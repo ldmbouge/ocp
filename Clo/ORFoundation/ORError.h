@@ -24,6 +24,7 @@
 }
 -(ORExecutionError*) initORExecutionError: (const char*) msg;
 -(const char*) msg;
+-(NSString *)description;
 @end 
 
 @interface ORSearchError : NSObject <ORError>

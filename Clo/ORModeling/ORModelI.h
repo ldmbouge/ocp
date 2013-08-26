@@ -10,6 +10,16 @@
  ***********************************************************************/
 
 #import <ORModeling/ORModeling.h>
+#import <ORFoundation/ORObject.h>
+
+@interface ORModelMappings : NSObject<ORModelMappings>
+-(ORModelMappings*) initORModelMappings;
+-(void) dealloc;
+-(void) setTau: (id<ORTau>) tau;
+-(void) setLambda: (id<ORLambda>) lambda;
+-(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
+@end
 
 @interface ORTau : NSObject<ORTau>
 -(ORTau*) initORTau;
@@ -42,7 +52,7 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) mutables;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 -(id) copyWithZone:(NSZone*)zone;
 -(id<ORVar>) addVariable:(id<ORVar>) var;
 -(id) addMutable:(id) object;
@@ -62,7 +72,7 @@
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;
--(id<ORGamma>) mappings;
+-(id<ORModelMappings>) modelMappings;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
@@ -71,8 +81,8 @@
 -(id) addMutable:(id)object;
 -(id) addImmutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
--(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
--(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
@@ -83,6 +93,7 @@
 -(id) trackMutable: (id) obj;
 -(id) trackImmutable:(id)obj;
 -(id) trackVariable: (id) obj;
+-(id<ORModelMappings>) modelMappings;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>

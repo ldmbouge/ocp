@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 
-#import "ORFoundation/ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/cont.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
@@ -20,6 +20,7 @@
 #import "CPData.h"
 #import "CPTableI.h"
 #import "CPBitVarI.h"
+#import "CPFloatVarI.h"
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 
@@ -66,6 +67,14 @@
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
 }
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
+{
+   return [[CPFloatVarI alloc] initCPFloatVar:cp low:range.low up:range.up];
+}
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVarI*)x
+{
+   return [[CPFloatViewOnIntVarI alloc] initCPFloatViewIntVar:cp intVar:x];
+}
 
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
@@ -80,6 +89,15 @@
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
    return (id<CPIntVarArray>) o;
 }
++(id<CPIntVarArray>) intVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPIntVar>(^)(ORInt)) clo
+{
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      [o  set:clo(k) at:k];
+   }
+   return (id<CPIntVarArray>)o;
+}
+
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];

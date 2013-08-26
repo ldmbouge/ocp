@@ -32,14 +32,14 @@
    [super dealloc];
 }
 // Tracer method
--(ORStatus) doIt
+-(void) doIt
 {
-    return [self post];
+    [self post];
 }
 // Constraint method
--(ORStatus) post 
+-(ORStatus) post
 {
-    return ORSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {}
@@ -70,7 +70,7 @@
    return _group;
 }
 
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitConstraint:self];
 }

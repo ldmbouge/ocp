@@ -4,7 +4,7 @@
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = -I$(GNUstep)/include -I.. -I. -I../CPUKernel \
+CFLAGS = -I$(GNUstep)/include -I.. -I. -I../CPUKernel -fPIC \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
 LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
@@ -14,7 +14,8 @@ LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
 
 SRCS = CPABS.m CPConcretizer.m  CPFirstFail.m  CPMultiStartSolver.m  \
 	CPSolver.m  LPConcretizer.m  ORCPParSolver.m CPBaseHeuristic.m  \
-	CPDDeg.m CPIBS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m
+	CPDDeg.m CPIBS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m \
+	MIPConcretizer.m MIPSolver.m
 
 
 

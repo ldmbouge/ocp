@@ -76,6 +76,10 @@
 {
    return _solver[[NSThread threadID]];
 }
+-(id<ORModelMappings>) modelMappings
+{
+   return [[self worker] modelMappings];
+}
 -(void)  restartHeuristics
 {
    [[self worker] restartHeuristics];
@@ -230,6 +234,14 @@
 {
    [[self worker] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void)              tryall: (id<ORIntIterable>) range
+                   suchThat: (ORInt2Bool) filter
+                  orderedBy: (ORInt2Float)o1
+                         in: (ORInt2Void) body
+                  onFailure: (ORInt2Void) onFailure
+{
+   [[self worker] tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
+}
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
 {
    [[[self worker] explorer] perform:body onLimit:onRestart];
@@ -345,6 +357,14 @@
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [[self worker] restrict: var to: S];
+}
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatLthen: var with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatGthen: var with: val];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
@@ -482,7 +502,7 @@
 {
    return [(id<CPProgram>)[self worker] intValue: x];
 }
--(ORBool) bound: (id<ORIntVar>) x
+-(ORBool) bound: (id<ORVar>) x
 {
    return [[self worker] bound: x];
 }
@@ -505,6 +525,18 @@
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
    return [((id<CPProgram>)[self worker]) floatValue: x];
+}
+-(ORFloat) domwidth:(id<ORFloatVar>)x
+{
+   return [[self worker] domwidth: x];
+}
+-(ORFloat) fmin:(id<ORFloatVar>)x
+{
+   return [[self worker] fmin:x];
+}
+-(ORFloat) fmax:(id<ORFloatVar>)x
+{
+   return [[self worker] fmax:x];
 }
 -(ORBool) boolValue: (id<ORIntVar>)x
 {

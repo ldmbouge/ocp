@@ -35,7 +35,7 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    NSLog(@"%@",self);
    @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
@@ -69,7 +69,6 @@
 {
    return _value;
 }
-
 -(ORFloat) floatValue
 {
    return _value;
@@ -94,6 +93,10 @@
 {
    return NO;
 }
+-(enum ORVType) vtype
+{
+   return ORTInt;
+}
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -112,7 +115,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitIntegerI: self];
 }
@@ -191,6 +194,10 @@
 {
    return NO;
 }
+-(enum ORVType) vtype
+{
+   return ORTInt;
+}
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -209,7 +216,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitMutableIntegerI: self];
 }
@@ -290,6 +297,10 @@
 {
    return NO;
 }
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -308,7 +319,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitFloatI: self];
 }
@@ -363,6 +374,10 @@
 {
    return NO;
 }
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -381,7 +396,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitMutableFloatI: self];
 }
@@ -443,7 +458,7 @@ static ORInt _deterministic;
 {
    return nrand48(_seed);
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitRandomStream:self];
 }
@@ -468,7 +483,7 @@ static ORInt _deterministic;
 {
    return erand48(_seed);
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitZeroOneStream:self];
 }
@@ -502,7 +517,7 @@ static ORInt _deterministic;
 {
    _name = name;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitUniformDistribution:self];
 }
@@ -727,7 +742,7 @@ static ORInt _deterministic;
       for(ORInt i = 0; i < _nb; i++)
          printf("_nextSupport[%d,%d]=%d\n",j,i,_nextSupport[j][i]);
 }
--(void) visit:(id<ORVisitor>)visitor
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitTable:self];
 }
@@ -902,6 +917,7 @@ static ORInt _deterministic;
 {
    self = [super init];
    _gamma = NULL;
+   _mappings = NULL;
    return self;
 }
 -(void) dealloc
@@ -913,13 +929,22 @@ static ORInt _deterministic;
 {
    _gamma = gamma;
 }
+-(void) setModelMappings: (id<ORModelMappings>) mappings
+{
+   _mappings = mappings;
+}
+-(id<ORModelMappings>) modelMappings
+{
+   return _mappings;
+}
 -(id*) gamma
 {
    return _gamma;
 }
 -(id) concretize: (id<ORObject>) o
 {
-   id<ORObject> ob =  _gamma[o.getId];
+   ORInt i = o.getId;
+   id<ORObject> ob =  _gamma[i];
    if (ob)
       return ob;
    else {
@@ -932,46 +957,6 @@ static ORInt _deterministic;
       }
       return _gamma[ob.getId];
    }
-}
-@end
-
-@implementation ORModelMappings
-{
-@protected
-   id<ORTau> _tau;
-   id<ORLambda> _lambda;
-}
--(ORModelMappings*) initORModelMappings
-{
-   self = [super init];
-   return self;
-}
--(void) dealloc
-{
-   [super dealloc];
-}
--(void) setTau: (id<ORTau>) tau
-{
-   _tau = tau;
-}
--(void) setLambda: (id<ORLambda>) lambda
-{
-   _lambda = lambda;
-}
--(id<ORTau>) tau
-{
-   return _tau;
-}
--(id<ORLambda>) lambda
-{
-   return _lambda;
-}
--(id) copyWithZone: (NSZone*) zone
-{
-   ORModelMappings* map = [[ORModelMappings alloc] initORModelMappings];
-   map->_tau = [_tau copy];
-   map->_lambda = [_lambda copy];
-   return map;
 }
 @end
 

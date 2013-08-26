@@ -133,15 +133,12 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 
 -(ORStatus) post
 {
-    [self propagate];
-    if (![_x bound] || ![_y bound]) {
-       [_x whenChangePropagate: self];
-       [_y whenChangePropagate: self];
-
-//        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-//        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-    }
-    [self propagate];
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+   }
+   [self propagate];
    return ORSuspend;
 }
 

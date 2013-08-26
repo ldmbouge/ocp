@@ -197,7 +197,7 @@
    GRBsetstrparam(_env,name,val);
 }
 
--(void) postConstraint: (MIPConstraintI*) cstr
+-(ORStatus) postConstraint: (MIPConstraintI*) cstr
 {
    switch ([cstr type]) {
       case MIPleq:
@@ -212,6 +212,7 @@
       default:
          break;
    }
+   return ORSuspend;
 }
 
 -(void) print

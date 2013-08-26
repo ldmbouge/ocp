@@ -12,13 +12,17 @@
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORObject.h>
+
 
 @protocol ORIntVarArray;
 @protocol ORVarArray;
 @protocol ORIntVarMatrix;
 @protocol ORExpr;
+@protocol ORVar;
 @protocol ORIntVar;
 @protocol ORBitVar;
+@protocol ORFloatVar;
 @protocol OREngine;
 @protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
@@ -73,6 +77,11 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
+@protocol  ORFloatEqualc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @protocol  ORNEqualc <ORConstraint>
 -(id<ORIntVar>) left;
 -(ORInt) cst;
@@ -89,8 +98,8 @@ enum ORGroupType {
 @end
 
 @protocol  OREqual <ORConstraint>
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
 -(ORInt) cst;
 -(ORAnnotation) annotation;
 @end
@@ -129,8 +138,8 @@ enum ORGroupType {
 @end
 
 @protocol ORSquare<ORConstraint>
--(id<ORIntVar>)res;
--(id<ORIntVar>)op;
+-(id<ORVar>)res;
+-(id<ORVar>)op;
 -(ORAnnotation) annotation;
 @end
 
@@ -203,6 +212,13 @@ enum ORGroupType {
 -(id<ORIntVar>) index0;
 -(id<ORIntVar>) index1;
 -(id<ORIntVar>) res;
+-(ORAnnotation)annotation;
+@end
+
+@protocol ORFloatElementCst <ORConstraint>
+-(id<ORFloatArray>) array;
+-(id<ORIntVar>)   idx;
+-(id<ORFloatVar>)   res;
 -(ORAnnotation)annotation;
 @end
 
@@ -423,6 +439,7 @@ enum ORGroupType {
 -(id<ORObjectiveValue>) primalBound;
 -(void)     updatePrimalBound;
 -(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(void)     tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 @end
 
 // pvh: to reconsider the solution pool in this interface; not sure I like them here
@@ -490,3 +507,11 @@ enum ORGroupType {
 -(id<ORBitVar>) equals;
 -(id<ORBitVar>) zeroIfXEquals;
 @end
+
+// Root implementation class (needed so that sub-frameworks can write constraints)
+
+@interface ORConstraintI : ORObject<ORConstraint>
+-(ORConstraintI*) initORConstraintI;
+-(NSString*) description;
+@end
+

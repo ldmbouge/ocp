@@ -33,11 +33,11 @@ enum CPDomClass {
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
 -(CPBoundsDom*)initBoundsDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
--(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
--(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
--(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(void) bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(void) remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(ORInt)min;
 -(ORInt)max;
 -(ORInt)imin;
@@ -53,8 +53,8 @@ enum CPDomClass {
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
--(void) enumerateWithBlock:(void(^)(ORInt))block;
--(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
+-(void)enumerateWithBlock:(void(^)(ORInt))block;
+-(void)enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
 
 static inline ORBounds domBounds(CPBoundsDom* dom)
@@ -80,11 +80,11 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(ORInt)findMax:(ORInt)from;
 -(ORInt)regret;
 -(NSString*)description;
--(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
--(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
--(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(void) bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(void) remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
@@ -99,10 +99,10 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
    ORInt     _b;
 }
 -(id)initAffineDom:(id<CPDom>)d scale:(ORInt)a shift:(ORInt)b;
--(ORStatus) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
--(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
--(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(void) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
+-(void) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) imin;

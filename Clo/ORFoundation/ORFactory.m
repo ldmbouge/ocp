@@ -18,9 +18,8 @@
 #import "ORDataI.h"
 #import "ORArrayI.h"
 #import "ORSetI.h"
-#import "ORConstraint.h"
-#import "ORModelI.h"
-#import "ORTrailI.h" 
+#import "ORConstraintI.h"
+#import "ORTrailI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
 
@@ -123,6 +122,11 @@
 {
    ORIntRangeI* o = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
    return [tracker trackImmutable: o];
+}
++(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker low:(ORFloat)low up:(ORFloat) up
+{
+   ORFloatRangeI* o = [[ORFloatRangeI alloc] initORFloatRangeI:low up:up];
+   return [tracker trackImmutable:o];
 }
 
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array
@@ -696,11 +700,23 @@
    [tracker trackObject:o];
    return o;
 }
++(id<ORExpr>) elt: (id<ORTracker>) tracker floatArray: (id<ORFloatArray>) a index: (id<ORExpr>) index
+{
+   id<ORExpr> o = [[ORExprCstFloatSubI alloc] initORExprCstFloatSubI: a index: index];
+   [tracker trackObject: o];
+   return o;
+}
+
 
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
    return [self validate:o onError:"No CP tracker in Abs Expression" track:t];
+}
++(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprSquareI alloc] initORExprSquareI:op];
+   return [self validate:o onError:"No CP tracker in Square Expression" track:t];
 }
 +(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t
 {
@@ -854,22 +870,6 @@
    [model trackObject:o];
    return o;
 }
-
-
-+(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
-{
-   id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
-   [model trackObject:o];
-   return o;
-}
-+(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  leq: (ORFloat) c
-{
-   id<ORConstraint> o = [[ORFloatLinearLeq alloc] initFloatLinearLeq: x coef: coef cst: c];
-   [model trackObject:o];
-   return o;
-}
-
-
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[OROr alloc] initOROr:b eq:x or:y];
@@ -889,13 +889,13 @@
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c
++(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORVar>) x to: (id<ORVar>) y plus:(int) c
 {
    id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c annotation: (ORAnnotation)n
++(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORVar>) x to: (id<ORVar>) y plus:(int) c annotation: (ORAnnotation)n
 {
    id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c annotation:n];
    [model trackObject:o];
@@ -915,7 +915,7 @@
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) equalc:(id<ORTracker>)model  var: (id<ORIntVar>) x to:(int) c
++(id<ORConstraint>) equalc:(id<ORTracker>)model  var: (id<ORIntVar>) x to:(ORInt) c
 {
    id<ORConstraint> o = [[OREqualc alloc] initOREqualc:x eqi:c];
    [model trackObject:o];
@@ -973,7 +973,7 @@
 +(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    if ([x getId] == [y getId]) {
-      id<ORConstraint> o = [[ORSquare alloc] initORSquare:z square:x annotation:n];
+      id<ORConstraint> o = [[ORSquare alloc] init:z square:x annotation:n];
       [model trackObject:o];
       return o;
    } else {
@@ -982,9 +982,9 @@
       return o;
    }
 }
-+(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORIntVar>)x equal:(id<ORIntVar>)res annotation:(ORAnnotation)n
++(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORVar>)x equal:(id<ORVar>)res annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORSquare alloc] initORSquare:res square:x annotation:n];
+   id<ORConstraint> o = [[ORSquare alloc] init:res square:x annotation:n];
    [model trackObject:o];
    return o;
 }
@@ -1163,6 +1163,38 @@
 }
 @end
 
+@implementation ORFactory (ORFloat)
++(id<ORConstraint>) floatSquare:(id<ORTracker>)model var:(id<ORFloatVar>)x equal:(id<ORFloatVar>)res annotation:(ORAnnotation)n
+{
+   id<ORConstraint> o = [[ORFloatSquare alloc] init:res square:x annotation:n];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
+{
+   id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  leq: (ORFloat) c
+{
+   id<ORConstraint> o = [[ORFloatLinearLeq alloc] initFloatLinearLeq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatEqualc:(id<ORTracker>)model  var: (id<ORFloatVar>) x to:(ORFloat) c
+{
+   id<ORConstraint> o = [[ORFloatEqualc alloc] init:x eqi:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatElement:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<ORFloatVar>)y annotation:(ORAnnotation)note
+{
+   id<ORConstraint> o = [[ORFloatElementCst alloc]  initORElement:x array:c equal:y annotation:note];
+   [model trackObject:o];
+   return o;   
+}
+@end
 
 @implementation ORFactory (BV)
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y

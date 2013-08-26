@@ -10,19 +10,14 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORObject.h"
+#import <ORUtilities/ORTypes.h>
+#import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORConstraint.h>
 #import "ORArray.h"
 #import "ORSet.h"
-#import "ORConstraint.h"
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"
-#import <ORUtilities/ORTypes.h>
-
-@interface ORConstraintI : ORObject<ORConstraint>
--(ORConstraintI*) initORConstraintI;
--(NSString*) description;
-@end
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
@@ -48,6 +43,12 @@
 -(ORInt) cst;
 @end
 
+@interface ORFloatEqualc : ORConstraintI<ORFloatEqualc>
+-(OREqualc*)init:(id<ORFloatVar>)x eqi:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @interface ORNEqualc : ORConstraintI<ORNEqualc>
 -(ORNEqualc*)initORNEqualc:(id<ORIntVar>)x neqi:(ORInt)c;
 -(id<ORIntVar>) left;
@@ -67,10 +68,10 @@
 @end
 
 @interface OREqual : ORConstraintI<OREqual>
--(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c;
--(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c annotation: (ORAnnotation) n;
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
+-(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y plus: (ORInt) c;
+-(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y plus: (ORInt) c annotation: (ORAnnotation) n;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
 -(ORInt) cst;
 @end
 
@@ -114,10 +115,13 @@
 @end
 
 @interface ORSquare : ORConstraintI<ORSquare>
--(ORSquare*)initORSquare:(id<ORIntVar>)z square:(id<ORIntVar>)x annotation:(ORAnnotation)n;
--(id<ORIntVar>)res;
--(id<ORIntVar>)op;
+-(ORSquare*)init:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n;
+-(id<ORVar>)res;
+-(id<ORVar>)op;
 -(ORAnnotation) annotation;
+@end
+
+@interface ORFloatSquare : ORSquare
 @end
 
 @interface ORMod : ORConstraintI<ORMod>
@@ -201,6 +205,14 @@
 -(id<ORIntVar>)index0;
 -(id<ORIntVar>)index1;
 -(id<ORIntVar>) res;
+-(ORAnnotation)annotation;
+@end
+
+@interface ORFloatElementCst : ORConstraintI<ORFloatElementCst>
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z annotation:(ORAnnotation)n; // y[idx] == z
+-(id<ORFloatArray>) array;
+-(id<ORIntVar>)       idx;
+-(id<ORFloatVar>)     res;
 -(ORAnnotation)annotation;
 @end
 
@@ -446,12 +458,12 @@
 
 @interface ORObjectiveFunctionVarI : ORObjectiveFunctionI<ORObjectiveFunctionVar>
 {
-   id<ORIntVar>             _var;
+   id<ORVar>             _var;
 }
--(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x;
--(id<ORIntVar>) var;
+-(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORVar>) x;
+-(id<ORVar>) var;
 -(id<ORObjectiveValue>) value;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 @end
 
 @interface ORObjectiveFunctionLinearI : ORObjectiveFunctionI<ORObjectiveFunctionLinear>
@@ -462,7 +474,7 @@
 -(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
 -(id<ORVarArray>) array;
 -(id<ORFloatArray>) coef;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 @end
 
 @interface ORObjectiveFunctionExprI : ORObjectiveFunctionI<ORObjectiveFunctionExpr>
@@ -471,15 +483,15 @@
 }
 -(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) expr;
 -(id<ORExpr>) expr;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 @end
 
 @interface ORMinimizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
--(ORMinimizeVarI*) initORMinimizeVarI: (id<ORIntVar>) x;
+-(ORMinimizeVarI*) initORMinimizeVarI: (id<ORVar>) x;
 @end
 
 @interface ORMaximizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
--(ORMaximizeVarI*) initORMaximizeVarI: (id<ORIntVar>) x;
+-(ORMaximizeVarI*) initORMaximizeVarI: (id<ORVar>) x;
 @end
 
 @interface ORMinimizeExprI : ORObjectiveFunctionExprI<ORObjectiveFunctionExpr>

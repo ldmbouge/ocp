@@ -100,6 +100,10 @@
 {
    assert(NO);
 }
+-(id<ORModelMappings>) modelMappings
+{
+   return [[self worker] modelMappings];
+}
 -(NSMutableArray*) variables
 {
    return [[[self worker] engine] variables];
@@ -164,6 +168,15 @@
 {
    [[[self worker] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void) tryall: (id<ORIntIterable>) range
+      suchThat: (ORInt2Bool) filter
+     orderedBy: (ORInt2Float)o1
+            in: (ORInt2Void) body
+     onFailure: (ORInt2Void) onFailure
+{
+   [[self worker] tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
+}
+
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
 {
    [[[self worker] explorer] perform:body onLimit:onRestart];
@@ -300,6 +313,14 @@
 {
    [[self worker] restrict: var to: S];
 }
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatLthen: var with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatGthen: var with: val];
+}
 -(void) fail
 {
    [[[self worker] explorer] fail];
@@ -333,8 +354,7 @@
    [[self worker] limitFailures: maxFailures in: cl];
 }
 
-
--(ORBool) bound: (id<ORIntVar>) x
+-(ORBool) bound: (id<ORVar>) x
 {
    return [[self worker] bound:x];
 }
@@ -349,6 +369,18 @@
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
    return [[self worker] domsize:x];
+}
+-(ORFloat) domwidth:(id<ORFloatVar>)x
+{
+   return [[self worker] domwidth:x];
+}
+-(ORFloat) fmin:(id<ORFloatVar>)x
+{
+   return [[self worker] fmin:x];
+}
+-(ORFloat) fmax:(id<ORFloatVar>)x
+{
+   return [[self worker] fmax:x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {

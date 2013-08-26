@@ -9,17 +9,16 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "ORUtilities/ORTypes.h"
-#import "ORFoundation/ORTracker.h"
-#import "ORFoundation/ORConstraint.h"
+#import <ORUtilities/ORTypes.h>
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORConstraint.h>
 
 @protocol ORRelation;
 @protocol ORExpr;
 @protocol ORIntArray;
 @protocol ORIntVarArray;
 
-enum ORRelationType {
+typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORRBad = 0,
    ORREq  = 1,
    ORRNEq = 2,
@@ -28,6 +27,24 @@ enum ORRelationType {
    ORRConj = 5,
    ORRImply = 6
 };
+
+typedef NS_ENUM(NSUInteger,ORVType) {
+   ORTInt = 0,
+   ORTFloat = 1,
+   ORTBit  = 2,
+   ORTSet  = 3,
+   ORTNA = 4
+};
+
+static inline ORVType lubVType(ORVType t1,ORVType t2)
+{
+   if (t1 == t2)
+      return t1;
+   else if (t1+t2 <= 1)
+      return ORTFloat;
+   else
+      return ORTNA;
+}
 
 id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r);
 id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
@@ -41,6 +58,7 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(ORBool) isConstant;
 -(ORBool) isVariable;
 -(id<ORExpr>) abs;
+-(id<ORExpr>) square;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
 -(id<ORExpr>) mul: (id) e;
@@ -77,11 +95,12 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
--(enum ORRelationType) type;
+-(ORRelationType) type;
+-(ORVType)vtype;
 @end
 
 @protocol ORRelation <ORExpr>
--(enum ORRelationType) type;
+-(ORRelationType) type;
 -(id<ORRelation>) and: (id<ORRelation>) e;
 -(id<ORRelation>) or: (id<ORRelation>) e;
 -(id<ORRelation>) imply: (id<ORRelation>) e;

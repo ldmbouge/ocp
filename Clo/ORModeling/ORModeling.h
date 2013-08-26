@@ -21,12 +21,13 @@
 
 @protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
+-(void) addVariable: (id<ORVar>) x;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
 
--(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
--(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
@@ -55,7 +56,7 @@
 -(id)inCache:(id)obj;
 -(id) addToCache:(id)obj;
 -(id)memoize:(id) obj;
--(id<ORModelMappings>) mappings;
+-(id<ORModelMappings>) modelMappings;
 -(id<ORTau>) tau;
 -(id<ORLambda>) lambda;
 @end
@@ -66,12 +67,13 @@
 -(id) addImmutable:(id) object;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORTracker>)tracker;
--(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;
--(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimizeVar:(id<ORVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORModelMappings>) modelMappings;
 @end
 
 @interface ORFactory (ORModeling)

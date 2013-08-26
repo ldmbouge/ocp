@@ -34,6 +34,8 @@
 -(void)                try: (ORClosure) left or: (ORClosure) right;
 -(void)             tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)             tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
+-(void)             tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f orderedBy: (ORInt2Float)o1 in: (ORInt2Void) body
+                 onFailure: (ORInt2Void) onFailure;
 -(void)               fail;
 
 // combinators

@@ -115,6 +115,7 @@
    ORFloat   _value;
 }
 -(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
+-(ORInt) getId;
 -(ORFloat) floatValue;
 -(ORInt) intValue;
 -(NSString*) description;
@@ -144,6 +145,10 @@
 {
    return _value;
 }
+-(ORInt) getId
+{
+   return _name;
+}
 -(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass:[self class]]) {
@@ -167,7 +172,6 @@
    [buf appendFormat:@"float(%d) : %f",_name,_value];
    return buf;
 }
-
 - (void) encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
@@ -182,7 +186,7 @@
 }
 @end
 
-@interface ORCPTakeSnapshot  : ORNOopVisit<ORVisitor>
+@interface ORCPTakeSnapshot  : ORNOopVisit<NSObject>
 -(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver;
 -(void) dealloc;
 @end
@@ -315,7 +319,10 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No float variable in LP solutions"];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
 }
 -(NSUInteger) count
 {
@@ -659,6 +666,16 @@
 {
    [_search tryall: range suchThat: filter in: body onFailure: onFailure];  
 }
+
+-(void) tryall: (id<ORIntIterable>) range
+      suchThat: (ORInt2Bool) filter
+     orderedBy: (ORInt2Float)o1
+            in: (ORInt2Void) body
+     onFailure: (ORInt2Void) onFailure
+{
+   [_search tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
+}
+
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
    [_engine clearStatus];
@@ -734,6 +751,14 @@
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method gthenImpl not implemented"];
+}
+-(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLthenImpl not implemented"];
+}
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGthenImpl not implemented"];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
@@ -1031,7 +1056,14 @@
 {
    return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
 }
-
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [self floatLthenImpl: _gamma[var.getId] with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [self floatGthenImpl: _gamma[var.getId] with: val];
+}
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
    [_search repeat: body onRepeat: onRepeat until: nil];
@@ -1192,10 +1224,9 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "no method floatValue available yet"];
-   // return [_gamma[x.getId] floatValue];
+   return [(id<ORFloatVar>)_gamma[x.getId] floatValue];
 }
--(ORBool) bound: (id<ORIntVar>) x
+-(ORBool) bound: (id<ORVar>) x
 {
    return [_gamma[x.getId] bound];
 }
@@ -1214,6 +1245,18 @@
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];
+}
+-(ORFloat) domwidth:(id<ORFloatVar>) x
+{
+   return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
+}
+-(ORFloat) fmin:(id<ORFloatVar>)x
+{
+   return [((id<CPFloatVar>)_gamma[x.getId]) min];
+}
+-(ORFloat) fmax:(id<ORFloatVar>)x
+{
+   return [((id<CPFloatVar>)_gamma[x.getId]) max];
 }
 -(NSSet*) constraints: (id<ORVar>)x
 {
@@ -1246,7 +1289,7 @@
 @implementation ORRTModel
 {
    CPSolver* _solver;
-   id<ORVisitor> _concretizer;
+   ORVisitor* _concretizer;
 }
 -(ORRTModel*)init:(CPSolver*)solver
 {
@@ -1259,6 +1302,10 @@
 {
    [_concretizer release];
    [super dealloc];
+}
+-(id<ORModelMappings>) modelMappings
+{
+   return [_solver modelMappings];
 }
 -(id<ORVar>) addVariable: (id<ORVar>) var
 {
@@ -1286,11 +1333,11 @@
 {
    return _solver;
 }
--(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar:(id<ORVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimizeVar: not allowed during search"];
 }
--(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximizeVar: not allowed during search"];
 }
@@ -1387,7 +1434,7 @@
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce: ^ORStatus { return [var bind: val];}];
+   ORStatus status = [_engine enforce: ^{ [var bind: val];}];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -1397,38 +1444,52 @@
 }
 -(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce:^ORStatus { return [var remove:val];}];
+   ORStatus status = [_engine enforce:^{ [var remove:val];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce:^ORStatus { return  [var updateMax:val-1];}];
+   ORStatus status = [_engine enforce: ^{ [var updateMax:val-1];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce:^ORStatus { return [var updateMin:val+1];}];
+   ORStatus status = [_engine enforce:^{ [var updateMin:val+1];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
-   ORStatus status = [_engine enforce:^ORStatus { return [var inside:S];}];
+   ORStatus status = [_engine enforce:^{ [var inside:S];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
-   ORStatus status = [_engine enforce:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
+   ORStatus status = [_engine enforce:^{ [[var domain] setBit:i to:val for:var];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
+}
+-(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
 }
 @end
 
@@ -1506,7 +1567,7 @@
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce: ^ORStatus { return [var bind: val];}];
+   ORStatus status = [_engine enforce: ^ {[var bind: val];}];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -1517,7 +1578,7 @@
 }
 -(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce:^ORStatus { return [var remove:val];}];
+   ORStatus status = [_engine enforce:^ { [var remove:val];}];
    if (status == ORFailure)
       [_search fail];
    [_tracer addCommand: [CPSearchFactory notEqualc: var to: val]];
@@ -1525,28 +1586,28 @@
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce:^ORStatus { return  [var updateMax:val-1];}];
+   ORStatus status = [_engine enforce:^ {  [var updateMax:val-1];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce:^ORStatus { return [var updateMin:val+1];}];
+   ORStatus status = [_engine enforce:^ { [var updateMin:val+1];}];
    if (status == ORFailure)
       [_search fail];   
    [ORConcurrency pumpEvents];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
-   ORStatus status = [_engine enforce:^ORStatus { return [var inside:S];}];
+   ORStatus status = [_engine enforce:^{[var inside:S];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
-   ORStatus status = [_engine enforce:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
+   ORStatus status = [_engine enforce:^ { [[var domain] setBit:i to:val for:var];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];

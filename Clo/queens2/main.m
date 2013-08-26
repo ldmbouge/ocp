@@ -10,26 +10,10 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPConstraint.h>
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-#import "objcp/CPHeuristic.h"
-#import "objcp/CPWDeg.h"
-
-ORInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,ORInt from,ORInt to)
-{
-   id<ORInteger> nbSolutions = [ORFactory integer:m value:0];
-   [m solveAll: ^() {
-      [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [[x at:i] domsize];}];
-      [nbSolutions incr];
-   }
-    ];
-   printf("NbSolutions: %d \n",[nbSolutions value]);   
-   return [nbSolutions value];
-}
+#import <ORProgram/ORProgramFactory.h>
 
 int main (int argc, const char * argv[])
 {
@@ -37,7 +21,7 @@ int main (int argc, const char * argv[])
    @autoreleasepool {
      id<ORModel> model = [ORFactory createModel];
      
-     id<ORIntRange> R = RANGE(model,1,n);
+     id<ORIntRange> R = RANGE(model,0,n-1);
      
      id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value:0];
      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
@@ -48,15 +32,18 @@ int main (int argc, const char * argv[])
      [model add: [ORFactory alldifferent: xn annotation:ValueConsistency]];
 
      id<CPProgram> cp = [ORFactory createCPProgram: model];
-     id<CPHeuristic> h = [cp createFF];
+     //id<CPHeuristic> h = [cp createFF];
      [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
-         [cp labelHeuristic:h];
-       //printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
+          printf("S[%d] = [",[nbSolutions intValue:cp]);
+          for(ORInt k=0;k < n;k++) {
+             printf("%d%c",[cp intValue:x[k]],k<n-1 ? ',' : ']');
+          }
+          printf("\n");
+          //[cp labelHeuristic:h];
           [nbSolutions incr:cp];
-       }
-       ];
+       }];
      printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
      
      NSLog(@"Solver status: %@\n",cp);

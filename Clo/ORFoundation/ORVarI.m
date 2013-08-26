@@ -13,19 +13,16 @@
 #import "ORError.h"
 #import "ORFactory.h"
 
-@implementation ORIntVarI
-{
+@implementation ORIntVarI {
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
-   //BOOL           _hasBounds;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
    self = [super init];
    _tracker = track;
    _domain = domain;
-   //_hasBounds = true;
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
@@ -59,6 +56,10 @@
 -(ORBool) isVariable
 {
    return YES;
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
 }
 -(NSString*) description
 {
@@ -116,7 +117,7 @@
 {
    return self;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitIntVar: self];
 }
@@ -173,7 +174,7 @@
 {
    return _x;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitAffineVar: self];
 }
@@ -211,7 +212,7 @@
 {
    return _x;
 }
--(void) visit: (id<ORVisitor>)v
+-(void) visit: (ORVisitor*)v
 {
    [v visitIntVarLitEQView:self];
 }
@@ -221,16 +222,14 @@
 {
 @protected
    id<ORTracker>    _tracker;
-   ORFloat          _low;
-   ORFloat          _up;
+   id<ORFloatRange> _domain;
    BOOL             _hasBounds;
 }
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
 {
    self = [super init];
    _tracker = track;
-   _low = low;
-   _up = up;
+   _domain = [ORFactory floatRange:track low:low up:up];
    _hasBounds = true;
    [track trackVariable: self];
    return self;
@@ -239,8 +238,7 @@
 {
    self = [super init];
    _tracker = track;
-   _low = 0;
-   _up = up;
+   _domain = [ORFactory floatRange:track low:0 up:up];
    _hasBounds = true;
    [track trackVariable: self];
    return self;
@@ -253,24 +251,30 @@
    [track trackVariable: self];
    return self;
 }
-
+-(id<ORFloatRange>) domain
+{
+   assert(_domain != NULL);
+   return _domain;
+}
 -(void) dealloc
 {
    [super dealloc];
 }
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   [aCoder encodeObject:_domain];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
    _tracker = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   _domain  = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
@@ -280,56 +284,13 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_low,_up];
+   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
 }
-//-(ORFloat) value
-//{
-//   return [self floatValue];
-//}
-//-(ORFloat) floatValue
-//{
-//   if (_impl)
-//      return [(id<ORFloatVar>)_impl floatValue];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-//   
-//}
-//-(ORBool) bound
-//{
-//   if (_impl)
-//      return [_impl bound];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-//   
-//}
-//
-//-(ORFloat) min
-//{
-//   if (_impl)
-//      return [(id<ORFloatVar>)_impl min];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-//}
-//-(ORFloat) max
-//{
-//   if (_impl)
-//      return [(id<ORFloatVar>)_impl max];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-//   
-//}
-//-(NSSet*) constraints
-//{
-//   if (_impl)
-//      return [(id<ORFloatVar>)_impl constraints];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-//}
 -(id<ORTracker>) tracker
 {
    return _tracker;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitFloatVar: self];
 }
@@ -339,11 +300,11 @@
 }
 -(ORFloat) low
 {
-   return _low;
+   return _domain.low;
 }
 -(ORFloat) up
 {
-   return _up;
+   return _domain.up;
 }
 @end
 
@@ -385,12 +346,14 @@
 {
    return _bLen;
 }
-
--(void) visit: (id<ORVisitor>)v
+-(enum ORVType) vtype
+{
+   return ORTBit;
+}
+-(void) visit: (ORVisitor*)v
 {
    [v visitBitVar:self];
 }
-
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -431,7 +394,6 @@
 {
    return [self description];
 }
-
 @end
 
 

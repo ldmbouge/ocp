@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORUtilities/ORTypes.h>
 
 @interface CPBitArray : NSObject<NSCopying> {
 @private

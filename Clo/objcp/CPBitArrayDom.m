@@ -236,7 +236,7 @@
 -(unsigned int) randomFreeBit
 {
    [self updateFreeBitCount];
-   int r = arc4random() % _freebits._val;
+   int r = random() % _freebits._val;
    unsigned int foundFreeBits =0;
    unsigned int boundBits;
    unsigned int bitMask;

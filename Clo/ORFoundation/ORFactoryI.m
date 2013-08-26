@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "ORFactoryI.h"
-#import "ORFoundation/ORAVLTree.h"
+#import <ORFoundation/ORAVLTree.h>
 
 @implementation ORInternalFactory 
 

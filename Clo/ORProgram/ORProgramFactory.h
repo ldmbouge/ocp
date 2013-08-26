@@ -23,6 +23,19 @@
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model;
++(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model;
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model;
++(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation;
+@end
+
+@interface ORLinearRelaxation : NSObject<ORRelaxation>
+-(ORLinearRelaxation*) initLinearRelaxation: (id<ORModel>) m;
+-(ORFloat) objective;
+-(ORFloat) lowerBound: (id<ORVar>) x;
+-(ORFloat) upperBound: (id<ORVar>) x;
+-(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f;
+-(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f;
+-(OROutcome) solve;
 @end

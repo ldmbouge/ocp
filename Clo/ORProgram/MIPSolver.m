@@ -11,6 +11,8 @@
 
 // MIPSolver
 #import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModelTransformation.h>
+
 #import "MIPProgram.h"
 #import "MIPSolver.h"
 #import <objmp/MIPSolverI.h>
@@ -158,7 +160,7 @@
 }
 @end
 
-@interface ORMIPTakeSnapshot  : ORNOopVisit<ORVisitor> // inherits from noop -> only fill relevant methods
+@interface ORMIPTakeSnapshot  : ORNOopVisit<NSObject> // inherits from noop -> only fill relevant methods
 -(ORMIPTakeSnapshot*) initORMIPTakeSnapshot: (id<MIPProgram>) solver;
 -(void) dealloc;
 @end

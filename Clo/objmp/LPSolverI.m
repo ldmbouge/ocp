@@ -50,10 +50,6 @@
    if (_col)
       free(_col);
    free(_coef);
-   if (_tmpVar)
-      free(_tmpVar);
-   if (_tmpCoef)
-      free(_tmpCoef);
    [super dealloc];
 }
 -(void) resize
@@ -82,8 +78,6 @@
 }
 -(LPVariableI**) var
 {
-   if (_tmpVar)
-      free(_tmpVar);
    _tmpVar = (LPVariableI**) malloc(_size * sizeof(LPVariableI*));
    for(ORInt i = 0; i < _size; i++)
       _tmpVar[i] = _var[i];
@@ -95,8 +89,6 @@
 }
 -(ORInt*) col
 {
-   if (_col)
-      free(_col);
    _col = (ORInt*) malloc(_size * sizeof(ORInt));
    for(ORInt i = 0; i < _size; i++)
       _col[i] = [_var[i] idx];
@@ -108,8 +100,6 @@
 }
 -(ORFloat*) coef
 {
-   if (_tmpCoef)
-      free(_tmpCoef);
    _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
    for(ORInt i = 0; i < _size; i++)
       _tmpCoef[i] = _coef[i];
@@ -287,10 +277,6 @@
       free(_col);
    free(_var);
    free(_coef);
-   if (_tmpVar)
-      free(_tmpVar);
-   if (_tmpCoef)
-      free(_tmpCoef);
    [super dealloc];
 }
 -(LPObjectiveType) type
@@ -303,8 +289,6 @@
 }
 -(LPVariableI**) var
 {
-   if (_tmpVar)
-      free(_tmpVar);
    _tmpVar = (LPVariableI**) malloc(_size * sizeof(LPVariableI*));
    for(ORInt i = 0; i < _size; i++)
       _tmpVar[i] = _var[i];
@@ -319,8 +303,6 @@
 }
 -(ORFloat*) coef
 {
-   if (_tmpCoef)
-      free(_tmpCoef);
    _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
    for(ORInt i = 0; i < _size; i++)
       _tmpCoef[i] = _coef[i];
@@ -1235,14 +1217,15 @@
 {
    return _isClosed;
 }
--(LPOutcome) solve
+-(OROutcome) solve
 {
    if (!_isClosed)
       [self close];
+ 
    return [_lp solve];
 }
 
--(LPOutcome) status;
+-(OROutcome) status;
 {
    return [_lp status];
 }

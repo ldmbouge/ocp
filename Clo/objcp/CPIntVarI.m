@@ -187,6 +187,24 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
 }
 
+-(ORFloat) floatMin
+{
+   return [_dom min];
+}
+-(ORFloat) floatMax
+{
+   return [_dom max];
+}
+-(ORFloat) floatValue
+{
+   if ([_dom bound])
+      return [_dom min];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
+      return 0;
+   }
+}
+
 -(ORInt) intValue
 {
    assert(_dom);
@@ -248,7 +266,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 #if !defined(_NDEBUG)
    [s appendFormat:@"var<%d>=",_name];
 #endif
-   if ([dom isKindOfClass:[CPBoundsDom class]]) {
+   if ([dom isMemberOfClass:[CPBoundsDom class]]) {
       if ([dom domsize]==1)
          [s appendFormat:@"%d",[dom min]];
       else {
@@ -301,7 +319,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(ORBool) tracksLoseEvt:(id<CPDom>)sender
 {
-    return TRACKSINTVAR;
+  //return TRACKSINTVAR;
+   if (_net._ac5._val != nil || _triggers != nil)
+      return YES;
+   else if (_recv && [_recv tracksLoseEvt:sender])
+      return YES;
+   else
+      return NO;
 }
 // nothing to do here
 -(void) setTracksLoseEvt
@@ -433,10 +457,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     }
 }
 
--(ORStatus) bindEvt:(id<CPDom>)sender
+-(void) bindEvt:(id<CPDom>) sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
-   if (s==ORFailure) return s;
+   [_recv bindEvt: sender];
+
    id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
@@ -452,13 +476,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = NULL;
    scheduleAC3(_fdm,mList);
    if (_triggers)
-      [_triggers bindEvt:_fdm];
-   return ORSuspend;
+      [_triggers bindEvt: _fdm];
 }
--(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
+
+-(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv changeMinEvt:dsz sender:sender];
-   if (s==ORFailure) return s;
+   [_recv changeMinEvt:dsz sender:sender];
+
    id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
@@ -473,12 +497,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    scheduleAC3(_fdm,mList);
    if (_triggers && dsz==1)
         [_triggers bindEvt:_fdm];
-   return ORSuspend;
 }
--(ORStatus) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender
+
+-(void) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv changeMaxEvt:dsz sender:sender];
-   if (s==ORFailure) return s;
+   [_recv changeMaxEvt:dsz sender:sender];
+  
    id<CPEventNode> mList[6];
    id<CPEventNode>* ptr = mList;
    *ptr  = _net._boundsEvt._val;
@@ -493,14 +517,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    scheduleAC3(_fdm,mList);
    if (_triggers && dsz==1)
       [_triggers bindEvt:_fdm];
-   return ORSuspend;
 }
--(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
+
+-(void) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
-   ORStatus s = ORSuspend;
    if (_recv !=nil) {
-      s = [_recv loseValEvt:val sender:sender];
-      if (s==ORFailure) return s;
+      [_recv loseValEvt:val sender:sender];
    }
    if (_net._domEvt._val != NULL) {
       id<CPEventNode> mList[2];
@@ -512,29 +534,28 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5._val]];
    if (_triggers)
       [_triggers loseValEvt:val solver:_fdm];
-   return ORSuspend;
 }
--(ORStatus) updateMin: (ORInt) newMin
+-(void) updateMin: (ORInt) newMin
 {
-    return [_dom updateMin:newMin for:self];
+   [_dom updateMin:newMin for:self];
 }
--(ORStatus) updateMax: (ORInt) newMax
+-(void) updateMax: (ORInt) newMax
 {
-    return [_dom updateMax:newMax for:self];
+   [_dom updateMax:newMax for:self];
 }
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
-   return [_dom updateMin:newMin andMax:newMax for:self];
+   [_dom updateMin:newMin andMax:newMax for:self];
 }
--(ORStatus) bind: (ORInt) val
+-(void) bind: (ORInt) val
 {
-    return [_dom bind:val for:self];
+   [_dom bind:val for:self];
 }
--(ORStatus) remove: (ORInt) val
+-(void) remove: (ORInt) val
 {
-    return [_dom remove:val for:self];
+   [_dom remove:val for:self];
 }
--(ORStatus) inside:(ORIntSetI*) S
+-(void) inside:(ORIntSetI*) S
 {
     ORInt m = [self min];
     ORInt M = [self max];
@@ -542,7 +563,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         if ([self member: i] && ![S member: i])
             [self remove: i];
     }
-    return ORSuspend;
 }
 
 -(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
@@ -565,7 +585,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _vc = CPVCAffine;
    id<CPIntVarNotifier> xDeg = [x delegate];
    if (xDeg == nil) {
-      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2 root:x];
+      CPMultiCast* mc = [[CPMultiCast alloc] initVarMC:2 root:x];
       [mc addVar: self];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
@@ -728,39 +748,39 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     return 1;
 }
--(ORStatus)updateMin: (ORInt) newMin
+-(void) updateMin: (ORInt) newMin
 {
-    return [_x updateMin: newMin-_b];
+   [_x updateMin: newMin-_b];
 }
--(ORStatus)updateMax: (ORInt) newMax
+-(void) updateMax: (ORInt) newMax
 {
-    return [_x updateMax: newMax-_b];
+   [_x updateMax: newMax-_b];
 }
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
-   ORStatus s = [_x updateMin:newMin-_b];
-   if (s)   s = [_x updateMax:newMax-_b];
-   return s;
+   [_x updateMin:newMin-_b];
+   [_x updateMax:newMax-_b];
 }
 
--(ORStatus)bind: (ORInt) val
+-(void) bind: (ORInt) val
 {
-    return [_x bind: val-_b];
+    [_x bind: val-_b];
 }
--(ORStatus) remove: (ORInt) val
+-(void) remove: (ORInt) val
 {
-    return [_x remove: val-_b];
+    [_x remove: val-_b];
 }
 // get the notification from the underlying domain; need to shift it for the network
--(ORStatus) loseValEvt: (ORInt)  val sender:(id<CPDom>)sender
+-(void) loseValEvt: (ORInt)  val sender:(id<CPDom>)sender
 {
-   return [super loseValEvt: val+_b sender:sender];
+   [super loseValEvt: val+_b sender:sender];
 }
--(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale==1 && shift==_b)
       return self;
-   else return nil;
+   else
+      return nil;
 }
 -(NSString*) description
 {
@@ -886,46 +906,48 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
 }
 
--(ORStatus) updateMin: (ORInt) newMin
+-(void) updateMin: (ORInt) newMin
 {
    ORInt op = newMin - _b;
    ORInt mv = op % _a ? 1 : 0;   // multiplier value
    if (_a > 0) {
       ORInt ms = op > 0 ? +1 : 0;  // multiplier sign
-      return [_x updateMin:op / _a + ms * mv];
-   } else {
+      [_x updateMin:op / _a + ms * mv];
+   }
+   else {
       ORInt ms = op > 0 ?  -1 : 0;
-      return [_x updateMax:op / _a + ms * mv];
+      [_x updateMax:op / _a + ms * mv];
    }
 }
--(ORStatus) updateMax: (ORInt) newMax
+-(void) updateMax: (ORInt) newMax
 {
    ORInt op = newMax - _b;
    ORInt mv = op % _a ? 1 : 0;
    if (_a > 0) {
       ORInt ms = op > 0  ? 0 : -1;
-      return [_x updateMax:op / _a + ms * mv];
-   } else {
+      [_x updateMax:op / _a + ms * mv];
+   }
+   else {
       ORInt ms = op < 0 ? +1 : 0;
-      return [_x updateMin:op / _a + ms * mv];
+      [_x updateMin:op / _a + ms * mv];
    }
 }
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
+
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
-   ORStatus s = [self updateMin:newMin];
-   if (s == ORFailure) return s;
-   return [self updateMax:newMax];
+   [self updateMin:newMin];
+   [self updateMax:newMax];
 }
 
--(ORStatus)bind: (ORInt) val
+-(void) bind: (ORInt) val
 {
     ORInt r = (val - _b) % _a;
     if (r != 0)
        failNow();
     ORInt ov = (val - _b) / _a; 
-    return [_x bind:ov];
+    [_x bind:ov];
 }
--(ORStatus)remove: (ORInt) val
+-(void) remove: (ORInt) val
 {
    ORInt ov;
    if (_a == -1)
@@ -934,20 +956,22 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       ov = val - _b;
    else {
       ORInt r = (val - _b) % _a;
-      if (r != 0) return ORSuspend;
+      if (r != 0)
+         return;
       ov = (val - _b) / _a; 
    }
-   return [_x remove:ov];
+   [_x remove:ov];
 }
--(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
+-(void) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
-   return [super loseValEvt:_a * val+_b sender:sender];
+   [super loseValEvt:_a * val+_b sender:sender];
 }
--(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale == _a && shift == _b)
       return self;
-   else return nil;
+   else
+      return nil;
 }
 -(NSString*)description
 {
@@ -960,7 +984,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    self = [super initCPIntVarView: [x engine] low:-[x max] up:-[x min] for:x];
    _vc = CPVCFlip;
-   //_dom = (CPBoundsDom*)[[x domain] retain];
    _dom = nil;
    _x = x;
    return self;
@@ -1042,31 +1065,30 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    hookupEvent(_fdm, &_net._minEvt, nil, c, p);
 }
 
--(ORStatus)updateMin:(ORInt)newMin
+-(void) updateMin:(ORInt)newMin
 {
-   return [_x updateMax:-newMin];
+   [_x updateMax:-newMin];
 }
--(ORStatus)updateMax:(ORInt)newMax
+-(void) updateMax:(ORInt)newMax
 {
-   return [_x updateMin:-newMax];
+   [_x updateMin:-newMax];
 }
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
-   ORStatus s = [_x updateMax:-newMin];
-   if (s == ORFailure) return s;
-   return [_x updateMin:-newMax];
+   [_x updateMax:-newMin];
+   [_x updateMin:-newMax];
 }
--(ORStatus)bind:(ORInt)val
+-(void) bind:(ORInt)val
 {
-   return [_x bind:-val];
+   [_x bind:-val];
 }
--(ORStatus)remove:(ORInt)val
+-(void) remove:(ORInt)val
 {
-   return [_x remove:-val];
+   [_x remove:-val];
 }
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
-   return [super loseValEvt:-val sender:sender];
+   [super loseValEvt:-val sender:sender];
 }
 -(NSString*)description
 {
@@ -1185,95 +1207,90 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return 1;
 }
--(ORStatus)updateMin:(ORInt)newMin
+-(void) updateMin: (ORInt) newMin
 {
    // newMin>=1 => x==v
    // newMin==0 => nothing
    if (newMin) {
-      return [_secondary bind:_v];
-   } else
-      return ORSuspend;
+      [_secondary bind:_v];
+   } 
 }
--(ORStatus)updateMax:(ORInt)newMax
+-(void) updateMax:(ORInt)newMax
 {
    // newMax == 0 => x != v
    // newMax >= 1 => nothing
    if (newMax==0) {
-      return [_secondary remove:_v];
-   } else
-      return ORSuspend;
+      [_secondary remove:_v];
+   }
 }
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(void) updateMin: (ORInt) newMin andMax: (ORInt) newMax
 {
-   ORStatus ok = ORSuspend;
-   if (newMin) {
-      ok = [_secondary bind:_v];
-   }
-   if (ok && newMax==0) {
-      ok = [_secondary remove:_v];
-   }
-   return ok;
+   if (newMin) 
+      [_secondary bind:_v];
+   if (newMax==0) 
+      [_secondary remove:_v];
 }
--(ORStatus)bind:(ORInt)val
+-(void) bind:(ORInt)val
 {
    assert(val==0 || val==1);
    // self=0 => x must loose _lit
    // self=1 => x must be bound to _lit
    if (val==0) {
-      return [_secondary remove:_v];
-   } else {
-      return [_secondary bind:_v];
+      [_secondary remove:_v];
+   }
+   else {
+      [_secondary bind:_v];
    }
 }
--(ORStatus)remove:(ORInt)val
+-(void) remove:(ORInt)val
 {
    assert(val==0 || val==1);
    // val==0 -> bind to 1 -> x must be bound to _lit
    // val==1 -> bind to 0 -> x must loose _lit
    if (val==0) {
-      return [_secondary bind:_v];
-   } else {
-      return [_secondary remove:_v];
+      [_secondary bind:_v];
+   }
+   else {
+      [_secondary remove:_v];
    }
 }
--(ORStatus)bindEvt:(id<CPDom>)sender
+-(void) bindEvt:(id<CPDom>)sender
 {
    assert(bound(_secondary));
 //   ORInt boundTo = minDom(_secondary);
-   return [super bindEvt:sender];
+   [super bindEvt:sender];
 }
 
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (val == _v) {
       // We lost the value being watched. So the boolean lost TRUE
-      return [super loseValEvt:TRUE sender:sender];
-   } else {
+      [super loseValEvt:TRUE sender:sender];
+   }
+   else {
       // We lost some other value. So we may have bound(_seconday) && minDom(_secondary)==_v      
       if (bound(_secondary) && minDom(_secondary) == _v) {
-         return [super loseValEvt:FALSE sender:sender];
-      } else return ORSuspend;
+         [super loseValEvt:FALSE sender:sender];
+      } 
    }
 }
--(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
+-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    ORInt myMin = [self min];
    ORInt myMax = [self max];
    if (myMin)
-      return [super bindEvt:sender];
+      [super bindEvt:sender];
    else if (myMax==0)
-      return [super bindEvt:sender];
-   else return ORSuspend;
+      [super bindEvt:sender];
 }
--(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
+-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    ORInt myMin = [self min];
    ORInt myMax = [self max];
    if (myMin)
-      return [super bindEvt:sender];
+      [super bindEvt:sender];
    else if (myMax==0)
-      return [super bindEvt:sender];
-   else return ORSuspend;
+      [super bindEvt:sender];
 }
 -(NSString*)description
 {
@@ -1290,7 +1307,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@implementation CPIntVarMultiCast
+@implementation CPMultiCast
 
 -(id)initVarMC:(ORInt)n root:(CPIntVarI*)root
 {
@@ -1330,7 +1347,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return CPVCLiterals;
 }
--(void) addVar:(CPIntVarI*)v
+-(void) addVar:(id)v
 {
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
@@ -1344,9 +1361,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
    _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
    _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
-   id<ORTrail> theTrail = [[v engine] trail];
+   CPEngineI* engine = (id)[v engine];
+   id<ORTrail> theTrail = [engine trail];
    ORInt toFix = _nb;
-   __block CPIntVarMultiCast* me = self;
+   __block CPMultiCast* me = self;
    [theTrail trailClosure:^{
       me->_tab[toFix] = NULL;
       me->_loseValIMP[toFix] = NULL;
@@ -1395,7 +1413,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _tracksLoseEvt = YES;
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
-   __block CPIntVarMultiCast* me = self;
+   __block CPMultiCast* me = self;
    [theTrail trailClosure:^{
       me->_tab[toFix] = NULL;
       me->_loseValIMP[toFix] = NULL;
@@ -1440,51 +1458,43 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     return _tracksLoseEvt;
 }
--(ORStatus)bindEvt:(id<CPDom>)sender
+-(void) bindEvt:(id<CPDom>)sender
 {
    // If _nb > 0 but the _tab entries are nil, this would inadvertently
    // set ok to ORFailure which is wrong. Hence it is critical to also
    // backtrack the size of the array in addVar.
    for(ORInt i=0;i<_nb;i++) {
-       ORStatus ok = [_tab[i] bindEvt:sender];
-      if (!ok) return ok;
+       [_tab[i] bindEvt:sender];
    }
-   return ORSuspend;
 }
 
--(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
+-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    SEL ms = @selector(changeMinEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
       //ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
       assert(_minIMP[i]);
-      ORStatus ok = _minIMP[i](_tab[i],ms,dsz,sender);
-      if (!ok) return ok;
+      _minIMP[i](_tab[i],ms,dsz,sender);
    }
-   return ORSuspend;
 }
--(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
+-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    SEL ms = @selector(changeMaxEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
       //ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
       assert(_maxIMP[i]);
-      ORStatus ok = _maxIMP[i](_tab[i],ms,dsz,sender);
-      if (!ok) return ok;
+      _maxIMP[i](_tab[i],ms,dsz,sender);
    }
-   return ORSuspend;
 }
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
-   if (!_tracksLoseEvt) return ORSuspend;
-   ORStatus ok = ORSuspend;
+   if (!_tracksLoseEvt)
+      return;
    for(ORInt i=0;i<_nb;i++) {
       //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
       if (_loseValIMP[i])
-         ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
-      if (ok == ORFailure) return ok;
+         _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
    }
-   return ORSuspend;
 }
 @end
 
@@ -1555,51 +1565,43 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return _pos[value - _ofs];
 }
 
--(ORStatus) bindEvt:(id<CPDom>)sender
+-(void) bindEvt:(id<CPDom>)sender
 {
    CPIntVarI* lv = _pos[sender.min - _ofs];
    if (lv != NULL)
-      return [lv bindEvt:sender];
-   else return ORSuspend;
+      [lv bindEvt:sender];
 }
--(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
+-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    ORInt min = [_ref min];
    for(ORInt i=_ofs;i <min;i++) {
       CPIntVarI* lv = _pos[i - _ofs];
-      ORStatus ok = (lv) ? [lv changeMinEvt:dsz sender:sender] : ORSuspend;
-      if (!ok)
-         return ok;
+      if (lv)
+         [lv changeMinEvt:dsz sender:sender];
    }
    if (dsz==1) {
       CPIntVarI* lv = _pos[[sender min] - _ofs];
       if (lv)
-         return [lv bindEvt:sender];
-      else return ORSuspend;
-   } else
-      return ORSuspend;
+         [lv bindEvt:sender];
+   }
 }
--(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
+-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    ORInt max = [_ref max];
    for(ORInt i = max+1;i<_ofs+_nb;i++) {
       CPIntVarI* lv = _pos[i - _ofs];
-      ORStatus ok = lv ? [lv changeMaxEvt:dsz sender:sender] : ORSuspend;
-      if (!ok)
-         return ok;
+      if (lv)
+         [lv changeMaxEvt:dsz sender:sender];
    }
    if (dsz==1) {
       CPIntVarI* lv = _pos[[sender min] - _ofs];
       if (lv)
          return [lv bindEvt:sender];
-      else return ORSuspend;
-   } else
-      return ORSuspend;
+   } 
 }
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (_pos[val - _ofs])
-      return [_pos[val - _ofs] loseValEvt:val sender:sender];
-   else return ORSuspend;
+      [_pos[val - _ofs] loseValEvt:val sender:sender];
 }
 @end

@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORFoundation/ORExpr.h"
+#import <ORFoundation/ORExpr.h>
 #import "ORExprI.h"
 #import "ORFactory.h"
 #import "ORError.h"
@@ -86,7 +86,7 @@
 }
 @end
 
-@interface ORSweep : NSObject<ORVisitor> {
+@interface ORSweep : ORVisitor<NSObject> {
    NSMutableSet* _ms;
 }
 -(id)init;
@@ -109,6 +109,7 @@
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprSquareI:(id<ORExpr>) e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
@@ -228,11 +229,19 @@
 {
    [[e operand] visit:self];
 }
+-(void) visitExprSquareI:(ORExprSquareI*) e
+{
+   [[e operand] visit:self];
+}
 -(void) visitExprNegateI:(ORExprNegateI*)e
 {
    [[e operand] visit:self];
 }
 -(void) visitExprCstSubI: (ORExprCstSubI*) e
+{
+   [[e index] visit:self];
+}
+-(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*) e
 {
    [[e index] visit:self];
 }
@@ -369,9 +378,17 @@
 {
    return ORRBad;
 }
+-(enum ORVType) vtype
+{
+   return ORTNA;
+}
 -(id<ORExpr>) abs
 {
    return [ORFactory exprAbs:self track:[self tracker]];
+}
+-(id<ORExpr>) square
+{
+   return [ORFactory exprSquare:self track:[self tracker]];
 }
 -(id<ORExpr>) plus: (id) e
 {
@@ -450,6 +467,10 @@
 -(id<ORExpr>) absTrack:(id<ORTracker>)t
 {
    return [ORFactory exprAbs:self track:t];
+}
+-(id<ORExpr>) squareTrack:(id<ORTracker>)t
+{
+   return [ORFactory exprSquare:self track:t];
 }
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t
 {
@@ -591,7 +612,7 @@
    self = [super init];
    return self;
 }
-- (void)visit:(id<ORVisitor>)visitor
+- (void)visit:(ORVisitor*)visitor
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
 }
@@ -639,6 +660,11 @@
 {
    return [_left isConstant] && [_right isConstant];
 }
+-(enum ORVType) vtype
+{
+   return lubVType(_left.vtype, _right.vtype);
+}
+
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_left];
@@ -687,14 +713,17 @@
 {
    return [_op isConstant];
 }
-
+-(enum ORVType) vtype
+{
+   return _op.vtype;
+}
 -(NSString *)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"abs(%@)",[_op description]];
    return rv;   
 }
--(void) visit:(id<ORVisitor>)visitor
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitExprAbsI:self];
 }
@@ -711,6 +740,65 @@
 }
 @end
 
+@implementation ORExprSquareI
+-(id<ORExpr>) initORExprSquareI: (id<ORExpr>) op
+{
+   self = [super init];
+   _op = op;
+   return self;
+}
+-(id<ORTracker>) tracker
+{
+   return [_op tracker];
+}
+-(ORInt) min
+{
+   ORInt min2 = _op.min * _op.min;
+   if (_op.min >= 0)
+      return min2;
+   else return 0;
+}
+-(ORInt) max
+{
+   ORInt min2 = _op.min * _op.min;
+   ORInt max2 = _op.max * _op.max;
+   ORInt ub = max(min2, max2);
+   return ub;
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(ORBool) isConstant
+{
+   return [_op isConstant];
+}
+-(enum ORVType) vtype
+{
+   return _op.vtype;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"square(%@)",[_op description]];
+   return rv;
+}
+-(void) visit:(ORVisitor*)visitor
+{
+   [visitor visitExprSquareI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_op];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _op = [aDecoder decodeObject];
+   return self;
+}
+@end
 
 @implementation ORExprNegateI
 -(id<ORExpr>) initORNegateI: (id<ORExpr>) op
@@ -739,13 +827,17 @@
 {
    return [_op isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _op.vtype;
+}
 -(NSString *)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"neg(%@)",[_op description]];
    return rv;
 }
--(void) visit:(id<ORVisitor>)visitor
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitExprNegateI:self];
 }
@@ -761,7 +853,6 @@
    return self;
 }
 @end
-
 
 @implementation ORExprCstSubI
 -(id<ORExpr>) initORExprCstSubI: (id<ORIntArray>) array index:(id<ORExpr>) op
@@ -807,9 +898,80 @@
 {
    return [_index isConstant];
 }
--(void) visit:(id<ORVisitor>)visitor
+-(enum ORVType) vtype
+{
+   return ORTInt;
+}
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitExprCstSubI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_array];
+   [aCoder encodeObject:_index];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _array = [aDecoder decodeObject];
+   _index = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+@implementation ORExprCstFloatSubI
+-(id<ORExpr>) initORExprCstFloatSubI: (id<ORFloatArray>) array index:(id<ORExpr>) op
+{
+   self = [super init];
+   _array = array;
+   _index = op;
+   return self;
+}
+-(id<ORTracker>) tracker
+{
+   return [_index tracker];
+}
+-(ORFloat) fmin
+{
+   ORFloat minOf = MAXINT;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      minOf = minOf <[_array at:k] ? minOf : [_array at:k];
+   return minOf;
+}
+-(ORFloat) fmax
+{
+   ORFloat maxOf = MININT;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
+   return maxOf;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@[%@]",_array,_index];
+   return rv;
+}
+-(ORExprI*) index
+{
+   return  _index;
+}
+-(id<ORFloatArray>)array
+{
+   return _array;
+}
+-(ORBool) isConstant
+{
+   return [_index isConstant];
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
+}
+-(void) visit:(ORVisitor*)visitor
+{
+   [visitor visitExprCstFloatSubI:self];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -844,7 +1006,7 @@
    return [_left max] + [_right max]; 
 }
 
--(void) visit:(id<ORVisitor>) visitor
+-(void) visit:(ORVisitor*) visitor
 {
    [visitor visitExprPlusI: self]; 
 }
@@ -884,7 +1046,7 @@
    return [_left max] - [_right min]; 
 }
 
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprMinusI: self]; 
 }
@@ -927,7 +1089,7 @@
    ORInt m2 = max([_left max] * [_right min],[_left max] * [_right max]);
    return max(m1,m2);
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprMulI: self]; 
 }
@@ -970,7 +1132,7 @@
    ORInt m2 = max([_left max] / [_right min],[_left max] / [_right max]);
    return max(m1,m2);
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprDivI: self];
 }
@@ -1019,7 +1181,7 @@
    [rv appendFormat:@"(%@ mod %@)",[_left description],[_right description]];
    return rv;
 }
--(void) visit: (id<ORVisitor>)visitor
+-(void) visit: (ORVisitor*)visitor
 {
    [visitor visitExprModI:self];
 }
@@ -1055,7 +1217,7 @@
    [rv appendFormat:@"(%@ min %@)",[_left description],[_right description]];
    return rv;
 }
--(void) visit: (id<ORVisitor>)visitor
+-(void) visit: (ORVisitor*)visitor
 {
    [visitor visitExprMinI:self];
 }
@@ -1090,7 +1252,7 @@
    [rv appendFormat:@"(%@ max %@)",[_left description],[_right description]];
    return rv;
 }
--(void) visit: (id<ORVisitor>)visitor
+-(void) visit: (ORVisitor*)visitor
 {
    [visitor visitExprMaxI:self];
 }
@@ -1126,7 +1288,7 @@
    assert([self isConstant]);
    return [_left max] == [_right max];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprEqualI: self]; 
 }
@@ -1172,7 +1334,7 @@
    assert([self isConstant]);
    return [_left max] != [_right max];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprNEqualI: self];
 }
@@ -1217,7 +1379,7 @@
    assert([self isConstant]);
    return [_left max] <= [_right max];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprLEqualI: self];
 }
@@ -1260,7 +1422,7 @@
 {
    return [_left max] || [_right max];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprDisjunctI: self];
 }
@@ -1303,7 +1465,7 @@
 {
    return [_left max] && [_right max];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprConjunctI: self];
 }
@@ -1346,7 +1508,7 @@
 {
    return ![_left max] || [_right max];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprImplyI: self];
 }
@@ -1442,11 +1604,15 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprSumI: self]; 
 }
@@ -1511,11 +1677,15 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprProdI: self];
 }
@@ -1580,11 +1750,15 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprAggMinI: self];
 }
@@ -1648,11 +1822,15 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprAggMaxI: self];
 }
@@ -1717,11 +1895,15 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprAggOrI: self];
 }
@@ -1786,11 +1968,15 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprAggAndI: self];
 }
@@ -1859,7 +2045,11 @@
 {
    return [_index isConstant];
 }
--(void) visit:(id<ORVisitor>)visitor
+-(enum ORVType) vtype
+{
+   return ORTInt;
+}
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitExprVarSubI:self];
 }
@@ -1936,7 +2126,11 @@
 {
    return NO;
 }
--(void) visit:(id<ORVisitor>) v
+-(enum ORVType) vtype
+{
+   return ORTInt;
+}
+-(void) visit:(ORVisitor*) v
 {
    [v visitExprMatrixVarSubI:self];
 }

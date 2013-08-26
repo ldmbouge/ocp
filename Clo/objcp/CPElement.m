@@ -52,18 +52,18 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 -(ORStatus) post
 {
    if (bound(_x)) {
-      return [_y bind:[_c at:[_x min]]];
-   } else if (bound(_y)) {
+      [_y bind:[_c at:[_x min]]];
+   }
+   else if (bound(_y)) {
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
       ORInt yv   = [_y min];
       ORBounds xb = bounds(_x);
-      ORStatus ok = ORSuspend;
-      for(ORInt k=xb.min;k <= xb.max && ok;k++)
+      for(ORInt k=xb.min;k <= xb.max;k++)
          if (k < cLow || k > cUp || [_c at:k] != yv)
-            ok = removeDom(_x, k);
-      return ok;
-   } else {
+            removeDom(_x, k);
+   }
+   else {
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
       _sz = cUp - cLow + 1;
@@ -72,28 +72,25 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          _tab[k - cLow] = (CPEltRecord){k,[_c at:k]};
       qsort(_tab, _sz,sizeof(CPEltRecord),(int(*)(const void*,const void*)) &compareCPEltRecords);
       ORBounds yb = bounds(_y);
-      ORStatus ok = ORSuspend;
       _from = makeTRInt(_trail, -1);
       _to   = makeTRInt(_trail, -1);
-      for(ORInt k=0;k < _sz && ok;k++) {
+      for(ORInt k=0;k < _sz;k++) {
          if (_tab[k]._val < yb.min || _tab[k]._val > yb.max)
-            ok = removeDom(_x, _tab[k]._idx);
+            removeDom(_x, _tab[k]._idx);
          else {
             if (_from._val == -1)
                assignTRInt(&_from, k, _trail);
             assignTRInt(&_to, k, _trail);
          }
       }
-      if (ok) {
-         if (bound(_x))
-            return [_y bind:[_x min]];
-         else {
-            [_y whenChangeBoundsPropagate:self];
-            [_x whenChangePropagate:self];
-         }
+      if (bound(_x))
+         [_y bind:[_x min]];
+      else {
+         [_y whenChangeBoundsPropagate:self];
+         [_x whenChangePropagate:self];
       }
-      return ok;
    }
+   return ORSuspend;
 }
 -(void) propagate
 {
@@ -127,7 +124,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       while (k >= 0 && _tab[k]._val > yb.max)
          removeDom(_x,_tab[k--]._idx);
       assignTRInt(&_to,k,_trail);
-   }   
+   }
 }
 -(NSSet*)allVars
 {
@@ -435,7 +432,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_iva release];
    [super dealloc];
 }
--(ORStatus)post
+-(ORStatus) post
 {
    ORBounds xb = bounds(_x);
    ORInt la = max([_array low],xb.min);

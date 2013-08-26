@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CPUKernel/CPConstraintI.h>
-#import "ORFoundation/ORTrailI.h"
+#import <ORFoundation/ORTrailI.h>
 
 @class CPIntVarI;
 typedef struct CPEQTerm {

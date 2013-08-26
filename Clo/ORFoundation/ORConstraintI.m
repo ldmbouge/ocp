@@ -25,7 +25,7 @@
    [buf appendFormat:@"<%@ : %p>",[self class],self];
    return buf;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitConstraint:self];
 }
@@ -84,7 +84,7 @@
    return [[NSSet alloc] init];
 }
 
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitGroup:self];
 }
@@ -107,7 +107,7 @@
    [buf appendFormat:@"<%@ : %p> -> fail",[self class],self];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitFail:self];
 }
@@ -138,7 +138,7 @@
    [buf appendFormat:@"<%@ : %p> -> restrict(%@) to %@",[self class],self,_x,_r];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitRestrict:self];
 }
@@ -165,7 +165,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %d)",[self class],self,_x,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitEqualc:self];
 }
@@ -174,6 +174,41 @@
    return _x;
 }
 -(ORInt) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
+@implementation ORFloatEqualc {
+   id<ORFloatVar> _x;
+   ORFloat        _c;
+}
+-(ORFloatEqualc*)init:(id<ORFloatVar>)x eqi:(ORFloat)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %f)",[self class],self,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatEqualc:self];
+}
+-(id<ORFloatVar>) left
+{
+   return _x;
+}
+-(ORFloat) cst
 {
    return _c;
 }
@@ -200,7 +235,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ != %d)",[self class],self,_x,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitNEqualc:self];
 }
@@ -235,7 +270,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <= %d)",[self class],self,_x,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitLEqualc:self];
 }
@@ -270,7 +305,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ >= %d)",[self class],self,_x,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitGEqualc:self];
 }
@@ -290,12 +325,12 @@
 
 
 @implementation OREqual {
-   id<ORIntVar> _x;
-   id<ORIntVar> _y;
+   id<ORVar> _x;
+   id<ORVar> _y;
    ORInt        _c;
    ORAnnotation _n;
 }
--(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c
+-(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y plus:(ORInt)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -304,7 +339,7 @@
    _n = DomainConsistency;
    return self;
 }
--(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c annotation:(ORAnnotation)n
+-(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y plus:(ORInt)c annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
@@ -319,15 +354,15 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %@ + %d)",[self class],self,_x,_y,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitEqual:self];
 }
--(id<ORIntVar>) left
+-(id<ORVar>) left
 {
    return _x;
 }
--(id<ORIntVar>) right
+-(id<ORVar>) right
 {
    return _y;
 }
@@ -369,7 +404,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %d * %@ + %d)",[self class],self,_y,_a,_x,_b];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitAffine:self];
 }
@@ -452,7 +487,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ != %@ + %d)",[self class],self,_x,_y,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitNEqual:self];
 }
@@ -481,7 +516,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <= %@ + %d)",[self class],self,_x,_y,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitLEqual:self];
 }
@@ -533,7 +568,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %@ + %@)",[self class],self,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitPlus:self];
 }
@@ -578,7 +613,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <= %@ + %@)",[self class],self,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitMult:self];
 }
@@ -601,11 +636,11 @@
 @end
 
 @implementation ORSquare { // z == x^2
-   id<ORIntVar> _z;
-   id<ORIntVar> _x;
+   id<ORVar> _z;
+   id<ORVar> _x;
    ORAnnotation _n;
 }
--(ORSquare*)initORSquare:(id<ORIntVar>)z square:(id<ORIntVar>)x annotation:(ORAnnotation)n
+-(id)init:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
@@ -613,11 +648,11 @@
    _n = n;
    return self;
 }
--(id<ORIntVar>)res
+-(id<ORVar>)res
 {
    return _z;
 }
--(id<ORIntVar>)op
+-(id<ORVar>)op
 {
    return _x;
 }
@@ -631,13 +666,20 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %@ ^ 2)",[self class],self,_z,_x];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitSquare:self];
 }
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_z, nil] autorelease];
+}
+@end
+
+@implementation ORFloatSquare
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatSquare:self];
 }
 @end
 
@@ -660,7 +702,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %@ MOD %@)",[self class],self,_z,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitMod:self];
 }
@@ -703,7 +745,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %@ MOD %d)",[self class],self,_z,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitModc:self];
 }
@@ -748,7 +790,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == MIN(%@,%@))",[self class],self,_z,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitMin:self];
 }
@@ -789,7 +831,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == MAX(%@,%@))",[self class],self,_z,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitMax:self];
 }
@@ -830,7 +872,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == abs(%@))",[self class],self,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitAbs:self];
 }
@@ -872,7 +914,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %@ || %@)",[self class],self,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitOr:self];
 }
@@ -913,7 +955,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == %@ && %@)",[self class],self,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitAnd:self];
 }
@@ -954,7 +996,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ == (%@ => %@))",[self class],self,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitImply:self];
 }
@@ -997,7 +1039,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@[%@] == %@)",[self class],self,_y,_idx,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitElementCst:self];
 }
@@ -1045,7 +1087,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@[%@] == %@)",[self class],self,_y,_idx,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitElementVar:self];
 }
@@ -1100,7 +1142,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@[%@,%@] == %@)",[self class],self,_m,_v0,_v1,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitElementMatrixVar:self];
 }
@@ -1139,6 +1181,55 @@
 }
 @end
 
+
+@implementation ORFloatElementCst {  // y[idx] == z
+   id<ORIntVar>   _idx;
+   id<ORFloatArray> _y;
+   id<ORFloatVar>   _z;
+   ORAnnotation  _note;
+}
+-(id)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z annotation:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _idx = idx;
+   _y = y;
+   _z = z;
+   _note = n;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@[%@] == %@)",[self class],self,_y,_idx,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatElementCst:self];
+}
+-(id<ORFloatArray>) array
+{
+   return _y;
+}
+-(id<ORIntVar>) idx
+{
+   return _idx;
+}
+-(id<ORFloatVar>) res
+{
+   return _z;
+}
+-(ORAnnotation)annotation
+{
+   return _note;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_idx,_z, nil] autorelease];
+}
+@end
+
+
 @implementation ORReifyEqualc {
    id<ORIntVar> _b;
    id<ORIntVar> _x;
@@ -1158,7 +1249,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %d)",[self class],self,_b,_x,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitReifyEqualc:self];
 }
@@ -1199,7 +1290,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ != %d)",[self class],self,_b,_x,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitReifyNEqualc:self];
 }
@@ -1242,7 +1333,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %@)",[self class],self,_b,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitReifyEqual:self];
 }
@@ -1289,7 +1380,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ != %@)",[self class],self,_b,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitReifyNEqual:self];
 }
@@ -1334,7 +1425,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ <= %d)",[self class],self,_b,_x,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitReifyLEqualc:self];
 }
@@ -1377,7 +1468,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ <= %@)",[self class],self,_b,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitReifyLEqual:self];
 }
@@ -1422,7 +1513,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ >= %d)",[self class],self,_b,_x,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitReifyGEqualc:self];
 }
@@ -1465,7 +1556,7 @@
    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ >= %@)",[self class],self,_b,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitReifyGEqual:self];
 }
@@ -1511,7 +1602,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sumbool(%@) == %d)",[self class],self,_ba,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitSumBoolEqualc:self];
 }
@@ -1550,7 +1641,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sumbool(%@) <= %d)",[self class],self,_ba,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitSumBoolLEqualc:self];
 }
@@ -1589,7 +1680,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sumbool(%@) >= %d)",[self class],self,_ba,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitSumBoolGEqualc:self];
 }
@@ -1628,7 +1719,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sum(%@) == %d)",[self class],self,_ia,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitSumEqualc:self];
 }
@@ -1667,7 +1758,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sum(%@) <= %d)",[self class],self,_ia,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitSumLEqualc:self];
 }
@@ -1707,7 +1798,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sum(%@) >= %d)",[self class],self,_ia,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitSumGEqualc:self];
 }
@@ -1749,7 +1840,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %d)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitLinearGeq: self];
 }
@@ -1795,7 +1886,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) <= %d)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitLinearLeq: self];
 }
@@ -1838,10 +1929,10 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %d)",[self class],self,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) == %d)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
--(void)visit: (id<ORVisitor>) v
+-(void)visit: (ORVisitor*) v
 {
    [v visitLinearEq: self];
 }
@@ -1884,10 +1975,10 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %f)",[self class],self,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) == %f)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitFloatLinearEq: self];
 }
@@ -1933,7 +2024,7 @@
    [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) <= %f)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitFloatLinearLeq: self];
 }
@@ -1988,7 +2079,7 @@
    [buf appendString:@"]>"];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitAlldifferent:self];
 }
@@ -2035,7 +2126,7 @@
    [buf appendString:@"]>"];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitRegular:self];
 }
@@ -2086,7 +2177,7 @@
 {
    return _up;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitCardinality:self];
 }
@@ -2125,7 +2216,7 @@
    [buf appendFormat:@"<ORAlgebraicConstraintI : %p(%d) IS %@>",self,[self getId],_expr];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitAlgebraicConstraint:self];
 }
@@ -2161,7 +2252,7 @@
 {
    return _table;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitTableConstraint:self];
 }
@@ -2194,7 +2285,7 @@
 {
    return _y;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitLexLeq:self];
 }
@@ -2230,7 +2321,7 @@
 {
    return _x;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitCircuit:self];
 }
@@ -2263,7 +2354,7 @@
 {
    return _x;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitNoCycle:self];
 }
@@ -2298,7 +2389,7 @@
    _binSize  = binSize;
    return self;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitPackOne:self];
 }
@@ -2383,7 +2474,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _load;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitPacking:self];
 }
@@ -2419,7 +2510,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    _c = c;
    return self;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitKnapsack:self];
 }
@@ -2476,7 +2567,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _cost;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitAssignment:self];
 }
@@ -2504,13 +2595,13 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveFunctionVarI
--(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x
+-(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORVar>) x
 {
    self = [super init];
    _var = x;
    return self;
 }
--(id<ORIntVar>) var
+-(id<ORVar>) var
 {
    return _var;
 }
@@ -2518,7 +2609,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
   return NULL;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitObjectiveFunctionVar:self];
 }
@@ -2660,7 +2751,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _expr;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitObjectiveFunctionExpr: self];
 }
@@ -2682,14 +2773,14 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _coef;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitObjectiveFunctionLinear: self];
 }
 @end
 
 @implementation ORMinimizeVarI
--(ORMinimizeVarI*) initORMinimizeVarI: (id<ORIntVar>) x
+-(ORMinimizeVarI*) initORMinimizeVarI: (id<ORVar>) x
 {
    self = [super initORObjectiveFunctionVarI: x];
    return self;
@@ -2705,7 +2796,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<ORMinimizeVarI: %p  --> %@> ",self,_var];
    return buf;
 }
--(void)visit:(id<ORVisitor>) v
+-(void)visit:(ORVisitor*) v
 {
    [v visitMinimizeVar:self];
 }
@@ -2716,7 +2807,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMaximizeVarI
--(ORMaximizeVarI*) initORMaximizeVarI:(id<ORIntVar>) x
+-(ORMaximizeVarI*) initORMaximizeVarI:(id<ORVar>) x
 {
    self = [super initORObjectiveFunctionVarI:x];
    return self;
@@ -2732,7 +2823,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<ORMaximizeVarI: %p  --> %@> ",self,_var];
    return buf;
 }
--(void)visit:(id<ORVisitor>) v
+-(void)visit:(ORVisitor*) v
 {
    [v visitMaximizeVar:self];
 }
@@ -2759,7 +2850,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<ORMaximizeExprI: %p  --> %@> ",self,_expr];
    return buf;
 }
--(void) visit:(id<ORVisitor>)v
+-(void) visit:(ORVisitor*)v
 {
    [v visitMaximizeExpr:self];
 }
@@ -2782,7 +2873,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<ORMinimizeExprI: %p  --> %@> ",self,_expr];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitMinimizeExpr:self];
     //[v visitMinimizeVar: self];
@@ -2806,7 +2897,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<ORMaximizeLinearI: %p  --> %@ %@> ",self,_array,_coef];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitMaximizeLinear:self];
 }
@@ -2829,7 +2920,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<ORMinimizeLinearI: %p  --> %@ %@> ",self,_array,_coef];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitMinimizeLinear:self];
 }
@@ -2864,7 +2955,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ == %@)",[self class],self,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitEqual:self];
 }
@@ -2905,7 +2996,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ | %@ = %@)",[self class],self,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitOr:self];
 }
@@ -2946,7 +3037,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ & %@ = %@)",[self class],self,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitAnd:self];
 }
@@ -2981,7 +3072,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ ~ %@)",[self class],self,_x,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitNot:self];
 }
@@ -3022,7 +3113,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ ^ %@ = %@)",[self class],self,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitXor:self];
 }
@@ -3063,7 +3154,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ <<%d = %@)",[self class],self,_x,_places,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitShiftL:self];
 }
@@ -3104,7 +3195,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ <<<%d = %@)",[self class],self,_x,_places,_y];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitRotateL:self];
 }
@@ -3162,7 +3253,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ + %@ [cin %@] = %@ [cout %@])",[self class],self,_x,_y,_ci,_z,_co];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitSum:self];
 }
@@ -3205,7 +3296,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> (%@ true if (x=%@)  equals %@ and false if x equals %@.])",[self class],self,_w,_x,_y,_z];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitBitIf:self];
 }

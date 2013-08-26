@@ -9,8 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORUtilities/ORUtilities.h"
-#import "ORFoundation/ORTracker.h"
+#import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORInterval.h>
 
 @protocol ORTrail <NSObject>
 -(void) trailInt:(ORInt*) ptr;
@@ -50,12 +51,12 @@ typedef struct {
 
 typedef struct {
    long long _val;   // TRLong should be a 64-bit wide trailable signed integer
-   ORUInt _mgc;
+   ORUInt    _mgc;
 } TRLong;
 
 typedef struct {
    double    _val;
-   ORUInt _mgc;
+   ORUInt    _mgc;
 } TRDouble;
 
 typedef struct {
@@ -74,12 +75,20 @@ typedef struct {
 } TRIntArray;
 
 typedef struct {
-   int       _val;
+   id<ORTrail>_trail;
+   int        _nb;
+   int        _low;
+   TRDouble*  _entries;
+} TRFloatArray;
+
+typedef struct {
+   int    _val;
    ORUInt _mgc;
 } FXInt;
 
 @interface ORTrailFunction : NSObject
 void trailIntFun(id<ORTrail> t,int* ptr);
+void trailFloatFun(id<ORTrail> t,double* ptr);
 void trailUIntFun(id<ORTrail> t,unsigned* ptr);
 void trailIdNCFun(id<ORTrail> t,id* ptr);
 TRInt makeTRInt(id<ORTrail> trail,int val);
@@ -90,6 +99,8 @@ TRId  makeTRId(id<ORTrail> trail,id val);
 TRIdNC  makeTRIdNC(id<ORTrail> trail,id val);
 TRIntArray makeTRIntArray(id<ORTrail> trail,int nb,int low);
 void  freeTRIntArray(TRIntArray a);
+TRIntArray makeTRFloatArray(id<ORTrail> trail,int nb,int low);
+void  freeTRFloatArray(TRFloatArray a);
 FXInt makeFXInt(id<ORTrail> trail);
 void  assignTRInt(TRInt* v,int val,id<ORTrail> trail);
 void  assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail);
@@ -99,6 +110,8 @@ void  assignTRId(TRId* v,id val,id<ORTrail> trail);
 void  assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail);
 ORInt assignTRIntArray(TRIntArray a,int i,ORInt val);
 ORInt getTRIntArray(TRIntArray a,int i);
+ORFloat assignTRFloatArray(TRIntArray a,int i,ORFloat val);
+ORInt getTRFloatArray(TRFloatArray a,int i);
 void  incrFXInt(FXInt* v,id<ORTrail> trail);
 int   getFXInt(FXInt* v,id<ORTrail> trail);
 ORInt trailMagic(id<ORTrail> trail);

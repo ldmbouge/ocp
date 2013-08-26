@@ -21,12 +21,17 @@
 {
    self = [super init];
    int error = GRBloadenv(&_env, "");
+   GRBsetintparam(_env,GRB_INT_PAR_OUTPUTFLAG,0);
+   GRBsetintparam(_env,GRB_INT_PAR_LOGTOCONSOLE,0);
    if (error) {
       @throw [[NSException alloc] initWithName:@"Gurobi Solver Error"
                                         reason:@"Gurobi cannot create its environment"
                                       userInfo:nil];
    }
    GRBnewmodel(_env, &_model, "", 0, NULL, NULL, NULL, NULL, NULL);
+//   GRBsetintparam(_env,"OutputFlag",0);
+
+   
    return self;
 }
 
@@ -99,33 +104,41 @@
 {
    
 }
--(LPOutcome) solve
+-(OROutcome) solve
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
+//   for(ORInt i = 0; i < 12; i++) {
+//      ORFloat lb;
+//      GRBgetdblattrelement(_model,"LB",i,&lb);
+//      ORFloat ub;
+//      GRBgetdblattrelement(_model,"UB",i,&ub);
+//      printf("Variable %i has bounds in lp: [%f,%f] \n",i,lb,ub);
+//   }
+//   printf("\n");
    GRBoptimize(_model);
-   [self printModelToFile: "/Users/pvh/lookatgurobi.lp"];
+//   [self printModelToFile: "/Users/pvh/lookatgurobi.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
       case GRB_OPTIMAL:
-         _status = LPoptimal;
+         _status = ORoptimal;
          break;
       case GRB_INFEASIBLE:
-         _status = LPinfeasible;
+         _status = ORinfeasible;
          break;
       case GRB_SUBOPTIMAL:
-         _status = LPsuboptimal;
+         _status = ORsuboptimal;
          break;
       case GRB_UNBOUNDED:
-         _status = LPunbounded;
+         _status = ORunbounded;
          break;
       default:
-         _status = LPerror;
+         _status = ORerror;
    }
    return _status;
 }
 
--(LPOutcome) status
+-(OROutcome) status
 {
    return _status;
 }
@@ -193,13 +206,13 @@
 
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb
 {
-   if (lb > [self lowerBound: var])
+//   if (lb > [self lowerBound: var])
       GRBsetdblattrelement(_model,"LB",[var idx],lb);
 }
 
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub
 {
-   if (ub < [self upperBound: var])
+//   if (ub < [self upperBound: var])
       GRBsetdblattrelement(_model,"UB",[var idx],ub);
 }
 
@@ -218,7 +231,7 @@
    GRBsetstrparam(_env,name,val);
 }
 
--(void) postConstraint: (LPConstraintI*) cstr
+-(ORStatus) postConstraint: (LPConstraintI*) cstr
 {
    switch ([cstr type]) {
       case LPleq:
@@ -233,6 +246,7 @@
       default:
          break;
    }
+   return ORSuspend;
 }
 
 -(void) print

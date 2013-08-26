@@ -9,11 +9,11 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORUtilities/ORUtilities.h>
-#import "ORFoundation/ORData.h"
-#import "ORFoundation/ORTrail.h"
-#import "ORFoundation/ORSet.h"
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORSet.h>
+#import "ORObject.h"
 
 @protocol ORSearchEngine;
 
@@ -171,6 +171,16 @@ static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val)
    TRInt* ei = a._entries + i;
    if (ei->_mgc != [a._trail magic]) {
       trailIntFun(a._trail, & ei->_val);
+      ei->_mgc = [a._trail magic];
+   }
+   return ei->_val = val;
+}
+
+static inline ORFloat inline_assignTRFloatArray(TRFloatArray a,int i,ORFloat val)
+{
+   TRDouble* ei = a._entries + i;
+   if (ei->_mgc != [a._trail magic]) {
+      trailFloatFun(a._trail, & ei->_val);
       ei->_mgc = [a._trail magic];
    }
    return ei->_val = val;

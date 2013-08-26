@@ -26,6 +26,7 @@
 #import "CPLexConstraint.h"
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
+#import "CPFloatConstraint.h"
 
 @implementation CPFactory (Constraint)
 
@@ -106,14 +107,14 @@
 
 +(id<ORConstraint>) minimize: (id<CPIntVar>) x
 {
-    id<ORConstraint> o = [[CPIntVarMinimize alloc] initCPIntVarMinimize: x];
+    id<ORConstraint> o = [[CPIntVarMinimize alloc] init: x];
     [[x engine] trackMutable: o];
     return o;
 }
 
 +(id<ORConstraint>) maximize: (id<CPIntVar>) x
 {
-    id<ORConstraint> o = [[CPIntVarMaximize alloc] initCPIntVarMaximize: x];
+    id<ORConstraint> o = [[CPIntVarMaximize alloc] init: x];
     [[x engine] trackMutable: o];
     return o;
 }
@@ -173,7 +174,7 @@
 {
    id<CPIntVarNotifier> mc = [x delegate];
    if (mc == nil) {
-      mc = [[CPIntVarMultiCast alloc] initVarMC:2 root:x];
+      mc = [[CPMultiCast alloc] initVarMC:2 root:x];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
@@ -289,7 +290,6 @@
    [[x tracker] trackMutable: o];
    return o;
 }
-
 +(id<ORConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b
 {
    id<ORConstraint> o = [[CPOrDC alloc] initCPOrDC:b equal:x or:y];
@@ -354,8 +354,8 @@
 +(id<ORConstraint>) equalc: (id<CPIntVar>) x to:(int) c
 {
    id<ORConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
-  [[x tracker] trackMutable:o];
-   return o;      
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<ORConstraint>) notEqual:(id<CPIntVar>)x to:(id<CPIntVar>)y plus:(int)c
 {
@@ -506,8 +506,60 @@
    [[x tracker] trackMutable:o];
    return o;
 }
+
++(id<ORConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation
+{
+   id<ORConstraint> o = [[CPRelaxation alloc] initCPRelaxation: mv var: cv relaxation: relaxation];
+   [[cv[0] tracker] trackMutable:o];
+   return o;
+}
 @end
 
+@implementation CPFactory (ORFloat)
++(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c
+{
+   id<CPConstraint> o = [[CPFloatSquareBC alloc] initCPFloatSquareBC:z equalSquare:x];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
+{
+   id<CPConstraint> o = [[CPFloatEquationBC alloc] init:x coef:coefs eqi:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c
+{
+   id<CPConstraint> o = [[CPFloatINEquationBC alloc] init:x coef:coefs leqi:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c
+{
+   id<CPConstraint> o = [[CPFloatEqualc alloc] init:x and:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORAnnotation)n
+{
+   id<CPConstraint> o = nil;
+   o = [[CPFloatElementCstBC alloc] init:x indexCstArray:c equal:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x
+{
+   id<CPConstraint> o = [[CPFloatVarMinimize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
+}
++(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x
+{
+   id<CPConstraint> o = [[CPFloatVarMaximize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
+}
+@end
 
 @implementation CPSearchFactory 
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c

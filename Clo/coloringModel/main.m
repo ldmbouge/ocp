@@ -46,24 +46,25 @@ int main(int argc, const char * argv[])
             [adj set:YES at:a : b];
             [adj set:YES at: b: a];
          }
-      }
-      [model minimize: m];
-
-      //NSLog(@"Model: %@",model);
-
-      //id<CPSolver> cp = [CPFactory createSolver];
-      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
-      id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      //id<CPSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
-      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
-      [cp addModel: model];
-      
-      [cp solve: ^{
-         __block ORInt depth = 0;
-         __block ORInt maxc  = 0;
-         for(ORInt i=[V low];i <= [V up];i++) {
-            if ([c[i] bound])
-               maxc = maxc > [c[i] value] ? maxc : [c[i] value];
+         id<ORIntArray> deg = [ORFactory intArray:model range:V with:^ORInt(ORInt i) {
+            ORInt d = 0;
+            for(ORInt j=1;j <= nbv;j++)
+               d +=  [adj at:i :j];
+            return d;
+         }];
+         
+         id<ORIntVarArray> c  = [ORFactory intVarArray:model range:V domain: V];
+         id<ORIntVar>      m  = [ORFactory intVar:model domain:V];
+         id<ORIntSetArray> sa = [ORFactory intSetArray: model range: V];
+         sa[1] = [ORFactory intSet: model];
+         [sa[1] insert: 5];
+         for(ORInt i=1;i<=nbv;i++)
+            [model add: [c[i] leq: m]];
+         for (ORInt i=1; i<=nbv; i++) {
+            for(ORInt j =i+1;j <= nbv;j++) {
+               if ([adj at: i :j])
+                  [model add: [c[i] neq: c[j]]];
+            }
          }
          [model minimize: m];     
 //      id<CPProgram> cp = [ORFactory createCPProgram: model];

@@ -282,9 +282,9 @@
 
 -(void) close;
 -(ORBool) isClosed;
--(LPOutcome) solve;
+-(OROutcome) solve;
 
--(LPOutcome) status;
+-(OROutcome) status;
 -(ORFloat) floatValue: (LPVariableI*) var;
 -(ORFloat) lowerBound: (LPVariableI*) var;
 -(ORFloat) upperBound: (LPVariableI*) var;

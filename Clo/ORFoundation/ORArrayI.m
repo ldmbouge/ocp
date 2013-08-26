@@ -128,7 +128,6 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-//   return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];
    return [ORFactory elt: _tracker intArray: self index: idx];
 }
 -(ORInt) low
@@ -193,7 +192,7 @@
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:_array+i];
    return self;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitIntArray:self];
 }
@@ -318,6 +317,10 @@
 {
     return _up;
 }
+-(id<ORExpr>)elt:(id<ORExpr>)idx
+{
+   return [ORFactory elt: _tracker floatArray: self index: idx];
+}
 -(ORFloat) max {
     ORFloat v = _array[0];
     for(int i = 1; i < _nb; i++)
@@ -372,7 +375,7 @@
         [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
     return self;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitFloatArray: self];
 }
@@ -529,7 +532,7 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitIdArray:self];
 }
@@ -765,7 +768,7 @@
       _flat[i] = [aDecoder decodeObject];
    return self;
 }
--(void) visit:(id<ORVisitor>)v
+-(void) visit:(ORVisitor*)v
 {
    [v visitIdMatrix:self];
 }
@@ -966,7 +969,7 @@
 {
    return _tracker;
 }
--(void) visit:(id<ORVisitor>)visitor
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitIntMatrix:self];
 }

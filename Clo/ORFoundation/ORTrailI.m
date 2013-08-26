@@ -312,7 +312,15 @@ void trailIntFun(ORTrailI* t,int* ptr)
    s->intVal = *ptr;
    ++(t->_seg[t->_cSeg]->top);
 }
-
+void trailFloatFun(ORTrailI* t,ORFloat* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGDouble;
+   s->intVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);
+}
 void trailUIntFun(ORTrailI* t,unsigned* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
@@ -611,7 +619,7 @@ void freeTRIntArray(TRIntArray a)
    [buf appendFormat:@"TR<int>(%d)",_trint._val];
    return buf;
 }
--(void)visit:(id<ORVisitor>)visitor
+-(void)visit:(ORVisitor*)visitor
 {
    [visitor visitTrailableInt:self];
 }

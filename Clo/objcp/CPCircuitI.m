@@ -90,7 +90,7 @@ ORStatus assign(CPCircuitI* cstr,int i)
     [cstr->_succ set: end at: start];
     [cstr->_length set: l at: start];
     if (l < cstr->_varSize- 1 || cstr->_noCycle)
-        return [cstr->_var[end] remove: start];
+        [cstr->_var[end] remove: start];
     return ORSuspend;
 }
 

@@ -48,6 +48,34 @@
 {
    return _terms[k]._coef;
 }
+-(ORFloat) fmin
+{
+   ORFloat lb = _indep;
+   for(ORInt k=0;k < _nb;k++) {
+      ORFloat c = _terms[k]._coef;
+      id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
+      ORFloat vlb = d.low;
+      ORFloat vub = d.up;
+      ORFloat svlb = c > 0 ? vlb * c : vub * c;
+      lb += svlb;
+   }
+   return max(MININT,lb);
+}
+
+-(ORFloat) fmax
+{
+   ORFloat ub = _indep;
+   for(ORInt k=0;k < _nb;k++) {
+      ORFloat c = _terms[k]._coef;
+      id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
+      ORFloat vlb = d.low;
+      ORFloat vub = d.up;
+      ORFloat svub = c > 0 ? vub * c : vlb * c;
+      ub += svub;
+   }
+   return min(MAXINT,ub);
+}
+
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c
 {
    if (c==0) return;
@@ -159,13 +187,29 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
    return _nb;
 }
 
--(id<ORConstraint>) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   return [model addConstraint:[ORFactory floatSum: model array: [self variables: model] coef: [self coefficients: model] eq: -_indep]];
+   return [model addConstraint:[ORFactory floatSum: model
+                                             array: [self variables: model]
+                                              coef: [self coefficients: model]
+                                                eq: -_indep]];
 }
--(id<ORConstraint>) postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   return [model addConstraint:[ORFactory floatSum: model array: [self variables: model] coef: [self coefficients: model] leq: -_indep]];
+   return [model addConstraint:[ORFactory floatSum: model
+                                             array: [self variables: model]
+                                              coef: [self coefficients: model]
+                                               leq: -_indep]];
+}
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   assert(NO);
+   return nil;
+}
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   assert(NO);
+   return nil;
 }
 -(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
@@ -227,6 +271,31 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
 -(NSString*) description
 {
    return [_real description];
+}
+-(ORFloat) fmin
+{
+   return [_real fmin];
+}
+-(ORFloat) fmax
+{
+   return [_real fmax];
+}
+
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postEQZ:model annotation:cons];
+}
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postNEQZ:model annotation:cons];
+}
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postLEQZ:model annotation:cons];
+}
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postDISJ:model annotation:cons];
 }
 @end
 

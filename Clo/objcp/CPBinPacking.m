@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORFoundation/ORExpr.h"
+#import <ORFoundation/ORExpr.h>
 #import "CPBinPacking.h"
 #import "CPBasicConstraint.h"
 #import "CPEngineI.h"
@@ -123,7 +123,6 @@
       if (![_var[i] bound])
          [_var[i] whenChangePropagate: self];
    [_load whenChangeBoundsPropagate: self];
-
    return ORSuspend;
 }
 

@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import <ORUtilities/ORTypes.h>
 
 #define CP_BITMASK 0x00000001
 #define CP_UMASK 0xFFFFFFFF

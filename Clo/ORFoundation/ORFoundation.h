@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORFactory.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORData.h>
@@ -30,6 +31,7 @@
 #import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORVar.h>
 
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());

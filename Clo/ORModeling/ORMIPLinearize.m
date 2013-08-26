@@ -10,11 +10,12 @@
  ***********************************************************************/
 
 #import "ORMIPLinearize.h"
+#import <ORFoundation/ORArrayI.h>
+#import "ORConstraintI.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
 #import "ORVarI.h"
 #import "ORSetI.h"
-#import <ORFoundation/ORArrayI.h>
 
 @implementation ORMIPLinearize
 {
@@ -33,7 +34,7 @@
 }
 +(id<ORModel>) linearize: (id<ORModel>) model
 {
-   id<ORModel> lin = [ORFactory createModel: [model nbObjects] mappings: model.mappings];
+   id<ORModel> lin = [ORFactory createModel: [model nbObjects] mappings: model.modelMappings];
    ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
    id<ORModelTransformation> linearizer = [[ORMIPLinearize alloc] initORMIPLinearize: lm];
    [linearizer apply: model];
@@ -137,6 +138,10 @@
 {
    _result = v;
 }
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{
+   _result = v;
+}
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    _result = v;
@@ -192,6 +197,10 @@
 {
    _result = cstr;
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+   _result = c;
+}
 -(void) visitEqualc: (id<OREqualc>)c
 {
    _result = c;
@@ -246,6 +255,10 @@
 {
    _result = c;
 }
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+   _result = c;
+}
 -(void) visitMod: (id<ORMod>)c
 {
    _result = c;
@@ -283,6 +296,10 @@
    _result = c;
 }
 -(void) visitElementVar: (id<ORElementVar>)c
+{
+   _result = c;
+}
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
 {
    _result = c;
 }

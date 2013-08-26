@@ -30,7 +30,7 @@
 @protocol MIPProgram <ORASolver>
 -(MIPSolverI*) solver;
 -(void) setGamma: (id*) gamma;
--(void) setTau: (id<ORTau>) tau;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
 -(ORFloat) floatValue: (id<ORFloatVar>) v;

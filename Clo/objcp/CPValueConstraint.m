@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 
-#import "ORFoundation/ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
 #import "CPValueConstraint.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
@@ -28,14 +28,14 @@
 {
    if ([_b bound]) {
       if ([_b min] == true) 
-         return [_x remove:_c];
+         [_x remove:_c];
       else 
-         return [_x bind:_c];
+         [_x bind:_c];
    } 
    else if ([_x bound]) 
-      return [_b bind:[_x min] != _c];
+      [_b bind:[_x min] != _c];
    else if (![_x member:_c])
-      return [_b remove:false];
+      [_b remove:false];
    else {
       [_b whenBindDo: ^void {
          if ([_b min]==true)
@@ -45,8 +45,8 @@
       } onBehalf:self];
       [_x setLoseTrigger: _c do: ^(void) { [_b bind:true]; } onBehalf:self];
       [_x whenBindDo: ^(void) { [_b bind:[_x min] != _c];} onBehalf:self];
-      return ORSuspend;
-   } 
+   }
+   return ORSuspend;
 }
 -(NSSet*)allVars
 {
@@ -91,14 +91,14 @@
 {
     if ([_b bound]) {
         if ([_b min] == true) 
-            return [_x bind:_c];
+            [_x bind:_c];
         else 
-            return [_x remove:_c];
+            [_x remove:_c];
     } 
     else if ([_x bound]) 
-        return [_b bind:[_x min] == _c];   
+        [_b bind:[_x min] == _c];   
     else if (![_x member:_c])
-        return [_b bind:false];
+        [_b bind:false];
     else {
         [_b setBindTrigger: ^ {
            if ([_b min] == true) {
@@ -113,8 +113,8 @@
         [_x setBindTrigger: ^ {
            [_b bind:[_x min] == _c];
         } onBehalf:self];
-        return ORSuspend;
-    }   
+    }
+   return ORSuspend;
 } 
 -(NSSet*)allVars
 {
@@ -706,21 +706,21 @@
 {
    if ([_b bound]) {
       if ([_b min])
-         return [_x updateMax:_c];
+         [_x updateMax:_c];
       else
-         return [_x updateMin:_c+1];
+         [_x updateMin:_c+1];
    }
    else if ([_x max] <= _c)
-      return [_b bind:YES];
+      [_b bind:YES];
    else if ([_x min] > _c)
-      return [_b bind:NO];
+      [_b bind:NO];
    else {
       [_b whenBindPropagate:self];
       [_x whenChangeBoundsPropagate:self];
-      return ORSuspend;
    }
+   return ORSuspend;
 }
--(void)propagate
+-(void) propagate
 {
    if (bound(_b)) {
       assignTRInt(&_active, NO, _trail);
@@ -782,21 +782,21 @@
 {
    if ([_b bound]) {
       if ([_b min])
-         return [_x updateMin:_c];
+         [_x updateMin:_c];
       else
-         return [_x updateMax:_c-1];
+         [_x updateMax:_c-1];
    }
    else if ([_x min] >= _c)
-      return [_b bind:YES];
+      [_b bind:YES];
    else if ([_x max] < _c)
-      return [_b bind:NO];
+      [_b bind:NO];
    else {
       [_b whenBindPropagate:self];
       [_x whenChangeBoundsPropagate:self];
-      return ORSuspend;
    }
+   return ORSuspend;
 }
--(void)propagate
+-(void) propagate
 {
    if (bound(_b)) {
       assignTRInt(&_active, NO, _trail);
@@ -924,9 +924,7 @@
                                else {  // Ok, we couldn't find any other support => so we must bind the remaining ones
                                    for(ORInt k=0;k<_c+1;k++) {
                                        if (k != listen) {
-                                           ORStatus ok = [_x[[_at[k] localID]] updateMin:true];
-                                           if (!ok) 
-                                              failNow();
+                                           [_x[[_at[k] localID]] updateMin:true];
                                        }
                                    }
                                }

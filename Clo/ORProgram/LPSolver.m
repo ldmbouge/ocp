@@ -479,9 +479,106 @@
 @end
 
 
+@implementation LPRelaxation
+{
+   LPSolverI*  _lpsolver;
+   id<ORModel> _model;
+}
+-(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model
+{
+   self = [super init];
+#if defined(__linux__)
+   _lpsolver = NULL;
+#else
+   _lpsolver = [LPFactory solver];
+   _model = model;
+#endif
+   return self;
+}
+-(void) dealloc
+{
+   NSLog(@"dealloc LPSolver");
+   [_lpsolver release];
+   [super dealloc];
+}
+-(LPSolverI*) solver
+{
+   return _lpsolver;
+}
+-(OROutcome) solve
+{
+   return [_lpsolver solve];
+}
+-(ORFloat) dual: (id<ORConstraint>) c
+{
+   return [_lpsolver dual: [self concretize: c]];
+}
+-(ORFloat) floatValue: (id<ORFloatVar>) v
+{
+   return [_lpsolver floatValue: _gamma[v.getId]];
+}
+-(ORFloat) reducedCost: (id<ORFloatVar>) v
+{
+   return [_lpsolver reducedCost: _gamma[v.getId]];
+}
+-(ORFloat) objective
+{
+   return [_lpsolver lpValue];
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [_lpsolver objectiveValue];
+}
+-(ORFloat) lowerBound: (id<ORVar>) v
+{
+   return [_lpsolver lowerBound: _gamma[v.getId]];
+}
+-(ORFloat) upperBound: (id<ORVar>) v
+{
+   return [_lpsolver upperBound: _gamma[v.getId]];
+}
+-(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb
+{
+   [_lpsolver updateLowerBound: _gamma[v.getId] lb: lb];
+}
+-(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub
+{
+   [_lpsolver updateUpperBound: _gamma[v.getId] ub: ub];
+}
+-(id) trackObject: (id) obj
+{
+   return [_lpsolver trackObject:obj];
+}
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_lpsolver trackConstraintInGroup:obj];
+}
+-(id) trackObjective: (id) obj
+{
+   return [_lpsolver trackObjective:obj];
+}
+-(id) trackMutable: (id) obj
+{
+   return [_lpsolver trackMutable:obj];
+}
+-(void) trackVariable: (id) obj
+{
+   [_lpsolver trackVariable:obj];
+}
+-(id) trackImmutable:(id) obj
+{
+   return [_lpsolver trackImmutable:obj];
+}
+@end
+
+
 @implementation LPSolverFactory
 +(id<LPProgram>) solver: (id<ORModel>) model
 {
    return [[LPSolver alloc] initLPSolver: model];
+}
++(id<LPRelaxation>) relaxation: (id<ORModel>) model
+{
+   return [[LPRelaxation alloc] initLPRelaxation: model];
 }
 @end

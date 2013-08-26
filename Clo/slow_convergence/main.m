@@ -24,7 +24,7 @@ int main(int argc, const char * argv[])
       [args measure:^struct ORResult() {
          ORLong startTime = [ORRuntimeMonitor wctime];
          id<ORModel> model = [ORFactory createModel];
-         ORInt n = argc >= 2 ? atoi(argv[1]) : 5;
+         ORInt n = [args size];
          id<ORIntRange> dom = RANGE(model,0,10*n);
          id<ORIntRange> R   = RANGE(model,0,n);
          id<ORIntVarArray> y = [ORFactory intVarArray:model range:R domain:dom];

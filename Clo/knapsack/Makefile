@@ -1,12 +1,11 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = ~/clang32/bin/clang
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
 
-CFLAGS = -I$(GNUstep)/include -I. -I.. \
+CFLAGS = -I$(GNUstep)/include -I. -I.. -g \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
 #### `$(GNUstep)/bin/gnustep-config --base-libs` 
@@ -25,12 +24,15 @@ OFILES=$(addsuffix .$(OBJEXT),$(basename $(SRCS)))
 LIBNAME = libobjcp.so.1 
 EXE = knapsack
 
-all: $(EXE)
-	@echo "Done..." $(OFILES)
+all: $(EXE) data
+	@echo "Done..." $(EXE)
 
 $(EXE):  $(OFILES)
 	@echo "Linking $(EXE)"
 	@$(OC) $(CFLAGS) $(notdir $(OFILES)) $(LFLAGS) -o $(EXE)
+
+data:
+	@cp -r ../../data/MKNAP .
 
 %.$(OBJEXT): %.m
 	@echo "Compiling m"  $<

@@ -12,7 +12,7 @@
 #import "CPEngineI.h"
 #import "CPTypes.h"
 #import "CPAC3Event.h"
-#import "ORFoundation/ORSetI.h"
+#import <ORFoundation/ORSetI.h>
 
 @implementation CPAC3Queue
 -(id) initAC3Queue: (ORInt) sz
@@ -311,7 +311,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return _oStore;
 }
--(void)setLastFailure:(id<CPConstraint>)lastToFail
+-(void) setLastFailure:(id<CPConstraint>)lastToFail
 {
    _last = lastToFail;
 }
@@ -331,6 +331,15 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return (ORUInt)[_mStore count];
 }
+-(id) inCache:(id)obj
+{
+   return NO;
+}
+-(id) addToCache:(id)obj
+{
+   return obj;
+}
+
 -(id) trackVariable: (id) var
 {
    [var setId:(ORUInt)[_vars count]];
@@ -495,12 +504,15 @@ ORStatus propagateFDM(CPEngineI* fdm)
          }
       }
       while (ISLOADED(ac3[ALWAYS_PRIO])) {
+         // PVH: Failure to remove?
          ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
+         // PVH: what is this stuff
          assert(as != ORFailure);
       }
       if (fdm->_propagDone)
          [fdm->_propagDone notify];
+      // PVH: This seems buggy or useless; is status still useful
       fdm->_status = status;
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
@@ -538,7 +550,9 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
          AC3reset(fdm->_ac3[p]);
       return ORFailure;
-   } else return status;
+   }
+   else
+      return status;
 }
 
 -(ORStatus) enforceObjective
@@ -546,6 +560,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    if (_objective == nil) return ORSuspend;
    _status = tryfail(^ORStatus{
       _status = ORSuspend;
+      // PVH: Failure to remove?
       ORStatus ok = [_objective check];
       if (ok)
          ok = propagateFDM(self);// [self propagate];
@@ -562,8 +577,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       ORStatus status = [cstr post];
       ORStatus pstatus = internalPropagate(self,status);
-      _status = pstatus;
-      if (pstatus && status != ORSkip) {
+      if (pstatus != ORFailure && status != ORSkip) {
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
          [_trail trailClosure:^{
@@ -577,6 +591,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
+// PVH: Failure to remove?
 -(ORStatus) addInternal:(id<ORConstraint>) c
 {
    assert(_state != CPOpen);
@@ -610,24 +625,24 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _objective;
 }
 
--(ORStatus) enforce: (Void2ORStatus) cl
+-(ORStatus) enforce: (ORClosure) cl
 {
    _status = tryfail(^ORStatus{
-      ORStatus status = cl();
-      return internalPropagate(self,status);
+      cl();
+      return internalPropagate(self,ORSuspend);
    }, ^ORStatus{
       return ORFailure;
    });
    return _status;
 }
--(ORStatus) atomic:(Void2ORStatus)cl
+-(ORStatus) atomic: (ORClosure) cl
 {
    ORInt oldPropag = _propagating;
    _status = tryfail(^ORStatus{
       _propagating++;
-      ORStatus status = cl();
+      cl();
       _propagating--;
-      return internalPropagate(self,status);
+      return internalPropagate(self,ORSuspend);
    }, ^ORStatus{
       _propagating = oldPropag;
       return ORFailure;

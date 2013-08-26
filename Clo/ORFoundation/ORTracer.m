@@ -689,8 +689,8 @@ static __thread id checkPointCache = NULL;
          [_trStack pushNode:theList->_ndId];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
-            BOOL pOk = [theList apply:^BOOL(id<ORCommand> c) {
-               return [c doIt] != ORFailure;
+            BOOL pOk = [theList apply: ^BOOL(id<ORCommand> c) {
+               [c doIt]; return true;
             }];
             if (!pOk) {
                //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
@@ -722,7 +722,7 @@ static __thread id checkPointCache = NULL;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
       bool ok = [p apply:^bool(id<ORCommand> c) {
-         return [c doIt];
+         [c doIt]; return TRUE;
       }];
       assert(ok);
 #pragma clang diagnostic pop
