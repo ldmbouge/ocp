@@ -25,7 +25,6 @@
 @interface ORAbstractRunnableI : NSObject<ORRunnable> {
 @protected
     id<ORModel> _model;
-    NSArray* _siblings;
     ORClosure _exitBlock;
     ORClosure _startBlock;
 }

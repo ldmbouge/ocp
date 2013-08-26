@@ -16,15 +16,12 @@
 
 @implementation ORAbstractRunnableI
 
-@synthesize siblings;
-
 -(id) initWithModel: (id<ORModel>)m
 {
     self = [super init];
     _model = m;
     _startBlock = nil;
     _exitBlock = nil;
-    _siblings = nil;
     return self;
 }
 

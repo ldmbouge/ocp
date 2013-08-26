@@ -98,4 +98,14 @@
     [_solutionStreamInformer notifyWithSolution: sol];
 }
 
+-(id<ORIntInformer>) boundStreamInformer { return nil; }
+-(void) receiveUpperBound: (ORInt)bound {}
+-(void) receiveLowerBound: (ORInt)bound {}
+-(id<ORSolutionInformer>) solutionStreamInformer { return nil; }
+-(void) receiveSolution: (id<ORSolution>)sol {}
+-(id<ORConstraintSetInformer>) constraintSetInformer { return nil; }
+-(void) receiveConstraintSet: (id<ORConstraintSet>)set {}
+-(void) addConstraintSetConsumer: (id<ORConstraintSetConsumer>)c {}
+-(void) notifyConstraintSet: (id<ORConstraintSet>)set {}
+
 @end
