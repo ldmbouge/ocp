@@ -64,7 +64,7 @@ int main (int argc, const char * argv[])
         [slaveRunnable start];
         id<CPProgram> slaveSolver = [(CPRunnableI*)slave solver];
         id<ORCPSolution> sol = [[slaveSolver solutionPool] best];
-        NSLog(@"sol: %@", sol);
+        //NSLog(@"sol: %@", sol);
         return [ORFactory column: linearSolver solution: sol array: use constraints: c];
     }];
     [cg run];
