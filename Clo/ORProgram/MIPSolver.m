@@ -120,7 +120,8 @@
 }
 -(ORFloat) floatValue
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not implemented"];
+   return _value;
+   //@throw [[ORExecutionError alloc] initORExecutionError: "floatValue not implemented"];
 }
 -(ORBool) isEqual: (id) object
 {
