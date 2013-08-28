@@ -13,14 +13,14 @@
 
 @protocol LPRunnable <ORRunnable>
 -(id<LPProgram>) solver;
--(void) injectColumn: (id<ORFloatArray>) col;
+-(void) injectColumn: (id<LPColumn>) col;
 @end
 
 @interface LPRunnableI : ORPipedRunnable<LPRunnable>
 -(id) initWithModel: (id<ORModel>)m;
 -(id<ORSignature>) signature;
 -(id<LPProgram>) solver;
--(void) injectColumn: (id<ORFloatArray>) col;
+-(void) injectColumn: (id<LPColumn>) col;
 -(id<ORModel>) model;
 -(void) run;
 @end

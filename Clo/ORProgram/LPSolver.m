@@ -270,7 +270,7 @@
 }
 -(ORInt) intValue: (id) var
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No boolean variable in LP solutions"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "No int variable in LP solutions"];   
 }
 -(ORBool) boolValue: (id) var
 {

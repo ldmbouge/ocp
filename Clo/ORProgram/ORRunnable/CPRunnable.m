@@ -50,8 +50,6 @@
 -(void) receiveLowerBound:(ORInt)bound
 {
     NSLog(@"(%p) recieved lower bound: %i", self, bound);
-    [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:NO]];
-    NSLog(@"obj: %@", [[[self model] objective] description]);
 }
 
 -(void) receiveSolution:(id<ORSolution>)sol {
@@ -79,6 +77,8 @@
             //            [_model restore:best];
             //[best release];
         //}
+        id<ORSolution> best = [[_program solutionPool] best];
+        NSLog(@"best: %@", best);
     }];
     
     [_program solve:
@@ -86,6 +86,7 @@
          NSLog(@"Solving CP program...");
          [_program labelHeuristic: h];
      }];
+    NSLog(@"status: %@", _program);
     NSLog(@"Finishing CP runnable(%p)...", _program);
 }
 

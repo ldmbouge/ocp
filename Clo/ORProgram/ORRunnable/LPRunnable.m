@@ -20,7 +20,7 @@
     if((self = [super init]) != nil) {
         _model = [m retain];
         _sig = nil;
-        _program = [[LPSolver alloc] initLPSolver: _model];
+        _program = [ORFactory createLPProgram: _model];
     }
     return self;
 }
@@ -44,8 +44,9 @@
 
 -(id<LPProgram>) solver { return _program; }
 
--(void) injectColumn: (id<ORFloatArray>) col
+-(void) injectColumn: (id<LPColumn>) col
 {
+    [_program addColumn: col];
 }
 
 -(void) run
