@@ -65,6 +65,7 @@
 -(void) setSource:(id<ORModel>)src;
 -(id<ORModel>)source;
 
+-(id<ORModel>) relaxConstraints: (NSArray*) cstrs;
 -(id<ORModel>) flatten;
 -(id<ORModel>) lpflatten;
 -(id<ORModel>) mipflatten;

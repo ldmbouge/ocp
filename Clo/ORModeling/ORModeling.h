@@ -46,6 +46,7 @@
 -(NSArray*) mutables;
 -(NSArray*) immutables;
 // pvh: this should go
+-(id<ORModel>) relaxConstraints: (NSArray*) cstrs;
 -(id<ORModel>) flatten;
 -(id<ORModel>) lpflatten;
 -(id<ORModel>) mipflatten;

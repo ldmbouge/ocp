@@ -24,14 +24,6 @@ typedef id<LPColumn> (^Void2Column)();
 -(void) run;
 @end
 
-@interface ORColumnGenerator : ORPipedRunnable
--(id) initWithRunnable: (id<ORRunnable>)r solutionTransform: (Void2Column)block;
--(id<ORSignature>) signature;
--(id<ORModel>) model;
--(void) run;
--(void) addColumnConsumer: (id<ORSolutionStreamConsumer>)c;
-@end
-
 @interface ORFactory(ORColumnGeneration)
 +(id<ORRunnable>) columnGeneration: (id<ORRunnable>)master slave: (Void2Column)slaveBlock;
 +(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<OROrderedConstraintSet>)cstrs;

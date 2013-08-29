@@ -197,6 +197,24 @@
    _mappings = [src->_mappings copy];
    return self;
 }
+-(ORModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
+{
+    self = [super init];
+    _vars = [src->_vars copy];
+    NSMutableArray* cStore = [src->_cStore mutableCopy];
+    [cStore removeObjectsInArray: cstrs];
+    _cStore = cStore;
+    _mStore = [src->_mStore copy];
+    _iStore = [src->_iStore copy];
+    _memory = [[NSMutableArray alloc] initWithCapacity:32];
+    _nbObjects = src->_nbObjects;
+    _nbImmutables = src->_nbImmutables;
+    _objective = src->_objective;
+    _source = [src retain];
+    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
+    _mappings = [src->_mappings copy];
+    return self;
+}
 -(id<ORTau>) tau
 {
    return _mappings.tau;
@@ -502,6 +520,10 @@
 {
    ORModelI* clone = [[ORModelI allocWithZone:zone] initWithModel:self];
    return clone;
+}
+-(id<ORModel>) relaxConstraints: (NSArray*) cstrs {
+    id<ORModel> relaxation = [[ORModelI alloc] initWithModel: self relax: cstrs];
+    return relaxation;
 }
 -(id<ORModel>) flatten
 {
