@@ -46,7 +46,7 @@ int main (int argc, const char * argv[])
         id<ORExpr> expr = [ORFactory sum: m over: setRange
                                 suchThat: ^bool(ORInt i) { return [[instance.sets at: i] member: n]; }
                                       of: ^id<ORExpr>(ORInt i) { return [s at: i]; }];
-        [m add: expr];
+        [m add: [expr geq: @1]];
     }
     
     for (ORInt i = [setRange low]; i <= [setRange up]; i++) {
