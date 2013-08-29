@@ -48,8 +48,10 @@
 
 -(void) run {
     id<LPRunnable> master = (id<LPRunnable>)_master;
+    id<LPProgram> lp = [master solver];
+    [master run];
     while(1) {
-        [master run];
+        NSLog(@"PO: %@", [[lp solutionPool] best]);
         id<LPColumn> col = _slaveBlock();
         NSLog(@"col: %@", col);
         if(col == nil) break;
@@ -65,8 +67,9 @@
 }
 +(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<OROrderedConstraintSet>)cstrs {
     id<LPColumn> col = [lp createColumn];
-    [col addObjCoef: 1.0];
+    [col addObjCoef: -1.0];
     for(ORInt i = 0; i < [cstrs size]; i++) {
+        NSLog(@"c[%i] = %f", i, [[sol value: [arr at: i]] floatValue]);
         [col addConstraint: [cstrs at: i] coef: [[sol value: [arr at: i]] floatValue]];
     }
     return col;

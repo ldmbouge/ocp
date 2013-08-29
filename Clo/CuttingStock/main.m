@@ -56,15 +56,14 @@ int main (int argc, const char * argv[])
         id<ORFloatArray> cost = [ORFactory floatArray: slave range: shelves with: ^ORFloat(ORInt i) {
             return [linearSolver dual: [c at: i]];
         }];
-        id<ORIntVar> objective = [ORFactory intVar: slave domain: RANGE(slave, -10000, 10000)];
-        [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([cost at: i])]) eq: objective]];
+        id<ORFloatVar> objective = [ORFactory floatVar: slave low: -10000 up:10000];
+        [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([cost at: i])]) leq: objective]];
         [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([shelf at: i])]) leq: @(boardWidth)]];
         [slave minimize: objective];
         id<ORRunnable> slaveRunnable = [ORFactory CPRunnable: slave];
         [slaveRunnable start];
         id<CPProgram> slaveSolver = [(CPRunnableI*)slaveRunnable solver];  // [ldm] fixed bug. Not slave -> slaveRunnable
         id<ORCPSolution> sol = [[slaveSolver solutionPool] best];
-        NSLog(@"sol: %@", sol);
         return [ORFactory column: linearSolver solution: sol array: use constraints: c];
     }];
     [cg run];
