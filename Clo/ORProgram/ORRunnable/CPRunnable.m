@@ -84,7 +84,14 @@
     [_program solve:
      ^() {
          NSLog(@"Solving CP program...");
-         [_program labelHeuristic: h];
+         NSIndexSet* intVarSet = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger i, BOOL* stop) {
+             return [obj conformsToProtocol: @protocol(ORIntVar)];
+         }];
+         NSArray* intVarArray = [[_model variables] objectsAtIndexes: intVarSet];
+         id<ORIntVarArray> intVars = [ORFactory intVarArray: _program range: RANGE(_program, 0, intVarArray.count-1) with: ^id<ORIntVar>(ORInt i) {
+             return [intVarArray objectAtIndex: i];
+         }];
+         [_program labelHeuristic: h restricted: intVars];
      }];
     NSLog(@"status: %@", _program);
     NSLog(@"Finishing CP runnable(%p)...", _program);
