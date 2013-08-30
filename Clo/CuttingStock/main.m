@@ -40,13 +40,10 @@ int main (int argc, const char * argv[])
         return 0.0;
     }];
     id<ORFloatVarArray> cut = [ORFactory floatVarArray: master range: shelves low:0 up:[demand max]];
-    id<ORFloatVar> masterObj = [ORFactory floatVar: master  low:0 up:shelfCount*[demand max]];
-    [master add: [masterObj eq: Sum(master, i, shelves, cut[i])]];
     id<OROrderedConstraintSet> c = [ORFactory orderedConstraintSet: master range: shelves with: ^id<ORConstraint>(ORInt i) {
-        return [master add: [Sum(master, j, shelves, [[cut at: j] mul: @([columns at: j * shelfCount + i])])
-                             geq: @([demand at: i])]];
+        return [master add: [Sum(master, j, shelves, [[cut at: j] mul: @([columns at: j * shelfCount + i])]) geq: @([demand at: i])]];
     }];
-    [master minimize: masterObj];
+    [master minimize: Sum(master, i, shelves, cut[i])];
 
     id<ORRunnable> lp = [ORFactory LPRunnable: master];
     id<ORRunnable> cg = [ORFactory columnGeneration: lp slave: ^id<LPColumn>() {
@@ -56,18 +53,19 @@ int main (int argc, const char * argv[])
         id<ORFloatArray> cost = [ORFactory floatArray: slave range: shelves with: ^ORFloat(ORInt i) {
             return [linearSolver dual: [c at: i]];
         }];
-        id<ORFloatVar> objective = [ORFactory floatVar: slave low: -10000 up:10000];
-        [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([cost at: i])]) leq: objective]];
         [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([shelf at: i])]) leq: @(boardWidth)]];
-        [slave minimize: objective];
-        id<ORRunnable> slaveRunnable = [ORFactory CPRunnable: slave];
+        [slave minimize: [@1  sub:Sum(slave, i, shelves, [[use at: i] mul: @([cost at: i])])]];
+        id<ORRunnable> slaveRunnable = [ORFactory MIPRunnable: slave];
         [slaveRunnable start];
         id<CPProgram> slaveSolver = [(CPRunnableI*)slaveRunnable solver];  // [ldm] fixed bug. Not slave -> slaveRunnable
         id<ORCPSolution> sol = [[slaveSolver solutionPool] best];
-        return [ORFactory column: linearSolver solution: sol array: use constraints: c];
+        if ([(id<ORObjectiveValueFloat>)[sol objectiveValue] value] < -0.00001)
+           return [ORFactory column: linearSolver solution: sol array: use constraints: c];
+        else return nil;
     }];
     [cg run];
-    
+   
+    // [ldm] The variables added as part of the column addition are not showing up in the variables dico..... grrrrrr. 
     for(id<ORFloatVar> v in [[lp model] variables])
         NSLog(@"var(%@): %f", [v description], [[lp solver] floatValue:v]);
     

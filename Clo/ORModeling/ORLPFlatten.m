@@ -73,7 +73,7 @@
       [_into addImmutable: x];
    }
    onConstraints:^(id<ORConstraint> c) {
-      [_into addConstraint:[self flattenIt:c]];
+      [self flattenIt:c]; // [ldm] It has _already_ been added to the model.  an addConstraint would have it _twice_ in.
    }
    onObjective:^(id<ORObjectiveFunction> o) {
       [self flattenIt:o];
@@ -100,6 +100,11 @@
       case ORRLEq:
          {
            cstr = [terms postLEQZ: model annotation: note];
+         }
+         break;
+      case ORRGEq:
+         {
+            cstr = [terms postGEQZ: model annotation: note];
          }
          break;
       default:
@@ -187,13 +192,13 @@
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
    ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into annotation: Default];
-   _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
+   _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into] independent:[terms independent]];
    [terms release];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
    ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into annotation: Default];
-   _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
+   _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into] independent:[terms independent]];
    [terms release];
 }
 

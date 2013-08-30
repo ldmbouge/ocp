@@ -173,6 +173,11 @@
    id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
    id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];

@@ -67,7 +67,7 @@
 }
 +(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<OROrderedConstraintSet>)cstrs {
     id<LPColumn> col = [lp createColumn];
-    [col addObjCoef: -1.0];
+    [col addObjCoef: +1.0]; // [ldm] TOCHECK: this was set to -1. I'm unclear as to why. 
     for(ORInt i = 0; i < [cstrs size]; i++) {
         NSLog(@"c[%i] = %f", i, [[sol value: [arr at: i]] floatValue]);
         [col addConstraint: [cstrs at: i] coef: [[sol value: [arr at: i]] floatValue]];

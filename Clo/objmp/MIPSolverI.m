@@ -835,6 +835,16 @@
       [t add: [coef at: i] times: var[i]];
    return [self createLEQ: t rhs: -cst];
 }
+-(MIPConstraintI*) createGEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
+{
+   MIPLinearTermI* t = [self createLinearTerm];
+   id<ORIntRange> R = [var range];
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt i = low; i <= up; i++)
+      [t add: [coef at: i] times: var[i]];
+   return [self createGEQ: t rhs: -cst];
+}
 -(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
 {
    MIPLinearTermI* t = [self createLinearTerm];
@@ -890,7 +900,7 @@
 -(MIPObjectiveI*) createMaximize: (MIPLinearTermI*) t
 {
    [t close];
-   MIPObjectiveI* o = [[MIPMaximize alloc] initMIPMaximize: self size: [t size] var: [t var] coef: [t coef]];
+   MIPObjectiveI* o = [[MIPMaximize alloc] initMIPMaximize: self size: [t size] var: [t var] coef: [t coef] cst:[t cst]];
    [o setNb: _createdObjs++];
    [self trackMutable: o];
    return o;
@@ -898,25 +908,27 @@
 -(MIPObjectiveI*) createMinimize: (MIPLinearTermI*) t
 {
    [t close];
-   MIPObjectiveI* o = [[MIPMinimize alloc] initMIPMinimize: self size: [t size] var: [t var] coef: [t coef]];
+   MIPObjectiveI* o = [[MIPMinimize alloc] initMIPMinimize: self size: [t size] var: [t var] coef: [t coef] cst:[t cst]];
    [o setNb: _createdObjs++];
    [self trackMutable: o];
    return o;
 }
--(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef
+-(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
    MIPLinearTermI* t = [self createLinearTerm];
    ORInt low = [var low];
    ORInt up = [var up];
+   [t add:c];
    for(ORInt i = low; i <= up; i++)
       [t add: [coef at: i] times: var[i]];
    return [self createMinimize: t];
 }
--(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef
+-(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
    MIPLinearTermI* t = [self createLinearTerm];
    ORInt low = [var low];
    ORInt up = [var up];
+   [t add:c];
    for(ORInt i = low; i <= up; i++)
       [t add: [coef at: i] times: var[i]];
    return [self createMaximize: t];

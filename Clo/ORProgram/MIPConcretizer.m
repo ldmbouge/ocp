@@ -129,7 +129,7 @@
       id<ORFloatArray> a = [obj coef];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a];
+      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a independent:[obj independent]];
       _gamma[obj.getId] = concreteObj;
       [_MIPsolver postObjective: concreteObj];
    }
@@ -141,7 +141,7 @@
       id<ORFloatArray> a = [obj coef];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a];
+      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a independent:[obj independent]];
       _gamma[obj.getId] = concreteObj;
       [_MIPsolver postObjective: concreteObj];
    }
@@ -206,7 +206,19 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
-
+-(void) visitFloatLinearGeq: (id<ORFloatLinearGeq>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> x = [c vars];
+      id<ORFloatArray> a = [c coefs];
+      ORInt cst = [c cst];
+      [x visit: self];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: dx coef: a cst: -cst];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+   }
+}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    if (_gamma[e.getId] == NULL)

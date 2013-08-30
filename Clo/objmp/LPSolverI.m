@@ -647,6 +647,15 @@
       free(_tmpCoef);
    [super dealloc];
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   [buf appendFormat:@"<%f>[",_objCoef];
+   for(ORInt i=0;i<_size;i++)
+      [buf appendFormat:@"%f,",_coef[i]];
+   [buf appendString:@"]"];
+   return buf;
+}
 -(void) resize
 {
    if (_size == _maxSize) {
@@ -991,6 +1000,16 @@
    for(ORInt i = low; i <= up; i++) 
       [t add: [coef at: i] times: var[i]];
    return [self createLEQ: t rhs: -cst];
+}
+-(LPConstraintI*) createGEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   id<ORIntRange> R = [var range];
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt i = low; i <= up; i++)
+      [t add: [coef at: i] times: var[i]];
+   return [self createGEQ: t rhs: -cst];
 }
 -(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
 {

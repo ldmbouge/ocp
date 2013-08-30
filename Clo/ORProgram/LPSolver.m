@@ -356,6 +356,10 @@
 {
    [super dealloc];
 }
+-(NSString*)description
+{
+   return [_lpcolumn description];
+}
 -(LPColumnI*) column
 {
    return _lpcolumn;

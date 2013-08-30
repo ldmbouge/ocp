@@ -903,6 +903,23 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void)visitFloatLinearGeq:(id<ORFloatLinearGeq>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORVarArray> av = [cstr vars];
+      id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+         id<CPVar> theCPVar = [self concreteVar:[av at:k]];
+         if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
+            return [CPFactory floatVar:_engine castFrom:(id)theCPVar];
+         else
+            return theCPVar;
+      }];
+      id<ORFloatArray> c = [cstr coefs];
+      id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c geqi:[cstr cst]];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr
@@ -1046,6 +1063,8 @@
 -(void) visitExprNEqualI: (id<ORExpr>) e
 {}
 -(void) visitExprLEqualI: (id<ORExpr>) e
+{}
+-(void) visitExprGEqualI: (id<ORExpr>) e
 {}
 -(void) visitExprSumI: (id<ORExpr>) e
 {}

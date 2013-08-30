@@ -366,6 +366,49 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    }
    return rv;
 }
+
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   id<ORConstraint> rv = NULL;
+   switch(_nb) {
+      case 0: assert(FALSE);return NULL;
+      case 1: {  // x >= c
+         if (_terms[0]._coef == 1)
+            rv = [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to:- _indep]];
+         else if (_terms[0]._coef == -1)
+            rv = [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to: _indep]];
+         else {
+            assert(_terms[0]._coef != 0);
+            ORInt nc = - _indep / _terms[0]._coef;
+            ORInt cr = - _indep % _terms[0]._coef;
+            if (nc < 0 && cr != 0)
+               rv = [model addConstraint:[ORFactory gEqualc:model var:_terms[0]._var to:nc - 1]];
+            else
+               rv = [model addConstraint:[ORFactory gEqualc:model var:_terms[0]._var to:nc]];
+         }
+      }break;
+      case 2: {  // x >= y
+         if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            rv = [model addConstraint:[ORFactory gEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
+            rv = [model addConstraint:[ORFactory gEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
+         } else {
+            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef annotation:cons];
+            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep annotation:cons];
+            rv = [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
+         }
+      }break;
+      default:
+         //rv = [model addConstraint:[ORFactory sum:model array:[self scaledViews:model annotation:cons] leqi:- _indep]];
+         rv = [model addConstraint:[ORFactory sum:model
+                                            array:[self variables:model]
+                                             coef:[self coefficients:model]
+                                              geq:- _indep]];
+   }
+   return rv;
+}
+
+
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    id<ORConstraint> rv = NULL;
@@ -470,6 +513,10 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    return [_real postLEQZ:model annotation:cons];
+}
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postGEQZ:model annotation:cons];
 }
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {

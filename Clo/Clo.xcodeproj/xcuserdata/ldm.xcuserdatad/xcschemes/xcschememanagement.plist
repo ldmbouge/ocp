@@ -14,6 +14,11 @@
 			<key>orderHint</key>
 			<integer>61</integer>
 		</dict>
+		<key>CPScheduler.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>83</integer>
+		</dict>
 		<key>CPUKernel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -22,7 +27,7 @@
 		<key>CardinalityTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>70</integer>
+			<integer>72</integer>
 		</dict>
 		<key>Clo.xcscheme_^#shared#^_</key>
 		<dict>
@@ -47,12 +52,17 @@
 		<key>LPRelaxation.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>69</integer>
+			<integer>70</integer>
 		</dict>
 		<key>LPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>15</integer>
+		</dict>
+		<key>LagrangeSetCovering.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>85</integer>
 		</dict>
 		<key>LogicBendersExample.xcscheme_^#shared#^_</key>
 		<dict>
@@ -62,7 +72,7 @@
 		<key>MD5.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>72</integer>
+			<integer>77</integer>
 		</dict>
 		<key>ORFoundation.xcscheme_^#shared#^_</key>
 		<dict>
@@ -78,6 +88,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>46</integer>
+		</dict>
+		<key>ORScheduler.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>84</integer>
 		</dict>
 		<key>ORUtilities.xcscheme_^#shared#^_</key>
 		<dict>
@@ -107,12 +122,12 @@
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>69</integer>
+			<integer>71</integer>
 		</dict>
 		<key>TestAssignment.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>71</integer>
+			<integer>75</integer>
 		</dict>
 		<key>Testing.xcscheme</key>
 		<dict>
@@ -124,10 +139,15 @@
 			<key>orderHint</key>
 			<integer>21</integer>
 		</dict>
+		<key>allProgs.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>82</integer>
+		</dict>
 		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>78</integer>
+			<integer>81</integer>
 		</dict>
 		<key>assignmentProblem.xcscheme_^#shared#^_</key>
 		<dict>
@@ -137,7 +157,7 @@
 		<key>bacp.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>71</integer>
+			<integer>74</integer>
 		</dict>
 		<key>bacp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -162,7 +182,7 @@
 		<key>circle.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>72</integer>
+			<integer>76</integer>
 		</dict>
 		<key>circle.xcscheme_^#shared#^_</key>
 		<dict>
@@ -207,7 +227,7 @@
 		<key>fwarehouse.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>70</integer>
+			<integer>73</integer>
 		</dict>
 		<key>golomb.xcscheme_^#shared#^_</key>
 		<dict>
@@ -292,7 +312,7 @@
 		<key>minesweeper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>67</integer>
+			<integer>68</integer>
 		</dict>
 		<key>model.xcscheme_^#shared#^_</key>
 		<dict>
@@ -327,7 +347,7 @@
 		<key>nonogram.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>73</integer>
+			<integer>78</integer>
 		</dict>
 		<key>nonogram.xcscheme_^#shared#^_</key>
 		<dict>
@@ -362,7 +382,7 @@
 		<key>paq.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>68</integer>
+			<integer>69</integer>
 		</dict>
 		<key>partition.xcscheme_^#shared#^_</key>
 		<dict>
@@ -382,7 +402,7 @@
 		<key>qg7.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>66</integer>
+			<integer>67</integer>
 		</dict>
 		<key>queens2.xcscheme_^#shared#^_</key>
 		<dict>
@@ -437,7 +457,7 @@
 		<key>regular.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>74</integer>
+			<integer>79</integer>
 		</dict>
 		<key>regular.xcscheme_^#shared#^_</key>
 		<dict>
@@ -487,7 +507,7 @@
 		<key>testF.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>77</integer>
+			<integer>80</integer>
 		</dict>
 		<key>testLPConcretization.xcscheme_^#shared#^_</key>
 		<dict>
@@ -497,7 +517,7 @@
 		<key>testLPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>65</integer>
+			<integer>66</integer>
 		</dict>
 		<key>testMIP.xcscheme_^#shared#^_</key>
 		<dict>
@@ -528,6 +548,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>37095B2916DBF173001BCEEC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3720A58917CEFA7B00A7F2B5</key>
 		<dict>
 			<key>primary</key>
 			<true/>

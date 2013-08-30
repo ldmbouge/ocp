@@ -534,6 +534,15 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geqi:(ORFloat)c
+{
+   id<ORFloatArray> nc = [ORFactory floatArray:[coefs tracker] range:[coefs range] with:^ORFloat(ORInt k) {
+      return - [coefs at: k];
+   }];
+   id<CPConstraint> o = [[CPFloatINEquationBC alloc] init:x coef:nc leqi: - c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c
 {
    id<CPConstraint> o = [[CPFloatEqualc alloc] init:x and:c];

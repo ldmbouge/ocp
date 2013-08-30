@@ -246,6 +246,15 @@
    [linRight release];
    _terms = linLeft;
 }
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   // TOCHECK
+   ORIntLinear* linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_n];
+   ORLinearFlip* linLeft = [[ORLinearFlip alloc] initORLinearFlip: linRight];
+   [ORNormalizer addToIntLinear:linRight from:[e left] model:_model annotation:_n];
+   [linLeft release];
+   _terms = linRight;
+}
 
 struct CPVarPair {
    id<ORIntVar> lV;
@@ -338,6 +347,15 @@ struct CPVarPair {
    [linRight release];
    _terms = linLeft;
 }
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   ORFloatLinear* linRight = [ORNormalizer floatLinearFrom:[e right] model:_model annotation:_n];
+   id<ORFloatLinear> linLeft = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linRight];
+   [ORNormalizer addToFloatLinear:linLeft from:[e left] model:_model annotation:_n];
+   [linLeft release];
+   _terms = linRight;
+}
+
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for !="];
@@ -529,6 +547,11 @@ struct CPVarPair {
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
 {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
@@ -946,6 +969,15 @@ static inline ORLong maxSeq(ORLong v[4])  {
       [self reifyLEQc:[e left] constant:[[e right] min]];
    } else
       [self reifyLEQ:[e left] right:[e right]];
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   if ([[e left] isConstant]) {
+      [self reifyLEQc:[e right] constant:[[e left] min]];
+   } else if ([[e right] isConstant]) {
+      [self reifyGEQc:[e left] constant:[[e right] min]];
+   } else
+      [self reifyLEQ:[e right] right:[e left]];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {

@@ -222,13 +222,14 @@
 -(MIPObjectiveI*)  createMaximize: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef;
 
 -(MIPConstraintI*) createLEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
+-(MIPConstraintI*) createGEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
 -(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
 
 
 -(MIPObjectiveI*)  createObjectiveMinimize: (MIPVariableI*) x;
 -(MIPObjectiveI*)  createObjectiveMaximize: (MIPVariableI*) x;
--(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef;
--(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef;
+-(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
+-(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 
 -(MIPConstraintI*) createLEQ: (MIPLinearTermI*) t rhs: (ORFloat) rhs;
 -(MIPConstraintI*) createGEQ: (MIPLinearTermI*) t rhs: (ORFloat) rhs;
