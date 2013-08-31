@@ -2772,8 +2772,8 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 
 -(ORInt) compare: (ORObjectiveValueFloatI*) other
 {
-   ORInt mykey = [self key];
-   ORInt okey = [other key];
+   ORFloat mykey = [self key];
+   ORFloat okey = [other key];
    if (mykey < okey)
       return -1;
    else if (mykey == okey)

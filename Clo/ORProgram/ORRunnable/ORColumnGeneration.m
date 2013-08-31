@@ -54,7 +54,8 @@
         NSLog(@"PO: %@", [[lp solutionPool] best]);
         id<LPColumn> col = _slaveBlock();
         NSLog(@"col: %@", col);
-        if(col == nil) break;
+        if(col == nil)
+           break;
         [master injectColumn: col];
     }
 }

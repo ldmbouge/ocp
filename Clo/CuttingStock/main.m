@@ -41,7 +41,7 @@ int main (int argc, const char * argv[])
     }];
     id<ORFloatVarArray> cut = [ORFactory floatVarArray: master range: shelves low:0 up:[demand max]];
     id<OROrderedConstraintSet> c = [ORFactory orderedConstraintSet: master range: shelves with: ^id<ORConstraint>(ORInt i) {
-        return [master add: [Sum(master, j, shelves, [[cut at: j] mul: @([columns at: j * shelfCount + i])]) geq: @([demand at: i])]];
+        return [master add: [Sum(master, j, shelves, [cut[j] mul: @([columns at: j * shelfCount + i])]) geq: @([demand at: i])]];
     }];
     [master minimize: Sum(master, i, shelves, cut[i])];
 
@@ -53,15 +53,16 @@ int main (int argc, const char * argv[])
         id<ORFloatArray> cost = [ORFactory floatArray: slave range: shelves with: ^ORFloat(ORInt i) {
             return [linearSolver dual: [c at: i]];
         }];
-        [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([shelf at: i])]) leq: @(boardWidth)]];
-        [slave minimize: [@1  sub:Sum(slave, i, shelves, [[use at: i] mul: @([cost at: i])])]];
-        id<ORRunnable> slaveRunnable = [ORFactory MIPRunnable: slave];
+        [slave add: [Sum(slave, i, shelves, [use[i] mul: @([shelf at: i])]) leq: @(boardWidth)]];
+        [slave minimize: [@1  sub:Sum(slave, i, shelves, [use[i] mul: @([cost at: i])])]];
+        id<ORRunnable> slaveRunnable = [ORFactory CPRunnable: slave];
         [slaveRunnable start];
         id<CPProgram> slaveSolver = [(CPRunnableI*)slaveRunnable solver];  // [ldm] fixed bug. Not slave -> slaveRunnable
         id<ORCPSolution> sol = [[slaveSolver solutionPool] best];
+        NSLog(@"SLAVE Sol: %@",sol);
         if ([(id<ORObjectiveValueFloat>)[sol objectiveValue] value] < -0.00001)
            return [ORFactory column: linearSolver solution: sol array: use constraints: c];
-        else return nil;
+         else return nil;
     }];
     [cg run];
    

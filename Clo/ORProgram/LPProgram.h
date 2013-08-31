@@ -18,6 +18,7 @@
 @protocol LPColumn <NSObject>
 -(void) addObjCoef: (ORFloat) coef;
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
+-(ORFloat) objCoef;
 @end
 
 @protocol ORLPSolution <ORSolution>

@@ -338,6 +338,7 @@
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col;
 -(void) addObjCoef: (ORFloat) coef;
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
+-(ORFloat) objCoef;
 @end
 
 @implementation LPColumn
@@ -372,6 +373,11 @@
 {
    [_lpcolumn addConstraint: [_lpsolver concretize: cstr] coef: coef];
 }
+-(ORFloat) objCoef
+{
+   return [_lpcolumn objCoef];
+}
+
 @end
 
 @implementation LPSolver
