@@ -28,7 +28,7 @@ typedef struct  {
     TRId               _ac5;
 } CPEventNetwork;
 
-@class CPIntVarBase;
+@class CPIntVar;
 @class CPLiterals;
 @class CPMultiCast;
 
@@ -45,8 +45,8 @@ typedef struct  {
 -(void)            setDelegate: (id<CPIntVarNotifier>) delegate;
 -(void)            addVar: (id<CPIntVarNotifier>) var;
 -(enum CPVarClass) varClass;
--(CPLiterals*)     findLiterals:(CPIntVarBase*)ref;
--(CPIntVarBase*)   findAffine:(ORInt)scale shift:(ORInt)shift;
+-(CPLiterals*)     findLiterals:(CPIntVar*)ref;
+-(CPIntVar*)   findAffine:(ORInt)scale shift:(ORInt)shift;
 -(CPLiterals*)     literals;
 -(void)            setTracksLoseEvt;
 -(ORBool)          tracksLoseEvt: (id<CPDom>) sender;
@@ -56,14 +56,14 @@ typedef struct  {
 -(void)            loseValEvt: (ORInt) val sender: (id<CPDom>)sender;
 @end
 
-@interface CPIntVarBase : ORObject<CPIntVarNotifier,CPIntVar> {
+@interface CPIntVar : ORObject<CPIntVarNotifier,CPIntVar> {
 @package
    BOOL            _isBool;
    enum CPVarClass _vc;
    CPEngineI*      _fdm;
    CPMultiCast*    _recv;
 }
--(CPIntVarBase*)   initCPIntVarBase: (id<CPEngine>) cp;
+-(CPIntVar*)   initCPIntVar: (id<CPEngine>) cp;
 
 -(ORRange)   around:(ORInt)v;
 -(id<CPDom>) domain;
@@ -74,14 +74,14 @@ typedef struct  {
 -(void)                 setDelegate:(id<CPIntVarNotifier>)d;
 @end
 
-@interface CPIntVarI : CPIntVarBase<CPIntVar> {
+@interface CPIntVarI : CPIntVar<CPIntVar> {
 @package
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
 }
--(CPIntVarBase*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
--(CPIntVarBase*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarBase*) x;
+-(CPIntVar*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
+-(CPIntVar*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVar*) x;
 -(void) dealloc;
 -(ORBool) isBool;
 -(NSString*) description;
@@ -146,14 +146,14 @@ typedef struct  {
 -(void)     inside:(ORIntSetI*) S;
 
 // Class methods
-+(CPIntVarBase*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
-+(CPIntVarBase*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
-+(CPIntVarBase*)    initCPBoolVar:(id<CPEngine>) fdm;
-+(CPIntVarBase*)    initCPFlipView:(id<CPIntVar>)x;
-+(CPIntVarBase*)    initCPIntView: (id<CPIntVar>)x withShift:(ORInt)b;
-+(CPIntVarBase*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a;
-+(CPIntVarBase*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
-+(CPIntVarBase*)    initCPNegateBoolView:(id<CPIntVar>)x;
++(CPIntVar*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
++(CPIntVar*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
++(CPIntVar*)    initCPBoolVar:(id<CPEngine>) fdm;
++(CPIntVar*)    initCPFlipView:(id<CPIntVar>)x;
++(CPIntVar*)    initCPIntView: (id<CPIntVar>)x withShift:(ORInt)b;
++(CPIntVar*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a;
++(CPIntVar*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
++(CPIntVar*)    initCPNegateBoolView:(id<CPIntVar>)x;
 @end
 
 // ---------------------------------------------------------------------
@@ -162,9 +162,9 @@ typedef struct  {
 @interface CPIntShiftView : CPIntVarI {
    @package
    ORInt       _b;
-   CPIntVarBase*  _x;
+   CPIntVar*  _x;
 }
--(CPIntShiftView*)initIVarShiftView:(CPIntVarBase*)x b:(ORInt)b;
+-(CPIntShiftView*)initIVarShiftView:(CPIntVar*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
 -(ORBool) bound;
@@ -188,9 +188,9 @@ typedef struct  {
    @package
     ORInt _a;
     ORInt _b;
-   CPIntVarBase*  _x;
+   CPIntVar*  _x;
 }
--(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarBase*)x b:(ORInt)b;
+-(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVar*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
 -(ORBool) bound;
@@ -212,9 +212,9 @@ typedef struct  {
 
 @interface CPIntFlipView : CPIntVarI { // Flip View (y == -x)
    @package
-   CPIntVarBase*  _x;
+   CPIntVar*  _x;
 }
--(CPIntFlipView*)initFlipViewFor:(CPIntVarBase*)x;
+-(CPIntFlipView*)initFlipViewFor:(CPIntVar*)x;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
 -(ORBool) bound;
@@ -237,9 +237,9 @@ typedef struct  {
 @interface CPEQLitView : CPIntVarI { // Literal view b <=> x == v
    @package
    ORInt              _v;
-   CPIntVarBase* _secondary;  // pointer to the original variable (x)
+   CPIntVar* _secondary;  // pointer to the original variable (x)
 }
--(CPEQLitView*)initEQLitViewFor:(CPIntVarBase*)x equal:(ORInt)v;
+-(CPEQLitView*)initEQLitViewFor:(CPIntVar*)x equal:(ORInt)v;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
 -(ORBool) bound;
@@ -258,7 +258,7 @@ typedef struct  {
 -(void) remove:(ORInt)val;
 @end
 
-static inline BOOL bound(CPIntVarBase* x)
+static inline BOOL bound(CPIntVar* x)
 {
    switch(x->_vc) {
       case CPVCBare: return ((CPBoundsDom*)((CPIntVarI*)x)->_dom)->_sz._val == 1;
@@ -269,7 +269,7 @@ static inline BOOL bound(CPIntVarBase* x)
    }   
 }
 
-static inline ORInt minDom(CPIntVarBase* x)
+static inline ORInt minDom(CPIntVar* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)((CPIntVarI*)x)->_dom)->_min._val;
@@ -278,7 +278,7 @@ static inline ORInt minDom(CPIntVarBase* x)
    }
 }
 
-static inline ORInt maxDom(CPIntVarBase* x)
+static inline ORInt maxDom(CPIntVar* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)((CPIntVarI*)x)->_dom)->_max._val;
@@ -288,7 +288,7 @@ static inline ORInt maxDom(CPIntVarBase* x)
 }
 
 #define DOMX ((CPBoundsDom*)((CPIntVarI*)x)->_dom)
-static inline ORBounds bounds(CPIntVarBase* x)
+static inline ORBounds bounds(CPIntVar* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return (ORBounds){DOMX->_min._val,DOMX->_max._val};
@@ -312,13 +312,13 @@ static inline ORBounds bounds(CPIntVarBase* x)
 }
 #undef DOMX
 
-static inline ORBounds negBounds(CPIntVarBase* x)
+static inline ORBounds negBounds(CPIntVar* x)
 {
    ORBounds b = [x bounds];
    return (ORBounds){- b.max, -b.min};
 }
 
-static inline ORInt memberDom(CPIntVarBase* x,ORInt value)
+static inline ORInt memberDom(CPIntVar* x,ORInt value)
 {
    switch (x->_vc) {
       case CPVCBare:
@@ -333,7 +333,7 @@ static inline ORInt memberDom(CPIntVarBase* x,ORInt value)
    }
 }
 
-static inline ORInt memberBitDom(CPIntVarBase* x,ORInt value)
+static inline ORInt memberBitDom(CPIntVar* x,ORInt value)
 {
    switch (x->_vc) {
       case CPVCBare:
@@ -349,7 +349,7 @@ static inline ORInt memberBitDom(CPIntVarBase* x,ORInt value)
    }
 }
 
-static inline void removeDom(CPIntVarBase* x,ORInt v)
+static inline void removeDom(CPIntVar* x,ORInt v)
 {
    switch (x->_vc) {
       case CPVCBare:
@@ -365,7 +365,7 @@ static inline void removeDom(CPIntVarBase* x,ORInt v)
    }
 }
 
-static inline void bindDom(CPIntVarBase* x,ORInt v)
+static inline void bindDom(CPIntVar* x,ORInt v)
 {
    switch(x->_vc) {
       case CPVCBare:
@@ -388,7 +388,7 @@ static inline void bindDom(CPIntVarBase* x,ORInt v)
    UBType*            _minIMP;
    UBType*            _maxIMP;
 }
--(id)initVarMC:(ORInt)n root:(CPIntVarBase*)root;
+-(id)initVarMC:(ORInt)n root:(CPIntVar*)root;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
@@ -401,13 +401,13 @@ static inline void bindDom(CPIntVarBase* x,ORInt v)
 @end
 
 @interface CPLiterals : NSObject<CPIntVarNotifier> {
-   CPIntVarBase*  _ref;
-   CPIntVarBase** _pos;
+   CPIntVar*  _ref;
+   CPIntVar** _pos;
    ORInt        _nb;
    ORInt       _ofs;
    BOOL        _tracksLoseEvt;
 }
--(id)initCPLiterals:(CPIntVarBase*)ref;
+-(id)initCPLiterals:(CPIntVar*)ref;
 -(void)dealloc;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;

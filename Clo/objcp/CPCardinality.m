@@ -99,7 +99,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     _required = _possible = 0;
     if ([ax isKindOfClass:[NSArray class]]) {
         _sx = (ORInt)[ax count];
-        _x = malloc(sizeof(CPIntVarBase*)*_sx);
+        _x = malloc(sizeof(CPIntVar*)*_sx);
         NSEnumerator* k = [ax objectEnumerator];
         id xi;
         ORInt i=0;
@@ -111,11 +111,11 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     } 
     else if ([ax isKindOfClass:[ORIdArrayI class]]) {
         _sx = (ORInt)[ax count];
-        _x  = malloc(sizeof(CPIntVarBase*)*_sx);
+        _x  = malloc(sizeof(CPIntVar*)*_sx);
         int i=0;
         id<CPIntVarArray> xa = ax;
         for(ORInt k=[xa low];k<=[xa up];k++)
-            _x[i++] = (CPIntVarBase*) [xa at:k];
+            _x[i++] = (CPIntVar*) [xa at:k];
         _lx = 0;
         _ux = (ORInt)_sx -1;
     }
@@ -130,11 +130,11 @@ static void computeCardinalities(id<CPIntVarArray> ax,
    _required = _possible = 0;
    
    _sx = (ORInt)[ax count];
-   _x  = malloc(sizeof(CPIntVarBase*)*_sx);
+   _x  = malloc(sizeof(CPIntVar*)*_sx);
    int i=0;
    id<CPIntVarArray> xa = ax;
    for(ORInt k=[ax low];k<=[ax up];k++)
-      _x[i++] = (CPIntVarBase*) [xa at:k];
+      _x[i++] = (CPIntVar*) [xa at:k];
    _lx = 0;
    _ux = (ORInt)_sx-1;
    computeCardinalities(ax,low,up,&_low,&_up,&_lo,&_uo);
@@ -206,7 +206,7 @@ static ORStatus removeFromRemaining(CPCardinalityCst* cc,ORInt val)
     return ORSuspend;     
 }
 
-static ORStatus valBind(CPCardinalityCst* cc,CPIntVarBase* v)
+static ORStatus valBind(CPCardinalityCst* cc,CPIntVar* v)
 {
    ORInt val = [v min];
    assignTRInt(cc->_required+val, cc->_required[val]._val+1, cc->_trail);
@@ -217,7 +217,7 @@ static ORStatus valBind(CPCardinalityCst* cc,CPIntVarBase* v)
    return ORSuspend;
 }
 
-static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarBase* v,ORInt i,ORInt val)
+static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
 {
    assignTRInt(cc->_possible+val, cc->_possible[val]._val-1, cc->_trail);
    if (cc->_possible[val]._val < cc->_low[val])
@@ -309,7 +309,7 @@ static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarBase* v,ORInt i,ORInt 
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_ux];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_so];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_sx];
-   _x = malloc(sizeof(CPIntVarBase*)*_sx) - _lx;
+   _x = malloc(sizeof(CPIntVar*)*_sx) - _lx;
    _low = malloc(sizeof(ORInt)*_so) - _lo;
    _up  = malloc(sizeof(ORInt)*_so) - _lo;
    [aDecoder decodeArrayOfObjCType:@encode(ORInt)

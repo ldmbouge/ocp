@@ -92,10 +92,10 @@ typedef struct  {
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
    CPEngineI*       _engine;
-   CPIntVarBase*       _theVar;
+   CPIntVar*       _theVar;
    CPFloatEventNetwork _net;
 }
--(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVarBase*)iv;
+-(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*)constraints;

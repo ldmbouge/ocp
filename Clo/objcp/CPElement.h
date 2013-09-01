@@ -13,14 +13,14 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-@class CPIntVarBase;
+@class CPIntVar;
 @class CPEngine;
 @class CPBitDom;
 
 @interface CPElementCstBC : CPCoreConstraint<NSCoding> { // y == c[x]
 @private
-   CPIntVarBase*     _x;   
-   CPIntVarBase*     _y;
+   CPIntVar*     _x;   
+   CPIntVar*     _y;
    id<ORIntArray> _c;
 }
 -(id) initCPElementBC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y;
@@ -31,8 +31,8 @@
 @end
 
 @interface CPElementCstAC : CPCoreConstraint { // y == c[x]
-   CPIntVarBase*     _x;
-   CPIntVarBase*     _y;
+   CPIntVar*     _x;
+   CPIntVar*     _y;
    id<ORIntArray> _c;
 }
 -(id) initCPElementAC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y;
@@ -44,8 +44,8 @@
 
 @interface CPElementVarBC : CPCoreConstraint<NSCoding> { // y == z[x]
 @private
-   CPIntVarBase*        _x;
-   CPIntVarBase*        _y;
+   CPIntVar*        _x;
+   CPIntVar*        _y;
    id<CPIntVarArray> _z;
 }
 -(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>) c equal:(id)y;
@@ -56,9 +56,9 @@
 @end
 
 @interface CPElementVarAC : CPCoreConstraint {
-   CPIntVarBase*         _x;
+   CPIntVar*         _x;
    id<CPIntVarArray>  _array;
-   CPIntVarBase*         _z;
+   CPIntVar*         _z;
    id<ORTrailableIntArray> _s;  // supports
    id<ORTrailableIntArray> _c;  // cardinalities of intersections
    CPBitDom**          _inter;  // intersections

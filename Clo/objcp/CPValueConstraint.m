@@ -16,7 +16,7 @@
 #import "CPIntVarI.h"
 
 @implementation CPReifyNotEqualcDC
--(id)initCPReifyNotEqualcDC:(CPIntVarBase*)b when:(CPIntVarBase*)x neq:(ORInt)c
+-(id)initCPReifyNotEqualcDC:(CPIntVar*)b when:(CPIntVar*)x neq:(ORInt)c
 {
    self = [super initCPCoreConstraint:[b engine]];
     _b = b;
@@ -78,7 +78,7 @@
 @end
 
 @implementation CPReifyEqualcDC
--(id) initCPReifyEqualcDC: (CPIntVarBase*) b when: (CPIntVarBase*) x eq: (ORInt) c
+-(id) initCPReifyEqualcDC: (CPIntVar*) b when: (CPIntVar*) x eq: (ORInt) c
 {
    self = [super initCPCoreConstraint:[b engine]];
     _b = b;
@@ -149,7 +149,7 @@
 // ==============================================================================================
 
 @implementation CPReifyEqualBC
--(id) initCPReifyEqualBC: (CPIntVarBase*) b when: (CPIntVarBase*) x eq: (CPIntVarBase*) y
+-(id) initCPReifyEqualBC: (CPIntVar*) b when: (CPIntVar*) x eq: (CPIntVar*) y
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = b;
@@ -249,7 +249,7 @@
 // ==============================================================================================
 
 @implementation CPReifyEqualDC
--(id) initCPReifyEqualDC: (CPIntVarBase*) b when: (CPIntVarBase*) x eq: (CPIntVarBase*) y
+-(id) initCPReifyEqualDC: (CPIntVar*) b when: (CPIntVar*) x eq: (CPIntVar*) y
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = b;
@@ -286,7 +286,7 @@
    }
    return ORSuspend;
 }
--(void)listenOn:(CPIntVarBase*)a inferOn:(CPIntVarBase*)other
+-(void)listenOn:(CPIntVar*)a inferOn:(CPIntVar*)other
 {
    [a whenLoseValue:self do:^(ORInt c) {  // c NOTIN(a)
       if (bound(other) && minDom(other)==c) // FALSE <=> other==c & c NOTIN(a)
@@ -306,7 +306,7 @@
    } onBehalf:self];
    
 }
--(void)reifiedOp:(CPIntVarBase*)a equal:(ORInt)c equiv:(CPIntVarBase*)b
+-(void)reifiedOp:(CPIntVar*)a equal:(ORInt)c equiv:(CPIntVar*)b
 {
    if (!memberDom(a, c)) {                   // b <=> c == a & c NOTIN D(a)
       [b bind:NO];                           // -> b=NO
@@ -387,7 +387,7 @@
 // ==============================================================================================
 
 @implementation CPReifyNEqualBC
--(id) initCPReify: (CPIntVarBase*) b when: (CPIntVarBase*) x neq: (CPIntVarBase*) y
+-(id) initCPReify: (CPIntVar*) b when: (CPIntVar*) x neq: (CPIntVar*) y
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = b;
@@ -487,7 +487,7 @@
 // ==============================================================================================
 
 @implementation CPReifyNEqualDC
--(id) initCPReify: (CPIntVarBase*) b when: (CPIntVarBase*) x neq: (CPIntVarBase*) y
+-(id) initCPReify: (CPIntVar*) b when: (CPIntVar*) x neq: (CPIntVar*) y
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = b;
@@ -524,7 +524,7 @@
    }
    return ORSuspend;
 }
--(void)listenOn:(CPIntVarBase*)a inferOn:(CPIntVarBase*)other
+-(void)listenOn:(CPIntVar*)a inferOn:(CPIntVar*)other
 {
    [a whenLoseValue:self do:^(ORInt c) {    // c NOTIN(a)
       if (bound(other) && minDom(other)==c) // FALSE <=> other==c & c NOTIN(a)
@@ -543,7 +543,7 @@
       }
    } onBehalf:self];
 }
--(void)reifiedOp:(CPIntVarBase*)a notEqual:(ORInt)c equiv:(CPIntVarBase*)b
+-(void)reifiedOp:(CPIntVar*)a notEqual:(ORInt)c equiv:(CPIntVar*)b
 {
    if (!memberDom(a, c)) {                   // b <=> c != a & c NOTIN D(a)
       [b bind:YES];                          // -> b=YES
@@ -622,7 +622,7 @@
 @end
 
 @implementation CPReifyLEqualBC
--(id) initCPReifyLEqualBC:(CPIntVarBase*)b when:(CPIntVarBase*)x leq:(CPIntVarBase*)y
+-(id) initCPReifyLEqualBC:(CPIntVar*)b when:(CPIntVar*)x leq:(CPIntVar*)y
 {
    self = [super initCPCoreConstraint:[x engine]];
    _b = b;
@@ -693,7 +693,7 @@
 // ==============================================================================================
 
 @implementation CPReifyLEqualDC
--(id) initCPReifyLEqualDC: (CPIntVarBase*) b when: (CPIntVarBase*) x leqi: (ORInt) c
+-(id) initCPReifyLEqualDC: (CPIntVar*) b when: (CPIntVar*) x leqi: (ORInt) c
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = b;
@@ -769,7 +769,7 @@
 
 
 @implementation CPReifyGEqualDC
--(id) initCPReifyGEqualDC: (CPIntVarBase*) b when: (CPIntVarBase*) x geq: (ORInt) c
+-(id) initCPReifyGEqualDC: (CPIntVar*) b when: (CPIntVar*) x geq: (ORInt) c
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = b;
@@ -848,12 +848,12 @@
       id<CPIntVarArray> xa = x;
       self = [super initCPCoreConstraint:[[xa at:[xa low]] engine]];
       _nb = [x count];
-      _x  = malloc(sizeof(CPIntVarBase*)*_nb);
+      _x  = malloc(sizeof(CPIntVar*)*_nb);
       ORInt low = [xa low];
       ORInt up = [xa up];
       ORInt i = 0;
       for(ORInt k=low;k <= up;k++)
-         _x[i++] = (CPIntVarBase*) [xa at:k];
+         _x[i++] = (CPIntVar*) [xa at:k];
    }
    else
       assert(FALSE);
@@ -968,7 +968,7 @@
 {
     self = [super initWithCoder:aDecoder];
     [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-    _x = malloc(sizeof(CPIntVarBase*)*_nb);   
+    _x = malloc(sizeof(CPIntVar*)*_nb);   
     for(ORInt k=0;k<_nb;k++) 
         _x[k] = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
@@ -986,12 +986,12 @@
    self = [super initCPCoreConstraint:engine];
    _xa = xa;
    _nb = [xa count];
-   _x  = malloc(sizeof(CPIntVarBase*)*_nb);
+   _x  = malloc(sizeof(CPIntVar*)*_nb);
    ORInt low = [xa low];
    ORInt up = [xa up];
    ORInt i = 0;
    for(ORInt k=low;k <= up;k++)
-      _x[i++] = (CPIntVarBase*) [xa at:k];
+      _x[i++] = (CPIntVar*) [xa at:k];
    _c = c;
    return self;
 }
@@ -1095,7 +1095,7 @@
 {
    self = [super initWithCoder:aDecoder];
    [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   _x = malloc(sizeof(CPIntVarBase*)*_nb);
+   _x = malloc(sizeof(CPIntVar*)*_nb);
    for(ORInt k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];

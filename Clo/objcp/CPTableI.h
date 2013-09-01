@@ -18,14 +18,14 @@
 #import "CPIntVarI.h"
 
 @interface CPTableCstrI : CPCoreConstraint<CPConstraint,NSCoding> {
-    CPIntVarBase**     _var;
+    CPIntVar**     _var;
     ORInt           _arity;  
     ORTableI*       _table;
     TRIntArray*     _currentSupport;
     bool            _posted;
 }
 -(CPTableCstrI*) initCPTableCstrI: (id<CPIntVarArray>) x table: (ORTableI*) table;
--(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVarBase*) x : (CPIntVarBase*) y : (CPIntVarBase*) z;
+-(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVar*) x : (CPIntVar*) y : (CPIntVar*) z;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;

@@ -734,9 +734,9 @@ static inline ORLong maxSeq(ORLong v[4])  {
          low = xMax / c;
          up  = xMin / c;
       }
-      CotCPIntVarBase* rem  = _mgr->adaptiveCreateIntVariable(-c+1,c-1);
-      CotCPIntVarBase* prod = _mgr->adaptiveCreateIntVariable(c*low,c*up);
-      CotCPIntVarBase* z = hasContext() ?
+      CotCPIntVar* rem  = _mgr->adaptiveCreateIntVariable(-c+1,c-1);
+      CotCPIntVar* prod = _mgr->adaptiveCreateIntVariable(c*low,c*up);
+      CotCPIntVar* z = hasContext() ?
       topContext() : _mgr->adaptiveCreateIntVariable(low,up);
       setSuccess(_mgr->post(cf.mod(x,c,rem)));
       setSuccess(_mgr->post(cf.mul(z,c,prod)));
@@ -759,9 +759,9 @@ static inline ORLong maxSeq(ORLong v[4])  {
       int pxlow = CotCP::bindDown(minSeq(pxvals,4));
       int pxup  = CotCP::bindUp(maxSeq(pxvals,4));
       int rb = max(abs(yp),abs(ym))-1;
-      CotCPIntVarBase* rem  = _mgr->adaptiveCreateIntVariable(-rb,rb);
-      CotCPIntVarBase* prod = _mgr->adaptiveCreateIntVariable(pxlow,pxup);
-      CotCPIntVarBase* z = hasContext() ?
+      CotCPIntVar* rem  = _mgr->adaptiveCreateIntVariable(-rb,rb);
+      CotCPIntVar* prod = _mgr->adaptiveCreateIntVariable(pxlow,pxup);
+      CotCPIntVar* z = hasContext() ?
       topContext() : _mgr->adaptiveCreateIntVariable(low,up);
       setSuccess(_mgr->post(cf.mod(v1,v2,rem)));
       setSuccess(_mgr->post(cf.nequalCst(v2,0)));

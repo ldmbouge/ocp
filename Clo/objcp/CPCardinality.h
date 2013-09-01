@@ -17,7 +17,7 @@
 @interface CPCardinalityCst : CPCoreConstraint<NSCoding> {  
     CPEngineI*        _fdm;
     ORRange       _values;
-    CPIntVarBase**         _x;  // CPIntVar[_lx .. _ux] 
+    CPIntVar**         _x;  // CPIntVar[_lx .. _ux] 
     ORInt*             _low;  // raw version of _low
     ORInt*              _up;  // raw version of _up
     ORInt               _lo; // int low[lo..uo] && int up[lo..uo]

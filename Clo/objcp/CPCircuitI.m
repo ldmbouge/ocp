@@ -18,7 +18,7 @@
 
 @implementation CPCircuitI {
    id<CPIntVarArray>  _x;
-   CPIntVarBase**      _var;
+   CPIntVar**      _var;
    ORInt            _varSize;
    ORInt            _low;
    ORInt            _up;
@@ -103,9 +103,9 @@ ORStatus assign(CPCircuitI* cstr,int i)
     _low = [_x low];
     _up = [_x up];
     _varSize = (_up - _low + 1);
-    _var = malloc(_varSize * sizeof(CPIntVarBase*));
+    _var = malloc(_varSize * sizeof(CPIntVar*));
     for(ORInt i = 0; i < _varSize; i++)
-        _var[i] = (CPIntVarBase*) [_x at: _low + i];
+        _var[i] = (CPIntVar*) [_x at: _low + i];
     _var -= _low;
     
     id<ORIntRange> R = RANGE([_x tracker],_low,_up);

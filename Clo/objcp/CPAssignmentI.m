@@ -20,8 +20,8 @@
    id<CPEngine>       _engine;
    id<CPIntVarArray>  _x;
    id<ORIntMatrix>    _matrix;
-   CPIntVarBase**        _var;
-   CPIntVarBase*         _costVariable;
+   CPIntVar**        _var;
+   CPIntVar*         _costVariable;
    
    ORInt              _varSize;
    ORInt              _low;
@@ -56,7 +56,7 @@
    _posted = false;
 }
 
--(CPAssignment*) initCPAssignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (CPIntVarBase*) costVariable
+-(CPAssignment*) initCPAssignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (CPIntVar*) costVariable
 {
    self = [super initCPCoreConstraint: engine];
    _x = x;
@@ -138,10 +138,10 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Assignment: The range of the variables does not agree with the rows of the matrix"];
    
    _varSize = (_up - _low + 1);
-   _var = malloc(_varSize * sizeof(CPIntVarBase*));
+   _var = malloc(_varSize * sizeof(CPIntVar*));
    _var -= _low;
    for(ORInt i = _lowr; i <= _upr; i++) 
-      _var[i] = (CPIntVarBase*) [_x at: i];
+      _var[i] = (CPIntVar*) [_x at: i];
 
    
    _cost = [CPFactory TRIntMatrix: _engine range: Rows : Columns ];
