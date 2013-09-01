@@ -56,7 +56,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 
 /*****************************************************************************************/
-/*                        CPIntVar                                                   */
+/*                        CPIntVar                                                       */
 /*****************************************************************************************/
 
 @implementation CPIntVar
@@ -364,6 +364,259 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    [self whenChangeBoundsPropagate: c priority: c->_priority];
 }
 
+@end
+
+/*****************************************************************************************/
+/*                        CPIntVarI                                                      */
+/*****************************************************************************************/
+
+@implementation CPIntVarCst
+-(CPIntVarCst*) initCPIntVarCst: (CPEngineI*) engine value: (ORInt) value;
+{
+   self = [super initCPIntVar: engine];
+   _vc = CPVCCst;
+   _value = value;
+   return self;
+}
+-(void) dealloc
+{
+   if (_recv != nil)
+      [_recv release];
+   [super dealloc];
+}
+-(CPLiterals*) findLiterals:(CPIntVar*)ref
+{
+   return nil;
+}
+-(ORBool) isBool
+{
+   return _isBool;
+}
+// PVH: To see if we can remove this bloody guy
+-(void) addVar: (CPIntVar*) var
+{
+   assert(FALSE); // [ldm] should never be called on real vars. Only on multicast
+}
+-(CPLiterals*) literals
+{
+   return nil;
+}
+-(NSMutableSet*) constraints
+{
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:2];
+   if (_recv) {
+      NSMutableSet* rc = [_recv constraints];
+      [rv unionSet:rc];
+      [rc release];
+   }
+   return rv;
+}
+// PVH: I hate these guys; pollute the interface
+-(CPIntVar*) findAffine:(ORInt)scale shift:(ORInt)shift
+{
+   if (scale==1 && shift==0)
+      return self;
+   else
+      return nil;
+}
+-(ORBool) isConstant
+{
+   return NO;
+}
+-(ORBool) isVariable
+{
+   return YES;
+}
+-(ORBool) bound
+{
+   return TRUE;
+}
+-(ORInt) min
+{
+   return _value;
+}
+-(ORInt) max
+{
+   return _value;
+}
+-(ORInt) value
+{
+   return _value;
+}
+-(ORFloat) floatMin
+{
+   return _value;
+}
+-(ORFloat) floatMax
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value; 
+}
+-(ORInt) intValue
+{
+   return _value; 
+}
+-(ORBounds) bounds
+{
+   return (ORBounds){_value,_value};
+}
+-(ORInt) domsize
+{
+   return 1;
+}
+-(ORInt) countFrom:(ORInt)from to:(ORInt)to
+{
+   return (_value >= from && _value <= to);
+}
+-(ORBool) member:(ORInt)v
+{
+   return _value == v;
+}
+// PVH: No idea what the semantics is
+-(ORRange) around: (ORInt) v
+{
+   return (ORRange){_value-1,_value+1};
+}
+-(ORInt) shift
+{
+   return 0;
+}
+-(ORInt) scale
+{
+   return 1;
+}
+-(ORInt) literal
+{
+   return 0;
+}
+-(id<CPIntVar>) base
+{
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* s = [NSMutableString stringWithCapacity:64];
+#if !defined(_NDEBUG)
+   [s appendFormat:@"var<%d>=",_name];
+#endif
+   [s appendFormat:@"%d",_value];
+   return s;
+}
+
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender
+{
+   return NO;
+}
+-(void) setTracksLoseEvt
+{
+}
+
+// AC3 Closure Events
+
+-(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+}
+-(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+}
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+}
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+}
+
+// Constraint-based Events
+
+-(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+}
+-(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
+{
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+}
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+}
+
+// AC5 Events
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
+{
+}
+
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   return NULL;
+}
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t;
+{
+}
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   return NULL;
+}
+-(void) createTriggers
+{
+}
+
+-(void) bindEvt:(id<CPDom>) sender
+{
+}
+
+-(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
+{
+}
+
+-(void) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender
+{
+}
+
+-(void) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
+{
+}
+-(void) updateMin: (ORInt) newMin
+{
+   if (newMin > _value)
+      failNow();
+}
+-(void) updateMax: (ORInt) newMax
+{
+   if (newMax < _value)
+      failNow();
+}
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
+{
+   if (newMin > _value)
+      failNow();
+   if (newMax < _value)
+      failNow();
+}
+-(void) bind: (ORInt) val
+{
+   if (_value != val)
+      failNow();
+}
+-(void) remove: (ORInt) val
+{
+   if (_value == val)
+      failNow();
+}
+-(void) inside:(ORIntSetI*) S
+{
+   if (![S member: _value])
+      failNow();
+}
 @end
 
 /*****************************************************************************************/

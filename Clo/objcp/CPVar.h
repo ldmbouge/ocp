@@ -24,7 +24,8 @@ enum CPVarClass {
    CPVCEQLiteral = 3,
    CPVCLiterals = 4,
    CPVCFlip = 5,
-   CPVCCast = 6
+   CPVCCast = 6,
+   CPVCCst = 7
 };
 
 @protocol CPVar <NSObject>

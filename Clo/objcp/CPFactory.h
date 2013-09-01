@@ -19,6 +19,7 @@
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
++(id<CPIntVar>) intVar: (id<CPEngine>) cp value: (ORInt) value;
 +(id<CPIntVar>) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range;
 +(id<CPIntVar>) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x shift: (ORInt) b;

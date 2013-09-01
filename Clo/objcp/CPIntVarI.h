@@ -74,7 +74,18 @@ typedef struct  {
 -(void)                 setDelegate:(id<CPIntVarNotifier>)d;
 @end
 
-@interface CPIntVarI : CPIntVar<CPIntVar> {
+@interface CPIntVarCst : CPIntVar
+{
+   @package
+   ORInt _value;
+}
+
+-(CPIntVar*) initCPIntVarCst: (id<CPEngine>) cp value: (ORInt) value;
+-(void) dealloc;
+@end
+
+
+@interface CPIntVarI : CPIntVar {
 @package
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
@@ -83,68 +94,6 @@ typedef struct  {
 -(CPIntVar*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVar*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVar*) x;
 -(void) dealloc;
--(ORBool) isBool;
--(NSString*) description;
--(NSMutableSet*)constraints;
--(CPLiterals*)literals;
-
-// needed for speeding the code when not using AC5
--(ORBool) tracksLoseEvt:(id<CPDom>)sender;
--(void) setTracksLoseEvt;
-
-// subscription
-
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c; 
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c; 
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c; 
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c; 
-
-// PVH: Why is this thing not with the same syntax
--(void) whenLoseValue: (CPCoreConstraint*)c do: (ConstraintIntCallBack) todo;
-
-// triggers
-
--(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) watch: (ORInt) val with: (id<CPTrigger>) t;
--(void) createTriggers;
-
-// notification
-
--(void) bindEvt:(id<CPDom>)sender;
--(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender;
--(void) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender;
--(void) loseValEvt: (ORInt)val sender:(id<CPDom>)sender;
-
-// access
-
--(ORBool) bound;
--(ORInt) min;
--(ORInt) max;
--(ORInt) value;
--(ORInt) intValue;
--(ORFloat) floatMin;
--(ORFloat) floatMax;
--(ORFloat) floatValue;
--(ORBounds)bounds;
--(ORInt) domsize;
--(ORBool) member:(ORInt)v;
--(ORRange) around:(ORInt)v;
--(id<CPDom>) domain;
--(ORInt) shift;
--(ORInt) scale;
--(id<ORIntVar>)base;
--(ORInt)countFrom:(ORInt)from to:(ORInt)to;
-
-// update
--(void)     updateMin: (ORInt) newMin;
--(void)     updateMax: (ORInt) newMax;
--(void)     updateMin: (ORInt) newMin andMax:(ORInt)newMax;
--(void)     bind:(ORInt) val;
--(void)     remove:(ORInt) val;
--(void)     inside:(ORIntSetI*) S;
-
 // Class methods
 +(CPIntVar*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
 +(CPIntVar*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
@@ -265,6 +214,7 @@ static inline BOOL bound(CPIntVar* x)
       case CPVCShift:  return bound(((CPIntShiftView*)x)->_x);
       case CPVCAffine: return bound(((CPIntView*)x)->_x);
       case CPVCFlip: return bound(((CPIntFlipView*)x)->_x);
+      case CPVCCst: return TRUE;
       default: return [x bound];
    }   
 }
@@ -274,6 +224,7 @@ static inline ORInt minDom(CPIntVar* x)
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)((CPIntVarI*)x)->_dom)->_min._val;
       case CPVCShift: return minDom(((CPIntShiftView*)x)->_x) + ((CPIntShiftView*)x)->_b;
+      case CPVCCst: return ((CPIntVarCst*) x)->_value;
       default: return [x min];
    }
 }
@@ -283,6 +234,7 @@ static inline ORInt maxDom(CPIntVar* x)
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)((CPIntVarI*)x)->_dom)->_max._val;
       case CPVCShift: return maxDom(((CPIntShiftView*)x)->_x) + ((CPIntShiftView*)x)->_b;
+      case CPVCCst: return ((CPIntVarCst*) x)->_value;
       default: return [x max];
    }
 }
@@ -307,6 +259,10 @@ static inline ORBounds bounds(CPIntVar* x)
          else
             return (ORBounds){fmax,fmin};
       }*/
+      case CPVCCst: {
+         ORInt v = ((CPIntVarCst*) x)->_value;
+         return (ORBounds){v,v};
+      }
       default: return [x bounds];
    }
 }
@@ -324,10 +280,13 @@ static inline ORInt memberDom(CPIntVar* x,ORInt value)
       case CPVCBare:
          return domMember((CPBoundsDom*)((CPIntVarI*)x)->_dom, value);
          break;
-      case CPVCShift: {
+      case CPVCShift:
+      {
          const ORInt b = ((CPIntShiftView*)x)->_b;
          return memberDom(((CPIntShiftView*)x)->_x, value - b);
-      }break;
+      }
+      break;
+      case CPVCCst: return (((CPIntVarCst*) x)->_value == value);
       default:
          return [x member:value];
    }

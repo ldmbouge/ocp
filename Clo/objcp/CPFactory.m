@@ -27,27 +27,36 @@
 {
     printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
 }
-+(CPIntVar*) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range
++(id<CPIntVar>) intVar: (id<CPEngine>) cp value: (ORInt) value
 {
+   return [[CPIntVarCst alloc] initCPIntVarCst: cp value: value];
+}
++(id<CPIntVar>) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range
+{
+   if ([range low] == [range up])
+      return [CPFactory intVar: cp value: [range low]];
    return [CPIntVarI initCPIntVar: cp bounds: range];
 }
-+(CPIntVar*) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
++(id<CPIntVar>) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
 {
+   if ([range low] == [range up])
+      return [CPFactory intVar: cp value: [range low]];
     return [CPIntVarI initCPIntVar: cp low: [range low] up: [range up]];
 }
-+(CPIntVar*) intVar: (CPIntVar*) x shift: (ORInt) b
++(id<CPIntVar>) intVar: (CPIntVar*) x shift: (ORInt) b
 {
    if (b!=0)
       return [CPIntVarI initCPIntView: x withShift: b];
-   else return x;
+   else
+      return x;
 }
-+(CPIntVar*) intVar: (CPIntVar*) x scale: (ORInt) a
++(id<CPIntVar>) intVar: (CPIntVar*) x scale: (ORInt) a
 {
    if (a!=1)
     return [CPIntVarI initCPIntView: x withScale: a];
    else return x;
 }
-+(CPIntVar*) intVar: (CPIntVarI *) x scale: (ORInt) a shift:(ORInt) b
++(id<CPIntVar>) intVar: (CPIntVarI *) x scale: (ORInt) a shift:(ORInt) b
 {
    if (a==1 && b==0)
       return x;
