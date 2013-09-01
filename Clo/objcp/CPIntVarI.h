@@ -37,9 +37,10 @@ typedef struct  {
 // This is really an implementation protocol
 // PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
 // PVH: my recommendation is to have an interface and this becomes the implementation class
-@protocol CPIntVarNotifier <NSObject>
-// [pvh] What is this?
--(ORInt)           getId;
+
+
+@protocol CPIntVarNotifier<NSObject>
+-(ORUInt)          getId;
 -(NSMutableSet*)   constraints;
 -(void)            setDelegate: (id<CPIntVarNotifier>) delegate;
 -(void)            addVar: (id<CPIntVarNotifier>) var;
@@ -55,11 +56,17 @@ typedef struct  {
 -(void)            loseValEvt: (ORInt) val sender: (id<CPDom>)sender;
 @end
 
-@interface CPIntVarI : ORObject<CPIntVar,CPIntVarNotifier> {
+@interface CPIntVarBase : ORObject<CPIntVarNotifier,CPIntVar> {
 @package
-   enum CPVarClass                      _vc;
+   enum CPVarClass _vc;
+   CPEngineI*      _fdm;
+}
+-(CPIntVarBase*)   initCPIntVarBase: (id<CPEngine>) cp;
+@end
+
+@interface CPIntVarI : CPIntVarBase<CPIntVar> {
+@package
    BOOL                             _isBool;
-   CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
@@ -68,11 +75,8 @@ typedef struct  {
 -(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
--(enum CPVarClass)varClass;
 -(ORBool) isBool;
 -(NSString*) description;
--(CPEngineI*) engine;
--(id<ORTracker>) tracker;
 -(NSMutableSet*)constraints;
 -(CPBitDom*)flatDomain;
 -(CPLiterals*)literals;

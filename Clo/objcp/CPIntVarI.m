@@ -56,7 +56,305 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 
 /*****************************************************************************************/
-/*                        CPIntVar                                                       */
+/*                        CPIntVarBase                                                   */
+/*****************************************************************************************/
+
+@implementation CPIntVarBase
+-(CPIntVarBase*) initCPIntVarBase: (CPEngineI*) engine
+{
+   self = [super init];
+   _fdm  = engine;
+   return self;
+}
+-(ORUInt) getId
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method getId not defined"];
+   return 0;
+}
+-(id<ORTracker>) tracker
+{
+   return _fdm;
+}
+-(id<CPEngine>) engine
+{
+   return _fdm;
+}
+-(enum CPVarClass) varClass
+{
+   return _vc;
+}
+-(ORInt) value
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method value not defined"];
+   return 0;
+}
+-(ORInt) min
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method min not defined"];
+   return 0;
+   
+}
+-(ORInt) max
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method max not defined"];
+   return 0;
+   
+}
+-(ORFloat) floatMin
+{
+   return [self min];
+}
+-(ORFloat) floatMax
+{
+   return [self max];
+}
+-(ORFloat) floatValue
+{
+   return [self value];
+}
+
+-(ORInt) domsize
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method domsize  not defined"];
+   return 0;
+   
+}
+-(ORBounds) bounds
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method bounds not defined"];
+   return (ORBounds){0,0};
+   
+}
+-(ORBool) member: (ORInt) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method member not defined"];
+   return FALSE;
+   
+}
+-(ORBool) isBool
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method isBool not defined"];
+   return FALSE;
+   
+}
+-(ORInt) scale
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method scale  not defined"];
+   return 0;
+   
+}
+-(ORInt) shift
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method shift not defined"];
+   return 0;
+   
+}
+-(id<ORIntVar>) base
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method base not defined"];
+   return 0;
+   
+}
+-(ORBool) bound
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method bound not defined"];
+   return 0;
+   
+}
+-(ORInt) countFrom: (ORInt) from to: (ORInt) to
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method countFrom not defined"];
+   return 0;
+   
+}
+-(void) bind:(ORInt) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method bind not defined"];
+}
+-(void) remove: (ORInt) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method remove not defined"];
+}
+-(void) inside: (id<ORIntSet>) S
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method inside not defined"];
+}
+-(void) updateMin: (ORInt) newMin
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method updateMin not defined"];
+}
+-(void) updateMax: (ORInt) newMax
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method updateMax not defined"];
+}
+-(void) updateMin: (ORInt) newMin andMax: (ORInt) newMax
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method updateMin not defined"];
+}
+-(NSMutableSet*) constraints
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method constraint not defined"];
+   return NULL;
+}
+-(void) setDelegate: (id<CPIntVarNotifier>) delegate
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method setDelegate not defined"];
+}
+-(void) addVar: (id<CPIntVarNotifier>) var
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method addVar not defined"];
+}
+-(CPLiterals*) findLiterals:(CPIntVarI*)ref
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method findLiterals not defined"];
+   return NULL;
+}
+-(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method findAffine not defined"];
+   return NULL;
+}
+-(CPLiterals*) literals
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method literals not defined"];
+   return NULL;
+}
+-(void) setTracksLoseEvt
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method setTracksLoseEvt not defined"];
+}
+-(ORBool) tracksLoseEvt: (id<CPDom>) sender
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method trackLoseEvt not defined"];
+}
+-(void) bindEvt: (id<CPDom>) sender
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method bindEvt not defined"];
+}
+-(void) changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method changeMinEvt not defined"];
+}
+-(void) changeMaxEvt:(ORInt) dsz sender: (id<CPDom>)sender
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method changeMaxEvt not defined"];
+}
+-(void) loseValEvt: (ORInt) val sender: (id<CPDom>)sender
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method loseValEvt not defined"];
+}
+
+
+-(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenBindDo not defined"];   
+}
+-(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenChangeDo not defined"];   
+}
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenChangeMinDo not defined"];   
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenChangeMaxDo not defined"];   
+}
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenChangeBoundsDo not defined"];
+}
+-(void) whenLoseValue: (CPCoreConstraint*)c do: (ConstraintIntCallBack) todo
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenLoseValue not defined"];   
+}
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenLoseTrigger not defined"];  
+   return NULL;
+}
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenBindTrigger not defined"];  
+   return NULL;
+}
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method watch not defined"];     
+}
+-(void) createTriggers
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method createTriggers not defined"];
+}
+
+-(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
+-(void) whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
+-(void) whenChangeMinDo: (ConstraintCallback) todo  onBehalf:(CPCoreConstraint*)c
+{
+   [self whenChangeMinDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   [self whenChangeMaxDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   [self whenChangeBoundsDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
+
+-(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntBase: method whenBindPropagate not defined"];
+}
+-(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenChangePropagate not defined"];
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenChangeMinPropagate not defined"];
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenChangeMaxPropagate not defined"];
+}
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method whenChaneBoundsPropagate not defined"];
+}
+
+-(void) whenBindPropagate: (CPCoreConstraint*) c
+{
+   [self whenBindPropagate: c priority: c->_priority];
+}
+-(void) whenChangePropagate:  (CPCoreConstraint*) c
+{
+   [self whenChangePropagate: c priority: c->_priority];
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c
+{
+   [self whenChangeMinPropagate: c priority: c->_priority];
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c
+{
+   [self whenChangeMaxPropagate: c priority: c->_priority];
+}
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c
+{
+   [self whenChangeBoundsPropagate: c priority: c->_priority];
+}
+
+@end
+
+/*****************************************************************************************/
+/*                        CPIntVarI                                                      */
 /*****************************************************************************************/
 
 @implementation CPIntVarI
@@ -65,10 +363,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(CPIntVarI*) initCPIntVarCore: (CPEngineI*)engine low: (ORInt) low up: (ORInt)up
 {
-   self = [super init];
+   self = [super initCPIntVarBase: engine];
    _vc = CPVCBare;
    _isBool = NO;
-   _fdm  = engine;
    [_fdm trackVariable: self];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);
    _triggers = nil;
@@ -87,10 +384,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         [_triggers release];    
     [super dealloc];
 }
--(enum CPVarClass)varClass
-{
-   return _vc;
-}
 -(CPLiterals*)findLiterals:(CPIntVarI*)ref
 {
    return nil;
@@ -99,23 +392,15 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _isBool;
 }
--(CPEngineI*) engine
-{
-    return _fdm;
-}
--(id<ORTracker>) tracker
-{
-   return _fdm;
-}
 -(void) addVar:(CPIntVarI*)var
 {
    assert(FALSE); // [ldm] should never be called on real vars. Only on multicast
 }
--(CPLiterals*)literals
+-(CPLiterals*) literals
 {
    return nil;
 }
--(NSMutableSet*)constraints
+-(NSMutableSet*) constraints
 {
    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
    if (_recv) {
@@ -125,7 +410,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    return rv;
 }
--(CPBitDom*)flatDomain
+-(CPBitDom*) flatDomain
 {
    return newDomain((CPBitDom*)_dom, 1, 0);
 }
@@ -144,11 +429,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       _recv = [d retain];
    }
 }
--(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale==1 && shift==0)
       return self;
-   else return nil;
+   else
+      return nil;
 }
 -(ORBool) isConstant
 {
@@ -186,7 +472,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       return 0;
    }
 }
-
 -(ORFloat) floatMin
 {
    return [_dom min];
@@ -204,18 +489,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       return 0;
    }
 }
-
 -(ORInt) intValue
 {
    assert(_dom);
    if ([_dom bound])
       return [_dom min];
    else {
-      //@throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
+      @throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
       return 0;
    }
 }
-
 -(ORBounds) bounds
 {
    assert(_dom);
@@ -354,26 +637,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    hookupEvent(_fdm,&_net._boundsEvt, todo, c, p);
 }
--(void)whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-   [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c]; 
-}
--(void)whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-    [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c];
-}
--(void) whenChangeMinDo: (ConstraintCallback) todo  onBehalf:(CPCoreConstraint*)c
-{
-    [self whenChangeMinDo: todo priority: HIGHEST_PRIO onBehalf:c];
-}
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-    [self whenChangeMaxDo: todo priority: HIGHEST_PRIO onBehalf:c];
-}
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-    [self whenChangeBoundsDo: todo priority: HIGHEST_PRIO onBehalf:c];
-}
 
 // Constraint-based Events
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
@@ -397,26 +660,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    hookupEvent(_fdm, &_net._boundsEvt, nil, c, p);
 }
 
--(void) whenBindPropagate: (CPCoreConstraint*) c
-{
-    [self whenBindPropagate: c priority: c->_priority];
-}
--(void) whenChangePropagate:  (CPCoreConstraint*) c 
-{
-    [self whenChangePropagate: c priority: c->_priority];
-}
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c 
-{    
-    [self whenChangeMinPropagate: c priority: c->_priority];
-}
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c
-{
-    [self whenChangeMaxPropagate: c priority: c->_priority];
-}
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c
-{
-    [self whenChangeBoundsPropagate: c priority: c->_priority];
-}
 
 // AC5 Events
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo 
@@ -1322,7 +1565,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _nb = 0;
    return self;
 }
--(ORInt)getId
+-(ORUInt)getId
 {
    assert(FALSE);
    return 0;
@@ -1446,7 +1689,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       if (_tab[k] == nil)
          [buf appendFormat:@"nil %c",k < _nb -1 ? ',' : ']'];
       else
-         [buf appendFormat:@"%d-%s %c",[_tab[k] getId],classes[[_tab[k] varClass]],k < _nb -1 ? ',' : ']'];
+         [buf appendFormat:@"%u-%s %c",[_tab[k] getId],classes[[_tab[k] varClass]],k < _nb -1 ? ',' : ']'];
    }
    return buf;
 }
@@ -1518,7 +1761,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    free(_pos);
    [super dealloc];
 }
--(ORInt)getId
+-(ORUInt)getId
 {
    return 0;
 }

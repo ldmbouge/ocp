@@ -65,7 +65,7 @@ typedef struct  {
 @class CPFloatVarI;
 
 @protocol CPFloatVarNotifier <NSObject>
--(ORInt)getId;
+-(ORUInt)getId;
 -(NSMutableSet*)constraints;
 -(void)setDelegate:(id<CPFloatVarNotifier>)delegate;
 -(void) addVar:(CPFloatVarI*)var;

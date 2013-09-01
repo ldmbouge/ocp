@@ -15,7 +15,7 @@
 #import <objcp/CPVar.h>
 
 @protocol CPBitVar <NSObject>
--(ORInt) getId;
+-(ORUInt) getId;
 -(ORBool) bound;
 -(CPBitArrayDom*) domain;
 -(uint64)min;

@@ -94,7 +94,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 {
    self = [super initCPCoreConstraint:[cap engine]];
    _priority = HIGHEST_PRIO - 2;
-   _fdm = [cap engine];
+   _fdm = (CPEngineI*) [cap engine];
    _x = x;
    _w = w;
    _c = cap;
