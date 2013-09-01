@@ -242,7 +242,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    _theVar = iv;
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
-   id<CPIntVarNotifier> xDeg = [iv delegate];
+   CPMultiCast* xDeg = [iv delegate];
    if (xDeg == nil) {
       CPMultiCast* mc = [[CPMultiCast alloc] initVarMC:2 root:iv];
       [mc addVar: self];

@@ -33,21 +33,10 @@ typedef struct  {
 @class CPMultiCast;
 
 
-
-// This is really an implementation protocol
-// PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
-// PVH: my recommendation is to have an interface and this becomes the implementation class
-
-
 @protocol CPIntVarNotifier<NSObject>
--(ORUInt)          getId;
 -(NSMutableSet*)   constraints;
--(void)            setDelegate: (id<CPIntVarNotifier>) delegate;
--(void)            addVar: (id<CPIntVarNotifier>) var;
--(enum CPVarClass) varClass;
--(CPLiterals*)     findLiterals:(CPIntVar*)ref;
--(CPIntVar*)   findAffine:(ORInt)scale shift:(ORInt)shift;
--(CPLiterals*)     literals;
+//-(enum CPVarClass) varClass;
+-(CPIntVar*)       findAffine:(ORInt)scale shift:(ORInt)shift;
 -(void)            setTracksLoseEvt;
 -(ORBool)          tracksLoseEvt: (id<CPDom>) sender;
 -(void)            bindEvt: (id<CPDom>) sender;
@@ -70,8 +59,8 @@ typedef struct  {
 -(CPBitDom*) flatDomain;
 
 // delegation
--(id<CPIntVarNotifier>) delegate;
--(void)                 setDelegate:(id<CPIntVarNotifier>)d;
+-(CPMultiCast*) delegate;
+-(void) setDelegate:(CPMultiCast*) d;
 @end
 
 @interface CPIntVarCst : CPIntVar
@@ -340,18 +329,20 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 
 @interface CPMultiCast : NSObject<CPIntVarNotifier> {
    id<CPIntVarNotifier>* _tab;
-   BOOL        _tracksLoseEvt;
-   ORInt                  _nb;
-   ORInt                  _mx;
-   UBType*        _loseValIMP;
-   UBType*            _minIMP;
-   UBType*            _maxIMP;
+   BOOL                  _tracksLoseEvt;
+   ORInt                 _nb;
+   ORInt                 _mx;
+   UBType*               _loseValIMP;
+   UBType*               _minIMP;
+   UBType*               _maxIMP;
+   CPLiterals*           _literals;
 }
--(id)initVarMC:(ORInt)n root:(CPIntVar*)root;
+-(id) initVarMC: (ORInt) n root: (CPIntVar*) root;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
--(CPLiterals*)literals;
--(void) addVar:(id<CPIntVarNotifier>) v;
+// PVH 2 LDM: This is ugly beyond belief
+-(CPLiterals*) findLiterals:(CPIntVar*)ref;
+-(void) addVar: (id) v;
 -(NSMutableSet*)constraints;
 -(void) bindEvt:(id<CPDom>)sender;
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
@@ -362,17 +353,16 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 @interface CPLiterals : NSObject<CPIntVarNotifier> {
    CPIntVar*  _ref;
    CPIntVar** _pos;
-   ORInt        _nb;
-   ORInt       _ofs;
-   BOOL        _tracksLoseEvt;
+   ORInt      _nb;
+   ORInt      _ofs;
+   BOOL       _tracksLoseEvt;
 }
--(id)initCPLiterals:(CPIntVar*)ref;
--(void)dealloc;
--(enum CPVarClass)varClass;
--(CPLiterals*)literals;
--(NSMutableSet*)constraints;
--(void)addPositive:(id<CPIntVar>)x forValue:(ORInt)value;
--(id<CPIntVar>)positiveForValue:(ORInt)value;
+-(id) initCPLiterals:(CPIntVar*)ref;
+-(void) dealloc;
+-(enum CPVarClass) varClass;
+-(NSMutableSet*) constraints;
+-(void) addPositive:(id<CPIntVar>)x forValue:(ORInt)value;
+-(id<CPIntVar>) positiveForValue:(ORInt)value;
 -(void) bindEvt:(id<CPDom>)sender;
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;

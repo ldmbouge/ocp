@@ -198,11 +198,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method constraint not defined"];
    return NULL;
 }
--(id<CPIntVarNotifier>) delegate
+-(CPMultiCast*) delegate
 {
    return _recv;
 }
--(void) setDelegate: (id<CPIntVarNotifier,NSCoding>) d
+-(void) setDelegate: (CPMultiCast*) d
 {
    if (_recv != d) {
       if (_recv != nil) {
@@ -213,23 +213,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       _recv = [d retain];
    }
 }
--(void) addVar: (id<CPIntVarNotifier>) var
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method addVar not defined"];
-}
--(CPLiterals*) findLiterals:(CPIntVar*)ref
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method findLiterals not defined"];
-   return NULL;
-}
 -(CPIntVar*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method findAffine not defined"];
-   return NULL;
-}
--(CPLiterals*) literals
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method literals not defined"];
    return NULL;
 }
 -(void) setTracksLoseEvt
@@ -384,22 +370,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_recv release];
    [super dealloc];
 }
--(CPLiterals*) findLiterals:(CPIntVar*)ref
-{
-   return nil;
-}
 -(ORBool) isBool
 {
    return _isBool;
-}
-// PVH: To see if we can remove this bloody guy
--(void) addVar: (CPIntVar*) var
-{
-   assert(FALSE); // [ldm] should never be called on real vars. Only on multicast
-}
--(CPLiterals*) literals
-{
-   return nil;
 }
 -(NSMutableSet*) constraints
 {
@@ -650,21 +623,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         [_triggers release];    
     [super dealloc];
 }
--(CPLiterals*)findLiterals:(CPIntVar*)ref
-{
-   return nil;
-}
 -(ORBool) isBool
 {
    return _isBool;
-}
--(void) addVar:(CPIntVar*)var
-{
-   assert(FALSE); // [ldm] should never be called on real vars. Only on multicast
-}
--(CPLiterals*) literals
-{
-   return nil;
 }
 -(NSMutableSet*) constraints
 {
@@ -1077,7 +1038,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    self = [self initCPIntVarCore:engine low: low up: up];
    _vc = CPVCAffine;
-   id<CPIntVarNotifier> xDeg = [x delegate];
+   CPMultiCast* xDeg = [x delegate];
    if (xDeg == nil) {
       CPMultiCast* mc = [[CPMultiCast alloc] initVarMC:2 root:x];
       [mc addVar: self];
@@ -1803,7 +1764,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 @implementation CPMultiCast
 
--(id)initVarMC:(ORInt)n root:(CPIntVar*)root
+-(id) initVarMC: (ORInt) n root: (CPIntVar*) root
 {
    self = [super init];
    _mx  = n;
@@ -1812,25 +1773,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _minIMP   = malloc(sizeof(UBType)*_mx);
    _maxIMP   = malloc(sizeof(UBType)*_mx);
    _tracksLoseEvt = false;
-   [root setDelegate:self];
+   [root setDelegate: self];
    _nb = 0;
+   _literals = nil;
    return self;
 }
--(ORUInt)getId
+-(ORUInt) getId
 {
    assert(FALSE);
    return 0;
 }
--(void)setDelegate:(id<CPIntVarNotifier>)delegate
-{}
 -(void) dealloc
 {
-   /*
-    for(ORInt i=0;i<_nb;i++) {
-      if ([_tab[i] isKindOfClass:[CPLiterals class]])
-         [_tab[i] release];
-   }
-    */
    free(_tab);
    free(_minIMP);
    free(_maxIMP);
@@ -1841,7 +1795,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return CPVCLiterals;
 }
--(void) addVar:(id)v
+// PVH to LDM: This is ugly beyond belief
+-(void) addVar:(id) v
 {
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
@@ -1867,14 +1822,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       me->_nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
+   // PVH: Sanity check
    ORInt nbBare = 0;
    for(ORInt i=0;i<_nb;i++) {
       if (_tab[i] !=nil)
-         nbBare += ([_tab[i] varClass] == CPVCBare);
+         nbBare += ([((id)_tab[i]) varClass] == CPVCBare);
    }
    assert(nbBare<=1);
+   // PVH: End of sanity check
 }
--(NSMutableSet*)constraints
+-(NSMutableSet*) constraints
 {
    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
    for(ORInt i=0;i<_nb;i++) {
@@ -1885,53 +1842,64 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return rv;
 }
 
--(CPLiterals*)findLiterals:(CPIntVar*)ref
+//-(CPLiterals*) findLiterals: (CPIntVar*) ref
+//{
+//   for(ORUInt i=0;i < _nb;i++) {
+//      CPLiterals* found = [_tab[i] literals];
+//      if (found)
+//         return found;
+//   }
+//   CPLiterals* newLits = [[CPLiterals alloc] initCPLiterals:ref];
+//   if (_nb >= _mx) {
+//      _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
+//      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
+//      _minIMP = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
+//      _maxIMP = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
+//      _mx <<= 1;
+//   }
+//   _tab[_nb] = newLits;
+//   _loseValIMP[_nb] = (UBType)[newLits methodForSelector:@selector(loseValEvt:sender:)];
+//   _minIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMinEvt:sender:)];
+//   _maxIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMaxEvt:sender:)];
+//   _tracksLoseEvt = YES;
+//   ORInt toFix = _nb;
+//   id<ORTrail> theTrail = [[ref engine] trail];
+//   __block CPMultiCast* me = self;
+//   [theTrail trailClosure:^{
+//      me->_tab[toFix] = NULL;
+//      me->_loseValIMP[toFix] = NULL;
+//      me->_minIMP[toFix] = NULL;
+//      me->_maxIMP[toFix] = NULL;
+//   }];
+//   _nb++;
+//   return newLits;
+//}
+
+-(CPLiterals*) findLiterals: (CPIntVar*) ref
 {
-   for(ORUInt i=0;i < _nb;i++) {
-      CPLiterals* found = [_tab[i] literals];
-      if (found)
-         return found;
-   }
+   if (_literals)
+      return _literals;
    CPLiterals* newLits = [[CPLiterals alloc] initCPLiterals:ref];
-   if (_nb >= _mx) {
-      _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
-      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
-      _minIMP = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
-      _maxIMP = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
-      _mx <<= 1;
-   }
-   _tab[_nb] = newLits;
-   _loseValIMP[_nb] = (UBType)[newLits methodForSelector:@selector(loseValEvt:sender:)];
-   _minIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMinEvt:sender:)];
-   _maxIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMaxEvt:sender:)];
    _tracksLoseEvt = YES;
-   ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
-   __block CPMultiCast* me = self;
-   [theTrail trailClosure:^{
-      me->_tab[toFix] = NULL;
-      me->_loseValIMP[toFix] = NULL;
-      me->_minIMP[toFix] = NULL;
-      me->_maxIMP[toFix] = NULL;
+   [theTrail trailClosure: ^{
+      _literals = NULL;
    }];
-   _nb++;
+   _literals = newLits;
    return newLits;
 }
--(CPLiterals*)literals
-{
-   return nil;
-}
--(CPIntVar*)findAffine:(ORInt)scale shift:(ORInt)shift
+
+-(CPIntVar*)findAffine: (ORInt) scale shift: (ORInt) shift
 {
    for(ORUInt i=0;i < _nb;i++) {
-      CPIntVar* sel = [_tab[i] findAffine:scale shift:shift];
+      CPIntVar* sel = [_tab[i] findAffine: scale shift: shift];
       if (sel)
          return sel;
    }
    return nil;
 }
 
--(NSString*)description
+-(NSString*) description
 {
    static const char* classes[] = {"Bare","Shift","Affine","EQLit","Literals","Flip","NEQLit"};
    NSMutableString* buf = [NSMutableString stringWithCapacity:64];
@@ -1940,7 +1908,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       if (_tab[k] == nil)
          [buf appendFormat:@"nil %c",k < _nb -1 ? ',' : ']'];
       else
-         [buf appendFormat:@"%u-%s %c",[_tab[k] getId],classes[[_tab[k] varClass]],k < _nb -1 ? ',' : ']'];
+         [buf appendFormat:@"%s %c",classes[[((id)_tab[k]) varClass]],k < _nb -1 ? ',' : ']'];
    }
    return buf;
 }
@@ -1954,9 +1922,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) bindEvt:(id<CPDom>)sender
 {
+   // PVH to LDM: This comment is not up to date. 
    // If _nb > 0 but the _tab entries are nil, this would inadvertently
    // set ok to ORFailure which is wrong. Hence it is critical to also
    // backtrack the size of the array in addVar.
+   if (_literals)
+      [_literals bindEvt: sender];
    for(ORInt i=0;i<_nb;i++) {
        [_tab[i] bindEvt:sender];
    }
@@ -1964,6 +1935,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
+   if (_literals)
+      [_literals changeMinEvt: dsz sender: sender];
    SEL ms = @selector(changeMinEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
       //ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
@@ -1973,6 +1946,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
+   if (_literals)
+      [_literals changeMaxEvt: dsz sender: sender];
    SEL ms = @selector(changeMaxEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
       //ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
@@ -1984,16 +1959,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    if (!_tracksLoseEvt)
       return;
+   if (_literals)
+      [_literals loseValEvt: val sender: sender];
    for(ORInt i=0;i<_nb;i++) {
       //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
       if (_loseValIMP[i])
          _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
    }
-}
+ }
 @end
 
 @implementation CPLiterals
--(id)initCPLiterals:(CPIntVar*)ref
+-(id) initCPLiterals: (CPIntVar*) ref
 {
    self = [super init];
    id<CPDom> rd = [ref domain];
@@ -2007,35 +1984,19 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _tracksLoseEvt = NO;
    return self;
 }
--(void)dealloc
+-(void) dealloc
 {
    free(_pos);
    [super dealloc];
 }
--(ORUInt)getId
-{
-   return 0;
-}
--(NSMutableSet*)constraints
+-(NSMutableSet*) constraints
 {
    assert(FALSE);
    return nil;
 }
--(void)setDelegate:(id<CPIntVarNotifier>)delegate
-{}
--(void) addVar:(CPIntVar*)var
-{}
--(enum CPVarClass)varClass
+-(enum CPVarClass) varClass
 {
    return CPVCLiterals;
-}
--(CPLiterals*)findLiterals:(CPIntVar*)ref
-{
-   return self;
-}
--(CPLiterals*)literals
-{
-   return self;
 }
 -(void) setTracksLoseEvt
 {
@@ -2045,27 +2006,26 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _tracksLoseEvt;
 }
--(CPIntVar*)findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift
 {
    return nil;
 }
--(void)addPositive:(CPIntVar*)x forValue:(ORInt)value
+-(void) addPositive: (CPIntVar*) x forValue: (ORInt) value
 {
    assert(_pos[value - _ofs] == 0);
    _pos[value - _ofs] = x;
 }
--(id<CPIntVar>)positiveForValue:(ORInt)value
+-(id<CPIntVar>) positiveForValue: (ORInt) value
 {
    return _pos[value - _ofs];
 }
-
--(void) bindEvt:(id<CPDom>)sender
+-(void) bindEvt:(id<CPDom>) sender
 {
    CPIntVar* lv = _pos[sender.min - _ofs];
    if (lv != NULL)
       [lv bindEvt:sender];
 }
--(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
+-(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
    ORInt min = [_ref min];
    for(ORInt i=_ofs;i <min;i++) {
@@ -2096,6 +2056,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (_pos[val - _ofs])
-      [_pos[val - _ofs] loseValEvt:val sender:sender];
+      [_pos[val - _ofs] loseValEvt: val sender: sender];
 }
 @end
