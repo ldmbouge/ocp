@@ -64,12 +64,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    self = [super init];
    _fdm  = engine;
+   _isBool = NO;
+   [_fdm trackVariable: self];
+   _recv = nil;
    return self;
-}
--(ORUInt) getId
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method getId not defined"];
-   return 0;
 }
 -(id<ORTracker>) tracker
 {
@@ -92,13 +90,26 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method min not defined"];
    return 0;
-   
 }
 -(ORInt) max
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method max not defined"];
    return 0;
-   
+}
+-(ORRange) around: (ORInt) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method around not defined"];
+   return (ORRange){0,0};
+}
+-(id<CPDom>) domain
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method domain not defined"];
+   return NULL;
+}
+-(CPBitDom*) flatDomain
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method flatDomain not defined"];
+   return NULL;
 }
 -(ORFloat) floatMin
 {
@@ -117,55 +128,46 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method domsize  not defined"];
    return 0;
-   
 }
 -(ORBounds) bounds
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method bounds not defined"];
    return (ORBounds){0,0};
-   
 }
 -(ORBool) member: (ORInt) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method member not defined"];
    return FALSE;
-   
 }
 -(ORBool) isBool
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method isBool not defined"];
    return FALSE;
-   
 }
 -(ORInt) scale
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method scale  not defined"];
    return 0;
-   
 }
 -(ORInt) shift
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method shift not defined"];
    return 0;
-   
 }
 -(id<ORIntVar>) base
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method base not defined"];
    return 0;
-   
 }
 -(ORBool) bound
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method bound not defined"];
    return 0;
-   
 }
 -(ORInt) countFrom: (ORInt) from to: (ORInt) to
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method countFrom not defined"];
    return 0;
-   
 }
 -(void) bind:(ORInt) val
 {
@@ -196,20 +198,31 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method constraint not defined"];
    return NULL;
 }
--(void) setDelegate: (id<CPIntVarNotifier>) delegate
+-(id<CPIntVarNotifier>) delegate
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method setDelegate not defined"];
+   return _recv;
+}
+-(void) setDelegate: (id<CPIntVarNotifier,NSCoding>) d
+{
+   if (_recv != d) {
+      if (_recv != nil) {
+         @throw [[NSException alloc] initWithName:@"Internal Error"
+                                           reason:@"Trying to set a delegate that already exists"
+                                         userInfo:nil];
+      }
+      _recv = [d retain];
+   }
 }
 -(void) addVar: (id<CPIntVarNotifier>) var
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method addVar not defined"];
 }
--(CPLiterals*) findLiterals:(CPIntVarI*)ref
+-(CPLiterals*) findLiterals:(CPIntVarBase*)ref
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method findLiterals not defined"];
    return NULL;
 }
--(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarBase*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVarBase: method findAffine not defined"];
    return NULL;
@@ -361,16 +374,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 #define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
 
--(CPIntVarI*) initCPIntVarCore: (CPEngineI*)engine low: (ORInt) low up: (ORInt)up
+-(CPIntVarBase*) initCPIntVarCore: (CPEngineI*)engine low: (ORInt) low up: (ORInt)up
 {
    self = [super initCPIntVarBase: engine];
    _vc = CPVCBare;
-   _isBool = NO;
-   [_fdm trackVariable: self];
+//   _isBool = NO;
+//   [_fdm trackVariable: self];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);
    _triggers = nil;
    _dom = nil;
-   _recv = nil;
+//   _recv = nil;
    return self;
 }
 -(void)dealloc
@@ -384,7 +397,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         [_triggers release];    
     [super dealloc];
 }
--(CPLiterals*)findLiterals:(CPIntVarI*)ref
+-(CPLiterals*)findLiterals:(CPIntVarBase*)ref
 {
    return nil;
 }
@@ -392,7 +405,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _isBool;
 }
--(void) addVar:(CPIntVarI*)var
+-(void) addVar:(CPIntVarBase*)var
 {
    assert(FALSE); // [ldm] should never be called on real vars. Only on multicast
 }
@@ -414,22 +427,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return newDomain((CPBitDom*)_dom, 1, 0);
 }
--(id<CPIntVarNotifier>) delegate
-{
-    return _recv;
-}
--(void) setDelegate:(id<CPIntVarNotifier,NSCoding>) d
-{
-   if (_recv != d) {
-      if (_recv != nil) {
-         @throw [[NSException alloc] initWithName:@"Internal Error"
-                                           reason:@"Trying to set a delegate that already exists"
-                                         userInfo:nil];
-      }
-      _recv = [d retain];
-   }
-}
--(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarBase*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale==1 && shift==0)
       return self;
@@ -808,21 +806,21 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     }
 }
 
--(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
+-(CPIntVarBase*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
 {
    self = [self initCPIntVarCore: engine low: [b low] up: [b up]];
    _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: [b low] up: [b up]];
    return self;
 }
 
--(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine low: (ORInt) low up: (ORInt) up
+-(CPIntVarBase*) initCPExplicitIntVar: (id<CPEngine>)engine low: (ORInt) low up: (ORInt) up
 {
     self = [self initCPIntVarCore: engine low:low up:up];
     _dom = [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:low up:up];
     return self;
 }
 
--(CPIntVarI*) initCPIntVarView: (id<CPEngine>) engine low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x
+-(CPIntVarBase*) initCPIntVarView: (id<CPEngine>) engine low: (ORInt) low up: (ORInt) up for: (CPIntVarBase*) x
 {
    self = [self initCPIntVarCore:engine low: low up: up];
    _vc = CPVCAffine;
@@ -843,14 +841,14 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 // Cluster Constructors
 // ------------------------------------------------------------------------
 
-+(CPIntVarI*)    initCPIntVar: (id<CPEngine>)fdm bounds:(id<ORIntRange>)b
++(CPIntVarBase*)    initCPIntVar: (id<CPEngine>)fdm bounds:(id<ORIntRange>)b
 {
    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:b];
    x->_isBool = ([b low] == 0 && [b up] == 1);
    return x;
 }
 
-+(CPIntVarI*) initCPIntVar: (id<CPEngine>) fdm low: (ORInt) low up: (ORInt) up
++(CPIntVarBase*) initCPIntVar: (id<CPEngine>) fdm low: (ORInt) low up: (ORInt) up
 {
    CPIntVarI* x = nil;
    ORLong sz = (ORLong)up - low + 1;
@@ -863,43 +861,43 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    x->_isBool = (low == 0 && up==1);
    return x;
 }
-+(CPIntVarI*) initCPBoolVar: (id<CPEngine>) fdm
++(CPIntVarBase*) initCPBoolVar: (id<CPEngine>) fdm
 {
    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];
    x->_isBool = YES;
    return x;
 }
 
-+(CPIntVarI*) initCPIntView: (CPIntVarI*) x withShift: (ORInt) b
++(CPIntVarBase*) initCPIntView: (CPIntVarBase*) x withShift: (ORInt) b
 {
    CPIntShiftView* view = [[CPIntShiftView alloc] initIVarShiftView: x b: b];
    return view;
 }
-+(CPIntVarI*) initCPFlipView: (CPIntVarI*)x
++(CPIntVarBase*) initCPFlipView: (CPIntVarBase*)x
 {
-   CPIntVarI* rv = [x->_recv findAffine:-1 shift:0];
+   CPIntVarBase* rv = [x->_recv findAffine:-1 shift:0];
    if (rv==nil) {
       rv = [[CPIntFlipView alloc] initFlipViewFor:x];
    }
    return rv;
 }
-+(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (ORInt) a
++(CPIntVarBase*) initCPIntView: (CPIntVarBase*) x withScale: (ORInt) a
 {
-   CPIntVarI* rv = [x->_recv findAffine:a shift:0];
+   CPIntVarBase* rv = [x->_recv findAffine:a shift:0];
    if (rv == nil)
       rv = [[CPIntView alloc] initIVarAViewFor: a x: x b: 0];
    return rv;
 }
-+(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (ORInt) a andShift: (ORInt) b
++(CPIntVarBase*) initCPIntView: (CPIntVarBase*) x withScale: (ORInt) a andShift: (ORInt) b
 {
-   CPIntVarI* rv = [x->_recv findAffine:a shift:b];
+   CPIntVarBase* rv = [x->_recv findAffine:a shift:b];
    if (rv==nil)
       rv = [[CPIntView alloc] initIVarAViewFor: a x: x b: b];
    return rv;
 }
-+(CPIntVarI*) initCPNegateBoolView: (CPIntVarI*) x
++(CPIntVarBase*) initCPNegateBoolView: (CPIntVarBase*) x
 {
-   CPIntVarI* rv = [x->_recv findAffine:-1 shift:1];
+   CPIntVarBase* rv = [x->_recv findAffine:-1 shift:1];
    if (rv==nil) {
       rv = [[CPIntView alloc] initIVarAViewFor: -1 x: x b: 1];
       rv->_isBool = YES;
@@ -913,7 +911,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 // ---------------------------------------------------------------------
 
 @implementation CPIntShiftView
--(CPIntShiftView*)initIVarShiftView: (CPIntVarI*) x b: (ORInt) b
+-(CPIntShiftView*)initIVarShiftView: (CPIntVarBase*) x b: (ORInt) b
 {
    self = [super initCPIntVarView:[x engine] low:[x min]+b up:[x max]+b for:x];
    _vc = CPVCShift;
@@ -1018,7 +1016,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    [super loseValEvt: val+_b sender:sender];
 }
--(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarBase*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale==1 && shift==_b)
       return self;
@@ -1036,7 +1034,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 // ---------------------------------------------------------------------
 
 @implementation CPIntView
--(CPIntView*)initIVarAViewFor: (ORInt) a  x: (CPIntVarI*) x b: (ORInt) b
+-(CPIntView*)initIVarAViewFor: (ORInt) a  x: (CPIntVarBase*) x b: (ORInt) b
 {
    ORInt vLow = a < 0 ? a * [x max] + b : a * [x min] + b;
    ORInt vUp  = a < 0 ? a * [x min] + b : a * [x max] + b;
@@ -1209,7 +1207,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    [super loseValEvt:_a * val+_b sender:sender];
 }
--(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarBase*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale == _a && shift == _b)
       return self;
@@ -1223,7 +1221,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 @end
 
 @implementation CPIntFlipView
--(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x
+-(CPIntFlipView*)initFlipViewFor:(CPIntVarBase*)x
 {
    self = [super initCPIntVarView: [x engine] low:-[x max] up:-[x min] for:x];
    _vc = CPVCFlip;
@@ -1341,7 +1339,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 @implementation CPEQLitView
 
--(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v
+-(CPEQLitView*)initEQLitViewFor:(CPIntVarBase*)x equal:(ORInt)v
 {
    assert(x->_vc == CPVCBare);
    self = [self initCPIntVarCore:[x engine] low: 0 up: 1];
@@ -1552,7 +1550,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 @implementation CPMultiCast
 
--(id)initVarMC:(ORInt)n root:(CPIntVarI*)root
+-(id)initVarMC:(ORInt)n root:(CPIntVarBase*)root
 {
    self = [super init];
    _mx  = n;
@@ -1634,7 +1632,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return rv;
 }
 
--(CPLiterals*)findLiterals:(CPIntVarI*)ref
+-(CPLiterals*)findLiterals:(CPIntVarBase*)ref
 {
    for(ORUInt i=0;i < _nb;i++) {
       CPLiterals* found = [_tab[i] literals];
@@ -1670,10 +1668,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return nil;
 }
--(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarBase*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
    for(ORUInt i=0;i < _nb;i++) {
-      CPIntVarI* sel = [_tab[i] findAffine:scale shift:shift];
+      CPIntVarBase* sel = [_tab[i] findAffine:scale shift:shift];
       if (sel)
          return sel;
    }
@@ -1742,7 +1740,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 @end
 
 @implementation CPLiterals
--(id)initCPLiterals:(CPIntVarI*)ref
+-(id)initCPLiterals:(CPIntVarBase*)ref
 {
    self = [super init];
    id<CPDom> rd = [ref domain];
@@ -1750,7 +1748,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _ofs = [rd imin];
    [rd release];
    _ref = ref;
-   _pos = malloc(sizeof(CPIntVarI*)*_nb);
+   _pos = malloc(sizeof(CPIntVarBase*)*_nb);
    for(ORInt i=0;i<_nb;i++)
       _pos[i] = nil;
    _tracksLoseEvt = NO;
@@ -1772,13 +1770,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void)setDelegate:(id<CPIntVarNotifier>)delegate
 {}
--(void) addVar:(CPIntVarI*)var
+-(void) addVar:(CPIntVarBase*)var
 {}
 -(enum CPVarClass)varClass
 {
    return CPVCLiterals;
 }
--(CPLiterals*)findLiterals:(CPIntVarI*)ref
+-(CPLiterals*)findLiterals:(CPIntVarBase*)ref
 {
    return self;
 }
@@ -1794,11 +1792,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _tracksLoseEvt;
 }
--(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarBase*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
    return nil;
 }
--(void)addPositive:(CPIntVarI*)x forValue:(ORInt)value
+-(void)addPositive:(CPIntVarBase*)x forValue:(ORInt)value
 {
    assert(_pos[value - _ofs] == 0);
    _pos[value - _ofs] = x;
@@ -1810,7 +1808,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(void) bindEvt:(id<CPDom>)sender
 {
-   CPIntVarI* lv = _pos[sender.min - _ofs];
+   CPIntVarBase* lv = _pos[sender.min - _ofs];
    if (lv != NULL)
       [lv bindEvt:sender];
 }
@@ -1818,12 +1816,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORInt min = [_ref min];
    for(ORInt i=_ofs;i <min;i++) {
-      CPIntVarI* lv = _pos[i - _ofs];
+      CPIntVarBase* lv = _pos[i - _ofs];
       if (lv)
          [lv changeMinEvt:dsz sender:sender];
    }
    if (dsz==1) {
-      CPIntVarI* lv = _pos[[sender min] - _ofs];
+      CPIntVarBase* lv = _pos[[sender min] - _ofs];
       if (lv)
          [lv bindEvt:sender];
    }
@@ -1832,12 +1830,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORInt max = [_ref max];
    for(ORInt i = max+1;i<_ofs+_nb;i++) {
-      CPIntVarI* lv = _pos[i - _ofs];
+      CPIntVarBase* lv = _pos[i - _ofs];
       if (lv)
          [lv changeMaxEvt:dsz sender:sender];
    }
    if (dsz==1) {
-      CPIntVarI* lv = _pos[[sender min] - _ofs];
+      CPIntVarBase* lv = _pos[[sender min] - _ofs];
       if (lv)
          return [lv bindEvt:sender];
    } 

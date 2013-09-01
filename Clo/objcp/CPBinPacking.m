@@ -27,13 +27,13 @@
    ORInt              _low;
    ORInt              _up;
    
-   CPIntVarI**        _var;
+   CPIntVarBase**        _var;
    ORInt              _nbVar;
    ORInt*             _size;
-   CPIntVarI*         _load;
+   CPIntVarBase*         _load;
    
    int                _nbCandidates;
-   CPIntVarI**        _candidate;
+   CPIntVarBase**        _candidate;
    ORInt*             _candidateSize;
    
    int                _nbX;
@@ -107,16 +107,16 @@
    _low = [_item range].low;
    _up = [_item range].up;
    _nbVar = _up - _low + 1;
-   _var = (CPIntVarI**) malloc(sizeof(CPIntVarI*) * _nbVar);
+   _var = (CPIntVarBase**) malloc(sizeof(CPIntVarBase*) * _nbVar);
    _size = malloc(sizeof(ORInt) * _nbVar);
    _s    = malloc(sizeof(ORInt) * _nbVar);
-   _candidate = malloc(sizeof(CPIntVarI*) * _nbVar);
+   _candidate = malloc(sizeof(CPIntVarBase*) * _nbVar);
    _candidateSize = malloc(sizeof(ORInt) * _nbVar);
    for(ORInt i = _low; i <= _up; i++) {
-      _var[i-_low] = (CPIntVarI*) _item[i];
+      _var[i-_low] = (CPIntVarBase*) _item[i];
       _size[i-_low] = [_itemSize at: i];
    }
-   _load = (CPIntVarI*) _binSize;
+   _load = (CPIntVarBase*) _binSize;
    [self propagate];
    
    for(ORInt i = 0; i < _nbVar; i++)

@@ -151,7 +151,7 @@
    [[x tracker] trackMutable: o];
    return o;
 }
-+(id<ORConstraint>) table: (ORTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
++(id<ORConstraint>) table: (ORTableI*) table on: (CPIntVarBase*) x : (CPIntVarBase*) y : (CPIntVarBase*) z;
 {
    id<ORConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: table on: x : y : z];
    [[x tracker] trackMutable: o];
@@ -170,7 +170,7 @@
    return o;
 }
 
-+(id<CPIntVar>) reifyView: (CPIntVarI*) x eqi:(ORInt)c
++(id<CPIntVar>) reifyView: (CPIntVarBase*) x eqi:(ORInt)c
 {
    id<CPIntVarNotifier> mc = [x delegate];
    if (mc == nil) {

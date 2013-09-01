@@ -45,7 +45,7 @@
 -(void)  addInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support  nbCol:(ORInt)nb addWeight:(ORInt)w bound:(ORInt)U;
 -(void)lostCapacity:(ORInt)v knapsack:(CPKnapsack*)ks;
 -(NSString*)description;
--(void)pruneCapacity:(CPIntVarI*)capVar;
+-(void)pruneCapacity:(CPIntVarBase*)capVar;
 @end
 
 typedef struct CPKSPair {
@@ -80,7 +80,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 
 @implementation CPKnapsack {
    CPEngineI*            _fdm;
-   CPIntVarI**            _xb;
+   CPIntVarBase**            _xb;
    TRInt*            _support;
    ORLong                 _nb;
    ORInt                 _low;
@@ -90,7 +90,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 
 #define SUPP(r,c) ((r)*2 + (c))
 
--(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarI*)cap
+-(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarBase*)cap
 {
    self = [super initCPCoreConstraint:[cap engine]];
    _priority = HIGHEST_PRIO - 2;
@@ -115,9 +115,9 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    _nb  = [_x count];
    _low = [_x low];
    _up  = [_x up];
-   _xb  = malloc(sizeof(CPIntVarI*)*_nb);
+   _xb  = malloc(sizeof(CPIntVarBase*)*_nb);
    for(ORInt k=_low;k<= _up;k++)
-      _xb[k - _low] = (CPIntVarI*)[_x at:k];
+      _xb[k - _low] = (CPIntVarBase*)[_x at:k];
    _support = malloc(sizeof(TRInt)*_nb*2);
    for(ORInt k=0;k<_nb*2;k++)
       _support[k] = makeTRInt(_trail, 0);
@@ -435,7 +435,7 @@ static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks)
       cur = cur->_up._val;
    }
 }
--(void)pruneCapacity:(CPIntVarI*)capVar
+-(void)pruneCapacity:(CPIntVarBase*)capVar
 {
    KSNode* cur = _first._val;
    for (ORInt v=[capVar min]; v<= [capVar max];++v) {

@@ -235,7 +235,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 @end
 
 @implementation CPFloatViewOnIntVarI
--(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVarI*)iv
+-(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVarBase*)iv
 {
    self = [super init];
    _engine = (id)engine;
@@ -353,7 +353,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 // ----------------------------------------------------------------------------------------------------
 
--(CPLiterals*)findLiterals:(CPIntVarI*)ref
+-(CPLiterals*)findLiterals:(CPIntVarBase*)ref
 {
    return NULL;
 }

@@ -21,7 +21,7 @@
    id<ORIntArray>    _lb;
    id<ORIntArray>    _ub;
    
-   CPIntVarI**     _var;
+   CPIntVarBase**     _var;
    ORInt           _varSize;
    
    ORInt           _valMin;        // smallest value
@@ -127,9 +127,9 @@ static void SCCsink(CPCardinalityDC* card);
    
    low = [_x low];
    _varSize = ([_x up] - low + 1);
-   _var = malloc(_varSize * sizeof(CPIntVarI*));
+   _var = malloc(_varSize * sizeof(CPIntVarBase*));
    for(ORInt i = 0; i < _varSize; i++)
-      _var[i] = (CPIntVarI*) [_x at: low + i];
+      _var[i] = (CPIntVarBase*) [_x at: low + i];
    
    _valMin = min([_lb low],[_ub low]);
    _valMax = max([_lb up],[_ub up]);
@@ -416,7 +416,7 @@ static void SCCFromVariable(CPCardinalityDC* card,ORInt k)
    nodeType[card->_top] = 0;
    card->_top++;
    
-   CPIntVarI* x = card->_var[k];
+   CPIntVarBase* x = card->_var[k];
    ORBounds bx = bounds(x);
    for(ORInt w = bx.min; w <= bx.max; w++) {
       if (varMatch[k] != w) {
@@ -613,7 +613,7 @@ static void prune(CPCardinalityDC* card)
 {
    SCC(card);
    for(int v = 0; v < card->_varSize; v++) {
-      CPIntVarI* x = card->_var[v];
+      CPIntVarBase* x = card->_var[v];
       ORBounds b = bounds(x);
       for(ORInt w = b.min; w <= b.max; w++)
          if (card->_varMatch[v] != w)

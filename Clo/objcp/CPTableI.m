@@ -38,12 +38,12 @@
    ORInt low = [x low];
    ORInt up = [x up];
    _arity = (up - low + 1);
-   _var = malloc(_arity * sizeof(CPIntVarI*));
+   _var = malloc(_arity * sizeof(CPIntVarBase*));
    for(ORInt i = 0; i < _arity; i++)
-      _var[i] = (CPIntVarI*) [x at: low + i];
+      _var[i] = (CPIntVarBase*) [x at: low + i];
    return self;
 }
--(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z
+-(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVarBase*) x : (CPIntVarBase*) y : (CPIntVarBase*) z
 {
    [table close];
    
@@ -52,7 +52,7 @@
    _table = table;
    assert(_table);
    _arity = 3;
-   _var = malloc(_arity * sizeof(CPIntVarI*));
+   _var = malloc(_arity * sizeof(CPIntVarBase*));
    _var[0] = x;
    _var[1] = y;
    _var[2] = z;
@@ -172,7 +172,7 @@ static ORStatus removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
     self = [super initWithCoder:aDecoder];
     _table = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
-    _var = malloc(_arity * sizeof(CPIntVarI*));
+    _var = malloc(_arity * sizeof(CPIntVarBase*));
     for(ORInt i=0;i<_arity;i++)
         _var[i] = [aDecoder decodeObject];
     [self initInstanceVariables];

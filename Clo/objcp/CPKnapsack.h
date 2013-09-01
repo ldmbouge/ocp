@@ -13,11 +13,11 @@
 #import "CPBitDom.h"
 #import <objcp/CPVar.h>
 
-@class CPIntVarI;
+@class CPIntVarBase;
 @interface CPKnapsack : CPCoreConstraint<NSCoding> {
    id<CPIntVarArray> _x;
    id<ORIntArray>    _w;
-   CPIntVarI*        _c;
+   CPIntVarBase*        _c;
 }
 -(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(id<CPIntVar>)cap;
 -(void) dealloc;

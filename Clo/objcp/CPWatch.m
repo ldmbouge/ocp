@@ -17,7 +17,7 @@
 #import <ORProgram/CPProgram.h>
 
 @interface CPWatch : CPCoreConstraint {
-   CPIntVarI* _theVar;
+   CPIntVarBase* _theVar;
    ORInt2Void _lost;
    ORInt2Void _bind;
    ORInt2Void _rec;
@@ -35,8 +35,8 @@
         onValueRecover:(ORInt2Void)rec 
          onValueUnbind:(ORInt2Void)unb
 {
-   self = [super initCPCoreConstraint:[(CPIntVarI*)x engine]];
-   _theVar = (CPIntVarI*)x;
+   self = [super initCPCoreConstraint:[(CPIntVarBase*)x engine]];
+   _theVar = (CPIntVarBase*)x;
    _lost = [lost copy];
    _bind = [bind copy];
    _rec = [rec copy];

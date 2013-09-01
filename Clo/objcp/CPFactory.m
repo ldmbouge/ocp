@@ -27,27 +27,27 @@
 {
     printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
 }
-+(CPIntVarI*) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range
++(CPIntVarBase*) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range
 {
    return [CPIntVarI initCPIntVar: cp bounds: range];
 }
-+(CPIntVarI*) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
++(CPIntVarBase*) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
 {
     return [CPIntVarI initCPIntVar: cp low: [range low] up: [range up]];
 }
-+(CPIntVarI*) intVar: (CPIntVarI*) x shift: (ORInt) b
++(CPIntVarBase*) intVar: (CPIntVarBase*) x shift: (ORInt) b
 {
    if (b!=0)
       return [CPIntVarI initCPIntView: x withShift: b];
    else return x;
 }
-+(CPIntVarI*) intVar: (CPIntVarI*) x scale: (ORInt) a
++(CPIntVarBase*) intVar: (CPIntVarBase*) x scale: (ORInt) a
 {
    if (a!=1)
     return [CPIntVarI initCPIntView: x withScale: a];
    else return x;
 }
-+(CPIntVarI*) intVar: (CPIntVarI *) x scale: (ORInt) a shift:(ORInt) b
++(CPIntVarBase*) intVar: (CPIntVarI *) x scale: (ORInt) a shift:(ORInt) b
 {
    if (a==1 && b==0)
       return x;
@@ -65,13 +65,13 @@
 
 +(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
-   return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
+   return [CPIntVarI initCPNegateBoolView:(CPIntVarBase*)x];
 }
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
 {
    return [[CPFloatVarI alloc] initCPFloatVar:cp low:range.low up:range.up];
 }
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVarI*)x
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVarBase*)x
 {
    return [[CPFloatViewOnIntVarI alloc] initCPFloatViewIntVar:cp intVar:x];
 }

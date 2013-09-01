@@ -262,7 +262,7 @@ typedef struct CPlFoatEltRecordTag {
    TRInt              _to;
 }
 
--(id) init: (CPIntVarI*) x indexCstArray:(id<ORFloatArray>) c equal:(CPFloatVarI*)y
+-(id) init: (CPIntVarBase*) x indexCstArray:(id<ORFloatArray>) c equal:(CPFloatVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _idempotent = TRUE;

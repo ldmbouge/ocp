@@ -25,10 +25,10 @@
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
       _nb = [x count];
-      _x  = malloc(sizeof(CPIntVarI*)*_nb);
+      _x  = malloc(sizeof(CPIntVarBase*)*_nb);
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
-         _x[i++] = (CPIntVarI*) [xa at:k];
+         _x[i++] = (CPIntVarBase*) [xa at:k];
    } else assert(FALSE);
    _c = c;
    _allTerms = NULL;
@@ -214,7 +214,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    self = [super initWithCoder:aDecoder];   
    [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   _x = malloc(sizeof(CPIntVarI*)*_nb);
+   _x = malloc(sizeof(CPIntVarBase*)*_nb);
    for(int k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];
    return self;
@@ -231,10 +231,10 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
       _nb = [x count];
-      _x  = malloc(sizeof(CPIntVarI*)*_nb);
+      _x  = malloc(sizeof(CPIntVarBase*)*_nb);
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
-         _x[i++] = (CPIntVarI*) [xa at:k];
+         _x[i++] = (CPIntVarBase*) [xa at:k];
    }
    else
       assert(FALSE);
@@ -358,7 +358,7 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    self = [super initWithCoder:aDecoder];   
    [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   _x = malloc(sizeof(CPIntVarI*)*_nb);
+   _x = malloc(sizeof(CPIntVarBase*)*_nb);
    for(int k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];
    return self;
