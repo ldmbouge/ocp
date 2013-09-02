@@ -22,7 +22,7 @@ enum CPVarClass {
    CPVCShift = 1,
    CPVCAffine = 2,
    CPVCEQLiteral = 3,
-   CPVCLiterals = 4,
+//   CPVCLiterals = 4,
    CPVCFlip = 5,
    CPVCCast = 6,
    CPVCCst = 7

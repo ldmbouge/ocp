@@ -385,7 +385,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return rv;
 }
 // PVH: I hate these guys; pollute the interface
--(CPIntVar*) findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift
 {
    if (scale==1 && shift==0)
       return self;
@@ -1791,10 +1791,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    free(_loseValIMP);
    [super dealloc];
 }
--(enum CPVarClass)varClass
-{
-   return CPVCLiterals;
-}
 // PVH to LDM: This is ugly beyond belief
 -(void) addVar:(id) v
 {
@@ -1889,7 +1885,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return newLits;
 }
 
--(CPIntVar*)findAffine: (ORInt) scale shift: (ORInt) shift
+-(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift
 {
    for(ORUInt i=0;i < _nb;i++) {
       CPIntVar* sel = [_tab[i] findAffine: scale shift: shift];
@@ -1993,10 +1989,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    assert(FALSE);
    return nil;
-}
--(enum CPVarClass) varClass
-{
-   return CPVCLiterals;
 }
 -(void) setTracksLoseEvt
 {

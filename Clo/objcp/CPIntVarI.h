@@ -35,8 +35,7 @@ typedef struct  {
 
 @protocol CPIntVarNotifier<NSObject>
 -(NSMutableSet*)   constraints;
-//-(enum CPVarClass) varClass;
--(CPIntVar*)       findAffine:(ORInt)scale shift:(ORInt)shift;
+-(CPIntVar*)       findAffine: (ORInt)scale shift: (ORInt) shift;
 -(void)            setTracksLoseEvt;
 -(ORBool)          tracksLoseEvt: (id<CPDom>) sender;
 -(void)            bindEvt: (id<CPDom>) sender;
@@ -339,9 +338,8 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 }
 -(id) initVarMC: (ORInt) n root: (CPIntVar*) root;
 -(void) dealloc;
--(enum CPVarClass)varClass;
-// PVH 2 LDM: This is ugly beyond belief
 -(CPLiterals*) findLiterals:(CPIntVar*)ref;
+// PVH 2 LDM: This is ugly beyond belief
 -(void) addVar: (id) v;
 -(NSMutableSet*)constraints;
 -(void) bindEvt:(id<CPDom>)sender;
@@ -359,7 +357,6 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 }
 -(id) initCPLiterals:(CPIntVar*)ref;
 -(void) dealloc;
--(enum CPVarClass) varClass;
 -(NSMutableSet*) constraints;
 -(void) addPositive:(id<CPIntVar>)x forValue:(ORInt)value;
 -(id<CPIntVar>) positiveForValue:(ORInt)value;

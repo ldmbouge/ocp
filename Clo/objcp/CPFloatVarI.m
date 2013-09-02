@@ -353,14 +353,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 // ----------------------------------------------------------------------------------------------------
 
--(CPLiterals*)findLiterals:(CPIntVar*)ref
-{
-   return NULL;
-}
--(CPLiterals*)literals
-{
-   return NULL;
-}
 -(void) setTracksLoseEvt
 {
 }
