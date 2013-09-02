@@ -34,7 +34,6 @@ typedef struct  {
 
 
 @protocol CPIntVarNotifier<NSObject>
--(NSMutableSet*)   constraints;
 -(CPIntVar*)       findAffine: (ORInt)scale shift: (ORInt) shift;
 -(void)            setTracksLoseEvt;
 -(ORBool)          tracksLoseEvt: (id<CPDom>) sender;
@@ -341,7 +340,6 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 -(CPLiterals*) findLiterals:(CPIntVar*)ref;
 // PVH 2 LDM: This is ugly beyond belief
 -(void) addVar: (id) v;
--(NSMutableSet*)constraints;
 -(void) bindEvt:(id<CPDom>)sender;
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;

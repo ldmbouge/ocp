@@ -377,11 +377,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(NSMutableSet*) constraints
 {
    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:2];
-   if (_recv) {
-      NSMutableSet* rc = [_recv constraints];
-      [rv unionSet:rc];
-      [rc release];
-   }
    return rv;
 }
 // PVH: I hate these guys; pollute the interface
@@ -630,11 +625,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(NSMutableSet*) constraints
 {
    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
-   if (_recv) {
-      NSMutableSet* rc = [_recv constraints];
-      [rv unionSet:rc];
-      [rc release];
-   }
+//   if (_recv) {
+//      NSMutableSet* rc = [_recv constraints];
+//      [rv unionSet:rc];
+//      [rc release];
+//   }
    return rv;
 }
 -(CPBitDom*) flatDomain
@@ -1827,16 +1822,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    assert(nbBare<=1);
    // PVH: End of sanity check
 }
--(NSMutableSet*) constraints
-{
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
-   for(ORInt i=0;i<_nb;i++) {
-      NSMutableSet* ti = [_tab[i] constraints];
-      [rv unionSet:ti];
-      [ti release];
-   }
-   return rv;
-}
+//-(NSMutableSet*) constraints
+//{
+//   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
+//   for(ORInt i=0;i<_nb;i++) {
+//      NSMutableSet* ti = [_tab[i] constraints];
+//      [rv unionSet:ti];
+//      [ti release];
+//   }
+//   return rv;
+//}
 
 //-(CPLiterals*) findLiterals: (CPIntVar*) ref
 //{
