@@ -34,13 +34,13 @@ typedef struct  {
 
 
 @protocol CPIntVarNotifier<NSObject>
--(CPIntVar*)       findAffine: (ORInt)scale shift: (ORInt) shift;
--(void)            setTracksLoseEvt;
--(ORBool)          tracksLoseEvt: (id<CPDom>) sender;
--(void)            bindEvt: (id<CPDom>) sender;
--(void)            changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender;
--(void)            changeMaxEvt:(ORInt) dsz sender: (id<CPDom>)sender;
--(void)            loseValEvt: (ORInt) val sender: (id<CPDom>)sender;
+-(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
+-(void)      setTracksLoseEvt;
+-(ORBool)    tracksLoseEvt: (id<CPDom>) sender;
+-(void)      bindEvt: (id<CPDom>) sender;
+-(void)      changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender;
+-(void)      changeMaxEvt:(ORInt) dsz sender: (id<CPDom>)sender;
+-(void)      loseValEvt: (ORInt) val sender: (id<CPDom>)sender;
 @end
 
 @interface CPIntVar : ORObject<CPIntVarNotifier,CPIntVar> {
@@ -66,7 +66,6 @@ typedef struct  {
    @package
    ORInt _value;
 }
-
 -(CPIntVar*) initCPIntVarCst: (id<CPEngine>) cp value: (ORInt) value;
 -(void) dealloc;
 @end
@@ -97,7 +96,7 @@ typedef struct  {
 
 @interface CPIntShiftView : CPIntVarI {
    @package
-   ORInt       _b;
+   ORInt      _b;
    CPIntVar*  _x;
 }
 -(CPIntShiftView*)initIVarShiftView:(CPIntVar*)x b:(ORInt)b;
@@ -273,7 +272,8 @@ static inline ORInt memberDom(CPIntVar* x,ORInt value)
          return memberDom(((CPIntShiftView*)x)->_x, value - b);
       }
       break;
-      case CPVCCst: return (((CPIntVarCst*) x)->_value == value);
+      case CPVCCst:
+         return (((CPIntVarCst*) x)->_value == value);
       default:
          return [x member:value];
    }
@@ -338,8 +338,7 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 -(id) initVarMC: (ORInt) n root: (CPIntVar*) root;
 -(void) dealloc;
 -(CPLiterals*) findLiterals:(CPIntVar*)ref;
-// PVH 2 LDM: This is ugly beyond belief
--(void) addVar: (id) v;
+-(void) addVar: (id<CPIntVarNotifier>) v;
 -(void) bindEvt:(id<CPDom>)sender;
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;

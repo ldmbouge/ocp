@@ -949,7 +949,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         [_triggers bindEvt:_fdm];
 }
 
--(void) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender
+-(void) changeMaxEvt: (ORInt) dsz sender: (id<CPDom>)sender
 {
    [_recv changeMaxEvt:dsz sender:sender];
   
@@ -1786,7 +1786,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    free(_loseValIMP);
    [super dealloc];
 }
-// PVH to LDM: This is ugly beyond belief
+// PVH: Objective-C does not allow id<CPIntVarNotifier> for some obscure reason.
 -(void) addVar:(id) v
 {
    if (_nb >= _mx) {
@@ -1822,6 +1822,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    assert(nbBare<=1);
    // PVH: End of sanity check
 }
+
 //-(NSMutableSet*) constraints
 //{
 //   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
@@ -1831,39 +1832,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 //      [ti release];
 //   }
 //   return rv;
-//}
-
-//-(CPLiterals*) findLiterals: (CPIntVar*) ref
-//{
-//   for(ORUInt i=0;i < _nb;i++) {
-//      CPLiterals* found = [_tab[i] literals];
-//      if (found)
-//         return found;
-//   }
-//   CPLiterals* newLits = [[CPLiterals alloc] initCPLiterals:ref];
-//   if (_nb >= _mx) {
-//      _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
-//      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
-//      _minIMP = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
-//      _maxIMP = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
-//      _mx <<= 1;
-//   }
-//   _tab[_nb] = newLits;
-//   _loseValIMP[_nb] = (UBType)[newLits methodForSelector:@selector(loseValEvt:sender:)];
-//   _minIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMinEvt:sender:)];
-//   _maxIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMaxEvt:sender:)];
-//   _tracksLoseEvt = YES;
-//   ORInt toFix = _nb;
-//   id<ORTrail> theTrail = [[ref engine] trail];
-//   __block CPMultiCast* me = self;
-//   [theTrail trailClosure:^{
-//      me->_tab[toFix] = NULL;
-//      me->_loseValIMP[toFix] = NULL;
-//      me->_minIMP[toFix] = NULL;
-//      me->_maxIMP[toFix] = NULL;
-//   }];
-//   _nb++;
-//   return newLits;
 //}
 
 -(CPLiterals*) findLiterals: (CPIntVar*) ref
@@ -1913,10 +1881,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) bindEvt:(id<CPDom>)sender
 {
-   // PVH to LDM: This comment is not up to date. 
-   // If _nb > 0 but the _tab entries are nil, this would inadvertently
-   // set ok to ORFailure which is wrong. Hence it is critical to also
-   // backtrack the size of the array in addVar.
    if (_literals)
       [_literals bindEvt: sender];
    for(ORInt i=0;i<_nb;i++) {
@@ -1930,19 +1894,15 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_literals changeMinEvt: dsz sender: sender];
    SEL ms = @selector(changeMinEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
-      //ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
-      assert(_minIMP[i]);
       _minIMP[i](_tab[i],ms,dsz,sender);
    }
 }
--(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
+-(void) changeMaxEvt:(ORInt)dsz sender: (id<CPDom>) sender
 {
    if (_literals)
       [_literals changeMaxEvt: dsz sender: sender];
    SEL ms = @selector(changeMaxEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
-      //ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
-      assert(_maxIMP[i]);
       _maxIMP[i](_tab[i],ms,dsz,sender);
    }
 }
@@ -1953,9 +1913,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_literals)
       [_literals loseValEvt: val sender: sender];
    for(ORInt i=0;i<_nb;i++) {
-      //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
-      if (_loseValIMP[i])
-         _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
+      _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
    }
  }
 @end

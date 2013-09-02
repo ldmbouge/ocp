@@ -22,10 +22,9 @@ enum CPVarClass {
    CPVCShift = 1,
    CPVCAffine = 2,
    CPVCEQLiteral = 3,
-//   CPVCLiterals = 4,
-   CPVCFlip = 5,
-   CPVCCast = 6,
-   CPVCCst = 7
+   CPVCFlip = 4,
+   CPVCCast = 5,
+   CPVCCst = 6
 };
 
 @protocol CPVar <NSObject>
@@ -83,6 +82,7 @@ enum CPVarClass {
 -(void) watch:(ORInt) val with: (id<CPTrigger>) t;
 
 @end
+@class CPIntVar;
 
 @protocol CPIntVar <CPNumVar,CPIntVarSubscriber>
 -(enum CPVarClass)varClass;
@@ -104,6 +104,7 @@ enum CPVarClass {
 -(void) updateMin: (ORInt) newMin;
 -(void) updateMax: (ORInt) newMax;
 -(void) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
+-(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 @end
 
 @protocol CPVarArray <ORVarArray>

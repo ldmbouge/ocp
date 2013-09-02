@@ -79,7 +79,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return CPVCBare;
 }
--(CPFloatVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPFloatVarI*) findAffine: (ORFloat) scale shift:(ORFloat) shift
 {
    return nil;
 }
@@ -253,7 +253,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    }
    return self;
 }
--(CPEngineI*)engine
+-(CPEngineI*) engine
 {
    return _engine;
 }
@@ -339,15 +339,17 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
 }
--(void)setDelegate:(id<CPFloatVarNotifier>)delegate
-{}
+-(void) setDelegate:(id<CPFloatVarNotifier>)delegate
+{
+}
 -(void) addVar:(CPFloatVarI*)var
-{}
+{
+}
 -(enum CPVarClass)varClass
 {
    return CPVCCast;
 }
--(CPFloatVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
+-(CPIntVarI*) findAffine:(ORInt)scale shift:(ORInt)shift
 {
    return nil;
 }
@@ -365,7 +367,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 }
 
--(void) bindEvt:(id<CPFDom>)sender
+-(void) bindEvt: (id<CPFDom>) sender
 {
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -379,7 +381,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    k += mList[k] != NULL;
    scheduleAC3(_engine,mList);
 }
--(void) changeMinEvt:(ORInt) dsz sender:(id<CPFDom>)sender
+-(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -408,7 +410,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    [_theVar updateMin:(ORInt)ceil(val) andMax:(ORInt)floor(val)];
 }
-
 -(void) updateMin: (ORFloat) newMin
 {
    [_theVar updateMin:(ORInt)ceil(newMin)];
