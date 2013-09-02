@@ -210,14 +210,13 @@
    [x bindEvt:self];
 }
 
-// PVH: This is highly suspicious stuff
 -(void) remove:(ORInt) val for:(id<CPIntVarNotifier>) x
 {
    if (val <= _min._val)
       [self updateMin:val+1 for:x];
    else if (val >= _max._val)
       [self updateMax:val-1 for:x];
-   //@throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+   @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
 }
 
 -(void) restoreDomain:(id<CPDom>) toRestore

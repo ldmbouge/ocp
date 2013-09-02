@@ -599,12 +599,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    self = [super initCPIntVar: engine];
    _vc = CPVCBare;
-//   _isBool = NO;
-//   [_fdm trackVariable: self];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);
    _triggers = nil;
    _dom = nil;
-//   _recv = nil;
    return self;
 }
 -(void)dealloc
@@ -653,21 +650,15 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBool) bound
 {
-   assert(_dom);
-    return [_dom bound];
-//   return sizeCPDom((CPBitDom*)_dom) == 1;
+   return [_dom bound];
 }
 -(ORInt) min
 {
-   assert(_dom);
    return [_dom min];
-   //return minCPDom((CPBitDom*)_dom);
 }
 -(ORInt) max 
 {
-   assert(_dom);
    return [_dom max];
-   //return maxCPDom((CPBitDom*)_dom);
 }
 -(ORInt) value
 {
@@ -708,27 +699,22 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBounds) bounds
 {
-   assert(_dom);
    return domBounds((CPBoundsDom*)_dom);
 }
 -(ORInt)domsize
 {
-   assert(_dom);
     return [_dom domsize];
 }
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to
 {
-   assert(_dom);
    return [_dom countFrom:from to:to];
 }
 -(ORBool)member:(ORInt)v
 {
-   assert(_dom);
     return [_dom member:v];
 }
 -(ORRange)around:(ORInt)v
 {
-   assert(_dom);
    ORInt low = [_dom findMax:v-1];
    ORInt up  = [_dom findMin:v+1];
    return (ORRange){low,up};
