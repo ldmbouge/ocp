@@ -45,6 +45,7 @@
 		37A715E416FB948200E02DC6 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		37A715E516FB948900E02DC6 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		5B0778C317D673A0001238A5 /* libgurobi55.so in Frameworks */ = {isa = PBXBuildFile; fileRef = B100EE8B17C7265500FC4FDC /* libgurobi55.so */; };
 		5B115520171B1CF5005371AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B115523171B1CF5005371AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B115522171B1CF5005371AA /* main.m */; };
 		5B115537171B1D0F005371AA /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -920,7 +921,6 @@
 		5BFD5A6915A3BC1D00825BC3 /* ORAVLTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BFD5A6A15A3BC1D00825BC3 /* ORAVLTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3E1D713C3BC6400C3F1A5 /* ORAVLTree.m */; };
 		5BFD5A6C15A3BEA900825BC3 /* ORError.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BFD5A6B15A3BEA900825BC3 /* ORError.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B100EE8C17C7265500FC4FDC /* libgurobi55.so in Frameworks */ = {isa = PBXBuildFile; fileRef = B100EE8B17C7265500FC4FDC /* libgurobi55.so */; };
 		B103534113BBD7B200627058 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B103534B13BBD81300627058 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B103534F13BBD82D00627058 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B103534313BBD7B200627058 /* main.m */; };
@@ -6211,7 +6211,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B100EE8C17C7265500FC4FDC /* libgurobi55.so in Frameworks */,
+				5B0778C317D673A0001238A5 /* libgurobi55.so in Frameworks */,
 				B154429916D19EB9001BD7B3 /* ORUtilities.framework in Frameworks */,
 				B154429816D19EB3001BD7B3 /* ORFoundation.framework in Frameworks */,
 				B154428116D19D8F001BD7B3 /* Cocoa.framework in Frameworks */,
@@ -16097,6 +16097,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					/Library/gurobi550/mac64/lib,
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -16125,6 +16126,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					/Library/gurobi550/mac64/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
