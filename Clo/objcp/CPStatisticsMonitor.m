@@ -142,7 +142,7 @@ BOOL refresh(CPVarInfo* vi)
       product *= _curActive[k]->_final / _curActive[k]->_initial;
    return product;
 }
--(double) reductionFromRootForVar:(CPIntVarI*)x extraLosses:(ORInt)ks
+-(double) reductionFromRootForVar:(CPIntVar*)x extraLosses:(ORInt)ks
 {
    double product = 1.0;
    for(ORUInt i=0;i<_nbVI;i++) {

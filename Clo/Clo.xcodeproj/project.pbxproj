@@ -133,7 +133,6 @@
 		5B196C7916446F4800C9CED2 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B196C7A16446F4800C9CED2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B196C7B16446F4800C9CED2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		5B1B494116D9025300F96CDA /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */; };
 		5B2000E6156D585E00D80105 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B2000E9156D585E00D80105 /* queensNaive.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B558C0D1563F01000D2BCD7 /* queensNaive.1 */; };
@@ -179,7 +178,6 @@
 		5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8E16C01505BB5700D3C698 /* CPParallel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B378BB716D5245D002E1AB4 /* CPParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8E16C11505BB5700D3C698 /* CPParallel.m */; };
 		5B3848BF16E6E59300498DCF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
-		5B3848C216E6E59300498DCF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3848C116E6E59300498DCF /* main.m */; };
 		5B3848C616E6E59300498DCF /* perfect.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B3848C516E6E59300498DCF /* perfect.1 */; };
 		5B3848D616E6E5CC00498DCF /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B3848D716E6E5CC00498DCF /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -952,12 +950,12 @@
 		5BFD5A6915A3BC1D00825BC3 /* ORAVLTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BFD5A6A15A3BC1D00825BC3 /* ORAVLTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3E1D713C3BC6400C3F1A5 /* ORAVLTree.m */; };
 		5BFD5A6C15A3BEA900825BC3 /* ORError.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BFD5A6B15A3BEA900825BC3 /* ORError.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B100EE8C17C7265500FC4FDC /* libgurobi55.so in Frameworks */ = {isa = PBXBuildFile; fileRef = B100EE8B17C7265500FC4FDC /* libgurobi55.so */; };
 		B103534113BBD7B200627058 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B103534B13BBD81300627058 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B103534F13BBD82D00627058 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B103534313BBD7B200627058 /* main.m */; };
 		B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614516D969CD00E95A39 /* ORLPFlatten.h */; };
 		B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614616D969CD00E95A39 /* ORLPFlatten.m */; };
-		B103614A16D96B0100E95A39 /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */; };
 		B103614D16D9AAA500E95A39 /* ORFloatDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614B16D9AAA500E95A39 /* ORFloatDecompose.h */; };
 		B103614E16D9AAA500E95A39 /* ORFloatDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */; };
 		B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614F16D9AB9A00E95A39 /* ORIntLinear.h */; };
@@ -974,6 +972,7 @@
 		B12ED8CF159E0CAD00713C8E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B139DEA115CCE3F8007D523E /* ORController.h in Headers */ = {isa = PBXBuildFile; fileRef = B139DE9F15CCE3F8007D523E /* ORController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B139DEA215CCE3F8007D523E /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
+		B13EBFDD17D2D96300021A82 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B13EBFDC17D2D96300021A82 /* main.m */; };
 		B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */ = {isa = PBXBuildFile; fileRef = B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */; };
 		B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */ = {isa = PBXBuildFile; fileRef = B152BE2D13BB541E00531FD5 /* CPAllDifferentDC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -4797,7 +4796,7 @@
 		5B115525171B1CF5005371AA /* slabLNSModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slabLNSModel-Prefix.pch"; sourceTree = "<group>"; };
 		5B115526171B1CF5005371AA /* slabLNSModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = slabLNSModel.1; sourceTree = "<group>"; };
 		5B1391841629A99D0029FD29 /* ORDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORDecompose.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5B1391851629A99D0029FD29 /* ORDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORDecompose.m; sourceTree = "<group>"; };
+		5B1391851629A99D0029FD29 /* ORDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORDecompose.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B150017156EB0E800897252 /* CPBaseHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBaseHeuristic.h; sourceTree = "<group>"; };
 		5B150019156EB1A500897252 /* CPBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBaseHeuristic.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B19097A16DAAB45006D1D24 /* eq20.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = eq20.1; sourceTree = "<group>"; };
@@ -4842,9 +4841,7 @@
 		5B36F2671682683000020E94 /* gap7.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap7.txt; sourceTree = "<group>"; };
 		5B36F2681682683000020E94 /* gap8.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap8.txt; sourceTree = "<group>"; };
 		5B36F2691682683000020E94 /* gap9.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap9.txt; sourceTree = "<group>"; };
-		5B3848B916E6E56B00498DCF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = perfect/main.m; sourceTree = "<group>"; };
 		5B3848BE16E6E59300498DCF /* perfect */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = perfect; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B3848C116E6E59300498DCF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B3848C416E6E59300498DCF /* perfect-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "perfect-Prefix.pch"; sourceTree = "<group>"; };
 		5B3848C516E6E59300498DCF /* perfect.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = perfect.1; sourceTree = "<group>"; };
 		5B3848E016E7883A00498DCF /* partition */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = partition; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4872,8 +4869,8 @@
 		5B57E5E9161F2DB100DB249A /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPConcretizer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCPParSolver.h; sourceTree = "<group>"; };
 		5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCPParSolver.m; sourceTree = "<group>"; };
-		5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatConstraint.h; sourceTree = "<group>"; };
-		5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatConstraint.m; sourceTree = "<group>"; };
+		5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFloatConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPFloatConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B5F547B165D6EB200E674DA /* assignmentProblem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = assignmentProblem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B5F547F165D6EB300E674DA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B5F5482165D6EB300E674DA /* assignmentProblem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "assignmentProblem-Prefix.pch"; sourceTree = "<group>"; };
@@ -4887,7 +4884,7 @@
 		5B60E5F115AE9661002FF2B3 /* ORData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORData.m; sourceTree = "<group>"; };
 		5B63C2D2156DB05E00C65B2A /* CPStatisticsMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPStatisticsMonitor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPStatisticsMonitor.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5B65615C15AD58F6002F344B /* CPKnapsack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPKnapsack.h; sourceTree = "<group>"; };
+		5B65615C15AD58F6002F344B /* CPKnapsack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPKnapsack.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B65615D15AD58F6002F344B /* CPKnapsack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPKnapsack.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B66238C176FA5BA00A1ACCD /* qg7 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = qg7; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B66238F176FA5BA00A1ACCD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -4929,7 +4926,7 @@
 		5B6E892C1379D3EA005DB4CA /* Clo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clo-Prefix.pch"; sourceTree = "<group>"; };
 		5B6E89301379D3EA005DB4CA /* Clo.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Clo.1; sourceTree = "<group>"; };
 		5B729C3F153F79A4001BE95A /* CPWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPWatch.h; sourceTree = "<group>"; };
-		5B729C40153F79A4001BE95A /* CPWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPWatch.m; sourceTree = "<group>"; };
+		5B729C40153F79A4001BE95A /* CPWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPWatch.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B73E55B151F45F60043192D /* NSBoardController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSBoardController.h; sourceTree = "<group>"; };
 		5B73E55C151F45F60043192D /* NSBoardController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSBoardController.m; sourceTree = "<group>"; };
 		5B7408AD156286C700C05277 /* bitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitTest.h; sourceTree = "<group>"; };
@@ -5028,7 +5025,7 @@
 		5B8DCD90165FDDB6007CC562 /* testBitConstraints.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = testBitConstraints.m; sourceTree = "<group>"; };
 		5B8E16C01505BB5700D3C698 /* CPParallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPParallel.h; sourceTree = "<group>"; };
 		5B8E16C11505BB5700D3C698 /* CPParallel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPParallel.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5B91C334159FAB2D00158EEA /* CPElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPElement.h; sourceTree = "<group>"; };
+		5B91C334159FAB2D00158EEA /* CPElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPElement.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B91C335159FAB2D00158EEA /* CPElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPElement.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B920EA915A3DDA600AD0820 /* ORExpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORExpr.h; sourceTree = "<group>"; };
 		5B920EAB15A3F4A800AD0820 /* ORTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORTracker.h; sourceTree = "<group>"; };
@@ -5043,7 +5040,7 @@
 		5B920EBD15A402A500AD0820 /* ORArrayI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORArrayI.h; sourceTree = "<group>"; };
 		5B920EBE15A402A500AD0820 /* ORArrayI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORArrayI.m; sourceTree = "<group>"; };
 		5B92975513A01F45002AA188 /* CPValueConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPValueConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5B92975613A01F45002AA188 /* CPValueConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPValueConstraint.m; sourceTree = "<group>"; };
+		5B92975613A01F45002AA188 /* CPValueConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPValueConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B93486316553E6E00757F89 /* CPTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTypes.m; sourceTree = "<group>"; };
 		5B93486A1655451C00757F89 /* CPUKernel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CPUKernel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B93486E1655451D00757F89 /* CPUKernel-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CPUKernel-Info.plist"; sourceTree = "<group>"; };
@@ -5099,8 +5096,8 @@
 		5BB170121582820500D4791A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BB170151582820500D4791A /* driver-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "driver-Prefix.pch"; sourceTree = "<group>"; };
 		5BB170161582820500D4791A /* driver.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = driver.1; sourceTree = "<group>"; };
-		5BB3835A13B3B624005B7D52 /* CPEquationBC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEquationBC.h; sourceTree = "<group>"; };
-		5BB3835B13B3B624005B7D52 /* CPEquationBC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEquationBC.m; sourceTree = "<group>"; };
+		5BB3835A13B3B624005B7D52 /* CPEquationBC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPEquationBC.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BB3835B13B3B624005B7D52 /* CPEquationBC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPEquationBC.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BB3836313B3C0E1005B7D52 /* magicserie */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = magicserie; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BB3836713B3C0E1005B7D52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BB3836A13B3C0E1005B7D52 /* magicserie-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "magicserie-Prefix.pch"; sourceTree = "<group>"; };
@@ -5114,8 +5111,8 @@
 		5BBB08CB16C551960087ACF0 /* order.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = order.1; sourceTree = "<group>"; };
 		5BBB08E216C562520087ACF0 /* CPGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPGroup.h; sourceTree = "<group>"; };
 		5BBB08E316C562520087ACF0 /* CPGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPGroup.m; sourceTree = "<group>"; };
-		5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatVarI.h; sourceTree = "<group>"; };
-		5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatVarI.m; sourceTree = "<group>"; };
+		5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFloatVarI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPFloatVarI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatDom.h; sourceTree = "<group>"; };
 		5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatDom.m; sourceTree = "<group>"; };
 		5BC0918A167F7F9A009A7712 /* grocery */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = grocery; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5226,6 +5223,7 @@
 		5BFD594D15A3ACA500825BC3 /* ORFoundation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORFoundation.m; sourceTree = "<group>"; };
 		5BFD5A6715A3B92300825BC3 /* CPTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPTypes.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BFD5A6B15A3BEA900825BC3 /* ORError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORError.h; sourceTree = "<group>"; };
+		B100EE8B17C7265500FC4FDC /* libgurobi55.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi55.so; path = ../../../../../../Library/gurobi550/mac64/lib/libgurobi55.so; sourceTree = "<group>"; };
 		B103533F13BBD7AC00627058 /* queensAC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensAC; sourceTree = BUILT_PRODUCTS_DIR; };
 		B103534313BBD7B200627058 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B103534613BBD7B200627058 /* queensAC-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensAC-Prefix.pch"; sourceTree = "<group>"; };
@@ -5261,6 +5259,7 @@
 		B12ED8C8159E0C2200713C8E /* sport.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = sport.1; sourceTree = "<group>"; };
 		B139DE9F15CCE3F8007D523E /* ORController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORController.h; sourceTree = "<group>"; };
 		B139DEA015CCE3F8007D523E /* ORController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORController.m; sourceTree = "<group>"; };
+		B13EBFDC17D2D96300021A82 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B149BF5B151E759600FC5887 /* ORCrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCrFactory.h; sourceTree = "<group>"; };
 		B149BF5C151E759600FC5887 /* ORCrFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCrFactory.m; sourceTree = "<group>"; };
 		B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAllDifferentDC.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -5270,7 +5269,6 @@
 		B15441F216D17713001BD7B3 /* testMIP-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testMIP-Prefix.pch"; sourceTree = "<group>"; };
 		B15441F316D17713001BD7B3 /* testMIP.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testMIP.1; sourceTree = "<group>"; };
 		B15441FC16D17A75001BD7B3 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Library/gurobi500/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
-		B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = /Library/gurobi502/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<absolute>"; };
 		B154420016D189F1001BD7B3 /* LPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolverI.h; sourceTree = "<group>"; };
 		B154420116D189F1001BD7B3 /* LPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSolverI.m; sourceTree = "<group>"; };
 		B154420416D18DEF001BD7B3 /* LPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPGurobi.h; sourceTree = "<group>"; };
@@ -5319,13 +5317,13 @@
 		B1672FF31584A7A500EFE5C3 /* CardinalityTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CardinalityTest-Prefix.pch"; sourceTree = "<group>"; };
 		B1672FF41584A7A500EFE5C3 /* CardinalityTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CardinalityTest.1; sourceTree = "<group>"; };
 		B169F9C614EF87D500B2F3A6 /* CPConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B169F9C714EF87D500B2F3A6 /* CPConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConstraint.m; sourceTree = "<group>"; };
+		B169F9C714EF87D500B2F3A6 /* CPConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1771594155798AA00BA14BF /* Euler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Euler; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1771598155798AA00BA14BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B177159B155798AA00BA14BF /* Euler-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Euler-Prefix.pch"; sourceTree = "<group>"; };
 		B177159C155798AA00BA14BF /* Euler.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Euler.1; sourceTree = "<group>"; };
 		B17715B31557D9D200BA14BF /* CPTableI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPTableI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B17715B41557D9D200BA14BF /* CPTableI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTableI.m; sourceTree = "<group>"; };
+		B17715B41557D9D200BA14BF /* CPTableI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPTableI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B17832FA161F5FCC00C7298D /* ORProgramFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORProgramFactory.h; sourceTree = "<group>"; };
 		B17832FB161F5FCC00C7298D /* ORProgramFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORProgramFactory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B17832FE161F636A00C7298D /* CPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPSolver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -6269,7 +6267,6 @@
 				B15442BD16D1AA3B001BD7B3 /* objmp.framework in Frameworks */,
 				B154420316D18B46001BD7B3 /* ORFoundation.framework in Frameworks */,
 				B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */,
-				5B1B494116D9025300F96CDA /* libgurobi.so.5.0.0 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6277,7 +6274,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B103614A16D96B0100E95A39 /* libgurobi.so.5.0.0 in Frameworks */,
+				B100EE8C17C7265500FC4FDC /* libgurobi55.so in Frameworks */,
 				B154429916D19EB9001BD7B3 /* ORUtilities.framework in Frameworks */,
 				B154429816D19EB3001BD7B3 /* ORFoundation.framework in Frameworks */,
 				B154428116D19D8F001BD7B3 /* Cocoa.framework in Frameworks */,
@@ -6713,20 +6710,12 @@
 			path = GAPDATA;
 			sourceTree = "<group>";
 		};
-		5B3848B816E6E51D00498DCF /* perfect */ = {
-			isa = PBXGroup;
-			children = (
-				5B3848B916E6E56B00498DCF /* main.m */,
-			);
-			name = perfect;
-			sourceTree = "<group>";
-		};
 		5B3848C016E6E59300498DCF /* perfect */ = {
 			isa = PBXGroup;
 			children = (
-				5B3848C116E6E59300498DCF /* main.m */,
 				5B3848C516E6E59300498DCF /* perfect.1 */,
 				5B3848C316E6E59300498DCF /* Supporting Files */,
+				B13EBFDC17D2D96300021A82 /* main.m */,
 			);
 			path = perfect;
 			sourceTree = "<group>";
@@ -7007,10 +6996,10 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				B100EE8B17C7265500FC4FDC /* libgurobi55.so */,
 				B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */,
 				B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */,
 				5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */,
-				B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */,
 				B15441FC16D17A75001BD7B3 /* gurobi_c.h */,
 				B1255E83161A0129009A7AC3 /* libgurobi.so.4.6.1 */,
 				5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */,
@@ -7182,71 +7171,70 @@
 		5B7408AC1562828000C05277 /* Objective-CP Examples */ = {
 			isa = PBXGroup;
 			children = (
-				5B6B0F00178B558000104246 /* circle */,
-				5BC0C754177A191400B12173 /* bacp */,
-				5B9B244A177873D3001AB944 /* nonogram */,
-				5B6623D41770B1AE00A1ACCD /* paq */,
-				5B6623B11770A13200A1ACCD /* minesweeper */,
-				5B66238E176FA5BA00A1ACCD /* qg7 */,
-				5BC97A2C177384C2005C48A8 /* regular */,
-				5B2D92CB17036DA8007F330B /* models */,
-				5B3848B816E6E51D00498DCF /* perfect */,
-				B15441EE16D17713001BD7B3 /* testMIP */,
-				5BBB08C616C551960087ACF0 /* order */,
-				5BB898F71697564D00FED099 /* eq20 */,
-				5BF1387316822EFC005EAC6B /* golomb */,
-				5BA3457F1680B7BD00485366 /* latinSquare */,
-				5BC091D3167F9D5B009A7712 /* slow_convergence */,
-				5BC091B0167F9095009A7712 /* nfraction */,
-				5BC0918D167F7F9A009A7712 /* grocery */,
-				5B28CB0816691F0C008AB802 /* langford */,
-				5B28CAE51668FC63008AB802 /* debruijn */,
-				5B5F547E165D6EB300E674DA /* assignmentProblem */,
-				37095B2C16DBF173001BCEEC /* CuttingStock */,
-				37A715CA16FB93F900E02DC6 /* LogicBendersExample */,
-				5B80561316076DFE00659ECC /* magicsquareModel */,
-				5B7B476D15F0E4AD005FF875 /* coloringModel */,
-				B1935C6115B90ECE00107399 /* slab */,
-				B189514015E0FA5E00B77813 /* slabModel */,
-				5B7D695915B9C91D00C9A10C /* market2s */,
-				5B3848C016E6E59300498DCF /* perfect */,
-				5B3848E216E7883A00498DCF /* partition */,
-				B15F6DE115B1361700158FA0 /* progressive */,
-				5BEAD78815ABE38500A012FE /* bibd */,
-				5B76D99115AAADBE00F8B445 /* marriage */,
-				5B3895EB1795BE07004CCE93 /* fwarehouse */,
-				5BE7C24E15A94BDF00B2CBC1 /* warehouse */,
 				5BC116A31595067900E0F5C8 /* ais */,
+				5B5F547E165D6EB300E674DA /* assignmentProblem */,
+				5BC0C754177A191400B12173 /* bacp */,
+				5BEAD78815ABE38500A012FE /* bibd */,
+				B1672FEF1584A7A500EFE5C3 /* CardinalityTest */,
+				5B6B0F00178B558000104246 /* circle */,
+				5B6E89281379D3EA005DB4CA /* Clo */,
+				5B7B476D15F0E4AD005FF875 /* coloringModel */,
 				5BE777571594D27C00ADE34E /* costas */,
+				37095B2C16DBF173001BCEEC /* CuttingStock */,
+				5B28CAE51668FC63008AB802 /* debruijn */,
+				5BB898F71697564D00FED099 /* eq20 */,
+				B1771597155798AA00BA14BF /* Euler */,
 				5BE777431594C9E500ADE34E /* fdmul */,
 				5BE5A7ED158A8390006703CB /* fdmul2 */,
-				5B8DA1F815B98BC300684FD8 /* knapsackOpt */,
+				5B3895EB1795BE07004CCE93 /* fwarehouse */,
+				5BF1387316822EFC005EAC6B /* golomb */,
+				5BC0918D167F7F9A009A7712 /* grocery */,
 				5B6A960315879F1600019903 /* knapsack */,
-				5B8C7DE5158674D1007042CA /* queensGui */,
-				B1B68C77159FC16E008BC463 /* TestAssignment */,
-				B1F531DB15AED4B100E89F98 /* testPacking */,
-				B1672FEF1584A7A500EFE5C3 /* CardinalityTest */,
-				B1672FD3158491DE00EFE5C3 /* TableTest */,
-				B1771597155798AA00BA14BF /* Euler */,
-				5B558C081563F01000D2BCD7 /* queensNaive */,
-				5B6E89281379D3EA005DB4CA /* Clo */,
-				5B9ABCE3139131EE000997E5 /* solver */,
+				5B8DA1F815B98BC300684FD8 /* knapsackOpt */,
+				5B28CB0816691F0C008AB802 /* langford */,
+				5BA3457F1680B7BD00485366 /* latinSquare */,
+				B18DF14C17810C68004E1880 /* LPRelaxation */,
+				37A715CA16FB93F900E02DC6 /* LogicBendersExample */,
 				5BB3836613B3C0E1005B7D52 /* magicserie */,
-				5BEEF61313970B6F002ADBD4 /* queens2 */,
-				5BCCC4061417F8CE0079E833 /* queensACSem */,
-				B103534213BBD7B200627058 /* queensAC */,
-				B182C5EC173C30EE002954F6 /* queensMIP */,
-				B12ED8C3159E0C2200713C8E /* sport */,
-				B181E11915D7465300AB44DA /* sportModel */,
-				B1C9DF1615A8045C00EE924C /* SportDemo */,
 				B189512915DE52D100B77813 /* magicseriesModel */,
+				5B80561316076DFE00659ECC /* magicsquareModel */,
+				5B76D99115AAADBE00F8B445 /* marriage */,
+				5B7D695915B9C91D00C9A10C /* market2s */,
+				5B6623B11770A13200A1ACCD /* minesweeper */,
 				B1CC832315D3BEC4008DE335 /* model */,
-				B1595B4113C11F2A001FCB61 /* Sudoku */,
+				5B2D92CB17036DA8007F330B /* models */,
+				5BC091B0167F9095009A7712 /* nfraction */,
+				5B9B244A177873D3001AB944 /* nonogram */,
+				5BBB08C616C551960087ACF0 /* order */,
+				5B6623D41770B1AE00A1ACCD /* paq */,
+				5B3848E216E7883A00498DCF /* partition */,
+				5B3848C016E6E59300498DCF /* perfect */,
+				B15F6DE115B1361700158FA0 /* progressive */,
+				5BEEF61313970B6F002ADBD4 /* queens2 */,
+				B103534213BBD7B200627058 /* queensAC */,
+				5BCCC4061417F8CE0079E833 /* queensACSem */,
+				5B8C7DE5158674D1007042CA /* queensGui */,
+				B182C5EC173C30EE002954F6 /* queensMIP */,
 				B1C4F3FE161F87070010A5C8 /* queensModel */,
+				5B558C081563F01000D2BCD7 /* queensNaive */,
+				5B66238E176FA5BA00A1ACCD /* qg7 */,
+				5BC97A2C177384C2005C48A8 /* regular */,
+				B1935C6115B90ECE00107399 /* slab */,
+				B189514015E0FA5E00B77813 /* slabModel */,
+				5BC091D3167F9D5B009A7712 /* slow_convergence */,
+				5B9ABCE3139131EE000997E5 /* solver */,
+				B12ED8C3159E0C2200713C8E /* sport */,
+				B1C9DF1615A8045C00EE924C /* SportDemo */,
+				B181E11915D7465300AB44DA /* sportModel */,
+				B1595B4113C11F2A001FCB61 /* Sudoku */,
+				B1672FD3158491DE00EFE5C3 /* TableTest */,
+				B1B68C77159FC16E008BC463 /* TestAssignment */,
+				B15442C716D1AAD0001BD7B3 /* testLPConcretization */,
+				B15441EE16D17713001BD7B3 /* testMIP */,
+				B1F531DB15AED4B100E89F98 /* testPacking */,
+				5BE7C24E15A94BDF00B2CBC1 /* warehouse */,
 				5B6CFD8916D9390A00BCB95F /* ORCmdLineArgs.h */,
 				5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */,
-				B15442C716D1AAD0001BD7B3 /* testLPConcretization */,
-				B18DF14C17810C68004E1880 /* LPRelaxation */,
 			);
 			name = "Objective-CP Examples";
 			sourceTree = "<group>";
@@ -11081,7 +11069,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BAC7AC316EBAD1900BE6F81 /* ORCmdLineArgs.m in Sources */,
-				5B3848C216E6E59300498DCF /* main.m in Sources */,
+				B13EBFDD17D2D96300021A82 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16277,11 +16265,11 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -16305,10 +16293,10 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
