@@ -340,7 +340,10 @@
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
 }
-
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker value: (ORInt) value
+{
+   return [[ORIntVarI alloc]  initORIntVarI: tracker domain: RANGE(tracker,value,value)];
+}
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b
 {
    return [self intVar:tracker var:x shift:b annotation:Default];

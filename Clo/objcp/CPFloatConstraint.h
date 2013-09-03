@@ -16,7 +16,7 @@
 #import <objcp/CPVar.h>
 
 @class CPFloatVarI;
-@class CPIntVarI;
+@class CPIntVar;
 @class CPEngine;
 @protocol CPFloatVarArray;
 
@@ -64,7 +64,7 @@
 
 @interface CPFloatElementCstBC : CPCoreConstraint { // y == c[x]
 @private
-   CPIntVarI*       _x;
+   CPIntVar*       _x;
    CPFloatVarI*     _y;
    id<ORFloatArray> _c;
 }

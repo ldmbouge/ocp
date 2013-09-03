@@ -36,8 +36,8 @@ int main(int argc, const char * argv[])
                if (i < j) {
                   [model add: [[[[[x[i] plus:@(side[i])] leq:x[j]]  or:
                                  [[x[j] plus:@(side[j])] leq:x[i]]] or:
-                                 [[y[i] plus:@(side[i])] leq:y[j]]] or:
-                                 [[y[j] plus:@(side[j])] leq:y[i]]]];
+                                [[y[i] plus:@(side[i])] leq:y[j]]] or:
+                               [[y[j] plus:@(side[j])] leq:y[i]]]];
                }
             }];
          }];
@@ -45,7 +45,7 @@ int main(int argc, const char * argv[])
             [model add:[Sum(model, i, square, [[[x[i] leq:@(k)] and:[x[i] geq:@(k - side[i] + 1)]] mul:@(side[i])]) eq:@(s)]];
             [model add:[Sum(model, i, square, [[[y[i] leq:@(k)] and:[y[i] geq:@(k - side[i] + 1)]] mul:@(side[i])]) eq:@(s)]];
          }
-         ];
+          ];
          //NSLog(@"model: %@",model);
          id<CPProgram> cp  = [args makeProgram:model];
          //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
@@ -76,7 +76,7 @@ int main(int argc, const char * argv[])
             id<ORIntArray> ys = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [cp intValue:y[i]];}];
             NSLog(@"x = %@",xs);
             NSLog(@"y = %@",ys);
-
+            
          }];
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
@@ -87,4 +87,5 @@ int main(int argc, const char * argv[])
    }
    return 0;
 }
+
 
