@@ -894,10 +894,14 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
     return (ORInt)[_all count];
 }
 
--(id<ORConstraint>) at:(ORInt)index {
+-(id<ORConstraint>) at:(ORInt)index
+{
     return [_all objectAtIndex: index];
 }
-
+-(id<ORConstraint>) objectAtIndexedSubscript: (NSUInteger) key
+{
+   return [_all objectAtIndex: key];
+}
 -(void) enumerateWith:(void(^)(id<ORConstraint>))block
 {
     [_all enumerateObjectsUsingBlock:^(id obj, NSUInteger i, BOOL *stop) {

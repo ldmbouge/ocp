@@ -19,6 +19,7 @@
 -(void) addObjCoef: (ORFloat) coef;
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
 -(ORFloat) objCoef;
+-(id)theVar;
 @end
 
 @protocol ORLPSolution <ORSolution>
@@ -40,7 +41,7 @@
 -(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
--(id<LPColumn>) createColumn;
+-(id<LPColumn>) freshColumn;
 -(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up;
 -(void) addColumn: (id<LPColumn>) column;
 -(ORFloat) dual: (id<ORConstraint>) c;
@@ -49,6 +50,7 @@
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORLPSolutionPool>) solutionPool;
 -(id<ORLPSolution>) captureSolution;
+-(void)enumerateColumnWith:(void(^)(id<LPColumn>))block;
 @end
 
 @protocol LPRelaxation <ORASolver>

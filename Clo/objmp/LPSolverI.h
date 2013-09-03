@@ -161,6 +161,7 @@
 {
 @protected
    LPSolverI*            _solver;
+   LPVariableI*          _theVar;
    int                   _nb;
    int                   _maxSize;
    int                   _idx;
@@ -176,13 +177,13 @@
    ORFloat*              _tmpCoef;
    
 }
--(LPColumnI*) initLPColumnI: (LPSolverI*) solver;
--(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
+-(LPColumnI*) initLPColumnI: (LPSolverI*) solver forVar:(LPVariableI*)x;
+-(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up forVar:(LPVariableI*)x;
+-(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef forVar:(LPVariableI*)x;
 -(void)      dealloc;
-
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
+-(LPVariableI*)theVar;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
@@ -242,13 +243,14 @@
 
 -(LPSolverI*) initLPSolverI;
 -(void) dealloc;
+-(void)enumerateColumnWith:(void(^)(LPColumnI*))block;
 
 +(LPSolverI*)      create;
 -(LPVariableI*)    createVariable;
 -(LPVariableI*)    createVariable: (ORFloat) low up: (ORFloat) up;
--(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
--(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up;
--(LPColumnI*)      createColumn;
+-(LPColumnI*)      createColumn:(LPVariableI*)fv low:(ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
+-(LPColumnI*)      createColumn:(LPVariableI*)fv low:(ORFloat) low up: (ORFloat) up;
+-(LPColumnI*)      freshColumn;
 
 -(LPLinearTermI*)  createLinearTerm;
 

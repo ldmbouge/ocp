@@ -67,7 +67,7 @@
     return [[ORColumnGeneration alloc] initWithMaster: master slave: slaveBlock];
 }
 +(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<OROrderedConstraintSet>)cstrs {
-    id<LPColumn> col = [lp createColumn];
+    id<LPColumn> col = [lp freshColumn];
     [col addObjCoef: +1.0]; // [ldm] TOCHECK: this was set to -1. I'm unclear as to why. 
     for(ORInt i = 0; i < [cstrs size]; i++) {
         NSLog(@"c[%i] = %f", i, [[sol value: [arr at: i]] floatValue]);

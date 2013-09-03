@@ -140,5 +140,6 @@
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
 -(id<ORConstraint>) at:(ORInt)index;
+-(id<ORConstraint>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end

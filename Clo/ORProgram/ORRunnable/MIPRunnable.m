@@ -33,8 +33,13 @@
     [super dealloc];
 }
 
--(id<ORModel>) model { return _model; }
-
+-(id<ORModel>) model {
+   return _model;
+}
+-(id<ORASolver>) solver
+{
+   return _program;
+}
 -(id<ORSignature>) signature
 {
     if(_sig == nil) {
@@ -42,9 +47,6 @@
     }
     return _sig;
 }
-
--(id<MIPProgram>) solver { return _program; }
-
 -(void) injectColumn: (id<ORFloatArray>) col
 {
 }

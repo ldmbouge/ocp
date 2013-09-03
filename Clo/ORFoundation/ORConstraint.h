@@ -51,6 +51,7 @@
 
 @protocol OROrderedConstraintSet <ORConstraintSet>
 -(id<ORConstraint>) at:(ORInt)index;
+-(id<ORConstraint>) objectAtIndexedSubscript: (NSUInteger) key;
 @end
 
 enum ORGroupType {

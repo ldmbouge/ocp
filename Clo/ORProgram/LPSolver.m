@@ -353,6 +353,10 @@
    _lpsolver = lpsolver;
    return self;
 }
+-(id)theVar
+{
+   return [_lpcolumn theVar];
+}
 -(void) dealloc
 {
    [super dealloc];
@@ -409,6 +413,11 @@
 {
    return _lpsolver;
 }
+-(void)enumerateColumnWith:(void(^)(id<LPColumn>))block
+{
+   [_lpsolver enumerateColumnWith:block];
+}
+
 -(void) solve
 {
    [_lpsolver solve];
@@ -428,16 +437,16 @@
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
 }
--(id<LPColumn>) createColumn
+-(id<LPColumn>) freshColumn
 {
-   LPColumnI* col = [_lpsolver createColumn];
+   LPColumnI* col = [_lpsolver freshColumn];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
    [self trackMutable: o];
    return o;
 }
 -(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up
 {
-   LPColumnI* col = [_lpsolver createColumn: low up: up];
+   LPColumnI* col = [_lpsolver createColumn:nil low:low up: up];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
    [self trackMutable: o];
    return o;

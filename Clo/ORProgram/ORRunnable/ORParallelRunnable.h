@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ORRunnable.h"
-#import "ORRunnablePiping.h"
+#import <ORProgram/ORRunnable.h>
+#import <ORProgram/ORRunnablePiping.h>
 
 @protocol ORCompleteParallelRunnable<ORUpperBoundStreamProducer, ORUpperBoundStreamConsumer,
                                      ORSolutionStreamProducer, ORSolutionStreamConsumer,

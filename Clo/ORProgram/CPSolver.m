@@ -1280,6 +1280,8 @@
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 -(id) trackConstraintInGroup:(id)obj;
 -(id) trackObjective:(id)obj;
 -(id) trackMutable: (id) obj;
@@ -1349,11 +1351,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize: not allowed during search"];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize:coef: not allowed during search"];   
 }
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }

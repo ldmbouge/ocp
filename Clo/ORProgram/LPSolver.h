@@ -18,10 +18,11 @@
 -(ORFloat) dual: (id<ORConstraint>) c;
 -(ORFloat) reducedCost: (id<ORFloatVar>) x;
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
--(id<LPColumn>) createColumn;
+-(id<LPColumn>) freshColumn;
 -(void) addColumn: (id<LPColumn>) column;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORLPSolution>) captureSolution;
+-(void)enumerateColumnWith:(void(^)(id<LPColumn>))block;
 @end
 
 @interface LPRelaxation : ORGamma<LPRelaxation>
