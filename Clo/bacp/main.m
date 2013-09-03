@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
                        id<ORIntArray> cc = [ORFactory intArray:cp range:Periods with:^ORInt(ORInt p) {
                           ORInt ttl = 0;
                           for(ORInt c=0;c < nbCourses;c++) {
-                             if ([cp bound:x[c]]) continue;
+                             if (![cp bound:x[c]]) continue;
                              ttl += [cp intValue:x[c]] == p;
                           }
                           return ttl;
