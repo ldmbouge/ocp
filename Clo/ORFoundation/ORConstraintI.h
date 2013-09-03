@@ -309,13 +309,6 @@
 -(ORInt)cst;
 @end
 
-@interface ORLinearGeq : ORConstraintI<ORLinearGeq>
--(ORLinearGeq*) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
--(id<ORIntVarArray>) vars;
--(id<ORIntArray>) coefs;
--(ORInt) cst;
-@end
-
 @interface ORLinearEq : ORConstraintI<ORLinearEq>
 -(ORLinearEq*) initLinearEq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt) c;
 -(id<ORIntVarArray>) vars;
@@ -324,12 +317,18 @@
 @end
 
 @interface ORLinearLeq : ORConstraintI<ORLinearLeq>
--(ORLinearLeq*) initLinearLeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
+-(id) initLinearLeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
 -(id<ORIntVarArray>) vars;
 -(id<ORIntArray>) coefs;
 -(ORInt) cst;
 @end
 
+@interface ORLinearGeq : ORConstraintI<ORLinearGeq>
+-(id) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
 
 @interface ORFloatLinearEq : ORConstraintI<ORFloatLinearEq>
 -(ORLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
@@ -345,6 +344,12 @@
 -(ORFloat) cst;
 @end
 
+@interface ORFloatLinearGeq : ORConstraintI<ORFloatLinearGeq>
+-(ORFloatLinearGeq*) initFloatLinearGeq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x annotation:(ORAnnotation)n;
@@ -468,12 +473,14 @@
 
 @interface ORObjectiveFunctionLinearI : ORObjectiveFunctionI<ORObjectiveFunctionLinear>
 {
-   id<ORVarArray> _array;
+   id<ORVarArray>  _array;
    id<ORFloatArray> _coef;
+   ORFloat            _ic;
 }
--(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
+-(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 -(id<ORVarArray>) array;
 -(id<ORFloatArray>) coef;
+-(ORFloat)independent;
 -(void) visit: (ORVisitor*) visitor;
 @end
 
@@ -503,13 +510,12 @@
 @end
 
 @interface ORMinimizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
--(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
+-(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 @end
 
 @interface ORMaximizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
--(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
+-(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 @end
-
 
 @interface ORBitEqual : ORConstraintI<ORBitEqual>
 -(ORBitEqual*)initORBitEqual: (id<ORBitVar>) x eq: (id<ORBitVar>) y;

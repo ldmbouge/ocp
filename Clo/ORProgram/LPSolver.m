@@ -270,7 +270,7 @@
 }
 -(ORInt) intValue: (id) var
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No boolean variable in LP solutions"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "No int variable in LP solutions"];   
 }
 -(ORBool) boolValue: (id) var
 {
@@ -338,6 +338,7 @@
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col;
 -(void) addObjCoef: (ORFloat) coef;
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
+-(ORFloat) objCoef;
 @end
 
 @implementation LPColumn
@@ -352,9 +353,17 @@
    _lpsolver = lpsolver;
    return self;
 }
+-(id)theVar
+{
+   return [_lpcolumn theVar];
+}
 -(void) dealloc
 {
    [super dealloc];
+}
+-(NSString*)description
+{
+   return [_lpcolumn description];
 }
 -(LPColumnI*) column
 {
@@ -368,6 +377,11 @@
 {
    [_lpcolumn addConstraint: [_lpsolver concretize: cstr] coef: coef];
 }
+-(ORFloat) objCoef
+{
+   return [_lpcolumn objCoef];
+}
+
 @end
 
 @implementation LPSolver
@@ -399,6 +413,11 @@
 {
    return _lpsolver;
 }
+-(void)enumerateColumnWith:(void(^)(id<LPColumn>))block
+{
+   [_lpsolver enumerateColumnWith:block];
+}
+
 -(void) solve
 {
    [_lpsolver solve];
@@ -418,16 +437,16 @@
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
 }
--(id<LPColumn>) createColumn
+-(id<LPColumn>) freshColumn
 {
-   LPColumnI* col = [_lpsolver createColumn];
+   LPColumnI* col = [_lpsolver freshColumn];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
    [self trackMutable: o];
    return o;
 }
 -(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up
 {
-   LPColumnI* col = [_lpsolver createColumn: low up: up];
+   LPColumnI* col = [_lpsolver createColumn:nil low:low up: up];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
    [self trackMutable: o];
    return o;

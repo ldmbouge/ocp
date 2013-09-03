@@ -30,8 +30,8 @@
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
         onMutables:(void(^)(id<ORObject>))doMutables
@@ -46,6 +46,7 @@
 -(NSArray*) mutables;
 -(NSArray*) immutables;
 // pvh: this should go
+-(id<ORModel>) relaxConstraints: (NSArray*) cstrs;
 -(id<ORModel>) flatten;
 -(id<ORModel>) lpflatten;
 -(id<ORModel>) mipflatten;
@@ -71,8 +72,8 @@
 -(id<ORObjectiveFunction>) maximizeVar:(id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 -(id<ORModelMappings>) modelMappings;
 @end
 

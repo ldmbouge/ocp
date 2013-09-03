@@ -106,6 +106,7 @@
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
+-(void) visitExprGEqualI: (id<ORExpr>) e;
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
@@ -213,6 +214,11 @@
    [[e right] visit:self];
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprGEqualI: (ORExprBinaryI*) e
 {
    [[e left] visit:self];
    [[e right] visit:self];
@@ -1392,6 +1398,51 @@
 -(enum ORRelationType)type
 {
    return ORRLEq;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprGEqualI
+-(id<ORExpr>) initORExprGEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   assert([self isConstant]);
+   return [_left min] >= [_right min];
+}
+-(ORInt) max
+{
+   assert([self isConstant]);
+   return [_left max] >= [_right max];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprGEqualI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@ >= %@",[_left description],[_right description]];
+   return rv;
+}
+-(enum ORRelationType)type
+{
+   return ORRGEq;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

@@ -15,23 +15,16 @@
 #import "ORRunnablePiping.h"
 
 typedef id<ORRunnable> (^ORFloatArray2Runnable)(id<ORFloatArray>);
-typedef id<ORFloatArray> (^Void2FloatArray)();
+typedef id<LPColumn> (^Void2Column)();
 
 @interface ORColumnGeneration : ORPipedRunnable<ORColumnConsumer>
--(id) initWithMaster: (id<ORRunnable>)master slave: (Void2FloatArray)slaveBlock;
+-(id) initWithMaster: (id<ORRunnable>)master slave: (Void2Column)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
-@end
-
-@interface ORColumnGenerator : ORPipedRunnable
--(id) initWithRunnable: (id<ORRunnable>)r solutionTransform: (Void2FloatArray)block;
--(id<ORSignature>) signature;
--(id<ORModel>) model;
--(void) run;
--(void) addColumnConsumer: (id<ORSolutionStreamConsumer>)c;
 @end
 
 @interface ORFactory(ORColumnGeneration)
-+(id<ORRunnable>) columnGeneration: (id<ORRunnable>)master slave: (Void2FloatArray)slaveBlock;
++(id<ORRunnable>) columnGeneration: (id<ORRunnable>)master slave: (Void2Column)slaveBlock;
++(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<OROrderedConstraintSet>)cstrs;
 @end

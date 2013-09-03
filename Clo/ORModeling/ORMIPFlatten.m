@@ -99,9 +99,14 @@
       }
          break;
       case ORRLEq:
-      {
-         cstr = [terms postLEQZ: model annotation: note];
-      }
+         {
+            cstr = [terms postLEQZ: model annotation: note];
+         }
+         break;
+      case ORRGEq:
+         {
+            cstr = [terms postGEQZ: model annotation: note];
+         }
          break;
       default:
          assert(terms == nil);
@@ -186,14 +191,13 @@
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
    ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into annotation: Default];
-   _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
+   _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into] independent:[terms independent]];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
    ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into annotation: Default];
-   _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
+   _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into] independent:[terms independent]];
 }
-
 @end
 
 

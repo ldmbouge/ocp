@@ -12,15 +12,16 @@
 #import "ORColumnGeneration.h"
 #import "ORConcurrencyI.h"
 #import "LPRunnable.h"
+#import "LPSolverI.h"
 
 @implementation ORColumnGeneration {
     @protected
     id<ORRunnable> _master;
-    Void2FloatArray _slaveBlock;
+    Void2Column _slaveBlock;
     id<ORSignature> _sig;
 }
 
--(id) initWithMaster: (id<ORRunnable>)master slave: (Void2FloatArray)slaveBlock {
+-(id) initWithMaster: (id<ORRunnable>)master slave: (Void2Column)slaveBlock {
     if((self = [super init]) != nil) {
         _master = [master retain];
         _slaveBlock = [slaveBlock copy];
@@ -47,10 +48,14 @@
 
 -(void) run {
     id<LPRunnable> master = (id<LPRunnable>)_master;
+    id<LPProgram> lp = [master solver];
+    [master run];
     while(1) {
-        [master run];
-        id<ORFloatArray> col = _slaveBlock();
-        if(col == nil) break;
+        NSLog(@"PO: %@", [[lp solutionPool] best]);
+        id<LPColumn> col = _slaveBlock();
+        NSLog(@"col: %@", col);
+        if(col == nil)
+           break;
         [master injectColumn: col];
     }
 }
@@ -58,7 +63,16 @@
 @end
 
 @implementation ORFactory(ORColumnGeneration)
-+(id<ORRunnable>) columnGeneration: (id<LPRunnable>)master slave: (Void2FloatArray)slaveBlock {
++(id<ORRunnable>) columnGeneration: (id<LPRunnable>)master slave: (Void2Column)slaveBlock {
     return [[ORColumnGeneration alloc] initWithMaster: master slave: slaveBlock];
+}
++(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<OROrderedConstraintSet>)cstrs {
+    id<LPColumn> col = [lp freshColumn];
+    [col addObjCoef: +1.0]; // [ldm] TOCHECK: this was set to -1. I'm unclear as to why. 
+    for(ORInt i = 0; i < [cstrs size]; i++) {
+        NSLog(@"c[%i] = %f", i, [[sol value: [arr at: i]] floatValue]);
+        [col addConstraint: [cstrs at: i] coef: [[sol value: [arr at: i]] floatValue]];
+    }
+    return col;
 }
 @end

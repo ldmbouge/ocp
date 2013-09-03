@@ -520,13 +520,13 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
 {
    id<ORIntVarArray> ca = [self flattenIt:[v array]];
    id<ORFloatArray>  cc = [self flattenIt:[v coef]];
-   _result = [_into minimize:ca coef:cc];
+   _result = [_into minimize:ca coef:cc independent:0.0];
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
    id<ORIntVarArray> ca = [self flattenIt:[v array]];
    id<ORFloatArray>  cc = [self flattenIt:[v coef]];
-   _result = [_into maximize:ca coef:cc];
+   _result = [_into maximize:ca coef:cc independent:0.0];
 }
 
 // ====================================================================================================================
@@ -548,6 +548,7 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
       case ORREq: rv = [terms postEQZ:model annotation:note];break;
       case ORRNEq:rv = [terms postNEQZ:model annotation:note];break;
       case ORRLEq:rv = [terms postLEQZ:model annotation:note];break;
+      case ORRGEq:rv = [terms postGEQZ:model annotation:note];break;
       case ORRDisj:rv = [terms postDISJ:model annotation:note];break;
       default:
          assert(terms == nil);

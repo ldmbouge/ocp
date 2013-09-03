@@ -197,6 +197,24 @@
    _mappings = [src->_mappings copy];
    return self;
 }
+-(ORModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
+{
+    self = [super init];
+    _vars = [src->_vars copy];
+    NSMutableArray* cStore = [src->_cStore mutableCopy];
+    [cStore removeObjectsInArray: cstrs];
+    _cStore = cStore;
+    _mStore = [src->_mStore copy];
+    _iStore = [src->_iStore copy];
+    _memory = [[NSMutableArray alloc] initWithCapacity:32];
+    _nbObjects = src->_nbObjects;
+    _nbImmutables = src->_nbImmutables;
+    _objective = src->_objective;
+    _source = [src retain];
+    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
+    _mappings = [src->_mappings copy];
+    return self;
+}
 -(id<ORTau>) tau
 {
    return _mappings.tau;
@@ -460,14 +478,14 @@
    return [self trackObjective: _objective];
 }
 
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef  independent:(ORFloat)c
 {
-   _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
+   _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef independent:c];
    return [self trackObjective: _objective];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
-   _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
+   _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef independent:c];
    return [self trackObjective: _objective];
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
@@ -502,6 +520,10 @@
 {
    ORModelI* clone = [[ORModelI allocWithZone:zone] initWithModel:self];
    return clone;
+}
+-(id<ORModel>) relaxConstraints: (NSArray*) cstrs {
+    id<ORModel> relaxation = [[ORModelI alloc] initWithModel: self relax: cstrs];
+    return relaxation;
 }
 -(id<ORModel>) flatten
 {
@@ -620,13 +642,13 @@
 {
    return [_target maximize: x];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
-   return [_target minimize: array coef: coef];
+   return [_target minimize: array coef: coef independent:c];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
-  return [_target maximize: array coef: coef];
+  return [_target maximize: array coef: coef independent:c];
 }
 -(id) trackObject: (id) obj
 {
@@ -710,13 +732,13 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return [_target maximize: x];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
-   return [_target minimize: array coef: coef];
+   return [_target minimize: array coef: coef independent:c];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
-   return [_target maximize: array coef: coef];
+   return [_target maximize: array coef: coef independent:c];
 }
 
 -(id<ORAddToModel>) model
@@ -872,10 +894,14 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
     return (ORInt)[_all count];
 }
 
--(id<ORConstraint>) at:(ORInt)index {
+-(id<ORConstraint>) at:(ORInt)index
+{
     return [_all objectAtIndex: index];
 }
-
+-(id<ORConstraint>) objectAtIndexedSubscript: (NSUInteger) key
+{
+   return [_all objectAtIndex: key];
+}
 -(void) enumerateWith:(void(^)(id<ORConstraint>))block
 {
     [_all enumerateObjectsUsingBlock:^(id obj, NSUInteger i, BOOL *stop) {

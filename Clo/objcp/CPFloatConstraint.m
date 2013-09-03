@@ -186,7 +186,7 @@
          ORInterval xii  = xi.bounds;
          ORInterval TMP = ORISubPointwise(S, ORIMul(xii, ci > 0 ? createORI1(ci) : ORISwap(createORI1(ci))));
          ORInterval NEW = ORIDiv(ORIOpposite(TMP), createORI1(ci));
-         BOOL update = ORINarrow(xii, NEW) >= ORLow;
+         BOOL update = (ci>0) ? (ORIUp(NEW) < ORIUp(xii)) : (ORILow(NEW) > ORILow(xii));//ORINarrow(xii, NEW) >= ORLow;
          changed |= update;
          if (update) {
             if (ci > 0)
@@ -444,7 +444,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x value] minimize:YES];
+   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x min] minimize:YES];
 }
 -(ORStatus) check
 {

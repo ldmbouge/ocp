@@ -201,6 +201,9 @@
         case ORRLEq: {
             // Not implemented
         }break;
+       case ORRGEq: {
+          // Not implemented
+       }break;
         default:
             assert(true);
             break;
