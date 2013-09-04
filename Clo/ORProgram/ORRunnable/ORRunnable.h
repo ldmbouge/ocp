@@ -10,15 +10,15 @@
 #import <ORProgram/CPProgram.h>
 #import <ORProgram/LPProgram.h>
 #import <ORUtilities/ORTypes.h>
-#import "ORTypes.h"
-#import "ORSignature.h"
+#import <ORUtilities/ORTypes.h>
+#import <ORProgram/ORSignature.h>
 
 //Forward Declarations
-@protocol  ORModel;
-
+@protocol ORModel;
 @protocol ORRunnable<NSObject>
 -(id<ORModel>) model;
 -(id<ORSignature>) signature;
+-(id<ORASolver>) solver;
 -(void) start;
 -(void) run;
 -(void) setSiblings: (NSArray*)siblings;
@@ -35,6 +35,7 @@
 -(id) initWithModel: (id<ORModel>)m;
 -(void) performOnStart: (ORClosure)c;
 -(void) performOnExit: (ORClosure)c;
+-(id<ORASolver>) solver;
 @end
 
 @interface ORFactory(ORRunnable)

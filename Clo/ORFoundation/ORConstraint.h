@@ -51,6 +51,7 @@
 
 @protocol OROrderedConstraintSet <ORConstraintSet>
 -(id<ORConstraint>) at:(ORInt)index;
+-(id<ORConstraint>) objectAtIndexedSubscript: (NSUInteger) key;
 @end
 
 enum ORGroupType {
@@ -337,6 +338,12 @@ enum ORGroupType {
 -(ORFloat) cst;
 @end
 
+@protocol ORFloatLinearGeq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORIntVarArray>) array;
 -(ORAnnotation) annotation;
@@ -432,6 +439,7 @@ enum ORGroupType {
 @protocol ORObjectiveFunctionLinear <ORObjectiveFunction>
 -(id<ORVarArray>) array;
 -(id<ORFloatArray>) coef;
+-(ORFloat)independent;
 @end
 
 @protocol ORSearchObjectiveFunction <NSObject,ORObjectiveFunction>

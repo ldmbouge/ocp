@@ -274,11 +274,12 @@
 }
 -(id<ORSnapshot>) value: (id) var
 {
-   NSUInteger idx = [var getId];
-   if (idx < [_varShots count])
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [var getId] == [obj getId];
+   }];
+   if (idx != NSNotFound)
       return [_varShots objectAtIndex:idx];
-   else
-      return nil;
+   else return nil;
 }
 -(ORInt) intValue: (id) var
 {

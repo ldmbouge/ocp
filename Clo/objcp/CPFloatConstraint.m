@@ -444,7 +444,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x value] minimize:YES];
+   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x min] minimize:YES];
 }
 -(ORStatus) check
 {

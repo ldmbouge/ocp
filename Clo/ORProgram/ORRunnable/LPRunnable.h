@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ORRunnablePiping.h"
-#import "LPProgram.h"
+#import <ORProgram/ORRunnablePiping.h>
+#import <ORProgram/LPProgram.h>
 
 
 @protocol LPRunnable <ORRunnable>

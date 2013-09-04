@@ -34,7 +34,10 @@
 {
     return _model;
 }
-
+-(id<ORASolver>) solver
+{
+   return nil;
+}
 -(id<ORSignature>) signature
 {
     return nil;

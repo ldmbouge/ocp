@@ -663,7 +663,7 @@
 }
 +(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right track:(id<ORTracker>)t
 {
-   id<ORRelation> o = [[ORExprLEqualI alloc] initORExprLEqualI: right and: left];
+   id<ORRelation> o = [[ORExprGEqualI alloc] initORExprGEqualI: right and: left];
    [self validate:o onError:"No CP tracker in >= Expression" track:t];
    return o;
 }
@@ -870,6 +870,12 @@
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) sum: (id<ORTracker>) model array: (id<ORIntVarArray>) x coef: (id<ORIntArray>) coef  geq: (ORInt) c
+{
+   id<ORConstraint> o = [[ORLinearGeq alloc] initLinearGeq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[OROr alloc] initOROr:b eq:x or:y];
@@ -956,6 +962,18 @@
    id<ORConstraint> o = [[ORLEqualc alloc] initORLEqualc:x leqi:c];
    [model trackObject:o];
    return o;
+}
++(id<ORConstraint>) gEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y // x >= y
+{   
+   id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:y leq:x plus:0];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) gEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c // x >= y + c <=> y <= x - c
+{
+   id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:y leq:x plus:-c];
+   [model trackObject:o];
+   return o;   
 }
 +(id<ORConstraint>) gEqualc:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (ORInt) c
 {
@@ -1179,6 +1197,12 @@
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  leq: (ORFloat) c
 {
    id<ORConstraint> o = [[ORFloatLinearLeq alloc] initFloatLinearLeq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  geq: (ORFloat) c
+{
+   id<ORConstraint> o = [[ORFloatLinearGeq alloc] initFloatLinearGeq: x coef: coef cst: c];
    [model trackObject:o];
    return o;
 }

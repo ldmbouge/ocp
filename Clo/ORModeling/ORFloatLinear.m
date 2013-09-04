@@ -53,9 +53,16 @@
    ORFloat lb = _indep;
    for(ORInt k=0;k < _nb;k++) {
       ORFloat c = _terms[k]._coef;
-      id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
-      ORFloat vlb = d.low;
-      ORFloat vub = d.up;
+      ORFloat vlb,vub;
+      if ([_terms[k]._var conformsToProtocol:@protocol(ORFloatVar)]) {
+         id<ORFloatRange> d= [(id<ORFloatVar>)_terms[k]._var domain];
+         vlb = d.low;
+         vub = d.up;
+      } else if ([_terms[k]._var conformsToProtocol:@protocol(ORIntVar)]) {
+         id<ORIntRange> d = [(id<ORIntVar>)_terms[k]._var domain];
+         vlb = d.low;
+         vub = d.up;
+      }
       ORFloat svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
@@ -67,9 +74,16 @@
    ORFloat ub = _indep;
    for(ORInt k=0;k < _nb;k++) {
       ORFloat c = _terms[k]._coef;
-      id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
-      ORFloat vlb = d.low;
-      ORFloat vub = d.up;
+      ORFloat vlb,vub;
+      if ([_terms[k]._var conformsToProtocol:@protocol(ORFloatVar)]) {
+         id<ORFloatRange> d= [(id<ORFloatVar>)_terms[k]._var domain];
+         vlb = d.low;
+         vub = d.up;
+      } else if ([_terms[k]._var conformsToProtocol:@protocol(ORIntVar)]) {
+         id<ORIntRange> d = [(id<ORIntVar>)_terms[k]._var domain];
+         vlb = d.low;
+         vub = d.up;
+      }
       ORFloat svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
@@ -201,6 +215,14 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
                                               coef: [self coefficients: model]
                                                leq: -_indep]];
 }
+-(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+{
+   return [model addConstraint:[ORFactory floatSum: model
+                                             array: [self variables: model]
+                                              coef: [self coefficients: model]
+                                               geq: -_indep]];
+}
+
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    assert(NO);
@@ -213,11 +235,11 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
 }
 -(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   [model minimize: [self variables: model] coef: [self coefficients: model]];
+   [model minimize: [self variables: model] coef: [self coefficients: model] independent:[self independent]];
 }
 -(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   [model maximize: [self variables: model] coef: [self coefficients: model]];
+   [model maximize: [self variables: model] coef: [self coefficients: model] independent:[self independent]];
 }
 @end
 
@@ -292,6 +314,10 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    return [_real postLEQZ:model annotation:cons];
+}
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postGEQZ:model annotation:cons];
 }
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {

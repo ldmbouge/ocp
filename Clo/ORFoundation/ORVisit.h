@@ -105,6 +105,7 @@
 -(void) visitLinearLeq: (id<ORLinearLeq>) c;
 -(void) visitLinearEq: (id<ORLinearEq>) c;
 -(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c;
+-(void) visitFloatLinearGeq: (id<ORFloatLinearGeq>) c;
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c;
 
 
@@ -123,6 +124,7 @@
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
+-(void) visitExprGEqualI: (id<ORExpr>) e;
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAggMinI: (id<ORExpr>) e;

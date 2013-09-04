@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ORRunnablePiping.h"
-#import "CPProgram.h"
+#import <ORProgram/ORRunnablePiping.h>
+#import <ORProgram/CPProgram.h>
 
 @protocol CPRunnable <ORUpperBoundStreamConsumer, ORUpperBoundStreamProducer,
                       ORLowerBoundStreamConsumer, ORSolutionStreamConsumer,

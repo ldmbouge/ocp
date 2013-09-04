@@ -2050,6 +2050,50 @@
 }
 @end
 
+@implementation ORFloatLinearGeq {
+   id<ORVarArray>      _ia;
+   id<ORFloatArray> _coefs;
+   ORFloat _c;
+}
+-(id) initFloatLinearGeq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %f)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+-(void) visit: (ORVisitor*) v
+{
+   [v visitFloatLinearGeq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
 // ========================================================================================================
 
 
@@ -2728,8 +2772,8 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 
 -(ORInt) compare: (ORObjectiveValueFloatI*) other
 {
-   ORInt mykey = [self key];
-   ORInt okey = [other key];
+   ORFloat mykey = [self key];
+   ORFloat okey = [other key];
    if (mykey < okey)
       return -1;
    else if (mykey == okey)
@@ -2758,11 +2802,12 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveFunctionLinearI
--(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
    self = [super init];
    _array = array;
    _coef = coef;
+   _ic   = c;
    return self;
 }
 -(id<ORVarArray>) array
@@ -2772,6 +2817,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(id<ORFloatArray>) coef
 {
    return _coef;
+}
+-(ORFloat)independent
+{
+   return _ic;
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -2881,9 +2930,9 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMaximizeLinearI
--(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
-   self = [super initORObjectiveFunctionLinearI: array coef: coef];
+   self = [super initORObjectiveFunctionLinearI: array coef: coef independent:c];
    return self;
 }
 -(void)dealloc
@@ -2894,7 +2943,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMaximizeLinearI: %p  --> %@ %@> ",self,_array,_coef];
+   [buf appendFormat:@"<ORMaximizeLinearI: %p  --> %@ %@  %f> ",self,_array,_coef,_ic];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -2904,9 +2953,9 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMinimizeLinearI
--(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
 {
-   self = [super initORObjectiveFunctionLinearI: array coef: coef];
+   self = [super initORObjectiveFunctionLinearI: array coef: coef independent:c];
    return self;
 }
 -(void)dealloc
@@ -2917,7 +2966,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMinimizeLinearI: %p  --> %@ %@> ",self,_array,_coef];
+   [buf appendFormat:@"<ORMinimizeLinearI: %p  --> %@ %@ %f> ",self,_array,_coef,_ic];
    return buf;
 }
 -(void)visit:(ORVisitor*)v

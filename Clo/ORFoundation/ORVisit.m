@@ -358,6 +358,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearLeq: visit method not defined"]; 
 }
+-(void) visitFloatLinearGeq: (id<ORFloatLinearGeq>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearGeq: visit method not defined"];
+}
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearEq: visit method not defined"]; 
@@ -441,6 +445,10 @@
 -(void) visitExprLEqualI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprLEqualI: visit method not defined"]; 
+}
+-(void) visitExprGEqualI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprGEqualI: visit method not defined"];
 }
 -(void) visitExprSumI: (id<ORExpr>) e
 {
@@ -610,6 +618,7 @@
 -(void) visitLinearLeq: (id<ORLinearLeq>) c {}
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
 -(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c {}
+-(void) visitFloatLinearGeq: (id<ORFloatLinearGeq>) c {}
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c {}
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c {}
@@ -633,6 +642,7 @@
 -(void) visitExprEqualI: (id<ORExpr>) e  {}
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}
+-(void) visitExprGEqualI: (id<ORExpr>) e  {}
 -(void) visitExprSumI: (id<ORExpr>) e  {}
 -(void) visitExprProdI: (id<ORExpr>) e  {}
 -(void) visitExprAbsI:(id<ORExpr>) e  {}

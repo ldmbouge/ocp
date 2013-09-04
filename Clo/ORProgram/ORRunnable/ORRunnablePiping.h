@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ORRunnable.h"
+#import <ORProgram/ORRunnable.h>
 
 @protocol ORBoundStreamConsumer<ORRunnable>
 -(id<ORIntInformer>) boundStreamInformer;
