@@ -32,8 +32,9 @@ int main (int argc, const char * argv[])
     id<ORModel> m = [ORFactory createModel];
     NSString* execPath = [NSString stringWithFormat: @"%s", argv[0]];
     NSString* basePath = [execPath stringByDeletingLastPathComponent];
-    NSString* path = [NSString pathWithComponents: [NSArray arrayWithObjects:
-                      basePath, @"simple.msc", nil]];//@"frb30-15-1.msc", nil]];
+    NSString* path = [NSString pathWithComponents: [NSArray arrayWithObjects:basePath,
+                                                    @"simple.msc", nil]];
+                                                    //@"frb30-15-1.msc", nil]];
     NSLog(@"path: %@", path);
     SetCoveringInstanceParser* parser = [[SetCoveringInstanceParser alloc] init];
     SetCoveringInstance* instance = [parser parseInstanceFile: m path: path];
@@ -50,7 +51,7 @@ int main (int argc, const char * argv[])
     }
     
     ORLagrangeRelax* lr = [[ORLagrangeRelax alloc] initWithModel: m];
-    NSLog(@"model: %@", [lr model]);
+    //NSLog(@"model: %@", [lr model]);
     
     id<ORRunnable> r = [ORFactory MIPRunnable: m];
     [r start];

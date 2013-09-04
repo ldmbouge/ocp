@@ -146,6 +146,19 @@
       [_MIPsolver postObjective: concreteObj];
    }
 }
+-(void) visitGEqualc: (id<ORGEqualc>)c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVar> x = [c left];
+      [x visit:self];
+      MIPVariableI* dx = _gamma[x.getId];
+      ORFloat coef[1] = { 1.0 };
+      ORFloat theCst =  [c cst];
+      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:1 var:&dx coef:coef rhs:theCst];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
+}
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {

@@ -52,7 +52,6 @@
 		3720A5AE17CF178000A7F2B5 /* frb30-15-1.msc in Resources */ = {isa = PBXBuildFile; fileRef = 3720A5AD17CF178000A7F2B5 /* frb30-15-1.msc */; };
 		3720A5AF17CF17AA00A7F2B5 /* frb30-15-1.msc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3720A5AD17CF178000A7F2B5 /* frb30-15-1.msc */; };
 		3724138E17D6DD20008BBF6E /* libgurobi55.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 3724138D17D6DD20008BBF6E /* libgurobi55.so */; };
-		3724138F17D6DD33008BBF6E /* libgurobi55.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 3724138D17D6DD20008BBF6E /* libgurobi55.so */; };
 		3756873917CBE4550075E447 /* ORCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3756873817CBE4550075E447 /* ORCombinator.h */; };
 		3756873B17CBE5320075E447 /* ORParallelCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D7299F1724CF6E004966DA /* ORParallelCombinator.h */; };
 		3756873C17CBE5320075E447 /* ORParallelCombinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729A01724CF6E004966DA /* ORParallelCombinator.m */; };
@@ -4841,7 +4840,7 @@
 		3720A5A817CEFC4100A7F2B5 /* SetCoveringInstanceParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetCoveringInstanceParser.h; sourceTree = "<group>"; };
 		3720A5A917CEFC4100A7F2B5 /* SetCoveringInstanceParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetCoveringInstanceParser.m; sourceTree = "<group>"; };
 		3720A5AD17CF178000A7F2B5 /* frb30-15-1.msc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "frb30-15-1.msc"; sourceTree = "<group>"; };
-		3724138D17D6DD20008BBF6E /* libgurobi55.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libgurobi55.so; sourceTree = "<group>"; };
+		3724138D17D6DD20008BBF6E /* libgurobi55.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi55.so; path = /Library/gurobi550/mac64/lib/libgurobi55.so; sourceTree = "<absolute>"; };
 		372D318B1726100C007E1B91 /* LPRunnable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPRunnable.h; path = ORProgram/ORRunnable/LPRunnable.h; sourceTree = SOURCE_ROOT; };
 		372D318C1726100C007E1B91 /* LPRunnable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LPRunnable.m; path = ORProgram/ORRunnable/LPRunnable.m; sourceTree = SOURCE_ROOT; };
 		372D318F172610D1007E1B91 /* MIPRunnable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MIPRunnable.h; path = ORProgram/ORRunnable/MIPRunnable.h; sourceTree = SOURCE_ROOT; };
