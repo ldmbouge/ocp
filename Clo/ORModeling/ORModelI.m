@@ -184,10 +184,10 @@
 -(ORModelI*) initWithModel: (ORModelI*) src
 {
    self = [super init];   
-   _vars = [src->_vars copy];
-   _cStore = [src->_cStore copy];
-   _mStore = [src->_mStore copy];
-   _iStore = [src->_iStore copy];
+   _vars = [src->_vars mutableCopy];
+   _cStore = [src->_cStore mutableCopy];
+   _mStore = [src->_mStore mutableCopy];
+   _iStore = [src->_iStore mutableCopy];
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _nbObjects = src->_nbObjects;
    _nbImmutables = src->_nbImmutables;
@@ -200,12 +200,12 @@
 -(ORModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
 {
     self = [super init];
-    _vars = [src->_vars copy];
+    _vars = [src->_vars mutableCopy];
     NSMutableArray* cStore = [src->_cStore mutableCopy];
     [cStore removeObjectsInArray: cstrs];
     _cStore = cStore;
-    _mStore = [src->_mStore copy];
-    _iStore = [src->_iStore copy];
+    _mStore = [src->_mStore mutableCopy];
+    _iStore = [src->_iStore mutableCopy];
     _memory = [[NSMutableArray alloc] initWithCapacity:32];
     _nbObjects = src->_nbObjects;
     _nbImmutables = src->_nbImmutables;

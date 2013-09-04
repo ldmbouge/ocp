@@ -86,6 +86,8 @@
 		37A715E516FB948900E02DC6 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		37A715E916FBA00100E02DC6 /* SSCPLPInstanceParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A715E716FBA00100E02DC6 /* SSCPLPInstanceParser.h */; };
 		37A715EA16FBA00100E02DC6 /* SSCPLPInstanceParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A715E816FBA00100E02DC6 /* SSCPLPInstanceParser.m */; };
+		37D1BE2217D6D04B00D9F68C /* simple.msc in Resources */ = {isa = PBXBuildFile; fileRef = 37D1BE2117D6D04B00D9F68C /* simple.msc */; };
+		37D1BE2317D6D07800D9F68C /* simple.msc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 37D1BE2117D6D04B00D9F68C /* simple.msc */; };
 		37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
 		5B115520171B1CF5005371AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B115523171B1CF5005371AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B115522171B1CF5005371AA /* main.m */; };
@@ -4111,6 +4113,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				37D1BE2317D6D07800D9F68C /* simple.msc in CopyFiles */,
 				3720A5AF17CF17AA00A7F2B5 /* frb30-15-1.msc in CopyFiles */,
 				3720A59017CEFA7C00A7F2B5 /* LagrangeSetCovering.1 in CopyFiles */,
 			);
@@ -4854,6 +4857,7 @@
 		37A715E816FBA00100E02DC6 /* SSCPLPInstanceParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSCPLPInstanceParser.m; sourceTree = "<group>"; };
 		37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORColumnGeneration.h; path = ORProgram/ORRunnable/ORColumnGeneration.h; sourceTree = SOURCE_ROOT; };
 		37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORColumnGeneration.m; path = ORProgram/ORRunnable/ORColumnGeneration.m; sourceTree = SOURCE_ROOT; };
+		37D1BE2117D6D04B00D9F68C /* simple.msc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simple.msc; sourceTree = "<group>"; };
 		37D7299F1724CF6E004966DA /* ORParallelCombinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORParallelCombinator.h; path = ORProgram/ORRunnable/ORParallelCombinator.h; sourceTree = SOURCE_ROOT; };
 		37D729A01724CF6E004966DA /* ORParallelCombinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORParallelCombinator.m; path = ORProgram/ORRunnable/ORParallelCombinator.m; sourceTree = SOURCE_ROOT; };
 		37D729A31724D4CC004966DA /* ORRunnablePiping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORRunnablePiping.h; path = ORProgram/ORRunnable/ORRunnablePiping.h; sourceTree = SOURCE_ROOT; };
@@ -6651,6 +6655,7 @@
 		3720A58C17CEFA7C00A7F2B5 /* LagrangeSetCovering */ = {
 			isa = PBXGroup;
 			children = (
+				37D1BE2117D6D04B00D9F68C /* simple.msc */,
 				3720A5AD17CF178000A7F2B5 /* frb30-15-1.msc */,
 				3720A58D17CEFA7C00A7F2B5 /* main.m */,
 				3720A58F17CEFA7C00A7F2B5 /* LagrangeSetCovering.1 */,
@@ -11085,6 +11090,7 @@
 				5B7B478315F0F538005FF875 /* test-n30-e50.col in Resources */,
 				5B7B478615F0F733005FF875 /* smallColoring.col in Resources */,
 				5B19097C16DAAB45006D1D24 /* eq20.1 in Resources */,
+				37D1BE2217D6D04B00D9F68C /* simple.msc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17129,6 +17135,7 @@
 				3720A59317CEFA7C00A7F2B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		37A715D116FB93F900E02DC6 /* Build configuration list for PBXNativeTarget "LogicBendersExample" */ = {
 			isa = XCConfigurationList;

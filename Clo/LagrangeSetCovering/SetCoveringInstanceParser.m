@@ -26,10 +26,14 @@
 -(SetCoveringInstance*) parseInstanceFile: (id<ORTracker>)tracker path: (NSString*)path {
     NSString* data = [NSString stringWithContentsOfFile: path encoding: NSASCIIStringEncoding error:nil];
     NSArray* lines = [data componentsSeparatedByCharactersInSet: [NSCharacterSet newlineCharacterSet]];
-    ORInt u = 0;
-    id<ORIntSetArray> sets = [ORFactory intSetArray: tracker range: RANGE(tracker, 0, 449)];
+    NSString* header = [lines objectAtIndex: 0];
+    NSArray* headerComponents = [header componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+    NSArray* headerValues = [headerComponents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != ''"]];
+    ORInt u = [[headerValues objectAtIndex: 2] intValue];
+    ORInt setCount = [[headerValues objectAtIndex: 3] intValue];
+    id<ORIntSetArray> sets = [ORFactory intSetArray: tracker range: RANGE(tracker, 0, setCount-1)];
     ORInt k = 0;
-    for(ORInt i = 0; i < lines.count; i++) {
+    for(ORInt i = 1; i < lines.count; i++) {
         NSString* line = [lines objectAtIndex: i];
         NSArray* components = [line componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
         NSArray* values = [components filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF != ''"]];        

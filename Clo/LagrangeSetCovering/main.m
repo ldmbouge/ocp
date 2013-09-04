@@ -23,7 +23,9 @@
 #import "ORColumnGeneration.h"
 #import "LPRunnable.h"
 #import "CPRunnable.h"
+#import "ORLagrangeRelax.h"
 #import "SetCoveringInstanceParser.h"
+
 
 int main (int argc, const char * argv[])
 {
@@ -31,7 +33,7 @@ int main (int argc, const char * argv[])
     NSString* execPath = [NSString stringWithFormat: @"%s", argv[0]];
     NSString* basePath = [execPath stringByDeletingLastPathComponent];
     NSString* path = [NSString pathWithComponents: [NSArray arrayWithObjects:
-                      basePath, @"frb30-15-1.msc", nil]];
+                      basePath, @"simple.msc", nil]];//@"frb30-15-1.msc", nil]];
     NSLog(@"path: %@", path);
     SetCoveringInstanceParser* parser = [[SetCoveringInstanceParser alloc] init];
     SetCoveringInstance* instance = [parser parseInstanceFile: m path: path];
@@ -49,12 +51,10 @@ int main (int argc, const char * argv[])
         [m add: [expr geq: @1]];
     }
     
-    for (ORInt i = [setRange low]; i <= [setRange up]; i++) {
-        NSLog(@"s%i, %@", i, [instance.sets at: i]);
-    }
+    ORLagrangeRelax* lr = [[ORLagrangeRelax alloc] initWithModel: m];
+    NSLog(@"model: %@", m);//[lr model]);
     
-    id<ORRunnable> r = [ORFactory MIPRunnable: m];
-    [r start];
-    
+    //id<ORRunnable> r = [ORFactory MIPRunnable: m];
+    //[r start];
     return 0;
 }
