@@ -88,7 +88,7 @@
              return [obj conformsToProtocol: @protocol(ORIntVar)];
          }];
          NSArray* intVarArray = [[_model variables] objectsAtIndexes: intVarSet];
-         id<ORIntVarArray> intVars = [ORFactory intVarArray: _program range: RANGE(_program, 0, intVarArray.count-1) with: ^id<ORIntVar>(ORInt i) {
+         id<ORIntVarArray> intVars = [ORFactory intVarArray: _program range: RANGE(_program, 0, (ORInt)intVarArray.count-1) with: ^id<ORIntVar>(ORInt i) {
              return [intVarArray objectAtIndex: i];
          }];
          [_program labelHeuristic: h restricted: intVars];

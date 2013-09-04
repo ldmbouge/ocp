@@ -52,9 +52,9 @@ int main (int argc, const char * argv[])
     }
     
     ORLagrangeRelax* lr = [[ORLagrangeRelax alloc] initWithModel: m];
-    NSLog(@"model: %@", m);//[lr model]);
+    NSLog(@"model: %@", [lr model]);
     
-    //id<ORRunnable> r = [ORFactory MIPRunnable: m];
-    //[r start];
+    id<ORRunnable> r = [ORFactory MIPRunnable: m];
+    [r start];
     return 0;
 }

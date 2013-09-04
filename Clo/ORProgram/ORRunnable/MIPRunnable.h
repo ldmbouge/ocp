@@ -12,7 +12,6 @@
 
 @protocol MIPRunnable <ORRunnable>
 -(id<MIPProgram>) solver;
--(id<ORFloatArray>) duals;
 -(void) injectColumn: (id<ORFloatArray>) col;
 @end
 
@@ -20,7 +19,6 @@
 -(id) initWithModel: (id<ORModel>)m;
 -(id<ORSignature>) signature;
 -(id<MIPProgram>) solver;
--(id<ORFloatArray>) duals;
 -(void) injectColumn: (id<ORFloatArray>) col;
 -(id<ORModel>) model;
 -(void) run;

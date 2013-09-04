@@ -60,5 +60,23 @@
 @interface ORPipedRunnable : ORAbstractRunnableI<ORRunnable>
 -(id) initWithModel: (id<ORModel>)m;
 -(void) doExit;
+
+-(void) notifyUpperBound: (ORInt)bound;
+-(void) notifyLowerBound: (ORInt)bound;
+-(id<ORIntInformer>) boundStreamInformer;
+-(void) receiveUpperBound: (ORInt)bound;
+-(void) receiveLowerBound: (ORInt)bound;
+-(void) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)c;
+-(void) addLowerBoundStreamConsumer: (id<ORLowerBoundStreamConsumer>)c;
+-(id<ORSolutionInformer>) solutionStreamInformer;
+-(void) receiveSolution: (id<ORSolution>)sol;
+-(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c;
+-(void) notifySolution: (id<ORSolution>)sol;
+-(void) produceColumn: (id<ORFloatArray>)col;
+-(id<ORFloatArray>) retrieveColumn;
+-(id<ORConstraintSetInformer>) constraintSetInformer;
+-(void) receiveConstraintSet: (id<ORConstraintSet>)set;
+-(void) addConstraintSetConsumer: (id<ORConstraintSetConsumer>)c;
+-(void) notifyConstraintSet: (id<ORConstraintSet>)set;
 @end
 
