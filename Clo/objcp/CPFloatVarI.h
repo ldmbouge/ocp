@@ -65,12 +65,7 @@ typedef struct  {
 @class CPFloatVarI;
 
 @protocol CPFloatVarNotifier <NSObject>
--(ORInt)getId;
--(NSMutableSet*)constraints;
--(void)setDelegate:(id<CPFloatVarNotifier>)delegate;
--(void) addVar:(CPFloatVarI*)var;
--(enum CPVarClass)varClass;
--(CPFloatVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
+-(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
 -(void) bindEvt:(id<CPFDom>)sender;
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender;
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender;
@@ -85,18 +80,18 @@ typedef struct  {
 -(id)initCPFloatVar:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(CPEngineI*) engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*)constraints;
--(ORFloat)floatValue;
+-(NSMutableSet*) constraints;
+-(ORFloat) floatValue;
 -(ORFloat) domwidth;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
-   CPEngineI*       _engine;
-   CPIntVarI*       _theVar;
+   CPEngineI* _engine;
+   CPIntVar* _theVar;
    CPFloatEventNetwork _net;
 }
--(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVarI*)iv;
--(CPEngineI*)engine;
+-(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
+-(CPEngineI*)    engine;
 -(id<ORTracker>) tracker;
--(NSMutableSet*)constraints;
+-(NSMutableSet*) constraints;
 @end

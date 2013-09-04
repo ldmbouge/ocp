@@ -219,7 +219,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    return min(MAXINT,bindUp(ub));
 }
 
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
    id<ORConstraint> rv = NULL;
    switch(_nb) {
@@ -260,7 +260,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    }
    return rv;
 }
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
    // [ldm] This should *never* raise an exception, but return a ORFailure.   
    id<ORConstraint> rv = NULL;
@@ -326,7 +326,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    }
    return rv;
 }
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
    id<ORConstraint> rv = NULL;
    switch(_nb) {
@@ -352,9 +352,16 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
             rv = [model addConstraint:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
          } else {
-            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef annotation:cons];
-            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep annotation:cons];
-            rv = [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
+            if (aok) {
+               id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef annotation:cons];
+               id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep annotation:cons];
+               rv = [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
+            } else {
+               rv = [model addConstraint:[ORFactory sum:model
+                                                  array:[self variables:model]
+                                                   coef:[self coefficients:model]
+                                                    leq:- _indep]];
+            }
          }
       }break;
       default:
@@ -367,7 +374,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    return rv;
 }
 
--(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
    id<ORConstraint> rv = NULL;
    switch(_nb) {
@@ -392,10 +399,17 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
             rv = [model addConstraint:[ORFactory gEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
             rv = [model addConstraint:[ORFactory gEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
-         } else {
-            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef annotation:cons];
-            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep annotation:cons];
-            rv = [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
+         } else {  // either: x + y + c >= 0  or -x - y + c >= 0
+            if (aok) {
+               id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef annotation:cons];
+               id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep annotation:cons];
+               rv = [model addConstraint:[ORFactory gEqual:model var:xp to:yp]];
+            } else {
+               rv = [model addConstraint:[ORFactory sum:model
+                                                  array:[self variables:model]
+                                                   coef:[self coefficients:model]
+                                                    geq:- _indep]];
+            }
          }
       }break;
       default:
@@ -409,7 +423,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 }
 
 
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
    id<ORConstraint> rv = NULL;
    switch (_nb) {
@@ -502,25 +516,25 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return [_real description];
 }
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postEQZ:model annotation:cons];
+   return [_real postEQZ:model annotation:cons affineOk:aok];
 }
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postNEQZ:model annotation:cons];
+   return [_real postNEQZ:model annotation:cons affineOk:aok];
 }
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postLEQZ:model annotation:cons];
+   return [_real postLEQZ:model annotation:cons affineOk:aok];
 }
--(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postGEQZ:model annotation:cons];
+   return [_real postGEQZ:model annotation:cons affineOk:aok];
 }
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postDISJ:model annotation:cons];
+   return [_real postDISJ:model annotation:cons affineOk:aok];
 }
 @end
 

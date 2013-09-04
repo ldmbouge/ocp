@@ -54,11 +54,11 @@
 -(id<ORVarArray>)  variables:  (id<ORAddToModel>)  model;
 -(id<ORFloatArray>)  coefficients: (id<ORAddToModel>) model;
 -(ORInt) size;
--(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation) cons;
--(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation) cons;
+-(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons affineOk:(BOOL)aok;
+-(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons affineOk:(BOOL)aok;
+-(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons  affineOk:(BOOL)aok;
+-(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation) cons  affineOk:(BOOL)aok;
+-(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation) cons affineOk:(BOOL)aok;
 -(void)  postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 -(void)  postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 @end

@@ -151,7 +151,7 @@
    } else {
       id<ORIntVar> xv = [ORFactory intVar: model domain: RANGE(model,[e min],[e max])];
       [e addTerm:xv by:-1];
-      [e postEQZ: model annotation:c];
+      [e postEQZ: model annotation:c affineOk:NO];
       return xv;
    }
 }
@@ -178,7 +178,7 @@
    } else {
       id<ORFloatVar> xv = [ORFactory floatVar: model low:[e fmin] up:[e fmax]];
       [e addTerm:xv by:-1];
-      [e postEQZ: model annotation:c];
+      [e postEQZ: model annotation:c affineOk:NO];
       return xv;
    }
 }
@@ -249,11 +249,11 @@
 -(void) visitExprGEqualI:(ORExprGEqualI*)e
 {
    // TOCHECK
-   ORIntLinear* linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_n];
-   ORLinearFlip* linLeft = [[ORLinearFlip alloc] initORLinearFlip: linRight];
-   [ORNormalizer addToIntLinear:linRight from:[e left] model:_model annotation:_n];
-   [linLeft release];
-   _terms = linRight;
+   ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_n];
+   ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
+   [ORNormalizer addToIntLinear:linRight from:[e right] model:_model annotation:_n];
+   [linRight release];
+   _terms = linLeft;
 }
 
 struct CPVarPair {
@@ -673,7 +673,7 @@ struct CPVarPair {
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
-   [terms postEQZ:_model annotation:_c];
+   [terms postEQZ:_model annotation:_c affineOk:NO];
    [terms release];
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
@@ -682,7 +682,7 @@ struct CPVarPair {
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
-   [terms postEQZ:_model annotation:_c];
+   [terms postEQZ:_model annotation:_c affineOk:NO];
    [terms release];
 }
 -(void) visitExprMulI: (ORExprMulI*) e
@@ -757,9 +757,9 @@ static inline ORLong maxSeq(ORLong v[4])  {
          low = xMax / c;
          up  = xMin / c;
       }
-      CotCPIntVarI* rem  = _mgr->adaptiveCreateIntVariable(-c+1,c-1);
-      CotCPIntVarI* prod = _mgr->adaptiveCreateIntVariable(c*low,c*up);
-      CotCPIntVarI* z = hasContext() ?
+      CotCPIntVar* rem  = _mgr->adaptiveCreateIntVariable(-c+1,c-1);
+      CotCPIntVar* prod = _mgr->adaptiveCreateIntVariable(c*low,c*up);
+      CotCPIntVar* z = hasContext() ?
       topContext() : _mgr->adaptiveCreateIntVariable(low,up);
       setSuccess(_mgr->post(cf.mod(x,c,rem)));
       setSuccess(_mgr->post(cf.mul(z,c,prod)));
@@ -782,9 +782,9 @@ static inline ORLong maxSeq(ORLong v[4])  {
       int pxlow = CotCP::bindDown(minSeq(pxvals,4));
       int pxup  = CotCP::bindUp(maxSeq(pxvals,4));
       int rb = max(abs(yp),abs(ym))-1;
-      CotCPIntVarI* rem  = _mgr->adaptiveCreateIntVariable(-rb,rb);
-      CotCPIntVarI* prod = _mgr->adaptiveCreateIntVariable(pxlow,pxup);
-      CotCPIntVarI* z = hasContext() ?
+      CotCPIntVar* rem  = _mgr->adaptiveCreateIntVariable(-rb,rb);
+      CotCPIntVar* prod = _mgr->adaptiveCreateIntVariable(pxlow,pxup);
+      CotCPIntVar* z = hasContext() ?
       topContext() : _mgr->adaptiveCreateIntVariable(low,up);
       setSuccess(_mgr->post(cf.mod(v1,v2,rem)));
       setSuccess(_mgr->post(cf.nequalCst(v2,0)));

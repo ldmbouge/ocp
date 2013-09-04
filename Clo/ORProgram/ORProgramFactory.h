@@ -22,12 +22,13 @@
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;
++(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation;
+
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model;
 +(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model;
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model;
-+(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model;
 +(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model;
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation;
 @end
 
 @interface ORLinearRelaxation : NSObject<ORRelaxation>

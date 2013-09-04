@@ -90,7 +90,7 @@
          assert(NO);
       case ORREq:
       {
-         cstr = [terms postEQZ: model annotation: note];
+         cstr = [terms postEQZ: model annotation: note  affineOk:NO];
       }
          break;
       case ORRNEq:
@@ -100,12 +100,12 @@
          break;
       case ORRLEq:
          {
-            cstr = [terms postLEQZ: model annotation: note];
+            cstr = [terms postLEQZ: model annotation: note  affineOk:NO];
          }
          break;
       case ORRGEq:
          {
-            cstr = [terms postGEQZ: model annotation: note];
+            cstr = [terms postGEQZ: model annotation: note  affineOk:NO];
          }
          break;
       default:

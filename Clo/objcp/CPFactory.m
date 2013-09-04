@@ -27,27 +27,36 @@
 {
     printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
 }
-+(CPIntVarI*) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range
++(id<CPIntVar>) intVar: (id<CPEngine>) cp value: (ORInt) value
 {
+   return [[CPIntVarCst alloc] initCPIntVarCst: cp value: value];
+}
++(id<CPIntVar>) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range
+{
+   if ([range low] == [range up])
+      return [CPFactory intVar: cp value: [range low]];
    return [CPIntVarI initCPIntVar: cp bounds: range];
 }
-+(CPIntVarI*) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
++(id<CPIntVar>) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
 {
+   if ([range low] == [range up])
+      return [CPFactory intVar: cp value: [range low]];
     return [CPIntVarI initCPIntVar: cp low: [range low] up: [range up]];
 }
-+(CPIntVarI*) intVar: (CPIntVarI*) x shift: (ORInt) b
++(id<CPIntVar>) intVar: (CPIntVar*) x shift: (ORInt) b
 {
    if (b!=0)
       return [CPIntVarI initCPIntView: x withShift: b];
-   else return x;
+   else
+      return x;
 }
-+(CPIntVarI*) intVar: (CPIntVarI*) x scale: (ORInt) a
++(id<CPIntVar>) intVar: (CPIntVar*) x scale: (ORInt) a
 {
    if (a!=1)
     return [CPIntVarI initCPIntView: x withScale: a];
    else return x;
 }
-+(CPIntVarI*) intVar: (CPIntVarI *) x scale: (ORInt) a shift:(ORInt) b
++(id<CPIntVar>) intVar: (CPIntVarI *) x scale: (ORInt) a shift:(ORInt) b
 {
    if (a==1 && b==0)
       return x;
@@ -65,13 +74,13 @@
 
 +(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
-   return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
+   return [CPIntVarI initCPNegateBoolView:(CPIntVar*)x];
 }
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
 {
    return [[CPFloatVarI alloc] initCPFloatVar:cp low:range.low up:range.up];
 }
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVarI*)x
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
    return [[CPFloatViewOnIntVarI alloc] initCPFloatViewIntVar:cp intVar:x];
 }

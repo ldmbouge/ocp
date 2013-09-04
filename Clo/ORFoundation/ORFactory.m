@@ -340,7 +340,10 @@
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
 }
-
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker value: (ORInt) value
+{
+   return [[ORIntVarI alloc]  initORIntVarI: tracker domain: RANGE(tracker,value,value)];
+}
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b
 {
    return [self intVar:tracker var:x shift:b annotation:Default];
@@ -663,7 +666,7 @@
 }
 +(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right track:(id<ORTracker>)t
 {
-   id<ORRelation> o = [[ORExprGEqualI alloc] initORExprGEqualI: right and: left];
+   id<ORRelation> o = [[ORExprGEqualI alloc] initORExprGEqualI: left and: right];
    [self validate:o onError:"No CP tracker in >= Expression" track:t];
    return o;
 }

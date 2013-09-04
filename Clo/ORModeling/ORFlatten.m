@@ -545,11 +545,11 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
    id<ORLinear> terms = [ORNormalizer normalize:expr into: model annotation:note];
    switch ([expr type]) {
       case ORRBad: assert(NO);
-      case ORREq: rv = [terms postEQZ:model annotation:note];break;
-      case ORRNEq:rv = [terms postNEQZ:model annotation:note];break;
-      case ORRLEq:rv = [terms postLEQZ:model annotation:note];break;
-      case ORRGEq:rv = [terms postGEQZ:model annotation:note];break;
-      case ORRDisj:rv = [terms postDISJ:model annotation:note];break;
+      case ORREq: rv = [terms postEQZ:model annotation:note affineOk:YES];break;
+      case ORRNEq:rv = [terms postNEQZ:model annotation:note affineOk:YES];break;
+      case ORRLEq:rv = [terms postLEQZ:model annotation:note affineOk:YES];break;
+      case ORRGEq:rv = [terms postGEQZ:model annotation:note affineOk:YES];break;
+      case ORRDisj:rv = [terms postDISJ:model annotation:note affineOk:YES];break;
       default:
          assert(terms == nil);
          break;

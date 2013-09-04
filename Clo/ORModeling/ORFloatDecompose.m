@@ -288,7 +288,7 @@
    if (_rv==nil)
       _rv = [ORFactory floatVar:_model low:[terms fmin] up:[terms fmax]];
    [terms addTerm:_rv by:-1];
-   [terms postEQZ:_model annotation:_c];
+   [terms postEQZ:_model annotation:_c affineOk:NO];
    [terms release];
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
@@ -297,7 +297,7 @@
    if (_rv==nil)
       _rv = [ORFactory floatVar:_model low:[terms fmin] up:[terms fmax]];
    [terms addTerm:_rv by:-1];
-   [terms postEQZ:_model annotation:_c];
+   [terms postEQZ:_model annotation:_c affineOk:NO];
    [terms release];
 }
 -(void) visitExprSquareI:(ORExprSquareI *)e

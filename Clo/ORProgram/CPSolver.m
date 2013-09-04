@@ -115,7 +115,7 @@
    ORFloat   _value;
 }
 -(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
--(ORInt) getId;
+-(ORUInt) getId;
 -(ORFloat) floatValue;
 -(ORInt) intValue;
 -(NSString*) description;
@@ -145,7 +145,7 @@
 {
    return _value;
 }
--(ORInt) getId
+-(ORUInt) getId
 {
    return _name;
 }

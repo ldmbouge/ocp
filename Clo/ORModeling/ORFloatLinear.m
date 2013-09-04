@@ -201,21 +201,21 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
    return _nb;
 }
 
--(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons affineOk:(BOOL)aok
 {
    return [model addConstraint:[ORFactory floatSum: model
                                              array: [self variables: model]
                                               coef: [self coefficients: model]
                                                 eq: -_indep]];
 }
--(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons affineOk:(BOOL)aok
 {
    return [model addConstraint:[ORFactory floatSum: model
                                              array: [self variables: model]
                                               coef: [self coefficients: model]
                                                leq: -_indep]];
 }
--(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons affineOk:(BOOL)aok
 {
    return [model addConstraint:[ORFactory floatSum: model
                                              array: [self variables: model]
@@ -223,12 +223,12 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
                                                geq: -_indep]];
 }
 
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
    assert(NO);
    return nil;
 }
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
    assert(NO);
    return nil;
@@ -303,25 +303,25 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
    return [_real fmax];
 }
 
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postEQZ:model annotation:cons];
+   return [_real postEQZ:model annotation:cons affineOk:aok];
 }
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postNEQZ:model annotation:cons];
+   return [_real postNEQZ:model annotation:cons affineOk:aok];
 }
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postLEQZ:model annotation:cons];
+   return [_real postLEQZ:model annotation:cons affineOk:aok];
 }
--(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postGEQZ:model annotation:cons];
+   return [_real postGEQZ:model annotation:cons affineOk:aok];
 }
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok
 {
-   return [_real postDISJ:model annotation:cons];
+   return [_real postDISJ:model annotation:cons affineOk:aok];
 }
 @end
 

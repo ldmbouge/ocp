@@ -40,10 +40,8 @@ int main (int argc, const char * argv[])
     id<ORIntRange> setRange = RANGE(m, 0, (ORInt)instance.sets.count-1);
     id<ORIntRange> universe = RANGE(m, 1, (ORInt)instance.universe);
     id<ORIntVarArray> s = [ORFactory intVarArray: m range: setRange domain: RANGE(m, 0, 1)];
-    id<ORIntVar> objective = [ORFactory intVar: m domain: RANGE(m, 0, (ORInt)instance.sets.count)];
     
-    [m minimize: objective];
-    [m add: [objective eq: Sum(m, i, setRange, [s at: i])]];
+    [m minimize: Sum(m, i, setRange, s[i])];
     for(ORInt n = [universe low]; n <= [universe up]; n++) {
         id<ORExpr> expr = [ORFactory sum: m over: setRange
                                 suchThat: ^bool(ORInt i) { return [[instance.sets at: i] member: n]; }
