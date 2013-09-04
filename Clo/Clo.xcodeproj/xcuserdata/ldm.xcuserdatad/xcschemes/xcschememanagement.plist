@@ -59,10 +59,10 @@
 			<key>orderHint</key>
 			<integer>15</integer>
 		</dict>
-		<key>LagrangeSetCovering.xcscheme</key>
+		<key>LagrangeSetCovering.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>85</integer>
+			<integer>82</integer>
 		</dict>
 		<key>LogicBendersExample.xcscheme_^#shared#^_</key>
 		<dict>
@@ -344,11 +344,6 @@
 			<key>orderHint</key>
 			<integer>30</integer>
 		</dict>
-		<key>nonogram.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>78</integer>
-		</dict>
 		<key>nonogram.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -454,7 +449,7 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
-		<key>regular.xcscheme</key>
+		<key>regular 2.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>79</integer>

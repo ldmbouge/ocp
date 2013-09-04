@@ -666,7 +666,7 @@
 }
 +(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right track:(id<ORTracker>)t
 {
-   id<ORRelation> o = [[ORExprGEqualI alloc] initORExprGEqualI: right and: left];
+   id<ORRelation> o = [[ORExprGEqualI alloc] initORExprGEqualI: left and: right];
    [self validate:o onError:"No CP tracker in >= Expression" track:t];
    return o;
 }

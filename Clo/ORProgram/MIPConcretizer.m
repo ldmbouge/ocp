@@ -179,6 +179,22 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
+-(void) visitLinearGeq: (id<ORLinearGeq>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> x = [c vars];
+      id<ORIntArray> a = [c coefs];
+      id<ORFloatArray> fa = [ORFactory floatArray:_program range:[a range] with:^ORFloat(ORInt k) {
+         return [a at:k];
+      }];
+      ORInt cst = [c cst];
+      [x visit: self];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: dx coef: fa cst: -cst];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+   }   
+}
 
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
 {
