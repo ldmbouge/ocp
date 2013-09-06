@@ -2,7 +2,7 @@
 #include $(GNUSTEP_MAKEFILES)/common.make
 
 OC = clang
-CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I../objcp -fblocks -fobjc-nonfragile-abi
+CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I../objcp -fblocks -fobjc-nonfragile-abi -msse4.1 
 LFLAGS = -g -L../objcp -lobjcp `/usr/GNUstep/System/Tools/gnustep-config --base-libs`  -L../objcp \
 	-lobjcp 
 SRCS = main.m
