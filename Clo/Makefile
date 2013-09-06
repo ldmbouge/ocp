@@ -4,7 +4,7 @@ TARGETS = $(LIBS) queens2 knapsack Sudoku magicserie
 # queensAC Sudoku magicserie queensACSem
 
 VIEWS=1
-CFL= -O3
+CFL= -g
 
 .PHONY: $(TARGETS)
 
