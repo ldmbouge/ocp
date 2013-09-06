@@ -5,7 +5,8 @@
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel -msse4.1 \
+CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel -I../ORFoundation \
+	-msse4.1 \
 	-fPIC -fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
 LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
@@ -42,7 +43,7 @@ $(LIBNAME): $(OFILES)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	$(OC) $(CFLAGS) -c $< 
+	@$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~
