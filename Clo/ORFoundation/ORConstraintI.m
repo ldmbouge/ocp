@@ -2664,16 +2664,16 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    else
       return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [other value] minimize: _direction == 1];
 }
--(ORInt) compare: (ORObjectiveValueIntI*) other
+-(NSComparisonResult) compare: (ORObjectiveValueIntI*) other
 {
    ORInt mykey = [self key];
    ORInt okey = [other key];
    if (mykey < okey)
-      return -1;
+      return NSOrderedAscending;
    else if (mykey == okey)
-      return 0;
+      return NSOrderedSame;
    else
-      return 1;
+      return NSOrderedDescending;
 }
 @end
 
@@ -2726,7 +2726,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
       return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [other value] minimize: _direction == 1];
 }
 
--(ORInt) compare: (ORObjectiveValueFloatI*) other
+-(NSComparisonResult) compare: (ORObjectiveValueFloatI*) other
 {
    ORInt mykey = [self key];
    ORInt okey = [other key];
