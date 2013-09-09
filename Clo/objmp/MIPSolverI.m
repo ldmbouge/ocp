@@ -954,7 +954,7 @@
       [self addConstraint: cstr];
       if (_isClosed) {
          [_MIP addConstraint: cstr];
-         [_MIP solve];
+         //[_MIP solve];
       }
    }
    else

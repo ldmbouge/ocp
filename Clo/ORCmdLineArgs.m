@@ -75,6 +75,8 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
       }@catch(ORExecutionError* execError) {
          NSLog(@"Execution ERROR: %@",execError);
          [execError release];
+         run.found = 0;
+         run.nbFailures = run.nbChoices = run.nbPropagations = 0;
       }
    }
    ORLong endWC  = [ORRuntimeMonitor wctime];

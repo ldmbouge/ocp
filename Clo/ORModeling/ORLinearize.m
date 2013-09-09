@@ -354,6 +354,7 @@
 
 @implementation ORLinearizeObjective {
     id<ORAddToModel> _model;
+    id _result;
 }
 -(id)init:(id<ORAddToModel>)m
 {
@@ -379,6 +380,7 @@
    assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
    [_model maximize:[v expr]];
 }
+-(void) visitIntVar: (id<ORIntVar>) v  { _result = v; }
 
 @end
 

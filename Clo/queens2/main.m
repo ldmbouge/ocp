@@ -13,8 +13,6 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
 #import <ORProgram/ORProgramFactory.h>
 
 int main (int argc, const char * argv[])

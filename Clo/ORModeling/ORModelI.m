@@ -846,5 +846,42 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
         block(obj);
     }];
 }
+
+@end
+@implementation OROrderedConstraintSetI
+-(id) init
+{
+    self = [super init];
+    _all = [[NSMutableArray alloc] initWithCapacity:64];
+    return self;
+}
+
+-(void) dealloc
+{
+    [_all release];
+    [super dealloc];
+}
+
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c
+{
+    [_all addObject: c];
+    return c;
+}
+
+-(ORInt) size {
+    return (ORInt)[_all count];
+}
+
+-(id<ORConstraint>) at:(ORInt)index {
+    return [_all objectAtIndex: index];
+}
+
+-(void) enumerateWith:(void(^)(id<ORConstraint>))block
+{
+    [_all enumerateObjectsUsingBlock:^(id obj, NSUInteger i, BOOL *stop) {
+        block(obj);
+    }];
+}
+
 @end
 

@@ -2876,6 +2876,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(ORVisitor*)v
 {
    [v visitMinimizeExpr:self];
+    //[v visitMinimizeVar: self];
 }
 @end
 

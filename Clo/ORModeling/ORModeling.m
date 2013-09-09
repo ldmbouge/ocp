@@ -57,4 +57,12 @@
 +(id<ORConstraintSet>) createConstraintSet {
     return [[ORConstraintSetI alloc] init];
 }
++(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block {
+    id<OROrderedConstraintSet> s = [[OROrderedConstraintSetI alloc] init];
+    for(ORInt i = [range low]; i <= [range up]; i++) {
+        [s addConstraint: block(i)];
+    }
+    //[tracker trackMutable: s];
+    return s;
+}
 @end
