@@ -187,7 +187,6 @@
 		5B3895F11795BE07004CCE93 /* fwarehouse.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B3895F01795BE07004CCE93 /* fwarehouse.1 */; };
 		5B3896011795BE1E004CCE93 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B3896021795BE1E004CCE93 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		5B3896031795BE1E004CCE93 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B3896041795BE1E004CCE93 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B3896051795BE1E004CCE93 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B3896061795BE1E004CCE93 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
@@ -961,6 +960,7 @@
 		B139DEA115CCE3F8007D523E /* ORController.h in Headers */ = {isa = PBXBuildFile; fileRef = B139DE9F15CCE3F8007D523E /* ORController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B139DEA215CCE3F8007D523E /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
 		B13EBFDD17D2D96300021A82 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B13EBFDC17D2D96300021A82 /* main.m */; };
+		B144185F17D98C1A00924909 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */ = {isa = PBXBuildFile; fileRef = B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */; };
 		B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */ = {isa = PBXBuildFile; fileRef = B152BE2D13BB541E00531FD5 /* CPAllDifferentDC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -5581,9 +5581,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B144185F17D98C1A00924909 /* ORFoundation.framework in Frameworks */,
 				5B3896011795BE1E004CCE93 /* CPUKernel.framework in Frameworks */,
 				5B3896021795BE1E004CCE93 /* objcp.framework in Frameworks */,
-				5B3896031795BE1E004CCE93 /* ORFoundation.framework in Frameworks */,
 				5B3896041795BE1E004CCE93 /* ORModeling.framework in Frameworks */,
 				5B3896051795BE1E004CCE93 /* ORProgram.framework in Frameworks */,
 				5B3896061795BE1E004CCE93 /* ORUtilities.framework in Frameworks */,
@@ -14811,6 +14811,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
