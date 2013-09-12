@@ -10,10 +10,9 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORFoundation.h>
 #import <ORProgram/ORProgramFactory.h>
 
 #import "ORCmdLineArgs.h"

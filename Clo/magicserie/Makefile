@@ -5,7 +5,7 @@ OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
 CFLAGS = -I$(GNUstep)/include -I. -I.. \
-	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
+	-fblocks -fobjc-nonfragile-abi -msse4.1  $(USER_DEFINES)
 
 LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
 	-L../objcp -L../ORFoundation -L../ORUtilities -L../ORModeling \

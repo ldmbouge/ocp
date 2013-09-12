@@ -29,15 +29,16 @@ all: $(LIBNAME)
 	fi
 
 $(LIBNAME): $(OFILES)
-	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	@echo "Linking..." $<
+	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	$(OC) $(CFLAGS) -c $< 
+	@$(OC) $(CFLAGS) -c $< 
 
 %.$(OBJEXT): %.mm
 	@echo "compiling C++ / m"  $<
-	$(OC) $(CFLAGS) -ObjC++ -c $< 
+	@$(OC) $(CFLAGS) -ObjC++ -c $< 
 
 clean:
 	rm -rf *.o *~

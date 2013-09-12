@@ -179,7 +179,7 @@ inline static ContPool* instancePool()
 #if defined(__APPLE__) || !defined(__x86_64__)
          NSDeallocateObject(self);
 #else
-	 char* ptr = self;
+	 char* ptr = (char*)self;
 	 ptr = ptr - 16;
 	 free(ptr);
 #endif
