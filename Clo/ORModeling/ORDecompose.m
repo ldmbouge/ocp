@@ -587,6 +587,11 @@ struct CPVarPair {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprMatrixVarSubI:(ORExprMatrixVarSubI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
 @end
 
 // ========================================================================================================================
@@ -1070,6 +1075,18 @@ static inline ORLong maxSeq(ORLong v[4])  {
    [lT release];
 }
 
+static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
+{
+   if (d == arity) {
+      [t insertTuple:idx];
+      idx[arity]++;
+   } else {
+      [[m range:d] enumerateWithBlock:^(ORInt k) {
+         idx[d] = k;
+         loopOverMatrix(m, d+1, arity, t, idx);
+      }];
+   }
+}
 -(void)visitExprMatrixVarSubI:(ORExprMatrixVarSubI*) e
 {
    id<ORIntLinear> i0 = [ORNormalizer intLinearFrom:[e index0] model:_model annotation:_c];
@@ -1083,7 +1100,23 @@ static inline ORLong maxSeq(ORLong v[4])  {
    ORInt ub = [e max];
    if (_rv == nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,lb,ub)];
-   [_model addConstraint:[ORFactory element:_model matrix:m elt:v0 elt:v1 equal:_rv annotation:_c]];
+   
+   id<ORIntRange> fr = [ORFactory intRange:_model low:0 up:(ORInt)[m count]-1];
+   id<ORIntVarArray> f = (id)[ORFactory idArray:_model range:fr with:^id(ORInt i) {
+      return [m flat:i];
+   }];
+   id<ORTable> table = [ORFactory table:_model arity:[m arity]+1];
+   ORInt k = [m arity]+1;
+   ORInt idx[k];
+   idx[k-1] = 0;
+   loopOverMatrix(m,0,[m arity],table,idx);
+   table = [_model memoize:table];
+   id<ORIntVar> alpha = [ORFactory intVar:_model domain:fr];
+   [_model addConstraint:[ORFactory tableConstraint:_model table:table on:v0 :v1 :alpha]];
+   id<ORConstraint> fc = [ORFactory element:_model var:alpha idxVarArray:f equal:_rv
+                                 annotation:DomainConsistency];
+   [_model addConstraint:fc];  
+   //[_model addConstraint:[ORFactory element:_model matrix:m elt:v0 elt:v1 equal:_rv annotation:_c]];
 }
 -(void) visitExprSumI: (ORExprSumI*) e
 {

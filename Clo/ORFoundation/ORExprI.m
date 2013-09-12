@@ -2099,7 +2099,7 @@
    [[_m range:0] enumerateWithBlock:^(ORInt i) {
       [[_m range:1] enumerateWithBlock:^(ORInt j) {
          id<ORIntRange> d = [[_m at:i :j] domain];
-         maxOf = maxOf > [d low] ? maxOf : [d low];
+         maxOf = maxOf > [d up] ? maxOf : [d up];
       }];
    }];
    return maxOf;

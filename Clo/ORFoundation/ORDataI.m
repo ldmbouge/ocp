@@ -726,6 +726,17 @@ static ORInt _deterministic;
    }
 }
 
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(ORInt i = 0; i < _nb; i++) {
+      [buf appendFormat:@"%d = < ",i];
+      for(ORInt j = 0; j < _arity; j++)
+         [buf appendFormat:@"%d ",_column[j][i]];
+      [buf appendString:@"> \n"];
+   }
+   return buf;
+}
 -(void) print
 {
    for(ORInt i = 0; i < _nb; i++) {

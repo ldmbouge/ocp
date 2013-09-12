@@ -604,6 +604,19 @@
 {
    return _target;
 }
+-(id)inCache:(id)obj
+{
+   return[_target inCache:obj];
+}
+-(id)addToCache:(id)obj
+{
+   return [_target addToCache:obj];
+}
+-(id)memoize:(id) obj
+{
+   return [_target memoize:obj];
+}
+
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x
 {
    return [_target minimizeVar:x];

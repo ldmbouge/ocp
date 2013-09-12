@@ -457,7 +457,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _inter  -= _minCI;
    
    for(ORInt k = _minCI;k<=_maxCI;k++) {
-      if (memberBitDom(_x, k)) {
+      if (memberDom(_x, k)) {
          ORInt interMin = min([_array[k] min],[_z min]);
          ORInt interMax = max([_array[k] max],[_z max]);
          _inter[k] = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:interMin up:interMax];
@@ -466,9 +466,9 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    }
    _iva = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:la up:ua];
    for(ORInt k=la;k<=ua;k++) {
-      if (memberBitDom(_x, k)) {
+      if (memberDom(_x, k)) {
          for(ORInt i=[_array[k] min]; i <= [_array[k] max];i++)
-            if (memberBitDom((CPIntVar*)_array[k], i))
+            if (memberDom((CPIntVar*)_array[k], i))
                [_s[i] setValue:[_s[i] value] + 1];
       } else
          [_iva set:k at:false];
@@ -478,7 +478,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          [_z remove:k];
    }
    for(int k=[_x min]; k<= [_x max];k++) {
-      if (memberBitDom(_x, k)) {
+      if (memberDom(_x, k)) {
          assert([_c[k] value] == 0);
          assert([_inter[k] countFrom:[_inter[k] min] to:[_inter[k] max]] == [_c[k] value]);
          CPIntVar* ak = (CPIntVar*) _array[k];

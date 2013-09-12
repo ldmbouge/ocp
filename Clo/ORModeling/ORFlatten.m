@@ -174,7 +174,7 @@
    id<ORIntVarArray> q = [ORFactory intVarArray:_into range:E domain:S];
    [_into addConstraint:[ORFactory equalc:_into var:q[R.low] to:S.low]];
    for(ORInt k=R.low;k <= R.up;k++)
-      [_into addConstraint:[ORFactory tableConstraint:T on:q[k] :x[k] :q[k+1]]];
+      [_into addConstraint:[ORFactory tableConstraint:_into table:T on:q[k] :x[k] :q[k+1]]];
    [S enumerateWithBlock:^(ORInt s) {
       if (![F member:s])
          [_into addConstraint:[ORFactory notEqualc:_into var:q[R.up+1] to:s]];
@@ -333,7 +333,7 @@
    _result = c;
 }
 
-void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
+static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
 {
    if (d == arity) {
       idx[arity]++;
@@ -364,7 +364,7 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
    loopOverMatrix(m,0,[m arity],table,idx);
    table = [t memoize:table];
    id<ORIntVar> alpha = [ORFactory intVar:t domain:fr];
-   [ORFactory tableConstraint:table on:idx0 :idx1 :alpha];
+   [ORFactory tableConstraint:t table:table on:idx0 :idx1 :alpha];
    _result = [ORFactory element:t var:alpha idxVarArray:f equal:res annotation:DomainConsistency];
 }
 -(void) visitCircuit:(id<ORCircuit>) c

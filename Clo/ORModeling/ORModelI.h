@@ -88,6 +88,8 @@
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModel>) model;
+-(id)inCache:(id)obj;
+-(id)addToCache:(id)obj;
 -(id) trackConstraintInGroup:(id)obj;
 -(id) trackObjective:(id) obj;
 -(id) trackMutable: (id) obj;

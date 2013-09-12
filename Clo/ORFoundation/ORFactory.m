@@ -1117,9 +1117,9 @@
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) tableConstraint: (id<ORIntVarArray>) x table: (ORTableI*) table
++(id<ORConstraint>) tableConstraint:(id<ORIntVarArray>) x table: (ORTableI*) table
 {
-   id<ORConstraint> o = [[ORTableConstraintI alloc] initORTableConstraintI: x table: table];
+   id<ORConstraint> o = [[ORTableConstraintI alloc] initORTableConstraintI:x table: table];
    [[x tracker] trackObject:o];
    return o;
 }
@@ -1135,15 +1135,14 @@
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) tableConstraint: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z
++(id<ORConstraint>) tableConstraint:(id<ORTracker>)model table:(id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z
 {
-   id<ORTracker> tracker = [x tracker];
-   id<ORIntRange> R = RANGE(tracker,0,2);
-   id<ORIdArray> a = [ORFactory idArray:tracker range:R];
+   id<ORIntRange> R = RANGE(model,0,2);
+   id<ORIdArray> a = [ORFactory idArray:model range:R];
    [a set:x at:0];
    [a set:y at:1];
    [a set:z at:2];
-   id<ORConstraint> o = [self tableConstraint: (id<ORIntVarArray>) a table: table];
+   id<ORConstraint> o = [self tableConstraint:(id<ORIntVarArray>) a table: table];
    return o;
 }
 
