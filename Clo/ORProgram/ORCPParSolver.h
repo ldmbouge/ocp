@@ -37,4 +37,7 @@
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
 -(ORInt)intValue:(id<ORIntVar>)x;
+-(ORFloat) floatValue:(id<ORFloatVar>)x;
+-(ORInt) intExprValue: (id<ORExpr>)e;
+-(ORFloat) floatExprValue: (id<ORExpr>)e;
 @end

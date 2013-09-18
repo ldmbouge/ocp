@@ -12,17 +12,17 @@
 #import "MIPSolverI.h"
 
 @interface ORLagrangeRelax(Private)
--(id<ORModel>) lagrangianRelax: (id<ORModel>)m constraints: (NSArray*)cstrs;
--(void) subgradientSolve: (ORInt)ub;
+-(void) lagrangianRelaxWithLambdas: (id<ORFloatArray>)lambda;
+-(ORFloat) lagrangianProblemSolveWithUpperBound: (ORFloat)ub;
 @end
 
 @implementation ORLagrangeRelax {
 @protected
     id<ORModel> _srcModel;
-    id<ORModel> _relaxModel;
+    id<ORModel> _relaxedModel;
     NSArray* _relaxedConstraints;
-    id<ORFloatVarArray> _lambdas;
-    id<ORIdArray> _subgradients;
+    NSMutableArray* _subgradients;
+    ORFloat _bestBound;
     id<ORSignature> _sig;
 }
 
@@ -36,49 +36,90 @@
     self = [super init];
     if(self) {
         _srcModel = m;
-        _relaxModel = [self lagrangianRelax: m constraints: cstrs];
         _relaxedConstraints = cstrs;
+        _relaxedModel = nil;
+        _subgradients = nil;
         _sig = nil;
+        _bestBound = DBL_MIN;
     }
     return self;
 }
 
--(id<ORModel>) lagrangianRelax: (id<ORModel>)m constraints: (NSArray*)cstrs {
-    id<ORModel> relaxation = [m relaxConstraints: cstrs];
-    id<ORIntRange> lambdasRange = RANGE(relaxation, 0, (ORInt)cstrs.count-1);
-    _lambdas = [ORFactory floatVarArray: relaxation range: lambdasRange];
-    _subgradients = [ORFactory idArray: relaxation range: lambdasRange];
-    
-    id<ORExpr> cstrsSum =
-        [ORFactory sum: relaxation over: lambdasRange suchThat: nil of: ^id<ORExpr>(ORInt e) {
-            id<ORConstraint> c = [cstrs objectAtIndex: e];
-            if(![c conformsToProtocol: @protocol(ORAlgebraicConstraint)])
-                [NSException raise: NSGenericException format: @"ORLagrangianRelax: relaxed constraints must conform to ORAlgebraicConstraint!"];
-            id<ORAlgebraicConstraint> a = (id<ORAlgebraicConstraint>)c;
-            if(![[a expr] conformsToProtocol: @protocol(ORRelation)])
-                [NSException raise: NSGenericException format: @"ORLagrangianRelax: relaxed constraints must conform to ORRelation!"];
-            id<ORRelation> rel = (id<ORRelation>)[a expr];
-            id<ORFloatVar> lambda = nil;
-            switch ([rel type]) {
-                case ORRLEq: lambda = [ORFactory floatVar: relaxation low: -100 up: 0]; break;
-                case ORRGEq: lambda = [ORFactory floatVar: relaxation low: 0 up: 100]; break;
-                case ORREq: lambda = [ORFactory floatVar: relaxation low: -100 up: 100]; break;
-                default:
-                    [NSException raise: NSGenericException format: @"ORLagrangianRelax: relaxed constraints not supported in Lagrangian Relaxation!"];
-                    break;
-            }
-            [_lambdas set: lambda at: e];
-            ORExprBinaryI* binexpr = (ORExprBinaryI*)rel;
-            id<ORExpr> subgradient = [[binexpr right] sub: [binexpr left] track: relaxation];
-            [_subgradients set: subgradient at: e];
-            return [lambda mul: subgradient track: relaxation];
-        }];
-    id<ORExpr> prevObjective = [((id<ORObjectiveFunctionExpr>)[relaxation objective]) expr];
-    id<ORFloatVar> objective = [ORFactory floatVar: relaxation low: -10000 up: 10000];
-    [relaxation add: [objective geq: [prevObjective plus: cstrsSum track: relaxation]]];
-    [relaxation minimize: objective];
-    return relaxation;
+-(void) lagrangianRelaxWithLambdas: (id<ORFloatArray>)lambdas {
+    _relaxedModel = [_srcModel relaxConstraints: _relaxedConstraints];
+    _subgradients = [[NSMutableArray alloc] initWithCapacity: _relaxedConstraints.count];
+    id<ORExpr> cstrsSum = [ORFactory sum: _relaxedModel over: [lambdas range] suchThat: nil of: ^id<ORExpr>(ORInt e) {
+        id<ORConstraint> c = [_relaxedConstraints objectAtIndex: e];
+        if(![c conformsToProtocol: @protocol(ORAlgebraicConstraint)])
+            [NSException raise: NSGenericException format: @"ORLagrangianRelax: relaxed constraints must conform to ORAlgebraicConstraint!"];
+        id<ORAlgebraicConstraint> a = (id<ORAlgebraicConstraint>)c;
+        if(![[a expr] conformsToProtocol: @protocol(ORRelation)])
+            [NSException raise: NSGenericException format: @"ORLagrangianRelax: relaxed constraints must conform to ORRelation!"];
+
+        id<ORRelation> rel = (id<ORRelation>)[a expr];
+        ORExprBinaryI* binexpr = (ORExprBinaryI*)rel;
+        id<ORExpr> subgradient = nil;
+        ORFloat lambda = [lambdas at: e];
+        switch ([rel type]) {
+            case ORRLEq: subgradient = [[[binexpr right] mul: @(-1) track: _relaxedModel] plus: [binexpr left] track: _relaxedModel]; break;
+            case ORRGEq: subgradient = [[binexpr right] sub: [binexpr left] track: _relaxedModel]; break;
+            default:
+                [NSException raise: NSGenericException format: @"ORLagrangianRelax: relaxed constraints not supported in Lagrangian Relaxation!"];
+                break;
+        }
+        ORFloat(^clo)(id<ORASolver>) = ^ORFloat(id<ORASolver> solver) { return [solver floatExprValue: subgradient]; };
+        [_subgradients addObject: [clo copy]];
+        return [subgradient mul: @(lambda) track: _relaxedModel];
+    }];
+    id<ORExpr> prevObjective = [((id<ORObjectiveFunctionExpr>)[_relaxedModel objective]) expr];
+    [_relaxedModel minimize: [prevObjective plus: cstrsSum track: _relaxedModel]];
 }
+
+-(ORFloat) lagrangianProblemSolveWithUpperBound: (ORFloat)ub {
+    ORFloat pi = 2.0f;
+    ORFloat best = DBL_MIN;
+    id<ORIntRange> lambdaRange = [ORFactory intRange: _srcModel low: 0 up: (ORInt)_relaxedConstraints.count-1];
+    id<ORFloatArray> lambdaValues = [ORFactory floatArray: _srcModel range: lambdaRange value: 0.0];
+    ORFloat cutoff = 0.005;
+    
+    ORInt noImproveLimit = 30;
+    ORInt noImprove = 0;
+    
+    while(pi > cutoff) {
+        [self lagrangianRelaxWithLambdas: lambdaValues];
+        id<MIPRunnable> mip = (id<MIPRunnable>)[ORFactory MIPRunnable: _relaxedModel];
+        [mip run];
+        id<ORFloatArray> subgradientValues =
+            [ORFactory floatArray: _relaxedModel range: lambdaRange with: ^ORFloat(ORInt e) {
+                ORFloat(^clo)(id<ORASolver>)  = [_subgradients objectAtIndex: e];
+                return clo([mip solver]);
+            }];
+        id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[[[[mip solver] solutionPool] best] objectiveValue];
+        ORFloat stepSize = pi * (ub - [objValue value]) /
+            [subgradientValues sumWith:^ORFloat(ORFloat x, int idx) { return x * x; }];
+        [lambdaRange enumerateWithBlock: ^(ORInt i) {
+            ORFloat lambda = [lambdaValues at: i];
+            ORFloat newLambda = MAX(0, lambda + stepSize * [subgradientValues at: i]);
+            [lambdaValues set: newLambda at: i];
+        }];
+        
+        // Check for improvement
+        if([objValue value] > best) {
+            best = [objValue value];
+            noImprove = 0;
+        }
+        else if(++noImprove > noImproveLimit) {
+            pi /= 2.0;
+            noImprove = 0;
+        }
+        
+        // Check if done
+        if(fabs(ub -[objValue value]) < 1.0e-5) break;
+    }
+    return best;
+}
+
+
 
 -(id<ORSignature>) signature
 {
@@ -90,35 +131,14 @@
 
 -(id<ORModel>) model
 {
-    return _relaxModel;
+    return _srcModel;
 }
 
 -(void) run
 {
-    id<ORExpr> srcObjective = [((id<ORObjectiveFunctionExpr>)[_srcModel objective]) expr];
-    [self subgradientSolve: [srcObjective max]];
+    _bestBound = [self lagrangianProblemSolveWithUpperBound: 10];
 }
 
--(void) subgradientSolve: (ORInt)ub
-{
-    /*
-    ORFloat pi = 2.0f;
-    ORFloat best = DBL_MIN;
-    ORFloat lambdaValues[_relaxedConstraints.count];
-    for(ORInt i = 0; i < _relaxedConstraints.count; i++) lambdaValues[i] = 0.0;
-    ORFloat cutoff = 0.005;
-    
-    while(pi > cutoff) {
-        id<MIPRunnable> mip = (id<MIPRunnable>)[ORFactory MIPRunnable: _relaxModel];
-        MIPSolverI* solver = [[mip solver] solver];
-        // Fix lambdas
-        for(ORInt i = 0; i < _relaxedConstraints.count; i++) {
-            MIPVariableI* v = [solver ]
-            [solver updateLowerBound: lb:<#(ORFloat)#>]
-        }
-    }
-    */
-}
-
+-(ORFloat) bestBound { return _bestBound; }
 
 @end

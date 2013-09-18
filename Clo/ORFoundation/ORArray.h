@@ -30,6 +30,7 @@
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
+-(ORInt) sumWith: (ORInt(^)(ORInt value,int idx))block;
 @end
 
 @protocol ORFloatArray <ORObject>
@@ -45,6 +46,7 @@
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
+-(ORFloat) sumWith: (ORFloat(^)(ORFloat value,int idx))block;
 @end
 
 @protocol ORIntSetArray <ORObject>

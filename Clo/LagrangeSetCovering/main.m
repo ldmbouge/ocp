@@ -51,9 +51,10 @@ int main (int argc, const char * argv[])
     }
     
     ORLagrangeRelax* lr = [[ORLagrangeRelax alloc] initWithModel: m];
-    //NSLog(@"model: %@", [lr model]);
+    [lr run];
+    NSLog(@"lower bound: %f", [lr bestBound]);
     
-    id<ORRunnable> r = [ORFactory MIPRunnable: m];
-    [r start];
+    //id<ORRunnable> r = [ORFactory MIPRunnable: [lr model]];
+    //[r start];
     return 0;
 }

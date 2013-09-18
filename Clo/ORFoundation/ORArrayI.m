@@ -126,6 +126,13 @@
    for(ORInt i=_low;i<=_up;i++)
       block(_array[i],i);
 }
+-(ORInt) sumWith: (ORInt(^)(ORInt value,int idx))block {
+    __block ORInt sum = 0;
+    [self enumerateWith:^(ORInt obj, ORInt idx) {
+        sum += block(obj, idx);
+    }];
+    return sum;
+}
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
    return [ORFactory elt: _tracker intArray: self index: idx];
@@ -308,6 +315,13 @@
 {
     for(ORInt i=_low;i<=_up;i++)
         block(_array[i],i);
+}
+-(ORFloat) sumWith: (ORFloat(^)(ORFloat value,int idx))block {
+    __block ORFloat sum = 0.0;
+    [self enumerateWith:^(ORFloat obj, int idx) {
+        sum += block(obj, idx);
+    }];
+    return sum;
 }
 -(ORInt) low
 {

@@ -114,6 +114,7 @@
 -(id<ORCPSolution>) captureSolution;
 
 -(ORInt) intValue: (id) x;
+-(ORInt) intExprValue: (id<ORExpr>)e;
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
@@ -122,6 +123,7 @@
 -(NSSet*) constraints: (id<ORVar>)x;
 
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORFloat) floatExprValue: (id<ORExpr>)e;
 -(ORFloat) domwidth:(id<ORFloatVar>)x;
 -(ORFloat) fmin:(id<ORFloatVar>)x;
 -(ORFloat) fmax:(id<ORFloatVar>)x;

@@ -44,12 +44,6 @@
     return [_r0 model];
 }
 
--(void) connectPiping:(NSArray *)runnables {
-    // Set siblings for internal piping
-    [_r0 setSiblings: [NSArray arrayWithObject: _r1]];
-    [_r1 setSiblings: [NSArray arrayWithObject: _r0]];
-}
-
 -(void) run {
     
 //    [_r0 onExit: ^() { [(CPRunnableI*)_r0 restore: [_solutionPool best]]; }];

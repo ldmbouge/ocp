@@ -12,6 +12,7 @@
 #import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORExprEval.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORFlatten.h>
 #import <ORProgram/ORProgram.h>
@@ -1218,6 +1219,12 @@
 {
    return [_gamma[[x getId]] intValue];
 }
+-(ORInt) intExprValue: (id<ORExpr>)e {
+    ORIntExprEval* eval = [[ORIntExprEval alloc] initORIntExprEval: self];
+    ORInt v = [eval intValue: e];
+    [eval release];
+    return v;
+}
 -(ORBool) boolValue: (id<ORIntVar>) x
 {
    return [_gamma[x.getId] intValue];
@@ -1225,6 +1232,12 @@
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
    return [(id<ORFloatVar>)_gamma[x.getId] floatValue];
+}
+-(ORFloat) floatExprValue: (id<ORExpr>)e {
+    ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];
+    ORFloat v = [eval floatValue: e];
+    [eval release];
+    return v;
 }
 -(ORBool) bound: (id<ORVar>) x
 {

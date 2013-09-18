@@ -19,6 +19,7 @@
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORExpr.h>
+#import <ORFoundation/ORExprEval.h>
 #import <ORFoundation/ORControl.h>
 #import <ORFoundation/ORCommand.h>
 #import <ORFoundation/ORTracer.h>

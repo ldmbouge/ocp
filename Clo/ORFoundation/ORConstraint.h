@@ -456,6 +456,10 @@ enum ORGroupType {
 -(void)               close;
 -(id<OREngine>)       engine;
 -(id<ORSolutionPool>) solutionPool;
+-(ORFloat) floatValue: (id)v;
+-(ORInt) intValue: (id)v;
+-(ORFloat) floatExprValue: (id<ORExpr>)e;
+-(ORInt) intExprValue: (id<ORExpr>)e;
 -(id) concretize: (id) o;
 @end
 

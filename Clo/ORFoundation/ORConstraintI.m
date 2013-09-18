@@ -595,11 +595,11 @@
 @end
 
 @implementation ORMult { // x = y * z
-   id<ORIntVar> _x;
-   id<ORIntVar> _y;
-   id<ORIntVar> _z;
+   id<ORVar> _x;
+   id<ORVar> _y;
+   id<ORVar> _z;
 }
--(ORMult*)initORMult:(id<ORIntVar>)x eq:(id<ORIntVar>)y times:(id<ORIntVar>)z
+-(ORMult*)initORMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z
 {
    self = [super initORConstraintI];
    _x = x;
@@ -617,15 +617,15 @@
 {
    [v visitMult:self];
 }
--(id<ORIntVar>) res
+-(id<ORVar>) res
 {
    return _x;
 }
--(id<ORIntVar>) left
+-(id<ORVar>) left
 {
    return _y;
 }
--(id<ORIntVar>) right
+-(id<ORVar>) right
 {
    return _z;
 }

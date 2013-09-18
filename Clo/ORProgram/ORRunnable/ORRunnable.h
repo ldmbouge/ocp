@@ -21,8 +21,7 @@
 -(id<ORASolver>) solver;
 -(void) start;
 -(void) run;
--(void) setSiblings: (NSArray*)siblings;
--(NSArray*) siblings;
+
 @end
 
 @interface ORAbstractRunnableI : NSObject<ORRunnable> {

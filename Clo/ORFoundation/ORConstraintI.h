@@ -108,10 +108,10 @@
 @end
 
 @interface ORMult : ORConstraintI<ORMult>
--(ORMult*)initORMult:(id<ORIntVar>)x eq:(id<ORIntVar>)y times:(id<ORIntVar>)z;
--(id<ORIntVar>) res;
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
+-(ORMult*)initORMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
 @end
 
 @interface ORSquare : ORConstraintI<ORSquare>

@@ -370,9 +370,21 @@
 {
    return [_MIPsolver floatValue: _gamma[v.getId]];
 }
+-(ORFloat) floatExprValue: (id<ORExpr>)e {
+    ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];
+    ORFloat v = [eval floatValue: e];
+    [eval release];
+    return v;
+}
 -(ORInt) intValue: (id<ORIntVar>) v
 {
    return [_MIPsolver intValue: _gamma[v.getId]];
+}
+-(ORInt) intExprValue: (id<ORExpr>)e {
+    ORIntExprEval* eval = [[ORIntExprEval alloc] initORIntExprEval: self];
+    ORInt v = [eval intValue: e];
+    [eval release];
+    return v;
 }
 -(id<ORObjectiveValue>) objectiveValue
 {

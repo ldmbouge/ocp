@@ -17,4 +17,5 @@
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
+-(ORFloat) bestBound;
 @end
