@@ -676,6 +676,95 @@
 }
 @end
 
+@implementation ORParameterizedModelI
+{
+    NSMutableArray*          _params;      // model parameters.
+}
+-(ORModelI*) initORParamModelI
+{
+    self = [super initORModelI];
+    _params   = [[NSMutableArray alloc] initWithCapacity:32];
+    return self;
+}
+-(ORModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings
+{
+    self = [self initORModelI:nb mappings: mappings];
+    _params   = [[NSMutableArray alloc] initWithCapacity:32];
+    return self;
+}
+-(ORModelI*) initWithParamModel: (ORParameterizedModelI*) src
+{
+    self = [super initWithModel: src];
+    _params = [src->_params mutableCopy];
+    return self;
+}
+-(void) dealloc
+{
+    NSLog(@"ORParameterizedModelI [%p] dealloc called...\n",self);
+    [_params release];
+    [super dealloc];
+}
+-(NSArray*) parameters
+{
+    return _params;
+}
+-(id<ORParameter>) addParam:(id<ORParameter>)param
+{
+    [_params addObject: param];
+    return param;
+}
+-(id) trackMutable: (id) obj
+{
+    [super trackMutable: obj];
+    if([obj conformsToProtocol: @protocol(ORParameter)])
+        [_params addObject: obj];
+    return obj;
+}
+-(NSString*) description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:512] autorelease];
+    [buf appendFormat:@"param[%ld] = {\n",[_params count]];
+    for(id<ORParameter> p in _params)
+        [buf appendFormat:@"\t%@\n",p];
+    [buf appendFormat:@"}\n"];
+    [buf appendFormat: @"%@", [super description]];
+    return buf;
+}
+-(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
+        onParameter:(void (^)(id<ORObject>))doParam
+         onMutables: (void(^)(id<ORObject>)) doMutable
+       onImmutables:(void(^)(id<ORObject>)) doImmutable
+      onConstraints:(void(^)(id<ORObject>)) doCons
+        onObjective:(void(^)(id<ORObject>)) doObjective
+{
+    for(id<ORParameter> p in _params)
+        doParam(p);
+    [self applyOnVar: doVar onMutables: doMutable onImmutables: doImmutable
+       onConstraints: doCons onObjective: doObjective];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+    for(id<ORObject> p in _params)
+        [p visit: visitor];
+    [super visit: visitor];
+}
+-(id) copyWithZone:(NSZone*)zone
+{
+    ORModelI* clone = [[ORParameterizedModelI allocWithZone:zone] initWithParamModel:self];
+    return clone;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+    [super encodeWithCoder: aCoder];
+    [aCoder encodeObject:_params];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder: aDecoder];
+    _params = [[aDecoder decodeObject] retain];
+    return self;
+}
+@end
 
 typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 

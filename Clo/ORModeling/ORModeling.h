@@ -21,7 +21,7 @@
 
 @protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
--(void) addVariable: (id<ORVar>) x;
+-(id<ORVar>) addVariable: (id<ORVar>) x;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
@@ -75,6 +75,17 @@
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 -(id<ORModelMappings>) modelMappings;
+@end
+
+@protocol ORParameterizedModel <ORModel>
+-(id<ORParameter>) addParam: (id<ORParameter>)param;
+-(void) applyOnVar:(void(^)(id<ORObject>))doVar
+       onParameter:(void(^)(id<ORObject>))doParam
+        onMutables:(void(^)(id<ORObject>))doMutables
+      onImmutables:(void(^)(id<ORObject>))doImmutables
+     onConstraints:(void(^)(id<ORObject>))doCons
+       onObjective:(void(^)(id<ORObject>))ofun;
+-(NSArray*) parameters;
 @end
 
 @interface ORFactory (ORModeling)

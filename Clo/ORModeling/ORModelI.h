@@ -11,6 +11,7 @@
 
 #import <ORModeling/ORModeling.h>
 #import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORParameter.h>
 
 @interface ORModelMappings : NSObject<ORModelMappings>
 -(ORModelMappings*) initORModelMappings;
@@ -97,6 +98,19 @@
 -(id) trackImmutable:(id)obj;
 -(id) trackVariable: (id) obj;
 -(id<ORModelMappings>) modelMappings;
+@end
+
+@interface ORParameterizedModelI : ORModelI<ORParameterizedModel>
+-(ORModelI*)              initORParamModelI;
+-(ORModelI*)              initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
+-(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
+                         onParameter:(void (^)(id<ORObject>))doParam
+                          onMutables:(void(^)(id<ORObject>))doMutables
+                        onImmutables:(void(^)(id<ORObject>))doImmutables
+                       onConstraints:(void(^)(id<ORObject>))doCons
+                         onObjective:(void(^)(id<ORObject>))doObjective;
+-(id<ORParameter>) addParam:(id<ORParameter>)param;
+-(NSArray*) parameters;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>

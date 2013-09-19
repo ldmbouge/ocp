@@ -89,6 +89,9 @@
 		37A715E516FB948900E02DC6 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		37A715E916FBA00100E02DC6 /* SSCPLPInstanceParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A715E716FBA00100E02DC6 /* SSCPLPInstanceParser.h */; };
 		37A715EA16FBA00100E02DC6 /* SSCPLPInstanceParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A715E816FBA00100E02DC6 /* SSCPLPInstanceParser.m */; };
+		37C00A5A17EB2E8500A683CB /* ORParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C00A5817EB2E8500A683CB /* ORParameter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		37C00A5E17EB30EE00A683CB /* ORParameterI.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C00A5C17EB30EE00A683CB /* ORParameterI.h */; };
+		37C00A5F17EB30EE00A683CB /* ORParameterI.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C00A5D17EB30EE00A683CB /* ORParameterI.m */; };
 		37D1BE2217D6D04B00D9F68C /* simple.msc in Resources */ = {isa = PBXBuildFile; fileRef = 37D1BE2117D6D04B00D9F68C /* simple.msc */; };
 		37D1BE2317D6D07800D9F68C /* simple.msc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 37D1BE2117D6D04B00D9F68C /* simple.msc */; };
 		37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
@@ -4862,6 +4865,9 @@
 		37A715E816FBA00100E02DC6 /* SSCPLPInstanceParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSCPLPInstanceParser.m; sourceTree = "<group>"; };
 		37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORColumnGeneration.h; path = ORProgram/ORRunnable/ORColumnGeneration.h; sourceTree = SOURCE_ROOT; };
 		37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORColumnGeneration.m; path = ORProgram/ORRunnable/ORColumnGeneration.m; sourceTree = SOURCE_ROOT; };
+		37C00A5817EB2E8500A683CB /* ORParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParameter.h; sourceTree = "<group>"; };
+		37C00A5C17EB30EE00A683CB /* ORParameterI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParameterI.h; sourceTree = "<group>"; };
+		37C00A5D17EB30EE00A683CB /* ORParameterI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORParameterI.m; sourceTree = "<group>"; };
 		37D1BE2117D6D04B00D9F68C /* simple.msc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = simple.msc; sourceTree = "<group>"; };
 		37D7299F1724CF6E004966DA /* ORParallelCombinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORParallelCombinator.h; path = ORProgram/ORRunnable/ORParallelCombinator.h; sourceTree = SOURCE_ROOT; };
 		37D729A01724CF6E004966DA /* ORParallelCombinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORParallelCombinator.m; path = ORProgram/ORRunnable/ORParallelCombinator.m; sourceTree = SOURCE_ROOT; };
@@ -8223,6 +8229,9 @@
 				5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */,
 				5B57E5E4161F294F00DB249A /* ORVisit.h */,
 				B1FBA2F017BF1AE0000F5F43 /* ORVisit.m */,
+				37C00A5817EB2E8500A683CB /* ORParameter.h */,
+				37C00A5C17EB30EE00A683CB /* ORParameterI.h */,
+				37C00A5D17EB30EE00A683CB /* ORParameterI.m */,
 			);
 			path = ORFoundation;
 			sourceTree = "<group>";
@@ -8969,12 +8978,14 @@
 				5B57E5DF161F275200DB249A /* ORExpr.h in Headers */,
 				5B57E5E0161F275F00DB249A /* ORExprI.h in Headers */,
 				373975C617E99FC60084C85C /* ORExprEval.h in Headers */,
+				37C00A5A17EB2E8500A683CB /* ORParameter.h in Headers */,
 				5B57E5E3161F280D00DB249A /* ORVar.h in Headers */,
 				5B57E5E5161F295000DB249A /* ORVisit.h in Headers */,
 				5BDF5FA6161F4F9900E5E1FA /* ORVarI.h in Headers */,
 				B1AAA33A164AADAD00CE9AED /* ORObject.h in Headers */,
 				37A715E916FBA00100E02DC6 /* SSCPLPInstanceParser.h in Headers */,
 				5B6B0EF81787533000104246 /* ORInterval.h in Headers */,
+				37C00A5E17EB30EE00A683CB /* ORParameterI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11868,6 +11879,7 @@
 				5B6B0EF91787533000104246 /* ORInterval.mm in Sources */,
 				B1FBA2F117BF1AE0000F5F43 /* ORVisit.m in Sources */,
 				373975C717E99FC60084C85C /* ORExprEval.m in Sources */,
+				37C00A5F17EB30EE00A683CB /* ORParameterI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
