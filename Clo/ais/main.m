@@ -43,10 +43,10 @@ int main(int argc, const char * argv[])
          [mdl add:[dx[n-1] leq:dx[1]]];
 
          id<CPProgram> cp =  [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
 
          [cp solve: ^{
-            [cp labelHeuristic:h];
+            //[cp labelHeuristic:h];
             [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
                return [cp domsize:sx[i]];
             }];

@@ -138,10 +138,6 @@
 {
    return _value;
 }
--(ORInt) value
-{
-   return _value;
-}
 -(ORInt) intValue
 {
    return _value;
@@ -342,17 +338,9 @@
 {
    return _value;
 }
--(ORFloat) value
-{
-   return _value;
-}
 -(ORFloat) floatValue
 {
    return _value;
-}
--(ORFloat) setValue: (ORFloat) value
-{
-   return _value = value;
 }
 -(ORFloat) value: (id<ORGamma>) solver;
 {

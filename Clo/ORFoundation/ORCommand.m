@@ -11,6 +11,7 @@
 
 #import "ORCommand.h"
 #import <pthread.h>
+#import <objc/runtime.h>
 
 typedef struct {
    Class  _poolClass;
@@ -71,7 +72,7 @@ static __thread ComListPool* pool = NULL;
          _head = nxt;
       }
       _ndId = -1;
-      ComListPool* p = [isa instancePool];
+      ComListPool* p = [object_getClass(self) instancePool];
       ORUInt next = (p->_high + 1) % p->_mxs;
       if (next == p->_low) {
          [self release];
