@@ -24,10 +24,9 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
-         NSLog(@"args: %d %s %s %s %s",argc,argv[0],argv[1],argv[2],argv[3]);
          ORInt base =  2;
-         ORInt n    =  12;
-         ORInt m    = pow(base,n);
+         ORInt n    = [args size];
+         ORInt m    = [args nArg];//pow(base,n);
          ORInt up   = (ORInt)pow(base,n)-1;
          NSLog(@"Params: n=%d m=%d base=%d",n,m,base);
          
@@ -57,17 +56,17 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          __block ORInt nbSol = 0;
-         [cp solve:^{
+         [cp solveAll:^{
             //NSLog(@"MODEL: %@",[[cp engine] model]);
             NSLog(@"searching...");
             [cp labelArray:x];
-            @autoreleasepool {
-               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-               [buf appendString:@"x = ["];
-               for(ORInt i=1;i<=m;i++)
-                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],i < m ? ',' : ']'];
-               NSLog(@"solution: %@",buf);
-            }
+//            @autoreleasepool {
+//               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//               [buf appendString:@"x = ["];
+//               for(ORInt i=1;i<=m;i++)
+//                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],i < m ? ',' : ']'];
+//               NSLog(@"solution: %@",buf);
+//            }
             nbSol++;
          }];
          NSLog(@"#sol: %d",nbSol);

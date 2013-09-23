@@ -2,11 +2,11 @@
  Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
-
+ 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ***********************************************************************/
 
 
@@ -17,42 +17,6 @@
 #import <ORProgram/ORProgramFactory.h>
 
 #import "ORCmdLineArgs.h"
-
-class H {
-   id<ORExpr> _h;
-public:
-   H(id<ORExpr> v) { _h = v;}
-   operator id<ORExpr>() { return _h;}
-   H operator+(H e2)
-   {
-      return [_h plus:e2];
-   }
-   H operator-(H e2)
-   {
-      return [_h sub:e2];
-   }
-   H operator*(H e2)
-   {
-      return [_h mul:e2];
-   }
-   H operator==(id<ORExpr> e2)
-   {
-      return [_h eq:e2];
-   }
-   H operator==(H e2)
-   {
-      return [_h eq:e2];
-   }
-};
-
-H operator-(id<ORIntVar> x,H y)
-{
-   return [x sub:y];
-}
-H operator==(id<ORIntVar> x,H y)
-{
-   return [x eq:y];
-}
 
 int main(int argc, const char * argv[])
 {
@@ -70,7 +34,7 @@ int main(int argc, const char * argv[])
          for(ORUInt i=R.low;i<=R.up;i++) {
             for(ORUInt j=R.low;j<=R.up;j++) {
                if (i < j)
-                  [mdl add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
+                  [mdl add:[[diff at:i :j] eq: [[costas at:j] sub:[costas at:j-i]]]];
                else [mdl add:[[diff at:i :j] eq: @0]];
             }
          }
@@ -86,8 +50,8 @@ int main(int argc, const char * argv[])
          }
          for (ORInt k=3; k<=n; k++) {
             for (ORInt l=k+1; l<=n; l++) {
-               [mdl add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
-                H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
+               [mdl add:[[[diff at:k-2 :l-1] plus: [diff at:k :l]] eq:
+                         [[diff at:k-1 :l-1] plus: [diff at:k-1 :l]]]];
             }
          }
          
@@ -100,24 +64,23 @@ int main(int argc, const char * argv[])
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
          [cp solveAll: ^{
             NSLog(@"Searching...");
-            //[cp labelHeuristic:h];
-//            for(ORInt  i=1;i <=n;i++) {
-//               if ([cp bound:costas[i]]) continue;
-//               while (![cp bound:costas[i]]) {
-//                  ORInt val = [cp max:costas[i]];
-//                  [cp try:^{
-//                     [cp label:costas[i] with:val];
-//                  } or:^{
-//                     <#code#>
-//                  }];
-//               }
-//            }
-            
+//            [cp labelHeuristic:h];
+            for(ORInt  i=1;i <=n;i++) {
+               if ([cp bound:costas[i]]) continue;
+               while (![cp bound:costas[i]]) {
+                  ORInt val = [cp max:costas[i]];
+                  [cp try:^{
+                     [cp label:costas[i] with:val];
+                  } or:^{
+                     [cp diff:costas[i] with:val];
+                  }];
+               }
+            }            
             @autoreleasepool {
-//               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
-//                  return [cp intValue:costas[i]];
-//               }];
-//               NSLog(@"Solution: %@",s);
+               //               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
+               //                  return [cp intValue:costas[i]];
+               //               }];
+               //               NSLog(@"Solution: %@",s);
                @synchronized(nbSol) {
                   [nbSol incr:cp];
                }

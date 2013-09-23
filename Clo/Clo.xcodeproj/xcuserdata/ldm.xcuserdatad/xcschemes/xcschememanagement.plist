@@ -164,6 +164,11 @@
 			<key>orderHint</key>
 			<integer>26</integer>
 		</dict>
+		<key>costas2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>75</integer>
+		</dict>
 		<key>debruijn.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -538,6 +543,11 @@
 			<true/>
 		</dict>
 		<key>5B2000E0156D585E00D80105</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B27572F17E87B560082934E</key>
 		<dict>
 			<key>primary</key>
 			<true/>

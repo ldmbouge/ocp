@@ -73,18 +73,19 @@ int main(int argc, const char * argv[])
                   //NSLog(@" ! tb[%d] != %d",i,j);
                }];
             }];
-            @autoreleasepool {
-               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-               [buf appendString:@"["];
-               for(ORInt i=1;i<=k*n;i++)
-                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],(i < k *n) ? ',' : ']'];
-               NSLog(@"Sol: %@",buf);
-            }
+//            @autoreleasepool {
+//               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//               [buf appendString:@"["];
+//               for(ORInt i=1;i<=k*n;i++)
+//                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],(i < k *n) ? ',' : ']'];
+//               NSLog(@"Sol: %@",buf);
+//            }
             nbSol++;
+            [[cp explorer] fail];
          }];         
          NSLog(@"#sol: %d",nbSol);
          NSLog(@"Solver status: %@\n",cp);
-         struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return res;
