@@ -46,22 +46,24 @@ int main (int argc, const char * argv[])
          
          [cp solveAll: ^{
             __block ORInt depth = 0;
-            [cp labelHeuristic:h];
+            //[cp labelHeuristic:h];
             //[cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
             FORALL(i,R,![cp bound:x[i]],[cp domsize:x[i]], ^(ORInt i) {
 #if TESTTA==1
                [cp tryall:R suchThat:^bool(ORInt v) { return [cp member:v in:x[i]];}
                        in:^(ORInt v) {
-                          [cp label: x[i] with:v];
+                          //[cp label: x[i] with:v];
+                          [cp add:[x[i] eq:@(v)]];
                           //NSLog(@"AFTER LABEL: %@",x);
                        } onFailure:^(ORInt v) {
-                          [cp diff: x[i] with:v];
+                          //[cp diff: x[i] with:v];
+                          [cp add:[x[i] neq:@(v)]];
                           //NSLog(@"AFTER DIFF: %@",x);
                        }];
                depth++;
 #else
-               while (![x[i] bound]) {
-                  int v = [x[i] min];
+               while (![cp bound:x[i]]) {
+                  int v = [cp min:x[i]];
                   [cp try:^{
                      [cp label: x[i] with:v];
                   } or:^{

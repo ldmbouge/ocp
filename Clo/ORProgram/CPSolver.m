@@ -1273,7 +1273,7 @@
 /******************************************************************************************/
 
 @interface ORRTModel : NSObject<ORAddToModel>
--(ORRTModel*) init:(CPSolver*) solver;
+-(ORRTModel*) init:(CPCoreSolver*) solver;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
 -(id) addMutable: (id) object;
 -(id) addImmutable:(id)object;
@@ -1288,10 +1288,10 @@
 
 @implementation ORRTModel
 {
-   CPSolver* _solver;
-   ORVisitor* _concretizer;
+   CPCoreSolver* _solver;
+   ORVisitor*    _concretizer;
 }
--(ORRTModel*)init:(CPSolver*)solver
+-(ORRTModel*)init:(CPCoreSolver*)solver
 {
    self = [super init];
    _solver = solver;
@@ -1553,17 +1553,25 @@
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
-   ORStatus status = [_engine add: c];
-   if (status == ORFailure)
-      [_search fail];
+   // LDM: DONE. Have not checked the variable creation/deallocation logic though.
+   id<ORAddToModel> trg = [[ORRTModel alloc] init:self];
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+      [ORFlatten flattenExpression:(id<ORExpr>) c into: trg annotation: DomainConsistency];
+   else
+      [ORFlatten flatten: c into:trg];
+   [trg release];
 }
 -(void) add: (id<ORConstraint>) c annotation:(ORAnnotation) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
-   ORStatus status = [_engine add: c];
-   if (status == ORFailure)
-      [_search fail];
+   // LDM: DONE. Have not checked the variable creation/deallocation logic though.
+   id<ORAddToModel> trg = [[ORRTModel alloc] init:self];
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+      [ORFlatten flattenExpression:(id<ORExpr>) c into: trg annotation: cons];
+   else
+      [ORFlatten flatten: c into:trg];
+   [trg release];
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
