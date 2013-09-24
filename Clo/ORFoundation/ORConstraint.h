@@ -444,11 +444,11 @@ enum ORGroupType {
 
 // pvh: to reconsider the solution pool in this interface; not sure I like them here
 @protocol ORASolver <NSObject,ORTracker,ORGamma>
--(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
--(id<ORSolutionPool>) solutionPool;
 -(id) concretize: (id) o;
+@optional-(id<ORSolutionPool>) solutionPool;
+@optional-(id<ORSearchObjectiveFunction>) objective;
 @end
 
 // ====== Bit Constraints =====================================
