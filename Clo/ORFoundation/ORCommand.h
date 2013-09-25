@@ -18,13 +18,11 @@
  * Other commands could be: going to atomic mode, setting a controller, etc....
  */
 
-@protocol ORCommand <NSObject,NSCoding>
--(void) doIt;
-@end
+@protocol ORConstraint;
 
 @interface ORCommandList : NSObject<NSCoding,NSCopying> {
    struct CNode {
-      id<ORCommand>    _c;
+      id<ORConstraint>    _c;
       struct CNode*    _next;
    };
    struct CNode* _head;
@@ -38,14 +36,14 @@
 -(void)dealloc;
 -(void)letgo;
 -(id)grab;
--(void)insert: (id<ORCommand>) c;
--(id<ORCommand>)removeFirst;
+-(void)insert: (id<ORConstraint>) c;
+-(id<ORConstraint>)removeFirst;
 -(ORBool)empty;
 -(ORBool)equalTo:(ORCommandList*)cList;
 -(ORInt) memory;
 -(ORInt) getNodeId;
 -(void) setNodeId:(ORInt)nid;
--(ORBool)apply:(BOOL(^)(id<ORCommand>))clo;
+-(ORBool)apply:(BOOL(^)(id<ORConstraint>))clo;
 -(ORInt)length;
 @end
 

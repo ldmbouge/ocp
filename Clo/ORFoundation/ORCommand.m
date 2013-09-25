@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "ORCommand.h"
+#import "ORConstraint.h"
 #import <pthread.h>
 #import <objc/runtime.h>
 
@@ -125,10 +126,10 @@ static __thread ComListPool* pool = NULL;
    return nList;
 }
 
--(void)insert:(id<ORCommand>)c
+-(void)insert:(id<ORConstraint>)c
 {
    struct CNode* new = malloc(sizeof(struct CNode));
-   new->_c = c;
+   new->_c = [c retain];
    new->_next = _head;
    _head = new;
 }
@@ -142,11 +143,11 @@ static __thread ComListPool* pool = NULL;
    }
    return nb;
 }
--(id<ORCommand>)removeFirst
+-(id<ORConstraint>)removeFirst
 {
    struct CNode* leave = _head;
    _head = _head->_next;
-   id<ORCommand> rv = leave->_c;
+   id<ORConstraint> rv = leave->_c;
    free(leave);
    return rv;
 }
@@ -180,7 +181,7 @@ static __thread ComListPool* pool = NULL;
 {
    return _ndId;
 }
--(ORBool)apply:(BOOL(^)(id<ORCommand>))clo
+-(ORBool)apply:(BOOL(^)(id<ORConstraint>))clo
 {
    struct CNode* cur = self->_head;
    BOOL ok = YES;
@@ -222,7 +223,7 @@ static __thread ComListPool* pool = NULL;
    ORUInt i = 0;
    struct CNode* tail = 0;
    while (i < cnt) {
-      id<ORCommand> com = [[aDecoder decodeObject] retain];
+      id<ORConstraint> com = [[aDecoder decodeObject] retain];
       struct CNode* nn = malloc(sizeof(struct CNode));
       nn->_next = 0;
       nn->_c = com;

@@ -55,7 +55,7 @@
 {
    [_ac5 enQueue:evt];
 }
-static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
+static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
    if (cb.cb)

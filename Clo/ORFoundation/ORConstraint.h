@@ -14,7 +14,6 @@
 #import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORObject.h>
 
-
 @protocol ORIntVarArray;
 @protocol ORVarArray;
 @protocol ORIntVarMatrix;

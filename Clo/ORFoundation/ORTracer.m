@@ -23,9 +23,9 @@
 -(ORProblemI*) init;
 -(void) dealloc;
 -(NSString*) description;
--(void) addCommand: (id<ORCommand>) c;
+-(void) addCommand: (id<ORConstraint>) c;
 -(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
--(ORBool) apply: (BOOL(^)(id<ORCommand>))clo;
+-(ORBool) apply: (BOOL(^)(id<ORConstraint>))clo;
 -(ORCommandList*) theList;
 -(ORInt)sizeEstimate;
 @end
@@ -59,7 +59,7 @@
 -(void) dealloc;
 -(void) pushList: (ORInt) node memory:(ORInt)mh;
 -(void) pushCommandList: (ORCommandList*) list;
--(void) addCommand:(id<ORCommand>)c;
+-(void) addCommand:(id<ORConstraint>)c;
 -(ORCommandList*) popList;
 -(ORCommandList*) peekAt:(ORUInt)d;
 -(ORUInt) size;
@@ -111,7 +111,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    pushCommandList(self, list);
 }
--(void)addCommand:(id<ORCommand>)c
+-(void)addCommand:(id<ORConstraint>)c
 {
    [_tab[_sz-1] insert:c];
 }
@@ -270,11 +270,11 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    return [_cstrs length];
 }
--(void)addCommand:(id<ORCommand>)c
+-(void)addCommand:(id<ORConstraint>)c
 {
    [_cstrs insert:c];
 }
--(ORBool)apply:(BOOL(^)(id<ORCommand>))clo
+-(ORBool)apply:(BOOL(^)(id<ORConstraint>))clo
 {
    return [_cstrs apply:clo];
 }
@@ -633,7 +633,7 @@ static __thread id checkPointCache = NULL;
 {
    return _trail;
 }
--(void)addCommand:(id<ORCommand>)com
+-(void)addCommand:(id<ORConstraint>)com
 {
    [_cmds addCommand:com];
 }
@@ -648,7 +648,7 @@ static __thread id checkPointCache = NULL;
    ORUInt ub = [_cmds size];
    ORProblemI* np = [[ORProblemI alloc] init];
    for(ORInt i=0;i< ub;i++) {
-      [[_cmds peekAt:i] apply:^BOOL(id<ORCommand> theCommand) {
+      [[_cmds peekAt:i] apply:^BOOL(id<ORConstraint> theCommand) {
          [np addCommand:[theCommand retain]];
          return true;
       }];
@@ -689,8 +689,10 @@ static __thread id checkPointCache = NULL;
          [_trStack pushNode:theList->_ndId];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
-            BOOL pOk = [theList apply: ^BOOL(id<ORCommand> c) {
-               [c doIt]; return true;
+            BOOL pOk = [theList apply: ^BOOL(id<ORConstraint> c) {
+               //[c post];
+               ORStatus cok = [fdm post:c];
+               return cok != ORFailure;
             }];
             if (!pOk) {
                //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
@@ -721,8 +723,10 @@ static __thread id checkPointCache = NULL;
    return tryfail(^ORStatus{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
-      bool ok = [p apply:^bool(id<ORCommand> c) {
-         [c doIt]; return TRUE;
+      bool ok = [p apply:^bool(id<ORConstraint> c) {
+         [fdm post:c];
+         return TRUE;
+//         [c post]; return TRUE;
       }];
       assert(ok);
 #pragma clang diagnostic pop

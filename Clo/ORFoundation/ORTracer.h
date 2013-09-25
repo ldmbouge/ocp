@@ -31,7 +31,7 @@
 -(id<ORTrail>)   trail;
 -(void)       trust;
 -(ORInt)      level;
-@optional -(void) addCommand: (id<ORCommand>) com;
+@optional -(void) addCommand: (id<ORConstraint>) com;
 @optional -(id<ORCheckpoint>) captureCheckpoint;
 @optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>) engine;
 @optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>) engine;
@@ -39,9 +39,9 @@
 @end
 
 @protocol ORProblem <NSObject>
--(void) addCommand: (id<ORCommand>) c;
+-(void) addCommand: (id<ORConstraint>) c;
 -(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
--(ORBool) apply: (bool(^)(id<ORCommand>))clo;
+-(ORBool) apply: (bool(^)(id<ORConstraint>))clo;
 -(ORCommandList*) theList;
 -(ORInt)sizeEstimate;
 @end
@@ -74,7 +74,7 @@
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
 -(id<ORTrail>)   trail;
--(void)       addCommand:(id<ORCommand>)com;
+-(void)       addCommand:(id<ORConstraint>)com;
 -(id<ORCheckpoint>)captureCheckpoint;
 -(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<ORSearchEngine>) engine;
 -(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<ORSearchEngine>) engine;

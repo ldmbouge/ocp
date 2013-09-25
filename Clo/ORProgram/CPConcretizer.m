@@ -37,8 +37,6 @@
    @throw [[ORExecutionError alloc] initORExecutionError:"ORCPConcretizer missing a selector"];
    //return [super doesNotRecognizeSelector:aSelector];
 }
-
-
 // Helper function
 -(id) concreteVar: (id<ORVar>) x
 {
@@ -1072,4 +1070,81 @@
 {}
 @end
 
+
+@implementation ORCPSearchConcretizer
+-(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver
+{
+   self = [super init];
+   _solver = [solver retain];
+   _engine = [_solver engine];
+   _gamma = [solver gamma];
+   return self;
+}
+-(void) dealloc
+{
+   [_solver release];
+   [super dealloc];
+}
+- (void)doesNotRecognizeSelector:(SEL)aSelector
+{
+   NSLog(@"DID NOT RECOGNIZE a selector %@",NSStringFromSelector(aSelector));
+   @throw [[ORExecutionError alloc] initORExecutionError:"ORCPConcretizer missing a selector"];
+}
+// Helper function
+-(id) concreteVar: (id<ORVar>) x
+{
+   [x visit:self];
+   return _gamma[x.getId];
+}
+-(void) visitEqualc: (id<OREqualc>) cstr
+{
+   id<CPIntVar> left = [self concreteVar:[cstr left]];
+   id<CPConstraint> concreteCstr = [CPFactory equalc: left  to: [cstr cst]];
+   [_solver addConstraintDuringSearch:concreteCstr annotation:DomainConsistency];
+}
+-(void) visitNEqualc: (id<ORNEqualc>) cstr
+{
+   id<CPIntVar> left = [self concreteVar:[cstr left]];
+   id<CPConstraint> concreteCstr = [CPFactory notEqualc: left to: [cstr cst]];
+   [_solver addConstraintDuringSearch:concreteCstr annotation:DomainConsistency];
+}
+-(void) visitIntVar: (id<ORIntVar>) v
+{
+   if (!_gamma[v.getId])
+      _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
+}
+
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+   if (!_gamma[v.getId])
+      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
+}
+
+-(void) visitBitVar: (id<ORBitVar>) v
+{
+   if (_gamma[v.getId] == NULL)
+      _gamma[v.getId] = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
+}
+
+-(void) visitAffineVar:(id<ORIntVar>) v
+{
+   if (_gamma[v.getId] == NULL) {
+      id<ORIntVar> mBase = [v base];
+      [mBase visit: self];
+      ORInt a = [v scale];
+      ORInt b = [v shift];
+      _gamma[v.getId] = [CPFactory intVar:(id<CPIntVar>) _gamma[mBase.getId] scale:a shift:b];
+   }
+}
+-(void) visitIntVarLitEQView:(id<ORIntVar>)v
+{
+   if (_gamma[v.getId] == NULL) {
+      id<ORIntVar> mBase = [v base];
+      [mBase visit:self];
+      ORInt lit = [v literal];
+      _gamma[v.getId] = [CPFactory reifyView:(id<CPIntVar>) _gamma[mBase.getId] eqi:lit];
+   }
+}
+
+@end
 

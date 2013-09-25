@@ -31,11 +31,6 @@
    [_trail release];
    [super dealloc];
 }
-// Tracer method
--(void) doIt
-{
-    [self post];
-}
 // Constraint method
 -(ORStatus) post
 {

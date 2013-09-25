@@ -1295,7 +1295,7 @@
 {
    self = [super init];
    _solver = solver;
-   _concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: solver];
+   _concretizer = [[ORCPSearchConcretizer alloc] initORCPConcretizer: solver];
    return self;
 }
 -(void) dealloc
@@ -1325,8 +1325,6 @@
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [cstr visit: _concretizer];
-   id<CPConstraint> c = [_solver gamma][[cstr getId]];
-   [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
    return cstr;
 }
 -(id<ORTracker>)tracker
@@ -1411,7 +1409,7 @@
 -(void) add: (id<ORConstraint>) c
 {
    // PVH: Need to flatten/concretize
-   // PVH: Only used during search
+   // PVH: Only used	 during search
    // LDM: DONE. Have not checked the variable creation/deallocation logic though. 
    id<ORAddToModel> trg = [[ORRTModel alloc] init:self];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
@@ -1555,11 +1553,18 @@
    // PVH: Only used during search
    // LDM: DONE. Have not checked the variable creation/deallocation logic though.
    id<ORAddToModel> trg = [[ORRTModel alloc] init:self];
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>) c into: trg annotation: DomainConsistency];
-   else
-      [ORFlatten flatten: c into:trg];
+   ORStatus status = [_engine enforce:^{
+      if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+         [ORFlatten flattenExpression:(id<ORExpr>) c into: trg annotation: DomainConsistency];
+      else
+         [ORFlatten flatten: c into:trg];
+   }];
    [trg release];
+   if (status == ORFailure) {
+      [_search fail];
+   }
+   [_tracer addCommand:c];
+   [ORConcurrency pumpEvents];
 }
 -(void) add: (id<ORConstraint>) c annotation:(ORAnnotation) cons
 {
@@ -1573,6 +1578,17 @@
       [ORFlatten flatten: c into:trg];
    [trg release];
 }
+-(void) label: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self labelImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory equalc:self var:var to: val]];
+}
+-(void) diff: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self diffImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory notEqualc:self var:var to: val]];
+}
+
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^ {[var bind: val];}];
@@ -1580,7 +1596,6 @@
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
-   [_tracer addCommand: [CPSearchFactory equalc: var to: val]];
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
@@ -1589,7 +1604,6 @@
    ORStatus status = [_engine enforce:^ { [var remove:val];}];
    if (status == ORFailure)
       [_search fail];
-   [_tracer addCommand: [CPSearchFactory notEqualc: var to: val]];
    [ORConcurrency pumpEvents];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val

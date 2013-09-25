@@ -196,11 +196,7 @@
 -(void)packAndFail
 {
    id<ORProblem> p = [[_solver tracer] captureProblem];
-   //NSLog(@"PACKING: %@",p);
-   NSData* theData = [p packFromSolver:[_solver engine]];
-   [p release];
-   assert(theData != nil);
-   [_pool enQueue:theData];
+   [_pool enQueue:p];
    [self fail];
    [self finitelyFailed];
    assert(FALSE);

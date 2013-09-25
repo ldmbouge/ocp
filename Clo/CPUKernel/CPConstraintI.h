@@ -15,7 +15,7 @@
 
 @class CPEngineI;
 
-@interface CPCoreConstraint : ORObject<NSCoding,ORCommand,CPConstraint> {
+@interface CPCoreConstraint : ORObject<NSCoding,CPConstraint> {
 @public
    CPTodo            _todo;
    BOOL        _idempotent;
@@ -26,7 +26,6 @@
    id<CPGroup>      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
--(void) doIt;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*) allVars;
