@@ -42,6 +42,10 @@
 -(NSSet*)allVars;
 @end
 
+@protocol ORPost
+-(ORStatus)post:(id<ORConstraint>)c;
+@end
+
 @protocol ORConstraintSet <NSObject>
 -(void)addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;

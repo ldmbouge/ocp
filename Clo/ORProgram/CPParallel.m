@@ -44,7 +44,7 @@
    id<ORTracer> tracer = [_solver tracer];
    id<ORCheckpoint> theCP = [tracer captureCheckpoint];
    ORHeist* stolen = [_controller steal];
-   ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine]];
+   ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:_solver];
    assert(ok != ORFailure);
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer] engine:[_solver engine]];
    
@@ -58,7 +58,7 @@
    
    //NSLog(@"PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
    [stolen release];
-   ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine]];
+   ok = [tracer restoreCheckpoint:theCP inSolver:_solver];
    assert(ok != ORFailure);
    [theCP letgo];
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
@@ -165,7 +165,7 @@
       long ofs = _sz-1;
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
-         ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:[_solver engine]];
+         ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:_solver];
          //assert(ok != ORFailure);
          [cp letgo];
          NSCont* k = _tab[ofs];

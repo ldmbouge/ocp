@@ -1072,17 +1072,15 @@
 
 
 @implementation ORCPSearchConcretizer
--(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver
+-(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine gamma:(id<ORGamma>)gamma
 {
    self = [super init];
-   _solver = [solver retain];
-   _engine = [_solver engine];
-   _gamma = [solver gamma];
+   _engine = engine;
+   _gamma = [gamma gamma];
    return self;
 }
 -(void) dealloc
 {
-   [_solver release];
    [super dealloc];
 }
 - (void)doesNotRecognizeSelector:(SEL)aSelector
@@ -1100,13 +1098,13 @@
 {
    id<CPIntVar> left = [self concreteVar:[cstr left]];
    id<CPConstraint> concreteCstr = [CPFactory equalc: left  to: [cstr cst]];
-   [_solver addConstraintDuringSearch:concreteCstr annotation:DomainConsistency];
+   [_engine add:concreteCstr];
 }
 -(void) visitNEqualc: (id<ORNEqualc>) cstr
 {
    id<CPIntVar> left = [self concreteVar:[cstr left]];
    id<CPConstraint> concreteCstr = [CPFactory notEqualc: left to: [cstr cst]];
-   [_solver addConstraintDuringSearch:concreteCstr annotation:DomainConsistency];
+   [_engine add:concreteCstr];
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {

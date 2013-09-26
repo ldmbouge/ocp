@@ -656,7 +656,7 @@ static __thread id checkPointCache = NULL;
    return np;
 }
 
--(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<ORSearchEngine>)fdm
+-(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model
 {
    /*
     NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
@@ -664,7 +664,7 @@ static __thread id checkPointCache = NULL;
    NSLog(@"into tracer: %@",_cmds);
    NSLog(@"-----------------------------");
     */
-   [fdm clearStatus];
+   [engine clearStatus];
    ORCmdStack* toRestore =  acp->_path;
    int i=0;
    bool pfxEq = true;
@@ -690,15 +690,14 @@ static __thread id checkPointCache = NULL;
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
             BOOL pOk = [theList apply: ^BOOL(id<ORConstraint> c) {
-               //[c post];
-               ORStatus cok = [fdm post:c];
+               ORStatus cok = [model post:c];
                return cok != ORFailure;
             }];
             if (!pOk) {
                //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
                return ORFailure;
             }
-            [fdm propagate];
+            [engine propagate];
             [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
             return ORSuspend;
@@ -711,12 +710,12 @@ static __thread id checkPointCache = NULL;
             return s;
       }
       [_mt comply:acp->_mt upTo:[acp->_mt trailSize]];
-      return [fdm enforceObjective];
+      return [engine enforceObjective];
    }
    return ORSuspend;
 }
 
--(ORStatus)restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>)fdm
+-(ORStatus)restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model
 {
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];
@@ -724,7 +723,7 @@ static __thread id checkPointCache = NULL;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
       bool ok = [p apply:^bool(id<ORConstraint> c) {
-         [fdm post:c];
+         [model post:c];
          return TRUE;
 //         [c post]; return TRUE;
       }];
@@ -733,7 +732,7 @@ static __thread id checkPointCache = NULL;
       [[p theList] setNodeId:_lastNode-1];
       [_cmds pushCommandList:[p theList]];
       assert([_cmds size] == [_trStack size]);
-      return [fdm propagate];
+      return [engine propagate];
    }, ^ORStatus{
       [_cmds pushCommandList:[p theList]];
       return ORFailure;

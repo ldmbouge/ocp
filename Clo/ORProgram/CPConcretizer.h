@@ -24,9 +24,8 @@
 
 @interface ORCPSearchConcretizer : ORVisitor<NSObject>
 {
-   id<CPCommonProgram> _solver;
    id<CPEngine>        _engine;
    id*                 _gamma;
 }
--(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver;
+-(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine gamma:(id<ORGamma>)gamma;
 @end

@@ -14,6 +14,7 @@
 
 @protocol ORCommand;
 @protocol ORSearchEngine;
+@protocol ORASolver;
 @protocol ORProblem;
 @protocol ORCheckpoint;
 @protocol ORTrail;
@@ -33,8 +34,8 @@
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORConstraint>) com;
 @optional -(id<ORCheckpoint>) captureCheckpoint;
-@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>) engine;
-@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>) engine;
+@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORASolver>) engine;
+@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORASolver>) cpp;
 @optional -(id<ORProblem>) captureProblem;
 @end
 
@@ -76,8 +77,8 @@
 -(id<ORTrail>)   trail;
 -(void)       addCommand:(id<ORConstraint>)com;
 -(id<ORCheckpoint>)captureCheckpoint;
--(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<ORSearchEngine>) engine;
--(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<ORSearchEngine>) engine;
+-(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<ORSearchEngine>) engine model:(id<ORPost>)m;
+-(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<ORSearchEngine>) engine model:(id<ORPost>)m;
 -(id<ORProblem>)  captureProblem;
 -(void)       trust;
 -(ORInt)      level;

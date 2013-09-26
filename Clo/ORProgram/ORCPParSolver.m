@@ -419,7 +419,7 @@
 -(void)setupWork:(id<ORProblem>)theSub forCP:(id<CPSemanticProgram>)cp
 {
    NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);
-   ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine]];
+   ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:cp];
    [theSub release];
    if (status == ORFailure)
       [[cp explorer] fail];
