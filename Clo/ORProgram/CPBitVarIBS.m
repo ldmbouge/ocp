@@ -222,7 +222,7 @@
    ORInt low = [_vars low],up = [_vars up];
    for(ORUInt i=low;i<=up;i++) {
       //NSLog(@"impacting: %@",[_vars at:i]);
-      CPBitVarAssignImpact* assigns = [[CPBitVarAssignImpact alloc] initCPBitVarAssignImpact:(id<ORBitVar>)[_vars at:i]];
+      CPBitVarAssignImpact* assigns = [[CPBitVarAssignImpact alloc] initCPBitVarAssignImpact:(id<CPBitVar>)[_vars at:i]];
       [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }

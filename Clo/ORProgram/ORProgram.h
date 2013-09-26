@@ -14,7 +14,7 @@
 #import <ORProgram/CPProgram.h>
 #import <ORProgram/ORProgramFactory.h>
 #import <ORProgram/CPHeuristic.h>
-#import <ORProgram/CPBitVarHeuristic.h>
+#import "CPBitVarHeuristic.h"
 #import <ORProgram/CPDDeg.h>
 #import <ORProgram/CPWDeg.h>
 #import <ORProgram/CPIBS.h>

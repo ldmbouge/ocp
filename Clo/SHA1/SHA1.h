@@ -26,6 +26,12 @@
 #define DIGEST_VAR_LENGTH 8
 #define BLOCK_LENGTH 4
 
+#define K0 0x5A827999
+#define K1 0x6ED9EBA1
+#define K2 0x8F1BBCDC
+#define K3 0xCA62C1D6
+
+
 @interface SHA1 : NSObject{
 @private
    id<ORModel>    _m;

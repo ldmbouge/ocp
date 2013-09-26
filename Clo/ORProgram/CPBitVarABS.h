@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORProgram/CPProgram.h>
-#import <ORProgram/CPBitVarHeuristic.h>
+#import "CPBitVarHeuristic.h"
 #import <ORProgram/CPBitVarBaseHeuristic.h>
 #import <objcp/CPVar.h>
 
@@ -27,7 +27,7 @@
 }
 -(id)initCPBitVarABS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPBitVar>)x;
--(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x;
+-(ORFloat)valOrdering:(ORBool)v atIndex:(ORUInt)idx forVar:(id<CPBitVar>)x;
 -(void)initInternal:(id<ORBitVarArray>)t and:(id<CPBitVarArray>)cvs;
 -(void) restart;
 -(id<CPBitVarArray>)allBitVars;

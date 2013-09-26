@@ -192,30 +192,31 @@
 
 //<<<<<<< HEAD
    //CPBitVarFF
+   __block id* gamma = [cp gamma];
+   
    NSLog(@"Message Blocks (Original)");
    id<ORBitVar>* bitVars;
    for(int i=0; i<_numBlocks;i++){
       bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
       for(int j=0;j<16;j++)
-         NSLog(@"%@\n",bitVars[j]);
+         NSLog(@"%@\n",gamma[bitVars[j].getId]);
    }
    
-   __block id* gamma = [cp gamma];
-
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
       [o set:gamma[bitVars[k].getId] at:k];
 
-   id<CPHeuristic> h = [cp createBitVarABS:(id<CPBitVarArray>)o];
-//   id<CPHeuristic> h = [cp createBitVarABS];
-//   id<CPHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
-//   id<CPHeuristic> h = [cp createBitVarFF];
+   id<CPBitVarHeuristic> h = [cp createBitVarABS:(id<CPBitVarArray>)o];
+//   id<CPBitVarHeuristic> h = [cp createBitVarABS];
+//   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+//   id<CPBitVarHeuristic> h = [cp createBitVarFF];
+   
    [cp solve: ^{
       NSLog(@"Search");
       for(int i=0;i<4;i++)
       {
-         NSLog(@"%@",digest[i]);
-         NSLog(@"%@\n\n",digestVars[i]);
+         NSLog(@"%@",gamma[digest[i].getId]);
+         NSLog(@"%@\n\n",gamma[digestVars[i].getId]);
       }
 //      NSLog(@"Message Blocks (With Data Recovered)");
 //      __block ORUInt maxFail = 0x0000000000004000;

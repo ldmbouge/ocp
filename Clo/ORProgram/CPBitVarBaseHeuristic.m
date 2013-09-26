@@ -10,7 +10,8 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORUtilities.h>
-#import "CPBitVarBaseHeuristic.h"
+#import <ORProgram/CPBitVarHeuristic.h>
+#import <ORProgram/CPBitVarBaseHeuristic.h>
 #import <objcp/CPVar.h>
 
 @implementation CPBitVarBaseHeuristic {
@@ -114,9 +115,14 @@
 {
    [_binding[[NSThread threadID]] initHeuristic:mvar concrete:cvar oneSol:oneSol];
 }
--(id<ORBitVarArray>) allIntVars
+-(id<ORBitVarArray>) allBitVars
 {
    return [_binding[[NSThread threadID]] allBitVars];
+}
+-(id<ORBitVarArray>) allIntVars
+{
+   NSAssert(false,@"Attempted to get IntVars from a BitVar Heuristic");
+   return nil;
 }
 -(id<CPProgram>)solver
 {

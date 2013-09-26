@@ -10,20 +10,21 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORProgram/CPHeuristic.h>
+#import "CPBitVarHeuristic.h"
 
-@interface CPBitVarBaseHeuristic : NSObject<CPHeuristic>
+@interface CPBitVarBaseHeuristic : NSObject<CPBitVarHeuristic>
 -(ORFloat) varOrdering: (id<CPBitVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
 -(void)initHeuristic:(NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void)initInternal:(id<ORVarArray>)t and:(id<ORVarArray>)cv;
 -(void) restart;
 -(id<ORBitVarArray>) allBitVars;
+-(id<ORIntVarArray>) allIntVars;
 -(id<CPProgram>)solver;
 -(ORBool)oneSol;
 @end
 
-@interface CPBitVarVirtualHeuristic: NSObject<CPHeuristic>
+@interface CPBitVarVirtualHeuristic: NSObject<CPBitVarHeuristic>
 -(CPBitVarVirtualHeuristic*)initWithBindings:(id<ORBindingArray>)bindings;
 -(ORFloat) varOrdering: (id<CPBitVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
@@ -31,5 +32,6 @@
 -(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void) restart;
 -(id<ORBitVarArray>) allBitVars;
+-(id<ORIntVarArray>) allIntVars;
 -(id<CPProgram>)solver;
 @end

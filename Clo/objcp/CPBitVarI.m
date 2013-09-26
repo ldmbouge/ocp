@@ -20,6 +20,7 @@
 
 static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t,ORUInt low,ORUInt up)
 {
+   net->_bitFixedEvt = makeTRId(t, nil);
    net->_boundsEvt = makeTRId(t,nil);
    net->_bindEvt   = makeTRId(t,nil);
    net->_domEvt    = makeTRId(t,nil);
@@ -30,6 +31,7 @@ static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t,ORUInt low,ORUInt 
 
 static void deallocNetwork(CPBitEventNetwork* net)
 {
+   freeList(net->_bitFixedEvt._val);
    freeList(net->_boundsEvt._val);
    freeList(net->_bindEvt._val);
    freeList(net->_domEvt._val);
@@ -40,6 +42,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
+   collectList(net->_bitFixedEvt._val,rv);
    collectList(net->_boundsEvt._val,rv);
    collectList(net->_bindEvt._val,rv);
    collectList(net->_domEvt._val,rv);
@@ -121,20 +124,33 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 //****************************************************
 @implementation CPBitVarI
--(void) initCPBitVarCore:(CPEngineI*)engine low: (unsigned int*) low up: (unsigned int*)up length:(int)len
+-(CPBitVarI*) initCPBitVarCore:(CPEngineI*)engine low: (unsigned int*) low up: (unsigned int*)up length:(int)len
 {
-    self = [super init];
-    _engine = engine;
-    [_engine trackVariable: self];
-    setUpNetwork(&_net, [_engine trail], *low, *up);
-    _triggers = nil;
-    _dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
-    _recv = self;
+//    self = [super init];
+//    _engine = engine;
+//    [_engine trackVariable: self];
+//    setUpNetwork(&_net, [_engine trail], *low, *up);
+//    _triggers = nil;
+//    _dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
+//    _recv = self;
+//}
+self = [super init];
+//_vc = CPVCBare;
+//_isBool = NO;
+_engine  = engine;
+[_engine trackVariable: self];
+setUpNetwork(&_net, [_engine trail],*low,*up);
+_triggers = nil;
+//_dom = nil;
+_dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
+_recv = nil;
+return self;
 }
+
 -(void)dealloc
 {
     //NSLog(@"CBitVar::dealloc %d\n",_name);
-    if (_recv != self) 
+    if (_recv != nil)
         [_recv release];
     [_dom release];     
     deallocNetwork(&_net);
@@ -156,17 +172,29 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
     return _recv;
 }
--(void) setDelegate:(id<CPBitVarNotifier>) d
+//-(void) setDelegate:(id<CPBitVarNotifier>) d
+//{
+//    if (_recv != d) {
+//        if (_recv != self) {
+//            @throw [[NSException alloc] initWithName:@"Internal Error" 
+//                                              reason:@"Trying to set a delegate that already exists" 
+//                                            userInfo:nil];
+//        }
+//        _recv = [d retain];
+//    }
+//}
+-(void) setDelegate:(id<CPBitVarNotifier,NSCoding>) d
 {
-    if (_recv != d) {
-        if (_recv != self) {
-            @throw [[NSException alloc] initWithName:@"Internal Error" 
-                                              reason:@"Trying to set a delegate that already exists" 
-                                            userInfo:nil];
-        }
-        _recv = [d retain];
-    }
+   if (_recv != d) {
+      if (_recv != nil) {
+         @throw [[NSException alloc] initWithName:@"Internal Error"
+                                           reason:@"Trying to set a delegate that already exists"
+                                         userInfo:nil];
+      }
+      _recv = [d retain];
+   }
 }
+
 -(NSMutableSet*)constraints
 {
    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
@@ -178,17 +206,12 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    return rv;
 }
 
-//<<<<<<< HEAD
-
 -(enum CPVarClass)varClass
 {
    return CPVCLiterals;
 }
 
-//-(BOOL)bound
-//=======
 -(ORBool)bound
-//>>>>>>> modeling
 {
     return [_dom bound];
 }
@@ -351,8 +374,12 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
     }
 }
 
--(void) bindEvt
+-(ORStatus) bindEvt:(int) dsz sender:(CPBitArrayDom*)sender
 {
+   
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   if (s==ORFailure) return s;
+
    id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
@@ -365,10 +392,14 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    [_engine scheduleAC3:mList];
     if (_triggers != nil)
         [_triggers bindEvt:_engine];
+   return ORSuspend;
 }
 
--(void) changeMinEvt: (int) dsz sender:(CPBitArrayDom*)sender
+-(ORStatus) changeMinEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   if (s==ORFailure) return s;
+
    id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
@@ -379,9 +410,13 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    [_engine scheduleAC3:mList];
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
+   return ORSuspend;
 }
--(void) changeMaxEvt: (int) dsz sender:(CPBitArrayDom*)sender
+-(ORStatus) changeMaxEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   if (s==ORFailure) return s;
+
    id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
@@ -392,11 +427,16 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    [_engine scheduleAC3:mList];
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
+   
+   return ORSuspend;
 }
 
--(void) bitFixedEvt:(int)idx sender:(CPBitArrayDom*)sender
+-(ORStatus) bitFixedEvt:(int)idx sender:(CPBitArrayDom*)sender
 {
-   [_dom updateFreeBitCount];
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   if (s==ORFailure) return s;
+
+//   [_dom updateFreeBitCount];
     //Empty implementation
    id<CPEventNode> mList[5];
    ORUInt k = 0;
@@ -404,29 +444,31 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleAC3:mList];
+   return ORSuspend;
 }
 
 -(ORStatus) updateMin: (uint64) newMin
 {
-    return [_dom updateMin:newMin for:_recv];
+    return [_dom updateMin:newMin for:self];
 }
 
 -(ORStatus) updateMax: (uint64) newMax
 {
-    return [_dom updateMax:newMax for:_recv];
+    return [_dom updateMax:newMax for:self];
 }
 
 -(void) setLow:(unsigned int *)newLow
 {
-    [_dom setLow: newLow for:_recv];
+    [_dom setLow: newLow for:self];
 }
 
 -(void) setUp:(unsigned int *)newUp{
-    [_dom setUp: newUp for:_recv];
+    [_dom setUp: newUp for:self];
 }
 
--(void) setUp:(unsigned int *)newUp andLow:(unsigned int *)newLow{
-   [_dom setUp: newUp andLow:newLow for:_recv];
+-(void) setUp:(unsigned int *)newUp andLow:(unsigned int *)newLow
+{
+   [_dom setUp: newUp andLow:newLow for:self];
 }
 
 -(TRUInt*) getLow
@@ -444,11 +486,11 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 
 -(ORStatus) bindUInt64:(uint64)val
 {
-    return [_dom bind:val for:_recv];
+    return [_dom bind:val for:self];
 }
 
 -(ORStatus)bind:(ORUInt*)val{
-    return [_dom bindToPat: val for:_recv];
+    return [_dom bindToPat: val for:self];
 }
 -(ORStatus) remove:(ORUInt)val
 {
@@ -470,7 +512,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
     setUpNetwork(&_net, [_engine trail], *low, *up);
     _triggers = nil;
     _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:[_engine trail]];
-    _recv = self;
+    _recv = nil;
     return self;
 }
 
@@ -518,42 +560,271 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 @end
 
 @implementation CPBitVarMultiCast
-
--(id)initVarMC:(int)n 
+//
+//-(id)initVarMC:(int)n 
+//{
+//    self = [super init];
+//    _mx  = n;
+//    _tab = malloc(sizeof(CPBitVarI*)*_mx);
+//    _tracksLoseEvt = false;
+//    _nb  = 0;
+//    return self;
+//}
+//
+//-(NSMutableSet*)constraints
+//{
+//   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
+//   for(ORInt i=0;i<_nb;i++) {
+//      NSMutableSet* ti = [_tab[i] constraints];
+//      [rv unionSet:ti];
+//      [ti release];
+//   }
+//   return rv;
+//}
+//
+//-(void) dealloc
+//{
+//    //NSLog(@"multicast object %p dealloc'd\n",self);
+//    free(_tab);
+//    [super dealloc];
+//}
+//-(void) addVar:(CPBitVarI*)v
+////{
+////    if (_nb >= _mx) {
+////        _tab = realloc(_tab,sizeof(CPBitVarI*)*(_mx<<1));
+////        _mx <<= 1;
+////    }
+////    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
+////    [_tab[_nb] setDelegate:self];
+////    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
+////    _nb++;
+////}
+//{
+//   if (_nb >= _mx) {
+//      _tab = realloc(_tab,sizeof(id<CPBitVarNotifier>)*(_mx<<1));
+//      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
+//      _minIMP     = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
+//      _maxIMP     = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
+//      _mx <<= 1;
+//   }
+//   _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
+//   _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt:nil];
+//   _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
+//   _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
+//   _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
+//   id<ORTrail> theTrail = [[v engine] trail];
+//   ORInt toFix = _nb;
+//   __block CPBitVarMultiCast* me = self;
+//   [theTrail trailClosure:^{
+//      me->_tab[toFix] = NULL;
+//      me->_loseValIMP[toFix] = NULL;
+//      me->_minIMP[toFix] = NULL;
+//      me->_maxIMP[toFix] = NULL;
+//      me->_nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
+//   }];
+//   _nb++;
+//   ORInt nbBare = 0;
+//   for(ORInt i=0;i<_nb;i++) {
+//      if (_tab[i] !=nil)
+//         nbBare += ([_tab[i] varClass] == CPVCBare);
+//   }
+//   assert(nbBare<=1);
+//}
+//
+//-(void)bindEvt
+//{
+//    for(int i=0;i<_nb;i++)
+//        [_tab[i] bindEvt];
+//}
+//-(void)bitFixedEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
+//{
+//    for(int i=0;i<_nb;i++)
+//        [_tab[i] bitFixedEvt:dsz sender:sender];
+//}
+//
+//- (void)encodeWithCoder: (NSCoder *) aCoder
+//{
+//   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
+//   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
+//   for(ORInt k=0;k<_nb;k++)
+//      [aCoder encodeObject:_tab[k]];
+//   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
+//}
+//- (id)initWithCoder: (NSCoder *) aDecoder
+//{
+//   self = [super init];
+//   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
+//   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
+//   _tab = malloc(sizeof(CPBitVarI*)*_mx);
+//   for(ORInt k=0;k<_nb;k++)
+//      _tab[k] = [aDecoder decodeObject];
+//   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];   
+//   return self;
+//}
+-(id)initVarMC:(ORInt)n root:(CPBitVarI*)root
 {
-    self = [super init];
-    _mx  = n;
-    _tab = malloc(sizeof(CPBitVarI*)*_mx);
-    _tracksLoseEvt = false;
-    _nb  = 0;
-    return self;
+   self = [super init];
+   _mx  = n;
+   _tab = malloc(sizeof(id<CPBitVarNotifier>)*_mx);
+   _loseValIMP   = malloc(sizeof(UBType)*_mx);
+   _minIMP   = malloc(sizeof(UBType)*_mx);
+   _maxIMP   = malloc(sizeof(UBType)*_mx);
+   _tracksLoseEvt = false;
+   [root setDelegate:self];
+   _nb = 0;
+   return self;
 }
+-(ORInt)getId
+{
+   assert(FALSE);
+   return 0;
+}
+-(void)setDelegate:(id<CPBitVarNotifier>)delegate
+{}
 -(void) dealloc
 {
-    //NSLog(@"multicast object %p dealloc'd\n",self);
-    free(_tab);
-    [super dealloc];
+   /*
+    for(ORInt i=0;i<_nb;i++) {
+    if ([_tab[i] isKindOfClass:[CPLiterals class]])
+    [_tab[i] release];
+    }
+    */
+   free(_tab);
+   free(_minIMP);
+   free(_maxIMP);
+   free(_loseValIMP);
+   free(_bitFixedIMP);
+   [super dealloc];
+}
+-(enum CPVarClass)varClass
+{
+   return CPVCLiterals;
 }
 -(void) addVar:(CPBitVarI*)v
 {
-    if (_nb >= _mx) {
-        _tab = realloc(_tab,sizeof(CPBitVarI*)*(_mx<<1));
-        _mx <<= 1;
-    }
-    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
-    [_tab[_nb] setDelegate:self];
-    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
-    _nb++;
+   if (_nb >= _mx) {
+      _tab = realloc(_tab,sizeof(id<CPBitVarNotifier>)*(_mx<<1));
+      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
+      _minIMP     = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
+      _maxIMP     = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
+      _bitFixedIMP = realloc(_bitFixedIMP, sizeof(UBType)*(_mx << 1));
+      _mx <<= 1;
+   }
+   _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
+   _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt:nil];
+   _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
+   _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
+   _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
+   _bitFixedIMP[_nb] = (UBType)[v methodForSelector:@selector(bitFixedEvt:sender:)];
+   id<ORTrail> theTrail = [[v engine] trail];
+   ORInt toFix = _nb;
+   __block CPBitVarMultiCast* me = self;
+   [theTrail trailClosure:^{
+      me->_tab[toFix] = NULL;
+      me->_loseValIMP[toFix] = NULL;
+      me->_minIMP[toFix] = NULL;
+      me->_maxIMP[toFix] = NULL;
+      me->_bitFixedIMP[toFix] = NULL;
+      me->_nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
+   }];
+   _nb++;
+   ORInt nbBare = 0;
+   for(ORInt i=0;i<_nb;i++) {
+      if (_tab[i] !=nil)
+         nbBare += ([_tab[i] varClass] == CPVCBare);
+   }
+   assert(nbBare<=1);
 }
--(void)bindEvt
+-(NSMutableSet*)constraints
 {
-    for(int i=0;i<_nb;i++)
-        [_tab[i] bindEvt];
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
+   for(ORInt i=0;i<_nb;i++) {
+      NSMutableSet* ti = [_tab[i] constraints];
+      [rv unionSet:ti];
+      [ti release];
+   }
+   return rv;
 }
--(void)bitFixedEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
+
+
+
+-(NSString*)description
 {
-    for(int i=0;i<_nb;i++)
-        [_tab[i] bitFixedEvt:dsz sender:sender];
+   static const char* classes[] = {"Bare","Shift","Affine","EQLit","Literals","Flip","NEQLit"};
+   NSMutableString* buf = [NSMutableString stringWithCapacity:64];
+   [buf appendFormat:@"MC:<%d>[",_nb];
+   for(ORUInt k=0;k<_nb;k++) {
+      if (_tab[k] == nil)
+         [buf appendFormat:@"nil %c",k < _nb -1 ? ',' : ']'];
+      else
+         [buf appendFormat:@"%d-%s %c",[_tab[k] getId],classes[[_tab[k] varClass]],k < _nb -1 ? ',' : ']'];
+   }
+   return buf;
+}
+-(void) setTracksLoseEvt
+{
+   _tracksLoseEvt = true;
+}
+-(ORBool) tracksLoseEvt:(CPBitArrayDom*)sender
+{
+   return _tracksLoseEvt;
+}
+-(ORStatus)bindEvt:(CPBitArrayDom*)sender
+{
+   // If _nb > 0 but the _tab entries are nil, this would inadvertently
+   // set ok to ORFailure which is wrong. Hence it is critical to also
+   // backtrack the size of the array in addVar.
+   for(ORInt i=0;i<_nb;i++) {
+      ORStatus ok = [_tab[i] bindEvt:sender];
+      if (!ok) return ok;
+   }
+   return ORSuspend;
+}
+
+-(ORStatus) changeMinEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender
+{
+   SEL ms = @selector(changeMinEvt:sender:);
+   for(ORInt i=0;i<_nb;i++) {
+      //ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
+      assert(_minIMP[i]);
+      ORStatus ok = _minIMP[i](_tab[i],ms,dsz,sender);
+      if (!ok) return ok;
+   }
+   return ORSuspend;
+}
+-(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender
+{
+   SEL ms = @selector(changeMaxEvt:sender:);
+   for(ORInt i=0;i<_nb;i++) {
+      //ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
+      assert(_maxIMP[i]);
+      ORStatus ok = _maxIMP[i](_tab[i],ms,dsz,sender);
+      if (!ok) return ok;
+   }
+   return ORSuspend;
+}
+-(ORStatus) loseValEvt:(ORUInt)val sender:(id<CPDom>)sender
+{
+   if (!_tracksLoseEvt) return ORSuspend;
+   ORStatus ok = ORSuspend;
+   for(ORInt i=0;i<_nb;i++) {
+      //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
+      if (_loseValIMP[i])
+         ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
+      if (ok == ORFailure) return ok;
+   }
+   return ORSuspend;
+}
+-(ORStatus)bitFixedEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
+{
+   ORStatus ok = ORSuspend;
+   for(ORInt i=0;i<_nb;i++) {
+      if (_bitFixedIMP[i])
+         ok = _bitFixedIMP[i](_tab[i],@selector(bitFixedEvt:sender:),dsz,sender);
+      if (ok == ORFailure)
+         return ok;
+   }
+   return ORSuspend;
 }
 
 - (void)encodeWithCoder: (NSCoder *) aCoder
@@ -572,7 +843,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    _tab = malloc(sizeof(CPBitVarI*)*_mx);
    for(ORInt k=0;k<_nb;k++)
       _tab[k] = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];   
+   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
    return self;
 }
+
 @end

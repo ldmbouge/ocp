@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORProgram/CPHeuristic.h>
+#import "CPBitVarHeuristic.h"
 #import <objcp/CPData.h>
 
 @protocol ORModel;
@@ -157,13 +158,13 @@
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
 -(void) labelDownFromMSB:(id<CPBitVar>) x;
--(void) labelBitVarsFirstFail: (NSArray*)vars;
--(void) labelBitVarHeuristic:(id<CPHeuristic>) h;
+//-(void) labelBitVarsFirstFail: (NSArray*)vars;
+-(void) labelBitVarHeuristic:(id<CPBitVarHeuristic>) h;
 
--(id<CPHeuristic>) createBitVarFF;
--(id<CPHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createBitVarABS;
--(id<CPHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarFF;
+-(id<CPBitVarHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarABS;
+-(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 
 -(NSString*)stringValue:(id<ORBitVar>)x;
 @end

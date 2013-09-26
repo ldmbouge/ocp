@@ -9,12 +9,12 @@
  
  ***********************************************************************/
 
-#import <ORProgram/CPHeuristic.h>
-#import <ORProgram/CPBaseHeuristic.h>
+#import "CPBitVarHeuristic.h"
+#import <ORProgram/CPBitVarBaseHeuristic.h>
 #import <ORProgram/CPProgram.h>
 #import <objcp/CPVar.h>
 
-@interface CPBitVarFirstFail : CPBitVarBaseHeuristic<CPHeuristic> {
+@interface CPBitVarFirstFail : CPBitVarBaseHeuristic<CPBitVarHeuristic> {
    id<ORVarArray>  _vars;  // Model variables
    id<ORVarArray>   _cvs;  // concrete variables
    id<ORVarArray> _rvars;
@@ -23,7 +23,7 @@
 -(CPBitVarFirstFail*)initCPBitVarFirstFail:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPBitVar>)x;
 -(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x ;
--(void)initInternal:(id<ORVarArray>)t;
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv;
 -(id<CPVarArray>)allBitVars;
 -(id<CPProgram>)solver;
 @end

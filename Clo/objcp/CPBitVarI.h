@@ -20,6 +20,7 @@
 @class CPBitArrayIterator;
 @class CPEngineI;
 @class CPTriggerMap;
+@class CPBitVarMultiCast;
 
 typedef struct  {
    TRId         _boundsEvt;
@@ -39,9 +40,9 @@ typedef struct  {
     CPBitArrayDom*                      _dom;
     CPBitEventNetwork                   _net;
     CPTriggerMap*                  _triggers;
-    id<CPBitVarNotifier>               _recv;
+    CPBitVarMultiCast*               _recv;
 }
--(void) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
+-(CPBitVarI*) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(NSString*) description;
@@ -67,9 +68,10 @@ typedef struct  {
 // notification
 
 //-(void) bindEvt;
--(void) changeMinEvt:(int)dsz sender:(CPBitArrayDom*)sender;
--(void) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
--(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
+-(ORStatus) changeMinEvt:(int)dsz sender:(CPBitArrayDom*)sender;
+-(ORStatus) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
+-(ORStatus) bindEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
 -(ORInt) bitLength;
 -(ORBool) bound;
@@ -115,16 +117,58 @@ typedef struct  {
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
+//@interface CPBitVarMultiCast : NSObject<CPBitVarNotifier,NSCoding> {
+//    CPBitVarI**       _tab;
+//    BOOL    _tracksLoseEvt;
+//    ORInt          _nb;
+//    ORInt          _mx;
+//}
+//-(id)initVarMC:(int)n;
+//-(void) dealloc;
+//-(void) addVar:(CPBitVarI*) v;
+//-(NSMutableSet*)constraints;
+//-(void) bindEvt;
+//-(void) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
+//@end
 @interface CPBitVarMultiCast : NSObject<CPBitVarNotifier,NSCoding> {
-    CPBitVarI**       _tab;
-    BOOL    _tracksLoseEvt;
-    ORInt          _nb;
-    ORInt          _mx;
+//   id<CPIntVarNotifier>* _tab;
+//   BOOL        _tracksLoseEvt;
+//   ORInt                  _nb;
+//   ORInt                  _mx;
+//   UBType*        _loseValIMP;
+//   UBType*            _minIMP;
+//   UBType*            _maxIMP;
+//}
+//-(id)initVarMC:(ORInt)n root:(CPBitVarI*)root;
+//-(void) dealloc;
+//-(enum CPVarClass)varClass;
+////-(CPLiterals*)literals;
+//-(void) addVar:(CPBitVarI*) v;
+//-(NSMutableSet*)constraints;
+//-(ORStatus) bindEvt:(id<CPDom>)sender;
+//-(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+//-(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+//-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+   id<CPBitVarNotifier>* _tab;
+   BOOL        _tracksLoseEvt;
+   ORInt                  _nb;
+   ORInt                  _mx;
+   UBType*        _loseValIMP;
+   UBType*            _minIMP;
+   UBType*            _maxIMP;
+   UBType*       _bitFixedIMP;
 }
--(id)initVarMC:(int)n;
+-(id)initVarMC:(ORInt)n root:(CPBitVarI*)root;
 -(void) dealloc;
+-(enum CPVarClass)varClass;
+//-(CPLiterals*)literals;
 -(void) addVar:(CPBitVarI*) v;
--(void) bindEvt;
--(void) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
+-(NSMutableSet*)constraints;
+-(ORStatus) bindEvt:(CPBitArrayDom*)sender;
+-(ORStatus) changeMinEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
+-(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
+-(ORStatus) loseValEvt:(ORUInt)val sender:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 @end
+
 

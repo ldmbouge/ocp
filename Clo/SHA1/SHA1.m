@@ -19,6 +19,7 @@
 {
    self = [super init];
    _m = [ORFactory createModel];
+   
    return self;
 }
 
@@ -382,13 +383,14 @@
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-//   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    
    [_m add:[ORFactory bit:x and:y eq:t0]];
-   [_m add:[ORFactory bit:x and:z eq:t1]];
-   [_m add:[ORFactory bit:t0 or:t1 eq:t2]];
+   [_m add:[ORFactory bit:x not:t1]];
+   [_m add:[ORFactory bit:t1 and:z eq:t2]];
+   [_m add:[ORFactory bit:t0 or:t2 eq:t3]];
    
-   return t2;
+   return t3;
 }
 -(id<ORBitVar>) g:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z
 {
@@ -422,24 +424,24 @@
    [_m add:[ORFactory bit:x and:y eq:t0]];
    [_m add:[ORFactory bit:x and:z eq:t1]];
    [_m add:[ORFactory bit:y and:z eq:t2]];
-   [_m add:[ORFactory bit:t0 xor:t1 eq:t3]];
-   [_m add:[ORFactory bit:t3 xor:t2 eq:t4]];
-   return t1;
+   [_m add:[ORFactory bit:t0 or:t1 eq:t3]];
+   [_m add:[ORFactory bit:t3 or:t2 eq:t4]];
+   return t4;
 }
--(id<ORBitVar>) i:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z
-{
-   //   I(X,Y,Z) = Y xor (X v not(Z))
-   uint32 min = 0;
-   uint32 max = 0xFFFFFFFF;
-   
-   id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   
-   [_m add:[ORFactory bit:x xor:y eq:t0]];
-   [_m add:[ORFactory bit:t0 xor:z eq:t1]];
-   
-   return t1;
-}
+//-(id<ORBitVar>) i:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z
+//{
+//   //   I(X,Y,Z) = Y xor (X v not(Z))
+//   uint32 min = 0;
+//   uint32 max = 0xFFFFFFFF;
+//   
+//   id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   
+//   [_m add:[ORFactory bit:x xor:y eq:t0]];
+//   [_m add:[ORFactory bit:t0 xor:z eq:t1]];
+//   
+//   return t1;
+//}
 
 
 -(id<ORBitVar>*) round1:(id<ORBitVar>*)h x:(id<ORBitVar>*) x

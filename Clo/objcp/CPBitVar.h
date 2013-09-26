@@ -13,6 +13,7 @@
 #import <CPUKernel/CPEngine.h>
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPVar.h>
+#import <objcp/CPDom.h>
 
 
 @protocol CPBitVar <CPVar>
@@ -27,7 +28,7 @@
 -(ORULong)  numPatterns;
 -(ORUInt) msFreeBit;
 -(ORUInt) lsFreeBit;
--(ORUInt) randFreeBit;
+-(ORUInt) randomFreeBit;
 -(ORBool) isFree:(ORUInt)pos;
 -(ORStatus) remove:(ORUInt)val;
 //-(id<CPBitVar>) dereference;
@@ -41,7 +42,8 @@
 @class CPCoreConstraint;
 
 @protocol CPBitVarSubscriber <NSObject>
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
+-(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ConstraintCallback) todo;
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo;
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
 @end
 
@@ -49,8 +51,12 @@
 
 @protocol CPBitVarNotifier <NSObject>
 @optional -(void) addVar:(CPBitVarI*)var;
--(void) bindEvt;
--(void) bitFixedEvt:(unsigned int) dsz  sender:(CPBitArrayDom*)sender;
--(void) changeMinEvt:(unsigned int) dsz sender:(CPBitArrayDom*)sender;
--(void) changeMaxEvt:(unsigned int) dsz sender:(CPBitArrayDom*)sender;
+-(ORInt)getId;
+-(enum CPVarClass)varClass;
+-(NSMutableSet*)constraints;
+-(ORBool) tracksLoseEvt:(CPBitArrayDom*)sender;
+-(ORStatus) bindEvt:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;
+-(ORStatus) changeMinEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
+-(ORStatus) changeMaxEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 @end

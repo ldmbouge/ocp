@@ -1136,7 +1136,12 @@
 		F548AA73167FB1C600726814 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		F548AA76167FB1C600726814 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AA75167FB1C600726814 /* main.m */; };
 		F548AAB21680B3A500726814 /* MD4.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AAB11680B3A500726814 /* MD4.m */; };
+		F54AC17F179F64B500E0D636 /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CCC5B9179611E900EC6859 /* CPBitVarHeuristic.h */; };
+		F54AC180179F64BB00E0D636 /* CPBitVarBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F507ECC2176F6D0A00578C4E /* CPBitVarBaseHeuristic.h */; };
+		F54AC181179F64C100E0D636 /* CPBitVarBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = F507ECC3176F6D0B00578C4E /* CPBitVarBaseHeuristic.m */; };
+		F54AC182179F660300E0D636 /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C04171AE93F00F309A6 /* CPBitVarABS.h */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
+		F5CCC5BA179611E900EC6859 /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CCC5B9179611E900EC6859 /* CPBitVarHeuristic.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -5134,6 +5139,7 @@
 		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
 		F55DEFB516C9F33E005818AF /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
 		F55DEFB616C9F33E005818AF /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
+		F5CCC5B9179611E900EC6859 /* CPBitVarHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarHeuristic.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6549,6 +6555,7 @@
 				F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */,
 				F5444F82171E3D9800C86070 /* CPBitVarIBS.h */,
 				F5444F83171E3D9900C86070 /* CPBitVarIBS.m */,
+				F5CCC5B9179611E900EC6859 /* CPBitVarHeuristic.h */,
 				F507ECC2176F6D0A00578C4E /* CPBitVarBaseHeuristic.h */,
 				F507ECC3176F6D0B00578C4E /* CPBitVarBaseHeuristic.m */,
 			);
@@ -8233,6 +8240,7 @@
 				5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */,
 				B1E1C7981703725B006AACFC /* MIPSolver.h in Headers */,
 				B1E1C79E1703741E006AACFC /* MIPConcretizer.h in Headers */,
+				F5CCC5BA179611E900EC6859 /* CPBitVarHeuristic.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8356,6 +8364,9 @@
 				5B8C7E541586801F007042CA /* UIBoardController.h in Headers */,
 				F5066C0E171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */,
 				F5444F85171E3D9900C86070 /* CPBitVarIBS.h in Headers */,
+				F54AC17F179F64B500E0D636 /* CPBitVarHeuristic.h in Headers */,
+				F54AC180179F64BB00E0D636 /* CPBitVarBaseHeuristic.h in Headers */,
+				F54AC182179F660300E0D636 /* CPBitVarABS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10904,6 +10915,7 @@
 				F5066C11171CA91D00F309A6 /* CPBitVarFirstFail.m in Sources */,
 				F5444F87171E3D9900C86070 /* CPBitVarIBS.m in Sources */,
 				F50EE699178395EC004D8ABB /* CPBitVarABS.m in Sources */,
+				F54AC181179F64C100E0D636 /* CPBitVarBaseHeuristic.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

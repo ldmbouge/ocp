@@ -712,7 +712,7 @@
     assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
     assignTRUInt(&_freebits, 0, _trail);
    [self updateFreeBitCount];
-    [x bindEvt];
+   [x bindEvt:self];
     return ORSuspend;   
 }
 
@@ -733,7 +733,7 @@
    assignTRUInt(&_min[1], pat[1], _trail);
    assignTRUInt(&_max[1], pat[1], _trail);
    assignTRUInt(&_freebits, 0, _trail);
-   [x bindEvt];
+   [x bindEvt:self];
    [self updateFreeBitCount];
    return ORSuspend;   
 }

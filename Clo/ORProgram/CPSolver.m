@@ -800,132 +800,132 @@
 }
 
 
--(void) labelBitVarsFirstFail: (NSArray*)vars
-{
-//<<<<<<< HEAD
-   NSMutableArray* unboundVars = [[NSMutableArray alloc]init];
-   NSMutableSet* alreadyTried = [[NSMutableSet alloc] init];
-//=======
-//   CPBitVarI* minDom;
-//   ORULong minDomSize;
-//   ORULong thisDomSize;
-//   ORLong numVars;
-//   bool freeVars = false;
-//   NSMutableArray* cvars = [[[NSMutableArray alloc] initWithCapacity:[vars count]] autorelease];
-//   for(id v in vars)
-//      [cvars addObject:_gamma[[v getId]]];
-//   vars = cvars;
-//   
-//   numVars = [vars count];
-//>>>>>>> modeling
-   int j;
-
-//<<<<<<< HEAD
-   [unboundVars addObjectsFromArray:vars];
-
-   NSArray *sortedArray;
-   bool moreVars = true;
-   while (moreVars) {
-
-      moreVars = false;
-      sortedArray = [unboundVars sortedArrayUsingComparator: ^NSComparisonResult(id obj1, id obj2) {
-      if ((ORULong)[(CPBitVarI*)obj1 domsize] > (ORULong)[(CPBitVarI*)obj2 domsize]) {
-         return (NSComparisonResult)NSOrderedDescending;
-      }
-      if ((ORULong)[(CPBitVarI*)obj1 domsize] < (ORULong)[(CPBitVarI*)obj2 domsize]) {
-         return (NSComparisonResult)NSOrderedAscending;
-//=======
-//   for(int i=0;i<numVars;i++){
-//      if ([vars[i] bound])
-//         continue;
-//      if ([vars[i] domsize] <= 0)
-//         continue;
-//      minDom = vars[i];
-//      minDomSize = [minDom domsize];
-//      freeVars = true;
-//      break;
-//   }
+//-(void) labelBitVarsFirstFail: (NSArray*)vars
+//{
+////<<<<<<< HEAD
+//   NSMutableArray* unboundVars = [[NSMutableArray alloc]init];
+//   NSMutableSet* alreadyTried = [[NSMutableSet alloc] init];
+////=======
+////   CPBitVarI* minDom;
+////   ORULong minDomSize;
+////   ORULong thisDomSize;
+////   ORLong numVars;
+////   bool freeVars = false;
+////   NSMutableArray* cvars = [[[NSMutableArray alloc] initWithCapacity:[vars count]] autorelease];
+////   for(id v in vars)
+////      [cvars addObject:_gamma[[v getId]]];
+////   vars = cvars;
+////   
+////   numVars = [vars count];
+////>>>>>>> modeling
+//   int j;
 //
-////   NSLog(@"%lld unbound variables.",numVars);
-//   while (freeVars) {
-//      freeVars = false;
-//      numBound = 0;
-//      for(int i=0;i<numVars;i++){
-//         if ([vars[i] bound]){
-//            numBound++;
-//            continue;
-//         }
-//         if ([vars[i] domsize] <= 0)
-//            continue;
-//         if (!freeVars) {
-//            minDom = vars[i];
-//            minDomSize = [minDom domsize];
-//            freeVars = true;
-//            continue;
-//         }
-//         thisDomSize= [vars[i] domsize];
-//         if(thisDomSize==0)
-//            continue;
-//         if (thisDomSize < minDomSize) {
-//            minDom = vars[i];
-//            minDomSize = thisDomSize;
-//         }
+////<<<<<<< HEAD
+//   [unboundVars addObjectsFromArray:vars];
+//
+//   NSArray *sortedArray;
+//   bool moreVars = true;
+//   while (moreVars) {
+//
+//      moreVars = false;
+//      sortedArray = [unboundVars sortedArrayUsingComparator: ^NSComparisonResult(id obj1, id obj2) {
+//      if ((ORULong)[(CPBitVarI*)obj1 domsize] > (ORULong)[(CPBitVarI*)obj2 domsize]) {
+//         return (NSComparisonResult)NSOrderedDescending;
 //      }
-//      if (!freeVars)
-//         break;
-//      //NSLog(@"%d//%lld bound.",numBound, numVars);
-////      j=[minDom randomFreeBit];
+//      if ((ORULong)[(CPBitVarI*)obj1 domsize] < (ORULong)[(CPBitVarI*)obj2 domsize]) {
+//         return (NSComparisonResult)NSOrderedAscending;
+////=======
+////   for(int i=0;i<numVars;i++){
+////      if ([vars[i] bound])
+////         continue;
+////      if ([vars[i] domsize] <= 0)
+////         continue;
+////      minDom = vars[i];
+////      minDomSize = [minDom domsize];
+////      freeVars = true;
+////      break;
+////   }
+////
+//////   NSLog(@"%lld unbound variables.",numVars);
+////   while (freeVars) {
+////      freeVars = false;
+////      numBound = 0;
+////      for(int i=0;i<numVars;i++){
+////         if ([vars[i] bound]){
+////            numBound++;
+////            continue;
+////         }
+////         if ([vars[i] domsize] <= 0)
+////            continue;
+////         if (!freeVars) {
+////            minDom = vars[i];
+////            minDomSize = [minDom domsize];
+////            freeVars = true;
+////            continue;
+////         }
+////         thisDomSize= [vars[i] domsize];
+////         if(thisDomSize==0)
+////            continue;
+////         if (thisDomSize < minDomSize) {
+////            minDom = vars[i];
+////            minDomSize = thisDomSize;
+////         }
+////      }
+////      if (!freeVars)
+////         break;
+////      //NSLog(@"%d//%lld bound.",numBound, numVars);
+//////      j=[minDom randomFreeBit];
+////      
+////      //NSLog(@"Labeling %@ at %d.", minDom, j);
+////      while ([minDom domsize] > 0) {
+////         j= [minDom randomFreeBit];
+////         [_search try: ^() { [self labelBVImpl:(id)minDom at:j with:false];}
+////                   or: ^() { [self labelBVImpl:(id)minDom at:j with:true];}];
+////>>>>>>> modeling
+//      }
+//      return (NSComparisonResult)NSOrderedSame;
+//      }];
+//
+////<<<<<<< HEAD
+////      for (int i=0;i<[sortedArray count]; i++) {
+////         ORULong dSize =[(CPBitVarI*)(sortedArray[i]) domsize];
+////         NSLog(@"%llu",dSize);
+////      }
+////      NSLog(@"\n\n\n\n");
 //      
-//      //NSLog(@"Labeling %@ at %d.", minDom, j);
-//      while ([minDom domsize] > 0) {
-//         j= [minDom randomFreeBit];
-//         [_search try: ^() { [self labelBVImpl:(id)minDom at:j with:false];}
-//                   or: ^() { [self labelBVImpl:(id)minDom at:j with:true];}];
-//>>>>>>> modeling
-      }
-      return (NSComparisonResult)NSOrderedSame;
-      }];
-
-//<<<<<<< HEAD
+//      
 //      for (int i=0;i<[sortedArray count]; i++) {
-//         ORULong dSize =[(CPBitVarI*)(sortedArray[i]) domsize];
-//         NSLog(@"%llu",dSize);
+////         NSLog(@"%llu",[(CPBitVarI*)sortedArray[i] domsize]);
+//         if (([(CPBitVarI*)(sortedArray[i]) domsize])>0x00000001) {
+////         if(![sortedArray[i] bound] && ![alreadyTried member:sortedArray[i]]){
+////            NSLog(@"Processing variable with domain size %llu, %lu variables remaining",[(CPBitVarI*)(sortedArray[i]) domsize], (unsigned long)[sortedArray count]);
+////         if (![(CPBitVarI*)(sortedArray[i]) bound]) {
+//            moreVars = true;
+//            [alreadyTried addObject:sortedArray[i]];
+//            while ((j=[sortedArray[i] lsFreeBit])>=0) {
+////               j=[sortedArray[i] lsFreeBit];
+////               [unboundVars removeObject:sortedArray[i]];
+////               NSMutableArray *temp = [[NSMutableArray alloc]init];
+////               [temp addObjectsFromArray:unboundVars];
+////               unboundVars = temp;
+////               [unboundVars removeObject:sortedArray[i]];
+////               NSLog(@"Labeling %x = %@ at %d with domain size %llu.",sortedArray[i],sortedArray[i],j,[(CPBitVarI*)sortedArray[i] domsize]);
+//               [_search try: ^() { [self labelBV:(id<CPBitVar>)sortedArray[i] at:j with:false];}
+//                         or: ^() { [self labelBV:(id<CPBitVar>)sortedArray[i] at:j with:true];}];
+//            }
+////            [alreadyTried removeObject:sortedArray[i]];
+////            NSMutableArray *temp = [[NSMutableArray alloc]init];
+////            [temp addObjectsFromArray:unboundVars];
+////            unboundVars = temp;
+////            [unboundVars removeObject:sortedArray[i]];
+//            //break;
+//         }
 //      }
-//      NSLog(@"\n\n\n\n");
-      
-      
-      for (int i=0;i<[sortedArray count]; i++) {
-//         NSLog(@"%llu",[(CPBitVarI*)sortedArray[i] domsize]);
-         if (([(CPBitVarI*)(sortedArray[i]) domsize])>0x00000001) {
-//         if(![sortedArray[i] bound] && ![alreadyTried member:sortedArray[i]]){
-//            NSLog(@"Processing variable with domain size %llu, %lu variables remaining",[(CPBitVarI*)(sortedArray[i]) domsize], (unsigned long)[sortedArray count]);
-//         if (![(CPBitVarI*)(sortedArray[i]) bound]) {
-            moreVars = true;
-            [alreadyTried addObject:sortedArray[i]];
-            while ((j=[sortedArray[i] lsFreeBit])>=0) {
-//               j=[sortedArray[i] lsFreeBit];
-//               [unboundVars removeObject:sortedArray[i]];
-//               NSMutableArray *temp = [[NSMutableArray alloc]init];
-//               [temp addObjectsFromArray:unboundVars];
-//               unboundVars = temp;
-//               [unboundVars removeObject:sortedArray[i]];
-//               NSLog(@"Labeling %x = %@ at %d with domain size %llu.",sortedArray[i],sortedArray[i],j,[(CPBitVarI*)sortedArray[i] domsize]);
-               [_search try: ^() { [self labelBV:(id<CPBitVar>)sortedArray[i] at:j with:false];}
-                         or: ^() { [self labelBV:(id<CPBitVar>)sortedArray[i] at:j with:true];}];
-            }
-//            [alreadyTried removeObject:sortedArray[i]];
-//            NSMutableArray *temp = [[NSMutableArray alloc]init];
-//            [temp addObjectsFromArray:unboundVars];
-//            unboundVars = temp;
-//            [unboundVars removeObject:sortedArray[i]];
-            //break;
-         }
-      }
-//=======
-//      //NSLog(@"Labeled %@ at %d.", minDom, j);
-//>>>>>>> modeling
-   }
-}
+////=======
+////      //NSLog(@"Labeled %@ at %d.", minDom, j);
+////>>>>>>> modeling
+//   }
+//}
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -1072,18 +1072,18 @@
    } while (true);
 }
 
--(void) labelBitVarHeuristic: (id<CPHeuristic>) h
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h
 {
    [self labelBitVarHeuristic:h withConcrete:(id)[h allBitVars]];
 }
--(void) labelBitVarHeuristic: (id<CPHeuristic>) h restricted:(id<ORBitVarArray>)av
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h restricted:(id<ORBitVarArray>)av
 {
    id<CPBitVarArray> cav = (id<CPBitVarArray>)[ORFactory varArray:self range:av.range with:^id<ORBitVar>(ORInt k) {
       return _gamma[av[k].getId];
    }];
    [self labelBitVarHeuristic:h withConcrete:cav];
 }
--(void) labelBitVarHeuristic: (id<CPHeuristic>) h withConcrete:(id<CPBitVarArray>)av
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
 {
 //   id<ORBitVarArray> av= [h allBitVars];
    id<ORSelect> select = [ORFactory selectRandom: _engine
@@ -1378,15 +1378,15 @@
    [self addHeuristic:h];
    return h;
 }
--(id<CPHeuristic>) createBitVarFF
+-(id<CPBitVarHeuristic>) createBitVarFF
 {
-   id<CPHeuristic> h = [[CPBitVarFirstFail alloc] initCPBitVarFirstFail:self restricted:nil];
+   id<CPBitVarHeuristic> h = [[CPBitVarFirstFail alloc] initCPBitVarFirstFail:self restricted:nil];
    [self addHeuristic:h];
    return h;
 }
--(id<CPHeuristic>) createBitVarFF: (id<ORVarArray>) rvars
+-(id<CPBitVarHeuristic>) createBitVarFF: (id<ORVarArray>) rvars
 {
-   id<CPHeuristic> h = [[CPBitVarFirstFail alloc] initCPBitVarFirstFail:self restricted:rvars];
+   id<CPBitVarHeuristic> h = [[CPBitVarFirstFail alloc] initCPBitVarFirstFail:self restricted:rvars];
    [self addHeuristic:h];
    return h;
 }
@@ -1401,9 +1401,9 @@
    [self addHeuristic:h];
    return h;
 }
--(id<CPHeuristic>) createBitVarABS:(id<ORVarArray>)rvars
+-(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars
 {
-   id<CPHeuristic> h = [[CPBitVarABS alloc] initCPBitVarABS:self restricted:rvars];
+   id<CPBitVarHeuristic> h = [[CPBitVarABS alloc] initCPBitVarABS:self restricted:rvars];
    [self addHeuristic:h];
    return h;
 }
@@ -1437,9 +1437,9 @@
    [self addHeuristic:h];
    return h;
 }
--(id<CPHeuristic>) createBitVarABS
+-(id<CPBitVarHeuristic>) createBitVarABS
 {
-   id<CPHeuristic> h = [[CPBitVarABS alloc] initCPBitVarABS:self restricted:nil];
+   id<CPBitVarHeuristic> h = [[CPBitVarABS alloc] initCPBitVarABS:self restricted:nil];
    [self addHeuristic:h];
    return h;
 }
