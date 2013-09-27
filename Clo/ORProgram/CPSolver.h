@@ -19,9 +19,8 @@
 
 @class ORRTModel;
 @class CPCoreSolver;
-@interface CPINCModel : NSObject<ORPost> {
+@interface CPINCModel : NSObject<ORPost,ORAddToModel> {
    id<CPEngine>  _engine;
-   ORRTModel*    _rtModel;
 }
 -(id)init:(CPCoreSolver*)theSolver;
 -(ORStatus)post:(id<ORConstraint>)c;

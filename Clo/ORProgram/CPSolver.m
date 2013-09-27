@@ -28,21 +28,6 @@
 #import <values.h>
 #endif
 
-@interface ORRTModel : NSObject<ORAddToModel>
--(ORRTModel*)init:(id<CPEngine>)engine maps:(id<ORModelMappings>)maps gamma:(id<ORGamma>)g;
--(id<ORVar>) addVariable: (id<ORVar>) var;
--(id) addMutable: (id) object;
--(id) addImmutable:(id)object;
--(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
--(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
--(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
--(id) trackConstraintInGroup:(id)obj;
--(id) trackObjective:(id)obj;
--(id) trackMutable: (id) obj;
--(id) trackVariable: (id) obj;
-@end
-
-
 // to do 23/12/2012
 //
 // 1. Look at IncModel to implement the incremental addition of constraints
@@ -1290,50 +1275,34 @@
 /******************************************************************************************/
 
 
-@implementation CPINCModel
+@implementation CPINCModel {
+   id<ORModelMappings> _maps;
+   ORVisitor*    _concretizer;
+}
 -(id)init:(CPCoreSolver*)theSolver
 {
    self = [super init];
    _engine  = [theSolver engine];
-   _rtModel = [[ORRTModel alloc] init:_engine maps:[theSolver modelMappings] gamma:theSolver];
+   _maps    = [theSolver modelMappings];
+   _concretizer = [[ORCPSearchConcretizer alloc] initORCPConcretizer: _engine gamma:theSolver];
    return self;
 }
 -(void)dealloc
 {
-   [_rtModel release];
+   [_concretizer release];
    [super dealloc];
 }
 -(ORStatus)post:(id<ORConstraint>)c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       [ORFlatten flattenExpression:(id<ORExpr>) c
-                              into: _rtModel
+                              into: self
                         annotation: DomainConsistency];
    else
-      [ORFlatten flatten: c into:_rtModel];
+      [ORFlatten flatten: c into:self];
    return [_engine status];
 }
-@end
 
-@implementation ORRTModel
-{
-   id<CPEngine>  _engine;
-   id<ORModelMappings> _maps;
-   ORVisitor*    _concretizer;
-}
--(ORRTModel*)init:(id<CPEngine>)engine maps:(id<ORModelMappings>)maps gamma:(id<ORGamma>)g
-{
-   self = [super init];
-   _engine = engine;
-   _maps   = maps;
-   _concretizer = [[ORCPSearchConcretizer alloc] initORCPConcretizer: _engine gamma:g];
-   return self;
-}
--(void) dealloc
-{
-   [_concretizer release];
-   [super dealloc];
-}
 -(id<ORModelMappings>) modelMappings
 {
    return _maps;
@@ -1377,7 +1346,7 @@
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize:coef: not allowed during search"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize:coef: not allowed during search"];
 }
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
 {
@@ -1438,12 +1407,9 @@
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used	 during search
-   // LDM: DONE. Have not checked the variable creation/deallocation logic though. 
-   id<ORAddToModel> trg = [[ORRTModel alloc] init:_engine maps:[self modelMappings] gamma:self];
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>) c into: trg annotation: DomainConsistency];
-   else
-      [ORFlatten flatten: c into:trg];
+   // LDM: DONE. Have not checked the variable creation/deallocation logic though.
+   CPINCModel* trg = [[CPINCModel alloc] init:self];
+   [trg post:c];
    [trg release];
 }
 -(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
@@ -1451,11 +1417,8 @@
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
    // LDM: See above. 
-   id<ORAddToModel> trg = [[ORRTModel alloc] init:_engine maps:[self modelMappings] gamma:self];
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression: (id<ORExpr>) c into: trg annotation: cons];
-   else
-      [ORFlatten flatten: c into: trg];
+   CPINCModel* trg = [[CPINCModel alloc] init:self];
+   [trg post:c];
    [trg release];
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
@@ -1584,34 +1547,10 @@
 -(void) add: (id<ORConstraint>) c
 {
    [_imdl post:c];
-   // PVH: Need to flatten/concretize
-   // PVH: Only used during search
-   // LDM: DONE. Have not checked the variable creation/deallocation logic though.
-//   id<ORAddToModel> trg = [[ORRTModel alloc] init:self];
-//   ORStatus status = [_engine enforce:^{
-//      if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-//         [ORFlatten flattenExpression:(id<ORExpr>) c into: trg annotation: DomainConsistency];
-//      else
-//         [ORFlatten flatten: c into:trg];
-//   }];
-//   [trg release];
-//   if (status == ORFailure) {
-//      [_search fail];
-//   }
-//   [_tracer addCommand:c];
-//   [ORConcurrency pumpEvents];
 }
 -(void) add: (id<ORConstraint>) c annotation:(ORAnnotation) cons
 {
-   // PVH: Need to flatten/concretize
-   // PVH: Only used during search
-   // LDM: DONE. Have not checked the variable creation/deallocation logic though.
-   id<ORAddToModel> trg = [[ORRTModel alloc] init:_engine maps:[self modelMappings] gamma:self];
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>) c into: trg annotation: cons];
-   else
-      [ORFlatten flatten: c into:trg];
-   [trg release];
+   [_imdl post:c];
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
