@@ -42,38 +42,6 @@
 -(id) trackVariable: (id) obj;
 @end
 
-@interface CPINCModel : NSObject<ORPost> {
-   id<CPEngine>  _engine;
-   ORRTModel*    _rtModel;
-}
--(id)init:(CPCoreSolver*)theSolver;
--(ORStatus)post:(id<ORConstraint>)c;
-@end
-
-@implementation CPINCModel
--(id)init:(CPCoreSolver*)theSolver
-{
-   self = [super init];
-   _engine  = [theSolver engine];
-   _rtModel = [[ORRTModel alloc] init:_engine maps:[theSolver modelMappings] gamma:theSolver];
-   return self;
-}
--(void)dealloc
-{
-   [_rtModel release];
-   [super dealloc];
-}
--(ORStatus)post:(id<ORConstraint>)c
-{
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>) c
-                              into: _rtModel
-                        annotation: DomainConsistency];
-   else
-      [ORFlatten flatten: c into:_rtModel];
-   return [_engine status];
-}
-@end
 
 // to do 23/12/2012
 //
@@ -473,11 +441,13 @@
 }
 -(id<ORSearchController>) makeRootController
 {
-   return [[_ctrlClass alloc] initTheController: [_solver tracer] engine: [_solver engine]];
+   id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+   return [[_ctrlClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
 }
 -(id<ORSearchController>) makeNestedController
 {
-   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine]];
+   id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
 }
 @end
 
@@ -1318,6 +1288,32 @@
 /******************************************************************************************/
 /*                                   CPSolver                                             */
 /******************************************************************************************/
+
+
+@implementation CPINCModel
+-(id)init:(CPCoreSolver*)theSolver
+{
+   self = [super init];
+   _engine  = [theSolver engine];
+   _rtModel = [[ORRTModel alloc] init:_engine maps:[theSolver modelMappings] gamma:theSolver];
+   return self;
+}
+-(void)dealloc
+{
+   [_rtModel release];
+   [super dealloc];
+}
+-(ORStatus)post:(id<ORConstraint>)c
+{
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+      [ORFlatten flattenExpression:(id<ORExpr>) c
+                              into: _rtModel
+                        annotation: DomainConsistency];
+   else
+      [ORFlatten flatten: c into:_rtModel];
+   return [_engine status];
+}
+@end
 
 @implementation ORRTModel
 {

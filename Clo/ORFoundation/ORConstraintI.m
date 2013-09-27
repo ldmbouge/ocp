@@ -161,7 +161,7 @@
 }
 -(void)dealloc
 {
-   NSLog(@"OREqualc::dealloc: %p",self);
+   //NSLog(@"OREqualc::dealloc: %p",self);
    [super dealloc];
 }
 -(NSString*) description

@@ -69,7 +69,7 @@
       [_into addImmutable:x];
    }
    onConstraints: ^(id<ORConstraint> c) {
-      [_into addConstraint:[self flattenIt:c]];
+      [self flattenIt:c];
    }
    onObjective: ^(id<ORObjectiveFunction> o) {
       [self flattenIt:o];
@@ -157,11 +157,11 @@
 
 -(void) visitRestrict:(id<ORRestrict>)cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {
@@ -182,7 +182,7 @@
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
@@ -218,15 +218,15 @@
       [ORFlatten flatten:ck into:a2g];
    }];
    [a2g release];
-   _result = ng;
+   _result = [_into addConstraint:ng];
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
@@ -234,103 +234,103 @@
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)cstr
 {
-   _result = c;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitGEqualc: (id<ORGEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitAffine: (id<ORAffine>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitPlus: (id<ORPlus>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitMult: (id<ORMult>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSquare:(id<ORSquare>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitFloatSquare:(id<ORSquare>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitMod: (id<ORMod>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitModc: (id<ORModc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitMin:(id<ORMin>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitMax:(id<ORMax>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitAbs: (id<ORAbs>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitOr: (id<OROr>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitAnd:( id<ORAnd>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitImply: (id<ORImply>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitElementCst: (id<ORElementCst>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitElementVar: (id<ORElementVar>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitFloatElementCst: (id<ORFloatElementCst>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 
 static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
@@ -366,111 +366,112 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    id<ORIntVar> alpha = [ORFactory intVar:t domain:fr];
    [ORFactory tableConstraint:t table:table on:idx0 :idx1 :alpha];
    _result = [ORFactory element:t var:alpha idxVarArray:f equal:res annotation:DomainConsistency];
+   [_into addConstraint:_result];
 }
 -(void) visitCircuit:(id<ORCircuit>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitNoCycle:(id<ORNoCycle>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyEqual: (id<ORReifyEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyNEqual: (id<ORReifyNEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyLEqual: (id<ORReifyLEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumEqualc:(id<ORSumEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitOr:(id<ORBitOr>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitAnd:(id<ORBitAnd>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitNot:(id<ORBitNot>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitXor:(id<ORBitXor>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitShiftL:(id<ORBitShiftL>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitSum:(id<ORBitSum>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 
 // Flattening of constraints ============================================================================

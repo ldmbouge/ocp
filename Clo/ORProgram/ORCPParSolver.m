@@ -418,9 +418,10 @@
 
 -(void)setupWork:(id<ORProblem>)theSub forCP:(id<CPSemanticProgram>)cp
 {
-   NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);
-   ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:cp];
-   [theSub release];
+   //NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);
+   id<ORPost> pItf = [[CPINCModel alloc] init:_workers[[NSThread threadID]]];
+   ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine] model:pItf];
+   [pItf release];
    if (status == ORFailure)
       [[cp explorer] fail];
     [cp restartHeuristics];
@@ -679,10 +680,12 @@
   return self;}
 -(id<ORSearchController>)makeRootController
 {
-  return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+  id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+  return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
 }
 -(id<ORSearchController>)makeNestedController
 {
-  return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+   id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
 }
 @end

@@ -42,7 +42,7 @@
 -(NSSet*)allVars;
 @end
 
-@protocol ORPost
+@protocol ORPost<NSObject>
 -(ORStatus)post:(id<ORConstraint>)c;
 @end
 

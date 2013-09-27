@@ -40,7 +40,7 @@ int main (int argc, const char * argv[])
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
 
-         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:1 with:[ORSemDFSController class]];
+         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
          
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          
@@ -59,7 +59,7 @@ int main (int argc, const char * argv[])
                           //NSLog(@"AFTER DIFF: %@",x);
                        }];
                depth++;
-               NSLog(@"After tryall: %@",[cp concretize:x]);
+               //NSLog(@"After tryall: %@",[cp concretize:x]);
 #else
                while (![cp bound:x[i]]) {
                   int v = [cp min:x[i]];

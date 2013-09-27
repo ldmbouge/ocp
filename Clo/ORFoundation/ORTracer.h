@@ -34,14 +34,13 @@
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORConstraint>) com;
 @optional -(id<ORCheckpoint>) captureCheckpoint;
-@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORASolver>) engine;
-@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORASolver>) cpp;
+@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model;
+@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model;
 @optional -(id<ORProblem>) captureProblem;
 @end
 
 @protocol ORProblem <NSObject>
 -(void) addCommand: (id<ORConstraint>) c;
--(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
 -(ORBool) apply: (bool(^)(id<ORConstraint>))clo;
 -(ORCommandList*) theList;
 -(ORInt)sizeEstimate;
@@ -83,11 +82,5 @@
 -(void)       trust;
 -(ORInt)      level;
 @end
-
-@interface SemTracer (Packing)
-+(id<ORProblem>)      unpackProblem:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
-@end
-
 
 void logCheckpoint();
