@@ -262,6 +262,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    [_controller._val startTryall];
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
+   //NSLog(@"Got an iterator: %p [%lu]",ite,(unsigned long)[ite retainCount]);
    // The [ite release] inserted on the trail will _not_ necessarily occur last but it will
    // consume one reference to ite, so it matches the "initial" reference.
    // Every subsequence "try" retains (increases by 1) and is matched by a trailRelease that

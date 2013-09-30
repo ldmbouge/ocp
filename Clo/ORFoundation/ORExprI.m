@@ -1618,7 +1618,11 @@
 }
 -(NSString *) description
 {
-   return [_e description];
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendString:@"("];
+   [buf appendString:[_e description]];
+   [buf appendString:@")"];
+   return buf;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

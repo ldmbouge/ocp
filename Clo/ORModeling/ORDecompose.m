@@ -146,7 +146,10 @@
 }
 +(id<ORIntVar>)intVarIn:(ORIntLinear*)e for:(id<ORAddToModel>)model annotation:(ORAnnotation)c
 {
-   if ([e size] == 1) {
+   if ([e size] == 0) {
+      id<ORIntVar> xv = [ORFactory intVar: model domain: RANGE(model,[e min],[e max])];
+      return xv;
+   } else if ([e size] == 1) {
       return [e oneView:model];
    } else {
       id<ORIntVar> xv = [ORFactory intVar: model domain: RANGE(model,[e min],[e max])];

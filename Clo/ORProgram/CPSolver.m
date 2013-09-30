@@ -1123,7 +1123,7 @@
 
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars
 {
-   assert(FALSE);
+   @throw [[ORExecutionError alloc] initORExecutionError:"reached createdPortfolio: in CPSolver"];
    return NULL;
 }
 

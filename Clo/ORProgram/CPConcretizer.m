@@ -183,7 +183,7 @@
 }
 -(void) visitLinearGeq: (id<ORLinearGeq>) cstr
 {
-   assert(NO); // to finish
+   @throw [[ORExecutionError alloc] initORExecutionError:"reached visitLinearGeq in CPConcretizer"];
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) cstr
 {
@@ -715,7 +715,7 @@
 }
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)cstr
 {
-   assert(FALSE);
+   @throw [[ORExecutionError alloc] initORExecutionError:"reached elementMatrixVar in CPConcretizer"];
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
 {
