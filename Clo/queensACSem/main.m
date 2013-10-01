@@ -27,7 +27,7 @@ int main (int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         int n = 10;//[args size];
+         int n = [args size];
          id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
          id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
          id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i annotation:Default]; }];
@@ -36,20 +36,21 @@ int main (int argc, const char * argv[])
          [model add: [ORFactory alldifferent: xp]];
          [model add: [ORFactory alldifferent: xn]];
          __block ORInt nbSol = 0;        
-         //id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgram:model];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
 
-         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:6 with:[ORSemDFSController class]];
+         //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:6 with:[ORSemDFSController class]];
          
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          
          [cp solveAll: ^{
             __block ORInt depth = 0;
             //[cp labelHeuristic:h];
-            //[cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
-            FORALL(i,R,![cp bound:x[i]],[cp domsize:x[i]], ^(ORInt i) {
+            [cp forall:R suchThat:^bool(ORInt i) { return ![cp bound:x[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];} do:^(ORInt i) {
+            //FORALL(i,R,![cp bound:x[i]],[cp domsize:x[i]], ^(ORInt i) {
 #if TESTTA==1
+               //NSLog(@"IN body of forall with i= %d",i);
                [cp tryall:R suchThat:^bool(ORInt v) { return [cp member:v in:x[i]];}
                        in:^(ORInt v) {
                           [cp label: x[i] with:v];
@@ -70,7 +71,7 @@ int main (int argc, const char * argv[])
                   }];
                }
 #endif
-            });
+            }];
             @synchronized(cp) {
                ++nbSol;
             }

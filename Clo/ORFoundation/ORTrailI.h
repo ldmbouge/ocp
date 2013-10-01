@@ -81,6 +81,7 @@
 -(void) backtrack:(ORInt) to;
 @end
 
+@class ORCommandList;
 @interface ORMemoryTrailI : NSObject<ORMemoryTrail,NSCopying> {
    id*   _tab;
    ORInt _mxs;
@@ -93,7 +94,8 @@
 -(void)pop;
 -(ORInt)trailSize;
 -(void)clear;
--(void)comply:(id<ORMemoryTrail>)mt upTo:(ORInt)mh;
+-(void)comply:(id<ORMemoryTrail>)mt upTo:(ORCommandList*)cl;
+-(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th;
 -(void)reload:(id<ORMemoryTrail>)t;
 @end
 

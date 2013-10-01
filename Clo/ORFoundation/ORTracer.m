@@ -103,8 +103,10 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
       _tab = realloc(_tab,sizeof(ORCommandList*)*_mxs*2);
       _mxs <<= 1;
    }
-   //ORCommandList* list = [[ORCommandList alloc] initCPCommandList:node];
-   ORCommandList* list = [ORCommandList newCommandList:node memory:mh];
+   if (_sz  >= 1) {
+      [_tab[_sz - 1] setMemoryTo:mh];
+   }
+   ORCommandList* list = [ORCommandList newCommandList:node from:mh to:mh];
    _tab[_sz++] = list;
 }
 -(void)pushCommandList:(ORCommandList*)list
@@ -145,7 +147,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    static ORInt _counter = 0;
    self = [super init];
-   _cstrs = [ORCommandList newCommandList:-1 memory:0];
+   _cstrs = [ORCommandList newCommandList:-1 from:0 to:0];
    _id = _counter++;
    return self;
 }
@@ -490,7 +492,7 @@ static __thread id checkPointCache = NULL;
       [_trail incMagic];
       for(ORInt j=i;j < getStackSize(toRestore);j++) {
          ORCommandList* theList = peekAt(toRestore,j);
-         [_mt comply:acp->_mt upTo:[theList memory]];
+         [_mt comply:acp->_mt upTo:theList];
          [_trStack pushNode:theList->_ndId];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
@@ -514,7 +516,7 @@ static __thread id checkPointCache = NULL;
          if (s==ORFailure)
             return s;
       }
-      [_mt comply:acp->_mt upTo:[acp->_mt trailSize]];
+      //[_mt comply:acp->_mt from:[peekAt(_cmds, getStackSize(_cmds)-1) memoryTo] to:[acp->_mt trailSize]];
       return [engine enforceObjective];
    }
    return ORSuspend;

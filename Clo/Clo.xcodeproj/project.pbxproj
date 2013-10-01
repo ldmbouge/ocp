@@ -4592,7 +4592,7 @@
 		5BCCC4011417F8CE0079E833 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			dstPath = /usr/share/man/man1;
 			dstSubfolderSpec = 0;
 			files = (
 				5BCCC40C1417F8CE0079E833 /* queensACSem.1 in CopyFiles */,
@@ -17859,6 +17859,7 @@
 				5BD601CB17F9A627006A9CDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BDBBAB41718D96C00322163 /* Build configuration list for PBXNativeTarget "stressLimit" */ = {
 			isa = XCConfigurationList;

@@ -16,6 +16,7 @@
 #import "ORData.h"
 #import <assert.h>
 #import "ORVisit.h"
+#import "ORCommand.h"
 
 
 @implementation ORTrailI
@@ -476,14 +477,17 @@ ORInt trailMagic(ORTrailI* trail)
    while (_csz)
       [_tab[--_csz] release];
 }
--(void)comply:(ORMemoryTrailI*)mt upTo:(ORInt)mh
+-(void)comply:(ORMemoryTrailI*)mt upTo:(ORCommandList*)cl
 {
-//   while (_csz > mt->_csz)
-//      [_tab[--_csz] release];
-   assert(_csz <= mt->_csz);
-   ORInt k = _csz;
-   while (_csz < mh)
-      _tab[_csz++] = [mt->_tab[k++] retain];
+   ORInt fh = [cl memoryFrom];
+   ORInt th = [cl memoryTo];
+   for(ORInt k=fh;k < th;k++)
+      _tab[_csz++] = [mt->_tab[k] retain];
+}
+-(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th
+{
+   for(ORInt k=fh;k < th;k++)
+      _tab[_csz++] = [mt->_tab[k] retain];
 }
 -(void)reload:(ORMemoryTrailI*)t
 {
@@ -495,7 +499,6 @@ ORInt trailMagic(ORTrailI* trail)
    while(_csz < t->_csz)
       _tab[_csz++] = [t->_tab[i++] retain];
 }
-
 
 -(NSString*)description
 {
