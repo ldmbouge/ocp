@@ -44,6 +44,7 @@
 -(void)letgo;
 -(id)grab;
 -(ORInt)sizeEstimate;
+-(id<ORMemoryTrail>)getMT;
 @end
 
 
@@ -202,6 +203,10 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"checkpoint = %@",_path];
    return buf;
+}
+-(id<ORMemoryTrail>)getMT
+{
+   return _mt;
 }
 -(ORInt)sizeEstimate
 {
@@ -428,6 +433,10 @@ static __thread id checkPointCache = NULL;
 -(id<ORTrail>)   trail
 {
    return _trail;
+}
+-(id<ORMemoryTrail>)getMT
+{
+   return _mt;
 }
 -(void)addCommand:(id<ORConstraint>)com
 {

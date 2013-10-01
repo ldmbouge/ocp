@@ -502,8 +502,8 @@ ORInt trailMagic(ORTrailI* trail)
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"ORMemoryTrail(%d / %d)[",_csz,_mxs];
    for(ORInt i =0;i<_csz-1;i++)
-      [buf appendFormat:@"%p,",_tab[i]];
-   [buf appendFormat:@"%p]",_tab[_csz-1]];
+      [buf appendFormat:@"%p(%lu,%@),",_tab[i],(unsigned long)[_tab[i] retainCount],NSStringFromClass([_tab[i] class])];
+   [buf appendFormat:@"%p(%lu,%@)]",_tab[_csz-1],[_tab[_csz-1] retainCount],NSStringFromClass([_tab[_csz-1] class])];
    return buf;
 }
 @end

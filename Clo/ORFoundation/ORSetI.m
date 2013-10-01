@@ -146,7 +146,7 @@
 }
 -(void)dealloc
 {
-   NSLog(@"ORIntRangeEnumerator dealloc (%p)...",self);
+   //NSLog(@"ORIntRangeEnumerator dealloc (%p)...",self);
    [super dealloc];
 }
 -(ORInt) next

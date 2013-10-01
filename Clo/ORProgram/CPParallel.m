@@ -44,7 +44,10 @@
    //NSLog(@"BEFORE PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    id<ORTracer> tracer = [_solver tracer];
    id<ORCheckpoint> theCP = [tracer captureCheckpoint];
+   NSLog(@"MT(0):%d : %@",[NSThread threadID],[theCP getMT]);
    ORHeist* stolen = [_controller steal];
+   NSLog(@"ST(0):%d : %@",[NSThread threadID],[[stolen theCP] getMT]);
+   
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
    ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine] model:pItf];
    assert(ok != ORFailure);
@@ -60,8 +63,12 @@
    
    //NSLog(@"PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
    [stolen release];
+   NSLog(@"MT(1):%d : %@",[NSThread threadID],[theCP getMT]);
+   NSLog(@"CT(1):%d : %@",[NSThread threadID],[tracer getMT]);
    ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
    assert(ok != ORFailure);
+   NSLog(@"MT(2):%d : %@",[NSThread threadID],[theCP getMT]);
+   NSLog(@"CT(2):%d : %@",[NSThread threadID],[tracer getMT]);
    [theCP letgo];
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    [pItf release];
