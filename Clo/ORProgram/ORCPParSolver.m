@@ -484,6 +484,7 @@
    ORInt myID = [[input objectAtIndex:0] intValue];
    ORClosure mySearch = [input objectAtIndex:1];
    NSNumber* allSols  = [input objectAtIndex:2];
+   [NSThread setThreadPriority:1.0];
    [NSThread setThreadID:myID];
    _doneSearching = NO;
    [[_workers[myID] explorer] search: ^() {
