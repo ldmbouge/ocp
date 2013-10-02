@@ -16,7 +16,6 @@
 #import <ORProgram/MIPProgram.h>
 
 @interface ORFactory (Concretization)
-+(id<CPProgram>)concretizeCP:(id<ORModel>)m;
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;

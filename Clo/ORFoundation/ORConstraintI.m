@@ -159,6 +159,11 @@
    _c = c;
    return self;
 }
+-(void)dealloc
+{
+   //NSLog(@"OREqualc::dealloc: %p",self);
+   [super dealloc];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

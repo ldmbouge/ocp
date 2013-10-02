@@ -97,7 +97,7 @@ void freeList(CPEventNode* list)
    }
 }
 
-void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority)
+void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,ORInt priority)
 {
    id evt = [[CPEventNode alloc] initCPEventNode:evtList->_val
                                           trigger:todo

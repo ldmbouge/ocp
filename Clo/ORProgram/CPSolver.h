@@ -17,6 +17,15 @@
 /*                  This file should be private                            */
 /***************************************************************************/
 
+@class ORRTModel;
+@class CPCoreSolver;
+@interface CPINCModel : NSObject<ORPost,ORAddToModel> {
+   id<CPEngine>  _engine;
+}
+-(id)init:(CPCoreSolver*)theSolver;
+-(ORStatus)post:(id<ORConstraint>)c;
+@end
+
 @interface CPHeuristicSet : NSObject
 -(CPHeuristicSet*) initCPHeuristicSet;
 -(void) push: (id<CPHeuristic>) h;

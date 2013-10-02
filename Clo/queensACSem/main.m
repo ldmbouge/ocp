@@ -40,16 +40,17 @@ int main (int argc, const char * argv[])
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
 
-//         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:1 with:[ORSemDFSController class]]
+         //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:6 with:[ORSemDFSController class]];
          
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          
          [cp solveAll: ^{
             __block ORInt depth = 0;
             //[cp labelHeuristic:h];
-            //[cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
-            FORALL(i,R,![cp bound:x[i]],[cp domsize:x[i]], ^(ORInt i) {
+            [cp forall:R suchThat:^bool(ORInt i) { return ![cp bound:x[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];} do:^(ORInt i) {
+            //FORALL(i,R,![cp bound:x[i]],[cp domsize:x[i]], ^(ORInt i) {
 #if TESTTA==1
+               //NSLog(@"IN body of forall with i= %d",i);
                [cp tryall:R suchThat:^bool(ORInt v) { return [cp member:v in:x[i]];}
                        in:^(ORInt v) {
                           [cp label: x[i] with:v];
@@ -59,6 +60,7 @@ int main (int argc, const char * argv[])
                           //NSLog(@"AFTER DIFF: %@",x);
                        }];
                depth++;
+               //NSLog(@"After tryall: %@",[cp concretize:x]);
 #else
                while (![cp bound:x[i]]) {
                   int v = [cp min:x[i]];
@@ -69,10 +71,11 @@ int main (int argc, const char * argv[])
                   }];
                }
 #endif
-            });
+            }];
             @synchronized(cp) {
                ++nbSol;
             }
+            [[cp explorer] fail]; // to avoid saving solutions.
          }];
          NSLog(@"Quitting #SOL=%d",nbSol);
          NSLog(@"Solver: %@",cp);

@@ -14,7 +14,6 @@
 #import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORObject.h>
 
-
 @protocol ORIntVarArray;
 @protocol ORVarArray;
 @protocol ORIntVarMatrix;
@@ -41,6 +40,10 @@
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
 -(NSSet*)allVars;
+@end
+
+@protocol ORPost<NSObject>
+-(ORStatus)post:(id<ORConstraint>)c;
 @end
 
 @protocol ORConstraintSet <NSObject>

@@ -52,16 +52,6 @@
 
 @implementation ORFactory (Concretization)
 
-+(id<CPProgram>)concretizeCP:(id<ORModel>)m
-{
-   id<CPProgram> mp = [CPSolverFactory solver];
-   ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: mp];
-   [m visit: concretizer];
-   [concretizer release];
-   [mp setSource:m];
-   return mp;
-}
-
 +(id<CPCommonProgram>) concretizeCP: (id<ORModel>) m program: (id<CPCommonProgram>) cpprogram
 {
    ORUInt nbEntries =  [m nbObjects];
@@ -86,22 +76,7 @@
 //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
 //   ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];   // models are AUTORELEASE
-   ORUInt nbEntries =  [fm nbObjects];
-   id* gamma = malloc(sizeof(id) * nbEntries);
-   for(ORInt i = 0; i < nbEntries; i++)
-      gamma[i] = NULL;
-   [cpprogram setGamma: gamma];
-
-   ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   for(id<ORObject> c in [fm mutables])
-      [c visit: concretizer];
-   for(id<ORObject> c in [fm constraints])
-      [c visit: concretizer];
-   [[fm objective] visit:concretizer];
-   [cpprogram setSource:fm];
-   [concretizer release];
-//   ORLong t1 = [ORRuntimeMonitor cputime];
-//   NSLog(@"FLAT  %ld %ld %ld %lld",[[fm variables] count],[[fm mutables] count],[[fm constraints] count],t1 - t0);
+   [self concretizeCP:fm program:cpprogram];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model

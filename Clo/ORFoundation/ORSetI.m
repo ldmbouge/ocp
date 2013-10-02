@@ -119,7 +119,7 @@
 @end
 
 
-@interface ORIntRangeEnumerator : NSObject<IntEnumerator>
+@interface ORIntRangeEnumerator : ORObject<IntEnumerator>
 -(ORIntRangeEnumerator*) initORIntRangeEnumerator: (ORInt) low up: (ORInt) up;
 -(ORInt) next;
 -(ORBool) more;

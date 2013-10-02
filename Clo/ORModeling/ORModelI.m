@@ -29,8 +29,8 @@
 -(ORTau*) initORTau
 {
    self = [super init];
-   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
-                                        valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
+                                        valueOptions:NSPointerFunctionsOpaqueMemory
                                             capacity:64];
    return self;
 }
@@ -62,8 +62,8 @@
 -(ORLambda*) initORLambda
 {
    self = [super init];
-   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
-                                        valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
+                                        valueOptions:NSPointerFunctionsOpaqueMemory
                                             capacity:64];
    return self;
 }

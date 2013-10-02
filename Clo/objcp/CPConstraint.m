@@ -197,6 +197,7 @@
 {
    switch(c) {
       case ValueConsistency:
+      case Default:
       case RangeConsistency: {
          id<CPConstraint> o = [[CPReifyNEqualBC alloc] initCPReify: b when: x neq: y];
          [[x tracker] trackMutable: o];
@@ -207,7 +208,9 @@
          [[x tracker] trackMutable: o];
          return o;
       }
-      default:assert(0);return nil;
+      default:
+         @throw [[ORExecutionError alloc] initORExecutionError:"reached default switch case in reify:neq:"];
+         return nil;
    }
 }
 
@@ -226,7 +229,9 @@
          [[x tracker] trackMutable: o];
          return o;
       }
-      default:assert(0);return nil;
+      default:
+         @throw [[ORExecutionError alloc] initORExecutionError:"reached default switch case in reify:eq:"];
+         return nil;
    }
 }
 

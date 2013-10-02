@@ -20,11 +20,12 @@
    id*                 _gamma;
 }
 -(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver;
--(void) dealloc;
 @end
 
-@interface ORCPMultiStartConcretizer  : ORVisitor<NSObject>
--(ORCPMultiStartConcretizer*) initORCPMultiStartConcretizer: (id<ORTracker>) tracker solver: (id<CPCommonProgram>) solver;
--(void) dealloc;
+@interface ORCPSearchConcretizer : ORVisitor<NSObject>
+{
+   id<CPEngine>        _engine;
+   id*                 _gamma;
+}
+-(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine gamma:(id<ORGamma>)gamma;
 @end
-
