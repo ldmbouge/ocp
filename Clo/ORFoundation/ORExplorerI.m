@@ -77,7 +77,7 @@
 -(void)addOrdered:(ORInt2Float)f
 {
    if (_nbo >= _mxo) {
-      _of = realloc(_of,_mxo*2);
+      _of = realloc(_of,sizeof(ORInt2Float)*_mxo*2);
       _mxo = _mxo * 2;
    }
    _of[_nbo++] = [f copy];

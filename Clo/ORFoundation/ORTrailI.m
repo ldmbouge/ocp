@@ -449,7 +449,7 @@ ORInt trailMagic(ORTrailI* trail)
 }
 -(void)resize
 {
-   _tab = realloc(_tab, _mxs * 2);
+   _tab = realloc(_tab, sizeof(id) * _mxs * 2);
    _mxs = _mxs * 2;
 }
 -(id)track:(id)obj
@@ -486,6 +486,8 @@ ORInt trailMagic(ORTrailI* trail)
 }
 -(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th
 {
+   while (_csz + (th - fh) >= _mxs)
+      [self resize];
    for(ORInt k=fh;k < th;k++)
       _tab[_csz++] = [mt->_tab[k] retain];
 }
@@ -496,8 +498,11 @@ ORInt trailMagic(ORTrailI* trail)
    for(i = 0;i < h && _tab[i] == t->_tab[i];i++);
    while(_csz != i)
       [_tab[--_csz] release];
-   while(_csz < t->_csz)
+   while(_csz < t->_csz) {
+      if (_csz >= _mxs)
+         [self resize];
       _tab[_csz++] = [t->_tab[i++] retain];
+   }
 }
 
 -(NSString*)description

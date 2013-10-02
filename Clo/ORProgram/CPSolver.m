@@ -38,6 +38,7 @@
 @interface ORCPIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
    ORUInt    _name;
    ORInt     _value;
+   ORBool    _bound;
 }
 -(ORCPIntVarSnapshot*) initCPIntVarSnapshot: (id<ORIntVar>) v with: (id<CPCommonProgram>) solver;
 -(int) intValue;
@@ -53,14 +54,16 @@
 {
    self = [super init];
    _name = [v getId];
-   _value = [solver intValue: v];
+   _bound = [solver bound:v];
+   if (_bound)
+      _value = [solver intValue: v];
+   else _value = 0;
    return self;
 }
 -(ORUInt)getId
 {
    return _name;
 }
-
 -(ORInt) intValue
 {
    return _value;
@@ -92,7 +95,10 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"int(%d) : %d",_name,_value];
+   if (_bound)
+      [buf appendFormat:@"int(%d) : %d",_name,_value];
+   else
+      [buf appendFormat:@"int(%d) : NA",_name];
    return buf;
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
@@ -372,7 +378,7 @@
 -(void) push: (id<CPHeuristic>) h
 {
    if (_sz >= _mx) {
-      _tab = realloc(_tab, _mx << 1);
+      _tab = realloc(_tab, sizeof(id<CPHeuristic>) * (_mx << 1));
       _mx <<= 1;
    }
    _tab[_sz++] = h;

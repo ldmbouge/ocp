@@ -17,7 +17,7 @@
 
 @interface ORObject : NSObject<ORObject> {
    ORUInt  _name;
-   //ORUInt  _rc;
+   ORUInt  _rc;
    BOOL    _ba[4];
 }
 -(id)init;

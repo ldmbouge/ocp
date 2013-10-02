@@ -100,24 +100,13 @@ int main(int argc, const char * argv[])
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
          [cp solveAll: ^{
             NSLog(@"Searching...");
-            //[cp labelHeuristic:h];
-//            for(ORInt  i=1;i <=n;i++) {
-//               if ([cp bound:costas[i]]) continue;
-//               while (![cp bound:costas[i]]) {
-//                  ORInt val = [cp max:costas[i]];
-//                  [cp try:^{
-//                     [cp label:costas[i] with:val];
-//                  } or:^{
-//                     <#code#>
-//                  }];
-//               }
-//            }
+            [cp labelHeuristic:h];
             
             @autoreleasepool {
-//               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
-//                  return [cp intValue:costas[i]];
-//               }];
-//               NSLog(@"Solution: %@",s);
+               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
+                  return [cp intValue:costas[i]];
+               }];
+               NSLog(@"Solution: %@",s);
                @synchronized(nbSol) {
                   [nbSol incr:cp];
                }
