@@ -1097,14 +1097,20 @@
 -(void) visitEqualc: (id<OREqualc>) cstr
 {
    id<CPIntVar> left = [self concreteVar:[cstr left]];
-   id<CPConstraint> concreteCstr = [CPFactory equalc: left  to: [cstr cst]];
-   [_engine add:concreteCstr];
+   //id<CPConstraint> concreteCstr = [CPFactory equalc: left  to: [cstr cst]];
+   //[_engine add:concreteCstr];
+   [_engine enforce:^{
+      [left bind:[cstr cst]];
+   }];
 }
 -(void) visitNEqualc: (id<ORNEqualc>) cstr
 {
    id<CPIntVar> left = [self concreteVar:[cstr left]];
-   id<CPConstraint> concreteCstr = [CPFactory notEqualc: left to: [cstr cst]];
-   [_engine add:concreteCstr];
+   //id<CPConstraint> concreteCstr = [CPFactory notEqualc: left to: [cstr cst]];
+   //[_engine add:concreteCstr];
+   [_engine enforce:^{
+      [left remove:[cstr cst]];
+   }];
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {

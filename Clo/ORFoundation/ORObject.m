@@ -19,6 +19,7 @@
    self = [super init];
    _name = -1;
    memset(_ba,0,sizeof(_ba));
+   //_rc = 1;
    return self;
 }
 -(void)setId:(ORUInt)name
@@ -35,6 +36,24 @@
    NSLog(@"DID NOT RECOGNIZE a selector %@",NSStringFromSelector(aSelector));
    return [super doesNotRecognizeSelector:aSelector];
 }
+//-(id)retain
+//{
+//   _rc += 1;
+//   return self;
+//}
+//-(oneway void)release
+//{
+//   _rc -= 1;
+//   if (_rc == 0)
+//      NSDeallocateObject(self);
+//}
+//-(id)autaorelease
+//{
+//   //return [super autorelease];
+//   _rc += 1;
+//   [NSAutoreleasePool addObject:self];
+//   return self;
+//}
 @end
 
 

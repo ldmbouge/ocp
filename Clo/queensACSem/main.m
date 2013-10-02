@@ -75,6 +75,7 @@ int main (int argc, const char * argv[])
             @synchronized(cp) {
                ++nbSol;
             }
+            [[cp explorer] fail]; // to avoid saving solutions.
          }];
          NSLog(@"Quitting #SOL=%d",nbSol);
          NSLog(@"Solver: %@",cp);
