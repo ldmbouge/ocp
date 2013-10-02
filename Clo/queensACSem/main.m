@@ -52,12 +52,10 @@ int main (int argc, const char * argv[])
 #if TESTTA==1
                [cp tryall:R suchThat:^bool(ORInt v) { return [cp member:v in:x[i]];}
                        in:^(ORInt v) {
-                          //[cp label: x[i] with:v];
-                          [cp add:[x[i] eq:@(v)]];
+                          [cp label: x[i] with:v];
                           //NSLog(@"AFTER LABEL: %@",x);
                        } onFailure:^(ORInt v) {
-                          //[cp diff: x[i] with:v];
-                          [cp add:[x[i] neq:@(v)]];
+                          [cp diff: x[i] with:v];
                           //NSLog(@"AFTER DIFF: %@",x);
                        }];
                depth++;
