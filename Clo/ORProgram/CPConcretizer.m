@@ -330,7 +330,7 @@
       id<ORIntMatrix> matrix = [cstr matrix];
       [matrix visit: self];
       id<CPIntVar> cost = [self concreteVar: [cstr cost]];
-      id<CPConstraint> concreteCstr = [CPFactory assignment: _engine array: x matrix: _gamma[matrix.getId] cost: cost];
+      id<CPConstraint> concreteCstr = [CPFactory assignment: _engine array: x matrix: matrix cost: cost];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

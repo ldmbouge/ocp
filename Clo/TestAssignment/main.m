@@ -80,7 +80,7 @@ int main (int argc, const char * argv[])
             ^{
                [cp limitFailures: 100 in:
                 ^{
-                  [cp labelArray: x];
+                  [cp labelArrayFF: x];
                    [cp label:assignmentCost with:[assignmentCost min]];
                    printf("Cost: %d \n",[assignmentCost min]);
                 }
