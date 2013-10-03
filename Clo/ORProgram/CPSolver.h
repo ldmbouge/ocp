@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORDataI.h>
 #import <ORProgram/CPProgram.h>
+#import <ORModeling/ORModeling.h>
 
 /***************************************************************************/
 /*                  This file should be private                            */

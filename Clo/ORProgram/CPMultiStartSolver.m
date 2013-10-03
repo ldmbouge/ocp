@@ -12,9 +12,9 @@
 #import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <ORModeling/ORModeling.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 
