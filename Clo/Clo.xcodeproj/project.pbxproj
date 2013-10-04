@@ -834,6 +834,7 @@
 		5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF14150C38CB00B82836 /* ORSetI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */ = {isa = PBXBuildFile; fileRef = B10ECF0F150C34DE00B82836 /* ORFactoryI.m */; };
 		5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF0E150C34DE00B82836 /* ORFactoryI.h */; };
+		5BD2F03E17FF556000A14B6D /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5BD601C217F9A627006A9CDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BD601C517F9A627006A9CDC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD601C417F9A627006A9CDC /* main.m */; };
 		5BD601C917F9A627006A9CDC /* bugTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BD601C817F9A627006A9CDC /* bugTest.1 */; };
@@ -11810,6 +11811,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BD2F03E17FF556000A14B6D /* ORCmdLineArgs.m in Sources */,
 				5B67A50017E227BB00516F50 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

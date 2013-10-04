@@ -27,36 +27,7 @@ class Runner:
 			stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		rc = h.wait()
 		print 'Return code {0}'.format(rc)
-		err = h.stderr.read()
-		out = ''
-		if rc == 0:
-			for line in h.stdout:
-				if line[:4] == 'OUT:':
-					parts = line[4:].rstrip().split(',')
-					res = {'method' : parts[0],
-					'randomized' : int(parts[1]),
-					'threads' : int(parts[2]),
-					'size' : parts[3],
-					'found' : parts[4],
-					'rrate' : parts[5],
-					'nfail' : int(parts[6]),
-					'nchoice' : int(parts[7]),
-					'nprop' : int(parts[8]),
-					'cpu' : float(parts[9]) / 1000.0,
-					'wc'  : float(parts[10]) / 1000.0,
-					'mused' : float(parts[11]) / 1024,
-					'mpeak' : float(parts[12]) / 1024,
-					'rc'    : rc}
-					out = out + line
-		else:
-			out = h.stdout.read()
-			res = {'cpu' : 0, 'found' : 0, 'rc' : rc}
-		self.ab[self.bin] = res
 
-		if res['found'] == 0:
-			error = 1
-		else:
-			error = 0
 
 
 ab = [('queensAC',12,0,0,0),
@@ -101,9 +72,10 @@ ab = [('queensAC',12,0,0,0),
 	('partition',20,0,0,0),
 	('order',1000,0,0,0),
 	('wka',0,0,0,0),
-	('queensMIP',8,0,0,0),
 	('testAssignment',0,0,0,0),
-	('testLPConcretization',0,0,0,0)]
+	('testLPConcretization',0,0,0,0),
+	('queensMIP',8,0,0,0)]
+#	('queensMIP',8,0,0,0),
 	  
 for (b,qa,na,par,heur) in ab:
 	p = Runner(b)
@@ -111,8 +83,6 @@ for (b,qa,na,par,heur) in ab:
 
 covdir=os.environ['CONFIGURATION_TEMP_DIR'];
 
-subprocess.Popen(('/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier',
-	'-message',
-	'Coverage Report Ready','-execute',
-	'open','-a','CoverStory',covdir))
-
+covdir=os.environ['CONFIGURATION_TEMP_DIR'];
+cmd = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier -message \"Coverage Report Ready\" -execute \'/Applications/CoverStory.app/Contents/MacOS/CoverStory " + covdir + "\'"
+os.system(cmd)
