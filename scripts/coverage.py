@@ -102,11 +102,12 @@ ab = [('queensAC',12,0,0,0),
 	('order',1000,0,0,0),
 	('wka',0,0,0,0),
 	('queensMIP',8,0,0,0),
+	('testAssignment',0,0,0,0),
 	('testLPConcretization',0,0,0,0)]
 	  
-for (b,qa,na,par) in ab:
+for (b,qa,na,par,heur) in ab:
 	p = Runner(b)
-	p.run(qa,na,par)
+	p.run(qa,na,par,heur)
 
 covdir=os.environ['CONFIGURATION_TEMP_DIR'];
 os.chdir(covdir)

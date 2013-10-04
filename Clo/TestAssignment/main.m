@@ -74,15 +74,15 @@ int main (int argc, const char * argv[])
    //id<ORTRIntArray> mark = [ORFactory TRIntArray:[cp engine] range: Cities];
 
    [cp solve: ^{
-       [cp limitCondition: ^bool() { return [nbRestarts intValue:cp] >= 100; } in:
+      [cp limitCondition: ^bool() { return [nbRestarts intValue:cp] >= 100; } in:
         ^{
            [cp repeat:
             ^{
                [cp limitFailures: 100 in:
                 ^{
                   [cp labelArrayFF: x];
-                   [cp label:assignmentCost with:[assignmentCost min]];
-                   printf("Cost: %d \n",[assignmentCost min]);
+                   [cp label:assignmentCost with:[cp min:assignmentCost]];
+                   printf("Cost: %d \n",[cp intValue:assignmentCost]);
                 }
                 ];
             }
@@ -105,11 +105,6 @@ int main (int argc, const char * argv[])
                   [all enumerateObjectsUsingBlock:^(NSNumber* i, BOOL *stop) {
                      [cp label: x[i.intValue] with: [solution intValue: x[i.intValue]]];
                   }];
-/*                  for(ORInt i = 0; i < nbCities; i++) {
-                     if ([mark at: i] == 0)
-                        [cp label: [x at: i] with: [solution intValue: [x at: i]]];
-                  }
- */
                }
             ];
         }

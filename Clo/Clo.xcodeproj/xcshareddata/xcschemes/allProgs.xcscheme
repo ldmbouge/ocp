@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "rm -rf /tmp/hello.log&#10;echo &quot;BUILD IN: &quot;  ${BUILT_PRODUCTS_DIR} &gt; /tmp/hello.log&#10;python $(SRCROOT)/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;"
+               scriptText = "rm -rf /tmp/hello.log&#10;echo &quot;BUILD IN: &quot;  ${BUILT_PRODUCTS_DIR} &gt; /tmp/hello.log&#10;printenv &gt;&gt; /tmp/hello.log&#10;&#10;echo &quot;SCRIPT: &quot; ${SRCROOT}/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;&#10;python ${SRCROOT}/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;"
                shellToInvoke = "/bin/bash">
                <EnvironmentBuildable>
                   <BuildableReference

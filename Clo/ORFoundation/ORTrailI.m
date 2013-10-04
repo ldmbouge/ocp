@@ -863,7 +863,7 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
    if (d == _arity) {
       [rv appendString:@"<"];
       for(ORInt k = 0; k < _arity; k++)
-         [rv appendFormat:@"%d,",_i[k]];
+         [rv appendFormat:@"%d,",i[k]];
       [rv appendString:@"> ="];
       [rv appendFormat:@"%d \n",_flat[indexMatrix(self, i)]._val];
    }
