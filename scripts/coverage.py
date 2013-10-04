@@ -110,5 +110,9 @@ for (b,qa,na,par,heur) in ab:
 	p.run(qa,na,par,heur)
 
 covdir=os.environ['CONFIGURATION_TEMP_DIR'];
-os.chdir(covdir)
+
+subprocess.Popen(('/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier',
+	'-message',
+	'Coverage Report Ready','-execute',
+	'open','-a','CoverStory',covdir))
 
