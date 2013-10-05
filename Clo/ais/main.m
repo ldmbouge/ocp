@@ -15,7 +15,6 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPError.h>
-#include <malloc/malloc.h>
 
 #import "ORCmdLineArgs.h"
 
