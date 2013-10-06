@@ -40,9 +40,12 @@
    id<CPSemanticProgram>  _solver;
    PCObjectQueue*           _pool;
    BOOL               _publishing;
+   BOOL*                 _stopNow;
    CPGenerator*              _gen;
 }
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq;
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver
+                    onPool:(PCObjectQueue*)pcq
+             stopIndicator:(BOOL*)stopNow;
 -(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;

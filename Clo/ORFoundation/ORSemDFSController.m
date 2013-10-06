@@ -92,6 +92,11 @@
    } while(true);
 }
 
+-(void) fail: (ORBool) pruned
+{
+   [self fail];
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
    ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_engine posting:_model];

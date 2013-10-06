@@ -15,12 +15,15 @@
 #import "CPSolver.h"
 
 @implementation CPParallelAdapter
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue *)pcq
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver
+                    onPool:(PCObjectQueue *)pcq
+             stopIndicator:(BOOL*)si
 {
    self = [super init:chain parent:[[solver explorer] controller]];
    _solver = solver;
    _pool = [pcq retain];
    _publishing = NO;
+   _stopNow    = si;
    return self;
 }
 -(void)dealloc
@@ -81,6 +84,8 @@
 }
 -(void)startTry
 {
+   if (*_stopNow)
+      [self fail:true];
    bool pe = !_publishing && [_pool empty] && [_controller willingToShare];
    if (pe) {
       //NSLog(@"Pool found to be empty[%d] and controller willing to share in thread: %p\n",pe,[NSThread currentThread]);
@@ -90,6 +95,8 @@
 }
 -(void)startTryall
 {
+   if (*_stopNow)
+      [self fail:true];
    bool pe = !_publishing && [_pool empty] && [_controller willingToShare];
    if (pe) {
       //NSLog(@"Pool found to be empty[%d] and controller willing to share in thread: %p\n",pe,[NSThread currentThread]);
@@ -103,9 +110,33 @@
    [self finitelyFailed];  // [ldm] This is necessary since we *are* a nested controller after all (finitelyFailed is inherited)
    assert(FALSE);
 }
+-(void)fail:(ORBool)pruned
+{
+   [_controller fail];
+   [self finitelyFailed];  // [ldm] This is necessary since we *are* a nested controller after all (finitelyFailed is inherited)
+   assert(FALSE);
+}
 -(ORBool) isFinitelyFailed
 {
    return NO;
+}
+-(void)startTryLeft
+{
+   if (*_stopNow)
+      [self fail:true];
+   [_controller startTryLeft];
+}
+-(void)startTryRight
+{
+   if (*_stopNow)
+      [self fail:true];
+   [_controller startTryRight];
+}
+-(void)exitTry
+{
+   if (*_stopNow)
+      [self fail:true];
+   [_controller exitTry];
 }
 @end
 

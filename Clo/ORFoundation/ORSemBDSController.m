@@ -163,6 +163,10 @@
       }
    } while (true);
 }
+-(void) fail: (ORBool) pruned
+{
+   [self fail];
+}
 -(void) trust
 {
    [_tracer pushNode]; // no need to trust the tracer since pushNode automatically trusts

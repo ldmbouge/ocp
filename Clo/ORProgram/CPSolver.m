@@ -903,10 +903,9 @@
                                  orderedBy: orderedBy];
    do {
       ORInt i = [select min];
-      if (i == MAXINT) {
+      if (i == MAXINT)
          break;
-      }
-      [self labelImpl: cxp[i - low]];
+      [self label: x[i]];
    } while (true);
 }
 
@@ -920,6 +919,7 @@
    do {
       ORInt sd  = FDMAXINT;
       id<CPIntVar> sx = NULL;
+      ORInt        bi = -1;
       ORLong bestRand = 0x7fffffffffffffff;
       for(ORInt i=0;i<sz;i++) {
          ORInt cds = [cx[i] domsize];
@@ -927,11 +927,13 @@
          if (cds < sd) {
             sd = cds;
             sx = cx[i];
+            bi = i;
             bestRand = [tie next];
          } else if (cds==sd) {
             ORLong nr = [tie next];
             if (nr < bestRand) {
                sx = cx[i];
+               bi = i;
                bestRand = nr;
             }
          }
@@ -939,10 +941,11 @@
       if (sx == NULL) break;
       ORBounds xb = [sx bounds];
       while (xb.min != xb.max) {
+         assert(_gamma[x[bi+x.range.low].getId] == sx);
          [_search try:^{
-            [self labelImpl:sx with:xb.min];
+            [self label:x[bi+x.range.low] with:xb.min];
          } or:^{
-            [self diffImpl:sx with:xb.min];
+            [self diff:x[bi+x.range.low] with:xb.min];
          }];
          xb = [sx bounds];
       }
@@ -1025,18 +1028,9 @@
    id<CPIntVar> x = _gamma[mx.getId];
    while (![x bound]) {
       ORInt m = [x min];
-      [_search try: ^{ [self labelImpl: x with: m]; }
-                or: ^{ [self diffImpl:  x with: m]; }
+      [_search try: ^{ [self label: mx with: m]; }
+                or: ^{ [self  diff: mx with: m]; }
       ];
-   }
-}
--(void) labelImpl: (id<CPIntVar>)x
-{
-   while (![x bound]) {
-      ORInt m = [x min];
-      [_search try: ^{ [self labelImpl: x with: m]; }
-                or: ^{ [self diffImpl:  x with: m]; }
-       ];
    }
 }
 

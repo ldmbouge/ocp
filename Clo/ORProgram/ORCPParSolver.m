@@ -434,7 +434,8 @@
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested
                                                                          explorer:me
-                                                                           onPool:_queue];
+                                                                           onPool:_queue
+                                                                    stopIndicator:&_doneSearching];
    [nested release];
    id<ORSearchObjectiveFunction> objective = [me objective];
    if (objective != nil) {
@@ -466,9 +467,9 @@
       } else {
         [[me explorer] nestedSolve:^() { [self setupWork:root forCP:me];body();}
                         onSolution: ^ {
-                            [self doOnSolution];
-                            [me doOnSolution];
-                            _doneSearching = YES;
+                           _doneSearching = YES;
+                           [self doOnSolution];
+                           [me doOnSolution];
                          }
                              onExit:nil
                             control:parc];        
