@@ -5,25 +5,6 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <PostActions>
-         <ExecutionAction
-            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
-            <ActionContent
-               title = "Run Script"
-               scriptText = "rm -rf /tmp/hello.log&#10;echo &quot;BUILD IN: &quot;  ${BUILT_PRODUCTS_DIR} &gt; /tmp/hello.log&#10;printenv &gt;&gt; /tmp/hello.log&#10;&#10;echo &quot;SCRIPT: &quot; ${SRCROOT}/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;&#10;python ${SRCROOT}/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;"
-               shellToInvoke = "/bin/bash">
-               <EnvironmentBuildable>
-                  <BuildableReference
-                     BuildableIdentifier = "primary"
-                     BlueprintIdentifier = "5B33370313A2B866001DFC38"
-                     BuildableName = "allProgs"
-                     BlueprintName = "allProgs"
-                     ReferencedContainer = "container:Clo.xcodeproj">
-                  </BuildableReference>
-               </EnvironmentBuildable>
-            </ActionContent>
-         </ExecutionAction>
-      </PostActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -77,10 +58,29 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Coverage"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
+      <PostActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "rm -rf /tmp/hello.log&#10;echo &quot;BUILD IN: &quot;  ${BUILT_PRODUCTS_DIR} &gt; /tmp/hello.log&#10;printenv &gt;&gt; /tmp/hello.log&#10;&#10;echo &quot;SCRIPT: &quot; ${SRCROOT}/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;&#10;python ${SRCROOT}/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;"
+               shellToInvoke = "/bin/bash">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "5B33370313A2B866001DFC38"
+                     BuildableName = "allProgs"
+                     BlueprintName = "allProgs"
+                     ReferencedContainer = "container:Clo.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PostActions>
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"

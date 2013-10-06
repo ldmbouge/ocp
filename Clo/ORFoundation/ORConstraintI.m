@@ -2637,6 +2637,14 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _value;
 }
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
 -(ORInt) primal
 {
    return _pBound;
@@ -2648,7 +2656,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-//   [buf appendFormat:@"%s(%d)",_direction==1 ? "min" : "max",_value];
    [buf appendFormat:@"%d",_value];
    return buf;
 }
@@ -2692,6 +2699,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    return self;
 }
 -(ORFloat) value
+{
+   return _value;
+}
+-(ORFloat) floatValue
 {
    return _value;
 }

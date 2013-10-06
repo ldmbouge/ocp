@@ -86,13 +86,13 @@ int main(int argc, const char * argv[])
             printf("\nl = [");
             for(ORInt i = l.low; i <= l.up; i++)
                printf("%d%c",[cp intValue: l[i]],((i < l.up) ? ',' : ']'));
-            printf("\tObjective: %d\n",[[[[cp engine] objective] value] value]);
+            printf("\tObjective: %d\n",[[[[cp engine] objective] value] intValue]);
          }];
          id<ORCPSolution> sol = [[cp solutionPool] best];
          printf("x = [");
          for(ORInt i = x.low; i <= x.up; i++)
             printf("%d%c",[sol intValue: x[i]],((i < x.up) ? ',' : ']'));
-         printf("\tObjective: %d\n",[[sol objectiveValue] value]);
+         printf("\tObjective: %d\n",[[sol objectiveValue] intValue]);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];

@@ -71,8 +71,7 @@ int main(int argc, const char * argv[])
                for(ORInt i=0;i <n;i++) {
                   for(ORInt j=0;j < n;j++) {
                      printf("%2d ",[cp intValue:[q at:i :j]]);
-                     ORInt qji = [cp intValue:[q at:j :i]];
-                     assert([cp intValue:[q at:qji :j]] == [cp intValue:[q at:i :qji]]);
+                     assert([cp intValue:[q at:[cp intValue:[q at:j :i]] :j]] == [cp intValue:[q at:i :[cp intValue:[q at:j :i]]]]);
                   }
                   printf("\n");
                }

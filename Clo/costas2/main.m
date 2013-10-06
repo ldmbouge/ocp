@@ -61,10 +61,8 @@ int main(int argc, const char * argv[])
          //id<ORMutableInteger> nbSol = [ORFactory mutable:mdl value:0];
          __block ORInt nbSol = 0;
          id<CPProgram> cp = [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
          [cp solveAll: ^{
             NSLog(@"Searching...");
-//            [cp labelHeuristic:h];
             for(ORInt  i=1;i <=n;i++) {
                //if ([cp bound:costas[i]]) continue;
                while (![cp bound:costas[i]]) {

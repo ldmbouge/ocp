@@ -123,9 +123,9 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
 @protocol ORRelation <ORExpr>
 -(ORRelationType) type;
--(id<ORRelation>) and: (id<ORRelation>) e;
--(id<ORRelation>) or: (id<ORRelation>) e;
--(id<ORRelation>) imply: (id<ORRelation>) e;
+-(id<ORRelation>) and: (id<ORExpr>) e;
+-(id<ORRelation>) or: (id<ORExpr>) e;
+-(id<ORRelation>) imply: (id<ORExpr>) e;
 @end
 
 @interface NSNumber (Expressions)

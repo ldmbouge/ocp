@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
          //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
          //id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
          //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {

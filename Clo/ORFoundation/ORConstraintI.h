@@ -433,6 +433,8 @@
 }
 -(id) initObjectiveValueIntI: (ORInt) pb minimize: (ORBool) b ;
 -(ORInt)value;
+-(ORInt)intValue;
+-(ORFloat)floatValue;
 -(ORInt)primal;
 -(ORFloat)key;
 -(NSString*)description;
@@ -445,6 +447,7 @@
 }
 -(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b ;
 -(ORFloat)value;
+-(ORFloat)floatValue;
 -(ORFloat)primal;
 -(ORFloat)key;
 -(NSString*)description;
