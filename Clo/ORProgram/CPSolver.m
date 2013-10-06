@@ -955,34 +955,35 @@
 
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   [self labelHeuristic:h withConcrete:(id)[h allIntVars]];
+   [self labelHeuristic:h withVars:(id)[h allIntVars]];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
 {
-   id<CPIntVarArray> cav = (id)[ORFactory intVarArray:self range:av.range with:^id<ORIntVar>(ORInt k) {
-      return _gamma[av[k].getId];
-   }];
-   [self labelHeuristic:h withConcrete:cav];
+   [self labelHeuristic:h withVars:av];
 }
 
--(void) labelHeuristic: (id<CPHeuristic>) h withConcrete:(id<CPIntVarArray>)av
+-(void) labelHeuristic: (id<CPHeuristic>) h withVars:(id<ORIntVarArray>)av
 {
    // [ldm] All four objects below are on the memory trail (+range of selector)
-   // Note, the two mutables are created during the search, hence never concretized. 
+   // Note, the two mutables are created during the search, hence never concretized.
+   id<CPIntVarArray> cav = [CPFactory intVarArray:self range:av.range with:^id<CPIntVar>(ORInt i) {
+      return _gamma[av[i].getId];
+   }];
+
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
-                                        suchThat: ^bool(ORInt i) { return ![av[i] bound]; }
+                                        suchThat: ^bool(ORInt i) { return ![cav[i] bound]; }
                                        orderedBy: ^ORFloat(ORInt i) {
-                                          ORFloat rv = [h varOrdering:av[i]];
+                                          ORFloat rv = [h varOrdering:cav[i]];
                                           return rv;
                                        }];
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
    do {
-      id<CPIntVar> x = [last idValue];
+      id<ORIntVar> x = [last idValue];
       //NSLog(@"at top: last = %p",x);
-      if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [x bound])) {
+      if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [self bound:x])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
@@ -998,9 +999,10 @@
       ORInt low = x.min;
       ORInt up  = x.max;
       ORInt bestIndex = low - 1;
+      id<CPIntVar> cx = _gamma[x.getId];
       for(ORInt v = low;v <= up;v++) {
-        if ([x member:v]) {
-          ORFloat vValue = [h valOrdering:v forVar:x];
+        if ([cx member:v]) {
+          ORFloat vValue = [h valOrdering:v forVar:cx];
           if (vValue > bestValue) {
             bestValue = vValue;
             bestIndex = v;
@@ -1016,9 +1018,9 @@
       }
       if (bestIndex != low - 1)  {
         [_search try: ^{
-           [self labelImpl:x with: bestIndex];
+           [self label:x with: bestIndex];
         } or: ^{
-           [self diffImpl:x with: bestIndex];
+           [self diff:x with: bestIndex];
         }];
       }
    } while (true);
@@ -1129,56 +1131,31 @@
 
 -(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars
 {
-   id<ORIntVarArray> crv = nil;
-   if (rvars)
-      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
-         return _gamma[rvars[k].getId];
-      }];
-   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:crv];
+   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:rvars];
    [self addHeuristic:h];
    return h;
 }
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars
 {
-   id<ORIntVarArray> crv = nil;
-   if (rvars)
-      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
-         return _gamma[rvars[k].getId];
-      }];
-   id<CPHeuristic> h = [[CPWDeg alloc] initCPWDeg:self restricted:crv];
+   id<CPHeuristic> h = [[CPWDeg alloc] initCPWDeg:self restricted:rvars];
    [self addHeuristic:h];
    return h;
 }
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars
 {
-   id<ORIntVarArray> crv = nil;
-   if (rvars)
-      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
-         return _gamma[rvars[k].getId];
-      }];
-   id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:crv];
+   id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:rvars];
    [self addHeuristic:h];
    return h;
 }
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
-   id<ORIntVarArray> crv = nil;
-   if (rvars)
-      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
-         return _gamma[rvars[k].getId];
-      }];
-   id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:crv];
+   id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:rvars];
    [self addHeuristic:h];
    return h;
 }
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars
 {
-   id<ORIntVarArray> crv = nil;
-   if (rvars)
-      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
-         return _gamma[rvars[k].getId];
-      }];
-   id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:crv];
+   id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:rvars];
    [self addHeuristic:h];
    return h;
 }

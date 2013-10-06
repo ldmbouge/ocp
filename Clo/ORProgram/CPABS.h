@@ -30,6 +30,6 @@
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs;
 -(void) restart;
--(id<CPIntVarArray>)allIntVars;
+-(id<ORIntVarArray>)allIntVars;
 -(id<CPCommonProgram>)solver;
 @end

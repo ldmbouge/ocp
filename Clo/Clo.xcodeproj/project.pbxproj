@@ -15794,8 +15794,8 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -15930,6 +15930,1601 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
+		};
+		5B7CDA011801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_OBJC_RETAIN_COUNT = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LINK_WITH_STANDARD_LIBRARIES = YES;
+				LLVM_LTO = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-DUSEVIEWS=1",
+					"-fno-stack-protector",
+				);
+				SDKROOT = macosx;
+			};
+			name = Coverage;
+		};
+		5B7CDA021801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA031801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA041801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
+				OTHER_CFLAGS = (
+					"-DUSEVIEWS=1",
+					"-fno-stack-protector",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA051801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA061801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA071801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
+				INFOPLIST_FILE = "objcp/objcp-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA081801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "objmp/objmp-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lgurobi55";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA091801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/CPLib.dst;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CPLib/CPLib-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Coverage;
+		};
+		5B7CDA0A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
+				INFOPLIST_FILE = "objcpTests/objcpTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Coverage;
+		};
+		5B7CDA0B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA0C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Clo/Clo-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA0D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queens2/queens2-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA0E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "magicserie/magicserie-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA0F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Sudoku/Sudoku-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA101801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testLPWrapper/testLPWrapper-Prefix.pch";
+				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi450/mac64/lib\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA111801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queensACSem/queensACSem-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA121801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AtomicTest/AtomicTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA131801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iCP/iCP-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "iCP/iCP-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Coverage;
+		};
+		5B7CDA141801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queensGui/queensGui-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "queensGui/queensGui-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Coverage;
+		};
+		5B7CDA151801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iQueens/iQueens-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "iQueens/iQueens-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Coverage;
+		};
+		5B7CDA161801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SportDemo/SportDemo-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "SportDemo/SportDemo-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Coverage;
+		};
+		5B7CDA171801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Euler/Euler-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA181801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA191801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "queensNaive copy";
+			};
+			name = Coverage;
+		};
+		5B7CDA1B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA201801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA211801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA221801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA231801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA241801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA251801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA261801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA271801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA281801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA291801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA301801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA311801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA321801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA331801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA341801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA351801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA361801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA371801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA381801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MD5/MD5-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Coverage;
+		};
+		5B7CDA391801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testMIP/testMIP-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lgurobi55";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA401801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraveYard/GraveYard-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA411801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "eq20/eq20-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA421801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "perfect/perfect-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA431801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "partition/partition-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA441801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA451801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "models/models-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA461801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "stressLimit/stressLimit-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA471801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "slabLNSModel/slabLNSModel-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA481801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queensAC/queensAC-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA491801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queensMIP/queensMIP-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bug/bug-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "qg7/qg7-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "minesweeper/minesweeper-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "paq/paq-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "regular/regular-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "nonogram/nonogram-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA501801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bacp/bacp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA511801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
+				INFOPLIST_FILE = "searchTest-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = searchTest;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Coverage;
+		};
+		5B7CDA521801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testLPConcretization/testLPConcretization-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Coverage;
+		};
+		5B7CDA531801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LPRelaxation/LPRelaxation-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA541801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "circle/circle-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA551801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "fwarehouse/fwarehouse-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA561801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testF/testF-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA571801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "wka/wka-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA581801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "costas2/costas2-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA591801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bugTest/bugTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
 		};
 		5B7D696115B9C91D00C9A10C /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -17842,6 +19437,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				37A715CF16FB93F900E02DC6 /* Debug */,
+				5B7CDA441801BB6600C60AB0 /* Coverage */,
 				37A715D016FB93F900E02DC6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17851,6 +19447,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B115528171B1CF5005371AA /* Debug */,
+				5B7CDA471801BB6600C60AB0 /* Coverage */,
 				5B115529171B1CF5005371AA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17860,6 +19457,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B19098C16DAACA7006D1D24 /* Debug */,
+				5B7CDA411801BB6600C60AB0 /* Coverage */,
 				5B19098D16DAACA7006D1D24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17869,6 +19467,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B2000EB156D585E00D80105 /* Debug */,
+				5B7CDA1A1801BB6600C60AB0 /* Coverage */,
 				5B2000EC156D585E00D80105 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17878,6 +19477,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B27573917E87B560082934E /* Debug */,
+				5B7CDA581801BB6600C60AB0 /* Coverage */,
 				5B27573A17E87B560082934E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17887,6 +19487,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B28CAEC1668FC63008AB802 /* Debug */,
+				5B7CDA361801BB6600C60AB0 /* Coverage */,
 				5B28CAED1668FC63008AB802 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17896,6 +19497,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B28CB1016691F0D008AB802 /* Debug */,
+				5B7CDA371801BB6600C60AB0 /* Coverage */,
 				5B28CB1116691F0D008AB802 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17905,6 +19507,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B2D92D217036DA8007F330B /* Debug */,
+				5B7CDA451801BB6600C60AB0 /* Coverage */,
 				5B2D92D317036DA8007F330B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17914,6 +19517,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B33370413A2B866001DFC38 /* Debug */,
+				5B7CDA0B1801BB6600C60AB0 /* Coverage */,
 				5B33370513A2B866001DFC38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17923,6 +19527,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B3848C816E6E59300498DCF /* Debug */,
+				5B7CDA421801BB6600C60AB0 /* Coverage */,
 				5B3848C916E6E59300498DCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17932,6 +19537,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B3848EA16E7883B00498DCF /* Debug */,
+				5B7CDA431801BB6600C60AB0 /* Coverage */,
 				5B3848EB16E7883B00498DCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17941,6 +19547,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B3895F21795BE07004CCE93 /* Debug */,
+				5B7CDA551801BB6600C60AB0 /* Coverage */,
 				5B3895F31795BE07004CCE93 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17950,6 +19557,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B5096EA1619B6CC00171F9D /* Debug */,
+				5B7CDA331801BB6600C60AB0 /* Coverage */,
 				5B5096EB1619B6CC00171F9D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17959,6 +19567,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B558C0F1563F01000D2BCD7 /* Debug */,
+				5B7CDA191801BB6600C60AB0 /* Coverage */,
 				5B558C101563F01000D2BCD7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17968,6 +19577,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B5F5485165D6EB300E674DA /* Debug */,
+				5B7CDA351801BB6600C60AB0 /* Coverage */,
 				5B5F5486165D6EB300E674DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17977,6 +19587,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B60E5E315AE907F002FF2B3 /* Debug */,
+				5B7CDA031801BB6600C60AB0 /* Coverage */,
 				5B60E5E415AE907F002FF2B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17986,6 +19597,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B662395176FA5BA00A1ACCD /* Debug */,
+				5B7CDA4B1801BB6600C60AB0 /* Coverage */,
 				5B662396176FA5BA00A1ACCD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17995,6 +19607,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6623B91770A13300A1ACCD /* Debug */,
+				5B7CDA4C1801BB6600C60AB0 /* Coverage */,
 				5B6623BA1770A13300A1ACCD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18004,6 +19617,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6623DC1770B1AE00A1ACCD /* Debug */,
+				5B7CDA4D1801BB6600C60AB0 /* Coverage */,
 				5B6623DD1770B1AE00A1ACCD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18013,6 +19627,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B67A50517E227BB00516F50 /* Debug */,
+				5B7CDA571801BB6600C60AB0 /* Coverage */,
 				5B67A50617E227BB00516F50 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18022,6 +19637,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B68118C161F98FB00F4480F /* Debug */,
+				5B7CDA051801BB6600C60AB0 /* Coverage */,
 				5B68118D161F98FB00F4480F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18031,6 +19647,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6A960A15879F1600019903 /* Debug */,
+				5B7CDA1E1801BB6600C60AB0 /* Coverage */,
 				5B6A960B15879F1600019903 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18040,6 +19657,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6B0F07178B558000104246 /* Debug */,
+				5B7CDA541801BB6600C60AB0 /* Coverage */,
 				5B6B0F08178B558000104246 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18049,6 +19667,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6E89311379D3EA005DB4CA /* Debug */,
+				5B7CDA011801BB6600C60AB0 /* Coverage */,
 				5B6E89321379D3EA005DB4CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18058,6 +19677,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6E89341379D3EA005DB4CA /* Debug */,
+				5B7CDA0C1801BB6600C60AB0 /* Coverage */,
 				5B6E89351379D3EA005DB4CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18067,6 +19687,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B76D99815AAADBE00F8B445 /* Debug */,
+				5B7CDA251801BB6600C60AB0 /* Coverage */,
 				5B76D99915AAADBE00F8B445 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18076,6 +19697,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B778BBC154F1D040078EB07 /* Debug */,
+				5B7CDA181801BB6600C60AB0 /* Coverage */,
 				5B778BBD154F1D040078EB07 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18085,6 +19707,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B7B477415F0E4AD005FF875 /* Debug */,
+				5B7CDA311801BB6600C60AB0 /* Coverage */,
 				5B7B477515F0E4AD005FF875 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18094,6 +19717,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B7D696115B9C91D00C9A10C /* Debug */,
+				5B7CDA2C1801BB6600C60AB0 /* Coverage */,
 				5B7D696215B9C91D00C9A10C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18103,6 +19727,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B80561A16076DFE00659ECC /* Debug */,
+				5B7CDA321801BB6600C60AB0 /* Coverage */,
 				5B80561B16076DFE00659ECC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18112,6 +19737,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B8DA1FF15B98BC300684FD8 /* Debug */,
+				5B7CDA2B1801BB6600C60AB0 /* Coverage */,
 				5B8DA20015B98BC300684FD8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18121,6 +19747,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9348771655451D00757F89 /* Debug */,
+				5B7CDA061801BB6600C60AB0 /* Coverage */,
 				5B9348781655451D00757F89 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18130,6 +19757,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9ABD131391329D000997E5 /* Debug */,
+				5B7CDA071801BB6600C60AB0 /* Coverage */,
 				5B9ABD141391329D000997E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18139,6 +19767,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9ABD161391329D000997E5 /* Debug */,
+				5B7CDA0A1801BB6600C60AB0 /* Coverage */,
 				5B9ABD171391329D000997E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18148,6 +19777,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9B2451177873D3001AB944 /* Debug */,
+				5B7CDA4F1801BB6600C60AB0 /* Coverage */,
 				5B9B2452177873D3001AB944 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18157,6 +19787,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9EE52115175CCC00619B47 /* Debug */,
+				5B7CDA131801BB6600C60AB0 /* Coverage */,
 				5B9EE52215175CCC00619B47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18166,6 +19797,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9EE53115175CF900619B47 /* Debug */,
+				5B7CDA091801BB6600C60AB0 /* Coverage */,
 				5B9EE53215175CF900619B47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18175,6 +19807,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BA345861680B7BD00485366 /* Debug */,
+				5B7CDA3C1801BB6600C60AB0 /* Coverage */,
 				5BA345871680B7BD00485366 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18184,6 +19817,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BAD115B161E5E430014EBCB /* Debug */,
+				5B7CDA041801BB6600C60AB0 /* Coverage */,
 				5BAD115C161E5E430014EBCB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18193,6 +19827,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BAEE0A815AEA08E006CEE1E /* Debug */,
+				5B7CDA271801BB6600C60AB0 /* Coverage */,
 				5BAEE0A915AEA08E006CEE1E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18202,6 +19837,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BB170181582820500D4791A /* Debug */,
+				5B7CDA1B1801BB6600C60AB0 /* Coverage */,
 				5BB170191582820500D4791A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18211,6 +19847,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BB3836D13B3C0E1005B7D52 /* Debug */,
+				5B7CDA0E1801BB6600C60AB0 /* Coverage */,
 				5BB3836E13B3C0E1005B7D52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18220,6 +19857,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BBA3F9E151CCB0C00D6F6AD /* Debug */,
+				5B7CDA141801BB6600C60AB0 /* Coverage */,
 				5BBA3F9F151CCB0C00D6F6AD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18229,6 +19867,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BBA56F9153F33E70089118E /* Debug */,
+				5B7CDA151801BB6600C60AB0 /* Coverage */,
 				5BBA56FA153F33E70089118E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18238,6 +19877,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BBB08CD16C551960087ACF0 /* Debug */,
+				5B7CDA3E1801BB6600C60AB0 /* Coverage */,
 				5BBB08CE16C551960087ACF0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18247,6 +19887,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC09194167F7F9A009A7712 /* Debug */,
+				5B7CDA391801BB6600C60AB0 /* Coverage */,
 				5BC09195167F7F9A009A7712 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18256,6 +19897,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC091B8167F9095009A7712 /* Debug */,
+				5B7CDA3A1801BB6600C60AB0 /* Coverage */,
 				5BC091B9167F9095009A7712 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18265,6 +19907,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC091DB167F9D5B009A7712 /* Debug */,
+				5B7CDA3B1801BB6600C60AB0 /* Coverage */,
 				5BC091DC167F9D5B009A7712 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18274,6 +19917,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC0C75B177A191400B12173 /* Debug */,
+				5B7CDA501801BB6600C60AB0 /* Coverage */,
 				5BC0C75C177A191400B12173 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18283,6 +19927,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC116AA1595067900E0F5C8 /* Debug */,
+				5B7CDA211801BB6600C60AB0 /* Coverage */,
 				5BC116AB1595067900E0F5C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18292,6 +19937,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC97A33177384C2005C48A8 /* Debug */,
+				5B7CDA4E1801BB6600C60AB0 /* Coverage */,
 				5BC97A34177384C2005C48A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18301,6 +19947,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BCCC40D1417F8CE0079E833 /* Debug */,
+				5B7CDA111801BB6600C60AB0 /* Coverage */,
 				5BCCC40E1417F8CE0079E833 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18310,6 +19957,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BD601CA17F9A627006A9CDC /* Debug */,
+				5B7CDA591801BB6600C60AB0 /* Coverage */,
 				5BD601CB17F9A627006A9CDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18319,6 +19967,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BDBBAB21718D96C00322163 /* Debug */,
+				5B7CDA461801BB6600C60AB0 /* Coverage */,
 				5BDBBAB31718D96C00322163 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18328,6 +19977,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BE1217D173C75A3000C9AA9 /* Debug */,
+				5B7CDA4A1801BB6600C60AB0 /* Coverage */,
 				5BE1217E173C75A3000C9AA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18337,6 +19987,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BE5A7F4158A8390006703CB /* Debug */,
+				5B7CDA1F1801BB6600C60AB0 /* Coverage */,
 				5BE5A7F5158A8390006703CB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18346,6 +19997,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BE7774A1594C9E500ADE34E /* Debug */,
+				5B7CDA201801BB6600C60AB0 /* Coverage */,
 				5BE7774B1594C9E500ADE34E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18355,6 +20007,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BE7C25615A94BDF00B2CBC1 /* Debug */,
+				5B7CDA241801BB6600C60AB0 /* Coverage */,
 				5BE7C25715A94BDF00B2CBC1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18364,6 +20017,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BEA4E87178365FA00614A82 /* Debug */,
+				5B7CDA511801BB6600C60AB0 /* Coverage */,
 				5BEA4E88178365FA00614A82 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18373,6 +20027,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BEAD79015ABE38500A012FE /* Debug */,
+				5B7CDA261801BB6600C60AB0 /* Coverage */,
 				5BEAD79115ABE38500A012FE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18382,6 +20037,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BEEF61A13970B6F002ADBD4 /* Debug */,
+				5B7CDA0D1801BB6600C60AB0 /* Coverage */,
 				5BEEF61B13970B6F002ADBD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18391,6 +20047,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BF1387A16822EFC005EAC6B /* Debug */,
+				5B7CDA3D1801BB6600C60AB0 /* Coverage */,
 				5BF1387B16822EFC005EAC6B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18400,6 +20057,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BFD594F15A3ACA500825BC3 /* Debug */,
+				5B7CDA021801BB6600C60AB0 /* Coverage */,
 				5BFD595015A3ACA500825BC3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18409,6 +20067,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B103534913BBD7B200627058 /* Debug */,
+				5B7CDA481801BB6600C60AB0 /* Coverage */,
 				B103534A13BBD7B200627058 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18418,6 +20077,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B111FC0913CF3D10003C5119 /* Debug */,
+				5B7CDA101801BB6600C60AB0 /* Coverage */,
 				B111FC0A13CF3D10003C5119 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18427,6 +20087,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B12ED8CB159E0C2200713C8E /* Debug */,
+				5B7CDA221801BB6600C60AB0 /* Coverage */,
 				B12ED8CC159E0C2200713C8E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18436,6 +20097,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B15441F616D17713001BD7B3 /* Debug */,
+				5B7CDA3F1801BB6600C60AB0 /* Coverage */,
 				B15441F716D17713001BD7B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18445,6 +20107,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B154428D16D19D8F001BD7B3 /* Debug */,
+				5B7CDA081801BB6600C60AB0 /* Coverage */,
 				B154428E16D19D8F001BD7B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18454,6 +20117,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B15442A916D1A247001BD7B3 /* Debug */,
+				5B7CDA401801BB6600C60AB0 /* Coverage */,
 				B15442AA16D1A247001BD7B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18463,6 +20127,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B15442CF16D1AAD1001BD7B3 /* Debug */,
+				5B7CDA521801BB6600C60AB0 /* Coverage */,
 				B15442D016D1AAD1001BD7B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18472,6 +20137,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1595B4713C11F2A001FCB61 /* Debug */,
+				5B7CDA0F1801BB6600C60AB0 /* Coverage */,
 				B1595B4813C11F2A001FCB61 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18481,6 +20147,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B15F6DE815B1361700158FA0 /* Debug */,
+				5B7CDA291801BB6600C60AB0 /* Coverage */,
 				B15F6DE915B1361700158FA0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18490,6 +20157,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1672FDA158491DE00EFE5C3 /* Debug */,
+				5B7CDA1C1801BB6600C60AB0 /* Coverage */,
 				B1672FDB158491DE00EFE5C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18499,6 +20167,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1672FF71584A7A600EFE5C3 /* Debug */,
+				5B7CDA1D1801BB6600C60AB0 /* Coverage */,
 				B1672FF81584A7A600EFE5C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18508,6 +20177,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B177159E155798AA00BA14BF /* Debug */,
+				5B7CDA171801BB6600C60AB0 /* Coverage */,
 				B177159F155798AA00BA14BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18517,6 +20187,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B181E12115D7465500AB44DA /* Debug */,
+				5B7CDA2E1801BB6600C60AB0 /* Coverage */,
 				B181E12215D7465500AB44DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18526,6 +20197,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B182C5F3173C30EE002954F6 /* Debug */,
+				5B7CDA491801BB6600C60AB0 /* Coverage */,
 				B182C5F4173C30EE002954F6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18535,6 +20207,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B189513115DE52D100B77813 /* Debug */,
+				5B7CDA2F1801BB6600C60AB0 /* Coverage */,
 				B189513215DE52D100B77813 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18544,6 +20217,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B189514815E0FA5F00B77813 /* Debug */,
+				5B7CDA301801BB6600C60AB0 /* Coverage */,
 				B189514915E0FA5F00B77813 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18553,6 +20227,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B18DF15417810C68004E1880 /* Debug */,
+				5B7CDA531801BB6600C60AB0 /* Coverage */,
 				B18DF15517810C68004E1880 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18562,6 +20237,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1935C6815B90ECF00107399 /* Debug */,
+				5B7CDA2A1801BB6600C60AB0 /* Coverage */,
 				B1935C6915B90ECF00107399 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18571,6 +20247,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B19ABA13146D68FE004EB77E /* Debug */,
+				5B7CDA121801BB6600C60AB0 /* Coverage */,
 				B19ABA14146D68FE004EB77E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18580,6 +20257,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1B68C7F159FC16E008BC463 /* Debug */,
+				5B7CDA231801BB6600C60AB0 /* Coverage */,
 				B1B68C80159FC16E008BC463 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18589,6 +20267,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1C4F406161F87070010A5C8 /* Debug */,
+				5B7CDA341801BB6600C60AB0 /* Coverage */,
 				B1C4F407161F87070010A5C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18598,6 +20277,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1C9DF2915A8045C00EE924C /* Debug */,
+				5B7CDA161801BB6600C60AB0 /* Coverage */,
 				B1C9DF2A15A8045C00EE924C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18607,6 +20287,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1CC832B15D3BEC4008DE335 /* Debug */,
+				5B7CDA2D1801BB6600C60AB0 /* Coverage */,
 				B1CC832C15D3BEC4008DE335 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18616,6 +20297,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1CFB7F517C436CD00FB062A /* Debug */,
+				5B7CDA561801BB6600C60AB0 /* Coverage */,
 				B1CFB7F617C436CD00FB062A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18625,6 +20307,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1F531E315AED4B100E89F98 /* Debug */,
+				5B7CDA281801BB6600C60AB0 /* Coverage */,
 				B1F531E415AED4B100E89F98 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -18634,6 +20317,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F548AA7B167FB1C700726814 /* Debug */,
+				5B7CDA381801BB6600C60AB0 /* Coverage */,
 				F548AA7C167FB1C700726814 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

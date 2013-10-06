@@ -38,7 +38,7 @@
 }
 -(id<ORIntVarArray>) allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 -(ORFloat)varOrdering: (id<CPIntVar>) ox
 {
