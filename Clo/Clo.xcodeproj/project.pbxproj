@@ -273,7 +273,7 @@
 		5B6A960215879F1600019903 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6A960515879F1600019903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A960415879F1600019903 /* main.m */; };
 		5B6A960D15879F2900019903 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */; };
+		5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = 5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */; };
 		5B6CFD7616D91CD600BCB95F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B6CFD7716D91CD600BCB95F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B6CFD7816D91CD600BCB95F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
@@ -1140,18 +1140,18 @@
 		F54AC181179F64C100E0D636 /* CPBitVarBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = F507ECC3176F6D0B00578C4E /* CPBitVarBaseHeuristic.m */; };
 		F54AC182179F660300E0D636 /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C04171AE93F00F309A6 /* CPBitVarABS.h */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
-		F5C00744180057CE00873D23 /* A-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C00743180057BF00873D23 /* A-mssg.txt */; };
-		F5C0074A18005AD200873D23 /* 5-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C0074918005AC900873D23 /* 5-mssg.txt */; };
-		F5C0074E1800F14700873D23 /* null-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C0074D1800F13700873D23 /* null-mssg.txt */; };
-		F5C00761180192DF00873D23 /* F-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C00760180192BE00873D23 /* F-mssg.txt */; };
-		F5C007801802671A00873D23 /* rand0-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C007781802670F00873D23 /* rand0-mssg.txt */; };
-		F5C007811802671A00873D23 /* rand1-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C007791802670F00873D23 /* rand1-mssg.txt */; };
-		F5C007821802671A00873D23 /* rand2-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C0077A1802670F00873D23 /* rand2-mssg.txt */; };
-		F5C007831802671A00873D23 /* rand3-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C0077B1802670F00873D23 /* rand3-mssg.txt */; };
-		F5C007841802671A00873D23 /* rand4-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C0077C1802670F00873D23 /* rand4-mssg.txt */; };
-		F5C007851802671A00873D23 /* rand5-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C0077D1802670F00873D23 /* rand5-mssg.txt */; };
-		F5C007861802671A00873D23 /* rand6-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C0077E1802670F00873D23 /* rand6-mssg.txt */; };
-		F5C007871802671A00873D23 /* rand7-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = F5C0077F1802670F00873D23 /* rand7-mssg.txt */; };
+		F5C00744180057CE00873D23 /* A-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C00743180057BF00873D23 /* A-mssg.txt */; };
+		F5C0074A18005AD200873D23 /* 5-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0074918005AC900873D23 /* 5-mssg.txt */; };
+		F5C0074E1800F14700873D23 /* null-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0074D1800F13700873D23 /* null-mssg.txt */; };
+		F5C00761180192DF00873D23 /* F-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C00760180192BE00873D23 /* F-mssg.txt */; };
+		F5C007801802671A00873D23 /* rand0-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C007781802670F00873D23 /* rand0-mssg.txt */; };
+		F5C007811802671A00873D23 /* rand1-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C007791802670F00873D23 /* rand1-mssg.txt */; };
+		F5C007821802671A00873D23 /* rand2-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0077A1802670F00873D23 /* rand2-mssg.txt */; };
+		F5C007831802671A00873D23 /* rand3-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0077B1802670F00873D23 /* rand3-mssg.txt */; };
+		F5C007841802671A00873D23 /* rand4-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0077C1802670F00873D23 /* rand4-mssg.txt */; };
+		F5C007851802671A00873D23 /* rand5-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0077D1802670F00873D23 /* rand5-mssg.txt */; };
+		F5C007861802671A00873D23 /* rand6-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0077E1802670F00873D23 /* rand6-mssg.txt */; };
+		F5C007871802671A00873D23 /* rand7-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0077F1802670F00873D23 /* rand7-mssg.txt */; };
 		F5CCC5BA179611E900EC6859 /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CCC5B9179611E900EC6859 /* CPBitVarHeuristic.h */; };
 /* End PBXBuildFile section */
 
@@ -4457,33 +4457,34 @@
 		};
 		F5444FAA171F32C900C86070 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F548AA6F167FB1C600726814 /* CopyFiles */ = {
+		F548AA6F167FB1C600726814 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				F5C007801802671A00873D23 /* rand0-mssg.txt in CopyFiles */,
-				F5C007811802671A00873D23 /* rand1-mssg.txt in CopyFiles */,
-				F5C007821802671A00873D23 /* rand2-mssg.txt in CopyFiles */,
-				F5C007831802671A00873D23 /* rand3-mssg.txt in CopyFiles */,
-				F5C007841802671A00873D23 /* rand4-mssg.txt in CopyFiles */,
-				F5C007851802671A00873D23 /* rand5-mssg.txt in CopyFiles */,
-				F5C007861802671A00873D23 /* rand6-mssg.txt in CopyFiles */,
-				F5C007871802671A00873D23 /* rand7-mssg.txt in CopyFiles */,
-				F5C00761180192DF00873D23 /* F-mssg.txt in CopyFiles */,
-				F5C0074E1800F14700873D23 /* null-mssg.txt in CopyFiles */,
-				F5C0074A18005AD200873D23 /* 5-mssg.txt in CopyFiles */,
-				F5C00744180057CE00873D23 /* A-mssg.txt in CopyFiles */,
-				5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in CopyFiles */,
+				F5C007801802671A00873D23 /* rand0-mssg.txt in Copy Files */,
+				F5C007811802671A00873D23 /* rand1-mssg.txt in Copy Files */,
+				F5C007821802671A00873D23 /* rand2-mssg.txt in Copy Files */,
+				F5C007831802671A00873D23 /* rand3-mssg.txt in Copy Files */,
+				F5C007841802671A00873D23 /* rand4-mssg.txt in Copy Files */,
+				F5C007851802671A00873D23 /* rand5-mssg.txt in Copy Files */,
+				F5C007861802671A00873D23 /* rand6-mssg.txt in Copy Files */,
+				F5C007871802671A00873D23 /* rand7-mssg.txt in Copy Files */,
+				F5C00761180192DF00873D23 /* F-mssg.txt in Copy Files */,
+				F5C0074E1800F14700873D23 /* null-mssg.txt in Copy Files */,
+				F5C0074A18005AD200873D23 /* 5-mssg.txt in Copy Files */,
+				F5C00744180057CE00873D23 /* A-mssg.txt in Copy Files */,
+				5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -8203,11 +8204,11 @@
 		F5444FAE171F32C900C86070 /* SHA1 */ = {
 			isa = PBXGroup;
 			children = (
+				F5444FB8171F32EE00C86070 /* SHA1.h */,
+				F5444FB9171F32EE00C86070 /* SHA1.m */,
 				F5444FAF171F32C900C86070 /* main.m */,
 				F5444FB3171F32C900C86070 /* SHA1.1 */,
 				F5444FB1171F32C900C86070 /* Supporting Files */,
-				F5444FB8171F32EE00C86070 /* SHA1.h */,
-				F5444FB9171F32EE00C86070 /* SHA1.m */,
 			);
 			path = SHA1;
 			sourceTree = "<group>";
@@ -10268,7 +10269,7 @@
 			buildPhases = (
 				F548AA6D167FB1C600726814 /* Sources */,
 				F548AA6E167FB1C600726814 /* Frameworks */,
-				F548AA6F167FB1C600726814 /* CopyFiles */,
+				F548AA6F167FB1C600726814 /* Copy Files */,
 			);
 			buildRules = (
 			);
