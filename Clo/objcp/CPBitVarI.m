@@ -273,6 +273,7 @@ return self;
 
 -(unsigned int) randomFreeBit
 {
+//   NSLog(@"%@",self);
    return [_dom randomFreeBit];
 }
 
@@ -291,6 +292,7 @@ return self;
 //   unsigned int freeBits = [_dom domsize];
 //   unsigned int midFreeBit = [_dom midFreeBit];
 //   NSLog(@"%@ mid free bit is %u",_dom, midFreeBit);
+//   return midFreeBit;
    return [_dom midFreeBit];
 }
 -(ORStatus) bind:(ORUInt)bit to:(BOOL)value

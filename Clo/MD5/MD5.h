@@ -28,6 +28,11 @@
 #define DIGEST_VAR_LENGTH 8
 #define BLOCK_LENGTH 4
 
+#ifndef BV_SEARCH_HEUR
+#define BV_SEARCH_HEUR
+typedef enum {BVFF, BVABS, BVLSB, BVMSB, BVMID, BVRAND, BVMIX} BVSearchHeuristic;
+#endif
+
 @interface MD5 : NSObject{
 @private
    id<ORModel>    _m;
@@ -62,7 +67,7 @@
 -(id<ORBitVar>) shuffle2:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x t:(uint32)t;
 -(id<ORBitVar>) shuffle3:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x t:(uint32)t;
 -(id<ORBitVar>) shuffle4:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x t:(uint32)t;
--(NSString*) preimage:(NSString*) filename withMask:(uint32*)mask;
+-(NSString*) preimage:(NSString*) filename withMask:(uint32*)mask andHeuristic:(BVSearchHeuristic)heur;
 -(id<ORBitVar>*) stateModel;
 
 

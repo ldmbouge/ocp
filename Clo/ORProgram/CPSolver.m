@@ -799,6 +799,69 @@
    }
 }
 
+-(void) labelOutFromMidFreeBit:(id<CPBitVar>) x
+{
+   int i;
+   //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
+   while (![x bound]) {
+      i=[x midFreeBit];
+      //      NSLog(@"%@ shows MSB as %d",bv,i);
+      NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
+      [_search try: ^() { [self labelBV:x at:i with:false];}
+                or: ^() { [self labelBV:x at:i with:true];}];
+   }
+}
+
+-(void) labelRandomFreeBit:(id<CPBitVar>) x
+{
+//   NSLog(@"Labeling bitvars by selecting unbound bits uniformly at random");
+   int i;
+   //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
+   while (![x bound]) {
+      i=[x randomFreeBit];
+//      NSLog(@"Labeling Bit at index %d",i);
+      int rand = arc4random();
+      if (rand > 0.5){
+//         NSLog(@"Labeling Bit at index %d with false first",i);
+         [_search try: ^() { [self labelBV:x at:i with:false];}
+                   or: ^() { [self labelBV:x at:i with:true];}];
+      }
+      else {
+//         NSLog(@"Labeling Bit at index %d with true first",i);
+         [_search try: ^() { [self labelBV:x at:i with:true];}
+                   or: ^() { [self labelBV:x at:i with:false];}];
+      }
+
+   }
+}
+
+-(void) labelBitsMixedStrategy:(id<CPBitVar>) x
+{
+      int i;
+      
+      //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
+      while (![x bound]) {
+         i=[x midFreeBit];
+         //      NSLog(@"%@ shows MSB as %d",bv,i);
+         NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
+         [_search try: ^() { [self labelBV:x at:i with:false];}
+                   or: ^() { [self labelBV:x at:i with:true];}];
+         
+         
+         if (![x bound]) {
+            i = [x lsFreeBit];
+            [_search try: ^() { [self labelBV:x at:i with:false];}
+                      or: ^() { [self labelBV:x at:i with:true];}];
+         }
+         if (![x bound]) {
+            i = [x msFreeBit];
+            [_search try: ^() { [self labelBV:x at:i with:false];}
+                      or: ^() { [self labelBV:x at:i with:true];}];
+         }
+      }
+}
+
+
 
 //-(void) labelBitVarsFirstFail: (NSArray*)vars
 //{

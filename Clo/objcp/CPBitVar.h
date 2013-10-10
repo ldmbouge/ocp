@@ -28,6 +28,7 @@
 -(ORULong)  numPatterns;
 -(ORUInt) msFreeBit;
 -(ORUInt) lsFreeBit;
+-(ORUInt) midFreeBit;
 -(ORUInt) randomFreeBit;
 -(ORBool) isFree:(ORUInt)pos;
 -(ORStatus) remove:(ORUInt)val;

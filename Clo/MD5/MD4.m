@@ -164,39 +164,37 @@
    }
    
 }
-
--(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask
+-(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask andHeuristic:(BVSearchHeuristic)heur
 {
    clock_t start;
    NSMutableString *results = [NSMutableString stringWithString:@""];
-
+   
    id<ORBitVar>* digest;
    id<ORBitVar>* digestVars = malloc(4*sizeof(id<ORBitVar>));
    
-   [self getMessage:filename];
-   
    start = clock();
    
+   [self getMessage:filename];
    [self getMD4Digest:filename];
-   //get MD4 Blocks
+   //get MD5 Blocks
    _temps = [[NSMutableArray alloc] initWithCapacity:128];
    [self createMD4Blocks:mask];
    digest = [self stateModel];
    uint32 *value = malloc(sizeof(uint32));
    *value = __builtin_bswap32([[_digest objectAtIndex:0] unsignedIntValue]);
-//   *value = [[_digest objectAtIndex:0] unsignedIntValue];
+   //   *value = [[_digest objectAtIndex:0] unsignedIntValue];
    digestVars[0] = [ORFactory bitVar:_m low:value up:value bitLength:32];
    value = malloc(sizeof(uint32));
    *value = __builtin_bswap32([[_digest objectAtIndex:1] unsignedIntValue]);
-//   *value = [[_digest objectAtIndex:1] unsignedIntValue];
+   //   *value = [[_digest objectAtIndex:1] unsignedIntValue];
    digestVars[1] = [ORFactory bitVar:_m low:value up:value bitLength:32];
    value = malloc(sizeof(uint32));
    *value = __builtin_bswap32([[_digest objectAtIndex:2] unsignedIntValue]);
-//   *value = [[_digest objectAtIndex:2] unsignedIntValue];
+   //   *value = [[_digest objectAtIndex:2] unsignedIntValue];
    digestVars[2] = [ORFactory bitVar:_m low:value up:value bitLength:32];
    value = malloc(sizeof(uint32));
    *value = __builtin_bswap32([[_digest objectAtIndex:3] unsignedIntValue]);
-//   *value = [[_digest objectAtIndex:3] unsignedIntValue];
+   //   *value = [[_digest objectAtIndex:3] unsignedIntValue];
    digestVars[3] = [ORFactory bitVar:_m low:value up:value bitLength:32];
    
    [_m add:[ORFactory bit:digest[0] eq:digestVars[0]]];
@@ -209,69 +207,206 @@
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
    
-   [cp solve: ^() {
-      @try {
-//         NSLog(@"Digest Variables:\n");
-//         for(int i=0;i<4;i++)
-//         {
-//            NSLog(@"%@",digest[i]);
-//            NSLog(@"%@\n\n",digestVars[i]);
-//         }
-//         NSLog(@"Message Blocks (Original)");
-//         id<ORBitVar>* bitVars;
-//         for(int i=0; i<_numBlocks;i++){
-//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-//            for(int j=0;j<16;j++)
-//               NSLog(@"%@\n",bitVars[j]);
-//         }
-//         NSLog(@"Message Blocks (With Data Recovered)");
-         id<ORBitVar>* bitVars;
-         clock_t searchStart = clock();
-         for(int i=0; i<_numBlocks;i++){
-            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-            for(int j=0;j<16;j++){
-               NSLog(@"%@\n",bitVars[j]);
-            }
-            for(int j=0;j<16;j++){
-               [cp labelUpFromLSB:bitVars[j]];
-//               NSLog(@"%@\n",bitVars[j]);
-            }
-         }
-         clock_t searchFinish = clock();
-         
-//         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
-//         NSDate *searchStart = [NSDate date];
-//         for(int i=0;i<4;i++)
-//         {
-//            [cp labelUpFromLSB:digest[i]];
-//         }
-//         for(int i=0;i<4;i++)
-//         {
-//            NSLog(@"%@",digest[i]);
-//            NSLog(@"%@\n\n",digestVars[i]);
-//         }
-         double totalTime, searchTime;
-         totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
-         searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
-         
-         NSString *str = [NSString stringWithFormat:@",%d,%d,%d,%f,%f\n",[explorer nbChoices],[explorer nbFailures],[engine nbPropagation],searchTime,totalTime];
-         [results appendString:str];
-         
-         NSLog(@"Number propagations: %d",[engine nbPropagation]);
-         NSLog(@"     Number choices: %d",[explorer nbChoices]);
-         NSLog(@"    Number Failures: %d", [explorer nbFailures]);
-         NSLog(@"    Search Time (s): %f",searchTime);
-         NSLog(@"     Total Time (s): %f\n\n",totalTime);
+   //<<<<<<< HEAD
+   //CPBitVarFF
+   __block id* gamma = [cp gamma];
+   
+   NSLog(@"Message Blocks (Original)");
+   id<ORBitVar>* bitVars;
+   for(int i=0; i<_numBlocks;i++){
+      bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+      for(int j=0;j<16;j++)
+         NSLog(@"%@\n",gamma[bitVars[j].getId]);
+   }
+   
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
+   for(ORInt k=0;k <= 15;k++)
+      [o set:gamma[bitVars[k].getId] at:k];
+   
+   id<CPBitVarHeuristic> h;
+   switch (heur) {
+      case BVABS: h = [cp createBitVarABS:(id<CPBitVarArray>)o];
+         break;
+      case BVFF:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+         break;
+         //      default:
+         //         break;
+   }
+   
+   [cp solve: ^{
+      NSLog(@"Search");
+      for(int i=0;i<4;i++)
+      {
+         NSLog(@"%@",gamma[digest[i].getId]);
+         NSLog(@"%@\n\n",gamma[digestVars[i].getId]);
+      }
+      //      NSLog(@"Message Blocks (With Data Recovered)");
+      //      __block ORUInt maxFail = 0x0000000000004000;
+      clock_t searchStart = clock();
+      //      [cp repeat:^{
+      //         [cp limitFailures:maxFail
+      //                        in:^{[cp labelBitVarHeuristic:h];}];}
+      //        onRepeat:^{maxFail<<=1;NSLog(@"Restart");}];
+      //[cp labelBitVarHeuristic:h];
+      //      for (int i=0;i<16;i++)
+      //         if (![gamma [bitVars[i].getId] bound]) {
+      //            [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
+      //         }
+      switch (heur) {
+         case BVRAND:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelRandomFreeBit:gamma[bitVars[i].getId]];
+               }
+            break;
+         case BVMID:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
+               }
+            break;
+         case BVMIX:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelBitsMixedStrategy:gamma[bitVars[i].getId]];
+               }
+            break;
+
+         default:       [cp labelBitVarHeuristic:h];
+            break;
+      }
+
+      clock_t searchFinish = clock();
+      
+      for(int j=0;j<16;j++){
+         NSLog(@"%@\n",gamma[bitVars[j].getId]);
          
       }
-      @catch (NSException *exception) {
-         
-         NSLog(@"[MD4 preimage] Caught %@: %@", [exception name], [exception reason]);
-         
-      }
+      
+      double totalTime, searchTime;
+      totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
+      searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
+      
+      NSString *str = [NSString stringWithFormat:@",%d,%d,%d,%f,%f\n",[explorer nbChoices],[explorer nbFailures],[engine nbPropagation],searchTime,totalTime];
+      [results appendString:str];
+      NSLog(@"Number propagations: %d",[engine nbPropagation]);
+      NSLog(@"     Number choices: %d",[explorer nbChoices]);
+      NSLog(@"    Number Failures: %d", [explorer nbFailures]);
+      NSLog(@"    Search Time (s): %f",searchTime);
+      NSLog(@"     Total Time (s): %f\n\n",totalTime);
+      
    }];
+   [cp release];
    return results;
 }
+
+//-(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask andHeuristic:(BVSearchHeuristic)heur
+//{
+//   clock_t start;
+//   NSMutableString *results = [NSMutableString stringWithString:@""];
+//
+//   id<ORBitVar>* digest;
+//   id<ORBitVar>* digestVars = malloc(4*sizeof(id<ORBitVar>));
+//   
+//   [self getMessage:filename];
+//   
+//   start = clock();
+//   
+//   [self getMD4Digest:filename];
+//   //get MD4 Blocks
+//   _temps = [[NSMutableArray alloc] initWithCapacity:128];
+//   [self createMD4Blocks:mask];
+//   digest = [self stateModel];
+//   uint32 *value = malloc(sizeof(uint32));
+//   *value = __builtin_bswap32([[_digest objectAtIndex:0] unsignedIntValue]);
+////   *value = [[_digest objectAtIndex:0] unsignedIntValue];
+//   digestVars[0] = [ORFactory bitVar:_m low:value up:value bitLength:32];
+//   value = malloc(sizeof(uint32));
+//   *value = __builtin_bswap32([[_digest objectAtIndex:1] unsignedIntValue]);
+////   *value = [[_digest objectAtIndex:1] unsignedIntValue];
+//   digestVars[1] = [ORFactory bitVar:_m low:value up:value bitLength:32];
+//   value = malloc(sizeof(uint32));
+//   *value = __builtin_bswap32([[_digest objectAtIndex:2] unsignedIntValue]);
+////   *value = [[_digest objectAtIndex:2] unsignedIntValue];
+//   digestVars[2] = [ORFactory bitVar:_m low:value up:value bitLength:32];
+//   value = malloc(sizeof(uint32));
+//   *value = __builtin_bswap32([[_digest objectAtIndex:3] unsignedIntValue]);
+////   *value = [[_digest objectAtIndex:3] unsignedIntValue];
+//   digestVars[3] = [ORFactory bitVar:_m low:value up:value bitLength:32];
+//   
+//   [_m add:[ORFactory bit:digest[0] eq:digestVars[0]]];
+//   [_m add:[ORFactory bit:digest[1] eq:digestVars[1]]];
+//   [_m add:[ORFactory bit:digest[2] eq:digestVars[2]]];
+//   [_m add:[ORFactory bit:digest[3] eq:digestVars[3]]];
+//   
+//   
+//   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
+//   id<CPEngine> engine = [cp engine];
+//   id<ORExplorer> explorer = [cp explorer];
+//   
+//   [cp solve: ^() {
+//      @try {
+////         NSLog(@"Digest Variables:\n");
+////         for(int i=0;i<4;i++)
+////         {
+////            NSLog(@"%@",digest[i]);
+////            NSLog(@"%@\n\n",digestVars[i]);
+////         }
+////         NSLog(@"Message Blocks (Original)");
+////         id<ORBitVar>* bitVars;
+////         for(int i=0; i<_numBlocks;i++){
+////            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+////            for(int j=0;j<16;j++)
+////               NSLog(@"%@\n",bitVars[j]);
+////         }
+////         NSLog(@"Message Blocks (With Data Recovered)");
+//         id<ORBitVar>* bitVars;
+//         clock_t searchStart = clock();
+//         for(int i=0; i<_numBlocks;i++){
+//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+//            for(int j=0;j<16;j++){
+//               NSLog(@"%@\n",bitVars[j]);
+//            }
+//            for(int j=0;j<16;j++){
+//               [cp labelUpFromLSB:bitVars[j]];
+////               NSLog(@"%@\n",bitVars[j]);
+//            }
+//         }
+//         clock_t searchFinish = clock();
+//         
+////         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
+////         NSDate *searchStart = [NSDate date];
+////         for(int i=0;i<4;i++)
+////         {
+////            [cp labelUpFromLSB:digest[i]];
+////         }
+////         for(int i=0;i<4;i++)
+////         {
+////            NSLog(@"%@",digest[i]);
+////            NSLog(@"%@\n\n",digestVars[i]);
+////         }
+//         double totalTime, searchTime;
+//         totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
+//         searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
+//         
+//         NSString *str = [NSString stringWithFormat:@",%d,%d,%d,%f,%f\n",[explorer nbChoices],[explorer nbFailures],[engine nbPropagation],searchTime,totalTime];
+//         [results appendString:str];
+//         
+//         NSLog(@"Number propagations: %d",[engine nbPropagation]);
+//         NSLog(@"     Number choices: %d",[explorer nbChoices]);
+//         NSLog(@"    Number Failures: %d", [explorer nbFailures]);
+//         NSLog(@"    Search Time (s): %f",searchTime);
+//         NSLog(@"     Total Time (s): %f\n\n",totalTime);
+//         
+//      }
+//      @catch (NSException *exception) {
+//         
+//         NSLog(@"[MD4 preimage] Caught %@: %@", [exception name], [exception reason]);
+//         
+//      }
+//   }];
+//   return results;
+//}
 -(id<ORBitVar>*) stateModel
 {
    uint32 *I0 = alloca(sizeof(uint32));

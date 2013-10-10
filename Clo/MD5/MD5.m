@@ -147,7 +147,7 @@
    
 }
 
--(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask
+-(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask andHeuristic:(BVSearchHeuristic)heur
 {
    clock_t start;
    NSMutableString *results = [NSMutableString stringWithString:@""];
@@ -206,10 +206,16 @@
    for(ORInt k=0;k <= 15;k++)
       [o set:gamma[bitVars[k].getId] at:k];
 
-   id<CPBitVarHeuristic> h = [cp createBitVarABS:(id<CPBitVarArray>)o];
-//   id<CPBitVarHeuristic> h = [cp createBitVarABS];
-//   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
-//   id<CPBitVarHeuristic> h = [cp createBitVarFF];
+   id<CPBitVarHeuristic> h;
+   switch (heur) {
+      case BVABS: h = [cp createBitVarABS:(id<CPBitVarArray>)o];
+                  break;
+      case BVFF:
+        default:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+                  break;
+//      default:
+//         break;
+   }
    
    [cp solve: ^{
       NSLog(@"Search");
@@ -225,7 +231,33 @@
 //         [cp limitFailures:maxFail
 //                        in:^{[cp labelBitVarHeuristic:h];}];}
 //        onRepeat:^{maxFail<<=1;NSLog(@"Restart");}];
-      [cp labelBitVarHeuristic:h];
+      switch (heur) {
+         case BVRAND:
+                        for (int i=0;i<16;i++)
+                           if (![gamma [bitVars[i].getId] bound]) {
+                              [cp labelRandomFreeBit:gamma[bitVars[i].getId]];
+                           }
+                        break;
+         case BVMID:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
+               }
+            break;
+         case BVMIX:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelBitsMixedStrategy:gamma[bitVars[i].getId]];
+               }
+            break;
+            
+         default:       [cp labelBitVarHeuristic:h];
+                        break;
+      }
+//      for (int i=0;i<16;i++)
+//         if (![gamma [bitVars[i].getId] bound]) {
+//            [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
+//         }
       clock_t searchFinish = clock();
 
          for(int j=0;j<16;j++){

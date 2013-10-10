@@ -312,9 +312,9 @@
 }
 -(void)scanProbe:(void(^)(ORInt varID,ORFloat activity))block
 {
-   for(NSNumber* key in _inProbe) {
-      assert(_low <= key.intValue && key.intValue <= _up);
-      block(key.intValue,_tab[key.intValue]);
+   for(CPBitAssignment* key in _inProbe) {
+      assert(_low <= [[key getVar] getId] && [[key getVar]getId] <= _up);
+      block([[key getVar]getId],_tab[[[key getVar] getId]]);
    }
 }
 -(NSString*)description
@@ -393,28 +393,14 @@
 }
 -(void)setActivity:(ORFloat)a atIndex:(ORUInt)idx forValue:(ORBool)v
 {
-   ORUInt keyhash = [_theVar getId];
-   keyhash <<= 16;
-   keyhash += idx;
-   keyhash <<= 1;
-   if (v) {
-      keyhash++;
-   }
-   NSNumber* key = [[NSNumber alloc] initWithLong:keyhash];
-   
+   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:_theVar idx:idx val:v];
+
    [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
    [key release];
 }
 -(void)addActivity:(ORFloat)a atIndex:(ORUInt)idx forValue:(ORBool)v
 {
-   ORUInt keyhash = [_theVar getId];
-   keyhash <<= 16;
-   keyhash += idx;
-   keyhash <<= 1;
-   if (v) {
-      keyhash++;
-   }
-   NSNumber* key = [[NSNumber alloc] initWithLong:keyhash];
+   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:_theVar idx:idx val:v];
    NSNumber* valAct = [_values objectForKey:key];
    if (valAct==nil) {
       [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
@@ -426,15 +412,7 @@
 }
 -(void)addProbeActivity:(ORFloat)a atIndex:(ORUInt)idx forValue:(ORBool)v
 {
-   ORUInt keyhash = [_theVar getId];
-   keyhash <<= 16;
-   keyhash += idx;
-   keyhash <<= 1;
-   if (v) {
-      keyhash++;
-   }
-   
-   NSNumber* key = [[NSNumber alloc] initWithLong:keyhash];
+   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:_theVar idx:idx val:v];
    NSNumber* valAct = [_values objectForKey:key];
    if (valAct==nil) {
       [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
@@ -446,14 +424,15 @@
 }
 -(ORFloat)activityForValue:(ORUInt)v atIndex:(ORUInt)idx
 {
-   ORUInt keyhash = [_theVar getId];
-   keyhash <<= 16;
-   keyhash += idx;
-   keyhash <<= 1;
-   if (v) {
-      keyhash++;
-   }
-   NSNumber* key = [[NSNumber alloc] initWithLong:keyhash];
+//   ORUInt keyhash = [_theVar getId];
+//   keyhash <<= 16;
+//   keyhash += idx;
+//   keyhash <<= 1;
+//   if (v) {
+//      keyhash++;
+//   }
+//   NSNumber* key = [[NSNumber alloc] initWithLong:keyhash];
+   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:_theVar idx:idx val:v];
    NSNumber* valAct = [_values objectForKey:key];
    [key release];
    if (valAct == nil)
@@ -464,18 +443,10 @@
 -(void)enumerate:(void(^)(ORUInt idx, ORBool val, id activity,BOOL* stop))block
 {
    BOOL stop = NO;
-   for(NSNumber* key in _values) {
+   for(CPBitAssignment* key in _values) {
       //extract index and value from key
-      ORUInt keyValue = [key unsignedIntValue];
-      ORUInt index = (keyValue & 0x0000FFFF) >> 16;
-      ORBool value;
-      if (keyValue % 2)
-         value = true;
-      else
-         value = false;
-      
 //      block(key,[_values objectForKey:key],&stop);
-      block(index,value,[_values objectForKey:key],&stop);
+      block([key getIndex], [key getValue],[_values objectForKey:key],&stop);
       if (stop)
          return ;
    }
@@ -624,15 +595,7 @@
 -(ORUInt)chooseValue:(id<CPBitVar>)x
 // Chooses a bit position/not a value for the variable
 {
-//   CPBitVarI* xVar = [x dereference];
    NSAssert([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
-//   if ([x lsFreeBit] == 0)
-//      if ([x msFreeBit] == [x bitLength])
-//         return [x lsFreeBit];
-//      else
-//         return [x lsFreeBit];
-//   else
-//      return [x lsFreeBit];
    return [x randomFreeBit];
 }
 -(ORBool)moreProbes
@@ -710,7 +673,8 @@
    for(ORInt i = [bvars low];i <= [bvars up];i++) {
       //NSAssert([bvars[i] isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", bvars[i], [[CPBitVarI class] description]);
       if ([bvars[i] bound]) continue;
-      mxp += log([(id)bvars[i] domsize]);
+//      mxp += log([(id)bvars[i] domsize]);
+      mxp += pow(2,[(id)bvars[i] domsize]);
    }
    const ORInt maxProbes = (int)10 * mxp;
    NSLog(@"#vars:  %d --> maximum # probes: %u  (MXP=%f)",probeDepth,maxProbes,mxp);

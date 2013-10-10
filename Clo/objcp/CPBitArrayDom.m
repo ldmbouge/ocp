@@ -291,7 +291,7 @@
    for(int i=0; i<_wordLength;i++)
    {
       unboundBits = (_low[i]._val ^ _up[i]._val);
-      bitMask = 0x80000000;
+      bitMask = 0x00000001;
       for(int j=31;j>=0;j--)
       {
          if (unboundBits & bitMask)
@@ -300,38 +300,56 @@
             if (foundFreeBits >= r)
                return (i*32+(31-j));
          }
-         bitMask >>= 1;
+         bitMask <<= 1;
       }
    }
    return -1;
 }
 -(unsigned int) midFreeBit
 {
-   uint32 midbit = _freebits._val/2;
-   uint32 freeBitsInWord;
-   uint32 numFreeBitsInWord;
-   for(int i=_wordLength-1; i>=0; i--){
-      //      NSLog(@"%d is first free bit in %x\n",i*32+__builtin_ffs((_low[i]._val^_up[i]._val))-1, (_low[i]._val^_up[i]._val));
-      freeBitsInWord = (_low[i]._val^_up[i]._val);
-      numFreeBitsInWord = __builtin_popcount(freeBitsInWord);
+//   uint32 midbit = _freebits._val/2;
+//   uint32 freeBitsInWord;
+//   uint32 numFreeBitsInWord;
+//   for(int i=_wordLength-1; i>=0; i--){
+//      //      NSLog(@"%d is first free bit in %x\n",i*32+__builtin_ffs((_low[i]._val^_up[i]._val))-1, (_low[i]._val^_up[i]._val));
+//      freeBitsInWord = (_low[i]._val^_up[i]._val);
+//      numFreeBitsInWord = __builtin_popcount(freeBitsInWord);
 //      NSLog(@"Mid bit of %@ is %u",self, midbit);
-      if (midbit <= numFreeBitsInWord) {
-         for (int j=0; j<32; j++) {
-            if (freeBitsInWord & 0x1){
-               midbit--;
-               numFreeBitsInWord--;
-            }
-            if (midbit <=0)
-               return (i*32)+j;
-            freeBitsInWord >>= 1;
-//            NSLog(@"Mid bit of %x is %u",freeBitsInWord, midbit);
-         }
-      }
-      else
-         midbit -= freeBitsInWord;
-   }
+//      if (midbit <= numFreeBitsInWord) {
+//         for (int j=0; j<32; j++) {
+//            if (freeBitsInWord & 0x1){
+//               midbit--;
+//               numFreeBitsInWord--;
+//            }
+//            if (midbit <=0)
+//               return (i*32)+j;
+//            freeBitsInWord >>= 1;
+////            NSLog(@"Mid bit of %x is %u",freeBitsInWord, midbit);
+//         }
+//      }
+//      else
+//         midbit -= freeBitsInWord;
+//   }
+   uint32 n;
+   uint32 oldn;
+   uint32 c = 0;
    
-   return -1;
+   uint32 numConsecutiveUnboundBits = 0;
+   uint32 lsBitPos = 0;
+   
+   for (int i=0; i<_wordLength; i++) {
+      n =  (_low[i]._val ^ _up[i]._val);
+      while (n != 0){
+         oldn = n;
+         n &= n >> 1;
+         c += 1;
+      }
+      if (c > numConsecutiveUnboundBits) {
+         numConsecutiveUnboundBits = c;
+         lsBitPos = __builtin_ffs(oldn) - 1;
+      }
+   }
+   return lsBitPos+(numConsecutiveUnboundBits/2);
 }
 
 -(void) updateFreeBitCount
