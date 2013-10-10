@@ -148,7 +148,7 @@
    
 }
 
--(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask
+-(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask andHeuristic:(BVSearchHeuristic)heur
 {
    clock_t start;
    NSMutableString *results = [NSMutableString stringWithString:@""];
@@ -192,33 +192,83 @@
    [_m add:[ORFactory bit:digest[4] eq:digestVars[4]]];
    
    
-   id<CPProgram,CPBV> cp = [ORFactory createCPProgram: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
    
+   //<<<<<<< HEAD
    //CPBitVarFF
-   id<CPHeuristic> h = [cp createBitVarFF];
+   __block id* gamma = [cp gamma];
+   
+   NSLog(@"Message Blocks (Original)");
+   id<ORBitVar>* bitVars;
+   for(int i=0; i<_numBlocks;i++){
+      bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+      for(int j=0;j<16;j++)
+         NSLog(@"%@\n",gamma[bitVars[j].getId]);
+   }
+   
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
+   for(ORInt k=0;k <= 15;k++)
+      [o set:gamma[bitVars[k].getId] at:k];
+   
+   id<CPBitVarHeuristic> h;
+   switch (heur) {
+      case BVABS: h = [cp createBitVarABS:(id<CPBitVarArray>)o];
+         break;
+      case BVFF:
+      default:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+         break;
+         //      default:
+         //         break;
+   }
+   
    [cp solve: ^{
       NSLog(@"Search");
-      for(int i=0;i<5;i++)
+      for(int i=0;i<4;i++)
       {
-         NSLog(@"%@",digest[i]);
-         NSLog(@"%@\n\n",digestVars[i]);
+         NSLog(@"%@",gamma[digest[i].getId]);
+         NSLog(@"%@\n\n",gamma[digestVars[i].getId]);
       }
-      NSLog(@"Message Blocks (Original)");
-      id<ORBitVar>* bitVars;
-      for(int i=0; i<_numBlocks;i++){
-         bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-         for(int j=0;j<16;j++)
-            NSLog(@"%@\n",bitVars[j]);
-      }
-      NSLog(@"Message Blocks (With Data Recovered)");
+      //      NSLog(@"Message Blocks (With Data Recovered)");
+      //      __block ORUInt maxFail = 0x0000000000004000;
       clock_t searchStart = clock();
-      [cp labelBitVarHeuristic:h];
+      //      [cp repeat:^{
+      //         [cp limitFailures:maxFail
+      //                        in:^{[cp labelBitVarHeuristic:h];}];}
+      //        onRepeat:^{maxFail<<=1;NSLog(@"Restart");}];
+      switch (heur) {
+         case BVRAND:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelRandomFreeBit:gamma[bitVars[i].getId]];
+               }
+            break;
+         case BVMID:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
+               }
+            break;
+         case BVMIX:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelBitsMixedStrategy:gamma[bitVars[i].getId]];
+               }
+            break;
+            
+         default:       [cp labelBitVarHeuristic:h];
+            break;
+      }
+      //      for (int i=0;i<16;i++)
+      //         if (![gamma [bitVars[i].getId] bound]) {
+      //            [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
+      //         }
       clock_t searchFinish = clock();
       
       for(int j=0;j<16;j++){
-         NSLog(@"%@\n",bitVars[j]);
+         NSLog(@"%@\n",gamma[bitVars[j].getId]);
+         
       }
       
       double totalTime, searchTime;
@@ -234,84 +284,9 @@
       NSLog(@"     Total Time (s): %f\n\n",totalTime);
       
    }];
-   
-   
-   //   [cp solve: ^() {
-   //      @try {
-   ////         fflush(stderr);
-   //         NSLog(@"Digest Variables:\n");
-   //         for(int i=0;i<4;i++)
-   //         {
-   //            NSLog(@"%@",digest[i]);
-   //            NSLog(@"%@\n\n",digestVars[i]);
-   //         }
-   //         NSLog(@"Message Blocks (Original)");
-   //         id<ORBitVar>* bitVars;
-   //         for(int i=0; i<_numBlocks;i++){
-   //            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-   //            for(int j=0;j<16;j++)
-   //               NSLog(@"%@\n",bitVars[j]);
-   //         }
-   //         NSLog(@"Message Blocks (With Data Recovered)");
-   //         //         id<ORBitVar>* bitVars;
-   //         clock_t searchStart = clock();
-   //         id<CPHeuristic> h = [cp createBitVarFF];
-   //         [cp solve: ^{
-   //         NSLog(@"Search");
-   //         [cp labelBitVarHeuristic:h];
-   //         }];
-   ////         NSMutableArray* messageVarArray = [[NSMutableArray alloc] init];
-   ////         [cp labelBitVarsFirstFail:[engine variables]];
-   //         for(int i=0; i<_numBlocks;i++){
-   //            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-   ////            for(int j=0;j<16;j++){
-   ////               [cp labelDownFromMSB:bitVars[j]];
-   ////               [messageVarArray addObject:bitVars[j]];
-   ////               NSLog(@"%@\n",bitVars[j]);
-   ////            }
-   //         }
-   ////         [cp labelBitVarsFirstFail:messageVarArray];
-   //
-   //         for(int j=0;j<16;j++){
-   //            NSLog(@"%@\n",bitVars[j]);
-   //         }
-   //         clock_t searchFinish = clock();
-   //
-   //         //         NSLog(@"Temporary Variables:\n");
-   //         //         for(int i=0;i<[_temps count];i++)
-   //         //         {
-   //         ////            [cp labelUpFromLSB:[_temps objectAtIndex:i]];
-   //         //            NSLog(@"%@",[_temps objectAtIndex:i]);
-   //         //            if((i%3)==2)
-   //         //               NSLog(@"\n\n");
-   //         //         }
-   //         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
-   //         for(int i=0;i<4;i++)
-   //         {
-   //            NSLog(@"%@",digest[i]);
-   //            NSLog(@"%@\n\n",digestVars[i]);
-   //         }
-   //         double totalTime, searchTime;
-   //         totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
-   //         searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
-   //
-   //         NSString *str = [NSString stringWithFormat:@",%d,%d,%d,%f,%f\n",[explorer nbChoices],[explorer nbFailures],[engine nbPropagation],searchTime,totalTime];
-   //         [results appendString:str];
-   //
-   //         NSLog(@"Number propagations: %d",[engine nbPropagation]);
-   //         NSLog(@"     Number choices: %d",[explorer nbChoices]);
-   //         NSLog(@"    Number Failures: %d", [explorer nbFailures]);
-   //         NSLog(@"    Search Time (s): %f",searchTime);
-   //         NSLog(@"     Total Time (s): %f\n\n",totalTime);
-   //      }
-   //      @catch (NSException *exception) {
-   //
-   //         NSLog(@"[SHA1 preimage] Caught %@: %@", [exception name], [exception reason]);
-   //
-   //      }
-   //   }];
    [cp release];
    return results;
+
 }
 -(id<ORBitVar>*) stateModel
 {
@@ -326,49 +301,86 @@
 //   H2 = 0x98BADCFE
 //   H3 = 0x10325476
 //   H4 = 0xC3D2E1F0
-//   
+//
+   
    *I0 = 0x67452301;
    *I1 = 0xefcdab89;
    *I2 = 0x98badcfe;
    *I3 = 0x10325476;
    *I4 = 0xC3D2E1F0;
    
+   uint32 *KV0 = malloc(sizeof(uint32));
+   uint32 *KV1 = malloc(sizeof(uint32));
+   uint32 *KV2 = malloc(sizeof(uint32));
+   uint32 *KV3 = malloc(sizeof(uint32));
+   *KV0 = K0;
+   *KV1 = K1;
+   *KV2 = K2;
+   *KV3 = K3;
+
    id<ORBitVar> *h0 = malloc(5*sizeof(id<ORBitVar>));
-   id<ORBitVar> *h5 = malloc(4*sizeof(id<ORBitVar>));
+//   id<ORBitVar> *h5 = malloc(4*sizeof(id<ORBitVar>));
    
    h0[0] = [ORFactory bitVar:_m low:I0 up:I0 bitLength:32];
    h0[1] = [ORFactory bitVar:_m low:I1 up:I1 bitLength:32];
    h0[2] = [ORFactory bitVar:_m low:I2 up:I2 bitLength:32];
    h0[3] = [ORFactory bitVar:_m low:I3 up:I3 bitLength:32];
    h0[4] = [ORFactory bitVar:_m low:I4 up:I4 bitLength:32];
+
+   kVars[0] = [ORFactory bitVar:_m low:KV0 up:KV0 bitLength:32];
+   kVars[1] = [ORFactory bitVar:_m low:KV1 up:KV1 bitLength:32];
+   kVars[2] = [ORFactory bitVar:_m low:KV2 up:KV2 bitLength:32];
+   kVars[3] = [ORFactory bitVar:_m low:KV3 up:KV3 bitLength:32];
    
    for(int i=0; i<_numBlocks;i++) {
       SHA1Block* b = [_messageBlocks objectAtIndex:i];
       
+//      id<ORBitVar> *blockVars = [b getORVars];
+//      
+//      W = malloc(80*sizeof(id<ORBitVar>));
+//      
+//      for (int j=0; j<16; j++) {
+//         W[j] = blockVars[j];
+//      }
+//      for (int j=16; j<80; j++) {
+//         id<ORBitVar> tempBV = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//         id<ORBitVar> tempBV2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//         id<ORBitVar> tempBV3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//         id<ORBitVar> newW = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//
+//         [_m add:[ORFactory bit:W[j-3] xor:W[j-8] eq:tempBV]];
+//         [_m add:[ORFactory bit:tempBV xor:W[j-14] eq:tempBV2]];
+//         [_m add:[ORFactory bit:tempBV2 xor:W[j-16] eq:tempBV3]];
+//         [_m add [ORFactory bit:tempBV3 rotateLBy:1 eq:newW]];
+//         W[j] = newW;
+//         
+//         
+//      }
+
       id<ORBitVar> *msg = [b getORVars];
-      id<ORBitVar> *h1 = [self round1:h0 x:msg];
-      id<ORBitVar> *h2 = [self round2:h1 x:msg];
-      id<ORBitVar> *h3 = [self round3:h2 x:msg];
-      id<ORBitVar> *h4 = [self round4:h3 x:msg];
-      
-      uint32 min = 0;
-      uint32 max = 0xFFFFFFFF;
-      
-      id<ORBitVar> cin;
-      id<ORBitVar> cout;
-      h5[0] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-      h5[1] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-      h5[2] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-      h5[3] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-      
-      //forall(i in 0..3) _m.post(h4[i] == h0[i] + h3[i]);
-      for (int i=0; i<4; i++)
-      {
-         cin = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-         cout = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-         [_m add:[ORFactory bit:h0[i] plus:h4[i] withCarryIn:cin eq:h5[i] withCarryOut:cout]];
-      }
-      h0 = h5;
+//      id<ORBitVar> *h1 = [self round1:h0 x:msg];
+//      id<ORBitVar> *h2 = [self round2:h1 x:msg];
+//      id<ORBitVar> *h3 = [self round3:h2 x:msg];
+//      id<ORBitVar> *h4 = [self round4:h3 x:msg];
+//      
+//      uint32 min = 0;
+//      uint32 max = 0xFFFFFFFF;
+//      
+//      id<ORBitVar> cin;
+//      id<ORBitVar> cout;
+//      h5[0] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//      h5[1] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//      h5[2] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//      h5[3] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//      
+//      //forall(i in 0..3) _m.post(h4[i] == h0[i] + h3[i]);
+//      for (int i=0; i<4; i++)
+//      {
+//         cin = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//         cout = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//         [_m add:[ORFactory bit:h0[i] plus:h4[i] withCarryIn:cin eq:h5[i] withCarryOut:cout]];
+//      }
+      h0 = [self roundSHA1:h0 x:msg];
    }
    
    return h0;
@@ -400,8 +412,8 @@
    
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    
    [_m add:[ORFactory bit:x xor:y eq:t0]];
    [_m add:[ORFactory bit:t0 xor:z eq:t1]];
@@ -444,7 +456,7 @@
 //}
 
 
--(id<ORBitVar>*) round1:(id<ORBitVar>*)h x:(id<ORBitVar>*) x
+-(id<ORBitVar>*) roundSHA1:(id<ORBitVar>*)h x:(id<ORBitVar>*) x
 {
    //   FF (a, b, c, d, x[ 0], S11, 0xd76aa478); /* 1 */
    //   FF (d, a, b, c, x[ 1], S12, 0xe8c7b756); /* 2 */
@@ -465,215 +477,235 @@
    //   FF (d, a, b, c, x[13], S12, 0xfd987193); /* 14 */
    //   FF (c, d, a, b, x[14], S13, 0xa679438e); /* 15 */
    //   FF (b, c, d, a, x[15], S14, 0x49b40821); /* 16 */
+   uint32 min = 0;
+   uint32 max = 0xFFFFFFFF;
    
    id<ORBitVar> A = h[0];
    id<ORBitVar> B = h[1];
    id<ORBitVar> C = h[2];
    id<ORBitVar> D = h[3];
    id<ORBitVar> E = h[4];
+
+   W = malloc(80*sizeof(id<ORBitVar>));
    
-   //[self shuffle1: b: c: d: index: shiftBy: x:x];
-   A = [self shuffle1:A b:B c:C d:D index:0 shiftBy:7 x:x t:0xd76aa478];
-   D = [self shuffle1:D b:A c:B d:C index:1 shiftBy:12 x:x t:0xe8c7b756];
-   C = [self shuffle1:C b:D c:A d:B index:2 shiftBy:17 x:x t:0x242070db];
-   B = [self shuffle1:B b:C c:D d:A index:3 shiftBy:22 x:x t:0xc1bdceee];
+   for (int j=0; j<16; j++) {
+      W[j] = x[j];
+   }
+   for (int j=16; j<80; j++) {
+      id<ORBitVar> tempBV = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+      id<ORBitVar> tempBV2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+      id<ORBitVar> tempBV3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+      id<ORBitVar> newW = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+      
+      [_m add:[ORFactory bit:W[j-3] xor:W[j-8] eq:tempBV]];
+      [_m add:[ORFactory bit:tempBV xor:W[j-14] eq:tempBV2]];
+      [_m add:[ORFactory bit:tempBV2 xor:W[j-16] eq:tempBV3]];
+      [_m add:[ORFactory bit:tempBV3 rotateLBy:1 eq:newW]];
+      W[j] = newW;
+   }
    
-   A = [self shuffle1:A b:B c:C d:D index:4 shiftBy:7 x:x t:0xf57c0faf];
-   D = [self shuffle1:D b:A c:B d:C index:5 shiftBy:12 x:x t:0x4787c62a];
-   C = [self shuffle1:C b:D c:A d:B index:6 shiftBy:17 x:x t:0xa8304613];
-   B = [self shuffle1:B b:C c:D d:A index:7 shiftBy:22 x:x t:0xfd469501];
-   
-   A = [self shuffle1:A b:B c:C d:D index:8 shiftBy:7 x:x t:0x698098d8];
-   D = [self shuffle1:D b:A c:B d:C index:9 shiftBy:12 x:x t:0x8b44f7af];
-   C = [self shuffle1:C b:D c:A d:B index:10 shiftBy:17 x:x t:0xffff5bb1];
-   B = [self shuffle1:B b:C c:D d:A index:11 shiftBy:22 x:x t:0x895cd7be];
-   
-   A = [self shuffle1:A b:B c:C d:D index:12 shiftBy:7 x:x t:0x6b901122];
-   D = [self shuffle1:D b:A c:B d:C index:13 shiftBy:12 x:x t:0xfd987193];
-   C = [self shuffle1:C b:D c:A d:B index:14 shiftBy:17 x:x t:0xa679438e];
-   B = [self shuffle1:B b:C c:D d:A index:15 shiftBy:22 x:x t:0x49b40821];
-   
-   A = [self shuffle1:A b:B c:C d:D index:12 shiftBy:7 x:x t:0x6b901122];
-   D = [self shuffle1:D b:A c:B d:C index:13 shiftBy:12 x:x t:0xfd987193];
-   C = [self shuffle1:C b:D c:A d:B index:14 shiftBy:17 x:x t:0xa679438e];
-   B = [self shuffle1:B b:C c:D d:A index:15 shiftBy:22 x:x t:0x49b40821];
+   for (int t=0; t<80; t++) {
+      id<ORBitVar> temp = [self shuffle:A b:B c:C d:D e:E t:t];
+      E = D;
+      D = C;
+      C = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+      [_m add:[ORFactory bit:B rotateLBy:30 eq:C]];
+      B=A;
+      A=temp;
+   }
 
    id<ORBitVar> *nh = malloc(5*sizeof(id<ORBitVar>));
-   nh[0] = A;
-   nh[1] = B;
-   nh[2] = C;
-   nh[3] = D;
-   nh[3] = E;
+   nh[0] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> ci0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> co0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   [_m add:[ORFactory bit:A plus:h[0] withCarryIn:ci0 eq:nh[0] withCarryOut:co0]];
+   nh[1] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> ci1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> co1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   [_m add:[ORFactory bit:B plus:h[1] withCarryIn:ci1 eq:nh[1] withCarryOut:co1]];
+   nh[2] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> ci2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> co2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   [_m add:[ORFactory bit:C plus:h[2] withCarryIn:ci2 eq:nh[2] withCarryOut:co2]];
+   nh[3] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> ci3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> co3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   [_m add:[ORFactory bit:D plus:h[3] withCarryIn:ci3 eq:nh[3] withCarryOut:co3]];
+   nh[4] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> ci4 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> co4 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   [_m add:[ORFactory bit:E plus:h[4] withCarryIn:ci4 eq:nh[4] withCarryOut:co4]];
+
    return(nh);
 }
 
--(id<ORBitVar>*)round2:(id<ORBitVar>*)h x:(id<ORBitVar>*) x
-{
-   //   GG (a, b, c, d, x[ 1], S21, 0xf61e2562); /* 17 */
-   //   GG (d, a, b, c, x[ 6], S22, 0xc040b340); /* 18 */
-   //   GG (c, d, a, b, x[11], S23, 0x265e5a51); /* 19 */
-   //   GG (b, c, d, a, x[ 0], S24, 0xe9b6c7aa); /* 20 */
-   
-   //   GG (a, b, c, d, x[ 5], S21, 0xd62f105d); /* 21 */
-   //   GG (d, a, b, c, x[10], S22, 0x2441453); /* 22 */
-   //   GG (c, d, a, b, x[15], S23, 0xd8a1e681); /* 23 */
-   //   GG (b, c, d, a, x[ 4], S24, 0xe7d3fbc8); /* 24 */
-   
-   //   GG (a, b, c, d, x[ 9], S21, 0x21e1cde6); /* 25 */
-   //   GG (d, a, b, c, x[14], S22, 0xc33707d6); /* 26 */
-   //   GG (c, d, a, b, x[ 3], S23, 0xf4d50d87); /* 27 */
-   //   GG (b, c, d, a, x[ 8], S24, 0x455a14ed); /* 28 */
-   
-   //   GG (a, b, c, d, x[13], S21, 0xa9e3e905); /* 29 */
-   //   GG (d, a, b, c, x[ 2], S22, 0xfcefa3f8); /* 30 */
-   //   GG (c, d, a, b, x[ 7], S23, 0x676f02d9); /* 31 */
-   //   GG (b, c, d, a, x[12], S24, 0x8d2a4c8a); /* 32 */
-   
-   
-   id<ORBitVar> A = h[0];
-   id<ORBitVar> B = h[1];
-   id<ORBitVar> C = h[2];
-   id<ORBitVar> D = h[3];
-   A = [self shuffle2:A b:B c:C d:D index:1 shiftBy:5 x:x t:0xf61e2562];
-   D = [self shuffle2:D b:A c:B d:C index:6 shiftBy:9 x:x t:0xc040b340];
-   C = [self shuffle2:C b:D c:A d:B index:11 shiftBy:14 x:x t:0x265e5a51];
-   B = [self shuffle2:B b:C c:D d:A index:0 shiftBy:20 x:x t:0xe9b6c7aa];
-   
-   A = [self shuffle2:A b:B c:C d:D index:5 shiftBy:5 x:x t:0xd62f105d];
-   D = [self shuffle2:D b:A c:B d:C index:10 shiftBy:9 x:x t:0x2441453];
-   C = [self shuffle2:C b:D c:A d:B index:15 shiftBy:14 x:x t:0xd8a1e681];
-   B = [self shuffle2:B b:C c:D d:A index:4 shiftBy:20 x:x t:0xe7d3fbc8];
-   
-   A = [self shuffle2:A b:B c:C d:D index:9 shiftBy:5 x:x t:0x21e1cde6];
-   D = [self shuffle2:D b:A c:B d:C index:14 shiftBy:9 x:x t:0xc33707d6];
-   C = [self shuffle2:C b:D c:A d:B index:3 shiftBy:14 x:x t:0xf4d50d87];
-   B = [self shuffle2:B b:C c:D d:A index:8 shiftBy:20 x:x t:0x455a14ed];
-   
-   A = [self shuffle2:A b:B c:C d:D index:13 shiftBy:5 x:x t:0xa9e3e905];
-   D = [self shuffle2:D b:A c:B d:C index:2 shiftBy:9 x:x t:0xfcefa3f8];
-   C = [self shuffle2:C b:D c:A d:B index:7 shiftBy:14 x:x t:0x676f02d9];
-   B = [self shuffle2:B b:C c:D d:A index:12 shiftBy:20 x:x t:0x8d2a4c8a];
-   
-   id<ORBitVar> *nh = malloc(4*sizeof(id<ORBitVar>));
-   nh[0] = A;
-   nh[1] = B;
-   nh[2] = C;
-   nh[3] = D;
-   return(nh);
-}
--(id<ORBitVar>*) round3:(id<ORBitVar>*)h x:(id<ORBitVar>*) x
-{
-   //   /* Round 3 */
-   //   HH (a, b, c, d, x[ 5], S31, 0xfffa3942); /* 33 */
-   //   HH (d, a, b, c, x[ 8], S32, 0x8771f681); /* 34 */
-   //   HH (c, d, a, b, x[11], S33, 0x6d9d6122); /* 35 */
-   //   HH (b, c, d, a, x[14], S34, 0xfde5380c); /* 36 */
-   
-   //   HH (a, b, c, d, x[ 1], S31, 0xa4beea44); /* 37 */
-   //   HH (d, a, b, c, x[ 4], S32, 0x4bdecfa9); /* 38 */
-   //   HH (c, d, a, b, x[ 7], S33, 0xf6bb4b60); /* 39 */
-   //   HH (b, c, d, a, x[10], S34, 0xbebfbc70); /* 40 */
-   
-   //   HH (a, b, c, d, x[13], S31, 0x289b7ec6); /* 41 */
-   //   HH (d, a, b, c, x[ 0], S32, 0xeaa127fa); /* 42 */
-   //   HH (c, d, a, b, x[ 3], S33, 0xd4ef3085); /* 43 */
-   //   HH (b, c, d, a, x[ 6], S34, 0x4881d05); /* 44 */
-   
-   //   HH (a, b, c, d, x[ 9], S31, 0xd9d4d039); /* 45 */
-   //   HH (d, a, b, c, x[12], S32, 0xe6db99e5); /* 46 */
-   //   HH (c, d, a, b, x[15], S33, 0x1fa27cf8); /* 47 */
-   //   HH (b, c, d, a, x[ 2], S34, 0xc4ac5665); /* 48 */
-   
-   id<ORBitVar> A = h[0];
-   id<ORBitVar> B = h[1];
-   id<ORBitVar> C = h[2];
-   id<ORBitVar> D = h[3];
-   
-   
-   A = [self shuffle3:A b:B c:C d:D index:5 shiftBy:4 x:x t:0xfffa3942];
-   D = [self shuffle3:D b:A c:B d:C index:8 shiftBy:11 x:x t:0x8771f681];
-   C = [self shuffle3:C b:D c:A d:B index:11 shiftBy:16 x:x t:0x6d9d6122];
-   B = [self shuffle3:B b:C c:D d:A index:14 shiftBy:23 x:x t:0xfde5380c];
-   
-   A = [self shuffle3:A b:B c:C d:D index:1 shiftBy:4 x:x t:0xa4beea44];
-   D = [self shuffle3:D b:A c:B d:C index:4 shiftBy:11 x:x t:0x4bdecfa9];
-   C = [self shuffle3:C b:D c:A d:B index:7 shiftBy:16 x:x t:0xf6bb4b60];
-   B = [self shuffle3:B b:C c:D d:A index:10 shiftBy:23 x:x t:0xbebfbc70];
-   
-   A = [self shuffle3:A b:B c:C d:D index:13 shiftBy:4 x:x t:0x289b7ec6];
-   D = [self shuffle3:D b:A c:B d:C index:0 shiftBy:11 x:x t:0xeaa127fa];
-   C = [self shuffle3:C b:D c:A d:B index:3 shiftBy:16 x:x t:0xd4ef3085];
-   B = [self shuffle3:B b:C c:D d:A index:6 shiftBy:23 x:x t:0x4881d05];
-   
-   A = [self shuffle3:A b:B c:C d:D index:9 shiftBy:4 x:x t:0xd9d4d039];
-   D = [self shuffle3:D b:A c:B d:C index:12 shiftBy:11 x:x t:0xe6db99e5];
-   C = [self shuffle3:C b:D c:A d:B index:15 shiftBy:16 x:x t:0x1fa27cf8];
-   B = [self shuffle3:B b:C c:D d:A index:2 shiftBy:23 x:x t:0xc4ac5665];
-   
-   id<ORBitVar> *nh = malloc(4*sizeof(id<ORBitVar>));
-   nh[0] = A;
-   nh[1] = B;
-   nh[2] = C;
-   nh[3] = D;
-   return(nh);
-}
+//-(id<ORBitVar>*)round2:(id<ORBitVar>*)h x:(id<ORBitVar>*) x
+//{
+//   //   GG (a, b, c, d, x[ 1], S21, 0xf61e2562); /* 17 */
+//   //   GG (d, a, b, c, x[ 6], S22, 0xc040b340); /* 18 */
+//   //   GG (c, d, a, b, x[11], S23, 0x265e5a51); /* 19 */
+//   //   GG (b, c, d, a, x[ 0], S24, 0xe9b6c7aa); /* 20 */
+//   
+//   //   GG (a, b, c, d, x[ 5], S21, 0xd62f105d); /* 21 */
+//   //   GG (d, a, b, c, x[10], S22, 0x2441453); /* 22 */
+//   //   GG (c, d, a, b, x[15], S23, 0xd8a1e681); /* 23 */
+//   //   GG (b, c, d, a, x[ 4], S24, 0xe7d3fbc8); /* 24 */
+//   
+//   //   GG (a, b, c, d, x[ 9], S21, 0x21e1cde6); /* 25 */
+//   //   GG (d, a, b, c, x[14], S22, 0xc33707d6); /* 26 */
+//   //   GG (c, d, a, b, x[ 3], S23, 0xf4d50d87); /* 27 */
+//   //   GG (b, c, d, a, x[ 8], S24, 0x455a14ed); /* 28 */
+//   
+//   //   GG (a, b, c, d, x[13], S21, 0xa9e3e905); /* 29 */
+//   //   GG (d, a, b, c, x[ 2], S22, 0xfcefa3f8); /* 30 */
+//   //   GG (c, d, a, b, x[ 7], S23, 0x676f02d9); /* 31 */
+//   //   GG (b, c, d, a, x[12], S24, 0x8d2a4c8a); /* 32 */
+//   
+//   
+//   id<ORBitVar> A = h[0];
+//   id<ORBitVar> B = h[1];
+//   id<ORBitVar> C = h[2];
+//   id<ORBitVar> D = h[3];
+//   A = [self shuffle2:A b:B c:C d:D index:1 shiftBy:5 x:x t:0xf61e2562];
+//   D = [self shuffle2:D b:A c:B d:C index:6 shiftBy:9 x:x t:0xc040b340];
+//   C = [self shuffle2:C b:D c:A d:B index:11 shiftBy:14 x:x t:0x265e5a51];
+//   B = [self shuffle2:B b:C c:D d:A index:0 shiftBy:20 x:x t:0xe9b6c7aa];
+//   
+//   A = [self shuffle2:A b:B c:C d:D index:5 shiftBy:5 x:x t:0xd62f105d];
+//   D = [self shuffle2:D b:A c:B d:C index:10 shiftBy:9 x:x t:0x2441453];
+//   C = [self shuffle2:C b:D c:A d:B index:15 shiftBy:14 x:x t:0xd8a1e681];
+//   B = [self shuffle2:B b:C c:D d:A index:4 shiftBy:20 x:x t:0xe7d3fbc8];
+//   
+//   A = [self shuffle2:A b:B c:C d:D index:9 shiftBy:5 x:x t:0x21e1cde6];
+//   D = [self shuffle2:D b:A c:B d:C index:14 shiftBy:9 x:x t:0xc33707d6];
+//   C = [self shuffle2:C b:D c:A d:B index:3 shiftBy:14 x:x t:0xf4d50d87];
+//   B = [self shuffle2:B b:C c:D d:A index:8 shiftBy:20 x:x t:0x455a14ed];
+//   
+//   A = [self shuffle2:A b:B c:C d:D index:13 shiftBy:5 x:x t:0xa9e3e905];
+//   D = [self shuffle2:D b:A c:B d:C index:2 shiftBy:9 x:x t:0xfcefa3f8];
+//   C = [self shuffle2:C b:D c:A d:B index:7 shiftBy:14 x:x t:0x676f02d9];
+//   B = [self shuffle2:B b:C c:D d:A index:12 shiftBy:20 x:x t:0x8d2a4c8a];
+//   
+//   id<ORBitVar> *nh = malloc(4*sizeof(id<ORBitVar>));
+//   nh[0] = A;
+//   nh[1] = B;
+//   nh[2] = C;
+//   nh[3] = D;
+//   return(nh);
+//}
+//-(id<ORBitVar>*) round3:(id<ORBitVar>*)h x:(id<ORBitVar>*) x
+//{
+//   //   /* Round 3 */
+//   //   HH (a, b, c, d, x[ 5], S31, 0xfffa3942); /* 33 */
+//   //   HH (d, a, b, c, x[ 8], S32, 0x8771f681); /* 34 */
+//   //   HH (c, d, a, b, x[11], S33, 0x6d9d6122); /* 35 */
+//   //   HH (b, c, d, a, x[14], S34, 0xfde5380c); /* 36 */
+//   
+//   //   HH (a, b, c, d, x[ 1], S31, 0xa4beea44); /* 37 */
+//   //   HH (d, a, b, c, x[ 4], S32, 0x4bdecfa9); /* 38 */
+//   //   HH (c, d, a, b, x[ 7], S33, 0xf6bb4b60); /* 39 */
+//   //   HH (b, c, d, a, x[10], S34, 0xbebfbc70); /* 40 */
+//   
+//   //   HH (a, b, c, d, x[13], S31, 0x289b7ec6); /* 41 */
+//   //   HH (d, a, b, c, x[ 0], S32, 0xeaa127fa); /* 42 */
+//   //   HH (c, d, a, b, x[ 3], S33, 0xd4ef3085); /* 43 */
+//   //   HH (b, c, d, a, x[ 6], S34, 0x4881d05); /* 44 */
+//   
+//   //   HH (a, b, c, d, x[ 9], S31, 0xd9d4d039); /* 45 */
+//   //   HH (d, a, b, c, x[12], S32, 0xe6db99e5); /* 46 */
+//   //   HH (c, d, a, b, x[15], S33, 0x1fa27cf8); /* 47 */
+//   //   HH (b, c, d, a, x[ 2], S34, 0xc4ac5665); /* 48 */
+//   
+//   id<ORBitVar> A = h[0];
+//   id<ORBitVar> B = h[1];
+//   id<ORBitVar> C = h[2];
+//   id<ORBitVar> D = h[3];
+//   
+//   
+//   A = [self shuffle3:A b:B c:C d:D index:5 shiftBy:4 x:x t:0xfffa3942];
+//   D = [self shuffle3:D b:A c:B d:C index:8 shiftBy:11 x:x t:0x8771f681];
+//   C = [self shuffle3:C b:D c:A d:B index:11 shiftBy:16 x:x t:0x6d9d6122];
+//   B = [self shuffle3:B b:C c:D d:A index:14 shiftBy:23 x:x t:0xfde5380c];
+//   
+//   A = [self shuffle3:A b:B c:C d:D index:1 shiftBy:4 x:x t:0xa4beea44];
+//   D = [self shuffle3:D b:A c:B d:C index:4 shiftBy:11 x:x t:0x4bdecfa9];
+//   C = [self shuffle3:C b:D c:A d:B index:7 shiftBy:16 x:x t:0xf6bb4b60];
+//   B = [self shuffle3:B b:C c:D d:A index:10 shiftBy:23 x:x t:0xbebfbc70];
+//   
+//   A = [self shuffle3:A b:B c:C d:D index:13 shiftBy:4 x:x t:0x289b7ec6];
+//   D = [self shuffle3:D b:A c:B d:C index:0 shiftBy:11 x:x t:0xeaa127fa];
+//   C = [self shuffle3:C b:D c:A d:B index:3 shiftBy:16 x:x t:0xd4ef3085];
+//   B = [self shuffle3:B b:C c:D d:A index:6 shiftBy:23 x:x t:0x4881d05];
+//   
+//   A = [self shuffle3:A b:B c:C d:D index:9 shiftBy:4 x:x t:0xd9d4d039];
+//   D = [self shuffle3:D b:A c:B d:C index:12 shiftBy:11 x:x t:0xe6db99e5];
+//   C = [self shuffle3:C b:D c:A d:B index:15 shiftBy:16 x:x t:0x1fa27cf8];
+//   B = [self shuffle3:B b:C c:D d:A index:2 shiftBy:23 x:x t:0xc4ac5665];
+//   
+//   id<ORBitVar> *nh = malloc(4*sizeof(id<ORBitVar>));
+//   nh[0] = A;
+//   nh[1] = B;
+//   nh[2] = C;
+//   nh[3] = D;
+//   return(nh);
+//}
+//
+//-(id<ORBitVar>*) round4:(id<ORBitVar>*)h x:(id<ORBitVar>*) x
+//{
+//   //   II (a, b, c, d, x[ 0], S41, 0xf4292244); /* 49 */
+//   //   II (d, a, b, c, x[ 7], S42, 0x432aff97); /* 50 */
+//   //   II (c, d, a, b, x[14], S43, 0xab9423a7); /* 51 */
+//   //   II (b, c, d, a, x[ 5], S44, 0xfc93a039); /* 52 */
+//   
+//   //   II (a, b, c, d, x[12], S41, 0x655b59c3); /* 53 */
+//   //   II (d, a, b, c, x[ 3], S42, 0x8f0ccc92); /* 54 */
+//   //   II (c, d, a, b, x[10], S43, 0xffeff47d); /* 55 */
+//   //   II (b, c, d, a, x[ 1], S44, 0x85845dd1); /* 56 */
+//   
+//   //   II (a, b, c, d, x[ 8], S41, 0x6fa87e4f); /* 57 */
+//   //   II (d, a, b, c, x[15], S42, 0xfe2ce6e0); /* 58 */
+//   //   II (c, d, a, b, x[ 6], S43, 0xa3014314); /* 59 */
+//   //   II (b, c, d, a, x[13], S44, 0x4e0811a1); /* 60 */
+//   
+//   //   II (a, b, c, d, x[ 4], S41, 0xf7537e82); /* 61 */
+//   //   II (d, a, b, c, x[11], S42, 0xbd3af235); /* 62 */
+//   //   II (c, d, a, b, x[ 2], S43, 0x2ad7d2bb); /* 63 */
+//   //   II (b, c, d, a, x[ 9], S44, 0xeb86d391); /* 64 */
+//   
+//   id<ORBitVar> A = h[0];
+//   id<ORBitVar> B = h[1];
+//   id<ORBitVar> C = h[2];
+//   id<ORBitVar> D = h[3];
+//   
+//   A = [self shuffle4:A b:B c:C d:D index:0 shiftBy:6 x:x t:0xf4292244];
+//   D = [self shuffle4:D b:A c:B d:C index:7 shiftBy:10 x:x t:0x432aff97];
+//   C = [self shuffle4:C b:D c:A d:B index:14 shiftBy:15 x:x t:0xab9423a7];
+//   B = [self shuffle4:B b:C c:D d:A index:5 shiftBy:21 x:x t:0xfc93a039];
+//   
+//   A = [self shuffle4:A b:B c:C d:D index:12 shiftBy:6 x:x t:0x655b59c3];
+//   D = [self shuffle4:D b:A c:B d:C index:3 shiftBy:10 x:x t:0x8f0ccc92];
+//   C = [self shuffle4:C b:D c:A d:B index:10 shiftBy:15 x:x t:0xffeff47d];
+//   B = [self shuffle4:B b:C c:D d:A index:1 shiftBy:21 x:x t:0x85845dd1];
+//   
+//   A = [self shuffle4:A b:B c:C d:D index:8 shiftBy:6 x:x t:0x6fa87e4f];
+//   D = [self shuffle4:D b:A c:B d:C index:15 shiftBy:10 x:x t:0xfe2ce6e0];
+//   C = [self shuffle4:C b:D c:A d:B index:6 shiftBy:15 x:x t:0xa3014314];
+//   B = [self shuffle4:B b:C c:D d:A index:13 shiftBy:21 x:x t:0x4e0811a1];
+//   
+//   A = [self shuffle4:A b:B c:C d:D index:4 shiftBy:6 x:x t:0xf7537e82];
+//   D = [self shuffle4:D b:A c:B d:C index:11 shiftBy:10 x:x t:0xbd3af235];
+//   C = [self shuffle4:C b:D c:A d:B index:2 shiftBy:15 x:x t:0x2ad7d2bb];
+//   B = [self shuffle4:B b:C c:D d:A index:9 shiftBy:21 x:x t:0xeb86d391];
+//   
+//   id<ORBitVar> *nh = malloc(4*sizeof(id<ORBitVar>));
+//   nh[0] = A;
+//   nh[1] = B;
+//   nh[2] = C;
+//   nh[3] = D;
+//   return(nh);
+//}
 
--(id<ORBitVar>*) round4:(id<ORBitVar>*)h x:(id<ORBitVar>*) x
-{
-   //   II (a, b, c, d, x[ 0], S41, 0xf4292244); /* 49 */
-   //   II (d, a, b, c, x[ 7], S42, 0x432aff97); /* 50 */
-   //   II (c, d, a, b, x[14], S43, 0xab9423a7); /* 51 */
-   //   II (b, c, d, a, x[ 5], S44, 0xfc93a039); /* 52 */
-   
-   //   II (a, b, c, d, x[12], S41, 0x655b59c3); /* 53 */
-   //   II (d, a, b, c, x[ 3], S42, 0x8f0ccc92); /* 54 */
-   //   II (c, d, a, b, x[10], S43, 0xffeff47d); /* 55 */
-   //   II (b, c, d, a, x[ 1], S44, 0x85845dd1); /* 56 */
-   
-   //   II (a, b, c, d, x[ 8], S41, 0x6fa87e4f); /* 57 */
-   //   II (d, a, b, c, x[15], S42, 0xfe2ce6e0); /* 58 */
-   //   II (c, d, a, b, x[ 6], S43, 0xa3014314); /* 59 */
-   //   II (b, c, d, a, x[13], S44, 0x4e0811a1); /* 60 */
-   
-   //   II (a, b, c, d, x[ 4], S41, 0xf7537e82); /* 61 */
-   //   II (d, a, b, c, x[11], S42, 0xbd3af235); /* 62 */
-   //   II (c, d, a, b, x[ 2], S43, 0x2ad7d2bb); /* 63 */
-   //   II (b, c, d, a, x[ 9], S44, 0xeb86d391); /* 64 */
-   
-   id<ORBitVar> A = h[0];
-   id<ORBitVar> B = h[1];
-   id<ORBitVar> C = h[2];
-   id<ORBitVar> D = h[3];
-   
-   A = [self shuffle4:A b:B c:C d:D index:0 shiftBy:6 x:x t:0xf4292244];
-   D = [self shuffle4:D b:A c:B d:C index:7 shiftBy:10 x:x t:0x432aff97];
-   C = [self shuffle4:C b:D c:A d:B index:14 shiftBy:15 x:x t:0xab9423a7];
-   B = [self shuffle4:B b:C c:D d:A index:5 shiftBy:21 x:x t:0xfc93a039];
-   
-   A = [self shuffle4:A b:B c:C d:D index:12 shiftBy:6 x:x t:0x655b59c3];
-   D = [self shuffle4:D b:A c:B d:C index:3 shiftBy:10 x:x t:0x8f0ccc92];
-   C = [self shuffle4:C b:D c:A d:B index:10 shiftBy:15 x:x t:0xffeff47d];
-   B = [self shuffle4:B b:C c:D d:A index:1 shiftBy:21 x:x t:0x85845dd1];
-   
-   A = [self shuffle4:A b:B c:C d:D index:8 shiftBy:6 x:x t:0x6fa87e4f];
-   D = [self shuffle4:D b:A c:B d:C index:15 shiftBy:10 x:x t:0xfe2ce6e0];
-   C = [self shuffle4:C b:D c:A d:B index:6 shiftBy:15 x:x t:0xa3014314];
-   B = [self shuffle4:B b:C c:D d:A index:13 shiftBy:21 x:x t:0x4e0811a1];
-   
-   A = [self shuffle4:A b:B c:C d:D index:4 shiftBy:6 x:x t:0xf7537e82];
-   D = [self shuffle4:D b:A c:B d:C index:11 shiftBy:10 x:x t:0xbd3af235];
-   C = [self shuffle4:C b:D c:A d:B index:2 shiftBy:15 x:x t:0x2ad7d2bb];
-   B = [self shuffle4:B b:C c:D d:A index:9 shiftBy:21 x:x t:0xeb86d391];
-   
-   id<ORBitVar> *nh = malloc(4*sizeof(id<ORBitVar>));
-   nh[0] = A;
-   nh[1] = B;
-   nh[2] = C;
-   nh[3] = D;
-   return(nh);
-}
-
--(id<ORBitVar>) shuffle1:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x t:(uint32)t
+-(id<ORBitVar>) shuffle:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D e:(id<ORBitVar>)E t:(uint32)t
 {
    //#define FF(a, b, c, d, x, s, ac) { \
    //(a) += F ((b), (c), (d)) + (x) + (UINT4)(ac); \
@@ -684,162 +716,169 @@
    uint32 min = 0;
    uint32 max = 0xFFFFFFFF;
    
-   id<ORBitVar> T = [ORFactory bitVar:_m low:&t up:&t bitLength:32];
+   id<ORBitVar> fo;
+
+   if (t<=19)
+      fo= [self f:B y:C z:D];
+   else if (t<=39)
+      fo= [self g:B y:C z:D];
+   else if (t<=59)
+      fo= [self h:B y:C z:D];
+   else
+      fo= [self g:B y:C z:D];
    
-   id<ORBitVar> fo = [self f:B y:C z:D];
+   
+   id<ORBitVar> rotatedA = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   [_m add:[ORFactory bit:A rotateLBy:5 eq:rotatedA]];
    
    id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:A plus:fo withCarryIn:ci eq:t0a withCarryOut:co]];
+   [_m add:[ORFactory bit:rotatedA plus:fo withCarryIn:ci eq:t0a withCarryOut:co]];
    
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t0a plus:x[i] withCarryIn:ci eq:t0 withCarryOut:co]];
+   [_m add:[ORFactory bit:t0a plus:E withCarryIn:ci eq:t0 withCarryOut:co]];
    
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t0 plus:T withCarryIn:ci eq:t1 withCarryOut:co]];
+   [_m add:[ORFactory bit:t0 plus:W[t] withCarryIn:ci eq:t1 withCarryOut:co]];
    
    id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t1 rotateLBy:s eq:t2]];
-   
-   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t2 plus:B withCarryIn:ci eq:t3 withCarryOut:co]];
+   [_m add:[ORFactory bit:t1 plus:kVars[t/20] withCarryIn:ci eq:t2 withCarryOut:co]];
    
-   
-   return t3;
+   return t2;
 }
-
--(id<ORBitVar>) shuffle2:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x t:(uint32)t
-{
-   //#define GG(a, b, c, d, x, s, ac) { \
-   //(a) += G ((b), (c), (d)) + (x) + (UINT4)(ac); \
-   //(a) = ROTATE_LEFT ((a), (s)); \
-   //(a) += (b); \
-   //}
-   
-   uint32 min = 0;
-   uint32 max = 0xFFFFFFFF;
-   
-   id<ORBitVar> T = [ORFactory bitVar:_m low:&t up:&t bitLength:32];
-   
-   id<ORBitVar> go = [self g:B y:C z:D];
-   
-   id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:A plus:go withCarryIn:ci eq:t0a withCarryOut:co]];
-   
-   id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t0a plus:x[i] withCarryIn:ci eq:t0 withCarryOut:co]];
-   
-   id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t0 plus:T withCarryIn:ci eq:t1 withCarryOut:co]];
-   
-   id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t1 rotateLBy:s eq:t2]];
-   
-   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t2 plus:B withCarryIn:ci eq:t3 withCarryOut:co]];
-   
-   return t3;
-}
-
--(id<ORBitVar>) shuffle3:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x t:(uint32)t
-{
-   //#define HH(a, b, c, d, x, s, ac) { \
-   //(a) += H ((b), (c), (d)) + (x) + (UINT4)(ac); \
-   //(a) = ROTATE_LEFT ((a), (s)); \
-   //(a) += (b); \
-   //}
-   
-   uint32 min = 0;
-   uint32 max = 0xFFFFFFFF;
-   
-   id<ORBitVar> T = [ORFactory bitVar:_m low:&t up:&t bitLength:32];
-   
-   id<ORBitVar> ho = [self h:B y:C z:D];
-   
-   id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:A plus:ho withCarryIn:ci eq:t0a withCarryOut:co]];
-   
-   id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t0a plus:x[i] withCarryIn:ci eq:t0 withCarryOut:co]];
-   
-   id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t0 plus:T withCarryIn:ci eq:t1 withCarryOut:co]];
-   
-   id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t1 rotateLBy:s eq:t2]];
-   
-   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t2 plus:B withCarryIn:ci eq:t3 withCarryOut:co]];
-   
-   
-   return t3;
-}
-
-
--(id<ORBitVar>) shuffle4:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x t:(uint32)t
-{
-   //#define II(a, b, c, d, x, s, ac) { \
-   //(a) += I ((b), (c), (d)) + (x) + (UINT4)(ac); \
-   //(a) = ROTATE_LEFT ((a), (s)); \
-   //(a) += (b); \
-   //}
-   
-   uint32 min = 0;
-   uint32 max = 0xFFFFFFFF;
-   
-   id<ORBitVar> T = [ORFactory bitVar:_m low:&t up:&t bitLength:32];
-   
-   id<ORBitVar> io = [self i:B y:C z:D];
-   
-   id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:A plus:io withCarryIn:ci eq:t0a withCarryOut:co]];
-   
-   id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t0a plus:x[i] withCarryIn:ci eq:t0 withCarryOut:co]];
-   
-   id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t0 plus:T withCarryIn:ci eq:t1 withCarryOut:co]];
-   
-   id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t1 rotateLBy:s eq:t2]];
-   
-   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:t2 plus:B withCarryIn:ci eq:t3 withCarryOut:co]];
-   
-   
-   return t3;
-}
+//
+//-(id<ORBitVar>) shuffle2:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x t:(uint32)t
+//{
+//   //#define GG(a, b, c, d, x, s, ac) { \
+//   //(a) += G ((b), (c), (d)) + (x) + (UINT4)(ac); \
+//   //(a) = ROTATE_LEFT ((a), (s)); \
+//   //(a) += (b); \
+//   //}
+//   
+//   uint32 min = 0;
+//   uint32 max = 0xFFFFFFFF;
+//   
+//   id<ORBitVar> T = [ORFactory bitVar:_m low:&t up:&t bitLength:32];
+//   
+//   id<ORBitVar> go = [self g:B y:C z:D];
+//   
+//   id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:A plus:go withCarryIn:ci eq:t0a withCarryOut:co]];
+//   
+//   id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t0a plus:x[i] withCarryIn:ci eq:t0 withCarryOut:co]];
+//   
+//   id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t0 plus:T withCarryIn:ci eq:t1 withCarryOut:co]];
+//   
+//   id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t1 rotateLBy:s eq:t2]];
+//   
+//   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t2 plus:B withCarryIn:ci eq:t3 withCarryOut:co]];
+//   
+//   return t3;
+//}
+//
+//-(id<ORBitVar>) shuffle3:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x t:(uint32)t
+//{
+//   //#define HH(a, b, c, d, x, s, ac) { \
+//   //(a) += H ((b), (c), (d)) + (x) + (UINT4)(ac); \
+//   //(a) = ROTATE_LEFT ((a), (s)); \
+//   //(a) += (b); \
+//   //}
+//   
+//   uint32 min = 0;
+//   uint32 max = 0xFFFFFFFF;
+//   
+//   id<ORBitVar> T = [ORFactory bitVar:_m low:&t up:&t bitLength:32];
+//   
+//   id<ORBitVar> ho = [self h:B y:C z:D];
+//   
+//   id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:A plus:ho withCarryIn:ci eq:t0a withCarryOut:co]];
+//   
+//   id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t0a plus:x[i] withCarryIn:ci eq:t0 withCarryOut:co]];
+//   
+//   id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t0 plus:T withCarryIn:ci eq:t1 withCarryOut:co]];
+//   
+//   id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t1 rotateLBy:s eq:t2]];
+//   
+//   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t2 plus:B withCarryIn:ci eq:t3 withCarryOut:co]];
+//   
+//   
+//   return t3;
+//}
+//
+//
+//-(id<ORBitVar>) shuffle4:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x t:(uint32)t
+//{
+//   //#define II(a, b, c, d, x, s, ac) { \
+//   //(a) += I ((b), (c), (d)) + (x) + (UINT4)(ac); \
+//   //(a) = ROTATE_LEFT ((a), (s)); \
+//   //(a) += (b); \
+//   //}
+//   
+//   uint32 min = 0;
+//   uint32 max = 0xFFFFFFFF;
+//   
+//   id<ORBitVar> T = [ORFactory bitVar:_m low:&t up:&t bitLength:32];
+//   
+//   id<ORBitVar> io = [self i:B y:C z:D];
+//   
+//   id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:A plus:io withCarryIn:ci eq:t0a withCarryOut:co]];
+//   
+//   id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t0a plus:x[i] withCarryIn:ci eq:t0 withCarryOut:co]];
+//   
+//   id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t0 plus:T withCarryIn:ci eq:t1 withCarryOut:co]];
+//   
+//   id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t1 rotateLBy:s eq:t2]];
+//   
+//   id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+//   [_m add:[ORFactory bit:t2 plus:B withCarryIn:ci eq:t3 withCarryOut:co]];
+//   
+//   
+//   return t3;
+//}
 
 
 @end
