@@ -71,18 +71,44 @@ int main(int argc, const char * argv[])
          [cp solve:^{
             //NSLog(@"BASIC: %@",[[cp engine] model]);
             __block ORInt d = 0;
-            [cp forall:[av range] suchThat:^bool(ORInt i) { return ![cp bound:av[i]];}
-             orderedBy:^ORInt(ORInt i) { return [cp domsize:av[i]];}
-                    do:^(ORInt i) {
-                       [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) { return [cp member:j in:av[i]];} in:^(ORInt j) {
-                  [cp label:av[i] with:j];
-               } onFailure:^(ORInt j) {
-                  [cp diff:av[i] with:j];
-               }];
-               d = d + 1;
-            }];
-            [cp labelHeuristic:h];
+//            [cp forall:[av range] suchThat:^bool(ORInt i) { return ![cp bound:av[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:av[i]];}
+//                    do:^(ORInt i) {
+//               [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) { return [cp member:j in:av[i]];} in:^(ORInt j) {
+//                  [cp label:av[i] with:j];
+//               } onFailure:^(ORInt j) {
+//                  [cp diff:av[i] with:j];
+//               }];
+//               d = d + 1;
+//            }];
+            //[cp labelHeuristic:h];
+            //[cp labelArrayFF:av];
             //[cp labelArray:av];
+            id* gamma = [cp gamma];
+            for(ORInt k=av.low;k <= av.up;k++) {
+               ORInt i = -1;
+               ORInt sd = FDMAXINT;
+               for(ORInt j=av.low; j <= av.up;j++) {
+                  if ([cp bound:av[j]]) continue;
+                  if ([cp domsize:av[j]] < sd) {
+                     sd = [cp domsize:av[j]];
+                     i = j;
+                  }
+               }
+               if (i==-1) break;
+               while(![cp bound:av[i]]) {
+                  ORInt v = [cp min:av[i]];
+                  [cp try:^{
+                     [cp label:av[i] with:v];
+//                     for(ORInt k=av.range.low;k <= av.range.up;k++) {
+//                        id<CPIntVar> cav = gamma[av[k].getId];
+//                        printf("%s , ",[[cav description] cStringUsingEncoding:NSASCIIStringEncoding]);
+//                     }
+//                     printf("\n");
+                  } or:^{
+                     [cp diff:av[i] with:v];
+                  }];
+               }
+            }
             @autoreleasepool {
                NSLog(@"x=");
                for(ORInt i=0;i<=n-1;i++) {
@@ -115,7 +141,6 @@ int main(int argc, const char * argv[])
                   [buf appendString:@"|"];
                   NSLog(@"%@",buf);
                }
-               
             }
          }];         
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
