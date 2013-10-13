@@ -17,76 +17,91 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      const ORInt cf = 30; // fixed maintenance cost
-      const ORInt nw = 5; // number warehouses
-      const ORInt ns = 10; // number stores
+      const ORInt no = 9; // number of orders
+      const ORInt nst = 3; // number of slab types
       
-      ORInt cap[nw] = {1, 4, 2, 1, 3};
-      ORInt supc[ns][nw] = {
-         {20, 24, 11, 25, 30},
-         {28, 27, 82, 83, 74},
-         {74, 97, 71, 96, 70},
-         {2, 55, 73, 69, 61},
-         {46, 96, 59, 83, 4},
-         {42, 22, 29, 67, 59},
-         {1, 5, 73, 59, 56},
-         {10, 73, 13, 43, 96},
-         {93, 35, 63, 85, 46},
-         {47, 65, 55, 71, 95}
-      };
       
-      id<ORIntArray> capacity = [ORFactory intArray:mdl range:RANGE(mdl, 1, nw) values:cap];
-      id<ORIntVarMatrix> supCost = [ORFactory intVarMatrix:mdl range:RANGE(mdl, 1, ns) :RANGE(mdl, 1, nw) domain:RANGE(mdl, 1, 1000)];
-      id<ORIntVarArray> warehouseof = [ORFactory intVarArray:mdl range:RANGE(mdl, 1, ns) domain:RANGE(mdl, 1, nw)];
-      id<ORIntVarArray> warehouseused = [ORFactory intVarArray:mdl range:RANGE(mdl, 1, nw) domain:RANGE(mdl, 0, 1)];
+      ORInt osz[no] = {2, 3, 1, 1, 1, 1, 1, 2, 1};
+      ORInt szs[nst] = {1, 3, 4};
       
-      id<ORIntVar> totalcost = [ORFactory intVar:mdl domain:RANGE(mdl, 0, 1000)];
+      id<ORIntArray> sizes = [ORFactory intArray:mdl range:RANGE(mdl, 1, nst) values:szs];
+      id<ORIntArray> sizeOfOrder = [ORFactory intArray:mdl range:RANGE(mdl, 1, no) values:osz];
+      id<ORIntVarArray> slabOfOrder = [ORFactory intVarArray:mdl range:RANGE(mdl, 1, 9) domain:RANGE(mdl, 1, 3)];
+      id<ORIntVarArray> isCounted = [ORFactory intVarArray:mdl range:RANGE(mdl, 1, 9) domain:RANGE(mdl, 0, 1)];
       
-      for (int s = 1; s <= ns; s++) {
-         for (int w = 1; w <= nw; w++) {
-            [mdl add:[[supCost at:s :w] eq:@(supc[s-1][w-1])]];
+      int lowerbound = 0;
+      for (int o = 0; o < 9; o++) {
+         lowerbound += osz[o];
+      }
+      id<ORIntVar> totcap = [ORFactory intVar:mdl domain:RANGE(mdl, 1, 1000)];
+      
+      id<ORIntVarMatrix> overlap = [ORFactory intVarMatrix:mdl range:RANGE(mdl, 1, no) :RANGE(mdl, 1, no) domain:RANGE(mdl, 0, 1)];
+      
+      for (int o = 1; o <= 9; o++) {
+         [mdl add:[[sizes elt: slabOfOrder[o]] geq:@([sizeOfOrder at:o])]]; // this seems to work
+         //            [[sizes elt: slabOfOrder[o]] gt:@(sizeOfOrder[o])]; // this doesn't work. why?
+      }
+      
+      for (int o = 1; o <= 9; o++)
+          [mdl add:[[overlap at:o :o] eq:@(1)]];
+      
+      for (int o = 1; o <= no; o++) {
+         for (int i = 1; i <= no; i++) {
+            [mdl add:[[overlap at:o :i] eq:   [overlap at:i :o]]];
+            [mdl add:[[overlap at:o :i] imply:[slabOfOrder[o] eq:slabOfOrder[i]] ] ];
+            [mdl add:[[overlap at:o :i] imply:[Sum(mdl,j,RANGE(mdl,1, no),[[overlap at:o :j] mul:@([sizeOfOrder at:j])])
+                                                     leq:[sizes elt: slabOfOrder[o]]]]
+                      ];
+            
+//            [mdl add:[[overlap at:o :i] imply:[[
+//                                                [overlap at:i :o] and: [slabOfOrder[o] eq:slabOfOrder[i]]
+//                                               ]
+//                                               and: [Sum(mdl,j,RANGE(mdl,1, no),[[overlap at:o :j] mul:@([sizeOfOrder at:j])])
+//                                                     leq:[sizes elt: slabOfOrder[o]]]]
+//                      ]];
          }
       }
       
-      for (int w = 1; w <= nw; w++) {
-         [mdl add:[Sum(mdl, s, RANGE(mdl, 1, ns), [warehouseof[s] eq:@(w)]) leq:@([capacity at:w])]];
+      [mdl add:[[isCounted at:1] eq:@(0)]];
+      for (int r = 2; r <= no; r++) {
+         [mdl add:[[isCounted at:r] eq:[Sum(mdl, c, RANGE(mdl, 1, r-1), [overlap at:r :c]) gt:@(0)]]]; // this is not counting right (for example for 5)
+//         [mdl add:[[isCounted at:r] eq:[Sum(mdl, c, RANGE(mdl, 1, r-1), [overlap at:r :c]) neq:@(0)]]]; // this gives different result than above, still not counting right though
       }
       
-      // this loop is what causes the invalid behavior
-      for (ORInt w = 1; w <= nw; w++) {
-         [mdl add:[warehouseused[w] eq: [Sum(mdl, s, RANGE(mdl, 1, ns), [[warehouseof at:s] eq:@(w)]) neq:@(0)]]];
-      }
-      
-      // if you replace the above loop with the one commented out below, it works as expected
-      //        for (int s = 1; s <= ns; s++) {
-      //            [mdl add:[[warehouseused elt:warehouseof[s]] eq:@(1)]];
-      //        }
-      
-      [mdl add:[totalcost eq:[Sum(mdl, w, RANGE(mdl, 1, nw), [warehouseused[w] mul:@(cf)]) plus:Sum(mdl, s, RANGE(mdl, 1, ns), [supCost at:s elt:warehouseof[s]])]]];
-      
-      [mdl minimize:totalcost];
-      
+      [mdl add:[totcap eq: Sum(mdl, o, RANGE(mdl, 1, 9), [[sizes elt: slabOfOrder[o]] mul:[isCounted[o] neg]])]];
+      //        [mdl add:[totcap eq: Sum(mdl, o, RANGE(mdl, 1, 9), [[sizes elt: slabOfOrder[o]] mul:[[isCounted at:o] eq:@(0)]])]]; // this crashes
+      [mdl minimize:totcap];
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id* gamma = [cp gamma];
       [cp solve:
        ^() {
-          [cp label:totalcost];
-          [cp labelArray:warehouseof];
-          [cp labelArray:warehouseused];
+          //[cp label:totcap];
+          [cp labelArray:slabOfOrder];
+          [cp labelArray:isCounted];
+          for (int r = 1; r <= no; r++) {
+             for (int c = 1; c <= no; c++) {
+                [cp label: [overlap at:r :c]];
+             }
+          }
+          NSLog(@"SOO: %@",[cp gamma][slabOfOrder.getId]);
+          printf("Total cap: %d \n", [cp intValue:totcap]);
+          printf("   ");
+          for (int c = 1; c <= no; c++) {
+             printf("%d ", c);
+          }
+          printf("\n");
+          for (int r = 1; r <= no; r++) {
+             printf("%d: ", r);
+             for (int c = 1; c <= no; c++) {
+                printf("%d ", [cp intValue:[overlap at:r :c]]);
+             }
+             printf("\n");
+          }
           
-          printf("Total cost: %d \n", [cp intValue:totalcost]);
-          for (int s = 1; s <= ns; s++) {
-             printf("%d ", [cp intValue:warehouseof[s]]);
-          }
-          printf("\n");
-          for (int s = 1; s <= ns; s++) {
-             printf("%d ", [cp intValue:[supCost at: s :[cp intValue:warehouseof[s]]]]);
+          for (int o = 1; o <= no; o++) {
+             printf("%d: %d %d %d\n", o, [sizes at:[cp intValue:slabOfOrder[o]]], [cp intValue:isCounted[o]],![cp intValue:isCounted[o]]);
           }
           
-          printf("\n");
-          for (int w = 1; w <= nw; w++) {
-             printf("%d ", [cp intValue:warehouseused[w]]);
-          }
-          printf("\n");
        }
        ];
       
