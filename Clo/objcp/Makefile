@@ -5,14 +5,23 @@
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel -I../ORFoundation \
-	-msse4.1 \
-	-fPIC -fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
+CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
+	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
+	-msse4.1
+LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
+	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
+	-L../CPUKernel -Wl,-rpath=`pwd`/../CPUKernel \
+	-lORUtilities -lORFoundation -lCPUKernel 
 
-LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
-	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
-	-lORUtilities -lORFoundation -lCPUKernel \
-	-lgnustep-base -lobjc 
+# CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel -I../ORFoundation \
+# 	-msse4.1 \
+# 	-fPIC -fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
+
+# LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
+# 	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
+# 	-lORUtilities -lORFoundation -lCPUKernel \
+# 	-lgnustep-base -lobjc 
 
 SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m CPConstraint.m  \
 	CPEvent.m  CPKnapsack.m CPTableI.m CPAssignmentI.m CPBitArray.m  \
