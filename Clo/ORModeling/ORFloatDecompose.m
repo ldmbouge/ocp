@@ -19,10 +19,10 @@
 {
    id<ORFloatLinear>   _terms;
    id<ORAddToModel>    _model;
-   ORAnnotation        _n;
+   ORCLevel        _n;
    id<ORFloatVar>      _eqto;
 }
--(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
+-(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORCLevel) n
 {
    self = [super init];
    _terms = t;
@@ -30,7 +30,7 @@
    _n     = n;
    return self;
 }
--(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x annotation: (ORAnnotation) n
+-(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x annotation: (ORCLevel) n
 {
    self = [super init];
    _terms = t;
@@ -231,7 +231,7 @@
 @end
 
 @implementation ORFloatSubst
--(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORCLevel)c
 {
    self = [super init];
    _rv = nil;
@@ -239,7 +239,7 @@
    _c = c;
    return self;   
 }
--(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c by:(id<ORFloatVar>)x
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORCLevel)c by:(id<ORFloatVar>)x
 {
    self = [super init];
    _rv  = x;
@@ -305,7 +305,7 @@
    ORFloat nub = max(lb*lb, ub*ub);
    if (_rv == nil)
       _rv = [ORFactory floatVar:_model low:nlb up:nub];
-   [_model addConstraint:[ORFactory floatSquare:_model var:oV equal:_rv annotation:_c]];
+   [_model addConstraint:[ORFactory floatSquare:_model var:oV equal:_rv]];
    [lT release];
 }
 -(void) visitExprCstFloatSubI:(ORExprCstFloatSubI*)e
@@ -317,7 +317,7 @@
    ORFloat ub = [a max];
    if (_rv == nil)
       _rv = [ORFactory floatVar:_model low:lb up:ub];
-   [_model addConstraint:[ORFactory floatElement:_model var:oV idxCstArray:a equal:_rv annotation:_c]];
+   [_model addConstraint:[ORFactory floatElement:_model var:oV idxCstArray:a equal:_rv]];
    [lT release];
 }
 

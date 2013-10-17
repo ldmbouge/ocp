@@ -390,18 +390,10 @@
 -(id<ORConstraint>) add: (id<ORConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:Default];
+      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c];
    }
    if (c.getId == -1)
       [c setId:_nbObjects++];
-   [_cStore addObject:c];
-   return c;
-}
--(id<ORConstraint>) add: (id<ORConstraint>) c annotation: (ORAnnotation) n
-{
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:n];
-   [c setId:_nbObjects++];
    [_cStore addObject:c];
    return c;
 }

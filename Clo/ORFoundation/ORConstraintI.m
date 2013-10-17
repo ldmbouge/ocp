@@ -57,7 +57,7 @@
 -(id<ORConstraint>)add:(id<ORConstraint>)c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      c = [ORFactory algebraicConstraint:_model expr: (id<ORRelation>)c annotation:Default];
+      c = [ORFactory algebraicConstraint:_model expr: (id<ORRelation>)c];
    [_content addObject:c];
    [_model trackConstraintInGroup:c];
    return c;
@@ -333,7 +333,6 @@
    id<ORVar> _x;
    id<ORVar> _y;
    ORInt        _c;
-   ORAnnotation _n;
 }
 -(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y plus:(ORInt)c
 {
@@ -341,16 +340,6 @@
    _x = x;
    _y = y;
    _c = c;
-   _n = DomainConsistency;
-   return self;
-}
--(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y plus:(ORInt)c annotation:(ORAnnotation)n
-{
-   self = [super initORConstraintI];
-   _x = x;
-   _y = y;
-   _c = c;
-   _n = n;
    return self;
 }
 -(NSString*) description
@@ -375,10 +364,6 @@
 {
    return _c;
 }
--(ORAnnotation) annotation
-{
-   return _n;
-}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
@@ -390,9 +375,8 @@
    ORInt _b;
    id<ORIntVar> _x;
    id<ORIntVar> _y;
-   ORAnnotation _note;
 }
--(ORAffine*)initORAffine: (id<ORIntVar>) y eq:(ORInt)a times:(id<ORIntVar>) x plus: (ORInt) b annotation: (ORAnnotation) n
+-(ORAffine*)initORAffine: (id<ORIntVar>) y eq:(ORInt)a times:(id<ORIntVar>) x plus: (ORInt) b
 {
    self = [super initORConstraintI];
    _a = a;
@@ -400,7 +384,6 @@
    _x = x;
    _y = y;
    assert(a != 0);
-   _note = n;
    return self;
 }
 -(NSString*) description
@@ -428,10 +411,6 @@
 -(ORInt)cst
 {
    return _b;
-}
--(ORAnnotation)annotation
-{
-   return _note;
 }
 -(NSSet*)allVars
 {
@@ -547,7 +526,6 @@
    id<ORIntVar> _x;
    id<ORIntVar> _y;
    id<ORIntVar> _z;
-   ORAnnotation _n;
 }
 -(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z
 {
@@ -555,16 +533,6 @@
    _x = x;
    _y = y;
    _z = z;
-   _n = DomainConsistency;
-   return self;
-}
--(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z annotation:(ORAnnotation)n
-{
-   self = [super initORConstraintI];
-   _x = x;
-   _y = y;
-   _z = z;
-   _n = n;
    return self;
 }
 -(NSString*) description
@@ -588,10 +556,6 @@
 -(id<ORIntVar>) right
 {
    return _z;
-}
--(ORAnnotation) annotation
-{
-   return _n;
 }
 -(NSSet*)allVars
 {
@@ -643,14 +607,12 @@
 @implementation ORSquare { // z == x^2
    id<ORVar> _z;
    id<ORVar> _x;
-   ORAnnotation _n;
 }
--(id)init:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n
+-(id)init:(id<ORVar>)z square:(id<ORVar>)x
 {
    self = [super initORConstraintI];
    _x = x;
    _z = z;
-   _n = n;
    return self;
 }
 -(id<ORVar>)res
@@ -660,10 +622,6 @@
 -(id<ORVar>)op
 {
    return _x;
-}
--(ORAnnotation)annotation
-{
-   return _n;
 }
 -(NSString*) description
 {
@@ -733,15 +691,13 @@
    id<ORIntVar> _x;
    ORInt        _y;
    id<ORIntVar> _z;
-   ORAnnotation _n;
 }
--(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
+-(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z
 {
    self = [super initORConstraintI];
    _x = x;
    _y = y;
    _z = z;
-   _n = n;
    return self;
 }
 -(NSString*) description
@@ -765,10 +721,6 @@
 -(ORInt) right
 {
    return _y;
-}
--(ORAnnotation) annotation
-{
-   return _n;
 }
 -(NSSet*)allVars
 {
@@ -861,14 +813,12 @@
 @implementation ORAbs { // x = |y|
    id<ORIntVar> _x;
    id<ORIntVar> _y;
-   ORAnnotation _annotation;
 }
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _x = x;
    _y = y;
-   _annotation = Default;
    return self;
 }
 -(NSString*) description
@@ -888,10 +838,6 @@
 -(id<ORIntVar>) left
 {
    return _y;
-}
--(ORAnnotation) annotation
-{
-   return _annotation;
 }
 -(NSSet*)allVars
 {
@@ -1027,15 +973,13 @@
    id<ORIntVar>   _idx;
    id<ORIntArray> _y;
    id<ORIntVar>   _z;
-   ORAnnotation  _note;
 }
--(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z
 {
    self = [super initORConstraintI];
    _idx = idx;
    _y = y;
    _z = z;
-   _note = n;
    return self;
 }
 -(NSString*) description
@@ -1060,10 +1004,6 @@
 {
    return _z;
 }
--(ORAnnotation)annotation
-{
-   return _note;
-}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_idx,_z, nil] autorelease];
@@ -1074,16 +1014,13 @@
    id<ORIntVar>     _idx;
    id<ORIntVarArray>  _y;
    id<ORIntVar>       _z;
-   ORAnnotation    _note;
 }
 -(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z
-                   annotation:(ORAnnotation)note
 {
    self = [super initORConstraintI];
    _idx = idx;
    _y = y;
    _z = z;
-   _note = note;
    return self;
 }
 -(NSString*) description
@@ -1108,10 +1045,6 @@
 {
    return _z;
 }
--(ORAnnotation)annotation
-{
-   return _note;
-}
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2 + [_y count]] autorelease];
@@ -1129,16 +1062,14 @@
    id<ORIntVar> _v0;
    id<ORIntVar> _v1;
    id<ORIntVar> _y;
-   ORAnnotation _note;
 }
--(id)initORElement:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y annotation:(ORAnnotation)n
+-(id)initORElement:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _m = m;
    _v0 = v0;
    _v1 = v1;
    _y  = y;
-   _note = n;
    return self;
 }
 -(NSString*) description
@@ -1167,10 +1098,6 @@
 {
    return _y;
 }
--(ORAnnotation)annotation
-{
-   return _note;
-}
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2 + [_m count]] autorelease];
@@ -1191,15 +1118,13 @@
    id<ORIntVar>   _idx;
    id<ORFloatArray> _y;
    id<ORFloatVar>   _z;
-   ORAnnotation  _note;
 }
--(id)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z annotation:(ORAnnotation)n
+-(id)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z
 {
    self = [super initORConstraintI];
    _idx = idx;
    _y = y;
    _z = z;
-   _note = n;
    return self;
 }
 -(NSString*) description
@@ -1223,10 +1148,6 @@
 -(id<ORFloatVar>) res
 {
    return _z;
-}
--(ORAnnotation)annotation
-{
-   return _note;
 }
 -(NSSet*)allVars
 {
@@ -1321,15 +1242,13 @@
    id<ORIntVar> _b;
    id<ORIntVar> _x;
    id<ORIntVar> _y;
-   ORAnnotation _n;
 }
--(ORReifyEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y annotation:(ORAnnotation)n
+-(ORReifyEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _b = b;
    _x = x;
    _y = y;
-   _n = n;
    return self;
 }
 -(NSString*) description
@@ -1354,10 +1273,6 @@
 {
    return _y;
 }
--(ORAnnotation) annotation
-{
-   return _n;
-}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
@@ -1368,15 +1283,13 @@
    id<ORIntVar> _b;
    id<ORIntVar> _x;
    id<ORIntVar> _y;
-   ORAnnotation _n;
 }
--(ORReifyNEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y annotation:(ORAnnotation)n
+-(ORReifyNEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _b = b;
    _x = x;
    _y = y;
-   _n = n;
    return self;
 }
 -(NSString*) description
@@ -1400,10 +1313,6 @@
 -(id<ORIntVar>) y
 {
    return _y;
-}
--(ORAnnotation) annotation
-{
-   return _n;
 }
 -(NSSet*)allVars
 {
@@ -1456,15 +1365,13 @@
    id<ORIntVar> _b;
    id<ORIntVar> _x;
    id<ORIntVar> _y;
-   ORAnnotation _n;
 }
--(ORReifyLEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y annotation:(ORAnnotation)n
+-(ORReifyLEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _b = b;
    _x = x;
    _y = y;
-   _n = n;
    return self;
 }
 -(NSString*) description
@@ -1488,10 +1395,6 @@
 -(id<ORIntVar>) y
 {
    return _y;
-}
--(ORAnnotation) annotation
-{
-   return _n;
 }
 -(NSSet*)allVars
 {
@@ -1544,15 +1447,13 @@
    id<ORIntVar> _b;
    id<ORIntVar> _x;
    id<ORIntVar> _y;
-   ORAnnotation _n;
 }
--(ORReifyGEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y annotation:(ORAnnotation)n
+-(ORReifyGEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _b = b;
    _x = x;
    _y = y;
-   _n = n;
    return self;
 }
 -(NSString*) description
@@ -1576,10 +1477,6 @@
 -(id<ORIntVar>) y
 {
    return _y;
-}
--(ORAnnotation) annotation
-{
-   return _n;
 }
 -(NSSet*)allVars
 {
@@ -2058,16 +1955,13 @@
 // ========================================================================================================
 
 
-@implementation ORAlldifferentI
-{
+@implementation ORAlldifferentI {
    id<ORIntVarArray> _x;
-   ORAnnotation _n;
 }
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x annotation:(ORAnnotation)n
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x
 {
    self = [super initORConstraintI];
    _x = x;
-   _n = n;
    return self;
 }
 -(id<ORIntVarArray>) array
@@ -2087,10 +1981,6 @@
 -(void)visit:(ORVisitor*)v
 {
    [v visitAlldifferent:self];
-}
--(ORAnnotation) annotation
-{
-   return _n;
 }
 -(NSSet*)allVars
 {
@@ -2150,7 +2040,6 @@
    id<ORIntVarArray> _x;
    id<ORIntArray>    _low;
    id<ORIntArray>     _up;
-   ORAnnotation        _n;
 }
 -(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
@@ -2158,16 +2047,6 @@
    _x = x;
    _low = low;
    _up = up;
-   _n = DomainConsistency;
-   return self;
-}
--(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c
-{
-   self = [super initORConstraintI];
-   _x = x;
-   _low = low;
-   _up = up;
-   _n = c;
    return self;
 }
 -(id<ORIntVarArray>) array
@@ -2186,10 +2065,6 @@
 {
    [v visitCardinality:self];
 }
--(ORAnnotation) annotation
-{
-   return _n;
-}
 -(NSSet*)allVars
 {
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
@@ -2202,13 +2077,11 @@
 
 @implementation ORAlgebraicConstraintI {
    id<ORRelation> _expr;
-   ORAnnotation   _note;
 }
--(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr annotation:(ORAnnotation)n
+-(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr
 {
    self = [super initORConstraintI];
    _expr = expr;
-   _note = n;
    return self;
 }
 -(id<ORRelation>) expr
@@ -2224,10 +2097,6 @@
 -(void)visit:(ORVisitor*)v
 {
    [v visitAlgebraicConstraint:self];
-}
--(ORAnnotation)annotation
-{
-   return _note;
 }
 -(NSSet*)allVars
 {

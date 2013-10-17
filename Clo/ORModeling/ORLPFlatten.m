@@ -80,7 +80,7 @@
    }];
 }
 
-+(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORCLevel)note
 {
    id<ORLinear> terms = [ORNormalizer normalize: expr into: model annotation:note];
    id<ORConstraint> cstr = NULL;

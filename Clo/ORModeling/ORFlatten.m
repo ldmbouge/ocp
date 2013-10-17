@@ -368,7 +368,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    table = [t memoize:table];
    id<ORIntVar> alpha = [ORFactory intVar:t domain:fr];
    [ORFactory tableConstraint:t table:table on:idx0 :idx1 :alpha];
-   _result = [ORFactory element:t var:alpha idxVarArray:f equal:res annotation:DomainConsistency];
+   _result = [ORFactory element:t var:alpha idxVarArray:f equal:res];
    [_into addConstraint:_result];
 }
 -(void) visitCircuit:(id<ORCircuit>) c
@@ -543,7 +543,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    [flattener release];
 }
 
-+(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORCLevel)note
 {
    id<ORConstraint> rv = NULL;
    id<ORLinear> terms = [ORNormalizer normalize:expr into: model annotation:note];

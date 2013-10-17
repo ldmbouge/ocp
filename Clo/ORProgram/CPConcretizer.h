@@ -18,8 +18,9 @@
    id<CPCommonProgram> _solver;
    id<CPEngine>        _engine;
    id*                 _gamma;
+   id<ORAnnotation>    _notes;
 }
--(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver;
+-(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes;
 @end
 
 @interface ORCPSearchConcretizer : ORVisitor<NSObject>

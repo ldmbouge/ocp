@@ -16,13 +16,13 @@
 #import <ORProgram/MIPProgram.h>
 
 @interface ORFactory (Concretization)
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model;
-+(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
-+(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k;
-+(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;
-+(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model;
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes;
++(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model annotation:(id<ORAnnotation>)notes;
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass;
++(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k annotation:(id<ORAnnotation>)notes;
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass;
++(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>)model annotation:(id<ORAnnotation>)notes;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>)notes;
 
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model;
 +(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model;

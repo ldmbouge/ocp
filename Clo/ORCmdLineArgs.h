@@ -43,6 +43,6 @@ struct ORResult {
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
 -(void)measure:(struct ORResult(^)())block;
--(id<CPProgram>)makeProgram:(id<ORModel>)model;
+-(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes;
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x;
 @end

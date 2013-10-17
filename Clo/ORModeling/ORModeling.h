@@ -23,7 +23,6 @@
 -(NSString*)description;
 -(void) addVariable: (id<ORVar>) x;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
--(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
 
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x;

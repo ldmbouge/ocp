@@ -16,6 +16,6 @@
 -(id) initORMIPFlatten: (id<ORAddToModel>) target;
 -(void) apply:(id<ORModel>) m;
 -(id<ORAddToModel>) target;
-+(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORCLevel)note;
 @end
 

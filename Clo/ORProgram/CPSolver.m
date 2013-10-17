@@ -1113,7 +1113,7 @@
    [_search limitFailures: maxFailures in: cl];
    
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation: (ORAnnotation) n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation: (ORCLevel) n
 {
    // LDM: This is the true addition of the constraint into the solver during the search.
    ORStatus status = [_engine add: c];
@@ -1389,7 +1389,7 @@
    [trg post:c];
    [trg release];
 }
--(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c annotation: (ORCLevel) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
@@ -1525,7 +1525,7 @@
 {
    [_imdl post:c];
 }
--(void) add: (id<ORConstraint>) c annotation:(ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c annotation:(ORCLevel) cons
 {
    [_imdl post:c];
 }
