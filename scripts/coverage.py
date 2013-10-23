@@ -72,9 +72,10 @@ ab = [('queensAC',12,0,0,0),
 	('partition',20,0,0,0),
 	('order',1000,0,0,0),
 	('wka',0,0,0,0),
-	('testAssignment',0,0,0,0),
-	('testLPConcretization',0,0,0,0),
-	('queensMIP',8,0,0,0)]
+	('TestAssignment',0,0,0,0)
+#	('testLPConcretization',0,0,0,0),
+#	('queensMIP',8,0,0,0)
+]
 #	('queensMIP',8,0,0,0),
 	  
 for (b,qa,na,par,heur) in ab:
