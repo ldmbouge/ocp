@@ -20,13 +20,11 @@
 @implementation ORFlatten {
    NSMapTable* _mapping;
 }
--(id)initORFlatten:(id<ORAddToModel>) into
+-(id)initORFlatten:(id<ORAddToModel>) into annotation:(id<ORAnnotation>)notes
 {
    self = [super init];
    _into = into;
-//   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
-//                                        valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
-//                                            capacity:64];
+   _fresh = notes;
    _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
                                         valueOptions:NSPointerFunctionsOpaqueMemory
                                             capacity:64];
@@ -197,18 +195,18 @@
    id<ORTracker> t = [_into tracker];
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
-   for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
+   [_into setCurrent:cstr];
+   for(ORInt b = brlow; b <= brup; b++) { /*note:RangeConsistency*/
       [ORFlatten flattenExpression: [Sum(t,i,IR,[[item[i] eq: @(b) track:t] mul:@([itemSize at:i]) track:t]) eq: binSize[b]]
-                              into: _into
-                        annotation: DomainConsistency];
+                              into: _into];
+   }
    ORInt s = 0;
    ORInt irlow = [IR low];
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
    [ORFlatten flattenExpression: [Sum(t,b,BR,binSize[b]) eq: @(s)]
-                           into: _into
-                     annotation: DomainConsistency];
+                           into: _into];
    
    for(ORInt b = brlow; b <= brup; b++)
       [_into addConstraint: [ORFactory packOne:t item:item itemSize: itemSize bin: b binSize: binSize[b]]];
@@ -233,7 +231,8 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORFlatten flattenExpression:[cstr expr] into:_into annotation:[cstr annotation]];
+   [_into setCurrent:cstr];
+   [ORFlatten flattenExpression:[cstr expr] into:_into];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -491,13 +490,13 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    switch ([e expr].vtype) {
       case ORTInt: {
-         ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
-         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into annotation:Default];
+         ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into];
+         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
          _result = [_into minimizeVar: alpha];
       }break;
       case ORTFloat: {
-         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into annotation: Default];
-         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into annotation:Default];
+         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
+         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
          _result = [_into minimizeVar:alpha];
       }break;
       default:
@@ -508,13 +507,13 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    switch ([e expr].vtype) {
       case ORTInt: {
-         ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
-         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into annotation:Default];
+         ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into];
+         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
          _result = [_into maximizeVar: alpha];
       }break;
       case ORTFloat:{
-         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into annotation: Default];
-         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into annotation:Default];
+         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
+         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
          _result = [_into maximizeVar:alpha];
       }break;
       default: break;
@@ -538,21 +537,21 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 
 +(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m
 {
-   ORFlatten* flattener  = [[ORFlatten alloc] initORFlatten:m];
+   ORFlatten* flattener  = [[ORFlatten alloc] initORFlatten:m annotation:nil]; //TOFIX
    [c visit:flattener];
    [flattener release];
 }
 
-+(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORCLevel)note
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model
 {
    id<ORConstraint> rv = NULL;
-   id<ORLinear> terms = [ORNormalizer normalize:expr into: model annotation:note];
+   id<ORLinear> terms = [ORNormalizer normalize:expr into: model];
    switch ([expr type]) {
       case ORRBad: assert(NO);
-      case ORREq: rv = [terms postEQZ:model annotation:note];break;
-      case ORRNEq:rv = [terms postNEQZ:model annotation:note];break;
-      case ORRLEq:rv = [terms postLEQZ:model annotation:note];break;
-      case ORRDisj:rv = [terms postDISJ:model annotation:note];break;
+      case ORREq: rv = [terms postEQZ:model];break;
+      case ORRNEq:rv = [terms postNEQZ:model];break;
+      case ORRLEq:rv = [terms postLEQZ:model];break;
+      case ORRDisj:rv = [terms postDISJ:model];break;
       default:
          assert(terms == nil);
          break;

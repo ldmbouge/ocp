@@ -20,7 +20,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         
+         id<ORAnnotation> notes= [ORFactory note];
          const ORInt nbCourses = 66;
          const ORInt nbPeriods = 12;
          const ORInt nbPre = 65;
@@ -45,15 +45,15 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> l = [ORFactory intVarArray:model range:Periods domain:RANGE(model,0,totCredit)];
          [model minimize:[ORFactory max:model over:Periods suchThat:nil of:^id<ORExpr>(ORInt i) {return l[i];}]];
          //[model add:[[ORFactory max:model over:Periods suchThat:nil of:^id<ORExpr>(ORInt i) {return l[i];}] eq:@17]];
-         [model add:[ORFactory packing:model item:x itemSize:credits load:l]];
+         [notes dc:[model add:[ORFactory packing:model item:x itemSize:credits load:l]]];
          for(ORInt i=0;i<nbPre;i++)
             [model add:[x[prerequisites[i*2]] lt:x[prerequisites[i*2+1]]]];
-         [model add:[ORFactory cardinality:x
-                                       low:[ORFactory intArray:model range:Periods with:^ORInt(ORInt p) { return minCard;}]
-                                        up:[ORFactory intArray:model range:Periods with:^ORInt(ORInt p) { return maxCard;}]
-                                annotation:DomainConsistency]];
+         [notes dc:[model add:[ORFactory cardinality:x
+                                                 low:[ORFactory intArray:model range:Periods with:^ORInt(ORInt p) { return minCard;}]
+                                                  up:[ORFactory intArray:model range:Periods with:^ORInt(ORInt p) { return maxCard;}]
+                                ]]];
         
-         id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgram:model annotation:notes];
          __block ORInt nbSol = 0;
          [cp solve:^{
             //[cp labelArrayFF:x];

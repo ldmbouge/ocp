@@ -85,7 +85,7 @@ int main(int argc, const char * argv[])
             [mdl add: [Sum(mdl,c,Colors,Or(mdl,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
          [mdl minimize: obj];
          
-         id<CPProgram> cp  = [args makeProgram:mdl];
+         id<CPProgram> cp  = [args makeProgram:mdl annotation:nil];
          [cp solve: ^{
             NSLog(@"In the search ... ");
             [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [cp domsize:slab[o]];} do: ^(ORInt o)

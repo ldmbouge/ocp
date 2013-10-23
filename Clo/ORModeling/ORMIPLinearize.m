@@ -35,7 +35,7 @@
 +(id<ORModel>) linearize: (id<ORModel>) model
 {
    id<ORModel> lin = [ORFactory createModel: [model nbObjects] mappings: model.modelMappings];
-   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
+   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model annotation:nil]; //TOFIX
    id<ORModelTransformation> linearizer = [[ORMIPLinearize alloc] initORMIPLinearize: lm];
    [linearizer apply: model];
    return lin;

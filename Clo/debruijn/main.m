@@ -24,6 +24,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
+         id<ORAnnotation> notes = [ORFactory note];
          ORInt base =  2;
          ORInt n    = [args size];
          ORInt m    = [args nArg];//pow(base,n);
@@ -35,7 +36,7 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> code = [ORFactory intVarArray:model range:RANGE(model,1,m) domain:RANGE(model,0,base-1)];
          id<ORIntVarArray> gcc  = [ORFactory intVarArray:model range:RANGE(model,0,base-1) domain:RANGE(model,0,m)];
          
-         [model add: [ORFactory alldifferent:x annotation:ValueConsistency]];
+         [notes vc:[model add: [ORFactory alldifferent:x]]];
          for(ORInt i=2;i<=m;i++)
             [model add: [x[1] leq: x[i]]];
          for(ORInt i=1;i<=m;i++)
@@ -54,7 +55,7 @@ int main(int argc, const char * argv[])
             [model add:[Sum(model, j, RANGE(model,1,m), [code[j] eq:@(i)]) eq:gcc[i]]];
          
          
-         id<CPProgram> cp = [ORFactory createCPProgram:model];
+         id<CPProgram> cp = [ORFactory createCPProgram:model annotation:notes];
          __block ORInt nbSol = 0;
          [cp solveAll:^{
             //NSLog(@"MODEL: %@",[[cp engine] model]);

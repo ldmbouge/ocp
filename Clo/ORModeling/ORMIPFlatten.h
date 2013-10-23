@@ -13,9 +13,9 @@
 #import <ORModeling/ORModelTransformation.h>
 
 @interface ORMIPFlatten : ORNOopVisit<ORModelTransformation>
--(id) initORMIPFlatten: (id<ORAddToModel>) target;
+-(id) initORMIPFlatten: (id<ORAddToModel>) target annotation:(id<ORAnnotation>)notes;
 -(void) apply:(id<ORModel>) m;
 -(id<ORAddToModel>) target;
-+(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORCLevel)note;
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m;
 @end
 

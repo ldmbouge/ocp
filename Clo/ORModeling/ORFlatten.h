@@ -17,12 +17,13 @@
 @interface ORFlatten : ORNOopVisit<ORModelTransformation> {
    id<ORAddToModel>   _into;
    id               _result;
+   id<ORAnnotation>  _fresh;
 }
--(id)initORFlatten: (id<ORAddToModel>) into;
+-(id)initORFlatten: (id<ORAddToModel>) into annotation:(id<ORAnnotation>)notes;
 -(void) apply: (id<ORModel>)m;
 -(id<ORAddToModel>) target;
 +(void) flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
-+(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORCLevel)note;
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m;
 @end
 
 @interface ORReplace : ORNOopVisit<ORModelTransformation>

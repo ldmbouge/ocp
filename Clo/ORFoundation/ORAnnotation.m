@@ -12,6 +12,14 @@
 #import "ORAnnotation.h"
 #import "ORConstraint.h"
 
+@interface ORAnnotationCopy : ORAnnotation<ORAnnotation,NSCopying>
+{
+   id<ORAnnotation> _original;
+}
+-(id)initWith:(id<ORAnnotation>)src;
+-(ORCLevel)levelFor:(id<ORConstraint>)cstr;
+@end
+
 @implementation ORAnnotation {
    NSMutableDictionary* _notes;
 }
@@ -26,6 +34,11 @@
    [_notes release];
    [super dealloc];
 }
+- (id)copyWithZone:(NSZone *)zone
+{
+   return [[ORAnnotationCopy allocWithZone:zone] initWith:self];
+}
+
 -(id<ORConstraint>)note:(id<ORConstraint>)cstr consistency:(ORCLevel)cl
 {
    NSNumber* k = [[NSNumber alloc] initWithInt:[cstr getId]];
@@ -123,6 +136,42 @@
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
    static const char* names[] = {"dom","rng","val","def"};
    [buf appendFormat:@"c=%s",names[_cLevel]];
+   return buf;
+}
+@end
+
+@implementation ORAnnotationCopy
+-(id)initWith:(id<ORAnnotation>)src
+{
+   self = [super init];
+   _original = [src retain];
+   return self;
+}
+-(void)dealloc
+{
+   [_original release];
+   [super dealloc];
+}
+- (id)copyWithZone:(NSZone *)zone
+{
+   return [[ORAnnotationCopy alloc] initWith:self];
+}
+-(ORCLevel)levelFor:(id<ORConstraint>)cstr
+{
+   ORConsistency* cn = [super findNote:cstr ofClass:[ORConsistency class]];
+   if (cn)
+      return cn ? [cn level] : Default;
+   else
+      return [_original levelFor:cstr];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   @autoreleasepool {
+      [buf appendString:[super description]];
+      [buf appendString:@"src:"];
+      [buf appendString:[_original description]];
+   }
    return buf;
 }
 @end

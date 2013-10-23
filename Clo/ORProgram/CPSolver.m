@@ -1269,12 +1269,14 @@
    [_concretizer release];
    [super dealloc];
 }
+-(void)setCurrent:(id<ORConstraint>)cstr
+{}
+
 -(ORStatus)post:(id<ORConstraint>)c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       [ORFlatten flattenExpression:(id<ORExpr>) c
-                              into: self
-                        annotation: DomainConsistency];
+                              into: self];
    else
       [ORFlatten flatten: c into:self];
    return [_engine status];

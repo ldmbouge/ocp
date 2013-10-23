@@ -25,6 +25,7 @@
 }
 -(id)init:(CPCoreSolver*)theSolver;
 -(ORStatus)post:(id<ORConstraint>)c;
+-(void)setCurrent:(id<ORConstraint>)cstr;
 @end
 
 @interface CPHeuristicSet : NSObject

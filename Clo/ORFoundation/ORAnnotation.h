@@ -19,14 +19,15 @@ typedef enum {
    Default
 } ORCLevel;
 
-@protocol ORAnnotation <NSObject>
+@protocol ORAnnotation <NSObject,NSCopying>
 -(id<ORConstraint>)dc:(id<ORConstraint>)cstr;
 -(id<ORConstraint>)bc:(id<ORConstraint>)cstr;
 -(id<ORConstraint>)vc:(id<ORConstraint>)cstr;
 -(ORCLevel)levelFor:(id<ORConstraint>)cstr;
+-(id)copy;
 @end
 
-@interface ORAnnotation : ORObject<ORAnnotation>
+@interface ORAnnotation : ORObject<ORAnnotation,NSCopying>
 -(id<ORConstraint>)dc:(id<ORConstraint>)cstr;
 -(id<ORConstraint>)bc:(id<ORConstraint>)cstr;
 -(id<ORConstraint>)vc:(id<ORConstraint>)cstr;

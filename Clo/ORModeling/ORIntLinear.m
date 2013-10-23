@@ -217,7 +217,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    return min(MAXINT,bindUp(ub));
 }
 
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORCLevel)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
    id<ORConstraint> rv = NULL;
    switch(_nb) {
@@ -258,7 +258,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    }
    return rv;
 }
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORCLevel)cons
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model
 {
    // [ldm] This should *never* raise an exception, but return a ORFailure.   
    id<ORConstraint> rv = NULL;
@@ -324,7 +324,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    }
    return rv;
 }
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORCLevel)cons
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {
    id<ORConstraint> rv = NULL;
    switch(_nb) {
@@ -364,7 +364,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    }
    return rv;
 }
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORCLevel)cons
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
    id<ORConstraint> rv = NULL;
    switch (_nb) {
@@ -457,21 +457,21 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return [_real description];
 }
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORCLevel)cons
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model
 {
-   return [_real postEQZ:model annotation:cons];
+   return [_real postEQZ:model];
 }
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORCLevel)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
-   return [_real postNEQZ:model annotation:cons];
+   return [_real postNEQZ:model];
 }
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORCLevel)cons
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {
-   return [_real postLEQZ:model annotation:cons];
+   return [_real postLEQZ:model];
 }
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORCLevel)cons
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
-   return [_real postDISJ:model annotation:cons];
+   return [_real postDISJ:model];
 }
 @end
 

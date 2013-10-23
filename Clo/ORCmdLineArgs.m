@@ -95,6 +95,10 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
           endCPU - startCPU,
           endWC - startWC,[str cStringUsingEncoding:NSASCIIStringEncoding]);
 }
+-(id<CPProgram>)makeProgram:(id<ORModel>)model
+{
+   return [self makeProgram:model annotation:nil];
+}
 -(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
    switch(nbThreads) {

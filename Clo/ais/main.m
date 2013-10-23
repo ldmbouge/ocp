@@ -26,6 +26,7 @@ int main(int argc, const char * argv[])
       [args measure:^struct ORResult() {
          id<ORModel> mdl = [ORFactory createModel];
          int n = [args size];
+         id<ORAnnotation> notes = [ORFactory note];
          id<ORIntRange> R = RANGE(mdl,1,n);
          id<ORIntRange> D = RANGE(mdl,0,n-1);
          id<ORIntRange> SD = RANGE(mdl,1,n-1);
@@ -33,19 +34,19 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> sx = [ORFactory intVarArray: mdl range:R domain: D];
          id<ORIntVarArray> dx = [ORFactory intVarArray: mdl range:SD domain: SD];
 
-         [mdl add:[ORFactory alldifferent:sx annotation:DomainConsistency]];
+         [notes dc:[mdl add:[ORFactory alldifferent:sx]]];
          for(ORUInt i=SD.low;i<=SD.up;i++) {
             //[mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]] annotation: DomainConsistency];
             [mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]]];
          }
-         [mdl add:[ORFactory alldifferent:dx annotation:DomainConsistency]];
+         [notes dc:[mdl add:[ORFactory alldifferent:dx]]];
 //         [mdl add:[sx[1]   leq:sx[2]]];
 //         [mdl add:[dx[n-1] leq:dx[1]]];
 
          [mdl add:[sx[1] leq:sx[n]]];
          [mdl add:[dx[1] leq:dx[2]]];
 
-         id<CPProgram> cp =  [args makeProgram:mdl];
+         id<CPProgram> cp =  [args makeProgram:mdl annotation:notes];
 //         id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
          __block ORInt nbSolutions = 0;
          [cp solveAll: ^{

@@ -15,8 +15,8 @@
 #import "ORFloatLinear.h"
 
 @interface ORFloatLinearizer : ORVisitor<NSObject>
--(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORCLevel) n;
--(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x annotation: (ORCLevel) n;
+-(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model;
+-(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x;
 @end
 
 @interface ORFloatSubst   : ORVisitor<NSObject> {
@@ -24,8 +24,8 @@
    id<ORAddToModel> _model;
    ORCLevel             _c;
 }
--(id)initORSubst:(id<ORAddToModel>) model annotation:(ORCLevel)c;
--(id)initORSubst:(id<ORAddToModel>) model annotation:(ORCLevel)c by:(id<ORFloatVar>)x;
+-(id)initORSubst:(id<ORAddToModel>) model;
+-(id)initORSubst:(id<ORAddToModel>) model by:(id<ORFloatVar>)x;
 -(id<ORFloatVar>)result;
 @end
 
