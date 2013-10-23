@@ -18,12 +18,13 @@
 
 @implementation ORCPConcretizer
 
--(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver
+-(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes
 {
    self = [super init];
    _solver = [solver retain];
    _engine = [_solver engine];
    _gamma = [solver gamma];
+   _notes = notes;
    return self;
 }
 -(void) dealloc
@@ -218,7 +219,7 @@
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
-      ORAnnotation n = [cstr annotation];
+      ORCLevel n = [_notes levelFor:cstr];
       [ax visit: self];
       id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: _gamma[ax.getId] annotation: n];
       [_engine add: concreteCstr];
@@ -235,7 +236,7 @@
       id<ORIntVarArray> ax = [cstr array];
       id<ORIntArray> low = [cstr low];
       id<ORIntArray> up = [cstr up];
-      ORAnnotation n = [cstr annotation];
+      ORCLevel n = [_notes levelFor:cstr];
       [ax visit: self];
       [low visit: self];
       [up visit: self];
@@ -446,7 +447,7 @@
       id<CPConstraint> concreteCstr = [CPFactory equal: left
                                                     to: right
                                                   plus: [cstr cst]
-                                            annotation: [cstr annotation]];
+                                            annotation: [_notes levelFor:cstr]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -457,7 +458,8 @@
    if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> y = [self concreteVar:[cstr left]];
       id<CPIntVar> x = [self concreteVar:[cstr right]];
-      id<CPConstraint> concrete = [CPFactory affine:y equal:[cstr coef] times:x plus:[cstr cst] annotation:[cstr annotation]];
+      id<CPConstraint> concrete = [CPFactory affine:y equal:[cstr coef] times:x plus:[cstr cst]
+                                         annotation:[_notes levelFor:cstr]];
       [_engine add:concrete];
       _gamma[cstr.getId] = concrete;
    }
@@ -495,7 +497,7 @@
       id<ORIntVar> res = [cstr res];
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
-      ORAnnotation annotation = [cstr annotation];
+      ORCLevel annotation = [_notes levelFor:cstr];
       [res visit: self];
       [left visit: self];
       [right visit: self];
@@ -530,7 +532,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> res = [self concreteVar:[cstr res]];
       id<CPIntVar> op  = [self concreteVar:[cstr op]];
-      ORAnnotation annotation = [cstr annotation];
+      ORCLevel annotation = [_notes levelFor:cstr];
       id<CPConstraint> concrete = [CPFactory square:op equal:res annotation:annotation];
       [_engine add:concrete];
       _gamma[cstr.getId] = concrete;
@@ -541,7 +543,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<CPFloatVar> res = [self concreteVar:[cstr res]];
       id<CPFloatVar> op  = [self concreteVar:[cstr op]];
-      ORAnnotation annotation = [cstr annotation];
+      ORCLevel annotation = [_notes levelFor:cstr];
       id<CPConstraint> concrete = [CPFactory floatSquare:op equal:res annotation:annotation];
       [_engine add:concrete];
       _gamma[cstr.getId] = concrete;
@@ -563,7 +565,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> res = [self concreteVar:[cstr res]];
       id<CPIntVar> left = [self concreteVar:[cstr left]];
-      ORAnnotation annotation = [cstr annotation];
+      ORCLevel annotation = [_notes levelFor:cstr];
       ORInt right = [cstr right];
       id<CPConstraint> concreteCstr  = [CPFactory mod:left modi:right equal:res annotation:annotation];
       [_engine add: concreteCstr];
@@ -673,7 +675,7 @@
       id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) _gamma[idx.getId]
                                              idxCstArray: array
                                                    equal: (id<CPIntVar>) _gamma[res.getId]
-                                              annotation: [cstr annotation]
+                                              annotation: [_notes levelFor:cstr]
                                        ];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -691,7 +693,7 @@
       id<CPConstraint> concreteCstr = [CPFactory floatElement: (id<CPIntVar>) _gamma[idx.getId]
                                                   idxCstArray: array
                                                         equal: (id<CPFloatVar>) _gamma[res.getId]
-                                                   annotation: [cstr annotation]
+                                                   annotation: [_notes levelFor:cstr]
                                        ];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -707,7 +709,7 @@
       id<CPConstraint> concreteCstr = [CPFactory element: idx
                                              idxVarArray: array
                                                    equal: res
-                                              annotation: [cstr annotation]
+                                              annotation: [_notes levelFor:cstr]
                                        ];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -736,7 +738,7 @@
       id<ORIntVar> b = [cstr b];
       id<ORIntVar> x = [cstr x];
       id<ORIntVar> y = [cstr y];
-      ORAnnotation annotation = [cstr annotation];
+      ORCLevel annotation = [_notes levelFor:cstr];
       [b visit: self];
       [x visit: self];
       [y visit: self];
@@ -765,7 +767,7 @@
       id<ORIntVar> b = [cstr b];
       id<ORIntVar> x = [cstr x];
       id<ORIntVar> y = [cstr y];
-      ORAnnotation annotation = [cstr annotation];
+      ORCLevel annotation = [_notes levelFor:cstr];
       [b visit: self];
       [x visit: self];
       [y visit: self];

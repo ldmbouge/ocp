@@ -213,7 +213,7 @@
 {
    return [[self worker] trackVariable: object];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
 {
    [[self worker] addConstraintDuringSearch: c annotation:n];
 }

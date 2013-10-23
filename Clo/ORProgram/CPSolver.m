@@ -1113,7 +1113,7 @@
    [_search limitFailures: maxFailures in: cl];
    
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation: (ORAnnotation) n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation: (ORCLevel) n
 {
    // LDM: This is the true addition of the constraint into the solver during the search.
    ORStatus status = [_engine add: c];
@@ -1269,12 +1269,14 @@
    [_concretizer release];
    [super dealloc];
 }
+-(void)setCurrent:(id<ORConstraint>)cstr
+{}
+
 -(ORStatus)post:(id<ORConstraint>)c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       [ORFlatten flattenExpression:(id<ORExpr>) c
-                              into: self
-                        annotation: DomainConsistency];
+                              into: self];
    else
       [ORFlatten flatten: c into:self];
    return [_engine status];
@@ -1389,7 +1391,7 @@
    [trg post:c];
    [trg release];
 }
--(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c annotation: (ORCLevel) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
@@ -1525,7 +1527,7 @@
 {
    [_imdl post:c];
 }
--(void) add: (id<ORConstraint>) c annotation:(ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c annotation:(ORCLevel) cons
 {
    [_imdl post:c];
 }

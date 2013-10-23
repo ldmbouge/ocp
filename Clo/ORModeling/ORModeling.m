@@ -29,22 +29,22 @@
 {
    return [m copy];
 }
-+(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel annotation:(id<ORAnnotation>)notes
 {
-   return [[ORBatchModel alloc]  init: flatModel source:srcModel];
+   return [[ORBatchModel alloc]  init: flatModel source:srcModel annotation:notes];
 }
 
-+(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into
++(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes
 {
-  return [[ORFlatten alloc] initORFlatten:into];
+  return [[ORFlatten alloc] initORFlatten:into annotation:notes];
 }
-+(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
++(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes
 {
-   return [[ORLPFlatten alloc] initORLPFlatten:into];
+   return [[ORLPFlatten alloc] initORLPFlatten:into annotation:notes];
 }
-+(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into
++(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes
 {
-   return [[ORMIPFlatten alloc] initORMIPFlatten:into];
+   return [[ORMIPFlatten alloc] initORMIPFlatten:into annotation:notes];
 }
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into
 {

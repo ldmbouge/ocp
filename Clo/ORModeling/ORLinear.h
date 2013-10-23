@@ -13,8 +13,8 @@
 #import <ORModeling/ORModeling.h>
 
 @protocol ORLinear<NSObject>
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model;
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model;
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model;
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model;
 @end

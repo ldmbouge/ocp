@@ -33,9 +33,10 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
          id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
          id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
-         [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
-         [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
-         [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
+         id<ORAnnotation> note = [ORFactory note];
+         [note dc:[mdl add: [ORFactory alldifferent: x]]];
+         [note dc:[mdl add: [ORFactory alldifferent: xp]]];
+         [note dc:[mdl add: [ORFactory alldifferent: xn]]];
          /*
          @autoreleasepool {
             for(id<ORConstraint> c in [mdl constraints]) {
@@ -44,7 +45,7 @@ int main(int argc, const char * argv[])
             }
          }
          */
-         id<CPProgram> cp = [args makeProgram:mdl];
+         id<CPProgram> cp = [args makeProgram:mdl annotation:note];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBDSController class]];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController class]];
          //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
@@ -88,11 +89,12 @@ int main0(int argc, const char * argv[])
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
-      [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
+      id<ORAnnotation> note = [ORFactory note];
+      [note bc:[mdl add: [ORFactory alldifferent: x]]];
+      [note bc:[mdl add: [ORFactory alldifferent: xp]]];
+      [note bc:[mdl add: [ORFactory alldifferent: xn]]];
 //      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
-      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
+      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 annotation:note with:[ORSemDFSController class]];
       __block ORInt nbSol = 0;
       [cp solveAll:
        ^() {

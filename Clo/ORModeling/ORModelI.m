@@ -197,6 +197,8 @@
    _mappings = [src->_mappings copy];
    return self;
 }
+-(void)setCurrent:(id<ORConstraint>)cstr
+{}
 -(id<ORTau>) tau
 {
    return _mappings.tau;
@@ -390,18 +392,10 @@
 -(id<ORConstraint>) add: (id<ORConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:Default];
+      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c];
    }
    if (c.getId == -1)
       [c setId:_nbObjects++];
-   [_cStore addObject:c];
-   return c;
-}
--(id<ORConstraint>) add: (id<ORConstraint>) c annotation: (ORAnnotation) n
-{
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:n];
-   [c setId:_nbObjects++];
    [_cStore addObject:c];
    return c;
 }
@@ -503,33 +497,33 @@
    ORModelI* clone = [[ORModelI allocWithZone:zone] initWithModel:self];
    return clone;
 }
--(id<ORModel>) flatten
+-(id<ORModel>) flatten:(id<ORAnnotation>)ncpy
 {
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
-   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch annotation:ncpy];
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
    [flat release];
    return flatModel;
 }
--(id<ORModel>) lpflatten
+-(id<ORModel>) lpflatten:(id<ORAnnotation>)ncpy
 {
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
-   id<ORModelTransformation> flat = [ORFactory createLPFlattener:batch];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
+   id<ORModelTransformation> flat = [ORFactory createLPFlattener:batch annotation:ncpy];
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
    [flat release];
    return flatModel;
 }
--(id<ORModel>) mipflatten
+-(id<ORModel>) mipflatten:(id<ORAnnotation>)ncpy
 {
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
-   id<ORModelTransformation> flat = [ORFactory createMIPFlattener:batch];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
+   id<ORModelTransformation> flat = [ORFactory createMIPFlattener:batch annotation:ncpy];
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
@@ -562,12 +556,16 @@
 {
    ORModelI* _target;
    ORModelI* _src;
+   id<ORAnnotation> _notes;
+   id<ORConstraint> _current;  // reference to the source constraint being current during a model transformation.
 }
--(ORBatchModel*)init: (ORModelI*) theModel source:(ORModelI*)src
+-(ORBatchModel*)init: (ORModelI*) theModel source:(ORModelI*)src annotation:(id<ORAnnotation>)notes 
 {
    self = [super init];
    _target = theModel;
    _src    = src;
+   _notes  = notes;
+   _current = nil;
    return self;
 }
 -(id<ORVar>) addVariable: (id<ORVar>) var
@@ -590,10 +588,22 @@
 {
    return [_target modelMappings];
 }
+-(void)setCurrent:(id<ORConstraint>)cstr
+{
+   _current = cstr;
+}
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
-   if (cstr && (id)cstr != [NSNull null])
+   if (cstr && (id)cstr != [NSNull null]) {
+      ORCLevel cl = [_notes levelFor:_current];
       [_target add: cstr];
+      switch(cl) {
+         case DomainConsistency: [_notes dc:cstr];break;
+         case RangeConsistency:  [_notes bc:cstr];break;
+         case ValueConsistency:  [_notes vc:cstr];break;
+         default: break;
+      }
+   }
    return cstr;
 }
 -(id<ORModel>) model
@@ -673,13 +683,19 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 @implementation ORBatchGroup {
    id<ORAddToModel>     _target;
    id<ORGroup>        _theGroup;
+   id<ORConstraint>    _current;
 }
 -(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group
 {
    self = [super init];
    _target = model;
    _theGroup = group;
+   _current = nil;
    return self;
+}
+-(void)setCurrent:(id<ORConstraint>)cstr
+{
+   _current = cstr;
 }
 -(id<ORTracker>)tracker
 {

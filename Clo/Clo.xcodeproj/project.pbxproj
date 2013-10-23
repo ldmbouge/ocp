@@ -498,6 +498,8 @@
 		5B8469301638583000F4D749 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8469311638583000F4D749 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8469321638583800F4D749 /* CPBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B150019156EB1A500897252 /* CPBaseHeuristic.m */; };
+		5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
 		5B8C7DF3158674D1007042CA /* CPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE7158674D1007042CA /* CPAppDelegate.m */; };
 		5B8C7DF4158674D1007042CA /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE8158674D1007042CA /* Credits.rtf */; };
@@ -5408,6 +5410,8 @@
 		5B8259851608BB04006CE539 /* CPABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPABS.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B85DE111438B2D500E4E133 /* ORSemBDSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemBDSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B85DE121438B2D500E4E133 /* ORSemBDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemBDSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORAnnotation.h; sourceTree = "<group>"; };
+		5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORAnnotation.m; sourceTree = "<group>"; };
 		5B8B12DB15A3BF8000300385 /* ORError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORError.m; sourceTree = "<group>"; };
 		5B8C7DE6158674D1007042CA /* CPAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAppDelegate.h; sourceTree = "<group>"; };
 		5B8C7DE7158674D1007042CA /* CPAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -8482,6 +8486,8 @@
 				5B920EBE15A402A500AD0820 /* ORArrayI.m */,
 				5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */,
 				5BF3E1D713C3BC6400C3F1A5 /* ORAVLTree.m */,
+				5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */,
+				5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */,
 				B1A0124615CCA92F001ED0D4 /* ORCommand.h */,
 				B1A0124715CCA930001ED0D4 /* ORCommand.m */,
 				B1CC82F315D27A57008DE335 /* ORConstraint.h */,
@@ -9242,6 +9248,7 @@
 				5BFD5A6C15A3BEA900825BC3 /* ORError.h in Headers */,
 				5BD2DFC815A3CEBF00D4C616 /* ORSet.h in Headers */,
 				5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */,
+				5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */,
 				5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */,
 				5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */,
 				5B920EAC15A3F4A900AD0820 /* ORTracker.h in Headers */,
@@ -12146,6 +12153,7 @@
 				5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */,
 				5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */,
 				B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */,
+				5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */,
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,

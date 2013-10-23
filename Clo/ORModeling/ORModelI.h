@@ -65,9 +65,9 @@
 -(void) setSource:(id<ORModel>)src;
 -(id<ORModel>)source;
 
--(id<ORModel>) flatten;
--(id<ORModel>) lpflatten;
--(id<ORModel>) mipflatten;
+-(id<ORModel>) flatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) mipflatten:(id<ORAnnotation>)notes;
 
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
@@ -76,7 +76,7 @@
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
--(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
+-(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src annotation:(id<ORAnnotation>)notes;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
 -(id) addMutable:(id)object;
 -(id) addImmutable:(id)object;
@@ -96,6 +96,7 @@
 -(id) trackImmutable:(id)obj;
 -(id) trackVariable: (id) obj;
 -(id<ORModelMappings>) modelMappings;
+-(void)setCurrent:(id<ORConstraint>)cstr;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>

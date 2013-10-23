@@ -23,7 +23,6 @@
 -(NSString*)description;
 -(void) addVariable: (id<ORVar>) x;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
--(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
 
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x;
@@ -46,9 +45,9 @@
 -(NSArray*) mutables;
 -(NSArray*) immutables;
 // pvh: this should go
--(id<ORModel>) flatten;
--(id<ORModel>) lpflatten;
--(id<ORModel>) mipflatten;
+-(id<ORModel>) flatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) mipflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) copy;
 -(void) setSource: (id<ORModel>) src;
 -(id<ORModel>) source;
@@ -74,16 +73,17 @@
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModelMappings>) modelMappings;
+-(void)setCurrent:(id<ORConstraint>)cstr;
 @end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
 +(id<ORModel>) createModel:(ORUInt)nbo mappings: (id<ORModelMappings>) mappings;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
-+(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
-+(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;
-+(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
-+(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src annotation:(id<ORAnnotation>)notes;
++(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes;
++(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes;
++(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes;
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
 +(id<ORSolutionPool>) createSolutionPool;
 +(id<ORConstraintSet>) createConstraintSet;

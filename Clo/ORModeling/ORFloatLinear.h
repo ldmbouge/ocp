@@ -54,12 +54,12 @@
 -(id<ORVarArray>)  variables:  (id<ORAddToModel>)  model;
 -(id<ORFloatArray>)  coefficients: (id<ORAddToModel>) model;
 -(ORInt) size;
--(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation) cons;
--(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation) cons;
--(void)  postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(void)  postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
+-(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model;
+-(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model;
+-(void)  postMinimize: (id<ORAddToModel>) model;
+-(void)  postMaximize: (id<ORAddToModel>) model;
 @end
 
 @interface ORFloatLinearFlip : NSObject<ORFloatLinear> {
