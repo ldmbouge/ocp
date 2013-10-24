@@ -74,7 +74,8 @@
          @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];
          break;
       default:
-         @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"];
+         o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: engine over: x];
+         break;
    }
    [[x tracker] trackMutable: o];
    return o;
