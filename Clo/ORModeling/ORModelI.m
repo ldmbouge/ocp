@@ -523,8 +523,8 @@
 {
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
-   id<ORModelTransformation> flat = [ORFactory createFlattener:batch annotation:ncpy];
-   [flat apply: self];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: self with:ncpy];
    [batch release];
    [flatModel setSource:self];
    [flat release];
@@ -534,8 +534,8 @@
 {
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
-   id<ORModelTransformation> flat = [ORFactory createLPFlattener:batch annotation:ncpy];
-   [flat apply: self];
+   id<ORModelTransformation> flat = [ORFactory createLPFlattener:batch];
+   [flat apply: self with:ncpy];
    [batch release];
    [flatModel setSource:self];
    [flat release];
@@ -545,8 +545,8 @@
 {
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
-   id<ORModelTransformation> flat = [ORFactory createMIPFlattener:batch annotation:ncpy];
-   [flat apply: self];
+   id<ORModelTransformation> flat = [ORFactory createMIPFlattener:batch];
+   [flat apply: self with:ncpy];
    [batch release];
    [flatModel setSource:self];
    [flat release];

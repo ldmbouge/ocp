@@ -20,11 +20,11 @@
 @implementation ORFlatten {
    NSMapTable* _mapping;
 }
--(id)initORFlatten:(id<ORAddToModel>) into annotation:(id<ORAnnotation>)notes
+-(id)initORFlatten:(id<ORAddToModel>) into
 {
    self = [super init];
    _into = into;
-   _fresh = notes;
+   _fresh = nil;
    _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
                                         valueOptions:NSPointerFunctionsOpaqueMemory
                                             capacity:64];
@@ -58,8 +58,9 @@
       return rv;
    }
 }
--(void)apply:(id<ORModel>)m
+-(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
 {
+   _fresh = notes;
    [m applyOnVar: ^(id<ORVar> x) {
       [_into addVariable: [self flattenIt:x]];
    }
@@ -537,7 +538,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 
 +(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m
 {
-   ORFlatten* flattener  = [[ORFlatten alloc] initORFlatten:m annotation:nil]; //TOFIX
+   ORFlatten* flattener  = [[ORFlatten alloc] initORFlatten:m];
    [c visit:flattener];
    [flattener release];
 }

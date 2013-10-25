@@ -23,11 +23,11 @@
    id<ORTau>       _tau;
 }
 
--(id)initORLPFlatten: (id<ORAddToModel>) into annotation:(id<ORAnnotation>)notes
+-(id)initORLPFlatten: (id<ORAddToModel>) into
 {
    self = [super init];
    _into = into;
-   _notes = notes;
+   _notes = nil;
    _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
                                         valueOptions:NSPointerFunctionsOpaqueMemory
                                             capacity:64];
@@ -62,8 +62,9 @@
       return rv;
    }
 }
--(void) apply: (id<ORModel>) m
+-(void) apply: (id<ORModel>) m  with:(id<ORAnnotation>)notes
 {
+   _notes = notes;
    _tau = [_into modelMappings].tau;
    [m applyOnVar:^(id<ORVar> x) {
       [_into addVariable: [self flattenIt: x]];

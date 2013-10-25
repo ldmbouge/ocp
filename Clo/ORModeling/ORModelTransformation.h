@@ -14,8 +14,9 @@
 
 @protocol ORModel;
 @protocol ORAddToModel;
+@protocol ORAnnotation;
 
 @protocol ORModelTransformation <NSObject>
--(void)apply:(id<ORModel>)m;
+-(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes;
 @end
 
