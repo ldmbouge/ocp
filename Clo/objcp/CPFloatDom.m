@@ -75,7 +75,7 @@
    if (isBound)
       [x bindEvt:self];
 }
--(ORStatus) updateInterval: (ORInterval) v for: (id<CPFloatVarNotifier>) x
+-(ORNarrowing) updateInterval: (ORInterval) v for: (id<CPFloatVarNotifier>) x
 {
    ORIReady();
    ORInterval src= createORI2(_min._val, _max._val);
@@ -94,9 +94,8 @@
          [x changeMaxEvt:isBound sender:self];
          if (isBound)
             [x bindEvt:self];
-         return ORSuspend;
-      }
-         break;
+         return ORBoth;
+      }break;
       case ORLow:
       {
          ORFloat nl = ORILow(is);
@@ -105,9 +104,8 @@
          [x changeMinEvt:isBound sender:self];
          if (isBound)
             [x bindEvt:self];
-         return ORSuspend;
-      }
-         break;
+         return ORLow;
+      }break;
       case ORUp:
       {
          ORFloat nu = ORIUp(is);
@@ -116,11 +114,10 @@
          [x changeMaxEvt:isBound sender:self];
          if (isBound)
             [x bindEvt:self];
-         return ORSuspend;
-      }
-         break;
+         return ORUp;
+      }break;
       case ORNone:
-         return ORNoop;
+         return ORNone;
    }
 }
 

@@ -23,9 +23,9 @@
 @end;
 
 @protocol ORSearchEngine <OREngine>
--(ORStatus)        close;
+-(ORStatus)           close;
 -(ORBool)            closed;
--(id)            trackMutable:(id)obj;
+-(id)   trackMutable:(id)obj;
 -(NSMutableArray*) variables;
 -(id<ORTrail>) trail;
 -(ORStatus)propagate;

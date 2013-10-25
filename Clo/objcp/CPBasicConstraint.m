@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPBasicConstraint.h"
 #import "ORConstraintI.h"
+#import "CPBasicConstraint.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 
@@ -273,23 +273,7 @@
          [_x bind:minDom(_y) + _c];
       } onBehalf:self];
    }
-   //[self propagate];
    return ORSuspend;
-}
--(void) propagate
-{
-   assert(false);
-   do {
-      _todo = CPChecked;
-      if (bound(_x)) {
-         [_y bind:minDom(_x) - _c];
-      } else if (bound(_y)) {
-         [_x bind:minDom(_y) + _c];
-      } else {
-         [_x updateMin:[_y min]+_c   andMax:[_y max] + _c];
-         [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
-      }
-   } while (_todo == CPTocheck);
 }
 -(NSString*)description
 {
@@ -393,8 +377,9 @@
    _y = y;
    _a = a;
    _b = b;
-   assert(a != 0);   
-   return self;   
+   if (a == 0)
+      @throw [[ORExecutionError alloc] initORExecutionError:"CPAffineAC a == 0!"];
+   return self;
 }
 -(ORStatus) post
 {

@@ -14,6 +14,7 @@
 
 @protocol ORCommand;
 @protocol ORSearchEngine;
+@protocol ORASolver;
 @protocol ORProblem;
 @protocol ORCheckpoint;
 @protocol ORTrail;
@@ -31,17 +32,16 @@
 -(id<ORTrail>)   trail;
 -(void)       trust;
 -(ORInt)      level;
-@optional -(void) addCommand: (id<ORCommand>) com;
+@optional -(void) addCommand: (id<ORConstraint>) com;
 @optional -(id<ORCheckpoint>) captureCheckpoint;
-@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>) engine;
-@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>) engine;
+@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model;
+@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model;
 @optional -(id<ORProblem>) captureProblem;
 @end
 
 @protocol ORProblem <NSObject>
--(void) addCommand: (id<ORCommand>) c;
--(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
--(ORBool) apply: (bool(^)(id<ORCommand>))clo;
+-(void) addCommand: (id<ORConstraint>) c;
+-(ORBool) apply: (bool(^)(id<ORConstraint>))clo;
 -(ORCommandList*) theList;
 -(ORInt)sizeEstimate;
 @end
@@ -74,19 +74,13 @@
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
 -(id<ORTrail>)   trail;
--(void)       addCommand:(id<ORCommand>)com;
+-(void)       addCommand:(id<ORConstraint>)com;
 -(id<ORCheckpoint>)captureCheckpoint;
--(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<ORSearchEngine>) engine;
--(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<ORSearchEngine>) engine;
+-(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<ORSearchEngine>) engine model:(id<ORPost>)m;
+-(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<ORSearchEngine>) engine model:(id<ORPost>)m;
 -(id<ORProblem>)  captureProblem;
 -(void)       trust;
 -(ORInt)      level;
 @end
-
-@interface SemTracer (Packing)
-+(id<ORProblem>)      unpackProblem:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
-@end
-
 
 void logCheckpoint();

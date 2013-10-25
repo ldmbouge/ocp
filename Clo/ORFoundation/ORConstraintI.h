@@ -69,14 +69,13 @@
 
 @interface OREqual : ORConstraintI<OREqual>
 -(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y plus: (ORInt) c;
--(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y plus: (ORInt) c annotation: (ORAnnotation) n;
 -(id<ORVar>) left;
 -(id<ORVar>) right;
 -(ORInt) cst;
 @end
 
 @interface ORAffine :ORConstraintI<ORAffine>
--(ORAffine*)initORAffine: (id<ORIntVar>) y eq:(ORInt)a times:(id<ORIntVar>) x plus: (ORInt) b annotation: (ORAnnotation) n;
+-(ORAffine*)initORAffine: (id<ORIntVar>) y eq:(ORInt)a times:(id<ORIntVar>) x plus: (ORInt) b;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt)coef;
@@ -101,7 +100,6 @@
 
 @interface ORPlus : ORConstraintI<ORPlus>
 -(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z;
--(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z annotation:(ORAnnotation)n;
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
@@ -115,10 +113,9 @@
 @end
 
 @interface ORSquare : ORConstraintI<ORSquare>
--(ORSquare*)init:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n;
+-(ORSquare*)init:(id<ORVar>)z square:(id<ORVar>)x;
 -(id<ORVar>)res;
 -(id<ORVar>)op;
--(ORAnnotation) annotation;
 @end
 
 @interface ORFloatSquare : ORSquare
@@ -132,11 +129,10 @@
 @end
 
 @interface ORModc : ORConstraintI<ORModc>
--(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n;
+-(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z;
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(ORInt) right;
--(ORAnnotation) annotation;
 @end
 
 @interface ORMin : ORConstraintI<ORMin>
@@ -158,7 +154,6 @@
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y;
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
--(ORAnnotation) annotation;
 @end
 
 @interface OROr : ORConstraintI<OROr>
@@ -183,37 +178,32 @@
 @end
 
 @interface ORElementCst : ORConstraintI<ORElementCst>
--(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n; // y[idx] == z
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
 -(id<ORIntArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
--(ORAnnotation)annotation;
 @end
 
 @interface ORElementVar : ORConstraintI<ORElementVar>
--(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z
-                   annotation:(ORAnnotation)note; // y[idx] == z
+-(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
--(ORAnnotation)annotation;
 @end
 
 @interface ORElementMatrixVar : ORConstraintI<ORElementMatrixVar>
--(id)initORElement:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y annotation:(ORAnnotation)n;
+-(id)initORElement:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y;
 -(id<ORIntVarMatrix>)matrix;
 -(id<ORIntVar>)index0;
 -(id<ORIntVar>)index1;
 -(id<ORIntVar>) res;
--(ORAnnotation)annotation;
 @end
 
 @interface ORFloatElementCst : ORConstraintI<ORFloatElementCst>
--(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z annotation:(ORAnnotation)n; // y[idx] == z
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z; // y[idx] == z
 -(id<ORFloatArray>) array;
 -(id<ORIntVar>)       idx;
 -(id<ORFloatVar>)     res;
--(ORAnnotation)annotation;
 @end
 
 @interface ORReifyEqualc : ORConstraintI<ORReifyEqualc>
@@ -228,19 +218,17 @@
 @end
 
 @interface ORReifyEqual : ORConstraintI<ORReifyEqual>
--(ORReifyEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y annotation:(ORAnnotation)n;
+-(ORReifyEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y;
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
--(ORAnnotation) annotation;
 @end
 
 @interface ORReifyNEqual : ORConstraintI<ORReifyNEqual>
--(ORReifyNEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y annotation:(ORAnnotation)n;
+-(ORReifyNEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y;
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
--(ORAnnotation) annotation;
 @end
 
 @interface ORReifyLEqualc : ORConstraintI<ORReifyLEqualc>
@@ -251,11 +239,10 @@
 @end
 
 @interface ORReifyLEqual : ORConstraintI<ORReifyLEqual>
--(ORReifyLEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y annotation:(ORAnnotation)n;
+-(ORReifyLEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y;
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
--(ORAnnotation) annotation;
 @end
 
 @interface ORReifyGEqualc : ORConstraintI<ORReifyGEqualc>
@@ -266,11 +253,10 @@
 @end
 
 @interface ORReifyGEqual : ORConstraintI<ORReifyGEqual>
--(ORReifyGEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y annotation:(ORAnnotation)n;
+-(ORReifyGEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y;
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
--(ORAnnotation) annotation;
 @end
 
 @interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>
@@ -352,9 +338,8 @@
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x annotation:(ORAnnotation)n;
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
 -(id<ORIntVarArray>) array;
--(ORAnnotation) annotation;
 @end
 
 @interface ORRegularI : ORConstraintI<ORRegular>
@@ -365,17 +350,14 @@
 
 @interface ORCardinalityI : ORConstraintI<ORCardinality>
 -(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
--(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c;
 -(id<ORIntVarArray>) array;
 -(id<ORIntArray>) low;
 -(id<ORIntArray>) up;
--(ORAnnotation) annotation;
 @end;
 
 @interface ORAlgebraicConstraintI : ORConstraintI<ORAlgebraicConstraint>
--(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr annotation:(ORAnnotation)n;
+-(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr;
 -(id<ORRelation>) expr;
--(ORAnnotation)annotation;
 @end
 
 @interface ORTableConstraintI : ORConstraintI<ORTableConstraint>
@@ -438,6 +420,8 @@
 }
 -(id) initObjectiveValueIntI: (ORInt) pb minimize: (ORBool) b ;
 -(ORInt)value;
+-(ORInt)intValue;
+-(ORFloat)floatValue;
 -(ORInt)primal;
 -(ORFloat)key;
 -(NSString*)description;
@@ -450,6 +434,7 @@
 }
 -(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b ;
 -(ORFloat)value;
+-(ORFloat)floatValue;
 -(ORFloat)primal;
 -(ORFloat)key;
 -(NSString*)description;

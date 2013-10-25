@@ -2,11 +2,11 @@
  Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
-
+ 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
@@ -19,21 +19,21 @@ int main (int argc, const char * argv[])
 {
    int n = 8;
    @autoreleasepool {
-     id<ORModel> model = [ORFactory createModel];
-     
-     id<ORIntRange> R = RANGE(model,0,n-1);
-     
-     id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value:0];
-     id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
-     id<ORIntVarArray> xp = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:i]; }];
-     id<ORIntVarArray> xn = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:-i]; }];
-     [model add: [ORFactory alldifferent: x annotation:ValueConsistency]];
-     [model add: [ORFactory alldifferent: xp annotation:ValueConsistency]];
-     [model add: [ORFactory alldifferent: xn annotation:ValueConsistency]];
-
-     id<CPProgram> cp = [ORFactory createCPProgram: model];
-     //id<CPHeuristic> h = [cp createFF];
-     [cp solveAll:
+      id<ORModel> model = [ORFactory createModel];
+      id<ORAnnotation> notes = [ORFactory note];
+      id<ORIntRange> R = RANGE(model,0,n-1);
+      
+      id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value:0];
+      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
+      id<ORIntVarArray> xp = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:i]; }];
+      id<ORIntVarArray> xn = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:-i]; }];
+      [notes dc:[model add: [ORFactory alldifferent: x ]]];
+      [notes dc:[model add: [ORFactory alldifferent: xp ]]];
+      [notes dc:[model add: [ORFactory alldifferent: xn ]]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
+      //id<CPHeuristic> h = [cp createFF];
+      [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
           printf("S[%d] = [",[nbSolutions intValue:cp]);
@@ -44,13 +44,13 @@ int main (int argc, const char * argv[])
           //[cp labelHeuristic:h];
           [nbSolutions incr:cp];
        }];
-     printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
-     
-     NSLog(@"Solver status: %@\n",cp);
-     NSLog(@"Quitting");
-     [cp release];
-     [ORFactory shutdown];
-  }
+      printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
+      
+      NSLog(@"Solver status: %@\n",cp);
+      NSLog(@"Quitting");
+      [cp release];
+      [ORFactory shutdown];
+   }
    return 0;
 }
 

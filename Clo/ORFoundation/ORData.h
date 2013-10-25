@@ -12,15 +12,14 @@
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORCrFactory.h>
 
-typedef enum {
-   DomainConsistency,
-   RangeConsistency,
-   ValueConsistency,
-   Hard,
-   Soft,
-   Default
-} ORAnnotation;
-
+//typedef enum {
+//   DomainConsistency,
+//   RangeConsistency,
+//   ValueConsistency,
+//   Hard,
+//   Soft,
+//   Default
+//} ORAnnotation;
 
 @protocol ORExpr;
 @protocol ORIntRange;

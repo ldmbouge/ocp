@@ -24,6 +24,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
+         id<ORAnnotation> notes = [ORFactory note];
          ORInt n = [args size];
          id<ORIntRange> R = RANGE(model,1,n);
          id<ORIntRange> D = RANGE(model,0,n*n);
@@ -52,10 +53,10 @@ int main(int argc, const char * argv[])
          for(ORInt i=1;i<=n;i++)
             for(ORInt j=i+1;j <= n;j++)
                [ad set:[d at: i : j] at:k++];
-         [model add:[ORFactory alldifferent:ad annotation:DomainConsistency]];
+         [notes dc:[model add:[ORFactory alldifferent:ad ]]];
          
-         id<CPProgram> cp  = [args makeProgram:model];
-         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
+         id<CPProgram> cp  = [args makeProgram:model annotation:notes];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          //id<ORIntVarArray> fd = [ORFactory flattenMatrix:d];
          [cp solve: ^{
             for(ORInt i=1;i<=n;i++) {
@@ -66,7 +67,7 @@ int main(int argc, const char * argv[])
                   [cp diff:m[i] with:v];
                }];
             }
-            //[cp labelHeuristic:h];
+            [cp labelHeuristic:h];
             //[cp once: ^{ [cp labelArray:fd];}];
             NSLog(@"Optimum: %d",[cp intValue:m[n]]);
          }];         

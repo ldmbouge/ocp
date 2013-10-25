@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>9621E267-5D52-41DC-BD3C-B43510BE3023</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ObjecticeCP</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>04BBE557-111D-4EA3-A2A2-A4CD265EF20E</key>
+		<string>git+ssh://scm.forge.nicta.com.au/scmrepos/git/objectivecp/platform.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Clo/ObjecticeCP.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>04BBE557-111D-4EA3-A2A2-A4CD265EF20E</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>git+ssh://scm.forge.nicta.com.au/scmrepos/git/objectivecp/platform.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>04BBE557-111D-4EA3-A2A2-A4CD265EF20E</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>04BBE557-111D-4EA3-A2A2-A4CD265EF20E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>private</string>
+		</dict>
+	</array>
+</dict>
+</plist>

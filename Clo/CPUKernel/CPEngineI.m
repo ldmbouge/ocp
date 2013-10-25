@@ -75,7 +75,7 @@ inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstrain
    if (q->_csz > 0 && q->_last->cb == cb && q->_last->cstr == cstr)
       return;
    q->_last  = q->_tab + q->_enter;
-   *q->_last = (AC3Entry){cb,cstr};
+   *q->_last = (AC3Entry){cb,(CPCoreConstraint*)cstr};
    q->_enter = (q->_enter+1) & q->_mask;
    q->_csz += 1;
 }
@@ -445,7 +445,7 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 
 // PVH: This does the case analysis on the key of events {trigger,cstr} and handle the idempotence
 
-static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
+static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
    if (cb.cb)

@@ -43,7 +43,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"Dealloc  ORForallI (%p)",self);
+   //NSLog(@"Dealloc  ORForallI (%p)",self);
    [_S release];
    [_arraySuchThat release];
    [_arrayOrderedBy release];

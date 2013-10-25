@@ -69,19 +69,24 @@ int main(int argc, const char * argv[])
                g++;
             }
          }
+         NSLog(@"CAP = %@",cap);
+         NSLog(@"CREW= %@",crew);
          ORLong startTime = [ORRuntimeMonitor cputime];
-         
+         id<ORAnnotation> notes = [ORFactory note];
          id<ORIntVarMatrix> boat = [ORFactory intVarMatrix:mdl range:Guests :Periods domain: Hosts];
          for(ORInt g = Guests.low; g <= Guests.up; g++)
-            [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar, p, Periods, [boat at:g :p]) ]];
+            [notes dc:[mdl add: [ORFactory alldifferent: All(mdl,ORIntVar, p, Periods, [boat at:g :p]) ]]];
          for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
             for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++)
                [mdl add: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leq: @1]];
-         for(ORInt p = Periods.low; p <= Periods.up; p++)
+         for(ORInt p = Periods.low; p <= Periods.up; p++) {
             [mdl add: [ORFactory packing:mdl item:All(mdl,ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
+            for(ORInt h=Hosts.low ; h <= Hosts.up; h++)
+               [mdl add:[Sum(mdl, g, Guests, [[[boat at:g :p] eq:@(h)] mul: @([crew at:g])]) leq:@([cap at:h])]];
+         }
          
-         id<CPProgram> cp = [args makeProgram:mdl];
-         //id<CPHeuristic> hr = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:boat]];
+         id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
+//         id<CPHeuristic> hr = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:boat]];
          ORFloat rate = [args restartRate];
          __block ORInt lim = ((ORInt)rate==0) ? FDMAXINT : ([Guests size] * [Periods size] * 3);
          NSLog(@"The limit starts at: %d  (%f)",lim,rate);
@@ -103,9 +108,18 @@ int main(int argc, const char * argv[])
             }];
             */
             for(ORInt p = Periods.low; p <= Periods.up; p++) {
+//               id<ORIntVarArray> slice = [ORFactory intVarArray:cp range:Guests with:^id<ORIntVar>(ORInt g) {
+//                  return [boat at:g :p];
+//               }];
+//               [cp labelHeuristic:hr restricted:slice];
+               
                [cp forall:Guests suchThat:^bool(ORInt g) { return ![cp bound:[boat at:g :p]];}
-                orderedBy:nil//^ORInt(ORInt g) { return - [[boat at:g :p] domsize];}
+                orderedBy: nil // ^ORInt(ORInt g) { return [cp domsize:[boat at:g :p]];}
                        do:^(ORInt g) {
+//                          for(ORInt k=Guests.low;k <= Guests.up;k++) {
+//                             printf("%c%d,%d : %2d |",k==g ? '*' : ' ',k,p,[cp domsize:[boat at:k :p]]);
+//                          }
+//                          printf("\n");
                           [cp tryall:Hosts suchThat:^bool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
                                   in:^(ORInt h) {
                                      [cp label:[boat at:g :p] with:h];
@@ -114,6 +128,7 @@ int main(int argc, const char * argv[])
                               [cp diff:[boat at:g :p] with:h];
                            }];
                        }];
+               
                // This search is 'weaker' (30,000 choices rather than ~ 5,000  on 6,1,9
                /*
                 [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; } ]

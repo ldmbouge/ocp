@@ -213,7 +213,7 @@
 {
    return [[self worker] trackVariable: object];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
 {
    [[self worker] addConstraintDuringSearch: c annotation:n];
 }
@@ -416,17 +416,17 @@
    return _globalPool;
 }
 
--(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
+-(void)setupWork:(id<ORProblem>)theSub forCP:(id<CPSemanticProgram>)cp
 {
-   id<ORProblem> theSub = [SemTracer unpackProblem:root fORSearchEngine:[cp engine]];
-   //NSLog(@"***** THREAD(%d) SETUP work size: %d",[NSThread threadID],[theSub sizeEstimate]);
-   ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine]];
-   [theSub release];
+   //NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);
+   id<ORPost> pItf = [[CPINCModel alloc] init:_workers[[NSThread threadID]]];
+   ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine] model:pItf];
+   [pItf release];
    if (status == ORFailure)
       [[cp explorer] fail];
     [cp restartHeuristics];
 }
--(ORLong)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
+-(ORLong)setupAndGo:(id<ORProblem>)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
@@ -434,7 +434,8 @@
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested
                                                                          explorer:me
-                                                                           onPool:_queue];
+                                                                           onPool:_queue
+                                                                    stopIndicator:&_doneSearching];
    [nested release];
    id<ORSearchObjectiveFunction> objective = [me objective];
    if (objective != nil) {
@@ -466,9 +467,9 @@
       } else {
         [[me explorer] nestedSolve:^() { [self setupWork:root forCP:me];body();}
                         onSolution: ^ {
-                            [self doOnSolution];
-                            [me doOnSolution];
-                            _doneSearching = YES;
+                           _doneSearching = YES;
+                           [self doOnSolution];
+                           [me doOnSolution];
                          }
                              onExit:nil
                             control:parc];        
@@ -484,6 +485,7 @@
    ORInt myID = [[input objectAtIndex:0] intValue];
    ORClosure mySearch = [input objectAtIndex:1];
    NSNumber* allSols  = [input objectAtIndex:2];
+   [NSThread setThreadPriority:1.0];
    [NSThread setThreadID:myID];
    _doneSearching = NO;
    [[_workers[myID] explorer] search: ^() {
@@ -520,11 +522,9 @@
       if (myID == 0) {
          // The first guy produces a sub-problem that is the root of the whole tree.
          id<ORProblem> root = [[_workers[myID] tracer] captureProblem];
-         NSData* rootSerial = [root packFromSolver:[_workers[myID] engine]];
-         [root release];
-         [_queue enQueue:rootSerial];
+         [_queue enQueue:root];
       }
-      NSData* cpRoot = nil;
+      id<ORProblem> cpRoot = nil;
       //ORLong took = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
@@ -694,10 +694,12 @@
   return self;}
 -(id<ORSearchController>)makeRootController
 {
-  return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+  id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+  return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
 }
 -(id<ORSearchController>)makeNestedController
 {
-  return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+   id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
 }
 @end

@@ -4,19 +4,24 @@
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = -I$(GNUstep)/include -I.. -I. -fPIC -g \
-	-I../ORFoundation -I../ORUtilities \
-	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
+CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
+	-I../ORFoundation -I../ORUtilities -msse4.1
+LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
+	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
+	-lORUtilities -lORFoundation
 
-
-LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
-	-L../ORUtilities -L../ORFoundation \
-	-lORUtilities -lORFoundation \
-	-lgnustep-base -lobjc 	
-SRCS = ORDecompose.m  ORFlatten.m  ORLinearize.m  ORLinear.m  ORLPDecompose.m  \
+# CFLAGS = -I$(GNUstep)/include -I.. -I. -fPIC -g -msse4.1 \
+# 	-I../ORFoundation -I../ORUtilities \
+# 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
+# LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
+# 	-L../ORUtilities -L../ORFoundation \
+# 	-lORUtilities -lORFoundation \
+# 	-lgnustep-base -lobjc 	
+SRCS = ORDecompose.m  ORFlatten.m  ORLinearize.m  ORIntLinear.m  \
+	ORFloatLinear.m ORFloatDecompose.m  \
 	ORLPFlatten.m  ORModelI.m  ORModeling.m  ORModelTransformation.m \
-	ORLogicBenders.m ORMIPLinearize.m ORRunnable.m  \
-	ORParallelRunnable.m ORMIPFlatten.m ORFloatLinear.m ORMIPDecompose.m
+	ORMIPLinearize.m ORMIPFlatten.m 
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))

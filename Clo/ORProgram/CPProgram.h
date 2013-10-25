@@ -49,7 +49,7 @@
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
 
--(void)         addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
+-(void)         addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n;
 -(void)                 add: (id<ORConstraint>) c;
 //-(void)                 add: (id<ORConstraint>) c annotation: (ORAnnotation) cons;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;

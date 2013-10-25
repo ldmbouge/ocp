@@ -129,8 +129,12 @@ inline static ContPool* instancePool()
    NSCont* rv = nil;
    if (pool->low == pool->high) {
       pool->nbCont += 1;
-#if defined(__APPLE__) || !defined(__x86_64__)
+#if defined(__APPLE__) 
       rv = NSAllocateObject(self, 0, NULL);
+      rv->_data = 0;
+      rv->_length = 0;
+      rv->field = 0;
+      rv->fieldId = nil;
 #else
       // THis is the allocation for Linux 64 where alignments are not
       // respected by GNUstep.
@@ -175,7 +179,7 @@ inline static ContPool* instancePool()
 #if defined(__APPLE__) || !defined(__x86_64__)
          NSDeallocateObject(self);
 #else
-	 char* ptr = self;
+	 char* ptr = (char*)self;
 	 ptr = ptr - 16;
 	 free(ptr);
 #endif

@@ -16,6 +16,7 @@
 #import "ORData.h"
 #import <assert.h>
 #import "ORVisit.h"
+#import "ORCommand.h"
 
 
 @implementation ORTrailI
@@ -448,7 +449,7 @@ ORInt trailMagic(ORTrailI* trail)
 }
 -(void)resize
 {
-   _tab = realloc(_tab, _mxs * 2);
+   _tab = realloc(_tab, sizeof(id) * _mxs * 2);
    _mxs = _mxs * 2;
 }
 -(id)track:(id)obj
@@ -476,14 +477,19 @@ ORInt trailMagic(ORTrailI* trail)
    while (_csz)
       [_tab[--_csz] release];
 }
--(void)comply:(ORMemoryTrailI*)mt upTo:(ORInt)mh
+-(void)comply:(ORMemoryTrailI*)mt upTo:(ORCommandList*)cl
 {
-//   while (_csz > mt->_csz)
-//      [_tab[--_csz] release];
-   assert(_csz <= mt->_csz);
-   ORInt k = _csz;
-   while (_csz < mh)
-      _tab[_csz++] = [mt->_tab[k++] retain];
+   ORInt fh = [cl memoryFrom];
+   ORInt th = [cl memoryTo];
+   for(ORInt k=fh;k < th;k++)
+      _tab[_csz++] = [mt->_tab[k] retain];
+}
+-(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th
+{
+   while (_csz + (th - fh) >= _mxs)
+      [self resize];
+   for(ORInt k=fh;k < th;k++)
+      _tab[_csz++] = [mt->_tab[k] retain];
 }
 -(void)reload:(ORMemoryTrailI*)t
 {
@@ -492,18 +498,20 @@ ORInt trailMagic(ORTrailI* trail)
    for(i = 0;i < h && _tab[i] == t->_tab[i];i++);
    while(_csz != i)
       [_tab[--_csz] release];
-   while(_csz < t->_csz)
+   while(_csz < t->_csz) {
+      if (_csz >= _mxs)
+         [self resize];
       _tab[_csz++] = [t->_tab[i++] retain];
+   }
 }
-
 
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"ORMemoryTrail(%d / %d)[",_csz,_mxs];
    for(ORInt i =0;i<_csz-1;i++)
-      [buf appendFormat:@"%p,",_tab[i]];
-   [buf appendFormat:@"%p]",_tab[_csz-1]];
+      [buf appendFormat:@"%p(%lu,%@),",_tab[i],(unsigned long)[_tab[i] retainCount],NSStringFromClass([_tab[i] class])];
+   [buf appendFormat:@"%p(%lu,%@)]",_tab[_csz-1],[_tab[_csz-1] retainCount],NSStringFromClass([_tab[_csz-1] class])];
    return buf;
 }
 @end
@@ -855,7 +863,7 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
    if (d == _arity) {
       [rv appendString:@"<"];
       for(ORInt k = 0; k < _arity; k++)
-         [rv appendFormat:@"%d,",_i[k]];
+         [rv appendFormat:@"%d,",i[k]];
       [rv appendString:@"> ="];
       [rv appendFormat:@"%d \n",_flat[indexMatrix(self, i)]._val];
    }

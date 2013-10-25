@@ -67,7 +67,7 @@ int main(int argc, const char * argv[])
                                  leq:All(mdl,ORIntVar, i, Rows, [M at:i :j])]];
          }
 
-         id<CPProgram> cp =  [args makeProgram:mdl];
+         id<CPProgram> cp =  [args makeProgram:mdl annotation:nil];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
          [cp solve:^{
             //NSLog(@"Start... %@",[[cp engine] model]);

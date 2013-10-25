@@ -14,7 +14,6 @@
 #import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORObject.h>
 
-
 @protocol ORIntVarArray;
 @protocol ORVarArray;
 @protocol ORIntVarMatrix;
@@ -41,6 +40,10 @@
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
 -(NSSet*)allVars;
+@end
+
+@protocol ORPost<NSObject>
+-(ORStatus)post:(id<ORConstraint>)c;
 @end
 
 @protocol ORConstraintSet <NSObject>
@@ -102,7 +105,6 @@ enum ORGroupType {
 -(id<ORVar>) left;
 -(id<ORVar>) right;
 -(ORInt) cst;
--(ORAnnotation) annotation;
 @end
 
 @protocol  ORAffine <ORConstraint>
@@ -110,7 +112,6 @@ enum ORGroupType {
 -(id<ORIntVar>) right;
 -(ORInt)coef;
 -(ORInt)cst;
--(ORAnnotation) annotation;
 @end
 
 @protocol  ORNEqual <ORConstraint>
@@ -129,7 +130,6 @@ enum ORGroupType {
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORMult <ORConstraint>
@@ -141,7 +141,6 @@ enum ORGroupType {
 @protocol ORSquare<ORConstraint>
 -(id<ORVar>)res;
 -(id<ORVar>)op;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORMod <ORConstraint>
@@ -154,7 +153,6 @@ enum ORGroupType {
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(ORInt) right;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORMin <ORConstraint>
@@ -173,7 +171,6 @@ enum ORGroupType {
 @protocol ORAbs <ORConstraint>
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
--(ORAnnotation) annotation;
 @end
 
 @protocol OROr <ORConstraint>
@@ -198,14 +195,12 @@ enum ORGroupType {
 -(id<ORIntArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
--(ORAnnotation)annotation;
 @end
 
 @protocol ORElementVar <ORConstraint>
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
--(ORAnnotation)annotation;
 @end
 
 @protocol ORElementMatrixVar <ORConstraint>
@@ -213,14 +208,12 @@ enum ORGroupType {
 -(id<ORIntVar>) index0;
 -(id<ORIntVar>) index1;
 -(id<ORIntVar>) res;
--(ORAnnotation)annotation;
 @end
 
 @protocol ORFloatElementCst <ORConstraint>
 -(id<ORFloatArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORFloatVar>)   res;
--(ORAnnotation)annotation;
 @end
 
 @protocol ORReify <ORConstraint>
@@ -242,14 +235,12 @@ enum ORGroupType {
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORReifyNEqual <ORReify>
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORReifyLEqualc <ORReify>
@@ -262,7 +253,6 @@ enum ORGroupType {
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORReifyGEqualc <ORReify>
@@ -275,7 +265,6 @@ enum ORGroupType {
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORSumBoolEqc <ORConstraint>
@@ -346,7 +335,6 @@ enum ORGroupType {
 
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORIntVarArray>) array;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORRegular<ORConstraint>
@@ -356,7 +344,6 @@ enum ORGroupType {
 
 @protocol ORAlgebraicConstraint <ORConstraint>
 -(id<ORExpr>) expr;
--(ORAnnotation)annotation;
 @end
 
 @protocol ORTableConstraint <ORConstraint>
@@ -368,7 +355,6 @@ enum ORGroupType {
 -(id<ORIntVarArray>) array;
 -(id<ORIntArray>) low;
 -(id<ORIntArray>) up;
--(ORAnnotation) annotation;
 @end
 
 @protocol ORLexLeq <ORConstraint>
@@ -412,16 +398,19 @@ enum ORGroupType {
 @protocol ORObjectiveValue <ORObject>
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
 -(ORInt) compare: (id<ORObjectiveValue>) other;
-//-(ORInt) intValue;
-//-(ORFloat) floatValue;
+@optional-(ORInt) intValue;
+-(ORFloat) floatValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
 -(ORInt) value;
+-(ORInt) intValue;
+-(ORFloat)floatValue;
 @end
 
 @protocol ORObjectiveValueFloat <ORObjectiveValue>
 -(ORFloat) value;
+-(ORFloat)floatValue;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
@@ -452,15 +441,15 @@ enum ORGroupType {
 
 // pvh: to reconsider the solution pool in this interface; not sure I like them here
 @protocol ORASolver <NSObject,ORTracker,ORGamma>
--(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
--(id<ORSolutionPool>) solutionPool;
 -(ORFloat) floatValue: (id)v;
 -(ORInt) intValue: (id)v;
 -(ORFloat) floatExprValue: (id<ORExpr>)e;
 -(ORInt) intExprValue: (id<ORExpr>)e;
 -(id) concretize: (id) o;
+@optional-(id<ORSolutionPool>) solutionPool;
+@optional-(id<ORSearchObjectiveFunction>) objective;
 @end
 
 // ====== Bit Constraints =====================================

@@ -228,7 +228,7 @@
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
 }
--(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -236,6 +236,7 @@
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
    _atRoot = 0;
+   [model release]; // not needed
    return self;
 }
 
