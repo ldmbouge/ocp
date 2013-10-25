@@ -53,7 +53,7 @@
 
 -(id<ORIntVarArray>) variables: (id<ORAddToModel>) model;
 -(id<ORIntArray>) coefficients: (id<ORAddToModel>) model;
--(id<ORIntVarArray>)scaledViews:(id<ORAddToModel>)model annotation:(ORAnnotation)note;
+-(id<ORIntVarArray>)scaledViews:(id<ORAddToModel>)model;
 -(id<ORIntVar>)oneView:(id<ORAddToModel>)model;
 -(ORInt)size;
 -(ORInt)min;

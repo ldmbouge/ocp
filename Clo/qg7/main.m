@@ -45,12 +45,13 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
+         id<ORAnnotation> notes = [ORFactory note];
          ORInt n = [args size];
          id<ORIntRange> D = RANGE(model,0,n-1);
          id<ORIntVarMatrix> q = [ORFactory intVarMatrix:model range:D :D domain:D];
          [D enumerateWithBlock:^(ORInt r) {
-            [model add:[ORFactory alldifferent:All(model, ORIntVar, c, D, [q at:r :c]) annotation:DomainConsistency]];
-            [model add:[ORFactory alldifferent:All(model, ORIntVar, c, D, [q at:c :r]) annotation:DomainConsistency]];
+            [notes dc:[model add:[ORFactory alldifferent:All(model, ORIntVar, c, D, [q at:r :c])]]];
+            [notes dc:[model add:[ORFactory alldifferent:All(model, ORIntVar, c, D, [q at:c :r])]]];
             [model add:[[q at:r :r] eq:@(r)]];
          }];
          [D enumerateWithBlock:^(ORInt i) {
@@ -60,7 +61,7 @@ int main(int argc, const char * argv[])
             [model add:[[[q at:i :n-1] plus:@2] geq:@(i)]];
          }];
 
-         id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgram:model annotation:notes];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:All2(cp, ORIntVar, i, D, j, D, [q at:i :j])];
          __block ORInt nbSol = 0;
          [cp solve:^{
@@ -71,8 +72,7 @@ int main(int argc, const char * argv[])
                for(ORInt i=0;i <n;i++) {
                   for(ORInt j=0;j < n;j++) {
                      printf("%2d ",[cp intValue:[q at:i :j]]);
-                     ORInt qji = [cp intValue:[q at:j :i]];
-                     assert([cp intValue:[q at:qji :j]] == [cp intValue:[q at:i :qji]]);
+                     assert([cp intValue:[q at:[cp intValue:[q at:j :i]] :j]] == [cp intValue:[q at:i :[cp intValue:[q at:j :i]]]]);
                   }
                   printf("\n");
                }

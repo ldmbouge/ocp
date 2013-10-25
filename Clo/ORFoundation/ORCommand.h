@@ -18,34 +18,35 @@
  * Other commands could be: going to atomic mode, setting a controller, etc....
  */
 
-@protocol ORCommand <NSObject,NSCoding>
--(void) doIt;
-@end
+@protocol ORConstraint;
 
 @interface ORCommandList : NSObject<NSCoding,NSCopying> {
    struct CNode {
-      id<ORCommand>    _c;
+      id<ORConstraint>    _c;
       struct CNode*    _next;
    };
    struct CNode* _head;
    @package
    ORInt _ndId;  // node id
-   ORInt _mh;
+   ORInt _fh;
+   ORInt _th;
    ORInt _cnt;
 }
-+(id)newCommandList:(ORInt)node memory:(ORInt)mh;
--(ORCommandList*) initCPCommandList: (ORInt) node memory:(ORInt)mh;
++(id)newCommandList:(ORInt)node from:(ORInt)fh to:(ORInt)th;
+-(ORCommandList*) initCPCommandList: (ORInt) node from:(ORInt)fh to:(ORInt)th;
 -(void)dealloc;
 -(void)letgo;
 -(id)grab;
--(void)insert: (id<ORCommand>) c;
--(id<ORCommand>)removeFirst;
+-(void)insert: (id<ORConstraint>) c;
+-(id<ORConstraint>)removeFirst;
 -(ORBool)empty;
 -(ORBool)equalTo:(ORCommandList*)cList;
--(ORInt) memory;
+-(void)setMemoryTo:(ORInt)ml;
+-(ORInt) memoryFrom;
+-(ORInt) memoryTo;
 -(ORInt) getNodeId;
 -(void) setNodeId:(ORInt)nid;
--(ORBool)apply:(BOOL(^)(id<ORCommand>))clo;
+-(ORBool)apply:(BOOL(^)(id<ORConstraint>))clo;
 -(ORInt)length;
 @end
 

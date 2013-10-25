@@ -12,9 +12,9 @@
 #import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <ORModeling/ORModeling.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 
@@ -310,7 +310,7 @@
 {
    [(CPSolver*)[self worker] add:c];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
 {
    [[self worker] addConstraintDuringSearch: c annotation:n];
 }

@@ -187,35 +187,35 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
    return _nb;
 }
 
--(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model
 {
    return [model addConstraint:[ORFactory floatSum: model
                                              array: [self variables: model]
                                               coef: [self coefficients: model]
                                                 eq: -_indep]];
 }
--(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model
 {
    return [model addConstraint:[ORFactory floatSum: model
                                              array: [self variables: model]
                                               coef: [self coefficients: model]
                                                leq: -_indep]];
 }
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
    assert(NO);
    return nil;
 }
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
    assert(NO);
    return nil;
 }
--(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(void) postMinimize: (id<ORAddToModel>) model
 {
    [model minimize: [self variables: model] coef: [self coefficients: model]];
 }
--(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(void) postMaximize: (id<ORAddToModel>) model
 {
    [model maximize: [self variables: model] coef: [self coefficients: model]];
 }
@@ -281,21 +281,21 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
    return [_real fmax];
 }
 
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model
 {
-   return [_real postEQZ:model annotation:cons];
+   return [_real postEQZ:model];
 }
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
-   return [_real postNEQZ:model annotation:cons];
+   return [_real postNEQZ:model];
 }
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {
-   return [_real postLEQZ:model annotation:cons];
+   return [_real postLEQZ:model];
 }
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
-   return [_real postDISJ:model annotation:cons];
+   return [_real postDISJ:model];
 }
 @end
 

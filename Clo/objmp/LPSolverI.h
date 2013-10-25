@@ -218,7 +218,7 @@
 -(void) close;
 @end
 
-@interface LPSolverI : NSObject<ORTracker> {
+@interface LPSolverI : NSObject<OREngine> {
    LPGurobiSolver*      _lp;
    int                  _nbVars;
    int                  _maxVars;

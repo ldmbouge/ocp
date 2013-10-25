@@ -92,11 +92,12 @@ int main(int argc, const char * argv[])
          [model add: [ORFactory packing:model item:slab itemSize: weight load: load]];
          for(ORInt s = Slabs.low; s <= Slabs.up; s++)
             [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
-         id<ORObjectiveFunction> obj = [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
+         [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
          id<CPProgram> cp = [ORFactory createCPProgram: model];
          __block ORInt lim = 1000;
          __block BOOL improved = NO;
          [cp solve: ^{
+            id<ORObjectiveFunction> obj = [cp objective];
             printf(" Starting search \n");
             [cp repeat:^{
                improved = NO;
@@ -127,7 +128,7 @@ int main(int argc, const char * argv[])
                         }];
                      }];
                   }];
-                  //if (!improved) lim *= 2;
+                  lim *= 2;
                   NSLog(@"New limit: %d",lim);
                   //[[cp objective] tightenPrimalBound:[s objectiveValue]];
                }

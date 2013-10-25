@@ -1618,7 +1618,11 @@
 }
 -(NSString *) description
 {
-   return [_e description];
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendString:@"("];
+   [buf appendString:[_e description]];
+   [buf appendString:@")"];
+   return buf;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -2099,7 +2103,7 @@
    [[_m range:0] enumerateWithBlock:^(ORInt i) {
       [[_m range:1] enumerateWithBlock:^(ORInt j) {
          id<ORIntRange> d = [[_m at:i :j] domain];
-         maxOf = maxOf > [d low] ? maxOf : [d low];
+         maxOf = maxOf > [d up] ? maxOf : [d up];
       }];
    }];
    return maxOf;

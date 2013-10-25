@@ -20,6 +20,11 @@
 #include <immintrin.h> 
 #include <assert.h>
 
+#if !defined(__APPLE__)
+#define FALSE 0
+#define TRUE 1
+#endif
+
 @interface ORILib : NSObject
 +(void)load;
 @end

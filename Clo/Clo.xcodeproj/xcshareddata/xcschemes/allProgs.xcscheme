@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0460"
-   version = "1.3">
+   LastUpgradeVersion = "0500"
+   version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -9,14 +9,28 @@
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
-            buildForProfiling = "YES"
+            buildForProfiling = "NO"
             buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5B33370313A2B866001DFC38"
                BuildableName = "allProgs"
                BlueprintName = "allProgs"
+               ReferencedContainer = "container:Clo.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5B6E891F1379D3E9005DB4CA"
+               BuildableName = "Clo"
+               BlueprintName = "Clo"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,16 +43,53 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5B6E891F1379D3E9005DB4CA"
+            BuildableName = "Clo"
+            BlueprintName = "Clo"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Coverage"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
+      <PostActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "rm -rf /tmp/hello.log&#10;echo &quot;BUILD IN: &quot;  ${BUILT_PRODUCTS_DIR} &gt; /tmp/hello.log&#10;printenv &gt;&gt; /tmp/hello.log&#10;&#10;echo &quot;SCRIPT: &quot; ${SRCROOT}/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;&#10;python ${SRCROOT}/../scripts/coverage.py &gt;&gt; /tmp/hello.log&#10;"
+               shellToInvoke = "/bin/bash">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "5B33370313A2B866001DFC38"
+                     BuildableName = "allProgs"
+                     BlueprintName = "allProgs"
+                     ReferencedContainer = "container:Clo.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PostActions>
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5B6E891F1379D3E9005DB4CA"
+            BuildableName = "Clo"
+            BlueprintName = "Clo"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

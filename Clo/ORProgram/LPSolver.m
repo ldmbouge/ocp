@@ -395,6 +395,12 @@
    [_sPool release];
    [super dealloc];
 }
+-(void)close
+{}
+-(id<OREngine>) engine
+{
+   return _lpsolver;
+}
 -(LPSolverI*) solver
 {
    return _lpsolver;
@@ -500,6 +506,12 @@
    NSLog(@"dealloc LPSolver");
    [_lpsolver release];
    [super dealloc];
+}
+-(void)close
+{}
+-(id<OREngine>) engine
+{
+   return _lpsolver;
 }
 -(LPSolverI*) solver
 {

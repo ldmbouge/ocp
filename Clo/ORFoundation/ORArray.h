@@ -20,6 +20,8 @@
 @protocol ORIntArray <ORObject>
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(ORInt) max;

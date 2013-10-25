@@ -13,6 +13,57 @@
 			buildPhases = (
 			);
 			dependencies = (
+				B109681C180B01EB00F010E3 /* PBXTargetDependency */,
+				5B7CDA5D1801F63600C60AB0 /* PBXTargetDependency */,
+				5B7CDA5B1801E0B200C60AB0 /* PBXTargetDependency */,
+				5B8E521817FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E521A17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E521C17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E521E17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E522017FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E522217FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E522417FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E522617FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E522817FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E522A17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E522C17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E522E17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E523017FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E523217FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E523417FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E523617FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E523817FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E523A17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E523C17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E523E17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E524017FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E524217FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E524417FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E524617FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E524817FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E524A17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E524C17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E524E17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E525017FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E525217FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E525617FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E525817FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E525A17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E525C17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E525E17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E526017FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E526217FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E526417FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E526617FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E526817FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E526A17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E526C17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E526E17FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E527017FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E527217FDE8FB00533284 /* PBXTargetDependency */,
+				5B8E521217FDE8B500533284 /* PBXTargetDependency */,
+				5B8E521417FDE8B500533284 /* PBXTargetDependency */,
+				5B8E521617FDE8B500533284 /* PBXTargetDependency */,
 				5BE2221E17C5373C00259DEB /* PBXTargetDependency */,
 				5BE2222017C5374000259DEB /* PBXTargetDependency */,
 				5BE2222217C5374200259DEB /* PBXTargetDependency */,
@@ -27,16 +78,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		37095B2B16DBF173001BCEEC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCE1139131EE000997E5 /* CoreFoundation.framework */; };
-		37095B4016DBF1A3001BCEEC /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
-		37095B4116DBF1AC001BCEEC /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		37095B4216DBF1AC001BCEEC /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
-		37095B4316DBF1AC001BCEEC /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
-		37095B4416DBF1AC001BCEEC /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		37095B4516DBF1B3001BCEEC /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
-		379CDEEC16F17D71000E7338 /* ORModelTransformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 379CDEEB16F17D71000E7338 /* ORModelTransformation.h */; };
 		37A715C916FB93F900E02DC6 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCE1139131EE000997E5 /* CoreFoundation.framework */; };
 		37A715E016FB948200E02DC6 /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
 		37A715E116FB948200E02DC6 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -44,7 +87,6 @@
 		37A715E316FB948200E02DC6 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		37A715E416FB948200E02DC6 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		37A715E516FB948900E02DC6 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
 		5B115520171B1CF5005371AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B115523171B1CF5005371AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B115522171B1CF5005371AA /* main.m */; };
 		5B115537171B1D0F005371AA /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -109,6 +151,17 @@
 		5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B2000E9156D585E00D80105 /* queensNaive.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B558C0D1563F01000D2BCD7 /* queensNaive.1 */; };
 		5B2000F1156D58A800D80105 /* mainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B2000F0156D58A800D80105 /* mainView.m */; };
+		5B27573117E87B560082934E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5B27573417E87B560082934E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B27573317E87B560082934E /* main.m */; };
+		5B27573817E87B560082934E /* costas2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27573717E87B560082934E /* costas2.1 */; };
+		5B27574A17E87B6A0082934E /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B27574B17E87B6A0082934E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B27574C17E87B6A0082934E /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		5B27574D17E87B6A0082934E /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B27574E17E87B6A0082934E /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5B27574F17E87B6A0082934E /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B27575017E87B6A0082934E /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B27575117E87C370082934E /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B27ABE415B151A300E4A3DF /* mknap1-0.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDC15B1518300E4A3DF /* mknap1-0.txt */; };
 		5B27ABE515B151A300E4A3DF /* mknap1-2.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDD15B1518300E4A3DF /* mknap1-2.txt */; };
 		5B27ABE615B151A300E4A3DF /* mknap1-3.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDE15B1518300E4A3DF /* mknap1-3.txt */; };
@@ -171,7 +224,6 @@
 		5B3895F11795BE07004CCE93 /* fwarehouse.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B3895F01795BE07004CCE93 /* fwarehouse.1 */; };
 		5B3896011795BE1E004CCE93 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B3896021795BE1E004CCE93 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		5B3896031795BE1E004CCE93 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B3896041795BE1E004CCE93 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B3896051795BE1E004CCE93 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B3896061795BE1E004CCE93 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
@@ -252,6 +304,16 @@
 		5B6623EF1770B1D000A1ACCD /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B6623F01770B1D800A1ACCD /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B673A2B178DC5AA00886A28 /* ORLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B673A2A178DC5AA00886A28 /* ORLinear.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B67A4FD17E227BB00516F50 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5B67A50017E227BB00516F50 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B67A4FF17E227BB00516F50 /* main.m */; };
+		5B67A50417E227BB00516F50 /* wka.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B67A50317E227BB00516F50 /* wka.1 */; };
+		5B67A50817E227E600516F50 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B67A50917E227ED00516F50 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B67A50A17E227ED00516F50 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B67A50B17E227ED00516F50 /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		5B67A50C17E227ED00516F50 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5B67A50D17E227ED00516F50 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B67A50E17E227ED00516F50 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B681181161F98FB00F4480F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B681187161F98FB00F4480F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B681185161F98FB00F4480F /* InfoPlist.strings */; };
 		5B681195161F991D00F4480F /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -437,6 +499,8 @@
 		5B8469301638583000F4D749 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8469311638583000F4D749 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8469321638583800F4D749 /* CPBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B150019156EB1A500897252 /* CPBaseHeuristic.m */; };
+		5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
 		5B8C7DF3158674D1007042CA /* CPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE7158674D1007042CA /* CPAppDelegate.m */; };
 		5B8C7DF4158674D1007042CA /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE8158674D1007042CA /* Credits.rtf */; };
@@ -493,6 +557,7 @@
 		5B8DA20915B98BD900684FD8 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B8DA20A15B98BD900684FD8 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B8DCD91165FDDB6007CC562 /* testBitConstraints.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8DCD90165FDDB6007CC562 /* testBitConstraints.m */; };
+		5B8E527517FE021E00533284 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B8E979315AA5693008146AA /* CPStatisticsMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */; };
 		5B8F1A2215A2D464009CCE42 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
 		5B8F1A2415A2D464009CCE42 /* CPElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B91C335159FAB2D00158EEA /* CPElement.m */; };
@@ -765,6 +830,17 @@
 		5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF14150C38CB00B82836 /* ORSetI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */ = {isa = PBXBuildFile; fileRef = B10ECF0F150C34DE00B82836 /* ORFactoryI.m */; };
 		5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF0E150C34DE00B82836 /* ORFactoryI.h */; };
+		5BD2F03E17FF556000A14B6D /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5BD601C217F9A627006A9CDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5BD601C517F9A627006A9CDC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD601C417F9A627006A9CDC /* main.m */; };
+		5BD601C917F9A627006A9CDC /* bugTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BD601C817F9A627006A9CDC /* bugTest.1 */; };
+		5BD601DB17F9A63F006A9CDC /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5BD601DC17F9A63F006A9CDC /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BD601DD17F9A63F006A9CDC /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		5BD601DE17F9A63F006A9CDC /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5BD601DF17F9A63F006A9CDC /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BD601E017F9A63F006A9CDC /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BD601E117F9A63F006A9CDC /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BD8BEB616E11FC700D9BF0B /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5BD8BEB716E11FC700D9BF0B /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BD8BEB816E11FC700D9BF0B /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
@@ -942,6 +1018,7 @@
 		B139DEA115CCE3F8007D523E /* ORController.h in Headers */ = {isa = PBXBuildFile; fileRef = B139DE9F15CCE3F8007D523E /* ORController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B139DEA215CCE3F8007D523E /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
 		B13EBFDD17D2D96300021A82 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B13EBFDC17D2D96300021A82 /* main.m */; };
+		B144185F17D98C1A00924909 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */ = {isa = PBXBuildFile; fileRef = B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */; };
 		B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */ = {isa = PBXBuildFile; fileRef = B152BE2D13BB541E00531FD5 /* CPAllDifferentDC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1119,13 +1196,6 @@
 		B1CC833315D3BEEF008DE335 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1CC833415D3BEF8008DE335 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1CC833515D3BEFC008DE335 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B1CFB7EC17C436CD00FB062A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
-		B1CFB7F817C4375400FB062A /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
-		B1CFB7F917C4375800FB062A /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		B1CFB7FA17C4375C00FB062A /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B1CFB7FB17C4375F00FB062A /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
-		B1CFB7FC17C4376300FB062A /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
-		B1CFB7FE17C4376900FB062A /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1E1C78C17036D27006AACFC /* MIPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C78A17036D27006AACFC /* MIPSolverI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1E1C78D17036D27006AACFC /* MIPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C78B17036D27006AACFC /* MIPSolverI.m */; };
 		B1E1C79017036D4D006AACFC /* MIPGurobi.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C78E17036D4C006AACFC /* MIPGurobi.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1162,48 +1232,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		37095B3416DBF18B001BCEEC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
-			remoteInfo = ORFoundation;
-		};
-		37095B3616DBF18B001BCEEC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
-			remoteInfo = ORUtilities;
-		};
-		37095B3816DBF18B001BCEEC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
-			remoteInfo = ORModeling;
-		};
-		37095B3A16DBF18B001BCEEC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
-			remoteInfo = ORProgram;
-		};
-		37095B3C16DBF18B001BCEEC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B9348691655451C00757F89;
-			remoteInfo = CPUKernel;
-		};
-		37095B3E16DBF18B001BCEEC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
-			remoteInfo = objcp;
-		};
 		37A715D216FB946900E02DC6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -1240,13 +1268,6 @@
 			remoteInfo = objcp;
 		};
 		37A715DE16FB946900E02DC6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
-			remoteInfo = objmp;
-		};
-		37EB3C6116F17E96003ABD4B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -1672,6 +1693,55 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
+		};
+		5B27573C17E87B600082934E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B27573E17E87B600082934E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B27574017E87B600082934E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5B27574217E87B600082934E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5B27574417E87B600082934E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5B27574617E87B600082934E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5B27574817E87B600082934E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
 		};
 		5B28CAEF1668FC6F008AB802 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2142,6 +2212,55 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5B67A50F17E227F600516F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B67A51117E227F600516F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B67A51317E227F600516F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5B67A51517E227F600516F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5B67A51717E227F600516F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5B67A51917E227F600516F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5B67A51B17E227F600516F50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
+		};
 		5B68118F161F990700F4480F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -2289,6 +2408,20 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5B7CDA5A1801E0B200C60AB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BCCC4021417F8CE0079E833;
+			remoteInfo = queensACSem;
+		};
+		5B7CDA5C1801F63600C60AB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B15442C416D1AAD0001BD7B3;
+			remoteInfo = testLPConcretization;
+		};
 		5B7D696315B9C93000C9A10C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -2393,6 +2526,349 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
+		};
+		5B8E521117FDE8B500533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BEEF60F13970B6F002ADBD4;
+			remoteInfo = queens2;
+		};
+		5B8E521317FDE8B500533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BB3836213B3C0E1005B7D52;
+			remoteInfo = magicserie;
+		};
+		5B8E521517FDE8B500533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1595B3D13C11F2A001FCB61;
+			remoteInfo = Sudoku;
+		};
+		5B8E521717FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1771593155798AA00BA14BF;
+			remoteInfo = Euler;
+		};
+		5B8E521917FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B558C041563F01000D2BCD7;
+			remoteInfo = queensNaive;
+		};
+		5B8E521B17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B2000E0156D585E00D80105;
+			remoteInfo = queensNaiveView;
+		};
+		5B8E521D17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B6A95FF15879F1500019903;
+			remoteInfo = knapsack;
+		};
+		5B8E521F17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BE5A7E9158A838F006703CB;
+			remoteInfo = fdmul2;
+		};
+		5B8E522117FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BE7773F1594C9E500ADE34E;
+			remoteInfo = fdmul;
+		};
+		5B8E522317FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BC1169F1595067900E0F5C8;
+			remoteInfo = ais;
+		};
+		5B8E522517FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B12ED8BF159E0C2200713C8E;
+			remoteInfo = sport;
+		};
+		5B8E522717FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BE7C24A15A94BDF00B2CBC1;
+			remoteInfo = warehouse;
+		};
+		5B8E522917FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B76D98D15AAADBD00F8B445;
+			remoteInfo = marriage;
+		};
+		5B8E522B17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BEAD78415ABE38500A012FE;
+			remoteInfo = bibd;
+		};
+		5B8E522D17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAEE09C15AEA08D006CEE1E;
+			remoteInfo = costas;
+		};
+		5B8E522F17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B15F6DDD15B1361700158FA0;
+			remoteInfo = progressive;
+		};
+		5B8E523117FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1935C5D15B90ECE00107399;
+			remoteInfo = slab;
+		};
+		5B8E523317FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B8DA1F415B98BC300684FD8;
+			remoteInfo = knapsackOpt;
+		};
+		5B8E523517FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B7D695515B9C91D00C9A10C;
+			remoteInfo = market2s;
+		};
+		5B8E523717FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B181E11515D7465300AB44DA;
+			remoteInfo = sportModel;
+		};
+		5B8E523917FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B189512515DE52D100B77813;
+			remoteInfo = magicseriesModel;
+		};
+		5B8E523B17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B189513C15E0FA5E00B77813;
+			remoteInfo = slabModel;
+		};
+		5B8E523D17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B7B476915F0E4AD005FF875;
+			remoteInfo = coloringModel;
+		};
+		5B8E523F17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B80560F16076DFE00659ECC;
+			remoteInfo = magicsquareModel;
+		};
+		5B8E524117FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B28CAE11668FC63008AB802;
+			remoteInfo = debruijn;
+		};
+		5B8E524317FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B28CB0416691F0C008AB802;
+			remoteInfo = langford;
+		};
+		5B8E524517FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BC09189167F7F9A009A7712;
+			remoteInfo = grocery;
+		};
+		5B8E524717FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BC091AC167F9095009A7712;
+			remoteInfo = nfraction;
+		};
+		5B8E524917FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BC091CF167F9D5B009A7712;
+			remoteInfo = slow_convergence;
+		};
+		5B8E524B17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BA3457B1680B7BD00485366;
+			remoteInfo = latinSquare;
+		};
+		5B8E524D17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BF1386F16822EFC005EAC6B;
+			remoteInfo = golomb;
+		};
+		5B8E524F17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BBB08C316C551960087ACF0;
+			remoteInfo = order;
+		};
+		5B8E525117FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B19098116DAACA7006D1D24;
+			remoteInfo = eq20;
+		};
+		5B8E525517FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B3848BD16E6E59300498DCF;
+			remoteInfo = perfect;
+		};
+		5B8E525717FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B3848DF16E7883A00498DCF;
+			remoteInfo = partition;
+		};
+		5B8E525917FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B11551E171B1CF4005371AA;
+			remoteInfo = slabLNSModel;
+		};
+		5B8E525B17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B103533E13BBD7AC00627058;
+			remoteInfo = queensAC;
+		};
+		5B8E525D17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B182C5E9173C30ED002954F6;
+			remoteInfo = queensMIP;
+		};
+		5B8E525F17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B66238B176FA5BA00A1ACCD;
+			remoteInfo = qg7;
+		};
+		5B8E526117FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B6623AE1770A13200A1ACCD;
+			remoteInfo = minesweeper;
+		};
+		5B8E526317FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B6623D11770B1AD00A1ACCD;
+			remoteInfo = paq;
+		};
+		5B8E526517FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BC97A29177384C1005C48A8;
+			remoteInfo = regular;
+		};
+		5B8E526717FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9B2447177873D3001AB944;
+			remoteInfo = nonogram;
+		};
+		5B8E526917FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BC0C751177A191400B12173;
+			remoteInfo = bacp;
+		};
+		5B8E526B17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B6B0EFD178B557F00104246;
+			remoteInfo = circle;
+		};
+		5B8E526D17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B3895E81795BE07004CCE93;
+			remoteInfo = fwarehouse;
+		};
+		5B8E526F17FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B67A4FB17E227BB00516F50;
+			remoteInfo = wka;
+		};
+		5B8E527117FDE8FB00533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B27572F17E87B560082934E;
+			remoteInfo = costas2;
+		};
+		5B8E527317FE021700533284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
 		};
 		5B9348791655452B00757F89 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3024,6 +3500,55 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5BD601CD17F9A634006A9CDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BD601CF17F9A635006A9CDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BD601D117F9A635006A9CDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BD601D317F9A635006A9CDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5BD601D517F9A635006A9CDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5BD601D717F9A635006A9CDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5BD601D917F9A635006A9CDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
+		};
 		5BD8BEAE16E11FBD00D9BF0B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -3507,6 +4032,13 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		B109681B180B01EB00F010E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1B68C73159FC16E008BC463;
+			remoteInfo = TestAssignment;
+		};
 		B12ED8CD159E0CA500713C8E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -3899,48 +4431,6 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
-		B1CFB7FF17C437BA00FB062A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
-			remoteInfo = ORFoundation;
-		};
-		B1CFB80117C437BE00FB062A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
-			remoteInfo = ORUtilities;
-		};
-		B1CFB80317C437C700FB062A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
-			remoteInfo = ORModeling;
-		};
-		B1CFB80517C437CB00FB062A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
-			remoteInfo = ORProgram;
-		};
-		B1CFB80717C437CF00FB062A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B9348691655451C00757F89;
-			remoteInfo = CPUKernel;
-		};
-		B1CFB80917C437D200FB062A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
-			remoteInfo = objcp;
-		};
 		B1F531E515AED4F100E89F98 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -4007,15 +4497,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		37095B2816DBF173001BCEEC /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		37A715C616FB93F900E02DC6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4051,6 +4532,16 @@
 			dstSubfolderSpec = 0;
 			files = (
 				5B2000E9156D585E00D80105 /* queensNaive.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5B27572E17E87B560082934E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5B27573817E87B560082934E /* costas2.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -4170,6 +4661,16 @@
 			dstSubfolderSpec = 0;
 			files = (
 				5B6623DA1770B1AE00A1ACCD /* paq.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5B67A4FA17E227BB00516F50 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5B67A50417E227BB00516F50 /* wka.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -4395,10 +4896,20 @@
 		5BCCC4011417F8CE0079E833 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			dstPath = /usr/share/man/man1;
 			dstSubfolderSpec = 0;
 			files = (
 				5BCCC40C1417F8CE0079E833 /* queensACSem.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5BD601BF17F9A627006A9CDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5BD601C917F9A627006A9CDC /* bugTest.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -4688,15 +5199,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B1CFB7E917C436CD00FB062A /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		B1F531D615AED4B100E89F98 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4720,7 +5222,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		37095B2A16DBF173001BCEEC /* CuttingStock */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CuttingStock; sourceTree = BUILT_PRODUCTS_DIR; };
 		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
 		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
 		379CDEEB16F17D71000E7338 /* ORModelTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelTransformation.h; sourceTree = "<group>"; };
@@ -4743,6 +5244,10 @@
 		5B19098216DAACA7006D1D24 /* eq20 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eq20; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2000ED156D585E00D80105 /* queensNaive copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "queensNaive copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2000F0156D58A800D80105 /* mainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = mainView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B27573017E87B560082934E /* costas2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = costas2; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B27573317E87B560082934E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B27573617E87B560082934E /* costas2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "costas2-Prefix.pch"; sourceTree = "<group>"; };
+		5B27573717E87B560082934E /* costas2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = costas2.1; sourceTree = "<group>"; };
 		5B27ABDC15B1518300E4A3DF /* mknap1-0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "mknap1-0.txt"; sourceTree = "<group>"; };
 		5B27ABDD15B1518300E4A3DF /* mknap1-2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "mknap1-2.txt"; sourceTree = "<group>"; };
 		5B27ABDE15B1518300E4A3DF /* mknap1-3.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "mknap1-3.txt"; sourceTree = "<group>"; };
@@ -4835,6 +5340,10 @@
 		5B6623D81770B1AE00A1ACCD /* paq-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "paq-Prefix.pch"; sourceTree = "<group>"; };
 		5B6623D91770B1AE00A1ACCD /* paq.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = paq.1; sourceTree = "<group>"; };
 		5B673A2A178DC5AA00886A28 /* ORLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinear.h; sourceTree = "<group>"; };
+		5B67A4FC17E227BB00516F50 /* wka */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wka; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B67A4FF17E227BB00516F50 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B67A50217E227BB00516F50 /* wka-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "wka-Prefix.pch"; sourceTree = "<group>"; };
+		5B67A50317E227BB00516F50 /* wka.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = wka.1; sourceTree = "<group>"; };
 		5B681180161F98FB00F4480F /* ORProgram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORProgram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B681184161F98FB00F4480F /* ORProgram-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORProgram-Info.plist"; sourceTree = "<group>"; };
 		5B681186161F98FB00F4480F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -4909,6 +5418,8 @@
 		5B8259851608BB04006CE539 /* CPABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPABS.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B85DE111438B2D500E4E133 /* ORSemBDSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemBDSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B85DE121438B2D500E4E133 /* ORSemBDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemBDSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORAnnotation.h; sourceTree = "<group>"; };
+		5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORAnnotation.m; sourceTree = "<group>"; };
 		5B8B12DB15A3BF8000300385 /* ORError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORError.m; sourceTree = "<group>"; };
 		5B8C7DE6158674D1007042CA /* CPAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAppDelegate.h; sourceTree = "<group>"; };
 		5B8C7DE7158674D1007042CA /* CPAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -5085,6 +5596,10 @@
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
 		5BCCC40B1417F8CE0079E833 /* queensACSem.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensACSem.1; sourceTree = "<group>"; };
+		5BD601C117F9A627006A9CDC /* bugTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bugTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BD601C417F9A627006A9CDC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BD601C717F9A627006A9CDC /* bugTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bugTest-Prefix.pch"; sourceTree = "<group>"; };
+		5BD601C817F9A627006A9CDC /* bugTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bugTest.1; sourceTree = "<group>"; };
 		5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSolution.h; sourceTree = "<group>"; };
 		5BDBBAA91718D96B00322163 /* stressLimit */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = stressLimit; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BDBBAAC1718D96C00322163 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -5353,7 +5868,6 @@
 		B1CC832415D3BEC4008DE335 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1CC832715D3BEC4008DE335 /* model-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "model-Prefix.pch"; sourceTree = "<group>"; };
 		B1CC832815D3BEC4008DE335 /* model.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = model.1; sourceTree = "<group>"; };
-		B1CFB7EB17C436CD00FB062A /* testF */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testF; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1E1C78A17036D27006AACFC /* MIPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSolverI.h; sourceTree = "<group>"; };
 		B1E1C78B17036D27006AACFC /* MIPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSolverI.m; sourceTree = "<group>"; };
 		B1E1C78E17036D4C006AACFC /* MIPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPGurobi.h; sourceTree = "<group>"; };
@@ -5389,21 +5903,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		37095B2716DBF173001BCEEC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */,
-				37095B4516DBF1B3001BCEEC /* objcp.framework in Frameworks */,
-				37095B4116DBF1AC001BCEEC /* ORFoundation.framework in Frameworks */,
-				37095B4216DBF1AC001BCEEC /* ORModeling.framework in Frameworks */,
-				37095B4316DBF1AC001BCEEC /* ORProgram.framework in Frameworks */,
-				37095B4416DBF1AC001BCEEC /* ORUtilities.framework in Frameworks */,
-				37095B4016DBF1A3001BCEEC /* CPUKernel.framework in Frameworks */,
-				37095B2B16DBF173001BCEEC /* CoreFoundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		37A715C516FB93F900E02DC6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5456,6 +5955,21 @@
 				5B920ECA15A432CF00AD0820 /* ORFoundation.framework in Frameworks */,
 				5B2000E6156D585E00D80105 /* objcp.framework in Frameworks */,
 				5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B27572D17E87B560082934E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B27574A17E87B6A0082934E /* CPUKernel.framework in Frameworks */,
+				5B27574B17E87B6A0082934E /* objcp.framework in Frameworks */,
+				5B27574C17E87B6A0082934E /* objmp.framework in Frameworks */,
+				5B27574D17E87B6A0082934E /* ORFoundation.framework in Frameworks */,
+				5B27574E17E87B6A0082934E /* ORModeling.framework in Frameworks */,
+				5B27574F17E87B6A0082934E /* ORProgram.framework in Frameworks */,
+				5B27575017E87B6A0082934E /* ORUtilities.framework in Frameworks */,
+				5B27573117E87B560082934E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5534,9 +6048,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B144185F17D98C1A00924909 /* ORFoundation.framework in Frameworks */,
 				5B3896011795BE1E004CCE93 /* CPUKernel.framework in Frameworks */,
 				5B3896021795BE1E004CCE93 /* objcp.framework in Frameworks */,
-				5B3896031795BE1E004CCE93 /* ORFoundation.framework in Frameworks */,
 				5B3896041795BE1E004CCE93 /* ORModeling.framework in Frameworks */,
 				5B3896051795BE1E004CCE93 /* ORProgram.framework in Frameworks */,
 				5B3896061795BE1E004CCE93 /* ORUtilities.framework in Frameworks */,
@@ -5629,6 +6143,21 @@
 				5B6623EE1770B1D000A1ACCD /* ORProgram.framework in Frameworks */,
 				5B6623EF1770B1D000A1ACCD /* ORUtilities.framework in Frameworks */,
 				5B6623D31770B1AE00A1ACCD /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B67A4F917E227BB00516F50 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B67A50917E227ED00516F50 /* CPUKernel.framework in Frameworks */,
+				5B67A50A17E227ED00516F50 /* objcp.framework in Frameworks */,
+				5B67A50B17E227ED00516F50 /* objmp.framework in Frameworks */,
+				5B67A50C17E227ED00516F50 /* ORModeling.framework in Frameworks */,
+				5B67A50D17E227ED00516F50 /* ORProgram.framework in Frameworks */,
+				5B67A50E17E227ED00516F50 /* ORUtilities.framework in Frameworks */,
+				5B67A4FD17E227BB00516F50 /* Foundation.framework in Frameworks */,
+				5B67A50817E227E600516F50 /* ORFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6029,6 +6558,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5BD601BE17F9A627006A9CDC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BD601DB17F9A63F006A9CDC /* CPUKernel.framework in Frameworks */,
+				5BD601DC17F9A63F006A9CDC /* objcp.framework in Frameworks */,
+				5BD601DD17F9A63F006A9CDC /* objmp.framework in Frameworks */,
+				5BD601DE17F9A63F006A9CDC /* ORFoundation.framework in Frameworks */,
+				5BD601DF17F9A63F006A9CDC /* ORModeling.framework in Frameworks */,
+				5BD601E017F9A63F006A9CDC /* ORProgram.framework in Frameworks */,
+				5BD601E117F9A63F006A9CDC /* ORUtilities.framework in Frameworks */,
+				5BD601C217F9A627006A9CDC /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5BDBBAA61718D96B00322163 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -6197,6 +6741,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B8E527517FE021E00533284 /* CPUKernel.framework in Frameworks */,
 				B15442C016D1AA4C001BD7B3 /* ORModeling.framework in Frameworks */,
 				B15442BF16D1AA44001BD7B3 /* ORProgram.framework in Frameworks */,
 				B15442BE16D1AA41001BD7B3 /* ORUtilities.framework in Frameworks */,
@@ -6438,20 +6983,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B1CFB7E817C436CD00FB062A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B1CFB7FE17C4376900FB062A /* ORUtilities.framework in Frameworks */,
-				B1CFB7FC17C4376300FB062A /* ORProgram.framework in Frameworks */,
-				B1CFB7FB17C4375F00FB062A /* ORModeling.framework in Frameworks */,
-				B1CFB7FA17C4375C00FB062A /* ORFoundation.framework in Frameworks */,
-				B1CFB7F917C4375800FB062A /* objcp.framework in Frameworks */,
-				B1CFB7F817C4375400FB062A /* CPUKernel.framework in Frameworks */,
-				B1CFB7EC17C436CD00FB062A /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B1F531D515AED4B100E89F98 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -6496,6 +7027,24 @@
 			isa = PBXGroup;
 			children = (
 				5B115525171B1CF5005371AA /* slabLNSModel-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5B27573217E87B560082934E /* costas2 */ = {
+			isa = PBXGroup;
+			children = (
+				5B27573317E87B560082934E /* main.m */,
+				5B27573717E87B560082934E /* costas2.1 */,
+				5B27573517E87B560082934E /* Supporting Files */,
+			);
+			path = costas2;
+			sourceTree = "<group>";
+		};
+		5B27573517E87B560082934E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B27573617E87B560082934E /* costas2-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -6761,6 +7310,24 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5B67A4FE17E227BB00516F50 /* wka */ = {
+			isa = PBXGroup;
+			children = (
+				5B67A4FF17E227BB00516F50 /* main.m */,
+				5B67A50317E227BB00516F50 /* wka.1 */,
+				5B67A50117E227BB00516F50 /* Supporting Files */,
+			);
+			path = wka;
+			sourceTree = "<group>";
+		};
+		5B67A50117E227BB00516F50 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B67A50217E227BB00516F50 /* wka-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		5B681182161F98FB00F4480F /* ORProgram */ = {
 			isa = PBXGroup;
 			children = (
@@ -6886,6 +7453,9 @@
 				5BDBBAAB1718D96C00322163 /* stressLimit */,
 				5B115521171B1CF5005371AA /* slabLNSModel */,
 				5BE12176173C75A3000C9AA9 /* bug */,
+				5B67A4FE17E227BB00516F50 /* wka */,
+				5B27573217E87B560082934E /* costas2 */,
+				5BD601C317F9A627006A9CDC /* bugTest */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -6959,7 +7529,6 @@
 				B154429F16D1A247001BD7B3 /* GraveYard */,
 				B15442C516D1AAD0001BD7B3 /* testLPConcretization */,
 				5B19098216DAACA7006D1D24 /* eq20 */,
-				37095B2A16DBF173001BCEEC /* CuttingStock */,
 				5B3848BE16E6E59300498DCF /* perfect */,
 				5B3848E016E7883A00498DCF /* partition */,
 				37A715C816FB93F900E02DC6 /* LogicBendersExample */,
@@ -6978,7 +7547,9 @@
 				B18DF14A17810C67004E1880 /* LPRelaxation */,
 				5B6B0EFE178B557F00104246 /* circle */,
 				5B3895E91795BE07004CCE93 /* fwarehouse */,
-				B1CFB7EB17C436CD00FB062A /* testF */,
+				5B67A4FC17E227BB00516F50 /* wka */,
+				5B27573017E87B560082934E /* costas2 */,
+				5BD601C117F9A627006A9CDC /* bugTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7727,6 +8298,24 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5BD601C317F9A627006A9CDC /* bugTest */ = {
+			isa = PBXGroup;
+			children = (
+				5BD601C417F9A627006A9CDC /* main.m */,
+				5BD601C817F9A627006A9CDC /* bugTest.1 */,
+				5BD601C617F9A627006A9CDC /* Supporting Files */,
+			);
+			path = bugTest;
+			sourceTree = "<group>";
+		};
+		5BD601C617F9A627006A9CDC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5BD601C717F9A627006A9CDC /* bugTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		5BDBBAAB1718D96C00322163 /* stressLimit */ = {
 			isa = PBXGroup;
 			children = (
@@ -7905,6 +8494,8 @@
 				5B920EBE15A402A500AD0820 /* ORArrayI.m */,
 				5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */,
 				5BF3E1D713C3BC6400C3F1A5 /* ORAVLTree.m */,
+				5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */,
+				5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */,
 				B1A0124615CCA92F001ED0D4 /* ORCommand.h */,
 				B1A0124715CCA930001ED0D4 /* ORCommand.m */,
 				B1CC82F315D27A57008DE335 /* ORConstraint.h */,
@@ -8649,7 +9240,6 @@
 				B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */,
 				B103614D16D9AAA500E95A39 /* ORFloatDecompose.h in Headers */,
 				B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */,
-				379CDEEC16F17D71000E7338 /* ORModelTransformation.h in Headers */,
 				B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */,
 				B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */,
 				5B673A2B178DC5AA00886A28 /* ORLinear.h in Headers */,
@@ -8666,6 +9256,7 @@
 				5BFD5A6C15A3BEA900825BC3 /* ORError.h in Headers */,
 				5BD2DFC815A3CEBF00D4C616 /* ORSet.h in Headers */,
 				5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */,
+				5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */,
 				5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */,
 				5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */,
 				5B920EAC15A3F4A900AD0820 /* ORTracker.h in Headers */,
@@ -8717,30 +9308,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		37095B2916DBF173001BCEEC /* CuttingStock */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 37095B3116DBF174001BCEEC /* Build configuration list for PBXNativeTarget "CuttingStock" */;
-			buildPhases = (
-				37095B2616DBF173001BCEEC /* Sources */,
-				37095B2716DBF173001BCEEC /* Frameworks */,
-				37095B2816DBF173001BCEEC /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				37EB3C6216F17E96003ABD4B /* PBXTargetDependency */,
-				37095B3516DBF18B001BCEEC /* PBXTargetDependency */,
-				37095B3716DBF18B001BCEEC /* PBXTargetDependency */,
-				37095B3916DBF18B001BCEEC /* PBXTargetDependency */,
-				37095B3B16DBF18B001BCEEC /* PBXTargetDependency */,
-				37095B3D16DBF18B001BCEEC /* PBXTargetDependency */,
-				37095B3F16DBF18B001BCEEC /* PBXTargetDependency */,
-			);
-			name = CuttingStock;
-			productName = CuttingStock;
-			productReference = 37095B2A16DBF173001BCEEC /* CuttingStock */;
-			productType = "com.apple.product-type.tool";
-		};
 		37A715C716FB93F900E02DC6 /* LogicBendersExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 37A715D116FB93F900E02DC6 /* Build configuration list for PBXNativeTarget "LogicBendersExample" */;
@@ -8830,6 +9397,30 @@
 			name = queensNaiveView;
 			productName = queensNaive;
 			productReference = 5B2000ED156D585E00D80105 /* queensNaive copy */;
+			productType = "com.apple.product-type.tool";
+		};
+		5B27572F17E87B560082934E /* costas2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B27573B17E87B560082934E /* Build configuration list for PBXNativeTarget "costas2" */;
+			buildPhases = (
+				5B27572C17E87B560082934E /* Sources */,
+				5B27572D17E87B560082934E /* Frameworks */,
+				5B27572E17E87B560082934E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B27573D17E87B600082934E /* PBXTargetDependency */,
+				5B27573F17E87B600082934E /* PBXTargetDependency */,
+				5B27574117E87B600082934E /* PBXTargetDependency */,
+				5B27574317E87B600082934E /* PBXTargetDependency */,
+				5B27574517E87B600082934E /* PBXTargetDependency */,
+				5B27574717E87B600082934E /* PBXTargetDependency */,
+				5B27574917E87B600082934E /* PBXTargetDependency */,
+			);
+			name = costas2;
+			productName = costas2;
+			productReference = 5B27573017E87B560082934E /* costas2 */;
 			productType = "com.apple.product-type.tool";
 		};
 		5B28CAE11668FC63008AB802 /* debruijn */ = {
@@ -9121,6 +9712,30 @@
 			name = paq;
 			productName = paq;
 			productReference = 5B6623D21770B1AD00A1ACCD /* paq */;
+			productType = "com.apple.product-type.tool";
+		};
+		5B67A4FB17E227BB00516F50 /* wka */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B67A50717E227BB00516F50 /* Build configuration list for PBXNativeTarget "wka" */;
+			buildPhases = (
+				5B67A4F817E227BB00516F50 /* Sources */,
+				5B67A4F917E227BB00516F50 /* Frameworks */,
+				5B67A4FA17E227BB00516F50 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B67A51017E227F600516F50 /* PBXTargetDependency */,
+				5B67A51217E227F600516F50 /* PBXTargetDependency */,
+				5B67A51417E227F600516F50 /* PBXTargetDependency */,
+				5B67A51617E227F600516F50 /* PBXTargetDependency */,
+				5B67A51817E227F600516F50 /* PBXTargetDependency */,
+				5B67A51A17E227F600516F50 /* PBXTargetDependency */,
+				5B67A51C17E227F600516F50 /* PBXTargetDependency */,
+			);
+			name = wka;
+			productName = wka;
+			productReference = 5B67A4FC17E227BB00516F50 /* wka */;
 			productType = "com.apple.product-type.tool";
 		};
 		5B68117F161F98FB00F4480F /* ORProgram */ = {
@@ -9795,6 +10410,30 @@
 			productReference = 5BCCC4031417F8CE0079E833 /* queensACSem */;
 			productType = "com.apple.product-type.tool";
 		};
+		5BD601C017F9A627006A9CDC /* bugTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BD601CC17F9A627006A9CDC /* Build configuration list for PBXNativeTarget "bugTest" */;
+			buildPhases = (
+				5BD601BD17F9A627006A9CDC /* Sources */,
+				5BD601BE17F9A627006A9CDC /* Frameworks */,
+				5BD601BF17F9A627006A9CDC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BD601CE17F9A635006A9CDC /* PBXTargetDependency */,
+				5BD601D017F9A635006A9CDC /* PBXTargetDependency */,
+				5BD601D217F9A635006A9CDC /* PBXTargetDependency */,
+				5BD601D417F9A635006A9CDC /* PBXTargetDependency */,
+				5BD601D617F9A635006A9CDC /* PBXTargetDependency */,
+				5BD601D817F9A635006A9CDC /* PBXTargetDependency */,
+				5BD601DA17F9A635006A9CDC /* PBXTargetDependency */,
+			);
+			name = bugTest;
+			productName = bugTest;
+			productReference = 5BD601C117F9A627006A9CDC /* bugTest */;
+			productType = "com.apple.product-type.tool";
+		};
 		5BDBBAA81718D96B00322163 /* stressLimit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BDBBAB41718D96C00322163 /* Build configuration list for PBXNativeTarget "stressLimit" */;
@@ -10089,6 +10728,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5B8E527417FE021700533284 /* PBXTargetDependency */,
 				B15442BC16D1AA2D001BD7B3 /* PBXTargetDependency */,
 				B15442BA16D1AA2A001BD7B3 /* PBXTargetDependency */,
 				B15442B816D1AA25001BD7B3 /* PBXTargetDependency */,
@@ -10502,29 +11142,6 @@
 			productReference = B1CC832015D3BEC4008DE335 /* model */;
 			productType = "com.apple.product-type.tool";
 		};
-		B1CFB7EA17C436CD00FB062A /* testF */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B1CFB7F417C436CD00FB062A /* Build configuration list for PBXNativeTarget "testF" */;
-			buildPhases = (
-				B1CFB7E717C436CD00FB062A /* Sources */,
-				B1CFB7E817C436CD00FB062A /* Frameworks */,
-				B1CFB7E917C436CD00FB062A /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B1CFB80A17C437D200FB062A /* PBXTargetDependency */,
-				B1CFB80817C437CF00FB062A /* PBXTargetDependency */,
-				B1CFB80617C437CB00FB062A /* PBXTargetDependency */,
-				B1CFB80417C437C700FB062A /* PBXTargetDependency */,
-				B1CFB80217C437BE00FB062A /* PBXTargetDependency */,
-				B1CFB80017C437BA00FB062A /* PBXTargetDependency */,
-			);
-			name = testF;
-			productName = testF;
-			productReference = B1CFB7EB17C436CD00FB062A /* testF */;
-			productType = "com.apple.product-type.tool";
-		};
 		B1F531D715AED4B100E89F98 /* testPacking */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B1F531E215AED4B100E89F98 /* Build configuration list for PBXNativeTarget "testPacking" */;
@@ -10576,7 +11193,7 @@
 		5B6E89171379D3E9005DB4CA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 5B6E891A1379D3E9005DB4CA /* Build configuration list for PBXProject "Clo" */;
@@ -10655,7 +11272,6 @@
 				B15441EB16D17713001BD7B3 /* testMIP */,
 				B154429E16D1A247001BD7B3 /* GraveYard */,
 				5B19098116DAACA7006D1D24 /* eq20 */,
-				37095B2916DBF173001BCEEC /* CuttingStock */,
 				5B3848BD16E6E59300498DCF /* perfect */,
 				5B3848DF16E7883A00498DCF /* partition */,
 				37A715C716FB93F900E02DC6 /* LogicBendersExample */,
@@ -10676,7 +11292,9 @@
 				B18DF14917810C67004E1880 /* LPRelaxation */,
 				5B6B0EFD178B557F00104246 /* circle */,
 				5B3895E81795BE07004CCE93 /* fwarehouse */,
-				B1CFB7EA17C436CD00FB062A /* testF */,
+				5B67A4FB17E227BB00516F50 /* wka */,
+				5B27572F17E87B560082934E /* costas2 */,
+				5BD601C017F9A627006A9CDC /* bugTest */,
 			);
 		};
 /* End PBXProject section */
@@ -10838,13 +11456,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		37095B2616DBF173001BCEEC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		37A715C416FB93F900E02DC6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10876,6 +11487,15 @@
 			files = (
 				5B2000F1156D58A800D80105 /* mainView.m in Sources */,
 				5B6CFDA216D93A1B00BCB95F /* ORCmdLineArgs.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B27572C17E87B560082934E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B27575117E87C370082934E /* ORCmdLineArgs.m in Sources */,
+				5B27573417E87B560082934E /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10994,6 +11614,15 @@
 			files = (
 				5B6623F01770B1D800A1ACCD /* ORCmdLineArgs.m in Sources */,
 				5B6623D61770B1AE00A1ACCD /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B67A4F817E227BB00516F50 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BD2F03E17FF556000A14B6D /* ORCmdLineArgs.m in Sources */,
+				5B67A50017E227BB00516F50 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11428,6 +12057,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5BD601BD17F9A627006A9CDC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BD601C517F9A627006A9CDC /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5BDBBAA51718D96B00322163 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11524,6 +12161,7 @@
 				5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */,
 				5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */,
 				B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */,
+				5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */,
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,
@@ -11752,13 +12390,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B1CFB7E717C436CD00FB062A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B1F531D415AED4B100E89F98 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11782,36 +12413,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		37095B3516DBF18B001BCEEC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
-			targetProxy = 37095B3416DBF18B001BCEEC /* PBXContainerItemProxy */;
-		};
-		37095B3716DBF18B001BCEEC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
-			targetProxy = 37095B3616DBF18B001BCEEC /* PBXContainerItemProxy */;
-		};
-		37095B3916DBF18B001BCEEC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
-			targetProxy = 37095B3816DBF18B001BCEEC /* PBXContainerItemProxy */;
-		};
-		37095B3B16DBF18B001BCEEC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B68117F161F98FB00F4480F /* ORProgram */;
-			targetProxy = 37095B3A16DBF18B001BCEEC /* PBXContainerItemProxy */;
-		};
-		37095B3D16DBF18B001BCEEC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B9348691655451C00757F89 /* CPUKernel */;
-			targetProxy = 37095B3C16DBF18B001BCEEC /* PBXContainerItemProxy */;
-		};
-		37095B3F16DBF18B001BCEEC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B9ABCEE1391329D000997E5 /* objcp */;
-			targetProxy = 37095B3E16DBF18B001BCEEC /* PBXContainerItemProxy */;
-		};
 		37A715D316FB946900E02DC6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
@@ -11841,11 +12442,6 @@
 			isa = PBXTargetDependency;
 			target = B154427F16D19D8E001BD7B3 /* objmp */;
 			targetProxy = 37A715DE16FB946900E02DC6 /* PBXContainerItemProxy */;
-		};
-		37EB3C6216F17E96003ABD4B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B154427F16D19D8E001BD7B3 /* objmp */;
-			targetProxy = 37EB3C6116F17E96003ABD4B /* PBXContainerItemProxy */;
 		};
 		5B11552C171B1D01005371AA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12146,6 +12742,41 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B2000E2156D585E00D80105 /* PBXContainerItemProxy */;
+		};
+		5B27573D17E87B600082934E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B27573C17E87B600082934E /* PBXContainerItemProxy */;
+		};
+		5B27573F17E87B600082934E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B27573E17E87B600082934E /* PBXContainerItemProxy */;
+		};
+		5B27574117E87B600082934E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5B27574017E87B600082934E /* PBXContainerItemProxy */;
+		};
+		5B27574317E87B600082934E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5B27574217E87B600082934E /* PBXContainerItemProxy */;
+		};
+		5B27574517E87B600082934E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B27574417E87B600082934E /* PBXContainerItemProxy */;
+		};
+		5B27574717E87B600082934E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B27574617E87B600082934E /* PBXContainerItemProxy */;
+		};
+		5B27574917E87B600082934E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 5B27574817E87B600082934E /* PBXContainerItemProxy */;
 		};
 		5B28CAF01668FC6F008AB802 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12482,6 +13113,41 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B6623E81770B1C300A1ACCD /* PBXContainerItemProxy */;
 		};
+		5B67A51017E227F600516F50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B67A50F17E227F600516F50 /* PBXContainerItemProxy */;
+		};
+		5B67A51217E227F600516F50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B67A51117E227F600516F50 /* PBXContainerItemProxy */;
+		};
+		5B67A51417E227F600516F50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5B67A51317E227F600516F50 /* PBXContainerItemProxy */;
+		};
+		5B67A51617E227F600516F50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5B67A51517E227F600516F50 /* PBXContainerItemProxy */;
+		};
+		5B67A51817E227F600516F50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B67A51717E227F600516F50 /* PBXContainerItemProxy */;
+		};
+		5B67A51A17E227F600516F50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B67A51917E227F600516F50 /* PBXContainerItemProxy */;
+		};
+		5B67A51C17E227F600516F50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 5B67A51B17E227F600516F50 /* PBXContainerItemProxy */;
+		};
 		5B681190161F990700F4480F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
@@ -12587,6 +13253,16 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B7B477E15F0E4C6005FF875 /* PBXContainerItemProxy */;
 		};
+		5B7CDA5B1801E0B200C60AB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BCCC4021417F8CE0079E833 /* queensACSem */;
+			targetProxy = 5B7CDA5A1801E0B200C60AB0 /* PBXContainerItemProxy */;
+		};
+		5B7CDA5D1801F63600C60AB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B15442C416D1AAD0001BD7B3 /* testLPConcretization */;
+			targetProxy = 5B7CDA5C1801F63600C60AB0 /* PBXContainerItemProxy */;
+		};
 		5B7D696415B9C93000C9A10C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
@@ -12661,6 +13337,251 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B8DA20615B98BCD00684FD8 /* PBXContainerItemProxy */;
+		};
+		5B8E521217FDE8B500533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BEEF60F13970B6F002ADBD4 /* queens2 */;
+			targetProxy = 5B8E521117FDE8B500533284 /* PBXContainerItemProxy */;
+		};
+		5B8E521417FDE8B500533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BB3836213B3C0E1005B7D52 /* magicserie */;
+			targetProxy = 5B8E521317FDE8B500533284 /* PBXContainerItemProxy */;
+		};
+		5B8E521617FDE8B500533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B1595B3D13C11F2A001FCB61 /* Sudoku */;
+			targetProxy = 5B8E521517FDE8B500533284 /* PBXContainerItemProxy */;
+		};
+		5B8E521817FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B1771593155798AA00BA14BF /* Euler */;
+			targetProxy = 5B8E521717FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E521A17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B558C041563F01000D2BCD7 /* queensNaive */;
+			targetProxy = 5B8E521917FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E521C17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B2000E0156D585E00D80105 /* queensNaiveView */;
+			targetProxy = 5B8E521B17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E521E17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B6A95FF15879F1500019903 /* knapsack */;
+			targetProxy = 5B8E521D17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E522017FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BE5A7E9158A838F006703CB /* fdmul2 */;
+			targetProxy = 5B8E521F17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E522217FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BE7773F1594C9E500ADE34E /* fdmul */;
+			targetProxy = 5B8E522117FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E522417FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BC1169F1595067900E0F5C8 /* ais */;
+			targetProxy = 5B8E522317FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E522617FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B12ED8BF159E0C2200713C8E /* sport */;
+			targetProxy = 5B8E522517FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E522817FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BE7C24A15A94BDF00B2CBC1 /* warehouse */;
+			targetProxy = 5B8E522717FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E522A17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B76D98D15AAADBD00F8B445 /* marriage */;
+			targetProxy = 5B8E522917FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E522C17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BEAD78415ABE38500A012FE /* bibd */;
+			targetProxy = 5B8E522B17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E522E17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAEE09C15AEA08D006CEE1E /* costas */;
+			targetProxy = 5B8E522D17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E523017FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B15F6DDD15B1361700158FA0 /* progressive */;
+			targetProxy = 5B8E522F17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E523217FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B1935C5D15B90ECE00107399 /* slab */;
+			targetProxy = 5B8E523117FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E523417FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B8DA1F415B98BC300684FD8 /* knapsackOpt */;
+			targetProxy = 5B8E523317FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E523617FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B7D695515B9C91D00C9A10C /* market2s */;
+			targetProxy = 5B8E523517FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E523817FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B181E11515D7465300AB44DA /* sportModel */;
+			targetProxy = 5B8E523717FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E523A17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B189512515DE52D100B77813 /* magicseriesModel */;
+			targetProxy = 5B8E523917FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E523C17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B189513C15E0FA5E00B77813 /* slabModel */;
+			targetProxy = 5B8E523B17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E523E17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B7B476915F0E4AD005FF875 /* coloringModel */;
+			targetProxy = 5B8E523D17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E524017FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B80560F16076DFE00659ECC /* magicsquareModel */;
+			targetProxy = 5B8E523F17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E524217FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B28CAE11668FC63008AB802 /* debruijn */;
+			targetProxy = 5B8E524117FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E524417FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B28CB0416691F0C008AB802 /* langford */;
+			targetProxy = 5B8E524317FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E524617FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BC09189167F7F9A009A7712 /* grocery */;
+			targetProxy = 5B8E524517FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E524817FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BC091AC167F9095009A7712 /* nfraction */;
+			targetProxy = 5B8E524717FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E524A17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BC091CF167F9D5B009A7712 /* slow_convergence */;
+			targetProxy = 5B8E524917FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E524C17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BA3457B1680B7BD00485366 /* latinSquare */;
+			targetProxy = 5B8E524B17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E524E17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BF1386F16822EFC005EAC6B /* golomb */;
+			targetProxy = 5B8E524D17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E525017FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BBB08C316C551960087ACF0 /* order */;
+			targetProxy = 5B8E524F17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E525217FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B19098116DAACA7006D1D24 /* eq20 */;
+			targetProxy = 5B8E525117FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E525617FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B3848BD16E6E59300498DCF /* perfect */;
+			targetProxy = 5B8E525517FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E525817FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B3848DF16E7883A00498DCF /* partition */;
+			targetProxy = 5B8E525717FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E525A17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B11551E171B1CF4005371AA /* slabLNSModel */;
+			targetProxy = 5B8E525917FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E525C17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B103533E13BBD7AC00627058 /* queensAC */;
+			targetProxy = 5B8E525B17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E525E17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B182C5E9173C30ED002954F6 /* queensMIP */;
+			targetProxy = 5B8E525D17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E526017FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B66238B176FA5BA00A1ACCD /* qg7 */;
+			targetProxy = 5B8E525F17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E526217FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B6623AE1770A13200A1ACCD /* minesweeper */;
+			targetProxy = 5B8E526117FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E526417FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B6623D11770B1AD00A1ACCD /* paq */;
+			targetProxy = 5B8E526317FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E526617FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BC97A29177384C1005C48A8 /* regular */;
+			targetProxy = 5B8E526517FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E526817FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9B2447177873D3001AB944 /* nonogram */;
+			targetProxy = 5B8E526717FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E526A17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BC0C751177A191400B12173 /* bacp */;
+			targetProxy = 5B8E526917FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E526C17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B6B0EFD178B557F00104246 /* circle */;
+			targetProxy = 5B8E526B17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E526E17FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B3895E81795BE07004CCE93 /* fwarehouse */;
+			targetProxy = 5B8E526D17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E527017FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B67A4FB17E227BB00516F50 /* wka */;
+			targetProxy = 5B8E526F17FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E527217FDE8FB00533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B27572F17E87B560082934E /* costas2 */;
+			targetProxy = 5B8E527117FDE8FB00533284 /* PBXContainerItemProxy */;
+		};
+		5B8E527417FE021700533284 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B8E527317FE021700533284 /* PBXContainerItemProxy */;
 		};
 		5B93487A1655452B00757F89 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13112,6 +14033,41 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BD34C9C139D6AF60075CD81 /* PBXContainerItemProxy */;
 		};
+		5BD601CE17F9A635006A9CDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BD601CD17F9A634006A9CDC /* PBXContainerItemProxy */;
+		};
+		5BD601D017F9A635006A9CDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BD601CF17F9A635006A9CDC /* PBXContainerItemProxy */;
+		};
+		5BD601D217F9A635006A9CDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BD601D117F9A635006A9CDC /* PBXContainerItemProxy */;
+		};
+		5BD601D417F9A635006A9CDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5BD601D317F9A635006A9CDC /* PBXContainerItemProxy */;
+		};
+		5BD601D617F9A635006A9CDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5BD601D517F9A635006A9CDC /* PBXContainerItemProxy */;
+		};
+		5BD601D817F9A635006A9CDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5BD601D717F9A635006A9CDC /* PBXContainerItemProxy */;
+		};
+		5BD601DA17F9A635006A9CDC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 5BD601D917F9A635006A9CDC /* PBXContainerItemProxy */;
+		};
 		5BD8BEAF16E11FBD00D9BF0B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
@@ -13457,6 +14413,11 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B103534C13BBD81900627058 /* PBXContainerItemProxy */;
 		};
+		B109681C180B01EB00F010E3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B1B68C73159FC16E008BC463 /* TestAssignment */;
+			targetProxy = B109681B180B01EB00F010E3 /* PBXContainerItemProxy */;
+		};
 		B12ED8CE159E0CA500713C8E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
@@ -13737,36 +14698,6 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B1CC833115D3BEE1008DE335 /* PBXContainerItemProxy */;
 		};
-		B1CFB80017C437BA00FB062A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
-			targetProxy = B1CFB7FF17C437BA00FB062A /* PBXContainerItemProxy */;
-		};
-		B1CFB80217C437BE00FB062A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
-			targetProxy = B1CFB80117C437BE00FB062A /* PBXContainerItemProxy */;
-		};
-		B1CFB80417C437C700FB062A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
-			targetProxy = B1CFB80317C437C700FB062A /* PBXContainerItemProxy */;
-		};
-		B1CFB80617C437CB00FB062A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B68117F161F98FB00F4480F /* ORProgram */;
-			targetProxy = B1CFB80517C437CB00FB062A /* PBXContainerItemProxy */;
-		};
-		B1CFB80817C437CF00FB062A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B9348691655451C00757F89 /* CPUKernel */;
-			targetProxy = B1CFB80717C437CF00FB062A /* PBXContainerItemProxy */;
-		};
-		B1CFB80A17C437D200FB062A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B9ABCEE1391329D000997E5 /* objcp */;
-			targetProxy = B1CFB80917C437D200FB062A /* PBXContainerItemProxy */;
-		};
 		B1F531E615AED4F100E89F98 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
@@ -13978,43 +14909,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		37095B3216DBF174001BCEEC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		37095B3316DBF174001BCEEC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		37A715CF16FB93F900E02DC6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -14155,6 +15049,46 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				PRODUCT_NAME = "queensNaive copy";
+			};
+			name = Release;
+		};
+		5B27573917E87B560082934E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "costas2/costas2-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B27573A17E87B560082934E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "costas2/costas2-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -14609,6 +15543,46 @@
 			};
 			name = Release;
 		};
+		5B67A50517E227BB00516F50 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "wka/wka-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B67A50617E227BB00516F50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "wka/wka-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5B68118C161F98FB00F4480F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -14686,6 +15660,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -14722,8 +15697,8 @@
 		5B6E89311379D3EA005DB4CA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ANALYZER_OBJC_RETAIN_COUNT = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -14731,6 +15706,8 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -14740,6 +15717,7 @@
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
@@ -14751,8 +15729,8 @@
 		5B6E89321379D3EA005DB4CA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ANALYZER_OBJC_RETAIN_COUNT = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -14760,6 +15738,9 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
 					_NDEBUG,
@@ -14861,6 +15842,1578 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
+		};
+		5B7CDA011801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_OBJC_RETAIN_COUNT = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LINK_WITH_STANDARD_LIBRARIES = YES;
+				LLVM_LTO = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-DUSEVIEWS=1",
+					"-fno-stack-protector",
+				);
+				SDKROOT = macosx;
+			};
+			name = Coverage;
+		};
+		5B7CDA021801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA031801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA041801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
+				OTHER_CFLAGS = (
+					"-DUSEVIEWS=1",
+					"-fno-stack-protector",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA051801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA061801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA071801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
+				INFOPLIST_FILE = "objcp/objcp-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA081801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "objmp/objmp-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lgurobi55";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA091801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/CPLib.dst;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CPLib/CPLib-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Coverage;
+		};
+		5B7CDA0A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
+				INFOPLIST_FILE = "objcpTests/objcpTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Coverage;
+		};
+		5B7CDA0B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA0C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Clo/Clo-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA0D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queens2/queens2-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA0E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "magicserie/magicserie-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA0F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Sudoku/Sudoku-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA101801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testLPWrapper/testLPWrapper-Prefix.pch";
+				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi450/mac64/lib\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA111801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queensACSem/queensACSem-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA121801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AtomicTest/AtomicTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA131801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iCP/iCP-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "iCP/iCP-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Coverage;
+		};
+		5B7CDA141801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queensGui/queensGui-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "queensGui/queensGui-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Coverage;
+		};
+		5B7CDA151801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iQueens/iQueens-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "iQueens/iQueens-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Coverage;
+		};
+		5B7CDA161801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SportDemo/SportDemo-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "SportDemo/SportDemo-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Coverage;
+		};
+		5B7CDA171801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Euler/Euler-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA181801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA191801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "queensNaive copy";
+			};
+			name = Coverage;
+		};
+		5B7CDA1B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA1F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA201801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA211801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA221801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA231801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA241801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA251801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA261801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA271801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA281801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA291801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA2F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA301801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA311801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA321801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA331801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA341801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA351801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA361801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA371801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA381801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MD5/MD5-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Coverage;
+		};
+		5B7CDA391801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA3F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testMIP/testMIP-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lgurobi55";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA401801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GraveYard/GraveYard-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA411801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "eq20/eq20-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA421801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "perfect/perfect-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA431801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "partition/partition-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA441801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA451801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "models/models-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA461801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "stressLimit/stressLimit-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA471801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "slabLNSModel/slabLNSModel-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA481801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queensAC/queensAC-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA491801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "queensMIP/queensMIP-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4A1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bug/bug-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4B1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "qg7/qg7-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4C1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "minesweeper/minesweeper-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4D1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "paq/paq-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4E1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "regular/regular-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA4F1801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "nonogram/nonogram-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA501801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bacp/bacp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA511801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
+				INFOPLIST_FILE = "searchTest-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = searchTest;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Coverage;
+		};
+		5B7CDA521801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "testLPConcretization/testLPConcretization-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Coverage;
+		};
+		5B7CDA531801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LPRelaxation/LPRelaxation-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA541801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "circle/circle-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA551801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "fwarehouse/fwarehouse-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA571801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "wka/wka-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA581801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "costas2/costas2-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5B7CDA591801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bugTest/bugTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
 		};
 		5B7D696115B9C91D00C9A10C /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -15097,7 +17650,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -15129,7 +17681,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -15158,7 +17709,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/CPLib.dst;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -15181,7 +17731,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DSTROOT = /tmp/CPLib.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -15341,7 +17890,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -15364,7 +17912,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -15383,7 +17930,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -15415,7 +17961,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -15647,6 +18192,60 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "queensACSem/queensACSem-Prefix.pch";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5BD601CA17F9A627006A9CDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bugTest/bugTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5BD601CB17F9A627006A9CDC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bugTest/bugTest-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -16039,12 +18638,13 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi502/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lgurobi55";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -16062,11 +18662,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "testMIP/testMIP-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi502/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
 				);
+				OTHER_LDFLAGS = "-lgurobi55";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -16560,7 +19161,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -16585,7 +19185,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -16622,46 +19221,6 @@
 			};
 			name = Release;
 		};
-		B1CFB7F517C436CD00FB062A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "testF/testF-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		B1CFB7F617C436CD00FB062A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "testF/testF-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		B1F531E315AED4B100E89F98 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -16686,7 +19245,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
@@ -16708,7 +19266,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -16725,19 +19282,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		37095B3116DBF174001BCEEC /* Build configuration list for PBXNativeTarget "CuttingStock" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				37095B3216DBF174001BCEEC /* Debug */,
-				37095B3316DBF174001BCEEC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		37A715D116FB93F900E02DC6 /* Build configuration list for PBXNativeTarget "LogicBendersExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				37A715CF16FB93F900E02DC6 /* Debug */,
+				5B7CDA441801BB6600C60AB0 /* Coverage */,
 				37A715D016FB93F900E02DC6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16747,6 +19296,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B115528171B1CF5005371AA /* Debug */,
+				5B7CDA471801BB6600C60AB0 /* Coverage */,
 				5B115529171B1CF5005371AA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16756,6 +19306,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B19098C16DAACA7006D1D24 /* Debug */,
+				5B7CDA411801BB6600C60AB0 /* Coverage */,
 				5B19098D16DAACA7006D1D24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16765,7 +19316,18 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B2000EB156D585E00D80105 /* Debug */,
+				5B7CDA1A1801BB6600C60AB0 /* Coverage */,
 				5B2000EC156D585E00D80105 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B27573B17E87B560082934E /* Build configuration list for PBXNativeTarget "costas2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B27573917E87B560082934E /* Debug */,
+				5B7CDA581801BB6600C60AB0 /* Coverage */,
+				5B27573A17E87B560082934E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -16774,6 +19336,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B28CAEC1668FC63008AB802 /* Debug */,
+				5B7CDA361801BB6600C60AB0 /* Coverage */,
 				5B28CAED1668FC63008AB802 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16783,6 +19346,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B28CB1016691F0D008AB802 /* Debug */,
+				5B7CDA371801BB6600C60AB0 /* Coverage */,
 				5B28CB1116691F0D008AB802 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16792,6 +19356,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B2D92D217036DA8007F330B /* Debug */,
+				5B7CDA451801BB6600C60AB0 /* Coverage */,
 				5B2D92D317036DA8007F330B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16801,6 +19366,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B33370413A2B866001DFC38 /* Debug */,
+				5B7CDA0B1801BB6600C60AB0 /* Coverage */,
 				5B33370513A2B866001DFC38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16810,6 +19376,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B3848C816E6E59300498DCF /* Debug */,
+				5B7CDA421801BB6600C60AB0 /* Coverage */,
 				5B3848C916E6E59300498DCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16819,6 +19386,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B3848EA16E7883B00498DCF /* Debug */,
+				5B7CDA431801BB6600C60AB0 /* Coverage */,
 				5B3848EB16E7883B00498DCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16828,6 +19396,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B3895F21795BE07004CCE93 /* Debug */,
+				5B7CDA551801BB6600C60AB0 /* Coverage */,
 				5B3895F31795BE07004CCE93 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16837,6 +19406,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B5096EA1619B6CC00171F9D /* Debug */,
+				5B7CDA331801BB6600C60AB0 /* Coverage */,
 				5B5096EB1619B6CC00171F9D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16846,6 +19416,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B558C0F1563F01000D2BCD7 /* Debug */,
+				5B7CDA191801BB6600C60AB0 /* Coverage */,
 				5B558C101563F01000D2BCD7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16855,6 +19426,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B5F5485165D6EB300E674DA /* Debug */,
+				5B7CDA351801BB6600C60AB0 /* Coverage */,
 				5B5F5486165D6EB300E674DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16864,6 +19436,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B60E5E315AE907F002FF2B3 /* Debug */,
+				5B7CDA031801BB6600C60AB0 /* Coverage */,
 				5B60E5E415AE907F002FF2B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16873,6 +19446,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B662395176FA5BA00A1ACCD /* Debug */,
+				5B7CDA4B1801BB6600C60AB0 /* Coverage */,
 				5B662396176FA5BA00A1ACCD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16882,6 +19456,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6623B91770A13300A1ACCD /* Debug */,
+				5B7CDA4C1801BB6600C60AB0 /* Coverage */,
 				5B6623BA1770A13300A1ACCD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16891,7 +19466,18 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6623DC1770B1AE00A1ACCD /* Debug */,
+				5B7CDA4D1801BB6600C60AB0 /* Coverage */,
 				5B6623DD1770B1AE00A1ACCD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B67A50717E227BB00516F50 /* Build configuration list for PBXNativeTarget "wka" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B67A50517E227BB00516F50 /* Debug */,
+				5B7CDA571801BB6600C60AB0 /* Coverage */,
+				5B67A50617E227BB00516F50 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -16900,6 +19486,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B68118C161F98FB00F4480F /* Debug */,
+				5B7CDA051801BB6600C60AB0 /* Coverage */,
 				5B68118D161F98FB00F4480F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16909,6 +19496,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6A960A15879F1600019903 /* Debug */,
+				5B7CDA1E1801BB6600C60AB0 /* Coverage */,
 				5B6A960B15879F1600019903 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16918,6 +19506,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6B0F07178B558000104246 /* Debug */,
+				5B7CDA541801BB6600C60AB0 /* Coverage */,
 				5B6B0F08178B558000104246 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16927,6 +19516,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6E89311379D3EA005DB4CA /* Debug */,
+				5B7CDA011801BB6600C60AB0 /* Coverage */,
 				5B6E89321379D3EA005DB4CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16936,6 +19526,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B6E89341379D3EA005DB4CA /* Debug */,
+				5B7CDA0C1801BB6600C60AB0 /* Coverage */,
 				5B6E89351379D3EA005DB4CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16945,6 +19536,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B76D99815AAADBE00F8B445 /* Debug */,
+				5B7CDA251801BB6600C60AB0 /* Coverage */,
 				5B76D99915AAADBE00F8B445 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16954,6 +19546,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B778BBC154F1D040078EB07 /* Debug */,
+				5B7CDA181801BB6600C60AB0 /* Coverage */,
 				5B778BBD154F1D040078EB07 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16963,6 +19556,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B7B477415F0E4AD005FF875 /* Debug */,
+				5B7CDA311801BB6600C60AB0 /* Coverage */,
 				5B7B477515F0E4AD005FF875 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16972,6 +19566,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B7D696115B9C91D00C9A10C /* Debug */,
+				5B7CDA2C1801BB6600C60AB0 /* Coverage */,
 				5B7D696215B9C91D00C9A10C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16981,6 +19576,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B80561A16076DFE00659ECC /* Debug */,
+				5B7CDA321801BB6600C60AB0 /* Coverage */,
 				5B80561B16076DFE00659ECC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16990,6 +19586,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B8DA1FF15B98BC300684FD8 /* Debug */,
+				5B7CDA2B1801BB6600C60AB0 /* Coverage */,
 				5B8DA20015B98BC300684FD8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -16999,6 +19596,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9348771655451D00757F89 /* Debug */,
+				5B7CDA061801BB6600C60AB0 /* Coverage */,
 				5B9348781655451D00757F89 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17008,6 +19606,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9ABD131391329D000997E5 /* Debug */,
+				5B7CDA071801BB6600C60AB0 /* Coverage */,
 				5B9ABD141391329D000997E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17017,6 +19616,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9ABD161391329D000997E5 /* Debug */,
+				5B7CDA0A1801BB6600C60AB0 /* Coverage */,
 				5B9ABD171391329D000997E5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17026,6 +19626,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9B2451177873D3001AB944 /* Debug */,
+				5B7CDA4F1801BB6600C60AB0 /* Coverage */,
 				5B9B2452177873D3001AB944 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17035,6 +19636,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9EE52115175CCC00619B47 /* Debug */,
+				5B7CDA131801BB6600C60AB0 /* Coverage */,
 				5B9EE52215175CCC00619B47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17044,6 +19646,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5B9EE53115175CF900619B47 /* Debug */,
+				5B7CDA091801BB6600C60AB0 /* Coverage */,
 				5B9EE53215175CF900619B47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17053,6 +19656,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BA345861680B7BD00485366 /* Debug */,
+				5B7CDA3C1801BB6600C60AB0 /* Coverage */,
 				5BA345871680B7BD00485366 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17062,6 +19666,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BAD115B161E5E430014EBCB /* Debug */,
+				5B7CDA041801BB6600C60AB0 /* Coverage */,
 				5BAD115C161E5E430014EBCB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17071,6 +19676,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BAEE0A815AEA08E006CEE1E /* Debug */,
+				5B7CDA271801BB6600C60AB0 /* Coverage */,
 				5BAEE0A915AEA08E006CEE1E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17080,6 +19686,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BB170181582820500D4791A /* Debug */,
+				5B7CDA1B1801BB6600C60AB0 /* Coverage */,
 				5BB170191582820500D4791A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17089,6 +19696,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BB3836D13B3C0E1005B7D52 /* Debug */,
+				5B7CDA0E1801BB6600C60AB0 /* Coverage */,
 				5BB3836E13B3C0E1005B7D52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17098,6 +19706,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BBA3F9E151CCB0C00D6F6AD /* Debug */,
+				5B7CDA141801BB6600C60AB0 /* Coverage */,
 				5BBA3F9F151CCB0C00D6F6AD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17107,6 +19716,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BBA56F9153F33E70089118E /* Debug */,
+				5B7CDA151801BB6600C60AB0 /* Coverage */,
 				5BBA56FA153F33E70089118E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17116,6 +19726,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BBB08CD16C551960087ACF0 /* Debug */,
+				5B7CDA3E1801BB6600C60AB0 /* Coverage */,
 				5BBB08CE16C551960087ACF0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17125,6 +19736,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC09194167F7F9A009A7712 /* Debug */,
+				5B7CDA391801BB6600C60AB0 /* Coverage */,
 				5BC09195167F7F9A009A7712 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17134,6 +19746,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC091B8167F9095009A7712 /* Debug */,
+				5B7CDA3A1801BB6600C60AB0 /* Coverage */,
 				5BC091B9167F9095009A7712 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17143,6 +19756,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC091DB167F9D5B009A7712 /* Debug */,
+				5B7CDA3B1801BB6600C60AB0 /* Coverage */,
 				5BC091DC167F9D5B009A7712 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17152,6 +19766,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC0C75B177A191400B12173 /* Debug */,
+				5B7CDA501801BB6600C60AB0 /* Coverage */,
 				5BC0C75C177A191400B12173 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17161,6 +19776,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC116AA1595067900E0F5C8 /* Debug */,
+				5B7CDA211801BB6600C60AB0 /* Coverage */,
 				5BC116AB1595067900E0F5C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17170,6 +19786,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BC97A33177384C2005C48A8 /* Debug */,
+				5B7CDA4E1801BB6600C60AB0 /* Coverage */,
 				5BC97A34177384C2005C48A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17179,7 +19796,18 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BCCC40D1417F8CE0079E833 /* Debug */,
+				5B7CDA111801BB6600C60AB0 /* Coverage */,
 				5BCCC40E1417F8CE0079E833 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BD601CC17F9A627006A9CDC /* Build configuration list for PBXNativeTarget "bugTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BD601CA17F9A627006A9CDC /* Debug */,
+				5B7CDA591801BB6600C60AB0 /* Coverage */,
+				5BD601CB17F9A627006A9CDC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -17188,6 +19816,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BDBBAB21718D96C00322163 /* Debug */,
+				5B7CDA461801BB6600C60AB0 /* Coverage */,
 				5BDBBAB31718D96C00322163 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17197,6 +19826,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BE1217D173C75A3000C9AA9 /* Debug */,
+				5B7CDA4A1801BB6600C60AB0 /* Coverage */,
 				5BE1217E173C75A3000C9AA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17206,6 +19836,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BE5A7F4158A8390006703CB /* Debug */,
+				5B7CDA1F1801BB6600C60AB0 /* Coverage */,
 				5BE5A7F5158A8390006703CB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17215,6 +19846,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BE7774A1594C9E500ADE34E /* Debug */,
+				5B7CDA201801BB6600C60AB0 /* Coverage */,
 				5BE7774B1594C9E500ADE34E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17224,6 +19856,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BE7C25615A94BDF00B2CBC1 /* Debug */,
+				5B7CDA241801BB6600C60AB0 /* Coverage */,
 				5BE7C25715A94BDF00B2CBC1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17233,6 +19866,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BEA4E87178365FA00614A82 /* Debug */,
+				5B7CDA511801BB6600C60AB0 /* Coverage */,
 				5BEA4E88178365FA00614A82 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17242,6 +19876,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BEAD79015ABE38500A012FE /* Debug */,
+				5B7CDA261801BB6600C60AB0 /* Coverage */,
 				5BEAD79115ABE38500A012FE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17251,6 +19886,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BEEF61A13970B6F002ADBD4 /* Debug */,
+				5B7CDA0D1801BB6600C60AB0 /* Coverage */,
 				5BEEF61B13970B6F002ADBD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17260,6 +19896,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BF1387A16822EFC005EAC6B /* Debug */,
+				5B7CDA3D1801BB6600C60AB0 /* Coverage */,
 				5BF1387B16822EFC005EAC6B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17269,6 +19906,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5BFD594F15A3ACA500825BC3 /* Debug */,
+				5B7CDA021801BB6600C60AB0 /* Coverage */,
 				5BFD595015A3ACA500825BC3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17278,6 +19916,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B103534913BBD7B200627058 /* Debug */,
+				5B7CDA481801BB6600C60AB0 /* Coverage */,
 				B103534A13BBD7B200627058 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17287,6 +19926,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B111FC0913CF3D10003C5119 /* Debug */,
+				5B7CDA101801BB6600C60AB0 /* Coverage */,
 				B111FC0A13CF3D10003C5119 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17296,6 +19936,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B12ED8CB159E0C2200713C8E /* Debug */,
+				5B7CDA221801BB6600C60AB0 /* Coverage */,
 				B12ED8CC159E0C2200713C8E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17305,6 +19946,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B15441F616D17713001BD7B3 /* Debug */,
+				5B7CDA3F1801BB6600C60AB0 /* Coverage */,
 				B15441F716D17713001BD7B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17314,6 +19956,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B154428D16D19D8F001BD7B3 /* Debug */,
+				5B7CDA081801BB6600C60AB0 /* Coverage */,
 				B154428E16D19D8F001BD7B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17323,6 +19966,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B15442A916D1A247001BD7B3 /* Debug */,
+				5B7CDA401801BB6600C60AB0 /* Coverage */,
 				B15442AA16D1A247001BD7B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17332,6 +19976,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B15442CF16D1AAD1001BD7B3 /* Debug */,
+				5B7CDA521801BB6600C60AB0 /* Coverage */,
 				B15442D016D1AAD1001BD7B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17341,6 +19986,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1595B4713C11F2A001FCB61 /* Debug */,
+				5B7CDA0F1801BB6600C60AB0 /* Coverage */,
 				B1595B4813C11F2A001FCB61 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17350,6 +19996,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B15F6DE815B1361700158FA0 /* Debug */,
+				5B7CDA291801BB6600C60AB0 /* Coverage */,
 				B15F6DE915B1361700158FA0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17359,6 +20006,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1672FDA158491DE00EFE5C3 /* Debug */,
+				5B7CDA1C1801BB6600C60AB0 /* Coverage */,
 				B1672FDB158491DE00EFE5C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17368,6 +20016,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1672FF71584A7A600EFE5C3 /* Debug */,
+				5B7CDA1D1801BB6600C60AB0 /* Coverage */,
 				B1672FF81584A7A600EFE5C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17377,6 +20026,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B177159E155798AA00BA14BF /* Debug */,
+				5B7CDA171801BB6600C60AB0 /* Coverage */,
 				B177159F155798AA00BA14BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17386,6 +20036,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B181E12115D7465500AB44DA /* Debug */,
+				5B7CDA2E1801BB6600C60AB0 /* Coverage */,
 				B181E12215D7465500AB44DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17395,6 +20046,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B182C5F3173C30EE002954F6 /* Debug */,
+				5B7CDA491801BB6600C60AB0 /* Coverage */,
 				B182C5F4173C30EE002954F6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17404,6 +20056,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B189513115DE52D100B77813 /* Debug */,
+				5B7CDA2F1801BB6600C60AB0 /* Coverage */,
 				B189513215DE52D100B77813 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17413,6 +20066,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B189514815E0FA5F00B77813 /* Debug */,
+				5B7CDA301801BB6600C60AB0 /* Coverage */,
 				B189514915E0FA5F00B77813 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17422,6 +20076,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B18DF15417810C68004E1880 /* Debug */,
+				5B7CDA531801BB6600C60AB0 /* Coverage */,
 				B18DF15517810C68004E1880 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17431,6 +20086,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1935C6815B90ECF00107399 /* Debug */,
+				5B7CDA2A1801BB6600C60AB0 /* Coverage */,
 				B1935C6915B90ECF00107399 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17440,6 +20096,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B19ABA13146D68FE004EB77E /* Debug */,
+				5B7CDA121801BB6600C60AB0 /* Coverage */,
 				B19ABA14146D68FE004EB77E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17449,6 +20106,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1B68C7F159FC16E008BC463 /* Debug */,
+				5B7CDA231801BB6600C60AB0 /* Coverage */,
 				B1B68C80159FC16E008BC463 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17458,6 +20116,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1C4F406161F87070010A5C8 /* Debug */,
+				5B7CDA341801BB6600C60AB0 /* Coverage */,
 				B1C4F407161F87070010A5C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17467,6 +20126,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1C9DF2915A8045C00EE924C /* Debug */,
+				5B7CDA161801BB6600C60AB0 /* Coverage */,
 				B1C9DF2A15A8045C00EE924C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17476,16 +20136,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1CC832B15D3BEC4008DE335 /* Debug */,
+				5B7CDA2D1801BB6600C60AB0 /* Coverage */,
 				B1CC832C15D3BEC4008DE335 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B1CFB7F417C436CD00FB062A /* Build configuration list for PBXNativeTarget "testF" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B1CFB7F517C436CD00FB062A /* Debug */,
-				B1CFB7F617C436CD00FB062A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -17494,6 +20146,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B1F531E315AED4B100E89F98 /* Debug */,
+				5B7CDA281801BB6600C60AB0 /* Coverage */,
 				B1F531E415AED4B100E89F98 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -17503,6 +20156,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F548AA7B167FB1C700726814 /* Debug */,
+				5B7CDA381801BB6600C60AB0 /* Coverage */,
 				F548AA7C167FB1C700726814 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

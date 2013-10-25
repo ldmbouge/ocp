@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0460"
+   LastUpgradeVersion = "0500"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -59,11 +59,11 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "4"
+            argument = "-q4"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "6"
+            argument = "-n6"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

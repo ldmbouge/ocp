@@ -25,7 +25,7 @@ int main(int argc, const char * argv[])
          ORInt maxCost = 100;
          id<ORIntRange> Stores     = RANGE(mdl,0,9);
          id<ORIntRange> Warehouses = RANGE(mdl,0,4);
-         ORInt* cap = (ORInt[]){1,4,2,1,3};
+         id<ORIntArray> cap = [ORFactory intArray:mdl array:@[@1,@4,@2,@1,@3]];
          ORInt connection[10][5] = {{ 20, 24, 11, 25, 30 },
             { 28, 27, 82, 83, 74 },
             { 74, 97, 71, 96, 70 },
@@ -46,7 +46,7 @@ int main(int argc, const char * argv[])
          
          [mdl add: [obj eq: [Sum(mdl,s, Stores, cost[s]) plus: Sum(mdl,w, Warehouses, [open[w] mul:@(fixed)]) ]]];
          for(ORUInt i=Warehouses.low;i <= Warehouses.up;i++) {
-            [mdl add: [Sum(mdl,s, Stores, [supp[s] eq:@(i)]) leq:@(cap[i])]];
+            [mdl add: [Sum(mdl,s, Stores, [supp[s] eq:@(i)]) leq:cap[i]]];
          }
          for(ORUInt i=Stores.low;i <= Stores.up; i++) {
             id<ORIntArray> row = [ORFactory intArray:mdl range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];

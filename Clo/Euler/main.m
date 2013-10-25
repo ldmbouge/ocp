@@ -55,16 +55,17 @@ int main (int argc, const char * argv[])
 {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
+      id<ORAnnotation> notes = [ORFactory note];
       id<ORIntRange> R = RANGE(mdl,1,64);
       id<ORIntRange> D = RANGE(mdl,1,64);
       id<ORIntVarArray> jump = [ORFactory intVarArray:mdl range: R domain: D];
            
       for(int i = 1; i <= 64; i++)
          [mdl add:[ORFactory restrict:mdl var:jump[i] to: knightMoves(mdl,i)]];
-      [mdl add: [ORFactory alldifferent: jump annotation: DomainConsistency]];
+      [notes dc:[mdl add: [ORFactory alldifferent: jump]]];
       [mdl add: [ORFactory circuit: jump]];
       
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation:notes];
       [cp solve:
        ^() {
           [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[jump at:i]];}];

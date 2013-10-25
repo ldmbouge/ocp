@@ -699,7 +699,6 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
          if (GETBIT(k) && k != val)
             [x loseValEvt:k sender:self];
    };
-   
    [x bindEvt:self];
 }
 
