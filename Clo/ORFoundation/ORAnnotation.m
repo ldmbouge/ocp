@@ -121,7 +121,7 @@
    _cLevel = Default;
    return self;
 }
--(id)initWith:(ORCLevel)cl
+-(id)initWith: (ORCLevel)cl
 {
    self = [super init];
    _cLevel = cl;

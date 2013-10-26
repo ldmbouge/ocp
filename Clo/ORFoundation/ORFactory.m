@@ -588,7 +588,7 @@
    [tracker trackImmutable: l];
    return l;
 }
-+(id<ORAnnotation>)note
++(id<ORAnnotation>) annotation
 {
    return [[ORAnnotation alloc] init];
 }
