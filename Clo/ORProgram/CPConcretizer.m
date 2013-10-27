@@ -219,7 +219,7 @@
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
-      ORCLevel n = [_notes levelFor:cstr];
+      ORCLevel n = [_notes levelFor: cstr];
       [ax visit: self];
       id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: _gamma[ax.getId] annotation: n];
       [_engine add: concreteCstr];
