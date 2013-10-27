@@ -37,7 +37,7 @@
    id<ORModel> lin = [ORFactory createModel: [model nbObjects] mappings: model.modelMappings];
    ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model annotation:nil]; //TOFIX
    id<ORModelTransformation> linearizer = [[ORMIPLinearize alloc] initORMIPLinearize: lm];
-   [linearizer apply: model];
+   [linearizer apply: model with:nil]; //TOFIX
    return lin;
 }
 -(void) dealloc
@@ -58,7 +58,7 @@
    return rv;
 }
 
--(void) apply: (id<ORModel>) m
+-(void) apply: (id<ORModel>) m with:(id<ORAnnotation>)notes 
 {
    [m applyOnVar: ^(id<ORVar> x) {
       [_into addVariable: x];
