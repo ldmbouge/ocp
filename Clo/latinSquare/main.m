@@ -33,7 +33,7 @@ int main(int argc, const char * argv[])
       [args measure:^struct ORResult() {
          
          id<ORModel> model = [ORFactory createModel];
-         id<ORAnnotation> note = [ORFactory note];
+         id<ORAnnotation> note = [ORFactory annotation];
          ORInt n = [args size];
          id<ORIntRange> R = RANGE(model,0,n-1);
          id<ORIntRange> D = RANGE(model,1,n);

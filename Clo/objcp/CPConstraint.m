@@ -103,7 +103,8 @@
             o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up]; 
             break;
         default:
-            @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
+          o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up];
+          break;
     }
     [[x tracker ] trackMutable: o];
     return o;

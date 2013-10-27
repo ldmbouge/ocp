@@ -24,7 +24,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
-         id<ORAnnotation> notes = [ORFactory note];
+         id<ORAnnotation> notes = [ORFactory annotation];
          ORInt base =  2;
          ORInt n    = [args size];
          ORInt m    = [args nArg];//pow(base,n);

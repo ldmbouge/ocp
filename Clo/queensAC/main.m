@@ -89,7 +89,7 @@ int main0(int argc, const char * argv[])
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
-      id<ORAnnotation> note = [ORFactory note];
+      id<ORAnnotation> note = [ORFactory annotation];
       [note bc:[mdl add: [ORFactory alldifferent: x]]];
       [note bc:[mdl add: [ORFactory alldifferent: xp]]];
       [note bc:[mdl add: [ORFactory alldifferent: xn]]];
