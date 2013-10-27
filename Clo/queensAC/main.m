@@ -33,7 +33,7 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
          id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
          id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
-         id<ORAnnotation> note = [ORFactory note];
+         id<ORAnnotation> note = [ORFactory annotation];
          [note dc:[mdl add: [ORFactory alldifferent: x]]];
          [note dc:[mdl add: [ORFactory alldifferent: xp]]];
          [note dc:[mdl add: [ORFactory alldifferent: xn]]];
