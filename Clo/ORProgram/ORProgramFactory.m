@@ -54,25 +54,25 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   id<ORAnnotation> notes = [ORFactory note];
+   id<ORAnnotation> notes = [ORFactory annotation];
    return [self createCPProgram:model annotation:notes];
    [notes release];
 }
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
-   id<ORAnnotation> notes = [ORFactory note];
+   id<ORAnnotation> notes = [ORFactory annotation];
    return [self createCPSemanticProgramDFS:model annotation:notes];
    [notes release];
 }
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
 {
-   id<ORAnnotation> notes = [ORFactory note];
+   id<ORAnnotation> notes = [ORFactory annotation];
    return [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
    [notes release];
 }
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
 {
-   id<ORAnnotation> notes = [ORFactory note];
+   id<ORAnnotation> notes = [ORFactory annotation];
    return [self createCPParProgram:model nb:k annotation:notes with:ctrlClass];
    [notes release];
 }

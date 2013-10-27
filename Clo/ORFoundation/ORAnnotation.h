@@ -20,18 +20,18 @@ typedef enum {
 } ORCLevel;
 
 @protocol ORAnnotation <NSObject,NSCopying>
--(id<ORConstraint>)dc:(id<ORConstraint>)cstr;
--(id<ORConstraint>)bc:(id<ORConstraint>)cstr;
--(id<ORConstraint>)vc:(id<ORConstraint>)cstr;
 -(ORCLevel)levelFor:(id<ORConstraint>)cstr;
 -(id)copy;
+
+-(id<ORConstraint>) dc:(id<ORConstraint>)cstr;
+-(id<ORConstraint>) bc:(id<ORConstraint>)cstr;
+-(id<ORConstraint>) vc:(id<ORConstraint>)cstr;
+-(id<ORConstraint>) cstr: (id<ORConstraint>)cstr consistency: (ORCLevel) cl;
+
+-(void) alldifferent: (ORCLevel) cl;
 @end
 
 @interface ORAnnotation : ORObject<ORAnnotation,NSCopying>
--(id<ORConstraint>)dc:(id<ORConstraint>)cstr;
--(id<ORConstraint>)bc:(id<ORConstraint>)cstr;
--(id<ORConstraint>)vc:(id<ORConstraint>)cstr;
--(ORCLevel)levelFor:(id<ORConstraint>)cstr;
 @end
 
 @protocol ORNote <NSObject>
