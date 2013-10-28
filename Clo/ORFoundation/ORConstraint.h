@@ -14,7 +14,6 @@
 #import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORObject.h>
 
-
 @protocol ORIntVarArray;
 @protocol ORVarArray;
 @protocol ORIntVarMatrix;
@@ -28,6 +27,7 @@
 @protocol ORObjectiveFunction;
 @protocol ORSolution;
 @protocol ORSolutionPool;
+@protocol ORParameter;
 
 @protocol ORBasicModel
 -(id<ORObjectiveFunction>) objective;
@@ -43,15 +43,8 @@
 -(NSSet*)allVars;
 @end
 
-@protocol ORConstraintSet <NSObject>
--(void)addConstraint:(id<ORConstraint>)c;
--(ORInt) size;
--(void)enumerateWith:(void(^)(id<ORConstraint>))block;
-@end
-
-@protocol OROrderedConstraintSet <ORConstraintSet>
--(id<ORConstraint>) at:(ORInt)index;
--(id<ORConstraint>) objectAtIndexedSubscript: (NSUInteger) key;
+@protocol ORSoftConstraint <ORConstraint>
+-(id<ORVar>)slack;
 @end
 
 enum ORGroupType {
@@ -62,6 +55,8 @@ enum ORGroupType {
 @protocol ORGroup <ORObject,ORConstraint>
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(ORInt) size;
+-(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
 @end
 
@@ -357,6 +352,13 @@ enum ORGroupType {
 @protocol ORAlgebraicConstraint <ORConstraint>
 -(id<ORExpr>) expr;
 -(ORAnnotation)annotation;
+@end
+
+// z = weight * x
+@protocol ORWeightedVar <ORConstraint>
+-(id<ORVar>) z;
+-(id<ORVar>)x;
+-(id<ORParameter>)weight;
 @end
 
 @protocol ORTableConstraint <ORConstraint>

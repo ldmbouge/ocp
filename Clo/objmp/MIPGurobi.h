@@ -43,6 +43,9 @@
 -(ORFloat) upperBound: (MIPVariableI*) var;
 -(ORFloat) objectiveValue;
 
+-(ORFloat) paramFloatValue: (MIPParameterI*) param;
+-(void) setParam: (MIPParameterI*) param value: (ORFloat)val;
+
 -(void) setBounds: (MIPVariableI*) var low: (ORFloat) low up: (ORFloat) up;
 -(void) setUnboundUpperBound: (MIPVariableI*) var;
 -(void) setUnboundLowerBound: (MIPVariableI*) var;

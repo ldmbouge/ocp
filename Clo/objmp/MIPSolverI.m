@@ -609,6 +609,50 @@
 }
 @end
 
+@implementation MIPParameterI
+-(MIPParameterI*) initMIPParameterI: (MIPSolverI*) solver
+{
+    self = [super init];
+    _solver = solver;
+    _cstrIdx = -1;
+    _coefIdx = -1;
+    return self;
+}
+-(ORInt) cstrIdx
+{
+    return _cstrIdx;
+}
+-(void) setCstrIdx: (ORInt) idx
+{
+    _cstrIdx = idx;
+}
+-(ORFloat) floatValue
+{
+    return [_solver floatParamValue: self];
+}
+-(void) setFloatValue: (ORFloat)val
+{
+    [_solver setORFloatParameter: self value: val];
+}
+-(ORInt) coefIdx
+{
+    return _coefIdx;
+}
+-(void) setCoefIdx: (ORInt) idx
+{
+    _coefIdx = idx;
+}
+-(NSString*)description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"%f",[_solver floatParamValue:self]];
+    return buf;
+}
+-(ORBool) isInteger
+{
+    return NO;
+}
+@end
 
 
 @implementation MIPLinearTermI
@@ -791,7 +835,12 @@
    [self trackVariable: v];
    return v;
 }
-
+-(MIPParameterI*) createParameter
+{
+    MIPParameterI* v = [[MIPParameterI alloc] initMIPParameterI: self];
+    [self trackMutable: v];
+    return v;
+}
 -(MIPLinearTermI*) createLinearTerm
 {
    MIPLinearTermI* o = [[MIPLinearTermI alloc] initMIPLinearTermI: self];
@@ -1073,6 +1122,14 @@
 -(ORFloat) floatValue: (MIPVariableI*) var
 {
    return [_MIP floatValue: var];
+}
+-(ORFloat) floatParamValue: (MIPParameterI*) param
+{
+    return [_MIP paramFloatValue: param];
+}
+-(void) setORFloatParameter: (MIPParameterI*)param value: (ORFloat)val
+{
+    [_MIP setParam: param value: val];
 }
 -(ORFloat) lowerBound: (MIPVariableI*) var
 {

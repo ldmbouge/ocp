@@ -26,5 +26,5 @@ typedef id<LPColumn> (^Void2Column)();
 
 @interface ORFactory(ORColumnGeneration)
 +(id<ORRunnable>) columnGeneration: (id<ORRunnable>)master slave: (Void2Column)slaveBlock;
-+(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<OROrderedConstraintSet>)cstrs;
++(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<ORGroup>)cstrs;
 @end

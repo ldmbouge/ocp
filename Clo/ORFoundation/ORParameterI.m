@@ -11,13 +11,11 @@
 @implementation ORIntParamI {
 @protected
     id<ORTracker>  _tracker;
-    ORInt _value;
 }
--(ORIntParamI*) initORIntParamI: (id<ORTracker>) track value: (ORInt)x
+-(ORIntParamI*) initORIntParamI: (id<ORTracker>) track
 {
     self = [super init];
     _tracker = track;
-    _value = x;
     [track trackMutable: self];
     return self;
 }
@@ -28,13 +26,11 @@
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:_tracker];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
 }
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super init];
     _tracker = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
     return self;
 }
 -(ORBool) isVariable
@@ -47,33 +43,22 @@
 }
 -(NSString*) description
 {
-    return [NSString stringWithFormat:@"param<OR>{int}:%03d(%d)",_name, _value];
+    return [NSString stringWithFormat:@"param<OR>{int}:%03d",_name];
 }
--(ORInt) value
+- (void)visit:(ORVisitor*)visitor
 {
-    return [self intValue];
-}
--(void) set:(ORInt)x {
-    _value = x;
-}
--(ORInt) intValue {
-    return _value;
-}
--(ORFloat) floatValue {
-    return _value;
+    [visitor visitIntParam: self];
 }
 @end
 
 @implementation ORFloatParamI {
 @protected
     id<ORTracker>  _tracker;
-    ORFloat _value;
 }
--(ORFloatParamI*) initORFloatParamI: (id<ORTracker>) track value: (ORFloat)x
+-(ORFloatParamI*) initORFloatParamI: (id<ORTracker>) track
 {
     self = [super init];
     _tracker = track;
-    _value = x;
     [track trackMutable: self];
     return self;
 }
@@ -84,13 +69,11 @@
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:_tracker];
-    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
 }
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super init];
     _tracker = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
     return self;
 }
 -(ORBool) isVariable
@@ -103,19 +86,10 @@
 }
 -(NSString*) description
 {
-    return [NSString stringWithFormat:@"param<OR>{float}:%03d(%f)",_name, _value];
+    return [NSString stringWithFormat:@"param<OR>{float}:%03d",_name];
 }
--(ORFloat) value
+- (void)visit:(ORVisitor*)visitor
 {
-    return [self floatValue];
-}
--(void) set:(ORFloat)x {
-    _value = x;
-}
--(ORInt) intValue {
-    return _value;
-}
--(ORFloat) floatValue {
-    return _value;
+    [visitor visitFloatParam: self];
 }
 @end

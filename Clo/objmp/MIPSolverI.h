@@ -66,6 +66,24 @@
 -(void) setObject: (MIPVariableI*) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
+@interface MIPParameterI : NSObject
+{
+@protected
+    MIPSolverI*           _solver;
+    ORInt                 _cstrIdx;
+    ORInt                 _coefIdx;
+}
+-(MIPParameterI*) initMIPParameterI: (MIPSolverI*) solver;
+-(ORInt) cstrIdx;
+-(void) setCstrIdx: (ORInt) idx;
+-(ORInt) coefIdx;
+-(void) setCoefIdx: (ORInt) idx;
+-(ORFloat) floatValue;
+-(void) setFloatValue: (ORFloat)val;
+
+-(NSString*)description;
+-(ORBool) isInteger;
+@end
 
 @interface MIPConstraintI : NSObject
 {
@@ -213,6 +231,7 @@
 -(MIPVariableI*)    createVariable: (ORFloat) low up: (ORFloat) up;
 -(MIPIntVariableI*) createIntVariable;
 -(MIPIntVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up;
+-(MIPParameterI*) createParameter;
 -(MIPLinearTermI*)  createLinearTerm;
 
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
@@ -250,6 +269,8 @@
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;
 -(ORFloat) floatValue: (MIPVariableI*) var;
+-(ORFloat) floatParamValue: (MIPParameterI*) var;
+-(void) setORFloatParameter: (MIPParameterI*)param value: (ORFloat)val;
 -(ORFloat) lowerBound: (MIPVariableI*) var;
 -(ORFloat) upperBound: (MIPVariableI*) var;
 -(id<ORObjectiveValue>) objectiveValue;

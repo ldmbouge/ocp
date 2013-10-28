@@ -86,6 +86,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Table: visit method not defined"]; 
 }
+-(void) visitIntParam: (id<ORIntParam>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "IntParam: visit method not defined"];
+}
+-(void) visitFloatParam: (id<ORFloatParam>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatParam: visit method not defined"];
+}
 -(void) visitConstraint:(id<ORConstraint>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Constraint: visit method not defined"]; 
@@ -129,6 +137,10 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "AlgebraicConstraint: visit method not defined"]; 
+}
+-(void) visitFloatWeightedVar: (id<ORWeightedVar>) cstr;
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatWeightedVar: visit method not defined"];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -548,6 +560,8 @@
 -(void) visitIdArray: (id<ORIdArray>) v  {}
 -(void) visitIdMatrix: (id<ORIdMatrix>) v  {}
 -(void) visitTable:(id<ORTable>) v  {}
+-(void) visitIntParam: (id<ORIntParam>) v {}
+-(void) visitFloatParam: (id<ORFloatParam>) v {}
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
 -(void) visitGroup:(id<ORGroup>)g {}
@@ -560,6 +574,7 @@
 -(void) visitRegular:(id<ORRegular>) cstr {}
 -(void) visitCardinality: (id<ORCardinality>) cstr  {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr  {}
+-(void) visitFloatWeightedVar: (id<ORWeightedVar>) cstr  {}
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr  {}
 -(void) visitLexLeq:(id<ORLexLeq>) cstr  {}
 -(void) visitCircuit:(id<ORCircuit>) cstr  {}

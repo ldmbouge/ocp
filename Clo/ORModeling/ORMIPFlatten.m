@@ -175,10 +175,22 @@
 {
    _result = v;
 }
+-(void) visitIntParam:(id<ORIntParam>)v
+{
+    _result = v;
+}
+-(void) visitFloatParam:(id<ORIntParam>)v
+{
+    _result = v;
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    _result = [ORMIPFlatten flattenExpression:[cstr expr] into: _into annotation:[cstr annotation]];
    [_tau set: _result forKey: cstr];
+}
+-(void) visitFloatWeightedVar:(id<ORWeightedVar>)cstr
+{
+    _result = cstr;
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {

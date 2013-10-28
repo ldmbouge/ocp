@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORData.h>
 #import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORParameter.h>
 
 @protocol ORTrailableInt;
 @protocol ORFloatVar;
@@ -34,6 +35,9 @@
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitTable:(id<ORTable>) v;
+-(void) visitIntParam: (id<ORIntParam>) v;
+-(void) visitFloatParam: (id<ORFloatParam>) v;
+
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c;
 -(void) visitGroup:(id<ORGroup>)g;
@@ -46,6 +50,7 @@
 -(void) visitRegular:(id<ORRegular>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+-(void) visitFloatWeightedVar: (id<ORWeightedVar>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitCircuit:(id<ORCircuit>) cstr;

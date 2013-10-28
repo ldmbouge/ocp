@@ -78,14 +78,9 @@
 @end
 
 @protocol ORParameterizedModel <ORModel>
--(id<ORParameter>) addParam: (id<ORParameter>)param;
--(void) applyOnVar:(void(^)(id<ORObject>))doVar
-       onParameter:(void(^)(id<ORObject>))doParam
-        onMutables:(void(^)(id<ORObject>))doMutables
-      onImmutables:(void(^)(id<ORObject>))doImmutables
-     onConstraints:(void(^)(id<ORObject>))doCons
-       onObjective:(void(^)(id<ORObject>))ofun;
--(NSArray*) parameters;
+-(NSArray*) softConstraints;
+-(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
+-(id<ORWeightedVar>) parameterizeFloatVar: (id<ORFloatVar>)x;
 @end
 
 @interface ORFactory (ORModeling)
@@ -98,7 +93,5 @@
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
 +(id<ORSolutionPool>) createSolutionPool;
-+(id<ORConstraintSet>) createConstraintSet;
-+(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
 @end
 

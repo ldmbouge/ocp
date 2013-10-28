@@ -12,16 +12,10 @@
 
 @protocol ORParameter <ORObject,ORExpr>
 -(ORInt) getId;
--(ORInt) intValue;
--(ORFloat) floatValue;
 @end
 
 @protocol ORIntParam <ORParameter>
--(void) set: (ORInt)x;
--(ORInt) value;
 @end
 
 @protocol ORFloatParam <ORParameter>
--(void) set: (ORFloat)x;
--(ORFloat) value;
 @end

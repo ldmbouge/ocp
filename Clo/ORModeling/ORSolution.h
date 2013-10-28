@@ -26,4 +26,5 @@
 -(void) enumerateWith: (void(^)(id<ORSolution>)) block;
 -(id<ORInformer>) solutionAdded;
 -(id<ORSolution>) best;
+-(void) emptyPool;
 @end

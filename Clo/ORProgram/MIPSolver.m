@@ -370,6 +370,14 @@
 {
    return [_MIPsolver floatValue: _gamma[v.getId]];
 }
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)p
+{
+    return [_MIPsolver floatParamValue: _gamma[p.getId]];
+}
+-(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
+{
+    [_MIPsolver setORFloatParameter: _gamma[p.getId] value: val];
+}
 -(ORFloat) floatExprValue: (id<ORExpr>)e {
     ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];
     ORFloat v = [eval floatValue: e];

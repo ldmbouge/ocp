@@ -272,7 +272,7 @@
 +(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
 {
    id<ORModel> flatModel = [model mipflatten];
-   
+    
    ORUInt nbEntries =  [flatModel nbObjects];
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)

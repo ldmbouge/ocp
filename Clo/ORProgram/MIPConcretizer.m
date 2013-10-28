@@ -86,6 +86,15 @@
    }
 }
 
+-(void) visitFloatParam:(id<ORFloatParam>)v
+{
+    if (_gamma[v.getId] == NULL) {
+        MIPParameterI* cv;
+        cv = [_MIPsolver createParameter];
+        _gamma[v.getId] = cv;
+    }
+}
+
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    if (_gamma[v.getId] == NULL) {
@@ -273,6 +282,28 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    // This is called when the constraint is stored in a data structure
+}
+-(void) visitFloatWeightedVar:(id<ORWeightedVar>)c
+{
+    if (_gamma[c.getId] == NULL) {
+        MIPVariableI* dx = _gamma[[c x].getId];
+        MIPVariableI* dz = _gamma[[c z].getId];
+        MIPParameterI* dw = _gamma[[c weight].getId];
+        
+        id<ORIntRange> r = RANGE(_MIPsolver, 0, 1);
+        id<ORIdArray> vars = [ORFactory idArray: _MIPsolver range: r];
+        [vars set: dx at: 0];
+        [vars set: dz at: 1];
+        ORFloat coefValues[] = { 0.0, -1.0 };
+        id<ORFloatArray> coef = [ORFactory floatArray: _MIPsolver range: r values: coefValues];
+        
+        // w * x - z == 0
+        MIPConstraintI* concreteCstr = [_MIPsolver createEQ: (id<MIPVariableArray>)vars coef: coef cst: 0];
+        _gamma[c.getId] = concreteCstr;
+        [_MIPsolver postConstraint: concreteCstr];
+        [dw setCstrIdx: [concreteCstr idx]];
+        [dw setCoefIdx: [dx idx]];
+    }
 }
 -(void) visitMinimize: (id<ORObjectiveFunctionVar>) v
 {

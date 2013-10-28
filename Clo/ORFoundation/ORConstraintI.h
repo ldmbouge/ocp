@@ -24,6 +24,8 @@
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(ORInt) size;
+-(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
 @end
 
@@ -376,6 +378,18 @@
 -(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr annotation:(ORAnnotation)n;
 -(id<ORRelation>) expr;
 -(ORAnnotation)annotation;
+@end
+
+@interface ORSoftAlgebraicConstraintI : ORAlgebraicConstraintI<ORSoftConstraint>
+-(ORSoftAlgebraicConstraintI*) initORSoftAlgebraicConstraintI: (id<ORRelation>) expr slack: (id<ORVar>)slack annotation: (ORAnnotation)ann;
+-(id<ORVar>) slack;
+@end
+
+@interface ORFloatWeightedVarI : ORConstraintI<ORWeightedVar>
+-(ORFloatWeightedVarI*) initFloatWeightedVar: (id<ORVar>)x;
+-(id<ORVar>) z;
+-(id<ORVar>)x;
+-(id<ORParameter>)weight;
 @end
 
 @interface ORTableConstraintI : ORConstraintI<ORTableConstraint>

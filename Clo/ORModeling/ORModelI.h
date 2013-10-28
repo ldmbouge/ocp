@@ -101,16 +101,12 @@
 @end
 
 @interface ORParameterizedModelI : ORModelI<ORParameterizedModel>
--(ORModelI*)              initORParamModelI;
--(ORModelI*)              initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
--(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
-                         onParameter:(void (^)(id<ORObject>))doParam
-                          onMutables:(void(^)(id<ORObject>))doMutables
-                        onImmutables:(void(^)(id<ORObject>))doImmutables
-                       onConstraints:(void(^)(id<ORObject>))doCons
-                         onObjective:(void(^)(id<ORObject>))doObjective;
--(id<ORParameter>) addParam:(id<ORParameter>)param;
--(NSArray*) parameters;
+-(ORParameterizedModelI*) initORParamModelI;
+-(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
+-(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs;
+-(NSArray*) softConstraints;
+-(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
+-(id<ORWeightedVar>) parameterizeFloatVar: (id<ORFloatVar>)x;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
@@ -136,24 +132,4 @@
 -(void)enumerateWith:(void(^)(id<ORSolution>))block;
 -(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
-@end
-
-@interface ORConstraintSetI : NSObject<ORConstraintSet> {
-    NSMutableSet* _all;
-}
--(id)init;
--(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
--(ORInt) size;
--(void)enumerateWith:(void(^)(id<ORConstraint>))block;
-@end
-
-@interface OROrderedConstraintSetI : NSObject<OROrderedConstraintSet> {
-    NSMutableArray* _all;
-}
--(id)init;
--(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
--(ORInt) size;
--(id<ORConstraint>) at:(ORInt)index;
--(id<ORConstraint>) objectAtIndexedSubscript: (NSUInteger) key;
--(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end

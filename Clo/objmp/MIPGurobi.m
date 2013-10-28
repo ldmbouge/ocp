@@ -89,6 +89,7 @@
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
    GRBoptimize(_model);
+    //[self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
@@ -152,7 +153,19 @@
    else
       return objVal;
 }
-
+-(ORFloat) paramFloatValue: (MIPParameterI*) param
+{
+    ORFloat v;
+    GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
+    return v;
+}
+-(void) setParam: (MIPParameterI*) param value: (ORFloat)val
+{
+    int cind[] = { [param cstrIdx] };
+    int vind[] = { [param coefIdx] };
+    double v[] = { val };
+    GRBchgcoeffs(_model, 1, cind, vind, v);
+}
 -(void) setBounds: (MIPVariableI*) var low: (ORFloat) low up: (ORFloat) up
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);

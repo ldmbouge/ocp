@@ -14,6 +14,7 @@
 
 @class MIPSolverI;
 @protocol ORModel;
+@protocol ORFloatParam;
 
 @protocol ORMIPSolution <ORSolution>
 -(id<ORObjectiveValue>) objectiveValue;
@@ -24,6 +25,7 @@
 -(void) enumerateWith: (void(^)(id<ORMIPSolution>)) block;
 -(id<ORInformer>) solutionAdded;
 -(id<ORMIPSolution>) best;
+-(void) emptyPool;
 @end
 
 
@@ -35,6 +37,8 @@
 -(void) solve;
 -(ORFloat) floatValue: (id<ORFloatVar>) v;
 -(ORInt) intValue: (id<ORIntVar>) v;
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)p;
+-(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORMIPSolutionPool>) solutionPool;
 -(id<ORMIPSolution>) captureSolution;

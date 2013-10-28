@@ -678,91 +678,61 @@
 
 @implementation ORParameterizedModelI
 {
-    NSMutableArray*          _params;      // model parameters.
+    NSMapTable* _paramMap;
 }
--(ORModelI*) initORParamModelI
+-(ORParameterizedModelI*) initORParamModelI
 {
     self = [super initORModelI];
-    _params   = [[NSMutableArray alloc] initWithCapacity:32];
+    _paramMap = [[NSMapTable alloc] init];
     return self;
 }
--(ORModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings
+-(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings
 {
     self = [self initORModelI:nb mappings: mappings];
-    _params   = [[NSMutableArray alloc] initWithCapacity:32];
+    _paramMap = [[NSMapTable alloc] init];
     return self;
 }
--(ORModelI*) initWithParamModel: (ORParameterizedModelI*) src
+-(ORParameterizedModelI*) initWithParamModel: (ORParameterizedModelI*) src
 {
     self = [super initWithModel: src];
-    _params = [src->_params mutableCopy];
+    _paramMap = [[NSMapTable alloc] init];
+    return self;
+}
+-(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
+{
+    self = [super initWithModel: src relax: cstrs];
+    _paramMap = [[NSMapTable alloc] init];
     return self;
 }
 -(void) dealloc
 {
     NSLog(@"ORParameterizedModelI [%p] dealloc called...\n",self);
-    [_params release];
     [super dealloc];
-}
--(NSArray*) parameters
-{
-    return _params;
-}
--(id<ORParameter>) addParam:(id<ORParameter>)param
-{
-    [_params addObject: param];
-    return param;
-}
--(id) trackMutable: (id) obj
-{
-    [super trackMutable: obj];
-    if([obj conformsToProtocol: @protocol(ORParameter)])
-        [_params addObject: obj];
-    return obj;
-}
--(NSString*) description
-{
-    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:512] autorelease];
-    [buf appendFormat:@"param[%ld] = {\n",[_params count]];
-    for(id<ORParameter> p in _params)
-        [buf appendFormat:@"\t%@\n",p];
-    [buf appendFormat:@"}\n"];
-    [buf appendFormat: @"%@", [super description]];
-    return buf;
-}
--(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
-        onParameter:(void (^)(id<ORObject>))doParam
-         onMutables: (void(^)(id<ORObject>)) doMutable
-       onImmutables:(void(^)(id<ORObject>)) doImmutable
-      onConstraints:(void(^)(id<ORObject>)) doCons
-        onObjective:(void(^)(id<ORObject>)) doObjective
-{
-    for(id<ORParameter> p in _params)
-        doParam(p);
-    [self applyOnVar: doVar onMutables: doMutable onImmutables: doImmutable
-       onConstraints: doCons onObjective: doObjective];
-}
--(void) visit: (ORVisitor*) visitor
-{
-    for(id<ORObject> p in _params)
-        [p visit: visitor];
-    [super visit: visitor];
 }
 -(id) copyWithZone:(NSZone*)zone
 {
     ORModelI* clone = [[ORParameterizedModelI allocWithZone:zone] initWithParamModel:self];
     return clone;
 }
-- (void) encodeWithCoder:(NSCoder *)aCoder
+-(NSArray*) softConstraints
 {
-    [super encodeWithCoder: aCoder];
-    [aCoder encodeObject:_params];
+    NSArray* cstrs = [self constraints];
+    NSMutableArray* softCstrs = [[NSMutableArray alloc] initWithCapacity: 64];
+    for(id<ORConstraint> c in cstrs)
+        if([c conformsToProtocol: @protocol(ORSoftConstraint)])
+            [softCstrs addObject: c];
+    return softCstrs;
 }
-- (id)initWithCoder:(NSCoder *)aDecoder
+-(id<ORWeightedVar>) parameterization: (id<ORVar>)x
 {
-    self = [super initWithCoder: aDecoder];
-    _params = [[aDecoder decodeObject] retain];
-    return self;
+    return [_paramMap objectForKey: x];
+}
+-(id<ORWeightedVar>) parameterizeFloatVar: (id<ORFloatVar>)x
+{
+    id<ORWeightedVar> c = [[ORFloatWeightedVarI alloc] initFloatWeightedVar: x];
+    [_paramMap setObject: c forKey: x];
+    [self add: c];
+    return c;
 }
 @end
 
@@ -925,78 +895,11 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    }];
    return [sel retain];
 }
+
+-(void) emptyPool
+{
+    [_all removeAllObjects];
+}
 @end
 
-@implementation ORConstraintSetI
--(id) init
-{
-    self = [super init];
-    _all = [[NSMutableSet alloc] initWithCapacity:64];
-    return self;
-}
-
--(void) dealloc
-{
-    [_all release];
-    [super dealloc];
-}
-
--(id<ORConstraint>) addConstraint:(id<ORConstraint>)c
-{
-   [_all addObject: c];
-   return c;
-}
-
--(ORInt) size {
-    return (ORInt)[_all count];
-}
-
--(void) enumerateWith:(void(^)(id<ORConstraint>))block
-{
-    [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-        block(obj);
-    }];
-}
-
-@end
-@implementation OROrderedConstraintSetI
--(id) init
-{
-    self = [super init];
-    _all = [[NSMutableArray alloc] initWithCapacity:64];
-    return self;
-}
-
--(void) dealloc
-{
-    [_all release];
-    [super dealloc];
-}
-
--(id<ORConstraint>) addConstraint:(id<ORConstraint>)c
-{
-    [_all addObject: c];
-    return c;
-}
-
--(ORInt) size {
-    return (ORInt)[_all count];
-}
-
--(id<ORConstraint>) at:(ORInt)index
-{
-    return [_all objectAtIndex: index];
-}
--(id<ORConstraint>) objectAtIndexedSubscript: (NSUInteger) key
-{
-   return [_all objectAtIndex: key];
-}
--(void) enumerateWith:(void(^)(id<ORConstraint>))block
-{
-    [_all enumerateObjectsUsingBlock:^(id obj, NSUInteger i, BOOL *stop) {
-        block(obj);
-    }];
-}
-
-@end
 

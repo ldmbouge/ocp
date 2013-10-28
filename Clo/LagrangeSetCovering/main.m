@@ -24,6 +24,7 @@
 #import "LPRunnable.h"
 #import "CPRunnable.h"
 #import "ORLagrangeRelax.h"
+#import "ORLagrangianTransform.h"
 #import "SetCoveringInstanceParser.h"
 
 
@@ -50,11 +51,11 @@ int main (int argc, const char * argv[])
         [m add: [expr geq: @1]];
     }
     
-    ORLagrangeRelax* lr = [[ORLagrangeRelax alloc] initWithModel: m];
+    ORLagrangianTransform* t = [[ORLagrangianTransform alloc] init];
+    id<ORParameterizedModel> lagrangeModel = [t apply: m relaxing: [m constraints]];
+    id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel];
     [lr run];
-    NSLog(@"lower bound: %f", [lr bestBound]);
     
-    //id<ORRunnable> r = [ORFactory MIPRunnable: [lr model]];
-    //[r start];
+    NSLog(@"lower bound: %f", [(ORLagrangeRelax*)lr bestBound]);
     return 0;
 }

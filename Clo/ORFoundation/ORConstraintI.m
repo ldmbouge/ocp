@@ -11,7 +11,9 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORError.h>
+#import <ORFoundation/ORParameter.h>
 #import "ORConstraintI.h"
+#import "ORParameterI.h"
 
 @implementation ORConstraintI
 -(ORConstraintI*) initORConstraintI
@@ -78,6 +80,14 @@
    [_content enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
       block(obj);
    }];
+}
+-(ORInt) size
+{
+    return (ORInt)[_content count];
+}
+-(id<ORConstraint>) at: (ORInt) idx
+{
+    return [_content objectAtIndex: idx];
 }
 -(NSSet*)allVars
 {
@@ -2273,6 +2283,58 @@
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:4] autorelease];
    //TODO:ldm
    return ms;
+}
+@end
+
+@implementation ORSoftAlgebraicConstraintI {
+   id<ORVar> _slack;
+}
+-(ORSoftAlgebraicConstraintI*) initORSoftAlgebraicConstraintI: (id<ORRelation>) expr slack: (id<ORVar>)slack annotation: (ORAnnotation)ann
+{
+   self = [super initORAlgebraicConstraintI: expr annotation: ann];
+   _slack = slack;
+   return self;
+}
+-(id<ORVar>) slack
+{
+   return _slack;
+}
+@end
+
+@implementation ORFloatWeightedVarI {
+   id<ORVar> _x;
+   id<ORVar> _z;
+   id<ORParameter> _lambda;
+}
+-(ORFloatWeightedVarI*) initFloatWeightedVar: (id<ORVar>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _z = [ORFactory floatVar: [x tracker]];
+   _lambda = [[ORFloatParamI alloc] initORFloatParamI: [x tracker]];
+   return self;
+}
+-(id<ORVar>) z
+{
+   return _z;
+}
+-(id<ORVar>)x
+{
+   return _x;
+}
+-(id<ORParameter>)weight
+{
+   return _lambda;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORFloatWeightedConstraintI : %p(%d) IS %@ = %@ * %@",self,[self getId],_z,_lambda,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatWeightedVar:self];
 }
 @end
 

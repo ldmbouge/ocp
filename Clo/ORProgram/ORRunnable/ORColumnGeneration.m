@@ -66,7 +66,7 @@
 +(id<ORRunnable>) columnGeneration: (id<LPRunnable>)master slave: (Void2Column)slaveBlock {
     return [[ORColumnGeneration alloc] initWithMaster: master slave: slaveBlock];
 }
-+(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<OROrderedConstraintSet>)cstrs {
++(id<LPColumn>) column: (id<LPProgram>)lp solution: (id<ORSolution>)sol array: (id<ORIntVarArray>)arr constraints: (id<ORGroup>)cstrs {
     id<LPColumn> col = [lp freshColumn];
     [col addObjCoef: +1.0]; // [ldm] TOCHECK: this was set to -1. I'm unclear as to why. 
     for(ORInt i = 0; i < [cstrs size]; i++) {

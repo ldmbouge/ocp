@@ -11,9 +11,8 @@
 #import <ORModeling/ORModeling.h>
 #import "ORRunnablePiping.h"
 
-@interface ORLagrangeRelax : NSObject
--(id) initWithModel: (id<ORModel>)m;
--(id) initWithModel: (id<ORModel>)m relax: (NSArray*)cstrs;
+@interface ORLagrangeRelax : ORPipedRunnable<NSObject>
+-(id) initWithModel: (id<ORParameterizedModel>)m;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
