@@ -88,6 +88,14 @@
 {
    return [[self asExpression:[e tracker]] gt:e];
 }
+-(id<ORRelation>) and: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] and:e];
+}
+-(id<ORRelation>) or: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] or:e];
+}
 @end
 
 @interface ORSweep : ORVisitor<NSObject> {
@@ -455,14 +463,14 @@
    if (e == NULL)
       return self;
    else
-      return [ORFactory expr:(id<ORRelation>)self and:e track:[self tracker]];
+      return [self and:e track:[self tracker]];
 }
 -(id<ORExpr>) or: (id<ORRelation>)e
 {
    if (e == NULL)
       return self;
    else
-      return [ORFactory expr:(id<ORRelation>)self or:e track:[self tracker]];
+      return [self or:e track:[self tracker]];
 }
 -(id<ORExpr>) imply:(id<ORRelation>)e
 {
@@ -599,7 +607,12 @@
 }
 -(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t
 {
-   return (id)[ORFactory expr:(id)self and:(id)e track:t];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return (id)[ORFactory expr:(id)self and:(id)e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return (id)[ORFactory expr:(id)self and:(id)[(id)e asExpression:t] track:t];
+   else
+      return NULL;
 }
 -(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t
 {
@@ -666,7 +679,9 @@
 }
 -(enum ORVType) vtype
 {
-   return lubVType(_left.vtype, _right.vtype);
+   ORVType rvt = [_right conformsToProtocol:@protocol(ORExpr)] ? [_right vtype] : ORTInt;
+   ORVType lvt = [_left conformsToProtocol:@protocol(ORExpr)] ? [_left vtype] : ORTInt;
+   return lubVType(lvt,rvt);
 }
 
 - (void) encodeWithCoder:(NSCoder *)aCoder

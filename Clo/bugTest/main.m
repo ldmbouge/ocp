@@ -144,14 +144,14 @@ int main(int argc, const char * argv[])
 //         [model add:[[l eq:r] imply:[[transactionsContainingItemset at:i] eq: @1]]];
 //         [model add:[[[transactionsContainingItemset at:i] eq: @0] imply: [l neq:r]]];
 
-         id<ORExpr> cov = [Sum(model, i, itemRange, [itemset[i] mul:[@1 sub:@([matrix at:t :i])]]) eq:@0];
+         id<ORExpr> cov = [Sum(model, i, itemRange, [itemset[i] and:@(![matrix at:t :i])]) eq:@0];
          [model add:[transactionsContainingItemset[t] eq:cov]];
       }
       
       //Sum of transactionsContainingItemset must be greater than the threshold
       //[model add:[Sum(model, k, transactionRange, [transactionsContainingItemset at:k]) gt:@(2)]];
       for(ORInt i =itemRange.low;i <= itemRange.up;i++) {
-         id<ORExpr> thr = Sum(model, t, transactionRange, [transactionsContainingItemset[t] mul:@([matrix at:t :i])]);
+         id<ORExpr> thr = Sum(model, t, transactionRange, [transactionsContainingItemset[t] and:@([matrix at:t :i])]);
          [model add:[itemset[i] imply:[thr geq:@2]]];
       }
       
