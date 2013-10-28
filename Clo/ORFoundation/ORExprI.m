@@ -42,7 +42,11 @@
 }
 -(id<ORExpr>)  sub:(id<ORExpr>)  r
 {
-   return [[self asExpression:[r tracker]] sub:r];
+   if ([r conformsToProtocol:@protocol(ORExpr)])
+      return [[self asExpression:[r tracker]] sub:r];
+   else if ([r isKindOfClass:[NSNumber class]]) {
+      return (id)[NSNumber numberWithInt:[self intValue] - [r intValue]];
+   } else return NULL;
 }
 -(id<ORExpr>)  div:(id<ORExpr>)  r
 {

@@ -147,6 +147,7 @@
 		5B196C7916446F4800C9CED2 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B196C7A16446F4800C9CED2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B196C7B16446F4800C9CED2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B1D4268181EF28D00EE8C83 /* test1.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667126181EF228007CBBA6 /* test1.csv */; };
 		5B2000E6156D585E00D80105 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B2000E9156D585E00D80105 /* queensNaive.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B558C0D1563F01000D2BCD7 /* queensNaive.1 */; };
@@ -833,7 +834,6 @@
 		5BD2F03E17FF556000A14B6D /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5BD601C217F9A627006A9CDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BD601C517F9A627006A9CDC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD601C417F9A627006A9CDC /* main.m */; };
-		5BD601C917F9A627006A9CDC /* bugTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BD601C817F9A627006A9CDC /* bugTest.1 */; };
 		5BD601DB17F9A63F006A9CDC /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5BD601DC17F9A63F006A9CDC /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BD601DD17F9A63F006A9CDC /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
@@ -4905,13 +4905,13 @@
 		};
 		5BD601BF17F9A627006A9CDC /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
-				5BD601C917F9A627006A9CDC /* bugTest.1 in CopyFiles */,
+				5B1D4268181EF28D00EE8C83 /* test1.csv in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5BDBBAA71718D96B00322163 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -5339,6 +5339,23 @@
 		5B6623D51770B1AE00A1ACCD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B6623D81770B1AE00A1ACCD /* paq-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "paq-Prefix.pch"; sourceTree = "<group>"; };
 		5B6623D91770B1AE00A1ACCD /* paq.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = paq.1; sourceTree = "<group>"; };
+		5B667126181EF228007CBBA6 /* test1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = test1.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/test1.csv"; sourceTree = "<group>"; };
+		5B667127181EF228007CBBA6 /* anneal.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = anneal.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/anneal.csv"; sourceTree = "<group>"; };
+		5B667128181EF228007CBBA6 /* audiology.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = audiology.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/audiology.csv"; sourceTree = "<group>"; };
+		5B667129181EF228007CBBA6 /* australian-credit.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "australian-credit.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/australian-credit.csv"; sourceTree = "<group>"; };
+		5B66712A181EF228007CBBA6 /* german-credit.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "german-credit.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/german-credit.csv"; sourceTree = "<group>"; };
+		5B66712B181EF228007CBBA6 /* heart-cleveland.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "heart-cleveland.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/heart-cleveland.csv"; sourceTree = "<group>"; };
+		5B66712C181EF228007CBBA6 /* hepatitis.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = hepatitis.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/hepatitis.csv"; sourceTree = "<group>"; };
+		5B66712D181EF228007CBBA6 /* hypothyroid.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = hypothyroid.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/hypothyroid.csv"; sourceTree = "<group>"; };
+		5B66712E181EF228007CBBA6 /* kr-vs-kp.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "kr-vs-kp.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/kr-vs-kp.csv"; sourceTree = "<group>"; };
+		5B66712F181EF228007CBBA6 /* lymph.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = lymph.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/lymph.csv"; sourceTree = "<group>"; };
+		5B667130181EF228007CBBA6 /* mushroom.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mushroom.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/mushroom.csv"; sourceTree = "<group>"; };
+		5B667131181EF228007CBBA6 /* primary-tumor.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "primary-tumor.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/primary-tumor.csv"; sourceTree = "<group>"; };
+		5B667132181EF228007CBBA6 /* soybean.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = soybean.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/soybean.csv"; sourceTree = "<group>"; };
+		5B667133181EF228007CBBA6 /* splice-1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "splice-1.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/splice-1.csv"; sourceTree = "<group>"; };
+		5B667134181EF228007CBBA6 /* tic-tac-toe.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "tic-tac-toe.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/tic-tac-toe.csv"; sourceTree = "<group>"; };
+		5B667135181EF228007CBBA6 /* vote.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = vote.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/vote.csv"; sourceTree = "<group>"; };
+		5B667136181EF228007CBBA6 /* zoo-1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "zoo-1.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/zoo-1.csv"; sourceTree = "<group>"; };
 		5B673A2A178DC5AA00886A28 /* ORLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinear.h; sourceTree = "<group>"; };
 		5B67A4FC17E227BB00516F50 /* wka */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wka; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B67A4FF17E227BB00516F50 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -7310,6 +7327,30 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5B667125181EF218007CBBA6 /* Dataset */ = {
+			isa = PBXGroup;
+			children = (
+				5B667126181EF228007CBBA6 /* test1.csv */,
+				5B667127181EF228007CBBA6 /* anneal.csv */,
+				5B667128181EF228007CBBA6 /* audiology.csv */,
+				5B667129181EF228007CBBA6 /* australian-credit.csv */,
+				5B66712A181EF228007CBBA6 /* german-credit.csv */,
+				5B66712B181EF228007CBBA6 /* heart-cleveland.csv */,
+				5B66712C181EF228007CBBA6 /* hepatitis.csv */,
+				5B66712D181EF228007CBBA6 /* hypothyroid.csv */,
+				5B66712E181EF228007CBBA6 /* kr-vs-kp.csv */,
+				5B66712F181EF228007CBBA6 /* lymph.csv */,
+				5B667130181EF228007CBBA6 /* mushroom.csv */,
+				5B667131181EF228007CBBA6 /* primary-tumor.csv */,
+				5B667132181EF228007CBBA6 /* soybean.csv */,
+				5B667133181EF228007CBBA6 /* splice-1.csv */,
+				5B667134181EF228007CBBA6 /* tic-tac-toe.csv */,
+				5B667135181EF228007CBBA6 /* vote.csv */,
+				5B667136181EF228007CBBA6 /* zoo-1.csv */,
+			);
+			name = Dataset;
+			sourceTree = "<group>";
+		};
 		5B67A4FE17E227BB00516F50 /* wka */ = {
 			isa = PBXGroup;
 			children = (
@@ -8301,6 +8342,7 @@
 		5BD601C317F9A627006A9CDC /* bugTest */ = {
 			isa = PBXGroup;
 			children = (
+				5B667125181EF218007CBBA6 /* Dataset */,
 				5BD601C417F9A627006A9CDC /* main.m */,
 				5BD601C817F9A627006A9CDC /* bugTest.1 */,
 				5BD601C617F9A627006A9CDC /* Supporting Files */,
