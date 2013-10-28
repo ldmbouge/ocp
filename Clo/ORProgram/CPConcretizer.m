@@ -879,7 +879,6 @@
          else
             return theCPVar;
       }];
-      //id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
       id<ORFloatArray> c = [cstr coefs];
       id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst]];
       [_engine add:concreteCstr];
@@ -889,7 +888,14 @@
 -(void)visitFloatLinearLeq:(id<ORFloatLinearLeq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
+      id<ORVarArray> av = [cstr vars];
+      id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+         id<CPVar> theCPVar = [self concreteVar:[av at:k]];
+         if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
+            return [CPFactory floatVar:_engine castFrom:(id)theCPVar];
+         else
+            return theCPVar;
+      }];
       id<ORFloatArray> c = [cstr coefs];
       id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c leqi:[cstr cst]];
       [_engine add:concreteCstr];

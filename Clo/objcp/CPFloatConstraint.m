@@ -186,13 +186,28 @@
          ORInterval xii  = xi.bounds;
          ORInterval TMP = ORISubPointwise(S, ORIMul(xii, ci > 0 ? createORI1(ci) : ORISwap(createORI1(ci))));
          ORInterval NEW = ORIDiv(ORIOpposite(TMP), createORI1(ci));
-         BOOL update = ORINarrow(xii, NEW) >= ORLow;
-         changed |= update;
-         if (update) {
-            if (ci > 0)
-               [xi updateMax:ORIUp(NEW)];
-            else
-               [xi updateMin:ORILow(NEW)];
+         ORNarrowing nrw = ORINarrow(xii, NEW);
+         switch(nrw) {
+            case ORUp: {
+               if (ci>0) {
+                  [xi updateMax:ORIUp(NEW)];
+                  changed |= true;
+               }
+            }break;
+            case ORLow: {
+               if (ci < 0) {
+                  [xi updateMin:ORILow(NEW)];
+                  changed |= true;
+               }
+            }break;
+            case ORBoth: {
+               if (ci > 0)
+                  [xi updateMax:ORIUp(NEW)];
+               else
+                  [xi updateMin:ORILow(NEW)];
+               changed |= true;
+            }
+            case ORNone:break;
          }
       }
    }
