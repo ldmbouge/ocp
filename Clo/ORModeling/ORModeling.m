@@ -34,17 +34,17 @@
    return [[ORBatchModel alloc]  init: flatModel source:srcModel annotation:notes];
 }
 
-+(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes
++(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into
 {
-  return [[ORFlatten alloc] initORFlatten:into annotation:notes];
+  return [[ORFlatten alloc] initORFlatten:into];
 }
-+(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes
++(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
 {
-   return [[ORLPFlatten alloc] initORLPFlatten:into annotation:notes];
+   return [[ORLPFlatten alloc] initORLPFlatten:into];
 }
-+(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes
++(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into
 {
-   return [[ORMIPFlatten alloc] initORMIPFlatten:into annotation:notes];
+   return [[ORMIPFlatten alloc] initORMIPFlatten:into];
 }
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into
 {

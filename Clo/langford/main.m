@@ -24,7 +24,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
-         id<ORAnnotation> notes = [ORFactory note];
+         id<ORAnnotation> notes = [ORFactory annotation];
          ORInt k    = [args nArg];
          ORInt n    = [args size];
          NSLog(@"Params: k=%d n=%d",k,n);

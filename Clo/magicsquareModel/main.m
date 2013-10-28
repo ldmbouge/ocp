@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
          ORInt t = [args timeOut];
         
          id<ORModel> model = [ORFactory createModel];
-         id<ORAnnotation> notes = [ORFactory note];
+         id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntRange>  R = [ORFactory intRange:model low:1 up:n];
          id<ORIntRange>  D = [ORFactory intRange:model low:1 up:n*n];
          ORInt T = n * (n*n + 1)/2;

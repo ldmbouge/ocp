@@ -81,9 +81,9 @@
 +(id<ORModel>) createModel:(ORUInt)nbo mappings: (id<ORModelMappings>) mappings;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src annotation:(id<ORAnnotation>)notes;
-+(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes;
-+(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes;
-+(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into annotation:(id<ORAnnotation>)notes;
++(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
 +(id<ORSolutionPool>) createSolutionPool;
 +(id<ORConstraintSet>) createConstraintSet;

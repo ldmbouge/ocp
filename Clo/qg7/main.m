@@ -45,7 +45,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         id<ORAnnotation> notes = [ORFactory note];
+         id<ORAnnotation> notes = [ORFactory annotation];
          ORInt n = [args size];
          id<ORIntRange> D = RANGE(model,0,n-1);
          id<ORIntVarMatrix> q = [ORFactory intVarMatrix:model range:D :D domain:D];
