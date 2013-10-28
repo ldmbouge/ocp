@@ -55,26 +55,30 @@
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
-   return [self createCPProgram:model annotation:notes];
+   id<CPProgram> program = [self createCPProgram:model annotation:notes];
    [notes release];
+   return program;
 }
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
-   return [self createCPSemanticProgramDFS:model annotation:notes];
+   id<CPProgram> program = [self createCPSemanticProgramDFS:model annotation:notes];
    [notes release];
+   return program;
 }
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
 {
    id<ORAnnotation> notes = [ORFactory annotation];
-   return [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
+   id<CPProgram> program = [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
    [notes release];
+   return program;
 }
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
 {
    id<ORAnnotation> notes = [ORFactory annotation];
-   return [self createCPParProgram:model nb:k annotation:notes with:ctrlClass];
+   id<CPProgram> program = [self createCPParProgram:model nb:k annotation:notes with:ctrlClass];
    [notes release];
+   return program;
 }
 
 
@@ -352,6 +356,13 @@
    return [[ORLinearRelaxation alloc] initLinearRelaxation:model];
 }
 
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation
+{
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPProgram: model withRelaxation: relaxation annotation: notes];
+   [notes release];
+   return program;
+}
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>)notes
 {
    __block id<CPProgram> cpprogram = [CPSolverFactory solver];
