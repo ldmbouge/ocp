@@ -139,13 +139,13 @@ int main(int argc, const char * argv[])
       
       //A value is 1 in transactionsContainingItemsets iff that transaction contains all of the items in the itemset
       for (ORInt t = [transactionRange low]; t <= [transactionRange up]; t++){
-//         id<ORExpr> r = Sum(model, j, itemRange, [[itemset at:j] mul:@([matrix at:i:j])]);
+//         id<ORExpr> r = Sum(model, j, itemRange, [[itemset at:j] mul:@([matrix at:t:j])]);
 //         id<ORExpr> l = Sum(model, j, itemRange, [itemset at:j]);
-//         [model add:[[l eq:r] imply:[[transactionsContainingItemset at:i] eq: @1]]];
-//         [model add:[[[transactionsContainingItemset at:i] eq: @0] imply: [l neq:r]]];
+//         [model add:[[l eq:r] imply:[transactionsContainingItemset at:t]]];
+//         [model add:[[transactionsContainingItemset at:t] imply: [l eq:r]]];
 
-         id<ORExpr> cov = [Sum(model, i, itemRange, [itemset[i] and:@(![matrix at:t :i])]) eq:@0];
-         [model add:[transactionsContainingItemset[t] eq:cov]];
+            id<ORExpr> cov = [Sum(model, i, itemRange, [itemset[i] and:@(![matrix at:t :i])]) eq:@0];
+            [model add:[transactionsContainingItemset[t] eq:cov]];
       }
       
       //Sum of transactionsContainingItemset must be greater than the threshold
@@ -164,6 +164,7 @@ int main(int argc, const char * argv[])
           id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {
              return [cpp intValue:itemset[i]];
           }];
+          
           NSLog(@"%@",prettyItemset(freqItemset, items));
        }];
       NSLog(@"Solver status: %@\n",cpp);

@@ -31,6 +31,7 @@ class Runner:
 		print 'Return code {0}'.format(rc)
 		err = h.stderr.read()
 		out = ''
+		res = {'cpu' : 0, 'found' : 0, 'rc' : rc}
 		if rc == 0:
 			for line in h.stdout:
 				if line[:4] == 'OUT:':
