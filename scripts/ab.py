@@ -4,6 +4,7 @@ import subprocess
 import os
 import sys
 import json
+import intoDB
 
 class Runner:
 	def __init__(self,bin):
@@ -130,3 +131,8 @@ for (b,qa,na,par,heur) in ab:
 covdir=value
 cmd = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier -message \"Coverage Report Ready\""
 os.system(cmd)
+
+collector = intoDB.Collect()
+collector.generate()
+collector.makeMarkdown(1)
+
