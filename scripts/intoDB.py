@@ -119,17 +119,18 @@ class Collect:
 		of.write("##Machine {0}\n- Flavor\t = {1}\n- OS\t={2}\n- Distrib\t={3}\n- CPU\t={3}Mhz\n\n".format(row[3],row[4],row[5],row[6]))
 		of.write("SHA1 = {0}\n\n".format(row[2]))
 		c.execute("select * from bench where runid={0} order by bench ASC".format(runID))
-		of.write("bench | method | threads | size | nbSol | nchoice | cpu | wc | mused | status \n")
-		of.write("|-----|--------|---------|------|-------|--------:|----:|---:|------:|--------|\n")
+		of.write("bench | method | threads | size | nbSol | nchoice | cpu(s) | wc(s) | mused(Kb) | mpeak(Kb) | status \n")
+		of.write("|-----|--------|---------|------|-------|--------:|----:|---:|------:|------:|--------|\n")
 		for r in c.fetchall():
 			print r
 			bn = r[1].split(' ')
 			print bn
 			of.write("{0:<20}".format(bn[0]) +
-			 " | {2:<4} | {4:<2} | {5:>4} | {6:>5} | {9:>7} | {11:>10} | {12:>7} | {13:.2f} | {15} \n".format(*r))
+			 " | {2:<4} | {4:<2} | {5:>4} | {6:>5} | {9:>7} | {11:>10} | {12:>7} | {13:.2f} | {14:.2f} | {15} \n".format(*r))
 		of.close()
 
 
 c = Collect()
-c.generate()
+#c.generate()
+c.makeMarkdown(1)
 
