@@ -21,22 +21,25 @@ typedef enum {
 } ORCLevel;
 
 @protocol ORAnnotation <NSObject,NSCopying>
--(ORCLevel)levelFor:(id<ORConstraint>)cstr;
+-(ORCLevel) levelFor:(id<ORConstraint>)cstr;
 -(id)copy;
 
--(id<ORConstraint>) dc:(id<ORConstraint>)cstr;
--(id<ORConstraint>) bc:(id<ORConstraint>)cstr;
--(id<ORConstraint>) vc:(id<ORConstraint>)cstr;
--(id<ORConstraint>) relax:(id<ORConstraint>)cstr;
--(id<ORConstraint>) cstr: (id<ORConstraint>)cstr consistency: (ORCLevel) cl;
+-(id<ORConstraint>) dc: (id<ORConstraint>) cstr;
+-(id<ORConstraint>) bc: (id<ORConstraint>) cstr;
+-(id<ORConstraint>) vc: (id<ORConstraint>) cstr;
+-(id<ORConstraint>) relax: (id<ORConstraint>) cstr;
+-(id<ORConstraint>) cstr: (id<ORConstraint>) cstr consistency: (ORCLevel) cl;
 
 -(void) alldifferent: (ORCLevel) cl;
+
+-(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) o;
+
 @end
 
 @interface ORAnnotation : ORObject<ORAnnotation,NSCopying>
 @end
 
-@protocol ORNote <NSObject>
+@protocol ORNote <NSObject,NSCopying>
 @end
 
 @interface ORConsistency : NSObject<ORNote> {
@@ -46,3 +49,5 @@ typedef enum {
 -(id)initWith:(ORCLevel)cl;
 -(ORCLevel)level;
 @end
+
+

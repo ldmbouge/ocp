@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORData.h>
+#import "math.h"
 
 inline ORFloat frac(ORFloat f)
 {

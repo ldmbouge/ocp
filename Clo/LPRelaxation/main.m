@@ -15,6 +15,7 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/LPProgram.h>
 #import <ORProgram/CPProgram.h>
+#import "math.h"
 
 #import "ORCmdLineArgs.h"
 
@@ -223,8 +224,8 @@ int main_hybrid_branching(int argc, const char * argv[])
          //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
          for(ORInt i = 0; i < nbRows; i++)
             //               [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i])]]];
-            //[note relax: [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]]];
-            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
+            [note relax: [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]]];
+            //[model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
          [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
          
          id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
@@ -243,7 +244,8 @@ int main_hybrid_branching(int argc, const char * argv[])
                 ORInt idx = -1;
                 for(ORInt i = 0; i < nbColumns; i++) {
                    ORFloat val = [lp value: x[i]];
-                   ORFloat fr = frac(val);
+                   ORFloat vf;
+                   ORFloat fr = modf(val,&vf);
                    if (fr > ifrac) {
                       idx = i;
                       ifrac = fr;
