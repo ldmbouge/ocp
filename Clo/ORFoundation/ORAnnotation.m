@@ -221,7 +221,7 @@
 }
 - (id) copyWithZone:(NSZone *)zone
 {
-   return [[ORAnnotationCopy alloc] initWith:self];
+   return [[ORAnnotationCopy allocWithZone: zone] initWith:self];
 }
 -(ORCLevel) levelFor: (id<ORConstraint>) cstr
 {
