@@ -134,12 +134,14 @@ class Collect:
 			of.write("{0:<20}".format(bn[0]) +
 			 " | {2:<4} | {4:<2} | {5:>4} | {6:>5} | {9:>7} | {11:>10} | {12:>7} | {13:.2f} | {14:.2f} | {15} \n".format(*r))
 		of.close()
+
 	def latestMarkDown(self,useHTMLHeader):
 		c = self.db.cursor()
 		c.execute("select max(pkey) from run")
 		row = c.fetchone()
 		lastRunID = row[0]
 		self.makeMarkdown(lastRunID,useHTMLHeader)
+		
 
 if __name__ == '__main__':
 	c = Collect()
