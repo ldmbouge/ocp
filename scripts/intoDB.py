@@ -114,10 +114,14 @@ class Collect:
 		c = self.db.cursor()
 		c.execute("select pkey,date,sha1,host,os,distrib,cpu from run,machine where run.machine=machine.id AND run.pkey= {0}".format(runID))
 		row = c.fetchone()
+		#print "DATETIME:" + row[1]
 		year = row[1][:4]
 		month = row[1][4:6]
 		day   = row[1][6:8]
-		of.write("# Summary for {0}/{1}/{2}\n".format(day,month,year))
+		hour   = row[1][11:13]
+		minute = row[1][13:15]
+		sec    = row[1][15:17]
+		of.write("# Summary for {0}/{1}/{2} @ {3}:{4}:{5}\n".format(day,month,year,hour,minute,sec))
 		of.write("##Machine {0}\n- Flavor\t = {1}\n- OS\t={2}\n- Distrib\t={3}\n- CPU\t={3}Mhz\n\n".format(row[3],row[4],row[5],row[6]))
 		of.write("SHA1 = {0}\n\n".format(row[2]))
 		c.execute("select * from bench where runid={0} order by bench ASC".format(runID))
@@ -130,9 +134,15 @@ class Collect:
 			of.write("{0:<20}".format(bn[0]) +
 			 " | {2:<4} | {4:<2} | {5:>4} | {6:>5} | {9:>7} | {11:>10} | {12:>7} | {13:.2f} | {14:.2f} | {15} \n".format(*r))
 		of.close()
+	def latestMarkDown(self,useHTMLHeader):
+		c = self.db.cursor()
+		c.execute("select max(pkey) from run")
+		row = c.fetchone()
+		lastRunID = row[0]
+		self.makeMarkdown(lastRunID,useHTMLHeader)
 
 if __name__ == '__main__':
 	c = Collect()
 	#c.loadINDB()
-	c.makeMarkdown(1,False)
+	c.latestMarkDown(False)
 
