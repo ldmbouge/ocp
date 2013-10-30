@@ -131,7 +131,10 @@
 {
    return [self note: cstr consistency: ValueConsistency];
 }
-
+-(id<ORConstraint>) relax:(id<ORConstraint>) cstr
+{
+   return [self note: cstr consistency: RelaxedConsistency];
+}
 -(void) classNote: (id) ocl consistency: (ORCLevel) cl
 {
    id<ORNote> n = [[ORConsistency alloc] initWith: cl];

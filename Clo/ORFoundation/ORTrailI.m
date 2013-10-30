@@ -269,10 +269,7 @@ TRInt makeTRInt(ORTrailI* trail,int val)
 {
    return (TRInt){val,[trail magic]-1};
 }
-FXInt makeFXInt(ORTrailI* trail)
-{
-   return (FXInt){0,[trail magic]-1};
-}
+
 TRUInt makeTRUInt(ORTrailI* trail,unsigned val)
 {
    return (TRUInt) {val,[trail magic]-1};
@@ -393,6 +390,11 @@ ORInt getTRIntArray(TRIntArray a,int i)
 {
    return a._entries[i]._val;
 }
+
+FXInt makeFXInt(ORTrailI* trail)
+{
+   return (FXInt){0,[trail magic]-1};
+}
 void  incrFXInt(FXInt* v,ORTrailI* trail)
 {
    ORInt cmgc = trail->_magic;
@@ -411,6 +413,7 @@ int getFXInt(FXInt* v,ORTrailI* trail)
    }
    return v->_val;
 }
+
 ORInt trailMagic(ORTrailI* trail)
 {
    return trail->_magic;

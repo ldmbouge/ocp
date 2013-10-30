@@ -1019,6 +1019,8 @@
 		B139DEA215CCE3F8007D523E /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
 		B13EBFDD17D2D96300021A82 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B13EBFDC17D2D96300021A82 /* main.m */; };
 		B144185F17D98C1A00924909 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		B148C0C8182175B0009BE440 /* ORFunc.h in Headers */ = {isa = PBXBuildFile; fileRef = B148C0C6182175B0009BE440 /* ORFunc.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B148C0C9182175B0009BE440 /* ORFunc.m in Sources */ = {isa = PBXBuildFile; fileRef = B148C0C7182175B0009BE440 /* ORFunc.m */; };
 		B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */ = {isa = PBXBuildFile; fileRef = B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */; };
 		B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */ = {isa = PBXBuildFile; fileRef = B152BE2D13BB541E00531FD5 /* CPAllDifferentDC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -5728,6 +5730,8 @@
 		B139DE9F15CCE3F8007D523E /* ORController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORController.h; sourceTree = "<group>"; };
 		B139DEA015CCE3F8007D523E /* ORController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORController.m; sourceTree = "<group>"; };
 		B13EBFDC17D2D96300021A82 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B148C0C6182175B0009BE440 /* ORFunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFunc.h; sourceTree = "<group>"; };
+		B148C0C7182175B0009BE440 /* ORFunc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFunc.m; sourceTree = "<group>"; };
 		B149BF5B151E759600FC5887 /* ORCrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCrFactory.h; sourceTree = "<group>"; };
 		B149BF5C151E759600FC5887 /* ORCrFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCrFactory.m; sourceTree = "<group>"; };
 		B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAllDifferentDC.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -8564,6 +8568,8 @@
 				B10ECF0F150C34DE00B82836 /* ORFactoryI.m */,
 				5BFD594C15A3ACA500825BC3 /* ORFoundation.h */,
 				5BFD594D15A3ACA500825BC3 /* ORFoundation.m */,
+				B148C0C6182175B0009BE440 /* ORFunc.h */,
+				B148C0C7182175B0009BE440 /* ORFunc.m */,
 				5B6B0EF61787533000104246 /* ORInterval.h */,
 				5B6B0EF71787533000104246 /* ORInterval.mm */,
 				B11D862515CD8E310019729B /* ORLimit.h */,
@@ -9325,6 +9331,7 @@
 				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
 				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
 				5B57E5DF161F275200DB249A /* ORExpr.h in Headers */,
+				B148C0C8182175B0009BE440 /* ORFunc.h in Headers */,
 				5B57E5E0161F275F00DB249A /* ORExprI.h in Headers */,
 				5B57E5E3161F280D00DB249A /* ORVar.h in Headers */,
 				5B57E5E5161F295000DB249A /* ORVisit.h in Headers */,
@@ -12207,6 +12214,7 @@
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,
+				B148C0C9182175B0009BE440 /* ORFunc.m in Sources */,
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
 				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,

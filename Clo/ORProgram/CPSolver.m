@@ -1052,6 +1052,15 @@
 {
    [self gthenImpl: _gamma[var.getId] with: val];
 }
+-(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [self lthenImpl: _gamma[var.getId] with: rint(ceil(val))];
+}
+-(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [self gthenImpl: _gamma[var.getId] with: rint(floor(val))];
+}
+
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [self restrictImpl: _gamma[var.getId] to: S];

@@ -190,6 +190,10 @@
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ex = [cstr vars];
+      ORCLevel n = [_notes levelFor: cstr];
+      if (n == RelaxedConsistency)
+         return;
+      
       id<ORIntArray>    ec = [cstr coefs];
       ORInt c = [cstr cst];
       id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {

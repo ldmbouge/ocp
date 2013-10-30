@@ -20,6 +20,7 @@
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORExpr.h>
 #import <ORFoundation/ORControl.h>
+#import <ORFoundation/ORFunc.h>
 #import <ORFoundation/ORCommand.h>
 #import <ORFoundation/ORTracer.h>
 #import <ORFoundation/ORTrail.h>

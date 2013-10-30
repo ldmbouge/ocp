@@ -55,6 +55,8 @@
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<ORIntVar>) var float: (ORFloat) val;
+-(void)               lthen: (id<ORIntVar>) var float: (ORFloat) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)          floatLthen: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
