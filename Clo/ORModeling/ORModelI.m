@@ -595,9 +595,7 @@
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    if (cstr && (id)cstr != [NSNull null]) {
-//      ORCLevel cl = [_notes levelFor:_current];
       [_target add: cstr];
-//      [_notes cstr: cstr consistency: cl];
       if (_current)
          [_notes transfer: _current toConstraint: cstr];
    }

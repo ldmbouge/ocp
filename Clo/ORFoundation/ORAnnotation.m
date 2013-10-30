@@ -208,22 +208,22 @@
 @end
 
 @implementation ORAnnotationCopy
--(id)initWith:(id<ORAnnotation>)src
+-(id)initWith: (id<ORAnnotation>) src
 {
    self = [super init];
    _original = [src retain];
    return self;
 }
--(void)dealloc
+-(void) dealloc
 {
    [_original release];
    [super dealloc];
 }
-- (id)copyWithZone:(NSZone *)zone
+- (id) copyWithZone:(NSZone *)zone
 {
    return [[ORAnnotationCopy alloc] initWith:self];
 }
--(ORCLevel)levelFor:(id<ORConstraint>)cstr
+-(ORCLevel) levelFor: (id<ORConstraint>) cstr
 {
    ORConsistency* cn = [super findConstraintNote:cstr ofClass:[ORConsistency class]];
    if (cn)
@@ -236,7 +236,7 @@
    [super transfer: o toConstraint: d];
    [_original transfer: o toConstraint: d];
 }
--(NSString*)description
+-(NSString*) description
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
    @autoreleasepool {
