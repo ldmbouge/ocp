@@ -62,7 +62,7 @@ class Collect:
 		else:
 			self.ab = {}
 
-	def generate(self):
+	def loadINDB(self):
 		nv = datetime.datetime.today()
 		sDate = nv.strftime('%Y%m%d')
 		sTime = nv.strftime('%H%M%S')
@@ -107,8 +107,10 @@ class Collect:
 			av = (theRunID,key,'','',0,0,0,0.0,0,0,0,0,0,0,0,0)
 		cursor.execute("insert into bench(runid,bench,method,rand,threads,size,nbsol,rrate,nfail,nchoice,nprop,cpu,wc,mused,mpeak,rc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",av)
 
-	def makeMarkdown(self,runID):
+	def makeMarkdown(self,runID,useHTMLHeader):
 		of = open('summary.md','w')
+		if useHTMLHeader:
+			of.write("<head>\n<link rel=\"stylesheet\" type=\"text/css\" href=\"espresso.css\">\n</head>\n")		
 		c = self.db.cursor()
 		c.execute("select pkey,date,sha1,host,os,distrib,cpu from run,machine where run.machine=machine.id AND run.pkey= {0}".format(runID))
 		row = c.fetchone()
@@ -122,15 +124,15 @@ class Collect:
 		of.write("bench | method | threads | size | nbSol | nchoice | cpu(s) | wc(s) | mused(Kb) | mpeak(Kb) | status \n")
 		of.write("|-----|--------|---------|------|-------|--------:|----:|---:|------:|------:|--------|\n")
 		for r in c.fetchall():
-			print r
+			#print r
 			bn = r[1].split(' ')
-			print bn
+			#print bn
 			of.write("{0:<20}".format(bn[0]) +
 			 " | {2:<4} | {4:<2} | {5:>4} | {6:>5} | {9:>7} | {11:>10} | {12:>7} | {13:.2f} | {14:.2f} | {15} \n".format(*r))
 		of.close()
 
-
-c = Collect()
-#c.generate()
-c.makeMarkdown(1)
+if __name__ == '__main__':
+	c = Collect()
+	#c.loadINDB()
+	c.makeMarkdown(1,False)
 
