@@ -130,11 +130,11 @@ for (b,qa,na,par,heur) in ab:
 
 collector = intoDB.Collect()
 collector.loadINDB()
-collector.makeMarkdown(1,True)
-
+collector.latestMarkDown(True)
+os.system("/usr/local/bin/mmd summary.md")
 covdir=value
 
-execmd       = 'open ' + getcwd() + '/summary.html'
+execmd       = 'open ' + os.getcwd() + '/summary.html'
 notifierPath = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier"
 cmd = notifierPath + " -message \"Test Report Ready\"  -execute '" + execmd + "'"
 os.system(cmd)
