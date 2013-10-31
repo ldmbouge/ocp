@@ -207,6 +207,14 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return [_dom max];
 }
+-(ORFloat) floatMin
+{
+   return [_dom min];
+}
+-(ORFloat) floatMax
+{
+   return [_dom max];
+}
 -(ORFloat) value
 {
    //assert([_dom bound]);
