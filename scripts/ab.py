@@ -128,11 +128,13 @@ for (b,qa,na,par,heur) in ab:
  	p = Runner(b)
  	p.run(qa,na,par,heur)
 
-covdir=value
-cmd = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier -message \"Coverage Report Ready\""
-os.system(cmd)
-
 collector = intoDB.Collect()
-collector.generate()
-collector.makeMarkdown(1)
+collector.loadINDB()
+collector.latestMarkDown(True)
+os.system("/usr/local/bin/mmd summary.md")
+covdir=value
 
+execmd       = 'open ' + os.getcwd() + '/summary.html'
+notifierPath = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier"
+cmd = notifierPath + " -message \"Test Report Ready\"  -execute '" + execmd + "'"
+os.system(cmd)
