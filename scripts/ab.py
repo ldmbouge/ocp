@@ -4,6 +4,7 @@ import subprocess
 import os
 import sys
 import json
+import intoDB
 
 class Runner:
 	def __init__(self,bin):
@@ -31,6 +32,7 @@ class Runner:
 		print 'Return code {0}'.format(rc)
 		err = h.stderr.read()
 		out = ''
+		res = {'cpu' : 0, 'found' : 0, 'rc' : rc}
 		if rc == 0:
 			for line in h.stdout:
 				if line[:4] == 'OUT:':
@@ -126,6 +128,13 @@ for (b,qa,na,par,heur) in ab:
  	p = Runner(b)
  	p.run(qa,na,par,heur)
 
+collector = intoDB.Collect()
+collector.loadINDB()
+collector.latestMarkDown(True)
+os.system("/usr/local/bin/mmd summary.md")
 covdir=value
-cmd = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier -message \"Coverage Report Ready\""
+
+execmd       = 'open ' + os.getcwd() + '/summary.html'
+notifierPath = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier"
+cmd = notifierPath + " -message \"Test Report Ready\"  -execute '" + execmd + "'"
 os.system(cmd)
