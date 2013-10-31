@@ -129,6 +129,19 @@ class Collect:
 			 " | {2:<4} | {4:<2} | {5:>4} | {6:>5} | {9:>7} | {11:>10} | {12:>7} | {13:.2f} | {14:.2f} | {15} \n".format(*r))
 		of.close()
 
+	def makeGraph(self,name,out):
+		c = self.db.cursor()
+		c.execute("select * from bench,run where bench.runid=run.pkey bench={0} order by runid asc".format(name))
+		for r in c.fetchall():
+			wc = r['wc']
+			cpu = r['cpu']
+			stamp = r['date']
+			year = row[1][:4]
+			month = row[1][4:6]
+			day   = row[1][6:8]			
+			out.write()
+
+
 
 c = Collect()
 #c.generate()
