@@ -21,7 +21,7 @@ SRCS = context.m   ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \
 	ORLimit.m       ORParallel.m   ORSemDFSController.m  ORTrailI.m \
 	ORArrayI.m  ORController.m  ORData.m     ORExplorerI.m  ORFactory.m  \
 	ORSelectorI.m  ORSetI.m ORVisit.m   ORVarI.m ORConstraintI.m \
-	ORInterval.mm
+	ORInterval.mm ORAnnotation.m
 
 
 OBJEXT=o

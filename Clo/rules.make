@@ -6,7 +6,7 @@ ORCmdLineArgs.m : ../ORCmdLineArgs.m
 
 $(EXE): $(OFILES) 
 	@echo "Linking " $(EXE)
-	$(OC) $(CFLAGS) $(notdir $(OFILES)) $(LFLAGS) -o $(EXE)
+	$(OC) $(CFLAGS) $(LFLAGS)  $(notdir $(OFILES)) -o $(EXE)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
