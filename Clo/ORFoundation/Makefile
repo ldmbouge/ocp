@@ -39,7 +39,7 @@ $(LIBNAME): $(OFILES)
 	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
-	@echo "compiling m"  $<
+	@echo "compiling m" $<
 	@$(OC) $(CFLAGS) -c $< 
 
 %.$(OBJEXT): %.mm

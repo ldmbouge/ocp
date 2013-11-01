@@ -224,6 +224,7 @@
 
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
+   NSLog(@"inside createLPProgram:");
    id<ORModel> flatModel = [model lpflatten:nil];
    
    ORUInt nbEntries =  [flatModel nbObjects];

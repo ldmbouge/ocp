@@ -2,7 +2,7 @@ LIBS    = ORUtilities ORFoundation CPUKernel objcp ORModeling ORProgram
 TARGETS = $(LIBS) 
 
 VIEWS=1
-CFL= -g
+CFL= -g -O0
 
 .PHONY: $(TARGETS)
 
