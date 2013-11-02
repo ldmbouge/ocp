@@ -12,8 +12,5 @@
 #import <ORFoundation/ORData.h>
 #import "math.h"
 
-inline ORFloat frac(ORFloat f)
-{
-   ORFloat y;
-   return modf(f,&y);
-}
+ORFloat frac(ORFloat f);
+

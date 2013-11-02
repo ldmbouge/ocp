@@ -244,8 +244,7 @@ int main_hybrid_branching(int argc, const char * argv[])
                 ORInt idx = -1;
                 for(ORInt i = 0; i < nbColumns; i++) {
                    ORFloat val = [lp value: x[i]];
-                   ORFloat vf;
-                   ORFloat fr = modf(val,&vf);
+                   ORFloat fr = frac(val);
                    if (fr > ifrac) {
                       idx = i;
                       ifrac = fr;
