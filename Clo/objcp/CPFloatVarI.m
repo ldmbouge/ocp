@@ -44,6 +44,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    _engine = engine;
    _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:low up:up];
    _recv = nil;
+   _hasValue = false;
+   _value = 0.0;  
    setUpNetwork(&_net, [engine trail]);
    [_engine trackVariable: self];
    return self;
@@ -217,12 +219,21 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(ORFloat) value
 {
-   //assert([_dom bound]);
-   return [_dom min];
+   if ([_dom bound])
+      return [_dom min];
+   return _value;
 }
 -(ORFloat)floatValue
 {
-   return [_dom min];
+   if ([_dom bound])
+      return [_dom min];
+   return _value;
+}
+-(void) assignRelaxationValue: (ORFloat) f
+{
+   if (f < [_dom min] && f > [_dom max])
+      @throw [[ORExecutionError alloc] initORExecutionError: "Assigning a relaxation value outside the bounds"];
+   _value = f;
 }
 -(ORInterval) bounds
 {
@@ -457,6 +468,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(ORFloat)floatValue
 {
    return [_theVar min];
+}
+-(void) assignRelaxationValue: (ORFloat) f
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Assigning a relaxation value on a view"];
 }
 -(ORInterval) bounds
 {

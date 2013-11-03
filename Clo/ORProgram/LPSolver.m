@@ -283,6 +283,15 @@
    }];
    return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
 }
+-(ORFloat) floatMin: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
+}
+-(ORFloat) floatMax: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];  
+}
+
 -(ORFloat) reducedCost: (id<ORFloatVar>) var
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {

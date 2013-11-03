@@ -213,9 +213,9 @@
 {
    return [[self worker] trackVariable: object];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c
 {
-   [[self worker] addConstraintDuringSearch: c annotation:n];
+   [[self worker] addConstraintDuringSearch: c];
 }
 -(void)add: (id<ORConstraint>) c
 {
@@ -382,13 +382,17 @@
 {
    return [[self worker] domwidth:x];
 }
--(ORFloat) fmin:(id<ORFloatVar>)x
+-(ORFloat) floatMin:(id<ORFloatVar>)x
 {
-   return [[self worker] fmin:x];
+   return [[self worker] floatMin:x];
 }
--(ORFloat) fmax:(id<ORFloatVar>)x
+-(ORFloat) floatMax:(id<ORFloatVar>)x
 {
-   return [[self worker] fmax:x];
+   return [[self worker] floatMax:x];
+}
+-(void) assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
+{
+   return [[self worker] assignRelaxationValue:  f to:  x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {

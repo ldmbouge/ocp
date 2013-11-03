@@ -300,6 +300,14 @@
    }];
    return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
 }
+-(ORFloat) floatMin: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
+}
+-(ORFloat) floatMax: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
+}
 -(NSUInteger) count
 {
    return [_varShots count];

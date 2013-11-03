@@ -219,12 +219,12 @@ int main_hybrid_branching(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         //id<ORFloatVar> y = [ORFactory floatVar: model low: -1.0 up: 1.0];
+         id<ORFloatVar> y = [ORFactory floatVar: model low: -1.0 up: 1.0];
         
          for(ORInt i = 0; i < nbRows; i++)
-            //[note relax:[model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i]-1)]]]];
+            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i]-1)]]];
             //[note relax: [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]]];
-            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
+            //[model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
           [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
          
          id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
@@ -251,6 +251,7 @@ int main_hybrid_branching(int argc, const char * argv[])
                 if (![cp bound: x[i]])
                    [cp label: x[i] with: rint([lp value: x[i]])];
              }
+             [cp assignRelaxationValue: [lp value: y] to: y];
           }
           ];
          ORLong endTime = [ORRuntimeMonitor cputime];
@@ -258,7 +259,13 @@ int main_hybrid_branching(int argc, const char * argv[])
          printf("Execution Time: %lld \n",endTime - startTime);
          printf("NbFailures: %lld \n",nbFailures);
          NSLog(@"we are done \n\n");
-         ORInt valueSol = [(id<ORObjectiveValueInt>)[[[cp solutionPool] best] objectiveValue] value];
+         id<ORSolution> sol = [[cp solutionPool] best];
+         ORInt valueSol = [(id<ORObjectiveValueInt>)[sol objectiveValue] value];
+         for(ORInt i = 0; i < nbColumns; i++) {
+            NSLog(@"Variable x[%d] is %d",i,[sol intValue: x[i]]);
+         }
+         NSLog(@"Variable y is in [%f,%f]",[sol floatMin: y],[sol floatMax: y]);
+         NSLog(@"Variable y is %f",[sol floatValue: y]);
          struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          return r;

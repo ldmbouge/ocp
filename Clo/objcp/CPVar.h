@@ -156,6 +156,7 @@ enum CPVarClass {
 -(void) bind:(ORFloat) val;
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;
+-(void) assignRelaxationValue: (ORFloat) f;
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 

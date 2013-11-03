@@ -119,6 +119,8 @@
 {
    ORUInt    _name;
    ORFloat   _value;
+   ORFloat   _min;
+   ORFloat   _max;
 }
 -(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
 -(ORUInt) getId;
@@ -135,6 +137,8 @@
    self = [super init];
    _name = [v getId];
    _value = [solver floatValue: v];
+   _min = [solver floatMin: v];
+   _max = [solver floatMax: v];
    return self;
 }
 -(ORInt) intValue
@@ -150,6 +154,14 @@
 -(ORFloat) floatValue
 {
    return _value;
+}
+-(ORFloat) floatMin
+{
+   return _min;
+}
+-(ORFloat) floatMax
+{
+   return _max;
 }
 -(ORUInt) getId
 {
@@ -330,6 +342,23 @@
    }];
    return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
 }
+-(ORFloat) floatMin: (id<ORFloatVar>) var
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   ORCPFloatVarSnapshot* snapshot = [_varShots objectAtIndex:idx];
+   return [snapshot floatMin];
+}
+-(ORFloat) floatMax: (id<ORFloatVar>) var
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   ORCPFloatVarSnapshot* snapshot = [_varShots objectAtIndex:idx];
+   return [snapshot floatMax];
+}
+
 -(NSUInteger) count
 {
    return [_varShots count];
@@ -1122,7 +1151,7 @@
    [_search limitFailures: maxFailures in: cl];
    
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation: (ORCLevel) n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c 
 {
    // LDM: This is the true addition of the constraint into the solver during the search.
    ORStatus status = [_engine add: c];
@@ -1214,6 +1243,10 @@
 {
    return [(id<ORFloatVar>)_gamma[x.getId] floatValue];
 }
+-(void)  assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
+{
+   [_gamma[x.getId] assignRelaxationValue: f];
+}
 -(ORBool) bound: (id<ORVar>) x
 {
    return [_gamma[x.getId] bound];
@@ -1238,14 +1271,15 @@
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
 }
--(ORFloat) fmin:(id<ORFloatVar>)x
+-(ORFloat) floatMin:(id<ORFloatVar>)x
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) min];
 }
--(ORFloat) fmax:(id<ORFloatVar>)x
+-(ORFloat) floatMax:(id<ORFloatVar>)x
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) max];
 }
+
 -(NSSet*) constraints: (id<ORVar>)x
 {
    return [(id<CPVar>)_gamma[x.getId] constraints];
