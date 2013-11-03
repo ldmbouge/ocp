@@ -190,10 +190,6 @@
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ex = [cstr vars];
-      ORCLevel n = [_notes levelFor: cstr];
-      if (n == RelaxedConsistency)
-         return;
-      
       id<ORIntArray>    ec = [cstr coefs];
       ORInt c = [cstr cst];
       id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
@@ -892,6 +888,7 @@
 -(void)visitFloatLinearLeq:(id<ORFloatLinearLeq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
+
       id<ORVarArray> av = [cstr vars];
       id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
          id<CPVar> theCPVar = [self concreteVar:[av at:k]];

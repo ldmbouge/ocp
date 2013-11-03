@@ -47,5 +47,6 @@
 -(ORFloat) upperBound: (id<ORVar>) x;
 -(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f;
 -(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f;
+-(void) close;
 -(OROutcome) solve;
 @end

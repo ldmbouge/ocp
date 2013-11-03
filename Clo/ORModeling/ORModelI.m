@@ -479,6 +479,7 @@
    for(id<ORObject> c in _cStore)
       doCons(c);
    doObjective(_objective);
+   
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -588,7 +589,7 @@
 {
    return [_target modelMappings];
 }
--(void)setCurrent:(id<ORConstraint>)cstr
+-(void) setCurrent:(id<ORConstraint>)cstr
 {
    _current = cstr;
 }

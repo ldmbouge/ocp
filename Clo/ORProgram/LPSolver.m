@@ -500,7 +500,9 @@
    [super dealloc];
 }
 -(void)close
-{}
+{
+   [_lpsolver close];
+}
 -(id<OREngine>) engine
 {
    return _lpsolver;

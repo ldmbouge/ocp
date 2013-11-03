@@ -92,8 +92,11 @@
    ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram annotation:notes];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];
-   for(id<ORObject> c in [m constraints])
-      [c visit: concretizer];
+   for(id<ORConstraint> c in [m constraints]) {
+      ORCLevel n = [notes levelFor: c];
+      if (n != RelaxedConsistency)
+         [c visit: concretizer];
+   }
    [[m objective] visit:concretizer];
    
    [concretizer release];
@@ -427,6 +430,10 @@
 -(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f
 {
    [_lprelaxation updateUpperBound: x with:f];
+}
+-(void) close
+{
+   return [_lprelaxation close];
 }
 -(OROutcome) solve
 {

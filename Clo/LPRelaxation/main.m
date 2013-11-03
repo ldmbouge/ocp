@@ -219,34 +219,30 @@ int main_hybrid_branching(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         //         id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+         id<ORFloatVar> y = [ORFactory floatVar: model low: -1.0 up: 1.0];
          
          //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
+         
+        
          for(ORInt i = 0; i < nbRows; i++)
-            //               [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i])]]];
+            //[note relax:[model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i]-1)]]]];
             //[note relax: [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]]];
             [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
-         [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
+          [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
          
          id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
-         //   OROutcome b = [lp solve];
-         //   printf("outcome: %d \n",b);
-         printf("Objective: %f \n",[lp objective]);
-         for(ORInt i = 0; i < nbColumns-1; i++)
-            printf("x[%d] = %10.5f in [%10.5f,%10.5f] \n",i,[lp value: x[i]],[lp lowerBound: x[i]],[lp upperBound: x[i]]);
          id<CPProgram> cp = [ORFactory createCPProgram: model withRelaxation: lp annotation: note];
          [cp solve:
           ^() {
-             NSLog(@"Objective: %f",[lp objective]);
              id<ORSelect> sel = [ORFactory select:cp range: Columns
                                          suchThat:^bool(ORInt i)    { return true;}
                                         orderedBy:^ORFloat(ORInt i) { return frac([lp value: x[i]]);}];
              while (true) {
                 ORInt idx = [sel max];
                 ORFloat ifval = [lp value: x[idx]];
+                //NSLog(@"Index: %d -> %f in [%d,%d]",idx,ifval,[cp min: x[idx]],[cp max: x[idx]]);
                 if (ifval == 0.0)
                    break;
-                //NSLog(@"Most Fractional: %d with %f giving (%ld,%ld)",idx,ifrac,lrint(floor(ifval)),lrint(ceil(ifval)));
                 [cp try:
                         ^{ [cp gthen: x[idx] float: ifval]; }
                      or:
@@ -254,7 +250,6 @@ int main_hybrid_branching(int argc, const char * argv[])
                  ];
 //                NSLog(@"new Objective: %f",[lp objective]);
              }
-             //NSLog(@"new primal bound: %f",[lp objective]);
              for(ORInt i = 0; i < nbColumns; i++) {
                 if (![cp bound: x[i]])
                    [cp label: x[i] with: rint([lp value: x[i]])];

@@ -115,6 +115,7 @@
    NSNumber* k = [[NSNumber alloc] initWithInt:[cstr getId]];
    id<ORNote> rv = nil;
    NSMutableArray* na  = [_cstr objectForKey: k];
+   NSLog(@"Description: %@",[na description]);
    if (na) {
       for(id<ORNote> obj in na) {
          if ([obj isKindOfClass: nc]) {
@@ -201,7 +202,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-   static const char* names[] = {"dom","rng","val","def"};
+   static const char* names[] = {"dom","rng","val","relax","def"};
    [buf appendFormat:@"c=%s",names[_cLevel]];
    return buf;
 }
