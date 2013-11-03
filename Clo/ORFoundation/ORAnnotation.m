@@ -115,7 +115,6 @@
    NSNumber* k = [[NSNumber alloc] initWithInt:[cstr getId]];
    id<ORNote> rv = nil;
    NSMutableArray* na  = [_cstr objectForKey: k];
-   NSLog(@"Description: %@",[na description]);
    if (na) {
       for(id<ORNote> obj in na) {
          if ([obj isKindOfClass: nc]) {

@@ -2697,7 +2697,6 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       _updated[i] = makeFXInt(_trail);
       _min[i] = makeTRDouble(_trail,[_cv[i] floatMin]);
       _max[i] = makeTRDouble(_trail,[_cv[i] floatMax]);
-      NSLog(@"Variable i is %@",[_cv[i] description]);
    }
    return self;
 }
@@ -2718,23 +2717,19 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       assignTRDouble(&_max[i],[_cv[i] floatMax],_trail);
       [_relaxation updateLowerBound: _mv[i] with: [_cv[i] floatMin]];
       [_relaxation updateUpperBound: _mv[i] with: [_cv[i] floatMax]];
-//      NSLog(@"variable %d: [%f,%f]",i,[_cv[i] floatMin],[_cv[i] floatMax]);
-//      NSLog(@"variable %d: [%f,%f]",i,[_relaxation lowerBound: _mv[i]],[_relaxation upperBound: _mv[i]]);
       
       [_cv[i] whenChangeBoundsPropagate: self];
       
       [_cv[i] whenChangeBoundsDo: ^{
-//         if (i == 8)
-//            NSLog(@"I am at the right place ti ckeck the bounds update");
          if (getFXInt(&_solved,_trail) == 0) {
             incrFXInt(&_solved,_trail);
             [_trail trailClosure: ^{
                [_relaxation solve];
             }];
          }
-      if (getFXInt(&_updated[i],_trail) == 0) {
-         ORFloat omin = _min[i]._val;
-         ORFloat omax = _max[i]._val;
+         if (getFXInt(&_updated[i],_trail) == 0) {
+            ORFloat omin = _min[i]._val;
+            ORFloat omax = _max[i]._val;
             [_trail trailClosure: ^{
                [_relaxation updateLowerBound: _mv[i] with: omin];
                [_relaxation updateUpperBound: _mv[i] with: omax];
@@ -2755,12 +2750,12 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) propagate
 {
-   NSUInteger nb = [_cv count];
-   for(ORInt i = 0; i < nb; i++) {
+//   NSUInteger nb = [_cv count];
+//   for(ORInt i = 0; i < nb; i++) {
 //      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] floatMin]];
 //      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] floatMax]];
-   }
-    
+//   }
+   
    OROutcome outcome = [_relaxation solve];
    if (outcome == ORinfeasible)
       failNow();
