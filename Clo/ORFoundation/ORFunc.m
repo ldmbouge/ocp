@@ -9,3 +9,11 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORData.h>
+#import "math.h"
+
+ORFloat frac(ORFloat f)
+{
+   ORFloat y;
+   return modf(f,&y);
+}
