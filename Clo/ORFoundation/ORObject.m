@@ -41,10 +41,14 @@
    _rc += 1;
    return self;
 }
+-(NSUInteger)retainCount
+{
+   return _rc;
+}
 -(oneway void)release
 {
    if (--_rc == 0)
-      NSDeallocateObject(self);
+      [self dealloc];
 }
 -(id)autorelease
 {

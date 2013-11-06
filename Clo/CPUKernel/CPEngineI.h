@@ -26,8 +26,9 @@ enum CPEngineState {
    CPClosed  = 2
 };
 
-@interface CPEngineI : NSObject <CPEngine,NSCoding> {
-   enum CPEngineState       _state;
+@interface CPEngineI : NSObject <CPEngine> {
+   //enum CPEngineState       _state;
+   TRInt                    _state;
    id<ORTrail>              _trail;
    id<ORMemoryTrail>        _mt;
    NSMutableArray*          _vars;

@@ -262,7 +262,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    self = [super init];
    _trail = trail;
    _mt    = mt;
-   _state = CPOpen;
+   _state = makeTRInt(_trail, CPOpen);
    _vars  = [[NSMutableArray alloc] init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
@@ -343,7 +343,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 -(id) trackVariable: (id) var
 {
    [var setId:(ORUInt)[_vars count]];
-   if (_state != CPClosed) {
+   if (_state._val != CPClosed) {
       [_vars addObject:var];
       [var release];
    }
@@ -353,7 +353,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) trackObject:(id)obj
 {
-   if (_state != CPClosed) {
+   if (_state._val != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
    }
@@ -367,7 +367,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) trackObjective:(id)obj
 {
-   if (_state != CPClosed) {
+   if (_state._val != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
    }
@@ -377,7 +377,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) trackMutable:(id)obj
 {
-   if (_state != CPClosed) {
+   if (_state._val != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
    }
@@ -387,7 +387,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) trackImmutable: (id) obj
 {
-   if (_state != CPClosed) {
+   if (_state._val != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
    }
@@ -594,7 +594,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 // PVH: Failure to remove?
 -(ORStatus) addInternal:(id<ORConstraint>) c
 {
-   assert(_state != CPOpen);
+   assert(_state._val != CPOpen);
    ORStatus s = [self post:c];
    if (s==ORFailure)
       failNow();
@@ -603,7 +603,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus) add: (id<ORConstraint>) c
 {
-   if (_state != CPOpen) {
+   if (_state._val != CPOpen) {
       return [self post: c];
    }
    else {
@@ -652,8 +652,8 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus) close
 {
-   if (_state == CPOpen) {
-      _state = CPClosing;
+   if (_state._val == CPOpen) {
+      assignTRInt(&_state, CPClosing, _trail);
       _propagating++;
       for(id<ORConstraint> c in _mStore) {
          [self post:c];
@@ -662,7 +662,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       }
       _propagating--;
       _status = internalPropagate(self, ORSuspend);
-      _state = CPClosed;
+      assignTRInt(&_state, CPClosed, _trail);
    }
    //printf("Closing CPEngine\n");
    return ORSuspend;
@@ -688,7 +688,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORBool) closed
 {
-   return _state == CPClosed;
+   return _state._val == CPClosed;
 }
 
 -(id<ORInformer>) propagateFail
@@ -703,38 +703,5 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    if (_propagDone == nil)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_state];
-   [aCoder encodeObject:_vars];
-   [aCoder encodeObject:_trail];
-   [aCoder encodeObject:_mStore];
-   [aCoder encodeObject:_oStore];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super init];
-   _cStore = [[NSMutableArray alloc] initWithCapacity:32];
-   _mStore = [[NSMutableArray alloc] initWithCapacity:32];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_state];
-   _vars = [[aDecoder decodeObject] retain];
-   _trail = [[aDecoder decodeObject] retain];
-   NSMutableArray* originalStore = [aDecoder decodeObject];
-   _oStore = [[aDecoder decodeObject] retain];
-   for(ORInt i=0;i<NBPRIORITIES;i++)
-      _ac3[i] = [[[CPAC3Queue alloc] initAC3Queue:512] retain];
-   _ac5 = [[[CPAC5Queue alloc] initAC5Queue:512] retain];
-   _status = ORSuspend;
-   _propagating = 0;
-   _nbpropag = 0;
-   _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
-   for(id<ORConstraint> c in originalStore) {
-      // The retain is necessary given that the post will release it after storing in cStore.
-      [self add:[c retain]];
-   }
-   return self;
 }
 @end

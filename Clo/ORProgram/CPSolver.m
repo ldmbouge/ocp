@@ -208,7 +208,7 @@
 @end
 
 @implementation ORCPFloatParamSnapshot
--(ORCPFloatParamSnapshot*) ORCPFloatParamSnapshot: (id<ORFloatParam>) v with: (id<CPCommonProgram>) solver;
+-(ORCPFloatParamSnapshot*) initCPFloatParamSnapshot: (id<ORFloatParam>) v with: (id<CPCommonProgram>) solver
 {
    self = [super init];
    _name = [v getId];
@@ -368,7 +368,7 @@
 
 -(void) dealloc
 {
-//   NSLog(@"dealloc ORCPSolutionI");
+   //NSLog(@"dealloc ORCPSolutionI");
    [_varShots release];
    [_objValue release];
    [super dealloc];
@@ -568,7 +568,7 @@
 
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
-   BOOL                  _closed;
+   TRInt                 _closed;
    BOOL                  _oneSol;
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
@@ -583,7 +583,6 @@
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
-   _closed = false;
    _oneSol = YES;
    _doOnSolArray = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnExitArray = [[NSMutableArray alloc] initWithCapacity: 1];
@@ -649,8 +648,8 @@
 }
 -(void) close
 {
-   if (!_closed) {
-      _closed = true;
+   if (!_closed._val) {
+      assignTRInt(&_closed, YES, _trail);
       if ([_engine close] == ORFailure)
          [_search fail];
       if (![_hSet empty]) {
@@ -1500,6 +1499,7 @@
    self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
    _mt    = [ORFactory memoryTrail];
+   _closed = makeTRInt(_trail, NO);
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
@@ -1610,6 +1610,7 @@
    self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
    _mt   = [ORFactory memoryTrail];
+   _closed = makeTRInt(_trail, NO);
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
@@ -1641,6 +1642,7 @@
    self = [super initCPCoreSolver]; 
    _trail = [ORFactory trail];
    _mt    = [ORFactory memoryTrail];
+   _closed = makeTRInt(_trail, NO);
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
