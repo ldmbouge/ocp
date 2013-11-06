@@ -69,12 +69,11 @@ int main(int argc, const char * argv[])
          }
          [model maximize:nbQueens];
          id<CPProgram> cp = [args makeProgram:model];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
          id<ORIntVarArray> x = All2(cp, ORIntVar, i, N, j, N, [board at:i :j]);
          __block ORInt nbSol = 0;
          [cp solve:^{
             for(ORInt k=0;k <= n*n-1;k++) {
-               if ([cp bound:x[k]]) continue;
                while (![cp bound:x[k]]) {
                   ORInt v = [cp max:x[k]];
                   [cp try:^{

@@ -29,9 +29,9 @@
 {
    return [m copy];
 }
-+(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel annotation:(id<ORAnnotation>)notes
 {
-   return [[ORBatchModel alloc]  init: flatModel source:srcModel];
+   return [[ORBatchModel alloc]  init: flatModel source:srcModel annotation:notes];
 }
 
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into

@@ -10,7 +10,9 @@
  ***********************************************************************/
 
 #import "ORCommand.h"
+#import "ORConstraint.h"
 #import <pthread.h>
+#import <objc/runtime.h>
 
 typedef struct {
    Class  _poolClass;
@@ -38,20 +40,21 @@ static __thread ComListPool* pool = NULL;
    return pool;
 }
 
-+(id)newCommandList:(ORInt)node memory:(ORInt)mh
++(id)newCommandList:(ORInt)node from:(ORInt)fh to:(ORInt)th
 {
    ComListPool* p = [self instancePool];
    ORCommandList* rv = NULL;
    if (p->_low == p->_high) {
       rv = NSAllocateObject(self, 0, NULL);
-      [rv initCPCommandList:node memory:mh];
+      [rv initCPCommandList:node from:fh to:th];
    } else {
       rv = p->_pool[p->_low];
       p->_low = (p->_low + 1) % p->_mxs;
       p->_sz--;
       rv->_cnt = 1;
       rv->_ndId = node;
-      rv->_mh   = mh;
+      rv->_fh   = fh;
+      rv->_th   = th;
    }
    return rv;
 }
@@ -71,7 +74,7 @@ static __thread ComListPool* pool = NULL;
          _head = nxt;
       }
       _ndId = -1;
-      ComListPool* p = [isa instancePool];
+      ComListPool* p = [object_getClass(self) instancePool];
       ORUInt next = (p->_high + 1) % p->_mxs;
       if (next == p->_low) {
          [self release];
@@ -82,12 +85,13 @@ static __thread ComListPool* pool = NULL;
       }
    }
 }
--(ORCommandList*) initCPCommandList: (ORInt) node memory:(ORInt)mh
+-(ORCommandList*) initCPCommandList: (ORInt) node from:(ORInt)fh to:(ORInt)th
 {
    self = [super init];
    _head = NULL;
    _ndId = node;
-   _mh   = mh;
+   _fh   = fh;
+   _th   = th;
    _cnt  = 1;
    return self;
 }
@@ -104,8 +108,7 @@ static __thread ComListPool* pool = NULL;
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORCommandList* nList = [ORCommandList newCommandList:_ndId memory:_mh];
-   //[[ORCommandList alloc] initCPCommandList:_ndId];
+   ORCommandList* nList = [ORCommandList newCommandList:_ndId from:_fh to:_th];
    struct CNode* cur = _head;
    struct CNode* first = NULL;
    struct CNode* last  = NULL;
@@ -123,11 +126,15 @@ static __thread ComListPool* pool = NULL;
    nList->_head = first;
    return nList;
 }
+-(void)setMemoryTo:(ORInt)ml
+{
+   _th = ml;
+}
 
--(void)insert:(id<ORCommand>)c
+-(void)insert:(id<ORConstraint>)c
 {
    struct CNode* new = malloc(sizeof(struct CNode));
-   new->_c = c;
+   new->_c = [c retain];
    new->_next = _head;
    _head = new;
 }
@@ -141,18 +148,18 @@ static __thread ComListPool* pool = NULL;
    }
    return nb;
 }
--(id<ORCommand>)removeFirst
+-(id<ORConstraint>)removeFirst
 {
    struct CNode* leave = _head;
    _head = _head->_next;
-   id<ORCommand> rv = leave->_c;
+   id<ORConstraint> rv = leave->_c;
    free(leave);
    return rv;
 }
 -(NSString*)description
 {
    NSMutableString* str = [NSMutableString stringWithCapacity:512];
-   [str appendFormat:@" [%d | %d]:{",_ndId,_mh];
+   [str appendFormat:@" [%d | %d - %d]:{",_ndId,_fh,_th];
    struct CNode* cur = _head;
    while (cur) {
       [str appendString:[cur->_c description]];
@@ -167,9 +174,13 @@ static __thread ComListPool* pool = NULL;
 {
    return _ndId == cList->_ndId;
 }
--(ORInt) memory
+-(ORInt) memoryFrom
 {
-   return _mh;
+   return _fh;
+}
+-(ORInt) memoryTo
+{
+   return _th;
 }
 -(void) setNodeId:(ORInt)nid
 {
@@ -179,7 +190,7 @@ static __thread ComListPool* pool = NULL;
 {
    return _ndId;
 }
--(ORBool)apply:(BOOL(^)(id<ORCommand>))clo
+-(ORBool)apply:(BOOL(^)(id<ORConstraint>))clo
 {
    struct CNode* cur = self->_head;
    BOOL ok = YES;
@@ -221,7 +232,7 @@ static __thread ComListPool* pool = NULL;
    ORUInt i = 0;
    struct CNode* tail = 0;
    while (i < cnt) {
-      id<ORCommand> com = [[aDecoder decodeObject] retain];
+      id<ORConstraint> com = [[aDecoder decodeObject] retain];
       struct CNode* nn = malloc(sizeof(struct CNode));
       nn->_next = 0;
       nn->_c = com;

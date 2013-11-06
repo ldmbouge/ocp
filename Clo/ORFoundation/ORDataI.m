@@ -138,10 +138,6 @@
 {
    return _value;
 }
--(ORInt) value
-{
-   return _value;
-}
 -(ORInt) intValue
 {
    return _value;
@@ -342,17 +338,9 @@
 {
    return _value;
 }
--(ORFloat) value
-{
-   return _value;
-}
 -(ORFloat) floatValue
 {
    return _value;
-}
--(ORFloat) setValue: (ORFloat) value
-{
-   return _value = value;
 }
 -(ORFloat) value: (id<ORGamma>) solver;
 {
@@ -726,6 +714,17 @@ static ORInt _deterministic;
    }
 }
 
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(ORInt i = 0; i < _nb; i++) {
+      [buf appendFormat:@"%d = < ",i];
+      for(ORInt j = 0; j < _arity; j++)
+         [buf appendFormat:@"%d ",_column[j][i]];
+      [buf appendString:@"> \n"];
+   }
+   return buf;
+}
 -(void) print
 {
    for(ORInt i = 0; i < _nb; i++) {

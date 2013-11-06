@@ -121,6 +121,18 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    _array[idx] = value;
 }
+-(id)objectAtIndexedSubscript: (NSUInteger) key
+{
+   if (key < _low || key > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
+   return [NSNumber numberWithInt:_array[key]];
+}
+-(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSUInteger) idx
+{
+   if (idx < _low || idx > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
+   _array[idx] = [newValue intValue];
+}
 -(void) enumerateWith: (void(^)(ORInt obj,int idx)) block
 {
    for(ORInt i=_low;i<=_up;i++)

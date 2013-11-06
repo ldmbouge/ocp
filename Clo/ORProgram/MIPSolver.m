@@ -459,6 +459,13 @@
    [_sPool release];
    [super dealloc];
 }
+-(void) close
+{}
+
+-(id<OREngine>) engine
+{
+   return _MIPsolver;
+}
 -(MIPSolverI*) solver
 {
    return _MIPsolver;

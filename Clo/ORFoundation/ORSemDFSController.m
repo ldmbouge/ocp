@@ -13,11 +13,12 @@
 
 @implementation ORSemDFSController
 
-- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
    _engine = engine;
+   _model  = model;
    _mx  = 64;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _cpTab = malloc(sizeof(id<ORCheckpoint>)*_mx);
@@ -46,7 +47,7 @@
       [_tab[_sz] letgo];
       [_cpTab[_sz] letgo];
    }
-   [_tracer restoreCheckpoint:_atRoot inSolver:_engine];
+   [_tracer restoreCheckpoint:_atRoot inSolver:_engine model:_model];
    [_atRoot letgo];
 }
 
@@ -72,7 +73,7 @@
       ORInt ofs = _sz-1;
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
-         ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine];
+         ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
          //assert(status != ORFailure);
          [cp letgo];
          NSCont* k = _tab[ofs];
@@ -91,9 +92,14 @@
    } while(true);
 }
 
+-(void) fail: (ORBool) pruned
+{
+   [self fail];
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_engine];
+   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_engine posting:_model];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
@@ -133,7 +139,7 @@
       ORInt ofs = _sz-1;
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
-         [_tracer restoreCheckpoint:cp inSolver:_engine];
+         [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
          [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;

@@ -11,18 +11,19 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
-
+#import <ORFoundation/ORAnnotation.h>
 
 
 @interface ORFlatten : ORNOopVisit<ORModelTransformation> {
    id<ORAddToModel>   _into;
    id               _result;
+   id<ORAnnotation>  _fresh;
 }
 -(id)initORFlatten: (id<ORAddToModel>) into;
--(void) apply: (id<ORModel>)m;
+-(void) apply: (id<ORModel>)m with:(id<ORAnnotation>)notes;
 -(id<ORAddToModel>) target;
 +(void) flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
-+(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m;
 @end
 
 @interface ORReplace : ORNOopVisit<ORModelTransformation>

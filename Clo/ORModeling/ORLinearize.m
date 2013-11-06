@@ -37,13 +37,13 @@
 +(id<ORModel>) linearize:(id<ORModel>)model
 {
    id<ORModel> lin = [ORFactory createModel];
-   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
+   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model annotation:nil];
    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize :lm];
-   [linearizer apply: model];
+   [linearizer apply: model with:nil]; //TOFIX
    return lin;
 }
 
--(void)apply:(id<ORModel>)m 
+-(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
 {
     [m applyOnVar:^(id<ORVar> x) {
         [_into addVariable: x];
@@ -391,9 +391,9 @@
 +(id<ORModel>) linearizeModel:(id<ORModel>)m
 {
    id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
-   ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
+   ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
-   [linearizer apply: m];
+   [linearizer apply: m with:nil]; // TOFIX
    id<ORModel> clm = [ORFactory cloneModel: lm];
    [lm release];
    [batch release];

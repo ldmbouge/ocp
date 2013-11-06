@@ -201,7 +201,7 @@
 -(void) close;
 @end
 
-@interface MIPSolverI : NSObject<ORTracker> {
+@interface MIPSolverI : NSObject<OREngine> {
    MIPGurobiSolver*      _MIP;
    int                  _nbVars;
    int                  _maxVars;

@@ -50,8 +50,8 @@
         return [w weight];
     }];
     
-    id<MIPProgram> program = [ORFactory createMIPProgram: _model];
-    //id<CPProgram> program = [ORFactory createCPProgram: _model];
+    //id<MIPProgram> program = [ORFactory createMIPProgram: _model];
+    id<CPProgram> program = [ORFactory createCPProgram: _model];
     ORFloat cutoff = 0.005;
     
     ORInt noImproveLimit = 30;
@@ -59,12 +59,12 @@
     
     while(pi > cutoff) {
         [[program solutionPool] emptyPool];
-        [program solve];
+        //[program solve];
         //id<CPHeuristic> h = [program createFF];
-        //[program solve: ^{
+        [program solve: ^{
             //[program labelHeuristic: h];
-        //    [program labelArray:[_model intVars]];
-        //} ];
+            [program labelArray:[_model intVars]];
+        } ];
         id<ORSolution> bs = [[program solutionPool] best];
         NSLog(@"BEST is: %@",bs);
         id<ORSolution> sol = [[program solutionPool] best];

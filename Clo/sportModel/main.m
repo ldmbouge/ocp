@@ -44,7 +44,7 @@ int main(int argc, const char * argv[])
          
          for(ORInt w = 1; w < n; w++)
             for(ORInt p = 1; p <= n/2; p++)
-               [model add: [ORFactory tableConstraint: table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
+               [model add: [ORFactory tableConstraint:model table:table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
          [model add: [ORFactory alldifferent: allgames]];
          for(ORInt w = 1; w <= n; w++)
             [model add: [ORFactory alldifferent: [ORFactory intVarArray: model range: Periods : HomeAway

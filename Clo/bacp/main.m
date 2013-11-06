@@ -20,7 +20,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         
+         id<ORAnnotation> notes= [ORFactory note];
          const ORInt nbCourses = 66;
          const ORInt nbPeriods = 12;
          const ORInt nbPre = 65;
@@ -45,15 +45,15 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> l = [ORFactory intVarArray:model range:Periods domain:RANGE(model,0,totCredit)];
          [model minimize:[ORFactory max:model over:Periods suchThat:nil of:^id<ORExpr>(ORInt i) {return l[i];}]];
          //[model add:[[ORFactory max:model over:Periods suchThat:nil of:^id<ORExpr>(ORInt i) {return l[i];}] eq:@17]];
-         [model add:[ORFactory packing:model item:x itemSize:credits load:l]];
+         [notes dc:[model add:[ORFactory packing:model item:x itemSize:credits load:l]]];
          for(ORInt i=0;i<nbPre;i++)
             [model add:[x[prerequisites[i*2]] lt:x[prerequisites[i*2+1]]]];
-         [model add:[ORFactory cardinality:x
-                                       low:[ORFactory intArray:model range:Periods with:^ORInt(ORInt p) { return minCard;}]
-                                        up:[ORFactory intArray:model range:Periods with:^ORInt(ORInt p) { return maxCard;}]
-                                annotation:DomainConsistency]];
+         [notes dc:[model add:[ORFactory cardinality:x
+                                                 low:[ORFactory intArray:model range:Periods with:^ORInt(ORInt p) { return minCard;}]
+                                                  up:[ORFactory intArray:model range:Periods with:^ORInt(ORInt p) { return maxCard;}]
+                                ]]];
         
-         id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgram:model annotation:notes];
          __block ORInt nbSol = 0;
          [cp solve:^{
             //[cp labelArrayFF:x];
@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
                        id<ORIntArray> cc = [ORFactory intArray:cp range:Periods with:^ORInt(ORInt p) {
                           ORInt ttl = 0;
                           for(ORInt c=0;c < nbCourses;c++) {
-                             if ([cp bound:x[c]]) continue;
+                             if (![cp bound:x[c]]) continue;
                              ttl += [cp intValue:x[c]] == p;
                           }
                           return ttl;
@@ -86,13 +86,13 @@ int main(int argc, const char * argv[])
             printf("\nl = [");
             for(ORInt i = l.low; i <= l.up; i++)
                printf("%d%c",[cp intValue: l[i]],((i < l.up) ? ',' : ']'));
-            printf("\tObjective: %d\n",[[[[cp engine] objective] value] value]);
+            printf("\tObjective: %d\n",[[[[cp engine] objective] value] intValue]);
          }];
          id<ORCPSolution> sol = [[cp solutionPool] best];
          printf("x = [");
          for(ORInt i = x.low; i <= x.up; i++)
             printf("%d%c",[sol intValue: x[i]],((i < x.up) ? ',' : ']'));
-         printf("\tObjective: %d\n",[[sol objectiveValue] value]);
+         printf("\tObjective: %d\n",[[sol objectiveValue] intValue]);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];

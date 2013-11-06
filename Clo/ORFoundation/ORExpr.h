@@ -18,6 +18,7 @@
 @protocol ORIntArray;
 @protocol ORIntVarArray;
 
+#if defined(__APPLE__)
 typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORRBad = 0,
    ORREq  = 1,
@@ -36,6 +37,27 @@ typedef NS_ENUM(NSUInteger,ORVType) {
    ORTSet  = 3,
    ORTNA = 4
 };
+#else
+typedef enum ORRelationType {
+   ORRBad = 0,
+   ORREq  = 1,
+   ORRNEq = 2,
+   ORRLEq = 3,
+   ORRDisj = 4,
+   ORRConj = 5,
+   ORRImply = 6
+} ORRelationType;
+
+typedef enum ORVType {
+   ORTInt = 0,
+   ORTFloat = 1,
+   ORTBit  = 2,
+   ORTSet  = 3,
+   ORTNA = 4
+} ORVType;
+
+#endif
+
 
 static inline ORVType lubVType(ORVType t1,ORVType t2)
 {
@@ -102,9 +124,9 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
 @protocol ORRelation <ORExpr>
 -(ORRelationType) type;
--(id<ORRelation>) and: (id<ORRelation>) e;
--(id<ORRelation>) or: (id<ORRelation>) e;
--(id<ORRelation>) imply: (id<ORRelation>) e;
+-(id<ORRelation>) and: (id<ORExpr>) e;
+-(id<ORRelation>) or: (id<ORExpr>) e;
+-(id<ORRelation>) imply: (id<ORExpr>) e;
 @end
 
 @interface NSNumber (Expressions)

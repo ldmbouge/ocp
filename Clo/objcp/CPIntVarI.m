@@ -960,12 +960,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_recv !=nil) {
       [_recv loseValEvt:val sender:sender];
    }
-   if (_net._domEvt._val != NULL) {
-      id<CPEventNode> mList[2];
-      mList[0] = _net._domEvt._val;
-      mList[1] = NULL;
-      scheduleAC3(_fdm,mList);
-   }
+//   if (_net._domEvt._val != NULL) {
+//      id<CPEventNode> mList[2];
+//      mList[0] = _net._domEvt._val;
+//      mList[1] = NULL;
+//      scheduleAC3(_fdm,mList);
+//   }
    if (_net._ac5._val)
       [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5._val]];
    if (_triggers)

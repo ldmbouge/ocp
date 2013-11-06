@@ -15,6 +15,7 @@
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
 #import "CPConcretizer.h"
+#import <objcp/CPFactory.h>
 
 #if defined(__linux__)
 #import <values.h>
@@ -216,7 +217,12 @@
 {
    _vars = t;
    _cvs  = cvs;
-   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:[self allIntVars]];
+   id<ORIntVarArray> av = [self allIntVars];
+   id* gamma = [_cp gamma];
+   id<CPIntVarArray> cav = [CPFactory intVarArray:_cp range:av.range with:^id<CPIntVar>(ORInt i) {
+      return gamma[av[i].getId];
+   }];
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:cav];
    _nbv = [_cvs count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
    ORInt low = [_cvs low],up = [_cvs up];
@@ -247,7 +253,7 @@
 
 -(id<ORIntVarArray>)allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
 -(void)addKillSetFrom:(ORInt)from to:(ORInt)to size:(ORUInt)sz into:(NSMutableSet*)set
@@ -316,7 +322,11 @@
 -(void)initImpacts
 {
    ORInt blockWidth = 1;
-   id<CPIntVarArray> av = [self allIntVars];
+   id<ORIntVarArray> mav = [self allIntVars];
+   id* gamma = [_cp gamma];
+   id<CPIntVarArray> av = [CPFactory intVarArray:_cp range:mav.range with:^id<CPIntVar>(ORInt i) {
+      return gamma[mav[i].getId];
+   }];
    ORInt low = [av low],up = [av up];
    for(ORInt k=low; k <= up;k++) {
       NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];

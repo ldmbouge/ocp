@@ -82,11 +82,12 @@
 
 @implementation ORSemBDSController
 
-- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
    _solver = engine;
+   _model = model;
    _tab  = [[BDSStack alloc] initBDSStack:32];
    _next = [[BDSStack alloc] initBDSStack:32];
    _nbDisc = _maxDisc = 0;
@@ -118,7 +119,7 @@
       [nd._cont letgo];
       [nd._cp release];
    }
-   [_tracer restoreCheckpoint:_atRoot inSolver:_solver];
+   [_tracer restoreCheckpoint:_atRoot inSolver:_solver model:_model];
    [_atRoot letgo];
 }
 
@@ -152,7 +153,7 @@
          struct BDSNode node = [_tab pop];
          _nbDisc = node._disc;
          //NSLog(@"********** RESTORING: %@",node._cp);
-         ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver];
+         ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver model:_model];
          [node._cp letgo];
          //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
          if (status != ORFailure)
@@ -162,6 +163,10 @@
       }
    } while (true);
 }
+-(void) fail: (ORBool) pruned
+{
+   [self fail];
+}
 -(void) trust
 {
    [_tracer pushNode]; // no need to trust the tracer since pushNode automatically trusts
@@ -169,7 +174,7 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_solver];
+   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_solver posting:_model];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }

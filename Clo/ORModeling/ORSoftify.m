@@ -61,8 +61,7 @@
     id<ORRelation> softExpr = [[greaterExpr plus: slack track: _target] geq: lessExpr track: _target];
     id<ORSoftConstraint> softCstr = [[ORSoftAlgebraicConstraintI alloc]
                                      initORSoftAlgebraicConstraintI: softExpr
-                                     slack: slack
-                                     annotation: Default];
+                                     slack: slack];
     [_target add: softCstr];
     [[_target tau] set: softCstr forKey: cstr];
 }

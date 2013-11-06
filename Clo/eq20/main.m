@@ -21,6 +21,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
+         id<ORAnnotation> notes = [ORFactory note];
          const ORInt nbC = 20;
          const ORInt nbV = 7;
          ORInt eqs[nbC][nbV+1] = {
@@ -49,11 +50,10 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:RANGE(model,1,7) domain:dom];
          for(ORInt i=0;i<nbC;i++) {
             ORInt* ri = eqs[i];
-            [model add:[Sum(model, j, RANGE(model,1,nbV), [x[j] mul:@(ri[j])]) eq: @(eqs[i][0])]
-            annotation: ValueConsistency];
+            [notes vc:[model add:[Sum(model, j, RANGE(model,1,nbV), [x[j] mul:@(ri[j])]) eq: @(eqs[i][0])]]];
          }
          //NSLog(@"MODEL: %@",model);
-         id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgram:model annotation:notes];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          __block BOOL found = NO;
          [cp solveAll:^{

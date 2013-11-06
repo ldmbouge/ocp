@@ -34,9 +34,9 @@
 {
    return _cp;
 }
--(id<CPIntVarArray>)allIntVars
+-(id<ORIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
 -(ORFloat)varOrdering:(id<CPIntVar>)x

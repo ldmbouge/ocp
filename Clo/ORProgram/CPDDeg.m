@@ -38,7 +38,7 @@
 }
 -(id<ORIntVarArray>) allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 -(ORFloat)varOrdering: (id<CPIntVar>) ox
 {
@@ -58,7 +58,7 @@
 {
    _vars = t;
    _cvs  = cvs;
-   ORLong len = [_vars count];
+   ORUInt len = (ORUInt)[_vars count];
    ORUInt maxID = 0;
    for(int k=0;k<len;k++) 
       maxID = max(maxID,[[t at:k] getId]);   

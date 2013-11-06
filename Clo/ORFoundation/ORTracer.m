@@ -16,21 +16,20 @@
 #include <pthread.h>
 
 
-@interface ORProblemI : NSObject<NSCoding,ORProblem> {    // a semantic sub-problem description (as a set of constraints aka commands)
+@interface ORProblemI : NSObject<ORProblem> {    // a semantic sub-problem description (as a set of constraints aka commands)
    ORCommandList* _cstrs;
    ORInt          _id;
 }
 -(ORProblemI*) init;
 -(void) dealloc;
 -(NSString*) description;
--(void) addCommand: (id<ORCommand>) c;
--(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
--(ORBool) apply: (BOOL(^)(id<ORCommand>))clo;
+-(void) addCommand: (id<ORConstraint>) c;
+-(ORBool) apply: (BOOL(^)(id<ORConstraint>))clo;
 -(ORCommandList*) theList;
 -(ORInt)sizeEstimate;
 @end
 
-@interface ORCheckpointI : NSObject<NSCoding,ORCheckpoint> { // a semantic path description (for incremental jumping around).
+@interface ORCheckpointI : NSObject<ORCheckpoint> { // a semantic path description (for incremental jumping around).
    @package
    ORCmdStack* _path;
    ORInt     _nodeId;
@@ -45,10 +44,11 @@
 -(void)letgo;
 -(id)grab;
 -(ORInt)sizeEstimate;
+-(id<ORMemoryTrail>)getMT;
 @end
 
 
-@interface ORCmdStack : NSObject<NSCoding> {
+@interface ORCmdStack : NSObject {
 //@private
 @package
    ORCommandList** _tab;
@@ -59,7 +59,7 @@
 -(void) dealloc;
 -(void) pushList: (ORInt) node memory:(ORInt)mh;
 -(void) pushCommandList: (ORCommandList*) list;
--(void) addCommand:(id<ORCommand>)c;
+-(void) addCommand:(id<ORConstraint>)c;
 -(ORCommandList*) popList;
 -(ORCommandList*) peekAt:(ORUInt)d;
 -(ORUInt) size;
@@ -103,15 +103,17 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
       _tab = realloc(_tab,sizeof(ORCommandList*)*_mxs*2);
       _mxs <<= 1;
    }
-   //ORCommandList* list = [[ORCommandList alloc] initCPCommandList:node];
-   ORCommandList* list = [ORCommandList newCommandList:node memory:mh];
+   if (_sz  >= 1) {
+      [_tab[_sz - 1] setMemoryTo:mh];
+   }
+   ORCommandList* list = [ORCommandList newCommandList:node from:mh to:mh];
    _tab[_sz++] = list;
 }
 -(void)pushCommandList:(ORCommandList*)list
 {
    pushCommandList(self, list);
 }
--(void)addCommand:(id<ORCommand>)c
+-(void)addCommand:(id<ORConstraint>)c
 {
    [_tab[_sz-1] insert:c];
 }
@@ -138,118 +140,6 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    }
    return buf;
 }
--(void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_mxs];
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_sz];
-   for (ORUInt i = 0; i < _sz; i++)
-      [aCoder encodeObject:_tab[i]];
-}
--(id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_mxs];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_sz];
-   _tab = malloc(sizeof(ORCommandList*)*_mxs);
-   for (ORUInt i =0; i<_sz; i++) {
-      _tab[i] = [[aDecoder decodeObject] retain];
-      assert(_tab[i]->_cnt > 0);
-   }
-   return self;
-}
-@end
-
-
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
-@interface CPUnarchiver : NSUnarchiver
-#else
-@interface CPUnarchiver : NSKeyedUnarchiver
-#endif
-{
-   id<ORSearchEngine> _fdm;
-}
--(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<ORSearchEngine>)fdm;
--(id<ORSearchEngine>)engine;
-@end
-
-@implementation CPUnarchiver
--(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<ORSearchEngine>)fdm
-{
-   self = [super initForReadingWithData:data];
-   _fdm = [fdm retain];
-   return self;
-}
--(void)dealloc
-{
-   [_fdm release];
-   [super dealloc];
-}
--(id<ORSearchEngine>)engine
-{
-   return _fdm;
-}
-@end
-
-@interface CPProxyTrail : NSObject<NSCoding> {
-}
--(id)initProxyTrail;
-@end
-
-@interface CPProxyVar : NSObject<NSCoding> {
-@private
-   ORUInt _id;
-}
--(id)initProxyVar:(ORUInt)vid;
-@end
-
-@implementation CPProxyTrail
-
--(id)initProxyTrail
-{
-   self = [super init];
-   return self;
-}
--(void)dealloc
-{
-   [super dealloc];
-}
--(void)encodeWithCoder:(NSCoder *)aCoder
-{
-}
--(id)initWithCoder:(CPUnarchiver *)aDecoder
-{
-   self = [super init];
-   [self dealloc];
-   id<ORTrail> theTrail = [[aDecoder engine] trail];
-   [theTrail retain];
-   return (CPProxyTrail*)theTrail;
-}
-@end
-
-@implementation CPProxyVar
--(id)initProxyVar:(ORUInt)vid
-{
-   self = [super init];
-   _id = vid;
-   return self;
-}
--(void)dealloc
-{
-   [super dealloc];
-}
--(void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_id];
-}
--(id)initWithCoder:(CPUnarchiver*)aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_id];
-   id<ORSearchEngine> fdm = [aDecoder engine];
-   id theVar = [[[fdm variables] objectAtIndex:_id] retain];
-   [self release];
-   return theVar;
-}
 @end
 
 @implementation ORProblemI
@@ -257,7 +147,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    static ORInt _counter = 0;
    self = [super init];
-   _cstrs = [ORCommandList newCommandList:-1 memory:0];
+   _cstrs = [ORCommandList newCommandList:-1 from:0 to:0];
    _id = _counter++;
    return self;
 }
@@ -270,11 +160,11 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    return [_cstrs length];
 }
--(void)addCommand:(id<ORCommand>)c
+-(void)addCommand:(id<ORConstraint>)c
 {
    [_cstrs insert:c];
 }
--(ORBool)apply:(BOOL(^)(id<ORCommand>))clo
+-(ORBool)apply:(BOOL(^)(id<ORConstraint>))clo
 {
    return [_cstrs apply:clo];
 }
@@ -282,93 +172,12 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    return _cstrs;
 }
--(void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_id];
-   [aCoder encodeObject:_cstrs];
-}
--(id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_id];
-   _cstrs = [[aDecoder decodeObject] retain];
-   return self;
-}
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<ORProblemI: %p @  %d  = %@>",self,_id,_cstrs];
    return buf;
-}
--(NSData*)packFromSolver:(id<ORSearchEngine>)fdm
-{
-   NSMutableData* thePack = [[NSMutableData alloc] initWithCapacity:32];
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
-   NSArchiver* archiver = [[NSArchiver alloc] initForWritingWithMutableData:thePack];
-#else
-   NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
-#endif
-   NSArray* dico = [fdm variables];
-   //NSLog(@"DICO: %@",dico);
-   ORULong nbProxies = [[fdm variables] count] + 1; // 1 extra for the trail proxy
-   id* proxies = malloc(sizeof(id)*nbProxies);
-   [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
-   [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      proxies[idx] = [[CPProxyVar alloc] initProxyVar:(ORUInt)idx];  // create a proxy
-      [archiver encodeObject:proxies[idx]];                  // encode proxy in archive
-   }];
-   proxies[nbProxies-1]  = [[CPProxyTrail alloc] initProxyTrail];
-   [archiver encodeObject:proxies[nbProxies-1]];
-   
-   [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      [archiver replaceObject:obj withObject:proxies[idx]];  // setup proxying between real and fake
-   }];
-   [archiver replaceObject:[fdm trail] withObject:proxies[nbProxies-1]];
-   [archiver encodeRootObject:self]; // encode the path.
-//   [self release]; // somehow the encodeRootObject retains us twice?
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
-#else
-   [archiver finishEncoding];
-#endif
-   [archiver release];
-   for(ORInt k=0;k<nbProxies;k++)
-      [proxies[k] release];
-   free(proxies);
-   return thePack;
-}
-@end
-
-@implementation SemTracer (Packing)
-+(id<ORProblem>)unpackProblem:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>)fdm
-{
-   ORUInt nbProxies = 0;
-   id arp  = [[NSAutoreleasePool alloc] init];
-   CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
-   [decoder decodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
-   id* proxies = malloc(sizeof(id)*nbProxies);
-   for(ORUInt k = 0;k<nbProxies;k++) {
-      proxies[k] = [decoder decodeObject];
-   }
-   id<ORProblem> theProblem = [[decoder decodeObject] retain];
-   [decoder release];
-   [arp release];
-   free(proxies);
-   return theProblem;
-}
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) fdm
-{
-   id arp = [[NSAutoreleasePool alloc] init];
-   ORUInt nbProxies = 0;
-   CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
-   [decoder decodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
-   id* proxies = alloca(sizeof(id)*nbProxies);
-   for(ORUInt k = 0;k<nbProxies;k++) {
-      proxies[k] = [decoder decodeObject];
-   }
-   id<ORCheckpoint> theCP = [[decoder decodeObject] retain];
-   [decoder release];
-   [arp release];
-   return theCP;
 }
 @end
 
@@ -397,6 +206,10 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    [buf appendFormat:@"checkpoint = %@",_path];
    return buf;
 }
+-(id<ORMemoryTrail>)getMT
+{
+   return _mt;
+}
 -(ORInt)sizeEstimate
 {
    return [_path size];
@@ -412,16 +225,6 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 -(ORCmdStack*)commands
 {
    return _path;
-}
--(void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [aCoder encodeObject:_path];
-}
--(id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super init];
-   _path = [[aDecoder decodeObject] retain];
-   return self;
 }
 
 static __thread id checkPointCache = NULL;
@@ -633,7 +436,11 @@ static __thread id checkPointCache = NULL;
 {
    return _trail;
 }
--(void)addCommand:(id<ORCommand>)com
+-(id<ORMemoryTrail>)getMT
+{
+   return _mt;
+}
+-(void)addCommand:(id<ORConstraint>)com
 {
    [_cmds addCommand:com];
 }
@@ -648,7 +455,7 @@ static __thread id checkPointCache = NULL;
    ORUInt ub = [_cmds size];
    ORProblemI* np = [[ORProblemI alloc] init];
    for(ORInt i=0;i< ub;i++) {
-      [[_cmds peekAt:i] apply:^BOOL(id<ORCommand> theCommand) {
+      [[_cmds peekAt:i] apply:^BOOL(id<ORConstraint> theCommand) {
          [np addCommand:[theCommand retain]];
          return true;
       }];
@@ -656,7 +463,7 @@ static __thread id checkPointCache = NULL;
    return np;
 }
 
--(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<ORSearchEngine>)fdm
+-(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model
 {
    /*
     NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
@@ -664,7 +471,7 @@ static __thread id checkPointCache = NULL;
    NSLog(@"into tracer: %@",_cmds);
    NSLog(@"-----------------------------");
     */
-   [fdm clearStatus];
+   [engine clearStatus];
    ORCmdStack* toRestore =  acp->_path;
    int i=0;
    bool pfxEq = true;
@@ -685,18 +492,19 @@ static __thread id checkPointCache = NULL;
       [_trail incMagic];
       for(ORInt j=i;j < getStackSize(toRestore);j++) {
          ORCommandList* theList = peekAt(toRestore,j);
-         [_mt comply:acp->_mt upTo:[theList memory]];
+         [_mt comply:acp->_mt upTo:theList];
          [_trStack pushNode:theList->_ndId];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
-            BOOL pOk = [theList apply: ^BOOL(id<ORCommand> c) {
-               [c doIt]; return true;
+            BOOL pOk = [theList apply: ^BOOL(id<ORConstraint> c) {
+               ORStatus cok = [model post:c];
+               return cok != ORFailure;
             }];
             if (!pOk) {
                //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
                return ORFailure;
             }
-            [fdm propagate];
+            [engine propagate];
             [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
             return ORSuspend;
@@ -708,28 +516,30 @@ static __thread id checkPointCache = NULL;
          if (s==ORFailure)
             return s;
       }
-      [_mt comply:acp->_mt upTo:[acp->_mt trailSize]];
-      return [fdm enforceObjective];
+      //[_mt comply:acp->_mt from:[peekAt(_cmds, getStackSize(_cmds)-1) memoryTo] to:[acp->_mt trailSize]];
+      return [engine enforceObjective];
    }
    return ORSuspend;
 }
 
--(ORStatus)restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>)fdm
+-(ORStatus)restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>)engine model:(id<ORPost>)model
 {
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];
    return tryfail(^ORStatus{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
-      bool ok = [p apply:^bool(id<ORCommand> c) {
-         [c doIt]; return TRUE;
+      bool ok = [p apply:^bool(id<ORConstraint> c) {
+         [model post:c];
+         return TRUE;
+//         [c post]; return TRUE;
       }];
       assert(ok);
 #pragma clang diagnostic pop
       [[p theList] setNodeId:_lastNode-1];
       [_cmds pushCommandList:[p theList]];
       assert([_cmds size] == [_trStack size]);
-      return [fdm propagate];
+      return [engine propagate];
    }, ^ORStatus{
       [_cmds pushCommandList:[p theList]];
       return ORFailure;

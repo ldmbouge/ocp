@@ -13,7 +13,7 @@
 
 @interface ORLinearize : NSObject<ORModelTransformation>
 -(id)initORLinearize:(id<ORAddToModel>)into;
--(void) apply:(id<ORModel>)m;
+-(void) apply:(id<ORModel>)m with:(id<ORAnnotation>)notes;
 +(id<ORModel>)linearize:(id<ORModel>)model;
 @end
 

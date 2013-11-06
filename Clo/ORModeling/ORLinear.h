@@ -13,9 +13,9 @@
 #import <ORModeling/ORModeling.h>
 
 @protocol ORLinear<NSObject>
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons  affineOk:(BOOL)aok;
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok;
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok;
--(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok;
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons affineOk:(BOOL)aok;
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model  affineOk:(BOOL)aok;
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model affineOk:(BOOL)aok;
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model affineOk:(BOOL)aok;
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model affineOk:(BOOL)aok;
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model affineOk:(BOOL)aok;
 @end
