@@ -74,6 +74,65 @@
 }
 @end
 
+@implementation CPFloatWeightedVarBC
+
+-(id)initCPFloatWeightedVarBC:(CPFloatVarI*)z equal:(CPFloatVarI*)x weight: (CPFloatParamI*)w // z = w * x, for constant w
+{
+    self = [super initCPCoreConstraint:[x engine]];
+    _x = x;
+    _z = z;
+    _w = w;
+    return self;
+}
+-(ORStatus) post
+{
+    [self propagate];
+    if (![_x bound])
+        [_x whenChangeBoundsPropagate:self];
+    if (![_z bound])
+        [_z whenChangeBoundsPropagate:self];
+    return ORSuspend;
+}
+-(void) propagate
+{
+    ORIReady();
+    // Make sure weight is not zero
+    if(fabs([_w value]) < 1e-8) {
+        [_z updateInterval: createORI2(0.0, 0.0)];
+        return;
+    }
+    ORNarrowing xs = ORNone, zs = ORNone;
+    do {
+        if ([_x bound]) {
+            zs = [_z updateInterval:ORIMul(createORI1([_w value]), [_x bounds])];
+            break;
+        } else if ([_z bound]) {
+            xs = [_x updateInterval:ORIDiv([_x bounds], createORI1([_w value]))];
+            break;
+        } else {
+            ORInterval xb = [_x bounds];
+            ORInterval wb = createORI1([_w value]);
+            zs = [_z updateInterval:ORIMul(xb, wb)];
+            ORInterval zb = [_z bounds];
+            xs = [_x updateInterval:ORIDiv(zb, wb)];
+        }
+    }
+    while (zs != ORNone || xs != ORNone);
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,_z,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound] + ![_z bound];
+}
+-(NSString*)description
+{
+    return [NSMutableString stringWithFormat:@"<CPFloatWeightedVarBC:%02d %@ == %@ * %@>",_name,_z,_w,_x];
+}
+@end
+
 @implementation CPFloatEquationBC
 -(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c   // sum(i in S) c_i * x_i == c  [[ saved constant is -c ]]
 {

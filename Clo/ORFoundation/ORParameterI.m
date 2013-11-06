@@ -11,11 +11,13 @@
 @implementation ORIntParamI {
 @protected
     id<ORTracker>  _tracker;
+    ORInt _val;
 }
--(ORIntParamI*) initORIntParamI: (id<ORTracker>) track
+-(ORIntParamI*) initORIntParamI: (id<ORTracker>) track initialValue:(ORInt)val
 {
     self = [super init];
     _tracker = track;
+    _val = val;
     [track trackMutable: self];
     return self;
 }
@@ -41,6 +43,10 @@
 {
     return ORTInt;
 }
+-(ORInt) initialValue
+{
+    return _val;
+}
 -(NSString*) description
 {
     return [NSString stringWithFormat:@"param<OR>{int}:%03d",_name];
@@ -54,11 +60,13 @@
 @implementation ORFloatParamI {
 @protected
     id<ORTracker>  _tracker;
+    ORFloat _val;
 }
--(ORFloatParamI*) initORFloatParamI: (id<ORTracker>) track
+-(ORFloatParamI*) initORFloatParamI: (id<ORTracker>) track initialValue:(ORFloat)val
 {
     self = [super init];
     _tracker = track;
+    _val = val;
     [track trackMutable: self];
     return self;
 }
@@ -83,6 +91,10 @@
 -(enum ORVType) vtype
 {
     return ORTFloat;
+}
+-(ORFloat) initialValue
+{
+    return _val;
 }
 -(NSString*) description
 {

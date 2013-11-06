@@ -87,6 +87,12 @@
       _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
 }
 
+-(void) visitFloatParam:(id<ORFloatParam>)v
+{
+    if (!_gamma[v.getId])
+        _gamma[v.getId] = [CPFactory floatParam: _engine initialValue: 0.0];
+}
+
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    if (_gamma[v.getId] == NULL) 
@@ -185,7 +191,17 @@
 }
 -(void) visitLinearGeq: (id<ORLinearGeq>) cstr
 {
-   assert(NO); // to finish
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVarArray> ex = [cstr vars];
+        id<ORIntArray>    ec = [cstr coefs];
+        ORInt c = [cstr cst];
+        id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
+            return [CPFactory intVar:_gamma[ex[k].getId] scale: - [ec at:k] shift:0];
+        }];
+        id<CPConstraint> concreteCstr = [CPFactory sum:vx leq: -c];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) cstr
 {
@@ -253,6 +269,19 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+}
+-(void) visitFloatWeightedVar:(id<ORWeightedVar>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPFloatVar>  z = [self concreteVar:[cstr z]];
+        id<CPIntVar>    x = [self concreteVar:[cstr x]];
+        id<ORParameter> w = [cstr weight];
+        [w visit: self];
+        id<CPFloatVar> xv = [CPFactory floatVar:_engine castFrom:x];
+        id<CPConstraint> concreteCstr = [CPFactory floatWeightedVar: z equal: xv weight: _gamma[w.getId] annotation: DomainConsistency];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

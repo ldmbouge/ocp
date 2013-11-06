@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORParameter.h>
 #import <ORProgram/CPHeuristic.h>
 #import <objcp/CPData.h>
 
@@ -123,6 +124,8 @@
 -(NSSet*) constraints: (id<ORVar>)x;
 
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)x;
+-(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
 -(ORFloat) floatExprValue: (id<ORExpr>)e;
 -(ORFloat) domwidth:(id<ORFloatVar>)x;
 -(ORFloat) fmin:(id<ORFloatVar>)x;

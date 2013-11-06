@@ -472,3 +472,33 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    return b.max - b.min;
 }
 @end
+
+@implementation CPFloatParamI
+-(id)initCPFloatParam:(id<CPEngine>)engine initialValue:(ORFloat)v
+{
+    self = [super init];
+    _engine = (CPEngineI*)engine;
+    _value = v;
+    return self;
+}
+-(CPEngineI*) engine
+{
+    return _engine;
+}
+-(id<ORTracker>) tracker
+{
+    return _engine;
+}
+-(NSMutableSet*) constraints
+{
+    return [NSSet set];
+}
+-(ORFloat) value
+{
+    return _value;
+}
+-(void) setValue: (ORFloat)val
+{
+    _value = val;
+}
+@end

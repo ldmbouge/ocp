@@ -679,29 +679,34 @@
 @implementation ORParameterizedModelI
 {
     NSMapTable* _paramMap;
+    NSMutableArray* _params;
 }
 -(ORParameterizedModelI*) initORParamModelI
 {
     self = [super initORModelI];
     _paramMap = [[NSMapTable alloc] init];
+    _params = [[NSMutableArray alloc] initWithCapacity: 32];
     return self;
 }
 -(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings
 {
     self = [self initORModelI:nb mappings: mappings];
     _paramMap = [[NSMapTable alloc] init];
+    _params = [[NSMutableArray alloc] initWithCapacity: 32];
     return self;
 }
 -(ORParameterizedModelI*) initWithParamModel: (ORParameterizedModelI*) src
 {
     self = [super initWithModel: src];
     _paramMap = [[NSMapTable alloc] init];
+    _params = [[NSMutableArray alloc] initWithCapacity: 32];
     return self;
 }
 -(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
 {
     self = [super initWithModel: src relax: cstrs];
     _paramMap = [[NSMapTable alloc] init];
+    _params = [[NSMutableArray alloc] initWithCapacity: 32];
     return self;
 }
 -(void) dealloc
@@ -723,6 +728,10 @@
             [softCstrs addObject: c];
     return softCstrs;
 }
+-(NSArray*) parameters
+{
+    return _params;
+}
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x
 {
     return [_paramMap objectForKey: x];
@@ -731,6 +740,7 @@
 {
     id<ORWeightedVar> c = [[ORFloatWeightedVarI alloc] initFloatWeightedVar: x];
     [_paramMap setObject: c forKey: x];
+    [_params addObject: [c weight]];
     [self add: c];
     return c;
 }

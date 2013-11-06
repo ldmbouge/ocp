@@ -95,3 +95,14 @@ typedef struct  {
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 @end
+
+@interface CPFloatParamI : ORObject<CPFloatParam> {
+    CPEngineI*            _engine;
+    ORFloat               _value;
+}
+-(id)initCPFloatParam:(id<CPEngine>)engine initialValue:(ORFloat)v;
+-(CPEngineI*) engine;
+-(id<ORTracker>) tracker;
+-(NSMutableSet*) constraints;
+-(ORFloat) value;
+@end

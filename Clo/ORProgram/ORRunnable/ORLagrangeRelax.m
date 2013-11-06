@@ -10,6 +10,7 @@
 #import "ORExprI.h"
 #import "MIPRunnable.h"
 #import "MIPSolverI.h"
+#import "CPFactory.h"
 
 @interface ORLagrangeRelax(Private)
 -(ORFloat) lagrangianSubgradientSolve: (ORFloat)ub;
@@ -50,6 +51,7 @@
     }];
     
     id<MIPProgram> program = [ORFactory createMIPProgram: _model];
+    //id<CPProgram> program = [ORFactory createCPProgram: _model];
     ORFloat cutoff = 0.005;
     
     ORInt noImproveLimit = 30;
@@ -58,22 +60,28 @@
     while(pi > cutoff) {
         [[program solutionPool] emptyPool];
         [program solve];
-        
-        id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[[[program solutionPool] best] objectiveValue];
+        //id<CPHeuristic> h = [program createFF];
+        //[program solve: ^{
+            //[program labelHeuristic: h];
+        //    [program labelArray:[_model intVars]];
+        //} ];
+        id<ORSolution> bs = [[program solutionPool] best];
+        NSLog(@"BEST is: %@",bs);
+        id<ORSolution> sol = [[program solutionPool] best];
+        id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
         
         __block ORFloat slackSum = 0.0;
-        [slacks enumerateWith:^(id obj, ORInt idx) {
-            id<ORFloatVar> s = obj;
-            slackSum += [program floatValue: s];
+        [slacks enumerateWith:^(id<ORFloatVar> obj, ORInt idx) {
+            slackSum += [sol floatValue: obj];
         }];
         
         ORFloat stepSize = pi * (ub - [objValue value]) / slackSum;
         
         [lambdas enumerateWith:^(id obj, ORInt idx) {
             id<ORFloatParam> lambda = obj;
-            ORFloat value = [program paramFloatValue: lambda];
+            ORFloat value = [sol paramFloatValue: lambda];
             id<ORFloatVar> slack = [slacks at: idx];
-            ORFloat newValue = MAX(0, value + stepSize * [program floatValue: slack]);
+            ORFloat newValue = MAX(0, value + stepSize * [sol floatValue: slack]);
             [program paramFloat: lambda setValue: newValue];
         }];
         

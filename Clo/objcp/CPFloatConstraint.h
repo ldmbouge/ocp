@@ -16,6 +16,7 @@
 #import <objcp/CPVar.h>
 
 @class CPFloatVarI;
+@class CPFloatParamI;
 @class CPIntVar;
 @class CPEngine;
 @protocol CPFloatVarArray;
@@ -25,6 +26,17 @@
    CPFloatVarI* _z;
 }
 -(id)initCPFloatSquareBC:(id)z equalSquare:(id)x;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPFloatWeightedVarBC : CPCoreConstraint { // z == x^2
+    CPFloatVarI* _x;
+    CPFloatVarI* _z;
+    CPFloatParamI* _w;
+}
+-(id)initCPFloatWeightedVarBC:(id)z equal:(id)x weight: (id)w;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

@@ -15,7 +15,9 @@
 @end
 
 @protocol ORIntParam <ORParameter>
+-(ORInt) initialValue;
 @end
 
 @protocol ORFloatParam <ORParameter>
+-(ORFloat) initialValue;
 @end

@@ -216,7 +216,7 @@
       [self updateMin:val+1 for:x];
    else if (val >= _max._val)
       [self updateMax:val-1 for:x];
-   @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+   else @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
 }
 
 -(void) restoreDomain:(id<CPDom>) toRestore

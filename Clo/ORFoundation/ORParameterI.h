@@ -12,9 +12,9 @@
 #import "ORVisit.h"
 
 @interface ORIntParamI : ORExprI<ORIntParam,NSCoding>
--(ORIntParamI*) initORIntParamI: (id<ORTracker>) track;
+-(ORIntParamI*) initORIntParamI: (id<ORTracker>) track initialValue: (ORInt)val;
 @end
 
 @interface ORFloatParamI : ORExprI<ORFloatParam,NSCoding>
--(ORIntParamI*) initORFloatParamI: (id<ORTracker>) track;
+-(ORIntParamI*) initORFloatParamI: (id<ORTracker>) track initialValue: (ORFloat)val;
 @end

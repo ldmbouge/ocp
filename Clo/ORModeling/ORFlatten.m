@@ -96,6 +96,14 @@
 {
    _result = v;
 }
+-(void) visitFloatParam:(id<ORFloatParam>)v
+{
+    _result = v;
+}
+-(void) visitIntParam:(id<ORIntParam>)v
+{
+    _result = v;
+}
 
 // ======================================================================================================
 
@@ -231,6 +239,10 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    [ORFlatten flattenExpression:[cstr expr] into:_into annotation:[cstr annotation]];
+}
+-(void) visitFloatWeightedVar:(id<ORWeightedVar>)cstr
+{
+    _result = cstr;
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

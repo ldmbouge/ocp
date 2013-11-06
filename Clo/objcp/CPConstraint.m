@@ -522,6 +522,12 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) floatWeightedVar: (id<CPFloatVar>)z equal:(id<CPFloatVar>)x weight: (id<CPFloatParam>)w annotation:(ORAnnotation)c
+{
+    id<CPConstraint> o = [[CPFloatWeightedVarBC alloc] initCPFloatWeightedVarBC: z equal: x weight: w];
+    [[x tracker] trackMutable: o];
+    return o;
+}
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
 {
    id<CPConstraint> o = [[CPFloatEquationBC alloc] init:x coef:coefs eqi:c];

@@ -105,6 +105,7 @@
 -(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
 -(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs;
 -(NSArray*) softConstraints;
+-(NSArray*) parameters;
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
 -(id<ORWeightedVar>) parameterizeFloatVar: (id<ORFloatVar>)x;
 @end

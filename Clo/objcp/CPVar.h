@@ -27,6 +27,13 @@ enum CPVarClass {
    CPVCCst = 6
 };
 
+@protocol CPParam <NSObject>
+-(ORUInt) getId;
+-(id<ORTracker>)tracker;
+-(id<CPEngine>)engine;
+-(NSSet*)constraints;
+@end
+
 @protocol CPVar <NSObject>
 -(ORUInt) getId;
 -(id<ORTracker>)tracker;
@@ -148,6 +155,11 @@ enum CPVarClass {
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;
 -(ORNarrowing) updateInterval: (ORInterval) v;
+@end
+
+@protocol CPFloatParam<CPParam>
+-(ORFloat) value;
+-(void) setValue: (ORFloat)val;
 @end
 
 @protocol CPFloatVarArray <CPVarArray>

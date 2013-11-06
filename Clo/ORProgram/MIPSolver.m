@@ -28,6 +28,19 @@
 -(NSUInteger) hash;
 @end
 
+@interface ORMIPFloatParamSnapshot : NSObject <ORSnapshot,NSCoding> {
+   ORUInt    _name;
+   ORFloat   _value;
+}
+-(ORMIPFloatParamSnapshot*) initMIPFloatParamSnapshot: (id<ORFloatParam>) v with: (id<MIPProgram>) solver;
+-(ORUInt)getId;
+-(ORFloat) floatValue;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+@end
+
+
 @implementation ORMIPFloatVarSnapshot
 -(ORMIPFloatVarSnapshot*) initMIPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<MIPProgram>) solver
 {
@@ -85,6 +98,69 @@
    return self;
 }
 @end
+
+@implementation ORMIPFloatParamSnapshot
+-(ORMIPFloatParamSnapshot*) initMIPFloatParamSnapshot: (id<ORFloatParam>) v with: (id<MIPProgram>) solver
+{
+   self = [super init];
+   _name = [v getId];
+   _value = [solver paramFloatValue: v];
+   return self;
+}
+-(ORUInt)getId
+{
+   return _name;
+}
+-(ORInt) intValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "intValue not implemented"];
+}
+-(ORBool) boolValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "boolValue not implemented"];
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      ORMIPFloatParamSnapshot* other = object;
+      if (_name == other->_name) {
+         return (_value == other->_value);
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"float(%d) : (%f)",_name,_value];
+   return buf;
+}
+
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+@end
+
 
 @interface ORMIPIntVarSnapshot : NSObject <ORSnapshot,NSCoding> {
    ORUInt _name;
@@ -199,6 +275,10 @@
 {
    _snapshot = [[ORMIPFloatVarSnapshot alloc] initMIPFloatVarSnapshot: v with: _solver];
 }
+-(void) visitFloatParam: (id<ORFloatParam>) p
+{
+   _snapshot = [[ORMIPFloatParamSnapshot alloc] initMIPFloatParamSnapshot: p with: _solver];
+}
 @end
 
 @interface ORMIPSolutionI : ORObject<ORMIPSolution>
@@ -212,6 +292,7 @@
 
 @implementation ORMIPSolutionI {
    NSArray*             _varShots;
+   NSArray*             _paramShots;
    id<ORObjectiveValue> _objValue;
 }
 -(ORMIPSolutionI*) initORMIPSolutionI: (id<ORModel>) model with: (id<MIPProgram>) solver
@@ -229,6 +310,22 @@
       [shot release];
    }];
    _varShots = snapshots;
+   
+   if([model conformsToProtocol: @protocol(ORParameterizedModel)]) {
+      NSArray* ap = [(id<ORParameterizedModel>)model parameters];
+      sz = [ap count];
+      NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
+      ORMIPTakeSnapshot* visit = [[ORMIPTakeSnapshot alloc] initORMIPTakeSnapshot: solver];
+      [ap enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
+         [obj visit: visit];
+         id shot = [visit snapshot];
+         if (shot)
+            [snapshots addObject: shot];
+         [shot release];
+      }];
+      _paramShots = snapshots;
+   }
+   else _paramShots = nil;
    
    if ([model objective])
       _objValue = [solver objectiveValue];
@@ -301,6 +398,13 @@
       return [var getId] == [obj getId];
    }];
    return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
+}
+-(ORFloat) paramFloatValue: (id<ORFloatParam>) param
+{
+    NSUInteger idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return [param getId] == [obj getId];
+    }];
+    return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
 }
 -(NSUInteger) count
 {

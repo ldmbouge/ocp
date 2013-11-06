@@ -66,7 +66,7 @@
       ORFloat svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
-   return max(MININT,lb);
+    return (((ORFloat)MININT) > lb) ? MININT : lb;
 }
 
 -(ORFloat) fmax
@@ -87,7 +87,7 @@
       ORFloat svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
-   return min(MAXINT,ub);
+    return (((ORFloat)MAXINT) < ub) ? MAXINT : ub;
 }
 
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c

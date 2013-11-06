@@ -124,6 +124,20 @@
 -(NSUInteger) hash;
 @end
 
+@interface ORCPFloatParamSnapshot : NSObject <ORSnapshot,NSCoding>
+{
+   ORUInt    _name;
+   ORFloat   _value;
+}
+-(ORCPFloatParamSnapshot*) initCPFloatParamSnapshot: (id<ORFloatParam>) v with: (id<CPCommonProgram>) solver;
+-(ORUInt) getId;
+-(ORFloat) floatValue;
+-(ORInt) intValue;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+@end
+
 @implementation ORCPFloatVarSnapshot
 -(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
 {
@@ -187,6 +201,70 @@
 }
 @end
 
+@implementation ORCPFloatParamSnapshot
+-(ORCPFloatParamSnapshot*) ORCPFloatParamSnapshot: (id<ORFloatParam>) v with: (id<CPCommonProgram>) solver;
+{
+   self = [super init];
+   _name = [v getId];
+   _value = [solver paramFloatValue: v];
+   return self;
+}
+-(ORInt) intValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "intValue called on a snapshot for float variables"];
+   return 0;
+}
+-(ORBool) boolValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "boolValue called on a snapshot for float variables"];
+   return 0;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      ORCPFloatParamSnapshot* other = object;
+      if (_name == other->_name) {
+         return _value == other->_value;
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger)hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"float(%d) : %f",_name,_value];
+   return buf;
+}
+- (void) encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id) initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+@end
+
+
 @interface ORCPTakeSnapshot  : ORNOopVisit<NSObject>
 -(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver;
 -(void) dealloc;
@@ -221,6 +299,10 @@
 {
    _snapshot = [[ORCPFloatVarSnapshot alloc] initCPFloatVarSnapshot: v with: _solver];
 }
+-(void) visitFloatParam:(id<ORFloatParam>)p
+{
+   _snapshot = [[ORCPFloatParamSnapshot alloc] initCPFloatParamSnapshot: p with: _solver];
+}
 @end
 
 @interface ORCPSolutionI : ORObject<ORCPSolution>
@@ -235,6 +317,7 @@
 // PVH: need to be generalized when the global numbering will be available
 @implementation ORCPSolutionI {
    NSArray*             _varShots;
+   NSArray*             _paramShots;
    id<ORObjectiveValue> _objValue;
 }
 
@@ -252,6 +335,22 @@
       [shot release];
    }
    _varShots = snapshots;
+   
+   // Capture parameters
+   if([model conformsToProtocol: @protocol(ORParameterizedModel)]) {
+      NSArray* ap = [(id<ORParameterizedModel>)model parameters];
+      sz = [ap count];
+      NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
+      ORCPTakeSnapshot* visit = [[ORCPTakeSnapshot alloc] initORCPTakeSnapshot: solver];
+      for(id obj in ap) {
+         id shot = [visit snapshot:obj];
+         if (shot)
+            [snapshots addObject: shot];
+         [shot release];
+      }
+      _paramShots = snapshots;
+   }
+   else _paramShots = nil;
    
    if ([model objective])
       _objValue = [[solver objective] value];
@@ -324,6 +423,13 @@
       return [obj getId] == [var getId];
    }];
    return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
+}
+-(ORFloat) paramFloatValue:(id<ORFloatParam>)param
+{
+   NSUInteger idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [param getId];
+   }];
+   return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
 }
 -(NSUInteger) count
 {
@@ -540,7 +646,15 @@
       if ([_engine close] == ORFailure)
          [_search fail];
       if (![_hSet empty]) {
-         NSArray* mvar = [_model variables];
+         NSMutableArray* mvar = [[NSMutableArray alloc] initWithCapacity: [[_model variables] count]];
+         NSIndexSet* iset = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            return [obj conformsToProtocol: @protocol(ORIntVar)];
+         }];
+         [[_model variables] enumerateObjectsAtIndexes: iset options: NSEnumerationReverse usingBlock: ^(id obj, NSUInteger idx, BOOL* stop) {
+            [mvar addObject: obj];
+         }];
+         [iset release];
+         
          NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
          for(id<ORVar> v in mvar)
             [cvar addObject:_gamma[v.getId]];
@@ -548,6 +662,7 @@
             [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
          }];
          [cvar release];
+         [mvar release];
       }
       [ORConcurrency pumpEvents];
    }
@@ -1232,6 +1347,16 @@
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
    return [(id<ORFloatVar>)_gamma[x.getId] floatValue];
+}
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)x
+{
+    return [(id<ORFloatParam>)_gamma[x.getId] floatValue];
+}
+-(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
+{
+   id<CPFloatParam> param = _gamma[p.getId];
+   [param setValue: val];
+   return val;
 }
 -(ORFloat) floatExprValue: (id<ORExpr>)e {
     ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];

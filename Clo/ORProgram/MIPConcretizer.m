@@ -294,7 +294,7 @@
         id<ORIdArray> vars = [ORFactory idArray: _MIPsolver range: r];
         [vars set: dx at: 0];
         [vars set: dz at: 1];
-        ORFloat coefValues[] = { 0.0, -1.0 };
+        ORFloat coefValues[] = { [(id<ORFloatParam>)[c weight] initialValue], -1.0 };
         id<ORFloatArray> coef = [ORFactory floatArray: _MIPsolver range: r values: coefValues];
         
         // w * x - z == 0

@@ -84,7 +84,10 @@
 {
    return [[CPFloatViewOnIntVarI alloc] initCPFloatViewIntVar:cp intVar:x];
 }
-
++(id<CPFloatParam>) floatParam:(id<CPEngine>)cp initialValue:(ORFloat)v
+{
+    return [[CPFloatParamI alloc] initCPFloatParam: cp initialValue: v];
+}
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    return [ORFactory intMatrix: tracker range: r1 : r2];
