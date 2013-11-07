@@ -399,8 +399,8 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
             rv = [model addConstraint:[ORFactory gEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
          } else {  // either: x + y + c >= 0  or -x - y + c >= 0
             if (aok) {
-               id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
-               id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
+               id<ORIntVar> xp = [ORFactory intVar:[model tracker] var:_terms[0]._var scale:_terms[0]._coef];
+               id<ORIntVar> yp = [ORFactory intVar:[model tracker] var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
                rv = [model addConstraint:[ORFactory gEqual:model var:xp to:yp]];
             } else {
                rv = [model addConstraint:[ORFactory sum:model

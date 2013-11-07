@@ -501,4 +501,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     _value = val;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<PARAM(%d) = %lf>",_name,_value];
+   return buf;
+}
 @end

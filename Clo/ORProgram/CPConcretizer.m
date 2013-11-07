@@ -277,7 +277,7 @@
         id<ORParameter> w = [cstr weight];
         [w visit: self];
         id<CPFloatVar> xv = [CPFactory floatVar:_engine castFrom:x];
-        id<CPConstraint> concreteCstr = [CPFactory floatWeightedVar: z equal: xv weight: _gamma[w.getId] annotation: DomainConsistency];
+        id<CPConstraint> concreteCstr = [CPFactory floatWeightedVar: z equal: xv weight: _gamma[w.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

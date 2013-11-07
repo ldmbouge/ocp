@@ -53,9 +53,15 @@
     }
     id<ORExpr> diffExpr = [greaterExpr sub: lessExpr track: _target];
     id<ORVar> slack = nil;
-    if([binexpr vtype] == ORTInt)
-        slack = [ORFactory intVar: _target domain: RANGE(_target, [diffExpr min], [diffExpr max])];
-    else if([binexpr vtype] == ORTFloat)
+   if([binexpr vtype] == ORTInt) {
+      ORInt lb,ub;
+      switch([binexpr type]) {
+         case ORRLEq: lb = [diffExpr min];ub = 0;break;
+         case ORRGEq: lb = 0;ub = [diffExpr max];break;
+         default:[NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
+      }
+      slack = [ORFactory intVar: _target domain: RANGE(_target, lb, ub)];
+   } else if([binexpr vtype] == ORTFloat)
         slack =[ORFactory floatVar: _target low: [diffExpr min] up: [diffExpr max]];
     else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
     id<ORRelation> softExpr = [[greaterExpr plus: slack track: _target] geq: lessExpr track: _target];

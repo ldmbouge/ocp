@@ -57,13 +57,13 @@
     ORInt noImproveLimit = 30;
     ORInt noImprove = 0;
     
+    id<CPHeuristic> h = [program createFF];
     while(pi > cutoff) {
         [[program solutionPool] emptyPool];
         //[program solve];
-        //id<CPHeuristic> h = [program createFF];
         [program solve: ^{
-            //[program labelHeuristic: h];
-            [program labelArray:[_model intVars]];
+            [program labelHeuristic: h];
+            //[program labelArray:[_model intVars]];
         } ];
         id<ORSolution> bs = [[program solutionPool] best];
         NSLog(@"BEST is: %@",bs);

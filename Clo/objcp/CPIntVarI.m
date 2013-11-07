@@ -431,6 +431,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return (ORBounds){_value,_value};
 }
+-(id<CPDom>) domain
+{
+   return [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: _value up: _value];
+}
 -(ORInt) domsize
 {
    return 1;

@@ -245,7 +245,7 @@
 }
 -(void) visitFloatWeightedVar:(id<ORWeightedVar>)cstr
 {
-    _result = cstr;
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

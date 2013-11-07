@@ -458,6 +458,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 -(ORStatus) post
 {
+   _primalBound = MAXINT;
    if (![_x bound])
       [_x whenChangeMinDo: ^ {
          [_x updateMax: _primalBound];
