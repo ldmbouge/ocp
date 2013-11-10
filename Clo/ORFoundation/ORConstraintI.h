@@ -277,6 +277,20 @@
 -(ORInt)cst;
 @end
 
+@interface ORHReifySumBoolEqc : ORConstraintI<ORReifySumBoolEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORHReifySumBoolGEqc : ORConstraintI<ORReifySumBoolGEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
 @interface ORSumEqc : ORConstraintI<ORSumEqc>
 -(ORSumEqc*)initSum:(id<ORIntVarArray>)ia eqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;

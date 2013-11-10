@@ -235,6 +235,8 @@
 		5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64310139D49610056F448 /* ORTrail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B48FEA915A3DB2A00141BB1 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B49CA9F16CEE28000D9125E /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B4FA4E0182A67D500BAA654 /* german-credit.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B66712A181EF228007CBBA6 /* german-credit.csv */; };
+		5B4FA4E1182A68F500BAA654 /* mushroom.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667130181EF228007CBBA6 /* mushroom.csv */; };
 		5B5096E21619B6CB00171F9D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B5096E51619B6CC00171F9D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5096E41619B6CC00171F9D /* main.m */; };
 		5B5096E91619B6CC00171F9D /* testDistrib.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B5096E81619B6CC00171F9D /* testDistrib.1 */; };
@@ -4911,6 +4913,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				5B4FA4E1182A68F500BAA654 /* mushroom.csv in CopyFiles */,
+				5B4FA4E0182A67D500BAA654 /* german-credit.csv in CopyFiles */,
 				5B1D4268181EF28D00EE8C83 /* test1.csv in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1487,6 +1487,98 @@
 // ========================================================================================================
 // Sums
 
+@implementation ORHReifySumBoolEqc {
+   id<ORIntVar>       _b;
+   id<ORIntVarArray> _ba;
+   ORInt              _c;
+}
+-(id) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba eqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _ba = ba;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (reify:%@ sumbool(%@) == %d)",[self class],self,_b,_ba,_c];
+   return buf;
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitHReifySumBoolEqualc:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+@end
+
+@implementation ORHReifySumBoolGEqc {
+   id<ORIntVar>       _b;
+   id<ORIntVarArray> _ba;
+   ORInt              _c;
+}
+-(id) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _ba = ba;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (reify:%@ sumbool(%@) >= %d)",[self class],self,_b,_ba,_c];
+   return buf;
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitHReifySumBoolGEqualc:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+@end
+
 @implementation ORSumBoolEqc {
    id<ORIntVarArray> _ba;
    ORInt             _c;

@@ -266,6 +266,18 @@ enum ORGroupType {
 -(id<ORIntVar>) y;
 @end
 
+@protocol ORReifySumBoolEqc <ORConstraint>
+-(id<ORIntVar>)b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@protocol ORReifySumBoolGEqc <ORConstraint>
+-(id<ORIntVar>)b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
 @protocol ORSumBoolEqc <ORConstraint>
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;

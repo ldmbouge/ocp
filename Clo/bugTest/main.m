@@ -25,6 +25,8 @@ id<ORIntMatrix> csv2matrix(NSString* filename, id<ORModel> tracker){
    NSArray* transactionStrings = [string componentsSeparatedByString:@"\r"];
    for (NSString* transactionString in transactionStrings){
       //If its the first line, that's the name of the items, so it can be ignored.
+      //printf("[%s]\n",[transactionString cStringUsingEncoding:NSASCIIStringEncoding]);
+      if ([transactionString length] == 0) continue;
       if (![transactionString isEqualToString:[transactionStrings objectAtIndex:0]]){
          NSArray* transactionCharacters = [transactionString componentsSeparatedByString:@","];
          NSMutableArray* row = [[NSMutableArray alloc] init];
@@ -38,7 +40,9 @@ id<ORIntMatrix> csv2matrix(NSString* filename, id<ORModel> tracker){
    }
    
    //Generate the ORIntMatrix
-   id<ORIntMatrix> result = [ORFactory intMatrix:tracker range:RANGE(tracker, 0,([matrix count]-1)):RANGE(tracker, 0,([[matrix objectAtIndex:0] count]-1))];
+   id<ORIntMatrix> result = [ORFactory intMatrix:tracker
+                                           range:RANGE(tracker, 0,((ORInt)[matrix count]-1))
+                                                :RANGE(tracker, 0,((ORInt)[[matrix objectAtIndex:0] count]-1))];
    for (int r = 0; r < [matrix count]; r++){
       NSArray* row = [matrix objectAtIndex:r];
       for (int c = 0; c < [[matrix objectAtIndex:1] count]; c++){
@@ -55,6 +59,7 @@ NSArray* csv2transactions(NSString* filename){
    NSString *string = [NSString stringWithUTF8String:[data bytes]];
    NSArray* transactionStrings = [string componentsSeparatedByString:@"\r"];
    for (NSString* transactionString in transactionStrings){
+      if ([transactionString length] == 0) continue;
       //If its the first line, that's the name of the items, so it can be ignored.
       if (![transactionString isEqualToString:[transactionStrings objectAtIndex:0]]){
          NSArray* transactionCharacters = [transactionString componentsSeparatedByString:@","];
@@ -124,9 +129,14 @@ int main(int argc, const char * argv[])
       
       //Input Data
       NSString* file = @"test1.csv";
-      id<ORIntMatrix> matrix = csv2matrix(file, model);
-      NSArray* transactions = csv2transactions(file);
-      NSArray* items = csv2items(file);
+      NSArray* transactions;
+      NSArray* items;
+      id<ORIntMatrix> matrix;
+      @autoreleasepool {
+         matrix = csv2matrix(file, model);
+         transactions = csv2transactions(file);
+         items = csv2items(file);
+      }
       
       ORInt numOfItems = (int)[items count];
       ORInt numOfTransactions = (int)[transactions count];
@@ -135,24 +145,39 @@ int main(int argc, const char * argv[])
       
       //Variables
       id<ORIntVarArray> itemset = [ORFactory intVarArray:model range:itemRange domain:binary];
-      id<ORIntVarArray> transactionsContainingItemset = [ORFactory intVarArray:model range:transactionRange domain:binary];
+      id<ORIntVarArray> trans = [ORFactory intVarArray:model range:transactionRange domain:binary];
       
       //A value is 1 in transactionsContainingItemsets iff that transaction contains all of the items in the itemset
       for (ORInt t = [transactionRange low]; t <= [transactionRange up]; t++){
-//         id<ORExpr> r = Sum(model, j, itemRange, [[itemset at:j] mul:@([matrix at:t:j])]);
-//         id<ORExpr> l = Sum(model, j, itemRange, [itemset at:j]);
-//         [model add:[[l eq:r] imply:[transactionsContainingItemset at:t]]];
-//         [model add:[[transactionsContainingItemset at:t] imply: [l eq:r]]];
-
-            id<ORExpr> cov = [Sum(model, i, itemRange, [itemset[i] and:@(![matrix at:t :i])]) eq:@0];
-            [model add:[transactionsContainingItemset[t] eq:cov]];
+         ORInt nbnz = 0;
+         for(ORInt i = itemRange.low;i <= itemRange.up;i++)
+            nbnz += ![matrix at:t :i];
+         id<ORIntVarArray> nz = (id)[ORFactory idArray:model range:RANGE(model,0,nbnz-1)];
+         nbnz = 0;
+         for(ORInt i = itemRange.low;i <= itemRange.up;i++) {
+            if ([matrix at:t :i]!=0) continue;
+            nz[nbnz++] = itemset[i];
+         }
+         id<ORExpr> cov = [Sum(model, i, nz.range, nz[i]) eq:@0];
+         [model add:[trans[t] eq:cov]];
       }
       
       //Sum of transactionsContainingItemset must be greater than the threshold
       //[model add:[Sum(model, k, transactionRange, [transactionsContainingItemset at:k]) gt:@(2)]];
       for(ORInt i =itemRange.low;i <= itemRange.up;i++) {
-         id<ORExpr> thr = Sum(model, t, transactionRange, [transactionsContainingItemset[t] and:@([matrix at:t :i])]);
-         [model add:[itemset[i] imply:[thr geq:@2]]];
+         ORInt nbnz = 0;
+         for(ORInt t=transactionRange.low;t <= transactionRange.up; t++)
+            nbnz += [matrix at:t :i];
+         id<ORIntVarArray> nz = (id)[ORFactory idArray:model range:RANGE(model,0,nbnz-1)];
+         nbnz = 0;
+         for(ORInt t=transactionRange.low;t <= transactionRange.up; t++) {
+            if ([matrix at:t :i] == 0) continue;
+            nz[nbnz++] = trans[t];
+         }
+         //id<ORExpr> thr = Sum(model, t, transactionRange, [trans[t] and:@([matrix at:t :i])]);
+         //id<ORExpr> thr = Sum(model, t, nz.range, nz[t]);
+         //[model add:[itemset[i] imply:[thr geq:@2]]];
+         [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:2]];
       }
       
       [model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
