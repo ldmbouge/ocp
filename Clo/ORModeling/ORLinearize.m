@@ -186,29 +186,33 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-    
+    ORExprBinaryI* binExpr = (ORExprBinaryI*)[cstr expr];
+    id<ORExpr> left = [self linearizeExpr: [binExpr left]];
+    id<ORExpr> right = [self linearizeExpr: [binExpr right]];
     switch ([[cstr expr] type]) {
         case ORRBad: assert(NO);
         case ORREq: {
-            ORExprBinaryI* binExpr = (ORExprBinaryI*)[cstr expr];
-            id<ORExpr> left = [self linearizeExpr: [binExpr left]];
-            id<ORExpr> right = [self linearizeExpr: [binExpr right]];
             [_model addConstraint: [left eq: right]];
         }break;
         case ORRNEq: {
             // Not implemented
         }break;
         case ORRLEq: {
-            // Not implemented
+            [_model addConstraint: [left leq: right]];
         }break;
        case ORRGEq: {
-          // Not implemented
+           [_model addConstraint: [left geq: right]];
        }break;
         default:
             assert(true);
             break;
     }
     
+}
+-(void) visitKnapsack:(id<ORKnapsack>)cstr {
+    id<ORExpr> sumExpr = Sum(_model, i, [[cstr item] range], [[[cstr item] at: i] mul: @([[cstr weight] at: i])]);
+    [_model addConstraint: [sumExpr leq: [cstr capacity]]];
+    [_model addConstraint: [sumExpr geq: [cstr capacity]]];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

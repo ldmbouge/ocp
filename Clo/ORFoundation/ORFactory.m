@@ -1079,6 +1079,12 @@
    [[x tracker] trackObject:o];
    return o;
 }
++(id<ORSoftConstraint>) softKnapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c slack: (id<ORVar>) slack
+{
+    id<ORConstraint> o = [[ORSoftKnapsackI alloc] initORSoftKnapsackI: x weight: w capacity: c slack: slack];
+    [[slack tracker] trackObject:o];
+    return o;
+}
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x];

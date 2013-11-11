@@ -418,6 +418,10 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@interface ORSoftKnapsackI : ORKnapsackI<ORSoftKnapsack>
+-(ORSoftKnapsackI*)initORSoftKnapsackI:(id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c slack: (id<ORVar>)slack;
+-(id<ORVar>)slack;
+@end
 
 @interface ORAssignmentI: ORConstraintI<ORAssignment>
 -(ORAssignmentI*)initORAssignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;

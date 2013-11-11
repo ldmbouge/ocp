@@ -13,13 +13,13 @@
 #import "CPFactory.h"
 
 @interface ORLagrangeRelax(Private)
--(ORFloat) lagrangianSubgradientSolve: (ORFloat)ub;
+-(id<ORSolution>) lagrangianSubgradientSolve: (ORFloat)ub;
 @end
 
 @implementation ORLagrangeRelax {
 @protected
     id<ORParameterizedModel> _model;
-    ORFloat _bestBound;
+    id<ORSolution> _bestSolution;
     id<ORSignature> _sig;
 }
 
@@ -29,15 +29,17 @@
     if(self) {
         _model = m;
         _sig = nil;
-        _bestBound = DBL_MIN;
+        _bestSolution = nil;
     }
     return self;
 }
 
--(ORFloat) lagrangianSubgradientSolve: (ORFloat)ub {
+-(id<ORSolution>) lagrangianSubgradientSolve: (ORFloat)ub {
     ORFloat pi = 2.0f;
-    ORFloat best = DBL_MIN;
-
+    ORFloat bestBound = -DBL_MAX;
+    ORFloat bestSlack = DBL_MAX;
+    id<ORSolution> bestSol = nil;
+    
     NSArray* softCstrs = [_model softConstraints];
     id<ORIntRange> slackRange = RANGE(_model, 0, (ORInt)softCstrs.count-1);
     id<ORIdArray> slacks = [ORFactory idArray: _model range: slackRange with: ^id(ORInt i) {
@@ -62,12 +64,11 @@
         [[program solutionPool] emptyPool];
         //[program solve];
         [program solve: ^{
-            [program labelHeuristic: h];
-            //[program labelArray:[_model intVars]];
+            //[program labelHeuristic: h];
+            [program labelArray:[_model intVars]];
         } ];
-        id<ORSolution> bs = [[program solutionPool] best];
-        NSLog(@"BEST is: %@",bs);
         id<ORSolution> sol = [[program solutionPool] best];
+        NSLog(@"BEST is: %@",sol);
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
         
         __block ORFloat slackSum = 0.0;
@@ -88,8 +89,11 @@
         NSLog(@"objective: %f", [objValue value]);
         
         // Check for improvement
-        if([objValue value] > best) {
-            best = [objValue value];
+        if([objValue floatValue] > bestBound ||
+            (fabs([objValue floatValue] - bestBound) < 1e-5 && slackSum < bestSlack)) {
+            bestBound = [objValue floatValue];
+            bestSol = sol;
+            bestSlack = slackSum;
             noImprove = 0;
         }
         else if(++noImprove > noImproveLimit) {
@@ -98,9 +102,10 @@
         }
         
         // Check if done
+        NSLog(@"slack sum: %f", slackSum);
         if(fabs(slackSum) < 1.0e-5) break;
     }
-    return best;
+    return bestSol;
 }
 
 
@@ -120,9 +125,19 @@
 
 -(void) run
 {
-    _bestBound = [self lagrangianSubgradientSolve: 10];
+    _bestSolution = [self lagrangianSubgradientSolve: 1];
 }
 
--(ORFloat) bestBound { return _bestBound; }
+-(ORFloat) bestBound
+{
+    if(!_bestSolution) return DBL_MIN;
+    id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[_bestSolution objectiveValue];
+    return [objValue floatValue];
+}
+
+-(id<ORSolution>) bestSolution
+{
+    return _bestSolution;
+}
 
 @end

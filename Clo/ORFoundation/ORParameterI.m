@@ -98,7 +98,7 @@
 }
 -(NSString*) description
 {
-    return [NSString stringWithFormat:@"param<OR>{float}:%03d",_name];
+    return [NSString stringWithFormat:@"param<OR>{float}:%03d[iv=%f]",_name, _val];
 }
 - (void)visit:(ORVisitor*)visitor
 {

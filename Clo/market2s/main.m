@@ -15,6 +15,10 @@
 
 #import "ORCmdLineArgs.h"
 
+#import "ORLagrangeRelax.h"
+#import "ORLagrangianTransform.h"
+#import <ORModeling/ORLinearize.h>
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -26,6 +30,7 @@ int main(int argc, const char * argv[])
          FILE* dta = fopen(fn,"r");
          int n,m,z;
          fscanf(dta, "%d %d %d",&m,&n,&z);
+         NSLog(@"m: %i, n: %i", m, n);
          id<ORIntRange> V = RANGE(model,0,n-1);
          int** w = alloca(sizeof(int*)*m);
          for(int k=0;k<m;k++)
@@ -67,6 +72,13 @@ int main(int argc, const char * argv[])
             [model add:[ORFactory knapsack:x weight:coef capacity:r]];
          }
          
+         //id<ORModel> lm = [ORFactory linearizeModel: model];
+         ORLagrangianTransform* t = [[ORLagrangianTransform alloc] init];
+         id<ORParameterizedModel> lagrangeModel = [t apply: model relaxing: [model constraints]];
+         id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel];
+         [lr run];
+
+          /*
          id<CPProgram> cp  = [args makeProgram:model];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          
@@ -81,6 +93,9 @@ int main(int argc, const char * argv[])
             NSLog(@"Solution: %@",x);
          }];
          id<ORSolution> best = [[cp solutionPool] best];
+           */
+         id<ORSolution> best = [lr bestSolution];
+         
          for(int k=0;k < m;k++) {
             ORInt sum = 0;
             for(ORInt i=V.low;i <= V.up;++i)
@@ -88,11 +103,13 @@ int main(int argc, const char * argv[])
             NSLog(@"got: %d == %d",sum,rhs[k]);
             assert(sum == rhs[k]);
          }
-         NSLog(@"Solver: %@",cp);
-         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
+         struct ORResult r;
          return r;
+         //NSLog(@"Solver: %@",cp);
+         //struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         //[cp release];
+         [ORFactory shutdown];
+         //return r;
       }];
    }
    return 0;

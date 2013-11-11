@@ -2185,7 +2185,7 @@
    self = [super initORConstraintI];
    _x = x;
    _z = [ORFactory floatVar: [x tracker]  low:FDMININT up:FDMAXINT];
-   _lambda = [[ORFloatParamI alloc] initORFloatParamI: [x tracker] initialValue: 0.0];
+   _lambda = [[ORFloatParamI alloc] initORFloatParamI: [x tracker] initialValue: 1.0];
    return self;
 }
 -(id<ORVar>) z
@@ -2519,6 +2519,24 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
       [ms addObject:obj];
    }];
    return ms;
+}
+@end
+
+@implementation ORSoftKnapsackI {
+   id<ORVar> _slack;
+}
+-(ORSoftKnapsackI*) initORSoftKnapsackI:(id<ORIntVarArray>)x weight:(id<ORIntArray>)w capacity:(id<ORIntVar>)c slack:(id<ORVar>)slack
+{
+   self = [super initORKnapsackI: x weight: w capacity: c];
+   if(self) {
+      _slack = slack;
+   }
+   return self;
+}
+
+-(id<ORVar>) slack
+{
+   return _slack;
 }
 @end
 

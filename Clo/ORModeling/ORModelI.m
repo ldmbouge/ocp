@@ -759,7 +759,7 @@
 {
     return [_paramMap objectForKey: x];
 }
--(id<ORWeightedVar>) parameterizeFloatVar: (id<ORFloatVar>)x
+-(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x
 {
     id<ORWeightedVar> c = [[ORFloatWeightedVarI alloc] initFloatWeightedVar: x];
     [_paramMap setObject: c forKey: x];

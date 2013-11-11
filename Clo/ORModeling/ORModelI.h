@@ -110,7 +110,7 @@
 -(NSArray*) softConstraints;
 -(NSArray*) parameters;
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
--(id<ORWeightedVar>) parameterizeFloatVar: (id<ORFloatVar>)x;
+-(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>

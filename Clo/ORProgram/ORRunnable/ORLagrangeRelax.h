@@ -17,4 +17,5 @@
 -(id<ORModel>) model;
 -(void) run;
 -(ORFloat) bestBound;
+-(id<ORSolution>) bestSolution;
 @end

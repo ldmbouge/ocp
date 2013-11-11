@@ -431,6 +431,12 @@
    [_varShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
    }];
+   if(_paramShots) {
+      [buf appendString: @"\nparameters:\n"];
+      [_paramShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
+         [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
+      }];
+   }
    return buf;
 }
 @end

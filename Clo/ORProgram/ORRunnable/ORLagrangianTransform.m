@@ -24,12 +24,13 @@
         return [c slack];
     }];
     id<ORExpr> slackSum = [ORFactory sum: relaxedModel over: slackRange suchThat: nil of: ^id<ORExpr>(ORInt i) {
-        id<ORFloatVar> s = [slacks at: i];
-        id<ORWeightedVar> parameterization = [relaxedModel parameterizeFloatVar: s];
+        id<ORVar> s = [slacks at: i];
+        id<ORWeightedVar> parameterization = [relaxedModel parameterizeVar: s];
         return [parameterization z];
     }];
     id<ORExpr> prevObjective = [((id<ORObjectiveFunctionExpr>)[relaxedModel objective]) expr];
-    [relaxedModel minimize: [prevObjective plus: slackSum track: relaxedModel]];
+    if(prevObjective) [relaxedModel minimize: [prevObjective plus: slackSum track: relaxedModel]];
+    else [relaxedModel minimize: slackSum];
     [relaxedModel setSource: m];
     return relaxedModel;
 }

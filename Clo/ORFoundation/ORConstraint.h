@@ -392,6 +392,9 @@ enum ORGroupType {
 -(id<ORIntVar>) capacity;
 @end
 
+@protocol ORSoftKnapsack <ORKnapsack, ORSoftConstraint>
+@end
+
 @protocol ORAssignment <ORConstraint>
 -(id<ORIntVarArray>) x;
 -(id<ORIntMatrix>) matrix;
