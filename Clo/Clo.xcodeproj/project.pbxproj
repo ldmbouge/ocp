@@ -230,6 +230,16 @@
 		5B3896061795BE1E004CCE93 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B3DAE4A1677988700F01DBF /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3DAE4B1677988700F01DBF /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
+		5B40969E183263F300660DDD /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B4096A0183263F300660DDD /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B4096A1183263F300660DDD /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5B4096A2183263F300660DDD /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B4096A3183263F300660DDD /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B4096A4183263F300660DDD /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B4096A5183263F300660DDD /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B4096A6183263F300660DDD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5B4096A8183263F300660DDD /* market.dta in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7D696C15B9C99200C9A10C /* market.dta */; };
+		5B4096AF183264C000660DDD /* mainLR.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4096AE183264C000660DDD /* mainLR.m */; };
 		5B40C21114F80A7D0041D162 /* CPObjectQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B40C21214F80A7D0041D162 /* CPObjectQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B40C21014F80A7D0041D162 /* CPObjectQueue.m */; };
 		5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64310139D49610056F448 /* ORTrail.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2026,6 +2036,48 @@
 			remoteInfo = CPUKernel;
 		};
 		5B3895FF1795BE12004CCE93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5B409691183263F300660DDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5B409693183263F300660DDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5B409695183263F300660DDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5B409697183263F300660DDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B409699183263F300660DDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B40969B183263F300660DDD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -4228,6 +4280,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		5B4096A7183263F300660DDD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				5B4096A8183263F300660DDD /* market.dta in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B5096DE1619B6CB00171F9D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4952,6 +5014,8 @@
 		5B3895EC1795BE07004CCE93 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B3895EF1795BE07004CCE93 /* fwarehouse-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fwarehouse-Prefix.pch"; sourceTree = "<group>"; };
 		5B3895F01795BE07004CCE93 /* fwarehouse.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = fwarehouse.1; sourceTree = "<group>"; };
+		5B4096AD183263F300660DDD /* market2s copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "market2s copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B4096AE183264C000660DDD /* mainLR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mainLR.m; sourceTree = "<group>"; };
 		5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPObjectQueue.h; sourceTree = "<group>"; };
 		5B40C21014F80A7D0041D162 /* CPObjectQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPObjectQueue.m; sourceTree = "<group>"; };
 		5B43634015AECE4D00E9458D /* CPDDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDDeg.m; sourceTree = "<group>"; };
@@ -5720,6 +5784,20 @@
 				5B3896051795BE1E004CCE93 /* ORProgram.framework in Frameworks */,
 				5B3896061795BE1E004CCE93 /* ORUtilities.framework in Frameworks */,
 				5B3895EA1795BE07004CCE93 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B40969F183263F300660DDD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B4096A0183263F300660DDD /* CPUKernel.framework in Frameworks */,
+				5B4096A1183263F300660DDD /* ORModeling.framework in Frameworks */,
+				5B4096A2183263F300660DDD /* ORProgram.framework in Frameworks */,
+				5B4096A3183263F300660DDD /* objcp.framework in Frameworks */,
+				5B4096A4183263F300660DDD /* ORFoundation.framework in Frameworks */,
+				5B4096A5183263F300660DDD /* ORUtilities.framework in Frameworks */,
+				5B4096A6183263F300660DDD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7253,6 +7331,7 @@
 				5B3895E91795BE07004CCE93 /* fwarehouse */,
 				B1CFB7EB17C436CD00FB062A /* testF */,
 				3720A58A17CEFA7B00A7F2B5 /* LagrangeSetCovering */,
+				5B4096AD183263F300660DDD /* market2s copy */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7442,6 +7521,7 @@
 			isa = PBXGroup;
 			children = (
 				5B7D695A15B9C91D00C9A10C /* main.m */,
+				5B4096AE183264C000660DDD /* mainLR.m */,
 				5B7D695E15B9C91D00C9A10C /* market2s.1 */,
 				5B7D695C15B9C91D00C9A10C /* Supporting Files */,
 			);
@@ -9301,6 +9381,29 @@
 			productReference = 5B3895E91795BE07004CCE93 /* fwarehouse */;
 			productType = "com.apple.product-type.tool";
 		};
+		5B40968F183263F300660DDD /* market2sLR */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B4096A9183263F300660DDD /* Build configuration list for PBXNativeTarget "market2sLR" */;
+			buildPhases = (
+				5B40969C183263F300660DDD /* Sources */,
+				5B40969F183263F300660DDD /* Frameworks */,
+				5B4096A7183263F300660DDD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B409690183263F300660DDD /* PBXTargetDependency */,
+				5B409692183263F300660DDD /* PBXTargetDependency */,
+				5B409694183263F300660DDD /* PBXTargetDependency */,
+				5B409696183263F300660DDD /* PBXTargetDependency */,
+				5B409698183263F300660DDD /* PBXTargetDependency */,
+				5B40969A183263F300660DDD /* PBXTargetDependency */,
+			);
+			name = market2sLR;
+			productName = market2s;
+			productReference = 5B4096AD183263F300660DDD /* market2s copy */;
+			productType = "com.apple.product-type.tool";
+		};
 		5B5096DF1619B6CB00171F9D /* testDistrib */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B5096EC1619B6CC00171F9D /* Build configuration list for PBXNativeTarget "testDistrib" */;
@@ -11008,6 +11111,7 @@
 				5B3895E81795BE07004CCE93 /* fwarehouse */,
 				B1CFB7EA17C436CD00FB062A /* testF */,
 				3720A58917CEFA7B00A7F2B5 /* LagrangeSetCovering */,
+				5B40968F183263F300660DDD /* market2sLR */,
 			);
 		};
 /* End PBXProject section */
@@ -11273,6 +11377,15 @@
 			files = (
 				5BE617F2179AD17E009DD473 /* ORCmdLineArgs.m in Sources */,
 				5B3895ED1795BE07004CCE93 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B40969C183263F300660DDD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B4096AF183264C000660DDD /* mainLR.m in Sources */,
+				5B40969E183263F300660DDD /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12723,6 +12836,36 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B3895FF1795BE12004CCE93 /* PBXContainerItemProxy */;
+		};
+		5B409690183263F300660DDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5B409691183263F300660DDD /* PBXContainerItemProxy */;
+		};
+		5B409692183263F300660DDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5B409693183263F300660DDD /* PBXContainerItemProxy */;
+		};
+		5B409694183263F300660DDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B409695183263F300660DDD /* PBXContainerItemProxy */;
+		};
+		5B409696183263F300660DDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B409697183263F300660DDD /* PBXContainerItemProxy */;
+		};
+		5B409698183263F300660DDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B409699183263F300660DDD /* PBXContainerItemProxy */;
+		};
+		5B40969A183263F300660DDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B40969B183263F300660DDD /* PBXContainerItemProxy */;
 		};
 		5B49CAA116CEE28600D9125E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14806,6 +14949,34 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
+		};
+		5B4096AA183263F300660DDD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				PRODUCT_NAME = "market2s copy";
+			};
+			name = Debug;
+		};
+		5B4096AB183263F300660DDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				PRODUCT_NAME = "market2s copy";
+			};
+			name = Release;
+		};
+		5B4096AC183263F300660DDD /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				PRODUCT_NAME = "market2s copy";
+			};
+			name = Coverage;
 		};
 		5B5096EA1619B6CC00171F9D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -18485,6 +18656,16 @@
 				5B3895F21795BE07004CCE93 /* Debug */,
 				5B3895F31795BE07004CCE93 /* Release */,
 				5BCE24C3181AB2AA000789F9 /* Coverage */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5B4096A9183263F300660DDD /* Build configuration list for PBXNativeTarget "market2sLR" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B4096AA183263F300660DDD /* Debug */,
+				5B4096AB183263F300660DDD /* Release */,
+				5B4096AC183263F300660DDD /* Coverage */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

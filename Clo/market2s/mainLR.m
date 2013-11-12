@@ -71,7 +71,14 @@ int main(int argc, const char * argv[])
             id<ORIntVar>   r = [ORFactory intVar:model domain:RANGE(model,rhs[i],rhs[i])];
             [model add:[ORFactory knapsack:x weight:coef capacity:r]];
          }
+         
+         //id<ORModel> lm = [ORFactory linearizeModel: model];
+         ORLagrangianTransform* t = [[ORLagrangianTransform alloc] init];
+         id<ORParameterizedModel> lagrangeModel = [t apply: model relaxing: [model constraints]];
+         id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel];
+         [lr run];
 
+          /*
          id<CPProgram> cp  = [args makeProgram:model];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          
@@ -86,6 +93,8 @@ int main(int argc, const char * argv[])
             NSLog(@"Solution: %@",x);
          }];
          id<ORSolution> best = [[cp solutionPool] best];
+           */
+         id<ORSolution> best = [lr bestSolution];
          
          for(int k=0;k < m;k++) {
             ORInt sum = 0;
