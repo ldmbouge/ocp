@@ -93,6 +93,7 @@
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORFloatVar>) var;
@@ -106,6 +107,7 @@
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORFloatVar>) var;

@@ -519,6 +519,10 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 {
    return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: _primalBound minimize:YES];
 }
+-(ORBool)   isBound
+{
+    return [_x bound];
+}
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -601,6 +605,10 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(id<ORObjectiveValue>) primalBound
 {
    return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: _primalBound minimize: NO];
+}
+-(ORBool)   isBound
+{
+    return [_x bound];
 }
 -(NSString*)description
 {
