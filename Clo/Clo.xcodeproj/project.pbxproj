@@ -5138,7 +5138,7 @@
 		5B920EB915A3FDB800AD0820 /* ORDataI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORDataI.h; sourceTree = "<group>"; };
 		5B920EBA15A3FDB800AD0820 /* ORDataI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORDataI.m; sourceTree = "<group>"; };
 		5B920EBD15A402A500AD0820 /* ORArrayI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORArrayI.h; sourceTree = "<group>"; };
-		5B920EBE15A402A500AD0820 /* ORArrayI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORArrayI.m; sourceTree = "<group>"; };
+		5B920EBE15A402A500AD0820 /* ORArrayI.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.objc; path = ORArrayI.m; sourceTree = "<group>"; tabWidth = 3; };
 		5B92975513A01F45002AA188 /* CPValueConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPValueConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B92975613A01F45002AA188 /* CPValueConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPValueConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B93486316553E6E00757F89 /* CPTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTypes.m; sourceTree = "<group>"; };
