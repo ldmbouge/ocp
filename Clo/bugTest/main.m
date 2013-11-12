@@ -128,7 +128,7 @@ int main(int argc, const char * argv[])
       id<ORIntRange> binary = RANGE(model, 0, 1);
       
       //Input Data
-      NSString* file = @"test1.csv";
+      NSString* file = @"vote.csv";
       NSArray* transactions;
       NSArray* items;
       id<ORIntMatrix> matrix;
@@ -158,10 +158,10 @@ int main(int argc, const char * argv[])
             if ([matrix at:t :i]!=0) continue;
             nz[nbnz++] = itemset[i];
          }
-         id<ORExpr> cov = [Sum(model, i, nz.range, nz[i]) eq:@0];
-         [model add:[trans[t] eq:cov]];
+         //[model add:[trans[t] eq:[Sum(model, i, nz.range, nz[i]) eq:@0]]];
+         [model add:[ORFactory reify:model boolean:trans[t] sumbool:nz eqi:0]];
       }
-      
+   
       //Sum of transactionsContainingItemset must be greater than the threshold
       //[model add:[Sum(model, k, transactionRange, [transactionsContainingItemset at:k]) gt:@(2)]];
       for(ORInt i =itemRange.low;i <= itemRange.up;i++) {
@@ -174,25 +174,29 @@ int main(int argc, const char * argv[])
             if ([matrix at:t :i] == 0) continue;
             nz[nbnz++] = trans[t];
          }
-         //id<ORExpr> thr = Sum(model, t, transactionRange, [trans[t] and:@([matrix at:t :i])]);
-         //id<ORExpr> thr = Sum(model, t, nz.range, nz[t]);
-         //[model add:[itemset[i] imply:[thr geq:@2]]];
-         [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:2]];
+         //[model add:[itemset[i] imply:[Sum(model, t, nz.range, nz[t]) geq:@2]]];
+         [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:44]];
       }
       
       [model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
-      
+      __block ORInt nbSol = 0;
       id<CPProgram> cpp = [ORFactory createCPProgram:model];
+      ORLong t0 = [ORRuntimeMonitor cputime];
       [cpp solveAll:
        ^() {
+          NSLog(@"Searching...");
           [cpp labelArray: [model intVars]];
+          nbSol++;
+          [[cpp explorer] fail];
           id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {
              return [cpp intValue:itemset[i]];
           }];
           
           NSLog(@"%@",prettyItemset(freqItemset, items));
        }];
+      ORLong t1 = [ORRuntimeMonitor cputime];
       NSLog(@"Solver status: %@\n",cpp);
+      NSLog(@"CPUtime: %lld",t1-t0);
       NSLog(@"Statistics: %d - %d - %d",[[cpp explorer] nbFailures],[[cpp explorer] nbChoices],
             [[cpp engine] nbPropagation]);
       [cpp release];

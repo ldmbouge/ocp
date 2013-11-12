@@ -816,6 +816,12 @@
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x eqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORReifySumBoolEqc alloc] init:b array:x eqi: c];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) hreify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x eqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORHReifySumBoolEqc alloc] init:b array:x eqi: c];

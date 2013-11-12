@@ -1107,6 +1107,243 @@
 }
 @end
 
+
+@implementation CPReifySumBoolEq { // half reification: b <=> sum(i in S) x_i = c
+   CPIntVar**  _x;
+   ORInt      _nb;
+   TRInt   _nbOne;
+   TRInt  _nbZero;
+}
+-(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x eqi:(ORInt)c
+{
+   self = [super initCPCoreConstraint:[b engine]];
+   _b  = b;
+   _xa = x;
+   _c  = c;
+   return self;
+}
+-(ORStatus) post
+{
+   int nbTrue = 0;
+   int nbPos  = 0;
+   ORInt low = _xa.range.low;
+   ORInt up  = _xa.range.up;
+   _nb = up - low + 1;
+   _x = malloc(sizeof(CPIntVar*)*_nb);
+   ORInt i= 0;
+   for(ORInt k=low;k <= up;++k,++i) {
+      _x[i] = (CPIntVar*) _xa[k];
+      nbTrue += minDom(_x[i])==1;
+      nbPos  += !bound(_x[i]);
+   }
+   if (nbTrue > _c) {              // too many are true already. b necessarily false
+      [_b bind:NO];
+      return ORSuccess;
+   }
+   if (nbTrue + nbPos < _c) {     // We can't possibly make it to _c. b necessarily false
+      [_b bind:NO];
+      return ORSuccess;
+   }
+   // nbTrue + nbPos >= _c >= nbTrue
+   _nbOne  = makeTRInt(_trail, nbTrue);
+   _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
+   if ([_b min] > 0) {         // boolean is true. Constraint _must_ be satisfied
+      if (nbTrue == _c) {            // All the possible should be FALSE
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i]))
+               [_x[i] bind:NO];
+         return ORSuccess;
+      }
+      if (nbTrue + nbPos == _c) {   // All the possible should be TRUE
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i]))
+               [_x[i] bind:YES];
+         return ORSuccess;
+      }
+      // We must satisfy c, but too little info to know what to do.
+   } else if ([_b max] == 0) { // boolean is false, therefore: sum(i in S) x_i != c
+      // REMEMBER: nbTrue + nbPos >= _c >= nbTrue
+      if (nbTrue == _c && nbPos == 1) { // sum(i in S) x_i = c  and only one possible left. Last possible must be true.
+         ORInt nbFixed = 0;
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i])) {
+               [_x[i] bind:YES];
+               ++nbFixed;
+            }
+         assert(nbFixed == 1);
+         return ORSuccess;
+      }
+      if (nbTrue == _c - 1 && nbPos == 1) { // sum(i in S) x_i = c - 1  and only one possible left. It cannot be true.
+         ORInt nbFixed = 0;
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i])) {
+               [_x[i] bind:NO];
+               ++nbFixed;
+            }
+         assert(nbFixed == 1);
+         return ORSuccess;
+      }
+   } else {                    // boolean is not fixed. Only check.
+      if (nbTrue == _c && nbPos == 0) {
+         [_b bind:YES];
+         return ORSuccess;
+      }
+      if (nbPos == 0 && nbTrue != _c) {
+         [_b bind:NO];
+         return ORSuccess;
+      }
+      [_b whenBindPropagate:self];
+   }
+   for(ORInt k=0;k < _nb;k++) {
+      if (bound(_x[k])) continue;
+      [_x[k] whenBindDo:^{ [self propagateIdx:k];} onBehalf:self];
+   }
+   return ORSuspend;
+}
+-(void)propagate
+{
+   assert(bound((id)_b));
+   if ([_b min] > 0) {         // boolean is true. Constraint _must_ be satisfied
+      if (_nbOne._val > _c)    // too many are true already. b necessarily false -> fail!
+         failNow();
+      if (_nb - _nbZero._val < _c)  // We can't possibly make it to _c. b necessarily false
+         failNow();
+      if (_nbOne._val == _c) {     // All the possible should be FALSE
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i]))
+               [_x[i] bind:NO];
+         return;
+      }
+      if (_nb - _nbZero._val == _c) {   // All the possible should be TRUE
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i]))
+               [_x[i] bind:YES];
+         return;
+      }
+   } else if ([_b max] == 0) {
+      if (_nbOne._val == _c && (_nb == _nbOne._val + _nbZero._val))
+         failNow();
+      if (_nbOne._val == _c && (_nb - _nbOne._val - _nbZero._val) == 1) {
+         ORInt nbFixed = 0;
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i])) {
+               [_x[i] bind:YES];
+               ++nbFixed;
+            }
+         assert(nbFixed == 1);
+         return ;
+      }
+      if (_nbOne._val == _c -1 && (_nb - _nbOne._val - _nbZero._val) == 1) {
+         ORInt nbFixed = 0;
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i])) {
+               [_x[i] bind:NO];
+               ++nbFixed;
+            }
+         assert(nbFixed == 1);
+         return ;
+      }
+   }
+}
+-(void)propagateIdx:(ORInt)k
+{
+   ORInt xkv = [_x[k] min];
+   if (xkv)  // ONE more TRUE
+      assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
+   else
+      assignTRInt(&_nbZero, _nbZero._val + 1, _trail);
+   if ([_b min] >= 1) {
+      ORInt nb1 = 0;
+      if (xkv) {  // ONE more TRUE
+         if (_nbOne._val > _c)
+            failNow();
+         if (_nbOne._val == _c) {
+            for(ORInt i=0;i<_nb;i++) {
+               nb1 += ([_x[i] min]==YES);   // already a ONE
+               if (![_x[i] bound])
+                  [_x[i] bind:NO];
+            }
+            if (nb1 != _c)
+               failNow();                     // too many ONES!
+         }
+      } else { // ONE more FALSE
+         if (_nb - _nbZero._val < _c)  // We can't possibly make it to _c. b necessarily false
+            failNow();
+         if (_nb - _nbZero._val == _c) { // we have maxed out the # of FALSE
+            for(ORInt i=0;i < _nb;i++) {
+               if (!bound(_x[i]))
+                  [_x[i] bind:YES];
+               nb1 += ([_x[i] min] == YES);   // already a ONE
+            }
+            if (nb1 != _c)
+               failNow();
+         }
+      }
+   } else if ([_b max] <= 0) {
+      if (_nbOne._val == _c && (_nb == _nbOne._val + _nbZero._val)) // everyone bound, we have c of them--> oops.
+         failNow();
+      if (_nbOne._val == _c && (_nb - _nbOne._val - _nbZero._val) == 1) {
+         ORInt nbFixed = 0;
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i])) {
+               [_x[i] bind:YES];
+               ++nbFixed;
+            }
+         assert(nbFixed == 1);
+         return ;
+      }
+      if (_nbOne._val == _c - 1 && (_nb - _nbOne._val - _nbZero._val) == 1) {
+         ORInt nbFixed = 0;
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i])) {
+               [_x[i] bind:NO];
+               ++nbFixed;
+            }
+         assert(nbFixed == 1);
+         return ;
+      }
+   } else {
+      if (_nbOne._val > _c) {
+         [_b bind:NO];
+         return;
+      }
+      if (_nb - _nbZero._val < _c) {
+         [_b bind:NO];
+         return;
+      }
+      if (_nbOne._val + _nbZero._val == _nb) {
+         [_b bind:YES];
+         return;
+      }
+   }
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPReifySumBoolEq:%02d %@ <=> (%@ == %d)>",_name,_b,_xa,_c];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:_nb + 1] autorelease];
+   [rv addObject:_b];
+   ORInt low = _xa.range.low;
+   ORInt up  = _xa.range.up;
+   for(ORUInt k= low;k <= up;k++)
+      [rv addObject:_xa[k]];
+   return rv;
+}
+-(ORUInt)nbUVars
+{
+   ORUInt nb= ![_b bound];
+   ORInt low = _xa.range.low;
+   ORInt up  = _xa.range.up;
+   for(ORUInt k= low;k <= up;k++)
+      nb += ![_xa[k] bound];
+   return nb;
+}
+@end
+
+// =================================
+
 @implementation CPHReifySumBoolEq { // half reification: b ~> sum(i in S) x_i = c
    CPIntVar**  _x;
    ORInt      _nb;
@@ -1130,8 +1367,8 @@
    _nb = up - low + 1;
    _x = malloc(sizeof(CPIntVar*)*_nb);
    ORInt i= 0;
-   for(ORInt k=low;k <= up;k++) {
-      _x[i++] = (CPIntVar*) _xa[k];
+   for(ORInt k=low;k <= up;++k,++i) {
+      _x[i] = (CPIntVar*) _xa[k];
       nbTrue += minDom(_x[i])==1;
       nbPos  += !bound(_x[i]);
    }
@@ -1234,7 +1471,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPReifySumBoolEq:%02d %@ ~> (%@ == %d)>",_name,_b,_xa,_c];
+   return [NSMutableString stringWithFormat:@"<CPHReifySumBoolEq:%02d %@ ~> (%@ == %d)>",_name,_b,_xa,_c];
 }
 -(NSSet*)allVars
 {
@@ -1372,7 +1609,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPReifySumBoolGEq:%02d %@ ~> (%@ >= %d)>",_name,_b,_xa,_c];
+   return [NSMutableString stringWithFormat:@"<CPHReifySumBoolGEq:%02d %@ ~> (%@ >= %d)>",_name,_b,_xa,_c];
 }
 -(NSSet*)allVars
 {

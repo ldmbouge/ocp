@@ -155,6 +155,17 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPReifySumBoolEq : CPCoreConstraint {
+   id<CPIntVar>       _b;
+   id<CPIntVarArray> _xa;
+   ORInt              _c;
+}
+-(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x eqi:(ORInt)c;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPHReifySumBoolEq : CPCoreConstraint {
    id<CPIntVar>       _b;
    id<CPIntVarArray> _xa;

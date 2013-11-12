@@ -505,6 +505,8 @@
 		5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
+		5B8B655318313B250054E2C6 /* vote.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667135181EF228007CBBA6 /* vote.csv */; };
+		5B8B655418313D0D0054E2C6 /* zoo-1.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667136181EF228007CBBA6 /* zoo-1.csv */; };
 		5B8C7DF3158674D1007042CA /* CPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE7158674D1007042CA /* CPAppDelegate.m */; };
 		5B8C7DF4158674D1007042CA /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE8158674D1007042CA /* Credits.rtf */; };
 		5B8C7DF5158674D1007042CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B8C7DEA158674D1007042CA /* InfoPlist.strings */; };
@@ -4913,6 +4915,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				5B8B655418313D0D0054E2C6 /* zoo-1.csv in CopyFiles */,
+				5B8B655318313B250054E2C6 /* vote.csv in CopyFiles */,
 				5B4FA4E1182A68F500BAA654 /* mushroom.csv in CopyFiles */,
 				5B4FA4E0182A67D500BAA654 /* german-credit.csv in CopyFiles */,
 				5B1D4268181EF28D00EE8C83 /* test1.csv in CopyFiles */,

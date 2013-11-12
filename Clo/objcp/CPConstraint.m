@@ -267,6 +267,12 @@
    [[x tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>) reify:(id<CPIntVar>) b array:(id<CPIntVarArray>)x eqi:(ORInt) c annotation:(ORCLevel)note
+{
+   id<CPConstraint> o = [[CPReifySumBoolEq alloc] init:b array:x eqi:c];
+   [[b tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) hreify:(id<CPIntVar>) b array:(id<CPIntVarArray>)x eqi:(ORInt) c annotation:(ORCLevel)note
 {
    id<CPConstraint> o = [[CPHReifySumBoolEq alloc] init:b array:x eqi:c];

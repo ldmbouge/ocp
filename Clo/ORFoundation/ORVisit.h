@@ -94,6 +94,7 @@
 -(void) visitReifyLEqual: (id<ORReifyLEqual>)c;
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c;
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c;
+-(void) visitReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c;
 -(void) visitHReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c;
 -(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c;
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c;
