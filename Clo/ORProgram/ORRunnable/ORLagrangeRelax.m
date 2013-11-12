@@ -46,6 +46,14 @@
         id<ORSoftConstraint> c = [softCstrs objectAtIndex: i];
         return [c slack];
     }];
+    
+    ORInt branchCount = (ORInt)[[_model intVars] count] - (ORInt)[slacks count];
+    id<ORIdArray> branchVars = [ORFactory idArray: _model range: RANGE(_model, 0, branchCount-1)];
+    __block ORInt k = 0;
+    [[_model intVars] enumerateWith: ^(id obj, ORInt idx) {
+        if(![slacks contains: obj]) [branchVars set: obj at: k++];
+    }];
+    
     id<ORIdArray> lambdas = [ORFactory idArray: _model range: slackRange with: ^id(ORInt i) {
         id<ORVar> slack = [slacks at: i];
         id<ORWeightedVar> w = [_model parameterization: slack];
@@ -65,7 +73,7 @@
         //[program solve];
         [program solve: ^{
             //[program labelHeuristic: h];
-            [program labelArray:[_model intVars]];
+            [program labelArray: (id<ORIntVarArray>)branchVars];
         } ];
         id<ORSolution> sol = [[program solutionPool] best];
         NSLog(@"BEST is: %@",sol);

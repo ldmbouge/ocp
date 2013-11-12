@@ -494,6 +494,12 @@
 {
    return _nb;
 }
+-(ORBool) contains: (id)obj
+{
+   for(ORInt i=_low;i<=_up;i++)
+      if(_array[i] == obj) return YES;
+   return NO;
+}
 -(id<ORIntRange>) range
 {
    return _range;

@@ -73,6 +73,7 @@
 -(ORInt) up;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
+-(ORBool) contains: (id)obj;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(void)enumerateWith:(void(^)(id obj,int idx))block;

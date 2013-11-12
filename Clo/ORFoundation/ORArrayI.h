@@ -75,6 +75,7 @@
 -(ORInt) up;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
+-(ORBool) contains: (id)obj;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
