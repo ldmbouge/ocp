@@ -443,6 +443,7 @@ enum ORGroupType {
 -(void)     updatePrimalBound;
 -(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(void)     tightenWithDualBound: (id<ORObjectiveValue>) newBound;
+-(ORBool)   isBound;
 @end
 
 // pvh: to reconsider the solution pool in this interface; not sure I like them here

@@ -558,7 +558,9 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(ORStatus) enforceObjective
 {
    if (_objective == nil) return ORSuspend;
-   _status = tryfail(^ORStatus{
+   if([_objective isBound] && [[_objective value] floatValue] != FDMAXINT &&
+         [[_objective value] floatValue] != FDMININT) return ORFailure;
+    _status = tryfail(^ORStatus{
       _status = ORSuspend;
       // PVH: Failure to remove?
       ORStatus ok = [_objective check];
