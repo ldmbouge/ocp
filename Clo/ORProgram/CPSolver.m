@@ -653,23 +653,23 @@
       if ([_engine close] == ORFailure)
          [_search fail];
       if (![_hSet empty]) {
-         NSMutableArray* mvar = [[NSMutableArray alloc] initWithCapacity: [[_model variables] count]];
-         NSIndexSet* iset = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [obj conformsToProtocol: @protocol(ORIntVar)];
-         }];
-         [[_model variables] enumerateObjectsAtIndexes: iset options: NSEnumerationReverse usingBlock: ^(id obj, NSUInteger idx, BOOL* stop) {
-            [mvar addObject: obj];
-         }];
-         [iset release];
-         
-         NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
-         for(id<ORVar> v in mvar)
-            [cvar addObject:_gamma[v.getId]];
-         [_hSet applyToAll:^(id<CPHeuristic> h) {
-            [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
-         }];
-         [cvar release];
-         [mvar release];
+         @autoreleasepool {
+            NSMutableArray* mvar = [[NSMutableArray alloc] initWithCapacity: [[_model variables] count]];
+            NSIndexSet* iset = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+               return [obj conformsToProtocol: @protocol(ORIntVar)];
+            }];
+            [[_model variables] enumerateObjectsAtIndexes: iset options: NSEnumerationReverse usingBlock: ^(id obj, NSUInteger idx, BOOL* stop) {
+               [mvar addObject: obj];
+            }];
+            NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
+            for(id<ORVar> v in mvar)
+               [cvar addObject:_gamma[v.getId]];
+            [_hSet applyToAll:^(id<CPHeuristic> h) {
+               [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+            }];
+            [cvar release];
+            [mvar release];
+         }
       }
       [ORConcurrency pumpEvents];
    }

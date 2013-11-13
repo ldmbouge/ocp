@@ -78,22 +78,6 @@ int main(int argc, const char * argv[])
          id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel];
          [lr run];
 
-          /*
-         id<CPProgram> cp  = [args makeProgram:model];
-         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
-         
-         [cp solve: ^{
-            [cp forall: V suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}  orderedBy:^ORInt(ORInt i) { return -tw[i];} do:^(ORInt i) {
-               [cp try:^{
-                  [cp label:x[i] with:0];
-               } or:^{
-                  [cp label:x[i] with:1];
-               }];
-            }];
-            NSLog(@"Solution: %@",x);
-         }];
-         id<ORSolution> best = [[cp solutionPool] best];
-           */
          id<ORSolution> best = [lr bestSolution];
          
          for(int k=0;k < m;k++) {

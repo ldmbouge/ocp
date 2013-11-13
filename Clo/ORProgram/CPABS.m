@@ -674,6 +674,7 @@
             } else {
                NSLog(@"ABS found a local optimum = %@",[_solver objective]);
                [[_solver objective] updatePrimalBound];
+               [_cp doOnSolution];
                //NSLog(@"after updatePrimalBound = %@",[_solver objective]);
             }
          }

@@ -74,6 +74,7 @@
         [program solve: ^{
             //[program labelHeuristic: h];
             [program labelArray: (id<ORIntVarArray>)branchVars];
+           NSLog(@"Got an improvement... %@",[[program objective] value]);
         } ];
         id<ORSolution> sol = [[program solutionPool] best];
         NSLog(@"BEST is: %@",sol);
@@ -92,6 +93,7 @@
             id<ORFloatVar> slack = [slacks at: idx];
             ORFloat newValue = MAX(0, value + stepSize * [sol floatValue: slack]);
             [program paramFloat: lambda setValue: newValue];
+            NSLog(@"New lambda is: %lf",newValue);
         }];
         
         NSLog(@"objective: %f", [objValue value]);
