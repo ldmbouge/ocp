@@ -160,7 +160,7 @@
    [self getMessage:filename];
    [self getMD5Digest:filename];
    //get MD5 Blocks
-   _temps = [[NSMutableArray alloc] initWithCapacity:128];
+//   _temps = [[NSMutableArray alloc] initWithCapacity:128];
    [self createMD5Blocks:mask];
    digest = [self stateModel];
    uint32 *value = malloc(sizeof(uint32));
@@ -189,9 +189,8 @@
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
+   id<ORBasicModel> model = [engine model];
 
-//<<<<<<< HEAD
-   //CPBitVarFF
    __block id* gamma = [cp gamma];
    
    NSLog(@"Message Blocks (Original)");
@@ -203,18 +202,17 @@
    }
    
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
+//   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:[[cp engine] nbVars]-1]];
    for(ORInt k=0;k <= 15;k++)
       [o set:gamma[bitVars[k].getId] at:k];
+   NSArray* allvars = [model variables];
 
    id<CPBitVarHeuristic> h;
    switch (heur) {
       case BVABS: h = [cp createBitVarABS:(id<CPBitVarArray>)o];
                   break;
-      case BVFF:
-        default:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+      case BVFF:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
                   break;
-//      default:
-//         break;
    }
    
    [cp solve: ^{
@@ -232,12 +230,18 @@
 //                        in:^{[cp labelBitVarHeuristic:h];}];}
 //        onRepeat:^{maxFail<<=1;NSLog(@"Restart");}];
       switch (heur) {
+         case BVLSB:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelUpFromLSB:gamma[bitVars[i].getId]];
+               }
+            break;
          case BVRAND:
-                        for (int i=0;i<16;i++)
-                           if (![gamma [bitVars[i].getId] bound]) {
-                              [cp labelRandomFreeBit:gamma[bitVars[i].getId]];
-                           }
-                        break;
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelRandomFreeBit:gamma[bitVars[i].getId]];
+               }
+            break;
          case BVMID:
             for (int i=0;i<16;i++)
                if (![gamma [bitVars[i].getId] bound]) {
@@ -252,7 +256,7 @@
             break;
             
          default:       [cp labelBitVarHeuristic:h];
-                        break;
+            break;
       }
 //      for (int i=0;i<16;i++)
 //         if (![gamma [bitVars[i].getId] bound]) {
@@ -264,6 +268,12 @@
             NSLog(@"%@\n",gamma[bitVars[j].getId]);
 
          }
+      NSLog(@"All variables:");
+      for (int i=0; i< [allvars count]; i++) {
+         NSLog(@"Model Variable[%i]: %x",i,[allvars[i] getLow]->_val);
+      }
+      NSLog(@"End all variables:");
+
 
          double totalTime, searchTime;
          totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;

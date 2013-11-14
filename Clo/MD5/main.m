@@ -20,7 +20,8 @@
 #import <objcp/CPBitConstraint.h>
 #import "MD4.h"
 #import "MD5.h"
-
+//#import "../SHA1/SHA1.h"
+#import "../SHA1/SHA1/SHA1b.h"
 
 
 void twoByteMD4(NSString* filename, BVSearchHeuristic heur)
@@ -138,6 +139,108 @@ void twoByteMD5(NSString* filename, BVSearchHeuristic heur)
       [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 //      [pool drain];
    }
+void twoByteSHA1(NSString* filename, BVSearchHeuristic heur)
+{
+   NSAutoreleasePool* pool; // = [[NSAutoreleasePool alloc] init];
+   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-SHA1Data-"];
+   switch (heur) {
+      case BVFF:  [outputFilename appendString:@"-FirstFail-2BYTE-"];
+         break;
+      case BVABS:  [outputFilename appendString:@"-ABS-2BYTE-"];
+         break;
+      case BVLSB:  [outputFilename appendString:@"-LSB-2BYTE-"];
+         break;
+      case BVMSB:  [outputFilename appendString:@"-MSB-2BYTE-"];
+         break;
+      case BVMID:  [outputFilename appendString:@"-MID-OUT-2BYTE-"];
+         break;
+      case BVRAND:  [outputFilename appendString:@"-RAND-2BYTE-"];
+         break;
+      case BVMIX:  [outputFilename appendString:@"-MIXED-2BYTE-"];
+         break;
+      default:
+         break;
+   }
+   
+   [outputFilename appendString:filename];
+   int num = 0;
+   //      pool = [[NSAutoreleasePool alloc] init];
+   [ORStreamManager setRandomized];
+   
+   SHA1b *mySHA1;
+   
+   NSMutableString *str = [NSMutableString stringWithString:@"bit,choices,failures,propagations,search time (s),total time (s)\n"];
+   
+   uint32 *mask = malloc(16*sizeof(uint32));
+   uint32 twobytemask;
+   
+   for(int i=0;i<16;i++)
+      mask[i] = 0xFFFFFFFF;
+   for(int i=0;i<16;i++){
+      twobytemask = 0xFFFF0000;
+      for(int j=0;j<4;j++){
+         mask[i] = ~twobytemask;
+         if ((j==3) && (i<15)) {
+            mask[i+1] = 0x00FFFFFF;
+         }
+         pool = [[NSAutoreleasePool alloc] init];
+         mySHA1 = [SHA1b initSHA1b];
+         [str appendFormat:@"%d ",num++];
+         [str appendString:[mySHA1 preimage:filename withMask:mask andHeuristic:heur]];
+         [mySHA1 dealloc];
+         [pool drain];
+         twobytemask >>= 8;
+      }
+      mask[i] = 0xFFFFFFFF;
+   }
+   [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+   //      [pool drain];
+}
+void zeroByteSHA1(NSString* filename, BVSearchHeuristic heur)
+{
+   NSAutoreleasePool* pool; // = [[NSAutoreleasePool alloc] init];
+   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-SHA1Data-"];
+   switch (heur) {
+      case BVFF:  [outputFilename appendString:@"-FirstFail-0BYTE-"];
+         break;
+      case BVABS:  [outputFilename appendString:@"-ABS-0BYTE-"];
+         break;
+      case BVLSB:  [outputFilename appendString:@"-LSB-0BYTE-"];
+         break;
+      case BVMSB:  [outputFilename appendString:@"-MSB-0BYTE-"];
+         break;
+      case BVMID:  [outputFilename appendString:@"-MID-OUT-0BYTE-"];
+         break;
+      case BVRAND:  [outputFilename appendString:@"-RAND-0BYTE-"];
+         break;
+      case BVMIX:  [outputFilename appendString:@"-MIXED-0BYTE-"];
+         break;
+      default:
+         break;
+   }
+   
+   [outputFilename appendString:filename];
+   int num = 0;
+   //      pool = [[NSAutoreleasePool alloc] init];
+   [ORStreamManager setRandomized];
+   
+   SHA1b *mySHA1;
+   
+   NSMutableString *str = [NSMutableString stringWithString:@"bit,choices,failures,propagations,search time (s),total time (s)\n"];
+   
+   uint32 *mask = malloc(16*sizeof(uint32));
+   
+   for(int i=0;i<16;i++)
+      mask[i] = 0xFFFFFFFF;
+         pool = [[NSAutoreleasePool alloc] init];
+         mySHA1 = [SHA1b initSHA1b];
+         [str appendFormat:@"%d ",num++];
+         [str appendString:[mySHA1 preimage:filename withMask:mask andHeuristic:heur]];
+         [mySHA1 dealloc];
+         [pool drain];
+   [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+   //      [pool drain];
+}
 
 int main(int argc, const char* argv[])
 {
@@ -209,14 +312,18 @@ int main(int argc, const char* argv[])
 //   twoByteMD4(@"rand6-mssg.txt", BVRAND);
 //   twoByteMD4(@"rand7-mssg.txt", BVRAND);
  
-   twoByteMD4(@"rand0-mssg.txt", BVMIX);
-   twoByteMD4(@"rand1-mssg.txt", BVMIX);
-   twoByteMD4(@"rand2-mssg.txt", BVMIX);
-   twoByteMD4(@"rand3-mssg.txt", BVMIX);
-   twoByteMD4(@"rand4-mssg.txt", BVMIX);
-   twoByteMD4(@"rand5-mssg.txt", BVMIX);
-   twoByteMD4(@"rand6-mssg.txt", BVMIX);
-   twoByteMD4(@"rand7-mssg.txt", BVMIX);
+   twoByteSHA1(@"rand0-mssg.txt", BVFF);
+   twoByteSHA1(@"rand1-mssg.txt", BVFF);
+   twoByteSHA1(@"rand2-mssg.txt", BVFF);
+   twoByteSHA1(@"rand3-mssg.txt", BVFF);
+   twoByteSHA1(@"rand4-mssg.txt", BVFF);
+   twoByteSHA1(@"rand5-mssg.txt", BVFF);
+   twoByteSHA1(@"rand6-mssg.txt", BVFF);
+   twoByteSHA1(@"rand7-mssg.txt", BVFF);
+
+//   twoByteSHA1(@"null-mssg.txt", BVLSB);
+   //twoByteMD5(@"lorem-mssg.txt", BVFF);
+
 
 }
 //int main(int argc, const char * argv[])

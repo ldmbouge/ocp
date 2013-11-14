@@ -1140,6 +1140,8 @@
 		F54AC181179F64C100E0D636 /* CPBitVarBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = F507ECC3176F6D0B00578C4E /* CPBitVarBaseHeuristic.m */; };
 		F54AC182179F660300E0D636 /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C04171AE93F00F309A6 /* CPBitVarABS.h */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
+		F5B87BF1182C4B32004A92E2 /* SHA1b.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B87BF0182C4B32004A92E2 /* SHA1b.m */; settings = {COMPILER_FLAGS = "-O0"; }; };
+		F5BFB4B218070F3000B04147 /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = F5444FB9171F32EE00C86070 /* SHA1.m */; };
 		F5C00744180057CE00873D23 /* A-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C00743180057BF00873D23 /* A-mssg.txt */; };
 		F5C0074A18005AD200873D23 /* 5-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0074918005AC900873D23 /* 5-mssg.txt */; };
 		F5C0074E1800F14700873D23 /* null-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C0074D1800F13700873D23 /* null-mssg.txt */; };
@@ -5163,6 +5165,8 @@
 		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
 		F55DEFB516C9F33E005818AF /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
 		F55DEFB616C9F33E005818AF /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
+		F5B87BEF182C4B32004A92E2 /* SHA1b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA1b.h; path = SHA1/SHA1b.h; sourceTree = "<group>"; };
+		F5B87BF0182C4B32004A92E2 /* SHA1b.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA1b.m; path = SHA1/SHA1b.m; sourceTree = "<group>"; };
 		F5C00743180057BF00873D23 /* A-mssg.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "A-mssg.txt"; sourceTree = "<group>"; };
 		F5C0074918005AC900873D23 /* 5-mssg.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "5-mssg.txt"; sourceTree = "<group>"; };
 		F5C0074D1800F13700873D23 /* null-mssg.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "null-mssg.txt"; sourceTree = "<group>"; };
@@ -8209,6 +8213,8 @@
 				F5444FAF171F32C900C86070 /* main.m */,
 				F5444FB3171F32C900C86070 /* SHA1.1 */,
 				F5444FB1171F32C900C86070 /* Supporting Files */,
+				F5B87BEF182C4B32004A92E2 /* SHA1b.h */,
+				F5B87BF0182C4B32004A92E2 /* SHA1b.m */,
 			);
 			path = SHA1;
 			sourceTree = "<group>";
@@ -11454,8 +11460,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5BFB4B218070F3000B04147 /* SHA1.m in Sources */,
 				F548AA76167FB1C600726814 /* main.m in Sources */,
 				F548AAB21680B3A500726814 /* MD4.m in Sources */,
+				F5B87BF1182C4B32004A92E2 /* SHA1b.m in Sources */,
 				5B6CFDB416D93A7600BCB95F /* ORCmdLineArgs.m in Sources */,
 				F55DEFB716C9F33E005818AF /* MD5.m in Sources */,
 			);

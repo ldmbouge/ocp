@@ -778,11 +778,36 @@
 -(void) labelUpFromLSB:(id<CPBitVar>) x
 {
    int i;
+   __block long long int domainBefore;
+   __block long long int domainAfter;
+   __block long long int domainDiff;
+   __block id<ORBasicModel> mdl = [_engine model];
+   NSArray* variables = [mdl variables];
 //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
    while ((i=[x lsFreeBit])>=0) {
       NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
-      [_search try: ^() { [self labelBV:x at:i with:false];}
-                or: ^() { [self labelBV:x at:i with:true];}];
+      [_search try: ^() {  domainBefore = domainAfter = 0;
+                           for(int j=0;j<[variables count];j++)
+                              domainBefore += [variables[j] domsize];
+                           [self labelBV:x at:i with:false];
+                           for(int j=0;j<[variables count];j++)
+                              domainBefore += [variables[j] domsize];
+                              domainDiff = domainBefore-domainAfter;
+                           //if ((domainDiff = domainBefore-domainAfter)>20000)
+                              //NSLog(@"Setting bit %i to false of %@ reduced search space by %lli",i,x,domainDiff);
+                        }
+       
+                or: ^() { domainBefore = domainAfter = 0;
+                   for(int j=0;j<[variables count];j++)
+                      domainBefore += [variables[j] domsize];
+                   [self labelBV:x at:i with:true];
+                   for(int j=0;j<[variables count];j++)
+                      domainBefore += [variables[j] domsize];
+                     domainDiff = domainBefore-domainAfter;
+                   //if ((domainDiff = domainBefore-domainAfter)>20000)
+                      //NSLog(@"Setting bit %i to true  of %@ reduced search space by %lli",i,x,domainDiff);
+                }
+];
    }
 }
 
@@ -802,13 +827,37 @@
 -(void) labelOutFromMidFreeBit:(id<CPBitVar>) x
 {
    int i;
+   __block long long int domainBefore;
+   __block long long int domainAfter;
+   __block long long int domainDiff;
+   __block id<ORBasicModel> mdl = [_engine model];
+   NSArray* variables = [mdl variables];
    //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
    while (![x bound]) {
       i=[x midFreeBit];
-      //      NSLog(@"%@ shows MSB as %d",bv,i);
-      NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
-      [_search try: ^() { [self labelBV:x at:i with:false];}
-                or: ^() { [self labelBV:x at:i with:true];}];
+      NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
+      [_search try: ^() {  domainBefore = domainAfter = 0;
+         for(int j=0;j<[variables count];j++)
+            domainBefore += [variables[j] domsize];
+         [self labelBV:x at:i with:false];
+         for(int j=0;j<[variables count];j++)
+            domainBefore += [variables[j] domsize];
+         domainDiff = domainBefore-domainAfter;
+         //if ((domainDiff = domainBefore-domainAfter)>20000)
+         //NSLog(@"Setting bit %i to false of %@ reduced search space by %lli",i,x,domainDiff);
+      }
+       
+                or: ^() { domainBefore = domainAfter = 0;
+                   for(int j=0;j<[variables count];j++)
+                      domainBefore += [variables[j] domsize];
+                   [self labelBV:x at:i with:true];
+                   for(int j=0;j<[variables count];j++)
+                      domainBefore += [variables[j] domsize];
+                   domainDiff = domainBefore-domainAfter;
+                   //if ((domainDiff = domainBefore-domainAfter)>20000)
+                   //NSLog(@"Setting bit %i to true  of %@ reduced search space by %lli",i,x,domainDiff);
+                }
+       ];
    }
 }
 
@@ -1280,6 +1329,7 @@
 }
 -(void) labelBitVar: (id<ORBitVar>) var at:(ORUInt)idx with: (ORUInt) val
 {
+   
    return [self labelBVImpl: _gamma[var.getId] at:idx with: val];
 }
 -(void) bitVarDiff: (id<ORBitVar>) var with: (ORUInt) val

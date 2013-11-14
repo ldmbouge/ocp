@@ -226,11 +226,9 @@
    id<CPBitVarHeuristic> h;
    switch (heur) {
       case BVABS: h = [cp createBitVarABS:(id<CPBitVarArray>)o];
-         break;
+                  break;
       case BVFF:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
-         break;
-         //      default:
-         //         break;
+                  break;
    }
    
    [cp solve: ^{
@@ -253,6 +251,12 @@
       //            [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
       //         }
       switch (heur) {
+         case BVLSB:
+            for (int i=0;i<16;i++)
+               if (![gamma [bitVars[i].getId] bound]) {
+                  [cp labelUpFromLSB:gamma[bitVars[i].getId]];
+               }
+            break;
          case BVRAND:
             for (int i=0;i<16;i++)
                if (![gamma [bitVars[i].getId] bound]) {

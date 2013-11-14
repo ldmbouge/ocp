@@ -673,8 +673,8 @@
    for(ORInt i = [bvars low];i <= [bvars up];i++) {
       //NSAssert([bvars[i] isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", bvars[i], [[CPBitVarI class] description]);
       if ([bvars[i] bound]) continue;
-//      mxp += log([(id)bvars[i] domsize]);
-      mxp += pow(2,[(id)bvars[i] domsize]);
+      mxp += log([(id)bvars[i] domsize]);
+//      mxp += pow(2,[(id)bvars[i] domsize]);
    }
    const ORInt maxProbes = (int)10 * mxp;
    NSLog(@"#vars:  %d --> maximum # probes: %u  (MXP=%f)",probeDepth,maxProbes,mxp);
@@ -719,7 +719,7 @@
             if (nbVS) { // we found someone
                CPBitVarI* xi = (CPBitVarI*)bvars[i];
                NSAssert([xi isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", xi, [[CPBitVarI class] description]);
-               ORUInt idx = [xi randomFreeBit]; //randomize
+               ORUInt idx = [xi midFreeBit]; //randomize
                ORBool v = arc4random_uniform(2)==0;
                ORStatus s = [_solver enforce: ^ORStatus { return [(id<CPBitVar>)xi bind:idx to:v];}];
                [ORConcurrency pumpEvents];
@@ -762,7 +762,7 @@
          for(ABSBitVarNogood* b in localKill) {
             
             //TODO:For BitVars we can just bind the bit to  the opposite value
-            [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
+            [_solver enforce: ^ORStatus { return [[b variable] bind:[b index] to:[b value]];}];
             //NSLog(@"Imposing local SAC %@",b);
          }
          [localKill removeAllObjects];
