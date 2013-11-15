@@ -949,6 +949,10 @@
    _c  = c;
    return self;
 }
+-(void)dealloc
+{
+   [super dealloc];
+}
 -(ORStatus) post
 {
    int nbTrue = 0;
@@ -1029,6 +1033,7 @@
 }
 -(void)propagate
 {
+   //NSLog(@"reify propagate %@ <=> %@ == %d",_b,_xa,_c);
    assert(bound((id)_b));
    if ([_b min] > 0) {         // boolean is true. Constraint _must_ be satisfied
       if (_nbOne._val > _c)    // too many are true already. b necessarily false -> fail!
@@ -1039,12 +1044,14 @@
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                [_x[i] bind:NO];
+         assignTRInt(&_active, NO, _trail);
          return;
       }
       if (_nb - _nbZero._val == _c) {   // All the possible should be TRUE
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                [_x[i] bind:YES];
+         assignTRInt(&_active, NO, _trail);
          return;
       }
    } else if ([_b max] == 0) {
@@ -1058,6 +1065,7 @@
                ++nbFixed;
             }
          assert(nbFixed == 1);
+         assignTRInt(&_active, NO, _trail);
          return ;
       }
       if (_nbOne._val == _c -1 && (_nb - _nbOne._val - _nbZero._val) == 1) {
@@ -1068,12 +1076,14 @@
                ++nbFixed;
             }
          assert(nbFixed == 1);
+         assignTRInt(&_active, NO, _trail);
          return ;
       }
    }
 }
 -(void)propagateIdx:(ORInt)k
 {
+   //NSLog(@"reify propagateIdx(%d) %@ <=> %@ == %d",k,_b,_xa,_c);
    ORInt xkv = [_x[k] min];
    if (xkv)  // ONE more TRUE
       assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
@@ -1092,6 +1102,7 @@
             }
             if (nb1 != _c)
                failNow();                     // too many ONES!
+            assignTRInt(&_active, NO, _trail);
          }
       } else { // ONE more FALSE
          if (_nb - _nbZero._val < _c)  // We can't possibly make it to _c. b necessarily false
@@ -1104,6 +1115,7 @@
             }
             if (nb1 != _c)
                failNow();
+            assignTRInt(&_active, NO, _trail);
          }
       }
    } else if ([_b max] <= 0) {
@@ -1117,6 +1129,7 @@
                ++nbFixed;
             }
          assert(nbFixed == 1);
+         assignTRInt(&_active, NO, _trail);
          return ;
       }
       if (_nbOne._val == _c - 1 && (_nb - _nbOne._val - _nbZero._val) == 1) {
@@ -1127,19 +1140,23 @@
                ++nbFixed;
             }
          assert(nbFixed == 1);
+         assignTRInt(&_active, NO, _trail);
          return ;
       }
    } else {
       if (_nbOne._val > _c) {
          [_b bind:NO];
+         assignTRInt(&_active, NO, _trail);
          return;
       }
       if (_nb - _nbZero._val < _c) {
          [_b bind:NO];
+         assignTRInt(&_active, NO, _trail);
          return;
       }
       if (_nbOne._val + _nbZero._val == _nb) {
          [_b bind:YES];
+         assignTRInt(&_active, NO, _trail);
          return;
       }
    }
@@ -1349,13 +1366,13 @@
       nbTrue += minDom(_x[i])==1;
       nbPos  += !bound(_x[i]);
    }
-   if (nbTrue >= _c) {               // too many are true already. b necessarily false
+   if (nbTrue >= _c) {               // too many are true already. b necessarily true
       [_b bind:YES];
-      return ORSuccess;
+      return ORSkip;
    }
    if (nbTrue + nbPos < _c) {     // We can't possibly make it to _c. b necessarily false
       [_b bind:NO];
-      return ORSuccess;
+      return ORSkip;
    }
    if ([_b min] > 0) {         // boolean is true. Constraint _must_ be satisfied
       _nbOne  = makeTRInt(_trail, nbTrue);
@@ -1394,16 +1411,19 @@
       _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
       if (nbTrue >= _c) {              // too many are true already. b necessarily false
          [_b bind:YES];
+         assignTRInt(&_active, NO, _trail);
          return;
       }
       if (nbTrue + nbPos < _c) {      // We can't possibly make it to _c. b necessarily false
          [_b bind:NO];
+         assignTRInt(&_active, NO, _trail);
          return;
       }
       if (nbTrue + nbPos == _c) {   // All the possible should be TRUE
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                [_x[i] bind:YES];
+         assignTRInt(&_active, NO, _trail);
          return;
       }
       for(ORInt k=0;k < _nb;k++) {
@@ -1429,6 +1449,7 @@
          }
          if (nb1 != _c)
             failNow();
+         assignTRInt(&_active, NO, _trail);
       }
       else
          assignTRInt(&_nbZero, _nbZero._val + 1, _trail);

@@ -284,6 +284,19 @@
    [tracker trackMutable: o];
    return o;
 }
++(id) slice:(id<ORTracker>)model range:(id<ORIntRange>)r suchThat:(ORInt2Bool)f of:(ORInt2Id)e
+{
+   ORInt nbOk = 0;
+   for(ORInt k=r.low;k <= r.up;k++)
+      nbOk += f(k);
+   id<ORIdArray> o = [ORFactory idArray:model range:RANGE(model,0,nbOk-1)];
+   ORInt i = 0;
+   for(ORInt k=r.low;k <= r.up;k++)
+      if (f(k))
+         [o set:e(k) at:i++];
+   return o;
+}
+
 
 +(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
 {

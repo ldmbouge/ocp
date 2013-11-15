@@ -1970,7 +1970,6 @@
    [aCoder encodeObject:_ba];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
-
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super initWithCoder:aDecoder];

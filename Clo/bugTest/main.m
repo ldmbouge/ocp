@@ -149,32 +149,18 @@ int main(int argc, const char * argv[])
       
       //A value is 1 in transactionsContainingItemsets iff that transaction contains all of the items in the itemset
       for (ORInt t = [transactionRange low]; t <= [transactionRange up]; t++){
-         ORInt nbnz = 0;
-         for(ORInt i = itemRange.low;i <= itemRange.up;i++)
-            nbnz += ![matrix at:t :i];
-         id<ORIntVarArray> nz = (id)[ORFactory idArray:model range:RANGE(model,0,nbnz-1)];
-         nbnz = 0;
-         for(ORInt i = itemRange.low;i <= itemRange.up;i++) {
-            if ([matrix at:t :i]!=0) continue;
-            nz[nbnz++] = itemset[i];
-         }
-         //[model add:[trans[t] eq:[Sum(model, i, nz.range, nz[i]) eq:@0]]];
+         id<ORIntVarArray> nz = [ORFactory slice:model
+                                           range:itemRange
+                                        suchThat:^bool(ORInt i)         { return ![matrix at:t :i];}
+                                              of:^id<ORIntVar>(ORInt i) { return itemset[i];}];
          [model add:[ORFactory reify:model boolean:trans[t] sumbool:nz eqi:0]];
       }
-   
       //Sum of transactionsContainingItemset must be greater than the threshold
-      //[model add:[Sum(model, k, transactionRange, [transactionsContainingItemset at:k]) gt:@(2)]];
       for(ORInt i =itemRange.low;i <= itemRange.up;i++) {
-         ORInt nbnz = 0;
-         for(ORInt t=transactionRange.low;t <= transactionRange.up; t++)
-            nbnz += [matrix at:t :i];
-         id<ORIntVarArray> nz = (id)[ORFactory idArray:model range:RANGE(model,0,nbnz-1)];
-         nbnz = 0;
-         for(ORInt t=transactionRange.low;t <= transactionRange.up; t++) {
-            if ([matrix at:t :i] == 0) continue;
-            nz[nbnz++] = trans[t];
-         }
-         //[model add:[itemset[i] imply:[Sum(model, t, nz.range, nz[t]) geq:@2]]];
+         id<ORIntVarArray> nz = [ORFactory slice:model
+                                           range:transactionRange
+                                        suchThat:^bool(ORInt t) { return [matrix at:t :i];}
+                                              of:^id(ORInt t)   { return trans[t];}];
          [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:44]];
       }
       
