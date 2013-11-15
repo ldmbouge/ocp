@@ -29,7 +29,7 @@
 +(id<CPConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
 @end
 
-@interface CPBitEqual : CPCoreConstraint<NSCoding> {
+@interface CPBitEqual : CPCoreConstraint {
 @private
     CPBitVarI*  _x;
     CPBitVarI*  _y;
@@ -40,7 +40,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitNOT : CPCoreConstraint<NSCoding>{
+@interface CPBitNOT : CPCoreConstraint{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;    
@@ -51,7 +51,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitAND : CPCoreConstraint<NSCoding>{
+@interface CPBitAND : CPCoreConstraint{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -63,7 +63,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitOR : CPCoreConstraint<NSCoding>{
+@interface CPBitOR : CPCoreConstraint{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -75,7 +75,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitXOR : CPCoreConstraint<NSCoding>{
+@interface CPBitXOR : CPCoreConstraint{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -87,7 +87,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitIF : CPCoreConstraint<NSCoding>{
+@interface CPBitIF : CPCoreConstraint{
 @private 
     CPBitVarI* _w;
     CPBitVarI* _x;
@@ -101,7 +101,7 @@
 @end
 
 
-@interface CPBitShiftL : CPCoreConstraint<NSCoding>{
+@interface CPBitShiftL : CPCoreConstraint{
 @private 
     CPBitVarI*      _x;
     CPBitVarI*      _y;
@@ -113,7 +113,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitRotateL : CPCoreConstraint<NSCoding>{
+@interface CPBitRotateL : CPCoreConstraint{
 @private
    CPBitVarI*      _x;
    CPBitVarI*      _y;
@@ -126,7 +126,7 @@
 @end
 
 
-@interface CPBitShiftR : CPCoreConstraint<NSCoding>{
+@interface CPBitShiftR : CPCoreConstraint{
 @private 
     CPBitVarI*      _x;
     CPBitVarI*      _y;
@@ -138,7 +138,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitADD: CPCoreConstraint<NSCoding>{
+@interface CPBitADD: CPCoreConstraint{
 @private
     CPBitVarI*      _x;
     CPBitVarI*      _y;

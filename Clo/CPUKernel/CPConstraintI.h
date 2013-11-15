@@ -15,7 +15,7 @@
 
 @class CPEngineI;
 
-@interface CPCoreConstraint : ORObject<NSCoding,CPConstraint> {
+@interface CPCoreConstraint : ORObject<CPConstraint> {
 @public
    CPTodo            _todo;
    BOOL        _idempotent;

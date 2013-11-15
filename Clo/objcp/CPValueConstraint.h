@@ -19,7 +19,7 @@
 @class CPIntVarI;
 @class CPEngineI;
 
-@interface CPReifyNotEqualcDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyNotEqualcDC : CPCoreConstraint {
 @private
     CPIntVar* _b;
     CPIntVar* _x;
@@ -31,7 +31,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyEqualcDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyEqualcDC : CPCoreConstraint {
 @private
     CPIntVar* _b;
     CPIntVar* _x;
@@ -43,7 +43,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyEqualBC : CPCoreConstraint<NSCoding> {
+@interface CPReifyEqualBC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
@@ -55,7 +55,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyEqualDC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
@@ -67,7 +67,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyNEqualBC : CPCoreConstraint<NSCoding> {
+@interface CPReifyNEqualBC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
@@ -79,7 +79,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyNEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyNEqualDC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
@@ -103,7 +103,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyLEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyLEqualDC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
@@ -115,7 +115,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyGEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyGEqualDC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
@@ -127,7 +127,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPSumBoolGeq : CPCoreConstraint<NSCoding> {
+@interface CPSumBoolGeq : CPCoreConstraint {
     CPIntVar**       _x;
     ORLong           _nb;
     ORInt             _c;
@@ -142,7 +142,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPSumBoolEq : CPCoreConstraint<NSCoding> {
+@interface CPSumBoolEq : CPCoreConstraint {
    id<CPIntVarArray> _xa;
    CPIntVar**        _x;
    ORLong            _nb;

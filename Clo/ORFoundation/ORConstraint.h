@@ -511,7 +511,7 @@ enum ORGroupType {
 
 // Root implementation class (needed so that sub-frameworks can write constraints)
 
-@interface ORConstraintI : ORObject<ORConstraint>
+@interface ORConstraintI : ORObject<ORConstraint,NSCoding>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
 @end

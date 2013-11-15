@@ -60,21 +60,6 @@
 {
    return [NSMutableString stringWithFormat:@"<CPReifyNotEqualcDC:%02d %@ <=> (%@ != %d)>",_name,_b,_x,_c];
 }
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_b];
-    [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-}
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _b = [aDecoder decodeObject];
-    _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-    return self;
-}
 @end
 
 @implementation CPReifyEqualcDC
@@ -127,22 +112,6 @@
 -(NSString*)description
 {
    return [NSMutableString stringWithFormat:@"<CPReifyEqualcDC:%02d %@ <=> (%@ == %d)>",_name,_b,_x,_c];
-}
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_b];
-    [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _b = [aDecoder decodeObject];
-    _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-    return self;
 }
 @end
 
@@ -226,23 +195,6 @@
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
-}
-
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_b];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _b = [aDecoder decodeObject];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
 }
 @end
 
@@ -365,23 +317,6 @@
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
 }
-
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_b];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _b = [aDecoder decodeObject];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 // ==============================================================================================
@@ -464,23 +399,6 @@
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
-}
-
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_b];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _b = [aDecoder decodeObject];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
 }
 @end
 
@@ -601,23 +519,6 @@
 -(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
-}
-
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_b];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _b = [aDecoder decodeObject];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
 }
 @end
 
@@ -749,22 +650,6 @@
 {
    return [NSMutableString stringWithFormat:@"<CPReifyLEqualDC:%02d %@ <=> (%@ <= %d)>",_name,_b,_x,_c];
 }
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_b];
-   [aCoder encodeObject:_x];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _b = [aDecoder decodeObject];
-   _x = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   return self;
-}
 @end
 
 
@@ -825,27 +710,9 @@
 {
    return [NSMutableString stringWithFormat:@"<CPReifyGEqualDC:%02d %@ <=> (%@ >= %d)>",_name,_b,_x,_c];
 }
-
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_b];
-   [aCoder encodeObject:_x];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _b = [aDecoder decodeObject];
-   _x = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   return self;
-}
 @end
 
 @implementation CPSumBoolGeq
-
 -(id) initCPSumBool: (id) x geq: (ORInt) c
 {
    if ([[x class] conformsToProtocol:@protocol(ORIdArray)]) {
@@ -958,26 +825,6 @@
       nb += ![_x[k] bound];
    return nb;
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];   
-    [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
-    for(ORInt k=0;k<_nb;k++) 
-        [aCoder encodeObject:_x[k]];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-    _x = malloc(sizeof(CPIntVar*)*_nb);   
-    for(ORInt k=0;k<_nb;k++) 
-        _x[k] = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-    return self;
-}
 @end
 
 @implementation CPSumBoolEq {
@@ -1084,26 +931,6 @@
    for(ORUInt k=0;k<_nb;k++)
       nb += ![_x[k] bound];
    return nb;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   for(ORInt k=0;k<_nb;k++)
-      [aCoder encodeObject:_x[k]];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   _x = malloc(sizeof(CPIntVar*)*_nb);
-   for(ORInt k=0;k<_nb;k++)
-      _x[k] = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   return self;
 }
 @end
 
