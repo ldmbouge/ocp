@@ -349,6 +349,10 @@
    [_sPool release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) close
 {}
 

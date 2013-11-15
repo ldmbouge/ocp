@@ -494,6 +494,10 @@
    [_doOnExitArray release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_model release];
