@@ -1081,7 +1081,7 @@
 }
 +(id<ORSoftConstraint>) softKnapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c slack: (id<ORVar>) slack
 {
-    id<ORConstraint> o = [[ORSoftKnapsackI alloc] initORSoftKnapsackI: x weight: w capacity: c slack: slack];
+    id<ORSoftConstraint> o = [[ORSoftKnapsackI alloc] initORSoftKnapsackI: x weight: w capacity: c slack: slack];
     [[slack tracker] trackObject:o];
     return o;
 }

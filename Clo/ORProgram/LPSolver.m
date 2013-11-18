@@ -31,6 +31,19 @@
 -(ORUInt)getId;
 @end
 
+@interface ORLPFloatParamSnapshot : NSObject <ORSnapshot,NSCoding> {
+   ORUInt    _name;
+   ORFloat   _value;
+   
+}
+-(ORLPFloatParamSnapshot*) initLPFloatParamSnapshot: (id<ORFloatParam>) p with: (id<LPProgram>) solver;
+-(ORFloat) floatValue;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
 @implementation ORLPFloatVarSnapshot
 -(ORLPFloatVarSnapshot*) initLPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<LPProgram>) solver
 {
@@ -99,6 +112,69 @@
    return self;
 }
 @end
+
+@implementation ORLPFloatParamSnapshot
+-(ORLPFloatParamSnapshot*) initLPFloatParamSnapshot: (id<ORFloatParam>) p with: (id<LPProgram>) solver
+{
+   self = [super init];
+   _name = [p getId];
+   _value = [solver paramFloatValue: p];
+   return self;
+}
+-(ORUInt)getId
+{
+   return _name;
+}
+-(ORInt) intValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "intValue not implemented"];
+}
+-(ORBool) boolValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "boolValue not implemented"];
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      ORLPFloatParamSnapshot* other = object;
+      if (_name == other->_name) {
+         return (_value == other->_value);
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"floatparam(%d) : %f",_name,_value];
+   return buf;
+}
+
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+@end
+
 
 @interface ORLPConstraintSnapshot : NSObject <ORSnapshot,NSCoding> {
    ORUInt    _name;
@@ -192,6 +268,7 @@
 
 @implementation ORLPSolutionI {
    NSArray*             _varShots;
+   NSArray*             _paramShots;
    NSArray*             _cstrShots;
    id<ORObjectiveValue> _objValue;
 }
@@ -208,6 +285,19 @@
       [shot release];
    }];
    _varShots = snapshots;
+   
+   if([[model source] conformsToProtocol: @protocol(ORParameterizedModel)]) {
+      NSArray* ap = [(id<ORParameterizedModel>)[model source] parameters];
+      ORULong sz = [ap count];
+      NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
+      [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
+         ORLPFloatParamSnapshot* shot = [[ORLPFloatParamSnapshot alloc] initLPFloatParamSnapshot: obj with: solver];
+         [snapshots addObject: shot];
+         [shot release];
+      }];
+      _paramShots = snapshots;
+   }
+   else _paramShots = nil;
    
    NSArray* ac = [model constraints];
    sz = [ac count];
@@ -282,6 +372,13 @@
       return [obj getId] == [var getId];
    }];
    return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
+}
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)p
+{
+   NSUInteger idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [p getId];
+   }];
+   return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
 }
 -(ORFloat) reducedCost: (id<ORFloatVar>) var
 {
@@ -443,6 +540,28 @@
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
 }
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)p
+{
+   return [_lpsolver floatParamValue: _gamma[p.getId]];
+}
+-(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
+{
+   [_lpsolver setORFloatParameter: _gamma[p.getId] value: val];
+   return val;
+}
+-(ORInt) intValue: (id<ORIntVar>) v
+{
+   return (ORInt)[_lpsolver floatValue: _gamma[v.getId]];
+}
+-(ORInt) intExprValue: (id<ORExpr>)e {
+   return (ORInt)[self floatExprValue: e];
+}
+-(ORFloat) floatExprValue: (id<ORExpr>)e {
+   ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];
+   ORFloat v = [eval floatValue: e];
+   [eval release];
+   return v;
+}
 -(id<LPColumn>) freshColumn
 {
    LPColumnI* col = [_lpsolver freshColumn];
@@ -501,6 +620,10 @@
 {
    return [[ORLPSolutionI alloc] initORLPSolutionI: _model with: self];
 }
+-(id<ORTracker>) tracker
+{
+   return self;
+}
 @end
 
 
@@ -548,9 +671,22 @@
 {
    return [_lpsolver floatValue: _gamma[v.getId]];
 }
+-(ORInt) intValue: (id<ORFloatVar>) v
+{
+   return (ORInt)[self floatValue: v];
+}
 -(ORFloat) reducedCost: (id<ORFloatVar>) v
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
+}
+-(ORInt) intExprValue: (id<ORExpr>)e {
+   return (ORInt)[self floatExprValue: e];
+}
+-(ORFloat) floatExprValue: (id<ORExpr>)e {
+   ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];
+   ORFloat v = [eval floatValue: e];
+   [eval release];
+   return v;
 }
 -(ORFloat) objective
 {
@@ -599,6 +735,10 @@
 -(id) trackImmutable:(id) obj
 {
    return [_lpsolver trackImmutable:obj];
+}
+-(id<ORTracker>) tracker
+{
+   return self;
 }
 @end
 

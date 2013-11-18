@@ -573,6 +573,51 @@
 }
 @end
 
+@implementation LPParameterI
+-(LPParameterI*) initLPParameterI: (LPSolverI*) solver
+{
+    self = [super init];
+    _solver = solver;
+    _cstrIdx = -1;
+    _coefIdx = -1;
+    return self;
+}
+-(ORInt) cstrIdx
+{
+    return _cstrIdx;
+}
+-(void) setCstrIdx: (ORInt) idx
+{
+    _cstrIdx = idx;
+}
+-(ORFloat) floatValue
+{
+    return [_solver floatParamValue: self];
+}
+-(void) setFloatValue: (ORFloat)val
+{
+    [_solver setORFloatParameter: self value: val];
+}
+-(ORInt) coefIdx
+{
+    return _coefIdx;
+}
+-(void) setCoefIdx: (ORInt) idx
+{
+    _coefIdx = idx;
+}
+-(NSString*)description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"%f",[_solver floatParamValue:self]];
+    return buf;
+}
+-(ORBool) isInteger
+{
+    return NO;
+}
+@end
+
 @implementation LPColumnI
 
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver
@@ -1270,9 +1315,22 @@
 {
    return [_lp status];
 }
+-(ORInt) intValue: (LPVariableI*) var
+{
+    return (ORInt) [_lp value: var];
+}
 -(ORFloat) floatValue: (LPVariableI*) var
 {
    return [_lp value: var];
+}
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)p
+{
+    return [_lp paramFloatValue: p];
+}
+-(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
+{
+    [_lp setParam: p value: val];
+    return val;
 }
 -(ORFloat) lowerBound: (LPVariableI*) var
 {
@@ -1333,7 +1391,14 @@
 {
    [_lp setStringParameter: name val: val];
 }
-
+-(ORFloat) floatParamValue: (LPParameterI*) param
+{
+    return [_lp paramFloatValue: param];
+}
+-(void) setORFloatParameter: (LPParameterI*)param value: (ORFloat)val
+{
+    [_lp setParam: param value: val];
+}
 -(void) print;
 {
    if (_obj || _nbCstrs > 0) {
@@ -1389,6 +1454,10 @@
    [_oStore addObject:obj];
    [obj release];
    return obj;
+}
+-(id<ORTracker>) tracker
+{
+    return self;
 }
 @end
 

@@ -15,6 +15,7 @@
 #import <objmp/LPType.h>
 #import "gurobi_c.h"
 
+@class LPParameterI;
 
 @interface LPGurobiSolver: NSObject
 {
@@ -39,6 +40,8 @@
 
 -(OROutcome) status;
 -(ORFloat) value: (LPVariableI*) var;
+-(ORFloat) paramFloatValue: (LPParameterI*) param;
+-(void) setParam: (LPParameterI*) param value: (ORFloat)val;
 -(ORFloat) lowerBound: (LPVariableI*) var;
 -(ORFloat) upperBound: (LPVariableI*) var;
 -(ORFloat) objectiveValue;

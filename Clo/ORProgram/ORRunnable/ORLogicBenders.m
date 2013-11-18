@@ -56,13 +56,15 @@
         t1 = [NSDate date];
         timeInMaster += [t1 timeIntervalSinceDate: t0];
         t0 = [NSDate date];
-        id<ORConstraintSet> cut = _slaveBlock();
+        //id<ORConstraintSet> cut = _slaveBlock();
         t1 = [NSDate date];
         timeInSlave += [t1 timeIntervalSinceDate: t0];
         
+        /*
         if(cut == nil || [cut size] == 0) isFeasible = YES;
         else [cut enumerateWith:^(id<ORConstraint> c) {
             [[_master model] add: c]; }]; // Inject cuts
+        */
     } while(!isFeasible);
     NSLog(@"master %f slave %f", timeInMaster, timeInSlave);
 }

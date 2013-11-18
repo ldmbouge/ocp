@@ -108,6 +108,10 @@
 {
    return [[self worker] tracer];
 }
+-(id<ORTracker>) tracker
+{
+    return self;
+}
 -(void) close
 {
    CPSolver* solver = [self worker];
@@ -525,6 +529,15 @@
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
    return [((id<CPProgram>)[self worker]) floatValue: x];
+}
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)x
+{
+    return [[self worker] paramFloatValue: x];
+}
+-(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
+{
+    [[self worker] paramFloat: p setValue: val];
+    return val;
 }
 -(ORFloat) floatExprValue: (id<ORExpr>)e {
     ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];

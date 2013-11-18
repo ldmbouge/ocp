@@ -60,6 +60,25 @@
 -(void) setObject: (LPVariableI*) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
+@interface LPParameterI : NSObject
+{
+@protected
+    LPSolverI*           _solver;
+    ORInt                 _cstrIdx;
+    ORInt                 _coefIdx;
+}
+-(LPParameterI*) initLPParameterI: (LPSolverI*) solver;
+-(ORInt) cstrIdx;
+-(void) setCstrIdx: (ORInt) idx;
+-(ORInt) coefIdx;
+-(void) setCoefIdx: (ORInt) idx;
+-(ORFloat) floatValue;
+-(void) setFloatValue: (ORFloat)val;
+
+-(NSString*)description;
+-(ORBool) isInteger;
+@end
+
 
 @interface LPConstraintI : NSObject 
 {
@@ -303,6 +322,9 @@
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
 -(void) setFloatParameter: (const char*) name val: (ORFloat) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
+
+-(ORFloat) floatParamValue: (LPParameterI*) param;
+-(void) setORFloatParameter: (LPParameterI*)param value: (ORFloat)val;
 
 -(void) print;
 -(void) printModelToFile: (char*) fileName;

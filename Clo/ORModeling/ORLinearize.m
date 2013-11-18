@@ -379,12 +379,12 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
+   //assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
    [_model minimize:[v expr]];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
+   //assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
    [_model maximize:[v expr]];
 }
 -(void) visitIntVar: (id<ORIntVar>) v  { _result = v; }

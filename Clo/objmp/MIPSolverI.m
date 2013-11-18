@@ -1238,6 +1238,10 @@
    [obj release];
    return obj;
 }
+-(id<ORTracker>) tracker
+{
+    return self;
+}
 @end
 
 @implementation MIPFactory

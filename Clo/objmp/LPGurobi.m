@@ -150,6 +150,21 @@
    return value;
 }
 
+-(ORFloat) paramFloatValue: (LPParameterI*) param
+{
+    ORFloat v;
+    GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
+    return v;
+}
+-(void) setParam: (LPParameterI*) param value: (ORFloat)val
+{
+    int cind[] = { [param cstrIdx] };
+    int vind[] = { [param coefIdx] };
+    double v[] = { val };
+    GRBchgcoeffs(_model, 1, cind, vind, v);
+}
+
+
 -(ORFloat) lowerBound: (LPVariableI*) var
 {
    ORFloat value;

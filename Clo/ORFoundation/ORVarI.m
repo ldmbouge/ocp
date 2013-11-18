@@ -21,7 +21,7 @@
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
    self = [super init];
-   _tracker = track;
+   _tracker = [track tracker];
    _domain = domain;
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
@@ -284,7 +284,10 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+   if (_domain == nil)
+      return [NSString stringWithFormat:@"var<OR>{float}:%03d(NA)",_name];
+   else
+      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {

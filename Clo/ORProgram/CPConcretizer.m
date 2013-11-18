@@ -89,7 +89,7 @@
 -(void) visitFloatParam:(id<ORFloatParam>)v
 {
     if (!_gamma[v.getId])
-        _gamma[v.getId] = [CPFactory floatParam: _engine initialValue: 0.0];
+        _gamma[v.getId] = [CPFactory floatParam: _engine initialValue: [v initialValue]];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v

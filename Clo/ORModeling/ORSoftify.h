@@ -9,7 +9,7 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORParameter.h>
 
-@interface ORSoftify : ORNOopVisit<ORModelTransformation>
+@interface ORSoftify : ORNOopVisit
 -(ORSoftify*) initORSoftify;
 -(void)apply:(id<ORModel>)m;
 -(void)apply:(id<ORModel>)m toConstraints: (NSArray*)cstrs;

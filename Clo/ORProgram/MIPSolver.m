@@ -311,8 +311,8 @@
    }];
    _varShots = snapshots;
    
-   if([model conformsToProtocol: @protocol(ORParameterizedModel)]) {
-      NSArray* ap = [(id<ORParameterizedModel>)model parameters];
+   if([[model source] conformsToProtocol: @protocol(ORParameterizedModel)]) {
+      NSArray* ap = [(id<ORParameterizedModel>)[model source] parameters];
       sz = [ap count];
       NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
       ORMIPTakeSnapshot* visit = [[ORMIPTakeSnapshot alloc] initORMIPTakeSnapshot: solver];
@@ -489,11 +489,12 @@
 }
 -(ORFloat) paramFloatValue: (id<ORFloatParam>)p
 {
-    return [_MIPsolver floatParamValue: _gamma[p.getId]];
+   return [_MIPsolver floatParamValue: _gamma[p.getId]];
 }
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
 {
-    [_MIPsolver setORFloatParameter: _gamma[p.getId] value: val];
+   [_MIPsolver setORFloatParameter: _gamma[p.getId] value: val];
+   return val;
 }
 -(ORFloat) floatExprValue: (id<ORExpr>)e {
     ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];
@@ -546,6 +547,10 @@
 -(id<ORMIPSolutionPool>) solutionPool
 {
    return _sPool;
+}
+-(id<ORTracker>) tracker
+{
+   return self;
 }
 @end
 

@@ -710,4 +710,9 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
+
+-(id<ORTracker>) tracker
+{
+   return self;
+}
 @end

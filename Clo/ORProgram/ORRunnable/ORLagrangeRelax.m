@@ -67,15 +67,17 @@
     ORInt noImproveLimit = 30;
     ORInt noImprove = 0;
     
-    id<CPHeuristic> h = [program createFF];
+    id<CPHeuristic> h = [program createABS];
     while(pi > cutoff) {
         [[program solutionPool] emptyPool];
         //[program solve];
+        
         [program solve: ^{
             //[program labelHeuristic: h];
-            [program labelArray: (id<ORIntVarArray>)branchVars];
+            [program labelHeuristic: h];
            NSLog(@"Got an improvement... %@",[[program objective] value]);
         } ];
+        
         id<ORSolution> sol = [[program solutionPool] best];
         NSLog(@"BEST is: %@",sol);
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
@@ -97,6 +99,7 @@
         }];
         
         NSLog(@"objective: %f", [objValue value]);
+        NSLog(@"slack: %f", slackSum);
         
         // Check for improvement
         if([objValue floatValue] > bestBound ||
@@ -135,7 +138,7 @@
 
 -(void) run
 {
-    _bestSolution = [self lagrangianSubgradientSolve: 1];
+    _bestSolution = [self lagrangianSubgradientSolve: 80];
 }
 
 -(ORFloat) bestBound

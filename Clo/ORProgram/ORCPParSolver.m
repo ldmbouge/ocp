@@ -132,6 +132,10 @@
 {
   return [[self worker] tracer];
 }
+-(id<ORTracker>) tracker
+{
+    return self;
+}
 -(void) close
 {
   return [[self worker] close];
@@ -673,6 +677,15 @@
 -(id<ORCPSolution>) captureSolution
 {
    return (id<ORCPSolution>) [[self worker] captureSolution];
+}
+-(ORFloat) paramFloatValue: (id<ORFloatParam>)x
+{
+    return [[self worker] paramFloatValue: x];
+}
+-(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
+{
+    [[self worker] paramFloat: p setValue: val];
+    return val;
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

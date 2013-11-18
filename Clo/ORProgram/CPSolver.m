@@ -342,18 +342,18 @@
    }
    _varShots = snapshots;
    
-   // Capture parameters
-   if([model conformsToProtocol: @protocol(ORParameterizedModel)]) {
-      NSArray* ap = [(id<ORParameterizedModel>)model parameters];
+   if([[model source] conformsToProtocol: @protocol(ORParameterizedModel)]) {
+      NSArray* ap = [(id<ORParameterizedModel>)[model source] parameters];
       sz = [ap count];
       NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
       ORCPTakeSnapshot* visit = [[ORCPTakeSnapshot alloc] initORCPTakeSnapshot: solver];
-      for(id obj in ap) {
-         id shot = [visit snapshot:obj];
+      [ap enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
+         [obj visit: visit];
+         id shot = [visit snapshot: obj];
          if (shot)
             [snapshots addObject: shot];
          [shot release];
-      }
+      }];
       _paramShots = snapshots;
    }
    else _paramShots = nil;
@@ -464,6 +464,13 @@
    [_varShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
    }];
+   if(_paramShots) {
+      last = [_paramShots count] - 1;
+      [_paramShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
+         [buf appendFormat:@"param<%@>%c",obj,idx < last ? ',' : ')'];
+      }];
+
+   }
    return buf;
 }
 @end
@@ -645,6 +652,10 @@
 -(id<ORTracer>) tracer
 {
    return _tracer;
+}
+-(id<ORTracker>) tracker
+{
+   return self;
 }
 -(void) close
 {
@@ -1328,7 +1339,8 @@
 }
 -(ORFloat) paramFloatValue: (id<ORFloatParam>)x
 {
-    return [(id<ORFloatParam>)_gamma[x.getId] floatValue];
+   id<CPFloatParam> p = _gamma[x.getId];
+    return [p value];
 }
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
 {
