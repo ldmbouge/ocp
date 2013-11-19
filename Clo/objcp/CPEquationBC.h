@@ -26,7 +26,7 @@ typedef struct CPEQTerm {
 MAKETRPointer(TRCPEQTerm,CPEQTerm);
 
 @class CPIntVarI;
-@interface CPEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i == c
+@interface CPEquationBC : CPCoreConstraint { // sum(i in S) x_i == c
 @private
    CPIntVar**               _x;  // array of vars
    ORLong                   _nb;  // size
@@ -44,7 +44,7 @@ MAKETRPointer(TRCPEQTerm,CPEQTerm);
 -(ORUInt)nbUVars;
 @end
 
-@interface CPINEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i <= c
+@interface CPINEquationBC : CPCoreConstraint { // sum(i in S) x_i <= c
 @private
    CPIntVar**        _x;  // array of vars
    ORLong            _nb;  // size

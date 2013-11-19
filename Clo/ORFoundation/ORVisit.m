@@ -318,6 +318,18 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ReifyGEqual: visit method not defined"]; 
 }
+-(void) visitReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ReifySumBoolEqualc: visit method not defined"];
+}
+-(void) visitHReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "HReifySumBoolEqualc: visit method not defined"];
+}
+-(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "HReifySumBoolGEqualc: visit method not defined"];
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolEqualc: visit method not defined"]; 
@@ -599,6 +611,9 @@
 -(void) visitReifyLEqual: (id<ORReifyLEqual>)c  {}
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c  {}
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c  {}
+-(void) visitReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c {}
+-(void) visitHReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c {}
+-(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c {}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c  {}
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c  {}
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c  {}

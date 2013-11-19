@@ -338,12 +338,8 @@
 -(id<MIPProgram>) initMIPSolver: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _MIPsolver = NULL;
-#else
    _MIPsolver = [MIPFactory solver];
    _model = model;
-#endif
    _sPool = (id<ORMIPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
@@ -352,6 +348,10 @@
    [_MIPsolver release];
    [_sPool release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
 }
 -(void) close
 {}

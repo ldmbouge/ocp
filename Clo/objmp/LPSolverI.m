@@ -11,9 +11,9 @@
 
 #import "LPSolverI.h"
 
-#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+//#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #import "LPGurobi.h"
-#endif
+//#endif
 
 @implementation LPConstraintI;
 
@@ -894,6 +894,10 @@
    free(_cstr);
    [_oStore release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
 }
 -(void) addVariable: (LPVariableI*) v
 {

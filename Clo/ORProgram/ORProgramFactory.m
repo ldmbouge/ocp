@@ -105,7 +105,7 @@
 {
 //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
    id<ORAnnotation> ncpy   = [notes copy];
-   id<ORModel> fm = [model flatten:ncpy];   // models are AUTORELEASE
+   id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
    [self concretizeCP:fm program:cpprogram annotation:ncpy];
    [ncpy release];
 }
@@ -224,6 +224,7 @@
 
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
+   NSLog(@"inside createLPProgram:");
    id<ORModel> flatModel = [model lpflatten:nil];
    
    ORUInt nbEntries =  [flatModel nbObjects];

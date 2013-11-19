@@ -235,6 +235,8 @@
 		5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64310139D49610056F448 /* ORTrail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B48FEA915A3DB2A00141BB1 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B49CA9F16CEE28000D9125E /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B4FA4E0182A67D500BAA654 /* german-credit.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B66712A181EF228007CBBA6 /* german-credit.csv */; };
+		5B4FA4E1182A68F500BAA654 /* mushroom.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667130181EF228007CBBA6 /* mushroom.csv */; };
 		5B5096E21619B6CB00171F9D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B5096E51619B6CC00171F9D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5096E41619B6CC00171F9D /* main.m */; };
 		5B5096E91619B6CC00171F9D /* testDistrib.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B5096E81619B6CC00171F9D /* testDistrib.1 */; };
@@ -503,6 +505,8 @@
 		5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
+		5B8B655318313B250054E2C6 /* vote.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667135181EF228007CBBA6 /* vote.csv */; };
+		5B8B655418313D0D0054E2C6 /* zoo-1.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667136181EF228007CBBA6 /* zoo-1.csv */; };
 		5B8C7DF3158674D1007042CA /* CPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE7158674D1007042CA /* CPAppDelegate.m */; };
 		5B8C7DF4158674D1007042CA /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE8158674D1007042CA /* Credits.rtf */; };
 		5B8C7DF5158674D1007042CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B8C7DEA158674D1007042CA /* InfoPlist.strings */; };
@@ -1019,6 +1023,8 @@
 		B139DEA215CCE3F8007D523E /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
 		B13EBFDD17D2D96300021A82 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B13EBFDC17D2D96300021A82 /* main.m */; };
 		B144185F17D98C1A00924909 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		B148C0C8182175B0009BE440 /* ORFunc.h in Headers */ = {isa = PBXBuildFile; fileRef = B148C0C6182175B0009BE440 /* ORFunc.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B148C0C9182175B0009BE440 /* ORFunc.m in Sources */ = {isa = PBXBuildFile; fileRef = B148C0C7182175B0009BE440 /* ORFunc.m */; };
 		B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */ = {isa = PBXBuildFile; fileRef = B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */; };
 		B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */ = {isa = PBXBuildFile; fileRef = B152BE2D13BB541E00531FD5 /* CPAllDifferentDC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -4909,6 +4915,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				5B8B655418313D0D0054E2C6 /* zoo-1.csv in CopyFiles */,
+				5B8B655318313B250054E2C6 /* vote.csv in CopyFiles */,
+				5B4FA4E1182A68F500BAA654 /* mushroom.csv in CopyFiles */,
+				5B4FA4E0182A67D500BAA654 /* german-credit.csv in CopyFiles */,
 				5B1D4268181EF28D00EE8C83 /* test1.csv in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5728,6 +5738,8 @@
 		B139DE9F15CCE3F8007D523E /* ORController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORController.h; sourceTree = "<group>"; };
 		B139DEA015CCE3F8007D523E /* ORController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORController.m; sourceTree = "<group>"; };
 		B13EBFDC17D2D96300021A82 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B148C0C6182175B0009BE440 /* ORFunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFunc.h; sourceTree = "<group>"; };
+		B148C0C7182175B0009BE440 /* ORFunc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFunc.m; sourceTree = "<group>"; };
 		B149BF5B151E759600FC5887 /* ORCrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCrFactory.h; sourceTree = "<group>"; };
 		B149BF5C151E759600FC5887 /* ORCrFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCrFactory.m; sourceTree = "<group>"; };
 		B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAllDifferentDC.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -8564,6 +8576,8 @@
 				B10ECF0F150C34DE00B82836 /* ORFactoryI.m */,
 				5BFD594C15A3ACA500825BC3 /* ORFoundation.h */,
 				5BFD594D15A3ACA500825BC3 /* ORFoundation.m */,
+				B148C0C6182175B0009BE440 /* ORFunc.h */,
+				B148C0C7182175B0009BE440 /* ORFunc.m */,
 				5B6B0EF61787533000104246 /* ORInterval.h */,
 				5B6B0EF71787533000104246 /* ORInterval.mm */,
 				B11D862515CD8E310019729B /* ORLimit.h */,
@@ -9325,6 +9339,7 @@
 				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
 				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
 				5B57E5DF161F275200DB249A /* ORExpr.h in Headers */,
+				B148C0C8182175B0009BE440 /* ORFunc.h in Headers */,
 				5B57E5E0161F275F00DB249A /* ORExprI.h in Headers */,
 				5B57E5E3161F280D00DB249A /* ORVar.h in Headers */,
 				5B57E5E5161F295000DB249A /* ORVisit.h in Headers */,
@@ -12207,6 +12222,7 @@
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,
+				B148C0C9182175B0009BE440 /* ORFunc.m in Sources */,
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
 				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,
@@ -15428,10 +15444,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15640,10 +15652,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
@@ -15928,10 +15936,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15952,10 +15956,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15978,10 +15978,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
@@ -16009,10 +16005,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
@@ -16036,10 +16028,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
@@ -16074,24 +16062,18 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
 				);
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lgurobi55";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
@@ -17319,18 +17301,12 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LPRelaxation/LPRelaxation-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Coverage;
@@ -17532,10 +17508,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
@@ -17822,10 +17794,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
@@ -18558,10 +18526,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -18722,24 +18686,18 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
 				);
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lgurobi55";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
@@ -18755,7 +18713,6 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -19077,18 +19034,12 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LPRelaxation/LPRelaxation-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -19100,7 +19051,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LPRelaxation/LPRelaxation-Prefix.pch";

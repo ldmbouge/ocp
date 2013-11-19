@@ -266,6 +266,18 @@ enum ORGroupType {
 -(id<ORIntVar>) y;
 @end
 
+@protocol ORReifySumBoolEqc <ORConstraint>
+-(id<ORIntVar>)b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@protocol ORReifySumBoolGEqc <ORConstraint>
+-(id<ORIntVar>)b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
 @protocol ORSumBoolEqc <ORConstraint>
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
@@ -499,7 +511,7 @@ enum ORGroupType {
 
 // Root implementation class (needed so that sub-frameworks can write constraints)
 
-@interface ORConstraintI : ORObject<ORConstraint>
+@interface ORConstraintI : ORObject<ORConstraint,NSCoding>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
 @end

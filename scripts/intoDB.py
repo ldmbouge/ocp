@@ -13,6 +13,12 @@ import sqlite3
 
 version = '0.1'
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 def get_processor_name():
 	p = sys.platform
 	if p == 'win32':
@@ -127,12 +133,21 @@ class Collect:
 		c.execute("select * from bench where runid={0} order by bench ASC".format(runID))
 		of.write("bench | method | threads | size | nbSol | nchoice | cpu(s) | wc(s) | mused(Kb) | mpeak(Kb) | status \n")
 		of.write("|-----|--------|---------|------|-------|--------:|----:|---:|------:|------:|--------|\n")
-		for r in c.fetchall():
+		rn = 0
+		ar = c.fetchall()
+		for r in ar:
 			#print r
 			bn = r[1].split(' ')
 			#print bn
-			of.write("{0:<20}".format(bn[0]) +
+			of.write("[{0:<20}] [{1}]".format(bn[0],rn) +
 			 " | {2:<4} | {4:<2} | {5:>4} | {6:>5} | {9:>7} | {11:>10} | {12:>7} | {13:.2f} | {14:.2f} | {15} \n".format(*r))
+			rn += 1
+		rn = 0
+		of.write("\n\n")
+		for r in ar:
+			bn = r[1].split(' ')
+			of.write("[{0}]: fragment.html#chart_{1}_{2}_{3}_{4}\n".format(rn,bn[0],r[4],r[3],r[2]))
+			rn += 1
 		of.close()
 
 	def latestMarkDown(self,useHTMLHeader):
@@ -143,8 +158,69 @@ class Collect:
 		self.makeMarkdown(lastRunID,useHTMLHeader)
 		
 
+	def makeHTMLPage(self,out,w,h):
+		out.write("""<html><head><script type="text/javascript" src="https://www.google.com/jsapi"></script>
+			<style media="screen" type="text/css">
+#container { width: 1200px; }
+.col1 { width: 600px; float: left; }
+.col2 { width: 600px; float: left; }
+</style></head>""")
+		out.write("<body><div id=\"container\">\n")
+		self.db.row_factory = dict_factory
+		c  = self.db.cursor()
+		c.execute("select distinct bench,size,threads,method from bench order by bench asc")
+		for r in c.fetchall():
+			print r
+			print '--------------------------------------------------------------------------------------------------'		
+			seg = r['bench'].split(' ')
+			name = seg[0]
+			size = r['size']			
+			self.makeGraph(name + '%',size,r['threads'],r['method'],out,w,h)
+#		self.makeGraph('queensAC %',12,out,w,h)
+#		self.makeGraph('sport %',0,out,w,h)
+		out.write("</div></body>\n")
+		out.write("""</html>\n""")
+
+	def makeGraph(self,name,sz,threads,method,out,w,h):
+		cleanName = name.strip('%').strip() + '_' + str(sz) + '_' + str(threads) + '_' + method
+		out.write("""<div class="col1"><script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart_""" + cleanName + """);
+      function drawChart_""" + cleanName + """() {
+        var data = google.visualization.arrayToDataTable(
+        	""")
+		out.write("[['date','cpu','wc'],\n")
+		self.db.row_factory = dict_factory
+		c = self.db.cursor()
+		query = "select bench,wc,cpu,date,size,threads,method from bench,run where bench.runid=run.pkey AND bench like '{0}' AND size={1} AND threads={2} AND method like '{3}' order by runid asc".format(name,sz,threads,method)
+		c.execute(query)
+		for r in c.fetchall():
+			print r
+			wc = r['wc']
+			cpu = r['cpu']
+			stamp = r['date']
+			year = stamp[:4]
+			month = stamp[4:6]
+			day   = stamp[6:8]
+			hour   = stamp[11:13]
+			minute = stamp[13:15]
+			sec    = stamp[15:17]
+			out.write("['{0}/{1}/{2} - {3}:{4}',{5},{6}],\n".format(day,month,year,hour,minute,cpu,wc))
+		out.write("]);\n")
+		out.write("var options = { title: 'Benchmark: " + "{0} ({1}) (Threads={2}) (Heur={3})".format(name.strip('%'),sz,threads,method) + "'};")
+		out.write("""
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div_""" + cleanName + """'));
+        chart.draw(data, options);
+      }
+    </script>""")
+		out.write("<a name=\"chart_{0}\"><div id=\"chart_div_{0}\" style=\"width: {1}px; height: {2}px;\"></div></a></div>\n".format(cleanName,w,h))
+
+
 if __name__ == '__main__':
 	c = Collect()
 	#c.loadINDB()
 	c.latestMarkDown(False)
+	out = open('fragment.html','w')
+	c.latestMarkDown(True)
+	c.makeHTMLPage(out,600,200)
 

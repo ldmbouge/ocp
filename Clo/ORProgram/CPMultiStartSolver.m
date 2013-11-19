@@ -55,6 +55,10 @@
    [_terminated release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_source release];
@@ -354,6 +358,15 @@
 {
    [[self worker] gthen: var with: val];
 }
+-(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] lthen: var with: val];
+}
+-(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] gthen: var with: val];
+}
+
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [[self worker] restrict: var to: S];

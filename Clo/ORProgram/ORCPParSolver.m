@@ -76,6 +76,10 @@
    [_onSol release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_source release];
@@ -306,6 +310,14 @@
    [[self worker] lthen: var with: val];
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [[self worker] gthen: var with: val];
+}
+-(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] lthen: var with: val];
+}
+-(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
 {
    [[self worker] gthen: var with: val];
 }

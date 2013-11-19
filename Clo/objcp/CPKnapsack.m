@@ -297,21 +297,6 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 {
    return [NSMutableString stringWithFormat:@"<CPKnapsackDC: %02d (%@ * %@ IN %@)>",_name,_x,_w,_c];
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_w];
-   [aCoder encodeObject:_c];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _w = [aDecoder decodeObject];
-   _c = [aDecoder decodeObject];   
-   return self;
-}
 @end
 
 @implementation KSNode

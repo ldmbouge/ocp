@@ -140,24 +140,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    [buf appendFormat:@"CPElementCstBC: <%02d %@ [ %@ ] == %@ >",_name,_c,_x,_y];
    return buf;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-   [aCoder encodeObject:_c];
-}
 
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   _c = [aDecoder decodeObject];
-   _tab = NULL;
-   _sz  = 0;
-   return self;
-}
 @end
 
 struct EltACPair {
@@ -389,23 +372,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"CPElementVarBC: <%02d %@ [ %@ ] == %@ >",_name,_z,_x,_y];
    return buf;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-   [aCoder encodeObject:_z];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   _z = [aDecoder decodeObject];
-   return self;
 }
 @end
 

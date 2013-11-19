@@ -63,6 +63,8 @@ collector = intoDB.Collect()
 collector.loadINDB()
 collector.latestMarkDown(True)
 os.system("/usr/local/bin/mmd summary.md")
+covdir=value
+collector.makeHTMLPage(out,600,200)
 
 execmd = 'open ' + os.getcwd() + '/summary.html'
 e.notify('Test Report Ready','execmd')

@@ -284,6 +284,19 @@
    [tracker trackMutable: o];
    return o;
 }
++(id) slice:(id<ORTracker>)model range:(id<ORIntRange>)r suchThat:(ORInt2Bool)f of:(ORInt2Id)e
+{
+   ORInt nbOk = 0;
+   for(ORInt k=r.low;k <= r.up;k++)
+      nbOk += f(k);
+   id<ORIdArray> o = [ORFactory idArray:model range:RANGE(model,0,nbOk-1)];
+   ORInt i = 0;
+   for(ORInt k=r.low;k <= r.up;k++)
+      if (f(k))
+         [o set:e(k) at:i++];
+   return o;
+}
+
 
 +(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
 {
@@ -813,6 +826,24 @@
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x leq: (id<ORIntVar>) y
 {
    id<ORConstraint> o = [[ORReifyLEqual alloc] initReify: b equiv: x leq: y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x eqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORReifySumBoolEqc alloc] init:b array:x eqi: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) hreify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x eqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORHReifySumBoolEqc alloc] init:b array:x eqi: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) hreify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x geqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORHReifySumBoolGEqc alloc] init:b array:x geqi: c];
    [model trackObject:o];
    return o;
 }

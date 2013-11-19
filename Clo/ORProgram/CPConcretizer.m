@@ -190,6 +190,10 @@
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ex = [cstr vars];
+      ORCLevel n = [_notes levelFor: cstr];
+      if (n == RelaxedConsistency)
+         return;
+      
       id<ORIntArray>    ec = [cstr coefs];
       ORInt c = [cstr cst];
       id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
@@ -820,6 +824,39 @@
       id<CPIntVar> x = [self concreteVar:[cstr x]];
       id<CPIntVar> y = [self concreteVar:[cstr y]];
       id<CPConstraint> concreteCstr = [CPFactory reify: b with: y leq: x annotation: Default];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitReifySumBoolEqualc: (id<ORReifySumBoolEqc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      ORCLevel lvl = [_notes levelFor:cstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify:b array:x eqi:[cstr cst] annotation:lvl];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitHReifySumBoolEqualc: (id<ORReifySumBoolEqc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      ORCLevel lvl = [_notes levelFor:cstr];
+      id<CPConstraint> concreteCstr = [CPFactory hreify:b array:x eqi:[cstr cst] annotation:lvl];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolEqc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      ORCLevel lvl = [_notes levelFor:cstr];
+      id<CPConstraint> concreteCstr = [CPFactory hreify:b array:x geqi:[cstr cst] annotation:lvl];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

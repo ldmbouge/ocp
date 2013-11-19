@@ -415,6 +415,18 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitHReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitHReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    _result = [_into addConstraint:c];

@@ -294,7 +294,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [_ac3[i] release];
    [super dealloc];
 }
-
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(id<CPEngine>) solver
 {
    return self;

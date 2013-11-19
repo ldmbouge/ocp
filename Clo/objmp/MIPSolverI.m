@@ -11,9 +11,9 @@
 
 #import "MIPSolverI.h"
 
-#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+//#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #import "MIPGurobi.h"
-#endif
+//#endif
 
 @implementation MIPConstraintI;
 
@@ -744,6 +744,10 @@
    free(_cstr);
    [_oStore release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
 }
 -(void) addVariable: (MIPVariableI*) v
 {

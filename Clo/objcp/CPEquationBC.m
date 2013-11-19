@@ -201,24 +201,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    [buf appendFormat:@" == %d >",_c];
    return buf;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-   for(int k=0;k<_nb;k++)
-      [aCoder encodeObject:_x[k]];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];   
-   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   _x = malloc(sizeof(CPIntVar*)*_nb);
-   for(int k=0;k<_nb;k++)
-      _x[k] = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 @implementation CPINEquationBC 
@@ -344,24 +326,6 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    }
    [buf appendFormat:@" <= %d >",_c];
    return buf;
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-   for(int k=0;k<_nb;k++)
-      [aCoder encodeObject:_x[k]];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];   
-   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   _x = malloc(sizeof(CPIntVar*)*_nb);
-   for(int k=0;k<_nb;k++)
-      _x[k] = [aDecoder decodeObject];
-   return self;
 }
 @end
 

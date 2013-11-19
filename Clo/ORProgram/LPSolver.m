@@ -379,12 +379,8 @@
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _lpsolver = NULL;
-#else
    _lpsolver = [LPFactory solver];
    _model = model;
-#endif
    _sPool = (id<ORLPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
@@ -394,6 +390,10 @@
    [_lpsolver release];
    [_sPool release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
 }
 -(void)close
 {}
@@ -493,12 +493,8 @@
 -(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _lpsolver = NULL;
-#else
    _lpsolver = [LPFactory solver];
    _model = model;
-#endif
    return self;
 }
 -(void) dealloc
@@ -506,6 +502,10 @@
    NSLog(@"dealloc LPSolver");
    [_lpsolver release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
 }
 -(void)close
 {}
