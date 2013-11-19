@@ -1341,8 +1341,11 @@
 @implementation CPHReifySumBoolGEq { // half reification: b ~> sum(i in S) x_i >= c
    CPIntVar**  _x;
    ORInt      _nb;
-   TRInt   _nbOne;
-   TRInt  _nbZero;
+   //TRInt   _nbOne;
+   //TRInt  _nbZero;
+   id<CPTrigger>*   _at; // the c+1 triggers.
+   ORInt* _notTriggered;
+   ORLong         _last;
 }
 -(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x geqi:(ORInt)c
 {
@@ -1350,7 +1353,19 @@
    _b  = b;
    _xa = x;
    _c  = c;
+   _at = NULL;
+   _notTriggered = NULL;
    return self;
+}
+-(void) dealloc
+{
+   if (_x)
+      free(_x);
+   if (_at)
+      free(_at);
+   if (_notTriggered)
+      free(_notTriggered);
+   [super dealloc];
 }
 -(ORStatus) post
 {
@@ -1359,10 +1374,19 @@
    ORInt low = _xa.range.low;
    ORInt up  = _xa.range.up;
    _nb = up - low + 1;
-   _x = malloc(sizeof(CPIntVar*)*_nb);
+   ORInt nbNT = _nb - _c - 1;
+   _x            = malloc(sizeof(CPIntVar*)*_nb);
+   _at           = malloc(sizeof(id)*(_c+1));
+   memset(_x,0,sizeof(CPIntVar*)*_nb);
+   memset(_at,0,sizeof(CPIntVar*)*(_c+1));
+   if (nbNT > 0) {
+      _notTriggered = malloc(sizeof(ORInt)*nbNT);
+      memset(_notTriggered,0,sizeof(ORInt)*nbNT);
+   } else _notTriggered = NULL;
    ORInt i= 0;
    for(ORInt k=low;k <= up;k++,i++) {
       _x[i] = (CPIntVar*) _xa[k];
+      [_x[i] updateMin:0 andMax:1];
       nbTrue += minDom(_x[i])==1;
       nbPos  += !bound(_x[i]);
    }
@@ -1375,28 +1399,57 @@
       return ORSkip;
    }
    if ([_b min] > 0) {         // boolean is true. Constraint _must_ be satisfied
-      _nbOne  = makeTRInt(_trail, nbTrue);
-      _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
-      if (nbTrue == _c)             // All the possible should be FALSE
-         return ORSuccess;
-      if (nbTrue + nbPos == _c) {   // All the possible should be TRUE
-         for(ORInt i=0;i<_nb;++i)
-            if (!bound(_x[i]))
-               [_x[i] bind:YES];
-         return ORSuccess;
-      }
-      // We must satisfy c, but too little info to know what to do.
-      // Listen to the _x variables!
-      for(ORInt k=0;k < _nb;k++) {
-         if (bound(_x[k])) continue;
-         [_x[k] whenBindDo:^{ [self propagateIdx:k];} onBehalf:self];
-      }
+      [self watchVars];
    } else if ([_b max] == 0) { // boolean is false. Constraint does not matter.
       // There is nothing to do.
    } else {                    // boolean is not fixed. Only check.
+      assert(_notTriggered != NULL);
       [_b whenBindPropagate:self];
    }
    return ORSuspend;
+}
+-(void)watchVars
+{
+   ORInt listen =  _c + 1;
+   ORInt nbNW   = 0;
+   assert(_notTriggered != NULL);
+   for (ORInt i=_nb - 1; i >= 0; --i) {
+      if (listen > 0 && _x[i].max == YES) {
+         --listen;
+         _at[listen] = [_x[i] setLoseTrigger:YES do:^{
+            ORLong j = _last;
+            BOOL jOk = NO;
+            if (_last >= 0) {
+               do {
+                  j = (j+1) % (_nb - _c - 1);
+                  jOk = [_x[_notTriggered[j]] member:YES];
+               } while( j!= _last && !jOk);
+            }
+            if (jOk) {
+               ORInt nextVar = _notTriggered[j];
+               id<CPTrigger> toMove = _at[listen];
+               [toMove detach];
+               _notTriggered[j] = [toMove localID];
+               [_x[nextVar] watch:YES with:toMove];
+               [toMove setLocalID:nextVar];
+               _last = j;
+            } else {
+               for (ORInt k=0; k < _c+1; ++k)
+                  if (k != listen)
+                     [_x[_at[k].localID] updateMin:YES];
+            }
+         } onBehalf:self];
+         [_trail trailClosure:^{
+            id<CPTrigger> t = _at[listen];
+            [t detach];
+            [t release];
+            _at[listen] = NULL;
+         }];
+         [_at[listen] setLocalID:i];
+      } else _notTriggered[nbNW++] = i;
+   }
+   assert(nbNW == _nb - _c - 1);
+   _last = _nb - _c - 2;
 }
 -(void)propagate
 {
@@ -1407,8 +1460,6 @@
          nbTrue += minDom(_x[k])==1;
          nbPos  += !bound(_x[k]);
       }
-      _nbOne  = makeTRInt(_trail, nbTrue);
-      _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
       if (nbTrue >= _c) {              // too many are true already. b necessarily false
          [_b bind:YES];
          assignTRInt(&_active, NO, _trail);
@@ -1426,33 +1477,7 @@
          assignTRInt(&_active, NO, _trail);
          return;
       }
-      for(ORInt k=0;k < _nb;k++) {
-         if (bound(_x[k])) continue;
-         [_x[k] whenBindDo:^{ [self propagateIdx:k];} onBehalf:self];
-      }
-   }
-}
--(void)propagateIdx:(ORInt)k
-{
-   ORInt nb1 = 0;
-   if ([_x[k] min]) {  // ONE more TRUE
-      assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
-   } else { // ONE more FALSE
-      if (_nb - _nbZero._val -  1 == _c) { // we have maxed out the # of FALSE
-         for(ORInt i=0;i < _nb;i++) {
-            ORInt mv =[_x[i] min];
-            nb1 += (mv == 1);   // already a ONE
-            if (!bound(_x[i])) {
-               [_x[i] bind:TRUE];
-               ++nb1;                      // We just added another ONE
-            }
-         }
-         if (nb1 != _c)
-            failNow();
-         assignTRInt(&_active, NO, _trail);
-      }
-      else
-         assignTRInt(&_nbZero, _nbZero._val + 1, _trail);
+      [self watchVars];
    }
 }
 -(NSString*)description

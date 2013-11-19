@@ -128,7 +128,7 @@
 @end
 
 @interface CPSumBoolGeq : CPCoreConstraint {
-    CPIntVar**       _x;
+    CPIntVar**        _x;
     ORLong           _nb;
     ORInt             _c;
     id<CPTrigger>*   _at; // the c+1 triggers.
