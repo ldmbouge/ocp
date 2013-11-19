@@ -181,6 +181,7 @@ int main(int argc, const char * argv[])
           NSLog(@"%@",prettyItemset(freqItemset, items));
        }];
       ORLong t1 = [ORRuntimeMonitor cputime];
+      NSLog(@"#Solutions: %d",nbSol);
       NSLog(@"Solver status: %@\n",cpp);
       NSLog(@"CPUtime: %lld",t1-t0);
       NSLog(@"Statistics: %d - %d - %d",[[cpp explorer] nbFailures],[[cpp explorer] nbChoices],
