@@ -128,7 +128,7 @@ int main(int argc, const char * argv[])
       id<ORIntRange> binary = RANGE(model, 0, 1);
       
       //Input Data
-      NSString* file = @"vote.csv";
+      NSString* file = @"test1.csv";
       NSArray* transactions;
       NSArray* items;
       id<ORIntMatrix> matrix;
@@ -161,7 +161,7 @@ int main(int argc, const char * argv[])
                                            range:transactionRange
                                         suchThat:^bool(ORInt t) { return [matrix at:t :i];}
                                               of:^id(ORInt t)   { return trans[t];}];
-         [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:44]];
+         [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:2]];
       }
       
       [model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
