@@ -169,7 +169,7 @@
 @interface CPReifySumBoolGEq : CPCoreConstraint {
    id<CPIntVar>       _b;
    id<CPIntVarArray> _xa;
-   TRInt              _c;
+   ORInt              _c;
 }
 -(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x geqi:(ORInt)c;
 -(ORStatus) post;
@@ -189,7 +189,7 @@
 @end
 
 @interface CPHReifySumBoolGEq : CPCoreConstraint {
-   id<CPIntVar>       _b;
+   CPIntVar*          _b;
    id<CPIntVarArray> _xa;
    ORInt              _c;
 }
