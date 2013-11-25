@@ -166,6 +166,17 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPReifySumBoolGEq : CPCoreConstraint {
+   id<CPIntVar>       _b;
+   id<CPIntVarArray> _xa;
+   TRInt              _c;
+}
+-(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x geqi:(ORInt)c;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPHReifySumBoolEq : CPCoreConstraint {
    id<CPIntVar>       _b;
    id<CPIntVarArray> _xa;

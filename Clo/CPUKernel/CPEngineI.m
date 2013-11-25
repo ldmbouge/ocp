@@ -547,7 +547,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
 
 static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
-   if (status == ORSuspend || status == ORSuccess)
+   if (status == ORSuspend || status == ORSuccess || status == ORSkip)
       return propagateFDM(fdm);// fdm->_propagIMP(fdm,@selector(propagate));
    else if (status== ORFailure) {
       for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)

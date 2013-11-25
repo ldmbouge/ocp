@@ -58,7 +58,8 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPReifyNotEqualcDC:%02d %@ <=> (%@ != %d)>",_name,_b,_x,_c];
+   const char* act = _active._val ? "" : "DEACTIVATED :";
+   return [NSMutableString stringWithFormat:@"<%sCPReifyNotEqualcDC:%02d %@ <=> (%@ != %d)>",act,_name,_b,_x,_c];
 }
 @end
 
@@ -935,7 +936,7 @@
 @end
 
 
-@implementation CPReifySumBoolEq { // half reification: b <=> sum(i in S) x_i = c
+@implementation CPReifySumBoolEq { // full reification: b <=> sum(i in S) x_i = c
    CPIntVar**  _x;
    ORInt      _nb;
    TRInt   _nbOne;
@@ -976,11 +977,11 @@
    }
    if (nbTrue > _c) {              // too many are true already. b necessarily false
       [_b bind:NO];
-      return ORSuccess;
+      return ORSkip;
    }
    if (nbTrue + nbPos < _c) {     // We can't possibly make it to _c. b necessarily false
       [_b bind:NO];
-      return ORSuccess;
+      return ORSkip;
    }
    // nbTrue + nbPos >= _c >= nbTrue
    _nbOne  = makeTRInt(_trail, nbTrue);
@@ -990,13 +991,13 @@
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                [_x[i] bind:NO];
-         return ORSuccess;
+         return ORSkip;
       }
       if (nbTrue + nbPos == _c) {   // All the possible should be TRUE
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                [_x[i] bind:YES];
-         return ORSuccess;
+         return ORSkip;
       }
       // We must satisfy c, but too little info to know what to do.
    } else if ([_b max] == 0) { // boolean is false, therefore: sum(i in S) x_i != c
@@ -1009,7 +1010,7 @@
                ++nbFixed;
             }
          assert(nbFixed == 1);
-         return ORSuccess;
+         return ORSkip;
       }
       if (nbTrue == _c - 1 && nbPos == 1) { // sum(i in S) x_i = c - 1  and only one possible left. It cannot be true.
          ORInt nbFixed = 0;
@@ -1019,16 +1020,16 @@
                ++nbFixed;
             }
          assert(nbFixed == 1);
-         return ORSuccess;
+         return ORSkip;
       }
    } else {                    // boolean is not fixed. Only check.
       if (nbTrue == _c && nbPos == 0) {
          [_b bind:YES];
-         return ORSuccess;
+         return ORSkip;
       }
       if (nbPos == 0 && nbTrue != _c) {
          [_b bind:NO];
-         return ORSuccess;
+         return ORSkip;
       }
       [_b whenBindPropagate:self];
    }
@@ -1042,7 +1043,8 @@
 {
    //NSLog(@"reify propagate %@ <=> %@ == %d",_b,_xa,_c);
    assert(bound((id)_b));
-   if ([_b min] > 0) {         // boolean is true. Constraint _must_ be satisfied
+   ORInt bv = minDom((id)_b);
+   if (bv) {         // boolean is true. Constraint _must_ be satisfied
       if (_nbOne._val > _c)    // too many are true already. b necessarily false -> fail!
          failNow();
       if (_nb - _nbZero._val < _c)  // We can't possibly make it to _c. b necessarily false
@@ -1061,7 +1063,8 @@
          assignTRInt(&_active, NO, _trail);
          return;
       }
-   } else if ([_b max] == 0) {
+   } else {
+      assert(bv == 0);
       if (_nbOne._val == _c && (_nb == _nbOne._val + _nbZero._val))
          failNow();
       if (_nbOne._val == _c && (_nb - _nbOne._val - _nbZero._val) == 1) {
@@ -1091,12 +1094,12 @@
 -(void)propagateIdx:(ORInt)k
 {
    //NSLog(@"reify propagateIdx(%d) %@ <=> %@ == %d",k,_b,_xa,_c);
-   ORInt xkv = [_x[k] min];
+   ORInt xkv = minDom(_x[k]);
    if (xkv)  // ONE more TRUE
       assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
    else
       assignTRInt(&_nbZero, _nbZero._val + 1, _trail);
-   if ([_b min] >= 1) {
+   if (minDom((id)_b) >= 1) {
       ORInt nb1 = 0;
       if (xkv) {  // ONE more TRUE
          if (_nbOne._val > _c)
@@ -1125,7 +1128,7 @@
             assignTRInt(&_active, NO, _trail);
          }
       }
-   } else if ([_b max] <= 0) {
+   } else if (maxDom((id)_b) <= 0) {
       if (_nbOne._val == _c && (_nb == _nbOne._val + _nbZero._val)) // everyone bound, we have c of them--> oops.
          failNow();
       if (_nbOne._val == _c && (_nb - _nbOne._val - _nbZero._val) == 1) {
@@ -1152,17 +1155,17 @@
       }
    } else {
       if (_nbOne._val > _c) {
-         [_b bind:NO];
+         bindDom((id)_b, NO);
          assignTRInt(&_active, NO, _trail);
          return;
       }
       if (_nb - _nbZero._val < _c) {
-         [_b bind:NO];
+         bindDom((id)_b, NO);
          assignTRInt(&_active, NO, _trail);
          return;
       }
       if (_nbOne._val + _nbZero._val == _nb) {
-         [_b bind:YES];
+         bindDom((id)_b, YES);
          assignTRInt(&_active, NO, _trail);
          return;
       }
@@ -1170,14 +1173,159 @@
 }
 -(NSString*)description
 {
+   const char* act = _active._val ? "" : "DEACTIVATED :";
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<CPReifySumBoolEq:%02d %@ <=> ([",_name,_b];
+   [buf appendFormat:@"<%sCPReifySumBoolEq:%02d %@ <=> ([",act,_name,_b];
    for(ORInt i=0;i<_nb;i++) {
       [buf appendFormat:@"%@%c",_x[i],(i < (_nb-1)) ? ',' : ']'];
    }
    [buf appendFormat:@" == %d)>",_c];
    return buf;
    //return [NSMutableString stringWithFormat:@"<CPReifySumBoolEq:%02d %@ <=> (%@ == %d)>",_name,_b,_xa,_c];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:_nb + 1] autorelease];
+   [rv addObject:_b];
+   ORInt low = _xa.range.low;
+   ORInt up  = _xa.range.up;
+   for(ORUInt k= low;k <= up;k++)
+      [rv addObject:_xa[k]];
+   return rv;
+}
+-(ORUInt)nbUVars
+{
+   ORUInt nb= ![_b bound];
+   ORInt low = _xa.range.low;
+   ORInt up  = _xa.range.up;
+   for(ORUInt k= low;k <= up;k++)
+      nb += ![_xa[k] bound];
+   return nb;
+}
+@end
+
+// =================================
+
+@implementation CPReifySumBoolGEq { // full reification: b <=> sum(i in S) x_i >= c
+   CPIntVar**         _x;
+   ORInt             _nb;
+   ORLong          _last;
+   TRInt         _nbTrue;
+   TRInt          _nbPos;
+}
+-(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x geqi:(ORInt)c
+{
+   self = [super initCPCoreConstraint:[b engine]];
+   _b  = b;
+   _xa = x;
+   _c  = makeTRInt(_trail, c);
+   return self;
+}
+-(void)dealloc
+{
+   if (_x)
+      free(_x);
+   [super dealloc];
+}
+-(ORStatus) post
+{
+   int nbTrue = 0;
+   int nbPos  = 0;
+   ORInt low = _xa.range.low;
+   ORInt up  = _xa.range.up;
+   _nb = up - low + 1;
+   _x = malloc(sizeof(CPIntVar*)*_nb);
+   ORInt i = 0;
+   for(ORInt k=low;k <= up;k++,i++) {
+      _x[i] = (CPIntVar*) _xa[k];
+      [_x[i] updateMin:0 andMax:1];
+      nbTrue += minDom(_x[i])==1;
+      nbPos  += !bound(_x[i]);
+   }
+   if (nbTrue >= _c._val) {              // too many are true already. b necessarily false
+      [_b bind:YES];
+      return ORSkip;
+   }
+   if (nbTrue + nbPos < _c._val) {     // We can't possibly make it to _c. b necessarily false
+      [_b bind:NO];
+      return ORSkip;
+   }
+   _nbTrue = makeTRInt(_trail, nbTrue);
+   _nbPos  = makeTRInt(_trail, nbPos);
+   
+   for(ORInt i=0;i < _nb;i++) {
+      if (bound(_x[i])) continue;
+      [_x[i] whenBindDo:^{
+         if (_x[i].value) {
+            assignTRInt(&_nbTrue, _nbTrue._val + 1, _trail);
+            assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
+         } else {
+            assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
+         }
+         if (_b.min > 0) {
+            if (_nbTrue._val >= _c._val) {
+               assignTRInt(&_active,NO,_trail);
+            }
+            if (_nbTrue._val + _nbPos._val < _c._val)
+               failNow();
+         } else if (_b.max <= 0) {
+            if (_nbTrue._val >= _c._val)
+               failNow();
+            if (_nbTrue._val + _nbPos._val < _c._val)
+               assignTRInt(&_active, NO, _trail);
+         } else { // b is not FIXED.
+            if (_nbTrue._val >= _c._val) {
+               [_b bind:YES];
+               assignTRInt(&_active, NO, _trail);
+            }
+            if (_nbTrue._val + _nbPos._val < _c._val) {
+               [_b bind:NO];
+               assignTRInt(&_active, NO, _trail);
+            }
+         }
+      } onBehalf:self];
+   }
+   [_b whenBindPropagate:self];
+   return ORSuspend;
+}
+
+-(void)propagate
+{
+   //NSLog(@"reify propagate %@ <=> %@ == %d",_b,_xa,_c);
+   assert(bound((id)_b));
+   if (_b.min > 0) {
+      if (_nbTrue._val >= _c._val)
+         assignTRInt(&_active,NO, _trail);
+      if (_nbTrue._val + _nbPos._val < _c._val)
+         failNow();
+   } else {
+      if (_nbTrue._val >= _c._val)
+         failNow();
+      if (_nbTrue._val + _nbPos._val < _c._val)
+         assignTRInt(&_active, NO, _trail);
+   }
+}
+-(void)decreaseBound
+{
+   assignTRInt(&_c, _c._val - 1, _trail);
+   if (_c._val < 0)
+      failNow();
+   else if (_c._val == 0) {
+      for(ORInt i=0;i<_nb;++i)
+         if (!bound(_x[i]))
+            [_x[i] bind:NO];
+   }
+}
+-(NSString*)description
+{
+   const char* act = _active._val ? "" : "DEACTIVATED :";
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%sCPReifySumBoolGEq:%02d %@ <=> ([",act,_name,_b];
+   for(ORInt i=0;i<_nb;i++) {
+      [buf appendFormat:@"%@%c",_x[i],(i < (_nb-1)) ? ',' : ']'];
+   }
+   [buf appendFormat:@" >= %d)>",_c._val];
+   return buf;
 }
 -(NSSet*)allVars
 {
@@ -1434,7 +1582,7 @@
             if (_last >= 0) {
                do {
                   j = (j+1) % (_nb - _c - 1);
-                  jOk = [_x[_notTriggered[j]] member:YES];
+                  jOk = memberDom(_x[_notTriggered[j]], YES);
                } while( j!= _last && !jOk);
             }
             if (jOk) {

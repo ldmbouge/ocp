@@ -1857,6 +1857,68 @@
 }
 @end
 
+@implementation ORReifySumBoolGEqc {
+   id<ORIntVar>       _b;
+   id<ORIntVarArray> _ba;
+   ORInt              _c;
+}
+-(id) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _ba = ba;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (reify:%@ sumbool(%@) >= %d)",[self class],self,_b,_ba,_c];
+   return buf;
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitReifySumBoolGEqualc:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_ba];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _ba= [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
 @implementation ORHReifySumBoolEqc {
    id<ORIntVar>       _b;
    id<ORIntVarArray> _ba;
