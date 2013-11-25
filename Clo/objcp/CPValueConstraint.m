@@ -962,10 +962,17 @@
    _nb = up - low + 1;
    _x = malloc(sizeof(CPIntVar*)*_nb);
    ORInt i= 0;
-   for(ORInt k=low;k <= up;++k,++i) {
-      _x[i] = (CPIntVar*) _xa[k];
-      nbTrue += minDom(_x[i])==1;
-      nbPos  += !bound(_x[i]);
+   for(ORInt k=low;k <= up;++k) {
+      CPIntVar* xk = (CPIntVar*) _xa[k];
+      if (bound(xk)) {
+         _c -= xk.value;  // adjust constant
+         _nb--;           // discard extraneous "var"
+      } else {
+         _x[i] = xk;
+         nbTrue += minDom(_x[i])==1;
+         nbPos  += !bound(_x[i]);
+         ++i;
+      }
    }
    if (nbTrue > _c) {              // too many are true already. b necessarily false
       [_b bind:NO];
@@ -1163,7 +1170,14 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPReifySumBoolEq:%02d %@ <=> (%@ == %d)>",_name,_b,_xa,_c];
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CPReifySumBoolEq:%02d %@ <=> ([",_name,_b];
+   for(ORInt i=0;i<_nb;i++) {
+      [buf appendFormat:@"%@%c",_x[i],(i < (_nb-1)) ? ',' : ']'];
+   }
+   [buf appendFormat:@" == %d)>",_c];
+   return buf;
+   //return [NSMutableString stringWithFormat:@"<CPReifySumBoolEq:%02d %@ <=> (%@ == %d)>",_name,_b,_xa,_c];
 }
 -(NSSet*)allVars
 {
@@ -1392,11 +1406,11 @@
    }
    if (nbTrue >= _c) {               // too many are true already. b necessarily true
       [_b bind:YES];
-      return ORSkip;
+      return ORSuspend;
    }
    if (nbTrue + nbPos < _c) {     // We can't possibly make it to _c. b necessarily false
       [_b bind:NO];
-      return ORSkip;
+      return ORSuspend;
    }
    if ([_b min] > 0) {         // boolean is true. Constraint _must_ be satisfied
       [self watchVars];

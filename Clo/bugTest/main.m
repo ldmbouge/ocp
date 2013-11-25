@@ -161,19 +161,28 @@ int main(int argc, const char * argv[])
                                            range:transactionRange
                                         suchThat:^bool(ORInt t) { return [matrix at:t :i];}
                                               of:^id(ORInt t)   { return trans[t];}];
-         [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:44]];
+         [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:254]];
       }
       
-      [model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
+      //[model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
       __block ORInt nbSol = 0;
       id<CPProgram> cpp = [ORFactory createCPProgram:model];
       ORLong t0 = [ORRuntimeMonitor cputime];
-      [cpp solveAll:
+      [cpp solve: // All:
        ^() {
           NSLog(@"Searching...");
-          [cpp labelArray: [model intVars]];
+          id<ORIntVarArray> av = [model intVars];
+          for(ORInt i=av.range.low;i <= av.range.up;i++) {
+             if ([cpp bound:av[i]]) continue;
+             [cpp try:^{
+                [cpp label:av[i] with:YES];
+             } or:^{
+                [cpp label:av[i] with:NO];
+             }];
+          }
+          //[cpp labelArray: av];
           nbSol++;
-          [[cpp explorer] fail];
+          //[[cpp explorer] fail];
           id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {
              return [cpp intValue:itemset[i]];
           }];

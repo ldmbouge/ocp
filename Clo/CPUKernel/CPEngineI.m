@@ -657,13 +657,13 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    if (_state == CPOpen) {
       _state = CPClosing;
-      _propagating++;
+      //_propagating++;
       for(id<ORConstraint> c in _mStore) {
          [self post:c];
          if (_status == ORFailure)
             return ORFailure;
       }
-      _propagating--;
+      //_propagating--;
       _status = internalPropagate(self, ORSuspend);
       _state = CPClosed;
    }
