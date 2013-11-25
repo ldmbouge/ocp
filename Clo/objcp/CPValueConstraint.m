@@ -1417,7 +1417,6 @@
    } else if ([_b max] == 0) { // boolean is false. Constraint does not matter.
       // There is nothing to do.
    } else {                    // boolean is not fixed. Only check.
-      assert(_notTriggered != NULL);
       [_b whenBindPropagate:self];
    }
    return ORSuspend;
@@ -1426,7 +1425,6 @@
 {
    ORInt listen =  _c + 1;
    ORInt nbNW   = 0;
-   assert(_notTriggered != NULL);
    for (ORInt i=_nb - 1; i >= 0; --i) {
       if (listen > 0 && _x[i].max == YES) {
          --listen;
@@ -1460,10 +1458,14 @@
             _at[listen] = NULL;
          }];
          [_at[listen] setLocalID:i];
-      } else _notTriggered[nbNW++] = i;
+      } else if (_x[i].max > 0) {
+         assert(_notTriggered != NULL);
+         _notTriggered[nbNW++] = i;
+      }
    }
-   assert(nbNW == _nb - _c - 1);
-   _last = _nb - _c - 2;
+//   assert(nbNW == _nb - _c - 1);
+//   _last = _nb - _c - 2;
+   _last = nbNW - 1;
 }
 -(void)propagate
 {
