@@ -1444,13 +1444,14 @@
             _at[listen] = NULL;
          }];
          [_at[listen] setLocalID:i];
-      } else if (listen > 0) {
+      } else if (_x[i].max > 0) {
          assert(_notTriggered != NULL);
          _notTriggered[nbNW++] = i;
       }
    }
-   assert(nbNW == _nb - _c - 1);
-   _last = _nb - _c - 2;
+//   assert(nbNW == _nb - _c - 1);
+//   _last = _nb - _c - 2;
+   _last = nbNW - 1;
 }
 -(void)propagate
 {
