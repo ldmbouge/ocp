@@ -16,11 +16,15 @@
 
 @interface CPEventNode : NSObject<CPEventNode> {
 @public
-   CPEventNode*          _node;
+   TRId                  _node;
    id                 _trigger;  // type is {ConstraintCallback}
    CPCoreConstraint*     _cstr;
    ORInt             _priority;
 }
--(id) initCPEventNode: (CPEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
+-(id) initCPEventNode: (CPEventNode*) next
+              trigger: (id) t
+                 cstr: (CPCoreConstraint*) c
+                   at: (ORInt) prio
+                trail: (id<ORTrail>)trail;
 -(void)dealloc;
 @end

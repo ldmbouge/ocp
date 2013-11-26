@@ -428,7 +428,7 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
             } else
                AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
          }
-         list = list->_node;
+         list = list->_node._val;
       }
       ++mlist;
    }

@@ -26,12 +26,19 @@
 
 static void setUpNetwork(CPEventNetwork* net,id<ORTrail> t,ORInt low,ORInt sz) 
 {
-    net->_boundsEvt = makeTRId(t,nil);
-    net->_bindEvt   = makeTRId(t,nil);
-    net->_domEvt    = makeTRId(t,nil);
-    net->_minEvt    = makeTRId(t,nil);
-    net->_maxEvt    = makeTRId(t,nil);
-    net->_ac5       = makeTRId(t, nil);
+   net->_boundsEvt = makeTRId(t,nil);
+   net->_bindEvt   = makeTRId(t,nil);
+   net->_domEvt    = makeTRId(t,nil);
+   net->_minEvt    = makeTRId(t,nil);
+   net->_maxEvt    = makeTRId(t,nil);
+   net->_ac5       = makeTRId(t, nil);
+
+   net->_tailBoundsEvt = makeTRId(t,nil);
+   net->_tailBindEvt   = makeTRId(t,nil);
+   net->_tailDomEvt    = makeTRId(t,nil);
+   net->_tailMinEvt    = makeTRId(t,nil);
+   net->_tailMaxEvt    = makeTRId(t,nil);
+   net->_tailAC5       = makeTRId(t, nil);
 }
 
 static void deallocNetwork(CPEventNetwork* net)

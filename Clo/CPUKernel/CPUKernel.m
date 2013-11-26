@@ -35,10 +35,14 @@
 
 
 @implementation CPEventNode
--(id)initCPEventNode:(CPEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio
+-(id)initCPEventNode:(CPEventNode*)next
+             trigger:(id)t
+                cstr:(CPCoreConstraint*)c
+                  at:(ORInt)prio
+               trail:(id<ORTrail>)trail
 {
    self = [super init];
-   _node = [next retain];
+   _node = makeTRId(trail, [next retain]);
    _trigger = [t copy];
    _cstr = c;
    _priority = prio;
@@ -49,7 +53,7 @@
 {
    //NSLog(@"CPEventNode::dealloc] %p\n",self);
    [_trigger release];
-   [_node release];
+   [_node._val release];
    [super dealloc];
 }
 
@@ -59,7 +63,7 @@
 }
 -(id<CPEventNode>)next
 {
-   return _node;
+   return _node._val;
 }
 
 -(void)scanWithBlock:(void(^)(id))block
@@ -67,7 +71,7 @@
    CPEventNode* cur = self;
    while(cur) {
       block(cur->_trigger);
-      cur = cur->_node;
+      cur = cur->_node._val;
    }
 }
 
@@ -75,14 +79,14 @@ void scanListWithBlock(CPEventNode* cur,ORID2Void block)
 {
    while(cur) {
       block(cur->_trigger);
-      cur = cur->_node;
+      cur = cur->_node._val;
    }
 }
 
 void collectList(CPEventNode* list,NSMutableSet* rv)
 {
    while(list) {
-      CPEventNode* next = list->_node;
+      CPEventNode* next = list->_node._val;
       [rv addObject:list->_cstr];
       list = next;
    }
@@ -91,7 +95,7 @@ void collectList(CPEventNode* list,NSMutableSet* rv)
 void freeList(CPEventNode* list)
 {
    while (list) {
-      CPEventNode* next = list->_node;
+      CPEventNode* next = list->_node._val;
       [list release];
       list = next;
    }
@@ -102,7 +106,15 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,O
    id evt = [[CPEventNode alloc] initCPEventNode:evtList->_val
                                           trigger:todo
                                              cstr:c
-                                               at:priority];
+                                               at:priority
+                                           trail:[engine trail]];
+   if (evtList->_val == nil) {
+      assignTRId(evtList, evt, [engine trail]);
+      assignTRId(evtList, evt, [engine trail]);
+   } else {
+      
+   }
+      assignTRId(
    assignTRId(evtList, evt, [engine trail]);
    [evt release];
 }
