@@ -27,11 +27,13 @@
 void twoByteMD4(NSString* filename, BVSearchHeuristic heur)
 {
    NSAutoreleasePool* pool; // = [[NSAutoreleasePool alloc] init];
-   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD4Data-"];
+   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"ObjCP-MD4Data"];
    switch (heur) {
       case BVFF:  [outputFilename appendString:@"-FirstFail-2BYTE-"];
          break;
       case BVABS:  [outputFilename appendString:@"-ABS-2BYTE-"];
+         break;
+      case BVIBS:  [outputFilename appendString:@"-IBS-2BYTE-"];
          break;
       case BVLSB:  [outputFilename appendString:@"-LSB-2BYTE-"];
          break;
@@ -79,18 +81,20 @@ void twoByteMD4(NSString* filename, BVSearchHeuristic heur)
       mask[i] = 0xFFFFFFFF;
    }
    [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-   //      [pool drain];
+   [pool drain];
 }
 
 void twoByteMD5(NSString* filename, BVSearchHeuristic heur)
    {
       NSAutoreleasePool* pool; // = [[NSAutoreleasePool alloc] init];
-      NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5Data-"];
+      NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"ObjCP-MD5Data"];
       switch (heur) {
          case BVFF:  [outputFilename appendString:@"-FirstFail-2BYTE-"];
                      break;
          case BVABS:  [outputFilename appendString:@"-ABS-2BYTE-"];
                      break;
+         case BVIBS:  [outputFilename appendString:@"-IBS-2BYTE-"];
+            break;
          case BVLSB:  [outputFilename appendString:@"-LSB-2BYTE-"];
                      break;
          case BVMSB:  [outputFilename appendString:@"-MSB-2BYTE-"];
@@ -137,16 +141,18 @@ void twoByteMD5(NSString* filename, BVSearchHeuristic heur)
          mask[i] = 0xFFFFFFFF;
       }
       [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-//      [pool drain];
+      [pool drain];
    }
 void twoByteSHA1(NSString* filename, BVSearchHeuristic heur)
 {
    NSAutoreleasePool* pool; // = [[NSAutoreleasePool alloc] init];
-   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-SHA1Data-"];
+   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"ObjCP-SHA1Data"];
    switch (heur) {
       case BVFF:  [outputFilename appendString:@"-FirstFail-2BYTE-"];
          break;
       case BVABS:  [outputFilename appendString:@"-ABS-2BYTE-"];
+         break;
+      case BVIBS:  [outputFilename appendString:@"-IBS-2BYTE-FULLSEARCH-"];
          break;
       case BVLSB:  [outputFilename appendString:@"-LSB-2BYTE-"];
          break;
@@ -194,16 +200,18 @@ void twoByteSHA1(NSString* filename, BVSearchHeuristic heur)
       mask[i] = 0xFFFFFFFF;
    }
    [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-   //      [pool drain];
+   [pool drain];
 }
 void zeroByteSHA1(NSString* filename, BVSearchHeuristic heur)
 {
    NSAutoreleasePool* pool; // = [[NSAutoreleasePool alloc] init];
-   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-SHA1Data-"];
+   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"ObjCP-SHA1Data"];
    switch (heur) {
       case BVFF:  [outputFilename appendString:@"-FirstFail-0BYTE-"];
          break;
       case BVABS:  [outputFilename appendString:@"-ABS-0BYTE-"];
+         break;
+      case BVIBS:  [outputFilename appendString:@"-IBS-0BYTE-"];
          break;
       case BVLSB:  [outputFilename appendString:@"-LSB-0BYTE-"];
          break;
@@ -239,11 +247,17 @@ void zeroByteSHA1(NSString* filename, BVSearchHeuristic heur)
          [mySHA1 dealloc];
          [pool drain];
    [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-   //      [pool drain];
+   [pool drain];
 }
 
 int main(int argc, const char* argv[])
 {
+   
+   [ORStreamManager setRandomized];
+
+   
+   
+   
 //   char A[128];
 //
 //   for(int i=0;i<128;i++)
@@ -311,15 +325,90 @@ int main(int argc, const char* argv[])
 //   twoByteMD4(@"rand5-mssg.txt", BVRAND);
 //   twoByteMD4(@"rand6-mssg.txt", BVRAND);
 //   twoByteMD4(@"rand7-mssg.txt", BVRAND);
- 
-   twoByteSHA1(@"rand0-mssg.txt", BVFF);
-   twoByteSHA1(@"rand1-mssg.txt", BVFF);
-   twoByteSHA1(@"rand2-mssg.txt", BVFF);
-   twoByteSHA1(@"rand3-mssg.txt", BVFF);
-   twoByteSHA1(@"rand4-mssg.txt", BVFF);
-   twoByteSHA1(@"rand5-mssg.txt", BVFF);
-   twoByteSHA1(@"rand6-mssg.txt", BVFF);
-   twoByteSHA1(@"rand7-mssg.txt", BVFF);
+   
+//   twoByteMD4(@"U-mssg.txt", BVABS);
+//   twoByteMD5(@"U-mssg.txt", BVABS);
+//   twoByteSHA1(@"U-mssg.txt", BVABS);
+//   twoByteMD4(@"3-mssg.txt", BVABS);
+//   twoByteMD5(@"3-mssg.txt", BVABS);
+//   twoByteSHA1(@"3-mssg.txt", BVABS);
+
+//twoByteMD4(@"U-mssg.txt", BVABS);
+twoByteMD5(@"U-mssg.txt", BVABS);
+twoByteSHA1(@"U-mssg.txt", BVABS);
+twoByteMD4(@"3-mssg.txt", BVABS);
+twoByteMD5(@"3-mssg.txt", BVABS);
+twoByteSHA1(@"3-mssg.txt", BVABS);
+
+   
+//   twoByteMD4(@"rand0-mssg.txt", BVIBS);
+//   twoByteMD4(@"rand1-mssg.txt", BVIBS);
+//   twoByteMD4(@"rand2-mssg.txt", BVIBS);
+//   twoByteMD4(@"rand3-mssg.txt", BVIBS);
+//   twoByteMD4(@"rand4-mssg.txt", BVIBS);
+//   twoByteMD4(@"rand5-mssg.txt", BVIBS);
+//   twoByteMD4(@"rand6-mssg.txt", BVIBS);
+//   twoByteMD4(@"rand7-mssg.txt", BVIBS);
+//
+//   twoByteMD5(@"rand0-mssg.txt", BVIBS);
+//   twoByteMD5(@"rand1-mssg.txt", BVIBS);
+//   twoByteMD5(@"rand2-mssg.txt", BVIBS);
+//   twoByteMD5(@"rand3-mssg.txt", BVIBS);
+//   twoByteMD5(@"rand4-mssg.txt", BVIBS);
+//   twoByteMD5(@"rand5-mssg.txt", BVIBS);
+//   twoByteMD5(@"rand6-mssg.txt", BVIBS);
+//   twoByteMD5(@"rand7-mssg.txt", BVIBS);
+//   
+//   twoByteSHA1(@"rand0-mssg.txt", BVIBS);
+//   twoByteSHA1(@"rand1-mssg.txt", BVIBS);
+//   twoByteSHA1(@"rand2-mssg.txt", BVIBS);
+//   twoByteSHA1(@"rand3-mssg.txt", BVIBS);
+//   twoByteSHA1(@"rand4-mssg.txt", BVIBS);
+//   twoByteSHA1(@"rand5-mssg.txt", BVIBS);
+//   twoByteSHA1(@"rand6-mssg.txt", BVIBS);
+//   twoByteSHA1(@"rand7-mssg.txt", BVIBS);
+   
+
+   
+   
+//   twoByteSHA1(@"rand0-mssg.txt", BVABS);
+//   twoByteSHA1(@"rand1-mssg.txt", BVABS);
+//   twoByteSHA1(@"rand2-mssg.txt", BVABS);
+//   twoByteSHA1(@"rand3-mssg.txt", BVABS);
+//   twoByteSHA1(@"rand4-mssg.txt", BVABS);
+//   twoByteSHA1(@"rand5-mssg.txt", BVABS);
+//   twoByteSHA1(@"rand6-mssg.txt", BVABS);
+//   twoByteSHA1(@"rand7-mssg.txt", BVABS);
+//   
+//   twoByteMD4(@"rand0-mssg.txt", BVABS);
+//   twoByteMD4(@"rand1-mssg.txt", BVABS);
+//   twoByteMD4(@"rand2-mssg.txt", BVABS);
+//   twoByteMD4(@"rand3-mssg.txt", BVABS);
+//   twoByteMD4(@"rand4-mssg.txt", BVABS);
+//   twoByteMD4(@"rand5-mssg.txt", BVABS);
+//   twoByteMD4(@"rand6-mssg.txt", BVABS);
+//   twoByteMD4(@"rand7-mssg.txt", BVABS);
+//
+//   twoByteMD5(@"rand0-mssg.txt", BVABS);
+//   twoByteMD5(@"rand1-mssg.txt", BVABS);
+//   twoByteMD5(@"rand2-mssg.txt", BVABS);
+//   twoByteMD5(@"rand3-mssg.txt", BVABS);
+//   twoByteMD5(@"rand4-mssg.txt", BVABS);
+//   twoByteMD5(@"rand5-mssg.txt", BVABS);
+//   twoByteMD5(@"rand6-mssg.txt", BVABS);
+//   twoByteMD5(@"rand7-mssg.txt", BVABS);
+
+//   twoByteMD4(@"fifteen.txt", BVABS);
+//   twoByteMD4(@"fifteen.txt", BVIBS);
+//   twoByteMD5(@"fifteen.txt", BVABS);
+//   twoByteMD5(@"fifteen.txt", BVIBS);
+//   twoByteSHA1(@"fifteen.txt", BVABS);
+//   twoByteSHA1(@"fifteen.txt", BVIBS);
+
+   
+//   twoByteSHA1(@"lorem-mssg.txt", BVFF);
+//   twoByteSHA1(@"lorem-mssg.txt", BVABS);
+
 
 //   twoByteSHA1(@"null-mssg.txt", BVLSB);
    //twoByteMD5(@"lorem-mssg.txt", BVFF);

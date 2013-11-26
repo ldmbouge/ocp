@@ -16,10 +16,15 @@
 #import <objcp/CPVar.h>
 #import "CPBitVar.h"
 #import "CPConcretizer.h"
+#import <ORFoundation/ORFactory.h>
+#import <ORProgram.h>
+
 
 #if defined(__linux__)
 #import <values.h>
 #endif
+
+@class CPBitVarI;
 
 @interface CPBitVarKillRange : NSObject {
    @package
@@ -68,18 +73,18 @@
 
 @interface CPBitVarAssignImpact : NSObject {
    id<CPBitVar>  _var;
-   double*      _imps;
-   ORUInt _nbVals;
+   double**     _imps;
+   ORUInt     _nbVals;
    ORBounds      _dom;
    double*        _mu;
    double*      _vari;
-   ORUInt*   _cnts;
+   ORUInt*      _cnts;
 }
 -(CPBitVarAssignImpact*)initCPBitVarAssignImpact:(id<CPBitVar>)theVar;
 -(void)dealloc;
--(void)addImpact:(double)i forValue:(ORInt)val;
--(void)setImpact:(double)i forValue:(ORInt)val;
--(double)impactForValue:(ORInt)val;
+-(void)addImpact:(double)i forValue:(ORBool)val atIndex:(ORUInt)idx;
+-(void)setImpact:(double)i forValue:(ORBool)val atIndex:(ORUInt)idx;
+-(double)impactForValue:(ORBool)val atIndex:(ORUInt)idx;
 -(double)impactForVariable;
 @end
 
@@ -87,35 +92,36 @@
 -(CPBitVarAssignImpact*)initCPBitVarAssignImpact:(id<CPBitVar>)theVar
 {
    self = [super init];
+   NSAssert([theVar isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", theVar, [[CPBitVarI class] description]);
    _var = theVar;
-   _dom = [theVar bounds];
-   _nbVals = _dom.max - _dom.min + 1;
-   if (_nbVals >= 8192) {
-      _imps = _mu = _vari = NULL;
-      _cnts = NULL;
-   } else {
-      _imps = malloc(sizeof(double)*_nbVals);
-      _imps -= _dom.min;
-      _mu = malloc(sizeof(double)*_nbVals);
-      _mu -= _dom.min;
-      _vari = malloc(sizeof(double)*_nbVals);
-      _vari -= _dom.min;
-      _cnts = malloc(sizeof(ORUInt)*_nbVals);
-      _cnts -= _dom.min;
-      for(ORUInt k=_dom.min;k<=_dom.max;k++) {
-         _cnts[k] = 0;
-         _imps[k] = _mu[k] = _vari[k] = 0.0;
+   _dom.min = [theVar lsFreeBit];
+   _dom.max = [theVar msFreeBit];
+   _nbVals = [theVar bitLength];
+   _imps = (double**)malloc(sizeof(double*)*_nbVals);
+   
+   for(int i=0;i<_nbVals;i++)
+      _imps[i] = malloc((sizeof(double))*2);
+
+   _mu = malloc(sizeof(double)*_nbVals);
+   //_mu -= _dom.min;
+   _vari = malloc(sizeof(double)*_nbVals);
+   //_vari -= _dom.min;
+   _cnts = malloc(sizeof(ORUInt)*_nbVals);
+   //_cnts -= _dom.min;
+   for(ORUInt k=_dom.min;k<=_dom.max;k++) {
+      _cnts[k] = 0;
+      _mu[k] = _vari[k] = 0.0;
+      for(ORUInt j=0; j<2;j++)
+      _imps[k][j] = 0.0;
       }
-   }
    return self;
 }
 -(void)dealloc
 {
+   
    if (_imps) {
-      _imps += _dom.min;
-      _mu += _dom.min;
-      _vari += _dom.min;
-      _cnts += _dom.min;
+      for(int i=0;i<_nbVals;i++)
+         free(_imps[i]);
       free(_imps);
       free(_mu);
       free(_vari);
@@ -123,23 +129,37 @@
    }
    [super dealloc];
 }
--(void)addImpact:(double)i forValue:(ORInt)val
+-(void)addImpact:(double)i forValue:(ORBool)val atIndex:(ORUInt)idx
 {
+   ORUInt vIndex;
+   
+   if (val)
+      vIndex = 0;
+   else
+      vIndex = 1;
+
    if (_imps) {
-      _imps[val] = (_imps[val] * (ALPHA - 1.0) + i) / ALPHA;
-      double oldMu = _mu[val];
-      _mu[val] = (_cnts[val] * _mu[val] + i)/(_cnts[val]+1);
-      _vari[val] = _vari[val] + (i - _mu[val]) * (i - oldMu);
-      _cnts[val] = _cnts[val] + 1;
+      _imps[idx][vIndex] = (_imps[idx][vIndex] * (ALPHA - 1.0) + i) / ALPHA;
+      double oldMu = _mu[idx];
+      _mu[idx] = (_cnts[idx] * _mu[idx] + i)/(_cnts[idx]+1);
+      _vari[idx] = _vari[idx] + (i - _mu[idx]) * (i - oldMu);
+      _cnts[idx] = _cnts[idx] + 1;
    }
 }
--(void)setImpact:(double)i forValue:(ORInt)val
+-(void)setImpact:(double)i forValue:(ORBool)val atIndex:(ORUInt)idx
 {
+   ORUInt vIndex;
+   
+   if (val)
+      vIndex = 0;
+   else
+      vIndex = 1;
+
    if (_imps) {
-      _imps[val] = i;
-      _mu[val]   = i;
-      _vari[val] = 0.0;
-      _cnts[val] = 1;
+      _imps[idx][vIndex] = i;
+      _mu[idx]   = i;
+      _vari[idx] = 0.0;
+      _cnts[idx] = 1;
    }
 }
 -(NSString*)description
@@ -148,18 +168,29 @@
    [buf appendFormat:@"impact[%3d] = %f",[_var getId],[self impactForVariable]];
    return buf;
 }
--(double)impactForValue:(ORInt)val
+-(double)impactForValue:(ORBool)val atIndex:(ORUInt)idx
 {
-   return _imps != NULL ? _imps[val] : 0.0;
+   ORUInt vIndex;
+   
+   if (val)
+      vIndex = 0;
+   else
+      vIndex = 1;
+
+   return _imps != NULL ? _imps[idx][vIndex] : 0.0;
 }
 -(double)impactForVariable
 {
+   
    if (_imps) {
-      ORBounds cb = [_var bounds];
+      ORBounds cb;
+      cb.min = [_var lsFreeBit];
+      cb.max = [_var msFreeBit];
       double rv = 0.0;
       for(ORInt i = cb.min;i <= cb.max;i++) {
          if (![_var member:(unsigned int*)&i]) continue;
-         rv += 1.0 - _imps[i];
+         rv += 1.0 - _imps[i][0];
+         rv += 1.0 - _imps[i][1];
       }
       return - rv;
    } else return - MAXFLOAT;
@@ -173,7 +204,7 @@
    NSMutableDictionary*    _impacts;
 }
 
--(id)initCPBitVarIBS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
+-(id)initCPBitVarIBS:(id<CPCommonProgram>)cp restricted:(id<ORBitVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
@@ -205,37 +236,47 @@
    [key release];
    return rv;
 }
--(ORFloat)valOrdering:(int)v forVar:(id<CPBitVar>)x
+-(ORFloat)valOrdering:(ORBool)v forVar:(id<CPBitVar>)x atIndex:(ORUInt)idx
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
-   double rv = [[_impacts objectForKey:key] impactForValue:v];
+   double rv = [[_impacts objectForKey:key] impactForValue:v atIndex:idx];
    [key release];
    return rv;
 }
 // pvh: this dictionary business seems pretty heavy; lots of memory allocation
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<ORBitVarArray>)t and:(id<CPBitVarArray>)cvs
 {
+   id* gamma = [_cp gamma];
    _vars = t;
-   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:[self allBitVars]];
-   _nbv = [_vars count];
+   NSArray* allvars = [[_engine model] variables];
+   id<ORIdArray> o = [ORFactory idArray:_engine range:[[ORIntRangeI alloc] initORIntRangeI:0 up:[allvars count]]];
+   for(int i=0; i< [allvars count];i++)
+      [o set:allvars[i] at:i];
+
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:(id<ORVarArray>)o];
+   
+   _nbv = [_rvars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
-   ORInt low = [_vars low],up = [_vars up];
-   for(ORUInt i=low;i<=up;i++) {
-      //NSLog(@"impacting: %@",[_vars at:i]);
-      CPBitVarAssignImpact* assigns = [[CPBitVarAssignImpact alloc] initCPBitVarAssignImpact:(id<CPBitVar>)[_vars at:i]];
-      [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
+   
+   
+   for(ORUInt i=0;i< _nbv; i++) {
+      if ([gamma[_rvars[i].getId] bound])
+         continue;
+      NSLog(@"impacting: %@",[t at:i]);
+      CPBitVarAssignImpact* assigns = [[CPBitVarAssignImpact alloc] initCPBitVarAssignImpact:gamma[_rvars[i].getId]];
+      [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[t at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }
    [_engine post:_monitor];
    [self initImpacts];       // [ldm] init called _after_ adding the monitor so that the reduction is tracked (but before watching label)
-   [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
+   [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id var, ORUInt idx, ORInt val) {
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
-      [[_impacts objectForKey:key] addImpact:1.0 - [_monitor reduction] forValue:val];
+      [[_impacts objectForKey:key] addImpact:1.0 - [_monitor reduction] forValue:val atIndex:idx];
       [key release];
    }];
-   [[[_cp portal] failLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
+   [[[_cp portal] failLabel] wheneverNotifiedDo:^void(id var, ORUInt idx, ORInt val) {
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
-      [[_impacts objectForKey:key] addImpact: 1.0 forValue:val];
+      [[_impacts objectForKey:key] addImpact: 1.0 forValue:val atIndex:idx];
       [key release];
    }];
    [[_cp engine] clearStatus];
@@ -286,7 +327,8 @@
       //NSLog(@"base: [%d .. %d]impact (%@) = %lf",low,up,key,ir);
       CPBitVarAssignImpact* vImpact = [_impacts objectForKey:key];
       for(ORInt c = low ; c <= up;c++) {
-         [vImpact setImpact:ir forValue:c];
+         [vImpact setImpact:ir forValue:false atIndex:c];
+         [vImpact setImpact:ir forValue:true atIndex:c];
       }
       [key release];
    } else {
@@ -314,24 +356,81 @@
       [tracer popNode];
    }
 }
+-(void) computeBitVarImpacts:(id<CPBitVar>)x sac:(NSMutableSet*)set{
+
+   id<ORTracer> tracer = [_cp tracer];
+   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+
+
+   for(int b=0; b < [x bitLength]; b++){
+      float ks = 0.0;
+      for(CPBitVarKillRange* kr in set)
+         ks += [kr killed];
+      
+      CPBitVarAssignImpact* vImpact = [_impacts objectForKey:key];
+
+
+      if ([x isFree:b]){
+      //cout << "var:" << x.getId() << ",bit:" << b  << endl;
+         [tracer pushNode];
+         ORStatus oc = [_engine enforce:^ORStatus{ return[x bind:b to:true];}];
+         [ORConcurrency pumpEvents];
+         if (oc != ORFailure) {
+            double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
+            [vImpact setImpact:ir forValue:true atIndex:b];
+//            _bstat[x.getId()].setImpact(b,true,ix0);
+            //cout << "RATIO:" << ix0 << "\tNBA:" << _nbA << endl;
+         }
+         
+         [tracer popNode];
+         if (oc == ORFailure) {
+            NSLog(@"FAILED impactBit(%@, %i to true )", x, b);
+            [x bind:b to:false];
+            
+         }
+         if (![x isFree:b]) continue;
+         [tracer pushNode];
+         oc = [_engine enforce:^ORStatus{ return[x bind:b to:false];}];
+         [ORConcurrency pumpEvents];
+         if (oc!=ORFailure) {
+            double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
+            [vImpact setImpact:ir forValue:false atIndex:b];
+         }
+         [tracer popNode];
+         if (oc==ORFailure) {
+            NSLog(@"FAILED impactBit(%@, %i to false )", x, b);
+            [x bind:b to:true];
+         }
+      }
+   }
+   [key release];
+}
+-(void) impBitVar:(id<CPBitVar>) x sac:(NSMutableSet*)set {
+   [self computeBitVarImpacts:x sac:set];
+}
+
 -(void)initImpacts
 {
-   ORInt blockWidth = 1;
-   id<CPBitVarArray> av = [self allBitVars];
-   ORInt low = [av low],up = [av up];
-   for(ORInt k=low; k <= up;k++) {
-      NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
-      id<CPBitVar> v = (id<CPBitVar>)_vars[k];
-      ORBounds vb = [v bounds];
-      [_monitor rootRefresh];
-      [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
+//   ORInt blockWidth = 1;
+   id<ORBitVarArray> av = [self allBitVars];
+
+   
+   for(ORInt k=0; k <[av count];k++) {
+      NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];   //TODO: currently sacs are not recorded separately
+      id<CPBitVar> v = (id<CPBitVar>)[_cp gamma][av[k].getId];
+      if ([v bound]) continue;
+//      ORBounds vb = [v bounds];
+//      [_monitor rootRefresh];
+      //[self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
+      [self impBitVar:v sac:sacs];
+      NSLog(@"%lu SACs",(unsigned long)[sacs count]);
       ORInt rank = 0;
       ORInt lastRank = (ORInt)[sacs count]-1;
       for(CPBitVarKillRange* kr in sacs) {
          if (rank == 0 && [kr low] == [v min]) {
-            [_engine enforce: ^ORStatus { return [v lsFreeBit:[kr up]+1];}];  // gthen:v with:[kr up]];
+            [_engine enforce: ^ORStatus { return [v lsFreeBit];}];  // gthen:v with:[kr up]];
          } else if (rank == lastRank && [kr up] == [v max]) {
-            [_engine enforce: ^ORStatus { return [v msFreeBit:[kr low]-1];}]; // lthen:v with:[kr low]];
+            [_engine enforce: ^ORStatus { return [v msFreeBit];}]; // lthen:v with:[kr low]];
          } else {
             for(ORInt i=[kr low];i <= [kr up];i++)
                [_engine enforce: ^ORStatus { return [v remove:i];}];// diff:v with:i];
@@ -341,6 +440,6 @@
       [sacs release];
       //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
    }
-   //NSLog(@"VARS AT END OF INIT:%@ ",av);
+   NSLog(@"VARS AT END OF INIT:%@ ",av);
 }
 @end

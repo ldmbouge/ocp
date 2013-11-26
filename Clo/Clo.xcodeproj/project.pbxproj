@@ -1128,6 +1128,9 @@
 		F50D95AF16835AE4001D5E3C /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		F50D95B016835AE4001D5E3C /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		F50EE699178395EC004D8ABB /* CPBitVarABS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5066C05171AE93F00F309A6 /* CPBitVarABS.m */; };
+		F5304E52183C520900779B90 /* U-mssg.txt in Resources */ = {isa = PBXBuildFile; fileRef = F5304E51183C520900779B90 /* U-mssg.txt */; };
+		F5304E53183C534900779B90 /* U-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5304E51183C520900779B90 /* U-mssg.txt */; };
+		F5304E55183C596C00779B90 /* 3-mssg.txt in Resources */ = {isa = PBXBuildFile; fileRef = F5304E54183C596C00779B90 /* 3-mssg.txt */; };
 		F5444F84171E3D9900C86070 /* CPBitVarIBS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5444F82171E3D9800C86070 /* CPBitVarIBS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F5444F85171E3D9900C86070 /* CPBitVarIBS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5444F82171E3D9800C86070 /* CPBitVarIBS.h */; };
 		F5444F86171E3D9900C86070 /* CPBitVarIBS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5444F83171E3D9900C86070 /* CPBitVarIBS.m */; };
@@ -1140,6 +1143,9 @@
 		F54AC181179F64C100E0D636 /* CPBitVarBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = F507ECC3176F6D0B00578C4E /* CPBitVarBaseHeuristic.m */; };
 		F54AC182179F660300E0D636 /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C04171AE93F00F309A6 /* CPBitVarABS.h */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
+		F5B1C2AA1840548500606056 /* 3-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5304E54183C596C00779B90 /* 3-mssg.txt */; };
+		F5B1C2AE1841632200606056 /* fifteen.txt in Resources */ = {isa = PBXBuildFile; fileRef = F5B1C2AD1841632200606056 /* fifteen.txt */; };
+		F5B1C2AF1841635200606056 /* fifteen.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5B1C2AD1841632200606056 /* fifteen.txt */; };
 		F5B87BF1182C4B32004A92E2 /* SHA1b.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B87BF0182C4B32004A92E2 /* SHA1b.m */; settings = {COMPILER_FLAGS = "-O0"; }; };
 		F5BFB4B218070F3000B04147 /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = F5444FB9171F32EE00C86070 /* SHA1.m */; };
 		F5C00744180057CE00873D23 /* A-mssg.txt in Copy Files */ = {isa = PBXBuildFile; fileRef = F5C00743180057BF00873D23 /* A-mssg.txt */; };
@@ -4470,8 +4476,11 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
 			dstPath = "";
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 16;
 			files = (
+				F5B1C2AF1841635200606056 /* fifteen.txt in Copy Files */,
+				F5B1C2AA1840548500606056 /* 3-mssg.txt in Copy Files */,
+				F5304E53183C534900779B90 /* U-mssg.txt in Copy Files */,
 				F5C007801802671A00873D23 /* rand0-mssg.txt in Copy Files */,
 				F5C007811802671A00873D23 /* rand1-mssg.txt in Copy Files */,
 				F5C007821802671A00873D23 /* rand2-mssg.txt in Copy Files */,
@@ -5149,6 +5158,8 @@
 		F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarFirstFail.m; sourceTree = "<group>"; };
 		F507ECC2176F6D0A00578C4E /* CPBitVarBaseHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarBaseHeuristic.h; sourceTree = "<group>"; };
 		F507ECC3176F6D0B00578C4E /* CPBitVarBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarBaseHeuristic.m; sourceTree = "<group>"; };
+		F5304E51183C520900779B90 /* U-mssg.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "U-mssg.txt"; sourceTree = "<group>"; };
+		F5304E54183C596C00779B90 /* 3-mssg.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "3-mssg.txt"; sourceTree = "<group>"; };
 		F5444F82171E3D9800C86070 /* CPBitVarIBS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarIBS.h; sourceTree = "<group>"; };
 		F5444F83171E3D9900C86070 /* CPBitVarIBS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarIBS.m; sourceTree = "<group>"; };
 		F5444FAC171F32C900C86070 /* SHA1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SHA1; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5165,6 +5176,7 @@
 		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
 		F55DEFB516C9F33E005818AF /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
 		F55DEFB616C9F33E005818AF /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
+		F5B1C2AD1841632200606056 /* fifteen.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fifteen.txt; sourceTree = "<group>"; };
 		F5B87BEF182C4B32004A92E2 /* SHA1b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA1b.h; path = SHA1/SHA1b.h; sourceTree = "<group>"; };
 		F5B87BF0182C4B32004A92E2 /* SHA1b.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA1b.m; path = SHA1/SHA1b.m; sourceTree = "<group>"; };
 		F5C00743180057BF00873D23 /* A-mssg.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "A-mssg.txt"; sourceTree = "<group>"; };
@@ -8062,6 +8074,9 @@
 		B1943A1015B0E33C00E1771B /* data */ = {
 			isa = PBXGroup;
 			children = (
+				F5B1C2AD1841632200606056 /* fifteen.txt */,
+				F5304E54183C596C00779B90 /* 3-mssg.txt */,
+				F5304E51183C520900779B90 /* U-mssg.txt */,
 				F5C007781802670F00873D23 /* rand0-mssg.txt */,
 				F5C007791802670F00873D23 /* rand1-mssg.txt */,
 				F5C0077A1802670F00873D23 /* rand2-mssg.txt */,
@@ -10491,9 +10506,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5304E55183C596C00779B90 /* 3-mssg.txt in Resources */,
 				5BFD594A15A3ACA500825BC3 /* InfoPlist.strings in Resources */,
 				5B7B478315F0F538005FF875 /* test-n30-e50.col in Resources */,
 				5B7B478615F0F733005FF875 /* smallColoring.col in Resources */,
+				F5B1C2AE1841632200606056 /* fifteen.txt in Resources */,
+				F5304E52183C520900779B90 /* U-mssg.txt in Resources */,
 				5B19097C16DAAB45006D1D24 /* eq20.1 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16101,7 +16119,7 @@
 		F548AA7B167FB1C700726814 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
@@ -16114,6 +16132,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -16122,7 +16141,7 @@
 		F548AA7C167FB1C700726814 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
@@ -16131,6 +16150,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MD5/MD5-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};

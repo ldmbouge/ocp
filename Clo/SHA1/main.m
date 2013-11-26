@@ -16,7 +16,9 @@ void twoByteSHA1(NSString* filename, BVSearchHeuristic heur)
    switch (heur) {
       case BVFF:  [outputFilename appendString:@"-FirstFail-2BYTE-"];
          break;
-      case BVABS:  [outputFilename appendString:@"-ABS-2BYTE-"];
+      case BVABS:  [outputFilename appendString:@"-IBS-2BYTE-"];
+         break;
+      case BVIBS:  [outputFilename appendString:@"-ABS-2BYTE-"];
          break;
       case BVLSB:  [outputFilename appendString:@"-LSB-2BYTE-"];
          break;
@@ -54,7 +56,7 @@ void twoByteSHA1(NSString* filename, BVSearchHeuristic heur)
             mask[i+1] = 0x00FFFFFF;
          }
          pool = [[NSAutoreleasePool alloc] init];
-         mySHA1 = [SHA1 initSHA1];
+         mySHA1 = [[SHA1 alloc] initSHA1];
          [str appendFormat:@"%d ",num++];
          [str appendString:[mySHA1 preimage:filename withMask:mask andHeuristic:heur]];
          [mySHA1 dealloc];
@@ -146,7 +148,7 @@ int main(int argc, const char* argv[])
    //   twoByteMD5(@"rand6-mssg.txt", BVMIX);
    //   twoByteMD5(@"rand7-mssg.txt", BVMIX);
    
-   twoByteSHA1(@"rand0-mssg.txt", BVFF);
+   twoByteSHA1(@"null-mssg.txt", BVLSB);
    
 }
 //int main(int argc, const char * argv[])

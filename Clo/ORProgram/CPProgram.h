@@ -168,6 +168,8 @@
 -(id<CPBitVarHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarABS;
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarIBS;
+-(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
 
 -(NSString*)stringValue:(id<ORBitVar>)x;
 @end

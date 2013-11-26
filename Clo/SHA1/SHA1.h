@@ -24,11 +24,8 @@
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPBitConstraint.h>
 
-#ifndef DIGEST_LENGTH
-#define DIGEST_LENGTH 5
-#endif
+#define SHA1_DIGEST_LENGTH 5
 #define DIGEST_VAR_LENGTH 8
-#define BLOCK_LENGTH 4
 
 #define K0 0x5A827999
 #define K1 0x6ED9EBA1
@@ -46,9 +43,8 @@ typedef enum {BVFF, BVABS, BVLSB, BVMSB, BVMID, BVRAND, BVMIX} BVSearchHeuristic
    NSFileManager  *_fm;
    NSMutableArray *_digest;
    NSMutableArray *_temps;
-   id<ORBitVar>   *hVars[4];
-   id<ORBitVar>   kVars[4];
-   id<ORBitVar>   *W;
+   id<ORBitVar>   _kVars[4];
+   id<ORBitVar>   _W[80];
    uint64         _messageLength; //in bits
    uint32         *_buffer;
    uint64         _numBlocks;
@@ -58,30 +54,19 @@ typedef enum {BVFF, BVABS, BVLSB, BVMSB, BVMID, BVRAND, BVMIX} BVSearchHeuristic
 
 +(SHA1*) initSHA1;
 -(SHA1*) initExplicitSHA1;
-//-(void) dealloc;
 
 -(bool) getMessage:(NSString*) fname;
 -(NSMutableArray*) getSHA1Digest:(NSString*)fname;
 -(void) createSHA1Blocks:(uint32*)mask;
-//-(void) createMD4Block:(uint32*)data withCount:(uint64)count;
 -(void) createSHA1Block:(uint32*)data withCount:(uint64)count andMask:(uint32*)messageMask;
-
+-(id<ORBitVar>) getK:(int) t;
 -(id<ORBitVar>) f:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z;
 -(id<ORBitVar>) g:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z;
 -(id<ORBitVar>) h:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z;
 -(id<ORBitVar>*) roundSHA1:(id<ORBitVar>[])h x:(id<ORBitVar>[]) x;
-//-(id<ORBitVar>*) round2:(id<ORBitVar>[])h x:(id<ORBitVar>[]) x;
-//-(id<ORBitVar>*) round3:(id<ORBitVar>[])h x:(id<ORBitVar>[]) x;
 -(id<ORBitVar>) shuffle:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D e:(id<ORBitVar>) E t:(uint32)t;
-//-(id<ORBitVar>) shuffle2:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x t:(uint32)t;
-//-(id<ORBitVar>) shuffle3:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x t:(uint32)t;
-//-(id<ORBitVar>) shuffle4:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x t:(uint32)t;
 -(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask andHeuristic:(BVSearchHeuristic)heur;
 -(id<ORBitVar>*) stateModel;
-
-
-//-(void) dealloc;
-
 @end
 
 @interface SHA1Block : NSObject

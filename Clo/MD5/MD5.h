@@ -30,7 +30,7 @@
 
 #ifndef BV_SEARCH_HEUR
 #define BV_SEARCH_HEUR
-typedef enum {BVFF, BVABS, BVLSB, BVMSB, BVMID, BVRAND, BVMIX} BVSearchHeuristic;
+typedef enum {BVFF, BVABS, BVIBS, BVLSB, BVMSB, BVMID, BVRAND, BVMIX} BVSearchHeuristic;
 #endif
 
 @interface MD5 : NSObject{

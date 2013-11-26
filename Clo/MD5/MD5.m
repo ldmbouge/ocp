@@ -201,16 +201,21 @@
          NSLog(@"%@\n",gamma[bitVars[j].getId]);
    }
    
-   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
+//   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:32]];
 //   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:[[cp engine] nbVars]-1]];
+   NSArray* allvars = [model variables];
+   
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
       [o set:gamma[bitVars[k].getId] at:k];
-   NSArray* allvars = [model variables];
+
 
    id<CPBitVarHeuristic> h;
    switch (heur) {
       case BVABS: h = [cp createBitVarABS:(id<CPBitVarArray>)o];
                   break;
+      case BVIBS: h = [cp createBitVarIBS:(id<CPBitVarArray>)o];
+         break;
       case BVFF:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
                   break;
    }
@@ -223,7 +228,7 @@
          NSLog(@"%@\n\n",gamma[digestVars[i].getId]);
       }
 //      NSLog(@"Message Blocks (With Data Recovered)");
-//      __block ORUInt maxFail = 0x0000000000004000;
+      __block ORUInt maxFail = 0x0000000000000800;
       clock_t searchStart = clock();
 //      [cp repeat:^{
 //         [cp limitFailures:maxFail
@@ -254,8 +259,17 @@
                   [cp labelBitsMixedStrategy:gamma[bitVars[i].getId]];
                }
             break;
+         case BVFF:
+            [cp labelBitVarHeuristic:h];
+            break;
             
-         default:       [cp labelBitVarHeuristic:h];
+            
+         default:
+            [cp labelBitVarHeuristic:h];
+//                  [cp repeat:^{
+//                     [cp limitFailures:maxFail
+//                                    in:^{[cp labelBitVarHeuristic:h];}];}
+//                    onRepeat:^{maxFail+=maxFail>>6;NSLog(@"Restart");}];
             break;
       }
 //      for (int i=0;i<16;i++)
@@ -268,11 +282,11 @@
             NSLog(@"%@\n",gamma[bitVars[j].getId]);
 
          }
-      NSLog(@"All variables:");
-      for (int i=0; i< [allvars count]; i++) {
-         NSLog(@"Model Variable[%i]: %x",i,[allvars[i] getLow]->_val);
-      }
-      NSLog(@"End all variables:");
+//      NSLog(@"All variables:");
+//      for (int i=0; i< [allvars count]; i++) {
+//         NSLog(@"Model Variable[%i]: %x",i,[allvars[i] getLow]->_val);
+//      }
+//      NSLog(@"End all variables:");
 
 
          double totalTime, searchTime;

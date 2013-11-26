@@ -564,7 +564,14 @@
 {
    _vars = t;
    _cvs  = cvs;
-   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:_cvs];
+   NSArray* allvars = [[[_cp engine] model] variables];
+   id<ORIdArray> o = [ORFactory idArray:[_cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:[allvars count]]];
+   for(int i=0; i< [allvars count];i++)
+      [o set:allvars[i] at:i];
+   
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:(id<ORVarArray>)o];
+
+//   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:_cvs];
    _nbv = [_cvs count];
    [_solver post:_monitor];
    _varActivity = [[NSMutableDictionary alloc] initWithCapacity:32];
@@ -647,7 +654,6 @@
          [_aggregator enumerateForVariable:[key intValue] using:^(ORUInt idx, ORBool value, NSNumber* activity, BOOL *stop) {
             [valAct setActivity:[activity floatValue] / nbProbes atIndex:idx forValue:value];
          }];
-         //do I need the value here? Do we care if it was set up or low?
       }
    }
    _varBackup = [[NSMutableDictionary alloc] initWithCapacity:[_varActivity count]];
@@ -668,12 +674,13 @@
    id<CPBitVarArray> vars = (id<CPBitVarArray>)_cvs;
    id<CPBitVarArray> bvars = [self allBitVars];
    const ORInt nbInRound = 10;
-   const ORInt probeDepth = (ORInt) [bvars count];
+   const ORInt probeDepth = (ORInt) [bvars count];  //TODO: Should the probe depth be based on # of bitvars and their domain size? (treating each bit as a variable)
    float mxp = 0;
    for(ORInt i = [bvars low];i <= [bvars up];i++) {
       //NSAssert([bvars[i] isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", bvars[i], [[CPBitVarI class] description]);
       if ([bvars[i] bound]) continue;
-      mxp += log([(id)bvars[i] domsize]);
+      mxp += [(id)bvars[i] domsize];
+//      mxp += log([(id)bvars[i] domsize]);
 //      mxp += pow(2,[(id)bvars[i] domsize]);
    }
    const ORInt maxProbes = (int)10 * mxp;
@@ -719,7 +726,7 @@
             if (nbVS) { // we found someone
                CPBitVarI* xi = (CPBitVarI*)bvars[i];
                NSAssert([xi isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", xi, [[CPBitVarI class] description]);
-               ORUInt idx = [xi midFreeBit]; //randomize
+               ORUInt idx = [xi randomFreeBit]; //randomize
                ORBool v = arc4random_uniform(2)==0;
                ORStatus s = [_solver enforce: ^ORStatus { return [(id<CPBitVar>)xi bind:idx to:v];}];
                [ORConcurrency pumpEvents];
@@ -762,7 +769,7 @@
          for(ABSBitVarNogood* b in localKill) {
             
             //TODO:For BitVars we can just bind the bit to  the opposite value
-            [_solver enforce: ^ORStatus { return [[b variable] bind:[b index] to:[b value]];}];
+            [_solver enforce: ^ORStatus { return [[b variable] bind:[b index] to:![b value]];}];
             //NSLog(@"Imposing local SAC %@",b);
          }
          [localKill removeAllObjects];
@@ -773,7 +780,7 @@
    [_solver atomic:^ORStatus {
       NSLog(@"Imposing %ld SAC constraints",[killSet count]);
       for(ABSBitVarNogood* b in killSet) {
-         [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
+         [_solver enforce: ^ORStatus { return [[b variable] bind:[b index] to:![b value]];}];
       }
       return ORSuspend;
    }];

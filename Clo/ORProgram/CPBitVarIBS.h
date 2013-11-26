@@ -13,22 +13,27 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <ORProgram/ORProgramFactory.h>
 #import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgram.h>
 #import <ORProgram/CPProgram.h>
 #import <objcp/CPVar.h>
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORSetI.h>
+
 
 @class CPStatisticsMonitor;
 
 #define ALPHA 8.0L
 
-@interface CPBitVarIBS : CPBaseHeuristic<CPBitVarHeuristic> {
-   id<ORVarArray>   _vars;
-   id<ORVarArray>  _rvars;
+@interface CPBitVarIBS : CPBitVarBaseHeuristic<CPBitVarHeuristic> {
+   id<ORBitVarArray>   _vars;
+   id<ORBitVarArray>  _rvars;
+   id<CPBitVarArray>  _cvars;
    id<CPCommonProgram>   _cp;
 }
 -(id)initCPBitVarIBS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPBitVar>)x;
--(ORFloat)valOrdering:(int)v forVar:(id<CPBitVar>)x;
--(void)initInternal:(id<ORVarArray>)t;
+-(ORFloat)valOrdering:(ORBool)v forVar:(id<CPBitVar>)x atIndex:(ORUInt)idx;
+-(void)initInternal:(id<ORBitVarArray>)t and:(id<CPBitVarArray>)cvs;
 -(id<CPBitVarArray>)allBitVars;
 -(void)initImpacts;
 -(id<CPProgram>)solver;

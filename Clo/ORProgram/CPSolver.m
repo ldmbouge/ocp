@@ -1520,6 +1520,12 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarIBS alloc] initCPBitVarIBS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createFF
 {
    id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:nil];
@@ -1553,6 +1559,12 @@
 -(id<CPBitVarHeuristic>) createBitVarABS
 {
    id<CPBitVarHeuristic> h = [[CPBitVarABS alloc] initCPBitVarABS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPBitVarHeuristic>) createBitVarIBS
+{
+   id<CPBitVarHeuristic> h = [[CPBitVarIBS alloc] initCPBitVarIBS:self restricted:nil];
    [self addHeuristic:h];
    return h;
 }

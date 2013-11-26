@@ -20,6 +20,7 @@
 #import <ORProgram/CPIBS.h>
 #import <ORProgram/CPABS.h>
 #import <ORProgram/CPBitVarABS.h>
+#import <ORProgram/CPBitVarIBS.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPBitVarFirstFail.h>
 

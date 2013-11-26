@@ -58,6 +58,7 @@
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
+-(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
 //=======
 //-(id<ORCPSolutionPool>) solutionPool;
 //-(id<ORCPSolution>) captureSolution;

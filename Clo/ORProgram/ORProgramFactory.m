@@ -29,7 +29,7 @@
 #import "CPIBS.h"
 #import "CPABS.h"
 #import "CPBitVarABS.h"
-
+#import "CPBitVarIBS.h"
 // LP Solver
 #import "LPProgram.h"
 #import "LPSolver.h"
