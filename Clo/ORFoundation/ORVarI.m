@@ -408,7 +408,6 @@
 {
    return _bLen;
 }
-
 //-(BOOL) bound
 //{
 //   if (_impl)

@@ -38,6 +38,7 @@
 @protocol ORBitVar <ORVar>
 -(ORUInt*)low;
 -(ORUInt*)up;
+
 //-(ORBounds) bounds;
 -(ORUInt) bitLength;
 //-(ORInt)  domsize;
@@ -50,6 +51,7 @@
 //-(bool) isFree:(ORUInt)pos;
 //-(ORUInt) lsFreeBit;
 //-(ORUInt) msFreeBit;
+
 -(NSString*)stringValue;
 @end
 

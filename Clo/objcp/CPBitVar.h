@@ -37,6 +37,18 @@
 -(ORInt) getId;
 -(ORBool) bound;
 -(ORBool) member: (unsigned int*) v;
+-(id<CPBitVar>) dereference;
+//=======
+//@protocol CPBitVar <NSObject>
+//-(ORInt) getId;
+//-(ORBool) bound;
+//-(CPBitArrayDom*) domain;
+//-(uint64)min;
+//-(uint64)max;
+//-(ORInt)  domsize;
+//-(ORBool) member: (unsigned int*) v;
+////-(id<CPBitVar>) dereference;
+//>>>>>>> modeling
 -(id<CPEngine>) engine;
 @end
 

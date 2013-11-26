@@ -280,7 +280,6 @@
 
          for(int j=0;j<16;j++){
             NSLog(@"%@\n",gamma[bitVars[j].getId]);
-
          }
 //      NSLog(@"All variables:");
 //      for (int i=0; i< [allvars count]; i++) {

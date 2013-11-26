@@ -282,7 +282,6 @@ return self;
    return [_dom lsFreeBit];
 }
 
-//<<<<<<< HEAD
 -(unsigned int) msFreeBit
 {
    return [_dom msFreeBit];
@@ -299,10 +298,7 @@ return self;
 {
    return [_dom setBit:bit to:value for:self];
 }
-//-(BOOL)member:(unsigned int*)v
-//=======
 -(ORBool)member:(unsigned int*)v
-//>>>>>>> modeling
 {
     return [_dom member:v];
 }

@@ -48,7 +48,6 @@
 -(void) restartHeuristics;
 -(void) doOnSolution;
 -(void) doOnExit;
-//<<<<<<< HEAD
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolutionPool>) globalSolutionPool;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
@@ -59,11 +58,9 @@
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
-//=======
-//-(id<ORCPSolutionPool>) solutionPool;
-//-(id<ORCPSolution>) captureSolution;
-//-(ORInt) maxBound:(id<ORIdArray>) x;
-//
+-(id<ORCPSolution>) captureSolution;
+-(ORInt) maxBound:(id<ORIdArray>) x;
+
 //-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
 //
 //// pvh: do we have to put these here. Any way to externalize them.
@@ -72,13 +69,11 @@
 //-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
 //-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
 //-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
-//>>>>>>> modeling
-//-(id<CPHeuristic>) createFF;
-//-(id<CPHeuristic>) createWDeg;
-//-(id<CPHeuristic>) createDDeg;
-//-(id<CPHeuristic>) createIBS;
-//-(id<CPHeuristic>) createABS;
-//-(id<CPHeuristic>) createBitVarABS;
+-(id<CPHeuristic>) createFF;
+-(id<CPHeuristic>) createWDeg;
+-(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createIBS;
+-(id<CPHeuristic>) createABS;
 @end
 
 // Pure DFS CPSolver

@@ -67,6 +67,7 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
+
 //-(ORInt)  domsize;
 //-(ORULong)  numPatterns;
 //-(ORULong)  maxRank;
