@@ -451,6 +451,11 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
+//   static int cnt = 0;
+//   @autoreleasepool {
+//      NSString* cn = NSStringFromClass([*last class]);
+//      NSLog(@"%d : propagate: %p : CN=%@",cnt++,*last,cn);
+//   }
    if (cb.cb)
       cb.cb();
    else {
@@ -657,13 +662,13 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    if (_state == CPOpen) {
       _state = CPClosing;
-      //_propagating++;
+      _propagating++;
       for(id<ORConstraint> c in _mStore) {
          [self post:c];
          if (_status == ORFailure)
             return ORFailure;
       }
-      //_propagating--;
+      _propagating--;
       _status = internalPropagate(self, ORSuspend);
       _state = CPClosed;
    }
