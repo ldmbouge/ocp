@@ -187,6 +187,7 @@
 		5B28CB2116691F57008AB802 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B28CB2216691F57008AB802 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B28CB2316691F57008AB802 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B2D58451844F1A40044EF1D /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B2D92CA17036DA8007F330B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B2D92CD17036DA8007F330B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B2D92CC17036DA8007F330B /* main.m */; };
 		5B2D92D117036DA8007F330B /* models.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B2D92D017036DA8007F330B /* models.1 */; };
@@ -12118,6 +12119,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B2D58451844F1A40044EF1D /* ORCmdLineArgs.m in Sources */,
 				5BD601C517F9A627006A9CDC /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

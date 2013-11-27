@@ -17,6 +17,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
+#import "ORCmdLineArgs.h"
 
 id<ORIntMatrix> csv2matrix(NSString* filename, id<ORModel> tracker){
    NSMutableArray* matrix = [[NSMutableArray alloc] init];
@@ -124,82 +125,89 @@ int sumColumn(int column, int numRows, id<ORIntMatrix> matrix, NSArray* items){
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<ORModel> model = [ORFactory createModel];
-      id<ORIntRange> binary = RANGE(model, 0, 1);
-      
-      //Input Data
-      NSString* file = @"vote.csv";
-      NSArray* transactions;
-      NSArray* items;
-      id<ORIntMatrix> matrix;
-      @autoreleasepool {
-         matrix = csv2matrix(file, model);
-         transactions = csv2transactions(file);
-         items = csv2items(file);
-      }
-      
-      ORInt numOfItems = (int)[items count];
-      ORInt numOfTransactions = (int)[transactions count];
-      id<ORIntRange> itemRange = RANGE(model, 0, numOfItems - 1);
-      id<ORIntRange> transactionRange = RANGE(model, 0, numOfTransactions - 1);
-      
-      //Variables
-      id<ORIntVarArray> itemset = [ORFactory intVarArray:model range:itemRange domain:binary];
-      id<ORIntVarArray> trans = [ORFactory intVarArray:model range:transactionRange domain:binary];
-      
-      //A value is 1 in transactionsContainingItemsets iff that transaction contains all of the items in the itemset
-      for (ORInt t = [transactionRange low]; t <= [transactionRange up]; t++){
-         id<ORIntVarArray> nz = [ORFactory slice:model
-                                           range:itemRange
-                                        suchThat:^bool(ORInt i)         { return ![matrix at:t :i];}
-                                              of:^id<ORIntVar>(ORInt i) { return itemset[i];}];
-         [model add:[ORFactory reify:model boolean:trans[t] sumbool:nz eqi:0]];
-      }
-      //Sum of transactionsContainingItemset must be greater than the threshold
-      for(ORInt i =itemRange.low;i <= itemRange.up;i++) {
-         id<ORIntVarArray> nz = [ORFactory slice:model
-                                           range:transactionRange
-                                        suchThat:^bool(ORInt t) { return [matrix at:t :i];}
-                                              of:^id(ORInt t)   { return trans[t];}];
-//         id<ORIntVar> aux = [ORFactory intVar:model domain:RANGE(model,0,1)];
-//         [model add:[ORFactory reify:model boolean:aux sumbool:nz geqi:44]];
-//         [model add:[itemset[i] leq:aux]];
-         [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:44]];
-      }
-      
-      //[model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
-      __block ORInt nbSol = 0;
-      id<CPProgram> cpp = [ORFactory createCPProgram:model];
-      ORLong t0 = [ORRuntimeMonitor cputime];
-      [cpp solveAll:
-       ^() {
-          NSLog(@"Searching...");
-          id<ORIntVarArray> av = [model intVars];
-          for(ORInt i=av.range.low;i <= av.range.up;i++) {
-             if ([cpp bound:av[i]]) continue;
-             [cpp try:^{
-                [cpp label:av[i] with:YES];
-             } or:^{
-                [cpp label:av[i] with:NO];
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         int trg = [args size];
+         id<ORModel> model = [ORFactory createModel];
+         id<ORIntRange> binary = RANGE(model, 0, 1);
+         //Input Data
+         NSString* file = @"vote.csv";
+         NSArray* transactions;
+         NSArray* items;
+         id<ORIntMatrix> matrix;
+         @autoreleasepool {
+            matrix = csv2matrix(file, model);
+            transactions = csv2transactions(file);
+            items = csv2items(file);
+         }
+         
+         ORInt numOfItems = (int)[items count];
+         ORInt numOfTransactions = (int)[transactions count];
+         id<ORIntRange> itemRange = RANGE(model, 0, numOfItems - 1);
+         id<ORIntRange> transactionRange = RANGE(model, 0, numOfTransactions - 1);
+         
+         //Variables
+         id<ORIntVarArray> itemset = [ORFactory intVarArray:model range:itemRange domain:binary];
+         id<ORIntVarArray> trans   = [ORFactory intVarArray:model range:transactionRange domain:binary];
+         
+         //A value is 1 in transactionsContainingItemsets iff that transaction contains all of the items in the itemset
+         for (ORInt t = [transactionRange low]; t <= [transactionRange up]; t++){
+            id<ORIntVarArray> nz = [ORFactory slice:model
+                                              range:itemRange
+                                           suchThat:^bool(ORInt i)         { return ![matrix at:t :i];}
+                                                 of:^id<ORIntVar>(ORInt i) { return itemset[i];}];
+            [model add:[ORFactory reify:model boolean:trans[t] sumbool:nz eqi:0]];
+         }
+         //Sum of transactionsContainingItemset must be greater than the threshold
+         for(ORInt i =itemRange.low;i <= itemRange.up;i++) {
+            id<ORIntVarArray> nz = [ORFactory slice:model
+                                              range:transactionRange
+                                           suchThat:^bool(ORInt t) { return [matrix at:t :i];}
+                                                 of:^id(ORInt t)   { return trans[t];}];
+            //         id<ORIntVar> aux = [ORFactory intVar:model domain:RANGE(model,0,1)];
+            //         [model add:[ORFactory reify:model boolean:aux sumbool:nz geqi:44]];
+            //         [model add:[itemset[i] leq:aux]];
+            [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:trg]];
+         }
+         
+         //[model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
+         __block ORInt nbSol = 0;
+         id<CPProgram> cpp = [ORFactory createCPProgram:model];
+         ORLong t0 = [ORRuntimeMonitor cputime];
+         __block ORInt ip = 0;
+         [cpp solveAll:
+          ^() {
+             ip = [[cpp engine] nbPropagation];
+             NSLog(@"Searching...");
+             id<ORIntVarArray> av = [model intVars];
+             for(ORInt i=av.range.low;i <= av.range.up;i++) {
+                if ([cpp bound:av[i]]) continue;
+                [cpp try:^{
+                   [cpp label:av[i] with:YES];
+                } or:^{
+                   [cpp label:av[i] with:NO];
+                }];
+             }
+             //[cpp labelArray: av];
+             nbSol++;
+             [[cpp explorer] fail];
+             id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {
+                return [cpp intValue:itemset[i]];
              }];
-          }
-          //[cpp labelArray: av];
-          nbSol++;
-          [[cpp explorer] fail];
-          id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {
-             return [cpp intValue:itemset[i]];
+             
+             NSLog(@"%@",prettyItemset(freqItemset, items));
           }];
-          
-          NSLog(@"%@",prettyItemset(freqItemset, items));
-       }];
-      ORLong t1 = [ORRuntimeMonitor cputime];
-      NSLog(@"#Solutions: %d",nbSol);
-      NSLog(@"Solver status: %@\n",cpp);
-      NSLog(@"CPUtime: %lld",t1-t0);
-      NSLog(@"Statistics: %d - %d - %d",[[cpp explorer] nbFailures],[[cpp explorer] nbChoices],
-            [[cpp engine] nbPropagation]);
-      [cpp release];
-      [ORFactory shutdown];
+         ORLong t1 = [ORRuntimeMonitor cputime];
+         NSLog(@"#Solutions: %d",nbSol);
+         NSLog(@"Solver status: %@\n",cpp);
+         NSLog(@"CPUtime: %lld",t1-t0);
+         NSLog(@"Statistics: %d - %d - %d",[[cpp explorer] nbFailures],[[cpp explorer] nbChoices],
+               [[cpp engine] nbPropagation] - ip);
+         struct ORResult r = REPORT(nbSol, [[cpp explorer] nbFailures],[[cpp explorer] nbChoices], [[cpp engine] nbPropagation]);
+         [cpp release];
+         [ORFactory shutdown];
+         return r;
+      }];
    }
    return 0;
 }

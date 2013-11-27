@@ -1133,7 +1133,7 @@
          failNow();
       if (_nbOne._val == _c && (_nb - _nbOne._val - _nbZero._val) == 1) {
          ORInt nbFixed = 0;
-         for(ORInt i=0;i<_nb;++i)
+         for(ORInt i=0;i<_nb;++i) {
             if (!bound(_x[i])) {
                [_x[i] bind:YES];
                ++nbFixed;
@@ -1141,6 +1141,7 @@
          assert(nbFixed <= 1);
          if (nbFixed == 1)
             assignTRInt(&_active, NO, _trail);
+         }
          return ;
       }
       if (_nbOne._val == _c - 1 && (_nb - _nbOne._val - _nbZero._val) == 1) {
@@ -1560,7 +1561,8 @@
                assignTRInt(&_active, NO, _trail);
             }
          }
-      } onBehalf:self];
+      } priority: HIGHEST_PRIO - 1
+        onBehalf:self];
    }
    [_b whenBindPropagate:self];
    return ORSuspend;
