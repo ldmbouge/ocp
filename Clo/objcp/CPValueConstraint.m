@@ -1138,8 +1138,9 @@
                [_x[i] bind:YES];
                ++nbFixed;
             }
-         assert(nbFixed == 1);
-         assignTRInt(&_active, NO, _trail);
+         assert(nbFixed <= 1);
+         if (nbFixed == 1)
+            assignTRInt(&_active, NO, _trail);
          return ;
       }
       if (_nbOne._val == _c - 1 && (_nb - _nbOne._val - _nbZero._val) == 1) {
@@ -1149,8 +1150,9 @@
                [_x[i] bind:NO];
                ++nbFixed;
             }
-         assert(nbFixed == 1);
-         assignTRInt(&_active, NO, _trail);
+         assert(nbFixed <= 1);
+         if (nbFixed == 1)
+            assignTRInt(&_active, NO, _trail);
          return ;
       }
    } else {

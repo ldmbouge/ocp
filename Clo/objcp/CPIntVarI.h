@@ -20,12 +20,12 @@
 #import <objcp/CPBitDom.h>
 
 typedef struct  {
-   TRId         _boundsEvt;TRId _tailBoundsEvt;
-   TRId           _bindEvt;TRId _tailBindEvt;
-   TRId            _domEvt;TRId _tailDomEvt;
-   TRId            _minEvt;TRId _tailMinEvt;
-   TRId            _maxEvt;TRId _tailMaxEvt;
-   TRId               _ac5;TRId _tailAC5;
+   TRId         _boundsEvt[2];
+   TRId           _bindEvt[2];
+   TRId            _domEvt[2];
+   TRId            _minEvt[2];
+   TRId            _maxEvt[2];
+   TRId               _ac5[2];
 } CPEventNetwork;
 
 @class CPIntVar;

@@ -35,14 +35,13 @@
 
 
 @implementation CPEventNode
--(id)initCPEventNode:(CPEventNode*)next
-             trigger:(id)t
+-(id)initCPEventNode:(id)t
                 cstr:(CPCoreConstraint*)c
                   at:(ORInt)prio
                trail:(id<ORTrail>)trail
 {
    self = [super init];
-   _node = makeTRId(trail, [next retain]);
+   _node = makeTRId(trail, nil);
    _trigger = [t copy];
    _cstr = c;
    _priority = prio;
@@ -103,19 +102,18 @@ void freeList(CPEventNode* list)
 
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,ORInt priority)
 {
-   id evt = [[CPEventNode alloc] initCPEventNode:evtList->_val
-                                          trigger:todo
-                                             cstr:c
-                                               at:priority
-                                           trail:[engine trail]];
+   id<ORTrail> trail = [engine trail];
+   id evt = [[CPEventNode alloc] initCPEventNode:todo
+                                            cstr:c
+                                              at:priority
+                                           trail:trail];
    if (evtList->_val == nil) {
-      assignTRId(evtList, evt, [engine trail]);
-      assignTRId(evtList, evt, [engine trail]);
+      assignTRId(&evtList[0], evt, trail);
+      assignTRId(&evtList[1], evt, trail);
    } else {
-      
+      CPEventNode* lastNode = evtList[1]._val;
+      assignTRId(&lastNode->_node, evt, trail);
+      assignTRId(&evtList[1], evt, trail);
    }
-      assignTRId(
-   assignTRId(evtList, evt, [engine trail]);
-   [evt release];
 }
 @end

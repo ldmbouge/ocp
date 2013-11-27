@@ -21,8 +21,7 @@
    CPCoreConstraint*     _cstr;
    ORInt             _priority;
 }
--(id) initCPEventNode: (CPEventNode*) next
-              trigger: (id) t
+-(id) initCPEventNode: (id) t
                  cstr: (CPCoreConstraint*) c
                    at: (ORInt) prio
                 trail: (id<ORTrail>)trail;
