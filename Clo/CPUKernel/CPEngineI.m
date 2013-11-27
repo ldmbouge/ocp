@@ -637,6 +637,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus) enforce: (ORClosure) cl
 {
+   _last = NULL;
    _status = tryfail(^ORStatus{
       cl();
       return internalPropagate(self,ORSuspend);
