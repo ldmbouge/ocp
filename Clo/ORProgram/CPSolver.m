@@ -1160,6 +1160,12 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPDeg alloc] initCPDeg:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
    id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:rvars];
@@ -1187,6 +1193,12 @@
 -(id<CPHeuristic>) createDDeg
 {
    id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createSDeg
+{
+   id<CPHeuristic> h = [[CPDeg alloc] initCPDeg:self restricted:nil];
    [self addHeuristic:h];
    return h;
 }

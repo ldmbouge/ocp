@@ -1561,7 +1561,7 @@
                assignTRInt(&_active, NO, _trail);
             }
          }
-      } priority: HIGHEST_PRIO - 1
+      } //priority: HIGHEST_PRIO - 1
         onBehalf:self];
    }
    [_b whenBindPropagate:self];

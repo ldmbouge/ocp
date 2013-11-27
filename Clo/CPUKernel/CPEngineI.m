@@ -451,11 +451,13 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
+
 //   static int cnt = 0;
 //   @autoreleasepool {
 //      NSString* cn = NSStringFromClass([*last class]);
 //      NSLog(@"%d : propagate: %p : CN=%@",cnt++,*last,cn);
 //   }
+
    if (cb.cb)
       cb.cb();
    else {

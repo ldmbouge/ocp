@@ -483,6 +483,10 @@
 {
    return [self setupHeuristic:_cmd with:rvars];
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   return [self setupHeuristic:_cmd with:rvars];
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
    return [self setupHeuristic:_cmd with:rvars];
@@ -500,6 +504,10 @@
    return [self setupHeuristic:_cmd];
 }
 -(id<CPHeuristic>) createDDeg
+{
+   return [self setupHeuristic:_cmd];
+}
+-(id<CPHeuristic>) createSDeg
 {
    return [self setupHeuristic:_cmd];
 }

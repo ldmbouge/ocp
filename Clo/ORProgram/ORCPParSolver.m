@@ -609,6 +609,13 @@
     binding[i] = [_workers[i] createDDeg:rvars];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createSDeg:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -642,6 +649,13 @@
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
   for(ORInt i=0;i < _nbWorkers;i++)
     binding[i] = [_workers[i] createDDeg];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createSDeg
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createSDeg];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
 -(id<CPHeuristic>) createIBS

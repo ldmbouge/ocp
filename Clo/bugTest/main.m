@@ -169,10 +169,10 @@ int main(int argc, const char * argv[])
             //         [model add:[itemset[i] leq:aux]];
             [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:trg]];
          }
-         
          //[model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
          __block ORInt nbSol = 0;
          id<CPProgram> cpp = [ORFactory createCPProgram:model];
+         id<CPHeuristic> h = [cpp createSDeg];
          ORLong t0 = [ORRuntimeMonitor cputime];
          __block ORInt ip = 0;
          [cpp solveAll:
@@ -180,14 +180,15 @@ int main(int argc, const char * argv[])
              ip = [[cpp engine] nbPropagation];
              NSLog(@"Searching...");
              id<ORIntVarArray> av = [model intVars];
-             for(ORInt i=av.range.low;i <= av.range.up;i++) {
-                if ([cpp bound:av[i]]) continue;
-                [cpp try:^{
-                   [cpp label:av[i] with:YES];
-                } or:^{
-                   [cpp label:av[i] with:NO];
-                }];
-             }
+             [cpp labelHeuristic:h restricted:av];
+//             for(ORInt i=av.range.low;i <= av.range.up;i++) {
+//                if ([cpp bound:av[i]]) continue;
+//                [cpp try:^{
+//                   [cpp label:av[i] with:YES];
+//                } or:^{
+//                   [cpp label:av[i] with:NO];
+//                }];
+//             }
              //[cpp labelArray: av];
              nbSol++;
              [[cpp explorer] fail];
