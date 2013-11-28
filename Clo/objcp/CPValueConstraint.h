@@ -156,7 +156,7 @@
 @end
 
 @interface CPReifySumBoolEq : CPCoreConstraint {
-   id<CPIntVar>       _b;
+   CPIntVar*          _b;
    id<CPIntVarArray> _xa;
    ORInt              _c;
 }

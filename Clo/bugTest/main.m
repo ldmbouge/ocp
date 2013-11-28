@@ -131,7 +131,7 @@ int main(int argc, const char * argv[])
          id<ORModel> model = [ORFactory createModel];
          id<ORIntRange> binary = RANGE(model, 0, 1);
          //Input Data
-         NSString* file = @"vote.csv";
+         NSString* file = @"test1.csv";
          NSArray* transactions;
          NSArray* items;
          id<ORIntMatrix> matrix;
