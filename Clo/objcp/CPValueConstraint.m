@@ -974,6 +974,7 @@
          _x[i++] = makeTRId(_trail, xk);
       }
    }
+   assert(i == _nb);
    if (nbT > _c) {     // too many are true already. b necessarily false
       [_b bind:NO];
       return ORSkip;
@@ -1012,10 +1013,8 @@
       }
    } else                     // boolean is not fixed. Only check.
       [_b whenBindPropagate:self];
-   for(ORInt k=0;k < _nb;k++) {
-      if (bound(_x[k]._val)) continue;
+   for(ORInt k=0;k < _edge._val;k++)
       [_x[k]._val whenBindPropagate:self];
-   }
    return ORSuspend;
 }
 -(ORInt)setupPrefix
@@ -1033,9 +1032,10 @@
          if (i < j) { // we found a pair to swap !bound(_x[j]) && bound(_x[i])
             assert(!bound(_x[j]._val));
             CPIntVar* xj = _x[j]._val;
-            assignTRId(_x + j,_x[i]._val,_trail);
+            CPIntVar* xi = _x[i]._val;
+            assignTRId(_x + j, xi,_trail);
             assignTRId(_x + i, xj, _trail);
-            nbT += (minDom(xj) > 0);
+            nbT += (minDom(xi) > 0);
          } else if (i==j) {
             nbT += (minDom(_x[i]._val) > 0);
          }

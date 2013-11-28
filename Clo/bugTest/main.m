@@ -180,23 +180,28 @@ int main(int argc, const char * argv[])
              ip = [[cpp engine] nbPropagation];
              NSLog(@"Searching...");
              id<ORIntVarArray> av = [model intVars];
-//             [cpp labelHeuristic:h restricted:av];
-             for(ORInt i=av.range.low;i <= av.range.up;i++) {
-                if ([cpp bound:av[i]]) continue;
-                [cpp try:^{
-                   [cpp label:av[i] with:YES];
-                } or:^{
-                   [cpp label:av[i] with:NO];
-                }];
-             }
+             [cpp labelHeuristic:h restricted:av];
+//             for(ORInt i=av.range.low;i <= av.range.up;i++) {
+//                if ([cpp bound:av[i]]) continue;
+//                [cpp try:^{
+//                   [cpp label:av[i] with:YES];
+//                } or:^{
+//                   [cpp label:av[i] with:NO];
+//                }];
+//             }
              //[cpp labelArray: av];
              nbSol++;
-             //[[cpp explorer] fail];
+             [[cpp explorer] fail];
              id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {
                 return [cpp intValue:itemset[i]];
              }];
              
-             NSLog(@"%@",prettyItemset(freqItemset, items));
+             //NSLog(@"%@",prettyItemset(freqItemset, items));
+             printf("IS: [");
+             [freqItemset enumerateWith:^(ORInt obj, int idx) {
+                printf("%d%c",obj,(idx < [freqItemset count]-1) ? ',' : ']');
+             }];
+             printf("\n");
           }];
          ORLong t1 = [ORRuntimeMonitor cputime];
          NSLog(@"#Solutions: %d",nbSol);
