@@ -131,7 +131,7 @@ int main(int argc, const char * argv[])
          id<ORModel> model = [ORFactory createModel];
          id<ORIntRange> binary = RANGE(model, 0, 1);
          //Input Data
-         NSString* file = @"test1.csv";
+         NSString* file = @"vote.csv";
          NSArray* transactions;
          NSArray* items;
          id<ORIntMatrix> matrix;
@@ -180,18 +180,18 @@ int main(int argc, const char * argv[])
              ip = [[cpp engine] nbPropagation];
              NSLog(@"Searching...");
              id<ORIntVarArray> av = [model intVars];
-             [cpp labelHeuristic:h restricted:av];
-//             for(ORInt i=av.range.low;i <= av.range.up;i++) {
-//                if ([cpp bound:av[i]]) continue;
-//                [cpp try:^{
-//                   [cpp label:av[i] with:YES];
-//                } or:^{
-//                   [cpp label:av[i] with:NO];
-//                }];
-//             }
+//             [cpp labelHeuristic:h restricted:av];
+             for(ORInt i=av.range.low;i <= av.range.up;i++) {
+                if ([cpp bound:av[i]]) continue;
+                [cpp try:^{
+                   [cpp label:av[i] with:YES];
+                } or:^{
+                   [cpp label:av[i] with:NO];
+                }];
+             }
              //[cpp labelArray: av];
              nbSol++;
-             [[cpp explorer] fail];
+             //[[cpp explorer] fail];
              id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {
                 return [cpp intValue:itemset[i]];
              }];
