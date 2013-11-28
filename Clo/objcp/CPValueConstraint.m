@@ -1064,10 +1064,6 @@
             bindDom(_x[k]._val,YES);
          assignTRInt(&_active, NO, _trail);
       }
-      [_xa enumerateWith:^(CPIntVar* obj, int idx) {
-         assert(bound(obj));
-      }];
-
    } else if (maxDom(_b) <= 0) {  // FALSE <=> sum(i in S) x_i = c   ==> sum(i in S) x_i ≠ c
       if (nbT > _c) {
          assignTRInt(&_active, NO, _trail);
@@ -1078,19 +1074,9 @@
       } else if (nbT == _c && _edge._val == 1) {
          bindDom(_x[0]._val,YES);
          assignTRInt(&_active, NO, _trail);
-
-         [_xa enumerateWith:^(CPIntVar* obj, int idx) {
-            assert(bound(obj));
-         }];
-         
       } else if (nbT == _c - 1 && _edge._val == 1) {
          bindDom(_x[0]._val,NO);
          assignTRInt(&_active, NO, _trail);
-         
-         [_xa enumerateWith:^(CPIntVar* obj, int idx) {
-            assert(bound(obj));
-         }];
-
       }
    } else { // _b is not bound
       if (nbT > _c) {
@@ -1098,15 +1084,10 @@
          assignTRInt(&_active, NO, _trail);
       } else if (nbT + _edge._val < _c) {
          bindDom(_b, NO);
-         assignTRInt(&_active, NO, _trail); 
+         assignTRInt(&_active, NO, _trail);
       } else if (nbT == _c && _edge._val == 0) {
          bindDom(_b, YES);
          assignTRInt(&_active, NO, _trail);
-         
-         [_xa enumerateWith:^(CPIntVar* obj, int idx) {
-            assert(bound(obj));
-         }];
-
       }
    }
 }

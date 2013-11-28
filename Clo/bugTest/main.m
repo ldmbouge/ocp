@@ -164,12 +164,8 @@ int main(int argc, const char * argv[])
                                               range:transactionRange
                                            suchThat:^bool(ORInt t) { return [matrix at:t :i];}
                                                  of:^id(ORInt t)   { return trans[t];}];
-            //         id<ORIntVar> aux = [ORFactory intVar:model domain:RANGE(model,0,1)];
-            //         [model add:[ORFactory reify:model boolean:aux sumbool:nz geqi:44]];
-            //         [model add:[itemset[i] leq:aux]];
             [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:trg]];
          }
-         //[model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
          __block ORInt nbSol = 0;
          id<CPProgram> cpp = [ORFactory createCPProgram:model];
          id<CPHeuristic> h = [cpp createSDeg];
