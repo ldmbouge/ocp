@@ -937,7 +937,7 @@
 
 
 @implementation CPReifySumBoolEq { // full reification: b <=> sum(i in S) x_i = c
-   TRId*       _x;
+   CPIntVar**  _x;
    ORInt      _nb;
    TRInt    _edge;
    TRInt  _nbTrue;
@@ -961,7 +961,7 @@
    ORInt low = _xa.range.low;
    ORInt up  = _xa.range.up;
    _nb = up - low + 1;
-   _x = malloc(sizeof(TRId)*_nb);
+   _x = malloc(sizeof(CPIntVar*)*_nb);
    ORInt i= 0;
    for(ORInt k=low;k <= up;++k) {
       CPIntVar* xk = (CPIntVar*) _xa[k];
@@ -971,7 +971,7 @@
       } else if (maxDom(xk) <=0) {
          --_nb;           // discard false variable.
       } else {
-         _x[i++] = makeTRId(_trail, xk);
+         _x[i++] = xk;
       }
    }
    assert(i == _nb);
@@ -992,29 +992,29 @@
    if (minDom(_b) > 0) {                // boolean is true. Constraint _must_ be satisfied.
       if (_nb + nbT == _c) {            // All the possible in _x (all _nb of them) should be TRUE
          for(ORInt i=0;i<_nb;++i)
-            bindDom(_x[i]._val, YES);
+            bindDom(_x[i], YES);
          return ORSkip;
       }
       if (_c == nbT && _nb > 0) {   // All the possible should be FALSE (we need none and we have a bunch)
          for(ORInt i=0;i<_nb;++i)
-            bindDom(_x[i]._val,NO);
+            bindDom(_x[i],NO);
          return ORSkip;
       }
       // We must satisfy c, but too little info to know what to do.
    } else if (maxDom(_b) == 0) { // boolean is false, therefore: sum(i in S) x_i != c
       // REMEMBER: _nb vars in prefix of _x are possible. _c is the number to _avoid_.
       if (nbT == _c && _nb == 1) { // sum(i in S) x_i = c  and only one possible left. Last possible must be true.
-         bindDom(_x[0]._val,YES);
+         bindDom(_x[0],YES);
          return ORSkip;
       }
       if (nbT == _c - 1  && _nb == 1) { // sum(i in S) x_i = c - 1  and only one possible left. It cannot be true.
-         bindDom(_x[0]._val,NO);
+         bindDom(_x[0],NO);
          return ORSkip;
       }
    } else                     // boolean is not fixed. Only check.
       [_b whenBindPropagate:self];
    for(ORInt k=0;k < _edge._val;k++)
-      [_x[k]._val whenBindPropagate:self];
+      [_x[k] whenBindPropagate:self];
    return ORSuspend;
 }
 -(ORInt)setupPrefix
@@ -1022,22 +1022,22 @@
    ORInt i = 0;
    ORInt nbT = 0;
    while (i < _edge._val) {
-      if (bound(_x[i]._val)) {
+      if (bound(_x[i])) {
          ORInt j = _edge._val - 1;
-         while (i < j && bound(_x[j]._val)) {
-            nbT += (minDom(_x[j]._val) > 0);
+         while (i < j && bound(_x[j])) {
+            nbT += (minDom(_x[j]) > 0);
             --j;
          }
          assignTRInt(&_edge,j,_trail);
          if (i < j) { // we found a pair to swap !bound(_x[j]) && bound(_x[i])
-            assert(!bound(_x[j]._val));
-            CPIntVar* xj = _x[j]._val;
-            CPIntVar* xi = _x[i]._val;
-            assignTRId(_x + j, xi,_trail);
-            assignTRId(_x + i, xj, _trail);
+            assert(!bound(_x[j]));
+            CPIntVar* xj = _x[j];
+            CPIntVar* xi = _x[i];
+            _x[j] = xi;
+            _x[i] = xj;
             nbT += (minDom(xi) > 0);
          } else if (i==j) {
-            nbT += (minDom(_x[i]._val) > 0);
+            nbT += (minDom(_x[i]) > 0);
          }
       }
       ++i;
@@ -1057,11 +1057,11 @@
          failNow();
       else if (nbT == _c) {
          for(ORInt k=0;k<_edge._val;k++)
-            bindDom(_x[k]._val,NO);
+            bindDom(_x[k],NO);
          assignTRInt(&_active, NO, _trail);
       } else if (nbT + _edge._val == _c) { // true + possible == c  => bind possible to true.
          for(ORInt k=0;k<_edge._val;k++)
-            bindDom(_x[k]._val,YES);
+            bindDom(_x[k],YES);
          assignTRInt(&_active, NO, _trail);
       }
    } else if (maxDom(_b) <= 0) {  // FALSE <=> sum(i in S) x_i = c   ==> sum(i in S) x_i ≠ c
@@ -1072,10 +1072,10 @@
       } else if (nbT == _c && _edge._val == 0) {
          failNow();
       } else if (nbT == _c && _edge._val == 1) {
-         bindDom(_x[0]._val,YES);
+         bindDom(_x[0],YES);
          assignTRInt(&_active, NO, _trail);
       } else if (nbT == _c - 1 && _edge._val == 1) {
-         bindDom(_x[0]._val,NO);
+         bindDom(_x[0],NO);
          assignTRInt(&_active, NO, _trail);
       }
    } else { // _b is not bound
@@ -1097,7 +1097,7 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<%sCPReifySumBoolEq:%02d %@ <=> ([",act,_name,_b];
    for(ORInt i=0;i<_nb;i++) {
-      [buf appendFormat:@"%@%c",_x[i]._val,(i < (_nb-1)) ? ',' : ']'];
+      [buf appendFormat:@"%@%c",_x[i],(i < (_nb-1)) ? ',' : ']'];
    }
    [buf appendFormat:@" == %d)>",_c];
    return buf;
