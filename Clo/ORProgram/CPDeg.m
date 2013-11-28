@@ -48,7 +48,7 @@
 }
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
-   return -v;
+   return v;
 }
 -(void)initInternal:(id<ORVarArray>) t and:(id<CPVarArray>)cvs
 {
