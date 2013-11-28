@@ -1098,7 +1098,7 @@
          assignTRInt(&_active, NO, _trail);
       } else if (nbT + _edge._val < _c) {
          bindDom(_b, NO);
-         assignTRInt(&_active, NO, _trail);
+         assignTRInt(&_active, NO, _trail); 
       } else if (nbT == _c && _edge._val == 0) {
          bindDom(_b, YES);
          assignTRInt(&_active, NO, _trail);
