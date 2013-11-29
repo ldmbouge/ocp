@@ -953,6 +953,7 @@
 }
 -(void)dealloc
 {
+   if (_x) free(_x);
    [super dealloc];
 }
 -(ORStatus) post
@@ -1408,10 +1409,10 @@
 @end
 
 @implementation CPHReifySumBoolGEq { // half reification: b ~> sum(i in S) x_i >= c
-   CPIntVar**  _x;
-   ORInt      _nb;
-   TRInt         _nbTrue;
-   TRInt          _nbPos;
+   CPIntVar**   _x;
+   ORInt       _nb;
+   TRInt   _nbTrue;
+   TRInt    _nbPos;
 }
 -(id) init:(CPIntVar*)b array:(id<CPIntVarArray>)x geqi:(ORInt)c
 {
@@ -1423,8 +1424,7 @@
 }
 -(void) dealloc
 {
-   if (_x)
-      free(_x);
+   if (_x) free(_x);
    [super dealloc];
 }
 -(ORStatus) post
