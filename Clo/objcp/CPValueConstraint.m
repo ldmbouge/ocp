@@ -966,14 +966,14 @@
    ORInt i= 0;
    for(ORInt k=low;k <= up;++k) {
       CPIntVar* xk = (CPIntVar*) _xa[k];
+      [xk updateMin:0 andMax:1];
       if (minDom(xk) > 0) {
          ++nbT;           // adjust # of true guys
          --_nb;           // discard extraneous "var"
       } else if (maxDom(xk) <=0) {
          --_nb;           // discard false variable.
-      } else {
+      } else
          _x[i++] = xk;
-      }
    }
    assert(i == _nb);
    if (nbT > _c) {     // too many are true already. b necessarily false
@@ -1412,11 +1412,12 @@
    CPIntVar**   _x;
    ORInt       _nb;
    TRInt   _nbTrue;
-   TRInt    _nbPos;
+   TRInt     _edge;
 }
 -(id) init:(CPIntVar*)b array:(id<CPIntVarArray>)x geqi:(ORInt)c
 {
    self = [super initCPCoreConstraint:[b engine]];
+   _idempotent = YES;
    _b  = b;
    _xa = x;
    _c  = c;
@@ -1430,68 +1431,103 @@
 -(ORStatus) post
 {
    int nbTrue = 0;
-   int nbPos  = 0;
    ORInt low = _xa.range.low;
    ORInt up  = _xa.range.up;
    _nb = up - low + 1;
    _x  = malloc(sizeof(CPIntVar*)*_nb);
    memset(_x,0,sizeof(CPIntVar*)*_nb);
    ORInt i= 0;
-   for(ORInt k=low;k <= up;k++,i++) {
-      _x[i] = (CPIntVar*) _xa[k];
-      [_x[i] updateMin:0 andMax:1];
-      nbTrue += minDom(_x[i])==1;
-      nbPos  += !bound(_x[i]);
+   for(ORInt k=low;k <= up;++k) {
+      CPIntVar* xk = (CPIntVar*) _xa[k];
+      [xk updateMin:0 andMax:1];
+      if (minDom(xk) > 0) {
+         ++nbTrue;
+         --_nb;
+      } else if (maxDom(xk) <= 0)
+         --_nb;
+      else
+         _x[i++] = xk;
    }
+   assert(i == _nb);
    if (nbTrue >= _c) {               // too many are true already. b necessarily true
       [_b bind:YES];
-      return ORSuspend;
+      return ORSkip;
    }
-   if (nbTrue + nbPos < _c) {     // We can't possibly make it to _c. b necessarily false
+   if (nbTrue + _nb < _c) {     // We can't possibly make it to _c. b necessarily false
       [_b bind:NO];
-      return ORSuspend;
+      return ORSkip;
    }
    _nbTrue = makeTRInt(_trail, nbTrue);
-   _nbPos  = makeTRInt(_trail, nbPos);
+   _edge   = makeTRInt(_trail,_nb);
+   if (minDom(_b) > 0) {
+      if (nbTrue + _nb == _c) {
+         for(ORInt i=0;i<_nb;++i)
+            bindDom(_x[i],YES);
+         return ORSkip;
+      }
+   } else if (maxDom(_b) <= 0) {  // FALSE ~> sum(i in S) x_i ≥ c ==> sum(i in S) x_i < c
+      if (nbTrue == _c - 1) {
+         for(ORInt i=0;i<_nb;++i)
+            bindDom(_x[i],NO);
+         return ORSkip;
+      }
+   } else
+      [_b whenBindPropagate:self];
    
-   for(ORInt i=0;i < _nb;i++) {
-      if (bound(_x[i])) continue;
-      [_x[i] whenBindDo:^{
-         if (minDom(_x[i])) {
-            assignTRInt(&_nbTrue, _nbTrue._val + 1, _trail);
-            assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
-         } else {
-            assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
-         }
-         if (minDom(_b) > 0) {
-            if (_nbTrue._val >= _c) {
-               assignTRInt(&_active,NO,_trail);
-            }
-            if (_nbTrue._val + _nbPos._val < _c)
-               failNow();
-         } else if (maxDom(_b) <= 0) {
-            assignTRInt(&_active, NO, _trail);
-         } else {
-            if (_nbTrue._val + _nbPos._val < _c) {
-               bindDom(_b, NO);
-               assignTRInt(&_active, NO, _trail);
-            }
-         }
-      } //priority: HIGHEST_PRIO - 1
-        onBehalf:self];
-   }
-   [_b whenBindPropagate:self];
+   for(ORInt i=0;i < _edge._val;i++)
+      [_x[i] whenBindPropagate:self];
    return ORSuspend;
+}
+-(ORInt)setupPrefix
+{
+   ORInt i = 0;
+   ORInt nbT = 0;
+   while (i < _edge._val) {
+      if (bound(_x[i])) {
+         ORInt j = _edge._val - 1;
+         while (i < j && bound(_x[j])) {
+            nbT += (minDom(_x[j]) > 0);
+            --j;
+         }
+         assignTRInt(&_edge,j,_trail);
+         if (i < j) { // we found a pair to swap !bound(_x[j]) && bound(_x[i])
+            assert(!bound(_x[j]));
+            CPIntVar* xj = _x[j];
+            CPIntVar* xi = _x[i];
+            _x[j] = xi;
+            _x[i] = xj;
+            nbT += (minDom(xi) > 0);
+         } else if (i==j) {
+            nbT += (minDom(_x[i]) > 0);
+         }
+      }
+      ++i;
+   }
+   assignTRInt(&_nbTrue,_nbTrue._val + nbT,_trail);
+   return _nbTrue._val;
+   // new(edge) is the number of non-bound guys, namely: _x[0 .. new(edge)] are all free. (Hence number of possible)
+   // nbT   is the number of true guys in _x[0 .. old(edge)]
 }
 -(void)propagate
 {
-   if (minDom(_b)) {
-      if (_nbTrue._val >= _c)
-         assignTRInt(&_active,NO, _trail);
-      if (_nbTrue._val + _nbPos._val < _c)
+   ORInt nbT = [self setupPrefix];
+   if (minDom(_b) > 0) {
+      if (nbT >= _c)
+         assignTRInt(&_active,NO,_trail);
+      if (_nbTrue._val + _edge._val < _c)
          failNow();
-   } else {
+      if (nbT + _edge._val == _c) {
+         for(ORInt k=0;k < _edge._val;k++)
+            bindDom(_x[k], YES);
+         assignTRInt(&_active,NO,_trail);
+      }
+   } else if (maxDom(_b) <= 0) {
       assignTRInt(&_active, NO, _trail);
+   } else {
+      if (nbT + _edge._val < _c) {
+         bindDom(_b, NO);
+         assignTRInt(&_active, NO, _trail);
+      }
    }
 }
 -(NSString*)description
