@@ -519,6 +519,10 @@
 {
    return [self setupHeuristic:_cmd];
 }
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [[self worker] degree:x];
+}
 -(ORInt) intValue: (id<ORIntVar>) x
 {
    return [(id<CPProgram>)[self worker] intValue: x];

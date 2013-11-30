@@ -40,10 +40,9 @@
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
--(ORFloat)varOrdering: (id<CPIntVar>) ox
+-(ORFloat)varOrdering: (id<CPIntVar>)x
 {
-   id<CPIntVar> x = (id<CPIntVar>)ox;
-   __block float h = _cv[_map[[x getId]]];
+   float h = _cv[_map[x.getId]];
    return h / [x domsize];
 }
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
@@ -63,16 +62,9 @@
    memset(_cv,sizeof(NSSet*)*len,0);
    memset(_map,sizeof(ORUInt)*(maxID+1),0);
    ORInt low = [t low],up = [t up];
-   @autoreleasepool {
-      for(ORInt k=low;k <= up;k++) {
-         _map[_cvs[k].getId] = k - low;
-         ORInt tArity = 0;
-         for(id<CPConstraint> c in [_cvs[k] constraints]) {
-            ORLong cArity = [[c allVars] count] -  1;
-            tArity += cArity;
-         }
-         _cv[k-low] = tArity;
-      }
+   for(ORInt k=low;k <= up;k++) {
+      _map[_cvs[k].getId] = k - low;
+      _cv[k - low] = [_cvs[k] degree];
    }
    _nbv = len;
    NSLog(@"Deg ready...");

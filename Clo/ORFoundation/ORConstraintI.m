@@ -89,7 +89,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] init];
+   return [[[NSSet alloc] init] autorelease];
 }
 
 -(void) visit: (ORVisitor*) visitor

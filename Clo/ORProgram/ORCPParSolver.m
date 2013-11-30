@@ -672,6 +672,10 @@
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [[self worker] degree:x];
+}
 -(ORInt) intValue: (id<ORIntVar>) x
 {
    return [[self worker] intValue: x];

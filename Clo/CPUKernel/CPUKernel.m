@@ -73,6 +73,14 @@
       cur = cur->_node._val;
    }
 }
+-(void)scanCstrWithBlock:(void(^)(id))block
+{
+   CPEventNode* cur = self;
+   while(cur) {
+      block(cur->_cstr);
+      cur = cur->_node._val;
+   }
+}
 
 void scanListWithBlock(CPEventNode* cur,ORID2Void block)
 {

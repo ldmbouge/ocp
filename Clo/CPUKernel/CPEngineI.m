@@ -336,7 +336,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) inCache:(id)obj
 {
-   return NO;
+   return nil;
 }
 -(id) addToCache:(id)obj
 {

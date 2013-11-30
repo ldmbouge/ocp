@@ -1018,39 +1018,39 @@
       [_x[k] whenBindPropagate:self];
    return ORSuspend;
 }
--(ORInt)setupPrefix
+static ORInt setupPrefix(CPReifySumBoolEq* this)
 {
    ORInt i = 0;
    ORInt nbT = 0;
-   while (i < _edge._val) {
-      if (bound(_x[i])) {
-         ORInt j = _edge._val - 1;
-         while (i < j && bound(_x[j])) {
-            nbT += (minDom(_x[j]) > 0);
+   while (i < this->_edge._val) {
+      if (bound(this->_x[i])) {
+         ORInt j = this->_edge._val - 1;
+         while (i < j && bound(this->_x[j])) {
+            nbT += (minDom(this->_x[j]) > 0);
             --j;
          }
-         assignTRInt(&_edge,j,_trail);
+         assignTRInt(&this->_edge,j,this->_trail);
          if (i < j) { // we found a pair to swap !bound(_x[j]) && bound(_x[i])
-            assert(!bound(_x[j]));
-            CPIntVar* xj = _x[j];
-            CPIntVar* xi = _x[i];
-            _x[j] = xi;
-            _x[i] = xj;
+            assert(!bound(this->_x[j]));
+            CPIntVar* xj = this->_x[j];
+            CPIntVar* xi = this->_x[i];
+            this->_x[j] = xi;
+            this->_x[i] = xj;
             nbT += (minDom(xi) > 0);
          } else if (i==j) {
-            nbT += (minDom(_x[i]) > 0);
+            nbT += (minDom(this->_x[i]) > 0);
          }
       }
       ++i;
    }
-   assignTRInt(&_nbTrue,_nbTrue._val + nbT,_trail);
-   return _nbTrue._val;
+   assignTRInt(&this->_nbTrue,this->_nbTrue._val + nbT,this->_trail);
+   return this->_nbTrue._val;
    // new(edge) is the number of non-bound guys, namely: _x[0 .. new(edge)] are all free. (Hence number of possible)
    // nbT   is the number of true guys in _x[0 .. old(edge)]
 }
 -(void)propagate
 {
-   ORInt nbT = [self setupPrefix];
+   ORInt nbT = setupPrefix(self);
    if (minDom(_b) > 0) {               // boolean is true. Constraint _must_ be satisfied
       if (nbT > _c)
          failNow();

@@ -168,24 +168,24 @@ int main(int argc, const char * argv[])
          }
          __block ORInt nbSol = 0;
          id<CPProgram> cpp = [ORFactory createCPProgram:model];
-         id<CPHeuristic> h = [cpp createSDeg];
          ORLong t0 = [ORRuntimeMonitor cputime];
          __block ORInt ip = 0;
          [cpp solveAll:
           ^() {
              ip = [[cpp engine] nbPropagation];
              NSLog(@"Searching...");
-             id<ORIntVarArray> av = [model intVars];
-             [cpp labelHeuristic:h restricted:av];
-//             for(ORInt i=av.range.low;i <= av.range.up;i++) {
-//                if ([cpp bound:av[i]]) continue;
+             id<ORIntVarArray> sv = (id) [ORFactory sort:cpp idArray:[model intVars] with:^ORFloat(id<ORIntVar> var) {
+                return - [cpp degree:var];
+             }];
+             [cpp labelArray:sv];
+//             for(ORInt i=sv.range.low;i <= sv.range.up;i++) {
+//                if ([cpp bound:sv[i]]) continue;
 //                [cpp try:^{
-//                   [cpp label:av[i] with:YES];
+//                   [cpp label:sv[i] with:NO];
 //                } or:^{
-//                   [cpp label:av[i] with:NO];
+//                   [cpp label:sv[i] with:YES];
 //                }];
 //             }
-             //[cpp labelArray: av];
              nbSol++;
              [[cpp explorer] fail];
              id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {

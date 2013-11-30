@@ -83,6 +83,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _vc;
 }
+-(ORInt)degree
+{
+   return 0;
+}
 -(ORInt) value
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method value not defined"];
@@ -621,14 +625,19 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _isBool;
 }
+-(ORInt)degree
+{
+   __block ORUInt d = 0;
+   [_net._bindEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._boundsEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._domEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   return d;
+}
 -(NSMutableSet*) constraints
 {
-   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
-//   if (_recv) {
-//      NSMutableSet* rc = [_recv constraints];
-//      [rv unionSet:rc];
-//      [rc release];
-//   }
+   NSMutableSet* rv = collectConstraints(&_net,[[[NSMutableSet alloc] initWithCapacity:2] autorelease]);
    return rv;
 }
 -(CPBitDom*) flatDomain

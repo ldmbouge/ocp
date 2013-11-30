@@ -44,7 +44,7 @@ typedef struct  {
 @end
 
 @interface CPIntVar : ORObject<CPIntVarNotifier,CPIntVar> {
-@package
+@public
    BOOL            _isBool;
    enum CPVarClass _vc;
    CPEngineI*      _fdm;
@@ -55,7 +55,7 @@ typedef struct  {
 -(ORRange)   around:(ORInt)v;
 -(id<CPDom>) domain;
 -(CPBitDom*) flatDomain;
-
+-(ORInt) degree;
 // delegation
 -(CPMultiCast*) delegate;
 -(void) setDelegate:(CPMultiCast*) d;
@@ -72,7 +72,7 @@ typedef struct  {
 
 
 @interface CPIntVarI : CPIntVar {
-@package
+@public
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
@@ -95,7 +95,7 @@ typedef struct  {
 // Views
 
 @interface CPIntShiftView : CPIntVarI {
-   @package
+   @public
    ORInt      _b;
    CPIntVar*  _x;
 }
@@ -120,9 +120,9 @@ typedef struct  {
 @end
 
 @interface CPIntView : CPIntVarI { // Affine View
-   @package
-    ORInt _a;
-    ORInt _b;
+@public
+   ORInt _a;
+   ORInt _b;
    CPIntVar*  _x;
 }
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVar*)x b:(ORInt)b;
@@ -146,7 +146,7 @@ typedef struct  {
 @end
 
 @interface CPIntFlipView : CPIntVarI { // Flip View (y == -x)
-   @package
+@public
    CPIntVar*  _x;
 }
 -(CPIntFlipView*)initFlipViewFor:(CPIntVar*)x;
@@ -170,8 +170,8 @@ typedef struct  {
 @end
 
 @interface CPEQLitView : CPIntVarI { // Literal view b <=> x == v
-   @package
-   ORInt              _v;
+@public
+   ORInt             _v;
    CPIntVar* _secondary;  // pointer to the original variable (x)
 }
 -(CPEQLitView*)initEQLitViewFor:(CPIntVar*)x equal:(ORInt)v;
