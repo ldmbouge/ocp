@@ -1113,6 +1113,10 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
       [rv addObject:_xa[k]];
    return rv;
 }
+-(ORUInt) nbVars
+{
+   return _xa.range.size + 1;
+}
 -(ORUInt)nbUVars
 {
    ORUInt nb= ![_b bound];
@@ -1397,6 +1401,10 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
       [rv addObject:_xa[k]];
    return rv;
 }
+-(ORUInt) nbVars
+{
+   return _xa.range.size + 1;
+}
 -(ORUInt)nbUVars
 {
    ORUInt nb= ![_b bound];
@@ -1543,6 +1551,10 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
    for(ORUInt k= low;k <= up;k++)
       [rv addObject:_xa[k]];
    return rv;
+}
+-(ORUInt) nbVars
+{
+   return _xa.range.size + 1;
 }
 -(ORUInt)nbUVars
 {
