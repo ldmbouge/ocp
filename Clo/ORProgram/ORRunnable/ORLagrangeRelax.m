@@ -60,7 +60,7 @@
         return [w weight];
     }];
     
-    //id<MIPProgram> program = [ORFactory createMIPProgram: _model];
+//    id<MIPProgram> program = [ORFactory createMIPProgram: _model];
     id<CPProgram> program = [ORFactory createCPProgram: _model];
     ORFloat cutoff = 0.005;
     
@@ -70,14 +70,14 @@
     id<CPHeuristic> h = [program createABS];
     while(pi > cutoff) {
         [[program solutionPool] emptyPool];
-        //[program solve];
+//        [program solve];
         
         [program solve: ^{
             //[program labelHeuristic: h];
             [program labelHeuristic: h];
            NSLog(@"Got an improvement... %@",[[program objective] value]);
         } ];
-        
+       
         id<ORSolution> sol = [[program solutionPool] best];
         NSLog(@"BEST is: %@",sol);
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
