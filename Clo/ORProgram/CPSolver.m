@@ -884,9 +884,9 @@
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
-      CPIntVar* xi = _gamma[x[i].getId];
+      CPIntVar* xi = _gamma[getId(x[i])];
       while (!bound(xi)) { 
-         ORInt m = [xi min];
+         ORInt m = minDom(xi);
          [_search try: ^{ [self labelImpl: xi with: m]; }
                    or: ^{ [self  diffImpl: xi with: m]; }
           ];

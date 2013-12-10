@@ -25,11 +25,11 @@ enum CPDomClass {
 @package
    enum CPDomClass    _dc;
    id<ORTrail>     _trail;
-   TRInt             _min;
-   TRInt             _max;
    ORInt            _imin;
    ORInt            _imax;
 @public
+   TRInt             _min;
+   TRInt             _max;
    TRInt              _sz;
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;

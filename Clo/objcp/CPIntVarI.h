@@ -63,7 +63,7 @@ typedef struct  {
 
 @interface CPIntVarCst : CPIntVar
 {
-   @package
+@public
    ORInt _value;
 }
 -(CPIntVar*) initCPIntVarCst: (id<CPEngine>) cp value: (ORInt) value;

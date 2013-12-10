@@ -420,13 +420,17 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
          if (lc->_active._val) {
-            lc->_todo = CPTocheck;
             id<CPGroup> group = lc->_group;
             if (group) {
+               lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
                [group scheduleAC3:list];
             } else
-               AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+               if (fdm->_last != lc || !lc->_idempotent) {
+                  lc->_todo = CPTocheck;
+                  AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+               }
+               //else NSLog(@"Not scheduling the currently running idempotent constraint");
          }
          list = list->_node._val;
       }
@@ -517,7 +521,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          // PVH: Failure to remove?
          ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
-         // PVH: what is this stuff
+         // PVH: what is this stuff // [ldm] we are never supposed to return "failure", but call failNow() instead.
          assert(as != ORFailure);
       }
       if (fdm->_propagDone)
