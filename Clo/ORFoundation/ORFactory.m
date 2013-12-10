@@ -216,6 +216,32 @@
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
    return [tracker trackMutable:o];
 }
+struct EltValue {
+   ORFloat  _val;
+   id       _obj;
+};
+int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
+{
+   ORFloat d = v1->_val - v2->_val;
+   if (d == 0.0) return 0;
+   else if (d < 0) return -1;
+   else return 1;
+}
++(id<ORIdArray>) sort:(id<ORTracker>)tracker idArray:(id<ORIdArray>)array with:(ORFloat(^)(id))f
+{
+   ORInt low = array.range.low;
+   ORInt up  = array.range.up;
+   ORInt sz = up - low + 1;
+   struct EltValue* fv = alloca(sizeof(struct EltValue)*sz);
+   for(ORInt i=low;i <= up;i++)
+      fv[i - low] = (struct EltValue){f(array[i]),array[i]};
+   qsort(fv,sz,sizeof(struct EltValue),(int(*)(const void*,const void*))&cmpEltValue);
+   id na = [ORFactory idArray:[tracker tracker] range:array.range with:^id(ORInt k) {
+      return fv[k - low]._obj;
+   }];
+   return na;
+}
+
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker range:r0 :r1];

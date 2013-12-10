@@ -24,12 +24,13 @@ enum CPDomClass {
 @interface CPBoundsDom : NSObject<CPDom,NSCoding,NSCopying> {
 @package
    enum CPDomClass    _dc;
-   id<ORTrail>        _trail;
+   id<ORTrail>     _trail;
    TRInt             _min;
    TRInt             _max;
-   TRInt              _sz;
    ORInt            _imin;
    ORInt            _imax;
+@public
+   TRInt              _sz;
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
 -(CPBoundsDom*)initBoundsDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;

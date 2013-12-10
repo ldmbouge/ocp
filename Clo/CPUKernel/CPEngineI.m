@@ -336,7 +336,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) inCache:(id)obj
 {
-   return NO;
+   return nil;
 }
 -(id) addToCache:(id)obj
 {
@@ -428,7 +428,7 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
             } else
                AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
          }
-         list = list->_node;
+         list = list->_node._val;
       }
       ++mlist;
    }
@@ -451,11 +451,13 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
+
 //   static int cnt = 0;
 //   @autoreleasepool {
 //      NSString* cn = NSStringFromClass([*last class]);
 //      NSLog(@"%d : propagate: %p : CN=%@",cnt++,*last,cn);
 //   }
+
    if (cb.cb)
       cb.cb();
    else {
@@ -635,6 +637,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus) enforce: (ORClosure) cl
 {
+   _last = NULL;
    _status = tryfail(^ORStatus{
       cl();
       return internalPropagate(self,ORSuspend);

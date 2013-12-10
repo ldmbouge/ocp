@@ -42,6 +42,15 @@
 {
    return [[[NSSet alloc] init] autorelease];
 }
+-(ORUInt) nbVars
+{
+   ORUInt nbv = 0;
+   @autoreleasepool {
+      NSSet* av = [self allVars];
+      nbv = (ORUInt)[av count];
+   }
+   return nbv;
+}
 -(ORUInt)nbUVars
 {
    ORUInt nbu = 0;

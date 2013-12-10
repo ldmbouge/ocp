@@ -30,6 +30,7 @@
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
+-(ORUInt) nbVars;
 -(void)setGroup:(id<CPGroup>)g;
 -(id<CPGroup>)group;
 @end

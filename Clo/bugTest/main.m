@@ -164,13 +164,8 @@ int main(int argc, const char * argv[])
                                               range:transactionRange
                                            suchThat:^bool(ORInt t) { return [matrix at:t :i];}
                                                  of:^id(ORInt t)   { return trans[t];}];
-            //         id<ORIntVar> aux = [ORFactory intVar:model domain:RANGE(model,0,1)];
-            //         [model add:[ORFactory reify:model boolean:aux sumbool:nz geqi:44]];
-            //         [model add:[itemset[i] leq:aux]];
             [model add:[ORFactory hreify:model boolean:itemset[i] sumbool:nz geqi:trg]];
          }
-         
-         //[model add:[Sum(model, k, itemRange, [itemset at:k]) gt:@(0)]];
          __block ORInt nbSol = 0;
          id<CPProgram> cpp = [ORFactory createCPProgram:model];
          ORLong t0 = [ORRuntimeMonitor cputime];
@@ -179,23 +174,30 @@ int main(int argc, const char * argv[])
           ^() {
              ip = [[cpp engine] nbPropagation];
              NSLog(@"Searching...");
-             id<ORIntVarArray> av = [model intVars];
-             for(ORInt i=av.range.low;i <= av.range.up;i++) {
-                if ([cpp bound:av[i]]) continue;
-                [cpp try:^{
-                   [cpp label:av[i] with:YES];
-                } or:^{
-                   [cpp label:av[i] with:NO];
-                }];
-             }
-             //[cpp labelArray: av];
+             id<ORIntVarArray> sv = (id) [ORFactory sort:cpp idArray:[model intVars] with:^ORFloat(id<ORIntVar> var) {
+                return - [cpp degree:var];
+             }];
+             [cpp labelArray:sv];
+//             for(ORInt i=sv.range.low;i <= sv.range.up;i++) {
+//                if ([cpp bound:sv[i]]) continue;
+//                [cpp try:^{
+//                   [cpp label:sv[i] with:NO];
+//                } or:^{
+//                   [cpp label:sv[i] with:YES];
+//                }];
+//             }
              nbSol++;
              [[cpp explorer] fail];
              id<ORIntArray> freqItemset = [ORFactory intArray:cpp range:itemset.range with:^ORInt(ORInt i) {
                 return [cpp intValue:itemset[i]];
              }];
              
-             NSLog(@"%@",prettyItemset(freqItemset, items));
+             //NSLog(@"%@",prettyItemset(freqItemset, items));
+             printf("IS: [");
+             [freqItemset enumerateWith:^(ORInt obj, int idx) {
+                printf("%d%c",obj,(idx < [freqItemset count]-1) ? ',' : ']');
+             }];
+             printf("\n");
           }];
          ORLong t1 = [ORRuntimeMonitor cputime];
          NSLog(@"#Solutions: %d",nbSol);

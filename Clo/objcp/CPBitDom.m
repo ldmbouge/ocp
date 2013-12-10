@@ -198,9 +198,9 @@
       return;
    ORInt oldMin = _min._val;
    ORInt oldMax = _max._val;
-   assignTRInt(&_min, val, _trail);
-   assignTRInt(&_max, val, _trail);
-   assignTRInt(&_sz, 1, _trail);
+   inline_assignTRInt(&_min, val, _trail);
+   inline_assignTRInt(&_max, val, _trail);
+   inline_assignTRInt(&_sz, 1, _trail);
    
    if ([x tracksLoseEvt:self]) {
       for(ORInt k=oldMin;k<=oldMax;k++)

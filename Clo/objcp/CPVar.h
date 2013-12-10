@@ -33,6 +33,7 @@ enum CPVarClass {
 -(id<CPEngine>)engine;
 -(ORBool) bound;
 -(NSSet*)constraints;
+-(ORInt)degree;
 -(enum CPVarClass)varClass;
 @end
 
