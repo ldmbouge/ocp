@@ -111,10 +111,18 @@ void freeList(CPEventNode* list)
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,ORInt priority)
 {
    id<ORTrail> trail = [engine trail];
-   id evt = [[CPEventNode alloc] initCPEventNode:todo
-                                            cstr:c
-                                              at:priority
-                                           trail:trail];
+   CPEventNode* evt = [[CPEventNode alloc] initCPEventNode:todo
+                                                      cstr:c
+                                                        at:priority
+                                                     trail:trail];
+   if (evtList->_val == nil) {
+      assignTRId(&evtList[0], evt, trail);
+      assignTRId(&evtList[1], evt, trail);
+   } else {
+      assignTRId(&evt->_node, evtList[0]._val, trail);
+      assignTRId(&evtList[0],evt,trail);
+   }
+/* // [ldm] insert at end version!
    if (evtList->_val == nil) {
       assignTRId(&evtList[0], evt, trail);
       assignTRId(&evtList[1], evt, trail);
@@ -123,5 +131,6 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,O
       assignTRId(&lastNode->_node, evt, trail);
       assignTRId(&evtList[1], evt, trail);
    }
+ */
 }
 @end
