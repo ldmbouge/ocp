@@ -17,7 +17,7 @@
 @class CPIntVarI;
 @class CPEngine;
 
-@interface CPLexConstraint : CPCoreConstraint<NSCoding> {
+@interface CPLexConstraint : CPCoreConstraint {
    id<CPIntVarArray>  _x;
    id<CPIntVarArray>  _y;
 }

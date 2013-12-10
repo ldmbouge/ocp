@@ -652,23 +652,4 @@ static void prune(CPCardinalityDC* card)
         @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality: nbUVars called before the constraints is posted"];
     return 0;
 }
-
--(void) encodeWithCoder: (NSCoder*) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_lb];
-    [aCoder encodeObject:_ub];
-}
-
--(id) initWithCoder: (NSCoder*) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [[aDecoder decodeObject] retain];
-    _lb = [[aDecoder decodeObject] retain];
-    _ub = [[aDecoder decodeObject] retain];
-    [self initInstanceVariables];
-    return self;
-}
-
 @end

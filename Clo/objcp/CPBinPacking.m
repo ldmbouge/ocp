@@ -76,27 +76,6 @@
    [super dealloc];
 }
 
--(void) encodeWithCoder:(NSCoder*) aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_item];
-   [aCoder encodeObject:_itemSize];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_bin];
-   [aCoder encodeObject:_binSize];
-}
-
--(id) initWithCoder:(NSCoder*) aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   [self initInstanceVariables];
-   _item = [aDecoder decodeObject];
-   _itemSize = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_bin];
-   _binSize = [aDecoder decodeObject];
-   return self;
-}
-
-
 -(ORStatus) post
 {
 //   NSLog(@"BinPacking post called ...");

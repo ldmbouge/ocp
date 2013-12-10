@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5BF1386F16822EFC005EAC6B"
-               BuildableName = "golomb"
-               BlueprintName = "golomb"
+               BlueprintIdentifier = "5BD601C017F9A627006A9CDC"
+               BuildableName = "bugTest"
+               BlueprintName = "bugTest"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5BF1386F16822EFC005EAC6B"
-            BuildableName = "golomb"
-            BlueprintName = "golomb"
+            BlueprintIdentifier = "5BD601C017F9A627006A9CDC"
+            BuildableName = "bugTest"
+            BlueprintName = "bugTest"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -44,31 +44,35 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5BF1386F16822EFC005EAC6B"
-            BuildableName = "golomb"
-            BlueprintName = "golomb"
+            BlueprintIdentifier = "5BD601C017F9A627006A9CDC"
+            BuildableName = "bugTest"
+            BlueprintName = "bugTest"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-q11"
+            argument = "-q256"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-q200"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-q2"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-q44"
             isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-p2"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-q10"
-            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
@@ -78,14 +82,14 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5BF1386F16822EFC005EAC6B"
-            BuildableName = "golomb"
-            BlueprintName = "golomb"
+            BlueprintIdentifier = "5BD601C017F9A627006A9CDC"
+            BuildableName = "bugTest"
+            BlueprintName = "bugTest"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

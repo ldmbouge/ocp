@@ -64,22 +64,6 @@
     [super dealloc];
 }
 
--(void) encodeWithCoder:(NSCoder*) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_noCycle];
-}
-
--(id) initWithCoder:(NSCoder*) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    [self initInstanceVariables];
-    _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_noCycle];
-    return self;
-}
-
 ORStatus assign(CPCircuitI* cstr,int i)
 {
     ORInt val = [cstr->_var[i] min];

@@ -76,6 +76,10 @@
    [_onSol release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_source release];
@@ -609,6 +613,13 @@
     binding[i] = [_workers[i] createDDeg:rvars];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createSDeg:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -644,6 +655,13 @@
     binding[i] = [_workers[i] createDDeg];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createSDeg
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createSDeg];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createIBS
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -657,6 +675,10 @@
   for(ORInt i=0;i < _nbWorkers;i++)
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [[self worker] degree:x];
 }
 -(ORInt) intValue: (id<ORIntVar>) x
 {

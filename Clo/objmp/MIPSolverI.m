@@ -745,6 +745,10 @@
    [_oStore release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) addVariable: (MIPVariableI*) v
 {
    if (_nbVars == _maxVars) {

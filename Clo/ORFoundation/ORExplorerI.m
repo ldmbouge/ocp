@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/cont.h>
+#import <ORFoundation/ORDataI.h>
 #import "ORLimit.h"
 #import "ORExplorerI.h"
 
@@ -459,15 +460,21 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
 {
-   __block ORBool isPruned = NO;
+   //__block ORBool isPruned = NO;
+   // [ldm] This was not working. Despite being marked as __block, the continuation restore would wipe it out!
+   //       instead, use a heap allocated mutable integer that ends up on the memory trail. It gets automatically
+   //       reclaimed on backtrack when the memory trail is cleared.
+   ORMutableIntegerI* isPruned = [ORFactory mutable:_engine value:NO];
    NSCont* enter = [NSCont takeContinuation];
    if ([enter nbCalls]==0) {
       [_controller._val addChoice: enter];
-      [self perform: s1 onLimit: ^{ isPruned = YES; }];
+      [self perform: s1 onLimit: ^{
+         [isPruned setValue:YES];
+      }];
    }
    else {
       [enter letgo];
-      if (isPruned)
+      if ([isPruned intValue])
          s2();
       else
          [_controller._val fail];

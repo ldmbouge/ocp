@@ -116,6 +116,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
       case ABS: h = [cp createABS:x];break;
       case WDEG: h = [cp createWDeg:x];break;
       case DDEG: h = [cp createDDeg:x];break;
+      case SDEG: h = [cp createSDeg:x];break;
    }
    return h;
 }

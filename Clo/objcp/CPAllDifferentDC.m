@@ -118,20 +118,6 @@ static void prune(CPAllDifferentDC* ad);
     return 0;
 }
 
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    [self initInstanceVariables];
-   return self;
-}
-
 static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
 {
    CPIntVar** var = ad->_var;

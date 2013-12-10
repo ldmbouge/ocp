@@ -63,6 +63,14 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
    return rv;
 }
+-(ORInt)degree
+{
+   __block ORUInt d = 0;
+   [_net._bindEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   return d;
+}
 -(NSString*)description
 {
    ORIReady();
@@ -284,6 +292,14 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
    return rv;
+}
+-(ORInt)degree
+{
+   __block ORUInt d = 0;
+   [_net._bindEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   return d;
 }
 -(NSString*)description
 {

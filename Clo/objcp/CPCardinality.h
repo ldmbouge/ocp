@@ -14,7 +14,7 @@
 #import <CPUKernel/CPConstraintI.h>
 
 // cardinality(int[] low,var<CP>{int}[] x,int[] up)
-@interface CPCardinalityCst : CPCoreConstraint<NSCoding> {  
+@interface CPCardinalityCst : CPCoreConstraint {  
     CPEngineI*        _fdm;
     ORRange       _values;
     CPIntVar**         _x;  // CPIntVar[_lx .. _ux] 

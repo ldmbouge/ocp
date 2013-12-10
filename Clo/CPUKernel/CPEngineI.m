@@ -294,7 +294,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [_ac3[i] release];
    [super dealloc];
 }
-
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(id<CPEngine>) solver
 {
    return self;
@@ -333,7 +336,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) inCache:(id)obj
 {
-   return NO;
+   return nil;
 }
 -(id) addToCache:(id)obj
 {
@@ -417,15 +420,19 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
          if (lc->_active._val) {
-            lc->_todo = CPTocheck;
             id<CPGroup> group = lc->_group;
             if (group) {
+               lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
                [group scheduleAC3:list];
             } else
-               AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+               if (fdm->_last != lc || !lc->_idempotent) {
+                  lc->_todo = CPTocheck;
+                  AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+               }
+               //else NSLog(@"Not scheduling the currently running idempotent constraint");
          }
-         list = list->_node;
+         list = list->_node._val;
       }
       ++mlist;
    }
@@ -448,6 +455,13 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
+
+//   static int cnt = 0;
+//   @autoreleasepool {
+//      NSString* cn = NSStringFromClass([*last class]);
+//      NSLog(@"%d : propagate: %p : CN=%@",cnt++,*last,cn);
+//   }
+
    if (cb.cb)
       cb.cb();
    else {
@@ -507,7 +521,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          // PVH: Failure to remove?
          ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
-         // PVH: what is this stuff
+         // PVH: what is this stuff // [ldm] we are never supposed to return "failure", but call failNow() instead.
          assert(as != ORFailure);
       }
       if (fdm->_propagDone)
@@ -544,7 +558,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
 
 static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
-   if (status == ORSuspend || status == ORSuccess)
+   if (status == ORSuspend || status == ORSuccess || status == ORSkip)
       return propagateFDM(fdm);// fdm->_propagIMP(fdm,@selector(propagate));
    else if (status== ORFailure) {
       for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
@@ -627,6 +641,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus) enforce: (ORClosure) cl
 {
+   _last = NULL;
    _status = tryfail(^ORStatus{
       cl();
       return internalPropagate(self,ORSuspend);
