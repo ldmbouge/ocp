@@ -23,7 +23,7 @@ class Environment:
 		value = value.lstrip().rstrip()
 		os.environ['BUILT_PRODUCTS_DIR'] = value
 	def notify(self,msg,execmd):
-		notPath = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier"
+		notifierPath = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier"
 		cmd = notifierPath + " -message \"" + msg + "\"  -execute '" + execmd + "'"
 		os.system(cmd)
 
