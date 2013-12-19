@@ -15,50 +15,50 @@
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
 
-@class CPIntVarI;
+@class CPIntVar;
 @class ORIntSetI;
 @class CPEngine;
 @protocol CPIntVarArray;
 
 
-@interface CPRestrictI : CPCoreConstraint<NSCoding> {
+@interface CPRestrictI : CPCoreConstraint {
 @private
-   CPIntVarI* _x;
+   CPIntVar* _x;
    ORIntSetI* _r;
 }
 -(id) initRestrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
 // PVH: where is _active being used
-@interface CPEqualc : CPCoreConstraint<NSCoding> {
+@interface CPEqualc : CPCoreConstraint {
    @private
-   CPIntVarI* _x;
+   CPIntVar* _x;
    ORInt  _c;
 }
 -(id) initCPEqualc:(id)x and:(ORInt)c;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPDiffc : CPCoreConstraint<NSCoding> {
+@interface CPDiffc : CPCoreConstraint {
 @private
-   CPIntVarI* _x;
+   CPIntVar* _x;
    ORInt      _c;
 }
 -(id) initCPDiffc:(id)x and:(ORInt)c;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPEqualBC : CPCoreConstraint<NSCoding> {
+@interface CPEqualBC : CPCoreConstraint {
 @private
-   CPIntVarI*  _x;
-   CPIntVarI*  _y;
+   CPIntVar*  _x;
+   CPIntVar*  _y;
    ORInt _c;
 }
 -(id) initCPEqualBC: (id<CPIntVar>) x and: (id<CPIntVar>) y  and: (ORInt) c;
@@ -68,10 +68,10 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPEqualDC : CPCoreConstraint {
 @private
-   CPIntVarI*  _x;
-   CPIntVarI*  _y;
+   CPIntVar*  _x;
+   CPIntVar*  _y;
    ORInt _c;
 }
 -(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c;
@@ -81,8 +81,8 @@
 @end
 
 @interface CPAffineBC : CPCoreConstraint { // y == a x + b
-   CPIntVarI* _y;
-   CPIntVarI* _x;
+   CPIntVar* _y;
+   CPIntVar* _x;
    ORInt      _a;
    ORInt      _b;
 }
@@ -93,8 +93,8 @@
 @end
 
 @interface CPAffineAC : CPCoreConstraint {  // y == a x + b
-   CPIntVarI* _y;
-   CPIntVarI* _x;
+   CPIntVar* _y;
+   CPIntVar* _x;
    ORInt      _a;
    ORInt      _b;
 }
@@ -105,9 +105,9 @@
 @end
 
 @interface CPEqual3BC : CPCoreConstraint {
-   CPIntVarI* _x;
-   CPIntVarI* _y;
-   CPIntVarI* _z;
+   CPIntVar* _x;
+   CPIntVar* _y;
+   CPIntVar* _z;
 }
 -(id) initCPEqual3BC: (id) x plus: (id) y  equal: (id) z;
 -(ORStatus) post;
@@ -115,10 +115,10 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPEqual3DC : CPCoreConstraint<NSCoding> {
-   CPIntVarI* _x;
-   CPIntVarI* _y;
-   CPIntVarI* _z;   
+@interface CPEqual3DC : CPCoreConstraint {
+   CPIntVar* _x;
+   CPIntVar* _y;
+   CPIntVar* _z;   
    CPBitDom*  _fx;
    CPBitDom*  _fy;
    CPBitDom*  _fz;
@@ -134,10 +134,10 @@
 
 typedef int (^intgetter) (void) ;
 
-@interface CPNotEqual : CPCoreConstraint<NSCoding> {
+@interface CPNotEqual : CPCoreConstraint {
 @private
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+   CPIntVar* _x;
+   CPIntVar* _y;
    ORInt  _c;
 }
 -(id) initCPNotEqual: (id) x and: (id) y  and: (ORInt) c;
@@ -147,9 +147,9 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPBasicNotEqual : CPCoreConstraint<NSCoding> {
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+@interface CPBasicNotEqual : CPCoreConstraint {
+   CPIntVar* _x;
+   CPIntVar* _y;
 }
 -(id) initCPBasicNotEqual:(id)x and:(id) y;
 -(ORStatus) post;
@@ -157,10 +157,10 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPLEqualBC : CPCoreConstraint<NSCoding> {  // x <= y + c
+@interface CPLEqualBC : CPCoreConstraint {  // x <= y + c
 @private
-   CPIntVarI*  _x;
-   CPIntVarI*  _y;
+   CPIntVar*  _x;
+   CPIntVar*  _y;
    ORInt       _c;
 }
 -(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c;
@@ -169,9 +169,9 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPLEqualc : CPCoreConstraint<NSCoding> { // x <= c
+@interface CPLEqualc : CPCoreConstraint { // x <= c
 @private
-   CPIntVarI* _x;
+   CPIntVar* _x;
    ORInt      _c;
 }
 -(id) initCPLEqualc:(id)x and:(ORInt) c;
@@ -180,9 +180,9 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPGEqualc : CPCoreConstraint<NSCoding> { // x >= c
+@interface CPGEqualc : CPCoreConstraint { // x >= c
 @private
-   CPIntVarI* _x;
+   CPIntVar* _x;
    ORInt      _c;
 }
 -(id) initCPGEqualc:(id)x and:(ORInt) c;
@@ -191,20 +191,20 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPMultBC : CPCoreConstraint<NSCoding> { // z == x * y
-   CPIntVarI* _x;
-   CPIntVarI* _y;
-   CPIntVarI* _z;
+@interface CPMultBC : CPCoreConstraint { // z == x * y
+   CPIntVar* _x;
+   CPIntVar* _y;
+   CPIntVar* _z;
 }
 -(id) initCPMultBC:(id)x times:(id)y equal:(id)z;
 -(ORStatus) post;
--(NSSet*)allVars;
--(ORUInt)nbUVars;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
 @end
 
 @interface CPSquareBC : CPCoreConstraint { // z = x^2
-   CPIntVarI* _x;
-   CPIntVarI* _z;
+   CPIntVar* _x;
+   CPIntVar* _z;
 }
 -(id)initCPSquareBC:(id)z equalSquare:(id)x;
 -(ORStatus) post;
@@ -218,8 +218,8 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPModcBC : CPCoreConstraint { // y == x MOD c
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+   CPIntVar* _x;
+   CPIntVar* _y;
    ORInt      _c;
 }
 -(id)initCPModcBC:(id)x mod:(ORInt)c equal:(id)y;
@@ -227,8 +227,8 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPModcDC : CPCoreConstraint { // y == x MOD c (DCConsistency)
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+   CPIntVar* _x;
+   CPIntVar* _y;
    ORInt      _c;
 }
 -(id)initCPModcDC:(id)x mod:(ORInt)c equal:(id)y;
@@ -236,9 +236,9 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPMinBC : CPCoreConstraint {
-   CPIntVarI* _x;
-   CPIntVarI* _y;
-   CPIntVarI* _z;   
+   CPIntVar* _x;
+   CPIntVar* _y;
+   CPIntVar* _z;   
 }
 -(id)initCPMin:(id)x and:(id)y equal:(id)z;
 -(ORStatus) post;
@@ -247,9 +247,9 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPMaxBC : CPCoreConstraint {
-   CPIntVarI* _x;
-   CPIntVarI* _y;
-   CPIntVarI* _z;
+   CPIntVar* _x;
+   CPIntVar* _y;
+   CPIntVar* _z;
 }
 -(id)initCPMax:(id)x and:(id)y equal:(id)z;
 -(ORStatus) post;
@@ -258,9 +258,9 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPModBC : CPCoreConstraint { // z == x MOD y
-   CPIntVarI* _x;
-   CPIntVarI* _y;
-   CPIntVarI* _z;
+   CPIntVar* _x;
+   CPIntVar* _y;
+   CPIntVar* _z;
 }
 -(id)initCPModBC:(id)x mod:(id)y equal:(id)z;
 -(ORStatus) post;
@@ -268,9 +268,9 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAbsBC : CPCoreConstraint<NSCoding> { // abs(x)==y
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+@interface CPAbsBC : CPCoreConstraint { // abs(x)==y
+   CPIntVar* _x;
+   CPIntVar* _y;
 }
 -(id)initCPAbsBC:(id)x equal:(id)y;
 -(ORStatus) post;
@@ -278,9 +278,9 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAbsDC : CPCoreConstraint<NSCoding> { // abs(x)==y
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+@interface CPAbsDC : CPCoreConstraint { // abs(x)==y
+   CPIntVar* _x;
+   CPIntVar* _y;
 }
 -(id)initCPAbsDC:(id)x equal:(id)y;
 -(ORStatus) post;
@@ -288,45 +288,45 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPOrDC : CPCoreConstraint<NSCoding> { // b == (x || y)
-   CPIntVarI* _b;
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+@interface CPOrDC : CPCoreConstraint { // b == (x || y)
+   CPIntVar* _b;
+   CPIntVar* _x;
+   CPIntVar* _y;
 }
 -(id)initCPOrDC:(id)b equal:(id)x or:(id)y;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAndDC : CPCoreConstraint<NSCoding> { // b == (x && y)
-   CPIntVarI* _b;
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+@interface CPAndDC : CPCoreConstraint { // b == (x && y)
+   CPIntVar* _b;
+   CPIntVar* _x;
+   CPIntVar* _y;
 }
 -(id)initCPAndDC:(id)b equal:(id)x and:(id)y;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPImplyDC : CPCoreConstraint<NSCoding> { // b == (x => y)
-   CPIntVarI* _b;
-   CPIntVarI* _x;
-   CPIntVarI* _y;
+@interface CPImplyDC : CPCoreConstraint { // b == (x => y)
+   CPIntVar* _b;
+   CPIntVar* _x;
+   CPIntVar* _y;
 }
 -(id)initCPImplyDC:(id)b equal:(id)x imply:(id)y;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAllDifferenceVC : CPCoreConstraint<NSCoding> {
-   CPIntVarI**   _x;
+@interface CPAllDifferenceVC : CPCoreConstraint {
+   CPIntVar**   _x;
    ORLong       _nb;
 }
 -(id) initCPAllDifferenceVC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x;
--(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (ORInt) n;
+-(id) initCPAllDifferenceVC: (CPIntVar**) x nb: (ORInt) n;
 -(id) initCPAllDifferenceVC: (id) x;
 -(void) dealloc;
 -(ORStatus) post;
@@ -335,12 +335,12 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPIntVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
--(id)        initCPIntVarMinimize: (id<CPIntVar>) x;
--(void)      dealloc;
+-(id)        init: (id<CPIntVar>) x;
 -(ORStatus)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -349,15 +349,24 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
--(id)        initCPIntVarMaximize: (id<CPIntVar>) x;
--(void)      dealloc;
+-(id)        init: (id<CPIntVar>) x;
 -(ORStatus)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>)value;
 @end
+
+@interface CPRelaxation : CPCoreConstraint
+-(CPRelaxation*) initCPRelaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
+-(void)      dealloc;
+-(ORStatus)  post;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+

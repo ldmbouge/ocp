@@ -11,12 +11,12 @@
 
 #import <Foundation/Foundation.h>
 #import <CPUKernel/CPConstraintI.h>
-#import "ORFoundation/ORTrailI.h"
+#import <ORFoundation/ORTrailI.h>
 
-@class CPIntVarI;
+@class CPIntVar;
 typedef struct CPEQTerm {
    UBType  update;
-   CPIntVarI* var;
+   CPIntVar* var;
    ORLong     low;
    ORLong      up;
    BOOL   updated;
@@ -26,9 +26,9 @@ typedef struct CPEQTerm {
 MAKETRPointer(TRCPEQTerm,CPEQTerm);
 
 @class CPIntVarI;
-@interface CPEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i == c
+@interface CPEquationBC : CPCoreConstraint { // sum(i in S) x_i == c
 @private
-   CPIntVarI**               _x;  // array of vars
+   CPIntVar**               _x;  // array of vars
    ORLong                   _nb;  // size
    ORInt                     _c;  // constant c in:: sum(i in S) x_i == c
    UBType*        _updateBounds;
@@ -44,9 +44,9 @@ MAKETRPointer(TRCPEQTerm,CPEQTerm);
 -(ORUInt)nbUVars;
 @end
 
-@interface CPINEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i <= c
+@interface CPINEquationBC : CPCoreConstraint { // sum(i in S) x_i <= c
 @private
-   CPIntVarI**        _x;  // array of vars
+   CPIntVar**        _x;  // array of vars
    ORLong            _nb;  // size
    ORInt              _c;  // constant c in:: sum(i in S) x_i <= c
    UBType*    _updateMax;

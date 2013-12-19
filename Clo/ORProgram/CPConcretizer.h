@@ -13,13 +13,20 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/CPSolver.h>
 
-@interface ORCPConcretizer  : NSObject<ORVisitor>
--(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver;
--(void) dealloc;
+@interface ORCPConcretizer  : ORVisitor<NSObject>
+{
+   id<CPCommonProgram> _solver;
+   id<CPEngine>        _engine;
+   id*                 _gamma;
+   id<ORAnnotation>    _notes;
+}
+-(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes;
 @end
 
-@interface ORCPMultiStartConcretizer  : NSObject<ORVisitor>
--(ORCPMultiStartConcretizer*) initORCPMultiStartConcretizer: (id<ORTracker>) tracker solver: (id<CPCommonProgram>) solver;
--(void) dealloc;
+@interface ORCPSearchConcretizer : ORVisitor<NSObject>
+{
+   id<CPEngine>        _engine;
+   id*                 _gamma;
+}
+-(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine gamma:(id<ORGamma>)gamma;
 @end
-

@@ -10,12 +10,13 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORAVLTree.h"
-#import "ORObject.h"
+#import <ORFoundation/ORAVLTree.h>
+#import <ORFoundation/ORData.h>
 
 @protocol ORIntIterable <ORObject>
 -(void)enumerateWithBlock:(ORInt2Void)block;
 -(ORInt) size;
+-(ORInt) low;
 -(id<IntEnumerator>) enumerator;
 @end
 
@@ -37,4 +38,12 @@
 -(ORBool) inRange: (ORInt)e;
 -(NSString*) description;
 -(void)enumerateWithBlock:(ORInt2Void)block;
+@end
+
+@protocol ORFloatRange
+-(ORFloat)low;
+-(ORFloat)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORFloat)e;
+-(NSString*)description;
 @end

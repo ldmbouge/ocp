@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPEquationBC.h"
-#import "ORFoundation/ORArrayI.h"
+#import <ORFoundation/ORArrayI.h>
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 
@@ -25,10 +25,10 @@
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
       _nb = [x count];
-      _x  = malloc(sizeof(CPIntVarI*)*_nb);
+      _x  = malloc(sizeof(CPIntVar*)*_nb);
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
-         _x[i++] = (CPIntVarI*) [xa at:k];
+         _x[i++] = (CPIntVar*) [xa at:k];
    } else assert(FALSE);
    _c = c;
    _allTerms = NULL;
@@ -201,24 +201,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    [buf appendFormat:@" == %d >",_c];
    return buf;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-   for(int k=0;k<_nb;k++)
-      [aCoder encodeObject:_x[k]];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];   
-   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   _x = malloc(sizeof(CPIntVarI*)*_nb);
-   for(int k=0;k<_nb;k++)
-      _x[k] = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 @implementation CPINEquationBC 
@@ -231,10 +213,10 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
       _nb = [x count];
-      _x  = malloc(sizeof(CPIntVarI*)*_nb);
+      _x  = malloc(sizeof(CPIntVar*)*_nb);
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
-         _x[i++] = (CPIntVarI*) [xa at:k];
+         _x[i++] = (CPIntVar*) [xa at:k];
    }
    else
       assert(FALSE);
@@ -344,24 +326,6 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    }
    [buf appendFormat:@" <= %d >",_c];
    return buf;
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-   for(int k=0;k<_nb;k++)
-      [aCoder encodeObject:_x[k]];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];   
-   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   _x = malloc(sizeof(CPIntVarI*)*_nb);
-   for(int k=0;k<_nb;k++)
-      _x[k] = [aDecoder decodeObject];
-   return self;
 }
 @end
 

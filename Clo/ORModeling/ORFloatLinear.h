@@ -13,8 +13,9 @@
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <ORModeling/ORModeling.h>
+#import <ORModeling/ORLinear.h>
 
-@protocol ORFloatLinear <NSObject>
+@protocol ORFloatLinear <NSObject,ORLinear>
 -(void) setIndependent: (ORFloat) idp;
 -(void) addIndependent: (ORFloat) idp;
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
@@ -24,11 +25,13 @@
 -(id<ORVar>) var: (ORInt) k;
 -(ORFloat) coef: (ORInt) k;
 -(ORFloat) independent;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 @end
 
 @interface ORFloatLinear :  NSObject<ORFloatLinear> {
    struct CPFloatTerm {
-      id<ORVar>  _var;
+      id<ORVar>   _var;
       ORFloat    _coef;
    };
    struct CPFloatTerm* _terms;
@@ -45,14 +48,18 @@
 -(void) scaleBy: (ORFloat) s;
 -(ORFloat) independent;
 -(NSString*) description;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 
 -(id<ORVarArray>)  variables:  (id<ORAddToModel>)  model;
 -(id<ORFloatArray>)  coefficients: (id<ORAddToModel>) model;
 -(ORInt) size;
--(id<ORConstraint>)  postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(id<ORConstraint>)  postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(void)  postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(void)  postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
+-(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model;
+-(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model;
+-(void)  postMinimize: (id<ORAddToModel>) model;
+-(void)  postMaximize: (id<ORAddToModel>) model;
 @end
 
 @interface ORFloatLinearFlip : NSObject<ORFloatLinear> {
@@ -62,5 +69,7 @@
 -(void) setIndependent: (ORFloat) idp;
 -(void) addIndependent: (ORFloat) idp;
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 @end
 

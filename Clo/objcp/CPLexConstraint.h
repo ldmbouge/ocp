@@ -17,13 +17,13 @@
 @class CPIntVarI;
 @class CPEngine;
 
-@interface CPLexConstraint : CPCoreConstraint<NSCoding> {
+@interface CPLexConstraint : CPCoreConstraint {
    id<CPIntVarArray>  _x;
    id<CPIntVarArray>  _y;
 }
 -(id) initCPLexConstraint:(id<CPIntVarArray>)x and:(id<CPIntVarArray>)y;
 -(void) dealloc;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

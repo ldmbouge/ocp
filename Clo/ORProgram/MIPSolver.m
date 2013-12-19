@@ -11,6 +11,8 @@
 
 // MIPSolver
 #import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModelTransformation.h>
+
 #import "MIPProgram.h"
 #import "MIPSolver.h"
 #import <objmp/MIPSolverI.h>
@@ -158,7 +160,7 @@
 }
 @end
 
-@interface ORMIPTakeSnapshot  : ORNOopVisit<ORVisitor> // inherits from noop -> only fill relevant methods
+@interface ORMIPTakeSnapshot  : ORNOopVisit<NSObject> // inherits from noop -> only fill relevant methods
 -(ORMIPTakeSnapshot*) initORMIPTakeSnapshot: (id<MIPProgram>) solver;
 -(void) dealloc;
 @end
@@ -336,12 +338,8 @@
 -(id<MIPProgram>) initMIPSolver: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _MIPsolver = NULL;
-#else
    _MIPsolver = [MIPFactory solver];
    _model = model;
-#endif
    _sPool = (id<ORMIPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
@@ -350,6 +348,17 @@
    [_MIPsolver release];
    [_sPool release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
+}
+-(void) close
+{}
+
+-(id<OREngine>) engine
+{
+   return _MIPsolver;
 }
 -(MIPSolverI*) solver
 {

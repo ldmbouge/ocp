@@ -89,7 +89,7 @@
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
    GRBoptimize(_model);
-   [self printModelToFile: "/Users/pvh/lookatgurobi.mps"];
+   [self printModelToFile: "/Users/dan/Desktop/lookatgurobi.mps"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
@@ -197,7 +197,7 @@
    GRBsetstrparam(_env,name,val);
 }
 
--(void) postConstraint: (MIPConstraintI*) cstr
+-(ORStatus) postConstraint: (MIPConstraintI*) cstr
 {
    switch ([cstr type]) {
       case MIPleq:
@@ -212,6 +212,7 @@
       default:
          break;
    }
+   return ORSuspend;
 }
 
 -(void) print

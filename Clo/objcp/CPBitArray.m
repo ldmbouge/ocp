@@ -9,8 +9,8 @@
 
  ***********************************************************************/
 
-#import "CPBitArray.h"
 #import "CPBitMacros.h"
+#import "CPBitArray.h"
 
 #define CP_SPACING 4
 #define UMASK 0xFFFFFFFF

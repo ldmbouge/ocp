@@ -9,28 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
 
-#if defined(__linux__)
-void failNow()
-{
-   static ORFailException* fex = nil;
-   if (fex==nil) fex = [ORFailException new];
-   @throw  [fex retain];
-}
-#else
-
-static __thread jmp_buf* ptr = 0;
-
-static inline void failTo(jmp_buf* jb)
-{
-   ptr = jb;
-}
-
-static inline void restoreFail(jmp_buf* old)
-{
-   ptr = old;
-}
+__thread jmp_buf* ptr = 0;
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)())
 {
@@ -38,24 +19,18 @@ ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)())
    jmp_buf* old = ptr;
    int st = _setjmp(buf);
    if (st==0) {
-      failTo(&buf);
+      ptr = &buf;
       ORStatus rv = block();
-      restoreFail(old);
+      ptr = old;
       return rv;
    } else {
-      restoreFail(old);
+      ptr = old;
       return handle();
    }
 }
 
 void failNow()
 {
-   /*
-    static ORFailException* fex = nil;
-    if (fex==nil) fex = [ORFailException new];
-    @throw  CFRetain(fex);
-    */
    _longjmp(*ptr, 1);
 }
-#endif
 

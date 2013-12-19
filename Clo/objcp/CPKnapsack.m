@@ -45,7 +45,7 @@
 -(void)  addInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support  nbCol:(ORInt)nb addWeight:(ORInt)w bound:(ORInt)U;
 -(void)lostCapacity:(ORInt)v knapsack:(CPKnapsack*)ks;
 -(NSString*)description;
--(void)pruneCapacity:(CPIntVarI*)capVar;
+-(void)pruneCapacity:(CPIntVar*)capVar;
 @end
 
 typedef struct CPKSPair {
@@ -80,7 +80,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 
 @implementation CPKnapsack {
    CPEngineI*            _fdm;
-   CPIntVarI**            _xb;
+   CPIntVar**            _xb;
    TRInt*            _support;
    ORLong                 _nb;
    ORInt                 _low;
@@ -90,11 +90,11 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 
 #define SUPP(r,c) ((r)*2 + (c))
 
--(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarI*)cap
+-(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVar*)cap
 {
    self = [super initCPCoreConstraint:[cap engine]];
    _priority = HIGHEST_PRIO - 2;
-   _fdm = [cap engine];
+   _fdm = (CPEngineI*) [cap engine];
    _x = x;
    _w = w;
    _c = cap;
@@ -110,14 +110,14 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    free(_xb);
    [super dealloc];
 }
--(ORStatus)post
+-(ORStatus) post
 {
    _nb  = [_x count];
    _low = [_x low];
    _up  = [_x up];
-   _xb  = malloc(sizeof(CPIntVarI*)*_nb);
+   _xb  = malloc(sizeof(CPIntVar*)*_nb);
    for(ORInt k=_low;k<= _up;k++)
-      _xb[k - _low] = (CPIntVarI*)[_x at:k];
+      _xb[k - _low] = (CPIntVar*)[_x at:k];
    _support = malloc(sizeof(TRInt)*_nb*2);
    for(ORInt k=0;k<_nb*2;k++)
       _support[k] = makeTRInt(_trail, 0);
@@ -297,21 +297,6 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 {
    return [NSMutableString stringWithFormat:@"<CPKnapsackDC: %02d (%@ * %@ IN %@)>",_name,_x,_w,_c];
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_w];
-   [aCoder encodeObject:_c];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _w = [aDecoder decodeObject];
-   _c = [aDecoder decodeObject];   
-   return self;
-}
 @end
 
 @implementation KSNode
@@ -435,7 +420,7 @@ static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks)
       cur = cur->_up._val;
    }
 }
--(void)pruneCapacity:(CPIntVarI*)capVar
+-(void)pruneCapacity:(CPIntVar*)capVar
 {
    KSNode* cur = _first._val;
    for (ORInt v=[capVar min]; v<= [capVar max];++v) {

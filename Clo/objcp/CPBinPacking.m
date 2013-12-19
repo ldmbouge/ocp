@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORFoundation/ORExpr.h"
+#import <ORFoundation/ORExpr.h>
 #import "CPBinPacking.h"
 #import "CPBasicConstraint.h"
 #import "CPEngineI.h"
@@ -27,13 +27,13 @@
    ORInt              _low;
    ORInt              _up;
    
-   CPIntVarI**        _var;
+   CPIntVar**        _var;
    ORInt              _nbVar;
    ORInt*             _size;
-   CPIntVarI*         _load;
+   CPIntVar*         _load;
    
    int                _nbCandidates;
-   CPIntVarI**        _candidate;
+   CPIntVar**        _candidate;
    ORInt*             _candidateSize;
    
    int                _nbX;
@@ -76,27 +76,6 @@
    [super dealloc];
 }
 
--(void) encodeWithCoder:(NSCoder*) aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_item];
-   [aCoder encodeObject:_itemSize];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_bin];
-   [aCoder encodeObject:_binSize];
-}
-
--(id) initWithCoder:(NSCoder*) aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   [self initInstanceVariables];
-   _item = [aDecoder decodeObject];
-   _itemSize = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_bin];
-   _binSize = [aDecoder decodeObject];
-   return self;
-}
-
-
 -(ORStatus) post
 {
 //   NSLog(@"BinPacking post called ...");
@@ -107,23 +86,22 @@
    _low = [_item range].low;
    _up = [_item range].up;
    _nbVar = _up - _low + 1;
-   _var = (CPIntVarI**) malloc(sizeof(CPIntVarI*) * _nbVar);
+   _var = (CPIntVar**) malloc(sizeof(CPIntVar*) * _nbVar);
    _size = malloc(sizeof(ORInt) * _nbVar);
    _s    = malloc(sizeof(ORInt) * _nbVar);
-   _candidate = malloc(sizeof(CPIntVarI*) * _nbVar);
+   _candidate = malloc(sizeof(CPIntVar*) * _nbVar);
    _candidateSize = malloc(sizeof(ORInt) * _nbVar);
    for(ORInt i = _low; i <= _up; i++) {
-      _var[i-_low] = (CPIntVarI*) _item[i];
+      _var[i-_low] = (CPIntVar*) _item[i];
       _size[i-_low] = [_itemSize at: i];
    }
-   _load = (CPIntVarI*) _binSize;
+   _load = (CPIntVar*) _binSize;
    [self propagate];
    
    for(ORInt i = 0; i < _nbVar; i++)
       if (![_var[i] bound])
          [_var[i] whenChangePropagate: self];
    [_load whenChangeBoundsPropagate: self];
-
    return ORSuspend;
 }
 

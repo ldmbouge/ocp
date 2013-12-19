@@ -9,8 +9,9 @@
 #import <ORModeling/ORLinearize.h>
 #import <ORFoundation/ORSetI.h>
 #import "ORModelI.h"
+#import "ORExprI.h"
 
-@interface ORLinearizeConstraint : NSObject<ORVisitor>
+@interface ORLinearizeConstraint : ORVisitor<NSObject>
 -(id)init:(id<ORAddToModel>)m;
 
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
@@ -18,7 +19,7 @@
 -(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr;
 @end
 
-@interface ORLinearizeObjective : NSObject<ORVisitor>
+@interface ORLinearizeObjective : ORVisitor<NSObject>
 -(id)init:(id<ORAddToModel>)m;
 
 @end
@@ -36,13 +37,13 @@
 +(id<ORModel>) linearize:(id<ORModel>)model
 {
    id<ORModel> lin = [ORFactory createModel];
-   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
+   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model annotation:nil];
    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize :lm];
-   [linearizer apply: model];
+   [linearizer apply: model with:nil]; //TOFIX
    return lin;
 }
 
--(void)apply:(id<ORModel>)m 
+-(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
 {
     [m applyOnVar:^(id<ORVar> x) {
         [_into addVariable: x];
@@ -209,6 +210,9 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+}
 -(void) visitEqualc: (id<OREqualc>)c
 {
 }
@@ -242,6 +246,9 @@
 -(void) visitSquare:(id<ORSquare>)c
 {
 }
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+}
 -(void) visitAbs: (id<ORAbs>)c
 {
 }
@@ -254,9 +261,13 @@
 -(void) visitImply: (id<ORImply>)c
 {
 }
--(void) visitElementCst: (id<ORElementCst>)c {
+-(void) visitElementCst: (id<ORElementCst>)c
+{
 }
 -(void) visitElementVar: (id<ORElementVar>)c
+{
+}
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
 {
 }
 // Expressions
@@ -319,10 +330,31 @@
     [_model addConstraint: [sumVar eq: linearSumExpr]];
     _exprResult = sumVar;
 }
+-(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*)cstSubExpr
+{
+   id<ORIntVar> indexVar;
+   // Create the index variable if needed.
+   if([[cstSubExpr index] conformsToProtocol: @protocol(ORIntVar)])
+      indexVar = (id<ORIntVar>)[cstSubExpr index];
+   else {
+      id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
+      id<ORIntRange> dom = [ORFactory intRange:_model low:[linearIndexExpr min] up:[linearIndexExpr max]];
+      indexVar = [ORFactory intVar: _model domain: dom];
+      [_model addConstraint: [indexVar eq: linearIndexExpr]];
+   }
+   id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
+   id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
+      return [[binIndexVar at: i] mul: @([[cstSubExpr array] at: i ])];
+   }];
+   id<ORFloatVar> sumVar = [ORFactory floatVar: _model low:[linearSumExpr min] up:[linearSumExpr max]];
+   [_model addConstraint: [sumVar eq: linearSumExpr]];
+   _exprResult = sumVar;
+}
 @end
 
 @implementation ORLinearizeObjective {
     id<ORAddToModel> _model;
+    id _result;
 }
 -(id)init:(id<ORAddToModel>)m
 {
@@ -348,6 +380,7 @@
    assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
    [_model maximize:[v expr]];
 }
+-(void) visitIntVar: (id<ORIntVar>) v  { _result = v; }
 
 @end
 
@@ -355,9 +388,9 @@
 +(id<ORModel>) linearizeModel:(id<ORModel>)m
 {
    id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
-   ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
+   ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
-   [linearizer apply: m];
+   [linearizer apply: m with:nil]; // TOFIX
    id<ORModel> clm = [ORFactory cloneModel: lm];
    [lm release];
    [batch release];

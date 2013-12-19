@@ -26,7 +26,7 @@ float coef[7][12] = {
 int main_lp(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
-   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-2];
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns];
     id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
@@ -39,6 +39,12 @@ int main_lp(int argc, const char * argv[])
    id<ORSolutionPool> test = [lp solutionPool];
    NSLog(@"test %@",test);
    
+   for(ORInt i = 0; i < nbRows; i++) {
+      printf("The id of constraint %d is %d \n",i,[ca[i] getId]);
+   }
+   for(ORInt i = 0; i < nbRows; i++) {
+      printf("The dual of constraint %d is %f \n",i,[lp dual: ca[i]]);
+   }
    id<ORLPSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbColumns-1; i++)
@@ -75,6 +81,9 @@ int main_mip(int argc, const char * argv[])
    for(ORInt i = 0; i < nbRows; i++)
       [model add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)coef[i][j])]) leq: @((ORInt)b[i])]];
    [model maximize: Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])])];
+   
+
+   
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
    [mip solve];
@@ -141,7 +150,7 @@ int main_cp(int argc, const char * argv[])
 int main_both(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
-   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-2];
    id<ORIntRange> Domains = [ORFactory intRange: model low: 0 up: 10000];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domains];
    for(ORInt i = 0; i < nbRows; i++)
@@ -166,7 +175,7 @@ int main_both(int argc, const char * argv[])
    }];
    id<ORSolution> cpSol = [[cp solutionPool] best];
    NSLog(@"Solution: %@",cpSol);
-   printf("Objective value: %d \n",[[cpSol objectiveValue] value]);
+   printf("Objective value: %d \n",(ORInt) [(id<ORObjectiveValueInt>) [cpSol objectiveValue] value]);
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[cpSol intValue: x[i]]);
    NSLog(@"we are done");
@@ -177,5 +186,7 @@ int main_both(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   return main_lp(argc,argv);
+   int st0 =  main_lp(argc,argv);
+   int st1 = main_mip(argc,argv);
+   return st0+st1;
 }

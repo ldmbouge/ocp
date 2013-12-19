@@ -12,136 +12,10 @@
 #import "ORFlatten.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
-#import "ORVarI.h"
 #import "ORSetI.h"
+#import "ORVarI.h"
 #import <ORFoundation/ORArrayI.h>
 
-@implementation ORNOopVisit
--(void) visitRandomStream:(id) v {}
--(void) visitZeroOneStream:(id) v {}
--(void) visitUniformDistribution:(id) v{}
--(void) visitIntSet:(id<ORIntSet>)v{}
--(void) visitIntRange:(id<ORIntRange>)v{}
--(void) visitIntArray:(id<ORIntArray>)v  {}
--(void) visitFloatArray:(id<ORFloatArray>)v  {}
--(void) visitIntMatrix:(id<ORIntMatrix>)v  {}
--(void) visitTrailableInt:(id<ORTrailableInt>)v  {}
--(void) visitIntVar: (id<ORIntVar>) v  {}
--(void) visitFloatVar: (id<ORFloatVar>) v  {}
--(void) visitBitVar: (id<ORBitVar>) v {}
--(void) visitIntVarLitEQView:(id<ORIntVar>)v  {}
--(void) visitAffineVar:(id<ORIntVar>) v  {}
--(void) visitIdArray: (id<ORIdArray>) v  {}
--(void) visitIdMatrix: (id<ORIdMatrix>) v  {}
--(void) visitTable:(id<ORTable>) v  {}
-// micro-Constraints
--(void) visitConstraint:(id<ORConstraint>)c  {}
--(void) visitGroup:(id<ORGroup>)g {}
--(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f  {}
--(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f  {}
--(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f  {}
--(void) visitFail:(id<ORFail>)cstr  {}
--(void) visitRestrict:(id<ORRestrict>)cstr  {}
--(void) visitAlldifferent: (id<ORAlldifferent>) cstr  {}
--(void) visitRegular:(id<ORRegular>) cstr {}
--(void) visitCardinality: (id<ORCardinality>) cstr  {}
--(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr  {}
--(void) visitTableConstraint: (id<ORTableConstraint>) cstr  {}
--(void) visitLexLeq:(id<ORLexLeq>) cstr  {}
--(void) visitCircuit:(id<ORCircuit>) cstr  {}
--(void) visitNoCycle:(id<ORNoCycle>) cstr  {}
--(void) visitPackOne:(id<ORPackOne>) cstr  {}
--(void) visitPacking:(id<ORPacking>) cstr  {}
--(void) visitKnapsack:(id<ORKnapsack>) cstr  {}
--(void) visitAssignment:(id<ORAssignment>)cstr {}
-
--(void) visitMinimizeVar: (id<ORObjectiveFunction>) v {}
--(void) visitMaximizeVar: (id<ORObjectiveFunction>) v {}
--(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e {}
--(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e {}
--(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o {}
--(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o {}
-
--(void) visitEqualc: (id<OREqualc>)c  {}
--(void) visitNEqualc: (id<ORNEqualc>)c  {}
--(void) visitLEqualc: (id<ORLEqualc>)c  {}
--(void) visitGEqualc: (id<ORGEqualc>)c  {}
--(void) visitEqual: (id<OREqual>)c  {}
--(void) visitAffine: (id<ORAffine>)c  {}
--(void) visitNEqual: (id<ORNEqual>)c  {}
--(void) visitLEqual: (id<ORLEqual>)c  {}
--(void) visitPlus: (id<ORPlus>)c  {}
--(void) visitMult: (id<ORMult>)c  {}
--(void) visitSquare:(id<ORSquare>)c {}
--(void) visitMod: (id<ORMod>)c {}
--(void) visitModc: (id<ORModc>)c {}
--(void) visitMin:(id<ORMin>)c  {}
--(void) visitMax:(id<ORMax>)c  {}
--(void) visitAbs: (id<ORAbs>)c  {}
--(void) visitOr: (id<OROr>)c  {}
--(void) visitAnd:( id<ORAnd>)c  {}
--(void) visitImply: (id<ORImply>)c  {}
--(void) visitElementCst: (id<ORElementCst>)c  {}
--(void) visitElementVar: (id<ORElementVar>)c  {}
--(void) visitReifyEqualc: (id<ORReifyEqualc>)c  {}
--(void) visitReifyEqual: (id<ORReifyEqual>)c  {}
--(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c  {}
--(void) visitReifyNEqual: (id<ORReifyNEqual>)c  {}
--(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c  {}
--(void) visitReifyLEqual: (id<ORReifyLEqual>)c  {}
--(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c  {}
--(void) visitReifyGEqual: (id<ORReifyGEqual>)c  {}
--(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c  {}
--(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c  {}
--(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c  {}
--(void) visitSumEqualc:(id<ORSumEqc>)c  {}
--(void) visitSumLEqualc:(id<ORSumLEqc>)c  {}
--(void) visitSumGEqualc:(id<ORSumGEqc>)c  {}
-
--(void) visitLinearGeq: (id<ORLinearGeq>) c {}
--(void) visitLinearLeq: (id<ORLinearLeq>) c {}
--(void) visitLinearEq: (id<ORLinearEq>) c {}
--(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c {}
--(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c {}
-// Bit
--(void) visitBitEqual:(id<ORBitEqual>)c {}
--(void) visitBitOr:(id<ORBitOr>)c {}
--(void) visitBitAnd:(id<ORBitAnd>)c {}
--(void) visitBitNot:(id<ORBitNot>)c {}
--(void) visitBitXor:(id<ORBitXor>)c {}
--(void) visitBitShiftL:(id<ORBitShiftL>)c {}
--(void) visitBitRotateL:(id<ORBitRotateL>)c {}
--(void) visitBitSum:(id<ORBitSum>)c {}
--(void) visitBitIf:(id<ORBitIf>)c {}
-// Expressions
--(void) visitIntegerI: (id<ORInteger>) e  {}
--(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}
--(void) visitMutableFloatI: (id<ORMutableFloat>) e {}
--(void) visitFloatI: (id<ORFloatNumber>) e  {}
--(void) visitExprPlusI: (id<ORExpr>) e  {}
--(void) visitExprMinusI: (id<ORExpr>) e  {}
--(void) visitExprMulI: (id<ORExpr>) e  {}
--(void) visitExprDivI: (id<ORExpr>) e  {}
--(void) visitExprEqualI: (id<ORExpr>) e  {}
--(void) visitExprNEqualI: (id<ORExpr>) e  {}
--(void) visitExprLEqualI: (id<ORExpr>) e  {}
--(void) visitExprSumI: (id<ORExpr>) e  {}
--(void) visitExprProdI: (id<ORExpr>) e  {}
--(void) visitExprAbsI:(id<ORExpr>) e  {}
--(void) visitExprModI:(id<ORExpr>)e   {}
--(void) visitExprMinI: (id<ORExpr>) e {}
--(void) visitExprMaxI: (id<ORExpr>) e {}
--(void) visitExprNegateI:(id<ORExpr>) e  {}
--(void) visitExprCstSubI: (id<ORExpr>) e  {}
--(void) visitExprDisjunctI:(id<ORExpr>) e  {}
--(void) visitExprConjunctI: (id<ORExpr>) e  {}
--(void) visitExprImplyI: (id<ORExpr>) e  {}
--(void) visitExprAggOrI: (id<ORExpr>) e  {}
--(void) visitExprAggAndI: (id<ORExpr>) e  {}
--(void) visitExprAggMinI: (id<ORExpr>) e  {}
--(void) visitExprAggMaxI: (id<ORExpr>) e  {}
--(void) visitExprVarSubI: (id<ORExpr>) e  {}
-@end
 
 @implementation ORFlatten {
    NSMapTable* _mapping;
@@ -150,8 +24,9 @@
 {
    self = [super init];
    _into = into;
-   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
-                                        valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+   _fresh = nil;
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
+                                        valueOptions:NSPointerFunctionsOpaqueMemory
                                             capacity:64];
    return self;
 }
@@ -166,6 +41,7 @@
 }
 -(id)flattenIt:(id)obj
 {
+   if (obj==nil) return obj;
    id fo = [_mapping objectForKey:obj];
    if (fo)
       return fo;
@@ -182,8 +58,9 @@
       return rv;
    }
 }
--(void)apply:(id<ORModel>)m
+-(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
 {
+   _fresh = notes;
    [m applyOnVar: ^(id<ORVar> x) {
       [_into addVariable: [self flattenIt:x]];
    }
@@ -194,7 +71,7 @@
       [_into addImmutable:x];
    }
    onConstraints: ^(id<ORConstraint> c) {
-      [_into addConstraint:[self flattenIt:c]];
+      [self flattenIt:c];
    }
    onObjective: ^(id<ORObjectiveFunction> o) {
       [self flattenIt:o];
@@ -261,6 +138,10 @@
 {
    _result = v;
 }
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{
+   _result = v;
+}
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    _result = v;
@@ -278,11 +159,11 @@
 
 -(void) visitRestrict:(id<ORRestrict>)cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {
@@ -295,7 +176,7 @@
    id<ORIntVarArray> q = [ORFactory intVarArray:_into range:E domain:S];
    [_into addConstraint:[ORFactory equalc:_into var:q[R.low] to:S.low]];
    for(ORInt k=R.low;k <= R.up;k++)
-      [_into addConstraint:[ORFactory tableConstraint:T on:q[k] :x[k] :q[k+1]]];
+      [_into addConstraint:[ORFactory tableConstraint:_into table:T on:q[k] :x[k] :q[k+1]]];
    [S enumerateWithBlock:^(ORInt s) {
       if (![F member:s])
          [_into addConstraint:[ORFactory notEqualc:_into var:q[R.up+1] to:s]];
@@ -303,7 +184,7 @@
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
@@ -315,18 +196,18 @@
    id<ORTracker> t = [_into tracker];
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
-   for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
+   [_into setCurrent:cstr];
+   for(ORInt b = brlow; b <= brup; b++) { /*note:RangeConsistency*/
       [ORFlatten flattenExpression: [Sum(t,i,IR,[[item[i] eq: @(b) track:t] mul:@([itemSize at:i]) track:t]) eq: binSize[b]]
-                              into: _into
-                        annotation: DomainConsistency];
+                              into: _into];
+   }
    ORInt s = 0;
    ORInt irlow = [IR low];
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
    [ORFlatten flattenExpression: [Sum(t,b,BR,binSize[b]) eq: @(s)]
-                           into: _into
-                     annotation: DomainConsistency];
+                           into: _into];
    
    for(ORInt b = brlow; b <= brup; b++)
       [_into addConstraint: [ORFactory packOne:t item:item itemSize: itemSize bin: b binSize: binSize[b]]];
@@ -339,109 +220,123 @@
       [ORFlatten flatten:ck into:a2g];
    }];
    [a2g release];
-   _result = ng;
+   _result = [_into addConstraint:ng];
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORFlatten flattenExpression:[cstr expr] into:_into annotation:[cstr annotation]];
+   [_into setCurrent:cstr];
+   [ORFlatten flattenExpression:[cstr expr] into:_into];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
-   _result = cstr;
+   _result = [_into addConstraint:cstr];
+}
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)cstr
+{
+   _result = [_into addConstraint:cstr];
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitGEqualc: (id<ORGEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitAffine: (id<ORAffine>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitPlus: (id<ORPlus>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitMult: (id<ORMult>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSquare:(id<ORSquare>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
+}
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+   _result = [_into addConstraint:c];
 }
 -(void) visitMod: (id<ORMod>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitModc: (id<ORModc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitMin:(id<ORMin>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitMax:(id<ORMax>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitAbs: (id<ORAbs>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitOr: (id<OROr>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitAnd:( id<ORAnd>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitImply: (id<ORImply>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitElementCst: (id<ORElementCst>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitElementVar: (id<ORElementVar>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
-void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+{
+   _result = [_into addConstraint:c];
+}
+
+static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
 {
    if (d == arity) {
       idx[arity]++;
@@ -472,113 +367,130 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
    loopOverMatrix(m,0,[m arity],table,idx);
    table = [t memoize:table];
    id<ORIntVar> alpha = [ORFactory intVar:t domain:fr];
-   [ORFactory tableConstraint:table on:idx0 :idx1 :alpha];
-   _result = [ORFactory element:t var:alpha idxVarArray:f equal:res annotation:DomainConsistency];
+   [ORFactory tableConstraint:t table:table on:idx0 :idx1 :alpha];
+   _result = [ORFactory element:t var:alpha idxVarArray:f equal:res];
+   [_into addConstraint:_result];
 }
 -(void) visitCircuit:(id<ORCircuit>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitNoCycle:(id<ORNoCycle>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyEqual: (id<ORReifyEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyNEqual: (id<ORReifyNEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyLEqual: (id<ORReifyLEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
+}
+-(void) visitReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitHReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitHReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
+{
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumEqualc:(id<ORSumEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitOr:(id<ORBitOr>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitAnd:(id<ORBitAnd>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitNot:(id<ORBitNot>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitXor:(id<ORBitXor>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitShiftL:(id<ORBitShiftL>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitSum:(id<ORBitSum>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {
-   _result = c;
+   _result = [_into addConstraint:c];
 }
 
 // Flattening of constraints ============================================================================
@@ -593,15 +505,36 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
-   id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
-   _result = [_into minimizeVar: alpha];
+   switch ([e expr].vtype) {
+      case ORTInt: {
+         ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into];
+         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
+         _result = [_into minimizeVar: alpha];
+      }break;
+      case ORTFloat: {
+         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
+         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+         _result = [_into minimizeVar:alpha];
+      }break;
+      default:
+         break;
+   }
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
-   id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
-   _result = [_into maximizeVar: alpha];
+   switch ([e expr].vtype) {
+      case ORTInt: {
+         ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into];
+         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
+         _result = [_into maximizeVar: alpha];
+      }break;
+      case ORTFloat:{
+         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
+         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+         _result = [_into maximizeVar:alpha];
+      }break;
+      default: break;
+   }
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
@@ -626,26 +559,16 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
    [flattener release];
 }
 
-+(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model
 {
    id<ORConstraint> rv = NULL;
-   ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
+   id<ORLinear> terms = [ORNormalizer normalize:expr into: model];
    switch ([expr type]) {
       case ORRBad: assert(NO);
-      case ORREq: {
-         if ([terms size] != 0) {
-            rv = [terms postEQZ:model annotation:note];
-         }
-      }break;
-      case ORRNEq: {
-         rv = [terms postNEQZ:model annotation:note];
-      }break;
-      case ORRLEq: {
-         rv = [terms postLEQZ:model annotation:note];
-      }break;
-      case ORRDisj: {
-         rv = [terms postDISJ:model annotation:note];
-      }break;
+      case ORREq: rv = [terms postEQZ:model];break;
+      case ORRNEq:rv = [terms postNEQZ:model];break;
+      case ORRLEq:rv = [terms postLEQZ:model];break;
+      case ORRDisj:rv = [terms postDISJ:model];break;
       default:
          assert(terms == nil);
          break;

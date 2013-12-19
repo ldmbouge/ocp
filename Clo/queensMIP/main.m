@@ -13,9 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
+#import <ORFoundation/ORFoundation.h>
 #import <ORProgram/ORProgramFactory.h>
 
 int main_alldiff(int argc, const char * argv[])
@@ -23,6 +21,7 @@ int main_alldiff(int argc, const char * argv[])
    @autoreleasepool {
       ORInt n = 8;
       id<ORModel> mdl = [ORFactory createModel];
+      id<ORAnnotation> notes = [ORFactory annotation];
       id<ORIntRange> R = RANGE(mdl,1,n);
       id<ORIntRange> ER = RANGE(mdl,-2*n,2*n);
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
@@ -34,11 +33,11 @@ int main_alldiff(int argc, const char * argv[])
          [mdl add: [xn[i] eq: [x[i] sub: @(i)]]];
       }
       
-      [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
+      [notes dc:[mdl add: [ORFactory alldifferent: x  ]]];
+      [notes dc:[mdl add: [ORFactory alldifferent: xp ]]];
+      [notes dc:[mdl add: [ORFactory alldifferent: xn ]]];
           
-      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      id<CPProgram> cp = [ORFactory createCPProgram: mdl annotation:notes];
       
       ORLong startTime = [ORRuntimeMonitor wctime];
       __block ORInt nbSol = 0;
@@ -89,7 +88,7 @@ int main_neq(int argc, const char * argv[])
       
       id<ORVarLitterals> l = [ORFactory varLitterals: mdl var: x[1]];
       NSLog(@"literals: %@",l);
-      id<CPProgram> cp = [ORFactory createCPLinearizedProgram: mdl];
+      id<CPProgram> cp = [ORFactory createCPLinearizedProgram: mdl annotation:nil];
       
       ORLong startTime = [ORRuntimeMonitor wctime];
       __block ORInt nbSol = 0;

@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
 #import <ORProgram/ORProgramFactory.h>
 
 

@@ -31,21 +31,25 @@
    [_trail release];
    [super dealloc];
 }
-// Tracer method
--(ORStatus) doIt
-{
-    return [self post];
-}
 // Constraint method
--(ORStatus) post 
+-(ORStatus) post
 {
-    return ORSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] init] autorelease];
+}
+-(ORUInt) nbVars
+{
+   ORUInt nbv = 0;
+   @autoreleasepool {
+      NSSet* av = [self allVars];
+      nbv = (ORUInt)[av count];
+   }
+   return nbv;
 }
 -(ORUInt)nbUVars
 {
@@ -70,25 +74,9 @@
    return _group;
 }
 
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitConstraint:self];
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_todo];
-    [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_idempotent];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_priority];    
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super init];
-    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_todo];
-    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_idempotent];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_priority]; 
-    return self;
 }
 @end
 

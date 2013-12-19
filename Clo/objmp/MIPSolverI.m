@@ -11,9 +11,9 @@
 
 #import "MIPSolverI.h"
 
-#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+//#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #import "MIPGurobi.h"
-#endif
+//#endif
 
 @implementation MIPConstraintI;
 
@@ -83,11 +83,13 @@
 -(MIPVariableI**) var
 {
    if (_tmpVar)
-      free(_tmpVar);
-   _tmpVar = (MIPVariableI**) malloc(_size * sizeof(MIPVariableI*));
-   for(ORInt i = 0; i < _size; i++)
-      _tmpVar[i] = _var[i];
-   return _tmpVar;
+      return _tmpVar;
+   else {
+      _tmpVar = (MIPVariableI**) malloc(_size * sizeof(MIPVariableI*));
+      for(ORInt i = 0; i < _size; i++)
+         _tmpVar[i] = _var[i];
+      return _tmpVar;
+   }
 }
 -(MIPVariableI*) var: (ORInt) i
 {
@@ -96,11 +98,13 @@
 -(ORInt*) col
 {
    if (_col)
-      free(_col);
-   _col = (ORInt*) malloc(_size * sizeof(ORInt));
-   for(ORInt i = 0; i < _size; i++)
-      _col[i] = [_var[i] idx];
-   return _col;
+      return _col;
+   else {
+      _col = (ORInt*) malloc(_size * sizeof(ORInt));
+      for(ORInt i = 0; i < _size; i++)
+         _col[i] = [_var[i] idx];
+      return _col;
+   }
 }
 -(ORInt) col: (ORInt) i
 {
@@ -109,11 +113,13 @@
 -(ORFloat*) coef
 {
    if (_tmpCoef)
-      free(_tmpCoef);
-   _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
-   for(ORInt i = 0; i < _size; i++)
-      _tmpCoef[i] = _coef[i];
-   return _tmpCoef;
+      return _tmpCoef;
+   else {
+      _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
+      for(ORInt i = 0; i < _size; i++)
+         _tmpCoef[i] = _coef[i];
+      return _tmpCoef;
+   }
 }
 -(ORFloat) coef: (ORInt) i
 {
@@ -300,11 +306,13 @@
 -(MIPVariableI**) var
 {
    if (_tmpVar)
-      free(_tmpVar);
-   _tmpVar = (MIPVariableI**) malloc(_size * sizeof(MIPVariableI*));
-   for(ORInt i = 0; i < _size; i++)
-      _tmpVar[i] = _var[i];
-   return _tmpVar;
+      return _tmpVar;
+   else {
+      _tmpVar = (MIPVariableI**) malloc(_size * sizeof(MIPVariableI*));
+      for(ORInt i = 0; i < _size; i++)
+         _tmpVar[i] = _var[i];
+      return _tmpVar;
+   }
 }
 -(ORInt*) col
 {
@@ -316,11 +324,13 @@
 -(ORFloat*) coef
 {
    if (_tmpCoef)
-      free(_tmpCoef);
-   _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
-   for(ORInt i = 0; i < _size; i++)
-      _tmpCoef[i] = _coef[i];
-   return _tmpCoef;
+      return _tmpCoef;
+   else {
+      _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
+      for(ORInt i = 0; i < _size; i++)
+         _tmpCoef[i] = _coef[i];
+      return _tmpCoef;
+   }
 }
 -(void) print
 {
@@ -735,6 +745,10 @@
    [_oStore release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) addVariable: (MIPVariableI*) v
 {
    if (_nbVars == _maxVars) {
@@ -805,7 +819,6 @@
    ORFloat* coef = [cstr coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addConstraint: cstr coef: coef[i]];
-   free(coef);
    return cstr;
 }
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
@@ -945,7 +958,7 @@
       [self addConstraint: cstr];
       if (_isClosed) {
          [_MIP addConstraint: cstr];
-         [_MIP solve];
+         //[_MIP solve];
       }
    }
    else
@@ -1016,7 +1029,6 @@
    ORFloat* coef = [obj coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addObjective: obj coef: coef[i]];
-   free(coef);
    return _obj;
 }
 

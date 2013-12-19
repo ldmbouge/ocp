@@ -12,9 +12,9 @@
 #import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <ORModeling/ORModeling.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 
@@ -55,6 +55,10 @@
    [_terminated release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_source release];
@@ -75,6 +79,10 @@
 -(CPSolver*) worker
 {
    return _solver[[NSThread threadID]];
+}
+-(id<ORModelMappings>) modelMappings
+{
+   return [[self worker] modelMappings];
 }
 -(void)  restartHeuristics
 {
@@ -230,6 +238,14 @@
 {
    [[self worker] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void)              tryall: (id<ORIntIterable>) range
+                   suchThat: (ORInt2Bool) filter
+                  orderedBy: (ORInt2Float)o1
+                         in: (ORInt2Void) body
+                  onFailure: (ORInt2Void) onFailure
+{
+   [[self worker] tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
+}
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
 {
    [[[self worker] explorer] perform:body onLimit:onRestart];
@@ -298,7 +314,7 @@
 {
    [(CPSolver*)[self worker] add:c];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
 {
    [[self worker] addConstraintDuringSearch: c annotation:n];
 }
@@ -342,9 +358,26 @@
 {
    [[self worker] gthen: var with: val];
 }
+-(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] lthen: var with: val];
+}
+-(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] gthen: var with: val];
+}
+
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [[self worker] restrict: var to: S];
+}
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatLthen: var with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatGthen: var with: val];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
@@ -450,6 +483,10 @@
 {
    return [self setupHeuristic:_cmd with:rvars];
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   return [self setupHeuristic:_cmd with:rvars];
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
    return [self setupHeuristic:_cmd with:rvars];
@@ -470,6 +507,10 @@
 {
    return [self setupHeuristic:_cmd];
 }
+-(id<CPHeuristic>) createSDeg
+{
+   return [self setupHeuristic:_cmd];
+}
 -(id<CPHeuristic>) createIBS
 {
    return [self setupHeuristic:_cmd];
@@ -478,11 +519,15 @@
 {
    return [self setupHeuristic:_cmd];
 }
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [[self worker] degree:x];
+}
 -(ORInt) intValue: (id<ORIntVar>) x
 {
    return [(id<CPProgram>)[self worker] intValue: x];
 }
--(ORBool) bound: (id<ORIntVar>) x
+-(ORBool) bound: (id<ORVar>) x
 {
    return [[self worker] bound: x];
 }
@@ -505,6 +550,18 @@
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
    return [((id<CPProgram>)[self worker]) floatValue: x];
+}
+-(ORFloat) domwidth:(id<ORFloatVar>)x
+{
+   return [[self worker] domwidth: x];
+}
+-(ORFloat) fmin:(id<ORFloatVar>)x
+{
+   return [[self worker] fmin:x];
+}
+-(ORFloat) fmax:(id<ORFloatVar>)x
+{
+   return [[self worker] fmax:x];
 }
 -(ORBool) boolValue: (id<ORIntVar>)x
 {

@@ -26,7 +26,7 @@ typedef struct CPEltRecordTag {
    TRInt        _to;
 }
 
--(id) initCPElementBC: (CPIntVarI*) x indexCstArray:(id<ORIntArray>) c equal:(CPIntVarI*)y
+-(id) initCPElementBC: (CPIntVar*) x indexCstArray:(id<ORIntArray>) c equal:(CPIntVar*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -52,18 +52,18 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 -(ORStatus) post
 {
    if (bound(_x)) {
-      return [_y bind:[_c at:[_x min]]];
-   } else if (bound(_y)) {
+      [_y bind:[_c at:[_x min]]];
+   }
+   else if (bound(_y)) {
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
       ORInt yv   = [_y min];
       ORBounds xb = bounds(_x);
-      ORStatus ok = ORSuspend;
-      for(ORInt k=xb.min;k <= xb.max && ok;k++)
+      for(ORInt k=xb.min;k <= xb.max;k++)
          if (k < cLow || k > cUp || [_c at:k] != yv)
-            ok = removeDom(_x, k);
-      return ok;
-   } else {
+            removeDom(_x, k);
+   }
+   else {
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
       _sz = cUp - cLow + 1;
@@ -72,28 +72,25 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          _tab[k - cLow] = (CPEltRecord){k,[_c at:k]};
       qsort(_tab, _sz,sizeof(CPEltRecord),(int(*)(const void*,const void*)) &compareCPEltRecords);
       ORBounds yb = bounds(_y);
-      ORStatus ok = ORSuspend;
       _from = makeTRInt(_trail, -1);
       _to   = makeTRInt(_trail, -1);
-      for(ORInt k=0;k < _sz && ok;k++) {
+      for(ORInt k=0;k < _sz;k++) {
          if (_tab[k]._val < yb.min || _tab[k]._val > yb.max)
-            ok = removeDom(_x, _tab[k]._idx);
+            removeDom(_x, _tab[k]._idx);
          else {
             if (_from._val == -1)
                assignTRInt(&_from, k, _trail);
             assignTRInt(&_to, k, _trail);
          }
       }
-      if (ok) {
-         if (bound(_x))
-            return [_y bind:[_x min]];
-         else {
-            [_y whenChangeBoundsPropagate:self];
-            [_x whenChangePropagate:self];
-         }
+      if (bound(_x))
+         [_y bind:[_x min]];
+      else {
+         [_y whenChangeBoundsPropagate:self];
+         [_x whenChangePropagate:self];
       }
-      return ok;
    }
+   return ORSuspend;
 }
 -(void) propagate
 {
@@ -127,7 +124,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       while (k >= 0 && _tab[k]._val > yb.max)
          removeDom(_x,_tab[k--]._idx);
       assignTRInt(&_to,k,_trail);
-   }   
+   }
 }
 -(NSSet*)allVars
 {
@@ -143,24 +140,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    [buf appendFormat:@"CPElementCstBC: <%02d %@ [ %@ ] == %@ >",_name,_c,_x,_y];
    return buf;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-   [aCoder encodeObject:_c];
-}
 
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   _c = [aDecoder decodeObject];
-   _tab = NULL;
-   _sz  = 0;
-   return self;
-}
 @end
 
 struct EltACPair {
@@ -177,7 +157,7 @@ struct EltACPair {
    ORInt             _xUp;
    ORInt             _nbValues;
 }
--(id) initCPElementAC: (CPIntVarI*) x indexCstArray:(id<ORIntArray>) c equal:(CPIntVarI*)y
+-(id) initCPElementAC: (CPIntVar*) x indexCstArray:(id<ORIntArray>) c equal:(CPIntVar*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -316,7 +296,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 @end
 
 @implementation CPElementVarBC
--(id) initCPElementBC: (CPIntVarI*) x indexVarArray:(id<CPIntVarArray>)z equal:(CPIntVarI*)y   // y == z[x]
+-(id) initCPElementBC: (CPIntVar*) x indexVarArray:(id<CPIntVarArray>)z equal:(CPIntVar*)y   // y == z[x]
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -336,7 +316,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    ORBounds xb = bounds(_x);
    for(ORInt k=xb.min; k <= xb.max;k++)
       if (memberDom(_x, k))
-         [(CPIntVarI*)[_z at:k] whenChangeBoundsPropagate:self];
+         [(CPIntVar*)[_z at:k] whenChangeBoundsPropagate:self];
    return ORSuspend;
 }
 -(void) propagate
@@ -347,7 +327,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    ORInt minZ = MAXINT,maxZ = MININT; // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
    for(int k=bx.min; k <= bx.max;k++) {
       if (memberDom(_x, k)) {
-         ORBounds zk = bounds((CPIntVarI*)[_z at:k]);
+         ORBounds zk = bounds((CPIntVar*)[_z at:k]);
          minZ = minZ < zk.min ? minZ : zk.min;
          maxZ = maxZ > zk.max ? maxZ : zk.max;
       }
@@ -356,7 +336,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    ORBounds yb = bounds(_y);
    for(int k=bx.min; k <= bx.max;k++) {
       if (memberDom(_x, k)) {
-         CPIntVarI* zk = (CPIntVarI*) [_z at: k];
+         CPIntVar* zk = (CPIntVar*) [_z at: k];
          ORBounds zkb = bounds(zk);
          if (zkb.min > yb.max || zkb.max < yb.min)  // D(z[k]) INTER D(y) = EMPTY -> k NOTIN D(x)
             removeDom(_x, k);
@@ -364,7 +344,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    }
    bx = bounds(_x);
    if (bound(_x)) { 
-      CPIntVarI* zk = (CPIntVarI*)[_z at:bx.min];
+      CPIntVar* zk = (CPIntVar*)[_z at:bx.min];
       [zk updateMin:yb.min andMax:yb.max];  //x==c -> D(y) == D(z_c)
    }
 }
@@ -383,7 +363,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 {
    ORInt nbuv = 0;
    for(ORInt k=[_z low];k<=[_z up];k++)
-      nbuv += !bound((CPIntVarI*)[_z at: k]);
+      nbuv += !bound((CPIntVar*)[_z at: k]);
    nbuv += !bound(_x) + !bound(_y);
    return nbuv;
 }
@@ -393,27 +373,10 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [buf appendFormat:@"CPElementVarBC: <%02d %@ [ %@ ] == %@ >",_name,_z,_x,_y];
    return buf;
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-   [aCoder encodeObject:_z];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   _z = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 @implementation CPElementVarAC
--(id)initCPElementAC: (CPIntVarI*) x indexVarArray:(id<CPIntVarArray>)y equal:(CPIntVarI*)z   // z AC== y[x]
+-(id)initCPElementAC: (CPIntVar*) x indexVarArray:(id<CPIntVarArray>)y equal:(CPIntVar*)z   // z AC== y[x]
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -435,7 +398,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_iva release];
    [super dealloc];
 }
--(ORStatus)post
+-(ORStatus) post
 {
    ORBounds xb = bounds(_x);
    ORInt la = max([_array low],xb.min);
@@ -460,7 +423,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _inter  -= _minCI;
    
    for(ORInt k = _minCI;k<=_maxCI;k++) {
-      if (memberBitDom(_x, k)) {
+      if (memberDom(_x, k)) {
          ORInt interMin = min([_array[k] min],[_z min]);
          ORInt interMax = max([_array[k] max],[_z max]);
          _inter[k] = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:interMin up:interMax];
@@ -469,9 +432,9 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    }
    _iva = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:la up:ua];
    for(ORInt k=la;k<=ua;k++) {
-      if (memberBitDom(_x, k)) {
+      if (memberDom(_x, k)) {
          for(ORInt i=[_array[k] min]; i <= [_array[k] max];i++)
-            if (memberBitDom((CPIntVarI*)_array[k], i))
+            if (memberDom((CPIntVar*)_array[k], i))
                [_s[i] setValue:[_s[i] value] + 1];
       } else
          [_iva set:k at:false];
@@ -481,10 +444,10 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          [_z remove:k];
    }
    for(int k=[_x min]; k<= [_x max];k++) {
-      if (memberBitDom(_x, k)) {
+      if (memberDom(_x, k)) {
          assert([_c[k] value] == 0);
          assert([_inter[k] countFrom:[_inter[k] min] to:[_inter[k] max]] == [_c[k] value]);
-         CPIntVarI* ak = (CPIntVarI*) _array[k];
+         CPIntVar* ak = (CPIntVar*) _array[k];
          for(int i=[ak min];i<= [ak max];i++) {
             if (memberDom(ak, i) &&  memberDom(_z,i)) {
                [_c[k] setValue:[_c[k] value] + 1];
@@ -503,7 +466,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
             [_iva set:val at:NO];
             [_c[val] setValue:0];
             [_inter[val] setAllZeroFrom:[_inter[val] min] to:[_inter[val] max]];
-            CPIntVarI* av = (CPIntVarI*)_array[val];
+            CPIntVar* av = (CPIntVar*)_array[val];
             ORBounds avb = bounds(av);
             for(ORInt k=avb.min;k <= avb.max;k++) {
                if (memberDom(av, k)) {
@@ -532,7 +495,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          }
       }];
    for(int k=minDom(_x);k <= maxDom(_x);k++) {
-      CPIntVarI* ak = (CPIntVarI*)_array[k];
+      CPIntVar* ak = (CPIntVar*)_array[k];
       if (memberDom(_x, k) && !bound(ak)) {
          [ak whenLoseValue:self do:^(ORInt val) {
             if ([_iva get:k]) {
@@ -565,7 +528,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    } else if ([_array[xv] bound]) {
       [_z bind:[_array[xv] min]];
    } else {
-      CPIntVarI* av = (CPIntVarI*)_array[xv];
+      CPIntVar* av = (CPIntVar*)_array[xv];
       [av  updateMin:[_z min] andMax:[_z max]];
       [_z updateMin:[av min] andMax:[av max]];
       ORBounds zb = bounds(_z);
@@ -593,7 +556,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 {
    ORInt nbuv = 0;
    for(ORInt k=[_array low];k<=[_array up];k++)
-      nbuv += !bound((CPIntVarI*)[_array at: k]);
+      nbuv += !bound((CPIntVar*)[_array at: k]);
    nbuv += !bound(_x) + !bound(_z);
    return nbuv;
 }

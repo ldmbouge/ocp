@@ -12,6 +12,7 @@
 #import <ORFoundation/ORExpr.h>
 #import "ORTracker.h"
 #import "ORArray.h"
+#import "ORSet.h"
 #import "ORConstraint.h"
 
 @protocol ORSnapshot
@@ -56,6 +57,7 @@
 @end
 
 @protocol ORFloatVar <ORVar>
+-(id<ORFloatRange>) domain;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
@@ -115,4 +117,19 @@
 -(id<ORIntVar>) litteral: (ORInt) i;
 -(BOOL) exist: (ORInt) i;
 -(NSString*) description;
+@end
+
+@protocol ORObjectiveValue;
+
+typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROutcome;
+
+@protocol ORRelaxation <NSObject>
+-(ORFloat) objective;
+-(id<ORObjectiveValue>) objectiveValue;
+-(ORFloat) value: (id<ORVar>) x;
+-(ORFloat) lowerBound: (id<ORVar>) x;
+-(ORFloat) upperBound: (id<ORVar>) x;
+-(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f;
+-(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f;
+-(OROutcome) solve;
 @end

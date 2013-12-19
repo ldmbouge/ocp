@@ -72,12 +72,13 @@ int test2(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
+         id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntVar> x = [ORFactory intVar:model domain:RANGE(model,-10,10)];
          ORInt y = 3;
          id<ORIntVar> z = [ORFactory intVar:model domain:RANGE(model,0,10)];
-         [model add:[[x mod:@(y)] eq:z] annotation:DomainConsistency];
+         [notes dc:[model add:[[x mod:@(y)] eq:z]]];
          __block int nbSol = 0;
-         id<CPProgram> cp = [ORFactory createCPProgram:model];
+         id<CPProgram> cp = [ORFactory createCPProgram:model annotation:notes];
          [cp solveAll:^{
             NSLog(@"MODEL: %@",[[cp engine] model]);
             [cp label:x];

@@ -24,6 +24,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
+         id<ORAnnotation> notes = [ORFactory annotation];
          ORInt k    = [args nArg];
          ORInt n    = [args size];
          NSLog(@"Params: k=%d n=%d",k,n);
@@ -38,19 +39,19 @@ int main(int argc, const char * argv[])
          [model add:[ORFactory cardinality:x low:occ up:occ]];
          for(ORInt i=1;i<=k;i++)
             for(ORInt j=1;j<=n;j++)
-               [model add:[[x elt:[p at:i :j]] eq:@(j)] annotation:DomainConsistency];  // onDomain
+               [notes dc:[model add:[[x elt:[p at:i :j]] eq:@(j)]]];  // onDomain
          
          for(ORInt i=1;i<=k-1;i++)
             for(ORInt j=1;j<=n;j++)
-               [model add:[[p at:i :j] lt:[p at:i+1 :j]] annotation:DomainConsistency]; // onDomain
+               [notes dc:[model add:[[p at:i :j] lt:[p at:i+1 :j]]]]; // onDomain
          
          for(ORInt i=1;i<=k-1;i++)
             for(ORInt j=1;j<=n;j++)
-               [model add:[[x elt:[[p at:i :j] plus:@(1+j)]] eq:@(j)] annotation:DomainConsistency]; // onDomain
+               [notes dc:[model add:[[x elt:[[p at:i :j] plus:@(1+j)]] eq:@(j)]]]; // onDomain
          [model add: [x[1] leq: x[k*n]]];
          
          __block ORInt nbSol = 0;
-         id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgram:model annotation:notes];
          //NSLog(@"Model %@",model);
          //      id<CPHeuristic> h = [ORFactory createFF:cp];
          [cp solveAll:^{
@@ -73,18 +74,19 @@ int main(int argc, const char * argv[])
                   //NSLog(@" ! tb[%d] != %d",i,j);
                }];
             }];
-            @autoreleasepool {
-               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-               [buf appendString:@"["];
-               for(ORInt i=1;i<=k*n;i++)
-                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],(i < k *n) ? ',' : ']'];
-               NSLog(@"Sol: %@",buf);
-            }
+//            @autoreleasepool {
+//               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//               [buf appendString:@"["];
+//               for(ORInt i=1;i<=k*n;i++)
+//                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],(i < k *n) ? ',' : ']'];
+//               NSLog(@"Sol: %@",buf);
+//            }
             nbSol++;
+            [[cp explorer] fail];
          }];         
          NSLog(@"#sol: %d",nbSol);
          NSLog(@"Solver status: %@\n",cp);
-         struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return res;

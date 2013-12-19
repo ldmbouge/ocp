@@ -76,6 +76,10 @@
    [_onSol release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_source release];
@@ -99,6 +103,10 @@
 -(void) restartHeuristics
 {
    assert(NO);
+}
+-(id<ORModelMappings>) modelMappings
+{
+   return [[self worker] modelMappings];
 }
 -(NSMutableArray*) variables
 {
@@ -164,6 +172,15 @@
 {
    [[[self worker] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void) tryall: (id<ORIntIterable>) range
+      suchThat: (ORInt2Bool) filter
+     orderedBy: (ORInt2Float)o1
+            in: (ORInt2Void) body
+     onFailure: (ORInt2Void) onFailure
+{
+   [[self worker] tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
+}
+
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
 {
    [[[self worker] explorer] perform:body onLimit:onRestart];
@@ -200,7 +217,7 @@
 {
    return [[self worker] trackVariable: object];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
 {
    [[self worker] addConstraintDuringSearch: c annotation:n];
 }
@@ -296,9 +313,25 @@
 {
    [[self worker] gthen: var with: val];
 }
+-(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] lthen: var with: val];
+}
+-(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] gthen: var with: val];
+}
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [[self worker] restrict: var to: S];
+}
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatLthen: var with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatGthen: var with: val];
 }
 -(void) fail
 {
@@ -333,8 +366,7 @@
    [[self worker] limitFailures: maxFailures in: cl];
 }
 
-
--(ORBool) bound: (id<ORIntVar>) x
+-(ORBool) bound: (id<ORVar>) x
 {
    return [[self worker] bound:x];
 }
@@ -349,6 +381,18 @@
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
    return [[self worker] domsize:x];
+}
+-(ORFloat) domwidth:(id<ORFloatVar>)x
+{
+   return [[self worker] domwidth:x];
+}
+-(ORFloat) fmin:(id<ORFloatVar>)x
+{
+   return [[self worker] fmin:x];
+}
+-(ORFloat) fmax:(id<ORFloatVar>)x
+{
+   return [[self worker] fmax:x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
@@ -384,17 +428,17 @@
    return _globalPool;
 }
 
--(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
+-(void)setupWork:(id<ORProblem>)theSub forCP:(id<CPSemanticProgram>)cp
 {
-   id<ORProblem> theSub = [SemTracer unpackProblem:root fORSearchEngine:[cp engine]];
-   //NSLog(@"***** THREAD(%d) SETUP work size: %d",[NSThread threadID],[theSub sizeEstimate]);
-   ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine]];
-   [theSub release];
+   //NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);
+   id<ORPost> pItf = [[CPINCModel alloc] init:_workers[[NSThread threadID]]];
+   ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine] model:pItf];
+   [pItf release];
    if (status == ORFailure)
       [[cp explorer] fail];
     [cp restartHeuristics];
 }
--(ORLong)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
+-(ORLong)setupAndGo:(id<ORProblem>)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
@@ -402,7 +446,8 @@
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested
                                                                          explorer:me
-                                                                           onPool:_queue];
+                                                                           onPool:_queue
+                                                                    stopIndicator:&_doneSearching];
    [nested release];
    id<ORSearchObjectiveFunction> objective = [me objective];
    if (objective != nil) {
@@ -434,9 +479,9 @@
       } else {
         [[me explorer] nestedSolve:^() { [self setupWork:root forCP:me];body();}
                         onSolution: ^ {
-                            [self doOnSolution];
-                            [me doOnSolution];
-                            _doneSearching = YES;
+                           _doneSearching = YES;
+                           [self doOnSolution];
+                           [me doOnSolution];
                          }
                              onExit:nil
                             control:parc];        
@@ -452,6 +497,7 @@
    ORInt myID = [[input objectAtIndex:0] intValue];
    ORClosure mySearch = [input objectAtIndex:1];
    NSNumber* allSols  = [input objectAtIndex:2];
+   [NSThread setThreadPriority:1.0];
    [NSThread setThreadID:myID];
    _doneSearching = NO;
    [[_workers[myID] explorer] search: ^() {
@@ -488,11 +534,9 @@
       if (myID == 0) {
          // The first guy produces a sub-problem that is the root of the whole tree.
          id<ORProblem> root = [[_workers[myID] tracer] captureProblem];
-         NSData* rootSerial = [root packFromSolver:[_workers[myID] engine]];
-         [root release];
-         [_queue enQueue:rootSerial];
+         [_queue enQueue:root];
       }
-      NSData* cpRoot = nil;
+      id<ORProblem> cpRoot = nil;
       //ORLong took = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
@@ -565,6 +609,13 @@
     binding[i] = [_workers[i] createDDeg:rvars];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createSDeg:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -600,6 +651,13 @@
     binding[i] = [_workers[i] createDDeg];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createSDeg
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createSDeg];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createIBS
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -613,6 +671,10 @@
   for(ORInt i=0;i < _nbWorkers;i++)
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [[self worker] degree:x];
 }
 -(ORInt) intValue: (id<ORIntVar>) x
 {
@@ -650,10 +712,12 @@
   return self;}
 -(id<ORSearchController>)makeRootController
 {
-  return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+  id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+  return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
 }
 -(id<ORSearchController>)makeNestedController
 {
-  return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+   id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
+   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
 }
 @end

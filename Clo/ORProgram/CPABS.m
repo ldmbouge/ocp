@@ -14,6 +14,7 @@
 #import <ORFoundation/ORDataI.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <ORFoundation/ORTracer.h>
+#import <objcp/CPFactory.h>
 
 @interface ABSNogood : NSObject {
    id<CPIntVar> _var;
@@ -507,9 +508,9 @@
    else
       NSLog(@"ABS ready...");
 }
--(id<CPIntVarArray>)allIntVars
+-(id<ORIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
+   return (id<ORIntVarArray>)(_rvars!=nil ? _rvars : _vars);
 }
 
 -(ORInt)chooseValue:(id<CPIntVar>)x
@@ -588,7 +589,11 @@
 -(void)initActivities
 {
    id<CPIntVarArray> vars = (id<CPIntVarArray>)_cvs;
-   id<CPIntVarArray> bvars = [self allIntVars];
+   id<ORIntVarArray> av = [self allIntVars]; // bvars
+   id* gamma = [_cp gamma];
+   id<CPIntVarArray> bvars = [CPFactory intVarArray:_cp range:av.range with:^id<CPIntVar>(ORInt i) {
+      return gamma[av[i].getId];
+   }];
    const ORInt nbInRound = 10;
    const ORInt probeDepth = (ORInt) [bvars count];
    float mxp = 0;
@@ -639,7 +644,7 @@
             if (nbVS) { // we found someone
                id<CPIntVar> xi = (id<CPIntVar>)bvars[i];
                ORInt v = [self chooseValue:xi];
-               ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
+               ORStatus s = [_solver enforce: ^{ [xi bind:v];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {
@@ -678,7 +683,7 @@
          [_aggregator addProbe:probe];
          [probe release];
          for(ABSNogood* b in localKill) {
-            [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];            
+            [_solver enforce: ^{[[b variable] remove:[b value]];}];            
             //NSLog(@"Imposing local SAC %@",b);
          }
          [localKill removeAllObjects];
@@ -686,12 +691,11 @@
       carryOn = [self moreProbes];
    } while (carryOn && cntProbes < maxProbes);
    
-   [_solver atomic:^ORStatus {
+   [_solver atomic:^{
       NSLog(@"Imposing %ld SAC constraints",[killSet count]);
       for(ABSNogood* b in killSet) {
-         [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
+         [_solver enforce: ^{ [[b variable] remove:[b value]];}];
       }
-      return ORSuspend;
    }];
    
    NSLog(@"Done probing (%d / %d)...",cntProbes,maxProbes);

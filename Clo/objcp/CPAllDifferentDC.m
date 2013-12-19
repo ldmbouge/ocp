@@ -19,7 +19,7 @@
 @implementation CPAllDifferentDC
 {
    id<CPIntVarArray> _x;
-   CPIntVarI**       _var;
+   CPIntVar**       _var;
    ORInt             _varSize;
    ORInt*            _varMatch;
    ORInt*            _varMagic;
@@ -118,23 +118,9 @@ static void prune(CPAllDifferentDC* ad);
     return 0;
 }
 
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    [self initInstanceVariables];
-   return self;
-}
-
 static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
 {
-   CPIntVarI** var = ad->_var;
+   CPIntVar** var = ad->_var;
    ORInt nb = ad->_varSize;
    ORInt val = minDom(var[k]);
    for(ORInt i = 0; i < nb; i++)
@@ -146,7 +132,7 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
 -(ORStatus) post
 {
    if (_posted)
-      return ORSuspend;
+      return ORSkip;
    _posted = true;
    
    [self allocate];
@@ -157,13 +143,11 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
    [self initMatching];
 
    [self propagate];
-
    for(ORInt k = 0 ; k < _varSize; k++)
       if (![_var[k] bound]) {
          [_var[k] whenBindDo: ^{ removeOnBind(self,k);} onBehalf:self];
          [_var[k] whenChangePropagate: self];
       }
-   
    return ORSuspend;
 }
 
@@ -171,9 +155,9 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
 {
    ORInt low = [_x low];
    _varSize = ([_x up] - low + 1);
-   _var = malloc(_varSize * sizeof(CPIntVarI*));
+   _var = malloc(_varSize * sizeof(CPIntVar*));
    for(ORInt k = 0; k < _varSize; k++)
-      _var[k] = (CPIntVarI*) [_x at: low + k];
+      _var[k] = (CPIntVar*) [_x at: low + k];
    
    _min = MAXINT;
    _max = -MAXINT;
@@ -240,11 +224,11 @@ static bool alternatingPath(CPAllDifferentDC* ad,ORInt i)
    ORInt* _valMagic = ad->_valMagic;
    ORInt* _valMatch = ad->_valMatch;
    ORInt* _varMatch = ad->_varMatch;
-   CPIntVarI** _var = ad->_var;
+   CPIntVar** _var = ad->_var;
    
    if (_varMagic[i] != ad->_magic) {
       _varMagic[i] = ad->_magic;
-      CPIntVarI* x = _var[i];
+      CPIntVar* x = _var[i];
       ORBounds b = bounds(x);
       ORInt _magic = ad->_magic;
       for(ORInt w = b.min; w <= b.max; w++)
@@ -336,7 +320,7 @@ static void SCCFromVariable(CPAllDifferentDC* ad,ORInt k)
    isVal[ad->_top] = 0;
    ++ad->_top;
    
-   CPIntVarI* x = ad->_var[k];
+   CPIntVar* x = ad->_var[k];
    ORBounds b = bounds(x);
    for(ORInt w = b.min; w <= b.max; w++) 
       if (varMatch[k] != w && memberBitDom(x, w)) {
@@ -441,7 +425,7 @@ static void prune(CPAllDifferentDC* ad)
    ORInt* varComponent = ad->_varComponent;
    SCC(ad);
    for(ORInt k = 0; k < ad->_varSize; k++) {
-      CPIntVarI* x = ad->_var[k];
+      CPIntVar* x = ad->_var[k];
       ORBounds bx = bounds(x);
       for(ORInt w = bx.min; w <= bx.max; w++) 
          if (varMatch[k] != w && varComponent[k] != valComponent[w]) 

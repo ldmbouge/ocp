@@ -45,23 +45,27 @@ int main(int argc, const char * argv[])
          for(ORInt i = 1; i <= n; i++)
             for(ORInt j = i+1; j <= n; j++)
                [table insert: i : j : (i-1)*n + j-1];
-         
+         id<ORAnnotation> notes = [ORFactory annotation];
          for(ORInt w = 1; w < n; w++)
             for(ORInt p = 1; p <= n/2; p++)
-               [mdl add: [ORFactory tableConstraint: table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
-         [mdl add: [ORFactory alldifferent: allgames]];
+               [mdl add: [ORFactory tableConstraint:mdl table:table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
+         [notes dc:[mdl add: [ORFactory alldifferent: allgames]]];
          for(ORInt w = 1; w <= n; w++)
-            [mdl add: [ORFactory alldifferent: [ORFactory intVarArray: mdl range: Periods : HomeAway
-                                                                 with: ^id<ORIntVar>(ORInt p,ORInt h) { return [team at: p : w : h ]; } ]]];
+            [notes dc:[mdl add: [ORFactory alldifferent: [ORFactory intVarArray: mdl range: Periods : HomeAway
+                                                                 with: ^id<ORIntVar>(ORInt p,ORInt h) { return [team at: p : w : h ]; } ]]]];
          for(ORInt p = 1; p <= n/2; p++)
-            [mdl add: [ORFactory cardinality: [ORFactory intVarArray: mdl range: EWeeks : HomeAway
+            [notes dc:[mdl add: [ORFactory cardinality: [ORFactory intVarArray: mdl range: EWeeks : HomeAway
                                                                 with: ^id<ORIntVar>(ORInt w,ORInt h) { return [team at: p : w : h ]; }]
                                          low: c
-                                          up: c]];
+                                          up: c]]];
+         for(ORInt p=1;p <= n/2;p++)
+            [mdl add: [[team at:p :n :0] lt:[team at:p :n :1]]];
          
-         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+         id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:allgames];
          [cp solve:
           ^() {
+             //[cp labelHeuristic:h restricted:allgames];
              [cp  labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allgames at:i]];}];
              NSLog(@"after");
              [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allteams at:i]];}];

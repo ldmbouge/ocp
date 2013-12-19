@@ -50,13 +50,18 @@
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
 
--(void)         addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
+-(void)         addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n;
 -(void)                 add: (id<ORConstraint>) c;
 //-(void)                 add: (id<ORConstraint>) c annotation: (ORAnnotation) cons;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<ORIntVar>) var float: (ORFloat) val;
+-(void)               lthen: (id<ORIntVar>) var float: (ORFloat) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)          floatLthen: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
+
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
@@ -79,6 +84,11 @@
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
 -(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
+-(void)              tryall: (id<ORIntIterable>) range
+                   suchThat: (ORInt2Bool) filter
+                  orderedBy: (ORInt2Float)o1
+                         in: (ORInt2Void) body
+                  onFailure: (ORInt2Void) onFailure;
 
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 
@@ -93,11 +103,13 @@
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createSDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
@@ -106,8 +118,9 @@
 -(id<ORCPSolutionPool>) solutionPool;
 -(id<ORCPSolution>) captureSolution;
 
+-(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;
--(ORBool) bound: (id<ORIntVar>) x;
+-(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
 -(ORInt)  domsize: (id<ORIntVar>) x;
@@ -115,6 +128,10 @@
 -(NSSet*) constraints: (id<ORVar>)x;
 
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORFloat) domwidth:(id<ORFloatVar>)x;
+-(ORFloat) fmin:(id<ORFloatVar>)x;
+-(ORFloat) fmax:(id<ORFloatVar>)x;
+
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
 

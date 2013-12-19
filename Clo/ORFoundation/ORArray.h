@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORTracker.h"
-#import "ORFoundation/ORData.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORData.h>
 
 @protocol ORExpr;
 @protocol ORIntSet;
@@ -20,6 +20,8 @@
 @protocol ORIntArray <ORObject>
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(ORInt) max;
@@ -43,6 +45,7 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
+-(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
 @end
 
@@ -72,8 +75,6 @@
 -(id<ORTracker>) tracker;
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
 @end
-
-
 
 @protocol ORIdMatrix <ORObject>
 -(id) flat:(ORInt)i;

@@ -21,10 +21,6 @@
 {
    return [[[ORModelI alloc] initORModelI] autorelease];
 }
-//+(id<ORModel>) createModel:(ORUInt)nbo
-//{
-//   return [[[ORModelI alloc] initORModelI:nbo] autorelease];
-//}
 +(id<ORModel>) createModel: (ORUInt) nbo mappings: (id<ORModelMappings>) mappings
 {
    return [[[ORModelI alloc] initORModelI: nbo mappings: mappings] autorelease];
@@ -33,26 +29,26 @@
 {
    return [m copy];
 }
-+(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel annotation:(id<ORAnnotation>)notes
 {
-   return [[ORBatchModel alloc]  init: flatModel source:srcModel];
+   return [[ORBatchModel alloc]  init: flatModel source:srcModel annotation:notes];
 }
 
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORFlatten alloc] initORFlatten:into] autorelease];
+  return [[ORFlatten alloc] initORFlatten:into];
 }
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORLPFlatten alloc] initORLPFlatten:into] autorelease];
+   return [[ORLPFlatten alloc] initORLPFlatten:into];
 }
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORMIPFlatten alloc] initORMIPFlatten:into] autorelease];
+   return [[ORMIPFlatten alloc] initORMIPFlatten:into];
 }
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into
 {
-   return [[[ORLinearize alloc] initORLinearize:into] autorelease];
+   return [[ORLinearize alloc] initORLinearize:into];
 }
 +(id<ORSolutionPool>) createSolutionPool
 {
@@ -60,5 +56,13 @@
 }
 +(id<ORConstraintSet>) createConstraintSet {
     return [[ORConstraintSetI alloc] init];
+}
++(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block {
+    id<OROrderedConstraintSet> s = [[OROrderedConstraintSetI alloc] init];
+    for(ORInt i = [range low]; i <= [range up]; i++) {
+        [s addConstraint: block(i)];
+    }
+    //[tracker trackMutable: s];
+    return s;
 }
 @end

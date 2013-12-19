@@ -70,7 +70,14 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
    ORLong startCPU = [ORRuntimeMonitor cputime];
    struct ORResult run;
    @autoreleasepool {
-      run = block();
+      @try {
+         run = block();
+      }@catch(ORExecutionError* execError) {
+         NSLog(@"Execution ERROR: %@",execError);
+         [execError release];
+         run.found = 0;
+         run.nbFailures = run.nbChoices = run.nbPropagations = 0;
+      }
    }
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];
@@ -90,10 +97,14 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 }
 -(id<CPProgram>)makeProgram:(id<ORModel>)model
 {
+   return [self makeProgram:model annotation:nil];
+}
+-(id<CPProgram>)makeProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
+{
    switch(nbThreads) {
-      case 0: return [ORFactory createCPProgram:model];
-      case 1: return [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
-      default: return [ORFactory createCPParProgram:model nb:nbThreads with:[ORSemDFSController class]];
+      case 0: return [ORFactory createCPProgram:model annotation:notes];
+      case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController class]];
+      default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController class]];
    }
 }
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x
@@ -105,6 +116,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
       case ABS: h = [cp createABS:x];break;
       case WDEG: h = [cp createWDeg:x];break;
       case DDEG: h = [cp createDDeg:x];break;
+      case SDEG: h = [cp createSDeg:x];break;
    }
    return h;
 }

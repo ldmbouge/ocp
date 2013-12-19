@@ -13,7 +13,6 @@
 #import <ORFoundation/cont.h>
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORTracer.h>
-#import "ORTrailI.h"
 
 @class BDSStack;
 
@@ -25,9 +24,10 @@
    ORInt              _nbDisc;
    SemTracer*         _tracer;
    id<ORCheckpoint>   _atRoot;
-   id<ORSearchEngine>       _solver;
+   id<ORSearchEngine> _solver;
+   id<ORPost>          _model;
 }
--(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

@@ -15,7 +15,6 @@
 #import "ORData.h"
 #import "ORSet.h"
 #import "ORAVLTree.h"
-@protocol ORVisitor;
 
 @interface ORIntSetI : ORObject<ORIntSet>
 
@@ -24,6 +23,7 @@
 -(ORBool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
+-(ORInt) low;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) size;
@@ -31,7 +31,7 @@
 -(void)enumerateWithBlock:(ORInt2Void)block;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
--(void)visit:(id<ORVisitor>)v;
+-(void)visit:(ORVisitor*)v;
 -(id<ORIntSet>)inter:(id<ORIntSet>)s2;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
@@ -45,9 +45,18 @@
 -(ORBool) inRange: (ORInt)e;
 -(ORInt) size;
 -(NSString*) description;
--(void)visit:(id<ORVisitor>)v;
+-(void)visit:(ORVisitor*)v;
 -(id<IntEnumerator>) enumerator;
 -(void)enumerateWithBlock:(ORInt2Void)block;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+@end
+
+@interface ORFloatRangeI : ORObject<ORFloatRange,NSCopying>
+-(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up;
+-(ORFloat)low;
+-(ORFloat)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORFloat)e;
+-(NSString*)description;
 @end

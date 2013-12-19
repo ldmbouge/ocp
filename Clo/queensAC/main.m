@@ -10,12 +10,9 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
 #import <ORProgram/ORProgramFactory.h>
 
 #import "ORCmdLineArgs.h"
@@ -36,9 +33,10 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
          id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
          id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
-         [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
-         [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
-         [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
+         id<ORAnnotation> note = [ORFactory annotation];
+         [note dc:[mdl add: [ORFactory alldifferent: x]]];
+         [note dc:[mdl add: [ORFactory alldifferent: xp]]];
+         [note dc:[mdl add: [ORFactory alldifferent: xn]]];
          /*
          @autoreleasepool {
             for(id<ORConstraint> c in [mdl constraints]) {
@@ -47,13 +45,13 @@ int main(int argc, const char * argv[])
             }
          }
          */
-         id<CPProgram> cp = [args makeProgram:mdl];
+         id<CPProgram> cp = [args makeProgram:mdl annotation:note];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBDSController class]];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController class]];
          //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
          //id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
          //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
@@ -91,11 +89,12 @@ int main0(int argc, const char * argv[])
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
-      [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
+      id<ORAnnotation> note = [ORFactory annotation];
+      [note bc:[mdl add: [ORFactory alldifferent: x]]];
+      [note bc:[mdl add: [ORFactory alldifferent: xp]]];
+      [note bc:[mdl add: [ORFactory alldifferent: xn]]];
 //      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
-      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
+      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 annotation:note with:[ORSemDFSController class]];
       __block ORInt nbSol = 0;
       [cp solveAll:
        ^() {

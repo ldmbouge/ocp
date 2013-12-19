@@ -31,8 +31,9 @@
 -(ORStatus) addInternal: (id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
--(ORStatus) enforce: (Void2ORStatus)cl;
--(ORStatus) propagate;
+-(ORStatus) status;
+-(void) propagate;
+-(ORStatus) enforce: (ORClosure) cl;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;

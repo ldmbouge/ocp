@@ -20,6 +20,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
+         id<ORAnnotation> notes = [ORFactory annotation];
          ORInt n = [args size];
          id<ORIntRange> V = RANGE(model,0,n-1);
          id<ORIntRange> F = RANGE(model,0,2*n-1);
@@ -39,10 +40,10 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> sx = [ORFactory intVarArray:model range:V domain:RANGE(model,1,4*n*n)];
          id<ORIntVarArray> sy = [ORFactory intVarArray:model range:V domain:RANGE(model,1,4*n*n)];
          for(ORInt i=0;i<=n-1;i++) {
-            [model add:[sx[i] eq:[x[i] mul:x[i]]] annotation:DomainConsistency];
-            [model add:[sy[i] eq:[y[i] mul:y[i]]] annotation:DomainConsistency];
+            [notes dc:[model add:[sx[i] eq:[x[i] mul:x[i]]]]];
+            [notes dc:[model add:[sy[i] eq:[y[i] mul:y[i]]]]];
          }
-         [model add:[ORFactory alldifferent:xy annotation:DomainConsistency]];
+         [notes dc:[model add:[ORFactory alldifferent:xy]]];
          [model add:[[Sum(model, i, V, x[i])  sub:Sum(model, j, V, y[j])] eq:@0]];
          [model add:[[Sum(model, i, V, sx[i]) sub:Sum(model, j, V, sy[j])] eq:@0]];
          [model add:[Sum(model,i,V,x[i])  eq:@(2 * n * (2 * n + 1) / 4) ]];
@@ -51,8 +52,9 @@ int main(int argc, const char * argv[])
          [model add:[Sum(model,i,V,sx[i])  eq:@(2 * n * (2 * n + 1)*(4*n+1) / 12) ]];
          [model add:[Sum(model,i,V,sx[i])  eq:@(2 * n * (2 * n + 1)*(4*n+1) / 12) ]];
 
-         id<CPProgram> cp  = [args makeProgram:model];
+         id<CPProgram> cp  = [args makeProgram:model annotation:notes];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:xy];
+         __block ORInt nbSol = 0;
          [cp solve:^{
             //NSLog(@"Concrete model;%@",[[cp engine] model]);
             [cp labelHeuristic:h];
@@ -60,10 +62,11 @@ int main(int argc, const char * argv[])
             id<ORIntArray> solX = [ORFactory intArray:model range:[x range] with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
             id<ORIntArray> solY = [ORFactory intArray:model range:[x range] with:^ORInt(ORInt i) { return [cp intValue:y[i]];}];
             NSLog(@"Sol: %@ -- %@",solX,solY);
+            nbSol++;
          }];         
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
-         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return r;

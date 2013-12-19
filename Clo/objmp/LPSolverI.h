@@ -218,7 +218,7 @@
 -(void) close;
 @end
 
-@interface LPSolverI : NSObject<ORTracker> {
+@interface LPSolverI : NSObject<OREngine> {
    LPGurobiSolver*      _lp;
    int                  _nbVars;
    int                  _maxVars;
@@ -282,9 +282,9 @@
 
 -(void) close;
 -(ORBool) isClosed;
--(LPOutcome) solve;
+-(OROutcome) solve;
 
--(LPOutcome) status;
+-(OROutcome) status;
 -(ORFloat) floatValue: (LPVariableI*) var;
 -(ORFloat) lowerBound: (LPVariableI*) var;
 -(ORFloat) upperBound: (LPVariableI*) var;

@@ -17,7 +17,10 @@ int main (int argc, const char * argv[])
 {
    ORInt n = 8;
    @autoreleasepool {
-      id<ORModel> model = [ORFactory createModel];      
+      id<ORModel> model = [ORFactory createModel];
+      id<ORAnnotation> annotate = [ORFactory annotation];
+//      [annotate alldifferent: DomainConsistency];
+      
       id<ORIntRange> R = RANGE(model,0,n-1);
       id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value: 0];
       
@@ -29,11 +32,12 @@ int main (int argc, const char * argv[])
          return [ORFactory intVar:model var:x[i] shift:-i];
       }];
       
-      [model add: [ORFactory alldifferent: x]];
+      id<ORConstraint> cstr = [model add: [ORFactory alldifferent: x]];
       [model add: [ORFactory alldifferent: xp]];
       [model add: [ORFactory alldifferent: xn]];
       
-      id<CPProgram> cp = [ORFactory createCPProgram: model];
+//      [annotate cstr: cstr consistency: DomainConsistency];
+      id<CPProgram> cp = [ORFactory createCPProgram: model annotation: annotate];
       [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]]; }];

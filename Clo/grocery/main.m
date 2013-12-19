@@ -10,11 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORFactory.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
@@ -43,7 +41,9 @@ int main(int argc, const char * argv[])
          [cp solveAll:^{
             splitUpFF(cp, x);
             @autoreleasepool {
-               NSLog(@"Sol: %@",x);
+               [x enumerateWith:^(id<ORIntVar> xi, int i) {
+                  NSLog(@"Sol: x[%d] = %d",i,[cp intValue:xi]);
+               }];
                nbSol++;
             }
          }];

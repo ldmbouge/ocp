@@ -12,10 +12,21 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORDataI.h>
 #import <ORProgram/CPProgram.h>
+#import <ORModeling/ORModeling.h>
 
 /***************************************************************************/
 /*                  This file should be private                            */
 /***************************************************************************/
+
+@class ORRTModel;
+@class CPCoreSolver;
+@interface CPINCModel : NSObject<ORPost,ORAddToModel> {
+   id<CPEngine>  _engine;
+}
+-(id)init:(CPCoreSolver*)theSolver;
+-(ORStatus)post:(id<ORConstraint>)c;
+-(void)setCurrent:(id<ORConstraint>)cstr;
+@end
 
 @interface CPHeuristicSet : NSObject
 -(CPHeuristicSet*) initCPHeuristicSet;
@@ -69,9 +80,20 @@
 //-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
 //-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
 //-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel) n;
+
+// pvh: do we have to put these here. Any way to externalize them.
+-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createSDeg: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
+
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createSDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
 @end

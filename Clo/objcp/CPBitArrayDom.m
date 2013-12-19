@@ -284,6 +284,7 @@
 {
    //[self updateFreeBitCount];
    int r = arc4random() % _freebits._val;
+
    unsigned int foundFreeBits =0;
    unsigned int unboundBits;
    unsigned int bitMask;

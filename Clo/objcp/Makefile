@@ -5,20 +5,34 @@
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel \
-	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
+CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
+	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
+	-msse4.1
+LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
+	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
+	-L../CPUKernel -Wl,-rpath=`pwd`/../CPUKernel \
+	-lORUtilities -lORFoundation -lCPUKernel 
 
-LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
-	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
-	-lORUtilities -lORFoundation -lCPUKernel \
-	-lgnustep-base -lobjc 
+# CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel -I../ORFoundation \
+# 	-msse4.1 \
+# 	-fPIC -fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
-SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m        CPConstraint.m  \
-	CPEvent.m    CPKnapsack.m           CPTableI.m CPAssignmentI.m      CPBitArray.m  \
-	CPCardinalityDC.m  CPElement.m     CPExprI.m    CPLexConstraint.m  CPValueConstraint.m \
-	CPBasicConstraint.m  CPBitConstraint.m  CPCardinality.m    CPEquationBC.m  \
-	CPFactory.m  CPObjectQueue.m CPWatch.m CPBinPacking.m CPBitDom.m    \
-	CPCircuitI.m CPError.m  CPIntVarI.m  CPStatisticsMonitor.m 
+# LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
+# 	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
+# 	-lORUtilities -lORFoundation -lCPUKernel \
+# 	-lgnustep-base -lobjc 
+
+SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m CPConstraint.m  \
+	CPEvent.m  CPKnapsack.m CPTableI.m CPAssignmentI.m CPBitArray.m  \
+	CPCardinalityDC.m  CPElement.m     CPExprI.m    \
+	CPLexConstraint.m  CPValueConstraint.m \
+	CPBasicConstraint.m  CPFloatConstraint.m \
+	CPBitConstraint.m  CPCardinality.m    CPEquationBC.m  \
+	CPFactory.m  CPObjectQueue.m CPWatch.m CPBinPacking.m CPBitDom.m \
+	CPFloatDom.m    \
+	CPCircuitI.m CPError.m  CPIntVarI.m CPFloatVarI.m \
+	CPStatisticsMonitor.m 
 
 #	./NSBoardController.m
 
@@ -38,7 +52,7 @@ $(LIBNAME): $(OFILES)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	$(OC) $(CFLAGS) -c $< 
+	@$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

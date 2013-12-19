@@ -40,7 +40,9 @@
    ORInt     _nbWorkers;
    ORInt    _nbWWaiting;
    NSCondition*  _avail;
+#if defined(__APPLE__)
    OSSpinLock    _slock;
+#endif
    BOOL _pretend;
 }
 -(id)initPCQueue:(ORInt)sz nbWorkers:(ORInt)nbw;

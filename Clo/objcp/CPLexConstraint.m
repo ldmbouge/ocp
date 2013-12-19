@@ -18,8 +18,8 @@
    TRInt          _r; // index of r symbol in string
    TRInt          _s; // index of s symbol in string
    TRInt          _u; // identifier of state we are in (incremental)
-   CPIntVarI**   _xa; // 0-based version of _x
-   CPIntVarI**   _ya; // 0-based version of _y
+   CPIntVar**   _xa; // 0-based version of _x
+   CPIntVar**   _ya; // 0-based version of _y
    ORULong       _sz; // size of xa/ya
    id<CPEngine> _engine;
 }
@@ -161,17 +161,17 @@ STATE4:
 }
 
 
--(ORStatus)post
+-(ORStatus) post
 {
    _q = makeTRInt(_trail, 0);
    _r = makeTRInt(_trail, 0);
    _s = makeTRInt(_trail, 0);
    _u = makeTRInt(_trail, 0);
    _sz = [_x count];
-   _xa= malloc(sizeof(CPIntVarI*)*_sz);
-   _ya= malloc(sizeof(CPIntVarI*)*_sz);
-   for(ORInt k=[_x low]; k<= [_x up];k++) _xa[k - [_x low]] = (CPIntVarI*)_x[k];
-   for(ORInt k=[_y low]; k<= [_y up];k++) _ya[k - [_y low]] = (CPIntVarI*)_y[k];
+   _xa= malloc(sizeof(CPIntVar*)*_sz);
+   _ya= malloc(sizeof(CPIntVar*)*_sz);
+   for(ORInt k=[_x low]; k<= [_x up];k++) _xa[k - [_x low]] = (CPIntVar*)_x[k];
+   for(ORInt k=[_y low]; k<= [_y up];k++) _ya[k - [_y low]] = (CPIntVar*)_y[k];
    ORLong up = _sz - 1;
    ORInt  i = 0;
    while (i <= up && LEX_XEQ_GEQY(i)) { // STATE 1 (x_i = y_i OR x_i >= y_i)
@@ -256,18 +256,4 @@ STATE4:
 {
    return [NSMutableString stringWithFormat:@"<CPLexConstraintDC: %02d (%@ <=(lex) %@)>",_name,_x,_y];
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
-}
-
 @end

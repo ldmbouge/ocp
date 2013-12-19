@@ -12,7 +12,7 @@
 #import "CPEngineI.h"
 #import "CPTypes.h"
 #import "CPAC3Event.h"
-#import "ORFoundation/ORSetI.h"
+#import <ORFoundation/ORSetI.h>
 
 @implementation CPAC3Queue
 -(id) initAC3Queue: (ORInt) sz
@@ -75,7 +75,7 @@ inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstrain
    if (q->_csz > 0 && q->_last->cb == cb && q->_last->cstr == cstr)
       return;
    q->_last  = q->_tab + q->_enter;
-   *q->_last = (AC3Entry){cb,cstr};
+   *q->_last = (AC3Entry){cb,(CPCoreConstraint*)cstr};
    q->_enter = (q->_enter+1) & q->_mask;
    q->_csz += 1;
 }
@@ -294,7 +294,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [_ac3[i] release];
    [super dealloc];
 }
-
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(id<CPEngine>) solver
 {
    return self;
@@ -311,7 +314,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return _oStore;
 }
--(void)setLastFailure:(id<CPConstraint>)lastToFail
+-(void) setLastFailure:(id<CPConstraint>)lastToFail
 {
    _last = lastToFail;
 }
@@ -331,6 +334,15 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return (ORUInt)[_mStore count];
 }
+-(id) inCache:(id)obj
+{
+   return nil;
+}
+-(id) addToCache:(id)obj
+{
+   return obj;
+}
+
 -(id) trackVariable: (id) var
 {
    [var setId:(ORUInt)[_vars count]];
@@ -408,15 +420,19 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
          if (lc->_active._val) {
-            lc->_todo = CPTocheck;
             id<CPGroup> group = lc->_group;
             if (group) {
+               lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
                [group scheduleAC3:list];
             } else
-               AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+               if (fdm->_last != lc || !lc->_idempotent) {
+                  lc->_todo = CPTocheck;
+                  AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+               }
+               //else NSLog(@"Not scheduling the currently running idempotent constraint");
          }
-         list = list->_node;
+         list = list->_node._val;
       }
       ++mlist;
    }
@@ -436,9 +452,16 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 
 // PVH: This does the case analysis on the key of events {trigger,cstr} and handle the idempotence
 
-static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
+static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
+
+//   static int cnt = 0;
+//   @autoreleasepool {
+//      NSString* cn = NSStringFromClass([*last class]);
+//      NSLog(@"%d : propagate: %p : CN=%@",cnt++,*last,cn);
+//   }
+
    if (cb.cb)
       cb.cb();
    else {
@@ -495,12 +518,15 @@ ORStatus propagateFDM(CPEngineI* fdm)
          }
       }
       while (ISLOADED(ac3[ALWAYS_PRIO])) {
+         // PVH: Failure to remove?
          ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
+         // PVH: what is this stuff // [ldm] we are never supposed to return "failure", but call failNow() instead.
          assert(as != ORFailure);
       }
       if (fdm->_propagDone)
          [fdm->_propagDone notify];
+      // PVH: This seems buggy or useless; is status still useful
       fdm->_status = status;
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
@@ -532,13 +558,15 @@ ORStatus propagateFDM(CPEngineI* fdm)
 
 static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
-   if (status == ORSuspend || status == ORSuccess)
+   if (status == ORSuspend || status == ORSuccess || status == ORSkip)
       return propagateFDM(fdm);// fdm->_propagIMP(fdm,@selector(propagate));
    else if (status== ORFailure) {
       for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
          AC3reset(fdm->_ac3[p]);
       return ORFailure;
-   } else return status;
+   }
+   else
+      return status;
 }
 
 -(ORStatus) enforceObjective
@@ -546,6 +574,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    if (_objective == nil) return ORSuspend;
    _status = tryfail(^ORStatus{
       _status = ORSuspend;
+      // PVH: Failure to remove?
       ORStatus ok = [_objective check];
       if (ok)
          ok = propagateFDM(self);// [self propagate];
@@ -562,8 +591,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       ORStatus status = [cstr post];
       ORStatus pstatus = internalPropagate(self,status);
-      _status = pstatus;
-      if (pstatus && status != ORSkip) {
+      if (pstatus != ORFailure && status != ORSkip) {
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
          [_trail trailClosure:^{
@@ -577,6 +605,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
+// PVH: Failure to remove?
 -(ORStatus) addInternal:(id<ORConstraint>) c
 {
    assert(_state != CPOpen);
@@ -610,24 +639,25 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _objective;
 }
 
--(ORStatus) enforce: (Void2ORStatus) cl
+-(ORStatus) enforce: (ORClosure) cl
 {
+   _last = NULL;
    _status = tryfail(^ORStatus{
-      ORStatus status = cl();
-      return internalPropagate(self,status);
+      cl();
+      return internalPropagate(self,ORSuspend);
    }, ^ORStatus{
       return ORFailure;
    });
    return _status;
 }
--(ORStatus) atomic:(Void2ORStatus)cl
+-(ORStatus) atomic: (ORClosure) cl
 {
    ORInt oldPropag = _propagating;
    _status = tryfail(^ORStatus{
       _propagating++;
-      ORStatus status = cl();
+      cl();
       _propagating--;
-      return internalPropagate(self,status);
+      return internalPropagate(self,ORSuspend);
    }, ^ORStatus{
       _propagating = oldPropag;
       return ORFailure;

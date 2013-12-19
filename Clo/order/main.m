@@ -21,7 +21,7 @@ int main(int argc, const char * argv[])
       [args measure:^struct ORResult(){
          ORLong startTime = [ORRuntimeMonitor cputime];
          id<ORModel> model = [ORFactory createModel];
-         ORInt n = argc > 2 ? atoi(argv[1]) : 10;
+         ORInt n = [args size];
          id<ORIntRange> D = RANGE(model,0,n);
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
          id<ORGroup> g = [ORFactory bergeGroup:model];

@@ -78,7 +78,7 @@ int main(int argc, const char * argv[])
             id<ORIntVarArray> slice = All(mdl,ORIntVar, j, RANGE(mdl,i+1,n), [diff at:i :j]);
             [mdl add:[ORFactory alldifferent:slice]];
          }
-         [mdl add:[[costas at:1] leq:[costas at:n]]];
+         //[mdl add:[[costas at:1] leq:[costas at:n]]];
          for(ORUInt i=R.low;i<=R.up;i++) {
             for(ORUInt j=i+1;j<=R.up;j++) {
                [mdl add:[[diff at:i :j] neq:@0]];
@@ -94,23 +94,26 @@ int main(int argc, const char * argv[])
          //         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
          //         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
          //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
-         id<ORMutableInteger> nbSol = [ORFactory mutable:mdl value:0];
          
+         __block ORInt nbSol = 0;
          id<CPProgram> cp = [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
          [cp solveAll: ^{
-            [cp labelHeuristic:h];
+            NSLog(@"Searching...");
+            //[cp labelHeuristic:h];
+            [cp labelArray:[mdl intVars]];
+            
             @autoreleasepool {
-               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
-                  return [cp intValue:costas[i]];
-               }];
-               NSLog(@"Solution: %@",s);
-               @synchronized(nbSol) {
-                  [nbSol incr:cp];
+//               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
+//                  return [cp intValue:costas[i]];
+//               }];
+//               NSLog(@"Solution: %@",s);
+               @synchronized(cp) {
+                  nbSol++;
                }
             }
          }];
-         struct ORResult r = REPORT([nbSol intValue:cp], [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return r;

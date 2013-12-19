@@ -18,7 +18,7 @@
 
 @implementation CPCircuitI {
    id<CPIntVarArray>  _x;
-   CPIntVarI**      _var;
+   CPIntVar**      _var;
    ORInt            _varSize;
    ORInt            _low;
    ORInt            _up;
@@ -64,22 +64,6 @@
     [super dealloc];
 }
 
--(void) encodeWithCoder:(NSCoder*) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_noCycle];
-}
-
--(id) initWithCoder:(NSCoder*) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    [self initInstanceVariables];
-    _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_noCycle];
-    return self;
-}
-
 ORStatus assign(CPCircuitI* cstr,int i)
 {
     ORInt val = [cstr->_var[i] min];
@@ -90,7 +74,7 @@ ORStatus assign(CPCircuitI* cstr,int i)
     [cstr->_succ set: end at: start];
     [cstr->_length set: l at: start];
     if (l < cstr->_varSize- 1 || cstr->_noCycle)
-        return [cstr->_var[end] remove: start];
+        [cstr->_var[end] remove: start];
     return ORSuspend;
 }
 
@@ -103,9 +87,9 @@ ORStatus assign(CPCircuitI* cstr,int i)
     _low = [_x low];
     _up = [_x up];
     _varSize = (_up - _low + 1);
-    _var = malloc(_varSize * sizeof(CPIntVarI*));
+    _var = malloc(_varSize * sizeof(CPIntVar*));
     for(ORInt i = 0; i < _varSize; i++)
-        _var[i] = (CPIntVarI*) [_x at: _low + i];
+        _var[i] = (CPIntVar*) [_x at: _low + i];
     _var -= _low;
     
     id<ORIntRange> R = RANGE([_x tracker],_low,_up);

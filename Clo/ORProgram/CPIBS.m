@@ -15,6 +15,7 @@
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
 #import "CPConcretizer.h"
+#import <objcp/CPFactory.h>
 
 #if defined(__linux__)
 #import <values.h>
@@ -216,7 +217,12 @@
 {
    _vars = t;
    _cvs  = cvs;
-   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:[self allIntVars]];
+   id<ORIntVarArray> av = [self allIntVars];
+   id* gamma = [_cp gamma];
+   id<CPIntVarArray> cav = [CPFactory intVarArray:_cp range:av.range with:^id<CPIntVar>(ORInt i) {
+      return gamma[av[i].getId];
+   }];
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:cav];
    _nbv = [_cvs count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
    ORInt low = [_cvs low],up = [_cvs up];
@@ -247,7 +253,7 @@
 
 -(id<ORIntVarArray>)allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
 -(void)addKillSetFrom:(ORInt)from to:(ORInt)to size:(ORUInt)sz into:(NSMutableSet*)set
@@ -292,7 +298,7 @@
       ORInt mid = low + (up - low)/2;
       id<ORTracer> tracer = [_cp tracer];
       [tracer pushNode];
-      ORStatus s1 = [_engine enforce:^ORStatus { return [x updateMax:mid];}]; //  lthen:x with:mid+1];
+      ORStatus s1 = [_engine enforce:^{ [x updateMax:mid];}]; //  lthen:x with:mid+1];
       [ORConcurrency pumpEvents];
       if (s1!=ORFailure) {
          [self dichotomize:x from:low to:mid block:b sac:set];
@@ -302,7 +308,7 @@
       }
       [tracer popNode];
       [tracer pushNode];
-      ORStatus s2 = [_engine enforce: ^ORStatus { return [x updateMin:mid+1];}];// gthen:x with:mid];
+      ORStatus s2 = [_engine enforce: ^{ [x updateMin:mid+1];}];// gthen:x with:mid];
       [ORConcurrency pumpEvents];
       if (s2!=ORFailure) {
          [self dichotomize:x from:mid+1 to:up block:b sac:set];
@@ -316,7 +322,11 @@
 -(void)initImpacts
 {
    ORInt blockWidth = 1;
-   id<CPIntVarArray> av = [self allIntVars];
+   id<ORIntVarArray> mav = [self allIntVars];
+   id* gamma = [_cp gamma];
+   id<CPIntVarArray> av = [CPFactory intVarArray:_cp range:mav.range with:^id<CPIntVar>(ORInt i) {
+      return gamma[mav[i].getId];
+   }];
    ORInt low = [av low],up = [av up];
    for(ORInt k=low; k <= up;k++) {
       NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
@@ -328,12 +338,12 @@
       ORInt lastRank = (ORInt)[sacs count]-1;
       for(CPKillRange* kr in sacs) {
          if (rank == 0 && [kr low] == [v min]) {
-            [_engine enforce: ^ORStatus { return [v updateMin:[kr up]+1];}];  // gthen:v with:[kr up]];
+            [_engine enforce: ^{ [v updateMin:[kr up]+1];}];  // gthen:v with:[kr up]];
          } else if (rank == lastRank && [kr up] == [v max]) {
-            [_engine enforce: ^ORStatus { return [v updateMax:[kr low]-1];}]; // lthen:v with:[kr low]];
+            [_engine enforce: ^{ [v updateMax:[kr low]-1];}]; // lthen:v with:[kr low]];
          } else {
             for(ORInt i=[kr low];i <= [kr up];i++)
-               [_engine enforce: ^ORStatus { return [v remove:i];}];// diff:v with:i];
+               [_engine enforce: ^{ [v remove:i];}];// diff:v with:i];
          }
          rank++;
       }

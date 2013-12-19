@@ -26,7 +26,7 @@
 }
 -(NSString*)description
 {
-   NSMutableString* rv = [NSString stringWithFormat:@"<%d,O/N:%lf,A:%d,I:%lf,F:%lf,R:%lf>",
+   NSString* rv = [NSString stringWithFormat:@"<%d,O/N:%lf,A:%d,I:%lf,F:%lf,R:%lf>",
                           [_theVar getId],_oldDSize._val,getFXInt(&_active,_trail),_initial,_final,_root];
    return rv;
 }
@@ -50,7 +50,7 @@ inline static void makeVarActive(CPVarInfo* vi)
 {
    incrFXInt(&vi->_active, vi->_trail);   
 }
-BOOL refresh(CPVarInfo* vi)
+static BOOL refresh(CPVarInfo* vi)
 {
    BOOL active = getFXInt(&vi->_active, vi->_trail);
    if (active) {
@@ -142,7 +142,7 @@ BOOL refresh(CPVarInfo* vi)
       product *= _curActive[k]->_final / _curActive[k]->_initial;
    return product;
 }
--(double) reductionFromRootForVar:(CPIntVarI*)x extraLosses:(ORInt)ks
+-(double) reductionFromRootForVar:(CPIntVar*)x extraLosses:(ORInt)ks
 {
    double product = 1.0;
    for(ORUInt i=0;i<_nbVI;i++) {

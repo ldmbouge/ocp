@@ -9,20 +9,19 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORData.h>
 #import <ORFoundation/ORVar.h>
 
 @protocol ORTrailableInt;
 @protocol ORFloatVar;
 
-@protocol ORVisitor <NSObject>
-@optional
+@interface ORVisitor : NSObject<NSObject>
 -(void) visitRandomStream:(id) v;
 -(void) visitZeroOneStream:(id) v;
 -(void) visitUniformDistribution:(id) v;
 -(void) visitIntSet:(id<ORIntSet>)v;
 -(void) visitIntRange:(id<ORIntRange>)v;
+-(void) visitFloatRange:(id<ORFloatRange>)v;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitFloatArray:(id<ORFloatArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
@@ -62,6 +61,7 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c;
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;
@@ -73,6 +73,7 @@
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
 -(void) visitSquare: (id<ORSquare>)c;
+-(void) visitFloatSquare: (id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
 -(void) visitMin: (id<ORMin>)c;
@@ -84,6 +85,7 @@
 -(void) visitElementCst: (id<ORElementCst>)c;
 -(void) visitElementVar: (id<ORElementVar>)c;
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c;
+-(void) visitFloatElementCst: (id<ORFloatElementCst>)c;
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
 -(void) visitReifyEqual: (id<ORReifyEqual>)c;
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
@@ -92,6 +94,10 @@
 -(void) visitReifyLEqual: (id<ORReifyLEqual>)c;
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c;
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c;
+-(void) visitReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c;
+-(void) visitReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c;
+-(void) visitHReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c;
+-(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c;
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c;
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c;
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c;
@@ -126,8 +132,10 @@
 -(void) visitExprAggMinI: (id<ORExpr>) e;
 -(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
@@ -146,3 +154,7 @@
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
 @end
+
+@interface ORNOopVisit : ORVisitor
+@end
+

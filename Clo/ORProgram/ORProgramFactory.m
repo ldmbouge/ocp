@@ -22,9 +22,11 @@
 #import <ORProgram/ORCPParSolver.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <objcp/CPFactory.h>
+#import <objcp/CPConstraint.h>
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 #import "CPDDeg.h"
+#import "CPDeg.h"
 #import "CPWDeg.h"
 #import "CPIBS.h"
 #import "CPABS.h"
@@ -45,31 +47,51 @@
 @implementation ORGamma (Model)
 -(void) initialize: (id<ORModel>) model
 {
-   _mappings = model.mappings;
+   _mappings = model.modelMappings;
 }
 @end
 
 
 @implementation ORFactory (Concretization)
 
-+(id<CPProgram>)concretizeCP:(id<ORModel>)m
++(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   id<CPProgram> mp = [CPSolverFactory solver];
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: mp];
-   [m visit: concretizer];
-   [concretizer release];
-   [mp setSource:m];
-   return mp;
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPProgram:model annotation:notes];
+   [notes release];
+   return program;
+}
++(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
+{
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPSemanticProgramDFS:model annotation:notes];
+   [notes release];
+   return program;
+}
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
+{
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
+   [notes release];
+   return program;
+}
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
+{
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPParProgram:model nb:k annotation:notes with:ctrlClass];
+   [notes release];
+   return program;
 }
 
-+(id<CPCommonProgram>) concretizeCP: (id<ORModel>) m program: (id<CPCommonProgram>) cpprogram
+
++(id<CPCommonProgram>) concretizeCP: (id<ORModel>) m program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes
 {
    ORUInt nbEntries =  [m nbObjects];
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram annotation:notes];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];
    for(id<ORObject> c in [m constraints])
@@ -81,33 +103,19 @@
    return cpprogram;
 }
 
-+(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
++(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes
 {
 //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
-//   ORLong t0 = [ORRuntimeMonitor cputime];
-   id<ORModel> fm = [model flatten];   // models are AUTORELEASE
-   ORUInt nbEntries =  [fm nbObjects];
-   id* gamma = malloc(sizeof(id) * nbEntries);
-   for(ORInt i = 0; i < nbEntries; i++)
-      gamma[i] = NULL;
-   [cpprogram setGamma: gamma];
-
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   for(id<ORObject> c in [fm mutables])
-      [c visit: concretizer];
-   for(id<ORObject> c in [fm constraints])
-      [c visit: concretizer];
-   [[fm objective] visit:concretizer];
-   [cpprogram setSource:fm];
-   [concretizer release];
-//   ORLong t1 = [ORRuntimeMonitor cputime];
-//   NSLog(@"FLAT  %ld %ld %ld %lld",[[fm variables] count],[[fm mutables] count],[[fm constraints] count],t1 - t0);
+   id<ORAnnotation> ncpy   = [notes copy];
+   id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
+   [self concretizeCP:fm program:cpprogram annotation:ncpy];
+   [ncpy release];
 }
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model
++(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {
    __block id<CPProgram> cpprogram = [CPSolverFactory solver];
-   [ORFactory createCPProgram: model program: cpprogram];
+   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];
@@ -119,37 +127,38 @@
 }
 
 
-+(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
++(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {
    id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolverDFS];
-   [ORFactory createCPProgram: model program: cpprogram];
+   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    return cpprogram;
 }
 
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass 
 {
    id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolver: ctrlClass];
-   [ORFactory createCPProgram: model program: cpprogram];
+   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    return cpprogram;
 }
 
-+(void) createCPOneProgram: (id<ORModel>) model multistartprogram: (CPMultiStartSolver*) cpprogram nb: (ORInt) i
++(void) createCPOneProgram: (id<ORModel>) model multistartprogram: (CPMultiStartSolver*) cpprogram nb: (ORInt) i annotation:(id<ORAnnotation>)notes
 {
    [NSThread setThreadID: i];
    id<CPProgram> cp = [cpprogram at: i];
-   [ORFactory createCPProgram: model program: cp];
+   [ORFactory createCPProgram: model program: cp annotation:notes];
 }
 
-+(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
++(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k annotation:(id<ORAnnotation>)notes
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
-   id<ORModel> flatModel = [model flatten];
+   id<ORAnnotation> ncpy = [notes copy];
+   id<ORModel> flatModel = [model flatten:ncpy];
    
    for(ORInt i = 0; i < k; i++) {
       // This "fakes" the thread number so that the main thread does add into the binding array at offset i
       [NSThread setThreadID: i];
       id<CPProgram> cp = [cpprogram at: i];
-      [ORFactory concretizeCP: flatModel program: cp];
+      [ORFactory concretizeCP: flatModel program: cp annotation:ncpy];
       id<ORSolutionPool> lp = [cp solutionPool];
       id<ORSolutionPool> gp = [cpprogram solutionPool];
       [cp onSolution: ^{
@@ -174,21 +183,27 @@
          [s release];
       }];
    }
+   [ncpy release];
    return cpprogram;
 }
 
-+(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass
 {
    CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
-   id<ORModel> flatModel = [model flatten];   
+   id<ORAnnotation> ncpy = [notes copy];
+   id<ORModel> flatModel = [model flatten:ncpy];
    id<ORSolutionPool> global = [cpprogram solutionPool];
+#if defined(__APPLE__)
    dispatch_queue_t q = dispatch_queue_create("ocp.par", DISPATCH_QUEUE_CONCURRENT);
    dispatch_group_t group = dispatch_group_create();
+#endif
    for(ORInt i=0;i< k;i++) {
+#if defined(__APPLE__)
       dispatch_group_async(group,q, ^{
+#endif
          [NSThread setThreadID:i];
          id<CPCommonProgram> pi = [cpprogram worker];
-         [ORFactory concretizeCP:flatModel program:pi];
+         [ORFactory concretizeCP:flatModel program:pi annotation:ncpy];
          [pi onSolution:^{
             id<ORCPSolution> sol = [[cpprogram worker] captureSolution];
             [[[cpprogram worker] solutionPool] addSolution: sol];
@@ -196,36 +211,38 @@
                [global addSolution:sol];
             }
          }];
+#if defined(__APPLE__)
       });
+#endif
    }
+#if defined(__APPLE__)
    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
    dispatch_release(q);
    dispatch_release(group);
+#endif
+   [ncpy release];
    return cpprogram;
 }
 
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
-   id<ORModel> flatModel = [model lpflatten];
-//   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
-//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-//   id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
-//   [flattener apply: model];
-//   [batch release];
-//   NSLog(@"model is %@",flatModel);
+   NSLog(@"inside createLPProgram:");
+   id<ORModel> flatModel = [model lpflatten:nil];
    
    ORUInt nbEntries =  [flatModel nbObjects];
-//   NSLog(@" NbEntries: %d",nbEntries);
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [lpprogram setGamma: gamma];
-   [lpprogram setTau: model.tau];
+   [lpprogram setModelMappings: flatModel.modelMappings];
  
-   id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
+   ORVisitor* concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
 
    for(id<ORObject> c in [flatModel mutables])
-      [c visit: concretizer];   
+      [c visit: concretizer];
+   for(id<ORObject> c in [flatModel constraints])
+      [c visit: concretizer];
+   [[flatModel objective] visit:concretizer];
    [concretizer release];
    //NSLog(@"flat: %@",flatModel);
 }
@@ -237,28 +254,55 @@
    return lpprogram;
 }
 
-+(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
++(void) createLPRelaxation: (id<ORModel>) model program: (id<LPRelaxation>) lpprogram
 {
-//   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
-//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
-//   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
-//   [flattener apply: model];
-//   [batch release];
-   
-   id<ORModel> flatModel = [model mipflatten];
+   id<ORModel> flatModel = [model lpflatten:nil];
    
    ORUInt nbEntries =  [flatModel nbObjects];
-//   NSLog(@" NbEntries: %d",nbEntries);
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [lpprogram setGamma: gamma];
+   [lpprogram setModelMappings: flatModel.modelMappings];
+   
+   ORVisitor* concretizer = [[ORLPRelaxationConcretizer alloc] initORLPRelaxationConcretizer: lpprogram];
+   
+   for(id<ORObject> c in [flatModel mutables])
+      [c visit: concretizer];
+   for(id<ORObject> c in [flatModel constraints])
+      [c visit: concretizer];
+   [[flatModel objective] visit:concretizer];
+   [concretizer release];
+}
+
++(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model
+{
+   id<LPRelaxation> lpprogram = [LPSolverFactory relaxation: model];
+   [self createLPRelaxation: model program: lpprogram];
+   return lpprogram;
+}
+
++(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
+{
+   id<ORModel> flatModel = [model mipflatten:nil];
+   
+   ORUInt nbEntries =  [flatModel nbObjects];
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [mipprogram setGamma: gamma];
-   [mipprogram setTau: model.tau];
+   [mipprogram setModelMappings: flatModel.modelMappings];
+  
    
-   id<ORVisitor> concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
+   ORVisitor* concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
   
    for(id<ORObject> c in [flatModel mutables])
       [c visit: concretizer];
+   for(id<ORObject> c in [flatModel constraints])
+      [c visit: concretizer];
+   [[flatModel objective] visit:concretizer];
+
+   //[mipprogram setSource:model];  // [ldm] missing API
    [concretizer release];
    //NSLog(@"flat: %@",flatModel);
 }
@@ -271,17 +315,18 @@
 }
 
 
-+(void) createCPLinearizedProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
++(void) createCPLinearizedProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes
 {
-   id<ORModel> fm = [model flatten];
-   id<ORModel> lfm = [[ORMIPLinearize linearize: fm] flatten];
+   id<ORAnnotation> ncpy = [notes copy];
+   id<ORModel> fm = [model flatten:ncpy];
+   id<ORModel> lfm = [[ORMIPLinearize linearize: fm] flatten:ncpy];
    
    ORUInt nbEntries =  [lfm nbObjects];
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram annotation:ncpy];
 
    for(id<ORObject> c in [lfm mutables])
       [c visit: concretizer];
@@ -291,14 +336,15 @@
    
    [cpprogram setSource:model];
    [concretizer release];
+   [ncpy release];
 }
 
 
 
-+(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model
++(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {
    id<CPProgram> cpprogram = [CPSolverFactory solver];
-   [ORFactory createCPLinearizedProgram: model program: cpprogram];
+   [ORFactory createCPLinearizedProgram: model program: cpprogram annotation:notes];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];
@@ -308,5 +354,88 @@
    }];
    return cpprogram;
 }
++(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model
+{
+   return [[ORLinearRelaxation alloc] initLinearRelaxation:model];
+}
 
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation
+{
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPProgram: model withRelaxation: relaxation annotation: notes];
+   [notes release];
+   return program;
+}
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>)notes
+{
+   __block id<CPProgram> cpprogram = [CPSolverFactory solver];
+   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+
+   NSArray* mv = [model variables];
+   NSMutableArray* cv = [[NSMutableArray alloc] init];
+   id* gamma = [cpprogram gamma];
+   for(id<ORVar> v in mv)
+      [cv addObject: gamma[v.getId]];
+   
+   NSLog(@"Model variables %@",mv);
+   NSLog(@"Concrete variables %@",cv);
+   id<CPEngine> engine = [(CPSolver*) cpprogram engine];
+   
+   [engine add: [CPFactory relaxation: mv var: cv relaxation: relaxation]];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [cpprogram captureSolution];
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      [sp addSolution: s];
+      [s release];
+   }];
+   return cpprogram;
+}
+
+@end
+
+@implementation ORLinearRelaxation
+{
+   id<ORModel> _model;
+   id<LPRelaxation> _lprelaxation;
+}
+-(ORLinearRelaxation*) initLinearRelaxation: (id<ORModel>) m
+{
+   self = [super init];
+   _model = m;
+   _lprelaxation = [ORFactory createLPRelaxation: _model];
+   return self;
+}
+-(ORFloat) objective
+{
+   return [_lprelaxation objective];
+}
+-(ORFloat) value: (id<ORVar>) x
+{
+   return [_lprelaxation floatValue: x];
+}
+-(ORFloat) lowerBound: (id<ORVar>) x
+{
+   return [_lprelaxation lowerBound: x];
+}
+-(ORFloat) upperBound: (id<ORVar>) x
+{
+   return [_lprelaxation upperBound: x];
+}
+-(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f
+{
+   [_lprelaxation updateLowerBound: x with:f];
+}
+-(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f
+{
+   [_lprelaxation updateUpperBound: x with:f];
+}
+-(OROutcome) solve
+{
+   return [_lprelaxation solve];
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [_lprelaxation objectiveValue];
+}
 @end

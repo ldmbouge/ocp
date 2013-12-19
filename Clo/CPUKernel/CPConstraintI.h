@@ -11,10 +11,11 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPUKernel.h>
+#import <ORFoundation/ORObject.h>
 
 @class CPEngineI;
 
-@interface CPCoreConstraint : ORObject<NSCoding,ORCommand,CPConstraint> {
+@interface CPCoreConstraint : ORObject<CPConstraint> {
 @public
    CPTodo            _todo;
    BOOL        _idempotent;
@@ -25,11 +26,11 @@
    id<CPGroup>      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
--(ORStatus) doIt;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
+-(ORUInt) nbVars;
 -(void)setGroup:(id<CPGroup>)g;
 -(id<CPGroup>)group;
 @end

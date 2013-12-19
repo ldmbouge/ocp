@@ -20,6 +20,8 @@
 -(ORInt) bitLength;
 -(ORStatus) bind:(ORUInt)bit to:(BOOL)value;
 -(ORStatus) bind:(ORUInt*)pat;
+-(ORUInt) getId;
+-(ORBool) bound;
 -(CPBitArrayDom*) domain;
 -(uint64)min;
 -(uint64)max;

@@ -13,7 +13,6 @@
 #import <ORFoundation/cont.h>
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORTracer.h>
-#import "ORTrailI.h"
 
 @interface ORSemDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing> {
 @protected
@@ -24,8 +23,9 @@
    SemTracer*       _tracer;
    id<ORCheckpoint> _atRoot;
    id<ORSearchEngine>     _engine;
+   id<ORPost>        _model;
 }
--(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

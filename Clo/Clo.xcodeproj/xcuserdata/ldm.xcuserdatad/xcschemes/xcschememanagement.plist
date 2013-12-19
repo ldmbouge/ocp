@@ -9,30 +9,25 @@
 			<key>orderHint</key>
 			<integer>5</integer>
 		</dict>
-		<key>CPLib.xcscheme</key>
+		<key>CPLib.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>54</integer>
+			<integer>58</integer>
 		</dict>
 		<key>CPUKernel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>35</integer>
 		</dict>
-		<key>CardinalityTest.xcscheme</key>
+		<key>CardinalityTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>67</integer>
+			<integer>69</integer>
 		</dict>
 		<key>Clo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>57</integer>
-		</dict>
-		<key>CuttingStock.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>51</integer>
+			<integer>54</integer>
 		</dict>
 		<key>Euler.xcscheme_^#shared#^_</key>
 		<dict>
@@ -44,20 +39,20 @@
 			<key>orderHint</key>
 			<integer>53</integer>
 		</dict>
+		<key>LPRelaxation.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>67</integer>
+		</dict>
 		<key>LPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>15</integer>
 		</dict>
-		<key>LogicBendersExample.xcscheme_^#shared#^_</key>
+		<key>MD5.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>49</integer>
-		</dict>
-		<key>MD5.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>69</integer>
+			<integer>72</integer>
 		</dict>
 		<key>ORFoundation.xcscheme_^#shared#^_</key>
 		<dict>
@@ -99,15 +94,15 @@
 			<key>orderHint</key>
 			<integer>16</integer>
 		</dict>
-		<key>TableTest.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>66</integer>
-		</dict>
-		<key>TestAssignment.xcscheme</key>
+		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>68</integer>
+		</dict>
+		<key>TestAssignment.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>71</integer>
 		</dict>
 		<key>Testing.xcscheme</key>
 		<dict>
@@ -119,25 +114,20 @@
 			<key>orderHint</key>
 			<integer>21</integer>
 		</dict>
-		<key>allProgs.xcscheme</key>
+		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>33</integer>
-		</dict>
-		<key>assignmentProblem 2.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>75</integer>
-		</dict>
-		<key>assignmentProblem.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>53</integer>
+			<integer>73</integer>
 		</dict>
 		<key>bacp.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>60</integer>
+			<integer>71</integer>
+		</dict>
+		<key>bacp.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>57</integer>
 		</dict>
 		<key>bibd.xcscheme_^#shared#^_</key>
 		<dict>
@@ -147,12 +137,27 @@
 		<key>bitArrayTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>15</integer>
+			<integer>18</integer>
 		</dict>
 		<key>bug.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>65</integer>
+		</dict>
+		<key>bugTest.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>76</integer>
+		</dict>
+		<key>circle.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>72</integer>
+		</dict>
+		<key>circle.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>59</integer>
 		</dict>
 		<key>coloringModel.xcscheme_^#shared#^_</key>
 		<dict>
@@ -164,6 +169,11 @@
 			<key>orderHint</key>
 			<integer>26</integer>
 		</dict>
+		<key>costas2.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>75</integer>
+		</dict>
 		<key>debruijn.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -172,7 +182,7 @@
 		<key>driver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>44</integer>
+			<integer>53</integer>
 		</dict>
 		<key>eq20.xcscheme_^#shared#^_</key>
 		<dict>
@@ -188,6 +198,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>20</integer>
+		</dict>
+		<key>fwarehouse.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>70</integer>
 		</dict>
 		<key>golomb.xcscheme_^#shared#^_</key>
 		<dict>
@@ -207,7 +222,7 @@
 		<key>iCP.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>24</integer>
+			<integer>31</integer>
 		</dict>
 		<key>iQueens.xcscheme_^#shared#^_</key>
 		<dict>
@@ -223,11 +238,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>27</integer>
-		</dict>
-		<key>langford 2.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>76</integer>
 		</dict>
 		<key>langford.xcscheme_^#shared#^_</key>
 		<dict>
@@ -274,20 +284,20 @@
 			<key>orderHint</key>
 			<integer>24</integer>
 		</dict>
-		<key>minesweeper.xcscheme</key>
+		<key>minesweeper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>80</integer>
+			<integer>65</integer>
 		</dict>
-		<key>model.xcscheme</key>
+		<key>model.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>71</integer>
+			<integer>61</integer>
 		</dict>
 		<key>models.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>72</integer>
+			<integer>62</integer>
 		</dict>
 		<key>mpinterface.xcscheme</key>
 		<dict>
@@ -312,7 +322,12 @@
 		<key>nonogram.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>59</integer>
+			<integer>73</integer>
+		</dict>
+		<key>nonogram.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>56</integer>
 		</dict>
 		<key>objcp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -332,17 +347,17 @@
 		<key>objmp.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>52</integer>
+			<integer>78</integer>
 		</dict>
 		<key>order.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>50</integer>
+			<integer>49</integer>
 		</dict>
-		<key>paq.xcscheme</key>
+		<key>paq.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>81</integer>
+			<integer>66</integer>
 		</dict>
 		<key>partition.xcscheme_^#shared#^_</key>
 		<dict>
@@ -354,20 +369,15 @@
 			<key>orderHint</key>
 			<integer>44</integer>
 		</dict>
-		<key>progressive 2.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>77</integer>
-		</dict>
 		<key>progressive.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>54</integer>
+			<integer>51</integer>
 		</dict>
-		<key>qg7.xcscheme</key>
+		<key>qg7.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>79</integer>
+			<integer>64</integer>
 		</dict>
 		<key>queens2.xcscheme_^#shared#^_</key>
 		<dict>
@@ -394,6 +404,11 @@
 			<key>orderHint</key>
 			<integer>64</integer>
 		</dict>
+		<key>queensModel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>35</integer>
+		</dict>
 		<key>queensModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -404,6 +419,11 @@
 			<key>orderHint</key>
 			<integer>6</integer>
 		</dict>
+		<key>queensNaive.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>36</integer>
+		</dict>
 		<key>queensNaive.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -412,22 +432,22 @@
 		<key>regular.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>58</integer>
+			<integer>74</integer>
+		</dict>
+		<key>regular.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>55</integer>
 		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>9</integer>
 		</dict>
-		<key>slabLNSModel 2.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>74</integer>
-		</dict>
 		<key>slabLNSModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>56</integer>
+			<integer>53</integer>
 		</dict>
 		<key>slabModel.xcscheme_^#shared#^_</key>
 		<dict>
@@ -449,40 +469,35 @@
 			<key>orderHint</key>
 			<integer>34</integer>
 		</dict>
-		<key>stressLimit 2.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>73</integer>
-		</dict>
 		<key>stressLimit.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>55</integer>
+			<integer>52</integer>
 		</dict>
 		<key>testDistrib.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>32</integer>
 		</dict>
+		<key>testF.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>77</integer>
+		</dict>
 		<key>testLPConcretization.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>52</integer>
+			<integer>50</integer>
 		</dict>
-		<key>testLPWrapper.xcscheme</key>
+		<key>testLPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>53</integer>
+			<integer>63</integer>
 		</dict>
 		<key>testMIP.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>70</integer>
-		</dict>
-		<key>testPacking.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>78</integer>
+			<integer>60</integer>
 		</dict>
 		<key>testPacking.xcscheme_^#shared#^_</key>
 		<dict>
@@ -503,6 +518,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>11</integer>
+		</dict>
+		<key>wka.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>74</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -528,6 +548,11 @@
 			<true/>
 		</dict>
 		<key>5B2000E0156D585E00D80105</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B27572F17E87B560082934E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -558,6 +583,11 @@
 			<true/>
 		</dict>
 		<key>5B3848DF16E7883A00498DCF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B3895E81795BE07004CCE93</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -612,12 +642,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5B67A4FB17E227BB00516F50</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5B68117F161F98FB00F4480F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>5B6A95FF15879F1500019903</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B6B0EFD178B557F00104246</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -777,6 +817,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5BD601C017F9A627006A9CDC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5BDBBAA81718D96B00322163</key>
 		<dict>
 			<key>primary</key>
@@ -807,6 +852,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5BEA4E67178365FA00614A82</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5BEAD78415ABE38500A012FE</key>
 		<dict>
 			<key>primary</key>
@@ -828,6 +878,16 @@
 			<true/>
 		</dict>
 		<key>B103533E13BBD7AC00627058</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B103B19F17BF5414008755BB</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B103B1DE17BF6545008755BB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -932,6 +992,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>B18DF14917810C67004E1880</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>B1935C5D15B90ECE00107399</key>
 		<dict>
 			<key>primary</key>
@@ -958,6 +1023,11 @@
 			<true/>
 		</dict>
 		<key>B1CC831F15D3BEC4008DE335</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B1CFB7EA17C436CD00FB062A</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -19,6 +19,7 @@
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
++(id<CPIntVar>) intVar: (id<CPEngine>) cp value: (ORInt) value;
 +(id<CPIntVar>) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range;
 +(id<CPIntVar>) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x shift: (ORInt) b;
@@ -27,8 +28,12 @@
 +(id<CPIntVar>) boolVar: (id<CPEngine>)cp;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range;
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(id<CPIntVar>)x;
+
 +(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<CPIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
++(id<CPIntVarArray>) intVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPIntVar>(^)(ORInt)) clo;
 
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain;
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain;

@@ -76,13 +76,22 @@ typedef enum  {
    ORSuccess,
    ORSuspend,
    ORDelay,
-   ORSkip
+   ORSkip,
+   ORNoop
 } ORStatus;
+
+typedef enum  {
+   ORNone = 0,
+   ORLow = 1,
+   ORUp  = 2,
+   ORBoth = 3
+} ORNarrowing;
 
 typedef void (^ORClosure)(void);
 typedef bool (^ORInt2Bool)(ORInt);
 typedef bool (^ORVoid2Bool)(void);
 typedef ORInt (^ORInt2Int)(ORInt);
+typedef id   (^ORInt2Id)(ORInt);
 typedef void (^ORInt2Void)(ORInt);
 typedef void (^ORId2Void)(id);
 typedef void (^ORSolution2Void)(id<ORSolution>);

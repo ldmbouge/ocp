@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
-#import "ORFoundation/ORFoundation.h"
-#import "ORUtilities/ORConcurrency.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORUtilities/ORConcurrency.h>
 
 @interface ORConcurrency (OR)
 +(void) parall: (ORRange) R do: (ORInt2Void) closure untilNotifiedBy: (id<ORInformer>) informer;

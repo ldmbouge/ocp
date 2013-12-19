@@ -29,7 +29,7 @@ typedef enum {
 
 @protocol CPGroup;
 
-@protocol CPConstraint <ORConstraint,ORCommand>
+@protocol CPConstraint <ORConstraint>
 -(ORUInt) getId;
 -(void)setGroup:(id<CPGroup>)g;
 -(id<CPGroup>)group;
@@ -48,6 +48,7 @@ typedef enum {
 -(id) trigger;                      // retrieves the closure responsible for responding to the event
 -(id<CPEventNode>) next;           // fetches the next event in the list *list suffix*
 -(void)scanWithBlock:(void(^)(id))block;
+-(void)scanCstrWithBlock:(void(^)(id))block;
 @end
 
 typedef void(^ORID2Void)(id);

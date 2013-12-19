@@ -59,7 +59,9 @@ int main(int argc, const char * argv[])
                }];
             }];
             @autoreleasepool {
-               NSLog(@"Got a solution: %@",ad);
+               NSLog(@"Got a solution: %@",[ORFactory intArray:cp range:ad.range with:^ORInt(ORInt i) {
+                  return [cp intValue:ad[i]];
+               }]);
                nbSol++;
             }
          }];

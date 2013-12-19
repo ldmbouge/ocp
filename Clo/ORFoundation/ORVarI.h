@@ -26,9 +26,10 @@
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+-(enum ORVType) vtype;
 @end
 
 @interface ORIntVarAffineI : ORIntVarI
@@ -36,7 +37,7 @@
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
@@ -45,7 +46,7 @@
 -(ORIntVarLitEQView*)initORIntVarLitEQView:(id<ORTracker>)tracker var:(id<ORIntVar>)x eqi:(ORInt)lit;
 -(ORInt)literal;
 -(id<ORIntVar>)base;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
@@ -57,9 +58,10 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
 -(id) initWithCoder:(NSCoder *)aDecoder;
+-(enum ORVType) vtype;
 @end
 
 @interface ORBitVarI : ORExprI<ORBitVar>
@@ -67,6 +69,7 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
+
 
 //-(ORInt)  domsize;
 //-(ORULong)  numPatterns;
@@ -77,6 +80,7 @@
 //-(bool) member: (unsigned int*) v;
 -(void) visit: (id<ORVisitor>)v;
 -(NSString*)stringValue;
+-(enum ORVType) vtype;
 @end
 
 @interface ORVarLitterals : ORObject<ORVarLitterals>

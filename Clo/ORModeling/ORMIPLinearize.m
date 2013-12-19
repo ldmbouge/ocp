@@ -10,11 +10,12 @@
  ***********************************************************************/
 
 #import "ORMIPLinearize.h"
+#import <ORFoundation/ORArrayI.h>
+#import "ORConstraintI.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
 #import "ORVarI.h"
 #import "ORSetI.h"
-#import <ORFoundation/ORArrayI.h>
 
 @implementation ORMIPLinearize
 {
@@ -33,10 +34,10 @@
 }
 +(id<ORModel>) linearize: (id<ORModel>) model
 {
-   id<ORModel> lin = [ORFactory createModel: [model nbObjects] mappings: model.mappings];
-   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
+   id<ORModel> lin = [ORFactory createModel: [model nbObjects] mappings: model.modelMappings];
+   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model annotation:nil]; //TOFIX
    id<ORModelTransformation> linearizer = [[ORMIPLinearize alloc] initORMIPLinearize: lm];
-   [linearizer apply: model];
+   [linearizer apply: model with:nil]; //TOFIX
    return lin;
 }
 -(void) dealloc
@@ -57,7 +58,7 @@
    return rv;
 }
 
--(void) apply: (id<ORModel>) m
+-(void) apply: (id<ORModel>) m with:(id<ORAnnotation>)notes 
 {
    [m applyOnVar: ^(id<ORVar> x) {
       [_into addVariable: x];
@@ -137,6 +138,10 @@
 {
    _result = v;
 }
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{
+   _result = v;
+}
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    _result = v;
@@ -192,6 +197,10 @@
 {
    _result = cstr;
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+   _result = c;
+}
 -(void) visitEqualc: (id<OREqualc>)c
 {
    _result = c;
@@ -246,6 +255,10 @@
 {
    _result = c;
 }
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+   _result = c;
+}
 -(void) visitMod: (id<ORMod>)c
 {
    _result = c;
@@ -283,6 +296,10 @@
    _result = c;
 }
 -(void) visitElementVar: (id<ORElementVar>)c
+{
+   _result = c;
+}
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
 {
    _result = c;
 }
@@ -327,6 +344,22 @@
    _result = c;
 }
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c
+{
+   _result = c;
+}
+-(void) visitReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = c;
+}
+-(void) visitReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
+{
+   _result = c;
+}
+-(void) visitHReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = c;
+}
+-(void) visitHReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
 {
    _result = c;
 }

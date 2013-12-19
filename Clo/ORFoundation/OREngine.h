@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
-#import "ORUtilities/ORUtilities.h"
-#import "ORFoundation/ORTracker.h"
+#import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORTracker.h>
 
 @protocol ORSearchEngine;
 @protocol ORTrail;
@@ -23,9 +23,9 @@
 @end;
 
 @protocol ORSearchEngine <OREngine>
--(ORStatus)        close;
+-(ORStatus)           close;
 -(ORBool)            closed;
--(id)            trackMutable:(id)obj;
+-(id)   trackMutable:(id)obj;
 -(NSMutableArray*) variables;
 -(id<ORTrail>) trail;
 -(ORStatus)propagate;

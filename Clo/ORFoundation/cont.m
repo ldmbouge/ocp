@@ -25,7 +25,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 }
 
 @implementation NSCont
--init {
+-init 
+{
    self = [super init];
    _used   = 0;
    _start  = 0;
@@ -33,7 +34,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    return self;
 }
 
--(void)saveStack:(size_t)len startAt:(void*)s {
+-(void)saveStack:(size_t)len startAt:(void*)s 
+{
    if (_length!=len) {
       if (_length!=0) free(_data);
       _data = malloc(len);
@@ -45,7 +47,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 
 -(ORInt) nbCalls { return _used;}
 
--(void)call {
+-(void)call 
+{
 #if defined(__x86_64__)
    register struct Ctx64* ctx = &_target;
    ctx->rax = (long)self;
@@ -56,7 +59,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 #endif
 }
 
-+(NSCont*)takeContinuation {
++(NSCont*)takeContinuation 
+{
    NSCont* k = [NSCont new];
 #if defined(__x86_64__)
    struct Ctx64* ctx = &k->_target;
@@ -94,7 +98,14 @@ inline static ContPool* instancePool()
    if (pool) {
       ORInt nb=0;
       for(ORInt k=pool->low;k != pool->high;) {
+#if defined(__APPLE__) || !defined(__x86_64__)
          [pool->pool[k] release];
+#else
+	 NSCont* ptr = pool->pool[k];
+	 free(ptr->_data);
+	 char* adr = ((char*)ptr) - 16;
+	 free(adr);
+#endif
          k = (k+1) % pool->sz;
          nb++;
       }
@@ -103,7 +114,8 @@ inline static ContPool* instancePool()
    }
 }
 
-+(id)new {
++(id)new 
+{
    ContPool* pool = instancePool();
    if (!pool->poolClass) {
       pool->poolClass = self;
@@ -117,7 +129,22 @@ inline static ContPool* instancePool()
    NSCont* rv = nil;
    if (pool->low == pool->high) {
       pool->nbCont += 1;
+#if defined(__APPLE__) 
       rv = NSAllocateObject(self, 0, NULL);
+      rv->_data = 0;
+      rv->_length = 0;
+      rv->field = 0;
+      rv->fieldId = nil;
+#else
+      // THis is the allocation for Linux 64 where alignments are not
+      // respected by GNUstep.
+      void* ptr = NULL;
+      size_t sz = class_getInstanceSize(self) + 16; // add 16 bytes
+      int err = posix_memalign(&ptr,16,sz);
+      memset(ptr,0,sz);
+      rv = (id)(((char*)ptr)+16);
+      object_setClass(rv,self);
+#endif
    } else {
       rv = pool->pool[pool->low];
       pool->low = (pool->low+1) % pool->sz;
@@ -149,7 +176,13 @@ inline static ContPool* instancePool()
       if (next == pool->low) {
          free(_data);
          pool->nbCont -= 1;
+#if defined(__APPLE__) || !defined(__x86_64__)
          NSDeallocateObject(self);
+#else
+	 char* ptr = (char*)self;
+	 ptr = ptr - 16;
+	 free(ptr);
+#endif
          return;
       }
       pool->pool[pool->high] = self;

@@ -26,8 +26,9 @@
    id<ORCheckpoint>*  _cpTab;
    int                   _sz;
    int                   _mx;
+   id<ORPost>          _model;
 }
--(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq;
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq post:(id<ORPost>)model;
 -(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(ORBool) isFinitelyFailed;
@@ -39,9 +40,12 @@
    id<CPSemanticProgram>  _solver;
    PCObjectQueue*           _pool;
    BOOL               _publishing;
+   BOOL*                 _stopNow;
    CPGenerator*              _gen;
 }
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq;
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver
+                    onPool:(PCObjectQueue*)pcq
+             stopIndicator:(BOOL*)stopNow;
 -(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;

@@ -20,8 +20,8 @@
    id<CPEngine>       _engine;
    id<CPIntVarArray>  _x;
    id<ORIntMatrix>    _matrix;
-   CPIntVarI**        _var;
-   CPIntVarI*         _costVariable;
+   CPIntVar**        _var;
+   CPIntVar*         _costVariable;
    
    ORInt              _varSize;
    ORInt              _low;
@@ -56,7 +56,7 @@
    _posted = false;
 }
 
--(CPAssignment*) initCPAssignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (CPIntVarI*) costVariable
+-(CPAssignment*) initCPAssignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (CPIntVar*) costVariable
 {
    self = [super initCPCoreConstraint: engine];
    _x = x;
@@ -100,24 +100,6 @@
    return 0;
 }
 
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_matrix];
-   [aCoder encodeObject:_costVariable];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _matrix = [aDecoder decodeObject];
-   _costVariable = [aDecoder decodeObject];
-   [self initInstanceVariables];
-   return self;
-}
-
 -(ORStatus) post
 {
    if (_posted)
@@ -138,10 +120,10 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Assignment: The range of the variables does not agree with the rows of the matrix"];
    
    _varSize = (_up - _low + 1);
-   _var = malloc(_varSize * sizeof(CPIntVarI*));
+   _var = malloc(_varSize * sizeof(CPIntVar*));
    _var -= _low;
    for(ORInt i = _lowr; i <= _upr; i++) 
-      _var[i] = (CPIntVarI*) [_x at: i];
+      _var[i] = (CPIntVar*) [_x at: i];
 
    
    _cost = [CPFactory TRIntMatrix: _engine range: Rows : Columns ];

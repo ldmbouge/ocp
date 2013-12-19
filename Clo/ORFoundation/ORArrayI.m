@@ -121,6 +121,18 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    _array[idx] = value;
 }
+-(id)objectAtIndexedSubscript: (NSUInteger) key
+{
+   if (key < _low || key > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
+   return [NSNumber numberWithInt:_array[key]];
+}
+-(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSUInteger) idx
+{
+   if (idx < _low || idx > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
+   _array[idx] = [newValue intValue];
+}
 -(void) enumerateWith: (void(^)(ORInt obj,int idx)) block
 {
    for(ORInt i=_low;i<=_up;i++)
@@ -128,7 +140,6 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-//   return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];
    return [ORFactory elt: _tracker intArray: self index: idx];
 }
 -(ORInt) low
@@ -193,7 +204,7 @@
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:_array+i];
    return self;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitIntArray:self];
 }
@@ -318,6 +329,10 @@
 {
     return _up;
 }
+-(id<ORExpr>)elt:(id<ORExpr>)idx
+{
+   return [ORFactory elt: _tracker floatArray: self index: idx];
+}
 -(ORFloat) max {
     ORFloat v = _array[0];
     for(int i = 1; i < _nb; i++)
@@ -372,7 +387,7 @@
         [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
     return self;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitFloatArray: self];
 }
@@ -529,7 +544,7 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitIdArray:self];
 }
@@ -765,7 +780,7 @@
       _flat[i] = [aDecoder decodeObject];
    return self;
 }
--(void) visit:(id<ORVisitor>)v
+-(void) visit:(ORVisitor*)v
 {
    [v visitIdMatrix:self];
 }
@@ -966,7 +981,7 @@
 {
    return _tracker;
 }
--(void) visit:(id<ORVisitor>)visitor
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitIntMatrix:self];
 }

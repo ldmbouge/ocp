@@ -24,8 +24,23 @@
 -(id<ORLPSolution>) captureSolution;
 @end
 
+@interface LPRelaxation : ORGamma<LPRelaxation>
+-(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model;
+-(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORVar>) x;
+-(ORFloat) floatValue: (id<ORVar>) x;
+-(ORFloat) objective;
+-(id<ORObjectiveValue>) objectiveValue;
+-(ORFloat) lowerBound: (id<ORVar>) v;
+-(ORFloat) upperBound: (id<ORVar>) v;
+-(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb;
+-(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub;
+@end
+
+
 // LPSolverFactory
 @interface LPSolverFactory : NSObject
 +(id<LPProgram>) solver: (id<ORModel>) model;
++(id<LPRelaxation>) relaxation: (id<ORModel>) model;
 @end
 

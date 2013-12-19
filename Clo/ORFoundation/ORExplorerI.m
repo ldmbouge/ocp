@@ -11,8 +11,127 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/cont.h>
+#import <ORFoundation/ORDataI.h>
 #import "ORLimit.h"
 #import "ORExplorerI.h"
+
+@interface OROrderedSweep : NSObject {
+   BOOL*    _used;
+   ORInt      _low;
+   ORInt      _sz;
+   ORInt     _nbo;
+   ORInt     _mxo;
+   ORFloat* _best;
+   ORFloat* _curr;
+   ORInt2Float* _of;
+   ORInt2Bool   _filter;
+   id<ORIntIterable> _col;
+}
+-(id)initWith:(id<ORIntIterable>)col;
+-(void)startup;
+-(void)addFilter:(ORInt2Bool)f;
+-(void)addOrdered:(ORInt2Float)f;
+-(BOOL)next:(ORInt*)v;
+@end
+
+@implementation OROrderedSweep
+
+-(id)initWith:(id<ORIntIterable>)col
+{
+   self = [super init];
+   _sz = [col size];
+   _low = [col low];
+   _used = malloc(sizeof(BOOL)*_sz);
+   memset(_used,0,sizeof(BOOL)*_sz);
+   _used -= _low;
+   _col = col;
+   _mxo = 2;
+   _nbo = 0;
+   _of = malloc(sizeof(ORInt2Float)*_mxo);
+   _filter =  NULL;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OROrderedSweep (%p) dealloc'd",self);
+   _used += _low;
+   free(_used);
+   free(_best);
+   free(_curr);
+   for(ORInt i=0;i<_nbo;i++)
+       [_of[i] release];
+   free(_of);
+   [_filter release];
+   [super dealloc];
+}
+-(void)startup
+{
+   _best = malloc(sizeof(ORFloat)*_nbo);
+   _curr = malloc(sizeof(ORFloat)*_nbo);
+}
+-(void)addFilter:(ORInt2Bool)f
+{
+   [_filter release];
+   _filter = [f copy];
+}
+
+-(void)addOrdered:(ORInt2Float)f
+{
+   if (_nbo >= _mxo) {
+      _of = realloc(_of,sizeof(ORInt2Float)*_mxo*2);
+      _mxo = _mxo * 2;
+   }
+   _of[_nbo++] = [f copy];
+}
+-(void)updateBest:(ORInt)from
+{
+   for(ORInt i=from;i<_nbo;i++)
+      _best[i] = _curr[i];
+}
+-(BOOL)next:(ORInt*)v
+{
+   __block ORInt sel = -1;
+   __block BOOL found = NO;
+   for(ORInt k=0;k < _nbo;k++)
+      _best[k] = FDMAXINT;
+   [_col enumerateWithBlock:^(ORInt i) {
+      if (!_used[i]) {
+         BOOL keep = !_filter || _filter(i);
+         if (!keep) {
+            _used[i] = YES;
+            return;
+         }
+         for(ORInt k=0;k < _nbo;k++)
+            _curr[k] = _of[k](i);
+         BOOL tieBreak = YES;
+         for(ORInt k=0;k < _nbo;k++) {
+            if (_curr[k] < _best[k]) {
+               tieBreak = NO;
+               [self updateBest:k];
+               sel = i;
+               found = YES;
+               break;
+            } else if (_curr[k] > _best[k]) {
+               tieBreak = NO;
+               break;
+            } else {
+               assert(_curr[k] == _best[k]);
+            }
+         }
+         if (tieBreak) {
+            
+         }
+      }
+   }];
+   if (found) {
+      _used[sel] = YES;
+      *v = sel;
+      return YES;
+   } else {
+      return NO;
+   }
+}
+@end
 
 @implementation ORCoreExplorerI
 {
@@ -144,6 +263,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    [_controller._val startTryall];
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
+   //NSLog(@"Got an iterator: %p [%lu]",ite,(unsigned long)[ite retainCount]);
    // The [ite release] inserted on the trail will _not_ necessarily occur last but it will
    // consume one reference to ite, so it matches the "initial" reference.
    // Every subsequence "try" retains (increases by 1) and is matched by a trailRelease that
@@ -185,6 +305,42 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
    // A release here *should not* be necessary. Even if the filtered range is empty, the initial delayed release
    // will occur upon backtrack.
+   [_controller._val exitTryall];
+}
+
+-(void) tryall: (id<ORIntIterable>) range
+      suchThat: (ORInt2Bool) filter
+     orderedBy: (ORInt2Float)o1
+            in: (ORInt2Void) body
+     onFailure: (ORInt2Void) onFailure
+{
+   [_controller._val startTryall];
+   OROrderedSweep* ite = [[OROrderedSweep alloc] initWith:range];
+   [ite addFilter:filter];
+   [ite addOrdered:o1];
+   [_engine trackObject:ite];
+   [ite startup];
+   BOOL found = YES;
+   ORInt sel = FDMININT;
+   found = [ite next:&sel];
+   while (found) {
+      NSCont* k = [NSCont takeContinuation];
+      if ([k nbCalls]==0) {
+         [_controller._val startTryallBody];
+         _nbc++;
+         [_controller._val addChoice:k];
+         body(sel);
+         [_controller._val exitTryallBody];
+         break;
+      } else {
+         [k letgo];
+         [_controller._val trust];
+         [_controller._val startTryallOnFailure];
+         if (onFailure) onFailure(sel);
+         [_controller._val exitTryallOnFailure];
+         found = [ite next:&sel];
+      }
+   }   
    [_controller._val exitTryall];
 }
 
@@ -304,15 +460,21 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
 {
-   __block ORBool isPruned = NO;
+   //__block ORBool isPruned = NO;
+   // [ldm] This was not working. Despite being marked as __block, the continuation restore would wipe it out!
+   //       instead, use a heap allocated mutable integer that ends up on the memory trail. It gets automatically
+   //       reclaimed on backtrack when the memory trail is cleared.
+   ORMutableIntegerI* isPruned = [ORFactory mutable:_engine value:NO];
    NSCont* enter = [NSCont takeContinuation];
    if ([enter nbCalls]==0) {
       [_controller._val addChoice: enter];
-      [self perform: s1 onLimit: ^{ isPruned = YES; }];
+      [self perform: s1 onLimit: ^{
+         [isPruned setValue:YES];
+      }];
    }
    else {
       [enter letgo];
-      if (isPruned)
+      if ([isPruned intValue])
          s2();
       else
          [_controller._val fail];
