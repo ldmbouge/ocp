@@ -353,6 +353,10 @@
 {
    return self;
 }
+-(id<ORExplorer>)  explorer
+{
+   return nil;
+}
 -(void) close
 {}
 

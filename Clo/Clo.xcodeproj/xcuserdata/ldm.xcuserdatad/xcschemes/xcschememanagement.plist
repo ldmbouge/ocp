@@ -349,6 +349,11 @@
 			<key>orderHint</key>
 			<integer>78</integer>
 		</dict>
+		<key>objmp.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>77</integer>
+		</dict>
 		<key>order.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -444,6 +449,11 @@
 			<key>orderHint</key>
 			<integer>9</integer>
 		</dict>
+		<key>slabIP.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>78</integer>
+		</dict>
 		<key>slabLNSModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -453,6 +463,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>8</integer>
+		</dict>
+		<key>slabZIB.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>79</integer>
 		</dict>
 		<key>slow_convergence.xcscheme_^#shared#^_</key>
 		<dict>
@@ -872,7 +887,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5BF9F38C186353450022C300</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5BFD594215A3ACA500825BC3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BFF681F1860D98E00B50286</key>
 		<dict>
 			<key>primary</key>
 			<true/>
