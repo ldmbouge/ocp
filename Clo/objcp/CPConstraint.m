@@ -183,7 +183,7 @@
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
-   id<CPIntVar> litView = [literals positiveForValue: c];
+   CPEQLitView* litView = [literals positiveForValue: c];
    if (!litView) {
       litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
       [literals addPositive: litView forValue:c];

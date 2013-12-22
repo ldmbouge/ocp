@@ -32,15 +32,13 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram: model];
       
       [cp solveAll: ^{
-         id* gamma = [cp gamma];
-         id<CPIntVarArray> cx = gamma[x.getId];
          //NSLog(@"BASIC: %@",[[cp engine] model]);
-         //[cp  labelArray: x];
-         for(ORInt i=0;i<n;i++) {
-            if ([cp bound:x[i]]) continue;
-            [cp label:x[i]];
-            NSLog(@"i = %d s = %@",i,cx);
-         }
+         [cp  labelArray: x];
+//         for(ORInt i=0;i<n;i++) {
+//            if ([cp bound:x[i]]) continue;
+//            [cp label:x[i]];
+//            NSLog(@"i = %d s = %@",i,cx);
+//         }
          
          
          printf("Succeeds \n");

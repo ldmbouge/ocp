@@ -906,7 +906,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(void) bindEvt:(id<CPDom>) sender
 {
-   [_recv bindEvt: sender];
+   if (_recv)
+      [_recv bindEvt: sender];
 
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -1723,21 +1724,36 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
-   ORInt myMin = [self min];
-   ORInt myMax = [self max];
-   if (myMin)
+   if (bound(_secondary)) {
       [super bindEvt:sender];
-   else if (myMax==0)
-      [super bindEvt:sender];
+   } else {
+      if (minDom(_secondary) > _v)
+         [super bindEvt:sender];
+   }
+//   ORBounds sb = bounds(_secondary);
+//   ORInt myMin = (sb.min == sb.max) ? sb.min==_v : 0;
+//   ORInt myMax = (sb.min == sb.max) ? sb.min==_v : memberDom(_secondary, _v);
+//   if (myMin)
+//      [super bindEvt:sender];
+//   else if (myMax==0)
+//      [super bindEvt:sender];
 }
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
-   ORInt myMin = [self min];
-   ORInt myMax = [self max];
-   if (myMin)
+   if (bound(_secondary)) {
       [super bindEvt:sender];
-   else if (myMax==0)
-      [super bindEvt:sender];
+   } else {
+      ORInt sMax = maxDom(_secondary);
+      if (sMax < _v)
+         [super bindEvt:sender];
+   }
+//   ORBounds sb = bounds(_secondary);
+//   ORInt myMin = (sb.min == sb.max) ? sb.min==_v : 0;
+//   ORInt myMax = (sb.min == sb.max) ? sb.min==_v : memberDom(_secondary, _v);
+//   if (myMin)
+//      [super bindEvt:sender];
+//   else if (myMax==0)
+//      [super bindEvt:sender];
 }
 -(NSString*)description
 {
@@ -1928,6 +1944,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    for(ORInt i=0;i<_nb;i++)
       _pos[i] = nil;
    _tracksLoseEvt = NO;
+   _changeMaxEvtIMP = [CPEQLitView instanceMethodForSelector:@selector(changeMaxEvt:sender:)];
+   _changeMinEvtIMP = [CPEQLitView instanceMethodForSelector:@selector(changeMinEvt:sender:)];
    return self;
 }
 -(void) dealloc
@@ -1952,12 +1970,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return nil;
 }
--(void) addPositive: (CPIntVar*) x forValue: (ORInt) value
+-(void) addPositive: (CPEQLitView*) x forValue: (ORInt) value
 {
    assert(_pos[value - _ofs] == 0);
    _pos[value - _ofs] = x;
 }
--(id<CPIntVar>) positiveForValue: (ORInt) value
+-(CPEQLitView*) positiveForValue: (ORInt) value
 {
    return _pos[value - _ofs];
 }
@@ -1972,13 +1990,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORInt min = [_ref min];
    for(ORInt i=_ofs;i <min;i++) {
       CPIntVar* lv = _pos[i - _ofs];
-      if (lv)
-         [lv changeMinEvt:dsz sender:sender];
+      //[lv changeMinEvt:dsz sender:sender];
+      _changeMinEvtIMP(lv,@selector(changeMinEvt:sender:),dsz,sender);
    }
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
-      if (lv)
-         [lv bindEvt:sender];
+      [lv bindEvt:sender];
    }
 }
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
@@ -1986,13 +2003,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORInt max = [_ref max];
    for(ORInt i = max+1;i<_ofs+_nb;i++) {
       CPIntVar* lv = _pos[i - _ofs];
-      if (lv)
-         [lv changeMaxEvt:dsz sender:sender];
+      //[lv changeMaxEvt:dsz sender:sender];
+      _changeMaxEvtIMP(lv,@selector(changeMaxEvt:sender:),dsz,sender);
    }
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
-      if (lv)
-         return [lv bindEvt:sender];
+      return [lv bindEvt:sender];
    } 
 }
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender

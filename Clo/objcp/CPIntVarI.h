@@ -346,17 +346,19 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 @end
 
 @interface CPLiterals : NSObject<CPIntVarNotifier> {
-   CPIntVar*  _ref;
-   CPIntVar** _pos;
-   ORInt      _nb;
-   ORInt      _ofs;
+   CPIntVar*     _ref;
+   CPEQLitView** _pos;
+   ORInt          _nb;
+   ORInt         _ofs;
    BOOL       _tracksLoseEvt;
+   IMP  _changeMaxEvtIMP;
+   IMP  _changeMinEvtIMP;
 }
 -(id) initCPLiterals:(CPIntVar*)ref;
 -(void) dealloc;
 -(NSMutableSet*) constraints;
--(void) addPositive:(id<CPIntVar>)x forValue:(ORInt)value;
--(id<CPIntVar>) positiveForValue:(ORInt)value;
+-(void) addPositive:(CPEQLitView*)x forValue:(ORInt)value;
+-(CPEQLitView*) positiveForValue:(ORInt)value;
 -(void) bindEvt:(id<CPDom>)sender;
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
