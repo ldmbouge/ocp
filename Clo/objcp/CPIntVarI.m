@@ -1712,12 +1712,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    if (val == _v) {
       // We lost the value being watched. So the boolean lost TRUE
-      [super loseValEvt:TRUE sender:sender];
+      [super bindEvt:sender];
    }
    else {
       // We lost some other value. So we may have bound(_seconday) && minDom(_secondary)==_v      
       if (bound(_secondary) && minDom(_secondary) == _v) {
-         [super loseValEvt:FALSE sender:sender];
+         [super bindEvt:sender];
       } 
    }
 }

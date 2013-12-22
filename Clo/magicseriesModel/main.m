@@ -25,16 +25,24 @@ int main (int argc, const char * argv[])
       id<ORModel> model = [ORFactory createModel];
       id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
       id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];
+      //[model add: [Sum(model,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
       for(ORInt i=0;i<n;i++)
          [model add: [Sum(model,j,R,[x[j] eq: @(i)]) eq: x[i] ]];
-      [model add: [Sum(model,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
       
       id<CPProgram> cp = [ORFactory createCPProgram: model];
       
       [cp solveAll: ^{
+         id* gamma = [cp gamma];
+         id<CPIntVarArray> cx = gamma[x.getId];
          //NSLog(@"BASIC: %@",[[cp engine] model]);
-
-         [cp  labelArray: x];
+         //[cp  labelArray: x];
+         for(ORInt i=0;i<n;i++) {
+            if ([cp bound:x[i]]) continue;
+            [cp label:x[i]];
+            NSLog(@"i = %d s = %@",i,cx);
+         }
+         
+         
          printf("Succeeds \n");
          for(ORInt i = 0; i < n; i++)
             printf("%d ",[cp intValue:x[i]]);
