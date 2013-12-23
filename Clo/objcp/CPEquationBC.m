@@ -126,6 +126,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    ORInt i = 0;
    ORInt lastUsed = _used._val - 1;
    ORLong ec = _ec._val;
+   long long slow = 0,sup = 0;
    while (i <= lastUsed) {
       CPEQTerm* cur = _inUse[i]._val;
       ORBounds b = bounds(cur->var);
@@ -138,29 +139,31 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       } else {
          cur->low = b.min;
          cur->up  = b.max;
+         slow += cur->low;
+         sup  += cur->up;
          cur->updated = NO;
          i++;
       }
    }
    assignTRInt(&_used, lastUsed+1, _trail);
    assignTRLong(&_ec, ec, _trail);
-   bool changed;
+   bool changed = false;
    bool feasible = true;
    do {
-      long long slow = 0,sup = 0;
       ORInt k=0;
-      while(k < _used._val) {
-         CPEQTerm* cur = _inUse[k++]._val;
-         // The next 3 lines are necessary because of views.
-         // Two variables in the equations could be related by a view.
-         // Updates on the bounds of one may cause the bounds of the view to change (or vice-versa)
-         // Therefore, at each iteration of the local fixpoint, we must refresh the bounds
-         // of the variable of each term. 
-         ORBounds b = bounds(cur->var);
-         cur->low = b.min;
-         cur->up  = b.max;
-         slow += cur->low;
-         sup  += cur->up;
+      if (changed) {
+         slow = sup = 0;
+         while(k < _used._val) {
+            CPEQTerm* cur = _inUse[k++]._val;
+            // The refresh of the bounds are necessary because of views.
+            // Two variables in the equations could be related by a view.
+            // Updates on the bounds of one may cause the bounds of the view to change (or vice-versa)
+            // Therefore, at each iteration of the local fixpoint, we must refresh the bounds
+            // of the variable of each term.
+            ORBounds b = bounds(cur->var);
+            slow += cur->low = b.min;
+            sup  += cur->up  = b.max;
+         }
       }
       struct Bounds b = (struct Bounds){0,0,slow + _ec._val,sup + _ec._val,_used._val};
       if (b._sumLow > 0 || b._sumUp < 0)
@@ -182,9 +185,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
             // D(x) = {0,1}  and D(y)={0..100} with y = 100 * x.
             // If (low,up) = (10,100) then, x={1} and therefore D(y)={100} rather than {10..100}
             cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
-            ORBounds b = bounds(cur->var);
-            cur->low = b.min;
-            cur->up  = b.max;
          }
          feasible = cur->low <= cur->up;
          if (cur->low == cur->up) {

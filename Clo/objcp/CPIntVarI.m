@@ -1925,6 +1925,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    [rd release];
    _ref = ref;
    _pos = malloc(sizeof(CPIntVar*)*_nb);
+   _a = makeTRInt([[ref engine] trail], 0);
+   _b = makeTRInt([[ref engine] trail], _nb);
    for(ORInt i=0;i<_nb;i++)
       _pos[i] = nil;
    _tracksLoseEvt = NO;
@@ -1965,9 +1967,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) bindEvt:(id<CPDom>) sender
 {
-   for(ORInt i=0;i <_nb;i++) {
+   for(ORInt i=_a._val;i <_b._val;i++) {
       [_pos[i] bindEvt:sender];
    }
+   assignTRInt(&_b,_a._val, [[_ref engine] trail]);
 //   CPIntVar* lv = _pos[sender.min - _ofs];
 //   if (lv != NULL)
 //      [lv bindEvt:sender];
@@ -1975,12 +1978,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
    ORInt min = [_ref min];
-   for(ORInt i=_ofs;i <min;i++) {
-      CPIntVar* lv = _pos[i - _ofs];
+   for(ORInt i=_a._val;i <min;i++) {
+      CPIntVar* lv = _pos[i];
       //[lv changeMinEvt:dsz sender:sender];
       //_changeMinEvtIMP(lv,@selector(changeMinEvt:sender:),dsz,sender);
       [lv bindEvt:sender];
    }
+   assignTRInt(&_a,min,[[_ref engine] trail]);
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
       [lv bindEvt:sender];
@@ -1989,12 +1993,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    ORInt max = [_ref max];
-   for(ORInt i = max+1;i<_ofs+_nb;i++) {
-      CPIntVar* lv = _pos[i - _ofs];
+   for(ORInt i = max+1;i<_b._val;i++) {
+      CPIntVar* lv = _pos[i];
       //[lv changeMaxEvt:dsz sender:sender];
       //_changeMaxEvtIMP(lv,@selector(changeMaxEvt:sender:),dsz,sender);
       [lv bindEvt:sender];
    }
+   assignTRInt(&_b, max+1, [[_ref engine] trail]);
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
       return [lv bindEvt:sender];

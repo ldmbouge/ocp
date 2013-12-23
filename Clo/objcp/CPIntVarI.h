@@ -225,35 +225,6 @@ static inline ORInt maxDom(CPIntVar* x)
    }
 }
 
-#define DOMX ((CPBoundsDom*)((CPIntVarI*)x)->_dom)
-static inline ORBounds bounds(CPIntVar* x)
-{
-   switch (x->_vc) {
-      case CPVCBare:  return (ORBounds){DOMX->_min._val,DOMX->_max._val};
-      case CPVCShift: {
-         ORBounds b = bounds(((CPIntShiftView*)x)->_x);
-         ORInt    c =((CPIntShiftView*)x)->_b;
-         return (ORBounds){b.min + c,b.max + c};
-      }
-         /*
-      case CPVCAffine: {
-         ORBounds b = bounds(((CPIntView*)x)->_x);
-         ORInt fmin = b.min * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
-         ORInt fmax = b.max * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
-         if (((CPIntView*)x)->_a > 0)
-            return (ORBounds){fmin,fmax};
-         else
-            return (ORBounds){fmax,fmin};
-      }*/
-      case CPVCCst: {
-         ORInt v = ((CPIntVarCst*) x)->_value;
-         return (ORBounds){v,v};
-      }
-      default: return [x bounds];
-   }
-}
-#undef DOMX
-
 static inline ORBounds negBounds(CPIntVar* x)
 {
    ORBounds b = [x bounds];
@@ -294,6 +265,54 @@ static inline ORInt memberBitDom(CPIntVar* x,ORInt value)
          break;
    }
 }
+
+#define DOMX ((CPBoundsDom*)((CPIntVarI*)x)->_dom)
+static inline ORBounds bounds(CPIntVar* x)
+{
+   switch (x->_vc) {
+      case CPVCBare:  return (ORBounds){DOMX->_min._val,DOMX->_max._val};
+      case CPVCShift: {
+         ORBounds b = bounds(((CPIntShiftView*)x)->_x);
+         ORInt    c =((CPIntShiftView*)x)->_b;
+         return (ORBounds){b.min + c,b.max + c};
+      }
+         /*
+          case CPVCAffine: {
+          ORBounds b = bounds(((CPIntView*)x)->_x);
+          ORInt fmin = b.min * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+          ORInt fmax = b.max * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+          if (((CPIntView*)x)->_a > 0)
+          return (ORBounds){fmin,fmax};
+          else
+          return (ORBounds){fmax,fmin};
+          }*/
+      case CPVCCst: {
+         ORInt v = ((CPIntVarCst*) x)->_value;
+         return (ORBounds){v,v};
+      }
+      case CPVCEQLiteral: {
+         CPIntVar*   sec = ((CPEQLitView*)x)->_secondary;
+         ORBounds sb = sec->_vc == CPVCBare ? (ORBounds){
+            ((CPBoundsDom*)((CPIntVarI*)sec)->_dom)->_min._val,
+            ((CPBoundsDom*)((CPIntVarI*)sec)->_dom)->_max._val
+         } : bounds(sec);
+         if (sb.min == sb.max) {
+            BOOL v = sb.min == ((CPEQLitView*)x)->_v;
+            return (ORBounds){v,v};
+         } else {
+            const ORInt lit = ((CPEQLitView*)x)->_v;
+            if (lit < sb.min || lit > sb.max)
+               return (ORBounds){0,0};
+            else {
+               ORInt ub = memberBitDom(sec,lit);
+               return (ORBounds){0,ub!=0};
+            }
+         }
+      }break;
+      default: return [x bounds];
+   }
+}
+#undef DOMX
 
 static inline void removeDom(CPIntVar* x,ORInt v)
 {
@@ -350,6 +369,8 @@ static inline void bindDom(CPIntVar* x,ORInt v)
    CPEQLitView** _pos;
    ORInt          _nb;
    ORInt         _ofs;
+   TRInt           _a;
+   TRInt           _b;
    BOOL       _tracksLoseEvt;
    IMP  _changeMaxEvtIMP;
    IMP  _changeMinEvtIMP;

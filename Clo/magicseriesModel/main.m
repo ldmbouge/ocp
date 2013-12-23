@@ -41,23 +41,23 @@ int main (int argc, const char * argv[])
       
       [cp solveAll: ^{
          //NSLog(@"BASIC: %@",[[cp engine] model]);
-//         [cp  labelArray: x];
-         id* gamma = [cp gamma];
-         id<CPIntVarArray> cx = gamma[x.getId];
-         for(ORInt i=0;i<n;i++) {
-            while(![cp bound:x[i]]) {
-               ORInt v = [cp min:x[i]];
-               [cp try:^{
-                  NSLog(@"%@ -label(%d) s = %@",tab(i),i,cx);
-                  [cp label:x[i] with:v];
-                  NSLog(@"%@ +label(%d) s = %@",tab(i),i,cx);
-               } or:^{
-                  NSLog(@"%@ -diff(%d)  s = %@",tab(i),i,cx);
-                  [cp diff:x[i] with:v];
-                  NSLog(@"%@ +diff(%d)  s = %@",tab(i),i,cx);
-               }];
-            }
-         }
+         [cp  labelArray: x];
+//         id* gamma = [cp gamma];
+//         id<CPIntVarArray> cx = gamma[x.getId];
+//         for(ORInt i=0;i<n;i++) {
+//            while(![cp bound:x[i]]) {
+//               ORInt v = [cp min:x[i]];
+//               [cp try:^{
+//                  NSLog(@"%@ -label(%d) s = %@",tab(i),i,cx);
+//                  [cp label:x[i] with:v];
+//                  NSLog(@"%@ +label(%d) s = %@",tab(i),i,cx);
+//               } or:^{
+//                  NSLog(@"%@ -diff(%d)  s = %@",tab(i),i,cx);
+//                  [cp diff:x[i] with:v];
+//                  NSLog(@"%@ +diff(%d)  s = %@",tab(i),i,cx);
+//               }];
+//            }
+//         }
          
          
          printf("Succeeds \n");
