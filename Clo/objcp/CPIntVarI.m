@@ -1704,8 +1704,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) bindEvt:(id<CPDom>)sender
 {
-   assert(bound(_secondary));
-//   ORInt boundTo = minDom(_secondary);
    [super bindEvt:sender];
 }
 
@@ -1730,13 +1728,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       if (minDom(_secondary) > _v)
          [super bindEvt:sender];
    }
-//   ORBounds sb = bounds(_secondary);
-//   ORInt myMin = (sb.min == sb.max) ? sb.min==_v : 0;
-//   ORInt myMax = (sb.min == sb.max) ? sb.min==_v : memberDom(_secondary, _v);
-//   if (myMin)
-//      [super bindEvt:sender];
-//   else if (myMax==0)
-//      [super bindEvt:sender];
 }
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
@@ -1747,13 +1738,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       if (sMax < _v)
          [super bindEvt:sender];
    }
-//   ORBounds sb = bounds(_secondary);
-//   ORInt myMin = (sb.min == sb.max) ? sb.min==_v : 0;
-//   ORInt myMax = (sb.min == sb.max) ? sb.min==_v : memberDom(_secondary, _v);
-//   if (myMin)
-//      [super bindEvt:sender];
-//   else if (myMax==0)
-//      [super bindEvt:sender];
 }
 -(NSString*)description
 {
@@ -1852,7 +1836,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_literals)
       return _literals;
    CPLiterals* newLits = [[CPLiterals alloc] initCPLiterals:ref];
-   _tracksLoseEvt = YES;
+   //_tracksLoseEvt = YES;
    id<ORTrail> theTrail = [[ref engine] trail];
    [theTrail trailClosure: ^{
       _literals = NULL;
@@ -1981,9 +1965,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) bindEvt:(id<CPDom>) sender
 {
-   CPIntVar* lv = _pos[sender.min - _ofs];
-   if (lv != NULL)
-      [lv bindEvt:sender];
+   for(ORInt i=0;i <_nb;i++) {
+      [_pos[i] bindEvt:sender];
+   }
+//   CPIntVar* lv = _pos[sender.min - _ofs];
+//   if (lv != NULL)
+//      [lv bindEvt:sender];
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
@@ -1991,7 +1978,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    for(ORInt i=_ofs;i <min;i++) {
       CPIntVar* lv = _pos[i - _ofs];
       //[lv changeMinEvt:dsz sender:sender];
-      _changeMinEvtIMP(lv,@selector(changeMinEvt:sender:),dsz,sender);
+      //_changeMinEvtIMP(lv,@selector(changeMinEvt:sender:),dsz,sender);
+      [lv bindEvt:sender];
    }
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
@@ -2004,7 +1992,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    for(ORInt i = max+1;i<_ofs+_nb;i++) {
       CPIntVar* lv = _pos[i - _ofs];
       //[lv changeMaxEvt:dsz sender:sender];
-      _changeMaxEvtIMP(lv,@selector(changeMaxEvt:sender:),dsz,sender);
+      //_changeMaxEvtIMP(lv,@selector(changeMaxEvt:sender:),dsz,sender);
+      [lv bindEvt:sender];
    }
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
@@ -2014,6 +2003,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (_pos[val - _ofs])
-      [_pos[val - _ofs] loseValEvt: val sender: sender];
+ //     [_pos[val - _ofs] loseValEvt: val sender: sender];
+      [_pos[val - _ofs] bindEvt: sender];
 }
 @end
