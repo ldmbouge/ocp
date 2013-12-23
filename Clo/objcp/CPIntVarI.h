@@ -303,6 +303,8 @@ static inline ORBounds bounds(CPIntVar* x)
             const ORInt lit = ((CPEQLitView*)x)->_v;
             if (lit < sb.min || lit > sb.max)
                return (ORBounds){0,0};
+            else if (lit == sb.min || lit == sb.max)
+               return (ORBounds){0,1};
             else {
                ORInt ub = memberBitDom(sec,lit);
                return (ORBounds){0,ub!=0};
