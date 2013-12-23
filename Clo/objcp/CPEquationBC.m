@@ -151,6 +151,14 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       ORInt k=0;
       while(k < _used._val) {
          CPEQTerm* cur = _inUse[k++]._val;
+         // The next 3 lines are necessary because of views.
+         // Two variables in the equations could be related by a view.
+         // Updates on the bounds of one may cause the bounds of the view to change (or vice-versa)
+         // Therefore, at each iteration of the local fixpoint, we must refresh the bounds
+         // of the variable of each term. 
+         ORBounds b = bounds(cur->var);
+         cur->low = b.min;
+         cur->up  = b.max;
          slow += cur->low;
          sup  += cur->up;
       }

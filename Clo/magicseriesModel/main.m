@@ -18,6 +18,14 @@
 
 #import <ORProgram/ORProgramFactory.h>
 
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}
+
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -33,12 +41,23 @@ int main (int argc, const char * argv[])
       
       [cp solveAll: ^{
          //NSLog(@"BASIC: %@",[[cp engine] model]);
-         [cp  labelArray: x];
-//         for(ORInt i=0;i<n;i++) {
-//            if ([cp bound:x[i]]) continue;
-//            [cp label:x[i]];
-//            NSLog(@"i = %d s = %@",i,cx);
-//         }
+//         [cp  labelArray: x];
+         id* gamma = [cp gamma];
+         id<CPIntVarArray> cx = gamma[x.getId];
+         for(ORInt i=0;i<n;i++) {
+            while(![cp bound:x[i]]) {
+               ORInt v = [cp min:x[i]];
+               [cp try:^{
+                  NSLog(@"%@ -label(%d) s = %@",tab(i),i,cx);
+                  [cp label:x[i] with:v];
+                  NSLog(@"%@ +label(%d) s = %@",tab(i),i,cx);
+               } or:^{
+                  NSLog(@"%@ -diff(%d)  s = %@",tab(i),i,cx);
+                  [cp diff:x[i] with:v];
+                  NSLog(@"%@ +diff(%d)  s = %@",tab(i),i,cx);
+               }];
+            }
+         }
          
          
          printf("Succeeds \n");
