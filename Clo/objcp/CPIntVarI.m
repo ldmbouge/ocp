@@ -236,6 +236,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method bindEvt not defined"];
 }
+-(void) domEvt: (id<CPDom>)sender
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method domEvt not defined" ];
+}
 -(void) changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method changeMinEvt not defined"];
@@ -547,7 +551,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) bindEvt:(id<CPDom>) sender
 {
 }
-
+-(void) domEvt: (id<CPDom>)sender
+{
+}
 -(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
 }
@@ -927,6 +933,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_triggers bindEvt: _fdm];
 }
 
+-(void) domEvt: (id<CPDom>)sender
+{
+   if (_recv)
+      [_recv domEvt: sender];
+   id<CPEventNode> mList[6];
+   ORUInt k = 0;
+   mList[k] = _net._domEvt[0]._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   scheduleAC3(_fdm,mList);
+}
+
 -(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
    [_recv changeMinEvt:dsz sender:sender];
@@ -973,12 +991,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_recv loseValEvt:val sender:sender];
    }
    // [ldm/pvh] necessary for alldiff to be correct when not idempotent?
-   if (_net._domEvt[0]._val != NULL) {
-      id<CPEventNode> mList[2];
-      mList[0] = _net._domEvt[0]._val;
-      mList[1] = NULL;
-      scheduleAC3(_fdm,mList);
-   }
+//   if (_net._domEvt[0]._val != NULL) {
+//      id<CPEventNode> mList[2];
+//      mList[0] = _net._domEvt[0]._val;
+//      mList[1] = NULL;
+//      scheduleAC3(_fdm,mList);
+//   }
    if (_net._ac5[0]._val)
       [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5[0]._val]];
    if (_triggers)
@@ -1707,7 +1725,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    [super bindEvt:sender];
 }
-
+-(void) domEvt:(id<CPDom>)sender
+{
+   [super domEvt:sender];
+}
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (val == _v) {
@@ -1885,6 +1906,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
        [_tab[i] bindEvt:sender];
    }
 }
+-(void) domEvt:(id<CPDom>)sender
+{
+   if (_literals)
+      [_literals domEvt:sender];
+   for(ORInt i=0;i<_nb;i++)
+      [_tab[i] domEvt:sender];
+}
 
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
@@ -1972,17 +2000,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_pos[i] bindEvt:sender];
    }
    assignTRInt(&_b,_a._val, [[_ref engine] trail]);
-//   CPIntVar* lv = _pos[sender.min - _ofs];
-//   if (lv != NULL)
-//      [lv bindEvt:sender];
+}
+-(void) domEvt:(id<CPDom>)sender
+{
+   for(ORInt i=_a._val;i <_b._val;i++) {
+      [_pos[i] domEvt:sender];
+   }
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
    ORInt min = [_ref min];
    for(ORInt i=_a._val;i <min;i++) {
       CPIntVar* lv = _pos[i];
-      //[lv changeMinEvt:dsz sender:sender];
-      //_changeMinEvtIMP(lv,@selector(changeMinEvt:sender:),dsz,sender);
       [lv bindEvt:sender];
    }
    assignTRInt(&_a,min,[[_ref engine] trail]);
@@ -1996,8 +2025,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORInt max = [_ref max];
    for(ORInt i = max+1;i<_b._val;i++) {
       CPIntVar* lv = _pos[i];
-      //[lv changeMaxEvt:dsz sender:sender];
-      //_changeMaxEvtIMP(lv,@selector(changeMaxEvt:sender:),dsz,sender);
       [lv bindEvt:sender];
    }
    assignTRInt(&_b, max+1, [[_ref engine] trail]);
@@ -2009,7 +2036,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (_pos[val - _ofs])
- //     [_pos[val - _ofs] loseValEvt: val sender: sender];
       [_pos[val - _ofs] bindEvt: sender];
 }
 @end

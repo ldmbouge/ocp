@@ -38,6 +38,7 @@ typedef struct  {
 -(void)      setTracksLoseEvt;
 -(ORBool)    tracksLoseEvt: (id<CPDom>) sender;
 -(void)      bindEvt: (id<CPDom>) sender;
+-(void)      domEvt: (id<CPDom>) sender;
 -(void)      changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender;
 -(void)      changeMaxEvt:(ORInt) dsz sender: (id<CPDom>)sender;
 -(void)      loseValEvt: (ORInt) val sender: (id<CPDom>)sender;
@@ -361,6 +362,7 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 -(CPLiterals*) findLiterals:(CPIntVar*)ref;
 -(void) addVar: (id<CPIntVarNotifier>) v;
 -(void) bindEvt:(id<CPDom>)sender;
+-(void) domEvt: (id<CPDom>)sender;
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
@@ -383,6 +385,7 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 -(void) addPositive:(CPEQLitView*)x forValue:(ORInt)value;
 -(CPEQLitView*) positiveForValue:(ORInt)value;
 -(void) bindEvt:(id<CPDom>)sender;
+-(void) domEvt: (id<CPDom>)sender;
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;

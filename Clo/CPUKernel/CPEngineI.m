@@ -426,10 +426,24 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
                AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
                [group scheduleAC3:list];
             } else
-               if (fdm->_last != lc || !lc->_idempotent) {
-                  lc->_todo = CPTocheck;
-                  AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
-               }
+               lc->_todo = CPTocheck;
+               AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+            // [ldm] not completely clear why. But the conditional enQueueing below breaks
+            // the behavior w.r.t. idempotence.
+            // Temporarily back to the original code until I figure this one out.
+            // Benchmark affected: sport
+            // Actually, if a constraint is tagged idemponent, the second disjunct is false and
+            // therefore we _might_ try to save scheduling the currently running propagator.
+            // This looks sounds to me, but the allDiffDC does _not_ check whether there was a change
+            // it seems to do a single pass. over the variable set. Which  should be ok without views
+            // but certainly wrong with views.  In sport, this _reduces_ the number of choices, but that
+            // maybe an artifact of the different search caused by a _weaker_ fixpoint (not really reaching a glb).
+            // For now, I'll keep this commented out. It only makes sense for idempotent propagators anyway and
+            // would disappear if we get rid of idempotence. 
+//               if (fdm->_last != lc || !lc->_idempotent) {
+//                  lc->_todo = CPTocheck;
+//                  AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+//               }
                //else NSLog(@"Not scheduling the currently running idempotent constraint");
          }
          list = list->_node._val;
