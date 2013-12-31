@@ -194,6 +194,23 @@ typedef struct  {
 -(void) remove:(ORInt)val;
 @end
 
+
+static inline BOOL tracksLoseEvt(id<CPIntVarNotifier> x,id<CPDom> sender)
+{
+   switch(((CPIntVar*)x)->_vc) {
+      case CPVCBare: {
+         CPIntVarI* y = (CPIntVarI*)x;
+         if (y->_net._ac5[0]._val != nil || y->_triggers != nil)
+            return YES;
+         else if (y->_recv && [y->_recv tracksLoseEvt:sender])
+            return YES;
+         else
+            return NO;
+      }
+      default: return [x tracksLoseEvt:sender];
+   }
+}
+
 static inline BOOL bound(CPIntVar* x)
 {
    switch(x->_vc) {

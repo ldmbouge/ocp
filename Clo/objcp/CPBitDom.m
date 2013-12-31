@@ -591,7 +591,6 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    }
 }
 
-
 -(void) updateMin: (ORInt) newMin for: (id<CPIntVarNotifier>)x
 {
    if (newMin <= _min._val)
@@ -606,7 +605,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    newMin = findMin(self,newMin);
    assignTRInt(&_min, newMin, _trail);
 
-   if ([x tracksLoseEvt:self]) {
+   if (tracksLoseEvt(x, self)) {
       for(ORInt k=oldMin;k< newMin;k++)
          if (GETBIT(k))
             [x loseValEvt:k sender:self];
@@ -627,7 +626,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    newMax = findMax(self,newMax);
    assignTRInt(&_max, newMax, _trail);
 
-   if ([x tracksLoseEvt:self]) {
+   if (tracksLoseEvt(x, self)) {
       for(ORInt k=newMax+1;k<= oldMax;k++)
          if (GETBIT(k))
             [x loseValEvt:k sender:self];
@@ -664,7 +663,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       newMax = findMax(self,newMax);
       assignTRInt(&_max, newMax, _trail);
       
-      if ([x tracksLoseEvt:self]) {
+      if (tracksLoseEvt(x, self)) {
          for(ORInt k=newMax+1;k<= oldMax;k++)
             if (GETBIT(k))
                [x loseValEvt:k sender:self];
@@ -694,7 +693,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 //   if (val < oldMax)
 //      [x changeMaxEvt:1 sender:self];
 
-   if ([x tracksLoseEvt:self]) {
+   if (tracksLoseEvt(x, self)) {
       for(ORInt k=oldMin;k<=oldMax;k++)
          if (GETBIT(k) && k != val)
             [x loseValEvt:k sender:self];
