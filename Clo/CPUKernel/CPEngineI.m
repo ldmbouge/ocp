@@ -22,7 +22,6 @@
    _csz = 0;
    _mask = _mxs - 1;
    _tab = malloc(sizeof(AC3Entry)*_mxs);
-   _tab[_mxs - 1] = (AC3Entry){0,0};
    _last = _tab+_mxs-1;
    _enter = _exit = 0;
    return self;
@@ -34,7 +33,6 @@
 }
 -(void) reset
 {
-   _tab[_mxs - 1] = (AC3Entry){0,0};
    _last = _tab + _mxs - 1;
    _enter = _exit = 0;
    _csz = 0;
@@ -81,14 +79,10 @@ inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstrain
 }
 inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 {
-   if (q->_csz > 0) {
-      AC3Entry cb = q->_tab[q->_exit];
-      q->_exit = (q->_exit+1) & q->_mask;
-      --q->_csz;
-      return cb;
-   }
-   else
-      return (AC3Entry){nil,nil};
+   AC3Entry cb = q->_tab[q->_exit];
+   q->_exit = (q->_exit+1) & q->_mask;
+   --q->_csz;
+   return cb;
 }
 -(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr
 {
