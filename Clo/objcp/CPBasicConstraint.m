@@ -429,7 +429,6 @@
          yb.min = max(yb.min,c - xb.max);
          yb.max = min(yb.max,c - xb.min);
          yb = updateMinAndMaxOfDom(_y, yb.min, yb.max);
-         yb = [_y updateMin:yb.min andMax:yb.max];
       } else {
          zb = updateMinAndMaxOfDom(_z, xb.min + yb.min, xb.max + yb.max);
          xb = updateMinAndMaxOfDom(_x, zb.min - yb.max, zb.max - yb.min);
