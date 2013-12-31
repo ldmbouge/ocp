@@ -702,6 +702,38 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    [x bindEvt:self];
 }
 
+void domBitRemove(CPBitDom* this,ORInt val,id<CPIntVarNotifier> x)
+{
+   if (val < this->_min._val || val > this->_max._val)
+      return;
+   if (this->_min._val == this->_max._val && val == this->_min._val)
+      failNow();
+   if (val == this->_min._val) {
+      ORInt oldMin = this->_min._val;
+      inline_assignTRInt(&this->_sz, this->_sz._val - 1, this->_trail);
+      ORInt newMin = findMin(this,this->_min._val + 1);
+      inline_assignTRInt(&this->_min, newMin, this->_trail);
+      [x loseValEvt:oldMin sender:this];
+      [x changeMinEvt:this->_sz._val sender:this];
+   }
+   else if (val == this->_max._val) {
+      ORInt oldMax = this->_max._val;
+      inline_assignTRInt(&this->_sz, this->_sz._val - 1, this->_trail);
+      ORInt newMax = findMax(this,this->_max._val - 1);
+      inline_assignTRInt(&this->_max, newMax, this->_trail);
+      [x loseValEvt:oldMax sender:this];
+      [x changeMaxEvt:this->_sz._val sender:this];
+   }
+   else if (GETBITPTR(this,val)) {
+      resetBit(this,val);
+      inline_assignTRInt(&this->_sz, this->_sz._val -  1, this->_trail);
+      if (this->_sz._val==1)
+         [x bindEvt:this];
+      [x loseValEvt:val sender:this];
+      [x domEvt:this];
+   }
+}
+
 -(void) remove:(ORInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val < _min._val || val > _max._val)

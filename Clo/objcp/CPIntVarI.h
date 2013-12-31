@@ -114,7 +114,7 @@ typedef struct  {
 -(ORInt) scale;
 -(void)updateMin:(ORInt)newMin;
 -(void)updateMax:(ORInt)newMax;
--(void)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(ORBounds)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(void)bind:(ORInt)val;
 -(void)remove:(ORInt)val;
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
@@ -140,7 +140,7 @@ typedef struct  {
 -(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(void) bind:(ORInt)val;
 -(void) remove:(ORInt)val;
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
@@ -164,7 +164,7 @@ typedef struct  {
 -(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(void) bind:(ORInt)val;
 -(void) remove:(ORInt)val;
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
@@ -189,7 +189,7 @@ typedef struct  {
 -(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(void) bind:(ORInt)val;
 -(void) remove:(ORInt)val;
 @end
@@ -321,7 +321,8 @@ static inline void removeDom(CPIntVar* x,ORInt v)
 {
    switch (x->_vc) {
       case CPVCBare:
-         [((CPIntVarI*)x)->_dom remove:v for: (CPIntVarI*) x];
+         //[((CPIntVarI*)x)->_dom remove:v for: (CPIntVarI*) x];
+         domRemove((CPBoundsDom*)(((CPIntVarI*)x)->_dom), v, x);
          break;
       case CPVCShift: {
          const ORInt b = ((CPIntShiftView*)x)->_b;
@@ -340,6 +341,17 @@ static inline void bindDom(CPIntVar* x,ORInt v)
          [((CPIntVarI*)x)->_dom bind:v for:x];
       default:
          [x bind:v];
+   }
+}
+
+static inline ORBounds updateMinAndMaxOfDom(CPIntVar* x,ORInt lb,ORInt ub)
+{
+   switch(x->_vc) {
+      case CPVCBare:
+         [((CPIntVarI*)x)->_dom updateMin:lb andMax:ub for:x];
+         return domBounds((CPBoundsDom*)((CPIntVarI*)x)->_dom);
+      default:
+         return [x updateMin:lb andMax:ub];
    }
 }
 

@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
+#import <objcp/CPError.h>
 
 @class CPEngineI;
 
@@ -148,6 +149,27 @@ static inline ORInt domMember(CPBoundsDom* x,ORInt value)
          } else return 0;         
       }
       default: return 0;
+   }
+}
+void domBitRemove(CPBitDom* this,ORInt val,id<CPIntVarNotifier> x);
+
+static inline void domRemove(CPBoundsDom* x,ORInt val,id<CPIntVarNotifier> recv)
+{
+   switch(x->_dc) {
+      case DCBounds: {
+         if (val < x->_min._val || val > x->_max._val)
+            return;
+         if (val == x->_min._val)
+            [x updateMin:val+1 for:recv];
+         else if (val == x->_max._val)
+            [x updateMax:val-1 for:recv];
+         else
+            @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+      }
+      case DCBits: {
+         domBitRemove((CPBitDom*)x,val,recv);
+      }
+      default: ;
    }
 }
 

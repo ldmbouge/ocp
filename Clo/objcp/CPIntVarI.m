@@ -195,7 +195,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method updateMax not defined"];
 }
--(void) updateMin: (ORInt) newMin andMax: (ORInt) newMax
+-(ORBounds) updateMin: (ORInt) newMin andMax: (ORInt) newMax
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method updateMin not defined"];
 }
@@ -575,12 +575,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (newMax < _value)
       failNow();
 }
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    if (newMin > _value)
       failNow();
    if (newMax < _value)
       failNow();
+   return (ORBounds){_value,_value};
 }
 -(void) bind: (ORInt) val
 {
@@ -1010,9 +1011,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    [_dom updateMax:newMax for:self];
 }
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    [_dom updateMin:newMin andMax:newMax for:self];
+   return domBounds((CPBoundsDom*)_dom);
 }
 -(void) bind: (ORInt) val
 {
@@ -1223,10 +1225,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    [_x updateMax: newMax-_b];
 }
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    [_x updateMin:newMin-_b];
    [_x updateMax:newMax-_b];
+   return domBounds((CPBoundsDom*)_dom);
 }
 
 -(void) bind: (ORInt) val
@@ -1400,10 +1403,15 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
 }
 
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    [self updateMin:newMin];
    [self updateMax:newMax];
+   ORBounds b = bounds(_x);
+   return (ORBounds){
+      _a > 0 ? b.min * _a + _b : b.max * _a + _b,
+      _a > 0 ? b.max * _a + _b : b.min * _a + _b
+   };
 }
 
 -(void) bind: (ORInt) val
@@ -1540,10 +1548,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    [_x updateMin:-newMax];
 }
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax
+-(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    [_x updateMax:-newMin];
    [_x updateMin:-newMax];
+   ORBounds b = [_x bounds];
+   return (ORBounds){-b.max,-b.min};
 }
 -(void) bind:(ORInt)val
 {
@@ -1690,12 +1700,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_secondary remove:_v];
    }
 }
--(void) updateMin: (ORInt) newMin andMax: (ORInt) newMax
+-(ORBounds) updateMin: (ORInt) newMin andMax: (ORInt) newMax
 {
    if (newMin) 
       [_secondary bind:_v];
    if (newMax==0) 
       [_secondary remove:_v];
+   return [self bounds];
 }
 -(void) bind:(ORInt)val
 {
