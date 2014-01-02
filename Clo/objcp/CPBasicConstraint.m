@@ -791,16 +791,20 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRI
 }
 -(void) propagate
 {
-   if (bound(_x)) {
+   updateMaxDom(_x, maxDom(_y) + _c);
+   updateMinDom(_y, minDom(_x) - _c);
+   if (bound(_x) || bound(_y))
       assignTRInt(&_active, NO, _trail);
-      updateMinDom(_y, minDom(_x) - _c);
-   } else if (bound(_y)) {
-      assignTRInt(&_active, NO, _trail);
-      updateMaxDom(_x, maxDom(_y) + _c);
-   } else {
-      updateMaxDom(_x, maxDom(_y) + _c);
-      updateMinDom(_y, minDom(_x) - _c);
-   }
+//   if (bound(_x)) {
+//      assignTRInt(&_active, NO, _trail);
+//      updateMinDom(_y, minDom(_x) - _c);
+//   } else if (bound(_y)) {
+//      assignTRInt(&_active, NO, _trail);
+//      updateMaxDom(_x, maxDom(_y) + _c);
+//   } else {
+//      updateMaxDom(_x, maxDom(_y) + _c);
+//      updateMinDom(_y, minDom(_x) - _c);
+//   }
 }
 -(NSSet*)allVars
 {

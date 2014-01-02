@@ -60,6 +60,10 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-q4096"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-q16"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
