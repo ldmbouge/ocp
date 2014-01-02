@@ -24,12 +24,13 @@ int main(int argc, const char * argv[])
          ORInt n = [args size];
          id<ORIntRange> D = RANGE(model,0,n);
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
-         id<ORGroup> g = [ORFactory bergeGroup:model];
+         //id<ORGroup> g = [ORFactory bergeGroup:model];
          [D enumerateWithBlock:^(ORInt k) {
             if (k < n)
-               [g add:[x[k] lt:x[k+1]]];
+	      //               [g add:[x[k] lt:x[k+1]]];
+               [model add:[x[k] lt:x[k+1]]];
          }];
-         [model add:g];
+         //[model add:g];
          //NSLog(@"Group: %@",g);
          //NSLog(@"MODEL %@",model);
          id<CPProgram> cp = [ORFactory createCPProgram:model];
