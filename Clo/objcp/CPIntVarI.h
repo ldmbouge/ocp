@@ -372,6 +372,28 @@ static inline ORBounds updateMinAndMaxOfDom(CPIntVar* x,ORInt lb,ORInt ub)
    }
 }
 
+static inline void updateMinDom(CPIntVar* x,ORInt newMin)
+{
+   switch(x->_vc) {
+      case CPVCBare:
+         [((CPIntVarI*)x)->_dom updateMin:newMin for:x];
+         break;
+      default:
+         return [x updateMin:newMin];
+   }
+}
+
+static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
+{
+   switch(x->_vc) {
+      case CPVCBare:
+         [((CPIntVarI*)x)->_dom updateMax:newMax for:x];
+         break;
+      default:
+         return [x updateMax:newMax];
+   }
+}
+
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
