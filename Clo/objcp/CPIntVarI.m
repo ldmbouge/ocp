@@ -2029,7 +2029,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       CPIntVar* lv = _pos[i];
       [lv bindEvt:sender];
    }
-   assignTRInt(&_a,min,[[_ref engine] trail]);
+   assignTRInt(&_a,min-1,[[_ref engine] trail]);
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
       [lv bindEvt:sender];
