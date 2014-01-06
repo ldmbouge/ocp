@@ -37,13 +37,13 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solve:^{
             NSLog(@"About to search...");
-            @autoreleasepool {
-               id<ORIntArray> xv = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
-                  return [cp intValue:x[i]];
-               }];
-               NSLog(@"solution: %@",xv);
-               nbSol++;
-            }
+//             @autoreleasepool {
+//                id<ORIntArray> xv = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
+//                   return [cp intValue:x[i]];
+//                }];
+//                NSLog(@"solution: %@",xv);
+//                nbSol++;
+//            }
          }];
          ORLong endTime = [ORRuntimeMonitor cputime];
          NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);

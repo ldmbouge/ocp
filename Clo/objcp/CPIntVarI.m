@@ -1229,7 +1229,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    [_x updateMin:newMin-_b];
    [_x updateMax:newMax-_b];
-   return domBounds((CPBoundsDom*)_dom);
+   ORBounds bnd;
+   bnd = domBounds((CPBitDom*)[_x domain]);
+   bnd.min += _b;
+   bnd.max += _b;
+   return bnd;
 }
 
 -(void) bind: (ORInt) val
