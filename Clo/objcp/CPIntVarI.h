@@ -36,7 +36,7 @@ typedef struct  {
 @protocol CPIntVarNotifier<NSObject>
 -(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 -(void)      setTracksLoseEvt;
--(ORBool)    tracksLoseEvt: (id<CPDom>) sender;
+-(ORBool)    tracksLoseEvt;
 -(void)      bindEvt: (id<CPDom>) sender;
 -(void)      domEvt: (id<CPDom>) sender;
 -(void)      changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender;
@@ -195,19 +195,19 @@ typedef struct  {
 @end
 
 
-static inline BOOL tracksLoseEvt(id<CPIntVarNotifier> x,id<CPDom> sender)
+static inline BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    switch(((CPIntVar*)x)->_vc) {
       case CPVCBare: {
          CPIntVarI* y = (CPIntVarI*)x;
          if (y->_net._ac5[0]._val != nil || y->_triggers != nil)
             return YES;
-         else if (y->_recv && [y->_recv tracksLoseEvt:sender])
+         else if (y->_recv && [y->_recv tracksLoseEvt])
             return YES;
          else
             return NO;
       }
-      default: return [x tracksLoseEvt:sender];
+      default: return [x tracksLoseEvt];
    }
 }
 
@@ -339,7 +339,7 @@ static inline void removeDom(CPIntVar* x,ORInt v)
    switch (x->_vc) {
       case CPVCBare:
          //[((CPIntVarI*)x)->_dom remove:v for: (CPIntVarI*) x];
-         domRemove((CPBoundsDom*)(((CPIntVarI*)x)->_dom), v, x);
+         domRemove((CPBoundsDom*)(((CPIntVarI*)x)->_dom), v, x,tracksLoseEvt(x));
          break;
       case CPVCShift: {
          const ORInt b = ((CPIntShiftView*)x)->_b;
@@ -355,7 +355,7 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 {
    switch(x->_vc) {
       case CPVCBare:
-         [((CPIntVarI*)x)->_dom bind:v for:x];
+         [((CPIntVarI*)x)->_dom bind:v for:x tle:tracksLoseEvt(x)];
       default:
          [x bind:v];
    }
@@ -365,7 +365,7 @@ static inline ORBounds updateMinAndMaxOfDom(CPIntVar* x,ORInt lb,ORInt ub)
 {
    switch(x->_vc) {
       case CPVCBare:
-         [((CPIntVarI*)x)->_dom updateMin:lb andMax:ub for:x];
+         [((CPIntVarI*)x)->_dom updateMin:lb andMax:ub for:x tle:tracksLoseEvt(x)];
          return domBounds((CPBoundsDom*)((CPIntVarI*)x)->_dom);
       default:
          return [x updateMin:lb andMax:ub];
@@ -376,7 +376,7 @@ static inline void updateMinDom(CPIntVar* x,ORInt newMin)
 {
    switch(x->_vc) {
       case CPVCBare:
-         [((CPIntVarI*)x)->_dom updateMin:newMin for:x];
+         [((CPIntVarI*)x)->_dom updateMin:newMin for:x tle:tracksLoseEvt(x)];
          break;
       default:
          return [x updateMin:newMin];
@@ -387,7 +387,7 @@ static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
 {
    switch(x->_vc) {
       case CPVCBare:
-         [((CPIntVarI*)x)->_dom updateMax:newMax for:x];
+         [((CPIntVarI*)x)->_dom updateMax:newMax for:x tle:tracksLoseEvt(x)];
          break;
       default:
          return [x updateMax:newMax];
@@ -412,7 +412,7 @@ static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
 -(void) dealloc;
 -(CPLiterals*) findLiterals:(CPIntVar*)ref;
 -(void) addVar: (id<CPIntVarNotifier>) v;
--(ORBool) tracksLoseEvt:(id<CPDom>)sender;
+-(ORBool) tracksLoseEvt;
 -(void) setTracksLoseEvt;
 -(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 //-(void) bindEvt:(id<CPDom>)sender;

@@ -228,7 +228,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method setTracksLoseEvt not defined"];
 }
--(ORBool) tracksLoseEvt: (id<CPDom>) sender
+-(ORBool) tracksLoseEvt
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method trackLoseEvt not defined"];
 }
@@ -484,7 +484,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return s;
 }
 
--(ORBool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt
 {
    return NO;
 }
@@ -811,12 +811,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 #define TRACKSINTVAR (_net._ac5._val != nil || _triggers != nil || _recv)
 
--(ORBool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt
 {
   //return TRACKSINTVAR;
    if (_net._ac5[0]._val != nil || _triggers != nil)
       return YES;
-   else if (_recv && [_recv tracksLoseEvt:sender])
+   else if (_recv && [_recv tracksLoseEvt])
       return YES;
    else
       return NO;
@@ -1008,20 +1008,20 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) updateMin: (ORInt) newMin
 {
-   [_dom updateMin:newMin for:self];
+   [_dom updateMin:newMin for:self tle:tracksLoseEvt(self)];
 }
 -(void) updateMax: (ORInt) newMax
 {
-   [_dom updateMax:newMax for:self];
+   [_dom updateMax:newMax for:self tle:tracksLoseEvt(self)];
 }
 -(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
-   [_dom updateMin:newMin andMax:newMax for:self];
+   [_dom updateMin:newMin andMax:newMax for:self tle:tracksLoseEvt(self)];
    return domBounds((CPBoundsDom*)_dom);
 }
 -(void) bind: (ORInt) val
 {
-   [_dom bind:val for:self];
+   [_dom bind:val for:self tle:tracksLoseEvt(self)];
 }
 -(void) remove: (ORInt) val
 {
@@ -1839,7 +1839,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       _mx <<= 1;
    }
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
-   _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt:nil];
+   _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];
    _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
    _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
    _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
@@ -1906,7 +1906,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     _tracksLoseEvt = true;
 }
--(ORBool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt
 {
     return _tracksLoseEvt;
 }
@@ -1990,7 +1990,7 @@ void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender)
 {
    _tracksLoseEvt = YES;
 }
--(ORBool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt
 {
    return _tracksLoseEvt;
 }

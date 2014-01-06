@@ -382,7 +382,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(void) setTracksLoseEvt
 {
 }
--(ORBool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt
 {
    return NO;
 }
