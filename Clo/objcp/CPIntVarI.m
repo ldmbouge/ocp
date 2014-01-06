@@ -1919,8 +1919,11 @@ void bindEvt(CPMultiCast* x,id<CPDom> sender)
 }
 void domEvt(CPMultiCast* x,id<CPDom> sender)
 {
-   if (x->_literals)
-      literalDomEvt(x->_literals, sender);
+   // [ldm] This should not be necessary
+   // given that a set of loveValEvt _always_ preceeds a domEvt.
+   // only relay to views, ignore the literals!
+//   if (x->_literals)
+//      literalDomEvt(x->_literals, sender);
    for(ORInt i=0;i<x->_nb;i++)
       [x->_tab[i] domEvt:sender];
 }
