@@ -398,7 +398,7 @@ static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@interface CPMultiCast : NSObject<CPIntVarNotifier> {
+@interface CPMultiCast : NSObject {
    id<CPIntVarNotifier>* _tab;
    BOOL                  _tracksLoseEvt;
    ORInt                 _nb;
@@ -412,12 +412,21 @@ static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
 -(void) dealloc;
 -(CPLiterals*) findLiterals:(CPIntVar*)ref;
 -(void) addVar: (id<CPIntVarNotifier>) v;
--(void) bindEvt:(id<CPDom>)sender;
--(void) domEvt: (id<CPDom>)sender;
--(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
--(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender;
+-(void) setTracksLoseEvt;
+-(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
+//-(void) bindEvt:(id<CPDom>)sender;
+//-(void) domEvt: (id<CPDom>)sender;
+//-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+//-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
+
+void bindEvt(CPMultiCast* x,id<CPDom> sender);
+void domEvt(CPMultiCast* x,id<CPDom> sender);
+void changeMinEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender);
+void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender);
+
 
 @interface CPLiterals : NSObject<CPIntVarNotifier> {
    CPIntVar*     _ref;
@@ -429,6 +438,7 @@ static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
    BOOL       _tracksLoseEvt;
    IMP  _changeMaxEvtIMP;
    IMP  _changeMinEvtIMP;
+   IMP  _domEvtIMP;
 }
 -(id) initCPLiterals:(CPIntVar*)ref;
 -(void) dealloc;
@@ -441,4 +451,7 @@ static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
+
+void literalDomEvt(CPLiterals* x,id<CPDom> sender);
+
 

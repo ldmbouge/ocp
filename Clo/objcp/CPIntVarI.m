@@ -914,7 +914,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) bindEvt:(id<CPDom>) sender
 {
    if (_recv)
-      [_recv bindEvt: sender];
+      bindEvt(_recv, sender);
+//      [_recv bindEvt: sender];
 
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -937,7 +938,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) domEvt: (id<CPDom>)sender
 {
    if (_recv)
-      [_recv domEvt: sender];
+      domEvt(_recv,sender);
    id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._domEvt[0]._val;
@@ -948,7 +949,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
-   [_recv changeMinEvt:dsz sender:sender];
+   if (_recv)
+      changeMinEvt(_recv,dsz,sender);
 
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -968,7 +970,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(void) changeMaxEvt: (ORInt) dsz sender: (id<CPDom>)sender
 {
-   [_recv changeMaxEvt:dsz sender:sender];
+   if (_recv)
+      changeMaxEvt(_recv,dsz,sender);
   
    id<CPEventNode> mList[6];
    id<CPEventNode>* ptr = mList;
@@ -1742,7 +1745,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void) domEvt:(id<CPDom>)sender
 {
-   [super domEvt:sender];
+   BOOL isb = bound(_secondary) || !memberDom(_secondary, _v);
+   // [ldm]
+   // There is no "dom Evt" to speak of in the literal view if the literal view is not
+   // bound (the evt of the secondary must "disappear" in that case.
+   if (isb)
+      [super domEvt:sender];
 }
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
@@ -1857,17 +1865,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    // PVH: End of sanity check
 }
 
-//-(NSMutableSet*) constraints
-//{
-//   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
-//   for(ORInt i=0;i<_nb;i++) {
-//      NSMutableSet* ti = [_tab[i] constraints];
-//      [rv unionSet:ti];
-//      [ti release];
-//   }
-//   return rv;
-//}
-
 -(CPLiterals*) findLiterals: (CPIntVar*) ref
 {
    if (_literals)
@@ -1913,39 +1910,36 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     return _tracksLoseEvt;
 }
--(void) bindEvt:(id<CPDom>)sender
+void bindEvt(CPMultiCast* x,id<CPDom> sender)
 {
-   if (_literals)
-      [_literals bindEvt: sender];
-   for(ORInt i=0;i<_nb;i++) {
-       [_tab[i] bindEvt:sender];
-   }
+   if (x->_literals)
+      [x->_literals bindEvt: sender];
+   for(ORInt i=0;i<x->_nb;i++)
+       [x->_tab[i] bindEvt:sender];
 }
--(void) domEvt:(id<CPDom>)sender
+void domEvt(CPMultiCast* x,id<CPDom> sender)
 {
-   if (_literals)
-      [_literals domEvt:sender];
-   for(ORInt i=0;i<_nb;i++)
-      [_tab[i] domEvt:sender];
+   if (x->_literals)
+      literalDomEvt(x->_literals, sender);
+   for(ORInt i=0;i<x->_nb;i++)
+      [x->_tab[i] domEvt:sender];
 }
 
--(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
+void changeMinEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender)
 {
-   if (_literals)
-      [_literals changeMinEvt: dsz sender: sender];
+   if (x->_literals)
+      [x->_literals changeMinEvt: dsz sender: sender];
    SEL ms = @selector(changeMinEvt:sender:);
-   for(ORInt i=0;i<_nb;i++) {
-      _minIMP[i](_tab[i],ms,dsz,sender);
-   }
+   for(ORInt i=0;i<x->_nb;i++)
+      x->_minIMP[i](x->_tab[i],ms,dsz,sender);
 }
--(void) changeMaxEvt:(ORInt)dsz sender: (id<CPDom>) sender
+void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender)
 {
-   if (_literals)
-      [_literals changeMaxEvt: dsz sender: sender];
+   if (x->_literals)
+      [x->_literals changeMaxEvt: dsz sender: sender];
    SEL ms = @selector(changeMaxEvt:sender:);
-   for(ORInt i=0;i<_nb;i++) {
-      _maxIMP[i](_tab[i],ms,dsz,sender);
-   }
+   for(ORInt i=0;i<x->_nb;i++)
+      x->_maxIMP[i](x->_tab[i],ms,dsz,sender);
 }
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
@@ -1976,6 +1970,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _tracksLoseEvt = NO;
    _changeMaxEvtIMP = [CPEQLitView instanceMethodForSelector:@selector(changeMaxEvt:sender:)];
    _changeMinEvtIMP = [CPEQLitView instanceMethodForSelector:@selector(changeMinEvt:sender:)];
+   _domEvtIMP       = [CPEQLitView instanceMethodForSelector:@selector(domEvt:)];
    return self;
 }
 -(void) dealloc
@@ -2016,10 +2011,20 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    assignTRInt(&_b,_a._val, [[_ref engine] trail]);
 }
+void literalDomEvt(CPLiterals* x,id<CPDom> sender)
+{
+   SEL dSEL = @selector(domEvt:);
+   for(ORInt i=x->_a._val;i < x->_b._val;i++)
+      if (x->_pos[i])
+         x->_domEvtIMP(x->_pos[i],dSEL,sender);
+}
 -(void) domEvt:(id<CPDom>)sender
 {
+   SEL dSEL = @selector(domEvt:);
    for(ORInt i=_a._val;i <_b._val;i++) {
-      [_pos[i] domEvt:sender];
+      if (_pos[i])
+         _domEvtIMP(_pos[i],dSEL,sender);
+//      [_pos[i] domEvt:sender];
    }
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
