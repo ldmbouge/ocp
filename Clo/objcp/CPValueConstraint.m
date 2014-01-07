@@ -576,10 +576,10 @@
    } else {
       if (maxDom(_x) <= minDom(_y)) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:YES];
+         bindDom(_b,YES);
       } else if (minDom(_x) > maxDom(_y)) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:NO];
+         bindDom(_b,NO);
       }
    }
 }

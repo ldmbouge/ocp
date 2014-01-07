@@ -977,24 +977,24 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRI
       if (bVal) {
          if (maxDom(_x)==0) {
             assignTRInt(&_active, NO, _trail);
-            [_y bind:TRUE];
+            bindDom(_y,TRUE);
          }
          else if (maxDom(_y)==0) {
             assignTRInt(&_active, NO, _trail);
-            [_x bind:TRUE];
+            bindDom(_x,TRUE);
          }
       } else {
          assignTRInt(&_active, NO, _trail);
-         [_x bind:NO];
-         [_y bind:NO];
+         bindDom(_x,NO);
+         bindDom(_y,NO);
       }
    } else {
       if (bound(_x) && bound(_y)) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:minDom(_x) || minDom(_y)];
+         bindDom(_b,minDom(_x) || minDom(_y));
       } else if (minDom(_x)>0 || minDom(_y)>0) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:TRUE];
+         bindDom(_b,TRUE);
       }
    }
 }
@@ -1036,26 +1036,26 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRI
    if (bb.min == bb.max) {
       if (bb.min) {
          assignTRInt(&_active, NO, _trail);
-         [_x bind:TRUE];
-         [_y bind:TRUE];
+         bindDom(_x,TRUE);
+         bindDom(_y,TRUE);
       } else {
          if (minDom(_x)==1) {
             assignTRInt(&_active, NO, _trail);
-            [_y bind:FALSE];
+            bindDom(_y,FALSE);
          }
          else if (minDom(_y)==1) {
             assignTRInt(&_active, NO, _trail);
-            [_x bind:FALSE];
+            bindDom(_x,FALSE);
          }
       }
    } else {
       ORBounds bx = bounds(_x),by = bounds(_y);
       if (bx.min==bx.max && by.min==by.max) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:bx.min && by.min];
+         bindDom(_b,bx.min && by.min);
       } else if (bx.max==0 || by.max==0) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:FALSE];
+         bindDom(_b,FALSE);
       }
    }
 }

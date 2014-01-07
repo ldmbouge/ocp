@@ -294,16 +294,15 @@ static inline ORBounds bounds(CPIntVar* x)
          ORInt    c =((CPIntShiftView*)x)->_b;
          return (ORBounds){b.min + c,b.max + c};
       }
-         /*
-          case CPVCAffine: {
-          ORBounds b = bounds(((CPIntView*)x)->_x);
-          ORInt fmin = b.min * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
-          ORInt fmax = b.max * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
-          if (((CPIntView*)x)->_a > 0)
-          return (ORBounds){fmin,fmax};
-          else
-          return (ORBounds){fmax,fmin};
-          }*/
+      case CPVCAffine: {
+         ORBounds b = bounds(((CPIntView*)x)->_x);
+         ORInt fmin = b.min * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+         ORInt fmax = b.max * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+         if (((CPIntView*)x)->_a > 0)
+            return (ORBounds){fmin,fmax};
+         else
+            return (ORBounds){fmax,fmin};
+      }
       case CPVCCst: {
          ORInt v = ((CPIntVarCst*) x)->_value;
          return (ORBounds){v,v};
@@ -356,6 +355,7 @@ static inline void bindDom(CPIntVar* x,ORInt v)
    switch(x->_vc) {
       case CPVCBare:
          [((CPIntVarI*)x)->_dom bind:v for:x tle:tracksLoseEvt(x)];
+         break;
       default:
          [x bind:v];
    }
