@@ -78,14 +78,15 @@ int main(int argc, const char * argv[])
          //NSLog(@"MODEL: %@",mdl);
 
          [cp solve: ^{
-            [cp labelHeuristic:h];
-            @autoreleasepool {
-               NSMutableString* b = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-               [b appendString:@"["];
-               for(ORInt i=0;i<=n-1;i++)
-                  [b appendFormat:@"%d%c",[cp intValue:x[i]],i < n-1 ? ',' : ']'];
-               NSLog(@"sol: %@ obj = %@  <-- %d",b,[[cp objective] value],[NSThread threadID]);
-            }
+            //[cp labelHeuristic:h];
+            [cp labelArrayFF:x];
+//            @autoreleasepool {
+//               NSMutableString* b = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+//               [b appendString:@"["];
+//               for(ORInt i=0;i<=n-1;i++)
+//                  [b appendFormat:@"%d%c",[cp intValue:x[i]],i < n-1 ? ',' : ']'];
+//               NSLog(@"sol: %@ obj = %@  <-- %d",b,[[cp objective] value],[NSThread threadID]);
+//            }
          }];
          id<ORCPSolution> sol = [[cp solutionPool] best];
          assert(sol);
