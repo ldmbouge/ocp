@@ -14,6 +14,16 @@
 
 #import "ORCmdLineArgs.h"
 
+
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}
+
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -62,24 +72,47 @@ int main(int argc, const char * argv[])
          id<ORIntRange> N = RANGE(mdl,0,n-1);
          
          id<ORIntVarArray> x = All(mdl,ORIntVar, i, N, [ORFactory intVar:mdl domain:RANGE(mdl,0,1)]);
-//         id<ORIntVar> obj = [ORFactory intVar:mdl domain:RANGE(mdl,0,sp)];
-//         [mdl add: [Sum(mdl,i, N, [x[i] muli:p[i]]) eq: obj]];
          for(int i=0;i<m;i++) {
-            //[mdl add:[Sum(mdl,j,N,[x[j] mul:@(r[i][j])]) leq:@(b[i])]];
-
             id<ORIntArray> w = [ORFactory intArray:mdl range:N with:^ORInt(ORInt j) {return r[i][j];}];
             id<ORIntVar>   c = [ORFactory intVar:mdl domain:RANGE(mdl,0,b[i])];
             [mdl add:[ORFactory knapsack:x weight:w capacity:c]];
-
          }
          [mdl maximize: Sum(mdl,i, N, [x[i] mul: @(p[i])])];
          id<CPProgram> cp  = [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          //NSLog(@"MODEL: %@",mdl);
 
          [cp solve: ^{
             //[cp labelHeuristic:h];
-            [cp labelArrayFF:x];
+            //[cp labelArrayFF:x];
+            //[cp labelArray:x];
+            
+            for(ORInt k=0;k<n;k++) {
+               int i = -1;
+               int bs = 10000000;
+               for(ORInt j=0;j<n;j++) {
+                  if ([cp bound:x[j]])
+                     continue;
+                  if ([cp domsize:x[j]] < bs) {
+                     bs = [cp domsize:x[j]];
+                     i  = j;
+                  }
+               }
+               while (i >= 0 && ![cp bound:x[i]]) {
+                  ORInt v = [cp min:x[i]];
+                  [cp try:^{
+                     //NSLog(@"%@?x(%d)==%d",tab(i),i,v);
+                     [cp label:x[i] with:v];
+                     //NSLog(@"%@+x(%d)==%d \tC:%d",tab(i),i,v,[[cp explorer] nbChoices]);
+                  } or:^{
+                     //NSLog(@"%@?x(%d)!=%d ",tab(i),i,v);
+                     [cp diff:x[i] with:v];
+                     //NSLog(@"%@+x(%d)!=%d \tC:%d",tab(i),i,v,[[cp explorer] nbChoices]);
+                  }];
+               }
+            }
+
+            
 //            @autoreleasepool {
 //               NSMutableString* b = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
 //               [b appendString:@"["];
