@@ -10,15 +10,17 @@ import csv
 #  bench qArgument	nArgument	parallel (0/1)	heuristic [0|1|2|3|4]
 
 ab = [
-#('sport',0,0,0,0,0,lambda x : x + 1),
+#      ('sport',0,0,0,0,0,lambda x : x + 1),
 #      ('progressive',1,9,0,0,1,lambda x : x + 1),
-      ('slab',0,0,0,0,0,lambda x : x + 1),
-      ('slabLNSModel',0,0,0,0,0,lambda x : x + 1),
-      ('perfect',0,0,0,0,0,lambda x : x + 1),
-      ('knapsackOpt',3,0,0,0,3,lambda x : x + 1),
-      ('latinSquare',8,0,0,0,8,lambda x : x + 1),
-      ('golomb',8,0,0,0,13,lambda x : x + 1)
+#      ('slab',0,0,0,0,0,lambda x : x + 1),
+#      ('slabLNSModel',0,0,0,0,0,lambda x : x + 1),
+#      ('perfect',0,0,0,0,0,lambda x : x + 1),
+#      ('knapsackOpt',1,0,0,0,4,lambda x : x + 1),
+#      ('golomb',8,0,0,0,13,lambda x : x + 1)
+	('order2',8,0,0,0,512,lambda x : x * 2)
   ]
+
+#      ('latinSquare',8,0,0,0,8,lambda x : x + 1),
 
 # ab = [('magicserie',8,0,0,0,2048,lambda x : x * 2),
 #       ('magicseriesModel',8,0,0,0,256,lambda x : x * 2)]

@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/cont.h>
+#import <ORUtilities/cont.h>
 
 @implementation ORHeist
 -(ORHeist*)initORHeist:(NSCont*)c from:(id<ORCheckpoint>)cp

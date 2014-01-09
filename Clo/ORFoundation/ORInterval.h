@@ -11,10 +11,8 @@
 
 
 #import <ORUtilities/ORTypes.h>
-#import <Foundation/Foundation.h>
 
 #include "emmintrin.h"
-#include "smmintrin.h"
 #include <float.h>
 
 #pragma clang diagnostic push 
@@ -104,10 +102,9 @@ static inline double ORIWidth(ORInterval a)
    _mm_storeu_pd(b, _mm_xor_pd(d,FLIP));    // fetch the bounds
    return b[0];                             // return up
 }
-static inline ORInterval ORIFloor(ORInterval a)
-{
-   return _mm_floor_pd(a);
-}
+
+ORInterval ORIFloor(ORInterval a);
+
 static inline bool ORIEqual(ORInterval a,ORInterval b)
 {
    ORInterval c = _mm_cmpeq_pd(a, b);

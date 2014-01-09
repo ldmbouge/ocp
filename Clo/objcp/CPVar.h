@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORInterval.h>
 #import <objcp/CPData.h>
 #import <CPUKernel/CPTrigger.h>
 

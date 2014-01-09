@@ -144,6 +144,11 @@
 			<key>orderHint</key>
 			<integer>65</integer>
 		</dict>
+		<key>bugTest.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>80</integer>
+		</dict>
 		<key>bugTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -358,6 +363,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>49</integer>
+		</dict>
+		<key>order2.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>81</integer>
 		</dict>
 		<key>paq.xcscheme_^#shared#^_</key>
 		<dict>
@@ -693,6 +703,11 @@
 			<true/>
 		</dict>
 		<key>5B7B476915F0E4AD005FF875</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B7C894E187F455F00D82789</key>
 		<dict>
 			<key>primary</key>
 			<true/>
