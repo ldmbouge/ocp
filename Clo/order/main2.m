@@ -22,7 +22,7 @@ int main(int argc, const char * argv[])
          ORLong startTime = [ORRuntimeMonitor cputime];
          id<ORModel> model = [ORFactory createModel];
          ORInt n = [args size];
-	 ORInt ubd = 8191;
+         ORInt ubd = 8191;
          id<ORIntRange> D = RANGE(model,0,n);
          id<ORIntRange> D2 = RANGE(model,0,ubd);
          id<ORIntRange> D3 = RANGE(model,0,ubd - n);

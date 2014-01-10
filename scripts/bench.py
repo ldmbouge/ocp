@@ -16,8 +16,9 @@ ab = [
 #      ('slabLNSModel',0,0,0,0,0,lambda x : x + 1),
 #      ('perfect',0,0,0,0,0,lambda x : x + 1),
 #      ('knapsackOpt',1,0,0,0,4,lambda x : x + 1),
-#      ('golomb',8,0,0,0,13,lambda x : x + 1)
-	('order2',8,0,0,0,512,lambda x : x * 2)
+#      ('golomb',8,0,0,0,13,lambda x : x + 1),
+#	('order2',8,0,0,0,4096,lambda x : x * 2),
+	('order',8,0,0,0,8192,lambda x : x * 2)
   ]
 
 #      ('latinSquare',8,0,0,0,8,lambda x : x + 1),

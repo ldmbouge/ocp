@@ -367,25 +367,25 @@ static inline int countFrom(CPBitDom* dom,ORInt from,ORInt to)
       bits = dom->_bits[fw] & wm;
       nc += __builtin_popcount(bits);
    }
-   /*
-   fw = from >> 5;
-   tw = to >> 5;
-   fb = from & 0x1f;
-   tb = to & 0x1f;
-   int cnt = 0;
-   ORUInt mask = 0x1 << fb;
-   while (fw != tw || fb != tb) {
-      cnt += ((dom->_bits[fw] & mask)!=0);
-      mask <<= 1;
-      ++fb;
-      if (mask==0) {
-         ++fw;
-         fb   = 0;
-         mask = 0x1;
-      }
-   }
-   assert(nc == cnt);
-   return cnt;   */
+//
+//   fw = from >> 5;
+//   tw = to >> 5;
+//   fb = from & 0x1f;
+//   tb = to & 0x1f;
+//   int cnt = 0;
+//   ORUInt mask = 0x1 << fb;
+//   while (fw != tw || fb != tb) {
+//      cnt += ((dom->_bits[fw] & mask)!=0);
+//      mask <<= 1;
+//      ++fb;
+//      if (mask==0) {
+//         ++fw;
+//         fb   = 0;
+//         mask = 0x1;
+//      }
+//   }
+//   assert(nc == cnt);
+//   return cnt;
    return nc;
 }
 
@@ -598,11 +598,13 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    if (newMin > _max._val)
       failNow();
    ORInt oldMin = _min._val;
-   int nbr = countFrom(self,_min._val,newMin-1);
+   BOOL compact = _max._val - _min._val + 1 == _sz._val;
+   int nbr = compact ? newMin - _min._val : countFrom(self,_min._val,newMin-1);
    // need to send AC5 notifications still
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
-   newMin = findMin(self,newMin);
+   if (!compact)
+      newMin = findMin(self,newMin);
    assignTRInt(&_min, newMin, _trail);
 
    if (tle) {
@@ -620,10 +622,12 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    if (newMax < _min._val)
       failNow();
    ORInt oldMax = _max._val;
-   ORInt nbr = countFrom(self,newMax+1,_max._val);
+   BOOL compact = _max._val - _min._val + 1 == _sz._val;
+   ORInt nbr = compact ? _max._val - newMax : countFrom(self,newMax+1,_max._val);
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
-   newMax = findMax(self,newMax);
+   if (!compact)
+      newMax = findMax(self,newMax);
    assignTRInt(&_max, newMax, _trail);
 
    if (tle) {
@@ -638,12 +642,14 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 {
    if (newMin > _max._val || newMax < _min._val || newMax < newMin)
       failNow();
+   BOOL compact = _max._val - _min._val + 1 == _sz._val;
    if (newMin > _min._val) {
       ORInt oldMin = _min._val;
-      int nbr = countFrom(self,_min._val,newMin-1);
+      int nbr = compact ? newMin - _min._val : countFrom(self,_min._val,newMin-1);
       ORInt nsz = _sz._val - nbr;
       assignTRInt(&_sz, nsz, _trail);
-      newMin = findMin(self,newMin);
+      if (!compact)
+         newMin = findMin(self,newMin);
       assignTRInt(&_min, newMin, _trail);
       
       if (tle) {
@@ -657,10 +663,11 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       failNow();
    if (newMax < _max._val)  {
       ORInt oldMax = _max._val;
-      ORInt nbr = countFrom(self,newMax+1,_max._val);
+      ORInt nbr = compact ? _max._val - newMax : countFrom(self,newMax+1,_max._val);
       ORInt nsz = _sz._val - nbr;
       assignTRInt(&_sz, nsz, _trail);
-      newMax = findMax(self,newMax);
+      if (!compact)
+         newMax = findMax(self,newMax);
       assignTRInt(&_max, newMax, _trail);
       
       if (tle) {
