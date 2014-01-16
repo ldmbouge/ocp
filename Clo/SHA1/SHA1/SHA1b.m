@@ -227,7 +227,7 @@
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
-   id<ORBasicModel> model = [engine model];
+//   id<ORBasicModel> model = [engine model];
    //<<<<<<< HEAD
    //CPBitVarFF
    __block id* gamma = [cp gamma];
@@ -260,7 +260,7 @@
          //      default:
          //         break;
    }
-   __block ORUInt maxFail = 0x0000000000000600;
+//   __block ORUInt maxFail = 0x0000000000000600;
 
    [cp solve: ^{
 //      NSLog(@"All variables before search:");
