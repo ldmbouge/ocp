@@ -93,7 +93,8 @@
             mask >>= 1;
          }
       else{
-         int remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;            
+         int remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
+         mask >>= 32 - remainingbits;
          for (int j=0; j<remainingbits; j++){
             if ((mask & boundLow) !=0) 
                [string appendString: @"0"];
@@ -118,7 +119,7 @@
 -(ORULong) numPatterns
 {
    //   [self updateFreeBitCount];
-   ORULong dSize = 0x00000001;
+   ORULong dSize = 0x0000000000000001;
    dSize <<= _freebits._val;
    return dSize;
    
@@ -224,6 +225,8 @@
       bool theBit = _low[WORDIDX(idx)]._val  & ONEAT(idx);
       if (theBit ^ val)
          failNow();
+      else
+         return ORSuspend;
    }
    [self updateFreeBitCount];
    [x bitFixedEvt:_freebits._val sender:self];

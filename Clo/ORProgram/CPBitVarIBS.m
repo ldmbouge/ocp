@@ -335,7 +335,7 @@
       ORInt mid = low + (up - low)/2;
       id<ORTracer> tracer = [_cp tracer];
       [tracer pushNode];
-      ORStatus s1 = [_engine enforce:^ORStatus { return [x updateMax:mid];}]; //  lthen:x with:mid+1];
+      ORStatus s1 = [_engine enforce:^{  [x updateMax:mid];}]; //  lthen:x with:mid+1];
       [ORConcurrency pumpEvents];
       if (s1!=ORFailure) {
          [self dichotomize:x from:low to:mid block:b sac:set];
@@ -345,7 +345,7 @@
       }
       [tracer popNode];
       [tracer pushNode];
-      ORStatus s2 = [_engine enforce: ^ORStatus { return [x updateMin:mid+1];}];// gthen:x with:mid];
+      ORStatus s2 = [_engine enforce: ^void { [x updateMin:mid+1];}];// gthen:x with:mid];
       [ORConcurrency pumpEvents];
       if (s2!=ORFailure) {
          [self dichotomize:x from:mid+1 to:up block:b sac:set];
@@ -373,7 +373,7 @@
       if ([x isFree:b]){
       //cout << "var:" << x.getId() << ",bit:" << b  << endl;
          [tracer pushNode];
-         ORStatus oc = [_engine enforce:^ORStatus{ return[x bind:b to:true];}];
+         ORStatus oc = [_engine enforce:^void{ [x bind:b to:true];}];
          [ORConcurrency pumpEvents];
          if (oc != ORFailure) {
             double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
@@ -390,7 +390,7 @@
          }
          if (![x isFree:b]) continue;
          [tracer pushNode];
-         oc = [_engine enforce:^ORStatus{ return[x bind:b to:false];}];
+         oc = [_engine enforce:^void{ [x bind:b to:false];}];
          [ORConcurrency pumpEvents];
          if (oc!=ORFailure) {
             double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
@@ -428,12 +428,12 @@
       ORInt lastRank = (ORInt)[sacs count]-1;
       for(CPBitVarKillRange* kr in sacs) {
          if (rank == 0 && [kr low] == [v min]) {
-            [_engine enforce: ^ORStatus { return [v lsFreeBit];}];  // gthen:v with:[kr up]];
+            [_engine enforce: ^void  {[v lsFreeBit];}];  // gthen:v with:[kr up]];
          } else if (rank == lastRank && [kr up] == [v max]) {
-            [_engine enforce: ^ORStatus { return [v msFreeBit];}]; // lthen:v with:[kr low]];
+            [_engine enforce: ^void { [v msFreeBit];}]; // lthen:v with:[kr low]];
          } else {
             for(ORInt i=[kr low];i <= [kr up];i++)
-               [_engine enforce: ^ORStatus { return [v remove:i];}];// diff:v with:i];
+               [_engine enforce: ^void { [v remove:i];}];// diff:v with:i];
          }
          rank++;
       }

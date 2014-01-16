@@ -113,7 +113,12 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    [[x engine] trackMutable:o];
    return o;
 }
-
++(id<CPConstraint>) bitCount:(id<CPBitVar>)x count:(id<CPIntVar>)p
+{
+   id<CPConstraint> o = [[CPBitCount alloc] initCPBitCount:(CPBitVarI*)x count:(CPIntVarI*)p];
+   [[x engine] trackMutable:o];
+   return o;
+}
 @end
 
 @implementation CPBitEqual
@@ -1640,4 +1645,101 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 }
 @end
 
+@implementation CPBitCount
+
+-(id) initCPBitCount:(CPBitVarI*) x count:(CPIntVarI*) p
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _p = p;
+   return self;
+}
+
+- (void) dealloc
+{
+   [super dealloc];
+}
+
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_x bound] || ![_p bound]) {
+      [_x whenChangePropagate: self];
+      [_p whenChangePropagate: self];
+   }
+   [self propagate];
+   return ORSuspend;
+}
+
+-(void) propagate
+{
+#ifdef BIT_DEBUG
+   NSLog(@"Bit Count Constraint propagated.");
+#endif
+   
+   unsigned int wordLength = [_x getWordLength];
+   
+   TRUInt* xLow;
+   TRUInt* xUp;
+   ORInt pLow;
+   ORInt pUp;
+   
+   [_x getUp:&xUp andLow:&xLow];
+   pLow = [_p min];
+   pUp = [_p max];
+   
+   unsigned int* up = alloca(sizeof(unsigned int)*wordLength);
+   unsigned int* low = alloca(sizeof(unsigned int)*wordLength);
+   unsigned int  upXORlow;
+   bool    inconsistencyFound = false;
+   
+//   unsigned int* setUp = alloca(sizeof(unsigned int)*wordLength);
+//   unsigned int* freeBits = alloca(sizeof(unsigned int)*wordLength);
+   
+   ORInt xPopcount = 0;
+   ORInt xFreebits = 0;
+   
+   for(int i=0;i<wordLength;i++){
+      up[i] = xUp[i]._val;
+      low[i] = xLow[i]._val;
+      xPopcount += __builtin_popcount(low[i]);
+      xFreebits += __builtin_popcount(up[i] ^ low[i]);
+   }
+   //Consistency Check
+   if((pLow > (xFreebits + xPopcount)) || (pUp < xPopcount))
+      failNow();
+   
+   //Shrink domain of _p if possible
+   if(pUp > (xPopcount+xFreebits))
+      pUp = xPopcount+xFreebits;
+   if(pLow < xPopcount)
+      pLow =  xPopcount;
+   
+   //set or clear unbound bits in _x if possible
+   //   If
+   if ((xFreebits + xPopcount) == pLow) {
+      if (![_p bound])
+         [_p bind:pLow];
+      for (int i=0; i<wordLength; i++)
+         low[i] = up[i];
+   }
+   if(xPopcount == pUp){
+      if(![_p bound])
+         [_p bind:pUp];
+      for (int i=0; i<wordLength; i++)
+         up[i] = low[i];
+   }
+   
+   //domain consistency check on _x
+   for (int i=0; i<wordLength; i++) {
+      upXORlow = up[i] ^ low[i];
+      inconsistencyFound |= (upXORlow&(~up[i]))&(upXORlow & low[i]);
+   }
+   if (inconsistencyFound)
+      failNow();
+   
+   //set _x and _p to new values
+   [_x setUp:up andLow:low];
+}
+@end
 

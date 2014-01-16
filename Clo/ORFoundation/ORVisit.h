@@ -153,6 +153,7 @@
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
+-(void) visitBitCount:(id<ORBitCount>)cstr;
 @end
 
 @interface ORNOopVisit : ORVisitor

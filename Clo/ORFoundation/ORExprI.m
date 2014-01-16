@@ -142,6 +142,7 @@
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
+-(void) visitBitCount:(id<ORBitCount>)cstr;
 @end
 
 @implementation ORSweep
@@ -350,6 +351,12 @@
    [[c equals] visit:self];
    [[c zeroIfXEquals] visit:self];
 }
+-(void) visitBitCount:(id<ORBitCount>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+
 @end
 
 

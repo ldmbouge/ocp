@@ -1143,4 +1143,261 @@ char *int2bin(int a, char *buffer, int buf_size) {
    NSLog(@"End testing bitwise IF constraint.\n");
 }
 
+-(void) testCountConstraint
+{
+   NSLog(@"Begin testing bit Count (popcount) constraint\n");
+
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0x00000000;
+   max[0] = 0xFFFFFFFF;
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORIntRange> r = [ORFactory intRange:m low:0 up:32];
+   id<ORIntVar> p = [ORFactory intVar:m domain:r];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"p = %@\n", p);
+   
+   [m add:[ORFactory bit:x count:p]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:0]];
+   [o set:gamma[x.getId] at:0];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End testing bit Count (popcount) constraint.\n");
+   
+}
+
+-(void) testCountConstraint1
+{
+   NSLog(@"Begin Test1 of bit Count (popcount) constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0xAAAAAAAA;
+   max[0] = 0xAAAAAAAA;
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORIntRange> r = [ORFactory intRange:m low:0 up:32];
+   id<ORIntVar> p = [ORFactory intVar:m domain:r];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"p = %@\n", p);
+   
+   [m add:[ORFactory bit:x count:p]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:0]];
+   [o set:gamma[x.getId] at:0];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test 1 of bit Count (popcount) constraint.\n");
+   
+}
+
+-(void) testCountConstraint2
+{
+   NSLog(@"Begin Test 2 of bit Count (popcount) constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0x00000000;
+   max[0] = 0xFFFFFFFF;
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORIntRange> r = [ORFactory intRange:m low:16 up:16];
+   id<ORIntVar> p = [ORFactory intVar:m domain:r];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"p = %@\n", p);
+   
+   [m add:[ORFactory bit:x count:p]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:0]];
+   [o set:gamma[x.getId] at:0];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test 2 of bit Count (popcount) constraint.\n");
+   
+}
+
+-(void) testCountConstraint3
+{
+   NSLog(@"Begin Test 3 of bit Count (popcount) constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0xAAAAAAAA;
+   max[0] = 0xFFFFFFFF;
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORIntRange> r = [ORFactory intRange:m low:32 up:32];
+   id<ORIntVar> p = [ORFactory intVar:m domain:r];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"p = %@\n", p);
+   
+   [m add:[ORFactory bit:x count:p]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:0]];
+   [o set:gamma[x.getId] at:0];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test 3 of bit Count (popcount) constraint.\n");
+   
+}
+-(void) testCountConstraint4
+{
+   NSLog(@"Begin Test 4 of bit Count (popcount) constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0xAAAAAAAA;
+   max[0] = 0xFFFFFFFF;
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORIntRange> r = [ORFactory intRange:m low:16 up:16];
+   id<ORIntVar> p = [ORFactory intVar:m domain:r];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"p = %@\n", p);
+   
+   [m add:[ORFactory bit:x count:p]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:0]];
+   [o set:gamma[x.getId] at:0];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test 4 of bit Count (popcount) constraint.\n");
+   
+}
+-(void) testCountConstraint5
+{
+   NSLog(@"Begin Test 5 of bit Count (popcount) constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0xAAAAAAAA;
+   max[0] = 0xFFFFFFFF;
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORIntRange> r = [ORFactory intRange:m low:0 up:32];
+   id<ORIntVar> p = [ORFactory intVar:m domain:r];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"p = %@\n", p);
+   
+   [m add:[ORFactory bit:x count:p]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:0]];
+   [o set:gamma[x.getId] at:0];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"p = %@\n", gamma[p.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test 5 of bit Count (popcount) constraint.\n");
+   
+}
+
 @end
+

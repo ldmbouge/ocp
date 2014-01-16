@@ -61,12 +61,12 @@
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolutionPool>) globalSolutionPool;
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
--(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+//-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation*)n;
+//-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
+//-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
+//-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
+//-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
+//-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 -(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
 -(id<ORCPSolution>) captureSolution;

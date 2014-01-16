@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPConstraint.h>
 #import "CPBitVarI.h"
+#import <objcp/CPIntVarI.h>
 #import <CPUKernel/CPConstraintI.h>
 
 #define UP_MASK 0xFFFFFFFF
@@ -27,6 +28,7 @@
 +(id<CPConstraint>) bitRotateL:(id<CPBitVar>)x by:(int) p equals:(id<CPBitVar>) y;
 +(id<CPConstraint>) bitADD:(id<CPBitVar>)x plus:(id<CPBitVar>) y withCarryIn:(id<CPBitVar>) cin equals:(id<CPBitVar>) z withCarryOut:(id<CPBitVar>) cout;
 +(id<CPConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
++(id<CPConstraint>) bitCount:(id<CPBitVar>)x count:(id<CPIntVar>)y;
 @end
 
 @interface CPBitEqual : CPCoreConstraint {
@@ -152,5 +154,16 @@
 -(void) propagate;
 @end
 
+//TODO:Add CPBitIF
 
+@interface CPBitCount : CPCoreConstraint {
+@private
+   CPBitVarI*  _x;
+   CPIntVarI*  _p;
+}
+-(id) initCPBitCount: (CPBitVarI*) x count: (CPIntVarI*) p ;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+@end
 

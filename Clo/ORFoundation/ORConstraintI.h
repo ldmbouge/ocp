@@ -587,3 +587,9 @@
 -(id<ORBitVar>) equals;
 -(id<ORBitVar>) zeroIfXEquals;
 @end
+
+@interface ORBitCount : ORConstraintI<ORBitCount>
+-(ORBitCount*)initORBitCount: (id<ORBitVar>) x count:(id<ORIntVar>)p;
+-(id<ORBitVar>) left;
+-(id<ORIntVar>) right;
+@end

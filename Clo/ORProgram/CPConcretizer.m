@@ -1059,6 +1059,16 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitBitCount:(id<ORBitCount>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPIntVar> p = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory bitCount:x count:p];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 
 -(void) visitIntegerI: (id<ORInteger>) e
 {}

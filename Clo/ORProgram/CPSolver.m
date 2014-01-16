@@ -953,8 +953,8 @@
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
       CPIntVar* xi = _gamma[getId(x[i])];
-      while (!bound(xi)) { 
-         ORInt m = minDom(xi);
+      while ([xi bound]) {
+         ORInt m = [xi min];
          [_search try: ^{ [self labelImpl: xi with: m]; }
                    or: ^{ [self  diffImpl: xi with: m]; }
           ];

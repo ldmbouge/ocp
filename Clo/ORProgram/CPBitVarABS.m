@@ -728,7 +728,7 @@
                NSAssert([xi isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", xi, [[CPBitVarI class] description]);
                ORUInt idx = [xi randomFreeBit]; //randomize
                ORBool v = arc4random_uniform(2)==0;
-               ORStatus s = [_solver enforce: ^ORStatus { return [(id<CPBitVar>)xi bind:idx to:v];}];
+               ORStatus s = [_solver enforce: ^{[(id<CPBitVar>)xi bind:idx to:v];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {
@@ -769,7 +769,7 @@
          for(ABSBitVarNogood* b in localKill) {
             
             //TODO:For BitVars we can just bind the bit to  the opposite value
-            [_solver enforce: ^ORStatus { return [[b variable] bind:[b index] to:![b value]];}];
+            [_solver enforce: ^{[[b variable] bind:[b index] to:![b value]];}];
             //NSLog(@"Imposing local SAC %@",b);
          }
          [localKill removeAllObjects];
@@ -777,12 +777,11 @@
       carryOn = [self moreProbes];
    } while (carryOn && cntProbes < maxProbes);
    
-   [_solver atomic:^ORStatus {
+   [_solver atomic:^{
       NSLog(@"Imposing %ld SAC constraints",[killSet count]);
       for(ABSBitVarNogood* b in killSet) {
-         [_solver enforce: ^ORStatus { return [[b variable] bind:[b index] to:![b value]];}];
+         [_solver enforce: ^{[[b variable] bind:[b index] to:![b value]];}];
       }
-      return ORSuspend;
    }];
    
    NSLog(@"Done probing (%d / %u)...",cntProbes,maxProbes);

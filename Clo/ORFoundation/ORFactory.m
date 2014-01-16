@@ -1284,4 +1284,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker]trackObject:o];
    return o;
 }
++(id<ORConstraint>) bit:(id<ORBitVar>)x count:(id<ORIntVar>)p
+{
+   id<ORConstraint> o = [[ORBitCount alloc] initORBitCount:x count:p];
+   [[x tracker]trackObject:o];
+   return o;
+}
 @end

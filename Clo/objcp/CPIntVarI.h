@@ -363,3 +363,4 @@ static inline void bindDom(CPIntVar* x,ORInt v)
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
+

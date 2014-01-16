@@ -509,6 +509,11 @@ enum ORGroupType {
 -(id<ORBitVar>) zeroIfXEquals;
 @end
 
+@protocol  ORBitCount <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORIntVar>) right;
+@end
+
 // Root implementation class (needed so that sub-frameworks can write constraints)
 
 @interface ORConstraintI : ORObject<ORConstraint,NSCoding>

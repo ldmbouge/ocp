@@ -424,6 +424,10 @@
 {
    _result = c;
 }
+-(void) visitBitCount:(id<ORBitCount>)c
+{
+   _result = c;
+}
 
 // Flattening of constraints ============================================================================
 

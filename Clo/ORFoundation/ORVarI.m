@@ -458,7 +458,7 @@
    return ORTBit;
 }
 
--(void) visit: (id<ORVisitor>)v
+-(void) visit: (ORVisitor*)v
 {
    [v visitBitVar:self];
 }

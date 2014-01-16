@@ -134,16 +134,17 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 //    _dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
 //    _recv = self;
 //}
-self = [super init];
+   self = [super init];
 //_vc = CPVCBare;
 //_isBool = NO;
-_engine  = engine;
-[_engine trackVariable: self];
-setUpNetwork(&_net, [_engine trail],*low,*up);
-_triggers = nil;
+   _engine  = engine;
+   [_engine trackVariable: self];
+   setUpNetwork(&_net, [_engine trail],*low,*up);
+   _triggers = nil;
 //_dom = nil;
-_dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
-_recv = nil;
+   _dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
+   _vc = CPVCBare;
+   _recv = nil;
 return self;
 }
 
@@ -208,7 +209,7 @@ return self;
 
 -(enum CPVarClass)varClass
 {
-   return CPVCLiterals;
+   return _vc;
 }
 
 -(ORBool)bound
@@ -558,107 +559,6 @@ return self;
 @end
 
 @implementation CPBitVarMultiCast
-//
-//-(id)initVarMC:(int)n 
-//{
-//    self = [super init];
-//    _mx  = n;
-//    _tab = malloc(sizeof(CPBitVarI*)*_mx);
-//    _tracksLoseEvt = false;
-//    _nb  = 0;
-//    return self;
-//}
-//
-//-(NSMutableSet*)constraints
-//{
-//   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
-//   for(ORInt i=0;i<_nb;i++) {
-//      NSMutableSet* ti = [_tab[i] constraints];
-//      [rv unionSet:ti];
-//      [ti release];
-//   }
-//   return rv;
-//}
-//
-//-(void) dealloc
-//{
-//    //NSLog(@"multicast object %p dealloc'd\n",self);
-//    free(_tab);
-//    [super dealloc];
-//}
-//-(void) addVar:(CPBitVarI*)v
-////{
-////    if (_nb >= _mx) {
-////        _tab = realloc(_tab,sizeof(CPBitVarI*)*(_mx<<1));
-////        _mx <<= 1;
-////    }
-////    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
-////    [_tab[_nb] setDelegate:self];
-////    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
-////    _nb++;
-////}
-//{
-//   if (_nb >= _mx) {
-//      _tab = realloc(_tab,sizeof(id<CPBitVarNotifier>)*(_mx<<1));
-//      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
-//      _minIMP     = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
-//      _maxIMP     = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
-//      _mx <<= 1;
-//   }
-//   _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
-//   _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt:nil];
-//   _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
-//   _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
-//   _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
-//   id<ORTrail> theTrail = [[v engine] trail];
-//   ORInt toFix = _nb;
-//   __block CPBitVarMultiCast* me = self;
-//   [theTrail trailClosure:^{
-//      me->_tab[toFix] = NULL;
-//      me->_loseValIMP[toFix] = NULL;
-//      me->_minIMP[toFix] = NULL;
-//      me->_maxIMP[toFix] = NULL;
-//      me->_nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
-//   }];
-//   _nb++;
-//   ORInt nbBare = 0;
-//   for(ORInt i=0;i<_nb;i++) {
-//      if (_tab[i] !=nil)
-//         nbBare += ([_tab[i] varClass] == CPVCBare);
-//   }
-//   assert(nbBare<=1);
-//}
-//
-//-(void)bindEvt
-//{
-//    for(int i=0;i<_nb;i++)
-//        [_tab[i] bindEvt];
-//}
-//-(void)bitFixedEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
-//{
-//    for(int i=0;i<_nb;i++)
-//        [_tab[i] bitFixedEvt:dsz sender:sender];
-//}
-//
-//- (void)encodeWithCoder: (NSCoder *) aCoder
-//{
-//   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
-//   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
-//   for(ORInt k=0;k<_nb;k++)
-//      [aCoder encodeObject:_tab[k]];
-//   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
-//}
-//- (id)initWithCoder: (NSCoder *) aDecoder
-//{
-//   self = [super init];
-//   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-//   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
-//   _tab = malloc(sizeof(CPBitVarI*)*_mx);
-//   for(ORInt k=0;k<_nb;k++)
-//      _tab[k] = [aDecoder decodeObject];
-//   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];   
-//   return self;
-//}
 -(id)initVarMC:(ORInt)n root:(CPBitVarI*)root
 {
    self = [super init];
@@ -694,10 +594,19 @@ return self;
    free(_bitFixedIMP);
    [super dealloc];
 }
--(enum CPVarClass)varClass
-{
-   return CPVCLiterals;
-}
+//-(CPBitVarLiterals*) findLiterals: (CPBitVarI*) ref
+//{
+//   if (_literals)
+//      return _literals;
+//   CPBitVarLiterals* newLits = [[CPBitVarLiterals alloc] initCPBitVarLiterals:ref];
+//   _tracksLoseEvt = YES;
+//   id<ORTrail> theTrail = [[ref engine] trail];
+//   [theTrail trailClosure: ^{
+//      _literals = NULL;
+//   }];
+//   _literals = newLits;
+//   return newLits;
+//}
 -(void) addVar:(CPBitVarI*)v
 {
    if (_nb >= _mx) {
@@ -844,5 +753,6 @@ return self;
    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
    return self;
 }
-
 @end
+
+

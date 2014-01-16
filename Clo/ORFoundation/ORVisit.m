@@ -414,6 +414,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitIf: visit method not defined"]; 
 }
+-(void) visitBitCount:(id<ORBitCount>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitCount: visit method not defined"];
+}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntegerI: visit method not defined"]; 
@@ -641,6 +645,7 @@
 -(void) visitBitRotateL:(id<ORBitRotateL>)c {}
 -(void) visitBitSum:(id<ORBitSum>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}
+-(void) visitBitCount:(id<ORBitCount>)c {}
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}

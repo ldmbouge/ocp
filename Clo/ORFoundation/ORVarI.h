@@ -15,7 +15,7 @@
 #import "ORConstraint.h"
 #import "ORVar.h"
 #import "ORExprI.h"
-#import "ORVisit.h"
+#import "ORFoundation/ORVisit.h"
 
 
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
@@ -78,7 +78,7 @@
 //-(ORUInt*)  atRank:(ORULong)r;
 //-(ORStatus) bind:(unsigned int *)val;
 //-(bool) member: (unsigned int*) v;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 -(NSString*)stringValue;
 -(enum ORVType) vtype;
 @end

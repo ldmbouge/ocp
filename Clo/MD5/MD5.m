@@ -189,7 +189,7 @@
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
-   id<ORBasicModel> model = [engine model];
+//   id<ORBasicModel> model = [engine model];
 
    __block id* gamma = [cp gamma];
    
@@ -203,7 +203,7 @@
    
 //   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:32]];
 //   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:[[cp engine] nbVars]-1]];
-   NSArray* allvars = [model variables];
+//   NSArray* allvars = [model variables];
    
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
@@ -228,7 +228,8 @@
          NSLog(@"%@\n\n",gamma[digestVars[i].getId]);
       }
 //      NSLog(@"Message Blocks (With Data Recovered)");
-      __block ORUInt maxFail = 0x0000000000000800;
+//      __block ORUInt maxFail = 0x0000000000000800;
+      
       clock_t searchStart = clock();
 //      [cp repeat:^{
 //         [cp limitFailures:maxFail
@@ -262,8 +263,7 @@
          case BVFF:
             [cp labelBitVarHeuristic:h];
             break;
-            
-            
+
          default:
             [cp labelBitVarHeuristic:h];
 //                  [cp repeat:^{

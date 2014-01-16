@@ -36,8 +36,8 @@
 -(ORStatus) remove:(ORUInt)val;
 //-(id<CPBitVar>) dereference;
 
--(ORInt) getId;
--(ORBool) bound;
+//-(ORInt) getId;
+//-(ORBool) bound;
 -(ORBool) member: (unsigned int*) v;
 -(id<CPBitVar>) dereference;
 //=======

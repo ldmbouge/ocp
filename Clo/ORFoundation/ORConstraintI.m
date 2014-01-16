@@ -3745,3 +3745,40 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    return [[[NSSet alloc] initWithObjects:_w,_x,_y,_z, nil] autorelease];
 }
 @end
+
+@implementation ORBitCount {
+   id<ORBitVar> _x;
+   id<ORIntVar> _p;
+}
+-(ORBitCount*)initORBitCount: (id<ORBitVar>) x count:(id<ORIntVar>)p
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _p = p;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _p;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_p, nil] autorelease];
+}
+
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (| %@ |  = %@ )",[self class],self,_x,_p];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitCount:self];
+}
+@end
+
