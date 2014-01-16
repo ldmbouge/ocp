@@ -51,13 +51,9 @@ int main(int argc, const char * argv[])
                [mdl add: [ORFactory tableConstraint:mdl table:table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
          [notes dc:[mdl add: [ORFactory alldifferent: allgames]]];
          for(ORInt w = 1; w <= n; w++)
-            [notes dc:[mdl add: [ORFactory alldifferent: [ORFactory intVarArray: mdl range: Periods : HomeAway
-                                                                 with: ^id<ORIntVar>(ORInt p,ORInt h) { return [team at: p : w : h ]; } ]]]];
+            [notes dc:[mdl add: [ORFactory alldifferent:All2(mdl, ORIntVar, p, Periods, h, HomeAway, [team at: p : w : h ])]]];
          for(ORInt p = 1; p <= n/2; p++)
-            [notes dc:[mdl add: [ORFactory cardinality: [ORFactory intVarArray: mdl range: EWeeks : HomeAway
-                                                                with: ^id<ORIntVar>(ORInt w,ORInt h) { return [team at: p : w : h ]; }]
-                                         low: c
-                                          up: c]]];
+            [notes dc:[mdl add: [ORFactory cardinality: All2(mdl, ORIntVar, w, EWeeks, h, HomeAway, [team at: p : w : h ]) low:c up:c]]];
          for(ORInt p=1;p <= n/2;p++)
             [mdl add: [[team at:p :n :0] lt:[team at:p :n :1]]];
          

@@ -29,7 +29,8 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl  range:R domain: D];
          id<ORIntVarArray> c = [ORFactory intVarArray:mdl range:RANGE(mdl,0,8) domain: D];
          id<ORIntArray> lb = [ORFactory intArray:mdl range:D value:2];
-         [mdl add:[ORFactory cardinality  :x low:lb up:lb]];
+         id<ORAnnotation> note = [ORFactory annotation];
+         [note dc:[mdl add:[ORFactory cardinality  :x low:lb up:lb]]];
          
          [mdl add: [[x[0] mul:x[3]]             eq:[x[6] plus:[c[0] mul:@10]]]];
          [mdl add: [[[x[1] mul:x[3]] plus:c[0]] eq:[x[7] plus:[c[1] mul:@10]]]];
@@ -54,7 +55,7 @@ int main(int argc, const char * argv[])
          [mdl add: [lhs2              eq:[x[18] plus:[c[8] mul:@10]]]];
          [mdl add: [[x[14] plus:c[8]] eq:x[19]]];
          
-         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+         id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation:note];
          id<CPHeuristic> h = [cp createFF];
          
          [cp solve: ^{

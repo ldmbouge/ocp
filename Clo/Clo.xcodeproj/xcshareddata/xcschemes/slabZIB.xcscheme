@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B8DA1F415B98BC300684FD8"
-               BuildableName = "knapsackOpt"
-               BlueprintName = "knapsackOpt"
+               BlueprintIdentifier = "5BF9F38C186353450022C300"
+               BuildableName = "slabIP copy"
+               BlueprintName = "slabZIB"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B8DA1F415B98BC300684FD8"
-            BuildableName = "knapsackOpt"
-            BlueprintName = "knapsackOpt"
+            BlueprintIdentifier = "5BF9F38C186353450022C300"
+            BuildableName = "slabIP copy"
+            BlueprintName = "slabZIB"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -51,38 +51,12 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B8DA1F415B98BC300684FD8"
-            BuildableName = "knapsackOpt"
-            BlueprintName = "knapsackOpt"
+            BlueprintIdentifier = "5BF9F38C186353450022C300"
+            BuildableName = "slabIP copy"
+            BlueprintName = "slabZIB"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-h1"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-p0"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-q2"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-p2"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-q3"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-h0"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -95,9 +69,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B8DA1F415B98BC300684FD8"
-            BuildableName = "knapsackOpt"
-            BlueprintName = "knapsackOpt"
+            BlueprintIdentifier = "5BF9F38C186353450022C300"
+            BuildableName = "slabIP copy"
+            BlueprintName = "slabZIB"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

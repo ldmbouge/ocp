@@ -44,7 +44,11 @@
    [x visit:self];
    return _gamma[x.getId];
 }
-
+-(id) scaleVar:(id<ORVar>) x coef:(ORInt)a
+{
+   [x visit:self];
+   return [CPFactory intVar:_gamma[x.getId] scale:a];
+}
 -(id) concreteArray: (id<ORVarArray>) x
 {
    [x visit: self];
@@ -485,12 +489,9 @@
 -(void) visitLEqual: (id<ORLEqual>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> left = [cstr left];
-      id<ORIntVar> right = [cstr right];
-      ORInt cst = [cstr cst];
-      [left visit: self];
-      [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory lEqual: (id<CPIntVar>) _gamma[left.getId]  to: (id<CPIntVar>) _gamma[right.getId] plus: cst];
+      id<CPIntVar> left  = [self scaleVar:[cstr left] coef:[cstr coefLeft]];
+      id<CPIntVar> right = [self scaleVar:[cstr right] coef:[cstr coefRight]];
+      id<CPConstraint> concreteCstr = [CPFactory lEqual: left  to: right plus: [cstr cst]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

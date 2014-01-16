@@ -16,10 +16,10 @@
 
 @protocol CPDom <NSObject,NSCopying>
 -(void)dealloc;
--(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
--(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(void) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 
 -(ORInt) min;
@@ -36,7 +36,7 @@
 -(ORInt) findMax:(ORInt)from;
 -(id) copy;
 -(void) restoreDomain:(id<CPDom>)toRestore;
--(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
+-(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
