@@ -190,7 +190,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   _idempotent = YES;
+   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -248,11 +248,11 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    _updateMax = malloc(sizeof(UBType)*_nb);
    for(ORInt k=0;k<_nb;k++)
       _updateMax[k] = (UBType)[_x[k] methodForSelector:@selector(updateMax:)];
-   [self propagate];
    for(ORInt k=0;k<_nb;k++) {
       if (![_x[k] bound])
          [_x[k] whenChangeMinPropagate: self];
    }
+   [self propagate];
    return ORSuspend;
 }
 
@@ -267,37 +267,29 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    b._bndLow = - _c;
    b._nb = _nb;
    
-   BOOL changed;   
    BOOL feasible = true;
-   do {      
-      sumLowerBound(terms, b._nb, &b);
-      if (b._sumLow > 0) 
-         failNow();      
-      changed=false;
-      for (int i=0; i < b._nb && feasible; i++) {         
-         ORLong slowi = b._sumLow - terms[i].low;
-         ORLong nSupi = - slowi;
-         BOOL updateNow = nSupi < terms[i].up;
-         changed |= updateNow;
-         terms[i].updated |= updateNow;
-         terms[i].up  = minOf(terms[i].up,nSupi);
-         if (updateNow) {
-            // [ldm] this is necessary to make sure that the view can apply its narrowing
-            // so that the constraint behaves in an idempotent way.
-            terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
-            terms[i].up = maxDom(terms[i].var);
-         }
-         feasible = terms[i].low <= terms[i].up;
+   sumLowerBound(terms, b._nb, &b);
+   if (b._sumLow > 0)
+      failNow();
+   BOOL changed=false;
+   for (int i=0; i < b._nb && feasible; i++) {
+      ORLong slowi = b._sumLow - terms[i].low;
+      ORLong nSupi = - slowi;
+      BOOL updateNow = nSupi < terms[i].up;
+      changed |= updateNow;
+      terms[i].updated |= updateNow;
+      terms[i].up  = minOf(terms[i].up,nSupi);
+      if (updateNow) {
+         // [ldm] this is necessary to make sure that the view can apply its narrowing
+         // so that the constraint behaves in an idempotent way.
+         terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
+         terms[i].up = maxDom(terms[i].var);
       }
-   } while (changed && feasible);
+      feasible = terms[i].low <= terms[i].up;
+   }
    
    if (!feasible)
       failNow();
-   
-   for(ORUInt i=0;i<_nb;i++) {
-      if (terms[i].updated) 
-         terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
-   }
 }
 -(NSString*) description
 {
