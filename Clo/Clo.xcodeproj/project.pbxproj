@@ -1266,6 +1266,30 @@
 		F548AA76167FB1C600726814 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AA75167FB1C600726814 /* main.m */; };
 		F548AAB21680B3A500726814 /* MD4.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AAB11680B3A500726814 /* MD4.m */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
+		F5EA7D3E18885EC200A27F2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D2F18885EC200A27F2F /* main.m */; };
+		F5EA7D3F18885EC200A27F2F /* SHA1b.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D3018885EC200A27F2F /* SHA1b.h */; };
+		F5EA7D4018885EC200A27F2F /* SHA1b.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D3118885EC200A27F2F /* SHA1b.m */; };
+		F5EA7D4118885EC200A27F2F /* SHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D3218885EC200A27F2F /* SHA1.h */; };
+		F5EA7D4218885EC200A27F2F /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D3318885EC200A27F2F /* SHA1.m */; };
+		F5EA7D7318885F9D00A27F2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D6518885F9D00A27F2F /* main.m */; };
+		F5EA7D7518885F9D00A27F2F /* SHA1-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D6618885F9D00A27F2F /* SHA1-Prefix.pch */; };
+		F5EA7D7618885F9D00A27F2F /* SHA1.1 in Resources */ = {isa = PBXBuildFile; fileRef = F5EA7D6718885F9D00A27F2F /* SHA1.1 */; };
+		F5EA7D7718885F9D00A27F2F /* SHA1b.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D6B18885F9D00A27F2F /* SHA1b.h */; };
+		F5EA7D7818885F9D00A27F2F /* SHA1b.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D6C18885F9D00A27F2F /* SHA1b.m */; };
+		F5EA7D7918885F9D00A27F2F /* SHA1b.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D6C18885F9D00A27F2F /* SHA1b.m */; };
+		F5EA7D7A18885F9D00A27F2F /* SHA1-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D6D18885F9D00A27F2F /* SHA1-Prefix.pch */; };
+		F5EA7D7B18885F9D00A27F2F /* SHA1.1 in Resources */ = {isa = PBXBuildFile; fileRef = F5EA7D6E18885F9D00A27F2F /* SHA1.1 */; };
+		F5EA7D7C18885F9D00A27F2F /* SHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D6F18885F9D00A27F2F /* SHA1.h */; };
+		F5EA7D7D18885F9D00A27F2F /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D7018885F9D00A27F2F /* SHA1.m */; };
+		F5EA7D8218885FCB00A27F2F /* CPBitVarFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D7F18885FCB00A27F2F /* CPBitVarFirstFail.h */; };
+		F5EA7D8318885FCB00A27F2F /* CPBitVarFirstFail.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D8018885FCB00A27F2F /* CPBitVarFirstFail.m */; };
+		F5EA7D8418885FCB00A27F2F /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D8118885FCB00A27F2F /* CPBitVarHeuristic.h */; };
+		F5EA7D8B188860B700A27F2F /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D85188860B700A27F2F /* CPBitVarABS.h */; };
+		F5EA7D8C188860B700A27F2F /* CPBitVarABS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D86188860B700A27F2F /* CPBitVarABS.m */; };
+		F5EA7D8D188860B700A27F2F /* CPBitVarBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D87188860B700A27F2F /* CPBitVarBaseHeuristic.h */; };
+		F5EA7D8E188860B700A27F2F /* CPBitVarBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D88188860B700A27F2F /* CPBitVarBaseHeuristic.m */; };
+		F5EA7D8F188860B700A27F2F /* CPBitVarIBS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D89188860B700A27F2F /* CPBitVarIBS.h */; };
+		F5EA7D90188860B700A27F2F /* CPBitVarIBS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D8A188860B700A27F2F /* CPBitVarIBS.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -6110,6 +6134,29 @@
 		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
 		F55DEFB516C9F33E005818AF /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
 		F55DEFB616C9F33E005818AF /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
+		F5EA7D2F18885EC200A27F2F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SHA1/main.m; sourceTree = "<group>"; };
+		F5EA7D3018885EC200A27F2F /* SHA1b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA1b.h; path = SHA1/SHA1/SHA1b.h; sourceTree = "<group>"; };
+		F5EA7D3118885EC200A27F2F /* SHA1b.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA1b.m; path = SHA1/SHA1/SHA1b.m; sourceTree = "<group>"; };
+		F5EA7D3218885EC200A27F2F /* SHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA1.h; path = SHA1/SHA1.h; sourceTree = "<group>"; };
+		F5EA7D3318885EC200A27F2F /* SHA1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA1.m; path = SHA1/SHA1.m; sourceTree = "<group>"; };
+		F5EA7D6518885F9D00A27F2F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F5EA7D6618885F9D00A27F2F /* SHA1-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SHA1-Prefix.pch"; sourceTree = "<group>"; };
+		F5EA7D6718885F9D00A27F2F /* SHA1.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = SHA1.1; sourceTree = "<group>"; };
+		F5EA7D6B18885F9D00A27F2F /* SHA1b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA1b.h; sourceTree = "<group>"; };
+		F5EA7D6C18885F9D00A27F2F /* SHA1b.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHA1b.m; sourceTree = "<group>"; };
+		F5EA7D6D18885F9D00A27F2F /* SHA1-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SHA1-Prefix.pch"; sourceTree = "<group>"; };
+		F5EA7D6E18885F9D00A27F2F /* SHA1.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = SHA1.1; sourceTree = "<group>"; };
+		F5EA7D6F18885F9D00A27F2F /* SHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA1.h; sourceTree = "<group>"; };
+		F5EA7D7018885F9D00A27F2F /* SHA1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHA1.m; sourceTree = "<group>"; };
+		F5EA7D7F18885FCB00A27F2F /* CPBitVarFirstFail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarFirstFail.h; sourceTree = "<group>"; };
+		F5EA7D8018885FCB00A27F2F /* CPBitVarFirstFail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarFirstFail.m; sourceTree = "<group>"; };
+		F5EA7D8118885FCB00A27F2F /* CPBitVarHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarHeuristic.h; sourceTree = "<group>"; };
+		F5EA7D85188860B700A27F2F /* CPBitVarABS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarABS.h; sourceTree = "<group>"; };
+		F5EA7D86188860B700A27F2F /* CPBitVarABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarABS.m; sourceTree = "<group>"; };
+		F5EA7D87188860B700A27F2F /* CPBitVarBaseHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarBaseHeuristic.h; sourceTree = "<group>"; };
+		F5EA7D88188860B700A27F2F /* CPBitVarBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarBaseHeuristic.m; sourceTree = "<group>"; };
+		F5EA7D89188860B700A27F2F /* CPBitVarIBS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarIBS.h; sourceTree = "<group>"; };
+		F5EA7D8A188860B700A27F2F /* CPBitVarIBS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarIBS.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -7611,6 +7658,15 @@
 		5B681182161F98FB00F4480F /* ORProgram */ = {
 			isa = PBXGroup;
 			children = (
+				F5EA7D85188860B700A27F2F /* CPBitVarABS.h */,
+				F5EA7D86188860B700A27F2F /* CPBitVarABS.m */,
+				F5EA7D87188860B700A27F2F /* CPBitVarBaseHeuristic.h */,
+				F5EA7D88188860B700A27F2F /* CPBitVarBaseHeuristic.m */,
+				F5EA7D89188860B700A27F2F /* CPBitVarIBS.h */,
+				F5EA7D8A188860B700A27F2F /* CPBitVarIBS.m */,
+				F5EA7D7F18885FCB00A27F2F /* CPBitVarFirstFail.h */,
+				F5EA7D8018885FCB00A27F2F /* CPBitVarFirstFail.m */,
+				F5EA7D8118885FCB00A27F2F /* CPBitVarHeuristic.h */,
 				5B93489116558D0F00757F89 /* ORProgram.h */,
 				B17832FA161F5FCC00C7298D /* ORProgramFactory.h */,
 				B17832FB161F5FCC00C7298D /* ORProgramFactory.m */,
@@ -7704,6 +7760,12 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				F5EA7D6118885F9C00A27F2F /* SHA1 */,
+				F5EA7D2F18885EC200A27F2F /* main.m */,
+				F5EA7D3018885EC200A27F2F /* SHA1b.h */,
+				F5EA7D3118885EC200A27F2F /* SHA1b.m */,
+				F5EA7D3218885EC200A27F2F /* SHA1.h */,
+				F5EA7D3318885EC200A27F2F /* SHA1.m */,
 				B100EE8B17C7265500FC4FDC /* libgurobi55.so */,
 				B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */,
 				B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */,
@@ -9343,6 +9405,38 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F5EA7D6118885F9C00A27F2F /* SHA1 */ = {
+			isa = PBXGroup;
+			children = (
+				F5EA7D6318885F9D00A27F2F /* SHA1 */,
+				F5EA7D6D18885F9D00A27F2F /* SHA1-Prefix.pch */,
+				F5EA7D6E18885F9D00A27F2F /* SHA1.1 */,
+				F5EA7D6F18885F9D00A27F2F /* SHA1.h */,
+				F5EA7D7018885F9D00A27F2F /* SHA1.m */,
+			);
+			path = SHA1;
+			sourceTree = "<group>";
+		};
+		F5EA7D6318885F9D00A27F2F /* SHA1 */ = {
+			isa = PBXGroup;
+			children = (
+				F5EA7D6418885F9D00A27F2F /* SHA1 */,
+				F5EA7D6B18885F9D00A27F2F /* SHA1b.h */,
+				F5EA7D6C18885F9D00A27F2F /* SHA1b.m */,
+			);
+			path = SHA1;
+			sourceTree = "<group>";
+		};
+		F5EA7D6418885F9D00A27F2F /* SHA1 */ = {
+			isa = PBXGroup;
+			children = (
+				F5EA7D6518885F9D00A27F2F /* main.m */,
+				F5EA7D6618885F9D00A27F2F /* SHA1-Prefix.pch */,
+				F5EA7D6718885F9D00A27F2F /* SHA1.1 */,
+			);
+			path = SHA1;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -9367,21 +9461,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */,
+				F5EA7D8218885FCB00A27F2F /* CPBitVarFirstFail.h in Headers */,
 				5B68119D161F99C700F4480F /* ORProgramFactory.h in Headers */,
 				5B68119F161F99C700F4480F /* CPSolver.h in Headers */,
 				5B94406C16319096006528DE /* CPProgram.h in Headers */,
+				F5EA7D8B188860B700A27F2F /* CPBitVarABS.h in Headers */,
 				5B846926163856B300F4D749 /* CPDDeg.h in Headers */,
 				5B846927163856B300F4D749 /* CPFirstFail.h in Headers */,
 				5B846928163856B300F4D749 /* CPIBS.h in Headers */,
+				F5EA7D8D188860B700A27F2F /* CPBitVarBaseHeuristic.h in Headers */,
 				B15442AD16D1A3DC001BD7B3 /* LPProgram.h in Headers */,
 				5BA6F96818464836002434E3 /* CPDeg.h in Headers */,
 				5B846929163856B300F4D749 /* CPWDeg.h in Headers */,
 				5B84692A163856B300F4D749 /* CPABS.h in Headers */,
+				F5EA7D8418885FCB00A27F2F /* CPBitVarHeuristic.h in Headers */,
 				5B8469301638583000F4D749 /* CPHeuristic.h in Headers */,
 				5B8469311638583000F4D749 /* CPBaseHeuristic.h in Headers */,
 				5B681199161F99C700F4480F /* CPConcretizer.h in Headers */,
 				B1E1C79B170372FB006AACFC /* MIPProgram.h in Headers */,
 				5B93489216558D1000757F89 /* ORProgram.h in Headers */,
+				F5EA7D8F188860B700A27F2F /* CPBitVarIBS.h in Headers */,
 				B15442B116D1A3F7001BD7B3 /* LPSolver.h in Headers */,
 				B15442E516D1B414001BD7B3 /* LPConcretizer.h in Headers */,
 				5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */,
@@ -9436,14 +9535,18 @@
 				5B778B9E154EF67C0078EB07 /* CPBitVarI.h in Headers */,
 				B1672FE215849EA300EFE5C3 /* CPCardinalityDC.h in Headers */,
 				5B91C336159FAB2D00158EEA /* CPElement.h in Headers */,
+				F5EA7D7C18885F9D00A27F2F /* SHA1.h in Headers */,
 				B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */,
 				5BEAD77F15ABBAFC00A012FE /* CPLexConstraint.h in Headers */,
 				5B65615E15AD58F6002F344B /* CPKnapsack.h in Headers */,
 				B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */,
 				5B94406E1631AEBA006528DE /* CPVar.h in Headers */,
 				5B93488D16554E6C00757F89 /* CPEvent.h in Headers */,
+				F5EA7D7518885F9D00A27F2F /* SHA1-Prefix.pch in Headers */,
 				5BBFE0A5178C63DA00BEAD83 /* CPFloatVarI.h in Headers */,
+				F5EA7D7A18885F9D00A27F2F /* SHA1-Prefix.pch in Headers */,
 				5BBFE0A9178C981B00BEAD83 /* CPFloatDom.h in Headers */,
+				F5EA7D7718885F9D00A27F2F /* SHA1b.h in Headers */,
 				5B5AAA8017905AAC0076C729 /* CPFloatConstraint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9539,6 +9642,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5EA7D3F18885EC200A27F2F /* SHA1b.h in Headers */,
 				5BFD5A6915A3BC1D00825BC3 /* ORAVLTree.h in Headers */,
 				5BFD5A6C15A3BEA900825BC3 /* ORError.h in Headers */,
 				5BD2DFC815A3CEBF00D4C616 /* ORSet.h in Headers */,
@@ -9571,6 +9675,7 @@
 				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
 				5B57E5DF161F275200DB249A /* ORExpr.h in Headers */,
 				B148C0C8182175B0009BE440 /* ORFunc.h in Headers */,
+				F5EA7D4118885EC200A27F2F /* SHA1.h in Headers */,
 				5B57E5E0161F275F00DB249A /* ORExprI.h in Headers */,
 				5B57E5E3161F280D00DB249A /* ORVar.h in Headers */,
 				5B57E5E5161F295000DB249A /* ORVisit.h in Headers */,
@@ -11685,8 +11790,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5EA7D7B18885F9D00A27F2F /* SHA1.1 in Resources */,
 				5B9ABCFB1391329D000997E5 /* InfoPlist.strings in Resources */,
 				5B7CB9D813C2141700783BB3 /* SomeDocumentation.pages in Resources */,
+				F5EA7D7618885F9D00A27F2F /* SHA1.1 in Resources */,
 				5B95F0A415A26C2B00C0B2D8 /* mpl.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11993,17 +12100,21 @@
 				5B68119A161F99C700F4480F /* CPConcretizer.m in Sources */,
 				5B68119C161F99C700F4480F /* ORCPParSolver.m in Sources */,
 				5B68119E161F99C700F4480F /* ORProgramFactory.m in Sources */,
+				F5EA7D8C188860B700A27F2F /* CPBitVarABS.m in Sources */,
 				5B6811A0161F99C700F4480F /* CPSolver.m in Sources */,
 				5BA6F96918464836002434E3 /* CPDeg.m in Sources */,
 				5B84692B163856BF00F4D749 /* CPDDeg.m in Sources */,
 				5B84692C163856BF00F4D749 /* CPFirstFail.m in Sources */,
 				5B84692D163856BF00F4D749 /* CPIBS.m in Sources */,
 				5B84692E163856BF00F4D749 /* CPWDeg.m in Sources */,
+				F5EA7D8318885FCB00A27F2F /* CPBitVarFirstFail.m in Sources */,
 				5B84692F163856BF00F4D749 /* CPABS.m in Sources */,
 				5B8469321638583800F4D749 /* CPBaseHeuristic.m in Sources */,
 				B1AAA30B16495E9700CE9AED /* CPMultiStartSolver.m in Sources */,
+				F5EA7D90188860B700A27F2F /* CPBitVarIBS.m in Sources */,
 				B15442B216D1A3F7001BD7B3 /* LPSolver.m in Sources */,
 				B15442E616D1B414001BD7B3 /* LPConcretizer.m in Sources */,
+				F5EA7D8E188860B700A27F2F /* CPBitVarBaseHeuristic.m in Sources */,
 				5B378BB716D5245D002E1AB4 /* CPParallel.m in Sources */,
 				B1E1C7991703725B006AACFC /* MIPSolver.m in Sources */,
 				B1E1C79F1703741E006AACFC /* MIPConcretizer.m in Sources */,
@@ -12122,6 +12233,7 @@
 				B15A2B5113995F12002401A0 /* CPError.m in Sources */,
 				5BE642FF139D49320056F448 /* CPBasicConstraint.m in Sources */,
 				5B92975813A01F45002AA188 /* CPValueConstraint.m in Sources */,
+				F5EA7D7818885F9D00A27F2F /* SHA1b.m in Sources */,
 				B1583D3313A4CF7D0002FBD8 /* CPExprI.m in Sources */,
 				B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */,
 				5BB3835D13B3B624005B7D52 /* CPEquationBC.m in Sources */,
@@ -12135,6 +12247,7 @@
 				B17715B61557D9D200BA14BF /* CPTableI.m in Sources */,
 				5B778B99154EF67C0078EB07 /* CPBitArray.m in Sources */,
 				5B778B9B154EF67C0078EB07 /* CPBitArrayDom.m in Sources */,
+				F5EA7D7D18885F9D00A27F2F /* SHA1.m in Sources */,
 				5B778B9D154EF67C0078EB07 /* CPBitConstraint.m in Sources */,
 				5B778B9F154EF67C0078EB07 /* CPBitVarI.m in Sources */,
 				5B63C2D5156DB05E00C65B2A /* CPStatisticsMonitor.m in Sources */,
@@ -12147,6 +12260,7 @@
 				5B93488C16554E6700757F89 /* CPEvent.m in Sources */,
 				5BBFE0A6178C63DA00BEAD83 /* CPFloatVarI.m in Sources */,
 				5BBFE0AA178C981B00BEAD83 /* CPFloatDom.m in Sources */,
+				F5EA7D7318885F9D00A27F2F /* main.m in Sources */,
 				5B5AAA8117905AAC0076C729 /* CPFloatConstraint.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12533,6 +12647,7 @@
 				5B8B12DC15A3BF8000300385 /* ORError.m in Sources */,
 				5BD2DFC915A3CEC700D4C616 /* ORSetI.m in Sources */,
 				5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */,
+				F5EA7D4018885EC200A27F2F /* SHA1b.m in Sources */,
 				5B920EB415A3F6DD00AD0820 /* ORFactory.m in Sources */,
 				5B920EBC15A3FDB800AD0820 /* ORDataI.m in Sources */,
 				5B920EC015A402A600AD0820 /* ORArrayI.m in Sources */,
@@ -12543,6 +12658,7 @@
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,
+				F5EA7D4218885EC200A27F2F /* SHA1.m in Sources */,
 				B148C0C9182175B0009BE440 /* ORFunc.m in Sources */,
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
@@ -12555,6 +12671,7 @@
 				5B57E5E1161F276800DB249A /* ORExprI.m in Sources */,
 				5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */,
 				B1AAA33B164AADAD00CE9AED /* ORObject.m in Sources */,
+				F5EA7D3E18885EC200A27F2F /* main.m in Sources */,
 				B1FBA2F117BF1AE0000F5F43 /* ORVisit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12790,6 +12907,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5EA7D7918885F9D00A27F2F /* SHA1b.m in Sources */,
 				F548AA76167FB1C600726814 /* main.m in Sources */,
 				F548AAB21680B3A500726814 /* MD4.m in Sources */,
 				5B6CFDB416D93A7600BCB95F /* ORCmdLineArgs.m in Sources */,

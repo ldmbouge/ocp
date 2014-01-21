@@ -17,6 +17,7 @@
 #import <ORProgram/ORProgram.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
+#import <objcp/CPIntVarI.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 
