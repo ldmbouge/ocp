@@ -395,7 +395,8 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",[_vars count],[_cStore count],_nbpropag];
+   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",
+      [_vars count],[_cStore count],_nbpropag];
 }
 -(id) trail
 {

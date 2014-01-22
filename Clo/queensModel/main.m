@@ -32,7 +32,7 @@ int main (int argc, const char * argv[])
          return [ORFactory intVar:model var:x[i] shift:-i];
       }];
       
-      id<ORConstraint> cstr = [model add: [ORFactory alldifferent: x]];
+      [model add: [ORFactory alldifferent: x]];
       [model add: [ORFactory alldifferent: xp]];
       [model add: [ORFactory alldifferent: xn]];
       
