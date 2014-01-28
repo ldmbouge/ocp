@@ -34,6 +34,11 @@
 			<key>orderHint</key>
 			<integer>17</integer>
 		</dict>
+		<key>GAP.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>77</integer>
+		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -344,7 +349,17 @@
 			<key>orderHint</key>
 			<integer>13</integer>
 		</dict>
+		<key>objls.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>79</integer>
+		</dict>
 		<key>objmp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>78</integer>
+		</dict>
+		<key>objmp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>78</integer>
@@ -848,6 +863,16 @@
 			<true/>
 		</dict>
 		<key>5BE7C24A15A94BDF00B2CBC1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BE8BB971857A41600D99445</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BE8BBA71857A41600D99445</key>
 		<dict>
 			<key>primary</key>
 			<true/>
