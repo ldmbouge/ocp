@@ -7,29 +7,33 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "Clo/knapsackOpt/main.m",
-			"settings":
-			{
-				"buffer_size": 3990,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Clo/ORProgram/CPABS.m",
-			"settings":
-			{
-				"buffer_size": 21374,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "Xcode",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 27.0,
 		"selected_items":
 		[
+			[
+				"push",
+				"Git: Push"
+			],
+			[
+				"commit",
+				"Git: Commit"
+			],
+			[
+				"Gitadd",
+				"Git: Add..."
+			],
+			[
+				"Install",
+				"Package Control: Install Package"
+			],
+			[
+				"Insta",
+				"Package Control: Install Package"
+			],
 			[
 				"indent",
 				"Indentation: Reindent Lines"
@@ -41,13 +45,9 @@
 			[
 				"latex",
 				"LaTeXTools: View PDF"
-			],
-			[
-				"Install",
-				"Package Control: Install Package"
 			]
 		],
-		"width": 404.0
+		"width": 521.0
 	},
 	"console":
 	{
@@ -67,6 +67,22 @@
 	},
 	"file_history":
 	[
+		"/Users/ldm/work/public/Clo/CPUKernel/CPEngineI.m",
+		"/Users/ldm/work/public/Clo/knapsackOpt/main.m",
+		"/Users/ldm/work/public/Clo/ORFoundation/ORExpr.h",
+		"/Users/ldm/work/public/Clo/ORFoundation/ORFactory.h",
+		"/Users/ldm/work/public/Clo/ORProgram/CPABS.m",
+		"/Users/ldm/work/public/scripts/runner.py",
+		"/Users/ldm/work/public/Clo/block1.m",
+		"/Users/ldm/work/public/Clo/bench.py",
+		"/Users/ldm/work/public/Clo/.gitignore",
+		"/Users/ldm/work/public/Clo/CPUKernel/CPEngine.h",
+		"/Users/ldm/work/public/Clo/build/Release/ORFoundation.framework/Headers/ORFactory.h",
+		"/Users/ldm/work/public/Clo/build/Release/ORFoundation.framework/Headers/ORExpr.h",
+		"/Users/ldm/work/public/Clo/ORUtilities/ORCrFactory.h",
+		"/Users/ldm/work/public/Clo/ORFoundation/ORAnnotation.h",
+		"/Users/ldm/work/public/scripts/operf.py",
+		"/Users/ldm/work/public/Clo.sublime-project",
 		"/Users/ldm/work/platform/Clo/ais/main.m",
 		"/Users/ldm/work/platform/Clo/bibd/main.m",
 		"/Users/ldm/work/platform/Clo.sublime-project",
@@ -130,67 +146,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "Clo/knapsackOpt/main.m",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3990,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								652,
-								652
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Objective-C/Objective-C++.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "Clo/ORProgram/CPABS.m",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 21374,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Objective-C/Objective-C++.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 9315.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -200,7 +157,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"layout":
 	{
@@ -229,6 +186,14 @@
 	{
 		"height": 116.0
 	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.git":
+	{
+		"height": 112.0
+	},
 	"project": "Clo.sublime-project",
 	"replace":
 	{
@@ -241,12 +206,12 @@
 		"selected_items":
 		[
 			[
-				"cpabs",
-				"ORProgram/CPABS.m"
+				"",
+				"scripts/runner.py"
 			],
 			[
-				"",
-				"objcp/CPCommand.h"
+				"cpabs",
+				"ORProgram/CPABS.m"
 			],
 			[
 				"orprogram",
@@ -277,20 +242,36 @@
 	},
 	"select_symbol":
 	{
-		"height": 0.0,
+		"height": 107.0,
 		"selected_items":
 		[
+			[
+				"AC3Q",
+				"initAC3Queue"
+			],
+			[
+				"All",
+				"All"
+			],
+			[
+				"ORExpr",
+				"ORExpr"
+			],
+			[
+				"",
+				"withActivity"
+			]
 		],
-		"width": 0.0
+		"width": 392.0
 	},
 	"settings":
 	{
 	},
-	"show_minimap": true,
+	"show_minimap": false,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 241.0,
+	"side_bar_width": 234.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

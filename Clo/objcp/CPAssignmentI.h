@@ -18,7 +18,7 @@
                            matrix: (id<ORIntMatrix>) matrix
                              cost: (id<CPIntVar>) cost;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

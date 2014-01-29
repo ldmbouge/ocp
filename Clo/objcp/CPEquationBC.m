@@ -88,7 +88,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    bnd->_nb     = nb;
 }
 
--(ORStatus) post
+-(void) post
 {
    _allTerms = malloc(sizeof(CPEQTerm)*_nb);
    _inUse    = malloc(sizeof(TRCPEQTerm)*_nb);
@@ -118,7 +118,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       if (![_x[k] bound])
          [_x[k] whenChangeBoundsPropagate: self];
    }
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -243,7 +242,7 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    bnd->_nb     = nb;
 }
 
--(ORStatus) post
+-(void) post
 {
    _updateMax = malloc(sizeof(UBType)*_nb);
    for(ORInt k=0;k<_nb;k++)
@@ -253,7 +252,6 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          [_x[k] whenChangeMinPropagate: self];
    }
    [self propagate];
-   return ORSuspend;
 }
 
 -(void) propagate

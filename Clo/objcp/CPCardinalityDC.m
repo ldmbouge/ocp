@@ -570,7 +570,7 @@ static void SCCFromSink(CPCardinalityDC* card)
    }
 }
 
--(ORStatus) post
+-(void) post
 {
     if (!_posted) {
        _posted = true;
@@ -584,7 +584,6 @@ static void SCCFromSink(CPCardinalityDC* card)
           if (![_var[i] bound])
              [_var[i] whenChangePropagate: self];
     }
-    return ORSuspend;
 }
 
 
