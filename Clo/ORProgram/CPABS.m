@@ -601,7 +601,7 @@
       if ([bvars[i] bound]) continue;
       mxp += log([(id)bvars[i] domsize]);
    }
-   const ORInt maxProbes = (int)10 * mxp;
+   const ORInt maxProbes = (int)(10 * mxp);
    NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
    int   cntProbes = 0;
    BOOL  carryOn = YES;
@@ -613,6 +613,7 @@
    __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
    __block ORInt nbVS = 0;
    id<ORZeroOneStream> varPr = [[ORZeroOneStreamI alloc] init];
+   ORLong t1,t0 = [ORRuntimeMonitor cputime];
    do {
       for(ORInt c=0;c <= nbInRound;c++) {
          [_solver clearStatus];
@@ -690,7 +691,8 @@
          [localKill removeAllObjects];
       }
       carryOn = [self moreProbes];
-   } while (carryOn && cntProbes < maxProbes);
+      t1 = [ORRuntimeMonitor cputime];
+   } while (carryOn && cntProbes < maxProbes && (t1 - t0)/1000 < 100);
    
    [_solver atomic:^{
       NSLog(@"Imposing %ld SAC constraints",[killSet count]);

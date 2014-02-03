@@ -232,7 +232,6 @@
 //            NSLog(@"Got an improvement... %@",[[program objective] value]);
 //        } ];
 
-         
         id<ORSolution> sol = [[program solutionPool] best];
         NSLog(@"BEST is: %@",sol);
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
