@@ -1119,9 +1119,15 @@
 {
    return (ORInt) [_MIP intValue: var];
 }
+-(void) setIntVar: (MIPIntVariableI*)var value:(ORInt)val {
+    [_MIP setIntVar: var value: val];
+}
 -(ORFloat) floatValue: (MIPVariableI*) var
 {
    return [_MIP floatValue: var];
+}
+-(void) setFloatVar: (MIPVariableI*)var value:(ORFloat)val {
+    [_MIP setFloatVar: var value: val];
 }
 -(ORFloat) floatParamValue: (MIPParameterI*) param
 {

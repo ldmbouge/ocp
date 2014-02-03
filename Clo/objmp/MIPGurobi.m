@@ -88,8 +88,9 @@
 -(MIPOutcome) solve
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
-   GRBoptimize(_model);
-    //[self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
+    GRBupdatemodel(_model);
+    [self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
+    GRBoptimize(_model);
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
@@ -123,12 +124,23 @@
    return (ORInt) value;
 }
 
+-(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val {
+    int error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_LB, [var idx], val);
+    error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_UB, [var idx], val) || error ;
+    GRBupdatemodel(_model);
+    if(error != 0) NSLog(@"err: %i", error);
+}
+
 -(ORFloat) floatValue: (MIPVariableI*) var
 {
    ORFloat value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);
    return value;
 }
+
+-(void) setFloatVar: (MIPVariableI*)var value: (ORFloat)val {
+}
+
 
 -(ORFloat) lowerBound: (MIPVariableI*) var
 {
@@ -156,7 +168,8 @@
 -(ORFloat) paramFloatValue: (MIPParameterI*) param
 {
     ORFloat v;
-    GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
+    int err = GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
+    if(err != 0) return DBL_MAX;
     return v;
 }
 -(void) setParam: (MIPParameterI*) param value: (ORFloat)val
@@ -164,12 +177,14 @@
     int cind[] = { [param cstrIdx] };
     int vind[] = { [param coefIdx] };
     double v[] = { val };
-    GRBchgcoeffs(_model, 1, cind, vind, v);
+    int err = GRBchgcoeffs(_model, 1, cind, vind, v);
+    GRBupdatemodel(_model);
+    if(err != 0) NSLog(@"error setting gurobi parameter: %i", err);
 }
 -(void) setBounds: (MIPVariableI*) var low: (ORFloat) low up: (ORFloat) up
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);
-   GRBsetdblattrelement(_model,"UB",[var idx],low);
+   GRBsetdblattrelement(_model,"UB",[var idx],up);
 }
 
 -(void) setUnboundUpperBound: (MIPVariableI*) var

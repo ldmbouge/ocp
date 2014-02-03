@@ -29,7 +29,7 @@
         return [parameterization z];
     }];
     id<ORExpr> prevObjective = [((id<ORObjectiveFunctionExpr>)[relaxedModel objective]) expr];
-    if(prevObjective) [relaxedModel minimize: [prevObjective sub: slackSum track: relaxedModel]];
+    if(prevObjective) [relaxedModel minimize: [prevObjective plus: slackSum track: relaxedModel]]; // Changed sub to plus
     else [relaxedModel minimize: slackSum];
     [relaxedModel setSource: m];
     return relaxedModel;

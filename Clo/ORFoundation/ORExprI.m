@@ -86,7 +86,7 @@
 }
 @end
 
-@interface ORSweep : ORVisitor<NSObject> {
+@interface ORSweep : ORNOopVisit<NSObject> {
    NSMutableSet* _ms;
 }
 -(id)init;

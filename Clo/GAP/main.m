@@ -22,8 +22,8 @@
 
 int main (int argc, const char * argv[])
 {
-    int m = 50; // knapsacks
-    int n = 120; // items
+    int m = 4; // knapsacks
+    int n = 12; // items
     int MAX_WGHT = 10;
     int MAX_PRFT = 15;
     int CAP_LOW = 100;
@@ -87,24 +87,29 @@ int main (int argc, const char * argv[])
         [limits addObject: [model add: c]];
     }
     
+    NSDate* t0 = [NSDate date];
     
-    /*
-    id<CPProgram> cp = [ORFactory createCPProgram: model];
-    id<CPHeuristic> h = [cp createFF: [model intVars]];
-    [cp solve:^{
-        [cp labelHeuristic: h];
-    }];
     
-    id<ORSolution> best = [[cp solutionPool] best];
-    */
-     
-    id<ORModel> lmodel = [ORFactory linearizeModel: model];
+//    id<CPProgram> cp = [ORFactory createCPProgram: model];
+//    id<CPHeuristic> h = [cp createABS];
+//    [cp solve:^{
+//        [cp labelHeuristic: h];
+//    }];
+//    id<ORSolution> best = [[cp solutionPool] best];
+    
     ORLagrangianTransform* t = [[ORLagrangianTransform alloc] init];
-    id<ORParameterizedModel> lagrangeModel = [t apply: lmodel relaxing: limits];
+    id<ORParameterizedModel> lagrangeModel = [t apply: model relaxing: limits];
     id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel];
     [lr run];
     id<ORSolution> best = [(ORLagrangeRelax*)lr bestSolution];
+
     
     NSLog(@"BEST: %@", best);
+    NSDate* t1 = [NSDate date];
+    NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
+    NSLog(@"Time: %f", time);
+
+    
+    
     return 0;
 }

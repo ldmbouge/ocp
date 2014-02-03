@@ -13,6 +13,7 @@
 
 @interface ORLagrangeRelax : ORPipedRunnable<NSObject>
 -(id) initWithModel: (id<ORParameterizedModel>)m;
+-(id) initWithModel:(id<ORParameterizedModel>)m withSurrogateSplit: (NSArray*)split;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;

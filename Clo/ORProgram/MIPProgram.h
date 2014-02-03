@@ -36,7 +36,9 @@
 -(id*)  gamma;
 -(void) solve;
 -(ORFloat) floatValue: (id<ORFloatVar>) v;
+-(void) setFloatVar: (id<ORFloatVar>)v value:(ORFloat)val;
 -(ORInt) intValue: (id<ORIntVar>) v;
+-(void) setIntVar: (id<ORIntVar>)v value:(ORInt)val;
 -(ORFloat) paramFloatValue: (id<ORFloatParam>)p;
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
 -(id<ORObjectiveValue>) objectiveValue;

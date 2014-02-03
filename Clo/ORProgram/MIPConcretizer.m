@@ -109,6 +109,17 @@
       _gamma[[v getId]] = dx;
    }
 }
+-(void) visitIdMatrix:(id<ORIdMatrix>) v
+{
+    if (_gamma[v.getId] == NULL) {
+        ORInt nb = (ORInt) [v count];
+        for(ORInt k = 0; k < nb; k++)
+            [[v flat: k] visit: self];
+        id<ORIdMatrix> n = [ORFactory idMatrix: _MIPsolver with: v];
+        for(ORInt k = 0; k < nb; k++)
+            [n setFlat: _gamma[[[v flat: k] getId]] at: k];
+        _gamma[v.getId] = n;
+    }}
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }

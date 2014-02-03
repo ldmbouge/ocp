@@ -2154,9 +2154,7 @@
 }
 -(NSSet*)allVars
 {
-   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:4] autorelease];
-   //TODO:ldm
-   return ms;
+   return [_expr allVars];
 }
 @end
 
@@ -2199,6 +2197,10 @@
 -(id<ORParameter>)weight
 {
    return _lambda;
+}
+-(NSSet*) allVars
+{
+   return [[NSSet setWithObjects: _x, _z, nil] autorelease];
 }
 -(NSString*)description
 {

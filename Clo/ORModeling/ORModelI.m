@@ -755,6 +755,9 @@
 {
     return _params;
 }
+-(void) addParameter: (id<ORParameter>)p {
+    [_params addObject: p];
+}
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x
 {
     return [_paramMap objectForKey: x];

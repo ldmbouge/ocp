@@ -109,6 +109,7 @@
 -(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs;
 -(NSArray*) softConstraints;
 -(NSArray*) parameters;
+-(void) addParameter: (id<ORParameter>)p;
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
 -(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x;
 @end
