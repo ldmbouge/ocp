@@ -80,7 +80,7 @@
       unsigned int boundUp = _up[i]._val & _low[i]._val;
       unsigned int err = ~_up[i]._val & _low[i]._val;
       unsigned int mask = CP_DESC_MASK;
-      if (i<_wordLength-1)
+      if (i>0 && _wordLength>1)
          for (int j=0; j<32; j++){
             if ((mask & boundLow) != 0) 
                [string appendString: @"0"];
