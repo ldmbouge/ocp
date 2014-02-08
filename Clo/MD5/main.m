@@ -334,11 +334,11 @@ int main(int argc, const char* argv[])
 //   twoByteSHA1(@"3-mssg.txt", BVABS);
 
 //twoByteMD4(@"U-mssg.txt", BVABS);
-twoByteMD5(@"U-mssg.txt", BVABS);
-twoByteSHA1(@"U-mssg.txt", BVABS);
-twoByteMD4(@"3-mssg.txt", BVABS);
-twoByteMD5(@"3-mssg.txt", BVABS);
-twoByteSHA1(@"3-mssg.txt", BVABS);
+twoByteMD5(@"rand0-mssg.txt", BVFF);
+twoByteSHA1(@"rand0-mssg.txt", BVFF);
+twoByteMD4(@"rand0-mssg.txt", BVFF);
+twoByteMD5(@"3-mssg.txt", BVFF);
+twoByteSHA1(@"3-mssg.txt", BVFF);
 
    
 //   twoByteMD4(@"rand0-mssg.txt", BVIBS);
