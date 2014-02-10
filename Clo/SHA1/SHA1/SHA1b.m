@@ -438,6 +438,8 @@
    
    ORUInt min = 0x00000000;
    uint32 max = 0xFFFFFFFF;
+   uint32 cinmax = 0xFFFFFFFE;
+
    id<ORBitVar> cin;
    id<ORBitVar> cout;
    
@@ -461,7 +463,7 @@
       for (int i=0; i<5; i++)
       {
          //h5[i] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-         cin = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+         cin = [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
          cout = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
          [_m add:[ORFactory bit:h0[i] plus:h4[i] withCarryIn:cin eq:h5[i] withCarryOut:cout]];
       }
@@ -1102,6 +1104,8 @@
 {
    ORUInt min = 0x00000000;
    ORUInt max = 0xFFFFFFFF;
+   ORUInt cinmax = 0xFFFFFFFE;
+
    
    id<ORBitVar> fo = [self f:B y:C z:D];
    
@@ -1111,22 +1115,22 @@
    [_m add:[ORFactory bit:A rotateLBy:5 eq:rotatedA]];
    
    id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:rotatedA plus:fo withCarryIn:ci eq:t0a withCarryOut:co]];
    
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t0a plus:E withCarryIn:ci eq:t0 withCarryOut:co]];
    
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t0 plus:[self getK:t] withCarryIn:ci eq:t1 withCarryOut:co]];
    
    id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t1 plus:_W[t] withCarryIn:ci eq:t2 withCarryOut:co]];
    
@@ -1137,6 +1141,7 @@
 {
    ORUInt min = 0x00000000;
    ORUInt max = 0xFFFFFFFF;
+   ORUInt cinmax = 0xFFFFFFFE;
    
    id<ORBitVar> go = [self g:B y:C z:D];
    
@@ -1146,22 +1151,22 @@
    [_m add:[ORFactory bit:A rotateLBy:5 eq:rotatedA]];
    
    id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:rotatedA plus:go withCarryIn:ci eq:t0a withCarryOut:co]];
    
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t0a plus:E withCarryIn:ci eq:t0 withCarryOut:co]];
    
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t0 plus:[self getK:t] withCarryIn:ci eq:t1 withCarryOut:co]];
    
    id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t1 plus:_W[t] withCarryIn:ci eq:t2 withCarryOut:co]];
    
@@ -1172,7 +1177,8 @@
 {
    ORUInt min = 0x00000000;
    ORUInt max = 0xFFFFFFFF;
-   
+   ORUInt cinmax = 0xFFFFFFFE;
+
    id<ORBitVar> ho = [self h:B y:C z:D];
    
 //   [self getW:t x:x];
@@ -1181,22 +1187,22 @@
    [_m add:[ORFactory bit:A rotateLBy:5 eq:rotatedA]];
    
    id<ORBitVar> t0a = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   id<ORBitVar> ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    id<ORBitVar> co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:rotatedA plus:ho withCarryIn:ci eq:t0a withCarryOut:co]];
    
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t0a plus:E withCarryIn:ci eq:t0 withCarryOut:co]];
    
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t0 plus:[self getK:t] withCarryIn:ci eq:t1 withCarryOut:co]];
    
    id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   ci =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
    co =  [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    [_m add:[ORFactory bit:t1 plus:_W[t] withCarryIn:ci eq:t2 withCarryOut:co]];
    
