@@ -464,6 +464,7 @@
       
       uint32 min = 0;
       uint32 max = 0xFFFFFFFF;
+      uint32 cinmax = 0xFFFFFFFE;
 
       id<ORBitVar> cin;
       id<ORBitVar> cout;
@@ -475,7 +476,7 @@
       //forall(i in 0..3) _m.post(h4[i] == h0[i] + h3[i]);
       for (int i=0; i<4; i++)
       {
-         cin = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+         cin = [ORFactory bitVar:_m low:&min up:&cinmax bitLength:32];
          cout = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
          [_m add:[ORFactory bit:h0[i] plus:h3[i] withCarryIn:cin eq:h4[i] withCarryOut:cout]];
       }
@@ -714,9 +715,11 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 {
    uint32 *min = alloca(sizeof(uint32));
    uint32 *max = alloca(sizeof(uint32));
+   uint32 *cinmax = alloca(sizeof(uint32));
    
    *min = 0;
    *max = 0xFFFFFFFF;
+   *cinmax = 0xFFFFFFFE;
    
 //   NSLog(@"Shuffle1\n");
    // A = (A + f(B,C,D) + X[i]) <<< s
@@ -729,7 +732,7 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 // t0 = A + fo + x[i];
    id<ORBitVar> t0a = [ORFactory bitVar:_m low:min up:max bitLength:32];
 //      *max = 0xFFFFFFFF;
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:min up:max bitLength:32];
+   id<ORBitVar> ci =  [ORFactory bitVar:_m low:min up:cinmax bitLength:32];
 //      *max = 0xFFFFFFFF;
    id<ORBitVar> co =  [ORFactory bitVar:_m low:min up:max bitLength:32];
    [_m add:[ORFactory bit:A plus:fo withCarryIn:ci eq:t0a withCarryOut:co]];
@@ -750,7 +753,8 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 {
    uint32 *min = alloca(sizeof(uint32));
    uint32 *max = alloca(sizeof(uint32));
-      
+   uint32 *cinmax = alloca(sizeof(uint32));
+   
 //   NSLog(@"Shuffle2\n");
    // A = (A + g(B,C,D) + X[i] + 5A827999) <<< s
    id<ORBitVar> go = [self g:B y:C z:D];
@@ -758,22 +762,24 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    *min = 0;
    *max = 0xFFFFFFFF;
+   *cinmax = 0xFFFFFFFE;
+   
 //id<ORBitVar> t1 = A + go + x[i] + t0;
    id<ORBitVar> t1a = [ORFactory bitVar:_m low:min up:max bitLength:32];
       *max = 0xFFFFFFFE;
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:min up:max bitLength:32];
+   id<ORBitVar> ci =  [ORFactory bitVar:_m low:min up:cinmax bitLength:32];
       *max = 0xFFFFFFFF;
    id<ORBitVar> co =  [ORFactory bitVar:_m low:min up:max bitLength:32];
    [_m add:[ORFactory bit:A plus:go withCarryIn:ci eq:t1a withCarryOut:co]];
    id<ORBitVar> t1b = [ORFactory bitVar:_m low:min up:max bitLength:32];
       *max = 0xFFFFFFFE;
-   ci =  [ORFactory bitVar:_m low:min up:max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:min up:cinmax bitLength:32];
       *max = 0xFFFFFFFF;
    co =  [ORFactory bitVar:_m low:min up:max bitLength:32];
    [_m add:[ORFactory bit:t1a plus:x[i] withCarryIn:ci eq:t1b withCarryOut:co]];
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
       *max = 0xFFFFFFFE;
-   ci =  [ORFactory bitVar:_m low:min up:max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:min up:cinmax bitLength:32];
       *max = 0xFFFFFFFF;
    co =  [ORFactory bitVar:_m low:min up:max bitLength:32];
    [_m add:[ORFactory bit:t1b plus:t0 withCarryIn:ci eq:t1 withCarryOut:co]];
@@ -787,6 +793,7 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 {
    uint32 *min = alloca(sizeof(uint32));
    uint32 *max = alloca(sizeof(uint32));
+   uint32 *cinmax = alloca(sizeof(uint32));
    
 //   NSLog(@"Shuffle3\n");
    //A = (A + h(B,C,D) + X[i] + 6ED9EBA1) <<< s
@@ -795,22 +802,23 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    *min = 0;
    *max = 0xFFFFFFFF;
-//   t1 = A + ho + x[i] + t0;
+   *cinmax = 0xFFFFFFFE;
+   //   t1 = A + ho + x[i] + t0;
    id<ORBitVar> t1a = [ORFactory bitVar:_m low:min up:max bitLength:32];
       *max = 0xFFFFFFFE;
-   id<ORBitVar> ci =  [ORFactory bitVar:_m low:min up:max bitLength:32];
+   id<ORBitVar> ci =  [ORFactory bitVar:_m low:min up:cinmax bitLength:32];
       *max = 0xFFFFFFFF;
    id<ORBitVar> co =  [ORFactory bitVar:_m low:min up:max bitLength:32];
    [_m add:[ORFactory bit:A plus:ho withCarryIn:ci eq:t1a withCarryOut:co]];
    id<ORBitVar> t1b = [ORFactory bitVar:_m low:min up:max bitLength:32];
       *max = 0xFFFFFFFE;
-   ci =  [ORFactory bitVar:_m low:min up:max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:min up:cinmax bitLength:32];
       *max = 0xFFFFFFFF;
    co =  [ORFactory bitVar:_m low:min up:max bitLength:32];
    [_m add:[ORFactory bit:t1a plus:x[i] withCarryIn:ci eq:t1b withCarryOut:co]];
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 //      *max = 0xFFFFFFFE;
-   ci =  [ORFactory bitVar:_m low:min up:max bitLength:32];
+   ci =  [ORFactory bitVar:_m low:min up:cinmax bitLength:32];
 //      *max = 0xFFFFFFFF;
    co =  [ORFactory bitVar:_m low:min up:max bitLength:32];
    [_m add:[ORFactory bit:t1b plus:t0 withCarryIn:ci eq:t1 withCarryOut:co]];

@@ -334,11 +334,11 @@ int main(int argc, const char* argv[])
 //   twoByteSHA1(@"3-mssg.txt", BVABS);
 
 //twoByteMD4(@"U-mssg.txt", BVABS);
-twoByteMD5(@"rand0-mssg.txt", BVFF);
-twoByteSHA1(@"rand0-mssg.txt", BVFF);
-twoByteMD4(@"rand0-mssg.txt", BVFF);
-twoByteMD5(@"3-mssg.txt", BVFF);
-twoByteSHA1(@"3-mssg.txt", BVFF);
+//twoByteMD5(@"rand0-mssg.txt", BVFF);
+//twoByteSHA1(@"rand0-mssg.txt", BVFF);
+//twoByteMD4(@"rand0-mssg.txt", BVFF);
+//twoByteMD5(@"3-mssg.txt", BVFF);
+//twoByteSHA1(@"3-mssg.txt", BVFF);
 
    
 //   twoByteMD4(@"rand0-mssg.txt", BVIBS);
@@ -389,14 +389,14 @@ twoByteSHA1(@"3-mssg.txt", BVFF);
 //   twoByteMD4(@"rand6-mssg.txt", BVABS);
 //   twoByteMD4(@"rand7-mssg.txt", BVABS);
 //
-//   twoByteMD5(@"rand0-mssg.txt", BVABS);
-//   twoByteMD5(@"rand1-mssg.txt", BVABS);
-//   twoByteMD5(@"rand2-mssg.txt", BVABS);
-//   twoByteMD5(@"rand3-mssg.txt", BVABS);
-//   twoByteMD5(@"rand4-mssg.txt", BVABS);
-//   twoByteMD5(@"rand5-mssg.txt", BVABS);
-//   twoByteMD5(@"rand6-mssg.txt", BVABS);
-//   twoByteMD5(@"rand7-mssg.txt", BVABS);
+   twoByteMD5(@"rand0-mssg.txt", BVABS);
+   twoByteMD5(@"rand1-mssg.txt", BVABS);
+   twoByteMD5(@"rand2-mssg.txt", BVABS);
+   twoByteMD5(@"rand3-mssg.txt", BVABS);
+   twoByteMD5(@"rand4-mssg.txt", BVABS);
+   twoByteMD5(@"rand5-mssg.txt", BVABS);
+   twoByteMD5(@"rand6-mssg.txt", BVABS);
+   twoByteMD5(@"rand7-mssg.txt", BVABS);
 
 //   twoByteMD4(@"fifteen.txt", BVABS);
 //   twoByteMD4(@"fifteen.txt", BVIBS);
