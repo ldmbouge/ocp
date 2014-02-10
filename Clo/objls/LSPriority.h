@@ -43,5 +43,12 @@
 static inline BOOL isFirst(LSPrioritySpace* ps,LSPriority* p) { return p == ps->_first;}
 static inline BOOL isLast(LSPrioritySpace* ps,LSPriority* p)  { return p == ps->_last;}
 static inline BOOL isNifty(LSPrioritySpace* ps,LSPriority* p) { return p == ps->_nifty;}
+static inline id<LSPriority> priorityAfter(LSPrioritySpace* ps,id<LSPriority> p) {
+   if (p == ps->_last)
+      return [ps freshPriorityAfter:p];
+   else
+      return ((LSPriority*)p)->_next;
+}
 static inline LSPriority* nextPriority(LSPriority* p)         { return p->_next;}
 static inline LSPriority* prevPriority(LSPriority* p)         { return p->_prev;}
+static inline id<LSPriority> maxPriority(id<LSPriority> a,id<LSPriority> b) { return (int)getId((ORObject*)a) > (int)getId((ORObject*)b) ? a : b;}

@@ -147,6 +147,7 @@
 		5B196C7916446F4800C9CED2 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B196C7A16446F4800C9CED2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B196C7B16446F4800C9CED2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B19BEC518A916AC006CC213 /* LSObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B19BEC418A916AC006CC213 /* LSObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B1D4268181EF28D00EE8C83 /* test1.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667126181EF228007CBBA6 /* test1.csv */; };
 		5B2000E6156D585E00D80105 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -5307,6 +5308,7 @@
 		5B19097A16DAAB45006D1D24 /* eq20.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = eq20.1; sourceTree = "<group>"; };
 		5B19097B16DAAB45006D1D24 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B19098216DAACA7006D1D24 /* eq20 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eq20; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B19BEC418A916AC006CC213 /* LSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSObject.h; sourceTree = "<group>"; };
 		5B2000ED156D585E00D80105 /* queensNaive copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "queensNaive copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2000F0156D58A800D80105 /* mainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = mainView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B27573017E87B560082934E /* costas2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = costas2; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8603,6 +8605,7 @@
 				5BE8BBA21857A41600D99445 /* objls.m */,
 				5BE8BB9B1857A41600D99445 /* Supporting Files */,
 				5BD7929A1857A749008DCF91 /* LSVar.h */,
+				5B19BEC418A916AC006CC213 /* LSObject.h */,
 				5B7C660718A581850077868F /* LSFactory.h */,
 				5B7C660818A581850077868F /* LSFactory.m */,
 				5BD792AA1857C129008DCF91 /* LSCount.h */,
@@ -9485,6 +9488,7 @@
 				5BD792A41857AE67008DCF91 /* LSPriority.h in Headers */,
 				5BD792A81857BA3A008DCF91 /* LSPropagator.h in Headers */,
 				5BD792A01857A803008DCF91 /* LSIntVar.h in Headers */,
+				5B19BEC518A916AC006CC213 /* LSObject.h in Headers */,
 				5BD792AC1857C129008DCF91 /* LSCount.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

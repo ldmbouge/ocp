@@ -12,6 +12,32 @@
 #import "LSEngineI.h"
 #import "LSPriority.h"
 #import "LSPropagator.h"
+#import "LSIntVar.h"
+#import <ORUtilities/ORPQueue.h>
+
+@interface LSRQueue : ORPQueue
+-(id)init;
+-(void)enQueue:(id<LSPropagator>)x atPriority:(id<LSPriority>)p;
+-(id<LSPropagator>)deQueue;
+@end
+
+@implementation LSRQueue
+-(id)init
+{
+   self = [super init:^BOOL(NSNumber* a,NSNumber* b) {
+      return a.intValue < b.intValue;
+   }];
+   return self;
+}
+-(void)enQueue:(id<LSPropagator>)x atPriority:(LSPriority*)p
+{
+   [self insertObject:x withKey:@([p getId])];
+}
+-(id<LSPropagator>)deQueue
+{
+   return [self extractBest];
+}
+@end
 
 @implementation LSEngineI
 
@@ -23,11 +49,13 @@
    _cstr = [[NSMutableArray alloc] initWithCapacity:64];
    _invs = [[NSMutableArray alloc] initWithCapacity:64];
    _pSpace = [[LSPrioritySpace alloc] init];
+   _queue = [[LSRQueue alloc] init];
    _nbObjects = 0;
    return self;
 }
 -(void)dealloc
 {
+   [_queue release];
    [_vars release];
    [_objs release];
    [_cstr release];
@@ -107,10 +135,6 @@
 {
    return nil;
 }
--(ORStatus)propagate
-{
-   return ORSuspend;
-}
 -(ORStatus)enforceObjective
 {
    return ORSuspend;
@@ -123,5 +147,29 @@
 {
    [_invs addObject:i];
    [i define];
+}
+-(void)notify:(id<LSVar>)x
+{
+   [x enumerateOutbound:^(id<LSPropagator,LSPull> p,ORInt k) {
+      [p pull:k];
+      [self schedule:p];
+   }];
+}
+-(void)schedule:(id<LSPropagator>)x
+{
+   [_queue enQueue:x atPriority:x.rank];
+}
+-(ORStatus)propagate
+{
+   while (![_queue empty]) {
+      id<LSPropagator> p = [_queue deQueue];
+      [p execute];
+   }
+   return ORSuspend;
+}
+-(void)label:(LSIntVar*)x with:(ORInt)v
+{
+   [x setValue: v];
+   [self propagate];
 }
 @end

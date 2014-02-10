@@ -14,6 +14,7 @@
 
 @class LSPrioritySpace;
 @class LSPropagator;
+@class LSRQueue;
 
 @interface LSEngineI : NSObject<ORSearchEngine,LSEngine> {
    NSMutableArray* _vars;
@@ -23,6 +24,7 @@
    ORUInt        _nbObjects;
    ORBool          _closed;
    LSPrioritySpace* _pSpace;
+   LSRQueue*        _queue;
 }
 -(LSEngineI*)initEngine;
 -(void)dealloc;
@@ -32,4 +34,6 @@
 -(NSMutableArray*)variables;
 -(NSMutableArray*)invariants;
 -(ORUInt)nbObjects;
+-(void)label:(LSIntVar*)x with:(ORInt)v;
+-(void)notify:(id<LSVar>)x;
 @end

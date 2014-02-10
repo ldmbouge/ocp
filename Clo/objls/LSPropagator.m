@@ -12,6 +12,7 @@
 #import "LSPropagator.h"
 #import <ORUtilities/ORPQueue.h>
 #import "LSVar.h"
+#import "LSIntVar.h"
 
 @implementation LSPropagator
 
@@ -20,7 +21,7 @@
    self = [super init];
    _engine = engine;
    _inbound = [[NSMutableSet alloc] initWithCapacity:2];
-   _rank = [[engine space] first];
+   _rank = [[[engine space] nifty] retain];
    return self;
 }
 -(void)post
@@ -48,6 +49,13 @@
 -(NSUInteger)inDegree
 {
    return [_inbound count];
+}
+-(id<NSFastEnumeration>)inbound
+{
+   return [[[LSInbound alloc] initWith:_inbound] autorelease];
+}
+-(void)execute
+{
 }
 @end
 
@@ -93,17 +101,31 @@
       for(LSPropagator* v in [_engine invariants])
          loc[v.getId] = [pq addObject:v forKey:@([v inDegree])];
       [pq buildHeap];
-      NSLog(@"The heap: %@",pq);
+      LSPrioritySpace* space = [_engine space];
       while (![pq empty]) {
          id node = [pq extractBest];
+         id<LSPriority> cur = [space nifty];
+         for(id<LSObject> x in [node inbound]) {
+            //NSLog(@"Got a predecessor %@",x);
+            cur = maxPriority(cur, [x rank]);
+         }
+         cur = priorityAfter(space, cur);
+         [node setRank:cur];
          for(ORObject* x in [node outbound]) {
-            NSLog(@"OUT FROM(%@) is %@",node,x);
+            //NSLog(@"OUT FROM(%@) is %@",node,x);
             [pq update:loc[x.getId] toKey:@([loc[x.getId].key intValue] - 1)];
          }
       }
       free(loc);
       [pq release];
    }
+   for(id<LSPropagator> v in [_engine invariants])
+      [v post];
+   
+   for(id<LSVar> v in [_engine variables])
+      NSLog(@"%@",v);
+   for(id<LSPropagator> v in [_engine invariants])
+      NSLog(@"%@",v);
 }
 
 @end

@@ -10,19 +10,10 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objls/LSEngineI.h>
-#import <objls/LSObject.h>
 
-@protocol LSEngine;
 @protocol LSPriority;
 
-@protocol LSVar <LSObject>
--(ORUInt)getId;
--(id<LSEngine>)engine;
--(NSUInteger)inDegree;
+@protocol LSObject<ORObject>
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)rank;
--(id<NSFastEnumeration>)outbound;
--(id<NSFastEnumeration>)inbound;
--(void)enumerateOutbound:(void(^)(id,ORInt))block;
 @end

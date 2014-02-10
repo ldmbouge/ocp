@@ -12,7 +12,11 @@
 #import <ORFoundation/ORFoundation.h>
 
 @class LSPropagator;
+@class LSIntVar;
+@protocol LSVar;
 
 @protocol LSEngine <NSObject,ORSearchEngine>
 -(void)add:(LSPropagator*)i;
+-(void)label:(LSIntVar*)x with:(ORInt)v;
+-(void)notify:(id<LSVar>)x;
 @end

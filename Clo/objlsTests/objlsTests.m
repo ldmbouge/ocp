@@ -34,16 +34,18 @@
 {
 //    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
 //   id<ORModel> m = [ORFactory createModel];
-   id<LSEngine>  e = [[LSEngineI alloc] initEngine];
-   id<ORIdArray> x = [ORFactory idArray:e range:RANGE(e,0,10)];
-   id<ORIdArray> c = [ORFactory idArray:e range:RANGE(e,0,10)];
+   id<LSEngine>  ls = [[LSEngineI alloc] initEngine];
+   id<ORIdArray> x = [ORFactory idArray:ls range:RANGE(ls,0,10)];
+   id<ORIdArray> c = [ORFactory idArray:ls range:RANGE(ls,0,10)];
    for (ORInt i=x.range.low; i <= x.range.up; ++i)
-      x[i] = [LSFactory intVar:e value:0];
+      x[i] = [LSFactory intVar:ls value:0];
    for (ORInt i=c.range.low; i <= c.range.up; ++i)
-      c[i] = [LSFactory intVar:e value:0];
-   LSCount* ci = [LSFactory count:e vars:x card:c];
-   [e add:ci];
-   [e close];
+      c[i] = [LSFactory intVar:ls value:0];
+   LSCount* ci = [LSFactory count:ls vars:x card:c];
+   [ls add:ci];
+   [ls close];
+   [ls label:x[1] with: 1];
+   NSLog(@"count: %@",c);
 }
 
 @end

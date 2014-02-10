@@ -51,6 +51,8 @@
    [_cnt[[_old at:k]] decr];
    [_cnt[[vk value]] incr];
 }
+-(void)execute
+{}
 -(id<NSFastEnumeration>)outbound
 {
    return _cnt;
@@ -58,7 +60,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSCount %p : %d>",self,_name];
+   [buf appendFormat:@"<LSCount(%p) : %d,%@>",self,_name,_rank];
    return buf;
 }
 @end

@@ -18,6 +18,7 @@
 
 @protocol LSLink
 -(id)target;
+-(id)source;
 @end
 
 typedef enum LSStatus {
@@ -45,4 +46,18 @@ typedef enum LSStatus {
 -(void)setRank:(id<LSPriority>)r;
 -(NSUInteger)inDegree;
 -(id<NSFastEnumeration>)outbound;
+-(id<NSFastEnumeration>)inbound;
+-(void)enumerateOutbound:(void(^)(id,ORInt))block;
+@end
+
+@interface LSOutbound : NSObject<NSFastEnumeration> {
+   NSSet* _theSet;
+}
+-(id)initWith:(NSSet*)theSet;
+@end
+
+@interface LSInbound : NSObject<NSFastEnumeration> {
+   NSSet* _theSet;
+}
+-(id)initWith:(NSSet*)theSet;
 @end

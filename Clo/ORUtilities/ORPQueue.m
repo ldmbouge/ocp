@@ -33,7 +33,7 @@
 }
 -(void)dealloc
 {
-   NSLog(@"Deallocating(%p): %@",self,self);
+   //NSLog(@"Deallocating(%p): %@",self,self);
    [_key release];
    [_object release];
    [super dealloc];
@@ -140,7 +140,7 @@ static void heapify(ORPQueue* pq,ORInt i)
    if (_sz >= _mxs - 1)
       [self resize];
    ORPQLocator* toInsert = [[ORPQLocator alloc] initWithObject:obj andKey:key];
-   ORInt i = _sz;
+   ORInt i = _sz++;
    while(i>=0 && better(key,_tab[parent(i)].key)) {
       _tab[i] = _tab[parent(i)];
       _tab[i]->_ofs = i;

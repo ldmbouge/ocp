@@ -18,7 +18,12 @@
    _next = _prev = nil;
    return self;
 }
-
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<P(%p)=%d>",self,_name];
+   return buf;
+}
 @end
 
 @implementation LSPrioritySpace {

@@ -18,7 +18,9 @@
    ORInt _k;
 }
 -(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k;
+-(id)source;
 -(id)target;
+-(ORInt)index;
 @end
 
 @implementation LSLink
@@ -42,12 +44,21 @@
 {
    return _trg;
 }
-@end
-
-@interface LSOutbound : NSObject<NSFastEnumeration> {
-   NSSet* _theSet;
+-(id)source
+{
+   return _src;
 }
--(id)initWith:(NSSet*)theSet;
+-(ORInt)index
+{
+   return _k;
+}
+
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSLink: %d -> %d>",[_src getId],[_trg getId]];
+   return buf;
+}
 @end
 
 @implementation LSOutbound
@@ -65,6 +76,8 @@
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
 {
    if (state->state == 0) {
+      if (_theSet == nil)
+         return 0;
       NSEnumerator* n = [_theSet objectEnumerator];
       ORInt k = 0;
       id ok = nil;
@@ -83,12 +96,55 @@
       state->itemsPtr = stackbuf;
       state->mutationsPtr = (unsigned long*)_theSet;
       state->state = (unsigned long)n;
-//      if (ok == nil)
-//         [n release];
       return k;
    }
 }
 @end
+
+@implementation LSInbound
+-(id)initWith:(NSSet*)theSet
+{
+   self = [super init];
+   _theSet = [theSet retain];
+   return self;
+}
+-(void)dealloc
+{
+   [_theSet release];
+   [super dealloc];
+}
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
+{
+   if (state->state == 0) {
+      if (_theSet == nil) {
+         state->itemsPtr = stackbuf;
+         state->mutationsPtr = &state->extra[0];;
+         state->state = 1;
+         return 0;
+      }
+      NSEnumerator* n = [_theSet objectEnumerator];
+      ORInt k = 0;
+      id ok = nil;
+      while (k < len && (ok = [n nextObject]) != nil)
+         stackbuf[k++] = [ok source];
+      state->itemsPtr = stackbuf;
+      state->mutationsPtr = (unsigned long*)_theSet;
+      state->state = (unsigned long)n;
+      return k;
+   } else {
+      NSEnumerator* n = (id)(state->state);
+      ORInt k = 0;
+      id ok = nil;
+      while (k < len && (ok = [n nextObject]) != nil)
+         stackbuf[k++] = [ok source];
+      state->itemsPtr = stackbuf;
+      state->mutationsPtr = (unsigned long*)_theSet;
+      state->state = (unsigned long)n;
+      return k;
+   }
+}
+@end
+
 
 @implementation LSIntVar
 
@@ -101,7 +157,7 @@
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
    _inbound  = nil;
    [_engine trackVariable:self];
-   _rank = [[engine space] first];
+   _rank = [[[engine space] nifty] retain];
    return self;
 }
 -(void)dealloc
@@ -126,10 +182,15 @@
 {
    return [[[LSOutbound alloc] initWith:_outbound] autorelease];
 }
+-(id<NSFastEnumeration>)inbound
+{
+   return [[[LSInbound alloc] initWith:_inbound] autorelease];
+}
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"var<LS>(%p,%d) = %d",self,_name,_value];
+   [buf appendFormat:@"var<LS>(%p,%d,%@) = %d",self,_name,_rank,_value];
    return buf;
 }
 -(LSEngineI*)engine
@@ -139,6 +200,7 @@
 -(void)setValue:(ORInt)v
 {
    _value = v;
+   [_engine notify:self];
 }
 -(ORInt)value
 {
@@ -146,11 +208,15 @@
 }
 -(ORInt)incr
 {
-   return ++_value;
+   ORInt rv =  ++_value;
+   [_engine notify:self];
+   return rv;
 }
 -(ORInt)decr
 {
-   return --_value;
+   ORInt rv =  --_value;
+   [_engine notify:self];
+   return rv;
 }
 -(id)addListener:(LSPropagator*)p term:(ORInt)k
 {
@@ -160,9 +226,15 @@
 }
 -(id)addDefiner:(LSPropagator*)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:-1];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:p to:self for:-1];
    if (_inbound==nil) _inbound = [[NSMutableSet alloc] initWithCapacity:8];
    [_inbound addObject:obj];
    return obj;
 }
+-(void)enumerateOutbound:(void(^)(id,ORInt))block
+{
+   for(LSLink* lnk in _outbound)
+      block(lnk.target,lnk.index);
+}
+
 @end

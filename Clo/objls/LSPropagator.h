@@ -12,6 +12,8 @@
 #import <ORFoundation/ORFoundation.h>
 #import "LSEngineI.h"
 #import "LSPriority.h"
+#import <objls/LSObject.h>
+
 
 @protocol LSVar;
 @class LSLink;
@@ -30,7 +32,13 @@
 -(void)prioritize;
 @end
 
-@interface LSPropagator : ORObject {
+@protocol LSPropagator<LSObject>
+-(void)define;
+-(void)post;
+-(void)execute;
+@end
+
+@interface LSPropagator : ORObject<LSPropagator> {
 @package
    id<LSPriority>   _rank;
    LSEngineI*     _engine;
@@ -39,6 +47,7 @@
 -(id)initWith:(id<LSEngine>)engine;
 -(void)post;
 -(void)define;
+-(void)execute;
 -(void)addTrigger:(LSLink*)link;
 -(void)prioritize:(PStore*)p;
 -(NSUInteger)inDegree;
