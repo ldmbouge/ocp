@@ -521,7 +521,19 @@
 {
    return [ORFactory elt: _tracker intVarArray: (id<ORIntVarArray>) self index: idx];
 }
-
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
+                                  objects:(id *)stackbuf
+                                    count:(NSUInteger)len
+{
+   if (state->state >= _up - _low + 1)
+      return 0;
+   else {
+      state->itemsPtr = _array + _low;
+      state->state = _up - _low + 1;
+      state->mutationsPtr = (unsigned long *)self;
+      return _up - _low + 1;
+   }
+}
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {
    [aCoder encodeObject:_tracker];

@@ -11,6 +11,7 @@
 
 #import "LSEngineI.h"
 #import "LSPriority.h"
+#import "LSPropagator.h"
 
 @implementation LSEngineI
 
@@ -18,14 +19,17 @@
 {
    self = [super init];
    _vars = [[NSMutableArray alloc] initWithCapacity:64];
+   _objs = [[NSMutableArray alloc] initWithCapacity:64];
    _cstr = [[NSMutableArray alloc] initWithCapacity:64];
    _invs = [[NSMutableArray alloc] initWithCapacity:64];
    _pSpace = [[LSPrioritySpace alloc] init];
+   _nbObjects = 0;
    return self;
 }
 -(void)dealloc
 {
    [_vars release];
+   [_objs release];
    [_cstr release];
    [_invs release];
    [super dealloc];
@@ -42,18 +46,20 @@
 }
 -(id) trackVariable: (id) var
 {
-   [var setId:(ORUInt)[_vars count]];
+   [var setId:_nbObjects++];
    [_vars addObject:var];
    return var;
 }
 -(id) trackMutable:(id)obj
 {
-   [obj setId:(ORUInt)[_cstr count]];
-   [_cstr addObject:obj];
+   [obj setId:_nbObjects++];
+   [_objs addObject:obj];
    return obj;
 }
 -(id) trackObject: (id) obj
 {
+   [obj setId:_nbObjects++];
+   [_objs addObject:obj];
    return obj;
 }
 -(id) trackImmutable: (id) obj
@@ -68,18 +74,34 @@
 {
    return obj;
 }
-
+-(LSPrioritySpace*)space
+{
+   return _pSpace;
+}
 -(ORStatus) close
 {
-   assert(NO);
+   if (_closed) return ORSuspend;
+   _closed = YES;
+   PStore* store = [[PStore alloc] initPStore:self];
+   [store prioritize];
+   [store release];
+   return ORSuspend;
 }
 -(ORBool) closed
 {
    return _closed;
 }
+-(ORUInt)nbObjects
+{
+   return _nbObjects;
+}
 -(NSMutableArray*) variables
 {
    return _vars;
+}
+-(NSMutableArray*)invariants
+{
+   return _invs;
 }
 -(id<ORTrail>) trail
 {
@@ -97,5 +119,9 @@
 -(void)clearStatus
 {
 }
-
+-(void)add:(LSPropagator*)i
+{
+   [_invs addObject:i];
+   [i define];
+}
 @end

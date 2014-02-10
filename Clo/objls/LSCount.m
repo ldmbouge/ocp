@@ -21,18 +21,17 @@
    _old = [ORFactory intArray:engine range:_src.range value:0];
    return self;
 }
--(void)prioritize:(PStore*)p
+-(void)dealloc
 {
-   if ([p finalNotice:self]) {
-      if ([p lastTime:self]) {
-         
-      } else _rank = [p maxWithRank:_rank];
-   }
+   NSLog(@"deallocating count %p",self);
+   [super dealloc];
 }
 -(void)define
 {
    for(ORInt i=_src.low;i <= _src.up;i++)
       [self addTrigger:[_src[i] addListener:self term:i]];
+   for(ORInt i=_cnt.low;i <= _cnt.up;i++)
+      [_cnt[i] addDefiner:self];
 }
 -(void)post
 {
@@ -51,6 +50,25 @@
    LSIntVar* vk = _src[k];
    [_cnt[[_old at:k]] decr];
    [_cnt[[vk value]] incr];
+}
+-(id<NSFastEnumeration>)outbound
+{
+   return _cnt;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSCount %p : %d>",self,_name];
+   return buf;
+}
+@end
+
+@implementation LSFactory (LSGlobalInvariant)
++(LSCount*)count:(id<LSEngine>)engine vars:(id<ORIdArray>)x card:(id<ORIdArray>)c
+{
+   LSCount* gi = [[LSCount alloc] init:engine count:x card:c];
+   [engine trackMutable:gi];
+   return gi;
 }
 
 @end

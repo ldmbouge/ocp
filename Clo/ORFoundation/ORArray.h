@@ -62,7 +62,7 @@
 -(id<ORTracker>) tracker;
 @end
 
-@protocol ORIdArray <ORObject>
+@protocol ORIdArray <ORObject,NSFastEnumeration>
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
 -(id)objectAtIndexedSubscript:(NSUInteger)key;

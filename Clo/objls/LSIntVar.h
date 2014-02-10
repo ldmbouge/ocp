@@ -11,9 +11,14 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objls/LSVar.h>
+#import "LSPriority.h"
 
 @protocol LSEngine;
 @class LSPropagator;
+
+@protocol LSLink
+-(id)target;
+@end
 
 typedef enum LSStatus {
    LSFinal   = 0,
@@ -25,6 +30,8 @@ typedef enum LSStatus {
    ORInt          _value;
    enum LSStatus _status;
    NSMutableSet*    _outbound;
+   NSMutableSet*    _inbound;
+   id<LSPriority>   _rank;
 }
 -(id)initWithEngine:(id<LSEngine>)engine andValue:(ORInt)v;
 -(void)dealloc;
@@ -33,4 +40,9 @@ typedef enum LSStatus {
 -(ORInt)incr;
 -(ORInt)decr;
 -(id)addListener:(LSPropagator*)p term:(ORInt)k;
+-(id)addDefiner:(LSPropagator*)p;
+-(id<LSPriority>)rank;
+-(void)setRank:(id<LSPriority>)r;
+-(NSUInteger)inDegree;
+-(id<NSFastEnumeration>)outbound;
 @end

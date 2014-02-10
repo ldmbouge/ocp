@@ -16,4 +16,6 @@
 @protocol LSVar <NSObject>
 -(ORUInt)getId;
 -(id<LSEngine>)engine;
+-(NSUInteger)inDegree;
+-(NSSet*)outbound;
 @end

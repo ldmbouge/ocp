@@ -7,6 +7,10 @@
 //
 
 #import <XCTest/XCTest.h>
+#import <ORFoundation/ORFoundation.h>
+#import "LSEngineI.h"
+#import "LSFactory.h"
+#import "LSCount.h"
 
 @interface objlsTests : XCTestCase
 
@@ -28,7 +32,18 @@
 
 - (void)testExample
 {
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+//    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+//   id<ORModel> m = [ORFactory createModel];
+   id<LSEngine>  e = [[LSEngineI alloc] initEngine];
+   id<ORIdArray> x = [ORFactory idArray:e range:RANGE(e,0,10)];
+   id<ORIdArray> c = [ORFactory idArray:e range:RANGE(e,0,10)];
+   for (ORInt i=x.range.low; i <= x.range.up; ++i)
+      x[i] = [LSFactory intVar:e value:0];
+   for (ORInt i=c.range.low; i <= c.range.up; ++i)
+      c[i] = [LSFactory intVar:e value:0];
+   LSCount* ci = [LSFactory count:e vars:x card:c];
+   [e add:ci];
+   [e close];
 }
 
 @end

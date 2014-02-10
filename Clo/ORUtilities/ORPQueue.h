@@ -9,21 +9,23 @@
  
  ***********************************************************************/
 
+#import <ORUtilities/ORUtilities.h>
 
-#import "LSPropagator.h"
-#import "LSFactory.h"
-
-@interface LSCount : LSPropagator<LSPull> {
-   id<ORIdArray>  _src;
-   id<ORIdArray>  _cnt;
-   id<ORIntArray> _old;
-}
--(id)init:(id<LSEngine>)engine count:(id<ORIdArray>)src card:(id<ORIdArray>)cnt;
--(void)post;
--(void)pull:(ORInt)k;
--(id<NSFastEnumeration>)outbound;
+@protocol ORLocator
+-(id)object;
+-(id)key;
 @end
 
-@interface LSFactory (LSGlobalInvariant)
-+(LSCount*)count:(id<LSEngine>)engine vars:(id<ORIdArray>)x card:(id<ORIdArray>)c;
+@interface ORPQueue : NSObject
+-(ORPQueue*)init:(BOOL(^)(id,id))cmp;
+-(void)buildHeap;
+-(id<ORLocator>)addObject:(id)obj forKey:(id)key;
+-(id<ORLocator>)insertObject:(id)obj withKey:(id)key;
+-(void)update:(id<ORLocator>)loc toKey:(id)key;
+-(id)peekAtKey;
+-(id)peekAtObject;
+-(id)extractBest;
+-(ORInt)size;
+-(BOOL)empty;
+-(NSString*)description;
 @end

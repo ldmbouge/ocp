@@ -9,21 +9,13 @@
  
  ***********************************************************************/
 
-
-#import "LSPropagator.h"
 #import "LSFactory.h"
+#import "LSIntVar.h"
 
-@interface LSCount : LSPropagator<LSPull> {
-   id<ORIdArray>  _src;
-   id<ORIdArray>  _cnt;
-   id<ORIntArray> _old;
+@implementation LSFactory
++(id<LSVar>)intVar:(id<LSEngine>)engine value:(ORInt)v
+{
+   return [[LSIntVar alloc] initWithEngine:engine andValue:v];
 }
--(id)init:(id<LSEngine>)engine count:(id<ORIdArray>)src card:(id<ORIdArray>)cnt;
--(void)post;
--(void)pull:(ORInt)k;
--(id<NSFastEnumeration>)outbound;
-@end
 
-@interface LSFactory (LSGlobalInvariant)
-+(LSCount*)count:(id<LSEngine>)engine vars:(id<ORIdArray>)x card:(id<ORIdArray>)c;
 @end

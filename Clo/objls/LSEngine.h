@@ -11,6 +11,8 @@
 
 #import <ORFoundation/ORFoundation.h>
 
-@protocol LSEngine <NSObject,ORSearchEngine>
+@class LSPropagator;
 
+@protocol LSEngine <NSObject,ORSearchEngine>
+-(void)add:(LSPropagator*)i;
 @end

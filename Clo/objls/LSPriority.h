@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 
-@protocol LSPriority
+@protocol LSPriority <NSObject>
 @end
 
 @class LSPrioritySpace;

@@ -461,6 +461,15 @@
 		5B7B478415F0F554005FF875 /* test-n30-e50.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7B478215F0F538005FF875 /* test-n30-e50.col */; };
 		5B7B478615F0F733005FF875 /* smallColoring.col in Resources */ = {isa = PBXBuildFile; fileRef = 5B7B478515F0F733005FF875 /* smallColoring.col */; };
 		5B7B478715F0F758005FF875 /* smallColoring.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7B478515F0F733005FF875 /* smallColoring.col */; };
+		5B7C660918A581850077868F /* LSFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C660718A581850077868F /* LSFactory.h */; };
+		5B7C660A18A581850077868F /* LSFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C660818A581850077868F /* LSFactory.m */; };
+		5B7C660B18A66D130077868F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B7C660C18A66D130077868F /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B7C660D18A66D130077868F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5B7C660E18A66D130077868F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B7C660F18A66D130077868F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B7C661218A698270077868F /* ORPQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C661018A698270077868F /* ORPQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B7C661318A698270077868F /* ORPQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C661118A698270077868F /* ORPQueue.m */; };
 		5B7CB9D813C2141700783BB3 /* SomeDocumentation.pages in Resources */ = {isa = PBXBuildFile; fileRef = 5B7CB9D713C2141600783BB3 /* SomeDocumentation.pages */; };
 		5B7D694C15B9B16500C9A10C /* mknap1-0.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDC15B1518300E4A3DF /* mknap1-0.txt */; };
 		5B7D694D15B9B16500C9A10C /* mknap1-2.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDD15B1518300E4A3DF /* mknap1-2.txt */; };
@@ -5477,6 +5486,10 @@
 		5B7B478015F0EBF7005FF875 /* test-n80-p40-0.col */ = {isa = PBXFileReference; lastKnownFileType = text; path = "test-n80-p40-0.col"; sourceTree = "<group>"; };
 		5B7B478215F0F538005FF875 /* test-n30-e50.col */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test-n30-e50.col"; sourceTree = "<group>"; };
 		5B7B478515F0F733005FF875 /* smallColoring.col */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = smallColoring.col; sourceTree = "<group>"; };
+		5B7C660718A581850077868F /* LSFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSFactory.h; sourceTree = "<group>"; };
+		5B7C660818A581850077868F /* LSFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSFactory.m; sourceTree = "<group>"; };
+		5B7C661018A698270077868F /* ORPQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORPQueue.h; sourceTree = "<group>"; };
+		5B7C661118A698270077868F /* ORPQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORPQueue.m; sourceTree = "<group>"; };
 		5B7CB9D713C2141600783BB3 /* SomeDocumentation.pages */ = {isa = PBXFileReference; lastKnownFileType = file; path = SomeDocumentation.pages; sourceTree = "<group>"; };
 		5B7D695615B9C91D00C9A10C /* market2s */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = market2s; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B7D695A15B9C91D00C9A10C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -6754,6 +6767,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B7C660B18A66D130077868F /* CPUKernel.framework in Frameworks */,
+				5B7C660C18A66D130077868F /* ORFoundation.framework in Frameworks */,
+				5B7C660D18A66D130077868F /* ORModeling.framework in Frameworks */,
+				5B7C660E18A66D130077868F /* ORProgram.framework in Frameworks */,
+				5B7C660F18A66D130077868F /* ORUtilities.framework in Frameworks */,
 				5BE8BBAB1857A41600D99445 /* Cocoa.framework in Frameworks */,
 				5BE8BBAE1857A41600D99445 /* objls.framework in Frameworks */,
 				5BE8BBAA1857A41600D99445 /* XCTest.framework in Frameworks */,
@@ -7362,6 +7380,8 @@
 				5B60E5DF15AE907F002FF2B3 /* ORUtilities.h */,
 				5B60E5E015AE907F002FF2B3 /* ORUtilities.m */,
 				5B60E5D915AE907F002FF2B3 /* Supporting Files */,
+				5B7C661018A698270077868F /* ORPQueue.h */,
+				5B7C661118A698270077868F /* ORPQueue.m */,
 			);
 			path = ORUtilities;
 			sourceTree = "<group>";
@@ -8582,17 +8602,19 @@
 				5BE8BBA11857A41600D99445 /* objls.h */,
 				5BE8BBA21857A41600D99445 /* objls.m */,
 				5BE8BB9B1857A41600D99445 /* Supporting Files */,
-				5BD792961857A5CF008DCF91 /* LSEngineI.h */,
 				5BD7929A1857A749008DCF91 /* LSVar.h */,
-				5BD7929C1857A7A6008DCF91 /* LSEngine.h */,
-				5BD792A61857BA3A008DCF91 /* LSPropagator.h */,
+				5B7C660718A581850077868F /* LSFactory.h */,
+				5B7C660818A581850077868F /* LSFactory.m */,
 				5BD792AA1857C129008DCF91 /* LSCount.h */,
 				5BD792AB1857C129008DCF91 /* LSCount.m */,
+				5BD792A61857BA3A008DCF91 /* LSPropagator.h */,
 				5BD792A71857BA3A008DCF91 /* LSPropagator.m */,
 				5BD792A21857AE67008DCF91 /* LSPriority.h */,
 				5BD792A31857AE67008DCF91 /* LSPriority.m */,
 				5BD7929E1857A803008DCF91 /* LSIntVar.h */,
 				5BD7929F1857A803008DCF91 /* LSIntVar.m */,
+				5BD7929C1857A7A6008DCF91 /* LSEngine.h */,
+				5BD792961857A5CF008DCF91 /* LSEngineI.h */,
 				5BD792971857A5CF008DCF91 /* LSEngineI.m */,
 			);
 			path = objls;
@@ -9275,6 +9297,7 @@
 				5B60E5EF15AE958A002FF2B3 /* ORCrFactory.h in Headers */,
 				5BAEE08915AE99C8006CEE1E /* ORUtilities.h in Headers */,
 				5BDE360516D905BE0030559D /* ORMallocWatch.h in Headers */,
+				5B7C661218A698270077868F /* ORPQueue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9455,6 +9478,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B7C660918A581850077868F /* LSFactory.h in Headers */,
 				5BD792981857A5CF008DCF91 /* LSEngineI.h in Headers */,
 				5BD7929B1857A749008DCF91 /* LSVar.h in Headers */,
 				5BD7929D1857A7A6008DCF91 /* LSEngine.h in Headers */,
@@ -11481,6 +11505,7 @@
 				5BE8BB971857A41600D99445 /* objls */,
 				5B9EE52715175CF900619B47 /* CPLib */,
 				5B9ABD011391329D000997E5 /* objcpTests */,
+				5BE8BBA71857A41600D99445 /* objlsTests */,
 				5B33370313A2B866001DFC38 /* allProgs */,
 				5B6E891F1379D3E9005DB4CA /* Clo */,
 				5BEEF60F13970B6F002ADBD4 /* queens2 */,
@@ -11559,7 +11584,6 @@
 				5B67A4FB17E227BB00516F50 /* wka */,
 				5B27572F17E87B560082934E /* costas2 */,
 				5BD601C017F9A627006A9CDC /* bugTest */,
-				5BE8BBA71857A41600D99445 /* objlsTests */,
 			);
 		};
 /* End PBXProject section */
@@ -11865,6 +11889,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */,
+				5B7C661318A698270077868F /* ORPQueue.m in Sources */,
 				5B60E5ED15AE913F002FF2B3 /* ORConcurrencyI.m in Sources */,
 				5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */,
 				5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */,
@@ -12402,6 +12427,7 @@
 				5BD792991857A5CF008DCF91 /* LSEngineI.m in Sources */,
 				5BD792891857A520008DCF91 /* objls.m in Sources */,
 				5BD792A91857BA3A008DCF91 /* LSPropagator.m in Sources */,
+				5B7C660A18A581850077868F /* LSFactory.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18790,7 +18816,7 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ORFoundation.framework/Versions/A/ORFoundation";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -18816,7 +18842,6 @@
 				INFOPLIST_FILE = "objlsTests/objlsTests-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -18828,7 +18853,7 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ORFoundation.framework/Versions/A/ORFoundation";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -18850,7 +18875,6 @@
 				INFOPLIST_FILE = "objlsTests/objlsTests-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Coverage;
@@ -18862,7 +18886,7 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ORFoundation.framework/Versions/A/ORFoundation";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -18884,7 +18908,6 @@
 				INFOPLIST_FILE = "objlsTests/objlsTests-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;

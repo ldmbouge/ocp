@@ -26,18 +26,22 @@
 -(BOOL)closed:(id<ORObject>)v;
 -(BOOL)finalNotice:(id<ORObject>)v;
 -(BOOL)lastTime:(id<ORObject>)v;
+-(id<LSPriority>)maxWithRank:(id<LSPriority>)p;
+-(void)prioritize;
 @end
 
 @interface LSPropagator : ORObject {
 @package
-   LSPriority*         _p;
+   id<LSPriority>   _rank;
    LSEngineI*     _engine;
    NSMutableSet* _inbound;
 }
 -(id)initWith:(id<LSEngine>)engine;
 -(void)post;
+-(void)define;
 -(void)addTrigger:(LSLink*)link;
 -(void)prioritize:(PStore*)p;
+-(NSUInteger)inDegree;
 @end
 
 
