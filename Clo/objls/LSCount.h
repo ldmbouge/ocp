@@ -26,4 +26,5 @@
 
 @interface LSFactory (LSGlobalInvariant)
 +(LSCount*)count:(id<LSEngine>)engine vars:(id<ORIdArray>)x card:(id<ORIdArray>)c;
++(id)inv:(LSIntVar*)x equal:(ORInt(^)())fun vars:(NSArray*)av;
 @end

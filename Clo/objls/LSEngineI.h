@@ -23,6 +23,7 @@
    NSMutableArray* _invs;
    ORUInt        _nbObjects;
    ORBool          _closed;
+   ORInt            _atomic;
    LSPrioritySpace* _pSpace;
    LSRQueue*        _queue;
 }

@@ -15,27 +15,35 @@
 #import "LSIntVar.h"
 #import <ORUtilities/ORPQueue.h>
 
-@interface LSRQueue : ORPQueue
--(id)init;
+@interface LSRQueue : ORPQueue {
+   LSEngineI* _engine;
+}
+-(id)init:(LSEngineI*)engine;
 -(void)enQueue:(id<LSPropagator>)x atPriority:(id<LSPriority>)p;
 -(id<LSPropagator>)deQueue;
 @end
 
 @implementation LSRQueue
--(id)init
+-(id)init:(LSEngineI*)engine
 {
    self = [super init:^BOOL(NSNumber* a,NSNumber* b) {
       return a.intValue < b.intValue;
    }];
+   _engine = engine;
    return self;
 }
--(void)enQueue:(id<LSPropagator>)x atPriority:(LSPriority*)p
+-(void)enQueue:(LSPropagator*)x atPriority:(LSPriority*)p
 {
-   [self insertObject:x withKey:@([p getId])];
+   if (!x->_inQueue) {
+      [self insertObject:x withKey:@([p getId])];
+      x->_inQueue = YES;
+   }
 }
 -(id<LSPropagator>)deQueue
 {
-   return [self extractBest];
+   LSPropagator* p = [self extractBest];
+   p->_inQueue = NO;
+   return p;
 }
 @end
 
@@ -49,8 +57,9 @@
    _cstr = [[NSMutableArray alloc] initWithCapacity:64];
    _invs = [[NSMutableArray alloc] initWithCapacity:64];
    _pSpace = [[LSPrioritySpace alloc] init];
-   _queue = [[LSRQueue alloc] init];
+   _queue = [[LSRQueue alloc] init:self];
    _nbObjects = 0;
+   _atomic  = NO;
    return self;
 }
 -(void)dealloc
@@ -148,12 +157,29 @@
    [_invs addObject:i];
    [i define];
 }
+-(void)atomic:(void(^)())block
+{
+   _atomic = YES;
+   block();
+   _atomic = NO;
+   [self propagate];
+}
 -(void)notify:(id<LSVar>)x
 {
-   [x enumerateOutbound:^(id<LSPropagator,LSPull> p,ORInt k) {
-      [p pull:k];
-      [self schedule:p];
-   }];
+   if (_atomic) {
+      LSBlock* b = [[LSBlock alloc] initWith:self block:^{
+         [x enumerateOutbound:^(id<LSPropagator,LSPull> p,ORInt k) {
+            [p pull:k];
+            [self schedule:p];
+         }];
+      } atPriority:x.rank];
+      [_queue enQueue:b atPriority:x.rank];
+   } else {
+      [x enumerateOutbound:^(id<LSPropagator,LSPull> p,ORInt k) {
+         [p pull:k];
+         [self schedule:p];
+      }];
+   }
 }
 -(void)schedule:(id<LSPropagator>)x
 {
@@ -161,6 +187,7 @@
 }
 -(ORStatus)propagate
 {
+   if (_atomic) return ORSkip;
    while (![_queue empty]) {
       id<LSPropagator> p = [_queue deQueue];
       [p execute];

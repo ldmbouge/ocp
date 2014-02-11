@@ -43,8 +43,17 @@
       c[i] = [LSFactory intVar:ls value:0];
    LSCount* ci = [LSFactory count:ls vars:x card:c];
    [ls add:ci];
+
+   id<ORIdArray> vv = [ORFactory idArray:ls range:RANGE(ls,0,10)];
+   for (ORInt i=vv.range.low; i <= vv.range.up; ++i)
+      vv[i] = [LSFactory intVar:ls value:0];
+   for (ORInt i=vv.range.low; i <= vv.range.up; ++i)
+      [ls add:[LSFactory inv:vv[i] equal:^ { return max(0, [c[i] value]);} vars:@[c[i]]]];
    [ls close];
-   [ls label:x[1] with: 1];
+   [ls atomic:^ {
+      [ls label:x[1] with: 1];
+      [ls label:x[2] with: 2];
+   }];
    NSLog(@"count: %@",c);
 }
 

@@ -72,5 +72,8 @@
    [engine trackMutable:gi];
    return gi;
 }
-
++(id)inv:(LSIntVar*)x equal:(ORInt(^)())fun vars:(NSArray*)av
+{
+   return nil;
+}
 @end

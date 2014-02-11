@@ -14,14 +14,47 @@
 #import "LSVar.h"
 #import "LSIntVar.h"
 
-@implementation LSPropagator
+@implementation LSBlock
+-(id)initWith:(id<LSEngine>)engine block:(void(^)())block atPriority:(id<LSPriority>)p
+{
+   self = [super initWith:engine];
+   _block  = [block copy];
+   _rank   = [p retain];
+   return self;
+}
+-(void)dealloc
+{
+   [_block release];
+   [_rank release];
+   [super dealloc];
+}
+-(void)define
+{}
+-(void)post
+{}
+-(void)execute
+{
+   _block();
+}
+-(id<LSPriority>)rank
+{
+   return _rank;
+}
+-(void)setRank:(id<LSPriority>)rank
+{
+   [_rank release];
+   _rank = [rank retain];
+}
+@end
 
+@implementation LSPropagator
 -(id)initWith:(LSEngineI*)engine
 {
    self = [super init];
    _engine = engine;
    _inbound = [[NSMutableSet alloc] initWithCapacity:2];
    _rank = [[[engine space] nifty] retain];
+   _inQueue = NO;
    return self;
 }
 -(void)post

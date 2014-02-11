@@ -19,4 +19,5 @@
 -(void)add:(LSPropagator*)i;
 -(void)label:(LSIntVar*)x with:(ORInt)v;
 -(void)notify:(id<LSVar>)x;
+-(void)atomic:(void(^)())block;
 @end

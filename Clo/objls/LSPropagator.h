@@ -43,6 +43,7 @@
    id<LSPriority>   _rank;
    LSEngineI*     _engine;
    NSMutableSet* _inbound;
+   BOOL          _inQueue;
 }
 -(id)initWith:(id<LSEngine>)engine;
 -(void)post;
@@ -53,6 +54,16 @@
 -(NSUInteger)inDegree;
 @end
 
+@interface LSBlock : LSPropagator {
+   void       (^_block)();
+}
+-(id)initWith:(id<LSEngine>)engine block:(void(^)())block atPriority:(id<LSPriority>)p;
+-(void)define;
+-(void)post;
+-(void)execute;
+-(id<LSPriority>)rank;
+-(void)setRank:(id<LSPriority>)rank;
+@end
 
 @protocol LSPull
 -(void)pull:(ORInt)k;
