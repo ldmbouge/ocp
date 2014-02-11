@@ -15,6 +15,7 @@
 
 @protocol LSEngine;
 @class LSPropagator;
+@class LSEngineI;
 
 @protocol LSLink
 -(id)target;
@@ -26,16 +27,19 @@ typedef enum LSStatus {
    LSPending = 1
 } LSStatus;
 
-@interface LSIntVar : ORObject<LSVar> {
+@interface LSIntVar : ORObject<LSIntVar> {
    LSEngineI*    _engine;
+   id<ORIntRange>   _dom;
    ORInt          _value;
    enum LSStatus _status;
    NSMutableSet*    _outbound;
    NSMutableSet*    _inbound;
    id<LSPriority>   _rank;
 }
--(id)initWithEngine:(id<LSEngine>)engine andValue:(ORInt)v;
+-(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d;
 -(void)dealloc;
+-(LSEngineI*)engine;
+-(id<ORIntRange>)domain;
 -(void)setValue:(ORInt)v;
 -(ORInt)value;
 -(ORInt)incr;

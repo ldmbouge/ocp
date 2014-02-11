@@ -141,7 +141,7 @@ static void heapify(ORPQueue* pq,ORInt i)
       [self resize];
    ORPQLocator* toInsert = [[ORPQLocator alloc] initWithObject:obj andKey:key];
    ORInt i = _sz++;
-   while(i>=0 && better(key,_tab[parent(i)].key)) {
+   while(i> 0 && better(key,_tab[parent(i)].key)) {
       _tab[i] = _tab[parent(i)];
       _tab[i]->_ofs = i;
       i = parent(i);

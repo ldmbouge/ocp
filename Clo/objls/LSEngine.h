@@ -14,10 +14,13 @@
 @class LSPropagator;
 @class LSIntVar;
 @protocol LSVar;
+@protocol LSIntVar;
+@protocol LSConstraint;
 
 @protocol LSEngine <NSObject,ORSearchEngine>
 -(void)add:(LSPropagator*)i;
--(void)label:(LSIntVar*)x with:(ORInt)v;
+-(id<LSConstraint>)addConstraint:(id<LSConstraint>)cstr;
+-(void)label:(id<LSIntVar>)x with:(ORInt)v;
 -(void)notify:(id<LSVar>)x;
 -(void)atomic:(void(^)())block;
 @end

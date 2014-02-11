@@ -11,9 +11,11 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import "LSEngine.h"
+#import <objls/LSVar.h>
 
-@protocol LSVar;
 
 @interface LSFactory : NSObject
-+(id<LSVar>)intVar:(id<LSEngine>)engine value:(ORInt)v;
++(id<LSIntVar>)intVar:(id<LSEngine>)engine domain:(id<ORIntRange>)r;
++(id<LSIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
++(id<LSIntVarArray>) intVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<LSIntVar>(^)(ORInt)) clo;
 @end

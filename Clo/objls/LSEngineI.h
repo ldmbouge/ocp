@@ -15,6 +15,13 @@
 @class LSPrioritySpace;
 @class LSPropagator;
 @class LSRQueue;
+@protocol LSConstraint;
+
+typedef enum LSMode {
+   LSInitial = 0,
+   LSClosing = 1,
+   LSIncremental = 2
+} LSMode;
 
 @interface LSEngineI : NSObject<ORSearchEngine,LSEngine> {
    NSMutableArray* _vars;
@@ -22,7 +29,7 @@
    NSMutableArray* _cstr;
    NSMutableArray* _invs;
    ORUInt        _nbObjects;
-   ORBool          _closed;
+   LSMode           _mode;
    ORInt            _atomic;
    LSPrioritySpace* _pSpace;
    LSRQueue*        _queue;
@@ -32,6 +39,7 @@
 -(ORStatus)close;
 -(LSPrioritySpace*)space;
 -(void)add:(LSPropagator*)i;
+-(id<LSConstraint>)addConstraint:(id<LSConstraint>)cstr;
 -(NSMutableArray*)variables;
 -(NSMutableArray*)invariants;
 -(ORUInt)nbObjects;

@@ -9,13 +9,20 @@
  
  ***********************************************************************/
 
-#import "LSFactory.h"
+#import <objls/LSFactory.h>
 #import "LSIntVar.h"
 
 @implementation LSFactory
-+(id<LSVar>)intVar:(id<LSEngine>)engine value:(ORInt)v
++(id<LSIntVar>)intVar:(id<LSEngine>)engine domain:(id<ORIntRange>)r
 {
-   return [[LSIntVar alloc] initWithEngine:engine andValue:v];
+   return [[LSIntVar alloc] initWithEngine:engine domain:r];
 }
-
++(id<LSIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
+{
+   return (id)[ORFactory idArray:cp range:range];
+}
++(id<LSIntVarArray>) intVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<LSIntVar>(^)(ORInt)) clo
+{
+   return (id)[ORFactory idArray:cp range:range with:clo];
+}
 @end

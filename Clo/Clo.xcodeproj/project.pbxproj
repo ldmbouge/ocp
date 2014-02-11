@@ -462,7 +462,7 @@
 		5B7B478415F0F554005FF875 /* test-n30-e50.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7B478215F0F538005FF875 /* test-n30-e50.col */; };
 		5B7B478615F0F733005FF875 /* smallColoring.col in Resources */ = {isa = PBXBuildFile; fileRef = 5B7B478515F0F733005FF875 /* smallColoring.col */; };
 		5B7B478715F0F758005FF875 /* smallColoring.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7B478515F0F733005FF875 /* smallColoring.col */; };
-		5B7C660918A581850077868F /* LSFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C660718A581850077868F /* LSFactory.h */; };
+		5B7C660918A581850077868F /* LSFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C660718A581850077868F /* LSFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B7C660A18A581850077868F /* LSFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C660818A581850077868F /* LSFactory.m */; };
 		5B7C660B18A66D130077868F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B7C660C18A66D130077868F /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -513,6 +513,10 @@
 		5B8469301638583000F4D749 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8469311638583000F4D749 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8469321638583800F4D749 /* CPBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B150019156EB1A500897252 /* CPBaseHeuristic.m */; };
+		5B876B2A18AA8148006F6258 /* LSConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B876B2818AA8148006F6258 /* LSConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B876B2B18AA8148006F6258 /* LSConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B876B2918AA8148006F6258 /* LSConstraint.m */; };
+		5B876B2E18AAAF8D006F6258 /* LSAllDifferent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B876B2C18AAAF8D006F6258 /* LSAllDifferent.h */; };
+		5B876B2F18AAAF8D006F6258 /* LSAllDifferent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B876B2D18AAAF8D006F6258 /* LSAllDifferent.m */; };
 		5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
@@ -5506,6 +5510,10 @@
 		5B8259851608BB04006CE539 /* CPABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPABS.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B85DE111438B2D500E4E133 /* ORSemBDSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemBDSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B85DE121438B2D500E4E133 /* ORSemBDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemBDSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B876B2818AA8148006F6258 /* LSConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LSConstraint.h; path = objls/LSConstraint.h; sourceTree = SOURCE_ROOT; };
+		5B876B2918AA8148006F6258 /* LSConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LSConstraint.m; path = objls/LSConstraint.m; sourceTree = SOURCE_ROOT; };
+		5B876B2C18AAAF8D006F6258 /* LSAllDifferent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSAllDifferent.h; sourceTree = "<group>"; };
+		5B876B2D18AAAF8D006F6258 /* LSAllDifferent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSAllDifferent.m; sourceTree = "<group>"; };
 		5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORAnnotation.h; sourceTree = "<group>"; };
 		5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORAnnotation.m; sourceTree = "<group>"; };
 		5B8B12DB15A3BF8000300385 /* ORError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORError.m; sourceTree = "<group>"; };
@@ -8619,6 +8627,10 @@
 				5BD7929C1857A7A6008DCF91 /* LSEngine.h */,
 				5BD792961857A5CF008DCF91 /* LSEngineI.h */,
 				5BD792971857A5CF008DCF91 /* LSEngineI.m */,
+				5B876B2818AA8148006F6258 /* LSConstraint.h */,
+				5B876B2C18AAAF8D006F6258 /* LSAllDifferent.h */,
+				5B876B2D18AAAF8D006F6258 /* LSAllDifferent.m */,
+				5B876B2918AA8148006F6258 /* LSConstraint.m */,
 			);
 			path = objls;
 			sourceTree = "<group>";
@@ -9487,8 +9499,10 @@
 				5BD7929D1857A7A6008DCF91 /* LSEngine.h in Headers */,
 				5BD792A41857AE67008DCF91 /* LSPriority.h in Headers */,
 				5BD792A81857BA3A008DCF91 /* LSPropagator.h in Headers */,
+				5B876B2E18AAAF8D006F6258 /* LSAllDifferent.h in Headers */,
 				5BD792A01857A803008DCF91 /* LSIntVar.h in Headers */,
 				5B19BEC518A916AC006CC213 /* LSObject.h in Headers */,
+				5B876B2A18AA8148006F6258 /* LSConstraint.h in Headers */,
 				5BD792AC1857C129008DCF91 /* LSCount.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12430,6 +12444,8 @@
 				5BD792A11857A803008DCF91 /* LSIntVar.m in Sources */,
 				5BD792991857A5CF008DCF91 /* LSEngineI.m in Sources */,
 				5BD792891857A520008DCF91 /* objls.m in Sources */,
+				5B876B2B18AA8148006F6258 /* LSConstraint.m in Sources */,
+				5B876B2F18AAAF8D006F6258 /* LSAllDifferent.m in Sources */,
 				5BD792A91857BA3A008DCF91 /* LSPropagator.m in Sources */,
 				5B7C660A18A581850077868F /* LSFactory.m in Sources */,
 			);

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "LSIntVar.h"
+#import "LSEngineI.h"
 
 @interface LSLink : NSObject<LSLink> {
 @public
@@ -148,11 +149,12 @@
 
 @implementation LSIntVar
 
--(id)initWithEngine:(LSEngineI*)engine andValue:(ORInt)v
+-(id)initWithEngine:(LSEngineI*)engine domain:(id<ORIntRange>)d
 {
    self = [super init];
    _engine = engine;
-   _value = v;
+   _dom    = d;
+   _value = d.low;
    _status = LSFinal;
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
    _inbound  = nil;
@@ -165,6 +167,10 @@
    NSLog(@"Deallocating LSIntVar %@",self);
    [super dealloc];
 }
+-(LSEngineI*)engine
+{
+   return _engine;
+}
 -(id<LSPriority>)rank
 {
    return _rank;
@@ -173,6 +179,10 @@
 {
    [_rank release];
    _rank = [r retain];
+}
+-(id<ORIntRange>)domain
+{
+   return _dom;
 }
 -(NSUInteger)inDegree
 {
@@ -192,10 +202,6 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"var<LS>(%p,%d,%@) = %d",self,_name,_rank,_value];
    return buf;
-}
--(LSEngineI*)engine
-{
-   return _engine;
 }
 -(void)setValue:(ORInt)v
 {

@@ -11,7 +11,7 @@
 
 
 #import "LSPropagator.h"
-#import "LSFactory.h"
+#import <objls/LSFactory.h>
 
 @interface LSCount : LSPropagator<LSPull> {
    id<ORIdArray>  _src;
@@ -24,7 +24,31 @@
 -(id<NSFastEnumeration>)outbound;
 @end
 
+@interface LSInv : LSPropagator {  // x <- fun(src)
+   NSArray* _src;
+   ORInt (^_fun)();
+   LSIntVar* _x;
+}
+-(id)init:(id<LSEngine>)engine var:(id<LSVar>)x equal:(ORInt(^)())fun src:(NSArray*)vars;
+-(void)define;
+-(void)post;
+-(void)execute;
+@end
+
+@interface LSSum : LSPropagator<LSPull> {
+   id<LSIntVarArray> _terms;
+   LSIntVar*           _sum;
+   id<ORIntArray>      _old;
+}
+-(id)init:(id<LSEngine>)engine sum:(id<LSIntVar>)x array:(id<LSIntVarArray>)terms;
+-(void)define;
+-(void)post;
+-(void)pull:(ORInt)k;
+-(id<NSFastEnumeration>)outbound;
+@end
+
 @interface LSFactory (LSGlobalInvariant)
-+(LSCount*)count:(id<LSEngine>)engine vars:(id<ORIdArray>)x card:(id<ORIdArray>)c;
-+(id)inv:(LSIntVar*)x equal:(ORInt(^)())fun vars:(NSArray*)av;
++(LSCount*)count:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c;
++(LSInv*)inv:(id<LSIntVar>)x equal:(ORInt(^)())fun vars:(NSArray*)av;
++(LSSum*)sum:(id<LSIntVar>)x over:(id<LSIntVarArray>)terms;
 @end

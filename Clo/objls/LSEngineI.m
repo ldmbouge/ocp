@@ -13,6 +13,7 @@
 #import "LSPriority.h"
 #import "LSPropagator.h"
 #import "LSIntVar.h"
+#import "LSConstraint.h"
 #import <ORUtilities/ORPQueue.h>
 
 @interface LSRQueue : ORPQueue {
@@ -81,6 +82,14 @@
 {
    return self;
 }
+-(id) inCache:(id)obj
+{
+   return nil;
+}
+-(id) addToCache:(id)obj
+{
+   return obj;
+}
 -(id) trackVariable: (id) var
 {
    [var setId:_nbObjects++];
@@ -117,16 +126,21 @@
 }
 -(ORStatus) close
 {
-   if (_closed) return ORSuspend;
-   _closed = YES;
+   if (_mode == LSIncremental) return ORSuspend;
+   _mode = LSClosing;
+   for(id<LSConstraint> c in _cstr)
+      [c post];
+   for(id<LSPropagator> p in _invs)
+      [p define];
    PStore* store = [[PStore alloc] initPStore:self];
    [store prioritize];
    [store release];
+   _mode = LSIncremental;
    return ORSuspend;
 }
 -(ORBool) closed
 {
-   return _closed;
+   return _mode == LSIncremental;
 }
 -(ORUInt)nbObjects
 {
@@ -155,7 +169,11 @@
 -(void)add:(LSPropagator*)i
 {
    [_invs addObject:i];
-   [i define];
+}
+-(id<LSConstraint>)addConstraint:(id<LSConstraint>)cstr
+{
+   [_cstr addObject:cstr];
+   return cstr;
 }
 -(void)atomic:(void(^)())block
 {
@@ -166,6 +184,8 @@
 }
 -(void)notify:(id<LSVar>)x
 {
+   if (_mode <= LSClosing)
+      return;
    if (_atomic) {
       LSBlock* b = [[LSBlock alloc] initWith:self block:^{
          [x enumerateOutbound:^(id<LSPropagator,LSPull> p,ORInt k) {
@@ -175,8 +195,10 @@
       } atPriority:x.rank];
       [_queue enQueue:b atPriority:x.rank];
    } else {
-      [x enumerateOutbound:^(id<LSPropagator,LSPull> p,ORInt k) {
-         [p pull:k];
+      [x enumerateOutbound:^(id<LSPropagator> p,ORInt k) {
+         BOOL canPull = [p conformsToProtocol:@protocol(LSPull)];
+         if (canPull)
+            [(id<LSPull>)p pull:k];
          [self schedule:p];
       }];
    }
@@ -188,9 +210,11 @@
 -(ORStatus)propagate
 {
    if (_atomic) return ORSkip;
-   while (![_queue empty]) {
-      id<LSPropagator> p = [_queue deQueue];
-      [p execute];
+   @autoreleasepool {
+      while (![_queue empty]) {
+         id<LSPropagator> p = [_queue deQueue];
+         [p execute];
+      }
    }
    return ORSuspend;
 }
