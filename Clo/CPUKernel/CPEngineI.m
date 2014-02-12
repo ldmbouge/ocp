@@ -395,7 +395,8 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",[_vars count],[_cStore count],_nbpropag];
+   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",
+      [_vars count],[_cStore count],_nbpropag];
 }
 -(id) trail
 {
@@ -593,13 +594,17 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
+// [ldm] the method post of a constraint returns _nothing_.
+// Yet, it can _raise_ a failure. The post method should intercept
+// the raised failure and return a suitable status to the caller.
+// Bottom line: no failure exception can go "past" post.
 -(ORStatus) post: (id<ORConstraint>) c
 {
    _status = tryfail(^ORStatus{
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      ORStatus status = [cstr post];
-      ORStatus pstatus = internalPropagate(self,status);
-      if (pstatus != ORFailure && status != ORSkip) {
+      [cstr post];
+      ORStatus pstatus = internalPropagate(self,ORSuspend);
+      if (pstatus != ORFailure) {
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
          [_trail trailClosure:^{
@@ -614,13 +619,13 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 }
 
 // PVH: Failure to remove?
--(ORStatus) addInternal:(id<ORConstraint>) c
+// LDM: addInternal must _raise_ a failure if the post returns a failure status.
+-(void) addInternal:(id<ORConstraint>) c
 {
    assert(_state != CPOpen);
    ORStatus s = [self post:c];
    if (s==ORFailure)
       failNow();
-   return s;
 }
 
 -(ORStatus) add: (id<ORConstraint>) c

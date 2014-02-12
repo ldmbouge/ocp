@@ -60,7 +60,7 @@ enum CPEngineState {
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>)objective;
--(ORStatus)  addInternal:(id<ORConstraint>) c;
+-(void)      addInternal:(id<ORConstraint>) c;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  enforce:(ORClosure) cl;

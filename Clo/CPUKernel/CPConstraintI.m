@@ -32,9 +32,8 @@
    [super dealloc];
 }
 // Constraint method
--(ORStatus) post
+-(void) post
 {
-   return ORSuspend;
 }
 -(void) propagate
 {}

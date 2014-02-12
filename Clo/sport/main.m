@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
             [mdl add: [[team at:p :n :0] lt:[team at:p :n :1]]];
          
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:allgames];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:allgames];
          [cp solve:
           ^() {
              //[cp labelHeuristic:h restricted:allgames];

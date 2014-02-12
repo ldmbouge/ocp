@@ -721,6 +721,7 @@
 		5BA345981680B7D400485366 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BA345991680B7D400485366 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BA3459A1680B7D400485366 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BA5D51D1889E62D003884EE /* testIdempotence.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA5D51C1889E62D003884EE /* testIdempotence.m */; };
 		5BA6F96818464836002434E3 /* CPDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BA6F96618464836002434E3 /* CPDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BA6F96918464836002434E3 /* CPDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6F96718464836002434E3 /* CPDeg.m */; };
 		5BAC7AC316EBAD1900BE6F81 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
@@ -5730,6 +5731,7 @@
 		5BA345801680B7BD00485366 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BA345831680B7BD00485366 /* latinSquare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "latinSquare-Prefix.pch"; sourceTree = "<group>"; };
 		5BA345841680B7BD00485366 /* latinSquare.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = latinSquare.1; sourceTree = "<group>"; };
+		5BA5D51C1889E62D003884EE /* testIdempotence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = testIdempotence.m; sourceTree = "<group>"; };
 		5BA6F96618464836002434E3 /* CPDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPDeg.h; sourceTree = "<group>"; };
 		5BA6F96718464836002434E3 /* CPDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDeg.m; sourceTree = "<group>"; };
 		5BAD114F161E5E420014EBCB /* ORModeling.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORModeling.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8292,6 +8294,7 @@
 				5B7408AD156286C700C05277 /* bitTest.h */,
 				5B7408AE156286C700C05277 /* bitTest.m */,
 				5B9ABD081391329D000997E5 /* Supporting Files */,
+				5BA5D51C1889E62D003884EE /* testIdempotence.m */,
 			);
 			path = objcpTests;
 			sourceTree = "<group>";
@@ -12156,6 +12159,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B9ABD111391329D000997E5 /* objcpTests.m in Sources */,
+				5BA5D51D1889E62D003884EE /* testIdempotence.m in Sources */,
 				5BC43CB613A13C56009119FF /* testCard.m in Sources */,
 				5B7408AF156286C700C05277 /* bitTest.m in Sources */,
 				5B8DCD91165FDDB6007CC562 /* testBitConstraints.m in Sources */,

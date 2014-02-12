@@ -222,10 +222,9 @@
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVarArray> ax = [cstr array];
       ORCLevel n = [_notes levelFor: cstr];
-      [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: _gamma[ax.getId] annotation: n];
+      id<CPIntVarArray> cax = [self concreteArray:(id)[cstr array]];
+      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: cax annotation: n];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

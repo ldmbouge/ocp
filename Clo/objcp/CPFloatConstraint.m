@@ -26,14 +26,13 @@
    _idempotent = TRUE;
    return self;
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound])
       [_x whenChangeBoundsPropagate:self];
    if (![_z bound])
       [_z whenChangeBoundsPropagate:self];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -85,14 +84,13 @@
    return self;
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    [_x enumerateWith:^(CPFloatVarI* obj, int k) {
       if (![obj bound])
          [obj whenChangeBoundsPropagate:self];
    }];
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -153,7 +151,7 @@
    _idempotent = TRUE;
    return self;
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    [_x enumerateWith:^(CPFloatVarI* obj, int k) {
@@ -166,7 +164,6 @@
             [obj whenChangeMaxPropagate:self];
       }
    }];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -244,10 +241,9 @@
    return self;
    
 }
--(ORStatus) post
+-(void) post
 {
    [_x bind:_c];
-   return ORSkip;
 }
 -(NSSet*)allVars
 {
@@ -301,7 +297,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
    else
       return d1;
 }
--(ORStatus) post
+-(void) post
 {
    if (bound(_x)) {
       [_y bind:[_c at:[_x min]]];
@@ -342,7 +338,6 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
          [_x whenChangePropagate:self];
       }
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -412,13 +407,12 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 {
    return _x;
 }
--(ORStatus) post
+-(void) post
 {
    if (![_x bound])
       [_x whenChangeMinDo: ^ {
          [_x updateMax: _primalBound];
       } onBehalf:self];
-   return ORSuspend;
 }
 -(NSSet*)allVars
 {
@@ -498,13 +492,12 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 {
    return _x;
 }
--(ORStatus) post
+-(void) post
 {
    if (![_x bound])
       [_x whenChangeMaxDo: ^ {
          [_x updateMin: _primalBound];
       } onBehalf:self];
-   return ORSuspend;
 }
 -(NSSet*)allVars
 {

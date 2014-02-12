@@ -27,5 +27,5 @@
 -(CPTableCstrI*) initCPTableCstrI: (id<CPIntVarArray>) x table: (ORTableI*) table;
 -(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVar*) x : (CPIntVar*) y : (CPIntVar*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 @end
