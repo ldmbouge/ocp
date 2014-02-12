@@ -69,7 +69,13 @@
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
-   return 0;
+   if (x.value == v)
+      return 0;
+   else {
+      const ORInt c1 = _c[x.value].value;
+      const ORInt c2 = _c[v].value;
+      return (c2 >= 1) - (c1 >= 2);
+   }
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
