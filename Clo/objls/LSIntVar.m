@@ -12,26 +12,52 @@
 #import "LSIntVar.h"
 #import "LSEngineI.h"
 
+typedef enum LSLinkType {
+   LSLogical = 0,
+   LSPropagate = 1
+} LSLinkType;
+
 @interface LSLink : NSObject<LSLink> {
 @public
    id _src;
    id _trg;
-   ORInt _k;
+   ORInt      _k;
+   void (^_block)();
+   LSLinkType _t;
 }
--(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k;
+-(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k type:(LSLinkType)t;
+-(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k block:(void(^)())block type:(LSLinkType)t;
 -(id)source;
 -(id)target;
 -(ORInt)index;
+-(LSLinkType)type;
 @end
 
 @implementation LSLink
--(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k
+-(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k type:(LSLinkType)t
 {
    self = [super init];
    _src = src;
    _trg = trg;
    _k   = k;
+   _block = nil;
+   _t   = t;
    return self;
+}
+-(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k block:(void(^)())block type:(LSLinkType)t
+{
+   self = [super init];
+   _src = src;
+   _trg = trg;
+   _k   = k;
+   _t   = t;
+   _block = [block copy];
+   return self;
+}
+-(void)dealloc
+{
+   [_block release];
+   [super dealloc];
 }
 -(NSUInteger)hash
 {
@@ -53,11 +79,14 @@
 {
    return _k;
 }
-
+-(LSLinkType)type
+{
+   return _t;
+}
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSLink: %d -> %d>",[_src getId],[_trg getId]];
+   [buf appendFormat:@"<LSLink: %d -> %d (%@)>",[_src getId],[_trg getId],_t == LSLogical ? @"log" : @"prp"];
    return buf;
 }
 @end
@@ -224,15 +253,27 @@
    [_engine notify:self];
    return rv;
 }
+-(id)addLogicalListener:(LSPropagator*)p term:(ORInt)k
+{
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSLogical];
+   [_outbound addObject:obj];
+   return obj;
+}
 -(id)addListener:(LSPropagator*)p term:(ORInt)k
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSPropagate];
+   [_outbound addObject:obj];
+   return obj;
+}
+-(id)addListener:(LSPropagator*)p term:(ORInt)k with:(void(^)())block
+{
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k block:block type:LSPropagate];
    [_outbound addObject:obj];
    return obj;
 }
 -(id)addDefiner:(LSPropagator*)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:p to:self for:-1];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:p to:self for:-1 type:LSPropagate];
    if (_inbound==nil) _inbound = [[NSMutableSet alloc] initWithCapacity:8];
    [_inbound addObject:obj];
    return obj;
@@ -241,6 +282,15 @@
 {
    for(LSLink* lnk in _outbound)
       block(lnk.target,lnk.index);
+}
+-(void)propagateOutbound:(void(^)(id,ORInt))block
+{
+   for(LSLink* lnk in _outbound) {
+      if (lnk->_block)
+         lnk->_block();
+      if (lnk->_t == LSPropagate)
+         block(lnk->_trg,lnk->_k);
+   }
 }
 
 @end

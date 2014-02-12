@@ -13,11 +13,12 @@
 #import <objls/LSConstraint.h>
 
 @interface LSAllDifferent : LSConstraint {
-   id<LSIntVarArray> _x;
-   id<LSIntVarArray> _c;
-   id<LSIntVarArray> _vv;
-   id<LSIntVar>     _sum;
-   ORBool       _posted;
+   id<LSIntVarArray>  _x;  // source
+   id<LSIntVarArray>  _c;  // cardinalities
+   id<LSIntVarArray> _vv;  // value violations
+   id<LSIntVarArray> _xv;  // variable violations
+   id<LSIntVar>     _sum;  // total violations
+   ORBool        _posted;  // whether we have been posted already.
 }
 -(id)init:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x;
 -(void)post;

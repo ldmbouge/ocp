@@ -52,6 +52,7 @@ typedef enum LSStatus {
 -(id<NSFastEnumeration>)outbound;
 -(id<NSFastEnumeration>)inbound;
 -(void)enumerateOutbound:(void(^)(id,ORInt))block;
+-(void)propagateOutbound:(void(^)(id,ORInt))block;
 @end
 
 @interface LSOutbound : NSObject<NSFastEnumeration> {

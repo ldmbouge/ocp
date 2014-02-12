@@ -22,15 +22,19 @@
 -(NSUInteger)inDegree;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)rank;
+-(id)addLogicalListener:(LSPropagator*)p term:(ORInt)k;
 -(id)addListener:(LSPropagator*)p term:(ORInt)k;
+-(id)addListener:(LSPropagator*)p term:(ORInt)k with:(void(^)())block;
 -(id)addDefiner:(LSPropagator*)p;
 -(id<NSFastEnumeration>)outbound;
 -(id<NSFastEnumeration>)inbound;
 -(void)enumerateOutbound:(void(^)(id,ORInt))block;
+-(void)propagateOutbound:(void(^)(id,ORInt))block;
 @end
 
 @protocol  LSIntVar <LSVar>
 -(ORInt)value;
+-(void)setValue:(ORInt)v;
 -(id<ORIntRange>)domain;
 @end
 

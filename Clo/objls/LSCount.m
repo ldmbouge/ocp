@@ -65,6 +65,53 @@
 }
 @end
 
+@implementation LSGElement
+-(id)init:(id<LSEngine>)engine count:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y
+{
+   self = [super initWith:engine];
+   _x = x;
+   _c = c;
+   _y = y;
+   return self;
+}
+-(void)define
+{
+   for(ORInt i=_x.low;i <= _x.up;i++)
+      [self addTrigger:[_x[i] addListener:self term:i with:^{
+         [_y[i] setValue: _c[_x[i].value].value];
+      }]];
+   for(ORInt i=_c.low;i <= _c.up;i++)
+      [self addTrigger:[_c[i] addListener:self term:i with:^{
+         ORInt k = _x.low;
+         for(id<LSIntVar> xk in _x) {
+            if (xk.value == i)
+               [_y[k] setValue:_c[i].value];
+            ++k;
+         }
+         //NSLog(@"wakeup because of c[i]");
+      }]];
+   for(ORInt i=_y.low;i <= _y.up;i++)
+      [_y[i] addDefiner:self];
+}
+-(void)execute
+{}
+-(void)post
+{
+   for(ORInt i=_x.low;i <= _x.up;i++)
+      [_y[i] setValue:_c[_x[i].value].value];
+}
+-(id<NSFastEnumeration>)outbound
+{
+   return _y;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSGElement(%p) : %d,%@>",self,_name,_rank];
+   return buf;
+}
+@end
+
 @implementation LSInv
 -(id)init:(id<LSEngine>)engine var:(id<LSIntVar>)x equal:(ORInt(^)())fun src:(NSArray*)vars
 {
@@ -167,6 +214,12 @@
 {
    LSSum* gi = [[LSSum alloc] init:[x engine] sum:x array:terms];
    [[x engine] trackMutable:gi];
+   return gi;
+}
++(LSGElement*)gelt:(id<LSEngine>)e x:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y
+{
+   LSGElement* gi = [[LSGElement alloc] init:e count:x card:c result:y];
+   [e trackMutable:gi];
    return gi;
 }
 @end

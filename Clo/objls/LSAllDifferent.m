@@ -18,6 +18,7 @@
    unsigned char* _present;  // boolean array (one boolean per var in _x)
    ORInt          _low;      // lowest variable identifier in _x
    ORInt          _up;       // highest variable identifier in _x
+   ORInt*          _xOfs;    // Offset of variable j in array x. i.e., x[_xOfs[j]].getId() == j
 }
 -(id)init:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x
 {
@@ -33,9 +34,22 @@
    _present = malloc(sizeof(unsigned char)*(_up - _low + 1));
    _present -= _low;
    memset(_present,0,sizeof(unsigned char)*(_up - _low + 1));
-   for(id<LSIntVar> v in _x)
+   _xOfs = malloc(sizeof(ORInt)*(_up - _low + 1));
+   _xOfs -= _low;
+   ORInt k = _low;
+   for(id<LSIntVar> v in _x) {
       _present[getId(v)] = YES;
+      _xOfs[getId(v)] = k++;
+   }
    return self;
+}
+-(void)dealloc
+{
+   _present += _low;
+   _xOfs    += _low;
+   free(_present);
+   free(_xOfs);
+   [super dealloc];
 }
 static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 {
@@ -62,12 +76,16 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
    _vv = [LSFactory intVarArray:_engine range:vals with:^id(ORInt i) {
       return [LSFactory intVar:_engine domain:cd];
    }];
-   _sum = [LSFactory intVar:_engine domain:RANGE(_engine,0,FDMAXINT)];
+   _xv = [LSFactory intVarArray:_engine range:_x.range with:^id<LSIntVar>(ORInt i) {
+      return [LSFactory intVar:_engine domain:cd];
+   }];
 
+   _sum = [LSFactory intVar:_engine domain:RANGE(_engine,0,FDMAXINT)];
    [_engine add:[LSFactory count:_engine vars:_x card:_c]];
    for (ORInt i=vals.low; i <= vals.up; ++i)
       [_engine add:[LSFactory inv:_vv[i] equal:^ { return max(0, [_c[i] value] - 1);} vars:@[_c[i]]]];
    [_engine add:[LSFactory sum: _sum over:_vv]];
+   [_engine add:[LSFactory gelt:_engine x:_x card:_vv result:_xv]];
 }
 -(ORBool)isTrue
 {
@@ -79,6 +97,7 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 }
 -(ORInt)getVarViolations:(id<LSIntVar>)var
 {
+   assert(_vv[var.value].value == [self varViolations:var].value);
    return _vv[var.value].value > 0;
 }
 -(id<LSIntVar>)violations
@@ -87,7 +106,7 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 }
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var
 {
-   return nil;
+   return _xv[_xOfs[getId(var)]];
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
