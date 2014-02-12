@@ -22,8 +22,11 @@ int main(int argc, const char * argv[])
          ORLong startTime = [ORRuntimeMonitor cputime];
          id<ORModel> model = [ORFactory createModel];
          ORInt n = [args size];
+         ORInt ubd = 8191;
          id<ORIntRange> D = RANGE(model,0,n);
-         id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
+         id<ORIntRange> D2 = RANGE(model,0,ubd);
+         id<ORIntRange> D3 = RANGE(model,0,ubd - n);
+         id<ORIntVarArray> x = [ORFactory intVarArray:model range:D2 domain:D2];
          //id<ORGroup> g = [ORFactory bergeGroup:model];
          [D enumerateWithBlock:^(ORInt k) {
             if (k < n)
@@ -37,18 +40,24 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solve:^{
             NSLog(@"About to search...");
+            [cp tryall:D3 suchThat:^bool(ORInt v) { return true;}
+                    in:^(ORInt v) {
+                       [cp gthen:x[0] with:v-1];
+                       [cp lthen:x[n] with:v+n+1];
+                    }];
 //             @autoreleasepool {
 //                id<ORIntArray> xv = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
 //                   return [cp intValue:x[i]];
 //                }];
 //                NSLog(@"solution: %@",xv);
-//                nbSol++;
 //            }
+            nbSol++;
+            [[cp explorer] fail];
          }];
          ORLong endTime = [ORRuntimeMonitor cputime];
          NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
          NSLog(@"Solver status: %@\n",cp);
-         NSLog(@"Quitting");
+         NSLog(@"Quitting: %d",nbSol);
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];

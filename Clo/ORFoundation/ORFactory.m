@@ -392,7 +392,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       return x;
    else {
       id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,[x min] + b,[x max] + b)];
-      [tracker addConstraint:[ORFactory equal:tracker var:nv to:x plus:b annotation:c]];
+      [tracker addConstraint:[ORFactory equal:tracker var:nv to:x plus:b]];
       return nv;
    }
 #endif
@@ -411,7 +411,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       ORInt l = a > 0 ? a * [x min] : a * [x max];
       ORInt u = a > 0 ? a * [x max] : a * [x min];
       id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
-      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:0 annotation:c]];
+      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:0]];
       return nv;
    }
 #endif
@@ -430,7 +430,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       ORInt l = (a > 0 ? a * [x min] : a * [x max]) + b;
       ORInt u = (a > 0 ? a * [x max] : a * [x min]) + b;
       id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
-      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b annotation:c]];
+      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b]];
       return nv;
    }
 #endif
@@ -997,6 +997,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) lEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c
 {
    id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:x leq:y plus:c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) lEqual:(id<ORTracker>)model  coef:(ORInt)a times: (id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>) y plus:(ORInt)c
+{
+   id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:a times:x leq:b times:y plus:c];
    [model trackObject:o];
    return o;
 }

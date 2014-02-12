@@ -576,10 +576,10 @@
    } else {
       if (maxDom(_x) <= minDom(_y)) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:YES];
+         bindDom(_b,YES);
       } else if (minDom(_x) > maxDom(_y)) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:NO];
+         bindDom(_b,NO);
       }
    }
 }
@@ -626,16 +626,17 @@
 {
    if (bound(_b)) {
       assignTRInt(&_active, NO, _trail);
-      if (_b.min)
-         [_x updateMax:_c];
-      else [_x updateMin:_c+1];
+      if (minDom(_b))
+         updateMaxDom(_x, _c);
+      else
+         updateMinDom(_x, _c+1);
    } else {
-      if (_x.min > _c) {
+      if (minDom(_x) > _c) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:NO];
-      } else if (_x.max <= _c) {
+         bindDom(_b, NO);
+      } else if (maxDom(_x) <= _c) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:YES];
+         bindDom(_b, YES);
       }
    }
 }
@@ -686,16 +687,17 @@
 {
    if (bound(_b)) {
       assignTRInt(&_active, NO, _trail);
-      if (_b.min)
-         [_x updateMin:_c];
-      else [_x updateMax:_c-1];
+      if (minDom(_b))
+         updateMinDom(_x, _c);
+      else
+         updateMaxDom(_x, _c-1);
    } else {
-      if (_x.min >= _c) {
+      if (minDom(_x) >= _c) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:YES];
-      } else if (_x.max < _c) {
+         bindDom(_b,YES);
+      } else if (maxDom(_x) < _c) {
          assignTRInt(&_active, NO, _trail);
-         [_b bind:NO];
+         bindDom(_b,NO);
       }
    }
 }

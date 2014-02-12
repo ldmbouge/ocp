@@ -123,6 +123,8 @@ enum ORGroupType {
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
+-(ORInt) coefLeft;
+-(ORInt) coefRight;
 @end
 
 @protocol  ORPlus <ORConstraint>

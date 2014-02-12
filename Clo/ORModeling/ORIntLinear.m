@@ -158,11 +158,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 }
 -(id<ORIntVarArray>) variables: (id<ORAddToModel>) model
 {
-   return [ORFactory intVarArray: model range: RANGE(model,0,_nb-1) with:^id<ORIntVar>(ORInt i) { return _terms[i]._var; }];
+   return [ORFactory intVarArray: [model tracker] range: RANGE(model,0,_nb-1) with:^id<ORIntVar>(ORInt i) { return _terms[i]._var; }];
 }
 -(id<ORIntArray>) coefficients: (id<ORAddToModel>) model
 {
-   return [ORFactory intArray: model range: RANGE(model,0,_nb-1) with: ^ORInt(ORInt i) { return _terms[i]._coef; }];
+   return [ORFactory intArray: [model tracker] range: RANGE(model,0,_nb-1) with: ^ORInt(ORInt i) { return _terms[i]._coef; }];
 }
 
 -(id<ORIntVarArray>)scaledViews:(id<ORAddToModel>)model
@@ -350,9 +350,15 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
             rv = [model addConstraint:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
          } else {
-            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
-            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
-            rv = [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
+//            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
+//            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
+//            rv = [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
+            rv = [model addConstraint:[ORFactory lEqual:model
+                                                   coef:_terms[0]._coef
+                                                  times:_terms[0]._var
+                                                    leq:-_terms[1]._coef
+                                                  times:_terms[1]._var
+                                                   plus:- _indep]];
          }
       }break;
       default:

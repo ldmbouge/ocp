@@ -11,7 +11,6 @@
 
 #import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORInterval.h>
 
 @protocol ORTrail <NSObject>
 -(void) trailInt:(ORInt*) ptr;

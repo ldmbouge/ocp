@@ -27,6 +27,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) size;
+-(ORInt) atRank:(ORInt)r;
 -(void) copyInto: (id<ORIntSet>) S;
 -(void)enumerateWithBlock:(ORInt2Void)block;
 -(NSString*) description;
