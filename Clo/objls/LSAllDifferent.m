@@ -14,13 +14,35 @@
 #import "LSEngineI.h"
 #import "LSCount.h"
 
-@implementation LSAllDifferent
+@implementation LSAllDifferent {
+   unsigned char* _present;  // boolean array (one boolean per var in _x)
+   ORInt          _low;      // lowest variable identifier in _x
+   ORInt          _up;       // highest variable identifier in _x
+}
 -(id)init:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x
 {
    self = [super init:engine];
    _x   = x;
    _posted = NO;
+   _low = FDMAXINT;
+   _up  = FDMININT;
+   for(id<LSIntVar> v in _x) {
+      _low = getId(v) < _low ? getId(v) : _low;
+      _up  = getId(v) > _up  ? getId(v) : _up;
+   }
+   _present = malloc(sizeof(unsigned char)*(_up - _low + 1));
+   _present -= _low;
+   memset(_present,0,sizeof(unsigned char)*(_up - _low + 1));
+   for(id<LSIntVar> v in _x)
+      _present[getId(v)] = YES;
    return self;
+}
+static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
+{
+   ORUInt vid = getId(v);
+   if (ad->_low <= vid && vid <= ad->_up)
+      return ad->_present[vid];
+   return NO;
 }
 -(void)post
 {
@@ -57,7 +79,7 @@
 }
 -(ORInt)getVarViolations:(id<LSIntVar>)var
 {
-   return _vv[var.value].value;
+   return _vv[var.value].value > 0;
 }
 -(id<LSIntVar>)violations
 {
@@ -79,6 +101,27 @@
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
-   return 0;
+   ORBool xP = isPresent(self,x);
+   ORBool yP = isPresent(self,y);
+   if (xP && yP)
+      return 0;
+   else if (xP==0 && yP==0)
+      return 0;
+   else {
+      if (yP) {
+         id<LSIntVar> t = x;
+         x = y;
+         y = t;
+      }
+      ORInt xv = x.value;
+      ORInt yv = y.value;
+      if (xv == yv)
+         return 0;
+      else {
+         const ORInt c1 = _c[xv].value;
+         const ORInt c2 = _c[yv].value;
+         return (c2 >= 1) - (c1 >= 2);
+      }
+   }
 }
 @end
