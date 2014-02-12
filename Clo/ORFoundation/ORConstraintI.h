@@ -93,9 +93,12 @@
 
 @interface ORLEqual : ORConstraintI<ORLEqual>
 -(ORLEqual*)initORLEqual: (id<ORIntVar>) x leq: (id<ORIntVar>) y plus: (ORInt) c;
+-(ORLEqual*)initORLEqual:(ORInt)a times:(id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>)y plus:(ORInt)c;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
+-(ORInt) coefLeft;
+-(ORInt) coefRight;
 @end
 
 @interface ORPlus : ORConstraintI<ORPlus>

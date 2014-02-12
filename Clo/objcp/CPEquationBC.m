@@ -20,7 +20,7 @@
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   _idempotent = YES;
+   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -126,6 +126,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    ORInt i = 0;
    ORInt lastUsed = _used._val - 1;
    ORLong ec = _ec._val;
+   long long slow = 0,sup = 0;
    while (i <= lastUsed) {
       CPEQTerm* cur = _inUse[i]._val;
       ORBounds b = bounds(cur->var);
@@ -138,56 +139,37 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       } else {
          cur->low = b.min;
          cur->up  = b.max;
+         slow += cur->low;
+         sup  += cur->up;
          cur->updated = NO;
          i++;
       }
    }
    assignTRInt(&_used, lastUsed+1, _trail);
    assignTRLong(&_ec, ec, _trail);
-   bool changed;
    bool feasible = true;
-   do {
-      long long slow = 0,sup = 0;
-      ORInt k=0;
-      while(k < _used._val) {
-         CPEQTerm* cur = _inUse[k++]._val;
-         slow += cur->low;
-         sup  += cur->up;
+
+   struct Bounds b = (struct Bounds){0,0,slow + _ec._val,sup + _ec._val,_used._val};
+   if (b._sumLow > 0 || b._sumUp < 0)
+      failNow();
+   i = 0;
+   while (i < _used._val && feasible) {
+      CPEQTerm* cur = _inUse[i]._val;
+      long long nLowi = - (b._sumUp - cur->up);
+      long long nSupi = - (b._sumLow - cur->low);
+      bool updateNow = nLowi > cur->low || nSupi < cur->up;
+      cur->low = maxOf(cur->low,nLowi);
+      cur->up  = minOf(cur->up,nSupi);
+      if (updateNow) {
+         // [ldm] We must update now. A view such as y = a * x with y appearing here
+         // might force a stronger tightening of the bounds of y. e.g.,
+         // D(x) = {0,1}  and D(y)={0..100} with y = 100 * x.
+         // If (low,up) = (10,100) then, x={1} and therefore D(y)={100} rather than {10..100}
+         cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
       }
-      struct Bounds b = (struct Bounds){0,0,slow + _ec._val,sup + _ec._val,_used._val};
-      if (b._sumLow > 0 || b._sumUp < 0)
-         failNow();
-      changed=false;
-      ORInt i = 0;
-      while (i < _used._val && feasible) {
-         CPEQTerm* cur = _inUse[i]._val;
-         long long nLowi = - (b._sumUp - cur->up);
-         long long nSupi = - (b._sumLow - cur->low);
-         bool updateNow = nLowi > cur->low || nSupi < cur->up;
-         changed |= updateNow;
-         cur->updated |= updateNow;
-         cur->low = maxOf(cur->low,nLowi);
-         cur->up  = minOf(cur->up,nSupi);
-         if (updateNow) {
-            // [ldm] We must update now. A view such as y = a * x with y appearing here
-            // might force a stronger tightening of the bounds of y. e.g.,
-            // D(x) = {0,1}  and D(y)={0..100} with y = 100 * x.
-            // If (low,up) = (10,100) then, x={1} and therefore D(y)={100} rather than {10..100}
-            cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
-            ORBounds b = bounds(cur->var);
-            cur->low = b.min;
-            cur->up  = b.max;
-         }
-         feasible = cur->low <= cur->up;
-         if (cur->low == cur->up) {
-            assignTRLong(&_ec, _ec._val + cur->low, _trail);
-            CPEQTerm* last = _inUse[_used._val-1]._val;
-            inline_assignTRCPEQTerm(&_inUse[_used._val - 1],cur,_trail);
-            inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
-            assignTRInt(&_used,_used._val - 1,_trail);
-         } else ++i;
-      }
-   } while(changed && feasible);
+      feasible = cur->low <= cur->up;
+      ++i;
+   }
    if (!feasible)
       failNow();
 }

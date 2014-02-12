@@ -58,7 +58,7 @@ __attribute__((noinline)) NSCont* saveCtx(struct Ctx64* ctx,NSCont* k)
 
 __attribute__((noinline)) NSCont* restoreCtx(struct Ctx64* ctx,char* start,char* data,size_t length) 
 {
-   NSCont* rv;
+   NSCont* rv = 0;
    // ctx in rdi, start in rsi, data in rdx, length in ecx   
    asm volatile("copystack: cmp $0x0,%%ecx         ; \n\t" //test length to 0
                 "           jle donecopy           ; \n\t" //if length <= 0 break loop
@@ -100,7 +100,7 @@ char* getContBase()
    return baseStack;
 }
 
-void initContinuationLibrary(int *base)
+__attribute__((noinline)) void initContinuationLibrary(int *base)
 {
    int x;
    while ((long)base & 0x7)

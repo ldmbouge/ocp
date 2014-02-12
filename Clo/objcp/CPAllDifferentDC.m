@@ -54,7 +54,7 @@ static void prune(CPAllDifferentDC* ad);
 
 -(void) initInstanceVariables 
 {
-    _idempotent = YES;
+    //_idempotent = YES;
     _priority = HIGHEST_PRIO-2;
     _posted = false;
 }

@@ -596,7 +596,8 @@
 }
 @end
 
-@implementation ORLEqual {
+@implementation ORLEqual {  // a * x ≤ b * y + c
+   ORInt     _a,_b;
    id<ORIntVar> _x;
    id<ORIntVar> _y;
    ORInt        _c;
@@ -604,6 +605,17 @@
 -(ORLEqual*)initORLEqual:(id<ORIntVar>)x leq:(id<ORIntVar>)y plus:(ORInt)c
 {
    self = [super initORConstraintI];
+   _a = _b = 1;
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(ORLEqual*)initORLEqual:(ORInt)a times:(id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>)y plus:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _a = a;
+   _b = b;
    _x = x;
    _y = y;
    _c = c;
@@ -612,7 +624,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ <= %@ + %d)",[self class],self,_x,_y,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%d * %@ <= %d * %@ + %d)",[self class],self,_a,_x,_b,_y,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -631,6 +643,14 @@
 {
    return _c;
 }
+-(ORInt) coefLeft
+{
+   return _a;
+}
+-(ORInt) coefRight
+{
+   return _b;
+}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
@@ -640,6 +660,8 @@
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
    [aCoder encodeObject:_y];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_a];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_b];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -647,6 +669,8 @@
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_a];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_b];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }

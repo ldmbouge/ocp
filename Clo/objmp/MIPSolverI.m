@@ -749,6 +749,10 @@
 {
    return self;
 }
+-(ORUInt) nbPropagation
+{
+   return 0;
+}
 -(void) addVariable: (MIPVariableI*) v
 {
    if (_nbVars == _maxVars) {

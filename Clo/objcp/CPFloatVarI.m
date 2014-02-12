@@ -393,7 +393,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(void) setTracksLoseEvt
 {
 }
--(ORBool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt
 {
    return NO;
 }
@@ -415,6 +415,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = _net._bindEvt._val;
    k += mList[k] != NULL;
    scheduleAC3(_engine,mList);
+}
+-(void) domEvt:(id<CPDom>)sender
+{
+   // [ldm]. There is nothing to do here. We lost a value _inside_ the domain, but floatVars are intervals
+   // So no hope of propagating. 
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {

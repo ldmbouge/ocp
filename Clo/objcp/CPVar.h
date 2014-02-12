@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORInterval.h>
 #import <objcp/CPData.h>
 #import <CPUKernel/CPTrigger.h>
 
@@ -113,7 +112,7 @@ enum CPVarClass {
 -(void) inside: (id<ORIntSet>) S;
 -(void) updateMin: (ORInt) newMin;
 -(void) updateMax: (ORInt) newMax;
--(void) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
+-(ORBounds) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
 -(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 @end
 

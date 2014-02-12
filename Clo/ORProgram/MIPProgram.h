@@ -38,5 +38,6 @@
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORMIPSolutionPool>) solutionPool;
 -(id<ORMIPSolution>) captureSolution;
+-(id<ORExplorer>)  explorer;
 @end
 

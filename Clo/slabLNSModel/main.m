@@ -30,6 +30,7 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      
       [args measure:^struct ORResult(){
          const char* fName = "slab.dat";
          id<ORModel> model = [ORFactory createModel];
@@ -96,6 +97,7 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram: model];
          __block ORInt lim = 1000;
          __block BOOL improved = NO;
+         id<ORZeroOneStream> rs = [ORFactory zeroOneStream:cp];
          [cp solve: ^{
             id<ORObjectiveFunction> obj = [cp objective];
             printf(" Starting search \n");
@@ -105,8 +107,21 @@ int main(int argc, const char * argv[])
                   [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];}
                    orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]] << 16) - [weight at:o];}
                           do: ^(ORInt o){
-                             ORInt ms = max(0,[cp maxBound: slab]);
-                             [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; }
+                             id<ORIntSet> avail = [ORFactory intSet:cp];
+                             id<ORIntSet> rS    = [ORFactory intSet:cp];
+                             for(ORInt k=Slabs.low;k<=Slabs.up;k++)
+                                [avail insert:k];
+                             for(ORInt o=SetOrders.low;o <= SetOrders.up;o++) {
+                                if (![cp bound:slab[o]])  continue;
+                                ORInt idx = [cp intValue:slab[o]];
+                                [avail delete:idx];
+                                [rS insert:idx];
+                             }
+                             ORInt s = floor([rs next] * [avail size]);
+                             ORInt aar = [avail atRank:s];
+                             [rS insert:aar];
+//                             NSLog(@"rs.insert(%d) : lbl(%d  --> %@",aar,o,rS);
+                             [cp tryall: rS suchThat: ^bool(ORInt s) { return [cp member: s in: slab[o]]; }
                                      in: ^void(ORInt s) {
                                         [cp label: slab[o] with: s];
                                      }
@@ -120,15 +135,14 @@ int main(int argc, const char * argv[])
                id<ORSolution> s = [[cp solutionPool] best];
                if (s!=nil) {
                   [cp once:^{
-                     [cp tryall:RANGE(cp,0,1000) suchThat:nil in:^(ORInt k) {
-                        [SetOrders enumerateWithBlock:^(ORInt i) {
-                           if ([d next]  <= 90 - 10 * i) {
-                              [cp add:[slab[i] eq:@([s intValue:slab[i]])]];
-                           }
-                        }];
+                     [SetOrders enumerateWithBlock:^(ORInt i) {
+                        if ([d next]  <= 90) {
+                           //printf(".");fflush(stdout);
+                           [cp add:[slab[i] eq:@([s intValue:slab[i]])]];
+                        }
                      }];
                   }];
-                  lim *= 2;
+                  //lim *= 2;
                   NSLog(@"New limit: %d",lim);
                   //[[cp objective] tightenPrimalBound:[s objectiveValue]];
                }

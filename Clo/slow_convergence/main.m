@@ -46,7 +46,11 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          __block ORInt nbSol = 0;
          [cp solve:^{
+            NSLog(@"Searching...");
+            long t0 = [ORRuntimeMonitor cputime];
             [cp labelArray:[model intVars]];
+            long t1 = [ORRuntimeMonitor cputime];
+            NSLog(@"labelArray time: %ld",t1-t0);
             @autoreleasepool {
                NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
                [buf appendString:@"["];

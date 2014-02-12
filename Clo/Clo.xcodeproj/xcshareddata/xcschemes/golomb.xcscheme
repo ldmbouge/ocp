@@ -60,7 +60,15 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-q11"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-q12"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-q9"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p2"
@@ -68,7 +76,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-q10"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
@@ -78,7 +86,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable>
          <BuildableReference
