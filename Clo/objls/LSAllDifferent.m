@@ -25,7 +25,7 @@
    _x   = x;
    _posted = NO;
    _low = FDMAXINT;
-   _up  = FDMININT;
+   _up  = 0;
    for(id<LSIntVar> v in _x) {
       _low = getId(v) < _low ? getId(v) : _low;
       _up  = getId(v) > _up  ? getId(v) : _up;
