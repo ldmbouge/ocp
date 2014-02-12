@@ -43,9 +43,8 @@
 {
    return nil;
 }
--(ORStatus) post
+-(void) post
 {
-   return ORSuspend;
 }
 -(void)scheduleAC3:(CPEventNode*)evt
 {
@@ -158,7 +157,7 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
    _inGroup[_nbIn++] = p;
    [p setGroup:self];
 }
--(ORStatus) post
+-(void) post
 {
    _scanMap = realloc(_scanMap,sizeof(id<CPEventNode>)*_nbIn);
    ORInt low = MAXINT;
@@ -177,7 +176,6 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
    for(ORInt i=0;i < _nbIn;i++) 
       _map[[_inGroup[i] getId]] = i;
    memset(_scanMap,0,sizeof(CPEventNode*)*_nbIn);
-   return ORSuspend;
 }
 -(void)scheduleAC3:(CPEventNode*)evt
 {

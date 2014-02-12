@@ -78,10 +78,10 @@ ORStatus assign(CPCircuitI* cstr,int i)
     return ORSuspend;
 }
 
--(ORStatus) post
+-(void) post
 {
     if (_posted)
-        return ORSuspend;
+        return ;
     _posted = true;
     
     _low = [_x low];
@@ -113,7 +113,6 @@ ORStatus assign(CPCircuitI* cstr,int i)
         else 
             [_var[i] whenBindDo: ^ { assign(self,i); } onBehalf:self];  
     }
-    return ORSuspend;
 }
 
 @end

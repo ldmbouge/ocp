@@ -36,7 +36,7 @@
 }
 -(id) initCPBitEqual: (CPBitVarI*) x and: (CPBitVarI*) y ;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -47,7 +47,7 @@
 }
 -(id) initCPBitNOT: (CPBitVarI*) x equals: (CPBitVarI*) y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -59,7 +59,7 @@
 }
 -(id) initCPBitAND: (CPBitVarI*) x and: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -71,7 +71,7 @@
 }
 -(id) initCPBitOR: (CPBitVarI*) x or: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -83,7 +83,7 @@
 }
 -(id) initCPBitXOR: (CPBitVarI*) x xor: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -96,7 +96,7 @@
 }
 -(id) initCPBitIF: (CPBitVarI*) w equalsOneIf:(CPBitVarI*) x equals: (CPBitVarI*) y andZeroIfXEquals: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -109,7 +109,7 @@
 }
 -(id) initCPBitShiftL: (CPBitVarI*) x shiftLBy:(int) places equals: (CPBitVarI*) y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -121,10 +121,9 @@
 }
 -(id) initCPBitRotateL: (CPBitVarI*) x rotateLBy:(int) places equals: (CPBitVarI*) y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
-
 
 @interface CPBitShiftR : CPCoreConstraint{
 @private 
@@ -134,7 +133,7 @@
 }
 -(id) initCPBitShiftR: (CPBitVarI*) x shiftRBy:(int) places equals:(CPBitVarI*) y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -148,7 +147,7 @@
 }
 -(id) initCPBitAdd: (CPBitVarI*) x plus: (CPBitVarI*) y equals:(CPBitVarI*) z withCarryIn:(CPBitVarI*) cin andCarryOut:(CPBitVarI*)cout;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 

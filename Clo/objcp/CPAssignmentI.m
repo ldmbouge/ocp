@@ -100,10 +100,10 @@
    return 0;
 }
 
--(ORStatus) post
+-(void) post
 {
    if (_posted)
-      return ORSuspend;
+      return;
    _posted = true;
    
    _low = [_x low];
@@ -188,7 +188,6 @@
    }
    if (![_costVariable bound]) 
       [_costVariable whenChangeMaxPropagate: self];
-   return ORSuspend;
 }
 
 -(void) preprocess

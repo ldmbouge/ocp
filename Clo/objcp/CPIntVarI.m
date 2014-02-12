@@ -1444,6 +1444,57 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    [_x remove:ov];
 }
+
+-(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
+{
+   if (_recv) {
+      if (_a >= 0)
+         changeMinEvt(_recv,dsz,sender);
+      else
+         changeMaxEvt(_recv,dsz,sender);
+   }
+   
+   id<CPEventNode> mList[6];
+   ORUInt k = 0;
+   mList[k] = _net._boundsEvt[0]._val;
+   k += mList[k] != NULL;
+   mList[k] = _a >= 0 ?  _net._minEvt[0]._val : _net._maxEvt[0]._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._domEvt[0]._val;
+   k += mList[k] != NULL;
+   mList[k] = dsz==1 ? _net._bindEvt[0]._val : NULL;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   scheduleAC3(_fdm,mList);
+   if (_triggers && dsz==1)
+      [_triggers bindEvt:_fdm];
+}
+
+-(void) changeMaxEvt: (ORInt) dsz sender: (id<CPDom>)sender
+{
+   if (_recv) {
+      if (_a >=0)
+         changeMaxEvt(_recv,dsz,sender);
+      else
+         changeMinEvt(_recv,dsz,sender);
+   }
+   
+   id<CPEventNode> mList[6];
+   id<CPEventNode>* ptr = mList;
+   *ptr  = _net._boundsEvt[0]._val;
+   ptr += *ptr != NULL;
+   *ptr = _net._domEvt[0]._val;
+   ptr += *ptr != NULL;
+   *ptr = _a>=0 ? _net._maxEvt[0]._val : _net._minEvt[0]._val;
+   ptr += *ptr != NULL;
+   *ptr = dsz==1 ? _net._bindEvt[0]._val : NULL;
+   ptr += *ptr != NULL;
+   *ptr = NULL;
+   scheduleAC3(_fdm,mList);
+   if (_triggers && dsz==1)
+      [_triggers bindEvt:_fdm];
+}
+
 -(void) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
    [super loseValEvt:_a * val+_b sender:sender];

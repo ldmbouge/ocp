@@ -49,7 +49,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    else
       return d1;
 }
--(ORStatus) post
+-(void) post
 {
    if (bound(_x)) {
       [_y bind:[_c at:[_x min]]];
@@ -90,7 +90,6 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          [_x whenChangePropagate:self];
       }
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -188,7 +187,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    return _endOfList;
 }
 
--(ORStatus) post
+-(void) post
 {
    ORInt cLow = [_c low];
    ORInt cUp  = [_c up];
@@ -276,7 +275,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
             removeDom(_y, _values[listIdx]._value);
       }];
    }
-   return ORSuspend;
 }
 
 -(NSSet*)allVars
@@ -308,7 +306,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    [_x whenChangePropagate:self];
@@ -317,7 +315,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    for(ORInt k=xb.min; k <= xb.max;k++)
       if (memberDom(_x, k))
          [(CPIntVar*)[_z at:k] whenChangeBoundsPropagate:self];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -398,7 +395,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_iva release];
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    ORBounds xb = bounds(_x);
    ORInt la = max([_array low],xb.min);
@@ -518,7 +515,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          }];
       }
    }
-   return ORSuspend;
 }
 
 -(void)doACEqual:(ORInt)xv
