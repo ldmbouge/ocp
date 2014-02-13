@@ -37,7 +37,6 @@ typedef enum LSStatus {
    id<LSPriority>   _rank;
 }
 -(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d;
--(void)dealloc;
 -(LSEngineI*)engine;
 -(id<ORIntRange>)domain;
 -(void)setValue:(ORInt)v;
@@ -45,7 +44,30 @@ typedef enum LSStatus {
 -(ORInt)incr;
 -(ORInt)decr;
 -(id)addListener:(LSPropagator*)p term:(ORInt)k;
--(id)addDefiner:(LSPropagator*)p;
+-(id)addDefiner:(id)p;
+-(id<LSPriority>)rank;
+-(void)setRank:(id<LSPriority>)r;
+-(NSUInteger)inDegree;
+-(id<NSFastEnumeration>)outbound;
+-(id<NSFastEnumeration>)inbound;
+-(void)enumerateOutbound:(void(^)(id,ORInt))block;
+-(void)propagateOutbound:(void(^)(id,ORInt))block;
+@end
+
+@interface LSIntVarView : ORObject<LSIntVar> {
+   LSEngineI*       _engine;
+   id<ORIntRange>      _dom;
+   NSMutableSet*  _outbound;
+   NSMutableSet*   _inbound;
+   id<LSPriority>     _rank;
+   ORInt(^_fun)();
+}
+-(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src;
+-(LSEngineI*)engine;
+-(id<ORIntRange>)domain;
+-(void)setValue:(ORInt)v;
+-(ORInt)value;
+-(id)addListener:(LSPropagator*)p term:(ORInt)k;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)r;
 -(NSUInteger)inDegree;
@@ -65,4 +87,25 @@ typedef enum LSStatus {
    NSSet* _theSet;
 }
 -(id)initWith:(NSSet*)theSet;
+@end
+
+typedef enum LSLinkType {
+   LSLogical = 0,
+   LSPropagate = 1
+} LSLinkType;
+
+@interface LSLink : NSObject<LSLink> {
+@public
+   id _src;
+   id _trg;
+   ORInt      _k;
+   void (^_block)();
+   LSLinkType _t;
+}
+-(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k type:(LSLinkType)t;
+-(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k block:(void(^)())block type:(LSLinkType)t;
+-(id)source;
+-(id)target;
+-(ORInt)index;
+-(LSLinkType)type;
 @end

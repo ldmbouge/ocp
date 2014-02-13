@@ -68,9 +68,7 @@
 {
    id<LSEngine>  ls = [[LSEngineI alloc] initEngine];
    id<ORIntRange> d = RANGE(ls, 0, 10);
-   id<LSIntVarArray> x = [LSFactory intVarArray:ls range:d with:^id<LSIntVar>(ORInt i) {
-      return [LSFactory intVar:ls domain:d];
-   }];
+   id<LSIntVarArray> x = [LSFactory intVarArray:ls range:d domain:d];
    id<LSConstraint> ad = [ls addConstraint:[LSFactory alldifferent:ls over:x]];
    [ls close];
    NSLog(@"TTL: %d",[ad getViolations]);

@@ -77,7 +77,9 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       return [LSFactory intVar:_engine domain:cd];
    }];
    _xv = [LSFactory intVarArray:_engine range:_x.range with:^id<LSIntVar>(ORInt i) {
-      return [LSFactory intVar:_engine domain:cd];
+      return [LSFactory intVarView:_engine domain:_x.range fun:^ORInt {
+         return _vv[_x[i].value].value;
+      } src:@[_x[i],_vv]];
    }];
 
    _sum = [LSFactory intVar:_engine domain:RANGE(_engine,0,FDMAXINT)];
@@ -85,7 +87,6 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
    for (ORInt i=vals.low; i <= vals.up; ++i)
       [_engine add:[LSFactory inv:_vv[i] equal:^ { return max(0, [_c[i] value] - 1);} vars:@[_c[i]]]];
    [_engine add:[LSFactory sum: _sum over:_vv]];
-   [_engine add:[LSFactory gelt:_engine x:_x card:_vv result:_xv]];
 }
 -(ORBool)isTrue
 {

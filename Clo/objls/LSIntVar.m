@@ -12,27 +12,6 @@
 #import "LSIntVar.h"
 #import "LSEngineI.h"
 
-typedef enum LSLinkType {
-   LSLogical = 0,
-   LSPropagate = 1
-} LSLinkType;
-
-@interface LSLink : NSObject<LSLink> {
-@public
-   id _src;
-   id _trg;
-   ORInt      _k;
-   void (^_block)();
-   LSLinkType _t;
-}
--(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k type:(LSLinkType)t;
--(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k block:(void(^)())block type:(LSLinkType)t;
--(id)source;
--(id)target;
--(ORInt)index;
--(LSLinkType)type;
-@end
-
 @implementation LSLink
 -(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k type:(LSLinkType)t
 {
@@ -176,6 +155,9 @@ typedef enum LSLinkType {
 @end
 
 
+// =======================================================================================
+// Int Variables
+
 @implementation LSIntVar
 
 -(id)initWithEngine:(LSEngineI*)engine domain:(id<ORIntRange>)d
@@ -253,25 +235,25 @@ typedef enum LSLinkType {
    [_engine notify:self];
    return rv;
 }
--(id)addLogicalListener:(LSPropagator*)p term:(ORInt)k
+-(id)addLogicalListener:(id)p term:(ORInt)k
 {
    LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSLogical];
    [_outbound addObject:obj];
    return obj;
 }
--(id)addListener:(LSPropagator*)p term:(ORInt)k
+-(id)addListener:(id)p term:(ORInt)k
 {
    LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSPropagate];
    [_outbound addObject:obj];
    return obj;
 }
--(id)addListener:(LSPropagator*)p term:(ORInt)k with:(void(^)())block
+-(id)addListener:(id)p term:(ORInt)k with:(void(^)())block
 {
    LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k block:block type:LSPropagate];
    [_outbound addObject:obj];
    return obj;
 }
--(id)addDefiner:(LSPropagator*)p
+-(id)addDefiner:(id)p
 {
    LSLink* obj = [[LSLink alloc] initLinkFrom:p to:self for:-1 type:LSPropagate];
    if (_inbound==nil) _inbound = [[NSMutableSet alloc] initWithCapacity:8];
@@ -292,5 +274,119 @@ typedef enum LSLinkType {
          block(lnk->_trg,lnk->_k);
    }
 }
+@end
 
+// ========================================================================================
+// Int Views
+
+@implementation LSIntVarView
+-(id)initWithEngine:(LSEngineI*)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src
+{
+   self = [super init];
+   _engine = engine;
+   _dom = d;
+   _fun = [fun copy];
+   _outbound = [[NSMutableSet alloc] initWithCapacity:2];
+   [_engine trackVariable:self];
+   _rank = [[[engine space] nifty] retain];
+   
+   NSMutableArray* vSrc = [[NSMutableArray alloc] initWithCapacity:[src count]];
+   for(id sk in src) {
+      if ([sk conformsToProtocol:@protocol(ORIdArray)])
+         [vSrc addObject:[_engine pseudoForArray:sk]];
+      else [vSrc addObject:sk];
+   }
+   _inbound = [[NSMutableSet alloc] initWithCapacity:8];
+   for(id sk in vSrc) {
+      LSLink* link = [sk addLogicalListener:self term:-1];
+      [_inbound addObject:link];
+   }
+   [vSrc release];
+   return self;
+}
+-(void)dealloc
+{
+   [_fun release];
+   [super dealloc];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"view<LS>(%p,%d,%@) = %d",self,_name,_rank,_fun()];
+   return buf;
+}
+-(LSEngineI*)engine
+{
+   return _engine;
+}
+-(id<ORIntRange>)domain
+{
+   return _dom;
+}
+-(void)setValue:(ORInt)v
+{
+   assert(NO);
+}
+-(ORInt)value
+{
+   return _fun();
+}
+-(id)addLogicalListener:(id)p term:(ORInt)k
+{
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSLogical];
+   [_outbound addObject:obj];
+   return obj;
+}
+-(id)addListener:(id)p term:(ORInt)k
+{
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSPropagate];
+   [_outbound addObject:obj];
+   return obj;
+}
+-(id)addListener:(id)p term:(ORInt)k with:(void(^)())block
+{
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k block:block type:LSPropagate];
+   [_outbound addObject:obj];
+   return obj;
+}
+-(id)addDefiner:(id)p
+{ 
+   assert(NO);
+   return nil;
+}
+-(id<LSPriority>)rank
+{
+   return _rank;
+}
+-(void)setRank:(id<LSPriority>)r
+{
+   [_rank release];
+   _rank = [r retain];
+}
+-(NSUInteger)inDegree
+{
+   return _inbound ? [_inbound count] : 0;
+}
+-(id<NSFastEnumeration>)outbound
+{
+   return [[[LSOutbound alloc] initWith:_outbound] autorelease];
+}
+-(id<NSFastEnumeration>)inbound
+{
+   return [[[LSInbound alloc] initWith:_inbound] autorelease];   
+}
+-(void)enumerateOutbound:(void(^)(id,ORInt))block
+{
+   for(LSLink* lnk in _outbound)
+      block(lnk.target,lnk.index);
+}
+-(void)propagateOutbound:(void(^)(id,ORInt))block
+{
+   for(LSLink* lnk in _outbound) {
+      if (lnk->_block)
+         lnk->_block();
+      if (lnk->_t == LSPropagate)
+         block(lnk->_trg,lnk->_k);
+   }
+}
 @end

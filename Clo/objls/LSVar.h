@@ -15,6 +15,7 @@
 @class LSPropagator;
 @protocol LSEngine;
 @protocol LSPriority;
+@protocol LSPropagator;
 
 @protocol LSVar <LSObject>
 -(ORUInt)getId;
@@ -22,10 +23,10 @@
 -(NSUInteger)inDegree;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)rank;
--(id)addLogicalListener:(LSPropagator*)p term:(ORInt)k;
--(id)addListener:(LSPropagator*)p term:(ORInt)k;
--(id)addListener:(LSPropagator*)p term:(ORInt)k with:(void(^)())block;
--(id)addDefiner:(LSPropagator*)p;
+-(id)addLogicalListener:(id)p term:(ORInt)k;
+-(id)addListener:(id)p term:(ORInt)k;
+-(id)addListener:(id)p term:(ORInt)k with:(void(^)())block;
+-(id)addDefiner:(id)p;
 -(id<NSFastEnumeration>)outbound;
 -(id<NSFastEnumeration>)inbound;
 -(void)enumerateOutbound:(void(^)(id,ORInt))block;

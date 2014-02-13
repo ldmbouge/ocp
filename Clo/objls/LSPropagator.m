@@ -92,6 +92,71 @@
 }
 @end
 
+
+@implementation LSPseudoPropagator
+-(id)initWith:(LSEngineI*)engine
+{
+   self = [super init];
+   _engine = engine;
+   _inbound  = [[NSMutableSet alloc] initWithCapacity:2];
+   _outbound = [[NSMutableSet alloc] initWithCapacity:2];
+   _rank = [[[engine space] nifty] retain];
+   return self;
+}
+-(void)post
+{
+   NSLog(@"Warning: define of LSPseudoPropagator called");
+}
+-(void)define
+{
+   NSLog(@"Warning: define of LSPseudoPropagator called");
+}
+-(void)addTrigger:(LSLink*)link
+{
+   [_inbound addObject:link];
+}
+-(void)prioritize:(PStore*)p
+{
+}
+-(id<LSPriority>)rank
+{
+   return _rank;
+}
+-(void)setRank:(id<LSPriority>)r
+{
+   [_rank release];
+   _rank = [r retain];
+}
+-(NSUInteger)inDegree
+{
+   return [_inbound count];
+}
+-(id<NSFastEnumeration>)inbound
+{
+   return [[[LSInbound alloc] initWith:_inbound] autorelease];
+}
+-(id<NSFastEnumeration>)outbound
+{
+   return [[[LSOutbound alloc] initWith:_outbound] autorelease];
+}
+-(void)execute
+{
+}
+-(id)addLogicalListener:(id)p term:(ORInt)k
+{
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSLogical];
+   [_outbound addObject:obj];
+   return obj;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSPseudo(%p) : %d,%@>",self,_name,_rank];
+   return buf;
+}
+@end
+
+
 @implementation PStore
 
 -(id)initPStore:(LSEngineI*)engine

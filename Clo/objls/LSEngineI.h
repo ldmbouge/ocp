@@ -14,8 +14,10 @@
 
 @class LSPrioritySpace;
 @class LSPropagator;
+@class LSPseudoPropagator;
 @class LSRQueue;
 @protocol LSConstraint;
+@protocol LSPropagator;
 
 typedef enum LSMode {
    LSInitial = 0,
@@ -28,6 +30,7 @@ typedef enum LSMode {
    NSMutableArray* _objs;
    NSMutableArray* _cstr;
    NSMutableArray* _invs;
+   NSMutableDictionary* _pseudo;
    ORUInt        _nbObjects;
    LSMode           _mode;
    ORInt            _atomic;
@@ -38,11 +41,12 @@ typedef enum LSMode {
 -(void)dealloc;
 -(ORStatus)close;
 -(LSPrioritySpace*)space;
--(void)add:(LSPropagator*)i;
+-(void)add:(id<LSPropagator>)i;
 -(id<LSConstraint>)addConstraint:(id<LSConstraint>)cstr;
 -(NSMutableArray*)variables;
 -(NSMutableArray*)invariants;
 -(ORUInt)nbObjects;
 -(void)label:(LSIntVar*)x with:(ORInt)v;
 -(void)notify:(id<LSVar>)x;
+-(LSPseudoPropagator*)pseudoForArray:(id<ORIdArray>)a;
 @end

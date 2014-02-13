@@ -54,6 +54,22 @@
 -(NSUInteger)inDegree;
 @end
 
+@interface LSPseudoPropagator : ORObject<LSPropagator> {
+   @package
+   id<LSPriority>   _rank;
+   LSEngineI*     _engine;
+   NSMutableSet* _inbound;
+   NSMutableSet* _outbound;
+}
+-(id)initWith:(id<LSEngine>)engine;
+-(void)post;
+-(void)define;
+-(void)execute;
+-(void)addTrigger:(LSLink*)link;
+-(void)prioritize:(PStore*)p;
+-(NSUInteger)inDegree;
+@end
+
 @interface LSBlock : LSPropagator {
    void       (^_block)();
 }
