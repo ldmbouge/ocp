@@ -50,6 +50,7 @@
    LSIntVar* vk = _src[k];
    [_cnt[[_old at:k]] decr];
    [_cnt[[vk value]] incr];
+   [_old set:vk.value at:k];
 }
 -(void)execute
 {}

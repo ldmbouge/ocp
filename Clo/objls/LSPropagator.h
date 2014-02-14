@@ -13,7 +13,7 @@
 #import "LSEngineI.h"
 #import "LSPriority.h"
 #import <objls/LSObject.h>
-
+#import <objls/LSVar.h>
 
 @protocol LSVar;
 @class LSLink;
@@ -36,6 +36,7 @@
 -(void)define;
 -(void)post;
 -(void)execute;
+-(id<LSPriority>)rank;
 @end
 
 @interface LSPropagator : ORObject<LSPropagator> {
@@ -53,6 +54,29 @@
 -(void)prioritize:(PStore*)p;
 -(NSUInteger)inDegree;
 @end
+
+
+@interface LSIntVarView : LSPropagator<LSIntVar> {
+   id<ORIntRange>      _dom;
+   NSMutableSet*  _outbound;
+   NSArray*            _src;
+   ORInt(^_fun)();
+}
+-(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src;
+-(LSEngineI*)engine;
+-(id<ORIntRange>)domain;
+-(void)setValue:(ORInt)v;
+-(ORInt)value;
+-(id)addListener:(LSPropagator*)p term:(ORInt)k;
+-(id<LSPriority>)rank;
+-(void)setRank:(id<LSPriority>)r;
+-(NSUInteger)inDegree;
+-(id<NSFastEnumeration>)outbound;
+-(id<NSFastEnumeration>)inbound;
+-(void)enumerateOutbound:(void(^)(id,ORInt))block;
+-(void)propagateOutbound:(void(^)(id,ORInt))block;
+@end
+
 
 @interface LSPseudoPropagator : ORObject<LSPropagator> {
    @package

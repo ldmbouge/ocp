@@ -67,17 +67,38 @@
 -(void)testConstraint
 {
    id<LSEngine>  ls = [[LSEngineI alloc] initEngine];
-   id<ORIntRange> d = RANGE(ls, 0, 10);
+   ORInt n = 7;
+   id<ORIntRange> d = RANGE(ls, 0, n);
    id<LSIntVarArray> x = [LSFactory intVarArray:ls range:d domain:d];
-   id<LSConstraint> ad = [ls addConstraint:[LSFactory alldifferent:ls over:x]];
+   id<LSIntVarArray> xp = [LSFactory intVarArray:ls range:d with:^id<LSIntVar>(ORInt i) {
+      return [LSFactory intVarView:ls domain:RANGE(ls,i,i+n) fun:^ORInt{
+         return x[i].value + i;
+      } src:@[x[i]]];
+   }];
+   id<LSIntVarArray> xn = [LSFactory intVarArray:ls range:d with:^id<LSIntVar>(ORInt i) {
+      return [LSFactory intVarView:ls domain:RANGE(ls,0-i,n-i) fun:^ORInt{
+         return x[i].value - i;
+      } src:@[x[i]]];
+   }];
+   
+   id<LSConstraint> ad1 = [ls addConstraint:[LSFactory alldifferent:ls over:x]];
+   id<LSConstraint> ad2 = [ls addConstraint:[LSFactory alldifferent:ls over:xp]];
+   id<LSConstraint> ad3 = [ls addConstraint:[LSFactory alldifferent:ls over:xn]];
    [ls close];
-   NSLog(@"TTL: %d",[ad getViolations]);
+   NSLog(@"TTL1  : %d",[ad1 getViolations]);
+   NSLog(@"TTL2  : %d",[ad2 getViolations]);
+   NSLog(@"TTL3  : %d",[ad3 getViolations]);
+   
    [ls atomic:^ {
       [ls label:x[1] with: 1];
       [ls label:x[2] with: 2];
    }];
-   NSLog(@"TTL  : %d",[ad getViolations]);
+   NSLog(@"TTL1  : %d",[ad1 getViolations]);
+   NSLog(@"TTL2  : %d",[ad2 getViolations]);
+   NSLog(@"TTL3  : %d",[ad3 getViolations]);
    [ls label:x[3] with: 3];
-   NSLog(@"TTL  : %d",[ad getViolations]);
+   NSLog(@"TTL1  : %d",[ad1 getViolations]);
+   NSLog(@"TTL2  : %d",[ad2 getViolations]);
+   NSLog(@"TTL3  : %d",[ad3 getViolations]);
 }
 @end

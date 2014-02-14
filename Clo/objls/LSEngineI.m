@@ -208,7 +208,7 @@
 }
 -(void)schedule:(id<LSPropagator>)x
 {
-   [_queue enQueue:x atPriority:x.rank];
+   [_queue enQueue:x atPriority:[x rank]];
 }
 -(ORStatus)propagate
 {

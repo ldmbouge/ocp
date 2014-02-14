@@ -54,29 +54,6 @@ typedef enum LSStatus {
 -(void)propagateOutbound:(void(^)(id,ORInt))block;
 @end
 
-@interface LSIntVarView : ORObject<LSIntVar> {
-   LSEngineI*       _engine;
-   id<ORIntRange>      _dom;
-   NSMutableSet*  _outbound;
-   NSMutableSet*   _inbound;
-   id<LSPriority>     _rank;
-   ORInt(^_fun)();
-}
--(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src;
--(LSEngineI*)engine;
--(id<ORIntRange>)domain;
--(void)setValue:(ORInt)v;
--(ORInt)value;
--(id)addListener:(LSPropagator*)p term:(ORInt)k;
--(id<LSPriority>)rank;
--(void)setRank:(id<LSPriority>)r;
--(NSUInteger)inDegree;
--(id<NSFastEnumeration>)outbound;
--(id<NSFastEnumeration>)inbound;
--(void)enumerateOutbound:(void(^)(id,ORInt))block;
--(void)propagateOutbound:(void(^)(id,ORInt))block;
-@end
-
 @interface LSOutbound : NSObject<NSFastEnumeration> {
    NSSet* _theSet;
 }

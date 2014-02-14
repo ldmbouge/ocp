@@ -11,6 +11,7 @@
 
 #import <objls/LSFactory.h>
 #import "LSIntVar.h"
+#import "LSPropagator.h"
 
 @implementation LSFactory
 +(id<LSIntVar>)intVar:(id<LSEngine>)engine domain:(id<ORIntRange>)r
