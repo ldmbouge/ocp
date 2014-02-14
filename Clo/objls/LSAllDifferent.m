@@ -58,6 +58,47 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       return ad->_present[vid];
    return NO;
 }
+-(id<LSIntVarArray>)variables
+{
+   ORBool hasViews = NO;
+   for(id<LSIntVar> xk in _x)
+      hasViews |= [xk isKindOfClass:[LSIntVarView class]];
+   if (hasViews) {
+      ORInt sz = (ORInt)[_x count];
+      NSArray* asv[sz];
+      ORInt k = 0;
+      for(id<LSIntVar> xk in _x) {
+         if ([xk isKindOfClass:[LSIntVarView class]])
+            asv[k++] = [(LSIntVarView*)xk sourceVars];
+         else asv[k++] = @[xk];
+      }
+      ORInt lb=FDMAXINT,ub=0;
+      ORInt nb = k;
+      for(k=0;k < nb;k++) {
+         for(id<LSIntVar> vi in asv[k]) {
+            lb = getId(vi) < lb ? getId(vi) : lb;
+            ub = getId(vi) > ub ? getId(vi) : ub;
+         }
+      }
+      ORInt tsz = ub - lb + 1;
+      id<LSIntVar>* t = malloc(sizeof(id)*tsz);
+      t -= lb;
+      for(k=0;k < nb;k++)
+         for(id<LSIntVar> vi in asv[k])
+            t[getId(vi)] = vi;
+      ORInt nba = 0;
+      for(k=lb;k <= ub;k++)
+         nba += t[k] != nil;
+      id<LSIntVarArray> xp = [LSFactory intVarArray:_engine range:RANGE(_engine,0,nba-1)];
+      ORInt i=0;
+      for(k=lb;k <= ub;k++)
+         if (t[k] != nil)
+            xp[i++] = t[k];
+      t += lb;
+      free(t);
+      return xp;
+   } else return _x;
+}
 -(void)post
 {
    ORInt lb=FDMAXINT,ub=FDMININT;
@@ -77,9 +118,10 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       return [LSFactory intVar:_engine domain:cd];
    }];
    _xv = [LSFactory intVarArray:_engine range:_x.range with:^id<LSIntVar>(ORInt i) {
-      return [LSFactory intVarView:_engine domain:_x.range fun:^ORInt {
-         return _vv[_x[i].value].value;
-      } src:@[_x[i],_vv]];
+//      return [LSFactory intVarView:_engine domain:_x.range fun:^ORInt {
+//         return _vv[_x[i].value].value;
+//      } src:@[_x[i],_vv]];
+      return [LSFactory intVar:_engine domain:cd];
    }];
 
    _sum = [LSFactory intVar:_engine domain:RANGE(_engine,0,FDMAXINT)];
@@ -87,6 +129,7 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
    for (ORInt i=vals.low; i <= vals.up; ++i)
       [_engine add:[LSFactory inv:_vv[i] equal:^ { return max(0, [_c[i] value] - 1);} vars:@[_c[i]]]];
    [_engine add:[LSFactory sum: _sum over:_vv]];
+   [_engine add:[LSFactory gelt:_engine x:_x card:_vv result:_xv]];
 }
 -(ORBool)isTrue
 {

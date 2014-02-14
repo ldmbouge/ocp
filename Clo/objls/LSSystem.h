@@ -12,15 +12,22 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objls/LSConstraint.h>
 
-@interface LSAllDifferent : LSConstraint {
-   id<LSIntVarArray>  _x;  // source
-   id<LSIntVarArray>  _c;  // cardinalities
-   id<LSIntVarArray> _vv;  // value violations
-   id<LSIntVarArray> _xv;  // variable violations
-   id<LSIntVar>     _sum;  // total violations
-   ORBool        _posted;  // whether we have been posted already.
+@protocol  LSIntVar;
+
+@interface LSSystem : LSConstraint<LSConstraint> {
+   NSArray* _cstrs;
+   ORInt       _nb;
+   ORBool  _posted;
+   id<LSIntVar> _viol;
+   id<LSIntVar>  _sat;
+   id<LSIntVarArray> _src;   // conventional array of source vars (sorted by id)
+   id<LSIntVarArray>  _av;   // all vioalations
+   ORInt           _lb,_ub;  // lower and upper bound for flat source array
+   id<LSIntVar>*  _flatSrc;  // flat source array
+   id<LSIntVarArray>   _vv;
+   ORBool      _vvIdMapped;
 }
--(id)init:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x;
+-(id)init:(id<LSEngine>)engine with:(NSArray*)ca;
 -(void)post;
 -(id<LSIntVarArray>)variables;
 -(ORBool)isTrue;

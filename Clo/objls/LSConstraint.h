@@ -16,6 +16,7 @@
 @class LSEngineI;
 @protocol LSConstraint <NSObject>
 -(void)post;
+-(id<LSIntVarArray>)variables;
 -(ORBool)isTrue;
 -(ORInt)getViolations;
 -(ORInt)getVarViolations:(id<LSIntVar>)var;
@@ -28,6 +29,7 @@
 }
 -(id)init:(id<LSEngine>)engine;
 -(void)post;
+-(id<LSIntVarArray>)variables;
 -(ORBool)isTrue;
 -(ORInt)getViolations;
 -(ORInt)getVarViolations:(id<LSIntVar>)var;
@@ -35,8 +37,7 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 @end
 
-@class LSAllDifferent;
-
 @interface LSFactory (LSConstraint)
 +(id<LSConstraint>)alldifferent:(id<LSEngine>)e over:(id<LSIntVarArray>)x;
++(id<LSConstraint>)system:(id<LSEngine>)e with:(NSArray*)ac;
 @end

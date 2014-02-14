@@ -84,10 +84,14 @@
    id<LSConstraint> ad1 = [ls addConstraint:[LSFactory alldifferent:ls over:x]];
    id<LSConstraint> ad2 = [ls addConstraint:[LSFactory alldifferent:ls over:xp]];
    id<LSConstraint> ad3 = [ls addConstraint:[LSFactory alldifferent:ls over:xn]];
+   id<LSConstraint> sys = [ls addConstraint:[LSFactory system:ls with:@[ad1,ad2,ad3]]];
    [ls close];
+   id<LSIntVarArray> sv = [sys variables];
+   NSLog(@"SYSVARS: %@",sv);
    NSLog(@"TTL1  : %d",[ad1 getViolations]);
    NSLog(@"TTL2  : %d",[ad2 getViolations]);
    NSLog(@"TTL3  : %d",[ad3 getViolations]);
+   NSLog(@"TTL4  : %d",[sys getViolations]);
    
    [ls atomic:^ {
       [ls label:x[1] with: 1];
@@ -96,9 +100,11 @@
    NSLog(@"TTL1  : %d",[ad1 getViolations]);
    NSLog(@"TTL2  : %d",[ad2 getViolations]);
    NSLog(@"TTL3  : %d",[ad3 getViolations]);
+   NSLog(@"TTL4  : %d",[sys getViolations]);
    [ls label:x[3] with: 3];
    NSLog(@"TTL1  : %d",[ad1 getViolations]);
    NSLog(@"TTL2  : %d",[ad2 getViolations]);
    NSLog(@"TTL3  : %d",[ad3 getViolations]);
+   NSLog(@"TTL4  : %d",[sys getViolations]);
 }
 @end

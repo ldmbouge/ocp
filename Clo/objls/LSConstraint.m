@@ -12,6 +12,7 @@
 #import "LSConstraint.h"
 #import "LSEngineI.h"
 #import "LSAllDifferent.h"
+#import "LSSystem.h"
 
 @implementation LSConstraint
 -(id)init:(LSEngineI*)engine
@@ -23,6 +24,10 @@
 -(void)post
 {
    
+}
+-(id<LSIntVarArray>)variables
+{
+   return nil;
 }
 -(ORBool)isTrue
 {
@@ -50,6 +55,12 @@
 +(id<LSConstraint>)alldifferent:(id<LSEngine>)e over:(id<LSIntVarArray>)x
 {
    LSAllDifferent* c = [[LSAllDifferent alloc] init:e vars:x];
+   [e trackMutable:c];
+   return c;
+}
++(id<LSConstraint>)system:(id<LSEngine>)e with:(NSArray*)ac
+{
+   LSSystem* c = [[LSSystem alloc] init:e with:ac];
    [e trackMutable:c];
    return c;
 }

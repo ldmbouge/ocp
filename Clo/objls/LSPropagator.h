@@ -65,6 +65,7 @@
 -(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src;
 -(LSEngineI*)engine;
 -(id<ORIntRange>)domain;
+-(NSArray*)sourceVars;
 -(void)setValue:(ORInt)v;
 -(ORInt)value;
 -(id)addListener:(LSPropagator*)p term:(ORInt)k;

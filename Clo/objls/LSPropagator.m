@@ -198,6 +198,10 @@
    [_src release];
    [super dealloc];
 }
+-(NSArray*)sourceVars
+{
+   return _src;
+}
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

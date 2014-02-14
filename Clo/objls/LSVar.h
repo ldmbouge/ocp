@@ -46,3 +46,6 @@
 -(void) setObject: (id<LSIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
+
+ORBool isIdMapped(id<LSIntVarArray> array);
+id<LSIntVar> findByName(id<LSIntVarArray> array,ORInt name);
