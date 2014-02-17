@@ -15,17 +15,18 @@
 @protocol  LSIntVar;
 
 @interface LSSystem : LSConstraint<LSConstraint> {
-   NSArray* _cstrs;
-   ORInt       _nb;
-   ORBool  _posted;
-   id<LSIntVar> _viol;
-   id<LSIntVar>  _sat;
-   id<LSIntVarArray> _src;   // conventional array of source vars (sorted by id)
-   id<LSIntVarArray>  _av;   // all vioalations
+   NSArray*         _cstrs;
+   ORInt               _nb;
+   ORBool          _posted;
+   id<LSIntVar>      _viol;
+   id<LSIntVar>       _sat;
+   id<LSIntVarArray>  _src;   // conventional array of source vars (sorted by id)
+   id<LSIntVarArray>   _av;   // all violations
    ORInt           _lb,_ub;  // lower and upper bound for flat source array
    id<LSIntVar>*  _flatSrc;  // flat source array
    id<LSIntVarArray>   _vv;
    ORBool      _vvIdMapped;
+   NSMutableDictionary*  _cstrOnVar;
 }
 -(id)init:(id<LSEngine>)engine with:(NSArray*)ca;
 -(void)post;

@@ -24,15 +24,30 @@ id<LSIntVar> findByName(id<LSIntVarArray> array,ORInt name)
 {
    ORInt l = array.range.low;
    ORInt u = array.range.up;
-   while (l < u) {
+   while (l <= u) {
       ORInt m = l + (u - l)/2;
       ORInt idm = getId(array[m]);
       if (name == idm)
          return array[m];
       else if (name < idm)
-         u = name - 1;
+         u = m - 1;
       else
-         l = name + 1;
+         l = m + 1;
    }
    return nil;
+}
+
+ORBool containsVar(id<LSIntVarArray> array,ORInt name)
+{
+   return findByName(array,name) != nil;
+}
+
+ORBounds idRange(id<LSIntVarArray> array)
+{
+   ORInt lb = FDMAXINT,ub = 0;
+   for(id<LSIntVar> x in array) {
+      lb = getId(x) < lb ? getId(x) : lb;
+      ub = getId(x) > ub ? getId(x) : ub;
+   }
+   return (ORBounds){lb,ub};
 }

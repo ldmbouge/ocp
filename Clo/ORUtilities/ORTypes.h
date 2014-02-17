@@ -66,6 +66,11 @@ typedef struct ORBounds {
    ORInt max;
 } ORBounds;
 
+static inline ORBounds unionOf(ORBounds a,ORBounds b)
+{
+   return (ORBounds){min(a.min,b.min),max(a.max,b.max)};
+}
+
 @protocol IntEnumerator <NSObject>
 -(ORBool) more;
 -(ORInt) next;

@@ -29,6 +29,7 @@
    _flatSrc += _lb;
    free(_flatSrc);
    [_cstrs release];
+   [_cstrOnVar release];
    [super dealloc];
 }
 -(id<LSIntVarArray>)variables
@@ -37,16 +38,14 @@
       ORInt n = (ORInt)[_cstrs count];
       id<LSIntVarArray> ava[n];
       ORInt i = 0;
-      _lb = FDMAXINT;
-      _ub = 0;
+      ORBounds idb = (ORBounds){FDMAXINT,0};
       for(id<LSConstraint> c in _cstrs) {
          ava[i] = [c variables];
-         for(id<LSIntVar> x in ava[i]) {
-            _lb = getId(x) < _lb ? getId(x) : _lb;
-            _ub = getId(x) > _ub ? getId(x) : _ub;
-         }
+         idb = unionOf(idb, idRange(ava[i]));
          i++;
       }
+      _lb = idb.min;
+      _ub = idb.max;
       ORInt sz = _ub - _lb + 1;
       id<LSIntVar>* iSrc = malloc(sizeof(id)*sz);
       memset(iSrc,0,sizeof(id)*sz);
@@ -63,6 +62,16 @@
       for(i=_lb;i <= _ub;i++)
          if (iSrc[i] != nil)
             _src[k++] = iSrc[i];
+      _cstrOnVar = [[NSMutableDictionary alloc] initWithCapacity:[_src count]];
+      for(id<LSIntVar> x in _src) {
+         NSMutableSet* ms = [[NSMutableSet alloc] initWithCapacity:2];
+         [_cstrOnVar setObject:ms forKey:@(getId(x))];
+      }
+      for(id<LSIntVar> x in _src) {
+         for(ORInt i = 0;i < n;i++)
+            if (containsVar(ava[i], getId(x)))
+               [[_cstrOnVar objectForKey:@(getId(x))] addObject:_cstrs[i]];
+      }
    }
    return _src;
 }
@@ -118,7 +127,13 @@
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
-   return 0;
+   if (containsVar(_src, getId(x))) {
+      ORInt ttl = 0;
+      for(id<LSConstraint> c in [_cstrOnVar objectForKey:@(getId(x))])
+         ttl += [c deltaWhenAssign:x to:v];
+      return ttl;
+   } else
+      return 0;
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {

@@ -49,3 +49,5 @@
 
 ORBool isIdMapped(id<LSIntVarArray> array);
 id<LSIntVar> findByName(id<LSIntVarArray> array,ORInt name);
+ORBounds idRange(id<LSIntVarArray> array);
+ORBool containsVar(id<LSIntVarArray> array,ORInt name);

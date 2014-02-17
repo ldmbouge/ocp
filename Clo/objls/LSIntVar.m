@@ -214,6 +214,14 @@
    [buf appendFormat:@"var<LS>(%p,%d,%@) = %d",self,_name,_rank,_value];
    return buf;
 }
+-(ORInt)lookahead:(id<LSIntVar>)y onAssign:(ORInt)v
+{
+   ORInt old = _value;
+   _value = v;
+   ORInt rv = [y value];
+   _value = old;
+   return rv;
+}
 -(void)setValue:(ORInt)v
 {
    _value = v;

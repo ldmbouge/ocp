@@ -22,6 +22,8 @@
 -(ORInt)getVarViolations:(id<LSIntVar>)var;
 -(id<LSIntVar>)violations;
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
 
 @interface LSConstraint : ORObject<LSConstraint> {

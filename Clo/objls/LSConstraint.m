@@ -49,6 +49,14 @@
 {
    return nil;
 }
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return 0;
+}
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return 0;
+}
 @end
 
 @implementation LSFactory (LSConstraint)

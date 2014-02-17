@@ -16,14 +16,19 @@
 
 @implementation LSAllDifferent {
    unsigned char* _present;  // boolean array (one boolean per var in _x)
-   ORInt          _low;      // lowest variable identifier in _x
-   ORInt          _up;       // highest variable identifier in _x
-   ORInt*          _xOfs;    // Offset of variable j in array x. i.e., x[_xOfs[j]].getId() == j
+   ORInt              _low;  // lowest variable identifier in _x
+   ORInt               _up;  // highest variable identifier in _x
+   ORInt*            _xOfs;  // Offset of variable j in array x. i.e., x[_xOfs[j]].getId() == j
+   ORBool       _overViews;
+   id<LSIntVarArray>  _src;
+   ORBounds            _sb;
+   NSMutableDictionary* _map;
 }
 -(id)init:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x
 {
    self = [super init:engine];
    _x   = x;
+   _src = nil;
    _posted = NO;
    _low = FDMAXINT;
    _up  = 0;
@@ -36,7 +41,7 @@
    memset(_present,0,sizeof(unsigned char)*(_up - _low + 1));
    _xOfs = malloc(sizeof(ORInt)*(_up - _low + 1));
    _xOfs -= _low;
-   ORInt k = _low;
+   ORInt k = x.range.low;
    for(id<LSIntVar> v in _x) {
       _present[getId(v)] = YES;
       _xOfs[getId(v)] = k++;
@@ -49,6 +54,7 @@
    _xOfs    += _low;
    free(_present);
    free(_xOfs);
+   [_map release];
    [super dealloc];
 }
 static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
@@ -60,17 +66,20 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 }
 -(id<LSIntVarArray>)variables
 {
-   ORBool hasViews = NO;
+   if (_src) return _src;
+   _overViews = NO;
    for(id<LSIntVar> xk in _x)
-      hasViews |= [xk isKindOfClass:[LSIntVarView class]];
-   if (hasViews) {
+      _overViews |= [xk isKindOfClass:[LSIntVarView class]];
+   if (_overViews) {
       ORInt sz = (ORInt)[_x count];
       NSArray* asv[sz];
       ORInt k = 0;
       for(id<LSIntVar> xk in _x) {
          if ([xk isKindOfClass:[LSIntVarView class]])
-            asv[k++] = [(LSIntVarView*)xk sourceVars];
-         else asv[k++] = @[xk];
+            asv[k] = [(LSIntVarView*)xk sourceVars];
+         else asv[k] = @[xk];
+         assert([asv[k] count] <= 1);
+         ++k;
       }
       ORInt lb=FDMAXINT,ub=0;
       ORInt nb = k;
@@ -96,8 +105,27 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
             xp[i++] = t[k];
       t += lb;
       free(t);
+      _src = xp;
+      _sb = idRange(xp);
+      _map = [[NSMutableDictionary alloc] initWithCapacity:nba];
+      for(id<LSIntVar> xk in xp) {
+         @autoreleasepool {
+            NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2] autorelease];
+            ORInt j = 0;
+            for(id<LSIntVar> s in _x) {
+               if ([asv[j] containsObject:xk])
+                  [ms addObject:s];
+               ++j;
+            }
+            assert([ms count] == 1);
+            [_map setObject:[ms anyObject] forKey:@(getId(xk))];
+         }
+      }
       return xp;
-   } else return _x;
+   } else {
+      _sb = idRange(_x);
+      return _src = _x;
+   }
 }
 -(void)post
 {
@@ -139,21 +167,34 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 {
    return _sum.value;
 }
--(ORInt)getVarViolations:(id<LSIntVar>)var
+-(ORInt)getVarViolations:(id<LSIntVar>)x
 {
-   assert(_vv[var.value].value == [self varViolations:var].value);
-   return _vv[var.value].value > 0;
+   ORInt xid = getId(x);
+   if (_map && _src.range.low <= xid && xid <= _src.range.up) {
+      x = [_map objectForKey:@(xid)];
+   }
+   assert(_vv[x.value].value == [self varViolations:x].value);
+   return _vv[x.value].value > 0;
 }
 -(id<LSIntVar>)violations
 {
    return _sum;
 }
--(id<LSIntVar>)varViolations:(id<LSIntVar>)var
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)x
 {
-   return _xv[_xOfs[getId(var)]];
+   ORInt xid = getId(x);
+   if (_map && _sb.min <= xid && xid <= _sb.max)
+      x = [_map objectForKey:@(xid)];
+   return _xv[_xOfs[getId(x)]];
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
+   ORInt xid = getId(x);
+   if (_map && _sb.min <= xid && xid <= _sb.max) {
+      id<LSIntVar> viewForX = [_map objectForKey:@(xid)];
+      v = [(LSIntVar*)x lookahead:viewForX onAssign:v];
+      x = viewForX;
+   }
    if (x.value == v)
       return 0;
    else {
@@ -164,6 +205,13 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
+   ORInt xid = getId(x);
+   if (_map && _sb.min <= xid && xid <= _sb.max)
+      x = [_map objectForKey:@(xid)];
+   ORInt yid = getId(y);
+   if (_map && _sb.min <= yid && yid <= _sb.max)
+      y = [_map objectForKey:@(yid)];
+
    ORBool xP = isPresent(self,x);
    ORBool yP = isPresent(self,y);
    if (xP && yP)

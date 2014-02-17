@@ -43,6 +43,7 @@ typedef enum LSStatus {
 -(ORInt)value;
 -(ORInt)incr;
 -(ORInt)decr;
+-(ORInt)lookahead:(id<LSIntVar>)y onAssign:(ORInt)v;
 -(id)addListener:(LSPropagator*)p term:(ORInt)k;
 -(id)addDefiner:(id)p;
 -(id<LSPriority>)rank;
