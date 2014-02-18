@@ -67,6 +67,7 @@
 -(void)testConstraint
 {
    id<LSEngine>  ls = [[LSEngineI alloc] initEngine];
+   [ORStreamManager setRandomized];
    ORInt n = 8;
    id<ORIntRange> d = RANGE(ls, 0, n-1);
    id<LSIntVarArray> x = [LSFactory intVarArray:ls range:d domain:d];
@@ -86,9 +87,9 @@
    id<LSConstraint> ad3 = [ls addConstraint:[LSFactory alldifferent:ls over:xn]];
    id<LSConstraint> sys = [ls addConstraint:[LSFactory system:ls with:@[ad1,ad2,ad3]]];
    [ls close];
-   id<LSIntVarArray> sv = [sys variables];
+//   id<LSIntVarArray> sv = [sys variables];
    ORInt it = 0;
-   id<ORSelect> sMax = [ORFactory select:ls range:d suchThat:nil orderedBy:^ORFloat(ORInt i) {
+   id<ORSelect> sMax = [ORFactory selectRandom:ls range:d suchThat:nil orderedBy:^ORFloat(ORInt i) {
       return [sys getVarViolations:x[i]];
    }];
    NSLog(@"Initial violations: %d",[sys violations].value);
@@ -96,26 +97,8 @@
       id<ORIntArray> vv = [ORFactory intArray:ls range:d with:^ORInt(ORInt i) {
          return [sys getVarViolations:x[i]];
       }];
-      NSLog(@"viol: %@",vv);
       ORInt i = [sMax max];
-      {
-         id<ORIntArray> delta = [ORFactory intArray:ls range:d with:^ORInt(ORInt v) { return [sys deltaWhenAssign:x[i] to:v];}];
-         NSLog(@"delta(%d) = %@",i,delta);
-      }
-      {
-         id<ORIntArray> delta = [ORFactory intArray:ls range:d with:^ORInt(ORInt v) { return [ad1 deltaWhenAssign:x[i] to:v];}];
-         NSLog(@"delta0(%d) = %@",i,delta);
-      }
-      {
-         id<ORIntArray> delta = [ORFactory intArray:ls range:d with:^ORInt(ORInt v) { return [ad2 deltaWhenAssign:x[i] to:v];}];
-         NSLog(@"delta1(%d) = %@",i,delta);
-      }
-      {
-         id<ORIntArray> delta = [ORFactory intArray:ls range:d with:^ORInt(ORInt v) { return [ad3 deltaWhenAssign:x[i] to:v];}];
-         NSLog(@"delta2(%d) = %@",i,delta);
-      }
-      
-      id<ORSelect> sMin = [ORFactory select:ls range:d suchThat:nil orderedBy:^ORFloat(ORInt v) {
+      id<ORSelect> sMin = [ORFactory selectRandom:ls range:d suchThat:nil orderedBy:^ORFloat(ORInt v) {
          return [sys deltaWhenAssign:x[i] to:v];
       }];
       ORInt v = [sMin min];
@@ -123,25 +106,12 @@
       ++it;
       NSLog(@"TTL4  : %d",[sys getViolations]);
    }
+   if ([sys getViolations] == 0) {
+      NSLog(@"TTL4  : %d",[sys getViolations]);
+      NSLog(@"QUEENS: %@",x);
+      NSLog(@"Iterations: %d",it);
+   } else
+      NSLog(@"FAILED!");
    
-   NSLog(@"SYSVARS: %@",sv);
-   NSLog(@"TTL1  : %d",[ad1 getViolations]);
-   NSLog(@"TTL2  : %d",[ad2 getViolations]);
-   NSLog(@"TTL3  : %d",[ad3 getViolations]);
-   NSLog(@"TTL4  : %d",[sys getViolations]);
-   
-   [ls atomic:^ {
-      [ls label:x[1] with: 1];
-      [ls label:x[2] with: 2];
-   }];
-   NSLog(@"TTL1  : %d",[ad1 getViolations]);
-   NSLog(@"TTL2  : %d",[ad2 getViolations]);
-   NSLog(@"TTL3  : %d",[ad3 getViolations]);
-   NSLog(@"TTL4  : %d",[sys getViolations]);
-   [ls label:x[3] with: 3];
-   NSLog(@"TTL1  : %d",[ad1 getViolations]);
-   NSLog(@"TTL2  : %d",[ad2 getViolations]);
-   NSLog(@"TTL3  : %d",[ad3 getViolations]);
-   NSLog(@"TTL4  : %d",[sys getViolations]);
 }
 @end
