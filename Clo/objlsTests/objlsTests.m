@@ -8,8 +8,12 @@
 
 #import <XCTest/XCTest.h>
 #import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <objls/LSFactory.h>
 #import <objls/LSConstraint.h>
+#import <objls/LSSolver.h>
 #import "LSCount.h"
 
 @interface objlsTests : XCTestCase
@@ -94,9 +98,6 @@
    }];
    NSLog(@"Initial violations: %d",[sys violations].value);
    while ([sys violations].value > 0 && it < 50 * n) {
-      id<ORIntArray> vv = [ORFactory intArray:ls range:d with:^ORInt(ORInt i) {
-         return [sys getVarViolations:x[i]];
-      }];
       ORInt i = [sMax max];
       id<ORSelect> sMin = [ORFactory selectRandom:ls range:d suchThat:nil orderedBy:^ORFloat(ORInt v) {
          return [sys deltaWhenAssign:x[i] to:v];
@@ -112,6 +113,37 @@
       NSLog(@"Iterations: %d",it);
    } else
       NSLog(@"FAILED!");
-   
 }
+
+-(void)testQueens
+{
+   ORInt n = 8;
+   [ORStreamManager setRandomized];
+   @autoreleasepool {
+      id<ORModel> model = [ORFactory createModel];
+      id<ORIntRange> D = RANGE(model, 0, n-1);
+      id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
+      [model add:[ORFactory alldifferent:x]];
+      [model add:[ORFactory alldifferent:All(model, ORExpr, i, D, [x[i] plus:@(i)])]];
+      [model add:[ORFactory alldifferent:All(model, ORExpr, i, D, [x[i] sub:@(i)])]];
+      id<LSProgram> ls = [ORFactory createLSProgram:model annotation:nil];
+      __block ORInt it = 0;
+      [ls solve: ^{
+         while ([ls violations] > 0 && it < 50 * n) {
+            [ls selectMax:D orderedBy:^ORFloat(ORInt i) { return [ls getVarViolations:x[i]];} do:^(ORInt i) {
+               [ls selectMin: D orderedBy:^ORFloat(ORInt v) { return [ls deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
+                  [ls label:x[i] with:v];
+               }];
+            }];
+            ++it;
+         }
+      }];
+      id<ORSolution> b = [[ls solutionPool] best];
+      if (b != nil) {
+         NSLog(@"Found a solution in %d iter",it);
+         NSLog(@"Sol: %@",b);
+      }
+   }
+}
+
 @end
