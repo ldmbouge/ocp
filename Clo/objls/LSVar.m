@@ -36,6 +36,23 @@ id<LSIntVar> findByName(id<LSIntVarArray> array,ORInt name)
    }
    return nil;
 }
+ORInt findRankByName(id<LSIntVarArray> array,ORInt name)
+{
+   ORInt l = array.range.low;
+   ORInt u = array.range.up;
+   while (l <= u) {
+      ORInt m = l + (u - l)/2;
+      ORInt idm = getId(array[m]);
+      if (name == idm)
+         return m;
+      else if (name < idm)
+         u = m - 1;
+      else
+         l = m + 1;
+   }
+   return l-1;
+}
+
 
 ORBool containsVar(id<LSIntVarArray> array,ORInt name)
 {

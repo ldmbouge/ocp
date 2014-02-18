@@ -171,7 +171,8 @@
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendString:@"["];
    for(ORInt i=_low;i<=_up;i++) {
-      [rv appendFormat:@"%d:%d",i,_array[i]];
+//      [rv appendFormat:@"%d:%d",i,_array[i]];
+      [rv appendFormat:@"%d",_array[i]];
       if (i < _up)
          [rv appendString:@","];
    }

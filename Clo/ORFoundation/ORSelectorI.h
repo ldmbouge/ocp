@@ -25,7 +25,7 @@
 @end
 
 
-@interface ORSelectI : NSObject<ORSelect>
+@interface ORSelectI : ORObject<ORSelect>
 -(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized;
 -(void)           dealloc;
 -(ORInt)              min;

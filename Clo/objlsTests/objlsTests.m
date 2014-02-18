@@ -67,8 +67,8 @@
 -(void)testConstraint
 {
    id<LSEngine>  ls = [[LSEngineI alloc] initEngine];
-   ORInt n = 7;
-   id<ORIntRange> d = RANGE(ls, 0, n);
+   ORInt n = 8;
+   id<ORIntRange> d = RANGE(ls, 0, n-1);
    id<LSIntVarArray> x = [LSFactory intVarArray:ls range:d domain:d];
    id<LSIntVarArray> xp = [LSFactory intVarArray:ls range:d with:^id<LSIntVar>(ORInt i) {
       return [LSFactory intVarView:ls domain:RANGE(ls,i,i+n) fun:^ORInt{
@@ -87,6 +87,43 @@
    id<LSConstraint> sys = [ls addConstraint:[LSFactory system:ls with:@[ad1,ad2,ad3]]];
    [ls close];
    id<LSIntVarArray> sv = [sys variables];
+   ORInt it = 0;
+   id<ORSelect> sMax = [ORFactory select:ls range:d suchThat:nil orderedBy:^ORFloat(ORInt i) {
+      return [sys getVarViolations:x[i]];
+   }];
+   NSLog(@"Initial violations: %d",[sys violations].value);
+   while ([sys violations].value > 0 && it < 50 * n) {
+      id<ORIntArray> vv = [ORFactory intArray:ls range:d with:^ORInt(ORInt i) {
+         return [sys getVarViolations:x[i]];
+      }];
+      NSLog(@"viol: %@",vv);
+      ORInt i = [sMax max];
+      {
+         id<ORIntArray> delta = [ORFactory intArray:ls range:d with:^ORInt(ORInt v) { return [sys deltaWhenAssign:x[i] to:v];}];
+         NSLog(@"delta(%d) = %@",i,delta);
+      }
+      {
+         id<ORIntArray> delta = [ORFactory intArray:ls range:d with:^ORInt(ORInt v) { return [ad1 deltaWhenAssign:x[i] to:v];}];
+         NSLog(@"delta0(%d) = %@",i,delta);
+      }
+      {
+         id<ORIntArray> delta = [ORFactory intArray:ls range:d with:^ORInt(ORInt v) { return [ad2 deltaWhenAssign:x[i] to:v];}];
+         NSLog(@"delta1(%d) = %@",i,delta);
+      }
+      {
+         id<ORIntArray> delta = [ORFactory intArray:ls range:d with:^ORInt(ORInt v) { return [ad3 deltaWhenAssign:x[i] to:v];}];
+         NSLog(@"delta2(%d) = %@",i,delta);
+      }
+      
+      id<ORSelect> sMin = [ORFactory select:ls range:d suchThat:nil orderedBy:^ORFloat(ORInt v) {
+         return [sys deltaWhenAssign:x[i] to:v];
+      }];
+      ORInt v = [sMin min];
+      [ls label:x[i] with:v];
+      ++it;
+      NSLog(@"TTL4  : %d",[sys getViolations]);
+   }
+   
    NSLog(@"SYSVARS: %@",sv);
    NSLog(@"TTL1  : %d",[ad1 getViolations]);
    NSLog(@"TTL2  : %d",[ad2 getViolations]);

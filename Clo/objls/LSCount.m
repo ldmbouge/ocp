@@ -79,14 +79,14 @@
 {
    for(ORInt i=_x.low;i <= _x.up;i++)
       [self addTrigger:[_x[i] addListener:self term:i with:^{
-         [_y[i] setValue: _c[_x[i].value].value];
+         [_y[i] setValue: _c[_x[i].value].value > 0];
       }]];
    for(ORInt i=_c.low;i <= _c.up;i++)
       [self addTrigger:[_c[i] addListener:self term:i with:^{
          ORInt k = _x.low;
          for(id<LSIntVar> xk in _x) {
             if (xk.value == i)
-               [_y[k] setValue:_c[i].value];
+               [_y[k] setValue:_c[i].value > 0];
             ++k;
          }
          //NSLog(@"wakeup because of c[i]");
@@ -99,7 +99,7 @@
 -(void)post
 {
    for(ORInt i=_x.low;i <= _x.up;i++)
-      [_y[i] setValue:_c[_x[i].value].value];
+      [_y[i] setValue:_c[_x[i].value].value > 0];
 }
 -(id<NSFastEnumeration>)outbound
 {

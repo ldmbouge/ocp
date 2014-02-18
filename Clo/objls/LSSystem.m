@@ -111,8 +111,10 @@
 {
    if (_vvIdMapped)
       return _vv[getId(var)].value;
-   else
-      return findByName(_vv, getId(var)).value;
+   else {
+      ORInt r = findRankByName(_src, getId(var));
+      return _vv[r].value;
+   }
 }
 -(id<LSIntVar>)violations
 {
@@ -122,8 +124,10 @@
 {
    if (_vvIdMapped)
       return _vv[getId(var)];
-   else
-      return findByName(_vv, getId(var));
+   else {
+      ORInt r = findRankByName(_src, getId(var));
+      return _vv[r];
+   }
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
