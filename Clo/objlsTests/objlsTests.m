@@ -141,7 +141,8 @@
       id<ORSolution> b = [[ls solutionPool] best];
       if (b != nil) {
          NSLog(@"Found a solution in %d iter",it);
-         NSLog(@"Sol: %@",b);
+         id<ORIntArray> sv = [ORFactory intArray:ls range:x.range with:^ORInt(ORInt i) {return [b intValue:x[i]];}];
+         NSLog(@"Sol: %@",sv);
       }
    }
 }

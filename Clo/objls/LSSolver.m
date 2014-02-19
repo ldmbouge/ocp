@@ -13,6 +13,8 @@
 #import "LSEngineI.h"
 #import "LSConstraint.h"
 #import "ORLSConcretizer.h"
+#import "ORLSSolution.h"
+#import <ORFoundation/ORDataI.h>
 
 @implementation LSSolver {
    id<LSConstraint> _sys;
@@ -22,6 +24,7 @@
 {
    self = [super initORGamma];
    _engine = [[LSEngineI alloc] initEngine];
+   _pool = [ORFactory createSolutionPool];
    return self;
 }
 -(void)dealloc
@@ -90,12 +93,24 @@
 {
    return [_engine memoize:obj];
 }
+-(id<ORSearchObjectiveFunction>) objective
+{
+   return [_engine objective]; 
+}
+-(ORInt)intValue:(id<ORIntVar>)x
+{
+   return [(id<LSIntVar>)(_gamma[getId(x)]) value];
+}
 
 -(void)solve:(void(^)())block
 {
    [_engine close];
    block();
-   //save solution
+   if ([_sys violations].value == 0) {
+      //save solution
+      id<ORSolution> sol = [[ORLSSolution alloc] initORLSSolution:_srcModel with:self];
+      [_pool addSolution:sol];
+   }
 }
 -(id<ORSolutionPool>) solutionPool
 {
@@ -116,6 +131,39 @@
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
 {
    return [_sys deltaWhenAssign:_gamma[getId(x)] to:v];
+}
+-(void)selectOpt:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block dir:(ORFloat)dir
+{
+   ORRandomStreamI* stream = [[ORRandomStreamI alloc] init];
+   float bestFound = MAXFLOAT;
+   ORLong bestRand = 0x7fffffffffffffff;
+   ORInt indexFound = MAXINT;
+   const ORInt low = r.low,up = r.up;
+   for(ORInt i=low;i <= up;i++) {
+      ORFloat val = dir * fun(i);
+      if (val < bestFound) {
+         bestFound  = val;
+         indexFound = i;
+         bestRand   = [stream next];
+      } else if (val == bestFound) {
+         ORLong r = [stream next];
+         if (r < bestRand) {
+            indexFound = i;
+            bestRand   = r;
+         }
+      }
+   }
+   if (indexFound < MAXINT)
+      block(indexFound);
+   [stream release];
+}
+-(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block
+{
+   [self selectOpt:r orderedBy:fun do:block dir:-1.0];
+}
+-(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block
+{
+   [self selectOpt:r orderedBy:fun do:block dir:+1.0];
 }
 @end
 
@@ -148,7 +196,7 @@
       notes = [[ORAnnotation alloc] init];
    id<ORAnnotation> ncpy   = [notes copy];
    id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
-   NSLog(@"FLAT: %@",fm);
+   //NSLog(@"FLAT: %@",fm);
    [self concretizeLS:fm program:solver annotation:ncpy];
    return solver;
 }

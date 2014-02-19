@@ -350,11 +350,10 @@
    }
    for(id<LSPropagator> v in [_engine invariants])
       [v post];
-   
-   for(id<LSVar> v in [_engine variables])
-      NSLog(@"%@",v);
-   for(id<LSPropagator> v in [_engine invariants])
-      NSLog(@"%@",v);
+//   for(id<LSVar> v in [_engine variables])
+//      NSLog(@"%@",v);
+//   for(id<LSPropagator> v in [_engine invariants])
+//      NSLog(@"%@",v);
 }
 
 @end

@@ -98,8 +98,8 @@
 
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
-   if (!_gamma[v.getId])
-      _gamma[v.getId] = [LSFactory floatVar: _engine bounds: [v domain]];
+//   if (!_gamma[v.getId])
+//      _gamma[v.getId] = [LSFactory floatVar: _engine bounds: [v domain]];
 }
 
 -(void) visitAffineVar:(id<ORIntVar>) v

@@ -41,6 +41,7 @@ typedef enum LSMode {
 -(void)dealloc;
 -(ORStatus)close;
 -(LSPrioritySpace*)space;
+-(id<ORSearchObjectiveFunction>) objective;
 -(void)add:(id<LSPropagator>)i;
 -(id<LSConstraint>)addConstraint:(id<LSConstraint>)cstr;
 -(NSMutableArray*)variables;

@@ -79,6 +79,10 @@
    [buf appendFormat:@"<LSEngineI: %p>",self];
    return buf;
 }
+-(id<ORSearchObjectiveFunction>) objective
+{
+   return nil;
+}
 -(id<ORTracker>) tracker
 {
    return self;

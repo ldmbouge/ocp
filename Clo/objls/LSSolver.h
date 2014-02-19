@@ -16,9 +16,9 @@
 @protocol LSEngine;
 @protocol LSConstraint;
 
-@protocol LSProgram<ORGamma>
+@protocol LSProgram<ORGamma,ORTracker>
+-(id<ORSearchObjectiveFunction>) objective;
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;
-
 -(ORInt)getVarViolations:(id<ORIntVar>)var;
 -(ORInt)violations;
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
@@ -29,6 +29,8 @@
 -(void)setSource:(id<ORModel>)m;
 -(void)setRoot:(id<LSConstraint>)sys;
 -(id<LSEngine>)engine;
+// accessors
+-(ORInt)intValue:(id<ORIntVar>)x;
 @end
 
 
@@ -39,6 +41,7 @@
 }
 -(id)initLSSolver;
 -(void)dealloc;
+-(id<ORSearchObjectiveFunction>) objective;
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;
 -(ORInt)getVarViolations:(id<ORIntVar>)var;
 -(ORInt)violations;
@@ -48,6 +51,10 @@
 -(void)setSource:(id<ORModel>)m;
 -(id<LSEngine>)engine;
 -(void)setRoot:(id<LSConstraint>)sys;
+-(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
+-(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
+// accessors
+-(ORInt)intValue:(id<ORIntVar>)x;
 @end
 
 
