@@ -12,6 +12,7 @@
 #import "LSSolver.h"
 #import "LSEngineI.h"
 #import "LSConstraint.h"
+#import "ORLSConcretizer.h"
 
 @implementation LSSolver {
    id<LSConstraint> _sys;
@@ -28,12 +29,19 @@
    [_engine release];
    [super dealloc];
 }
-
+-(void)setRoot:(id<LSConstraint>)sys
+{
+   _sys = sys;
+}
 -(void)close
 {
    [_engine close];
 }
--(id<OREngine>)       engine
+-(void)setSource:(id<ORModel>)m
+{
+   _srcModel = m;
+}
+-(id<OREngine>)engine
 {
    return _engine;
 }
@@ -112,6 +120,27 @@
 @end
 
 @implementation ORFactory(LS)
+
++(id<LSProgram>) concretizeLS: (id<ORModel>) m program: (id<LSProgram>) program annotation:(id<ORAnnotation>)notes
+{
+   ORUInt nbEntries =  [m nbObjects];
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [program setGamma: gamma];
+   ORLSConcretizer* concretizer = [[ORLSConcretizer alloc] initORLSConcretizer: program annotation:notes];
+   for(id<ORObject> c in [m mutables])
+      [c visit: concretizer];
+   for(id<ORConstraint> c in [m constraints])
+      [c visit: concretizer];
+   [[m objective] visit:concretizer];
+   id<LSConstraint> sys = [concretizer wrapUp];
+   [concretizer release];
+   [program setRoot:sys];
+   [program setSource:m];
+   return program;
+}
+
 +(LSSolver*)createLSProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
    LSSolver* solver = [[[LSSolver alloc] initLSSolver] autorelease];
@@ -120,6 +149,7 @@
    id<ORAnnotation> ncpy   = [notes copy];
    id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
    NSLog(@"FLAT: %@",fm);
+   [self concretizeLS:fm program:solver annotation:ncpy];
    return solver;
 }
 @end

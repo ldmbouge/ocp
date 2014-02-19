@@ -96,6 +96,8 @@
 		5B11553B171B1D0F005371AA /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B11553C171B1D0F005371AA /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B11553D171B1D2E005371AA /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B116F5B18B4EE2F00CDFB33 /* ORLSConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B116F5918B4EE2F00CDFB33 /* ORLSConcretizer.h */; };
+		5B116F5C18B4EE2F00CDFB33 /* ORLSConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B116F5A18B4EE2F00CDFB33 /* ORLSConcretizer.m */; };
 		5B137ADA1666B1D0008C7049 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B137ADB1666B1D0008C7049 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B137ADC1666B1D0008C7049 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
@@ -249,7 +251,7 @@
 		5B558C0A1563F01000D2BCD7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B558C091563F01000D2BCD7 /* main.m */; };
 		5B558C0E1563F01000D2BCD7 /* queensNaive.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B558C0D1563F01000D2BCD7 /* queensNaive.1 */; };
 		5B558C121563F28100D2BCD7 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		5B57402818AE7F21003AC6AF /* LSSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57402618AE7F21003AC6AF /* LSSystem.h */; };
+		5B57402818AE7F21003AC6AF /* LSSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57402618AE7F21003AC6AF /* LSSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B57402918AE7F21003AC6AF /* LSSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57402718AE7F21003AC6AF /* LSSystem.m */; };
 		5B57402B18AEA1DF003AC6AF /* LSVar.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57402A18AEA1DF003AC6AF /* LSVar.m */; };
 		5B57E5DF161F275200DB249A /* ORExpr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EA915A3DDA600AD0820 /* ORExpr.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -5481,6 +5483,8 @@
 		5B115522171B1CF5005371AA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B115525171B1CF5005371AA /* slabLNSModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slabLNSModel-Prefix.pch"; sourceTree = "<group>"; };
 		5B115526171B1CF5005371AA /* slabLNSModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = slabLNSModel.1; sourceTree = "<group>"; };
+		5B116F5918B4EE2F00CDFB33 /* ORLSConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLSConcretizer.h; sourceTree = "<group>"; };
+		5B116F5A18B4EE2F00CDFB33 /* ORLSConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLSConcretizer.m; sourceTree = "<group>"; };
 		5B1391841629A99D0029FD29 /* ORDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORDecompose.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B1391851629A99D0029FD29 /* ORDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORDecompose.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B150017156EB0E800897252 /* CPBaseHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBaseHeuristic.h; sourceTree = "<group>"; };
@@ -8869,6 +8873,8 @@
 				5BD792971857A5CF008DCF91 /* LSEngineI.m */,
 				5B63C98E18B3F51F00C4D158 /* LSSolver.h */,
 				5B63C98F18B3F51F00C4D158 /* LSSolver.m */,
+				5B116F5918B4EE2F00CDFB33 /* ORLSConcretizer.h */,
+				5B116F5A18B4EE2F00CDFB33 /* ORLSConcretizer.m */,
 				5B876B2818AA8148006F6258 /* LSConstraint.h */,
 				5B876B2918AA8148006F6258 /* LSConstraint.m */,
 				5B876B2C18AAAF8D006F6258 /* LSAllDifferent.h */,
@@ -9737,6 +9743,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B57402818AE7F21003AC6AF /* LSSystem.h in Headers */,
+				5B116F5B18B4EE2F00CDFB33 /* ORLSConcretizer.h in Headers */,
 				5B7C660918A581850077868F /* LSFactory.h in Headers */,
 				5B63C99018B3F51F00C4D158 /* LSSolver.h in Headers */,
 				5BD792981857A5CF008DCF91 /* LSEngineI.h in Headers */,
@@ -12770,6 +12777,7 @@
 				5BD792991857A5CF008DCF91 /* LSEngineI.m in Sources */,
 				5BD792891857A520008DCF91 /* objls.m in Sources */,
 				5B57402918AE7F21003AC6AF /* LSSystem.m in Sources */,
+				5B116F5C18B4EE2F00CDFB33 /* ORLSConcretizer.m in Sources */,
 				5B876B2B18AA8148006F6258 /* LSConstraint.m in Sources */,
 				5B876B2F18AAAF8D006F6258 /* LSAllDifferent.m in Sources */,
 				5BD792A91857BA3A008DCF91 /* LSPropagator.m in Sources */,

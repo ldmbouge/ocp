@@ -92,7 +92,6 @@
 }
 @end
 
-
 @implementation LSPseudoPropagator
 -(id)initWith:(LSEngineI*)engine
 {

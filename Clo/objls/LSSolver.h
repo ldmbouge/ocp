@@ -13,8 +13,10 @@
 #import <ORModeling/ORModeling.h>
 
 @class LSEngineI;
+@protocol LSEngine;
+@protocol LSConstraint;
 
-@protocol LSProgram
+@protocol LSProgram<ORGamma>
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;
 
 -(ORInt)getVarViolations:(id<ORIntVar>)var;
@@ -24,12 +26,16 @@
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)solve:(void(^)())block;
 -(id<ORSolutionPool>) solutionPool;
+-(void)setSource:(id<ORModel>)m;
+-(void)setRoot:(id<LSConstraint>)sys;
+-(id<LSEngine>)engine;
 @end
 
 
 @interface LSSolver : ORGamma<ORASolver,ORGamma,LSProgram> {
-   LSEngineI*          _engine;
-   id<ORSolutionPool>    _pool;
+   LSEngineI*              _engine;
+   id<ORModel>           _srcModel;
+   id<ORSolutionPool>        _pool;
 }
 -(id)initLSSolver;
 -(void)dealloc;
@@ -39,6 +45,9 @@
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
 -(void)solve:(void(^)())block;
 -(id<ORSolutionPool>) solutionPool;
+-(void)setSource:(id<ORModel>)m;
+-(id<LSEngine>)engine;
+-(void)setRoot:(id<LSConstraint>)sys;
 @end
 
 
