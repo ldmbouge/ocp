@@ -865,7 +865,7 @@
    }
 }
 
--(void) labelOutFromMidFreeBit:(id<CPBitVar>) x
+-(void) labelOutFromMidFreeBit:(id<ORBitVar>) x
 {
    int i=-1;
    id<CPBitVar> bv = _gamma[x.getId];
@@ -904,7 +904,7 @@
    }
 }
 
--(void) labelRandomFreeBit:(id<CPBitVar>) x
+-(void) labelRandomFreeBit:(id<ORBitVar>) x
 {
 //   NSLog(@"Labeling bitvars by selecting unbound bits uniformly at random");
    int i=-1;
@@ -928,7 +928,7 @@
 }
 }
 
--(void) labelBitsMixedStrategy:(id<CPBitVar>) x
+-(void) labelBitsMixedStrategy:(id<ORBitVar>) x
 {
       int i=-1;
    id<CPBitVar> bv = _gamma[x.getId];
