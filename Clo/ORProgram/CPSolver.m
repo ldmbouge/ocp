@@ -813,21 +813,23 @@
    [_search try: ^() { [self labelBV:x at:i with:false];}
              or: ^() { [self labelBV:x at:i with:true];}];
 }
--(void) labelUpFromLSB:(id<CPBitVar>) x
+-(void) labelUpFromLSB:(id<ORBitVar>) x
 {
-   int i;
+   int i=-1;
+   id<CPBitVar> bv = _gamma[x.getId];
+
    __block long long int domainBefore;
    __block long long int domainAfter;
    __block long long int domainDiff;
    __block id<ORBasicModel> mdl = [_engine model];
    NSArray* variables = [mdl variables];
 //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
-   while ((i=[x lsFreeBit])>=0) {
+   while ((i=[bv lsFreeBit])>=0) {
       NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
       [_search try: ^() {  domainBefore = domainAfter = 0;
                            for(int j=0;j<[variables count];j++)
                               domainBefore += [variables[j] domsize];
-                           [self labelBV:x at:i with:false];
+                           [self labelBV:bv at:i with:false];
                            for(int j=0;j<[variables count];j++)
                               domainBefore += [variables[j] domsize];
                               domainDiff = domainBefore-domainAfter;
@@ -838,7 +840,7 @@
                 or: ^() { domainBefore = domainAfter = 0;
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
-                   [self labelBV:x at:i with:true];
+                   [self labelBV:bv at:i with:true];
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
                      domainDiff = domainBefore-domainAfter;
@@ -849,35 +851,38 @@
    }
 }
 
--(void) labelDownFromMSB:(id<CPBitVar>) x
+-(void) labelDownFromMSB:(id<ORBitVar>) x
 {
    int i;
-//   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
-   while ((i=[x msFreeBit])>=0) {
+   
+   id<CPBitVar> bv = _gamma[x.getId];
+   while ((i=[bv msFreeBit])>=0) {
 //      i=[bv msFreeBit];
 //      NSLog(@"%@ shows MSB as %d",bv,i);
       NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
-      [_search try: ^() { [self labelBV:x at:i with:true];}
-                or: ^() { [self labelBV:x at:i with:false];}];
+      [_search try: ^() { [self labelBV:bv at:i with:true];}
+                or: ^() { [self labelBV:bv at:i with:false];}];
    }
 }
 
 -(void) labelOutFromMidFreeBit:(id<CPBitVar>) x
 {
-   int i;
+   int i=-1;
+   id<CPBitVar> bv = _gamma[x.getId];
+
    __block long long int domainBefore;
    __block long long int domainAfter;
    __block long long int domainDiff;
    __block id<ORBasicModel> mdl = [_engine model];
    NSArray* variables = [mdl variables];
    //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
-   while (![x bound]) {
-      i=[x midFreeBit];
+   while (![bv bound]) {
+      i=[bv midFreeBit];
       NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
       [_search try: ^() {  domainBefore = domainAfter = 0;
          for(int j=0;j<[variables count];j++)
             domainBefore += [variables[j] domsize];
-         [self labelBV:x at:i with:false];
+         [self labelBV:bv at:i with:false];
          for(int j=0;j<[variables count];j++)
             domainBefore += [variables[j] domsize];
          domainDiff = domainBefore-domainAfter;
@@ -888,7 +893,7 @@
                 or: ^() { domainBefore = domainAfter = 0;
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
-                   [self labelBV:x at:i with:true];
+                   [self labelBV:bv at:i with:true];
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
                    domainDiff = domainBefore-domainAfter;
@@ -902,47 +907,50 @@
 -(void) labelRandomFreeBit:(id<CPBitVar>) x
 {
 //   NSLog(@"Labeling bitvars by selecting unbound bits uniformly at random");
-   int i;
+   int i=-1;
+   id<CPBitVar> bv = _gamma[x.getId];
+
    //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
-   while (![x bound]) {
-      i=[x randomFreeBit];
+   while (![bv bound]) {
+      i=[bv randomFreeBit];
 //      NSLog(@"Labeling Bit at index %d",i);
       int rand = arc4random();
       if (rand > 0.5){
 //         NSLog(@"Labeling Bit at index %d with false first",i);
-         [_search try: ^() { [self labelBV:x at:i with:false];}
-                   or: ^() { [self labelBV:x at:i with:true];}];
+         [_search try: ^() { [self labelBV:bv at:i with:false];}
+                   or: ^() { [self labelBV:bv at:i with:true];}];
       }
       else {
 //         NSLog(@"Labeling Bit at index %d with true first",i);
-         [_search try: ^() { [self labelBV:x at:i with:true];}
-                   or: ^() { [self labelBV:x at:i with:false];}];
+         [_search try: ^() { [self labelBV:bv at:i with:true];}
+                   or: ^() { [self labelBV:bv at:i with:false];}];
    }
 }
 }
 
 -(void) labelBitsMixedStrategy:(id<CPBitVar>) x
 {
-      int i;
-   
+      int i=-1;
+   id<CPBitVar> bv = _gamma[x.getId];
+
       //   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
-      while (![x bound]) {
-         i=[x midFreeBit];
+      while (![bv bound]) {
+         i=[bv midFreeBit];
          //      NSLog(@"%@ shows MSB as %d",bv,i);
          NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
-         [_search try: ^() { [self labelBV:x at:i with:false];}
-                   or: ^() { [self labelBV:x at:i with:true];}];
+         [_search try: ^() { [self labelBV:bv at:i with:false];}
+                   or: ^() { [self labelBV:bv at:i with:true];}];
          
          
          if (![x bound]) {
-            i = [x lsFreeBit];
-            [_search try: ^() { [self labelBV:x at:i with:false];}
-                      or: ^() { [self labelBV:x at:i with:true];}];
+            i = [bv lsFreeBit];
+            [_search try: ^() { [self labelBV:bv at:i with:false];}
+                      or: ^() { [self labelBV:bv at:i with:true];}];
          }
          if (![x bound]) {
-            i = [x msFreeBit];
-            [_search try: ^() { [self labelBV:x at:i with:false];}
-                      or: ^() { [self labelBV:x at:i with:true];}];
+            i = [bv msFreeBit];
+            [_search try: ^() { [self labelBV:bv at:i with:false];}
+                      or: ^() { [self labelBV:bv at:i with:true];}];
          }
       }
 }
