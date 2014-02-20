@@ -257,13 +257,21 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
         
         //y_k=1 => x_k=0
         newXUp[i] = ~yLow[i]._val & xUp[i]._val;
+       
+       if(i==0){
+          uint32 bitmask = CP_UMASK >> [_x bitLength] % 32;
+          newXUp[0] &= bitmask;
+          newXLow[0] &= bitmask;
+          newYUp[0] &= bitmask;
+          newYLow[0] &= bitmask;
+       }
         
         upXORlow = newXUp[i] ^ newXLow[i];
         inconsistencyFound |= ((upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]));
 
         upXORlow = newYUp[i] ^ newYLow[i];
         inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
-        
+       
         if (inconsistencyFound)
             failNow();
 
