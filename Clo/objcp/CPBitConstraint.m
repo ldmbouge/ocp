@@ -259,7 +259,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
         newXUp[i] = ~yLow[i]._val & xUp[i]._val;
        
        if(i==0){
-          uint32 bitmask = CP_UMASK >> [_x bitLength] % 32;
+          uint32 bitmask = CP_UMASK >> 32 - [_x bitLength] % 32;
           newXUp[0] &= bitmask;
           newXLow[0] &= bitmask;
           newYUp[0] &= bitmask;
