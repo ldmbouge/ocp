@@ -224,6 +224,7 @@
 }
 -(void)setValue:(ORInt)v
 {
+   if (v == _value) return;
    _value = v;
    [_engine notify:self];
 }

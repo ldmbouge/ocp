@@ -66,7 +66,19 @@
 }
 @end
 
-@implementation LSGElement
+typedef struct LSEltNode {
+   ORInt _prev;
+   ORInt _next;
+} LSEltNode;
+
+@implementation LSGElement {
+   ORInt*      _head;
+   LSEltNode* _lists;
+   ORInt   _vlb,_vub,_eol;
+   ORInt*     _delta;
+   ORInt      _ndelta;
+   id<ORIntArray> _oldx;
+}
 -(id)init:(id<LSEngine>)engine count:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y
 {
    self = [super initWith:engine];
@@ -75,31 +87,97 @@
    _y = y;
    return self;
 }
+-(void)setup
+{
+   id<ORIntRange> xr = [_x range];
+   _vlb = FDMAXINT;
+   _vub = FDMININT;
+   for(ORInt i=_x.low;i <= _x.up;i++) {
+      ORInt xil = [[_x[i] domain] low];
+      ORInt xiu = [[_x[i] domain] up];
+      _vlb = xil < _vlb ? xil : _vlb;
+      _vub = xiu > _vub ? xiu : _vub;
+   }
+   _head = malloc(sizeof(ORInt)*(_vub - _vlb+1));
+   memset(_head, 0, sizeof(ORInt)*(_vub - _vlb + 1));
+   _head -= _vlb;
+   _lists = malloc(sizeof(LSEltNode)*[xr size]);
+   memset(_lists,0,sizeof(LSEltNode)*[xr size]);
+   _lists -= xr.low;
+   _eol = xr.low - 1;
+   _delta = malloc(sizeof(ORInt)*(_vub - _vlb + 1));
+   _ndelta = 0;
+}
 -(void)define
 {
+   [self setup];
    for(ORInt i=_x.low;i <= _x.up;i++)
       [self addTrigger:[_x[i] addListener:self term:i with:^{
-         [_y[i] setValue: _c[_x[i].value].value > 0];
+         ORInt oi = [_oldx at:i];
+         ORInt ni = _x[i].value;
+         //Remove node(i) from old list (oi)
+         if (_lists[i]._prev != _eol)
+            _lists[_lists[i]._prev]._next = _lists[i]._next;
+         else _head[oi] = _lists[i]._next;
+         assert(_lists[_lists[i]._prev]._next != _lists[i]._prev);
+         if (_lists[i]._next != _eol)
+            _lists[_lists[i]._next]._prev = _lists[i]._prev;
+         // Link node(i) in new list (ni)
+         assert(_head[ni] != i);
+         _lists[i]._next = _head[ni];
+         assert(_lists[i]._next != i);
+         _lists[i]._prev = _eol;
+         if (_head[ni]!=_eol)
+            _lists[_head[ni]]._prev = i;
+         _head[ni] = i;
+         // update _y[i] right away
+         [_y[i] setValue: _c[ni].value > 0];
+         // Fixup _oldx
+         [_oldx set:ni at:i];
       }]];
    for(ORInt i=_c.low;i <= _c.up;i++)
       [self addTrigger:[_c[i] addListener:self term:i with:^{
-         ORInt k = _x.low;
-         for(id<LSIntVar> xk in _x) {
-            if (xk.value == i)
-               [_y[k] setValue:_c[i].value > 0];
-            ++k;
-         }
+         _delta[_ndelta++] = i;
+//         ORInt k = _x.low;
+//         for(id<LSIntVar> xk in _x) {
+//            if (xk.value == i)
+//               [_y[k] setValue:_c[i].value > 0];
+//            ++k;
+//         }
          //NSLog(@"wakeup because of c[i]");
       }]];
    for(ORInt i=_y.low;i <= _y.up;i++)
       [_y[i] addDefiner:self];
 }
 -(void)execute
-{}
+{
+   for(ORInt k=0;k<_ndelta;k++) {
+      ORInt myList = _head[_delta[k]];
+      while(myList != _eol) {
+         [_y[myList] setValue: _c[_x[myList].value].value > 0];
+         myList = _lists[myList]._next;
+      }
+   }
+   _ndelta = 0;
+}
 -(void)post
 {
+   _oldx = [ORFactory intArray:_engine range:[_x range] with:^ORInt(ORInt i) {
+      return _x[i].value;
+   }];
    for(ORInt i=_x.low;i <= _x.up;i++)
       [_y[i] setValue:_c[_x[i].value].value > 0];
+
+   for(ORInt i=_x.low;i <= _x.up;i++)
+      _head[i] = _eol;
+   for(ORInt i=_x.low;i <= _x.up;i++) {
+      ORInt xiv = _x[i].value;
+      _lists[i]._prev = _eol;
+      _lists[i]._next = _head[xiv];
+      if (_head[xiv] != _eol)
+         _lists[_head[xiv]]._prev = i;
+      _head[xiv] = i;
+   }
 }
 -(id<NSFastEnumeration>)outbound
 {
