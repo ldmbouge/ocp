@@ -1723,7 +1723,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    if(pLow < xPopcount)
       pLow =  xPopcount;
    
-   [_p updateMin:pLow andMax:pUp];
 
    //set or clear unbound bits in _x if possible
    //   If
@@ -1732,12 +1731,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
          [_p bind:pLow];
       for (int i=0; i<wordLength; i++)
          low[i] = up[i];
-   }
-   if(xPopcount == pUp){
+   }else if(xPopcount == pUp){
       if(![_p bound])
          [_p bind:pUp];
       for (int i=0; i<wordLength; i++)
          up[i] = low[i];
+   }else{
+      [_p updateMin:pLow andMax:pUp];
    }
    
    //domain consistency check on _x
