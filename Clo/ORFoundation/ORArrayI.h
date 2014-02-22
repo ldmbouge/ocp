@@ -82,6 +82,7 @@
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 -(void)visit:(ORVisitor*)v;
+-(id*)base;
 @end
 
 

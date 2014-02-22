@@ -13,6 +13,7 @@
 #import <objls/LSFactory.h>
 #import "LSEngineI.h"
 #import "LSCount.h"
+#import "LSIntVar.h"
 
 @implementation LSAllDifferent {
    unsigned char* _present;  // boolean array (one boolean per var in _x)
@@ -22,7 +23,9 @@
    ORBool       _overViews;
    id<LSIntVarArray>  _src;
    ORBounds            _sb;
-   NSMutableDictionary* _map;
+   id<LSIntVar>*      _map;
+   id* _vvBase;
+   id*  _cBase;
 }
 -(id)init:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x
 {
@@ -54,7 +57,8 @@
    _xOfs    += _low;
    free(_present);
    free(_xOfs);
-   [_map release];
+   _map += _sb.max;
+   free(_map);
    [super dealloc];
 }
 static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
@@ -107,18 +111,19 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       free(t);
       _src = xp;
       _sb = idRange(xp);
-      _map = [[NSMutableDictionary alloc] initWithCapacity:nba];
+      _map = malloc(sizeof(LSIntVar*)*(_sb.max - _sb.min + 1));
+      _map -= _sb.min;
       for(id<LSIntVar> xk in xp) {
          @autoreleasepool {
-            NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2] autorelease];
             ORInt j = 0;
+            _map[getId(xk)] = nil;
             for(id<LSIntVar> s in _x) {
-               if ([asv[j] containsObject:xk])
-                  [ms addObject:s];
+               if ([asv[j] containsObject:xk]) {
+                  _map[getId(xk)] = s;
+               }
                ++j;
             }
-            assert([ms count] == 1);
-            [_map setObject:[ms anyObject] forKey:@(getId(xk))];
+            assert(_map[getId(xk)] != nil);
          }
       }
       return xp;
@@ -146,12 +151,10 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       return [LSFactory intVar:_engine domain:cd];
    }];
    _xv = [LSFactory intVarArray:_engine range:_x.range with:^id<LSIntVar>(ORInt i) {
-//      return [LSFactory intVarView:_engine domain:_x.range fun:^ORInt {
-//         return _vv[_x[i].value].value;
-//      } src:@[_x[i],_vv]];
       return [LSFactory intVar:_engine domain:cd];
    }];
-
+   _vvBase = (id*)[(id)_vv base];
+   _cBase  = (id*)[(id)_c base];
    _sum = [LSFactory intVar:_engine domain:RANGE(_engine,0,FDMAXINT)];
    [_engine add:[LSFactory count:_engine vars:_x card:_c]];
    for (ORInt i=vals.low; i <= vals.up; ++i)
@@ -161,20 +164,20 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 }
 -(ORBool)isTrue
 {
-   return _sum.value == 0;
+   return getLSIntValue(_sum) == 0;
 }
 -(ORInt)getViolations
 {
-   return _sum.value;
+   return getLSIntValue(_sum);
 }
 -(ORInt)getVarViolations:(id<LSIntVar>)x
 {
    ORInt xid = getId(x);
    if (_map && _src.range.low <= xid && xid <= _src.range.up) {
-      x = [_map objectForKey:@(xid)];
+      x = _map[xid];
    }
    assert(_vv[x.value].value == [self varViolations:x].value);
-   return _vv[x.value].value > 0;
+   return getLSIntValue(_vvBase[x.value]) > 0;
 }
 -(id<LSIntVar>)violations
 {
@@ -184,22 +187,23 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 {
    ORInt xid = getId(x);
    if (_map && _sb.min <= xid && xid <= _sb.max)
-      x = [_map objectForKey:@(xid)];
+      x = _map[xid];
    return _xv[_xOfs[getId(x)]];
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
    ORInt xid = getId(x);
    if (_map && _sb.min <= xid && xid <= _sb.max) {
-      id<LSIntVar> viewForX = [_map objectForKey:@(xid)];
+      id<LSIntVar> viewForX = _map[xid];
       v = [(LSIntVar*)x lookahead:viewForX onAssign:v];
       x = viewForX;
    }
-   if (x.value == v)
+   ORInt xv = x.value;
+   if (xv == v)
       return 0;
    else {
-      const ORInt c1 = _c[x.value].value;
-      const ORInt c2 = _c[v].value;
+      const ORInt c1 = getLSIntValue(_cBase[xv]);
+      const ORInt c2 = getLSIntValue(_cBase[v]);
       return (c2 >= 1) - (c1 >= 2);
    }
 }
@@ -207,10 +211,10 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 {
    ORInt xid = getId(x);
    if (_map && _sb.min <= xid && xid <= _sb.max)
-      x = [_map objectForKey:@(xid)];
+      x = _map[xid];
    ORInt yid = getId(y);
    if (_map && _sb.min <= yid && yid <= _sb.max)
-      y = [_map objectForKey:@(yid)];
+      y = _map[yid];
 
    ORBool xP = isPresent(self,x);
    ORBool yP = isPresent(self,y);

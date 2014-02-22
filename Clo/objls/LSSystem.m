@@ -14,7 +14,16 @@
 #import "LSEngineI.h"
 #import "LSCount.h"
 
-@implementation LSSystem
+typedef struct LSConstraintList {
+   id<LSConstraint>* _t;
+   ORInt             _n;
+} LSConstraintList;
+
+@implementation LSSystem {
+   id* _vvBase;
+   ORInt* _srcOfs;
+   LSConstraintList* _cstrOnVars;
+}
 
 -(id)init:(id<LSEngine>)engine with:(NSArray*)ca
 {
@@ -28,8 +37,13 @@
 {
    _flatSrc += _lb;
    free(_flatSrc);
+   _srcOfs += _lb;
+   free(_srcOfs);
    [_cstrs release];
-   [_cstrOnVar release];
+   for(ORInt k=_lb;k <= _ub;++k)
+      free(_cstrOnVars[k]._t);
+   _cstrOnVars += _lb;
+   free(_cstrOnVars);
    [super dealloc];
 }
 -(id<LSIntVarArray>)variables
@@ -62,16 +76,27 @@
       for(i=_lb;i <= _ub;i++)
          if (iSrc[i] != nil)
             _src[k++] = iSrc[i];
-      _cstrOnVar = [[NSMutableDictionary alloc] initWithCapacity:[_src count]];
-      for(id<LSIntVar> x in _src) {
-         NSMutableSet* ms = [[NSMutableSet alloc] initWithCapacity:2];
-         [_cstrOnVar setObject:ms forKey:@(getId(x))];
+      _cstrOnVars = malloc(sizeof(LSConstraintList)*sz);
+      memset(_cstrOnVars,0,sizeof(LSConstraintList)*sz);
+      _cstrOnVars -= _lb;
+      for(ORInt k=_lb;k <= _ub;++k) {
+         _cstrOnVars[k]._t = malloc(sizeof(id<LSConstraint>)*n);
+         _cstrOnVars[k]._n = 0;
       }
       for(id<LSIntVar> x in _src) {
          for(ORInt i = 0;i < n;i++)
-            if (containsVar(ava[i], getId(x)))
-               [[_cstrOnVar objectForKey:@(getId(x))] addObject:_cstrs[i]];
+            if (containsVar(ava[i], getId(x))) {
+               LSConstraintList* lx =_cstrOnVars + getId(x);
+               lx->_t[lx->_n++] = _cstrs[i];
+            }
       }
+      _srcOfs = malloc(sizeof(ORInt)*sz);
+      for(ORInt i=0;i< sz;++i)
+         _srcOfs[i] = _lb - 1;
+      _srcOfs -= _lb;
+      ORInt r = 0;
+      for(id<LSIntVar> x in _src)
+         _srcOfs[getId(x)] = r++;
    }
    return _src;
 }
@@ -86,35 +111,32 @@
       return [_cstrs[i] violations];
    }];
    [_engine add:[LSFactory sum: _viol over:_av]];
-   [_engine add:[LSFactory inv:_sat equal:^ORInt{ return _viol.value ==  0;} vars:@[_viol]]];
+   [_engine add:[LSFactory inv:_sat equal:^ORInt{ return getLSIntValue(_viol) ==  0;} vars:@[_viol]]];
    
-   id<LSIntVarArray> as = [self variables];
-   _vv = [LSFactory intVarArray:_engine range:as.range domain:RANGE(_engine,0,FDMAXINT)];
-   for(ORInt k=as.low;k <= as.up;k++) {
+   id<LSIntVarArray> src = [self variables];
+   _vv = [LSFactory intVarArray:_engine range:src.range domain:RANGE(_engine,0,FDMAXINT)];
+   for(ORInt k=src.low;k <= src.up;k++) {
       ORInt i=0;
       id<LSIntVarArray> cvk = [LSFactory intVarArray:_engine range:RANGE(_engine,0,_nb-1)];
       for(id<LSConstraint> c in _cstrs)
-         cvk[i++] = [c varViolations:as[k]];
+         cvk[i++] = [c varViolations:src[k]];
       [_engine add:[LSFactory sum:_vv[k] over:cvk]];
    }
-   _vvIdMapped = isIdMapped(_vv);
+   _vvBase = (id*)[(id)_vv base];
 }
 -(ORBool)isTrue
 {
-   return _sat.value;
+   return getLSIntValue(_sat);
 }
 -(ORInt)getViolations
 {
-   return _viol.value;
+   return getLSIntValue(_viol);
 }
 -(ORInt)getVarViolations:(id<LSIntVar>)var
 {
-   if (_vvIdMapped)
-      return _vv[getId(var)].value;
-   else {
-      ORInt r = findRankByName(_src, getId(var));
-      return _vv[r].value;
-   }
+//   ORInt r = findRankByName(_src, getId(var));
+   ORInt r = _srcOfs[getId(var)];
+   return getLSIntValue(_vvBase[r]);
 }
 -(id<LSIntVar>)violations
 {
@@ -122,19 +144,18 @@
 }
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var
 {
-   if (_vvIdMapped)
-      return _vv[getId(var)];
-   else {
-      ORInt r = findRankByName(_src, getId(var));
-      return _vv[r];
-   }
+   ORInt r = findRankByName(_src, getId(var));
+   return _vvBase[r];
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
-   if (containsVar(_src, getId(x))) {
+   ORInt xid = getId(x);
+   if (_lb <= xid && xid <= _ub && _srcOfs[xid] >= _lb) {
       ORInt ttl = 0;
-      for(id<LSConstraint> c in [_cstrOnVar objectForKey:@(getId(x))])
+      for(ORInt k = 0;k < _cstrOnVars[xid]._n;k++) {
+         id<LSConstraint> c = _cstrOnVars[xid]._t[k];
          ttl += [c deltaWhenAssign:x to:v];
+      }
       return ttl;
    } else
       return 0;

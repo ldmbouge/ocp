@@ -457,6 +457,10 @@
    free(_array);
    [super dealloc];
 }
+-(id*)base
+{
+   return _array;
+}
 -(id) at: (ORInt) value
 {
    if (value < _low || value > _up)

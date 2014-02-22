@@ -108,6 +108,18 @@ typedef struct LSEltNode {
    _delta = malloc(sizeof(ORInt)*(_vub - _vlb + 1));
    _ndelta = 0;
 }
+void printLists(LSGElement* elt)
+{
+   for(ORInt i= elt->_vlb;i <= elt->_vub;i++) {
+      ORInt cur = elt->_head[i];
+      printf("value(%d) : ",i);
+      while (cur != elt->_eol) {
+         printf("%d:<%d,%d> ",cur,elt->_lists[cur]._prev,elt->_lists[cur]._next);
+         cur = elt->_lists[cur]._next;
+      }
+      printf("\n");
+   }
+}
 -(void)define
 {
    [self setup];
@@ -119,7 +131,6 @@ typedef struct LSEltNode {
          if (_lists[i]._prev != _eol)
             _lists[_lists[i]._prev]._next = _lists[i]._next;
          else _head[oi] = _lists[i]._next;
-         assert(_lists[_lists[i]._prev]._next != _lists[i]._prev);
          if (_lists[i]._next != _eol)
             _lists[_lists[i]._next]._prev = _lists[i]._prev;
          // Link node(i) in new list (ni)
@@ -138,13 +149,6 @@ typedef struct LSEltNode {
    for(ORInt i=_c.low;i <= _c.up;i++)
       [self addTrigger:[_c[i] addListener:self term:i with:^{
          _delta[_ndelta++] = i;
-//         ORInt k = _x.low;
-//         for(id<LSIntVar> xk in _x) {
-//            if (xk.value == i)
-//               [_y[k] setValue:_c[i].value > 0];
-//            ++k;
-//         }
-         //NSLog(@"wakeup because of c[i]");
       }]];
    for(ORInt i=_y.low;i <= _y.up;i++)
       [_y[i] addDefiner:self];
@@ -167,8 +171,8 @@ typedef struct LSEltNode {
    }];
    for(ORInt i=_x.low;i <= _x.up;i++)
       [_y[i] setValue:_c[_x[i].value].value > 0];
-
-   for(ORInt i=_x.low;i <= _x.up;i++)
+   // Initialize the variable list
+   for(ORInt i=_vlb;i <= _vub;i++)
       _head[i] = _eol;
    for(ORInt i=_x.low;i <= _x.up;i++) {
       ORInt xiv = _x[i].value;

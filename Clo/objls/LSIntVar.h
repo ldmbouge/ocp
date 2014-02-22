@@ -30,11 +30,12 @@ typedef enum LSStatus {
 @interface LSIntVar : ORObject<LSIntVar> {
    LSEngineI*    _engine;
    id<ORIntRange>   _dom;
-   ORInt          _value;
    enum LSStatus _status;
    NSMutableSet*    _outbound;
    NSMutableSet*    _inbound;
    id<LSPriority>   _rank;
+@package
+   ORInt          _value;
 }
 -(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d;
 -(LSEngineI*)engine;
@@ -87,3 +88,6 @@ typedef enum LSLinkType {
 -(ORInt)index;
 -(LSLinkType)type;
 @end
+
+inline static ORInt getLSIntValue(LSIntVar* x) { return x->_value;}
+
