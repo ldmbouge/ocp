@@ -54,7 +54,7 @@ static void prune(CPAllDifferentDC* ad);
 
 -(void) initInstanceVariables 
 {
-    _idempotent = YES;
+//    _idempotent = YES;
     _priority = HIGHEST_PRIO-2;
     _posted = false;
 }
@@ -156,12 +156,14 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
          removeOnBind(self,k);
    [self initMatching];
 
-   [self propagate];
+   
    for(ORInt k = 0 ; k < _varSize; k++)
       if (![_var[k] bound]) {
          [_var[k] whenBindDo: ^{ removeOnBind(self,k);} onBehalf:self];
          [_var[k] whenChangePropagate: self];
       }
+   
+   [self propagate];
    return ORSuspend;
 }
 

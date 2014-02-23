@@ -77,7 +77,7 @@
          break;
       default:
           NSLog(@"Default Consistency");
-         o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: engine over: x];
+         o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
          break;
    }
    [[x tracker] trackMutable: o];
@@ -137,12 +137,14 @@
    [[item tracker] trackMutable: o];
    return o;
 }
+
 +(id<ORConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<CPIntVar>)c
 {
    id<ORConstraint> o = [[CPKnapsack alloc] initCPKnapsackDC:x weights:w capacity:c];
    [[x tracker] trackMutable: o];
    return o;
 }
+
 +(id<ORConstraint>) nocycle: (id<CPIntVarArray>) x
 {
    id<ORConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];
