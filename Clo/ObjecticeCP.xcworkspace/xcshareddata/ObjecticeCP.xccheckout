@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>D398814F-273B-4CA5-B491-1192D6B77341</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ObjecticeCP</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>F1C25CD2-C698-4734-9CB4-B93B0768FA4F</key>
+		<string>ssh://ash.engr.uconn.edu/objcp-public.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Clo/ObjecticeCP.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>204A65AC-57EA-440F-91EB-ABA46844F267</key>
+		<string>../SHA1/SHA1</string>
+		<key>F1C25CD2-C698-4734-9CB4-B93B0768FA4F</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://ash.engr.uconn.edu/objcp-public.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F1C25CD2-C698-4734-9CB4-B93B0768FA4F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F1C25CD2-C698-4734-9CB4-B93B0768FA4F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>platform</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>204A65AC-57EA-440F-91EB-ABA46844F267</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SHA1</string>
+		</dict>
+	</array>
+</dict>
+</plist>
