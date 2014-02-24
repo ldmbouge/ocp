@@ -155,10 +155,12 @@ void printLists(LSGElement* elt)
 }
 -(void)execute
 {
+   id<LSIntVar>* xBase = (id*)[(id)_x base];
+   id<LSIntVar>* yBase = (id*)[(id)_y base];
    for(ORInt k=0;k<_ndelta;k++) {
       ORInt myList = _head[_delta[k]];
       while(myList != _eol) {
-         [_y[myList] setValue: _c[_x[myList].value].value > 0];
+         [yBase[myList] setValue: getLSIntValue(_c[[xBase[myList] value]]) > 0];
          myList = _lists[myList]._next;
       }
    }
@@ -170,7 +172,7 @@ void printLists(LSGElement* elt)
       return _x[i].value;
    }];
    for(ORInt i=_x.low;i <= _x.up;i++)
-      [_y[i] setValue:_c[_x[i].value].value > 0];
+      [_y[i] setValue:_c[_x[i].value].value > 0];   
    // Initialize the variable list
    for(ORInt i=_vlb;i <= _vub;i++)
       _head[i] = _eol;

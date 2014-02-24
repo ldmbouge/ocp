@@ -113,19 +113,16 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       _sb = idRange(xp);
       _map = malloc(sizeof(LSIntVar*)*(_sb.max - _sb.min + 1));
       _map -= _sb.min;
-      for(id<LSIntVar> xk in xp) {
-         @autoreleasepool {
-            ORInt j = 0;
-            _map[getId(xk)] = nil;
-            for(id<LSIntVar> s in _x) {
-               if ([asv[j] containsObject:xk]) {
-                  _map[getId(xk)] = s;
-               }
-               ++j;
-            }
-            assert(_map[getId(xk)] != nil);
+      ORInt xlow = _x.low;
+      for(ORInt j=0;j<sz;++j) {
+         for(id<LSIntVar> s in asv[j]) {
+            _map[getId(s)] = _x[j+xlow];
          }
       }
+#if !defined(_NDEBUG)
+      for(id<LSIntVar> xk in xp)
+         assert(_map[getId(xk)]!=nil);
+#endif
       return xp;
    } else {
       _sb = idRange(_x);

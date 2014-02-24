@@ -186,9 +186,11 @@
 }
 -(BOOL)isEqual:(id)object
 {
-   if ([object isKindOfClass:[self class]])
-      return _low == ((ORIntRangeI*)object)->_low && _up == ((ORIntRangeI*)object)->_up;
-   else return NO;
+   if (self == object)
+      return YES;
+   if ([self class] != [object class])
+      return NO;
+   return _low == ((ORIntRangeI*)object)->_low && _up == ((ORIntRangeI*)object)->_up;
 }
 -(NSUInteger)hash
 {
