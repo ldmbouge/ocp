@@ -1262,6 +1262,64 @@
 		F50D95AE16835AE4001D5E3C /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		F50D95AF16835AE4001D5E3C /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		F50D95B016835AE4001D5E3C /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		F515FEFA18BA7283000429E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FEF918BA7283000429E7 /* main.m */; };
+		F515FF1818BA72CD000429E7 /* objcp-parser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFB18BA72CC000429E7 /* objcp-parser.c */; };
+		F515FF1918BA72CD000429E7 /* smtlib2abstractparser_private.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FEFC18BA72CC000429E7 /* smtlib2abstractparser_private.h */; };
+		F515FF1A18BA72CD000429E7 /* smtlib2abstractparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFD18BA72CC000429E7 /* smtlib2abstractparser.c */; };
+		F515FF1B18BA72CD000429E7 /* smtlib2abstractparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FEFE18BA72CC000429E7 /* smtlib2abstractparser.h */; };
+		F515FF1C18BA72CD000429E7 /* smtlib2bisonparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFF18BA72CC000429E7 /* smtlib2bisonparser.c */; };
+		F515FF1D18BA72CD000429E7 /* smtlib2bisonparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0018BA72CC000429E7 /* smtlib2bisonparser.h */; };
+		F515FF1E18BA72CD000429E7 /* smtlib2bisonparser.y in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0118BA72CC000429E7 /* smtlib2bisonparser.y */; };
+		F515FF1F18BA72CD000429E7 /* smtlib2charbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0218BA72CC000429E7 /* smtlib2charbuf.c */; };
+		F515FF2018BA72CD000429E7 /* smtlib2charbuf.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0318BA72CC000429E7 /* smtlib2charbuf.h */; };
+		F515FF2118BA72CD000429E7 /* smtlib2flexlexer.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0418BA72CC000429E7 /* smtlib2flexlexer.c */; };
+		F515FF2218BA72CD000429E7 /* smtlib2flexlexer.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0518BA72CC000429E7 /* smtlib2flexlexer.h */; };
+		F515FF2318BA72CD000429E7 /* smtlib2genvector.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0618BA72CC000429E7 /* smtlib2genvector.h */; };
+		F515FF2418BA72CD000429E7 /* smtlib2hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0718BA72CC000429E7 /* smtlib2hashtable.c */; };
+		F515FF2518BA72CD000429E7 /* smtlib2hashtable.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0818BA72CC000429E7 /* smtlib2hashtable.h */; };
+		F515FF2618BA72CD000429E7 /* smtlib2objcp.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0918BA72CC000429E7 /* smtlib2objcp.c */; };
+		F515FF2718BA72CD000429E7 /* smtlib2objcp.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0A18BA72CC000429E7 /* smtlib2objcp.h */; };
+		F515FF2818BA72CD000429E7 /* smtlib2parser.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0B18BA72CC000429E7 /* smtlib2parser.h */; };
+		F515FF2918BA72CD000429E7 /* smtlib2parserinterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0C18BA72CC000429E7 /* smtlib2parserinterface.h */; };
+		F515FF2A18BA72CD000429E7 /* smtlib2scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0D18BA72CC000429E7 /* smtlib2scanner.c */; };
+		F515FF2B18BA72CD000429E7 /* smtlib2scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0E18BA72CC000429E7 /* smtlib2scanner.h */; };
+		F515FF2C18BA72CD000429E7 /* smtlib2stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0F18BA72CC000429E7 /* smtlib2stream.c */; };
+		F515FF2D18BA72CD000429E7 /* smtlib2stream.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1018BA72CD000429E7 /* smtlib2stream.h */; };
+		F515FF2E18BA72CD000429E7 /* smtlib2termparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1118BA72CD000429E7 /* smtlib2termparser.c */; };
+		F515FF2F18BA72CD000429E7 /* smtlib2termparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1218BA72CD000429E7 /* smtlib2termparser.h */; };
+		F515FF3018BA72CD000429E7 /* smtlib2types.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1318BA72CD000429E7 /* smtlib2types.h */; };
+		F515FF3118BA72CD000429E7 /* smtlib2utils.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1418BA72CD000429E7 /* smtlib2utils.c */; };
+		F515FF3218BA72CD000429E7 /* smtlib2utils.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1518BA72CD000429E7 /* smtlib2utils.h */; };
+		F515FF3318BA72CD000429E7 /* smtlib2vector.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1618BA72CD000429E7 /* smtlib2vector.c */; };
+		F515FF3418BA72CD000429E7 /* smtlib2vector.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1718BA72CD000429E7 /* smtlib2vector.h */; };
+		F515FF3618BA738B000429E7 /* objcpgateway.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FF3518BA738B000429E7 /* objcpgateway.m */; };
+		F515FF3818BA7407000429E7 /* objcpgateway.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF3718BA7407000429E7 /* objcpgateway.h */; };
+		F515FF3E18BBCD52000429E7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		F515FF4118BBCD52000429E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FF4018BBCD52000429E7 /* main.m */; };
+		F515FF4518BBCD52000429E7 /* SMTLIB2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = F515FF4418BBCD52000429E7 /* SMTLIB2.1 */; };
+		F515FF5618BBCDCB000429E7 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		F515FF5718BBCDCB000429E7 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		F515FF5818BBCDCB000429E7 /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		F515FF5918BBCDCB000429E7 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		F515FF5A18BBCDCB000429E7 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		F515FF5B18BBCDCB000429E7 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		F515FF5C18BBCDCB000429E7 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		F515FF5D18BBCDDF000429E7 /* objcp-parser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFB18BA72CC000429E7 /* objcp-parser.c */; };
+		F515FF5F18BBCDDF000429E7 /* smtlib2abstractparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFD18BA72CC000429E7 /* smtlib2abstractparser.c */; };
+		F515FF6118BBCDDF000429E7 /* smtlib2bisonparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFF18BA72CC000429E7 /* smtlib2bisonparser.c */; };
+		F515FF6418BBCDDF000429E7 /* smtlib2charbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0218BA72CC000429E7 /* smtlib2charbuf.c */; };
+		F515FF6618BBCDDF000429E7 /* smtlib2flexlexer.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0418BA72CC000429E7 /* smtlib2flexlexer.c */; };
+		F515FF6918BBCDDF000429E7 /* smtlib2hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0718BA72CC000429E7 /* smtlib2hashtable.c */; };
+		F515FF6B18BBCDDF000429E7 /* smtlib2objcp.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0918BA72CC000429E7 /* smtlib2objcp.c */; };
+		F515FF6F18BBCDDF000429E7 /* smtlib2scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0D18BA72CC000429E7 /* smtlib2scanner.c */; };
+		F515FF7118BBCDDF000429E7 /* smtlib2stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0F18BA72CC000429E7 /* smtlib2stream.c */; };
+		F515FF7318BBCDDF000429E7 /* smtlib2termparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1118BA72CD000429E7 /* smtlib2termparser.c */; };
+		F515FF7618BBCDDF000429E7 /* smtlib2utils.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1418BA72CD000429E7 /* smtlib2utils.c */; };
+		F515FF7818BBCDDF000429E7 /* smtlib2vector.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1618BA72CD000429E7 /* smtlib2vector.c */; };
+		F515FF7A18BBCDDF000429E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FEF918BA7283000429E7 /* main.m */; };
+		F515FF7B18BBCDDF000429E7 /* objcpgateway.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FF3518BA738B000429E7 /* objcpgateway.m */; };
+		F515FF7E18BBD229000429E7 /* CPBitVarABS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D86188860B700A27F2F /* CPBitVarABS.m */; };
+		F515FF7F18BBD22E000429E7 /* CPBitVarIBS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D8A188860B700A27F2F /* CPBitVarIBS.m */; };
 		F548AA73167FB1C600726814 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		F548AA76167FB1C600726814 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AA75167FB1C600726814 /* main.m */; };
 		F548AAB21680B3A500726814 /* MD4.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AAB11680B3A500726814 /* MD4.m */; };
@@ -1281,14 +1339,14 @@
 		F5EA7D7B18885F9D00A27F2F /* SHA1.1 in Resources */ = {isa = PBXBuildFile; fileRef = F5EA7D6E18885F9D00A27F2F /* SHA1.1 */; };
 		F5EA7D7C18885F9D00A27F2F /* SHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D6F18885F9D00A27F2F /* SHA1.h */; };
 		F5EA7D7D18885F9D00A27F2F /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D7018885F9D00A27F2F /* SHA1.m */; };
-		F5EA7D8218885FCB00A27F2F /* CPBitVarFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D7F18885FCB00A27F2F /* CPBitVarFirstFail.h */; };
+		F5EA7D8218885FCB00A27F2F /* CPBitVarFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D7F18885FCB00A27F2F /* CPBitVarFirstFail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F5EA7D8318885FCB00A27F2F /* CPBitVarFirstFail.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D8018885FCB00A27F2F /* CPBitVarFirstFail.m */; };
-		F5EA7D8418885FCB00A27F2F /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D8118885FCB00A27F2F /* CPBitVarHeuristic.h */; };
-		F5EA7D8B188860B700A27F2F /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D85188860B700A27F2F /* CPBitVarABS.h */; };
+		F5EA7D8418885FCB00A27F2F /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D8118885FCB00A27F2F /* CPBitVarHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F5EA7D8B188860B700A27F2F /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D85188860B700A27F2F /* CPBitVarABS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F5EA7D8C188860B700A27F2F /* CPBitVarABS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D86188860B700A27F2F /* CPBitVarABS.m */; };
-		F5EA7D8D188860B700A27F2F /* CPBitVarBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D87188860B700A27F2F /* CPBitVarBaseHeuristic.h */; };
+		F5EA7D8D188860B700A27F2F /* CPBitVarBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D87188860B700A27F2F /* CPBitVarBaseHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F5EA7D8E188860B700A27F2F /* CPBitVarBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D88188860B700A27F2F /* CPBitVarBaseHeuristic.m */; };
-		F5EA7D8F188860B700A27F2F /* CPBitVarIBS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D89188860B700A27F2F /* CPBitVarIBS.h */; };
+		F5EA7D8F188860B700A27F2F /* CPBitVarIBS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D89188860B700A27F2F /* CPBitVarIBS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F5EA7D90188860B700A27F2F /* CPBitVarIBS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D8A188860B700A27F2F /* CPBitVarIBS.m */; };
 /* End PBXBuildFile section */
 
@@ -4667,6 +4725,48 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		F515FF4A18BBCD97000429E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		F515FF4C18BBCD97000429E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		F515FF4E18BBCD97000429E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		F515FF5018BBCD97000429E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		F515FF5218BBCD97000429E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		F515FF5418BBCD97000429E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -5416,6 +5516,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		F515FF3B18BBCD52000429E7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				F515FF4518BBCD52000429E7 /* SMTLIB2.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		F548AA6F167FB1C600726814 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -6126,6 +6236,42 @@
 		B1F531DF15AED4B100E89F98 /* testPacking-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testPacking-Prefix.pch"; sourceTree = "<group>"; };
 		B1F531E015AED4B100E89F98 /* testPacking.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testPacking.1; sourceTree = "<group>"; };
 		B1FBA2F017BF1AE0000F5F43 /* ORVisit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORVisit.m; sourceTree = "<group>"; };
+		F515FEF918BA7283000429E7 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Verification/main.m; sourceTree = "<group>"; };
+		F515FEFB18BA72CC000429E7 /* objcp-parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "objcp-parser.c"; path = "Verification/objcp-parser.c"; sourceTree = "<group>"; };
+		F515FEFC18BA72CC000429E7 /* smtlib2abstractparser_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2abstractparser_private.h; path = Verification/smtlib2abstractparser_private.h; sourceTree = "<group>"; };
+		F515FEFD18BA72CC000429E7 /* smtlib2abstractparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2abstractparser.c; path = Verification/smtlib2abstractparser.c; sourceTree = "<group>"; };
+		F515FEFE18BA72CC000429E7 /* smtlib2abstractparser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2abstractparser.h; path = Verification/smtlib2abstractparser.h; sourceTree = "<group>"; };
+		F515FEFF18BA72CC000429E7 /* smtlib2bisonparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2bisonparser.c; path = Verification/smtlib2bisonparser.c; sourceTree = "<group>"; };
+		F515FF0018BA72CC000429E7 /* smtlib2bisonparser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2bisonparser.h; path = Verification/smtlib2bisonparser.h; sourceTree = "<group>"; };
+		F515FF0118BA72CC000429E7 /* smtlib2bisonparser.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = smtlib2bisonparser.y; path = Verification/smtlib2bisonparser.y; sourceTree = "<group>"; };
+		F515FF0218BA72CC000429E7 /* smtlib2charbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2charbuf.c; path = Verification/smtlib2charbuf.c; sourceTree = "<group>"; };
+		F515FF0318BA72CC000429E7 /* smtlib2charbuf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2charbuf.h; path = Verification/smtlib2charbuf.h; sourceTree = "<group>"; };
+		F515FF0418BA72CC000429E7 /* smtlib2flexlexer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2flexlexer.c; path = Verification/smtlib2flexlexer.c; sourceTree = "<group>"; };
+		F515FF0518BA72CC000429E7 /* smtlib2flexlexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2flexlexer.h; path = Verification/smtlib2flexlexer.h; sourceTree = "<group>"; };
+		F515FF0618BA72CC000429E7 /* smtlib2genvector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2genvector.h; path = Verification/smtlib2genvector.h; sourceTree = "<group>"; };
+		F515FF0718BA72CC000429E7 /* smtlib2hashtable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2hashtable.c; path = Verification/smtlib2hashtable.c; sourceTree = "<group>"; };
+		F515FF0818BA72CC000429E7 /* smtlib2hashtable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2hashtable.h; path = Verification/smtlib2hashtable.h; sourceTree = "<group>"; };
+		F515FF0918BA72CC000429E7 /* smtlib2objcp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2objcp.c; path = Verification/smtlib2objcp.c; sourceTree = "<group>"; };
+		F515FF0A18BA72CC000429E7 /* smtlib2objcp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2objcp.h; path = Verification/smtlib2objcp.h; sourceTree = "<group>"; };
+		F515FF0B18BA72CC000429E7 /* smtlib2parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2parser.h; path = Verification/smtlib2parser.h; sourceTree = "<group>"; };
+		F515FF0C18BA72CC000429E7 /* smtlib2parserinterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2parserinterface.h; path = Verification/smtlib2parserinterface.h; sourceTree = "<group>"; };
+		F515FF0D18BA72CC000429E7 /* smtlib2scanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2scanner.c; path = Verification/smtlib2scanner.c; sourceTree = "<group>"; };
+		F515FF0E18BA72CC000429E7 /* smtlib2scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2scanner.h; path = Verification/smtlib2scanner.h; sourceTree = "<group>"; };
+		F515FF0F18BA72CC000429E7 /* smtlib2stream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2stream.c; path = Verification/smtlib2stream.c; sourceTree = "<group>"; };
+		F515FF1018BA72CD000429E7 /* smtlib2stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2stream.h; path = Verification/smtlib2stream.h; sourceTree = "<group>"; };
+		F515FF1118BA72CD000429E7 /* smtlib2termparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2termparser.c; path = Verification/smtlib2termparser.c; sourceTree = "<group>"; };
+		F515FF1218BA72CD000429E7 /* smtlib2termparser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2termparser.h; path = Verification/smtlib2termparser.h; sourceTree = "<group>"; };
+		F515FF1318BA72CD000429E7 /* smtlib2types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2types.h; path = Verification/smtlib2types.h; sourceTree = "<group>"; };
+		F515FF1418BA72CD000429E7 /* smtlib2utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2utils.c; path = Verification/smtlib2utils.c; sourceTree = "<group>"; };
+		F515FF1518BA72CD000429E7 /* smtlib2utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2utils.h; path = Verification/smtlib2utils.h; sourceTree = "<group>"; };
+		F515FF1618BA72CD000429E7 /* smtlib2vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2vector.c; path = Verification/smtlib2vector.c; sourceTree = "<group>"; };
+		F515FF1718BA72CD000429E7 /* smtlib2vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2vector.h; path = Verification/smtlib2vector.h; sourceTree = "<group>"; };
+		F515FF3518BA738B000429E7 /* objcpgateway.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = objcpgateway.m; path = Verification/objcpgateway.m; sourceTree = "<group>"; };
+		F515FF3718BA7407000429E7 /* objcpgateway.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcpgateway.h; sourceTree = "<group>"; };
+		F515FF3D18BBCD52000429E7 /* SMTLIB2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SMTLIB2; sourceTree = BUILT_PRODUCTS_DIR; };
+		F515FF4018BBCD52000429E7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F515FF4318BBCD52000429E7 /* SMTLIB2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMTLIB2-Prefix.pch"; sourceTree = "<group>"; };
+		F515FF4418BBCD52000429E7 /* SMTLIB2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = SMTLIB2.1; sourceTree = "<group>"; };
 		F548AA71167FB1C600726814 /* MD5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MD5; sourceTree = BUILT_PRODUCTS_DIR; };
 		F548AA75167FB1C600726814 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F548AA78167FB1C700726814 /* MD5-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MD5-Prefix.pch"; sourceTree = "<group>"; };
@@ -7293,6 +7439,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F515FF3A18BBCD52000429E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F515FF5618BBCDCB000429E7 /* CPUKernel.framework in Frameworks */,
+				F515FF5718BBCDCB000429E7 /* objcp.framework in Frameworks */,
+				F515FF5818BBCDCB000429E7 /* objmp.framework in Frameworks */,
+				F515FF5918BBCDCB000429E7 /* ORFoundation.framework in Frameworks */,
+				F515FF5A18BBCDCB000429E7 /* ORModeling.framework in Frameworks */,
+				F515FF5B18BBCDCB000429E7 /* ORProgram.framework in Frameworks */,
+				F515FF5C18BBCDCB000429E7 /* ORUtilities.framework in Frameworks */,
+				F515FF3E18BBCD52000429E7 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F548AA6E167FB1C600726814 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -7760,6 +7921,7 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				F515FEBE18BA7122000429E7 /* Verification */,
 				F5EA7D6118885F9C00A27F2F /* SHA1 */,
 				F5EA7D2F18885EC200A27F2F /* main.m */,
 				F5EA7D3018885EC200A27F2F /* SHA1b.h */,
@@ -7800,6 +7962,7 @@
 				5B67A4FE17E227BB00516F50 /* wka */,
 				5B27573217E87B560082934E /* costas2 */,
 				5BD601C317F9A627006A9CDC /* bugTest */,
+				F515FF3F18BBCD52000429E7 /* SMTLIB2 */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -7897,6 +8060,7 @@
 				5BFF683A1860D98E00B50286 /* slab copy */,
 				5BF9F3A7186353450022C300 /* slabIP copy */,
 				5B7C896C187F455F00D82789 /* order2 */,
+				F515FF3D18BBCD52000429E7 /* SMTLIB2 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -9383,6 +9547,63 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F515FEBE18BA7122000429E7 /* Verification */ = {
+			isa = PBXGroup;
+			children = (
+				F515FEFB18BA72CC000429E7 /* objcp-parser.c */,
+				F515FEFC18BA72CC000429E7 /* smtlib2abstractparser_private.h */,
+				F515FEFD18BA72CC000429E7 /* smtlib2abstractparser.c */,
+				F515FEFE18BA72CC000429E7 /* smtlib2abstractparser.h */,
+				F515FEFF18BA72CC000429E7 /* smtlib2bisonparser.c */,
+				F515FF0018BA72CC000429E7 /* smtlib2bisonparser.h */,
+				F515FF0118BA72CC000429E7 /* smtlib2bisonparser.y */,
+				F515FF0218BA72CC000429E7 /* smtlib2charbuf.c */,
+				F515FF0318BA72CC000429E7 /* smtlib2charbuf.h */,
+				F515FF0418BA72CC000429E7 /* smtlib2flexlexer.c */,
+				F515FF0518BA72CC000429E7 /* smtlib2flexlexer.h */,
+				F515FF0618BA72CC000429E7 /* smtlib2genvector.h */,
+				F515FF0718BA72CC000429E7 /* smtlib2hashtable.c */,
+				F515FF0818BA72CC000429E7 /* smtlib2hashtable.h */,
+				F515FF0918BA72CC000429E7 /* smtlib2objcp.c */,
+				F515FF0A18BA72CC000429E7 /* smtlib2objcp.h */,
+				F515FF0B18BA72CC000429E7 /* smtlib2parser.h */,
+				F515FF0C18BA72CC000429E7 /* smtlib2parserinterface.h */,
+				F515FF0D18BA72CC000429E7 /* smtlib2scanner.c */,
+				F515FF0E18BA72CC000429E7 /* smtlib2scanner.h */,
+				F515FF0F18BA72CC000429E7 /* smtlib2stream.c */,
+				F515FF1018BA72CD000429E7 /* smtlib2stream.h */,
+				F515FF1118BA72CD000429E7 /* smtlib2termparser.c */,
+				F515FF1218BA72CD000429E7 /* smtlib2termparser.h */,
+				F515FF1318BA72CD000429E7 /* smtlib2types.h */,
+				F515FF1418BA72CD000429E7 /* smtlib2utils.c */,
+				F515FF1518BA72CD000429E7 /* smtlib2utils.h */,
+				F515FF1618BA72CD000429E7 /* smtlib2vector.c */,
+				F515FF1718BA72CD000429E7 /* smtlib2vector.h */,
+				F515FEF918BA7283000429E7 /* main.m */,
+				F515FF3518BA738B000429E7 /* objcpgateway.m */,
+				F515FF3718BA7407000429E7 /* objcpgateway.h */,
+			);
+			name = Verification;
+			sourceTree = "<group>";
+		};
+		F515FF3F18BBCD52000429E7 /* SMTLIB2 */ = {
+			isa = PBXGroup;
+			children = (
+				F515FF4018BBCD52000429E7 /* main.m */,
+				F515FF4418BBCD52000429E7 /* SMTLIB2.1 */,
+				F515FF4218BBCD52000429E7 /* Supporting Files */,
+			);
+			path = SMTLIB2;
+			sourceTree = "<group>";
+		};
+		F515FF4218BBCD52000429E7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F515FF4318BBCD52000429E7 /* SMTLIB2-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		F548AA74167FB1C600726814 /* MD5 */ = {
 			isa = PBXGroup;
 			children = (
@@ -9461,26 +9682,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */,
-				F5EA7D8218885FCB00A27F2F /* CPBitVarFirstFail.h in Headers */,
 				5B68119D161F99C700F4480F /* ORProgramFactory.h in Headers */,
 				5B68119F161F99C700F4480F /* CPSolver.h in Headers */,
 				5B94406C16319096006528DE /* CPProgram.h in Headers */,
-				F5EA7D8B188860B700A27F2F /* CPBitVarABS.h in Headers */,
 				5B846926163856B300F4D749 /* CPDDeg.h in Headers */,
 				5B846927163856B300F4D749 /* CPFirstFail.h in Headers */,
 				5B846928163856B300F4D749 /* CPIBS.h in Headers */,
-				F5EA7D8D188860B700A27F2F /* CPBitVarBaseHeuristic.h in Headers */,
 				B15442AD16D1A3DC001BD7B3 /* LPProgram.h in Headers */,
 				5BA6F96818464836002434E3 /* CPDeg.h in Headers */,
 				5B846929163856B300F4D749 /* CPWDeg.h in Headers */,
 				5B84692A163856B300F4D749 /* CPABS.h in Headers */,
-				F5EA7D8418885FCB00A27F2F /* CPBitVarHeuristic.h in Headers */,
 				5B8469301638583000F4D749 /* CPHeuristic.h in Headers */,
+				F5EA7D8F188860B700A27F2F /* CPBitVarIBS.h in Headers */,
 				5B8469311638583000F4D749 /* CPBaseHeuristic.h in Headers */,
 				5B681199161F99C700F4480F /* CPConcretizer.h in Headers */,
+				F5EA7D8B188860B700A27F2F /* CPBitVarABS.h in Headers */,
+				F5EA7D8218885FCB00A27F2F /* CPBitVarFirstFail.h in Headers */,
 				B1E1C79B170372FB006AACFC /* MIPProgram.h in Headers */,
 				5B93489216558D1000757F89 /* ORProgram.h in Headers */,
-				F5EA7D8F188860B700A27F2F /* CPBitVarIBS.h in Headers */,
+				F5EA7D8D188860B700A27F2F /* CPBitVarBaseHeuristic.h in Headers */,
+				F5EA7D8418885FCB00A27F2F /* CPBitVarHeuristic.h in Headers */,
 				B15442B116D1A3F7001BD7B3 /* LPSolver.h in Headers */,
 				B15442E516D1B414001BD7B3 /* LPConcretizer.h in Headers */,
 				5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */,
@@ -9645,30 +9866,43 @@
 				F5EA7D3F18885EC200A27F2F /* SHA1b.h in Headers */,
 				5BFD5A6915A3BC1D00825BC3 /* ORAVLTree.h in Headers */,
 				5BFD5A6C15A3BEA900825BC3 /* ORError.h in Headers */,
+				F515FF2B18BA72CD000429E7 /* smtlib2scanner.h in Headers */,
+				F515FF1D18BA72CD000429E7 /* smtlib2bisonparser.h in Headers */,
 				5BD2DFC815A3CEBF00D4C616 /* ORSet.h in Headers */,
 				5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */,
+				F515FF2F18BA72CD000429E7 /* smtlib2termparser.h in Headers */,
 				5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */,
+				F515FF3018BA72CD000429E7 /* smtlib2types.h in Headers */,
 				5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */,
 				5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */,
+				F515FF1B18BA72CD000429E7 /* smtlib2abstractparser.h in Headers */,
 				5B920EAC15A3F4A900AD0820 /* ORTracker.h in Headers */,
 				5B920EB315A3F6DD00AD0820 /* ORFactory.h in Headers */,
 				5B920EB615A3F91A00AD0820 /* ORData.h in Headers */,
 				5B920EB815A3FB9E00AD0820 /* ORArray.h in Headers */,
 				B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */,
+				F515FF1918BA72CD000429E7 /* smtlib2abstractparser_private.h in Headers */,
+				F515FF2218BA72CD000429E7 /* smtlib2flexlexer.h in Headers */,
 				B15B2F6815C4A86F0027A7E6 /* ORControl.h in Headers */,
 				B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */,
 				B139DEA115CCE3F8007D523E /* ORController.h in Headers */,
 				B11D862715CD8E310019729B /* ORLimit.h in Headers */,
 				B1C0E7CF15CD853700DA4F82 /* ORExplorer.h in Headers */,
+				F515FF3418BA72CD000429E7 /* smtlib2vector.h in Headers */,
 				B1C010F015CDBC3B00ED7027 /* OREngine.h in Headers */,
 				B11D862315CD8AE20019729B /* ORExplorerI.h in Headers */,
 				B1CC82F415D27A57008DE335 /* ORConstraint.h in Headers */,
+				F515FF3218BA72CD000429E7 /* smtlib2utils.h in Headers */,
+				F515FF2318BA72CD000429E7 /* smtlib2genvector.h in Headers */,
 				5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */,
 				B189511C15DE25D800B77813 /* ORSelector.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
+				F515FF2518BA72CD000429E7 /* smtlib2hashtable.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,
 				B198E75A15D90768000BE64A /* ORTrailI.h in Headers */,
+				F515FF2018BA72CD000429E7 /* smtlib2charbuf.h in Headers */,
 				5BAEE08A15AE9B6E006CEE1E /* ORFoundation.h in Headers */,
+				F515FF2718BA72CD000429E7 /* smtlib2objcp.h in Headers */,
 				B1CC82F715D27C66008DE335 /* ORConstraintI.h in Headers */,
 				5BEC256015DBF60F0084DEE8 /* ORSemDFSController.h in Headers */,
 				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
@@ -9681,6 +9915,10 @@
 				5B57E5E5161F295000DB249A /* ORVisit.h in Headers */,
 				5BDF5FA6161F4F9900E5E1FA /* ORVarI.h in Headers */,
 				B1AAA33A164AADAD00CE9AED /* ORObject.h in Headers */,
+				F515FF3818BA7407000429E7 /* objcpgateway.h in Headers */,
+				F515FF2918BA72CD000429E7 /* smtlib2parserinterface.h in Headers */,
+				F515FF2818BA72CD000429E7 /* smtlib2parser.h in Headers */,
+				F515FF2D18BA72CD000429E7 /* smtlib2stream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11623,6 +11861,29 @@
 			productReference = B1F531D815AED4B100E89F98 /* testPacking */;
 			productType = "com.apple.product-type.tool";
 		};
+		F515FF3C18BBCD52000429E7 /* SMTLIB2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F515FF4618BBCD53000429E7 /* Build configuration list for PBXNativeTarget "SMTLIB2" */;
+			buildPhases = (
+				F515FF3918BBCD52000429E7 /* Sources */,
+				F515FF3A18BBCD52000429E7 /* Frameworks */,
+				F515FF3B18BBCD52000429E7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F515FF4B18BBCD97000429E7 /* PBXTargetDependency */,
+				F515FF4D18BBCD97000429E7 /* PBXTargetDependency */,
+				F515FF4F18BBCD97000429E7 /* PBXTargetDependency */,
+				F515FF5118BBCD97000429E7 /* PBXTargetDependency */,
+				F515FF5318BBCD97000429E7 /* PBXTargetDependency */,
+				F515FF5518BBCD97000429E7 /* PBXTargetDependency */,
+			);
+			name = SMTLIB2;
+			productName = SMTLIB2;
+			productReference = F515FF3D18BBCD52000429E7 /* SMTLIB2 */;
+			productType = "com.apple.product-type.tool";
+		};
 		F548AA70167FB1C600726814 /* MD5 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F548AA7D167FB1C700726814 /* Build configuration list for PBXNativeTarget "MD5" */;
@@ -11634,9 +11895,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				F50D95A516835AA0001D5E3C /* PBXTargetDependency */,
 				F50D95A116835AA0001D5E3C /* PBXTargetDependency */,
 				F50D95A316835AA0001D5E3C /* PBXTargetDependency */,
-				F50D95A516835AA0001D5E3C /* PBXTargetDependency */,
 				F50D95A716835AA0001D5E3C /* PBXTargetDependency */,
 				F50D95A916835AA0001D5E3C /* PBXTargetDependency */,
 				F50D959E16835A8F001D5E3C /* PBXTargetDependency */,
@@ -11757,6 +12018,7 @@
 				5BFF681F1860D98E00B50286 /* slabIP */,
 				5BF9F38C186353450022C300 /* slabZIB */,
 				5B7C894E187F455F00D82789 /* order2 */,
+				F515FF3C18BBCD52000429E7 /* SMTLIB2 */,
 			);
 		};
 /* End PBXProject section */
@@ -12365,6 +12627,7 @@
 				5B8C7E3515867DB9007042CA /* CPWDeg.m in Sources */,
 				5B729C44153F89F8001BE95A /* CPWatch.m in Sources */,
 				5BF8F02E1520E31A00821CE2 /* ORCrFactory.m in Sources */,
+				F515FF7E18BBD229000429E7 /* CPBitVarABS.m in Sources */,
 				5BF8F02B1520E2A800821CE2 /* ORConcurrencyI.m in Sources */,
 				5B9EE53415175D4F00619B47 /* cont.m in Sources */,
 				5B9EE53615175D4F00619B47 /* context.m in Sources */,
@@ -12383,6 +12646,7 @@
 				5B9EE56615175D4F00619B47 /* ORFactoryI.m in Sources */,
 				5B9EE56815175D4F00619B47 /* CPIntVarI.m in Sources */,
 				5B9EE56E15175D4F00619B47 /* CPObjectQueue.m in Sources */,
+				F515FF7F18BBD22E000429E7 /* CPBitVarIBS.m in Sources */,
 				5B9EE57015175D4F00619B47 /* CPParallel.m in Sources */,
 				5B9EE57B15175D4F00619B47 /* CPTrigger.m in Sources */,
 				5B9EE57E15175D4F00619B47 /* CPValueConstraint.m in Sources */,
@@ -12644,7 +12908,11 @@
 			files = (
 				5BFD594E15A3ACA500825BC3 /* ORFoundation.m in Sources */,
 				5BFD5A6A15A3BC1D00825BC3 /* ORAVLTree.m in Sources */,
+				F515FF2618BA72CD000429E7 /* smtlib2objcp.c in Sources */,
 				5B8B12DC15A3BF8000300385 /* ORError.m in Sources */,
+				F515FF2118BA72CD000429E7 /* smtlib2flexlexer.c in Sources */,
+				F515FF2E18BA72CD000429E7 /* smtlib2termparser.c in Sources */,
+				F515FF1F18BA72CD000429E7 /* smtlib2charbuf.c in Sources */,
 				5BD2DFC915A3CEC700D4C616 /* ORSetI.m in Sources */,
 				5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */,
 				F5EA7D4018885EC200A27F2F /* SHA1b.m in Sources */,
@@ -12653,26 +12921,37 @@
 				5B920EC015A402A600AD0820 /* ORArrayI.m in Sources */,
 				5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */,
 				5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */,
+				F515FF3318BA72CD000429E7 /* smtlib2vector.c in Sources */,
 				B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */,
 				5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */,
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,
+				F515FEFA18BA7283000429E7 /* main.m in Sources */,
+				F515FF3618BA738B000429E7 /* objcpgateway.m in Sources */,
 				F5EA7D4218885EC200A27F2F /* SHA1.m in Sources */,
 				B148C0C9182175B0009BE440 /* ORFunc.m in Sources */,
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
+				F515FF2C18BA72CD000429E7 /* smtlib2stream.c in Sources */,
+				F515FF1C18BA72CD000429E7 /* smtlib2bisonparser.c in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
 				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,
 				B1CC82F815D27C66008DE335 /* ORConstraintI.m in Sources */,
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,
+				F515FF1A18BA72CD000429E7 /* smtlib2abstractparser.c in Sources */,
 				5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */,
 				5BF903B415DC0ABC003E36BC /* ORSemBDSController.m in Sources */,
+				F515FF3118BA72CD000429E7 /* smtlib2utils.c in Sources */,
+				F515FF1E18BA72CD000429E7 /* smtlib2bisonparser.y in Sources */,
 				B189512115DE434A00B77813 /* ORSelectorI.m in Sources */,
 				5B57E5E1161F276800DB249A /* ORExprI.m in Sources */,
 				5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */,
 				B1AAA33B164AADAD00CE9AED /* ORObject.m in Sources */,
 				F5EA7D3E18885EC200A27F2F /* main.m in Sources */,
+				F515FF1818BA72CD000429E7 /* objcp-parser.c in Sources */,
 				B1FBA2F117BF1AE0000F5F43 /* ORVisit.m in Sources */,
+				F515FF2A18BA72CD000429E7 /* smtlib2scanner.c in Sources */,
+				F515FF2418BA72CD000429E7 /* smtlib2hashtable.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12900,6 +13179,28 @@
 			files = (
 				B1F531DD15AED4B100E89F98 /* main.m in Sources */,
 				5B6CFD9416D939E200BCB95F /* ORCmdLineArgs.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F515FF3918BBCD52000429E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F515FF5D18BBCDDF000429E7 /* objcp-parser.c in Sources */,
+				F515FF5F18BBCDDF000429E7 /* smtlib2abstractparser.c in Sources */,
+				F515FF6118BBCDDF000429E7 /* smtlib2bisonparser.c in Sources */,
+				F515FF6418BBCDDF000429E7 /* smtlib2charbuf.c in Sources */,
+				F515FF6618BBCDDF000429E7 /* smtlib2flexlexer.c in Sources */,
+				F515FF6918BBCDDF000429E7 /* smtlib2hashtable.c in Sources */,
+				F515FF6B18BBCDDF000429E7 /* smtlib2objcp.c in Sources */,
+				F515FF6F18BBCDDF000429E7 /* smtlib2scanner.c in Sources */,
+				F515FF7118BBCDDF000429E7 /* smtlib2stream.c in Sources */,
+				F515FF7318BBCDDF000429E7 /* smtlib2termparser.c in Sources */,
+				F515FF7618BBCDDF000429E7 /* smtlib2utils.c in Sources */,
+				F515FF7818BBCDDF000429E7 /* smtlib2vector.c in Sources */,
+				F515FF7A18BBCDDF000429E7 /* main.m in Sources */,
+				F515FF7B18BBCDDF000429E7 /* objcpgateway.m in Sources */,
+				F515FF4118BBCD52000429E7 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15327,6 +15628,36 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = F50D95A816835AA0001D5E3C /* PBXContainerItemProxy */;
+		};
+		F515FF4B18BBCD97000429E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = F515FF4A18BBCD97000429E7 /* PBXContainerItemProxy */;
+		};
+		F515FF4D18BBCD97000429E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = F515FF4C18BBCD97000429E7 /* PBXContainerItemProxy */;
+		};
+		F515FF4F18BBCD97000429E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = F515FF4E18BBCD97000429E7 /* PBXContainerItemProxy */;
+		};
+		F515FF5118BBCD97000429E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = F515FF5018BBCD97000429E7 /* PBXContainerItemProxy */;
+		};
+		F515FF5318BBCD97000429E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = F515FF5218BBCD97000429E7 /* PBXContainerItemProxy */;
+		};
+		F515FF5518BBCD97000429E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = F515FF5418BBCD97000429E7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -19850,6 +20181,85 @@
 			};
 			name = Release;
 		};
+		F515FF4718BBCD53000429E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SMTLIB2/SMTLIB2-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F515FF4818BBCD53000429E7 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SMTLIB2/SMTLIB2-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		F515FF4918BBCD53000429E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SMTLIB2/SMTLIB2-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		F548AA7B167FB1C700726814 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -20790,6 +21200,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		F515FF4618BBCD53000429E7 /* Build configuration list for PBXNativeTarget "SMTLIB2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F515FF4718BBCD53000429E7 /* Debug */,
+				F515FF4818BBCD53000429E7 /* Coverage */,
+				F515FF4918BBCD53000429E7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		F548AA7D167FB1C700726814 /* Build configuration list for PBXNativeTarget "MD5" */ = {
 			isa = XCConfigurationList;
