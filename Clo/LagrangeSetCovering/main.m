@@ -27,6 +27,50 @@
 #import "ORLagrangianTransform.h"
 #import "SetCoveringInstanceParser.h"
 
+NSArray* autosplit(NSArray* vars, NSArray* cstrs) {
+   if([vars count] <= 2) return [NSArray arrayWithObject: [NSSet setWithArray: vars]];
+   
+   // Partition variables
+   NSSet* allVars = [NSSet setWithArray: vars];
+   NSMutableSet* splitSet = [NSMutableSet setWithObject: [vars firstObject]];
+   BOOL changed = YES;
+   while (changed) {
+      changed = NO;
+      for(id<ORConstraint> c in cstrs) {
+         NSMutableSet* cstrVars = [[c allVars] mutableCopy];
+         [cstrVars intersectSet: allVars];
+         if([splitSet intersectsSet: cstrVars]) {
+            NSInteger oldCount = [splitSet count];
+            NSArray* varArray = [cstrVars allObjects];
+            [splitSet addObjectsFromArray: varArray];
+            [varArray release];
+            if([splitSet count] > oldCount) changed = YES;
+         }
+      }
+   }
+   
+   // Partition failed, return everything
+   if([vars count] - [splitSet count] <= 1) {
+      [splitSet release];
+      return [NSArray arrayWithObject: [NSSet setWithArray: vars]];
+   }
+   
+   // Recursively partition
+   NSArray* split0 = [splitSet allObjects];
+   NSMutableArray* split1 = [vars mutableCopy];
+   [split1 removeObjectsInArray: split0];
+   [splitSet release];
+   
+   NSMutableArray* res = [[NSMutableArray alloc] initWithCapacity: 32];
+   NSArray* r0 = autosplit(split0, cstrs);
+   [res addObjectsFromArray: r0];
+   [r0 release];
+   NSArray* r1 = autosplit(split1, cstrs);
+   [res addObjectsFromArray: r1];
+   [r1 release];
+   
+   return res;
+}
 
 int main (int argc, const char * argv[])
 {
@@ -55,72 +99,15 @@ int main (int argc, const char * argv[])
    
     NSDate* t0 = [NSDate date];
    
-   // Build Split
-//   block 1: 22 -- 1..97
-//   block 2: 22 -- 98..189
-//   block 3: 19 -- 190..284
-//   block 4: 22 -- 285..374
-//   block 5: 17 -- 375..475
-//   block 6: 20 -- 476..561
-//   block 7: 19 -- 562..654
-//   block 8: 19 -- 655..730
-//   block 9: 20 -- 731..820
-//   block 10: 20 -- 821..899
-
-   NSMutableArray* u = [[NSMutableArray alloc] initWithCapacity: 12];
-   ORInt splitCount = 10;
    ORInt coupledCount = 100;
-   
-   NSMutableSet* us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 1; i <= 97; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 98; i <= 189; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 190; i <= 284; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 285; i <= 374; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 375; i <= 475; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 476; i <= 561; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 562; i <= 654; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 655; i <= 730; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 731; i <= 820; i++) [us addObject: @(i)];
-   [u addObject: us];
-   us = [[NSMutableSet alloc] initWithCapacity: 64];
-   for(int i = 821; i <= 899; i++) [us addObject: @(i)];
-   [u addObject: us];
-   
-   NSMutableArray* split = [[NSMutableArray alloc] initWithCapacity: 10];
-   for(int b = 0; b < splitCount; b++) {
-      NSMutableSet* splitSet = [[NSMutableSet alloc] initWithCapacity: 10];
-      [split addObject: splitSet];
-      for(int i = [setRange low]; i <= [setRange up]; i++) {
-         [((NSSet*)[u objectAtIndex: b]) enumerateObjectsUsingBlock: ^(id obj, BOOL *stop) {
-            if([instance.sets[i] member: [obj intValue]]) {
-               [splitSet addObject: s[i]];
-               *stop = YES;
-            }
-         }];
-      }
-   }
-   
+   NSArray* myCoupled = [ORLagrangianTransform coupledConstraints: m];
    NSMutableArray* coupled = [[NSMutableArray alloc] initWithCapacity: 50];
    for(int i = 0; i < coupledCount; i++) [coupled addObject: [cstrs objectAtIndex: cstrs.count-i-1]];
    
    ORLagrangianTransform* t = [[ORLagrangianTransform alloc] init];
    id<ORParameterizedModel> lagrangeModel = [t apply: m relaxing: coupled];
+   
+   NSArray* split = autosplit([s toNSArray], [lagrangeModel hardConstraints]);
    id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel withSurrogateSplit: split];
    [lr run];
 

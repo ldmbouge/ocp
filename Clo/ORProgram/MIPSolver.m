@@ -502,7 +502,7 @@
    return [_MIPsolver floatParamValue: _gamma[p.getId]];
 }
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
-{   
+{
    [_MIPsolver setORFloatParameter: _gamma[p.getId] value: val];
    return val;
 }

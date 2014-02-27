@@ -542,6 +542,12 @@
    return [ORFactory elt: _tracker intVarArray: (id<ORIntVarArray>) self index: idx];
 }
 
+-(NSArray*) toNSArray {
+   NSMutableArray* arr = [[NSMutableArray alloc] init];
+   [self enumerateWith: ^(id obj, ORInt idx) { [arr addObject: obj]; }];
+   return arr;
+}
+
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {
    [aCoder encodeObject:_tracker];

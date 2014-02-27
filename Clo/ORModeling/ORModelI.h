@@ -108,6 +108,7 @@
 -(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
 -(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs;
 -(NSArray*) softConstraints;
+-(NSArray*) hardConstraints;
 -(NSArray*) parameters;
 -(void) addParameter: (id<ORParameter>)p;
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x;

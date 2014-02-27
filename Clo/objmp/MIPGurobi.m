@@ -179,7 +179,8 @@
     double v[] = { val };
     int err = GRBchgcoeffs(_model, 1, cind, vind, v);
     GRBupdatemodel(_model);
-    if(err != 0) NSLog(@"error setting gurobi parameter: %i", err);
+    if(err != 0)
+        NSLog(@"error setting gurobi parameter: %i", err);
 }
 -(void) setBounds: (MIPVariableI*) var low: (ORFloat) low up: (ORFloat) up
 {

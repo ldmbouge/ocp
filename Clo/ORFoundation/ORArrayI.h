@@ -82,6 +82,7 @@
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
+-(NSArray*) toNSArray;
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 -(void)visit:(ORVisitor*)v;

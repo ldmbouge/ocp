@@ -152,6 +152,7 @@
 -(NSArray*) constraintsForPartition: (NSUInteger) splitIdx;
 -(id<ORSolution>) lagrangianSubgradientSolve: (ORFloat)ub;
 -(id<ORSolution>) lagrangianSurrogateSolve: (ORFloat)ub;
+-(id<ORWeightedVar>) weightedVarForSlack: (id<ORVar>)slack;
 @end
 
 @implementation ORLagrangeRelax {
@@ -164,6 +165,7 @@
     BOOL _isSurrogate;
     NSMutableArray* _split;
     NSMutableSet* _surrogateBranchVars;
+    NSMapTable* _lambdaMap;
 }
 
 -(id) initWithModel: (id<ORParameterizedModel>)m
@@ -185,12 +187,13 @@
     _split = [split mutableCopy];
     _surrogateBranchVars = [[NSMutableSet alloc] initWithCapacity: 256];
     for(NSSet* s in _split) [_surrogateBranchVars unionSet: s];
+    _lambdaMap = [[NSMapTable alloc] init];
     return self;
 }
 
 -(id<ORSolution>) lagrangianSubgradientSolve: (ORFloat)ub {
     ORFloat pi = 2.0f;
-    ORFloat bestBound = -DBL_MAX;
+    ORFloat bestBound = ub;//-DBL_MAX;
     ORFloat bestSlack = DBL_MAX;
     id<ORSolution> bestSol = nil;
     
@@ -241,7 +244,7 @@
             slackSum += [sol floatValue: obj];
         }];
         
-        ORFloat stepSize = pi * (ub - [objValue value]) / slackSum;
+        ORFloat stepSize = pi * (bestBound - [objValue value]) / slackSum;
         
         [lambdas enumerateWith:^(id obj, ORInt idx) {
             id<ORFloatParam> lambda = obj;
@@ -275,20 +278,22 @@
     return bestSol;
 }
 
--(ORFloat) updateLambdas: (id<ORIdArray>) lambdas
+-(NSSet*) updateLambdas: (id<ORIdArray>) lambdas
                   values: (NSMapTable*)values
               withSlacks: (id<ORIdArray>)slacks
              solution: (id<ORSolution>)sol
-                bound: (ORFloat)ub
+                bound: (ORFloat)bound
                    pi: (ORFloat)pi {
+    NSMutableSet* modifiedProblems = [[NSMutableSet alloc] init];
     __block ORFloat slackSum = 0.0;
     [slacks enumerateWith:^(id<ORFloatVar> obj, ORInt idx) {
-        slackSum += [sol floatValue: obj];
+        double val = [sol floatValue: obj];
+        slackSum += val * val;
         NSLog(@"slack: %f", [sol floatValue: obj]);
     }];
     
     id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
-    ORFloat stepSize = pi * (ub - [objValue value]) / slackSum;
+    ORFloat stepSize = pi * (bound - [objValue value]) / slackSum;
     
     [lambdas enumerateWith:^(id obj, ORInt idx) {
         id<ORFloatParam> lambda = obj;
@@ -296,11 +301,16 @@
         if(value != DBL_MAX) {
             id<ORFloatVar> slack = [slacks at: idx];
             ORFloat newValue = MAX(0, value + stepSize * [sol floatValue: slack]);
-            [values setObject: @(newValue) forKey: lambda];
-            NSLog(@"New lambda[%i]: %lf -- pi: %f slack: %f, obj: %f", idx, newValue, pi, slackSum, [objValue floatValue]);
+            
+            if(newValue != value) {
+                [values setObject: @(newValue) forKey: lambda];
+                NSLog(@"New lambda[%i]: %lf -- pi: %f slack: %f, obj: %f", idx, newValue, pi, slackSum, [objValue floatValue]);
+                NSArray* lambdaProbs = [_lambdaMap objectForKey: obj];
+                if(lambdaProbs != nil) [modifiedProblems addObjectsFromArray: lambdaProbs];
+            }
         }
     }];
-    return slackSum;
+    return modifiedProblems;
 }
 
 -(id<ORSolution>) runAllProblems: (id<ORParameterizedModel>)m solver: (id<MIPProgram>)program withIncumbents: (NSMapTable*)incumbents {
@@ -334,7 +344,7 @@
     
     ORFloat bestSlackSum = DBL_MAX;
     ORFloat pi = 2.0f;
-    ORFloat bestBound = -DBL_MAX;
+    ORFloat bestBound = ub;
     ORFloat bestSlack = DBL_MAX;
     id<ORSolution> bestSol = nil;
 
@@ -360,62 +370,19 @@
     for(id<ORIntVar> x in _surrogateBranchVars) [incumbents setObject: @([allsol intValue: x]) forKey: x];
     
     ORFloat cutoff = 0.005;
-    ORInt noImproveLimit = 30;
+    ORInt noImproveLimit = 3;
     ORInt noImprove = 0;
-    ORInt probIdx = 0;
+    //ORInt probIdx = 0;
+    NSSet* probIndexes;
+    id<ORParameterizedModel> subproblem = nil;
     
     while(1) {
         
         // Step 1: update lambdas, lambda^(k+1), x^k
-        [self updateLambdas: lambdas values: lambdaValues withSlacks: slacks solution: allsol bound: ub pi: pi];
+        probIndexes = [self updateLambdas: lambdas values: lambdaValues withSlacks: slacks solution: allsol bound: bestBound pi: pi];
         
-        // Step 2: solve subproblem
-        id<ORParameterizedModel> subproblem = [subproblems objectAtIndex: probIdx];
-        id<MIPProgram> subproblemSolver = [ORFactory createMIPProgram: subproblem];
-        [[subproblemSolver solver] close];
-        
-        for(id<ORVar> x in [subproblem variables]) {
-            NSSet* vset = [_split objectAtIndex: probIdx];
-            if(![vset member: x]) {
-                if([x vtype] == ORTInt)
-                    [subproblemSolver setIntVar: (id<ORIntVar>)x value: [[incumbents objectForKey: x] intValue]];
-            }
-        }
-        for(id<ORFloatParam> p in [subproblem parameters]) {
-            ORFloat value = [[lambdaValues objectForKey: p] floatValue];
-            [subproblemSolver paramFloat: p setValue: value];
-        }
-        
-        [subproblemSolver solve];
-        id<ORSolution> sol = [[subproblemSolver solutionPool] best];
-        NSMapTable* candidIncumbents = [incumbents copy];
-        NSSet* subproblemVars = _split[probIdx];
-        for(id<ORIntVar> x in subproblemVars) {
-            if([_surrogateBranchVars member: x]) [candidIncumbents setObject: @([sol intValue: x]) forKey: x];
-        }
-
-        program = [ORFactory createMIPProgram: _model];
-        [[program solver] close];
-        for(id<ORFloatParam> p in [_model parameters]) [program paramFloat: p setValue: [[lambdaValues objectForKey: p] floatValue]];
-        id<ORSolution> sol0 = [self runAllProblems: _model solver: program withIncumbents: candidIncumbents];
-        
-        program = [ORFactory createMIPProgram: _model];
-        [[program solver] close];
-        for(id<ORFloatParam> p in [_model parameters]) [program paramFloat: p setValue: [[lambdaValues objectForKey: p] floatValue]];
-        id<ORSolution> sol1 = [self runAllProblems: _model solver: program withIncumbents: incumbents];
-
-        if([[sol0 objectiveValue] floatValue] <= [[sol1 objectiveValue] floatValue]) {
-            allsol = sol0;
-            [incumbents release];
-            incumbents = candidIncumbents;
-        }
-        else {
-            allsol = sol1;
-            [candidIncumbents release];
-        }
-        
-        // Increase subproblem index
-        probIdx = (probIdx + 1) % subprobCount;
+        //int r = arc4random() % [probIndexes count];
+        //probIdx = [[[probIndexes allObjects] objectAtIndex: r] intValue];
         
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[allsol objectiveValue];
         if([objValue floatValue] > bestBound) {
@@ -427,6 +394,59 @@
             pi /= 2.0;
             noImprove = 0;
         }
+        
+        // Step 2: solve subproblem
+        BOOL succ = NO;
+        NSMapTable* candidIncumbents = [incumbents copy];
+        
+        program = [ORFactory createMIPProgram: _model];
+        [[program solver] close];
+        for(id<ORFloatParam> p in [_model parameters]) [program paramFloat: p setValue: [(NSNumber*)[lambdaValues objectForKey: p] floatValue]];
+        id<ORSolution> sol1 = [self runAllProblems: _model solver: program withIncumbents: incumbents];
+        
+        for(ORInt probIdx = 0; probIdx < subproblems.count; probIdx++) {
+            subproblem = [subproblems objectAtIndex: probIdx];
+            id<MIPProgram> subproblemSolver = [ORFactory createMIPProgram: subproblem];
+            [[subproblemSolver solver] close];
+            
+            for(id<ORVar> x in [subproblem variables]) {
+                NSSet* vset = [_split objectAtIndex: probIdx];
+                if(![vset member: x]) {
+                    if([x vtype] == ORTInt)
+                        [subproblemSolver setIntVar: (id<ORIntVar>)x value: [[candidIncumbents objectForKey: x] intValue]];
+                }
+            }
+            for(id<ORFloatParam> p in [subproblem parameters]) {
+                ORFloat value = [(NSNumber*)[lambdaValues objectForKey: p] floatValue];
+                [subproblemSolver paramFloat: p setValue: value];
+            }
+            
+            [subproblemSolver solve];
+            id<ORSolution> sol = [[subproblemSolver solutionPool] best];
+            NSSet* subproblemVars = _split[probIdx];
+            for(id<ORIntVar> x in [_model variables]) {
+                if([_surrogateBranchVars member: x] && [subproblemVars member: x])
+                    [candidIncumbents setObject: @([sol intValue: x]) forKey: x];
+            }
+            
+            program = [ORFactory createMIPProgram: _model];
+            [[program solver] close];
+            for(id<ORFloatParam> p in [_model parameters]) [program paramFloat: p setValue: [(NSNumber*)[lambdaValues objectForKey: p] floatValue]];
+            id<ORSolution> sol0 = [self runAllProblems: _model solver: program withIncumbents: candidIncumbents];
+            
+            if([[sol0 objectiveValue] floatValue] < [[sol1 objectiveValue] floatValue]) {
+                allsol = sol0;
+                [incumbents release];
+                incumbents = candidIncumbents;
+                succ = YES;
+                break;
+            }
+        }
+        
+        if(!succ) {
+            allsol = sol1;
+            [candidIncumbents release];
+        }
     }
     NSLog(@"Done");
     return bestSol;
@@ -436,8 +456,25 @@
     id<ORParameterizedModel> m = [[ORParameterizedModelI alloc] initWithModel: (ORModelI*)_model relax: [_model constraints]];
     NSArray* cstrs = [self constraintsForPartition: splitIdx];
     NSSet* vars = [_split objectAtIndex: splitIdx];
-    for(id<ORConstraint> c in cstrs) [m add: c];
-    for (id<ORParameter> p in [_model parameters]) [(ORParameterizedModelI*)m addParameter: p];
+    for(id<ORConstraint> c in cstrs) {
+        [m add: c];
+        // Create the lambda map
+        if([c conformsToProtocol: @protocol(ORSoftConstraint)]) {
+            // Add problem index to lambda map
+            ORSoftAlgebraicConstraintI* softCstr = (ORSoftAlgebraicConstraintI*)c;
+            id<ORWeightedVar> wv = [self weightedVarForSlack: [softCstr slack]];
+            NSMutableArray* arr = [_lambdaMap objectForKey: [wv weight]];
+            if(arr == nil) {
+                arr = [[NSMutableArray alloc] initWithCapacity: 8];
+                [_lambdaMap setObject: arr forKey: [wv weight]];
+            }
+            [arr addObject: @(splitIdx)];
+            
+            // Add lambda to model
+            [(ORParameterizedModelI*)m addParameter: [wv weight]];
+        }
+    }
+    //for (id<ORParameter> p in [_model parameters]) [(ORParameterizedModelI*)m addParameter: p];
     
     // Add objective
     if([[_model objective] conformsToProtocol: @protocol(ORObjectiveFunctionExpr)]) {
@@ -477,22 +514,22 @@
                 [cstrs addObject: wv];
                 [vars addObject: [wv x]];
                 [vars addObject: [wv z]];
-                
-                
-                // Create restricted soft constraint
-                ORExprBinaryI* binexpr = (ORExprBinaryI*)[softCstr expr];
-                ORTermCollector* collector = [[ORTermCollector alloc] init];
-                NSArray* terms = [collector doIt: [binexpr left]];
-                id<ORExpr> expr = [ORFactory sum: _model over: RANGE(_model, 0, (ORInt)terms.count-1)
-                                        suchThat: ^bool(ORInt i) { return [vars intersectsSet: [terms[i] allVars]]; }
-                                              of: ^id<ORExpr>(ORInt i) { return terms[i]; }];
-                ORSoftAlgebraicConstraintI* restrictedCstr = nil;
-                switch([binexpr type]) {
-                    case ORRLEq: restrictedCstr = [[ORSoftAlgebraicConstraintI alloc] initORSoftAlgebraicConstraintI: [expr leq: [binexpr right]] slack: [wv x]]; break;
-                    case ORRGEq: restrictedCstr = [[ORSoftAlgebraicConstraintI alloc] initORSoftAlgebraicConstraintI: [expr geq: [binexpr right]] slack: [wv x]]; break;
-                    case ORREq: restrictedCstr = [[ORSoftAlgebraicConstraintI alloc] initORSoftAlgebraicConstraintI: [expr eq: [binexpr right]] slack: [wv x]]; break;
-                    default: break;
-                }
+//
+//                
+//                // Create restricted soft constraint
+//                ORExprBinaryI* binexpr = (ORExprBinaryI*)[softCstr expr];
+//                ORTermCollector* collector = [[ORTermCollector alloc] init];
+//                NSArray* terms = [collector doIt: [binexpr left]];
+//                id<ORExpr> expr = [ORFactory sum: _model over: RANGE(_model, 0, (ORInt)terms.count-1)
+//                                        suchThat: ^bool(ORInt i) { return [vars intersectsSet: [terms[i] allVars]]; }
+//                                              of: ^id<ORExpr>(ORInt i) { return terms[i]; }];
+//                ORSoftAlgebraicConstraintI* restrictedCstr = nil;
+//                switch([binexpr type]) {
+//                    case ORRLEq: restrictedCstr = [[ORSoftAlgebraicConstraintI alloc] initORSoftAlgebraicConstraintI: [expr leq: [binexpr right]] slack: [wv x]]; break;
+//                    case ORRGEq: restrictedCstr = [[ORSoftAlgebraicConstraintI alloc] initORSoftAlgebraicConstraintI: [expr geq: [binexpr right]] slack: [wv x]]; break;
+//                    case ORREq: restrictedCstr = [[ORSoftAlgebraicConstraintI alloc] initORSoftAlgebraicConstraintI: [expr eq: [binexpr right]] slack: [wv x]]; break;
+//                    default: break;
+//                }
                 [cstrs addObject: softCstr];
             }
             else [cstrs addObject: c];
@@ -517,7 +554,7 @@
 
 -(void) run
 {
-    int bound = 300;
+    int bound = 290;
     _bestSolution = _isSurrogate ? [self lagrangianSurrogateSolve: bound]  : [self lagrangianSubgradientSolve: bound];
 }
 

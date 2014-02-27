@@ -751,6 +751,15 @@
             [softCstrs addObject: c];
     return softCstrs;
 }
+-(NSArray*) hardConstraints
+{
+    NSArray* cstrs = [self constraints];
+    NSMutableArray* hardCstrs = [[NSMutableArray alloc] initWithCapacity: 64];
+    for(id<ORConstraint> c in cstrs)
+        if(![c conformsToProtocol: @protocol(ORSoftConstraint)])
+            [hardCstrs addObject: c];
+    return hardCstrs;
+}
 -(NSArray*) parameters
 {
     return _params;
