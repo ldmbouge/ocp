@@ -38,41 +38,25 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     ORExprBinaryI* binexpr = (ORExprBinaryI*)[cstr expr];
+    id<ORExpr> slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
     id<ORVar> slack = nil;
+    if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, [slackExpr min], [slackExpr max])];
+    else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: [slackExpr min] up: [slackExpr max]];
+    else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
+
     id<ORRelation> softExpr = nil;
-    switch([binexpr type]) {
-       case ORRLEq:
-            if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [[binexpr left] max])];
-            else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [[binexpr left] max]];
-            else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-            softExpr = [[[binexpr left] sub: slack] leq: [binexpr right] track: _target];
-            break;
-       case ORRGEq:
-            if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [[binexpr right] max])];
-            else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [[binexpr right] max]];
-            else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-            softExpr = [[[binexpr left] plus: slack] geq: [binexpr right] track: _target];
-            break;
-       case ORREq:
-          ;
-          id<ORVar> alpha = nil;
-          id<ORVar> beta = nil;
-          if([binexpr vtype] == ORTInt || [binexpr vtype] == ORTFloat) {
-             alpha = [ORFactory intVar: _target domain: RANGE(_target, 0, [[binexpr right] max])];
-             beta = [ORFactory intVar: _target domain: RANGE(_target, 0, [[binexpr left] max])];
-             slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [[binexpr right] max] + [[binexpr left] max])];
-             softExpr = [[[[binexpr left] plus: alpha] sub: beta] eq: [binexpr right] track: _target];
-             [_target add: [slack eq: [alpha plus: beta]]];
-          }
-          else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-          softExpr = [[[binexpr left] plus: slack] geq: [binexpr right] track: _target];
-          break;
-       default: [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-    }
+    softExpr = [slack eq: slackExpr track: _target];
+//    switch([binexpr type]) {
+//        case ORRLEq: softExpr = [[[binexpr left] sub: slack] leq: [binexpr right] track: _target]; break;
+//        case ORRGEq: softExpr = [[[binexpr left] plus: slack] geq: [binexpr right] track: _target]; break;
+//        case ORREq: softExpr = [[[binexpr left] plus: slack] eq: [binexpr right] track: _target]; break;
+//        default: [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
+//    }
     id<ORSoftConstraint> softCstr = [[ORSoftAlgebraicConstraintI alloc]
                                      initORSoftAlgebraicConstraintI: softExpr
                                      slack: slack];
     [_target add: softCstr];
+    //[_target add: [slack geq: slackExpr track: _target]];
     [[_target tau] set: softCstr forKey: cstr];
 }
 
