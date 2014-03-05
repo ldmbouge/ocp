@@ -185,7 +185,7 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> fa = [ORFactory floatArray:[a tracker] range:[a range] with:^ORFloat(ORInt k) {
+      id<ORFloatArray> fa = [ORFactory floatArray:[_MIPsolver tracker] range:[a range] with:^ORFloat(ORInt k) {
          return [a at:k];
       }];
       ORFloat cst = [c cst];
