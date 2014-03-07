@@ -19,7 +19,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 #import <objcp/CPBitVar.h>
-#import <objcp/CPBitVarI.h>
+//#import <objcp/CPBitVarI.h>
 
 #import "CPProgram.h"
 #import "CPSolver.h"

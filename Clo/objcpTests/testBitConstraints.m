@@ -1055,7 +1055,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
 //         [cp3 labelUpFromLSB:cin];
 //         [cp3 labelUpFromLSB:co];
          [cp3 solve: ^{
-            id<CPHeuristic> h = [cp3 createBitVarABS];
+            id<CPBitVarHeuristic> h = [cp3 createBitVarFF];
             [cp3 labelBitVarHeuristic:h];
          }];
          [cp3 release];
@@ -1072,7 +1072,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
          //         STAssertTrue([[co3 stringValue] isEqualToString:@"0000000000000000000000000000000000000000000000000000000000000000"],@"testBitSUMConstraint: Bit Pattern for Cout is incorrect.");
       }
       @catch (NSException *exception) {
-         NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);
+         NSLog(@"testSumConstraint: Caught %@: %@", [exception name], [exception reason]);
       }
    }];
    

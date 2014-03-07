@@ -24,6 +24,6 @@
 -(ORFloat)varOrdering:(id<CPBitVar>)x;
 -(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x ;
 -(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv;
--(id<CPVarArray>)allBitVars;
+-(id<ORVarArray>)allBitVars;
 -(id<CPProgram>)solver;
 @end

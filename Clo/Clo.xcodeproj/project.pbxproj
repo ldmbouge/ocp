@@ -1262,38 +1262,22 @@
 		F50D95AE16835AE4001D5E3C /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		F50D95AF16835AE4001D5E3C /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		F50D95B016835AE4001D5E3C /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		F515FEFA18BA7283000429E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FEF918BA7283000429E7 /* main.m */; };
-		F515FF1818BA72CD000429E7 /* objcp-parser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFB18BA72CC000429E7 /* objcp-parser.c */; };
 		F515FF1918BA72CD000429E7 /* smtlib2abstractparser_private.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FEFC18BA72CC000429E7 /* smtlib2abstractparser_private.h */; };
-		F515FF1A18BA72CD000429E7 /* smtlib2abstractparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFD18BA72CC000429E7 /* smtlib2abstractparser.c */; };
 		F515FF1B18BA72CD000429E7 /* smtlib2abstractparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FEFE18BA72CC000429E7 /* smtlib2abstractparser.h */; };
-		F515FF1C18BA72CD000429E7 /* smtlib2bisonparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFF18BA72CC000429E7 /* smtlib2bisonparser.c */; };
 		F515FF1D18BA72CD000429E7 /* smtlib2bisonparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0018BA72CC000429E7 /* smtlib2bisonparser.h */; };
-		F515FF1E18BA72CD000429E7 /* smtlib2bisonparser.y in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0118BA72CC000429E7 /* smtlib2bisonparser.y */; };
-		F515FF1F18BA72CD000429E7 /* smtlib2charbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0218BA72CC000429E7 /* smtlib2charbuf.c */; };
 		F515FF2018BA72CD000429E7 /* smtlib2charbuf.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0318BA72CC000429E7 /* smtlib2charbuf.h */; };
-		F515FF2118BA72CD000429E7 /* smtlib2flexlexer.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0418BA72CC000429E7 /* smtlib2flexlexer.c */; };
 		F515FF2218BA72CD000429E7 /* smtlib2flexlexer.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0518BA72CC000429E7 /* smtlib2flexlexer.h */; };
 		F515FF2318BA72CD000429E7 /* smtlib2genvector.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0618BA72CC000429E7 /* smtlib2genvector.h */; };
-		F515FF2418BA72CD000429E7 /* smtlib2hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0718BA72CC000429E7 /* smtlib2hashtable.c */; };
 		F515FF2518BA72CD000429E7 /* smtlib2hashtable.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0818BA72CC000429E7 /* smtlib2hashtable.h */; };
-		F515FF2618BA72CD000429E7 /* smtlib2objcp.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0918BA72CC000429E7 /* smtlib2objcp.c */; };
 		F515FF2718BA72CD000429E7 /* smtlib2objcp.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0A18BA72CC000429E7 /* smtlib2objcp.h */; };
 		F515FF2818BA72CD000429E7 /* smtlib2parser.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0B18BA72CC000429E7 /* smtlib2parser.h */; };
 		F515FF2918BA72CD000429E7 /* smtlib2parserinterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0C18BA72CC000429E7 /* smtlib2parserinterface.h */; };
-		F515FF2A18BA72CD000429E7 /* smtlib2scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0D18BA72CC000429E7 /* smtlib2scanner.c */; };
 		F515FF2B18BA72CD000429E7 /* smtlib2scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF0E18BA72CC000429E7 /* smtlib2scanner.h */; };
-		F515FF2C18BA72CD000429E7 /* smtlib2stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0F18BA72CC000429E7 /* smtlib2stream.c */; };
 		F515FF2D18BA72CD000429E7 /* smtlib2stream.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1018BA72CD000429E7 /* smtlib2stream.h */; };
-		F515FF2E18BA72CD000429E7 /* smtlib2termparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1118BA72CD000429E7 /* smtlib2termparser.c */; };
 		F515FF2F18BA72CD000429E7 /* smtlib2termparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1218BA72CD000429E7 /* smtlib2termparser.h */; };
 		F515FF3018BA72CD000429E7 /* smtlib2types.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1318BA72CD000429E7 /* smtlib2types.h */; };
-		F515FF3118BA72CD000429E7 /* smtlib2utils.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1418BA72CD000429E7 /* smtlib2utils.c */; };
 		F515FF3218BA72CD000429E7 /* smtlib2utils.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1518BA72CD000429E7 /* smtlib2utils.h */; };
-		F515FF3318BA72CD000429E7 /* smtlib2vector.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1618BA72CD000429E7 /* smtlib2vector.c */; };
 		F515FF3418BA72CD000429E7 /* smtlib2vector.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF1718BA72CD000429E7 /* smtlib2vector.h */; };
-		F515FF3618BA738B000429E7 /* objcpgateway.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FF3518BA738B000429E7 /* objcpgateway.m */; };
-		F515FF3818BA7407000429E7 /* objcpgateway.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FF3718BA7407000429E7 /* objcpgateway.h */; };
 		F515FF3E18BBCD52000429E7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		F515FF4118BBCD52000429E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FF4018BBCD52000429E7 /* main.m */; };
 		F515FF4518BBCD52000429E7 /* SMTLIB2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = F515FF4418BBCD52000429E7 /* SMTLIB2.1 */; };
@@ -1304,31 +1288,28 @@
 		F515FF5A18BBCDCB000429E7 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		F515FF5B18BBCDCB000429E7 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		F515FF5C18BBCDCB000429E7 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		F515FF5D18BBCDDF000429E7 /* objcp-parser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFB18BA72CC000429E7 /* objcp-parser.c */; };
 		F515FF5F18BBCDDF000429E7 /* smtlib2abstractparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFD18BA72CC000429E7 /* smtlib2abstractparser.c */; };
 		F515FF6118BBCDDF000429E7 /* smtlib2bisonparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FEFF18BA72CC000429E7 /* smtlib2bisonparser.c */; };
 		F515FF6418BBCDDF000429E7 /* smtlib2charbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0218BA72CC000429E7 /* smtlib2charbuf.c */; };
 		F515FF6618BBCDDF000429E7 /* smtlib2flexlexer.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0418BA72CC000429E7 /* smtlib2flexlexer.c */; };
 		F515FF6918BBCDDF000429E7 /* smtlib2hashtable.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0718BA72CC000429E7 /* smtlib2hashtable.c */; };
-		F515FF6B18BBCDDF000429E7 /* smtlib2objcp.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0918BA72CC000429E7 /* smtlib2objcp.c */; };
+		F515FF6B18BBCDDF000429E7 /* smtlib2objcp.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0918BA72CC000429E7 /* smtlib2objcp.m */; };
 		F515FF6F18BBCDDF000429E7 /* smtlib2scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0D18BA72CC000429E7 /* smtlib2scanner.c */; };
 		F515FF7118BBCDDF000429E7 /* smtlib2stream.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF0F18BA72CC000429E7 /* smtlib2stream.c */; };
 		F515FF7318BBCDDF000429E7 /* smtlib2termparser.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1118BA72CD000429E7 /* smtlib2termparser.c */; };
 		F515FF7618BBCDDF000429E7 /* smtlib2utils.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1418BA72CD000429E7 /* smtlib2utils.c */; };
 		F515FF7818BBCDDF000429E7 /* smtlib2vector.c in Sources */ = {isa = PBXBuildFile; fileRef = F515FF1618BA72CD000429E7 /* smtlib2vector.c */; };
-		F515FF7A18BBCDDF000429E7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FEF918BA7283000429E7 /* main.m */; };
 		F515FF7B18BBCDDF000429E7 /* objcpgateway.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FF3518BA738B000429E7 /* objcpgateway.m */; };
 		F515FF7E18BBD229000429E7 /* CPBitVarABS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D86188860B700A27F2F /* CPBitVarABS.m */; };
 		F515FF7F18BBD22E000429E7 /* CPBitVarIBS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D8A188860B700A27F2F /* CPBitVarIBS.m */; };
 		F548AA73167FB1C600726814 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		F548AA76167FB1C600726814 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AA75167FB1C600726814 /* main.m */; };
 		F548AAB21680B3A500726814 /* MD4.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AAB11680B3A500726814 /* MD4.m */; };
+		F5578B9318BC175A0067F74D /* objcpgateway.h in Headers */ = {isa = PBXBuildFile; fileRef = F5578B9218BC175A0067F74D /* objcpgateway.h */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
-		F5EA7D3E18885EC200A27F2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D2F18885EC200A27F2F /* main.m */; };
+		F5618DA518C1075D0044D997 /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F5618DA118C104AD0044D997 /* libgmp.dylib */; };
 		F5EA7D3F18885EC200A27F2F /* SHA1b.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D3018885EC200A27F2F /* SHA1b.h */; };
-		F5EA7D4018885EC200A27F2F /* SHA1b.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D3118885EC200A27F2F /* SHA1b.m */; };
 		F5EA7D4118885EC200A27F2F /* SHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D3218885EC200A27F2F /* SHA1.h */; };
-		F5EA7D4218885EC200A27F2F /* SHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D3318885EC200A27F2F /* SHA1.m */; };
 		F5EA7D7318885F9D00A27F2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D6518885F9D00A27F2F /* main.m */; };
 		F5EA7D7518885F9D00A27F2F /* SHA1-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D6618885F9D00A27F2F /* SHA1-Prefix.pch */; };
 		F5EA7D7618885F9D00A27F2F /* SHA1.1 in Resources */ = {isa = PBXBuildFile; fileRef = F5EA7D6718885F9D00A27F2F /* SHA1.1 */; };
@@ -6236,8 +6217,6 @@
 		B1F531DF15AED4B100E89F98 /* testPacking-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testPacking-Prefix.pch"; sourceTree = "<group>"; };
 		B1F531E015AED4B100E89F98 /* testPacking.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testPacking.1; sourceTree = "<group>"; };
 		B1FBA2F017BF1AE0000F5F43 /* ORVisit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORVisit.m; sourceTree = "<group>"; };
-		F515FEF918BA7283000429E7 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Verification/main.m; sourceTree = "<group>"; };
-		F515FEFB18BA72CC000429E7 /* objcp-parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "objcp-parser.c"; path = "Verification/objcp-parser.c"; sourceTree = "<group>"; };
 		F515FEFC18BA72CC000429E7 /* smtlib2abstractparser_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2abstractparser_private.h; path = Verification/smtlib2abstractparser_private.h; sourceTree = "<group>"; };
 		F515FEFD18BA72CC000429E7 /* smtlib2abstractparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2abstractparser.c; path = Verification/smtlib2abstractparser.c; sourceTree = "<group>"; };
 		F515FEFE18BA72CC000429E7 /* smtlib2abstractparser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2abstractparser.h; path = Verification/smtlib2abstractparser.h; sourceTree = "<group>"; };
@@ -6251,7 +6230,7 @@
 		F515FF0618BA72CC000429E7 /* smtlib2genvector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2genvector.h; path = Verification/smtlib2genvector.h; sourceTree = "<group>"; };
 		F515FF0718BA72CC000429E7 /* smtlib2hashtable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2hashtable.c; path = Verification/smtlib2hashtable.c; sourceTree = "<group>"; };
 		F515FF0818BA72CC000429E7 /* smtlib2hashtable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2hashtable.h; path = Verification/smtlib2hashtable.h; sourceTree = "<group>"; };
-		F515FF0918BA72CC000429E7 /* smtlib2objcp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2objcp.c; path = Verification/smtlib2objcp.c; sourceTree = "<group>"; };
+		F515FF0918BA72CC000429E7 /* smtlib2objcp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = smtlib2objcp.m; path = Verification/smtlib2objcp.m; sourceTree = "<group>"; };
 		F515FF0A18BA72CC000429E7 /* smtlib2objcp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2objcp.h; path = Verification/smtlib2objcp.h; sourceTree = "<group>"; };
 		F515FF0B18BA72CC000429E7 /* smtlib2parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2parser.h; path = Verification/smtlib2parser.h; sourceTree = "<group>"; };
 		F515FF0C18BA72CC000429E7 /* smtlib2parserinterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2parserinterface.h; path = Verification/smtlib2parserinterface.h; sourceTree = "<group>"; };
@@ -6267,7 +6246,6 @@
 		F515FF1618BA72CD000429E7 /* smtlib2vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smtlib2vector.c; path = Verification/smtlib2vector.c; sourceTree = "<group>"; };
 		F515FF1718BA72CD000429E7 /* smtlib2vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smtlib2vector.h; path = Verification/smtlib2vector.h; sourceTree = "<group>"; };
 		F515FF3518BA738B000429E7 /* objcpgateway.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = objcpgateway.m; path = Verification/objcpgateway.m; sourceTree = "<group>"; };
-		F515FF3718BA7407000429E7 /* objcpgateway.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcpgateway.h; sourceTree = "<group>"; };
 		F515FF3D18BBCD52000429E7 /* SMTLIB2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SMTLIB2; sourceTree = BUILT_PRODUCTS_DIR; };
 		F515FF4018BBCD52000429E7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F515FF4318BBCD52000429E7 /* SMTLIB2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SMTLIB2-Prefix.pch"; sourceTree = "<group>"; };
@@ -6278,8 +6256,12 @@
 		F548AA79167FB1C700726814 /* MD5.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MD5.1; sourceTree = "<group>"; };
 		F548AAB01680B3A500726814 /* MD4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD4.h; sourceTree = "<group>"; };
 		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
+		F5578B9218BC175A0067F74D /* objcpgateway.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = objcpgateway.h; path = Verification/objcpgateway.h; sourceTree = "<group>"; };
 		F55DEFB516C9F33E005818AF /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
 		F55DEFB616C9F33E005818AF /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
+		F5618DA118C104AD0044D997 /* libgmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.dylib; path = ../../../../../../usr/local/lib/libgmp.dylib; sourceTree = "<group>"; };
+		F5618DA318C104F60044D997 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = ../../../../../../usr/local/lib/libgmp.a; sourceTree = "<group>"; };
+		F5618DA618C107800044D997 /* libgmp.la */ = {isa = PBXFileReference; lastKnownFileType = text; name = libgmp.la; path = ../../../../../../usr/local/lib/libgmp.la; sourceTree = "<group>"; };
 		F5EA7D2F18885EC200A27F2F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SHA1/main.m; sourceTree = "<group>"; };
 		F5EA7D3018885EC200A27F2F /* SHA1b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA1b.h; path = SHA1/SHA1/SHA1b.h; sourceTree = "<group>"; };
 		F5EA7D3118885EC200A27F2F /* SHA1b.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA1b.m; path = SHA1/SHA1/SHA1b.m; sourceTree = "<group>"; };
@@ -7443,6 +7425,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5618DA518C1075D0044D997 /* libgmp.dylib in Frameworks */,
 				F515FF5618BBCDCB000429E7 /* CPUKernel.framework in Frameworks */,
 				F515FF5718BBCDCB000429E7 /* objcp.framework in Frameworks */,
 				F515FF5818BBCDCB000429E7 /* objmp.framework in Frameworks */,
@@ -8068,6 +8051,9 @@
 		5B6E89231379D3E9005DB4CA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F5618DA618C107800044D997 /* libgmp.la */,
+				F5618DA318C104F60044D997 /* libgmp.a */,
+				F5618DA118C104AD0044D997 /* libgmp.dylib */,
 				5B6E89241379D3E9005DB4CA /* CoreData.framework */,
 				5B6E89261379D3E9005DB4CA /* Foundation.framework */,
 				5B9ABCE1139131EE000997E5 /* CoreFoundation.framework */,
@@ -9550,7 +9536,6 @@
 		F515FEBE18BA7122000429E7 /* Verification */ = {
 			isa = PBXGroup;
 			children = (
-				F515FEFB18BA72CC000429E7 /* objcp-parser.c */,
 				F515FEFC18BA72CC000429E7 /* smtlib2abstractparser_private.h */,
 				F515FEFD18BA72CC000429E7 /* smtlib2abstractparser.c */,
 				F515FEFE18BA72CC000429E7 /* smtlib2abstractparser.h */,
@@ -9564,7 +9549,7 @@
 				F515FF0618BA72CC000429E7 /* smtlib2genvector.h */,
 				F515FF0718BA72CC000429E7 /* smtlib2hashtable.c */,
 				F515FF0818BA72CC000429E7 /* smtlib2hashtable.h */,
-				F515FF0918BA72CC000429E7 /* smtlib2objcp.c */,
+				F515FF0918BA72CC000429E7 /* smtlib2objcp.m */,
 				F515FF0A18BA72CC000429E7 /* smtlib2objcp.h */,
 				F515FF0B18BA72CC000429E7 /* smtlib2parser.h */,
 				F515FF0C18BA72CC000429E7 /* smtlib2parserinterface.h */,
@@ -9579,9 +9564,8 @@
 				F515FF1518BA72CD000429E7 /* smtlib2utils.h */,
 				F515FF1618BA72CD000429E7 /* smtlib2vector.c */,
 				F515FF1718BA72CD000429E7 /* smtlib2vector.h */,
-				F515FEF918BA7283000429E7 /* main.m */,
+				F5578B9218BC175A0067F74D /* objcpgateway.h */,
 				F515FF3518BA738B000429E7 /* objcpgateway.m */,
-				F515FF3718BA7407000429E7 /* objcpgateway.h */,
 			);
 			name = Verification;
 			sourceTree = "<group>";
@@ -9906,6 +9890,7 @@
 				B1CC82F715D27C66008DE335 /* ORConstraintI.h in Headers */,
 				5BEC256015DBF60F0084DEE8 /* ORSemDFSController.h in Headers */,
 				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
+				F5578B9318BC175A0067F74D /* objcpgateway.h in Headers */,
 				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
 				5B57E5DF161F275200DB249A /* ORExpr.h in Headers */,
 				B148C0C8182175B0009BE440 /* ORFunc.h in Headers */,
@@ -9915,7 +9900,6 @@
 				5B57E5E5161F295000DB249A /* ORVisit.h in Headers */,
 				5BDF5FA6161F4F9900E5E1FA /* ORVarI.h in Headers */,
 				B1AAA33A164AADAD00CE9AED /* ORObject.h in Headers */,
-				F515FF3818BA7407000429E7 /* objcpgateway.h in Headers */,
 				F515FF2918BA72CD000429E7 /* smtlib2parserinterface.h in Headers */,
 				F515FF2818BA72CD000429E7 /* smtlib2parser.h in Headers */,
 				F515FF2D18BA72CD000429E7 /* smtlib2stream.h in Headers */,
@@ -12908,50 +12892,32 @@
 			files = (
 				5BFD594E15A3ACA500825BC3 /* ORFoundation.m in Sources */,
 				5BFD5A6A15A3BC1D00825BC3 /* ORAVLTree.m in Sources */,
-				F515FF2618BA72CD000429E7 /* smtlib2objcp.c in Sources */,
 				5B8B12DC15A3BF8000300385 /* ORError.m in Sources */,
-				F515FF2118BA72CD000429E7 /* smtlib2flexlexer.c in Sources */,
-				F515FF2E18BA72CD000429E7 /* smtlib2termparser.c in Sources */,
-				F515FF1F18BA72CD000429E7 /* smtlib2charbuf.c in Sources */,
 				5BD2DFC915A3CEC700D4C616 /* ORSetI.m in Sources */,
 				5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */,
-				F5EA7D4018885EC200A27F2F /* SHA1b.m in Sources */,
 				5B920EB415A3F6DD00AD0820 /* ORFactory.m in Sources */,
 				5B920EBC15A3FDB800AD0820 /* ORDataI.m in Sources */,
 				5B920EC015A402A600AD0820 /* ORArrayI.m in Sources */,
 				5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */,
 				5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */,
-				F515FF3318BA72CD000429E7 /* smtlib2vector.c in Sources */,
 				B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */,
 				5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */,
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,
-				F515FEFA18BA7283000429E7 /* main.m in Sources */,
-				F515FF3618BA738B000429E7 /* objcpgateway.m in Sources */,
-				F5EA7D4218885EC200A27F2F /* SHA1.m in Sources */,
 				B148C0C9182175B0009BE440 /* ORFunc.m in Sources */,
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
-				F515FF2C18BA72CD000429E7 /* smtlib2stream.c in Sources */,
-				F515FF1C18BA72CD000429E7 /* smtlib2bisonparser.c in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
 				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,
 				B1CC82F815D27C66008DE335 /* ORConstraintI.m in Sources */,
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,
-				F515FF1A18BA72CD000429E7 /* smtlib2abstractparser.c in Sources */,
 				5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */,
 				5BF903B415DC0ABC003E36BC /* ORSemBDSController.m in Sources */,
-				F515FF3118BA72CD000429E7 /* smtlib2utils.c in Sources */,
-				F515FF1E18BA72CD000429E7 /* smtlib2bisonparser.y in Sources */,
 				B189512115DE434A00B77813 /* ORSelectorI.m in Sources */,
 				5B57E5E1161F276800DB249A /* ORExprI.m in Sources */,
 				5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */,
 				B1AAA33B164AADAD00CE9AED /* ORObject.m in Sources */,
-				F5EA7D3E18885EC200A27F2F /* main.m in Sources */,
-				F515FF1818BA72CD000429E7 /* objcp-parser.c in Sources */,
 				B1FBA2F117BF1AE0000F5F43 /* ORVisit.m in Sources */,
-				F515FF2A18BA72CD000429E7 /* smtlib2scanner.c in Sources */,
-				F515FF2418BA72CD000429E7 /* smtlib2hashtable.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13186,19 +13152,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F515FF5D18BBCDDF000429E7 /* objcp-parser.c in Sources */,
 				F515FF5F18BBCDDF000429E7 /* smtlib2abstractparser.c in Sources */,
 				F515FF6118BBCDDF000429E7 /* smtlib2bisonparser.c in Sources */,
 				F515FF6418BBCDDF000429E7 /* smtlib2charbuf.c in Sources */,
 				F515FF6618BBCDDF000429E7 /* smtlib2flexlexer.c in Sources */,
 				F515FF6918BBCDDF000429E7 /* smtlib2hashtable.c in Sources */,
-				F515FF6B18BBCDDF000429E7 /* smtlib2objcp.c in Sources */,
+				F515FF6B18BBCDDF000429E7 /* smtlib2objcp.m in Sources */,
 				F515FF6F18BBCDDF000429E7 /* smtlib2scanner.c in Sources */,
 				F515FF7118BBCDDF000429E7 /* smtlib2stream.c in Sources */,
 				F515FF7318BBCDDF000429E7 /* smtlib2termparser.c in Sources */,
 				F515FF7618BBCDDF000429E7 /* smtlib2utils.c in Sources */,
 				F515FF7818BBCDDF000429E7 /* smtlib2vector.c in Sources */,
-				F515FF7A18BBCDDF000429E7 /* main.m in Sources */,
 				F515FF7B18BBCDDF000429E7 /* objcpgateway.m in Sources */,
 				F515FF4118BBCD52000429E7 /* main.m in Sources */,
 			);
@@ -20187,7 +20151,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -20205,6 +20169,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -20216,7 +20181,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -20230,6 +20195,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -20241,7 +20207,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -20255,6 +20221,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -21209,6 +21176,7 @@
 				F515FF4918BBCD53000429E7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F548AA7D167FB1C700726814 /* Build configuration list for PBXNativeTarget "MD5" */ = {
 			isa = XCConfigurationList;

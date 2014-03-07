@@ -29,12 +29,16 @@
 
 #include "smtlib2abstractparser.h"
 #include "smtlib2abstractparser_private.h"
-//#include <gmp.h>
+#include "/usr/local/include/gmp.h"
 #include "OBJCPgateway.h"
+
+OBJCPGateway* objcpgw;
+
+typedef enum {l_false, l_undef, l_true}lbool;
 
 typedef struct smtlib2_objcp_parser {
     smtlib2_abstract_parser parent_;
-    OBJCPGateway.objcp_context ctx_;
+    objcp_context ctx_;
     smtlib2_hashtable *sorts_;
     smtlib2_hashtable *parametric_sorts_;
     int next_sort_idx_;

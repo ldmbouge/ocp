@@ -40,7 +40,7 @@
 }
 -(id<CPVarArray>)allBitVars
 {
-   return (id<CPVarArray>) (_rvars!=nil ? _rvars : _cvs);
+   return (id<ORVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
 -(ORFloat)varOrdering:(id<CPBitVar>)x

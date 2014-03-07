@@ -55,10 +55,10 @@
     _max = malloc(sizeof(TRUInt)*_wordLength);
     
     for(int i=0;i<_wordLength;i++){
-        _low[i] = makeTRUInt(tr, low[i]);
-        _up[i]  = makeTRUInt(tr, up[i]);
-        _min[i] = makeTRUInt(tr, low[i]);
-        _max[i] = makeTRUInt(tr, up[i]);        
+        _low[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
+        _up[_wordLength - 1 - i]  = makeTRUInt(tr, up[i]);
+        _min[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
+        _max[_wordLength - 1 - i] = makeTRUInt(tr, up[i]);
     }
     unsigned int boundBits = 0;
     unsigned int freeBits = 0;
@@ -75,30 +75,38 @@
 -(NSString*)    description
 {
    NSMutableString* string = [[[NSMutableString alloc] init] autorelease];
-   for(int i=0; i< _wordLength;i++){
-      unsigned int boundLow = (~ _up[i]._val) & (~_low[i]._val);
-      unsigned int boundUp = _up[i]._val & _low[i]._val;
-      unsigned int err = ~_up[i]._val & _low[i]._val;
-      unsigned int mask = CP_DESC_MASK;
-      if (i>0 && _wordLength>1)
+   
+   
+   int remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
+   unsigned int boundLow = (~ _up[_wordLength-1]._val) & (~_low[_wordLength-1]._val);
+   unsigned int boundUp = _up[_wordLength-1]._val & _low[_wordLength-1]._val;
+   unsigned int err = ~_up[_wordLength-1]._val & _low[_wordLength-1]._val;
+   unsigned int mask = CP_DESC_MASK;
+
+   mask >>= 32 - remainingbits;
+   for (int j=0; j<remainingbits; j++){
+      if ((mask & boundLow) !=0)
+         [string appendString: @"0"];
+      else if ((mask & boundUp) !=0)
+         [string appendString: @"1"];
+      else if ((mask & err) != 0)
+         [string appendString: @"X"];
+      else
+         [string appendString: @"?"];
+      mask >>= 1;
+   }
+
+   if(_wordLength > 1){
+      for(int i=_wordLength-2; i>=0;i--){
+      boundLow = (~ _up[i]._val) & (~_low[i]._val);
+      boundUp = _up[i]._val & _low[i]._val;
+      err = ~_up[i]._val & _low[i]._val;
+      mask = CP_DESC_MASK;
+
          for (int j=0; j<32; j++){
             if ((mask & boundLow) != 0) 
                [string appendString: @"0"];
             else if ((mask & boundUp) != 0)
-               [string appendString: @"1"];
-            else if ((mask & err) != 0)
-               [string appendString: @"X"];
-            else
-               [string appendString: @"?"];
-            mask >>= 1;
-         }
-      else{
-         int remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
-         mask >>= 32 - remainingbits;
-         for (int j=0; j<remainingbits; j++){
-            if ((mask & boundLow) !=0) 
-               [string appendString: @"0"];
-            else if ((mask & boundUp) !=0)
                [string appendString: @"1"];
             else if ((mask & err) != 0)
                [string appendString: @"X"];
