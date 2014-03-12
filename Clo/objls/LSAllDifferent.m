@@ -33,12 +33,9 @@
    _x   = x;
    _src = nil;
    _posted = NO;
-   _low = FDMAXINT;
-   _up  = 0;
-   for(id<LSIntVar> v in _x) {
-      _low = getId(v) < _low ? getId(v) : _low;
-      _up  = getId(v) > _up  ? getId(v) : _up;
-   }
+   ORBounds b = idRange(_x, (ORBounds){FDMAXINT,0});
+   _low = b.min;
+   _up  = b.max;
    _present = malloc(sizeof(unsigned char)*(_up - _low + 1));
    _present -= _low;
    memset(_present,0,sizeof(unsigned char)*(_up - _low + 1));
@@ -89,6 +86,8 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
 
 -(void)post
 {
+   if (_posted) return;
+   _posted = YES;
    ORInt lb=FDMAXINT,ub=FDMININT;
    for(id<LSIntVar> xk in _x) {
       ORInt lk = [xk domain].low;
@@ -98,7 +97,6 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
    }
    id<ORIntRange> vals = RANGE(_engine,lb,ub);
    id<ORIntRange> cd   = RANGE(_engine,0,_x.range.size);
-   if (_posted) return;
    _c = [LSFactory intVarArray:_engine range:vals with:^id<LSIntVar>(ORInt i) {
       return [LSFactory intVar:_engine domain:cd];
    }];

@@ -355,6 +355,12 @@ void printLists(LSGElement* elt)
    [[x engine] trackMutable:gi];
    return gi;
 }
++(LSScaledSum*)sum:(id<LSIntVar>)x is:(id<ORIntArray>)c times:(id<LSIntVarArray>)terms
+{
+   LSScaledSum* gi = [[LSScaledSum alloc] init:[x engine] sum:x coefs:c array:terms];
+   [[x engine] trackMutable:gi];
+   return gi;
+}
 +(LSGElement*)gelt:(id<LSEngine>)e x:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y
 {
    LSGElement* gi = [[LSGElement alloc] init:e count:x card:c result:y];
