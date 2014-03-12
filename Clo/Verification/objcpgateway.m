@@ -8,6 +8,41 @@
 
 #import "OBJCPGateway.h"
 
+@interface OBJCPType : NSObject{
+@private
+   NSString* _name;
+   objcp_var_type _type;
+   ORInt    _size;
+}
+-initExplicit:(NSString*)name withType:(objcp_var_type)type;
+-initExplicitWithSize:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size;
+-(NSString*) getName;
+-(objcp_var_type) getType;
+@end
+
+@implementation OBJCPType
+-initExplicit:(NSString*)name withType:(objcp_var_type)type{
+   self=[super init];
+   _name = name;
+   _type = type;
+   _size = 1;
+   return self;
+}
+-initExplicitWithSize:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size{
+   self=[super init];
+   _name = name;
+   _type = type;
+   _size = size;
+   return self;
+}
+-(NSString*) getName{
+   return _name;
+}
+-(objcp_var_type) getType{
+   return _type;
+}
+@end
+
 @implementation OBJCPGateway:NSObject
 +(OBJCPGateway*) initOBJCPGateway{
    OBJCPGateway* x = [[OBJCPGateway alloc]initExplicitOBJCPGateway];
@@ -17,6 +52,8 @@
 -(OBJCPGateway*) initExplicitOBJCPGateway{
    self = [super init];
    _model = [ORFactory createModel];
+   _variables = [[NSMutableDictionary alloc] initWithCapacity:10];
+   _types = [[NSMutableDictionary alloc] initWithCapacity:10];
    return self;
 }
 -(id<ORModel>) getModel{
@@ -37,9 +74,23 @@
    return NULL;
 }
 
--(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type{
-   NSLog(@"Make variable declaration not implemented");
-   return NULL;
+-(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_var_decl) type{
+   NSLog(@"Make variable declaration not implemented. Name was %s and type was %ld", name, (long)type);
+//   ORUInt* min;
+//   ORUInt* max;
+//   
+//   min = alloca(sizeof(ORInt));
+//   max = alloca(sizeof(ORInt));
+//   min[0] = 0;
+//   max[0] = 0xFFFFFFFF;
+//   id<ORBitVar> bv = [ORFactory bitVar:_model low:min up:max bitLength:32];
+//   NSString *key = [[NSString alloc] initWithUTF8String:name];
+//   [_variables setObject:bv forKey:key];
+//   return bv;
+   NSString* nameString =[[NSString alloc] initWithUTF8String:name];
+   OBJCPType* t = [[OBJCPType alloc] initExplicit:nameString withType:OR_BV];
+   [_types setObject:t forKey:type];
+   return t;
 }
 
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t{
@@ -47,9 +98,11 @@
    return NULL;
 }
 
--(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(char*) name{
-   NSLog(@"Get variable declaration from name not implemented");
-   return NULL;
+-(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name{
+//   NSLog(@"Get variable declaration from name not implemented. Name was %s",name);
+   NSString *key = [[NSString alloc] initWithUTF8String:name];
+   id<ORBitVar> bv = [_variables objectForKey:key];
+   return bv;
 }
 
 -(objcp_expr) objcp_mk_var_from_decl:(objcp_context) ctx withDecl:(objcp_var_decl) d{
@@ -62,7 +115,7 @@
 }
 
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name{
-   NSLog(@"Make type with name not implemented");
+   NSLog(@"Make type with name not implemented. Name was %s",name);
    return NULL;
 }
 
@@ -116,7 +169,20 @@ return 0;
 
 
 
-//objcp_assert_retractable
+   /**
+    \brief Assert a constraint that can be later retracted.
+    
+    \returns An id that can be used to retract the constraint.
+    
+    This is similar to #yices_assert_weighted, but the weight is considered to be infinite.
+    
+    \sa yices_retract
+    */
+-(assertion_id) objcp_assert_retractable:(objcp_context) ctx withExpr:(objcp_expr) expr{
+   NSLog(@"Assert Retractable not implemented");
+   return 0;
+}
+   
 /**
  \brief Assert a constraint in the logical context.
  
@@ -161,20 +227,31 @@ return 0;
    return false;
 }
 
-//-(ORUInt) objcp_get_unsat_core:(objcp_context) ctx withId:(assertion_id*)a;
+-(ORUInt) objcp_get_unsat_core:(objcp_context) ctx withId:(assertion_id*)a{
+   NSLog(@"Get unsat core size not implemented");
+   return 0;
+}
 -(ORUInt) objcp_get_unsat_core_size:(objcp_context) ctx{
    NSLog(@"Get unsat core size not implemented");
    return 0;
 }
 
--(objcp_expr) objcp_mk_app:(objcp_context)ctx withFun:(objcp_expr)f withArgs:(objcp_expr*)arg andNumArgs:(ORUInt)n{
+-(objcp_expr) objcp_mk_app:(objcp_context)ctx withFun:(objcp_expr)f withArgs:(objcp_expr*)arg andNumArgs:(ORULong)n{
    NSLog(@"Make bitvector not implemented");
    return NULL;
 }
 
 -(objcp_expr) objcp_mk_bv_constant_from_array:(objcp_context) ctx withSize:(ORUInt)size fromArray:(ORUInt*)bv{
-   id<ORBitVar> bitv = [ORFactory bitVar:_model low:bv up:bv bitLength:size];
-   //TODO:Shift/mask to create BV pattern
+   NSLog(@"Making bitvector constant from array");
+   ORUInt* pattern = alloca(sizeof(ORUInt)*(size%32));
+   for (int i=size; i<=0; i--) {
+      if (bv[i] != 0) {
+         pattern[i] += 1;
+      }
+      if (i != 0)
+         pattern[i%32] <<= 1;
+   }
+   id<ORBitVar> bitv = [ORFactory bitVar:_model low:pattern up:pattern bitLength:size];
    return bitv;
 }
 
@@ -197,7 +274,6 @@ return 0;
 //objcp_mk_diseq
 //objcp_mk_bv_concat
 -(objcp_expr) objcp_mk_bv_not:(objcp_context) ctx withArg:(objcp_expr) a1{
-   
    int size = [(id<ORBitVar>)a1 bitLength];
    
    ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);

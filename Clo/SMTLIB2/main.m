@@ -27,29 +27,26 @@
 
 int main(int argc, const char * argv[])
 {
-
-   OBJCPGateway* cpgw = [[OBJCPGateway initOBJCPGateway] initExplicitOBJCPGateway];
-   
-         char fname[256];
-      FILE* fp;
+   char fname[256];
+   FILE* fp;
       
       
-      if (argc > 1){
-         fp = fopen(fname, "r");
-         if (fp==NULL) {
-            printf("Error opening file.\n");
-            return false;
-         }
+   if (argc > 1){
+      fp = fopen(fname, "r");
+      if (fp==NULL) {
+         printf("Error opening file.\n");
+         return false;
       }
-      else{
-         fprintf(stdout, "Enter data file path and filename:");
-         fscanf(stdin, "%s", fname);
-         fp = fopen(fname, "r");
-         if (fp==NULL) {
-            printf("Error opening file.\n");
-            return false;
-         }
+   }
+   else{
+      fprintf(stdout, "Enter data file path and filename:");
+      fscanf(stdin, "%s", fname);
+      fp = fopen(fname, "r");
+      if (fp==NULL) {
+         printf("Error opening file.\n");
+         return false;
       }
+   }
    smtlib2_objcp_parser *objcp_parser = smtlib2_objcp_parser_new();
    smtlib2_abstract_parser_parse((smtlib2_abstract_parser *)objcp_parser, fp);
    smtlib2_objcp_parser_delete(objcp_parser);

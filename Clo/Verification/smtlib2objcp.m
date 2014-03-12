@@ -285,7 +285,7 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new(void)
                           (intptr_t)smtlib2_objcp_parametric_sort_new(
                               "Bool", NULL),
                           (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withName: "bool"]);
-    smtlib2_hashtable_set(ret->sorts_,
+      smtlib2_hashtable_set(ret->sorts_,
                           (intptr_t)smtlib2_objcp_parametric_sort_new(
                               "Int", NULL),
                           (intptr_t)[objcpgw objcp_mk_type:ret->ctx_ withName:"int"]);
@@ -497,7 +497,7 @@ static smtlib2_sort smtlib2_objcp_parser_make_function_sort(
     smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
 
     smtlib2_sort ret = NULL;
-    
+   NSLog(@"Make function sort called.");
     if (ap->response_ != SMTLIB2_RESPONSE_ERROR) {
         objcp_type *domain;
         objcp_type range;
@@ -629,24 +629,23 @@ static void smtlib2_objcp_parser_pop(smtlib2_parser_interface *p, int n)
 static void smtlib2_objcp_parser_assert_formula(smtlib2_parser_interface *p,
                                                 smtlib2_term term)
 {
-//    smtlib2_objcp_parser *yp = (smtlib2_objcp_parser *)p;
-//    smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
-//
-//    if (ap->response_ != SMTLIB2_RESPONSE_ERROR) {
-//        if (yp->produce_unsat_cores_) {
-//            intptr_t n;
-//            if (smtlib2_hashtable_find(yp->term_names_, (intptr_t)term, &n)) {
-//                assertion_id aid = objcp_assert_retractable(yp->ctx_,
-//                                                            (objcp_expr)term);
-//                smtlib2_hashtable_set(yp->assertion_ids_, aid, n);
-//            } else {
-//                objcp_assert(yp->ctx_, (objcp_expr)term);
-//            }
-//        } else {
-//            objcp_assert(yp->ctx_, (objcp_expr)term);
-//        }
-//        ap->response_ = SMTLIB2_RESPONSE_SUCCESS;
-//    }
+    smtlib2_objcp_parser *yp = (smtlib2_objcp_parser *)p;
+    smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
+
+    if (ap->response_ != SMTLIB2_RESPONSE_ERROR) {
+        if (yp->produce_unsat_cores_) {
+            intptr_t n;
+            if (smtlib2_hashtable_find(yp->term_names_, (intptr_t)term, &n)) {
+               assertion_id aid = [objcpgw objcp_assert_retractable:yp->ctx_ withExpr:(objcp_expr)term];
+                smtlib2_hashtable_set(yp->assertion_ids_, aid, n);
+            } else {
+               [objcpgw  objcp_assert:yp->ctx_ withExpr: (objcp_expr)term];
+            }
+        } else {
+           [objcpgw objcp_assert:yp->ctx_ withExpr:(objcp_expr)term];
+        }
+        ap->response_ = SMTLIB2_RESPONSE_SUCCESS;
+    }
 }
 
 
@@ -906,7 +905,7 @@ static void smtlib2_objcp_parser_get_unsat_core(smtlib2_parser_interface *p)
             } else {
                 unsigned int i;
                 core = (assertion_id *)malloc(sizeof(assertion_id) * n);
-               [objcpgw objcp_get_unsat_core:yp->ctx_ withCore:core];
+               [objcpgw objcp_get_unsat_core:yp->ctx_ withId:core];
 
                 ap->response_ = SMTLIB2_RESPONSE_UNSATCORE;
                 

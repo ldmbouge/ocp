@@ -1,6 +1,6 @@
 #ifndef OBJCPGATEWAY_H
 #define OBJCPGATEWAY_H
-//#import <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 //#import <Foundation/NSData.h>
 //#import <Foundation/NSString.h>
 
@@ -19,6 +19,8 @@
 #import <objcp/CPBitConstraint.h>
 #include "/usr/local/include/gmp.h"
 
+
+typedef enum {OR_BOOL, OR_INT, OR_REAL, OR_BV} objcp_var_type;
 
 // A context stores a collection of declarations and assertions.
 typedef void* objcp_context;
@@ -59,7 +61,8 @@ typedef int assertion_id;
 @interface OBJCPGateway : NSObject{
 @private
    id<ORModel> _model;
-   
+   NSMutableDictionary* _variables;
+   NSMutableDictionary* _types;
 }
 +(OBJCPGateway*) initOBJCPGateway;
 -(OBJCPGateway*) initExplicitOBJCPGateway;
@@ -71,7 +74,7 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_app:(objcp_context) ctx expr:(objcp_expr) f args:(objcp_expr*) args num:(unsigned int)n;
 -(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type;
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t;
--(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(char*) name;
+-(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name;
 -(objcp_expr) objcp_mk_var_from_decl:(objcp_context) ctx withDecl:(objcp_var_decl) d;
 -(void) objcp_set_arith_only:(int) flag;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name;
@@ -106,14 +109,15 @@ typedef int assertion_id;
  After an assertion, the logical context may become inconsistent.
  The method #yices_inconsistent may be used to check that.
  */
+-(assertion_id) objcp_assert_retractable:(objcp_context) ctx withExpr:(objcp_expr) expr;
 -(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr;
 -(ORBool) objcp_check:(objcp_context) ctx;
 -(objcp_model) objcp_get_model:(objcp_context) ctx;
 -(ORBool)objcp_evaluate_in_model:(objcp_model) m withExpr:(objcp_expr) expr;
 -(ORBool) objcp_get_value:(objcp_model) m withVar:(objcp_var_decl) v;
-//-(ORUInt) objcp_get_unsat_core:(objcp_context) ctx withId:(assertion_id*)a;
+-(ORUInt) objcp_get_unsat_core:(objcp_context) ctx withId:(assertion_id*)a;
 -(ORUInt) objcp_get_unsat_core_size:(objcp_context) ctx;
--(objcp_expr) objcp_mk_app:(objcp_context)ctx withFun:(objcp_expr)f withArgs:(objcp_expr*)arg andNumArgs:(ORUInt)n;
+-(objcp_expr) objcp_mk_app:(objcp_context)ctx withFun:(objcp_expr)f withArgs:(objcp_expr*)arg andNumArgs:(ORULong)n;
 -(objcp_expr) objcp_mk_bv_constant_from_array:(objcp_context) ctx withSize:(ORUInt)size fromArray:(ORUInt*)bv;
 //-(objcp_expr) objcp_mk_and
 //-(objcp_expr) objcp_mk_or
