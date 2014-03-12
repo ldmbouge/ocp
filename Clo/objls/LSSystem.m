@@ -55,7 +55,7 @@ typedef struct LSConstraintList {
       ORBounds idb = (ORBounds){FDMAXINT,0};
       for(id<LSConstraint> c in _cstrs) {
          ava[i] = [c variables];
-         idb = unionOf(idb, idRange(ava[i]));
+         idb = idRange(ava[i],idb);
          i++;
       }
       _lb = idb.min;

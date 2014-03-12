@@ -471,9 +471,9 @@
 {
    return [_lpsolver trackMutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_lpsolver trackVariable:obj];
+   return [_lpsolver trackVariable:obj];
 }
 -(id) trackImmutable:(id)obj
 {
@@ -584,9 +584,9 @@
 {
    return [_lpsolver trackMutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_lpsolver trackVariable:obj];
+   return [_lpsolver trackVariable:obj];
 }
 -(id) trackImmutable:(id) obj
 {

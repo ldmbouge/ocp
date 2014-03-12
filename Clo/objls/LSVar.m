@@ -10,6 +10,8 @@
  ***********************************************************************/
 
 #import <objls/LSVar.h>
+#import "LSPropagator.h"
+#import "LSFactory.h"
 
 ORBool isIdMapped(id<LSIntVarArray> array)
 {
@@ -59,12 +61,67 @@ ORBool containsVar(id<LSIntVarArray> array,ORInt name)
    return findByName(array,name) != nil;
 }
 
-ORBounds idRange(id<LSIntVarArray> array)
+ORBounds idRange(id<NSFastEnumeration> array,ORBounds ib)
 {
-   ORInt lb = FDMAXINT,ub = 0;
    for(id<LSIntVar> x in array) {
-      lb = getId(x) < lb ? getId(x) : lb;
-      ub = getId(x) > ub ? getId(x) : ub;
+      ORInt xid = getId(x);
+      ib.min = xid < ib.min ? xid : ib.min;
+      ib.max = xid > ib.max ? xid : ib.max;
    }
-   return (ORBounds){lb,ub};
+   return ib;
+}
+
+void collectSources(id<LSIntVarArray> x,NSArray** asv)
+{
+   ORInt k = 0;
+   for(id<LSIntVar> xk in x) {
+      if ([xk isKindOfClass:[LSIntVarView class]])
+         asv[k] = [(LSIntVarView*)xk sourceVars];
+      else asv[k] = @[xk];
+      assert([asv[k] count] <= 1);
+      ++k;
+   }
+}
+
+id<LSIntVarArray> sourceVariables(LSEngineI* engine,NSArray** asv,ORInt nb)
+{
+   ORBounds idb = {FDMAXINT,0};
+   ORInt k=0;
+   for(k=0;k < nb;k++)
+      idb = idRange(asv[k],idb);
+   
+   ORInt tsz = idb.max - idb.min + 1;
+   id<LSIntVar>* t = malloc(sizeof(id)*tsz);  // t is indexed by variable ids
+   t -= idb.min;
+   for(k=0;k < nb;k++)
+      for(id<LSIntVar> vi in asv[k])
+         t[getId(vi)] = vi;
+   ORInt nba = 0;                             // count the number of non-nil entries
+   for(k=idb.min;k <= idb.max;k++)
+      nba += t[k] != nil;
+   id<LSIntVarArray> xp = [LSFactory intVarArray:engine range:RANGE(engine,0,nba-1)];
+   ORInt i=0;
+   for(k=idb.min;k <= idb.max;k++)
+      if (t[k] != nil)
+         xp[i++] = t[k];
+   t += idb.min;
+   free(t);
+   return xp;
+}
+
+id<LSIntVar>* makeVar2ViewMap(id<LSIntVarArray> x,id<LSIntVarArray> views,
+                              NSArray**  asv,ORInt sz,ORBounds* b)
+{
+   *b = idRange(x,(ORBounds){FDMAXINT,0});
+   id<LSIntVar>* map = malloc(sizeof(id<LSIntVar>)*(b->max - b->min + 1));
+   map -= b->min;
+   ORInt xlow = x.low;
+   for(ORInt j=0;j<sz;++j)
+      for(id<LSIntVar> s in asv[j])
+         map[getId(s)] = views[j+xlow]; // each source var is mapped to the view that uses it.
+#if !defined(_NDEBUG)
+   for(id<LSIntVar> xk in x)
+      assert(map[getId(xk)]!=nil);
+#endif
+   return map;
 }

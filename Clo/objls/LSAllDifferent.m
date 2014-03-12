@@ -77,58 +77,16 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
    if (_overViews) {
       ORInt sz = (ORInt)[_x count];
       NSArray* asv[sz];
-      ORInt k = 0;
-      for(id<LSIntVar> xk in _x) {
-         if ([xk isKindOfClass:[LSIntVarView class]])
-            asv[k] = [(LSIntVarView*)xk sourceVars];
-         else asv[k] = @[xk];
-         assert([asv[k] count] <= 1);
-         ++k;
-      }
-      ORInt lb=FDMAXINT,ub=0;
-      ORInt nb = k;
-      for(k=0;k < nb;k++) {
-         for(id<LSIntVar> vi in asv[k]) {
-            lb = getId(vi) < lb ? getId(vi) : lb;
-            ub = getId(vi) > ub ? getId(vi) : ub;
-         }
-      }
-      ORInt tsz = ub - lb + 1;
-      id<LSIntVar>* t = malloc(sizeof(id)*tsz);
-      t -= lb;
-      for(k=0;k < nb;k++)
-         for(id<LSIntVar> vi in asv[k])
-            t[getId(vi)] = vi;
-      ORInt nba = 0;
-      for(k=lb;k <= ub;k++)
-         nba += t[k] != nil;
-      id<LSIntVarArray> xp = [LSFactory intVarArray:_engine range:RANGE(_engine,0,nba-1)];
-      ORInt i=0;
-      for(k=lb;k <= ub;k++)
-         if (t[k] != nil)
-            xp[i++] = t[k];
-      t += lb;
-      free(t);
-      _src = xp;
-      _sb = idRange(xp);
-      _map = malloc(sizeof(LSIntVar*)*(_sb.max - _sb.min + 1));
-      _map -= _sb.min;
-      ORInt xlow = _x.low;
-      for(ORInt j=0;j<sz;++j) {
-         for(id<LSIntVar> s in asv[j]) {
-            _map[getId(s)] = _x[j+xlow];
-         }
-      }
-#if !defined(_NDEBUG)
-      for(id<LSIntVar> xk in xp)
-         assert(_map[getId(xk)]!=nil);
-#endif
-      return xp;
+      collectSources(_x, asv);
+      _src = sourceVariables(_engine, asv,sz);     // _src is now packed with the source variables
+      _map = makeVar2ViewMap(_src, _x, asv, sz, &_sb); // create a map source -> view
+      return _src;
    } else {
-      _sb = idRange(_x);
+      _sb = idRange(_x,(ORBounds){FDMAXINT,0});
       return _src = _x;
    }
 }
+
 -(void)post
 {
    ORInt lb=FDMAXINT,ub=FDMININT;

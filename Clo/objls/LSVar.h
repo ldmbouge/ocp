@@ -12,7 +12,9 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objls/LSObject.h>
 
+
 @class LSPropagator;
+@class LSEngineI;
 @protocol LSEngine;
 @protocol LSPriority;
 @protocol LSPropagator;
@@ -50,5 +52,9 @@
 ORBool isIdMapped(id<LSIntVarArray> array);
 id<LSIntVar> findByName(id<LSIntVarArray> array,ORInt name);
 ORInt findRankByName(id<LSIntVarArray> array,ORInt name);
-ORBounds idRange(id<LSIntVarArray> array);
+ORBounds idRange(id<NSFastEnumeration> array,ORBounds ib);
 ORBool containsVar(id<LSIntVarArray> array,ORInt name);
+void collectSources(id<LSIntVarArray> x,NSArray** asv);
+id<LSIntVarArray> sourceVariables(LSEngineI* engine,NSArray** asv,ORInt nb);
+id<LSIntVar>* makeVar2ViewMap(id<LSIntVarArray> x,id<LSIntVarArray> views,
+                              NSArray**  asv,ORInt sz,ORBounds* b);

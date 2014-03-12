@@ -47,6 +47,20 @@
 -(id<NSFastEnumeration>)outbound;
 @end
 
+@interface LSScaledSum : LSPropagator<LSPull> {
+   id<ORIntArray>    _coefs;
+   id<LSIntVarArray> _terms;
+   LSIntVar*           _sum;
+   id<ORIntArray>      _old;
+   
+}
+-(id)init:(id<LSEngine>)engine sum:(id<LSIntVar>)x coefs:(id<ORIntArray>)c array:(id<LSIntVarArray>)terms;
+-(void)define;
+-(void)post;
+-(void)pull:(ORInt)k;
+-(id<NSFastEnumeration>)outbound;
+@end
+
 @interface LSGElement : LSPropagator {  // y[i] = c[x[i]] \forall i \in D(x)
    id<LSIntVarArray> _x;
    id<LSIntVarArray> _c;

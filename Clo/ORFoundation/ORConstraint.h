@@ -405,7 +405,7 @@ enum ORGroupType {
 
 @protocol ORObjectiveValue <ORObject>
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
--(ORInt) compare: (id<ORObjectiveValue>) other;
+-(NSComparisonResult) compare: (id<ORObjectiveValue>) other;
 @optional-(ORInt) intValue;
 -(ORFloat) floatValue;
 @end

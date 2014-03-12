@@ -10,4 +10,10 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <objls/LSFactory.h>
+#import <objls/LSConstraint.h>
+#import <objls/LSSolver.h>
 

@@ -285,6 +285,57 @@ void printLists(LSGElement* elt)
 }
 @end
 
+
+@implementation LSScaledSum
+-(id)init:(id<LSEngine>)engine sum:(id<LSIntVar>)x coefs:(id<ORIntArray>)c array:(id<LSIntVarArray>)terms
+{
+   self = [super initWith:engine];
+   _sum   = x;
+   _coefs = c;
+   _terms = terms;
+   for(id<LSIntVar> t in terms) {
+      assert(t != nil && [t conformsToProtocol:@protocol(LSIntVar)]);
+   }
+   _old = [ORFactory intArray:engine range:_terms.range value:0];
+   return self;
+}
+-(void)define
+{
+   for(ORInt i = _terms.range.low; i <= _terms.range.up;i++)
+      [self addTrigger:[_terms[i] addListener:self term:i]];
+   [_sum addDefiner:self];
+}
+-(void)post
+{
+   ORInt ttl = 0;
+   for(ORInt i = _terms.range.low; i <= _terms.range.up;i++) {
+      ORInt term = [_terms[i] value];
+      [_old set:term at:i];
+      ttl += [_coefs at:i] * term;
+   }
+   [_sum setValue:ttl];
+}
+-(void)pull:(ORInt)k
+{
+   ORInt nv    = [_terms[k] value];
+   ORInt delta = nv -  [_old at:k];
+   if (delta) {
+      [_sum setValue: [_sum value] + [_coefs at:k] * delta];
+      [_old set:nv at:k];
+   }
+}
+-(id<NSFastEnumeration>)outbound
+{
+   return [NSSet setWithObject:_sum];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSScaledSum(%p) : %d,%@>",self,_name,_rank];
+   return buf;
+}
+@end
+
 @implementation LSFactory (LSGlobalInvariant)
 +(LSCount*)count:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c
 {
