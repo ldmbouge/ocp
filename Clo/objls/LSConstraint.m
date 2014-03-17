@@ -13,6 +13,7 @@
 #import "LSEngineI.h"
 #import "LSAllDifferent.h"
 #import "LSSystem.h"
+#import "LSLinear.h"
 
 @implementation LSConstraint
 -(id)init:(LSEngineI*)engine
@@ -69,6 +70,12 @@
 +(id<LSConstraint>)system:(id<LSEngine>)e with:(NSArray*)ac
 {
    LSSystem* c = [[LSSystem alloc] init:e with:ac];
+   [e trackMutable:c];
+   return c;
+}
++(id<LSConstraint>)linear:(id<LSEngine>)e coef:(id<ORIntArray>)coef vars:(id<LSIntVarArray>)x eq:(ORInt)cst
+{
+   LSLinear* c = [[LSLinear alloc] init:e coefs:coef vars:x type:LSTYEqual constant:cst];
    [e trackMutable:c];
    return c;
 }

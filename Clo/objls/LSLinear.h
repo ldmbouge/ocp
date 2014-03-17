@@ -20,14 +20,16 @@ typedef enum : NSUInteger {
 } LSLinearType;
 
 @interface LSLinear : LSConstraint {
-   id<ORIntArray>    _c;
-   id<LSIntVarArray> _x;
-   LSLinearType      _t;
+   id<ORIntArray>    _coefs;
+   id<LSIntVarArray>     _x;
+   LSLinearType          _t;
+   ORInt                 _c;
 }
 -(id)init:(id<LSEngine>)engine
-    coefs:(id<ORIntArray>)c
+    coefs:(id<ORIntArray>)coef
      vars:(id<LSIntVarArray>)x
-     type:(LSLinearType)ty;     // sum(i in S) a_i x_i OP 0
+     type:(LSLinearType)ty
+ constant:(ORInt)c;               // sum(i in S) a_i x_i OP c
 -(void)post;
 -(id<LSIntVarArray>)variables;
 -(ORBool)isTrue;

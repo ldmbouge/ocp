@@ -177,7 +177,14 @@
 }
 -(void) visitLinearEq: (id<ORLinearEq>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError:"ORLSConcretizer missing a selector"];
+   if (_gamma[cstr.getId] == NULL) {
+      id<LSIntVarArray> ca = [self concreteArray:[cstr vars]];
+      id<ORIntArray>    coefs = [cstr coefs];
+      id<LSConstraint> concreteCstr = [LSFactory linear:_engine coef:coefs vars:ca eq:[cstr cst]];
+      [_engine addConstraint:concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {

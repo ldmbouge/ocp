@@ -42,4 +42,5 @@
 @interface LSFactory (LSConstraint)
 +(id<LSConstraint>)alldifferent:(id<LSEngine>)e over:(id<LSIntVarArray>)x;
 +(id<LSConstraint>)system:(id<LSEngine>)e with:(NSArray*)ac;
++(id<LSConstraint>)linear:(id<LSEngine>)e coef:(id<ORIntArray>)c vars:(id<LSIntVarArray>)x eq:(ORInt)cst;
 @end

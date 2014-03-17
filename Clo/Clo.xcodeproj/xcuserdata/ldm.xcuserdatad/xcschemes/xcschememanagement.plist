@@ -274,6 +274,11 @@
 			<key>orderHint</key>
 			<integer>15</integer>
 		</dict>
+		<key>magicserieLS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>84</integer>
+		</dict>
 		<key>magicseriesModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -688,6 +693,11 @@
 			<true/>
 		</dict>
 		<key>5B60E5D515AE907E002FF2B3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B6295A518D239D100A8F53C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
