@@ -35,6 +35,11 @@ int main(int argc, const char * argv[])
          [cp solve: ^{
             //NSLog(@"BASIC: %@",[[cp engine] model]);
             while ([cp violations] > 0 && it < 50 * n) {
+               id<ORIntArray> sv = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt i) {return [cp intValue:x[i]];}];
+               NSLog(@"SV: %@",sv);
+               for(ORInt i = R.low;i  <= R.up;i++) {
+                  NSLog(@"\tviol(x[%d]) = %d",i,[cp getVarViolations:x[i]]);
+               }
                [cp selectMax:R orderedBy:^ORFloat(ORInt i) { return [cp getVarViolations:x[i]];} do:^(ORInt i) {
                   [cp selectMin: R orderedBy:^ORFloat(ORInt v) { return [cp deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
                      [cp label:x[i] with:v];

@@ -143,8 +143,11 @@
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
    ORInt xid = getId(x);
-   if (_map && _sb.min <= xid && xid <= _sb.max)
-      x = _map[xid];
+   if (_map && _sb.min <= xid && xid <= _sb.max) {
+      id<LSIntVar> viewForX = _map[xid];
+      v = [(LSIntVar*)x lookahead:viewForX onAssign:v];
+      x = viewForX;
+   }
    ORInt tid = _tmap[getId(x)];
    ORInt cv = x.value;
    ORInt nv = v;
