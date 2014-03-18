@@ -11,6 +11,8 @@
 
 #import "LSIntVar.h"
 #import "LSEngineI.h"
+#import "LSFactory.h"
+#import "LSCount.h"
 
 @implementation LSLink
 -(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k type:(LSLinkType)t
@@ -211,7 +213,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"var<LS>(%p,%d,%@) = %d",self,_name,_rank,_value];
+   [buf appendFormat:@"var<LS>(%p,%d,%@,%@) = %d",self,_name,_rank,_dom,_value];
    return buf;
 }
 -(ORInt)lookahead:(id<LSIntVar>)y onAssign:(ORInt)v
@@ -282,5 +284,32 @@
       if (lnk->_t == LSPropagate)
          block(lnk->_trg,lnk->_k);
    }
+}
+
+-(LSGradient)decrease:(id<LSIntVar>)x
+{
+   LSGradient rv;
+   if (getId(x) == _name) {
+      rv._gt = LSGVar;
+      rv._vg = [LSFactory intVar:_engine domain:RANGE(_engine,0,_dom.up - _dom.low)];
+      [_engine add:[LSFactory inv:rv._vg equal:^ORInt{ return _value - _dom.low;} vars:@[self]]];
+   } else {
+      rv._gt = LSGCst;
+      rv._cg = 0;
+   }
+   return rv;
+}
+-(LSGradient)increase:(id<LSIntVar>)x
+{
+   LSGradient rv;
+   if (getId(x) == _name) {
+      rv._gt = LSGVar;
+      rv._vg = [LSFactory intVar:_engine domain:RANGE(_engine,0,_dom.up - _dom.low)];
+      [_engine add:[LSFactory inv:rv._vg equal:^ORInt{ return _dom.up - _value;} vars:@[self]]];
+   } else {
+      rv._gt = LSGCst;
+      rv._cg = 0;
+   }
+   return rv;
 }
 @end

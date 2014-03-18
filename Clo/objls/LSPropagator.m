@@ -13,6 +13,8 @@
 #import <ORUtilities/ORPQueue.h>
 #import "LSVar.h"
 #import "LSIntVar.h"
+#import "LSFactory.h"
+#import "LSCount.h"
 
 @implementation LSBlock
 -(id)initWith:(id<LSEngine>)engine block:(void(^)())block atPriority:(id<LSPriority>)p
@@ -161,17 +163,14 @@
 }
 @end
 // ==============================================================
+// Core Views
 
-// ========================================================================================
-// Int Views
-
-@implementation LSIntVarView
--(id)initWithEngine:(LSEngineI*)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src
+@implementation LSCoreView
+-(id)initWith:(LSEngineI*)engine  domain:(id<ORIntRange>)d src:(NSArray*)src
 {
    self = [super init];
    _engine = engine;
    _dom = d;
-   _fun = [fun copy];
    _src = src;
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
    [_engine trackVariable:self];
@@ -193,19 +192,12 @@
 }
 -(void)dealloc
 {
-   [_fun release];
    [_src release];
    [super dealloc];
 }
 -(NSArray*)sourceVars
 {
    return _src;
-}
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"view<LS>(%p,%d,%@) = %d",self,_name,_rank,_fun()];
-   return buf;
 }
 -(LSEngineI*)engine
 {
@@ -218,10 +210,6 @@
 -(void)setValue:(ORInt)v
 {
    assert(NO);
-}
--(ORInt)value
-{
-   return _fun();
 }
 -(id)addLogicalListener:(id)p term:(ORInt)k
 {
@@ -284,6 +272,80 @@
 -(void)execute
 {
    [_engine notify:self];
+}
+@end
+// ========================================================================================
+// Int Views
+
+@implementation LSIntVarView
+-(id)initWithEngine:(LSEngineI*)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src
+{
+   self = [super initWith:engine domain:d src:src];
+   _fun = [fun copy];
+   return self;
+}
+-(void)dealloc
+{
+   [_fun release];
+   [super dealloc];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"view<LS>(%p,%d,%@) = %d",self,_name,_rank,_fun()];
+   return buf;
+}
+-(ORInt)value
+{
+   return _fun();
+}
+@end
+// ==============================================================
+
+@implementation LSEQLitView
+-(id)initWithEngine:(LSEngineI*)engine on:(id<LSIntVar>)x eqLit:(ORInt)c
+{
+   self = [super initWith:engine domain:RANGE(engine,0,1) src:@[x]];
+   _x   = x;
+   _lit = c;
+   return self;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"EQLitView<LS>(%p,%d,%@) %p == %d",self,_name,_rank,_x,_lit];
+   return buf;
+}
+-(ORInt)value
+{
+   return _x.value == _lit;
+}
+-(LSGradient)decrease:(id<LSIntVar>)x
+{
+   LSGradient rv;
+   if (getId(_x) == getId(x)) {
+      rv._gt = LSGVar;
+      rv._vg = self;
+   } else {
+      rv._gt = LSGCst;
+      rv._cg = 0;
+   }
+   return rv;
+}
+-(LSGradient)increase:(id<LSIntVar>)x
+{
+   LSGradient rv;
+   if (getId(_x) == getId(x)) {
+      rv._gt = LSGVar;
+      rv._vg = [LSFactory intVar:_engine domain:_dom];
+      [_engine add:[LSFactory inv:rv._vg equal:^ORInt{
+         return 1 - self.value;
+      } vars:@[self]]];
+   } else {
+      rv._gt = LSGCst;
+      rv._cg = 0;
+   }
+   return rv;
 }
 @end
 

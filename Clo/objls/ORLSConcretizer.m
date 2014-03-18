@@ -124,9 +124,7 @@
       [mBase visit:self];
       ORInt lit = [v literal];
       LSIntVar* src = _gamma[getId(mBase)];
-      _gamma[getId(v)] = [LSFactory intVarView:_engine domain:[v domain] fun:^ORInt{
-         return src.value == lit;
-      } src:@[src]];
+      _gamma[getId(v)] = [LSFactory intVarView:_engine var:src eq:lit];
    }
 }
 -(void) visitIdArray: (id<ORIdArray>) v

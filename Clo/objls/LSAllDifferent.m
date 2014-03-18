@@ -70,7 +70,7 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
    if (_src) return _src;
    _overViews = NO;
    for(id<LSIntVar> xk in _x)
-      _overViews |= [xk isKindOfClass:[LSIntVarView class]];
+      _overViews |= [xk isKindOfClass:[LSCoreView class]];
    if (_overViews) {
       ORInt sz = (ORInt)[_x count];
       NSArray* asv[sz];

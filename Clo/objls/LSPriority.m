@@ -21,7 +21,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<P(%p)=%d>",self,_name];
+   [buf appendFormat:@"<P=%d>",_name];
    return buf;
 }
 @end

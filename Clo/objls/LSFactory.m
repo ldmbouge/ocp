@@ -22,6 +22,10 @@
 {
    return [[LSIntVarView alloc] initWithEngine:engine domain:r fun:fun src:src];
 }
++(id<LSIntVar>)intVarView:(id<LSEngine>)engine var:(id<LSIntVar>)x eq:(ORInt)lit
+{
+   return [[LSEQLitView alloc] initWithEngine:engine on:x eqLit:lit];
+}
 +(id<LSIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
    return (id)[ORFactory idArray:cp range:range];

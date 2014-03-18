@@ -75,8 +75,8 @@ void collectSources(id<LSIntVarArray> x,NSArray** asv)
 {
    ORInt k = 0;
    for(id<LSIntVar> xk in x) {
-      if ([xk isKindOfClass:[LSIntVarView class]])
-         asv[k] = [(LSIntVarView*)xk sourceVars];
+      if ([xk isKindOfClass:[LSCoreView class]])
+         asv[k] = [(LSCoreView*)xk sourceVars];
       else asv[k] = @[xk];
       assert([asv[k] count] <= 1);
       ++k;

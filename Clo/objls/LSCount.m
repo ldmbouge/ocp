@@ -233,7 +233,7 @@ void printLists(LSGElement* elt)
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSInv(%p) : %d,%@>",self,_name,_rank];
+   [buf appendFormat:@"<LSInv(%p) : %d,%@> defines %@ from %@",self,_name,_rank,_x,_src];
    return buf;
 }
 @end
@@ -280,7 +280,7 @@ void printLists(LSGElement* elt)
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSSum(%p) : %d,%@>",self,_name,_rank];
+   [buf appendFormat:@"<LSSum(%p) : %d,%@> : %@ == sum(%@)",self,_name,_rank,_sum,_terms];
    return buf;
 }
 @end
@@ -331,7 +331,7 @@ void printLists(LSGElement* elt)
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSScaledSum(%p) : %d,%@>",self,_name,_rank];
+   [buf appendFormat:@"<LSScaledSum(%p) : %d,%@> : %@ == sum(%@,%@)",self,_name,_rank,_sum,_terms,_coefs];
    return buf;
 }
 @end

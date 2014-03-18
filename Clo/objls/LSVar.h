@@ -18,6 +18,7 @@
 @protocol LSEngine;
 @protocol LSPriority;
 @protocol LSPropagator;
+@protocol LSIntVar;
 
 @protocol LSVar <LSObject>
 -(ORUInt)getId;
@@ -35,10 +36,25 @@
 -(void)propagateOutbound:(void(^)(id,ORInt))block;
 @end
 
+typedef enum : NSUInteger {
+   LSGVar = 0,
+   LSGCst = 1
+} LSGradientType;
+
+typedef struct LSGradient {
+   union {
+      id<LSIntVar>  _vg;
+      ORInt         _cg;
+   };
+   LSGradientType   _gt;
+} LSGradient;
+
 @protocol  LSIntVar <LSVar>
 -(ORInt)value;
 -(void)setValue:(ORInt)v;
 -(id<ORIntRange>)domain;
+-(LSGradient)decrease:(id<LSIntVar>)x;
+-(LSGradient)increase:(id<LSIntVar>)x;
 @end
 
 @protocol LSIntVarArray <ORIdArray>

@@ -55,19 +55,16 @@
 -(NSUInteger)inDegree;
 @end
 
-
-@interface LSIntVarView : LSPropagator<LSIntVar> {
+@interface LSCoreView : LSPropagator<LSIntVar> {
    id<ORIntRange>      _dom;
    NSMutableSet*  _outbound;
    NSArray*            _src;
-   ORInt(^_fun)();
 }
--(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src;
+-(id)initWith:(id<LSEngine>)engine  domain:(id<ORIntRange>)d src:(NSArray*)src;
 -(LSEngineI*)engine;
 -(id<ORIntRange>)domain;
 -(NSArray*)sourceVars;
 -(void)setValue:(ORInt)v;
--(ORInt)value;
 -(id)addListener:(LSPropagator*)p term:(ORInt)k;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)r;
@@ -76,6 +73,21 @@
 -(id<NSFastEnumeration>)inbound;
 -(void)enumerateOutbound:(void(^)(id,ORInt))block;
 -(void)propagateOutbound:(void(^)(id,ORInt))block;
+@end
+
+@interface LSIntVarView : LSCoreView {
+   ORInt(^_fun)();
+}
+-(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src;
+-(ORInt)value;
+@end
+
+@interface LSEQLitView : LSCoreView {
+   id<LSIntVar>          _x;
+   ORInt               _lit;
+}
+-(id)initWithEngine:(id<LSEngine>)engine on:(id<LSIntVar>)x eqLit:(ORInt)c;
+-(ORInt)value;
 @end
 
 

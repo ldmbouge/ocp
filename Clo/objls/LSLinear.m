@@ -27,6 +27,7 @@
    ORBounds           _xb;
    ORBounds           _sb;
    ORInt*           _tmap;     // mapping variables (x_i) to term identifier : i
+   id<LSIntVarArray>  _vv;
 }
 
 -(id)init:(id<LSEngine>)engine
@@ -101,13 +102,56 @@
    _tmap -= _xb.min;
    for(ORInt k=_x.low;k <= _x.up;k++)
       _tmap[getId(_x[k])] = k;
+   _vv = [LSFactory intVarArray:_engine
+                          range:RANGE(_engine,_sb.min,_sb.max)
+                         domain:RANGE(_engine,FDMININT,FDMAXINT)];
+   id<LSIntVar> gv[[[_x range] size]];
+   ORInt        gc[[[_x range] size]];
+   id<LSIntVar>* gvPtr = gv;
+   ORInt        nbt = 0;
+   ORInt        gi = 0;
+   for(ORInt k=_src.range.low; k <= _src.range.up;k++) {
+      id<LSIntVar> sk = _src[k];
+      ORInt idx = getId(sk);
+      nbt = 0;
+      gi  = 0;
+      for(ORInt t=_x.range.low; t <= _x.range.up;t++) {
+         ORInt ct = [_coefs at:t];
+         id<LSIntVar> xt = _x[t];
+         if (ct > 0) {
+            LSGradient gt = [xt decrease:sk];
+            if (gt._gt == LSGCst)
+               gi += gt._cg;
+            else {
+               gv[nbt] = gt._vg;
+               gc[nbt] = ct;
+               nbt++;
+            }
+         } else {
+            LSGradient gt = [xt increase:sk];
+            if (gt._gt == LSGCst)
+               gi -= gt._cg;
+            else {
+               gv[nbt] = gt._vg;
+               gc[nbt] = abs(ct);
+               nbt++;
+            }
+         }
+      }
+      id<LSIntVarArray> gtv = [LSFactory intVarArray:_engine range:RANGE(_engine,0,nbt-1) with:^id<LSIntVar>(ORInt k) {
+         return gvPtr[k];
+      }];
+      [_engine add:[LSFactory sum:_vv[idx]
+                               is:[ORFactory intArray:_engine range:RANGE(_engine,0,nbt-1) values:gc]
+                            times:gtv]];
+   }
 }
 -(id<LSIntVarArray>)variables
 {
    if (_src) return _src;
    _overViews = NO;
    for(id<LSIntVar> xk in _x)
-      _overViews |= [xk isKindOfClass:[LSIntVarView class]];
+      _overViews |= [xk isKindOfClass:[LSCoreView class]];
    if (_overViews) {
       ORInt sz = (ORInt)[_x count];
       NSArray* asv[sz];
@@ -130,15 +174,15 @@
 }
 -(ORInt)getVarViolations:(id<LSIntVar>)var
 {
-   return _violations.value;
+   return _vv[getId(var)].value;
 }
 -(id<LSIntVar>)violations
 {
    return _violations;
 }
--(id<LSIntVar>)varViolations:(id<LSIntVar>)var
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)x
 {
-   return _violations;
+   return _vv[getId(x)];
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
