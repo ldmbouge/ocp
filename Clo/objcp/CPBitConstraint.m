@@ -119,6 +119,24 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    [[x engine] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) bitZeroExtend:(CPBitVarI*)x extendTo:(CPBitVarI*)y
+{
+   id<CPConstraint> o = [[CPBitZeroExtend alloc] initCPBitZeroExtend:x extendTo:y];
+   [[x engine] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) bitConcat:(CPBitVarI*)x concat:(CPBitVarI*)y eq:(CPBitVarI*)z
+{
+   id<CPConstraint> o = [[CPBitConcat alloc] initCPBitConcat:x concat:y eq:z];
+   [[x engine] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) bitExtract:(CPBitVarI*)x from:(ORUInt)lsb to:(ORUInt)msb eq:(CPBitVarI*)y
+{
+   id<CPConstraint> o = [[CPBitExtract alloc] initCPBitExtract:x from:lsb to:msb eq:y];
+   [[x engine] trackMutable:o];
+   return o;
+}
 @end
 
 @implementation CPBitEqual
@@ -1750,6 +1768,268 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    
    //set _x and _p to new values
    [_x setUp:up andLow:low];
+}
+@end
+
+@implementation CPBitZeroExtend
+
+-(id) initCPBitZeroExtend:(CPBitVarI*) x extendTo:(CPBitVarI *)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   return self;
+}
+
+- (void) dealloc
+{
+   [super dealloc];
+}
+
+-(ORStatus) post
+{
+   unsigned int xWordLength = [_x getWordLength];
+   unsigned int yWordLength = [_y getWordLength];
+   unsigned int wordDiff = yWordLength - xWordLength;
+   
+   TRUInt* yLow;
+   TRUInt* yUp;
+   [_y getUp:&yUp andLow:&yLow];
+   unsigned int* up = alloca(sizeof(unsigned int)*xWordLength);
+   unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
+   unsigned int  upXORlow;
+
+   for (int i=0; i<wordDiff; i++) {
+      up[i] = 0;
+      low[i] = 0;
+   }
+   
+   for(int i=wordDiff;i<yWordLength;i++){
+      up[i] = yUp[i]._val;
+      low[i] = yLow[i]._val;
+      upXORlow = up[i] ^ low[i];
+      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+         failNow();
+      }
+   }
+   
+   [_y setUp:up andLow:low];
+   
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+   }
+   [self propagate];
+   return ORSuspend;
+}
+
+-(void) propagate
+{
+#ifdef BIT_DEBUG
+   NSLog(@"Bit ZeroExtend Constraint propagated.");
+#endif
+   
+   unsigned int xWordLength = [_x getWordLength];
+   unsigned int yWordLength = [_y getWordLength];
+   unsigned int wordDiff = yWordLength - xWordLength;
+   
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+   
+   unsigned int* up = alloca(sizeof(unsigned int)*yWordLength);
+   unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
+   unsigned int  upXORlow;
+   
+   for (int i=0; i<wordDiff; i++) {
+      up[i] = 0;
+      low[i] = 0;
+   }
+   
+   for(int i=wordDiff;i<yWordLength;i++){
+      up[i] = xUp[i-wordDiff+1]._val & yUp[i]._val;
+      low[i] = xLow[i-wordDiff]._val | yLow[i]._val;
+      upXORlow = up[i] ^ low[i];
+      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+         failNow();
+      }
+   }
+   
+   [_x setUp:&up[wordDiff] andLow:&low[wordDiff]];
+   [_y setUp:up andLow:low];
+   
+}
+@end
+
+@implementation CPBitExtract
+
+-(id) initCPBitExtract:(CPBitVarI*) x from:(ORUInt)lsb to:(ORUInt)msb eq:(CPBitVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _lsb = lsb;
+   _msb = msb;
+   return self;
+}
+
+- (void) dealloc
+{
+   [super dealloc];
+}
+
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+   }
+   [self propagate];
+   return ORSuspend;
+}
+
+-(void) propagate
+{
+#ifdef BIT_DEBUG
+   NSLog(@"Bit Extract Constraint propagated.");
+#endif
+   
+//   unsigned int xWordLength = [_x getWordLength];
+//   unsigned int yWordLength = [_y getWordLength];
+//   
+//   TRUInt* xLow;
+//   TRUInt* xUp;
+//   TRUInt* yLow;
+//   TRUInt* yUp;
+//   
+//   [_x getUp:&xUp andLow:&xLow];
+//   [_y getUp:&yUp andLow:&yLow];
+//   
+//   unsigned int* up = alloca(sizeof(unsigned int)*yWordLength);
+//   unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
+//   unsigned int  upXORlow;
+   
+   
+//   for(int i=wordDiff;i<yWordLength;i++){
+//      up[i] = xUp[i-wordDiff+1]._val & yUp[i]._val;
+//      low[i] = xLow[i-wordDiff]._val | yLow[i]._val;
+//      upXORlow = up[i] ^ low[i];
+//      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+//         failNow();
+//      }
+//   }
+//   
+//   [_x setUp:&up[wordDiff] andLow:&low[wordDiff]];
+//   [_y setUp:up andLow:low];
+//   
+}
+@end
+
+@implementation CPBitConcat
+
+-(id) initCPBitConcat:(CPBitVarI*) x concat:(CPBitVarI *)y eq:(CPBitVarI *)z
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+
+- (void) dealloc
+{
+   [super dealloc];
+}
+
+-(ORStatus) post
+{
+   unsigned int xWordLength = [_x getWordLength];
+   unsigned int yWordLength = [_y getWordLength];
+   unsigned int zWordLength = [_z getWordLength];
+   
+   if (zWordLength != (xWordLength + yWordLength)) {
+      failNow();
+   }
+   
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   TRUInt* zLow;
+   TRUInt* zUp;
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+   [_z getUp:&zUp andLow:&zLow];
+
+   unsigned int* newXUp = alloca(sizeof(unsigned int)*xWordLength);
+   unsigned int* newXLow = alloca(sizeof(unsigned int)*xWordLength);
+   unsigned int* newYUp = alloca(sizeof(unsigned int)*yWordLength);
+   unsigned int* newYLow = alloca(sizeof(unsigned int)*yWordLength);
+   unsigned int* newZUp = alloca(sizeof(unsigned int)*zWordLength);
+   unsigned int* newZLow = alloca(sizeof(unsigned int)*zWordLength);
+   unsigned int  upXORlow;
+   
+   
+   
+   [_x setUp:newXUp andLow:newXLow];
+   [_y setUp:newYUp andLow:newYLow];
+   [_y setUp:newZUp andLow:newZLow];
+   
+   [self propagate];
+   if (![_x bound] || ![_y bound] || ![_z bound]) {
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+      [_z whenChangePropagate: self];
+   }
+   [self propagate];
+   return ORSuspend;
+}
+
+-(void) propagate
+{
+#ifdef BIT_DEBUG
+   NSLog(@"Bit Concat Constraint propagated.");
+#endif
+   
+//   unsigned int xWordLength = [_x getWordLength];
+//   unsigned int yWordLength = [_y getWordLength];
+//   unsigned int zWordLength = [_z getWordLength];
+//   
+//   TRUInt* xLow;
+//   TRUInt* xUp;
+//   TRUInt* yLow;
+//   TRUInt* yUp;
+//   
+//   [_x getUp:&xUp andLow:&xLow];
+//   [_y getUp:&yUp andLow:&yLow];
+//   
+//   unsigned int* up = alloca(sizeof(unsigned int)*yWordLength);
+//   unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
+//   unsigned int  upXORlow;
+   
+//   for (int i=0; i<wordDiff; i++) {
+//      up[i] = 0;
+//      low[i] = 0;
+//   }
+//   
+//   for(int i=wordDiff;i<yWordLength;i++){
+//      up[i] = xUp[i-wordDiff+1]._val & yUp[i]._val;
+//      low[i] = xLow[i-wordDiff]._val | yLow[i]._val;
+//      upXORlow = up[i] ^ low[i];
+//      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+//         failNow();
+//      }
+//   }
+//   
+//   [_x setUp:&up[wordDiff] andLow:&low[wordDiff]];
+//   [_y setUp:up andLow:low];
+   
 }
 @end
 

@@ -61,8 +61,9 @@ typedef int assertion_id;
 @interface OBJCPGateway : NSObject{
 @private
    id<ORModel> _model;
-   NSMutableDictionary* _variables;
    NSMutableDictionary* _types;
+   NSMutableDictionary* _declarations;
+   NSMutableDictionary* _instances;
 }
 +(OBJCPGateway*) initOBJCPGateway;
 -(OBJCPGateway*) initExplicitOBJCPGateway;
@@ -122,7 +123,7 @@ typedef int assertion_id;
 //-(objcp_expr) objcp_mk_and
 //-(objcp_expr) objcp_mk_or
 //-(objcp_expr) objcp_mk_not
-//-(objcp_expr) objcp_mk_eq
+-(objcp_expr) objcp_mk_eq:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2;
 //-(objcp_expr) objcp_mk_sum
 //-(objcp_expr) objcp_mk_mul
 //-(objcp_expr) objcp_mk_sub
@@ -133,7 +134,7 @@ typedef int assertion_id;
 //-(objcp_expr) objcp_mk_ite
 //-(objcp_expr) objcp_mk_num_from_string
 //-(objcp_expr) objcp_mk_diseq
-//-(objcp_expr) objcp_mk_bv_concat
+-(objcp_expr) objcp_mk_bv_concat:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_context)arg2;
 -(objcp_expr) objcp_mk_bv_not:(objcp_context) ctx withArg:(objcp_expr) a1;
 -(objcp_expr) objcp_mk_bv_and:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 -(objcp_expr) objcp_mk_bv_or:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
@@ -155,7 +156,7 @@ typedef int assertion_id;
 //-(objcp_expr) objcp_mk_bv_sign_extend
 //-(objcp_expr) objcp_mk_bv_rotl
 //-(objcp_expr) objcp_mk_bv_rotr
-
+-(objcp_expr) objcp_mk_bv_zero_extend:(objcp_context)ctx withArg:(objcp_expr)a1 andAmount:(ORUInt)amt;
 
 @end
 

@@ -53,7 +53,14 @@
     _up = malloc(sizeof(TRUInt)*_wordLength);
     _min = malloc(sizeof(TRUInt)*_wordLength);
     _max = malloc(sizeof(TRUInt)*_wordLength);
-    
+
+   //Mask out unused bits - bits are bound to zero
+   ORUInt remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
+   ORUInt mask = CP_UMASK;
+   mask >>= 32 - remainingbits;
+   up[0] &= mask;
+   low[0] &= mask;
+
     for(int i=0;i<_wordLength;i++){
         _low[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
         _up[_wordLength - 1 - i]  = makeTRUInt(tr, up[i]);
@@ -84,6 +91,7 @@
    unsigned int mask = CP_DESC_MASK;
 
    mask >>= 32 - remainingbits;
+
    for (int j=0; j<remainingbits; j++){
       if ((mask & boundLow) !=0)
          [string appendString: @"0"];
@@ -271,7 +279,7 @@
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
    
-   for(int i=0; i<_wordLength; i++){
+   for(int i=_wordLength-1; i>=0; i--){
       //NSLog(@"%d leading zeroes in %x\n",__builtin_clz((_low[i]._val^_up[i]._val)), (_low[i]._val^_up[i]._val));
       freeBits =_low[i]._val^_up[i]._val;
       if (freeBits==0) {
@@ -281,7 +289,7 @@
          return _bitLength-((i*32)+1);
       }
       else if ((j=__builtin_clz(freeBits))!=0) {
-         return (_bitLength)-((i*32)+j+1);
+         return (_bitLength)-((i*32)-j+1);
       }
       else{
          j=__builtin_clz(~freeBits);

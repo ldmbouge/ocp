@@ -143,6 +143,9 @@
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
 -(void) visitBitCount:(id<ORBitCount>)cstr;
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c;
+-(void) visitBitExtract:(id<ORBitExtract>)c;
+-(void) visitBitConcat:(id<ORBitConcat>)c;
 @end
 
 @implementation ORSweep
@@ -357,6 +360,22 @@
    [[c right] visit:self];
 }
 
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitBitConcat:(id<ORBitConcat>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitExtract:(id<ORBitExtract>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
 @end
 
 

@@ -596,3 +596,24 @@
 -(id<ORBitVar>) left;
 -(id<ORIntVar>) right;
 @end
+
+@interface ORBitZeroExtend : ORConstraintI<ORBitZeroExtend>
+-(ORBitZeroExtend*)initORBitZeroExtend: (id<ORBitVar>) x extendTo: (id<ORBitVar>) y;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitConcat : ORConstraintI<ORBitConcat>
+-(ORBitOr*)initORBitConcat: (id<ORBitVar>) x concat: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitExtract : ORConstraintI<ORBitExtract>
+-(ORBitExtract*)initORBitExtract: (id<ORBitVar>) x from:(ORUInt)lsb to:(ORUInt)msb eq:(id<ORBitVar>)y;
+-(id<ORBitVar>) left;
+-(ORUInt) lsb;
+-(ORUInt) msb;
+-(id<ORBitVar>) right;
+@end

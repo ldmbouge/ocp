@@ -1024,11 +1024,11 @@ SMTLIB2_OBJCP_DECLHANDLER(or) { return NULL; /* TODO */ }
 //}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(not) { return NULL; /* TODO */ }
-//{
-//   return [objcpgw objcp_mk_not:YCTX(ctx)
-//                       withArg:(objcp_expr)smtlib2_vector_at(args, 0)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(not) //{ return NULL; /* TODO */ }
+{
+   return [objcpgw objcp_mk_bv_not:YCTX(ctx)
+                       withArg:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
 
 SMTLIB2_OBJCP_DECLHANDLER(implies) { return NULL; /* TODO */ }
 //{
@@ -1046,11 +1046,11 @@ SMTLIB2_OBJCP_DECLHANDLER(implies) { return NULL; /* TODO */ }
 //}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(eq) { return NULL; /* TODO */ }
-//{
-//    objcp_context yctx = YCTX(ctx);
-//   objcp_expr ret = [objcpgw objcp_mk_eq:yctx withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                                  andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
+SMTLIB2_OBJCP_DECLHANDLER(eq) //{ return NULL; /* TODO */ }
+{
+   objcp_context yctx = YCTX(ctx);
+   objcp_expr ret = [objcpgw objcp_mk_eq:yctx withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+                                  andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
 //    size_t i;
 //    
 //    for (i = 2; i < smtlib2_vector_size(args); ++i) {
@@ -1059,8 +1059,8 @@ SMTLIB2_OBJCP_DECLHANDLER(eq) { return NULL; /* TODO */ }
 //       objcp_expr aa[2] = { ret, [objcpgw objcp_mk_eq:yctx withArg:prev andArg:cur] };
 //       ret = [objcpgw objcp_mk_and:yctx withArgs:aa andNumArgs:2];
 //    }
-//    return ret;
-//}
+    return ret;
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(plus) { return NULL; /* TODO */ }
@@ -1209,12 +1209,12 @@ SMTLIB2_OBJCP_DECLHANDLER(to_real) { return NULL; /* TODO */ }
 //}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(concat) { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_concat:YCTX(ctx)
-//                               withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                                andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(concat) //{ return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_concat:YCTX(ctx)
+                               withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+                                andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(bvnot)
@@ -1407,14 +1407,14 @@ SMTLIB2_OBJCP_DECLHANDLER(repeat) { return NULL; /* TODO */ }
 //}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(zero_extend) { return NULL; /* TODO */ }
-//{
-//    size_t amount = (size_t)smtlib2_vector_at(idx, 0);
+SMTLIB2_OBJCP_DECLHANDLER(zero_extend) //{ return NULL; /* TODO */ }
+{
+    size_t amount = (size_t)smtlib2_vector_at(idx, 0);
 //   objcp_expr pad = [objcpgw objcp_mk_bv_constant:YCTX(ctx) extendBy:amount with:0];
-//            return [objcpgw objcp_mk_bv_concat:YCTX(ctx)
-//                                       withArg:pad
-//                                        andArg:(objcp_expr)smtlib2_vector_at(args, 0)];
-//}
+            return [objcpgw objcp_mk_bv_zero_extend:YCTX(ctx)
+                                       withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+                                        andAmount:amount];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(sign_extend) { return NULL; /* TODO */ }

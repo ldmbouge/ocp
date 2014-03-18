@@ -154,6 +154,9 @@
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
 -(void) visitBitCount:(id<ORBitCount>)cstr;
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c;
+-(void) visitBitExtract:(id<ORBitExtract>)c;
+-(void) visitBitConcat:(id<ORBitConcat>)c;
 @end
 
 @interface ORNOopVisit : ORVisitor

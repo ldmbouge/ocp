@@ -516,6 +516,24 @@ enum ORGroupType {
 -(id<ORIntVar>) right;
 @end
 
+@protocol  ORBitZeroExtend <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitConcat <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+@end
+
+@protocol  ORBitExtract <ORConstraint>
+-(id<ORBitVar>) left;
+-(ORUInt) lsb;
+-(ORUInt) msb;
+-(id<ORBitVar>) right;
+@end
+
 // Root implementation class (needed so that sub-frameworks can write constraints)
 
 @interface ORConstraintI : ORObject<ORConstraint,NSCoding>

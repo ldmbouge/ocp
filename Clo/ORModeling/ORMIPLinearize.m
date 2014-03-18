@@ -428,6 +428,18 @@
 {
    _result = c;
 }
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
+{
+   _result = c;
+}
+-(void) visitBitExtract:(id<ORBitExtract>)c
+{
+   _result = c;
+}
+-(void) visitBitZeroConcat:(id<ORBitConcat>)c
+{
+   _result = c;
+}
 
 // Flattening of constraints ============================================================================
 

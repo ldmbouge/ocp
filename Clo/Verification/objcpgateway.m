@@ -18,6 +18,7 @@
 -initExplicitWithSize:(NSString*)name withType:(objcp_var_type)type andSize:(ORInt)size;
 -(NSString*) getName;
 -(objcp_var_type) getType;
+-(id)copyWithZone:(NSZone *)zone;
 @end
 
 @implementation OBJCPType
@@ -41,6 +42,57 @@
 -(objcp_var_type) getType{
    return _type;
 }
+-(ORInt) getSize{
+   return _size;
+}
+-(id) copyWithZone:(NSZone *)zone{
+   OBJCPType* newObject = [[OBJCPType alloc] initExplicitWithSize:_name withType:_type andSize:_size];
+   return newObject;
+}
+@end
+
+@interface OBJCPDecl : NSObject{
+@private
+   NSString* _name;
+   OBJCPType* _type;
+   ORInt    _size;
+}
+-initExplicit:(NSString*)name withType:(OBJCPType*)type;
+-initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size;
+-(NSString*) getName;
+-(OBJCPType*) getType;
+-(ORUInt) getSize;
+-(id)copyWithZone:(NSZone *)zone;
+   @end
+
+@implementation OBJCPDecl
+-(OBJCPDecl*)initExplicit:(NSString*)name withType:(OBJCPType*)type{
+   self=[super init];
+   _name = name;
+   _type = (OBJCPType*)type;
+   _size = 1;
+   return self;
+}
+-(OBJCPDecl*)initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size{
+   self=[super init];
+   _name = name;
+   _type = (OBJCPType*)type;
+   _size = size;
+   return self;
+}
+-(NSString*) getName{
+   return _name;
+}
+-(OBJCPType*) getType{
+   return _type;
+}
+-(ORUInt) getSize{
+   return _size;
+}
+-(id) copyWithZone:(NSZone *)zone{
+   OBJCPDecl* newObject = [[OBJCPDecl alloc] initExplicitWithSize:_name withType:_type andSize:_size];
+   return newObject;
+}
 @end
 
 @implementation OBJCPGateway:NSObject
@@ -52,7 +104,8 @@
 -(OBJCPGateway*) initExplicitOBJCPGateway{
    self = [super init];
    _model = [ORFactory createModel];
-   _variables = [[NSMutableDictionary alloc] initWithCapacity:10];
+   _declarations = [[NSMutableDictionary alloc] initWithCapacity:10];
+   _instances = [[NSMutableDictionary alloc] initWithCapacity:10];
    _types = [[NSMutableDictionary alloc] initWithCapacity:10];
    return self;
 }
@@ -74,8 +127,8 @@
    return NULL;
 }
 
--(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_var_decl) type{
-   NSLog(@"Make variable declaration not implemented. Name was %s and type was %ld", name, (long)type);
+-(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type{
+//   NSLog(@"Make variable declaration not implemented. Name was %s and type was %ld", name, (long)type);
 //   ORUInt* min;
 //   ORUInt* max;
 //   
@@ -88,9 +141,10 @@
 //   [_variables setObject:bv forKey:key];
 //   return bv;
    NSString* nameString =[[NSString alloc] initWithUTF8String:name];
-   OBJCPType* t = [[OBJCPType alloc] initExplicit:nameString withType:OR_BV];
-   [_types setObject:t forKey:type];
-   return t;
+   OBJCPType* t = (OBJCPType*) type;
+   OBJCPDecl* d = [[OBJCPDecl alloc] initExplicitWithSize:nameString withType:type andSize:[t getSize]];
+   [_declarations  setObject:d forKey:nameString];
+   return (void*)t;
 }
 
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t{
@@ -101,13 +155,24 @@
 -(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name{
 //   NSLog(@"Get variable declaration from name not implemented. Name was %s",name);
    NSString *key = [[NSString alloc] initWithUTF8String:name];
-   id<ORBitVar> bv = [_variables objectForKey:key];
-   return bv;
+   OBJCPDecl* d = [_declarations objectForKey:key];
+   return d;
 }
 
 -(objcp_expr) objcp_mk_var_from_decl:(objcp_context) ctx withDecl:(objcp_var_decl) d{
-   NSLog(@"Make var from declaration not implemented");
-   return NULL;
+//   NSLog(@"Make var from declaration not implemented");
+   OBJCPDecl* decl = d;
+   ORUInt size = [decl getSize];
+   NSLog(@"Making bit vector of size %d\n",size);
+   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   for(int i=0; i< wordlength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
+   id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   return bv;
 }
 
 -(void) objcp_set_arith_only:(int) flag{
@@ -120,16 +185,20 @@
 }
 
 -(objcp_type) objcp_mk_bitvector_type:(objcp_context)ctx withSize:(unsigned int) size{
-   NSLog(@"Making bit vector of size %d\n",size);
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
-   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
-   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
-   for(int i=0; i< wordlength;i++){
-      low[i] = 0;
-      up[i] = CP_UMASK;
-   }
-   id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-   return bv;
+//   NSLog(@"Making bit vector of size %d\n",size);
+//   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+//   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+//   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+//   for(int i=0; i< wordlength;i++){
+//      low[i] = 0;
+//      up[i] = CP_UMASK;
+//   }
+//   id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+//   return bv;
+   NSString* nameString =[[NSString alloc] initWithUTF8String:"unnamed"];
+   OBJCPType* t = [[OBJCPType alloc] initExplicitWithSize:nameString withType:OR_BV andSize:size];
+   [_types setObject:t forKey:(void*)t];
+   return (void*)t;
 }
 
 -(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned int) size andRange:(objcp_type) range{
@@ -259,8 +328,9 @@ return 0;
 //objcp_mk_or
 //objcp_mk_not
 -(objcp_expr) objcp_mk_eq:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2{
-   NSLog(@"Make eq constraint not implemented");
-   return NULL;
+   [ORFactory bit:(id<ORBitVar>)arg1 eq:(id<ORBitVar>)arg2];
+   NSLog(@"Added BVEQUAL Constraint\n");
+   return arg1;
 }
 //objcp_mk_sum
 //objcp_mk_mul
@@ -272,7 +342,23 @@ return 0;
 //objcp_mk_ite
 //objcp_mk_num_from_string
 //objcp_mk_diseq
-//objcp_mk_bv_concat
+-(objcp_expr) objcp_mk_bv_concat:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_context)arg2{
+   int xSize = [(id<ORBitVar>)arg1 bitLength];
+   int ySize = [(id<ORBitVar>)arg2 bitLength];
+   int size = xSize + ySize;
+
+   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   for(int i=0; i< wordlength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
+   id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   [ORFactory bit:(id<ORBitVar>)arg1 concat:(id<ORBitVar>)arg2 eq:bv];
+   return bv;
+}
+
 -(objcp_expr) objcp_mk_bv_not:(objcp_context) ctx withArg:(objcp_expr) a1{
    int size = [(id<ORBitVar>)a1 bitLength];
    
@@ -376,6 +462,20 @@ return 0;
 //objcp_mk_bv_sign_extend
 //objcp_mk_bv_rotl
 //objcp_mk_bv_rotr
-
+-(objcp_expr) objcp_mk_bv_zero_extend:(objcp_context)ctx withArg:(objcp_expr)arg1 andAmount:(ORUInt)amt{
+   int size = [(id<ORBitVar>)arg1 bitLength];
+   
+   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   wordlength += amt;
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   for(int i=0; i< wordlength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
+   id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   [ORFactory bit:(id<ORBitVar>)arg1 zeroExtendTo:(id<ORBitVar>)bv];
+   return bv;
+}
 
 @end

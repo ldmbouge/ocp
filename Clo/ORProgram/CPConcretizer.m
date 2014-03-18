@@ -1070,6 +1070,29 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory bitZeroExtend:x extendTo:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitExtract:(id<ORBitExtract>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+
+      ORUInt lsb = [cstr lsb];
+      ORUInt msb = [cstr msb];
+      id<CPConstraint> concreteCstr = [CPFactory bitExtract:x from:lsb to:msb eq:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 
 -(void) visitIntegerI: (id<ORInteger>) e
 {}

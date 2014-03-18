@@ -418,6 +418,18 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitCount: visit method not defined"];
 }
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitZeroExtend: visit method not defined"];
+}
+-(void) visitBitExtract:(id<ORBitExtract>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitExtract: visit method not defined"];
+}
+-(void) visitBitConcat:(id<ORBitConcat>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitConcat: visit method not defined"];
+}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntegerI: visit method not defined"]; 
@@ -646,6 +658,9 @@
 -(void) visitBitSum:(id<ORBitSum>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}
 -(void) visitBitCount:(id<ORBitCount>)c {}
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c{}
+-(void) visitBitExtract:(id<ORBitExtract>)c{}
+-(void) visitBitZeroConcat:(id<ORBitConcat>)c{}
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}

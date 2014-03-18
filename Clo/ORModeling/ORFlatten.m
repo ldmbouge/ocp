@@ -496,6 +496,18 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitExtract:(id<ORBitExtract>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitZeroConcat:(id<ORBitConcat>)c
+{
+   _result = [_into addConstraint:c];
+}
 
 // Flattening of constraints ============================================================================
 

@@ -29,6 +29,9 @@
 +(id<CPConstraint>) bitADD:(id<CPBitVar>)x plus:(id<CPBitVar>) y withCarryIn:(id<CPBitVar>) cin equals:(id<CPBitVar>) z withCarryOut:(id<CPBitVar>) cout;
 +(id<CPConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
 +(id<CPConstraint>) bitCount:(id<CPBitVar>)x count:(id<CPIntVar>)y;
++(id<CPConstraint>) bitZeroExtend:(id<CPBitVar>)x extendTo:(id<CPIntVar>)y;
++(id<CPConstraint>) bitExtract:(id<CPBitVar>)x from:(ORUInt)lsb to:(ORUInt)msb eq:(id<CPIntVar>)y;
++(id<CPConstraint>) bitConcat:(id<CPBitVar>)x concat:(id<CPBitVar>)y eq:(id<CPBitVar>)z;
 @end
 
 @interface CPBitEqual : CPCoreConstraint {
@@ -154,14 +157,48 @@
 -(void) propagate;
 @end
 
-//TODO:Add CPBitIF
-
 @interface CPBitCount : CPCoreConstraint {
 @private
    CPBitVarI*  _x;
    CPIntVarI*  _p;
 }
 -(id) initCPBitCount: (CPBitVarI*) x count: (CPIntVarI*) p ;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+@end
+
+@interface CPBitZeroExtend : CPCoreConstraint {
+@private
+   CPBitVarI*  _x;
+   CPBitVarI*  _y;
+}
+-(id) initCPBitZeroExtend: (CPBitVarI*) x extendTo: (CPBitVarI*) y ;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+@end
+
+@interface CPBitExtract : CPCoreConstraint {
+@private
+   CPBitVarI*  _x;
+   ORUInt      _lsb;
+   ORUInt      _msb;
+   CPBitVarI*  _y;
+}
+-(id) initCPBitExtract: (CPBitVarI*) x from:(ORUInt)lsb to:(ORUInt)msb eq:(CPBitVarI*) y ;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+@end
+
+@interface CPBitConcat : CPCoreConstraint {
+@private
+   CPBitVarI*  _x;
+   CPBitVarI*  _y;
+   CPBitVarI*  _z;
+}
+-(id) initCPBitConcat: (CPBitVarI*) x concat: (CPBitVarI*) y eq:(CPBitVarI*)z;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
