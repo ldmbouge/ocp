@@ -24,6 +24,8 @@
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
 -(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
+-(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
+-(void)selectMin:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)solve:(void(^)())block;
 -(id<ORSolutionPool>) solutionPool;
 -(void)setSource:(id<ORModel>)m;
@@ -53,6 +55,8 @@
 -(void)setRoot:(id<LSConstraint>)sys;
 -(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
+-(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
+-(void)selectMin:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 // accessors
 -(ORInt)intValue:(id<ORIntVar>)x;
 @end

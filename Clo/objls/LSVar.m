@@ -83,7 +83,7 @@ void collectSources(id<LSIntVarArray> x,NSArray** asv)
    }
 }
 
-id<LSIntVarArray> sourceVariables(LSEngineI* engine,NSArray** asv,ORInt nb)
+id<LSIntVarArray> sourceVariables(LSEngineI* engine,NSArray** asv,ORInt nb,ORBool* multiple)
 {
    ORBounds idb = {FDMAXINT,0};
    ORInt k=0;
@@ -93,9 +93,13 @@ id<LSIntVarArray> sourceVariables(LSEngineI* engine,NSArray** asv,ORInt nb)
    ORInt tsz = idb.max - idb.min + 1;
    id<LSIntVar>* t = malloc(sizeof(id)*tsz);  // t is indexed by variable ids
    t -= idb.min;
-   for(k=0;k < nb;k++)
-      for(id<LSIntVar> vi in asv[k])
+   *multiple = NO;
+   for(k=0;k < nb;k++) {
+      for(id<LSIntVar> vi in asv[k]) {
+         *multiple |= t[getId(vi)] != NULL;
          t[getId(vi)] = vi;
+      }
+   }
    ORInt nba = 0;                             // count the number of non-nil entries
    for(k=idb.min;k <= idb.max;k++)
       nba += t[k] != nil;

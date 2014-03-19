@@ -75,7 +75,8 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       ORInt sz = (ORInt)[_x count];
       NSArray* asv[sz];
       collectSources(_x, asv);
-      _src = sourceVariables(_engine, asv,sz);     // _src is now packed with the source variables
+      ORBool multi = NO;
+      _src = sourceVariables(_engine, asv,sz,&multi);     // _src is now packed with the source variables
       _map = makeVar2ViewMap(_src, _x, asv, sz, &_sb); // create a map source -> view
       return _src;
    } else {

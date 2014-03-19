@@ -157,6 +157,42 @@
       block(indexFound);
    [stream release];
 }
+-(void)selectOpt:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block dir:(ORFloat)dir
+{
+   ORRandomStreamI* stream = [[ORRandomStreamI alloc] init];
+   float bestFound = MAXFLOAT;
+   ORLong bestRand = 0x7fffffffffffffff;
+   ORInt indexFound = MAXINT;
+   const ORInt low = r.low,up = r.up;
+   for(ORInt i=low;i <= up;i++) {
+      if (filter(i)) {
+         ORFloat val = dir * fun(i);
+         if (val < bestFound) {
+            bestFound  = val;
+            indexFound = i;
+            bestRand   = [stream next];
+         } else if (val == bestFound) {
+            ORLong r = [stream next];
+            if (r < bestRand) {
+               indexFound = i;
+               bestRand   = r;
+            }
+         }
+      }
+   }
+   if (indexFound < MAXINT)
+      block(indexFound);
+   [stream release];
+}
+
+-(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block
+{
+   [self selectOpt:r suchThat:filter orderedBy:fun do:block dir:-1.0];
+}
+-(void)selectMin:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block
+{
+   [self selectOpt:r suchThat:filter orderedBy:fun do:block dir:+1.0];
+}
 -(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block
 {
    [self selectOpt:r orderedBy:fun do:block dir:-1.0];

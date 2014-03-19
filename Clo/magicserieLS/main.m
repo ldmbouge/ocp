@@ -32,6 +32,8 @@ int main(int argc, const char * argv[])
          
          id<LSProgram> cp = [ORFactory createLSProgram: model annotation:nil];
          __block ORInt it = 0;
+         ORInt* tabu = malloc(sizeof(ORInt)*n);
+         memset(tabu,0,sizeof(ORInt)*n);
          [cp solve: ^{
             //NSLog(@"BASIC: %@",[[cp engine] model]);
             while ([cp violations] > 0 && it < 50 * n) {
@@ -40,14 +42,15 @@ int main(int argc, const char * argv[])
                for(ORInt i = R.low;i  <= R.up;i++) {
                   NSLog(@"\tviol(x[%d]) = %d",i,[cp getVarViolations:x[i]]);
                }
-               [cp selectMax:R orderedBy:^ORFloat(ORInt i) { return [cp getVarViolations:x[i]];} do:^(ORInt i) {
+               [cp selectMax:R suchThat:^ORBool(ORInt i) { return tabu[i] < it;}  orderedBy:^ORFloat(ORInt i) { return [cp getVarViolations:x[i]];} do:^(ORInt i) {
                   
                   for(ORInt v = R.low;v  <= R.up;v++) {
                      NSLog(@"\tDELTA(x[%d] to %d) = %d",i,v,[cp deltaWhenAssign:x[i] to:v]);
                   }
                   
-                  [cp selectMin: R orderedBy:^ORFloat(ORInt v) { return [cp deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
+                  [cp selectMin:R  suchThat:^ORBool(ORInt v) { return [cp intValue:x[i]] != v;} orderedBy:^ORFloat(ORInt v) { return [cp deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
                      [cp label:x[i] with:v];
+                     tabu[i] = it;
                   }];
                }];
                ++it;

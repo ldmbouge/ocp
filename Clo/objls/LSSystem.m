@@ -92,7 +92,7 @@ typedef struct LSConstraintList {
       }
       _srcOfs = malloc(sizeof(ORInt)*sz);
       for(ORInt i=0;i< sz;++i)
-         _srcOfs[i] = _lb - 1;
+         _srcOfs[i] = - 1;
       _srcOfs -= _lb;
       ORInt r = 0;
       for(id<LSIntVar> x in _src)
@@ -150,7 +150,7 @@ typedef struct LSConstraintList {
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
    ORInt xid = getId(x);
-   if (_lb <= xid && xid <= _ub && _srcOfs[xid] >= _lb) {
+   if (_lb <= xid && xid <= _ub && _srcOfs[xid] >= 0) {
       ORInt ttl = 0;
       for(ORInt k = 0;k < _cstrOnVars[xid]._n;k++) {
          id<LSConstraint> c = _cstrOnVars[xid]._t[k];

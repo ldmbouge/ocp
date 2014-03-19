@@ -15,6 +15,15 @@
 #import "LSCount.h"
 #import "LSIntVar.h"
 
+typedef struct LSTermDesc {
+   ORInt            _ofs;
+   id<LSIntVar> _termVar;
+} LSTermDesc;
+
+typedef struct LSOccurrence {
+   ORInt       _n;  // number of terms
+   LSTermDesc* _t;  // pointer to array of terms
+} LSOccurrence;
 
 @implementation LSLinear {
    ORBool _posted;
@@ -23,11 +32,14 @@
    id<LSIntVar> _violations;
    id<LSIntVarArray> _src;
    ORBool      _overViews;     // are there views involved?
-   id<LSIntVar>*     _map;
    ORBounds           _xb;
    ORBounds           _sb;
    ORInt*           _tmap;     // mapping variables (x_i) to term identifier : i
    id<LSIntVarArray>  _vv;
+   ORInt*  _srcOfs;
+   LSOccurrence*  _occ;  // array of occurrences for source variables
+   ORInt        _nbOcc;  // how many occurrence  entries (same as _src.size)
+   LSTermDesc*     _at;  // flat array of all terms (for sub-allocation inside _occ).
 }
 
 -(id)init:(id<LSEngine>)engine
@@ -46,9 +58,11 @@
 -(void)dealloc
 {
    _tmap += _xb.min;
+   _srcOfs += _sb.min;
+   free(_srcOfs);
    free(_tmap);
-   _map += _sb.min;
-   free(_map);
+   free(_occ);
+   free(_at);
    [super dealloc];
 }
 -(void)post
@@ -205,13 +219,42 @@
       ORInt sz = (ORInt)[_x count];
       NSArray* asv[sz];
       collectSources(_x, asv);
-      _src = sourceVariables(_engine, asv,sz);     // _src is now packed with the source variables
-      _map = makeVar2ViewMap(_src, _x, asv, sz, &_sb); // create a map source -> view
-      return _src;
+      ORBool multi = NO;
+      _src = sourceVariables(_engine, asv,sz,&multi);  // _src is now packed with the source variables. _src uses 0-based indexing
+      ORInt ttlSz = 0;
+      for(ORInt i=0;i<sz;i++)
+         ttlSz += [asv[i] count];
+      _at = malloc(sizeof(LSTermDesc)*ttlSz);
+      _nbOcc =_src.range.size;
+      _occ = malloc(sizeof(LSOccurrence)*_nbOcc);
+      LSTermDesc* ptr = _at;
+      for(ORInt i=0;i<_nbOcc;i++) {
+         _occ[i]._n = 0;
+         _occ[i]._t = ptr;
+         for(ORInt j=_x.range.low; j <= _x.range.up;j++) {
+            if ([asv[j - _x.range.low] containsObject:_src[i]]) {
+               _occ[i]._t[_occ[i]._n]._termVar = _x[j];
+               _occ[i]._t[_occ[i]._n]._ofs     = j;
+               _occ[i]._n++;
+            }
+         }
+         ptr += _occ[i]._n;
+      }
+      _sb = idRange(_src, (ORBounds){FDMAXINT,0});
    } else {
       _sb = idRange(_x,(ORBounds){FDMAXINT,0});
-      return _src = _x;
+      _src = _x;
    }
+   ORInt sz =_src.range.size;
+   _srcOfs = malloc(sizeof(ORInt)*sz);
+   for(ORInt i=0;i< sz;++i)
+      _srcOfs[i] = -1;
+   _srcOfs -= _sb.min;
+   ORInt r = 0;
+   for(id<LSIntVar> x in _src)
+      _srcOfs[getId(x)] = r++;
+   
+   return _src;
 }
 -(ORBool)isTrue
 {
@@ -236,44 +279,31 @@
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
    ORInt xid = getId(x);
-   if (_map && _sb.min <= xid && xid <= _sb.max) {
-      id<LSIntVar> viewForX = _map[xid];
-      v = [(LSIntVar*)x lookahead:viewForX onAssign:v];
-      x = viewForX;
+   ORInt nbt = _occ[_srcOfs[xid]]._n;
+   LSTermDesc* t = _occ[_srcOfs[xid]]._t;
+   ORInt oldEval = _value.value;
+   ORInt newEval = oldEval;
+   for(ORInt k=0;k < nbt;k++) {
+      id<LSIntVar> varTermk = t[k]._termVar;
+      ORInt        termOfs  = t[k]._ofs;
+      ORInt    newTermValue = [(LSIntVar*)x lookahead:varTermk onAssign:v];
+      ORInt    oldTermValue = varTermk.value;
+      if (newTermValue == oldTermValue) continue;
+      newEval += (newTermValue - oldTermValue) * [_coefs at:termOfs];
    }
-   ORInt tid = _tmap[getId(x)];
-   ORInt cv = x.value;
-   ORInt nv = v;
-   if (cv == nv)
-      return 0;
-   else {
-      ORInt eval  = _value.value;
-      ORInt neval = eval + (nv - cv) * [_coefs at:tid];
-      switch(_t) {
-         case LSTYEqual: return abs(neval - _c) - abs(eval - _c);
-         case LSTYLEqual:
-         case LSTYGEqual: {
-            ORInt nOut = neval - _c < 0 ? 0 : neval - _c;
-            ORInt oOut = eval  - _c < 0 ? 0 : eval  - _c;
-            return nOut - oOut;
-         }
-         case LSTYNEqual: return (neval == _c) - (eval == _c);
+   switch(_t) {
+      case LSTYEqual: return abs(newEval - _c) - abs(oldEval - _c);
+      case LSTYLEqual:
+      case LSTYGEqual: {
+         ORInt nOut = newEval - _c < 0 ? 0 : newEval - _c;
+         ORInt oOut = oldEval - _c < 0 ? 0 : oldEval  - _c;
+         return nOut - oOut;
       }
+      case LSTYNEqual: return (newEval == _c) - (oldEval == _c);
    }
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
-   ORInt xid = getId(x);
-   if (_map && _sb.min <= xid && xid <= _sb.max)
-      x = _map[xid];
-   ORInt txid = _tmap[getId(x)];
-   ORInt yid = getId(y);
-   if (_map && _sb.min <= yid && yid <= _sb.max)
-      y = _map[yid];
-   ORInt tyid = _tmap[getId(y)];
-   if (x == y)
-      return 0;
-   else
    return 0;
 }
 @end
