@@ -1977,6 +1977,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    
    
    
+   
    [_x setUp:newXUp andLow:newXLow];
    [_y setUp:newYUp andLow:newYLow];
    [_y setUp:newZUp andLow:newZLow];

@@ -58,8 +58,8 @@
    ORUInt remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
    ORUInt mask = CP_UMASK;
    mask >>= 32 - remainingbits;
-   up[0] &= mask;
-   low[0] &= mask;
+   up[_wordLength-1] &= mask;
+   low[_wordLength-1] &= mask;
 
     for(int i=0;i<_wordLength;i++){
         _low[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
