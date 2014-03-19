@@ -105,47 +105,96 @@
    _vv = [LSFactory intVarArray:_engine
                           range:RANGE(_engine,_sb.min,_sb.max)
                          domain:RANGE(_engine,FDMININT,FDMAXINT)];
+
+   for(ORInt k=_src.range.low; k <= _src.range.up;k++) {
+      id<LSIntVar> sk = _src[k];
+      ORInt idx = getId(sk);
+      id<LSIntVar> downG = [self downGSum:sk];
+      id<LSIntVar> upG   = [self upGSum:sk];
+      [_engine add:[LSFactory inv:_vv[idx] equal:^ORInt{
+         ORInt fv = _value.value;
+         if (fv >= 0)
+            return min(fv,downG.value);
+         else
+            return min(-fv,upG.value);
+      } vars:@[_value,downG,upG]]];
+   }
+}
+-(id<LSIntVar>)downGSum:(id<LSIntVar>)sk
+{
+   id<LSIntVar> gv[_x.range.size];
+   ORInt        gc[_x.range.size];
+   id<LSIntVar>* gvPtr = gv;
+   ORInt        nbt = 0;
+   ORInt        gi = 0;
+   for(ORInt t=_x.range.low; t <= _x.range.up;t++) {
+      ORInt ct = [_coefs at:t];
+      id<LSIntVar> xt = _x[t];
+      if (ct > 0) {
+         LSGradient gt = [xt decrease:sk];
+         if (gt._gt == LSGCst)
+            gi += gt._cg;
+         else {
+            gv[nbt] = gt._vg;
+            gc[nbt] = ct;
+            nbt++;
+         }
+      } else {
+         LSGradient gt = [xt increase:sk];
+         if (gt._gt == LSGCst)
+            gi -= gt._cg;
+         else {
+            gv[nbt] = gt._vg;
+            gc[nbt] = abs(ct);
+            nbt++;
+         }
+      }
+   }
+   id<ORIntRange> R = RANGE(_engine,0,nbt-1);
+   id<LSIntVarArray> gtv = [LSFactory intVarArray:_engine range:R with:^id<LSIntVar>(ORInt k) { return gvPtr[k];}];
+   id<ORIntArray> gcoef  = [ORFactory intArray:_engine range:R values:gc];
+   id<LSIntVar> downG = [LSFactory intVar:_engine domain:RANGE(_engine,FDMININT,FDMAXINT)];
+   [_engine add:[LSFactory sum:downG is:gcoef times:gtv]];
+   return downG;
+}
+-(id<LSIntVar>)upGSum:(id<LSIntVar>)sk
+{
    id<LSIntVar> gv[[[_x range] size]];
    ORInt        gc[[[_x range] size]];
    id<LSIntVar>* gvPtr = gv;
    ORInt        nbt = 0;
    ORInt        gi = 0;
-   for(ORInt k=_src.range.low; k <= _src.range.up;k++) {
-      id<LSIntVar> sk = _src[k];
-      ORInt idx = getId(sk);
-      nbt = 0;
-      gi  = 0;
-      for(ORInt t=_x.range.low; t <= _x.range.up;t++) {
-         ORInt ct = [_coefs at:t];
-         id<LSIntVar> xt = _x[t];
-         if (ct > 0) {
-            LSGradient gt = [xt decrease:sk];
-            if (gt._gt == LSGCst)
-               gi += gt._cg;
-            else {
-               gv[nbt] = gt._vg;
-               gc[nbt] = ct;
-               nbt++;
-            }
-         } else {
-            LSGradient gt = [xt increase:sk];
-            if (gt._gt == LSGCst)
-               gi -= gt._cg;
-            else {
-               gv[nbt] = gt._vg;
-               gc[nbt] = abs(ct);
-               nbt++;
-            }
+   for(ORInt t=_x.range.low; t <= _x.range.up;t++) {
+      ORInt ct = [_coefs at:t];
+      id<LSIntVar> xt = _x[t];
+      if (ct > 0) {
+         LSGradient gt = [xt increase:sk];
+         if (gt._gt == LSGCst)
+            gi += gt._cg;
+         else {
+            gv[nbt] = gt._vg;
+            gc[nbt] = ct;
+            nbt++;
+         }
+      } else {
+         LSGradient gt = [xt decrease:sk];
+         if (gt._gt == LSGCst)
+            gi -= gt._cg;
+         else {
+            gv[nbt] = gt._vg;
+            gc[nbt] = abs(ct);
+            nbt++;
          }
       }
-      id<LSIntVarArray> gtv = [LSFactory intVarArray:_engine range:RANGE(_engine,0,nbt-1) with:^id<LSIntVar>(ORInt k) {
-         return gvPtr[k];
-      }];
-      [_engine add:[LSFactory sum:_vv[idx]
-                               is:[ORFactory intArray:_engine range:RANGE(_engine,0,nbt-1) values:gc]
-                            times:gtv]];
    }
+   id<ORIntRange> R = RANGE(_engine,0,nbt-1);
+   id<LSIntVarArray> gtv = [LSFactory intVarArray:_engine range:R with:^id<LSIntVar>(ORInt k) { return gvPtr[k];}];
+   id<ORIntArray> gcoef  = [ORFactory intArray:_engine range:R values:gc];
+   id<LSIntVar> upG = [LSFactory intVar:_engine domain:RANGE(_engine,FDMININT,FDMAXINT)];
+   [_engine add:[LSFactory sum:upG is:gcoef times:gtv]];
+   return upG;
 }
+
 -(id<LSIntVarArray>)variables
 {
    if (_src) return _src;

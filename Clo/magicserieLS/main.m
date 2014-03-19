@@ -41,6 +41,11 @@ int main(int argc, const char * argv[])
                   NSLog(@"\tviol(x[%d]) = %d",i,[cp getVarViolations:x[i]]);
                }
                [cp selectMax:R orderedBy:^ORFloat(ORInt i) { return [cp getVarViolations:x[i]];} do:^(ORInt i) {
+                  
+                  for(ORInt v = R.low;v  <= R.up;v++) {
+                     NSLog(@"\tDELTA(x[%d] to %d) = %d",i,v,[cp deltaWhenAssign:x[i] to:v]);
+                  }
+                  
                   [cp selectMin: R orderedBy:^ORFloat(ORInt v) { return [cp deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
                      [cp label:x[i] with:v];
                   }];
