@@ -29,36 +29,56 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];
          for(ORInt i=0;i<n;i++)
             [model add: [Sum(model,j,R,[x[j] eq: @(i)]) eq: x[i] ]];
-         [model add: [Sum(model,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
+         id<ORConstraint> rc = [model add: [Sum(model,i,R,[x[i] mul: @(i)]) eq: @(n) ]];  // We can't query constraints yet. The TAU map is not build by flatten.
+//         [model add: [Sum(model,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
+//         [model add: [Sum(model,i,R,[x[i] mul: @(i-1)]) eq: @0 ]];
          
          id<LSProgram> cp = [ORFactory createLSProgram: model annotation:nil];
-         __block ORInt it = 0;
+         __block ORInt itt=0;
          ORInt* tabu = malloc(sizeof(ORInt)*n);
          for(ORInt k = 0;k < n;k++) tabu[k] = -1;
          [cp solve: ^{
-            while ([cp violations] > 0 && it < 50 * n) {
-               [cp selectMax:R suchThat:^ORBool(ORInt i) { return tabu[i] < it;}  orderedBy:^ORFloat(ORInt i) { return [cp getVarViolations:x[i]];} do:^(ORInt i) {
-                  [cp selectMin:R  suchThat:^ORBool(ORInt v) { return [cp intValue:x[i]] != v;} orderedBy:^ORFloat(ORInt v) { return [cp deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
-                     [cp label:x[i] with:v];
-                     tabu[i] = it;
+            while ([cp violations] > 0) {
+               for(ORInt k = 0;k < n;k++) tabu[k] = -1;
+               for(id<ORIntVar> xi in x)
+                  [cp label:xi with:0];
+               __block ORInt it = 0;
+               while ([cp violations] > 0 && it < 50 * n) {
+
+                  id<ORIntArray> sv = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt i) {return [cp intValue:x[i]];}];
+                  NSLog(@"SV: %@",sv);
+                  for(ORInt i = R.low;i  <= R.up;i++) {
+                     NSLog(@"\tviol(x[%d]) = %d\t\tREDUNDANT.viol : %d",i,[cp getVarViolations:x[i]],[cp getVarViolations:x[i] forConstraint:rc]);
+                  }
+
+                  [cp selectMax:R suchThat:^ORBool(ORInt i) { return tabu[i] < it;}  orderedBy:^ORFloat(ORInt i) { return [cp getVarViolations:x[i]];} do:^(ORInt i) {
+                     
+                     for(ORInt v = R.low;v  <= R.up;v++) {
+                        NSLog(@"\tDELTA(x[%d] to %d) = %d",i,v,[cp deltaWhenAssign:x[i] to:v]);
+                     }
+                     
+                     [cp selectMin:R  suchThat:^ORBool(ORInt v) { return [cp intValue:x[i]] != v;} orderedBy:^ORFloat(ORInt v) { return [cp deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
+                        [cp label:x[i] with:v];
+                        tabu[i] = it;
+                     }];
                   }];
-               }];
-               ++it;
+                  ++it;
+               }
+               NSLog(@"(%d)",[cp violations]);
+               itt += it;
             }
-            if (it < 50 * n) {
-               printf("Succeeds \n");
-               for(ORInt i = 0; i < n; i++)
-                  printf("%d ",[cp intValue:x[i]]);
-               printf("\n");
-            }
+            printf("Succeeds \n");
+            for(ORInt i = 0; i < n; i++)
+               printf("%d ",[cp intValue:x[i]]);
+            printf("\n");
          }];
          id<ORSolution> b = [[cp solutionPool] best];
          if (b != nil) {
-            NSLog(@"Found a solution in %d iter",it);
+            NSLog(@"Found a solution in %d iter",itt);
             id<ORIntArray> sv = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt i) {return [b intValue:x[i]];}];
             NSLog(@"Sol: %@",sv);
          }
-         struct ORResult r = REPORT(b!=nil, it, 0, 0);
+         struct ORResult r = REPORT(b!=nil, itt, 0, 0);
          return r;
       }
    }];

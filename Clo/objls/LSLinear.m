@@ -51,6 +51,7 @@ typedef struct LSOccurrence {
    self = [super init:engine];
    _coefs = coefs;
    _x = x;
+   _c = c;
    _t = ty;
    _posted = NO;
    return self;
@@ -126,7 +127,7 @@ typedef struct LSOccurrence {
       id<LSIntVar> downG = [self downGSum:sk];
       id<LSIntVar> upG   = [self upGSum:sk];
       [_engine add:[LSFactory inv:_vv[idx] equal:^ORInt{
-         ORInt fv = _value.value;
+         ORInt fv = _value.value - _c;
          if (fv >= 0)
             return min(fv,downG.value);
          else
@@ -242,6 +243,16 @@ typedef struct LSOccurrence {
       }
    } else {
       _src = _x;
+      ORInt sz = _nbOcc = _src.range.size;
+      _at = malloc(sizeof(LSTermDesc)*sz);
+      _occ = malloc(sizeof(LSOccurrence)*_nbOcc);
+      LSTermDesc* ptr = _at;
+      for(ORInt i=0;i<_nbOcc;i++) {
+         _occ[i]._n = 1;
+         _occ[i]._t = ptr++;
+         _occ[i]._t[0]._termVar = _src[i];
+         _occ[i]._t[0]._ofs     = i;
+      }
    }
    _sb = idRange(_src,(ORBounds){FDMAXINT,0});
    ORInt sz =_src.range.size;
@@ -263,9 +274,12 @@ typedef struct LSOccurrence {
 {
    return _violations.value;
 }
--(ORInt)getVarViolations:(id<LSIntVar>)var
+-(ORInt)getVarViolations:(id<LSIntVar>)x
 {
-   return _vv[getId(var)].value;
+   ORInt xid = getId(x);
+   if (_sb.min <= xid && xid <= _sb.max)
+      return _vv[getId(x)].value;
+   else return 0;
 }
 -(id<LSIntVar>)violations
 {

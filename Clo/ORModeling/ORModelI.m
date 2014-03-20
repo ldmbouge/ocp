@@ -53,6 +53,21 @@
    tau->_mapping = [_mapping copy];
    return tau;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   @autoreleasepool {
+      NSEnumerator* i = [_mapping keyEnumerator];
+      id key;
+      [buf appendString:@"{"];
+      while ((key = [i nextObject]) !=nil) {
+         id obj = [_mapping objectForKey:key];
+         [buf appendFormat:@"%@ -> %@,",key,obj];
+      }
+      [buf appendString:@"}"];
+   }
+   return buf;
+}
 @end
 
 @implementation ORLambda
@@ -597,6 +612,7 @@
 {
    if (cstr && (id)cstr != [NSNull null]) {
       [_target add: cstr];
+      [[[_target modelMappings] tau] set:cstr forKey:_current];
       if (_current)
          [_notes transfer: _current toConstraint: cstr];
    }

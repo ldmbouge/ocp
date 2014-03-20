@@ -17,11 +17,13 @@
 @protocol LSConstraint;
 
 @protocol LSProgram<ORGamma,ORTracker>
+//-(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id<ORSearchObjectiveFunction>) objective;
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;
 -(ORInt)getVarViolations:(id<ORIntVar>)var;
 -(ORInt)violations;
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
+-(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c;
 -(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
@@ -48,6 +50,7 @@
 -(ORInt)getVarViolations:(id<ORIntVar>)var;
 -(ORInt)violations;
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
+-(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c;
 -(void)solve:(void(^)())block;
 -(id<ORSolutionPool>) solutionPool;
 -(void)setSource:(id<ORModel>)m;

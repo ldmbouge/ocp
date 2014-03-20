@@ -48,11 +48,11 @@
 {
    return _engine;
 }
--(id) concretize: (id) o
-{
-   return o;
-}
-
+//-(id) concretize: (id) o
+//{
+//   return o;
+//}
+//
 -(id<ORTracker>) tracker
 {
    return _engine;
@@ -101,7 +101,6 @@
 {
    return [(id<LSIntVar>)(_gamma[getId(x)]) value];
 }
-
 -(void)solve:(void(^)())block
 {
    [_engine close];
@@ -132,6 +131,11 @@
 {
    return [_sys deltaWhenAssign:_gamma[getId(x)] to:v];
 }
+-(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c
+{
+   return [[self concretize:c] getVarViolations:_gamma[getId(var)]];
+}
+
 -(void)selectOpt:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block dir:(ORFloat)dir
 {
    ORRandomStreamI* stream = [[ORRandomStreamI alloc] init];
@@ -212,6 +216,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [program setGamma: gamma];
+   [program setModelMappings:[m modelMappings]];
    ORLSConcretizer* concretizer = [[ORLSConcretizer alloc] initORLSConcretizer: program annotation:notes];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];

@@ -52,6 +52,7 @@
 -(id*)gamma;
 -(id<ORObject>) concretize: (id<ORObject>) o;
 -(id<ORModelMappings>) modelMappings;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
 @end
 
 @protocol ORModelMappings <NSObject>
