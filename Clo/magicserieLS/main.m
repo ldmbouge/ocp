@@ -29,7 +29,7 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];
          for(ORInt i=0;i<n;i++)
             [model add: [Sum(model,j,R,[x[j] eq: @(i)]) eq: x[i] ]];
-         //[model add: [Sum(model,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
+         [model add: [Sum(model,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
          
          id<LSProgram> cp = [ORFactory createLSProgram: model annotation:nil];
          __block ORInt it = 0;

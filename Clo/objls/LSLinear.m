@@ -240,11 +240,10 @@ typedef struct LSOccurrence {
          }
          ptr += _occ[i]._n;
       }
-      _sb = idRange(_src, (ORBounds){FDMAXINT,0});
    } else {
-      _sb = idRange(_x,(ORBounds){FDMAXINT,0});
       _src = _x;
    }
+   _sb = idRange(_src,(ORBounds){FDMAXINT,0});
    ORInt sz =_src.range.size;
    _srcOfs = malloc(sizeof(ORInt)*sz);
    for(ORInt i=0;i< sz;++i)
@@ -274,7 +273,10 @@ typedef struct LSOccurrence {
 }
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)x
 {
-   return _vv[getId(x)];
+   ORInt xid = getId(x);
+   if (_sb.min <= xid && xid <= _sb.max)
+      return _vv[getId(x)];
+   else return nil;
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
