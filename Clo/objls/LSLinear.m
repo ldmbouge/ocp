@@ -112,15 +112,26 @@ typedef struct LSOccurrence {
    } vars:@[_violations]]];
 
    [self variables];  // now _src and _sb are both defined
+   ORBool present[_sb.max - _sb.min + 1];
+   memset(present,0,sizeof(ORBool)*(_sb.max - _sb.min + 1));
+   ORBool* pp = present;
+   for(id<LSIntVar> y in _src)
+      present[getId(y) - _sb.min] = YES;
+   // present tells us in O(1) whether a specific source variable exist (and therefore what kind of violation
+   // variable must be created.
+   
+   
    _xb = idRange(_x, (ORBounds){FDMAXINT,0});
    _tmap = malloc(sizeof(ORInt)*(_xb.max - _xb.min + 1));
    _tmap -= _xb.min;
    for(ORInt k=_x.low;k <= _x.up;k++)
       _tmap[getId(_x[k])] = k;
-   _vv = [LSFactory intVarArray:_engine
-                          range:RANGE(_engine,_sb.min,_sb.max)
-                         domain:RANGE(_engine,FDMININT,FDMAXINT)];
-
+   id<ORIntRange> wide = RANGE(_engine,FDMININT,FDMAXINT);
+   _vv = [LSFactory intVarArray:_engine range:RANGE(_engine,_sb.min,_sb.max) with:^id<LSIntVar>(ORInt k) {
+      if (pp[k - _sb.min])
+         return [LSFactory intVar:_engine domain:wide];
+      else return [LSFactory intVar:_engine domain:RANGE(_engine,0,0)];
+   }];
    for(ORInt k=_src.range.low; k <= _src.range.up;k++) {
       id<LSIntVar> sk = _src[k];
       ORInt idx = getId(sk);
@@ -295,6 +306,7 @@ typedef struct LSOccurrence {
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
    ORInt xid = getId(x);
+   if (_srcOfs[xid] < 0) return 0;     // that means variable x does not even appear in the constraint.
    ORInt nbt = _occ[_srcOfs[xid]]._n;
    LSTermDesc* t = _occ[_srcOfs[xid]]._t;
    ORInt oldEval = _value.value;

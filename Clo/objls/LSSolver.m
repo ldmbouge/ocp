@@ -131,6 +131,10 @@
 {
    return [_sys deltaWhenAssign:_gamma[getId(x)] to:v];
 }
+-(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v inConstraint:(id<ORConstraint>)c
+{
+   return [[self concretize:c] deltaWhenAssign:_gamma[getId(x)] to:v];
+}
 -(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c
 {
    return [[self concretize:c] getVarViolations:_gamma[getId(var)]];

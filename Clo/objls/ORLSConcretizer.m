@@ -141,6 +141,9 @@
       _gamma[v.getId] = dx;
    }
 }
+-(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
+{}
+
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
