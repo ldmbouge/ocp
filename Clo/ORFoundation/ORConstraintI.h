@@ -338,6 +338,7 @@
 -(id<ORIntVarArray>) vars;
 -(id<ORIntArray>) coefs;
 -(ORInt) cst;
+-(NSUInteger)count;
 @end
 
 @interface ORLinearLeq : ORConstraintI<ORLinearLeq>

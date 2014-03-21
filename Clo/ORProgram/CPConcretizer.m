@@ -207,15 +207,32 @@
 -(void) visitLinearEq: (id<ORLinearEq>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVarArray> ex = [cstr vars];
-      id<ORIntArray>    ec = [cstr coefs];
-      ORInt c = [cstr cst];
-      id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
-         return [CPFactory intVar:_gamma[ex[k].getId] scale:[ec at:k] shift:0];
-      }];
-      id<CPConstraint> concreteCstr = [CPFactory sum:vx eq: c];
-      [_engine add:concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
+      switch([cstr count]) {
+         case 3: {
+            // [ldm] We concretize for CP. So we can specialize for small arity constraints (like a ternary sum).
+            id<ORIntVarArray> ex = [cstr vars];
+            id<ORIntArray>    ec = [cstr coefs];
+            ORInt c = [cstr cst];
+            ORCLevel annotation = [_notes levelFor:cstr];
+            id<CPIntVar> xp = [CPFactory intVar:_gamma[getId(ex[0])] scale:[ec at:0] shift: - c ];
+            id<CPIntVar> yp = [CPFactory intVar:_gamma[getId(ex[1])] scale:[ec at:1] ];
+            id<CPIntVar> zp = [CPFactory intVar:_gamma[getId(ex[2])] scale:-[ec at:2]];
+            id<CPConstraint> concreteCstr = [CPFactory equal3:zp to:xp plus:yp annotation:annotation];
+            [_engine add:concreteCstr];
+            _gamma[getId(cstr)] = concreteCstr;
+         }break;
+         default: {
+            id<ORIntVarArray> ex = [cstr vars];
+            id<ORIntArray>    ec = [cstr coefs];
+            ORInt c = [cstr cst];
+            id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
+               return [CPFactory intVar:_gamma[ex[k].getId] scale:[ec at:k] shift:0];
+            }];
+            id<CPConstraint> concreteCstr = [CPFactory sum:vx eq: c];
+            [_engine add:concreteCstr];
+            _gamma[cstr.getId] = concreteCstr;
+         }
+      }
    }
 }
 

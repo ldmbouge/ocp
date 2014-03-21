@@ -292,15 +292,14 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          }
       }break;
       case 3: {
+         // The creation of views should be the prerogative of the concretization. So we create a "vanilla" linear here.
+         // after cleaning up to have most coefficients positive. See CPConcretizer.m[~ 200]
          ORInt np = [self nbPositive];
          if (np == 1 || np == 0) [self scaleBy:-1];
          assert([self nbPositive]>=2);
          [self positiveFirst];
          assert(_terms[0]._coef > 0 && _terms[1]._coef > 0);
-         id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale: _terms[0]._coef  shift: _indep];
-         id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale: _terms[1]._coef];
-         id<ORIntVar> zp = [ORFactory intVar:model var:_terms[2]._var scale: - _terms[2]._coef];
-         rv = [model  addConstraint:[ORFactory equal3:model var:zp to:xp plus:yp]];
+         rv = [model addConstraint:[ORFactory sum:model array:[self variables:model] coef:[self coefficients:model] eq:-_indep]];
       }break;
       default: {
          ORInt sumCoefs = 0;
@@ -311,11 +310,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
             id<ORIntVarArray> boolVars = All(model,ORIntVar, i, RANGE(model,0,_nb-1), _terms[i]._var);
             rv = [model addConstraint:[ORFactory sumbool:model array:boolVars eqi: - _indep]];
          }
-         else /*
-            rv = [model addConstraint:[ORFactory sum:model
-                                               array:[self scaledViews:model annotation:cons]
-                                                 eqi: - _indep]];
-               */
+         else
             rv = [model addConstraint:[ORFactory sum:model
                                                array:[self variables:model]
                                                 coef:[self coefficients:model]

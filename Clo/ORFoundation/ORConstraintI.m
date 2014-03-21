@@ -2413,6 +2413,11 @@
    [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) == %d)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
+-(NSUInteger)count
+{
+   assert([_ia count] == [_coefs count]);
+   return [_ia count];
+}
 -(void)visit: (ORVisitor*) v
 {
    [v visitLinearEq: self];

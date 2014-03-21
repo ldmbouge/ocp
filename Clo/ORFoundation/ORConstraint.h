@@ -326,6 +326,7 @@ enum ORGroupType {
 @protocol ORLinearEq <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(id<ORIntArray>) coefs;
+-(NSUInteger)count;
 -(ORInt) cst;
 @end
 
