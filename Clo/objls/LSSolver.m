@@ -22,7 +22,7 @@
 
 -(id)initLSSolver
 {
-   self = [super initORGamma];
+   self = [super init];
    _engine = [[LSEngineI alloc] initEngine];
    _pool = [ORFactory createSolutionPool];
    return self;

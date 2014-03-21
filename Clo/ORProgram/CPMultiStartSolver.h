@@ -15,7 +15,7 @@
 #import <ORProgram/CPSolver.h>
 
 // MultiStart DFS CPSolver
-@interface CPMultiStartSolver : NSObject<CPProgram>
+@interface CPMultiStartSolver : ORGamma<CPProgram>
 -(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
 -(void) setSource:(id<ORModel>)src;
 -(id<CPProgram>) at: (ORInt) i;

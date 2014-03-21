@@ -67,7 +67,7 @@
    id* _gamma;
    id<ORModelMappings> _mappings;
 }
--(ORGamma*) initORGamma;
+-(ORGamma*) init;
 -(void) dealloc;
 -(id*) gamma;
 -(id) concretize: (id) o;

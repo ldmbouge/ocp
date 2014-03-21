@@ -273,6 +273,18 @@
 {
    [_engine notify:self];
 }
+-(LSGradient)decrease:(id<LSIntVar>)x
+{
+   assert(NO);
+   LSGradient rv;
+   return rv;
+}
+-(LSGradient)increase:(id<LSIntVar>)x
+{
+   assert(NO);
+   LSGradient rv;
+   return rv;
+}
 @end
 // ========================================================================================
 // Int Views
@@ -298,6 +310,18 @@
 -(ORInt)value
 {
    return _fun();
+}
+-(LSGradient)decrease:(id<LSIntVar>)x
+{
+   assert(NO);
+   LSGradient rv;
+   return rv;
+}
+-(LSGradient)increase:(id<LSIntVar>)x
+{
+   assert(NO);
+   LSGradient rv;
+   return rv;
 }
 @end
 // ==============================================================

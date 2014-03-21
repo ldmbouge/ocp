@@ -155,6 +155,8 @@ typedef struct LSConstraintList {
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
+   if (x.value == v)
+      return 0;
    ORInt xid = getId(x);
    if (_lb <= xid && xid <= _ub && _srcOfs[xid] >= 0) {
       ORInt ttl = 0;

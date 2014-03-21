@@ -26,7 +26,7 @@
 -(id<ORSearchController>)makeNestedController;
 @end
 
-@implementation CPParSolverI {
+@implementation CPParSolverI  {
    id<CPSemanticProgram>* _workers;
    
    PCObjectQueue*       _queue;

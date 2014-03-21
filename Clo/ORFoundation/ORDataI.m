@@ -912,7 +912,7 @@ static ORInt _deterministic;
 @end
 
 @implementation ORGamma
--(ORGamma*) initORGamma
+-(ORGamma*) init
 {
    self = [super init];
    _gamma = NULL;

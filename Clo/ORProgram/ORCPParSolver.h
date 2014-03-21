@@ -14,7 +14,7 @@
 #import <ORProgram/CPProgram.h> 
 #import <ORProgram/CPSolver.h>
 
-@interface CPParSolverI : NSObject<CPProgram> {
+@interface CPParSolverI : ORGamma<CPProgram> {
    ORInt              _nbWorkers;
    id<ORSolutionPool> _globalPool;
    ORClosure          _onSol;
