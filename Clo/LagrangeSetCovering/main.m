@@ -99,8 +99,8 @@ int main (int argc, const char * argv[])
    
     NSDate* t0 = [NSDate date];
    
-   ORInt coupledCount = 100;
-   NSArray* myCoupled = [ORLagrangianTransform coupledConstraints: m];
+   ORInt coupledCount = 600;
+   //NSArray* myCoupled = [ORLagrangianTransform coupledConstraints: m];
    NSMutableArray* coupled = [[NSMutableArray alloc] initWithCapacity: 50];
    for(int i = 0; i < coupledCount; i++) [coupled addObject: [cstrs objectAtIndex: cstrs.count-i-1]];
    
@@ -108,7 +108,7 @@ int main (int argc, const char * argv[])
    id<ORParameterizedModel> lagrangeModel = [t apply: m relaxing: coupled];
    
    NSArray* split = autosplit([s toNSArray], [lagrangeModel hardConstraints]);
-   id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel withSurrogateSplit: split];
+   id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel]; //withSurrogateSplit: split];
    [lr run];
 
 //   id<ORRunnable> r = [ORFactory MIPRunnable: m];
@@ -116,7 +116,7 @@ int main (int argc, const char * argv[])
 //   id<ORSolution> sol= [[[r solver] solutionPool] best];
 //   id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
 //   NSLog(@"BEST: %f", [objValue floatValue]);
-//   NSLog(@"%@", sol);
+   //NSLog(@"%@", sol);
    
     //NSLog(@"lower bound: %f", [(ORLagrangeRelax*)lr bestBound]);
     

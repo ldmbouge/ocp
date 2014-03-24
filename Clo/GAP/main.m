@@ -22,12 +22,12 @@
 
 int main (int argc, const char * argv[])
 {
-    int m = 4; // knapsacks
-    int n = 12; // items
-    int MAX_WGHT = 10;
-    int MAX_PRFT = 15;
+    int m = 2; // knapsacks
+    int n = 6; // items
+    int MAX_WGHT = 8;
+    int MAX_PRFT = 12;
     int CAP_LOW = 100;
-    int CAP_RNG = 500;
+    int CAP_RNG = 300;
     unsigned int seed = 147;
     srand(seed);
     
@@ -103,8 +103,11 @@ int main (int argc, const char * argv[])
     [lr run];
     id<ORSolution> best = [(ORLagrangeRelax*)lr bestSolution];
 
+//    id<ORRunnable> r = [ORFactory MIPRunnable: model];
+//    [r run];
+//    id<ORSolution> sol= [[[r solver] solutionPool] best];
     
-    NSLog(@"BEST: %@", best);
+    //NSLog(@"BEST: %@", best);
     NSDate* t1 = [NSDate date];
     NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
     NSLog(@"Time: %f", time);

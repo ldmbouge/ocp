@@ -180,6 +180,22 @@
    }
 }
 
+-(void) visitLEqual: (id<ORLEqual>)c {
+    if (_gamma[c.getId] == NULL) {
+        id<ORVar> x = [c left];
+        [x visit:self];
+        MIPVariableI* dx = _gamma[x.getId];
+        id<ORVar> y = [c right];
+        [y visit:self];
+        MIPVariableI* dy = _gamma[y.getId];
+        ORFloat coef[2] = { 1.0, -1.0 };
+        MIPVariableI* vars[2] = { dx, dy };
+        MIPConstraintI* concreteCstr = [_MIPsolver createLEQ:2 var: vars coef:coef rhs: 0];
+        _gamma[c.getId] = concreteCstr;
+        [_MIPsolver postConstraint:concreteCstr];
+    }
+}
+
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {

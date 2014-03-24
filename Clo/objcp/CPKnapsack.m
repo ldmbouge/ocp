@@ -181,6 +181,7 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 }
 -(BOOL**)denseMatrices
 {
+    assert([_c min] >= 0);
    ORInt L = [_c min],U = [_c max];
    __block BOOL** f = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
    __block BOOL** g = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
