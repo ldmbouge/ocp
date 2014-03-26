@@ -14,6 +14,7 @@
 #import <ORFoundation/ORAVLTree.h>
 #import "ORFactoryI.h"
 #import "ORError.h"
+#import <objc/objc-runtime.h>
 
 @implementation ORIntSetI
 {
@@ -188,7 +189,7 @@
 {
    if (self == object)
       return YES;
-   if ([self class] != [object class])
+   if (object_getClass(self) != object_getClass(object))
       return NO;
    return _low == ((ORIntRangeI*)object)->_low && _up == ((ORIntRangeI*)object)->_up;
 }
