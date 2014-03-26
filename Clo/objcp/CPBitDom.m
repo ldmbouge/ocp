@@ -121,7 +121,7 @@
    else
       return [NSString stringWithFormat:@"(%d)[%d .. %d]",_sz._val,_min._val,_max._val];
 }
--(void) updateMin:(ORInt) newMin for:(id<CPIntVarNotifier>) x
+-(void) updateMin:(ORInt) newMin for:(id<CPIntVarNotifier>) x tle:(BOOL)tle
 {
    if (newMin <= _min._val)
       return;
@@ -133,13 +133,13 @@
    assignTRInt(&_sz, nsz, _trail);
    assignTRInt(&_min, newMin, _trail);
    
-   if ([x tracksLoseEvt:self]) {
+   if (tle) {
       for(ORInt k=oldMin;k< newMin;k++)
          [x loseValEvt:k sender:self];
    }
    [x changeMinEvt:nsz sender:self];
 }
--(void) updateMax:(ORInt) newMax for:(id<CPIntVarNotifier>) x
+-(void) updateMax:(ORInt) newMax for:(id<CPIntVarNotifier>) x tle:(BOOL)tle
 {
    if (newMax >= _max._val)
       return;
@@ -151,14 +151,14 @@
    assignTRInt(&_max, newMax, _trail);
    assignTRInt(&_sz, nsz, _trail);
    
-   if ([x tracksLoseEvt:self]) {
+   if (tle) {
       for(ORInt k=newMax+1;k<= oldMax;k++)
          [x loseValEvt:k sender:self];
    }
    [x changeMaxEvt:nsz sender:self];
 }
 
--(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+-(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    if (newMin > _min._val) {
       if (newMin > _max._val)
@@ -168,7 +168,7 @@
       ORInt nsz = _sz._val - nbr;
       assignTRInt(&_sz, nsz, _trail);
       assignTRInt(&_min, newMin, _trail);
-      if ([x tracksLoseEvt:self]) {
+      if (tle) {
          for(ORInt k=oldMin;k< newMin;k++)
             [x loseValEvt:k sender:self];
       }
@@ -183,14 +183,14 @@
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
    assignTRInt(&_max, newMax, _trail);
-   if ([x tracksLoseEvt:self]) {
+   if (tle) {
       for(ORInt k=newMax+1;k<= oldMax;k++)
          [x loseValEvt:k sender:self];
    }
    [x changeMaxEvt:nsz sender:self];
 }
 
--(void) bind:(ORInt)  val for:(id<CPIntVarNotifier>) x
+-(void) bind:(ORInt)  val for:(id<CPIntVarNotifier>) x tle:(BOOL)tle
 {
    if (val < _min._val || val > _max._val)
       failNow();
@@ -198,11 +198,11 @@
       return;
    ORInt oldMin = _min._val;
    ORInt oldMax = _max._val;
-   assignTRInt(&_min, val, _trail);
-   assignTRInt(&_max, val, _trail);
-   assignTRInt(&_sz, 1, _trail);
+   inline_assignTRInt(&_min, val, _trail);
+   inline_assignTRInt(&_max, val, _trail);
+   inline_assignTRInt(&_sz, 1, _trail);
    
-   if ([x tracksLoseEvt:self]) {
+   if (tle) {
       for(ORInt k=oldMin;k<=oldMax;k++)
          if (k != val)
             [x loseValEvt:k sender:self];
@@ -213,9 +213,9 @@
 -(void) remove:(ORInt) val for:(id<CPIntVarNotifier>) x
 {
    if (val <= _min._val)
-      [self updateMin:val+1 for:x];
+      [self updateMin:val+1 for:x tle:tracksLoseEvt(x)];
    else if (val >= _max._val)
-      [self updateMax:val-1 for:x];
+      [self updateMax:val-1 for:x tle:tracksLoseEvt(x)];
    else if (val > _min._val || val < _max._val)
       @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
 }
@@ -226,7 +226,7 @@
    _max._val = [toRestore max];
    _sz._val  = [toRestore domsize];
 }
--(void) restoreValue:(ORInt) toRestore for:(id<CPIntVarNotifier>)x
+-(void) restoreValue:(ORInt) toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
     ORInt oldMin = _min._val;
     ORInt oldMax = _max._val;
@@ -235,7 +235,7 @@
     _max._val = toRestore;
     _sz._val  = 1;
     
-    if ([x tracksLoseEvt:self]) {
+    if (tle) {
         for(ORInt k=oldMin;k<=oldMax;k++)
             if (k != toRestore)
                 [x loseValEvt:k sender:self];
@@ -298,8 +298,8 @@
    const BOOL partialLast = sz & 0x1f;
    if (partialLast)
       _bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits of the last partially filled word.
-   _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
-   _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
+   _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:tle:)];
+   _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:tle:)];
    return self;   
 }
 -(CPBitDom*) initBitDomFor:(id<ORTrail>) trail low:(ORInt) low up:(ORInt) up
@@ -317,8 +317,8 @@
    const BOOL partialLast = sz & 0x1f;
    if (partialLast)
       _bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits of the last partially filled word.
-   _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
-   _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
+   _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:tle:)];
+   _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:tle:)];
    return self;
 }
 - (id)copyWithZone:(NSZone *) zone
@@ -367,25 +367,25 @@ static inline int countFrom(CPBitDom* dom,ORInt from,ORInt to)
       bits = dom->_bits[fw] & wm;
       nc += __builtin_popcount(bits);
    }
-   /*
-   fw = from >> 5;
-   tw = to >> 5;
-   fb = from & 0x1f;
-   tb = to & 0x1f;
-   int cnt = 0;
-   ORUInt mask = 0x1 << fb;
-   while (fw != tw || fb != tb) {
-      cnt += ((dom->_bits[fw] & mask)!=0);
-      mask <<= 1;
-      ++fb;
-      if (mask==0) {
-         ++fw;
-         fb   = 0;
-         mask = 0x1;
-      }
-   }
-   assert(nc == cnt);
-   return cnt;   */
+//
+//   fw = from >> 5;
+//   tw = to >> 5;
+//   fb = from & 0x1f;
+//   tb = to & 0x1f;
+//   int cnt = 0;
+//   ORUInt mask = 0x1 << fb;
+//   while (fw != tw || fb != tb) {
+//      cnt += ((dom->_bits[fw] & mask)!=0);
+//      mask <<= 1;
+//      ++fb;
+//      if (mask==0) {
+//         ++fw;
+//         fb   = 0;
+//         mask = 0x1;
+//      }
+//   }
+//   assert(nc == cnt);
+//   return cnt;
    return nc;
 }
 
@@ -591,22 +591,23 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    }
 }
 
-
--(void) updateMin: (ORInt) newMin for: (id<CPIntVarNotifier>)x
+-(void) updateMin: (ORInt) newMin for: (id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    if (newMin <= _min._val)
       return;
    if (newMin > _max._val)
       failNow();
    ORInt oldMin = _min._val;
-   int nbr = countFrom(self,_min._val,newMin-1);
+   BOOL compact = _max._val - _min._val + 1 == _sz._val;
+   int nbr = compact ? newMin - _min._val : countFrom(self,_min._val,newMin-1);
    // need to send AC5 notifications still
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
-   newMin = findMin(self,newMin);
+   if (!compact)
+      newMin = findMin(self,newMin);
    assignTRInt(&_min, newMin, _trail);
 
-   if ([x tracksLoseEvt:self]) {
+   if (tle) {
       for(ORInt k=oldMin;k< newMin;k++)
          if (GETBIT(k))
             [x loseValEvt:k sender:self];
@@ -614,20 +615,22 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    [x changeMinEvt:nsz sender:self];
 }
 
--(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    if (newMax >= _max._val)
       return;
    if (newMax < _min._val)
       failNow();
    ORInt oldMax = _max._val;
-   ORInt nbr = countFrom(self,newMax+1,_max._val);
+   BOOL compact = _max._val - _min._val + 1 == _sz._val;
+   ORInt nbr = compact ? _max._val - newMax : countFrom(self,newMax+1,_max._val);
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
-   newMax = findMax(self,newMax);
+   if (!compact)
+      newMax = findMax(self,newMax);
    assignTRInt(&_max, newMax, _trail);
 
-   if ([x tracksLoseEvt:self]) {
+   if (tle) {
       for(ORInt k=newMax+1;k<= oldMax;k++)
          if (GETBIT(k))
             [x loseValEvt:k sender:self];
@@ -635,19 +638,21 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    [x changeMaxEvt:nsz sender:self];
 }
 
--(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+-(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    if (newMin > _max._val || newMax < _min._val || newMax < newMin)
       failNow();
+   BOOL compact = _max._val - _min._val + 1 == _sz._val;
    if (newMin > _min._val) {
       ORInt oldMin = _min._val;
-      int nbr = countFrom(self,_min._val,newMin-1);
+      int nbr = compact ? newMin - _min._val : countFrom(self,_min._val,newMin-1);
       ORInt nsz = _sz._val - nbr;
       assignTRInt(&_sz, nsz, _trail);
-      newMin = findMin(self,newMin);
+      if (!compact)
+         newMin = findMin(self,newMin);
       assignTRInt(&_min, newMin, _trail);
       
-      if ([x tracksLoseEvt:self]) {
+      if (tle) {
          for(ORInt k=oldMin;k< newMin;k++)
             if (GETBIT(k))
                [x loseValEvt:k sender:self];
@@ -658,13 +663,14 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       failNow();
    if (newMax < _max._val)  {
       ORInt oldMax = _max._val;
-      ORInt nbr = countFrom(self,newMax+1,_max._val);
+      ORInt nbr = compact ? _max._val - newMax : countFrom(self,newMax+1,_max._val);
       ORInt nsz = _sz._val - nbr;
       assignTRInt(&_sz, nsz, _trail);
-      newMax = findMax(self,newMax);
+      if (!compact)
+         newMax = findMax(self,newMax);
       assignTRInt(&_max, newMax, _trail);
       
-      if ([x tracksLoseEvt:self]) {
+      if (tle) {
          for(ORInt k=newMax+1;k<= oldMax;k++)
             if (GETBIT(k))
                [x loseValEvt:k sender:self];
@@ -673,7 +679,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    }
 }
 
--(void) bind:(ORInt)val for:(id<CPIntVarNotifier>)x
+-(void) bind:(ORInt)val for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    if (val < _min._val || val > _max._val)
       failNow();
@@ -694,12 +700,44 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 //   if (val < oldMax)
 //      [x changeMaxEvt:1 sender:self];
 
-   if ([x tracksLoseEvt:self]) {
+   if (tle) {
       for(ORInt k=oldMin;k<=oldMax;k++)
          if (GETBIT(k) && k != val)
             [x loseValEvt:k sender:self];
    };
    [x bindEvt:self];
+}
+
+void domBitRemove(CPBitDom* this,ORInt val,id<CPIntVarNotifier> x)
+{
+   if (val < this->_min._val || val > this->_max._val)
+      return;
+   if (this->_min._val == this->_max._val && val == this->_min._val)
+      failNow();
+   if (val == this->_min._val) {
+      ORInt oldMin = this->_min._val;
+      inline_assignTRInt(&this->_sz, this->_sz._val - 1, this->_trail);
+      ORInt newMin = findMin(this,this->_min._val + 1);
+      inline_assignTRInt(&this->_min, newMin, this->_trail);
+      [x loseValEvt:oldMin sender:this];
+      [x changeMinEvt:this->_sz._val sender:this];
+   }
+   else if (val == this->_max._val) {
+      ORInt oldMax = this->_max._val;
+      inline_assignTRInt(&this->_sz, this->_sz._val - 1, this->_trail);
+      ORInt newMax = findMax(this,this->_max._val - 1);
+      inline_assignTRInt(&this->_max, newMax, this->_trail);
+      [x loseValEvt:oldMax sender:this];
+      [x changeMaxEvt:this->_sz._val sender:this];
+   }
+   else if (GETBITPTR(this,val)) {
+      resetBit(this,val);
+      inline_assignTRInt(&this->_sz, this->_sz._val -  1, this->_trail);
+      if (this->_sz._val==1)
+         [x bindEvt:this];
+      [x loseValEvt:val sender:this];
+      [x domEvt:this];
+   }
 }
 
 -(void) remove:(ORInt)val for:(id<CPIntVarNotifier>)x
@@ -730,6 +768,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       if (_sz._val==1)
          [x bindEvt:self];
       [x loseValEvt:val sender:self];
+      [x domEvt:self];
    }
 }
 
@@ -744,7 +783,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       _bits[k] = toRestore->_bits[k];
    }
 }
--(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x
+-(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
     ORInt oldMin = _min._val;
     ORInt oldMax = _max._val;
@@ -753,7 +792,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    _max._val = toRestore;
    _sz._val  = 1;
     
-    if ([x tracksLoseEvt:self]) {
+    if (tle) {
         for(ORInt k=oldMin;k<=oldMax;k++)
             if (GETBIT(k) && k != toRestore)
                [x loseValEvt:k sender:self];
@@ -877,19 +916,19 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
    [_theDom release];
    [super dealloc];
 }
--(void) updateMin:(ORInt) newMin for:(id<CPIntVarNotifier>)x
+-(void) updateMin:(ORInt) newMin for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    assert(FALSE);
 }
--(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    assert(FALSE);
 }
--(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    assert(FALSE);
 }
--(void) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x
+-(void) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    assert(FALSE);
 }
@@ -988,7 +1027,7 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
 {
    assert(FALSE);
 }
--(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x
+-(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle
 {
    assert(FALSE);
 }

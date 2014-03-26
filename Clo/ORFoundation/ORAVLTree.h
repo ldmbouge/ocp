@@ -14,6 +14,7 @@
 
 @protocol Position    
 -(id)element;
+-(ORInt)key;
 @end
 
 @class ORAVLTreeNode;
@@ -26,6 +27,7 @@
 -(ORAVLTreeNode<Position>*) findNodeForKey:(ORInt)k;
 -(id)findObjectForKey:(ORInt)k;
 -(ORInt)size;
+-(ORAVLTreeNode<Position>*) findNodeAtRank:(ORInt)r;
 -(void) iterateOverKey: (ORInt2Void) f;
 -(void) updateObject:(id)o forKey:(ORInt)k;
 -(void) removeObjectForKey:(ORInt) k;

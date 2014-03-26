@@ -16,7 +16,9 @@
 // ldm: We must, because CPCoreConstraint in CPUKernel is public and inherits from ORObject
 
 @interface ORObject : NSObject<ORObject> {
+@public
    ORUInt  _name;
+@package
    ORUInt  _rc;
    BOOL    _ba[4];
 }
@@ -25,3 +27,4 @@
 -(ORUInt)getId;
 @end
 
+static inline ORUInt getId(ORObject* ptr) { return ptr->_name;}

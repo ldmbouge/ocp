@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
+#import <objcp/CPError.h>
 
 @class CPEngineI;
 
@@ -24,19 +25,20 @@ enum CPDomClass {
 @interface CPBoundsDom : NSObject<CPDom,NSCoding,NSCopying> {
 @package
    enum CPDomClass    _dc;
-   id<ORTrail>        _trail;
+   id<ORTrail>     _trail;
+   ORInt            _imin;
+   ORInt            _imax;
+@public
    TRInt             _min;
    TRInt             _max;
    TRInt              _sz;
-   ORInt            _imin;
-   ORInt            _imax;
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
 -(CPBoundsDom*)initBoundsDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
--(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
--(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(void) bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) bind:(ORInt)val for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void) remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(ORInt)min;
 -(ORInt)max;
@@ -52,7 +54,7 @@ enum CPDomClass {
 -(NSString*)description;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
+-(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void)enumerateWithBlock:(void(^)(ORInt))block;
 -(void)enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
@@ -80,14 +82,14 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(ORInt)findMax:(ORInt)from;
 -(ORInt)regret;
 -(NSString*)description;
--(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
--(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(void) bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) bind:(ORInt)val for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void) remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
+-(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void)translate:(ORInt)shift;
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
@@ -99,9 +101,9 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
    ORInt     _b;
 }
 -(id)initAffineDom:(id<CPDom>)d scale:(ORInt)a shift:(ORInt)b;
--(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
--(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
--(void) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
+-(void) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
+-(void) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 -(ORInt) min;
 -(ORInt) max;
@@ -117,7 +119,7 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(ORInt) findMax:(ORInt)from;
 -(id) copyWithZone:(NSZone *)zone;
 -(void) restoreDomain:(id<CPDom>)toRestore ;
--(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
+-(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x tle:(BOOL)tle;
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
@@ -147,6 +149,27 @@ static inline ORInt domMember(CPBoundsDom* x,ORInt value)
          } else return 0;         
       }
       default: return 0;
+   }
+}
+void domBitRemove(CPBitDom* this,ORInt val,id<CPIntVarNotifier> x);
+
+static inline void domRemove(CPBoundsDom* x,ORInt val,id<CPIntVarNotifier> recv,BOOL tle)
+{
+   switch(x->_dc) {
+      case DCBounds: {
+         if (val < x->_min._val || val > x->_max._val)
+            return;
+         if (val == x->_min._val)
+            [x updateMin:val+1 for:recv tle:tle];
+         else if (val == x->_max._val)
+            [x updateMax:val-1 for:recv tle:tle];
+         else
+            @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+      }
+      case DCBits: {
+         domBitRemove((CPBitDom*)x,val,recv);
+      }
+      default: ;
    }
 }
 

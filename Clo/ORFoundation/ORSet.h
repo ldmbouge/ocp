@@ -26,6 +26,7 @@
 -(void) delete: (ORInt) v;
 -(ORInt) min;
 -(ORInt) max;
+-(ORInt) atRank:(ORInt)r;
 -(NSString*) description;
 -(void) copyInto: (id<ORIntSet>) S;
 -(id<ORIntSet>)inter:(id<ORIntSet>)s2;

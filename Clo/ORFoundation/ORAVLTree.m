@@ -39,6 +39,7 @@
 -(void)fixSize;
 -(void)fixHeight;
 -(void) iterateOverKey: (ORInt2Void) f;
+-(ORInt)key;
 @end
 
 #define LEFTHEIGHT(n)  ((n)->_left  ? (n)->_left->_height : 0L)
@@ -66,7 +67,11 @@
    [_data release];
    [super dealloc];
 }
--(ORBool)balanced 
+-(ORInt)key
+{
+   return _key;
+}
+-(ORBool)balanced
 {
    ORInt bal = LEFTHEIGHT(self) - RIGHTHEIGHT(self);
    return -1 <= bal && bal <= 1;
@@ -206,6 +211,24 @@ static inline void rightRotate(ORAVLTree* t,ORAVLTreeNode* z)
    [self reBalance: *cur];
    return retVal;   
 }
+-(ORAVLTreeNode<Position>*) findNodeAtRank:(ORInt)r
+{
+   ORAVLTreeNode* cur = _root;
+   ++r;
+   while (cur) {
+      ORInt lSize = cur->_left ? cur->_left->_size : 0;
+      if (r <= lSize)
+         cur = cur->_left;
+      else if (r == lSize + 1)
+         return cur;
+      else {
+         r = r - lSize - 1;
+         cur = cur->_right;
+      }
+   }
+   return nil;
+}
+
 -(ORAVLTreeNode<Position>*)findNodeForKey:(ORInt)k
 {
    ORAVLTreeNode* cur = _root;

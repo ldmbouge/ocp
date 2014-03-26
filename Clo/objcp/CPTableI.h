@@ -17,7 +17,7 @@
 #import <CPUKernel/CPConstraintI.h>
 #import "CPIntVarI.h"
 
-@interface CPTableCstrI : CPCoreConstraint<CPConstraint,NSCoding> {
+@interface CPTableCstrI : CPCoreConstraint<CPConstraint> {
     CPIntVar**     _var;
     ORInt           _arity;  
     ORTableI*       _table;
@@ -28,7 +28,4 @@
 -(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVar*) x : (CPIntVar*) y : (CPIntVar*) z;
 -(void) dealloc;
 -(ORStatus) post;
--(void) encodeWithCoder: (NSCoder*) aCoder;
--(id) initWithCoder: (NSCoder*) aDecoder;
-
 @end

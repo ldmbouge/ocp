@@ -122,6 +122,8 @@
 -(void)enumerateWith:(void(^)(id<ORSolution>))block;
 -(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
+-(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
+-(NSUInteger) count;
 @end
 
 @interface ORConstraintSetI : NSObject<ORConstraintSet> {

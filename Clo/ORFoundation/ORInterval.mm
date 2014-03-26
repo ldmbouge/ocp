@@ -18,6 +18,7 @@
 #include <fenv.h>
 #include <limits>
 #include <immintrin.h> 
+#include <smmintrin.h>
 #include <assert.h>
 
 #if !defined(__APPLE__)
@@ -101,6 +102,12 @@ static double N_LN10L,N_LN10U;
    ptr[2] = bigendian ? c : b; \
    ptr[3] = bigendian ? d : a; \
 } while(0)
+
+
+ORInterval ORIFloor(ORInterval a)
+{
+   return _mm_floor_pd(a);
+}
 
 // ===========================================================================================
 // TRIGO

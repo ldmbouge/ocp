@@ -12,6 +12,8 @@
 #import "CPKnapsack.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
+#import <ORFoundation/ORTrailI.h>
+//#import <ORFoundation/ORTrailFun.h>
 
 @interface KSNode : NSObject {
    @package
@@ -64,17 +66,17 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    id<ORTrail> trail = col->_trail;
    if (col->_first._val == node) {
       assert(below == nil);
-      assignTRIdNC(&col->_first,above,trail);
+      inline_assignTRIdNC(&col->_first,above,trail);
    } else {
       assert(below != nil);
-      assignTRIdNC(&below->_up,above,trail);
+      inline_assignTRIdNC(&below->_up,above,trail);
    }
    if (col->_last._val == node) {
       assert(above == nil);
-      assignTRIdNC(&col->_last,below,trail);
+      inline_assignTRIdNC(&col->_last,below,trail);
    } else {
       assert(above != nil);
-      assignTRIdNC(&above->_down,below,trail);
+      inline_assignTRIdNC(&above->_down,below,trail);
    }
 }
 
@@ -144,10 +146,10 @@ static inline void outboundLossOn(CPKnapsack* ks,KSNode* n,ORInt v)
    ORInt colID = n->_col + 1;
    ORInt ofs = SUPP(colID,v);
    ORInt ns  = ks->_support[ofs]._val - 1;
-   assignTRInt(ks->_support + ofs,ns,ks->_trail);
+   inline_assignTRInt(ks->_support + ofs,ns,ks->_trail);
    if (ns==0)
       removeDom(ks->_xb[colID], v);
-   assignTRIdNC(&n->_succ[v],nil,ks->_trail);
+   inline_assignTRIdNC(&n->_succ[v],nil,ks->_trail);
    if (n->_succ[!v]._val == nil)
       backwardPropagateLoss(ks,n);
 }
@@ -155,10 +157,10 @@ static inline void inboundLossOn(CPKnapsack* ks,KSNode* n,ORInt v)
 {
    ORInt ofs = SUPP(n->_col,v);
    ORInt ns  = ks->_support[ofs]._val - 1;
-   assignTRInt(ks->_support + ofs,ns,ks->_trail);
+   inline_assignTRInt(ks->_support + ofs,ns,ks->_trail);
    if (ns==0)
       removeDom(ks->_xb[n->_col],v);
-   assignTRIdNC(&n->_pred[v],nil,ks->_trail);
+   inline_assignTRIdNC(&n->_pred[v],nil,ks->_trail);
    if (n->_pred[!v]._val ==nil)
       forwardPropagateLoss(ks,n,ks->_column[n->_col]);
 }
@@ -297,21 +299,6 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 {
    return [NSMutableString stringWithFormat:@"<CPKnapsackDC: %02d (%@ * %@ IN %@)>",_name,_x,_w,_c];
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_w];
-   [aCoder encodeObject:_c];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _w = [aDecoder decodeObject];
-   _c = [aDecoder decodeObject];   
-   return self;
-}
 @end
 
 @implementation KSNode
@@ -338,13 +325,13 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 }
 -(void)setSucc:(ORInt)v as:(KSNode*)n
 {
-   assignTRIdNC(&_succ[v],n,_trail);
-   assignTRIdNC(&n->_pred[v],self,_trail);
+   inline_assignTRIdNC(&_succ[v],n,_trail);
+   inline_assignTRIdNC(&n->_pred[v],self,_trail);
 }
 -(void)pushKSNode:(KSNode*)top
 {
-   assignTRIdNC(&top->_down,self,_trail);
-   assignTRIdNC(&_up,top,_trail);
+   inline_assignTRIdNC(&top->_down,self,_trail);
+   inline_assignTRIdNC(&_up,top,_trail);
 }
 -(KSNode*)findSpot:(ORInt)w
 {
@@ -357,8 +344,8 @@ static inline CPKSPair looseValue(KSNode* n,ORInt v)
 {
    KSNode* pv = n->_pred[v]._val;
    if (pv) {
-      assignTRIdNC(&n->_pred[v],nil,n->_trail);
-      assignTRIdNC(&pv->_succ[v],nil,n->_trail);
+      inline_assignTRIdNC(&n->_pred[v],nil,n->_trail);
+      inline_assignTRIdNC(&pv->_succ[v],nil,n->_trail);
       return (CPKSPair){YES,pv};
    } else
       return (CPKSPair){NO,pv};
@@ -387,27 +374,27 @@ static inline BOOL unreachableFromRight(KSNode* n)
 -(void)makeSource
 {
    KSNode* source = [[KSNode alloc] initKSNode:_col weight:0 trail:_trail];
-   assignTRIdNC(&_first,source,_trail);
-   assignTRIdNC(&_last,source,_trail);
+   inline_assignTRIdNC(&_first,source,_trail);
+   inline_assignTRIdNC(&_last,source,_trail);
 }
 -(void)pushOnColumn:(KSNode*)c
 {
    if (_first._val == nil) {            // we do not have a content yet. Create one with c.
-      assignTRIdNC(&_first,c,_trail);
-      assignTRIdNC(&_last,c,_trail);
+      inline_assignTRIdNC(&_first,c,_trail);
+      inline_assignTRIdNC(&_last,c,_trail);
    } else {                             // we do have a column. Add on top.
       [_last._val pushKSNode:c];
-      assignTRIdNC(&_last,c,_trail);
+      inline_assignTRIdNC(&_last,c,_trail);
    }
 }
 -(void)insert:(KSNode*)n below:(KSNode*)spot
 {
    KSNode* below = spot->_down._val;
    assert(below != nil);
-   assignTRIdNC(&n->_up, spot, _trail);
-   assignTRIdNC(&n->_down,below,_trail);
-   assignTRIdNC(&below->_up,n,_trail);
-   assignTRIdNC(&spot->_down,n,_trail);
+   inline_assignTRIdNC(&n->_up, spot, _trail);
+   inline_assignTRIdNC(&n->_down,below,_trail);
+   inline_assignTRIdNC(&below->_up,n,_trail);
+   inline_assignTRIdNC(&spot->_down,n,_trail);
 }
 
 static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks)

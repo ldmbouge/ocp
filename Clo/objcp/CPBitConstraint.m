@@ -179,20 +179,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //    [_x setUp: up];
 //    [_y setUp: up];
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitNOT
@@ -290,20 +276,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"  =    Y =%@",_y);
    NSLog(@"**********************************");
 #endif
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    return self;
 }
 @end
 
@@ -422,20 +394,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"**********************************");
 #endif
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitOR
@@ -547,22 +505,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"   =  Z =%@",_z);
    NSLog(@"**********************************");
 #endif
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-    [aCoder encodeObject:_z];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    _z = [aDecoder decodeObject];
-    return self;
 }
 @end
 
@@ -686,22 +628,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"**********************************");
 #endif
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-    [aCoder encodeObject:_z];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    _z = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitIF
@@ -808,24 +734,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [_y setUp:newYUp];
     [_z setLow:newZLow];
     [_z setUp:newZUp];
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_w];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-    [aCoder encodeObject:_z];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _w = [aDecoder decodeObject];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    _z = [aDecoder decodeObject];
-    return self;
 }
 @end
  
@@ -944,20 +852,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //    [_y setLow:newYLow];
 //    [_y setUp:newYUp];
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitRotateL
@@ -1060,20 +954,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@" ROTL %d  Y =%@",_places,_y);
    NSLog(@"********************************************************");
 #endif
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
 }
 @end
 
@@ -1757,26 +1637,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@" Cout =%@\n\n",_cout);
    NSLog(@"********************************************************\n");
 #endif
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-    [aCoder encodeObject:_z];
-    [aCoder encodeObject:_cin];
-    [aCoder encodeObject:_cout];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    _z = [aDecoder decodeObject];
-    _cin = [aDecoder decodeObject];
-    _cout = [aDecoder decodeObject];
-    return self;
 }
 @end
 

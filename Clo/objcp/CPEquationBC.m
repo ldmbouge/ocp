@@ -20,7 +20,7 @@
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   _idempotent = YES;
+   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -126,6 +126,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    ORInt i = 0;
    ORInt lastUsed = _used._val - 1;
    ORLong ec = _ec._val;
+   long long slow = 0,sup = 0;
    while (i <= lastUsed) {
       CPEQTerm* cur = _inUse[i]._val;
       ORBounds b = bounds(cur->var);
@@ -138,56 +139,37 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       } else {
          cur->low = b.min;
          cur->up  = b.max;
+         slow += cur->low;
+         sup  += cur->up;
          cur->updated = NO;
          i++;
       }
    }
    assignTRInt(&_used, lastUsed+1, _trail);
    assignTRLong(&_ec, ec, _trail);
-   bool changed;
    bool feasible = true;
-   do {
-      long long slow = 0,sup = 0;
-      ORInt k=0;
-      while(k < _used._val) {
-         CPEQTerm* cur = _inUse[k++]._val;
-         slow += cur->low;
-         sup  += cur->up;
+
+   struct Bounds b = (struct Bounds){0,0,slow + _ec._val,sup + _ec._val,_used._val};
+   if (b._sumLow > 0 || b._sumUp < 0)
+      failNow();
+   i = 0;
+   while (i < _used._val && feasible) {
+      CPEQTerm* cur = _inUse[i]._val;
+      long long nLowi = - (b._sumUp - cur->up);
+      long long nSupi = - (b._sumLow - cur->low);
+      bool updateNow = nLowi > cur->low || nSupi < cur->up;
+      cur->low = maxOf(cur->low,nLowi);
+      cur->up  = minOf(cur->up,nSupi);
+      if (updateNow) {
+         // [ldm] We must update now. A view such as y = a * x with y appearing here
+         // might force a stronger tightening of the bounds of y. e.g.,
+         // D(x) = {0,1}  and D(y)={0..100} with y = 100 * x.
+         // If (low,up) = (10,100) then, x={1} and therefore D(y)={100} rather than {10..100}
+         cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
       }
-      struct Bounds b = (struct Bounds){0,0,slow + _ec._val,sup + _ec._val,_used._val};
-      if (b._sumLow > 0 || b._sumUp < 0)
-         failNow();
-      changed=false;
-      ORInt i = 0;
-      while (i < _used._val && feasible) {
-         CPEQTerm* cur = _inUse[i]._val;
-         long long nLowi = - (b._sumUp - cur->up);
-         long long nSupi = - (b._sumLow - cur->low);
-         bool updateNow = nLowi > cur->low || nSupi < cur->up;
-         changed |= updateNow;
-         cur->updated |= updateNow;
-         cur->low = maxOf(cur->low,nLowi);
-         cur->up  = minOf(cur->up,nSupi);
-         if (updateNow) {
-            // [ldm] We must update now. A view such as y = a * x with y appearing here
-            // might force a stronger tightening of the bounds of y. e.g.,
-            // D(x) = {0,1}  and D(y)={0..100} with y = 100 * x.
-            // If (low,up) = (10,100) then, x={1} and therefore D(y)={100} rather than {10..100}
-            cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
-            ORBounds b = bounds(cur->var);
-            cur->low = b.min;
-            cur->up  = b.max;
-         }
-         feasible = cur->low <= cur->up;
-         if (cur->low == cur->up) {
-            assignTRLong(&_ec, _ec._val + cur->low, _trail);
-            CPEQTerm* last = _inUse[_used._val-1]._val;
-            inline_assignTRCPEQTerm(&_inUse[_used._val - 1],cur,_trail);
-            inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
-            assignTRInt(&_used,_used._val - 1,_trail);
-         } else ++i;
-      }
-   } while(changed && feasible);
+      feasible = cur->low <= cur->up;
+      ++i;
+   }
    if (!feasible)
       failNow();
 }
@@ -201,24 +183,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    [buf appendFormat:@" == %d >",_c];
    return buf;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-   for(int k=0;k<_nb;k++)
-      [aCoder encodeObject:_x[k]];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];   
-   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   _x = malloc(sizeof(CPIntVar*)*_nb);
-   for(int k=0;k<_nb;k++)
-      _x[k] = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 @implementation CPINEquationBC 
@@ -226,7 +190,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   _idempotent = YES;
+   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -284,11 +248,11 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    _updateMax = malloc(sizeof(UBType)*_nb);
    for(ORInt k=0;k<_nb;k++)
       _updateMax[k] = (UBType)[_x[k] methodForSelector:@selector(updateMax:)];
-   [self propagate];
    for(ORInt k=0;k<_nb;k++) {
       if (![_x[k] bound])
          [_x[k] whenChangeMinPropagate: self];
    }
+   [self propagate];
    return ORSuspend;
 }
 
@@ -303,37 +267,29 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    b._bndLow = - _c;
    b._nb = _nb;
    
-   BOOL changed;   
    BOOL feasible = true;
-   do {      
-      sumLowerBound(terms, b._nb, &b);
-      if (b._sumLow > 0) 
-         failNow();      
-      changed=false;
-      for (int i=0; i < b._nb && feasible; i++) {         
-         ORLong slowi = b._sumLow - terms[i].low;
-         ORLong nSupi = - slowi;
-         BOOL updateNow = nSupi < terms[i].up;
-         changed |= updateNow;
-         terms[i].updated |= updateNow;
-         terms[i].up  = minOf(terms[i].up,nSupi);
-         if (updateNow) {
-            // [ldm] this is necessary to make sure that the view can apply its narrowing
-            // so that the constraint behaves in an idempotent way.
-            terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
-            terms[i].up = maxDom(terms[i].var);
-         }
-         feasible = terms[i].low <= terms[i].up;
+   sumLowerBound(terms, b._nb, &b);
+   if (b._sumLow > 0)
+      failNow();
+   BOOL changed=false;
+   for (int i=0; i < b._nb && feasible; i++) {
+      ORLong slowi = b._sumLow - terms[i].low;
+      ORLong nSupi = - slowi;
+      BOOL updateNow = nSupi < terms[i].up;
+      changed |= updateNow;
+      terms[i].updated |= updateNow;
+      terms[i].up  = minOf(terms[i].up,nSupi);
+      if (updateNow) {
+         // [ldm] this is necessary to make sure that the view can apply its narrowing
+         // so that the constraint behaves in an idempotent way.
+         terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
+         terms[i].up = maxDom(terms[i].var);
       }
-   } while (changed && feasible);
+      feasible = terms[i].low <= terms[i].up;
+   }
    
    if (!feasible)
       failNow();
-   
-   for(ORUInt i=0;i<_nb;i++) {
-      if (terms[i].updated) 
-         terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
-   }
 }
 -(NSString*) description
 {
@@ -344,24 +300,6 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    }
    [buf appendFormat:@" <= %d >",_c];
    return buf;
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
-   for(int k=0;k<_nb;k++)
-      [aCoder encodeObject:_x[k]];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];   
-   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
-   _x = malloc(sizeof(CPIntVar*)*_nb);
-   for(int k=0;k<_nb;k++)
-      _x[k] = [aDecoder decodeObject];
-   return self;
 }
 @end
 
