@@ -20,22 +20,11 @@
    self = [super init];
    _src = src;
    _trg = trg;
-   _block = nil;
    _t   = t;
-   return self;
-}
--(id)initLinkFrom:(id)src to:(id)trg block:(void(^)())block type:(LSLinkType)t
-{
-   self = [super init];
-   _src = src;
-   _trg = trg;
-   _t   = t;
-   _block = [block copy];
    return self;
 }
 -(void)dealloc
 {
-   [_block release];
    [super dealloc];
 }
 -(NSUInteger)hash
@@ -164,6 +153,7 @@
    _value = d.low;
    _status = LSFinal;
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
+   _pullers  = [[NSMutableArray alloc] initWithCapacity:2];
    _inbound  = nil;
    [_engine trackVariable:self];
    _rank = [[[engine space] nifty] retain];
@@ -172,6 +162,8 @@
 -(void)dealloc
 {
    NSLog(@"Deallocating LSIntVar %@",self);
+   [_outbound release];
+   [_pullers release];
    [super dealloc];
 }
 -(LSEngineI*)engine
@@ -254,8 +246,9 @@
 }
 -(id)addListener:(id)p with:(void(^)())block
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p block:block type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
    [_outbound addObject:obj];
+   [_pullers addObject:[block copy]];
    return obj;
 }
 -(id)addDefiner:(id)p
@@ -272,9 +265,9 @@
 }
 -(void)scheduleOutbound:(LSEngineI*)engine
 {
+   for(void(^puller)() in _pullers)
+      puller();
    for(LSLink* lnk in _outbound) {
-      if (lnk->_block)
-         lnk->_block();
       if (lnk->_t == LSPropagate)
          [engine schedule:lnk->_trg];
    }

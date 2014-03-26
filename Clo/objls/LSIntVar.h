@@ -33,6 +33,7 @@ typedef enum LSStatus {
    enum LSStatus _status;
    NSMutableSet*    _outbound;
    NSMutableSet*    _inbound;
+   NSMutableArray*  _pullers;
    id<LSPriority>   _rank;
 @package
    ORInt          _value;
@@ -77,11 +78,9 @@ typedef enum LSLinkType {
 @public
    id _src;
    id _trg;
-   void (^_block)();
    LSLinkType _t;
 }
 -(id)initLinkFrom:(id)src to:(id)trg type:(LSLinkType)t;
--(id)initLinkFrom:(id)src to:(id)trg block:(void(^)())block type:(LSLinkType)t;
 -(id)source;
 -(id)target;
 -(LSLinkType)type;

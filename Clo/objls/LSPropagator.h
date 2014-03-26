@@ -58,6 +58,7 @@
 @interface LSCoreView : LSPropagator<LSIntVar> {
    id<ORIntRange>      _dom;
    NSMutableSet*  _outbound;
+   NSMutableArray* _pullers;
    NSArray*            _src;
 }
 -(id)initWith:(id<LSEngine>)engine  domain:(id<ORIntRange>)d src:(NSArray*)src;

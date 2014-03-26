@@ -173,6 +173,7 @@
    _dom = d;
    _src = src;
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
+   _pullers  = [[NSMutableArray alloc] initWithCapacity:2];
    [_engine trackVariable:self];
    _rank = [[[engine space] nifty] retain];
    
@@ -193,6 +194,8 @@
 -(void)dealloc
 {
    [_src release];
+   [_pullers release];
+   [_outbound release];
    [super dealloc];
 }
 -(NSArray*)sourceVars
@@ -225,8 +228,9 @@
 }
 -(id)addListener:(id)p with:(void(^)())block
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p block:block type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
    [_outbound addObject:obj];
+   [_pullers addObject:[block copy]];
    return obj;
 }
 -(id)addDefiner:(id)p
@@ -262,9 +266,9 @@
 }
 -(void)scheduleOutbound:(LSEngineI*)engine
 {
+   for(void(^puller)() in _pullers)
+      puller();
    for(LSLink* lnk in _outbound) {
-      if (lnk->_block)
-         lnk->_block();
       if (lnk->_t == LSPropagate)
          [engine schedule:lnk->_trg];
    }
