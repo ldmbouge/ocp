@@ -828,7 +828,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 // AC3 Closure Events
 
--(void)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._bindEvt, todo, c, p);
 }

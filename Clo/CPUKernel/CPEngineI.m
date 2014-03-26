@@ -446,6 +446,8 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 
 static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
+    *last = cb.cstr;
+    
     if (cb.cb)
         cb.cb();
     else {

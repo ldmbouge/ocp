@@ -45,17 +45,17 @@ enum CPVarClass {
 @protocol CPIntVarSubscriber <NSObject>
 
 // AC3 Closure Event
--(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*) c;
+-(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*) c;
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*) c;
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*) c;
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*) c;
 
--(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMinDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMaxDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeBoundsDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
+-(void) whenBindDo: (ORClosure) todo onBehalf: (CPCoreConstraint*) c;
+-(void) whenChangeDo: (ORClosure) todo onBehalf: (CPCoreConstraint*) c;
+-(void) whenChangeMinDo: (ORClosure) todo onBehalf: (CPCoreConstraint*) c;
+-(void) whenChangeMaxDo: (ORClosure) todo onBehalf: (CPCoreConstraint*) c;
+-(void) whenChangeBoundsDo: (ORClosure) todo onBehalf: (CPCoreConstraint*) c;
 
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p;

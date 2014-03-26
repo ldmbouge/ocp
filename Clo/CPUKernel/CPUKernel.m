@@ -122,15 +122,16 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,O
       assignTRId(&evt->_node, evtList[0]._val, trail);
       assignTRId(&evtList[0],evt,trail);
    }
-/* // [ldm] insert at end version!
-   if (evtList->_val == nil) {
-      assignTRId(&evtList[0], evt, trail);
-      assignTRId(&evtList[1], evt, trail);
-   } else {
-      CPEventNode* lastNode = evtList[1]._val;
-      assignTRId(&lastNode->_node, evt, trail);
-      assignTRId(&evtList[1], evt, trail);
-   }
- */
+//
+//    // [ldm] insert at end version!
+//   if (evtList->_val == nil) {
+//      assignTRId(&evtList[0], evt, trail);
+//      assignTRId(&evtList[1], evt, trail);
+//   } else {
+//      CPEventNode* lastNode = evtList[1]._val;
+//      assignTRId(&lastNode->_node, evt, trail);
+//      assignTRId(&evtList[1], evt, trail);
+//   }
+//
 }
 @end
