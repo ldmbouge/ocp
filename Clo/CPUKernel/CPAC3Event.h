@@ -17,11 +17,11 @@
 @interface CPEventNode : NSObject<CPEventNode> {
 @public
    TRId                  _node;
-   id                 _trigger;  // type is {ORClosure}
+   ORClosure             _trigger;
    CPCoreConstraint*     _cstr;
-   ORInt             _priority;
+   ORInt                 _priority;
 }
--(id) initCPEventNode: (id) t
+-(id) initCPEventNode: (ORClosure) t
                  cstr: (CPCoreConstraint*) c
                    at: (ORInt) prio
                 trail: (id<ORTrail>)trail;

@@ -437,12 +437,13 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 
 // PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses CPEventNode; AC3 works with the trigger directly
 
+
 -(void) scheduleAC5: (id<CPAC5Event>)evt
 {
    enQueueAC5(_ac5, evt);
 }
 
-// PVH: This does the case analysis on the key of events {trigger,cstr} and handle the idempotence
+// PVH: This does the case analysis on the key of events {trigger,cstr}
 
 static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
@@ -537,19 +538,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
    return propagateFDM(self);
 }
 
-static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
-{
-   if (status == ORSuspend || status == ORSuccess || status == ORSkip)
-      return propagateFDM(fdm);// fdm->_propagIMP(fdm,@selector(propagate));
-   else if (status== ORFailure) {
-      for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
-         AC3reset(fdm->_ac3[p]);
-      return ORFailure;
-   }
-   else
-      return status;
-}
-
 -(ORStatus) enforceObjective
 {
    if (_objective == nil) return ORSuspend;
@@ -566,16 +554,14 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
-// [ldm] the method post of a constraint returns _nothing_.
-// Yet, it can _raise_ a failure. The post method should intercept
-// the raised failure and return a suitable status to the caller.
-// Bottom line: no failure exception can go "past" post.
+// [pvh] the post method on a constraint may throw a failure, so this must be catched.
+
 -(ORStatus) post: (id<ORConstraint>) c
 {
    _status = tryfail(^ORStatus{
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       [cstr post];
-      ORStatus pstatus = internalPropagate(self,ORSuspend);
+      ORStatus pstatus =  propagateFDM(self);
       if (pstatus != ORFailure) {
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
@@ -583,15 +569,16 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
             [_cStore removeObjectAtIndex:ofs];
          }];
       }
-      return ORSuspend;
+      return pstatus;
    }, ^ORStatus{
       return ORFailure;
    });
    return _status;
 }
 
-// PVH: Failure to remove?
 // LDM: addInternal must _raise_ a failure if the post returns a failure status.
+// PVH: This is the case where a constraint adds another constraint
+
 -(void) addInternal:(id<ORConstraint>) c
 {
    assert(_state != CPOpen);
@@ -629,7 +616,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    _last = NULL;
    _status = tryfail(^ORStatus{
       cl();
-      return internalPropagate(self,ORSuspend);
+      return propagateFDM(self);
    }, ^ORStatus{
       return ORFailure;
    });
@@ -642,7 +629,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       _propagating++;
       cl();
       _propagating--;
-      return internalPropagate(self,ORSuspend);
+      return propagateFDM(self);
    }, ^ORStatus{
       _propagating = oldPropag;
       return ORFailure;
@@ -661,7 +648,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
             return ORFailure;
       }
       _propagating--;
-      _status = internalPropagate(self, ORSuspend);
+      _status = propagateFDM(self);
       _state = CPClosed;
    }
    //printf("Closing CPEngine\n");

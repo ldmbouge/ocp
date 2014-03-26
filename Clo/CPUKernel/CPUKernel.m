@@ -35,7 +35,7 @@
 
 
 @implementation CPEventNode
--(id)initCPEventNode:(id)t
+-(id)initCPEventNode:(ORClosure)t
                 cstr:(CPCoreConstraint*)c
                   at:(ORInt)prio
                trail:(id<ORTrail>)trail

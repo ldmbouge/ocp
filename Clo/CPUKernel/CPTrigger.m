@@ -24,10 +24,10 @@
    CPCoreConstraint*  _cstr;
    ORInt              _vId;       // local variable identifier (var being watched)
 }
--(id)initTrigger:(ORClosure)cb onBehalf:(CPCoreConstraint*)c;
--(void)detach;
--(ORInt)localID;
--(void)setLocalID:(ORInt)lid;
+-(id)initTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c;
+-(void) detach;
+-(ORInt) localID;
+-(void) setLocalID: (ORInt) lid;
 @end
 
 @interface CPDenseTriggerMap : CPTriggerMap {
@@ -36,9 +36,9 @@
    ORInt         _low;
    ORInt          _sz;
 }
--(id) initDenseTriggerMap:(ORInt)low size:(ORInt)sz;
--(CPTrigger*)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
--(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
+-(id) initDenseTriggerMap: (ORInt)low size: (ORInt) sz;
+-(CPTrigger*) linkTrigger: (CPTrigger*) t forValue: (ORInt)value;
+-(void) loseValEvt: (ORInt) val solver: (CPEngineI*) fdm;
 @end
 
 @interface CPSparseTriggerMap : CPTriggerMap {
@@ -46,8 +46,8 @@
    ORAVLTree* _map;
 }
 -(id) initSparseTriggerMap;
--(CPTrigger*) linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
--(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
+-(CPTrigger*) linkTrigger: (CPTrigger*) t forValue: (ORInt) value;
+-(void) loseValEvt: (ORInt) val solver: (CPEngineI*) fdm;
 @end
 
 @implementation CPTrigger
