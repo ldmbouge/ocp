@@ -49,30 +49,30 @@
 
 #define ISLOADED(q)  ((q)->_csz)
 
-typedef struct AC3Entry {
+typedef struct CPClosureEntry {
    ORClosure  cb;
    CPCoreConstraint*    cstr;
-} AC3Entry;
+} CPClosureEntry;
 
-@interface CPAC3Queue : NSObject {
+@interface CPClosureQueue : NSObject {
    @package
    ORInt      _mxs;
    ORInt      _csz;
-   AC3Entry*  _tab;
-   AC3Entry* _last;
-   ORInt    _enter;
+   CPClosureEntry*  _tab;
+   CPClosureEntry*  _last;
+   ORInt     _enter;
    ORInt     _exit;
    ORInt     _mask;
 }
--(id) initAC3Queue: (ORInt) sz;
+-(id) initClosureQueue: (ORInt) sz;
 -(void) dealloc;
--(AC3Entry) deQueue;
--(void) enQueue:(ORClosure) cb cstr: (CPCoreConstraint*)cstr;
+-(CPClosureEntry) deQueue;
+-(void) enQueue:(ORClosure) cb cstr: (id<CPConstraint>)cstr;
 -(void) reset;
 -(ORBool) loaded;
 @end
 
-@interface CPAC5Queue : NSObject {
+@interface CPValueClosureQueue : NSObject {
    @package
    ORInt           _mxs;
    ORInt           _csz;
@@ -81,7 +81,7 @@ typedef struct AC3Entry {
    ORInt          _exit;
    ORInt          _mask;
 }
--(id) initAC5Queue: (ORInt) sz;
+-(id) initValueClosureQueue: (ORInt) sz;
 -(void) dealloc;
 -(id<CPValueEvent>) deQueue;
 -(void) enQueue: (id<CPValueEvent>)cb;

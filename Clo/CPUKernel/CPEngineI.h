@@ -16,8 +16,8 @@
 
 @class ORTrailI;
 @class ORTrailIStack;
-@class CPAC3Queue;
-@class CPAC5Queue;
+@class CPClosureQueue;
+@class CPValueClosureQueue;
 
 
 enum CPEngineState {
@@ -35,8 +35,8 @@ enum CPEngineState {
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
    id<ORSearchObjectiveFunction> _objective;
-   CPAC3Queue*              _ac3[NBPRIORITIES];
-   CPAC5Queue*              _ac5;
+   CPClosureQueue*              _ac3[NBPRIORITIES];
+   CPValueClosureQueue*              _ac5;
    ORStatus                _status;
    ORInt                _propagating;
    ORUInt               _nbpropag;

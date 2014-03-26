@@ -20,8 +20,8 @@
    self = [super initCPCoreConstraint:engine];
    _engine = engine;
    for(ORInt i=0;i<NBPRIORITIES;i++)
-      _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
-   _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
+      _ac3[i] = [[CPClosureQueue alloc] initClosureQueue:512];
+   _ac5 = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
    return self;
 }
 -(void)dealloc
@@ -54,7 +54,7 @@
 {
    [_ac5 enQueue:evt];
 }
-static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
+static inline ORStatus executeAC3(CPClosureEntry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
    if (cb.cb)
@@ -189,14 +189,14 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
       for(ORInt k=0;k<_nbIn;k++) {
          CPClosureList* evt = _scanMap[k];
          if (evt) {
-            ORStatus status = executeAC3((AC3Entry){evt->_trigger,evt->_cstr},&last);
+            ORStatus status = executeAC3((CPClosureEntry){evt->_trigger,evt->_cstr},&last);
             nbp += status !=ORSkip;
          }
       }
       for(ORInt k=_nbIn-1;k>=0;k--) {
          CPClosureList* evt = _scanMap[k];
          if (evt) {
-            ORStatus status = executeAC3((AC3Entry){evt->_trigger,evt->_cstr},&last);
+            ORStatus status = executeAC3((CPClosureEntry){evt->_trigger,evt->_cstr},&last);
             nbp += status !=ORSkip;
          }
       }

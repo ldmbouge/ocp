@@ -14,14 +14,14 @@
 #import "CPAC3Event.h"
 #import <ORFoundation/ORSetI.h>
 
-@implementation CPAC3Queue
--(id) initAC3Queue: (ORInt) sz
+@implementation CPClosureQueue
+-(id) initClosureQueue: (ORInt) sz
 {
    self = [super init];
    _mxs = sz;
    _csz = 0;
    _mask = _mxs - 1;
-   _tab = malloc(sizeof(AC3Entry)*_mxs);
+   _tab = malloc(sizeof(CPClosureEntry)*_mxs);
    _last = _tab+_mxs-1;
    _enter = _exit = 0;
    return self;
@@ -44,8 +44,8 @@
 -(void) resize
 {
    long lx = _last - _tab;
-   AC3Entry* nt = malloc(sizeof(AC3Entry)*_mxs*2);
-   AC3Entry* ptr = nt;
+   CPClosureEntry* nt = malloc(sizeof(CPClosureEntry)*_mxs*2);
+   CPClosureEntry* ptr = nt;
    ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
@@ -60,26 +60,26 @@
    _mxs <<= 1;
    _mask = _mxs - 1;
 }
-inline static void AC3reset(CPAC3Queue* q)
+inline static void AC3reset(CPClosureQueue* q)
 {
    q->_last = q->_tab+q->_mxs-1;
    q->_enter = q->_exit = 0;
    q->_csz = 0;
 }
-inline static void AC3enQueue(CPAC3Queue* q,ORClosure cb,id<CPConstraint> cstr)
+inline static void AC3enQueue(CPClosureQueue* q,ORClosure cb,id<CPConstraint> cstr)
 {
    if (q->_csz == q->_mxs)
       [q resize];
    if (q->_csz > 0 && q->_last->cb == cb && q->_last->cstr == cstr)
       return;
    q->_last  = q->_tab + q->_enter;
-   *q->_last = (AC3Entry){cb,(CPCoreConstraint*)cstr};
+   *q->_last = (CPClosureEntry){cb,(CPCoreConstraint*)cstr};
    q->_enter = (q->_enter+1) & q->_mask;
    q->_csz += 1;
 }
-inline static AC3Entry AC3deQueue(CPAC3Queue* q)
+inline static CPClosureEntry AC3deQueue(CPClosureQueue* q)
 {
-   AC3Entry cb = q->_tab[q->_exit];
+   CPClosureEntry cb = q->_tab[q->_exit];
    q->_exit = (q->_exit+1) & q->_mask;
    --q->_csz;
    return cb;
@@ -88,14 +88,14 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 {
    AC3enQueue(self, cb,cstr);
 }
--(AC3Entry)deQueue
+-(CPClosureEntry)deQueue
 {
    return AC3deQueue(self);
 }
 @end
 
-@implementation CPAC5Queue
--(id) initAC5Queue:(ORInt)sz
+@implementation CPValueClosureQueue
+-(id) initValueClosureQueue:(ORInt)sz
 {
    self = [super init];
    _mxs = sz; 
@@ -135,7 +135,7 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
    _mxs <<= 1;
    _mask = _mxs - 1;
 }
-inline static void AC5reset(CPAC5Queue* q)
+inline static void AC5reset(CPValueClosureQueue* q)
 {
    while (q->_csz) {
       [q->_tab[q->_exit] release];
@@ -145,7 +145,7 @@ inline static void AC5reset(CPAC5Queue* q)
    q->_enter = q->_exit = 0;
    assert(q->_csz == 0);
 }
-inline static void enQueueAC5(CPAC5Queue* q,id<CPValueEvent> cb)
+inline static void enQueueAC5(CPValueClosureQueue* q,id<CPValueEvent> cb)
 {
    if (q->_csz == q->_mxs-1)
       [q resize];
@@ -154,7 +154,7 @@ inline static void enQueueAC5(CPAC5Queue* q,id<CPValueEvent> cb)
    q->_enter = (enter+1) & q->_mask;
    ++q->_csz;
 }
-inline static id<CPValueEvent> deQueueAC5(CPAC5Queue* q)
+inline static id<CPValueEvent> deQueueAC5(CPValueClosureQueue* q)
 {
    if (q->_enter != q->_exit) {
       ORInt oe = q->_exit;
@@ -263,8 +263,8 @@ inline static id<CPValueEvent> deQueueAC5(CPAC5Queue* q)
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
    for(ORInt i=0;i<NBPRIORITIES;i++)
-      _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
-   _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
+      _ac3[i] = [[CPClosureQueue alloc] initClosureQueue:512];
+   _ac5 = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
    _status = ORSuspend;
    _propagating = 0;
    _nbpropag = 0;
@@ -445,7 +445,7 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
 
 // PVH: This does the case analysis on the key of events {trigger,cstr}
 
-static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
+static inline ORStatus executeAC3(CPClosureEntry cb,id<CPConstraint>* last)
 {
     *last = cb.cstr;
     
@@ -469,8 +469,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
       return ORDelay;
    ++fdm->_propagating;
    fdm->_status = ORSuspend;
-   CPAC5Queue* ac5 = fdm->_ac5;
-   CPAC3Queue** ac3 = fdm->_ac3;
+   CPValueClosureQueue* ac5 = fdm->_ac5;
+   CPClosureQueue** ac3 = fdm->_ac3;
    __block ORInt nbp = 0;
    return tryfail(^ORStatus{
       id<CPConstraint>* last = &fdm->_last;
@@ -714,8 +714,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
    NSMutableArray* originalStore = [aDecoder decodeObject];
    _oStore = [[aDecoder decodeObject] retain];
    for(ORInt i=0;i<NBPRIORITIES;i++)
-      _ac3[i] = [[[CPAC3Queue alloc] initAC3Queue:512] retain];
-   _ac5 = [[[CPAC5Queue alloc] initAC5Queue:512] retain];
+      _ac3[i] = [[[CPClosureQueue alloc] initClosureQueue:512] retain];
+   _ac5 = [[[CPValueClosureQueue alloc] initValueClosureQueue:512] retain];
    _status = ORSuspend;
    _propagating = 0;
    _nbpropag = 0;

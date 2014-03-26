@@ -17,8 +17,8 @@
 
 @interface CPGroup : CPCoreConstraint<CPGroup> {
    CPEngineI*               _engine;
-   CPAC3Queue*              _ac3[NBPRIORITIES];
-   CPAC5Queue*              _ac5;
+   CPClosureQueue*              _ac3[NBPRIORITIES];
+   CPValueClosureQueue*              _ac5;
 }
 -(id)init:(id<CPEngine>)engine;
 -(void)add:(id<CPConstraint>)p;
