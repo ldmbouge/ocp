@@ -55,8 +55,8 @@ enum CPEngineState {
 -(id)        trackImmutable:(id)obj;
 -(id)        trail;
 -(void)      scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
--(void)      scheduleAC3:(id<CPEventNode>*)mlist;
--(void)      scheduleAC5:(id<CPAC5Event>)evt;
+-(void)      scheduleClosures:(id<CPClosureList>*)mlist;
+-(void)      scheduleValueEvent:(id<CPValueEvent>)evt;
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>)objective;
@@ -84,4 +84,4 @@ enum CPEngineState {
 @end
 
 ORStatus propagateFDM(CPEngineI* fdm);
-void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist);
+void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist);

@@ -274,7 +274,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenChangeBoundsDo not defined"];
 }
--(void) whenLoseValue: (CPCoreConstraint*)c do: (ConstraintIntCallBack) todo
+-(void) whenLoseValue: (CPCoreConstraint*)c do: (ORIntClosure) todo
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenLoseValue not defined"];   
 }
@@ -529,7 +529,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 
 // AC5 Events
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ORIntClosure) todo
 {
 }
 
@@ -873,7 +873,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 
 // AC5 Events
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo 
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ORIntClosure) todo 
 {
    [_recv setTracksLoseEvt];
    hookupEvent(_fdm, _net._ac5, todo, c, HIGHEST_PRIO);
@@ -917,7 +917,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       bindEvt(_recv, sender);
 //      [_recv bindEvt: sender];
 
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
@@ -930,7 +930,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = _net._bindEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers)
       [_triggers bindEvt: _fdm];
 }
@@ -939,12 +939,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    if (_recv)
       domEvt(_recv,sender);
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._domEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
 }
 
 -(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
@@ -952,7 +952,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_recv)
       changeMinEvt(_recv,dsz,sender);
 
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
@@ -963,7 +963,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = dsz==1 ? _net._bindEvt[0]._val : NULL;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers && dsz==1)
         [_triggers bindEvt:_fdm];
 }
@@ -973,8 +973,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_recv)
       changeMaxEvt(_recv,dsz,sender);
   
-   id<CPEventNode> mList[6];
-   id<CPEventNode>* ptr = mList;
+   id<CPClosureList> mList[6];
+   id<CPClosureList>* ptr = mList;
    *ptr  = _net._boundsEvt[0]._val;
    ptr += *ptr != NULL;
    *ptr = _net._domEvt[0]._val;
@@ -984,7 +984,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    *ptr = dsz==1 ? _net._bindEvt[0]._val : NULL;
    ptr += *ptr != NULL;
    *ptr = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers && dsz==1)
       [_triggers bindEvt:_fdm];
 }
@@ -995,7 +995,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_recv loseValEvt:val sender:sender];
    }
    if (_net._ac5[0]._val)
-      [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5[0]._val]];
+      [_fdm scheduleValueEvent:[CPValueLossEvent newValueLoss:val notify:_net._ac5[0]._val]];
    if (_triggers)
       [_triggers loseValEvt:val solver:_fdm];
 }
@@ -1447,7 +1447,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
          changeMaxEvt(_recv,dsz,sender);
    }
    
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
@@ -1458,7 +1458,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = dsz==1 ? _net._bindEvt[0]._val : NULL;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers && dsz==1)
       [_triggers bindEvt:_fdm];
 }
@@ -1472,8 +1472,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
          changeMinEvt(_recv,dsz,sender);
    }
    
-   id<CPEventNode> mList[6];
-   id<CPEventNode>* ptr = mList;
+   id<CPClosureList> mList[6];
+   id<CPClosureList>* ptr = mList;
    *ptr  = _net._boundsEvt[0]._val;
    ptr += *ptr != NULL;
    *ptr = _net._domEvt[0]._val;
@@ -1483,7 +1483,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    *ptr = dsz==1 ? _net._bindEvt[0]._val : NULL;
    ptr += *ptr != NULL;
    *ptr = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers && dsz==1)
       [_triggers bindEvt:_fdm];
 }

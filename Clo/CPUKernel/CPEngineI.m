@@ -101,7 +101,7 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
    _mxs = sz; 
    _csz = 0;
    _mask = _mxs - 1;
-   _tab = malloc(sizeof(id<CPAC5Event>)*_mxs);
+   _tab = malloc(sizeof(id<CPValueEvent>)*_mxs);
    _enter = _exit = 0;
    return self;
 }
@@ -121,8 +121,8 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 }
 -(void)resize
 {
-   id<CPAC5Event>* nt = malloc(sizeof(id<CPAC5Event>)*_mxs*2);
-   id<CPAC5Event>* ptr = nt;
+   id<CPValueEvent>* nt = malloc(sizeof(id<CPValueEvent>)*_mxs*2);
+   id<CPValueEvent>* ptr = nt;
    ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
@@ -145,7 +145,7 @@ inline static void AC5reset(CPAC5Queue* q)
    q->_enter = q->_exit = 0;
    assert(q->_csz == 0);
 }
-inline static void enQueueAC5(CPAC5Queue* q,id<CPAC5Event> cb)
+inline static void enQueueAC5(CPAC5Queue* q,id<CPValueEvent> cb)
 {
    if (q->_csz == q->_mxs-1)
       [q resize];
@@ -154,7 +154,7 @@ inline static void enQueueAC5(CPAC5Queue* q,id<CPAC5Event> cb)
    q->_enter = (enter+1) & q->_mask;
    ++q->_csz;
 }
-inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
+inline static id<CPValueEvent> deQueueAC5(CPAC5Queue* q)
 {
    if (q->_enter != q->_exit) {
       ORInt oe = q->_exit;
@@ -164,11 +164,11 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    } else return nil;
 }
 
--(void)enQueue:(id<CPAC5Event>)cb
+-(void)enQueue:(id<CPValueEvent>)cb
 {
    enQueueAC5(self, cb);
 }
--(id<CPAC5Event>)deQueue
+-(id<CPValueEvent>)deQueue
 {
    return deQueueAC5(self);
 }
@@ -408,10 +408,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    AC3enQueue(_ac3[HIGHEST_PRIO], cb, c);
 }
 
-void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
+void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
 {
    while (*mlist) {
-      CPEventNode* list = *mlist;
+      CPClosureList* list = *mlist;
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
          if (lc->_active._val) {
@@ -419,7 +419,7 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
             if (group) {
                lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
-               [group scheduleAC3:list];
+               [group scheduleClosures:list];
             } else
                lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
@@ -430,15 +430,15 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
    }
 }
 
--(void) scheduleAC3: (id<CPEventNode>*) mlist
+-(void) scheduleClosures: (id<CPClosureList>*) mlist
 {
-   scheduleAC3(self, mlist);
+   scheduleClosures(self, mlist);
 }
 
-// PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses CPEventNode; AC3 works with the trigger directly
+// PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses CPClosureList; AC3 works with the trigger directly
 
 
--(void) scheduleAC5: (id<CPAC5Event>)evt
+-(void) scheduleValueEvent: (id<CPValueEvent>)evt
 {
    enQueueAC5(_ac5, evt);
 }
@@ -480,7 +480,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       while (!done) {
          // AC5 manipulates the list
          while (AC5LOADED(ac5)) {
-            id<CPAC5Event> evt = deQueueAC5(ac5);
+            id<CPValueEvent> evt = deQueueAC5(ac5);
             nbp += [evt execute];
          }
          // Processing AC3
@@ -622,6 +622,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
    });
    return _status;
 }
+
 -(ORStatus) atomic: (ORClosure) cl
 {
    ORInt oldPropag = _propagating;
@@ -655,7 +656,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
    return ORSuspend;
 }
 
--(id<ORBasicModel>)model
+// [PVH] this is for debugging purposes only
+-(id<ORBasicModel>) model
 {
    id<ORBasicModel> bm = [[CPModelI alloc] initCPModel:self];
    [self trackMutable:bm];

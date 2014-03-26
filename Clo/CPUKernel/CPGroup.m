@@ -46,11 +46,11 @@
 -(void) post
 {
 }
--(void)scheduleAC3:(CPEventNode*)evt
+-(void)scheduleClosures:(CPClosureList*)evt
 {
    [_ac3[evt->_priority] enQueue:evt->_trigger cstr:evt->_cstr];
 }
--(void)scheduleAC5:(id<CPAC5Event>)evt
+-(void)scheduleValueEvent:(id<CPValueEvent>)evt
 {
    [_ac5 enQueue:evt];
 }
@@ -81,7 +81,7 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
       while (!done) {
          // AC5 manipulates the list
          while (AC5LOADED(_ac5)) {
-            id<CPAC5Event> evt = [_ac5 deQueue];
+            id<CPValueEvent> evt = [_ac5 deQueue];
             nbp += [evt execute];
          }
          // Processing AC3
@@ -131,7 +131,7 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
    _engine = engine;
    _max = 2;
    _inGroup = malloc(sizeof(id<CPConstraint>)*_max);
-   _scanMap = malloc(sizeof(id<CPEventNode>)*_max);
+   _scanMap = malloc(sizeof(id<CPClosureList>)*_max);
    _nbIn = 0;
    return self;
 }
@@ -154,7 +154,7 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 }
 -(void) post
 {
-   _scanMap = realloc(_scanMap,sizeof(id<CPEventNode>)*_nbIn);
+   _scanMap = realloc(_scanMap,sizeof(id<CPClosureList>)*_nbIn);
    ORInt low = MAXINT;
    ORInt up  = MININT;
    for(ORInt i=0;i<_nbIn;i++) {
@@ -170,14 +170,14 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
    _map -= _low;
    for(ORInt i=0;i < _nbIn;i++) 
       _map[[_inGroup[i] getId]] = i;
-   memset(_scanMap,0,sizeof(CPEventNode*)*_nbIn);
+   memset(_scanMap,0,sizeof(CPClosureList*)*_nbIn);
 }
--(void)scheduleAC3:(CPEventNode*)evt
+-(void)scheduleClosures:(CPClosureList*)evt
 {
    ORInt cid = [evt->_cstr getId];
    _scanMap[_map[cid]] = evt;
 }
--(void)scheduleAC5:(id<CPAC5Event>)evt
+-(void)scheduleValueEvent:(id<CPValueEvent>)evt
 {
    assert(NO);
 }
@@ -187,24 +187,24 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
    __block id<CPConstraint> last = nil;
    return tryfail(^ORStatus{
       for(ORInt k=0;k<_nbIn;k++) {
-         CPEventNode* evt = _scanMap[k];
+         CPClosureList* evt = _scanMap[k];
          if (evt) {
             ORStatus status = executeAC3((AC3Entry){evt->_trigger,evt->_cstr},&last);
             nbp += status !=ORSkip;
          }
       }
       for(ORInt k=_nbIn-1;k>=0;k--) {
-         CPEventNode* evt = _scanMap[k];
+         CPClosureList* evt = _scanMap[k];
          if (evt) {
             ORStatus status = executeAC3((AC3Entry){evt->_trigger,evt->_cstr},&last);
             nbp += status !=ORSkip;
          }
       }
-      memset(_scanMap,0,sizeof(CPEventNode*)*_nbIn);
+      memset(_scanMap,0,sizeof(CPClosureList*)*_nbIn);
       [_engine incNbPropagation:nbp];
       return ORSuspend;
    }, ^ORStatus{
-      memset(_scanMap,0,sizeof(CPEventNode*)*_nbIn); // clear the queue
+      memset(_scanMap,0,sizeof(CPClosureList*)*_nbIn); // clear the queue
       [_engine incNbPropagation:nbp];
       [_engine setLastFailure:last];
       failNow();

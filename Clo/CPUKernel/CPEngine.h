@@ -12,9 +12,9 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 
-@protocol CPAC5Event;
+@protocol CPValueEvent;
 @protocol CPConstraint;
-@protocol CPEventNode;
+@protocol CPClosureList;
 @class CPCoreConstraint;
 
 #define NBPRIORITIES ((ORInt)8)
@@ -23,24 +23,28 @@
 #define HIGHEST_PRIO ((ORInt)7)
 
 @protocol CPEngine <ORSearchEngine>
+
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>)c;
--(void) scheduleAC3: (id<CPEventNode>*) mlist;
--(void) scheduleAC5: (id<CPAC5Event>) evt;
+-(void) scheduleClosures: (id<CPClosureList>*) mlist;
+-(void) scheduleValueEvent: (id<CPValueEvent>) evt;
+-(void) propagate;
+
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>) objective;
 -(ORStatus) addInternal: (id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
 -(ORStatus) status;
--(void) propagate;
 -(ORStatus) enforce: (ORClosure) cl;
+
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
--(id<ORBasicModel>)model;
+-(id<ORBasicModel>) model;
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+
 @end
 
 #define AC5LOADED(q) ((q)->_csz)
@@ -73,15 +77,15 @@ typedef struct AC3Entry {
    @package
    ORInt           _mxs;
    ORInt           _csz;
-   id<CPAC5Event>* _tab;
+   id<CPValueEvent>* _tab;
    ORInt         _enter;
    ORInt          _exit;
    ORInt          _mask;
 }
 -(id) initAC5Queue: (ORInt) sz;
 -(void) dealloc;
--(id<CPAC5Event>) deQueue;
--(void) enQueue: (id<CPAC5Event>)cb;
+-(id<CPValueEvent>) deQueue;
+-(void) enQueue: (id<CPValueEvent>)cb;
 -(void) reset;
 -(ORBool) loaded;
 @end

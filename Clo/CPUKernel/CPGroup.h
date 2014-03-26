@@ -22,8 +22,8 @@
 }
 -(id)init:(id<CPEngine>)engine;
 -(void)add:(id<CPConstraint>)p;
--(void)scheduleAC3:(id<CPEventNode>)evt;
--(void)scheduleAC5:(id<CPAC5Event>)evt;
+-(void)scheduleClosures:(id<CPClosureList>)evt;
+-(void)scheduleValueEvent:(id<CPValueEvent>)evt;
 -(void) post;
 -(ORStatus)propagate;
 @end
@@ -31,7 +31,7 @@
 @interface CPBergeGroup : CPCoreConstraint<CPGroup> {
    CPEngineI*               _engine;
    id<CPConstraint>*        _inGroup;
-   id<CPEventNode>*         _scanMap;
+   id<CPClosureList>*         _scanMap;
    ORInt                    _nbIn;
    ORInt                    _max;
    ORInt                    _low;
@@ -40,8 +40,8 @@
 }
 -(id)init:(id<CPEngine>)engine;
 -(void)add:(id<CPConstraint>)p;
--(void)scheduleAC3:(id<CPEventNode>)evt;
--(void)scheduleAC5:(id<CPAC5Event>)evt;
+-(void)scheduleClosures:(id<CPClosureList>)evt;
+-(void)scheduleValueEvent:(id<CPValueEvent>)evt;
 -(void) post;
 -(ORStatus)propagate;
 @end

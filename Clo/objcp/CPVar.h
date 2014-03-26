@@ -71,7 +71,7 @@ enum CPVarClass {
 -(void) whenChangeBoundsPropagate: (id<CPConstraint>) c;
 
 // AC5 Event
--(void) whenLoseValue: (id<CPConstraint>) c do: (ConstraintIntCallBack) todo;
+-(void) whenLoseValue: (id<CPConstraint>) c do: (ORIntClosure) todo;
 
 // Triggers
 // create a trigger which executes todo when value val is removed.

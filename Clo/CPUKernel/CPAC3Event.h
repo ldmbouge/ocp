@@ -12,9 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPUKernel.h>
 
-@class CPCoreConstraint;
-
-@interface CPEventNode : NSObject<CPEventNode> {
+@interface CPClosureList : NSObject<CPClosureList> {
 @public
    TRId                  _node;
    ORClosure             _trigger;
@@ -22,7 +20,7 @@
    ORInt                 _priority;
 }
 -(id) initCPEventNode: (ORClosure) t
-                 cstr: (CPCoreConstraint*) c
+                 cstr: (id<CPConstraint>) c
                    at: (ORInt) prio
                 trail: (id<ORTrail>)trail;
 -(void)dealloc;

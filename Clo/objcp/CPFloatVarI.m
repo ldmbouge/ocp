@@ -160,15 +160,15 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 -(void) bindEvt:(id<CPFDom>)sender
 {
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._bindEvt._val;
    k += mList[k] != NULL;
-   scheduleAC3(_engine,mList);
+   scheduleClosures(_engine,mList);
 }
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender
 {
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._minEvt._val;
    k += mList[k] != NULL;
@@ -176,11 +176,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    k += mList[k] != NULL;
    mList[k] = bound ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;
-   scheduleAC3(_engine,mList);
+   scheduleClosures(_engine,mList);
 }
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender
 {
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._maxEvt._val;
    k += mList[k] != NULL;
@@ -188,7 +188,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    k += mList[k] != NULL;
    mList[k] = bound ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;
-   scheduleAC3(_engine,mList);
+   scheduleClosures(_engine,mList);
 }
 
 -(void) bind:(ORFloat) val
@@ -393,7 +393,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 -(void) bindEvt: (id<CPFDom>) sender
 {
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._minEvt._val;
    k += mList[k] != NULL;
@@ -403,7 +403,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    k += mList[k] != NULL;
    mList[k] = _net._bindEvt._val;
    k += mList[k] != NULL;
-   scheduleAC3(_engine,mList);
+   scheduleClosures(_engine,mList);
 }
 -(void) domEvt:(id<CPDom>)sender
 {
@@ -412,7 +412,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._minEvt._val;
    k += mList[k] != NULL;
@@ -420,11 +420,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    k += mList[k] != NULL;
    mList[k] = (dsz==1) ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;
-   scheduleAC3(_engine,mList);
+   scheduleClosures(_engine,mList);
 }
 -(void) changeMaxEvt:(ORInt) dsz sender:(id<CPFDom>)sender
 {
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._maxEvt._val;
    k += mList[k] != NULL;
@@ -432,7 +432,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    k += mList[k] != NULL;
    mList[k] = (dsz==1) ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;
-   scheduleAC3(_engine,mList);
+   scheduleClosures(_engine,mList);
 }
 
 -(void) bind:(ORFloat) val
