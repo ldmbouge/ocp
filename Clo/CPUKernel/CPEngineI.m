@@ -479,7 +479,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       BOOL done = NO;
       while (!done) {
          // AC5 manipulates the list
-         while (AC5LOADED(ac5)) {
+         while (ISLOADED(ac5)) {
             id<CPValueEvent> evt = deQueueAC5(ac5);
             nbp += [evt execute];
          }
@@ -491,7 +491,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          while (!done) {
             status = executeAC3(AC3deQueue(ac3[p]),last);
             nbp += status !=ORSkip;
-            if (AC5LOADED(ac5))
+            if (ISLOADED(ac5))
                break;
             p = HIGHEST_PRIO;
             while (p >= LOWEST_PRIO && !ISLOADED(ac3[p]))

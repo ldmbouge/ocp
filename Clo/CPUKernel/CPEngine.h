@@ -47,7 +47,6 @@
 
 @end
 
-#define AC5LOADED(q) ((q)->_csz)
 #define ISLOADED(q)  ((q)->_csz)
 
 typedef struct AC3Entry {
@@ -65,12 +64,12 @@ typedef struct AC3Entry {
    ORInt     _exit;
    ORInt     _mask;
 }
--(id)initAC3Queue:(ORInt)sz;
--(void)dealloc;
--(AC3Entry)deQueue;
--(void)enQueue:(ORClosure) cb cstr:(CPCoreConstraint*)cstr;
--(void)reset;
--(ORBool)loaded;
+-(id) initAC3Queue: (ORInt) sz;
+-(void) dealloc;
+-(AC3Entry) deQueue;
+-(void) enQueue:(ORClosure) cb cstr: (CPCoreConstraint*)cstr;
+-(void) reset;
+-(ORBool) loaded;
 @end
 
 @interface CPAC5Queue : NSObject {

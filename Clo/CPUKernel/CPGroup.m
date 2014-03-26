@@ -80,7 +80,7 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
    return tryfail(^ORStatus{
       while (!done) {
          // AC5 manipulates the list
-         while (AC5LOADED(_ac5)) {
+         while (ISLOADED(_ac5)) {
             id<CPValueEvent> evt = [_ac5 deQueue];
             nbp += [evt execute];
          }
@@ -92,7 +92,7 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
          while (!done) {
             status = executeAC3([_ac3[p] deQueue],&last);
             nbp += status !=ORSkip;
-            if (AC5LOADED(_ac5))
+            if (ISLOADED(_ac5))
                break;
             p = HIGHEST_PRIO;
             while (p >= LOWEST_PRIO && !ISLOADED(_ac3[p]))
