@@ -14,127 +14,6 @@
 #import "LSFactory.h"
 #import "LSCount.h"
 
-@implementation LSLink
--(id)initLinkFrom:(id)src to:(id)trg 
-{
-   self = [super init];
-   _src = src;
-   _trg = trg;
-   return self;
-}
--(void)dealloc
-{
-   [super dealloc];
-}
--(NSUInteger)hash
-{
-   return ((NSUInteger)_src ^ (NSUInteger)_trg);
-}
-- (BOOL)isEqual: (LSLink*)other
-{
-   return _src == other->_src && _trg == other->_trg;
-}
--(id)target
-{
-   return _trg;
-}
--(id)source
-{
-   return _src;
-}
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSLink: %d -> %d>",[_src getId],[_trg getId]];
-   return buf;
-}
-@end
-
-@implementation LSOutbound
--(id)initWith:(NSSet*)theSet
-{
-   self = [super init];
-   _theSet = [theSet retain];
-   return self;
-}
--(void)dealloc
-{
-   [_theSet release];
-   [super dealloc];
-}
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
-{
-   if (state->state == 0) {
-      if (_theSet == nil)
-         return 0;
-      NSEnumerator* n = [_theSet objectEnumerator];
-      ORInt k = 0;
-      id ok = nil;
-      while (k < len && (ok = [n nextObject]) != nil)
-         stackbuf[k++] = [ok target];
-      state->itemsPtr = stackbuf;
-      state->mutationsPtr = (unsigned long*)_theSet;
-      state->state = (unsigned long)n;
-      return k;
-   } else {
-      NSEnumerator* n = (id)(state->state);
-      ORInt k = 0;
-      id ok = nil;
-      while (k < len && (ok = [n nextObject]) != nil)
-         stackbuf[k++] = [ok target];
-      state->itemsPtr = stackbuf;
-      state->mutationsPtr = (unsigned long*)_theSet;
-      state->state = (unsigned long)n;
-      return k;
-   }
-}
-@end
-
-@implementation LSInbound
--(id)initWith:(NSSet*)theSet
-{
-   self = [super init];
-   _theSet = [theSet retain];
-   return self;
-}
--(void)dealloc
-{
-   [_theSet release];
-   [super dealloc];
-}
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id *)stackbuf count:(NSUInteger)len
-{
-   if (state->state == 0) {
-      if (_theSet == nil) {
-         state->itemsPtr = stackbuf;
-         state->mutationsPtr = &state->extra[0];;
-         state->state = 1;
-         return 0;
-      }
-      NSEnumerator* n = [_theSet objectEnumerator];
-      ORInt k = 0;
-      id ok = nil;
-      while (k < len && (ok = [n nextObject]) != nil)
-         stackbuf[k++] = [ok source];
-      state->itemsPtr = stackbuf;
-      state->mutationsPtr = (unsigned long*)_theSet;
-      state->state = (unsigned long)n;
-      return k;
-   } else {
-      NSEnumerator* n = (id)(state->state);
-      ORInt k = 0;
-      id ok = nil;
-      while (k < len && (ok = [n nextObject]) != nil)
-         stackbuf[k++] = [ok source];
-      state->itemsPtr = stackbuf;
-      state->mutationsPtr = (unsigned long*)_theSet;
-      state->state = (unsigned long)n;
-      return k;
-   }
-}
-@end
-
-
 // =======================================================================================
 // Int Variables
 
@@ -184,13 +63,12 @@
 }
 -(id<NSFastEnumeration>)outbound
 {
-   return [[[LSOutbound alloc] initWith:_outbound] autorelease];
+   return _outbound;
 }
 -(id<NSFastEnumeration>)inbound
 {
-   return [[[LSInbound alloc] initWith:_inbound] autorelease];
+   return _inbound;
 }
-
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -229,35 +107,32 @@
 }
 -(id)addListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
-   [_outbound addObject:obj];
-   return obj;
+   [_outbound addObject:p];
+   return self;
 }
 -(id)addListener:(id)p with:(void(^)())block
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
-   [_outbound addObject:obj];
+   [_outbound addObject:p];
    [_pullers addObject:[block copy]];
-   return obj;
+   return self;
 }
 -(id)addDefiner:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:p to:self];
    if (_inbound==nil) _inbound = [[NSMutableSet alloc] initWithCapacity:8];
-   [_inbound addObject:obj];
-   return obj;
+   [_inbound addObject:p];
+   return p;
 }
 -(void)enumerateOutbound:(void(^)(id))block
 {
-   for(LSLink* lnk in _outbound)
-      block(lnk.target);
+   for(id<LSPropagator> lnk in _outbound)
+      block(lnk);
 }
 -(void)scheduleOutbound:(LSEngineI*)engine
 {
    for(void(^puller)() in _pullers)
       puller();
-   for(LSLink* lnk in _outbound) {
-      [engine schedule:lnk->_trg];
+   for(id<LSPropagator> lnk in _outbound) {
+      [engine schedule:lnk];
    }
 }
 

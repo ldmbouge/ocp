@@ -57,27 +57,5 @@ typedef enum LSStatus {
 -(void)scheduleOutbound:(LSEngineI*)engine;
 @end
 
-@interface LSOutbound : NSObject<NSFastEnumeration> {
-   NSSet* _theSet;
-}
--(id)initWith:(NSSet*)theSet;
-@end
-
-@interface LSInbound : NSObject<NSFastEnumeration> {
-   NSSet* _theSet;
-}
--(id)initWith:(NSSet*)theSet;
-@end
-
-@interface LSLink : NSObject<LSLink> {
-@public
-   id _src;
-   id _trg;
-}
--(id)initLinkFrom:(id)src to:(id)trg;
--(id)source;
--(id)target;
-@end
-
 inline static ORInt getLSIntValue(LSIntVar* x) { return x->_value;}
 

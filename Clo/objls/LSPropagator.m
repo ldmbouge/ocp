@@ -65,7 +65,7 @@
 {
    NSLog(@"Warning: define of abstract LSPropagator called");
 }
--(void)addTrigger:(LSLink*)link
+-(void)addTrigger:(id)link
 {
    [_inbound addObject:link];
 }
@@ -87,75 +87,14 @@
 }
 -(id<NSFastEnumeration>)inbound
 {
-   return [[[LSInbound alloc] initWith:_inbound] autorelease];
+   //return [[[LSInbound alloc] initWith:_inbound] autorelease];
+   return _inbound;
 }
 -(void)execute
 {
 }
 @end
 
-@implementation LSPseudoPropagator
--(id)initWith:(LSEngineI*)engine
-{
-   self = [super init];
-   _engine = engine;
-   _inbound  = [[NSMutableSet alloc] initWithCapacity:2];
-   _outbound = [[NSMutableSet alloc] initWithCapacity:2];
-   _rank = [[[engine space] nifty] retain];
-   return self;
-}
--(void)post
-{
-   NSLog(@"Warning: define of LSPseudoPropagator called");
-}
--(void)define
-{
-   NSLog(@"Warning: define of LSPseudoPropagator called");
-}
--(void)addTrigger:(LSLink*)link
-{
-   [_inbound addObject:link];
-}
--(void)prioritize:(PStore*)p
-{
-}
--(id<LSPriority>)rank
-{
-   return _rank;
-}
--(void)setRank:(id<LSPriority>)r
-{
-   [_rank release];
-   _rank = [r retain];
-}
--(NSUInteger)inDegree
-{
-   return [_inbound count];
-}
--(id<NSFastEnumeration>)inbound
-{
-   return [[[LSInbound alloc] initWith:_inbound] autorelease];
-}
--(id<NSFastEnumeration>)outbound
-{
-   return [[[LSOutbound alloc] initWith:_outbound] autorelease];
-}
--(void)execute
-{
-}
--(id)addListener:(id)p
-{
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
-   [_outbound addObject:obj];
-   return obj;
-}
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSPseudo(%p) : %d,%@>",self,_name,_rank];
-   return buf;
-}
-@end
 // ==============================================================
 // Core Views
 
@@ -169,18 +108,10 @@
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
    _pullers  = [[NSMutableArray alloc] initWithCapacity:2];
    [_engine trackVariable:self];
-   _rank = [[[engine space] nifty] retain];
-   
-   NSMutableArray* vSrc = [[NSMutableArray alloc] initWithCapacity:[src count]];
-   for(id sk in src) {
-      [vSrc addObject:sk];
-   }
+   _rank    = [[[engine space] nifty] retain];
    _inbound = [[NSMutableSet alloc] initWithCapacity:8];
-   for(id sk in vSrc) {
-      LSLink* link = [sk addListener:self];
-      [_inbound addObject:link];
-   }
-   [vSrc release];
+   for(id sk in _src)
+      [_inbound addObject:[sk addListener:self]];
    return self;
 }
 -(void)dealloc
@@ -208,16 +139,14 @@
 }
 -(id)addListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
-   [_outbound addObject:obj];
-   return obj;
+   [_outbound addObject:p];
+   return self;
 }
 -(id)addListener:(id)p with:(void(^)())block
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
-   [_outbound addObject:obj];
+   [_outbound addObject:p];
    [_pullers addObject:[block copy]];
-   return obj;
+   return self;
 }
 -(id)addDefiner:(id)p
 {
@@ -239,24 +168,23 @@
 }
 -(id<NSFastEnumeration>)outbound
 {
-   return [[[LSOutbound alloc] initWith:_outbound] autorelease];
+   return _outbound;
 }
 -(id<NSFastEnumeration>)inbound
 {
-   return [[[LSInbound alloc] initWith:_inbound] autorelease];
+   return _inbound;
 }
 -(void)enumerateOutbound:(void(^)(id))block
 {
-   for(LSLink* lnk in _outbound)
-      block(lnk.target);
+   for(id<LSPropagator> lnk in _outbound)
+      block(lnk);
 }
 -(void)scheduleOutbound:(LSEngineI*)engine
 {
    for(void(^puller)() in _pullers)
       puller();
-   for(LSLink* lnk in _outbound) {
-      [engine schedule:lnk->_trg];
-   }
+   for(id lnk in _outbound)
+      [engine schedule:lnk];
 }
 -(void)execute
 {
