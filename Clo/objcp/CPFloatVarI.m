@@ -92,35 +92,35 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    return nil;
 }
 
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._minEvt, todo, c, p);
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
 }
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenBindDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeMinDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeMaxDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeBoundsDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
@@ -298,35 +298,35 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    [buf appendString:[_theVar description]];
    return buf;
 }
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._bindEvt, todo, c, p);
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._minEvt, todo, c, p);
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
 }
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenBindDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeMinDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeMaxDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeBoundsDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }

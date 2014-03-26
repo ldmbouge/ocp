@@ -66,7 +66,7 @@ inline static void AC3reset(CPAC3Queue* q)
    q->_enter = q->_exit = 0;
    q->_csz = 0;
 }
-inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstraint> cstr)
+inline static void AC3enQueue(CPAC3Queue* q,ORClosure cb,id<CPConstraint> cstr)
 {
    if (q->_csz == q->_mxs)
       [q resize];
@@ -84,7 +84,7 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
    --q->_csz;
    return cb;
 }
--(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr
+-(void)enQueue:(ORClosure) cb cstr: (CPCoreConstraint*) cstr
 {
    AC3enQueue(self, cb,cstr);
 }
@@ -403,7 +403,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    return _trail;
 }
 
--(void) scheduleTrigger:(ConstraintCallback)cb onBehalf:(id<CPConstraint>)c
+-(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
 {
    AC3enQueue(_ac3[HIGHEST_PRIO], cb, c);
 }
@@ -446,31 +446,18 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 
 static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
-   *last = cb.cstr;
-
-//   static int cnt = 0;
-//   @autoreleasepool {
-//      NSString* cn = NSStringFromClass([*last class]);
-//      NSLog(@"%d : propagate: %p : CN=%@",cnt++,*last,cn);
-//   }
-
-   if (cb.cb)
-      cb.cb();
-   else {
-      CPCoreConstraint* cstr = cb.cstr;
-      if (cstr->_todo == CPChecked)
-         return ORSkip;
-      else {
-//         if (cstr->_idempotent) {
-//            cstr->_propagate(cstr,@selector(propagate));
-//            cstr->_todo = CPChecked;
-//         } else {
+    if (cb.cb)
+        cb.cb();
+    else {
+        CPCoreConstraint* cstr = cb.cstr;
+        if (cstr->_todo == CPChecked)
+            return ORSkip;
+        else {
             cstr->_todo = CPChecked;
             cstr->_propagate(cstr,@selector(propagate));
-//         }
-      }
-   }
-   return ORSuspend;
+        }
+    }
+    return ORSuspend;
 }
 
 ORStatus propagateFDM(CPEngineI* fdm)
@@ -577,13 +564,17 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
+// [ldm] the method post of a constraint returns _nothing_.
+// Yet, it can _raise_ a failure. The post method should intercept
+// the raised failure and return a suitable status to the caller.
+// Bottom line: no failure exception can go "past" post.
 -(ORStatus) post: (id<ORConstraint>) c
 {
    _status = tryfail(^ORStatus{
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      ORStatus status = [cstr post];
-      ORStatus pstatus = internalPropagate(self,status);
-      if (pstatus != ORFailure && status != ORSkip) {
+      [cstr post];
+      ORStatus pstatus = internalPropagate(self,ORSuspend);
+      if (pstatus != ORFailure) {
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
          [_trail trailClosure:^{
@@ -598,13 +589,13 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 }
 
 // PVH: Failure to remove?
--(ORStatus) addInternal:(id<ORConstraint>) c
+// LDM: addInternal must _raise_ a failure if the post returns a failure status.
+-(void) addInternal:(id<ORConstraint>) c
 {
    assert(_state != CPOpen);
    ORStatus s = [self post:c];
    if (s==ORFailure)
       failNow();
-   return s;
 }
 
 -(ORStatus) add: (id<ORConstraint>) c

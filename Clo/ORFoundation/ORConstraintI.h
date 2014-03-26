@@ -364,8 +364,8 @@
 
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
--(id<ORIntVarArray>) array;
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x;
+-(id<ORExprArray>) array;
 @end
 
 @interface ORRegularI : ORConstraintI<ORRegular>

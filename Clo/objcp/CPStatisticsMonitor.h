@@ -26,7 +26,7 @@
    id<ORVarArray>        _monVar;
 }
 -(id)initCPMonitor:(id<CPEngine>)engine vars:(id<ORVarArray>)allVars;
--(ORStatus) post;
+-(void) post;
 -(NSString*) description;
 -(double) reduction;
 -(double) reductionFromRootForVar:(id)x extraLosses:(ORInt)ks;

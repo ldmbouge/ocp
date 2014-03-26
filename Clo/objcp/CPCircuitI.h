@@ -19,7 +19,7 @@
 -(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
 -(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 static ORStatus assign(CPCircuitI* cstr,int i);
 @end
 

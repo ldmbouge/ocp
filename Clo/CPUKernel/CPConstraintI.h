@@ -18,7 +18,6 @@
 @interface CPCoreConstraint : ORObject<CPConstraint> {
 @public
    CPTodo            _todo;
-   BOOL        _idempotent;
    ORInt         _priority;
    IMP          _propagate;
    id<ORTrail>      _trail;
@@ -26,7 +25,7 @@
    id<CPGroup>      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;

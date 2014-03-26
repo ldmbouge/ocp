@@ -75,11 +75,11 @@
    [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
 //   NSLog(@"BinPacking post called ...");
    if (_posted)
-      return ORSkip;
+      return ;
    
    _posted = true;
    _low = [_item range].low;
@@ -101,7 +101,6 @@
       if (![_var[i] bound])
          [_var[i] whenChangePropagate: self];
    [_load whenChangeBoundsPropagate: self];
-   return ORSuspend;
 }
 
 -(void) propagate

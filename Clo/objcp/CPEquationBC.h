@@ -38,7 +38,7 @@ MAKETRPointer(TRCPEQTerm,CPEQTerm);
    TRLong                   _ec; // expanded constant c (including the bound terms)
 }
 -(CPEquationBC*)initCPEquationBC: (id) x equal:(ORInt) c;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -52,7 +52,7 @@ MAKETRPointer(TRCPEQTerm,CPEQTerm);
    UBType*    _updateMax;
 }
 -(CPINEquationBC*)initCPINEquationBC: (id) x lequal:(ORInt) c;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

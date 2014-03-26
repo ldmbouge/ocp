@@ -24,7 +24,7 @@
     _c = c;
     return self;
 }
--(ORStatus) post
+-(void) post
 {
    if ([_b bound]) {
       if ([_b min] == true) 
@@ -46,7 +46,6 @@
       [_x setLoseTrigger: _c do: ^(void) { [_b bind:true]; } onBehalf:self];
       [_x whenBindDo: ^(void) { [_b bind:[_x min] != _c];} onBehalf:self];
    }
-   return ORSuspend;
 }
 -(NSSet*)allVars
 {
@@ -73,7 +72,7 @@
     return self;
 }
 
--(ORStatus) post
+-(void) post
 {
     if ([_b bound]) {
         if ([_b min] == true) 
@@ -100,8 +99,7 @@
            [_b bind:[_x min] == _c];
         } onBehalf:self];
     }
-   return ORSuspend;
-} 
+}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
@@ -128,26 +126,26 @@
    return self;
 }
 
--(ORStatus) post
+-(void) post
 {
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b engine] addInternal: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y  (addInternal can throw)
-         return ORSkip;
+         return;
       } else {
          [[_b engine] addInternal: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y  (addInternal can throw)
-         return ORSkip;
+         return;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
       [_b bind:minDom(_x) == minDom(_y)];
    else if (bound(_x)) {
       [[_b engine] addInternal: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
-      return ORSkip;
+      return;
    }
    else if (bound(_y)) {
       [[_b engine] addInternal: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
-      return ORSkip;
+      return;
    } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
       if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
          [_b bind:NO];
@@ -157,7 +155,6 @@
          [_y whenChangeBoundsPropagate:self];
       }
    }
-   return ORSuspend;
 }
 
 -(void)propagate
@@ -211,15 +208,15 @@
    return self;
 }
 
--(ORStatus) post
+-(void) post
 {
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b engine] addInternal: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
-         return ORSkip;
+         return;
       } else {
          [[_b engine] addInternal: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
-         return ORSkip;
+         return;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
@@ -237,7 +234,6 @@
          [self listenOn:_y inferOn:_x];
       }
    }
-   return ORSuspend;
 }
 -(void)listenOn:(CPIntVar*)a inferOn:(CPIntVar*)other
 {
@@ -332,26 +328,26 @@
    return self;
 }
 
--(ORStatus) post
+-(void) post
 {
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b engine] addInternal: [CPFactory notEqual:_x to:_y]];         // Rewrite as x==y  (addInternal can throw)
-         return ORSkip;
+         return ;
       } else {
          [[_b engine] addInternal: [CPFactory equal:_x to:_y plus:0]];     // Rewrite as x==y  (addInternal can throw)
-         return ORSkip;
+         return ;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
       [_b bind:minDom(_x) != minDom(_y)];
    else if (bound(_x)) {
       [[_b engine] addInternal: [CPFactory reify:_b with:_y neqi:minDom(_x)]];
-      return ORSkip;
+      return ;
    }
    else if (bound(_y)) {
       [[_b engine] addInternal: [CPFactory reify:_b with:_x neqi:minDom(_y)]];
-      return ORSkip;
+      return ;
    } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = YES
       if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
          [_b bind:YES];
@@ -361,7 +357,6 @@
          [_y whenChangeBoundsPropagate:self];
       }
    }
-   return ORSuspend;
 }
 
 -(void)propagate
@@ -415,15 +410,15 @@
    return self;
 }
 
--(ORStatus) post
+-(void) post
 {
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b engine] addInternal: [CPFactory notEqual:_x to:_y]]; // Rewrite as x!=y
-         return ORSkip;
+         return ;
       } else {
          [[_b engine] addInternal: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
-         return ORSkip;
+         return ;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
@@ -441,7 +436,6 @@
          [self listenOn:_y inferOn:_x];
       }
    }
-   return ORSuspend;
 }
 -(void)listenOn:(CPIntVar*)a inferOn:(CPIntVar*)other
 {
@@ -532,7 +526,7 @@
    _y = y;
    return self;
 }
--(ORStatus) post
+-(void) post
 {
    if (bound(_b)) {
       if (minDom(_b)) {  // YES <=>  x <= y
@@ -561,7 +555,6 @@
          [_b whenBindPropagate:self];
       }
    }
-   return ORSuspend;
 }
 -(void)propagate
 {
@@ -604,7 +597,7 @@
    return self;
 }
 
--(ORStatus) post
+-(void) post
 {
    if ([_b bound]) {
       if ([_b min])
@@ -620,7 +613,6 @@
       [_b whenBindPropagate:self];
       [_x whenChangeBoundsPropagate:self];
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -665,7 +657,7 @@
    return self;
 }
 
--(ORStatus) post  // b <=>  x >= c
+-(void) post  // b <=>  x >= c
 {
    if ([_b bound]) {
       if ([_b min])
@@ -681,7 +673,6 @@
       [_b whenBindPropagate:self];
       [_x whenChangeBoundsPropagate:self];
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -745,7 +736,7 @@
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
     _at = malloc(sizeof(id<CPTrigger>)*(_c+1));
     _notTriggered = malloc(sizeof(ORInt)*(_nb - _c - 1));
@@ -758,7 +749,7 @@
        nbPos  += ![_x[i] bound];
     }
     if (nbTrue >= _c) 
-        return ORSuccess;
+        return ;
     if (nbTrue + nbPos < _c) 
        failNow();
     if (nbTrue + nbPos == _c) {
@@ -768,7 +759,7 @@
                 continue;
            [_x[i] updateMin:true];
         }
-        return ORSuccess;      
+        return ;
     }
     ORInt listen = _c+1;
     ORInt nbNW   = 0;
@@ -811,7 +802,6 @@
     }   
     assert(nbNW == _nb - _c - 1);
     _last = _nb - _c - 2;  // where we will start the circular scan among the unWatched variables.
-    return ORSuspend;
 }
 
 -(NSSet*)allVars
@@ -854,7 +844,7 @@
    free(_x);
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    int nbTrue = 0;
    int nbPos  = 0;
@@ -868,7 +858,7 @@
       for(ORInt i=0;i<_nb;++i)
          if (!bound(_x[i]))
             [_x[i] bind:NO];
-      return ORSuccess;
+      return ;
    }
    if (nbTrue + nbPos < _c)      // We can't possibly make it to _c. fail.
       failNow();
@@ -876,7 +866,7 @@
       for(ORInt i=0;i<_nb;++i)
          if (!bound(_x[i]))
              [_x[i] bind:YES];
-      return ORSuccess;
+      return ;
    }
    _nbOne  = makeTRInt(_trail, nbTrue);
    _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
@@ -884,7 +874,6 @@
       if (bound(_x[k])) continue;
       [_x[k] whenBindDo:^{ [self propagateIdx:k];} onBehalf:self];
    }
-   return ORSuspend;
 }
 -(void)propagateIdx:(ORInt)k
 {
@@ -957,7 +946,7 @@
    if (_x) free(_x);
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    ORInt nbT = 0;
    ORInt low = _xa.range.low;
@@ -979,15 +968,15 @@
    assert(i == _nb);
    if (nbT > _c) {     // too many are true already. b necessarily false
       [_b bind:NO];
-      return ORSkip;
+      return ;
    }
    if (nbT + _nb < _c) {     // We can't possibly make it to _c. b necessarily false
       [_b bind:NO];
-      return ORSkip;
+      return ;
    }
    if (_c == nbT && _nb == 0) {
       [_b bind:YES];
-      return ORSkip;
+      return ;
    }
    _nbTrue = makeTRInt(_trail,nbT);
    _edge   = makeTRInt(_trail,_nb);     // this keeps the boundary between possible & bound vars.
@@ -995,29 +984,28 @@
       if (_nb + nbT == _c) {            // All the possible in _x (all _nb of them) should be TRUE
          for(ORInt i=0;i<_nb;++i)
             bindDom(_x[i], YES);
-         return ORSkip;
+         return ;
       }
       if (_c == nbT && _nb > 0) {   // All the possible should be FALSE (we need none and we have a bunch)
          for(ORInt i=0;i<_nb;++i)
             bindDom(_x[i],NO);
-         return ORSkip;
+         return ;
       }
       // We must satisfy c, but too little info to know what to do.
    } else if (maxDom(_b) == 0) { // boolean is false, therefore: sum(i in S) x_i != c
       // REMEMBER: _nb vars in prefix of _x are possible. _c is the number to _avoid_.
       if (nbT == _c && _nb == 1) { // sum(i in S) x_i = c  and only one possible left. Last possible must be true.
          bindDom(_x[0],YES);
-         return ORSkip;
+         return ;
       }
       if (nbT == _c - 1  && _nb == 1) { // sum(i in S) x_i = c - 1  and only one possible left. It cannot be true.
          bindDom(_x[0],NO);
-         return ORSkip;
+         return ;
       }
    } else                     // boolean is not fixed. Only check.
       [_b whenBindPropagate:self];
    for(ORInt k=0;k < _edge._val;k++)
       [_x[k] whenBindPropagate:self];
-   return ORSuspend;
 }
 static ORInt setupPrefix(CPReifySumBoolEq* this)
 {
@@ -1151,7 +1139,7 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
       free(_x);
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    int nbTrue = 0;
    int nbPos  = 0;
@@ -1168,11 +1156,11 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
    }
    if (nbTrue >= _c) {              // too many are true already. b necessarily false
       [_b bind:YES];
-      return ORSkip;
+      return ;
    }
    if (nbTrue + nbPos < _c) {     // We can't possibly make it to _c. b necessarily false
       [_b bind:NO];
-      return ORSkip;
+      return ;
    }
    _nbTrue = makeTRInt(_trail, nbTrue);
    _nbPos  = makeTRInt(_trail, nbPos);
@@ -1210,7 +1198,6 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
       } onBehalf:self];
    }
    [_b whenBindPropagate:self];
-   return ORSuspend;
 }
 
 -(void)propagate
@@ -1277,7 +1264,7 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
    _c  = c;
    return self;
 }
--(ORStatus) post
+-(void) post
 {
    int nbTrue = 0;
    int nbPos  = 0;
@@ -1302,13 +1289,13 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                [_x[i] bind:NO];
-         return ORSuccess;
+         return ;
       }
       if (nbTrue + nbPos == _c) {   // All the possible should be TRUE
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                [_x[i] bind:YES];
-         return ORSuccess;
+         return ;
       }
       // We must satisfy c, but too little info to know what to do.
       // Listen to the _x variables!
@@ -1321,7 +1308,6 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
    } else {                    // boolean is not fixed. Only check.
       [_b whenBindPropagate:self];
    }
-   return ORSuspend;
 }
 -(void)propagate
 {
@@ -1436,7 +1422,7 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
    if (_x) free(_x);
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    int nbTrue = 0;
    ORInt low = _xa.range.low;
@@ -1459,11 +1445,11 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
    assert(i == _nb);
    if (nbTrue >= _c) {               // too many are true already. b necessarily true
       [_b bind:YES];
-      return ORSkip;
+      return ;
    }
    if (nbTrue + _nb < _c) {     // We can't possibly make it to _c. b necessarily false
       [_b bind:NO];
-      return ORSkip;
+      return ;
    }
    _nbTrue = makeTRInt(_trail, nbTrue);
    _edge   = makeTRInt(_trail,_nb);
@@ -1471,20 +1457,19 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
       if (nbTrue + _nb == _c) {
          for(ORInt i=0;i<_nb;++i)
             bindDom(_x[i],YES);
-         return ORSkip;
+         return ;
       }
    } else if (maxDom(_b) <= 0) {  // FALSE ~> sum(i in S) x_i ≥ c ==> sum(i in S) x_i < c
       if (nbTrue == _c - 1) {
          for(ORInt i=0;i<_nb;++i)
             bindDom(_x[i],NO);
-         return ORSkip;
+         return ;
       }
    } else
       [_b whenBindPropagate:self];
    
    for(ORInt i=0;i < _edge._val;i++)
       [_x[i] whenBindPropagate:self];
-   return ORSuspend;
 }
 static inline ORInt setupPrefix2(CPHReifySumBoolGEq* this)
 {

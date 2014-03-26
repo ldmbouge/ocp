@@ -17,7 +17,7 @@
 @interface CPEventNode : NSObject<CPEventNode> {
 @public
    TRId                  _node;
-   id                 _trigger;  // type is {ConstraintCallback}
+   id                 _trigger;  // type is {ORClosure}
    CPCoreConstraint*     _cstr;
    ORInt             _priority;
 }

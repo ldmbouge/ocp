@@ -23,7 +23,7 @@
 #define HIGHEST_PRIO ((ORInt)7)
 
 @protocol CPEngine <ORSearchEngine>
--(void) scheduleTrigger: (ConstraintCallback) cb onBehalf: (id<CPConstraint>)c;
+-(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>)c;
 -(void) scheduleAC3: (id<CPEventNode>*) mlist;
 -(void) scheduleAC5: (id<CPAC5Event>) evt;
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
@@ -47,7 +47,7 @@
 #define ISLOADED(q)  ((q)->_csz)
 
 typedef struct AC3Entry {
-   ConstraintCallback   cb;
+   ORClosure  cb;
    CPCoreConstraint*    cstr;
 } AC3Entry;
 
@@ -64,7 +64,7 @@ typedef struct AC3Entry {
 -(id)initAC3Queue:(ORInt)sz;
 -(void)dealloc;
 -(AC3Entry)deQueue;
--(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr;
+-(void)enQueue:(ORClosure) cb cstr:(CPCoreConstraint*)cstr;
 -(void)reset;
 -(ORBool)loaded;
 @end

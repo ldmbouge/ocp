@@ -33,7 +33,7 @@
 @end
 
 @interface CPTriggerMap : NSObject<CPTriggerMap>
-+(id<CPTrigger>)     createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
++(id<CPTrigger>)     createTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
 +(id<CPTriggerMap>) triggerMapFrom: (ORInt)low to:(ORInt)up dense:(ORBool)b;
 -(id<CPTrigger>) linkTrigger:(id<CPTrigger>)trig forValue:(ORInt)value;
 -(id<CPTrigger>) linkBindTrigger:(id<CPTrigger>)t;

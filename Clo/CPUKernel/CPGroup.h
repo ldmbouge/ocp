@@ -24,7 +24,7 @@
 -(void)add:(id<CPConstraint>)p;
 -(void)scheduleAC3:(id<CPEventNode>)evt;
 -(void)scheduleAC5:(id<CPAC5Event>)evt;
--(ORStatus) post;
+-(void) post;
 -(ORStatus)propagate;
 @end
 
@@ -42,6 +42,6 @@
 -(void)add:(id<CPConstraint>)p;
 -(void)scheduleAC3:(id<CPEventNode>)evt;
 -(void)scheduleAC5:(id<CPAC5Event>)evt;
--(ORStatus) post;
+-(void) post;
 -(ORStatus)propagate;
 @end

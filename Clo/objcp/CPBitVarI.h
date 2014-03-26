@@ -53,10 +53,10 @@ typedef struct  {
 -(void) setTracksLoseEvt;
 
 // subscription
--(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ConstraintCallback) todo;
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
--(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
--(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
+-(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ORClosure) todo;
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 
 // notification
 

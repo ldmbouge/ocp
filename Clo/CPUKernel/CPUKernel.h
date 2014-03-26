@@ -30,14 +30,14 @@ typedef enum {
 @protocol CPGroup;
 
 @protocol CPConstraint <ORConstraint>
--(ORUInt) getId;
--(void)setGroup:(id<CPGroup>)g;
--(id<CPGroup>)group;
+-(ORUInt)      getId;
+-(void)        setGroup:(id<CPGroup>) g;
+-(id<CPGroup>) group;
 @end
 
 @protocol CPGroup <CPConstraint>
--(void)add:(id<CPConstraint>)p;
--(void)scheduleAC3:(id<CPEventNode>)evt;
+-(void)  add:(id<CPConstraint>)p;
+-(void)  scheduleAC3:(id<CPEventNode>)evt;
 @end
 
 @protocol CPAC5Event<NSObject>
@@ -47,8 +47,8 @@ typedef enum {
 @protocol CPEventNode <NSObject>
 -(id) trigger;                      // retrieves the closure responsible for responding to the event
 -(id<CPEventNode>) next;           // fetches the next event in the list *list suffix*
--(void)scanWithBlock:(void(^)(id))block;
--(void)scanCstrWithBlock:(void(^)(id))block;
+-(void) scanWithBlock:(void(^)(id))block;
+-(void) scanCstrWithBlock:(void(^)(id))block;
 @end
 
 typedef void(^ORID2Void)(id);

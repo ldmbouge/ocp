@@ -234,20 +234,20 @@ static void deallocNetwork(CPBitEventNetwork* net)
    hookupEvent(_engine, &_net._bitFixedEvt, nil, c, HIGHEST_PRIO);
 }
 
--(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo 
+-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, &_net._boundsEvt, todo, c, p);
 }
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, &_net._minEvt, todo, c, p);
 }
--(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
+-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, &_net._maxEvt, todo, c, p);
 }
 
--(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ConstraintCallback) todo
+-(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ORClosure) todo
 {
    hookupEvent(_engine, &_net._bitFixedEvt, todo, c, p);
 }

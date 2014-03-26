@@ -19,5 +19,4 @@
 @protocol CPSolver;
 
 typedef ORStatus(*UBType)(id,SEL,...);
-typedef void (^ConstraintCallback)(void);
 typedef void (^ConstraintIntCallBack)(ORInt);

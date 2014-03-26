@@ -20,11 +20,11 @@
    @package
    CPTrigger*         _prev;
    CPTrigger*         _next;
-   ConstraintCallback   _cb;       // var/val held inside the closure (captured).
+   ORClosure          _cb;       // var/val held inside the closure (captured).
    CPCoreConstraint*  _cstr;
-   ORInt               _vId;       // local variable identifier (var being watched)
+   ORInt              _vId;       // local variable identifier (var being watched)
 }
--(id)initTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c;
+-(id)initTrigger:(ORClosure)cb onBehalf:(CPCoreConstraint*)c;
 -(void)detach;
 -(ORInt)localID;
 -(void)setLocalID:(ORInt)lid;
@@ -60,7 +60,7 @@
    _prev = _next = nil;
    return self;
 }
--(id)initTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c
+-(id)initTrigger:(ORClosure)cb onBehalf:(CPCoreConstraint*)c
 {
    self = [super init];
    _cb = [cb copy];
@@ -129,7 +129,7 @@ static void freeTriggers(CPTrigger* list)
     [super dealloc];
 }
 
-+(CPTrigger*) createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
++(CPTrigger*) createTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    return [[CPTrigger alloc] initTrigger:todo onBehalf:c];
 }

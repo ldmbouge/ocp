@@ -16,6 +16,7 @@
 
 @protocol ORIntVarArray;
 @protocol ORVarArray;
+@protocol ORExprArray;
 @protocol ORIntVarMatrix;
 @protocol ORExpr;
 @protocol ORVar;
@@ -341,7 +342,7 @@ enum ORGroupType {
 @end
 
 @protocol ORAlldifferent <ORConstraint>
--(id<ORIntVarArray>) array;
+-(id<ORExprArray>) array;
 @end
 
 @protocol ORRegular<ORConstraint>
@@ -404,7 +405,7 @@ enum ORGroupType {
 
 @protocol ORObjectiveValue <ORObject>
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
--(ORInt) compare: (id<ORObjectiveValue>) other;
+-(NSComparisonResult) compare: (id<ORObjectiveValue>) other;
 @optional-(ORInt) intValue;
 -(ORFloat) floatValue;
 @end
