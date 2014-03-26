@@ -117,7 +117,3 @@
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)rank;
 @end
-
-@protocol LSPull
--(void)pull:(ORInt)k;
-@end

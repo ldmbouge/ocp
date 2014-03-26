@@ -29,7 +29,12 @@
 -(void)define
 {
    for(ORInt i=_src.low;i <= _src.up;i++)
-      [self addTrigger:[_src[i] addListener:self term:i]];
+      [self addTrigger:[_src[i] addListener:self term:i with:^{
+         LSIntVar* vk = _src[i];
+         [_cnt[[_old at:i]] decr];
+         [_cnt[[vk value]] incr];
+         [_old set:vk.value at:i];
+      }]];
    for(ORInt i=_cnt.low;i <= _cnt.up;i++)
       [_cnt[i] addDefiner:self];
 }
@@ -44,13 +49,6 @@
       [_cnt[si.value] incr];
       [_old set:si.value at:i];
    }
-}
--(void)pull:(ORInt)k
-{
-   LSIntVar* vk = _src[k];
-   [_cnt[[_old at:k]] decr];
-   [_cnt[[vk value]] incr];
-   [_old set:vk.value at:k];
 }
 -(void)execute
 {}
@@ -253,7 +251,12 @@ void printLists(LSGElement* elt)
 -(void)define
 {
    for(ORInt i = _terms.range.low; i <= _terms.range.up;i++)
-      [self addTrigger:[_terms[i] addListener:self term:i]];
+      [self addTrigger:[_terms[i] addListener:self term:i with:^{
+         ORInt nv    = [_terms[i] value];
+         ORInt delta = nv -  [_old at:i];
+         [_sum setValue: [_sum value] + delta];
+         [_old set:nv at:i];
+      }]];
    [_sum addDefiner:self];
 }
 -(void)post
@@ -265,13 +268,6 @@ void printLists(LSGElement* elt)
       ttl += term;
    }
    [_sum setValue:ttl];
-}
--(void)pull:(ORInt)k
-{
-   ORInt nv    = [_terms[k] value];
-   ORInt delta = nv -  [_old at:k];
-   [_sum setValue: [_sum value] + delta];
-   [_old set:nv at:k];
 }
 -(id<NSFastEnumeration>)outbound
 {
@@ -302,7 +298,14 @@ void printLists(LSGElement* elt)
 -(void)define
 {
    for(ORInt i = _terms.range.low; i <= _terms.range.up;i++)
-      [self addTrigger:[_terms[i] addListener:self term:i]];
+      [self addTrigger:[_terms[i] addListener:self term:i with:^{
+         ORInt nv    = [_terms[i] value];
+         ORInt delta = nv -  [_old at:i];
+         if (delta) {
+            [_sum setValue: [_sum value] + [_coefs at:i] * delta];
+            [_old set:nv at:i];
+         }
+      }]];
    [_sum addDefiner:self];
 }
 -(void)post
@@ -314,15 +317,6 @@ void printLists(LSGElement* elt)
       ttl += [_coefs at:i] * term;
    }
    [_sum setValue:ttl];
-}
--(void)pull:(ORInt)k
-{
-   ORInt nv    = [_terms[k] value];
-   ORInt delta = nv -  [_old at:k];
-   if (delta) {
-      [_sum setValue: [_sum value] + [_coefs at:k] * delta];
-      [_old set:nv at:k];
-   }
 }
 -(id<NSFastEnumeration>)outbound
 {

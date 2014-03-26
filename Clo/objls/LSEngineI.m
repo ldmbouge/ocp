@@ -193,19 +193,13 @@
       return;
    if (_atomic) {
       LSBlock* b = [[LSBlock alloc] initWith:self block:^{
-         [x propagateOutbound:^(id<LSPropagator,LSPull> p,ORInt k) {
-            BOOL canPull = [p conformsToProtocol:@protocol(LSPull)];
-            if (canPull)
-               [(id<LSPull>)p pull:k];
+         [x propagateOutbound:^(id<LSPropagator> p,ORInt k) {
             [self schedule:p];
          }];
       } atPriority:x.rank];
       [_queue enQueue:b atPriority:x.rank];
    } else {
       [x propagateOutbound:^(id<LSPropagator> p,ORInt k) {
-         BOOL canPull = [p conformsToProtocol:@protocol(LSPull)];
-         if (canPull)
-            [(id<LSPull>)p pull:k];
          [self schedule:p];
       }];
    }
