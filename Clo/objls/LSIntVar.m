@@ -15,12 +15,11 @@
 #import "LSCount.h"
 
 @implementation LSLink
--(id)initLinkFrom:(id)src to:(id)trg type:(LSLinkType)t
+-(id)initLinkFrom:(id)src to:(id)trg 
 {
    self = [super init];
    _src = src;
    _trg = trg;
-   _t   = t;
    return self;
 }
 -(void)dealloc
@@ -43,14 +42,10 @@
 {
    return _src;
 }
--(LSLinkType)type
-{
-   return _t;
-}
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSLink: %d -> %d (%@)>",[_src getId],[_trg getId],_t == LSLogical ? @"log" : @"prp"];
+   [buf appendFormat:@"<LSLink: %d -> %d>",[_src getId],[_trg getId]];
    return buf;
 }
 @end
@@ -232,28 +227,22 @@
    [_engine notify:self];
    return rv;
 }
--(id)addLogicalListener:(id)p
-{
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSLogical];
-   [_outbound addObject:obj];
-   return obj;
-}
 -(id)addListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
    [_outbound addObject:obj];
    return obj;
 }
 -(id)addListener:(id)p with:(void(^)())block
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
    [_outbound addObject:obj];
    [_pullers addObject:[block copy]];
    return obj;
 }
 -(id)addDefiner:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:p to:self type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:p to:self];
    if (_inbound==nil) _inbound = [[NSMutableSet alloc] initWithCapacity:8];
    [_inbound addObject:obj];
    return obj;
@@ -268,8 +257,7 @@
    for(void(^puller)() in _pullers)
       puller();
    for(LSLink* lnk in _outbound) {
-      if (lnk->_t == LSPropagate)
-         [engine schedule:lnk->_trg];
+      [engine schedule:lnk->_trg];
    }
 }
 

@@ -69,21 +69,14 @@ typedef enum LSStatus {
 -(id)initWith:(NSSet*)theSet;
 @end
 
-typedef enum LSLinkType {
-   LSLogical = 0,
-   LSPropagate = 1
-} LSLinkType;
-
 @interface LSLink : NSObject<LSLink> {
 @public
    id _src;
    id _trg;
-   LSLinkType _t;
 }
--(id)initLinkFrom:(id)src to:(id)trg type:(LSLinkType)t;
+-(id)initLinkFrom:(id)src to:(id)trg;
 -(id)source;
 -(id)target;
--(LSLinkType)type;
 @end
 
 inline static ORInt getLSIntValue(LSIntVar* x) { return x->_value;}

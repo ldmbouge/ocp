@@ -145,13 +145,7 @@
 }
 -(id)addListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
-   [_outbound addObject:obj];
-   return obj;
-}
--(id)addLogicalListener:(id)p
-{
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSLogical];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
    [_outbound addObject:obj];
    return obj;
 }
@@ -179,9 +173,7 @@
    
    NSMutableArray* vSrc = [[NSMutableArray alloc] initWithCapacity:[src count]];
    for(id sk in src) {
-      if ([sk conformsToProtocol:@protocol(ORIdArray)])
-         [vSrc addObject:[_engine pseudoForArray:sk]];
-      else [vSrc addObject:sk];
+      [vSrc addObject:sk];
    }
    _inbound = [[NSMutableSet alloc] initWithCapacity:8];
    for(id sk in vSrc) {
@@ -214,21 +206,15 @@
 {
    assert(NO);
 }
--(id)addLogicalListener:(id)p
-{
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSLogical];
-   [_outbound addObject:obj];
-   return obj;
-}
 -(id)addListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
    [_outbound addObject:obj];
    return obj;
 }
 -(id)addListener:(id)p with:(void(^)())block
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p];
    [_outbound addObject:obj];
    [_pullers addObject:[block copy]];
    return obj;
@@ -269,8 +255,7 @@
    for(void(^puller)() in _pullers)
       puller();
    for(LSLink* lnk in _outbound) {
-      if (lnk->_t == LSPropagate)
-         [engine schedule:lnk->_trg];
+      [engine schedule:lnk->_trg];
    }
 }
 -(void)execute

@@ -26,7 +26,6 @@
 -(NSUInteger)inDegree;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)rank;
--(id)addLogicalListener:(id)p;
 -(id)addListener:(id)p;
 -(id)addListener:(id)p with:(void(^)())block;
 -(id)addDefiner:(id)p;
