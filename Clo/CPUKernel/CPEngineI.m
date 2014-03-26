@@ -60,13 +60,13 @@
    _mxs <<= 1;
    _mask = _mxs - 1;
 }
-inline static void AC3reset(CPClosureQueue* q)
+inline static void ClosureQueueReset(CPClosureQueue* q)
 {
    q->_last = q->_tab+q->_mxs-1;
    q->_enter = q->_exit = 0;
    q->_csz = 0;
 }
-inline static void AC3enQueue(CPClosureQueue* q,ORClosure cb,id<CPConstraint> cstr)
+inline static void ClosureQueueEnqueue(CPClosureQueue* q,ORClosure cb,id<CPConstraint> cstr)
 {
    if (q->_csz == q->_mxs)
       [q resize];
@@ -77,20 +77,20 @@ inline static void AC3enQueue(CPClosureQueue* q,ORClosure cb,id<CPConstraint> cs
    q->_enter = (q->_enter+1) & q->_mask;
    q->_csz += 1;
 }
-inline static CPClosureEntry AC3deQueue(CPClosureQueue* q)
+inline static CPClosureEntry ClosureQueueDequeue(CPClosureQueue* q)
 {
    CPClosureEntry cb = q->_tab[q->_exit];
    q->_exit = (q->_exit+1) & q->_mask;
    --q->_csz;
    return cb;
 }
--(void)enQueue:(ORClosure) cb cstr: (CPCoreConstraint*) cstr
+-(void) enQueue:(ORClosure) cb cstr: (CPCoreConstraint*) cstr
 {
-   AC3enQueue(self, cb,cstr);
+   ClosureQueueEnqueue(self, cb,cstr);
 }
--(CPClosureEntry)deQueue
+-(CPClosureEntry) deQueue
 {
-   return AC3deQueue(self);
+   return ClosureQueueDequeue(self);
 }
 @end
 
@@ -135,7 +135,7 @@ inline static CPClosureEntry AC3deQueue(CPClosureQueue* q)
    _mxs <<= 1;
    _mask = _mxs - 1;
 }
-inline static void AC5reset(CPValueClosureQueue* q)
+inline static void ValueClosureQueueReset(CPValueClosureQueue* q)
 {
    while (q->_csz) {
       [q->_tab[q->_exit] release];
@@ -145,7 +145,7 @@ inline static void AC5reset(CPValueClosureQueue* q)
    q->_enter = q->_exit = 0;
    assert(q->_csz == 0);
 }
-inline static void enQueueAC5(CPValueClosureQueue* q,id<CPValueEvent> cb)
+inline static void ValueClosureQueueEnqueue(CPValueClosureQueue* q,id<CPValueEvent> cb)
 {
    if (q->_csz == q->_mxs-1)
       [q resize];
@@ -154,7 +154,7 @@ inline static void enQueueAC5(CPValueClosureQueue* q,id<CPValueEvent> cb)
    q->_enter = (enter+1) & q->_mask;
    ++q->_csz;
 }
-inline static id<CPValueEvent> deQueueAC5(CPValueClosureQueue* q)
+inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 {
    if (q->_enter != q->_exit) {
       ORInt oe = q->_exit;
@@ -164,13 +164,13 @@ inline static id<CPValueEvent> deQueueAC5(CPValueClosureQueue* q)
    } else return nil;
 }
 
--(void)enQueue:(id<CPValueEvent>)cb
+-(void) enQueue: (id<CPValueEvent>) cb
 {
-   enQueueAC5(self, cb);
+   ValueClosureQueueEnqueue(self, cb);
 }
--(id<CPValueEvent>)deQueue
+-(id<CPValueEvent>) deQueue
 {
-   return deQueueAC5(self);
+   return ValueClosureQueueDequeue(self);
 }
 @end
 
@@ -405,7 +405,7 @@ inline static id<CPValueEvent> deQueueAC5(CPValueClosureQueue* q)
 
 -(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
 {
-   AC3enQueue(_ac3[HIGHEST_PRIO], cb, c);
+   ClosureQueueEnqueue(_ac3[HIGHEST_PRIO], cb, c);
 }
 
 void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
@@ -418,11 +418,13 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
             id<CPGroup> group = lc->_group;
             if (group) {
                lc->_todo = CPTocheck;
-               AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
+               ClosureQueueEnqueue(fdm->_ac3[LOWEST_PRIO], nil, group);
                [group scheduleClosures:list];
-            } else
+            }
+            else {
                lc->_todo = CPTocheck;
-               AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+               ClosureQueueEnqueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+            }
          }
          list = list->_node._val;
       }
@@ -440,7 +442,7 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
 
 -(void) scheduleValueEvent: (id<CPValueEvent>)evt
 {
-   enQueueAC5(_ac5, evt);
+   ValueClosureQueueEnqueue(_ac5, evt);
 }
 
 // PVH: This does the case analysis on the key of events {trigger,cstr}
@@ -480,7 +482,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       while (!done) {
          // AC5 manipulates the list
          while (ISLOADED(ac5)) {
-            id<CPValueEvent> evt = deQueueAC5(ac5);
+            id<CPValueEvent> evt = ValueClosureQueueDequeue(ac5);
             nbp += [evt execute];
          }
          // Processing AC3
@@ -489,7 +491,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
             --p;
          done = p < LOWEST_PRIO;
          while (!done) {
-            status = executeAC3(AC3deQueue(ac3[p]),last);
+            status = executeAC3(ClosureQueueDequeue(ac3[p]),last);
             nbp += status !=ORSkip;
             if (ISLOADED(ac5))
                break;
@@ -501,7 +503,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       }
       while (ISLOADED(ac3[ALWAYS_PRIO])) {
          // PVH: Failure to remove?
-         ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
+         ORStatus as = executeAC3(ClosureQueueDequeue(ac3[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
          // PVH: what is this stuff // [ldm] we are never supposed to return "failure", but call failNow() instead.
          assert(as != ORFailure);
@@ -516,13 +518,13 @@ ORStatus propagateFDM(CPEngineI* fdm)
    }, ^ORStatus{
       id<CPConstraint>* last = &fdm->_last;
       while (ISLOADED(ac3[ALWAYS_PRIO])) {
-         ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
+         ORStatus as = executeAC3(ClosureQueueDequeue(ac3[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
          assert(as != ORFailure);
       }
       for(ORInt p=NBPRIORITIES-1;p>=0;--p)
-         AC3reset(ac3[p]);
-      AC5reset(ac5);
+         ClosureQueueReset(ac3[p]);
+      ValueClosureQueueReset(ac5);
       if (fdm->_propagFail)
          [fdm->_propagFail notifyWith:[*last getId]];
       //[exception release];

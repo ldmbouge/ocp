@@ -22,7 +22,7 @@
 }
 -(id)init:(id<CPEngine>)engine;
 -(void)add:(id<CPConstraint>)p;
--(void)scheduleClosures:(id<CPClosureList>)evt;
+-(void)scheduleClosure:(id<CPClosureList>)evt;
 -(void)scheduleValueEvent:(id<CPValueEvent>)evt;
 -(void) post;
 -(ORStatus)propagate;
@@ -40,7 +40,7 @@
 }
 -(id)init:(id<CPEngine>)engine;
 -(void)add:(id<CPConstraint>)p;
--(void)scheduleClosures:(id<CPClosureList>)evt;
+-(void)scheduleClosure:(id<CPClosureList>)evt;
 -(void)scheduleValueEvent:(id<CPValueEvent>)evt;
 -(void) post;
 -(ORStatus)propagate;

@@ -46,7 +46,7 @@
 -(void) post
 {
 }
--(void)scheduleClosures:(CPClosureList*)evt
+-(void)scheduleClosure:(CPClosureList*)evt
 {
    [_ac3[evt->_priority] enQueue:evt->_trigger cstr:evt->_cstr];
 }
@@ -172,7 +172,7 @@ static inline ORStatus executeAC3(CPClosureEntry cb,id<CPConstraint>* last)
       _map[[_inGroup[i] getId]] = i;
    memset(_scanMap,0,sizeof(CPClosureList*)*_nbIn);
 }
--(void)scheduleClosures:(CPClosureList*)evt
+-(void)scheduleClosure:(CPClosureList*)evt
 {
    ORInt cid = [evt->_cstr getId];
    _scanMap[_map[cid]] = evt;
