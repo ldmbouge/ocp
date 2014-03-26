@@ -419,9 +419,10 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
                lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
                [group scheduleAC3:list];
-            } else
+            } else {
                lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+            }
             // [ldm] not completely clear why. But the conditional enQueueing below breaks
             // the behavior w.r.t. idempotence.
             // Temporarily back to the original code until I figure this one out.
