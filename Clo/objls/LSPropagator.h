@@ -50,16 +50,18 @@
 -(void)post;
 -(void)define;
 -(void)execute;
--(void)addTrigger:(LSLink*)link;
--(void)prioritize:(PStore*)p;
+-(void)addTrigger:(id)link;
 -(NSUInteger)inDegree;
 @end
 
-@interface LSCoreView : LSPropagator<LSIntVar> {
+@interface LSCoreView : ORObject<LSIntVar> {
+   LSEngineI*       _engine;
    id<ORIntRange>      _dom;
    NSMutableSet*  _outbound;
+   NSSet*          _inbound;
    NSMutableArray* _pullers;
    NSArray*            _src;
+   id<LSPriority>     _rank;
 }
 -(id)initWith:(id<LSEngine>)engine  domain:(id<ORIntRange>)d src:(NSArray*)src;
 -(LSEngineI*)engine;

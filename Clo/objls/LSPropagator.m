@@ -69,9 +69,6 @@
 {
    [_inbound addObject:link];
 }
--(void)prioritize:(PStore*)p
-{
-}
 -(id<LSPriority>)rank
 {
    return _rank;
@@ -87,7 +84,6 @@
 }
 -(id<NSFastEnumeration>)inbound
 {
-   //return [[[LSInbound alloc] initWith:_inbound] autorelease];
    return _inbound;
 }
 -(void)execute
@@ -98,6 +94,40 @@
 // ==============================================================
 // Core Views
 
+@interface LSViewPropagator : LSPropagator {
+   id _target;
+}
+-(id)initWith:(id<LSEngine>)engine src:(NSArray*)src trg:(id)var;
+-(void)post;
+-(void)define;
+-(void)execute;
+@end
+
+@implementation LSViewPropagator
+-(id)initWith:(id<LSEngine>)engine src:(NSArray*)src trg:(id)var;
+{
+   self = [super initWith:engine];
+   _target = var;
+   for(id<LSVar> sv in src)
+      [self addTrigger:[sv addListener:self]];
+   [_engine trackObject:self];
+   [_engine add:self];
+   return self;
+}
+-(void)post
+{}
+-(void)define
+{}
+-(void)execute
+{
+   [_engine notify:_target];
+}
+-(id<NSFastEnumeration>)outbound
+{
+   return [NSSet setWithObject:_target];
+}
+@end
+
 @implementation LSCoreView
 -(id)initWith:(LSEngineI*)engine  domain:(id<ORIntRange>)d src:(NSArray*)src
 {
@@ -105,13 +135,12 @@
    _engine = engine;
    _dom = d;
    _src = src;
+   LSViewPropagator* vp = [[LSViewPropagator alloc] initWith:_engine src:src trg:self];
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
+   _inbound  = [[NSSet alloc] initWithObjects:vp, nil];
    _pullers  = [[NSMutableArray alloc] initWithCapacity:2];
    [_engine trackVariable:self];
    _rank    = [[[engine space] nifty] retain];
-   _inbound = [[NSMutableSet alloc] initWithCapacity:8];
-   for(id sk in _src)
-      [_inbound addObject:[sk addListener:self]];
    return self;
 }
 -(void)dealloc
@@ -119,6 +148,7 @@
    [_src release];
    [_pullers release];
    [_outbound release];
+   [_inbound release];
    [super dealloc];
 }
 -(NSArray*)sourceVars
@@ -151,7 +181,19 @@
 -(id)addDefiner:(id)p
 {
    assert(NO);
-   return nil;
+   return p;
+}
+-(NSUInteger)inDegree
+{
+   return 1;
+}
+-(id<NSFastEnumeration>)outbound
+{
+   return _outbound;
+}
+-(id<NSFastEnumeration>)inbound
+{
+   return _inbound;
 }
 -(id<LSPriority>)rank
 {
@@ -161,18 +203,6 @@
 {
    [_rank release];
    _rank = [r retain];
-}
--(NSUInteger)inDegree
-{
-   return _inbound ? [_inbound count] : 0;
-}
--(id<NSFastEnumeration>)outbound
-{
-   return _outbound;
-}
--(id<NSFastEnumeration>)inbound
-{
-   return _inbound;
 }
 -(void)enumerateOutbound:(void(^)(id))block
 {
@@ -185,10 +215,6 @@
       puller();
    for(id lnk in _outbound)
       [engine schedule:lnk];
-}
--(void)execute
-{
-   [_engine notify:self];
 }
 -(LSGradient)decrease:(id<LSIntVar>)x
 {
@@ -227,18 +253,6 @@
 -(ORInt)value
 {
    return _fun();
-}
--(LSGradient)decrease:(id<LSIntVar>)x
-{
-   assert(NO);
-   LSGradient rv;
-   return rv;
-}
--(LSGradient)increase:(id<LSIntVar>)x
-{
-   assert(NO);
-   LSGradient rv;
-   return rv;
 }
 @end
 // ==============================================================

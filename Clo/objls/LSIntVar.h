@@ -17,11 +17,6 @@
 @class LSPropagator;
 @class LSEngineI;
 
-@protocol LSLink
--(id)target;
--(id)source;
-@end
-
 typedef enum LSStatus {
    LSFinal   = 0,
    LSPending = 1
