@@ -994,13 +994,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_recv !=nil) {
       [_recv loseValEvt:val sender:sender];
    }
-   // [ldm/pvh] necessary for alldiff to be correct when not idempotent?
-//   if (_net._domEvt[0]._val != NULL) {
-//      id<CPEventNode> mList[2];
-//      mList[0] = _net._domEvt[0]._val;
-//      mList[1] = NULL;
-//      scheduleAC3(_fdm,mList);
-//   }
    if (_net._ac5[0]._val)
       [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5[0]._val]];
    if (_triggers)

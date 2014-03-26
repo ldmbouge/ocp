@@ -20,7 +20,6 @@
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -190,7 +189,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -280,8 +278,6 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       terms[i].updated |= updateNow;
       terms[i].up  = minOf(terms[i].up,nSupi);
       if (updateNow) {
-         // [ldm] this is necessary to make sure that the view can apply its narrowing
-         // so that the constraint behaves in an idempotent way.
          terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
          terms[i].up = maxDom(terms[i].var);
       }

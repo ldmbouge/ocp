@@ -374,7 +374,6 @@
    _x = x;
    _y = y;
    _z = z;
-   _idempotent = YES;
    return self;
 }
 -(ORStatus) post
@@ -906,7 +905,6 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRI
    self = [super initCPCoreConstraint:[x engine]];
    _x =  (CPIntVar*) x;
    _y =  (CPIntVar*) y;
-   _idempotent = YES;
    return self;
 }
 -(ORStatus) post
@@ -959,7 +957,6 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRI
    _b = (CPIntVar*) b;
    _x = (CPIntVar*) x;
    _y = (CPIntVar*) y;
-   _idempotent = YES;
    return self;
 }
 -(ORStatus) post
@@ -1019,7 +1016,6 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRI
    _b = (CPIntVar*) b;
    _x = (CPIntVar*) x;
    _y = (CPIntVar*) y;
-   _idempotent = YES;
    return self;
 }
 -(ORStatus) post
@@ -1080,7 +1076,6 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRI
    _b = (CPIntVar*) b;
    _x = (CPIntVar*) x;
    _y = (CPIntVar*) y;
-   _idempotent = YES;
    return self;
 }
 -(ORStatus) post

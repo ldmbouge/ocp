@@ -51,7 +51,6 @@
 
 -(void) initInstanceVariables 
 {
-   _idempotent = YES;
    _priority = HIGHEST_PRIO-4;
    _posted = false;
 }

@@ -65,13 +65,13 @@ static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
       if (cstr->_todo == CPChecked)
          return ORSkip;
       else {
-         if (cstr->_idempotent) {
-            cstr->_propagate(cstr,@selector(propagate));
+//         if (cstr->_idempotent) {
+//            cstr->_propagate(cstr,@selector(propagate));
+//            cstr->_todo = CPChecked;
+//         } else {
             cstr->_todo = CPChecked;
-         } else {
-            cstr->_todo = CPChecked;
             cstr->_propagate(cstr,@selector(propagate));
-         }
+//         }
       }
    }
    return ORSuspend;
