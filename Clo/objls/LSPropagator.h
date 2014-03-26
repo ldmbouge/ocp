@@ -65,14 +65,14 @@
 -(id<ORIntRange>)domain;
 -(NSArray*)sourceVars;
 -(void)setValue:(ORInt)v;
--(id)addListener:(LSPropagator*)p term:(ORInt)k;
+-(id)addListener:(LSPropagator*)p;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)r;
 -(NSUInteger)inDegree;
 -(id<NSFastEnumeration>)outbound;
 -(id<NSFastEnumeration>)inbound;
--(void)enumerateOutbound:(void(^)(id,ORInt))block;
--(void)propagateOutbound:(void(^)(id,ORInt))block;
+-(void)enumerateOutbound:(void(^)(id))block;
+-(void)scheduleOutbound:(LSEngineI*)engine;
 @end
 
 @interface LSIntVarView : LSCoreView {

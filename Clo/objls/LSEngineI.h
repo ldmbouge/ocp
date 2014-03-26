@@ -49,5 +49,6 @@ typedef enum LSMode {
 -(ORUInt)nbObjects;
 -(void)label:(LSIntVar*)x with:(ORInt)v;
 -(void)notify:(id<LSVar>)x;
+-(void)schedule:(id<LSPropagator>)x;
 -(LSPseudoPropagator*)pseudoForArray:(id<ORIdArray>)a;
 @end

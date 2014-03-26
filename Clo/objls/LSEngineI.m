@@ -193,15 +193,11 @@
       return;
    if (_atomic) {
       LSBlock* b = [[LSBlock alloc] initWith:self block:^{
-         [x propagateOutbound:^(id<LSPropagator> p,ORInt k) {
-            [self schedule:p];
-         }];
+         [x scheduleOutbound:self];
       } atPriority:x.rank];
       [_queue enQueue:b atPriority:x.rank];
    } else {
-      [x propagateOutbound:^(id<LSPropagator> p,ORInt k) {
-         [self schedule:p];
-      }];
+      [x scheduleOutbound:self];
    }
 }
 -(void)schedule:(id<LSPropagator>)x
@@ -234,7 +230,7 @@
       [self add:p];
       [_pseudo setObject:p forKey:@(aId)];
       for(ORInt k=a.low;k <= a.up;k++)
-         [p addTrigger:[a[k] addLogicalListener:p term:k]];
+         [p addTrigger:[a[k] addLogicalListener:p]];
    }
    return p;
 }

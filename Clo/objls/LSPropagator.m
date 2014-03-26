@@ -143,15 +143,15 @@
 -(void)execute
 {
 }
--(id)addListener:(id)p term:(ORInt)k
+-(id)addListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
    [_outbound addObject:obj];
    return obj;
 }
--(id)addLogicalListener:(id)p term:(ORInt)k
+-(id)addLogicalListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSLogical];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSLogical];
    [_outbound addObject:obj];
    return obj;
 }
@@ -184,7 +184,7 @@
    }
    _inbound = [[NSMutableSet alloc] initWithCapacity:8];
    for(id sk in vSrc) {
-      LSLink* link = [sk addListener:self term:-1];
+      LSLink* link = [sk addListener:self];
       [_inbound addObject:link];
    }
    [vSrc release];
@@ -211,21 +211,21 @@
 {
    assert(NO);
 }
--(id)addLogicalListener:(id)p term:(ORInt)k
+-(id)addLogicalListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSLogical];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSLogical];
    [_outbound addObject:obj];
    return obj;
 }
--(id)addListener:(id)p term:(ORInt)k
+-(id)addListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p type:LSPropagate];
    [_outbound addObject:obj];
    return obj;
 }
--(id)addListener:(id)p term:(ORInt)k with:(void(^)())block
+-(id)addListener:(id)p with:(void(^)())block
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k block:block type:LSPropagate];
+   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p block:block type:LSPropagate];
    [_outbound addObject:obj];
    return obj;
 }
@@ -255,18 +255,18 @@
 {
    return [[[LSInbound alloc] initWith:_inbound] autorelease];
 }
--(void)enumerateOutbound:(void(^)(id,ORInt))block
+-(void)enumerateOutbound:(void(^)(id))block
 {
    for(LSLink* lnk in _outbound)
-      block(lnk.target,lnk.index);
+      block(lnk.target);
 }
--(void)propagateOutbound:(void(^)(id,ORInt))block
+-(void)scheduleOutbound:(LSEngineI*)engine
 {
    for(LSLink* lnk in _outbound) {
       if (lnk->_block)
          lnk->_block();
       if (lnk->_t == LSPropagate)
-         block(lnk->_trg,lnk->_k);
+         [engine schedule:lnk->_trg];
    }
 }
 -(void)execute

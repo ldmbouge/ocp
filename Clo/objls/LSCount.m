@@ -29,7 +29,7 @@
 -(void)define
 {
    for(ORInt i=_src.low;i <= _src.up;i++)
-      [self addTrigger:[_src[i] addListener:self term:i with:^{
+      [self addTrigger:[_src[i] addListener:self with:^{
          LSIntVar* vk = _src[i];
          [_cnt[[_old at:i]] decr];
          [_cnt[[vk value]] incr];
@@ -122,7 +122,7 @@ void printLists(LSGElement* elt)
 {
    [self setup];
    for(ORInt i=_x.low;i <= _x.up;i++)
-      [self addTrigger:[_x[i] addListener:self term:i with:^{
+      [self addTrigger:[_x[i] addListener:self with:^{
          ORInt oi = [_oldx at:i];
          ORInt ni = _x[i].value;
          //Remove node(i) from old list (oi)
@@ -145,7 +145,7 @@ void printLists(LSGElement* elt)
          [_oldx set:ni at:i];
       }]];
    for(ORInt i=_c.low;i <= _c.up;i++)
-      [self addTrigger:[_c[i] addListener:self term:i with:^{
+      [self addTrigger:[_c[i] addListener:self with:^{
          _delta[_ndelta++] = i;
       }]];
    for(ORInt i=_y.low;i <= _y.up;i++)
@@ -213,7 +213,7 @@ void printLists(LSGElement* elt)
 -(void)define
 {
    for(id<LSVar> s in _src)
-      [self addTrigger:[s addListener:self term:-1]];
+      [self addTrigger:[s addListener:self]];
    [_x addDefiner:self];
 }
 -(void)post
@@ -251,7 +251,7 @@ void printLists(LSGElement* elt)
 -(void)define
 {
    for(ORInt i = _terms.range.low; i <= _terms.range.up;i++)
-      [self addTrigger:[_terms[i] addListener:self term:i with:^{
+      [self addTrigger:[_terms[i] addListener:self with:^{
          ORInt nv    = [_terms[i] value];
          ORInt delta = nv -  [_old at:i];
          [_sum setValue: [_sum value] + delta];
@@ -298,7 +298,7 @@ void printLists(LSGElement* elt)
 -(void)define
 {
    for(ORInt i = _terms.range.low; i <= _terms.range.up;i++)
-      [self addTrigger:[_terms[i] addListener:self term:i with:^{
+      [self addTrigger:[_terms[i] addListener:self with:^{
          ORInt nv    = [_terms[i] value];
          ORInt delta = nv -  [_old at:i];
          if (delta) {
