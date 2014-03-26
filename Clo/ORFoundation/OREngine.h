@@ -20,7 +20,7 @@
 @end
 
 @protocol OREngine <NSObject,ORTracker>
-@end;
+@end
 
 @protocol ORSearchEngine <OREngine>
 -(ORStatus)           close;

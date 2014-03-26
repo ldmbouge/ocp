@@ -15,7 +15,7 @@
 
 @class CPEngineI;
 
-@interface CPCoreConstraint : ORObject<NSCoding,CPConstraint> {
+@interface CPCoreConstraint : ORObject<CPConstraint> {
 @public
    CPTodo            _todo;
    BOOL        _idempotent;
@@ -30,6 +30,7 @@
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
+-(ORUInt) nbVars;
 -(void)setGroup:(id<CPGroup>)g;
 -(id<CPGroup>)group;
 @end

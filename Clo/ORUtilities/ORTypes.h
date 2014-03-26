@@ -91,6 +91,7 @@ typedef void (^ORClosure)(void);
 typedef bool (^ORInt2Bool)(ORInt);
 typedef bool (^ORVoid2Bool)(void);
 typedef ORInt (^ORInt2Int)(ORInt);
+typedef id   (^ORInt2Id)(ORInt);
 typedef void (^ORInt2Void)(ORInt);
 typedef void (^ORId2Void)(id);
 typedef void (^ORSolution2Void)(id<ORSolution>);

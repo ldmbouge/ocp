@@ -157,27 +157,5 @@ static ORStatus removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
             [_var[i] whenLoseValue: self do: ^(ORInt v) { removeValue(self,i,v); }];
    return ORSuspend;
 }
-
--(void) encodeWithCoder: (NSCoder*) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_table];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
-    for(ORInt i=0;i<_arity;i++)
-        [aCoder encodeObject:_var[i]];
-}
-
--(id) initWithCoder: (NSCoder*) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    _table = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
-    _var = malloc(_arity * sizeof(CPIntVar*));
-    for(ORInt i=0;i<_arity;i++)
-        _var[i] = [aDecoder decodeObject];
-    [self initInstanceVariables];
-    return self;
-}
-
 @end
 

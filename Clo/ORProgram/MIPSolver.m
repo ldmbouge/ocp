@@ -349,6 +349,14 @@
    [_sPool release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
+-(id<ORExplorer>)  explorer
+{
+   return nil;
+}
 -(void) close
 {}
 

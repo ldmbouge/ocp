@@ -24,6 +24,8 @@
 @protocol ORSolutionPool <NSObject>
 -(void) addSolution: (id<ORSolution>) s;
 -(void) enumerateWith: (void(^)(id<ORSolution>)) block;
+-(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
 -(id<ORInformer>) solutionAdded;
 -(id<ORSolution>) best;
+-(NSUInteger) count;
 @end

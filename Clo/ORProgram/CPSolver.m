@@ -18,6 +18,7 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitVar.h>
+#import <objcp/CPIntVarI.h>
 
 #import "CPProgram.h"
 #import "CPSolver.h"
@@ -494,6 +495,10 @@
    [_doOnExitArray release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return _engine;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_model release];
@@ -874,14 +879,19 @@
    }
 }
 
-
-
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt low = [x low];
    ORInt up = [x up];
-   for(ORInt i = low; i <= up; i++)
-      [self label: x[i]];
+   for(ORInt i = low; i <= up; i++) {
+      CPIntVar* xi = _gamma[getId(x[i])];
+      while (!bound(xi)) { 
+         ORInt m = minDom(xi);
+         [_search try: ^{ [self labelImpl: xi with: m]; }
+                   or: ^{ [self  diffImpl: xi with: m]; }
+          ];
+      }
+   }
 }
 
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
@@ -1156,6 +1166,12 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPDeg alloc] initCPDeg:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
    id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:rvars];
@@ -1186,6 +1202,12 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createSDeg
+{
+   id<CPHeuristic> h = [[CPDeg alloc] initCPDeg:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createIBS
 {
    id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:nil];
@@ -1201,6 +1223,10 @@
 -(NSString*)stringValue:(id<ORBitVar>)x
 {
    return [_gamma[x.getId] stringValue];
+}
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [_gamma[x.getId] degree];
 }
 -(ORInt) intValue: (id) x
 {
@@ -1411,7 +1437,7 @@
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce: ^{ [var bind: val];}];
+   ORStatus status = [_engine enforce: ^{ bindDom((CPIntVarI*)var, val);}];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];

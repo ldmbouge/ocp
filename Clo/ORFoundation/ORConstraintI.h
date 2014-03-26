@@ -93,9 +93,12 @@
 
 @interface ORLEqual : ORConstraintI<ORLEqual>
 -(ORLEqual*)initORLEqual: (id<ORIntVar>) x leq: (id<ORIntVar>) y plus: (ORInt) c;
+-(ORLEqual*)initORLEqual:(ORInt)a times:(id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>)y plus:(ORInt)c;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
+-(ORInt) coefLeft;
+-(ORInt) coefRight;
 @end
 
 @interface ORPlus : ORConstraintI<ORPlus>
@@ -273,6 +276,34 @@
 
 @interface ORSumBoolGEqc : ORConstraintI<ORSumBoolGEqc>
 -(ORSumBoolGEqc*)initSumBool:(id<ORIntVarArray>)ba geqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORReifySumBoolEqc : ORConstraintI<ORReifySumBoolEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORReifySumBoolGEqc : ORConstraintI<ORReifySumBoolGEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORHReifySumBoolEqc : ORConstraintI<ORReifySumBoolEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORHReifySumBoolGEqc : ORConstraintI<ORReifySumBoolGEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c;
+-(id<ORIntVar>) b;
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end

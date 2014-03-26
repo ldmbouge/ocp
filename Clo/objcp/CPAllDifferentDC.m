@@ -54,7 +54,7 @@ static void prune(CPAllDifferentDC* ad);
 
 -(void) initInstanceVariables 
 {
-    _idempotent = YES;
+    //_idempotent = YES;
     _priority = HIGHEST_PRIO-2;
     _posted = false;
 }
@@ -116,20 +116,6 @@ static void prune(CPAllDifferentDC* ad);
     else 
         @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: nbUVars called before the constraints is posted"];
     return 0;
-}
-
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    [self initInstanceVariables];
-   return self;
 }
 
 static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)

@@ -22,7 +22,6 @@
    _csz = 0;
    _mask = _mxs - 1;
    _tab = malloc(sizeof(AC3Entry)*_mxs);
-   _tab[_mxs - 1] = (AC3Entry){0,0};
    _last = _tab+_mxs-1;
    _enter = _exit = 0;
    return self;
@@ -34,7 +33,6 @@
 }
 -(void) reset
 {
-   _tab[_mxs - 1] = (AC3Entry){0,0};
    _last = _tab + _mxs - 1;
    _enter = _exit = 0;
    _csz = 0;
@@ -81,14 +79,10 @@ inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstrain
 }
 inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 {
-   if (q->_csz > 0) {
-      AC3Entry cb = q->_tab[q->_exit];
-      q->_exit = (q->_exit+1) & q->_mask;
-      --q->_csz;
-      return cb;
-   }
-   else
-      return (AC3Entry){nil,nil};
+   AC3Entry cb = q->_tab[q->_exit];
+   q->_exit = (q->_exit+1) & q->_mask;
+   --q->_csz;
+   return cb;
 }
 -(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr
 {
@@ -294,7 +288,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [_ac3[i] release];
    [super dealloc];
 }
-
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(id<CPEngine>) solver
 {
    return self;
@@ -333,7 +330,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) inCache:(id)obj
 {
-   return NO;
+   return nil;
 }
 -(id) addToCache:(id)obj
 {
@@ -398,7 +395,8 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",[_vars count],[_cStore count],_nbpropag];
+   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",
+      [_vars count],[_cStore count],_nbpropag];
 }
 -(id) trail
 {
@@ -417,15 +415,33 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
          if (lc->_active._val) {
-            lc->_todo = CPTocheck;
             id<CPGroup> group = lc->_group;
             if (group) {
+               lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
                [group scheduleAC3:list];
             } else
+               lc->_todo = CPTocheck;
                AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+            // [ldm] not completely clear why. But the conditional enQueueing below breaks
+            // the behavior w.r.t. idempotence.
+            // Temporarily back to the original code until I figure this one out.
+            // Benchmark affected: sport
+            // Actually, if a constraint is tagged idemponent, the second disjunct is false and
+            // therefore we _might_ try to save scheduling the currently running propagator.
+            // This looks sounds to me, but the allDiffDC does _not_ check whether there was a change
+            // it seems to do a single pass. over the variable set. Which  should be ok without views
+            // but certainly wrong with views.  In sport, this _reduces_ the number of choices, but that
+            // maybe an artifact of the different search caused by a _weaker_ fixpoint (not really reaching a glb).
+            // For now, I'll keep this commented out. It only makes sense for idempotent propagators anyway and
+            // would disappear if we get rid of idempotence. 
+//               if (fdm->_last != lc || !lc->_idempotent) {
+//                  lc->_todo = CPTocheck;
+//                  AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+//               }
+               //else NSLog(@"Not scheduling the currently running idempotent constraint");
          }
-         list = list->_node;
+         list = list->_node._val;
       }
       ++mlist;
    }
@@ -448,6 +464,13 @@ void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 static inline ORStatus executeAC3(AC3Entry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
+
+//   static int cnt = 0;
+//   @autoreleasepool {
+//      NSString* cn = NSStringFromClass([*last class]);
+//      NSLog(@"%d : propagate: %p : CN=%@",cnt++,*last,cn);
+//   }
+
    if (cb.cb)
       cb.cb();
    else {
@@ -507,7 +530,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          // PVH: Failure to remove?
          ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
-         // PVH: what is this stuff
+         // PVH: what is this stuff // [ldm] we are never supposed to return "failure", but call failNow() instead.
          assert(as != ORFailure);
       }
       if (fdm->_propagDone)
@@ -544,7 +567,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
 
 static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
-   if (status == ORSuspend || status == ORSuccess)
+   if (status == ORSuspend || status == ORSuccess || status == ORSkip)
       return propagateFDM(fdm);// fdm->_propagIMP(fdm,@selector(propagate));
    else if (status== ORFailure) {
       for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
@@ -627,6 +650,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus) enforce: (ORClosure) cl
 {
+   _last = NULL;
    _status = tryfail(^ORStatus{
       cl();
       return internalPropagate(self,ORSuspend);

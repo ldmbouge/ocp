@@ -279,24 +279,24 @@ static inline void  inline_assignTRDouble(TRDouble* v,double val,ORTrailI* trail
    }
    v->_val = val;
 }
-static inline void  inline_assignTRId(TRId* v,id val,ORTrailI* trail)
+static inline void  inline_assignTRId(TRId* v,id val,id<ORTrail> trail)
 {
    [trail trailId:&v->_val];
    [v->_val release];
    v->_val = [val retain];
 }
-static inline void  inline_assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
+static inline void  inline_assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail)
 {
-   trailIdNCFun(trail, &v->_val);
+   inline_trailIdNCFun((ORTrailI*)trail, &v->_val);
    v->_val = val;
 }
 static inline ORInt inline_getTRIntArray(TRIntArray a,int i)
 {
    return a._entries[i]._val;
 }
-static inline void  inline_incrFXInt(FXInt* v,ORTrailI* trail)
+static inline void  inline_incrFXInt(FXInt* v,id<ORTrail> trail)
 {
-   ORInt cmgc = trail->_magic;
+   ORInt cmgc = ((ORTrailI*)trail)->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
       v->_val = 0;

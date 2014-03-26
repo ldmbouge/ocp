@@ -44,7 +44,11 @@
    [x visit:self];
    return _gamma[x.getId];
 }
-
+-(id) scaleVar:(id<ORVar>) x coef:(ORInt)a
+{
+   [x visit:self];
+   return [CPFactory intVar:_gamma[x.getId] scale:a];
+}
 -(id) concreteArray: (id<ORVarArray>) x
 {
    [x visit: self];
@@ -485,12 +489,9 @@
 -(void) visitLEqual: (id<ORLEqual>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORIntVar> left = [cstr left];
-      id<ORIntVar> right = [cstr right];
-      ORInt cst = [cstr cst];
-      [left visit: self];
-      [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory lEqual: (id<CPIntVar>) _gamma[left.getId]  to: (id<CPIntVar>) _gamma[right.getId] plus: cst];
+      id<CPIntVar> left  = [self scaleVar:[cstr left] coef:[cstr coefLeft]];
+      id<CPIntVar> right = [self scaleVar:[cstr right] coef:[cstr coefRight]];
+      id<CPConstraint> concreteCstr = [CPFactory lEqual: left  to: right plus: [cstr cst]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -824,6 +825,50 @@
       id<CPIntVar> x = [self concreteVar:[cstr x]];
       id<CPIntVar> y = [self concreteVar:[cstr y]];
       id<CPConstraint> concreteCstr = [CPFactory reify: b with: y leq: x annotation: Default];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitReifySumBoolEqualc: (id<ORReifySumBoolEqc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      ORCLevel lvl = [_notes levelFor:cstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify:b array:x eqi:[cstr cst] annotation:lvl];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      ORCLevel lvl = [_notes levelFor:cstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify:b array:x geqi:[cstr cst] annotation:lvl];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitHReifySumBoolEqualc: (id<ORReifySumBoolEqc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      ORCLevel lvl = [_notes levelFor:cstr];
+      id<CPConstraint> concreteCstr = [CPFactory hreify:b array:x eqi:[cstr cst] annotation:lvl];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolEqc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      ORCLevel lvl = [_notes levelFor:cstr];
+      id<CPConstraint> concreteCstr = [CPFactory hreify:b array:x geqi:[cstr cst] annotation:lvl];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

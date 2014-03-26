@@ -11,6 +11,7 @@
 
 #import "bitTest.h"
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTrailI.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>

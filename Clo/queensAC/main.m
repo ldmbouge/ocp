@@ -22,6 +22,14 @@
 // First solution
 // 22 choices 20 fail 277 propagations
 
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -56,15 +64,31 @@ int main(int argc, const char * argv[])
          [cp solveAll:
           ^() {
              //[cp labelHeuristic:h];
-             //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
-             [cp labelArrayFF: x];
+             [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+             //[cp labelArray: x];
+             id* gamma = [cp gamma];
+             id<CPIntVarArray> cx = gamma[x.getId];
+             for(ORInt i=1;i<=n;i++) {
+                while (![cp bound:x[i]]) {
+                   ORInt v = [cp min:x[i]];
+                   [cp try:^{
+                      NSLog(@"%@-lbl(%d,%d) = %@",tab(i),i,v,cx);
+                      [cp label:x[i] with:v];
+                      NSLog(@"%@+lbl(%d,%d) = %@",tab(i),i,v,cx);
+                   } or:^{
+                      NSLog(@"%@-dif(%d,%d) = %@",tab(i),i,v,cx);
+                      [cp diff:x[i] with:v];
+                      NSLog(@"%@+dif(%d,%d) = %@",tab(i),i,v,cx);
+                   }];
+                }
+             }
              @synchronized(cp) {
                 nbSol++;
 /*                for(ORInt i = 1; i <= 8; i++)
                    printf("%d ",[cp intValue: x[i]]);
                 printf("\n");*/
              }
-             [[cp explorer] fail];
+             //[[cp explorer] fail];
           }];
          printf("GOT %d solutions\n",nbSol);
          NSLog(@"Solver status: %@\n",cp);

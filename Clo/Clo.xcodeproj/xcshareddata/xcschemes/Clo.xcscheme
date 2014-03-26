@@ -729,7 +729,7 @@
       buildConfiguration = "Debug">
       <Testables>
          <TestableReference
-            skipped = "YES">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5B9ABD011391329D000997E5"
@@ -737,9 +737,26 @@
                BlueprintName = "objcpTests"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "bitTest">
+               </Test>
+               <Test
+                  Identifier = "testCard">
+               </Test>
+               <Test
+                  Identifier = "testBitConstraints">
+               </Test>
+               <Test
+                  Identifier = "searchTest">
+               </Test>
+               <Test
+                  Identifier = "objcpTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
-            skipped = "NO">
+            skipped = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5BEA4E67178365FA00614A82"

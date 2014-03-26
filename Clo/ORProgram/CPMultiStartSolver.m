@@ -55,6 +55,10 @@
    [_terminated release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_source release];
@@ -479,6 +483,10 @@
 {
    return [self setupHeuristic:_cmd with:rvars];
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   return [self setupHeuristic:_cmd with:rvars];
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
    return [self setupHeuristic:_cmd with:rvars];
@@ -499,6 +507,10 @@
 {
    return [self setupHeuristic:_cmd];
 }
+-(id<CPHeuristic>) createSDeg
+{
+   return [self setupHeuristic:_cmd];
+}
 -(id<CPHeuristic>) createIBS
 {
    return [self setupHeuristic:_cmd];
@@ -506,6 +518,10 @@
 -(id<CPHeuristic>) createABS
 {
    return [self setupHeuristic:_cmd];
+}
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [[self worker] degree:x];
 }
 -(ORInt) intValue: (id<ORIntVar>) x
 {

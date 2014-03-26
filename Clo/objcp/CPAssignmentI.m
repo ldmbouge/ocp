@@ -100,24 +100,6 @@
    return 0;
 }
 
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_matrix];
-   [aCoder encodeObject:_costVariable];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _matrix = [aDecoder decodeObject];
-   _costVariable = [aDecoder decodeObject];
-   [self initInstanceVariables];
-   return self;
-}
-
 -(ORStatus) post
 {
    if (_posted)

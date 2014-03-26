@@ -76,8 +76,6 @@
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
 @end
 
-
-
 @protocol ORIdMatrix <ORObject>
 -(id) flat:(ORInt)i;
 -(id) at: (ORInt) i1 : (ORInt) i2;
