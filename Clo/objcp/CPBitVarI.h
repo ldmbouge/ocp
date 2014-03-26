@@ -45,10 +45,10 @@ typedef struct  {
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;
 
-// AC3 Constraint Event
+// Constraint Event
 -(void) whenChangePropagate:  (CPCoreConstraint*) c;
 
-// need for speeding the code when not using AC5
+// needed for speeding the code when not using value notifications
 -(ORBool) tracksLoseEvt;
 -(void) setTracksLoseEvt;
 

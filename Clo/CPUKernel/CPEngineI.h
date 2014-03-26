@@ -35,12 +35,12 @@ enum CPEngineState {
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
    id<ORSearchObjectiveFunction> _objective;
-   CPClosureQueue*              _ac3[NBPRIORITIES];
-   CPValueClosureQueue*              _ac5;
-   ORStatus                _status;
-   ORInt                _propagating;
-   ORUInt               _nbpropag;
-   id<CPConstraint>        _last;
+   CPClosureQueue*          _closureQueue[NBPRIORITIES];
+   CPValueClosureQueue*     _valueClosureQueue;
+   ORStatus                 _status;
+   ORInt                    _propagating;
+   ORUInt                   _nbpropag;
+   id<CPConstraint>         _last;
    UBType                   _propagIMP;
    @package
    id<ORIntInformer>        _propagFail;

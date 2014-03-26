@@ -37,7 +37,7 @@ typedef enum {
 
 @protocol CPGroup <CPConstraint>
 -(void)  add:(id<CPConstraint>)p;
--(void)  scheduleClosures:(id<CPClosureList>)evt;
+-(void)  scheduleClosure:(id<CPClosureList>)evt;
 @end
 
 @protocol CPValueEvent<NSObject>

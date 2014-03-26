@@ -20,15 +20,15 @@
    self = [super initCPCoreConstraint:engine];
    _engine = engine;
    for(ORInt i=0;i<NBPRIORITIES;i++)
-      _ac3[i] = [[CPClosureQueue alloc] initClosureQueue:512];
-   _ac5 = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
+      _closureQueue[i] = [[CPClosureQueue alloc] initClosureQueue:512];
+   _valueClosureQueue = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
    return self;
 }
 -(void)dealloc
 {
    for(ORInt i=0;i<NBPRIORITIES;i++)
-      [_ac3[i] release];
-   [_ac5 release];
+      [_closureQueue[i] release];
+   [_valueClosureQueue release];
    [super dealloc];
 }
 -(void)add:(id<CPConstraint>)p
@@ -48,13 +48,13 @@
 }
 -(void)scheduleClosure:(CPClosureList*)evt
 {
-   [_ac3[evt->_priority] enQueue:evt->_trigger cstr:evt->_cstr];
+   [_closureQueue[evt->_priority] enQueue:evt->_trigger cstr:evt->_cstr];
 }
 -(void)scheduleValueEvent:(id<CPValueEvent>)evt
 {
-   [_ac5 enQueue:evt];
+   [_valueClosureQueue enQueue:evt];
 }
-static inline ORStatus executeAC3(CPClosureEntry cb,id<CPConstraint>* last)
+static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
 {
    *last = cb.cstr;
    if (cb.cb)
@@ -79,43 +79,43 @@ static inline ORStatus executeAC3(CPClosureEntry cb,id<CPConstraint>* last)
    __block ORInt nbp = 0;
    return tryfail(^ORStatus{
       while (!done) {
-         // AC5 manipulates the list
-         while (ISLOADED(_ac5)) {
-            id<CPValueEvent> evt = [_ac5 deQueue];
+         
+         while (ISLOADED(_valueClosureQueue)) {
+            id<CPValueEvent> evt = [_valueClosureQueue deQueue];
             nbp += [evt execute];
          }
-         // Processing AC3
+         
          int p = HIGHEST_PRIO;
-         while (p>=LOWEST_PRIO && !ISLOADED(_ac3[p]))
+         while (p>=LOWEST_PRIO && !ISLOADED(_closureQueue[p]))
             --p;
          done = p < LOWEST_PRIO;
          while (!done) {
-            status = executeAC3([_ac3[p] deQueue],&last);
+            status = executeClosure([_closureQueue[p] deQueue],&last);
             nbp += status !=ORSkip;
-            if (ISLOADED(_ac5))
+            if (ISLOADED(_valueClosureQueue))
                break;
             p = HIGHEST_PRIO;
-            while (p >= LOWEST_PRIO && !ISLOADED(_ac3[p]))
+            while (p >= LOWEST_PRIO && !ISLOADED(_closureQueue[p]))
                --p;
             done = p < LOWEST_PRIO;
          }
       }
-      while (ISLOADED(_ac3[ALWAYS_PRIO])) {
-         ORStatus as = executeAC3([_ac3[ALWAYS_PRIO] deQueue],&last);
+      while (ISLOADED(_closureQueue[ALWAYS_PRIO])) {
+         ORStatus as = executeClosure([_closureQueue[ALWAYS_PRIO] deQueue],&last);
          nbp += as != ORSkip;
          assert(as != ORFailure);
       }
       [_engine incNbPropagation:nbp];
       return status;
    }, ^ORStatus{
-      while (ISLOADED(_ac3[ALWAYS_PRIO])) {
-         ORStatus as = executeAC3([_ac3[ALWAYS_PRIO] deQueue],&last);
+      while (ISLOADED(_closureQueue[ALWAYS_PRIO])) {
+         ORStatus as = executeClosure([_closureQueue[ALWAYS_PRIO] deQueue],&last);
          nbp += as != ORSkip;
          assert(as != ORFailure);
       }
       for(ORInt p=NBPRIORITIES-1;p>=0;--p)
-         [_ac3[p] reset];
-      [_ac5 reset];
+         [_closureQueue[p] reset];
+      [_valueClosureQueue reset];
       [_engine incNbPropagation:nbp];
       [_engine setLastFailure:last];
       failNow();
@@ -189,14 +189,14 @@ static inline ORStatus executeAC3(CPClosureEntry cb,id<CPConstraint>* last)
       for(ORInt k=0;k<_nbIn;k++) {
          CPClosureList* evt = _scanMap[k];
          if (evt) {
-            ORStatus status = executeAC3((CPClosureEntry){evt->_trigger,evt->_cstr},&last);
+            ORStatus status = executeClosure((CPClosureEntry){evt->_trigger,evt->_cstr},&last);
             nbp += status !=ORSkip;
          }
       }
       for(ORInt k=_nbIn-1;k>=0;k--) {
          CPClosureList* evt = _scanMap[k];
          if (evt) {
-            ORStatus status = executeAC3((CPClosureEntry){evt->_trigger,evt->_cstr},&last);
+            ORStatus status = executeClosure((CPClosureEntry){evt->_trigger,evt->_cstr},&last);
             nbp += status !=ORSkip;
          }
       }

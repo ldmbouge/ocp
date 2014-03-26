@@ -32,7 +32,7 @@ static void setUpNetwork(CPEventNetwork* net,id<ORTrail> t,ORInt low,ORInt sz)
       net->_domEvt[i]    = makeTRId(t,nil);
       net->_minEvt[i]    = makeTRId(t,nil);
       net->_maxEvt[i]    = makeTRId(t,nil);
-      net->_ac5[i]       = makeTRId(t, nil);
+      net->_valueClosureQueue[i]       = makeTRId(t, nil);
    }
 }
 
@@ -43,7 +43,7 @@ static void deallocNetwork(CPEventNetwork* net)
     freeList(net->_domEvt[0]._val);
     freeList(net->_minEvt[0]._val);
     freeList(net->_maxEvt[0]._val);
-    freeList(net->_ac5[0]._val);
+    freeList(net->_valueClosureQueue[0]._val);
 }
 
 static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
@@ -53,7 +53,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    collectList(net->_domEvt[0]._val,rv);
    collectList(net->_minEvt[0]._val,rv);
    collectList(net->_maxEvt[0]._val,rv);
-   collectList(net->_ac5[0]._val,rv);
+   collectList(net->_valueClosureQueue[0]._val,rv);
    return rv;
 }
 
@@ -528,7 +528,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
 }
 
-// AC5 Events
+// ValueClosure Events
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ORIntClosure) todo
 {
 }
@@ -606,7 +606,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 @implementation CPIntVarI
 
-#define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
+#define TRACKLOSSES (_net._valueClosureQueue._val != nil || _triggers != nil)
 
 -(CPIntVar*) initCPIntVarCore: (CPEngineI*)engine low: (ORInt) low up: (ORInt)up
 {
@@ -809,12 +809,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     return [_dom retain];
 }
 
-#define TRACKSINTVAR (_net._ac5._val != nil || _triggers != nil || _recv)
+#define TRACKSINTVAR (_net._valueClosureQueue._val != nil || _triggers != nil || _recv)
 
 -(ORBool) tracksLoseEvt
 {
   //return TRACKSINTVAR;
-   if (_net._ac5[0]._val != nil || _triggers != nil)
+   if (_net._valueClosureQueue[0]._val != nil || _triggers != nil)
       return YES;
    else if (_recv && [_recv tracksLoseEvt])
       return YES;
@@ -872,11 +872,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 
 
-// AC5 Events
+// ValueClosure Events
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ORIntClosure) todo 
 {
    [_recv setTracksLoseEvt];
-   hookupEvent(_fdm, _net._ac5, todo, c, HIGHEST_PRIO);
+   hookupEvent(_fdm, _net._valueClosureQueue, todo, c, HIGHEST_PRIO);
 }
 
 -(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
@@ -994,8 +994,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_recv !=nil) {
       [_recv loseValEvt:val sender:sender];
    }
-   if (_net._ac5[0]._val)
-      [_fdm scheduleValueEvent:[CPValueLossEvent newValueLoss:val notify:_net._ac5[0]._val]];
+   if (_net._valueClosureQueue[0]._val)
+      [_fdm scheduleValueEvent:[CPValueLossEvent newValueLoss:val notify:_net._valueClosureQueue[0]._val]];
    if (_triggers)
       [_triggers loseValEvt:val solver:_fdm];
 }

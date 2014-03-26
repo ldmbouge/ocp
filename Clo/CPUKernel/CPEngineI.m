@@ -263,8 +263,8 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
    for(ORInt i=0;i<NBPRIORITIES;i++)
-      _ac3[i] = [[CPClosureQueue alloc] initClosureQueue:512];
-   _ac5 = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
+      _closureQueue[i] = [[CPClosureQueue alloc] initClosureQueue:512];
+   _valueClosureQueue = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
    _status = ORSuspend;
    _propagating = 0;
    _nbpropag = 0;
@@ -281,11 +281,11 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    [_mStore release];
    [_oStore release];
    [_objective release];
-   [_ac5 release];
+   [_valueClosureQueue release];
    [_propagFail release];
    [_propagDone release];
    for(ORInt i=0;i<NBPRIORITIES;i++)
-      [_ac3[i] release];
+      [_closureQueue[i] release];
    [super dealloc];
 }
 -(id<ORTracker>)tracker
@@ -405,7 +405,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 
 -(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
 {
-   ClosureQueueEnqueue(_ac3[HIGHEST_PRIO], cb, c);
+   ClosureQueueEnqueue(_closureQueue[HIGHEST_PRIO], cb, c);
 }
 
 void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
@@ -418,12 +418,12 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
             id<CPGroup> group = lc->_group;
             if (group) {
                lc->_todo = CPTocheck;
-               ClosureQueueEnqueue(fdm->_ac3[LOWEST_PRIO], nil, group);
-               [group scheduleClosures:list];
+               ClosureQueueEnqueue(fdm->_closureQueue[LOWEST_PRIO], nil, group);
+               [group scheduleClosure:list];
             }
             else {
                lc->_todo = CPTocheck;
-               ClosureQueueEnqueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+               ClosureQueueEnqueue(fdm->_closureQueue[list->_priority], list->_trigger,lc);
             }
          }
          list = list->_node._val;
@@ -437,19 +437,17 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
    scheduleClosures(self, mlist);
 }
 
-// PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses CPClosureList; AC3 works with the trigger directly
-
 
 -(void) scheduleValueEvent: (id<CPValueEvent>)evt
 {
-   ValueClosureQueueEnqueue(_ac5, evt);
+   ValueClosureQueueEnqueue(_valueClosureQueue, evt);
 }
 
 // PVH: This does the case analysis on the key of events {trigger,cstr}
 
-static inline ORStatus executeAC3(CPClosureEntry cb,id<CPConstraint>* last)
+static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
 {
-    *last = cb.cstr;
+    *last = cb.cstr;   // [pvh] This is for wdeg: need to know the last constraint that has failed
     
     if (cb.cb)
         cb.cb();
@@ -471,8 +469,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
       return ORDelay;
    ++fdm->_propagating;
    fdm->_status = ORSuspend;
-   CPValueClosureQueue* ac5 = fdm->_ac5;
-   CPClosureQueue** ac3 = fdm->_ac3;
+   CPValueClosureQueue* vcQueue = fdm->_valueClosureQueue;
+   CPClosureQueue** cQueue = fdm->_closureQueue;
    __block ORInt nbp = 0;
    return tryfail(^ORStatus{
       id<CPConstraint>* last = &fdm->_last;
@@ -480,33 +478,30 @@ ORStatus propagateFDM(CPEngineI* fdm)
       ORStatus status = ORSuspend;
       BOOL done = NO;
       while (!done) {
-         // AC5 manipulates the list
-         while (ISLOADED(ac5)) {
-            id<CPValueEvent> evt = ValueClosureQueueDequeue(ac5);
+         
+         while (ISLOADED(vcQueue)) {
+            id<CPValueEvent> evt = ValueClosureQueueDequeue(vcQueue);
             nbp += [evt execute];
          }
-         // Processing AC3
+         
          int p = HIGHEST_PRIO;
-         while (p>=LOWEST_PRIO && !ISLOADED(ac3[p]))
+         while (p>=LOWEST_PRIO && !ISLOADED(cQueue[p]))
             --p;
          done = p < LOWEST_PRIO;
          while (!done) {
-            status = executeAC3(ClosureQueueDequeue(ac3[p]),last);
+            status = executeClosure(ClosureQueueDequeue(cQueue[p]),last);
             nbp += status !=ORSkip;
-            if (ISLOADED(ac5))
+            if (ISLOADED(vcQueue))
                break;
             p = HIGHEST_PRIO;
-            while (p >= LOWEST_PRIO && !ISLOADED(ac3[p]))
+            while (p >= LOWEST_PRIO && !ISLOADED(cQueue[p]))
                --p;
             done = p < LOWEST_PRIO;
          }
       }
-      while (ISLOADED(ac3[ALWAYS_PRIO])) {
-         // PVH: Failure to remove?
-         ORStatus as = executeAC3(ClosureQueueDequeue(ac3[ALWAYS_PRIO]), last);
-         nbp += as != ORSkip;
-         // PVH: what is this stuff // [ldm] we are never supposed to return "failure", but call failNow() instead.
-         assert(as != ORFailure);
+      while (ISLOADED(cQueue[ALWAYS_PRIO])) {
+          ORStatus as = executeClosure(ClosureQueueDequeue(cQueue[ALWAYS_PRIO]), last);
+          nbp += as != ORSkip;
       }
       if (fdm->_propagDone)
          [fdm->_propagDone notify];
@@ -517,14 +512,14 @@ ORStatus propagateFDM(CPEngineI* fdm)
       return status;
    }, ^ORStatus{
       id<CPConstraint>* last = &fdm->_last;
-      while (ISLOADED(ac3[ALWAYS_PRIO])) {
-         ORStatus as = executeAC3(ClosureQueueDequeue(ac3[ALWAYS_PRIO]), last);
+      while (ISLOADED(cQueue[ALWAYS_PRIO])) {
+         ORStatus as = executeClosure(ClosureQueueDequeue(cQueue[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
          assert(as != ORFailure);
       }
       for(ORInt p=NBPRIORITIES-1;p>=0;--p)
-         ClosureQueueReset(ac3[p]);
-      ValueClosureQueueReset(ac5);
+         ClosureQueueReset(cQueue[p]);
+      ValueClosureQueueReset(vcQueue);
       if (fdm->_propagFail)
          [fdm->_propagFail notifyWith:[*last getId]];
       //[exception release];
@@ -542,25 +537,23 @@ ORStatus propagateFDM(CPEngineI* fdm)
 
 -(ORStatus) enforceObjective
 {
-   if (_objective == nil) return ORSuspend;
-   _status = tryfail(^ORStatus{
-      _status = ORSuspend;
-      // PVH: Failure to remove?
+   if (_objective == nil)
+       return ORSuspend;
+   return tryfail(^ORStatus{
       ORStatus ok = [_objective check];
       if (ok)
-         ok = propagateFDM(self);// [self propagate];
+         ok = propagateFDM(self);
       return ok;
    }, ^ORStatus{
       return ORFailure;
    });
-   return _status;
 }
 
 // [pvh] the post method on a constraint may throw a failure, so this must be catched.
 
 -(ORStatus) post: (id<ORConstraint>) c
 {
-   _status = tryfail(^ORStatus{
+    return tryfail(^ORStatus{
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       [cstr post];
       ORStatus pstatus =  propagateFDM(self);
@@ -575,7 +568,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
    }, ^ORStatus{
       return ORFailure;
    });
-   return _status;
 }
 
 // LDM: addInternal must _raise_ a failure if the post returns a failure status.
@@ -616,19 +608,18 @@ ORStatus propagateFDM(CPEngineI* fdm)
 -(ORStatus) enforce: (ORClosure) cl
 {
    _last = NULL;
-   _status = tryfail(^ORStatus{
+   return tryfail(^ORStatus{
       cl();
       return propagateFDM(self);
    }, ^ORStatus{
       return ORFailure;
    });
-   return _status;
 }
 
 -(ORStatus) atomic: (ORClosure) cl
 {
    ORInt oldPropag = _propagating;
-   _status = tryfail(^ORStatus{
+   return tryfail(^ORStatus{
       _propagating++;
       cl();
       _propagating--;
@@ -637,7 +628,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _propagating = oldPropag;
       return ORFailure;
    });
-   return _status;
 }
 
 -(ORStatus) close
@@ -654,7 +644,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _status = propagateFDM(self);
       _state = CPClosed;
    }
-   //printf("Closing CPEngine\n");
    return ORSuspend;
 }
 
@@ -666,7 +655,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
    return bm;
 }
 
-
+// [pvh]: not sure that this is still useful
 -(void) clearStatus
 {
    _status = ORSuspend;
@@ -716,8 +705,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
    NSMutableArray* originalStore = [aDecoder decodeObject];
    _oStore = [[aDecoder decodeObject] retain];
    for(ORInt i=0;i<NBPRIORITIES;i++)
-      _ac3[i] = [[[CPClosureQueue alloc] initClosureQueue:512] retain];
-   _ac5 = [[[CPValueClosureQueue alloc] initValueClosureQueue:512] retain];
+      _closureQueue[i] = [[[CPClosureQueue alloc] initClosureQueue:512] retain];
+   _valueClosureQueue = [[[CPValueClosureQueue alloc] initValueClosureQueue:512] retain];
    _status = ORSuspend;
    _propagating = 0;
    _nbpropag = 0;

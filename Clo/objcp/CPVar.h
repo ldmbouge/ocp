@@ -70,7 +70,7 @@ enum CPVarClass {
 -(void) whenChangeMaxPropagate: (id<CPConstraint>) c;
 -(void) whenChangeBoundsPropagate: (id<CPConstraint>) c;
 
-// AC5 Event
+// Value Closure Event
 -(void) whenLoseValue: (id<CPConstraint>) c do: (ORIntClosure) todo;
 
 // Triggers
