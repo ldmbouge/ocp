@@ -204,10 +204,12 @@
 {
    return _up;
 }
--(ORBool) isDefined {
+-(ORBool) isDefined
+{
     return _low <= _up;
 }
--(ORBool) inRange: (ORInt)e {
+-(ORBool) inRange: (ORInt)e
+{
     return e >= _low && e <= _up;
 }
 -(ORInt) size

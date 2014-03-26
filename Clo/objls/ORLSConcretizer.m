@@ -113,7 +113,7 @@
       id<ORIntRange> d = [src domain];
       id<ORIntRange> nd = a > 0 ? RANGE(_engine,a * d.low + b,a * d.up + b) : RANGE(_engine,a * d.up + b,a * d.low + b);
       _gamma[getId(v)] = [LSFactory intVarView:_engine domain:nd fun:^ORInt{
-         return a * src.value + b;
+         return a * getLSIntValue(src) + b;
       } src:@[src]];
    }
 }
