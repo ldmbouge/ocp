@@ -21,10 +21,10 @@
    CPTrigger*         _prev;
    CPTrigger*         _next;
    ORClosure          _cb;       // var/val held inside the closure (captured).
-   CPCoreConstraint*  _cstr;
+   id<CPConstraint>   _cstr;
    ORInt              _vId;       // local variable identifier (var being watched)
 }
--(id)initTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c;
+-(id)initTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>)c;
 -(void) detach;
 -(ORInt) localID;
 -(void) setLocalID: (ORInt) lid;
@@ -51,7 +51,7 @@
 @end
 
 @implementation CPTrigger
--(id)init
+-(id) init
 {
    self = [super init];
    _cb = nil;
@@ -60,7 +60,7 @@
    _prev = _next = nil;
    return self;
 }
--(id)initTrigger:(ORClosure)cb onBehalf:(CPCoreConstraint*)c
+-(id) initTrigger:(ORClosure)cb onBehalf:(id<CPConstraint>) c
 {
    self = [super init];
    _cb = [cb copy];
@@ -69,25 +69,25 @@
    _prev = _next = nil;
    return self;
 }
--(void)dealloc
+-(void) dealloc
 {
    [_cb release];
    [super dealloc];
 }
--(void)detach
+-(void) detach
 {
    _next->_prev = _prev;
    _prev->_next = _next;
 }
--(ORInt)localID
+-(ORInt) localID
 {
    return _vId;
 }
--(void)setLocalID:(ORInt)lid
+-(void) setLocalID: (ORInt) lid
 {
    _vId = lid;
 }
--(void)setNext:(CPTrigger*)new
+-(void) setNext: (CPTrigger*) new
 {
    if (_next)
       _next->_prev = new;
@@ -129,7 +129,7 @@ static void freeTriggers(CPTrigger* list)
     [super dealloc];
 }
 
-+(CPTrigger*) createTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
++(CPTrigger*) createTrigger: (ORClosure) todo onBehalf:(id<CPConstraint>)c
 {
    return [[CPTrigger alloc] initTrigger:todo onBehalf:c];
 }
