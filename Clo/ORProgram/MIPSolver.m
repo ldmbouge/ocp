@@ -490,6 +490,12 @@
    [_sPool addSolution: s];
    [s release];
 }
+-(void) setTimeLimit: (double)limit {
+   [_MIPsolver setTimeLimit: limit];
+}
+-(ORFloat) bestObjectiveBound {
+   return [_MIPsolver bestObjectiveBound];
+}
 -(ORFloat) floatValue: (id<ORFloatVar>) v
 {
    return [_MIPsolver floatValue: _gamma[v.getId]];

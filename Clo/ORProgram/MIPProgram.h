@@ -35,6 +35,8 @@
 -(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
+-(void) setTimeLimit: (double)limit;
+-(ORFloat) bestObjectiveBound;
 -(ORFloat) floatValue: (id<ORFloatVar>) v;
 -(void) setFloatVar: (id<ORFloatVar>)v value:(ORFloat)val;
 -(ORInt) intValue: (id<ORIntVar>) v;

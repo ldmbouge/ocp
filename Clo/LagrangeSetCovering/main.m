@@ -116,7 +116,7 @@ int main (int argc, const char * argv[])
 //   id<ORSolution> sol= [[[r solver] solutionPool] best];
 //   id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
 //   NSLog(@"BEST: %f", [objValue floatValue]);
-   //NSLog(@"%@", sol);
+//   NSLog(@"%@", sol);
    
     //NSLog(@"lower bound: %f", [(ORLagrangeRelax*)lr bestBound]);
     

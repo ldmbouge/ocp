@@ -37,21 +37,19 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-    ORExprBinaryI* binexpr = (ORExprBinaryI*)[cstr expr];
-    id<ORExpr> slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
-    id<ORVar> slack = nil;
-    if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, [slackExpr min], [slackExpr max])];
-    else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: [slackExpr min] up: [slackExpr max]];
-    else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
+//    ORExprBinaryI* binexpr = (ORExprBinaryI*)[cstr expr];
+//    id<ORExpr> slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
+//    id<ORVar> slack = nil;
+//    if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, [slackExpr min], [slackExpr max])];
+//    else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: [slackExpr min] up: [slackExpr max]];
+//    else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
    
-   /*
    ORExprBinaryI* binexpr = (ORExprBinaryI*)[cstr expr];
    id<ORExpr> slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
    id<ORVar> slack = nil;
    if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [slackExpr max])];
    else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [slackExpr max]];
    else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-*/
    
     id<ORRelation> softExpr = nil;
     softExpr = [slack geq: slackExpr track: _target];

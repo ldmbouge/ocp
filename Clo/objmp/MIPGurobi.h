@@ -35,6 +35,8 @@
 -(void) addObjective: (MIPObjectiveI*) obj;
 -(void) close;
 -(MIPOutcome) solve;
+-(void) setTimeLimit: (double)limit;
+-(ORFloat) bestObjectiveBound;
 
 -(MIPOutcome) status;
 -(ORFloat) floatValue: (MIPVariableI*) var;

@@ -112,6 +112,11 @@
    return _status;
 }
 
+-(void) setTimeLimit: (double)limit {
+    struct _GRBenv* env = GRBgetenv(_model);
+    GRBsetdblparam(env, GRB_DBL_PAR_TIMELIMIT, limit);
+}
+
 -(MIPOutcome) status
 {
    return _status;
@@ -155,7 +160,6 @@
    GRBgetdblattrelement(_model,"UB",[var idx],&value);
    return value;
 }
-
 -(ORFloat) objectiveValue
 {
    ORFloat objVal;
@@ -164,6 +168,11 @@
       return -objVal;
    else
       return objVal;
+}
+-(ORFloat) bestObjectiveBound {
+    ORFloat bnd;
+    GRBgetdblattr(_model, "ObjBound", &bnd);
+    return bnd;
 }
 -(ORFloat) paramFloatValue: (MIPParameterI*) param
 {

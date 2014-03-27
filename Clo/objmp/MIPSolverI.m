@@ -1110,7 +1110,12 @@
       [self close];
    return [_MIP solve];
 }
-
+-(void) setTimeLimit: (double)limit {
+    [_MIP setTimeLimit: limit];
+}
+-(ORFloat) bestObjectiveBound {
+    return [_MIP bestObjectiveBound];
+}
 -(MIPOutcome) status;
 {
    return [_MIP status];

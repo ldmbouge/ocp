@@ -265,6 +265,8 @@
 -(void) close;
 -(ORBool) isClosed;
 -(MIPOutcome) solve;
+-(void) setTimeLimit: (double)limit;
+-(ORFloat) bestObjectiveBound;
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;

@@ -218,15 +218,18 @@
     }];
     
     id<MIPProgram> program = [ORFactory createMIPProgram: _model];
+    [program close];
 //    id<CPProgram> program = [ORFactory createCPProgram: _model];
 //    id<CPHeuristic> h = [program createFF];
     
     ORFloat cutoff = 0.005;
-    ORInt noImproveLimit = 30;
+    ORInt noImproveLimit = 3;//30;
     ORInt noImprove = 0;
+    ORFloat timeLimit = 2.0;
     
     while(pi > cutoff) {
         [[program solutionPool] emptyPool];
+        [program setTimeLimit: timeLimit];
         [program solve];
         
 //        [program solve: ^{
@@ -237,6 +240,7 @@
         id<ORSolution> sol = [[program solutionPool] best];
         NSLog(@"BEST is: %@",sol);
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
+        ORFloat bound = [program bestObjectiveBound];
         
         __block ORFloat slackSum = 0.0;
         [slacks enumerateWith:^(id<ORFloatVar> obj, ORInt idx) {
@@ -260,15 +264,19 @@
         
         // Check for improvement
         NSLog(@"obj: %@, %f", objValue, bestBound);
-        if([objValue floatValue] > bestBound) {
-            bestBound = [objValue floatValue];
+        if(bound > bestBound) {//if([objValue floatValue] > bestBound) {
+            bestBound = bound;//[objValue floatValue];
             bestSol = sol;
             bestSlack = slackSum;
             noImprove = 0;
+            //if(timeLimit > 2) timeLimit /= 2;
         }
         else if(++noImprove > noImproveLimit) {
             pi /= 2.0;
             noImprove = 0;
+        }
+        else {
+            timeLimit *= 2;
         }
         
         // Check if done
