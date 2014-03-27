@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPGroup.h"
-#import "CPAC3Event.h"
+#import "CPClosureEvent.h"
 #import "CPConstraintI.h"
 #import "CPEngineI.h"
 
@@ -50,9 +50,13 @@
 {
    [_closureQueue[evt->_priority] enQueue:evt->_trigger cstr:evt->_cstr];
 }
--(void)scheduleValueEvent:(id<CPValueEvent>)evt
+-(void)scheduleValueClosure:(id<CPValueEvent>)evt
 {
    [_valueClosureQueue enQueue:evt];
+}
+-(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
+{
+    [_closureQueue[HIGHEST_PRIO] enQueue: cb cstr: c];
 }
 static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
 {
@@ -177,9 +181,13 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
    ORInt cid = [evt->_cstr getId];
    _scanMap[_map[cid]] = evt;
 }
--(void)scheduleValueEvent:(id<CPValueEvent>)evt
+-(void)scheduleValueClosure:(id<CPValueEvent>)evt
 {
    assert(NO);
+}
+-(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
+{
+    assert(NO);
 }
 -(ORStatus)propagate
 {

@@ -659,7 +659,7 @@
 		5B9B2464177873EA001AB944 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B9B2465177873EA001AB944 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B9B2466177873F2001AB944 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
-		5B9C2CDF166CF08C00D91D40 /* CPAC3Event.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */; };
+		5B9C2CDF166CF08C00D91D40 /* CPClosureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9C2CDE166CF08C00D91D40 /* CPClosureEvent.h */; };
 		5B9EE50815175CCC00619B47 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50715175CCC00619B47 /* UIKit.framework */; };
 		5B9EE50915175CCC00619B47 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B9EE50B15175CCC00619B47 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50A15175CCC00619B47 /* CoreGraphics.framework */; };
@@ -5722,7 +5722,7 @@
 		5B9B244B177873D3001AB944 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B9B244E177873D3001AB944 /* nonogram-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "nonogram-Prefix.pch"; sourceTree = "<group>"; };
 		5B9B244F177873D3001AB944 /* nonogram.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = nonogram.1; sourceTree = "<group>"; };
-		5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAC3Event.h; sourceTree = "<group>"; };
+		5B9C2CDE166CF08C00D91D40 /* CPClosureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPClosureEvent.h; sourceTree = "<group>"; };
 		5B9EE50515175CCB00619B47 /* iCP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iCP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B9EE50715175CCC00619B47 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		5B9EE50A15175CCC00619B47 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
@@ -8148,7 +8148,7 @@
 			children = (
 				B189033D142C266D007F6EAD /* CPTrigger.h */,
 				B189033E142C266E007F6EAD /* CPTrigger.m */,
-				5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */,
+				5B9C2CDE166CF08C00D91D40 /* CPClosureEvent.h */,
 				5B9348731655451D00757F89 /* CPUKernel.h */,
 				5B9348741655451D00757F89 /* CPUKernel.m */,
 				5BE642FD139D49320056F448 /* CPEngine.h */,
@@ -9404,7 +9404,7 @@
 				5B9348831655465A00757F89 /* CPTypes.h in Headers */,
 				5B9348851655473D00757F89 /* CPConstraintI.h in Headers */,
 				5B9348861655478200757F89 /* CPUKernel.h in Headers */,
-				5B9C2CDF166CF08C00D91D40 /* CPAC3Event.h in Headers */,
+				5B9C2CDF166CF08C00D91D40 /* CPClosureEvent.h in Headers */,
 				5B3DAE4A1677988700F01DBF /* CPTrigger.h in Headers */,
 				5BBB08E416C562520087ACF0 /* CPGroup.h in Headers */,
 			);

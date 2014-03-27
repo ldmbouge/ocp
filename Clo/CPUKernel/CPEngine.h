@@ -24,9 +24,9 @@
 
 @protocol CPEngine <ORSearchEngine>
 
--(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>)c;
+-(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosures: (id<CPClosureList>*) mlist;
--(void) scheduleValueEvent: (id<CPValueEvent>) evt;
+-(void) scheduleValueClosure: (id<CPValueEvent>) evt;
 -(void) propagate;
 
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;

@@ -995,7 +995,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_recv loseValEvt:val sender:sender];
    }
    if (_net._valueClosureQueue[0]._val)
-      [_fdm scheduleValueEvent:[CPValueLossEvent newValueLoss:val notify:_net._valueClosureQueue[0]._val]];
+      [_fdm scheduleValueClosure:[CPValueLossEvent newValueLoss:val notify:_net._valueClosureQueue[0]._val]];
    if (_triggers)
       [_triggers loseValEvt:val solver:_fdm];
 }

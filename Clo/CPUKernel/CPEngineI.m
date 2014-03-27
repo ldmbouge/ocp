@@ -11,7 +11,7 @@
 
 #import "CPEngineI.h"
 #import "CPTypes.h"
-#import "CPAC3Event.h"
+#import "CPClosureEvent.h"
 #import <ORFoundation/ORSetI.h>
 
 @implementation CPClosureQueue
@@ -438,7 +438,7 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
 }
 
 
--(void) scheduleValueEvent: (id<CPValueEvent>)evt
+-(void) scheduleValueClosure: (id<CPValueEvent>)evt
 {
    ValueClosureQueueEnqueue(_valueClosureQueue, evt);
 }

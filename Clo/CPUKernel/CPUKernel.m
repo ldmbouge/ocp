@@ -11,7 +11,7 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import "CPEngineI.h"
-#import "CPAC3Event.h"
+#import "CPClosureEvent.h"
 #import "CPGroup.h"
 
 @implementation CPFactory

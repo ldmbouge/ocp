@@ -17,31 +17,33 @@
 
 @interface CPGroup : CPCoreConstraint<CPGroup> {
    CPEngineI*               _engine;
-   CPClosureQueue*              _closureQueue[NBPRIORITIES];
-   CPValueClosureQueue*              _valueClosureQueue;
+   CPClosureQueue*          _closureQueue[NBPRIORITIES];
+   CPValueClosureQueue*     _valueClosureQueue;
 }
--(id)init:(id<CPEngine>)engine;
--(void)add:(id<CPConstraint>)p;
--(void)scheduleClosure:(id<CPClosureList>)evt;
--(void)scheduleValueEvent:(id<CPValueEvent>)evt;
+-(id)   init: (id<CPEngine>) engine;
+-(void) add: (id<CPConstraint>) p;
+-(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
+-(void) scheduleClosure: (id<CPClosureList>) evt;
+-(void) scheduleValueClosure: (id<CPValueEvent>) evt;
 -(void) post;
--(ORStatus)propagate;
+-(ORStatus) propagate;
 @end
 
 @interface CPBergeGroup : CPCoreConstraint<CPGroup> {
    CPEngineI*               _engine;
    id<CPConstraint>*        _inGroup;
-   id<CPClosureList>*         _scanMap;
+   id<CPClosureList>*       _scanMap;
    ORInt                    _nbIn;
    ORInt                    _max;
    ORInt                    _low;
    ORInt                    _sz;
    ORInt*                   _map;
 }
--(id)init:(id<CPEngine>)engine;
--(void)add:(id<CPConstraint>)p;
--(void)scheduleClosure:(id<CPClosureList>)evt;
--(void)scheduleValueEvent:(id<CPValueEvent>)evt;
+-(id) init:(id<CPEngine>)engine;
+-(void) add:(id<CPConstraint>)p;
+-(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
+-(void) scheduleClosure:(id<CPClosureList>)evt;
+-(void) scheduleValueClosure: (id<CPValueEvent>)evt;
 -(void) post;
 -(ORStatus)propagate;
 @end
