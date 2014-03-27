@@ -119,10 +119,10 @@ id<LSIntVar>* makeVar2ViewMap(id<LSIntVarArray> x,id<LSIntVarArray> views,
    *b = idRange(x,(ORBounds){FDMAXINT,0});
    id<LSIntVar>* map = malloc(sizeof(id<LSIntVar>)*(b->max - b->min + 1));
    map -= b->min;
-   ORInt xlow = x.low;
+   ORInt vlow = views.low;
    for(ORInt j=0;j<sz;++j)
       for(id<LSIntVar> s in asv[j])
-         map[getId(s)] = views[j+xlow]; // each source var is mapped to the view that uses it.
+         map[getId(s)] = views[j+vlow]; // each source var is mapped to the view that uses it.
 #if !defined(_NDEBUG)
    for(id<LSIntVar> xk in x)
       assert(map[getId(xk)]!=nil);
