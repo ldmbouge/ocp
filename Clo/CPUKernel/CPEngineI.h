@@ -37,7 +37,6 @@ enum CPEngineState {
    id<ORSearchObjectiveFunction> _objective;
    CPClosureQueue*          _closureQueue[NBPRIORITIES];
    CPValueClosureQueue*     _valueClosureQueue;
-   ORStatus                 _status;
    ORInt                    _propagating;
    ORUInt                   _nbpropag;
    id<CPConstraint>         _last;
@@ -65,18 +64,21 @@ enum CPEngineState {
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  enforce:(ORClosure) cl;
 -(ORStatus)  atomic:(ORClosure) cl;
+-(ORStatus)  enforceObjective;
+-(void)      tryEnforce:(ORClosure) cl;
+-(void)      tryAtomic:(ORClosure) cl;
+-(void)      tryEnforceObjective;
 -(NSMutableArray*) variables;
 -(NSMutableArray*) constraints;
 -(NSMutableArray*) objects;
--(ORStatus)  close;
--(ORStatus)  status;
+-(ORStatus)   close;
 -(ORBool)      closed;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
--(ORStatus)enforceObjective;
+
 //-(id<ORIntVarArray>)intVars;
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;

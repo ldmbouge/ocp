@@ -202,7 +202,6 @@
 {
    [ORConcurrency pumpEvents];
    _nbf++;
-   //[_engine clearStatus];
    [_controller._val fail];
    assert(0);
 }

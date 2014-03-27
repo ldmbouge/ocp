@@ -30,5 +30,5 @@
 -(id<ORTrail>) trail;
 -(ORStatus)propagate;
 -(ORStatus)enforceObjective;
--(void)clearStatus;
+-(ORStatus)tryEnforceObjective;
 @end

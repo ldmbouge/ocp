@@ -265,7 +265,6 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _closureQueue[i] = [[CPClosureQueue alloc] initClosureQueue:512];
    _valueClosureQueue = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
-   _status = ORSuspend;
    _propagating = 0;
    _nbpropag = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
@@ -443,15 +442,13 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
    ValueClosureQueueEnqueue(_valueClosureQueue, evt);
 }
 
-// PVH: This does the case analysis on the key of events {trigger,cstr}
-
 static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
 {
     *last = cb.cstr;   // [pvh] This is for wdeg: need to know the last constraint that has failed
     
-    if (cb.cb)
+    if (cb.cb)    // closure event
         cb.cb();
-    else {
+    else {        // propagation event; closure not created explicitly for efficiency reasons
         CPCoreConstraint* cstr = cb.cstr;
         if (cstr->_todo == CPChecked)
             return ORSkip;
@@ -468,7 +465,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
    if (fdm->_propagating > 0)
       return ORDelay;
    ++fdm->_propagating;
-   fdm->_status = ORSuspend;
    CPValueClosureQueue* vcQueue = fdm->_valueClosureQueue;
    CPClosureQueue** cQueue = fdm->_closureQueue;
    __block ORInt nbp = 0;
@@ -505,8 +501,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
       }
       if (fdm->_propagDone)
          [fdm->_propagDone notify];
-      // PVH: This seems buggy or useless; is status still useful
-      fdm->_status = status;
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
       return status;
@@ -523,7 +517,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
       if (fdm->_propagFail)
          [fdm->_propagFail notifyWith:[*last getId]];
       //[exception release];
-      fdm->_status = ORFailure;
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
       return ORFailure;
@@ -547,6 +540,15 @@ ORStatus propagateFDM(CPEngineI* fdm)
    }, ^ORStatus{
       return ORFailure;
    });
+}
+
+-(void) tryEnforceObjective
+{
+    if (_objective != nil) {
+        if ([_objective check] == ORFailure)
+            failNow();
+        propagateFDM(self);
+    }
 }
 
 // [pvh] the post method on a constraint may throw a failure, so this must be catched.
@@ -616,6 +618,13 @@ ORStatus propagateFDM(CPEngineI* fdm)
    });
 }
 
+-(void) tryEnforce: (ORClosure) cl
+{
+    _last = NULL;
+    cl();
+    propagateFDM(self);
+}
+
 -(ORStatus) atomic: (ORClosure) cl
 {
    ORInt oldPropag = _propagating;
@@ -630,21 +639,39 @@ ORStatus propagateFDM(CPEngineI* fdm)
    });
 }
 
+-(void) tryAtomic: (ORClosure) cl
+{
+    ORInt oldPropag = _propagating;
+    ORStatus status = tryfail(^ORStatus{
+        _propagating++;
+        cl();
+        _propagating--;
+        return propagateFDM(self);
+    }, ^ORStatus{
+        _propagating = oldPropag;
+        return ORFailure;
+    });
+    if (status == ORFailure)
+        failNow();
+}
+
 -(ORStatus) close
 {
-   if (_state == CPOpen) {
-      _state = CPClosing;
-      _propagating++;
-      for(id<ORConstraint> c in _mStore) {
-         [self post:c];
-         if (_status == ORFailure)
+    if (_state == CPOpen) {
+        _state = CPClosing;
+        _propagating++;
+        for(id<ORConstraint> c in _mStore) {
+            if ([self post: c] == ORFailure) {
+                _propagating--;
+                return ORFailure;
+            }
+        }
+        _propagating--;
+        if (propagateFDM(self) == ORFailure)
             return ORFailure;
-      }
-      _propagating--;
-      _status = propagateFDM(self);
-      _state = CPClosed;
-   }
-   return ORSuspend;
+        _state = CPClosed;
+    }
+    return ORSuspend;
 }
 
 // [PVH] this is for debugging purposes only
@@ -653,17 +680,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
    id<ORBasicModel> bm = [[CPModelI alloc] initCPModel:self];
    [self trackMutable:bm];
    return bm;
-}
-
-// [pvh]: not sure that this is still useful
--(void) clearStatus
-{
-   _status = ORSuspend;
-}
-
--(ORStatus)  status
-{
-   return _status;
 }
 
 -(ORBool) closed
@@ -707,7 +723,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _closureQueue[i] = [[[CPClosureQueue alloc] initClosureQueue:512] retain];
    _valueClosureQueue = [[[CPValueClosureQueue alloc] initValueClosureQueue:512] retain];
-   _status = ORSuspend;
    _propagating = 0;
    _nbpropag = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
