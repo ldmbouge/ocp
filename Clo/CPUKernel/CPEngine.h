@@ -15,7 +15,6 @@
 @protocol CPValueEvent;
 @protocol CPConstraint;
 @protocol CPClosureList;
-@class CPCoreConstraint;
 
 #define NBPRIORITIES ((ORInt)8)
 #define ALWAYS_PRIO  ((ORInt)0)
@@ -52,7 +51,7 @@
 
 typedef struct CPClosureEntry {
    ORClosure  cb;
-   CPCoreConstraint*    cstr;
+   id<CPConstraint>    cstr;
 } CPClosureEntry;
 
 @interface CPClosureQueue : NSObject {
