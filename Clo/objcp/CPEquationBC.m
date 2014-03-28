@@ -28,7 +28,9 @@
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVar*) [xa at:k];
-   } else assert(FALSE);
+   }
+   else
+       assert(FALSE);
    _c = c;
    _allTerms = NULL;
    _inUse    = NULL;
@@ -107,7 +109,8 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          inline_assignTRCPEQTerm(&_inUse[lastUsed],_inUse[i]._val,_trail);
          inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
          lastUsed--;
-      } else
+      }
+      else
          i++;      
    }
    _ec   = makeTRLong(_trail, ec);
@@ -134,7 +137,8 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          inline_assignTRCPEQTerm(&_inUse[lastUsed],cur,_trail);
          inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
          lastUsed--;
-      } else {
+      }
+      else {
          cur->low = b.min;
          cur->up  = b.max;
          slow += cur->low;
