@@ -17,11 +17,6 @@
 @class LSPropagator;
 @class LSEngineI;
 
-@protocol LSLink
--(id)target;
--(id)source;
-@end
-
 typedef enum LSStatus {
    LSFinal   = 0,
    LSPending = 1
@@ -33,6 +28,7 @@ typedef enum LSStatus {
    enum LSStatus _status;
    NSMutableSet*    _outbound;
    NSMutableSet*    _inbound;
+   NSMutableArray*  _pullers;
    id<LSPriority>   _rank;
 @package
    ORInt          _value;
@@ -45,48 +41,15 @@ typedef enum LSStatus {
 -(ORInt)incr;
 -(ORInt)decr;
 -(ORInt)lookahead:(id<LSIntVar>)y onAssign:(ORInt)v;
--(id)addListener:(LSPropagator*)p term:(ORInt)k;
+-(id)addListener:(LSPropagator*)p;
 -(id)addDefiner:(id)p;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)r;
 -(NSUInteger)inDegree;
 -(id<NSFastEnumeration>)outbound;
 -(id<NSFastEnumeration>)inbound;
--(void)enumerateOutbound:(void(^)(id,ORInt))block;
--(void)propagateOutbound:(void(^)(id,ORInt))block;
-@end
-
-@interface LSOutbound : NSObject<NSFastEnumeration> {
-   NSSet* _theSet;
-}
--(id)initWith:(NSSet*)theSet;
-@end
-
-@interface LSInbound : NSObject<NSFastEnumeration> {
-   NSSet* _theSet;
-}
--(id)initWith:(NSSet*)theSet;
-@end
-
-typedef enum LSLinkType {
-   LSLogical = 0,
-   LSPropagate = 1
-} LSLinkType;
-
-@interface LSLink : NSObject<LSLink> {
-@public
-   id _src;
-   id _trg;
-   ORInt      _k;
-   void (^_block)();
-   LSLinkType _t;
-}
--(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k type:(LSLinkType)t;
--(id)initLinkFrom:(id)src to:(id)trg for:(ORInt)k block:(void(^)())block type:(LSLinkType)t;
--(id)source;
--(id)target;
--(ORInt)index;
--(LSLinkType)type;
+-(void)enumerateOutbound:(void(^)(id))block;
+-(void)scheduleOutbound:(LSEngineI*)engine;
 @end
 
 inline static ORInt getLSIntValue(LSIntVar* x) { return x->_value;}

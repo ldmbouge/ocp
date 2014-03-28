@@ -65,12 +65,9 @@
 {
    NSLog(@"Warning: define of abstract LSPropagator called");
 }
--(void)addTrigger:(LSLink*)link
+-(void)addTrigger:(id)link
 {
    [_inbound addObject:link];
-}
--(void)prioritize:(PStore*)p
-{
 }
 -(id<LSPriority>)rank
 {
@@ -87,83 +84,49 @@
 }
 -(id<NSFastEnumeration>)inbound
 {
-   return [[[LSInbound alloc] initWith:_inbound] autorelease];
+   return _inbound;
 }
 -(void)execute
 {
 }
 @end
 
-@implementation LSPseudoPropagator
--(id)initWith:(LSEngineI*)engine
+// ==============================================================
+// Core Views
+
+@interface LSViewPropagator : LSPropagator {
+   id _target;
+}
+-(id)initWith:(id<LSEngine>)engine src:(NSArray*)src trg:(id)var;
+-(void)post;
+-(void)define;
+-(void)execute;
+@end
+
+@implementation LSViewPropagator
+-(id)initWith:(id<LSEngine>)engine src:(NSArray*)src trg:(id)var;
 {
-   self = [super init];
-   _engine = engine;
-   _inbound  = [[NSMutableSet alloc] initWithCapacity:2];
-   _outbound = [[NSMutableSet alloc] initWithCapacity:2];
-   _rank = [[[engine space] nifty] retain];
+   self = [super initWith:engine];
+   _target = var;
+   for(id<LSVar> sv in src)
+      [self addTrigger:[sv addListener:self]];
+   [_engine trackObject:self];
+   [_engine add:self];
    return self;
 }
 -(void)post
-{
-   NSLog(@"Warning: define of LSPseudoPropagator called");
-}
+{}
 -(void)define
+{}
+-(void)execute
 {
-   NSLog(@"Warning: define of LSPseudoPropagator called");
-}
--(void)addTrigger:(LSLink*)link
-{
-   [_inbound addObject:link];
-}
--(void)prioritize:(PStore*)p
-{
-}
--(id<LSPriority>)rank
-{
-   return _rank;
-}
--(void)setRank:(id<LSPriority>)r
-{
-   [_rank release];
-   _rank = [r retain];
-}
--(NSUInteger)inDegree
-{
-   return [_inbound count];
-}
--(id<NSFastEnumeration>)inbound
-{
-   return [[[LSInbound alloc] initWith:_inbound] autorelease];
+   [_engine notify:_target];
 }
 -(id<NSFastEnumeration>)outbound
 {
-   return [[[LSOutbound alloc] initWith:_outbound] autorelease];
-}
--(void)execute
-{
-}
--(id)addListener:(id)p term:(ORInt)k
-{
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSPropagate];
-   [_outbound addObject:obj];
-   return obj;
-}
--(id)addLogicalListener:(id)p term:(ORInt)k
-{
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSLogical];
-   [_outbound addObject:obj];
-   return obj;
-}
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSPseudo(%p) : %d,%@>",self,_name,_rank];
-   return buf;
+   return [NSSet setWithObject:_target];
 }
 @end
-// ==============================================================
-// Core Views
 
 @implementation LSCoreView
 -(id)initWith:(LSEngineI*)engine  domain:(id<ORIntRange>)d src:(NSArray*)src
@@ -172,27 +135,20 @@
    _engine = engine;
    _dom = d;
    _src = src;
+   LSViewPropagator* vp = [[LSViewPropagator alloc] initWith:_engine src:src trg:self];
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
+   _inbound  = [[NSSet alloc] initWithObjects:vp, nil];
+   _pullers  = [[NSMutableArray alloc] initWithCapacity:2];
    [_engine trackVariable:self];
-   _rank = [[[engine space] nifty] retain];
-   
-   NSMutableArray* vSrc = [[NSMutableArray alloc] initWithCapacity:[src count]];
-   for(id sk in src) {
-      if ([sk conformsToProtocol:@protocol(ORIdArray)])
-         [vSrc addObject:[_engine pseudoForArray:sk]];
-      else [vSrc addObject:sk];
-   }
-   _inbound = [[NSMutableSet alloc] initWithCapacity:8];
-   for(id sk in vSrc) {
-      LSLink* link = [sk addListener:self term:-1];
-      [_inbound addObject:link];
-   }
-   [vSrc release];
+   _rank    = [[[engine space] nifty] retain];
    return self;
 }
 -(void)dealloc
 {
    [_src release];
+   [_pullers release];
+   [_outbound release];
+   [_inbound release];
    [super dealloc];
 }
 -(NSArray*)sourceVars
@@ -211,28 +167,33 @@
 {
    assert(NO);
 }
--(id)addLogicalListener:(id)p term:(ORInt)k
+-(id)addListener:(id)p
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSLogical];
-   [_outbound addObject:obj];
-   return obj;
+   [_outbound addObject:p];
+   return self;
 }
--(id)addListener:(id)p term:(ORInt)k
+-(id)addListener:(id)p with:(void(^)())block
 {
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k type:LSPropagate];
-   [_outbound addObject:obj];
-   return obj;
-}
--(id)addListener:(id)p term:(ORInt)k with:(void(^)())block
-{
-   LSLink* obj = [[LSLink alloc] initLinkFrom:self to:p for:k block:block type:LSPropagate];
-   [_outbound addObject:obj];
-   return obj;
+   [_outbound addObject:p];
+   [_pullers addObject:[block copy]];
+   return self;
 }
 -(id)addDefiner:(id)p
 {
    assert(NO);
-   return nil;
+   return p;
+}
+-(NSUInteger)inDegree
+{
+   return 1;
+}
+-(id<NSFastEnumeration>)outbound
+{
+   return _outbound;
+}
+-(id<NSFastEnumeration>)inbound
+{
+   return _inbound;
 }
 -(id<LSPriority>)rank
 {
@@ -243,35 +204,17 @@
    [_rank release];
    _rank = [r retain];
 }
--(NSUInteger)inDegree
+-(void)enumerateOutbound:(void(^)(id))block
 {
-   return _inbound ? [_inbound count] : 0;
+   for(id<LSPropagator> lnk in _outbound)
+      block(lnk);
 }
--(id<NSFastEnumeration>)outbound
+-(void)scheduleOutbound:(LSEngineI*)engine
 {
-   return [[[LSOutbound alloc] initWith:_outbound] autorelease];
-}
--(id<NSFastEnumeration>)inbound
-{
-   return [[[LSInbound alloc] initWith:_inbound] autorelease];
-}
--(void)enumerateOutbound:(void(^)(id,ORInt))block
-{
-   for(LSLink* lnk in _outbound)
-      block(lnk.target,lnk.index);
-}
--(void)propagateOutbound:(void(^)(id,ORInt))block
-{
-   for(LSLink* lnk in _outbound) {
-      if (lnk->_block)
-         lnk->_block();
-      if (lnk->_t == LSPropagate)
-         block(lnk->_trg,lnk->_k);
-   }
-}
--(void)execute
-{
-   [_engine notify:self];
+   for(void(^puller)() in _pullers)
+      puller();
+   for(id lnk in _outbound)
+      [engine schedule:lnk];
 }
 -(LSGradient)decrease:(id<LSIntVar>)x
 {
@@ -310,18 +253,6 @@
 -(ORInt)value
 {
    return _fun();
-}
--(LSGradient)decrease:(id<LSIntVar>)x
-{
-   assert(NO);
-   LSGradient rv;
-   return rv;
-}
--(LSGradient)increase:(id<LSIntVar>)x
-{
-   assert(NO);
-   LSGradient rv;
-   return rv;
 }
 @end
 // ==============================================================

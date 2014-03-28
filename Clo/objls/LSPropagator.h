@@ -50,29 +50,32 @@
 -(void)post;
 -(void)define;
 -(void)execute;
--(void)addTrigger:(LSLink*)link;
--(void)prioritize:(PStore*)p;
+-(void)addTrigger:(id)link;
 -(NSUInteger)inDegree;
 @end
 
-@interface LSCoreView : LSPropagator<LSIntVar> {
+@interface LSCoreView : ORObject<LSIntVar> {
+   LSEngineI*       _engine;
    id<ORIntRange>      _dom;
    NSMutableSet*  _outbound;
+   NSSet*          _inbound;
+   NSMutableArray* _pullers;
    NSArray*            _src;
+   id<LSPriority>     _rank;
 }
 -(id)initWith:(id<LSEngine>)engine  domain:(id<ORIntRange>)d src:(NSArray*)src;
 -(LSEngineI*)engine;
 -(id<ORIntRange>)domain;
 -(NSArray*)sourceVars;
 -(void)setValue:(ORInt)v;
--(id)addListener:(LSPropagator*)p term:(ORInt)k;
+-(id)addListener:(LSPropagator*)p;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)r;
 -(NSUInteger)inDegree;
 -(id<NSFastEnumeration>)outbound;
 -(id<NSFastEnumeration>)inbound;
--(void)enumerateOutbound:(void(^)(id,ORInt))block;
--(void)propagateOutbound:(void(^)(id,ORInt))block;
+-(void)enumerateOutbound:(void(^)(id))block;
+-(void)scheduleOutbound:(LSEngineI*)engine;
 @end
 
 @interface LSIntVarView : LSCoreView {
@@ -90,23 +93,6 @@
 -(ORInt)value;
 @end
 
-
-@interface LSPseudoPropagator : ORObject<LSPropagator> {
-   @package
-   id<LSPriority>   _rank;
-   LSEngineI*     _engine;
-   NSMutableSet* _inbound;
-   NSMutableSet* _outbound;
-}
--(id)initWith:(id<LSEngine>)engine;
--(void)post;
--(void)define;
--(void)execute;
--(void)addTrigger:(LSLink*)link;
--(void)prioritize:(PStore*)p;
--(NSUInteger)inDegree;
-@end
-
 @interface LSBlock : LSPropagator {
    void       (^_block)();
 }
@@ -116,8 +102,4 @@
 -(void)execute;
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)rank;
-@end
-
-@protocol LSPull
--(void)pull:(ORInt)k;
 @end

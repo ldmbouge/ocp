@@ -57,7 +57,6 @@
    _objs = [[NSMutableArray alloc] initWithCapacity:64];
    _cstr = [[NSMutableArray alloc] initWithCapacity:64];
    _invs = [[NSMutableArray alloc] initWithCapacity:64];
-   _pseudo = [[NSMutableDictionary alloc] initWithCapacity:32];
    _pSpace = [[LSPrioritySpace alloc] init];
    _queue = [[LSRQueue alloc] init:self];
    _nbObjects = 0;
@@ -193,21 +192,11 @@
       return;
    if (_atomic) {
       LSBlock* b = [[LSBlock alloc] initWith:self block:^{
-         [x propagateOutbound:^(id<LSPropagator,LSPull> p,ORInt k) {
-            BOOL canPull = [p conformsToProtocol:@protocol(LSPull)];
-            if (canPull)
-               [(id<LSPull>)p pull:k];
-            [self schedule:p];
-         }];
+         [x scheduleOutbound:self];
       } atPriority:x.rank];
       [_queue enQueue:b atPriority:x.rank];
    } else {
-      [x propagateOutbound:^(id<LSPropagator> p,ORInt k) {
-         BOOL canPull = [p conformsToProtocol:@protocol(LSPull)];
-         if (canPull)
-            [(id<LSPull>)p pull:k];
-         [self schedule:p];
-      }];
+      [x scheduleOutbound:self];
    }
 }
 -(void)schedule:(id<LSPropagator>)x
@@ -230,19 +219,4 @@
    [x setValue: v];
    [self propagate];
 }
--(LSPseudoPropagator*)pseudoForArray:(id<ORIdArray>)a
-{
-   ORInt aId = getId(a);
-   LSPseudoPropagator* p = [_pseudo objectForKey:@(aId)];
-   if (p==nil) {
-      p = [[LSPseudoPropagator alloc] initWith:self];
-      [self trackMutable:p];
-      [self add:p];
-      [_pseudo setObject:p forKey:@(aId)];
-      for(ORInt k=a.low;k <= a.up;k++)
-         [p addTrigger:[a[k] addLogicalListener:p term:k]];
-   }
-   return p;
-}
-
 @end

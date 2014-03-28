@@ -13,14 +13,13 @@
 #import "LSPropagator.h"
 #import <objls/LSFactory.h>
 
-@interface LSCount : LSPropagator<LSPull> {
+@interface LSCount : LSPropagator {
    id<ORIdArray>  _src;
    id<ORIdArray>  _cnt;
    id<ORIntArray> _old;
 }
 -(id)init:(id<LSEngine>)engine count:(id<ORIdArray>)src card:(id<ORIdArray>)cnt;
 -(void)post;
--(void)pull:(ORInt)k;
 -(id<NSFastEnumeration>)outbound;
 @end
 
@@ -35,7 +34,7 @@
 -(void)execute;
 @end
 
-@interface LSSum : LSPropagator<LSPull> {
+@interface LSSum : LSPropagator {
    id<LSIntVarArray> _terms;
    LSIntVar*           _sum;
    id<ORIntArray>      _old;
@@ -43,11 +42,10 @@
 -(id)init:(id<LSEngine>)engine sum:(id<LSIntVar>)x array:(id<LSIntVarArray>)terms;
 -(void)define;
 -(void)post;
--(void)pull:(ORInt)k;
 -(id<NSFastEnumeration>)outbound;
 @end
 
-@interface LSScaledSum : LSPropagator<LSPull> {
+@interface LSScaledSum : LSPropagator {
    id<ORIntArray>    _coefs;
    id<LSIntVarArray> _terms;
    LSIntVar*           _sum;
@@ -57,7 +55,6 @@
 -(id)init:(id<LSEngine>)engine sum:(id<LSIntVar>)x coefs:(id<ORIntArray>)c array:(id<LSIntVarArray>)terms;
 -(void)define;
 -(void)post;
--(void)pull:(ORInt)k;
 -(id<NSFastEnumeration>)outbound;
 @end
 

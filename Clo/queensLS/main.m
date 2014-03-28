@@ -21,10 +21,10 @@ int main(int argc, const char * argv[])
    ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
    [args measure:^struct ORResult(){
       ORInt n = [args size];
-      [ORStreamManager setRandomized];
+      //[ORStreamManager setRandomized];
       @autoreleasepool {
          id<ORModel> model = [ORFactory createModel];
-         id<ORIntRange> D = RANGE(model, 0, n-1);
+         id<ORIntRange> D = RANGE(model, 1, n);
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
          [model add:[ORFactory alldifferent:x]];
          [model add:[ORFactory alldifferent:All(model, ORExpr, i, D, [x[i] plus:@(i)])]];

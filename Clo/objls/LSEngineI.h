@@ -30,7 +30,6 @@ typedef enum LSMode {
    NSMutableArray* _objs;
    NSMutableArray* _cstr;
    NSMutableArray* _invs;
-   NSMutableDictionary* _pseudo;
    ORUInt        _nbObjects;
    LSMode           _mode;
    ORInt            _atomic;
@@ -49,5 +48,5 @@ typedef enum LSMode {
 -(ORUInt)nbObjects;
 -(void)label:(LSIntVar*)x with:(ORInt)v;
 -(void)notify:(id<LSVar>)x;
--(LSPseudoPropagator*)pseudoForArray:(id<ORIdArray>)a;
+-(void)schedule:(id<LSPropagator>)x;
 @end
