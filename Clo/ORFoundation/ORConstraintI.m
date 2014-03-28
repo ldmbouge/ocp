@@ -2535,15 +2535,15 @@
 
 
 @implementation ORAlldifferentI {
-   id<ORIntVarArray> _x;
+   id<ORExprArray> _x;
 }
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x
 {
    self = [super initORConstraintI];
    _x = x;
    return self;
 }
--(id<ORIntVarArray>) array
+-(id<ORExprArray>) array
 {
    return _x;
 }

@@ -720,7 +720,6 @@
 
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitTime: maxTime in: cl];
 }
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
@@ -1142,24 +1141,19 @@
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitSolutions: maxSolutions in: cl];
 }
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitCondition: condition in:cl];
 }
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitDiscrepancies: maxDiscrepancies in: cl];
 }
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitFailures: maxFailures in: cl];
-   
 }
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c 
 {
@@ -1341,14 +1335,18 @@
 -(void)setCurrent:(id<ORConstraint>)cstr
 {}
 
--(ORStatus)post:(id<ORConstraint>)c
+-(ORStatus) post: (id<ORConstraint>)c
 {
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>) c
-                              into: self];
-   else
-      [ORFlatten flatten: c into:self];
-   return [_engine status];
+    return tryfail(^ORStatus {
+        if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+            [ORFlatten flattenExpression:(id<ORExpr>) c
+                                    into: self];
+        else
+            [ORFlatten flatten: c into:self];
+        return ORSuspend;
+    }, ^ORStatus {
+        return ORFailure;
+    });
 }
 
 -(id<ORModelMappings>) modelMappings
@@ -1456,18 +1454,24 @@
    // PVH: Need to flatten/concretize
    // PVH: Only used	 during search
    // LDM: DONE. Have not checked the variable creation/deallocation logic though.
-   CPINCModel* trg = [[CPINCModel alloc] init:self];
-   [trg post:c];
-   [trg release];
+    CPINCModel* trg = [[CPINCModel alloc] init:self];
+    ORStatus status = [trg post:c];
+    [trg release];
+    if (status == ORFailure)
+        [_search fail];
+    [ORConcurrency pumpEvents];
 }
 -(void) add: (id<ORConstraint>) c annotation: (ORCLevel) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
    // LDM: See above. 
-   CPINCModel* trg = [[CPINCModel alloc] init:self];
-   [trg post:c];
-   [trg release];
+    CPINCModel* trg = [[CPINCModel alloc] init:self];
+    ORStatus status = [trg post:c];
+    [trg release];
+    if (status == ORFailure)
+        [_search fail];
+    [ORConcurrency pumpEvents];
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -1594,11 +1598,16 @@
 }
 -(void) add: (id<ORConstraint>) c
 {
-   [_imdl post:c];
+   if ([_imdl post:c] == ORFailure)
+       [_search fail];
+    [ORConcurrency pumpEvents];
+    
 }
 -(void) add: (id<ORConstraint>) c annotation:(ORCLevel) cons
 {
-   [_imdl post:c];
+    if ([_imdl post:c] == ORFailure)
+        [_search fail];
+    [ORConcurrency pumpEvents];
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {

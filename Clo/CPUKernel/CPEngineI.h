@@ -16,8 +16,8 @@
 
 @class ORTrailI;
 @class ORTrailIStack;
-@class CPAC3Queue;
-@class CPAC5Queue;
+@class CPClosureQueue;
+@class CPValueClosureQueue;
 
 
 enum CPEngineState {
@@ -35,12 +35,11 @@ enum CPEngineState {
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
    id<ORSearchObjectiveFunction> _objective;
-   CPAC3Queue*              _ac3[NBPRIORITIES];
-   CPAC5Queue*              _ac5;
-   ORStatus                _status;
-   ORInt                _propagating;
-   ORUInt               _nbpropag;
-   id<CPConstraint>        _last;
+   CPClosureQueue*          _closureQueue[NBPRIORITIES];
+   CPValueClosureQueue*     _valueClosureQueue;
+   ORInt                    _propagating;
+   ORUInt                   _nbpropag;
+   id<CPConstraint>         _last;
    UBType                   _propagIMP;
    @package
    id<ORIntInformer>        _propagFail;
@@ -54,29 +53,32 @@ enum CPEngineState {
 -(id)        trackMutable:(id)obj;
 -(id)        trackImmutable:(id)obj;
 -(id)        trail;
--(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
--(void)      scheduleAC3:(id<CPEventNode>*)mlist;
--(void)      scheduleAC5:(id<CPAC5Event>)evt;
+-(void)      scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
+-(void)      scheduleClosures:(id<CPClosureList>*)mlist;
+-(void)      scheduleValueClosure:(id<CPValueEvent>)evt;
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>)objective;
--(ORStatus)  addInternal:(id<ORConstraint>) c;
+-(void)      addInternal:(id<ORConstraint>) c;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  enforce:(ORClosure) cl;
 -(ORStatus)  atomic:(ORClosure) cl;
+-(ORStatus)  enforceObjective;
+-(void)      tryEnforce:(ORClosure) cl;
+-(void)      tryAtomic:(ORClosure) cl;
+-(void)      tryEnforceObjective;
 -(NSMutableArray*) variables;
 -(NSMutableArray*) constraints;
 -(NSMutableArray*) objects;
--(ORStatus)  close;
--(ORStatus)  status;
+-(ORStatus)   close;
 -(ORBool)      closed;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
--(ORStatus)enforceObjective;
+
 //-(id<ORIntVarArray>)intVars;
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;
@@ -84,4 +86,4 @@ enum CPEngineState {
 @end
 
 ORStatus propagateFDM(CPEngineI* fdm);
-void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist);
+void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist);

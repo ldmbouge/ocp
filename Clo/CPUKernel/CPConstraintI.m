@@ -18,7 +18,6 @@
 {
    self = [super init];
    _todo = CPTocheck;
-   _idempotent = NO;
    _priority = HIGHEST_PRIO;
    _propagate = [self methodForSelector:@selector(propagate)];
    _trail = [[m trail] retain];
@@ -32,9 +31,8 @@
    [super dealloc];
 }
 // Constraint method
--(ORStatus) post
+-(void) post
 {
-   return ORSuspend;
 }
 -(void) propagate
 {}

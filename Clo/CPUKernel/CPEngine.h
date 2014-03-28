@@ -12,9 +12,9 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 
-@protocol CPAC5Event;
+@protocol CPValueEvent;
 @protocol CPConstraint;
-@protocol CPEventNode;
+@protocol CPClosureList;
 @class CPCoreConstraint;
 
 #define NBPRIORITIES ((ORInt)8)
@@ -23,65 +23,69 @@
 #define HIGHEST_PRIO ((ORInt)7)
 
 @protocol CPEngine <ORSearchEngine>
--(void) scheduleTrigger: (ConstraintCallback) cb onBehalf: (id<CPConstraint>)c;
--(void) scheduleAC3: (id<CPEventNode>*) mlist;
--(void) scheduleAC5: (id<CPAC5Event>) evt;
+
+-(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
+-(void) scheduleClosures: (id<CPClosureList>*) mlist;
+-(void) scheduleValueClosure: (id<CPValueEvent>) evt;
+-(void) propagate;
+
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>) objective;
 -(ORStatus) addInternal: (id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
--(ORStatus) status;
--(void) propagate;
 -(ORStatus) enforce: (ORClosure) cl;
+-(void)  tryEnforce:(ORClosure) cl;
+-(void)  tryAtomic:(ORClosure) cl;
+
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
--(id<ORBasicModel>)model;
+-(id<ORBasicModel>) model;
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+
 @end
 
-#define AC5LOADED(q) ((q)->_csz)
 #define ISLOADED(q)  ((q)->_csz)
 
-typedef struct AC3Entry {
-   ConstraintCallback   cb;
+typedef struct CPClosureEntry {
+   ORClosure  cb;
    CPCoreConstraint*    cstr;
-} AC3Entry;
+} CPClosureEntry;
 
-@interface CPAC3Queue : NSObject {
+@interface CPClosureQueue : NSObject {
    @package
    ORInt      _mxs;
    ORInt      _csz;
-   AC3Entry*  _tab;
-   AC3Entry* _last;
-   ORInt    _enter;
+   CPClosureEntry*  _tab;
+   CPClosureEntry*  _last;
+   ORInt     _enter;
    ORInt     _exit;
    ORInt     _mask;
 }
--(id)initAC3Queue:(ORInt)sz;
--(void)dealloc;
--(AC3Entry)deQueue;
--(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr;
--(void)reset;
--(ORBool)loaded;
+-(id) initClosureQueue: (ORInt) sz;
+-(void) dealloc;
+-(CPClosureEntry) deQueue;
+-(void) enQueue:(ORClosure) cb cstr: (id<CPConstraint>)cstr;
+-(void) reset;
+-(ORBool) loaded;
 @end
 
-@interface CPAC5Queue : NSObject {
+@interface CPValueClosureQueue : NSObject {
    @package
    ORInt           _mxs;
    ORInt           _csz;
-   id<CPAC5Event>* _tab;
+   id<CPValueEvent>* _tab;
    ORInt         _enter;
    ORInt          _exit;
    ORInt          _mask;
 }
--(id) initAC5Queue: (ORInt) sz;
+-(id) initValueClosureQueue: (ORInt) sz;
 -(void) dealloc;
--(id<CPAC5Event>) deQueue;
--(void) enQueue: (id<CPAC5Event>)cb;
+-(id<CPValueEvent>) deQueue;
+-(void) enQueue: (id<CPValueEvent>)cb;
 -(void) reset;
 -(ORBool) loaded;
 @end

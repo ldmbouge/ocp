@@ -20,7 +20,6 @@
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -29,7 +28,9 @@
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVar*) [xa at:k];
-   } else assert(FALSE);
+   }
+   else
+       assert(FALSE);
    _c = c;
    _allTerms = NULL;
    _inUse    = NULL;
@@ -88,7 +89,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    bnd->_nb     = nb;
 }
 
--(ORStatus) post
+-(void) post
 {
    _allTerms = malloc(sizeof(CPEQTerm)*_nb);
    _inUse    = malloc(sizeof(TRCPEQTerm)*_nb);
@@ -108,7 +109,8 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          inline_assignTRCPEQTerm(&_inUse[lastUsed],_inUse[i]._val,_trail);
          inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
          lastUsed--;
-      } else
+      }
+      else
          i++;      
    }
    _ec   = makeTRLong(_trail, ec);
@@ -118,7 +120,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       if (![_x[k] bound])
          [_x[k] whenChangeBoundsPropagate: self];
    }
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -136,7 +137,8 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          inline_assignTRCPEQTerm(&_inUse[lastUsed],cur,_trail);
          inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
          lastUsed--;
-      } else {
+      }
+      else {
          cur->low = b.min;
          cur->up  = b.max;
          slow += cur->low;
@@ -190,7 +192,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -243,7 +244,7 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    bnd->_nb     = nb;
 }
 
--(ORStatus) post
+-(void) post
 {
    _updateMax = malloc(sizeof(UBType)*_nb);
    for(ORInt k=0;k<_nb;k++)
@@ -253,7 +254,6 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          [_x[k] whenChangeMinPropagate: self];
    }
    [self propagate];
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -280,8 +280,6 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       terms[i].updated |= updateNow;
       terms[i].up  = minOf(terms[i].up,nSupi);
       if (updateNow) {
-         // [ldm] this is necessary to make sure that the view can apply its narrowing
-         // so that the constraint behaves in an idempotent way.
          terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
          terms[i].up = maxDom(terms[i].var);
       }

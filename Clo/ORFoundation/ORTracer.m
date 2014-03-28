@@ -471,7 +471,6 @@ static __thread id checkPointCache = NULL;
    NSLog(@"into tracer: %@",_cmds);
    NSLog(@"-----------------------------");
     */
-   [engine clearStatus];
    ORCmdStack* toRestore =  acp->_path;
    int i=0;
    bool pfxEq = true;
@@ -530,9 +529,7 @@ static __thread id checkPointCache = NULL;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
       bool ok = [p apply:^bool(id<ORConstraint> c) {
-         [model post:c];
-         return TRUE;
-//         [c post]; return TRUE;
+          return [model post:c] != ORFailure;
       }];
       assert(ok);
 #pragma clang diagnostic pop

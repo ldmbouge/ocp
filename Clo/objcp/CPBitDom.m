@@ -600,7 +600,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    ORInt oldMin = _min._val;
    BOOL compact = _max._val - _min._val + 1 == _sz._val;
    int nbr = compact ? newMin - _min._val : countFrom(self,_min._val,newMin-1);
-   // need to send AC5 notifications still
+   // need to send value notifications still
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
    if (!compact)
