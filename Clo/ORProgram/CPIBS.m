@@ -243,8 +243,7 @@
       [[_impacts objectForKey:key] addImpact: 1.0 forValue:val];
       [key release];
    }];
-   [[_cp engine] clearStatus];
-   [[_cp engine] enforceObjective];
+   [[_cp engine] tryEnforceObjective];
    if ([[_cp engine] objective] != NULL)
       NSLog(@"IBS ready... %@",[[_cp engine] objective]);
    else
@@ -321,35 +320,43 @@
 }
 -(void)initImpacts
 {
-   ORInt blockWidth = 1;
-   id<ORIntVarArray> mav = [self allIntVars];
-   id* gamma = [_cp gamma];
-   id<CPIntVarArray> av = [CPFactory intVarArray:_cp range:mav.range with:^id<CPIntVar>(ORInt i) {
-      return gamma[mav[i].getId];
-   }];
-   ORInt low = [av low],up = [av up];
-   for(ORInt k=low; k <= up;k++) {
-      NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
-      id<CPIntVar> v = av[k];
-      ORBounds vb = [v bounds];
-      [_monitor rootRefresh];
-      [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
-      ORInt rank = 0;
-      ORInt lastRank = (ORInt)[sacs count]-1;
-      for(CPKillRange* kr in sacs) {
-         if (rank == 0 && [kr low] == [v min]) {
-            [_engine enforce: ^{ [v updateMin:[kr up]+1];}];  // gthen:v with:[kr up]];
-         } else if (rank == lastRank && [kr up] == [v max]) {
-            [_engine enforce: ^{ [v updateMax:[kr low]-1];}]; // lthen:v with:[kr low]];
-         } else {
-            for(ORInt i=[kr low];i <= [kr up];i++)
-               [_engine enforce: ^{ [v remove:i];}];// diff:v with:i];
-         }
-         rank++;
-      }
-      [sacs release];
-      //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
-   }
-   //NSLog(@"VARS AT END OF INIT:%@ ",av);
+    ORInt blockWidth = 1;
+    id<ORIntVarArray> mav = [self allIntVars];
+    id* gamma = [_cp gamma];
+    id<CPIntVarArray> av = [CPFactory intVarArray:_cp range:mav.range with:^id<CPIntVar>(ORInt i) {
+        return gamma[mav[i].getId];
+    }];
+    ORInt low = [av low],up = [av up];
+    for(ORInt k=low; k <= up;k++) {
+        NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
+        id<CPIntVar> v = av[k];
+        ORBounds vb = [v bounds];
+        [_monitor rootRefresh];
+        [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
+        ORInt rank = 0;
+        ORInt lastRank = (ORInt)[sacs count]-1;
+        ORStatus status = ORSuspend;
+        for(CPKillRange* kr in sacs) {
+            if (rank == 0 && [kr low] == [v min]) {
+                if ([_engine enforce: ^{ [v updateMin:[kr up]+1];}] == ORFailure)   // gthen:v with:[kr up]];
+                    status = ORFailure;
+            }
+            else if (rank == lastRank && [kr up] == [v max]) {
+                if ([_engine enforce: ^{ [v updateMax:[kr low]-1];}] == ORFailure) // lthen:v with:[kr low]];
+                    status = ORFailure;
+            }
+            else {
+                for(ORInt i=[kr low];i <= [kr up];i++)
+                    if ([_engine enforce: ^{ [v remove:i];}] == ORFailure) // diff:v with:i];
+                        status = ORFailure;
+            }
+            rank++;
+        }
+        [sacs release];
+        if (status == ORFailure)
+            failNow();
+        //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
+    }
+    //NSLog(@"VARS AT END OF INIT:%@ ",av);
 }
 @end

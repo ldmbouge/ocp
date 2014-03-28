@@ -501,8 +501,7 @@
       [self updateActivities:var andVal:val];
    }];
    
-   [[_cp engine] clearStatus];
-   [[_cp engine] enforceObjective];
+   [[_cp engine] tryEnforceObjective];
    if ([[_cp engine] objective] != NULL)
       NSLog(@"ABS ready... %@",[[_cp engine] objective]);
    else
@@ -588,120 +587,129 @@
 
 -(void)initActivities
 {
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_cvs;
-   id<ORIntVarArray> av = [self allIntVars]; // bvars
-   id* gamma = [_cp gamma];
-   id<CPIntVarArray> bvars = [CPFactory intVarArray:_cp range:av.range with:^id<CPIntVar>(ORInt i) {
-      return gamma[av[i].getId];
-   }];
-   const ORInt nbInRound = 10;
-   const ORInt probeDepth = (ORInt) [bvars count];
-   float mxp = 0;
-   for(ORInt i = [bvars low];i <= [bvars up];i++) {
-      if ([bvars[i] bound]) continue;
-      mxp += log([(id)bvars[i] domsize]);
-   }
-   const ORInt maxProbes = (int)10 * mxp;
-   NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
-   int   cntProbes = 0;
-   BOOL  carryOn = YES;
-   id<ORTracer> tracer = [_cp tracer];
-   _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:bvars];
-   _valPr = [[ORZeroOneStreamI alloc] init];
-   NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
-   NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
-   __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
-   __block ORInt nbVS = 0;
-   id<ORZeroOneStream> varPr = [[ORZeroOneStreamI alloc] init];
-   do {
-      for(ORInt c=0;c <= nbInRound;c++) {
-         [_solver clearStatus];
-         cntProbes++;
-         ABSProbe* probe = [[ABSProbe alloc] initABSProbe:bvars];
-         ORInt depth = 0;
-         BOOL allBound = NO;
-         while (depth <= probeDepth && !allBound) {
-            [tracer pushNode];
-            nbVS = 0;
-            [[bvars range] enumerateWithBlock:^(ORInt i) {
-               if (![bvars[i] bound])
-                  vs[nbVS++] = i;
-            }];
-
-            /*
-            NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-            [buf  appendString:@"["];
-            for(ORInt j=0;j < nbVS; j++) 
-               [buf appendFormat:@"%d ",vs[j]];
-            [buf  appendString:@"]"];
-            */
-
-            ORInt idx = (ORInt)floor([varPr next] * nbVS);
-            ORInt i = vs[idx];
-
-            //NSLog(@"chose %i from VS = %@",i, buf);
-
-            if (nbVS) { // we found someone
-               id<CPIntVar> xi = (id<CPIntVar>)bvars[i];
-               ORInt v = [self chooseValue:xi];
-               ORStatus s = [_solver enforce: ^{ [xi bind:v];}];
-               [ORConcurrency pumpEvents];
-               __block int nbActive = 0;
-               [_monitor scanActive:^(CPVarInfo * vInfo) {
-                  nbActive++;
-                  [probe addVar:[vInfo getVar]];
-               }];
-               [_aggregator addAssignment:xi toValue:v withActivity:nbActive];
-               if (s == ORFailure) {
-                  if (depth == 0) {
-                     ABSNogood* nogood = [[ABSNogood alloc] initABSNogood:xi value:v];
-                     //NSLog(@"Adding SAC %@",nogood);
-                     [killSet addObject:nogood];
-                     [localKill addObject:nogood];
-                     [nogood release];
-                  }
-                  depth++;
-                  break;
-               }
-            } else allBound = YES;
-            depth++;
-         }
-         if (depth > probeDepth || allBound) {
-            if ([_solver objective]==nil) {
-               NSLog(@"Found a solution in a CSP while probing!");
-               if ([self oneSol])
-                  return ;
-            } else {
-               NSLog(@"ABS found a local optimum = %@",[_solver objective]);
-               [[_solver objective] updatePrimalBound];
-               //NSLog(@"after updatePrimalBound = %@",[_solver objective]);
+    id<CPIntVarArray> vars = (id<CPIntVarArray>)_cvs;
+    id<ORIntVarArray> av = [self allIntVars]; // bvars
+    id* gamma = [_cp gamma];
+    id<CPIntVarArray> bvars = [CPFactory intVarArray:_cp range:av.range with:^id<CPIntVar>(ORInt i) {
+        return gamma[av[i].getId];
+    }];
+    const ORInt nbInRound = 10;
+    const ORInt probeDepth = (ORInt) [bvars count];
+    float mxp = 0;
+    for(ORInt i = [bvars low];i <= [bvars up];i++) {
+        if ([bvars[i] bound]) continue;
+        mxp += log([(id)bvars[i] domsize]);
+    }
+    const ORInt maxProbes = (int)10 * mxp;
+    NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
+    int   cntProbes = 0;
+    BOOL  carryOn = YES;
+    id<ORTracer> tracer = [_cp tracer];
+    _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:bvars];
+    _valPr = [[ORZeroOneStreamI alloc] init];
+    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
+    NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
+    __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
+    __block ORInt nbVS = 0;
+    id<ORZeroOneStream> varPr = [[ORZeroOneStreamI alloc] init];
+    do {
+        for(ORInt c=0;c <= nbInRound;c++) {
+            cntProbes++;
+            ABSProbe* probe = [[ABSProbe alloc] initABSProbe:bvars];
+            ORInt depth = 0;
+            BOOL allBound = NO;
+            while (depth <= probeDepth && !allBound) {
+                [tracer pushNode];
+                nbVS = 0;
+                [[bvars range] enumerateWithBlock:^(ORInt i) {
+                    if (![bvars[i] bound])
+                        vs[nbVS++] = i;
+                }];
+                
+                /*
+                 NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+                 [buf  appendString:@"["];
+                 for(ORInt j=0;j < nbVS; j++)
+                 [buf appendFormat:@"%d ",vs[j]];
+                 [buf  appendString:@"]"];
+                 */
+                
+                ORInt idx = (ORInt)floor([varPr next] * nbVS);
+                ORInt i = vs[idx];
+                
+                //NSLog(@"chose %i from VS = %@",i, buf);
+                
+                if (nbVS) { // we found someone
+                    id<CPIntVar> xi = (id<CPIntVar>)bvars[i];
+                    ORInt v = [self chooseValue:xi];
+                    ORStatus s = [_solver enforce: ^{ [xi bind:v];}];
+                    [ORConcurrency pumpEvents];
+                    __block int nbActive = 0;
+                    [_monitor scanActive:^(CPVarInfo * vInfo) {
+                        nbActive++;
+                        [probe addVar:[vInfo getVar]];
+                    }];
+                    [_aggregator addAssignment:xi toValue:v withActivity:nbActive];
+                    if (s == ORFailure) {
+                        if (depth == 0) {
+                            ABSNogood* nogood = [[ABSNogood alloc] initABSNogood:xi value:v];
+                            //NSLog(@"Adding SAC %@",nogood);
+                            [killSet addObject:nogood];
+                            [localKill addObject:nogood];
+                            [nogood release];
+                        }
+                        depth++;
+                        break;
+                    }
+                } else allBound = YES;
+                depth++;
             }
-         }
-         while (depth-- != 0)
-            [tracer popNode];
-         //NSLog(@"THEPROBE: %@",probe);
-         [_aggregator addProbe:probe];
-         [probe release];
-         for(ABSNogood* b in localKill) {
-            [_solver enforce: ^{[[b variable] remove:[b value]];}];            
-            //NSLog(@"Imposing local SAC %@",b);
-         }
-         [localKill removeAllObjects];
-      }
-      carryOn = [self moreProbes];
-   } while (carryOn && cntProbes < maxProbes);
-   
-   [_solver atomic:^{
-      NSLog(@"Imposing %ld SAC constraints",[killSet count]);
-      for(ABSNogood* b in killSet) {
-         [_solver enforce: ^{ [[b variable] remove:[b value]];}];
-      }
-   }];
-   
-   NSLog(@"Done probing (%d / %d)...",cntProbes,maxProbes);
-   [killSet release];
-   [varPr release];
-   [_valPr release];
+            if (depth > probeDepth || allBound) {
+                if ([_solver objective]==nil) {
+                    NSLog(@"Found a solution in a CSP while probing!");
+                    if ([self oneSol])
+                        return ;
+                } else {
+                    NSLog(@"ABS found a local optimum = %@",[_solver objective]);
+                    [[_solver objective] updatePrimalBound];
+                    //NSLog(@"after updatePrimalBound = %@",[_solver objective]);
+                }
+            }
+            while (depth-- != 0)
+                [tracer popNode];
+            //NSLog(@"THEPROBE: %@",probe);
+            [_aggregator addProbe:probe];
+            [probe release];
+            ORStatus status = ORSuspend;
+            for(ABSNogood* b in localKill) {
+                if ([_solver enforce: ^{[[b variable] remove:[b value]];}] == ORFailure)
+                    status = ORFailure;
+                //NSLog(@"Imposing local SAC %@",b);
+            }
+            [localKill removeAllObjects];
+            if (status == ORFailure)
+                failNow();
+        }
+        carryOn = [self moreProbes];
+    } while (carryOn && cntProbes < maxProbes);
+    
+    ORStatus status = [_solver atomic:^{
+        NSLog(@"Imposing %ld SAC constraints",[killSet count]);
+        ORStatus status = ORSuspend;
+        for(ABSNogood* b in killSet) {
+            if ([_solver enforce: ^{ [[b variable] remove:[b value]];}] == ORFailure)
+                status = ORFailure;
+        }
+        if (status == ORFailure)
+            failNow();
+    }];
+    
+    NSLog(@"Done probing (%d / %d)...",cntProbes,maxProbes);
+    [killSet release];
+    [varPr release];
+    [_valPr release];
+    if (status == ORFailure)
+        failNow();
 }
 
 -(void) restart

@@ -367,7 +367,6 @@
    _x = x;
    _y = y;
    _z = z;
-   _idempotent = YES;
    return self;
 }
 -(void) post
@@ -889,7 +888,6 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
    self = [super initCPCoreConstraint:[x engine]];
    _x =  (CPIntVar*) x;
    _y =  (CPIntVar*) y;
-   _idempotent = YES;
    return self;
 }
 -(void) post
@@ -941,7 +939,6 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
    _b = (CPIntVar*) b;
    _x = (CPIntVar*) x;
    _y = (CPIntVar*) y;
-   _idempotent = YES;
    return self;
 }
 -(void) post
@@ -1000,7 +997,6 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
    _b = (CPIntVar*) b;
    _x = (CPIntVar*) x;
    _y = (CPIntVar*) y;
-   _idempotent = YES;
    return self;
 }
 -(void) post
@@ -1060,7 +1056,6 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
    _b = (CPIntVar*) b;
    _x = (CPIntVar*) x;
    _y = (CPIntVar*) y;
-   _idempotent = YES;
    return self;
 }
 -(void) post

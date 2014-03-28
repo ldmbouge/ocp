@@ -14,7 +14,7 @@
 
 @implementation CPValueLossEvent
 
--(id) initValueLoss: (ORInt) value notify: (id<CPEventNode>) list
+-(id) initValueLoss: (ORInt) value notify: (id<CPClosureList>) list
 {
    self = [super init];
    _theVal = value;
@@ -27,7 +27,7 @@
    __block ORInt rv;
    tryfail(^ORStatus{
       __block ORInt nbP = 0;
-      scanListWithBlock(_theList,(void(^)(id)) ^(ConstraintIntCallBack trigger) {
+      scanListWithBlock(_theList,(void(^)(id)) ^(ORIntClosure trigger) {
          trigger(_theVal);
          ++nbP;
       });
@@ -44,7 +44,7 @@
 
 static __thread id vLossCache = nil;
 
-+(id)newValueLoss:(ORInt)value notify:(id<CPEventNode>)list
++(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list
 {
    // [ldm] This is an effective optimization, but it is not thread-friendly.
    // Should use TLS to store the vLossCache.

@@ -28,8 +28,8 @@
 @class CPCoreConstraint;
 
 @protocol CPBitVarSubscriber <NSObject>
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
--(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 @end
 
 @class CPBitVarI;

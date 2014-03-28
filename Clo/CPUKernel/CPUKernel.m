@@ -11,7 +11,7 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import "CPEngineI.h"
-#import "CPAC3Event.h"
+#import "CPClosureEvent.h"
 #import "CPGroup.h"
 
 @implementation CPFactory
@@ -19,13 +19,13 @@
 {
    return [[CPEngineI alloc] initEngine: trail memory:mt];
 }
-+(id<CPGroup>)group:(id<CPEngine>)engine
++(id<CPGroup>) group: (id<CPEngine>)engine
 {
    id<CPGroup> g = [[CPGroup alloc] init:engine];
    [engine trackMutable:g];
    return g;
 }
-+(id<CPGroup>)bergeGroup:(id<CPEngine>)engine
++(id<CPGroup>) bergeGroup: (id<CPEngine>) engine
 {
    id<CPGroup> g = [[CPBergeGroup alloc] init:engine];
    [engine trackMutable:g];
@@ -34,9 +34,9 @@
 @end
 
 
-@implementation CPEventNode
--(id)initCPEventNode:(id)t
-                cstr:(CPCoreConstraint*)c
+@implementation CPClosureList
+-(id)initCPEventNode:(ORClosure)t
+                cstr:(id<CPConstraint>)c
                   at:(ORInt)prio
                trail:(id<ORTrail>)trail
 {
@@ -50,24 +50,24 @@
 
 -(void)dealloc
 {
-   //NSLog(@"CPEventNode::dealloc] %p\n",self);
+   //NSLog(@"CPClosureList::dealloc] %p\n",self);
    [_trigger release];
    [_node._val release];
    [super dealloc];
 }
 
--(id)trigger
+-(ORClosure) trigger
 {
    return _trigger;
 }
--(id<CPEventNode>)next
+-(id<CPClosureList>) next
 {
    return _node._val;
 }
 
 -(void)scanWithBlock:(void(^)(id))block
 {
-   CPEventNode* cur = self;
+   CPClosureList* cur = self;
    while(cur) {
       block(cur->_trigger);
       cur = cur->_node._val;
@@ -75,14 +75,14 @@
 }
 -(void)scanCstrWithBlock:(void(^)(id))block
 {
-   CPEventNode* cur = self;
+   CPClosureList* cur = self;
    while(cur) {
       block(cur->_cstr);
       cur = cur->_node._val;
    }
 }
 
-void scanListWithBlock(CPEventNode* cur,ORID2Void block)
+void scanListWithBlock(CPClosureList* cur,ORID2Void block)
 {
    while(cur) {
       block(cur->_trigger);
@@ -90,19 +90,19 @@ void scanListWithBlock(CPEventNode* cur,ORID2Void block)
    }
 }
 
-void collectList(CPEventNode* list,NSMutableSet* rv)
+void collectList(CPClosureList* list,NSMutableSet* rv)
 {
    while(list) {
-      CPEventNode* next = list->_node._val;
+      CPClosureList* next = list->_node._val;
       [rv addObject:list->_cstr];
       list = next;
    }
 }
 
-void freeList(CPEventNode* list)
+void freeList(CPClosureList* list)
 {
    while (list) {
-      CPEventNode* next = list->_node._val;
+      CPClosureList* next = list->_node._val;
       [list release];
       list = next;
    }
@@ -111,7 +111,7 @@ void freeList(CPEventNode* list)
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,ORInt priority)
 {
    id<ORTrail> trail = [engine trail];
-   CPEventNode* evt = [[CPEventNode alloc] initCPEventNode:todo
+   CPClosureList* evt = [[CPClosureList alloc] initCPEventNode:todo
                                                       cstr:c
                                                         at:priority
                                                      trail:trail];
@@ -122,15 +122,16 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,O
       assignTRId(&evt->_node, evtList[0]._val, trail);
       assignTRId(&evtList[0],evt,trail);
    }
-/* // [ldm] insert at end version!
-   if (evtList->_val == nil) {
-      assignTRId(&evtList[0], evt, trail);
-      assignTRId(&evtList[1], evt, trail);
-   } else {
-      CPEventNode* lastNode = evtList[1]._val;
-      assignTRId(&lastNode->_node, evt, trail);
-      assignTRId(&evtList[1], evt, trail);
-   }
- */
+//
+//    // [ldm] insert at end version!
+//   if (evtList->_val == nil) {
+//      assignTRId(&evtList[0], evt, trail);
+//      assignTRId(&evtList[1], evt, trail);
+//   } else {
+//      CPClosureList* lastNode = evtList[1]._val;
+//      assignTRId(&lastNode->_node, evt, trail);
+//      assignTRId(&evtList[1], evt, trail);
+//   }
+//
 }
 @end

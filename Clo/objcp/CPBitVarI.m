@@ -234,20 +234,20 @@ static void deallocNetwork(CPBitEventNetwork* net)
    hookupEvent(_engine, &_net._bitFixedEvt, nil, c, HIGHEST_PRIO);
 }
 
--(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo 
+-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, &_net._boundsEvt, todo, c, p);
 }
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, &_net._minEvt, todo, c, p);
 }
--(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
+-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, &_net._maxEvt, todo, c, p);
 }
 
--(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ConstraintCallback) todo
+-(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ORClosure) todo
 {
    hookupEvent(_engine, &_net._bitFixedEvt, todo, c, p);
 }
@@ -263,7 +263,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) bindEvt
 {
-   id<CPEventNode> mList[5];
+   id<CPClosureList> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -272,34 +272,34 @@ static void deallocNetwork(CPBitEventNetwork* net)
    mList[k] = _net._maxEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
+   [_engine scheduleClosures:mList];
     if (_triggers != nil)
         [_triggers bindEvt:_engine];
 }
 
 -(void) changeMinEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
-   id<CPEventNode> mList[5];
+   id<CPClosureList> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = _net._minEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
+   [_engine scheduleClosures:mList];
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
 }
 -(void) changeMaxEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
-   id<CPEventNode> mList[5];
+   id<CPClosureList> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = _net._maxEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
+   [_engine scheduleClosures:mList];
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
 }
@@ -308,12 +308,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    [_dom updateFreeBitCount];
     //Empty implementation
-   id<CPEventNode> mList[5];
+   id<CPClosureList> mList[5];
    ORUInt k = 0;
    mList[k] = _net._bitFixedEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
+   [_engine scheduleClosures:mList];
 }
 
 -(ORStatus) updateMin: (uint64) newMin

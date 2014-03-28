@@ -23,7 +23,6 @@
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _z = z;
-   _idempotent = TRUE;
    return self;
 }
 -(void) post
@@ -80,7 +79,6 @@
    _x = x;
    _coefs = coefs;
    _c = - c;
-   _idempotent = TRUE;
    return self;
 }
 
@@ -148,7 +146,6 @@
    _x = x;
    _coefs = coefs;
    _c = - c;
-   _idempotent = TRUE;
    return self;
 }
 -(void) post
@@ -276,7 +273,6 @@ typedef struct CPlFoatEltRecordTag {
 -(id) init: (CPIntVar*) x indexCstArray:(id<ORFloatArray>) c equal:(CPFloatVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
-   _idempotent = TRUE;
    _x = x;
    _y = y;
    _c = c;
@@ -398,7 +394,6 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(id) init: (CPFloatVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
-   _idempotent = TRUE;
    _x = x;
    _primalBound = MAXINT;
    return self;
@@ -482,8 +477,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 -(id) init: (CPFloatVarI*) x
 {
-   self = [super initCPCoreConstraint:[x engine]];
-   _idempotent = TRUE;
+    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = -MAXINT;
    return self;
