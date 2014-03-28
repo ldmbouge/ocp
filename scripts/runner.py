@@ -27,6 +27,13 @@ class Environment:
 		cmd = notifierPath + " -message \"" + msg + "\"  -execute '" + execmd + "'"
 		os.system(cmd)
 
+	def buildRelease(self):
+		cmd = "cd Clo;/usr/bin/xcodebuild -workspace ObjecticeCP.xcworkspace -scheme allProgs -configuration Release build"
+		task = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+		result = task.stdout.read()
+		assert task.wait() == 0
+		print(result)		
+
 class Runner:
 	def __init__(self,bin,randomized):
 		self.home = os.environ['HOME']
