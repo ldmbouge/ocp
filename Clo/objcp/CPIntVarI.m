@@ -32,7 +32,7 @@ static void setUpNetwork(CPEventNetwork* net,id<ORTrail> t,ORInt low,ORInt sz)
       net->_domEvt[i]    = makeTRId(t,nil);
       net->_minEvt[i]    = makeTRId(t,nil);
       net->_maxEvt[i]    = makeTRId(t,nil);
-      net->_ac5[i]       = makeTRId(t, nil);
+      net->_valueClosureQueue[i]       = makeTRId(t, nil);
    }
 }
 
@@ -43,7 +43,7 @@ static void deallocNetwork(CPEventNetwork* net)
     freeList(net->_domEvt[0]._val);
     freeList(net->_minEvt[0]._val);
     freeList(net->_maxEvt[0]._val);
-    freeList(net->_ac5[0]._val);
+    freeList(net->_valueClosureQueue[0]._val);
 }
 
 static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
@@ -53,7 +53,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    collectList(net->_domEvt[0]._val,rv);
    collectList(net->_minEvt[0]._val,rv);
    collectList(net->_maxEvt[0]._val,rv);
-   collectList(net->_ac5[0]._val,rv);
+   collectList(net->_valueClosureQueue[0]._val,rv);
    return rv;
 }
 
@@ -254,36 +254,36 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 
 
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+-(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenBindDo not defined"];   
 }
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+-(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenChangeDo not defined"];   
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenChangeMinDo not defined"];   
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenChangeMaxDo not defined"];   
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenChangeBoundsDo not defined"];
 }
--(void) whenLoseValue: (CPCoreConstraint*)c do: (ConstraintIntCallBack) todo
+-(void) whenLoseValue: (CPCoreConstraint*)c do: (ORIntClosure) todo
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenLoseValue not defined"];   
 }
--(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenLoseTrigger not defined"];  
    return NULL;
 }
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenBindTrigger not defined"];  
    return NULL;
@@ -297,23 +297,23 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method createTriggers not defined"];
 }
 
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo  onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo  onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeMinDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeMaxDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeBoundsDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
@@ -494,19 +494,19 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 // AC3 Closure Events
 
--(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
 }
--(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void)whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
 }
 
@@ -528,19 +528,19 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
 }
 
-// AC5 Events
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
+// ValueClosure Events
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ORIntClosure) todo
 {
 }
 
--(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    return NULL;
 }
 -(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 {
 }
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    return NULL;
 }
@@ -606,7 +606,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 @implementation CPIntVarI
 
-#define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
+#define TRACKLOSSES (_net._valueClosureQueue._val != nil || _triggers != nil)
 
 -(CPIntVar*) initCPIntVarCore: (CPEngineI*)engine low: (ORInt) low up: (ORInt)up
 {
@@ -809,12 +809,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     return [_dom retain];
 }
 
-#define TRACKSINTVAR (_net._ac5._val != nil || _triggers != nil || _recv)
+#define TRACKSINTVAR (_net._valueClosureQueue._val != nil || _triggers != nil || _recv)
 
 -(ORBool) tracksLoseEvt
 {
   //return TRACKSINTVAR;
-   if (_net._ac5[0]._val != nil || _triggers != nil)
+   if (_net._valueClosureQueue[0]._val != nil || _triggers != nil)
       return YES;
    else if (_recv && [_recv tracksLoseEvt])
       return YES;
@@ -828,23 +828,23 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 // AC3 Closure Events
 
--(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._bindEvt, todo, c, p);
 }
--(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void)whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._domEvt, todo, c, p);
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._minEvt, todo, c, p);
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._maxEvt, todo, c, p);
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._boundsEvt, todo, c, p);
 }
@@ -872,14 +872,14 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 
 
-// AC5 Events
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo 
+// ValueClosure Events
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ORIntClosure) todo 
 {
    [_recv setTracksLoseEvt];
-   hookupEvent(_fdm, _net._ac5, todo, c, HIGHEST_PRIO);
+   hookupEvent(_fdm, _net._valueClosureQueue, todo, c, HIGHEST_PRIO);
 }
 
--(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
@@ -893,7 +893,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         [self createTriggers];
     [_triggers linkTrigger:t forValue:val];
 }
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
@@ -917,7 +917,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       bindEvt(_recv, sender);
 //      [_recv bindEvt: sender];
 
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
@@ -930,7 +930,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = _net._bindEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers)
       [_triggers bindEvt: _fdm];
 }
@@ -939,12 +939,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    if (_recv)
       domEvt(_recv,sender);
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._domEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
 }
 
 -(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
@@ -952,7 +952,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_recv)
       changeMinEvt(_recv,dsz,sender);
 
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
@@ -963,7 +963,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = dsz==1 ? _net._bindEvt[0]._val : NULL;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers && dsz==1)
         [_triggers bindEvt:_fdm];
 }
@@ -973,8 +973,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_recv)
       changeMaxEvt(_recv,dsz,sender);
   
-   id<CPEventNode> mList[6];
-   id<CPEventNode>* ptr = mList;
+   id<CPClosureList> mList[6];
+   id<CPClosureList>* ptr = mList;
    *ptr  = _net._boundsEvt[0]._val;
    ptr += *ptr != NULL;
    *ptr = _net._domEvt[0]._val;
@@ -984,7 +984,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    *ptr = dsz==1 ? _net._bindEvt[0]._val : NULL;
    ptr += *ptr != NULL;
    *ptr = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers && dsz==1)
       [_triggers bindEvt:_fdm];
 }
@@ -994,15 +994,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_recv !=nil) {
       [_recv loseValEvt:val sender:sender];
    }
-   // [ldm/pvh] necessary for alldiff to be correct when not idempotent?
-//   if (_net._domEvt[0]._val != NULL) {
-//      id<CPEventNode> mList[2];
-//      mList[0] = _net._domEvt[0]._val;
-//      mList[1] = NULL;
-//      scheduleAC3(_fdm,mList);
-//   }
-   if (_net._ac5[0]._val)
-      [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5[0]._val]];
+   if (_net._valueClosureQueue[0]._val)
+      [_fdm scheduleValueClosure:[CPValueLossEvent newValueLoss:val notify:_net._valueClosureQueue[0]._val]];
    if (_triggers)
       [_triggers loseValEvt:val solver:_fdm];
 }
@@ -1354,14 +1347,14 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     return _a;
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    if (_a<0)
       hookupEvent(_fdm, _net._maxEvt, todo, c, p);
    else
       hookupEvent(_fdm, _net._minEvt, todo, c, p);
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    if (_a<0)
       hookupEvent(_fdm, _net._minEvt, todo, c, p);
@@ -1454,18 +1447,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
          changeMaxEvt(_recv,dsz,sender);
    }
    
-   id<CPEventNode> mList[6];
+   id<CPClosureList> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
-   mList[k] = _a >= 0 ?  _net._minEvt[0]._val : _net._maxEvt[0]._val;
+   mList[k] = _net._minEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = _net._domEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = dsz==1 ? _net._bindEvt[0]._val : NULL;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers && dsz==1)
       [_triggers bindEvt:_fdm];
 }
@@ -1479,18 +1472,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
          changeMinEvt(_recv,dsz,sender);
    }
    
-   id<CPEventNode> mList[6];
-   id<CPEventNode>* ptr = mList;
+   id<CPClosureList> mList[6];
+   id<CPClosureList>* ptr = mList;
    *ptr  = _net._boundsEvt[0]._val;
    ptr += *ptr != NULL;
    *ptr = _net._domEvt[0]._val;
    ptr += *ptr != NULL;
-   *ptr = _a>=0 ? _net._maxEvt[0]._val : _net._minEvt[0]._val;
+   *ptr = _net._maxEvt[0]._val;
    ptr += *ptr != NULL;
    *ptr = dsz==1 ? _net._bindEvt[0]._val : NULL;
    ptr += *ptr != NULL;
    *ptr = NULL;
-   scheduleAC3(_fdm,mList);
+   scheduleClosures(_fdm,mList);
    if (_triggers && dsz==1)
       [_triggers bindEvt:_fdm];
 }
@@ -1581,11 +1574,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return -1;
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._maxEvt, todo, c, p);
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._minEvt, todo, c, p);
 }

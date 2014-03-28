@@ -18,7 +18,6 @@
 @interface CPCoreConstraint : ORObject<CPConstraint> {
 @public
    CPTodo            _todo;
-   BOOL        _idempotent;
    ORInt         _priority;
    IMP          _propagate;
    id<ORTrail>      _trail;

@@ -246,7 +246,7 @@ static void valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
                     assignTRInt(_possible+v, _possible[v]._val+1, _trail);
         }
     }
-    // AC5 events
+    // constraint events
     for(ORInt i=_lx;i<=_ux;i++) {
         if ([_x[i] bound]) 
             continue;

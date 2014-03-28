@@ -936,7 +936,6 @@
 -(id) init:(CPIntVar*)b array:(id<CPIntVarArray>)x eqi:(ORInt)c
 {
    self = [super initCPCoreConstraint:[b engine]];
-   _idempotent = YES;
    _b  = b;
    _xa = x;
    _c  = c;
@@ -1413,7 +1412,6 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
 -(id) init:(CPIntVar*)b array:(id<CPIntVarArray>)x geqi:(ORInt)c
 {
    self = [super initCPCoreConstraint:[b engine]];
-   _idempotent = YES;
    _b  = b;
    _xa = x;
    _c  = c;

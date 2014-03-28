@@ -1273,8 +1273,8 @@ SECFloat::SECFloat(double d)
 {
    unsigned short* e = (unsigned short*)&d;
    
-   unsigned short r;
-   unsigned short *p;
+    unsigned short r;
+    unsigned short *p;
    int denorm,k;
    
    if (bigendian)

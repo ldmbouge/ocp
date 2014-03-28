@@ -55,6 +55,8 @@ ab = [('queensAC',12,0,0,0),
 	  
 e = runner.Environment()
 
+e.buildRelease()
+
 for (b,qa,na,par,heur) in ab:
  	p = runner.Runner(b,0)
  	p.run(qa,na,par,heur)

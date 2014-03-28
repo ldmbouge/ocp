@@ -105,10 +105,9 @@ int main(int argc, const char * argv[])
              ];
             printf("obj: %d \n",[cp intValue:obj]);
          }];
-         
-         NSLog(@"Solver status: %@\n",cp);
          ORLong endTime = [ORRuntimeMonitor cputime];
-        NSLog(@"CPU Time: %lld\n",endTime - startTime);
+         NSLog(@"Solver status: %@\n",cp);
+         NSLog(@"CPU Time: %lld\n",endTime - startTime);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];

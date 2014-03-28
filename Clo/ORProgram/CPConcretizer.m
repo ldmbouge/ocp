@@ -1169,7 +1169,7 @@
    id<CPIntVar> left = [self concreteVar:[cstr left]];
    //id<CPConstraint> concreteCstr = [CPFactory equalc: left  to: [cstr cst]];
    //[_engine add:concreteCstr];
-   [_engine enforce:^{
+   [_engine tryEnforce:^{
       [left bind:[cstr cst]];
    }];
 }
@@ -1178,7 +1178,7 @@
    id<CPIntVar> left = [self concreteVar:[cstr left]];
    //id<CPConstraint> concreteCstr = [CPFactory notEqualc: left to: [cstr cst]];
    //[_engine add:concreteCstr];
-   [_engine enforce:^{
+   [_engine tryEnforce:^{
       [left remove:[cstr cst]];
    }];
 }

@@ -45,18 +45,18 @@ typedef struct  {
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;
 
-// AC3 Constraint Event
+// Constraint Event
 -(void) whenChangePropagate:  (CPCoreConstraint*) c;
 
-// need for speeding the code when not using AC5
+// needed for speeding the code when not using value notifications
 -(ORBool) tracksLoseEvt;
 -(void) setTracksLoseEvt;
 
 // subscription
--(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ConstraintCallback) todo;
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
--(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
--(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
+-(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ORClosure) todo;
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 
 // notification
 
