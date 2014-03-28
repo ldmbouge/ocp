@@ -23,6 +23,7 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
+         ORLong startTime = [ORRuntimeMonitor cputime];
          id<ORModel> mdl = [ORFactory createModel];
          FILE* dta = fopen("slab.dat","r");
          ORInt nbCap;
@@ -106,6 +107,8 @@ int main(int argc, const char * argv[])
          }];
          
          NSLog(@"Solver status: %@\n",cp);
+         ORLong endTime = [ORRuntimeMonitor cputime];
+        NSLog(@"CPU Time: %lld\n",endTime - startTime);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
