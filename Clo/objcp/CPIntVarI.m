@@ -1451,7 +1451,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
-   mList[k] = _a >= 0 ?  _net._minEvt[0]._val : _net._maxEvt[0]._val;
+   mList[k] = _net._minEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = _net._domEvt[0]._val;
    k += mList[k] != NULL;
@@ -1478,7 +1478,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ptr += *ptr != NULL;
    *ptr = _net._domEvt[0]._val;
    ptr += *ptr != NULL;
-   *ptr = _a>=0 ? _net._maxEvt[0]._val : _net._minEvt[0]._val;
+   *ptr = _net._maxEvt[0]._val;
    ptr += *ptr != NULL;
    *ptr = dsz==1 ? _net._bindEvt[0]._val : NULL;
    ptr += *ptr != NULL;
