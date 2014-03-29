@@ -65,7 +65,7 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       return ad->_present[vid];
    return NO;
 }
--(id<LSIntVarArray>)variables
+-(id<LSIntVarArray>) variables
 {
    if (_src) return _src;
    _overViews = NO;

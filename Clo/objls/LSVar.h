@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,12 +27,12 @@
 -(id<LSPriority>)rank;
 -(void)setRank:(id<LSPriority>)rank;
 -(id)addListener:(id)p;
--(id)addListener:(id)p with:(void(^)())block;
+-(id)addListener:(id)p with:(ORClosure)block;
 -(id)addDefiner:(id)p;
 -(id<NSFastEnumeration>)outbound;
 -(id<NSFastEnumeration>)inbound;
 -(void)enumerateOutbound:(void(^)(id))block;
--(void)scheduleOutbound:(LSEngineI*)engine;
+-(void)scheduleOutbound:(id<LSEngine>)engine;
 @end
 
 typedef enum : NSUInteger {

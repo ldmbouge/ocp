@@ -52,7 +52,7 @@
 }
 -(void)execute
 {}
--(id<NSFastEnumeration>)outbound
+-(id<NSFastEnumeration>) outbound
 {
    return _cnt;
 }

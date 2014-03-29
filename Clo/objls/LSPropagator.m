@@ -172,7 +172,7 @@
    [_outbound addObject:p];
    return self;
 }
--(id)addListener:(id)p with:(void(^)())block
+-(id)addListener:(id)p with:(ORClosure)block
 {
    [_outbound addObject:p];
    [_pullers addObject:[block copy]];

@@ -166,7 +166,9 @@
 {
    return ORSuspend;
 }
-
+-(void) tryEnforceObjective
+{
+}
 -(void)clearStatus
 {
 }
