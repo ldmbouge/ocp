@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,4 +51,5 @@ static inline id<LSPriority> priorityAfter(LSPrioritySpace* ps,id<LSPriority> p)
 }
 static inline LSPriority* nextPriority(LSPriority* p)         { return p->_next;}
 static inline LSPriority* prevPriority(LSPriority* p)         { return p->_prev;}
+// [pvh] not clue why this is correct
 static inline id<LSPriority> maxPriority(id<LSPriority> a,id<LSPriority> b) { return (int)getId((ORObject*)a) > (int)getId((ORObject*)b) ? a : b;}

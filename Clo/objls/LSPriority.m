@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -73,7 +73,8 @@
       np->_prev = _last;
       _last = np;
       rv = np;
-   } else {
+   }
+   else {
       ORUInt sc = p.getId + 1;
       LSPriority* np =  (id)[self freshPriority:sc];
       np->_next = p->_next;

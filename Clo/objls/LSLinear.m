@@ -130,7 +130,8 @@ typedef struct LSOccurrence {
    _vv = [LSFactory intVarArray:_engine range:RANGE(_engine,_sb.min,_sb.max) with:^id<LSIntVar>(ORInt k) {
       if (pp[k - _sb.min])
          return [LSFactory intVar:_engine domain:wide];
-      else return [LSFactory intVar:_engine domain:RANGE(_engine,0,0)];
+      else
+         return [LSFactory intVar:_engine domain:RANGE(_engine,0,0)];
    }];
    for(ORInt k=_src.range.low; k <= _src.range.up;k++) {
       id<LSIntVar> sk = _src[k];
@@ -252,7 +253,8 @@ typedef struct LSOccurrence {
          }
          ptr += _occ[i]._n;
       }
-   } else {
+   }
+   else {
       _src = _x;
       ORInt sz = _nbOcc = _src.range.size;
       _at = malloc(sizeof(LSTermDesc)*sz);
@@ -306,7 +308,9 @@ typedef struct LSOccurrence {
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
    ORInt xid = getId(x);
-   if (_srcOfs[xid] < 0) return 0;     // that means variable x does not even appear in the constraint.
+   if (_srcOfs[xid] < 0)
+      return 0;     // that means variable x does not even appear in the constraint.
+
    ORInt nbt = _occ[_srcOfs[xid]]._n;
    LSTermDesc* t = _occ[_srcOfs[xid]]._t;
    ORInt oldEval = _value.value;

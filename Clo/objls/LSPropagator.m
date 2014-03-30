@@ -137,6 +137,7 @@
 
 
 // [pvh] This guy is a variable: This is not a propagator
+// [pvh] There are a lot of redundancies with LSIntVar
 
 @implementation LSCoreView
 -(id)initWith:(LSEngineI*)engine  domain:(id<ORIntRange>)d src:(NSArray*)src
@@ -146,9 +147,7 @@
    _dom = d;
    _src = src;
    LSViewPropagator* vp = [[LSViewPropagator alloc] initWith:_engine src:src trg:self];
-   // [pvh]: most likely a bunch of propagator (to be confirmed)
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
-   // [pvh]: the inbound is the propagator
    _inbound  = [[NSMutableSet alloc] initWithObjects:vp, nil];
    _closures  = [[NSMutableArray alloc] initWithCapacity:2];
    [_engine trackVariable:self];
@@ -179,7 +178,6 @@
 {
    assert(NO);
 }
-// [pvh] I really do not like this
 -(id)addListener:(id)p
 {
    [_outbound addObject:p];
@@ -219,15 +217,15 @@
 }
 -(void)enumerateOutbound:(void(^)(id))block
 {
-   for(id<LSPropagator> lnk in _outbound)
-      block(lnk);
+   for(id<LSPropagator> p in _outbound)
+      block(p);
 }
 -(void)scheduleOutbound:(LSEngineI*)engine
 {
    for(void(^closure)() in _closures)
       closure();
-   for(id lnk in _outbound)
-      [engine schedule:lnk];
+   for(id p in _outbound)
+      [engine schedule:p];
 }
 -(LSGradient)decrease:(id<LSIntVar>)x
 {
@@ -244,6 +242,8 @@
 @end
 // ========================================================================================
 // Int Views
+
+// [pvh]: As discussed this is probably a bad idea long term, since it does not support increase/decrease
 
 @implementation LSIntVarView
 -(id)initWithEngine:(LSEngineI*)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src
@@ -269,6 +269,8 @@
 }
 @end
 // ==============================================================
+
+// [pvh] This is a view for x == c
 
 @implementation LSEQLitView
 -(id)initWithEngine:(LSEngineI*)engine on:(id<LSIntVar>)x eqLit:(ORInt)c
@@ -309,7 +311,8 @@
       [_engine add:[LSFactory inv:rv._vg equal:^ORInt{
          return 1 - self.value;
       } vars:@[self]]];
-   } else {
+   }
+   else {
       rv._gt = LSGCst;
       rv._cg = 0;
    }

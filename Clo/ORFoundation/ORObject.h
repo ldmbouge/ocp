@@ -12,9 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORData.h>
 
-// pvh: Do I need the implementation to be visible
-// ldm: We must, because CPCoreConstraint in CPUKernel is public and inherits from ORObject
-
 @interface ORObject : NSObject<ORObject> {
 @public
    ORUInt  _name;
