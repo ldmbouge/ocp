@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,7 +27,7 @@
    _value = d.low;
    _status = LSFinal;
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
-   _pullers  = [[NSMutableArray alloc] initWithCapacity:2];
+   _closures  = [[NSMutableArray alloc] initWithCapacity:2];
    _inbound  = nil;
    [_engine trackVariable:self];
    _rank = [[[engine space] nifty] retain];
@@ -37,7 +37,7 @@
 {
    NSLog(@"Deallocating LSIntVar %@",self);
    [_outbound release];
-   [_pullers release];
+   [_closures release];
    [super dealloc];
 }
 -(LSEngineI*)engine
@@ -75,6 +75,7 @@
    [buf appendFormat:@"var<LS>(%p,%d,%@,%@) = %d",self,_name,_rank,_dom,_value];
    return buf;
 }
+// [pvh] use in views probably; not sure I like it
 -(ORInt)lookahead:(id<LSIntVar>)y onAssign:(ORInt)v
 {
    ORInt old = _value;
@@ -83,9 +84,11 @@
    _value = old;
    return rv;
 }
+// [pvh] at the top-level, we should forbid users to assign values to variables defined by invariants
 -(void)setValue:(ORInt)v
 {
-   if (v == _value) return;
+   if (v == _value)
+      return;
    _value = v;
    [_engine notify:self];
 }
@@ -113,29 +116,29 @@
 -(id) addListener:(id)p with:(ORClosure)block
 {
    [_outbound addObject:p];
-   [_pullers addObject:[block copy]];
+   [_closures addObject:[block copy]];
    return self;
 }
 -(id)addDefiner:(id)p
 {
-   if (_inbound==nil) _inbound = [[NSMutableSet alloc] initWithCapacity:8];
+   if (_inbound==nil)
+      _inbound = [[NSMutableSet alloc] initWithCapacity:8];
    [_inbound addObject:p];
    return p;
 }
 -(void)enumerateOutbound:(void(^)(id))block
 {
-   for(id<LSPropagator> lnk in _outbound)
-      block(lnk);
+   for(id<LSPropagator> p in _outbound)
+      block(p);
 }
 -(void)scheduleOutbound:(LSEngineI*)engine
 {
-   for(void(^puller)() in _pullers)
-      puller();
-   for(id<LSPropagator> lnk in _outbound) {
-      [engine schedule:lnk];
+   for(void(^closure)() in _closures)
+      closure();
+   for(id<LSPropagator> p in _outbound) {
+      [engine schedule: p];
    }
 }
-
 -(LSGradient)decrease:(id<LSIntVar>)x
 {
    LSGradient rv;
@@ -143,7 +146,8 @@
       rv._gt = LSGVar;
       rv._vg = [LSFactory intVar:_engine domain:RANGE(_engine,0,_dom.up - _dom.low)];
       [_engine add:[LSFactory inv:rv._vg equal:^ORInt{ return _value - _dom.low;} vars:@[self]]];
-   } else {
+   }
+   else {
       rv._gt = LSGCst;
       rv._cg = 0;
    }
@@ -156,7 +160,8 @@
       rv._gt = LSGVar;
       rv._vg = [LSFactory intVar:_engine domain:RANGE(_engine,0,_dom.up - _dom.low)];
       [_engine add:[LSFactory inv:rv._vg equal:^ORInt{ return _dom.up - _value;} vars:@[self]]];
-   } else {
+   }
+   else {
       rv._gt = LSGCst;
       rv._cg = 0;
    }

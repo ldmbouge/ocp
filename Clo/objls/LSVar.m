@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -77,7 +77,8 @@ void collectSources(id<LSIntVarArray> x,NSArray** asv)
    for(id<LSIntVar> xk in x) {
       if ([xk isKindOfClass:[LSCoreView class]])
          asv[k] = [(LSCoreView*)xk sourceVars];
-      else asv[k] = @[xk];
+      else
+         asv[k] = @[xk];
       assert([asv[k] count] <= 1);
       ++k;
    }

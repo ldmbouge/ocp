@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,8 +16,10 @@
 #import "LSFactory.h"
 #import "LSCount.h"
 
+// [pvh]: Not clue what this guy does and what it is used for
+
 @implementation LSBlock
--(id)initWith:(id<LSEngine>)engine block:(void(^)())block atPriority:(id<LSPriority>)p
+-(id)initWith:(id<LSEngine>)engine block:(ORClosure)block atPriority:(id<LSPriority>)p
 {
    self = [super initWith:engine];
    _block  = [block copy];
@@ -31,9 +33,11 @@
    [super dealloc];
 }
 -(void)define
-{}
+{
+}
 -(void)post
-{}
+{
+}
 -(void)execute
 {
    _block();
@@ -55,12 +59,13 @@
    self = [super init];
    _engine = engine;
    _inbound = [[NSMutableSet alloc] initWithCapacity:2];
-   _rank = [[[engine space] nifty] retain];
+   _rank = [[[engine space] nifty] retain];    
    _inQueue = NO;
    return self;
 }
 -(void)post
-{}
+{
+}
 -(void)define
 {
    NSLog(@"Warning: define of abstract LSPropagator called");
@@ -115,9 +120,11 @@
    return self;
 }
 -(void)post
-{}
+{
+}
 -(void)define
-{}
+{
+}
 -(void)execute
 {
    [_engine notify:_target];
@@ -128,6 +135,9 @@
 }
 @end
 
+
+// [pvh] This guy is a variable: This is not a propagator
+
 @implementation LSCoreView
 -(id)initWith:(LSEngineI*)engine  domain:(id<ORIntRange>)d src:(NSArray*)src
 {
@@ -136,9 +146,11 @@
    _dom = d;
    _src = src;
    LSViewPropagator* vp = [[LSViewPropagator alloc] initWith:_engine src:src trg:self];
+   // [pvh]: most likely a bunch of propagator (to be confirmed)
    _outbound = [[NSMutableSet alloc] initWithCapacity:2];
-   _inbound  = [[NSSet alloc] initWithObjects:vp, nil];
-   _pullers  = [[NSMutableArray alloc] initWithCapacity:2];
+   // [pvh]: the inbound is the propagator
+   _inbound  = [[NSMutableSet alloc] initWithObjects:vp, nil];
+   _closures  = [[NSMutableArray alloc] initWithCapacity:2];
    [_engine trackVariable:self];
    _rank    = [[[engine space] nifty] retain];
    return self;
@@ -146,7 +158,7 @@
 -(void)dealloc
 {
    [_src release];
-   [_pullers release];
+   [_closures release];
    [_outbound release];
    [_inbound release];
    [super dealloc];
@@ -167,6 +179,7 @@
 {
    assert(NO);
 }
+// [pvh] I really do not like this
 -(id)addListener:(id)p
 {
    [_outbound addObject:p];
@@ -175,7 +188,7 @@
 -(id)addListener:(id)p with:(ORClosure)block
 {
    [_outbound addObject:p];
-   [_pullers addObject:[block copy]];
+   [_closures addObject:[block copy]];
    return self;
 }
 -(id)addDefiner:(id)p
@@ -211,8 +224,8 @@
 }
 -(void)scheduleOutbound:(LSEngineI*)engine
 {
-   for(void(^puller)() in _pullers)
-      puller();
+   for(void(^closure)() in _closures)
+      closure();
    for(id lnk in _outbound)
       [engine schedule:lnk];
 }

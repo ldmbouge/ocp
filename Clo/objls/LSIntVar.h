@@ -23,12 +23,12 @@ typedef enum LSStatus {
 } LSStatus;
 
 @interface LSIntVar : ORObject<LSIntVar> {
-   LSEngineI*    _engine;
+   LSEngineI*       _engine;
    id<ORIntRange>   _dom;
-   enum LSStatus _status;
-   NSMutableSet*    _outbound;
+   enum LSStatus    _status;
+   NSMutableSet*    _outbound;  // [pvh] propagators
    NSMutableSet*    _inbound;
-   NSMutableArray*  _pullers;
+   NSMutableArray*  _closures;
    id<LSPriority>   _rank;
 @package
    ORInt          _value;

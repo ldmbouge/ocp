@@ -21,8 +21,8 @@
 
 @interface PStore : NSObject {
    LSEngineI* _engine;
-   ORInt*      _marks;
-   ORInt     _low,_up;
+   ORInt*     _marks;
+   ORInt      _low, _up;
 }
 -(id)initPStore:(LSEngineI*)engine;
 -(BOOL)closed:(id<ORObject>)v;
@@ -42,9 +42,9 @@
 @interface LSPropagator : ORObject<LSPropagator> {
 @package
    id<LSPriority>   _rank;
-   LSEngineI*     _engine;
-   NSMutableSet* _inbound;
-   BOOL          _inQueue;
+   LSEngineI*       _engine;
+   NSMutableSet*    _inbound;
+   BOOL             _inQueue;
 }
 -(id)initWith:(id<LSEngine>)engine;
 -(void)post;
@@ -54,14 +54,16 @@
 -(NSUInteger)inDegree;
 @end
 
+// [pvh] These are views. They seem to still have a lot of the stuff to propagate. Need to check.
+
 @interface LSCoreView : ORObject<LSIntVar> {
    LSEngineI*       _engine;
    id<ORIntRange>      _dom;
-   NSMutableSet*  _outbound;
-   NSSet*          _inbound;
-   NSMutableArray* _pullers;
-   NSArray*            _src;
-   id<LSPriority>     _rank;
+   NSMutableSet*  _outbound;  // [pvh] type?
+   NSMutableSet*   _inbound;  // [pvh] type?
+   NSMutableArray* _closures;  // [pvh] closure to propagate
+   NSArray*            _src;  // [pvh] do not know what this is yet;
+   id<LSPriority>     _rank;  // [pvh] why a rank on variables; check if still needed
 }
 -(id)initWith:(id<LSEngine>)engine  domain:(id<ORIntRange>)d src:(NSArray*)src;
 -(LSEngineI*)engine;
@@ -85,6 +87,8 @@
 -(ORInt)value;
 @end
 
+// [pvh]: This is a (x == c) view
+
 @interface LSEQLitView : LSCoreView {
    id<LSIntVar>          _x;
    ORInt               _lit;
@@ -93,10 +97,12 @@
 -(ORInt)value;
 @end
 
+// [pvh]: Not sue what this is at this point
+
 @interface LSBlock : LSPropagator {
-   void       (^_block)();
+   ORClosure _block;
 }
--(id)initWith:(id<LSEngine>)engine block:(void(^)())block atPriority:(id<LSPriority>)p;
+-(id)initWith:(id<LSEngine>)engine block:(ORClosure)block atPriority:(id<LSPriority>)p;
 -(void)define;
 -(void)post;
 -(void)execute;
