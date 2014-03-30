@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,7 +32,7 @@
       [self addTrigger:[_src[i] addListener:self with:^{
          LSIntVar* vk = _src[i];
          [_cnt[[_old at:i]] decr];
-         [_cnt[[vk value]] incr];
+         [_cnt[vk.value] incr];
          [_old set:vk.value at:i];
       }]];
    for(ORInt i=_cnt.low;i <= _cnt.up;i++)
@@ -50,8 +50,10 @@
       [_old set:si.value at:i];
    }
 }
+// [pvh] all is done in the closures
 -(void)execute
-{}
+{
+}
 -(id<NSFastEnumeration>) outbound
 {
    return _cnt;
@@ -69,12 +71,15 @@ typedef struct LSEltNode {
    ORInt _next;
 } LSEltNode;
 
+// [pvh] This is not element; must be cleaned; it is element plus some tests > 0
+// [pvh] this is best decomposed into element and then a cardinality test
+
 @implementation LSGElement {
-   ORInt*      _head;
-   LSEltNode* _lists;
-   ORInt   _vlb,_vub,_eol;
-   ORInt*     _delta;
-   ORInt      _ndelta;
+   ORInt*         _head;
+   LSEltNode*     _lists;
+   ORInt          _vlb,_vub,_eol;
+   ORInt*         _delta;
+   ORInt          _ndelta;
    id<ORIntArray> _oldx;
 }
 -(id)init:(id<LSEngine>)engine count:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y
@@ -118,9 +123,10 @@ void printLists(LSGElement* elt)
       printf("\n");
    }
 }
--(void)define
+-(void)define  // y[i] = c[x[i]] > 0
 {
    [self setup];
+   // [pvh] what to do when x changes
    for(ORInt i=_x.low;i <= _x.up;i++)
       [self addTrigger:[_x[i] addListener:self with:^{
          ORInt oi = [_oldx at:i];
@@ -128,7 +134,8 @@ void printLists(LSGElement* elt)
          //Remove node(i) from old list (oi)
          if (_lists[i]._prev != _eol)
             _lists[_lists[i]._prev]._next = _lists[i]._next;
-         else _head[oi] = _lists[i]._next;
+         else
+            _head[oi] = _lists[i]._next;
          if (_lists[i]._next != _eol)
             _lists[_lists[i]._next]._prev = _lists[i]._prev;
          // Link node(i) in new list (ni)
@@ -144,13 +151,35 @@ void printLists(LSGElement* elt)
          // Fixup _oldx
          [_oldx set:ni at:i];
       }]];
+   // [pvh] what to do when c changes
    for(ORInt i=_c.low;i <= _c.up;i++)
       [self addTrigger:[_c[i] addListener:self with:^{
          _delta[_ndelta++] = i;
       }]];
+   // [pvh] y is listening to the propaator
    for(ORInt i=_y.low;i <= _y.up;i++)
       [_y[i] addDefiner:self];
 }
+-(void)post
+{
+   _oldx = [ORFactory intArray:_engine range:[_x range] with:^ORInt(ORInt i) {
+      return _x[i].value;
+   }];
+   for(ORInt i=_x.low;i <= _x.up;i++)
+      [_y[i] setValue:_c[_x[i].value].value > 0];
+   // Initialize the variable list
+   for(ORInt i=_vlb;i <= _vub;i++)
+      _head[i] = _eol;
+   for(ORInt i=_x.low;i <= _x.up;i++) {
+      ORInt xiv = _x[i].value;
+      _lists[i]._prev = _eol;
+      _lists[i]._next = _head[xiv];
+      if (_head[xiv] != _eol)
+         _lists[_head[xiv]]._prev = i;
+      _head[xiv] = i;
+   }
+}
+// [pvh] propagate
 -(void)execute
 {
    id<LSIntVar>* xBase = (id*)[(id)_x base];
@@ -163,25 +192,6 @@ void printLists(LSGElement* elt)
       }
    }
    _ndelta = 0;
-}
--(void)post
-{
-   _oldx = [ORFactory intArray:_engine range:[_x range] with:^ORInt(ORInt i) {
-      return _x[i].value;
-   }];
-   for(ORInt i=_x.low;i <= _x.up;i++)
-      [_y[i] setValue:_c[_x[i].value].value > 0];   
-   // Initialize the variable list
-   for(ORInt i=_vlb;i <= _vub;i++)
-      _head[i] = _eol;
-   for(ORInt i=_x.low;i <= _x.up;i++) {
-      ORInt xiv = _x[i].value;
-      _lists[i]._prev = _eol;
-      _lists[i]._next = _head[xiv];
-      if (_head[xiv] != _eol)
-         _lists[_head[xiv]]._prev = i;
-      _head[xiv] = i;
-   }
 }
 -(id<NSFastEnumeration>)outbound
 {

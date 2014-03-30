@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,7 +35,7 @@
 @end
 
 @interface LSSum : LSPropagator {
-   id<LSIntVarArray> _terms;
+   id<LSIntVarArray>   _terms;
    LSIntVar*           _sum;
    id<ORIntArray>      _old;
 }
@@ -46,8 +46,8 @@
 @end
 
 @interface LSScaledSum : LSPropagator {
-   id<ORIntArray>    _coefs;
-   id<LSIntVarArray> _terms;
+   id<ORIntArray>      _coefs;
+   id<LSIntVarArray>   _terms;
    LSIntVar*           _sum;
    id<ORIntArray>      _old;
    

@@ -59,10 +59,10 @@
 @interface LSCoreView : ORObject<LSIntVar> {
    LSEngineI*       _engine;
    id<ORIntRange>      _dom;
-   NSMutableSet*  _outbound;  // [pvh] type?
-   NSMutableSet*   _inbound;  // [pvh] type?
-   NSMutableArray* _closures;  // [pvh] closure to propagate
-   NSArray*            _src;  // [pvh] do not know what this is yet;
+   NSMutableSet*  _outbound;  // [pvh] propagator
+   NSMutableSet*   _inbound;  // [pvh] propagator
+   NSMutableArray* _closures; // [pvh] closure to propagate
+   NSArray*            _src;  // [pvh] source variables of the view
    id<LSPriority>     _rank;  // [pvh] why a rank on variables; check if still needed
 }
 -(id)initWith:(id<LSEngine>)engine  domain:(id<ORIntRange>)d src:(NSArray*)src;
