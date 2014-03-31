@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,7 +29,7 @@
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
--(void)solve:(void(^)())block;
+-(void)solve:(ORClosure)block;
 -(id<ORSolutionPool>) solutionPool;
 -(void)setSource:(id<ORModel>)m;
 -(void)setRoot:(id<LSConstraint>)sys;
@@ -53,7 +53,7 @@
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v inConstraint:(id<ORConstraint>)c;
 -(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c;
--(void)solve:(void(^)())block;
+-(void)solve:(ORClosure)block;
 -(id<ORSolutionPool>) solutionPool;
 -(void)setSource:(id<ORModel>)m;
 -(id<LSEngine>)engine;

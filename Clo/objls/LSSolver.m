@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -81,6 +81,7 @@
 {
    return [_engine trackConstraintInGroup:obj];
 }
+// [pvh] what are these guys?
 -(id) inCache:(id)obj
 {
    return [_engine inCache:obj];
@@ -101,15 +102,15 @@
 {
    return [(id<LSIntVar>)(_gamma[getId(x)]) value];
 }
--(void)solve:(void(^)())block
+-(void)solve:(ORClosure)block
 {
    [_engine close];
    block();
-   if ([_sys violations].value == 0) {
-      //save solution
-      id<ORSolution> sol = [[ORLSSolution alloc] initORLSSolution:_srcModel with:self];
-      [_pool addSolution:sol];
-   }
+   //   if ([_sys violations].value == 0) {
+   //save solution
+   id<ORSolution> sol = [[ORLSSolution alloc] initORLSSolution:_srcModel with:self];
+   [_pool addSolution:sol];
+   //   }
 }
 -(id<ORSolutionPool>) solutionPool
 {
@@ -211,6 +212,8 @@
 }
 @end
 
+// [pvh] I would prefer this to be in the ORProgram framework
+
 @implementation ORFactory(LS)
 
 +(id<LSProgram>) concretizeLS: (id<ORModel>) m program: (id<LSProgram>) program annotation:(id<ORAnnotation>)notes
@@ -233,6 +236,8 @@
    [program setSource:m];
    return program;
 }
+
+// [pvh] should put a version without annotation (cleaner than passing nil)
 
 +(LSSolver*)createLSProgram:(id<ORModel>)model annotation:(id<ORAnnotation>)notes
 {
