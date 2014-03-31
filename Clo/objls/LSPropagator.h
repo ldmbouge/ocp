@@ -19,18 +19,7 @@
 @class LSLink;
 @class LSIntVar;
 
-@interface PStore : NSObject {
-   LSEngineI* _engine;
-   ORInt*     _marks;
-   ORInt      _low, _up;
-}
--(id)initPStore:(LSEngineI*)engine;
--(BOOL)closed:(id<ORObject>)v;
--(BOOL)finalNotice:(id<ORObject>)v;
--(BOOL)lastTime:(id<ORObject>)v;
--(id<LSPriority>)maxWithRank:(id<LSPriority>)p;
--(void)prioritize;
-@end
+
 
 @protocol LSPropagator<LSObject>
 -(void)define;
