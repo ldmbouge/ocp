@@ -21,7 +21,7 @@ int main_alldiff(int argc, const char * argv[])
    @autoreleasepool {
       ORInt n = 8;
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORAnnotation> notes = [ORFactory note];
+      id<ORAnnotation> notes = [ORFactory annotation];
       id<ORIntRange> R = RANGE(mdl,1,n);
       id<ORIntRange> ER = RANGE(mdl,-2*n,2*n);
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];

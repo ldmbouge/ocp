@@ -380,6 +380,14 @@
    }];
    return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
 }
+-(ORFloat) floatMin: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
+}
+-(ORFloat) floatMax: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];  
+}
 -(ORFloat) reducedCost: (id<ORFloatVar>) var
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
@@ -490,12 +498,8 @@
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _lpsolver = NULL;
-#else
    _lpsolver = [LPFactory solver];
    _model = model;
-#endif
    _sPool = (id<ORLPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
@@ -635,12 +639,8 @@
 -(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _lpsolver = NULL;
-#else
    _lpsolver = [LPFactory solver];
    _model = model;
-#endif
    return self;
 }
 -(void) dealloc
@@ -650,7 +650,9 @@
    [super dealloc];
 }
 -(void)close
-{}
+{
+   [_lpsolver close];
+}
 -(id<OREngine>) engine
 {
    return _lpsolver;

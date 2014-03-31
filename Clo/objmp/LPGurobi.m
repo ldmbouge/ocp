@@ -207,28 +207,33 @@
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);
    GRBsetdblattrelement(_model,"UB",[var idx],low);
+   GRBupdatemodel(_model);
 }
 
 -(void) setUnboundUpperBound: (LPVariableI*) var
 {
    GRBsetdblattrelement(_model,"UB",[var idx],1e21);
+   GRBupdatemodel(_model);
 }
 
 -(void) setUnboundLowerBound: (LPVariableI*) var
 {
    GRBsetdblattrelement(_model,"LB",[var idx],-1e21);
+   GRBupdatemodel(_model);
 }
 
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb
 {
 //   if (lb > [self lowerBound: var])
-      GRBsetdblattrelement(_model,"LB",[var idx],lb);
+   GRBsetdblattrelement(_model,"LB",[var idx],lb);
+   GRBupdatemodel(_model);
 }
 
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub
 {
 //   if (ub < [self upperBound: var])
-      GRBsetdblattrelement(_model,"UB",[var idx],ub);
+   GRBsetdblattrelement(_model,"UB",[var idx],ub);
+   GRBupdatemodel(_model);
 }
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val

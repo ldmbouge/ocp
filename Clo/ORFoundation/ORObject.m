@@ -47,8 +47,13 @@
 }
 -(oneway void)release
 {
-   if (--_rc == 0)
+   if (--_rc == 0) {
       [self dealloc];
+   }
+}
+-(NSUInteger)retainCount
+{
+   return _rc;
 }
 -(id)autorelease
 {

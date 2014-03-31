@@ -54,27 +54,31 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   id<ORAnnotation> notes = [ORFactory note];
-   return [self createCPProgram:model annotation:notes];
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPProgram:model annotation:notes];
    [notes release];
+   return program;
 }
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
-   id<ORAnnotation> notes = [ORFactory note];
-   return [self createCPSemanticProgramDFS:model annotation:notes];
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPSemanticProgramDFS:model annotation:notes];
    [notes release];
+   return program;
 }
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
 {
-   id<ORAnnotation> notes = [ORFactory note];
-   return [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
    [notes release];
+   return program;
 }
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
 {
-   id<ORAnnotation> notes = [ORFactory note];
-   return [self createCPParProgram:model nb:k annotation:notes with:ctrlClass];
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPParProgram:model nb:k annotation:notes with:ctrlClass];
    [notes release];
+   return program;
 }
 
 
@@ -88,8 +92,11 @@
    ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram annotation:notes];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];
-   for(id<ORObject> c in [m constraints])
-      [c visit: concretizer];
+   for(id<ORConstraint> c in [m constraints]) {
+      ORCLevel n = [notes levelFor: c];
+      if (n != RelaxedConsistency)
+         [c visit: concretizer];
+   }
    [[m objective] visit:concretizer];
    
    [concretizer release];
@@ -101,7 +108,7 @@
 {
 //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
    id<ORAnnotation> ncpy   = [notes copy];
-   id<ORModel> fm = [model flatten:ncpy];   // models are AUTORELEASE
+   id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
    [self concretizeCP:fm program:cpprogram annotation:ncpy];
    [ncpy release];
 }
@@ -220,6 +227,7 @@
 
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
+   NSLog(@"inside createLPProgram:");
    id<ORModel> flatModel = [model lpflatten:nil];
    
    ORUInt nbEntries =  [flatModel nbObjects];
@@ -351,6 +359,13 @@
    return [[ORLinearRelaxation alloc] initLinearRelaxation:model];
 }
 
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation
+{
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPProgram: model withRelaxation: relaxation annotation: notes];
+   [notes release];
+   return program;
+}
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>)notes
 {
    __block id<CPProgram> cpprogram = [CPSolverFactory solver];
@@ -414,6 +429,10 @@
 -(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f
 {
    [_lprelaxation updateUpperBound: x with:f];
+}
+-(void) close
+{
+   return [_lprelaxation close];
 }
 -(OROutcome) solve
 {

@@ -96,9 +96,9 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORRelation>) neg;
--(id<ORRelation>) and: (id<ORExpr>) e;
--(id<ORRelation>) or: (id<ORExpr>) e;
--(id<ORRelation>) imply:(id<ORExpr>)e;
+-(id<ORRelation>) and: (id) e;
+-(id<ORRelation>) or: (id) e;
+-(id<ORRelation>) imply:(id)e;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;

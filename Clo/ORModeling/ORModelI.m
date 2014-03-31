@@ -497,6 +497,7 @@
    for(id<ORObject> c in _cStore)
       doCons(c);
    doObjective(_objective);
+   
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -610,21 +611,16 @@
 {
    return [_target modelMappings];
 }
--(void)setCurrent:(id<ORConstraint>)cstr
+-(void) setCurrent:(id<ORConstraint>)cstr
 {
    _current = cstr;
 }
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    if (cstr && (id)cstr != [NSNull null]) {
-      ORCLevel cl = [_notes levelFor:_current];
       [_target add: cstr];
-      switch(cl) {
-         case DomainConsistency: [_notes dc:cstr];break;
-         case RangeConsistency:  [_notes bc:cstr];break;
-         case ValueConsistency:  [_notes vc:cstr];break;
-         default: break;
-      }
+      if (_current)
+         [_notes transfer: _current toConstraint: cstr];
    }
    return cstr;
 }

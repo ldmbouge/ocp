@@ -242,6 +242,7 @@
 {
    [_into setCurrent:cstr];
    [ORFlatten flattenExpression:[cstr expr] into:_into];
+   [_into setCurrent:nil];
 }
 -(void) visitFloatWeightedVar:(id<ORWeightedVar>)cstr
 {

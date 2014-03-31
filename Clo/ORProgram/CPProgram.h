@@ -50,15 +50,17 @@
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
 
--(void)         addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n;
+
 -(void)                 add: (id<ORConstraint>) c;
-//-(void)                 add: (id<ORConstraint>) c annotation: (ORAnnotation) cons;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<ORIntVar>) var float: (ORFloat) val;
+-(void)               lthen: (id<ORIntVar>) var float: (ORFloat) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)          floatLthen: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)         addConstraintDuringSearch: (id<ORConstraint>) c;
 
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
@@ -123,13 +125,20 @@
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
 
+-(void)    assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x;
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
+<<<<<<< HEAD
 -(ORFloat) paramFloatValue: (id<ORFloatParam>)x;
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
 -(ORFloat) floatExprValue: (id<ORExpr>)e;
 -(ORFloat) domwidth:(id<ORFloatVar>)x;
 -(ORFloat) fmin:(id<ORFloatVar>)x;
 -(ORFloat) fmax:(id<ORFloatVar>)x;
+=======
+-(ORFloat) floatMin: (id<ORFloatVar>)x;
+-(ORFloat) floatMax: (id<ORFloatVar>)x;
+-(ORFloat) domwidth: (id<ORFloatVar>)x;
+>>>>>>> master
 
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;

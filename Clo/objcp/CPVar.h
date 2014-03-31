@@ -43,39 +43,48 @@ enum CPVarClass {
 -(enum CPVarClass)varClass;
 @end
 
-@protocol CPNumVar <CPVar>
--(ORFloat) floatMin;
--(ORFloat) floatMax;
--(ORFloat) floatValue;
-@end
 
-@protocol CPIntVarSubscriber <NSObject>
+@protocol CPNumVarSubscriber <NSObject>
 
 // AC3 Closure Event
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 
 // AC3 Constraint Event
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
 -(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p;
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
 
--(void) whenBindPropagate: (CPCoreConstraint*) c;
 -(void) whenChangePropagate:  (CPCoreConstraint*) c;
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c;
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c;
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c;
+
+@end
+
+@protocol CPNumVar <CPVar,CPNumVarSubscriber>
+-(ORFloat) floatMin;
+-(ORFloat) floatMax;
+-(ORFloat) floatValue;
+@end
+
+@protocol CPIntVarSubscriber <CPNumVarSubscriber>
+
+// AC3 Closure Event
+-(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+
+// AC3 Constraint Event
+-(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
+-(void) whenBindPropagate: (CPCoreConstraint*) c;
 
 // AC5 Event
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo;
@@ -154,6 +163,7 @@ enum CPVarClass {
 -(void) bind:(ORFloat) val;
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;
+-(void) assignRelaxationValue: (ORFloat) f;
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 

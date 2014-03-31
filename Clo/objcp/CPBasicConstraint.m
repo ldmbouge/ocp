@@ -2622,7 +2622,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
   ORInt bound = [_x max];
   if (bound > _primalBound) 
     _primalBound = bound;
-   NSLog(@"primal bound: %d",_primalBound);
+  NSLog(@"primal bound: %d",_primalBound);
 }
 
 -(void) tightenPrimalBound: (id) newBound
@@ -2679,6 +2679,11 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    NSArray* _mv;
    NSArray* _cv;
    id<ORRelaxation> _relaxation;
+   FXInt* _updated;
+   FXInt  _solved;
+   TRDouble* _min;
+   TRDouble* _max;
+   id<CPEngine> _engine;
 }
 -(CPRelaxation*) initCPRelaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation
 {
@@ -2688,44 +2693,82 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    _mv = mv;
    _cv = cv;
    _relaxation = relaxation;
+   _engine = [(id<CPNumVar>)cv[0] engine];
+   NSUInteger nb = [_cv count];
+   _updated = malloc(nb * sizeof(FXInt));
+   _min = malloc(nb * sizeof(TRDouble));
+   _max = malloc(nb * sizeof(TRDouble));
+   _solved = makeFXInt(_trail);
+   incrFXInt(&_solved,_trail);
+   for(NSUInteger i = 0; i < nb; i++) {
+      _updated[i] = makeFXInt(_trail);
+      _min[i] = makeTRDouble(_trail,[_cv[i] floatMin]);
+      _max[i] = makeTRDouble(_trail,[_cv[i] floatMax]);
+   }
    return self;
 }
 -(void) dealloc
 {
+   free(_updated);
+   free(_min);
+   free(_max);
    [super dealloc];
 }
 -(ORStatus) post
 {
+   [_relaxation close];
    NSUInteger nb = [_cv count];
-   if ([_cv[0] isKindOfClass:[CPIntVarI class]]) {
-      for(NSUInteger i = 0; i < nb; i++) {
-         CPIntVar* x = (CPIntVar*) _cv[i];
-         // NSLog(@"x: %@",x);
-         [x whenChangeBoundsPropagate: self];
-        // [x whenChangeMaxPropagate: self];
+   for(ORInt i = 0; i < nb; i++) {
+      //CPIntVar* x = (CPIntVar*) _cv[i];
+      assignTRDouble(&_min[i],[_cv[i] floatMin],_trail);
+      assignTRDouble(&_max[i],[_cv[i] floatMax],_trail);
+      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] floatMin]];
+      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] floatMax]];
+      
+      [_cv[i] whenChangeBoundsPropagate: self];
+      
+      [_cv[i] whenChangeBoundsDo: ^{
+         if (getFXInt(&_solved,_trail) == 0) {
+            incrFXInt(&_solved,_trail);
+            [_trail trailClosure: ^{
+               [_relaxation solve];
+            }];
+         }
+         if (getFXInt(&_updated[i],_trail) == 0) {
+            ORFloat omin = _min[i]._val;
+            ORFloat omax = _max[i]._val;
+            [_trail trailClosure: ^{
+               [_relaxation updateLowerBound: _mv[i] with: omin];
+               [_relaxation updateUpperBound: _mv[i] with: omax];
+            }];
+            incrFXInt(&_updated[i],_trail);
+         }
+         ORFloat lb = [_cv[i] floatMin];
+         ORFloat ub = [_cv[i] floatMax];
+         assignTRDouble(&_min[i],lb,_trail);
+         assignTRDouble(&_max[i],ub,_trail);
+         [_relaxation updateLowerBound: _mv[i] with: lb];
+         [_relaxation updateUpperBound: _mv[i] with: ub];
       }
+      onBehalf: self];
    }
    [self propagate];
    return ORSuspend;
 }
 -(void) propagate
 {
-   id<CPNumVar> v = (id<CPNumVar>) _cv[0];
-   NSUInteger nb = [_cv count];
-   for(NSUInteger i = 0; i < nb; i++) {
-      ORFloat lb = [_cv[i] floatMin];
-      ORFloat ub = [_cv[i] floatMax];
-//         NSLog(@" variable %d: %@ has bounds [%d,%d]",(ORInt) i,_cv[i],lb,ub);
-      [_relaxation updateLowerBound: _mv[i] with: lb];
-      [_relaxation updateUpperBound: _mv[i] with: ub];
-   }
+//   NSUInteger nb = [_cv count];
+//   for(ORInt i = 0; i < nb; i++) {
+//      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] floatMin]];
+//      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] floatMax]];
+//   }
+   
    OROutcome outcome = [_relaxation solve];
    if (outcome == ORinfeasible)
       failNow();
    else if (outcome == ORoptimal) {
-      id<ORSearchObjectiveFunction> o = [[v engine] objective];
+      id<ORSearchObjectiveFunction> o = [_engine objective];
       [o tightenWithDualBound: [_relaxation objectiveValue]];
-//      NSLog(@"Objective after: %@",o);
    }
 }
 

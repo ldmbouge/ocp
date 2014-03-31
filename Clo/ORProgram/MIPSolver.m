@@ -413,6 +413,14 @@
    assert(idx != -1 && idx != 9223372036854775807);
    return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
 }
+-(ORFloat) floatMin: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
+}
+-(ORFloat) floatMax: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
+}
 -(NSUInteger) count
 {
    return [_varShots count];
@@ -457,12 +465,8 @@
 -(id<MIPProgram>) initMIPSolver: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _MIPsolver = NULL;
-#else
    _MIPsolver = [MIPFactory solver];
    _model = model;
-#endif
    _sPool = (id<ORMIPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }

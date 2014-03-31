@@ -72,7 +72,7 @@ int main(int argc, const char * argv[])
          NSLog(@"CAP = %@",cap);
          NSLog(@"CREW= %@",crew);
          ORLong startTime = [ORRuntimeMonitor cputime];
-         id<ORAnnotation> notes = [ORFactory note];
+         id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntVarMatrix> boat = [ORFactory intVarMatrix:mdl range:Guests :Periods domain: Hosts];
          for(ORInt g = Guests.low; g <= Guests.up; g++)
             [notes dc:[mdl add: [ORFactory alldifferent: All(mdl,ORIntVar, p, Periods, [boat at:g :p]) ]]];

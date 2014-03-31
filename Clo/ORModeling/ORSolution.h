@@ -19,6 +19,8 @@
 -(ORBool) boolValue: (id<ORIntVar>) var;
 -(ORFloat) floatValue: (id<ORFloatVar>) var;
 -(ORFloat) paramFloatValue: (id<ORFloatParam>) param;
+-(ORFloat) floatMin: (id<ORFloatVar>) var;
+-(ORFloat) floatMax: (id<ORFloatVar>) var;
 -(id<ORObjectiveValue>) objectiveValue;
 @end
 

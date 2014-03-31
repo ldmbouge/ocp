@@ -20,7 +20,7 @@ int main (int argc, const char * argv[])
    int n = 8;
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
-      id<ORAnnotation> notes = [ORFactory note];
+      id<ORAnnotation> notes = [ORFactory annotation];
       id<ORIntRange> R = RANGE(model,0,n-1);
       
       id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value:0];

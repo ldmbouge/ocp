@@ -65,15 +65,18 @@
    id<ORConstraint> o;
    switch (c) {
       case DomainConsistency:
+         NSLog(@"Domain Consistency");
          o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
          break;
       case ValueConsistency:
+         NSLog(@"Value Consistency");
          o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: engine over: x];
          break;
       case RangeConsistency:
          @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];
          break;
       default:
+          NSLog(@"Default Consistency");
          o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: engine over: x];
          break;
    }
@@ -100,7 +103,8 @@
             o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up]; 
             break;
         default:
-            @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
+          o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up];
+          break;
     }
     [[x tracker ] trackMutable: o];
     return o;

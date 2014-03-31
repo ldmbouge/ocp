@@ -314,9 +314,9 @@
 {
    [(CPSolver*)[self worker] add:c];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c
 {
-   [[self worker] addConstraintDuringSearch: c annotation:n];
+   [[self worker] addConstraintDuringSearch: c];
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -358,6 +358,15 @@
 {
    [[self worker] gthen: var with: val];
 }
+-(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] lthen: var with: val];
+}
+-(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] gthen: var with: val];
+}
+
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [[self worker] restrict: var to: S];
@@ -555,13 +564,17 @@
 {
    return [[self worker] domwidth: x];
 }
--(ORFloat) fmin:(id<ORFloatVar>)x
+-(ORFloat) floatMin:(id<ORFloatVar>)x
 {
-   return [[self worker] fmin:x];
+   return [[self worker] floatMin:x];
 }
--(ORFloat) fmax:(id<ORFloatVar>)x
+-(ORFloat) floatMax:(id<ORFloatVar>)x
 {
-   return [[self worker] fmax:x];
+   return [[self worker] floatMax:x];
+}
+-(void) assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
+{
+   return [[self worker] assignRelaxationValue:  f to:  x];
 }
 -(ORBool) boolValue: (id<ORIntVar>)x
 {

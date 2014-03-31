@@ -235,7 +235,7 @@
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
-      ORCLevel n = [_notes levelFor:cstr];
+      ORCLevel n = [_notes levelFor: cstr];
       [ax visit: self];
       id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: _gamma[ax.getId] annotation: n];
       [_engine add: concreteCstr];
@@ -908,7 +908,6 @@
          else
             return theCPVar;
       }];
-      //id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
       id<ORFloatArray> c = [cstr coefs];
       id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst]];
       [_engine add:concreteCstr];

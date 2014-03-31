@@ -11,6 +11,7 @@
 
 #import "ORAnnotation.h"
 #import "ORConstraint.h"
+#import "ORConstraintI.h"
 
 @interface ORAnnotationCopy : ORAnnotation<ORAnnotation,NSCopying>
 {
@@ -21,67 +22,84 @@
 @end
 
 @implementation ORAnnotation {
-   NSMutableDictionary* _notes;
+   NSMutableDictionary* _cstr;
+   NSMutableDictionary* _classCstr;
 }
--(id)init
+
+-(id) init
 {
    self = [super init];
-   _notes = [[NSMutableDictionary alloc] initWithCapacity:16];
+   _classCstr = [[NSMutableDictionary alloc] initWithCapacity:16];
+   _cstr = [[NSMutableDictionary alloc] initWithCapacity:16];
    return self;
 }
--(void)dealloc
+
+-(void) dealloc
 {
-   [_notes release];
+   [_classCstr release];
+   [_cstr release];
    [super dealloc];
 }
-- (id)copyWithZone:(NSZone *)zone
+
+- (id) copyWithZone: (NSZone *) zone
 {
    return [[ORAnnotationCopy allocWithZone:zone] initWith:self];
 }
 
--(id<ORConstraint>)note:(id<ORConstraint>)cstr consistency:(ORCLevel)cl
+-(void) addCstr: (id<ORConstraint>) cstr note: (id<ORNote>) n
 {
    NSNumber* k = [[NSNumber alloc] initWithInt:[cstr getId]];
-   id<ORNote> n = [[ORConsistency alloc] initWith:cl];
-   id xn = [_notes objectForKey:k];
-   if (xn == nil) {
-      [_notes setObject:n forKey:k];
-   } else {
-      if ([xn isKindOfClass:[NSMutableArray class]]) {
-         NSMutableArray* na = xn;
-         [na addObject:n];
-      } else {
-         NSMutableArray* na = [[NSMutableArray alloc] initWithCapacity:2];
-         [_notes setObject:na forKey:k];
-         [na addObject:n];
-      }
+   NSMutableArray* na = [_cstr objectForKey: k];
+   if (na == nil) {
+      na = [[NSMutableArray alloc] initWithCapacity:2];
+      [_cstr setObject:na forKey: k];
    }
-   [n release];
+   [na addObject: n];
    [k release];
+}
+
+-(void) addClassCstr: (id) ocl note: (id<ORNote>) n
+{
+   NSMutableArray* na = [_classCstr objectForKey: ocl];
+   if (na == nil) {
+      na = [[NSMutableArray alloc] initWithCapacity:2];
+      [_classCstr setObject:na forKey: ocl];
+   }
+   [na addObject: n];
+}
+
+-(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) d
+{
+   NSNumber* k = [[NSNumber alloc] initWithInt:[o getId]];
+   NSMutableArray* na  = [_cstr objectForKey: k];
+   if (na)
+      for(id<ORNote> obj in na)
+         [self addCstr: d note: obj];
+   [k release];
+}
+
+
+-(id<ORConstraint>) noteConstraint: (id<ORConstraint>) cstr consistency: (ORCLevel) cl
+{
+   id<ORNote> n = [[ORConsistency alloc] initWith:cl];
+   [self addCstr: cstr note: n];
+   [n release];
    return cstr;
 }
 
--(id<ORConstraint>)dc:(id<ORConstraint>)cstr
+-(void) classNoteConstraint: (id) ocl consistency: (ORCLevel) cl
 {
-   return [self note:cstr consistency:DomainConsistency];
+   id<ORNote> n = [[ORConsistency alloc] initWith: cl];
+   [self addClassCstr: ocl note: n];
+   [n release];
 }
--(id<ORConstraint>)bc:(id<ORConstraint>)cstr
+
+-(id<ORNote>) findConstraintClassNote: (id<ORConstraint>) cstr ofClass: (Class) nc
 {
-   return [self note:cstr consistency:RangeConsistency];
-}
--(id<ORConstraint>)vc:(id<ORConstraint>)cstr
-{
-   return [self note:cstr consistency:ValueConsistency];
-}
--(id<ORNote>)findNote:(id<ORConstraint>)cstr ofClass:(Class)nc
-{
-   NSNumber* k = [[NSNumber alloc] initWithInt:[cstr getId]];
+   id cl = [cstr class];
    id<ORNote> rv = nil;
-   id xn = [_notes objectForKey:k];
-   if (xn && [xn isKindOfClass:nc])
-      rv = xn;
-   else if (xn && [xn isKindOfClass:[NSMutableArray class]]) {
-      NSMutableArray* na = xn;
+   NSMutableArray* na  = [_classCstr objectForKey: cl];
+   if (na) {
       for(id<ORNote> obj in na) {
          if ([obj isKindOfClass:nc]) {
             rv = obj;
@@ -89,20 +107,65 @@
          }
       }
    }
+   return rv;
+}
+
+-(id<ORNote>) findConstraintNote: (id<ORConstraint>) cstr ofClass: (Class) nc
+{
+   NSNumber* k = [[NSNumber alloc] initWithInt:[cstr getId]];
+   id<ORNote> rv = nil;
+   NSMutableArray* na  = [_cstr objectForKey: k];
+   if (na) {
+      for(id<ORNote> obj in na) {
+         if ([obj isKindOfClass: nc]) {
+            rv = obj;
+            break;
+         }
+      }
+   }
+   if (rv == nil)
+      rv = [self findConstraintClassNote: cstr ofClass: nc];
    [k release];
    return rv;
 }
--(ORCLevel)levelFor:(id<ORConstraint>)cstr
+
+-(ORCLevel) levelFor: (id<ORConstraint>) cstr
 {
-   ORConsistency* cn = [self findNote:cstr ofClass:[ORConsistency class]];
+   ORConsistency* cn = [self findConstraintNote: cstr ofClass: [ORConsistency class]];
    return cn ? [cn level] : Default;
 }
--(NSString*)description
+-(id<ORConstraint>) cstr: (id<ORConstraint>) cstr consistency: (ORCLevel) cl;
+{
+   return [self noteConstraint: cstr consistency: cl];
+}
+-(id<ORConstraint>) dc: (id<ORConstraint>) cstr
+{
+   return [self noteConstraint: cstr consistency: DomainConsistency];
+}
+-(id<ORConstraint>) bc: (id<ORConstraint>) cstr
+{
+   return [self noteConstraint: cstr consistency: RangeConsistency];
+}
+-(id<ORConstraint>) vc:(id<ORConstraint>) cstr
+{
+   return [self noteConstraint: cstr consistency: ValueConsistency];
+}
+-(id<ORConstraint>) relax:(id<ORConstraint>) cstr
+{
+   return [self noteConstraint: cstr consistency: RelaxedConsistency];
+}
+
+-(void) alldifferent: (ORCLevel) cl
+{
+   return [self classNoteConstraint: [ORAlldifferentI class] consistency: cl];
+}
+
+-(NSString*) description
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
    [buf appendString:@"{"];
    @autoreleasepool {
-      [_notes enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+      [_cstr enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
          [buf appendString:[key description]];
          [buf appendString:@" : "];
          [buf appendString:[obj description]];
@@ -121,50 +184,59 @@
    _cLevel = Default;
    return self;
 }
--(id)initWith:(ORCLevel)cl
+-(id)initWith: (ORCLevel)cl
 {
    self = [super init];
    _cLevel = cl;
    return self;
 }
--(ORCLevel)level
+- (id) copyWithZone: (NSZone *) zone
+{
+   return [[ORConsistency allocWithZone:zone] initWith: _cLevel];
+}
+-(ORCLevel) level
 {
    return _cLevel;
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-   static const char* names[] = {"dom","rng","val","def"};
+   static const char* names[] = {"dom","rng","val","relax","def"};
    [buf appendFormat:@"c=%s",names[_cLevel]];
    return buf;
 }
 @end
 
 @implementation ORAnnotationCopy
--(id)initWith:(id<ORAnnotation>)src
+-(id)initWith: (id<ORAnnotation>) src
 {
    self = [super init];
    _original = [src retain];
    return self;
 }
--(void)dealloc
+-(void) dealloc
 {
    [_original release];
    [super dealloc];
 }
-- (id)copyWithZone:(NSZone *)zone
+- (id) copyWithZone:(NSZone *)zone
 {
-   return [[ORAnnotationCopy alloc] initWith:self];
+   return [[ORAnnotationCopy allocWithZone: zone] initWith:self];
 }
--(ORCLevel)levelFor:(id<ORConstraint>)cstr
+-(ORCLevel) levelFor: (id<ORConstraint>) cstr
 {
-   ORConsistency* cn = [super findNote:cstr ofClass:[ORConsistency class]];
+   ORConsistency* cn = [super findConstraintNote:cstr ofClass:[ORConsistency class]];
    if (cn)
-      return cn ? [cn level] : Default;
+      return [cn level];
    else
       return [_original levelFor:cstr];
 }
--(NSString*)description
+-(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) d
+{
+   [super transfer: o toConstraint: d];
+   [_original transfer: o toConstraint: d];
+}
+-(NSString*) description
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
    @autoreleasepool {
@@ -175,3 +247,5 @@
    return buf;
 }
 @end
+
+

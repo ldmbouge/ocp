@@ -167,6 +167,7 @@
 		5B196C7916446F4800C9CED2 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B196C7A16446F4800C9CED2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B196C7B16446F4800C9CED2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B1D4268181EF28D00EE8C83 /* test1.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667126181EF228007CBBA6 /* test1.csv */; };
 		5B2000E6156D585E00D80105 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B2000E9156D585E00D80105 /* queensNaive.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B558C0D1563F01000D2BCD7 /* queensNaive.1 */; };
@@ -841,6 +842,16 @@
 		5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF14150C38CB00B82836 /* ORSetI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */ = {isa = PBXBuildFile; fileRef = B10ECF0F150C34DE00B82836 /* ORFactoryI.m */; };
 		5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF0E150C34DE00B82836 /* ORFactoryI.h */; };
+		5BD2F03E17FF556000A14B6D /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5BD601C217F9A627006A9CDC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5BD601C517F9A627006A9CDC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BD601C417F9A627006A9CDC /* main.m */; };
+		5BD601DB17F9A63F006A9CDC /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5BD601DC17F9A63F006A9CDC /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BD601DD17F9A63F006A9CDC /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		5BD601DE17F9A63F006A9CDC /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5BD601DF17F9A63F006A9CDC /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BD601E017F9A63F006A9CDC /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BD601E117F9A63F006A9CDC /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BD8BEB616E11FC700D9BF0B /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5BD8BEB716E11FC700D9BF0B /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BD8BEB816E11FC700D9BF0B /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
@@ -1019,6 +1030,9 @@
 		B139DEA115CCE3F8007D523E /* ORController.h in Headers */ = {isa = PBXBuildFile; fileRef = B139DE9F15CCE3F8007D523E /* ORController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B139DEA215CCE3F8007D523E /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
 		B13EBFDD17D2D96300021A82 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B13EBFDC17D2D96300021A82 /* main.m */; };
+		B144185F17D98C1A00924909 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		B148C0C8182175B0009BE440 /* ORFunc.h in Headers */ = {isa = PBXBuildFile; fileRef = B148C0C6182175B0009BE440 /* ORFunc.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B148C0C9182175B0009BE440 /* ORFunc.m in Sources */ = {isa = PBXBuildFile; fileRef = B148C0C7182175B0009BE440 /* ORFunc.m */; };
 		B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */ = {isa = PBXBuildFile; fileRef = B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */; };
 		B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */ = {isa = PBXBuildFile; fileRef = B152BE2D13BB541E00531FD5 /* CPAllDifferentDC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -4633,12 +4647,22 @@
 		5BCCC4011417F8CE0079E833 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			dstPath = /usr/share/man/man1;
 			dstSubfolderSpec = 0;
 			files = (
 				5BCCC40C1417F8CE0079E833 /* queensACSem.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5BD601BF17F9A627006A9CDC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				5B1D4268181EF28D00EE8C83 /* test1.csv in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5BDBBAA71718D96B00322163 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -5126,6 +5150,23 @@
 		5B6623D51770B1AE00A1ACCD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B6623D81770B1AE00A1ACCD /* paq-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "paq-Prefix.pch"; sourceTree = "<group>"; };
 		5B6623D91770B1AE00A1ACCD /* paq.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = paq.1; sourceTree = "<group>"; };
+		5B667126181EF228007CBBA6 /* test1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = test1.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/test1.csv"; sourceTree = "<group>"; };
+		5B667127181EF228007CBBA6 /* anneal.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = anneal.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/anneal.csv"; sourceTree = "<group>"; };
+		5B667128181EF228007CBBA6 /* audiology.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = audiology.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/audiology.csv"; sourceTree = "<group>"; };
+		5B667129181EF228007CBBA6 /* australian-credit.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "australian-credit.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/australian-credit.csv"; sourceTree = "<group>"; };
+		5B66712A181EF228007CBBA6 /* german-credit.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "german-credit.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/german-credit.csv"; sourceTree = "<group>"; };
+		5B66712B181EF228007CBBA6 /* heart-cleveland.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "heart-cleveland.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/heart-cleveland.csv"; sourceTree = "<group>"; };
+		5B66712C181EF228007CBBA6 /* hepatitis.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = hepatitis.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/hepatitis.csv"; sourceTree = "<group>"; };
+		5B66712D181EF228007CBBA6 /* hypothyroid.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = hypothyroid.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/hypothyroid.csv"; sourceTree = "<group>"; };
+		5B66712E181EF228007CBBA6 /* kr-vs-kp.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "kr-vs-kp.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/kr-vs-kp.csv"; sourceTree = "<group>"; };
+		5B66712F181EF228007CBBA6 /* lymph.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = lymph.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/lymph.csv"; sourceTree = "<group>"; };
+		5B667130181EF228007CBBA6 /* mushroom.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mushroom.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/mushroom.csv"; sourceTree = "<group>"; };
+		5B667131181EF228007CBBA6 /* primary-tumor.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "primary-tumor.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/primary-tumor.csv"; sourceTree = "<group>"; };
+		5B667132181EF228007CBBA6 /* soybean.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = soybean.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/soybean.csv"; sourceTree = "<group>"; };
+		5B667133181EF228007CBBA6 /* splice-1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "splice-1.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/splice-1.csv"; sourceTree = "<group>"; };
+		5B667134181EF228007CBBA6 /* tic-tac-toe.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "tic-tac-toe.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/tic-tac-toe.csv"; sourceTree = "<group>"; };
+		5B667135181EF228007CBBA6 /* vote.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = vote.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/vote.csv"; sourceTree = "<group>"; };
+		5B667136181EF228007CBBA6 /* zoo-1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "zoo-1.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/zoo-1.csv"; sourceTree = "<group>"; };
 		5B673A2A178DC5AA00886A28 /* ORLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinear.h; sourceTree = "<group>"; };
 		5B681180161F98FB00F4480F /* ORProgram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORProgram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B681184161F98FB00F4480F /* ORProgram-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORProgram-Info.plist"; sourceTree = "<group>"; };
@@ -5316,7 +5357,7 @@
 		5BAD1158161E5E430014EBCB /* ORModeling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORModeling.h; sourceTree = "<group>"; };
 		5BAD1159161E5E430014EBCB /* ORModeling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORModeling.m; sourceTree = "<group>"; };
 		5BAD1164161E5F2B0014EBCB /* ORModelI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelI.h; sourceTree = "<group>"; };
-		5BAD1165161E5F2B0014EBCB /* ORModelI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORModelI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5BAD1165161E5F2B0014EBCB /* ORModelI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORModelI.m; sourceTree = "<group>"; };
 		5BAEE08415AE9883006CEE1E /* ORParallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParallel.h; sourceTree = "<group>"; };
 		5BAEE08515AE9883006CEE1E /* ORParallel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORParallel.m; sourceTree = "<group>"; };
 		5BAEE09D15AEA08E006CEE1E /* costas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = costas; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5489,6 +5530,8 @@
 		B139DE9F15CCE3F8007D523E /* ORController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORController.h; sourceTree = "<group>"; };
 		B139DEA015CCE3F8007D523E /* ORController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORController.m; sourceTree = "<group>"; };
 		B13EBFDC17D2D96300021A82 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B148C0C6182175B0009BE440 /* ORFunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFunc.h; sourceTree = "<group>"; };
+		B148C0C7182175B0009BE440 /* ORFunc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFunc.m; sourceTree = "<group>"; };
 		B149BF5B151E759600FC5887 /* ORCrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCrFactory.h; sourceTree = "<group>"; };
 		B149BF5C151E759600FC5887 /* ORCrFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCrFactory.m; sourceTree = "<group>"; };
 		B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAllDifferentDC.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -7199,6 +7242,48 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5B667125181EF218007CBBA6 /* Dataset */ = {
+			isa = PBXGroup;
+			children = (
+				5B667126181EF228007CBBA6 /* test1.csv */,
+				5B667127181EF228007CBBA6 /* anneal.csv */,
+				5B667128181EF228007CBBA6 /* audiology.csv */,
+				5B667129181EF228007CBBA6 /* australian-credit.csv */,
+				5B66712A181EF228007CBBA6 /* german-credit.csv */,
+				5B66712B181EF228007CBBA6 /* heart-cleveland.csv */,
+				5B66712C181EF228007CBBA6 /* hepatitis.csv */,
+				5B66712D181EF228007CBBA6 /* hypothyroid.csv */,
+				5B66712E181EF228007CBBA6 /* kr-vs-kp.csv */,
+				5B66712F181EF228007CBBA6 /* lymph.csv */,
+				5B667130181EF228007CBBA6 /* mushroom.csv */,
+				5B667131181EF228007CBBA6 /* primary-tumor.csv */,
+				5B667132181EF228007CBBA6 /* soybean.csv */,
+				5B667133181EF228007CBBA6 /* splice-1.csv */,
+				5B667134181EF228007CBBA6 /* tic-tac-toe.csv */,
+				5B667135181EF228007CBBA6 /* vote.csv */,
+				5B667136181EF228007CBBA6 /* zoo-1.csv */,
+			);
+			name = Dataset;
+			sourceTree = "<group>";
+		};
+		5B67A4FE17E227BB00516F50 /* wka */ = {
+			isa = PBXGroup;
+			children = (
+				5B67A4FF17E227BB00516F50 /* main.m */,
+				5B67A50317E227BB00516F50 /* wka.1 */,
+				5B67A50117E227BB00516F50 /* Supporting Files */,
+			);
+			path = wka;
+			sourceTree = "<group>";
+		};
+		5B67A50117E227BB00516F50 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B67A50217E227BB00516F50 /* wka-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		5B681182161F98FB00F4480F /* ORProgram */ = {
 			isa = PBXGroup;
 			children = (
@@ -8177,6 +8262,25 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5BD601C317F9A627006A9CDC /* bugTest */ = {
+			isa = PBXGroup;
+			children = (
+				5B667125181EF218007CBBA6 /* Dataset */,
+				5BD601C417F9A627006A9CDC /* main.m */,
+				5BD601C817F9A627006A9CDC /* bugTest.1 */,
+				5BD601C617F9A627006A9CDC /* Supporting Files */,
+			);
+			path = bugTest;
+			sourceTree = "<group>";
+		};
+		5BD601C617F9A627006A9CDC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5BD601C717F9A627006A9CDC /* bugTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		5BDBBAAB1718D96C00322163 /* stressLimit */ = {
 			isa = PBXGroup;
 			children = (
@@ -8354,6 +8458,8 @@
 				5BE642EF139D49320056F448 /* cont.m */,
 				5BE642F0139D49320056F448 /* context.h */,
 				5BE642F1139D49320056F448 /* context.m */,
+				5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */,
+				5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */,
 				5B920EB715A3FB9E00AD0820 /* ORArray.h */,
 				5B920EBD15A402A500AD0820 /* ORArrayI.h */,
 				5B920EBE15A402A500AD0820 /* ORArrayI.m */,
@@ -8385,6 +8491,8 @@
 				B10ECF0F150C34DE00B82836 /* ORFactoryI.m */,
 				5BFD594C15A3ACA500825BC3 /* ORFoundation.h */,
 				5BFD594D15A3ACA500825BC3 /* ORFoundation.m */,
+				B148C0C6182175B0009BE440 /* ORFunc.h */,
+				B148C0C7182175B0009BE440 /* ORFunc.m */,
 				5B6B0EF61787533000104246 /* ORInterval.h */,
 				5B6B0EF71787533000104246 /* ORInterval.mm */,
 				B11D862515CD8E310019729B /* ORLimit.h */,
@@ -9164,6 +9272,7 @@
 				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
 				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
 				5B57E5DF161F275200DB249A /* ORExpr.h in Headers */,
+				B148C0C8182175B0009BE440 /* ORFunc.h in Headers */,
 				5B57E5E0161F275F00DB249A /* ORExprI.h in Headers */,
 				373975C617E99FC60084C85C /* ORExprEval.h in Headers */,
 				37C00A5A17EB2E8500A683CB /* ORParameter.h in Headers */,
@@ -12119,6 +12228,7 @@
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,
+				B148C0C9182175B0009BE440 /* ORFunc.m in Sources */,
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
 				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,
@@ -15275,10 +15385,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15447,10 +15553,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
@@ -15582,6 +15684,9 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					NDEBUG,
 					_NDEBUG,
@@ -15700,6 +15805,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -15708,10 +15822,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -15727,10 +15848,24 @@
 		5B8DA1FF15B98BC300684FD8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
+				ALWAYS_SEARCH_USER_PATHS = NO;=
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
+				OTHER_CFLAGS = (
+					"-DUSEVIEWS=1",
+					"-fno-stack-protector",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -15758,11 +15893,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = "";
@@ -15821,6 +15952,28 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "objmp/objmp-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+				);
+				OTHER_LDFLAGS = "-lgurobi55";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Coverage;
+		};
+		5B7CDA091801BB6600C60AB0 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/CPLib.dst;
+				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				GCC_UNROLL_LOOPS = YES;
@@ -16954,6 +17107,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LPRelaxation/LPRelaxation-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Coverage;
@@ -17050,6 +17212,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Coverage;
@@ -17187,6 +17363,24 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = "";
+				OTHER_CFLAGS = (
+					"-DUSEVIEWS=1",
+					"-fno-stack-protector",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Coverage;
@@ -17944,10 +18138,6 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -18114,24 +18304,19 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
 				);
-				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-lgurobi55";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
 				WRAPPER_EXTENSION = framework;
@@ -18146,7 +18331,6 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -18467,18 +18651,12 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LPRelaxation/LPRelaxation-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -18490,7 +18668,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
-				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LPRelaxation/LPRelaxation-Prefix.pch";

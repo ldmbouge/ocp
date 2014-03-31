@@ -20,7 +20,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         id<ORAnnotation> notes= [ORFactory note];
+         id<ORAnnotation> notes= [ORFactory annotation];
          const ORInt nbCourses = 66;
          const ORInt nbPeriods = 12;
          const ORInt nbPre = 65;
