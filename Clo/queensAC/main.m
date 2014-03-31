@@ -22,6 +22,14 @@
 // First solution
 // 22 choices 20 fail 277 propagations
 
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -31,20 +39,10 @@ int main(int argc, const char * argv[])
          id<ORModel> mdl = [ORFactory createModel];
          id<ORIntRange> R = RANGE(mdl,1,n);
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
-         id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
-         id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
          id<ORAnnotation> note = [ORFactory annotation];
          [note dc:[mdl add: [ORFactory alldifferent: x]]];
-         [note dc:[mdl add: [ORFactory alldifferent: xp]]];
-         [note dc:[mdl add: [ORFactory alldifferent: xn]]];
-         /*
-         @autoreleasepool {
-            for(id<ORConstraint> c in [mdl constraints]) {
-               NSSet* av = [c allVars];
-               NSLog(@"Constraint[%d] has: %@",c.getId,av);
-            }
-         }
-         */
+         [note dc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i] plus:@(i)])]]];
+         [note dc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i]  sub:@(i)])]]];
          id<CPProgram> cp = [args makeProgram:mdl annotation:note];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBDSController class]];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController class]];
@@ -53,18 +51,35 @@ int main(int argc, const char * argv[])
          //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          __block ORInt nbSol = 0;
+         NSLog(@"model: %@",mdl);
          [cp solveAll:
           ^() {
              //[cp labelHeuristic:h];
-             //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
-             [cp labelArrayFF: x];
+             [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+             //[cp labelArray: x];
+             id* gamma = [cp gamma];
+             id<CPIntVarArray> cx = gamma[x.getId];
+             for(ORInt i=1;i<=n;i++) {
+                while (![cp bound:x[i]]) {
+                   ORInt v = [cp min:x[i]];
+                   [cp try:^{
+                      NSLog(@"%@-lbl(%d,%d) = %@",tab(i),i,v,cx);
+                      [cp label:x[i] with:v];
+                      NSLog(@"%@+lbl(%d,%d) = %@",tab(i),i,v,cx);
+                   } or:^{
+                      NSLog(@"%@-dif(%d,%d) = %@",tab(i),i,v,cx);
+                      [cp diff:x[i] with:v];
+                      NSLog(@"%@+dif(%d,%d) = %@",tab(i),i,v,cx);
+                   }];
+                }
+             }
              @synchronized(cp) {
                 nbSol++;
 /*                for(ORInt i = 1; i <= 8; i++)
                    printf("%d ",[cp intValue: x[i]]);
                 printf("\n");*/
              }
-             [[cp explorer] fail];
+             //[[cp explorer] fail];
           }];
          printf("GOT %d solutions\n",nbSol);
          NSLog(@"Solver status: %@\n",cp);

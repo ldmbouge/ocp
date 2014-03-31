@@ -14,12 +14,12 @@
 
 /*
  
-pvh: 
+[PVH]
  
-1. simplify scheduleAC3 et les appels
-2. Rename CPEventNode
+1. simplify scheduleClosures et les appels
+2. Check if the group stuff can be simplified
  
- */
+*/
 
 typedef enum {
    CPChecked,
@@ -30,35 +30,38 @@ typedef enum {
 @protocol CPGroup;
 
 @protocol CPConstraint <ORConstraint>
--(ORUInt) getId;
--(void)setGroup:(id<CPGroup>)g;
--(id<CPGroup>)group;
+-(ORUInt)      getId;
+-(void)        setGroup:(id<CPGroup>) g;
+-(id<CPGroup>) group;
 @end
 
 @protocol CPGroup <CPConstraint>
--(void)add:(id<CPConstraint>)p;
--(void)scheduleAC3:(id<CPEventNode>)evt;
+-(void)  add:(id<CPConstraint>)p;
+-(void)  scheduleClosure:(id<CPClosureList>)evt;
 @end
 
-@protocol CPAC5Event<NSObject>
+@protocol CPValueEvent<NSObject>
 -(ORInt) execute;
 @end
 
-@protocol CPEventNode <NSObject>
--(id) trigger;                      // retrieves the closure responsible for responding to the event
--(id<CPEventNode>) next;           // fetches the next event in the list *list suffix*
--(void)scanWithBlock:(void(^)(id))block;
+// [PVH] To display the closure + the non-created closure to propagate constraints
+
+@protocol CPClosureList <NSObject>
+-(ORClosure) trigger;                
+-(id<CPClosureList>) next;           // fetches the tail of the list
+-(void) scanWithBlock:(void(^)(id))block;
+-(void) scanCstrWithBlock:(void(^)(id))block;
 @end
 
 typedef void(^ORID2Void)(id);
 
-void scanListWithBlock(id<CPEventNode> list,ORID2Void block);
-void collectList(id<CPEventNode> list,NSMutableSet* rv);
-void freeList(id<CPEventNode> list);
+void scanListWithBlock(id<CPClosureList> list,ORID2Void block);
+void collectList(id<CPClosureList> list,NSMutableSet* rv);
+void freeList(id<CPClosureList> list);
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
 
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
-+(id<CPGroup>)group:(id<CPEngine>)engine;
-+(id<CPGroup>)bergeGroup:(id<CPEngine>)engine;
++(id<CPGroup>) group:(id<CPEngine>)engine;
++(id<CPGroup>) bergeGroup:(id<CPEngine>)engine;
 @end;

@@ -156,6 +156,7 @@ class Collect:
 		row = c.fetchone()
 		lastRunID = row[0]
 		self.makeMarkdown(lastRunID,useHTMLHeader)
+		
 
 	def makeHTMLPage(self,out,w,h):
 		out.write("""<html><head><script type="text/javascript" src="https://www.google.com/jsapi"></script>

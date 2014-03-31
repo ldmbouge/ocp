@@ -5,6 +5,13 @@
 			"path": "Clo"	,
 			"folder_exclude_patterns" : ["*.lproj"],
 			"file_exclude_patterns" : ["*.pch","*.1"]		
+		},
+		{
+			"path" : "scripts",
+			"file_exclude_patterns" : ["*.pyc","*~","*.backup"]
+		},
+		{
+			"path" : "R"
 		}
 	],
 	"build_systems" : [

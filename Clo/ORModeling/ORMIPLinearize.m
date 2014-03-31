@@ -347,6 +347,22 @@
 {
    _result = c;
 }
+-(void) visitReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = c;
+}
+-(void) visitReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
+{
+   _result = c;
+}
+-(void) visitHReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = c;
+}
+-(void) visitHReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
+{
+   _result = c;
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    _result = c;

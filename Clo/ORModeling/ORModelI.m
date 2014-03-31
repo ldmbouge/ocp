@@ -893,11 +893,19 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    [_all release];
    [super dealloc];
 }
-
+-(NSUInteger) count
+{
+   return [_all count];
+}
 -(void) addSolution:(id<ORSolution>)s
 {
     [_all addObject:s];
     [_solutionAddedInformer notifyWithSolution: s];
+}
+
+-(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key
+{
+   return [_all objectAtIndexedSubscript:key];
 }
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block

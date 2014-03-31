@@ -174,7 +174,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
    return nb;
 }
 
--(ORStatus) bindRemainingTo: (ORInt) val
+-(void) bindRemainingTo: (ORInt) val
 {
     int count = 0;
     for(ORInt i = _lx; i <= _ux; i++) {
@@ -187,11 +187,10 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     }
     if (count != _low[val])
        failNow();
-    return ORSuspend;
 }
 
 
-static ORStatus removeFromRemaining(CPCardinalityCst* cc,ORInt val)
+static void removeFromRemaining(CPCardinalityCst* cc,ORInt val)
 {
     int count = 0;
     for(ORInt i =cc->_lx; i <= cc->_ux ;i++) {
@@ -203,10 +202,9 @@ static ORStatus removeFromRemaining(CPCardinalityCst* cc,ORInt val)
     }
     if (count != cc->_up[val])
        failNow();
-    return ORSuspend;     
 }
 
-static ORStatus valBind(CPCardinalityCst* cc,CPIntVar* v)
+static void valBind(CPCardinalityCst* cc,CPIntVar* v)
 {
    ORInt val = [v min];
    assignTRInt(cc->_required+val, cc->_required[val]._val+1, cc->_trail);
@@ -214,20 +212,18 @@ static ORStatus valBind(CPCardinalityCst* cc,CPIntVar* v)
       failNow();
    if (cc->_required[val]._val == cc->_up[val])
       removeFromRemaining(cc,val);
-   return ORSuspend;
 }
 
-static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
+static void valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
 {
    assignTRInt(cc->_possible+val, cc->_possible[val]._val-1, cc->_trail);
    if (cc->_possible[val]._val < cc->_low[val])
       failNow();
    if (cc->_low[val] > 0 && cc->_possible[val]._val == cc->_low[val])
       [cc bindRemainingTo: val];    
-   return ORSuspend;
 }
 
--(ORStatus) post
+-(void) post
 {
     _required = malloc(sizeof(TRInt)*_so);
     _possible = malloc(sizeof(TRInt)*_so);
@@ -250,7 +246,7 @@ static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
                     assignTRInt(_possible+v, _possible[v]._val+1, _trail);
         }
     }
-    // AC5 events
+    // constraint events
     for(ORInt i=_lx;i<=_ux;i++) {
         if ([_x[i] bound]) 
             continue;
@@ -266,7 +262,6 @@ static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
         if (_low[i] > 0 && _possible[i]._val == _low[i])
            [self bindRemainingTo: i];
     }   
-    return ORSuspend;
 }
 -(ORInt) nbFreeVars
 {
@@ -274,52 +269,5 @@ static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
     for(ORInt i=0;i<_sx;i++)
         t += ![_x[i] bound];
     return t;
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_fdm];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_values.low];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_values.up];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_lo];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_uo];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_lx];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_ux];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_so];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_sx];
-   [aCoder encodeArrayOfObjCType:@encode(ORInt)
-                           count:_so
-                              at:_low + _lo];
-   [aCoder encodeArrayOfObjCType:@encode(ORInt)
-                           count:_so
-                              at:_up + _lo];
-   for(int k=_lx;k<=_ux;k++)
-      [aCoder encodeObject:_x[k]];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _fdm = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_values.low];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_values.up];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_lo];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_uo];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_lx];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_ux];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_so];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_sx];
-   _x = malloc(sizeof(CPIntVar*)*_sx) - _lx;
-   _low = malloc(sizeof(ORInt)*_so) - _lo;
-   _up  = malloc(sizeof(ORInt)*_so) - _lo;
-   [aDecoder decodeArrayOfObjCType:@encode(ORInt)
-                             count:_so 
-                                at:_low + _lo];
-   [aDecoder decodeArrayOfObjCType:@encode(ORInt)
-                             count:_so 
-                                at:_up + _lo];
-   for(int k=_lx;k<=_ux;k++)
-      _x[k] = [aDecoder decodeObject];
-   return self;
 }
 @end

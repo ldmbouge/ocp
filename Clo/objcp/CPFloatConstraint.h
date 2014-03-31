@@ -26,7 +26,7 @@
    CPFloatVarI* _z;
 }
 -(id)initCPFloatSquareBC:(id)z equalSquare:(id)x;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -48,7 +48,7 @@
    ORFloat             _c;
 }
 -(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -59,7 +59,7 @@
    ORFloat             _c;
 }
 -(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -69,7 +69,7 @@
    ORFloat      _c;
 }
 -(id) init:(id)x and:(ORFloat)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -81,14 +81,14 @@
    id<ORFloatArray> _c;
 }
 -(id) init: (id) x indexCstArray:(id<ORFloatArray>) c equal:(id)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
 @interface CPFloatVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
 -(id)        init: (id<CPFloatVar>) x;
--(ORStatus)  post;
+-(void)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
@@ -102,7 +102,7 @@
 
 @interface CPFloatVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
 -(id)        init: (id<CPFloatVar>) x;
--(ORStatus)  post;
+-(void)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;

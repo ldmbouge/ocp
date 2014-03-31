@@ -26,7 +26,7 @@ typedef struct CPEQTerm {
 MAKETRPointer(TRCPEQTerm,CPEQTerm);
 
 @class CPIntVarI;
-@interface CPEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i == c
+@interface CPEquationBC : CPCoreConstraint { // sum(i in S) x_i == c
 @private
    CPIntVar**               _x;  // array of vars
    ORLong                   _nb;  // size
@@ -38,13 +38,13 @@ MAKETRPointer(TRCPEQTerm,CPEQTerm);
    TRLong                   _ec; // expanded constant c (including the bound terms)
 }
 -(CPEquationBC*)initCPEquationBC: (id) x equal:(ORInt) c;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPINEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i <= c
+@interface CPINEquationBC : CPCoreConstraint { // sum(i in S) x_i <= c
 @private
    CPIntVar**        _x;  // array of vars
    ORLong            _nb;  // size
@@ -52,7 +52,7 @@ MAKETRPointer(TRCPEQTerm,CPEQTerm);
    UBType*    _updateMax;
 }
 -(CPINEquationBC*)initCPINEquationBC: (id) x lequal:(ORInt) c;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

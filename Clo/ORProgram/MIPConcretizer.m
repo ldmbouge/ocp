@@ -106,7 +106,7 @@
          [v[i] visit: self];
          dx[i] = _gamma[[v[i] getId]];
       }
-      _gamma[[v getId]] = dx;
+      _gamma[v.getId] = dx;
    }
 }
 -(void) visitIdMatrix:(id<ORIdMatrix>) v
@@ -166,34 +166,16 @@
       [_MIPsolver postObjective: concreteObj];
    }
 }
--(void) visitGEqualc: (id<ORGEqualc>)c
+
+-(void) visitLEqual: (id<ORLEqual>)c
 {
-   if (_gamma[c.getId] == NULL) {
-      id<ORVar> x = [c left];
-      [x visit:self];
-      MIPVariableI* dx = _gamma[x.getId];
-      ORFloat coef[1] = { 1.0 };
-      ORFloat theCst =  [c cst];
-      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:1 var:&dx coef:coef rhs:theCst];
+   if (_gamma[c.getId]==NULL) {
+      MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
+      ORFloat    coef[2] = { [c coefLeft],- [c coefRight]};
+      MIPConstraintI* concreteCstr = [_MIPsolver createLEQ:2 var:x coef:coef rhs:[c cst]];
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint:concreteCstr];
    }
-}
-
--(void) visitLEqual: (id<ORLEqual>)c {
-    if (_gamma[c.getId] == NULL) {
-        id<ORVar> x = [c left];
-        [x visit:self];
-        MIPVariableI* dx = _gamma[x.getId];
-        id<ORVar> y = [c right];
-        [y visit:self];
-        MIPVariableI* dy = _gamma[y.getId];
-        ORFloat coef[2] = { 1.0, -1.0 };
-        MIPVariableI* vars[2] = { dx, dy };
-        MIPConstraintI* concreteCstr = [_MIPsolver createLEQ:2 var: vars coef:coef rhs: 0];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint:concreteCstr];
-    }
 }
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
@@ -228,51 +210,6 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
--(void) visitLinearGeq: (id<ORLinearGeq>) c
-{
-   if (_gamma[c.getId] == NULL) {
-      id<ORVarArray> x = [c vars];
-      id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> fa = [ORFactory floatArray:_program range:[a range] with:^ORFloat(ORInt k) {
-         return [a at:k];
-      }];
-      ORInt cst = [c cst];
-      [x visit: self];
-      id<MIPVariableArray> dx = _gamma[x.getId];
-      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: dx coef: fa cst: -cst];
-      _gamma[c.getId] = concreteCstr;
-      [_MIPsolver postConstraint: concreteCstr];
-   }   
-}
--(void) visitPlus: (id<ORPlus>)c
-{
-    if (_gamma[c.getId] == NULL) {
-        id<ORVar> res = [c res];
-        [res visit: self];
-        id<ORVar> left = [c left];
-        [left visit: self];
-        id<ORVar> right = [c right];
-        [right visit: self];
-        
-        MIPVariableI* dres = _gamma[res.getId];
-        MIPVariableI* dleft = _gamma[left.getId];
-        MIPVariableI* dright = _gamma[right.getId];
-        
-        id<ORIdArray> dx = [ORFactory idArray: _program range: RANGE(_program, 0, 2)];
-        [dx setObject: dleft atIndexedSubscript: 0];
-        [dx setObject: dright atIndexedSubscript: 1];
-        [dx setObject: dres atIndexedSubscript: 2];
-        id<ORFloatArray> a = [ORFactory floatArray:_program range: dx.range with:^ORFloat(ORInt k) {
-            if(k < 2) return 1.0;
-            return -1.0;
-        }];
-        MIPConstraintI* concreteCstr = [_MIPsolver createEQ: (id<MIPVariableArray>)dx coef: a cst: 0.0];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint: concreteCstr];
-    }
-  
-}
-
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>)c
 {
     if (_gamma[c.getId] == NULL) {

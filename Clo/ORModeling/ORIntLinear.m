@@ -158,11 +158,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 }
 -(id<ORIntVarArray>) variables: (id<ORAddToModel>) model
 {
-   return [ORFactory intVarArray: model range: RANGE(model,0,_nb-1) with:^id<ORIntVar>(ORInt i) { return _terms[i]._var; }];
+   return [ORFactory intVarArray: [model tracker] range: RANGE(model,0,_nb-1) with:^id<ORIntVar>(ORInt i) { return _terms[i]._var; }];
 }
 -(id<ORIntArray>) coefficients: (id<ORAddToModel>) model
 {
-   return [ORFactory intArray: model range: RANGE(model,0,_nb-1) with: ^ORInt(ORInt i) { return _terms[i]._coef; }];
+   return [ORFactory intArray: [model tracker] range: RANGE(model,0,_nb-1) with: ^ORInt(ORInt i) { return _terms[i]._coef; }];
 }
 
 -(id<ORIntVarArray>)scaledViews:(id<ORAddToModel>)model

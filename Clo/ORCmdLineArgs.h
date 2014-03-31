@@ -19,7 +19,8 @@ enum Heuristic {
    ABS = 1,
    IBS = 2,
    WDEG = 3,
-   DDEG = 4
+   DDEG = 4,
+   SDEG = 5
 };
 
 struct ORResult {

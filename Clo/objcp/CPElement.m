@@ -49,7 +49,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    else
       return d1;
 }
--(ORStatus) post
+-(void) post
 {
    if (bound(_x)) {
       [_y bind:[_c at:[_x min]]];
@@ -90,7 +90,6 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          [_x whenChangePropagate:self];
       }
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -140,24 +139,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    [buf appendFormat:@"CPElementCstBC: <%02d %@ [ %@ ] == %@ >",_name,_c,_x,_y];
    return buf;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-   [aCoder encodeObject:_c];
-}
 
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   _c = [aDecoder decodeObject];
-   _tab = NULL;
-   _sz  = 0;
-   return self;
-}
 @end
 
 struct EltACPair {
@@ -205,7 +187,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    return _endOfList;
 }
 
--(ORStatus) post
+-(void) post
 {
    ORInt cLow = [_c low];
    ORInt cUp  = [_c up];
@@ -293,7 +275,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
             removeDom(_y, _values[listIdx]._value);
       }];
    }
-   return ORSuspend;
 }
 
 -(NSSet*)allVars
@@ -325,7 +306,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    [_x whenChangePropagate:self];
@@ -334,7 +315,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    for(ORInt k=xb.min; k <= xb.max;k++)
       if (memberDom(_x, k))
          [(CPIntVar*)[_z at:k] whenChangeBoundsPropagate:self];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -390,23 +370,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [buf appendFormat:@"CPElementVarBC: <%02d %@ [ %@ ] == %@ >",_name,_z,_x,_y];
    return buf;
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-   [aCoder encodeObject:_z];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   _z = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 @implementation CPElementVarAC
@@ -432,7 +395,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_iva release];
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    ORBounds xb = bounds(_x);
    ORInt la = max([_array low],xb.min);
@@ -552,7 +515,6 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
          }];
       }
    }
-   return ORSuspend;
 }
 
 -(void)doACEqual:(ORInt)xv

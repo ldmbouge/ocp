@@ -511,6 +511,10 @@
    [_sPool release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void)close
 {}
 -(id<OREngine>) engine
@@ -625,10 +629,6 @@
 {
    return [[ORLPSolutionI alloc] initORLPSolutionI: _model with: self];
 }
--(id<ORTracker>) tracker
-{
-   return self;
-}
 @end
 
 
@@ -649,6 +649,10 @@
    NSLog(@"dealloc LPSolver");
    [_lpsolver release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
 }
 -(void)close
 {
@@ -738,10 +742,6 @@
 -(id) trackImmutable:(id) obj
 {
    return [_lpsolver trackImmutable:obj];
-}
--(id<ORTracker>) tracker
-{
-   return self;
 }
 @end
 

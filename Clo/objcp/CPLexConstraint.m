@@ -161,7 +161,7 @@ STATE4:
 }
 
 
--(ORStatus) post
+-(void) post
 {
    _q = makeTRInt(_trail, 0);
    _r = makeTRInt(_trail, 0);
@@ -182,7 +182,7 @@ STATE4:
    }
    assignTRInt(&_q,i,_trail);  // update Q to point to the first symbol s.t. x_q ? y_q
    if (i > up || LEX_XLY(i))
-      return ORSuccess;        // STATE T1. We added the requirements on P.
+      return ;        // STATE T1. We added the requirements on P.
    // transition 1 -> 2
    // q is now pointing to the ? :  x_q <= y_q
    [_xa[LEX_Q] updateMax: maxDom(_ya[LEX_Q])];
@@ -195,42 +195,45 @@ STATE4:
    assignTRInt(&_r,i,_trail);
 
    if (i > up || LEX_XLY(i)) { // transition STATE 2 -> T3
-      return [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
+      [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
+      return;
    } else if (LEX_XGY(i)) {    // transition STATE 2 -> T2
-      return [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
+      [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
                                                  to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER: x_q < y_q
+      return;
    } else if (LEX_XLEQY(i)) {  // transition STATE 2 -> STATE 3
       assignTRInt(&_s,i = i + 1,_trail);
       // ****************** ENTERING STATE 3
       while(i <= up && LEX_XEQ_LEQY(i))
          i = i+1;
       assignTRInt(&_s,i,_trail);
-      if (i>up || LEX_XLY(i))   // transition STATE 3 -> T3
-         return [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
+      if (i>up || LEX_XLY(i))  { // transition STATE 3 -> T3
+         [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
+         return ;
+      }
       // transition 3 -> D3
       // ****************** ENTERING STATE D3
       [self listenFrom:LEX_Q];
       assignTRInt(&_u,3,_trail);
-      return ORSuspend;
    } else if (LEX_XGEQY(i)) {  // transition 2 -> 4
       assignTRInt(&_s,i = i + 1,_trail);
       // ****************** ENTERING STATE 4
       while(i<=up && LEX_XEQ_GEQY(i))
          i = i + 1;
       assignTRInt(&_s,i,_trail);
-      if (i <= up && LEX_XGY(i)) // transition STATE 4 -> T2
-         return [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
+      if (i <= up && LEX_XGY(i)) { // transition STATE 4 -> T2
+         [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
                                                     to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER x_q < y_q
+         return;
+      }
       // transition 4 -> D2
       // ****************** ENTERING STATE D2
       [self listenFrom:LEX_Q];
       assignTRInt(&_u, 4, _trail);
-      return ORSuspend;
    } else {
       // ****************** ENTERING STATE D1
       [self listenFrom:LEX_Q];
       assignTRInt(&_u,2,_trail);      // remember we were in state 2 (where to resume).
-      return ORSuspend;
    }
 }
 -(NSSet*)allVars
@@ -256,18 +259,4 @@ STATE4:
 {
    return [NSMutableString stringWithFormat:@"<CPLexConstraintDC: %02d (%@ <=(lex) %@)>",_name,_x,_y];
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
-}
-
 @end

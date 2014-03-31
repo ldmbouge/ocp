@@ -15,10 +15,9 @@
 
 @class CPEngineI;
 
-@interface CPCoreConstraint : ORObject<NSCoding,CPConstraint> {
+@interface CPCoreConstraint : ORObject<CPConstraint> {
 @public
    CPTodo            _todo;
-   BOOL        _idempotent;
    ORInt         _priority;
    IMP          _propagate;
    id<ORTrail>      _trail;
@@ -26,10 +25,11 @@
    id<CPGroup>      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
+-(ORUInt) nbVars;
 -(void)setGroup:(id<CPGroup>)g;
 -(id<CPGroup>)group;
 @end

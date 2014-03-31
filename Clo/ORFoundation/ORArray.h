@@ -80,8 +80,6 @@
 -(NSArray*) toNSArray;
 @end
 
-
-
 @protocol ORIdMatrix <ORObject>
 -(id) flat:(ORInt)i;
 -(id) at: (ORInt) i1 : (ORInt) i2;

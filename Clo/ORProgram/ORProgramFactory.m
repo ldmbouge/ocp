@@ -26,6 +26,7 @@
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 #import "CPDDeg.h"
+#import "CPDeg.h"
 #import "CPWDeg.h"
 #import "CPIBS.h"
 #import "CPABS.h"

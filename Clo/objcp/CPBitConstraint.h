@@ -29,29 +29,29 @@
 +(id<CPConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
 @end
 
-@interface CPBitEqual : CPCoreConstraint<NSCoding> {
+@interface CPBitEqual : CPCoreConstraint {
 @private
     CPBitVarI*  _x;
     CPBitVarI*  _y;
 }
 -(id) initCPBitEqual: (CPBitVarI*) x and: (CPBitVarI*) y ;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
-@interface CPBitNOT : CPCoreConstraint<NSCoding>{
+@interface CPBitNOT : CPCoreConstraint{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;    
 }
 -(id) initCPBitNOT: (CPBitVarI*) x equals: (CPBitVarI*) y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
-@interface CPBitAND : CPCoreConstraint<NSCoding>{
+@interface CPBitAND : CPCoreConstraint{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -59,11 +59,11 @@
 }
 -(id) initCPBitAND: (CPBitVarI*) x and: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
-@interface CPBitOR : CPCoreConstraint<NSCoding>{
+@interface CPBitOR : CPCoreConstraint{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -71,11 +71,11 @@
 }
 -(id) initCPBitOR: (CPBitVarI*) x or: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
-@interface CPBitXOR : CPCoreConstraint<NSCoding>{
+@interface CPBitXOR : CPCoreConstraint{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -83,11 +83,11 @@
 }
 -(id) initCPBitXOR: (CPBitVarI*) x xor: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
-@interface CPBitIF : CPCoreConstraint<NSCoding>{
+@interface CPBitIF : CPCoreConstraint{
 @private 
     CPBitVarI* _w;
     CPBitVarI* _x;
@@ -96,12 +96,12 @@
 }
 -(id) initCPBitIF: (CPBitVarI*) w equalsOneIf:(CPBitVarI*) x equals: (CPBitVarI*) y andZeroIfXEquals: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
 
-@interface CPBitShiftL : CPCoreConstraint<NSCoding>{
+@interface CPBitShiftL : CPCoreConstraint{
 @private 
     CPBitVarI*      _x;
     CPBitVarI*      _y;
@@ -109,11 +109,11 @@
 }
 -(id) initCPBitShiftL: (CPBitVarI*) x shiftLBy:(int) places equals: (CPBitVarI*) y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
-@interface CPBitRotateL : CPCoreConstraint<NSCoding>{
+@interface CPBitRotateL : CPCoreConstraint{
 @private
    CPBitVarI*      _x;
    CPBitVarI*      _y;
@@ -121,12 +121,11 @@
 }
 -(id) initCPBitRotateL: (CPBitVarI*) x rotateLBy:(int) places equals: (CPBitVarI*) y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
-
-@interface CPBitShiftR : CPCoreConstraint<NSCoding>{
+@interface CPBitShiftR : CPCoreConstraint{
 @private 
     CPBitVarI*      _x;
     CPBitVarI*      _y;
@@ -134,11 +133,11 @@
 }
 -(id) initCPBitShiftR: (CPBitVarI*) x shiftRBy:(int) places equals:(CPBitVarI*) y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 
-@interface CPBitADD: CPCoreConstraint<NSCoding>{
+@interface CPBitADD: CPCoreConstraint{
 @private
     CPBitVarI*      _x;
     CPBitVarI*      _y;
@@ -148,7 +147,7 @@
 }
 -(id) initCPBitAdd: (CPBitVarI*) x plus: (CPBitVarI*) y equals:(CPBitVarI*) z withCarryIn:(CPBitVarI*) cin andCarryOut:(CPBitVarI*)cout;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end
 

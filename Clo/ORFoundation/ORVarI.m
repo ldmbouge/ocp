@@ -27,10 +27,10 @@
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
+//   if (domain.low == domain.up)
+//      NSLog(@"Variable with singleton domain: %@",self);
    return self;
 }
-
-
 -(void) dealloc
 {
    [super dealloc];

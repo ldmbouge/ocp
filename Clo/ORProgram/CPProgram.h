@@ -103,11 +103,13 @@
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createSDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
@@ -116,6 +118,7 @@
 -(id<ORCPSolutionPool>) solutionPool;
 -(id<ORCPSolution>) captureSolution;
 
+-(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;
 -(ORInt) intExprValue: (id<ORExpr>)e;
 -(ORBool) bound: (id<ORVar>) x;

@@ -86,7 +86,7 @@ static BOOL refresh(CPVarInfo* vi)
    free(_curActive);
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    id<ORTrail> trail = [_engine trail];
    ORUInt nbW = 0;
@@ -123,7 +123,6 @@ static BOOL refresh(CPVarInfo* vi)
             _curActive[_nbActive++] = vInfo;
       }      
    }];
-   return ORSuspend;
 }
 -(NSString*)description
 {

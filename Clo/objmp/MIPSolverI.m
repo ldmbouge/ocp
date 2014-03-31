@@ -789,6 +789,14 @@
    [_oStore release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
+-(ORUInt) nbPropagation
+{
+   return 0;
+}
 -(void) addVariable: (MIPVariableI*) v
 {
    if (_nbVars == _maxVars) {
@@ -1248,10 +1256,6 @@
    [_oStore addObject:obj];
    [obj release];
    return obj;
-}
--(id<ORTracker>) tracker
-{
-    return self;
 }
 @end
 

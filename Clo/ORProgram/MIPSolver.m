@@ -477,6 +477,14 @@
    [_sPool release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
+-(id<ORExplorer>)  explorer
+{
+   return nil;
+}
 -(void) close
 {}
 
@@ -572,10 +580,6 @@
 -(id<ORMIPSolutionPool>) solutionPool
 {
    return _sPool;
-}
--(id<ORTracker>) tracker
-{
-   return self;
 }
 @end
 
