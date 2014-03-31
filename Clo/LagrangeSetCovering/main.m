@@ -88,7 +88,7 @@ int main (int argc, const char * argv[])
     id<ORIntVarArray> s = [ORFactory intVarArray: m range: setRange domain: RANGE(m, 0, 1)];
    
    NSMutableArray* cstrs = [[NSMutableArray alloc] initWithCapacity: [universe size]];
-    [m minimize: Sum(m, i, setRange, [s[i] mul: @(i%6+1)])];
+    [m minimize: Sum(m, i, setRange, [s[i] mul: @(i % 6)])];
     for(ORInt n = [universe low]; n <= [universe up]; n++) {
         id<ORExpr> expr = [ORFactory sum: m over: setRange
                                 suchThat: ^bool(ORInt i) { return [[instance.sets at: i] member: n]; }
