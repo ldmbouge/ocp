@@ -14,6 +14,7 @@
 #import <ORFoundation/ORAVLTree.h>
 #import "ORFactoryI.h"
 #import "ORError.h"
+#import <ORFoundation/ORVisit.h>
 
 @implementation ORIntSetI
 {

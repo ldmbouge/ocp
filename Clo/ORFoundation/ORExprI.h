@@ -16,7 +16,7 @@
 #import "ORData.h"
 #import "ORSet.h"
 #import "ORConstraint.h"
-#import "ORVisit.h"
+//#import "ORVisit.h"
 
 @interface ORExprI: ORObject<ORExpr,NSCoding>
 -(id<ORExpr>) abs;

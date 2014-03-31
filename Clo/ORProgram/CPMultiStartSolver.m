@@ -17,6 +17,7 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
+#import <ORFoundation/ORExprEval.h>
 
 
 /******************************************************************************************/

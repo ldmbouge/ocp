@@ -16,6 +16,7 @@
 #import <sys/resource.h>
 #import <unistd.h>
 #import <ORUtilities/ORConcurrency.h>
+#import <ORFoundation/ORVisit.h>
 
 @implementation NSObject (Concretization)
 -(void) setImpl: (id) impl

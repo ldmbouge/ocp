@@ -16,15 +16,15 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/LPProgram.h>
 #import <objcp/CPFactory.h>
-#import "../ORModeling/ORLinearize.h"
-#import "../ORModeling/ORFlatten.h"
+#import <ORModeling/ORLinearize.h>
+#import <ORModeling/ORFlatten.h>
 #import <ORProgram/ORRunnable.h>
-#import "ORParallelRunnable.h"
-#import "ORColumnGeneration.h"
-#import "LPRunnable.h"
-#import "CPRunnable.h"
-#import "ORLagrangeRelax.h"
-#import "ORLagrangianTransform.h"
+#import <ORProgram/ORParallelRunnable.h>
+#import <ORProgram/ORColumnGeneration.h>
+#import <ORProgram/LPRunnable.h>
+#import <ORProgram/CPRunnable.h>
+#import <ORProgram/ORLagrangeRelax.h>
+#import <ORProgram/ORLagrangianTransform.h>
 #import "SetCoveringInstanceParser.h"
 
 NSArray* autosplit(NSArray* vars, NSArray* cstrs) {

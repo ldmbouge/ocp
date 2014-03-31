@@ -15,7 +15,7 @@
 #import "ORConstraint.h"
 #import "ORVar.h"
 #import "ORExprI.h"
-#import "ORVisit.h"
+#import <ORFoundation/ORVisit.h>
 
 
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>

@@ -10,6 +10,7 @@
 #import <ORFoundation/ORSetI.h>
 #import "ORModelI.h"
 #import "ORExprI.h"
+#import <ORFoundation/ORVisit.h>
 
 @interface ORLinearizeConstraint : ORVisitor<NSObject>
 -(id)init:(id<ORAddToModel>)m;

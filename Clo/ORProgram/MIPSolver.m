@@ -12,7 +12,8 @@
 // MIPSolver
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModelTransformation.h>
-
+#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORExprEval.h>
 #import "MIPProgram.h"
 #import "MIPSolver.h"
 #import <objmp/MIPSolverI.h>

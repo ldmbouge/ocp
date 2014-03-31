@@ -15,7 +15,7 @@
 #import "ORError.h"
 #import "ORData.h"
 #import <assert.h>
-#import "ORVisit.h"
+#import <ORFoundation/ORVisit.h>
 #import "ORCommand.h"
 
 

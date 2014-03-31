@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/CPSolver.h>
+#import <ORFoundation/ORVisit.h>
 
 @interface ORCPConcretizer  : ORVisitor<NSObject>
 {

@@ -17,7 +17,7 @@
 #import "ORSet.h"
 #import "ORVar.h"
 #import "ORExprI.h"
-#import "ORVisit.h"
+//#import "ORVisit.h"
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;

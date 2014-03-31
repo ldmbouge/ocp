@@ -14,6 +14,7 @@
 #import "ORError.h"
 #import "ORExprI.h"
 #import "ORFactory.h"
+#import <ORFoundation/ORVisit.h>
 
 /**********************************************************************************************/
 /*                          ORIntArray                                                        */

@@ -14,7 +14,7 @@
 #import "ORFactory.h"
 #import "ORError.h"
 #import "ORConstraint.h"
-#import "ORVisit.h"
+#import <ORFoundation/ORVisit.h>
 
 
 @implementation NSNumber (Expressions)

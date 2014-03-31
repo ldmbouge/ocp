@@ -51,10 +51,6 @@
       [self dealloc];
    }
 }
--(NSUInteger)retainCount
-{
-   return _rc;
-}
 -(id)autorelease
 {
    //assert(_ba[3] == 0); // Dan removed this

@@ -127,22 +127,16 @@
 
 -(void)    assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x;
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
-<<<<<<< HEAD
 -(ORFloat) paramFloatValue: (id<ORFloatParam>)x;
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
 -(ORFloat) floatExprValue: (id<ORExpr>)e;
 -(ORFloat) domwidth:(id<ORFloatVar>)x;
 -(ORFloat) fmin:(id<ORFloatVar>)x;
 -(ORFloat) fmax:(id<ORFloatVar>)x;
-=======
 -(ORFloat) floatMin: (id<ORFloatVar>)x;
 -(ORFloat) floatMax: (id<ORFloatVar>)x;
--(ORFloat) domwidth: (id<ORFloatVar>)x;
->>>>>>> master
-
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
-
 @end
 
 // CPSolver with syntactic DFS Search

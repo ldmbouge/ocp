@@ -13,6 +13,7 @@
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
 #import "ORFloatLinear.h"
+#import <ORFoundation/ORVisit.h>
 
 @interface ORFloatLinearizer : ORVisitor<NSObject>
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model;

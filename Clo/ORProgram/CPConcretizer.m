@@ -15,6 +15,7 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>
+#import <ORFoundation/ORVisit.h>
 
 @implementation ORCPConcretizer
 

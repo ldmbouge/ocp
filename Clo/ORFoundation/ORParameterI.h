@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "ORParameter.h"
 #import "ORExprI.h"
-#import "ORVisit.h"
+#import <ORFoundation/ORVisit.h>
 
 @interface ORIntParamI : ORExprI<ORIntParam,NSCoding>
 -(ORIntParamI*) initORIntParamI: (id<ORTracker>) track initialValue: (ORInt)val;

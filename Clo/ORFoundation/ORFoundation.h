@@ -19,7 +19,6 @@
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORExpr.h>
-#import <ORFoundation/ORExprEval.h>
 #import <ORFoundation/ORControl.h>
 #import <ORFoundation/ORFunc.h>
 #import <ORFoundation/ORCommand.h>
@@ -30,7 +29,7 @@
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORConstraint.h>
-#import <ORFoundation/ORVisit.h>
+//#import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORVar.h>

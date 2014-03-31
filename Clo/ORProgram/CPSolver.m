@@ -1390,6 +1390,7 @@
     ORFloat v = [eval floatValue: e];
     [eval release];
     return v;
+}
 -(void)  assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
 {
    [_gamma[x.getId] assignRelaxationValue: f];
