@@ -177,7 +177,16 @@
       [_MIPsolver postConstraint:concreteCstr];
    }
 }
-
+-(void) visitGEqual: (id<ORLEqual>)c
+{
+    if (_gamma[c.getId]==NULL) {
+        MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
+        ORFloat    coef[2] = { [c coefLeft],- [c coefRight]};
+        MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:2 var:x coef:coef rhs:[c cst]];
+        _gamma[c.getId] = concreteCstr;
+        [_MIPsolver postConstraint:concreteCstr];
+    }
+}
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
@@ -209,6 +218,22 @@
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint: concreteCstr];
    }
+}
+-(void) visitLinearGeq: (id<ORLinearGeq>) c
+{
+    if (_gamma[c.getId] == NULL) {
+        id<ORVarArray> x = [c vars];
+        id<ORIntArray> a = [c coefs];
+        id<ORFloatArray> fa = [ORFactory floatArray:_program range:[a range] with:^ORFloat(ORInt k) {
+            return [a at:k];
+        }];
+        ORInt cst = [c cst];
+        [x visit: self];
+        id<MIPVariableArray> dx = _gamma[x.getId];
+        MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: dx coef: fa cst: -cst];
+        _gamma[c.getId] = concreteCstr;
+        [_MIPsolver postConstraint: concreteCstr];
+    }
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>)c
 {
