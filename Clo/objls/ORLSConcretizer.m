@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,6 +51,8 @@
    [x visit:self];
    return _gamma[x.getId];
 }
+
+// [pvh] this needs to be replaced with a real scaled view
 -(id) scaleVar:(id<ORVar>) x coef:(ORInt)a
 {
    [x visit:self];
@@ -101,6 +103,8 @@
 //   if (!_gamma[v.getId])
 //      _gamma[v.getId] = [LSFactory floatVar: _engine bounds: [v domain]];
 }
+
+// [pvh] this must be transformed into an affine view as well to allow for increase/decrease
 
 -(void) visitAffineVar:(id<ORIntVar>) v
 {

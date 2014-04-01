@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #import "LSAllDifferent.h"
 #import <objls/LSFactory.h>
 #import "LSEngineI.h"
+#import "LSGlobalInvariants.h"
 #import "LSCount.h"
 #import "LSIntVar.h"
 
@@ -104,6 +105,9 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
    _vv = [LSFactory intVarArray:_engine range:vals with:^id(ORInt i) {
       return [LSFactory intVar:_engine domain:cd];
    }];
+ //  id<LSIntVarArray> xe = [LSFactory intVarArray:_engine range:_x.range with:^id<LSIntVar>(ORInt i) {
+ //     return [LSFactory intVar:_engine domain:cd];
+ //  }];
    _xv = [LSFactory intVarArray:_engine range:_x.range with:^id<LSIntVar>(ORInt i) {
       return [LSFactory intVar:_engine domain:cd];
    }];
@@ -114,6 +118,9 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
    for (ORInt i=vals.low; i <= vals.up; ++i)
       [_engine add:[LSFactory inv:_vv[i] equal:^ { return max(0, [_c[i] value] - 1);} vars:@[_c[i]]]];
    [_engine add:[LSFactory sum: _sum over:_vv]];
+//   [_engine add:[LSFactory element:_x of:_vv is:xe]];
+//   for (ORInt i=_x.range.low; i <= _x.range.up; ++i)
+//      [_engine add:[LSFactory inv:_xv[i] equal:^ { return ([xe[i] value] >0);} vars:@[xe[i]]]];
    [_engine add:[LSFactory gelt:_engine x:_x card:_vv result:_xv]];
 }
 -(ORBool)isTrue
@@ -161,6 +168,7 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       return (c2 >= 1) - (c1 >= 2);
    }
 }
+// [pvh] no views in here which is strange. Also could delegate to deltaAssign which would be simpler.
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
    ORInt xid = getId(x);

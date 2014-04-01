@@ -23,6 +23,17 @@
 -(id<NSFastEnumeration>)outbound;
 @end
 
+@interface LSWeightedCount : LSPropagator {
+   id<LSIntVarArray>  _src;
+   id<LSIntVarArray>  _cnt;
+   id<ORIntArray>     _w;
+   id<ORIntArray>     _old;
+}
+-(id)init: (id<LSIntVarArray>) src weight: (id<ORIntArray>)w count:(id<LSIntVarArray>)cnt;
+-(void)post;
+-(id<NSFastEnumeration>)outbound;
+@end
+
 @interface LSInv : LSPropagator {  // x <- fun(src)
    NSArray* _src;
    ORInt (^_fun)();
@@ -58,20 +69,10 @@
 -(id<NSFastEnumeration>)outbound;
 @end
 
-@interface LSGElement : LSPropagator {  // y[i] = c[x[i]] \forall i \in D(x)
-   id<LSIntVarArray> _x;
-   id<LSIntVarArray> _c;
-   id<LSIntVarArray> _y;
-}
--(id)init:(id<LSEngine>)engine count:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y;
--(void)post;
--(id<NSFastEnumeration>)outbound;
-@end
 
 @interface LSFactory (LSGlobalInvariant)
 +(LSCount*)count:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c;
 +(LSInv*)inv:(id<LSIntVar>)x equal:(ORInt(^)())fun vars:(NSArray*)av;
 +(LSSum*)sum:(id<LSIntVar>)x over:(id<LSIntVarArray>)terms;
 +(LSScaledSum*)sum:(id<LSIntVar>)x is:(id<ORIntArray>)c times:(id<LSIntVarArray>)terms;
-+(LSGElement*)gelt:(id<LSEngine>)e x:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y;
 @end

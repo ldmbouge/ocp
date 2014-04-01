@@ -31,7 +31,14 @@ int main(int argc, const char * argv[])
          [model add:[ORFactory alldifferent:All(model, ORExpr, i, D, [x[i] sub:@(i)])]];
          id<LSProgram> ls = [ORFactory createLSProgram:model annotation:nil];
          __block ORInt it = 0;
+         
          [ls solve: ^{
+            
+            printf("Violations: %d \n",[ls violations]);
+            for(ORInt i = 1; i <= n; i++) {
+               printf("x[%d] = %d\n",i,[ls intValue:x[i]]);
+               printf("violations[%d] = %d\n",i,[ls getVarViolations: x[i]]);
+            }
             while ([ls violations] > 0 && it < 50 * n) {
                [ls selectMax:D orderedBy:^ORFloat(ORInt i) { return [ls getVarViolations:x[i]];} do:^(ORInt i) {
                   [ls selectMin: D orderedBy:^ORFloat(ORInt v) { return [ls deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {

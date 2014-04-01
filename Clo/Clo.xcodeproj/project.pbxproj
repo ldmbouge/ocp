@@ -1303,6 +1303,8 @@
 		B1CC833315D3BEEF008DE335 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1CC833415D3BEF8008DE335 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1CC833515D3BEFC008DE335 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		B1D065A818EA62F7001D6CB9 /* LSGlobalInvariants.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D065A618EA62F7001D6CB9 /* LSGlobalInvariants.h */; };
+		B1D065A918EA62F7001D6CB9 /* LSGlobalInvariants.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D065A718EA62F7001D6CB9 /* LSGlobalInvariants.m */; };
 		B1E1C78C17036D27006AACFC /* MIPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C78A17036D27006AACFC /* MIPSolverI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1E1C78D17036D27006AACFC /* MIPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C78B17036D27006AACFC /* MIPSolverI.m */; };
 		B1E1C79017036D4D006AACFC /* MIPGurobi.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C78E17036D4C006AACFC /* MIPGurobi.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -6306,6 +6308,8 @@
 		B1CC832415D3BEC4008DE335 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1CC832715D3BEC4008DE335 /* model-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "model-Prefix.pch"; sourceTree = "<group>"; };
 		B1CC832815D3BEC4008DE335 /* model.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = model.1; sourceTree = "<group>"; };
+		B1D065A618EA62F7001D6CB9 /* LSGlobalInvariants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSGlobalInvariants.h; sourceTree = "<group>"; };
+		B1D065A718EA62F7001D6CB9 /* LSGlobalInvariants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSGlobalInvariants.m; sourceTree = "<group>"; };
 		B1E1C78A17036D27006AACFC /* MIPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSolverI.h; sourceTree = "<group>"; };
 		B1E1C78B17036D27006AACFC /* MIPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSolverI.m; sourceTree = "<group>"; };
 		B1E1C78E17036D4C006AACFC /* MIPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPGurobi.h; sourceTree = "<group>"; };
@@ -9057,6 +9061,8 @@
 				5B19BEC418A916AC006CC213 /* LSObject.h */,
 				5B7C660718A581850077868F /* LSFactory.h */,
 				5B7C660818A581850077868F /* LSFactory.m */,
+				B1D065A618EA62F7001D6CB9 /* LSGlobalInvariants.h */,
+				B1D065A718EA62F7001D6CB9 /* LSGlobalInvariants.m */,
 				5BD792AA1857C129008DCF91 /* LSCount.h */,
 				5BD792AB1857C129008DCF91 /* LSCount.m */,
 				5BD7929C1857A7A6008DCF91 /* LSEngine.h */,
@@ -9950,6 +9956,7 @@
 				5B8D0E7518CE481C000C857D /* objls.h in Headers */,
 				5BD7929D1857A7A6008DCF91 /* LSEngine.h in Headers */,
 				5BD792A41857AE67008DCF91 /* LSPriority.h in Headers */,
+				B1D065A818EA62F7001D6CB9 /* LSGlobalInvariants.h in Headers */,
 				5BD792A81857BA3A008DCF91 /* LSPropagator.h in Headers */,
 				5B8D0E7318CE472E000C857D /* LSExactly.h in Headers */,
 				5B876B2E18AAAF8D006F6258 /* LSAllDifferent.h in Headers */,
@@ -13035,6 +13042,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1D065A918EA62F7001D6CB9 /* LSGlobalInvariants.m in Sources */,
 				5BD792AD1857C129008DCF91 /* LSCount.m in Sources */,
 				5BD792A51857AE67008DCF91 /* LSPriority.m in Sources */,
 				5BD792A11857A803008DCF91 /* LSIntVar.m in Sources */,

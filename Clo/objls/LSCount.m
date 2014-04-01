@@ -66,141 +66,59 @@
 }
 @end
 
-typedef struct LSEltNode {
-   ORInt _prev;
-   ORInt _next;
-} LSEltNode;
-
-// [pvh] This is not element; must be cleaned; it is element plus some tests > 0
-// [pvh] this is best decomposed into element and then a cardinality test
-
-@implementation LSGElement {
-   ORInt*         _head;
-   LSEltNode*     _lists;
-   ORInt          _vlb,_vub,_eol;
-   ORInt*         _delta;
-   ORInt          _ndelta;
-   id<ORIntArray> _oldx;
-}
--(id)init:(id<LSEngine>)engine count:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y
+@implementation LSWeightedCount
+-(id)init:(id<LSIntVarArray>)src weight: (id<ORIntArray>) w count:(id<LSIntVarArray>)cnt;
 {
-   self = [super initWith:engine];
-   _x = x;
-   _c = c;
-   _y = y;
+   id<LSEngine> engine = [src[src.range.low] engine];
+   self = [super initWith: engine];
+   _src = src;
+   _cnt = cnt;
+   _w = w;
+   _old = [ORFactory intArray:engine range:_src.range value:0];
    return self;
 }
--(void)setup
+-(void)dealloc
 {
-   id<ORIntRange> xr = [_x range];
-   _vlb = FDMAXINT;
-   _vub = FDMININT;
-   for(ORInt i=_x.low;i <= _x.up;i++) {
-      ORInt xil = [[_x[i] domain] low];
-      ORInt xiu = [[_x[i] domain] up];
-      _vlb = xil < _vlb ? xil : _vlb;
-      _vub = xiu > _vub ? xiu : _vub;
-   }
-   _head = malloc(sizeof(ORInt)*(_vub - _vlb+1));
-   memset(_head, 0, sizeof(ORInt)*(_vub - _vlb + 1));
-   _head -= _vlb;
-   _lists = malloc(sizeof(LSEltNode)*[xr size]);
-   memset(_lists,0,sizeof(LSEltNode)*[xr size]);
-   _lists -= xr.low;
-   _eol = xr.low - 1;
-   _delta = malloc(sizeof(ORInt)*(_vub - _vlb + 1));
-   _ndelta = 0;
+   NSLog(@"deallocating count %p",self);
+   [super dealloc];
 }
-void printLists(LSGElement* elt)
+-(void)define
 {
-   for(ORInt i= elt->_vlb;i <= elt->_vub;i++) {
-      ORInt cur = elt->_head[i];
-      printf("value(%d) : ",i);
-      while (cur != elt->_eol) {
-         printf("%d:<%d,%d> ",cur,elt->_lists[cur]._prev,elt->_lists[cur]._next);
-         cur = elt->_lists[cur]._next;
-      }
-      printf("\n");
-   }
-}
--(void)define  // y[i] = c[x[i]] > 0
-{
-   [self setup];
-   // [pvh] what to do when x changes
-   for(ORInt i=_x.low;i <= _x.up;i++)
-      [self addTrigger:[_x[i] addListener:self with:^{
-         ORInt oi = [_oldx at:i];
-         ORInt ni = _x[i].value;
-         //Remove node(i) from old list (oi)
-         if (_lists[i]._prev != _eol)
-            _lists[_lists[i]._prev]._next = _lists[i]._next;
-         else
-            _head[oi] = _lists[i]._next;
-         if (_lists[i]._next != _eol)
-            _lists[_lists[i]._next]._prev = _lists[i]._prev;
-         // Link node(i) in new list (ni)
-         assert(_head[ni] != i);
-         _lists[i]._next = _head[ni];
-         assert(_lists[i]._next != i);
-         _lists[i]._prev = _eol;
-         if (_head[ni]!=_eol)
-            _lists[_head[ni]]._prev = i;
-         _head[ni] = i;
-         // update _y[i] right away
-         [_y[i] setValue: _c[ni].value > 0];
-         // Fixup _oldx
-         [_oldx set:ni at:i];
+   for(ORInt i=_src.low;i <= _src.up;i++)
+      [self addTrigger:[_src[i] addListener:self with:^{
+         LSIntVar* vk = _src[i];
+         ORInt oi = [_old at:i];
+         [_cnt[oi] setValue: _cnt[oi].value - [_w at: i]];
+         [_cnt[vk.value] setValue: _cnt[vk.value].value + [_w at: i]];
+         [_old set:vk.value at:i];
       }]];
-   // [pvh] what to do when c changes
-   for(ORInt i=_c.low;i <= _c.up;i++)
-      [self addTrigger:[_c[i] addListener:self with:^{
-         _delta[_ndelta++] = i;
-      }]];
-   // [pvh] y is listening to the propaator
-   for(ORInt i=_y.low;i <= _y.up;i++)
-      [_y[i] addDefiner:self];
+   for(ORInt i=_cnt.low;i <= _cnt.up;i++)
+      [_cnt[i] addDefiner:self];
 }
 -(void)post
 {
-   _oldx = [ORFactory intArray:_engine range:[_x range] with:^ORInt(ORInt i) {
-      return _x[i].value;
-   }];
-   for(ORInt i=_x.low;i <= _x.up;i++)
-      [_y[i] setValue:_c[_x[i].value].value > 0];
-   // Initialize the variable list
-   for(ORInt i=_vlb;i <= _vub;i++)
-      _head[i] = _eol;
-   for(ORInt i=_x.low;i <= _x.up;i++) {
-      ORInt xiv = _x[i].value;
-      _lists[i]._prev = _eol;
-      _lists[i]._next = _head[xiv];
-      if (_head[xiv] != _eol)
-         _lists[_head[xiv]]._prev = i;
-      _head[xiv] = i;
+   for(ORInt i=_cnt.low;i <= _cnt.up;i++) {
+      LSIntVar* cardi = _cnt[i];
+      [cardi setValue:0];
+   }
+   for(ORInt i=_src.low;i <= _src.up;i++) {
+      LSIntVar* si = _src[i];
+      [_cnt[si.value] setValue: [_w at: i]];
+      [_old set:si.value at:i];
    }
 }
-// [pvh] propagate
+// [pvh] all is done in the closures
 -(void)execute
 {
-   id<LSIntVar>* xBase = (id*)[(id)_x base];
-   id<LSIntVar>* yBase = (id*)[(id)_y base];
-   for(ORInt k=0;k<_ndelta;k++) {
-      ORInt myList = _head[_delta[k]];
-      while(myList != _eol) {
-         [yBase[myList] setValue: getLSIntValue(_c[[xBase[myList] value]]) > 0];
-         myList = _lists[myList]._next;
-      }
-   }
-   _ndelta = 0;
 }
--(id<NSFastEnumeration>)outbound
+-(id<NSFastEnumeration>) outbound
 {
-   return _y;
+   return _cnt;
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<LSGElement(%p) : %d,%@>",self,_name,_rank];
+   [buf appendFormat:@"<LSCount(%p) : %d,%@>",self,_name,_rank];
    return buf;
 }
 @end
@@ -365,10 +283,5 @@ void printLists(LSGElement* elt)
    [[x engine] trackMutable:gi];
    return gi;
 }
-+(LSGElement*)gelt:(id<LSEngine>)e x:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c result:(id<LSIntVarArray>)y
-{
-   LSGElement* gi = [[LSGElement alloc] init:e count:x card:c result:y];
-   [e trackMutable:gi];
-   return gi;
-}
+
 @end

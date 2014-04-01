@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -78,7 +78,8 @@ typedef struct LSOccurrence {
       if (ck > 0) {
          low += ck * xl;
          up  += ck * xu;
-      } else {
+      }
+      else {
          low += ck * xu;
          up  += ck * xl;
       }
@@ -203,7 +204,8 @@ typedef struct LSOccurrence {
             gc[nbt] = ct;
             nbt++;
          }
-      } else {
+      }
+      else {
          LSGradient gt = [xt decrease:sk];
          if (gt._gt == LSGCst)
             gi -= gt._cg;
@@ -292,7 +294,8 @@ typedef struct LSOccurrence {
    ORInt xid = getId(x);
    if (_sb.min <= xid && xid <= _sb.max)
       return _vv[getId(x)].value;
-   else return 0;
+   else
+      return 0;
 }
 -(id<LSIntVar>)violations
 {
