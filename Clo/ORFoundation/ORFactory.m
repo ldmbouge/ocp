@@ -22,6 +22,8 @@
 #import "ORTrailI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
+#import "ORParameterI.h"
+
 
 @implementation ORFactory
 +(void) shutdown
@@ -79,6 +81,19 @@
 {
    ORMutableIntegerI* o = [[ORMutableIntegerI alloc] initORMutableIntegerI: tracker value:value];
    [tracker trackMutable: o];
+   return o;
+}
+
++(id<ORIntParam>) intParam:(id<ORTracker>)tracker initially:(ORInt)v
+{
+   ORIntParamI* o = [[ORIntParamI alloc] initORIntParamI:tracker initialValue:v];
+   [tracker trackMutable:o];
+   return o;
+}
++(id<ORFloatParam>) floatParam:(id<ORTracker>)tracker initially:(ORFloat)v
+{
+   ORFloatParamI* o = [[ORFloatParamI alloc] initORFloatParamI:tracker initialValue:v];
+   [tracker trackMutable:o];
    return o;
 }
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value
@@ -1216,6 +1231,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) assignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost
 {
    id<ORConstraint> o = [[ORAssignmentI alloc] initORAssignment:x matrix:matrix cost:cost];
+   [[x tracker] trackObject:o];
+   return o;
+}
+
++(id<ORConstraint>) weightedVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x
+{
+   id<ORConstraint> o = [[ORFloatWeightedVarI alloc] initVar:z equal:p times:x];
    [[x tracker] trackObject:o];
    return o;
 }

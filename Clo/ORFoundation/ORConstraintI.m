@@ -2757,6 +2757,14 @@
    id<ORVar> _z;
    id<ORParameter> _lambda;
 }
+-(id)initVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _z = z;
+   _lambda = p;
+   return self;
+}
 -(ORFloatWeightedVarI*) initFloatWeightedVar: (id<ORVar>)x
 {
    self = [super initORConstraintI];

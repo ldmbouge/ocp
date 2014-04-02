@@ -13,12 +13,11 @@
     id<ORTracker>  _tracker;
     ORInt _val;
 }
--(ORIntParamI*) initORIntParamI: (id<ORTracker>) track initialValue:(ORInt)val
+-(id) initORIntParamI: (id<ORTracker>) track initialValue:(ORInt)val
 {
     self = [super init];
     _tracker = track;
     _val = val;
-    [track trackMutable: self];
     return self;
 }
 -(void) dealloc
@@ -62,12 +61,11 @@
     id<ORTracker>  _tracker;
     ORFloat _val;
 }
--(ORFloatParamI*) initORFloatParamI: (id<ORTracker>) track initialValue:(ORFloat)val
+-(id) initORFloatParamI: (id<ORTracker>) track initialValue:(ORFloat)val
 {
     self = [super init];
     _tracker = track;
     _val = val;
-    [track trackMutable: self];
     return self;
 }
 -(void) dealloc

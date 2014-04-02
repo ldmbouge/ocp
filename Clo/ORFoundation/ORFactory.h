@@ -16,7 +16,6 @@
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORAnnotation.h>
-//#import "ORConstraintI.h"
 
 @protocol ORSearchEngine;
 @protocol ORSearchController;
@@ -25,6 +24,8 @@
 @protocol ORTRIntArray;
 @protocol ORTRIntMatrix;
 @protocol ORAutomaton;
+@protocol ORIntParam;
+@protocol ORFloatParam;
 
 @interface ORFactory : NSObject
 +(void) shutdown;
@@ -45,6 +46,8 @@
 +(id<ORIntSet>) intSet:(id<ORTracker>) tracker set:(NSSet*)theSet;
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
 +(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker low:(ORFloat)low up:(ORFloat) up;
++(id<ORIntParam>) intParam:(id<ORTracker>)tracker initially:(ORInt)v;
++(id<ORFloatParam>) floatParam:(id<ORTracker>)tracker initially:(ORFloat)v;
 
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
@@ -234,6 +237,7 @@
 +(id<ORConstraint>) tableConstraint: (id<ORTracker>)model table:(id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
 +(id<ORConstraint>) assignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
 +(id<ORConstraint>) regular:(id<ORIntVarArray>) x for:(id<ORAutomaton>)a;
++(id<ORConstraint>) weightedVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x;
 @end
 
 @interface ORFactory (ORFloat)

@@ -127,7 +127,7 @@
          [left scaleBy:[[e right] min]];
          [_terms addLinear:left];
       } else {
-         id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e];
+         id<ORFloatVar> alpha =  [ORNormalizer floatVarIn:_model expr:e];
          [_terms addTerm:alpha by:1];
       }
    }
@@ -295,6 +295,30 @@
    [terms postEQZ:_model affineOk:NO];
    [terms release];
 }
+/*
+-(void) visitExprMulI: (ORExprMulI*) e
+{
+   id<ORFloatLinear> lT = [ORNormalizer floatLinearFrom:[e left] model:_model];
+   id<ORFloatLinear> rT = [ORNormalizer floatLinearFrom:[e right] model:_model];
+   id<ORFloatVar> lV = [ORNormalizer floatVarIn:lT for:_model];
+   id<ORFloatVar> rV = [ORNormalizer floatVarIn:rT for:_model];
+   ORFloat llb = [[lV domain] low];
+   ORFloat lub = [[lV domain] up];
+   ORFloat rlb = [[rV domain] low];
+   ORFloat rub = [[rV domain] up];
+   ORFloat a = minOf(llb * rlb,llb * rub);
+   ORFloat b = minOf(lub * rlb,lub * rub);
+   ORFloat lb = minOf(a,b);
+   ORFloat c = maxOf(llb * rlb,llb * rub);
+   ORFloat d = maxOf(lub * rlb,lub * rub);
+   ORFloat ub = maxOf(c,d);
+   if (_rv==nil)
+      _rv = [ORFactory floatVar:_model domain: RANGE(_model,bindDown(lb),bindUp(ub))];
+   [_model addConstraint: [ORFactory mult:_model var:lV by:rV equal:_rv]];
+   [lT release];
+   [rT release];
+}
+*/
 -(void) visitExprSquareI:(ORExprSquareI *)e
 {
    id<ORFloatLinear> lT = [ORNormalizer floatLinearFrom:[e operand] model:_model];

@@ -610,6 +610,7 @@
       _nb *= _size[k];
    }
    _flat = malloc(sizeof(id)*_nb);
+   memset(_flat,0,sizeof(id)*_nb);
    return self;
 }
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker with: (ORIdMatrixI*) matrix

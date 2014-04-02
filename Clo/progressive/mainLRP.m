@@ -74,19 +74,39 @@ int main(int argc, const char * argv[])
          ORLong startTime = [ORRuntimeMonitor cputime];
          id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntVarMatrix> boat = [ORFactory intVarMatrix:mdl range:Guests :Periods domain: Hosts];
+         id<ORIntVarMatrix> d    = [ORFactory intVarMatrix:mdl range:Guests :Guests domain:RANGE(mdl,-1,[Periods size])];
+         id<ORIdMatrix>        p = [ORFactory idMatrix:mdl range:Guests :Guests];
+         id<ORFloatVarArray>   z = [ORFactory floatVarArray:mdl range:RANGE(mdl,0,[Guests size] * ([Guests size] -1)/2 - 1) low:FDMININT up:FDMAXINT];
+         NSLog(@"p is %@",p);
+         ORInt o = 0;
+         for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++) {
+            for(ORInt g2 = Guests.low; g2 <= g1; g2++) {
+               [mdl add:[[d at:g1 :g2] eq:@0]];
+               [p set:[ORFactory floatParam:mdl initially:0.0] at:g1 :g2];
+            }
+            
+            for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
+               id<ORFloatParam> fp = nil;
+               [p set:fp = [ORFactory floatParam:mdl initially:1] at:g1 :g2];
+               [mdl add: [[d at:g1 :g2] eq: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) sub: @1]]];
+               [mdl add: [ORFactory weightedVar:z[o++] equal:fp times:[d at:g1 :g2]]];
+            }
+         }
+         [mdl minimize:Sum(mdl, k, z.range, z[k])];
+                   
          for(ORInt g = Guests.low; g <= Guests.up; g++)
             [notes dc:[mdl add: [ORFactory alldifferent: All(mdl,ORIntVar, p, Periods, [boat at:g :p]) ]]];
-         for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
-            for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++)
-               [mdl add: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leq: @1]];
+         
+//         for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
+//            for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++)
+//               [mdl add: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leq: @1]];
+         
          for(ORInt p = Periods.low; p <= Periods.up; p++) {
             [mdl add: [ORFactory packing:mdl item:All(mdl,ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
-//            for(ORInt h=Hosts.low ; h <= Hosts.up; h++)
-//               [mdl add:[Sum(mdl, g, Guests, [[[boat at:g :p] eq:@(h)] mul: @([crew at:g])]) leq:@([cap at:h])]];
          }
          
+         
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
-//         id<CPHeuristic> hr = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:boat]];
          ORFloat rate = [args restartRate];
          __block ORInt lim = ((ORInt)rate==0) ? FDMAXINT : ([Guests size] * [Periods size] * 3);
          NSLog(@"The limit starts at: %d  (%f)",lim,rate);
@@ -108,18 +128,9 @@ int main(int argc, const char * argv[])
             }];
             */
             for(ORInt p = Periods.low; p <= Periods.up; p++) {
-//               id<ORIntVarArray> slice = [ORFactory intVarArray:cp range:Guests with:^id<ORIntVar>(ORInt g) {
-//                  return [boat at:g :p];
-//               }];
-//               [cp labelHeuristic:hr restricted:slice];
-               
                [cp forall:Guests suchThat:^bool(ORInt g) { return ![cp bound:[boat at:g :p]];}
                 orderedBy: nil // ^ORInt(ORInt g) { return [cp domsize:[boat at:g :p]];}
                        do:^(ORInt g) {
-//                          for(ORInt k=Guests.low;k <= Guests.up;k++) {
-//                             printf("%c%d,%d : %2d |",k==g ? '*' : ' ',k,p,[cp domsize:[boat at:k :p]]);
-//                          }
-//                          printf("\n");
                           [cp tryall:Hosts suchThat:^bool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
                                   in:^(ORInt h) {
                                      [cp label:[boat at:g :p] with:h];
@@ -129,11 +140,6 @@ int main(int argc, const char * argv[])
                            }];
                        }];
                
-               // This search is 'weaker' (30,000 choices rather than ~ 5,000  on 6,1,9
-               /*
-                [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; } ]
-                orderedBy: ^ORInt(ORInt g) { return [[boat at:g : p] domsize];}
-                ];*/
             }
             ORLong endTime = [ORRuntimeMonitor cputime];
             
@@ -148,58 +154,17 @@ int main(int argc, const char * argv[])
                NSLog(@"%@",line);
                [line release];
             }
+            for(ORInt g1=Guests.low;g1 <= Guests.up;g1++) {
+               for(ORInt g2=Guests.low;g2 <= Guests.up;g2++) {
+                  printf("%2d  ",[cp intValue:[d at:g1 :g2]]);
+               }
+               printf("\n");
+            }
+            
+            
+            
             NSLog(@"Execution Time: %lld \n",endTime - startTime);
-            
-            int use[14];
-            for(ORInt p = Periods.low; p <= Periods.up; p++) {
-               for(ORInt h = 1; h <= 13; h++)
-                  use[h] = 0;
-               
-               for(ORInt g = Guests.low; g <= Guests.up; g++)
-                  use[[cp intValue:[boat at: g : p]]] += [crew at: g];
-               for(ORInt h = 1; h <= 13; h++)
-                  if (use[h] > [cap at: h]) {
-                     printf("Bad capacity at %d - %d: %d instead of %d \n",p,h,use[h],[cap at: h]);
-                     abort();
-                  }
-            }
-            for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++) {
-               for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-                  ORInt nbEq = 0;
-                  for(ORInt p=Periods.low;p <= Periods.up;p++) {
-                     nbEq += [cp intValue:[boat at: g1 : p]] == [cp intValue:[boat at: g2 :p]];
-                     if (nbEq >= 2) {
-                        NSLog(@"Violation of social: g1=%d g2=%d p=%d  %@   -  %@",g1,g2,p,[boat at:g1:p],[boat at:g2 :p]);
-                        abort();
-                     }
-                  }
-                  assert (nbEq <= 1);
-               }
-            }
-            
-            for(ORInt g = Guests.low; g <= Guests.up; g++) {
-               for(ORInt p1 = Periods.low; p1 <= Periods.up; p1++)
-                  for(ORInt p2 = p1 + 1; p2 <= Periods.up; p2++) {
-                     if ([cp intValue:[boat at: g : p1]] == [cp intValue:[boat at: g : p2]]) {
-                        printf("boat[%d,%d] = %d and boat[%d,%d] = %d \n",g,p1,g,p2,[cp intValue:[boat at:g : p1]],[cp intValue:[boat at: g : p2]]);
-                        printf("all different is wrong \n");
-                        abort();
-                     }
-                  }
-            }
-            
-            for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
-               for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-                  ORInt s = 0;
-                  for(ORInt p = Periods.low; p <= Periods.up; p++)
-                     s += [cp intValue:[boat at: g1 : p]] == [cp intValue:[boat at:g2 : p]];
-                  if (s > 1) {
-                     printf("guest %d and guest %d \n",g1,g2);
-                     printf("social constraint is wrong \n");
-                     abort();
-                  }
-               }
-            //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+            NSLog(@"Objective: %@",[[cp objective] value]);
          }
           ];
          NSLog(@"Solver status: %@\n",cp);

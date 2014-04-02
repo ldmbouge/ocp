@@ -399,6 +399,7 @@
 @end
 
 @interface ORFloatWeightedVarI : ORConstraintI<ORWeightedVar>
+-(id)initVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x;
 -(ORFloatWeightedVarI*) initFloatWeightedVar: (id<ORVar>)x;
 -(id<ORVar>) z;
 -(id<ORVar>)x;
