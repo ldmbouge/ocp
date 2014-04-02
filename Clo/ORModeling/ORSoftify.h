@@ -17,3 +17,5 @@
 -(id<ORParameterizedModel>)target;
 @end
 
+@interface ORViolationSoftify : ORSoftify
+@end

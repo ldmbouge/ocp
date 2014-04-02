@@ -219,7 +219,7 @@ static void heapify(ORPQueue* pq,ORInt i)
 
 @property(readonly) NSSet* vertices;
 @property(readwrite) BOOL isTouched;
-@property(readwrite) id object;
+@property(assign) id object;
 
 -(id) initWithVertices: (NSSet*)vertices;
 @end
@@ -317,9 +317,7 @@ static void heapify(ORPQueue* pq,ORInt i)
 
 -(id<ORParameterizedModel>) apply: (id<ORModel>)m relaxing: (NSArray*)cstrs
 {
-    ORSoftify* softify = [[ORSoftify alloc] initORSoftify];
-    [softify apply: m toConstraints: cstrs];
-    id<ORParameterizedModel> relaxedModel = [softify target];
+    id<ORParameterizedModel> relaxedModel = [self softify: m constraints: cstrs];
     id<ORIntRange> slackRange = RANGE(relaxedModel, 0, (ORInt)cstrs.count-1);
     id<ORIdArray> slacks = [ORFactory idArray:  relaxedModel range: slackRange with: ^id(ORInt i) {
         id<ORSoftConstraint> c = [[relaxedModel tau] get: [cstrs objectAtIndex: i]];
@@ -334,6 +332,13 @@ static void heapify(ORPQueue* pq,ORInt i)
     if(prevObjective) [relaxedModel minimize: [prevObjective plus: slackSum track: relaxedModel]]; // Changed sub to plus
     else [relaxedModel minimize: slackSum];
     [relaxedModel setSource: m];
+    return relaxedModel;
+}
+
+-(id<ORParameterizedModel>) softify: (id<ORModel>)m constraints: (NSArray*) cstrs {
+    ORSoftify* softify = [[ORSoftify alloc] initORSoftify];
+    [softify apply: m toConstraints: cstrs];
+    id<ORParameterizedModel> relaxedModel = [softify target];
     return relaxedModel;
 }
 
@@ -416,4 +421,22 @@ static void heapify(ORPQueue* pq,ORInt i)
     return G;
 }
 
+@end
+
+@implementation ORLagrangianViolationTransform
+-(id<ORParameterizedModel>) softify: (id<ORModel>)m constraints: (NSArray*) cstrs {
+    ORViolationSoftify* softify = [[ORViolationSoftify alloc] initORSoftify];
+    [softify apply: m toConstraints: cstrs];
+    id<ORParameterizedModel> relaxedModel = [softify target];
+    return relaxedModel;
+}
+@end
+
+@implementation ORFactory (ORLagrangianTransform)
++(ORLagrangianTransform*) lagrangianTransform {
+    return [[ORLagrangianTransform alloc] init];
+}
++(ORLagrangianTransform*) lagrangianViolationTransform {
+    return [[ORLagrangianViolationTransform alloc] init];
+}
 @end

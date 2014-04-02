@@ -11,13 +11,43 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORRunnablePiping.h>
 
+@protocol ORLagrangeRelax <ORRunnable>
+-(void) setUpperBound: (ORFloat)upperBound;
+-(ORFloat) upperBound;
+-(ORFloat) bestBound;
+-(id<ORSolution>) bestSolution;
+@end
 
-@interface ORLagrangeRelax : ORPipedRunnable<NSObject>
--(id) initWithModel: (id<ORParameterizedModel>)m;
--(id) initWithModel:(id<ORParameterizedModel>)m withSurrogateSplit: (NSArray*)split;
+@interface ORSubgradientTemplate : ORPipedRunnable<ORLagrangeRelax, ORLowerBoundStreamProducer>
+-(id) initSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat) ub;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
+-(void) setSolverTimeLimit: (ORFloat)limit;
 -(ORFloat) bestBound;
 -(id<ORSolution>) bestSolution;
+-(void) setUpperBound: (ORFloat)upperBound;
+-(ORFloat) upperBound;
+@end
+
+@interface ORSurrogateTemplate : ORSubgradientTemplate
+-(id) initWithSurrogate:(id<ORParameterizedModel>)m bound: (ORFloat) ub;
+@end
+
+@interface MIPSubgradient : ORSubgradientTemplate
+@end
+
+@interface CPSubgradient : ORSubgradientTemplate
+@end
+
+@interface MIPSurrogate : ORSurrogateTemplate
+@end
+
+@interface CPSurrogate : ORSurrogateTemplate
+@end
+
+@interface ORFactory(ORLagrangeRelax)
++(id<ORLagrangeRelax>) MIPSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat)ub;
++(id<ORLagrangeRelax>) CPSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat)ub;
++(id<ORLagrangeRelax>) MIPSurrogate: (id<ORParameterizedModel>)m bound: (ORFloat)ub;
 @end

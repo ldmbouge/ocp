@@ -23,54 +23,10 @@
 #import <ORProgram/ORColumnGeneration.h>
 #import <ORProgram/LPRunnable.h>
 #import <ORProgram/CPRunnable.h>
+#import <ORProgram/ORPipeLogger.h>
 #import <ORProgram/ORLagrangeRelax.h>
 #import <ORProgram/ORLagrangianTransform.h>
 #import "SetCoveringInstanceParser.h"
-
-NSArray* autosplit(NSArray* vars, NSArray* cstrs) {
-   if([vars count] <= 2) return [NSArray arrayWithObject: [NSSet setWithArray: vars]];
-   
-   // Partition variables
-   NSSet* allVars = [NSSet setWithArray: vars];
-   NSMutableSet* splitSet = [NSMutableSet setWithObject: [vars firstObject]];
-   BOOL changed = YES;
-   while (changed) {
-      changed = NO;
-      for(id<ORConstraint> c in cstrs) {
-         NSMutableSet* cstrVars = [[c allVars] mutableCopy];
-         [cstrVars intersectSet: allVars];
-         if([splitSet intersectsSet: cstrVars]) {
-            NSInteger oldCount = [splitSet count];
-            NSArray* varArray = [cstrVars allObjects];
-            [splitSet addObjectsFromArray: varArray];
-            [varArray release];
-            if([splitSet count] > oldCount) changed = YES;
-         }
-      }
-   }
-   
-   // Partition failed, return everything
-   if([vars count] - [splitSet count] <= 1) {
-      [splitSet release];
-      return [NSArray arrayWithObject: [NSSet setWithArray: vars]];
-   }
-   
-   // Recursively partition
-   NSArray* split0 = [splitSet allObjects];
-   NSMutableArray* split1 = [vars mutableCopy];
-   [split1 removeObjectsInArray: split0];
-   [splitSet release];
-   
-   NSMutableArray* res = [[NSMutableArray alloc] initWithCapacity: 32];
-   NSArray* r0 = autosplit(split0, cstrs);
-   [res addObjectsFromArray: r0];
-   [r0 release];
-   NSArray* r1 = autosplit(split1, cstrs);
-   [res addObjectsFromArray: r1];
-   [r1 release];
-   
-   return res;
-}
 
 int main (int argc, const char * argv[])
 {
@@ -104,11 +60,13 @@ int main (int argc, const char * argv[])
    NSMutableArray* coupled = [[NSMutableArray alloc] initWithCapacity: 50];
    for(int i = 0; i < coupledCount; i++) [coupled addObject: [cstrs objectAtIndex: cstrs.count-i-1]];
    
-   ORLagrangianTransform* t = [[ORLagrangianTransform alloc] init];
+   ORLagrangianTransform* t = [ORFactory lagrangianTransform];
    id<ORParameterizedModel> lagrangeModel = [t apply: m relaxing: coupled];
    
-   NSArray* split = autosplit([s toNSArray], [lagrangeModel hardConstraints]);
-   id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel]; //withSurrogateSplit: split];
+    id<ORRunnable> lr = [ORFactory MIPSubgradient: lagrangeModel bound: 342];
+    [[(id<ORLowerBoundStreamProducer>)lr lowerBoundStreamInformer] wheneverNotifiedDo: ^(ORFloat lb) {
+        NSLog(@"LOG: %f", lb);
+    }];
    [lr run];
 
 //   id<ORRunnable> r = [ORFactory MIPRunnable: m];

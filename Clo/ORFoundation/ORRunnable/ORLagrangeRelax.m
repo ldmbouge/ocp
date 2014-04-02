@@ -149,53 +149,51 @@
 @end
 
 
-@interface ORLagrangeRelax(Private)
--(NSArray*) constraintsForPartition: (NSUInteger) splitIdx;
--(id<ORSolution>) lagrangianSubgradientSolve: (ORFloat)ub;
--(id<ORSolution>) lagrangianSurrogateSolve: (ORFloat)ub;
--(id<ORWeightedVar>) weightedVarForSlack: (id<ORVar>)slack;
+@interface ORSubgradientTemplate(Private)
+-(id) solverForModel: (id<ORModel>)m;
+-(void) solveIt: (id)solver;
 @end
 
-@implementation ORLagrangeRelax {
+@implementation ORSubgradientTemplate {
 @protected
     id<ORParameterizedModel> _model;
     id<ORSolution> _bestSolution;
+    ORFloat _ub;
     id<ORSignature> _sig;
-    
-    // Surrogate
-    BOOL _isSurrogate;
-    NSMutableArray* _split;
-    NSMutableSet* _surrogateBranchVars;
-    NSMapTable* _lambdaMap;
+    ORFloat _solverTimeLimit;
 }
 
--(id) initWithModel: (id<ORParameterizedModel>)m
+-(id) initSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat) ub
 {
-    self = [super init];
+    self = [super initWithModel: m];
     if(self) {
         _model = m;
         _sig = nil;
+        _ub = ub;
         _bestSolution = nil;
-        _isSurrogate = NO;
-        _split = nil;
+        _solverTimeLimit = -DBL_MAX;
     }
     return self;
 }
 
--(id) initWithModel:(id<ORParameterizedModel>)m withSurrogateSplit: (NSArray*)split {
-    self = [self initWithModel: m];
-    _isSurrogate = YES;
-    _split = [split mutableCopy];
-    _surrogateBranchVars = [[NSMutableSet alloc] initWithCapacity: 256];
-    for(NSSet* s in _split) [_surrogateBranchVars unionSet: s];
-    _lambdaMap = [[NSMapTable alloc] init];
-    return self;
+-(void) setSolverTimeLimit: (ORFloat)limit {
+    _solverTimeLimit = limit;
 }
 
--(id<ORSolution>) lagrangianSubgradientSolve: (ORFloat)ub {
+-(id) solverForModel: (id<ORModel>)m {
+    [NSException raise: @"Abstract Method" format: @"Tried to call an abstract method"];
+    return nil;
+}
+
+-(void) solveIt: (id)solver {
+    [NSException raise: @"Abstract Method" format: @"Tried to call an abstract method"];
+}
+
+-(id<ORSolution>) lagrangianSubgradientSolve {
     ORFloat pi = 2.0f;
     ORFloat bestBound = -DBL_MAX;
     ORFloat bestSlack = DBL_MAX;
+    __block ORFloat slackSum = 0.0;
     id<ORSolution> bestSol = nil;
     
     NSArray* softCstrs = [_model softConstraints];
@@ -218,38 +216,29 @@
         return [w weight];
     }];
     
-    id<MIPProgram> program = [ORFactory createMIPProgram: _model];
-    [program close];
-//    id<CPProgram> program = [ORFactory createCPProgram: _model];
-//    id<CPHeuristic> h = [program createFF];
-    
-    ORFloat cutoff = 0.005;
-    ORInt noImproveLimit = 3;//30;
+    id<MIPProgram> program = [self solverForModel: _model];
+    ORFloat cutoff = 0.0005;
+    ORInt noImproveLimit = 30;//30;
     ORInt noImprove = 0;
     ORFloat timeLimit = 2.0;
     
     while(pi > cutoff) {
         [[program solutionPool] emptyPool];
-        [program setTimeLimit: timeLimit];
-        [program solve];
-        
-//        [program solve: ^{
-//            [program labelHeuristic: h];
-//            NSLog(@"Got an improvement... %@",[[program objective] value]);
-//        } ];
+        if(_solverTimeLimit > 0.0 && [program respondsToSelector: @selector(setTimeLimit:)])
+            [program setTimeLimit: timeLimit];
+        [self solveIt: program];
 
         id<ORSolution> sol = [[program solutionPool] best];
-        NSLog(@"BEST is: %@",sol);
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
         ORFloat bound = [program bestObjectiveBound];
         
-        __block ORFloat slackSum = 0.0;
+        slackSum = 0.0;
         [slacks enumerateWith:^(id<ORFloatVar> obj, ORInt idx) {
             double s = [sol floatValue: obj];
             slackSum += s * s;
         }];
         
-        ORFloat stepSize = pi * (ub - [objValue value]) / slackSum;
+        ORFloat stepSize = pi * (_ub - [objValue value]) / slackSum;
         
         [lambdas enumerateWith:^(id obj, ORInt idx) {
             id<ORFloatParam> lambda = obj;
@@ -257,42 +246,148 @@
             id<ORFloatVar> slack = [slacks at: idx];
             ORFloat newValue = MAX(0, value + stepSize * [sol floatValue: slack]);
             [program paramFloat: lambda setValue: newValue];
-            NSLog(@"New lambda is[%i]: %lf", idx, newValue);
+            //NSLog(@"New lambda is[%i]: %lf", idx, newValue);
         }];
         
-        NSLog(@"objective: %f", [objValue value]);
-        NSLog(@"slack: %f", slackSum);
-        
         // Check for improvement
-        NSLog(@"obj: %@, %f", objValue, bestBound);
         if(bound > bestBound) {//if([objValue floatValue] > bestBound) {
-            bestBound = bound;//[objValue floatValue];
+            bestBound = bound;
             bestSol = sol;
             bestSlack = slackSum;
             noImprove = 0;
-            //if(timeLimit > 2) timeLimit /= 2;
+            [self notifyLowerBound: bestBound];
+            [ORConcurrency pumpEvents];
+            NSLog(@"slack sum: %f", slackSum);
+            NSLog(@"new bound: %f", bestBound);
         }
-        else if(++noImprove > noImproveLimit) {
-            pi /= 2.0;
-            noImprove = 0;
-        }
-        else {
-            timeLimit *= 2;
-        }
+        else if(++noImprove > noImproveLimit) { pi /= 2.0; noImprove = 0; }
+        else { timeLimit *= 2; }
         
         // Check if done
-        NSLog(@"slack sum: %f", slackSum);
         if(fabs(slackSum) < 1.0e-3) break;
     }
+    NSLog(@"Best Solution: %@", bestSol);
+    NSLog(@"remaining slack: %f", slackSum);
     return bestSol;
 }
 
+-(id<ORSignature>) signature
+{
+    if(_sig == nil) {
+        _sig = [ORFactory createSignature: @"complete.columnIn"];
+    }
+    return _sig;
+}
+
+-(id<ORModel>) model
+{
+    return _model;
+}
+
+-(void) run
+{
+    _bestSolution = [self lagrangianSubgradientSolve];
+}
+
+-(ORFloat) bestBound
+{
+    if(!_bestSolution) return DBL_MIN;
+    id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[_bestSolution objectiveValue];
+    return [objValue floatValue];
+}
+
+-(id<ORSolution>) bestSolution
+{
+    return _bestSolution;
+}
+
+-(void) setUpperBound: (ORFloat)upperBound
+{
+    _ub = upperBound;
+}
+
+-(ORFloat) upperBound
+{
+    return _ub;
+}
+
+@end
+
+@interface ORSurrogateTemplate(Private)
+-(NSMutableArray*) autosplitVariables: (NSArray*)vars constraints: (NSArray*)cstrs;
+-(NSArray*) constraintsForPartition: (NSUInteger) splitIdx;
+-(id<ORSolution>) lagrangianSubgradientSolve: (ORFloat)ub;
+-(id<ORSolution>) lagrangianSurrogateSolve: (ORFloat)ub;
+-(id<ORWeightedVar>) weightedVarForSlack: (id<ORVar>)slack;
+@end
+
+@implementation ORSurrogateTemplate {
+@protected
+    NSMutableArray* _split;
+    NSSet* _surrogateBranchVars;
+    NSMapTable* _lambdaMap;
+}
+
+-(id) initWithSurrogate:(id<ORParameterizedModel>)m bound: (ORFloat) ub
+{
+    self = [self initSubgradient: m bound: ub];
+    _surrogateBranchVars = [[self computeBranchVars] mutableCopy];
+    _split = [self autosplitVariables: [_surrogateBranchVars allObjects] constraints: [m hardConstraints]];
+    _lambdaMap = [[NSMapTable alloc] init];
+    return self;
+}
+
+-(NSMutableArray*) autosplitVariables: (NSArray*)vars constraints: (NSArray*)cstrs {
+    if([vars count] <= 2) return [NSMutableArray arrayWithObject: [NSSet setWithArray: vars]];
+    
+    // Partition variables
+    NSSet* allVars = [NSSet setWithArray: vars];
+    NSMutableSet* splitSet = [NSMutableSet setWithObject: [vars firstObject]];
+    BOOL changed = YES;
+    while (changed) {
+        changed = NO;
+        for(id<ORConstraint> c in cstrs) {
+            NSMutableSet* cstrVars = [[c allVars] mutableCopy];
+            [cstrVars intersectSet: allVars];
+            if([splitSet intersectsSet: cstrVars]) {
+                NSInteger oldCount = [splitSet count];
+                NSArray* varArray = [cstrVars allObjects];
+                [splitSet addObjectsFromArray: varArray];
+                [varArray release];
+                if([splitSet count] > oldCount) changed = YES;
+            }
+        }
+    }
+    
+    // Partition failed, return everything
+    if([vars count] - [splitSet count] <= 1) {
+        [splitSet release];
+        return [NSMutableArray arrayWithObject: [NSSet setWithArray: vars]];
+    }
+    
+    // Recursively partition
+    NSArray* split0 = [splitSet allObjects];
+    NSMutableArray* split1 = [vars mutableCopy];
+    [split1 removeObjectsInArray: split0];
+    [splitSet release];
+    
+    NSMutableArray* res = [[NSMutableArray alloc] initWithCapacity: 32];
+    NSMutableArray* r0 = [self autosplitVariables: split0 constraints: cstrs];
+    [res addObjectsFromArray: r0];
+    [r0 release];
+    NSMutableArray* r1 = [self autosplitVariables: split1 constraints: cstrs];
+    [res addObjectsFromArray: r1];
+    [r1 release];
+
+    return res;
+}
+
 -(NSSet*) updateLambdas: (id<ORIdArray>) lambdas
-                  values: (NSMapTable*)values
-              withSlacks: (id<ORIdArray>)slacks
-             solution: (id<ORSolution>)sol
-                bound: (ORFloat)bound
-                   pi: (ORFloat)pi {
+                 values: (NSMapTable*)values
+                withSlacks: (id<ORIdArray>)slacks
+               solution: (id<ORSolution>)sol
+                  bound: (ORFloat)bound
+                     pi: (ORFloat)pi {
     NSMutableSet* modifiedProblems = [[NSMutableSet alloc] init];
     __block ORFloat slackSum = 0.0;
     [slacks enumerateWith:^(id<ORFloatVar> obj, ORInt idx) {
@@ -321,7 +416,7 @@
     }];
     return modifiedProblems;
 }
-
+    
 -(id<ORSolution>) runAllProblems: (id<ORParameterizedModel>)m solver: (id<MIPProgram>)program withIncumbents: (NSMapTable*)incumbents {
     for(id<ORIntVar> v in _surrogateBranchVars) {
         NSNumber* value = [incumbents objectForKey: v];
@@ -339,7 +434,7 @@
     return sol;
 }
 
--(id<ORSolution>) lagrangianSurrogateSolve: (ORFloat)ub {
+-(id<ORSolution>) lagrangianSurrogateSolve {
     NSMapTable* incumbents = [[NSMapTable alloc] init];
     NSMapTable* lambdaValues = [[NSMapTable alloc] init];
     
@@ -351,12 +446,10 @@
         [subproblems addObject: m];
     }
     
-    ORFloat bestSlackSum = DBL_MAX;
     ORFloat pi = 1.0f;
     ORFloat bestBound = -DBL_MAX;
-    ORFloat bestSlack = DBL_MAX;
     id<ORSolution> bestSol = nil;
-
+    
     // Get slacks
     NSArray* softCstrs = [_model softConstraints];
     id<ORIntRange> slackRange = RANGE(_model, 0, (ORInt)softCstrs.count-1);
@@ -378,16 +471,15 @@
     id<ORSolution> allsol = [self runAllProblems: _model solver: program withIncumbents: incumbents];
     for(id<ORIntVar> x in _surrogateBranchVars) [incumbents setObject: @([allsol intValue: x]) forKey: x];
     
-    ORFloat cutoff = 0.005;
+    //ORFloat cutoff = 0.005;
     ORInt noImproveLimit = 10;
     ORInt noImprove = 0;
-    //NSMutableArray* subprobQueue = [[NSMutableArray alloc] init];
     id<ORParameterizedModel> subproblem = nil;
     
     while(1) {
         
         // Step 1: update lambdas, lambda^(k+1), x^k
-        NSSet* probIndexes = [self updateLambdas: lambdas values: lambdaValues withSlacks: slacks solution: allsol bound: ub pi: pi];
+        NSSet* probIndexes = [self updateLambdas: lambdas values: lambdaValues withSlacks: slacks solution: allsol bound: _ub pi: pi];
         //for(NSNumber* idx in probIndexes)
         //    if(![subprobQueue containsObject: idx]) [subprobQueue addObject: idx];
         
@@ -440,7 +532,7 @@
                 [candidIncumbents setObject: @([sol intValue: x]) forKey: x];
         }
         ////////// End solve subproblem ///////////
-            
+        
         program = [ORFactory createMIPProgram: _model];
         [[program solver] close];
         for(id<ORFloatParam> p in [_model parameters]) [program paramFloat: p setValue: [(NSNumber*)[lambdaValues objectForKey: p] floatValue]];
@@ -500,6 +592,22 @@
     return m;
 }
 
+-(NSSet*) computeBranchVars {
+    NSMutableSet* allvars = [[[NSMutableSet alloc] initWithCapacity: 256] autorelease];
+    // Get slacks
+    NSArray* softCstrs = [_model softConstraints];
+    id<ORIntRange> slackRange = RANGE(_model, 0, (ORInt)softCstrs.count-1);
+    id<ORIdArray> slacks = [ORFactory idArray: _model range: slackRange with: ^id(ORInt i) {
+        id<ORSoftConstraint> c = [softCstrs objectAtIndex: i];
+        return [c slack];
+    }];
+    for(id<ORVar> x in [_model variables]) {
+        if([x conformsToProtocol: @protocol(ORIntVar)] && ![slacks contains: x])
+            [allvars addObject: x];
+    }
+    return allvars;
+}
+
 -(id<ORWeightedVar>) weightedVarForSlack: (id<ORVar>)slack {
     for(id<ORConstraint> c in [_model constraints]) {
         if([c conformsToProtocol: @protocol(ORWeightedVar)]) {
@@ -531,35 +639,65 @@
     return [cstrs allObjects];
 }
 
--(id<ORSignature>) signature
-{
-    if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.columnIn"];
-    }
-    return _sig;
-}
-
--(id<ORModel>) model
-{
-    return _model;
-}
-
 -(void) run
 {
-    int bound = 635;
-    _bestSolution = _isSurrogate ? [self lagrangianSurrogateSolve: bound]  : [self lagrangianSubgradientSolve: bound];
-}
-
--(ORFloat) bestBound
-{
-    if(!_bestSolution) return DBL_MIN;
-    id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[_bestSolution objectiveValue];
-    return [objValue floatValue];
-}
-
--(id<ORSolution>) bestSolution
-{
-    return _bestSolution;
+    _bestSolution = [self lagrangianSurrogateSolve];
 }
 
 @end
+
+@implementation MIPSubgradient
+-(id) solverForModel: (id<ORModel>)m {
+    id<MIPProgram> program = [ORFactory createMIPProgram: _model];
+    [program close];
+    return program;
+}
+
+-(void) solveIt: (id)solver {
+    id<MIPProgram> program = (id<MIPProgram>)solver;
+    [program solve];
+}
+@end
+
+@implementation CPSubgradient
+-(id) solverForModel: (id<ORModel>)m {
+    id<CPProgram> program = [ORFactory createCPProgram: _model];
+    return program;
+}
+
+-(void) solveIt: (id)solver {
+    id<CPProgram> program = (id<CPProgram>)solver;
+    id<CPHeuristic> h = [program createFF];
+    [program solve: ^{
+        [program labelHeuristic: h];
+        NSLog(@"Got an improvement... %@",[[program objective] value]);
+    }];
+    [h release];
+}
+@end
+
+@implementation MIPSurrogate
+-(id) solverForModel: (id<ORModel>)m {
+    id<MIPProgram> program = [ORFactory createMIPProgram: _model];
+    [program close];
+    return program;
+}
+
+-(void) solveIt: (id)solver {
+    id<MIPProgram> program = (id<MIPProgram>)solver;
+    [program solve];
+}
+@end
+
+@implementation ORFactory(ORLagrangeRelax)
++(id<ORLagrangeRelax>) MIPSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat)ub {
+    return [[MIPSubgradient alloc] initSubgradient: m bound: ub];
+}
++(id<ORLagrangeRelax>) CPSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat)ub {
+    return [[CPSubgradient alloc] initSubgradient: m bound: ub];
+}
++(id<ORLagrangeRelax>) MIPSurrogate: (id<ORParameterizedModel>)m bound: (ORFloat)ub {
+    return [[MIPSurrogate alloc] initWithSurrogate: m bound: ub];
+}
+@end
+
