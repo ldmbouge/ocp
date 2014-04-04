@@ -45,8 +45,7 @@
    ORInt*            _stack;
    ORInt*            _isVal;
    ORInt             _top;
-   
-   bool              _posted;
+   bool              _allocated;
 }
 
 static bool maximalMatching(CPAllDifferentDC* ad);
@@ -54,8 +53,21 @@ static void prune(CPAllDifferentDC* ad);
 
 -(void) initInstanceVariables 
 {
-    _priority = HIGHEST_PRIO-2;
-    _posted = false;
+   _priority = HIGHEST_PRIO-2;
+   _allocated = false;
+   _var = NULL;
+   _varMatch = NULL;
+   _varMagic = NULL;
+   _varComponent = NULL;
+   _varDfs = NULL;
+   _varHigh = NULL;
+   _valMatch = NULL;
+   _valMagic = NULL;
+   _valComponent = NULL;
+   _valDfs = NULL;
+   _valHigh = NULL;
+   _stack = NULL;
+   _isVal = NULL;
 }
 
 -(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x
@@ -69,7 +81,7 @@ static void prune(CPAllDifferentDC* ad);
 -(void) dealloc
 {
 //   NSLog(@"AllDifferent dealloc called ...");
-   if (_posted) {
+   if (_allocated) {
       free(_var);
       free(_varMatch);
       free(_varMagic);
@@ -97,7 +109,7 @@ static void prune(CPAllDifferentDC* ad);
 
 -(NSSet*) allVars
 {
-    if (_posted)
+    if (_allocated)
         return [[[NSSet alloc] initWithObjects:_var count:_varSize] autorelease];
     else
         @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: allVars called before the constraints is posted"];
@@ -106,7 +118,7 @@ static void prune(CPAllDifferentDC* ad);
 
 -(ORUInt) nbUVars
 {
-    if (_posted) {
+    if (_allocated) {
         ORUInt nb=0;
         for(ORUInt k=0;k<_varSize;k++)
             nb += ![_var[k] bound];
@@ -130,11 +142,8 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
 
 -(void) post
 {
-   if (_posted)
-      return;
-   _posted = true;
-   
-   [self allocate];
+   if (_allocated == NO)
+      [self allocate];
    
    for(ORInt k = 0; k < _varSize; k++)
       if ([_var[k] bound])
@@ -151,6 +160,7 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
 
 -(void) allocate
 {
+   _allocated = YES;
    ORInt low = [_x low];
    _varSize = ([_x up] - low + 1);
    _var = malloc(_varSize * sizeof(CPIntVar*));

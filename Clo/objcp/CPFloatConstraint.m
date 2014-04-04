@@ -461,6 +461,10 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 {
    return _x;
 }
+-(void)relax
+{
+   _primalBound = MAXINT;
+}
 -(void) post
 {
    _primalBound = MAXINT;
@@ -549,6 +553,10 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(id<CPFloatVar>)var
 {
    return _x;
+}
+-(void)relax
+{
+   _primalBound = -MAXINT;
 }
 -(void) post
 {

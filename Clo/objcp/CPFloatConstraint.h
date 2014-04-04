@@ -98,6 +98,7 @@
 -(ORUInt)nbUVars;
 -(id<ORFloatVar>) var;
 -(id<ORObjectiveValue>)value;
+-(void)relax;
 @end
 
 @interface CPFloatVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
@@ -112,5 +113,6 @@
 -(ORUInt)nbUVars;
 -(id<ORFloatVar>) var;
 -(id<ORObjectiveValue>)value;
+-(void)relax;
 @end
 

@@ -347,6 +347,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>)value;
+-(void)relax;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
@@ -362,6 +363,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>)value;
+-(void)relax;
 @end
 
 @interface CPRelaxation : CPCoreConstraint

@@ -106,4 +106,5 @@ typedef struct  {
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 -(ORFloat) value;
+-(ORFloat) floatValue;
 @end

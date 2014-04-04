@@ -2192,6 +2192,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    return [_x bound] ? 0 : 1;
 }
+-(void)relax
+{
+   _primalBound = MAXINT;
+}
 -(void) updatePrimalBound
 {
    ORInt bound = [_x min];
@@ -2278,6 +2282,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
     [_x whenChangeMaxDo: ^ {  
       [_x updateMin: _primalBound + 1]; 
    } onBehalf:self];
+}
+-(void)relax
+{
+   _primalBound = -MAXINT;
 }
 
 -(NSSet*)allVars

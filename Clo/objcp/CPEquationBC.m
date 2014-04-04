@@ -91,8 +91,10 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 
 -(void) post
 {
-   _allTerms = malloc(sizeof(CPEQTerm)*_nb);
-   _inUse    = malloc(sizeof(TRCPEQTerm)*_nb);
+   if (_allTerms == NULL) {
+      _allTerms = malloc(sizeof(CPEQTerm)*_nb);
+      _inUse    = malloc(sizeof(TRCPEQTerm)*_nb);
+   }
    for(ORInt i=0;i<_nb;i++) {
       ORBounds b = bounds(_x[i]);
       UBType mth = (UBType)[_x[i] methodForSelector:@selector(updateMin:andMax:)];

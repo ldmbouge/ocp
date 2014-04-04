@@ -537,6 +537,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [NSMutableSet set];
 }
+-(ORFloat) floatValue
+{
+   return _value;
+}
 -(ORFloat) value
 {
     return _value;

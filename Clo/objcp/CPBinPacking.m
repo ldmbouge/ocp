@@ -22,7 +22,7 @@
    id<ORIntArray>     _itemSize;
    ORInt              _bin;
    id<CPIntVar>       _binSize;
-   BOOL               _posted;
+   BOOL               _allocated;
    
    ORInt              _low;
    ORInt              _up;
@@ -48,7 +48,12 @@
 -(void) initInstanceVariables
 {
    _priority = HIGHEST_PRIO-2;
-   _posted = false;
+   _allocated = NO;
+   _var = NULL;
+   _size = NULL;
+   _s = NULL;
+   _candidate = NULL;
+   _candidateSize = NULL;
 }
 
 -(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize;
@@ -65,7 +70,7 @@
 -(void) dealloc
 {
 //   NSLog(@"BinPacking dealloc called ...");
-   if (_posted) {
+   if (_allocated) {
       free(_var);
       free(_size);
       free(_s);
@@ -78,18 +83,18 @@
 -(void) post
 {
 //   NSLog(@"BinPacking post called ...");
-   if (_posted)
-      return ;
-   
-   _posted = true;
    _low = [_item range].low;
    _up = [_item range].up;
    _nbVar = _up - _low + 1;
-   _var = (CPIntVar**) malloc(sizeof(CPIntVar*) * _nbVar);
-   _size = malloc(sizeof(ORInt) * _nbVar);
-   _s    = malloc(sizeof(ORInt) * _nbVar);
-   _candidate = malloc(sizeof(CPIntVar*) * _nbVar);
-   _candidateSize = malloc(sizeof(ORInt) * _nbVar);
+   if (_allocated == NO) {
+      _allocated = YES;
+      _var = (CPIntVar**) malloc(sizeof(CPIntVar*) * _nbVar);
+      _size = malloc(sizeof(ORInt) * _nbVar);
+      _s    = malloc(sizeof(ORInt) * _nbVar);
+      _candidate = malloc(sizeof(CPIntVar*) * _nbVar);
+      _candidateSize = malloc(sizeof(ORInt) * _nbVar);
+   }
+   
    for(ORInt i = _low; i <= _up; i++) {
       _var[i-_low] = (CPIntVar*) _item[i];
       _size[i-_low] = [_itemSize at: i];
