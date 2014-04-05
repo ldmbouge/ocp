@@ -392,6 +392,18 @@ enum ORGroupType {
 -(id<ORIntVarArray>) binSize;
 @end
 
+@protocol ORMultiKnapsack <ORConstraint>
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>)    itemSize;
+-(id<ORIntArray>)    capacity;
+@end
+
+@protocol ORMeetAtmost <ORConstraint>
+-(id<ORIntVarArray>) x;
+-(id<ORIntVarArray>) y;
+-(ORInt) atmost;
+@end
+
 @protocol ORKnapsack <ORConstraint>
 -(id<ORIntVarArray>) item;
 -(id<ORIntArray>) weight;

@@ -154,6 +154,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Packing: visit method not defined"]; 
 }
+-(void) visitMultiKnapsack:(id<ORMultiKnapsack>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "MultiKnapsack: visit method not defined"];
+}
+-(void) visitMeetAtmost:(id<ORMeetAtmost>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "MeetAtmost: visit method not defined"];
+}
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Knapsack: visit method not defined"]; 
@@ -575,6 +583,8 @@
 -(void) visitPackOne:(id<ORPackOne>) cstr  {}
 -(void) visitPacking:(id<ORPacking>) cstr  {}
 -(void) visitKnapsack:(id<ORKnapsack>) cstr  {}
+-(void) visitMultiKnapsack:(id<ORMultiKnapsack>) cstr  {}
+-(void) visitMeetAtmost:(id<ORMeetAtmost>) cstr  {}
 -(void) visitAssignment:(id<ORAssignment>)cstr {}
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunction>) v {}

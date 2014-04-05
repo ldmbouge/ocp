@@ -267,7 +267,15 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Packing constraints"];
+}
+-(void) visitMultiknapsack: (id<ORMultiKnapsack>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MultiKnapsack constraints"];
+}
+-(void) visitMeetAtmost: (id<ORMeetAtmost>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MeetAtmost constraints"];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

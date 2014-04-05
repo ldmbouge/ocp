@@ -424,6 +424,20 @@
 -(id<ORIntVarArray>) binSize;
 @end
 
+@interface ORMultiKnapsackI : ORConstraintI<ORMultiKnapsack>
+-(ORMultiKnapsackI*)initORMultiKnapsackI:(id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize capacity: (id<ORIntArray>) cap;
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>) itemSize;
+-(id<ORIntArray>) capacity;
+@end
+
+@interface ORMeetAtmostI : ORConstraintI<ORMeetAtmost>
+-(ORMeetAtmostI*)initORMeetAtmostI:(id<ORIntVarArray>) x and: (id<ORIntVarArray>) y atmost: (ORInt) k;
+-(id<ORIntVarArray>) x;
+-(id<ORIntVarArray>) y;
+-(ORInt) atmost;
+@end
+
 @interface ORKnapsackI : ORConstraintI<ORKnapsack>
 -(ORKnapsackI*)initORKnapsackI:(id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;
 -(id<ORIntVarArray>) item;

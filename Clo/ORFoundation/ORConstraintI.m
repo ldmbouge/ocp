@@ -2955,6 +2955,99 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORMultiKnapsackI {
+   id<ORIntVarArray>        _x;
+   id<ORIntArray>           _itemSize;
+   id<ORIntArray>           _capacity;
+}
+-(ORMultiKnapsackI*)initORMultiKnapsackI:(id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize capacity: (id<ORIntArray>) capacity
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _itemSize = itemSize;
+   _capacity    = capacity;
+   return self;
+}
+-(id<ORIntVarArray>) item
+{
+   return _x;
+}
+-(id<ORIntArray>) itemSize
+{
+   return _itemSize;
+}
+-(id<ORIntArray>) capacity
+{
+   return _capacity;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitMultiKnapsack:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> multiknapsack(%@,%@,%@)>",[self class],self,_x,_itemSize,_capacity];
+   return buf;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORMeetAtmostI {
+   id<ORIntVarArray>        _x;
+   id<ORIntVarArray>        _y;
+   ORInt                    _k;
+}
+-(ORMeetAtmostI*)initORMeetAtmostI:(id<ORIntVarArray>) x and: (id<ORIntVarArray>) y atmost: (ORInt) atmost
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _k = atmost;
+   return self;
+}
+-(id<ORIntVarArray>) x
+{
+   return _x;
+}
+-(id<ORIntVarArray>) y
+{
+   return _x;
+}
+-(ORInt) atmost
+{
+   return _k;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitMeetAtmost:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> MeetAtmost(%@,%@,%d)>",[self class],self,_x,_y,_k];
+   return buf;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [_y enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
 @implementation ORKnapsackI {
    id<ORIntVarArray> _x;
    id<ORIntArray>    _w;

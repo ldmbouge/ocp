@@ -202,6 +202,27 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<LSIntVarArray> citem = [self concreteArray:(id)[cstr item]];
+      id<LSConstraint> concreteCstr = [LSFactory packing: citem weight: [cstr itemSize] capacity: [cstr capacity]];
+      [_engine addConstraint: concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitMeetAtmost: (id<ORMeetAtmost>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<LSIntVarArray> cx = [self concreteArray:(id)[cstr x]];
+      id<LSIntVarArray> cy = [self concreteArray:(id)[cstr y]];
+      id<LSConstraint> concreteCstr = [LSFactory meetAtmost: cx and: cy atmost: [cstr atmost]];
+      [_engine addConstraint: concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeVar not yet implemented"];

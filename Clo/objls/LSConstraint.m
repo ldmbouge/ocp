@@ -67,6 +67,18 @@
    [e trackMutable:c];
    return c;
 }
++(id<LSConstraint>) packing:(id<LSIntVarArray>)x weight: (id<ORIntArray>)weight capacity: (id<ORIntArray>)capacity;
+{
+   LSPacking* c = [[LSPacking alloc] init:x weight:weight cap:capacity];
+   [[x[x.range.low] engine] trackMutable:c];
+   return c;
+}
++(id<LSConstraint>) meetAtmost:(id<LSIntVarArray>)x and: (id<LSIntVarArray>)y atmost: (ORInt) k
+{
+   LSMeetAtmost* c = [[LSMeetAtmost alloc] init:x and: y atmost: k];
+   [[x[x.range.low] engine] trackMutable:c];
+   return c;
+}
 +(id<LSConstraint>)system:(id<LSEngine>)e with:(NSArray*)ac
 {
    LSSystem* c = [[LSSystem alloc] init:e with:ac];

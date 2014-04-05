@@ -204,6 +204,14 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
+{
+   _result = [_into addConstraint:cstr];
+}
+-(void) visitMeetAtmost: (id<ORMeetAtmost>) cstr
+{
+   _result = [_into addConstraint:cstr];
+}
 -(void) visitPacking: (id<ORPacking>) cstr
 {
    id<ORIntVarArray> item     = [self flattenIt:[cstr item]];
@@ -230,6 +238,7 @@
    for(ORInt b = brlow; b <= brup; b++)
       [_into addConstraint: [ORFactory packOne:t item:item itemSize: itemSize bin: b binSize: binSize[b]]];
 }
+
 -(void) visitGroup:(id<ORGroup>)g
 {
    id<ORGroup> ng = [ORFactory group:[_into tracker] type:[g type]];

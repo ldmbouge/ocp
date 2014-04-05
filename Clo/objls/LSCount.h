@@ -72,6 +72,7 @@
 
 @interface LSFactory (LSGlobalInvariant)
 +(LSCount*)count:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c;
++(LSWeightedCount*)count: (id<LSIntVarArray>)x weight: (id<ORIntArray>) weight count:(id<LSIntVarArray>)c;
 +(LSInv*)inv:(id<LSIntVar>)x equal:(ORInt(^)())fun vars:(NSArray*)av;
 +(LSSum*)sum:(id<LSIntVar>)x over:(id<LSIntVarArray>)terms;
 +(LSScaledSum*)sum:(id<LSIntVar>)x is:(id<ORIntArray>)c times:(id<LSIntVarArray>)terms;

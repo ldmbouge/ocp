@@ -103,7 +103,7 @@
    }
    for(ORInt i=_src.low;i <= _src.up;i++) {
       LSIntVar* si = _src[i];
-      [_cnt[si.value] setValue: [_w at: i]];
+      [_cnt[si.value] setValue: [_cnt[si.value] value] + [_w at: i]];
       [_old set:si.value at:i];
    }
 }
@@ -171,6 +171,7 @@
    _sum = x;
    _terms = terms;
    for(id<LSIntVar> t in terms) {
+      NSLog(@"t = %@",t);
       assert(t != nil && [t conformsToProtocol:@protocol(LSIntVar)]);
    }
    _old = [ORFactory intArray:engine range:_terms.range value:0];
@@ -262,6 +263,13 @@
 +(LSCount*)count:(id<LSEngine>)engine vars:(id<LSIntVarArray>)x card:(id<LSIntVarArray>)c
 {
    LSCount* gi = [[LSCount alloc] init:engine count:x card:c];
+   [engine trackMutable:gi];
+   return gi;
+}
++(LSWeightedCount*)count:(id<LSIntVarArray>)x weight: (id<ORIntArray>) weight count:(id<LSIntVarArray>)c
+{
+   id<LSEngine> engine = [x[x.range.low] engine];
+   LSWeightedCount* gi = [[LSWeightedCount alloc] init: x weight: weight count:c];
    [engine trackMutable:gi];
    return gi;
 }

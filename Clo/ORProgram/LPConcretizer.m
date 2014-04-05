@@ -193,6 +193,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Packing constraints"];
 }
+-(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MultiKnapsack constraints"];
+}
+-(void) visitMeetAtmost: (id<ORMeetAtmost>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MeetAtmost constraints"];
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    // This is called only when the original constraint is stored in a data structure

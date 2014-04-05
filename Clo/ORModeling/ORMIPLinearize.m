@@ -177,6 +177,14 @@
 {
    assert(false);
 }
+-(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
+{
+   assert(false);
+}
+-(void) visitMeetAmost: (id<ORMeetAtmost>) cstr
+{
+   assert(false);
+}
 -(void) visitGroup:(id<ORGroup>)g
 {
     assert(false);

@@ -134,6 +134,14 @@
 {
    assert(NO);
 }
+-(void) visitMultiKnapsack:(id<ORMultiKnapsack>) cstr
+{
+   assert(NO);
+}
+-(void) visitMeetAtmost:(id<ORMeetAtmost>) cstr
+{
+   assert(NO);
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
     // Constrain upper bounds

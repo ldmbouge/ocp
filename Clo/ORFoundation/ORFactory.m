@@ -1124,6 +1124,19 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [t trackObject:o];
    return o;
 }
++(id<ORConstraint>) multiknapsack:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize capacity: (id<ORIntArray>) capacity
+{
+   id<ORConstraint> o = [[ORMultiKnapsackI alloc] initORMultiKnapsackI:item itemSize:itemSize capacity:capacity];
+   [t trackObject:o];
+   return o;
+}
++(id<ORConstraint>) meetAtmost:(id<ORTracker>)t x:(id<ORIntVarArray>) x y: (id<ORIntVarArray>) y atmost: (ORInt) atmost
+{
+   id<ORConstraint> o = [[ORMeetAtmostI alloc] initORMeetAtmostI: x and: y atmost: atmost];
+   [t trackObject:o];
+   return o;
+
+}
 +(id<ORConstraint>) packOne:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize
 {
    id<ORConstraint> o = [[ORPackOneI alloc] initORPackOneI:item itemSize:itemSize bin:b binSize:binSize];

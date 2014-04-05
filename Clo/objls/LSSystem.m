@@ -55,12 +55,14 @@ typedef struct LSConstraintList {
       ORBounds idb = (ORBounds){FDMAXINT,0};
       for(id<LSConstraint> c in _cstrs) {
          ava[i] = [c variables];
+//         NSLog(@"ava[i] = %@",ava[i]);
          idb = idRange(ava[i],idb);
          i++;
       }
       _lb = idb.min;
       _ub = idb.max;
       ORInt sz = _ub - _lb + 1;
+      NSLog(@"size: %d",sz);
       id<LSIntVar>* iSrc = malloc(sizeof(id)*sz);
       memset(iSrc,0,sizeof(id)*sz);
       iSrc -= _lb;
@@ -114,6 +116,8 @@ typedef struct LSConstraintList {
    [_engine add:[LSFactory inv:_sat equal:^ORInt{ return getLSIntValue(_viol) ==  0;} vars:@[_viol]]];
    
    id<LSIntVarArray> src = [self variables];
+   NSLog(@"source range in system = %@",src.range);
+   NSLog(@"source in system = %@",src);
    _vv = [LSFactory intVarArray:_engine range:src.range domain:RANGE(_engine,0,FDMAXINT)];
    for(ORInt k=src.low;k <= src.up;k++) {
       ORInt i=0;
@@ -126,6 +130,7 @@ typedef struct LSConstraintList {
          if (cvk[i] != nil)
             i++;
       }
+      NSLog(@"cvk = %@",cvk);
       [_engine add:[LSFactory sum:_vv[k] over:cvk]];
    }
    _vvBase = (id*)[(id)_vv base];
