@@ -482,12 +482,16 @@ static inline ORBool isPresentMeetAtmost(LSMeetAtmost* ad,id<LSIntVar> v)
    _violations = [LSFactory intVar:_engine domain:RANGE(_engine,0,FDMAXINT)];
    [_engine add:[LSFactory inv:_violations equal: ^{ return max(0,[_satDegree value]); } vars:@[_satDegree]]];
    ORInt s = _x.range.up - _x.range.low + 1;
-   _varv = [LSFactory intVarArray:_engine range:RANGE(_engine,0,2*s-1) with: ^id<LSIntVar>(ORInt i) {
+   _varv = [LSFactory intVarArray:_engine range:RANGE(_engine,1,2*s) with: ^id<LSIntVar>(ORInt i) {
       return [LSFactory intVar:_engine domain: RANGE(_engine,0,FDMAXINT)];
    }];
    for(ORInt k = low; k <= up; k++) {
       ORInt o = _xOfs[getId(_x[k])];
       [_engine add: [LSFactory inv: _varv[o] equal: ^{ return ([_violations value] > 0) && ([_x[k] value] == [_y[k] value]); } vars:@[_violations,_x[k],_y[k]]]];
+   }
+   for(ORInt k = low; k <= up; k++) {
+      ORInt o = _xOfs[getId(_y[k])];
+      [_engine add: [LSFactory inv: _varv[o+s] equal: ^{ return ([_violations value] > 0) && ([_x[k] value] == [_y[k] value]); } vars:@[_violations,_x[k],_y[k]]]];
    }
  }
 -(ORBool)isTrue
@@ -521,10 +525,14 @@ static inline ORBool isPresentMeetAtmost(LSMeetAtmost* ad,id<LSIntVar> v)
       ORInt vid = getId(v);
       ORInt o = _xOfs[vid];
       ORInt l = _left[vid];
-      if (l)
+      if (l) {
+         NSLog(@"_varv[o]: %@",_varv[o]);
          return _varv[o];
-      else
+      }
+      else {
+         NSLog(@"_varv[o+...]: %@",_varv[o+_x.range.size]);
          return _varv[o+_x.range.size];
+      }
    }
    else
       return 0;
