@@ -122,13 +122,16 @@ typedef struct LSConstraintList {
    for(ORInt k=src.low;k <= src.up;k++) {
       ORInt i=0;
       ORInt cvkSz = 0;
-      for(id<LSConstraint> c in _cstrs)
-         cvkSz += [c varViolations:src[k]] != nil;
-      id<LSIntVarArray> cvk = [LSFactory intVarArray:_engine range:RANGE(_engine,0,cvkSz-1)];
       for(id<LSConstraint> c in _cstrs) {
-         cvk[i] = [c varViolations:src[k]];
-         if (cvk[i] != nil)
-            i++;
+         id vv = [c varViolations:src[k]];
+         cvkSz +=  (vv != nil);
+      }
+      id<LSIntVarArray> cvk = [LSFactory intVarArray:_engine range:RANGE(_engine,0,cvkSz-1)];
+      
+      for(id<LSConstraint> c in _cstrs) {
+         id vv = [c varViolations:src[k]];
+         if (vv != nil)
+            cvk[i++] = vv;
       }
       [_engine add:[LSFactory sum:_vv[k] over:cvk]];
    }
