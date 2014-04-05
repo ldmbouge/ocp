@@ -2109,3 +2109,44 @@ void literalDomEvt(CPLiterals* x,id<CPDom> sender)
       [_pos[val - _ofs] bindEvt: sender];
 }
 @end
+
+@implementation CPIntParamI
+-(id)initCPIntParam:(id<CPEngine>)engine initialValue:(ORInt)v
+{
+   self = [super init];
+   _engine = (CPEngineI*)engine;
+   _value = v;
+   return self;
+}
+-(CPEngineI*) engine
+{
+   return _engine;
+}
+-(id<ORTracker>) tracker
+{
+   return _engine;
+}
+-(NSMutableSet*) constraints
+{
+   return [NSMutableSet set];
+}
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORInt) value
+{
+   return _value;
+}
+-(void) setValue: (ORInt)val
+{
+   _value = val;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<PARAM(%d) = %d>",_name,_value];
+   return buf;
+}
+@end
+

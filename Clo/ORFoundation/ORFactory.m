@@ -1234,10 +1234,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker] trackObject:o];
    return o;
 }
-
-+(id<ORConstraint>) weightedVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x
++(id<ORConstraint>) floatWeightedVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x
 {
    id<ORConstraint> o = [[ORFloatWeightedVarI alloc] initVar:z equal:p times:x];
+   [[x tracker] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) intWeightedVar:(id<ORIntVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x
+{
+   id<ORConstraint> o = [[ORIntWeightedVarI alloc] initVar:z equal:p times:x];
    [[x tracker] trackObject:o];
    return o;
 }

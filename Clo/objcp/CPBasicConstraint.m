@@ -2179,10 +2179,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) post
 {
-  if (![_x bound]) 
-    [_x whenChangeMinDo: ^ {
-       [_x updateMax: _primalBound - 1];
-    } onBehalf:self];
+   _primalBound = MAXINT;
+   if (![_x bound])
+      [_x whenChangeMinDo: ^ {
+         [_x updateMax: _primalBound - 1];
+      } onBehalf:self];
 }
 -(NSSet*)allVars
 {
@@ -2278,10 +2279,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(void) post
 {
-  if (![_x bound]) 
-    [_x whenChangeMaxDo: ^ {  
-      [_x updateMin: _primalBound + 1]; 
-   } onBehalf:self];
+   _primalBound = -MAXINT;
+   if (![_x bound])
+      [_x whenChangeMaxDo: ^ {
+         [_x updateMin: _primalBound + 1];
+      } onBehalf:self];
 }
 -(void)relax
 {
@@ -2463,5 +2465,69 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(ORUInt) nbUVars
 {
    return (ORUInt) [_cv count];
+}
+@end
+
+@implementation CPIntWeightedVarBC
+-(id)initCPIntWeightedVarBC:(CPIntVarI*)z equal:(CPIntVarI*)x weight: (CPIntParamI*)w // z = w * x, for constant w
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = x;
+   _z = z;
+   _w = w;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_x bound])
+      [_x whenChangeBoundsPropagate:self];
+   if (![_z bound])
+      [_z whenChangeBoundsPropagate:self];
+   return ORSuspend;
+}
+-(void) propagate
+{
+   ORInt p = _w.value;
+   if (p == 0)
+      updateMinAndMaxOfDom(_z, 0, 0);
+   else if (bound(_x))
+      bindDom(_z, minDom(_x)*p);
+   else if (bound(_z)) {
+      ORInt r = minDom(_z) % p;
+      if (r!=0)
+         failNow();
+      else bindDom(_x, minDom(_z) / p);
+   } else if (p > 0) {
+      ORBounds xb = bounds(_x);
+      [_z updateMin: xb.min * p andMax:xb.max * p];
+      ORBounds zb = bounds(_z);
+      ORInt ymaxs = zb.max > 0  ? 0  : -1;
+      ORInt ymaxr = zb.max % p ? 1  : 0;
+      ORInt ymins = zb.min > 0  ? +1 : 0;
+      ORInt yminr = zb.min % p ? 1  : 0;
+      [_x updateMin:zb.min / p + ymins * yminr andMax:zb.max / p + ymaxs * ymaxr];
+   } else {
+      ORBounds xb = bounds(_x);
+      [_z updateMin: xb.max * p andMax:xb.min * p];
+      ORBounds zb = bounds(_z);
+      ORInt ymaxs = zb.max < 0  ? +1 : 0;
+      ORInt ymaxr = zb.max % p ? 1  : 0;
+      ORInt ymins = zb.min > 0  ? -1 : 0;
+      ORInt yminr = zb.min % p ? 1  : 0;
+      [_x updateMin:zb.max / p + ymaxs * ymaxr andMax:zb.min / p + ymins * yminr];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_z,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_z bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPIntWeightedVarBC:%02d %@ == %@ * %@>",_name,_z,_w,_x];
 }
 @end

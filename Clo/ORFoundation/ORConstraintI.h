@@ -406,6 +406,14 @@
 -(id<ORParameter>)weight;
 @end
 
+@interface ORIntWeightedVarI : ORConstraintI<ORWeightedVar>
+-(id)initVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x;
+-(id) initIntWeightedVar: (id<ORVar>)x;
+-(id<ORVar>) z;
+-(id<ORVar>) x;
+-(id<ORParameter>)weight;
+@end
+
 @interface ORTableConstraintI : ORConstraintI<ORTableConstraint>
 -(ORTableConstraintI*) initORTableConstraintI: (id<ORIntVarArray>) x table: (id<ORTable>) table;
 -(id<ORIntVarArray>) array;

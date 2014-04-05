@@ -31,7 +31,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatWeightedVarBC : CPCoreConstraint { // z == x^2
+@interface CPFloatWeightedVarBC : CPCoreConstraint { // z == w * x
     CPFloatVarI* _x;
     CPFloatVarI* _z;
     CPFloatParamI* _w;

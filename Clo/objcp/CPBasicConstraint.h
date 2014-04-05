@@ -18,6 +18,7 @@
 @class CPIntVar;
 @class ORIntSetI;
 @class CPEngine;
+@class CPIntParamI;
 @protocol CPIntVarArray;
 
 
@@ -374,3 +375,13 @@ typedef int (^intgetter) (void) ;
 -(ORUInt) nbUVars;
 @end
 
+@interface CPIntWeightedVarBC : CPCoreConstraint { // z == w * x
+   CPIntVar* _x;
+   CPIntVar* _z;
+   CPIntParamI* _w;
+}
+-(id)initCPIntWeightedVarBC:(id)z equal:(id)x weight: (id)w;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end

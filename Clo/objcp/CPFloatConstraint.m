@@ -156,11 +156,19 @@
    BOOL changed = NO;
    do {
       __block ORInterval S = createORI1(_c);
-      [_x enumerateWith:^(CPFloatVarI* xk,int k) {
+      ORInt lb = _x.range.low;
+      ORInt ub = _x.range.up;
+      for(ORInt k=lb;k <= ub;k++) {
+         CPFloatVarI* xk = (CPFloatVarI*)_x[k];
          S = ORIAdd(S,ORIMul([xk bounds],createORI1([_coefs at:k])));
          if (ORIEmpty(S))
             @throw [[ORExecutionError alloc] initORExecutionError:"interval empty in FloatEquation"];
-      }];
+      }
+//      [_x enumerateWith:^(CPFloatVarI* xk,int k) {
+//         S = ORIAdd(S,ORIMul([xk bounds],createORI1([_coefs at:k])));
+//         if (ORIEmpty(S))
+//            @throw [[ORExecutionError alloc] initORExecutionError:"interval empty in FloatEquation"];
+//      }];
       changed = NO;
       for(ORInt i=_x.low;i <= _x.up;i++) {
          ORFloat ci = [_coefs at:i];

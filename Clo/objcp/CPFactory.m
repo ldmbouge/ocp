@@ -88,6 +88,10 @@
 {
     return [[CPFloatParamI alloc] initCPFloatParam: cp initialValue: v];
 }
++(id<CPIntParam>) intParam:(id<CPEngine>)cp initialValue:(ORInt)v
+{
+   return [[CPIntParamI alloc] initCPIntParam: cp initialValue: v];
+}
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    return [ORFactory intMatrix: tracker range: r1 : r2];

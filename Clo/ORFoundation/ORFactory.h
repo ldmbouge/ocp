@@ -237,7 +237,8 @@
 +(id<ORConstraint>) tableConstraint: (id<ORTracker>)model table:(id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
 +(id<ORConstraint>) assignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
 +(id<ORConstraint>) regular:(id<ORIntVarArray>) x for:(id<ORAutomaton>)a;
-+(id<ORConstraint>) weightedVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x;
++(id<ORConstraint>) floatWeightedVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x;
++(id<ORConstraint>) intWeightedVar:(id<ORIntVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x;
 @end
 
 @interface ORFactory (ORFloat)

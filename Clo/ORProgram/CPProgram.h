@@ -132,6 +132,7 @@
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
 -(ORFloat) paramFloatValue: (id<ORFloatParam>)x;
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
+-(ORInt) paramInt: (id<ORIntParam>)p setValue: (ORInt)val;
 -(ORFloat) floatExprValue: (id<ORExpr>)e;
 -(ORFloat) domwidth:(id<ORFloatVar>)x;
 -(ORFloat) fmin:(id<ORFloatVar>)x;

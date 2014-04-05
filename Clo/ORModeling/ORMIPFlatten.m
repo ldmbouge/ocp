@@ -200,6 +200,10 @@
 {
     _result = cstr;
 }
+-(void) visitIntWeightedVar:(id<ORWeightedVar>)cstr
+{
+   _result = cstr;
+}
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    _result = [_into minimize:[v var]];

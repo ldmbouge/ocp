@@ -76,7 +76,8 @@ int main(int argc, const char * argv[])
          id<ORIntVarMatrix> boat = [ORFactory intVarMatrix:mdl range:Guests :Periods domain: Hosts];
          id<ORIntVarMatrix> d    = [ORFactory intVarMatrix:mdl range:Guests :Guests domain:RANGE(mdl,-1,[Periods size])];
          id<ORIdMatrix>        p = [ORFactory idMatrix:mdl range:Guests :Guests];
-         id<ORFloatVarArray>   z = [ORFactory floatVarArray:mdl range:RANGE(mdl,0,[Guests size] * ([Guests size] -1)/2 - 1) low:FDMININT up:FDMAXINT];
+         id<ORIntVarArray>     z = [ORFactory intVarArray:mdl range:RANGE(mdl,0,[Guests size] * ([Guests size] -1)/2 - 1)
+                                                   domain:RANGE(mdl,FDMININT,FDMAXINT)];
          id<ORIdArray> ca = [ORFactory idArray:mdl range:z.range];
          ORInt o = 0;
          for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++) {
@@ -86,10 +87,10 @@ int main(int argc, const char * argv[])
             }
             
             for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-               id<ORFloatParam> fp = nil;
-               [p set:fp = [ORFactory floatParam:mdl initially:1] at:g1 :g2];
+               id<ORIntParam> fp = nil;
+               [p set:fp = [ORFactory intParam:mdl initially:1] at:g1 :g2];
                [mdl add: [[d at:g1 :g2] eq: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) sub: @1]]];
-               ca[o] = [mdl add: [ORFactory weightedVar:z[o] equal:fp times:[d at:g1 :g2]]];
+               ca[o] = [mdl add: [ORFactory intWeightedVar:z[o] equal:fp times:[d at:g1 :g2]]];
                o++;
             }
          }
@@ -109,90 +110,87 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
          ORFloat rate = [args restartRate];
-         __block ORInt lim = ((ORInt)rate==0) ? FDMAXINT : ([Guests size] * [Periods size] * 3);
+         __block ORInt lim = 1;
          __block ORFloat agility = 1000.0;
          __block ORFloat s = 0.0;
          __block ORFloat sum = 0.0;
          __block ORInt sat = 1;
+         __block id<ORSolution> sol = nil;
          NSLog(@"The limit starts at: %d  (%f)",lim,rate);
-//         id<CPHeuristic> heur = [cp createABS:[ORFactory flattenMatrix:boat]];
          while (sat != 0) {
             [cp solve: ^{
-               [cp repeat: ^{
-                  [cp limitSolutions: 1 in: ^{
-                     //[cp labelHeuristic:heur];
-//                     [cp forall:ca.range suchThat:^bool(ORInt i) { return [cp floatValue:[ca[i] weight]] > 1;}
-//                      orderedBy: ^ORInt(ORInt i) { return (ORInt) - [cp floatValue:[ca[i] weight]];}
-//                             do: ^(ORInt i) {
-//                                id<ORIntVar> x = [ca[i] x];
-//                                [cp tryall:RANGE(cp,1,x.domain.up) suchThat:nil in:^(ORInt r) {
-//                                   [cp lthen:x with: r];
-//                                }];
-//                                //[cp lthen:[ca[i] x] with:1];
-//                             }
-//                      ];
+               id<ORSolution> incumbent = [[cp solutionPool] best];
+               [[cp solutionPool]  emptyPool];
+               [cp limitSolutions: lim in: ^{
+//                     [cp once:^{
+//                        [cp forall:ca.range suchThat:^bool(ORInt i) { return [cp intValue:[ca[i] weight]] > 1;}
+//                         orderedBy: ^ORInt(ORInt i) { return (ORInt) - [cp intValue:[ca[i] weight]];}
+//                                do: ^(ORInt i) {
+//                                   id<ORIntVar> x = [ca[i] x];
+//                                   [cp tryall:RANGE(cp,1,x.domain.up) suchThat:nil in:^(ORInt r) {
+//                                      [cp lthen:x with: r];
+//                                   }];
+//                                }
+//                         ];
+//                     }];
                      for(ORInt p = Periods.low; p <= Periods.up; p++) {
                         [cp forall:Guests suchThat:^bool(ORInt g) { return ![cp bound:[boat at:g :p]];}
                          orderedBy: nil // ^ORInt(ORInt g) { return [cp domsize:[boat at:g :p]];}
                                 do:^(ORInt g) {
-                                   [cp tryall:Hosts suchThat:^bool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
-                                           in:^(ORInt h) {
-                                              [cp label:[boat at:g :p] with:h];
-                                           }
-                                    onFailure:^(ORInt h) {
-                                       [cp diff:[boat at:g :p] with:h];
-                                    }];
+                                   ORInt inSol = [incumbent intValue:[boat at:g :p]];
+                                   if (incumbent && [cp member:inSol in:[boat at:g :p]]) {
+                                      [cp try:^{
+                                         [cp label:[boat at:g :p] with:inSol];
+                                      } or:^{
+                                         [cp tryall:Hosts suchThat:^bool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
+                                                 in:^(ORInt h) {
+                                                    [cp label:[boat at:g :p] with:h];
+                                                 }
+                                          onFailure:^(ORInt h) {
+                                             [cp diff:[boat at:g :p] with:h];
+                                          }];
+                                      }];
+                                   } else {
+                                      [cp tryall:Hosts suchThat:^bool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
+                                              in:^(ORInt h) {
+                                                 [cp label:[boat at:g :p] with:h];
+                                              }
+                                       onFailure:^(ORInt h) {
+                                          [cp diff:[boat at:g :p] with:h];
+                                       }];
+                                   }
                                 }];
                         
                      }
                      ORLong endTime = [ORRuntimeMonitor cputime];
-                     
-                     for(ORInt p = Periods.low; p <= Periods.up; p++) {
-                        NSMutableString* line = [[NSMutableString alloc] initWithCapacity:64];
-                        [line appendFormat:@"p=%2d : ",p];
-                        for(ORInt g = Guests.low; g <= Guests.up; g++) {
-                           if ([cp bound:[boat at: g : p]])
-                              [line appendFormat:@"%2d ",[cp intValue:[boat at: g :p]]];
-                           else [line appendFormat:@"%@",[boat at: g :p] ];
-                        }
-                        NSLog(@"%@",line);
-                        [line release];
-                     }
-                     for(ORInt g1=Guests.low;g1 <= Guests.up;g1++) {
-                        for(ORInt g2=Guests.low;g2 <= Guests.up;g2++) {
-                           printf("%2d  ",[cp intValue:[d at:g1 :g2]]);
-                        }
-                        printf("\n");
-                     }
                      NSLog(@"Execution Time: %lld \n",endTime - startTime);
-                     
-                  }];
+                     sol = [cp captureSolution];
+                     NSLog(@"INSIDE Objective: %@",[sol objectiveValue]);
+               }];
+               NSLog(@"Solver status: %@\n",cp);
+               NSLog(@"Objective: %@",[sol objectiveValue]);
+               sum = 0.0;
+               sat = 0;
+               for(ORInt i=ca.range.low;i <= ca.range.up;i++) {
+                  ORInt   gi = [sol intValue:[ca[i] x]];
+                  sat += max(0,gi);
+                  sum += gi*gi;
                }
-                 onRepeat: ^{
-                    id<ORSolution> sol = [[cp solutionPool] best];
-                    NSLog(@"Objective: %@",[sol objectiveValue]);
-                    sum = 0.0;
-                    sat = 0;
-                    for(ORInt i=ca.range.low;i <= ca.range.up;i++) {
-                       ORInt   gi = [sol intValue:[ca[i] x]];
-                       sat += max(0,gi);
-                       sum += gi*gi;
-                    }
-                    s = agility / sum;
-//                    for(ORInt i=ca.range.low;i <= ca.range.up;i++) {
-//                       ORInt   gi = [sol intValue:[ca[i] x]];
-//                       ORFloat li = [cp floatValue:[ca[i] weight]];
-//                       li = max(0,li + s * gi);
-//                       [cp paramFloat:[ca[i] weight] setValue:li];
-//                    }
-                    for(ORInt i=ca.range.low;i <= ca.range.up;i++) {
-                       ORInt gi = [sol intValue:[ca[i] x]];
-                       ORFloat p = [cp floatValue:[ca[i] weight]];
-                       if (gi > 0)
-                          NSLog(@"param(%d) = %lf  gradient was: %d",i,p,gi);
-                    }
-                    [[cp objective] relax];
-                 } until:^bool { return sat == 0;}];
+               NSLog(@"SAT? : %d",sat);
+               s = agility / sum;
+               for(ORInt i=ca.range.low;i <= ca.range.up;i++) {
+                  ORInt   gi = [sol intValue:[ca[i] x]];
+                  ORFloat li = [cp intValue:[ca[i] weight]];
+                  li = max(0,li + s * gi);
+                  [cp paramInt:[ca[i] weight] setValue:li];
+               }
+               for(ORInt i=ca.range.low;i <= ca.range.up;i++) {
+                  ORInt gi = [sol intValue:[ca[i] x]];
+                  ORFloat p = [cp intValue:[ca[i] weight]];
+                  if (gi > 0)
+                     NSLog(@"param(%d) = %lf  gradient was: %d",i,p,gi);
+               }
+               //lim++;
             }];
          }
          NSLog(@"Solver status: %@\n",cp);

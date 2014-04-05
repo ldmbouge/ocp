@@ -96,7 +96,11 @@
     if (!_gamma[v.getId])
         _gamma[v.getId] = [CPFactory floatParam: _engine initialValue: [v initialValue]];
 }
-
+-(void) visitIntParam: (id<ORIntParam>) v
+{
+   if (!_gamma[v.getId])
+      _gamma[v.getId] = [CPFactory intParam: _engine initialValue: [v initialValue]];
+}
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    if (_gamma[v.getId] == NULL) 
@@ -285,6 +289,18 @@
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
+}
+-(void) visitIntWeightedVar:(id<ORWeightedVar>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar>  z = [self concreteVar:[cstr z]];
+      id<CPIntVar>  x = [self concreteVar:[cstr x]];
+      id<ORParameter> w = [cstr weight];
+      [w visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory intWeightedVar: z equal: x weight: _gamma[w.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

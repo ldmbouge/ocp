@@ -549,6 +549,12 @@
    [[cv[0] tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) intWeightedVar: (id<CPIntVar>)z equal:(id<CPIntVar>)x weight: (id<CPIntParam>)w
+{
+   id<CPConstraint> o = [[CPIntWeightedVarBC alloc] initCPIntWeightedVarBC: z equal: x weight: w];
+   [[x tracker] trackMutable: o];
+   return o;
+}
 @end
 
 @implementation CPFactory (ORFloat)

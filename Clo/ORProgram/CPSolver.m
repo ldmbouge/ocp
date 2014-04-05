@@ -1401,6 +1401,12 @@
    [param setValue: val];
    return val;
 }
+-(ORInt) paramInt: (id<ORIntParam>)p setValue: (ORInt)val
+{
+   id<CPIntParam> param = _gamma[getId(p)];
+   [param setValue:val];
+   return val;
+}
 -(ORFloat) floatExprValue: (id<ORExpr>)e {
     ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];
     ORFloat v = [eval floatValue: e];

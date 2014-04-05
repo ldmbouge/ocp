@@ -172,6 +172,11 @@ enum CPVarClass {
 -(void) setValue: (ORFloat)val;
 @end
 
+@protocol CPIntParam<CPParam>
+-(ORInt) value;
+-(void) setValue: (ORInt)val;
+@end
+
 @protocol CPFloatVarArray <CPVarArray>
 -(id<CPFloatVar>) at: (ORInt) value;
 -(void) set: (id<CPFloatVar>) x at: (ORInt) value;

@@ -51,6 +51,7 @@
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitFloatWeightedVar: (id<ORWeightedVar>) cstr;
+-(void) visitIntWeightedVar: (id<ORWeightedVar>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitCircuit:(id<ORCircuit>) cstr;

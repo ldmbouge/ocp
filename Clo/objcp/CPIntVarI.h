@@ -454,4 +454,16 @@ void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender);
 
 void literalDomEvt(CPLiterals* x,id<CPDom> sender);
 
+@interface CPIntParamI : ORObject<CPIntParam> {
+   CPEngineI*           _engine;
+   ORInt                _value;
+}
+-(id)initCPIntParam:(id<CPEngine>)engine initialValue:(ORInt)v;
+-(CPEngineI*) engine;
+-(id<ORTracker>) tracker;
+-(NSMutableSet*) constraints;
+-(ORInt) value;
+-(ORInt) intValue;
+-(void) setValue: (ORInt)val;
+@end
 

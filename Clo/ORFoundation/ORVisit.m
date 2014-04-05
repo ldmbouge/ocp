@@ -142,6 +142,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatWeightedVar: visit method not defined"];
 }
+-(void) visitIntWeightedVar: (id<ORWeightedVar>) cstr;
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "IntWeightedVar: visit method not defined"];
+}
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "TableConstraint: visit method not defined"]; 
@@ -591,6 +595,7 @@
 -(void) visitCardinality: (id<ORCardinality>) cstr  {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr  {}
 -(void) visitFloatWeightedVar: (id<ORWeightedVar>) cstr  {}
+-(void) visitIntWeightedVar: (id<ORWeightedVar>) cstr  {}
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr  {}
 -(void) visitLexLeq:(id<ORLexLeq>) cstr  {}
 -(void) visitCircuit:(id<ORCircuit>) cstr  {}

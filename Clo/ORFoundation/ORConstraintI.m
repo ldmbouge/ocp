@@ -2801,6 +2801,56 @@
 }
 @end
 
+
+@implementation ORIntWeightedVarI {
+   id<ORVar> _x;
+   id<ORVar> _z;
+   id<ORParameter> _lambda;
+}
+-(id)initVar:(id<ORVar>)z equal:(id<ORParameter>)p times:(id<ORIntVar>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _z = z;
+   _lambda = p;
+   return self;
+}
+-(id) initIntWeightedVar: (id<ORVar>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _z = [ORFactory intVar: [x tracker]  domain:RANGE([x tracker],FDMININT,FDMAXINT)];
+   _lambda = [[ORIntParamI alloc] initORIntParamI: [x tracker] initialValue: 1];
+   return self;
+}
+-(id<ORVar>) z
+{
+   return _z;
+}
+-(id<ORVar>)x
+{
+   return _x;
+}
+-(id<ORParameter>)weight
+{
+   return _lambda;
+}
+-(NSSet*) allVars
+{
+   return [[NSSet setWithObjects: _x, _z, nil] autorelease];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORIntWeightedConstraintI : %p(%d) IS %@ = %@ * %@",self,[self getId],_z,_lambda,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitIntWeightedVar:self];
+}
+@end
+
 @implementation ORTableConstraintI
 {
    id<ORIntVarArray> _x;

@@ -83,6 +83,7 @@
 +(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
 
 +(id<CPConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
++(id<CPConstraint>) intWeightedVar: (id<CPIntVar>)z equal:(id<CPIntVar>)x weight: (id<CPIntParam>)w;
 @end
 
 @interface CPFactory (ORFloat)
