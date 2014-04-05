@@ -3019,7 +3019,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(id<ORIntVarArray>) y
 {
-   return _x;
+   return _y;
 }
 -(ORInt) atmost
 {
