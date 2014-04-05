@@ -171,7 +171,6 @@
    _sum = x;
    _terms = terms;
    for(id<LSIntVar> t in terms) {
-      NSLog(@"t = %@",t);
       assert(t != nil && [t conformsToProtocol:@protocol(LSIntVar)]);
    }
    _old = [ORFactory intArray:engine range:_terms.range value:0];

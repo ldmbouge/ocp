@@ -79,11 +79,11 @@ int main(int argc, const char * argv[])
          NSLog(@"CAP = %@",cap);
          NSLog(@"CREW= %@",crew);
          ORLong startTime = [ORRuntimeMonitor cputime];
-         id<ORAnnotation> notes = [ORFactory annotation];
+ //        id<ORAnnotation> notes = [ORFactory annotation];
          NSLog(@"size Guests = %@",Guests);
          id<ORIntVarMatrix> boat = [ORFactory intVarMatrix:mdl range:Guests :Periods domain: Hosts];
-         for(ORInt g = Guests.low; g <= Guests.up; g++)
-            [notes dc:[mdl add: [ORFactory alldifferent: All(mdl,ORIntVar, p, Periods, [boat at:g :p]) ]]];
+//         for(ORInt g = Guests.low; g <= Guests.up; g++)
+//            [notes dc:[mdl add: [ORFactory alldifferent: All(mdl,ORIntVar, p, Periods, [boat at:g :p]) ]]];
          for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++) {
             for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
                id<ORIntVarArray> a1 = All(mdl,ORIntVar, p, Periods, [boat at:g1 :p]);
@@ -131,10 +131,11 @@ int main(int argc, const char * argv[])
                [ls selectMax: Vars orderedBy:^ORFloat(ORInt i) { return [ls getVarViolations:x[i]];} do:^(ORInt i) {
                   [ls selectMin: Hosts suchThat: ^ORBool(ORInt v) { return ([tabu at: i : v] <= it); }
                       orderedBy:^ORFloat(ORInt v) { return [ls deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
-                         //                      NSLog(@"delta: %d from %d to %d giving %d ",i,[ls intValue: x[i]],v,[ls deltaWhenAssign:x[i] to:v]);
-                         //                      NSLog(@"Violations: %d",[ls violations]);
+                         NSLog(@"delta: %d from %d to %d giving %d ",i,[ls intValue: x[i]],v,[ls deltaWhenAssign:x[i] to:v]);
+                         NSLog(@"Violations: %d",[ls violations]);
                          [tabu set: it + tbl at: i : [ls intValue: x[i]]];
                          [ls label:x[i] with:v];
+                         NSLog(@"Violations: %d",[ls violations]);
                          ORInt violations = [ls violations];
                          if (violations < old && tbl > tblMin) tbl--;
                          if (violations >= old && tbl <tblMax) tbl++;

@@ -130,7 +130,6 @@ typedef struct LSConstraintList {
          if (cvk[i] != nil)
             i++;
       }
-      NSLog(@"cvk = %@",cvk);
       [_engine add:[LSFactory sum:_vv[k] over:cvk]];
    }
    _vvBase = (id*)[(id)_vv base];
