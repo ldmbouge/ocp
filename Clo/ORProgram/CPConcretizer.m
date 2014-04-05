@@ -149,7 +149,6 @@
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {
 }
-
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
 {
    if (_gamma[v.getId] == NULL) {
@@ -274,9 +273,7 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
-}
+{}
 -(void) visitFloatWeightedVar:(id<ORWeightedVar>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {

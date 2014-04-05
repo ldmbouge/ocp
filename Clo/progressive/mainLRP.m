@@ -79,6 +79,8 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray>     z = [ORFactory intVarArray:mdl range:RANGE(mdl,0,[Guests size] * ([Guests size] -1)/2 - 1)
                                                    domain:RANGE(mdl,FDMININT,FDMAXINT)];
          id<ORIdArray> ca = [ORFactory idArray:mdl range:z.range];
+         NSMutableArray* cs = [[NSMutableArray alloc] initWithCapacity:z.range.size];
+         NSMutableArray* wvmap = [[NSMutableArray alloc] initWithCapacity:z.range.size];
          ORInt o = 0;
          for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++) {
             for(ORInt g2 = Guests.low; g2 <= g1; g2++) {
@@ -89,7 +91,13 @@ int main(int argc, const char * argv[])
             for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
                id<ORIntParam> fp = nil;
                [p set:fp = [ORFactory intParam:mdl initially:1] at:g1 :g2];
-               [mdl add: [[d at:g1 :g2] eq: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) sub: @1]]];
+               cs[o] = [[mdl add: [[d at:g1 :g2] eq: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) sub: @1]]] allVars];
+               NSMutableSet* theIds = [[NSMutableSet alloc] initWithCapacity:8];
+               for(ORInt p=Periods.low;p <= Periods.up;p++) {
+                  [theIds addObject:@[@(g1),@(p)]];
+                  [theIds addObject:@[@(g2),@(p)]];
+               }
+               wvmap[o] = theIds;
                ca[o] = [mdl add: [ORFactory intWeightedVar:z[o] equal:fp times:[d at:g1 :g2]]];
                o++;
             }
@@ -122,20 +130,33 @@ int main(int argc, const char * argv[])
                id<ORSolution> incumbent = [[cp solutionPool] best];
                [[cp solutionPool]  emptyPool];
                [cp limitSolutions: lim in: ^{
-//                     [cp once:^{
-//                        [cp forall:ca.range suchThat:^bool(ORInt i) { return [cp intValue:[ca[i] weight]] > 1;}
-//                         orderedBy: ^ORInt(ORInt i) { return (ORInt) - [cp intValue:[ca[i] weight]];}
-//                                do: ^(ORInt i) {
-//                                   id<ORIntVar> x = [ca[i] x];
-//                                   [cp tryall:RANGE(cp,1,x.domain.up) suchThat:nil in:^(ORInt r) {
-//                                      [cp lthen:x with: r];
-//                                   }];
-//                                }
-//                         ];
-//                     }];
-                     for(ORInt p = Periods.low; p <= Periods.up; p++) {
+                     [cp once:^{
+                        [cp forall:ca.range suchThat:^bool(ORInt i) { return [cp intValue:[ca[i] weight]] > 1;}
+                         orderedBy: ^ORInt(ORInt i) { return (ORInt) - [cp intValue:[ca[i] weight]];}
+                                do: ^(ORInt i) {
+                                   id<ORIntVar> x = [ca[i] x];
+                                   [cp tryall:RANGE(cp,1,x.domain.up) suchThat:nil in:^(ORInt r) {
+                                      [cp lthen:x with: r];
+                                   }];
+                                }
+                         ];
+                     }];
+                  id<ORIntMatrix> vw = [ORFactory intMatrix:cp range:Periods :Guests using:^int(ORInt i , ORInt j) { return 0;}];
+                  for(ORInt k=z.range.low;k <= z.range.up;k++) {
+                     NSSet* varsOfMeet = wvmap[k];
+                     ORInt  wOfMeet    = [cp intValue:[ca[k] weight]];
+                     for(NSArray* bid in varsOfMeet) {
+                        ORInt g = [bid[0] intValue];
+                        ORInt p = [bid[1] intValue];
+                        ORInt cw = [vw at:p :g];
+                        [vw set:cw + wOfMeet at:p :g];
+                     }
+                  }
+                  
+                  for(ORInt p = Periods.low; p <= Periods.up; p++) {
+                     
                         [cp forall:Guests suchThat:^bool(ORInt g) { return ![cp bound:[boat at:g :p]];}
-                         orderedBy: nil // ^ORInt(ORInt g) { return [cp domsize:[boat at:g :p]];}
+                         orderedBy: ^ORInt(ORInt g) { return ([vw at:p :g]<<16) + g;}
                                 do:^(ORInt g) {
                                    ORInt inSol = [incumbent intValue:[boat at:g :p]];
                                    if (incumbent && [cp member:inSol in:[boat at:g :p]]) {
