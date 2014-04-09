@@ -58,6 +58,19 @@
     NSLog(@"Finishing MIP runnable(%p)...", _program);
 }
 
+-(void) setTimeLimit: (ORFloat) secs
+{
+   [_program setTimeLimit: secs];
+}
+
+-(ORFloat) bestBound {
+   return [_program bestObjectiveBound];
+}
+
+-(id<ORSolution>) bestSolution {
+   return [[_program solutionPool] best];
+}
+
 -(void) receivedUpperBound:(ORInt)bound
 {
     NSLog(@"(%p) recieved upper bound: %i", self, bound);

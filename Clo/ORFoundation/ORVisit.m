@@ -222,6 +222,9 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Equal: visit method not defined"]; 
 }
+-(void) visitSoftNEqual: (id<ORSoftNEqual>)c {
+    @throw [[ORExecutionError alloc] initORExecutionError: "SoftNEqual: visit method not defined"];
+}
 -(void) visitAffine: (id<ORAffine>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Affine: visit method not defined"]; 

@@ -73,6 +73,7 @@
 -(void)               label: (id<ORIntVar>) mx;
 
 -(void)               solve: (ORClosure) body;
+-(void)               solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 -(void)            solveAll: (ORClosure) body;
 -(void)               close;
 

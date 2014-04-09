@@ -216,6 +216,11 @@
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
    return [tracker trackMutable:o];
 }
++(id<ORIdArray>) idArray: (id<ORTracker>)tracker NSArray: (NSArray*)arr {
+    id<ORIntRange> range = RANGE(tracker, 0, (ORInt)arr.count-1);
+    id<ORIdArray> o = [ORFactory idArray: tracker range: range with: ^id(ORInt i) { return arr[i]; }];
+    return o;
+}
 struct EltValue {
    ORFloat  _val;
    id       _obj;
@@ -993,6 +998,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORConstraint> o = [[ORNEqual alloc] initORNEqual:x neq:y];
    [model trackObject:o];
    return o;
+}
++(id<ORSoftConstraint>) softNotEqual:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(id<ORIntVar>)y plus:(int)c slack: (id<ORVar>)slack
+{
+    id<ORSoftConstraint> o = [[ORSoftNEqual alloc] initORSoftNEqual:x neq:y plus:c slack: slack];
+    [model trackObject:o];
+    return o;
 }
 +(id<ORConstraint>) notEqualc:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(ORInt)c
 {

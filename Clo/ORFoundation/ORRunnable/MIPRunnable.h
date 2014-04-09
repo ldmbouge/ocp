@@ -22,4 +22,7 @@
 -(void) injectColumn: (id<ORFloatArray>) col;
 -(id<ORModel>) model;
 -(void) run;
+-(void) setTimeLimit: (ORFloat) secs;
+-(ORFloat) bestBound;
+-(id<ORSolution>) bestSolution;
 @end

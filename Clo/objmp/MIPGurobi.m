@@ -174,6 +174,11 @@
     GRBgetdblattr(_model, "ObjBound", &bnd);
     return bnd;
 }
+-(ORFloat) dualityGap {
+    ORFloat gap;
+    GRBgetdblattr(_model, "MIPGap", &gap);
+    return gap;
+}
 -(ORFloat) paramFloatValue: (MIPParameterI*) param
 {
     ORFloat v;

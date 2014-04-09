@@ -302,6 +302,10 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitSoftNEqual: (id<ORSoftNEqual>)c
+{
+    _result = [_into addConstraint:c];
+}
 -(void) visitLEqual: (id<ORLEqual>)c
 {
    _result = [_into addConstraint:c];

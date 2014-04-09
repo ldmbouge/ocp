@@ -267,6 +267,7 @@
 -(MIPOutcome) solve;
 -(void) setTimeLimit: (double)limit;
 -(ORFloat) bestObjectiveBound;
+-(ORFloat) dualityGap;
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;

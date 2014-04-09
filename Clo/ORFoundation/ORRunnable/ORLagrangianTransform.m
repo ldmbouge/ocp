@@ -317,10 +317,18 @@ static void heapify(ORPQueue* pq,ORInt i)
 
 -(id<ORParameterizedModel>) apply: (id<ORModel>)m relaxing: (NSArray*)cstrs
 {
-    id<ORParameterizedModel> relaxedModel = [self softify: m constraints: cstrs];
-    id<ORIntRange> slackRange = RANGE(relaxedModel, 0, (ORInt)cstrs.count-1);
+    // Lookup constraints wrt this model
+    NSMutableArray* myCstrs = [[NSMutableArray alloc] init];
+    for(id<ORConstraint> cstr in cstrs) {
+        NSArray* tc = [[m tau] get: cstr];
+        if(tc == nil) [myCstrs addObject: cstr];
+        else [myCstrs addObjectsFromArray: tc];
+    }
+    
+    id<ORParameterizedModel> relaxedModel = [self softify: m constraints: myCstrs];
+    id<ORIntRange> slackRange = RANGE(relaxedModel, 0, (ORInt)myCstrs.count-1);
     id<ORIdArray> slacks = [ORFactory idArray:  relaxedModel range: slackRange with: ^id(ORInt i) {
-        id<ORSoftConstraint> c = [[relaxedModel tau] get: [cstrs objectAtIndex: i]];
+        id<ORSoftConstraint> c = [[relaxedModel tau] get: [myCstrs objectAtIndex: i]];
         return [c slack];
     }];
     id<ORExpr> slackSum = [ORFactory sum: relaxedModel over: slackRange suchThat: nil of: ^id<ORExpr>(ORInt i) {
@@ -432,11 +440,40 @@ static void heapify(ORPQueue* pq,ORInt i)
 }
 @end
 
+@implementation ORSoftifyTransform
+-(id<ORModel>) apply: (id<ORModel>)m relaxing: (NSArray*)cstrs
+{
+    // Lookup constraints wrt this model
+    NSMutableArray* myCstrs = [[NSMutableArray alloc] init];
+    for(id<ORConstraint> cstr in cstrs) {
+        NSArray* tc = [[m tau] get: cstr];
+        if(tc == nil) [myCstrs addObject: cstr];
+        else [myCstrs addObjectsFromArray: tc];
+    }
+    ORViolationSoftify* softify = [[ORViolationSoftify alloc] initORSoftify];
+    [softify apply: m toConstraints: myCstrs];
+    id<ORModel> relaxedModel = [softify target];
+    id<ORIntRange> slackRange = RANGE(relaxedModel, 0, (ORInt)myCstrs.count-1);
+    id<ORExpr> slackSum = [ORFactory sum: relaxedModel over: slackRange suchThat: nil of: ^id<ORExpr>(ORInt i) {
+        id<ORSoftConstraint> c = [[relaxedModel tau] get: [myCstrs objectAtIndex: i]];
+        return [c slack];
+    }];
+    id<ORExpr> prevObjective = [((id<ORObjectiveFunctionExpr>)[relaxedModel objective]) expr];
+    if(prevObjective) [relaxedModel minimize: [prevObjective plus: slackSum track: relaxedModel]]; // Changed sub to plus
+    else [relaxedModel minimize: slackSum];
+    [relaxedModel setSource: m];
+    return relaxedModel;
+}
+@end
+
 @implementation ORFactory (ORLagrangianTransform)
 +(ORLagrangianTransform*) lagrangianTransform {
     return [[ORLagrangianTransform alloc] init];
 }
 +(ORLagrangianTransform*) lagrangianViolationTransform {
     return [[ORLagrangianViolationTransform alloc] init];
+}
++(ORSoftifyTransform*) softifyModelTransform {
+    return [[ORSoftifyTransform alloc] init];
 }
 @end

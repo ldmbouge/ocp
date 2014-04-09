@@ -482,7 +482,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
    ORFloat bound = [_x min];
    @synchronized(self) {
       if (bound < _primalBound)
-         _primalBound = bound;
+          _primalBound = bound - 0.000001;
    }
 }
 -(void) tightenPrimalBound: (ORObjectiveValueFloatI*) newBound

@@ -606,6 +606,29 @@
 }
 @end
 
+@implementation ORSoftNEqual {
+    id<ORVar> _slack;
+}
+-(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y slack: (id<ORVar>)slack {
+   self = [super initORNEqual: x neq: y];
+   if(self) _slack = slack;
+   return self;
+}
+-(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y plus: (ORInt) c slack: (id<ORVar>)slack {
+   self = [super initORNEqual: x neq: y plus: c];
+   if(self) _slack = slack;
+   return self;
+}
+-(id<ORVar>) slack
+{
+   return _slack;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitSoftNEqual:self];
+}
+@end
+
 @implementation ORLEqual {  // a * x ≤ b * y + c
    ORInt     _a,_b;
    id<ORIntVar> _x;
@@ -2762,7 +2785,7 @@
    self = [super initORConstraintI];
    _x = x;
    _z = [ORFactory floatVar: [x tracker]  low:FDMININT up:FDMAXINT];
-   _lambda = [[ORFloatParamI alloc] initORFloatParamI: [x tracker] initialValue: 1.0];
+   _lambda = [[ORFloatParamI alloc] initORFloatParamI: [x tracker] initialValue: 0.0];
    return self;
 }
 -(id<ORVar>) z

@@ -17,7 +17,12 @@
 @interface ORLagrangianViolationTransform : ORLagrangianTransform
 @end
 
+@interface ORSoftifyTransform : NSObject
+-(id<ORParameterizedModel>) apply: (id<ORModel>)m relaxing: (NSArray*)cstrs;
+@end
+
 @interface ORFactory(ORLagrangianTransform)
 +(ORLagrangianTransform*) lagrangianTransform;
 +(ORLagrangianTransform*) lagrangianViolationTransform;
++(ORSoftifyTransform*) softifyModelTransform;
 @end
