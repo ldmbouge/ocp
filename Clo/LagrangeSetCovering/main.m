@@ -52,25 +52,33 @@ int main (int argc, const char * argv[])
        id<ORConstraint> c = [m add: [expr geq: @1]];
        [cstrs addObject: c];
     }
-   
+    
     NSDate* t0 = [NSDate date];
    
-   ORInt coupledCount = 250;
+   ORInt coupledCount = 300;
    //NSArray* myCoupled = [ORLagrangianTransform coupledConstraints: m];
    NSMutableArray* coupled = [[NSMutableArray alloc] initWithCapacity: 50];
-   for(int i = 0; i < coupledCount; i++) [coupled addObject: [cstrs objectAtIndex: cstrs.count-i-1]];
-   
+    NSMutableArray* uncoupled = [[NSMutableArray alloc] initWithCapacity: 50];
+    for(int i = 0; i < [cstrs count]; i++) {
+        if(i <= [cstrs count] - coupledCount) [coupled addObject: [cstrs objectAtIndex: i]];
+        else [uncoupled addObject: [cstrs objectAtIndex: i]];
+    }
+    
    ORLagrangianTransform* t = [ORFactory lagrangianTransform];
    id<ORParameterizedModel> lagrangeModel = [t apply: m relaxing: coupled];
    
-    id<ORRunnable> lr = [ORFactory MIPSubgradient: lagrangeModel bound: 169];
+    id<ORRunnable> lr = [ORFactory MIPSubgradient: lagrangeModel bound: 168];
     //[(MIPSubgradient*)lr setSolverTimeLimit: 5];
+    
+    FILE* f = fopen("/Users/dan/Desktop/TT10.txt", "w+");
     [[(id<ORLowerBoundStreamProducer>)lr lowerBoundStreamInformer] wheneverNotifiedDo: ^(ORFloat lb) {
         NSDate* t1 = [NSDate date];
         NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
-        [logData appendFormat: @"%f %f\n", time, lb];
+        fprintf(f, "%f %f\n", time, lb);
+        fflush(f);
     }];
    [lr run];
+    fclose(f);
 
 //   id<ORRunnable> r = [ORFactory MIPRunnable: m];
 //   [r run];
@@ -83,8 +91,6 @@ int main (int argc, const char * argv[])
     NSDate* t1 = [NSDate date];
     NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
     NSLog(@"Time: %f", time);
-    
-    [logData writeToFile: @"/Users/dan/Desktop/logdat.txt" atomically: YES encoding: NSASCIIStringEncoding error: nil];
     
     return 0;
 }

@@ -24,5 +24,9 @@
 -(id<ORModel>) model;
 -(id<ORRunnable>) primaryRunnable;
 -(id<ORRunnable>) secondaryRunnable;
+-(ORFloat) bestBound;
+-(id<ORRunnable>) solvedRunnable;
+-(void) setTimeLimit:(ORFloat)secs;
+-(id<ORSolution>) bestSolution;
 @end
 

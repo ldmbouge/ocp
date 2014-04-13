@@ -118,7 +118,7 @@
 		379E3F6A18E9F4A40066399A /* ORLagrangeRelax.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E3F2318E9F3300066399A /* ORLagrangeRelax.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		379E3F6B18E9F4A40066399A /* ORLagrangianTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E3F2518E9F3300066399A /* ORLagrangianTransform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		379E3F6C18E9F4A40066399A /* ORLogicBenders.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E3F2718E9F3300066399A /* ORLogicBenders.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		379E3F6D18E9F4A40066399A /* ORParallelCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E3F2918E9F3300066399A /* ORParallelCombinator.h */; };
+		379E3F6D18E9F4A40066399A /* ORParallelCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E3F2918E9F3300066399A /* ORParallelCombinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		379E3F6E18E9F4A40066399A /* ORParallelRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E3F2B18E9F3300066399A /* ORParallelRunnable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		379E3F6F18E9F4A40066399A /* ORRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E3F2D18E9F3300066399A /* ORRunnable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		379E3F7018E9F4A40066399A /* ORRunnablePiping.h in Headers */ = {isa = PBXBuildFile; fileRef = 379E3F2F18E9F3300066399A /* ORRunnablePiping.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -6140,7 +6140,7 @@
 		B17715B31557D9D200BA14BF /* CPTableI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPTableI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B17715B41557D9D200BA14BF /* CPTableI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPTableI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B17832FA161F5FCC00C7298D /* ORProgramFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORProgramFactory.h; sourceTree = "<group>"; };
-		B17832FB161F5FCC00C7298D /* ORProgramFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORProgramFactory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		B17832FB161F5FCC00C7298D /* ORProgramFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORProgramFactory.m; sourceTree = "<group>"; tabWidth = 3; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B17832FE161F636A00C7298D /* CPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPSolver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B17832FF161F636A00C7298D /* CPSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPSolver.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B17ABE9013CC852C00DC7288 /* CPIntVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPIntVarI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };

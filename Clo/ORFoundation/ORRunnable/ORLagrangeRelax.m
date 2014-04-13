@@ -164,6 +164,8 @@
     ORFloat _solverTimeLimit;
     ORFloat _subgradientTimeLimit;
     ORInt _iters;
+    ORFloat _agility;
+    ORFloat _runtime;
 }
 
 -(id) initSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat) ub
@@ -178,6 +180,8 @@
         _solverTimeLimit = -DBL_MAX;
         _subgradientTimeLimit = -DBL_MAX;
         _iters = 0;
+        _agility = 2.0;
+        _runtime = 0;
     }
     return self;
 }
@@ -196,6 +200,10 @@
     return _iters;
 }
 
+-(ORFloat) runtime {
+    return _runtime;
+}
+
 -(id) solverForModel: (id<ORModel>)m {
     [NSException raise: @"Abstract Method" format: @"Tried to call an abstract method"];
     return nil;
@@ -206,10 +214,9 @@
 }
 
 -(id<ORSolution>) lagrangianSubgradientSolve {
-    ORFloat pi = 2.0f;
+    ORFloat pi = _agility;
     __block ORFloat slackSum = 0.0;
     id<ORSolution> bestSol = nil;
-    NSDate* t0 = [NSDate date];
     
     id<ORVarArray> slacks = [_model slacks];
     id<ORIntRange> slackRange = [slacks range];
@@ -227,11 +234,13 @@
     }];
     
     id<ORASolver> program = [self solverForModel: _model];
+    [program close];
     ORFloat cutoff = 0.0005;
     ORInt noImproveLimit = 30;//30;
     ORInt noImprove = 0;
     ORInt timeIncrease = 0;
     NSTimeInterval remainingTime = 0;
+    NSDate* t0 = [NSDate date];
     
     _iters = 0;
     while(pi > cutoff) {
@@ -307,6 +316,8 @@
         // Check if done
         if(satisfied) break;
     }
+    NSDate* t1 = [NSDate date];
+    _runtime = [t1 timeIntervalSinceDate: t0];
     NSLog(@"Best Bound: %f", _bestBound);
     NSLog(@"remaining slack: %f", slackSum);
     return bestSol;
@@ -338,6 +349,10 @@
 -(id<ORSolution>) bestSolution
 {
     return _bestSolution;
+}
+
+-(void) setAgility: (ORFloat)val {
+    _agility = val;
 }
 
 -(void) setUpperBound: (ORFloat)upperBound

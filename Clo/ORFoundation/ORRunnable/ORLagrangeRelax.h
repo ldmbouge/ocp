@@ -28,10 +28,12 @@
 -(void) run;
 -(void) setSolverTimeLimit: (ORFloat)limit;
 -(void) setTimeLimit:(ORFloat)secs;
+-(void) setAgility: (ORFloat)val;
 -(ORFloat) bestBound;
 -(id<ORSolution>) bestSolution;
 -(void) setUpperBound: (ORFloat)upperBound;
 -(ORFloat) upperBound;
+-(ORFloat) runtime;
 +(NSMutableArray*) autosplitVariables: (NSArray*)vars constraints: (NSArray*)cstrs;
 @end
 
