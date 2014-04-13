@@ -1103,8 +1103,10 @@
       _isClosed = true;
       for(ORInt i = 0; i < _nbVars; i++)
          [_MIP addVariable: _var[i]];
+      [_MIP updateModel];
       for(ORInt i = 0; i < _nbCstrs; i++)
          [_MIP addConstraint: _cstr[i]];
+      [_MIP updateModel];
       [_MIP addObjective: _obj];
    }
 }

@@ -123,8 +123,9 @@ int main(int argc, const char * argv[])
       id<ORModel> lm = [ORFactory linearizeModel: model];
       // --------------------------------------------------------------------------------------
 
-      
-      FILE* f = fopen("/Users/dan/Desktop/ALL.txt", "a+");
+      char buf[1024];
+      sprintf(buf,"%s/Desktop/ALL.txt",getenv("HOME"));
+      FILE* f = fopen(buf, "a+");
       fprintf(f, "\n%i-%i-%i--------------------\n", nbv, cliqueCount, relaxCount);
    
    
@@ -158,6 +159,8 @@ int main(int argc, const char * argv[])
       //[lagrangeModel1 release];
       fprintf(f, "LR: %f %f %f %i\n", time, bnd, inc, iter);
       fflush(f);
+   
+      fclose(f);return 0;
    
       // LR-MIP Violation -----------------------------------------
 
