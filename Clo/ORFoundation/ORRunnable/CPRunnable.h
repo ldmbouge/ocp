@@ -12,7 +12,7 @@
 
 @protocol CPRunnable <ORUpperBoundStreamConsumer, ORUpperBoundStreamProducer,
                       ORLowerBoundStreamConsumer, ORSolutionStreamConsumer,
-                      ORSolutionStreamProducer>
+                      ORSolutionStreamProducer, ORRunnable>
 -(id<CPProgram>) solver;
 @end
 

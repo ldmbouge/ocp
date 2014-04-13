@@ -506,8 +506,13 @@
 -(void) setTimeLimit: (double)limit {
    [_MIPsolver setTimeLimit: limit];
 }
--(ORFloat) bestObjectiveBound {
+-(ORFloat) bestObjectiveBound
+{
    return [_MIPsolver bestObjectiveBound];
+}
+-(ORFloat) dualityGap
+{
+    return [_MIPsolver dualityGap];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) v
 {

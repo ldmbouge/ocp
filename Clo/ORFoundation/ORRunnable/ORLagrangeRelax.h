@@ -16,6 +16,9 @@
 -(ORFloat) upperBound;
 -(ORFloat) bestBound;
 -(id<ORSolution>) bestSolution;
+-(void) setSolverTimeLimit: (ORFloat)limit;
+-(void) setTimeLimit:(ORFloat)secs;
+-(ORInt) iterations;
 @end
 
 @interface ORSubgradientTemplate : ORPipedRunnable<ORLagrangeRelax, ORLowerBoundStreamProducer>
@@ -24,10 +27,14 @@
 -(id<ORModel>) model;
 -(void) run;
 -(void) setSolverTimeLimit: (ORFloat)limit;
+-(void) setTimeLimit:(ORFloat)secs;
+-(void) setAgility: (ORFloat)val;
 -(ORFloat) bestBound;
 -(id<ORSolution>) bestSolution;
 -(void) setUpperBound: (ORFloat)upperBound;
 -(ORFloat) upperBound;
+-(ORFloat) runtime;
++(NSMutableArray*) autosplitVariables: (NSArray*)vars constraints: (NSArray*)cstrs;
 @end
 
 @interface ORSurrogateTemplate : ORSubgradientTemplate
@@ -37,7 +44,10 @@
 @interface MIPSubgradient : ORSubgradientTemplate
 @end
 
-@interface CPSubgradient : ORSubgradientTemplate
+@interface CPSubgradient : ORSubgradientTemplate {
+    void(^_search)(id<CPCommonProgram>);
+}
+-(id) initSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat) ub search: (void(^)(id<CPCommonProgram>))search;
 @end
 
 @interface MIPSurrogate : ORSurrogateTemplate
@@ -48,6 +58,6 @@
 
 @interface ORFactory(ORLagrangeRelax)
 +(id<ORLagrangeRelax>) MIPSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat)ub;
-+(id<ORLagrangeRelax>) CPSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat)ub;
++(id<ORLagrangeRelax>) CPSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat)ub search: (void(^)(id<CPCommonProgram>))search;
 +(id<ORLagrangeRelax>) MIPSurrogate: (id<ORParameterizedModel>)m bound: (ORFloat)ub;
 @end

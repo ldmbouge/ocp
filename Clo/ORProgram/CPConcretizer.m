@@ -511,6 +511,21 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitSoftNEqual:(id<ORSoftNEqual>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> left = [cstr left];
+        id<ORIntVar> right = [cstr right];
+        id<ORVar> slack = [cstr slack];
+        //ORInt cst = [cstr cst];
+        [left visit: self];
+        [right visit: self];
+        [slack visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory reify: _gamma[slack.getId] with: _gamma[left.getId] eq: _gamma[right.getId] annotation: Default];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 -(void) visitLEqual: (id<ORLEqual>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

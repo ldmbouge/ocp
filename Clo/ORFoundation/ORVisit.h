@@ -74,6 +74,7 @@
 -(void) visitEqual: (id<OREqual>)c;
 -(void) visitAffine: (id<ORAffine>)c;
 -(void) visitNEqual: (id<ORNEqual>)c;
+-(void) visitSoftNEqual: (id<ORSoftNEqual>)c;
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;

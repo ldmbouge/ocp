@@ -81,6 +81,7 @@
 -(NSArray*) softConstraints;
 -(NSArray*) hardConstraints;
 -(NSArray*) parameters;
+-(id<ORVarArray>) slacks;
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
 -(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x;
 @end

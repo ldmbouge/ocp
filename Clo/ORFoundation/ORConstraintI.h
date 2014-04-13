@@ -93,6 +93,12 @@
 -(ORInt) cst;
 @end
 
+@interface ORSoftNEqual : ORNEqual<ORSoftNEqual,NSCoding>
+-(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y slack: (id<ORVar>)slack;
+-(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y plus: (ORInt) c slack: (id<ORVar>)slack;
+-(id<ORVar>) slack;
+@end
+
 @interface ORLEqual : ORConstraintI<ORLEqual>
 -(ORLEqual*)initORLEqual: (id<ORIntVar>) x leq: (id<ORIntVar>) y plus: (ORInt) c;
 -(ORLEqual*)initORLEqual:(ORInt)a times:(id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>)y plus:(ORInt)c;

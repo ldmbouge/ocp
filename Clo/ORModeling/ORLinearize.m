@@ -46,6 +46,7 @@
 
 -(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
 {
+    ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: _into];
     [m applyOnVar:^(id<ORVar> x) {
         [_into addVariable: x];
     } onMutables:^(id<ORObject> x) {
@@ -53,13 +54,12 @@
     } onImmutables:^(id<ORObject> x) {
        //NSLog(@"Got an object: %@",x);
     } onConstraints:^(id<ORConstraint> c) {
-        ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: _into];
         [c visit: lc];
-        [lc release];
     } onObjective:^(id<ORObjectiveFunction> o) {
         ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: _into];
         [o visit: lo];
     }];
+    [lc release];
 }
 
 @end
@@ -189,20 +189,26 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     ORExprBinaryI* binExpr = (ORExprBinaryI*)[cstr expr];
-    id<ORExpr> left = [self linearizeExpr: [binExpr left]];
-    id<ORExpr> right = [self linearizeExpr: [binExpr right]];
+    id<ORExpr> left = nil;
+    id<ORExpr> right = nil;
     switch ([[cstr expr] type]) {
         case ORRBad: assert(NO);
         case ORREq: {
+            left = [self linearizeExpr: [binExpr left]];
+            right = [self linearizeExpr: [binExpr right]];
             [_model addConstraint: [left eq: right]];
         }break;
         case ORRNEq: {
-            // Not implemented
+            [binExpr visit: self];
         }break;
         case ORRLEq: {
+            left = [self linearizeExpr: [binExpr left]];
+            right = [self linearizeExpr: [binExpr right]];
             [_model addConstraint: [left leq: right]];
         }break;
        case ORRGEq: {
+           left = [self linearizeExpr: [binExpr left]];
+           right = [self linearizeExpr: [binExpr right]];
            [_model addConstraint: [left geq: right]];
        }break;
         default:
@@ -213,8 +219,7 @@
 }
 -(void) visitKnapsack:(id<ORKnapsack>)cstr {
     id<ORExpr> sumExpr = Sum(_model, i, [[cstr item] range], [[[cstr item] at: i] mul: @([[cstr weight] at: i])]);
-    [_model addConstraint: [sumExpr leq: [cstr capacity]]];
-    [_model addConstraint: [sumExpr geq: [cstr capacity]]];
+    [_model addConstraint: [sumExpr eq: [cstr capacity]]];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -242,6 +247,21 @@
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
+    id<ORIntVar> x = [c left];
+    id<ORIntVarArray> bx = [self binarizationForVar: x];
+    id<ORIntVar> y = [c right];
+    id<ORIntVarArray> by = [self binarizationForVar: y];
+    ORInt cst = [c cst];
+    NSMutableArray* cstrs = [[NSMutableArray alloc] init];
+    id<ORIntRange> dom = RANGE(_model, MAX([[x domain] low], [[y domain] low]), MIN([[x domain] up], [[y domain] up]));
+    [dom enumerateWithBlock: ^(ORInt i) {
+        if([[y domain] inRange: i + cst]) {
+            id<ORConstraint> cstr = [ORFactory algebraicConstraint: _model expr:  [[bx[i] plus: by[i+cst] track: _model] leq: @(1) track: _model]];
+            [_model addConstraint: cstr];
+            [cstrs addObject: cstr];
+        }
+    }];
+    [[[_model modelMappings] tau] set: cstrs forKey: c];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
@@ -400,10 +420,8 @@
    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
    [linearizer apply: m with:nil]; // TOFIX
-   id<ORModel> clm = [ORFactory cloneModel: lm];
-   [lm release];
    [batch release];
    [linearizer release];
-   return clm;
+   return lm;
 }
 @end

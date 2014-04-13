@@ -117,6 +117,9 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
+@protocol ORSoftNEqual <ORNEqual, ORSoftConstraint>
+@end
+
 @protocol  ORLEqual <ORConstraint>
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;

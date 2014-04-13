@@ -39,7 +39,10 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     ORExprBinaryI* binexpr = (ORExprBinaryI*)[cstr expr];
-    id<ORExpr> slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
+    id<ORExpr> slackExpr = nil;
+    if([[cstr expr] type] == ORRGEq || [[cstr expr] type] == ORREq) slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
+    else if([[cstr expr] type] == ORRLEq) slackExpr = [[binexpr left] sub: [binexpr right] track: _target];
+    
     id<ORVar> slack = nil;
     if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, [slackExpr min], [slackExpr max])];
     else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: [slackExpr min] up: [slackExpr max]];
@@ -88,7 +91,10 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     ORExprBinaryI* binexpr = (ORExprBinaryI*)[cstr expr];
-    id<ORExpr> slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
+    id<ORExpr> slackExpr = nil;
+    if([[cstr expr] type] == ORRGEq || [[cstr expr] type] == ORREq) slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
+    else if([[cstr expr] type] == ORRLEq) slackExpr = [[binexpr left] sub: [binexpr right] track: _target];
+    
     id<ORVar> slack = nil;
     if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [slackExpr max])];
     else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [slackExpr max]];
@@ -124,6 +130,13 @@
     id<ORSoftConstraint> knapsack = [ORFactory softKnapsack: softItems weight: softWeight capacity: slack slack: slack];
     [_target add: knapsack];
     [[_target tau] set: knapsack forKey: cstr];
+}
+
+-(void) visitNEqual:(id<ORNEqual>)c {
+    id<ORIntVar> slack = [ORFactory intVar: _target domain: RANGE(_target, 0, 1)];
+    id<ORSoftConstraint> cstr = [ORFactory softNotEqual: _target var: [c left] to: [c right] plus: [c cst] slack: slack];
+    [_target add: cstr];
+    [[_target tau] set: cstr forKey: c];
 }
 
 @end

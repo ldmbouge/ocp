@@ -1118,11 +1118,17 @@
       [self close];
    return [_MIP solve];
 }
--(void) setTimeLimit: (double)limit {
+-(void) setTimeLimit: (double)limit
+{
     [_MIP setTimeLimit: limit];
 }
--(ORFloat) bestObjectiveBound {
+-(ORFloat) bestObjectiveBound
+{
     return [_MIP bestObjectiveBound];
+}
+-(ORFloat) dualityGap
+{
+    return [_MIP dualityGap];
 }
 -(MIPOutcome) status;
 {

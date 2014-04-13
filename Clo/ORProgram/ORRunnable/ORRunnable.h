@@ -21,7 +21,7 @@
 -(id<ORASolver>) solver;
 -(void) start;
 -(void) run;
-
+-(ORFloat)bestBound;
 @end
 
 @interface ORAbstractRunnableI : NSObject<ORRunnable> {

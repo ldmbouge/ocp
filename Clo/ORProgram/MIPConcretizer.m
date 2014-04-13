@@ -187,6 +187,26 @@
         [_MIPsolver postConstraint:concreteCstr];
     }
 }
+-(void) visitGEqualc:(id<ORGEqualc>)c
+{
+    if (_gamma[c.getId]==NULL) {
+        MIPVariableI* x[1] = { [self concreteVar:[c left]] };
+        ORFloat    coef[1] = { 1.0 };
+        MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: 1 var:x coef:coef rhs:[c cst]];
+        _gamma[c.getId] = concreteCstr;
+        [_MIPsolver postConstraint:concreteCstr];
+    }
+}
+-(void) visitLEqualc:(id<ORGEqualc>)c
+{
+    if (_gamma[c.getId]==NULL) {
+        MIPVariableI* x[1] = { [self concreteVar:[c left]] };
+        ORFloat    coef[1] = { 1.0 };
+        MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: 1 var:x coef:coef rhs:[c cst]];
+        _gamma[c.getId] = concreteCstr;
+        [_MIPsolver postConstraint:concreteCstr];
+    }
+}
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
