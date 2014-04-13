@@ -36,8 +36,8 @@ int main(int argc, const char * argv[])
    //@autoreleasepool {
       //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       //      [args measure:^struct ORResult(){
-      ORInt relaxCount = 95;//atoi(argv[2]);
-      ORInt cliqueCount = 20;//atoi(argv[1]);
+   ORInt relaxCount = 119;//95;//atoi(argv[2]);
+   ORInt cliqueCount = 5;//20;//atoi(argv[1]);
       ORFloat timeLimit = 5 * 60;
       
       id<ORModel> model = [ORFactory createModel];
@@ -83,7 +83,7 @@ int main(int argc, const char * argv[])
       
       
       // FIND RELAXATION -------------------------------------------------------------------------------
-      ORFloat UB = 15;
+      ORFloat UB = 12;
       NSArray* split = [ORSubgradientTemplate autosplitVariables: [c toNSArray] constraints: nonCoupledCstr];
       NSMutableArray* varSets = [[NSMutableArray alloc] initWithCapacity: split.count];
       [split enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL* stop) {
@@ -132,7 +132,8 @@ int main(int argc, const char * argv[])
       ORLagrangianTransform* t = [ORFactory lagrangianViolationTransform];
       id<ORParameterizedModel> lagrangeModel0 = [t apply: lm relaxing: relaxCstrs];
       id<ORParameterizedModel> lagrangeModel1 = [t apply: lm relaxing: unrelaxCstrs];
-      id<ORRunnable> r0 = [ORFactory MIPSubgradient: lagrangeModel0 bound: UB];
+
+      id<ORRunnable> r0 = [ORFactory MIPSurrogate: lagrangeModel0 bound: UB];
       [(ORSubgradientTemplate*)r0 setAgility: 3];
       id<ORRunnable> r1 = [ORFactory MIPSubgradient: lagrangeModel1 bound: UB];
       [(ORSubgradientTemplate*)r1 setAgility: 3];

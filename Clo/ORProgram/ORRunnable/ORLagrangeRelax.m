@@ -431,7 +431,7 @@
 {
     self = [self initSubgradient: m bound: ub];
     _surrogateBranchVars = [[self computeBranchVars] mutableCopy];
-    _split = [self autosplitVariables: [_surrogateBranchVars allObjects] constraints: [m hardConstraints]];
+    _split = [ORSubgradientTemplate autosplitVariables: [_surrogateBranchVars allObjects] constraints: [m hardConstraints]];
     _lambdaMap = [[NSMapTable alloc] init];
     return self;
 }
@@ -453,6 +453,7 @@
     id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
     ORFloat stepSize = pi * (bound - [objValue value]) / slackSum;
     
+    __block BOOL satisfied = YES;
     [lambdas enumerateWith:^(id obj, ORInt idx) {
         id<ORFloatParam> lambda = obj;
         ORFloat value = [sol paramFloatValue: lambda];
@@ -466,8 +467,11 @@
                 NSArray* lambdaProbs = [_lambdaMap objectForKey: obj];
                 if(lambdaProbs != nil) [modifiedProblems addObjectsFromArray: lambdaProbs];
             }
+            if(newValue != 0.0)
+                satisfied = NO;
         }
     }];
+    if(satisfied) return nil;
     return modifiedProblems;
 }
     
@@ -501,8 +505,8 @@
     }
     
     ORFloat pi = 1.0f;
-    ORFloat bestBound = -DBL_MAX;
-    id<ORSolution> bestSol = nil;
+    _bestBound = -DBL_MAX;
+    _bestSolution = nil;
     
     // Get slacks
     NSArray* softCstrs = [_model softConstraints];
@@ -537,10 +541,15 @@
         //for(NSNumber* idx in probIndexes)
         //    if(![subprobQueue containsObject: idx]) [subprobQueue addObject: idx];
         
+        if(probIndexes == nil) {
+            NSLog(@"Done");
+            break;
+        }
+        
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[allsol objectiveValue];
-        if([objValue floatValue] > bestBound) {
-            bestBound = [objValue floatValue];
-            bestSol = allsol;
+        if([objValue floatValue] > _bestBound) {
+            _bestBound = [objValue floatValue];
+            _bestSolution = allsol;
             noImprove = 0;
         }
         else if(++noImprove > noImproveLimit) {
@@ -603,7 +612,7 @@
         }
     }
     NSLog(@"Done");
-    return bestSol;
+    return _bestSolution;
 }
 
 -(id<ORModel>) subproblemForPartition: (NSUInteger) splitIdx {
