@@ -619,13 +619,16 @@
     id<ORParameterizedModel> m = [[ORParameterizedModelI alloc] initWithModel: (ORModelI*)_model relax: [_model constraints]];
     NSArray* cstrs = [self constraintsForPartition: splitIdx];
     NSSet* vars = [_split objectAtIndex: splitIdx];
+   NSDictionary* scd = [self makeWeightedMap];
     for(id<ORConstraint> c in cstrs) {
         [m add: c];
         // Create the lambda map
         if([c conformsToProtocol: @protocol(ORSoftConstraint)]) {
             // Add problem index to lambda map
             ORSoftAlgebraicConstraintI* softCstr = (ORSoftAlgebraicConstraintI*)c;
-            id<ORWeightedVar> wv = [self weightedVarForSlack: [softCstr slack]];
+           id<ORWeightedVar> wv = [scd objectForKey:@(getId([softCstr slack]))];
+           assert(wv != nil);
+            //id<ORWeightedVar> wv = [self weightedVarForSlack: [softCstr slack]];
             NSMutableArray* arr = [_lambdaMap objectForKey: [wv weight]];
             if(arr == nil) {
                 arr = [[NSMutableArray alloc] initWithCapacity: 8];
@@ -638,7 +641,7 @@
         }
     }
     //for (id<ORParameter> p in [_model parameters]) [(ORParameterizedModelI*)m addParameter: p];
-    
+   [scd release];
     // Add objective
     if([[_model objective] conformsToProtocol: @protocol(ORObjectiveFunctionExpr)]) {
         id<ORExpr> objExpr = [(id<ORObjectiveFunctionExpr>)[_model objective] expr];
@@ -681,25 +684,41 @@
     return nil;
 }
 
+-(NSDictionary*)makeWeightedMap
+{
+   NSMutableDictionary* scd = [[NSMutableDictionary alloc] initWithCapacity:64];
+   for(id<ORConstraint> c in [_model constraints]) {
+      if ([c conformsToProtocol:@protocol(ORWeightedVar)]) {
+         id<ORWeightedVar> wv = (id<ORWeightedVar>)c;
+         id<ORVar> slack = [wv x];
+         [scd setObject:wv forKey:@(getId(slack))];
+      }
+   }
+   return scd;
+}
 -(NSArray*) constraintsForPartition: (NSUInteger) splitIdx {
-    NSMutableSet* vars = [[_split objectAtIndex: splitIdx] mutableCopy];
-    NSMutableSet* cstrs = [[NSMutableSet alloc] initWithCapacity: 16];
-    for(id<ORConstraint> c in [_model constraints]) {
-        NSSet* cstrVars =[c allVars];
-        if([cstrVars intersectsSet: vars]) {
-            if([c conformsToProtocol: @protocol(ORSoftConstraint)]) {
-                ORSoftAlgebraicConstraintI* softCstr = (ORSoftAlgebraicConstraintI*)c;
-                id<ORWeightedVar> wv = [self weightedVarForSlack: [softCstr slack]];
-                [cstrs addObject: wv];
-                [vars addObject: [wv x]];
-                [vars addObject: [wv z]];
-                [cstrs addObject: softCstr];
-            }
-            else [cstrs addObject: c];
-        }
-    }
-    [_split replaceObjectAtIndex: splitIdx withObject: vars];
-    return [cstrs allObjects];
+   NSMutableSet* vars = [[_split objectAtIndex: splitIdx] mutableCopy];
+   NSMutableSet* cstrs = [[NSMutableSet alloc] initWithCapacity: 16];
+   NSDictionary* scd = [self makeWeightedMap];
+
+   for(id<ORConstraint> c in [_model constraints]) {
+      NSSet* cstrVars =[c allVars];
+      if([cstrVars intersectsSet: vars]) {
+         if([c conformsToProtocol: @protocol(ORSoftConstraint)]) {
+            ORSoftAlgebraicConstraintI* softCstr = (ORSoftAlgebraicConstraintI*)c;
+            id<ORWeightedVar> wv = [scd objectForKey:@(getId([softCstr slack]))];
+            //id<ORWeightedVar> wv = [self weightedVarForSlack: [softCstr slack]];
+            [cstrs addObject: wv];
+            [vars addObject: [wv x]];
+            [vars addObject: [wv z]];
+            [cstrs addObject: softCstr];
+         }
+         else [cstrs addObject: c];
+      }
+   }
+   [_split replaceObjectAtIndex: splitIdx withObject: vars];
+   [scd release];
+   return [cstrs allObjects];
 }
 
 -(void) run
