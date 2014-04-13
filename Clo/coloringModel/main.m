@@ -41,7 +41,7 @@ int main(int argc, const char * argv[])
       ORFloat timeLimit = 5 * 60;
       
       id<ORModel> model = [ORFactory createModel];
-      FILE* dta = fopen("/Users/dan/Desktop/clique.col","r");
+      FILE* dta = fopen("clique.col","r");  // file is located in the executable directory.
       //FILE* dta = fopen("smallColoring.col","r");
       //FILE* dta = fopen("test-n30-e50.col","r");
       //FILE* dta = fopen("test-n80-p40-0.col","r");

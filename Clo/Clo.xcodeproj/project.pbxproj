@@ -113,7 +113,6 @@
 		37A6505C18FAE08F003F292E /* ORCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A6504318FAE08F003F292E /* ORCombinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37A6505D18FAE08F003F292E /* ORLagrangeRelax.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A6504418FAE08F003F292E /* ORLagrangeRelax.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37A6505E18FAE08F003F292E /* ORLagrangeRelax.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A6504518FAE08F003F292E /* ORLagrangeRelax.m */; };
-		37A6505F18FAE08F003F292E /* ORLagrangeRelax.m~ in Resources */ = {isa = PBXBuildFile; fileRef = 37A6504618FAE08F003F292E /* ORLagrangeRelax.m~ */; };
 		37A6506018FAE08F003F292E /* ORLagrangianTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A6504718FAE08F003F292E /* ORLagrangianTransform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37A6506118FAE08F003F292E /* ORLagrangianTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A6504818FAE08F003F292E /* ORLagrangianTransform.m */; };
 		37A6506218FAE08F003F292E /* ORLogicBenders.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A6504918FAE08F003F292E /* ORLogicBenders.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -981,6 +980,8 @@
 		5BE1218F173C75C0000C9AA9 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BE12190173C75C0000C9AA9 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BE12191173C75C0000C9AA9 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BE1ED7A18FAE7A400710868 /* clique.col in Resources */ = {isa = PBXBuildFile; fileRef = 5BE1ED7918FAE7A400710868 /* clique.col */; };
+		5BE1ED7B18FAE7BC00710868 /* clique.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE1ED7918FAE7A400710868 /* clique.col */; };
 		5BE5A7EC158A8390006703CB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BE5A7EF158A8390006703CB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE5A7EE158A8390006703CB /* main.m */; };
 		5BE5A7F3158A8390006703CB /* fdmul2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE5A7F2158A8390006703CB /* fdmul2.1 */; };
@@ -4992,6 +4993,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				5BE1ED7B18FAE7BC00710868 /* clique.col in CopyFiles */,
 				5B7B478715F0F758005FF875 /* smallColoring.col in CopyFiles */,
 				5B7B478415F0F554005FF875 /* test-n30-e50.col in CopyFiles */,
 				5B7B478115F0EC12005FF875 /* test-n80-p40-0.col in CopyFiles */,
@@ -5979,6 +5981,7 @@
 		5BE19F251582654F008DF214 /* CPFirstFail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFirstFail.h; sourceTree = "<group>"; };
 		5BE19F261582654F008DF214 /* CPFirstFail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFirstFail.m; sourceTree = "<group>"; };
 		5BE19F2915826A28008DF214 /* CPDDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPDDeg.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BE1ED7918FAE7A400710868 /* clique.col */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = clique.col; sourceTree = "<group>"; };
 		5BE5A7EA158A838F006703CB /* fdmul2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fdmul2; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BE5A7EE158A8390006703CB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BE5A7F1158A8390006703CB /* fdmul2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fdmul2-Prefix.pch"; sourceTree = "<group>"; };
@@ -9449,6 +9452,7 @@
 		B1943A1015B0E33C00E1771B /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5BE1ED7918FAE7A400710868 /* clique.col */,
 				5B6CFD7316D90F2200BCB95F /* rbg049a.tw */,
 				5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */,
 				5B36F25D1682683000020E94 /* GAPDATA */,
@@ -11972,7 +11976,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B681187161F98FB00F4480F /* InfoPlist.strings in Resources */,
-				37A6505F18FAE08F003F292E /* ORLagrangeRelax.m~ in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12060,6 +12063,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				379E3EF418E9ED1A0066399A /* LagrangeSetCovering.1 in Resources */,
+				5BE1ED7A18FAE7A400710868 /* clique.col in Resources */,
 				5BFD594A15A3ACA500825BC3 /* InfoPlist.strings in Resources */,
 				379E3EF318E9ED1A0066399A /* frb30-15-1.msc in Resources */,
 				379E3EF918E9ED1A0066399A /* simple.msc in Resources */,
