@@ -55,7 +55,7 @@ int main (int argc, const char * argv[])
     
     NSDate* t0 = [NSDate date];
    
-   ORInt coupledCount = 250;
+   ORInt coupledCount = 300;
    //NSArray* myCoupled = [ORLagrangianTransform coupledConstraints: m];
    NSMutableArray* coupled = [[NSMutableArray alloc] initWithCapacity: 50];
     NSMutableArray* uncoupled = [[NSMutableArray alloc] initWithCapacity: 50];
@@ -67,10 +67,10 @@ int main (int argc, const char * argv[])
    ORLagrangianTransform* t = [ORFactory lagrangianViolationTransform];
    id<ORParameterizedModel> lagrangeModel = [t apply: m relaxing: coupled];
    
-    id<ORRunnable> lr = [ORFactory MIPSubgradient: lagrangeModel bound: 168];
+    id<ORRunnable> lr = [ORFactory MIPSubgradient: lagrangeModel bound: 158];
     //[(MIPSubgradient*)lr setSolverTimeLimit: 10];
     
-    FILE* f = fopen("/Users/dan/Desktop/FIN_1_LV_.txt", "w+");
+    FILE* f = fopen("/Users/dan/Desktop/FIN_2_LV_.txt", "w+");
     [[(id<ORLowerBoundStreamProducer>)lr lowerBoundStreamInformer] wheneverNotifiedDo: ^(ORFloat lb) {
         NSDate* t1 = [NSDate date];
         NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
