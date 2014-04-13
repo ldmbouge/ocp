@@ -54,7 +54,6 @@ static void prune(CPAllDifferentDC* ad);
 
 -(void) initInstanceVariables 
 {
-    _idempotent = YES;
     _priority = HIGHEST_PRIO-2;
     _posted = false;
 }
@@ -118,20 +117,6 @@ static void prune(CPAllDifferentDC* ad);
     return 0;
 }
 
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    [self initInstanceVariables];
-   return self;
-}
-
 static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
 {
    CPIntVar** var = ad->_var;
@@ -143,10 +128,10 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
    return ORSuspend;
 }
 
--(ORStatus) post
+-(void) post
 {
    if (_posted)
-      return ORSkip;
+      return;
    _posted = true;
    
    [self allocate];
@@ -162,7 +147,6 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
          [_var[k] whenBindDo: ^{ removeOnBind(self,k);} onBehalf:self];
          [_var[k] whenChangePropagate: self];
       }
-   return ORSuspend;
 }
 
 -(void) allocate

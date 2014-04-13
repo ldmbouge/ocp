@@ -15,6 +15,8 @@
 #import "ORFloatLinear.h"
 //-- temp
 #import "ORFloatDecompose.h"
+#import <ORFoundation/ORVisit.h>
+
 
 @interface ORIntNormalizer : ORNOopVisit<NSObject> {
    id<ORIntLinear>     _terms;

@@ -79,6 +79,7 @@
 
 @protocol ORParameterizedModel <ORModel>
 -(NSArray*) softConstraints;
+-(NSArray*) hardConstraints;
 -(NSArray*) parameters;
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
 -(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x;

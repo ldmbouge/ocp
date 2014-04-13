@@ -43,7 +43,7 @@
 -(void) main;
 @end
 
-@interface ORInformerI : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer,
+@interface ORInformerI : NSObject<ORVoidInformer,ORIntInformer, ORFloatInformer, ORIdxIntInformer,
     ORSolutionInformer, ORConstraintInformer, ORIntArrayInformer, ORFloatArrayInformer, ORConstraintSetInformer> {
     NSLock* _lock;
     NSMutableArray* _whenList;
@@ -55,6 +55,7 @@
 -(void) sleepUntilNotified;
 -(void) notify;
 -(void) notifyWith:(int)a0;
+-(void) notifyWithFloat:(double)a0;
 -(void) notifyWith:(id)a0 andInt:(ORInt)v;
 -(void) notifyWithSolution:(id<ORSolution>)s;
 @end

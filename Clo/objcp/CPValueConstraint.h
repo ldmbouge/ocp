@@ -19,74 +19,74 @@
 @class CPIntVarI;
 @class CPEngineI;
 
-@interface CPReifyNotEqualcDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyNotEqualcDC : CPCoreConstraint {
 @private
     CPIntVar* _b;
     CPIntVar* _x;
     ORInt      _c;
 }
 -(id) initCPReifyNotEqualcDC:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyEqualcDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyEqualcDC : CPCoreConstraint {
 @private
     CPIntVar* _b;
     CPIntVar* _x;
     ORInt      _c;
 }
 -(id) initCPReifyEqualcDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyEqualBC : CPCoreConstraint<NSCoding> {
+@interface CPReifyEqualBC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
    CPIntVar* _y;
 }
 -(id) initCPReifyEqualBC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyEqualDC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
    CPIntVar* _y;
 }
 -(id) initCPReifyEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyNEqualBC : CPCoreConstraint<NSCoding> {
+@interface CPReifyNEqualBC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
    CPIntVar* _y;
 }
 -(id) initCPReify:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyNEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyNEqualDC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
    CPIntVar* _y;
 }
 -(id) initCPReify:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -98,37 +98,37 @@
    CPIntVar* _y;
 }
 -(id) initCPReifyLEqualBC:(id<CPIntVar>)b when:(id<CPIntVar>)x leq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyLEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyLEqualDC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
    ORInt      _c;
 }
 -(id) initCPReifyLEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x leqi:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPReifyGEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyGEqualDC : CPCoreConstraint {
 @private
    CPIntVar* _b;
    CPIntVar* _x;
    ORInt      _c;
 }
 -(id) initCPReifyGEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x geq:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPSumBoolGeq : CPCoreConstraint<NSCoding> {
-    CPIntVar**       _x;
+@interface CPSumBoolGeq : CPCoreConstraint {
+    CPIntVar**        _x;
     ORLong           _nb;
     ORInt             _c;
     id<CPTrigger>*   _at; // the c+1 triggers.
@@ -137,12 +137,12 @@
 }
 -(id) initCPSumBool:(id)x geq:(ORInt)c;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPSumBoolEq : CPCoreConstraint<NSCoding> {
+@interface CPSumBoolEq : CPCoreConstraint {
    id<CPIntVarArray> _xa;
    CPIntVar**        _x;
    ORLong            _nb;
@@ -150,7 +150,51 @@
 }
 -(id) initCPSumBool:(id)x eq:(ORInt)c;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPReifySumBoolEq : CPCoreConstraint {
+   CPIntVar*          _b;
+   id<CPIntVarArray> _xa;
+   ORInt              _c;
+}
+-(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x eqi:(ORInt)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPReifySumBoolGEq : CPCoreConstraint {
+   id<CPIntVar>       _b;
+   id<CPIntVarArray> _xa;
+   ORInt              _c;
+}
+-(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x geqi:(ORInt)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPHReifySumBoolEq : CPCoreConstraint {
+   id<CPIntVar>       _b;
+   id<CPIntVarArray> _xa;
+   ORInt              _c;
+}
+-(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x eqi:(ORInt)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPHReifySumBoolGEq : CPCoreConstraint {
+   CPIntVar*          _b;
+   id<CPIntVarArray> _xa;
+   ORInt              _c;
+}
+-(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x geqi:(ORInt)c;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

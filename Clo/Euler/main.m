@@ -55,7 +55,7 @@ int main (int argc, const char * argv[])
 {
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      id<ORAnnotation> notes = [ORFactory note];
+      id<ORAnnotation> notes = [ORFactory annotation];
       id<ORIntRange> R = RANGE(mdl,1,64);
       id<ORIntRange> D = RANGE(mdl,1,64);
       id<ORIntVarArray> jump = [ORFactory intVarArray:mdl range: R domain: D];

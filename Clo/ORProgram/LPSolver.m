@@ -14,6 +14,7 @@
 #import "LPProgram.h"
 #import "LPSolver.h"
 #import <objmp/LPSolverI.h>
+#import <ORFoundation/ORExprEval.h>
 
 
 @interface ORLPFloatVarSnapshot : NSObject <ORSnapshot,NSCoding> {
@@ -380,6 +381,14 @@
    }];
    return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
 }
+-(ORFloat) floatMin: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
+}
+-(ORFloat) floatMax: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];  
+}
 -(ORFloat) reducedCost: (id<ORFloatVar>) var
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
@@ -490,12 +499,8 @@
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _lpsolver = NULL;
-#else
    _lpsolver = [LPFactory solver];
    _model = model;
-#endif
    _sPool = (id<ORLPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
@@ -505,6 +510,10 @@
    [_lpsolver release];
    [_sPool release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
 }
 -(void)close
 {}
@@ -600,9 +609,9 @@
 {
    return [_lpsolver trackMutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_lpsolver trackVariable:obj];
+   return [_lpsolver trackVariable:obj];
 }
 -(id) trackImmutable:(id)obj
 {
@@ -620,10 +629,6 @@
 {
    return [[ORLPSolutionI alloc] initORLPSolutionI: _model with: self];
 }
--(id<ORTracker>) tracker
-{
-   return self;
-}
 @end
 
 
@@ -635,12 +640,8 @@
 -(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _lpsolver = NULL;
-#else
    _lpsolver = [LPFactory solver];
    _model = model;
-#endif
    return self;
 }
 -(void) dealloc
@@ -649,8 +650,14 @@
    [_lpsolver release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void)close
-{}
+{
+   [_lpsolver close];
+}
 -(id<OREngine>) engine
 {
    return _lpsolver;
@@ -728,17 +735,13 @@
 {
    return [_lpsolver trackMutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_lpsolver trackVariable:obj];
+   return [_lpsolver trackVariable:obj];
 }
 -(id) trackImmutable:(id) obj
 {
    return [_lpsolver trackImmutable:obj];
-}
--(id<ORTracker>) tracker
-{
-   return self;
 }
 @end
 

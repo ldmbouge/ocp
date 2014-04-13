@@ -14,6 +14,7 @@
 #import <ORFoundation/ORAVLTree.h>
 #import "ORFactoryI.h"
 #import "ORError.h"
+#import <ORFoundation/ORVisit.h>
 
 @implementation ORIntSetI
 {
@@ -59,6 +60,15 @@
     [self enumerateWithBlock:^(ORInt e) { if(e > value) value = e; }];
     return value;
 }
+-(ORInt) atRank:(ORInt)r
+{
+   ORAVLTreeNode<Position>* nd = [_avl findNodeAtRank:r];
+   if (nd)
+      return [nd key];
+   else
+      return [self min] - 1;
+}
+
 -(id<ORIntSet>)inter:(id<ORIntSet>)s2
 {
    id<ORIntSet> rv = [ORFactory intSet:nil];

@@ -17,7 +17,7 @@
 @class CPEngine;
 @class CPBitDom;
 
-@interface CPElementCstBC : CPCoreConstraint<NSCoding> { // y == c[x]
+@interface CPElementCstBC : CPCoreConstraint { // y == c[x]
 @private
    CPIntVar*     _x;   
    CPIntVar*     _y;
@@ -25,7 +25,7 @@
 }
 -(id) initCPElementBC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -37,12 +37,12 @@
 }
 -(id) initCPElementAC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPElementVarBC : CPCoreConstraint<NSCoding> { // y == z[x]
+@interface CPElementVarBC : CPCoreConstraint { // y == z[x]
 @private
    CPIntVar*        _x;
    CPIntVar*        _y;
@@ -50,7 +50,7 @@
 }
 -(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>) c equal:(id)y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -68,7 +68,7 @@
    ORInt  _minCI,_maxCI,_nbCI;  // bounds & size of interesection array
 }
 -(id)initCPElementAC: (id) x indexVarArray:(id<CPIntVarArray>)y equal:(id)z;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

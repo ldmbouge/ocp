@@ -15,14 +15,11 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-@interface CPCircuitI : CPCoreConstraint<CPConstraint,NSCoding>
+@interface CPCircuitI : CPCoreConstraint<CPConstraint>
 -(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
 -(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
 -(void) dealloc;
--(ORStatus) post;
--(void) encodeWithCoder: (NSCoder*) aCoder;
--(id) initWithCoder: (NSCoder*) aDecoder;
-
+-(void) post;
 static ORStatus assign(CPCircuitI* cstr,int i);
 @end
 

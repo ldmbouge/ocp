@@ -65,17 +65,20 @@
    id<ORConstraint> o;
    switch (c) {
       case DomainConsistency:
+         //NSLog(@"Domain Consistency");
          o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
          break;
       case ValueConsistency:
+         //NSLog(@"Value Consistency");
          o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: engine over: x];
          break;
       case RangeConsistency:
          @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];
          break;
       default:
-         o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: engine over: x];
-         break;
+	NSLog(@"Default Consistency");
+	o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
+	break;
    }
    [[x tracker] trackMutable: o];
    return o;
@@ -100,7 +103,8 @@
             o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up]; 
             break;
         default:
-            @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
+          o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up];
+          break;
     }
     [[x tracker ] trackMutable: o];
     return o;
@@ -133,12 +137,14 @@
    [[item tracker] trackMutable: o];
    return o;
 }
+
 +(id<ORConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<CPIntVar>)c
 {
    id<ORConstraint> o = [[CPKnapsack alloc] initCPKnapsackDC:x weights:w capacity:c];
    [[x tracker] trackMutable: o];
    return o;
 }
+
 +(id<ORConstraint>) nocycle: (id<CPIntVarArray>) x
 {
    id<ORConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];
@@ -179,7 +185,7 @@
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
-   id<CPIntVar> litView = [literals positiveForValue: c];
+   CPEQLitView* litView = [literals positiveForValue: c];
    if (!litView) {
       litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
       [literals addPositive: litView forValue:c];
@@ -257,35 +263,59 @@
    return o;
 }
 
-+(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x geqi: (ORInt) i
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x geqi: (ORInt) i
 {
-   id<ORConstraint> o = [[CPReifyGEqualDC alloc] initCPReifyGEqualDC: b when: x geq: i];
+   id<CPConstraint> o = [[CPReifyGEqualDC alloc] initCPReifyGEqualDC: b when: x geq: i];
    [[x tracker] trackMutable: o];
    return o;
 }
-
-+(id<ORConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c
++(id<CPConstraint>) reify:(id<CPIntVar>) b array:(id<CPIntVarArray>)x eqi:(ORInt) c annotation:(ORCLevel)note
 {
-    id<ORConstraint> o = [[CPSumBoolGeq alloc] initCPSumBool: x geq: c];
+   id<CPConstraint> o = [[CPReifySumBoolEq alloc] init:b array:x eqi:c];
+   [[b tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) reify:(id<CPIntVar>) b array:(id<CPIntVarArray>)x geqi:(ORInt) c annotation:(ORCLevel)note
+{
+   id<CPConstraint> o = [[CPReifySumBoolGEq alloc] init:b array:x geqi:c];
+   [[b tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) hreify:(id<CPIntVar>) b array:(id<CPIntVarArray>)x eqi:(ORInt) c annotation:(ORCLevel)note
+{
+   id<CPConstraint> o = [[CPHReifySumBoolEq alloc] init:b array:x eqi:c];
+   [[b tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) hreify:(id<CPIntVar>) b array:(id<CPIntVarArray>)x geqi:(ORInt) c annotation:(ORCLevel)note
+{
+   id<CPConstraint> o = [[CPHReifySumBoolGEq alloc] init:b array:x geqi:c];
+   [[b tracker] trackMutable:o];
+   return o;
+}
+
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c
+{
+    id<CPConstraint> o = [[CPSumBoolGeq alloc] initCPSumBool: x geq: c];
     [[x tracker] trackMutable: o];
     return o;
 }
 
-+(id<ORConstraint>) sumbool: (id<CPIntVarArray>) x eq: (ORInt) c
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (ORInt) c
 {
-   id<ORConstraint> o = [[CPSumBoolEq alloc] initCPSumBool: x eq: c];
+   id<CPConstraint> o = [[CPSumBoolEq alloc] initCPSumBool: x eq: c];
    [[x tracker] trackMutable: o];
    return o;
 }
 
-+(id<ORConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c
 {
    return [self sum:x eq:c annotation:RangeConsistency];
 }
 
-+(id<ORConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c annotation: (ORCLevel)cons
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c annotation: (ORCLevel)cons
 {
-   id<ORConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
+   id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
    [[x tracker] trackMutable: o];
    return o;
 }

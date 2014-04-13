@@ -22,7 +22,6 @@
 
 -(void) initInstanceVariables 
 {
-    _idempotent = YES;
     _priority = HIGHEST_PRIO;
     _posted = false;
 }
@@ -80,7 +79,7 @@ static bool isValidTuple(CPTableCstrI* cstr,ORInt tuple)
     return true;
 }
 
-static ORStatus findNewSupport(CPTableCstrI* cstr,ORInt tuple,ORInt col)
+static void findNewSupport(CPTableCstrI* cstr,ORInt tuple,ORInt col)
 {
     ORTableI* table = cstr->_table;
     ORInt v = table->_column[col][tuple];
@@ -98,10 +97,9 @@ static ORStatus findNewSupport(CPTableCstrI* cstr,ORInt tuple,ORInt col)
             assignTRIntArray(cstr->_currentSupport[col],v,tuple);
         }
     }
-    return ORSuspend;
 }
 
-static ORStatus removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
+static void removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
 {
     ORInt arity = cstr->_arity;
     TRIntArray currentSupport = cstr->_currentSupport[i];
@@ -112,10 +110,9 @@ static ORStatus removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
                findNewSupport(cstr,tuple,j);
         tuple = cstr->_table->_nextSupport[i][tuple];
     } while (tuple != -1);
-    return ORSuspend;
 }
 
--(ORStatus) initSupport: (ORInt) i
+-(void) initSupport: (ORInt) i
 {
     int nb = _table->_max[i] - _table->_min[i] + 1;
     _currentSupport[i] = makeTRIntArray(_trail,nb,_table->_min[i]);
@@ -134,50 +131,24 @@ static ORStatus removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
         }
         else 
             assignTRIntArray(_currentSupport[i],v,tuple);
-//        printf("Support of value %d for column %d is %d \n",v,i,getTRIntArray(_currentSupport[i],v));
     }
-    return ORSuspend;
 }
 
--(ORStatus) post
+-(void) post
 {
     if (_posted)
-        return ORSkip;
+        return ;
     _posted = true;
     for(ORInt i = 0; i < _arity; i++) {
        [_var[i] updateMin: _table->_min[i]];
        [_var[i] updateMax: _table->_max[i]];
     }
     _currentSupport = (TRIntArray*) malloc(sizeof(TRIntArray) * _arity);
-    for(ORInt i = 0; i < _arity; i++) {
+    for(ORInt i = 0; i < _arity; i++)
         [self initSupport: i];
-    }
     for(ORInt i = 0; i < _arity; i++) 
         if (![_var[i] bound])
             [_var[i] whenLoseValue: self do: ^(ORInt v) { removeValue(self,i,v); }];
-   return ORSuspend;
 }
-
--(void) encodeWithCoder: (NSCoder*) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_table];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
-    for(ORInt i=0;i<_arity;i++)
-        [aCoder encodeObject:_var[i]];
-}
-
--(id) initWithCoder: (NSCoder*) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    _table = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
-    _var = malloc(_arity * sizeof(CPIntVar*));
-    for(ORInt i=0;i<_arity;i++)
-        _var[i] = [aDecoder decodeObject];
-    [self initInstanceVariables];
-    return self;
-}
-
 @end
 

@@ -26,17 +26,19 @@ int main (int argc, const char * argv[])
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
+          ORLong startTime = [ORRuntimeMonitor cputime];
+          id<ORAnnotation> note = [ORFactory annotation];
          id<ORModel> model = [ORFactory createModel];
          int n = [args size];
          id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
          id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
          id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
          id<ORIntVarArray> xn = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:-i]; }];
-         [model add: [ORFactory alldifferent: x]];
-         [model add: [ORFactory alldifferent: xp]];
-         [model add: [ORFactory alldifferent: xn]];
+          [note vc: [model add: [ORFactory alldifferent: x]]];
+          [note vc: [model add: [ORFactory alldifferent: xp]]];
+          [note vc:[model add: [ORFactory alldifferent: xn]]];
          __block ORInt nbSol = 0;        
-         id<CPProgram> cp = [args makeProgram:model annotation:nil];
+         id<CPProgram> cp = [args makeProgram:model annotation: note];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
 
@@ -77,9 +79,11 @@ int main (int argc, const char * argv[])
             }
             [[cp explorer] fail]; // to avoid saving solutions.
          }];
+         ORLong endTime = [ORRuntimeMonitor cputime];
          NSLog(@"Quitting #SOL=%d",nbSol);
          NSLog(@"Solver: %@",cp);
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         NSLog(@"CPU Time: %lld\n",(int) endTime - startTime);
          [cp release];
          [ORFactory shutdown];
          return r;

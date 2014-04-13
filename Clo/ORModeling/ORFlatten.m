@@ -171,7 +171,25 @@
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   _result = [_into addConstraint:cstr];
+   id<ORExprArray> ax = [cstr array];
+   id<ORIntVarArray> cax = nil;
+   BOOL av = YES;
+   for(ORInt k = ax.range.low; av && k <= ax.range.up;k++)
+      av = av && [ax[k] conformsToProtocol:@protocol(ORIntVar)];
+   if (av)
+      cax = [self flattenIt:ax];
+   else {
+      cax = [ORFactory intVarArray:_into range:ax.range with:^id<ORIntVar>(ORInt i) {
+         id<ORIntLinear> term = [ORNormalizer intLinearFrom:ax[i] model:_into];
+         id<ORIntVar> nv = [ORNormalizer intVarIn:term for:_into];
+         [term release];
+         return nv;
+      }];
+   }
+   if (cax == ax)
+      _result = [_into addConstraint:cstr];
+   else
+      _result = [_into addConstraint:[ORFactory alldifferent:cax]];
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {
@@ -242,6 +260,7 @@
 {
    [_into setCurrent:cstr];
    [ORFlatten flattenExpression:[cstr expr] into:_into];
+   [_into setCurrent:nil];
 }
 -(void) visitFloatWeightedVar:(id<ORWeightedVar>)cstr
 {
@@ -427,6 +446,22 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitHReifySumBoolEqualc:(id<ORReifySumBoolEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitHReifySumBoolGEqualc:(id<ORReifySumBoolGEqc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    _result = [_into addConstraint:c];
@@ -546,7 +581,6 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 
 // ====================================================================================================================
-
 
 +(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m
 {

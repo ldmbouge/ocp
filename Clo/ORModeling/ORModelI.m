@@ -497,6 +497,7 @@
    for(id<ORObject> c in _cStore)
       doCons(c);
    doObjective(_objective);
+   
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -610,21 +611,16 @@
 {
    return [_target modelMappings];
 }
--(void)setCurrent:(id<ORConstraint>)cstr
+-(void) setCurrent:(id<ORConstraint>)cstr
 {
    _current = cstr;
 }
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    if (cstr && (id)cstr != [NSNull null]) {
-      ORCLevel cl = [_notes levelFor:_current];
       [_target add: cstr];
-      switch(cl) {
-         case DomainConsistency: [_notes dc:cstr];break;
-         case RangeConsistency:  [_notes bc:cstr];break;
-         case ValueConsistency:  [_notes vc:cstr];break;
-         default: break;
-      }
+      if (_current)
+         [_notes transfer: _current toConstraint: cstr];
    }
    return cstr;
 }
@@ -751,9 +747,21 @@
             [softCstrs addObject: c];
     return softCstrs;
 }
+-(NSArray*) hardConstraints
+{
+    NSArray* cstrs = [self constraints];
+    NSMutableArray* hardCstrs = [[NSMutableArray alloc] initWithCapacity: 64];
+    for(id<ORConstraint> c in cstrs)
+        if(![c conformsToProtocol: @protocol(ORSoftConstraint)])
+            [hardCstrs addObject: c];
+    return hardCstrs;
+}
 -(NSArray*) parameters
 {
     return _params;
+}
+-(void) addParameter: (id<ORParameter>)p {
+    [_params addObject: p];
 }
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x
 {
@@ -885,11 +893,19 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    [_all release];
    [super dealloc];
 }
-
+-(NSUInteger) count
+{
+   return [_all count];
+}
 -(void) addSolution:(id<ORSolution>)s
 {
     [_all addObject:s];
     [_solutionAddedInformer notifyWithSolution: s];
+}
+
+-(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key
+{
+   return [_all objectAtIndexedSubscript:key];
 }
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block

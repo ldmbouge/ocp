@@ -25,7 +25,7 @@ int main(int argc, const char * argv[])
       [args measure:^struct ORResult() {
          id<ORModel> mdl = [ORFactory createModel];
          int n = [args size];
-         id<ORAnnotation> notes = [ORFactory note];
+         id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntRange> R = RANGE(mdl,1,n);
          id<ORIntRange> D = RANGE(mdl,0,n-1);
          id<ORIntRange> SD = RANGE(mdl,1,n-1);

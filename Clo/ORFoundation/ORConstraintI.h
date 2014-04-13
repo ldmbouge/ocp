@@ -17,7 +17,7 @@
 #import "ORSet.h"
 #import "ORVar.h"
 #import "ORExprI.h"
-#import "ORVisit.h"
+//#import "ORVisit.h"
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
@@ -95,9 +95,12 @@
 
 @interface ORLEqual : ORConstraintI<ORLEqual>
 -(ORLEqual*)initORLEqual: (id<ORIntVar>) x leq: (id<ORIntVar>) y plus: (ORInt) c;
+-(ORLEqual*)initORLEqual:(ORInt)a times:(id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>)y plus:(ORInt)c;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
+-(ORInt) coefLeft;
+-(ORInt) coefRight;
 @end
 
 @interface ORPlus : ORConstraintI<ORPlus>
@@ -279,6 +282,34 @@
 -(ORInt)cst;
 @end
 
+@interface ORReifySumBoolEqc : ORConstraintI<ORReifySumBoolEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORReifySumBoolGEqc : ORConstraintI<ORReifySumBoolGEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORHReifySumBoolEqc : ORConstraintI<ORReifySumBoolEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORHReifySumBoolGEqc : ORConstraintI<ORReifySumBoolGEqc>
+-(ORSumBoolEqc*) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
 @interface ORSumEqc : ORConstraintI<ORSumEqc>
 -(ORSumEqc*)initSum:(id<ORIntVarArray>)ia eqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;
@@ -340,8 +371,8 @@
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
--(id<ORIntVarArray>) array;
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x;
+-(id<ORExprArray>) array;
 @end
 
 @interface ORRegularI : ORConstraintI<ORRegular>

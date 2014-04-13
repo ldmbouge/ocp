@@ -23,17 +23,15 @@
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _z = z;
-   _idempotent = TRUE;
    return self;
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound])
       [_x whenChangeBoundsPropagate:self];
    if (![_z bound])
       [_z whenChangeBoundsPropagate:self];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -140,18 +138,16 @@
    _x = x;
    _coefs = coefs;
    _c = - c;
-   _idempotent = TRUE;
    return self;
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    [_x enumerateWith:^(CPFloatVarI* obj, int k) {
       if (![obj bound])
          [obj whenChangeBoundsPropagate:self];
    }];
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -209,10 +205,9 @@
    _x = x;
    _coefs = coefs;
    _c = - c;
-   _idempotent = TRUE;
    return self;
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    [_x enumerateWith:^(CPFloatVarI* obj, int k) {
@@ -225,7 +220,6 @@
             [obj whenChangeMaxPropagate:self];
       }
    }];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -245,13 +239,28 @@
          ORInterval xii  = xi.bounds;
          ORInterval TMP = ORISubPointwise(S, ORIMul(xii, ci > 0 ? createORI1(ci) : ORISwap(createORI1(ci))));
          ORInterval NEW = ORIDiv(ORIOpposite(TMP), createORI1(ci));
-         BOOL update = (ci>0) ? (ORIUp(NEW) < ORIUp(xii)) : (ORILow(NEW) > ORILow(xii));//ORINarrow(xii, NEW) >= ORLow;
-         changed |= update;
-         if (update) {
-            if (ci > 0)
-               [xi updateMax:ORIUp(NEW)];
-            else
-               [xi updateMin:ORILow(NEW)];
+         ORNarrowing nrw = ORINarrow(xii, NEW);
+         switch(nrw) {
+            case ORUp: {
+               if (ci>0) {
+                  [xi updateMax:ORIUp(NEW)];
+                  changed |= true;
+               }
+            }break;
+            case ORLow: {
+               if (ci < 0) {
+                  [xi updateMin:ORILow(NEW)];
+                  changed |= true;
+               }
+            }break;
+            case ORBoth: {
+               if (ci > 0)
+                  [xi updateMax:ORIUp(NEW)];
+               else
+                  [xi updateMin:ORILow(NEW)];
+               changed |= true;
+            }
+            case ORNone:break;
          }
       }
    }
@@ -288,10 +297,9 @@
    return self;
    
 }
--(ORStatus) post
+-(void) post
 {
    [_x bind:_c];
-   return ORSkip;
 }
 -(NSSet*)allVars
 {
@@ -324,7 +332,6 @@ typedef struct CPlFoatEltRecordTag {
 -(id) init: (CPIntVar*) x indexCstArray:(id<ORFloatArray>) c equal:(CPFloatVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
-   _idempotent = TRUE;
    _x = x;
    _y = y;
    _c = c;
@@ -345,7 +352,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
    else
       return d1;
 }
--(ORStatus) post
+-(void) post
 {
    if (bound(_x)) {
       [_y bind:[_c at:[_x min]]];
@@ -386,7 +393,6 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
          [_x whenChangePropagate:self];
       }
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -447,7 +453,6 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(id) init: (CPFloatVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
-   _idempotent = TRUE;
    _x = x;
    _primalBound = MAXINT;
    return self;
@@ -456,14 +461,13 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 {
    return _x;
 }
--(ORStatus) post
+-(void) post
 {
    _primalBound = MAXINT;
    if (![_x bound])
       [_x whenChangeMinDo: ^ {
          [_x updateMax: _primalBound];
       } onBehalf:self];
-   return ORSuspend;
 }
 -(NSSet*)allVars
 {
@@ -537,8 +541,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 -(id) init: (CPFloatVarI*) x
 {
-   self = [super initCPCoreConstraint:[x engine]];
-   _idempotent = TRUE;
+    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = -MAXINT;
    return self;
@@ -547,13 +550,12 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 {
    return _x;
 }
--(ORStatus) post
+-(void) post
 {
    if (![_x bound])
       [_x whenChangeMaxDo: ^ {
          [_x updateMin: _primalBound];
       } onBehalf:self];
-   return ORSuspend;
 }
 -(NSSet*)allVars
 {

@@ -51,7 +51,6 @@
 
 -(void) initInstanceVariables 
 {
-   _idempotent = YES;
    _priority = HIGHEST_PRIO-4;
    _posted = false;
 }
@@ -100,28 +99,10 @@
    return 0;
 }
 
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_matrix];
-   [aCoder encodeObject:_costVariable];
-}
-
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _matrix = [aDecoder decodeObject];
-   _costVariable = [aDecoder decodeObject];
-   [self initInstanceVariables];
-   return self;
-}
-
--(ORStatus) post
+-(void) post
 {
    if (_posted)
-      return ORSuspend;
+      return;
    _posted = true;
    
    _low = [_x low];
@@ -206,7 +187,6 @@
    }
    if (![_costVariable bound]) 
       [_costVariable whenChangeMaxPropagate: self];
-   return ORSuspend;
 }
 
 -(void) preprocess

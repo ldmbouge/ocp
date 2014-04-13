@@ -10,12 +10,13 @@
 #import <ORFoundation/ORSetI.h>
 #import "ORModelI.h"
 #import "ORExprI.h"
+#import <ORFoundation/ORVisit.h>
 
 @interface ORLinearizeConstraint : ORVisitor<NSObject>
 -(id)init:(id<ORAddToModel>)m;
 
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
--(id<ORIntRange>) unionOfVarArrayRanges: (id<ORIntVarArray>)arr;
+-(id<ORIntRange>) unionOfVarArrayRanges: (id<ORExprArray>)arr;
 -(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr;
 @end
 
@@ -77,7 +78,7 @@
     }
     return self;
 }
--(id<ORIntRange>) unionOfVarArrayRanges: (id<ORIntVarArray>)arr
+-(id<ORIntRange>) unionOfVarArrayRanges: (id<ORExprArray>)arr
 {
     ORInt up = [ORFactory maxOver: [arr range] suchThat: nil of:^ORInt (ORInt e) {
         return [[(id<ORIntVar>)[arr at: e] domain] up];
@@ -116,7 +117,8 @@
 -(void) visitIntVar: (id<ORIntVar>) v  { _exprResult = v; }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-    id<ORIntVarArray> varsOfC = [cstr array];
+   // [ldm] this code needs to be revised if the input is an array of expressions. 
+    id<ORIntVarArray> varsOfC = (id) [cstr array];
     id<ORIntRange> dom = [self unionOfVarArrayRanges: varsOfC];
     for (int d = [dom low]; d <= [dom up]; d++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [varsOfC range]

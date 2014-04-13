@@ -186,6 +186,10 @@
 {
     _result = v;
 }
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   _result = c;
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    [_into setCurrent:cstr];

@@ -19,6 +19,7 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitVar.h>
+#import <objcp/CPIntVarI.h>
 
 #import "CPProgram.h"
 #import "CPSolver.h"
@@ -120,6 +121,8 @@
 {
    ORUInt    _name;
    ORFloat   _value;
+   ORFloat   _min;
+   ORFloat   _max;
 }
 -(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
 -(ORUInt) getId;
@@ -150,6 +153,8 @@
    self = [super init];
    _name = [v getId];
    _value = [solver floatValue: v];
+   _min = [solver floatMin: v];
+   _max = [solver floatMax: v];
    return self;
 }
 -(ORInt) intValue
@@ -165,6 +170,14 @@
 -(ORFloat) floatValue
 {
    return _value;
+}
+-(ORFloat) floatMin
+{
+   return _min;
+}
+-(ORFloat) floatMax
+{
+   return _max;
 }
 -(ORUInt) getId
 {
@@ -437,6 +450,22 @@
    }];
    return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
 }
+-(ORFloat) floatMin: (id<ORFloatVar>) var
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   ORCPFloatVarSnapshot* snapshot = [_varShots objectAtIndex:idx];
+   return [snapshot floatMin];
+}
+-(ORFloat) floatMax: (id<ORFloatVar>) var
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   ORCPFloatVarSnapshot* snapshot = [_varShots objectAtIndex:idx];
+   return [snapshot floatMax];
+}
 -(NSUInteger) count
 {
    return [_varShots count];
@@ -607,6 +636,10 @@
    [_doOnExitArray release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return _engine;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_model release];
@@ -652,10 +685,6 @@
 -(id<ORTracer>) tracer
 {
    return _tracer;
-}
--(id<ORTracker>) tracker
-{
-   return self;
 }
 -(void) close
 {
@@ -812,7 +841,6 @@
 
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitTime: maxTime in: cl];
 }
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
@@ -1000,14 +1028,19 @@
    }
 }
 
-
-
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt low = [x low];
    ORInt up = [x up];
-   for(ORInt i = low; i <= up; i++)
-      [self label: x[i]];
+   for(ORInt i = low; i <= up; i++) {
+      CPIntVar* xi = _gamma[getId(x[i])];
+      while (!bound(xi)) { 
+         ORInt m = minDom(xi);
+         [_search try: ^{ [self labelImpl: xi with: m]; }
+                   or: ^{ [self  diffImpl: xi with: m]; }
+          ];
+      }
+   }
 }
 
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
@@ -1178,6 +1211,15 @@
 {
    [self gthenImpl: _gamma[var.getId] with: val];
 }
+-(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [self lthenImpl: _gamma[var.getId] with: rint(ceil(val))];
+}
+-(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [self gthenImpl: _gamma[var.getId] with: rint(floor(val))];
+}
+
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [self restrictImpl: _gamma[var.getId] to: S];
@@ -1220,26 +1262,21 @@
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitSolutions: maxSolutions in: cl];
 }
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitCondition: condition in:cl];
 }
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitDiscrepancies: maxDiscrepancies in: cl];
 }
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
 {
-   [_engine clearStatus];
    [_search limitFailures: maxFailures in: cl];
-   
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation: (ORCLevel) n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c 
 {
    // LDM: This is the true addition of the constraint into the solver during the search.
    ORStatus status = [_engine add: c];
@@ -1273,6 +1310,12 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPDeg alloc] initCPDeg:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
    id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:rvars];
@@ -1303,6 +1346,12 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createSDeg
+{
+   id<CPHeuristic> h = [[CPDeg alloc] initCPDeg:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createIBS
 {
    id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:nil];
@@ -1318,6 +1367,10 @@
 -(NSString*)stringValue:(id<ORBitVar>)x
 {
    return [_gamma[x.getId] stringValue];
+}
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [_gamma[x.getId] degree];
 }
 -(ORInt) intValue: (id) x
 {
@@ -1354,6 +1407,10 @@
     [eval release];
     return v;
 }
+-(void)  assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
+{
+   [_gamma[x.getId] assignRelaxationValue: f];
+}
 -(ORBool) bound: (id<ORVar>) x
 {
    return [_gamma[x.getId] bound];
@@ -1378,14 +1435,15 @@
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
 }
--(ORFloat) fmin:(id<ORFloatVar>)x
+-(ORFloat) floatMin:(id<ORFloatVar>)x
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) min];
 }
--(ORFloat) fmax:(id<ORFloatVar>)x
+-(ORFloat) floatMax:(id<ORFloatVar>)x
 {
    return [((id<CPFloatVar>)_gamma[x.getId]) max];
 }
+
 -(NSSet*) constraints: (id<ORVar>)x
 {
    return [(id<CPVar>)_gamma[x.getId] constraints];
@@ -1420,14 +1478,18 @@
 -(void)setCurrent:(id<ORConstraint>)cstr
 {}
 
--(ORStatus)post:(id<ORConstraint>)c
+-(ORStatus) post: (id<ORConstraint>)c
 {
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>) c
-                              into: self];
-   else
-      [ORFlatten flatten: c into:self];
-   return [_engine status];
+    return tryfail(^ORStatus {
+        if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+            [ORFlatten flattenExpression:(id<ORExpr>) c
+                                    into: self];
+        else
+            [ORFlatten flatten: c into:self];
+        return ORSuspend;
+    }, ^ORStatus {
+        return ORFailure;
+    });
 }
 
 -(id<ORModelMappings>) modelMappings
@@ -1536,22 +1598,28 @@
    // PVH: Need to flatten/concretize
    // PVH: Only used	 during search
    // LDM: DONE. Have not checked the variable creation/deallocation logic though.
-   CPINCModel* trg = [[CPINCModel alloc] init:self];
-   [trg post:c];
-   [trg release];
+    CPINCModel* trg = [[CPINCModel alloc] init:self];
+    ORStatus status = [trg post:c];
+    [trg release];
+    if (status == ORFailure)
+        [_search fail];
+    [ORConcurrency pumpEvents];
 }
 -(void) add: (id<ORConstraint>) c annotation: (ORCLevel) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
    // LDM: See above. 
-   CPINCModel* trg = [[CPINCModel alloc] init:self];
-   [trg post:c];
-   [trg release];
+    CPINCModel* trg = [[CPINCModel alloc] init:self];
+    ORStatus status = [trg post:c];
+    [trg release];
+    if (status == ORFailure)
+        [_search fail];
+    [ORConcurrency pumpEvents];
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce: ^{ [var bind: val];}];
+   ORStatus status = [_engine enforce: ^{ bindDom((CPIntVarI*)var, val);}];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -1676,11 +1744,16 @@
 }
 -(void) add: (id<ORConstraint>) c
 {
-   [_imdl post:c];
+   if ([_imdl post:c] == ORFailure)
+       [_search fail];
+    [ORConcurrency pumpEvents];
+    
 }
 -(void) add: (id<ORConstraint>) c annotation:(ORCLevel) cons
 {
-   [_imdl post:c];
+    if ([_imdl post:c] == ORFailure)
+        [_search fail];
+    [ORConcurrency pumpEvents];
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {

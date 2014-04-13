@@ -41,7 +41,7 @@ int main(int argc, const char * argv[])
                ORInt i = [select min];
                if (i == MAXINT)
                   break;               
-               ORFloat mid = [cp fmin:a[i]] + ([cp fmax:a[i]] - [cp fmin:a[i]])/2.0;
+               ORFloat mid = [cp floatMin:a[i]] + ([cp floatMax:a[i]] - [cp floatMin:a[i]])/2.0;
                [cp try:^{
                   [cp floatLthen:a[i] with:mid];
                } or:^{

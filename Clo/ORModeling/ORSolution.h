@@ -19,13 +19,17 @@
 -(ORBool) boolValue: (id<ORIntVar>) var;
 -(ORFloat) floatValue: (id<ORFloatVar>) var;
 -(ORFloat) paramFloatValue: (id<ORFloatParam>) param;
+-(ORFloat) floatMin: (id<ORFloatVar>) var;
+-(ORFloat) floatMax: (id<ORFloatVar>) var;
 -(id<ORObjectiveValue>) objectiveValue;
 @end
 
 @protocol ORSolutionPool <NSObject>
 -(void) addSolution: (id<ORSolution>) s;
 -(void) enumerateWith: (void(^)(id<ORSolution>)) block;
+-(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
 -(id<ORInformer>) solutionAdded;
 -(id<ORSolution>) best;
 -(void) emptyPool;
+-(NSUInteger) count;
 @end

@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORAnnotation.h>
+#import <ORFoundation/ORVisit.h>
 
 
 @interface ORFlatten : ORNOopVisit<ORModelTransformation> {

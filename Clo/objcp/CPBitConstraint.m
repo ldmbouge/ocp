@@ -131,7 +131,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -139,7 +139,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
       [_y whenChangePropagate: self];
    }
    [self propagate];
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -179,20 +178,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //    [_x setUp: up];
 //    [_y setUp: up];
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitNOT
@@ -210,7 +195,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
     [self propagate];
     if (![_x bound] || ![_y bound]) {
@@ -221,7 +206,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
     }
    [self propagate];
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -291,20 +275,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"**********************************");
 #endif
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitAND
@@ -322,7 +292,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound] || ![_z bound]) {
@@ -335,7 +305,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
    }
    [self propagate];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -422,20 +391,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"**********************************");
 #endif
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitOR
@@ -453,7 +408,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound] || ![_z bound]) {
@@ -466,7 +421,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -548,22 +502,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"**********************************");
 #endif
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-    [aCoder encodeObject:_z];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    _z = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitXOR
@@ -581,7 +519,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound] || ![_z bound]) {
@@ -594,7 +532,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -686,22 +623,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"**********************************");
 #endif
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-    [aCoder encodeObject:_z];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    _z = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitIF
@@ -720,7 +641,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
 //   if (![_x bound] || ![_y bound]) {
@@ -732,7 +653,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
       [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return ORSuspend;
 }
 -(void) propagate
 {    
@@ -809,24 +729,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [_z setLow:newZLow];
     [_z setUp:newZUp];
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_w];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-    [aCoder encodeObject:_z];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _w = [aDecoder decodeObject];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    _z = [aDecoder decodeObject];
-    return self;
-}
 @end
  
 @implementation CPBitShiftL
@@ -844,7 +746,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -854,7 +756,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -944,20 +845,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //    [_y setLow:newYLow];
 //    [_y setUp:newYUp];
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    return self;
-}
 @end
 
 @implementation CPBitRotateL
@@ -975,7 +862,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -985,7 +872,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -1061,20 +947,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"********************************************************");
 #endif
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_x];
-   [aCoder encodeObject:_y];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _x = [aDecoder decodeObject];
-   _y = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 @implementation CPBitADD
@@ -1094,7 +966,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
 //   NSLog(@"Bit Sum Constraint Posted");
    [self propagate];
@@ -1113,7 +985,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //      [_cout whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
    }
    [self propagate];
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -1757,26 +1628,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@" Cout =%@\n\n",_cout);
    NSLog(@"********************************************************\n");
 #endif
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_x];
-    [aCoder encodeObject:_y];
-    [aCoder encodeObject:_z];
-    [aCoder encodeObject:_cin];
-    [aCoder encodeObject:_cout];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder;
-{
-    self = [super initWithCoder:aDecoder];
-    _x = [aDecoder decodeObject];
-    _y = [aDecoder decodeObject];
-    _z = [aDecoder decodeObject];
-    _cin = [aDecoder decodeObject];
-    _cout = [aDecoder decodeObject];
-    return self;
 }
 @end
 

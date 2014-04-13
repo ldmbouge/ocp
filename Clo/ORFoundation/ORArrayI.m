@@ -14,6 +14,7 @@
 #import "ORError.h"
 #import "ORExprI.h"
 #import "ORFactory.h"
+#import <ORFoundation/ORVisit.h>
 
 /**********************************************************************************************/
 /*                          ORIntArray                                                        */
@@ -540,6 +541,12 @@
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
    return [ORFactory elt: _tracker intVarArray: (id<ORIntVarArray>) self index: idx];
+}
+
+-(NSArray*) toNSArray {
+   NSMutableArray* arr = [[NSMutableArray alloc] init];
+   [self enumerateWith: ^(id obj, ORInt idx) { [arr addObject: obj]; }];
+   return arr;
 }
 
 -(void) encodeWithCoder: (NSCoder*) aCoder

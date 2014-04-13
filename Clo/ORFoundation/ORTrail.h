@@ -11,7 +11,6 @@
 
 #import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORInterval.h>
 
 @protocol ORTrail <NSObject>
 -(void) trailInt:(ORInt*) ptr;
@@ -101,7 +100,7 @@ TRIntArray makeTRIntArray(id<ORTrail> trail,int nb,int low);
 void  freeTRIntArray(TRIntArray a);
 TRIntArray makeTRFloatArray(id<ORTrail> trail,int nb,int low);
 void  freeTRFloatArray(TRFloatArray a);
-FXInt makeFXInt(id<ORTrail> trail);
+
 void  assignTRInt(TRInt* v,int val,id<ORTrail> trail);
 void  assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail);
 void  assignTRLong(TRLong* v,long long val,id<ORTrail> trail);
@@ -112,6 +111,8 @@ ORInt assignTRIntArray(TRIntArray a,int i,ORInt val);
 ORInt getTRIntArray(TRIntArray a,int i);
 ORFloat assignTRFloatArray(TRIntArray a,int i,ORFloat val);
 ORInt getTRFloatArray(TRFloatArray a,int i);
+
+FXInt makeFXInt(id<ORTrail> trail);
 void  incrFXInt(FXInt* v,id<ORTrail> trail);
 int   getFXInt(FXInt* v,id<ORTrail> trail);
 ORInt trailMagic(id<ORTrail> trail);

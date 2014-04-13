@@ -13,10 +13,10 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-@interface CPCardinalityDC : CPCoreConstraint<CPConstraint,NSCoding> 
+@interface CPCardinalityDC : CPCoreConstraint<CPConstraint> 
 -(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;

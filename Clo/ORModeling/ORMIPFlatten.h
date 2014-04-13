@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORFoundation/ORVisit.h>
 
 @interface ORMIPFlatten : ORNOopVisit<ORModelTransformation>
 -(id) initORMIPFlatten: (id<ORAddToModel>) target;

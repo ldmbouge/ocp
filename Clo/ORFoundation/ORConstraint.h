@@ -16,6 +16,7 @@
 
 @protocol ORIntVarArray;
 @protocol ORVarArray;
+@protocol ORExprArray;
 @protocol ORIntVarMatrix;
 @protocol ORExpr;
 @protocol ORVar;
@@ -120,6 +121,8 @@ enum ORGroupType {
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
+-(ORInt) coefLeft;
+-(ORInt) coefRight;
 @end
 
 @protocol  ORPlus <ORConstraint>
@@ -263,6 +266,18 @@ enum ORGroupType {
 -(id<ORIntVar>) y;
 @end
 
+@protocol ORReifySumBoolEqc <ORConstraint>
+-(id<ORIntVar>)b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@protocol ORReifySumBoolGEqc <ORConstraint>
+-(id<ORIntVar>)b;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
 @protocol ORSumBoolEqc <ORConstraint>
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
@@ -330,7 +345,7 @@ enum ORGroupType {
 @end
 
 @protocol ORAlldifferent <ORConstraint>
--(id<ORIntVarArray>) array;
+-(id<ORExprArray>) array;
 @end
 
 @protocol ORRegular<ORConstraint>
@@ -403,7 +418,7 @@ enum ORGroupType {
 
 @protocol ORObjectiveValue <ORObject>
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
--(ORInt) compare: (id<ORObjectiveValue>) other;
+-(NSComparisonResult) compare: (id<ORObjectiveValue>) other;
 @optional-(ORInt) intValue;
 -(ORFloat) floatValue;
 @end
@@ -518,7 +533,7 @@ enum ORGroupType {
 
 // Root implementation class (needed so that sub-frameworks can write constraints)
 
-@interface ORConstraintI : ORObject<ORConstraint>
+@interface ORConstraintI : ORObject<ORConstraint,NSCoding>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
 @end

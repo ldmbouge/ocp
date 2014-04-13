@@ -16,17 +16,17 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/LPProgram.h>
 #import <objcp/CPFactory.h>
-#import "../ORModeling/ORLinearize.h"
-#import "../ORModeling/ORFlatten.h"
+#import <ORModeling/ORLinearize.h>
+#import <ORModeling/ORFlatten.h>
 #import <ORProgram/ORRunnable.h>
-#import "ORParallelRunnable.h"
-#import "ORColumnGeneration.h"
-#import "LPRunnable.h"
-#import "CPRunnable.h"
-#import "ORLagrangeRelax.h"
-#import "ORLagrangianTransform.h"
+#import <ORProgram/ORParallelRunnable.h>
+#import <ORProgram/ORColumnGeneration.h>
+#import <ORProgram/LPRunnable.h>
+#import <ORProgram/CPRunnable.h>
+#import <ORProgram/ORPipeLogger.h>
+#import <ORProgram/ORLagrangeRelax.h>
+#import <ORProgram/ORLagrangianTransform.h>
 #import "SetCoveringInstanceParser.h"
-
 
 int main (int argc, const char * argv[])
 {
@@ -42,20 +42,45 @@ int main (int argc, const char * argv[])
     id<ORIntRange> setRange = RANGE(m, 0, (ORInt)instance.sets.count-1);
     id<ORIntRange> universe = RANGE(m, 1, (ORInt)instance.universe);
     id<ORIntVarArray> s = [ORFactory intVarArray: m range: setRange domain: RANGE(m, 0, 1)];
-    
-    [m minimize: Sum(m, i, setRange, s[i])];
+   
+   NSMutableArray* cstrs = [[NSMutableArray alloc] initWithCapacity: [universe size]];
+    [m minimize: Sum(m, i, setRange, [s[i] mul: @(i % 6)])];
     for(ORInt n = [universe low]; n <= [universe up]; n++) {
         id<ORExpr> expr = [ORFactory sum: m over: setRange
                                 suchThat: ^bool(ORInt i) { return [[instance.sets at: i] member: n]; }
                                       of: ^id<ORExpr>(ORInt i) { return [s at: i]; }];
-        [m add: [expr geq: @1]];
+       id<ORConstraint> c = [m add: [expr geq: @1]];
+       [cstrs addObject: c];
     }
+   
+    NSDate* t0 = [NSDate date];
+   
+   ORInt coupledCount = 600;
+   //NSArray* myCoupled = [ORLagrangianTransform coupledConstraints: m];
+   NSMutableArray* coupled = [[NSMutableArray alloc] initWithCapacity: 50];
+   for(int i = 0; i < coupledCount; i++) [coupled addObject: [cstrs objectAtIndex: cstrs.count-i-1]];
+   
+   ORLagrangianTransform* t = [ORFactory lagrangianTransform];
+   id<ORParameterizedModel> lagrangeModel = [t apply: m relaxing: coupled];
+   
+    id<ORRunnable> lr = [ORFactory MIPSubgradient: lagrangeModel bound: 342];
+    [[(id<ORLowerBoundStreamProducer>)lr lowerBoundStreamInformer] wheneverNotifiedDo: ^(ORFloat lb) {
+        NSLog(@"LOG: %f", lb);
+    }];
+   [lr run];
+
+//   id<ORRunnable> r = [ORFactory MIPRunnable: m];
+//   [r run];
+//   id<ORSolution> sol= [[[r solver] solutionPool] best];
+//   id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
+//   NSLog(@"BEST: %f", [objValue floatValue]);
+//   NSLog(@"%@", sol);
+   
+    //NSLog(@"lower bound: %f", [(ORLagrangeRelax*)lr bestBound]);
     
-    ORLagrangianTransform* t = [[ORLagrangianTransform alloc] init];
-    id<ORParameterizedModel> lagrangeModel = [t apply: m relaxing: [m constraints]];
-    id<ORRunnable> lr = [[ORLagrangeRelax alloc] initWithModel: lagrangeModel];
-    [lr run];
+    NSDate* t1 = [NSDate date];
+    NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
+    NSLog(@"Time: %f", time);
     
-    NSLog(@"lower bound: %f", [(ORLagrangeRelax*)lr bestBound]);
     return 0;
 }

@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORInterval.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <CPUKernel/CPTrigger.h>
@@ -24,15 +23,15 @@
 
 @protocol CPFloatVarSubscriber <NSObject>
 // AC3 Closure Event
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(void) whenBindDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeBoundsDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeMinDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeMaxDo: (ORClosure) todo onBehalf:(CPCoreConstraint*)c;
 
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
@@ -72,10 +71,12 @@ typedef struct  {
 @end
 
 @interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPFloatVarExtendedItf> {
-   CPEngineI*            _engine;
+   CPEngineI*               _engine;
+   BOOL                     _hasValue;
+   ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    id<CPFDom>               _dom;
    CPFloatEventNetwork      _net;
-   CPMultiCast*            _recv;
+   CPMultiCast*             _recv;
 }
 -(id)initCPFloatVar:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(CPEngineI*) engine;

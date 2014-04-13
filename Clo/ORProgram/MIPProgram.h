@@ -35,12 +35,17 @@
 -(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
+-(void) setTimeLimit: (double)limit;
+-(ORFloat) bestObjectiveBound;
 -(ORFloat) floatValue: (id<ORFloatVar>) v;
+-(void) setFloatVar: (id<ORFloatVar>)v value:(ORFloat)val;
 -(ORInt) intValue: (id<ORIntVar>) v;
+-(void) setIntVar: (id<ORIntVar>)v value:(ORInt)val;
 -(ORFloat) paramFloatValue: (id<ORFloatParam>)p;
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORMIPSolutionPool>) solutionPool;
 -(id<ORMIPSolution>) captureSolution;
+-(id<ORExplorer>)  explorer;
 @end
 

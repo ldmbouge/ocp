@@ -35,6 +35,14 @@
 {
    return [[[NSSet alloc] init] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   return self;
+}
 @end
 
 @implementation ORGroupI {
@@ -91,7 +99,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] init];
+   return [[[NSSet alloc] init] autorelease];
 }
 
 -(void) visit: (ORVisitor*) visitor
@@ -101,6 +109,20 @@
 -(enum ORGroupType)type
 {
    return _gt;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_content];
+   [aCoder encodeObject:_model];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_gt];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _content = [aDecoder decodeObject];
+   _model   = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_gt];
+   return self;
 }
 @end
 
@@ -156,6 +178,19 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_r];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _r = [aDecoder decodeObject];
+   return self;
+}
 @end
 
 @implementation OREqualc {
@@ -196,6 +231,19 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
 @end
 
 @implementation ORFloatEqualc {
@@ -230,6 +278,19 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_c];
+   return self;
 }
 @end
 
@@ -266,6 +327,19 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
 @end
 
 @implementation ORLEqualc {
@@ -300,6 +374,19 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
 }
 @end
 
@@ -336,13 +423,26 @@
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
 @end
 
 
 @implementation OREqual {
    id<ORVar> _x;
    id<ORVar> _y;
-   ORInt        _c;
+   ORInt     _c;
 }
 -(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y plus:(ORInt)c
 {
@@ -377,6 +477,21 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
 }
 @end
 
@@ -491,7 +606,8 @@
 }
 @end
 
-@implementation ORLEqual {
+@implementation ORLEqual {  // a * x ≤ b * y + c
+   ORInt     _a,_b;
    id<ORIntVar> _x;
    id<ORIntVar> _y;
    ORInt        _c;
@@ -499,6 +615,17 @@
 -(ORLEqual*)initORLEqual:(id<ORIntVar>)x leq:(id<ORIntVar>)y plus:(ORInt)c
 {
    self = [super initORConstraintI];
+   _a = _b = 1;
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(ORLEqual*)initORLEqual:(ORInt)a times:(id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>)y plus:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _a = a;
+   _b = b;
    _x = x;
    _y = y;
    _c = c;
@@ -507,7 +634,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> (%@ <= %@ + %d)",[self class],self,_x,_y,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%d * %@ <= %d * %@ + %d)",[self class],self,_a,_x,_b,_y,_c];
    return buf;
 }
 -(void)visit:(ORVisitor*)v
@@ -526,9 +653,36 @@
 {
    return _c;
 }
+-(ORInt) coefLeft
+{
+   return _a;
+}
+-(ORInt) coefRight
+{
+   return _b;
+}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_a];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_b];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_a];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_b];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
 }
 @end
 
@@ -571,6 +725,21 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
+}
 @end
 
 @implementation ORMult { // x = y * z
@@ -612,6 +781,21 @@
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
+}
 @end
 
 @implementation ORSquare { // z == x^2
@@ -646,6 +830,19 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_z, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_z];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
 }
 @end
 
@@ -694,6 +891,21 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
 }
 @end
 
@@ -1205,6 +1417,21 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
 @end
 
 @implementation ORReifyNEqualc {
@@ -1245,6 +1472,21 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
 }
 @end
 
@@ -1287,6 +1529,21 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
 @end
 
 @implementation ORReifyNEqual {
@@ -1327,6 +1584,21 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
 }
 @end
 
@@ -1369,6 +1641,21 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
 @end
 
 @implementation ORReifyLEqual {
@@ -1409,6 +1696,21 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
 }
 @end
 
@@ -1451,6 +1753,21 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
 @end
 
 @implementation ORReifyGEqual {
@@ -1492,10 +1809,272 @@
 {
    return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
 @end
 
 // ========================================================================================================
 // Sums
+
+@implementation ORReifySumBoolEqc {
+   id<ORIntVar>       _b;
+   id<ORIntVarArray> _ba;
+   ORInt              _c;
+}
+-(id) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba eqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _ba = ba;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (reify:%@ sumbool(%@) == %d)",[self class],self,_b,_ba,_c];
+   return buf;
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitReifySumBoolEqualc:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_ba];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _ba= [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+@implementation ORReifySumBoolGEqc {
+   id<ORIntVar>       _b;
+   id<ORIntVarArray> _ba;
+   ORInt              _c;
+}
+-(id) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _ba = ba;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (reify:%@ sumbool(%@) >= %d)",[self class],self,_b,_ba,_c];
+   return buf;
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitReifySumBoolGEqualc:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_ba];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _ba= [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+@implementation ORHReifySumBoolEqc {
+   id<ORIntVar>       _b;
+   id<ORIntVarArray> _ba;
+   ORInt              _c;
+}
+-(id) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba eqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _ba = ba;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (hreify:%@ sumbool(%@) == %d)",[self class],self,_b,_ba,_c];
+   return buf;
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitHReifySumBoolEqualc:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_ba];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _ba= [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
+@implementation ORHReifySumBoolGEqc {
+   id<ORIntVar>       _b;
+   id<ORIntVarArray> _ba;
+   ORInt              _c;
+}
+-(id) init:(id<ORIntVar>)b array:(id<ORIntVarArray>)ba geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _ba = ba;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (hreify:%@ sumbool(%@) >= %d)",[self class],self,_b,_ba,_c];
+   return buf;
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitHReifySumBoolGEqualc:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]+1] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_b];
+   return ms;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_ba];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _ba= [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
 
 @implementation ORSumBoolEqc {
    id<ORIntVarArray> _ba;
@@ -2010,15 +2589,15 @@
 
 
 @implementation ORAlldifferentI {
-   id<ORIntVarArray> _x;
+   id<ORExprArray> _x;
 }
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x
 {
    self = [super initORConstraintI];
    _x = x;
    return self;
 }
--(id<ORIntVarArray>) array
+-(id<ORExprArray>) array
 {
    return _x;
 }
@@ -2154,9 +2733,7 @@
 }
 -(NSSet*)allVars
 {
-   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:4] autorelease];
-   //TODO:ldm
-   return ms;
+   return [_expr allVars];
 }
 @end
 
@@ -2199,6 +2776,10 @@
 -(id<ORParameter>)weight
 {
    return _lambda;
+}
+-(NSSet*) allVars
+{
+   return [[NSSet setWithObjects: _x, _z, nil] autorelease];
 }
 -(NSString*)description
 {

@@ -265,10 +265,14 @@
 -(void) close;
 -(ORBool) isClosed;
 -(MIPOutcome) solve;
+-(void) setTimeLimit: (double)limit;
+-(ORFloat) bestObjectiveBound;
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;
+-(void) setIntVar: (MIPVariableI*)var value:(ORInt)val;
 -(ORFloat) floatValue: (MIPVariableI*) var;
+-(void) setFloatVar: (MIPVariableI*)var value:(ORFloat)val;
 -(ORFloat) floatParamValue: (MIPParameterI*) var;
 -(void) setORFloatParameter: (MIPParameterI*)param value: (ORFloat)val;
 -(ORFloat) lowerBound: (MIPVariableI*) var;

@@ -16,18 +16,23 @@
 #import <ORProgram/MIPProgram.h>
 
 @interface ORFactory (Concretization)
+
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation;
+
 // With annotations
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes;
-+(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model annotation:(id<ORAnnotation>)notes;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation: (id<ORAnnotation>) notes;
++(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model annotation:(id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass;
-+(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k annotation:(id<ORAnnotation>)notes;
++(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k annotation:(id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass;
-+(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>)model annotation:(id<ORAnnotation>)notes;
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>)notes;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>) notes;
+
++(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>)model annotation:(id<ORAnnotation>) notes;
+
 
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model;
 +(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model;
@@ -42,5 +47,6 @@
 -(ORFloat) upperBound: (id<ORVar>) x;
 -(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f;
 -(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f;
+-(void) close;
 -(OROutcome) solve;
 @end

@@ -1,4 +1,4 @@
-all: $(EXE)
+all: $(EXE) ../bin/$(EXE)
 	@echo "Done building " $(EXE) "..."
 
 ORCmdLineArgs.m : ../ORCmdLineArgs.m
@@ -6,7 +6,12 @@ ORCmdLineArgs.m : ../ORCmdLineArgs.m
 
 $(EXE): $(OFILES) 
 	@echo "Linking " $(EXE)
-	$(OC) $(CFLAGS) $(notdir $(OFILES)) $(LFLAGS) -o $(EXE)
+	$(OC) $(CFLAGS) $(LFLAGS)  $(notdir $(OFILES)) -o $(EXE)
+
+../bin/$(EXE): $(EXE)
+	@echo "Copying in bin..." $(EXE)
+	@mkdir -p ../bin
+	@cp $(EXE) ../bin
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<

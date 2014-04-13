@@ -18,6 +18,7 @@
 #include <fenv.h>
 #include <limits>
 #include <immintrin.h> 
+#include <smmintrin.h>
 #include <assert.h>
 
 #if !defined(__APPLE__)
@@ -101,6 +102,12 @@ static double N_LN10L,N_LN10U;
    ptr[2] = bigendian ? c : b; \
    ptr[3] = bigendian ? d : a; \
 } while(0)
+
+
+ORInterval ORIFloor(ORInterval a)
+{
+   return _mm_floor_pd(a);
+}
 
 // ===========================================================================================
 // TRIGO
@@ -1266,8 +1273,8 @@ SECFloat::SECFloat(double d)
 {
    unsigned short* e = (unsigned short*)&d;
    
-   register unsigned short r;
-   register unsigned short *p;
+    unsigned short r;
+    unsigned short *p;
    int denorm,k;
    
    if (bigendian)
@@ -1319,8 +1326,8 @@ SECFloat& SECFloat::operator=(const SECFloat& sf)
 SECFloat& SECFloat::operator=(const USRFloat& sf)
 
 {
-   register unsigned short *q;
-   register unsigned short k;
+    unsigned short *q;
+    unsigned short k;
    k = NE-1;
    q = w;
    if (sf.w[k] & 0x8000)
@@ -1340,7 +1347,7 @@ SECFloat& SECFloat::operator=(const USRFloat& sf)
 SECFloat::SECFloat(const USRFloat& uf)
 
 {
-   register unsigned short *p,*q;
+    unsigned short *p,*q;
    q = w;
    p = (unsigned short*) (uf.w +(NE-1));
    if (*p & 0x8000)
@@ -1363,7 +1370,7 @@ double SECFloat::getDouble()
    unsigned short *e = (unsigned short*)&res;
    SECFloat xi(*this);
    int i,k;
-   register unsigned short *p;
+    unsigned short *p;
    e += 3;
    *e = 0;
    p = &xi[0] + 1;
@@ -1423,8 +1430,8 @@ nornd:
 void SECFloat::clear()
 
 {
-   register unsigned short *xi = w;
-   register int i;
+    unsigned short *xi = w;
+    int i;
    for(i=0;i<NI;i++)
       *xi++ = 0x0000;
 }
@@ -1494,7 +1501,7 @@ int SECFloat::normlz()
 
 {
    unsigned short *x = w;
-   register unsigned short *p;
+    unsigned short *p;
    int sc;
    sc  = 0;
    p = &x[M];
@@ -1543,7 +1550,7 @@ void SECFloat::addm(SECFloat& s)
 {
    unsigned short* x = &s[0];
    unsigned short* y = w;
-   register unsigned int a;
+    unsigned int a;
    int i;
    unsigned int carry;
    x += NI-1;
@@ -1585,8 +1592,8 @@ void SECFloat::subm(SECFloat& s)
 int  SECFloat::cmpm(SECFloat& s)
 
 {
-   register unsigned short *a = w;
-   register unsigned short *b = &s[0];
+    unsigned short *a = w;
+    unsigned short *b = &s[0];
    int i;
    a += M;
    b += M;
@@ -1641,7 +1648,7 @@ int  SECFloat::divm(SECFloat& s)
    unsigned short *den = &s[0];
    unsigned short *num = w;
    int i,j;
-   register unsigned short *p,*q;
+    unsigned short *p,*q;
    p = &equot[0];
    *p++ = num[0];
    *p++ = num[1];
@@ -1698,8 +1705,8 @@ divdon:
 void SECFloat::eshdn1()
 
 {
-   register unsigned short *x = w;
-   register unsigned short bits;
+    unsigned short *x = w;
+    unsigned short bits;
    int i;
    x += M;
    bits = 0;
@@ -1717,8 +1724,8 @@ void SECFloat::eshdn1()
 void SECFloat::eshup1()
 
 {
-   register unsigned short *x = w;
-   register unsigned short bits;
+    unsigned short *x = w;
+    unsigned short bits;
    int i;
    x += NI-1;
    bits = 0;
@@ -1736,8 +1743,8 @@ void SECFloat::eshup1()
 void SECFloat::eshdn8()
 
 {
-   register unsigned short *x = w;
-   register unsigned short newbyt,oldbyt;
+    unsigned short *x = w;
+    unsigned short newbyt,oldbyt;
    int i;
    x += M;
    oldbyt = 0;
@@ -1754,8 +1761,8 @@ void SECFloat::eshup8()
 
 {
    int i;
-   register unsigned short *x = w;
-   register unsigned short newbyt,oldbyt;
+    unsigned short *x = w;
+    unsigned short newbyt,oldbyt;
    x += NI - 1;
    oldbyt = 0;
    for(i=M;i<NI;i++) {
@@ -1771,8 +1778,8 @@ void SECFloat::eshup16()
 
 {
    int i;
-   register unsigned short *x = w;
-   register unsigned short *p;
+    unsigned short *x = w;
+    unsigned short *p;
    p = x + M;
    x += M + 1;
    for(i=M;i<NI-1;i++)
@@ -1784,8 +1791,8 @@ void SECFloat::eshdn16()
 
 {
    int i;
-   register unsigned short *x = w;
-   register unsigned short *p;
+    unsigned short *x = w;
+    unsigned short *p;
    x += NI-1;
    p = x + 1;
    for(i=M;i<NI-1;i++)
@@ -1796,8 +1803,8 @@ void SECFloat::eshdn16()
 void SECFloat::makeInf()
 
 {
-   register unsigned short *x = w;
-   register int i;
+    unsigned short *x = w;
+    int i;
    for(i=0;i<NE-1;i++)
       *x++ = 0xffff;
    *x |= 0x7fff;
@@ -1870,8 +1877,8 @@ done:
 int SECFloat::cmp(SECFloat op2)
 
 {
-   register unsigned short *p,*q;
-   register int i;
+    unsigned short *p,*q;
+    int i;
    int msign;
    p = w;
    q = &op2[0];
@@ -2116,7 +2123,7 @@ USRFloat::USRFloat(double d)
 USRFloat::USRFloat(const SECFloat& f)
 
 {
-   register unsigned short *p,*q;
+    unsigned short *p,*q;
    unsigned short i;
    p = (unsigned short*) f.w;
    q = w + (NE-1);
@@ -2163,8 +2170,8 @@ USRFloat& USRFloat::operator=(const USRFloat& f)
 USRFloat& USRFloat::operator=(const SECFloat& f)
 
 {
-   register unsigned short *q;
-   register unsigned short i,j;
+    unsigned short *q;
+    unsigned short i,j;
    j = 0;
    q = w + (NE-1);
    i = f.w[j++];
@@ -2220,7 +2227,7 @@ USRFloat USRFloat::floor()
    USRFloat one(1);
    USRFloat cpy(*this);
    USRFloat res;
-   register unsigned short *p;
+    unsigned short *p;
    int e,expon,i;
    expon = exponent();
    e = (expon & 0x7fff) - (IEEEBIAS -1);

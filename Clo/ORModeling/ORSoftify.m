@@ -12,6 +12,7 @@
 #import "ORConstraintI.h"
 
 @implementation ORSoftify {
+    @protected
     id<ORParameterizedModel> _target;
 }
 
@@ -38,41 +39,63 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     ORExprBinaryI* binexpr = (ORExprBinaryI*)[cstr expr];
-    id<ORExpr> diffExpr = nil;
+    id<ORExpr> slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
     id<ORVar> slack = nil;
+    if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, [slackExpr min], [slackExpr max])];
+    else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: [slackExpr min] up: [slackExpr max]];
+    else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
+    
     id<ORRelation> softExpr = nil;
-    switch([binexpr type]) {
-        case ORRLEq:
-            diffExpr = [[binexpr right] sub: [binexpr left] track: _target];
-            if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [diffExpr min])];
-            else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [diffExpr min]];
-            else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-            softExpr = [[[binexpr left] sub: slack] leq: [binexpr right] track: _target];
-            break;
-        case ORRGEq:
-            diffExpr = [[binexpr left] sub: [binexpr right] track: _target];
-            if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [diffExpr max])];
-            else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [diffExpr max]];
-            else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-            softExpr = [[[binexpr left] plus: slack] geq: [binexpr right] track: _target];
-            break;
-        case ORREq:
-            diffExpr = [[binexpr left] sub: [binexpr right] track: _target];
-            id<ORVar> alpha = nil;
-            id<ORVar> beta = nil;
-            if([binexpr vtype] == ORTInt) {
-                alpha = [ORFactory intVar: _target domain: RANGE(_target, 0, abs([diffExpr max]))];
-                beta = [ORFactory intVar: _target domain: RANGE(_target, 0, abs([diffExpr min]))];
-                slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [diffExpr max] + [diffExpr min])];
-                softExpr = [[[[binexpr left] plus: alpha] sub: beta] eq: [binexpr right] track: _target];
-                [_target add: [slack eq: [alpha plus: beta]]];
-            }
-            else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [diffExpr max]];
-            else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-            softExpr = [[[binexpr left] plus: slack] geq: [binexpr right] track: _target];
-            break;
-        default: [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
-    }
+    softExpr = [slack eq: slackExpr track: _target];
+   id<ORSoftConstraint> softCstr = [[ORSoftAlgebraicConstraintI alloc]
+                                     initORSoftAlgebraicConstraintI: softExpr
+                                     slack: slack];
+    [_target add: softCstr];
+    //[_target add: [slack geq: slackExpr track: _target]];
+    [[_target tau] set: softCstr forKey: cstr];
+}
+
+-(void) visitKnapsack:(id<ORKnapsack>)cstr
+{
+   id<ORIntRange> softRange = RANGE(_target, 0, [[[cstr item] range] up]);
+   id<ORIntVarArray> softItems = [ORFactory intVarArray: _target range: softRange with: ^id<ORIntVar>(ORInt i) {
+      if(i == 0) return [cstr capacity];
+      else return [[cstr item] at: i - 1];
+   }];
+   
+   id<ORIntArray> softWeight = [ORFactory intArray: _target range: softRange with: ^ORInt(ORInt i) {
+      if(i == 0) return 1;
+      else return -1 * [[cstr weight] at: i - 1];
+   }];
+   
+   __block ORInt slackMin = 0;
+   __block ORInt slackMax = 0;
+   [softItems enumerateWith: ^(id x, int i) {
+      slackMin += [(id<ORIntVar>)x min] * [softWeight at: i];
+      slackMax += [(id<ORIntVar>)x max] * [softWeight at: i];
+   }];
+   
+   id<ORIntVar> slack = [ORFactory intVar: _target domain: RANGE(_target, slackMin, slackMax)];
+   id<ORSoftConstraint> knapsack = [ORFactory softKnapsack: softItems weight: softWeight capacity: slack slack: slack];
+   [_target add: knapsack];
+   [[_target tau] set: knapsack forKey: cstr];
+}
+
+@end
+
+@implementation ORViolationSoftify
+
+-(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
+{
+    ORExprBinaryI* binexpr = (ORExprBinaryI*)[cstr expr];
+    id<ORExpr> slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
+    id<ORVar> slack = nil;
+    if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [slackExpr max])];
+    else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [slackExpr max]];
+    else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
+    
+    id<ORRelation> softExpr = nil;
+    softExpr = [slack geq: slackExpr track: _target];
     id<ORSoftConstraint> softCstr = [[ORSoftAlgebraicConstraintI alloc]
                                      initORSoftAlgebraicConstraintI: softExpr
                                      slack: slack];
@@ -82,16 +105,23 @@
 
 -(void) visitKnapsack:(id<ORKnapsack>)cstr
 {
-    //id<ORExpr> diffExpr =
-    //    [Sum(_target, i, [[cstr item] range], [[[cstr item] at: i] mul: @([[cstr weight] at: i])]) sub: [cstr capacity]];
-    id<ORIntVar> alpha = [ORFactory intVar: _target domain: RANGE(_target, 0, [[cstr capacity] max])];
-    id<ORIntVar> beta = [ORFactory intVar: _target domain: RANGE(_target, 0, [[cstr capacity] min])];
-    id<ORIntVar> slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [[cstr capacity] min] + [[cstr capacity] max])];
-    id<ORExpr> newRHS = [[[cstr capacity] sub: alpha track: _target] plus: beta track: _target];
-    id<ORIntVar> z = [ORFactory intVar: _target domain: RANGE(_target, [newRHS min], [newRHS max])];
-    [_target add: [z eq: newRHS]];
-    [_target add: [slack eq: [alpha plus: beta track: _target] track: _target]];
-    id<ORSoftConstraint> knapsack = [ORFactory softKnapsack: [cstr item] weight: [cstr weight] capacity: z slack: slack];
+    id<ORIntRange> softRange = RANGE(_target, 0, [[[cstr item] range] up]);
+    id<ORIntVarArray> softItems = [ORFactory intVarArray: _target range: softRange with: ^id<ORIntVar>(ORInt i) {
+        if(i == 0) return [cstr capacity];
+        else return [[cstr item] at: i - 1];
+    }];
+    id<ORIntArray> softWeight = [ORFactory intArray: _target range: softRange with: ^ORInt(ORInt i) {
+        if(i == 0) return 1;
+        else return -1 * [[cstr weight] at: i - 1];
+    }];
+    
+    __block ORInt slackMax = 0;
+    [softItems enumerateWith: ^(id x, int i) {
+        slackMax += [(id<ORIntVar>)x max] * [softWeight at: i];
+    }];
+    
+    id<ORIntVar> slack = [ORFactory intVar: _target domain: RANGE(_target, 0, slackMax)];
+    id<ORSoftConstraint> knapsack = [ORFactory softKnapsack: softItems weight: softWeight capacity: slack slack: slack];
     [_target add: knapsack];
     [[_target tau] set: knapsack forKey: cstr];
 }

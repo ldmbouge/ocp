@@ -11,9 +11,9 @@
 
 #import "MIPSolverI.h"
 
-#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+//#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #import "MIPGurobi.h"
-#endif
+//#endif
 
 @implementation MIPConstraintI;
 
@@ -789,6 +789,14 @@
    [_oStore release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
+-(ORUInt) nbPropagation
+{
+   return 0;
+}
 -(void) addVariable: (MIPVariableI*) v
 {
    if (_nbVars == _maxVars) {
@@ -1110,7 +1118,12 @@
       [self close];
    return [_MIP solve];
 }
-
+-(void) setTimeLimit: (double)limit {
+    [_MIP setTimeLimit: limit];
+}
+-(ORFloat) bestObjectiveBound {
+    return [_MIP bestObjectiveBound];
+}
 -(MIPOutcome) status;
 {
    return [_MIP status];
@@ -1119,9 +1132,15 @@
 {
    return (ORInt) [_MIP intValue: var];
 }
+-(void) setIntVar: (MIPIntVariableI*)var value:(ORInt)val {
+    [_MIP setIntVar: var value: val];
+}
 -(ORFloat) floatValue: (MIPVariableI*) var
 {
    return [_MIP floatValue: var];
+}
+-(void) setFloatVar: (MIPVariableI*)var value:(ORFloat)val {
+    [_MIP setFloatVar: var value: val];
 }
 -(ORFloat) floatParamValue: (MIPParameterI*) param
 {
@@ -1237,10 +1256,6 @@
    [_oStore addObject:obj];
    [obj release];
    return obj;
-}
--(id<ORTracker>) tracker
-{
-    return self;
 }
 @end
 

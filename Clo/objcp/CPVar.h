@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORInterval.h>
 #import <objcp/CPData.h>
 #import <CPUKernel/CPTrigger.h>
 
@@ -40,51 +39,61 @@ enum CPVarClass {
 -(id<CPEngine>)engine;
 -(ORBool) bound;
 -(NSSet*)constraints;
+-(ORInt)degree;
 -(enum CPVarClass)varClass;
 @end
 
-@protocol CPNumVar <CPVar>
+
+@protocol CPNumVarSubscriber <NSObject>
+
+// AC3 Closure Event
+-(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+
+-(void) whenChangeDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeMinDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeMaxDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeBoundsDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+
+// AC3 Constraint Event
+-(void) whenChangePropagate:  (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenChangeMinPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenChangeMaxPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenChangeBoundsPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+
+-(void) whenChangePropagate:  (id<CPConstraint>) c;
+-(void) whenChangeMinPropagate: (id<CPConstraint>) c;
+-(void) whenChangeMaxPropagate: (id<CPConstraint>) c;
+-(void) whenChangeBoundsPropagate: (id<CPConstraint>) c;
+
+@end
+
+@protocol CPNumVar <CPVar,CPNumVarSubscriber>
 -(ORFloat) floatMin;
 -(ORFloat) floatMax;
 -(ORFloat) floatValue;
 @end
 
-@protocol CPIntVarSubscriber <NSObject>
+@protocol CPIntVarSubscriber <CPNumVarSubscriber>
 
 // AC3 Closure Event
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
-
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(void) whenBindDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 
 // AC3 Constraint Event
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
--(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p;
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
-
--(void) whenBindPropagate: (CPCoreConstraint*) c;
--(void) whenChangePropagate:  (CPCoreConstraint*) c;
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c;
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c;
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c;
+-(void) whenBindPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenBindPropagate: (id<CPConstraint>) c;
 
 // AC5 Event
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo;
+-(void) whenLoseValue: (id<CPConstraint>) c do: (ORIntClosure) todo;
 
 // Triggers
 // create a trigger which executes todo when value val is removed.
--(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 // create a trigger which executes todo when the variable is bound.
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 // assign a trigger which is executed when value val is removed.
 -(void) watch:(ORInt) val with: (id<CPTrigger>) t;
 
@@ -110,7 +119,7 @@ enum CPVarClass {
 -(void) inside: (id<ORIntSet>) S;
 -(void) updateMin: (ORInt) newMin;
 -(void) updateMax: (ORInt) newMax;
--(void) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
+-(ORBounds) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
 -(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 @end
 
@@ -154,6 +163,7 @@ enum CPVarClass {
 -(void) bind:(ORFloat) val;
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;
+-(void) assignRelaxationValue: (ORFloat) f;
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 

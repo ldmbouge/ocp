@@ -77,9 +77,8 @@
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
+-(NSArray*) toNSArray;
 @end
-
-
 
 @protocol ORIdMatrix <ORObject>
 -(id) flat:(ORInt)i;

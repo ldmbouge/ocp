@@ -247,7 +247,7 @@
    id<ORIntVar> x = [ORFactory intVar:m domain:RANGE(m,0,10)];
    id<ORIntVar> y = [ORFactory intVar:m domain:RANGE(m,0,10)];
    id<ORIntVar> b = [ORFactory intVar:m domain:RANGE(m,0,1)];
-   [m add:[ORFactory reify:m boolean:b with:x eq:y annotation:ValueConsistency]];
+   [m add:[ORFactory reify:m boolean:b with:x eq:y]];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
 
    [cp solveAll:^() {
@@ -267,7 +267,7 @@
    id<ORIntVar> x = [ORFactory intVar:m domain:RANGE(m,0,10)];
    id<ORIntVar> y = [ORFactory intVar:m domain:RANGE(m,0,10)];
    id<ORIntVar> b = [ORFactory intVar:m domain:RANGE(m,0,1)];
-   [m add:[ORFactory reify:m boolean:b with:x eq:y annotation:DomainConsistency]];
+   [m add:[ORFactory reify:m boolean:b with:x eq:y]];
 
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll:^() {

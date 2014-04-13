@@ -63,17 +63,19 @@
 -(id<ORCPSolution>) captureSolution;
 -(ORInt) maxBound:(id<ORIdArray>) x;
 
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel) n;
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c;
 
 // pvh: do we have to put these here. Any way to externalize them.
 -(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
 -(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
 -(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createSDeg: (id<ORVarArray>) rvars;
 -(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
 -(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createSDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
 @end

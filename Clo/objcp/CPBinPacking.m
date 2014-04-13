@@ -47,7 +47,6 @@
 
 -(void) initInstanceVariables
 {
-   _idempotent = YES;
    _priority = HIGHEST_PRIO-2;
    _posted = false;
 }
@@ -76,32 +75,11 @@
    [super dealloc];
 }
 
--(void) encodeWithCoder:(NSCoder*) aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_item];
-   [aCoder encodeObject:_itemSize];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_bin];
-   [aCoder encodeObject:_binSize];
-}
-
--(id) initWithCoder:(NSCoder*) aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   [self initInstanceVariables];
-   _item = [aDecoder decodeObject];
-   _itemSize = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_bin];
-   _binSize = [aDecoder decodeObject];
-   return self;
-}
-
-
--(ORStatus) post
+-(void) post
 {
 //   NSLog(@"BinPacking post called ...");
    if (_posted)
-      return ORSkip;
+      return ;
    
    _posted = true;
    _low = [_item range].low;
@@ -123,7 +101,6 @@
       if (![_var[i] bound])
          [_var[i] whenChangePropagate: self];
    [_load whenChangeBoundsPropagate: self];
-   return ORSuspend;
 }
 
 -(void) propagate

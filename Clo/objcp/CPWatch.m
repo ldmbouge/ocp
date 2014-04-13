@@ -24,7 +24,7 @@
    ORInt2Void _unb;
 }
 -(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -61,7 +61,7 @@
    return ![_theVar bound];
 }
 
--(ORStatus) post
+-(void) post
 {
    [_theVar whenLoseValue:self do:^(ORInt val) {
       if (_lost) _lost(val);
@@ -80,7 +80,6 @@
          }];
       }
    } onBehalf:self];
-   return ORSuspend;
 }
 @end
 

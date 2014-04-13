@@ -108,7 +108,9 @@
 -(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
 -(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs;
 -(NSArray*) softConstraints;
+-(NSArray*) hardConstraints;
 -(NSArray*) parameters;
+-(void) addParameter: (id<ORParameter>)p;
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
 -(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x;
 @end
@@ -136,4 +138,6 @@
 -(void)enumerateWith:(void(^)(id<ORSolution>))block;
 -(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
+-(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
+-(NSUInteger) count;
 @end

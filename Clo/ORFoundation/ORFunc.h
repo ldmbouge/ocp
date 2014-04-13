@@ -9,18 +9,8 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPUKernel.h>
+#import <ORFoundation/ORData.h>
+#import "math.h"
 
-@class CPCoreConstraint;
+ORFloat frac(ORFloat f);
 
-@interface CPEventNode : NSObject<CPEventNode> {
-@public
-   CPEventNode*          _node;
-   id                 _trigger;  // type is {ConstraintCallback}
-   CPCoreConstraint*     _cstr;
-   ORInt             _priority;
-}
--(id) initCPEventNode: (CPEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
--(void)dealloc;
-@end

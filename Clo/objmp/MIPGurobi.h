@@ -35,10 +35,14 @@
 -(void) addObjective: (MIPObjectiveI*) obj;
 -(void) close;
 -(MIPOutcome) solve;
+-(void) setTimeLimit: (double)limit;
+-(ORFloat) bestObjectiveBound;
 
 -(MIPOutcome) status;
 -(ORFloat) floatValue: (MIPVariableI*) var;
+-(void) setFloatVar: (MIPVariableI*)var value: (ORFloat)val;
 -(ORInt) intValue: (MIPIntVariableI*) var;
+-(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val;
 -(ORFloat) lowerBound: (MIPVariableI*) var;
 -(ORFloat) upperBound: (MIPVariableI*) var;
 -(ORFloat) objectiveValue;

@@ -12,7 +12,8 @@
 // MIPSolver
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModelTransformation.h>
-
+#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORExprEval.h>
 #import "MIPProgram.h"
 #import "MIPSolver.h"
 #import <objmp/MIPSolverI.h>
@@ -22,6 +23,7 @@
    ORFloat   _value;
 }
 -(ORMIPFloatVarSnapshot*) initMIPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<MIPProgram>) solver;
+-(ORUInt)getId;
 -(ORFloat) floatValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
@@ -48,6 +50,10 @@
    _name = [v getId];
    _value = [solver floatValue: v];
    return self;
+}
+-(ORUInt)getId
+{
+   return _name;
 }
 -(ORInt) intValue
 {
@@ -311,8 +317,8 @@
    }];
    _varShots = snapshots;
    
-   if([[model source] conformsToProtocol: @protocol(ORParameterizedModel)]) {
-      NSArray* ap = [(id<ORParameterizedModel>)[model source] parameters];
+   if([model conformsToProtocol: @protocol(ORParameterizedModel)]) {
+      NSArray* ap = [(id<ORParameterizedModel>)model parameters];
       sz = [ap count];
       NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
       ORMIPTakeSnapshot* visit = [[ORMIPTakeSnapshot alloc] initORMIPTakeSnapshot: solver];
@@ -401,10 +407,20 @@
 }
 -(ORFloat) paramFloatValue: (id<ORFloatParam>) param
 {
-    NSUInteger idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+   NSUInteger idx = -1;
+   idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
         return [param getId] == [obj getId];
-    }];
-    return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
+   }];
+   assert(idx != -1 && idx != 9223372036854775807);
+   return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
+}
+-(ORFloat) floatMin: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
+}
+-(ORFloat) floatMax: (id<ORFloatVar>) var
+{
+   return [self floatValue: var];
 }
 -(NSUInteger) count
 {
@@ -450,12 +466,8 @@
 -(id<MIPProgram>) initMIPSolver: (id<ORModel>) model
 {
    self = [super init];
-#if defined(__linux__)
-   _MIPsolver = NULL;
-#else
    _MIPsolver = [MIPFactory solver];
    _model = model;
-#endif
    _sPool = (id<ORMIPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
@@ -464,6 +476,14 @@
    [_MIPsolver release];
    [_sPool release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return self;
+}
+-(id<ORExplorer>)  explorer
+{
+   return nil;
 }
 -(void) close
 {}
@@ -483,9 +503,18 @@
    [_sPool addSolution: s];
    [s release];
 }
+-(void) setTimeLimit: (double)limit {
+   [_MIPsolver setTimeLimit: limit];
+}
+-(ORFloat) bestObjectiveBound {
+   return [_MIPsolver bestObjectiveBound];
+}
 -(ORFloat) floatValue: (id<ORFloatVar>) v
 {
    return [_MIPsolver floatValue: _gamma[v.getId]];
+}
+-(void) setFloatVar: (id<ORFloatVar>)v value:(ORFloat)val {
+   [_MIPsolver setFloatVar: _gamma[v.getId] value: val];
 }
 -(ORFloat) paramFloatValue: (id<ORFloatParam>)p
 {
@@ -506,6 +535,10 @@
 {
    return [_MIPsolver intValue: _gamma[v.getId]];
 }
+-(void) setIntVar: (id<ORIntVar>)v value:(ORInt)val {
+   [_MIPsolver setIntVar: _gamma[v.getId] value: val];
+}
+
 -(ORInt) intExprValue: (id<ORExpr>)e {
     ORIntExprEval* eval = [[ORIntExprEval alloc] initORIntExprEval: self];
     ORInt v = [eval intValue: e];
@@ -547,10 +580,6 @@
 -(id<ORMIPSolutionPool>) solutionPool
 {
    return _sPool;
-}
--(id<ORTracker>) tracker
-{
-   return self;
 }
 @end
 

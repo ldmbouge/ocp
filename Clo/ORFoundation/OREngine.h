@@ -20,7 +20,7 @@
 @end
 
 @protocol OREngine <NSObject,ORTracker>
-@end;
+@end
 
 @protocol ORSearchEngine <OREngine>
 -(ORStatus)           close;
@@ -30,5 +30,5 @@
 -(id<ORTrail>) trail;
 -(ORStatus)propagate;
 -(ORStatus)enforceObjective;
--(void)clearStatus;
+-(ORStatus)tryEnforceObjective;
 @end

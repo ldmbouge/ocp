@@ -50,7 +50,15 @@
 -(ORFloat) up;
 @end
 
-@protocol ORVarArray <ORIdArray>
+@protocol ORExprArray<ORIdArray>
+-(id<ORExpr>) at: (ORInt) value;
+-(void) set: (id<ORExpr>) x at: (ORInt) value;
+-(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(id<ORExpr>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORExpr>) newValue atIndexedSubscript: (NSUInteger) idx;
+@end
+
+@protocol ORVarArray <ORExprArray>
 -(id<ORVar>) at: (ORInt) value;
 -(void) set: (id<ORVar>) x at: (ORInt) value;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
@@ -111,5 +119,6 @@ typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROu
 -(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f;
 -(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f;
 -(OROutcome) solve;
+-(void) close;
 @end
 

@@ -72,7 +72,7 @@ int test2(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
-         id<ORAnnotation> notes = [ORFactory note];
+         id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntVar> x = [ORFactory intVar:model domain:RANGE(model,-10,10)];
          ORInt y = 3;
          id<ORIntVar> z = [ORFactory intVar:model domain:RANGE(model,0,10)];

@@ -15,6 +15,7 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <ORModeling/ORModeling.h>
 #import <objcp/CPObjectQueue.h>
+#import <ORFoundation/ORExprEval.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;
@@ -76,6 +77,10 @@
    [_onSol release];
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_source release];
@@ -131,10 +136,6 @@
 -(id<ORTracer>) tracer
 {
   return [[self worker] tracer];
-}
--(id<ORTracker>) tracker
-{
-    return self;
 }
 -(void) close
 {
@@ -217,9 +218,9 @@
 {
    return [[self worker] trackVariable: object];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c
 {
-   [[self worker] addConstraintDuringSearch: c annotation:n];
+   [[self worker] addConstraintDuringSearch: c];
 }
 -(void)add: (id<ORConstraint>) c
 {
@@ -313,6 +314,14 @@
 {
    [[self worker] gthen: var with: val];
 }
+-(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] lthen: var with: val];
+}
+-(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+{
+   [[self worker] gthen: var with: val];
+}
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [[self worker] restrict: var to: S];
@@ -378,13 +387,17 @@
 {
    return [[self worker] domwidth:x];
 }
--(ORFloat) fmin:(id<ORFloatVar>)x
+-(ORFloat) floatMin:(id<ORFloatVar>)x
 {
-   return [[self worker] fmin:x];
+   return [[self worker] floatMin:x];
 }
--(ORFloat) fmax:(id<ORFloatVar>)x
+-(ORFloat) floatMax:(id<ORFloatVar>)x
 {
-   return [[self worker] fmax:x];
+   return [[self worker] floatMax:x];
+}
+-(void) assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
+{
+   return [[self worker] assignRelaxationValue:  f to:  x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
@@ -601,6 +614,13 @@
     binding[i] = [_workers[i] createDDeg:rvars];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createSDeg:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -636,6 +656,13 @@
     binding[i] = [_workers[i] createDDeg];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createSDeg
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createSDeg];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createIBS
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -649,6 +676,10 @@
   for(ORInt i=0;i < _nbWorkers;i++)
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(ORUInt) degree:(id<ORVar>)x
+{
+   return [[self worker] degree:x];
 }
 -(ORInt) intValue: (id<ORIntVar>) x
 {

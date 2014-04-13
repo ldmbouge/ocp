@@ -8,6 +8,7 @@
 
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORParameter.h>
+#import <ORFoundation/ORVisit.h>
 
 @interface ORSoftify : ORNOopVisit
 -(ORSoftify*) initORSoftify;
@@ -16,3 +17,5 @@
 -(id<ORParameterizedModel>)target;
 @end
 
+@interface ORViolationSoftify : ORSoftify
+@end
