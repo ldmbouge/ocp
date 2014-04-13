@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
    //@autoreleasepool {
       //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       //      [args measure:^struct ORResult(){
-   ORInt relaxCount = 119;//95;//atoi(argv[2]);
+   ORInt relaxCount = 95;//atoi(argv[2]);
    ORInt cliqueCount = 5;//20;//atoi(argv[1]);
       ORFloat timeLimit = 5 * 60;
       
