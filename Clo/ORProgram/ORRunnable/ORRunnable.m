@@ -51,6 +51,11 @@
 
 -(void) run
 {
+    [NSException raise: @"ORAbstractRunnableI" format: @"called abstract method: run"];
+}
+
+-(void) setTimeLimit: (ORFloat) secs {
+    [NSException raise: @"ORAbstractRunnableI" format: @"called abstract method: setTimeLimit"];
 }
 
 -(void) performOnStart: (ORClosure)c

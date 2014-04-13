@@ -9,50 +9,48 @@
 #import <Foundation/Foundation.h>
 #import <ORProgram/ORRunnable.h>
 
-@protocol ORBoundStreamConsumer<ORRunnable>
--(id<ORIntInformer>) boundStreamInformer;
-@end
-
-@protocol ORUpperBoundStreamConsumer<ORBoundStreamConsumer>
+@protocol ORUpperBoundStreamConsumer
 -(void) receiveUpperBound: (ORInt)bound;
 @end
 
-@protocol ORLowerBoundStreamConsumer<ORBoundStreamConsumer>
--(void) receiveLowerBound: (ORInt)bound;
+@protocol ORLowerBoundStreamConsumer
+-(void) receiveLowerBound: (ORFloat)bound;
 @end
 
-@protocol ORUpperBoundStreamProducer<ORRunnable>
+@protocol ORUpperBoundStreamProducer
 -(void) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)c;
+-(id<ORIntInformer>) upperBoundStreamInformer;
 @end
 
-@protocol ORLowerBoundStreamProducer<ORRunnable>
+@protocol ORLowerBoundStreamProducer
 -(void) addLowerBoundStreamConsumer: (id<ORLowerBoundStreamConsumer>)c;
+-(id<ORFloatInformer>) lowerBoundStreamInformer;
 @end
 
-@protocol ORSolutionStreamConsumer<ORRunnable>
+@protocol ORSolutionStreamConsumer
 -(id<ORSolutionInformer>) solutionStreamInformer;
 -(void) receiveSolution: (id<ORSolution>)sol;
 @end
 
-@protocol ORSolutionStreamProducer<ORRunnable>
+@protocol ORSolutionStreamProducer
 -(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c;
 -(void) notifySolution: (id<ORSolution>)sol;
 @end
 
-@protocol ORColumnConsumer<ORRunnable>
+@protocol ORColumnConsumer
 @end
 
-@protocol ORColumnProducer<ORRunnable>
+@protocol ORColumnProducer
 -(void) produceColumn: (id<ORFloatArray>)col;
 -(id<ORFloatArray>) retrieveColumn;
 @end
 
-@protocol ORConstraintSetConsumer<ORRunnable>
+@protocol ORConstraintSetConsumer
 -(id<ORConstraintSetInformer>) constraintSetInformer;
 -(void) receiveConstraintSet: (id<ORConstraintSet>)set;
 @end
 
-@protocol ORConstraintSetProducer<ORRunnable>
+@protocol ORConstraintSetProducer
 -(void) addConstraintSetConsumer: (id<ORConstraintSetConsumer>)c;
 -(void) notifyConstraintSet: (id<ORConstraintSet>)set;
 @end
@@ -62,10 +60,11 @@
 -(void) doExit;
 
 -(void) notifyUpperBound: (ORInt)bound;
--(void) notifyLowerBound: (ORInt)bound;
--(id<ORIntInformer>) boundStreamInformer;
+-(void) notifyLowerBound: (ORFloat)bound;
+-(id<ORIntInformer>) upperBoundStreamInformer;
+-(id<ORFloatInformer>) lowerBoundStreamInformer;
 -(void) receiveUpperBound: (ORInt)bound;
--(void) receiveLowerBound: (ORInt)bound;
+-(void) receiveLowerBound: (ORFloat)bound;
 -(void) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)c;
 -(void) addLowerBoundStreamConsumer: (id<ORLowerBoundStreamConsumer>)c;
 -(id<ORSolutionInformer>) solutionStreamInformer;

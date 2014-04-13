@@ -21,7 +21,9 @@
 -(id<ORASolver>) solver;
 -(void) start;
 -(void) run;
--(ORFloat)bestBound;
+-(void) setTimeLimit: (ORFloat) secs;
+-(ORFloat) bestBound;
+-(id<ORSolution>) bestSolution;
 @end
 
 @interface ORAbstractRunnableI : NSObject<ORRunnable> {
@@ -35,6 +37,7 @@
 -(void) performOnStart: (ORClosure)c;
 -(void) performOnExit: (ORClosure)c;
 -(id<ORASolver>) solver;
+-(void) setTimeLimit: (ORFloat) secs;
 @end
 
 @interface ORFactory(ORRunnable)

@@ -47,7 +47,7 @@
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
 }
 
--(void) receiveLowerBound:(ORInt)bound
+-(void) receiveLowerBound:(ORFloat)bound
 {
     NSLog(@"(%p) recieved lower bound: %i", self, bound);
 }

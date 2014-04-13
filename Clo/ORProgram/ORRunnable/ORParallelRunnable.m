@@ -16,6 +16,8 @@
     id<ORSolutionPool> _solutionPool;
     NSThread* _t0;
     NSThread* _t1;
+    ORFloat _bestBound;
+    id<ORRunnable> _solvedRunnable;
 }
 
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1 {
@@ -25,6 +27,8 @@
         _t0 = nil;
         _t1 = nil;
         _solutionPool = [[ORSolutionPoolI alloc] init];
+        _bestBound = -DBL_MAX;
+        _solvedRunnable = nil;
     }
     return self;
 }
@@ -44,6 +48,24 @@
     return [_r0 model];
 }
 
+-(ORFloat) bestBound {
+    return _bestBound;
+}
+
+-(void) setTimeLimit:(ORFloat)secs {
+    [_r0 setTimeLimit: secs];
+    [_r1 setTimeLimit: secs];
+}
+
+-(id<ORSolution>) bestSolution {
+    if(_solvedRunnable) return [_solvedRunnable bestSolution];
+    return nil;
+}
+
+-(id<ORRunnable>) solvedRunnable {
+    return  _solvedRunnable;
+}
+
 -(void) run {
     
 //    [_r0 onExit: ^() { [(CPRunnableI*)_r0 restore: [_solutionPool best]]; }];
@@ -57,11 +79,21 @@
 
     
     // Wait for the runnables to finish
-    while([_t0 isExecuting] || [_t1 isExecuting]) {
-        //[NSThread sleepForTimeInterval: 0.25];
+    while([_t0 isExecuting] && [_t1 isExecuting]) {
+        [NSThread sleepForTimeInterval: 0.25];
         //NSLog(@"r2 bound: %@", [[[_r1 model] objective] description]);
         [ORConcurrency pumpEvents];
     }
+    [_t0 cancel];
+    [_t1 cancel];
+    id<ORSolution> s0 = [_r0 bestSolution];
+    id<ORSolution> s1 = [_r1 bestSolution];
+    if(s0 && s1) {
+        _solvedRunnable = ([[s0 objectiveValue] floatValue] >= [[s1 objectiveValue] floatValue]) ? _r0 : _r1;
+        _bestBound = MAX([[s0 objectiveValue] floatValue], [[s1 objectiveValue] floatValue]);
+    }
+    else if(s0) { _bestBound = [[s0 objectiveValue] floatValue]; _solvedRunnable = _r0; }
+    else if(s1) { _bestBound = [[s1 objectiveValue] floatValue]; _solvedRunnable = _r1; }
 }
 
 -(id<ORRunnable>) primaryRunnable { return _r0; }

@@ -12,7 +12,8 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import "ORRunnablePiping.h"
+#import <ORProgram/ORRunnablePiping.h>
+
 
 typedef id<ORRunnable> (^ORFloatArray2Runnable)(id<ORFloatArray>);
 typedef id<LPColumn> (^Void2Column)();
