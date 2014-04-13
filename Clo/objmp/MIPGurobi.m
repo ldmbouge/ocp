@@ -35,6 +35,10 @@
    [super dealloc];
 }
 
+-(void) updateModel
+{
+   GRBupdatemodel(_model);
+}
 -(void) addVariable: (MIPVariableI*) var;
 {
    if ([var isInteger]) {
@@ -47,13 +51,13 @@
       GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_CONTINUOUS,NULL);
    else
       GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_CONTINUOUS,NULL);
-   GRBupdatemodel(_model);
+   //GRBupdatemodel(_model);
 }
 
 -(MIPConstraintI*) addConstraint: (MIPConstraintI*) cstr
 {
    [self postConstraint: cstr];
-   GRBupdatemodel(_model);
+   //GRBupdatemodel(_model);
    return cstr;
 }
 -(void) delConstraint: (MIPConstraintI*) cstr
@@ -192,7 +196,7 @@
     int vind[] = { [param coefIdx] };
     double v[] = { val };
     int err = GRBchgcoeffs(_model, 1, cind, vind, v);
-    GRBupdatemodel(_model);
+//    GRBupdatemodel(_model);
     if(err != 0)
         NSLog(@"error setting gurobi parameter: %i", err);
 }

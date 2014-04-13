@@ -16,6 +16,7 @@
 #import "ORConstraint.h"
 
 @protocol ORSnapshot
+-(ORInt) getId;
 -(ORInt)  intValue;
 -(ORBool) boolValue;
 -(ORFloat) floatValue;

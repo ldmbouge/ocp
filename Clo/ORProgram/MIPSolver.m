@@ -169,7 +169,7 @@
 
 
 @interface ORMIPIntVarSnapshot : NSObject <ORSnapshot,NSCoding> {
-   ORUInt _name;
+   ORInt   _name;
    ORInt  _value;
 }
 -(ORMIPIntVarSnapshot*) initMIPIntVarSnapshot: (id<ORIntVar>) v with: (id<MIPProgram>) solver;
@@ -177,7 +177,7 @@
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
--(ORUInt)getId;
+-(ORInt)getId;
 @end
 
 @implementation ORMIPIntVarSnapshot
@@ -188,7 +188,7 @@
    _value = [solver intValue: v];
    return self;
 }
--(ORUInt)getId
+-(ORInt)getId
 {
    return _name;
 }
@@ -316,6 +316,21 @@
       [shot release];
    }];
    _varShots = snapshots;
+   ORInt curId = 0;
+   BOOL  inc = YES;
+   for(id<ORSnapshot> vs in _varShots) {
+      ORInt vsID = [vs getId];
+      inc = curId <= vsID;
+      if (!inc) break;
+   }
+   if (!inc) {
+      _varShots = [snapshots sortedArrayUsingComparator:^NSComparisonResult(id<ORSnapshot> a,id<ORSnapshot> b) {
+         ORInt v = [b getId] - [a getId];
+         if (v <0) return NSOrderedAscending;
+         else if (v>0) return NSOrderedDescending;
+         else return NSOrderedSame;
+      }];
+   }
    
    if([model conformsToProtocol: @protocol(ORParameterizedModel)]) {
       NSArray* ap = [(id<ORParameterizedModel>)model parameters];
@@ -400,16 +415,31 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [var getId] == [obj getId];
-   }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
+   ORInt vid = getId(var);
+   ORInt low = 0;
+   ORInt up  = (ORInt)[_varShots count];
+   while (low <= up) {
+      ORInt m = low + (up - low)/2;
+      id<ORSnapshot> sm = [_varShots objectAtIndex:m];
+      ORInt smid = [sm getId];
+      if (smid == vid)
+         return [sm floatValue];
+      else if (smid < vid)
+         low = m + 1;
+      else up = m - 1;
+   }
+   assert(false);
+//   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+//      return vid == getId(obj);
+//   }];
+//   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
 }
 -(ORFloat) paramFloatValue: (id<ORFloatParam>) param
 {
    NSUInteger idx = -1;
+   ORInt pid = getId(param);
    idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [param getId] == [obj getId];
+        return pid == getId(obj);
    }];
    assert(idx != -1 && idx != 9223372036854775807);
    return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
