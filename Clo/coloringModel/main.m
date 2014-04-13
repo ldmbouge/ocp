@@ -36,8 +36,8 @@ int main(int argc, const char * argv[])
    //@autoreleasepool {
       //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       //      [args measure:^struct ORResult(){
-      ORInt relaxCount = 31;//atoi(argv[2]);
-      ORInt cliqueCount = 4;//atoi(argv[1]);
+      ORInt relaxCount = 95;//atoi(argv[2]);
+      ORInt cliqueCount = 20;//atoi(argv[1]);
       ORFloat timeLimit = 5 * 60;
       
       id<ORModel> model = [ORFactory createModel];
@@ -260,9 +260,9 @@ int main(int argc, const char * argv[])
       };
       
       r0 = [ORFactory CPSubgradient: lagrangeModel0 bound: UB search: search0];
-      [(ORSubgradientTemplate*)r0 setAgility: 150];
+      [(ORSubgradientTemplate*)r0 setAgility: 30];
       r1 = [ORFactory CPSubgradient: lagrangeModel1 bound: UB search: search1];
-      [(ORSubgradientTemplate*)r1 setAgility: 150];
+      [(ORSubgradientTemplate*)r1 setAgility: 30];
       id<ORRunnable> pr = [ORFactory composeCompleteParallel: r0 with: r1];
       [pr setTimeLimit: timeLimit];
 
