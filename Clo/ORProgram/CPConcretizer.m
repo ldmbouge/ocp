@@ -1022,6 +1022,18 @@
    }
 }
 
+-(void) visitBitShiftR:(id<ORBitShiftR>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      ORInt p = [cstr places];
+      id<CPConstraint> concreteCstr = [CPFactory bitShiftR:x by:p equals:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitBitRotateL:(id<ORBitRotateL>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1089,6 +1101,101 @@
       ORUInt lsb = [cstr lsb];
       ORUInt msb = [cstr msb];
       id<CPConstraint> concreteCstr = [CPFactory bitExtract:x from:lsb to:msb eq:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitConcat:(id<ORBitConcat>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitConcat:x concat:y eq:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitLogicalEqual:x EQ:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitLT:(id<ORBitLT>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitLT:x LT:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitLE:(id<ORBitLE>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitLE:x LE:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitITE:(id<ORBitITE>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> i = [self concreteVar:[cstr left]];
+      id<CPBitVar> t = [self concreteVar:[cstr right1]];
+      id<CPBitVar> e = [self concreteVar:[cstr right2]];
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitITE:i then:t else:e result:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntRange> R = [[cstr left] range];
+      id<CPBitVarArray> x = [CPFactory bitVarArray:_solver range:R];
+      ORInt low = R.low;
+      ORInt up = R.up;
+      for(ORInt i = low; i <= up; i++) {
+         x[i] = [self concreteVar:[cstr left][i]];
+      }
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      
+      id<CPConstraint> concreteCstr = [CPFactory bitLogicalAnd:x eval:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntRange> R = [[cstr left] range];
+      id<CPBitVarArray> x = [CPFactory bitVarArray:_solver range:R];
+      ORInt low = R.low;
+      ORInt up = R.up;
+      for(ORInt i = low; i <= up; i++) {
+         x[i] = [self concreteVar:[cstr left][i]];
+      }
+      id<CPBitVar> r = [self concreteVar:[cstr res]];
+      
+      id<CPConstraint> concreteCstr = [CPFactory bitLogicalOr:x eval:r];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

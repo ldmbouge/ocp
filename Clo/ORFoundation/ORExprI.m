@@ -139,6 +139,7 @@
 -(void) visitBitNot:(id<ORBitNot>)c;
 -(void) visitBitXor:(id<ORBitXor>)c;
 -(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitShiftR:(id<ORBitShiftR>)c;
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
@@ -146,6 +147,12 @@
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c;
 -(void) visitBitExtract:(id<ORBitExtract>)c;
 -(void) visitBitConcat:(id<ORBitConcat>)c;
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c;
+-(void) visitBitLT:(id<ORBitLT>)c;
+-(void) visitBitLE:(id<ORBitLE>)c;
+-(void) visitBitITE:(id<ORBitITE>)c;
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c;
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c;
 @end
 
 @implementation ORSweep
@@ -334,6 +341,11 @@
    [[c left] visit:self];
    [[c right] visit:self];
 }
+-(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    [[c left] visit:self];
@@ -375,6 +387,43 @@
 {
    [[c left] visit:self];
    [[c right] visit:self];
+}
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitLT:(id<ORBitLT>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitLE:(id<ORBitLE>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitITE:(id<ORBitITE>)c
+{
+   [[c left] visit:self];
+   [[c right1] visit:self];
+   [[c right2] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c
+{
+   [[c left] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c
+{
+   [[c left] visit:self];
+   [[c res] visit:self];
 }
 @end
 

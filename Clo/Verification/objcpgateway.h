@@ -19,7 +19,6 @@
 #import <objcp/CPBitConstraint.h>
 #include "/usr/local/include/gmp.h"
 
-
 typedef enum {OR_BOOL, OR_INT, OR_REAL, OR_BV} objcp_var_type;
 
 // A context stores a collection of declarations and assertions.
@@ -64,6 +63,8 @@ typedef int assertion_id;
    NSMutableDictionary* _types;
    NSMutableDictionary* _declarations;
    NSMutableDictionary* _instances;
+   id<ORBitVar> _true;
+   id<ORBitVar> _false;
 }
 +(OBJCPGateway*) initOBJCPGateway;
 -(OBJCPGateway*) initExplicitOBJCPGateway;
@@ -120,10 +121,16 @@ typedef int assertion_id;
 -(ORUInt) objcp_get_unsat_core_size:(objcp_context) ctx;
 -(objcp_expr) objcp_mk_app:(objcp_context)ctx withFun:(objcp_expr)f withArgs:(objcp_expr*)arg andNumArgs:(ORULong)n;
 -(objcp_expr) objcp_mk_bv_constant_from_array:(objcp_context) ctx withSize:(ORUInt)size fromArray:(ORUInt*)bv;
-//-(objcp_expr) objcp_mk_and
-//-(objcp_expr) objcp_mk_or
+
+-(objcp_expr) objcp_mk_true:(objcp_context)ctx;
+-(objcp_expr) objcp_mk_false:(objcp_context)ctx;
+
+-(objcp_expr) objcp_mk_and:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs;
+-(objcp_expr) objcp_mk_or:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs;
 //-(objcp_expr) objcp_mk_not
+
 -(objcp_expr) objcp_mk_eq:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2;
+
 //-(objcp_expr) objcp_mk_sum
 //-(objcp_expr) objcp_mk_mul
 //-(objcp_expr) objcp_mk_sub
@@ -131,7 +138,7 @@ typedef int assertion_id;
 //-(objcp_expr) objcp_mk_lt
 //-(objcp_expr) objcp_mk_ge
 //-(objcp_expr) objcp_mk_gt
-//-(objcp_expr) objcp_mk_ite
+-(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr) c then:(objcp_expr) t else:(objcp_expr)e ;
 //-(objcp_expr) objcp_mk_num_from_string
 //-(objcp_expr) objcp_mk_diseq
 -(objcp_expr) objcp_mk_bv_concat:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_context)arg2;
@@ -139,9 +146,14 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_bv_and:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 -(objcp_expr) objcp_mk_bv_or:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 -(objcp_expr) objcp_mk_bv_xor:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
-//-(objcp_expr) objcp_mk_bv_lt
-//-(objcp_expr) objcp_mk_bv_slt
-//-(objcp_expr) objcp_mk_bv_le
+-(objcp_expr) objcp_mk_bv_lt:(objcp_expr)ctx x:(objcp_expr)x lt:(objcp_expr)y;
+
+//Shift Left
+-(objcp_expr) objcp_mk_bv_shl:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+//Shift Right Logical
+-(objcp_expr) objcp_mk_bv_shrl:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+
+-(objcp_expr) objcp_mk_bv_le:(objcp_expr)ctx x:(objcp_expr)x le:(objcp_expr)y;
 //-(objcp_expr) objcp_mk_bv_sle
 //-(objcp_expr) objcp_mk_bv_gt
 //-(objcp_expr) objcp_mk_bv_sgt
@@ -152,12 +164,10 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_bv_add:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 //-(objcp_expr) objcp_mk_bv_sub
 //-(objcp_expr) objcp_mk_bv_mul
-//-(objcp_expr) objcp_mk_bv_extract:(objcp_context)ctx from:(int)msb downTo:(int)lsb in:(objcp_expr)a1;
+-(objcp_expr) objcp_mk_bv_extract:(objcp_context)ctx from:(ORUInt)msb downTo:(ORUInt)lsb in:(objcp_expr)a1;
 //-(objcp_expr) objcp_mk_bv_sign_extend
-//-(objcp_expr) objcp_mk_bv_rotl
-//-(objcp_expr) objcp_mk_bv_rotr
+//-(objcp_expr) objcp_mk_bv_rotl:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+//-(objcp_expr) objcp_mk_bv_rotr:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 -(objcp_expr) objcp_mk_bv_zero_extend:(objcp_context)ctx withArg:(objcp_expr)a1 andAmount:(ORUInt)amt;
-
 @end
-
 #endif

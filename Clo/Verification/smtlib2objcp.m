@@ -1008,20 +1008,20 @@ static smtlib2_term smtlib2_objcp_parser_mk_number(smtlib2_context ctx,
     return ret;
 }
 
-SMTLIB2_OBJCP_DECLHANDLER(and) { return NULL; /* TODO */ }
-//{
-//   return [objcpgw objcp_mk_and:YCTX(ctx)
-//                       withArgs:(objcp_expr *)&(smtlib2_vector_at(args, 0))
-//                     andNumArgs:smtlib2_vector_size(args)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(and) //{ return NULL; /* TODO */ }
+{
+   return [objcpgw objcp_mk_and:YCTX(ctx)
+                       withArgs:(objcp_expr *)&(smtlib2_vector_at(args, 0))
+                     andNumArgs:smtlib2_vector_size(args)];
+}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(or) { return NULL; /* TODO */ }
-//{
-//   return [objcpgw objcp_mk_or:YCTX(ctx)
-//                      withArgs:(objcp_expr *)&(smtlib2_vector_at(args, 0))
-//                    andNumArgs:smtlib2_vector_size(args)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(or) //{ return NULL; /* TODO */ }
+{
+   return [objcpgw objcp_mk_or:YCTX(ctx)
+                      withArgs:(objcp_expr *)&(smtlib2_vector_at(args, 0))
+                    andNumArgs:smtlib2_vector_size(args)];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(not) //{ return NULL; /* TODO */ }
@@ -1048,17 +1048,22 @@ SMTLIB2_OBJCP_DECLHANDLER(implies) { return NULL; /* TODO */ }
 
 SMTLIB2_OBJCP_DECLHANDLER(eq) //{ return NULL; /* TODO */ }
 {
+   id<ORBitVar> ret = [objcpgw objcp_mk_eq:YCTX(ctx)
+                           withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+                            andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
+   
    objcp_context yctx = YCTX(ctx);
-   objcp_expr ret = [objcpgw objcp_mk_eq:yctx withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-                                  andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//    size_t i;
-//    
-//    for (i = 2; i < smtlib2_vector_size(args); ++i) {
-//        objcp_expr prev = (objcp_expr)smtlib2_vector_at(args, i-1);
-//        objcp_expr cur = (objcp_expr)smtlib2_vector_at(args, i);
-//       objcp_expr aa[2] = { ret, [objcpgw objcp_mk_eq:yctx withArg:prev andArg:cur] };
-//       ret = [objcpgw objcp_mk_and:yctx withArgs:aa andNumArgs:2];
-//    }
+//   id<ORBitVar> ret = [objcpgw objcp_mk_eq:yctx withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+//                                  andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
+
+    size_t i;
+    
+    for (i = 2; i < smtlib2_vector_size(args); ++i) {
+        objcp_expr prev = (objcp_expr)smtlib2_vector_at(args, i-1);
+        objcp_expr cur = (objcp_expr)smtlib2_vector_at(args, i);
+       objcp_expr aa[2] = { ret, [objcpgw objcp_mk_eq:yctx withArg:prev andArg:cur] };
+       ret = [objcpgw objcp_mk_and:yctx withArgs:aa andNumArgs:2];
+    }
     return ret;
 }
 
@@ -1122,13 +1127,16 @@ SMTLIB2_OBJCP_DECLHANDLER(gt) { return NULL; /* TODO */ }
 //}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(ite) { return NULL; /* TODO */ }
-//{
-//   return [objcpgw objcp_mk_ite:YCTX(ctx)
-//                       withArg0:(objcp_expr)smtlib2_vector_at(args, 0)
-//                       withArg1:(objcp_expr)smtlib2_vector_at(args, 1)
-//                       andArg2:(objcp_expr)smtlib2_vector_at(args, 2)];
-//}
+/**
+ \brief Return an expression representing <tt>(if c t e)</tt>.
+ */
+SMTLIB2_OBJCP_DECLHANDLER(ite) //{ return NULL; /* TODO */ }
+{
+   return [objcpgw objcp_mk_ite:YCTX(ctx)
+                       if:(objcp_expr)smtlib2_vector_at(args, 0)
+                       then:(objcp_expr)smtlib2_vector_at(args, 1)
+                       else:(objcp_expr)smtlib2_vector_at(args, 2)];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(divide) { return NULL; /* TODO */ }
@@ -1271,28 +1279,35 @@ SMTLIB2_OBJCP_DECLHANDLER(bvxnor)
 }
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvult) { return NULL; /* TODO */ }
-//{
-//   return [objcpgw objcp_mk_bv_lt:YCTX(ctx)
-//                          withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                           andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvult) //{ return NULL; /* TODO */ }
+{
+   return [objcpgw objcp_mk_bv_lt:YCTX(ctx)
+                          x:(objcp_expr)smtlib2_vector_at(args, 0)
+                           lt:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvslt) { return NULL; /* TODO */ }
-//{
-//   return [objcpgw objcp_mk_bv_slt:YCTX(ctx)
-//                           withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                            andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
-//
+SMTLIB2_OBJCP_DECLHANDLER(bvshl) //{ return NULL; /* TODO */ }
+{
+   return [objcpgw objcp_mk_bv_shl:YCTX(ctx)
+                           withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+                            andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
-SMTLIB2_OBJCP_DECLHANDLER(bvule) { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_le:YCTX(ctx)
-//                           withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                            andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvlshr) //{ return NULL; /* TODO */ }
+{
+   return [objcpgw objcp_mk_bv_shrl:YCTX(ctx)
+                           withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+                            andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
+
+
+SMTLIB2_OBJCP_DECLHANDLER(bvule) //{ return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_le:YCTX(ctx)
+                           x:(objcp_expr)smtlib2_vector_at(args, 0)
+                            le:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(bvsle) { return NULL; /* TODO */ }
@@ -1381,17 +1396,17 @@ SMTLIB2_OBJCP_DECLHANDLER(bvsdiv) { return NULL; /* TODO */ }
 SMTLIB2_OBJCP_DECLHANDLER(bvsmod) { return NULL; /* TODO */ }
 SMTLIB2_OBJCP_DECLHANDLER(bvurem) { return NULL; /* TODO */ }
 SMTLIB2_OBJCP_DECLHANDLER(bvsrem) { return NULL; /* TODO */ }
-SMTLIB2_OBJCP_DECLHANDLER(bvshl)  { return NULL; /* TODO */ }
-SMTLIB2_OBJCP_DECLHANDLER(bvlshr) { return NULL; /* TODO */ }
+SMTLIB2_OBJCP_DECLHANDLER(bvslt)  { return NULL; /* TODO */ }
+//SMTLIB2_OBJCP_DECLHANDLER(bvlshr) { return NULL; /* TODO */ }
 SMTLIB2_OBJCP_DECLHANDLER(bvashr) { return NULL; /* TODO */ }
 
 
-SMTLIB2_OBJCP_DECLHANDLER(extract) { return NULL; /* TODO */ }
-//{
-//    size_t msb = (size_t)smtlib2_vector_at(idx, 0);
-//    size_t lsb = (size_t)smtlib2_vector_at(idx, 1);
-//            return [objcpgw objcp_mk_bv_extract:YCTX(ctx) from:msb downTo:lsb in:(objcp_expr)smtlib2_vector_at(args, 0)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(extract) //{ return NULL; /* TODO */ }
+{
+    size_t msb = (size_t)smtlib2_vector_at(idx, 0);
+    size_t lsb = (size_t)smtlib2_vector_at(idx, 1);
+            return [objcpgw objcp_mk_bv_extract:YCTX(ctx) from:msb downTo:lsb in:(objcp_expr)smtlib2_vector_at(args, 0)];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(repeat) { return NULL; /* TODO */ }

@@ -229,4 +229,17 @@
 {
    return [[CPBitVarI alloc] initCPExplicitBitVarPat:engine withLow:low andUp:up andLen:len];
 }
++(id<CPBitVarArray>) bitVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
+{
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   return (id<CPBitVarArray>) o;
+}
++(id<CPBitVarArray>) bitVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPBitVar>(^)(ORInt)) clo
+{
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      [o  set:clo(k) at:k];
+   }
+   return (id<CPBitVarArray>)o;
+}
 @end

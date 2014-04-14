@@ -240,12 +240,14 @@
 @end
 
 @interface ORFactory (BV)
++(id<ORBitVarArray>) bitVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x or:(id<ORBitVar>)y eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x and:(id<ORBitVar>)y eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x not:(id<ORBitVar>)y;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x xor:(id<ORBitVar>)y eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x shiftLBy:(ORInt)p eq:(id<ORBitVar>)z;
++(id<ORConstraint>) bit:(id<ORBitVar>)x shiftRBy:(ORInt)p eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x rotateLBy:(ORInt)p eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x plus:(id<ORBitVar>)y withCarryIn:(id<ORBitVar>)ci eq:(id<ORBitVar>)z withCarryOut:(id<ORBitVar>)co;
 +(id<ORConstraint>) bit:(id<ORBitVar>)w trueIf:(id<ORBitVar>)x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z;
@@ -253,6 +255,12 @@
 +(id<ORConstraint>) bit:(id<ORBitVar>)x zeroExtendTo:(id<ORBitVar>)p;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x from:(ORUInt)lsb to:(ORUInt)msb eq:(id<ORBitVar>)p;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x concat:(id<ORBitVar>)y eq:(id<ORBitVar>)z;
++(id<ORConstraint>) bit:(id<ORBitVar>)x EQ:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
++(id<ORConstraint>) bit:(id<ORBitVar>)x LT:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
++(id<ORConstraint>) bit:(id<ORBitVar>)x LE:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
++(id<ORConstraint>) bit:(id<ORBitVar>)i then:(id<ORBitVar>)t else:(id<ORBitVar>)e result:(id<ORBitVar>)r;
++(id<ORConstraint>) bit:(id<ORBitVarArray>)x logicalAndEval:(id<ORBitVar>)r;
++(id<ORConstraint>) bit:(id<ORBitVarArray>)x logicalOrEval:(id<ORBitVar>)r;
 @end
 
 @interface ORFactory (ObjectiveValue)

@@ -1236,6 +1236,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (BV)
++(id<ORBitVarArray>) bitVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   return (id<ORBitVarArray>)o;
+}
+
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitEqual alloc] initORBitEqual:x eq:y];
@@ -1269,6 +1275,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) bit:(id<ORBitVar>)x shiftLBy:(ORInt)p eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitShiftL alloc] initORBitShiftL:x by:p eq:y];
+   [[x tracker]trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x shiftRBy:(ORInt)p eq:(id<ORBitVar>)y
+{
+   id<ORConstraint> o = [[ORBitShiftR alloc] initORBitShiftR:x by:p eq:y];
    [[x tracker]trackObject:o];
    return o;
 }
@@ -1312,6 +1324,42 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    id<ORConstraint> o = [[ORBitExtract alloc] initORBitExtract:x from:lsb to:msb eq:y];
    [[x tracker] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x EQ:(id<ORBitVar>)y eval:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitLogicalEqual alloc] initORBitLogicalEqual:x EQ:y eval:z];
+   [[x tracker]trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x LT:(id<ORBitVar>)y eval:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitLT alloc] initORBitLT:x LT:y eval:z];
+   [[x tracker]trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x LE:(id<ORBitVar>)y eval:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitLE alloc] initORBitLE:x LE:y eval:z];
+   [[x tracker]trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)i then:(id<ORBitVar>)t else:(id<ORBitVar>)e result:(id<ORBitVar>)r
+{
+   id<ORConstraint> o = [[ORBitITE alloc] initORBitITE:i then:t else:e result:r];
+   [[i tracker]trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVarArray>)x logicalAndEval:(id<ORBitVar>)r
+{
+   id<ORConstraint> o = [[ORBitLogicalAnd alloc] initORBitLogicalAnd:x eval:r];
+   [[r tracker]trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVarArray>)x logicalOrEval:(id<ORBitVar>)r
+{
+   id<ORConstraint> o = [[ORBitLogicalOr alloc] initORBitLogicalOr:x eval:r];
+   [[r tracker]trackObject:o];
    return o;
 }
 @end

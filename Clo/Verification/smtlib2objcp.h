@@ -30,7 +30,7 @@
 #include "smtlib2abstractparser.h"
 #include "smtlib2abstractparser_private.h"
 #include "/usr/local/include/gmp.h"
-#include "OBJCPgateway.h"
+#import "OBJCPgateway.h"
 
 OBJCPGateway* objcpgw;
 

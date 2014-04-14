@@ -412,6 +412,10 @@
 {
    _result = c;
 }
+-(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   _result = c;
+}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    _result = c;
@@ -436,11 +440,36 @@
 {
    _result = c;
 }
--(void) visitBitZeroConcat:(id<ORBitConcat>)c
+-(void) visitBitConcat:(id<ORBitConcat>)c
+{
+   _result = c;
+}
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c
+{
+   _result = c;
+}
+-(void) visitBitLT:(id<ORBitLT>)c
+{
+   _result = c;
+}
+-(void) visitBitLE:(id<ORBitLE>)c
 {
    _result = c;
 }
 
+-(void) visitBitITE:(id<ORBitITE>)c
+{
+   _result = c;
+}
+
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c
+{
+   _result = c;
+}
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c
+{
+   _result = c;
+}
 // Flattening of constraints ============================================================================
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v

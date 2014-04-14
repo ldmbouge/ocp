@@ -62,6 +62,8 @@
 
 @interface CPFactory (BV)
 +(id<CPBitVar>) bitVar:(id<CPEngine>)engine withLow: (ORUInt*) low andUp:(ORUInt*) up andLength:(int) len;
++(id<CPBitVarArray>) bitVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
++(id<CPBitVarArray>) bitVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPBitVar>(^)(ORInt)) clo;
 @end
 
 

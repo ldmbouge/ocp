@@ -490,6 +490,12 @@ enum ORGroupType {
 -(ORInt) places;
 @end
 
+@protocol  ORBitShiftR <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(ORInt) places;
+@end
+
 @protocol  ORBitRotateL <ORConstraint>
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
@@ -534,10 +540,44 @@ enum ORGroupType {
 -(id<ORBitVar>) right;
 @end
 
+@protocol  ORBitLogicalEqual <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitLT <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitLE <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitITE <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right1;
+-(id<ORBitVar>) right2;
+@end
+
+@protocol  ORBitLogicalAnd <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORVarArray>) left;
+@end
+
+@protocol  ORBitLogicalOr <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORVarArray>) left;
+@end
+
 // Root implementation class (needed so that sub-frameworks can write constraints)
 
 @interface ORConstraintI : ORObject<ORConstraint,NSCoding>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
 @end
-

@@ -243,7 +243,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
       }
       @catch (NSException *exception) {
          
-         NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);
+         NSLog(@"testORConstraint: Caught %@: %@", [exception name], [exception reason]);
          
       }
       
@@ -354,7 +354,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
 
       }
       @catch (NSException *exception) {
-         NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);
+         NSLog(@"testXORConstraint: Caught %@: %@", [exception name], [exception reason]);
       }
    }];
     NSLog(@"End testing bitwise XOR constraint.\n");
@@ -411,13 +411,15 @@ char *int2bin(int a, char *buffer, int buf_size) {
       }
          @catch (NSException *exception) {
          
-         NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);
+         NSLog(@"testShiftLConstraint: Caught %@: %@", [exception name], [exception reason]);
          
       }
       
    }];
     NSLog(@"End testing bitwise ShiftL constraint.\n");
 }
+
+
 
 -(void) testShiftLConstraint2
 {
@@ -463,13 +465,125 @@ char *int2bin(int a, char *buffer, int buf_size) {
       }
       @catch (NSException *exception) {
          
-         NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);
+         NSLog(@"testShiftLConstraint: Caught %@: %@", [exception name], [exception reason]);
          
       }
       
    }];
    NSLog(@"End testing bitwise ShiftL constraint.\n");
 }
+
+-(void) testShiftRConstraint
+{
+   NSLog(@"Begin testing bitwise ShiftR constraint\n");
+   
+   char buffer[BUF_SIZE];
+   char buffer2[BUF_SIZE];
+   buffer[BUF_SIZE - 1] = '\0';
+   buffer2[BUF_SIZE - 1] = '\0';
+   
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[2];
+   unsigned int max[2];
+   
+   min[0] = 0xB77BEFDF;
+   min[1] = 0xDFEFFBFF;
+   max[0] = 0xB77BEFDF;
+   max[1] = 0xDFEFFBFF;
+   
+   id<ORBitVar> p = [ORFactory bitVar:m low:min up:max bitLength:64];
+   min[1] = 0;
+   min[0] = 0;
+   max[0] = 0xFFFFFFFF;
+   max[1] = 0xFFFFFFFF;
+   id<ORBitVar> q = [ORFactory bitVar:m low:min up:max bitLength:64];
+   
+   [m add:[ORFactory bit:p shiftRBy:3 eq:q]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   NSLog(@"Initial values:");
+   NSLog(@"p = %@\n", p);
+   NSLog(@"q = %@\n", q);
+   [cp solve: ^() {
+      @try {
+         
+         NSLog(@"After Posting:");
+         NSLog(@"p = %@\n", [cp stringValue:p]);
+         NSLog(@"q = %@\n", [cp stringValue:q]);
+         [cp labelUpFromLSB:p];
+         [cp labelUpFromLSB:q];
+         NSLog(@"Solution Found:");
+         NSLog(@"p = %@\n", [cp stringValue:p]);
+         NSLog(@"q = %@\n", [cp stringValue:q]);
+         STAssertTrue([[cp stringValue:p] isEqualToString:@"1011011101111011111011111101111111011111111011111111101111111111"],
+                      @"testBitORConstraint: Bit Pattern for p is incorrect.");
+         STAssertTrue([[cp stringValue:q] isEqualToString:@"0001011011101111011111011111101111111011111111011111111101111111"],
+                      @"testBitORConstraint: Bit Pattern for q is incorrect.");
+      }
+      @catch (NSException *exception) {
+         
+         NSLog(@"testShiftRConstraint: Caught %@: %@", [exception name], [exception reason]);
+         
+      }
+      
+   }];
+   NSLog(@"End testing bitwise ShiftR constraint.\n");
+}
+
+-(void) testShiftRConstraint2
+{
+   NSLog(@"Begin testing bitwise ShiftR constraint\n");
+   
+   char buffer[BUF_SIZE];
+   char buffer2[BUF_SIZE];
+   buffer[BUF_SIZE - 1] = '\0';
+   buffer2[BUF_SIZE - 1] = '\0';
+   id gamma;
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min;
+   unsigned int max;
+   
+   min = 0x00000000;
+   max = 0xFFFFFFFF;
+   
+   id<ORBitVar> p = [ORFactory bitVar:m low:&min up:&max bitLength:32];
+   min = 0x82082082;
+   max = 0xDF7DF7DF;
+   id<ORBitVar> q = [ORFactory bitVar:m low:&min up:&max bitLength:32];
+   
+   [m add:[ORFactory bit:p shiftRBy:3 eq:q]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   gamma = [cp gamma];
+   NSLog(@"Initial values:");
+   NSLog(@"p = %@\n", p);
+   NSLog(@"q = %@\n", q);
+   [cp solve: ^() {
+      @try {
+         
+         NSLog(@"After Posting:");
+         NSLog(@"p = %@\n", [cp stringValue:p]);
+         NSLog(@"q = %@\n", [cp stringValue:q]);
+         [cp labelUpFromLSB:p];
+         [cp labelUpFromLSB:q];
+         NSLog(@"Solution Found:");
+         NSLog(@"p = %@\n", [cp stringValue:p]);
+         NSLog(@"q = %@\n", [cp stringValue:q]);
+                  //STAssertTrue([[p stringValue] isEqualToString:@"0001011011101111011111011111101111111011111111011111111101111111"],@"testBitORConstraint: Bit Pattern for p is incorrect.");
+                  //STAssertTrue([[q stringValue] isEqualToString:@"1011011101111011111011111101111111011111111011111111101111111111"],@"testBitORConstraint: Bit Pattern for q is incorrect.");
+      }
+      @catch (NSException *exception) {
+         
+         NSLog(@"testShiftRConstraint: Caught %@: %@", [exception name], [exception reason]);
+         
+      }
+      
+   }];
+   NSLog(@"End testing bitwise ShiftR constraint.\n");
+}
+
 -(void) testROTLConstraint
 {
    NSLog(@"Begin testing ROTL bitwise constraint\n");

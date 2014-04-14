@@ -402,6 +402,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftL: visit method not defined"]; 
 }
+-(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftR: visit method not defined"];
+}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitRotateL: visit method not defined"]; 
@@ -430,6 +434,35 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitConcat: visit method not defined"];
 }
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLogicalEqual: visit method not defined"];
+}
+
+-(void) visitBitLT:(id<ORBitLT>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLT: visit method not defined"];
+}
+
+-(void) visitBitLE:(id<ORBitLE>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLE: visit method not defined"];
+}
+
+-(void) visitBitITE:(id<ORBitITE>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitITE: visit method not defined"];
+}
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLogicalAnd: visit method not defined"];
+}
+
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitLogicalOr: visit method not defined"];
+}
+
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntegerI: visit method not defined"]; 
@@ -654,13 +687,20 @@
 -(void) visitBitNot:(id<ORBitNot>)c {}
 -(void) visitBitXor:(id<ORBitXor>)c {}
 -(void) visitBitShiftL:(id<ORBitShiftL>)c {}
+-(void) visitBitShiftR:(id<ORBitShiftR>)c {}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c {}
 -(void) visitBitSum:(id<ORBitSum>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}
 -(void) visitBitCount:(id<ORBitCount>)c {}
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c{}
 -(void) visitBitExtract:(id<ORBitExtract>)c{}
--(void) visitBitZeroConcat:(id<ORBitConcat>)c{}
+-(void) visitBitConcat:(id<ORBitConcat>)c{}
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c{}
+-(void) visitBitLT:(id<ORBitLT>)c{}
+-(void) visitBitLE:(id<ORBitLE>)c{}
+-(void) visitBitITE:(id<ORBitITE>)c{}
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c{}
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c{}
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}

@@ -150,6 +150,7 @@
 -(void) visitBitNot:(id<ORBitNot>)c;
 -(void) visitBitXor:(id<ORBitXor>)c;
 -(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitShiftR:(id<ORBitShiftR>)c;
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
@@ -157,6 +158,12 @@
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c;
 -(void) visitBitExtract:(id<ORBitExtract>)c;
 -(void) visitBitConcat:(id<ORBitConcat>)c;
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c;
+-(void) visitBitLT:(id<ORBitLT>)c;
+-(void) visitBitLE:(id<ORBitLE>)c;
+-(void) visitBitITE:(id<ORBitITE>)c;
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c;
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c;
 @end
 
 @interface ORNOopVisit : ORVisitor

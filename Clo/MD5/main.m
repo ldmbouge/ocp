@@ -389,14 +389,14 @@ int main(int argc, const char* argv[])
 //   twoByteMD4(@"rand6-mssg.txt", BVABS);
 //   twoByteMD4(@"rand7-mssg.txt", BVABS);
 //
-   twoByteMD5(@"rand0-mssg.txt", BVABS);
-   twoByteMD5(@"rand1-mssg.txt", BVABS);
-   twoByteMD5(@"rand2-mssg.txt", BVABS);
-   twoByteMD5(@"rand3-mssg.txt", BVABS);
-   twoByteMD5(@"rand4-mssg.txt", BVABS);
-   twoByteMD5(@"rand5-mssg.txt", BVABS);
-   twoByteMD5(@"rand6-mssg.txt", BVABS);
-   twoByteMD5(@"rand7-mssg.txt", BVABS);
+   twoByteMD5(@"rand0-mssg.txt", BVFF);
+   twoByteMD5(@"rand1-mssg.txt", BVFF);
+   twoByteMD5(@"rand2-mssg.txt", BVFF);
+   twoByteMD5(@"rand3-mssg.txt", BVFF);
+   twoByteMD5(@"rand4-mssg.txt", BVFF);
+   twoByteMD5(@"rand5-mssg.txt", BVFF);
+   twoByteMD5(@"rand6-mssg.txt", BVFF);
+   twoByteMD5(@"rand7-mssg.txt", BVFF);
 
 //   twoByteMD4(@"fifteen.txt", BVABS);
 //   twoByteMD4(@"fifteen.txt", BVIBS);

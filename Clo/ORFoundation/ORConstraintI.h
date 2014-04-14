@@ -567,6 +567,13 @@
 -(id<ORBitVar>) right;
 @end
 
+@interface ORBitShiftR : ORConstraintI<ORBitShiftR>
+-(ORBitShiftR*)initORBitShiftR: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
+-(ORInt) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
 @interface ORBitRotateL : ORConstraintI<ORBitRotateL>
 -(ORBitRotateL*)initORBitRotateL: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
 -(ORInt) places;
@@ -604,7 +611,7 @@
 @end
 
 @interface ORBitConcat : ORConstraintI<ORBitConcat>
--(ORBitOr*)initORBitConcat: (id<ORBitVar>) x concat: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(ORBitConcat*)initORBitConcat: (id<ORBitVar>) x concat: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
@@ -616,4 +623,44 @@
 -(ORUInt) lsb;
 -(ORUInt) msb;
 -(id<ORBitVar>) right;
+@end
+
+@interface ORBitLogicalEqual : ORConstraintI<ORBitLogicalEqual>
+-(ORBitLogicalEqual*)initORBitLogicalEqual:(id<ORBitVar>)x EQ:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitLT : ORConstraintI<ORBitLT>
+-(ORBitLT*)initORBitLT:(id<ORBitVar>)x LT:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitLE : ORConstraintI<ORBitLE>
+-(ORBitLE*)initORBitLE:(id<ORBitVar>)x LE:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitITE : ORConstraintI<ORBitITE>
+-(ORBitITE*)initORBitITE:(id<ORBitVar>)i then:(id<ORBitVar>)t else:(id<ORBitVar>)e result:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right1;
+-(id<ORBitVar>) right2;
+@end
+@interface ORBitLogicalAnd : ORConstraintI<ORBitLogicalAnd>
+-(ORBitLogicalAnd*)initORBitLogicalAnd:(id<ORBitVarArray>)x eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVarArray>) left;
+@end
+
+@interface ORBitLogicalOr : ORConstraintI<ORBitLogicalOr>
+-(ORBitLogicalOr*)initORBitLogicalOr:(id<ORBitVarArray>)x eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVarArray>) left;
 @end

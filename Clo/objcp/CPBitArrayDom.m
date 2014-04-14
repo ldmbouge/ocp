@@ -278,6 +278,7 @@
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
+   ORInt wordLengthInBits = _wordLength * 32;
    
    for(int i=_wordLength-1; i>=0; i--){
       //NSLog(@"%d leading zeroes in %x\n",__builtin_clz((_low[i]._val^_up[i]._val)), (_low[i]._val^_up[i]._val));
@@ -285,15 +286,18 @@
       if (freeBits==0) {
          continue;
       }
-      else if (freeBits==0xFFFFFFFF) {
-         return _bitLength-((i*32)+1);
+      else if (freeBits == 0xFFFFFFFF) {
+         int msfb = wordLengthInBits-((i*32)+1);
+         return msfb;
       }
-      else if ((j=__builtin_clz(freeBits))!=0) {
-         return (_bitLength)-((i*32)-j+1);
+      else if (freeBits & 0x80000000) {
+         j=__builtin_clz(~freeBits);
+         return (wordLengthInBits)-((i*32)+1);
       }
       else{
-         j=__builtin_clz(~freeBits);
-         return (_bitLength)-((i*32)+1);
+         j=__builtin_clz(freeBits);
+         int msfb = (wordLengthInBits)-((i*32)+j+1);
+         return msfb;
       }
    }
    return -1;

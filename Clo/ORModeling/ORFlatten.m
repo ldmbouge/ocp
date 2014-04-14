@@ -480,6 +480,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    _result = [_into addConstraint:c];
@@ -504,7 +508,31 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
--(void) visitBitZeroConcat:(id<ORBitConcat>)c
+-(void) visitBitConcat:(id<ORBitConcat>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitLT:(id<ORBitLT>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitLE:(id<ORBitLE>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitITE:(id<ORBitITE>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c
 {
    _result = [_into addConstraint:c];
 }
