@@ -225,6 +225,14 @@
    [x setValue: v];
    [self propagate];
 }
+-(void) updateMultipliers
+{
+   
+}
+-(void) resetMultipliers
+{
+   
+}
 @end
 
 // ==============================================================

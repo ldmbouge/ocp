@@ -3000,6 +3000,58 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORMultiKnapsackOneI {
+   id<ORIntVarArray>        _x;
+   id<ORIntArray>           _itemSize;
+   ORInt                    _bin;
+   ORInt                   _capacity;
+}
+-(ORMultiKnapsackOneI*)initORMultiKnapsackOneI:(id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b capacity: (ORInt) capacity
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _itemSize = itemSize;
+   _bin = b;
+   _capacity    = capacity;
+   return self;
+}
+-(id<ORIntVarArray>) item
+{
+   return _x;
+}
+-(id<ORIntArray>) itemSize
+{
+   return _itemSize;
+}
+-(ORInt) capacity
+{
+   return _capacity;
+}
+-(ORInt) bin
+{
+   return _bin;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitMultiKnapsackOne: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> multiknapsackOne(%@,%@,%d)>",[self class],self,_x,_itemSize,_capacity];
+   return buf;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+
 @implementation ORMeetAtmostI {
    id<ORIntVarArray>        _x;
    id<ORIntVarArray>        _y;

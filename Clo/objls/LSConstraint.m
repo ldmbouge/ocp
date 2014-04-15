@@ -38,6 +38,10 @@
 {
    return 0;
 }
+-(ORInt)getTrueViolations
+{
+   return max(0,[self getViolations]);
+}
 -(ORInt)getVarViolations:(id<LSIntVar>)var
 {
    return 0;
@@ -73,15 +77,29 @@
    [[x[x.range.low] engine] trackMutable:c];
    return c;
 }
++(id<LSConstraint>) packingOne: (id<LSIntVarArray>)x weight: (id<ORIntArray>)weight bin: (ORInt) bin capacity: (ORInt)capacity;
+{
+   LSPackingOne* c = [[LSPackingOne alloc] init:x weight:weight bin: bin cap:capacity];
+//   LSPackingOneSat* c = [[LSPackingOneSat alloc] init:x weight:weight bin: bin cap:capacity];
+   [[x[x.range.low] engine] trackMutable:c];
+   return c;
+}
 +(id<LSConstraint>) meetAtmost:(id<LSIntVarArray>)x and: (id<LSIntVarArray>)y atmost: (ORInt) k
 {
    LSMeetAtmost* c = [[LSMeetAtmost alloc] init:x and: y atmost: k];
+//   LSMeetAtmostSat* c = [[LSMeetAtmostSat alloc] init:x and: y atmost: k];
    [[x[x.range.low] engine] trackMutable:c];
    return c;
 }
 +(id<LSConstraint>)system:(id<LSEngine>)e with:(NSArray*)ac
 {
    LSSystem* c = [[LSSystem alloc] init:e with:ac];
+   [e trackMutable:c];
+   return c;
+}
++(id<LSConstraint>) lrsystem:(id<LSEngine>)e with:(NSArray*)ac
+{
+   LSLRSystem* c = [[LSLRSystem alloc] init:e with:ac];
    [e trackMutable:c];
    return c;
 }

@@ -17,25 +17,42 @@
 @protocol LSConstraint;
 
 @protocol LSProgram<ORGamma,ORTracker>
-//-(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id<ORSearchObjectiveFunction>) objective;
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;
--(ORInt)getVarViolations:(id<ORIntVar>)var;
+
+-(ORBool)isTrue;
+
 -(ORInt)violations;
--(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
--(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v inConstraint:(id<ORConstraint>)c;
+-(ORInt)weightedViolations;
+-(ORInt)unweightedViolations;
+
+-(ORInt)getVarViolations:(id<ORIntVar>)var;
+-(ORInt)getVarWeightedViolations:(id<ORIntVar>)var;
+-(ORInt)getVarUnweightedViolations:(id<ORIntVar>)var;
+
 -(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c;
+
+-(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
+-(ORInt)weightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
+-(ORInt)unweightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
+
 -(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)solve:(ORClosure)block;
+
 -(id<ORSolutionPool>) solutionPool;
 -(void)setSource:(id<ORModel>)m;
 -(void)setRoot:(id<LSConstraint>)sys;
 -(id<LSEngine>)engine;
+
 // accessors
 -(ORInt)intValue:(id<ORIntVar>)x;
+
+// Lagrangian multiplier
+-(void) updateMultipliers;
+-(void) resetMultipliers;
 @end
 
 
@@ -46,24 +63,6 @@
 }
 -(id)initLSSolver;
 -(void)dealloc;
--(id<ORSearchObjectiveFunction>) objective;
--(void)label:(id<ORIntVar>)x with:(ORInt)v;
--(ORInt)getVarViolations:(id<ORIntVar>)var;
--(ORInt)violations;
--(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
--(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v inConstraint:(id<ORConstraint>)c;
--(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c;
--(void)solve:(ORClosure)block;
--(id<ORSolutionPool>) solutionPool;
--(void)setSource:(id<ORModel>)m;
--(id<LSEngine>)engine;
--(void)setRoot:(id<LSConstraint>)sys;
--(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
--(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
--(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
--(void)selectMin:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
-// accessors
--(ORInt)intValue:(id<ORIntVar>)x;
 @end
 
 

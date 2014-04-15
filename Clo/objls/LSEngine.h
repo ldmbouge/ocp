@@ -23,4 +23,6 @@
 -(void)label:(id<LSIntVar>)x with:(ORInt)v;
 -(void)notify:(id<LSVar>)x;
 -(void)atomic:(ORClosure)block;
+-(void) updateMultipliers;
+-(void) resetMultipliers;
 @end

@@ -77,3 +77,75 @@
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
+
+@interface LSMeetAtmostSat : LSConstraint {
+   id<LSIntVarArray>  _x;
+   id<LSIntVarArray>  _y;
+   ORInt              _cap;
+   id<LSIntVarArray>  _equal;  // equalities on the term
+   id<LSIntVar>       _sum;  // How many are equal
+   id<LSIntVar>       _satDegree;  // How many are equal - cap
+   id<LSIntVar>       _violations;
+   id<LSIntVarArray>  _varv;  // variable violations
+   ORBool             _posted;  // whether we have been posted already.
+}
+-(id)init: (id<LSIntVarArray>)x and:(id<LSIntVarArray>)y atmost:(ORInt)cap;
+-(void)post;
+-(id<LSIntVarArray>)variables;
+-(ORBool)isTrue;
+-(ORInt)getViolations;
+-(ORInt)getVarViolations:(id<LSIntVar>)var;
+-(id<LSIntVar>)violations;
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+@end
+
+
+@interface LSPackingOne : LSConstraint {
+   id<LSIntVarArray>  _x;  // decision variables
+   id<ORIntArray>     _weight;  // weights
+   ORInt              _bin;
+   ORInt              _cap;  // weights
+   id<LSIntVarArray>  _wx;  // sum of weights of items taking the bi
+   id<LSIntVar>       _sum;  // sum of _wx
+   id<LSIntVar>       _violations; // total violations
+   id<LSIntVarArray> _vv;  // value violations
+   id<LSIntVar>  _satDegree;  // satisfiability degree
+   ORBool        _posted;  // whether we have been posted already.
+}
+-(id) init: (id<LSIntVarArray>)x weight:(id<ORIntArray>)weight bin: (ORInt) bin cap:(ORInt)cap;
+-(void)post;
+-(id<LSIntVarArray>)variables;
+-(ORBool)isTrue;
+-(ORInt)getViolations;
+-(ORInt)getVarViolations:(id<LSIntVar>)var;
+-(id<LSIntVar>)violations;
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+@end
+
+@interface LSPackingOneSat : LSConstraint {
+   id<LSIntVarArray>  _x;  // decision variables
+   id<ORIntArray>     _weight;  // weights
+   ORInt              _bin;
+   ORInt              _cap;  // weights
+   id<LSIntVarArray>  _wx;  // sum of weights of items taking the bi
+   id<LSIntVar>       _sum;  // sum of _wx
+   id<LSIntVar>       _violations; // total violations
+   id<LSIntVarArray> _vv;  // value violations
+   id<LSIntVar>  _satDegree;  // satisfiability degree
+   ORBool        _posted;  // whether we have been posted already.
+}
+-(id) init: (id<LSIntVarArray>)x weight:(id<ORIntArray>)weight bin: (ORInt) bin cap:(ORInt)cap;
+-(void)post;
+-(id<LSIntVarArray>)variables;
+-(ORBool)isTrue;
+-(ORInt)getViolations;
+-(ORInt)getVarViolations:(id<LSIntVar>)var;
+-(id<LSIntVar>)violations;
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+@end

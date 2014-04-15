@@ -51,6 +51,8 @@ typedef enum LSMode {
 -(void)label:(LSIntVar*)x with:(ORInt)v;
 -(void)notify:(id<LSVar>)x;
 -(void)schedule:(id<LSPropagator>)x;
+-(void) updateMultipliers;
+-(void) resetMultipliers;
 @end
 
 @interface PStore : NSObject {

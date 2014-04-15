@@ -1130,6 +1130,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [t trackObject:o];
    return o;
 }
++(id<ORConstraint>) multiknapsackOne:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) bin capacity: (ORInt) capacity
+{
+   id<ORConstraint> o = [[ORMultiKnapsackOneI alloc] initORMultiKnapsackOneI:item itemSize:itemSize bin: bin capacity:capacity];
+   [t trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) meetAtmost:(id<ORTracker>)t x:(id<ORIntVarArray>) x y: (id<ORIntVarArray>) y atmost: (ORInt) atmost
 {
    id<ORConstraint> o = [[ORMeetAtmostI alloc] initORMeetAtmostI: x and: y atmost: atmost];

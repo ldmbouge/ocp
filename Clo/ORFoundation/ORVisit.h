@@ -54,6 +54,7 @@
 -(void) visitPacking:(id<ORPacking>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitMultiKnapsack:(id<ORMultiKnapsack>) cstr;
+-(void) visitMultiKnapsackOne:(id<ORMultiKnapsackOne>) cstr;
 -(void) visitMeetAtmost:(id<ORMeetAtmost>) cstr;
 -(void) visitAssignment:(id<ORAssignment>)cstr;
 -(void) visitMinimizeVar: (id<ORObjectiveFunction>) v;

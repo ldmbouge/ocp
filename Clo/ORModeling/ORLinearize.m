@@ -138,6 +138,10 @@
 {
    assert(NO);
 }
+-(void) visitMultiKnapsackOne:(id<ORMultiKnapsackOne>) cstr
+{
+   assert(NO);
+}
 -(void) visitMeetAtmost:(id<ORMeetAtmost>) cstr
 {
    assert(NO);

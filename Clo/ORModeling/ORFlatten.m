@@ -208,6 +208,10 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitMultiKnapsackOne: (id<ORMultiKnapsackOne>) cstr
+{
+   _result = [_into addConstraint:cstr];
+}
 -(void) visitMeetAtmost: (id<ORMeetAtmost>) cstr
 {
    _result = [_into addConstraint:cstr];

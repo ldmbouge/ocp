@@ -431,6 +431,14 @@
 -(id<ORIntArray>) capacity;
 @end
 
+@interface ORMultiKnapsackOneI : ORConstraintI<ORMultiKnapsackOne>
+-(ORMultiKnapsackOneI*)initORMultiKnapsackOneI:(id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b capacity: (ORInt) cap;
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>) itemSize;
+-(ORInt) bin;
+-(ORInt) capacity;
+@end
+
 @interface ORMeetAtmostI : ORConstraintI<ORMeetAtmost>
 -(ORMeetAtmostI*)initORMeetAtmostI:(id<ORIntVarArray>) x and: (id<ORIntVarArray>) y atmost: (ORInt) k;
 -(id<ORIntVarArray>) x;

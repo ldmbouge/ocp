@@ -12,12 +12,13 @@
 #import "LSSolver.h"
 #import "LSEngineI.h"
 #import "LSConstraint.h"
+#import "LSSystem.h"
 #import "ORLSConcretizer.h"
 #import "ORLSSolution.h"
 #import <ORFoundation/ORDataI.h>
 
 @implementation LSSolver {
-   id<LSConstraint> _sys;
+   LSLRSystem* _sys;
 }
 
 -(id)initLSSolver
@@ -32,7 +33,7 @@
    [_engine release];
    [super dealloc];
 }
--(void)setRoot:(id<LSConstraint>)sys
+-(void)setRoot:(LSLRSystem*)sys
 {
    _sys = sys;
 }
@@ -120,18 +121,51 @@
 {
    [_engine label:_gamma[getId(x)] with:v];
 }
+
 -(ORInt)getVarViolations:(id<ORIntVar>)var
 {
    return [_sys getVarViolations:_gamma[getId(var)]];
 }
+-(ORInt)getVarUnweightedViolations:(id<ORIntVar>)var
+{
+   return [_sys getVarUnweightedViolations:_gamma[getId(var)]];
+}
+-(ORInt)getVarWeightedViolations:(id<ORIntVar>)var
+{
+   return [_sys getVarWeightedViolations: _gamma[getId(var)]];
+}
+
+-(ORBool) isTrue
+{
+   return [_sys isTrue];
+}
+
 -(ORInt)violations
 {
    return [_sys getViolations];
 }
+-(ORInt)weightedViolations
+{
+   return [_sys getWeightedViolations];
+}
+-(ORInt)unweightedViolations
+{
+   return [_sys getUnweightedViolations];
+}
+
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
 {
    return [_sys deltaWhenAssign:_gamma[getId(x)] to:v];
 }
+-(ORInt)weightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
+{
+   return [_sys weightedDeltaWhenAssign:_gamma[getId(x)] to:v];
+}
+-(ORInt) unweightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
+{
+   return [_sys unweightedDeltaWhenAssign:_gamma[getId(x)] to:v];
+}
+
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v inConstraint:(id<ORConstraint>)c
 {
    return [[self concretize:c] deltaWhenAssign:_gamma[getId(x)] to:v];
@@ -139,6 +173,15 @@
 -(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c
 {
    return [[self concretize:c] getVarViolations:_gamma[getId(var)]];
+}
+
+-(void) updateMultipliers
+{
+   [_sys updateMultipliers];
+}
+-(void) resetMultipliers
+{
+   [_sys resetMultipliers];
 }
 
 -(void)selectOpt:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block dir:(ORFloat)dir

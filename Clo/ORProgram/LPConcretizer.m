@@ -197,6 +197,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MultiKnapsack constraints"];
 }
+-(void) visitMultiKnapsackOne: (id<ORMultiKnapsackOne>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MultiKnapsackOne constraints"];
+}
+
 -(void) visitMeetAtmost: (id<ORMeetAtmost>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for MeetAtmost constraints"];

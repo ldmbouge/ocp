@@ -42,7 +42,7 @@
 
 -(id<LSConstraint>)wrapUp
 {
-   return [_engine addConstraint:[LSFactory system:_engine with:_allCstrs]];
+   return [_engine addConstraint:[LSFactory lrsystem:_engine with:_allCstrs]];
 }
 
 // Helper function
@@ -207,6 +207,16 @@
    if (_gamma[cstr.getId] == NULL) {
       id<LSIntVarArray> citem = [self concreteArray:(id)[cstr item]];
       id<LSConstraint> concreteCstr = [LSFactory packing: citem weight: [cstr itemSize] capacity: [cstr capacity]];
+      [_engine addConstraint: concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitMultiKnapsackOne: (id<ORMultiKnapsackOne>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<LSIntVarArray> citem = [self concreteArray:(id)[cstr item]];
+      id<LSConstraint> concreteCstr = [LSFactory packingOne: citem weight: [cstr itemSize] bin: [cstr bin] capacity: [cstr capacity]];
       [_engine addConstraint: concreteCstr];
       [_allCstrs addObject:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
