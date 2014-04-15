@@ -1,0 +1,158 @@
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
+
+#import <ORFoundation/ORFoundation.h>
+#import <ORScheduler/ORScheduler.h>
+#import <ORProgram/CPConcretizer.h>
+#import "CPScheduler/CPFactory.h"
+#import "CPDifference.h"
+
+@implementation ORCPConcretizer (CPScheduler)
+-(void) visitDisjunctivePair: (id<ORDisjunctivePair>) cstr
+{
+    NSLog(@"ORCPConcretizer: visitDisjunctivePair/1\n");
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> x = [cstr x];
+        ORInt dx = [cstr dx];
+        id<ORIntVar> y = [cstr y];
+        ORInt dy = [cstr dy];
+        [x visit: self];
+        [y visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory disjunctivePair: (id<CPIntVar>) _gamma[x.getId] duration: dx start: (id<CPIntVar>) _gamma[y.getId] duration: dy];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+// Cumulative (resource) constraint
+-(void) visitCumulative:(id<ORCumulative>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVarArray> start = [cstr start];
+        id<ORIntArray> duration = [cstr duration];
+        id<ORIntArray> usage = [cstr usage];
+        id<ORIntVar> capacity = [cstr capacity];
+        [start visit: self];
+        [duration visit: self];
+        [usage visit: self];
+        [capacity visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory cumulative: _gamma[start.getId] duration: duration usage:usage capacity: _gamma[capacity.getId]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+// Disjunctive (resource) constraint
+-(void) visitDisjunctive:(id<ORDisjunctive>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVarArray> start = [cstr start];
+        id<ORIntVarArray> duration = [cstr duration];
+        [start visit: self];
+        [duration visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory disjunctive: _gamma[start.getId] duration: _gamma[duration.getId]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+// Difference logic constraint
+-(void) visitDifference:(id<ORDifference>) cstr
+{
+    printf("visitDifference");
+    if (_gamma[cstr.getId] == NULL) {
+        const id<ORTracker> tracker = [cstr tracker];
+        const ORInt cap = [cstr initCapacity];
+        
+        id<CPConstraint> concreteCstr = [CPFactory difference:tracker engine:_engine withInitCapacity:cap];
+        
+        [_engine add: concreteCstr];
+        
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+
+// x <= y + d
+-(void) visitDiffLEqual:(id<ORDiffLEqual>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> x = [cstr x];
+        id<ORIntVar> y = [cstr y];
+        ORInt        d = [cstr d];
+        id<ORDifference> diffCstr = [cstr diff];
+        
+        [x visit: self];
+        [y visit: self];
+        
+        if (_gamma[diffCstr.getId] == NULL) {
+            [self visitDifference:diffCstr];
+        }
+        
+        CPDifference * cpdiff = (CPDifference *) _gamma[diffCstr.getId];
+        
+        [cpdiff addDifference:_gamma[x.getId] minus:_gamma[y.getId] leq:d];
+        
+        _gamma[cstr.getId] = _gamma[diffCstr.getId];
+    }
+}
+
+// b <-> x <= y + d
+-(void) visitDiffReifyLEqual:(id<ORDiffReifyLEqual>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORIntVar> x = [cstr x];
+        id<ORIntVar> y = [cstr y];
+        ORInt        d = [cstr d];
+        id<ORDifference> diffCstr = [cstr diff];
+        
+        [b visit: self];
+        [x visit: self];
+        [y visit: self];
+        
+        if (_gamma[diffCstr.getId] == NULL) {
+            [self visitDifference:diffCstr];
+        }
+        
+        CPDifference * cpdiff = (CPDifference *) _gamma[diffCstr.getId];
+        
+        [cpdiff addReifyDifference:_gamma[b.getId] when:_gamma[x.getId] minus:_gamma[y.getId] leq:d];
+        
+        _gamma[cstr.getId] = _gamma[diffCstr.getId];
+    }
+}
+
+// b -> x <= y + d
+-(void) visitDiffImplyLEqual:(id<ORDiffImplyLEqual>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORIntVar> x = [cstr x];
+        id<ORIntVar> y = [cstr y];
+        ORInt        d = [cstr d];
+        id<ORDifference> diffCstr = [cstr diff];
+        
+        [b visit: self];
+        [x visit: self];
+        [y visit: self];
+        
+        if (_gamma[diffCstr.getId] == NULL) {
+            [self visitDifference:diffCstr];
+        }
+        
+        CPDifference * cpdiff = (CPDifference *) _gamma[diffCstr.getId];
+        
+        [cpdiff addImplyDifference:_gamma[b.getId] when:_gamma[x.getId] minus:_gamma[y.getId] leq:d];
+        
+        _gamma[cstr.getId] = _gamma[diffCstr.getId];
+    }
+}
+@end;
