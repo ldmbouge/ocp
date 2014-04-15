@@ -14,10 +14,6 @@
 #import "ORConstraintI.h"
 
 @implementation ORFlatten (ORScheduler)
--(void) visitDisjunctivePair:(id<ORDisjunctivePair>) cstr
-{
-   _result = cstr;
-}
 -(void) visitCumulative:(id<ORCumulative>) cstr
 {
     _result = cstr;

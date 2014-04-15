@@ -13,7 +13,6 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 @interface ORVisitor (ORScheduler)
--(void) visitDisjunctivePair: (id<ORDisjunctivePair>) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
@@ -23,7 +22,6 @@
 @end;
 
 @interface ORNOopVisit (ORScheduler)
--(void) visitDisjunctivePair: (id<ORDisjunctivePair>) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;

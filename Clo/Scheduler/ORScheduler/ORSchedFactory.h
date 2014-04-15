@@ -13,7 +13,6 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 @interface ORFactory (ORScheduler)
-+(id<ORDisjunctivePair>) disjunctivePair: (id<ORIntVar>) x duration: (ORInt) dx start: (id<ORIntVar>) y duration: (ORInt) dy;
 // Cumulative Resource constraints
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c;
 // Disjunctive Resource constraints

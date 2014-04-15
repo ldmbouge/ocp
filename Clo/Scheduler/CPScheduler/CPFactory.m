@@ -16,12 +16,6 @@
 #import "CPDifference.h"
 
 @implementation CPFactory (CPScheduler)
-+(id<CPConstraint>) disjunctivePair: (id<CPIntVar>) x duration: (ORInt) dx start: (id<CPIntVar>) y duration: (ORInt) dy
-{
-   id<CPConstraint> o = [[CPDisjunctivePair alloc] initCPDisjunctivePair: x duration: dx start: y duration: dy];
-   [[x tracker] trackMutable: o];
-   return o;
-}
 
 // Cumulative (resource) constraint
 //

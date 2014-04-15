@@ -13,52 +13,6 @@
 #import "ORConstraintI.h"
 #import "ORVisit.h"
 
-@implementation ORDisjunctivePair {
-   id<ORIntVar> _x;
-   ORInt        _dx;
-   id<ORIntVar> _y;
-   ORInt        _dy;
-}
--(id<ORDisjunctivePair>) initORDisjunctivePair: (id<ORIntVar>) x duration: (ORInt) dx start: (id<ORIntVar>) y duration: (ORInt) dy;
-{
-   self = [super initORConstraintI];
-   _x = x;
-   _dx = dx;
-   _y = y;
-   _dy = dy;
-   return self;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"disjunctivePair %@ %@",[self class],self];
-   return buf;
-}
--(void) visit:(ORVisitor*) v
-{
-   [v visitDisjunctivePair: self];
-}
--(id<ORIntVar>) x
-{
-   return _x;
-}
--(ORInt) dx
-{
-   return _dx;
-}
--(id<ORIntVar>) y
-{
-   return _y;
-}
--(ORInt) dy
-{
-   return _dy;
-}
--(NSSet*) allVars
-{
-   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
-}
-@end
 
 // Cumulative (resource) constraint
 //

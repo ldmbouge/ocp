@@ -14,9 +14,7 @@
 #import <objcp/CPFactory.h>
 
 @interface CPFactory (CPScheduler)
-+(id<CPConstraint>) disjunctivePair: (id<CPIntVar>) x duration: (ORInt) dx start: (id<CPIntVar>) y duration: (ORInt) dy;
 +(id<CPConstraint>) cumulative: (id<CPIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;
 +(id<CPConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d;
-//+(id<CPConstraint>) differenceLogic: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) difference: (id<ORTracker>) tracker engine: (id<CPEngine>) e withInitCapacity:(ORInt) numItems;
 @end

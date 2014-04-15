@@ -16,21 +16,6 @@
 #import "CPDifference.h"
 
 @implementation ORCPConcretizer (CPScheduler)
--(void) visitDisjunctivePair: (id<ORDisjunctivePair>) cstr
-{
-    NSLog(@"ORCPConcretizer: visitDisjunctivePair/1\n");
-    if (_gamma[cstr.getId] == NULL) {
-        id<ORIntVar> x = [cstr x];
-        ORInt dx = [cstr dx];
-        id<ORIntVar> y = [cstr y];
-        ORInt dy = [cstr dy];
-        [x visit: self];
-        [y visit: self];
-        id<CPConstraint> concreteCstr = [CPFactory disjunctivePair: (id<CPIntVar>) _gamma[x.getId] duration: dx start: (id<CPIntVar>) _gamma[y.getId] duration: dy];
-        [_engine add: concreteCstr];
-        _gamma[cstr.getId] = concreteCstr;
-    }
-}
 
 // Cumulative (resource) constraint
 -(void) visitCumulative:(id<ORCumulative>) cstr

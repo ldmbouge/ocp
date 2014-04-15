@@ -11,13 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 
-@protocol  ORDisjunctivePair <ORConstraint>
--(id<ORIntVar>) x;
--(ORInt) dx;
--(id<ORIntVar>) y;
--(ORInt) dy;
-@end
-
 @protocol ORCumulative <ORConstraint>
 -(id<ORIntVarArray>) start;
 -(id<ORIntArray>) duration;

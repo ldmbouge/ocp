@@ -13,10 +13,6 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 @implementation ORVisitor (ORScheduler)
--(void) visitDisjunctivePair: (id<ORDisjunctivePair>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "disjunctivePair: visit method not defined"];
-}
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
@@ -44,10 +40,6 @@
 @end
 
 @implementation ORNOopVisit (ORScheduler)
--(void) visitDisjunctivePair: (id<ORDisjunctivePair>) cstr
-{
-   
-}
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr
 {
     

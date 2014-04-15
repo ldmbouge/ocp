@@ -14,11 +14,3 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-
-@interface CPDisjunctivePair : CPCoreConstraint<NSCoding>
--(id) initCPDisjunctivePair: (id<CPIntVar>) x duration: (ORInt) dx start: (id<CPIntVar>) y duration: (ORInt) dy;
--(void) dealloc;
--(ORStatus) post;
--(NSSet*) allVars;
--(ORUInt) nbUVars;
-@end

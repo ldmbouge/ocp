@@ -15,13 +15,6 @@
 
 @implementation ORFactory (ORScheduler)
 
-+(id<ORDisjunctivePair>) disjunctivePair: (id<ORIntVar>) x duration: (ORInt) dx start: (id<ORIntVar>) y duration: (ORInt) dy;
-{
-    id<ORDisjunctivePair> o = [[ORDisjunctivePair alloc] initORDisjunctivePair: x duration: dx start: y duration: dy];
-    [[x tracker] trackObject:o];
-    return o;
-}
-
 // Cumulative (resource) constraint
 //
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c
