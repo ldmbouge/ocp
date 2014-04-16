@@ -18,13 +18,14 @@
 
 @protocol LSProgram<ORGamma,ORTracker>
 -(id<ORSearchObjectiveFunction>) objective;
+
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;
 
 -(ORBool)isTrue;
 
--(ORInt)violations;
--(ORInt)weightedViolations;
--(ORInt)unweightedViolations;
+-(ORInt)getViolations;
+-(ORInt)getWeightedViolations;
+-(ORInt)getUnweightedViolations;
 
 -(ORInt)getVarViolations:(id<ORIntVar>)var;
 -(ORInt)getVarWeightedViolations:(id<ORIntVar>)var;

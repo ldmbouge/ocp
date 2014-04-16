@@ -140,15 +140,15 @@
    return [_sys isTrue];
 }
 
--(ORInt)violations
+-(ORInt) getViolations
 {
    return [_sys getViolations];
 }
--(ORInt)weightedViolations
+-(ORInt) getWeightedViolations
 {
    return [_sys getWeightedViolations];
 }
--(ORInt)unweightedViolations
+-(ORInt) getUnweightedViolations
 {
    return [_sys getUnweightedViolations];
 }

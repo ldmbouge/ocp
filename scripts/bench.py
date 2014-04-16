@@ -11,7 +11,7 @@ import csv
 
 ab = [
 #      ('sport',0,0,0,0,0,lambda x : x + 1),
-       ('progressive',9,4,0,0,9,lambda x : x + 1),
+       ('progressive',7,6,0,0,7,lambda x : x + 1),
 #      ('slab',0,0,0,0,0,lambda x : x + 1),
 #      ('slabLNSModel',0,0,0,0,0,lambda x : x + 1),
 #      ('perfect',0,0,0,0,0,lambda x : x + 1),
