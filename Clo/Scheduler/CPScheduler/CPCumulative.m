@@ -12,7 +12,7 @@
 #import "CPCumulative.h"
 #import <objcp/CPIntVarI.h>
 #import <CPUKernel/CPEngineI.h>
-
+#import "CPMisc.h"
 
     // Whether skipping of dominated time intervals should be activated wrt.
     // TTEF propagation rule
@@ -465,6 +465,11 @@ int compareProfileChange(const ProfileChange* r1, const ProfileChange* r2)
 int sortEstAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return est(cumu, *r1) - est(cumu, *r2);
+}
+
+int sortEctAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
+{
+    return ect(cumu, *r1) - ect(cumu, *r2);
 }
 
 int sortLctAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
@@ -1357,6 +1362,41 @@ static void ttef_bounds_propagation(CPCumulative* cumu, bool* update)
         ttef_consistency_check(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, get_no_shift);
 #endif
     }
+}
+
+/*******************************************************************************
+ Computation of the contention profile
+ ******************************************************************************/
+
+// Computation of the contention profile for the earliest-start-time schedule
+//
+static Profile cumuGetEarliestContentionProfile(CPCumulative * cumu)
+{
+    ORInt estA  [cumu->_size];
+    ORInt ectA  [cumu->_size];
+    ORInt h     [cumu->_size];
+    ORInt id_est[cumu->_size];
+    ORInt id_ect[cumu->_size];
+    
+    // Initialisation of the arrays
+    for (ORInt t = 0; t < cumu->_size; t++) {
+        estA  [t] = est(cumu, t);
+        ectA  [t] = ect(cumu, t);
+        h     [t] = usage_min(cumu, t);
+        id_est[t] = t;
+        id_ect[t] = t;
+    }
+    
+    // NOTE: qsort_r the 3rd argument of qsort_r is at the last position in glibc (GNU/Linux)
+    // instead of the second last
+    // Sorting the tasks in non-decreasing order by the earliest start time
+    qsort_r(id_est, cumu->_size, sizeof(ORInt), cumu, (int(*)(void*, const void*, const void*)) &sortEstAsc);
+    // Sorting the tasks in non-decreasing order by the latest completion time
+    qsort_r(id_ect, cumu->_size, sizeof(ORInt), cumu, (int(*)(void*, const void*, const void*)) &sortEctAsc);
+
+    Profile prof = getEarliestContentionProfile(id_est, id_ect, estA, ectA, h, (ORInt) cumu->_size);
+    
+    return prof;
 }
 
 @end

@@ -12,6 +12,7 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPIntVarI.h>
 #import "CPDisjunctive.h"
+#import "CPMisc.h"
 
 // TODO Replacing ORUInts by ORInts
 
@@ -50,6 +51,7 @@
 -(id) initCPDisjunctive: (id<CPIntVarArray>) s duration: (id<CPIntVarArray>) d
 {
     self = [super initCPCoreConstraint: [[s at: s.low] engine]];
+    NSLog(@"Create disjunctive constraint\n");
     // TODO Changing the priority
     _priority = LOWEST_PRIO + 3;
     _start = s;
@@ -986,6 +988,53 @@ static ORInt getLocalSlack(CPDisjunctive * disj)
     
     return localSlack;
 }
+
+/*******************************************************************************
+ Computation of the contention profile
+ ******************************************************************************/
+
+    // Computation of the contention profile for the earliest-start-time schedule
+    //
+static Profile disjGetEarliestContentionProfile(CPDisjunctive * disj)
+{
+    cleanUp(disj);
+    
+    // Allocation of memory
+    disj->_est           = alloca(disj->_size * sizeof(ORInt));
+    disj->_dur_min       = alloca(disj->_size * sizeof(ORInt));
+    disj->_task_id_est   = alloca(disj->_size * sizeof(ORInt));
+    disj->_task_id_ect   = alloca(disj->_size * sizeof(ORInt));
+    
+    // Check whether memory allocation was successful
+    if (disj->_est == NULL || disj->_dur_min == NULL || disj->_task_id_est == NULL ||
+        disj->_task_id_ect == NULL) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPDisjunctive: Out of memory!"];
+    }
+    
+    ORInt ect[disj->_size];
+    ORInt h[disj->_size];
+    
+    // Initialisation of the arrays
+    for (ORInt t = 0; t < disj->_size; t++) {
+        disj->_est    [t] = disj->_start0[t].min;
+        disj->_dur_min[t] = disj->_dur0  [t].min;
+        disj->_task_id_est[t] = t;
+        disj->_task_id_ect[t] = t;
+        ect[t] = disj->_start0[t].min + disj->_dur0  [t].min;
+        h[t] = 1;
+    }
+    
+    // Sorting of the tasks
+    // NOTE: qsort_r the 3rd argument of qsort_r is at the last position in glibc (GNU/Linux)
+    // instead of the second last
+    qsort_r(disj->_task_id_est, disj->_size, sizeof(ORInt), disj, (int(*)(void*, const void*, const void*)) &sortDisjEstAsc);
+    qsort_r(disj->_task_id_ect, disj->_size, sizeof(ORInt), disj, (int(*)(void*, const void*, const void*)) &sortDisjEctAsc);
+
+    Profile prof = getEarliestContentionProfile(disj->_task_id_est, disj->_task_id_ect, disj->_est, ect, h, disj->_size);
+    
+    return prof;
+}
+
 
 /*******************************************************************************
  Main Propagation Loop
