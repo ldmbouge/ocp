@@ -87,6 +87,10 @@
 		37A715E316FB948200E02DC6 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		37A715E416FB948200E02DC6 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		37A715E516FB948900E02DC6 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		535D132E18FF7A47008D48BD /* CPMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 535D132C18FF7A46008D48BD /* CPMisc.h */; };
+		535D132F18FF7A47008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
+		535D133018FF7EFA008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
+		535D133118FF7F1D008D48BD /* CPMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 535D132C18FF7A46008D48BD /* CPMisc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537EEA0118FCDCFC0006FFD2 /* ORConstraintI.h in Headers */ = {isa = PBXBuildFile; fileRef = 537EE8AD18FCC5720006FFD2 /* ORConstraintI.h */; };
 		537EEA0218FCDCFC0006FFD2 /* ORFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = 537EE8AF18FCC5720006FFD2 /* ORFlatten.h */; };
 		537EEA0318FCDCFC0006FFD2 /* ORSchedConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 537EE8B118FCC5720006FFD2 /* ORSchedConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -5604,6 +5608,8 @@
 		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
 		379CDEEB16F17D71000E7338 /* ORModelTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelTransformation.h; sourceTree = "<group>"; };
 		37A715C816FB93F900E02DC6 /* LogicBendersExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LogicBendersExample; sourceTree = BUILT_PRODUCTS_DIR; };
+		535D132C18FF7A46008D48BD /* CPMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPMisc.h; sourceTree = "<group>"; };
+		535D132D18FF7A46008D48BD /* CPMisc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPMisc.m; sourceTree = "<group>"; };
 		537EE4EE18FCC56C0006FFD2 /* abz5.jss */ = {isa = PBXFileReference; lastKnownFileType = text; path = abz5.jss; sourceTree = "<group>"; };
 		537EE4EF18FCC56C0006FFD2 /* abz6.jss */ = {isa = PBXFileReference; lastKnownFileType = text; path = abz6.jss; sourceTree = "<group>"; };
 		537EE4F018FCC56C0006FFD2 /* abz7.jss */ = {isa = PBXFileReference; lastKnownFileType = text; path = abz7.jss; sourceTree = "<group>"; };
@@ -9528,6 +9534,8 @@
 				537EE8A718FCC5720006FFD2 /* CPDisjunctive.m */,
 				537EE8A818FCC5720006FFD2 /* CPFactory.h */,
 				537EE8A918FCC5720006FFD2 /* CPFactory.m */,
+				535D132C18FF7A46008D48BD /* CPMisc.h */,
+				535D132D18FF7A46008D48BD /* CPMisc.m */,
 				537EE8AA18FCC5720006FFD2 /* CPScheduler.h */,
 			);
 			path = CPScheduler;
@@ -11687,6 +11695,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				537EEA5B18FCE35E0006FFD2 /* CPScheduler.h in Headers */,
+				535D133118FF7F1D008D48BD /* CPMisc.h in Headers */,
 				537EEA5618FCE35E0006FFD2 /* CPConstraint.h in Headers */,
 				537EEA5718FCE35E0006FFD2 /* CPCumulative.h in Headers */,
 				537EEA5818FCE35E0006FFD2 /* CPDifference.h in Headers */,
@@ -11925,6 +11934,7 @@
 				5B57E5E5161F295000DB249A /* ORVisit.h in Headers */,
 				5BDF5FA6161F4F9900E5E1FA /* ORVarI.h in Headers */,
 				B1AAA33A164AADAD00CE9AED /* ORObject.h in Headers */,
+				535D132E18FF7A47008D48BD /* CPMisc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14290,6 +14300,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				535D133018FF7EFA008D48BD /* CPMisc.m in Sources */,
 				537EEA5118FCE2FC0006FFD2 /* CPConstraint.m in Sources */,
 				537EEA5218FCE2FC0006FFD2 /* CPCumulative.m in Sources */,
 				537EEA5318FCE2FC0006FFD2 /* CPDifference.m in Sources */,
@@ -15051,6 +15062,7 @@
 				5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */,
 				B1AAA33B164AADAD00CE9AED /* ORObject.m in Sources */,
 				B1FBA2F117BF1AE0000F5F43 /* ORVisit.m in Sources */,
+				535D132F18FF7A47008D48BD /* CPMisc.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18125,6 +18137,7 @@
 				GCC_PREFIX_HEADER = "Scheduler/Tests/jsp/jsp-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -18144,6 +18157,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Scheduler/Tests/jsp/jsp-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -18163,6 +18177,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Scheduler/Tests/jsp/jsp-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -22628,6 +22643,7 @@
 				537EEA6C18FCF1C70006FFD2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		537EEA8E18FCF9880006FFD2 /* Build configuration list for PBXNativeTarget "rcpsp" */ = {
 			isa = XCConfigurationList;
@@ -22637,6 +22653,7 @@
 				537EEA9118FCF9880006FFD2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B11552A171B1CF5005371AA /* Build configuration list for PBXNativeTarget "slabLNSModel" */ = {
 			isa = XCConfigurationList;
