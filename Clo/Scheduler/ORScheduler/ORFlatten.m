@@ -16,26 +16,26 @@
 @implementation ORFlatten (ORScheduler)
 -(void) visitCumulative:(id<ORCumulative>) cstr
 {
-    _result = cstr;
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitDisjunctive:(id<ORDisjunctive>) cstr
 {
-    _result = cstr;
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitDifference:(id<ORDifference>) cstr
 {
-    _result = cstr;
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitDiffLEqual:(id<ORDiffLEqual>) cstr
 {
-    _result = cstr;
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitDiffReifyLEqual:(id<ORDiffReifyLEqual>) cstr
 {
-    _result = cstr;
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitDiffImplyLEqual:(id<ORDiffImplyLEqual>) cstr
 {
-    _result = cstr;
+    _result = [_into addConstraint:cstr];
 }
 @end;
