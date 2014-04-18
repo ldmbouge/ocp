@@ -33,19 +33,19 @@
     }, 
     "progressive -q7 -n6 -p0 -h0": {
         "nprop": 0, 
-        "mpeak": 15914.5625, 
+        "mpeak": 15914.671875, 
         "randomized": 1, 
         "threads": 0, 
         "rrate": "0.000000", 
         "nchoice": 0, 
         "size": "7", 
-        "wc": 61.894, 
+        "wc": 24.392, 
         "method": "FF", 
         "rc": 0, 
-        "found": "5", 
-        "nfail": 1000000, 
-        "cpu": 61.212, 
-        "mused": 13616.046875
+        "found": "0", 
+        "nfail": 414101, 
+        "cpu": 24.122, 
+        "mused": 13616.1875
     }, 
     "progressive -q6 -n7 -p0 -h0": {
         "size": "6", 
