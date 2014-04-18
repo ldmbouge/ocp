@@ -175,7 +175,7 @@ class Collect:
 			seg = r['bench'].split(' ')
 			name = seg[0]
 			size = r['size']			
-			self.makeGraph(name + '%',size,r['threads'],r['method'],out,w,h)
+			self.makeGraph(name + ' %',size,r['threads'],r['method'],out,w,h)
 #		self.makeGraph('queensAC %',12,out,w,h)
 #		self.makeGraph('sport %',0,out,w,h)
 		out.write("</div></body>\n")
