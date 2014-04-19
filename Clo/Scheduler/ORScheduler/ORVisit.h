@@ -10,9 +10,11 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORScheduler/ORActivity.h>
 #import <ORScheduler/ORSchedConstraint.h>
 
 @interface ORVisitor (ORScheduler)
+-(void) visitActivity: (id<ORActivity> ) activity;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
@@ -22,6 +24,7 @@
 @end;
 
 @interface ORNOopVisit (ORScheduler)
+-(void) visitActivity: (id<ORActivity> ) activity;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;

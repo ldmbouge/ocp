@@ -10,9 +10,14 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORScheduler/ORActivity.h>
 #import <ORScheduler/ORSchedConstraint.h>
 
 @implementation ORVisitor (ORScheduler)
+-(void) visitActivity: (id<ORActivity>) activity
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
+}
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
@@ -40,6 +45,10 @@
 @end
 
 @implementation ORNOopVisit (ORScheduler)
+-(void) visitActivity: (id<ORActivity>) activity
+{
+   
+}
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr
 {
     

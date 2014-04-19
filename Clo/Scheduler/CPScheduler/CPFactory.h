@@ -11,9 +11,11 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORScheduler/ORScheduler.h>
+#import <CPScheduler/CPActivity.h>
 #import <objcp/CPFactory.h>
 
 @interface CPFactory (CPScheduler)
++(id<CPActivity>) activity: (id<CPIntVar>) start duration:(ORInt) duration;
 +(id<CPConstraint>) cumulative: (id<CPIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;
 +(id<CPConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d;
 +(id<CPConstraint>) difference: (id<ORTracker>) tracker engine: (id<CPEngine>) e withInitCapacity:(ORInt) numItems;

@@ -13,9 +13,23 @@
 #import <ORScheduler/ORScheduler.h>
 #import <ORProgram/CPConcretizer.h>
 #import "CPScheduler/CPFactory.h"
-#import "CPDifference.h"
+#import "CPSCheduler/CPActivity.h"
+#import "CPSCheduler/CPDifference.h"
 
 @implementation ORCPConcretizer (CPScheduler)
+
+// Cumulative (resource) constraint
+-(void) visitActivity:(id<ORActivity>) act
+{
+   if (_gamma[act.getId] == NULL) {
+      id<ORIntVar> start = [act start];
+      ORInt duration = [act duration];
+      [start visit: self];
+      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration: duration];
+//      [_engine add: concreteCstr];
+      _gamma[act.getId] = concreteAct;
+   }
+}
 
 // Cumulative (resource) constraint
 -(void) visitCumulative:(id<ORCumulative>) cstr

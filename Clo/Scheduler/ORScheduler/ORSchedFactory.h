@@ -10,11 +10,16 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORScheduler/ORActivity.h>
 #import <ORScheduler/ORSchedConstraint.h>
 
 @interface ORFactory (ORScheduler)
+// activities
++(id<ORActivity>) activity: (id<ORTracker>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+
 // Cumulative Resource constraints
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c;
++(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r maxCapacity:(ORInt) c;
 // Disjunctive Resource constraints
 +(id<ORDisjunctive>) disjunctive: (id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
 // Difference Logic constraints

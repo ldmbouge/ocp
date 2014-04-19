@@ -10,18 +10,32 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORScheduler/ORActivity.h>
 #import <ORScheduler/ORSchedConstraint.h>
 #import "ORConstraintI.h"
 
 @implementation ORFactory (ORScheduler)
 
++(id<ORActivity>) activity: (id<ORTracker>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
+{
+   id<ORActivity> o = [[ORActivity alloc] initORActivity: model horizon: horizon duration:duration];
+   [model trackMutable:o];
+   return o;
+}
 // Cumulative (resource) constraint
 //
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c
 {
     id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration:d usage:r capacity:c];
-    [[s tracker] trackObject:o];
+    [[s tracker] trackMutable:o];
     return o;
+}
++(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r maxCapacity:(ORInt) c
+{
+   id<ORIntVar> capacity = [ORFactory intVar: [s tracker] domain: RANGE([s tracker],c,c)];
+   id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration:d usage:r capacity:capacity];
+   [[s tracker] trackObject:o];
+   return o;
 }
 
 // Disjunctive (resource) constraint

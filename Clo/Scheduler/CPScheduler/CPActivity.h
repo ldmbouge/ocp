@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,15 @@
  
  ***********************************************************************/
 
-#import <ORScheduler/ORActivity.h>
-#import <ORScheduler/ORSchedConstraint.h>
-#import <ORScheduler/ORSchedFactory.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModeling.h>
+
+@protocol CPActivity <ORObject>
+-(ORInt) getId;
+-(id<CPIntVar>) start;
+-(ORInt) duration;
+@end
+
+@interface CPActivity : ORObject<CPActivity>
+-(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (ORInt) duration;
+@end

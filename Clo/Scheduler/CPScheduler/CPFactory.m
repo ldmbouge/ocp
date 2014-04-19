@@ -16,7 +16,16 @@
 #import "CPDifference.h"
 
 @implementation CPFactory (CPScheduler)
-
+// activity
++(id<CPActivity>) activity: (id<CPIntVar>) start duration:(ORInt) duration
+{
+   id<CPActivity> act = [[CPActivity alloc] initCPActivity: start duration: duration];
+   
+   // XXX What is the meaning of the following? Variable subscription?
+   [[start tracker] trackMutable: act];
+   
+   return act;
+}
 // Cumulative (resource) constraint
 //
 +(id<ORConstraint>) cumulative: (id<CPIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c
