@@ -43,36 +43,36 @@ int main(int argc, const char * argv[])
          totalDuration += [duration at: i];
       id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
       id<ORIntArray> demand = [ORFactory intArray: model range: Tasks with: ^ORInt(ORInt i) { return inputDemand[i-1]; } ];
-      id<ORIntVarArray> start = [ORFactory intVarArray: model range: Tasks domain: Horizon];
-      id<ORIntVar> makespan = [ORFactory intVar: model domain: Horizon];
-      [model minimize: makespan];
+      
+      id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks with: ^id<ORActivity>(ORInt i) {
+         return [ORFactory activity: model horizon: Horizon duration: inputDuration[i-1]];
+      }];
+      id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
+      [model minimize: makespan.start];
       for(ORInt p = 0; p < nbPrecedences; p++) {
          ORInt b = precedence[p].before;
          ORInt a = precedence[p].after;
-         [model add: [ORFactory geq: model x: start[a] y: start[b] plus: [duration at: b]]];
+         [model add: [ORFactory precedence: activities[b] precedes: activities[a]]];
       }
       for(ORInt t = 1; t <= nbTasks; t++) {
-         [model add: [ORFactory geq: model x: makespan y: start[t] plus: [duration at: t]]];
+         [model add: [ORFactory precedence: activities[t] precedes: makespan]];
       }
-      [model add: [ORFactory cumulative: start duration: duration usage: demand maxCapacity: capacity]];
-      
-      id<ORActivity> activity = [ORFactory activity: model horizon: Horizon duration: 0];
-      printf("id: %d \n",[activity getId]);
+      id<ORIntVarArray> start = [ORFactory intVarArray: model range: Tasks with: ^id<ORIntVar>(ORInt k) {
+         return activities[k].start;
+      }];
+      [model add: [ORFactory cumulative: activities usage: demand maxCapacity: capacity]];
       
       id<CPProgram> cp  = [ORFactory createCPProgram: model];
       [cp solve: ^{
-
-         ORInt test = [cp max: [activity start]];
-         printf("test: %d \n",test);
          [cp labelArray: start];
-         [cp label: makespan];
-          printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+         [cp label: makespan.start];
+          printf("makespan = [%d,%d] \n",[cp min: makespan.start],[cp max: makespan.start]);
       }
       ];
       id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
       id<ORSolution> optimum = [pool best];
-      printf("Makespan: %d \n",[optimum intValue: makespan]);
+      printf("Makespan: %d \n",[optimum intValue: makespan.start]);
       for(ORInt i = 1; i <= nbTasks; i++) {
          ORInt s = [optimum intValue: [start at: i]];
          printf("task %d = [%d,%d] \n",i,s,s + [duration at: i]);

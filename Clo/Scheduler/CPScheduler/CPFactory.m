@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import <objcp/CPConstraint.h>
 #import "CPFactory.h"
 #import "CPConstraint.h"
 #import "CPCumulative.h"
@@ -25,6 +26,12 @@
    [[start tracker] trackMutable: act];
    
    return act;
+}
+// precedes
+
++(id<CPConstraint>) precedence: (id<CPActivity>) before precedes:(id<CPActivity>) after
+{
+   return [CPFactory lEqual: before.start to: after.start plus: -before.duration];
 }
 // Cumulative (resource) constraint
 //
@@ -68,9 +75,18 @@
     [[s tracker] trackMutable: o];
     
     // Returning the cumulative propagator
-    return o;
+   return o;
 }
-
++(id<CPConstraint>) cumulative: (id<CPActivityArray>) act usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c
+{
+   id<CPIntVarArray> start = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+      return act[k].start;
+   }];
+   id<ORIntArray> duration = [ORFactory intArray: [act tracker] range:[act range] with:^ORInt(ORInt k) {
+      return act[k].duration;
+   }];
+   return [self cumulative: start duration: duration  usage: r capacity: c];
+}
 // Disjunctive (resource) constraint
 //
 +(id<ORConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d

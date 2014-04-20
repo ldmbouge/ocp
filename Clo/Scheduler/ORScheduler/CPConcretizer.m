@@ -49,6 +49,36 @@
     }
 }
 
+// Cumulative (resource) constraint
+-(void) visitSchedulingCumulative:(id<ORSchedulingCumulative>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORActivityArray> activities = [cstr activities];
+      id<ORIntArray> usage = [cstr usage];
+      id<ORIntVar> capacity = [cstr capacity];
+      [activities visit: self];
+      [usage visit: self];
+      [capacity visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory cumulative: _gamma[activities.getId] usage:usage capacity: _gamma[capacity.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+// Precedence constraint
+-(void) visitPrecedes:(id<ORPrecedes>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORActivity> before = [cstr before];
+      id<ORActivity> after = [cstr after];
+      [before visit: self];
+      [after visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory precedence: _gamma[before.getId] precedes: _gamma[after.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 // Disjunctive (resource) constraint
 -(void) visitDisjunctive:(id<ORDisjunctive>) cstr
 {

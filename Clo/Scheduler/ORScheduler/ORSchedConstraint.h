@@ -10,6 +10,18 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORScheduler/ORActivity.h>
+
+@protocol ORPrecedes <ORConstraint>
+-(id<ORActivity>) before;
+-(id<ORActivity>) after;
+@end
+
+@protocol ORSchedulingCumulative <ORConstraint>
+-(id<ORActivityArray>) activities;
+-(id<ORIntArray>) usage;
+-(id<ORIntVar>) capacity;
+@end
 
 @protocol ORCumulative <ORConstraint>
 -(id<ORIntVarArray>) start;

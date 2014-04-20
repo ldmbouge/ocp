@@ -13,6 +13,14 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 
+// Precedence
+@interface ORPrecedes : ORConstraintI<ORPrecedes>
+-(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after;
+-(id<ORActivity>) before;
+-(id<ORActivity>) after;
+@end
+
+
 // Cumulative (resource) constraint
 @interface ORCumulative : ORConstraintI<ORCumulative>
 -(id<ORCumulative>) initORCumulative:(id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
@@ -21,6 +29,14 @@
 -(id<ORIntArray>) usage;
 -(id<ORIntVar>) capacity;
 @end
+
+@interface ORSchedulingCumulative : ORConstraintI<ORSchedulingCumulative>
+-(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<ORActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
+-(id<ORActivityArray>) activities;
+-(id<ORIntArray>) usage;
+-(id<ORIntVar>) capacity;
+@end
+
 
 // Disjunctive (resource) constraint
 @interface ORDisjunctive : ORConstraintI<ORDisjunctive>

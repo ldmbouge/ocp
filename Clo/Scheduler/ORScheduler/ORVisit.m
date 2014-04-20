@@ -18,6 +18,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
 }
+-(void) visitPrecedes: (id<ORPrecedes>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "precedes: visit method not defined"];
+}
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
@@ -25,6 +29,10 @@
 -(void) visitCumulative: (id<ORCumulative>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "cumulative: visit method not defined"];
+}
+-(void) visitSchedulingCumulative: (id<ORSchedulingCumulative>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "cumulative: visit method not defined"];
 }
 -(void) visitDifference: (id<ORDifference>) cstr
 {
@@ -49,6 +57,10 @@
 {
    
 }
+-(void) visitPrecedes: (id<ORPrecedes>) cstr
+{
+   
+}
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr
 {
     
@@ -56,6 +68,10 @@
 -(void) visitCumulative: (id<ORCumulative>) cstr
 {
     
+}
+-(void) visitSchedulingCumulative: (id<ORSchedulingCumulative>) cstr
+{
+   
 }
 -(void) visitDifference: (id<ORDifference>) cstr
 {

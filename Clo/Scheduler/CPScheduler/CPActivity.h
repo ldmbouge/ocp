@@ -18,6 +18,20 @@
 -(ORInt) duration;
 @end
 
+@protocol CPActivityArray <ORObject>
+-(id<CPActivity>) at: (ORInt) idx;
+-(void) set: (id<CPActivity>) value at: (ORInt)idx;
+-(id<CPActivity>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<CPActivity>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+
 @interface CPActivity : ORObject<CPActivity>
 -(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (ORInt) duration;
 @end
+

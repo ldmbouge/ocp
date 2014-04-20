@@ -14,6 +14,47 @@
 #import "ORVisit.h"
 
 
+// ORPrecedes
+//
+@implementation ORPrecedes {
+   id<ORActivity> _before;
+   id<ORActivity> _after;
+}
+-(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after
+{
+   self = [super initORConstraintI];
+   _before = before;
+   _after   = after;
+   return self;
+}
+-(void)visit:(ORVisitor*) v
+{
+   [v visitPrecedes: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> precedes(%@,%@)>", [self class], self, _before, _after];
+   return buf;
+}
+-(id<ORActivity>) before
+{
+   return _before;
+}
+-(id<ORActivity>) after
+{
+   return _after;
+}
+// [pvh] to update when generalizing activities
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
+   [ms addObject: _before.start];
+   [ms addObject: _after.start];
+   return ms;
+}
+@end
+
 // Cumulative (resource) constraint
 //
 @implementation ORCumulative {
@@ -66,6 +107,55 @@
     return ms;
 }
 @end
+
+@implementation ORSchedulingCumulative {
+   id<ORActivityArray> _activities;
+   id<ORIntArray>      _usage;
+   id<ORIntVar>        _cap;
+}
+-(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<ORActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c
+{
+   self = [super initORConstraintI];
+   _activities = act;
+   _usage = ru;
+   _cap   = c;
+   return self;
+}
+-(void)visit:(ORVisitor*) v
+{
+   [v visitSchedulingCumulative: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> cumulative(%@,%@,%@)>", [self class], self, _activities, _usage, _cap];
+   return buf;
+}
+-(id<ORActivityArray>) activities
+{
+   return _activities;
+}
+-(id<ORIntArray>) usage
+{
+   return _usage;
+}
+-(id<ORIntVar>) capacity
+{
+   return _cap;
+}
+-(NSSet*) allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_activities count]] autorelease];
+   id<ORIntRange> R = _activities.range;
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt k = low; k <= up; k++){
+      [ms addObject: _activities[k].start];
+   }
+   return ms;
+}
+@end
+
 
 // Disjunctive (resource) constraint
 //

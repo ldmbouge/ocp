@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 
+
 @protocol ORActivity <ORObject>
 -(ORInt) getId;
 -(id<ORIntVar>) start;
@@ -20,4 +21,17 @@
 
 @interface ORActivity : ORObject<ORActivity> 
 -(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+@end
+
+@protocol ORActivityArray <ORObject>
+-(id<ORActivity>) at: (ORInt) idx;
+-(void) set: (id<ORActivity>) value at: (ORInt)idx;
+-(id<ORActivity>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORActivity>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
 @end
