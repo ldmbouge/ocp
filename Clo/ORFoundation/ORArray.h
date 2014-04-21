@@ -88,6 +88,7 @@
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
+-(id<ORIdArray>) flatten;
 @end
 
 @protocol ORIntMatrix <ORObject>

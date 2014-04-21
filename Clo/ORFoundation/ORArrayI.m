@@ -563,6 +563,7 @@
    ORInt*           _size;
    ORInt*              _i;
    ORInt              _nb;
+   id<ORIdArray>   _array;
 }
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker arity: (ORInt) ar ranges: (id<ORIntRange>*) rs;
 {
@@ -583,6 +584,7 @@
       _nb *= _size[k];
    }
    _flat = malloc(sizeof(id)*_nb);
+   _array = 0;
    return self;
 }
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker with: (ORIdMatrixI*) matrix
@@ -605,6 +607,7 @@
    _flat = malloc(sizeof(id) * _nb);
    for (ORInt i=0 ; i < _nb; i++)
       _flat[i] = matrix->_flat[i];
+   _array = [ORFactory idArray: tracker range: RANGE(tracker,0,_nb-1) with: ^id(ORInt i) { return _flat[i]; }];
    return self;
 }
 
@@ -784,7 +787,12 @@
 {
    [v visitIdMatrix:self];
 }
-
+-(id<ORIdArray>) flatten
+{
+   if (!_array)
+      _array = [ORFactory idArray: _tracker range: RANGE(_tracker,0,_nb-1) with: ^id(ORInt i) { return _flat[i]; }];
+   return _array;
+}
 @end
 
 
@@ -857,7 +865,7 @@
       _flat[i] = 0;
    return self;
 }
--(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 using: (ORIntxInt2Int)block {
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 with: (ORIntxInt2Int)block {
    self = [self initORIntMatrix: tracker range: r0 : r1];
    for(ORInt i = _low[0]; i <= _up[0]; i++) {
       for(ORInt j = _low[1]; j <= _up[1]; j++) {

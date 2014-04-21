@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Andreas Schutt and and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,6 +35,23 @@
       return [ORFactory activity: model horizon: horizon duration: [duration at: i]];
    }];
 }
++(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2  with: (id<ORActivity>(^)(ORInt,ORInt)) clo;
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix: model range: R1 : R2];
+   for(ORInt i=R1.low;i <= R1.up;i++)
+      for(ORInt j=R2.low;j <= R2.up;j++)
+         [o set: clo(i,j) at: i : j];
+   return (id<ORActivityMatrix>) o;
+}
+
++(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
+                               horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration
+{
+   return [ORFactory activityMatrix: model range: R1 : R2  with: ^id<ORActivity>(ORInt i,ORInt j) {
+      return [ORFactory activity: model horizon: horizon duration: [duration at: i : j]];
+   }];
+}
+
 // Precedes
 //
 +(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after
