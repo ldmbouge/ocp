@@ -29,6 +29,12 @@
       [o set: clo(k) at:k];
    return (id<ORActivityArray>) o;
 }
++(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration
+{
+   return [ORFactory activityArray: model range: range with: ^id<ORActivity>(ORInt i) {
+      return [ORFactory activity: model horizon: horizon duration: [duration at: i]];
+   }];
+}
 // Precedes
 //
 +(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after

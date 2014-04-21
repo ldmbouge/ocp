@@ -12,11 +12,13 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 
+@protocol ORPrecedes;
 
 @protocol ORActivity <ORObject>
 -(ORInt) getId;
 -(id<ORIntVar>) start;
 -(ORInt) duration;
+-(id<ORPrecedes>) precedes: (id<ORActivity>) after;
 @end
 
 @interface ORActivity : ORObject<ORActivity> 

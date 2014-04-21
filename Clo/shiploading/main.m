@@ -9,7 +9,7 @@
 ORInt capacity = 8;
 ORInt nbTasks = 34;
 
-int duration[34] = {3, 4, 4, 6, 5, 2, 3, 4, 3, 2, 3, 2, 1, 5, 2, 3, 2, 2, 1, 1, 1, 2, 4, 5, 2, 1, 1, 2, 1, 3, 2, 1, 2, 2};
+int inputDuration[34] = {3, 4, 4, 6, 5, 2, 3, 4, 3, 2, 3, 2, 1, 5, 2, 3, 2, 2, 1, 1, 1, 2, 4, 5, 2, 1, 1, 2, 1, 3, 2, 1, 2, 2};
 int inputDemand[34] = {4, 4, 3, 4, 5, 5, 4, 3, 4, 8, 4, 5, 4, 3, 3, 3, 6, 7, 4, 4, 4, 4, 7, 8, 8, 3, 3, 6, 8, 3, 3, 3, 3, 3};
 
 typedef struct Precedence {
@@ -36,28 +36,34 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       
       id<ORModel> model = [ORFactory createModel];
+      
+      // data
       id<ORIntRange> Tasks = RANGE(model,1,nbTasks);
-      ORInt totalDuration = 0;
-      for(ORInt i = 0; i < nbTasks; i++)
-         totalDuration += duration[i];
-      id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
+      id<ORIntArray> duration = [ORFactory intArray: model range: Tasks with: ^ORInt(ORInt i) { return inputDuration[i-1]; } ];
       id<ORIntArray> demand = [ORFactory intArray: model range: Tasks with: ^ORInt(ORInt i) { return inputDemand[i-1]; } ];
-      id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks with: ^id<ORActivity>(ORInt i) {
-         return [ORFactory activity: model horizon: Horizon duration: duration[i-1]];
-      }];
+      ORInt totalDuration = 0;
+      for(ORInt i = Tasks.low; i < Tasks.up; i++)
+         totalDuration += [duration at: i];
+       id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
+      
+      // variables
+      id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
       id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
       
+      // constraints and objective
       [model minimize: makespan.start];
       
       for(ORInt p = 0; p < nbPrecedences; p++)
-         [model add: [ORFactory precedence: activities[precedence[p].before] precedes: activities[precedence[p].after]]];
+         [model add: [activities[precedence[p].before] precedes: activities[precedence[p].after]]];
       for(ORInt t = 1; t <= nbTasks; t++)
-         [model add: [ORFactory precedence: activities[t] precedes: makespan]];
+         [model add: [activities[t] precedes: makespan]];
       [model add: [ORFactory cumulative: activities usage: demand maxCapacity: capacity]];
       
+      // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
-         [cp labelActivities: activities];
+//         [cp labelActivities: activities];
+         [cp setTimes: activities];
          [cp labelActivity: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan.start],[cp max: makespan.start]);
       }
@@ -68,9 +74,8 @@ int main(int argc, const char * argv[])
       printf("Makespan: %d \n",[optimum intValue: makespan.start]);
       for(ORInt i = 1; i <= nbTasks; i++) {
          ORInt s = [optimum intValue: activities[i].start];
-         printf("task %d = [%d,%d] \n",i,s,s + duration[i]);
+         printf("task %d = [%d,%d] \n",i,s,s + [duration at: i]);
       }
-
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
 //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

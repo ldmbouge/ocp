@@ -17,6 +17,7 @@
 // activities
 +(id<ORActivity>) activity: (id<ORTracker>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
 +(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration;
 // Cumulative Resource constraints
 +(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after;
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c;

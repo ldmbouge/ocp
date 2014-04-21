@@ -17,6 +17,7 @@
 @protocol CPSchedulingProgram <CPProgram>
 -(void) labelActivities: (id<ORActivityArray>) act;
 -(void) labelActivity: (id<ORActivity>) act;
+-(void) setTimes: (id<ORActivityArray>) act;
 @end
 
 @interface ORFactory (CPScheduling)

@@ -14,6 +14,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORUtilities/ORUtilities.h>
 #import <ORScheduler/ORVisit.h>
+#import <ORScheduler/ORSchedFactory.h>
 
 @implementation ORActivity
 {
@@ -38,5 +39,9 @@
 -(void)visit:(ORVisitor*) v
 {
    [v visitActivity: self];
+}
+-(id<ORPrecedes>) precedes: (id<ORActivity>) after
+{
+   return [ORFactory precedence: self precedes: after];
 }
 @end
