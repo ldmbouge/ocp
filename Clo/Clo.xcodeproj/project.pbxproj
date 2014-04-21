@@ -1265,6 +1265,9 @@
 		B19ABA18146D6930004EB77E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B19ABA26146DC7FA004EB77E /* CPCardinality.h in Headers */ = {isa = PBXBuildFile; fileRef = B19ABA24146DC7FA004EB77E /* CPCardinality.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA25146DC7FA004EB77E /* CPCardinality.m */; };
+		B19ADA6C19049EA0009E233D /* CPSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = B19ADA6A19049EA0009E233D /* CPSearch.h */; };
+		B19ADA6D19049EA0009E233D /* CPSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ADA6B19049EA0009E233D /* CPSearch.m */; };
+		B19ADA6F1904A17E009E233D /* ORScheduler.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ADA6E1904A17E009E233D /* ORScheduler.m */; };
 		B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124615CCA92F001ED0D4 /* ORCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124715CCA930001ED0D4 /* ORCommand.m */; };
 		B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124A15CCAE71001ED0D4 /* ORTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -7292,6 +7295,9 @@
 		B19ABA11146D68FE004EB77E /* AtomicTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = AtomicTest.1; sourceTree = "<group>"; };
 		B19ABA24146DC7FA004EB77E /* CPCardinality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPCardinality.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B19ABA25146DC7FA004EB77E /* CPCardinality.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPCardinality.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		B19ADA6A19049EA0009E233D /* CPSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSearch.h; sourceTree = "<group>"; };
+		B19ADA6B19049EA0009E233D /* CPSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSearch.m; sourceTree = "<group>"; };
+		B19ADA6E1904A17E009E233D /* ORScheduler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORScheduler.m; sourceTree = "<group>"; };
 		B1A0124615CCA92F001ED0D4 /* ORCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCommand.h; sourceTree = "<group>"; };
 		B1A0124715CCA930001ED0D4 /* ORCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCommand.m; sourceTree = "<group>"; };
 		B1A0124A15CCAE71001ED0D4 /* ORTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTracer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -9644,6 +9650,8 @@
 				535D132C18FF7A46008D48BD /* CPMisc.h */,
 				535D132D18FF7A46008D48BD /* CPMisc.m */,
 				537EE8AA18FCC5720006FFD2 /* CPScheduler.h */,
+				B19ADA6A19049EA0009E233D /* CPSearch.h */,
+				B19ADA6B19049EA0009E233D /* CPSearch.m */,
 			);
 			path = CPScheduler;
 			sourceTree = "<group>";
@@ -9662,6 +9670,7 @@
 				537EE8B218FCC5720006FFD2 /* ORSchedFactory.h */,
 				537EE8B318FCC5720006FFD2 /* ORSchedFactory.m */,
 				537EE8B418FCC5720006FFD2 /* ORScheduler.h */,
+				B19ADA6E1904A17E009E233D /* ORScheduler.m */,
 				537EE8B518FCC5720006FFD2 /* ORVisit.h */,
 				537EE8B618FCC5720006FFD2 /* ORVisit.m */,
 			);
@@ -11825,6 +11834,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B19ADA6C19049EA0009E233D /* CPSearch.h in Headers */,
 				537EEA5B18FCE35E0006FFD2 /* CPScheduler.h in Headers */,
 				535D133118FF7F1D008D48BD /* CPMisc.h in Headers */,
 				B12BE46F190158B2006D1D59 /* CPActivity.h in Headers */,
@@ -14452,6 +14462,7 @@
 				B12BE46B19014C56006D1D59 /* ORActivity.m in Sources */,
 				537EEA2418FCDD760006FFD2 /* ORSchedFactory.m in Sources */,
 				537EEA2518FCDD760006FFD2 /* ORVisit.m in Sources */,
+				B19ADA6F1904A17E009E233D /* ORScheduler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14465,6 +14476,7 @@
 				537EEA5318FCE2FC0006FFD2 /* CPDifference.m in Sources */,
 				537EEA5418FCE2FC0006FFD2 /* CPDisjunctive.m in Sources */,
 				B12BE470190158B2006D1D59 /* CPActivity.m in Sources */,
+				B19ADA6D19049EA0009E233D /* CPSearch.m in Sources */,
 				537EEA5518FCE2FC0006FFD2 /* CPFactory.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -23619,6 +23631,7 @@
 				B12BE44E19012746006D1D59 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B12ED8CA159E0C2200713C8E /* Build configuration list for PBXNativeTarget "sport" */ = {
 			isa = XCConfigurationList;

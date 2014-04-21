@@ -9,16 +9,5 @@
  
  ***********************************************************************/
 
-#import <ORScheduler/ORActivity.h>
-#import <ORScheduler/ORSchedConstraint.h>
-#import <ORScheduler/ORSchedFactory.h>
-#import <ORProgram/ORProgram.h>
-
-@protocol CPSchedulingProgram <CPProgram>
--(void) labelActivities: (id<ORActivityArray>) act;
--(void) labelActivity: (id<ORActivity>) act;
-@end
-
-@interface ORFactory (CPScheduling)
-+(id<CPSchedulingProgram>) createCPSchedulingProgram: (id<ORModel>) model;
-@end
+#import <Foundation/Foundation.h>
+#import <CPScheduler/CPScheduler.h>

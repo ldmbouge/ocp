@@ -62,10 +62,10 @@ int main(int argc, const char * argv[])
       }];
       [model add: [ORFactory cumulative: activities usage: demand maxCapacity: capacity]];
       
-      id<CPProgram> cp  = [ORFactory createCPProgram: model];
+      id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
-         [cp labelArray: start];
-         [cp label: makespan.start];
+         [cp labelActivities: activities];
+         [cp labelActivity: makespan];
           printf("makespan = [%d,%d] \n",[cp min: makespan.start],[cp max: makespan.start]);
       }
       ];
