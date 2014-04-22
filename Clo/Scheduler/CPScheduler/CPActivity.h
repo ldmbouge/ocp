@@ -35,3 +35,11 @@
 -(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (ORInt) duration;
 @end
 
+@protocol CPDisjunctiveResource <ORObject>
+-(id<CPActivityArray>) activities;
+@end
+
+@interface CPDisjunctiveResource : ORObject<CPDisjunctiveResource>
+-(id<CPDisjunctiveResource>) initCPDisjunctiveResource: (id<ORTracker>) tracker activities: (id<CPActivityArray>) activities;
+-(id<CPActivityArray>) activities;
+@end

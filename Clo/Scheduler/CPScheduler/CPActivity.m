@@ -34,3 +34,24 @@
    return _duration;
 }
 @end
+
+@implementation CPDisjunctiveResource {
+   id<ORTracker> _tracker;
+   id<CPActivityArray> _activities;
+}
+-(id<CPDisjunctiveResource>) initCPDisjunctiveResource: (id<ORTracker>) tracker activities: (id<CPActivityArray>) activities
+{
+   self = [super init];
+   _tracker = tracker;
+   _activities = activities;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<CPActivityArray>) activities
+{
+   return _activities;
+}
+@end

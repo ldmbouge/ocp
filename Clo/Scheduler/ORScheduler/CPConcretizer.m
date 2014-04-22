@@ -26,10 +26,20 @@
       ORInt duration = [act duration];
       [start visit: self];
       id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration: duration];
-//      [_engine add: concreteCstr];
       _gamma[act.getId] = concreteAct;
    }
 }
+
+-(void) visitDisjunctiveResource:(id<ORDisjunctiveResource>) dr
+{
+   if (_gamma[dr.getId] == NULL) {
+      id<ORActivityArray> act = [dr activities];
+      [act visit: self];
+      id<CPDisjunctiveResource> concreteDr = [CPFactory disjunctiveResource: _engine activities: _gamma[dr.getId]];
+      _gamma[dr.getId] = concreteDr;
+   }
+}
+
 
 // Cumulative (resource) constraint
 -(void) visitCumulative:(id<ORCumulative>) cstr

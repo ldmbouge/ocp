@@ -22,6 +22,7 @@
 +(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<ORActivity>(^)(ORInt,ORInt)) clo;
 +(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
                                horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration;
++(id<ORDisjunctiveResourceArray>) disjunctiveResourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
 
 // Precedence constraints
 +(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after;
@@ -33,6 +34,7 @@
 
 // Disjunctive Resource constraint
 +(id<ORDisjunctive>) disjunctive: (id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
++(id<ORDisjunctiveResource>) disjunctiveResource: (id<ORTracker>) model;
 
 // Difference Logic constraints
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems;

@@ -16,6 +16,8 @@
 
 @interface CPFactory (CPScheduler)
 +(id<CPActivity>) activity: (id<CPIntVar>) start duration:(ORInt) duration;
++(id<CPDisjunctiveResource>) disjunctiveResource:  (id<ORTracker>) tracker  activities: (id<CPActivityArray>) activities;
+
 +(id<CPConstraint>) precedence: (id<CPActivity>) before precedes:(id<CPActivity>) after;
 +(id<CPConstraint>) cumulative: (id<CPIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;
 +(id<CPConstraint>) cumulative: (id<CPActivityArray>) act usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;

@@ -51,7 +51,15 @@
       return [ORFactory activity: model horizon: horizon duration: [duration at: i : j]];
    }];
 }
-
++(id<ORDisjunctiveResourceArray>) disjunctiveResourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
+{
+   id<ORIdArray> o = [ORFactory idArray: model range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      id<ORDisjunctiveResource> dr = [ORFactory disjunctiveResource: model];
+      [o set: dr at:k];
+   }
+   return (id<ORDisjunctiveResourceArray>) o;
+}
 // Precedes
 //
 +(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after
@@ -89,6 +97,12 @@
     id<ORDisjunctive> o = [[ORDisjunctive alloc] initORDisjunctive:s duration:d];
     [[s tracker] trackObject:o];
     return o;
+}
++(id<ORDisjunctiveResource>) disjunctiveResource: (id<ORTracker>) model
+{
+   id<ORDisjunctiveResource> o = [[ORDisjunctiveResource alloc] initORDisjunctiveResource: model];
+   [model trackObject:o];
+   return o;
 }
 
 // Difference Logic constraint

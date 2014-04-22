@@ -52,3 +52,28 @@
 -(id<ORTracker>) tracker;
 -(id<ORActivityArray>) flatten;
 @end
+
+@protocol ORDisjunctiveResource <ORObject>
+-(void) isRequiredBy: (id<ORActivity>) act;
+-(id<ORActivityArray>) activities;
+@end
+
+@interface ORDisjunctiveResource : ORObject<ORDisjunctiveResource>
+-(id<ORDisjunctiveResource>) initORDisjunctiveResource: (id<ORTracker>) tracker;
+-(void) isRequiredBy: (id<ORActivity>) act;
+-(id<ORActivityArray>) activities;
+@end
+
+@protocol ORDisjunctiveResourceArray <ORObject>
+-(id<ORDisjunctiveResource>) at: (ORInt) idx;
+-(void) set: (id<ORDisjunctiveResource>) value at: (ORInt)idx;
+-(id<ORDisjunctiveResource>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORDisjunctiveResource>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+

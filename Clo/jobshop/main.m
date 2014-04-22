@@ -56,6 +56,7 @@ int main(int argc, const char * argv[])
       // variables
       id<ORActivityMatrix> activity = [ORFactory activityMatrix: model range: Size : Size horizon: Horizon duration: duration];
       id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
+      id<ORDisjunctiveResourceArray> machine = [ORFactory disjunctiveResourceArray: model range: Size];
       
       // constraints and objective
       [model minimize: makespan.start];
@@ -63,6 +64,20 @@ int main(int argc, const char * argv[])
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j < Size.up; j++)
             [model add: [[activity at: i : j] precedes: [activity at: i : j+1]]];
+      
+//      id<ORIntVarArray> start = [ORFactory: intVarArray: model range: ]
+      NSMutableArray** ar = malloc(size * sizeof(NSMutableArray*));
+      for(ORInt k = 0; k < size; k++)
+         ar[k] = [[NSMutableArray alloc] initWithCapacity: size];
+      
+      for(ORInt i = Size.low; i <= Size.up; i++)
+         for(ORInt j = Size.low; j < Size.up; j++)
+            [machine[[resource at: i : j]] isRequiredBy: [activity at: i : j]];
+
+      id<ORActivityArray> act1 = [machine[1] activities];
+      for(ORInt k = act1.range.low; k <= act1.range.up; k++)
+         printf("act[%d,%d] \n",act1[k].getId,act1[k].duration);
+      
       for(ORInt i = Size.low; i <= Size.up; i++)
          [model add: [[activity at: i : Size.up] precedes: makespan]];
 //      [model add: [ORFactory cumulative: activities usage: demand maxCapacity: capacity]];

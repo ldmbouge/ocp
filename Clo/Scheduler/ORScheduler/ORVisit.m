@@ -18,6 +18,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
 }
+-(void) visitDisjunctiveResource: (id<ORDisjunctiveResource>) dr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive resource: visit method not defined"];
+}
 -(void) visitPrecedes: (id<ORPrecedes>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "precedes: visit method not defined"];
@@ -54,6 +58,10 @@
 
 @implementation ORNOopVisit (ORScheduler)
 -(void) visitActivity: (id<ORActivity>) activity
+{
+   
+}
+-(void) visitDisjunctiveResource: (id<ORDisjunctiveResource>) activity
 {
    
 }

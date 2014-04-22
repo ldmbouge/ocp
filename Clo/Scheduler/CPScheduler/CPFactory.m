@@ -27,6 +27,14 @@
    
    return act;
 }
+
+// disjunctive resource
++(id<CPDisjunctiveResource>) disjunctiveResource:  (id<ORTracker>) tracker  activities: (id<CPActivityArray>) activities
+{
+   id<CPDisjunctiveResource> dr = [[CPDisjunctiveResource alloc] initCPDisjunctiveResource: tracker activities: activities];
+   [tracker trackMutable: dr];
+   return dr;
+}
 // precedes
 
 +(id<CPConstraint>) precedence: (id<CPActivity>) before precedes:(id<CPActivity>) after
