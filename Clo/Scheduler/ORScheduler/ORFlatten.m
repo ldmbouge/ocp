@@ -30,6 +30,10 @@
 {
     _result = [_into addConstraint:cstr];
 }
+-(void) visitSchedulingDisjunctive:(id<ORSchedulingDisjunctive>) cstr
+{
+   _result = [_into addConstraint:cstr];
+}
 -(void) visitDifference:(id<ORDifference>) cstr
 {
     _result = [_into addConstraint:cstr];

@@ -103,6 +103,20 @@
     }
 }
 
+// Disjunctive (resource) constraint
+-(void) visitSchedulingDisjunctive:(id<ORSchedulingDisjunctive>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORActivityArray> activities = [cstr activities];
+      [activities visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory disjunctive: _gamma[activities.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+
+
 // Difference logic constraint
 -(void) visitDifference:(id<ORDifference>) cstr
 {

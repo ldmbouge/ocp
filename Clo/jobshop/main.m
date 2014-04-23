@@ -65,32 +65,29 @@ int main(int argc, const char * argv[])
          for(ORInt j = Size.low; j < Size.up; j++)
             [model add: [[activity at: i : j] precedes: [activity at: i : j+1]]];
       
-//      id<ORIntVarArray> start = [ORFactory: intVarArray: model range: ]
-      NSMutableArray** ar = malloc(size * sizeof(NSMutableArray*));
-      for(ORInt k = 0; k < size; k++)
-         ar[k] = [[NSMutableArray alloc] initWithCapacity: size];
-      
-      for(ORInt i = Size.low; i <= Size.up; i++)
-         for(ORInt j = Size.low; j < Size.up; j++)
-            [machine[[resource at: i : j]] isRequiredBy: [activity at: i : j]];
-
-      id<ORActivityArray> act1 = [machine[1] activities];
-      for(ORInt k = act1.range.low; k <= act1.range.up; k++)
-         printf("act[%d,%d] \n",act1[k].getId,act1[k].duration);
-      
       for(ORInt i = Size.low; i <= Size.up; i++)
          [model add: [[activity at: i : Size.up] precedes: makespan]];
-//      [model add: [ORFactory cumulative: activities usage: demand maxCapacity: capacity]];
-//
+
+      for(ORInt i = Size.low; i <= Size.up; i++)
+         for(ORInt j = Size.low; j <= Size.up; j++)
+            [machine[[resource at: i : j]] isRequiredBy: [activity at: i : j]];
+      
+       for(ORInt i = Size.low; i <= Size.up; i++)
+          [model add: [ORFactory disjunctive: [machine[i] activities]]];
+
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
          [cp setTimes: [activity flatten]];
          [cp labelActivity: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan.start],[cp max: makespan.start]);
-         for(ORInt i = Size.low; i <= Size.up; i++)
-            for(ORInt j = Size.low; j < Size.up; j++)
-               printf("[%d,%d] = [%d,%d,%d]\n",i,j,[activity at: i : j].duration,[cp min: [activity at: i : j].start],[cp max: [activity at: i : j].start]);
+         for(ORInt i = Size.low; i <= Size.up; i++) {
+            id<ORActivityArray> act = [machine[i] activities];
+            for(ORInt k = act.range.low; k <= act.range.up; k++) {
+               printf("[%d): %d --(%d) --> %d]",act[k].getId,[cp intValue: act[k].start],act[k].duration,[cp intValue: act[k].start] + act[k].duration);
+            }
+            printf("\n");
+         }
       }];
       id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];

@@ -98,6 +98,13 @@
     [[s tracker] trackObject:o];
     return o;
 }
++(id<ORSchedulingDisjunctive>) disjunctive: (id<ORActivityArray>) act
+{
+   id<ORSchedulingDisjunctive> o = [[ORSchedulingDisjunctive alloc] initORSchedulingDisjunctive: act];
+   [[act tracker] trackObject:o];
+   return o;
+}
+
 +(id<ORDisjunctiveResource>) disjunctiveResource: (id<ORTracker>) model
 {
    id<ORDisjunctiveResource> o = [[ORDisjunctiveResource alloc] initORDisjunctiveResource: model];

@@ -30,6 +30,11 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@protocol ORSchedulingDisjunctive <ORConstraint>
+-(id<ORActivityArray>) activities;
+@end
+
+
 @protocol ORDisjunctive <ORConstraint>
 -(id<ORIntVarArray>) start;
 -(id<ORIntVarArray>) duration;

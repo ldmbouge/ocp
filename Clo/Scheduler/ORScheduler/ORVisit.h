@@ -20,6 +20,7 @@
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
+-(void) visitSchedulingDisjunctive:  (id<ORSchedulingDisjunctive> ) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
 -(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr;
 -(void) visitDiffReifyLEqual:  (id<ORDiffReifyLEqual> ) cstr;
@@ -33,6 +34,7 @@
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
+-(void) visitSchedulingDisjunctive:  (id<ORSchedulingDisjunctive> ) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
 -(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr;
 -(void) visitDiffReifyLEqual:  (id<ORDiffReifyLEqual> ) cstr;

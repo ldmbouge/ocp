@@ -156,6 +156,45 @@
 }
 @end
 
+@implementation ORSchedulingDisjunctive {
+   id<ORActivityArray> _activities;
+}
+-(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<ORActivityArray>) act
+{
+   self = [super initORConstraintI];
+   _activities = act;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(void)visit:(ORVisitor*) v
+{
+   [v visitSchedulingDisjunctive: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> disjunctive(%@)>", [self class], self, _activities];
+   return buf;
+}
+-(id<ORActivityArray>) activities
+{
+   return _activities;
+}
+-(NSSet*) allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_activities count]] autorelease];
+   id<ORIntRange> R = _activities.range;
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt k = low; k <= up; k++){
+      [ms addObject: _activities[k].start];
+   }
+   return ms;
+}
+@end
 
 // Disjunctive (resource) constraint
 //

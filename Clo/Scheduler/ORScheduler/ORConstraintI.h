@@ -40,10 +40,16 @@
 
 // Disjunctive (resource) constraint
 @interface ORDisjunctive : ORConstraintI<ORDisjunctive>
--(id<ORCumulative>) initORDisjunctive:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
+-(id<ORDisjunctive>) initORDisjunctive:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
 -(id<ORIntVarArray>) start;
 -(id<ORIntVarArray>) duration;
 @end
+
+@interface ORSchedulingDisjunctive : ORConstraintI<ORSchedulingDisjunctive>
+-(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<ORActivityArray>) act;
+-(id<ORActivityArray>) activities;
+@end
+
 
 // Difference logic constraint
 @interface ORDifference : ORConstraintI<ORDifference>

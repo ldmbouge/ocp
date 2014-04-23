@@ -108,6 +108,18 @@
     // Returning the cumulative propagator
     return o;
 }
++(id<CPConstraint>) disjunctive: (id<CPActivityArray>) act
+{
+   id<CPEngine> engine = [act[act.range.low].start engine];
+   id<CPIntVarArray> start = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+      return act[k].start;
+   }];
+   id<CPIntVarArray> duration = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+      return [CPFactory intVar: engine domain: RANGE([act tracker],act[k].duration,act[k].duration)];
+   }];
+   return [self disjunctive: start duration: duration];
+}
+
 
 // Difference (logic) constraint
 //
