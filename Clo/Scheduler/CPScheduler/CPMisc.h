@@ -13,6 +13,8 @@
 #import <CPUKernel/CPUKernel.h>
 
 
+// Resource profile
+
 typedef struct {
     ORInt   _size;
     ORInt * _time;
@@ -21,3 +23,11 @@ typedef struct {
 
 Profile getEarliestContentionProfile(ORInt * sort_id_est, ORInt * sort_id_ect, ORInt * est, ORInt * ect, ORInt * level, ORInt size);
 void dumpProfile(Profile prof);
+
+
+// Precedence relation
+
+typedef struct {
+    ORInt _first;
+    ORInt _second;
+} Precedence;

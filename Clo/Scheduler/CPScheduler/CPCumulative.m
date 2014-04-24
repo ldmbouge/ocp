@@ -1399,4 +1399,86 @@ static Profile cumuGetEarliestContentionProfile(CPCumulative * cumu)
     return prof;
 }
 
+/*******************************************************************************
+ Computation of the partial order
+ ******************************************************************************/
+
+static Precedence * cumuGetPartialOrder(CPCumulative * cumu, ORInt * psize)
+{
+    // XXX Assumption all activities are fixed
+    ORInt id_est[cumu->_size];
+    ORInt id_ect[cumu->_size];
+    Precedence * prec = NULL;
+    ORInt cap  = 0;
+    ORInt size = 0;
+
+    // Initialisation of the arrays
+    for (ORInt t = 0; t < cumu->_size; t++) {
+        id_est[t] = t;
+        id_ect[t] = t;
+    }
+
+    // NOTE: qsort_r the 3rd argument of qsort_r is at the last position in glibc (GNU/Linux)
+    // instead of the second last
+    // Sorting the tasks in non-decreasing order by the earliest start time
+    qsort_r(id_est, cumu->_size, sizeof(ORInt), cumu, (int(*)(void*, const void*, const void*)) &sortEstAsc);
+    // Sorting the tasks in non-decreasing order by the latest completion time
+    qsort_r(id_ect, cumu->_size, sizeof(ORInt), cumu, (int(*)(void*, const void*, const void*)) &sortEctAsc);
+    
+    ORInt tt1  = 0;
+    ORInt tt2  = 0;
+    ORInt time = MININT;
+    NSMutableSet * prevAct = [[NSMutableSet alloc] init];
+    
+    while (tt1 < cumu->_size) {
+        assert(tt1 < cumu->_size);
+        assert(tt2 < cumu->_size);
+        
+        const ORInt t1 = id_est[tt1];
+        const ORInt t2 = id_ect[tt2];
+        const ORInt time1 = est(cumu, t1);
+        const ORInt time2 = ect(cumu, t2);
+        
+        if (time1 < time2) {
+            // Memory allocation
+            if (size + prevAct.count >= cap) {
+                cap = (cap > 0 ? cap << 1 : 16);
+                cap = (size + prevAct.count >= cap ? size + (ORInt) (prevAct.count) + 1 : cap);
+                if (prec == NULL) {
+                    prec = (Precedence *) malloc(cap * sizeof(Precedence));
+                } else {
+                    prec = (Precedence *) realloc(prec, cap * sizeof(Precedence));
+                }
+                if (prec == NULL) {
+                    @throw [[ORExecutionError alloc] initORExecutionError: "CPCumulative: Out of memory!"];
+                }
+            }
+            // Adding precedence relations
+            NSEnumerator * myEnum = [prevAct objectEnumerator];
+            NSNumber * num;
+            while ((num = [myEnum nextObject])) {
+                prec[size]._first  = t1;
+                prec[size]._second = (ORInt) [num intValue];
+                size++;
+            }
+            tt1++;
+        } else {
+            // time1 >= time2
+            // Clearing the set
+            if (time < time2) [prevAct removeAllObjects];
+            // Adding 't2' to the set
+            NSNumber * n2 = [NSNumber numberWithInt:t2];
+            [prevAct addObject:n2];
+            time = time2;
+            tt2++;
+        }
+    }
+    
+    [prevAct release];
+    
+    *psize = size;
+    
+    return prec;
+}
+
 @end
