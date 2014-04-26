@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <objcp/CPConstraint.h>
 #import <ORScheduler/ORScheduler.h>
 #import <ORProgram/CPConcretizer.h>
 #import "CPScheduler/CPFactory.h"
@@ -25,16 +26,29 @@
       id<ORIntVar> start = [act start];
       id<ORIntVar> duration = [act duration];
       id<ORIntVar> end = [act end];
+      id<ORTracker> tracker = [start tracker];
       
       [start visit: self];
       [duration visit: self];
       id<CPIntVar> concreteEnd;
-      if (duration.min == duration.max)
+      if (duration.min == duration.max) {
          concreteEnd = [CPFactory intVar: _gamma[start.getId] shift: duration.min];
-      else {
-         assert(false);
       }
-      _gamma[end.getId] = concreteEnd;
+      else {
+         concreteEnd = [CPFactory intVar: _engine domain: RANGE(_engine,start.min + duration.min,start.max + duration.max)];
+         _gamma[end.getId] = concreteEnd;
+         id<CPIntVarArray> av = [CPFactory intVarArray: _engine range: RANGE(tracker,0,2) with: ^id<CPIntVar>(ORInt k) {
+            if (k == 0)
+               return _gamma[start.getId];
+            else if (k == 1)
+               return _gamma[duration.getId];
+            else
+               return [CPFactory intVar: concreteEnd scale: -1];
+         }];
+         id<CPConstraint> cstr = [CPFactory sum: av eq: 0 annotation: RangeConsistency];
+         [_engine add: cstr];
+      }
+       _gamma[end.getId] = concreteEnd;
       id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration:  _gamma[duration.getId] end: concreteEnd];
       _gamma[act.getId] = concreteAct;
    }
