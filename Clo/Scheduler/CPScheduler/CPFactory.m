@@ -84,9 +84,25 @@
 {
     // Creating view variables for the end times
     ORInt offset2 = [[s range] low] - [[d range] low];
-    id<CPIntVarArray> e = [CPFactory intVarArray:[s tracker] range:[s range] with:^(ORInt k) {
-       // [pvh] to change if the durations are really variables
-        return [CPFactory intVar: [s at: k] shift: [d at: k - offset2].min];
+   id<CPIntVarArray> e = [CPFactory intVarArray:[s tracker] range:[s range] with:^id<CPIntVar>(ORInt k) {
+       id<CPIntVar> duration = [d at: k - offset2];
+       id<CPEngine> engine =[duration engine];
+       if (duration.min == duration.max)
+          return [CPFactory intVar: [s at: k] shift: duration.min];
+       else {
+          id<CPIntVar> concreteEnd = [CPFactory intVar: engine domain: RANGE(engine,s[k].min + duration.min,s[k].max + duration.max)];
+          id<CPIntVarArray> av = [CPFactory intVarArray: engine range: RANGE(engine,0,2) with: ^id<CPIntVar>(ORInt k) {
+             if (k == 0)
+                return s[k];
+             else if (k == 1)
+                return duration;
+             else
+                return [CPFactory intVar: concreteEnd scale: -1];
+          }];
+          id<CPConstraint> cstr = [CPFactory sum: av eq: 0 annotation: RangeConsistency];
+          [engine add: cstr];
+          return concreteEnd;
+       }
     }];
    return [CPFactory cumulative: s duration: d end: e usage:r capacity: c];
 }
