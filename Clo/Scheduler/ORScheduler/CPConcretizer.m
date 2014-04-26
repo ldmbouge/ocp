@@ -24,9 +24,18 @@
    if (_gamma[act.getId] == NULL) {
       id<ORIntVar> start = [act start];
       id<ORIntVar> duration = [act duration];
+      id<ORIntVar> end = [act end];
+      
       [start visit: self];
       [duration visit: self];
-      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration:  _gamma[duration.getId]];
+      id<CPIntVar> concreteEnd;
+      if (duration.min == duration.max)
+         concreteEnd = [CPFactory intVar: _gamma[start.getId] shift: duration.min];
+      else {
+         assert(false);
+      }
+      _gamma[end.getId] = concreteEnd;
+      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration:  _gamma[duration.getId] end: concreteEnd];
       _gamma[act.getId] = concreteAct;
    }
 }

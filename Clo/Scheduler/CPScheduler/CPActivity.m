@@ -17,12 +17,14 @@
 {
    id<CPIntVar> _start;
    id<CPIntVar> _duration;
+   id<CPIntVar> _end;
 }
--(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration
+-(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration end: (id<CPIntVar>) end
 {
    self = [super init];
    _start = start;
    _duration = duration;
+   _end = end;
    return self;
 }
 -(id<CPIntVar>) start
@@ -32,6 +34,10 @@
 -(id<CPIntVar>) duration
 {
    return _duration;
+}
+-(id<CPIntVar>) end
+{
+   return _end;
 }
 @end
 

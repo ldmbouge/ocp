@@ -15,7 +15,7 @@
 #import <objcp/CPFactory.h>
 
 @interface CPFactory (CPScheduler)
-+(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration;
++(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration end:(id<CPIntVar>) end;
 +(id<CPDisjunctiveResource>) disjunctiveResource:  (id<ORTracker>) tracker  activities: (id<CPActivityArray>) activities;
 
 +(id<CPConstraint>) precedence: (id<CPActivity>) before precedes:(id<CPActivity>) after;

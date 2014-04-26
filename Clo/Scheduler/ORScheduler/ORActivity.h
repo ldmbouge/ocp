@@ -18,6 +18,7 @@
 -(ORInt) getId;
 -(id<ORIntVar>) start;
 -(id<ORIntVar>) duration;
+-(id<ORIntVar>) end;
 -(id<ORPrecedes>) precedes: (id<ORActivity>) after;
 @end
 

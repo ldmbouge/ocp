@@ -18,9 +18,9 @@
 
 @implementation CPFactory (CPScheduler)
 // activity
-+(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration
++(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration end:(id<CPIntVar>) end
 {
-   id<CPActivity> act = [[CPActivity alloc] initCPActivity: start duration: duration];
+   id<CPActivity> act = [[CPActivity alloc] initCPActivity: start duration: duration end: end];
    
    // XXX What is the meaning of the following? Variable subscription?
    [[start tracker] trackMutable: act];
@@ -88,7 +88,7 @@
        // [pvh] to change if the durations are really variables
         return [CPFactory intVar: [s at: k] shift: [d at: k - offset2].min];
     }];
-   return [CPFactory cumulative: s duration: d end:e usage:r capacity: c];
+   return [CPFactory cumulative: s duration: d end: e usage:r capacity: c];
 }
 +(id<CPConstraint>) cumulative: (id<CPActivityArray>) act usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c
 {
@@ -98,7 +98,10 @@
    id<CPIntVarArray> duration = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
       return act[k].duration;
    }];
-   return [self cumulative: start duration: duration  usage: r capacity: c];
+   id<CPIntVarArray> end = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+      return act[k].end;
+   }];
+   return [self cumulative: start duration: duration end: end usage: r capacity: c];
 }
 // Disjunctive (resource) constraint
 //

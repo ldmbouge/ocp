@@ -20,6 +20,7 @@
 {
    id<ORIntVar> _start;
    id<ORIntVar> _duration;
+   id<ORIntVar> _end;
 }
 -(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
 {
@@ -42,6 +43,10 @@
 -(id<ORIntVar>) duration
 {
    return _duration;
+}
+-(id<ORIntVar>) end
+{
+   return _end;
 }
 -(void)visit:(ORVisitor*) v
 {
