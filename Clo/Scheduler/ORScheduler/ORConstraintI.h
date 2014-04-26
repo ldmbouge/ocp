@@ -23,9 +23,9 @@
 
 // Cumulative (resource) constraint
 @interface ORCumulative : ORConstraintI<ORCumulative>
--(id<ORCumulative>) initORCumulative:(id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
+-(id<ORCumulative>) initORCumulative:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
 -(id<ORIntVarArray>) start;
--(id<ORIntArray>) duration;
+-(id<ORIntVarArray>) duration;
 -(id<ORIntArray>) usage;
 -(id<ORIntVar>) capacity;
 @end

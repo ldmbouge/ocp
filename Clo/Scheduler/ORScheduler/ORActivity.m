@@ -19,9 +19,16 @@
 @implementation ORActivity
 {
    id<ORIntVar> _start;
-   ORInt _duration;
+   id<ORIntVar> _duration;
 }
 -(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
+{
+   self = [super init];
+   _start = [ORFactory intVar: tracker domain: horizon];
+   _duration = [ORFactory intVar: tracker domain: RANGE(tracker,duration,duration)];
+   return self;
+}
+-(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon durationVariable: (id<ORIntVar>) duration
 {
    self = [super init];
    _start = [ORFactory intVar: tracker domain: horizon];
@@ -32,7 +39,7 @@
 {
    return _start;
 }
--(ORInt) duration
+-(id<ORIntVar>) duration
 {
    return _duration;
 }

@@ -59,11 +59,11 @@
 //
 @implementation ORCumulative {
     id<ORIntVarArray> _start;
-    id<ORIntArray>    _dur;
+    id<ORIntVarArray> _dur;
     id<ORIntArray>    _usage;
     id<ORIntVar>      _cap;
 }
--(id<ORCumulative>) initORCumulative:(id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c
+-(id<ORCumulative>) initORCumulative:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c
 {
     self = [super initORConstraintI];
     _start = s;
@@ -86,7 +86,7 @@
 {
     return _start;
 }
--(id<ORIntArray>) duration
+-(id<ORIntVarArray>) duration
 {
     return _dur;
 }

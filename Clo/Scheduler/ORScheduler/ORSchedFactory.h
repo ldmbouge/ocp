@@ -17,6 +17,7 @@
 
 // activities
 +(id<ORActivity>) activity: (id<ORTracker>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
++(id<ORActivity>) activity: (id<ORTracker>) model horizon: (id<ORIntRange>) horizon durationVariable: (id<ORIntVar>) duration;
 +(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<ORActivity>(^)(ORInt)) clo;
 +(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration;
 +(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<ORActivity>(^)(ORInt,ORInt)) clo;

@@ -84,7 +84,7 @@ int main(int argc, const char * argv[])
          for(ORInt i = Size.low; i <= Size.up; i++) {
             id<ORActivityArray> act = [machine[i] activities];
             for(ORInt k = act.range.low; k <= act.range.up; k++) {
-               printf("[%d): %d --(%d) --> %d]",act[k].getId,[cp intValue: act[k].start],act[k].duration,[cp intValue: act[k].start] + act[k].duration);
+               printf("[%d): %d --(%d) --> %d]",act[k].getId,[cp intValue: act[k].start],[cp intValue: act[k].duration],[cp intValue: act[k].start] + [cp intValue: act[k].duration]);
             }
             printf("\n");
          }

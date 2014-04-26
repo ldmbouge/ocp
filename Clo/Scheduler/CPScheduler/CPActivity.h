@@ -15,7 +15,7 @@
 @protocol CPActivity <ORObject>
 -(ORInt) getId;
 -(id<CPIntVar>) start;
--(ORInt) duration;
+-(id<CPIntVar>) duration;
 @end
 
 @protocol CPActivityArray <ORObject>
@@ -32,7 +32,7 @@
 @end
 
 @interface CPActivity : ORObject<CPActivity>
--(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (ORInt) duration;
+-(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration;
 @end
 
 @protocol CPDisjunctiveResource <ORObject>

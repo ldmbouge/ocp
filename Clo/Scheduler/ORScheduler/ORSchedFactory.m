@@ -22,6 +22,12 @@
    [model trackMutable:o];
    return o;
 }
++(id<ORActivity>) activity: (id<ORTracker>) model horizon: (id<ORIntRange>) horizon durationVariable: (id<ORIntVar>) duration
+{
+   id<ORActivity> o = [[ORActivity alloc] initORActivity: model horizon: horizon durationVariable:duration];
+   [model trackMutable:o];
+   return o;
+}
 +(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
 {
    id<ORIdArray> o = [ORFactory idArray: model range:range];
@@ -72,14 +78,22 @@
 //
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c
 {
-    id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration:d usage:r capacity:c];
+   id<ORTracker> tracker = [s tracker];
+   id<ORIntVarArray> duration = [ORFactory intVarArray: tracker range:[s range] with:^id<ORIntVar>(ORInt k) {
+      return [ORFactory intVar: tracker domain: RANGE(tracker,[d at: k],[d at: k])];
+   }];
+    id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration: duration usage:r capacity:c];
     [[s tracker] trackMutable:o];
     return o;
 }
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r maxCapacity:(ORInt) c
 {
+   id<ORTracker> tracker = [s tracker];
+   id<ORIntVarArray> duration = [ORFactory intVarArray: tracker range:[s range] with:^id<ORIntVar>(ORInt k) {
+      return [ORFactory intVar: tracker domain: RANGE(tracker,[d at: k],[d at: k])];
+   }];
    id<ORIntVar> capacity = [ORFactory intVar: [s tracker] domain: RANGE([s tracker],c,c)];
-   id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration:d usage:r capacity:capacity];
+   id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration: duration usage:r capacity:capacity];
    [[s tracker] trackObject:o];
    return o;
 }

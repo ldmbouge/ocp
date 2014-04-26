@@ -23,9 +23,10 @@
 {
    if (_gamma[act.getId] == NULL) {
       id<ORIntVar> start = [act start];
-      ORInt duration = [act duration];
+      id<ORIntVar> duration = [act duration];
       [start visit: self];
-      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration: duration];
+      [duration visit: self];
+      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration:  _gamma[duration.getId]];
       _gamma[act.getId] = concreteAct;
    }
 }
@@ -46,14 +47,14 @@
 {
     if (_gamma[cstr.getId] == NULL) {
         id<ORIntVarArray> start = [cstr start];
-        id<ORIntArray> duration = [cstr duration];
+        id<ORIntVarArray> duration = [cstr duration];
         id<ORIntArray> usage = [cstr usage];
         id<ORIntVar> capacity = [cstr capacity];
         [start visit: self];
         [duration visit: self];
         [usage visit: self];
         [capacity visit: self];
-        id<CPConstraint> concreteCstr = [CPFactory cumulative: _gamma[start.getId] duration: duration usage:usage capacity: _gamma[capacity.getId]];
+        id<CPConstraint> concreteCstr = [CPFactory cumulative: _gamma[start.getId] duration: _gamma[duration.getId] usage:usage capacity: _gamma[capacity.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

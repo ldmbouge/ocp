@@ -16,9 +16,9 @@
 @implementation CPActivity
 {
    id<CPIntVar> _start;
-   ORInt _duration;
+   id<CPIntVar> _duration;
 }
--(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (ORInt) duration
+-(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration
 {
    self = [super init];
    _start = start;
@@ -29,7 +29,7 @@
 {
    return _start;
 }
--(ORInt) duration
+-(id<CPIntVar>) duration
 {
    return _duration;
 }

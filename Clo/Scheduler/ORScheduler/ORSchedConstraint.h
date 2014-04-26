@@ -25,7 +25,7 @@
 
 @protocol ORCumulative <ORConstraint>
 -(id<ORIntVarArray>) start;
--(id<ORIntArray>) duration;
+-(id<ORIntVarArray>) duration;
 -(id<ORIntArray>) usage;
 -(id<ORIntVar>) capacity;
 @end

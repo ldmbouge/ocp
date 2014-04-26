@@ -17,12 +17,13 @@
 @protocol ORActivity <ORObject>
 -(ORInt) getId;
 -(id<ORIntVar>) start;
--(ORInt) duration;
+-(id<ORIntVar>) duration;
 -(id<ORPrecedes>) precedes: (id<ORActivity>) after;
 @end
 
 @interface ORActivity : ORObject<ORActivity> 
 -(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+-(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon durationVariable: (id<ORIntVar>) duration;
 @end
 
 @protocol ORActivityArray <ORObject>
