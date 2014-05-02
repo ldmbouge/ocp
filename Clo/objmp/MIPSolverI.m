@@ -732,23 +732,32 @@
    int sizeIdx = (uidx - lidx + 1);
    ORFloat* bucket = (ORFloat*) alloca(sizeIdx * sizeof(ORFloat));
    MIPVariableI** bucketVar = (MIPVariableI**) alloca(sizeIdx * sizeof(MIPVariableI*));
+   ORInt* toProcess = alloca(sizeof(ORInt)*sizeIdx);
+   memset(bucketVar,0,sizeIdx*sizeof(MIPVariableI*));
    bucket -= lidx;
    bucketVar -= lidx;
    for(ORInt i = lidx; i <= uidx; i++)
       bucket[i] = 0.0;
+   ORInt nb = 0;
    for(ORInt i = 0; i < _size; i++) {
       int idx = [_var[i] idx];
       bucket[idx] += _coef[i];
+      if (bucketVar[idx] == 0)
+         toProcess[nb++] = idx;
       bucketVar[idx] = _var[i];
    }
-   int nb = 0;
-   for(ORInt i = lidx; i <= uidx; i++) {
-      if (bucket[i] != 0) {
-         _var[nb] = bucketVar[i];
-         _coef[nb] = bucket[i];
-         nb++;
-      }
+   for(ORInt k=0;k < nb;k++) {
+      ORInt at = toProcess[k];
+      _var[k] = bucketVar[at];
+      _coef[k] = bucket[at];
    }
+//   for(ORInt i = lidx; i <= uidx; i++) {
+//      if (bucket[i] != 0) {
+//         _var[nb] = bucketVar[i];
+//         _coef[nb] = bucket[i];
+//         nb++;
+//      }
+//   }
    _size = nb;
 }
 @end

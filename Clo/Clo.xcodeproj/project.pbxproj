@@ -5517,7 +5517,7 @@
 
 /* Begin PBXFileReference section */
 		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
-		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
+		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; tabWidth = 3; };
 		379CDEEB16F17D71000E7338 /* ORModelTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelTransformation.h; sourceTree = "<group>"; };
 		379E3EC518E9EC3F0066399A /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		379E3EC718E9EC3F0066399A /* SetCovering.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = SetCovering.1; sourceTree = "<group>"; };
@@ -5897,7 +5897,7 @@
 		5BAD1158161E5E430014EBCB /* ORModeling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORModeling.h; sourceTree = "<group>"; };
 		5BAD1159161E5E430014EBCB /* ORModeling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORModeling.m; sourceTree = "<group>"; };
 		5BAD1164161E5F2B0014EBCB /* ORModelI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelI.h; sourceTree = "<group>"; };
-		5BAD1165161E5F2B0014EBCB /* ORModelI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORModelI.m; sourceTree = "<group>"; };
+		5BAD1165161E5F2B0014EBCB /* ORModelI.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORModelI.m; sourceTree = "<group>"; tabWidth = 3; };
 		5BAEE08415AE9883006CEE1E /* ORParallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParallel.h; sourceTree = "<group>"; };
 		5BAEE08515AE9883006CEE1E /* ORParallel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORParallel.m; sourceTree = "<group>"; };
 		5BAEE09D15AEA08E006CEE1E /* costas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = costas; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6238,12 +6238,12 @@
 		B1CC832715D3BEC4008DE335 /* model-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "model-Prefix.pch"; sourceTree = "<group>"; };
 		B1CC832815D3BEC4008DE335 /* model.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = model.1; sourceTree = "<group>"; };
 		B1E1C78A17036D27006AACFC /* MIPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSolverI.h; sourceTree = "<group>"; };
-		B1E1C78B17036D27006AACFC /* MIPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSolverI.m; sourceTree = "<group>"; };
+		B1E1C78B17036D27006AACFC /* MIPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.objc; path = MIPSolverI.m; sourceTree = "<group>"; tabWidth = 3; };
 		B1E1C78E17036D4C006AACFC /* MIPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPGurobi.h; sourceTree = "<group>"; };
 		B1E1C78F17036D4C006AACFC /* MIPGurobi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPGurobi.m; sourceTree = "<group>"; };
 		B1E1C79217036D7B006AACFC /* MIPType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPType.h; sourceTree = "<group>"; };
 		B1E1C7961703725B006AACFC /* MIPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSolver.h; sourceTree = "<group>"; };
-		B1E1C7971703725B006AACFC /* MIPSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSolver.m; sourceTree = "<group>"; };
+		B1E1C7971703725B006AACFC /* MIPSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.objc; path = MIPSolver.m; sourceTree = "<group>"; tabWidth = 3; };
 		B1E1C79A170372FB006AACFC /* MIPProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPProgram.h; sourceTree = "<group>"; };
 		B1E1C79C1703741E006AACFC /* MIPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPConcretizer.h; sourceTree = "<group>"; };
 		B1E1C79D1703741E006AACFC /* MIPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPConcretizer.m; sourceTree = "<group>"; };

@@ -98,6 +98,7 @@
    id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] mul: @(i)]);
    [_model addConstraint: [sumBinVars eq: @(1)]];
    [_model addConstraint: [sumExpr eq: x]];
+   [[[_model modelMappings] tau] set: o forKey: x];
    return o;
 }
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var
@@ -204,7 +205,8 @@
         case ORRLEq: {
             left = [self linearizeExpr: [binExpr left]];
             right = [self linearizeExpr: [binExpr right]];
-            [_model addConstraint: [left leq: right]];
+            id<ORConstraint> c = [_model addConstraint: [left leq: right]];
+           [[[_model modelMappings] tau] set: c forKey: cstr];
         }break;
        case ORRGEq: {
            left = [self linearizeExpr: [binExpr left]];

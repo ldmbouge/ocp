@@ -318,12 +318,23 @@ static void heapify(ORPQueue* pq,ORInt i)
 -(id<ORParameterizedModel>) apply: (id<ORModel>)m relaxing: (NSArray*)cstrs
 {
     // Lookup constraints wrt this model
-    NSMutableArray* myCstrs = [[NSMutableArray alloc] init];
-    for(id<ORConstraint> cstr in cstrs) {
-        NSArray* tc = [[m tau] get: cstr];
-        if(tc == nil) [myCstrs addObject: cstr];
-        else [myCstrs addObjectsFromArray: tc];
-    }
+//    NSMutableArray* myCstrs = [[NSMutableArray alloc] init];
+//    for(id<ORConstraint> cstr in cstrs) {
+//        NSArray* tc = [[m tau] get: cstr];
+//        if(tc == nil) [myCstrs addObject: cstr];
+//        else [myCstrs addObjectsFromArray: tc];
+//    }
+    
+    // SURROGATE
+        NSMutableArray* myCstrs = [[NSMutableArray alloc] init];
+        for(id<ORConstraint> cstr in cstrs) {
+            id tc = [[m tau] get: cstr];
+            if(tc == nil) [myCstrs addObject: cstr];
+            else if([tc isKindOfClass: [NSArray class]]) {
+                [myCstrs addObjectsFromArray: tc];
+            }
+            else [myCstrs addObject: tc];
+        }
     
     id<ORParameterizedModel> relaxedModel = [self softify: m constraints: myCstrs];
     id<ORIntRange> slackRange = RANGE(relaxedModel, 0, (ORInt)myCstrs.count-1);

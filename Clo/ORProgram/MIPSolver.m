@@ -321,6 +321,7 @@
    for(id<ORSnapshot> vs in _varShots) {
       ORInt vsID = [vs getId];
       inc = curId <= vsID;
+       curId = vsID;
       if (!inc) break;
    }
    if (!inc) {
@@ -345,6 +346,24 @@
          [shot release];
       }];
       _paramShots = snapshots;
+      
+      ORInt curId = 0;
+      BOOL  inc = YES;
+      for(id<ORSnapshot> ps in _paramShots) {
+         ORInt psID = [ps getId];
+         inc = curId <= psID;
+         curId = psID;
+         if (!inc) break;
+      }
+      if (!inc) {
+         _paramShots = [snapshots sortedArrayUsingComparator:^NSComparisonResult(id<ORSnapshot> a,id<ORSnapshot> b) {
+            ORInt v = [b getId] - [a getId];
+            if (v <0) return NSOrderedAscending;
+            else if (v>0) return NSOrderedDescending;
+            else return NSOrderedSame;
+         }];
+      }
+
    }
    else _paramShots = nil;
    
@@ -401,10 +420,25 @@
 }
 -(ORInt) intValue: (id) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [var getId] == [obj getId];
-   }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
+   ORInt vid = getId(var);
+   ORInt low = 0;
+   ORInt up  = (ORInt)[_varShots count];
+   while (low <= up) {
+      ORInt m = low + (up - low)/2;
+      id<ORSnapshot> sm = [_varShots objectAtIndex:m];
+      ORInt smid = [sm getId];
+      if (smid == vid)
+         return [sm floatValue];
+      else if (smid < vid)
+         low = m + 1;
+      else up = m - 1;
+   }
+   assert(false);
+   return INT_MAX;
+//   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+//      return [var getId] == [obj getId];
+//   }];
+//   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
 }
 -(ORBool) boolValue: (id) var
 {
@@ -429,6 +463,7 @@
       else up = m - 1;
    }
    assert(false);
+   return DBL_MAX;
 //   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
 //      return vid == getId(obj);
 //   }];
@@ -436,13 +471,28 @@
 }
 -(ORFloat) paramFloatValue: (id<ORFloatParam>) param
 {
-   NSUInteger idx = -1;
-   ORInt pid = getId(param);
-   idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return pid == getId(obj);
-   }];
-   assert(idx != -1 && idx != 9223372036854775807);
-   return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
+   ORInt vid = getId(param);
+   ORInt low = 0;
+   ORInt up  = (ORInt)[_paramShots count];
+   while (low <= up) {
+      ORInt m = low + (up - low)/2;
+      id<ORSnapshot> sm = [_paramShots objectAtIndex:m];
+      ORInt smid = [sm getId];
+      if (smid == vid)
+         return [sm floatValue];
+      else if (smid < vid)
+         low = m + 1;
+      else up = m - 1;
+   }
+   assert(false);
+   return DBL_MAX;
+//   NSUInteger idx = -1;
+//   ORInt pid = getId(param);
+//   idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+//        return pid == getId(obj);
+//   }];
+//   assert(idx != -1 && idx != 9223372036854775807);
+//   return [(id<ORSnapshot>) [_paramShots objectAtIndex:idx] floatValue];
 }
 -(ORFloat) floatMin: (id<ORFloatVar>) var
 {

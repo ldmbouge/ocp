@@ -203,7 +203,7 @@
    [ORConcurrency pumpEvents];
    _nbf++;
    [_controller._val fail];
-   assert(0);
+   assert(0); // Dan surrogate debugging
 }
 
 -(void) try: (ORClosure) left or: (ORClosure) right

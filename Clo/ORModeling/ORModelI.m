@@ -617,12 +617,13 @@
 }
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
+   id<ORConstraint> newCstr = cstr;
    if (cstr && (id)cstr != [NSNull null]) {
-      [_target add: cstr];
+      newCstr = [_target add: cstr];
       if (_current)
          [_notes transfer: _current toConstraint: cstr];
    }
-   return cstr;
+   return newCstr;
 }
 -(id<ORModel>) model
 {
