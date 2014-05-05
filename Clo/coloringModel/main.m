@@ -157,7 +157,7 @@ int main(int argc, const char * argv[])
    id<ORParameterizedModel> lagrangeModel1 = [t4 apply: model relaxing: unrelaxCstrs];
    id<ORIntVarArray> slacks1 = (id<ORIntVarArray>)[lagrangeModel1 slacks];
    
-   void (^search1)(id<CPCommonProgram>) = ^(id<CPCommonProgram> cp){
+   void (^search1)(id<CPCommonProgram>) = ^(id<CPProgram> cp){
       //         for(id<ORIntVarArray> vars in searchSets) {
       //            //NSLog(@"**CLIQUE: %@",vars);
       //            [vars enumerateWith: ^(id obj, int idx) {
@@ -173,39 +173,53 @@ int main(int argc, const char * argv[])
       //               }
       //            }];
       //         }
-      
-      __block ORInt maxc = 0;
-      for(NSSet* vars in searchC) {
-         for(id obj in vars) {
-            if(![cp bound: obj]) {
-               //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
-               [cp tryall: V
-                 suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
-                       in:^(ORInt v) { [cp label: obj with: v]; maxc = max(maxc, v); }
-                onFailure:^(ORInt v) {
-                   [cp diff: obj with:v];
-                }];
+      [cp limitCondition:^bool{
+         ORInt ttlSlacks = 0;
+         for(ORInt k=slacks1.range.low;k <= slacks1.range.up;k++)
+            if (![cp bound:slacks1[k]])
+               return false;
+         for(ORInt k=slacks1.range.low;k <= slacks1.range.up;k++)
+            ttlSlacks += [cp intValue:slacks1[k]];
+         return (ttlSlacks == 0);
+      } in:^{
+         
+         __block ORInt maxc = 0;
+         ORInt CID = 0;
+         for(NSSet* vars in searchC) {
+            NSLog(@"In component... %d",CID);
+            for(id obj in vars) {
+               if(![cp bound: obj]) {
+                  //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
+                  [cp tryall: V
+                    suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
+                          in:^(ORInt v) { [cp label: obj with: v]; maxc = max(maxc, v); }
+                   onFailure:^(ORInt v) {
+                      [cp diff: obj with:v];
+                   }];
+               }
+            }
+            CID++;
+         }
+         NSLog(@"First loop...");
+         for(NSSet* vars in searchNC) {
+            for(id obj in vars) {
+               if(![cp bound: obj]) {
+                  //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
+                  [cp tryall: V
+                    suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
+                          in:^(ORInt v) { [cp label: obj with: v]; maxc = max(maxc, v); }
+                   onFailure:^(ORInt v) {
+                      [cp diff: obj with:v];
+                   }];
+               }
             }
          }
-      }
-      
-      for(NSSet* vars in searchNC) {
-         for(id obj in vars) {
-            if(![cp bound: obj]) {
-               //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
-               [cp tryall: V
-                 suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
-                       in:^(ORInt v) { [cp label: obj with: v]; maxc = max(maxc, v); }
-                onFailure:^(ORInt v) {
-                   [cp diff: obj with:v];
-                }];
-            }
-         }
-      }
-      
-      [cp label:m with:[cp min: m]];
-      [cp labelArray: slacks1];
-      //NSLog(@"coloring: %i", [cp min: m]);
+         
+         [cp label:m with:[cp min: m]];
+         [cp labelArray: slacks1];
+         NSLog(@"coloring: %i", [cp min: m]);
+         NSLog(@"Objective: %@",[[cp objective] value]);
+      }];
    };
    
    id<ORRunnable> r1 = [ORFactory CPSubgradient: lagrangeModel1 bound: UB search: search1];

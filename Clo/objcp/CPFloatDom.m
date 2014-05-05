@@ -42,14 +42,13 @@
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
    ORIReady();
-   ORInterval me = createORI2(_min._val, _max._val);
-   BOOL isb = ORIBound(me, TOLERANCE);
-   if (isb)
-      return;
    if (newMin <= _min._val)
       return;
+   ORInterval me = createORI2(_min._val, _max._val);
    if (ORIEmpty(ORIInter(me, createORI1(newMin))))
       failNow();
+   if (ORIBound(me, TOLERANCE))
+      return;
    assignTRDouble(&_min, newMin, _trail);
    ORIReady();
    ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
@@ -60,14 +59,13 @@
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
 {
    ORIReady();
-   ORInterval me = createORI2(_min._val, _max._val);
-   BOOL isb = ORIBound(me, TOLERANCE);
-   if (isb)
-      return;
    if (newMax >= _max._val)
       return;
+   ORInterval me = createORI2(_min._val, _max._val);
    if (ORIEmpty(ORIInter(me, createORI1(newMax))))
       failNow();
+   if (ORIBound(me, TOLERANCE))
+      return;
    assignTRDouble(&_max, newMax, _trail);
    ORIReady();
    ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
