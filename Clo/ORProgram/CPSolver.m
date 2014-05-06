@@ -952,14 +952,18 @@
 }
 -(ORInt) maxBound:(id<ORIdArray>) x
 {
-   ORInt low = [x low];
-   ORInt up = [x up];
+   id<ORIdArray> cx = [self concretize:x];
+   ORInt low = [cx low];
+   ORInt up = [cx up];
    ORInt M = -MAXINT;
    for(ORInt i = low; i <= up; i++) {
-      if ([self bound:x[i]]) {
-         ORInt v = [self intValue:x[i]];
-         if (v > M)
-            M = v;
+//      if ([self bound:x[i]]) {
+      ORBounds ib = bounds(cx[i]);
+      if (ib.min == ib.max) {
+         //ORInt v = [self intValue:x[i]];
+         //ORInt v = minDom(cx[i]);
+         if (ib.min > M)
+            M = ib.min;
       }
    }
    return M;

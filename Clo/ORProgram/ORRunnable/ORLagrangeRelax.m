@@ -324,7 +324,7 @@
             id<ORFloatParam> lambda = obj;
             ORFloat value = [sol paramFloatValue: lambda];
             id<ORVar> slack = [slacks at: idx];
-            ORFloat newValue = MAX(0, value + stepSize * [sol floatValue: (id<ORFloatVar>)slack]);
+            ORFloat newValue = MAX(0.0, value + stepSize * [sol floatValue: (id<ORFloatVar>)slack]);
             [(id<CPProgram>)program paramFloat: lambda setValue: newValue];
             //NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
         }];

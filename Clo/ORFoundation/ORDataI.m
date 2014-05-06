@@ -17,6 +17,7 @@
 #import <unistd.h>
 #import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORVisit.h>
+#import <mach/mach_time.h>
 
 @implementation NSObject (Concretization)
 -(void) setImpl: (id) impl
@@ -513,13 +514,25 @@ static ORInt _deterministic;
 @end
 
 @implementation ORRuntimeMonitor
+static mach_timebase_info_data_t info;
++(void)load
+{
+   if (mach_timebase_info(&info) != KERN_SUCCESS)
+      info.denom = info.numer = 1;
+}
 +(ORLong) cputime
 {
+#if defined(__APPLE__)
+   uint64_t start = mach_absolute_time ();
+   uint64_t nanos = (double)start * info.numer / (info.denom * NSEC_PER_MSEC);
+   return (ORLong)nanos;
+#else
    struct rusage r;
    getrusage(RUSAGE_SELF,&r);
    struct timeval t;
    t = r.ru_utime;
    return 1000 * t.tv_sec + t.tv_usec / 1000;
+#endif
 }
 +(ORLong) microseconds
 {

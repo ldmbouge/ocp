@@ -2785,7 +2785,7 @@
    self = [super initORConstraintI];
    _x = x;
    _z = [ORFactory floatVar: [x tracker]  low:FDMININT up:FDMAXINT];
-   _lambda = [[ORFloatParamI alloc] initORFloatParamI: [x tracker] initialValue: 0.0];
+   _lambda = [[ORFloatParamI alloc] initORFloatParamI: [x tracker] initialValue: 0.0]; // TOTRY [ldm] try with param @ 1.
    return self;
 }
 -(id<ORVar>) z

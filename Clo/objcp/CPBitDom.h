@@ -26,9 +26,9 @@ enum CPDomClass {
 @package
    enum CPDomClass    _dc;
    id<ORTrail>     _trail;
+@public
    ORInt            _imin;
    ORInt            _imax;
-@public
    TRInt             _min;
    TRInt             _max;
    TRInt              _sz;
@@ -66,10 +66,11 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 
 @interface CPBitDom : CPBoundsDom {
 @package
-   unsigned*    _bits;
    ORInt*      _magic;
    UBType  _updateMin;
-   UBType  _updateMax;   
+   UBType  _updateMax;
+@public
+   unsigned*    _bits;
 }
 -(CPBitDom*)initBitDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
 -(void)dealloc;
