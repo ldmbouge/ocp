@@ -723,6 +723,19 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"reached elementMatrixVar in CPConcretizer"];
 }
+-(void) visitImplyEqualc: (id<ORImplyEqualc>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORIntVar> x = [cstr x];
+        ORInt cst = [cstr cst];
+        [b visit: self];
+        [x visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory imply: _gamma[b.getId] with: _gamma[x.getId] eqi: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

@@ -41,6 +41,8 @@
 // Disjunctive (resource) constraint
 @interface ORDisjunctive : ORConstraintI<ORDisjunctive>
 -(id<ORDisjunctive>) initORDisjunctive:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
+-(id<ORDisjunctive>) initORDisjunctive:(id<OROptionalActivityArray>) act;
+-(id<OROptionalActivityArray>) act;
 -(id<ORIntVarArray>) start;
 -(id<ORIntVarArray>) duration;
 @end

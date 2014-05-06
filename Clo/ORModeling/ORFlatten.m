@@ -401,6 +401,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c
+{
+    _result = [_into addConstraint:c];
+}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
    _result = [_into addConstraint:c];

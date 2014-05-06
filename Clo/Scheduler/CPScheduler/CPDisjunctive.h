@@ -13,14 +13,17 @@
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
+#import "CPActivity.h"
 
 
 @interface CPDisjunctive : CPCoreConstraint<NSCoding> {
+    id<CPOptionalActivityArray> _act; // (Optional) activities
     id<CPIntVarArray> _start;   // Start times of tasks
     id<CPIntVarArray> _dur;     // Durations of tasks
 }
 
 -(id) initCPDisjunctive: (id<CPIntVarArray>) s duration: (id<CPIntVarArray>) d;
+-(id) initCPDisjunctive: (id<CPOptionalActivityArray>) act;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

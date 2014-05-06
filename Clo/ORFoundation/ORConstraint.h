@@ -218,6 +218,12 @@ enum ORGroupType {
 -(id<ORFloatVar>)   res;
 @end
 
+@protocol ORImplyEqualc <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
+@end
+
 @protocol ORReify <ORConstraint>
 @end
 

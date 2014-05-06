@@ -73,7 +73,7 @@ int main(int argc, const char * argv[])
             [machine[[resource at: i : j]] isRequiredBy: [activity at: i : j]];
       
        for(ORInt i = Size.low; i <= Size.up; i++)
-          [model add: [ORFactory disjunctive: [machine[i] activities]]];
+          [model add: [ORFactory schedulingDisjunctive: [machine[i] activities]]];
 
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];

@@ -209,6 +209,10 @@
 -(id<ORFloatVar>)     res;
 @end
 
+@interface ORImplyEqualc : ORConstraintI<ORImplyEqualc>
+-(ORImplyEqualc*)initImply:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c;
+@end
+
 @interface ORReifyEqualc : ORConstraintI<ORReifyEqualc>
 -(ORReifyEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c;
 @end

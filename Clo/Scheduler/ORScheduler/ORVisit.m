@@ -18,6 +18,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
 }
+-(void) visitOptionalActivity: (id<OROptionalActivity>) activity
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
+}
 -(void) visitDisjunctiveResource: (id<ORDisjunctiveResource>) dr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive resource: visit method not defined"];
@@ -64,6 +68,10 @@
 -(void) visitActivity: (id<ORActivity>) activity
 {
    
+}
+-(void) visitOptionalActivity: (id<OROptionalActivity>) activity
+{
+    
 }
 -(void) visitDisjunctiveResource: (id<ORDisjunctiveResource>) activity
 {

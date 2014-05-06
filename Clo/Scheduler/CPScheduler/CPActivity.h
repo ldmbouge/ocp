@@ -19,6 +19,10 @@
 -(id<CPIntVar>) end;
 @end
 
+@interface CPActivity : ORObject<CPActivity>
+-(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration end: (id<CPIntVar>) end;
+@end
+
 @protocol CPActivityArray <ORObject>
 -(id<CPActivity>) at: (ORInt) idx;
 -(void) set: (id<CPActivity>) value at: (ORInt)idx;
@@ -32,10 +36,6 @@
 -(id<ORTracker>) tracker;
 @end
 
-@interface CPActivity : ORObject<CPActivity>
--(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration end: (id<CPIntVar>) end;
-@end
-
 @protocol CPDisjunctiveResource <ORObject>
 -(id<CPActivityArray>) activities;
 @end
@@ -43,4 +43,39 @@
 @interface CPDisjunctiveResource : ORObject<CPDisjunctiveResource>
 -(id<CPDisjunctiveResource>) initCPDisjunctiveResource: (id<ORTracker>) tracker activities: (id<CPActivityArray>) activities;
 -(id<CPActivityArray>) activities;
+@end
+
+
+/*******************************************************************************
+ Below is the definition of an optional activity object using a tripartite
+ representation for "optional" variables
+ ******************************************************************************/
+
+@protocol CPOptionalActivity <ORObject>
+-(ORInt) getId;
+-(id<CPIntVar>) startLB;
+-(id<CPIntVar>) startUB;
+-(id<CPIntVar>) duration;
+-(id<CPIntVar>) top;
+-(BOOL)         isOptional;
+-(void) updateStartMin: (ORInt) v;
+-(void) updateStartMax: (ORInt) v;
+@end
+
+@interface CPOptionalActivity : ORObject<CPOptionalActivity>
+-(id<CPOptionalActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration;
+-(id<CPOptionalActivity>) initCPOptionalActivity: (id<CPIntVar>) top startLB: (id<CPIntVar>) startLB startUB: (id<CPIntVar>) startUB startRange: (id<ORIntRange>) startRange duration: (id<CPIntVar>) duration;
+@end
+
+@protocol CPOptionalActivityArray <ORObject>
+-(id<CPOptionalActivity>) at: (ORInt) idx;
+-(void) set: (id<CPOptionalActivity>) value at: (ORInt)idx;
+-(id<CPOptionalActivity>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<CPOptionalActivity>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
 @end

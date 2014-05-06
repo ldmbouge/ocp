@@ -819,6 +819,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) imply:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i
+{
+    id<ORConstraint> o = [[ORImplyEqualc alloc] initImply: b equiv:x eqi: i];
+    [model trackObject:o];
+    return o;
+}
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyEqualc alloc] initReify: b equiv:x eqi: i];

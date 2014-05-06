@@ -286,6 +286,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatElementCst: visit method not defined"]; 
 }
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ImplyEqualc: visit method not defined"];
+}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ReifyEqualc: visit method not defined"]; 
@@ -607,6 +611,7 @@
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
 -(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr {}
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c  {}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c  {}
 -(void) visitReifyEqual: (id<ORReifyEqual>)c  {}
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c  {}

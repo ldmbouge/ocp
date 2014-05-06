@@ -191,6 +191,13 @@
    return litView;
 }
 
++(id<ORConstraint>) imply: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
+{
+    id<ORConstraint> o = [[CPImplyEqualcDC alloc] initCPImplyEqualcDC: b when: x eq: i];
+    [[x engine] trackMutable: o];
+    return o;
+}
+
 +(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
 {
    id<ORConstraint> o = [[CPReifyEqualcDC alloc] initCPReifyEqualcDC: b when: x eq: i];

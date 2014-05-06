@@ -25,6 +25,10 @@
                                horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration;
 +(id<ORDisjunctiveResourceArray>) disjunctiveResourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
 
+// optional activities
++(id<OROptionalActivity>) compulsoryActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
++(id<OROptionalActivity>) optionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+
 // Precedence constraints
 +(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after;
 
@@ -35,7 +39,8 @@
 
 // Disjunctive Resource constraint
 +(id<ORDisjunctive>) disjunctive: (id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
-+(id<ORSchedulingDisjunctive>) disjunctive: (id<ORActivityArray>) act;
++(id<ORDisjunctive>) disjunctive: (id<OROptionalActivityArray>) act;
++(id<ORSchedulingDisjunctive>) schedulingDisjunctive: (id<ORActivityArray>) act;
 +(id<ORDisjunctiveResource>) disjunctiveResource: (id<ORTracker>) model;
 
 // Difference Logic constraints

@@ -79,3 +79,38 @@
 -(id<ORTracker>) tracker;
 @end
 
+
+/*******************************************************************************
+ Below is the definition of an optional activity object using a tripartite
+ representation for "optional" variables
+ ******************************************************************************/
+
+@protocol OROptionalActivity <ORObject>
+-(ORInt) getId;
+-(id<ORIntVar>) startLB;
+-(id<ORIntVar>) startUB;
+-(id<ORIntVar>) duration;
+-(id<ORIntVar>) top;
+-(BOOL) isOptional;
+-(id<ORIntRange>) startRange;
+//-(id<ORPrecedes>) precedes: (id<OROptionalActivity>) after;
+@end
+
+@interface OROptionalActivity : ORObject<OROptionalActivity>
+-(id<OROptionalActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<OROptionalActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+@end
+
+@protocol OROptionalActivityArray <ORObject>
+-(id<OROptionalActivity>) at: (ORInt) idx;
+-(void) set: (id<OROptionalActivity>) value at: (ORInt)idx;
+-(id<OROptionalActivity>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<OROptionalActivity>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+

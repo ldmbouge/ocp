@@ -103,3 +103,78 @@
 }
 @end
 
+
+/*******************************************************************************
+ Below is the definition of an optional activity object using a tripartite
+ representation for "optional" variables
+ ******************************************************************************/
+
+@implementation OROptionalActivity
+{
+    id<ORIntVar> _startLB;
+    id<ORIntVar> _startUB;
+    id<ORIntVar> _duration;
+    id<ORIntVar> _top;
+    BOOL         _optional;
+    id<ORIntRange> _startRange;
+}
+-(id<OROptionalActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+{
+    self      = [super init];
+    _startLB  = [ORFactory intVar: model domain: horizon ];
+    _startUB  = _startLB;
+    _duration = [ORFactory intVar: model domain: duration];
+    _top      = [ORFactory intVar: model value : 1       ];
+    _optional = FALSE;
+    _startRange = horizon;
+    return self;
+}
+-(id<OROptionalActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+{
+    self      = [super init];
+    // Initialisation of all variables
+    _startLB  = [ORFactory intVar : model domain: RANGE(model, horizon.low    , horizon.up + 1) ];
+    _startUB  = [ORFactory intVar : model domain: RANGE(model, horizon.low - 1, horizon.up    ) ];
+    _duration = [ORFactory intVar : model domain: duration];
+    _top      = [ORFactory boolVar: model                 ];
+    _optional = TRUE;
+    _startRange = horizon;
+    // Constraints for the tri-partite optional variable representation
+    [model add: [ORFactory reify:model boolean:_top with:_startLB leq :_startUB   ]];
+    [model add: [ORFactory reify:model boolean:_top with:_startLB leqi:horizon.up ]];
+    [model add: [ORFactory reify:model boolean:_top with:_startUB geqi:horizon.low]];
+    return self;
+}
+-(id<ORIntVar>) startLB
+{
+    return _startLB;
+}
+-(id<ORIntVar>) startUB
+{
+    return _startLB;
+}
+-(id<ORIntVar>) duration
+{
+    return _duration;
+}
+-(id<ORIntVar>) top
+{
+    return _top;
+}
+-(BOOL) isOptional
+{
+    return _optional;
+}
+-(id<ORIntRange>) startRange
+{
+    return _startRange;
+}
+-(void)visit:(ORVisitor*) v
+{
+    [v visitOptionalActivity: self];
+}
+//-(id<ORPrecedes>) precedes: (id<OROptionalActivity>) after
+//{
+//    return [ORFactory precedence: self precedes: after];
+//}
+@end

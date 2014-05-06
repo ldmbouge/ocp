@@ -86,6 +86,7 @@
 -(void) visitElementVar: (id<ORElementVar>)c;
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c;
 -(void) visitFloatElementCst: (id<ORFloatElementCst>)c;
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c;
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
 -(void) visitReifyEqual: (id<ORReifyEqual>)c;
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;

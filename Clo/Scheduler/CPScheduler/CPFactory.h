@@ -16,6 +16,8 @@
 
 @interface CPFactory (CPScheduler)
 +(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration end:(id<CPIntVar>) end;
++(id<CPOptionalActivity>) compulsoryActivity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration;
++(id<CPOptionalActivity>) optionalActivity: (id<CPIntVar>) top startLB: (id<CPIntVar>) startLB startUB:(id<CPIntVar>) startUB startRange:(id<ORIntRange>)startRange duration:(id<CPIntVar>) duration;
 +(id<CPDisjunctiveResource>) disjunctiveResource:  (id<ORTracker>) tracker  activities: (id<CPActivityArray>) activities;
 
 +(id<CPConstraint>) precedence: (id<CPActivity>) before precedes:(id<CPActivity>) after;
@@ -23,6 +25,7 @@
 +(id<CPConstraint>) cumulative: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d end:(id<CPIntVarArray>) e usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;
 +(id<CPConstraint>) cumulative: (id<CPActivityArray>) act usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;
 +(id<CPConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d;
-+(id<CPConstraint>) disjunctive: (id<CPActivityArray>) act;
++(id<CPConstraint>) disjunctive: (id<CPOptionalActivityArray>) act;
++(id<CPConstraint>) schedulingDisjunctive: (id<CPActivityArray>) act;
 +(id<CPConstraint>) difference: (id<ORTracker>) tracker engine: (id<CPEngine>) e withInitCapacity:(ORInt) numItems;
 @end

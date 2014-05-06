@@ -36,6 +36,7 @@
 
 
 @protocol ORDisjunctive <ORConstraint>
+-(id<OROptionalActivityArray>) act;
 -(id<ORIntVarArray>) start;
 -(id<ORIntVarArray>) duration;
 @end

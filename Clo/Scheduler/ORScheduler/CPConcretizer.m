@@ -54,6 +54,31 @@
    }
 }
 
+-(void) visitOptionalActivity:(id<OROptionalActivity>) act
+{
+    if (_gamma[act.getId] == NULL) {
+        id<ORIntVar> startLB  = [act startLB ];
+        id<ORIntVar> startUB  = [act startUB ];
+        id<ORIntVar> duration = [act duration];
+        id<ORIntVar> top      = [act top     ];
+        [startLB  visit: self];
+        [duration visit: self];
+        
+        id<CPOptionalActivity> concreteAct;
+        
+        if (act.isOptional == TRUE) {
+            [startUB visit: self];
+            [top     visit: self];
+            
+            concreteAct = [CPFactory optionalActivity:_gamma[top.getId] startLB:_gamma[startLB.getId] startUB:_gamma[startUB.getId] startRange: [act startRange] duration:_gamma[duration.getId]];
+        } else {
+            concreteAct = [CPFactory compulsoryActivity:_gamma[startLB.getId] duration:_gamma[duration.getId]];
+        }
+        
+        _gamma[act.getId] = concreteAct;
+    }
+}
+
 -(void) visitDisjunctiveResource:(id<ORDisjunctiveResource>) dr
 {
    if (_gamma[dr.getId] == NULL) {
@@ -117,11 +142,21 @@
 -(void) visitDisjunctive:(id<ORDisjunctive>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
-        id<ORIntVarArray> start = [cstr start];
-        id<ORIntVarArray> duration = [cstr duration];
-        [start visit: self];
-        [duration visit: self];
-        id<CPConstraint> concreteCstr = [CPFactory disjunctive: _gamma[start.getId] duration: _gamma[duration.getId]];
+        id<CPConstraint> concreteCstr;
+        if ([cstr act] == NULL) {
+            id<ORIntVarArray> start = [cstr start];
+            id<ORIntVarArray> duration = [cstr duration];
+            
+            [start    visit: self];
+            [duration visit: self];
+            concreteCstr = [CPFactory disjunctive: _gamma[start.getId] duration: _gamma[duration.getId]];
+        }
+        else {
+            id<OROptionalActivityArray> act = [cstr act];
+            
+            [act visit: self];
+            concreteCstr = [CPFactory disjunctive:_gamma[act.getId]];
+        }
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
@@ -133,7 +168,7 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORActivityArray> activities = [cstr activities];
       [activities visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory disjunctive: _gamma[activities.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory schedulingDisjunctive: _gamma[activities.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

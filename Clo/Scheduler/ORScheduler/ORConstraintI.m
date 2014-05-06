@@ -199,14 +199,24 @@
 // Disjunctive (resource) constraint
 //
 @implementation ORDisjunctive {
-    id<ORIntVarArray> _start;
-    id<ORIntVarArray> _dur;
+    id<OROptionalActivityArray> _act;
+    id<ORIntVarArray>           _start;
+    id<ORIntVarArray>           _dur;
 }
 -(id<ORDisjunctive>) initORDisjunctive:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d
 {
     self = [super initORConstraintI];
+    _act   = NULL;
     _start = s;
     _dur   = d;
+    return self;
+}
+-(id<ORDisjunctive>) initORDisjunctive:(id<OROptionalActivityArray>)act
+{
+    self = [super initORConstraintI];
+    _act   = act;
+    _start = NULL;
+    _dur   = NULL;
     return self;
 }
 -(void)visit:(ORVisitor*) v
@@ -218,6 +228,10 @@
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [buf appendFormat:@"<%@ : %p> -> disjunctive(%@,%@)>", [self class], self, _start, _dur];
     return buf;
+}
+-(id<OROptionalActivityArray>) act
+{
+    return _act;
 }
 -(id<ORIntVarArray>) start
 {

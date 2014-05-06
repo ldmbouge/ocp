@@ -15,6 +15,50 @@
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
 
+@implementation CPImplyEqualcDC
+-(id) initCPImplyEqualcDC: (CPIntVar*) b when: (CPIntVar*) x eq: (ORInt) c
+{
+    self = [super initCPCoreConstraint:[b engine]];
+    _b = b;
+    _x = x;
+    _c = c;
+    return self;
+}
+
+-(void) post
+{
+    if ([_b bound]) {
+        if ([_b min] == true)
+            [_x bind:_c];
+    }
+    else if (![_x member:_c])
+        [_b bind:false];
+    else {
+        [_b setBindTrigger: ^ {
+            if ([_b min] == true) {
+                [_x bind:_c];
+            }
+        } onBehalf:self];
+        [_x setLoseTrigger: _c do: ^ {
+            [_b bind:false];
+        } onBehalf:self];
+    }
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound] + ![_b bound];
+}
+-(NSString*)description
+{
+    return [NSMutableString stringWithFormat:@"<CPImplyEqualcDC:%02d %@ => (%@ == %d)>",_name,_b,_x,_c];
+}
+@end
+
+
 @implementation CPReifyNotEqualcDC
 -(id)initCPReifyNotEqualcDC:(CPIntVar*)b when:(CPIntVar*)x neq:(ORInt)c
 {

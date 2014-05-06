@@ -315,6 +315,10 @@
 {
    _result = c;
 }
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c
+{
+    _result = c;
+}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
    _result = c;

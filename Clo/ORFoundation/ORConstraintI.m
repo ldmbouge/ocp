@@ -1368,6 +1368,63 @@
 @end
 
 
+@implementation ORImplyEqualc {
+    id<ORIntVar> _b;
+    id<ORIntVar> _x;
+    ORInt        _c;
+}
+-(ORImplyEqualc*)initImply:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c
+{
+    self = [super initORConstraintI];
+    _b = b;
+    _x = x;
+    _c = c;
+    return self;
+}
+-(NSString*) description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %d)",[self class],self,_b,_x,_c];
+    return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+    [v visitImplyEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+    return _b;
+}
+-(id<ORIntVar>) x
+{
+    return _x;
+}
+-(ORInt) cst
+{
+    return _c;
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:_b];
+    [aCoder encodeObject:_x];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    _b = [aDecoder decodeObject];
+    _x = [aDecoder decodeObject];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+    return self;
+}
+@end
+
+
 @implementation ORReifyEqualc {
    id<ORIntVar> _b;
    id<ORIntVar> _x;

@@ -57,6 +57,20 @@
       return [ORFactory activity: model horizon: horizon duration: [duration at: i : j]];
    }];
 }
+// Optional activities
++(id<OROptionalActivity>) compulsoryActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+{
+    id<OROptionalActivity> o = [[OROptionalActivity alloc] initORActivity: model horizon: horizon duration:duration];
+    [model trackMutable:o];
+    return o;
+}
++(id<OROptionalActivity>) optionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+{
+    id<OROptionalActivity> o = [[OROptionalActivity alloc] initOROptionalActivity: model horizon: horizon duration:duration];
+    [model trackMutable:o];
+    return o;
+}
+
 +(id<ORDisjunctiveResourceArray>) disjunctiveResourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
 {
    id<ORIdArray> o = [ORFactory idArray: model range:range];
@@ -112,7 +126,13 @@
     [[s tracker] trackObject:o];
     return o;
 }
-+(id<ORSchedulingDisjunctive>) disjunctive: (id<ORActivityArray>) act
++(id<ORDisjunctive>) disjunctive: (id<OROptionalActivityArray>) act
+{
+    id<ORDisjunctive> o = [[ORDisjunctive alloc] initORDisjunctive:act];
+    [[act tracker] trackObject:o];
+    return o;
+}
++(id<ORSchedulingDisjunctive>) schedulingDisjunctive: (id<ORActivityArray>) act
 {
    id<ORSchedulingDisjunctive> o = [[ORSchedulingDisjunctive alloc] initORSchedulingDisjunctive: act];
    [[act tracker] trackObject:o];
