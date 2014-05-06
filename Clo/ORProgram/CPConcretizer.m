@@ -1228,6 +1228,16 @@
       [left remove:[cstr cst]];
    }];
 }
+-(void) visitNEqual: (id<ORNEqual>) cstr
+{
+   id<CPIntVar> left  = [self concreteVar:[cstr left]];
+   id<CPIntVar> right = [self concreteVar:[cstr right]];
+   ORInt cst = [cstr cst];
+   id<CPConstraint> concreteCstr = [CPFactory notEqual: left  to: right plus: cst];
+   [_engine add: concreteCstr];
+   _gamma[cstr.getId] = concreteCstr;
+}
+
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (!_gamma[v.getId])

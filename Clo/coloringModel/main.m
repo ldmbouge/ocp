@@ -36,6 +36,7 @@ int main(int argc, const char * argv[])
    //@autoreleasepool {
    //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
    //      [args measure:^struct ORResult(){
+   [ORStreamManager setRandomized];
    ORInt relaxCount = 201;//atoi(argv[2]);
    ORInt cliqueCount = 20;//atoi(argv[1]);
    ORFloat UB = 75;//atoi(argv[3]);
@@ -60,10 +61,21 @@ int main(int argc, const char * argv[])
          if(edges[k].i == i || edges[k].j == i) d++;
       return d;
    }];
-   
    id<ORIntVarArray> c  = [ORFactory intVarArray:model range:V domain: V];
    id<ORIntVar>      m  = [ORFactory intVar:model domain:V];
    id<ORIntSetArray> sa = [ORFactory intSetArray: model range: V];
+   
+   ORInt lid = 1000000,uid = - 1000000;
+   for(ORInt k=V.low;k <= V.up;k++) {
+      lid = min(lid,[c[k] getId]);
+      uid = max(uid,[c[k] getId]);
+   }
+   ORInt* vmap = (int*)malloc(sizeof(ORInt)*(uid - lid + 1));
+   vmap -= lid;
+   for(ORInt k=V.low;k <= V.up;k++) {
+      vmap[getId(c[k])] = k;
+   }
+   
    NSMutableArray* coupledCstr = [[NSMutableArray alloc] init];
    NSMutableArray* nonCoupledCstr = [[NSMutableArray alloc] init];
    id<ORConstraint> cstr;
@@ -158,7 +170,68 @@ int main(int argc, const char * argv[])
    id<ORIntVarArray> slacks1 = (id<ORIntVarArray>)[lagrangeModel1 slacks];
    
    void (^search1)(id<CPCommonProgram>) = ^(id<CPProgram> cp){
+      id<CPFloatVar> ofv = [[[cp objective] allVars] anyObject];
+      [cp try:^{
+         [ofv updateMax:16.0];
+         [ofv updateMin:16.0];
+         [[cp objective] updatePrimalBound];
+         [[cp engine] enforceObjective];
+         [[cp explorer] fail];
+      } or:^{
+         [ofv updateMin:15.0];
+         [cp gthen:m with:14];
+      }];
+      //for(id<ORConstraint> rc in unrelaxCstrs) [cp add:rc];
+
+//      [cp forall: V
+//        suchThat:^bool(ORInt i) { return ![cp bound: c[i]];}
+//       orderedBy: ^ORInt(ORInt i) { return [cp domsize: c[i]]; }
+//             and: ^ORInt(ORInt i) { return - [deg at:i];}
+//              do: ^(ORInt i) {
+//                 //for(ORInt j=c.low;j <= c.up;j++) printf("|c[%d]|= %d  -- deg = %d\n",j,[cp domsize:c[j]],[deg at:j]);
+//                 ORInt maxc = max(0,[cp maxBound: c]);
+//                 [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {
+//                    //NSLog(@"LABEL c[%d] to %d",i,v);
+//                    [cp label: c[i] with: v];
+//                 }
+//                  onFailure:^(ORInt v) {
+//                     //NSLog(@"DIFF  c[%d] to %d",i,v);
+//                     [cp diff: c[i] with:v];
+//                  }
+//                  ];
+//              }
+//       ];
+//      [cp label:m with:[cp min: m]];
+
+      
       ORInt CID = 0;
+
+      for(id<ORIntVarArray> vars in searchSets) {
+         NSLog(@"**CLIQUE: %d",CID);
+         [cp forall: vars.range
+           suchThat: ^bool(ORInt i) { return ![cp bound: vars[i]];}
+                 orderedBy: ^ORInt(ORInt i) { return [cp domsize: vars[i]]; }
+                       and: ^ORInt(ORInt i) {
+                          ORInt vid = getId(vars[i]);
+                          if (lid <= vid && vid <= uid)
+                             return - [deg at:vmap[getId(vars[i])]];
+                          else return 0;
+                       }
+                       do: ^(ORInt i) {
+                           ORInt maxc = max(0,[cp maxBound: c]);
+                           [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: vars[i]];} in:^(ORInt v) {
+                              [cp label: vars[i] with: v];
+                           }
+                            onFailure:^(ORInt v) {
+                               [cp diff: vars[i] with:v];
+                            }
+                          ];
+                      }
+          ];
+         CID++;
+      }
+
+      
       for(id<ORIntVarArray> vars in searchSets) {
          NSLog(@"**CLIQUE: %d",CID);
          [vars enumerateWith: ^(id obj, int idx) {
