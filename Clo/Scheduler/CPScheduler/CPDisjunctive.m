@@ -301,6 +301,15 @@ static void initThetaTree(ThetaTree * theta, ORUInt tsize, ORInt time) {
     }
 }
 
+// Initialisation of an empty Lambda tree
+//
+static void initLambdaTree(LambdaTree * lambda, ORUInt tsize, ORInt time) {
+    for (ORUInt i = 0; i < tsize; i++) {
+        lambda[i]._gLength = 0;
+        lambda[i]._gTime   = time;
+    }
+}
+
 
 // Insertation of one task in a Theta tree
 //
@@ -659,6 +668,58 @@ static void ef_overload_check_vilim(CPDisjunctive * disj, const ORInt size, cons
     }
 }
 
+// Resource overload check with optional activities from Vilim
+//  Time: O(n log n)
+//  Space: O(n)
+//  NOTE: Vilim's algorithm contains a minor mistake. A potential overload caused
+//      by an optional activity also needs to be check after insertion of optional
+//      activities.
+//
+static void ef_overload_check_optional_vilim(CPDisjunctive * disj, const ORInt size, const ORUInt * idx_map_est, ThetaTree * theta, LambdaTree * lambda, const ORUInt tsize, const ORUInt tdepth)
+{
+    // Initialisation of Theta and Lambda tree
+    initThetaTree( theta,  tsize, MININT);
+    initLambdaTree(lambda, tsize, MININT);
+    // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
+    const ORUInt offset = (1 << tdepth) - 1;
+    // Iteration in non-descreasing order of the latest completion time
+    for (ORInt tt = 0; tt < size; tt++) {
+        const ORInt t = disj->_task_id_lct[tt];
+        if (isPresent(disj, disj->_idx[t])) {
+            // Compulsory activity
+            // Retrieve task's position in task_id_est
+            const ORUInt tree_idx = idx_map_est[t];
+            const ORInt ect_t = disj->_est[t] + disj->_dur_min[t];
+            // Insert activity into theta tree
+            insertThetaNodeAtIdxEct(theta, tsize, tree_idx, disj->_dur_min[t], ect_t);
+            // Update lambda tree
+            insertLambdaNodeAtIdxEct(theta, lambda, tsize, tree_idx, 0, MININT);
+            // Check for resource overload
+            if (theta[0]._time > disj->_lct[t]) {
+                failNow();
+            }
+        }
+        else if (!isAbsent(disj, disj->_idx[t])) {
+            // Optional activity
+            insertLambdaNodeAtIdxEct(theta, lambda, tsize, idx_map_est[t], disj->_dur_min[t], disj->_est[t] + disj->_dur_min[t]);
+        }
+        // Dectection of potential overloads
+        while (lambda[0]._gTime > disj->_lct[t]) {
+            // Retrieve responsible leaf
+            const ORUInt leaf_idx = retrieveResponsibleLambdaNodeWithEct(theta, lambda, tsize);
+            // The leaf must be a gray one
+            assert(theta[leaf_idx]._time == MININT && lambda[leaf_idx]._gTime != MININT);
+            // Map leaf index to task ID
+            const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + disj->_size) - offset);
+            const ORUInt k = disj->_task_id_est[array_idx];
+            assert(leaf_idx == idx_map_est[k]);
+            // Set to absent
+            [disj->_act[disj->_idx[t]].top updateMax: 0];
+            // Remove from Lambda tree
+            insertLambdaNodeAtIdxEct(theta, lambda, tsize, idx_map_est[k], 0, MININT);
+        }
+    }
+}
 
 /*******************************************************************************
  Detectable Precedences Filtering Algorithms
@@ -730,6 +791,8 @@ static void dprec_filter_lct_vilim(CPDisjunctive * disj, const ORInt size, const
     // Iterating over the tasks in descending order of their latest start time
     for (ORInt ii = size - 1; ii >= 0; ii--) {
         const ORUInt i = disj->_task_id_lst[ii];
+        // XXX Just temporary skipping of optional activities
+        if (!isPresent(disj, disj->_idx[i])) continue;
 //        printf("Outer loop: ii %d\n", ii);
 //        dumpTask(disj, i);
         // Inner loop:
@@ -1207,7 +1270,8 @@ static void doPropagation(CPDisjunctive * disj) {
     // Updating indices
     updateIndices(disj);
     
-    const ORInt size = disj->_uIdx._val;
+    const ORInt size  = disj->_uIdx._val;
+    const ORInt cSize = disj->_cIdx._val;
     
     // Allocation of memory
     disj->_est           = alloca(size * sizeof(ORInt ));
@@ -1268,24 +1332,35 @@ static void doPropagation(CPDisjunctive * disj) {
         initIndexMap(disj->_task_id_est, idx_map_est, size, tsize, tdepth);
         
         // Consistency check
-        ef_overload_check_vilim(disj, size, idx_map_est, theta, tsize);
+        if (cSize < size) {
+            ef_overload_check_optional_vilim(disj, size, idx_map_est, theta, lambda, tsize, tdepth);
+        }
+        else {
+            ef_overload_check_vilim(disj, size, idx_map_est, theta, tsize);
+        }
 
         // Further initialisations needed for the filtering algorithm
         initIndexMap(disj->_task_id_lct, idx_map_lct, size, tsize, tdepth);
         qsort_r(disj->_task_id_ect, size, sizeof(ORInt), disj, (int(*)(void*, const void*, const void*)) &sortDisjEctAsc);
         qsort_r(disj->_task_id_lst, size, sizeof(ORInt), disj, (int(*)(void*, const void*, const void*)) &sortDisjLstAsc);
         
-        // Detectable precedences
-        if (disj->_dprec) {
-            dprec_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, tsize, & update);
-        }
-        // Not-first/not-last
-        if (!update && disj->_nfnl) {
-            nfnl_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, tsize, & update);
-        }
-        // Edge-finding
-        if (!update && disj->_ef) {
-            ef_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
+        // XXX Just temporary until implementation of alogirthms taking optional activities is completed
+        if (cSize >= size) {
+            // Detectable precedences
+            // TODO optional activities
+            if (disj->_dprec) {
+                dprec_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, tsize, & update);
+            }
+            // Not-first/not-last
+            // TODO optional activities
+            if (!update && disj->_nfnl) {
+                nfnl_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, tsize, & update);
+            }
+            // Edge-finding
+            // TODO optional activities
+            if (!update && disj->_ef) {
+                ef_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
+            }
         }
     } while (disj->_idempotent && update);
     
