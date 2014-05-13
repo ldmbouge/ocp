@@ -258,7 +258,7 @@ int main(int argc, const char * argv[])
             
          }];
       } onRepeat:^{
-         [tl setValue:[tl intValue] + 100];
+         [tl setValue:(ORInt)((double)[tl intValue] * 1.1)];
          NSLog(@"From the top with: %@  LIMIT = %d",[cp objective],[tl intValue]);
       } until:^bool{
          return !*limitReached;
