@@ -1401,6 +1401,126 @@ static void ef_filter_lct_vilim(CPDisjunctive * disj, const ORInt size, const OR
     }
 }
 
+
+// Edge-Finding algorithm
+//  Time: O(n^2)
+//  Space: O(n)
+//
+//  NOTE: Tasks with a minimal duration of zero will be ignored.
+//
+static void ef_filter_est_and_lct_optional(CPDisjunctive * disj, const ORInt size, bool * update)
+{
+    ef_filter_est_optional(disj, size, update);
+    ef_filter_lct_optional(disj, size, update);
+    if (update) updateBounds(disj, size);
+}
+
+static void ef_filter_est_optional(CPDisjunctive * disj, const ORInt size, bool * update)
+{
+    ORInt length = 0;
+    // Outer loop:
+    // Iterating over activities in ascending order of their latest completion time
+    for (ORInt ii = 0; ii < size; ii++) {
+        const ORInt i = disj->_task_id_lct[ii];
+        // Skip activities with no duration or non-present activities
+        if (disj->_dur_min[i] == 0 || !isPresent(disj, disj->_idx[i])) continue;
+        const ORInt end = disj->_lct[i];
+        // Determine the length of all present activities with latest completion
+        // time less than or equal to 'end'
+        length += disj->_dur_min[i];
+        // Initialisation for inner loop
+        ORInt length_end  = length;
+        ORInt ect_omega   = MININT;
+        ORInt begin_omega = MININT;
+        
+        // Inner loop:
+        // Iterating over activities in ascending order of their earliest start time
+        for (ORInt jj = 0; jj < size; jj++) {
+            const ORInt j = disj->_task_id_est[jj];
+            // Skip activities with no duration or absent activities
+            if (disj->_dur_min[j] == 0 || isAbsent(disj, disj->_idx[j])) continue;
+            
+            if (disj->_lct[j] <= end && isPresent(disj, disj->_idx[j])) {
+                // Activity 'j' is in the activity interval
+                const ORInt ect_i = disj->_est[j] + length_end;
+                if (ect_i > ect_omega) {
+                    ect_omega   = ect_i;
+                    begin_omega = disj->_est[j];
+                }
+                length_end -= disj->_dur_min[j];
+            }
+            else {
+                // Activity 'j' is not in the activity interval
+                // Bounds check for time interval [est(j), end)
+                if (disj->_est[j] + disj->_dur_min[j] + length_end > end && disj->_est[j] + length_end > disj->_new_est[j]) {
+                    // New lower bound was found
+                    disj->_new_est[j] = disj->_est[j] + length_end;
+                    *update = true;
+                }
+                // Bounds check for time interval [begin_omega, end)
+                if (ect_omega + disj->_dur_min[j] > end && ect_omega > disj->_new_est[j]) {
+                    // New lower bound was found
+                    disj->_new_est[j] = ect_omega;
+                    *update = true;
+                }
+            }
+        }
+    }
+}
+
+static void ef_filter_lct_optional(CPDisjunctive * disj, const ORInt size, bool * update)
+{
+    ORInt length = 0;
+    // Outer loop:
+    // Iterating over activities in descending order of their earliest start time
+    for (ORInt ii = 0; ii < size; ii++) {
+        const ORInt i = disj->_task_id_est[ii];
+        // Skip activities with no duration or non-present activities
+        if (disj->_dur_min[i] == 0 || !isPresent(disj, disj->_idx[i])) continue;
+        const ORInt begin = disj->_est[i];
+        // Determine the length of all present activities with an earliest start
+        // time greater than or equal to 'end'
+        length += disj->_dur_min[i];
+        // Initialisation for inner loop
+        ORInt length_begin = length;
+        ORInt lst_omega    = MAXINT;
+        ORInt end_omega    = MAXINT;
+        
+        // Inner loop:
+        // Iterating over activities in descending order of their latest completion time
+        for (ORInt jj = 0; jj < size; jj++) {
+            const ORInt j = disj->_task_id_lct[jj];
+            // Skip activities with no duration or absent activities
+            if (disj->_dur_min[j] == 0 || isAbsent(disj, disj->_idx[j])) continue;
+            
+            if (begin <= disj->_est[j] && isPresent(disj, disj->_idx[j])) {
+                // Activity 'j' is in time interval [begin, lct(j))
+                const ORInt lst_j = disj->_lct[j] - length_begin;
+                if (lst_j < lst_omega) {
+                    lst_omega = lst_j;
+                    end_omega = disj->_lct[j];
+                }
+                length_begin -= disj->_dur_min[j];
+            }
+            else {
+                // Activity is not in the activity interval
+                // Bounds check for time interval [begin, lct(j))
+                if (disj->_lct[j] - disj->_dur_min[j] - length_begin < begin && disj->_lct[j] - length_begin < disj->_new_lct[j]) {
+                    // New upper bound was found
+                    disj->_new_lct[j] = disj->_lct[j] - length_begin;
+                    *update = true;
+                }
+                // Bounds check for time interval [begin, end_omega)
+                if (lst_omega - disj->_dur_min[j] < begin && lst_omega < disj->_new_lct[j]) {
+                    // New upper bound was found
+                    disj->_new_lct[j] = lst_omega;
+                    *update = true;
+                }
+            }
+        }
+    }
+}
+
 /*******************************************************************************
  Computation of the local and global slack
  ******************************************************************************/
@@ -1721,12 +1841,14 @@ static void doPropagation(CPDisjunctive * disj) {
                 nfnl_filter_est_and_lct_optional_vilim(disj, size, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
             }
         }
-        // XXX Just temporary until implementation of alogirthms taking optional activities is completed
-        if (cSize >= size) {
-            // Edge-finding
-            // TODO optional activities
-            if (!update && disj->_ef) {
+        // Edge-finding
+        if (!update && disj->_ef) {
+            if (cSize >= size) {
                 ef_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
+            }
+            else {
+                // NOTE: This algorithms has a time-complexity of O(n^2)
+                ef_filter_lct_optional(disj, size, & update);
             }
         }
     } while (disj->_idempotent && update);
