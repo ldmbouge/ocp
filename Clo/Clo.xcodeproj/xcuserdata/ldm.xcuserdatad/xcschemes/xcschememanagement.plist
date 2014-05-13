@@ -14,6 +14,11 @@
 			<key>orderHint</key>
 			<integer>58</integer>
 		</dict>
+		<key>CPScheduler.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>81</integer>
+		</dict>
 		<key>CPUKernel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -68,6 +73,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>46</integer>
+		</dict>
+		<key>ORScheduler.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>80</integer>
 		</dict>
 		<key>ORUtilities.xcscheme_^#shared#^_</key>
 		<dict>
@@ -233,6 +243,16 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>5</integer>
+		</dict>
+		<key>jobshop.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>85</integer>
+		</dict>
+		<key>jsp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>82</integer>
 		</dict>
 		<key>knapsack.xcscheme_^#shared#^_</key>
 		<dict>
@@ -449,6 +469,11 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
+		<key>rcpsp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>83</integer>
+		</dict>
 		<key>regular.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -458,6 +483,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>55</integer>
+		</dict>
+		<key>shiploading.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>84</integer>
 		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
@@ -563,6 +593,26 @@
 			<true/>
 		</dict>
 		<key>37A715C716FB93F900E02DC6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>537EE9A618FCDC520006FFD2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>537EEA2618FCE1FE0006FFD2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>537EEA5F18FCF1C70006FFD2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>537EEA7C18FCF9880006FFD2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -942,6 +992,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>B12BE44219012746006D1D59</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>B12ED8BF159E0C2200713C8E</key>
 		<dict>
 			<key>primary</key>
@@ -1048,6 +1103,11 @@
 			<true/>
 		</dict>
 		<key>B19ABA08146D68FE004EB77E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B19B5583190518CF0069ABA0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
