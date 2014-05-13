@@ -67,7 +67,16 @@
 {
     _exitBlock = [c copy];
 }
-
+-(ORFloat) bestBound
+{
+   abort();
+   return 0.0;
+}
+-(id<ORSolution>) bestSolution
+{
+   abort();
+   return nil;
+}
 @end
 
 

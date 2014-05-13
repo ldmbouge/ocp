@@ -66,5 +66,6 @@
 
 -(void) printModelToFile: (char*) fileName;
 -(void) print;
+-(void) updateModel;
 @end
 

@@ -49,7 +49,7 @@
 
 -(void) receiveLowerBound:(ORFloat)bound
 {
-    NSLog(@"(%p) recieved lower bound: %i", self, bound);
+    NSLog(@"(%p) recieved lower bound: %f", self, bound);
 }
 
 -(void) receiveSolution:(id<ORSolution>)sol {

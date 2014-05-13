@@ -73,7 +73,6 @@
 -(void)               label: (id<ORIntVar>) mx;
 
 -(void)               solve: (ORClosure) body;
--(void)               solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 -(void)            solveAll: (ORClosure) body;
 -(void)               close;
 
@@ -135,8 +134,6 @@
 -(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
 -(ORFloat) floatExprValue: (id<ORExpr>)e;
 -(ORFloat) domwidth:(id<ORFloatVar>)x;
--(ORFloat) fmin:(id<ORFloatVar>)x;
--(ORFloat) fmax:(id<ORFloatVar>)x;
 -(ORFloat) floatMin: (id<ORFloatVar>)x;
 -(ORFloat) floatMax: (id<ORFloatVar>)x;
 -(ORBool) boolValue: (id<ORIntVar>) x;

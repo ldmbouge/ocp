@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORVisit.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <CPUKernel/CPEngineI.h>
 

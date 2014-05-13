@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 # Filename intoDB.py
 
@@ -22,6 +23,11 @@ class Environment:
 		(key,value) = result.split('=')
 		value = value.lstrip().rstrip()
 		os.environ['BUILT_PRODUCTS_DIR'] = value
+		self.showSettings()
+		
+	def showSettings(self):
+		print("BUILT in [" + os.environ['BUILT_PRODUCTS_DIR'] + "]")
+ 
 	def notify(self,msg,execmd):
 		notifierPath = "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier"
 		cmd = notifierPath + " -message \"" + msg + "\"  -execute '" + execmd + "'"

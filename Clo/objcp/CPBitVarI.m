@@ -66,6 +66,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
       [_rep._dom release];
    [super dealloc];
 }
+-(ORInt)getId
+{
+   return _name;
+}
 -(int)intValue
 {
    return _asDom ? [_rep._dom min] : _rep._value;

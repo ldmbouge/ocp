@@ -219,7 +219,7 @@
     __block ORFloat slackSum = 0.0;
     id<ORSolution> bestSol = nil;
     
-    id<ORVarArray> slacks = [_model slacks];
+    id<ORFloatVarArray> slacks = (id)[_model slacks];
 
     // Take this out
     __block id<ORExpr> slackSumExpr = nil;
@@ -277,8 +277,15 @@
         }];
         NSLog(@"slack sum: %f", slackSum);
         // Take this out
-        [(id<CPProgram>)program addConstraintDuringSearch:
-            [CPFactory lEqualc: [[[program modelMappings] tau] get: slackSumVar] to: slackSum]];
+       // LDM: The two lines below make no sense. a CPProgram does not have a model mapping in this branch (that is a bug)
+       // Besides, we shouldn't be constraining the sum of the slacks.
+       // If you wish to retrieve the concrete version of slackSumVar, the right API to use is:
+       // [program concretize:slackSumVar]  (which you can then use to post a constraint).
+       
+//        [(id<CPProgram>)program addConstraintDuringSearch:
+//            [CPFactory lEqualc: [[[program modelMappings] tau] get: slackSumVar] to: slackSum]];
+       //LDM: correct version below (if we wanted to use it).
+       //[(id<CPProgram>)program addConstraintDuringSearch:[CPFactory lEqualc: [program concretize:slackSumVar] to: slackSum]];
         ///////////////////
         
         // Check for improvement
@@ -323,8 +330,8 @@
         [lambdas enumerateWith:^(id obj, ORInt idx) {
             id<ORFloatParam> lambda = obj;
             ORFloat value = [sol paramFloatValue: lambda];
-            id<ORVar> slack = [slacks at: idx];
-            ORFloat newValue = MAX(0.0, value + stepSize * [sol floatValue: (id<ORFloatVar>)slack]);
+            id<ORFloatVar> slack = [slacks at: idx];
+            ORFloat newValue = MAX(0.0, value + stepSize * [sol floatValue: slack]);
             if(newValue > 100)
                 NSLog(@"why?");
             [(id<CPProgram>)program paramFloat: lambda setValue: newValue];
@@ -793,7 +800,12 @@
 -(void) solveIt: (id)solver {
     id<CPProgram> program = (id<CPProgram>)solver;
     NSLog(@"Solving...");
-    [program solveOn: _search withTimeLimit: _subgradientTimeLimit];
+   [program solve:^{
+      [program limitTime:_subgradientTimeLimit * 1000
+                      in:^{
+                         _search(program);
+                      }];
+   }];
 }
 @end
 
@@ -826,7 +838,12 @@
 -(void) solveIt: (id)solver {
     id<CPProgram> program = (id<CPProgram>)solver;
     NSLog(@"Solving...");
-    [program solveOn: _search withTimeLimit: _subgradientTimeLimit];
+   [program solve:^{
+      [program limitTime:_subgradientTimeLimit * 1000
+                      in:^{
+                         _search(program);
+                      }];
+   }];
 }
 @end
 

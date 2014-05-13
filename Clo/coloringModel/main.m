@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
    //      [args measure:^struct ORResult(){
    [ORStreamManager setRandomized];
    ORInt relaxCount = 201;//atoi(argv[2]);
-   ORInt cliqueCount = 20;//atoi(argv[1]);
+   //ORInt cliqueCount = 20;//atoi(argv[1]);
    ORFloat UB = 75;//atoi(argv[3]);
    ORFloat timeLimit = 5 * 60;
    
@@ -111,10 +111,10 @@ int main(int argc, const char * argv[])
    NSArray* split = [ORSubgradientTemplate autosplitVariables: [c toNSArray] constraints: nonCoupledCstr];
    
    // Finish Model
-   NSMutableArray* branchVars = [[c toNSArray] mutableCopy];
+   //NSMutableArray* branchVars = [[c toNSArray] mutableCopy];
    NSMutableArray* varSets = [[NSMutableArray alloc] initWithCapacity: split.count];
    for(NSMutableSet* clique in split) {
-      id<ORConstraint> c = nil;
+      //id<ORConstraint> c = nil;
       //id<ORIntVar> cm  = [ORFactory intVar:model domain:V];
       //[branchVars addObject: cm];
       NSMutableArray* allObjs = [[(NSSet*)clique allObjects] mutableCopy];
@@ -169,7 +169,7 @@ int main(int argc, const char * argv[])
          [s1 addObject: @(value)];
       }
       ORInt deg2 = 0;
-      NSMutableSet* s2 = [[NSMutableSet alloc] initWithCapacity: 16];
+      //NSMutableSet* s2 = [[NSMutableSet alloc] initWithCapacity: 16];
       for(ORInt i = [[(id<ORIdArray>)second range] low]; i <= [[(id<ORIdArray>)second range] up]; i++) {
          id v = [(id<ORIdArray>)second at: i];
          ORInt value = [deg at: [v getId]-1];
@@ -177,8 +177,11 @@ int main(int argc, const char * argv[])
          [s1 addObject: @(value)];
       }
       NSLog(@"%i, %i", [first getId], deg1);
-      NSLog(@"-- %i, %i", [first getId], [s1 count]);
-
+      NSLog(@"-- %i, %lu", [first getId], (unsigned long)[s1 count]);
+      
+      deg1 = deg1 * (ORInt)[first count];
+      deg2 = deg2 * (ORInt)[second count];
+      
       if (deg1 < deg2) return NSOrderedAscending;
       else if (deg1 > deg2) return NSOrderedDescending;
       else {
@@ -190,7 +193,7 @@ int main(int argc, const char * argv[])
    NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"" ascending:NO comparator: myBlock];
    NSArray *sds = [NSArray arrayWithObject:sd];
    __block NSArray* searchSets = [varSets sortedArrayUsingDescriptors: sds];
-   
+   NSArray* originalOrdering = [searchSets copy];
 //   NSMutableArray* ns = [searchSets mutableCopy];
 //   id a = [searchSets objectAtIndex: 3];
 //   [ns removeObject: a];
@@ -211,7 +214,23 @@ int main(int argc, const char * argv[])
    
 //   __block ORInt myMax = INT_MAX;
    void (^search1)(id<CPCommonProgram>) = ^(id<CPProgram> cp){
-      
+
+      {
+      printf("AT START TIME: searchSet: ");
+      ORInt k= 0;
+      for(id<ORIdArray> ak in searchSets) {
+         ORInt as = [ak count];
+         __block ORInt maxd = 0,mind=100000;
+         [ak enumerateWith:^(id obj, int idx) {
+            ORInt vd = [deg at:vmap[getId(obj)]];
+            maxd = vd > maxd ? vd : maxd;
+            mind = vd < mind ? vd : mind;
+         }];
+         printf("%d(%d,%d - %d),",k++,as,mind,maxd);
+      }
+      printf("\n");
+      }
+
       __block ORInt CID = 0;
       id<ORMutableInteger> tl = [ORFactory mutable:cp value:500];
       ORBool* limitReached = malloc(sizeof(ORBool));
@@ -223,7 +242,7 @@ int main(int argc, const char * argv[])
                        in: ^
              {
                 for(id<ORIntVarArray> vars in searchSets) {
-                   //NSLog(@"**CLIQUE: %d",CID);
+                   //NSLog(@"**CLIQUE: %d -- %@",CID,vars);
                    [cp forall: vars.range
                      suchThat: ^bool(ORInt i) { return ![cp bound: vars[i]];}
                     orderedBy: ^ORInt(ORInt i) { return [cp domsize: vars[i]]; }
@@ -254,12 +273,29 @@ int main(int argc, const char * argv[])
           }];
          } onLimit:^{
             *limitReached = YES;
-            searchSets = shuffleArray(searchSets);
-            
+            NSLog(@"Did we improve?  [%s]",[tl intValue] == 500 ? "YES" : "NO");
+            if ([tl intValue] == 500)
+               searchSets = [originalOrdering copy];
+            else
+               searchSets = shuffleArray(searchSets);
          }];
       } onRepeat:^{
          [tl setValue:(ORInt)((double)[tl intValue] * 1.1)];
          NSLog(@"From the top with: %@  LIMIT = %d",[cp objective],[tl intValue]);
+         ORInt k = 0;
+         printf("searchSet: ");
+         for(id<ORIdArray> ak in searchSets) {
+            ORInt as = [ak count];
+            __block ORInt maxd = 0,mind=100000;
+            [ak enumerateWith:^(id obj, int idx) {
+               ORInt vd = [deg at:vmap[getId(obj)]];
+               maxd = vd > maxd ? vd : maxd;
+               mind = vd < mind ? vd : mind;
+            }];
+            printf("%d(%d,%d - %d),",k++,as,mind,maxd);
+         }
+         printf("\n");
+
       } until:^bool{
          return !*limitReached;
       }
@@ -280,7 +316,7 @@ int main(int argc, const char * argv[])
    NSDate* t1 = [NSDate date];
    NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
    int iter = [(ORSubgradientTemplate*)r1 iterations];
-   ORFloat bnd5 = [r1 bestBound];
+   //ORFloat bnd5 = [r1 bestBound];
    [lagrangeModel1 release];
    //[r0 release];
    //[r1 release];
