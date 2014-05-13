@@ -31,6 +31,17 @@ typedef struct {
    ORInt j;
 } Edge;
 
+NSArray* shuffleArray(NSArray* array) {
+   
+   NSMutableArray *temp = [[NSMutableArray alloc] initWithArray:array];
+   
+   for(NSUInteger i = [array count]; i > 1; i--) {
+      NSUInteger j = (NSUInteger)arc4random_uniform((int)i);
+      [temp exchangeObjectAtIndex:i-1 withObjectAtIndex:j];
+   }
+   return [NSArray arrayWithArray:temp];
+}
+
 int main(int argc, const char * argv[])
 {
    //@autoreleasepool {
@@ -104,17 +115,17 @@ int main(int argc, const char * argv[])
    NSMutableArray* varSets = [[NSMutableArray alloc] initWithCapacity: split.count];
    for(NSMutableSet* clique in split) {
       id<ORConstraint> c = nil;
-      id<ORIntVar> cm  = [ORFactory intVar:model domain:V];
-      [branchVars addObject: cm];
+      //id<ORIntVar> cm  = [ORFactory intVar:model domain:V];
+      //[branchVars addObject: cm];
       NSMutableArray* allObjs = [[(NSSet*)clique allObjects] mutableCopy];
-      [allObjs addObject: cm];
+      //[allObjs addObject: cm];
       [varSets addObject: [ORFactory idArray: model NSArray: allObjs]];
       
-      for(id<ORIntVar> x in clique) {
-         if(x == cm) continue;
+      //for(id<ORIntVar> x in clique) {
+         //if(x == cm) continue;
          //c = [model add: [x leq: cm track: model]];
          //[nonCoupledCstr addObject: c];
-      }
+      //}
       //c = [model add: [m geq: cm track: model]];
       //[coupledCstr addObject: c];
    }
@@ -148,39 +159,72 @@ int main(int argc, const char * argv[])
    }];
    
    //      // TEST CP-LR -----------------------------------------------------------------------
-   NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"count" ascending:NO];
+   NSComparisonResult (^myBlock)(id, id) = ^NSComparisonResult(id first, id second){
+      ORInt deg1 = 0;
+      NSMutableSet* s1 = [[NSMutableSet alloc] initWithCapacity: 16];
+      for(ORInt i = [[(id<ORIdArray>)first range] low]; i <= [[(id<ORIdArray>)first range] up]; i++) {
+         id v = [(id<ORIdArray>)first at: i];
+         ORInt value = [deg at: [v getId]-1];
+         if(value > deg1) deg1 = value;
+         [s1 addObject: @(value)];
+      }
+      ORInt deg2 = 0;
+      NSMutableSet* s2 = [[NSMutableSet alloc] initWithCapacity: 16];
+      for(ORInt i = [[(id<ORIdArray>)second range] low]; i <= [[(id<ORIdArray>)second range] up]; i++) {
+         id v = [(id<ORIdArray>)second at: i];
+         ORInt value = [deg at: [v getId]-1];
+         if(value > deg2) deg2 = value;
+         [s1 addObject: @(value)];
+      }
+      NSLog(@"%i, %i", [first getId], deg1);
+      NSLog(@"-- %i, %i", [first getId], [s1 count]);
+
+      if (deg1 < deg2) return NSOrderedAscending;
+      else if (deg1 > deg2) return NSOrderedDescending;
+      else {
+         if([first count] < [second count]) return NSOrderedAscending;
+         else if([first count] > [second count]) return NSOrderedDescending;
+      }
+      return NSOrderedSame;
+   };
+   NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"" ascending:NO comparator: myBlock];
    NSArray *sds = [NSArray arrayWithObject:sd];
-   NSArray* searchSets = [varSets sortedArrayUsingDescriptors: sds];
+   __block NSArray* searchSets = [varSets sortedArrayUsingDescriptors: sds];
    
-   NSMutableArray* searchC = [[NSMutableArray alloc] init];
-   NSMutableArray* searchNC = [[NSMutableArray alloc] init];
-   for(id<ORIdArray> s in searchSets) {
-      NSMutableSet* ns = [[NSMutableSet alloc] init];
-      NSMutableSet* nns = [[NSMutableSet alloc] init];
-      [s enumerateWith: ^(id x, ORInt idx) {
-         if([c contains: x]) [ns addObject: x];
-         else [nns addObject: x];
-      }];
-      [searchC addObject: ns];
-      [searchNC addObject: nns];
+//   NSMutableArray* ns = [searchSets mutableCopy];
+//   id a = [searchSets objectAtIndex: 3];
+//   [ns removeObject: a];
+//   [ns insertObject: a atIndex:1];
+//   searchSets = ns;
+   
+   for(id<ORIdArray> arr in searchSets) {
+      for(ORInt i = [[arr range] low]; i <= [[arr range] up]; i++) {
+         ORInt ids = [[arr at: i] getId];
+         NSLog(@"%i", ids);
+      }
+      NSLog(@"\n\n");
    }
    
    ORLagrangianTransform* t4 = [ORFactory lagrangianViolationTransform];
    id<ORParameterizedModel> lagrangeModel1 = [t4 apply: model relaxing: unrelaxCstrs];
    id<ORIntVarArray> slacks1 = (id<ORIntVarArray>)[lagrangeModel1 slacks];
    
+//   __block ORInt myMax = INT_MAX;
    void (^search1)(id<CPCommonProgram>) = ^(id<CPProgram> cp){
-      id<CPFloatVar> ofv = [[[cp objective] allVars] anyObject];
-      [cp try:^{
-         [ofv updateMax:16.0];
-         [ofv updateMin:16.0];
-         [[cp objective] updatePrimalBound];
-         [[cp engine] enforceObjective];
-         [[cp explorer] fail];
-      } or:^{
-         [ofv updateMin:15.0];
-         [cp gthen:m with:14];
-      }];
+//      if(myMax != INT_MAX) {
+//      id<CPFloatVar> ofv = [[[cp objective] allVars] anyObject];
+//      [cp try:^{
+//         //[ofv updateMax: myMax];
+//         [ofv updateMin: myMax];
+//         [[cp objective] updatePrimalBound];
+//         [[cp engine] enforceObjective];
+//         [[cp explorer] fail];
+//      } or:^{
+//         [ofv updateMin:myMax];
+//         [cp gthen:m with: myMax-1];
+//      }];
+//      }
+      
       //for(id<ORConstraint> rc in unrelaxCstrs) [cp add:rc];
 
 //      [cp forall: V
@@ -204,50 +248,76 @@ int main(int argc, const char * argv[])
 //      [cp label:m with:[cp min: m]];
 
       
-      ORInt CID = 0;
-
-      for(id<ORIntVarArray> vars in searchSets) {
-         NSLog(@"**CLIQUE: %d",CID);
-         [cp forall: vars.range
-           suchThat: ^bool(ORInt i) { return ![cp bound: vars[i]];}
-                 orderedBy: ^ORInt(ORInt i) { return [cp domsize: vars[i]]; }
-                       and: ^ORInt(ORInt i) {
-                          ORInt vid = getId(vars[i]);
-                          if (lid <= vid && vid <= uid)
-                             return - [deg at:vmap[getId(vars[i])]];
-                          else return 0;
-                       }
-                       do: ^(ORInt i) {
-                           ORInt maxc = max(0,[cp maxBound: c]);
-                           [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: vars[i]];} in:^(ORInt v) {
-                              [cp label: vars[i] with: v];
+      __block ORInt CID = 0;
+      ORBool* limitReached = malloc(sizeof(ORBool));
+      *limitReached = YES;
+      [cp repeat:^{
+         [cp perform:^{
+            *limitReached = NO;
+            [cp limitTime:2000
+                       in: ^
+             {
+                for(id<ORIntVarArray> vars in searchSets) {
+                   NSLog(@"**CLIQUE: %d",CID);
+                   [cp forall: vars.range
+                     suchThat: ^bool(ORInt i) { return ![cp bound: vars[i]];}
+                    orderedBy: ^ORInt(ORInt i) { return [cp domsize: vars[i]]; }
+                          and: ^ORInt(ORInt i) {
+                             ORInt vid = getId(vars[i]);
+                             if (lid <= vid && vid <= uid)
+                                return - [deg at:vmap[getId(vars[i])]];
+                             else return 0;
+                          }
+                           do: ^(ORInt i) {
+                              ORInt maxc = max(0,[cp maxBound: c]);
+                              [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: vars[i]];} in:^(ORInt v) {
+                                 [cp label: vars[i] with: v];
+                              }
+                               onFailure:^(ORInt v) {
+                                  [cp diff: vars[i] with:v];
+                               }
+                               ];
                            }
-                            onFailure:^(ORInt v) {
-                               [cp diff: vars[i] with:v];
-                            }
-                          ];
-                      }
-          ];
-         CID++;
+                    ];
+                   CID++;
+                }
+                [cp label:m with:[cp min: m]];
+                [cp labelArray: slacks1];
+                NSLog(@"coloring: %i", [cp min: m]);
+                NSLog(@"Objective: %@",[[cp objective] value]);
+             //[[cp objective] tightenPrimalBound:[[cp objective] value]];
+          }];
+         } onLimit:^{
+            *limitReached = YES;
+            searchSets = shuffleArray(searchSets);
+            
+         }];
+      } onRepeat:^{
+         NSLog(@"Hit the limit... Repeating from the top with new bound. %@",[cp objective]);
+      } until:^bool{
+         return !*limitReached;
       }
+       ];
 
       
-      for(id<ORIntVarArray> vars in searchSets) {
-         NSLog(@"**CLIQUE: %d",CID);
-         [vars enumerateWith: ^(id obj, int idx) {
-            if(![cp bound: obj]) {
-               ORInt maxc = max(0,[cp maxBound: c]);
-               //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
-               [cp tryall: V
-                 suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
-                       in:^(ORInt v) { [cp label: obj with: v]; }
-                onFailure:^(ORInt v) {
-                   [cp diff: obj with:v];
-                }];
-            }
-         }];
-         CID++;
-      }
+//      for(id<ORIntVarArray> vars in searchSets) {
+//         NSLog(@"**CLIQUE: %d",CID);
+//         [vars enumerateWith: ^(id obj, int idx) {
+//            if(![cp bound: obj]) {
+//               ORInt maxc = max(0,[cp maxBound: c]);
+//               //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
+//               [cp tryall: V
+//                 suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
+//                       in:^(ORInt v) { [cp label: obj with: v]; }
+//                onFailure:^(ORInt v) {
+//                   [cp diff: obj with:v];
+//                }];
+//            }
+//         }];
+//         CID++;
+//      }
+      
+      
 //         __block ORInt maxc = 0;
 //         ORInt CID = 0;
 //         for(NSSet* vars in searchC) {
@@ -284,7 +354,8 @@ int main(int argc, const char * argv[])
          [cp labelArray: slacks1];
          NSLog(@"coloring: %i", [cp min: m]);
          NSLog(@"Objective: %@",[[cp objective] value]);
-         
+         //myMax = [cp min: m];
+      
          ORInt ttlSlacks = 0;
          for(ORInt k=slacks1.range.low;k <= slacks1.range.up;k++)
             ttlSlacks += [cp intValue:slacks1[k]];
@@ -294,7 +365,7 @@ int main(int argc, const char * argv[])
    
    id<ORRunnable> r1 = [ORFactory CPSubgradient: lagrangeModel1 bound: UB search: search1];
    [r1 setTimeLimit: timeLimit];
-   [(ORSubgradientTemplate*)r1 setAgility: 7*UB];
+   [(ORSubgradientTemplate*)r1 setAgility: 5.0];//7*UB];
    
    NSDate* t0 = [NSDate date];
    [r1 run];
