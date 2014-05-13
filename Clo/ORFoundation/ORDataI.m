@@ -522,7 +522,7 @@ static mach_timebase_info_data_t info;
 }
 +(ORLong) cputime
 {
-#if defined(__APPLE__)
+#if 0 && defined(__APPLE__)
    uint64_t start = mach_absolute_time ();
    uint64_t nanos = (double)start * info.numer / (info.denom * NSEC_PER_MSEC);
    return (ORLong)nanos;

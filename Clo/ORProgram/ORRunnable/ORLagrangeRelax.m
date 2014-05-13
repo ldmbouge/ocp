@@ -325,8 +325,10 @@
             ORFloat value = [sol paramFloatValue: lambda];
             id<ORVar> slack = [slacks at: idx];
             ORFloat newValue = MAX(0.0, value + stepSize * [sol floatValue: (id<ORFloatVar>)slack]);
+            if(newValue > 100)
+                NSLog(@"why?");
             [(id<CPProgram>)program paramFloat: lambda setValue: newValue];
-            //NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
+            NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
         }];
         
         // Check if done
