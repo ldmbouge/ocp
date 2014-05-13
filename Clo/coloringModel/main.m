@@ -211,54 +211,19 @@ int main(int argc, const char * argv[])
    
 //   __block ORInt myMax = INT_MAX;
    void (^search1)(id<CPCommonProgram>) = ^(id<CPProgram> cp){
-//      if(myMax != INT_MAX) {
-//      id<CPFloatVar> ofv = [[[cp objective] allVars] anyObject];
-//      [cp try:^{
-//         //[ofv updateMax: myMax];
-//         [ofv updateMin: myMax];
-//         [[cp objective] updatePrimalBound];
-//         [[cp engine] enforceObjective];
-//         [[cp explorer] fail];
-//      } or:^{
-//         [ofv updateMin:myMax];
-//         [cp gthen:m with: myMax-1];
-//      }];
-//      }
-      
-      //for(id<ORConstraint> rc in unrelaxCstrs) [cp add:rc];
-
-//      [cp forall: V
-//        suchThat:^bool(ORInt i) { return ![cp bound: c[i]];}
-//       orderedBy: ^ORInt(ORInt i) { return [cp domsize: c[i]]; }
-//             and: ^ORInt(ORInt i) { return - [deg at:i];}
-//              do: ^(ORInt i) {
-//                 //for(ORInt j=c.low;j <= c.up;j++) printf("|c[%d]|= %d  -- deg = %d\n",j,[cp domsize:c[j]],[deg at:j]);
-//                 ORInt maxc = max(0,[cp maxBound: c]);
-//                 [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {
-//                    //NSLog(@"LABEL c[%d] to %d",i,v);
-//                    [cp label: c[i] with: v];
-//                 }
-//                  onFailure:^(ORInt v) {
-//                     //NSLog(@"DIFF  c[%d] to %d",i,v);
-//                     [cp diff: c[i] with:v];
-//                  }
-//                  ];
-//              }
-//       ];
-//      [cp label:m with:[cp min: m]];
-
       
       __block ORInt CID = 0;
+      id<ORMutableInteger> tl = [ORFactory mutable:cp value:500];
       ORBool* limitReached = malloc(sizeof(ORBool));
       *limitReached = YES;
       [cp repeat:^{
          [cp perform:^{
             *limitReached = NO;
-            [cp limitTime:2000
+            [cp limitTime:[tl intValue]
                        in: ^
              {
                 for(id<ORIntVarArray> vars in searchSets) {
-                   NSLog(@"**CLIQUE: %d",CID);
+                   //NSLog(@"**CLIQUE: %d",CID);
                    [cp forall: vars.range
                      suchThat: ^bool(ORInt i) { return ![cp bound: vars[i]];}
                     orderedBy: ^ORInt(ORInt i) { return [cp domsize: vars[i]]; }
@@ -283,8 +248,8 @@ int main(int argc, const char * argv[])
                 }
                 [cp label:m with:[cp min: m]];
                 [cp labelArray: slacks1];
-                NSLog(@"coloring: %i", [cp min: m]);
-                NSLog(@"Objective: %@",[[cp objective] value]);
+                [tl setValue:500];
+                NSLog(@"coloring: %i  Objective: %@", [cp min: m],[[cp objective] value]);
              //[[cp objective] tightenPrimalBound:[[cp objective] value]];
           }];
          } onLimit:^{
@@ -293,74 +258,17 @@ int main(int argc, const char * argv[])
             
          }];
       } onRepeat:^{
-         NSLog(@"Hit the limit... Repeating from the top with new bound. %@",[cp objective]);
+         [tl setValue:[tl intValue] + 100];
+         NSLog(@"From the top with: %@  LIMIT = %d",[cp objective],[tl intValue]);
       } until:^bool{
          return !*limitReached;
       }
        ];
-
-      
-//      for(id<ORIntVarArray> vars in searchSets) {
-//         NSLog(@"**CLIQUE: %d",CID);
-//         [vars enumerateWith: ^(id obj, int idx) {
-//            if(![cp bound: obj]) {
-//               ORInt maxc = max(0,[cp maxBound: c]);
-//               //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
-//               [cp tryall: V
-//                 suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
-//                       in:^(ORInt v) { [cp label: obj with: v]; }
-//                onFailure:^(ORInt v) {
-//                   [cp diff: obj with:v];
-//                }];
-//            }
-//         }];
-//         CID++;
-//      }
-      
-      
-//         __block ORInt maxc = 0;
-//         ORInt CID = 0;
-//         for(NSSet* vars in searchC) {
-//            NSLog(@"In component... %d",CID);
-//            for(id obj in vars) {
-//               if(![cp bound: obj]) {
-//                  //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
-//                  [cp tryall: V
-//                    suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
-//                          in:^(ORInt v) { [cp label: obj with: v]; maxc = max(maxc, v); }
-//                   onFailure:^(ORInt v) {
-//                      [cp diff: obj with:v];
-//                   }];
-//               }
-//            }
-//            CID++;
-//         }
-//         NSLog(@"First loop...");
-//         for(NSSet* vars in searchNC) {
-//            for(id obj in vars) {
-//               if(![cp bound: obj]) {
-//                  //NSLog(@"VARIABLE:%d -  %@ ",idx,obj);
-//                  [cp tryall: V
-//                    suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: obj];}
-//                          in:^(ORInt v) { [cp label: obj with: v]; maxc = max(maxc, v); }
-//                   onFailure:^(ORInt v) {
-//                      [cp diff: obj with:v];
-//                   }];
-//               }
-//            }
-//         }
-      
-         [cp label:m with:[cp min: m]];
-         [cp labelArray: slacks1];
-         NSLog(@"coloring: %i", [cp min: m]);
-         NSLog(@"Objective: %@",[[cp objective] value]);
-         //myMax = [cp min: m];
-      
-         ORInt ttlSlacks = 0;
-         for(ORInt k=slacks1.range.low;k <= slacks1.range.up;k++)
-            ttlSlacks += [cp intValue:slacks1[k]];
-         NSLog(@"TTL SLACK: %d",ttlSlacks);
-
+    
+      ORInt ttlSlacks = 0;
+      for(ORInt k=slacks1.range.low;k <= slacks1.range.up;k++)
+         ttlSlacks += [cp intValue:slacks1[k]];
+      NSLog(@"TTL SLACK: %d",ttlSlacks);
    };
    
    id<ORRunnable> r1 = [ORFactory CPSubgradient: lagrangeModel1 bound: UB search: search1];

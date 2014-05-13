@@ -328,7 +328,8 @@
             if(newValue > 100)
                 NSLog(@"why?");
             [(id<CPProgram>)program paramFloat: lambda setValue: newValue];
-            NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
+            if (newValue != 0)
+               NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
         }];
         
         // Check if done

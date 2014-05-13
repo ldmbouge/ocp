@@ -139,7 +139,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitTime dealloc called...\n");
+   //NSLog(@"ORLimitTime dealloc called...\n");
    [super dealloc];
 }
 -(ORInt) addChoice: (NSCont*) k
@@ -254,7 +254,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitCondition dealloc called...\n");
+   //NSLog(@"ORLimitCondition dealloc called...\n");
    [_condition release];
    [super dealloc];
 }
@@ -292,7 +292,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitMonitor dealloc called...\n");
+   //NSLog(@"ORLimitMonitor dealloc called...\n");
    [super dealloc];
 }
 -(void) fail: (ORBool) pruned
