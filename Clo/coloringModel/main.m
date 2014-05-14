@@ -48,13 +48,20 @@ int main(int argc, const char * argv[])
    //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
    //      [args measure:^struct ORResult(){
    [ORStreamManager setRandomized];
-   ORInt relaxCount = 201;//atoi(argv[2]);
+   //ORInt relaxCount = 201;//atoi(argv[2]);
    //ORInt cliqueCount = 20;//atoi(argv[1]);
-   ORFloat UB = 75;//atoi(argv[3]);
+   //ORFloat UB = 75;//atoi(argv[3]);
+   
+   
+   ORInt relaxCount = 534;//atoi(argv[2]);
+   ORInt cliqueCount = 5;//atoi(argv[1]);
+   ORFloat UB = 30;//atoi(argv[3]);
+   
+   
    ORFloat timeLimit = 5 * 60;
    
    id<ORModel> model = [ORFactory createModel];
-   FILE* dta = fopen("clique.col","r");  // file is located in the executable directory.
+   FILE* dta = fopen("clique2.col","r");  // file is located in the executable directory.
    //FILE* dta = fopen("smallColoring.col","r");
    //FILE* dta = fopen("test-n30-e50.col","r");
    //FILE* dta = fopen("test-n80-p40-0.col","r");
