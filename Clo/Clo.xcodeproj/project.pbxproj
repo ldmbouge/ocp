@@ -12722,8 +12722,7 @@
 				B19B558B190518CF0069ABA0 /* jobshop.1 */,
 				B19B5589190518CF0069ABA0 /* Supporting Files */,
 			);
-			name = jobshop;
-			path = ../../jobshop;
+			path = jobshop;
 			sourceTree = "<group>";
 		};
 		B19B5589190518CF0069ABA0 /* Supporting Files */ = {
@@ -23867,7 +23866,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "jobshop/jobshop-Prefix.pch";
+				GCC_PREFIX_HEADER = "Scheduler/Tests/jobshop/jobshop-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -23896,7 +23895,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "jobshop/jobshop-Prefix.pch";
+				GCC_PREFIX_HEADER = "Scheduler/Tests/jobshop/jobshop-Prefix.pch";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -23921,7 +23920,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "jobshop/jobshop-Prefix.pch";
+				GCC_PREFIX_HEADER = "Scheduler/Tests/jobshop/jobshop-Prefix.pch";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
