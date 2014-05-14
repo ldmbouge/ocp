@@ -31,15 +31,28 @@ typedef struct {
    ORInt j;
 } Edge;
 
-NSArray* shuffleArray(NSArray* array) {
-   
-   NSMutableArray *temp = [[NSMutableArray alloc] initWithArray:array];
-   
-   for(NSUInteger i = [array count]; i > 1; i--) {
-      NSUInteger j = (NSUInteger)arc4random_uniform((int)i);
-      [temp exchangeObjectAtIndex:i-1 withObjectAtIndex:j];
+void weightedSelect(NSArray* src, NSMutableArray* dest) {
+   if([src count] == 0) return;
+   else {
+      ORInt weightSum = 0;
+      for(id obj in src) weightSum += [obj count];
+      ORInt r = (ORInt)(arc4random() % weightSum);
+      id selected = nil;
+      for(id obj in src) {
+         if(r < [obj count]) { selected = obj; break; }
+         else { r -= [obj count]; }
+      }
+      [dest addObject: selected];
+      NSMutableArray* newSrc = [src mutableCopy];
+      [newSrc removeObject: selected];
+      weightedSelect(newSrc, dest);
    }
-   return [NSArray arrayWithArray:temp];
+}
+
+NSArray* shuffleArray(NSArray* array) {
+   NSMutableArray* dest = [[NSMutableArray alloc] init];
+   weightedSelect(array, dest);
+   return dest;
 }
 
 int main(int argc, const char * argv[])
@@ -48,8 +61,8 @@ int main(int argc, const char * argv[])
    //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
    //      [args measure:^struct ORResult(){
    [ORStreamManager setRandomized];
-   ORInt relaxCount = 201;//atoi(argv[2]);
-   //ORInt cliqueCount = 20;//atoi(argv[1]);
+   ORInt relaxCount = 534;//atoi(argv[2]);
+   ORInt cliqueCount = 5;//atoi(argv[1]);
    ORFloat UB = 75;//atoi(argv[3]);
    ORFloat timeLimit = 5 * 60;
    
