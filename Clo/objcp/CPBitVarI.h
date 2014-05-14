@@ -132,6 +132,7 @@ typedef struct  {
    UBType*                _minIMP;
    UBType*                _maxIMP;
    UBType*           _bitFixedIMP;
+   UBType*           _bitFixedAtIMP;
    CPBitVarLiterals*    _literals;
 }
 -(id)initVarMC:(ORInt)n root:(CPBitVarI*)root;

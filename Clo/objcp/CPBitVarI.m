@@ -567,6 +567,7 @@ return self;
    _loseValIMP   = malloc(sizeof(UBType)*_mx);
    _minIMP   = malloc(sizeof(UBType)*_mx);
    _maxIMP   = malloc(sizeof(UBType)*_mx);
+   _bitFixedAtIMP   = malloc(sizeof(UBType)*_mx);
    _tracksLoseEvt = false;
    [root setDelegate:self];
    _nb = 0;
@@ -623,6 +624,7 @@ return self;
    _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
    _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
    _bitFixedIMP[_nb] = (UBType)[v methodForSelector:@selector(bitFixedEvt:sender:)];
+   _bitFixedAtIMP[_nb] = (UBType)[v methodForSelector:@selector(bitFixedEvt:sender:)];
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
    __block CPBitVarMultiCast* me = self;
@@ -632,6 +634,7 @@ return self;
       me->_minIMP[toFix] = NULL;
       me->_maxIMP[toFix] = NULL;
       me->_bitFixedIMP[toFix] = NULL;
+      me->_bitFixedAtIMP[toFix] = NULL;
       me->_nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
@@ -728,6 +731,17 @@ return self;
    for(ORInt i=0;i<_nb;i++) {
       if (_bitFixedIMP[i])
          ok = _bitFixedIMP[i](_tab[i],@selector(bitFixedEvt:sender:),dsz,sender);
+      if (ok == ORFailure)
+         return ok;
+   }
+   return ORSuspend;
+}
+
+-(ORStatus) bitFixedEvt:(ORUInt)dsz at:(ORUInt)i sender:(CPBitArrayDom *)sender{
+   ORStatus ok = ORSuspend;
+   for(ORInt i=0;i<_nb;i++) {
+      if (_bitFixedAtIMP[i])
+         ok = _bitFixedAtIMP[i](_tab[i],@selector(bitFixedAtEvt:sender:),dsz,sender);
       if (ok == ORFailure)
          return ok;
    }

@@ -22,6 +22,7 @@
 #import "ORTrailI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
+#import "CPBitMacros.h"
 
 @implementation ORFactory
 +(void) shutdown
@@ -449,6 +450,19 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORBitVar>) bitVar:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORUInt)bLen
 {
+   return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen];
+}
++(id<ORBitVar>) bitVar:(id<ORTracker>)tracker withLength:(ORUInt)bLen
+{
+   ORUInt wordLength = (bLen / BITSPERWORD) + ((bLen % BITSPERWORD != 0) ? 1: 0);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordLength);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordLength);
+   
+   for (int i = 0; i<wordLength; i++) {
+      low[i] = 0x00000000;
+      up[i] = 0xFFFFFFFF;
+   }
+   up[wordLength-1] >>= bLen%BITSPERWORD;
    return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen];
 }
 +(id<ORBindingArray>) bindingArray: (id<ORTracker>) tracker nb: (ORInt) nb

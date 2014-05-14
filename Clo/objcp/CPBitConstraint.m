@@ -1939,32 +1939,32 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 
 -(ORStatus) post
 {
-   unsigned int xWordLength = [_x getWordLength];
-   unsigned int yWordLength = [_y getWordLength];
-   unsigned int wordDiff = yWordLength - xWordLength;
-   
-   TRUInt* yLow;
-   TRUInt* yUp;
-   [_y getUp:&yUp andLow:&yLow];
-   unsigned int* up = alloca(sizeof(unsigned int)*xWordLength);
-   unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
-   unsigned int  upXORlow;
-
-   for (int i=0; i<wordDiff; i++) {
-      up[i] = 0;
-      low[i] = 0;
-   }
-   
-   for(int i=wordDiff;i<yWordLength;i++){
-      up[i] = yUp[i]._val;
-      low[i] = yLow[i]._val;
-      upXORlow = up[i] ^ low[i];
-      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
-         failNow();
-      }
-   }
-   
-   [_y setUp:up andLow:low];
+//   unsigned int xWordLength = [_x getWordLength];
+//   unsigned int yWordLength = [_y getWordLength];
+//   unsigned int wordDiff = yWordLength - xWordLength;
+//   
+//   TRUInt* yLow;
+//   TRUInt* yUp;
+//   [_y getUp:&yUp andLow:&yLow];
+//   unsigned int* up = alloca(sizeof(unsigned int)*xWordLength);
+//   unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
+//   unsigned int  upXORlow;
+//
+//   for (int i=0; i<wordDiff; i++) {
+//      up[i] = 0;
+//      low[i] = 0;
+//   }
+//   
+//   for(int i=wordDiff;i<yWordLength;i++){
+//      up[i] = yUp[i]._val;
+//      low[i] = yLow[i]._val;
+//      upXORlow = up[i] ^ low[i];
+//      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+//         failNow();
+//      }
+//   }
+//   
+//   [_y setUp:up andLow:low];
    
    [self propagate];
    if (![_x bound])
@@ -1980,7 +1980,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 #ifdef BIT_DEBUG
    NSLog(@"Bit ZeroExtend Constraint propagated.");
 #endif
-   
+   //Check to see that upper (zero) bits are not set to 1
    unsigned int xWordLength = [_x getWordLength];
    unsigned int yWordLength = [_y getWordLength];
    unsigned int wordDiff = yWordLength - xWordLength;
@@ -1997,21 +1997,21 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
    unsigned int  upXORlow;
    
-   for (int i=0; i<wordDiff; i++) {
+   for (int i=0; i<yWordLength; i++) {
       up[i] = 0;
       low[i] = 0;
    }
    
-   for(int i=wordDiff;i<yWordLength;i++){
-      up[i] = xUp[i-wordDiff+1]._val & yUp[i]._val;
-      low[i] = xLow[i-wordDiff]._val | yLow[i]._val;
+   for(int i=0;i<xWordLength;i++){
+      up[i] = xUp[i]._val & yUp[i]._val;
+      low[i] = xLow[i]._val | yLow[i]._val;
       upXORlow = up[i] ^ low[i];
       if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
          failNow();
       }
    }
    
-   [_x setUp:&up[wordDiff] andLow:&low[wordDiff]];
+   [_x setUp:up andLow:low];
    [_y setUp:up andLow:low];
    
 }
