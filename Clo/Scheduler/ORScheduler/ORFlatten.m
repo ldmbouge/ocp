@@ -18,6 +18,10 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitOptionalPrecedes:(id<OROptionalPrecedes>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
 -(void) visitCumulative:(id<ORCumulative>) cstr
 {
     _result = [_into addConstraint:cstr];

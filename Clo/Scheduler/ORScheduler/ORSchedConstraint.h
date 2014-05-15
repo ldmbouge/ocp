@@ -17,6 +17,11 @@
 -(id<ORActivity>) after;
 @end
 
+@protocol OROptionalPrecedes <ORConstraint>
+-(id<OROptionalActivity>) before;
+-(id<OROptionalActivity>) after;
+@end
+
 @protocol ORSchedulingCumulative <ORConstraint>
 -(id<ORActivityArray>) activities;
 -(id<ORIntArray>) usage;

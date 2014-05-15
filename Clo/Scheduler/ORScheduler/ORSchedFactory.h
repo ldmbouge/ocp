@@ -28,9 +28,12 @@
 // optional activities
 +(id<OROptionalActivity>) compulsoryActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 +(id<OROptionalActivity>) optionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
++(id<OROptionalActivity>) compulsoryAlternativeActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<OROptionalActivity>(^)(ORInt)) clo;
++(id<OROptionalActivityArray>) optionalActivityArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<OROptionalActivity>(^)(ORInt)) clo;
 
 // Precedence constraints
 +(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after;
++(id<OROptionalPrecedes>) optionalPrecedence: (id<OROptionalActivity>) before precedes:(id<OROptionalActivity>) after;
 
 // Cumulative Resource constraints
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c;

@@ -20,6 +20,12 @@
 -(id<ORActivity>) after;
 @end
 
+@interface OROptionalPrecedes : ORConstraintI<OROptionalPrecedes>
+-(id<OROptionalPrecedes>) initOROptionalPrecedes:(id<OROptionalActivity>) before precedes:(id<OROptionalActivity>) after;
+-(id<OROptionalActivity>) before;
+-(id<OROptionalActivity>) after;
+@end
+
 
 // Cumulative (resource) constraint
 @interface ORCumulative : ORConstraintI<ORCumulative>

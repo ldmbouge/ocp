@@ -70,6 +70,38 @@
     [model trackMutable:o];
     return o;
 }
++(id<OROptionalActivity>) compulsoryAlternativeActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<OROptionalActivity>(^)(ORInt)) clo;
+{
+    id<OROptionalActivityArray> acts = [ORFactory optionalActivityArray:model range:range with:clo];
+    id<OROptionalActivity> o;
+    ORInt count = 0;
+    for (ORInt i = acts.range.low; i <= acts.range.up; i++) {
+        if (!acts[i].isOptional) count++;
+    }
+    if (count > 1) failNow();
+    if (count == 1) {
+        for (ORInt i = acts.range.low; i <= acts.range.up; i++) {
+            if (acts[i].isOptional) {
+                [model add: [ORFactory equalc:model var:acts[i].top to:0]];
+            }
+            else {
+                o = acts[i];
+            }
+        }
+    }
+    else {
+        o = [[OROptionalActivity alloc] initORAlternativeActivity:model activities:acts];
+    }
+    [model trackMutable:o];
+    return o;
+}
++(id<OROptionalActivityArray>) optionalActivityArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<OROptionalActivity>(^)(ORInt)) clo;
+{
+    id<ORIdArray> o = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [o set: clo(k) at:k];
+    return (id<OROptionalActivityArray>) o;
+}
 
 +(id<ORDisjunctiveResourceArray>) disjunctiveResourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
 {
@@ -88,6 +120,13 @@
    [[before.start tracker] trackMutable:o];
    return o;
 }
++(id<OROptionalPrecedes>) optionalPrecedence: (id<OROptionalActivity>) before precedes:(id<OROptionalActivity>) after
+{
+    id<OROptionalPrecedes> o = [[OROptionalPrecedes alloc] initOROptionalPrecedes: before precedes: after];
+    [[before.duration tracker] trackMutable:o];
+    return o;
+}
+
 // Cumulative (resource) constraint
 //
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c

@@ -85,6 +85,21 @@
  representation for "optional" variables
  ******************************************************************************/
 
+    // Different activity types
+    // NOTE: Last bit represents indicates whether the activity is optional or
+    //  compulsory
+typedef enum {
+    ORACTCOMP  = 0,   // Standard compulsory activity
+    ORACTOPT   = 1,   // Standard optional activity
+    ORALTCOMP  = 2,   // Compositional compulsory activity by alternative constraint
+    ORALTOPT   = 3,   // Compositional optional activity by alternative constraint
+    ORSPANCOMP = 4,   // Compositional compulsory activity by span constraint
+    ORSPANOPT  = 5    // Compositional optional activity by span constraint
+} ORActivityType;
+
+@protocol OROptionalPrecedes;
+@protocol OROptionalActivityArray;
+
 @protocol OROptionalActivity <ORObject>
 -(ORInt) getId;
 -(id<ORIntVar>) startLB;
@@ -93,12 +108,9 @@
 -(id<ORIntVar>) top;
 -(BOOL) isOptional;
 -(id<ORIntRange>) startRange;
-//-(id<ORPrecedes>) precedes: (id<OROptionalActivity>) after;
-@end
-
-@interface OROptionalActivity : ORObject<OROptionalActivity>
--(id<OROptionalActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
--(id<OROptionalActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<OROptionalActivityArray>) composition;
+-(ORInt) type;
+-(id<OROptionalPrecedes>) precedes: (id<OROptionalActivity>) after;
 @end
 
 @protocol OROptionalActivityArray <ORObject>
@@ -112,5 +124,11 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
+@end
+
+@interface OROptionalActivity : ORObject<OROptionalActivity>
+-(id<OROptionalActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<OROptionalActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<OROptionalActivity>) initORAlternativeActivity: (id<ORModel>)model activities: (id<OROptionalActivityArray>) act;
 @end
 

@@ -55,6 +55,61 @@
 }
 @end
 
+@implementation OROptionalPrecedes {
+    id<OROptionalActivity> _before;
+    id<OROptionalActivity> _after;
+}
+-(id<OROptionalPrecedes>) initOROptionalPrecedes:(id<OROptionalActivity>) before precedes:(id<OROptionalActivity>) after
+{
+    self = [super initORConstraintI];
+    _before = before;
+    _after   = after;
+    return self;
+}
+-(void)visit:(ORVisitor*) v
+{
+    [v visitOptionalPrecedes: self];
+}
+-(NSString*) description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"<%@ : %p> -> optionalPrecedes(%@,%@)>", [self class], self, _before, _after];
+    return buf;
+}
+-(id<OROptionalActivity>) before
+{
+    return _before;
+}
+-(id<OROptionalActivity>) after
+{
+    return _after;
+}
+// [pvh] to update when generalizing activities
+-(NSSet*)allVars
+{
+    ORInt cap = 0;
+    cap += (_before.isOptional ? 4 : 2);
+    cap += (_after .isOptional ? 4 : 2);
+    
+    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: cap] autorelease];
+
+    [ms addObject: _before.startLB ];
+    [ms addObject: _before.duration];
+    [ms addObject: _after .startLB ];
+    [ms addObject: _after .duration];
+    if (_before.isOptional) {
+        [ms addObject: _before.startUB];
+        [ms addObject: _before.top    ];
+    }
+    if (_after.isOptional) {
+        [ms addObject: _after.startUB];
+        [ms addObject: _after.top    ];
+    }
+    return ms;
+}
+@end
+
+
 // Cumulative (resource) constraint
 //
 @implementation ORCumulative {

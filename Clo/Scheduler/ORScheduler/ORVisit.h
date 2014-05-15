@@ -18,6 +18,7 @@
 -(void) visitOptionalActivity: (id<OROptionalActivity> ) activity;
 -(void) visitDisjunctiveResource: (id<ORDisjunctiveResource> ) dr;
 -(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
+-(void) visitOptionalPrecedes:  (id<OROptionalPrecedes> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
@@ -33,6 +34,7 @@
 -(void) visitOptionalActivity: (id<OROptionalActivity> ) activity;
 -(void) visitDisjunctiveResource: (id<ORDisjunctiveResource> ) dr;
 -(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
+-(void) visitOptionalPrecedes:  (id<OROptionalPrecedes> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;

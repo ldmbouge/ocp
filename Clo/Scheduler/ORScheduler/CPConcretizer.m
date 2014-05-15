@@ -19,7 +19,7 @@
 
 @implementation ORCPConcretizer (CPScheduler)
 
-// Cumulative (resource) constraint
+// Activity
 -(void) visitActivity:(id<ORActivity>) act
 {
    if (_gamma[act.getId] == NULL) {
@@ -49,13 +49,14 @@
          [_engine add: cstr];
       }
        _gamma[end.getId] = concreteEnd;
-      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration:  _gamma[duration.getId] end: concreteEnd];
+      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration: _gamma[duration.getId] end: concreteEnd];
       _gamma[act.getId] = concreteAct;
    }
 }
 
 -(void) visitOptionalActivity:(id<OROptionalActivity>) act
 {
+    // NOTE that the information about compositional activities get lost during the concretization
     if (_gamma[act.getId] == NULL) {
         id<ORIntVar> startLB  = [act startLB ];
         id<ORIntVar> startUB  = [act startUB ];
@@ -136,6 +137,19 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
+}
+
+-(void) visitOptionalPrecedes:(id<OROptionalPrecedes>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<OROptionalActivity> before = [cstr before];
+        id<OROptionalActivity> after  = [cstr after];
+        [before visit: self];
+        [after  visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory optionalPrecedence: _gamma[before.getId] precedes: _gamma[after.getId]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 
 // Disjunctive (resource) constraint

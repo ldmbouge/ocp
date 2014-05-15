@@ -111,38 +111,91 @@
 
 @implementation OROptionalActivity
 {
-    id<ORIntVar> _startLB;
-    id<ORIntVar> _startUB;
-    id<ORIntVar> _duration;
-    id<ORIntVar> _top;
-    BOOL         _optional;
+    id<ORIntVar>   _startLB;
+    id<ORIntVar>   _startUB;
+    id<ORIntVar>   _duration;
+    id<ORIntVar>   _top;
+    id<ORIntVar>   _altIdx;
+    BOOL           _optional;
     id<ORIntRange> _startRange;
+    id<OROptionalActivityArray> _composition;
+    ORInt          _type;
 }
 -(id<OROptionalActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
-    self      = [super init];
-    _startLB  = [ORFactory intVar: model domain: horizon ];
-    _startUB  = _startLB;
-    _duration = [ORFactory intVar: model domain: duration];
-    _top      = [ORFactory intVar: model value : 1       ];
-    _optional = FALSE;
-    _startRange = horizon;
+    self = [super init];
+    
+    _startRange  = horizon;
+    _startLB     = [ORFactory intVar: model domain: horizon ];
+    _startUB     = _startLB;
+    _duration    = [ORFactory intVar: model domain: duration];
+    _top         = NULL;
+    _optional    = FALSE;
+    _altIdx      = NULL;
+    _composition = NULL;
+    _type        = ORACTCOMP;
+    
     return self;
 }
 -(id<OROptionalActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
-    self      = [super init];
+    self = [super init];
+    
     // Initialisation of all variables
-    _startLB  = [ORFactory intVar : model domain: RANGE(model, horizon.low    , horizon.up + 1) ];
-    _startUB  = [ORFactory intVar : model domain: RANGE(model, horizon.low - 1, horizon.up    ) ];
-    _duration = [ORFactory intVar : model domain: duration];
-    _top      = [ORFactory boolVar: model                 ];
-    _optional = TRUE;
-    _startRange = horizon;
+    _startRange  = horizon;
+    _startLB     = [ORFactory intVar : model domain: RANGE(model, horizon.low    , horizon.up + 1) ];
+    _startUB     = [ORFactory intVar : model domain: RANGE(model, horizon.low - 1, horizon.up    ) ];
+    _duration    = [ORFactory intVar : model domain: duration];
+    _top         = [ORFactory boolVar: model                 ];
+    _optional    = TRUE;
+    _altIdx      = NULL;
+    _composition = NULL;
+    _type        = ORACTOPT;
+    
     // Constraints for the tri-partite optional variable representation
     [model add: [ORFactory reify:model boolean:_top with:_startLB leq :_startUB   ]];
     [model add: [ORFactory reify:model boolean:_top with:_startLB leqi:horizon.up ]];
     [model add: [ORFactory reify:model boolean:_top with:_startUB geqi:horizon.low]];
+    
+    return self;
+}
+-(id<OROptionalActivity>) initORAlternativeActivity:(id<ORModel>)model activities:(id<OROptionalActivityArray>)act
+{
+    self = [super init];
+
+    // Determine the start and duration ranges
+    ORInt start_min = MAXINT;
+    ORInt start_max = MININT;
+    ORInt dur_min   = MAXINT;
+    ORInt dur_max   = MININT;
+    for (ORInt i = act.range.low; i <= act.range.up; i++) {
+        start_min = min(start_min, [act[i].startRange low]);
+        start_max = max(start_max, [act[i].startRange up ]);
+        dur_min   = min(dur_min,   [act[i].duration   low]);
+        dur_max   = max(dur_max,   [act[i].duration   up ]);
+    }
+    
+    // Setting and creating variables
+    _startRange  = RANGE(model, start_min, start_max);
+    _startLB     = [ORFactory intVar: model domain: _startRange];
+    _startUB     = _startLB;
+    _duration    = [ORFactory intVar: model domain: RANGE(model, dur_min, dur_max)];
+    _top         = NULL;
+    _altIdx      = [ORFactory intVar:model domain:act.range];
+    _composition = act;
+    _type        = ORALTCOMP;
+
+    // Constraints for representing the alternative
+    // XXX Should the constraints be adding here or to the "concrete" model?
+    id<ORIntVar> one   = [ORFactory intVar:model domain:RANGE(model, 1, 1)];
+    id<ORIntVarArray> tops      = [ORFactory intVarArray:model range:act.range with:^id<ORIntVar>(ORInt k) {return act[k].top;     }];
+    id<ORIntVarArray> starts    = [ORFactory intVarArray:model range:act.range with:^id<ORIntVar>(ORInt k) {return act[k].startLB; }];
+    id<ORIntVarArray> durations = [ORFactory intVarArray:model range:act.range with:^id<ORIntVar>(ORInt k) {return act[k].duration;}];
+    [model add: [ORFactory sumbool:model array:tops eqi:1]];
+    [model add: [ORFactory element:model var:_altIdx idxVarArray:tops      equal:one      ]];
+    [model add: [ORFactory element:model var:_altIdx idxVarArray:starts    equal:_startLB ]];
+    [model add: [ORFactory element:model var:_altIdx idxVarArray:durations equal:_duration]];
+    
     return self;
 }
 -(id<ORIntVar>) startLB
@@ -169,12 +222,20 @@
 {
     return _startRange;
 }
+-(id<OROptionalActivityArray>) composition
+{
+    return _composition;
+}
+-(ORInt) type
+{
+    return _type;
+}
 -(void)visit:(ORVisitor*) v
 {
     [v visitOptionalActivity: self];
 }
-//-(id<ORPrecedes>) precedes: (id<OROptionalActivity>) after
-//{
-//    return [ORFactory precedence: self precedes: after];
-//}
+-(id<OROptionalPrecedes>) precedes: (id<OROptionalActivity>) after
+{
+    return [ORFactory optionalPrecedence: self precedes: after];
+}
 @end

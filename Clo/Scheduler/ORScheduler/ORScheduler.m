@@ -28,6 +28,23 @@
 {
    [self label: act.start];
 }
+-(void) labelOptionalActivities: (id<OROptionalActivityArray>) act
+{
+    for (ORInt i = act.range.low; i <= act.range.up; i++) {
+        [self labelOptionalActivity:act[i]];
+    }
+}
+-(void) labelOptionalActivity: (id<OROptionalActivity>) act
+{
+    if ((act.type & 1) == 1) {
+        [self label: act.top];
+    }
+    [self label: act.startLB ];
+    [self label: act.duration];
+    if (act.type > 3) {
+        [self labelOptionalActivities:act.composition];
+    }
+}
 -(void) setTimes: (id<ORActivityArray>) act
 {
    id<ORIntRange> R = act.range;
