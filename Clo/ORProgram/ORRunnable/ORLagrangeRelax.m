@@ -331,7 +331,8 @@
             id<ORFloatParam> lambda = obj;
             ORFloat value = [sol paramFloatValue: lambda];
             id<ORFloatVar> slack = [slacks at: idx];
-            ORFloat newValue = MAX(0.0, value + stepSize * [sol floatValue: slack]);
+           double sv = 1.0 + (double)random() /  (double)((signed int)0x7fffffff);
+            ORFloat newValue = MAX(0.0, value + stepSize * [sol floatValue: slack] * sv);
             if(newValue > 100)
                 NSLog(@"why?");
             [(id<CPProgram>)program paramFloat: lambda setValue: newValue];

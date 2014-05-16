@@ -26,12 +26,21 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
-         ORInt relaxCount = 201;//atoi(argv[2]);
-         ORInt cliqueCount = 20;//atoi(argv[1]);
-         ORFloat UB = 75;//atoi(argv[3]);
+
+         const char* fName = "inst_120_5_40.col";
+         ORInt cliqueCount = 5;
+         ORInt relaxCount = 938;
+         ORFloat UB = 38;
+
+//         const char* fName = "clique.col";
+//         ORInt relaxCount = 201;//atoi(argv[2]);
+//         ORInt cliqueCount = 20;//atoi(argv[1]);
+//         ORFloat UB = 75;//atoi(argv[3]);
+         FILE* dta = fopen(fName,"r");  // file is located in the executable directory.
+
+         
          ORFloat timeLimit = 5 * 60;
          id<ORModel> model = [ORFactory createModel];
-         FILE* dta = fopen("clique.col","r");  // file is located in the executable directory.
          //FILE* dta = fopen("smallColoring.col","r");
          //FILE* dta = fopen("test-n30-e50.col","r");
          //FILE* dta = fopen("test-n80-p40-0.col","r");
@@ -89,6 +98,7 @@ int main(int argc, const char * argv[])
                     do: ^(ORInt i) {
                        ORInt maxc = max(0,[cp maxBound: c]);
                        [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {
+                          printf("c[%d] == %d (%d)\n",i,v,[deg at:i]);
                           [cp label: c[i] with: v];
                        }
                         onFailure:^(ORInt v) {

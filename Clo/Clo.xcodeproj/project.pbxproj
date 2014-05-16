@@ -784,6 +784,9 @@
 		5BA345991680B7D400485366 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BA3459A1680B7D400485366 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BA5D51D1889E62D003884EE /* testIdempotence.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA5D51C1889E62D003884EE /* testIdempotence.m */; };
+		5BA606281925361200CB198D /* inst_150_10_40.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BA606251925360500CB198D /* inst_150_10_40.col */; };
+		5BA606291925361500CB198D /* inst_120_5_40.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BA606261925360500CB198D /* inst_120_5_40.col */; };
+		5BA6062A1925362500CB198D /* inst_100_10_60.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BA606271925360500CB198D /* inst_100_10_60.col */; };
 		5BA6F96818464836002434E3 /* CPDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BA6F96618464836002434E3 /* CPDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BA6F96918464836002434E3 /* CPDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6F96718464836002434E3 /* CPDeg.m */; };
 		5BAC7AC316EBAD1900BE6F81 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
@@ -5057,7 +5060,10 @@
 			files = (
 				5B978FA31922F2BA009FA6C3 /* clique2.col in CopyFiles */,
 				5BE1ED7B18FAE7BC00710868 /* clique.col in CopyFiles */,
+				5BA606281925361200CB198D /* inst_150_10_40.col in CopyFiles */,
 				5B7B478715F0F758005FF875 /* smallColoring.col in CopyFiles */,
+				5BA606291925361500CB198D /* inst_120_5_40.col in CopyFiles */,
+				5BA6062A1925362500CB198D /* inst_100_10_60.col in CopyFiles */,
 				5B7B478415F0F554005FF875 /* test-n30-e50.col in CopyFiles */,
 				5B7B478115F0EC12005FF875 /* test-n80-p40-0.col in CopyFiles */,
 			);
@@ -5954,6 +5960,9 @@
 		5BA345831680B7BD00485366 /* latinSquare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "latinSquare-Prefix.pch"; sourceTree = "<group>"; };
 		5BA345841680B7BD00485366 /* latinSquare.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = latinSquare.1; sourceTree = "<group>"; };
 		5BA5D51C1889E62D003884EE /* testIdempotence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = testIdempotence.m; sourceTree = "<group>"; };
+		5BA606251925360500CB198D /* inst_150_10_40.col */ = {isa = PBXFileReference; lastKnownFileType = text; path = inst_150_10_40.col; sourceTree = "<group>"; };
+		5BA606261925360500CB198D /* inst_120_5_40.col */ = {isa = PBXFileReference; lastKnownFileType = text; path = inst_120_5_40.col; sourceTree = "<group>"; };
+		5BA606271925360500CB198D /* inst_100_10_60.col */ = {isa = PBXFileReference; lastKnownFileType = text; path = inst_100_10_60.col; sourceTree = "<group>"; };
 		5BA6F96618464836002434E3 /* CPDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPDeg.h; sourceTree = "<group>"; };
 		5BA6F96718464836002434E3 /* CPDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDeg.m; sourceTree = "<group>"; };
 		5BAD114F161E5E420014EBCB /* ORModeling.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORModeling.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9533,6 +9542,9 @@
 		B1943A1015B0E33C00E1771B /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5BA606251925360500CB198D /* inst_150_10_40.col */,
+				5BA606261925360500CB198D /* inst_120_5_40.col */,
+				5BA606271925360500CB198D /* inst_100_10_60.col */,
 				5B978FA11922F2B4009FA6C3 /* clique2.col */,
 				5BE1ED7918FAE7A400710868 /* clique.col */,
 				5B6CFD7316D90F2200BCB95F /* rbg049a.tw */,
