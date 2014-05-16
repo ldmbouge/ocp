@@ -61,29 +61,16 @@ int main(int argc, const char * argv[])
    //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
    //      [args measure:^struct ORResult(){
    [ORStreamManager setRandomized];
-   const char* fName = "clique2.col";
-   ORInt cliqueCount = 5;//atoi(argv[1]);
-   ORInt relaxCount = 534;//atoi(argv[2]);
-   ORFloat UB = 75;//atoi(argv[3]);
-   
-//   const char* fName = "inst_120_5_40.col";
-//   ORInt cliqueCount = 5;
-//   ORInt relaxCount = 938;
-//   ORFloat UB = 38;
-   
-//   const char* fName = "inst_100_10_60.col";
-//   ORInt cliqueCount = 10;
-//   ORInt relaxCount = 191;
-//   ORFloat UB = 17;
-//
-//   const char* fName = "inst_150_10_40.col";
-//   ORInt cliqueCount = 10;
-//   ORInt relaxCount = 622;
-//   ORFloat UB = 28;
-   
+   NSString* path = [NSString stringWithUTF8String: argv[1]];
+   ORInt relaxCount = atoi(argv[3]);
+   ORInt cliqueCount = atoi(argv[2]);
+   ORFloat UB = atoi(argv[4]);
    ORFloat timeLimit = 5 * 60;
-   FILE* dta = fopen(fName,"r");  // file is located in the executable directory.
+   
+   NSLog(@"path: %@ clique: %i, relax: %i, ub: %f", path, cliqueCount, relaxCount, UB);
+   
    id<ORModel> model = [ORFactory createModel];
+   FILE* dta = fopen([path UTF8String],"r");//fopen("clique.col","r");
    //FILE* dta = fopen("smallColoring.col","r");
    //FILE* dta = fopen("test-n30-e50.col","r");
    //FILE* dta = fopen("test-n80-p40-0.col","r");
@@ -361,7 +348,7 @@ int main(int argc, const char * argv[])
                    CID++;
                 }
                 [cp label:m with:[cp min: m]];
-                [cp labelArray: slacks1];
+                //[cp labelArray: slacks1];
                 [tl setValue:500];
                 NSLog(@"coloring: %i  Objective: %@", [cp min: m],[[cp objective] value]);
              //[[cp objective] tightenPrimalBound:[[cp objective] value]];
@@ -396,10 +383,10 @@ int main(int argc, const char * argv[])
       }
        ];
     
-      ORInt ttlSlacks = 0;
-      for(ORInt k=slacks1.range.low;k <= slacks1.range.up;k++)
-         ttlSlacks += [cp intValue:slacks1[k]];
-      NSLog(@"TTL SLACK: %d",ttlSlacks);
+//      ORInt ttlSlacks = 0;
+//      for(ORInt k=slacks1.range.low;k <= slacks1.range.up;k++)
+//         ttlSlacks += [cp intValue:slacks1[k]];
+//      NSLog(@"TTL SLACK: %d",ttlSlacks);
    };
    
    id<ORRunnable> r1 = [ORFactory CPSubgradient: lagrangeModel1 bound: UB search: search1];
@@ -408,19 +395,35 @@ int main(int argc, const char * argv[])
    
    //id<ORRunnable> r1 = [ORFactory CPRunnable:model];
    
+   id<CPProgram> cp = [ORFactory createCPProgram: model];
+   
+   char* outpath = "/Users/dan/Desktop/colorout.txt";
+   FILE* f = fopen(outpath, "w+");
+   
    NSDate* t0 = [NSDate date];
-   [r1 run];
+   //[r1 run];
    NSDate* t1 = [NSDate date];
    NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
    int iter = [(ORSubgradientTemplate*)r1 iterations];
    //ORFloat bnd5 = [r1 bestBound];
-   [lagrangeModel1 release];
+   //[lagrangeModel1 release];
    //[r0 release];
    //[r1 release];
    //[pr release];
-   [t4 release];
+   //[t4 release];
    
-   NSLog(@"time: %f iter: %i", time, iter);
+   fprintf(f, "%f %i\n", time, iter);
+   
+   t0 = [NSDate date];
+   [cp solve: ^{ [cp limitTime: timeLimit * 1000 in: ^{ search1(cp); }]; }];
+   t1 = [NSDate date];
+   time = [t1 timeIntervalSinceDate: t0];
+   fprintf(f, "%f", time);
+   fclose(f);
+  
+   ORFloat bestBND = [[[[cp solutionPool] best] objectiveValue] floatValue];
+   
+   NSLog(@"BND: %f",bestBND);
    
    return 0;
 }
