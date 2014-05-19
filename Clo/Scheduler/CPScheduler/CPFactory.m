@@ -67,20 +67,8 @@
 }
 +(id<CPConstraint>) optionalPrecedence: (id<CPOptionalActivity>) before precedes:(id<CPOptionalActivity>) after
 {
-    // TODO Creating a proper precedence propagator
-    if (before.isOptional || after.isOptional) {
-        @throw [[ORExecutionError alloc] initORExecutionError: "Precedence for optional activities not yet implemented"];
-    }
-    if (before.duration.domsize == 1)
-        return [CPFactory lEqual: before.startLB to: after.startLB plus: -before.duration.min];
-    else {
-//        ORInt end_min = before.startRange.low + before.duration.low;
-//        ORInt end_max = before.startRange.up  + before.duration.up;
-//        id<CPIntVar> end = [CPFactory intVar:_engine domain:RANGE([before.duration tracker], end_min, end_max)];
-//        [model add: [CPFactory equal3:end to:before.startLB plus:before.duration annotation:<#(ORCLevel)#>]];
-//        return [CPFactory lEqual:end to:after.startLB];
-        @throw [[ORExecutionError alloc] initORExecutionError: "Duration is not a constant"];
-    }
+    // Creating a precedence propagator
+    return [[CPPrecedence alloc] initCPPrecedence:before after:after];
 }
 
 

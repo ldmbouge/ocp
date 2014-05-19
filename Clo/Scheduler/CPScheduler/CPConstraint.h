@@ -13,4 +13,20 @@
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
+#import "CPActivity.h"
 
+
+    // Single precedence propagator
+    //
+@interface CPPrecedence : CPCoreConstraint<NSCoding> {
+    id<CPOptionalActivity> _before; // Optional activity
+    id<CPOptionalActivity> _after;  // Optional activity
+}
+
+-(id) initCPPrecedence: (id<CPOptionalActivity>) before after: (id<CPOptionalActivity>) after;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end

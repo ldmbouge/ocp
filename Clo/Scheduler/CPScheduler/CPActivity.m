@@ -70,37 +70,34 @@
 
 @implementation CPOptionalActivity
 {
-    id<CPIntVar> _startLB;
-    id<CPIntVar> _startUB;
-    id<CPIntVar> _duration;
-    id<CPIntVar> _top;
-    BOOL         _optional;
-    ORInt        _initStartMin;
-    ORInt        _initStartMax;
+    id<CPIntVar>   _startLB;
+    id<CPIntVar>   _startUB;
+    id<CPIntVar>   _duration;
+    id<CPIntVar>   _top;
+    BOOL           _optional;
+    id<ORIntRange> _startRange;
 }
 -(id<CPOptionalActivity>) initCPActivity:(id<CPIntVar>)start duration:(id<CPIntVar>)duration
 {
     self = [super init];
-    _startLB  = start;
-    _startUB  = start;
-    _duration = duration;
-    _top      = NULL;
-    _optional = FALSE;
-    _initStartMin = [start min];
-    _initStartMax = [start max];
+    _startLB    = start;
+    _startUB    = start;
+    _duration   = duration;
+    _top        = NULL;
+    _optional   = FALSE;
+    _startRange = RANGE([start tracker], [start min], [start max]);
     
     return self;
 }
 -(id<CPOptionalActivity>) initCPOptionalActivity: (id<CPIntVar>) top startLB: (id<CPIntVar>) startLB startUB: (id<CPIntVar>) startUB startRange: (id<ORIntRange>) startRange duration: (id<CPIntVar>) duration
 {
     self = [super init];
-    _startLB  = startLB;
-    _startUB  = startUB;
-    _duration = duration;
-    _top      = top;
-    _optional = TRUE;
-    _initStartMin = [startRange low];
-    _initStartMax = [startRange up ];
+    _startLB    = startLB;
+    _startUB    = startUB;
+    _duration   = duration;
+    _top        = top;
+    _optional   = TRUE;
+    _startRange = startRange;
     
     return self;
 }
@@ -124,14 +121,31 @@
 {
     return _optional;
 }
+-(BOOL) isPresent
+{
+    return (!_optional || (_optional && _top.min == 1));
+}
+-(BOOL) isAbsent
+{
+    return (_optional && _top.max == 0);
+}
+-(BOOL) implyPresent:(id<CPOptionalActivity>)act
+{
+    // XXX Need to record present implication somewhere else
+    return (!act.isOptional || (_optional && _top.getId == act.top.getId));
+}
+-(id<ORIntRange>) startRange
+{
+    return _startRange;
+}
 -(void) updateStartMin:(ORInt)v
 {
     if (!_optional) {
         [_startLB updateMin: v];
     }
     else if (_top.max == 1) {
-        [_startLB updateMin: min(v, _initStartMax + 1)];
-        if (v > _initStartMax) [_top bind:0];
+        [_startLB updateMin: min(v, _startRange.up + 1)];
+        if (v > _startRange.up) [_top bind:0];
     }
 }
 -(void) updateStartMax:(ORInt)v
@@ -140,8 +154,8 @@
         [_startUB updateMax:v];
     }
     else if (_top.max == 1) {
-        [_startUB updateMax: max(v, _initStartMin - 1)];
-        if (v < _initStartMin) [_top bind:0];
+        [_startUB updateMax: max(v, _startRange.low - 1)];
+        if (v < _startRange.low) [_top bind:0];
     }
 }
 @end

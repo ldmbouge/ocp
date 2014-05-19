@@ -53,11 +53,15 @@
 
 @protocol CPOptionalActivity <ORObject>
 -(ORInt) getId;
--(id<CPIntVar>) startLB;
--(id<CPIntVar>) startUB;
--(id<CPIntVar>) duration;
--(id<CPIntVar>) top;
--(BOOL)         isOptional;
+-(id<CPIntVar>)   startLB;
+-(id<CPIntVar>)   startUB;
+-(id<CPIntVar>)   duration;
+-(id<CPIntVar>)   top;
+-(BOOL)           isOptional;
+-(BOOL)           isPresent;
+-(BOOL)           isAbsent;
+-(BOOL)           implyPresent: (id<CPOptionalActivity>) act;
+-(id<ORIntRange>) startRange;
 -(void) updateStartMin: (ORInt) v;
 -(void) updateStartMax: (ORInt) v;
 @end
