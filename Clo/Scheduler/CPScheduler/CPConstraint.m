@@ -18,7 +18,7 @@
     //
 @implementation CPPrecedence
 
--(id) initCPPrecedence:(id<CPOptionalActivity>)before after:(id<CPOptionalActivity>)after {
+-(id) initCPPrecedence:(id<CPActivity>)before after:(id<CPActivity>)after {
 
     self = [super initCPCoreConstraint:before.startLB.engine];
     

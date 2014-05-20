@@ -17,13 +17,13 @@
 
 
 @interface CPDisjunctive : CPCoreConstraint<NSCoding> {
-    id<CPOptionalActivityArray> _act; // (Optional) activities
-    id<CPIntVarArray> _start;   // Start times of tasks
-    id<CPIntVarArray> _dur;     // Durations of tasks
+    id<CPActivityArray> _act;   // (Optional) activities
+    id<CPIntVarArray>   _start; // Start times of tasks
+    id<CPIntVarArray>   _dur;   // Durations of tasks
 }
 
 -(id) initCPDisjunctive: (id<CPIntVarArray>) s duration: (id<CPIntVarArray>) d;
--(id) initCPDisjunctive: (id<CPOptionalActivityArray>) act;
+-(id) initCPDisjunctive: (id<CPActivityArray>) act;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

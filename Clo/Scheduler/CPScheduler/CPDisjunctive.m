@@ -92,14 +92,14 @@
     
     return self;
 }
--(id) initCPDisjunctive: (id<CPOptionalActivityArray>) act
+-(id) initCPDisjunctive: (id<CPActivityArray>) act
 {
     // Checking whether the number of activities is within the limit
     if (act.count > (NSUInteger) MAXNBTASK) {
         @throw [[ORExecutionError alloc] initORExecutionError: "CPDisjunctive: Number of elements exceeds beyond the limit!"];
     }
 
-    id<CPOptionalActivity> act0 = [act at: act.low];
+    id<CPActivity> act0 = [act at: act.low];
     self = [super initCPCoreConstraint: [act0.startLB engine]];
     NSLog(@"Create disjunctive constraint\n");
     // TODO Changing the priority

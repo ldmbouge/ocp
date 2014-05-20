@@ -65,7 +65,7 @@
         [startLB  visit: self];
         [duration visit: self];
         
-        id<CPOptionalActivity> concreteAct;
+        id<CPActivity> concreteAct;
         
         if (act.isOptional == TRUE) {
             [startUB visit: self];
@@ -73,7 +73,7 @@
             
             concreteAct = [CPFactory optionalActivity:_gamma[top.getId] startLB:_gamma[startLB.getId] startUB:_gamma[startUB.getId] startRange: [act startRange] duration:_gamma[duration.getId]];
         } else {
-            concreteAct = [CPFactory compulsoryActivity:_gamma[startLB.getId] duration:_gamma[duration.getId]];
+            concreteAct = [CPFactory activity:_gamma[startLB.getId] duration:_gamma[duration.getId]];
         }
         
         _gamma[act.getId] = concreteAct;
@@ -133,7 +133,7 @@
         id<ORActivity> after  = [cstr after];
         [before visit: self];
         [after  visit: self];
-        id<CPConstraint> concreteCstr = [CPFactory optionalPrecedence: _gamma[before.getId] precedes: _gamma[after.getId]];
+        id<CPConstraint> concreteCstr = [CPFactory precedence: _gamma[before.getId] precedes: _gamma[after.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

@@ -13,41 +13,13 @@
 #import <CPScheduler/CPActivity.h>
 #import <objcp/CPVar.h>
 
-//@implementation CPActivity
-//{
-//   id<CPIntVar> _start;
-//   id<CPIntVar> _duration;
-//   id<CPIntVar> _end;
-//}
-//-(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration end: (id<CPIntVar>) end
-//{
-//   self = [super init];
-//   _start = start;
-//   _duration = duration;
-//   _end = end;
-//   return self;
-//}
-//-(id<CPIntVar>) start
-//{
-//   return _start;
-//}
-//-(id<CPIntVar>) duration
-//{
-//   return _duration;
-//}
-//-(id<CPIntVar>) end
-//{
-//   return _end;
-//}
-//@end
-
 
 /*******************************************************************************
  Below is the implementation of an optional activity object using a tripartite
  representation for "optional" variables
  ******************************************************************************/
 
-@implementation CPOptionalActivity
+@implementation CPActivity
 {
     id<CPIntVar>   _startLB;
     id<CPIntVar>   _startUB;
@@ -56,7 +28,7 @@
     BOOL           _optional;
     id<ORIntRange> _startRange;
 }
--(id<CPOptionalActivity>) initCPActivity:(id<CPIntVar>)start duration:(id<CPIntVar>)duration
+-(id<CPActivity>) initCPActivity:(id<CPIntVar>)start duration:(id<CPIntVar>)duration
 {
     self = [super init];
     _startLB    = start;
@@ -68,7 +40,7 @@
     
     return self;
 }
--(id<CPOptionalActivity>) initCPOptionalActivity: (id<CPIntVar>) top startLB: (id<CPIntVar>) startLB startUB: (id<CPIntVar>) startUB startRange: (id<ORIntRange>) startRange duration: (id<CPIntVar>) duration
+-(id<CPActivity>) initCPOptionalActivity: (id<CPIntVar>) top startLB: (id<CPIntVar>) startLB startUB: (id<CPIntVar>) startUB startRange: (id<ORIntRange>) startRange duration: (id<CPIntVar>) duration
 {
     self = [super init];
     _startLB    = startLB;
@@ -108,7 +80,7 @@
 {
     return (_optional && _top.max == 0);
 }
--(BOOL) implyPresent:(id<CPOptionalActivity>)act
+-(BOOL) implyPresent:(id<CPActivity>)act
 {
     // XXX Need to record present implication somewhere else
     return (!act.isOptional || (_optional && _top.getId == act.top.getId));
@@ -142,9 +114,9 @@
 
 @implementation CPDisjunctiveResource {
     id<ORTracker> _tracker;
-    id<CPOptionalActivityArray> _activities;
+    id<CPActivityArray> _activities;
 }
--(id<CPDisjunctiveResource>) initCPDisjunctiveResource: (id<ORTracker>) tracker activities: (id<CPOptionalActivityArray>) activities
+-(id<CPDisjunctiveResource>) initCPDisjunctiveResource: (id<ORTracker>) tracker activities: (id<CPActivityArray>) activities
 {
     self = [super init];
     _tracker = tracker;
@@ -155,7 +127,7 @@
 {
     [super dealloc];
 }
--(id<CPOptionalActivityArray>) activities
+-(id<CPActivityArray>) activities
 {
     return _activities;
 }

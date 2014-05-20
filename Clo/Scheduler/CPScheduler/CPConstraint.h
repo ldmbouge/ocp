@@ -19,11 +19,11 @@
     // Single precedence propagator
     //
 @interface CPPrecedence : CPCoreConstraint<NSCoding> {
-    id<CPOptionalActivity> _before; // Optional activity
-    id<CPOptionalActivity> _after;  // Optional activity
+    id<CPActivity> _before; // Optional activity
+    id<CPActivity> _after;  // Optional activity
 }
 
--(id) initCPPrecedence: (id<CPOptionalActivity>) before after: (id<CPOptionalActivity>) after;
+-(id) initCPPrecedence: (id<CPActivity>) before after: (id<CPActivity>) after;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
