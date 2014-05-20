@@ -18,15 +18,15 @@
 
 @implementation CPFactory (CPScheduler)
 // activity
-+(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration end:(id<CPIntVar>) end
-{
-   id<CPActivity> act = [[CPActivity alloc] initCPActivity: start duration: duration end: end];
-   
-   // XXX What is the meaning of the following? Variable subscription?
-   [[start tracker] trackMutable: act];
-   
-   return act;
-}
+//+(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration end:(id<CPIntVar>) end
+//{
+//   id<CPActivity> act = [[CPActivity alloc] initCPActivity: start duration: duration end: end];
+//   
+//   // XXX What is the meaning of the following? Variable subscription?
+//   [[start tracker] trackMutable: act];
+//   
+//   return act;
+//}
 
 // optional activity
 +(id<CPOptionalActivity>) compulsoryActivity:(id<CPIntVar>)start duration:(id<CPIntVar>)duration
@@ -49,7 +49,7 @@
 }
 
 // disjunctive resource
-+(id<CPDisjunctiveResource>) disjunctiveResource:  (id<ORTracker>) tracker  activities: (id<CPActivityArray>) activities
++(id<CPDisjunctiveResource>) disjunctiveResource:  (id<ORTracker>) tracker  activities: (id<CPOptionalActivityArray>) activities
 {
    id<CPDisjunctiveResource> dr = [[CPDisjunctiveResource alloc] initCPDisjunctiveResource: tracker activities: activities];
    [tracker trackMutable: dr];
@@ -57,14 +57,14 @@
 }
 
 // Precedence
-+(id<CPConstraint>) precedence: (id<CPActivity>) before precedes:(id<CPActivity>) after
-{
-   // [pvh] this is not good
-   if (before.duration.domsize == 1)
-      return [CPFactory lEqual: before.start to: after.start plus: -before.duration.min];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "Duration is not a constant"];
-}
+//+(id<CPConstraint>) precedence: (id<CPActivity>) before precedes:(id<CPActivity>) after
+//{
+//   // [pvh] this is not good
+//   if (before.duration.domsize == 1)
+//      return [CPFactory lEqual: before.start to: after.start plus: -before.duration.min];
+//   else
+//      @throw [[ORExecutionError alloc] initORExecutionError: "Duration is not a constant"];
+//}
 +(id<CPConstraint>) optionalPrecedence: (id<CPOptionalActivity>) before precedes:(id<CPOptionalActivity>) after
 {
     // Creating a precedence propagator
@@ -133,18 +133,40 @@
     }];
    return [CPFactory cumulative: s duration: d end: e usage:r capacity: c];
 }
-+(id<CPConstraint>) cumulative: (id<CPActivityArray>) act usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c
++(id<CPConstraint>) cumulative: (id<CPOptionalActivityArray>) act usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c
 {
-   id<CPIntVarArray> start = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
-      return act[k].start;
-   }];
-   id<CPIntVarArray> duration = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
-      return act[k].duration;
-   }];
-   id<CPIntVarArray> end = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
-      return act[k].end;
-   }];
-   return [self cumulative: start duration: duration end: end usage: r capacity: c];
+    // XXX Following is just temporary
+    for (ORInt i = act.range.low; i <= act.range.up; i++) {
+        if (act[i].isOptional)
+            @throw [[ORExecutionError alloc] initORExecutionError: "Optional activities for the cumulative is not implemented yet"];
+    }
+    id<CPIntVarArray> start = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+        return act[k].startLB;
+    }];
+    id<CPIntVarArray> duration = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+        return act[k].duration;
+    }];
+    id<CPIntVarArray> end = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+        id<CPIntVar> duration = act[k].duration;
+        id<CPEngine> engine =[duration engine];
+        if (duration.min == duration.max)
+            return [CPFactory intVar: act[k].startLB shift: duration.min];
+        else {
+            id<CPIntVar> concreteEnd = [CPFactory intVar: engine domain: RANGE(engine,act[k].startLB.min + duration.min,act[k].startLB.max + duration.max)];
+            id<CPIntVarArray> av = [CPFactory intVarArray: engine range: RANGE(engine,0,2) with: ^id<CPIntVar>(ORInt k) {
+                if (k == 0)
+                    return act[k].startLB;
+                else if (k == 1)
+                    return duration;
+                else
+                    return [CPFactory intVar: concreteEnd scale: -1];
+            }];
+            id<CPConstraint> cstr = [CPFactory sum: av eq: 0 annotation: RangeConsistency];
+            [engine add: cstr];
+            return concreteEnd;
+        }
+    }];
+    return [self cumulative: start duration: duration end: end usage: r capacity: c];
 }
 // Disjunctive (resource) constraint
 //
@@ -156,7 +178,7 @@
     // XXX What is the meaning of the following? Variable subscription?
     [[s tracker] trackMutable: o];
     
-    // Returning the cumulative propagator
+    // Returning the disjunctive propagator
     return o;
 }
 +(id<CPConstraint>) disjunctive:(id<CPOptionalActivityArray>)act
@@ -167,19 +189,19 @@
     // XXX What is the meaning of the following? Variable subscription?
     [[act tracker] trackMutable: o];
     
-    // Returning the cumulative propagator
+    // Returning the disjunctive propagator
     return o;
 }
-+(id<CPConstraint>) schedulingDisjunctive: (id<CPActivityArray>) act
-{
-   id<CPIntVarArray> start = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
-      return act[k].start;
-   }];
-   id<CPIntVarArray> duration = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
-      return act[k].duration;
-   }];
-   return [self disjunctive: start duration: duration];
-}
+//+(id<CPConstraint>) schedulingDisjunctive: (id<CPOptionalActivityArray>) act
+//{
+//   id<CPIntVarArray> start = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+//      return act[k].start;
+//   }];
+//   id<CPIntVarArray> duration = [CPFactory intVarArray: [act tracker] range:[act range] with:^id<CPIntVar>(ORInt k) {
+//      return act[k].duration;
+//   }];
+//   return [self disjunctive: start duration: duration];
+//}
 
 
 // Difference (logic) constraint

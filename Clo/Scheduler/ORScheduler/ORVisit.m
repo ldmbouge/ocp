@@ -14,10 +14,10 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 @implementation ORVisitor (ORScheduler)
--(void) visitActivity: (id<ORActivity>) activity
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
-}
+//-(void) visitActivity: (id<ORActivity>) activity
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
+//}
 -(void) visitOptionalActivity: (id<OROptionalActivity>) activity
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
@@ -26,10 +26,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive resource: visit method not defined"];
 }
--(void) visitPrecedes: (id<ORPrecedes>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "precedes: visit method not defined"];
-}
+//-(void) visitPrecedes: (id<ORPrecedes>) cstr
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "precedes: visit method not defined"];
+//}
 -(void) visitOptionalPrecedes: (id<OROptionalPrecedes>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "precedes: visit method not defined"];
@@ -69,10 +69,10 @@
 @end
 
 @implementation ORNOopVisit (ORScheduler)
--(void) visitActivity: (id<ORActivity>) activity
-{
-   
-}
+//-(void) visitActivity: (id<ORActivity>) activity
+//{
+//   
+//}
 -(void) visitOptionalActivity: (id<OROptionalActivity>) activity
 {
     
@@ -81,10 +81,10 @@
 {
    
 }
--(void) visitPrecedes: (id<ORPrecedes>) cstr
-{
-   
-}
+//-(void) visitPrecedes: (id<ORPrecedes>) cstr
+//{
+//   
+//}
 -(void) visitOptionalPrecedes: (id<OROptionalPrecedes>) cstr
 {
     

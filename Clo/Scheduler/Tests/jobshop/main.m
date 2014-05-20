@@ -55,11 +55,11 @@ int main(int argc, const char * argv[])
       
       // variables
       id<ORActivityMatrix> activity = [ORFactory activityMatrix: model range: Size : Size horizon: Horizon duration: duration];
-      id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
+      id<OROptionalActivity> makespan = [ORFactory compulsoryActivity: model horizon: Horizon duration: 0];
       id<ORDisjunctiveResourceArray> machine = [ORFactory disjunctiveResourceArray: model range: Size];
       
       // constraints and objective
-      [model minimize: makespan.start];
+      [model minimize: makespan.startLB];
       
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j < Size.up; j++)
@@ -79,12 +79,12 @@ int main(int argc, const char * argv[])
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
          [cp setTimes: [activity flatten]];
-         [cp labelActivity: makespan];
-         printf("makespan = [%d,%d] \n",[cp min: makespan.start],[cp max: makespan.start]);
+         [cp labelOptionalActivity: makespan];
+         printf("makespan = [%d,%d] \n",[cp min: makespan.startLB],[cp max: makespan.startLB]);
          for(ORInt i = Size.low; i <= Size.up; i++) {
-            id<ORActivityArray> act = [machine[i] activities];
+            id<OROptionalActivityArray> act = [machine[i] activities];
             for(ORInt k = act.range.low; k <= act.range.up; k++) {
-               printf("[%d): %d --(%d) --> %d]",act[k].getId,[cp intValue: act[k].start],[cp intValue: act[k].duration],[cp intValue: act[k].start] + [cp intValue: act[k].duration]);
+               printf("[%d): %d --(%d) --> %d]",act[k].getId,[cp intValue: act[k].startLB],[cp intValue: act[k].duration],[cp intValue: act[k].startLB] + [cp intValue: act[k].duration]);
             }
             printf("\n");
          }
@@ -92,7 +92,7 @@ int main(int argc, const char * argv[])
       id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
       id<ORSolution> optimum = [pool best];
-      printf("Makespan: %d \n",[optimum intValue: makespan.start]);
+      printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
       NSLog(@"Solver status: %@\n",cp);
       [cp release];
       NSLog(@"Quitting");

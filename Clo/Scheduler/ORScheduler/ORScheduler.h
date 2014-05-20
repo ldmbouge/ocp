@@ -15,11 +15,11 @@
 #import <ORProgram/ORProgram.h>
 
 @protocol CPSchedulingProgram <CPProgram>
--(void) labelActivities: (id<ORActivityArray>) act;
--(void) labelActivity: (id<ORActivity>) act;
+//-(void) labelActivities: (id<ORActivityArray>) act;
+//-(void) labelActivity: (id<ORActivity>) act;
 -(void) labelOptionalActivities: (id<OROptionalActivityArray>) act;
 -(void) labelOptionalActivity: (id<OROptionalActivity>) act;
--(void) setTimes: (id<ORActivityArray>) act;
+-(void) setTimes: (id<OROptionalActivityArray>) act;
 @end
 
 @interface ORFactory (CPScheduling)

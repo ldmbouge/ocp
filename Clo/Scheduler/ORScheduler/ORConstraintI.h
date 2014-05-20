@@ -14,11 +14,11 @@
 
 
 // Precedence
-@interface ORPrecedes : ORConstraintI<ORPrecedes>
--(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after;
--(id<ORActivity>) before;
--(id<ORActivity>) after;
-@end
+//@interface ORPrecedes : ORConstraintI<ORPrecedes>
+//-(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after;
+//-(id<ORActivity>) before;
+//-(id<ORActivity>) after;
+//@end
 
 @interface OROptionalPrecedes : ORConstraintI<OROptionalPrecedes>
 -(id<OROptionalPrecedes>) initOROptionalPrecedes:(id<OROptionalActivity>) before precedes:(id<OROptionalActivity>) after;
@@ -37,8 +37,8 @@
 @end
 
 @interface ORSchedulingCumulative : ORConstraintI<ORSchedulingCumulative>
--(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<ORActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
--(id<ORActivityArray>) activities;
+-(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<OROptionalActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
+-(id<OROptionalActivityArray>) activities;
 -(id<ORIntArray>) usage;
 -(id<ORIntVar>) capacity;
 @end
@@ -54,8 +54,8 @@
 @end
 
 @interface ORSchedulingDisjunctive : ORConstraintI<ORSchedulingDisjunctive>
--(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<ORActivityArray>) act;
--(id<ORActivityArray>) activities;
+-(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<OROptionalActivityArray>) act;
+-(id<OROptionalActivityArray>) activities;
 @end
 
 

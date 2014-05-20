@@ -16,44 +16,44 @@
 
 // ORPrecedes
 //
-@implementation ORPrecedes {
-   id<ORActivity> _before;
-   id<ORActivity> _after;
-}
--(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after
-{
-   self = [super initORConstraintI];
-   _before = before;
-   _after   = after;
-   return self;
-}
--(void)visit:(ORVisitor*) v
-{
-   [v visitPrecedes: self];
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> precedes(%@,%@)>", [self class], self, _before, _after];
-   return buf;
-}
--(id<ORActivity>) before
-{
-   return _before;
-}
--(id<ORActivity>) after
-{
-   return _after;
-}
-// [pvh] to update when generalizing activities
--(NSSet*)allVars
-{
-   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
-   [ms addObject: _before.start];
-   [ms addObject: _after.start];
-   return ms;
-}
-@end
+//@implementation ORPrecedes {
+//   id<ORActivity> _before;
+//   id<ORActivity> _after;
+//}
+//-(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after
+//{
+//   self = [super initORConstraintI];
+//   _before = before;
+//   _after   = after;
+//   return self;
+//}
+//-(void)visit:(ORVisitor*) v
+//{
+//   [v visitPrecedes: self];
+//}
+//-(NSString*) description
+//{
+//   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+//   [buf appendFormat:@"<%@ : %p> -> precedes(%@,%@)>", [self class], self, _before, _after];
+//   return buf;
+//}
+//-(id<ORActivity>) before
+//{
+//   return _before;
+//}
+//-(id<ORActivity>) after
+//{
+//   return _after;
+//}
+//// [pvh] to update when generalizing activities
+//-(NSSet*)allVars
+//{
+//   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
+//   [ms addObject: _before.start];
+//   [ms addObject: _after.start];
+//   return ms;
+//}
+//@end
 
 @implementation OROptionalPrecedes {
     id<OROptionalActivity> _before;
@@ -164,11 +164,11 @@
 @end
 
 @implementation ORSchedulingCumulative {
-   id<ORActivityArray> _activities;
+   id<OROptionalActivityArray> _activities;
    id<ORIntArray>      _usage;
    id<ORIntVar>        _cap;
 }
--(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<ORActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c
+-(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<OROptionalActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c
 {
    self = [super initORConstraintI];
    _activities = act;
@@ -186,7 +186,7 @@
    [buf appendFormat:@"<%@ : %p> -> cumulative(%@,%@,%@)>", [self class], self, _activities, _usage, _cap];
    return buf;
 }
--(id<ORActivityArray>) activities
+-(id<OROptionalActivityArray>) activities
 {
    return _activities;
 }
@@ -205,16 +205,16 @@
    ORInt low = R.low;
    ORInt up = R.up;
    for(ORInt k = low; k <= up; k++){
-      [ms addObject: _activities[k].start];
+      [ms addObject: _activities[k].startLB];
    }
    return ms;
 }
 @end
 
 @implementation ORSchedulingDisjunctive {
-   id<ORActivityArray> _activities;
+   id<OROptionalActivityArray> _activities;
 }
--(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<ORActivityArray>) act
+-(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<OROptionalActivityArray>) act
 {
    self = [super initORConstraintI];
    _activities = act;
@@ -234,7 +234,7 @@
    [buf appendFormat:@"<%@ : %p> -> disjunctive(%@)>", [self class], self, _activities];
    return buf;
 }
--(id<ORActivityArray>) activities
+-(id<OROptionalActivityArray>) activities
 {
    return _activities;
 }
@@ -245,7 +245,7 @@
    ORInt low = R.low;
    ORInt up = R.up;
    for(ORInt k = low; k <= up; k++){
-      [ms addObject: _activities[k].start];
+      [ms addObject: _activities[k].startLB];
    }
    return ms;
 }

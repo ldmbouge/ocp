@@ -12,10 +12,10 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORScheduler/ORActivity.h>
 
-@protocol ORPrecedes <ORConstraint>
--(id<ORActivity>) before;
--(id<ORActivity>) after;
-@end
+//@protocol ORPrecedes <ORConstraint>
+//-(id<ORActivity>) before;
+//-(id<ORActivity>) after;
+//@end
 
 @protocol OROptionalPrecedes <ORConstraint>
 -(id<OROptionalActivity>) before;
@@ -23,7 +23,7 @@
 @end
 
 @protocol ORSchedulingCumulative <ORConstraint>
--(id<ORActivityArray>) activities;
+-(id<OROptionalActivityArray>) activities;
 -(id<ORIntArray>) usage;
 -(id<ORIntVar>) capacity;
 @end
@@ -36,7 +36,7 @@
 @end
 
 @protocol ORSchedulingDisjunctive <ORConstraint>
--(id<ORActivityArray>) activities;
+-(id<OROptionalActivityArray>) activities;
 @end
 
 

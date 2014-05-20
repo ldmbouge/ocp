@@ -58,11 +58,11 @@ int main(int argc, const char * argv[])
        id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
       
       // variables
-      id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
-      id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
+      id<OROptionalActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
+      id<OROptionalActivity> makespan = [ORFactory compulsoryActivity: model horizon: Horizon duration: 0];
       
       // constraints and objective
-      [model minimize: makespan.start];
+      [model minimize: makespan.startLB];
       
       for(ORInt p = 0; p < nbPrecedences; p++)
          [model add: [activities[precedence[p].before] precedes: activities[precedence[p].after]]];
@@ -73,18 +73,17 @@ int main(int argc, const char * argv[])
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
-//         [cp labelActivities: activities];
          [cp setTimes: activities];
-         [cp labelActivity: makespan];
-         printf("makespan = [%d,%d] \n",[cp min: makespan.start],[cp max: makespan.start]);
+         [cp labelOptionalActivity: makespan];
+         printf("makespan = [%d,%d] \n",[cp min: makespan.startLB],[cp max: makespan.startLB]);
       }
       ];
       id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
       id<ORSolution> optimum = [pool best];
-      printf("Makespan: %d \n",[optimum intValue: makespan.start]);
+      printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
       for(ORInt i = 1; i <= nbTasks; i++) {
-         ORInt s = [optimum intValue: activities[i].start];
+         ORInt s = [optimum intValue: activities[i].startLB];
          printf("task %d = [%d,%d] \n",i,s,s + [duration at: i]);
       }
       NSLog(@"Solver status: %@\n",cp);

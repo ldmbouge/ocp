@@ -12,72 +12,35 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 
-@protocol ORPrecedes;
+//@protocol ORPrecedes;
+//
+//@protocol ORActivity <ORObject>
+//-(ORInt) getId;
+//-(id<ORIntVar>) start;
+//-(id<ORIntVar>) duration;
+//-(id<ORIntVar>) end;
+//-(id<ORPrecedes>) precedes: (id<ORActivity>) after;
+//@end
+//
+//@interface ORActivity : ORObject<ORActivity> 
+//-(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+//-(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon durationVariable: (id<ORIntVar>) duration;
+//@end
+//
+//@protocol ORActivityArray <ORObject>
+//-(id<ORActivity>) at: (ORInt) idx;
+//-(void) set: (id<ORActivity>) value at: (ORInt)idx;
+//-(id<ORActivity>)objectAtIndexedSubscript:(NSUInteger)key;
+//-(void)setObject:(id<ORActivity>)newValue atIndexedSubscript:(NSUInteger)idx;
+//-(ORInt) low;
+//-(ORInt) up;
+//-(id<ORIntRange>) range;
+//-(NSUInteger) count;
+//-(NSString*) description;
+//-(id<ORTracker>) tracker;
+//@end
 
-@protocol ORActivity <ORObject>
--(ORInt) getId;
--(id<ORIntVar>) start;
--(id<ORIntVar>) duration;
--(id<ORIntVar>) end;
--(id<ORPrecedes>) precedes: (id<ORActivity>) after;
-@end
 
-@interface ORActivity : ORObject<ORActivity> 
--(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
--(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon durationVariable: (id<ORIntVar>) duration;
-@end
-
-@protocol ORActivityArray <ORObject>
--(id<ORActivity>) at: (ORInt) idx;
--(void) set: (id<ORActivity>) value at: (ORInt)idx;
--(id<ORActivity>)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id<ORActivity>)newValue atIndexedSubscript:(NSUInteger)idx;
--(ORInt) low;
--(ORInt) up;
--(id<ORIntRange>) range;
--(NSUInteger) count;
--(NSString*) description;
--(id<ORTracker>) tracker;
-@end
-
-@protocol ORActivityMatrix <ORObject>
--(id) flat:(ORInt)i;
--(id<ORActivity>) at: (ORInt) i1 : (ORInt) i2;
--(id<ORActivity>) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
--(void) setFlat:(id<ORActivity>) x at:(ORInt)i;
--(void) set: (id<ORActivity>) x at: (ORInt) i1 : (ORInt) i2;
--(void) set: (id<ORActivity>) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
--(ORInt) arity;
--(id<ORIntRange>) range: (ORInt) i;
--(NSUInteger)count;
--(NSString*) description;
--(id<ORTracker>) tracker;
--(id<ORActivityArray>) flatten;
-@end
-
-@protocol ORDisjunctiveResource <ORObject>
--(void) isRequiredBy: (id<ORActivity>) act;
--(id<ORActivityArray>) activities;
-@end
-
-@interface ORDisjunctiveResource : ORObject<ORDisjunctiveResource>
--(id<ORDisjunctiveResource>) initORDisjunctiveResource: (id<ORTracker>) tracker;
--(void) isRequiredBy: (id<ORActivity>) act;
--(id<ORActivityArray>) activities;
-@end
-
-@protocol ORDisjunctiveResourceArray <ORObject>
--(id<ORDisjunctiveResource>) at: (ORInt) idx;
--(void) set: (id<ORDisjunctiveResource>) value at: (ORInt)idx;
--(id<ORDisjunctiveResource>)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id<ORDisjunctiveResource>)newValue atIndexedSubscript:(NSUInteger)idx;
--(ORInt) low;
--(ORInt) up;
--(id<ORIntRange>) range;
--(NSUInteger) count;
--(NSString*) description;
--(id<ORTracker>) tracker;
-@end
 
 
 /*******************************************************************************
@@ -113,6 +76,12 @@ typedef enum {
 -(id<OROptionalPrecedes>) precedes: (id<OROptionalActivity>) after;
 @end
 
+@interface OROptionalActivity : ORObject<OROptionalActivity>
+-(id<OROptionalActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<OROptionalActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<OROptionalActivity>) initORAlternativeActivity: (id<ORModel>)model activities: (id<OROptionalActivityArray>) act;
+@end
+
 @protocol OROptionalActivityArray <ORObject>
 -(id<OROptionalActivity>) at: (ORInt) idx;
 -(void) set: (id<OROptionalActivity>) value at: (ORInt)idx;
@@ -126,9 +95,41 @@ typedef enum {
 -(id<ORTracker>) tracker;
 @end
 
-@interface OROptionalActivity : ORObject<OROptionalActivity>
--(id<OROptionalActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
--(id<OROptionalActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
--(id<OROptionalActivity>) initORAlternativeActivity: (id<ORModel>)model activities: (id<OROptionalActivityArray>) act;
+@protocol ORActivityMatrix <ORObject>
+-(id) flat:(ORInt)i;
+-(id<OROptionalActivity>) at: (ORInt) i1 : (ORInt) i2;
+-(id<OROptionalActivity>) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) setFlat:(id<OROptionalActivity>) x at:(ORInt)i;
+-(void) set: (id<OROptionalActivity>) x at: (ORInt) i1 : (ORInt) i2;
+-(void) set: (id<OROptionalActivity>) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(ORInt) arity;
+-(id<ORIntRange>) range: (ORInt) i;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+-(id<OROptionalActivityArray>) flatten;
 @end
 
+@protocol ORDisjunctiveResource <ORObject>
+-(void) isRequiredBy: (id<OROptionalActivity>) act;
+-(id<OROptionalActivityArray>) activities;
+@end
+
+@interface ORDisjunctiveResource : ORObject<ORDisjunctiveResource>
+-(id<ORDisjunctiveResource>) initORDisjunctiveResource: (id<ORTracker>) tracker;
+-(void) isRequiredBy: (id<OROptionalActivity>) act;
+-(id<OROptionalActivityArray>) activities;
+@end
+
+@protocol ORDisjunctiveResourceArray <ORObject>
+-(id<ORDisjunctiveResource>) at: (ORInt) idx;
+-(void) set: (id<ORDisjunctiveResource>) value at: (ORInt)idx;
+-(id<ORDisjunctiveResource>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORDisjunctiveResource>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end

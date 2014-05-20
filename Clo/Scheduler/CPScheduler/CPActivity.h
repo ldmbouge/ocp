@@ -12,38 +12,29 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 
-@protocol CPActivity <ORObject>
--(ORInt) getId;
--(id<CPIntVar>) start;
--(id<CPIntVar>) duration;
--(id<CPIntVar>) end;
-@end
-
-@interface CPActivity : ORObject<CPActivity>
--(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration end: (id<CPIntVar>) end;
-@end
-
-@protocol CPActivityArray <ORObject>
--(id<CPActivity>) at: (ORInt) idx;
--(void) set: (id<CPActivity>) value at: (ORInt)idx;
--(id<CPActivity>)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id<CPActivity>)newValue atIndexedSubscript:(NSUInteger)idx;
--(ORInt) low;
--(ORInt) up;
--(id<ORIntRange>) range;
--(NSUInteger) count;
--(NSString*) description;
--(id<ORTracker>) tracker;
-@end
-
-@protocol CPDisjunctiveResource <ORObject>
--(id<CPActivityArray>) activities;
-@end
-
-@interface CPDisjunctiveResource : ORObject<CPDisjunctiveResource>
--(id<CPDisjunctiveResource>) initCPDisjunctiveResource: (id<ORTracker>) tracker activities: (id<CPActivityArray>) activities;
--(id<CPActivityArray>) activities;
-@end
+//@protocol CPActivity <ORObject>
+//-(ORInt) getId;
+//-(id<CPIntVar>) start;
+//-(id<CPIntVar>) duration;
+//-(id<CPIntVar>) end;
+//@end
+//
+//@interface CPActivity : ORObject<CPActivity>
+//-(id<CPActivity>) initCPActivity: (id<CPIntVar>) start duration: (id<CPIntVar>) duration end: (id<CPIntVar>) end;
+//@end
+//
+//@protocol CPActivityArray <ORObject>
+//-(id<CPActivity>) at: (ORInt) idx;
+//-(void) set: (id<CPActivity>) value at: (ORInt)idx;
+//-(id<CPActivity>)objectAtIndexedSubscript:(NSUInteger)key;
+//-(void)setObject:(id<CPActivity>)newValue atIndexedSubscript:(NSUInteger)idx;
+//-(ORInt) low;
+//-(ORInt) up;
+//-(id<ORIntRange>) range;
+//-(NSUInteger) count;
+//-(NSString*) description;
+//-(id<ORTracker>) tracker;
+//@end
 
 
 /*******************************************************************************
@@ -82,4 +73,13 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
+@end
+
+@protocol CPDisjunctiveResource <ORObject>
+-(id<CPOptionalActivityArray>) activities;
+@end
+
+@interface CPDisjunctiveResource : ORObject<CPDisjunctiveResource>
+-(id<CPDisjunctiveResource>) initCPDisjunctiveResource: (id<ORTracker>) tracker activities: (id<CPOptionalActivityArray>) activities;
+-(id<CPOptionalActivityArray>) activities;
 @end

@@ -20,39 +20,39 @@
 @implementation ORCPConcretizer (CPScheduler)
 
 // Activity
--(void) visitActivity:(id<ORActivity>) act
-{
-   if (_gamma[act.getId] == NULL) {
-      id<ORIntVar> start = [act start];
-      id<ORIntVar> duration = [act duration];
-      id<ORIntVar> end = [act end];
-      id<ORTracker> tracker = [start tracker];
-      
-      [start visit: self];
-      [duration visit: self];
-      id<CPIntVar> concreteEnd;
-      if (duration.min == duration.max) {
-         concreteEnd = [CPFactory intVar: _gamma[start.getId] shift: duration.min];
-      }
-      else {
-         concreteEnd = [CPFactory intVar: _engine domain: RANGE(_engine,start.min + duration.min,start.max + duration.max)];
-         _gamma[end.getId] = concreteEnd;
-         id<CPIntVarArray> av = [CPFactory intVarArray: _engine range: RANGE(tracker,0,2) with: ^id<CPIntVar>(ORInt k) {
-            if (k == 0)
-               return _gamma[start.getId];
-            else if (k == 1)
-               return _gamma[duration.getId];
-            else
-               return [CPFactory intVar: concreteEnd scale: -1];
-         }];
-         id<CPConstraint> cstr = [CPFactory sum: av eq: 0 annotation: RangeConsistency];
-         [_engine add: cstr];
-      }
-       _gamma[end.getId] = concreteEnd;
-      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration: _gamma[duration.getId] end: concreteEnd];
-      _gamma[act.getId] = concreteAct;
-   }
-}
+//-(void) visitActivity:(id<ORActivity>) act
+//{
+//   if (_gamma[act.getId] == NULL) {
+//      id<ORIntVar> start = [act start];
+//      id<ORIntVar> duration = [act duration];
+//      id<ORIntVar> end = [act end];
+//      id<ORTracker> tracker = [start tracker];
+//      
+//      [start visit: self];
+//      [duration visit: self];
+//      id<CPIntVar> concreteEnd;
+//      if (duration.min == duration.max) {
+//         concreteEnd = [CPFactory intVar: _gamma[start.getId] shift: duration.min];
+//      }
+//      else {
+//         concreteEnd = [CPFactory intVar: _engine domain: RANGE(_engine,start.min + duration.min,start.max + duration.max)];
+//         _gamma[end.getId] = concreteEnd;
+//         id<CPIntVarArray> av = [CPFactory intVarArray: _engine range: RANGE(tracker,0,2) with: ^id<CPIntVar>(ORInt k) {
+//            if (k == 0)
+//               return _gamma[start.getId];
+//            else if (k == 1)
+//               return _gamma[duration.getId];
+//            else
+//               return [CPFactory intVar: concreteEnd scale: -1];
+//         }];
+//         id<CPConstraint> cstr = [CPFactory sum: av eq: 0 annotation: RangeConsistency];
+//         [_engine add: cstr];
+//      }
+//       _gamma[end.getId] = concreteEnd;
+//      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration: _gamma[duration.getId] end: concreteEnd];
+//      _gamma[act.getId] = concreteAct;
+//   }
+//}
 
 -(void) visitOptionalActivity:(id<OROptionalActivity>) act
 {
@@ -83,9 +83,9 @@
 -(void) visitDisjunctiveResource:(id<ORDisjunctiveResource>) dr
 {
    if (_gamma[dr.getId] == NULL) {
-      id<ORActivityArray> act = [dr activities];
+      id<OROptionalActivityArray> act = [dr activities];
       [act visit: self];
-      id<CPDisjunctiveResource> concreteDr = [CPFactory disjunctiveResource: _engine activities: _gamma[dr.getId]];
+       id<CPDisjunctiveResource> concreteDr = [CPFactory disjunctiveResource: _engine activities: _gamma[dr.getId]];
       _gamma[dr.getId] = concreteDr;
    }
 }
@@ -113,7 +113,7 @@
 -(void) visitSchedulingCumulative:(id<ORSchedulingCumulative>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORActivityArray> activities = [cstr activities];
+      id<OROptionalActivityArray> activities = [cstr activities];
       id<ORIntArray> usage = [cstr usage];
       id<ORIntVar> capacity = [cstr capacity];
       [activities visit: self];
@@ -125,19 +125,19 @@
    }
 }
 
-// Precedence constraint
--(void) visitPrecedes:(id<ORPrecedes>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORActivity> before = [cstr before];
-      id<ORActivity> after = [cstr after];
-      [before visit: self];
-      [after visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory precedence: _gamma[before.getId] precedes: _gamma[after.getId]];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}
+//// Precedence constraint
+//-(void) visitPrecedes:(id<ORPrecedes>) cstr
+//{
+//   if (_gamma[cstr.getId] == NULL) {
+//      id<ORActivity> before = [cstr before];
+//      id<ORActivity> after = [cstr after];
+//      [before visit: self];
+//      [after visit: self];
+//      id<CPConstraint> concreteCstr = [CPFactory precedence: _gamma[before.getId] precedes: _gamma[after.getId]];
+//      [_engine add: concreteCstr];
+//      _gamma[cstr.getId] = concreteCstr;
+//   }
+//}
 
 -(void) visitOptionalPrecedes:(id<OROptionalPrecedes>) cstr
 {
@@ -177,15 +177,16 @@
 }
 
 // Disjunctive (resource) constraint
+// TODO Remove this method
 -(void) visitSchedulingDisjunctive:(id<ORSchedulingDisjunctive>) cstr
 {
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORActivityArray> activities = [cstr activities];
-      [activities visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory schedulingDisjunctive: _gamma[activities.getId]];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
+    if (_gamma[cstr.getId] == NULL) {
+        id<OROptionalActivityArray> act = [cstr activities];
+        [act visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory disjunctive:_gamma[act.getId]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 
 
