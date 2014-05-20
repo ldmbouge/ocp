@@ -55,7 +55,7 @@ int main(int argc, const char * argv[])
       
       // variables
       id<ORActivityMatrix> activity = [ORFactory activityMatrix: model range: Size : Size horizon: Horizon duration: duration];
-      id<OROptionalActivity> makespan = [ORFactory compulsoryActivity: model horizon: Horizon duration: 0];
+      id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
       id<ORDisjunctiveResourceArray> machine = [ORFactory disjunctiveResourceArray: model range: Size];
       
       // constraints and objective
@@ -79,10 +79,10 @@ int main(int argc, const char * argv[])
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
          [cp setTimes: [activity flatten]];
-         [cp labelOptionalActivity: makespan];
+         [cp labelActivity: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan.startLB],[cp max: makespan.startLB]);
          for(ORInt i = Size.low; i <= Size.up; i++) {
-            id<OROptionalActivityArray> act = [machine[i] activities];
+            id<ORActivityArray> act = [machine[i] activities];
             for(ORInt k = act.range.low; k <= act.range.up; k++) {
                printf("[%d): %d --(%d) --> %d]",act[k].getId,[cp intValue: act[k].startLB],[cp intValue: act[k].duration],[cp intValue: act[k].startLB] + [cp intValue: act[k].duration]);
             }

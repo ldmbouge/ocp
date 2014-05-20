@@ -16,50 +16,11 @@
 
 // ORPrecedes
 //
-//@implementation ORPrecedes {
-//   id<ORActivity> _before;
-//   id<ORActivity> _after;
-//}
-//-(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after
-//{
-//   self = [super initORConstraintI];
-//   _before = before;
-//   _after   = after;
-//   return self;
-//}
-//-(void)visit:(ORVisitor*) v
-//{
-//   [v visitPrecedes: self];
-//}
-//-(NSString*) description
-//{
-//   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-//   [buf appendFormat:@"<%@ : %p> -> precedes(%@,%@)>", [self class], self, _before, _after];
-//   return buf;
-//}
-//-(id<ORActivity>) before
-//{
-//   return _before;
-//}
-//-(id<ORActivity>) after
-//{
-//   return _after;
-//}
-//// [pvh] to update when generalizing activities
-//-(NSSet*)allVars
-//{
-//   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
-//   [ms addObject: _before.start];
-//   [ms addObject: _after.start];
-//   return ms;
-//}
-//@end
-
-@implementation OROptionalPrecedes {
-    id<OROptionalActivity> _before;
-    id<OROptionalActivity> _after;
+@implementation ORPrecedes {
+    id<ORActivity> _before;
+    id<ORActivity> _after;
 }
--(id<OROptionalPrecedes>) initOROptionalPrecedes:(id<OROptionalActivity>) before precedes:(id<OROptionalActivity>) after
+-(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after
 {
     self = [super initORConstraintI];
     _before = before;
@@ -68,7 +29,7 @@
 }
 -(void)visit:(ORVisitor*) v
 {
-    [v visitOptionalPrecedes: self];
+    [v visitPrecedes: self];
 }
 -(NSString*) description
 {
@@ -76,11 +37,11 @@
     [buf appendFormat:@"<%@ : %p> -> optionalPrecedes(%@,%@)>", [self class], self, _before, _after];
     return buf;
 }
--(id<OROptionalActivity>) before
+-(id<ORActivity>) before
 {
     return _before;
 }
--(id<OROptionalActivity>) after
+-(id<ORActivity>) after
 {
     return _after;
 }
@@ -164,11 +125,11 @@
 @end
 
 @implementation ORSchedulingCumulative {
-   id<OROptionalActivityArray> _activities;
+   id<ORActivityArray> _activities;
    id<ORIntArray>      _usage;
    id<ORIntVar>        _cap;
 }
--(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<OROptionalActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c
+-(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<ORActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c
 {
    self = [super initORConstraintI];
    _activities = act;
@@ -186,7 +147,7 @@
    [buf appendFormat:@"<%@ : %p> -> cumulative(%@,%@,%@)>", [self class], self, _activities, _usage, _cap];
    return buf;
 }
--(id<OROptionalActivityArray>) activities
+-(id<ORActivityArray>) activities
 {
    return _activities;
 }
@@ -212,9 +173,9 @@
 @end
 
 @implementation ORSchedulingDisjunctive {
-   id<OROptionalActivityArray> _activities;
+   id<ORActivityArray> _activities;
 }
--(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<OROptionalActivityArray>) act
+-(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<ORActivityArray>) act
 {
    self = [super initORConstraintI];
    _activities = act;
@@ -234,7 +195,7 @@
    [buf appendFormat:@"<%@ : %p> -> disjunctive(%@)>", [self class], self, _activities];
    return buf;
 }
--(id<OROptionalActivityArray>) activities
+-(id<ORActivityArray>) activities
 {
    return _activities;
 }
@@ -254,7 +215,7 @@
 // Disjunctive (resource) constraint
 //
 @implementation ORDisjunctive {
-    id<OROptionalActivityArray> _act;
+    id<ORActivityArray> _act;
     id<ORIntVarArray>           _start;
     id<ORIntVarArray>           _dur;
 }
@@ -266,7 +227,7 @@
     _dur   = d;
     return self;
 }
--(id<ORDisjunctive>) initORDisjunctive:(id<OROptionalActivityArray>)act
+-(id<ORDisjunctive>) initORDisjunctive:(id<ORActivityArray>)act
 {
     self = [super initORConstraintI];
     _act   = act;
@@ -284,7 +245,7 @@
     [buf appendFormat:@"<%@ : %p> -> disjunctive(%@,%@)>", [self class], self, _start, _dur];
     return buf;
 }
--(id<OROptionalActivityArray>) act
+-(id<ORActivityArray>) act
 {
     return _act;
 }

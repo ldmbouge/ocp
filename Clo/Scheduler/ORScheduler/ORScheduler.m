@@ -13,28 +13,17 @@
 #import <ORProgram/CPSolver.h>
 
 @interface CPCoreSolver (CPScheduling)
-//-(void) labelActivities: (id<ORActivityArray>) act;
+-(void) labelActivities: (id<ORActivityArray>) act;
 @end
 
 @implementation CPCoreSolver (CPScheduling)
-//-(void) labelActivities: (id<ORActivityArray>) act
-//{
-//   id<ORIntVarArray> start = [ORFactory intVarArray: self range: act.range with: ^id<ORIntVar>(ORInt k) {
-//      return act[k].start;
-//   }];
-//   [self labelArray: start];
-//}
-//-(void) labelActivity: (id<ORActivity>) act
-//{
-//   [self label: act.start];
-//}
--(void) labelOptionalActivities: (id<OROptionalActivityArray>) act
+-(void) labelActivities: (id<ORActivityArray>) act
 {
     for (ORInt i = act.range.low; i <= act.range.up; i++) {
-        [self labelOptionalActivity:act[i]];
+        [self labelActivity:act[i]];
     }
 }
--(void) labelOptionalActivity: (id<OROptionalActivity>) act
+-(void) labelActivity: (id<ORActivity>) act
 {
     if ((act.type & 1) == 1) {
         [self label: act.top];
@@ -42,10 +31,10 @@
     [self label: act.startLB ];
     [self label: act.duration];
     if (act.type > 1) {
-        [self labelOptionalActivities:act.composition];
+        [self labelActivities:act.composition];
     }
 }
--(void) setTimes: (id<OROptionalActivityArray>) act
+-(void) setTimes: (id<ORActivityArray>) act
 {
     id<ORIntRange> R = act.range;
     ORInt low = R.low;

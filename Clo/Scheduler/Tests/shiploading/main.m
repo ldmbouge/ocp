@@ -58,8 +58,8 @@ int main(int argc, const char * argv[])
        id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
       
       // variables
-      id<OROptionalActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
-      id<OROptionalActivity> makespan = [ORFactory compulsoryActivity: model horizon: Horizon duration: 0];
+      id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
+      id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
       
       // constraints and objective
       [model minimize: makespan.startLB];
@@ -74,7 +74,7 @@ int main(int argc, const char * argv[])
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
          [cp setTimes: activities];
-         [cp labelOptionalActivity: makespan];
+         [cp labelActivity: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan.startLB],[cp max: makespan.startLB]);
       }
       ];

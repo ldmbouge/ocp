@@ -13,17 +13,10 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 
-// Precedence
-//@interface ORPrecedes : ORConstraintI<ORPrecedes>
-//-(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after;
-//-(id<ORActivity>) before;
-//-(id<ORActivity>) after;
-//@end
-
-@interface OROptionalPrecedes : ORConstraintI<OROptionalPrecedes>
--(id<OROptionalPrecedes>) initOROptionalPrecedes:(id<OROptionalActivity>) before precedes:(id<OROptionalActivity>) after;
--(id<OROptionalActivity>) before;
--(id<OROptionalActivity>) after;
+@interface ORPrecedes : ORConstraintI<ORPrecedes>
+-(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after;
+-(id<ORActivity>) before;
+-(id<ORActivity>) after;
 @end
 
 
@@ -37,8 +30,8 @@
 @end
 
 @interface ORSchedulingCumulative : ORConstraintI<ORSchedulingCumulative>
--(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<OROptionalActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
--(id<OROptionalActivityArray>) activities;
+-(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<ORActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
+-(id<ORActivityArray>) activities;
 -(id<ORIntArray>) usage;
 -(id<ORIntVar>) capacity;
 @end
@@ -47,15 +40,15 @@
 // Disjunctive (resource) constraint
 @interface ORDisjunctive : ORConstraintI<ORDisjunctive>
 -(id<ORDisjunctive>) initORDisjunctive:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
--(id<ORDisjunctive>) initORDisjunctive:(id<OROptionalActivityArray>) act;
--(id<OROptionalActivityArray>) act;
+-(id<ORDisjunctive>) initORDisjunctive:(id<ORActivityArray>) act;
+-(id<ORActivityArray>) act;
 -(id<ORIntVarArray>) start;
 -(id<ORIntVarArray>) duration;
 @end
 
 @interface ORSchedulingDisjunctive : ORConstraintI<ORSchedulingDisjunctive>
--(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<OROptionalActivityArray>) act;
--(id<OROptionalActivityArray>) activities;
+-(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<ORActivityArray>) act;
+-(id<ORActivityArray>) activities;
 @end
 
 

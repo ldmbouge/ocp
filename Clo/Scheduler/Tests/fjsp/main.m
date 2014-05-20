@@ -284,27 +284,27 @@ int main(int argc, const char * argv[])
         
             // Creating optional activities
             //
-        id<OROptionalActivityArray> OptActs = [ORFactory optionalActivityArray:model range:OptActsR with: ^id<OROptionalActivity>(ORInt k) {
+        id<ORActivityArray> OptActs = [ORFactory activityArray:model range:OptActsR with: ^id<ORActivity>(ORInt k) {
             if (act_nopt[opt_act[k]] == 1) {
-                return [ORFactory compulsoryActivity:model horizon:dom duration:RANGE(model, dur[k], dur[k])];
+                return [ORFactory activity:model horizon:dom duration:RANGE(model, dur[k], dur[k])];
             }
             return [ORFactory optionalActivity:model horizon:dom duration:RANGE(model, dur[k], dur[k])];
         }];
         
             // Creating of "alternative" activities
             //
-        id<OROptionalActivityArray> Acts = [ORFactory optionalActivityArray:model range:ActsR with:^id<OROptionalActivity>(ORInt k) {
+        id<ORActivityArray> Acts = [ORFactory activityArray:model range:ActsR with:^id<ORActivity>(ORInt k) {
             if (act_nopt[k] == 1) {
                 return OptActs[act_fopt[k]];
             }
-            return [ORFactory compulsoryAlternativeActivity:model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) with:^id<OROptionalActivity>(ORInt o) {
+            return [ORFactory alternativeActivity:model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) with:^id<ORActivity>(ORInt o) {
                 return OptActs[o];
             }];
         }];
         
             // Creating the sink activity (representing the end of the project)
             //
-        id<OROptionalActivity> end = [ORFactory compulsoryActivity:model horizon:dom duration:RANGE(model, 0, 0)];
+        id<ORActivity> end = [ORFactory activity:model horizon:dom duration:RANGE(model, 0, 0)];
         
             // Adding precedence constraints
             //
@@ -319,7 +319,7 @@ int main(int argc, const char * argv[])
             // Adding resource constraints
             //
         for (ORInt m = 0; m < n_mach; m++) {
-            id<OROptionalActivityArray> m_acts = [ORFactory optionalActivityArray:model range:RANGE(model, 0, mach_nopt[m] - 1) with:^id<OROptionalActivity>(ORInt k) {
+            id<ORActivityArray> m_acts = [ORFactory activityArray:model range:RANGE(model, 0, mach_nopt[m] - 1) with:^id<ORActivity>(ORInt k) {
                 return OptActs[mach_opt[m][k]];
             }];
             [model add: [ORFactory disjunctive:m_acts]];
@@ -342,8 +342,8 @@ int main(int argc, const char * argv[])
 		[cp solve:
 			^() {
 				// Search strategy
-                [cp labelOptionalActivities: OptActs];
-                [cp labelOptionalActivity:   end ];
+                [cp labelActivities: OptActs];
+                [cp labelActivity:   end ];
 				// TODO Output of solution
 //				printf("start = [|\n\t");
 //				for (ORInt t = 0; t < n_task; t++) {

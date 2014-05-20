@@ -15,35 +15,32 @@
 
 @interface ORFactory (ORScheduler)
 
-// activities
-//+(id<ORActivity>) activity: (id<ORTracker>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
-//+(id<ORActivity>) activity: (id<ORTracker>) model horizon: (id<ORIntRange>) horizon durationVariable: (id<ORIntVar>) duration;
-//+(id<OROptionalActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<OROptionalActivity>(^)(ORInt)) clo;
-+(id<OROptionalActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration;
-+(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<OROptionalActivity>(^)(ORInt,ORInt)) clo;
+// Activities
++(id<ORActivity>) activity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
++(id<ORActivity>) optionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
++(id<ORActivity>) alternativeActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
+
++(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration;
+
++(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<ORActivity>(^)(ORInt,ORInt)) clo;
 +(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
                                horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration;
+
 +(id<ORDisjunctiveResourceArray>) disjunctiveResourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
 
-// optional activities
-+(id<OROptionalActivity>) compulsoryActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
-+(id<OROptionalActivity>) optionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
-+(id<OROptionalActivity>) compulsoryAlternativeActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<OROptionalActivity>(^)(ORInt)) clo;
-+(id<OROptionalActivityArray>) optionalActivityArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<OROptionalActivity>(^)(ORInt)) clo;
-
 // Precedence constraints
-//+(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after;
-+(id<OROptionalPrecedes>) optionalPrecedence: (id<OROptionalActivity>) before precedes:(id<OROptionalActivity>) after;
++(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after;
 
 // Cumulative Resource constraints
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c;
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r maxCapacity:(ORInt) c;
-+(id<ORSchedulingCumulative>) cumulative: (id<OROptionalActivityArray>) act usage:(id<ORIntArray>) r maxCapacity:(ORInt) c;
++(id<ORSchedulingCumulative>) cumulative: (id<ORActivityArray>) act usage:(id<ORIntArray>) r maxCapacity:(ORInt) c;
 
 // Disjunctive Resource constraint
 +(id<ORDisjunctive>) disjunctive: (id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
-+(id<ORDisjunctive>) disjunctive: (id<OROptionalActivityArray>) act;
-+(id<ORSchedulingDisjunctive>) schedulingDisjunctive: (id<OROptionalActivityArray>) act;
++(id<ORDisjunctive>) disjunctive: (id<ORActivityArray>) act;
++(id<ORSchedulingDisjunctive>) schedulingDisjunctive: (id<ORActivityArray>) act;
 +(id<ORDisjunctiveResource>) disjunctiveResource: (id<ORTracker>) model;
 
 // Difference Logic constraints

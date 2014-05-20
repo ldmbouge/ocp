@@ -14,11 +14,9 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 @interface ORVisitor (ORScheduler)
-//-(void) visitActivity: (id<ORActivity> ) activity;
--(void) visitOptionalActivity: (id<OROptionalActivity> ) activity;
+-(void) visitActivity: (id<ORActivity> ) activity;
 -(void) visitDisjunctiveResource: (id<ORDisjunctiveResource> ) dr;
-//-(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
--(void) visitOptionalPrecedes:  (id<OROptionalPrecedes> ) cstr;
+-(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
@@ -30,11 +28,9 @@
 @end;
 
 @interface ORNOopVisit (ORScheduler)
-//-(void) visitActivity: (id<ORActivity> ) activity;
--(void) visitOptionalActivity: (id<OROptionalActivity> ) activity;
+-(void) visitActivity: (id<ORActivity> ) activity;
 -(void) visitDisjunctiveResource: (id<ORDisjunctiveResource> ) dr;
-//-(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
--(void) visitOptionalPrecedes:  (id<OROptionalPrecedes> ) cstr;
+-(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;

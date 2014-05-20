@@ -14,11 +14,7 @@
 #import "ORConstraintI.h"
 
 @implementation ORFlatten (ORScheduler)
-//-(void) visitPrecedes:(id<ORPrecedes>) cstr
-//{
-//   _result = [_into addConstraint:cstr];
-//}
--(void) visitOptionalPrecedes:(id<OROptionalPrecedes>) cstr
+-(void) visitPrecedes:(id<ORPrecedes>) cstr
 {
     _result = [_into addConstraint:cstr];
 }

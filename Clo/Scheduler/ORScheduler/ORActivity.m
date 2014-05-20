@@ -16,57 +16,12 @@
 #import <ORScheduler/ORVisit.h>
 #import <ORScheduler/ORSchedFactory.h>
 
-//@implementation ORActivity
-//{
-//   id<ORIntVar> _start;
-//   id<ORIntVar> _duration;
-//   id<ORIntVar> _end;
-//}
-//-(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
-//{
-//   self = [super init];
-//   _start = [ORFactory intVar: tracker domain: horizon];
-//   _duration = [ORFactory intVar: tracker domain: RANGE(tracker,duration,duration)];
-//   return self;
-//}
-//-(id<ORActivity>) initORActivity: (id<ORTracker>) tracker horizon: (id<ORIntRange>) horizon durationVariable: (id<ORIntVar>) duration
-//{
-//   self = [super init];
-//   _start = [ORFactory intVar: tracker domain: horizon];
-//   _duration = duration;
-//   return self;
-//}
-//-(id<ORIntVar>) start
-//{
-//   return _start;
-//}
-//-(id<ORIntVar>) duration
-//{
-//   return _duration;
-//}
-//-(id<ORIntVar>) end
-//{
-//   return _end;
-//}
-//-(void)visit:(ORVisitor*) v
-//{
-//   [v visitActivity: self];
-//}
-//-(id<ORPrecedes>) precedes: (id<ORActivity>) after
-//{
-//   return [ORFactory precedence: self precedes: after];
-//}
-//@end
-
-
-
-
 /*******************************************************************************
  Below is the definition of an optional activity object using a tripartite
  representation for "optional" variables
  ******************************************************************************/
 
-@implementation OROptionalActivity
+@implementation ORActivity
 {
     id<ORIntVar>   _startLB;
     id<ORIntVar>   _startUB;
@@ -75,10 +30,10 @@
     id<ORIntVar>   _altIdx;
     BOOL           _optional;
     id<ORIntRange> _startRange;
-    id<OROptionalActivityArray> _composition;
+    id<ORActivityArray> _composition;
     ORInt          _type;
 }
--(id<OROptionalActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+-(id<ORActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
     self = [super init];
     
@@ -94,7 +49,7 @@
     
     return self;
 }
--(id<OROptionalActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+-(id<ORActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
     self = [super init];
     
@@ -116,7 +71,7 @@
     
     return self;
 }
--(id<OROptionalActivity>) initORAlternativeActivity:(id<ORModel>)model activities:(id<OROptionalActivityArray>)act
+-(id<ORActivity>) initORAlternativeActivity:(id<ORModel>)model activities:(id<ORActivityArray>)act
 {
 //    assert(act.range.low <= act.range.up);
     self = [super init];
@@ -180,7 +135,7 @@
 {
     return _startRange;
 }
--(id<OROptionalActivityArray>) composition
+-(id<ORActivityArray>) composition
 {
     return _composition;
 }
@@ -190,11 +145,11 @@
 }
 -(void)visit:(ORVisitor*) v
 {
-    [v visitOptionalActivity: self];
+    [v visitActivity: self];
 }
--(id<OROptionalPrecedes>) precedes: (id<OROptionalActivity>) after
+-(id<ORPrecedes>) precedes: (id<ORActivity>) after
 {
-    return [ORFactory optionalPrecedence: self precedes: after];
+    return [ORFactory precedence: self precedes: after];
 }
 @end
 
@@ -202,7 +157,7 @@
     BOOL _closed;
     id<ORTracker> _tracker;
     NSMutableArray* _acc;
-    id<OROptionalActivityArray> _activities;
+    id<ORActivityArray> _activities;
 }
 -(id<ORDisjunctiveResource>) initORDisjunctiveResource: (id<ORTracker>) tracker
 {
@@ -219,7 +174,7 @@
     }
     [super dealloc];
 }
--(void) isRequiredBy: (id<OROptionalActivity>) act
+-(void) isRequiredBy: (id<ORActivity>) act
 {
     if (_closed) {
         @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
@@ -231,11 +186,11 @@
     [v visitDisjunctiveResource: self];
 }
 
--(id<OROptionalActivityArray>) activities
+-(id<ORActivityArray>) activities
 {
     if (!_closed) {
         _closed = true;
-        _activities = [ORFactory optionalActivityArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]-1) with: ^id<OROptionalActivity>(ORInt i) {
+        _activities = [ORFactory activityArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]-1) with: ^id<ORActivity>(ORInt i) {
             return _acc[i];
         }];
     }

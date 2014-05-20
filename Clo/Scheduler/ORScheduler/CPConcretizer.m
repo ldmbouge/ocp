@@ -54,7 +54,7 @@
 //   }
 //}
 
--(void) visitOptionalActivity:(id<OROptionalActivity>) act
+-(void) visitActivity:(id<ORActivity>) act
 {
     // NOTE that the information about compositional activities get lost during the concretization
     if (_gamma[act.getId] == NULL) {
@@ -83,7 +83,7 @@
 -(void) visitDisjunctiveResource:(id<ORDisjunctiveResource>) dr
 {
    if (_gamma[dr.getId] == NULL) {
-      id<OROptionalActivityArray> act = [dr activities];
+      id<ORActivityArray> act = [dr activities];
       [act visit: self];
        id<CPDisjunctiveResource> concreteDr = [CPFactory disjunctiveResource: _engine activities: _gamma[dr.getId]];
       _gamma[dr.getId] = concreteDr;
@@ -113,7 +113,7 @@
 -(void) visitSchedulingCumulative:(id<ORSchedulingCumulative>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<OROptionalActivityArray> activities = [cstr activities];
+      id<ORActivityArray> activities = [cstr activities];
       id<ORIntArray> usage = [cstr usage];
       id<ORIntVar> capacity = [cstr capacity];
       [activities visit: self];
@@ -125,25 +125,12 @@
    }
 }
 
-//// Precedence constraint
-//-(void) visitPrecedes:(id<ORPrecedes>) cstr
-//{
-//   if (_gamma[cstr.getId] == NULL) {
-//      id<ORActivity> before = [cstr before];
-//      id<ORActivity> after = [cstr after];
-//      [before visit: self];
-//      [after visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory precedence: _gamma[before.getId] precedes: _gamma[after.getId]];
-//      [_engine add: concreteCstr];
-//      _gamma[cstr.getId] = concreteCstr;
-//   }
-//}
-
--(void) visitOptionalPrecedes:(id<OROptionalPrecedes>) cstr
+// Precedence constraint
+-(void) visitPrecedes:(id<ORPrecedes>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
-        id<OROptionalActivity> before = [cstr before];
-        id<OROptionalActivity> after  = [cstr after];
+        id<ORActivity> before = [cstr before];
+        id<ORActivity> after  = [cstr after];
         [before visit: self];
         [after  visit: self];
         id<CPConstraint> concreteCstr = [CPFactory optionalPrecedence: _gamma[before.getId] precedes: _gamma[after.getId]];
@@ -166,7 +153,7 @@
             concreteCstr = [CPFactory disjunctive: _gamma[start.getId] duration: _gamma[duration.getId]];
         }
         else {
-            id<OROptionalActivityArray> act = [cstr act];
+            id<ORActivityArray> act = [cstr act];
             
             [act visit: self];
             concreteCstr = [CPFactory disjunctive:_gamma[act.getId]];
@@ -181,7 +168,7 @@
 -(void) visitSchedulingDisjunctive:(id<ORSchedulingDisjunctive>) cstr
 {
     if (_gamma[cstr.getId] == NULL) {
-        id<OROptionalActivityArray> act = [cstr activities];
+        id<ORActivityArray> act = [cstr activities];
         [act visit: self];
         id<CPConstraint> concreteCstr = [CPFactory disjunctive:_gamma[act.getId]];
         [_engine add: concreteCstr];
