@@ -159,6 +159,7 @@
 		53C4BE3B1929C2E700DE6498 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		53C4BE3C1929C2E700DE6498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		53C4BE431929C54700DE6498 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 533C588619230E57007D33BB /* main.m */; };
+		53E386FF192B2CE60075F0F0 /* fjsp-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 53E386FE192B2CE60075F0F0 /* fjsp-Prefix.pch */; };
 		5B04F30B1922709D006BDCB6 /* st103_1.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE54218FCC56C0006FFD2 /* st103_1.rcp */; };
 		5B115520171B1CF5005371AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B115523171B1CF5005371AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B115522171B1CF5005371AA /* main.m */; };
@@ -7189,6 +7190,7 @@
 		537EEA6018FCF1C70006FFD2 /* jsp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jsp; sourceTree = BUILT_PRODUCTS_DIR; };
 		537EEA9218FCF9880006FFD2 /* rcpsp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rcpsp; sourceTree = BUILT_PRODUCTS_DIR; };
 		53C4BE421929C2E700DE6498 /* fjsp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fjsp; sourceTree = BUILT_PRODUCTS_DIR; };
+		53E386FE192B2CE60075F0F0 /* fjsp-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fjsp-Prefix.pch"; sourceTree = "<group>"; };
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B074A27142E5B2D0055B72D /* ORSemDFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemDFSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPHeuristic.h; sourceTree = "<group>"; };
@@ -9678,6 +9680,7 @@
 		533C588519230E57007D33BB /* fjsp */ = {
 			isa = PBXGroup;
 			children = (
+				53E386FE192B2CE60075F0F0 /* fjsp-Prefix.pch */,
 				533C588619230E57007D33BB /* main.m */,
 			);
 			path = fjsp;
@@ -13141,6 +13144,7 @@
 			files = (
 				5BFD5A6915A3BC1D00825BC3 /* ORAVLTree.h in Headers */,
 				5BFD5A6C15A3BEA900825BC3 /* ORError.h in Headers */,
+				53E386FF192B2CE60075F0F0 /* fjsp-Prefix.pch in Headers */,
 				5BD2DFC815A3CEBF00D4C616 /* ORSet.h in Headers */,
 				5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */,
 				5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */,
