@@ -94,8 +94,6 @@
 }
 -(id) initCPDisjunctive: (id<CPOptionalActivityArray>) act
 {
-    assert(false);
-    
     // Checking whether the number of activities is within the limit
     if (act.count > (NSUInteger) MAXNBTASK) {
         @throw [[ORExecutionError alloc] initORExecutionError: "CPDisjunctive: Number of elements exceeds beyond the limit!"];
@@ -114,7 +112,7 @@
     _idempotent = true;
     _dprec = true;
     _nfnl  = true;
-    _ef    = true;
+    _ef    = false;
     
     _start0 = NULL;
     _dur0   = NULL;
@@ -135,6 +133,7 @@
 {
     if (_start0  != NULL) free(_start0 );
     if (_dur0    != NULL) free(_dur0   );
+    if (_idx     != NULL) free(_idx    );
     
     [super dealloc];
 }
@@ -163,10 +162,14 @@
             _start0[i] = (CPIntVar*) _start[iSt];
             _dur0  [i] = (CPIntVar*) _dur  [iDu];
         }
+        for (ORInt i = 0; i < _size; i++) {
+            _idx[i] = i;
+        }
     }
-    
-    for (ORInt i = 0; i < _size; i++) {
-        _idx[i] = i;
+    else {
+        for (ORInt i = 0; i < _size; i++) {
+            _idx[i] = i + _act.low;
+        }
     }
     
     // Initial propagation
@@ -181,15 +184,16 @@
                 [_dur0[i]   whenChangeMinPropagate:    self];
         }
         else {
-            if (_act[i].top.max == 0) continue;
-            if (!_act[i].startLB.bound)
-                [_act[i].startLB whenChangeMinPropagate: self];
-            if (!_act[i].startUB.bound)
-                [_act[i].startUB whenChangeMaxPropagate: self];
-            if (!_act[i].duration.bound)
-                [_act[i].duration whenChangeMinPropagate: self];
-            if (_act[i].isOptional)
-                [_act[i].top whenChangeMinPropagate: self];
+            const ORInt iOff = i + _act.low;
+            if (_act[iOff].top.max == 0) continue;
+            if (!_act[iOff].startLB.bound)
+                [_act[iOff].startLB whenChangeMinPropagate: self];
+            if (!_act[iOff].startUB.bound)
+                [_act[iOff].startUB whenChangeMaxPropagate: self];
+            if (!_act[iOff].duration.bound)
+                [_act[iOff].duration whenChangeMinPropagate: self];
+            if (_act[iOff].isOptional)
+                [_act[iOff].top whenChangeMinPropagate: self];
         }
     }
     
@@ -355,9 +359,9 @@ static void insertThetaNodeAtIdxLst(ThetaTree * theta, const ORUInt tsize, ORUIn
 //          (White or 'i in Theta') considered in theta tree and lambda tree
 //          (Grey  or 'i in Lambda') only considered in lambda tree
 //          (None  or 'i not in Theta union Lambda') not considered at all
-static void initThetaLambdaTreeWithEct(CPDisjunctive * disj, const ORUInt * idx_map_est, ThetaTree * theta, LambdaTree * lambda, const ORUInt tsize) {
+static void initThetaLambdaTreeWithEct(CPDisjunctive * disj, const ORInt size, const ORUInt * idx_map_est, ThetaTree * theta, LambdaTree * lambda, const ORUInt tsize) {
     // Inserting all tasks into the Theta tree
-    for (ORUInt i = 0; i < disj->_size; i++) {
+    for (ORUInt i = 0; i < size; i++) {
         const ORUInt idx = idx_map_est[i];
         if (disj->_dur_min[i] > 0) {
             theta[idx]._length = disj->_dur_min[i];
@@ -369,7 +373,7 @@ static void initThetaLambdaTreeWithEct(CPDisjunctive * disj, const ORUInt * idx_
         }
     }
     // Computation of the values for the interior nodes in the Theta tree
-    for (ORInt p = tsize - disj->_size - 1; p >= 0; p--) {
+    for (ORInt p = tsize - size - 1; p >= 0; p--) {
         const ORInt l = LEFTCHILD( p);
         const ORInt r = RIGHTCHILD(p);
         theta[p]._length = theta[l]._length + theta[r]._length;
@@ -710,7 +714,7 @@ static void ef_overload_check_optional_vilim(CPDisjunctive * disj, const ORInt s
             // The leaf must be a gray one
             assert(theta[leaf_idx]._time == MININT && lambda[leaf_idx]._gTime != MININT);
             // Map leaf index to task ID
-            const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + disj->_size) - offset);
+            const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + size) - offset);
             const ORUInt k = disj->_task_id_est[array_idx];
             assert(leaf_idx == idx_map_est[k]);
             // Set to absent
@@ -865,10 +869,13 @@ static void dprec_filter_est_optional_vilim(CPDisjunctive * disj, const ORInt si
                 insertThetaNodeAtIdxEct(theta, tsize, tree_idx, dur_j, ect_j);
                 // Update Lambda tree
                 insertLambdaNodeAtIdxEct(theta, lambda, tsize, tree_idx, 0, MININT);
+//                printf("Present: ");
+//                dumpTask(disj, j);
             }
             else if (!isAbsent(disj, disj->_idx[j])) {
                 // Optional activity
                 insertLambdaNodeAtIdxEct(theta, lambda, tsize, tree_idx, dur_j, ect_j);
+//                printf("Optional: ");
             }
             jj++;
             j = disj->_task_id_lst[jj];
@@ -891,9 +898,14 @@ static void dprec_filter_est_optional_vilim(CPDisjunctive * disj, const ORInt si
                 // Retrieve responsible leaf
                 const ORUInt leaf_idx = retrieveResponsibleLambdaNodeWithEct(theta, lambda, tsize);
                 // The leaf must be a gray one
+                if (theta[leaf_idx]._time != MININT || lambda[leaf_idx]._gTime == MININT) {
+                    break;
+                    dumpThetaTree(theta, tsize);
+                    dumpLambdaTree(lambda, tsize);
+                }
                 assert(theta[leaf_idx]._time == MININT && lambda[leaf_idx]._gTime != MININT);
                 // Map leaf index to task ID
-                const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + disj->_size) - offset);
+                const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + size) - offset);
                 const ORUInt k = disj->_task_id_est[array_idx];
                 assert(leaf_idx == idx_map_est[k]);
                 // Set to absent
@@ -910,6 +922,8 @@ static void dprec_filter_est_optional_vilim(CPDisjunctive * disj, const ORInt si
         }
         // Checking for a new bound update
         if (ect_t > disj->_est[i]) {
+            if (ect_t > disj->_lct[i] - disj->_dur_min[i])
+                failNow();
             // New lower bound found
             disj->_new_est[i] = ect_t;
             *update = true;
@@ -970,6 +984,9 @@ static void dprec_filter_lct_optional_vilim(CPDisjunctive * disj, const ORInt si
                 // Retrieve responsible leaf
                 const ORInt leaf_idx = retrieveResponsibleLambdaNodeWithLst(theta, lambda, tsize);
                 // The leaf must be a gray one
+                if (theta[leaf_idx]._time != MAXINT || lambda[leaf_idx]._gTime == MAXINT) {
+                    break;
+                }
                 assert(theta[leaf_idx]._time == MAXINT && lambda[leaf_idx]._gTime != MAXINT);
                 // Map leaf index to task ID
                 const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + size) - offset);
@@ -1157,6 +1174,8 @@ static void nfnl_filter_est_optional_vilim(CPDisjunctive * disj, const ORInt siz
             }
             j = disj->_task_id_ect[--jj];
         }
+        // Check whether a present activity is in Theta tree
+        if (jLastInserted == MAXINT) continue;
         assert(disj->_est[i] < disj->_est[i] + disj->_dur_min[i]);
         assert(jj < (ORInt) (size - 1));
         assert(0 <= jLastInserted && jLastInserted < size);
@@ -1177,12 +1196,14 @@ static void nfnl_filter_est_optional_vilim(CPDisjunctive * disj, const ORInt siz
             *update = true;
         }
         // Detection of possible overloads
-        const ORInt ect_j2 = disj->_est[jLastInserted2] + disj->_dur_min[jLastInserted2];
-        if (isPresent(disj, disj->_idx[i]) && disj->_lct[i] - disj->_dur_min[i] < ect_j2) {
+        if (jLastInserted2 < MAXINT && isPresent(disj, disj->_idx[i]) && disj->_lct[i] - disj->_dur_min[i] < disj->_est[jLastInserted2] + disj->_dur_min[jLastInserted2]) {
             while (lambda[0]._gTime < disj->_est[i] + disj->_dur_min[i]) {
                 // Retrieve responsible leaf
                 const ORInt leaf_idx = retrieveResponsibleLambdaNodeWithLst(theta, lambda, tsize);
                 // The leaf must be a gray one
+                if (theta[leaf_idx]._time != MAXINT || lambda[leaf_idx]._gTime == MAXINT) {
+                    break;
+                }
                 assert(theta[leaf_idx]._time == MAXINT && lambda[leaf_idx]._gTime != MAXINT);
                 // Map leaf index to task ID
                 const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + size) - offset);
@@ -1251,6 +1272,8 @@ static void nfnl_filter_lct_optional_vilim(CPDisjunctive * disj, const ORInt siz
             }
             j = disj->_task_id_lst[++jj];
         }
+        // Check whether a present activity is in Theta tree
+        if (jLastInserted == MAXINT) continue;
         assert(disj->_lct[i] > disj->_lct[i] - disj->_dur_min[i]);
         assert(jj > 0);
         assert(0 <= jLastInserted && jLastInserted < (ORInt) size);
@@ -1270,16 +1293,18 @@ static void nfnl_filter_lct_optional_vilim(CPDisjunctive * disj, const ORInt siz
             disj->_new_lct[i] = disj->_lct[jLastInserted] - disj->_dur_min[jLastInserted];
             *update = true;
         }
-        const ORInt lst_j2 = disj->_lct[jLastInserted2] - disj->_dur_min[jLastInserted2];
-        if (isPresent(disj, disj->_idx[i]) && lst_j2 < disj->_est[i] + disj->_dur_min[i]) {
+        if (jLastInserted2 < MAXINT && isPresent(disj, disj->_idx[i]) && disj->_lct[jLastInserted2] - disj->_dur_min[jLastInserted2] < disj->_est[i] + disj->_dur_min[i]) {
             // Detection of potential overloads
             while (lambda[0]._gTime > disj->_lct[i] - disj->_dur_min[i]) {
                 // Retrieve responsible leaf
                 const ORUInt leaf_idx = retrieveResponsibleLambdaNodeWithEct(theta, lambda, tsize);
                 // The leaf must be a gray one
+                if (theta[leaf_idx]._time != MININT || lambda[leaf_idx]._gTime == MININT) {
+                    break;
+                }
                 assert(theta[leaf_idx]._time == MININT && lambda[leaf_idx]._gTime != MININT);
                 // Map leaf index to task ID
-                const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + disj->_size) - offset);
+                const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + size) - offset);
                 const ORUInt k = disj->_task_id_est[array_idx];
                 assert(leaf_idx == idx_map_est[k]);
                 // Set to absent
@@ -1318,7 +1343,7 @@ static void ef_filter_est_and_lct_vilim(CPDisjunctive * disj, const ORInt size, 
 static void ef_filter_est_vilim(CPDisjunctive * disj, const ORInt size, const ORUInt * idx_map_est, ThetaTree * theta, LambdaTree * lambda, const ORUInt tsize, const ORUInt tdepth, bool * update)
 {
     // Initialise Theta-Lambda tree with (T, {})
-    initThetaLambdaTreeWithEct(disj, idx_map_est, theta, lambda, tsize);
+    initThetaLambdaTreeWithEct(disj, size, idx_map_est, theta, lambda, tsize);
     ORInt jj = size - 1;
     ORUInt j = disj->_task_id_lct[jj];
     // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
@@ -1343,7 +1368,7 @@ static void ef_filter_est_vilim(CPDisjunctive * disj, const ORInt size, const OR
             // The leaf must be a gray one
             assert(theta[leaf_idx]._time == MININT && lambda[leaf_idx]._gTime != MININT);
             // Map leaf index to task ID
-            const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + disj->_size) - offset);
+            const ORUInt array_idx = (offset <= leaf_idx ? leaf_idx - offset : (leaf_idx + size) - offset);
             const ORUInt i = disj->_task_id_est[array_idx];
             assert(leaf_idx == idx_map_est[i]);
             // Check for a new bound update
@@ -1727,7 +1752,7 @@ static void updateIndices(CPDisjunctive * disj)
                 swapORInt(disj->_idx, i, cIdx++);
             } else if (isAbsent(disj, disj->_idx[i])) {
                 // Swap elements in 'i' and 'uIdx'
-                swapORInt(disj->_idx, i, uIdx--);
+                swapORInt(disj->_idx, i, --uIdx);
                 i--;
             }
         }
@@ -1751,6 +1776,11 @@ static void doPropagation(CPDisjunctive * disj) {
     
     const ORInt size  = disj->_uIdx._val;
     const ORInt cSize = disj->_cIdx._val;
+    
+    if (size <= 1) {
+//        assignTRInt(&(disj->_active), NO, (disj->_trail));
+        return ;
+    }
     
     // Allocation of memory
     disj->_est           = alloca(size * sizeof(ORInt ));

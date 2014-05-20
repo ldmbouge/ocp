@@ -47,7 +47,7 @@ void freeMemory() {
     if (job_nact  != NULL) free(job_nact );
     if (job_fact  != NULL) free(job_fact );
     if (act_nopt  != NULL) free(act_nopt );
-    if (act_fopt  != NULL) free(act_nopt );
+    if (act_fopt  != NULL) free(act_fopt );
     if (opt_act   != NULL) free(opt_act  );
     
     if (mach_opt != NULL) {
@@ -115,6 +115,8 @@ void readDataFJSS(const char * filename) {
         }
         n_opt += n_opt_j;
     }
+
+//    printf("#mach %d; #job %d; #act %d; #opt %d\n", n_mach, n_job, n_act, n_opt);
     
         // Allocating memory
         //
@@ -217,7 +219,7 @@ void preprocessData(void) {
     }
     
     for (ORInt o = 0; o < n_opt; o++) {
-        const ORInt m = mach[o];
+        const ORInt m = mach[o] - mach_id_min;
         const ORInt c = mach_copt[m];
         mach_opt[m][c] = o;
         mach_copt[m]++;
@@ -256,10 +258,10 @@ int main(int argc, const char * argv[])
         exit(2);
     }
 
-	// TODO Read input
+	// Read input
 	readDataFJSS(argv[1]);
     
-    // TODO Some pre-processing
+    // Some pre-processing
     preprocessData();
 
     // Determine an initial upper bound on the project duration
@@ -276,9 +278,9 @@ int main(int argc, const char * argv[])
         
             // Creating of some ranges
             //
-      	id<ORIntRange> dom      = [ORFactory intRange:model low:0 up:ms_max];
-        id<ORIntRange> ActsR    = [ORFactory intRange:model low:0 up:n_act ];
-        id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt ];
+      	id<ORIntRange> dom      = [ORFactory intRange:model low:0 up:ms_max   ];
+        id<ORIntRange> ActsR    = [ORFactory intRange:model low:0 up:n_act - 1];
+        id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt - 1];
         
             // Creating optional activities
             //
@@ -340,7 +342,8 @@ int main(int argc, const char * argv[])
 		[cp solve:
 			^() {
 				// Search strategy
-                [cp labelOptionalActivities: Acts];
+                [cp labelOptionalActivities: OptActs];
+                [cp labelOptionalActivity:   end ];
 				// TODO Output of solution
 //				printf("start = [|\n\t");
 //				for (ORInt t = 0; t < n_task; t++) {

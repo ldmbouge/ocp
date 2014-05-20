@@ -41,7 +41,7 @@
     }
     [self label: act.startLB ];
     [self label: act.duration];
-    if (act.type > 3) {
+    if (act.type > 1) {
         [self labelOptionalActivities:act.composition];
     }
 }

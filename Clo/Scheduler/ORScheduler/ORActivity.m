@@ -161,6 +161,7 @@
 }
 -(id<OROptionalActivity>) initORAlternativeActivity:(id<ORModel>)model activities:(id<OROptionalActivityArray>)act
 {
+//    assert(act.range.low <= act.range.up);
     self = [super init];
 
     // Determine the start and duration ranges
