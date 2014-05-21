@@ -185,7 +185,7 @@
         }
         else {
             const ORInt iOff = i + _act.low;
-            if (_act[iOff].top.max == 0) continue;
+            if (_act[iOff].isOptional && _act[iOff].top.max == 0) continue;
             if (!_act[iOff].startLB.bound)
                 [_act[iOff].startLB whenChangeMinPropagate: self];
             if (!_act[iOff].startUB.bound)
