@@ -34,7 +34,7 @@ typedef enum {
     id<CPIntVarArray> _area;    // Area/Energy of tasks
     id<CPIntVarArray> _end;     // End times of tasks
     TaskType*         _type;    // Task Type
-    CPIntVar*        _cap;     // Resource capacity
+    CPIntVar*         _cap;     // Resource capacity
 }
 
 -(id) initCPCumulative:(id<CPIntVarArray>)s duration:(id<CPIntVarArray>)d usage:(id<CPIntVarArray>)r energy:(id<CPIntVarArray>)a end:(id<CPIntVarArray>)e type:(TaskType*)t capacity:(id<CPIntVar>)c;

@@ -128,35 +128,35 @@
 }
 +(id<ORActivityArray>) activityArray: (id<ORModel>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration
 {
-   return [ORFactory activityArray: model range: range with: ^id<ORActivity>(ORInt i) {
-       return [ORFactory activity: model horizon: horizon duration: RANGE(model, [duration at:i], [duration at:i])];
-   }];
+    return [ORFactory activityArray: model range: range with: ^id<ORActivity>(ORInt i) {
+        return [ORFactory activity: model horizon: horizon duration: RANGE(model, [duration at:i], [duration at:i])];
+    }];
 }
 
 // Activity matrix
 +(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2  with: (id<ORActivity>(^)(ORInt,ORInt)) clo;
 {
-   id<ORIdMatrix> o = [ORFactory idMatrix: model range: R1 : R2];
-   for(ORInt i=R1.low;i <= R1.up;i++)
-      for(ORInt j=R2.low;j <= R2.up;j++)
-         [o set: clo(i,j) at: i : j];
-   return (id<ORActivityMatrix>) o;
+    id<ORIdMatrix> o = [ORFactory idMatrix: model range: R1 : R2];
+    for(ORInt i=R1.low;i <= R1.up;i++)
+        for(ORInt j=R2.low;j <= R2.up;j++)
+            [o set: clo(i,j) at: i : j];
+    return (id<ORActivityMatrix>) o;
 }
 +(id<ORActivityMatrix>) activityMatrix: (id<ORModel>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
                                horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration
 {
-   return [ORFactory activityMatrix: model range: R1 : R2  with: ^id<ORActivity>(ORInt i,ORInt j) {
-      return [ORFactory activity: model horizon: horizon duration: RANGE(model, [duration at: i : j], [duration at: i : j])];
-   }];
+    return [ORFactory activityMatrix: model range: R1 : R2  with: ^id<ORActivity>(ORInt i,ORInt j) {
+        return [ORFactory activity: model horizon: horizon duration: RANGE(model, [duration at: i : j], [duration at: i : j])];
+    }];
 }
 +(id<ORDisjunctiveResourceArray>) disjunctiveResourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
 {
-   id<ORIdArray> o = [ORFactory idArray: model range:range];
-   for(ORInt k=range.low;k <= range.up;k++) {
-      id<ORDisjunctiveResource> dr = [ORFactory disjunctiveResource: model];
-      [o set: dr at:k];
-   }
-   return (id<ORDisjunctiveResourceArray>) o;
+    id<ORIdArray> o = [ORFactory idArray: model range:range];
+    for(ORInt k=range.low;k <= range.up;k++) {
+        id<ORDisjunctiveResource> dr = [ORFactory disjunctiveResource: model];
+        [o set: dr at:k];
+    }
+    return (id<ORDisjunctiveResourceArray>) o;
 }
 // Precedes
 //
@@ -171,31 +171,31 @@
 //
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c
 {
-   id<ORTracker> tracker = [s tracker];
-   id<ORIntVarArray> duration = [ORFactory intVarArray: tracker range:[s range] with:^id<ORIntVar>(ORInt k) {
-      return [ORFactory intVar: tracker domain: RANGE(tracker,[d at: k],[d at: k])];
-   }];
+    id<ORTracker> tracker = [s tracker];
+    id<ORIntVarArray> duration = [ORFactory intVarArray: tracker range:[s range] with:^id<ORIntVar>(ORInt k) {
+        return [ORFactory intVar: tracker value: [d at: k]];
+    }];
     id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration: duration usage:r capacity:c];
     [[s tracker] trackMutable:o];
     return o;
 }
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r maxCapacity:(ORInt) c
 {
-   id<ORTracker> tracker = [s tracker];
-   id<ORIntVarArray> duration = [ORFactory intVarArray: tracker range:[s range] with:^id<ORIntVar>(ORInt k) {
-      return [ORFactory intVar: tracker domain: RANGE(tracker,[d at: k],[d at: k])];
-   }];
-   id<ORIntVar> capacity = [ORFactory intVar: [s tracker] domain: RANGE([s tracker],c,c)];
-   id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration: duration usage:r capacity:capacity];
-   [[s tracker] trackObject:o];
-   return o;
+    id<ORTracker> tracker = [s tracker];
+    id<ORIntVarArray> duration = [ORFactory intVarArray: tracker range:[s range] with:^id<ORIntVar>(ORInt k) {
+        return [ORFactory intVar: tracker value:[d at: k]];
+    }];
+    id<ORIntVar> capacity = [ORFactory intVar: [s tracker] value: c];
+    id<ORCumulative> o = [[ORCumulative alloc] initORCumulative:s duration: duration usage:r capacity:capacity];
+    [[s tracker] trackObject:o];
+    return o;
 }
 +(id<ORSchedulingCumulative>) cumulative: (id<ORActivityArray>) act usage:(id<ORIntArray>) r maxCapacity:(ORInt) c
 {
-   id<ORIntVar> capacity = [ORFactory intVar: [act tracker] domain: RANGE([act tracker],c,c)];
-   id<ORSchedulingCumulative> o = [[ORSchedulingCumulative alloc] initORSchedulingCumulative: act usage:r capacity:capacity];
-   [[act tracker] trackObject:o];
-   return o;
+    id<ORIntVar> capacity = [ORFactory intVar: [act tracker] value:c];
+    id<ORSchedulingCumulative> o = [[ORSchedulingCumulative alloc] initORSchedulingCumulative: act usage:r capacity:capacity];
+    [[act tracker] trackObject:o];
+    return o;
 }
 // Disjunctive (resource) constraint
 //
@@ -213,16 +213,16 @@
 }
 +(id<ORSchedulingDisjunctive>) schedulingDisjunctive: (id<ORActivityArray>) act
 {
-   id<ORSchedulingDisjunctive> o = [[ORSchedulingDisjunctive alloc] initORSchedulingDisjunctive: act];
-   [[act tracker] trackObject:o];
-   return o;
+    id<ORSchedulingDisjunctive> o = [[ORSchedulingDisjunctive alloc] initORSchedulingDisjunctive: act];
+    [[act tracker] trackObject:o];
+    return o;
 }
 
 +(id<ORDisjunctiveResource>) disjunctiveResource: (id<ORTracker>) model
 {
-   id<ORDisjunctiveResource> o = [[ORDisjunctiveResource alloc] initORDisjunctiveResource: model];
-   [model trackObject:o];
-   return o;
+    id<ORDisjunctiveResource> o = [[ORDisjunctiveResource alloc] initORDisjunctiveResource: model];
+    [model trackObject:o];
+    return o;
 }
 
 // Difference Logic constraint
