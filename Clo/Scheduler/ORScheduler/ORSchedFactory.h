@@ -15,13 +15,13 @@
 
 @interface ORFactory (ORScheduler)
 
-// Activities
+// (Optional) activities
 +(id<ORActivity>) activity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
++(id<ORActivity>) activity: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) activity: (id<ORModel>) model range: (id<ORIntRange>) range withSpan: (id<ORActivity>(^)(ORInt)) clo;
 +(id<ORActivity>) optionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
-+(id<ORActivity>) alternativeActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
-+(id<ORActivity>) optionalAlternative: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
-+(id<ORActivity>) spanActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
-+(id<ORActivity>) optionalSpan: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) optionalActivity: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) optionalActivity: (id<ORModel>) model range: (id<ORIntRange>) range withSpan: (id<ORActivity>(^)(ORInt)) clo;
 
 // Activity array
 +(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;

@@ -28,7 +28,7 @@
     [model trackMutable:o];
     return o;
 }
-+(id<ORActivity>) alternativeActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) activity: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORActivity>(^)(ORInt)) clo;
 {
     id<ORActivityArray> acts = [ORFactory activityArray:model range:range with:clo];
     id<ORActivity> o;
@@ -51,12 +51,12 @@
         o = acts[range.low];
     }
     else {
-        o = [[ORActivity alloc] initORAlternativeActivity:model activities:acts];
+        o = [[ORActivity alloc] initORActivity:model alternatives:acts];
     }
     [model trackMutable:o];
     return o;
 }
-+(id<ORActivity>) optionalAlternative: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) optionalActivity: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORActivity>(^)(ORInt)) clo;
 {
     id<ORActivityArray> acts = [ORFactory activityArray:model range:range with:clo];
     id<ORActivity> o;
@@ -79,12 +79,12 @@
         o = acts[range.low];
     }
     else {
-        o = [[ORActivity alloc] initOROptionalAlternative:model activities:acts];
+        o = [[ORActivity alloc] initOROptionalActivity:model alternatives:acts];
     }
     [model trackMutable:o];
     return o;
 }
-+(id<ORActivity>) spanActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) activity: (id<ORModel>) model range: (id<ORIntRange>) range withSpan: (id<ORActivity>(^)(ORInt)) clo;
 {
     id<ORActivityArray> acts = [ORFactory activityArray:model range:range with:clo];
     id<ORActivity> o;
@@ -92,12 +92,12 @@
         o = acts[range.low];
     }
     else {
-        o = [[ORActivity alloc] initORSpanActivity:model activities:acts];
+        o = [[ORActivity alloc] initORActivity:model span:acts];
     }
     [model trackMutable:o];
     return o;
 }
-+(id<ORActivity>) optionalSpan: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) optionalActivity: (id<ORModel>) model range: (id<ORIntRange>) range withSpan: (id<ORActivity>(^)(ORInt)) clo;
 {
     id<ORActivityArray> acts = [ORFactory activityArray:model range:range with:clo];
     id<ORActivity> o;
@@ -109,10 +109,10 @@
         o = acts[range.low];
     }
     else if (count > 0) {
-        o = [[ORActivity alloc] initORSpanActivity:model activities:acts];
+        o = [[ORActivity alloc] initORActivity:model span:acts];
     }
     else {
-        o = [[ORActivity alloc] initOROptionalSpan:model activities:acts];
+        o = [[ORActivity alloc] initOROptionalActivity:model span:acts];
     }
     [model trackMutable:o];
     return o;

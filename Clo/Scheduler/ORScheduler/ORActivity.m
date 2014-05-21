@@ -71,7 +71,7 @@
     
     return self;
 }
--(id<ORActivity>) initORAlternativeActivity:(id<ORModel>)model activities:(id<ORActivityArray>)act
+-(id<ORActivity>) initORActivity:(id<ORModel>)model alternatives:(id<ORActivityArray>)act
 {
     self = [super init];
 
@@ -110,7 +110,7 @@
     
     return self;
 }
--(id<ORActivity>) initOROptionalAlternative:(id<ORModel>)model activities:(id<ORActivityArray>)act
+-(id<ORActivity>) initOROptionalActivity:(id<ORModel>)model alternatives:(id<ORActivityArray>)act
 {
     assert(false);
     
@@ -152,7 +152,7 @@
     
     return self;
 }
--(id<ORActivity>) initORSpanActivity:(id<ORModel>)model activities:(id<ORActivityArray>)act
+-(id<ORActivity>) initORActivity:(id<ORModel>)model span:(id<ORActivityArray>)act
 {
     assert(false);
     
@@ -183,7 +183,7 @@
     
     return self;
 }
--(id<ORActivity>) initOROptionalSpan:(id<ORModel>)model activities:(id<ORActivityArray>)act
+-(id<ORActivity>) initOROptionalActivity:(id<ORModel>)model span:(id<ORActivityArray>)act
 {
     assert(false);
     

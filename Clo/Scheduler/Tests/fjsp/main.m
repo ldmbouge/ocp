@@ -297,7 +297,7 @@ int main(int argc, const char * argv[])
             if (act_nopt[k] == 1) {
                 return OptActs[act_fopt[k]];
             }
-            return [ORFactory alternativeActivity:model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) with:^id<ORActivity>(ORInt o) {
+            return [ORFactory activity:model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) withAlternatives:^id<ORActivity>(ORInt o) {
                 return OptActs[o];
             }];
         }];

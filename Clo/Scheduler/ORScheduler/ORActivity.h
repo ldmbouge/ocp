@@ -47,12 +47,12 @@ typedef enum {
 @end
 
 @interface ORActivity : ORObject<ORActivity>
--(id<ORActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
--(id<ORActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
--(id<ORActivity>) initORAlternativeActivity: (id<ORModel>)model activities: (id<ORActivityArray>)act;
--(id<ORActivity>) initOROptionalAlternative: (id<ORModel>)model activities: (id<ORActivityArray>)act;
--(id<ORActivity>) initORSpanActivity: (id<ORModel>)model activities: (id<ORActivityArray>)act;
--(id<ORActivity>) initOROptionalSpan: (id<ORModel>)model activities: (id<ORActivityArray>)act;
+-(id<ORActivity>) initORActivity: (id<ORModel>)model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<ORActivity>) initORActivity: (id<ORModel>)model alternatives: (id<ORActivityArray>)act;
+-(id<ORActivity>) initORActivity: (id<ORModel>)model span: (id<ORActivityArray>)act;
+-(id<ORActivity>) initOROptionalActivity: (id<ORModel>)model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<ORActivity>) initOROptionalActivity: (id<ORModel>)model alternatives: (id<ORActivityArray>)act;
+-(id<ORActivity>) initOROptionalActivity: (id<ORModel>)model span: (id<ORActivityArray>)act;
 @end
 
 @protocol ORActivityArray <ORObject>
