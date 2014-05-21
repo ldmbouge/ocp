@@ -49,7 +49,10 @@ typedef enum {
 @interface ORActivity : ORObject<ORActivity>
 -(id<ORActivity>) initORActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 -(id<ORActivity>) initOROptionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
--(id<ORActivity>) initORAlternativeActivity: (id<ORModel>)model activities: (id<ORActivityArray>) act;
+-(id<ORActivity>) initORAlternativeActivity: (id<ORModel>)model activities: (id<ORActivityArray>)act;
+-(id<ORActivity>) initOROptionalAlternative: (id<ORModel>)model activities: (id<ORActivityArray>)act;
+-(id<ORActivity>) initORSpanActivity: (id<ORModel>)model activities: (id<ORActivityArray>)act;
+-(id<ORActivity>) initOROptionalSpan: (id<ORModel>)model activities: (id<ORActivityArray>)act;
 @end
 
 @protocol ORActivityArray <ORObject>

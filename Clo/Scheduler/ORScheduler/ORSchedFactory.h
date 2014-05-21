@@ -19,10 +19,15 @@
 +(id<ORActivity>) activity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 +(id<ORActivity>) optionalActivity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 +(id<ORActivity>) alternativeActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) optionalAlternative: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) spanActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
++(id<ORActivity>) optionalSpan: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
 
+// Activity array
 +(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
 +(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration;
 
+// Activity matrix
 +(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<ORActivity>(^)(ORInt,ORInt)) clo;
 +(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
                                horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration;

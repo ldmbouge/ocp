@@ -73,7 +73,6 @@
 }
 -(id<ORActivity>) initORAlternativeActivity:(id<ORModel>)model activities:(id<ORActivityArray>)act
 {
-//    assert(act.range.low <= act.range.up);
     self = [super init];
 
     // Determine the start and duration ranges
@@ -108,6 +107,110 @@
     [model add: [ORFactory element:model var:_altIdx idxVarArray:tops      equal:one      ]];
     [model add: [ORFactory element:model var:_altIdx idxVarArray:starts    equal:_startLB ]];
     [model add: [ORFactory element:model var:_altIdx idxVarArray:durations equal:_duration]];
+    
+    return self;
+}
+-(id<ORActivity>) initOROptionalAlternative:(id<ORModel>)model activities:(id<ORActivityArray>)act
+{
+    assert(false);
+    
+    self = [super init];
+    
+    // Determine the start and duration ranges
+    ORInt start_min = MAXINT;
+    ORInt start_max = MININT;
+    ORInt dur_min   = MAXINT;
+    ORInt dur_max   = MININT;
+    for (ORInt i = act.range.low; i <= act.range.up; i++) {
+        start_min = min(start_min, [act[i].startRange low]);
+        start_max = max(start_max, [act[i].startRange up ]);
+        dur_min   = min(dur_min,   [act[i].duration   low]);
+        dur_max   = max(dur_max,   [act[i].duration   up ]);
+    }
+    
+    // Setting and creating variables
+    _startRange  = RANGE(model, start_min, start_max);
+    id<ORIntRange> idxR = RANGE(model, act.range.low - 1, act.range.up);
+    _startLB     = [ORFactory intVar : model domain: RANGE(model, start_min    , start_max + 1)];
+    _startUB     = [ORFactory intVar : model domain: RANGE(model, start_min - 1, start_max    )];
+    _duration    = [ORFactory intVar : model domain: RANGE(model, dur_min, dur_max)];
+    _top         = [ORFactory boolVar: model];
+    _altIdx      = [ORFactory intVar : model domain: idxR];
+    _composition = act;
+    _type        = ORALTOPT;
+    
+    // TODO Constraints for representing the alternative
+    // XXX Should the constraints be adding here or to the "concrete" model?
+    id<ORIntVar> one   = [ORFactory intVar:model domain:RANGE(model, 1, 1)];
+    id<ORIntVarArray> tops      = [ORFactory intVarArray:model range:idxR with:^id<ORIntVar>(ORInt k) {
+        if (k < act.range.low) {
+            return [ORFactory intVar:model var:_top scale:-1 shift:1];
+        }
+        return act[k].top;
+    }];
+    [model add: [ORFactory element:model var:_altIdx idxVarArray:tops equal:one]];
+    
+    return self;
+}
+-(id<ORActivity>) initORSpanActivity:(id<ORModel>)model activities:(id<ORActivityArray>)act
+{
+    assert(false);
+    
+    self = [super init];
+    
+    // Determine the start and duration ranges
+    ORInt start_min = MAXINT;
+    ORInt start_max = MININT;
+    ORInt dur_max   = MININT;
+    for (ORInt i = act.range.low; i <= act.range.up; i++) {
+        start_min = min(start_min, [act[i].startRange low]);
+        start_max = max(start_max, [act[i].startRange up ]);
+        dur_max   = max(dur_max,   [act[i].startRange up ] + [act[i].duration up]);
+    }
+    
+    // Setting and creating variables
+    _startRange  = RANGE(model, start_min, start_max);
+    _startLB     = [ORFactory intVar: model domain: _startRange];
+    _startUB     = _startLB;
+    _duration    = [ORFactory intVar: model domain: RANGE(model, start_min, dur_max)];
+    _top         = NULL;
+    _altIdx      = NULL;
+    _composition = act;
+    _type        = ORSPANCOMP;
+    
+    // TODO Constraints for representing the span
+    // XXX Should the constraints be adding here or to the "concrete" model?
+    
+    return self;
+}
+-(id<ORActivity>) initOROptionalSpan:(id<ORModel>)model activities:(id<ORActivityArray>)act
+{
+    assert(false);
+    
+    self = [super init];
+    
+    // Determine the start and duration ranges
+    ORInt start_min = MAXINT;
+    ORInt start_max = MININT;
+    ORInt dur_max   = MININT;
+    for (ORInt i = act.range.low; i <= act.range.up; i++) {
+        start_min = min(start_min, [act[i].startRange low]);
+        start_max = max(start_max, [act[i].startRange up ]);
+        dur_max   = max(dur_max,   [act[i].startRange up ] + [act[i].duration up]);
+    }
+    
+    // Setting and creating variables
+    _startRange  = RANGE(model, start_min, start_max);
+    _startLB     = [ORFactory intVar : model domain: RANGE(model, start_min    , start_max + 1)];
+    _startUB     = [ORFactory intVar : model domain: RANGE(model, start_min - 1, start_max    )];
+    _duration    = [ORFactory intVar : model domain: RANGE(model, start_min, dur_max)];
+    _top         = [ORFactory boolVar: model];
+    _altIdx      = NULL;
+    _composition = act;
+    _type        = ORSPANOPT;
+    
+    // TODO Constraints for representing the span
+    // XXX Should the constraints be adding here or to the "concrete" model?
     
     return self;
 }

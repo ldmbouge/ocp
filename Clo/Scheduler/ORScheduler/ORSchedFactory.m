@@ -15,29 +15,7 @@
 #import "ORConstraintI.h"
 
 @implementation ORFactory (ORScheduler)
-
-+(id<ORActivityArray>) activityArray: (id<ORModel>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration
-{
-   return [ORFactory activityArray: model range: range with: ^id<ORActivity>(ORInt i) {
-       return [ORFactory activity: model horizon: horizon duration: RANGE(model, [duration at:i], [duration at:i])];
-   }];
-}
-+(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2  with: (id<ORActivity>(^)(ORInt,ORInt)) clo;
-{
-   id<ORIdMatrix> o = [ORFactory idMatrix: model range: R1 : R2];
-   for(ORInt i=R1.low;i <= R1.up;i++)
-      for(ORInt j=R2.low;j <= R2.up;j++)
-         [o set: clo(i,j) at: i : j];
-   return (id<ORActivityMatrix>) o;
-}
-
-+(id<ORActivityMatrix>) activityMatrix: (id<ORModel>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
-                               horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration
-{
-   return [ORFactory activityMatrix: model range: R1 : R2  with: ^id<ORActivity>(ORInt i,ORInt j) {
-      return [ORFactory activity: model horizon: horizon duration: RANGE(model, [duration at: i : j], [duration at: i : j])];
-   }];
-}
+// Activities
 +(id<ORActivity>) activity: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
     id<ORActivity> o = [[ORActivity alloc] initORActivity: model horizon: horizon duration:duration];
@@ -69,12 +47,78 @@
             }
         }
     }
+    else if (range.low == range.up) {
+        o = acts[range.low];
+    }
     else {
         o = [[ORActivity alloc] initORAlternativeActivity:model activities:acts];
     }
     [model trackMutable:o];
     return o;
 }
++(id<ORActivity>) optionalAlternative: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
+{
+    id<ORActivityArray> acts = [ORFactory activityArray:model range:range with:clo];
+    id<ORActivity> o;
+    ORInt count = 0;
+    for (ORInt i = acts.range.low; i <= acts.range.up; i++) {
+        if (!acts[i].isOptional) count++;
+    }
+    if (count > 1) failNow();
+    if (count == 1) {
+        for (ORInt i = acts.range.low; i <= acts.range.up; i++) {
+            if (acts[i].isOptional) {
+                [model add: [ORFactory equalc:model var:acts[i].top to:0]];
+            }
+            else {
+                o = acts[i];
+            }
+        }
+    }
+    else if (range.low == range.up) {
+        o = acts[range.low];
+    }
+    else {
+        o = [[ORActivity alloc] initOROptionalAlternative:model activities:acts];
+    }
+    [model trackMutable:o];
+    return o;
+}
++(id<ORActivity>) spanActivity: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
+{
+    id<ORActivityArray> acts = [ORFactory activityArray:model range:range with:clo];
+    id<ORActivity> o;
+    if (range.low == range.up) {
+        o = acts[range.low];
+    }
+    else {
+        o = [[ORActivity alloc] initORSpanActivity:model activities:acts];
+    }
+    [model trackMutable:o];
+    return o;
+}
++(id<ORActivity>) optionalSpan: (id<ORModel>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
+{
+    id<ORActivityArray> acts = [ORFactory activityArray:model range:range with:clo];
+    id<ORActivity> o;
+    ORInt count = 0;
+    for (ORInt i = acts.range.low; i <= acts.range.up; i++) {
+        if (!acts[i].isOptional) count++;
+    }
+    if (range.low == range.up) {
+        o = acts[range.low];
+    }
+    else if (count > 0) {
+        o = [[ORActivity alloc] initORSpanActivity:model activities:acts];
+    }
+    else {
+        o = [[ORActivity alloc] initOROptionalSpan:model activities:acts];
+    }
+    [model trackMutable:o];
+    return o;
+}
+
+// Activity array
 +(id<ORActivityArray>) activityArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORActivity>(^)(ORInt)) clo;
 {
     id<ORIdArray> o = [ORFactory idArray:model range:range];
@@ -82,7 +126,29 @@
         [o set: clo(k) at:k];
     return (id<ORActivityArray>) o;
 }
++(id<ORActivityArray>) activityArray: (id<ORModel>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration
+{
+   return [ORFactory activityArray: model range: range with: ^id<ORActivity>(ORInt i) {
+       return [ORFactory activity: model horizon: horizon duration: RANGE(model, [duration at:i], [duration at:i])];
+   }];
+}
 
+// Activity matrix
++(id<ORActivityMatrix>) activityMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2  with: (id<ORActivity>(^)(ORInt,ORInt)) clo;
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix: model range: R1 : R2];
+   for(ORInt i=R1.low;i <= R1.up;i++)
+      for(ORInt j=R2.low;j <= R2.up;j++)
+         [o set: clo(i,j) at: i : j];
+   return (id<ORActivityMatrix>) o;
+}
++(id<ORActivityMatrix>) activityMatrix: (id<ORModel>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
+                               horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration
+{
+   return [ORFactory activityMatrix: model range: R1 : R2  with: ^id<ORActivity>(ORInt i,ORInt j) {
+      return [ORFactory activity: model horizon: horizon duration: RANGE(model, [duration at: i : j], [duration at: i : j])];
+   }];
+}
 +(id<ORDisjunctiveResourceArray>) disjunctiveResourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
 {
    id<ORIdArray> o = [ORFactory idArray: model range:range];
