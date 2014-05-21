@@ -93,6 +93,7 @@
     _startUB     = _startLB;
     _duration    = [ORFactory intVar: model domain: RANGE(model, dur_min, dur_max)];
     _top         = NULL;
+    _optional    = FALSE;
     _altIdx      = [ORFactory intVar:model domain:act.range];
     _composition = act;
     _type        = ORALTCOMP;
@@ -135,6 +136,7 @@
     _startUB     = [ORFactory intVar : model domain: RANGE(model, start_min - 1, start_max    )];
     _duration    = [ORFactory intVar : model domain: RANGE(model, dur_min, dur_max)];
     _top         = [ORFactory boolVar: model];
+    _optional    = TRUE;
     _altIdx      = [ORFactory intVar : model domain: idxR];
     _composition = act;
     _type        = ORALTOPT;
@@ -174,6 +176,7 @@
     _startUB     = _startLB;
     _duration    = [ORFactory intVar: model domain: RANGE(model, start_min, dur_max)];
     _top         = NULL;
+    _optional    = FALSE;
     _altIdx      = NULL;
     _composition = act;
     _type        = ORSPANCOMP;
@@ -205,6 +208,7 @@
     _startUB     = [ORFactory intVar : model domain: RANGE(model, start_min - 1, start_max    )];
     _duration    = [ORFactory intVar : model domain: RANGE(model, start_min, dur_max)];
     _top         = [ORFactory boolVar: model];
+    _optional    = TRUE;
     _altIdx      = NULL;
     _composition = act;
     _type        = ORSPANOPT;
