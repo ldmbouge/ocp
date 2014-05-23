@@ -38,7 +38,7 @@
             [startUB visit: self];
             [top     visit: self];
             
-            [_engine add: [CPFactory reify:_gamma[top.getId] with:_gamma[startLB.getId] leq:_gamma[startUB.getId] annotation:Default]];
+            [_engine add: [CPFactory reify:_gamma[top.getId] with:_gamma[startLB.getId] eq:_gamma[startUB.getId] annotation:Default]];
             [_engine add: [CPFactory reify:_gamma[top.getId] with:_gamma[startLB.getId] leqi:[act startRange].up ]];
             [_engine add: [CPFactory reify:_gamma[top.getId] with:_gamma[startUB.getId] geqi:[act startRange].low]];
             
