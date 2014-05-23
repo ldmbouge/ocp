@@ -39,6 +39,7 @@ typedef enum {
 -(id<ORIntVar>) startUB;
 -(id<ORIntVar>) duration;
 -(id<ORIntVar>) top;
+-(id<ORIntVar>) alterIdx;
 -(BOOL) isOptional;
 -(id<ORIntRange>) startRange;
 -(id<ORActivityArray>) composition;

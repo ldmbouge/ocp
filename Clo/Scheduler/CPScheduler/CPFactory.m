@@ -22,7 +22,7 @@
 {
     id<CPActivity> act = [[CPActivity alloc] initCPActivity: start duration: duration];
     [[start    tracker] trackMutable: act];
-    [[duration tracker] trackMutable: act];
+//    [[duration tracker] trackMutable: act];
     
     return act;
 }
@@ -30,11 +30,19 @@
 {
     id<CPActivity> act = [[CPActivity alloc] initCPOptionalActivity:top startLB:startLB startUB:startUB startRange:startRange duration:duration];
     [[startLB  tracker] trackMutable: act];
-    [[startUB  tracker] trackMutable: act];
-    [[duration tracker] trackMutable: act];
-    [[top      tracker] trackMutable: act];
+//    [[startUB  tracker] trackMutable: act];
+//    [[duration tracker] trackMutable: act];
+//    [[top      tracker] trackMutable: act];
     
     return act;
+}
+
+// Alternative propagator
++(id<CPConstraint>) alternative:(id<CPActivity>)act composedBy:(id<CPActivityArray>)alternatives
+{
+    id<CPConstraint> cstr = [[CPAlternative alloc] initCPAlternative:act alternatives:alternatives];
+    [[act.startLB tracker] trackMutable:cstr];
+    return cstr;
 }
 
 // disjunctive resource

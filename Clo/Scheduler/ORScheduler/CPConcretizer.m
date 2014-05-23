@@ -20,40 +20,6 @@
 @implementation ORCPConcretizer (CPScheduler)
 
 // Activity
-//-(void) visitActivity:(id<ORActivity>) act
-//{
-//   if (_gamma[act.getId] == NULL) {
-//      id<ORIntVar> start = [act start];
-//      id<ORIntVar> duration = [act duration];
-//      id<ORIntVar> end = [act end];
-//      id<ORTracker> tracker = [start tracker];
-//      
-//      [start visit: self];
-//      [duration visit: self];
-//      id<CPIntVar> concreteEnd;
-//      if (duration.min == duration.max) {
-//         concreteEnd = [CPFactory intVar: _gamma[start.getId] shift: duration.min];
-//      }
-//      else {
-//         concreteEnd = [CPFactory intVar: _engine domain: RANGE(_engine,start.min + duration.min,start.max + duration.max)];
-//         _gamma[end.getId] = concreteEnd;
-//         id<CPIntVarArray> av = [CPFactory intVarArray: _engine range: RANGE(tracker,0,2) with: ^id<CPIntVar>(ORInt k) {
-//            if (k == 0)
-//               return _gamma[start.getId];
-//            else if (k == 1)
-//               return _gamma[duration.getId];
-//            else
-//               return [CPFactory intVar: concreteEnd scale: -1];
-//         }];
-//         id<CPConstraint> cstr = [CPFactory sum: av eq: 0 annotation: RangeConsistency];
-//         [_engine add: cstr];
-//      }
-//       _gamma[end.getId] = concreteEnd;
-//      id<CPActivity> concreteAct = [CPFactory activity: _gamma[start.getId] duration: _gamma[duration.getId] end: concreteEnd];
-//      _gamma[act.getId] = concreteAct;
-//   }
-//}
-
 -(void) visitActivity:(id<ORActivity>) act
 {
     // NOTE that the information about compositional activities get lost during the concretization
@@ -62,6 +28,7 @@
         id<ORIntVar> startUB  = [act startUB ];
         id<ORIntVar> duration = [act duration];
         id<ORIntVar> top      = [act top     ];
+        ORInt        type     = [act type    ];
         [startLB  visit: self];
         [duration visit: self];
         
@@ -71,12 +38,40 @@
             [startUB visit: self];
             [top     visit: self];
             
+            [_engine add: [CPFactory reify:_gamma[top.getId] with:_gamma[startLB.getId] leq:_gamma[startUB.getId] annotation:Default]];
+            [_engine add: [CPFactory reify:_gamma[top.getId] with:_gamma[startLB.getId] leqi:[act startRange].up ]];
+            [_engine add: [CPFactory reify:_gamma[top.getId] with:_gamma[startUB.getId] geqi:[act startRange].low]];
+            
             concreteAct = [CPFactory optionalActivity:_gamma[top.getId] startLB:_gamma[startLB.getId] startUB:_gamma[startUB.getId] startRange: [act startRange] duration:_gamma[duration.getId]];
         } else {
             concreteAct = [CPFactory activity:_gamma[startLB.getId] duration:_gamma[duration.getId]];
         }
         
         _gamma[act.getId] = concreteAct;
+
+        if (type > 1) {
+            // (Optional) alternative or (optional) span
+            id<ORActivityArray> comp = [act composition];
+            [comp visit: self];
+            id<CPActivityArray> cpComp = _gamma[comp.getId];
+            if (type == ORALTCOMP) {
+                // XXX Temporary the decomposition instead of the "global"
+                id<ORIntVar> altIdx = [act alterIdx];
+                [altIdx visit:self];
+                id<CPIntVar> one = [CPFactory intVar:_engine value:1];
+                id<CPIntVarArray> tops      = [CPFactory intVarArray:_engine range:cpComp.range with:^id<CPIntVar>(ORInt k) {return cpComp[k].top;     }];
+                id<CPIntVarArray> starts    = [CPFactory intVarArray:_engine range:cpComp.range with:^id<CPIntVar>(ORInt k) {return cpComp[k].startLB; }];
+                id<CPIntVarArray> durations = [CPFactory intVarArray:_engine range:cpComp.range with:^id<CPIntVar>(ORInt k) {return cpComp[k].duration;}];
+                [_engine add: [CPFactory sumbool:tops eq:1]];
+                [_engine add: [CPFactory element:_gamma[altIdx.getId] idxVarArray:tops      equal:one annotation:Default]];
+                [_engine add: [CPFactory element:_gamma[altIdx.getId] idxVarArray:starts    equal:_gamma[startLB.getId ] annotation:Default]];
+                [_engine add: [CPFactory element:_gamma[altIdx.getId] idxVarArray:durations equal:_gamma[duration.getId] annotation:Default]];
+            }
+//            if (type == ORALTCOMP || type == ORALTOPT)
+//                [_engine add: [CPFactory alternative:_gamma[act.getId] composedBy:_gamma[comp.getId]]];
+            else
+                assert(false);
+        }
     }
 }
 
