@@ -102,6 +102,7 @@
    
    [concretizer release];
    [cpprogram setSource:m];
+   [cpprogram setModelMappings: m.modelMappings];
    return cpprogram;
 }
 

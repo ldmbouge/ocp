@@ -645,6 +645,10 @@
    [_model release];
    _model = [src retain];
 }
+-(id<ORModel>)source
+{
+   return _model;
+}
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",

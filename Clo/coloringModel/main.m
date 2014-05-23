@@ -263,14 +263,47 @@ int main(int argc, const char * argv[])
 //   [ns removeObject: a];
 //   [ns insertObject: a atIndex:1];
 //   searchSets = ns;
-   
+   ORInt* cliqueOf = malloc(sizeof(ORInt)*nbv);
+   ORInt* cliquePr = malloc(sizeof(ORInt)*nbv);
+   ORInt* cliqueIn = malloc(sizeof(ORInt)*nbv);
+   memset(cliqueOf,0,sizeof(ORInt)*nbv);
+   memset(cliquePr,0,sizeof(ORInt)*nbv);
+   memset(cliqueIn,0,sizeof(ORInt)*nbv);
+   cliqueOf -= 1;
+   cliquePr -= 1;
+   cliqueIn -= 1;
+   ORInt cn = 0;
+   for(id<ORIdArray> arr in searchSets) {
+      [arr enumerateWith:^(id obj, int idx) {
+         ORInt ids = vmap[getId(obj)]; // vertex number in clique arr
+         cliqueOf[ids] = cn;
+      }];
+      cn++;
+   }
    for(id<ORIdArray> arr in searchSets) {
       for(ORInt i = [[arr range] low]; i <= [[arr range] up]; i++) {
-         ORInt ids = [[arr at: i] getId];
+         ORInt ids = vmap[getId([arr at: i])]; // vertex number in clique arr
+         ORInt cc  = cliqueOf[ids];
+         for(ORInt j=1;j <= nbv;j++) {
+            if ([adj at:ids :j]) {
+               if (cliqueOf[j] != cc) { // adjacent but in different cliques.
+                  cliquePr[ids]++;
+                  cliquePr[j]++;
+               } else {
+                  assert(cliqueOf[j] == cc);
+                  cliqueIn[ids]++;
+                  cliqueIn[j]++;
+               }
+            }
+         }
          NSLog(@"%i", ids);
       }
       NSLog(@"\n\n");
    }
+   for(ORInt k=1;k <= nbv;k++)
+      printf("%3d =>  %3d\t%3d\t%3d\n",k,cliqueOf[k],cliquePr[k],cliqueIn[k]);
+   
+      
    printf("digraph G { \n");
    id<ORIntArray> rdeg = [ORFactory intArray:model range:V with:^ORInt(ORInt i) { return 0;}];
    NSArray* ac = [model constraints];
@@ -320,9 +353,39 @@ int main(int argc, const char * argv[])
 //            printf("\tx[%d] deg: %d\n",vmap[getId(obj)],vd);
          }];
          printf("%d(%d,%d - %d),",k++,as,mind,maxd);
+         }
+         printf("\n");
       }
-      printf("\n");
+      
+      id<ORIntArray> rdeg = [ORFactory intArray:cp range:V with:^ORInt(ORInt i) { return 0;}];
+      NSArray* asc = [lagrangeModel1 softConstraints];
+      for(id<ORConstraint> c in asc) {
+         if (![c conformsToProtocol:@protocol(ORSoftNEqual)]) continue;
+         NSSet* cv = [c allVars];  // this is a relaxed edge
+         id<ORVar> slack = [(id<ORSoftConstraint>)c slack];
+         id<ORParameter> w = [[lagrangeModel1 parameterization:slack] weight];
+         if ([cv count]>= 2) {
+            NSArray* ep = [cv allObjects];
+            ORInt a = vmap[getId([ep objectAtIndex:0])];
+            ORInt b = vmap[getId([ep objectAtIndex:1])];
+            ORFloat pv =1 + [cp paramFloatValue:w];
+            NSLog(@"Param value for (%d,%d) is %f\n",a,b,pv);
+            [rdeg set:[rdeg at:a] + pv at:a];
+            [rdeg set:[rdeg at:b] + pv at:b];
+         }
       }
+      for(id<ORConstraint> c in [lagrangeModel1 hardConstraints]) {
+         if (![c conformsToProtocol:@protocol(ORNEqual)]) continue;
+         NSSet* cv = [c allVars];
+         if ([cv count]==2) {
+            NSArray* ep = [cv allObjects];
+            ORInt a = vmap[[[ep objectAtIndex:0] getId]];
+            ORInt b = vmap[[[ep objectAtIndex:1] getId]];
+            [rdeg set:[rdeg at:a] + 1 at:a];
+            [rdeg set:[rdeg at:b] + 1 at:b];
+         }
+      }
+
 
       __block ORInt CID = 0;
       id<ORMutableInteger> tl = [ORFactory mutable:cp value:500];
@@ -334,13 +397,20 @@ int main(int argc, const char * argv[])
             [cp limitTime:[tl intValue]
                        in: ^
              {
-                for(id<ORIntVarArray> vars in searchSets) {
-                //id<ORIntVarArray> vars = c;
+                //for(id<ORIntVarArray> vars in searchSets) {
+                id<ORIntVarArray> vars = c;
                    //NSLog(@"**CLIQUE: %d -- %@",CID,vars);
                    [cp forall: vars.range
                      suchThat: ^bool(ORInt i) { return ![cp bound: vars[i]];}
-                    orderedBy: ^ORInt(ORInt i) { return [cp domsize: vars[i]]; }
+                    orderedBy: ^ORInt(ORInt i) {
+                       ORInt vid = vmap[getId(vars[i])];
+                       return ([cp domsize:vars[i]] << 8)  - cliquePr[vid];
+                    }
                           and: ^ORInt(ORInt i) {
+                             //ORInt vid = vmap[getId(vars[i])];
+                             //ORInt rv = -(cliquePr[vid] << 8) + [cp domsize: vars[i]];
+                             //ORInt rv = - cliquePr[vid];
+                             //return rv;
                              ORInt vid = getId(vars[i]);
                              if (lid <= vid && vid <= uid)
                                 return - [rdeg at:vmap[getId(vars[i])]];
@@ -349,7 +419,7 @@ int main(int argc, const char * argv[])
                            do: ^(ORInt i) {
                               ORInt maxc = max(0,[cp maxBound: c]);
                               [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: vars[i]];} in:^(ORInt v) {
-                                 //NSLog(@"BRANCH: c[%d] == %d (%d)\n",vmap[getId(vars[i])],v,[deg at:vmap[getId(vars[i])]]);
+                                 NSLog(@"BRANCH: c[%d] == %d (%d,%d)\n",vmap[getId(vars[i])],v,[deg at:vmap[getId(vars[i])]],cliquePr[vmap[getId(vars[i])]]);
                                  [cp label: vars[i] with: v];
                               }
                                onFailure:^(ORInt v) {
@@ -359,7 +429,7 @@ int main(int argc, const char * argv[])
                            }
                     ];
                    CID++;
-                }
+                //}
                 [cp label:m with:[cp min: m]];
                 [cp labelArray: slacks1];
                 [tl setValue:500];

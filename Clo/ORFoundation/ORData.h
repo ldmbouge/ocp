@@ -51,6 +51,7 @@
 -(void) setGamma: (id*) gamma;
 -(id*)gamma;
 -(id<ORObject>) concretize: (id<ORObject>) o;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id<ORModelMappings>) modelMappings;
 @end
 
