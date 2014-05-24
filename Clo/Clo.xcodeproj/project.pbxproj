@@ -87,7 +87,6 @@
 		37A715E316FB948200E02DC6 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		37A715E416FB948200E02DC6 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		37A715E516FB948900E02DC6 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		533C588719230E57007D33BB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 533C588619230E57007D33BB /* main.m */; };
 		535D132E18FF7A47008D48BD /* CPMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 535D132C18FF7A46008D48BD /* CPMisc.h */; };
 		535D132F18FF7A47008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
 		535D133018FF7EFA008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
@@ -16374,7 +16373,6 @@
 				5B920EC015A402A600AD0820 /* ORArrayI.m in Sources */,
 				5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */,
 				5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */,
-				533C588719230E57007D33BB /* main.m in Sources */,
 				B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */,
 				5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */,
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,

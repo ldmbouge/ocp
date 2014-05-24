@@ -30,3 +30,18 @@
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end
+
+    // Alternative propagator
+    //
+@interface CPAlternative : CPCoreConstraint<NSCoding> {
+    id<CPActivity>      _act;
+    id<CPActivityArray> _alter;
+}
+
+-(id) initCPAlternative: (id<CPActivity>) act alternatives: (id<CPActivityArray>) alter;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end

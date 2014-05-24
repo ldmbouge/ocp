@@ -64,11 +64,6 @@
     _composition = NULL;
     _type        = ORACTOPT;
     
-    // Constraints for the tri-partite optional variable representation
-    [model add: [ORFactory reify:model boolean:_top with:_startLB leq :_startUB   ]];
-    [model add: [ORFactory reify:model boolean:_top with:_startLB leqi:horizon.up ]];
-    [model add: [ORFactory reify:model boolean:_top with:_startUB geqi:horizon.low]];
-    
     return self;
 }
 -(id<ORActivity>) initORActivity:(id<ORModel>)model alternatives:(id<ORActivityArray>)act
@@ -98,17 +93,6 @@
     _composition = act;
     _type        = ORALTCOMP;
 
-    // Constraints for representing the alternative
-    // XXX Should the constraints be adding here or to the "concrete" model?
-    id<ORIntVar> one   = [ORFactory intVar:model domain:RANGE(model, 1, 1)];
-    id<ORIntVarArray> tops      = [ORFactory intVarArray:model range:act.range with:^id<ORIntVar>(ORInt k) {return act[k].top;     }];
-    id<ORIntVarArray> starts    = [ORFactory intVarArray:model range:act.range with:^id<ORIntVar>(ORInt k) {return act[k].startLB; }];
-    id<ORIntVarArray> durations = [ORFactory intVarArray:model range:act.range with:^id<ORIntVar>(ORInt k) {return act[k].duration;}];
-    [model add: [ORFactory sumbool:model array:tops eqi:1]];
-    [model add: [ORFactory element:model var:_altIdx idxVarArray:tops      equal:one      ]];
-    [model add: [ORFactory element:model var:_altIdx idxVarArray:starts    equal:_startLB ]];
-    [model add: [ORFactory element:model var:_altIdx idxVarArray:durations equal:_duration]];
-    
     return self;
 }
 -(id<ORActivity>) initOROptionalActivity:(id<ORModel>)model alternatives:(id<ORActivityArray>)act
@@ -140,17 +124,6 @@
     _altIdx      = [ORFactory intVar : model domain: idxR];
     _composition = act;
     _type        = ORALTOPT;
-    
-    // TODO Constraints for representing the alternative
-    // XXX Should the constraints be adding here or to the "concrete" model?
-    id<ORIntVar> one   = [ORFactory intVar:model domain:RANGE(model, 1, 1)];
-    id<ORIntVarArray> tops      = [ORFactory intVarArray:model range:idxR with:^id<ORIntVar>(ORInt k) {
-        if (k < act.range.low) {
-            return [ORFactory intVar:model var:_top scale:-1 shift:1];
-        }
-        return act[k].top;
-    }];
-    [model add: [ORFactory element:model var:_altIdx idxVarArray:tops equal:one]];
     
     return self;
 }
@@ -224,7 +197,7 @@
 }
 -(id<ORIntVar>) startUB
 {
-    return _startLB;
+    return _startUB;
 }
 -(id<ORIntVar>) duration
 {
@@ -233,6 +206,10 @@
 -(id<ORIntVar>) top
 {
     return _top;
+}
+-(id<ORIntVar>) alterIdx
+{
+    return _altIdx;
 }
 -(BOOL) isOptional
 {

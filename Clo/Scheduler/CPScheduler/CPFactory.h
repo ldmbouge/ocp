@@ -17,6 +17,8 @@
 @interface CPFactory (CPScheduler)
 +(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration;
 +(id<CPActivity>) optionalActivity: (id<CPIntVar>) top startLB: (id<CPIntVar>) startLB startUB:(id<CPIntVar>) startUB startRange:(id<ORIntRange>)startRange duration:(id<CPIntVar>) duration;
++(id<CPConstraint>) alternative: (id<CPActivity>) act composedBy: (id<CPActivityArray>) alternatives;
+
 +(id<CPDisjunctiveResource>) disjunctiveResource:  (id<ORTracker>) tracker  activities: (id<CPActivityArray>) activities;
 
 +(id<CPConstraint>) precedence: (id<CPActivity>) before precedes:(id<CPActivity>) after;

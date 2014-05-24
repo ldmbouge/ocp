@@ -185,7 +185,7 @@
         }
         else {
             const ORInt iOff = i + _act.low;
-            if (_act[iOff].top.max == 0) continue;
+            if (_act[iOff].isOptional && _act[iOff].top.max == 0) continue;
             if (!_act[iOff].startLB.bound)
                 [_act[iOff].startLB whenChangeMinPropagate: self];
             if (!_act[iOff].startUB.bound)
@@ -207,10 +207,17 @@
 
 -(NSSet*) allVars
 {
-    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:2*_size ];
+    NSUInteger nb = 2 * _size;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
     for(ORInt i = 0; i < _size; i++) {
-        [rv addObject: _start0[i] ];
-        [rv addObject: _dur0  [i] ];
+        if (_act == NULL) {
+            [rv addObject: _start0[i] ];
+            [rv addObject: _dur0  [i] ];
+        }
+        else {
+            [rv addObject:_act[i + _act.range.low].startLB ];
+            [rv addObject:_act[i + _act.range.low].duration];
+        }
     }
     [rv autorelease];
     return rv;
@@ -218,9 +225,21 @@
 -(ORUInt) nbUVars
 {
     ORUInt nb = 0;
-    for (ORInt i = 0; i < _size; i++) {
-        if (!_start0[i].bound) nb++;
-        if (!_dur0  [i].bound) nb++;
+    if (_act == NULL) {
+        for (ORInt i = 0; i < _size; i++) {
+            if (!_start0[i].bound) nb++;
+            if (!_dur0  [i].bound) nb++;
+        }
+    }
+    else {
+        for (ORInt ii = 0; ii < _uIdx._val; ii++) {
+            const ORInt i = _idx[ii];
+            if (_act[i].isOptional && !_act[i].top.bound) nb++;
+            if (!_act[i].isOptional || _act[i].top.bound) {
+                if (_act[i].startLB .bound) nb++;
+                if (_act[i].duration.bound) nb++;
+            }
+        }
     }
     return nb;
 }

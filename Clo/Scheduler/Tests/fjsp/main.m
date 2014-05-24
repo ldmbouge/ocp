@@ -342,24 +342,32 @@ int main(int argc, const char * argv[])
 		[cp solve:
 			^() {
 				// Search strategy
-                [cp labelActivities: OptActs];
+                [cp labelActivities: Acts];
                 [cp labelActivity:   end ];
-				// TODO Output of solution
-//				printf("start = [|\n\t");
-//				for (ORInt t = 0; t < n_task; t++) {
-//                    if (t > 0 && t % n_mach == 0) printf("\n\t");
-//					if (t % n_mach > 0) printf(", ");
-//					printf("%2d", [cp intValue: start[t]]);
-//				}
-//				printf("];\n");
-//                for (ORInt m = 0; m < n_mach; m++) {
-//                    printf("%%%% mach %d: ", m + mach_id_min);
-//                    for (ORInt k = 0; k < n_job; k++) {
-//                        const ORInt t = mach_task[m][k];
-//                        printf("[%2d, %2d) ", [cp intValue: start[t]], [cp intValue: start[t]] + dur[t]);
-//                    }
-//                    printf("\n");
-//                }
+                printf("start = [");
+                for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
+                    if (t > ActsR.low) printf(", ");
+                    printf("%2d", [cp intValue:Acts[t].startLB]);
+                }
+                printf("];\n");
+                printf("dur   = [");
+                for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
+                    if (t > ActsR.low) printf(", ");
+                    printf("%2d", [cp intValue:Acts[t].duration]);
+                }
+                printf("];\n");
+                for (ORInt m = 0; m < n_mach; m++) {
+                    printf("%%%% mach %d: ", m + mach_id_min);
+                    for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
+                        const ORInt k = mach_opt[m][kk];
+                        if (!OptActs[k].isOptional || [cp intValue:OptActs[k].top] == 1) {
+                            const ORInt start = [cp intValue:OptActs[k].startUB];
+                            const ORInt dur = [cp intValue:OptActs[k].duration] + start;
+                            printf("[%2d, %2d) ", start, dur);
+                        }
+                    }
+                    printf("\n");
+                }
                 printf("objective = %d;\n", [cp intValue: end.startLB]);
                 printf("----------\n");
 			}
