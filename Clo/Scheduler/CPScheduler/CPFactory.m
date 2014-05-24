@@ -201,6 +201,7 @@
     // Returning the cumulative propagator
     return o;
 }
+
 // Disjunctive (resource) constraint
 //
 +(id<CPConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d
