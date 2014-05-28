@@ -14,6 +14,7 @@
 #import "LSAllDifferent.h"
 #import "LSSystem.h"
 #import "LSLinear.h"
+#import "LSBasic.h"
 
 @implementation LSConstraint
 -(id)init:(LSEngineI*)engine
@@ -109,4 +110,11 @@
    [e trackMutable:c];
    return c;
 }
++(id<LSConstraint>) lEqual: (id<LSIntVar>)x to: (id<LSIntVar>) y plus:(ORInt)c
+{
+   LSLEqual* cstr = [[LSLEqual alloc] init:[x engine] x:x leq:y plus:c];
+   [[x engine] trackMutable:cstr];
+   return cstr;
+}
+
 @end
