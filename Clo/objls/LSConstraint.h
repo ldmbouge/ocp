@@ -48,4 +48,5 @@
 +(id<LSConstraint>)system:(id<LSEngine>)e with:(NSArray*)ac;
 +(id<LSConstraint>)lrsystem:(id<LSEngine>)e with:(NSArray*)ac;
 +(id<LSConstraint>)linear:(id<LSEngine>)e coef:(id<ORIntArray>)c vars:(id<LSIntVarArray>)x eq:(ORInt)cst;
++(id<LSConstraint>) lEqual: (id<LSIntVar>)x to: (id<LSIntVar>) y plus:(ORInt)c;
 @end
