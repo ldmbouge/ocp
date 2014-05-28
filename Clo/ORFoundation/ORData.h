@@ -135,15 +135,19 @@
 
 @protocol ORRandomStream <ORObject>
 -(ORLong) next;
-@end;
+@end
 
 @protocol ORZeroOneStream <ORObject>
 -(double) next;
-@end;
+@end
 
 @protocol ORUniformDistribution <ORObject>
 -(ORInt) next;
-@end;
+@end
+
+@protocol ORRandomPermutation <ORRandomStream>
+-(ORInt) next;
+@end
 
 @interface ORCrFactory (OR)
 +(id<ORMutableInteger>) integer:(ORInt) value;

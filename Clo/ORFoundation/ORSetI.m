@@ -217,6 +217,10 @@
 {
    return (_up - _low + 1);
 }
+-(ORInt) atRank:(ORInt)r
+{
+   return _low + r;
+}
 -(void)enumerateWithBlock:(void(^)(ORInt))block
 {
    for(ORInt i = _low; i <= _up; i++)

@@ -17,6 +17,7 @@
 -(void)enumerateWithBlock:(ORInt2Void)block;
 -(ORInt) size;
 -(ORInt) low;
+-(ORInt) atRank:(ORInt)r;
 -(id<IntEnumerator>) enumerator;
 @end
 
@@ -37,6 +38,7 @@
 -(ORInt) up;
 -(ORBool) isDefined;
 -(ORBool) inRange: (ORInt)e;
+-(ORInt) atRank:(ORInt)r;
 -(NSString*) description;
 -(void)enumerateWithBlock:(ORInt2Void)block;
 @end

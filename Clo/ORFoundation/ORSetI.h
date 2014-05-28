@@ -45,6 +45,7 @@
 -(ORBool) isDefined;
 -(ORBool) inRange: (ORInt)e;
 -(ORInt) size;
+-(ORInt) atRank:(ORInt)r;
 -(NSString*) description;
 -(void)visit:(ORVisitor*)v;
 -(id<IntEnumerator>) enumerator;

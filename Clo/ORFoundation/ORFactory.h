@@ -33,6 +33,7 @@
 +(id<ORRandomStream>) randomStream: (id<ORTracker>) tracker;
 +(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) tracker;
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) tracker range: (id<ORIntRange>) r;
++(id<ORRandomPermutation>) randomPermutation:(id<ORIntIterable>)onSet;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
 +(id<ORGroup>)group:(id<ORTracker>)model;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;

@@ -19,6 +19,18 @@
 
 #import "ORCmdLineArgs.h"
 
+void printSquare(id<LSProgram> p,id<ORIntVarMatrix> m)
+{
+   assert([m arity] == 2);
+   printf("matrix is:\n");
+   [[m range:0] enumerateWithBlock:^(ORInt i) {
+      [[m range:1] enumerateWithBlock:^(ORInt j) {
+         printf("%3d ",[p intValue:[m at:i :j]]);
+      }];
+      printf("\n");
+   }];
+}
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -27,11 +39,10 @@ int main(int argc, const char * argv[])
          ORInt n = [args size];
          ORFloat rf = [args restartRate];
          ORInt t = [args timeOut];
-         
          id<ORModel> model = [ORFactory createModel];
          id<ORAnnotation> notes = [ORFactory annotation];
-         id<ORIntRange>  R = [ORFactory intRange:model low:1 up:n];
-         id<ORIntRange>  D = [ORFactory intRange:model low:1 up:n*n];
+         id<ORIntRange>  R = RANGE(model,1,n);
+         id<ORIntRange>  D = RANGE(model,1,n*n);
          ORInt T = n * (n*n + 1)/2;
          id<ORIntVarMatrix> s = [ORFactory intVarMatrix:model range:R :R domain:D];
          [notes dc:[model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [s at:i :j])]]];
@@ -50,6 +61,12 @@ int main(int argc, const char * argv[])
          
          id<LSProgram> cp = [ORFactory createLSProgram:model annotation:nil];
          [cp solve: ^{
+            id<ORRandomPermutation> p = [ORFactory randomPermutation:D];
+            for(ORInt i=1;i <= n;i++)
+               for(ORInt j=1;j <= n;j++)
+                  [cp label:[s at:i :j] with:[p next]];
+            NSLog(@"viol ? : %d",[cp getViolations]);
+            printSquare(cp, s);
          }];
          ORBool found = [cp getViolations] == 0;
 

@@ -54,6 +54,12 @@
    [cp trackMutable: o];
    return o;
 }
++(id<ORRandomPermutation>) randomPermutation:(id<ORIntIterable>)onSet
+{
+   id<ORRandomPermutation> o = [[ORRandomPermutationI alloc] initWithSet:onSet];
+   return o;
+}
+
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt
 {
    id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt];
