@@ -189,10 +189,45 @@ typedef struct LSConstraintList {
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
-   return 0;
+   ORInt xv = getLSIntValue(x),yv = getLSIntValue(y);
+   if (xv==yv)
+      return 0;
+   ORInt xid = getId(x),yid = getId(y);
+   ORBool hasX = _lb <= xid && xid <= _ub && _srcOfs[xid] >= 0;
+   ORBool hasY = _lb <= yid && yid <= _ub && _srcOfs[yid] >= 0;
+   if (hasX ^ hasY) {
+      if (hasX)
+         return [self deltaWhenAssign:x to:yv];
+      else return [self deltaWhenAssign:y to:xv];
+   } else if (!hasX || !hasY) {
+      return 0;
+   } else {
+      // We have x and y showing up somewhere in the system. Pick the constraints of x and y
+      // and scan them, sending deltaWhenXXX messages as appropriate (whether x alone, y alone or both together)
+      ORInt ttl = 0;
+      ORInt nx = _cstrOnVars[xid]._n,ny = _cstrOnVars[yid]._n;
+      id<LSConstraint> *cx = _cstrOnVars[xid]._t,*cy = _cstrOnVars[yid]._t;
+      ORInt            *lx = _cstrOnVars[xid]._nb,*ly = _cstrOnVars[yid]._nb;
+      ORInt i=0,j=0;
+      while (i < nx && j < ny) {
+         if (lx[i] == ly[j]) {
+            assert(cx[i] == cy[j]);
+            ttl += [cx[i] deltaWhenSwap:x with:y];
+            ++i;
+            ++j;
+         } else if (lx[i] < ly[j])
+            ttl += [cx[i++] deltaWhenAssign:x to:yv];
+         else
+            ttl += [cy[j++] deltaWhenAssign:y to:xv];
+      }
+      while(i < nx)
+         ttl += [cx[i++] deltaWhenAssign:x to:yv];
+      while(j < ny)
+         ttl += [cy[j++] deltaWhenAssign:y to:xv];
+      return ttl;
+   }
 }
 @end
-
 
 @implementation LSLRSystem {
    id* _vvBase;
@@ -437,7 +472,6 @@ typedef struct LSConstraintList {
 {
    return [self weightedDeltaWhenAssign: x to: v];
 }
-
 
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {

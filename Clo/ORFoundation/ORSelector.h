@@ -17,3 +17,8 @@
 -(ORInt)              max;
 -(ORInt)              any;
 @end
+
+@protocol ORSweep<NSObject>
+-(void)commit;
+-(void)forMininum:(ORFloat)v do:(ORClosure)block;
+@end

@@ -16,6 +16,7 @@
 #import "ORLSConcretizer.h"
 #import "ORLSSolution.h"
 #import <ORFoundation/ORDataI.h>
+#import <ORFoundation/ORSelector.h>
 
 @implementation LSSolver {
    LSLRSystem* _sys;
@@ -121,7 +122,10 @@
 {
    [_engine label:_gamma[getId(x)] with:v];
 }
-
+-(void)swap:(id<ORIntVar>)x with:(id<ORIntVar>)y
+{
+   [_engine swap:_gamma[getId(x)] with:_gamma[getId(y)]];
+}
 -(ORInt)getVarViolations:(id<ORIntVar>)var
 {
    return [_sys getVarViolations:_gamma[getId(var)]];
@@ -156,6 +160,10 @@
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
 {
    return [_sys deltaWhenAssign:_gamma[getId(x)] to:v];
+}
+-(ORInt)deltaWhenSwap:(id<ORIntVar>)x with:(id<ORIntVar>)y
+{
+   return [_sys deltaWhenSwap:_gamma[getId(x)] with:_gamma[getId(y)]];
 }
 -(ORInt)weightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
 {
@@ -252,6 +260,14 @@
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block
 {
    [self selectOpt:r orderedBy:fun do:block dir:+1.0];
+}
+
+-(void)sweep:(void(^)(id<ORSweep>))block
+{
+   id<ORSweep> sweep = [ORFactory sweeper:nil]; // no tracker. Release manually.
+   block(sweep);
+   [sweep commit];
+   [sweep release];
 }
 @end
 

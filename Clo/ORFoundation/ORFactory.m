@@ -372,6 +372,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackMutable: o];
    return o;
 }
++(id<ORSweep>) sweeper:(id<ORTracker>)tracker
+{
+   id<ORSweep> sweeper = [[ORSweeper alloc] init];
+   [tracker trackMutable:sweeper];
+   return sweeper;
+}
+
 +(id<ORIntVar>) reifyView:(id<ORTracker>)model var:(id<ORIntVar>) x eqi:(ORInt)c
 {
 #if USEVIEWS==1

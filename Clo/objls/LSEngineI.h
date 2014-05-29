@@ -49,6 +49,7 @@ typedef enum LSMode {
 -(NSMutableArray*)invariants;
 -(ORUInt)nbObjects;
 -(void)label:(LSIntVar*)x with:(ORInt)v;
+-(void)swap:(LSIntVar*)x with:(LSIntVar*)y;
 -(void)notify:(id<LSVar>)x;
 -(void)schedule:(id<LSPropagator>)x;
 -(void) updateMultipliers;

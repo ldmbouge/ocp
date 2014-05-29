@@ -339,6 +339,56 @@ typedef struct LSOccurrence {
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
-   return 0;
+   ORInt xid = getId(x),yid = getId(y);
+   ORInt xv  = getLSIntValue(x),yv = getLSIntValue(y);
+   if (xid == yid)
+      return 0;
+   ORBool hasX = _sb.min <= xid && xid <= _sb.max && _srcOfs[xid] >= 0;
+   ORBool hasY = _sb.min <= yid && yid <= _sb.max && _srcOfs[yid] >= 0;
+   if (hasX ^ hasY) {
+      if (hasX)
+         return [self deltaWhenAssign:x to:yv];
+      else return [self deltaWhenAssign:y to:xv];
+   } else if (!hasX || !hasY)
+      return 0;
+   else {
+      // Both x and y appear in the equation. That's a real swap. Find the
+      // terms where x occurs and the terms with y occurs.
+      // Reevaluate those affected terms and accumulate delta
+      // Since this is a linear equation, we can't have a term mentioning both x and y.
+      ORInt nbx = _occ[_srcOfs[xid]]._n,nby = _occ[_srcOfs[yid]]._n;
+      LSTermDesc *tx = _occ[_srcOfs[xid]]._t,*ty = _occ[_srcOfs[yid]]._t;
+      ORInt oldEval = _value.value;
+      ORInt newEval = oldEval;
+      ORInt i = 0,j =0;
+      while (i < nbx) {
+         id<LSIntVar> vari   = tx[i]._termVar;
+         ORInt        termi  = tx[i]._ofs;
+         ORInt    newTermValue = [(LSIntVar*)x lookahead:vari onAssign:yv];
+         ORInt    oldTermValue = vari.value;
+         if (newTermValue == oldTermValue) continue;
+         newEval += (newTermValue - oldTermValue) * [_coefs at:termi];
+         i++;
+      }
+      while (j < nby) {
+         id<LSIntVar> varj   = ty[j]._termVar;
+         ORInt        termj  = ty[j]._ofs;
+         ORInt    newTermValue = [(LSIntVar*)y lookahead:varj onAssign:xv];
+         ORInt    oldTermValue = varj.value;
+         if (newTermValue == oldTermValue) continue;
+         newEval += (newTermValue - oldTermValue) * [_coefs at:termj];
+         i++;
+      }
+      switch(_t) {
+         case LSTYEqual: return abs(newEval - _c) - abs(oldEval - _c);
+         case LSTYLEqual:
+         case LSTYGEqual: {
+            ORInt nOut = newEval - _c < 0 ? 0 : newEval - _c;
+            ORInt oOut = oldEval - _c < 0 ? 0 : oldEval  - _c;
+            return nOut - oOut;
+         }
+         case LSTYNEqual: return (newEval == _c) - (oldEval == _c);
+      }
+   }
 }
 @end

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSelector.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgramFactory.h>
 #import <objls/LSFactory.h>
@@ -52,27 +53,54 @@ int main(int argc, const char * argv[])
          }
          [model add:[Sum(model, i, R, [s at:i :i]) eq: @(T)]];
          [model add:[Sum(model, i, R, [s at:i :n-i+1]) eq: @(T)]];
-         for(ORInt i=1;i<=n-1;i++) {
-            [model add:[[s at:i :i]     lt:[s at:i+1 :i+1]]];
-            [model add:[[s at:i :n-i+1] lt:[s at:i+1 :n-i]]];
-         }
-         [model add:[[s at:1 :1] lt: [s at: 1 :n]]];
-         [model add:[[s at:1 :1] lt: [s at: n :1]]];
+//         for(ORInt i=1;i<=n-1;i++) {
+//            [model add:[[s at:i :i]     lt:[s at:i+1 :i+1]]];
+//            [model add:[[s at:i :n-i+1] lt:[s at:i+1 :n-i]]];
+//         }
+//         [model add:[[s at:1 :1] lt: [s at: 1 :n]]];
+//         [model add:[[s at:1 :1] lt: [s at: n :1]]];
          
          id<LSProgram> cp = [ORFactory createLSProgram:model annotation:nil];
+         ORInt it = 0;
          [cp solve: ^{
+            id<ORIntMatrix> tabu = [ORFactory intMatrix:cp range:R :R using:^int(ORInt i, ORInt j) { return -1;}];
+            ORInt tLen = 2;
             id<ORRandomPermutation> p = [ORFactory randomPermutation:D];
+            ORInt k=1;
             for(ORInt i=1;i <= n;i++)
                for(ORInt j=1;j <= n;j++)
-                  [cp label:[s at:i :j] with:[p next]];
+                  [cp label:[s at:i :j] with:k++]; // [p next]
             NSLog(@"viol ? : %d",[cp getViolations]);
             printSquare(cp, s);
+            while ([cp getViolations] > 0) {
+               [cp sweep: ^(id<ORSweep> S) {
+                  for(ORInt i=R.low,u = R.up;i <= u;i++) {
+                     for(ORInt j=R.low; j <= u;j++) {
+                        if (!([cp getVarViolations:[s at:i :j]] > 0 && [tabu at:i :j] <= it)) continue;
+                        for(ORInt i1=R.low;i1 <= u;i1++) {
+                           for(ORInt j1=R.low;j1 <= u;j1++) {
+                              if (!([tabu at:i1 :j1] <= it && (i != i1 || j != j1))) continue;
+                              [S forMininum:(ORFloat)[cp deltaWhenSwap:[s at:i :j] with:[s at:i1 :j1]] do:^{
+                                 [cp swap:[s at:i :j] with:[s at:i1 :j1]];
+                                 [tabu set:it + tLen at:i :j];
+                                 [tabu set:it + tLen at:i1 :j1];
+                              }];
+                           }
+                        }
+                     }
+                  }
+                }];
+            }
+            
+            for(ORInt i=1;i<n;i++)
+               for(ORInt j=1;j<n;j++)
+                  NSLog(@"viol(s[%d,%d] = %d",i,j,[cp getVarViolations:[s at:i :j]]);
          }];
          ORBool found = [cp getViolations] == 0;
 
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
-         struct ORResult r = REPORT(found, [cp nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(found, it, 0, 0);
          [cp release];
          [ORFactory shutdown];
          return r;

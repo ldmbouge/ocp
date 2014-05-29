@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORUtilities/ORPQueue.h>
 #import "ORDataI.h"
 #import "ORSelectorI.h"
 #import <math.h>
@@ -115,5 +116,61 @@
 -(ORInt) any
 {
    return [_select any];
+}
+@end
+
+@implementation ORSweeper {
+   ORClosure _bestBlock;
+   ORFloat   _bestValue;
+   ORLong     _bestRand;
+   ORBool    _randomized;
+   id<ORRandomStream> _stream;
+}
+-(id)init
+{
+   self = [super init];
+   _bestRand = 0x7fffffffffffffff;
+   _bestValue = MAXFLOAT;
+   _bestBlock = nil;
+   _randomized = YES;
+   _stream = [[ORRandomStreamI alloc] init];
+   return self;
+}
+-(void)dealloc
+{
+   [_bestBlock release];
+   [super dealloc];
+}
+-(void)reset
+{
+   [_bestBlock release];
+   _bestRand = 0x7fffffffffffffff;
+   _bestValue = MAXFLOAT;
+   _bestBlock = nil;
+}
+-(void)commit
+{
+   if (_bestBlock) {
+      _bestBlock();
+      [_bestBlock release];
+      _bestBlock = nil;
+   }
+}
+-(void)forMininum:(ORFloat)v do:(ORClosure)block
+{
+   if (v < _bestValue) {
+      _bestValue = v;
+      _bestRand  = [_stream next];
+      [_bestBlock release];
+      _bestBlock = [block copy];
+   }
+   else if (_randomized && v == _bestValue) {
+      ORLong r = [_stream next];
+      if (r < _bestRand) {
+         _bestRand = r;
+         [_bestBlock release];
+         _bestBlock = [block copy];
+      }
+   }
 }
 @end
