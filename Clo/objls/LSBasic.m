@@ -92,6 +92,19 @@
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
-   return 0;
+   ORInt vid[2] = { getId(_x),getId(_y) };
+   ORInt xid = getId(x),yid = getId(y);
+   ORBool xIn = (xid == vid[0] || xid == vid[1]);
+   ORBool yIn = (yid == vid[0] || yid == vid[1]);
+   if (xIn && yIn) {
+      ORInt xv = getLSIntValue(x),yv = getLSIntValue(y);
+      ORInt cv = xv <= yv + _c;
+      ORInt nv = yv <= xv + _c;
+      return nv - cv;
+   } else if (xIn) {
+      return [self deltaWhenAssign:x to:getLSIntValue(y)];
+   } else if (yIn) {
+      return [self deltaWhenAssign:y to:getLSIntValue(x)];
+   } else return 0;
 }
 @end

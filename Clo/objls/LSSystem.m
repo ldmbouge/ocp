@@ -88,12 +88,11 @@ typedef struct LSConstraintList {
          _cstrOnVars[k]._n = 0;
       }
       for(id<LSIntVar> x in _src) {
+         LSConstraintList* lx =_cstrOnVars + getId(x);
          for(ORInt i = 0;i < n;i++)
             if (containsVar(ava[i], getId(x))) {
-               LSConstraintList* lx =_cstrOnVars + getId(x);
                lx->_nb[lx->_n] = i;
                lx->_t[lx->_n++] = _cstrs[i];
-               
             }
       }
       _srcOfs = malloc(sizeof(ORInt)*sz);
