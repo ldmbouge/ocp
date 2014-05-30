@@ -40,6 +40,7 @@
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
+-(int*)base;
 @end
 
 @interface ORFloatArrayI : ORObject<NSCoding,ORFloatArray>

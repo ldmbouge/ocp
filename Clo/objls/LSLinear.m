@@ -40,6 +40,7 @@ typedef struct LSOccurrence {
    LSOccurrence*  _occ;  // array of occurrences for source variables
    ORInt        _nbOcc;  // how many occurrence  entries (same as _src.size)
    LSTermDesc*     _at;  // flat array of all terms (for sub-allocation inside _occ).
+   ORInt*         _cBase;
 }
 
 -(id)init:(id<LSEngine>)engine
@@ -54,6 +55,7 @@ typedef struct LSOccurrence {
    _c = c;
    _t = ty;
    _posted = NO;
+   _cBase  = (ORInt*)[(id)_coefs base];
    return self;
 }
 -(void)dealloc
@@ -270,15 +272,14 @@ typedef struct LSOccurrence {
       }
    }
    _sb = idRange(_src,(ORBounds){FDMAXINT,0});
-   ORInt sz =_src.range.size;
+   ORInt sz =_sb.max - _sb.min + 1;
    _srcOfs = malloc(sizeof(ORInt)*sz);
    for(ORInt i=0;i< sz;++i)
       _srcOfs[i] = -1;
    _srcOfs -= _sb.min;
    ORInt r = 0;
    for(id<LSIntVar> x in _src)
-      _srcOfs[getId(x)] = r++;
-   
+      _srcOfs[getId(x)] = r++;   
    return _src;
 }
 -(ORBool)isTrue
@@ -311,20 +312,21 @@ typedef struct LSOccurrence {
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
    ORInt xid = getId(x);
-   if (_srcOfs[xid] < 0)
+   ORBool hasX = _sb.min <= xid && xid <= _sb.max && _srcOfs[xid] >= 0;
+   if (!hasX)
       return 0;     // that means variable x does not even appear in the constraint.
-
-   ORInt nbt = _occ[_srcOfs[xid]]._n;
+   const ORInt nbt = _occ[_srcOfs[xid]]._n;
    LSTermDesc* t = _occ[_srcOfs[xid]]._t;
-   ORInt oldEval = _value.value;
+   ORInt oldEval = getLSIntValue(_value);
    ORInt newEval = oldEval;
    for(ORInt k=0;k < nbt;k++) {
       id<LSIntVar> varTermk = t[k]._termVar;
       ORInt        termOfs  = t[k]._ofs;
-      ORInt    newTermValue = [(LSIntVar*)x lookahead:varTermk onAssign:v];
-      ORInt    oldTermValue = varTermk.value;
+      //ORInt    newTermValue = [(LSIntVar*)x lookahead:varTermk onAssign:v];
+      ORInt    newTermValue = varTermk == x ? v : [varTermk valueWhenVar:x equal:v];
+      ORInt    oldTermValue = getLSIntValue(varTermk);//varTermk.value;
       if (newTermValue == oldTermValue) continue;
-      newEval += (newTermValue - oldTermValue) * [_coefs at:termOfs];
+      newEval += (newTermValue - oldTermValue) * _cBase[termOfs];
    }
    switch(_t) {
       case LSTYEqual: return abs(newEval - _c) - abs(oldEval - _c);
@@ -364,20 +366,20 @@ typedef struct LSOccurrence {
       while (i < nbx) {
          id<LSIntVar> vari   = tx[i]._termVar;
          ORInt        termi  = tx[i]._ofs;
+         i++;
          ORInt    newTermValue = [(LSIntVar*)x lookahead:vari onAssign:yv];
          ORInt    oldTermValue = vari.value;
          if (newTermValue == oldTermValue) continue;
          newEval += (newTermValue - oldTermValue) * [_coefs at:termi];
-         i++;
       }
       while (j < nby) {
          id<LSIntVar> varj   = ty[j]._termVar;
          ORInt        termj  = ty[j]._ofs;
+         j++;
          ORInt    newTermValue = [(LSIntVar*)y lookahead:varj onAssign:xv];
          ORInt    oldTermValue = varj.value;
          if (newTermValue == oldTermValue) continue;
          newEval += (newTermValue - oldTermValue) * [_coefs at:termj];
-         i++;
       }
       switch(_t) {
          case LSTYEqual: return abs(newEval - _c) - abs(oldEval - _c);

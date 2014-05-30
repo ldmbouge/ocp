@@ -18,7 +18,11 @@
 // Int Variables
 
 @implementation LSIntVar
-
+Class __lsivc = nil;
++(void)load
+{
+   __lsivc = [LSIntVar class];
+}
 -(id)initWithEngine:(LSEngineI*)engine domain:(id<ORIntRange>)d
 {
    self = [super init];
@@ -85,6 +89,16 @@
    return rv;
 }
 // [pvh] at the top-level, we should forbid users to assign values to variables defined by invariants
+-(void)setValueSilent:(ORInt)v
+{
+   _value = v;
+}
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v
+{
+   if (getId(x)==_name)
+      return v;
+   else return _value;
+}
 -(void)setValue:(ORInt)v
 {
    if (v == _value)

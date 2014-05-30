@@ -267,6 +267,15 @@
 {
    return _fun();
 }
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v  // [ldm] alternative to lookahead. Not faster, but this class will disappear anyway
+{
+   ORInt ov = getLSIntValue(x);
+   [x setValueSilent:v];
+   ORInt rv = _fun();
+   [x setValueSilent:ov];
+   return rv;
+}
+
 @end
 // ==============================================================
 
@@ -290,6 +299,13 @@
 {
    return _x.value == _lit;
 }
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v
+{
+   if (getId(_x) == getId(x))
+      return v == _lit;
+   else return getLSIntValue(_x) == _lit;
+}
+
 -(LSGradient)decrease:(id<LSIntVar>)x
 {
    LSGradient rv;

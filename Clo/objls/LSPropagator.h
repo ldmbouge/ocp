@@ -74,6 +74,7 @@
 }
 -(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d fun:(ORInt(^)())fun src:(NSArray*)src;
 -(ORInt)value;
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v;
 @end
 
 // [pvh]: This is a (x == c) view
@@ -84,6 +85,7 @@
 }
 -(id)initWithEngine:(id<LSEngine>)engine on:(id<LSIntVar>)x eqLit:(ORInt)c;
 -(ORInt)value;
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v;
 @end
 
 // [pvh]: Not sue what this is at this point

@@ -50,6 +50,7 @@ typedef struct LSGradient {
 
 @protocol  LSIntVar <LSVar>
 -(ORInt)value;
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v;
 -(void)setValue:(ORInt)v;
 -(id<ORIntRange>)domain;
 -(LSGradient)decrease:(id<LSIntVar>)x;
