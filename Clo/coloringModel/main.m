@@ -312,7 +312,7 @@ int main(int argc, const char * argv[])
       }
       printf("\n");
       }
-
+      
       __block ORInt CID = 0;
       id<ORMutableInteger> tl = [ORFactory mutable:cp value:500];
       ORBool* limitReached = malloc(sizeof(ORBool));
@@ -331,9 +331,9 @@ int main(int argc, const char * argv[])
                     orderedBy: ^ORInt(ORInt i) {
                        if([r1 lastSolution] == nil)
                           return [cp domsize: vars[i]];
-                       ORFloat w = [r1 weightForVar: vars[i] in: [r1 lastSolution]];
-                       //NSLog(@"W: %f", w);
-                       return w;
+                       ORFloat w = [r1 weightForVar: vars[i]];
+                       //NSLog(@"W[%i]: %f", getId(vars[i]), w);
+                       return 1000 - w;
                     }
                           and: ^ORInt(ORInt i) {
                              ORInt vid = getId(vars[i]);
@@ -342,6 +342,8 @@ int main(int argc, const char * argv[])
                              else return 0;
                           }
                            do: ^(ORInt i) {
+                              //ORFloat w = [r1 weightForVar: vars[i]];
+                              //NSLog(@"W2[%i]: %f", getId(vars[i]), w);
                               ORInt maxc = max(0,[cp maxBound: c]);
                               [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: vars[i]];} in:^(ORInt v) {
                                  //NSLog(@"BRANCH: c[%d] == %d (%d)\n",vmap[getId(vars[i])],v,[deg at:vmap[getId(vars[i])]]);

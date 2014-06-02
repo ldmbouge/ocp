@@ -35,7 +35,7 @@
 -(ORFloat) upperBound;
 -(ORFloat) runtime;
 -(NSDictionary*)makeWeightedMap;
--(ORFloat) weightForVar: (id<ORVar>)x in: (id<ORSolution>) sol;
+-(ORFloat) weightForVar: (id<ORVar>)x;
 -(id<ORSolution>) lastSolution;
 +(NSMutableArray*) autosplitVariables: (NSArray*)vars constraints: (NSArray*)cstrs;
 @end

@@ -224,7 +224,7 @@
     return scd;
 }
 
--(ORFloat) weightForVar: (id<ORVar>)x in: (id<ORSolution>) sol {
+-(ORFloat) weightForVar: (id<ORVar>)x {
     ORFloat weight = 0;
     NSArray* softCstrs = [_model softConstraints];
     for(id<ORSoftConstraint> c in softCstrs) {
@@ -436,6 +436,7 @@
     
     // Partition variables
     NSSet* allVars = [NSSet setWithArray: vars];
+    if(cstrs == nil) return [NSArray arrayWithObject: allVars];
     NSMutableSet* splitSet = [NSMutableSet setWithObject: [vars firstObject]];
     BOOL changed = YES;
     while (changed) {
