@@ -61,10 +61,10 @@ int main(int argc, const char * argv[])
    //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
    //      [args measure:^struct ORResult(){
    [ORStreamManager setRandomized];
-   NSString* path = [NSString stringWithUTF8String: argv[1]];
-   ORInt relaxCount = atoi(argv[3]);
-   ORInt cliqueCount = atoi(argv[2]);
-   ORFloat UB = atoi(argv[4]);
+   NSString* path = @"/Users/dan/Desktop/clique.col";//[NSString stringWithUTF8String: argv[1]];
+   ORInt relaxCount = 846;//atoi(argv[3]);
+   ORInt cliqueCount = 2;//atoi(argv[2]);
+   ORFloat UB = 130;//atoi(argv[4]);
    ORFloat timeLimit = 5 * 60;
    
    NSLog(@"path: %@ clique: %i, relax: %i, ub: %f", path, cliqueCount, relaxCount, UB);
@@ -289,8 +289,10 @@ int main(int argc, const char * argv[])
    
    ORLagrangianTransform* t4 = [ORFactory lagrangianViolationTransform];
    id<ORParameterizedModel> lagrangeModel1 = [t4 apply: model relaxing: unrelaxCstrs];
+   __block ORSubgradientTemplate* r1 = nil;
    id<ORIntVarArray> slacks1 = (id<ORIntVarArray>)[lagrangeModel1 slacks];
    
+   id<ORSolution> sol = nil;
 //   __block ORInt myMax = INT_MAX;
    void (^search1)(id<CPCommonProgram>) = ^(id<CPProgram> cp){
 
@@ -326,7 +328,13 @@ int main(int argc, const char * argv[])
                    //NSLog(@"**CLIQUE: %d -- %@",CID,vars);
                    [cp forall: vars.range
                      suchThat: ^bool(ORInt i) { return ![cp bound: vars[i]];}
-                    orderedBy: ^ORInt(ORInt i) { return [cp domsize: vars[i]]; }
+                    orderedBy: ^ORInt(ORInt i) {
+                       if([r1 lastSolution] == nil)
+                          return [cp domsize: vars[i]];
+                       ORFloat w = [r1 weightForVar: vars[i] in: [r1 lastSolution]];
+                       //NSLog(@"W: %f", w);
+                       return w;
+                    }
                           and: ^ORInt(ORInt i) {
                              ORInt vid = getId(vars[i]);
                              if (lid <= vid && vid <= uid)
@@ -389,7 +397,7 @@ int main(int argc, const char * argv[])
 //      NSLog(@"TTL SLACK: %d",ttlSlacks);
    };
    
-   id<ORRunnable> r1 = [ORFactory CPSubgradient: lagrangeModel1 bound: UB search: search1];
+   r1 = (ORSubgradientTemplate*)[ORFactory CPSubgradient: lagrangeModel1 bound: UB search: search1];
    [r1 setTimeLimit: timeLimit];
    [(ORSubgradientTemplate*)r1 setAgility: 5.0];//7*UB];
    
@@ -401,9 +409,10 @@ int main(int argc, const char * argv[])
    FILE* f = fopen(outpath, "w+");
    
    NSDate* t0 = [NSDate date];
-   //[r1 run];
+   [r1 run];
    NSDate* t1 = [NSDate date];
    NSTimeInterval time = [t1 timeIntervalSinceDate: t0];
+   ORFloat bestBND = [r1 bestBound];
    int iter = [(ORSubgradientTemplate*)r1 iterations];
    //ORFloat bnd5 = [r1 bestBound];
    //[lagrangeModel1 release];
@@ -412,18 +421,15 @@ int main(int argc, const char * argv[])
    //[pr release];
    //[t4 release];
    
-   fprintf(f, "%f %i\n", time, iter);
+   fprintf(f, "%f %i\n", time, bestBND);
    
    t0 = [NSDate date];
-   [cp solve: ^{ [cp limitTime: timeLimit * 1000 in: ^{ search1(cp); }]; }];
+   //[cp solve: ^{ [cp limitTime: timeLimit * 1000 in: ^{ search1(cp); }]; }];
    t1 = [NSDate date];
    time = [t1 timeIntervalSinceDate: t0];
    fprintf(f, "%f", time);
    fclose(f);
-  
-   ORFloat bestBND = [[[[cp solutionPool] best] objectiveValue] floatValue];
    
-   NSLog(@"BND: %f",bestBND);
    
    return 0;
 }

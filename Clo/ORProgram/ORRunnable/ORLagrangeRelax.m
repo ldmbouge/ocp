@@ -159,6 +159,7 @@
 @protected
     id<ORParameterizedModel> _model;
     id<ORSolution> _bestSolution;
+    id<ORSolution> _lastSolution;
     ORFloat _bestBound;
     ORFloat _ub;
     id<ORSignature> _sig;
@@ -167,6 +168,8 @@
     ORInt _iters;
     ORFloat _agility;
     ORFloat _runtime;
+    NSDictionary* _scd;
+    id<ORASolver> _program;
 }
 
 -(id) initSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat) ub
@@ -177,12 +180,15 @@
         _sig = nil;
         _ub = ub;
         _bestSolution = nil;
+        _lastSolution = nil;
         _bestBound = -DBL_MAX;
         _solverTimeLimit = -DBL_MAX;
         _subgradientTimeLimit = -DBL_MAX;
         _iters = 0;
         _agility = 2.0;
         _runtime = 0;
+        _scd = [self makeWeightedMap];
+        _program = nil;
     }
     return self;
 }
@@ -203,6 +209,40 @@
 
 -(ORFloat) runtime {
     return _runtime;
+}
+
+-(NSDictionary*)makeWeightedMap
+{
+    NSMutableDictionary* scd = [[NSMutableDictionary alloc] initWithCapacity:64];
+    for(id<ORConstraint> c in [_model constraints]) {
+        if ([c conformsToProtocol:@protocol(ORWeightedVar)]) {
+            id<ORWeightedVar> wv = (id<ORWeightedVar>)c;
+            id<ORVar> slack = [wv x];
+            [scd setObject:wv forKey:@(getId(slack))];
+        }
+    }
+    return scd;
+}
+
+-(ORFloat) weightForVar: (id<ORVar>)x in: (id<ORSolution>) sol {
+    ORFloat weight = 0;
+    NSArray* softCstrs = [_model softConstraints];
+    for(id<ORSoftConstraint> c in softCstrs) {
+        if([[c allVars] containsObject: x]) {
+            id<ORVar> slack = [c slack];
+            id<ORWeightedVar> wv = [_scd objectForKey: @(getId(slack))];
+            if(wv) {
+                id<ORFloatParam> lambda = (id<ORFloatParam>)[wv weight];
+                weight += [(id<CPProgram>)_program paramFloatValue: lambda];
+            }
+        }
+    }
+    return weight;
+}
+
+-(id<ORSolution>) lastSolution
+{
+    return _lastSolution;
 }
 
 -(id) solverForModel: (id<ORModel>)m {
@@ -245,7 +285,7 @@
         return [w weight];
     }];
     
-    id<ORASolver> program = [self solverForModel: _model];
+    _program = [self solverForModel: _model];
     ORFloat cutoff = 0.0005;
     ORInt noImproveLimit = 30;
     ORInt noImprove = 0;
@@ -259,14 +299,15 @@
         //remainingTime = (_subgradientTimeLimit > 0) ? _subgradientTimeLimit - [t1 timeIntervalSinceDate: t0]: DBL_MAX;
         //ORFloat programTimeLimit = MIN(fabs(_solverTimeLimit), fabs(remainingTime));
         //if(programTimeLimit < 0) programTimeLimit = 0;
-        [[program solutionPool] emptyPool];
+        [[_program solutionPool] emptyPool];
         //if([program respondsToSelector: @selector(setTimeLimit:)]) [program setTimeLimit: programTimeLimit];
-        [self solveIt: program];
+        [self solveIt: _program];
         _iters++;
         
-        id<ORSolution> sol = [[program solutionPool] best];
+        id<ORSolution> sol = [[_program solutionPool] best];
+        _lastSolution = sol;
         id<ORObjectiveValueFloat> objValue = (id<ORObjectiveValueFloat>)[sol objectiveValue];
-        ORFloat bound = ([program respondsToSelector: @selector(bestObjectiveBound)]) ? [(id<MIPProgram>)program bestObjectiveBound] : [objValue floatValue];
+        ORFloat bound = ([_program respondsToSelector: @selector(bestObjectiveBound)]) ? [(id<MIPProgram>)_program bestObjectiveBound] : [objValue floatValue];
         
         __block BOOL satisfied = YES;
         slackSum = 0.0;
@@ -298,7 +339,7 @@
             NSLog(@"new bound: %f", _bestBound);
             if(satisfied &&
                [[bestSol objectiveValue] floatValue] == _bestBound &&
-               [program respondsToSelector: @selector(bestObjectiveBound)]) break;
+               [_program respondsToSelector: @selector(bestObjectiveBound)]) break;
         }
         else if(++noImprove > noImproveLimit) { pi /= 2.0; noImprove = 0; }
         else {
@@ -306,8 +347,8 @@
             if(timeIncrease++ < 3) newTime = _solverTimeLimit * 2;
             else newTime = DBL_MAX;
             
-            if(_solverTimeLimit > 0.0 && [program respondsToSelector: @selector(setTimeLimit:)])
-                [program setTimeLimit: newTime];
+            if(_solverTimeLimit > 0.0 && [_program respondsToSelector: @selector(setTimeLimit:)])
+                [_program setTimeLimit: newTime];
             [self setSolverTimeLimit: newTime];
         }
         if(_bestSolution == nil) _bestSolution = sol;
@@ -319,7 +360,7 @@
         //if(satisfied && [program dualityGap] == 0.0) break;
         
         // Special case: Slacks are 0, but we stopped due to time limit.
-        if(satisfied && _solverTimeLimit > 0 && [program respondsToSelector: @selector(setTimeLimit:)]) {
+        if(satisfied && _solverTimeLimit > 0 && [_program respondsToSelector: @selector(setTimeLimit:)]) {
             [self setSolverTimeLimit: -DBL_MAX];
             continue;
         }
@@ -333,9 +374,7 @@
             id<ORFloatVar> slack = [slacks at: idx];
            double sv = 1.0 + (double)random() /  (double)((signed int)0x7fffffff);
             ORFloat newValue = MAX(0.0, value + stepSize * [sol floatValue: slack] * sv);
-            if(newValue > 100)
-                NSLog(@"why?");
-            [(id<CPProgram>)program paramFloat: lambda setValue: newValue];
+            [(id<CPProgram>)_program paramFloat: lambda setValue: newValue];
             if (newValue != 0)
                NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
         }];
@@ -663,7 +702,7 @@
     id<ORParameterizedModel> m = [[ORParameterizedModelI alloc] initWithModel: (ORModelI*)_model relax: [_model constraints]];
     NSArray* cstrs = [self constraintsForPartition: splitIdx];
     NSSet* vars = [_split objectAtIndex: splitIdx];
-   NSDictionary* scd = [self makeWeightedMap];
+   //NSDictionary* scd = [self makeWeightedMap];
     static ORInt cnt = 0;
     for(id<ORConstraint> c in cstrs) {
         [m add: c];
@@ -671,7 +710,7 @@
         if([c conformsToProtocol: @protocol(ORSoftConstraint)]) {
             // Add problem index to lambda map
             ORSoftAlgebraicConstraintI* softCstr = (ORSoftAlgebraicConstraintI*)c;
-           id<ORWeightedVar> wv = [scd objectForKey:@(getId([softCstr slack]))];
+           id<ORWeightedVar> wv = [_scd objectForKey:@(getId([softCstr slack]))];
            assert(wv != nil);
             //id<ORWeightedVar> wv = [self weightedVarForSlack: [softCstr slack]];
             NSMutableArray* arr = [_lambdaMap objectForKey: [wv weight]];
@@ -686,7 +725,7 @@
         }
     }
     //for (id<ORParameter> p in [_model parameters]) [(ORParameterizedModelI*)m addParameter: p];
-   [scd release];
+   //[scd release];
     // Add objective
     if([[_model objective] conformsToProtocol: @protocol(ORObjectiveFunctionExpr)]) {
         id<ORExpr> objExpr = [(id<ORObjectiveFunctionExpr>)[_model objective] expr];
@@ -729,18 +768,6 @@
     return nil;
 }
 
--(NSDictionary*)makeWeightedMap
-{
-   NSMutableDictionary* scd = [[NSMutableDictionary alloc] initWithCapacity:64];
-   for(id<ORConstraint> c in [_model constraints]) {
-      if ([c conformsToProtocol:@protocol(ORWeightedVar)]) {
-         id<ORWeightedVar> wv = (id<ORWeightedVar>)c;
-         id<ORVar> slack = [wv x];
-         [scd setObject:wv forKey:@(getId(slack))];
-      }
-   }
-   return scd;
-}
 -(NSArray*) constraintsForPartition: (NSUInteger) splitIdx {
    NSMutableSet* vars = [[_split objectAtIndex: splitIdx] mutableCopy];
    NSMutableSet* cstrs = [[NSMutableSet alloc] initWithCapacity: 16];
