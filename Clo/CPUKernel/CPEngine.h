@@ -49,11 +49,6 @@
 
 #define ISLOADED(q)  ((q)->_csz)
 
-typedef struct CPClosureEntry {
-   ORClosure             cb;
-   id<CPConstraint>    cstr;
-} CPClosureEntry;
-
 @interface CPClosureQueue : NSObject {
    @package
    ORInt      _mxs;
@@ -61,7 +56,7 @@ typedef struct CPClosureEntry {
 }
 -(id) initClosureQueue: (ORInt) sz;
 -(void) dealloc;
--(CPClosureEntry) deQueue;
+-(void) deQueue:(ORClosure*)cb forCstr:(id<CPConstraint>*)cstr;
 -(void) enQueue:(ORClosure) cb cstr: (id<CPConstraint>)cstr;
 -(void) reset;
 -(ORBool) loaded;

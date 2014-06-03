@@ -82,7 +82,8 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
    __block id<CPConstraint> last = nil;
    __block ORInt nbp = 0;
    return tryfail(^ORStatus{
-      CPClosureEntry cb;
+      ORClosure cb;
+      id<CPConstraint> forCstr;
       while (!done) {
          
          while (ISLOADED(_valueClosureQueue)) {
@@ -95,8 +96,8 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
             --p;
          done = p < LOWEST_PRIO;
          while (!done) {
-            cb = [_closureQueue[p] deQueue];
-            status = executeClosure(cb.cb,cb.cstr,&last);
+            [_closureQueue[p] deQueue:&cb forCstr:&forCstr];
+            status = executeClosure(cb,forCstr,&last);
             nbp += status !=ORSkip;
             if (ISLOADED(_valueClosureQueue))
                break;
@@ -107,18 +108,19 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
          }
       }
       while (ISLOADED(_closureQueue[ALWAYS_PRIO])) {
-         cb = [_closureQueue[ALWAYS_PRIO] deQueue];
-         ORStatus as = executeClosure(cb.cb,cb.cstr,&last);
+         [_closureQueue[ALWAYS_PRIO] deQueue:&cb forCstr:&forCstr];
+         ORStatus as = executeClosure(cb,forCstr,&last);
          nbp += as != ORSkip;
          assert(as != ORFailure);
       }
       [_engine incNbPropagation:nbp];
       return status;
    }, ^ORStatus{
-      CPClosureEntry cb;
+      ORClosure cb;
+      id<CPConstraint> forCstr;
       while (ISLOADED(_closureQueue[ALWAYS_PRIO])) {
-         cb = [_closureQueue[ALWAYS_PRIO] deQueue];
-         ORStatus as = executeClosure(cb.cb,cb.cstr,&last);
+         [_closureQueue[ALWAYS_PRIO] deQueue:&cb forCstr:&forCstr];
+         ORStatus as = executeClosure(cb,forCstr,&last);
          nbp += as != ORSkip;
          assert(as != ORFailure);
       }

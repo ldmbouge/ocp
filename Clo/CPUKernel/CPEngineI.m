@@ -14,6 +14,13 @@
 #import "CPClosureEvent.h"
 #import <ORFoundation/ORSetI.h>
 
+
+typedef struct CPClosureEntry {
+   ORClosure             cb;
+   id<CPConstraint>    cstr;
+} CPClosureEntry;
+
+
 @implementation CPClosureQueue {
    CPClosureEntry*  _tab;
    CPClosureEntry*  _last;
@@ -94,9 +101,11 @@ inline static CPClosureEntry ClosureQueueDequeue(CPClosureQueue* q)
 {
    ClosureQueueEnqueue(self, cb,cstr);
 }
--(CPClosureEntry) deQueue
+-(void)deQueue:(ORClosure*)cb forCstr:(id<CPConstraint>*)cstr
 {
-   return ClosureQueueDequeue(self);
+   CPClosureEntry cbe = ClosureQueueDequeue(self);
+   *cb = cbe.cb;
+   *cstr = cbe.cstr;
 }
 @end
 
