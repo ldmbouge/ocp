@@ -38,8 +38,6 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          ORInt n = [args size];
-         ORFloat rf = [args restartRate];
-         ORInt t = [args timeOut];
          id<ORModel> model = [ORFactory createModel];
          id<ORAnnotation> notes = [ORFactory annotation];
          id<ORIntRange>  R = RANGE(model,1,n);
@@ -66,10 +64,9 @@ int main(int argc, const char * argv[])
             id<ORIntMatrix> tabu = [ORFactory intMatrix:cp range:R :R using:^int(ORInt i, ORInt j) { return -1;}];
             ORInt tLen = 2;
             id<ORRandomPermutation> p = [ORFactory randomPermutation:D];
-            ORInt k=1;
             for(ORInt i=1;i <= n;i++)
                for(ORInt j=1;j <= n;j++)
-                  [cp label:[s at:i :j] with:k++]; // [p next]
+                  [cp label:[s at:i :j] with:[p next]];
             NSLog(@"viol ? : %d",[cp getViolations]);
             printSquare(cp, s);
             while ([cp getViolations] > 0) {

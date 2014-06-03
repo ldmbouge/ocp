@@ -239,6 +239,10 @@
    LSGradient rv;
    return rv;
 }
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v
+{
+   assert(NO);
+}
 @end
 // ========================================================================================
 // Int Views
@@ -267,7 +271,7 @@
 {
    return _fun();
 }
--(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v  // [ldm] alternative to lookahead. Not faster, but this class will disappear anyway
+-(ORInt)valueWhenVar:(LSIntVar*)x equal:(ORInt)v  // [ldm] alternative to lookahead. Not faster, but this class will disappear anyway
 {
    ORInt ov = getLSIntValue(x);
    [x setValueSilent:v];

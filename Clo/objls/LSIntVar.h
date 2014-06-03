@@ -37,6 +37,7 @@ typedef enum LSStatus {
 -(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d;
 -(LSEngineI*)engine;
 -(id<ORIntRange>)domain;
+-(void)setValueSilent:(ORInt)v;
 -(void)setValue:(ORInt)v;
 -(ORInt)value;
 -(ORInt)incr;

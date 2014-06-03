@@ -67,6 +67,7 @@
 -(id<NSFastEnumeration>)inbound;
 -(void)enumerateOutbound:(void(^)(id))block;
 -(void)scheduleOutbound:(LSEngineI*)engine;
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v;
 @end
 
 @interface LSIntVarView : LSCoreView {
