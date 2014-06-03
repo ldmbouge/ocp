@@ -14,7 +14,13 @@
 #import "CPClosureEvent.h"
 #import <ORFoundation/ORSetI.h>
 
-@implementation CPClosureQueue
+@implementation CPClosureQueue {
+   CPClosureEntry*  _tab;
+   CPClosureEntry*  _last;
+   ORInt     _enter;
+   ORInt     _exit;
+   ORInt     _mask;   
+}
 -(id) initClosureQueue: (ORInt) sz
 {
    self = [super init];
@@ -94,7 +100,12 @@ inline static CPClosureEntry ClosureQueueDequeue(CPClosureQueue* q)
 }
 @end
 
-@implementation CPValueClosureQueue
+@implementation CPValueClosureQueue {
+   id<CPValueEvent>* _tab;
+   ORInt         _enter;
+   ORInt          _exit;
+   ORInt          _mask;
+}
 -(id) initValueClosureQueue:(ORInt)sz
 {
    self = [super init];
@@ -424,7 +435,7 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
                ClosureQueueEnqueue(fdm->_closureQueue[list->_priority], list->_trigger,lc);
             }
          }
-         list = list->_node._val;
+         list = list->_node;
       }
       ++mlist;
    }

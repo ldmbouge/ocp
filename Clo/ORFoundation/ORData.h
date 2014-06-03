@@ -64,7 +64,7 @@
 @interface ORGamma : NSObject<ORGamma>
 {
 @protected
-   id* _gamma;
+   id __strong*  _gamma;
    id<ORModelMappings> _mappings;
 }
 -(ORGamma*) init;

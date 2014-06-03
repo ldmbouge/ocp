@@ -200,6 +200,15 @@
         return (ORFloat)[[arr at: i] literal];
     }];
 }
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array
+{
+   ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:RANGE(tracker,0,(ORInt)[array count] - 1)];
+   [o.range enumerateWithBlock:^(ORInt k) {
+      [o set:[array objectAtIndex:k] at:k];
+   }];
+   return [tracker trackMutable:o];
+}
+
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(id(^)(ORInt))clo
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];

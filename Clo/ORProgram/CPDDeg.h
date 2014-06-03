@@ -21,7 +21,7 @@
    ORUInt*          _map; 
    id<CPCommonProgram>     _cp;
    ORULong          _nbv;
-   NSSet**           _cv;
+   NSSet* __strong*     _cv;
 }
 -(id)initCPDDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPIntVar>)x;

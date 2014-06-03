@@ -14,6 +14,15 @@
 #import "pthread.h"
 #import <stdlib.h>
 
+typedef struct  {
+   Class poolClass;
+   ORUInt low;
+   ORUInt high;
+   ORUInt sz;
+   ORUInt nbCont;
+   id*          pool;
+} ContPool;
+
 // [ldm] The routine is meant to operate over 32-bit words (4-bytes at a time) or 64-bit wide 
 // datum. dest / src must be increased by the data item size.
 static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,register size_t len)

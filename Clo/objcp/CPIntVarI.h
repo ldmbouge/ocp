@@ -200,7 +200,7 @@ static inline BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
    switch(((CPIntVar*)x)->_vc) {
       case CPVCBare: {
          CPIntVarI* y = (CPIntVarI*)x;
-         if (y->_net._valueClosureQueue[0]._val != nil || y->_triggers != nil)
+         if (y->_net._valueClosureQueue[0] != nil || y->_triggers != nil)
             return YES;
          else if (y->_recv && [y->_recv tracksLoseEvt])
             return YES;

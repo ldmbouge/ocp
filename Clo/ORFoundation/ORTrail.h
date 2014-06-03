@@ -58,13 +58,8 @@ typedef struct {
    ORUInt    _mgc;
 } TRDouble;
 
-typedef struct {
-   id        _val;
-} TRId;
-
-typedef struct {
-   id        _val;
-} TRIdNC;
+typedef id TRId;
+typedef id TRIdNC;
 
 typedef struct {
    id<ORTrail>_trail;

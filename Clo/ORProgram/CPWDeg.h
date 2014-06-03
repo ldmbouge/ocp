@@ -18,20 +18,7 @@
 // pvh: heuristics should use the solver and it should make the informer available
 // pvh: This is too low level
 
-@interface CPWDeg : CPBaseHeuristic<CPHeuristic> {
-   id<ORVarArray>   _vars;  // Model variables
-   id<CPVarArray>    _cvs;  // concrete variables
-   id<ORVarArray>  _rvars;
-   ORUInt         _nbVars;
-   ORUInt*           _map; 
-   id<CPCommonProgram>      _cp;
-   CPEngineI*     _solver;
-   ORUInt            _nbc;
-   ORUInt            _nbv;
-   ORUInt*             _w;
-   NSSet**            _cv;
-   id*              _vOfC;
-}
+@interface CPWDeg : CPBaseHeuristic<CPHeuristic>
 -(CPWDeg*)initCPWDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPIntVar>)x;
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x ;

@@ -11,7 +11,17 @@
 
 #import "ORSemDFSController.h"
 
-@implementation ORSemDFSController
+@implementation ORSemDFSController {
+@protected
+   NSCont**            _tab;
+   ORInt                _sz;
+   ORInt                _mx;
+   id<ORCheckpoint>* _cpTab;
+   SemTracer*       _tracer;
+   id<ORCheckpoint> _atRoot;
+   id<ORSearchEngine>     _engine;
+   id<ORPost>        _model;
+}
 
 - (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {

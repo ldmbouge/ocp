@@ -13,8 +13,20 @@
 #import "CPWDeg.h"
 #import "CPEngineI.h"
 
-@implementation CPWDeg
-
+@implementation CPWDeg {
+   id<ORVarArray>   _vars;  // Model variables
+   id<CPVarArray>    _cvs;  // concrete variables
+   id<ORVarArray>  _rvars;
+   ORUInt         _nbVars;
+   ORUInt*           _map;
+   id<CPCommonProgram>      _cp;
+   CPEngineI*     _solver;
+   ORUInt            _nbc;
+   ORUInt            _nbv;
+   ORUInt*             _w;
+   NSSet* __strong*   _cv;
+   id*              _vOfC;
+}
 -(CPWDeg*)initCPWDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];

@@ -23,16 +23,16 @@ static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
 
 static void deallocNetwork(CPFloatEventNetwork* net)
 {
-   freeList(net->_bindEvt._val);
-   freeList(net->_minEvt._val);
-   freeList(net->_maxEvt._val);
+   freeList(net->_bindEvt);
+   freeList(net->_minEvt);
+   freeList(net->_maxEvt);
 }
 
 static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* rv)
 {
-   collectList(net->_bindEvt._val,rv);
-   collectList(net->_minEvt._val,rv);
-   collectList(net->_maxEvt._val,rv);
+   collectList(net->_bindEvt,rv);
+   collectList(net->_minEvt,rv);
+   collectList(net->_maxEvt,rv);
    return rv;
 }
 
@@ -66,9 +66,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(ORInt)degree
 {
    __block ORUInt d = 0;
-   [_net._bindEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
-   [_net._maxEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-   [_net._minEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._bindEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
    return d;
 }
 -(NSString*)description
@@ -164,7 +164,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._bindEvt._val;
+   mList[k] = _net._bindEvt;
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
@@ -172,11 +172,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._minEvt._val;
+   mList[k] = _net._minEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = bound ? _net._bindEvt._val : NULL;
+   mList[k] = bound ? _net._bindEvt : NULL;
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
@@ -184,11 +184,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._maxEvt._val;
+   mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = bound ? _net._bindEvt._val : NULL;
+   mList[k] = bound ? _net._bindEvt : NULL;
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
@@ -296,9 +296,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(ORInt)degree
 {
    __block ORUInt d = 0;
-   [_net._bindEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
-   [_net._maxEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
-   [_net._minEvt._val scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._bindEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
    return d;
 }
 -(NSString*)description
@@ -406,13 +406,13 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._minEvt._val;
+   mList[k] = _net._minEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._maxEvt._val;
+   mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._bindEvt._val;
+   mList[k] = _net._bindEvt;
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
@@ -425,11 +425,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._minEvt._val;
+   mList[k] = _net._minEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = (dsz==1) ? _net._bindEvt._val : NULL;
+   mList[k] = (dsz==1) ? _net._bindEvt : NULL;
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
@@ -437,11 +437,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._maxEvt._val;
+   mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = (dsz==1) ? _net._bindEvt._val : NULL;
+   mList[k] = (dsz==1) ? _net._bindEvt : NULL;
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }

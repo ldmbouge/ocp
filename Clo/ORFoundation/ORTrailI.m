@@ -377,14 +377,14 @@ void  assignTRDouble(TRDouble* v,double val,ORTrailI* trail)
 }
 void  assignTRId(TRId* v,id val,ORTrailI* trail)
 {
-   [trail trailId:&v->_val];
-   [v->_val release];
-   v->_val = [val retain];
+   [trail trailId:v];
+   [*v release];
+   *v = [val retain];
 }
 void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
 {
-   inline_trailIdNCFun(trail, &v->_val);
-   v->_val = val;
+   inline_trailIdNCFun(trail, v);
+   *v = val;
 }
 ORInt getTRIntArray(TRIntArray a,int i)
 {

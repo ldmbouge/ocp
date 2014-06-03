@@ -155,7 +155,7 @@
 -(void) dealloc
 {
    NSLog(@"ORCoreExplorer dealloc called...\n");
-   id ctrl = _controller._val;
+   id ctrl = _controller;
    [ctrl release];
    [_trail release];
    [_cFact release];
@@ -183,51 +183,51 @@
 
 -(void) push: (id<ORSearchController>) controller
 {
-   [controller setController: _controller._val];
+   [controller setController: _controller];
    assignTRId(&_controller,controller,_trail);
 }
 
 -(void) popController
 {
-   id<ORSearchController> controller = [_controller._val controller];
+   id<ORSearchController> controller = [_controller controller];
    //[_controller._val release];
    //_controller._val = controller;
    assignTRId(&_controller,controller,_trail);
 }
 -(id<ORSearchController>) controller
 {
-   return _controller._val;
+   return _controller;
 }
 -(void) fail
 {
    [ORConcurrency pumpEvents];
    _nbf++;
-   [_controller._val fail];
+   [_controller fail];
    assert(0);
 }
 
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
-   [_controller._val startTry];
+   [_controller startTry];
    NSCont* k = [NSCont takeContinuation];
    if ([k nbCalls] == 0) {
-      [_controller._val startTryLeft];
+      [_controller startTryLeft];
       _nbc++;
-      [_controller._val addChoice: k];
+      [_controller addChoice: k];
       left();
-      [_controller._val exitTryLeft];
+      [_controller exitTryLeft];
    }
    else {
       // [ldm] In the case of an optimization, the startTryRight will enforce the primalBound and _may_ fail as as
       // result. Hence, we are not even guaranteed to reach the call to right() and we must letgo of the continuation
       // now or face memory leaks. *do not move the letgo further down*
       [k letgo];
-      [_controller._val startTryRight];
-      [_controller._val trust];
+      [_controller startTryRight];
+      [_controller trust];
       right();
-      [_controller._val exitTryRight];
+      [_controller exitTryRight];
    }
-   [_controller._val exitTry];
+   [_controller exitTry];
 }
 
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
@@ -260,7 +260,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
-   [_controller._val startTryall];
+   [_controller startTryall];
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
    //NSLog(@"Got an iterator: %p [%lu]",ite,(unsigned long)[ite retainCount]);
    // The [ite release] inserted on the trail will _not_ necessarily occur last but it will
@@ -274,11 +274,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    while (nv.found) {
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls] == 0) {
-         [_controller._val startTryallBody];
+         [_controller startTryallBody];
          _nbc++;
-         [_controller._val addChoice: k];
+         [_controller addChoice: k];
          body(nv.value);
-         [_controller._val exitTryallBody];
+         [_controller exitTryallBody];
          break;
       }
       else {
@@ -288,23 +288,23 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [k letgo];
          // We must trust to increase the choice point identifier or the semantic path are all busted and the suffix
          // deconstruction fails.
-         [_controller._val trust];
-         [_controller._val startTryallOnFailure];
+         [_controller trust];
+         [_controller startTryallOnFailure];
          // The continuation is used only twice, so we are guaranteed that it is safe and correct to letgo now. 
          if (onFailure)
             onFailure(nv.value);
          // There is a caveat here. We can call "startTryallOnFailure" but *never* call its matching "exitTRyallOnFailure"
          // It all depends on the semantics we assign to this pair. Do we wish to guarantee that both are called? or that
          // the exit is called only when the onFailure succeeded?
-         [_controller._val exitTryallOnFailure];
+         [_controller exitTryallOnFailure];
          nv = nextTAValue(ite, filter);
          if (!nv.found)
-            [_controller._val fail];
+            [_controller fail];
       }
    }
    // A release here *should not* be necessary. Even if the filtered range is empty, the initial delayed release
    // will occur upon backtrack.
-   [_controller._val exitTryall];
+   [_controller exitTryall];
 }
 
 -(void) tryall: (id<ORIntIterable>) range
@@ -313,7 +313,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
             in: (ORInt2Void) body
      onFailure: (ORInt2Void) onFailure
 {
-   [_controller._val startTryall];
+   [_controller startTryall];
    OROrderedSweep* ite = [[OROrderedSweep alloc] initWith:range];
    [ite addFilter:filter];
    [ite addOrdered:o1];
@@ -325,22 +325,22 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    while (found) {
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls]==0) {
-         [_controller._val startTryallBody];
+         [_controller startTryallBody];
          _nbc++;
-         [_controller._val addChoice:k];
+         [_controller addChoice:k];
          body(sel);
-         [_controller._val exitTryallBody];
+         [_controller exitTryallBody];
          break;
       } else {
          [k letgo];
-         [_controller._val trust];
-         [_controller._val startTryallOnFailure];
+         [_controller trust];
+         [_controller startTryallOnFailure];
          if (onFailure) onFailure(sel);
-         [_controller._val exitTryallOnFailure];
+         [_controller exitTryallOnFailure];
          found = [ite next:&sel];
       }
    }   
-   [_controller._val exitTryall];
+   [_controller exitTryall];
 }
 
 -(void) once: (ORClosure) cl
@@ -409,7 +409,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    if (isDone)
       if (isDone()) {
          [enter letgo];
-         [_controller._val fail];
+         [_controller fail];
       }
    /*
     [nbRestarts incr];
@@ -418,7 +418,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
     [_controller._val fail];
     }
     */
-   [_controller._val addChoice: enter];
+   [_controller addChoice: enter];
    if ([enter nbCalls]!=0)
       if (onRepeat) onRepeat();
    if (body) body();
@@ -430,14 +430,14 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [monitor release];
    NSCont* enter = [NSCont takeContinuation];
    if ([enter nbCalls]==0) {
-      [_controller._val addChoice: enter];
+      [_controller addChoice: enter];
       body();
    }
    else {
       [enter letgo];
       if ([monitor isPruned])
          action();
-      [_controller._val fail];
+      [_controller fail];
    }
    [self popController];
 }
@@ -466,7 +466,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    ORMutableIntegerI* isPruned = [ORFactory mutable:_engine value:NO];
    NSCont* enter = [NSCont takeContinuation];
    if ([enter nbCalls]==0) {
-      [_controller._val addChoice: enter];
+      [_controller addChoice: enter];
       [self perform: s1 onLimit: ^{
          [isPruned setValue:YES];
       }];
@@ -476,7 +476,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       if ([isPruned intValue])
          s2();
       else
-         [_controller._val fail];
+         [_controller fail];
    }
 }
 
@@ -494,9 +494,9 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          body();
          // [ldm] Do *not* letgo of exit here. The cleanup call will do this automatically.
          //[exit letgo];
-         [_controller._val cleanup];
-         [_controller._val release];
-         _controller._val = nil;
+         [_controller cleanup];
+         [_controller release];
+         _controller = nil;
          NSLog(@"top-level success");
       }
       else {
@@ -513,16 +513,16 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
-      [_controller._val addChoice: exit];                           // add the choice in the original controller
+      [_controller addChoice: exit];                           // add the choice in the original controller
       [self setController:newCtrl];                                 // install the new controller chain
       if (body) body();
       if (onSolution) onSolution();
-      [_controller._val succeeds];
+      [_controller succeeds];
    }
    else if ([newCtrl isFinitelyFailed]) {
       [exit letgo];
       [newCtrl release];
-      [_controller._val fail];
+      [_controller fail];
    }
    else {
       [exit letgo];
@@ -538,11 +538,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
-      [_controller._val addChoice: exit];
+      [_controller addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       if (body) body();
       if (onSolution) onSolution();
-      [_controller._val fail];                // If fail runs out of node, it will trigger finitelyFailed.
+      [_controller fail];                // If fail runs out of node, it will trigger finitelyFailed.
    }
    else { // if ([newCtrl isFinitelyFailed]) {
       [exit letgo];
@@ -559,7 +559,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
-      [_controller._val addChoice: exit];
+      [_controller addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       id<ORSearchObjectiveFunction> obj = solver.objective;
       assert(obj);
@@ -569,7 +569,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       if (search) search();
       [obj updatePrimalBound];
       if (onSolution) onSolution();
-      [_controller._val fail];
+      [_controller fail];
    }
    else { // if ([newCtrl isFinitelyFailed]) {
       [exit letgo];
@@ -631,21 +631,21 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> base    = [_cFact makeNestedController];
-   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller._val];
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller];
    [base release];
    [self nestedSolve:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> base    = [_cFact makeNestedController];
-   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller._val];
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller];
    [base release];
    [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
 -(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> new    = [_cFact makeNestedController];
-   id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller._val];
+   id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller];
    [new release];
    [self nestedOptimize:solver using:search onSolution:onSolution onExit:onExit control:nested];
 }
@@ -684,7 +684,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    id<ORSearchController> new     = [_cFact makeNestedController];
    id<ORSearchController> root    = [_cFact makeRootController];
    [self push:root];
-   id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller._val];
+   id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller];
    [new release];
    [self nestedOptimize:solver using:search onSolution:onSolution onExit:onExit control:nested];
    [self popController];

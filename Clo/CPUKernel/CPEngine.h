@@ -50,7 +50,7 @@
 #define ISLOADED(q)  ((q)->_csz)
 
 typedef struct CPClosureEntry {
-   ORClosure  cb;
+   ORClosure             cb;
    id<CPConstraint>    cstr;
 } CPClosureEntry;
 
@@ -58,11 +58,6 @@ typedef struct CPClosureEntry {
    @package
    ORInt      _mxs;
    ORInt      _csz;
-   CPClosureEntry*  _tab;
-   CPClosureEntry*  _last;
-   ORInt     _enter;
-   ORInt     _exit;
-   ORInt     _mask;
 }
 -(id) initClosureQueue: (ORInt) sz;
 -(void) dealloc;
@@ -74,12 +69,8 @@ typedef struct CPClosureEntry {
 
 @interface CPValueClosureQueue : NSObject {
    @package
-   ORInt           _mxs;
-   ORInt           _csz;
-   id<CPValueEvent>* _tab;
-   ORInt         _enter;
-   ORInt          _exit;
-   ORInt          _mask;
+   ORInt      _mxs;
+   ORInt      _csz;
 }
 -(id) initValueClosureQueue: (ORInt) sz;
 -(void) dealloc;

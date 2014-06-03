@@ -60,6 +60,7 @@
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORFloat(^)(ORInt,ORInt)) clo;
 +(id<ORFloatArray>) floatArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr;
 
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(id(^)(ORInt))clo;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORIdArray>) sort:(id<ORTracker>)tracker idArray:(id<ORIdArray>)array with:(ORFloat(^)(id))f;

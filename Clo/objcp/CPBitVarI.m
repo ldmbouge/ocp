@@ -28,10 +28,10 @@ static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t)
 
 static void deallocNetwork(CPBitEventNetwork* net) 
 {
-    freeList(net->_boundsEvt._val);
-    freeList(net->_bitFixedEvt._val);
-    freeList(net->_minEvt._val);
-    freeList(net->_maxEvt._val);
+    freeList(net->_boundsEvt);
+    freeList(net->_bitFixedEvt);
+    freeList(net->_minEvt);
+    freeList(net->_maxEvt);
 }
 
 @interface CPBitVarSnapshot : NSObject<ORSnapshot,NSCoding> {
@@ -265,11 +265,11 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._minEvt._val;
+   mList[k] = _net._minEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._maxEvt._val;
+   mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleClosures:mList];
@@ -281,9 +281,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._minEvt._val;
+   mList[k] = _net._minEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleClosures:mList];
@@ -294,9 +294,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._maxEvt._val;
+   mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleClosures:mList];
@@ -310,7 +310,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     //Empty implementation
    id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._bitFixedEvt._val;
+   mList[k] = _net._bitFixedEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleClosures:mList];

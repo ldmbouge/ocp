@@ -564,6 +564,11 @@
 			<key>orderHint</key>
 			<integer>39</integer>
 		</dict>
+		<key>smory.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>98</integer>
+		</dict>
 		<key>sport.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -698,6 +703,11 @@
 			<true/>
 		</dict>
 		<key>5B3895E81795BE07004CCE93</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B4055AB193E253E00A2B1DD</key>
 		<dict>
 			<key>primary</key>
 			<true/>
