@@ -448,7 +448,7 @@
    _x = x;
    _y = y;
    _z = z;
-   _xs = _ys = _zs = (TRIntArray){nil,0,0,NULL};
+   _xs = _ys = _zs = (TRIntArray){0,0,NULL};
    return self;
 }
 -(void)dealloc
@@ -473,42 +473,42 @@ static inline TRIntArray createSupport(CPIntVar* v)
 {
    return makeTRIntArray([[v engine] trail], [v max] - [v min] + 1, [v min]);
 }
-static void constAddScanB(ORInt a,CPBitDom* bd,CPBitDom* cd,CPIntVar* c,TRIntArray cs) // a + D(b) IN D(c)
+static void constAddScanB(ORInt a,CPBitDom* bd,CPBitDom* cd,CPIntVar* c,TRIntArray cs,id<ORTrail> trail) // a + D(b) IN D(c)
 {   
    ORInt min = minCPDom(bd),max = maxCPDom(bd);
    for(ORInt j=min;j<=max;++j) {
       if (!getCPDom(bd,j)) continue;
       ORInt t = a + j;
       if (memberCPDom(cd, t)) {
-         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1,trail);
          if (cv == 0) {
             removeDom(c, t);            
          }         
       }
    }
 }
-static void constSubScanB(ORInt a,CPBitDom* bd,CPBitDom* cd,CPIntVar* c,TRIntArray cs) // a - D(b) IN D(c)
+static void constSubScanB(ORInt a,CPBitDom* bd,CPBitDom* cd,CPIntVar* c,TRIntArray cs,id<ORTrail> trail) // a - D(b) IN D(c)
 {
    ORInt min = minCPDom(bd),max = maxCPDom(bd);
    for(ORInt j=min;j<=max;j++) {
       if (!getCPDom(bd,j)) continue;
       ORInt t = a - j;
       if (memberCPDom(cd, t)) {
-         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1,trail);
          if (cv == 0) { 
             removeDom(c, t);
          }         
       }
    }
 }
-static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntArray cs)  // D(a) - b IN D(c)
+static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntArray cs,id<ORTrail> trail)  // D(a) - b IN D(c)
 {
    ORInt min = minCPDom(ad),max = maxCPDom(ad);
    for(ORInt j=min;j<=max;j++) {
       if (!getCPDom(ad,j)) continue;
       ORInt t = j - b;
       if (memberCPDom(cd, t)) {
-         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1,trail);
          if (cv == 0) {
             removeDom(c, t);
          }         
@@ -528,23 +528,23 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
    if (v == _x) {
       [_x whenLoseValue:self do:^(ORInt val) {
          setCPDom(_fx, val, NO);
-         assignTRIntArray(_xs, val, 0);            
-         constAddScanB(val,_fy,_fz,_z,_zs);   // xc + D(y) in D(z)
-         scanASubConstB(_fz,val,_fy,_y,_ys);   // D(z) - xc in D(y)
+         assignTRIntArray(_xs, val, 0,_trail);
+         constAddScanB(val,_fy,_fz,_z,_zs,_trail);   // xc + D(y) in D(z)
+         scanASubConstB(_fz,val,_fy,_y,_ys,_trail);   // D(z) - xc in D(y)
       }];      
    } else if (v == _y) {
       [_y whenLoseValue:self do:^(ORInt val) {
          setCPDom(_fy, val, NO);
-         assignTRIntArray(_ys, val, 0);            
-         constAddScanB(val,_fx,_fz,_z,_zs);  // yc + D(x) in D(z)
-         scanASubConstB(_fz,val,_fx,_x,_xs);  // D(z) - yc in D(x)
+         assignTRIntArray(_ys, val, 0,_trail);
+         constAddScanB(val,_fx,_fz,_z,_zs,_trail);  // yc + D(x) in D(z)
+         scanASubConstB(_fz,val,_fx,_x,_xs,_trail);  // D(z) - yc in D(x)
       }];
    } else {
       [_z whenLoseValue:self do:^(ORInt val) {
          setCPDom(_fz, val, NO);
-         assignTRIntArray(_zs, val, 0);            
-         constSubScanB(val,_fx,_fy,_y,_ys);  // zc - D(x) in D(y)
-         constSubScanB(val,_fy,_fx,_x,_xs);   // zc - D(y) in D(x)
+         assignTRIntArray(_zs, val, 0,_trail);
+         constSubScanB(val,_fx,_fy,_y,_ys,_trail);  // zc - D(x) in D(y)
+         constSubScanB(val,_fy,_fx,_x,_xs,_trail);   // zc - D(y) in D(x)
       }];
    }
 }
@@ -567,7 +567,7 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
             if (memberCPDom(_fy, j)) {
                ORInt v = i + j;
                if (memberCPDom(_fz, v)) 
-                  assignTRIntArray(_zs, v, getTRIntArray(_zs, v) + 1);
+                  assignTRIntArray(_zs, v, getTRIntArray(_zs, v) + 1,_trail);
             }
          }
       }
@@ -578,14 +578,14 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
             if (memberCPDom(_fx, j)) {
                ORInt v = i - j;
                if (memberCPDom(_fy, v)) 
-                  assignTRIntArray(_ys, v, getTRIntArray(_ys, v) + 1);
+                  assignTRIntArray(_ys, v, getTRIntArray(_ys, v) + 1,_trail);
             }
          }
          for(ORInt j=minY;j <= maxY;j++) {
             if (memberCPDom(_fy, j)) {
                ORInt v = i - j;
                if (memberCPDom(_fx, v)) 
-                  assignTRIntArray(_xs, v, getTRIntArray(_xs, v) + 1);
+                  assignTRIntArray(_xs, v, getTRIntArray(_xs, v) + 1,_trail);
             }
          }
       }

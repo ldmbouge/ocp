@@ -168,22 +168,22 @@ static inline TRDouble  inline_makeTRDouble(ORTrailI* trail,double val)
    return (TRDouble){val,[trail magic]-1};
 }
 
-static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val)
+static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
 {
    TRInt* ei = a._entries + i;
-   if (ei->_mgc != [a._trail magic]) {
-      trailIntFun(a._trail, & ei->_val);
-      ei->_mgc = [a._trail magic];
+   if (ei->_mgc != [trail magic]) {
+      trailIntFun(trail, & ei->_val);
+      ei->_mgc = [trail magic];
    }
    return ei->_val = val;
 }
 
-static inline ORFloat inline_assignTRFloatArray(TRFloatArray a,int i,ORFloat val)
+static inline ORFloat inline_assignTRFloatArray(TRFloatArray a,int i,ORFloat val,id<ORTrail> trail)
 {
    TRDouble* ei = a._entries + i;
-   if (ei->_mgc != [a._trail magic]) {
-      trailFloatFun(a._trail, & ei->_val);
-      ei->_mgc = [a._trail magic];
+   if (ei->_mgc != [trail magic]) {
+      trailFloatFun(trail, & ei->_val);
+      ei->_mgc = [trail magic];
    }
    return ei->_val = val;
 }

@@ -94,7 +94,7 @@ static void findNewSupport(CPTableCstrI* cstr,ORInt tuple,ORInt col)
            removeDom(cstr->_var[col],v);
         }
         else {
-            assignTRIntArray(cstr->_currentSupport[col],v,tuple);
+            assignTRIntArray(cstr->_currentSupport[col],v,tuple,cstr->_trail);
         }
     }
 }
@@ -117,7 +117,7 @@ static void removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
     int nb = _table->_max[i] - _table->_min[i] + 1;
     _currentSupport[i] = makeTRIntArray(_trail,nb,_table->_min[i]);
     for(ORInt v = _table->_min[i]; v <= _table->_max[i]; v++)
-        assignTRIntArray(_currentSupport[i],v,-1);
+        assignTRIntArray(_currentSupport[i],v,-1,_trail);
     for(ORInt v = _table->_min[i]; v <= _table->_max[i]; v++) {
         ORInt tuple = _table->_support[i][v];
         while (tuple != -1) {
@@ -130,7 +130,7 @@ static void removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
            [_var[i] remove: v];
         }
         else 
-            assignTRIntArray(_currentSupport[i],v,tuple);
+            assignTRIntArray(_currentSupport[i],v,tuple,_trail);
     }
 }
 
