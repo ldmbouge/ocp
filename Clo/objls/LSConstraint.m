@@ -116,5 +116,10 @@
    [[x engine] trackMutable:cstr];
    return cstr;
 }
-
++(id<LSConstraint>) nEqualc: (id<LSIntVar>)x to: (ORInt) c
+{
+   LSNEqualc* cstr = [[LSNEqualc alloc] init:[x engine] x:x neq:c];
+   [[x engine] trackMutable:cstr];
+   return cstr;
+}
 @end

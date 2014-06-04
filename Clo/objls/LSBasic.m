@@ -108,3 +108,78 @@
    } else return 0;
 }
 @end
+
+
+// ==================================================================================
+
+@implementation LSNEqualc {
+   id<LSIntVarArray> _src;
+   id<LSIntVar>     _viol;
+}
+-(id)init:(id<LSEngine>)engine x:(id<LSIntVar>)x neq:(ORInt)c;  // x != c
+{
+   self = [super init:engine];
+   _x = x;
+   _c = c;
+   _src = nil;
+   return self;
+}
+-(void)post
+{
+   id<LSEngine> engine = (id)_engine;
+   // viol = 1 - min(1,abs(x - c))
+   // viol = (x == c)
+   _viol = [LSFactory intVarView:engine var:_x eq:_c];   
+//   _viol = [LSFactory intVar:engine domain:RANGE(engine,0,1)];
+//   [engine add:[LSFactory inv:_viol equal:^ORInt{
+//      return getLSIntValue(_x) == _c;
+//   } vars:@[_x]]];
+}
+-(id<LSIntVarArray>)variables
+{
+   if (!_src) {
+      _src = [LSFactory intVarArray:(id)_engine range:RANGE((id)_engine,0,0)];
+      _src[0] = _x;
+   }
+   return _src;
+}
+-(ORBool)isTrue
+{
+   return getLSIntValue(_x) != _c;
+}
+-(ORInt)getViolations
+{
+   return getLSIntValue(_x) == _c;
+}
+-(ORInt)getVarViolations:(id<LSIntVar>)var
+{
+   if (getId(var) == getId(_x))
+      return getLSIntValue(_viol);
+   else return 0;
+}
+-(id<LSIntVar>)violations
+{
+   return _viol;
+}
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var
+{
+   if (getId(var) == getId(_x))
+      return _viol;
+   else return nil;
+}
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   if (getId(x) == getId(_x)) {
+      return (getLSIntValue(_x) != _c) - (v != _c);
+   } else return 0;
+}
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   ORInt xid = getId(_x);
+   if (xid == getId(x))
+      return [self deltaWhenAssign:x to:getLSIntValue(y)];
+   else if (xid == getId(y))
+      return [self deltaWhenAssign:y to:getLSIntValue(x)];
+   else return 0;
+}
+@end

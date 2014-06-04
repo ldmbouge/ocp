@@ -183,7 +183,19 @@
       id<LSIntVar> right = [self scaleVar:[cstr right] coef:[cstr coefRight]];
       id<LSConstraint> concreteCstr = [LSFactory lEqual: left  to: right plus: [cstr cst]];
       [_engine addConstraint: concreteCstr];
+      [_allCstrs addObject:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitNEqualc: (id<ORNEqualc>)cstr
+{
+   if (_gamma[getId(cstr)] == NULL) {
+      id<LSIntVar> left = [self concreteVar:[cstr left]];
+      id<LSConstraint> concreteCstr = [LSFactory nEqualc: left to: [cstr cst]];
+      [_engine addConstraint:concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[getId(cstr)] = concreteCstr;
    }
 }
 

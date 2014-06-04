@@ -569,6 +569,11 @@
 			<key>orderHint</key>
 			<integer>98</integer>
 		</dict>
+		<key>smoryLS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>99</integer>
+		</dict>
 		<key>sport.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -828,6 +833,11 @@
 			<true/>
 		</dict>
 		<key>5B80560F16076DFE00659ECC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B8CBDD6193F743200AF3D60</key>
 		<dict>
 			<key>primary</key>
 			<true/>
