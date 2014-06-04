@@ -538,7 +538,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
             [o set:clo(i,j,k) at:l++];
    return (id<ORIntVarArray>)o;
 }
-
++(id<ORExprArray>) arrayORExpr: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORExpr>(^)(ORInt)) clo
+{
+   id<ORExprArray> t = (id<ORExprArray>)[ORFactory idArray:cp range:range];
+   for(ORInt i=range.low;i <= range.up;i++)
+      t[i] = clo(i);
+   return t;
+}
 +(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
 {
    return [self intVarArray:cp range:range with:clo];
@@ -1144,7 +1150,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
++(id<ORConstraint>) alldifferent: (id<ORExprArray>) x
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x];
    [[x tracker] trackObject:o];

@@ -42,6 +42,33 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5B9ABD011391329D000997E5"
+               BuildableName = "objcpTests.octest"
+               BlueprintName = "objcpTests"
+               ReferencedContainer = "container:Clo.xcodeproj">
+            </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "bitTest">
+               </Test>
+               <Test
+                  Identifier = "objcpTests">
+               </Test>
+               <Test
+                  Identifier = "searchTest">
+               </Test>
+               <Test
+                  Identifier = "testBitConstraints">
+               </Test>
+               <Test
+                  Identifier = "testCard">
+               </Test>
+            </SkippedTests>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

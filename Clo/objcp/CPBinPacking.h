@@ -20,6 +20,6 @@
                                       bin: (ORInt) b
                                   binSize: (id<CPIntVar>) binSize;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 @end

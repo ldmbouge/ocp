@@ -174,7 +174,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
    return nb;
 }
 
--(ORStatus) bindRemainingTo: (ORInt) val
+-(void) bindRemainingTo: (ORInt) val
 {
     int count = 0;
     for(ORInt i = _lx; i <= _ux; i++) {
@@ -187,11 +187,10 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     }
     if (count != _low[val])
        failNow();
-    return ORSuspend;
 }
 
 
-static ORStatus removeFromRemaining(CPCardinalityCst* cc,ORInt val)
+static void removeFromRemaining(CPCardinalityCst* cc,ORInt val)
 {
     int count = 0;
     for(ORInt i =cc->_lx; i <= cc->_ux ;i++) {
@@ -203,10 +202,9 @@ static ORStatus removeFromRemaining(CPCardinalityCst* cc,ORInt val)
     }
     if (count != cc->_up[val])
        failNow();
-    return ORSuspend;     
 }
 
-static ORStatus valBind(CPCardinalityCst* cc,CPIntVar* v)
+static void valBind(CPCardinalityCst* cc,CPIntVar* v)
 {
    ORInt val = [v min];
    assignTRInt(cc->_required+val, cc->_required[val]._val+1, cc->_trail);
@@ -214,20 +212,18 @@ static ORStatus valBind(CPCardinalityCst* cc,CPIntVar* v)
       failNow();
    if (cc->_required[val]._val == cc->_up[val])
       removeFromRemaining(cc,val);
-   return ORSuspend;
 }
 
-static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
+static void valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
 {
    assignTRInt(cc->_possible+val, cc->_possible[val]._val-1, cc->_trail);
    if (cc->_possible[val]._val < cc->_low[val])
       failNow();
    if (cc->_low[val] > 0 && cc->_possible[val]._val == cc->_low[val])
       [cc bindRemainingTo: val];    
-   return ORSuspend;
 }
 
--(ORStatus) post
+-(void) post
 {
     _required = malloc(sizeof(TRInt)*_so);
     _possible = malloc(sizeof(TRInt)*_so);
@@ -266,7 +262,6 @@ static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
         if (_low[i] > 0 && _possible[i]._val == _low[i])
            [self bindRemainingTo: i];
     }   
-    return ORSuspend;
 }
 -(ORInt) nbFreeVars
 {

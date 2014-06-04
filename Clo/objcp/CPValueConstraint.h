@@ -26,7 +26,7 @@
     ORInt      _c;
 }
 -(id) initCPReifyNotEqualcDC:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -38,7 +38,7 @@
     ORInt      _c;
 }
 -(id) initCPReifyEqualcDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -50,7 +50,7 @@
    CPIntVar* _y;
 }
 -(id) initCPReifyEqualBC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -62,7 +62,7 @@
    CPIntVar* _y;
 }
 -(id) initCPReifyEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -74,7 +74,7 @@
    CPIntVar* _y;
 }
 -(id) initCPReify:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -86,7 +86,7 @@
    CPIntVar* _y;
 }
 -(id) initCPReify:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -98,7 +98,7 @@
    CPIntVar* _y;
 }
 -(id) initCPReifyLEqualBC:(id<CPIntVar>)b when:(id<CPIntVar>)x leq:(id<CPIntVar>)y;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -110,7 +110,7 @@
    ORInt      _c;
 }
 -(id) initCPReifyLEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x leqi:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -122,7 +122,7 @@
    ORInt      _c;
 }
 -(id) initCPReifyGEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x geq:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -137,7 +137,7 @@
 }
 -(id) initCPSumBool:(id)x geq:(ORInt)c;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -150,7 +150,7 @@
 }
 -(id) initCPSumBool:(id)x eq:(ORInt)c;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -161,7 +161,7 @@
    ORInt              _c;
 }
 -(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x eqi:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -172,7 +172,7 @@
    ORInt              _c;
 }
 -(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x geqi:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -183,7 +183,7 @@
    ORInt              _c;
 }
 -(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x eqi:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -194,7 +194,7 @@
    ORInt              _c;
 }
 -(id) init:(id<CPIntVar>)b array:(id<CPIntVarArray>)x geqi:(ORInt)c;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

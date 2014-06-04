@@ -363,6 +363,11 @@ return self;
 {
    hookupEvent(_engine, &_net._bitFixedEvt, todo, c, p);
 }
+-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p withI:(int)i do:(ConstraintCallback) todo
+{
+   hookupEvent(_engine, &_net._bitFixedEvt, todo, c, p);
+}
+
 
 -(void) createTriggers
 {
@@ -738,13 +743,12 @@ return self;
 }
 
 -(ORStatus) bitFixedEvt:(ORUInt)dsz at:(ORUInt)i sender:(CPBitArrayDom *)sender{
+   NSLog(@"BitFixedEvt at:%d\n",i);
    ORStatus ok = ORSuspend;
-   for(ORInt i=0;i<_nb;i++) {
-      if (_bitFixedAtIMP[i])
-         ok = _bitFixedAtIMP[i](_tab[i],@selector(bitFixedAtEvt:sender:),dsz,sender);
-      if (ok == ORFailure)
-         return ok;
-   }
+   if (_bitFixedAtIMP[i])
+      ok = _bitFixedAtIMP[i](_tab[i],@selector(bitFixedAtEvt:sender:),dsz,sender);
+   if (ok == ORFailure)
+      return ok;
    return ORSuspend;
 }
 

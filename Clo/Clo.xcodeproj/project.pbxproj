@@ -721,6 +721,7 @@
 		5BA345981680B7D400485366 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BA345991680B7D400485366 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BA3459A1680B7D400485366 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BA5D51D1889E62D003884EE /* testIdempotence.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA5D51C1889E62D003884EE /* testIdempotence.m */; };
 		5BA6F96818464836002434E3 /* CPDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BA6F96618464836002434E3 /* CPDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BA6F96918464836002434E3 /* CPDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6F96718464836002434E3 /* CPDeg.m */; };
 		5BAC7AC316EBAD1900BE6F81 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
@@ -5521,7 +5522,7 @@
 
 /* Begin PBXFileReference section */
 		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
-		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
+		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORLinearize.m; path = ../ORModeling/ORLinearize.m; sourceTree = "<group>"; };
 		379CDEEB16F17D71000E7338 /* ORModelTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelTransformation.h; sourceTree = "<group>"; };
 		37A715C816FB93F900E02DC6 /* LogicBendersExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LogicBendersExample; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -5533,7 +5534,7 @@
 		5B115522171B1CF5005371AA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B115525171B1CF5005371AA /* slabLNSModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slabLNSModel-Prefix.pch"; sourceTree = "<group>"; };
 		5B115526171B1CF5005371AA /* slabLNSModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = slabLNSModel.1; sourceTree = "<group>"; };
-		5B1391841629A99D0029FD29 /* ORDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORDecompose.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5B1391841629A99D0029FD29 /* ORDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = ORDecompose.h; path = ../ORModeling/ORDecompose.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B1391851629A99D0029FD29 /* ORDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORDecompose.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B150017156EB0E800897252 /* CPBaseHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBaseHeuristic.h; sourceTree = "<group>"; };
 		5B150019156EB1A500897252 /* CPBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBaseHeuristic.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -5605,10 +5606,10 @@
 		5B558C091563F01000D2BCD7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B558C0C1563F01000D2BCD7 /* queensNaive-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensNaive-Prefix.pch"; sourceTree = "<group>"; };
 		5B558C0D1563F01000D2BCD7 /* queensNaive.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensNaive.1; sourceTree = "<group>"; };
-		5B57E5E2161F280D00DB249A /* ORVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORVar.h; sourceTree = "<group>"; };
+		5B57E5E2161F280D00DB249A /* ORVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORVar.h; path = ../ORFoundation/ORVar.h; sourceTree = "<group>"; };
 		5B57E5E4161F294F00DB249A /* ORVisit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORVisit.h; sourceTree = "<group>"; };
 		5B57E5E8161F2DB100DB249A /* CPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConcretizer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5B57E5E9161F2DB100DB249A /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPConcretizer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B57E5E9161F2DB100DB249A /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = CPConcretizer.m; path = ../ORProgram/CPConcretizer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCPParSolver.h; sourceTree = "<group>"; };
 		5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCPParSolver.m; sourceTree = "<group>"; };
 		5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFloatConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -5637,23 +5638,23 @@
 		5B6623D51770B1AE00A1ACCD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B6623D81770B1AE00A1ACCD /* paq-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "paq-Prefix.pch"; sourceTree = "<group>"; };
 		5B6623D91770B1AE00A1ACCD /* paq.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = paq.1; sourceTree = "<group>"; };
-		5B667126181EF228007CBBA6 /* test1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = test1.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/test1.csv"; sourceTree = "<group>"; };
-		5B667127181EF228007CBBA6 /* anneal.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = anneal.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/anneal.csv"; sourceTree = "<group>"; };
-		5B667128181EF228007CBBA6 /* audiology.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = audiology.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/audiology.csv"; sourceTree = "<group>"; };
-		5B667129181EF228007CBBA6 /* australian-credit.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "australian-credit.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/australian-credit.csv"; sourceTree = "<group>"; };
-		5B66712A181EF228007CBBA6 /* german-credit.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "german-credit.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/german-credit.csv"; sourceTree = "<group>"; };
-		5B66712B181EF228007CBBA6 /* heart-cleveland.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "heart-cleveland.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/heart-cleveland.csv"; sourceTree = "<group>"; };
-		5B66712C181EF228007CBBA6 /* hepatitis.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = hepatitis.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/hepatitis.csv"; sourceTree = "<group>"; };
-		5B66712D181EF228007CBBA6 /* hypothyroid.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = hypothyroid.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/hypothyroid.csv"; sourceTree = "<group>"; };
-		5B66712E181EF228007CBBA6 /* kr-vs-kp.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "kr-vs-kp.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/kr-vs-kp.csv"; sourceTree = "<group>"; };
-		5B66712F181EF228007CBBA6 /* lymph.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = lymph.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/lymph.csv"; sourceTree = "<group>"; };
-		5B667130181EF228007CBBA6 /* mushroom.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mushroom.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/mushroom.csv"; sourceTree = "<group>"; };
-		5B667131181EF228007CBBA6 /* primary-tumor.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "primary-tumor.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/primary-tumor.csv"; sourceTree = "<group>"; };
-		5B667132181EF228007CBBA6 /* soybean.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = soybean.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/soybean.csv"; sourceTree = "<group>"; };
-		5B667133181EF228007CBBA6 /* splice-1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "splice-1.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/splice-1.csv"; sourceTree = "<group>"; };
-		5B667134181EF228007CBBA6 /* tic-tac-toe.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "tic-tac-toe.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/tic-tac-toe.csv"; sourceTree = "<group>"; };
-		5B667135181EF228007CBBA6 /* vote.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = vote.csv; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/vote.csv"; sourceTree = "<group>"; };
-		5B667136181EF228007CBBA6 /* zoo-1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "zoo-1.csv"; path = "../../../../Desktop/demo/queens/Frequent Itemsets/Data/Datasets/zoo-1.csv"; sourceTree = "<group>"; };
+		5B667126181EF228007CBBA6 /* test1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test1.csv; sourceTree = "<group>"; };
+		5B667127181EF228007CBBA6 /* anneal.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = anneal.csv; sourceTree = "<group>"; };
+		5B667128181EF228007CBBA6 /* audiology.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = audiology.csv; sourceTree = "<group>"; };
+		5B667129181EF228007CBBA6 /* australian-credit.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "australian-credit.csv"; sourceTree = "<group>"; };
+		5B66712A181EF228007CBBA6 /* german-credit.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "german-credit.csv"; sourceTree = "<group>"; };
+		5B66712B181EF228007CBBA6 /* heart-cleveland.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "heart-cleveland.csv"; sourceTree = "<group>"; };
+		5B66712C181EF228007CBBA6 /* hepatitis.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hepatitis.csv; sourceTree = "<group>"; };
+		5B66712D181EF228007CBBA6 /* hypothyroid.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = hypothyroid.csv; sourceTree = "<group>"; };
+		5B66712E181EF228007CBBA6 /* kr-vs-kp.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "kr-vs-kp.csv"; sourceTree = "<group>"; };
+		5B66712F181EF228007CBBA6 /* lymph.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lymph.csv; sourceTree = "<group>"; };
+		5B667130181EF228007CBBA6 /* mushroom.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mushroom.csv; sourceTree = "<group>"; };
+		5B667131181EF228007CBBA6 /* primary-tumor.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "primary-tumor.csv"; sourceTree = "<group>"; };
+		5B667132181EF228007CBBA6 /* soybean.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = soybean.csv; sourceTree = "<group>"; };
+		5B667133181EF228007CBBA6 /* splice-1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "splice-1.csv"; sourceTree = "<group>"; };
+		5B667134181EF228007CBBA6 /* tic-tac-toe.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "tic-tac-toe.csv"; sourceTree = "<group>"; };
+		5B667135181EF228007CBBA6 /* vote.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vote.csv; sourceTree = "<group>"; };
+		5B667136181EF228007CBBA6 /* zoo-1.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "zoo-1.csv"; sourceTree = "<group>"; };
 		5B673A2A178DC5AA00886A28 /* ORLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinear.h; sourceTree = "<group>"; };
 		5B67A4FC17E227BB00516F50 /* wka */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wka; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B67A4FF17E227BB00516F50 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -5690,7 +5691,7 @@
 		5B73E55B151F45F60043192D /* NSBoardController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSBoardController.h; sourceTree = "<group>"; };
 		5B73E55C151F45F60043192D /* NSBoardController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSBoardController.m; sourceTree = "<group>"; };
 		5B7408AD156286C700C05277 /* bitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitTest.h; sourceTree = "<group>"; };
-		5B7408AE156286C700C05277 /* bitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = bitTest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B7408AE156286C700C05277 /* bitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = bitTest.m; path = objcpTests/bitTest.m; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B7408B015628C1400C05277 /* CPBitMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitMacros.h; sourceTree = "<group>"; };
 		5B76D98E15AAADBD00F8B445 /* marriage */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = marriage; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B76D99215AAADBE00F8B445 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -5795,8 +5796,8 @@
 		5B920EAB15A3F4A800AD0820 /* ORTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORTracker.h; sourceTree = "<group>"; };
 		5B920EAD15A3F5B000AD0820 /* ORExprI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORExprI.h; sourceTree = "<group>"; };
 		5B920EAE15A3F5B000AD0820 /* ORExprI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORExprI.m; sourceTree = "<group>"; };
-		5B920EB115A3F6DD00AD0820 /* ORFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORFactory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5B920EB215A3F6DD00AD0820 /* ORFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORFactory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B920EB115A3F6DD00AD0820 /* ORFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = ORFactory.h; path = ../ORFoundation/ORFactory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5B920EB215A3F6DD00AD0820 /* ORFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = ORFactory.m; path = ../ORFoundation/ORFactory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B920EB515A3F91A00AD0820 /* ORData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B920EB715A3FB9E00AD0820 /* ORArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORArray.h; sourceTree = "<group>"; };
 		5B920EB915A3FDB800AD0820 /* ORDataI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORDataI.h; sourceTree = "<group>"; };
@@ -5831,7 +5832,7 @@
 		5B9ABD0B1391329D000997E5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5B9ABD0D1391329D000997E5 /* objcpTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objcpTests-Prefix.pch"; sourceTree = "<group>"; };
 		5B9ABD0E1391329D000997E5 /* objcpTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objcpTests.h; sourceTree = "<group>"; };
-		5B9ABD101391329D000997E5 /* objcpTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = objcpTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B9ABD101391329D000997E5 /* objcpTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = objcpTests.m; path = objcpTests/objcpTests.m; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B9B2448177873D3001AB944 /* nonogram */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nonogram; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B9B244B177873D3001AB944 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B9B244E177873D3001AB944 /* nonogram-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "nonogram-Prefix.pch"; sourceTree = "<group>"; };
@@ -5845,6 +5846,7 @@
 		5BA345801680B7BD00485366 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BA345831680B7BD00485366 /* latinSquare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "latinSquare-Prefix.pch"; sourceTree = "<group>"; };
 		5BA345841680B7BD00485366 /* latinSquare.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = latinSquare.1; sourceTree = "<group>"; };
+		5BA5D51C1889E62D003884EE /* testIdempotence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = testIdempotence.m; path = objcpTests/testIdempotence.m; sourceTree = SOURCE_ROOT; };
 		5BA6F96618464836002434E3 /* CPDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPDeg.h; sourceTree = "<group>"; };
 		5BA6F96718464836002434E3 /* CPDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDeg.m; sourceTree = "<group>"; };
 		5BAD114F161E5E420014EBCB /* ORModeling.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORModeling.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5916,7 +5918,7 @@
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
 		5BCCC40B1417F8CE0079E833 /* queensACSem.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensACSem.1; sourceTree = "<group>"; };
 		5BD601C117F9A627006A9CDC /* bugTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bugTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BD601C417F9A627006A9CDC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BD601C417F9A627006A9CDC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../bugTest/main.m; sourceTree = "<group>"; };
 		5BD601C717F9A627006A9CDC /* bugTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bugTest-Prefix.pch"; sourceTree = "<group>"; };
 		5BD601C817F9A627006A9CDC /* bugTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bugTest.1; sourceTree = "<group>"; };
 		5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSolution.h; sourceTree = "<group>"; };
@@ -5930,7 +5932,7 @@
 		5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORVarI.m; sourceTree = "<group>"; };
 		5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelTransformation.h; sourceTree = "<group>"; };
 		5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFlatten.h; sourceTree = "<group>"; };
-		5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORFlatten.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = ORFlatten.m; path = ../ORModeling/ORFlatten.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BE12174173C75A3000C9AA9 /* bug */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bug; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BE12177173C75A3000C9AA9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BE1217A173C75A3000C9AA9 /* bug-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bug-Prefix.pch"; sourceTree = "<group>"; };
@@ -7779,6 +7781,7 @@
 				5B667136181EF228007CBBA6 /* zoo-1.csv */,
 			);
 			name = Dataset;
+			path = Datasets;
 			sourceTree = "<group>";
 		};
 		5B67A4FE17E227BB00516F50 /* wka */ = {
@@ -7815,7 +7818,6 @@
 				B17832FA161F5FCC00C7298D /* ORProgramFactory.h */,
 				B17832FB161F5FCC00C7298D /* ORProgramFactory.m */,
 				5B57E5E8161F2DB100DB249A /* CPConcretizer.h */,
-				5B57E5E9161F2DB100DB249A /* CPConcretizer.m */,
 				B15442E316D1B414001BD7B3 /* LPConcretizer.h */,
 				B15442E416D1B414001BD7B3 /* LPConcretizer.m */,
 				B1E1C79C1703741E006AACFC /* MIPConcretizer.h */,
@@ -8361,8 +8363,15 @@
 				5B9348731655451D00757F89 /* CPUKernel.h */,
 				5B9348741655451D00757F89 /* CPUKernel.m */,
 				5BE642FD139D49320056F448 /* CPEngine.h */,
-				B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */,
 				B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */,
+				5B920EB115A3F6DD00AD0820 /* ORFactory.h */,
+				5B920EB215A3F6DD00AD0820 /* ORFactory.m */,
+				5B57E5E2161F280D00DB249A /* ORVar.h */,
+				5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */,
+				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
+				5B1391841629A99D0029FD29 /* ORDecompose.h */,
+				5B57E5E9161F2DB100DB249A /* CPConcretizer.m */,
+				B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */,
 				5BFD5A6715A3B92300825BC3 /* CPTypes.h */,
 				5B93486316553E6E00757F89 /* CPTypes.m */,
 				5BBB08E216C562520087ACF0 /* CPGroup.h */,
@@ -8419,59 +8428,63 @@
 				B1F531D015AED1DB00E89F98 /* CPBinPacking.h */,
 				B1F531D115AED1DB00E89F98 /* CPBinPacking.m */,
 				5B778B90154EF67C0078EB07 /* CPBitArray.h */,
-				5B778B91154EF67C0078EB07 /* CPBitArray.m */,
-				5B778B92154EF67C0078EB07 /* CPBitArrayDom.h */,
-				5B778B93154EF67C0078EB07 /* CPBitArrayDom.m */,
 				5B778B94154EF67C0078EB07 /* CPBitConstraint.h */,
 				5B778B95154EF67C0078EB07 /* CPBitConstraint.m */,
-				5B778BA0154EF7DA0078EB07 /* CPBitVar.h */,
 				5B778B96154EF67C0078EB07 /* CPBitVarI.h */,
 				5B778B97154EF67C0078EB07 /* CPBitVarI.m */,
-				5B3606931392A9C5008B0EE8 /* CPBitDom.h */,
-				5B3606941392A9C5008B0EE8 /* CPBitDom.m */,
-				5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */,
-				5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */,
-				5B7408B015628C1400C05277 /* CPBitMacros.h */,
 				B19ABA24146DC7FA004EB77E /* CPCardinality.h */,
 				B19ABA25146DC7FA004EB77E /* CPCardinality.m */,
 				B1672FE015849EA300EFE5C3 /* CPCardinalityDC.h */,
 				B1672FE115849EA300EFE5C3 /* CPCardinalityDC.m */,
 				B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */,
 				B1C25AA01557540E009CB8A8 /* CPCircuitI.m */,
-				B169F9C614EF87D500B2F3A6 /* CPConstraint.h */,
-				B169F9C714EF87D500B2F3A6 /* CPConstraint.m */,
-				B1A0A5F615CDAB42005992E7 /* CPData.h */,
-				5B3606901392A8DA008B0EE8 /* CPDom.h */,
 				5B91C334159FAB2D00158EEA /* CPElement.h */,
 				5B91C335159FAB2D00158EEA /* CPElement.m */,
 				5BB3835A13B3B624005B7D52 /* CPEquationBC.h */,
 				5BB3835B13B3B624005B7D52 /* CPEquationBC.m */,
-				B15A2B4E13995F12002401A0 /* CPError.h */,
-				B15A2B4F13995F12002401A0 /* CPError.m */,
-				B1583D3113A4CF7D0002FBD8 /* CPExprI.m */,
-				B1C8C5F414BEBE1C000C5486 /* CPFactory.h */,
-				B1C8C5F514BEBE1C000C5486 /* CPFactory.m */,
 				5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */,
 				5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */,
-				5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */,
-				5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */,
-				B17ABE9013CC852C00DC7288 /* CPIntVarI.h */,
 				B17ABE9113CC852C00DC7288 /* CPIntVarI.m */,
 				5B65615C15AD58F6002F344B /* CPKnapsack.h */,
 				5B65615D15AD58F6002F344B /* CPKnapsack.m */,
 				5BEAD77D15ABBAFC00A012FE /* CPLexConstraint.h */,
 				5BEAD77E15ABBAFC00A012FE /* CPLexConstraint.m */,
-				5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */,
-				5B40C21014F80A7D0041D162 /* CPObjectQueue.m */,
 				5B63C2D2156DB05E00C65B2A /* CPStatisticsMonitor.h */,
 				5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */,
 				B17715B31557D9D200BA14BF /* CPTableI.h */,
 				B17715B41557D9D200BA14BF /* CPTableI.m */,
 				5B92975513A01F45002AA188 /* CPValueConstraint.h */,
 				5B92975613A01F45002AA188 /* CPValueConstraint.m */,
+				5B729C40153F79A4001BE95A /* CPWatch.m */,
+				5B9ABD101391329D000997E5 /* objcpTests.m */,
+				5B7408AE156286C700C05277 /* bitTest.m */,
+				5BA5D51C1889E62D003884EE /* testIdempotence.m */,
+				5BD601C417F9A627006A9CDC /* main.m */,
+				5B778B91154EF67C0078EB07 /* CPBitArray.m */,
+				5B778B92154EF67C0078EB07 /* CPBitArrayDom.h */,
+				5B778B93154EF67C0078EB07 /* CPBitArrayDom.m */,
+				5B778BA0154EF7DA0078EB07 /* CPBitVar.h */,
+				5B3606931392A9C5008B0EE8 /* CPBitDom.h */,
+				5B3606941392A9C5008B0EE8 /* CPBitDom.m */,
+				5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */,
+				5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */,
+				5B7408B015628C1400C05277 /* CPBitMacros.h */,
+				B169F9C614EF87D500B2F3A6 /* CPConstraint.h */,
+				B169F9C714EF87D500B2F3A6 /* CPConstraint.m */,
+				B1A0A5F615CDAB42005992E7 /* CPData.h */,
+				5B3606901392A8DA008B0EE8 /* CPDom.h */,
+				B15A2B4E13995F12002401A0 /* CPError.h */,
+				B15A2B4F13995F12002401A0 /* CPError.m */,
+				B1583D3113A4CF7D0002FBD8 /* CPExprI.m */,
+				B1C8C5F414BEBE1C000C5486 /* CPFactory.h */,
+				B1C8C5F514BEBE1C000C5486 /* CPFactory.m */,
+				5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */,
+				5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */,
+				B17ABE9013CC852C00DC7288 /* CPIntVarI.h */,
+				5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */,
+				5B40C21014F80A7D0041D162 /* CPObjectQueue.m */,
 				5B94406D1631AEB9006528DE /* CPVar.h */,
 				5B729C3F153F79A4001BE95A /* CPWatch.h */,
-				5B729C40153F79A4001BE95A /* CPWatch.m */,
 				5B73E55B151F45F60043192D /* NSBoardController.h */,
 				5B73E55C151F45F60043192D /* NSBoardController.m */,
 				5B9ABCF71391329D000997E5 /* Supporting Files */,
@@ -8500,9 +8513,7 @@
 				5BEA4E641783641E00614A82 /* searchTest.h */,
 				5BEA4E651783641E00614A82 /* searchTest.m */,
 				5B9ABD0E1391329D000997E5 /* objcpTests.h */,
-				5B9ABD101391329D000997E5 /* objcpTests.m */,
 				5B7408AD156286C700C05277 /* bitTest.h */,
-				5B7408AE156286C700C05277 /* bitTest.m */,
 				5B9ABD081391329D000997E5 /* Supporting Files */,
 			);
 			path = objcpTests;
@@ -8565,15 +8576,12 @@
 				5BAD1165161E5F2B0014EBCB /* ORModelI.m */,
 				5BAD1152161E5E430014EBCB /* Supporting Files */,
 				5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */,
-				5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */,
 				B103614516D969CD00E95A39 /* ORLPFlatten.h */,
 				B103614616D969CD00E95A39 /* ORLPFlatten.m */,
 				B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */,
 				B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */,
 				5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */,
 				3783F12E1620C6E30085E8C2 /* ORLinearize.h */,
-				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
-				5B1391841629A99D0029FD29 /* ORDecompose.h */,
 				5B1391851629A99D0029FD29 /* ORDecompose.m */,
 				B103614B16D9AAA500E95A39 /* ORFloatDecompose.h */,
 				B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */,
@@ -8800,7 +8808,6 @@
 			isa = PBXGroup;
 			children = (
 				5B667125181EF218007CBBA6 /* Dataset */,
-				5BD601C417F9A627006A9CDC /* main.m */,
 				5BD601C817F9A627006A9CDC /* bugTest.1 */,
 				5BD601C617F9A627006A9CDC /* Supporting Files */,
 			);
@@ -9011,8 +9018,6 @@
 				B1C0E7CE15CD853700DA4F82 /* ORExplorer.h */,
 				B11D862115CD8AE20019729B /* ORExplorerI.h */,
 				B11D862215CD8AE20019729B /* ORExplorerI.m */,
-				5B920EB115A3F6DD00AD0820 /* ORFactory.h */,
-				5B920EB215A3F6DD00AD0820 /* ORFactory.m */,
 				B10ECF0E150C34DE00B82836 /* ORFactoryI.h */,
 				B10ECF0F150C34DE00B82836 /* ORFactoryI.m */,
 				5BFD594C15A3ACA500825BC3 /* ORFoundation.h */,
@@ -9042,7 +9047,6 @@
 				5BFD594615A3ACA500825BC3 /* Supporting Files */,
 				B198E75815D90768000BE64A /* ORTrailI.h */,
 				B198E75915D90768000BE64A /* ORTrailI.m */,
-				5B57E5E2161F280D00DB249A /* ORVar.h */,
 				5BDF5FA4161F4F9900E5E1FA /* ORVarI.h */,
 				5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */,
 				5B57E5E4161F294F00DB249A /* ORVisit.h */,
@@ -12516,6 +12520,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B9ABD111391329D000997E5 /* objcpTests.m in Sources */,
+				5BA5D51D1889E62D003884EE /* testIdempotence.m in Sources */,
 				5BC43CB613A13C56009119FF /* testCard.m in Sources */,
 				5B7408AF156286C700C05277 /* bitTest.m in Sources */,
 				5B8DCD91165FDDB6007CC562 /* testBitConstraints.m in Sources */,
@@ -16611,7 +16616,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;

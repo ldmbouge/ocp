@@ -199,16 +199,21 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound])
       [_x whenChangePropagate: self];
    if (![_y bound])
       [_y whenChangePropagate: self];
-
-//   [self propagate];
-   return ORSuspend;
+//<<<<<<< HEAD
+//
+////   [self propagate];
+//   return ORSuspend;
+//=======
+//   }
+   [self propagate];
+//>>>>>>> master
 }
 
 -(void) propagate
@@ -265,7 +270,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
     [self propagate];
    if (![_x bound])
@@ -273,8 +278,15 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    if (![_y bound])
       [_y whenChangePropagate: self];
 
-//   [self propagate];
-   return ORSuspend;
+//<<<<<<< HEAD
+////   [self propagate];
+//   return ORSuspend;
+//=======
+//        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//    }
+   [self propagate];
+//>>>>>>> master
 }
 
 -(void) propagate
@@ -369,7 +381,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound])
@@ -379,8 +391,16 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    if (![_z bound])
       [_z whenChangePropagate: self];
 
-//   [self propagate];
-   return ORSuspend;
+//<<<<<<< HEAD
+////   [self propagate];
+//   return ORSuspend;
+//=======
+////      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+////      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+////      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//   }
+   [self propagate];
+//>>>>>>> master
 }
 -(void) propagate
 {
@@ -484,7 +504,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound])
@@ -494,8 +514,16 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    if (![_z bound])
       [_z whenChangePropagate: self];
 
-//   [self propagate];
-   return ORSuspend;
+//<<<<<<< HEAD
+////   [self propagate];
+//   return ORSuspend;
+//=======
+////      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//   }
+   [self propagate];
+//>>>>>>> master
 }
 -(void) propagate
 {
@@ -594,7 +622,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound])
@@ -604,8 +632,16 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    if (![_z bound])
       [_z whenChangePropagate: self];
 
-//   [self propagate];
-   return ORSuspend;
+//<<<<<<< HEAD
+////   [self propagate];
+//   return ORSuspend;
+//=======
+////      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//   }
+   [self propagate];
+//>>>>>>> master
 }
 -(void) propagate
 {
@@ -715,27 +751,39 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
-   if (![_w bound])
-      [_w whenChangePropagate: self];
-   if (![_x bound])
-      [_x whenChangePropagate: self];
-   if (![_y bound])
-      [_y whenChangePropagate: self];
-   if (![_z bound])
-      [_z whenChangePropagate: self];
+//<<<<<<< HEAD
+//   if (![_w bound])
+//      [_w whenChangePropagate: self];
+//   if (![_x bound])
+//      [_x whenChangePropagate: self];
+//   if (![_y bound])
+//      [_y whenChangePropagate: self];
+//   if (![_z bound])
+//      [_z whenChangePropagate: self];
+//////   if (![_x bound] || ![_y bound]) {
+////   if (![_x bound] || ![_y bound] || ![_z bound] || ![_w bound]) {\
+////      //_w added by GAJ on 11/29/12
+////      [_w whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////   }
+////   [self propagate];
+//   return ORSuspend;
+//=======
 ////   if (![_x bound] || ![_y bound]) {
-//   if (![_x bound] || ![_y bound] || ![_z bound] || ![_w bound]) {\
-//      //_w added by GAJ on 11/29/12
-//      [_w whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-//      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-//      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-//      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-//   }
-//   [self propagate];
-   return ORSuspend;
+   if (![_x bound] || ![_y bound] || ![_z bound] || ![_w bound]) {
+      //_w added by GAJ on 11/29/12
+      [_w whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+   }
+   [self propagate];
+//>>>>>>> master
 }
 -(void) propagate
 {    
@@ -829,16 +877,23 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound])
       [_x whenChangePropagate: self];
    if (![_y bound])
       [_y whenChangePropagate: self];
-
-//   [self propagate];
-   return ORSuspend;
+//<<<<<<< HEAD
+//
+////   [self propagate];
+//   return ORSuspend;
+//=======
+////      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+////      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//   }
+   [self propagate];
+//>>>>>>> master
 }
 -(void) propagate
 {
@@ -945,15 +1000,15 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_x bound])
       [_x whenChangePropagate: self];
    if (![_y bound])
       [_y whenChangePropagate: self];
-//   [self propagate];
-   return ORSuspend;
+   [self propagate];
+//   return ORSuspend;
 }
 -(void) propagate
 {
@@ -1063,6 +1118,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 -(ORStatus) post
 {
    [self propagate];
+//<<<<<<< HEAD
    if (![_x bound])
       [_x whenChangePropagate: self];
    if (![_y bound])
@@ -1070,6 +1126,8 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 
 //   [self propagate];
    return ORSuspend;
+//=======
+//>>>>>>> master
 }
 -(void) propagate
 {
@@ -1164,7 +1222,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
 //   NSLog(@"Bit Sum Constraint Posted");
    [self propagate];
@@ -1174,8 +1232,21 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
       [_y whenChangePropagate: self];
    if (![_z bound])
       [_z whenChangePropagate: self];
+//<<<<<<< HEAD
+////   [self propagate];
+//   return ORSuspend;
+//=======
+////      [_cin whenChangePropagate: self];
+////      [_cout whenChangePropagate: self];
+//      
+////      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+////      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+////      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+////      [_cin whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+////      [_cout whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//   }
 //   [self propagate];
-   return ORSuspend;
+//>>>>>>> master
 }
 -(void) propagate
 {

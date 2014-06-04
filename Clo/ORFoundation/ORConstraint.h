@@ -16,6 +16,7 @@
 
 @protocol ORIntVarArray;
 @protocol ORVarArray;
+@protocol ORExprArray;
 @protocol ORIntVarMatrix;
 @protocol ORExpr;
 @protocol ORVar;
@@ -341,7 +342,7 @@ enum ORGroupType {
 @end
 
 @protocol ORAlldifferent <ORConstraint>
--(id<ORIntVarArray>) array;
+-(id<ORExprArray>) array;
 @end
 
 @protocol ORRegular<ORConstraint>
