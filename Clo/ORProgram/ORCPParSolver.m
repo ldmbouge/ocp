@@ -406,6 +406,10 @@
 {
    return [[self worker] maxBound:(id)x];
 }
+-(ORBool) allBound:(id<ORIdArray>) x
+{
+   return [[self worker] allBound:x];
+}
 -(NSSet*)constraints:(id<ORVar>)x
 {
    return [[self worker] constraints:x];

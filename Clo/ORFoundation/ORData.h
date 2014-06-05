@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORCrFactory.h>
+#import <ORFoundation/ORObject.h>
 
 //typedef enum {
 //   DomainConsistency,
@@ -26,12 +27,6 @@
 @protocol ORASolver;
 @protocol ORIntSet;
 @class ORVisitor;
-
-@protocol ORObject <NSObject>
--(ORInt) getId;
--(void)setId:(ORUInt)name;
--(void) visit: (ORVisitor*) visitor;
-@end;
 
 @protocol ORTau <NSObject,NSCopying>
 -(void) set: (id) value forKey: (id) key;
