@@ -72,6 +72,7 @@
 -(ORBool) tracksLoseEvt:(CPBitArrayDom*)sender;
 -(ORStatus) bindEvt:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedAtEvt:(ORUInt) dsz  sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMinEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMaxEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 @end

@@ -808,42 +808,88 @@
 -(void) setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x
 {
    bool lmod =  false;
+   
+   uint32* isChanged;
+   isChanged = alloca(sizeof(uint32)*_wordLength);
+
    for(int i=0;i<_wordLength;i++){
-    lmod |= _low[i]._val != newLow[i];
-    assignTRUInt(&_low[i], newLow[i], _trail);
+      isChanged[i] |= ~(_low[i]._val & ~newLow[i]);
+      lmod |= _low[i]._val != newLow[i];
+      assignTRUInt(&_low[i], newLow[i], _trail);
    }
     [self updateFreeBitCount];
     if (lmod)
        [x bitFixedEvt:_freebits._val sender:self];
+   
+   uint32 idx = 0;
+   for (int i=0; i<_wordLength; i++) {
+      for (int j=0; j<WORDLENGTH; j++) {
+         if (isChanged[i] & 0x00000001) {
+            [x bitFixedAtEvt:idx++ sender:self];
+         }
+         isChanged[i] >>= 1;
+      }
+   }
+
 }
 
 -(void) setUp: (unsigned int*) newUp  for:(id<CPBitVarNotifier>)x
 {
     bool umod = false;
 
+   uint32* isChanged;
+   isChanged = alloca(sizeof(uint32)*_wordLength);
+
+
    for(int i=0;i<_wordLength;i++){
+      isChanged[i]  = ~(_up[i]._val & ~newUp[i]);
     umod |= _up[i]._val != newUp[i];
     assignTRUInt(&_up[i], newUp[i], _trail);
    }
     [self updateFreeBitCount];
     if (umod)
        [x bitFixedEvt:_freebits._val sender:self];
+   
+   uint32 idx = 0;
+   for (int i=0; i<_wordLength; i++) {
+      for (int j=0; j<WORDLENGTH; j++) {
+         if (isChanged[i] & 0x00000001) {
+            [x bitFixedAtEvt:idx++ sender:self];
+         }
+         isChanged[i] >>= 1;
+      }
+   }
+
 }
 -(void) setUp: (unsigned int*) newUp andLow:(unsigned int*)newLow for:(id<CPBitVarNotifier>)x
 {
    bool umod = false;
    bool lmod = false;
    
+   uint32* isChanged;
+   isChanged = alloca(sizeof(uint32)*_wordLength);
+   
    for(int i=0;i<_wordLength;i++){
+      isChanged[i]  = ~(_up[i]._val & ~newUp[i]);
+      isChanged[i] |= ~(_low[i]._val & ~newLow[i]);
       umod |= _up[i]._val != newUp[i];
       assignTRUInt(&_up[i], newUp[i], _trail);
       lmod |= _low[i]._val != newLow[i];
       assignTRUInt(&_low[i], newLow[i], _trail);
-
    }
    [self updateFreeBitCount];
    if (umod || lmod)
       [x bitFixedEvt:_freebits._val sender:self];
+
+   uint32 idx = 0;
+   for (int i=0; i<_wordLength; i++) {
+      for (int j=0; j<WORDLENGTH; j++) {
+         if (isChanged[i] & 0x00000001) {
+            [x bitFixedAtEvt:idx++ sender:self];
+         }
+         isChanged[i] >>= 1;
+      }
+   }
    
 }
 

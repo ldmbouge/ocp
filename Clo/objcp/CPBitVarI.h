@@ -27,13 +27,15 @@
 
 
 typedef struct  {
-   TRId         _boundsEvt;
-   TRId           _bindEvt;
-   TRId            _domEvt;
-   TRId            _minEvt;
-   TRId            _maxEvt;
-   TRId               _ac5;
-   TRId       _bitFixedEvt;
+   TRId         _boundsEvt[2];
+   TRId           _bindEvt[2];
+   TRId            _domEvt[2];
+   TRId            _minEvt[2];
+   TRId            _maxEvt[2];
+   TRId               _ac5[2];
+   TRId       _bitFixedEvt[2];
+   TRId**    _bitFixedAtEvt;
+   ORUInt       _bitLength;
 } CPBitEventNetwork;
 
 @interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
@@ -64,6 +66,9 @@ typedef struct  {
 // subscription
 -(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ConstraintCallback) todo;
 -(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p withI:(int)i do:(ConstraintCallback) todo;
+-(void) whenBitFixedAt:(int)i propagate:(CPCoreConstraint*) c;
+-(void) whenBitFixed:(CPCoreConstraint*)c do:(ConstraintIntCallBack)todo at:(int)p;
+
 -(void) whenChangeDo:(CPCoreConstraint*) c;
 -(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo;
@@ -73,10 +78,11 @@ typedef struct  {
 // notification
 
 //-(void) bindEvt;
--(ORStatus) changeMinEvt:(int)dsz sender:(CPBitArrayDom*)sender;
--(ORStatus) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
--(ORStatus) bindEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
+-(ORStatus) changeMinEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
+-(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedAtEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
+-(ORStatus) bindEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
 // access
 -(ORInt) bitLength;
 -(ORBool) bound;
@@ -127,13 +133,14 @@ typedef struct  {
 @interface CPBitVarMultiCast : NSObject<CPBitVarNotifier,NSCoding> {
    id<CPBitVarNotifier>*     _tab;
    BOOL            _tracksLoseEvt;
+   ORUInt              _bitLength;
    ORInt                      _nb;
    ORInt                      _mx;
    UBType*            _loseValIMP;
    UBType*                _minIMP;
    UBType*                _maxIMP;
    UBType*           _bitFixedIMP;
-   UBType*           _bitFixedAtIMP;
+   UBType**         _bitFixedAtIMP;
    CPBitVarLiterals*    _literals;
 }
 -(id)initVarMC:(ORInt)n root:(CPBitVarI*)root;
