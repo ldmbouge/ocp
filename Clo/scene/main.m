@@ -41,36 +41,37 @@ int main(int argc, const char * argv[])
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
          id<ORAnnotation> notes = [ORFactory annotation];
-         ORInt maxScene = 19;
+         
+         NSError* error = nil;
+         NSXMLDocument* doc = [[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString:@"file:///Users/ldm/scene.xml"] options:NSXMLDocumentTidyXML error:&error];
+         NSXMLElement* elt = [doc rootElement];
+         NSArray* an = [elt nodesForXPath:@"/scene/actors/actor/name/text()" error:&error];
+         NSArray* rf = [elt nodesForXPath:@"/scene/actors/actor/fee/text()" error:&error];
+         NSArray* ri = [elt nodesForXPath:@"/scene/actors/actor/@id" error:&error];
+         NSMutableArray* sc = (id)[elt nodesForXPath:@"/scene/appearances/scene" error:&error];
+         id tmp[rf.count];
+         for(ORInt i=0;i<[an count];i++)
+            tmp[[[ri[i] stringValue] integerValue]] = @([[ri[i] stringValue] integerValue]);
+         //NSArray* actors = [NSArray arrayWithObjects:tmp count:an.count];
+         for(ORInt i=0;i < [rf count];i++)
+            tmp[[[ri[i] stringValue] integerValue]] = @([[rf[i] stringValue] integerValue]);
+         NSArray* xmlFee = [NSArray arrayWithObjects:tmp count:rf.count];
+         for(ORInt i=0;i < [sc count];i++) {
+            NSArray* actor = [sc[i] nodesForXPath:@"actor/@ref" error:&error];
+            id<ORIntSet> inScene = [ORFactory intSet:model];
+            for(ORInt j=0;j < [actor count];j++)
+               [inScene insert:(ORInt) [[actor[j] stringValue] integerValue]];
+            sc[i] = inScene;
+         }
+         
+         ORInt maxScene = (ORInt) [sc count];
+         id<ORIntRange> Actors = RANGE(model,0,(ORInt)[an count] - 1);
          id<ORIntRange> Scenes = RANGE(model,0,maxScene-1);
          id<ORIntRange> Days   = RANGE(model,0,4);
-         typedef enum : NSUInteger {
-            Patt=0, Casta, Scolaro, Murphy, Brown, Hacket,Anderson, McDougal, Mercer, Spring, Thompson
-         } Actor;
-         id<ORIntArray>    fee = [ORFactory intArray:model array:@[@26481,@25043,@30310,@4085,@7562,@9381,@8770,@5788,@7423,@3303,@9593]];
-         id<ORIdArray> appears = [ORFactory idArray:model array:@[
-                   [ORFactory intSet:model set:[NSSet setWithObjects:@(Hacket), nil]],
-                   [ORFactory intSet:model set:[NSSet setWithObjects:@(Patt),@(Hacket),@(Brown),@(Murphy),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(McDougal),@(Scolaro),@(Mercer),@(Brown),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Casta),@(Mercer),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Mercer),@(Anderson),@(Patt),@(McDougal),@(Spring),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Thompson),@(McDougal),@(Anderson),@(Scolaro),@(Spring),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Casta),@(Patt),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Mercer),@(Murphy),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Casta),@(McDougal),@(Mercer),@(Scolaro),@(Thompson),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Casta),@(McDougal),@(Scolaro),@(Patt),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Patt),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Hacket),@(Thompson),@(McDougal),@(Murphy),@(Brown),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Hacket),@(Murphy),@(Casta),@(Patt),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Anderson),@(Scolaro),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Thompson),@(Murphy),@(McDougal),@(Patt),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Scolaro),@(McDougal),@(Casta),@(Mercer),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Scolaro),@(Patt),@(Brown),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Scolaro),@(McDougal),@(Hacket),@(Thompson),nil]],
-				       [ORFactory intSet:model set:[NSSet setWithObjects:@(Casta),nil]],
-								  ]];
-
-         id<ORIdArray> which = [ORFactory idArray:model range:RANGE(model,Patt,Thompson) with:^id(ORInt a) {
+         id<ORIntArray>    fee = [ORFactory intArray:model array:xmlFee];
+         id<ORIdArray> appears = [ORFactory idArray:model array:sc ];      
+         
+         id<ORIdArray> which = [ORFactory idArray:model range:Actors with:^id(ORInt a) {
             return filterSet(model, Scenes, ^ORBool(ORInt i) { return [(id<ORIntSet>)appears[i] member:a];});
          }];
          id<ORIntVarArray> __block shoot = [ORFactory intVarArray:model range:Scenes domain:Days];
@@ -78,7 +79,7 @@ int main(int argc, const char * argv[])
          id<ORIntArray> up  = [ORFactory intArray:model range:Days value:5];
          
          [notes dc:[model add:[ORFactory cardinality:shoot low:low up:up]]];
-         [model minimize:Sum2(model, a, RANGE(model,Patt,Thompson), d, Days,
+         [model minimize:Sum2(model, a, Actors, d, Days,
                               [Or(model, s, which[a], [shoot[s] eq:@(d)]) mul:@([fee at:a])
                               ])];
          
