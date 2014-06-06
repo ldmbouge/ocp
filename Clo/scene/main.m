@@ -43,7 +43,9 @@ int main(int argc, const char * argv[])
          id<ORAnnotation> notes = [ORFactory annotation];
          
          NSError* error = nil;
-         NSXMLDocument* doc = [[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString:@"file:///Users/ldm/scene.xml"] options:NSXMLDocumentTidyXML error:&error];
+         NSString* cwd = [[NSFileManager defaultManager] currentDirectoryPath];
+         NSString* fp  = [cwd stringByAppendingString:@"/scene.xml"];
+         NSXMLDocument* doc = [[NSXMLDocument alloc] initWithContentsOfURL:[NSURL  fileURLWithPath:fp] options:NSXMLDocumentTidyXML error:&error];
          NSXMLElement* elt = [doc rootElement];
          NSArray* an = [elt nodesForXPath:@"/scene/actors/actor/name/text()" error:&error];
          NSArray* rf = [elt nodesForXPath:@"/scene/actors/actor/fee/text()" error:&error];
