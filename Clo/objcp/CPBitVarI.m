@@ -21,13 +21,14 @@
 static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t,ORUInt low,ORUInt up, ORUInt len)
 {
    for(ORInt i = 0 ; i < 2;i++) {
-      net->_bitFixedEvt[i] = makeTRId(t, nil);
-      net->_boundsEvt[i]   = makeTRId(t,nil);
-      net->_bindEvt[i]     = makeTRId(t,nil);
-      net->_domEvt[i]      = makeTRId(t,nil);
-      net->_minEvt[i]      = makeTRId(t,nil);
-      net->_maxEvt[i]      = makeTRId(t,nil);
-      net->_ac5[i]         = makeTRId(t, nil);
+      net->_bitFixedEvt[i]    = makeTRId(t,nil);
+      net->_bitFixedAtIEvt[i] = makeTRId(t,nil);
+      net->_boundsEvt[i]      = makeTRId(t,nil);
+      net->_bindEvt[i]        = makeTRId(t,nil);
+      net->_domEvt[i]         = makeTRId(t,nil);
+      net->_minEvt[i]         = makeTRId(t,nil);
+      net->_maxEvt[i]         = makeTRId(t,nil);
+      net->_ac5[i]            = makeTRId(t, nil);
    }
    net->_bitLength = len;
    net->_bitFixedAtEvt = malloc(sizeof(TRId*) * net->_bitLength);
@@ -41,6 +42,7 @@ static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t,ORUInt low,ORUInt 
 static void deallocNetwork(CPBitEventNetwork* net)
 {
    freeList(net->_bitFixedEvt[0]._val);
+   freeList(net->_bitFixedAtIEvt[0]._val);
    freeList(net->_boundsEvt[0]._val);
    freeList(net->_bindEvt[0]._val);
    freeList(net->_domEvt[0]._val);
@@ -56,12 +58,17 @@ static void deallocNetwork(CPBitEventNetwork* net)
 static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
    collectList(net->_bitFixedEvt[0]._val,rv);
+   collectList(net->_bitFixedAtIEvt[0]._val,rv);
    collectList(net->_boundsEvt[0]._val,rv);
    collectList(net->_bindEvt[0]._val,rv);
    collectList(net->_domEvt[0]._val,rv);
    collectList(net->_minEvt[0]._val,rv);
    collectList(net->_maxEvt[0]._val,rv);
    collectList(net->_ac5[0]._val,rv);
+   
+   for (int i=0; i<net->_bitLength; i++) {
+      collectList(net->_bitFixedAtEvt[i][0]._val, rv);
+   }
    return rv;
 }
 
@@ -378,15 +385,11 @@ return self;
 {
    hookupEvent(_engine, _net._bitFixedEvt, todo, c, p);
 }
--(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p withI:(int)i do:(ConstraintCallback) todo
+-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p withI:(int)i do:(ConstraintIntCallBack) todo
 {
-   hookupEvent(_engine, _net._bitFixedEvt, todo, c, p);
+   hookupEvent(_engine, _net._bitFixedAtIEvt, todo, c, p);
 }
--(void) whenBitFixed:(CPCoreConstraint*)c do:(ConstraintIntCallBack)todo at:(int)p
-{
-   hookupEvent(_engine, _net._bitFixedEvt, todo, c, p);
-}
--(void) whenBitFixedAt:(int)i propagate:(CPCoreConstraint*) c
+-(void) whenBitFixedAt:(ORUInt)i propagate:(CPCoreConstraint*) c
 {
    hookupEvent(_engine, _net._bitFixedAtEvt[i], nil, c, HIGHEST_PRIO);
 }
@@ -467,6 +470,24 @@ return self;
    id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._bitFixedEvt[0]._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_engine scheduleAC3:mList];
+   
+   
+   return ORSuspend;
+}
+
+-(ORStatus) bitFixedAtIEvt:(ORUInt)idx sender:(CPBitArrayDom*)sender
+{
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   if (s==ORFailure) return s;
+   
+   //   [_dom updateFreeBitCount];
+   //Empty implementation
+   id<CPEventNode> mList[5];
+   ORUInt k = 0;
+   mList[k] = _net._bitFixedAtIEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleAC3:mList];
@@ -644,6 +665,7 @@ return self;
    free(_maxIMP);
    free(_loseValIMP);
    free(_bitFixedIMP);
+   free(_bitFixedAtIIMP);
    for (int i = 0; i<_bitLength; i++) {
       free(_bitFixedAtIMP[i]);
    }
@@ -823,6 +845,17 @@ return self;
    }
    return ORSuspend;
 }
+-(ORStatus) bitFixedAtIEvt:(ORUInt)dsz at:(ORUInt)i sender:(CPBitArrayDom *)sender{
+   NSLog(@"BitFixedAtIEvt at:%d\n",i);
+   ORStatus ok = ORSuspend;
+   for(ORInt i=0;i<_nb;i++) {
+      //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
+      if (_bitFixedAtIIMP[i])
+         ok = _bitFixedAtIIMP[i](_tab[i],@selector(bitFixedAtIEvt:at:sender:),dsz,i,sender);
+      if (ok == ORFailure) return ok;
+   }
+   return ORSuspend;
+}
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
@@ -842,8 +875,6 @@ return self;
    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
    return self;
 }
-
-
 @end
 
 

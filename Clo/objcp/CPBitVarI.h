@@ -25,7 +25,6 @@
 @class CPBitVarMultiCast;
 @class CPBitVarLiterals;
 
-
 typedef struct  {
    TRId         _boundsEvt[2];
    TRId           _bindEvt[2];
@@ -34,8 +33,9 @@ typedef struct  {
    TRId            _maxEvt[2];
    TRId               _ac5[2];
    TRId       _bitFixedEvt[2];
-   TRId**    _bitFixedAtEvt;
-   ORUInt       _bitLength;
+   TRId    _bitFixedAtIEvt[2];
+   TRId**      _bitFixedAtEvt;
+   ORUInt          _bitLength;
 } CPBitEventNetwork;
 
 @interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
@@ -65,8 +65,8 @@ typedef struct  {
 
 // subscription
 -(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ConstraintCallback) todo;
--(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p withI:(int)i do:(ConstraintCallback) todo;
--(void) whenBitFixedAt:(int)i propagate:(CPCoreConstraint*) c;
+-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p do:(ConstraintCallback) todo;
+-(void) whenBitFixedAt:(ORUInt)i propagate:(CPCoreConstraint*) c;
 -(void) whenBitFixed:(CPCoreConstraint*)c do:(ConstraintIntCallBack)todo at:(int)p;
 
 -(void) whenChangeDo:(CPCoreConstraint*) c;
@@ -140,7 +140,8 @@ typedef struct  {
    UBType*                _minIMP;
    UBType*                _maxIMP;
    UBType*           _bitFixedIMP;
-   UBType**         _bitFixedAtIMP;
+   UBType*        _bitFixedAtIIMP;
+   UBType**        _bitFixedAtIMP;
    CPBitVarLiterals*    _literals;
 }
 -(id)initVarMC:(ORInt)n root:(CPBitVarI*)root;
@@ -153,7 +154,8 @@ typedef struct  {
 -(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) loseValEvt:(ORUInt)val sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedEvt:(ORUInt)dsz at:(ORUInt)i sender:(CPBitArrayDom *)sender;
+-(ORStatus) bitFixedAtEvt:(ORUInt) i sender:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedAtIEvt:(ORUInt)i sender:(CPBitArrayDom *)sender;
 @end
 
 
