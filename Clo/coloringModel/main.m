@@ -292,7 +292,7 @@ int main(int argc, const char * argv[])
    __block ORSubgradientTemplate* r1 = nil;
    id<ORIntVarArray> slacks1 = (id<ORIntVarArray>)[lagrangeModel1 slacks];
    
-   id<ORSolution> sol = nil;
+   __block id<ORSolution> mySol = nil;
 //   __block ORInt myMax = INT_MAX;
    void (^search1)(id<CPCommonProgram>) = ^(id<CPProgram> cp){
 
@@ -328,13 +328,7 @@ int main(int argc, const char * argv[])
                    //NSLog(@"**CLIQUE: %d -- %@",CID,vars);
                    [cp forall: vars.range
                      suchThat: ^bool(ORInt i) { return ![cp bound: vars[i]];}
-                    orderedBy: ^ORInt(ORInt i) {
-                       if([r1 lastSolution] == nil)
-                          return [cp domsize: vars[i]];
-                       ORFloat w = [r1 weightForVar: vars[i]];
-                       //NSLog(@"W[%i]: %f", getId(vars[i]), w);
-                       return 1000 - w;
-                    }
+                    orderedBy: ^ORInt(ORInt i) { return [cp domsize: vars[i]]; }
                           and: ^ORInt(ORInt i) {
                              ORInt vid = getId(vars[i]);
                              if (lid <= vid && vid <= uid)
@@ -342,17 +336,25 @@ int main(int argc, const char * argv[])
                              else return 0;
                           }
                            do: ^(ORInt i) {
-                              //ORFloat w = [r1 weightForVar: vars[i]];
-                              //NSLog(@"W2[%i]: %f", getId(vars[i]), w);
-                              ORInt maxc = max(0,[cp maxBound: c]);
-                              [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: vars[i]];} in:^(ORInt v) {
-                                 //NSLog(@"BRANCH: c[%d] == %d (%d)\n",vmap[getId(vars[i])],v,[deg at:vmap[getId(vars[i])]]);
-                                 [cp label: vars[i] with: v];
+                              if(mySol) {
+                                 ORInt v = [mySol intValue: vars[i]];
+                                 if([cp member: v in: vars[i]]) {
+                                    [cp try: ^{ [cp label: vars[i] with: v]; } or: ^{ [cp diff: vars[i] with:v]; }];
+                                 }
                               }
-                               onFailure:^(ORInt v) {
-                                  [cp diff: vars[i] with:v];
-                               }
-                               ];
+                              if([cp domsize: vars[i]] != 1) {
+                                 //ORFloat w = [r1 weightForVar: vars[i]];
+                                 //NSLog(@"W2[%i]: %f", getId(vars[i]), w);
+                                 ORInt maxc = max(0,[cp maxBound: c]);
+                                 [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: vars[i]];} in:^(ORInt v) {
+                                    //NSLog(@"BRANCH: c[%d] == %d (%d)\n",vmap[getId(vars[i])],v,[deg at:vmap[getId(vars[i])]]);
+                                    [cp label: vars[i] with: v];
+                                 }
+                                  onFailure:^(ORInt v) {
+                                     [cp diff: vars[i] with:v];
+                                  }
+                                  ];
+                              }
                            }
                     ];
                    CID++;
@@ -393,6 +395,7 @@ int main(int argc, const char * argv[])
       }
        ];
     
+      mySol = [cp captureSolution];
 //      ORInt ttlSlacks = 0;
 //      for(ORInt k=slacks1.range.low;k <= slacks1.range.up;k++)
 //         ttlSlacks += [cp intValue:slacks1[k]];
