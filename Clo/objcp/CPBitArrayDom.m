@@ -813,7 +813,7 @@
    isChanged = alloca(sizeof(uint32)*_wordLength);
 
    for(int i=0;i<_wordLength;i++){
-      isChanged[i] |= ~(_low[i]._val & ~newLow[i]);
+      isChanged[i] |= (_low[i]._val & ~newLow[i]);
       lmod |= _low[i]._val != newLow[i];
       assignTRUInt(&_low[i], newLow[i], _trail);
    }
@@ -842,7 +842,7 @@
 
 
    for(int i=0;i<_wordLength;i++){
-      isChanged[i]  = ~(_up[i]._val & ~newUp[i]);
+      isChanged[i]  = (_up[i]._val & ~newUp[i]);
     umod |= _up[i]._val != newUp[i];
     assignTRUInt(&_up[i], newUp[i], _trail);
    }
@@ -870,8 +870,8 @@
    isChanged = alloca(sizeof(uint32)*_wordLength);
    
    for(int i=0;i<_wordLength;i++){
-      isChanged[i]  = ~(_up[i]._val & ~newUp[i]);
-      isChanged[i] |= ~(_low[i]._val & ~newLow[i]);
+      isChanged[i]  = (_up[i]._val & ~newUp[i]);
+      isChanged[i] |= (_low[i]._val & ~newLow[i]);
       umod |= _up[i]._val != newUp[i];
       assignTRUInt(&_up[i], newUp[i], _trail);
       lmod |= _low[i]._val != newLow[i];
