@@ -61,10 +61,10 @@ int main(int argc, const char * argv[])
    //      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
    //      [args measure:^struct ORResult(){
    [ORStreamManager setRandomized];
-   NSString* path = @"/Users/dan/Desktop/clique.col";//[NSString stringWithUTF8String: argv[1]];
-   ORInt relaxCount = 846;//atoi(argv[3]);
-   ORInt cliqueCount = 2;//atoi(argv[2]);
-   ORFloat UB = 130;//atoi(argv[4]);
+   NSString* path = [NSString stringWithUTF8String: argv[1]];
+   ORInt relaxCount = atoi(argv[3]);
+   ORInt cliqueCount = atoi(argv[2]);
+   ORFloat UB = atoi(argv[4]);
    ORFloat timeLimit = 5 * 60;
    
    NSLog(@"path: %@ clique: %i, relax: %i, ub: %f", path, cliqueCount, relaxCount, UB);
@@ -426,7 +426,7 @@ int main(int argc, const char * argv[])
    //[pr release];
    //[t4 release];
    
-   fprintf(f, "%f %i\n", time, bestBND);
+   fprintf(f, "%f %f\n", time, bestBND);
    
    t0 = [NSDate date];
    //[cp solve: ^{ [cp limitTime: timeLimit * 1000 in: ^{ search1(cp); }]; }];
