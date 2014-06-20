@@ -198,6 +198,19 @@
       _gamma[getId(cstr)] = concreteCstr;
    }
 }
+-(void) visitOr: (id<OROr>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<LSIntVar> res = [self concreteVar:[cstr res]];
+      id<LSIntVar> left = [self concreteVar:[cstr left]];
+      id<LSIntVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [LSFactory boolean: left or: right equal: res];
+      [_engine add: concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 
 -(void) visitLinearGeq: (id<ORLinearGeq>) cstr
 {
@@ -229,6 +242,18 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitCardinality: (id<ORCardinality>) cstr
+{
+   if (_gamma[getId(cstr)] == NULL) {
+      id<LSIntVarArray> cx = [self concreteArray:[cstr array]];
+      id<ORIntArray>    low = [cstr low],up = [cstr up];
+      id<LSConstraint> concreteCstr = [LSFactory cardinality:_engine low:low vars:cx up:up];
+      [_engine addConstraint:concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[getId(cstr)] = concreteCstr;
+   }
+}
+
 -(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORAVLTree.h>
 #import <ORFoundation/ORData.h>
+@protocol ORTracker;
 
 @protocol ORIntIterable <ORObject>
 -(void)enumerateWithBlock:(ORInt2Void)block;
@@ -50,3 +51,6 @@
 -(ORBool)inRange:(ORFloat)e;
 -(NSString*)description;
 @end
+
+id<ORIntSet> filterSet(id<ORTracker> t,id<ORIntIterable> s,ORBool(^cond)(ORInt i));
+ORInt sumSet(id<ORIntIterable> s,ORInt(^term)(ORInt i));

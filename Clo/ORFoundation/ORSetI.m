@@ -318,3 +318,22 @@
    return self;
 }
 @end
+
+id<ORIntSet> filterSet(id<ORTracker> t,id<ORIntIterable> s,ORBool(^cond)(ORInt i))
+{
+   id<ORIntSet> sub = [ORFactory intSet:t];
+   [s enumerateWithBlock:^(ORInt i) {
+      if (cond(i))
+         [sub insert:i];
+   }];
+   return sub;
+}
+
+ORInt sumSet(id<ORIntIterable> s,ORInt(^term)(ORInt i))
+{
+   ORInt __block ttl = 0;
+   [s enumerateWithBlock:^(ORInt i) {
+      ttl += term(i);
+   }];
+   return ttl;
+}

@@ -107,12 +107,12 @@
 		<key>TEST.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>100</integer>
+			<integer>99</integer>
 		</dict>
 		<key>TEST2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>101</integer>
+			<integer>100</integer>
 		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
@@ -192,7 +192,7 @@
 		<key>coloringModelCP.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>98</integer>
+			<integer>97</integer>
 		</dict>
 		<key>costas.xcscheme_^#shared#^_</key>
 		<dict>
@@ -202,7 +202,7 @@
 		<key>costas2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>94</integer>
+			<integer>93</integer>
 		</dict>
 		<key>costas2.xcscheme_^#shared#^_</key>
 		<dict>
@@ -297,7 +297,7 @@
 		<key>magicSquareLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>99</integer>
+			<integer>98</integer>
 		</dict>
 		<key>magicserie.xcscheme_^#shared#^_</key>
 		<dict>
@@ -307,7 +307,7 @@
 		<key>magicserieLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>93</integer>
+			<integer>92</integer>
 		</dict>
 		<key>magicseriesModel.xcscheme_^#shared#^_</key>
 		<dict>
@@ -327,7 +327,7 @@
 		<key>market2sLR.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>91</integer>
+			<integer>90</integer>
 		</dict>
 		<key>marriage.xcscheme_^#shared#^_</key>
 		<dict>
@@ -387,7 +387,7 @@
 		<key>objcpTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>29</integer>
+			<integer>103</integer>
 		</dict>
 		<key>objlp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -402,7 +402,7 @@
 		<key>objlsTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>90</integer>
+			<integer>104</integer>
 		</dict>
 		<key>objmp.xcscheme</key>
 		<dict>
@@ -452,7 +452,7 @@
 		<key>progressiveLRP.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>95</integer>
+			<integer>94</integer>
 		</dict>
 		<key>progressiveLRP.xcscheme_^#shared#^_</key>
 		<dict>
@@ -462,7 +462,7 @@
 		<key>progressiveLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>97</integer>
+			<integer>96</integer>
 		</dict>
 		<key>qg7.xcscheme_^#shared#^_</key>
 		<dict>
@@ -492,7 +492,7 @@
 		<key>queensLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>92</integer>
+			<integer>91</integer>
 		</dict>
 		<key>queensMIP.xcscheme</key>
 		<dict>
@@ -535,6 +535,11 @@
 			<integer>59</integer>
 		</dict>
 		<key>scene.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>101</integer>
+		</dict>
+		<key>sceneLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>102</integer>
@@ -642,7 +647,7 @@
 		<key>wka.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>96</integer>
+			<integer>95</integer>
 		</dict>
 		<key>wka.xcscheme_^#shared#^_</key>
 		<dict>
@@ -693,6 +698,11 @@
 			<true/>
 		</dict>
 		<key>5B2D92C817036DA8007F330B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B32A485194A4AD100466123</key>
 		<dict>
 			<key>primary</key>
 			<true/>
