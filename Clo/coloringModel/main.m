@@ -367,6 +367,8 @@ int main(int argc, const char * argv[])
           }];
          } onLimit:^{
             *limitReached = YES;
+            if ([tl intValue] != 500)
+               mySol = nil;
             NSLog(@"Did we improve?  [%s]",[tl intValue] == 500 ? "YES" : "NO");
             if ([tl intValue] == 500)
                searchSets = [originalOrdering copy];
@@ -410,7 +412,7 @@ int main(int argc, const char * argv[])
    
    id<CPProgram> cp = [ORFactory createCPProgram: model];
    
-   char* outpath = "/Users/dan/Desktop/colorout.txt";
+   char* outpath = "/Users/ldm/Desktop/colorout.txt";
    FILE* f = fopen(outpath, "w+");
    
    NSDate* t0 = [NSDate date];
