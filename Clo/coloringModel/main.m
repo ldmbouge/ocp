@@ -406,7 +406,7 @@ int main(int argc, const char * argv[])
    
    r1 = (ORSubgradientTemplate*)[ORFactory CPSubgradient: lagrangeModel1 bound: UB search: search1];
    [r1 setTimeLimit: timeLimit];
-   [(ORSubgradientTemplate*)r1 setAgility: 5.0];//7*UB];
+   [(ORSubgradientTemplate*)r1 setAgility: 205.0];//7*UB];
    
    //id<ORRunnable> r1 = [ORFactory CPRunnable:model];
    
