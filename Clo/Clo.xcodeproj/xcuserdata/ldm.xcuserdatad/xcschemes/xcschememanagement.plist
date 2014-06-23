@@ -107,12 +107,12 @@
 		<key>TEST.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>100</integer>
+			<integer>99</integer>
 		</dict>
 		<key>TEST2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>101</integer>
+			<integer>100</integer>
 		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
@@ -192,7 +192,7 @@
 		<key>coloringModelCP.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>98</integer>
+			<integer>97</integer>
 		</dict>
 		<key>costas.xcscheme_^#shared#^_</key>
 		<dict>
@@ -327,7 +327,7 @@
 		<key>market2sLR.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>91</integer>
+			<integer>90</integer>
 		</dict>
 		<key>marriage.xcscheme_^#shared#^_</key>
 		<dict>
@@ -387,7 +387,7 @@
 		<key>objcpTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>29</integer>
+			<integer>103</integer>
 		</dict>
 		<key>objlp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -538,6 +538,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>100</integer>
+		</dict>
+		<key>sceneLS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>102</integer>
 		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
@@ -693,6 +698,11 @@
 			<true/>
 		</dict>
 		<key>5B2D92C817036DA8007F330B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B32A485194A4AD100466123</key>
 		<dict>
 			<key>primary</key>
 			<true/>

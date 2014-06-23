@@ -12,6 +12,9 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
+#import <objls/LSFactory.h>
+#import <objls/LSConstraint.h>
+#import <objls/LSSolver.h>
 
 #import "ORCmdLineArgs.h"
 
@@ -52,7 +55,7 @@ int main(int argc, const char * argv[])
          id<ORIntRange> Scenes = RANGE(model,0,maxScene-1);
          id<ORIntRange> Days   = RANGE(model,0,4);
          id<ORIntArray>    fee = [ORFactory intArray:model array:xmlFee];
-         id<ORIdArray> appears = [ORFactory idArray:model array:sc ];      
+         id<ORIdArray> appears = [ORFactory idArray:model array:sc ];
          
          id<ORIdArray> which = [ORFactory idArray:model range:Actors with:^id(ORInt a) {
             return filterSet(model, Scenes, ^ORBool(ORInt i) { return [(id<ORIntSet>)appears[i] member:a];});
@@ -64,48 +67,16 @@ int main(int argc, const char * argv[])
          [notes dc:[model add:[ORFactory cardinality:shoot low:low up:up]]];
          [model minimize:Sum2(model, a, Actors, d, Days,
                               [Or(model, s, which[a], [shoot[s] eq:@(d)]) mul:@([fee at:a])
-                              ])];
+                               ])];
          
-         id<CPProgram> __block cp = [args makeProgram:model annotation:notes];
+         id<LSProgram> __block cp = [ORFactory createLSProgram:model annotation:notes];
          BOOL __block found = NO;
-         id<ORIntRange> sr  = shoot.range;
-         [cp onSolution:^{
-            @autoreleasepool {
-               id<ORIntArray> shootSol = [ORFactory intArray:cp range:shoot.range with:^ORInt(ORInt s) { return [cp intValue:shoot[s]];}];
-               NSLog(@"Sol:(%@) %@",[[cp objective] value],shootSol);
-            }
-            found = YES;
-         }];
+         ORInt __block it = 0;
          [cp solve:^{
-            while (![cp allBound:shoot]) {
-               ORInt s;
-               {
-                  // [ldm] With ARC, it is _capital_ to put the selector definition in a block.
-                  //       otherwise, the block (and more importantly even, the closures it is defined on
-                  //       live on when we enter and leave the tryall. But since we can leave the tryall several times
-                  //       the release would be sent to the variables captured by those closures repeatedly!
-                  //       By embedding in a block, the selector, closures and the variables the closures capture are sent a release
-                  //       as soon as we leave the block and well before we head into the tryall. In essence the block
-                  //       plays its role and control the lifetime of the selector and its captured variables.
-                  id<ORSelect> sel = [ORFactory select:cp range:sr
-                                              suchThat:^bool(ORInt s)    { return ! [cp bound:shoot[s]];}
-                                             orderedBy:^ORFloat(ORInt s) {
-                                                return ([cp domsize:shoot[s]] << 20) - sumSet(appears[s], ^ORInt(ORInt a) { return [fee at:a];});
-                                             }];
-                  s = [sel min];
-               }
-               if (s != MAXINT) {
-                  ORInt mday = max(-1,[cp maxBound:shoot]);
-                  [cp tryall:Days suchThat:^bool(ORInt d) { return d <= mday + 1 && [cp member:d in:shoot[s]];} in:^(ORInt d) {
-                     [cp label:shoot[s] with:d];
-                  } onFailure:^(ORInt d) {
-                     [cp diff:shoot[s] with:d];
-                  }];
-               }
-            }
+            
          }];
          NSLog(@"Solver status: %@\n",cp);
-         struct ORResult res = REPORT(found, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult res = REPORT(found, it, 0,0);
          [ORFactory shutdown];
          return res;
       }];

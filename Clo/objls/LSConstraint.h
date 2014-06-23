@@ -42,6 +42,7 @@
 
 @interface LSFactory (LSConstraint)
 +(id<LSConstraint>)alldifferent:(id<LSEngine>)e over:(id<LSIntVarArray>)x;
++(id<LSConstraint>)cardinality:(id<LSEngine>)e low:(id<ORIntArray>)lb vars:(id<LSIntVarArray>)x up:(id<ORIntArray>)ub;
 +(id<LSConstraint>) packing:(id<LSIntVarArray>)x weight: (id<ORIntArray>)weight capacity: (id<ORIntArray>)capacity;
 +(id<LSConstraint>) packingOne: (id<LSIntVarArray>)x weight: (id<ORIntArray>)weight bin: (ORInt) bin capacity: (ORInt)capacity;
 +(id<LSConstraint>) meetAtmost:(id<LSIntVarArray>)x and: (id<LSIntVarArray>)y atmost: (ORInt) k;
@@ -49,4 +50,6 @@
 +(id<LSConstraint>)lrsystem:(id<LSEngine>)e with:(NSArray*)ac;
 +(id<LSConstraint>)linear:(id<LSEngine>)e coef:(id<ORIntArray>)c vars:(id<LSIntVarArray>)x eq:(ORInt)cst;
 +(id<LSConstraint>) lEqual: (id<LSIntVar>)x to: (id<LSIntVar>) y plus:(ORInt)c;
++(id<LSConstraint>) nEqualc: (id<LSIntVar>)x to: (ORInt) c;
++(id<ORConstraint>) boolean:(id<LSIntVar>)x or:(id<LSIntVar>)y equal:(id<LSIntVar>)b;
 @end

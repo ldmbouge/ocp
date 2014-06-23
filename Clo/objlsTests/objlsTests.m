@@ -34,6 +34,69 @@
     [super tearDown];
 }
 
+-(void) testCard1
+{
+   id<LSEngine>  ls = [[LSEngineI alloc] initEngine];
+   id<ORIntRange> d = RANGE(ls, 0, 5);
+   id<ORIntArray> low = [ORFactory intArray:ls array:@[@1,@1,@1,@1,@1,@1]];
+   id<ORIntArray> up  = [ORFactory intArray:ls array:@[@1,@1,@1,@1,@1,@1]];
+   id<LSIntVarArray> x = [LSFactory intVarArray:ls range:d domain:d];
+   id<LSConstraint> c = [ls addConstraint:[LSFactory cardinality:ls low:low vars:x up:up]];
+   [ls close];
+   NSLog(@"C: %@",c);
+   printf("viol: %d\n",[c violations].value);
+   [ls atomic:^ {
+      [ls label:x[1] with: 1];
+      [ls label:x[2] with: 2];
+   }];
+   printf("viol: %d\n",[c violations].value);
+   for(ORInt i =d.low;i <= d.up;i++) {
+      printf("VVIOL(%d) = %d\n",i,[c getVarViolations:x[i]]);
+      for(ORInt v=d.low;v <= d.up;v++)
+         printf("\tdeltaWhenAssign(x[%d],%d) = %d\n",i,v,[c deltaWhenAssign:x[i] to:v]);
+   }
+   [ls label:x[3] with:3];
+   printf("viol: %d\n",[c violations].value);
+   for(ORInt i =d.low;i <= d.up;i++) {
+      printf("VVIOL(%d) = %d\n",i,[c getVarViolations:x[i]]);
+      for(ORInt v=d.low;v <= d.up;v++)
+         printf("\tdeltaWhenAssign(x[%d],%d) = %d\n",i,v,[c deltaWhenAssign:x[i] to:v]);
+   }
+}
+-(void) testCard2
+{
+   id<LSEngine>  ls = [[LSEngineI alloc] initEngine];
+   id<ORIntRange> d = RANGE(ls, 0, 5);
+   id<ORIntArray> low = [ORFactory intArray:ls array:@[@1,@1,@3,@0,@0,@0]];
+   id<ORIntArray> up  = [ORFactory intArray:ls array:@[@1,@1,@5,@5,@5,@5]];
+   id<LSIntVarArray> x = [LSFactory intVarArray:ls range:d domain:d];
+   id<LSConstraint> c = [ls addConstraint:[LSFactory cardinality:ls low:low vars:x up:up]];
+   [ls close];
+   NSLog(@"C: %@",c);
+   printf("viol: %d\n",[c violations].value);
+   for(ORInt i =d.low;i <= d.up;i++) {
+      printf("VVIOL(%d) = %d\n",i,[c getVarViolations:x[i]]);
+      for(ORInt v=d.low;v <= d.up;v++)
+         printf("\tdeltaWhenAssign(x[%d],%d) = %d\n",i,v,[c deltaWhenAssign:x[i] to:v]);
+   }
+   [ls atomic:^ {
+      [ls label:x[1] with: 1];
+      [ls label:x[2] with: 2];
+   }];
+   printf("viol: %d\n",[c violations].value);
+   for(ORInt i =d.low;i <= d.up;i++) {
+      printf("VVIOL(%d) = %d\n",i,[c getVarViolations:x[i]]);
+      for(ORInt v=d.low;v <= d.up;v++)
+         printf("\tdeltaWhenAssign(x[%d],%d) = %d\n",i,v,[c deltaWhenAssign:x[i] to:v]);
+   }
+   [ls label:x[3] with:3];
+   printf("viol: %d\n",[c violations].value);
+   for(ORInt i =d.low;i <= d.up;i++) {
+      printf("VVIOL(%d) = %d\n",i,[c getVarViolations:x[i]]);
+      for(ORInt v=d.low;v <= d.up;v++)
+         printf("\tdeltaWhenAssign(x[%d],%d) = %d\n",i,v,[c deltaWhenAssign:x[i] to:v]);
+   }
+}
 - (void)testExample
 {
 //    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
@@ -129,7 +192,7 @@
       id<LSProgram> ls = [ORFactory createLSProgram:model annotation:nil];
       __block ORInt it = 0;
       [ls solve: ^{
-         while ([ls violations] > 0 && it < 50 * n) {
+         while ([ls getViolations] > 0 && it < 50 * n) {
             [ls selectMax:D orderedBy:^ORFloat(ORInt i) { return [ls getVarViolations:x[i]];} do:^(ORInt i) {
                [ls selectMin: D orderedBy:^ORFloat(ORInt v) { return [ls deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
                   [ls label:x[i] with:v];

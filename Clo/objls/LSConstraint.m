@@ -12,6 +12,7 @@
 #import "LSConstraint.h"
 #import "LSEngineI.h"
 #import "LSAllDifferent.h"
+#import "LSCardinality.h"
 #import "LSSystem.h"
 #import "LSLinear.h"
 #import "LSBasic.h"
@@ -72,6 +73,12 @@
    [e trackMutable:c];
    return c;
 }
++(id<LSConstraint>)cardinality:(id<LSEngine>)e low:(id<ORIntArray>)lb vars:(id<LSIntVarArray>)x up:(id<ORIntArray>)ub
+{
+   LSCardinality* c = [[LSCardinality alloc] init:e low:lb vars:x up:ub];
+   [e trackMutable:c];
+   return c;
+}
 +(id<LSConstraint>) packing:(id<LSIntVarArray>)x weight: (id<ORIntArray>)weight capacity: (id<ORIntArray>)capacity;
 {
    LSPacking* c = [[LSPacking alloc] init:x weight:weight cap:capacity];
@@ -121,5 +128,11 @@
    LSNEqualc* cstr = [[LSNEqualc alloc] init:[x engine] x:x neq:c];
    [[x engine] trackMutable:cstr];
    return cstr;
+}
++(id<ORConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
+{
+   id<ORConstraint> o = [[CPOrDC alloc] initCPOrDC:b equal:x or:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 @end
