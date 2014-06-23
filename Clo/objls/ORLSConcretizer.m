@@ -205,7 +205,7 @@
       id<LSIntVar> left = [self concreteVar:[cstr left]];
       id<LSIntVar> right = [self concreteVar:[cstr right]];
       id<LSConstraint> concreteCstr = [LSFactory boolean: left or: right equal: res];
-      [_engine add: concreteCstr];
+      [_engine addConstraint: concreteCstr];
       [_allCstrs addObject:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
