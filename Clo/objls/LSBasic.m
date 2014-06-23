@@ -183,3 +183,113 @@
    else return 0;
 }
 @end
+
+@implementation LSOr {
+   id<LSIntVarArray> _src;
+   id<LSIntVar>      _viol;
+   id<LSIntVarArray> _vx;
+}
+-(id)init:(id<LSEngine>)engine boolean:(id<LSIntVar>)b equal:(id<LSIntVar>)x or:(id<LSIntVar>)y
+{
+   self = [super init:engine];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+static inline ORInt flipper(ORInt b) { return b * 2 - 1;}
+
+-(void)post
+{
+   id<LSEngine> engine = (id)_engine;
+   _viol = [LSFactory intVar:engine domain:RANGE(engine, 0, 1)];
+   [engine add:[LSFactory inv:_viol equal:^ORInt{
+      return abs(getLSIntValue(_b) - (getLSIntValue(_x) || getLSIntValue(_y)));
+   } vars:@[_b,_x,_y]]];
+   _vx = [LSFactory intVarArray:engine range:RANGE(engine,0,2) domain:RANGE(engine,0,1)];
+   [_engine add:[LSFactory inv:_vx[0] equal:^ORInt{
+      return flipper(getLSIntValue(_viol)==0) * (getLSIntValue(_b) == 1);
+   } vars:@[_b,_viol]]];
+   [_engine add:[LSFactory inv:_vx[1] equal:^ORInt{
+      return flipper(getLSIntValue(_viol)==0) * (getLSIntValue(_x) == 1);
+   } vars:@[_x,_viol]]];
+   [_engine add:[LSFactory inv:_vx[2] equal:^ORInt{
+      return flipper(getLSIntValue(_viol)==0) * (getLSIntValue(_y) == 1);
+   } vars:@[_x,_viol]]];
+}
+-(id<LSIntVarArray>)variables
+{
+   if (!_src) {
+      _src = [LSFactory intVarArray:(id)_engine range:RANGE((id)_engine,0,2)];
+      _src[0] = _b;
+      _src[1] = _x;
+      _src[2] = _y;
+   }
+   return _src;
+}
+-(ORBool)isTrue
+{
+   return getLSIntValue(_viol) == 0;
+}
+-(ORInt)getViolations
+{
+   return getLSIntValue(_viol);
+}
+-(ORInt)getVarViolations:(id<LSIntVar>)var
+{
+   if (getId(var) == getId(_b))
+      return getLSIntValue(_vx[0]);
+   else if (getId(var) == getId(_x))
+      return getLSIntValue(_vx[1]);
+   else if (getId(var) == getId(_y))
+      return getLSIntValue(_vx[2]);
+   else return 0;
+}
+-(id<LSIntVar>)violations
+{
+   return _viol;
+}
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var
+{
+   if (getId(var) == getId(_b))
+      return _vx[0];
+   else if (getId(var) == getId(_x))
+      return _vx[1];
+   else if (getId(var) == getId(_y))
+      return _vx[2];
+   else return 0;
+}
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   ORInt xid  = getId(x);
+   ORInt orig = getLSIntValue(_b) == (getLSIntValue(_x) || getLSIntValue(_y));
+   if (xid == getId(_b))
+      return (v == getLSIntValue(_x) || getLSIntValue(_y)) - orig;
+   else if (xid == getId(_x))
+      return (getLSIntValue(_b) == v || getLSIntValue(_y)) - orig;
+   else if (xid == getId(_y))
+      return (getLSIntValue(_b) == v || getLSIntValue(_x)) - orig;
+   else return 0;
+}
+inline static ORInt presentIn(ORInt key,ORInt* t,ORInt sz)
+{
+   while(sz--)
+      if (t[sz] == key)
+         return YES;
+   return NO;
+}
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   ORInt xid = getId(x),yid = getId(y);
+   ORInt cid[3] = {getId(_x),getId(_y),getId(_b)};
+   ORInt xIn =presentIn(xid,cid,3),yIn = presentIn(yid,cid,3);
+   if (xIn && yIn) {
+      ORInt orig = getLSIntValue(_b) == (getLSIntValue(_x) || getLSIntValue(_y));
+      return 0;
+   } else if (xIn)
+      return [self deltaWhenAssign:x to:getLSIntValue(y)];
+   else if (yIn)
+      return [self deltaWhenAssign:y to:getLSIntValue(x)];
+   else return 0;
+}
+@end

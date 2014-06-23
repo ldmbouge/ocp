@@ -44,3 +44,20 @@
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
+
+@interface LSOr  : LSConstraint {
+   LSIntVar* _b;
+   LSIntVar* _x;
+   LSIntVar* _y;
+}
+-(id)init:(id<LSEngine>)engine boolean:(id<LSIntVar>)b equal:(id<LSIntVar>)x or:(id<LSIntVar>)y;
+-(void)post;
+-(id<LSIntVarArray>)variables;
+-(ORBool)isTrue;
+-(ORInt)getViolations;
+-(ORInt)getVarViolations:(id<LSIntVar>)var;
+-(id<LSIntVar>)violations;
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+@end

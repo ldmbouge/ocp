@@ -129,10 +129,10 @@
    [[x engine] trackMutable:cstr];
    return cstr;
 }
-+(id<ORConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
++(id<LSConstraint>) boolean:(id<LSIntVar>)x or:(id<LSIntVar>)y equal:(id<LSIntVar>)b;
 {
-   id<ORConstraint> o = [[CPOrDC alloc] initCPOrDC:b equal:x or:y];
-   [[x tracker] trackMutable:o];
+   LSOr* o = [[LSOr alloc] init:[x engine] boolean:b equal:x or: y];
+   [[x engine] trackMutable:o];
    return o;
 }
 @end
