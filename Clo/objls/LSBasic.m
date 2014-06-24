@@ -285,7 +285,43 @@ inline static ORInt presentIn(ORInt key,ORInt* t,ORInt sz)
    ORInt xIn =presentIn(xid,cid,3),yIn = presentIn(yid,cid,3);
    if (xIn && yIn) {
       ORInt orig = getLSIntValue(_b) == (getLSIntValue(_x) || getLSIntValue(_y));
-      return 0;
+      if (xid == cid[0]) {
+         if (yid == cid[1]) {
+            // b is the non-mentioned var
+            return 0; // no effect (|| commutes)
+         } else {
+            assert(yid == cid[2]);
+            // _y is is non-mentioned var  (swap(_x,_b))
+            ORInt nb = getLSIntValue(_x),nx = getLSIntValue(_b);
+            ORInt new = nb == nx || getLSIntValue(_y);
+            return new - orig;
+         }
+      } else if (xid == cid[1]) {
+         if (yid == cid[0]) {
+            // b is the non-mentioned var
+            return 0; // no effect (|| commutes)
+         } else {
+            assert(yid == cid[2]);
+            // _x is the non-mentioned var --> swap(_y,_b)
+            ORInt nb = getLSIntValue(_y),ny = getLSIntValue(_b);
+            ORInt new = nb == getLSIntValue(_x) || ny;
+            return new - orig;
+         }
+      } else {
+         assert(xid == cid[2]);
+         if (yid == cid[0]) {
+            // _y is the non mentioned var --> swap(b,x)
+            ORInt nb = getLSIntValue(_x),nx = getLSIntValue(_b);
+            ORInt new = nb == nx || getLSIntValue(_y);
+            return new - orig;
+         } else {
+            assert(yid == cid[1]);
+            // _x is the non-mentioned var --> swap(b,y)
+            ORInt nb = getLSIntValue(_y),ny = getLSIntValue(_b);
+            ORInt new = nb == getLSIntValue(_x) || ny;
+            return new - orig;
+         }
+      }
    } else if (xIn)
       return [self deltaWhenAssign:x to:getLSIntValue(y)];
    else if (yIn)
