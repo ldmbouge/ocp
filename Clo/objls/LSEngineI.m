@@ -225,6 +225,14 @@
    [x setValue: v];
    [self propagate];
 }
+-(void)swap:(LSIntVar*)x with:(LSIntVar*)y
+{
+   ORInt xv = x.value;
+   ORInt yv = y.value;
+   [x setValue:yv];
+   [y setValue:xv];
+   [self propagate];
+}
 -(void) updateMultipliers
 {
    

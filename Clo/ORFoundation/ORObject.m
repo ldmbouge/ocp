@@ -61,6 +61,8 @@
 //   [NSAutoreleasePool addObject:self];
 //   return self;
 }
+-(void) visit: (ORVisitor*) visitor
+{}
 @end
 
 

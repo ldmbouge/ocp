@@ -78,7 +78,12 @@
 -(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r;
 -(void) dealloc;
 -(ORInt) next;
--(void)setId:(ORUInt)name;
+@end
+
+@interface ORRandomPermutationI : ORObject<ORRandomPermutation>
+-(ORRandomPermutationI*)initWithSet:(id<ORIntIterable>)set;
+-(ORInt)next;
+-(void)reset;
 @end
 
 @interface ORTableI : ORObject<ORTable,NSCoding,NSCopying> {

@@ -134,7 +134,7 @@
 
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
-
+-(ORBool) allBound:(id<ORIdArray>) x;
 @end
 
 // CPSolver with syntactic DFS Search

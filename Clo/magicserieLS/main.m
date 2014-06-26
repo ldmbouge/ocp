@@ -38,12 +38,12 @@ int main(int argc, const char * argv[])
          ORInt* tabu = malloc(sizeof(ORInt)*n);
          for(ORInt k = 0;k < n;k++) tabu[k] = -1;
          [cp solve: ^{
-            while ([cp violations] > 0) {
+            while ([cp getViolations] > 0) {
                for(ORInt k = 0;k < n;k++) tabu[k] = -1;
                for(id<ORIntVar> xi in x)
                   [cp label:xi with:0];
                __block ORInt it = 0;
-               while ([cp violations] > 0 && it < 50 * n) {
+               while ([cp getViolations] > 0 && it < 50 * n) {
                   [cp selectMax:R suchThat:^ORBool(ORInt i) { return tabu[i] < it;}  orderedBy:^ORFloat(ORInt i) { return [cp getVarViolations:x[i]];} do:^(ORInt i) {
                      [cp selectMin:R  suchThat:^ORBool(ORInt v) { return [cp intValue:x[i]] != v;} orderedBy:^ORFloat(ORInt v) { return [cp deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
                         [cp label:x[i] with:v];
@@ -52,7 +52,7 @@ int main(int argc, const char * argv[])
                   }];
                   ++it;
                }
-               NSLog(@"(%d)",[cp violations]);
+               NSLog(@"(%d)",[cp getViolations]);
                itt += it;
             }
             printf("Succeeds \n");

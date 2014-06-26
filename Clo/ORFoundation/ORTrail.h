@@ -58,23 +58,16 @@ typedef struct {
    ORUInt    _mgc;
 } TRDouble;
 
-typedef struct {
-   id        _val;
-} TRId;
+typedef id TRId;
+typedef id TRIdNC;
 
 typedef struct {
-   id        _val;
-} TRIdNC;
-
-typedef struct {
-   id<ORTrail>_trail;
    int        _nb;
    int        _low;
    TRInt*     _entries;
 } TRIntArray;
 
 typedef struct {
-   id<ORTrail>_trail;
    int        _nb;
    int        _low;
    TRDouble*  _entries;
@@ -107,9 +100,9 @@ void  assignTRLong(TRLong* v,long long val,id<ORTrail> trail);
 void  assignTRDouble(TRDouble* v,double val,id<ORTrail> trail);
 void  assignTRId(TRId* v,id val,id<ORTrail> trail);
 void  assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail);
-ORInt assignTRIntArray(TRIntArray a,int i,ORInt val);
+ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail);
 ORInt getTRIntArray(TRIntArray a,int i);
-ORFloat assignTRFloatArray(TRIntArray a,int i,ORFloat val);
+ORFloat assignTRFloatArray(TRIntArray a,int i,ORFloat val,id<ORTrail> trail);
 ORInt getTRFloatArray(TRFloatArray a,int i);
 
 FXInt makeFXInt(id<ORTrail> trail);

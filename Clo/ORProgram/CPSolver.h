@@ -23,7 +23,7 @@
 @interface CPINCModel : NSObject<ORPost,ORAddToModel> {
    id<CPEngine>  _engine;
 }
--(id)init:(CPCoreSolver*)theSolver;
+-(id)init:(id<CPCommonProgram>)theSolver;
 -(ORStatus)post:(id<ORConstraint>)c;
 -(void)setCurrent:(id<ORConstraint>)cstr;
 @end
@@ -62,6 +62,7 @@
 -(id<ORCPSolutionPool>) solutionPool;
 -(id<ORCPSolution>) captureSolution;
 -(ORInt) maxBound:(id<ORIdArray>) x;
+-(ORBool) allBound:(id<ORIdArray>) x;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
 

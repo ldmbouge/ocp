@@ -16,6 +16,7 @@
 #import "ORLSConcretizer.h"
 #import "ORLSSolution.h"
 #import <ORFoundation/ORDataI.h>
+#import <ORFoundation/ORSelector.h>
 
 @implementation LSSolver {
    LSLRSystem* _sys;
@@ -121,7 +122,10 @@
 {
    [_engine label:_gamma[getId(x)] with:v];
 }
-
+-(void)swap:(id<ORIntVar>)x with:(id<ORIntVar>)y
+{
+   [_engine swap:_gamma[getId(x)] with:_gamma[getId(y)]];
+}
 -(ORInt)getVarViolations:(id<ORIntVar>)var
 {
    return [_sys getVarViolations:_gamma[getId(var)]];
@@ -152,10 +156,13 @@
 {
    return [_sys getUnweightedViolations];
 }
-
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
 {
    return [_sys deltaWhenAssign:_gamma[getId(x)] to:v];
+}
+-(ORInt)deltaWhenSwap:(id<ORIntVar>)x with:(id<ORIntVar>)y
+{
+   return [_sys deltaWhenSwap:_gamma[getId(x)] with:_gamma[getId(y)]];
 }
 -(ORInt)weightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
 {
@@ -165,7 +172,6 @@
 {
    return [_sys unweightedDeltaWhenAssign:_gamma[getId(x)] to:v];
 }
-
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v inConstraint:(id<ORConstraint>)c
 {
    return [[self concretize:c] deltaWhenAssign:_gamma[getId(x)] to:v];
@@ -173,6 +179,10 @@
 -(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c
 {
    return [[self concretize:c] getVarViolations:_gamma[getId(var)]];
+}
+-(ORInt)getCstrViolations:(id<ORConstraint>)cstr
+{
+   return [[self concretize:cstr] getViolations];
 }
 
 -(void) updateMultipliers
@@ -252,6 +262,34 @@
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block
 {
    [self selectOpt:r orderedBy:fun do:block dir:+1.0];
+}
+
+-(void)selectRandom:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter do:(void(^)(ORInt))block
+{
+   ORRandomStreamI* stream = [[ORRandomStreamI alloc] init];
+   ORLong bestRand = 0x7fffffffffffffff;
+   ORInt indexFound = MAXINT;
+   const ORInt low = r.low,up = r.up;
+   for(ORInt i=low;i <= up;i++) {
+      if (filter(i)) {
+         ORLong r = [stream next];
+         if (r < bestRand) {
+            indexFound = i;
+            bestRand   = r;
+         }
+      }
+   }
+   if (indexFound < MAXINT)
+      block(indexFound);
+   [stream release];
+}
+
+-(void)sweep:(void(^)(id<ORSweep>))block
+{
+   id<ORSweep> sweep = [ORFactory sweeper:nil]; // no tracker. Release manually.
+   block(sweep);
+   [sweep commit];
+   [sweep release];
 }
 @end
 

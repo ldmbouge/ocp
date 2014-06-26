@@ -45,6 +45,7 @@
 -(ORBool) isDefined;
 -(ORBool) inRange: (ORInt)e;
 -(ORInt) size;
+-(ORInt) atRank:(ORInt)r;
 -(NSString*) description;
 -(void)visit:(ORVisitor*)v;
 -(id<IntEnumerator>) enumerator;
@@ -52,6 +53,7 @@
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
+
 
 @interface ORFloatRangeI : ORObject<ORFloatRange,NSCopying>
 -(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up;

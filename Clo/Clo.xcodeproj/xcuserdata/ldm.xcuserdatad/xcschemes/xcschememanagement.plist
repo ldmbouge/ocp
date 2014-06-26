@@ -42,7 +42,7 @@
 		<key>GAP.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>92</integer>
+			<integer>87</integer>
 		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
@@ -103,6 +103,16 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>17</integer>
+		</dict>
+		<key>TEST.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>99</integer>
+		</dict>
+		<key>TEST2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>100</integer>
 		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
@@ -179,6 +189,11 @@
 			<key>orderHint</key>
 			<integer>13</integer>
 		</dict>
+		<key>coloringModelCP.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>97</integer>
+		</dict>
 		<key>costas.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -187,7 +202,7 @@
 		<key>costas2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>91</integer>
+			<integer>93</integer>
 		</dict>
 		<key>costas2.xcscheme_^#shared#^_</key>
 		<dict>
@@ -279,6 +294,11 @@
 			<key>orderHint</key>
 			<integer>10</integer>
 		</dict>
+		<key>magicSquareLS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>98</integer>
+		</dict>
 		<key>magicserie.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -287,7 +307,7 @@
 		<key>magicserieLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>90</integer>
+			<integer>92</integer>
 		</dict>
 		<key>magicseriesModel.xcscheme_^#shared#^_</key>
 		<dict>
@@ -307,7 +327,7 @@
 		<key>market2sLR.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>87</integer>
+			<integer>90</integer>
 		</dict>
 		<key>marriage.xcscheme_^#shared#^_</key>
 		<dict>
@@ -367,7 +387,7 @@
 		<key>objcpTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>29</integer>
+			<integer>103</integer>
 		</dict>
 		<key>objlp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -382,12 +402,12 @@
 		<key>objlsTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>88</integer>
+			<integer>89</integer>
 		</dict>
 		<key>objmp.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>86</integer>
+			<integer>88</integer>
 		</dict>
 		<key>objmp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -437,7 +457,7 @@
 		<key>progressiveLRP.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>93</integer>
+			<integer>90</integer>
 		</dict>
 		<key>progressiveLS.xcscheme</key>
 		<dict>
@@ -472,7 +492,7 @@
 		<key>queensLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>89</integer>
+			<integer>91</integer>
 		</dict>
 		<key>queensMIP.xcscheme</key>
 		<dict>
@@ -514,6 +534,16 @@
 			<key>orderHint</key>
 			<integer>59</integer>
 		</dict>
+		<key>scene.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>100</integer>
+		</dict>
+		<key>sceneLS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>101</integer>
+		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -537,12 +567,22 @@
 		<key>slabZIB.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>87</integer>
+			<integer>88</integer>
 		</dict>
 		<key>slow_convergence.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>39</integer>
+		</dict>
+		<key>smory.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>97</integer>
+		</dict>
+		<key>smoryLS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>99</integer>
 		</dict>
 		<key>sport.xcscheme_^#shared#^_</key>
 		<dict>
@@ -662,6 +702,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5B32A485194A4AD100466123</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5B33370313A2B866001DFC38</key>
 		<dict>
 			<key>primary</key>
@@ -678,6 +723,11 @@
 			<true/>
 		</dict>
 		<key>5B3895E81795BE07004CCE93</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B4055AB193E253E00A2B1DD</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -728,6 +778,11 @@
 			<true/>
 		</dict>
 		<key>5B6295A518D239D100A8F53C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B65049D1940C21600AEA65C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -798,6 +853,11 @@
 			<true/>
 		</dict>
 		<key>5B80560F16076DFE00659ECC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B8CBDD6193F743200AF3D60</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -982,6 +1042,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5BED464C1934C60B0082FAB7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5BEEF60F13970B6F002ADBD4</key>
 		<dict>
 			<key>primary</key>
@@ -1103,6 +1168,11 @@
 			<true/>
 		</dict>
 		<key>B17CF9E018EF95610063395D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B17E35881900BC6900766DC6</key>
 		<dict>
 			<key>primary</key>
 			<true/>

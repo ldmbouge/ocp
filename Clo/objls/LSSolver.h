@@ -20,6 +20,7 @@
 -(id<ORSearchObjectiveFunction>) objective;
 
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;
+-(void)swap:(id<ORIntVar>)x with:(id<ORIntVar>)y;
 
 -(ORBool)isTrue;
 
@@ -31,9 +32,12 @@
 -(ORInt)getVarWeightedViolations:(id<ORIntVar>)var;
 -(ORInt)getVarUnweightedViolations:(id<ORIntVar>)var;
 
+-(ORInt)getCstrViolations:(id<ORConstraint>)cstr;
 -(ORInt)getVarViolations:(id<ORIntVar>)var forConstraint:(id<ORConstraint>)c;
 
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<ORIntVar>)x with:(id<ORIntVar>)y;
+-(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v inConstraint:(id<ORConstraint>)c;
 -(ORInt)weightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
 -(ORInt)unweightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
 
@@ -41,6 +45,8 @@
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
+-(void)selectRandom:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter do:(void(^)(ORInt))block;
+-(void)sweep:(void(^)(id<ORSweep>))block;
 -(void)solve:(ORClosure)block;
 
 -(id<ORSolutionPool>) solutionPool;

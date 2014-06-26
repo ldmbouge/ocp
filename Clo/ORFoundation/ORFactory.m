@@ -54,6 +54,12 @@
    [cp trackMutable: o];
    return o;
 }
++(id<ORRandomPermutation>) randomPermutation:(id<ORIntIterable>)onSet
+{
+   id<ORRandomPermutation> o = [[ORRandomPermutationI alloc] initWithSet:onSet];
+   return o;
+}
+
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt
 {
    id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt];
@@ -194,6 +200,15 @@
         return (ORFloat)[[arr at: i] literal];
     }];
 }
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array
+{
+   ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:RANGE(tracker,0,(ORInt)[array count] - 1)];
+   [o.range enumerateWithBlock:^(ORInt k) {
+      [o set:[array objectAtIndex:k] at:k];
+   }];
+   return [tracker trackMutable:o];
+}
+
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(id(^)(ORInt))clo
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
@@ -366,6 +381,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackMutable: o];
    return o;
 }
++(id<ORSweep>) sweeper:(id<ORTracker>)tracker
+{
+   id<ORSweep> sweeper = [[ORSweeper alloc] init];
+   [tracker trackMutable:sweeper];
+   return sweeper;
+}
+
 +(id<ORIntVar>) reifyView:(id<ORTracker>)model var:(id<ORIntVar>) x eqi:(ORInt)c
 {
 #if USEVIEWS==1

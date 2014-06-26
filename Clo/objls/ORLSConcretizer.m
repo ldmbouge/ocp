@@ -56,12 +56,16 @@
 -(id) scaleVar:(id<ORVar>) x coef:(ORInt)a
 {
    [x visit:self];
-   LSIntVar* cv = _gamma[getId(x)];
-   id<ORIntRange> d = [cv domain];
-   id<ORIntRange> nd = a > 0 ? RANGE(_engine,d.low * a,d.up * a) : RANGE(_engine,d.up * a,d.low * a);
-   return [LSFactory intVarView:_engine domain:nd fun:^ORInt{
-      return cv.value * a;
-   } src:@[_gamma[getId(x)]]];
+   if (a == 1) {
+      return _gamma[x.getId];
+   } else {
+      LSIntVar* cv = _gamma[getId(x)];
+      id<ORIntRange> d = [cv domain];
+      id<ORIntRange> nd = a > 0 ? RANGE(_engine,d.low * a,d.up * a) : RANGE(_engine,d.up * a,d.low * a);
+      return [LSFactory intVarView:_engine domain:nd fun:^ORInt{
+         return cv.value * a;
+      } src:@[_gamma[getId(x)]]];
+   }
 }
 -(id) concreteArray: (id<ORVarArray>) x
 {
@@ -172,6 +176,42 @@
 -(void) visitTable:(id<ORTable>) v
 {
 }
+-(void) visitLEqual: (id<ORLEqual>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<LSIntVar> left  = [self scaleVar:[cstr left] coef:[cstr coefLeft]];
+      id<LSIntVar> right = [self scaleVar:[cstr right] coef:[cstr coefRight]];
+      id<LSConstraint> concreteCstr = [LSFactory lEqual: left  to: right plus: [cstr cst]];
+      [_engine addConstraint: concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitNEqualc: (id<ORNEqualc>)cstr
+{
+   if (_gamma[getId(cstr)] == NULL) {
+      id<LSIntVar> left = [self concreteVar:[cstr left]];
+      id<LSConstraint> concreteCstr = [LSFactory nEqualc: left to: [cstr cst]];
+      [_engine addConstraint:concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[getId(cstr)] = concreteCstr;
+   }
+}
+-(void) visitOr: (id<OROr>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<LSIntVar> res = [self concreteVar:[cstr res]];
+      id<LSIntVar> left = [self concreteVar:[cstr left]];
+      id<LSIntVar> right = [self concreteVar:[cstr right]];
+      id<LSConstraint> concreteCstr = [LSFactory boolean: left or: right equal: res];
+      [_engine add: concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+
 -(void) visitLinearGeq: (id<ORLinearGeq>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"reached visitLinearGeq in CPConcretizer"];
@@ -202,6 +242,18 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitCardinality: (id<ORCardinality>) cstr
+{
+   if (_gamma[getId(cstr)] == NULL) {
+      id<LSIntVarArray> cx = [self concreteArray:[cstr array]];
+      id<ORIntArray>    low = [cstr low],up = [cstr up];
+      id<LSConstraint> concreteCstr = [LSFactory cardinality:_engine low:low vars:cx up:up];
+      [_engine addConstraint:concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[getId(cstr)] = concreteCstr;
+   }
+}
+
 -(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

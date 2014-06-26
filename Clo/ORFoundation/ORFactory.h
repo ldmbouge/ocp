@@ -16,6 +16,7 @@
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORAnnotation.h>
+#import <ORFoundation/ORSelector.h>
 //#import "ORConstraintI.h"
 
 @protocol ORSearchEngine;
@@ -33,6 +34,7 @@
 +(id<ORRandomStream>) randomStream: (id<ORTracker>) tracker;
 +(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) tracker;
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) tracker range: (id<ORIntRange>) r;
++(id<ORRandomPermutation>) randomPermutation:(id<ORIntIterable>)onSet;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
 +(id<ORGroup>)group:(id<ORTracker>)model;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;
@@ -58,6 +60,7 @@
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORFloat(^)(ORInt,ORInt)) clo;
 +(id<ORFloatArray>) floatArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr;
 
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(id(^)(ORInt))clo;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORIdArray>) sort:(id<ORTracker>)tracker idArray:(id<ORIdArray>)array with:(ORFloat(^)(id))f;
@@ -84,7 +87,7 @@
 +(id<IntEnumerator>) intEnumerator: (id<ORTracker>) cp over: (id<ORIntIterable>) r;
 +(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order;
 +(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order;
-
++(id<ORSweep>) sweeper:(id<ORTracker>)tracker;
 +(id<ORIntVar>) reifyView:(id<ORTracker>) tracker var:(id<ORIntVar>) x eqi:(ORInt)c;
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker value: (ORInt) value;
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker domain: (id<ORIntRange>) r;

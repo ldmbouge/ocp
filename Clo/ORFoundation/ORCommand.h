@@ -21,10 +21,6 @@
 @protocol ORConstraint;
 
 @interface ORCommandList : NSObject<NSCoding,NSCopying> {
-   struct CNode {
-      id<ORConstraint>    _c;
-      struct CNode*    _next;
-   };
    struct CNode* _head;
    @package
    ORInt _ndId;  // node id

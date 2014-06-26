@@ -26,6 +26,11 @@ typedef struct {
 
 @implementation ORCommandList
 
+struct CNode {
+   id<ORConstraint>    _c;
+   struct CNode*    _next;
+};
+
 static __thread ComListPool* pool = NULL;
 
 +(ComListPool*)instancePool

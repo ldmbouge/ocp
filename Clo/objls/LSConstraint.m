@@ -12,8 +12,10 @@
 #import "LSConstraint.h"
 #import "LSEngineI.h"
 #import "LSAllDifferent.h"
+#import "LSCardinality.h"
 #import "LSSystem.h"
 #import "LSLinear.h"
+#import "LSBasic.h"
 
 @implementation LSConstraint
 -(id)init:(LSEngineI*)engine
@@ -71,6 +73,12 @@
    [e trackMutable:c];
    return c;
 }
++(id<LSConstraint>)cardinality:(id<LSEngine>)e low:(id<ORIntArray>)lb vars:(id<LSIntVarArray>)x up:(id<ORIntArray>)ub
+{
+   LSCardinality* c = [[LSCardinality alloc] init:e low:lb vars:x up:ub];
+   [e trackMutable:c];
+   return c;
+}
 +(id<LSConstraint>) packing:(id<LSIntVarArray>)x weight: (id<ORIntArray>)weight capacity: (id<ORIntArray>)capacity;
 {
    LSPacking* c = [[LSPacking alloc] init:x weight:weight cap:capacity];
@@ -108,5 +116,23 @@
    LSLinear* c = [[LSLinear alloc] init:e coefs:coef vars:x type:LSTYEqual constant:cst];
    [e trackMutable:c];
    return c;
+}
++(id<LSConstraint>) lEqual: (id<LSIntVar>)x to: (id<LSIntVar>) y plus:(ORInt)c
+{
+   LSLEqual* cstr = [[LSLEqual alloc] init:[x engine] x:x leq:y plus:c];
+   [[x engine] trackMutable:cstr];
+   return cstr;
+}
++(id<LSConstraint>) nEqualc: (id<LSIntVar>)x to: (ORInt) c
+{
+   LSNEqualc* cstr = [[LSNEqualc alloc] init:[x engine] x:x neq:c];
+   [[x engine] trackMutable:cstr];
+   return cstr;
+}
++(id<LSConstraint>) boolean:(id<LSIntVar>)x or:(id<LSIntVar>)y equal:(id<LSIntVar>)b;
+{
+   LSOr* o = [[LSOr alloc] init:[x engine] boolean:b equal:x or: y];
+   [[x engine] trackMutable:o];
+   return o;
 }
 @end

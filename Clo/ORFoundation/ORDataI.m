@@ -16,6 +16,7 @@
 #import <sys/resource.h>
 #import <unistd.h>
 #import <ORUtilities/ORConcurrency.h>
+#import <ORFoundation/ORFactory.h>
 
 @implementation NSObject (Concretization)
 -(void) setImpl: (id) impl
@@ -477,9 +478,7 @@ static ORInt _deterministic;
 }
 @end
 
-@implementation ORUniformDistributionI
-{
-   ORUInt           _name;
+@implementation ORUniformDistributionI {
    id<ORIntRange>   _range;
    ORRandomStreamI* _stream;
    ORInt            _size;
@@ -501,13 +500,50 @@ static ORInt _deterministic;
 {
    return _range.low + [_stream next] % _size;
 }
--(void)setId:(ORUInt)name
-{
-   _name = name;
-}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitUniformDistribution:self];
+}
+@end
+
+@implementation ORRandomPermutationI {
+   id<ORIntIterable> _theSet;
+   id<ORIntSet> _thePool;
+   id<ORRandomStream> _stream;
+}
+-(ORRandomPermutationI*)initWithSet:(id<ORIntIterable>)set
+{
+   self = [super init];
+   _theSet = set;
+   _thePool = [ORFactory intSet:nil];
+   [set enumerateWithBlock:^(ORInt i) {
+      [_thePool insert:i];
+   }];
+   _stream = [[ORRandomStreamI alloc] init];
+   return self;
+}
+-(void)dealloc
+{
+   [_thePool release];
+   [super dealloc];
+}
+-(ORInt)next
+{
+   ORLong v = [_stream next];
+   if ([_thePool size] == 0)
+      @throw [[ORExecutionError alloc] initORExecutionError:"empty set for permutation next"];
+   ORInt r = v % [_thePool size];
+   ORInt rv = [_thePool atRank:r];
+   [_thePool delete:rv];
+   return rv;
+}
+-(void)reset
+{
+   while ([_thePool size] > 0)
+      [_thePool delete:[_thePool min]];
+   [_theSet enumerateWithBlock:^(ORInt i) {
+      [_thePool  insert:i];
+   }];
 }
 @end
 

@@ -108,7 +108,10 @@
    free(_array);
    [super dealloc];
 }
-
+-(int*)base
+{
+   return _array;
+}
 -(ORInt) at: (ORInt) value
 {
    if (value < _low || value > _up)

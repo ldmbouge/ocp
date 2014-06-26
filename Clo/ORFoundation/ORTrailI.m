@@ -291,12 +291,12 @@ TRDouble  makeTRDouble(ORTrailI* trail,double val)
    return (TRDouble){val,[trail magic]-1};
 }
 
-ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
+ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
 {
    TRInt* ei = a._entries + i;
-   if (ei->_mgc != [a._trail magic]) {
-      trailIntFun((ORTrailI*)a._trail, & ei->_val);
-      ei->_mgc = [a._trail magic];
+   if (ei->_mgc != [trail magic]) {
+      trailIntFun(trail, & ei->_val);
+      ei->_mgc = [trail magic];
    }
    return ei->_val = val;
 }
@@ -377,14 +377,14 @@ void  assignTRDouble(TRDouble* v,double val,ORTrailI* trail)
 }
 void  assignTRId(TRId* v,id val,ORTrailI* trail)
 {
-   [trail trailId:&v->_val];
-   [v->_val release];
-   v->_val = [val retain];
+   [trail trailId:v];
+   [*v release];
+   *v = [val retain];
 }
 void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
 {
-   inline_trailIdNCFun(trail, &v->_val);
-   v->_val = val;
+   inline_trailIdNCFun(trail, v);
+   *v = val;
 }
 ORInt getTRIntArray(TRIntArray a,int i)
 {
@@ -580,7 +580,7 @@ ORInt trailMagic(ORTrailI* trail)
 
 TRIntArray makeTRIntArray(ORTrailI* trail,int nb,int low)
 {
-   TRIntArray x = {trail,nb,low,NULL};
+   TRIntArray x = {nb,low,NULL};
    x._entries = malloc(sizeof(TRInt)*nb);
    for(int i = 0; i < nb; i++)
       x._entries[i] = makeTRInt(trail,0);

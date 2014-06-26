@@ -10,7 +10,16 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORData.h>
+#import <ORUtilities/ORUtilities.h>
+
+@class ORVisitor;
+
+@protocol ORObject <NSObject>
+-(ORInt) getId;
+-(void)setId:(ORUInt)name;
+-(void) visit: (ORVisitor*) visitor;
+@end;
+
 
 @interface ORObject : NSObject<ORObject> {
 @public

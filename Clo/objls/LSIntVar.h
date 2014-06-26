@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objls/LSVar.h>
 #import "LSPriority.h"
+#import <objc/runtime.h>
 
 @protocol LSEngine;
 @class LSPropagator;
@@ -36,6 +37,7 @@ typedef enum LSStatus {
 -(id)initWithEngine:(id<LSEngine>)engine domain:(id<ORIntRange>)d;
 -(LSEngineI*)engine;
 -(id<ORIntRange>)domain;
+-(void)setValueSilent:(ORInt)v;
 -(void)setValue:(ORInt)v;
 -(ORInt)value;
 -(ORInt)incr;
@@ -52,5 +54,12 @@ typedef enum LSStatus {
 -(void)scheduleOutbound:(LSEngineI*)engine;
 @end
 
-inline static ORInt getLSIntValue(LSIntVar* x) { return x->_value;}
+extern Class __lsivc;
+
+inline static ORInt getLSIntValue(LSIntVar* x)
+{
+   if (*(Class*)x == __lsivc)
+      return x->_value;
+   else return [x value];
+}
 

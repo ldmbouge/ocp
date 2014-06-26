@@ -2659,6 +2659,183 @@
 }
 @end
 
+@interface VarCollector : ORNOopVisit {
+   NSMutableSet* _theSet;
+}
+-(id)init:(NSMutableSet*)theSet;
++(NSSet*)collect:(id<ORExpr>)e;
+@end
+
+@implementation VarCollector
++(NSSet*)collect:(id<ORExpr>)e
+{
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:4];
+   VarCollector* vc = [[VarCollector alloc] init:rv];
+   [e visit:vc];
+   [vc release];
+   return rv;
+}
+-(id)init:(NSMutableSet*)theSet
+{
+   self = [super init];
+   _theSet = theSet;
+   return self;
+}
+-(void) visitIntVar: (id<ORIntVar>) v
+{
+   [_theSet addObject:v];
+}
+-(void) visitBitVar: (id<ORBitVar>) v
+{
+   [_theSet addObject:v];
+}
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+   [_theSet addObject:v];
+}
+-(void) visitIntVarLitEQView:(id<ORIntVar>)v
+{
+   [_theSet addObject:v];
+}
+-(void) visitAffineVar:(id<ORIntVar>) v
+{
+   [_theSet addObject:v];
+}
+-(void) visitIntegerI: (id<ORInteger>) e
+{}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{}
+-(void) visitExprPlusI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprMinusI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprMulI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprDivI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprModI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprMinI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprMaxI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprEqualI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprNEqualI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprLEqualI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprSumI: (ORExprSumI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprProdI: (ORExprProdI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggMinI: (ORExprAggMinI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggMaxI: (ORExprAggMaxI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprSquareI:(ORExprSquareI*)e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprNegateI:(ORExprNegateI*)e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprCstSubI: (ORExprCstSubI*) e
+{
+   [[e index] visit:self];
+}
+-(void) visitExprCstFloatSubI:(ORExprCstFloatSubI*)e
+{
+   [[e index] visit:self];
+}
+-(void) visitExprDisjunctI:(ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprConjunctI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprImplyI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggAndI: (ORExprAggAndI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprVarSubI: (ORExprVarSubI*) e
+{
+   [[e index] visit:self];
+   id<ORIntVarArray> a = [e array];
+   for(id<ORIntVar> ak in a)
+       [_theSet addObject:ak];
+}
+-(void) visitExprMatrixVarSubI:(ORExprMatrixVarSubI*)e
+{
+   [[e index0] visit:self];
+   [[e index1] visit:self];
+   id<ORIntVarMatrix> m = [e matrix];
+   ORInt sz = (ORInt)[m count];
+   for(ORInt i=0;i < sz;i++)
+      [_theSet addObject:[m  flat:i]];
+}
+@end
+
 @implementation ORAlgebraicConstraintI {
    id<ORRelation> _expr;
 }
@@ -2684,8 +2861,7 @@
 }
 -(NSSet*)allVars
 {
-   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:4] autorelease];
-   //TODO:ldm
+   NSSet* ms = [[VarCollector collect:_expr] autorelease];
    return ms;
 }
 @end

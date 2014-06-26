@@ -823,6 +823,15 @@
    }
    return M;
 }
+-(ORBool) allBound:(id<ORIdArray>) x
+{
+   ORInt low = x.low,up = x.up;
+   for(ORInt i =low;i <= up;i++) {
+      if (![self bound:x[i]])
+         return NO;
+   }
+   return YES;
+}
 -(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
 {
    [_search try: ^() { [self labelBV:x at:i with:false];}
@@ -1319,7 +1328,7 @@
    id<ORModelMappings> _maps;
    ORVisitor*    _concretizer;
 }
--(id)init:(CPCoreSolver*)theSolver
+-(id)init:(id<CPCommonProgram>)theSolver
 {
    self = [super init];
    _engine  = [theSolver engine];

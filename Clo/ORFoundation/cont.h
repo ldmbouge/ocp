@@ -17,15 +17,6 @@
 #include <stdio.h>
 #include "context.h"
 
-typedef struct  {
-   Class poolClass;
-   ORUInt low;
-   ORUInt high;
-   ORUInt sz;
-   ORUInt nbCont;
-   id*          pool;
-} ContPool;
-
 @interface NSCont : NSObject {
 @private
 #if defined(__x86_64__)
