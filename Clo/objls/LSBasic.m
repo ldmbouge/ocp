@@ -329,3 +329,65 @@ inline static ORInt presentIn(ORInt key,ORInt* t,ORInt sz)
    else return 0;
 }
 @end
+
+@implementation LSMinimize {
+   id<LSIntVarArray> _src;
+   id<LSIntVar>     _zero;
+}
+-(id)init:(id<LSEngine>)engine with:(id<LSIntVar>)x
+{
+   self  = [super init:engine];
+   _x = x;
+   return self;
+}
+-(void)post
+{
+   _zero = [LSFactory intVar:_engine domain:RANGE(_engine,0,0)];
+}
+-(id<LSIntVarArray>)variables
+{
+   if (!_src) {
+      _src = [LSFactory intVarArray:(id)_engine range:RANGE((id)_engine,0,0)];
+      _src[0] = _x;
+   }
+   return _src;
+}
+-(ORBool)isTrue
+{
+   return NO;
+}
+-(ORInt)getViolations
+{
+   return getLSIntValue(_x);
+}
+-(ORInt)getVarViolations:(id<LSIntVar>)var
+{
+   if (getId(var) == getId(_x))
+      return getLSIntValue(_x);
+   else return 0;
+}
+-(id<LSIntVar>)violations
+{
+   return _x;
+}
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var
+{
+   if (getId(var) == getId(_x))
+      return _x;
+   else return _zero;
+}
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   if (getId(x) == getId(_x))
+      return max(v,_x.domain.low) - getLSIntValue(_x);
+   else return 0;
+}
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   if (getId(x) == getId(_x))
+      return max(getLSIntValue(y),_x.domain.low) - getLSIntValue(x);
+   else if (getId(y) == getId(_x))
+      return max(getLSIntValue(x),_x.domain.low) - getLSIntValue(y);
+   else return 0;
+}
+@end

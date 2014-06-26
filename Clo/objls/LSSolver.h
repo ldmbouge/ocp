@@ -17,6 +17,7 @@
 @protocol LSConstraint;
 
 @protocol LSProgram<ORGamma,ORTracker>
+-(void)setHard:(NSArray*)hardCstrs;
 -(id<ORSearchObjectiveFunction>) objective;
 
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;

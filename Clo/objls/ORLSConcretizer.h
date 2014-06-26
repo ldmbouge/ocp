@@ -15,13 +15,16 @@
 
 @interface ORLSConcretizer  : ORVisitor<NSObject>
 {
-   id<LSProgram>      _solver;
-   id<LSEngine>       _engine;
-   id*                 _gamma;
-   id<ORAnnotation>    _notes;
-   NSMutableArray*  _allCstrs;
+   id<LSProgram>        _solver;
+   id<LSEngine>         _engine;
+   id*                   _gamma;
+   id<ORAnnotation>      _notes;
+   NSMutableArray*    _allCstrs;
+   NSMutableArray*   _hardCstrs;
+   id<LSConstraint>  _objective;
 }
 -(ORLSConcretizer*) initORLSConcretizer: (id<LSProgram>) solver annotation:(id<ORAnnotation>)notes;
 -(id<LSConstraint>)wrapUp;
+-(NSMutableArray*)hardSet;
 @end
 

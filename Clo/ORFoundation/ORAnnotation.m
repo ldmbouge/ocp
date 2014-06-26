@@ -138,6 +138,10 @@
 {
    return [self noteConstraint: cstr consistency: cl];
 }
+-(id<ORConstraint>) hard:(id<ORConstraint>) cstr
+{
+   return [self noteConstraint:cstr consistency:HardConsistency];
+}
 -(id<ORConstraint>) dc: (id<ORConstraint>) cstr
 {
    return [self noteConstraint: cstr consistency: DomainConsistency];
@@ -201,7 +205,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-   static const char* names[] = {"dom","rng","val","relax","def"};
+   static const char* names[] = {"dom","rng","val","relax","hard","soft","def"};
    [buf appendFormat:@"c=%s",names[_cLevel]];
    return buf;
 }

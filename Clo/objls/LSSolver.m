@@ -20,6 +20,7 @@
 
 @implementation LSSolver {
    LSLRSystem* _sys;
+   NSArray*    _hard;
 }
 
 -(id)initLSSolver
@@ -27,12 +28,18 @@
    self = [super init];
    _engine = [[LSEngineI alloc] initEngine];
    _pool = [ORFactory createSolutionPool];
+   _hard = nil;
    return self;
 }
 -(void)dealloc
 {
    [_engine release];
    [super dealloc];
+}
+-(void)setHard:(NSArray*)hc
+{
+   [_hard release];
+   _hard = [hc retain];
 }
 -(void)setRoot:(LSLRSystem*)sys
 {
@@ -41,6 +48,10 @@
 -(void)close
 {
    [_engine close];
+   // [ldm] Now that the solver is closed, we can initialize the hard constraints.
+   for(id<LSConstraint> c in _hard) {
+      [c hardInit];
+   }
 }
 -(void)setSource:(id<ORModel>)m
 {
@@ -106,7 +117,7 @@
 }
 -(void)solve:(ORClosure)block
 {
-   [_engine close];
+   [self close];
    block();
    //   if ([_sys violations].value == 0) {
    //save solution
@@ -312,9 +323,10 @@
       [c visit: concretizer];
    [[m objective] visit:concretizer];
    id<LSConstraint> sys = [concretizer wrapUp];
-   [concretizer release];
    [program setRoot:sys];
    [program setSource:m];
+   [program setHard:[concretizer hardSet]];
+   [concretizer release];
    return program;
 }
 

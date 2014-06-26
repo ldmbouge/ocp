@@ -17,6 +17,8 @@ typedef enum {
    RangeConsistency,
    ValueConsistency,
    RelaxedConsistency,
+   HardConsistency,
+   SoftConsistency,
    Default
 } ORCLevel;
 
@@ -29,7 +31,7 @@ typedef enum {
 -(id<ORConstraint>) vc: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) relax: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) cstr: (id<ORConstraint>) cstr consistency: (ORCLevel) cl;
-
+-(id<ORConstraint>) hard:(id<ORConstraint>) cstr;
 -(void) alldifferent: (ORCLevel) cl;
 
 -(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) o;

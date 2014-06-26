@@ -25,6 +25,7 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+@optional -(void)hardInit;
 @end
 
 @interface LSConstraint : ORObject<LSConstraint> {
@@ -52,4 +53,5 @@
 +(id<LSConstraint>) lEqual: (id<LSIntVar>)x to: (id<LSIntVar>) y plus:(ORInt)c;
 +(id<LSConstraint>) nEqualc: (id<LSIntVar>)x to: (ORInt) c;
 +(id<LSConstraint>) boolean:(id<LSIntVar>)x or:(id<LSIntVar>)y equal:(id<LSIntVar>)b;
++(id<LSConstraint>) minimize:(id<LSEngine>)e var:(id<LSIntVar>)x;
 @end

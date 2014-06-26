@@ -99,6 +99,12 @@
    [[x[x.range.low] engine] trackMutable:c];
    return c;
 }
++(id<LSConstraint>) minimize:(id<LSEngine>)e var:(id<LSIntVar>)x
+{
+   LSMinimize* c = [[LSMinimize alloc] init:e with:x];
+   [e trackMutable:c];
+   return c;
+}
 +(id<LSConstraint>)system:(id<LSEngine>)e with:(NSArray*)ac
 {
    LSSystem* c = [[LSSystem alloc] init:e with:ac];

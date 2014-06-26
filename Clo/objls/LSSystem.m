@@ -386,7 +386,18 @@ typedef struct LSConstraintList {
 {
    return getLSIntValue(_viol);
 }
-
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSLRSystem: %p",self];
+   ORInt i = 0;
+   for(id<LSConstraint> c in _cstrs) {
+      [buf appendFormat:@"\tW=%d \tC=%@\n",_lambda[i].value,c];
+      i++;
+   }
+   [buf appendString:@">"];
+   return buf;
+}
 
 -(ORInt)getVarUnweightedViolations:(id<LSIntVar>)var
 {

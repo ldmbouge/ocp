@@ -25,12 +25,15 @@
    _gamma = [solver gamma];
    _notes = notes;
    _allCstrs = [[NSMutableArray alloc] initWithCapacity:64];
+   _hardCstrs = [[NSMutableArray alloc] initWithCapacity:64];
+   _objective = nil;
    return self;
 }
 -(void) dealloc
 {
    [_solver release];
    [_allCstrs release];
+   [_hardCstrs release];
    [super dealloc];
 }
 - (void)doesNotRecognizeSelector:(SEL)aSelector
@@ -42,9 +45,19 @@
 
 -(id<LSConstraint>)wrapUp
 {
-   return [_engine addConstraint:[LSFactory lrsystem:_engine with:_allCstrs]];
+   id<LSConstraint> sys = [LSFactory lrsystem:_engine with:_allCstrs];
+   if (_objective) {
+      id<LSConstraint> com = [LSFactory lrsystem:_engine with:@[sys,_objective]];
+      [_engine addConstraint:sys];
+      return [_engine addConstraint:com];
+   } else {
+      return [_engine addConstraint:sys];
+   }
 }
-
+-(NSMutableArray*)hardSet
+{
+   return _hardCstrs;
+}
 // Helper function
 -(id) concreteVar: (id<ORVar>) x
 {
@@ -240,6 +253,9 @@
       [_engine addConstraint: concreteCstr];
       [_allCstrs addObject:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
+      ORCLevel annotation = [_notes levelFor:cstr];
+      if (annotation == HardConsistency)
+          [_hardCstrs addObject:concreteCstr];
    }
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
@@ -251,6 +267,9 @@
       [_engine addConstraint:concreteCstr];
       [_allCstrs addObject:concreteCstr];
       _gamma[getId(cstr)] = concreteCstr;
+      ORCLevel annotation = [_notes levelFor:cstr];
+      if (annotation == HardConsistency)
+         [_hardCstrs addObject:concreteCstr];
    }
 }
 
@@ -287,7 +306,13 @@
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeVar not yet implemented"];
+   if (_gamma[getId(v)] == NULL) {
+      id<LSIntVar> theVar = [self concreteVar:[v var]];
+      id<LSConstraint> concreteCstr = [LSFactory minimize:_engine var:theVar];
+      [_engine addConstraint:concreteCstr];
+      _objective = concreteCstr;
+      _gamma[getId(v)] = concreteCstr;
+   }
 }
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {

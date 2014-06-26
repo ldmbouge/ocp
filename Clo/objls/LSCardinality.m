@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "LSCardinality.h"
+#import <ORFoundation/ORSetI.h>
 #import <objls/LSFactory.h>
 #import "LSEngineI.h"
 #import "LSGlobalInvariants.h"
@@ -139,6 +140,31 @@ static inline ORInt max3(ORInt a,ORInt b,ORInt c)
    [_engine add:[LSFactory sum: _sum over:_vv]];
    [_engine add:[LSFactory gelt:_engine x:_x card:_vv result:_xv]];
 }
+-(void)hardInit
+{
+   ORInt slb = sumSet(_lb.range, ^ORInt(ORInt i) { return [_lb at:i];});
+   ORInt sub = sumSet(_lb.range, ^ORInt(ORInt i) { return [_ub at:i];});
+   if (slb > 0)
+      @throw [[ORExecutionError alloc] initORExecutionError:"Cardinality constraint cannot be hard if sum of lower bounds is > 0"];
+   if (sub != [_x count])
+      @throw [[ORExecutionError alloc] initORExecutionError:"Cardinality constraint cannot be hard if sum of upper bounds is not tight"];
+   [_engine atomic:^{
+      ORInt vals[sub];
+      ORInt k = 0;
+      for(ORInt i =_ub.range.low;i <= _ub.range.up;i++)
+         for(ORInt j=0;j < [_ub at:i];j++)
+            vals[k++] = i;
+      id<ORIntRange> AV = [[ORIntRangeI alloc] initORIntRangeI: 0 up: sub-1];
+      id<ORRandomPermutation> p = [ORFactory randomPermutation:AV];
+      for(ORInt k = _x.range.low; k <= _x.range.up;k++) {
+         ORInt theValue = vals[p.next];
+         [_x[k] setValue:theValue];
+      }
+      [AV release];
+      [p release];
+   }];
+}
+
 -(ORBool)isTrue
 {
    return getLSIntValue(_sum) == 0;

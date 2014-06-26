@@ -46,7 +46,7 @@ int main(int argc, const char * argv[])
                [inScene insert:(ORInt) [[actor[j] stringValue] integerValue]];
             sc[i] = inScene;
          }
-         
+         int vals[5] = {5,5,5,5,5};
          ORInt maxScene = (ORInt) [sc count];
          id<ORIntRange> Actors = RANGE(model,0,(ORInt)[an count] - 1);
          id<ORIntRange> Scenes = RANGE(model,0,maxScene-1);
@@ -59,7 +59,8 @@ int main(int argc, const char * argv[])
          }];
          id<ORIntVarArray> __block shoot = [ORFactory intVarArray:model range:Scenes domain:Days];
          id<ORIntArray> low = [ORFactory intArray:model range:Days value:0];
-         id<ORIntArray> up  = [ORFactory intArray:model range:Days value:5];
+//         id<ORIntArray> up  = [ORFactory intArray:model range:Days value:5];
+         id<ORIntArray> up  = [ORFactory intArray:model range:Days values:vals];
          
          [notes dc:[model add:[ORFactory cardinality:shoot low:low up:up]]];
          [model minimize:Sum2(model, a, Actors, d, Days,
@@ -77,6 +78,11 @@ int main(int argc, const char * argv[])
             found = YES;
          }];
          [cp solve:^{
+//            int sol[19] = {2,3,0,1,3,2,1,3,0,0,1,3,1,2,3,0,0,2,1};
+//            for(ORInt i=0;i < maxScene;i++) {
+//               [cp label:shoot[i] with:sol[i]];
+//               NSLog(@"Passed: %d",i);
+//            }
             while (![cp allBound:shoot]) {
                ORInt s;
                {
