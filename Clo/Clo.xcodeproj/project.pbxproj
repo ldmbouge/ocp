@@ -1205,13 +1205,6 @@
 		B17715B61557D9D200BA14BF /* CPTableI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17715B41557D9D200BA14BF /* CPTableI.m */; };
 		B17ABE9213CC852C00DC7288 /* CPIntVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = B17ABE9013CC852C00DC7288 /* CPIntVarI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B17ABE9313CC852C00DC7288 /* CPIntVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17ABE9113CC852C00DC7288 /* CPIntVarI.m */; };
-		B17E35691900BB5800766DC6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
-		B17E35751900BBB200766DC6 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */; };
-		B17E35801900BBDE00766DC6 /* objls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BE8BB981857A41600D99445 /* objls.framework */; };
-		B17E35811900BBDE00766DC6 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B17E35821900BBDE00766DC6 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
-		B17E35831900BBDE00766DC6 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
-		B17E35841900BBDE00766DC6 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B17E358A1900BC6900766DC6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B17E358D1900BC6900766DC6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B17E358C1900BC6900766DC6 /* main.m */; };
 		B17E35911900BC6900766DC6 /* progressiveLS.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B17E35901900BC6900766DC6 /* progressiveLS.1 */; };
@@ -4515,35 +4508,35 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
-		B17E35761900BBBF00766DC6 /* PBXContainerItemProxy */ = {
+		B17E359C1900BF8100766DC6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
 			remoteInfo = ORFoundation;
 		};
-		B17E35781900BBC400766DC6 /* PBXContainerItemProxy */ = {
+		B17E359E1900BF8100766DC6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
 			remoteInfo = ORUtilities;
 		};
-		B17E357A1900BBCD00766DC6 /* PBXContainerItemProxy */ = {
+		B17E35A01900BF8100766DC6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
 			remoteInfo = ORModeling;
 		};
-		B17E357C1900BBCD00766DC6 /* PBXContainerItemProxy */ = {
+		B17E35A21900BF8100766DC6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
 			remoteInfo = ORProgram;
 		};
-		B17E357E1900BBCD00766DC6 /* PBXContainerItemProxy */ = {
+		B17E35A41900BF8100766DC6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -5515,15 +5508,6 @@
 			dstSubfolderSpec = 0;
 			files = (
 				B177159D155798AA00BA14BF /* Euler.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		B17E35661900BB5800766DC6 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -7456,19 +7440,6 @@
 				5B920ECD15A432E000AD0820 /* ORFoundation.framework in Frameworks */,
 				B17715A315579B4900BA14BF /* objcp.framework in Frameworks */,
 				B1771596155798AA00BA14BF /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B17E35651900BB5800766DC6 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B17E35801900BBDE00766DC6 /* objls.framework in Frameworks */,
-				B17E35811900BBDE00766DC6 /* ORFoundation.framework in Frameworks */,
-				B17E35821900BBDE00766DC6 /* ORModeling.framework in Frameworks */,
-				B17E35831900BBDE00766DC6 /* ORProgram.framework in Frameworks */,
-				B17E35841900BBDE00766DC6 /* ORUtilities.framework in Frameworks */,
-				B17E35691900BB5800766DC6 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11910,6 +11881,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				B17E359D1900BF8100766DC6 /* PBXTargetDependency */,
+				B17E359F1900BF8100766DC6 /* PBXTargetDependency */,
+				B17E35A11900BF8100766DC6 /* PBXTargetDependency */,
+				B17E35A31900BF8100766DC6 /* PBXTargetDependency */,
+				B17E35A51900BF8100766DC6 /* PBXTargetDependency */,
 			);
 			name = progressiveLS;
 			productName = progressiveLS;
@@ -13413,14 +13389,6 @@
 			files = (
 				B1771599155798AA00BA14BF /* main.m in Sources */,
 				5B6CFDA516D93A2500BCB95F /* ORCmdLineArgs.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B17E35641900BB5800766DC6 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B17E35751900BBB200766DC6 /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15810,30 +15778,30 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B17715A115579B3900BA14BF /* PBXContainerItemProxy */;
 		};
-		B17E35771900BBBF00766DC6 /* PBXTargetDependency */ = {
+		B17E359D1900BF8100766DC6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
-			targetProxy = B17E35761900BBBF00766DC6 /* PBXContainerItemProxy */;
+			targetProxy = B17E359C1900BF8100766DC6 /* PBXContainerItemProxy */;
 		};
-		B17E35791900BBC400766DC6 /* PBXTargetDependency */ = {
+		B17E359F1900BF8100766DC6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
-			targetProxy = B17E35781900BBC400766DC6 /* PBXContainerItemProxy */;
+			targetProxy = B17E359E1900BF8100766DC6 /* PBXContainerItemProxy */;
 		};
-		B17E357B1900BBCD00766DC6 /* PBXTargetDependency */ = {
+		B17E35A11900BF8100766DC6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
-			targetProxy = B17E357A1900BBCD00766DC6 /* PBXContainerItemProxy */;
+			targetProxy = B17E35A01900BF8100766DC6 /* PBXContainerItemProxy */;
 		};
-		B17E357D1900BBCD00766DC6 /* PBXTargetDependency */ = {
+		B17E35A31900BF8100766DC6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B68117F161F98FB00F4480F /* ORProgram */;
-			targetProxy = B17E357C1900BBCD00766DC6 /* PBXContainerItemProxy */;
+			targetProxy = B17E35A21900BF8100766DC6 /* PBXContainerItemProxy */;
 		};
-		B17E357F1900BBCD00766DC6 /* PBXTargetDependency */ = {
+		B17E35A51900BF8100766DC6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BE8BB971857A41600D99445 /* objls */;
-			targetProxy = B17E357E1900BBCD00766DC6 /* PBXContainerItemProxy */;
+			targetProxy = B17E35A41900BF8100766DC6 /* PBXContainerItemProxy */;
 		};
 		B181E12415D746A200AB44DA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -21896,15 +21864,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B17E35741900BB5900766DC6 /* Build configuration list for PBXNativeTarget "testLS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B17E35711900BB5900766DC6 /* Debug */,
-				B17E35721900BB5900766DC6 /* Coverage */,
-				B17E35731900BB5900766DC6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-		};
 		B17E35921900BC6A00766DC6 /* Build configuration list for PBXNativeTarget "progressiveLS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -21913,6 +21872,7 @@
 				B17E35951900BC6A00766DC6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B181E12015D7465500AB44DA /* Build configuration list for PBXNativeTarget "sportModel" */ = {
 			isa = XCConfigurationList;
