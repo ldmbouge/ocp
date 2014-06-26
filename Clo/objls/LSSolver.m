@@ -95,6 +95,9 @@
    return [_engine trackConstraintInGroup:obj];
 }
 // [pvh] what are these guys?
+// [ldm] I need to check that they work. But same idea as for CP: prevent recreating the same
+//       object many times over (e.g., range(0,1)). Here we delegate to the engine the responsibility
+//       to maintain the cache.
 -(id) inCache:(id)obj
 {
    return [_engine inCache:obj];
@@ -124,6 +127,12 @@
    id<ORSolution> sol = [[ORLSSolution alloc] initORLSSolution:_srcModel with:self];
    [_pool addSolution:sol];
    //   }
+}
+-(id<ORSolution>)saveSolution
+{
+   id<ORSolution> sol = [[ORLSSolution alloc] initORLSSolution:_srcModel with:self];
+   [_pool addSolution:sol];
+   return sol;
 }
 -(id<ORSolutionPool>) solutionPool
 {

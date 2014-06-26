@@ -296,7 +296,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"EQLitView<LS>(%p,%d,%@) %p == %d",self,_name,_rank,_x,_lit];
+   [buf appendFormat:@"EQLitView<LS>(%p,%d,%@) (%p == %d) = %d",self,_name,_rank,_x,_lit,[self value]];
    return buf;
 }
 -(ORInt)value

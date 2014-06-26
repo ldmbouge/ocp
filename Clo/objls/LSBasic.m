@@ -328,6 +328,12 @@ inline static ORInt presentIn(ORInt key,ORInt* t,ORInt sz)
       return [self deltaWhenAssign:y to:getLSIntValue(x)];
    else return 0;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSOr : %p   %@ == (%@ || %@)>",self,_b,_x,_y];
+   return buf;
+}
 @end
 
 @implementation LSMinimize {

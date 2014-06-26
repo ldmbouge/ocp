@@ -72,8 +72,30 @@ int main(int argc, const char * argv[])
          id<LSProgram> __block cp = [ORFactory createLSProgram:model annotation:notes];
          BOOL __block found = NO;
          ORInt __block it = 0;
+         ORInt __block best = FDMAXINT;
+         id<ORIntMatrix> tabu = [ORFactory intMatrix:cp range:Scenes :Scenes using:^int(ORInt i, ORInt j) { return 0;}];
          [cp solve:^{
-            
+            while (++it <= 400) {
+               [cp sweep:^(id<ORSweep> sweep) {
+                  for(ORInt s1=Scenes.low;s1 <= Scenes.up;s1++) {
+                     for(ORInt s2=Scenes.low;s2 <= Scenes.up;s2++) {
+                        if ([cp intValue:shoot[s1]] == [cp intValue:shoot[s2]] || [tabu at:s1 :s2] > it)
+                           continue;
+                        [sweep forMininum:[cp deltaWhenSwap:shoot[s1] with:shoot[s2]] do:^{
+                           [cp swap:shoot[s1] with:shoot[s2]];
+                           [tabu set:it+15 at:s1 :s2];
+                           [tabu set:it+15 at:s2 :s1];
+                           if ([cp getViolations] < best) {
+                              best = [cp getViolations];
+                              printf("Current best: %d\n",best);
+                              [cp saveSolution];
+                           }
+                        }];
+                     }
+                  }
+               }];
+               it++;
+            }
          }];
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult res = REPORT(found, it, 0,0);

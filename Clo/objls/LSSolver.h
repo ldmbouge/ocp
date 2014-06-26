@@ -51,6 +51,7 @@
 -(void)solve:(ORClosure)block;
 
 -(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>)saveSolution;
 -(void)setSource:(id<ORModel>)m;
 -(void)setRoot:(id<LSConstraint>)sys;
 -(id<LSEngine>)engine;

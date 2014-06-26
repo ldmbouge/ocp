@@ -87,6 +87,10 @@
    return self;
 }
 // [pvh] no idea what this is supposed to do
+// [ldm] None are real yet. On the CP side, these allow us to avoid recreating the
+//       same object many times over. For instance, 200 boolean variables -> 200x the range [0,1]
+//       with the cache we should have only one. Note that, currently, only the ORModelI class
+//       implements a cache. The CP engine does not do it either [to be corrected!]
 -(id) inCache:(id)obj
 {
    return nil;
