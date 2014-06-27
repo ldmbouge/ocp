@@ -153,32 +153,24 @@ Class __lsivc = nil;
       [engine schedule: p];
    }
 }
--(LSGradient)decrease:(id<LSIntVar>)x
+-(id<LSGradient>)decrease:(id<LSIntVar>)x
 {
-   LSGradient rv;
    if (getId(x) == _name) {
-      rv._gt = LSGVar;
-      rv._vg = [LSFactory intVar:_engine domain:RANGE(_engine,0,_dom.up - _dom.low)];
-      [_engine add:[LSFactory inv:rv._vg equal:^ORInt{ return _value - _dom.low;} vars:@[self]]];
+      id<LSIntVar> fv = [LSFactory intVar:_engine domain:RANGE(_engine,0,_dom.up - _dom.low)];
+      [_engine add:[LSFactory inv:fv equal:^ORInt{ return _value - _dom.low;} vars:@[self]]];
+      return [LSVarGradient newVarGradient:fv];
    }
-   else {
-      rv._gt = LSGCst;
-      rv._cg = 0;
-   }
-   return rv;
+   else
+      return [LSCstGradient newCstGradient:0];
 }
--(LSGradient)increase:(id<LSIntVar>)x
+-(id<LSGradient>)increase:(id<LSIntVar>)x
 {
-   LSGradient rv;
    if (getId(x) == _name) {
-      rv._gt = LSGVar;
-      rv._vg = [LSFactory intVar:_engine domain:RANGE(_engine,0,_dom.up - _dom.low)];
-      [_engine add:[LSFactory inv:rv._vg equal:^ORInt{ return _dom.up - _value;} vars:@[self]]];
+      id<LSIntVar> fv = [LSFactory intVar:_engine domain:RANGE(_engine,0,_dom.up - _dom.low)];
+      [_engine add:[LSFactory inv:fv equal:^ORInt{ return _dom.up - _value;} vars:@[self]]];
+      return [LSVarGradient newVarGradient:fv];
    }
-   else {
-      rv._gt = LSGCst;
-      rv._cg = 0;
-   }
-   return rv;
+   else
+      return [LSCstGradient newCstGradient:0];
 }
 @end

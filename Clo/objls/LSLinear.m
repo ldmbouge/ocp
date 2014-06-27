@@ -161,23 +161,25 @@ typedef struct LSOccurrence {
       ORInt ct = [_coefs at:t];
       id<LSIntVar> xt = _x[t];
       if (ct > 0) {
-         LSGradient gt = [xt decrease:sk];
-         if (gt._gt == LSGCst)
-            gi += gt._cg;
+         id<LSGradient> gt = [xt decrease:sk];
+         if (gt.isConstant)
+            gi += gt.constant;
          else {
-            gv[nbt] = gt._vg;
+            gv[nbt] = gt.variable;
             gc[nbt] = ct;
             nbt++;
          }
+         [gt release];
       } else {
-         LSGradient gt = [xt increase:sk];
-         if (gt._gt == LSGCst)
-            gi -= gt._cg;
+         id<LSGradient> gt = [xt increase:sk];
+         if (gt.isConstant)
+            gi -= gt.constant;
          else {
-            gv[nbt] = gt._vg;
+            gv[nbt] = gt.variable;
             gc[nbt] = abs(ct);
             nbt++;
          }
+         [gt release];
       }
    }
    id<ORIntRange> R = RANGE(_engine,0,nbt-1);
@@ -198,24 +200,26 @@ typedef struct LSOccurrence {
       ORInt ct = [_coefs at:t];
       id<LSIntVar> xt = _x[t];
       if (ct > 0) {
-         LSGradient gt = [xt increase:sk];
-         if (gt._gt == LSGCst)
-            gi += gt._cg;
+         id<LSGradient> gt = [xt increase:sk];
+         if (gt.isConstant)
+            gi += gt.constant;
          else {
-            gv[nbt] = gt._vg;
+            gv[nbt] = gt.variable;
             gc[nbt] = ct;
             nbt++;
          }
+         [gt release];
       }
       else {
-         LSGradient gt = [xt decrease:sk];
-         if (gt._gt == LSGCst)
-            gi -= gt._cg;
+         id<LSGradient> gt = [xt decrease:sk];
+         if (gt.isConstant)
+            gi -= gt.constant;
          else {
-            gv[nbt] = gt._vg;
+            gv[nbt] = gt.variable;
             gc[nbt] = abs(ct);
             nbt++;
          }
+         [gt release];
       }
    }
    id<ORIntRange> R = RANGE(_engine,0,nbt-1);

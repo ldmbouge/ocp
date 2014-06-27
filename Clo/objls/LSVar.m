@@ -13,6 +13,64 @@
 #import "LSPropagator.h"
 #import "LSFactory.h"
 
+@implementation LSVarGradient
++(id<LSGradient>)newVarGradient:(id<LSIntVar>)x
+{
+   return [[LSVarGradient alloc] init:x];
+}
+-(id)init:(id<LSIntVar>)x
+{
+   self = [super init];
+   _x = x;
+   return self;
+}
+-(ORBool)isConstant
+{
+   return NO;
+}
+-(ORBool)isVar
+{
+   return YES;
+}
+-(ORInt)constant
+{
+   return 0;
+}
+-(id<LSIntVar>)variable
+{
+   return _x;
+}
+@end
+
+@implementation LSCstGradient
++(id<LSGradient>)newCstGradient:(ORInt)c
+{
+   return [[LSCstGradient alloc] init:c];
+}
+-(id)init:(ORInt)c
+{
+   self = [super init];
+   _cst = c;
+   return self;
+}
+-(ORBool)isConstant
+{
+   return YES;
+}
+-(ORBool)isVar
+{
+   return NO;
+}
+-(ORInt)constant
+{
+   return _cst;
+}
+-(id<LSIntVar>)variable
+{
+   return nil;
+}
+@end
+
 ORBool isIdMapped(id<LSIntVarArray> array)
 {
    id<ORIntRange> r = array.range;

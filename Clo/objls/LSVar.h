@@ -35,26 +35,40 @@
 -(void)scheduleOutbound:(id<LSEngine>)engine;
 @end
 
-typedef enum : NSUInteger {
-   LSGVar = 0,
-   LSGCst = 1
-} LSGradientType;
+@protocol LSGradient<NSObject>
+-(ORBool)isConstant;
+-(ORBool)isVar;
+-(ORInt)constant;
+-(id<LSIntVar>)variable;
+@end
 
-typedef struct LSGradient {
-   union {
-      id<LSIntVar>  _vg;
-      ORInt         _cg;
-   };
-   LSGradientType   _gt;
-} LSGradient;
+@interface LSVarGradient : NSObject<LSGradient> {
+   id<LSIntVar>   _x;
+}
++(id<LSGradient>)newVarGradient:(id<LSIntVar>)x;
+-(ORBool)isConstant;
+-(ORBool)isVar;
+-(ORInt)constant;
+-(id<LSIntVar>)variable;
+@end
+
+@interface LSCstGradient : NSObject<LSGradient> {
+   int  _cst;
+}
++(id<LSGradient>)newCstGradient:(ORInt)c;
+-(ORBool)isConstant;
+-(ORBool)isVar;
+-(ORInt)constant;
+-(id<LSIntVar>)variable;
+@end
 
 @protocol  LSIntVar <LSVar>
 -(ORInt)value;
 -(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v;
 -(void)setValue:(ORInt)v;
 -(id<ORIntRange>)domain;
--(LSGradient)decrease:(id<LSIntVar>)x;
--(LSGradient)increase:(id<LSIntVar>)x;
+-(id<LSGradient>)decrease:(id<LSIntVar>)x;
+-(id<LSGradient>)increase:(id<LSIntVar>)x;
 @end
 
 @protocol LSIntVarArray <ORIdArray>

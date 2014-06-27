@@ -28,6 +28,16 @@
 @optional -(void)hardInit;
 @end
 
+@protocol LSFunction <NSObject>
+-(void)post;
+-(id<LSIntVar>)evaluation;
+-(id<LSGradient>)increase:(id<LSIntVar>)x;
+-(id<LSGradient>)decrease:(id<LSIntVar>)x;
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(id<LSIntVarArray>)variables;
+@end
+
 @interface LSConstraint : ORObject<LSConstraint> {
    LSEngineI* _engine;
 }

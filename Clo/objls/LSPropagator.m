@@ -227,17 +227,15 @@
    for(id p in _outbound)
       [engine schedule:p];
 }
--(LSGradient)decrease:(id<LSIntVar>)x
+-(id<LSGradient>)decrease:(id<LSIntVar>)x
 {
    assert(NO);
-   LSGradient rv;
-   return rv;
+   return nil;
 }
--(LSGradient)increase:(id<LSIntVar>)x
+-(id<LSGradient>)increase:(id<LSIntVar>)x
 {
    assert(NO);
-   LSGradient rv;
-   return rv;
+   return nil;
 }
 -(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v
 {
@@ -310,33 +308,24 @@
    else return getLSIntValue(_x) == _lit;
 }
 
--(LSGradient)decrease:(id<LSIntVar>)x
+-(id<LSGradient>)decrease:(id<LSIntVar>)x
 {
-   LSGradient rv;
-   if (getId(_x) == getId(x)) {
-      rv._gt = LSGVar;
-      rv._vg = self;
-   } else {
-      rv._gt = LSGCst;
-      rv._cg = 0;
-   }
-   return rv;
+   if (getId(_x) == getId(x))
+      return [LSVarGradient newVarGradient:self];
+   else
+      return [LSCstGradient newCstGradient:0];
 }
--(LSGradient)increase:(id<LSIntVar>)x
+-(id<LSGradient>)increase:(id<LSIntVar>)x
 {
-   LSGradient rv;
    if (getId(_x) == getId(x)) {
-      rv._gt = LSGVar;
-      rv._vg = [LSFactory intVar:_engine domain:_dom];
-      [_engine add:[LSFactory inv:rv._vg equal:^ORInt{
+      id<LSIntVar> fv = [LSFactory intVar:_engine domain:_dom];
+      [_engine add:[LSFactory inv:fv equal:^ORInt{
          return 1 - self.value;
       } vars:@[self]]];
+      return [LSVarGradient newVarGradient:fv];
    }
-   else {
-      rv._gt = LSGCst;
-      rv._cg = 0;
-   }
-   return rv;
+   else
+      return [LSCstGradient newCstGradient:0];
 }
 @end
 

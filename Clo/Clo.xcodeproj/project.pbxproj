@@ -726,6 +726,8 @@
 		5B9440741631D7F3006528DE /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B95F0A415A26C2B00C0B2D8 /* mpl.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5B95F0A315A26C2B00C0B2D8 /* mpl.txt */; };
 		5B963DB4163DC6F300E8C22F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B965781195CAC5500EB48EF /* LSFunVariable.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B96577F195CAC5500EB48EF /* LSFunVariable.h */; };
+		5B965782195CAC5500EB48EF /* LSFunVariable.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B965780195CAC5500EB48EF /* LSFunVariable.m */; };
 		5B9ABCF11391329D000997E5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B9ABCFB1391329D000997E5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B9ABCF91391329D000997E5 /* InfoPlist.strings */; };
 		5B9ABD031391329D000997E5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
@@ -6277,6 +6279,8 @@
 		5B93489116558D0F00757F89 /* ORProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORProgram.h; sourceTree = "<group>"; };
 		5B94406D1631AEB9006528DE /* CPVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPVar.h; sourceTree = "<group>"; };
 		5B95F0A315A26C2B00C0B2D8 /* mpl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mpl.txt; sourceTree = SOURCE_ROOT; };
+		5B96577F195CAC5500EB48EF /* LSFunVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSFunVariable.h; sourceTree = "<group>"; };
+		5B965780195CAC5500EB48EF /* LSFunVariable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSFunVariable.m; sourceTree = "<group>"; };
 		5B9ABCE1139131EE000997E5 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		5B9ABCE4139131EE000997E5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B9ABCE6139131EE000997E5 /* solver.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = solver.1; sourceTree = "<group>"; };
@@ -9631,6 +9635,8 @@
 				5B63C98F18B3F51F00C4D158 /* LSSolver.m */,
 				5B116F5918B4EE2F00CDFB33 /* ORLSConcretizer.h */,
 				5B116F5A18B4EE2F00CDFB33 /* ORLSConcretizer.m */,
+				5B96577F195CAC5500EB48EF /* LSFunVariable.h */,
+				5B965780195CAC5500EB48EF /* LSFunVariable.m */,
 				5B876B2818AA8148006F6258 /* LSConstraint.h */,
 				5B876B2918AA8148006F6258 /* LSConstraint.m */,
 				5B876B2C18AAAF8D006F6258 /* LSAllDifferent.h */,
@@ -10560,6 +10566,7 @@
 				5BD792A81857BA3A008DCF91 /* LSPropagator.h in Headers */,
 				5B8D0E7318CE472E000C857D /* LSExactly.h in Headers */,
 				5B876B2E18AAAF8D006F6258 /* LSAllDifferent.h in Headers */,
+				5B965781195CAC5500EB48EF /* LSFunVariable.h in Headers */,
 				5BD792A01857A803008DCF91 /* LSIntVar.h in Headers */,
 				5B19BEC518A916AC006CC213 /* LSObject.h in Headers */,
 				5B876B2A18AA8148006F6258 /* LSConstraint.h in Headers */,
@@ -13835,6 +13842,7 @@
 				5B8D0E7418CE472E000C857D /* LSExactly.m in Sources */,
 				5B116F6018B510AB00CDFB33 /* ORLSSolution.m in Sources */,
 				5B57402B18AEA1DF003AC6AF /* LSVar.m in Sources */,
+				5B965782195CAC5500EB48EF /* LSFunVariable.m in Sources */,
 				5B7C660A18A581850077868F /* LSFactory.m in Sources */,
 				5B63C99118B3F51F00C4D158 /* LSSolver.m in Sources */,
 				5BF8092A18CF5BE4002F59BD /* LSLinear.m in Sources */,
