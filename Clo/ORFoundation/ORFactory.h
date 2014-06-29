@@ -26,6 +26,11 @@
 @protocol ORTRIntMatrix;
 @protocol ORAutomaton;
 
+@protocol OROrderedSweep <NSObject>
+-(BOOL) next: (ORInt*) v;
+@end
+
+
 @interface ORFactory : NSObject
 +(void) shutdown;
 +(id<ORTrail>) trail;
@@ -82,6 +87,7 @@
 +(ORInt) maxOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e;
 
 +(id<IntEnumerator>) intEnumerator: (id<ORTracker>) cp over: (id<ORIntIterable>) r;
++(id<OROrderedSweep>) orderedSweep: (id<ORTracker>) t over: (id<ORIntIterable>) r filter: (ORInt2Bool) filter orderedBy: (ORInt2Float) o;
 +(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order;
 +(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order;
 
