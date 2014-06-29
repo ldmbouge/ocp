@@ -239,8 +239,7 @@
 }
 -(id*) gamma
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "gamma never called on CPParProgram"];
-   return NULL;
+   return [[self worker] gamma];
 }
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
