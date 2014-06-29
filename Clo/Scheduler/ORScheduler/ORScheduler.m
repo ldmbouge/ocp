@@ -12,6 +12,8 @@
 #import "ORScheduler.h"
 #import <ORProgram/CPSolver.h>
 
+// PVH: to clean up the code for optional activities; this is ugly right now
+
 @interface CPCoreSolver (CPScheduling)
 -(void) labelActivities: (id<ORActivityArray>) act;
 @end
@@ -19,10 +21,10 @@
 @implementation CPCoreSolver (CPScheduling)
 -(void) labelActivities: (id<ORActivityArray>) act
 {
-    for (ORInt i = act.range.low; i <= act.range.up; i++) {
+    for (ORInt i = act.range.low; i <= act.range.up; i++)
         [self labelActivity:act[i]];
-    }
 }
+
 -(void) labelActivity: (id<ORActivity>) act
 {
     if ((act.type & 1) == 1) {
@@ -34,41 +36,82 @@
         [self labelActivities:act.composition];
     }
 }
+
 -(void) setTimes: (id<ORActivityArray>) act
 {
     id<ORIntRange> R = act.range;
     ORInt low = R.low;
     ORInt up = R.up;
     ORInt m = FDMAXINT;
+    ORInt im;
     ORInt found = FALSE;
+    ORInt hasPostponedActivities = FALSE;
    
+   // optional activities
    for (ORInt k = low; k <= up; k++) {
       if ((act[k].type & 1) == 1)
          [self label: act[k].top];
    }
-
+   
+   id<ORTrailableIntArray> postponed = [ORFactory trailableIntArray: [self engine] range: R value: 0];
+   id<ORTrailableIntArray> ptime = [ORFactory trailableIntArray: [self engine] range: R value: 0];
+   
     while (true) {
-        found = FALSE;
-        m = FDMAXINT;
-       id<ORIntArray> assigned = [ORFactory intArray: self range: R value: 0];
+       found = FALSE;
+       m = FDMAXINT;
+       hasPostponedActivities = FALSE;
+       ORInt lsd = FDMAXINT;
        for(ORInt k = low; k <= up; k++) {
-          [assigned set: [self bound: act[k].startLB] at: k];
-       }
-        for(ORInt k = low; k <= up; k++) {
-            ORInt vm = [self min: act[k].startLB];
-           if (![assigned at: k]) {
+         
+          if (![self bound: act[k].startLB]) {
+             if (![[postponed at: k] value]) {
+                ORInt vm = [self min: act[k].startLB];
                 found = TRUE;
-                if (vm < m)
-                    m = vm;
-            }
+                if (vm < m) {
+                   m = vm;
+                   im = k;
+                }
+             }
+             else {
+                hasPostponedActivities = TRUE;
+                ORInt vm = [self max: act[k].startLB];
+                if (vm < lsd)
+                   lsd = vm;
+             }
+          }
+       }
+       if (!found) {
+          if (hasPostponedActivities)
+             [[self explorer] fail];
+          else
+             break;
+       }
+       if (lsd <= m)
+           [[self explorer] fail];
+ 
+       for(ORInt k = low; k <= up; k++)
+          if ([[postponed at: k] value])
+             if ([self min: act[k].startLB] + [self min: act[k].duration] <= m)
+                [[self explorer] fail];
+
+       
+       [self try:
+        ^() {
+           
+           [self label: act[im].startLB with: m];
+
+           for(ORInt k = low; k <= up; k++)
+              if ([[postponed at: k] value])
+                 if ([self min: act[k].startLB] > [[ptime at: k] value])
+                    [[postponed at: k] setValue: 0];
+           
         }
-        if (!found)
-            break;
-       [self tryall: R suchThat: ^bool(ORInt k) { return ([self min: act[k].startLB] == m) && ![assigned at: k]; } orderedBy: ^(ORInt k) { return (ORFloat) k; } in: ^(ORInt k) {
-            [self label: act[k].startLB with: m];
+              or:
+        ^() {
+           [[postponed at: im]  setValue: 1];
+           [[ptime at: im] setValue: m];
         }
-       onFailure: ^(ORInt k) {  [self diff: act[k].startLB with: m];  }
-         ];
+        ];
     }
 }
 

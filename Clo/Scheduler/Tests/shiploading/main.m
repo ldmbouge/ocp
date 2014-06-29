@@ -17,6 +17,13 @@
 #import <ORScheduler/ORScheduler.h>
 
 
+//Makespan: 66
+//2014-06-29 15:00:29.197 shiploading[6044:303] Solver status: Solver: 173 vars
+//78 constraints
+//605 choices
+//599 fail
+//7220 propagations
+
 ORInt capacity = 8;
 ORInt nbTasks = 34;
 
@@ -86,6 +93,7 @@ int main(int argc, const char * argv[])
          ORInt s = [optimum intValue: activities[i].startLB];
          printf("task %d = [%d,%d] \n",i,s,s + [duration at: i]);
       }
+      printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
 //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

@@ -16,6 +16,14 @@
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORScheduler.h>
 
+//setTimes for mt06
+//Makespan: 55
+//2014-06-29 15:01:07.168 jobshop[6054:303] Solver status: Solver: 74 vars
+//43 constraints
+//2054 choices
+//1972 fail
+//26972 propagations
+
 
 ORInt size = 6;
 ORInt iresource[6][6] = {
@@ -101,7 +109,7 @@ int main(int argc, const char * argv[])
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
-         [cp labelTimes: [activity flatten]];
+         [cp setTimes: [activity flatten]];
          [cp labelActivity: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan.startLB],[cp max: makespan.startLB]);
          for(ORInt i = Size.low; i <= Size.up; i++) {
