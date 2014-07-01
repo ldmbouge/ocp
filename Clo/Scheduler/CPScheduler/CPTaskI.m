@@ -16,17 +16,23 @@
 @implementation CPTask
 {
    id<CPEngine>   _engine;
+   id<ORTrail>    _trail;
    id<ORIntRange> _horizon;
    ORInt          _duration;
+   TRInt          _start;
+   
 }
 -(id<CPTask>) initCPTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
 {
    self = [super init];
+   _engine = engine;
+   _trail = [engine trail];
+   _start = makeTRInt(_trail,horizon.low);
    return self;
 }
 -(ORInt) start
 {
-   return 3;
+   return _start._val;
 }
 -(ORInt) end
 {

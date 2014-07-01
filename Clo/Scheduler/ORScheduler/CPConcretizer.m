@@ -274,13 +274,11 @@
    if (_gamma[task.getId] == NULL) {
       id<ORIntRange> horizon = [task horizon];
       id<ORIntRange> duration = [task duration];
-      [horizon visit: self];
-      [duration visit: self];
       
       id<CPTask> concreteTask;
       
       if (duration.low == duration.up) {
-         concreteTask = [CPFactory task: _engine horizon: _gamma[horizon.getId] duration: duration.low];
+         concreteTask = [CPFactory task: _engine horizon: horizon duration: duration.low];
       }
       else {
          // pvh to fill

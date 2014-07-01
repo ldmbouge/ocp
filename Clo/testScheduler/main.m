@@ -65,8 +65,9 @@ int main(int argc, const char * argv[])
          totalDuration += [duration at: i];
       id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
       
-      id<ORTask> t = [ORFactory task: model horizon: Horizon duration: RANGE(model,1,1)];
-      NSLog(@"Task %@",t);
+      id<ORTask> t = [ORFactory task: model horizon: RANGE(model,10,20) duration: RANGE(model,1,1)];
+      
+      NSLog(@"Task %@ %@",t,[t horizon]);
       // variables
       id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
       id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
