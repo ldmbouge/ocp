@@ -9,9 +9,10 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
+#import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORScheduler/ORActivity.h>
-#import <ORScheduler/ORTask.h>
-#import <ORScheduler/ORSchedConstraint.h>
-#import <ORScheduler/ORSchedFactory.h>
+#import <CPScheduler/CPTask.h>
+
+@interface CPTask : ORObject<CPTask>
+-(id<CPTask>) initCPTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+@end

@@ -12,10 +12,13 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPConstraint.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORScheduler/ORActivity.h>
 #import <ORProgram/CPConcretizer.h>
 #import "CPScheduler/CPFactory.h"
 #import "CPSCheduler/CPActivity.h"
 #import "CPSCheduler/CPDifference.h"
+#import "CPTask.h"
+#import "CPTaskI.h"
 
 @implementation ORCPConcretizer (CPScheduler)
 
@@ -264,4 +267,28 @@
         _gamma[cstr.getId] = _gamma[diffCstr.getId];
     }
 }
+
+// Task
+-(void) visitTask:(id<ORTask>) task
+{
+   if (_gamma[task.getId] == NULL) {
+      id<ORIntRange> horizon = [task horizon];
+      id<ORIntRange> duration = [task duration];
+      [horizon visit: self];
+      [duration visit: self];
+      
+      id<CPTask> concreteTask;
+      
+      if (duration.low == duration.up) {
+         concreteTask = [CPFactory task: _engine horizon: _gamma[horizon.getId] duration: duration.low];
+      }
+      else {
+         // pvh to fill
+         assert(false);
+      }
+      _gamma[task.getId] = concreteTask;
+   }
+}
+
+
 @end;

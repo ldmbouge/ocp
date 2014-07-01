@@ -9,9 +9,9 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORScheduler/ORActivity.h>
 #import <ORScheduler/ORTask.h>
-#import <ORScheduler/ORSchedConstraint.h>
-#import <ORScheduler/ORSchedFactory.h>
+
+@interface ORTask : ORObject<ORTask>
+-(id<ORTask>) initORTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+@end
+

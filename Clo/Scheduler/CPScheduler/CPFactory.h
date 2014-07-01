@@ -13,6 +13,7 @@
 #import <ORScheduler/ORScheduler.h>
 #import <CPScheduler/CPActivity.h>
 #import <objcp/CPFactory.h>
+#import "CPtask.h"
 
 @interface CPFactory (CPScheduler)
 +(id<CPActivity>) activity: (id<CPIntVar>) start duration:(id<CPIntVar>) duration;
@@ -28,4 +29,6 @@
 +(id<CPConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d;
 +(id<CPConstraint>) disjunctive: (id<CPActivityArray>) act;
 +(id<CPConstraint>) difference: (id<ORTracker>) tracker engine: (id<CPEngine>) e withInitCapacity:(ORInt) numItems;
+
++(id<CPTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
 @end

@@ -93,8 +93,6 @@ enum CPVarClass {
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
--(ORInt) scale;
--(ORInt) shift;
 -(id<ORIntVar>) base;
 -(ORBool) bound;
 -(ORInt) countFrom: (ORInt) from to: (ORInt) to;
@@ -104,7 +102,6 @@ enum CPVarClass {
 -(void) updateMin: (ORInt) newMin;
 -(void) updateMax: (ORInt) newMax;
 -(ORBounds) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
--(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 @end
 
 @protocol CPVarArray <ORVarArray>

@@ -11,7 +11,9 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORScheduler/ORActivity.h>
-#import <ORScheduler/ORTask.h>
-#import <ORScheduler/ORSchedConstraint.h>
-#import <ORScheduler/ORSchedFactory.h>
+
+@protocol ORTask <ORObject>
+-(ORInt) getId;
+-(id<ORIntRange>)   horizon;
+-(id<ORIntRange>)   duration;
+@end

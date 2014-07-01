@@ -9,9 +9,20 @@
  
  ***********************************************************************/
 
+
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORScheduler/ORActivity.h>
-#import <ORScheduler/ORTask.h>
-#import <ORScheduler/ORSchedConstraint.h>
-#import <ORScheduler/ORSchedFactory.h>
+
+@protocol CPTask <ORObject>
+-(ORInt) getId;
+-(ORInt) start;
+-(ORInt) end;
+-(ORInt) minDuration;
+-(ORInt) maxDuration;
+-(void) updateStart: (ORInt) newStart;
+-(void) updateEnd: (ORInt) newEnd;
+-(void) updateMinDuration: (ORInt) newMinDuration;
+-(void) updateMaxDuration: (ORInt) newMaxDuration;
+@end
+
+

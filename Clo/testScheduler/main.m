@@ -15,6 +15,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
 
 
 //Makespan: 66
@@ -50,7 +51,7 @@ ORPrecedence precedence[42] = {
 
 int main(int argc, const char * argv[])
 {
-
+   
    @autoreleasepool {
       
       id<ORModel> model = [ORFactory createModel];
@@ -62,8 +63,10 @@ int main(int argc, const char * argv[])
       ORInt totalDuration = 0;
       for(ORInt i = Tasks.low; i < Tasks.up; i++)
          totalDuration += [duration at: i];
-       id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
+      id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
       
+      id<ORTask> t = [ORFactory task: model horizon: Horizon duration: RANGE(model,1,1)];
+      NSLog(@"Task %@",t);
       // variables
       id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
       id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
@@ -80,26 +83,22 @@ int main(int argc, const char * argv[])
       
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
+      NSLog(@"start of the task: %d",[cp start: t]);
       [cp solve: ^{
          [cp setTimes: activities];
          [cp labelActivity: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan.startLB],[cp max: makespan.startLB]);
       }
-      ];
+       ];
       id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
       id<ORSolution> optimum = [pool best];
       printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
-      for(ORInt i = 1; i <= nbTasks; i++) {
-         ORInt s = [optimum intValue: activities[i].startLB];
-         printf("task %d = [%d,%d] \n",i,s,s + [duration at: i]);
-      }
-      printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-//      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+      //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
       [cp release];
    }
-    return 0;
+   return 0;
 }
 

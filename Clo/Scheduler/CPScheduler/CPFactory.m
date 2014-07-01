@@ -15,6 +15,7 @@
 #import "CPCumulative.h"
 #import "CPDisjunctive.h"
 #import "CPDifference.h"
+#import "CPTaskI.h"
 
 @implementation CPFactory (CPScheduler)
 // activity
@@ -248,6 +249,15 @@
     
     // Returning the cumulative propagator
     return o;
+}
+
+// Task of fixed duration
+
++(id<CPTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
+{
+   id<CPTask> task = [[CPTask alloc] initCPTask: engine horizon: horizon duration: duration];
+   [engine trackMutable: task];
+   return task;
 }
 
 @end

@@ -13,6 +13,7 @@
 #import <ORScheduler/ORActivity.h>
 #import <ORScheduler/ORSchedConstraint.h>
 #import "ORConstraintI.h"
+#import "ORTaskI.h"
 
 @implementation ORFactory (ORScheduler)
 // Activities
@@ -261,6 +262,14 @@
     id<ORDiffImplyLEqual> o = [[ORDiffImplyLEqual alloc] initORDiffImplyLEqual:diff boolean:b with:x leqc:y plus:d];
     [[x tracker] trackObject:o];
     return o;
+}
+
+// ORTask
++(id<ORTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+{
+   id<ORTask> o = [[ORTask alloc] initORTask: model horizon: horizon duration:duration];
+   [model trackMutable:o];
+   return o;
 }
 
 @end

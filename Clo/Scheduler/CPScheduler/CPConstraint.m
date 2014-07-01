@@ -25,7 +25,7 @@
     _before = before;
     _after  = after;
     
-    NSLog(@"Create precedence constraint\n");
+//    NSLog(@"Create precedence constraint\n");
     
     return self;
 }
