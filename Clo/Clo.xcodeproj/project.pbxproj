@@ -4786,42 +4786,6 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
-<<<<<<< HEAD
-		B17E359C1900BF8100766DC6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
-			remoteInfo = ORFoundation;
-		};
-		B17E359E1900BF8100766DC6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
-			remoteInfo = ORUtilities;
-		};
-		B17E35A01900BF8100766DC6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
-			remoteInfo = ORModeling;
-		};
-		B17E35A21900BF8100766DC6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
-			remoteInfo = ORProgram;
-		};
-		B17E35A41900BF8100766DC6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BE8BB971857A41600D99445;
-			remoteInfo = objls;
-		};
 		B181E12315D746A200AB44DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -12541,11 +12505,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B17E359D1900BF8100766DC6 /* PBXTargetDependency */,
-				B17E359F1900BF8100766DC6 /* PBXTargetDependency */,
-				B17E35A11900BF8100766DC6 /* PBXTargetDependency */,
-				B17E35A31900BF8100766DC6 /* PBXTargetDependency */,
-				B17E35A51900BF8100766DC6 /* PBXTargetDependency */,
 			);
 			name = progressiveLS;
 			productName = progressiveLS;
@@ -16650,31 +16609,6 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B17715A115579B3900BA14BF /* PBXContainerItemProxy */;
-		};
-		B17E359D1900BF8100766DC6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
-			targetProxy = B17E359C1900BF8100766DC6 /* PBXContainerItemProxy */;
-		};
-		B17E359F1900BF8100766DC6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
-			targetProxy = B17E359E1900BF8100766DC6 /* PBXContainerItemProxy */;
-		};
-		B17E35A11900BF8100766DC6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
-			targetProxy = B17E35A01900BF8100766DC6 /* PBXContainerItemProxy */;
-		};
-		B17E35A31900BF8100766DC6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B68117F161F98FB00F4480F /* ORProgram */;
-			targetProxy = B17E35A21900BF8100766DC6 /* PBXContainerItemProxy */;
-		};
-		B17E35A51900BF8100766DC6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BE8BB971857A41600D99445 /* objls */;
-			targetProxy = B17E35A41900BF8100766DC6 /* PBXContainerItemProxy */;
 		};
 		B181E12415D746A200AB44DA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
