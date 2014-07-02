@@ -9,6 +9,9 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
+#import <ORUtilities/ORUtilities.h>
+#import <ORModeling/ORModeling.h>
 #import "ORTaskI.h"
 #import <ORScheduler/ORSchedFactory.h>
 #import <ORScheduler/ORVisit.h>

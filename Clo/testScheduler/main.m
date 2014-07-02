@@ -48,6 +48,7 @@ ORPrecedence precedence[42] = {
    (ORPrecedence){30, 28}, (ORPrecedence){31, 28}, (ORPrecedence){32, 33}, (ORPrecedence){33, 34}
 };
 
+int dura[2] = {5,10};
 
 int main(int argc, const char * argv[])
 {
@@ -58,28 +59,28 @@ int main(int argc, const char * argv[])
       
       // data
       id<ORIntRange> Horizon = RANGE(model,0,100);
-      id<ORIntRange> duration1 = RANGE(model,5,5);
-      id<ORIntRange> duration2 = RANGE(model,10,10);
+      id<ORIntRange> R = RANGE(model,0,1);
       
+      
+      id<ORIntArray> duration = [ORFactory intArray: model range: R with: ^ORInt(ORInt i) { return dura[i]; }];
       
       // variables
       
-      id<ORTaskVar> t1 = [ORFactory task: model horizon: Horizon duration: duration1];
-      id<ORTaskVar> t2 = [ORFactory task: model horizon: Horizon duration: duration2];
+      id<ORTaskVarArray> t = [ORFactory taskVarArray: model range: R horizon: Horizon duration: duration];
       
       // constraints and objective
-      [model add: [t1 precedes: t2]];
+      [model add: [t[0] precedes: t[1]]];
       
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
-      NSLog(@"Task: %@",[cp description: t1]);
-      NSLog(@"Task: %@",[cp description: t2]);
+      NSLog(@"Task: %@",[cp description: t[0]]);
+      NSLog(@"Task: %@",[cp description: t[1]]);
       [cp solve: ^{
          
-         [cp updateStart: t1 with: 26];
-         [cp updateEnd: t2 with: 50];
-         NSLog(@"Task: %@",[cp description: t1]);
-         NSLog(@"Task: %@",[cp description: t2]);
+         [cp updateStart: t[0] with: 26];
+         [cp updateEnd: t[1] with: 50];
+         NSLog(@"Task: %@",[cp description: t[0]]);
+         NSLog(@"Task: %@",[cp description: t[1]]);
       }
        ];
 //      id<ORSolutionPool> pool = [cp solutionPool];
