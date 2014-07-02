@@ -14,6 +14,7 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 #import "CPActivity.h"
+#import "CPTask.h"
 
 
     // Single precedence propagator
@@ -45,3 +46,14 @@
 -(ORUInt) nbUVars;
 @end
 
+@interface CPTaskPrecedence : CPCoreConstraint<NSCoding> {
+   id<CPTaskVar> _before;
+   id<CPTaskVar> _after;
+}
+-(id) initCPTaskPrecedence: (id<CPTaskVar>) before after: (id<CPTaskVar>) after;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end

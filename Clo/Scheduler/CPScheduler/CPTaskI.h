@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
+#import <objcp/CPVar.h>
 #import <CPScheduler/CPTask.h>
 
 @interface CPTaskVar : ORObject<CPTaskVar>

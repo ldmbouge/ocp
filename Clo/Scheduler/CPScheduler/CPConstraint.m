@@ -13,6 +13,7 @@
 #import <objcp/CPIntVarI.h>
 #import "CPConstraint.h"
 #import "CPTask.h"
+#import "CPTaskI.h"
 
 
     // Single precedence propagator
@@ -24,10 +25,8 @@
     self = [super initCPCoreConstraint:before.startLB.engine];
     
     _before = before;
-    _after  = after;
-    
-//    NSLog(@"Create precedence constraint\n");
-    
+   _after  = after;
+   
     return self;
 }
 -(void) dealloc {
@@ -400,23 +399,27 @@
 }
 @end
 
-//@implementation CPTaskVarPrecedes
-//
-//-(id) initCPTaskVarPrecedes: (id<CPTaskVar>) before after: (id<CPTaskVar>) after {
+
+
+@implementation CPTaskPrecedence
+
+-(id) initCPTaskPrecedence: (id<CPTaskVar>) before after: (id<CPTaskVar>) after
+{
+   self = [super initCPCoreConstraint: [before engine]];
+  
+   _before = before;
+   _after  = after;
+   
+   NSLog(@"Create precedence constraint\n");
 //   
-//   self = [super initCPCoreConstraint:before.startLB.engine];
-//   
-//   _before = before;
-//   _after  = after;
-//   
-//   //    NSLog(@"Create precedence constraint\n");
-//   
-//   return self;
-//}
-//-(void) dealloc {
-//   [super dealloc];
-//}
-//-(ORStatus) post {
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORStatus) post
+{
 //   [self propagate];
 //   
 //   if (!_before.startLB.bound)
@@ -434,9 +437,10 @@
 //         [_after.top whenBindPropagate:self];
 //   }
 //   
-//   return ORSuspend;
-//}
-//-(void) propagate {
+   return ORSuspend;
+}
+-(void) propagate
+{
 //   if (_before.isAbsent || _after.isAbsent || _before.startUB.max + _before.duration.max <= _after.startLB.min) {
 //      assignTRInt(&_active, NO, _trail);
 //   }
@@ -462,13 +466,13 @@
 //         //            printf("END before implies after\n");
 //      }
 //   }
-//}
-//-(NSSet*) allVars
-//{
-//   ORInt size = 0;
+}
+-(NSSet*) allVars
+{
+   ORInt size = 0;
 //   size += (_before.isOptional ? 4 : 2);
 //   size += (_after .isOptional ? 3 : 1);
-//   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
 //   [rv addObject:_before.startLB ];
 //   [rv addObject:_after .startLB ];
 //   [rv addObject:_before.duration];
@@ -480,12 +484,12 @@
 //      [rv addObject:_after.startUB];
 //      [rv addObject:_after.top    ];
 //   }
-//   [rv autorelease];
-//   return rv;
-//}
-//-(ORUInt) nbUVars
-//{
-//   ORUInt nb = 0;
+   [rv autorelease];
+   return rv;
+}
+-(ORUInt) nbUVars
+{
+   ORUInt nb = 0;
 //   if (!_before.startLB .bound) nb++;
 //   if (!_after .startLB .bound) nb++;
 //   if (!_before.duration.bound) nb++;
@@ -498,15 +502,14 @@
 //      if (!_after.startUB.bound) nb++;
 //      if (!_after.top    .bound) nb++;
 //   }
-//   return nb;
-//}
-//- (void)encodeWithCoder:(NSCoder *)aCoder
-//{
-//   assert(false);
-//}
-//- (id)initWithCoder:(NSCoder *)aDecoder
-//{
-//   assert(false);
-//}
-//@end
-
+   return nb;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   assert(false);
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   assert(false);
+}
+@end

@@ -34,7 +34,7 @@
 -(void) whenChangeEndPropagate: (id<CPConstraint>) c;
 @end
 
-@protocol CPTaskVar <ORObject,CPTaskVarSubscriber>
+@protocol CPTaskVar <CPVar,CPTaskVarSubscriber>
 -(ORInt) getId;
 -(ORInt) est;
 -(ORInt) ect;

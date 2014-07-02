@@ -198,4 +198,29 @@ typedef struct  {
    scheduleClosures(_engine,mList);
 }
 
+-(id<ORTracker>) tracker
+{
+   return _engine;
+}
+-(id<CPEngine>) engine
+{
+   return _engine;
+}
+-(NSSet*) constraints
+{
+   NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:2] autorelease];
+   collectList(_net._anyEvt[0]._val,rv);
+   collectList(_net._startEvt[0]._val,rv);
+   collectList(_net._endEvt[0]._val,rv);
+   return rv;
+}
+-(ORInt) degree
+{
+   __block ORUInt d = 0;
+   [_net._anyEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._startEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._endEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   return d;
+}
+
 @end
