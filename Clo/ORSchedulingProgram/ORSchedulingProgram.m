@@ -148,37 +148,65 @@
    }
 }
 
--(ORInt) start: (id<ORTask>) task
+-(ORInt) est: (id<ORTaskVar>) task
 {
-   return [((id<CPTask>)_gamma[task.getId]) start];
+   return [((id<CPTaskVar>)_gamma[task.getId]) est];
 }
--(ORInt) end: (id<ORTask>) task
+-(ORInt) ect: (id<ORTaskVar>) task
 {
-   return [((id<CPTask>)_gamma[task.getId]) end];
+   return [((id<CPTaskVar>)_gamma[task.getId]) ect];
 }
--(ORInt) minDuration: (id<ORTask>) task
+-(ORInt) lst: (id<ORTaskVar>) task
 {
-   return [((id<CPTask>)_gamma[task.getId]) minDuration];
+   return [((id<CPTaskVar>)_gamma[task.getId]) lst];
 }
--(ORInt) maxDuration: (id<ORTask>) task
+-(ORInt) lct: (id<ORTaskVar>) task
 {
-   return [((id<CPTask>)_gamma[task.getId]) maxDuration];
+   return [((id<CPTaskVar>)_gamma[task.getId]) lct];
 }
--(void) updateStart: (id<ORTask>) task with: (ORInt) newStart
+-(ORBool) boundActivity: (id<ORTaskVar>) task
 {
-   [((id<CPTask>) _gamma[task.getId]) updateStart: newStart];
+   return [((id<CPTaskVar>)_gamma[task.getId]) bound];
 }
--(void) updateEnd: (id<ORTask>) task with: (ORInt) newEnd
+-(ORInt) minDuration: (id<ORTaskVar>) task
 {
-   [((id<CPTask>) _gamma[task.getId]) updateEnd: newEnd];
+   return [((id<CPTaskVar>)_gamma[task.getId]) minDuration];
 }
--(void) updateMinDuration: (id<ORTask>) task with: (ORInt) newMinDuration
+-(ORInt) maxDuration: (id<ORTaskVar>) task
 {
-   [((id<CPTask>) _gamma[task.getId]) updateMinDuration: newMinDuration];
+   return [((id<CPTaskVar>)_gamma[task.getId]) maxDuration];
 }
--(void) updateMaxDuration: (id<ORTask>) task with: (ORInt) newMaxDuration
+-(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart
 {
-    [((id<CPTask>) _gamma[task.getId]) updateMaxDuration: newMaxDuration];
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) updateStart: newStart]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) updateEnd: (id<ORTaskVar>) task with: (ORInt) newEnd
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) updateEnd: newEnd]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) updateMinDuration: (id<ORTaskVar>) task with: (ORInt) newMinDuration
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) updateMinDuration: newMinDuration]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) updateMaxDuration: (id<ORTaskVar>) task with: (ORInt) newMaxDuration
+{
+    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) updateMaxDuration: newMaxDuration]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(NSString*) description: (id<ORObject>) o
+{
+   return [_gamma[o.getId] description];
 }
 @end
 

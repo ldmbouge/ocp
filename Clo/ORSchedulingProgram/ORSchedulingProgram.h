@@ -21,14 +21,19 @@
 -(void) setTimes: (id<ORActivityArray>) act;
 -(void) labelTimes: (id<ORActivityArray>) act;
 
--(ORInt) start: (id<ORTask>) task;
--(ORInt) ebd: (id<ORTask>) task;
--(ORInt) minDuration: (id<ORTask>) task;
--(ORInt) maxDuration: (id<ORTask>) task;
--(void) updateStart: (id<ORTask>) task with: (ORInt) newStart;
--(void) updateEnd: (id<ORTask>) task with: (ORInt) newEnd;
--(void) updateMinDuration: (id<ORTask>) task with: (ORInt) newMinDuration;
--(void) updateMaxDuration: (id<ORTask>) task with: (ORInt) newMaxDuration;
+-(ORInt) est: (id<ORTaskVar>) task;
+-(ORInt) ect: (id<ORTaskVar>) task;
+-(ORInt) lst: (id<ORTaskVar>) task;
+-(ORInt) lct: (id<ORTaskVar>) task;
+-(ORInt) boundActivity: (id<ORTaskVar>) task;
+-(ORInt) minDuration: (id<ORTaskVar>) task;
+-(ORInt) maxDuration: (id<ORTaskVar>) task;
+-(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart;
+-(void) updateEnd: (id<ORTaskVar>) task with: (ORInt) newEnd;
+-(void) updateMinDuration: (id<ORTaskVar>) task with: (ORInt) newMinDuration;
+-(void) updateMaxDuration: (id<ORTaskVar>) task with: (ORInt) newMaxDuration;
+
+-(NSString*) description: (id<ORObject>) o;
 @end
 
 @interface ORFactory (CPScheduling)

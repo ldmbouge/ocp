@@ -253,9 +253,9 @@
 
 // Task of fixed duration
 
-+(id<CPTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
++(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
 {
-   id<CPTask> task = [[CPTask alloc] initCPTask: engine horizon: horizon duration: duration];
+   id<CPTaskVar> task = [[CPTaskVar alloc] initCPTaskVar: engine horizon: horizon duration: duration];
    [engine trackMutable: task];
    return task;
 }

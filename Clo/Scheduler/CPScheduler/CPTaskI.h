@@ -13,6 +13,8 @@
 #import <ORModeling/ORModeling.h>
 #import <CPScheduler/CPTask.h>
 
-@interface CPTask : ORObject<CPTask>
--(id<CPTask>) initCPTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+@interface CPTaskVar : ORObject<CPTaskVar>
+-(id<CPTaskVar>) initCPTaskVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+-(void) changeMinEvt;
+-(void) changeMaxEvt;
 @end

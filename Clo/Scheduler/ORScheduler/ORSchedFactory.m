@@ -264,10 +264,10 @@
     return o;
 }
 
-// ORTask
-+(id<ORTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+// ORTaskVar
++(id<ORTaskVar>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
-   id<ORTask> o = [[ORTask alloc] initORTask: model horizon: horizon duration:duration];
+   id<ORTaskVar> o = [[ORTaskVar alloc] initORTaskVar: model horizon: horizon duration:duration];
    [model trackMutable:o];
    return o;
 }

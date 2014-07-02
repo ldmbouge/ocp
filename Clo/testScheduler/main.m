@@ -57,47 +57,31 @@ int main(int argc, const char * argv[])
       id<ORModel> model = [ORFactory createModel];
       
       // data
-      id<ORIntRange> Tasks = RANGE(model,1,nbTasks);
-      id<ORIntArray> duration = [ORFactory intArray: model range: Tasks with: ^ORInt(ORInt i) { return inputDuration[i-1]; } ];
-      id<ORIntArray> demand = [ORFactory intArray: model range: Tasks with: ^ORInt(ORInt i) { return inputDemand[i-1]; } ];
-      ORInt totalDuration = 0;
-      for(ORInt i = Tasks.low; i < Tasks.up; i++)
-         totalDuration += [duration at: i];
-      id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
+      id<ORIntRange> Horizon = RANGE(model,0,100);
+      id<ORIntRange> duration = RANGE(model,5,5);
       
-      id<ORTask> t = [ORFactory task: model horizon: RANGE(model,10,20) duration: RANGE(model,1,1)];
       
-      NSLog(@"Task %@ %@",t,[t horizon]);
       // variables
-      id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
-      id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
       
+      id<ORTaskVar> t = [ORFactory task: model horizon: Horizon duration: duration];
       
       // constraints and objective
-      [model minimize: makespan.startLB];
-      
-      for(ORInt p = 0; p < nbPrecedences; p++)
-         [model add: [activities[precedence[p].before] precedes: activities[precedence[p].after]]];
-      for(ORInt t = 1; t <= nbTasks; t++)
-         [model add: [activities[t] precedes: makespan]];
-      [model add: [ORFactory cumulative: activities usage: demand maxCapacity: capacity]];
       
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
-      NSLog(@"start of the task: %d",[cp start: t]);
+      NSLog(@"Task: %@",[cp description: t]);
+      NSLog(@"start of the task: %d",[cp est: t]);
       [cp solve: ^{
-         [cp setTimes: activities];
-         [cp labelActivity: makespan];
-         printf("makespan = [%d,%d] \n",[cp min: makespan.startLB],[cp max: makespan.startLB]);
+         [cp updateStart: t with: 95];
+         NSLog(@"Task: %@",[cp description: t]);
       }
        ];
-      id<ORSolutionPool> pool = [cp solutionPool];
-      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
-      id<ORSolution> optimum = [pool best];
-      printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
+//      id<ORSolutionPool> pool = [cp solutionPool];
+//      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
+//      id<ORSolution> optimum = [pool best];
+//      printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
       [cp release];
    }
    return 0;

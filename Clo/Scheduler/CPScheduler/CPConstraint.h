@@ -22,7 +22,6 @@
     id<CPActivity> _before; // Optional activity
     id<CPActivity> _after;  // Optional activity
 }
-
 -(id) initCPPrecedence: (id<CPActivity>) before after: (id<CPActivity>) after;
 -(void) dealloc;
 -(ORStatus) post;
@@ -45,3 +44,4 @@
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end
+

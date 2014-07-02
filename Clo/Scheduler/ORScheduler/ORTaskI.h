@@ -11,7 +11,7 @@
 
 #import <ORScheduler/ORTask.h>
 
-@interface ORTask : ORObject<ORTask>
--(id<ORTask>) initORTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+@interface ORTaskVar : ORObject<ORTaskVar>
+-(id<ORTaskVar>) initORTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 @end
 

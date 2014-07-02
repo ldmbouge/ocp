@@ -21,11 +21,15 @@
 -(ORFloat) floatValue;
 @end
 
-@protocol ORVar <ORObject,ORExpr>
+@protocol ORVar <ORObject>
 -(ORInt) getId;
 @end
 
-@protocol ORIntVar <ORVar>
+@protocol ORExprVar <ORVar,ORExpr>
+-(ORInt) getId;
+@end
+
+@protocol ORIntVar <ORExprVar>
 -(id<ORIntRange>) domain;
 -(ORInt) low;
 -(ORInt) up;
@@ -36,14 +40,14 @@
 -(id<ORIntVar>)base;
 @end
 
-@protocol ORBitVar <ORVar>
+@protocol ORBitVar <ORExprVar>
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
 -(NSString*)stringValue;
 @end
 
-@protocol ORFloatVar <ORVar>
+@protocol ORFloatVar <ORExprVar>
 -(id<ORFloatRange>) domain;
 -(ORBool) hasBounds;
 -(ORFloat) low;

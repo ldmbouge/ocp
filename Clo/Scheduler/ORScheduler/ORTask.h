@@ -12,8 +12,10 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 
-@protocol ORTask <ORObject>
--(ORInt) getId;
+@protocol ORTaskPrecedes;
+
+@protocol ORTaskVar <ORVar>
 -(id<ORIntRange>)   horizon;
 -(id<ORIntRange>)   duration;
+-(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after;
 @end

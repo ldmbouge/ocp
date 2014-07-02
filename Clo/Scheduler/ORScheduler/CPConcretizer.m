@@ -269,13 +269,13 @@
 }
 
 // Task
--(void) visitTask:(id<ORTask>) task
+-(void) visitTask:(id<ORTaskVar>) task
 {
    if (_gamma[task.getId] == NULL) {
       id<ORIntRange> horizon = [task horizon];
       id<ORIntRange> duration = [task duration];
       
-      id<CPTask> concreteTask;
+      id<CPTaskVar> concreteTask;
       
       if (duration.low == duration.up) {
          concreteTask = [CPFactory task: _engine horizon: horizon duration: duration.low];
