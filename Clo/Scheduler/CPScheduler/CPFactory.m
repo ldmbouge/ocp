@@ -61,6 +61,12 @@
     return [[CPPrecedence alloc] initCPPrecedence:before after:after];
 }
 
++(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
+{
+   // Creating a precedence propagator
+   return [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
+}
+
 
 // Cumulative (resource) constraint
 //

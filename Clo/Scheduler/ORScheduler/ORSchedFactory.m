@@ -167,7 +167,12 @@
     [[before.duration tracker] trackMutable:o];
     return o;
 }
-
++(id<ORTaskPrecedes>) constraint: (id<ORTaskVar>) before precedes: (id<ORTaskVar>) after
+{
+   id<ORTaskPrecedes> o = [[ORTaskPrecedes alloc] initORTaskPrecedes: before precedes: after];
+   [[before tracker] trackMutable: o];
+   return o;
+}
 // Cumulative (resource) constraint
 //
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c

@@ -26,6 +26,10 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "precedes: visit method not defined"];
 }
+-(void) visitTaskPrecedes: (id<ORPrecedes>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "taskPrecedes: visit method not defined"];
+}
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];

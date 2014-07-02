@@ -11,10 +11,16 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORScheduler/ORActivity.h>
+#import <ORScheduler/ORTask.h>
 
 @protocol ORPrecedes <ORConstraint>
 -(id<ORActivity>) before;
 -(id<ORActivity>) after;
+@end
+
+@protocol ORTaskPrecedes <ORConstraint>
+-(id<ORTaskVar>) before;
+-(id<ORTaskVar>) after;
 @end
 
 @protocol ORSchedulingCumulative <ORConstraint>

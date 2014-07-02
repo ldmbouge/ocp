@@ -90,6 +90,7 @@ typedef struct  {
    if (newStart > _startMin._val) {
       if (newStart > _startMax._val)
          failNow();
+      [self changeStartEvt];
       assignTRInt(&_startMin,newStart,_trail);
       assignTRInt(&_endMin,newStart+_duration,_trail);
    }
@@ -99,8 +100,9 @@ typedef struct  {
    if (newEnd < _endMax._val) {
       if (newEnd < _endMin._val)
          failNow();
+      [self changeEndEvt];
       assignTRInt(&_endMax,newEnd,_trail);
-      assignTRInt(&_startMax,newEnd=_duration,_trail);
+      assignTRInt(&_startMax,newEnd-_duration,_trail);
    }
 }
 -(void) updateMinDuration: (ORInt) newMinDuration
@@ -174,7 +176,7 @@ typedef struct  {
    [self whenChangeEndPropagate: c priority: c->_priority];
 }
 
--(void) changeMinEvt
+-(void) changeStartEvt
 {
    id<CPClosureList> mList[2];
    ORUInt k = 0;
@@ -186,13 +188,13 @@ typedef struct  {
    scheduleClosures(_engine,mList);
 }
 
--(void) changeMaxEvt
+-(void) changeEndEvt
 {
    id<CPClosureList> mList[2];
    ORUInt k = 0;
    mList[k] = _net._anyEvt[0]._val;
    k += mList[k] != NULL;
-   mList[k] = _net._startEvt[0]._val;
+   mList[k] = _net._endEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);

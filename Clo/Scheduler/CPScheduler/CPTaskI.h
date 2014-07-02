@@ -16,6 +16,6 @@
 
 @interface CPTaskVar : ORObject<CPTaskVar>
 -(id<CPTaskVar>) initCPTaskVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
--(void) changeMinEvt;
--(void) changeMaxEvt;
+-(void) changeStartEvt;
+-(void) changeEndEvt;
 @end

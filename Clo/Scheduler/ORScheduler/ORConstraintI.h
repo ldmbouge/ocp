@@ -19,6 +19,12 @@
 -(id<ORActivity>) after;
 @end
 
+@interface ORTaskPrecedes : ORConstraintI<ORTaskPrecedes>
+-(id<ORTaskPrecedes>) initORTaskPrecedes:(id<ORTaskVar>) before precedes:(id<ORTaskVar>) after;
+-(id<ORTaskVar>) before;
+-(id<ORTaskVar>) after;
+@end
+
 
 // Cumulative (resource) constraint
 @interface ORCumulative : ORConstraintI<ORCumulative>

@@ -71,6 +71,48 @@
 @end
 
 
+// ORPrecedes
+//
+@implementation ORTaskPrecedes {
+   id<ORTaskVar> _before;
+   id<ORTaskVar> _after;
+}
+-(id<ORTaskPrecedes>) initORTaskPrecedes: (id<ORTaskVar>) before precedes:(id<ORTaskVar>) after
+{
+   self = [super initORConstraintI];
+   _before = before;
+   _after   = after;
+   return self;
+}
+-(void)visit: (ORVisitor*) v
+{
+   [v visitTaskPrecedes: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> TaskPrecedes(%@,%@)>", [self class], self, _before, _after];
+   return buf;
+}
+-(id<ORTaskVar>) before
+{
+   return _before;
+}
+-(id<ORTaskVar>) after
+{
+   return _after;
+}
+-(NSSet*) allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
+   [ms addObject: _before ];
+   [ms addObject: _after ];
+   [ms addObject: _after .duration];
+   return ms;
+}
+@end
+
+
 // Cumulative (resource) constraint
 //
 @implementation ORCumulative {

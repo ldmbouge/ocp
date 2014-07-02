@@ -137,6 +137,20 @@
     }
 }
 
+// Precedence constraint
+-(void) visitTaskPrecedes:(id<ORTaskPrecedes>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORTaskVar> before = [cstr before];
+      id<ORTaskVar> after  = [cstr after];
+      [before visit: self];
+      [after  visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory constraint: _gamma[before.getId] precedes: _gamma[after.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 // Disjunctive (resource) constraint
 -(void) visitDisjunctive:(id<ORDisjunctive>) cstr
 {

@@ -58,22 +58,28 @@ int main(int argc, const char * argv[])
       
       // data
       id<ORIntRange> Horizon = RANGE(model,0,100);
-      id<ORIntRange> duration = RANGE(model,5,5);
+      id<ORIntRange> duration1 = RANGE(model,5,5);
+      id<ORIntRange> duration2 = RANGE(model,10,10);
       
       
       // variables
       
-      id<ORTaskVar> t = [ORFactory task: model horizon: Horizon duration: duration];
+      id<ORTaskVar> t1 = [ORFactory task: model horizon: Horizon duration: duration1];
+      id<ORTaskVar> t2 = [ORFactory task: model horizon: Horizon duration: duration2];
       
       // constraints and objective
+      [model add: [t1 precedes: t2]];
       
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
-      NSLog(@"Task: %@",[cp description: t]);
-      NSLog(@"start of the task: %d",[cp est: t]);
+      NSLog(@"Task: %@",[cp description: t1]);
+      NSLog(@"Task: %@",[cp description: t2]);
       [cp solve: ^{
-         [cp updateStart: t with: 95];
-         NSLog(@"Task: %@",[cp description: t]);
+         
+         [cp updateStart: t1 with: 26];
+         [cp updateEnd: t2 with: 50];
+         NSLog(@"Task: %@",[cp description: t1]);
+         NSLog(@"Task: %@",[cp description: t2]);
       }
        ];
 //      id<ORSolutionPool> pool = [cp solutionPool];

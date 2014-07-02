@@ -19,6 +19,7 @@
 -(void) visitTask: (id<ORTaskVar> ) task;
 -(void) visitDisjunctiveResource: (id<ORDisjunctiveResource> ) dr;
 -(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
+-(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
@@ -34,6 +35,7 @@
 -(void) visitTask: (id<ORTaskVar> ) task;
 -(void) visitDisjunctiveResource: (id<ORDisjunctiveResource> ) dr;
 -(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
+-(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
 -(void) visitDisjunctive: (id<ORDisjunctive>) cstr;

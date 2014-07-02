@@ -10,18 +10,25 @@
  ***********************************************************************/
 
 #import "ORTaskI.h"
+#import <ORScheduler/ORSchedFactory.h>
 #import <ORScheduler/ORVisit.h>
 
 @implementation ORTaskVar {
+   id<ORModel> _model;
    id<ORIntRange>  _horizon;
    id<ORIntRange>  _duration;
 }
 -(id<ORTaskVar>) initORTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    self = [super init];
+   _model = model;
    _duration = duration;
    _horizon = horizon;
    return self;
+}
+-(id<ORTracker>) tracker
+{
+   return _model;
 }
 -(id<ORIntRange>)   horizon
 {
@@ -35,8 +42,8 @@
 {
    [v visitTask: self];
 }
-//-(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after
-//{
-//   return [ORFactory constraint: self precedes: after];
-//}
+-(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after
+{
+   return [ORFactory constraint: self precedes: after];
+}
 @end

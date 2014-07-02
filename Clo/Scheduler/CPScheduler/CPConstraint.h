@@ -15,6 +15,7 @@
 #import <objcp/CPVar.h>
 #import "CPActivity.h"
 #import "CPTask.h"
+#import "CPTaskI.h"
 
 
     // Single precedence propagator

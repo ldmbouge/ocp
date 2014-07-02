@@ -409,9 +409,6 @@
   
    _before = before;
    _after  = after;
-   
-   NSLog(@"Create precedence constraint\n");
-//   
    return self;
 }
 -(void) dealloc
@@ -420,89 +417,30 @@
 }
 -(ORStatus) post
 {
-//   [self propagate];
-//   
-//   if (!_before.startLB.bound)
-//      [_before.startLB whenChangeMinPropagate:self];
-//   if (!_before.duration.bound)
-//      [_before.duration whenChangeMinPropagate:self];
-//   if (_before.isOptional) {
-//      if (!_before.top.bound)
-//         [_before.top whenBindPropagate:self];
-//   }
-//   if (!_after.startUB.bound)
-//      [_after.startUB whenChangeMinPropagate:self];
-//   if (_after.isOptional) {
-//      if (!_after.top.bound)
-//         [_after.top whenBindPropagate:self];
-//   }
-//   
+   [self propagate];
+   if (![_before bound] && ![_after bound]) {
+      [_before whenChangeStartPropagate: self];
+      [_after whenChangeEndPropagate: self];
+   }
    return ORSuspend;
 }
 -(void) propagate
 {
-//   if (_before.isAbsent || _after.isAbsent || _before.startUB.max + _before.duration.max <= _after.startLB.min) {
-//      assignTRInt(&_active, NO, _trail);
-//   }
-//   else if (_before.isPresent && _after.isPresent) {
-//      //        printf("START present %d -> %d\n", _before.getId, _after.getId);
-//      //        printf("\t start [(%d,%d), (%d,%d)] + dur [%d,%d] <= start [%d,%d]\n", _before.startLB.min, _before.startLB.max, _before.startUB.min, _before.startUB.max, _before.duration.min, _before.duration.max, _after.startLB.min, _after.startUB.max);
-//      [_after updateStartMin:_before.startLB.min + _before.duration.min];
-//      [_before updateStartMax:_after.startUB.max - _before.duration.min];
-//      updateMaxDom((CPIntVar *)_before.duration, _after.startUB.max - _before.startLB.min);
-//      //        printf("\t start [(%d,%d), (%d,%d)] + dur [%d,%d] <= start [%d,%d]\n", _before.startLB.min, _before.startLB.max, _before.startUB.min, _before.startUB.max, _before.duration.min, _before.duration.max, _after.startLB.min, _after.startUB.max);
-//      //        printf("END present\n");
-//   }
-//   else {
-//      if ([_before implyPresent:_after]) {
-//         //            printf("START before (%d) implies after (%d)\n", _before.getId, _after.getId);
-//         [_before updateStartMax:_after.startUB.max - _before.duration.min];
-//         updateMaxDom((CPIntVar *)_before.duration, _after.startUB.max - _before.startLB.min);
-//         //            printf("END before implies after\n");
-//      }
-//      if ([_after implyPresent:_before]) {
-//         //            printf("START after (%d) implies before (%d)\n", _after.getId, _before.getId);
-//         [_after updateStartMin:_before.startLB.min + _before.duration.min];
-//         //            printf("END before implies after\n");
-//      }
-//   }
+   [_after updateStart: [_before ect]];
+   [_before updateEnd: [_after lst]];
 }
 -(NSSet*) allVars
 {
-   ORInt size = 0;
-//   size += (_before.isOptional ? 4 : 2);
-//   size += (_after .isOptional ? 3 : 1);
+   ORInt size = 2;
    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
-//   [rv addObject:_before.startLB ];
-//   [rv addObject:_after .startLB ];
-//   [rv addObject:_before.duration];
-//   if (_before.isOptional) {
-//      [rv addObject:_before.startUB];
-//      [rv addObject:_before.top    ];
-//   }
-//   if (_after.isOptional) {
-//      [rv addObject:_after.startUB];
-//      [rv addObject:_after.top    ];
-//   }
+   [rv addObject:_before];
+   [rv addObject:_after];
    [rv autorelease];
    return rv;
 }
 -(ORUInt) nbUVars
 {
-   ORUInt nb = 0;
-//   if (!_before.startLB .bound) nb++;
-//   if (!_after .startLB .bound) nb++;
-//   if (!_before.duration.bound) nb++;
-//   if (!_after .duration.bound) nb++;
-//   if (_before.isOptional) {
-//      if (!_before.startUB.bound) nb++;
-//      if (!_before.top    .bound) nb++;
-//   }
-//   if (_after.isOptional) {
-//      if (!_after.startUB.bound) nb++;
-//      if (!_after.top    .bound) nb++;
-//   }
-   return nb;
+   return 2;
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
