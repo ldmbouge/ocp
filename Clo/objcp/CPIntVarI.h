@@ -110,8 +110,6 @@ typedef struct  {
 -(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
 -(void)updateMin:(ORInt)newMin;
 -(void)updateMax:(ORInt)newMax;
 -(ORBounds)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
@@ -136,8 +134,6 @@ typedef struct  {
 -(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
 -(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
@@ -160,8 +156,6 @@ typedef struct  {
 -(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
 -(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
@@ -185,8 +179,6 @@ typedef struct  {
 -(ORInt) domsize;
 -(ORBool)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
 -(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;

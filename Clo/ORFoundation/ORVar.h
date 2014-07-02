@@ -30,8 +30,6 @@
 -(ORInt) low;
 -(ORInt) up;
 -(ORBool) isBool;
--(ORInt) scale;
--(ORInt) shift;
 -(ORInt) literal;
 -(id<ORIntVar>)base;
 @end

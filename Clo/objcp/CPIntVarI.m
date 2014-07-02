@@ -150,16 +150,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method isBool not defined"];
    return FALSE;
 }
--(ORInt) scale
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method scale  not defined"];
-   return 0;
-}
--(ORInt) shift
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method shift not defined"];
-   return 0;
-}
 -(id<ORIntVar>) base
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method base not defined"];
@@ -458,14 +448,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return (ORRange){_value-1,_value+1};
 }
--(ORInt) shift
-{
-   return 0;
-}
--(ORInt) scale
-{
-   return 1;
-}
 -(ORInt) literal
 {
    return 0;
@@ -736,14 +718,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORInt low = [_dom findMax:v-1];
    ORInt up  = [_dom findMin:v+1];
    return (ORRange){low,up};
-}
--(ORInt) shift
-{
-    return 0;
-}
--(ORInt) scale
-{
-    return 1;
 }
 -(ORInt)literal
 {
@@ -1201,17 +1175,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    a.low += _b;
    a.up  += _b;
    return a;
-//   ORInt low = [_dom findMax:v - _b - 1];
-//   ORInt up  = [_dom findMin:v - _b + 1];
-//   return (ORRange){low + _b,up + _b};
-}
--(ORInt) shift
-{
-    return _b;
-}
--(ORInt) scale
-{
-    return 1;
 }
 -(void) updateMin: (ORInt) newMin
 {
@@ -1337,15 +1300,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORRange a = [_x around: (v - _b) / _a];
    return (ORRange){a.low * _a + _b,a.up * _a  + _b};
-}
-
--(ORInt) shift
-{
-    return _b;
-}
--(ORInt) scale
-{
-    return _a;
 }
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
@@ -1566,14 +1520,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORRange a = [_x around:-v];
    return (ORRange){-a.up,-a.low};
 }
--(ORInt) shift
-{
-   return 0;
-}
--(ORInt) scale
-{
-   return -1;
-}
 -(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_fdm, _net._maxEvt, todo, c, p);
@@ -1726,14 +1672,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORRange)around:(ORInt)v
 {
    return (ORRange){0,1};
-}
--(ORInt) shift
-{
-   return 0;
-}
--(ORInt) scale
-{
-   return 1;
 }
 -(void) updateMin: (ORInt) newMin
 {

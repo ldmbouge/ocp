@@ -123,7 +123,7 @@
 
 // [pvh] this must be transformed into an affine view as well to allow for increase/decrease
 
--(void) visitAffineVar:(id<ORIntVar>) v
+-(void) visitAffineVar:(ORIntVarAffineI*) v
 {
    if (_gamma[v.getId] == NULL) {
       id<ORIntVar> mBase = [v base];

@@ -13,6 +13,7 @@
 #import <ORModeling/ORLinear.h>
 #import "ORExprI.h"
 #import "ORFloatLinear.h"
+#import "ORVarI.h"
 //-- temp
 #import "ORFloatDecompose.h"
 
@@ -382,7 +383,7 @@ struct CPVarPair {
    } else
       [_terms addTerm:e by:1];
 }
--(void) visitAffineVar:(id<ORIntVar>)e
+-(void) visitAffineVar:(ORIntVarAffineI*)e
 {
    if (_eqto) {
       [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
