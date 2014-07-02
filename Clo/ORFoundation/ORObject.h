@@ -33,4 +33,4 @@
 -(ORUInt)getId;
 @end
 
-static inline ORUInt getId(ORObject* ptr) { return ptr->_name;}
+static inline ORUInt getId(const ORObject* ptr) { return ptr->_name;}

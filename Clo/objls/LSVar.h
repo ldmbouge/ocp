@@ -42,7 +42,11 @@
 -(id<LSIntVar>)variable;
 @end
 
-@interface LSVarGradient : NSObject<LSGradient> {
+@interface LSGradient : NSObject
++(id<LSGradient>)maxOf:(id<LSGradient>)g1 and:(id<LSGradient>)g2;
+@end
+
+@interface LSVarGradient : LSGradient<LSGradient> {
    id<LSIntVar>   _x;
 }
 +(id<LSGradient>)newVarGradient:(id<LSIntVar>)x;
@@ -52,7 +56,7 @@
 -(id<LSIntVar>)variable;
 @end
 
-@interface LSCstGradient : NSObject<LSGradient> {
+@interface LSCstGradient : LSGradient<LSGradient> {
    int  _cst;
 }
 +(id<LSGradient>)newCstGradient:(ORInt)c;
@@ -79,6 +83,7 @@
 -(id<ORASolver>) solver;
 @end
 
+id<LSIntVarArray> sortById(id<LSIntVarArray> array);
 ORBool isIdMapped(id<LSIntVarArray> array);
 id<LSIntVar> findByName(id<LSIntVarArray> array,ORInt name);
 ORInt findRankByName(id<LSIntVarArray> array,ORInt name);

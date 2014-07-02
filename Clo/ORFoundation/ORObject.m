@@ -63,6 +63,16 @@
 }
 -(void) visit: (ORVisitor*) visitor
 {}
+- (BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[ORObject class]]) {
+      return _name == getId(object);
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   return _name;
+}
 @end
 
 

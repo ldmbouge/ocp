@@ -44,6 +44,12 @@ Class __lsivc = nil;
    [_closures release];
    [super dealloc];
 }
+- (BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[LSIntVar class]]) {
+      return _name == getId(object);
+   } else return NO;
+}
 -(LSEngineI*)engine
 {
    return _engine;

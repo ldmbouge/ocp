@@ -12,6 +12,42 @@
 #import <objls/LSVar.h>
 #import "LSPropagator.h"
 #import "LSFactory.h"
+#import "LSCount.h"
+#import "LSIntVar.h"
+
+@implementation LSGradient
++(id<LSGradient>)maxOf:(id<LSGradient>)g1 and:(id<LSGradient>)g2
+{
+   if ([g1 isConstant] && [g2 isConstant])
+      return [LSCstGradient newCstGradient:max([g1 constant],[g2 constant])];
+   else if ([g1 isConstant]) {
+      id<LSIntVar> v = [g2 variable];
+      id<ORIntRange> d = v.domain;
+      ORInt g1c = [g1 constant];
+      if (g1c >= d.up)
+         return g1;
+      else if (g1c <= d.low)
+         return g2;
+      else {
+         id<LSIntVar> ng = [LSFactory intVarView:[v engine] domain:d fun:^ORInt{
+            return max(getLSIntValue(v),g1c);
+         } src:@[v]];
+         return [LSVarGradient newVarGradient:ng];
+      }
+   } else if ([g2 isConstant]) {
+      return [self maxOf:g2 and:g1];
+   } else {
+      id<LSIntVar> v1 = [g1 variable];
+      id<LSIntVar> v2 = [g2 variable];
+      id<LSEngine> e = [v1 engine];
+      id<LSIntVar> rv = [LSFactory intVar:e domain:v1.domain];
+      [e add:[LSFactory inv:rv equal:^ORInt{
+         return max(getLSIntValue(v1),getLSIntValue(v2));
+      } vars:@[v1,v2]]];
+      return [LSVarGradient newVarGradient:rv];
+   }
+}
+@end
 
 @implementation LSVarGradient
 +(id<LSGradient>)newVarGradient:(id<LSIntVar>)x
@@ -141,6 +177,16 @@ void collectSources(id<LSIntVarArray> x,NSArray** asv)
       ++k;
    }
 }
+int varComparator(const ORObject* a, const ORObject* b) {
+   return getId(a) - getId(b);
+}
+id<LSIntVarArray> sortById(id<LSIntVarArray> array)
+{
+   id* b = (id*)[(id)array base];
+   qsort(b, [array count], sizeof(id),(int(*)(const void*,const void*))&varComparator );
+   return array;
+}
+
 
 id<LSIntVarArray> sourceVariables(LSEngineI* engine,NSArray** asv,ORInt nb,ORBool* multiple)
 {
