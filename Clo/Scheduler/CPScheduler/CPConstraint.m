@@ -481,10 +481,10 @@
 }
 -(void) propagate
 {
-   if ([_before isPresent] && [_after isPresent]) {
+   if ([_before isPresent])
       [_after updateStart: [_before ect]];
+   if ([_after isPresent])
       [_before updateEnd: [_after lst]];
-   }
 }
 -(NSSet*) allVars
 {

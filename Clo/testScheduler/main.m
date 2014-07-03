@@ -81,9 +81,9 @@ int main(int argc, const char * argv[])
       [cp solve: ^{
          
 //         [cp updateStart: t[0] with: 26];
-//         [cp updateEnd: t[1] with: 50];
+         [cp updateEnd: t[1] with: 20];
 //         [cp updateStart: o with: 30];
-         [cp labelPresent:o with:TRUE];
+//         [cp labelPresent:o with:TRUE];
          NSLog(@"Task: %@",[cp description: t[0]]);
          NSLog(@"Task: %@",[cp description: t[1]]);
          NSLog(@"Optional Task: %@",[cp description: o]);
