@@ -292,7 +292,10 @@
       id<CPTaskVar> concreteTask;
       
       if (duration.low == duration.up) {
-         concreteTask = [CPFactory task: _engine horizon: horizon duration: duration.low];
+         if (![task isOptional])
+            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration.low];
+         else
+            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration.low];
       }
       else {
          // pvh to fill

@@ -18,6 +18,7 @@
 -(id<ORTracker>) tracker;
 -(id<ORIntRange>) horizon;
 -(id<ORIntRange>) duration;
+-(ORBool) isOptional;
 -(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after;
 @end
 

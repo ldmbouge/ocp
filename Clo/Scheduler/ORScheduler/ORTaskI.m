@@ -20,6 +20,7 @@
    id<ORModel> _model;
    id<ORIntRange>  _horizon;
    id<ORIntRange>  _duration;
+   ORBool _isOptional;
 }
 -(id<ORTaskVar>) initORTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
@@ -27,6 +28,16 @@
    _model = model;
    _duration = duration;
    _horizon = horizon;
+   _isOptional = FALSE;
+   return self;
+}
+-(id<ORTaskVar>) initOROptionalTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+{
+   self = [super init];
+   _model = model;
+   _duration = duration;
+   _horizon = horizon;
+   _isOptional = TRUE;
    return self;
 }
 -(id<ORTracker>) tracker
@@ -41,6 +52,10 @@
 {
    return _duration;
 }
+-(ORBool) isOptional
+{
+   return _isOptional;
+}
 -(void)visit:(ORVisitor*) v
 {
    [v visitTask: self];
@@ -50,3 +65,4 @@
    return [ORFactory constraint: self precedes: after];
 }
 @end
+

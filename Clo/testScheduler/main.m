@@ -67,6 +67,7 @@ int main(int argc, const char * argv[])
       // variables
       
       id<ORTaskVarArray> t = [ORFactory taskVarArray: model range: R horizon: Horizon duration: duration];
+      id<ORTaskVar> o = [ORFactory optionalTask: model horizon: Horizon duration: 10];
       
       // constraints and objective
       [model add: [t[0] precedes: t[1]]];
@@ -75,12 +76,15 @@ int main(int argc, const char * argv[])
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       NSLog(@"Task: %@",[cp description: t[0]]);
       NSLog(@"Task: %@",[cp description: t[1]]);
+      NSLog(@"Optional Task: %@",[cp description: o]);
       [cp solve: ^{
          
          [cp updateStart: t[0] with: 26];
          [cp updateEnd: t[1] with: 50];
+         [cp updateStart: o with: 100];
          NSLog(@"Task: %@",[cp description: t[0]]);
          NSLog(@"Task: %@",[cp description: t[1]]);
+         NSLog(@"Optional Task: %@",[cp description: o]);
       }
        ];
 //      id<ORSolutionPool> pool = [cp solutionPool];

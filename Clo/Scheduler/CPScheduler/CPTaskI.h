@@ -19,3 +19,7 @@
 -(void) changeStartEvt;
 -(void) changeEndEvt;
 @end
+
+@interface CPOptionalTaskVar : ORObject<CPTaskVar>
+-(id<CPTaskVar>) initCPOptionalTaskVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+@end

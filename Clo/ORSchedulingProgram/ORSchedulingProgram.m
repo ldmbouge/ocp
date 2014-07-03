@@ -204,6 +204,35 @@
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelStart: (id<ORTaskVar>) task with: (ORInt) start
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelStart: start]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelEnd: end]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelDuration: duration]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelPresent: present]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+
 -(NSString*) description: (id<ORObject>) o
 {
    return [_gamma[o.getId] description];

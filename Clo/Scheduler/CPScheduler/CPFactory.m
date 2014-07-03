@@ -265,5 +265,11 @@
    [engine trackMutable: task];
    return task;
 }
++(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
+{
+   id<CPTaskVar> task = [[CPOptionalTaskVar alloc] initCPOptionalTaskVar: engine horizon: horizon duration: duration];
+   [engine trackMutable: task];
+   return task;
+}
 
 @end

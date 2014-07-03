@@ -33,6 +33,11 @@
 -(void) updateMinDuration: (id<ORTaskVar>) task with: (ORInt) newMinDuration;
 -(void) updateMaxDuration: (id<ORTaskVar>) task with: (ORInt) newMaxDuration;
 
+-(void) labelStart: (id<ORTaskVar>) task with: (ORInt) start;
+-(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end;
+-(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration;
+-(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present;
+
 -(NSString*) description: (id<ORObject>) o;
 @end
 
