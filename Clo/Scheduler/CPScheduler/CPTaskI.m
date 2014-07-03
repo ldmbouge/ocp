@@ -331,7 +331,6 @@ typedef struct  {
 }
 @end
 
-
 typedef struct  {
    TRId _presentEvt[2];
    TRId _absentEvt[2];
