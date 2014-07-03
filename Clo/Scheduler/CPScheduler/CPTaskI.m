@@ -20,23 +20,22 @@
 #import "CPFactory.h"
 
 typedef struct  {
-   TRId _anyEvt[2];
+   TRId _boundEvt[2];
    TRId _startEvt[2];
    TRId _endEvt[2];
+   TRId _durationEvt[2];
 } CPTaskVarEventNetwork;
-
-
 
 @implementation CPTaskVar
 {
    CPEngineI*         _engine;
    id<ORTrail>        _trail;
    id<ORIntRange>     _horizon;
-   ORInt              _duration;
-   TRInt              _startMin;
-   TRInt              _startMax;
-   TRInt              _endMin;
-   TRInt              _endMax;
+   TRInt              _start;
+   TRInt              _end;
+   TRInt              _durationMin;
+   TRInt              _durationMax;
+   ORBool             _constantDuration;
    CPTaskVarEventNetwork _net;
 }
 -(id<CPTaskVar>) initCPTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
@@ -46,47 +45,51 @@ typedef struct  {
    _trail = [engine trail];
    
    // domain [who said I do not write comments?]
-   _startMin = makeTRInt(_trail,horizon.low);
-   _startMax = makeTRInt(_trail,horizon.up - duration);
-   _endMin = makeTRInt(_trail,horizon.low + duration);
-   _endMax = makeTRInt(_trail,horizon.up);
-   _duration = duration;
-   
+   _start = makeTRInt(_trail,horizon.low);
+   _end = makeTRInt(_trail,horizon.up);
+   _durationMin = makeTRInt(_trail,duration);
+   _durationMax = makeTRInt(_trail,duration);
+   _constantDuration = TRUE;
+
+   // need a consistency check
+   assert(_start._val + _durationMax._val <= _end._val);
+
    // network
    for(ORInt i = 0;i < 2;i++) {
-      _net._anyEvt[i] = makeTRId(_trail,nil);
+      _net._boundEvt[i] = makeTRId(_trail,nil);
       _net._startEvt[i] = makeTRId(_trail,nil);
       _net._endEvt[i] = makeTRId(_trail,nil);
+      _net._durationEvt[i] = makeTRId(_trail,nil);
    }
    return self;
 }
 -(ORInt) est
 {
-   return _startMin._val;
+   return _start._val;
 }
 -(ORInt) lst
 {
-   return _startMax._val;
+   return _end._val - _durationMin._val;
 }
 -(ORInt) ect
 {
-   return _endMin._val;
+   return _start._val + _durationMin._val;
 }
 -(ORInt) lct
 {
-   return _endMax._val;
+   return _end._val;
 }
 -(ORInt) minDuration
 {
-   return _duration;
+   return _durationMin._val;
 }
 -(ORInt) maxDuration
 {
-   return _duration;
+   return _durationMax._val;
 }
 -(ORBool) bound
 {
-   return _startMin._val == _startMax._val;
+   return (_start._val + _durationMin._val == _end._val) && (_durationMin._val == _durationMax._val);
 }
 -(ORBool) isPresent
 {
@@ -102,43 +105,61 @@ typedef struct  {
 }
 -(void) updateStart: (ORInt) newStart
 {
-   if (newStart > _startMin._val) {
-      if (newStart > _startMax._val)
+   if (newStart > _start._val) {
+      if (newStart + _durationMin._val > _end._val)
          failNow();
       [self changeStartEvt];
-      assignTRInt(&_startMin,newStart,_trail);
-      assignTRInt(&_endMin,newStart+_duration,_trail);
+      assignTRInt(&_start,newStart,_trail);
+      
+      if (_constantDuration) {
+         ORInt newDurationMax = _end._val - _start._val;
+         [self updateMaxDuration: newDurationMax];
+      }
    }
 }
 -(void) updateEnd: (ORInt) newEnd
 {
-   if (newEnd < _endMax._val) {
-      if (newEnd < _endMin._val)
+   if (newEnd < _end._val) {
+      if (newEnd < _start._val + _durationMin._val)
          failNow();
       [self changeEndEvt];
-      assignTRInt(&_endMax,newEnd,_trail);
-      assignTRInt(&_startMax,newEnd-_duration,_trail);
+      assignTRInt(&_end,newEnd,_trail);
+      
+      if (_constantDuration) {
+         ORInt newDurationMax = _end._val - _start._val;
+         [self updateMaxDuration: newDurationMax];
+      }
    }
 }
--(void) updateMinDuration: (ORInt) newMinDuration
+-(void) updateMinDuration: (ORInt) newDurationMin
 {
-   if (newMinDuration != _duration)
-      failNow();
+   if (newDurationMin > _durationMin._val) {
+      if (newDurationMin > _durationMax._val)
+         failNow();
+      if (_start._val + newDurationMin > _end._val)
+         failNow();
+      [self changeDurationEvt];
+      assignTRInt(&_durationMin,newDurationMin,_trail);
+   }
 }
--(void) updateMaxDuration: (ORInt) newMaxDuration
+-(void) updateMaxDuration: (ORInt) newDurationMax
 {
-   if (newMaxDuration != _duration)
-      failNow();
+   if (newDurationMax < _durationMax._val) {
+      if (newDurationMax < _durationMin._val)
+         failNow();
+      [self changeDurationEvt];
+      assignTRInt(&_durationMax,newDurationMax,_trail);
+   }
 }
 -(void) labelStart: (ORInt) start
 {
    [self updateStart: start];
-   [self updateEnd: start + _duration];
+   [self updateEnd: start + _durationMax._val];
 }
 -(void) labelEnd: (ORInt) end
 {
    [self updateEnd: end];
-   [self updateStart: end - _duration];
+   [self updateStart: end - _durationMax._val];
 }
 -(void) labelDuration: (ORInt) duration
 {
@@ -153,16 +174,17 @@ typedef struct  {
 -(NSString*) description
 {
    if ([self bound])
-      return [NSString stringWithFormat:@"[%d -(%d)-> %d]",_startMin._val,_duration,_endMin._val];
+      return [NSString stringWithFormat:@"[%d -(%d)-> %d]",[self est],_durationMin._val,[self ect]];
+   else if (_constantDuration)
+      return [NSString stringWithFormat:@"[%d..%d -(%d)-> %d..%d]",[self est],[self lst],_durationMin._val,[self ect],[self lct]];
    else
-      return [NSString stringWithFormat:@"[%d..%d -(%d)-> %d..%d]",_startMin._val,_startMax._val,_duration,_endMin._val,_endMax._val];
+      return [NSString stringWithFormat:@"[%d..%d -(%d..%d)-> %d..%d]",[self est],[self lst],_durationMin._val,_durationMax._val,[self ect],[self lct]];
 }
-
 
 // AC3 Closure Event
 -(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
 {
-   hookupEvent(_engine, _net._anyEvt, todo, c, p);
+   hookupEvent(_engine, _net._boundEvt, todo, c, p);
 }
 -(void) whenChangeStartDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
 {
@@ -171,6 +193,10 @@ typedef struct  {
 -(void) whenChangeEndDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
 {
    hookupEvent(_engine, _net._endEvt, todo, c, p);
+}
+-(void) whenChangeDurationDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
+{
+   hookupEvent(_engine, _net._durationEvt, todo, c, p);
 }
 -(void) whenAbsentDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
 {
@@ -190,6 +216,10 @@ typedef struct  {
 {
    [self whenChangeEndDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
+-(void) whenChangeDurationDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
+{
+   [self whenChangeDurationDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
 -(void) whenAbsentDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
 {
 }
@@ -200,7 +230,7 @@ typedef struct  {
 // AC3 Constraint Event
 -(void) whenChangePropagate:  (id<CPConstraint>) c priority: (ORInt) p
 {
-   hookupEvent(_engine, _net._anyEvt, nil, c, p);
+   hookupEvent(_engine, _net._boundEvt, nil, c, p);
 }
 -(void) whenChangeStartPropagate: (id<CPConstraint>) c priority: (ORInt) p
 {
@@ -210,13 +240,16 @@ typedef struct  {
 {
    hookupEvent(_engine, _net._endEvt, nil, c, p);
 }
+-(void) whenChangeDurationPropagate: (id<CPConstraint>) c priority: (ORInt) p
+{
+   hookupEvent(_engine, _net._durationEvt, nil, c, p);
+}
 -(void) whenAbsentPropagate: (id<CPConstraint>) c priority: (ORInt) p
 {
 }
 -(void) whenPresentPropagate: (id<CPConstraint>) c priority: (ORInt) p
 {
 }
-
 -(void) whenChangePropagate: (CPCoreConstraint*) c
 {
    [self whenChangePropagate: c priority: c->_priority];
@@ -229,18 +262,21 @@ typedef struct  {
 {
    [self whenChangeEndPropagate: c priority: c->_priority];
 }
+-(void) whenChangeDurationPropagate: (CPCoreConstraint*) c
+{
+   [self whenChangeDurationPropagate: c priority: c->_priority];
+}
 -(void) whenAbsentPropagate: (id<CPConstraint>) c
 {
 }
 -(void) whenPresentPropagate: (id<CPConstraint>) c
 {
 }
-
 -(void) changeStartEvt
 {
    id<CPClosureList> mList[2];
    ORUInt k = 0;
-   mList[k] = _net._anyEvt[0]._val;
+   mList[k] = _net._boundEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = _net._startEvt[0]._val;
    k += mList[k] != NULL;
@@ -251,14 +287,22 @@ typedef struct  {
 {
    id<CPClosureList> mList[2];
    ORUInt k = 0;
-   mList[k] = _net._anyEvt[0]._val;
+   mList[k] = _net._boundEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = _net._endEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
 }
-
+-(void) changeDurationEvt
+{
+   id<CPClosureList> mList[1];
+   ORUInt k = 0;
+   mList[k] = _net._durationEvt[0]._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   scheduleClosures(_engine,mList);
+}
 -(id<ORTracker>) tracker
 {
    return _engine;
@@ -270,20 +314,21 @@ typedef struct  {
 -(NSSet*) constraints
 {
    NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:2] autorelease];
-   collectList(_net._anyEvt[0]._val,rv);
+   collectList(_net._boundEvt[0]._val,rv);
    collectList(_net._startEvt[0]._val,rv);
    collectList(_net._endEvt[0]._val,rv);
+   collectList(_net._durationEvt[0]._val,rv);
    return rv;
 }
 -(ORInt) degree
 {
    __block ORUInt d = 0;
-   [_net._anyEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._boundEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    [_net._startEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    [_net._endEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._durationEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    return d;
 }
-
 @end
 
 
@@ -572,5 +617,4 @@ typedef struct  {
    [_net._presentEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    return d;
 }
-
 @end
