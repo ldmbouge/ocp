@@ -61,11 +61,6 @@
     return [[CPPrecedence alloc] initCPPrecedence:before after:after];
 }
 
-+(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
-{
-   // Creating a precedence propagator
-   return [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
-}
 
 
 // Cumulative (resource) constraint
@@ -270,6 +265,14 @@
    id<CPTaskVar> task = [[CPOptionalTaskVar alloc] initCPOptionalTaskVar: engine horizon: horizon duration: duration];
    [engine trackMutable: task];
    return task;
+}
++(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
+{
+   return [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
+}
++(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after
+{
+   return [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
 }
 
 @end

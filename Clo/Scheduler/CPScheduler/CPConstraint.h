@@ -58,3 +58,16 @@
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end
+
+@interface CPOptionalTaskPrecedence : CPCoreConstraint<NSCoding> {
+   id<CPTaskVar> _before;
+   id<CPTaskVar> _after;
+}
+-(id) initCPOptionalTaskPrecedence: (id<CPTaskVar>) before after: (id<CPTaskVar>) after;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+

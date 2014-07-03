@@ -451,3 +451,61 @@
    assert(false);
 }
 @end
+
+@implementation CPOptionalTaskPrecedence
+
+-(id) initCPOptionalTaskPrecedence: (id<CPTaskVar>) before after: (id<CPTaskVar>) after
+{
+   self = [super initCPCoreConstraint: [before engine]];
+   
+   _before = before;
+   _after  = after;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_before bound] && ![_after bound]) {
+      [_before whenChangeStartPropagate: self];
+      [_after whenChangeEndPropagate: self];
+      if ([_before isOptional])
+         [_before whenPresentPropagate: self];
+      if ([_after isOptional])
+         [_after whenPresentPropagate: self];
+   }
+   return ORSuspend;
+}
+-(void) propagate
+{
+   if ([_before isPresent] && [_after isPresent]) {
+      [_after updateStart: [_before ect]];
+      [_before updateEnd: [_after lst]];
+   }
+}
+-(NSSet*) allVars
+{
+   ORInt size = 2;
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+   [rv addObject:_before];
+   [rv addObject:_after];
+   [rv autorelease];
+   return rv;
+}
+-(ORUInt) nbUVars
+{
+   return 2;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   assert(false);
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   assert(false);
+}
+@end
+

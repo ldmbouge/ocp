@@ -53,6 +53,7 @@
 -(ORInt) maxDuration;
 -(ORBool) isPresent;
 -(ORBool) isAbsent;
+-(ORBool) isOptional;
 -(void) updateStart: (ORInt) newStart;
 -(void) updateEnd: (ORInt) newEnd;
 -(void) updateMinDuration: (ORInt) newMinDuration;

@@ -70,6 +70,7 @@ int main(int argc, const char * argv[])
       id<ORTaskVar> o = [ORFactory optionalTask: model horizon: Horizon duration: 10];
       
       // constraints and objective
+      [model add: [o precedes: t[0]]];
       [model add: [t[0] precedes: t[1]]];
       
       // search
@@ -79,9 +80,10 @@ int main(int argc, const char * argv[])
       NSLog(@"Optional Task: %@",[cp description: o]);
       [cp solve: ^{
          
-         [cp updateStart: t[0] with: 26];
-         [cp updateEnd: t[1] with: 50];
-         [cp updateStart: o with: 100];
+//         [cp updateStart: t[0] with: 26];
+//         [cp updateEnd: t[1] with: 50];
+//         [cp updateStart: o with: 30];
+         [cp labelPresent:o with:TRUE];
          NSLog(@"Task: %@",[cp description: t[0]]);
          NSLog(@"Task: %@",[cp description: t[1]]);
          NSLog(@"Optional Task: %@",[cp description: o]);

@@ -92,6 +92,10 @@ typedef struct  {
 {
    return TRUE;
 }
+-(ORBool) isOptional
+{
+   return FALSE;
+}
 -(ORBool) isAbsent
 {
    return FALSE;
@@ -345,6 +349,10 @@ typedef struct  {
 -(ORBool) isAbsent
 {
    return _presentMax._val == 0;
+}
+-(ORBool) isOptional
+{
+   return _presentMin._val != _presentMax._val;
 }
 -(ORBool) bound
 {
