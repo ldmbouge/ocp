@@ -25,7 +25,7 @@
 -(ORInt) ect: (id<ORTaskVar>) task;
 -(ORInt) lst: (id<ORTaskVar>) task;
 -(ORInt) lct: (id<ORTaskVar>) task;
--(ORInt) boundActivity: (id<ORTaskVar>) task;
+-(ORBool) boundActivity: (id<ORTaskVar>) task;
 -(ORInt) minDuration: (id<ORTaskVar>) task;
 -(ORInt) maxDuration: (id<ORTaskVar>) task;
 -(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart;
@@ -39,6 +39,12 @@
 -(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present;
 
 -(NSString*) description: (id<ORObject>) o;
+@end
+
+@interface CPSchedulerFactory : NSObject
++(id<CPSchedulingProgram>) solver;
+//+(id<CPSemanticProgramDFS>) semanticSolverDFS;
+//+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
 @end
 
 @interface ORFactory (CPScheduling)

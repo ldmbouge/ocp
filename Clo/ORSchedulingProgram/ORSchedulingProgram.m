@@ -16,11 +16,20 @@
 
 // PVH: to clean up the code for optional activities; this is ugly right now
 
-@interface CPCoreSolver (CPScheduling)
--(void) labelActivities: (id<ORActivityArray>) act;
+@interface CPSchedulingSolver : CPSolver<CPSchedulingProgram>
+-(CPSchedulingSolver*) initCPSchedulingSolver;
 @end
 
-@implementation CPCoreSolver (CPScheduling)
+
+@implementation CPSchedulingSolver
+{
+// new instance variables
+}
+-(CPSchedulingSolver*) initCPSchedulingSolver
+{
+   self = [super initCPSolver];
+   return self;
+}
 -(void) labelActivities: (id<ORActivityArray>) act
 {
    for (ORInt i = act.range.low; i <= act.range.up; i++)
@@ -239,10 +248,49 @@
 }
 @end
 
+
+@implementation CPSchedulerFactory
++(id<CPSchedulingProgram>) solver
+{
+   return [[CPSchedulingSolver alloc] initCPSchedulingSolver];
+}
+//+(id<CPSemanticProgramDFS>) semanticSolverDFS
+//{
+//   return [[CPSemanticSolver alloc] initCPSemanticSolverDFS];
+//}
+//+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
+//{
+//   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
+//}
+@end
+
+
+// Now I need to create a scheduling program
 @implementation ORFactory (CPScheduling)
++(id<CPSchedulingProgram>) createCPSchedulingProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
+{
+   __block id<CPSchedulingProgram> cpprogram = [CPSchedulerFactory solver];
+   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [cpprogram captureSolution];
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      [sp addSolution: s];
+      [s release];
+   }];
+   return cpprogram;
+}
 +(id<CPSchedulingProgram>) createCPSchedulingProgram: (id<ORModel>) model
 {
-   return (id<CPSchedulingProgram>) [ORFactory createCPProgram: model];
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPSchedulingProgram> program = [self createCPSchedulingProgram:model annotation:notes];
+   [notes release];
+   return program;
 }
+//+(id<CPSchedulingProgram>) createCPSchedulingProgram: (id<ORModel>) model
+//{
+//   return (id<CPSchedulingProgram>) [ORFactory createCPProgram: model];
+//}
+
 
 @end

@@ -31,6 +31,9 @@
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass;
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>) notes;
 
+// For extensioms
++(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes;
+
 +(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>)model annotation:(id<ORAnnotation>) notes;
 
 

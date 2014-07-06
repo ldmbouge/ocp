@@ -12706,8 +12706,8 @@
 			isa = PBXGroup;
 			children = (
 				B127A57E19629B0600398AA3 /* ORSchedulingProgram.h */,
-				B127A57F19629B0600398AA3 /* ORSchedulingProgram.m */,
 				537EE8AC18FCC5720006FFD2 /* CPConcretizer.m */,
+				B127A57F19629B0600398AA3 /* ORSchedulingProgram.m */,
 				B127A57819629B0600398AA3 /* Supporting Files */,
 			);
 			name = ORSchedulingProgram;
