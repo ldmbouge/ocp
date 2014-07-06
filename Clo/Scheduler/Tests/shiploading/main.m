@@ -68,7 +68,6 @@ int main(int argc, const char * argv[])
       id<ORActivityArray> activities = [ORFactory activityArray: model range: Tasks horizon: Horizon duration: duration];
       id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
       
-      
       // constraints and objective
       [model minimize: makespan.startLB];
       

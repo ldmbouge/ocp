@@ -111,7 +111,7 @@ typedef struct  {
       [self changeStartEvt];
       assignTRInt(&_start,newStart,_trail);
       
-      if (_constantDuration) {
+      if (!_constantDuration) {
          ORInt newDurationMax = _end._val - _start._val;
          [self updateMaxDuration: newDurationMax];
       }
@@ -125,7 +125,7 @@ typedef struct  {
       [self changeEndEvt];
       assignTRInt(&_end,newEnd,_trail);
       
-      if (_constantDuration) {
+      if (!_constantDuration) {
          ORInt newDurationMax = _end._val - _start._val;
          [self updateMaxDuration: newDurationMax];
       }
@@ -407,49 +407,70 @@ typedef struct  {
 }
 -(void) updateStart: (ORInt) newStart
 {
-   tryfail(
+   if (_presentMin._val)
+      [_task updateStart: newStart];
+   else if (_presentMax._val)
+      tryfail(
            ^ORStatus() { [_task updateStart: newStart]; return ORSuccess;},
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
 }
 -(void) updateEnd: (ORInt) newEnd
 {
-   tryfail(
+   if (_presentMin._val)
+      [_task updateEnd: newEnd];
+   else if (_presentMax._val)
+      tryfail(
            ^ORStatus() { [_task updateEnd: newEnd]; return ORSuccess;},
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
 }
 -(void) updateMinDuration: (ORInt) newMinDuration
 {
-   tryfail(
+   if (_presentMin._val)
+      [_task updateMinDuration: newMinDuration];
+   else if (_presentMax._val)
+      tryfail(
            ^ORStatus() { [_task updateMinDuration: newMinDuration]; return ORSuccess;},
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
 }
 -(void) updateMaxDuration: (ORInt) newMaxDuration
 {
-   tryfail(
+   if (_presentMin._val)
+      [_task updateMaxDuration: newMaxDuration];
+   else if (_presentMax._val)
+      tryfail(
            ^ORStatus() { [_task updateMaxDuration: newMaxDuration];  return ORSuccess;},
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
 }
 -(void) labelStart: (ORInt) start
 {
-   tryfail(
+   if (_presentMin._val)
+      [_task labelStart: start];
+   else if (_presentMax._val)
+      tryfail(
            ^ORStatus() { [_task labelStart: start]; return ORSuccess;},
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
 }
 -(void) labelEnd: (ORInt) end
 {
-   tryfail(
+   if (_presentMin._val)
+      [_task labelEnd: end];
+   else if (_presentMax._val)
+      tryfail(
            ^ORStatus() {  [_task labelEnd: end]; return ORSuccess;},
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
 }
 -(void) labelDuration: (ORInt) duration
 {
-   tryfail(
+   if (_presentMin._val)
+      [_task labelDuration: duration];
+   else if (_presentMax._val)
+      tryfail(
            ^ORStatus() { [_task labelDuration: duration]; return ORSuccess;},
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
@@ -493,6 +514,7 @@ typedef struct  {
 }
 
 // AC3 Closure Event
+//
 -(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
 {
    [_task whenChangeDo: todo priority: p onBehalf: c];
