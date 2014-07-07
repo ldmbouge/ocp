@@ -275,6 +275,10 @@
 {
    return [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
 }
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date
+{
+   return [[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
+}
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {
    id<CPConstraint> o = [[CPDisjunctive alloc] initCPTaskDisjunctive: tasks];

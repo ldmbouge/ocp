@@ -322,21 +322,17 @@
    }
 }
 
-//-(void) visitTaskIsFinishedBy:(id<ORTaskisFinishedBy>) cstr
-//{
-//   if (_gamma[cstr.getId] == NULL) {
-//      id<ORTaskVar> before = [cstr before];
-//      id<ORTaskVar> after  = [cstr after];
-//      [before visit: self];
-//      [after  visit: self];
-//      id<CPConstraint> concreteCstr;
-//      if ([before isOptional] || [after isOptional])
-//         concreteCstr = [CPFactory constraint: _gamma[before.getId] optionalPrecedes: _gamma[after.getId]];
-//      else
-//         concreteCstr = [CPFactory constraint: _gamma[before.getId] precedes: _gamma[after.getId]];
-//      [_engine add: concreteCstr];
-//      _gamma[cstr.getId] = concreteCstr;
-//   }
-//}
+-(void) visitTaskIsFinishedBy:(id<ORTaskIsFinishedBy>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORTaskVar> task = [cstr task];
+      id<ORIntVar> date  = [cstr date];
+      [task visit: self];
+      [date  visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory constraint: _gamma[task.getId] isFinishedBy: _gamma[date.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 
 @end;

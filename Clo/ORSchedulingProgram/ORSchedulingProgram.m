@@ -154,7 +154,7 @@
       ORInt lsd = FDMAXINT;
       for(ORInt k = low; k <= up; k++) {
          
-         if (![self boundACTIVITY: act[k]]) {
+         if (![self boundActivity: act[k]]) {
             if (![[postponed at: k] value]) {
                ORInt vm = [self est:  act[k]];
                found = TRUE;

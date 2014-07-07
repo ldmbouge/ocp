@@ -71,3 +71,15 @@
 -(ORUInt) nbUVars;
 @end
 
+@interface CPTaskIsFinishedBy : CPCoreConstraint<NSCoding> {
+   id<CPTaskVar> _task;
+   id<CPIntVar> _date;
+}
+-(id) initCPTaskIsFinishedBy: (id<CPTaskVar>) task : (id<CPIntVar>) date;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+

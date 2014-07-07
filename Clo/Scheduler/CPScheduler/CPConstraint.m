@@ -509,3 +509,56 @@
 }
 @end
 
+@implementation CPTaskIsFinishedBy
+
+-(id) initCPTaskIsFinishedBy: (id<CPTaskVar>) task : (id<CPIntVar>) date
+{
+   self = [super initCPCoreConstraint: [task engine]];
+   
+   _task = task;
+   _date  = date;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_task bound] && ![_date bound]) {
+      [_task whenChangeStartPropagate: self];
+      [_date whenChangeMaxPropagate: self];
+   }
+   return ORSuspend;
+}
+-(void) propagate
+{
+   if ([_task isPresent])
+      [_date updateMin: [_task ect]];
+   [_task updateEnd: [_date min]];
+}
+-(NSSet*) allVars
+{
+   ORInt size = 2;
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+   [rv addObject:_task];
+   [rv addObject:_date];
+   [rv autorelease];
+   return rv;
+}
+-(ORUInt) nbUVars
+{
+   return 2;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   assert(false);
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   assert(false);
+}
+@end
+
+
