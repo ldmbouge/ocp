@@ -104,7 +104,7 @@ int main(int argc, const char * argv[])
             [model add: [[activity at: i : j] precedes: [activity at: i : j+1]]];
       
       for(ORInt i = Size.low; i <= Size.up; i++)
-         [model add: [[activity at: i : Size.up] finishesBy: makespan]];
+         [model add: [[activity at: i : Size.up] isFinishedBy: makespan]];
 
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j <= Size.up; j++)
@@ -138,7 +138,7 @@ int main(int argc, const char * argv[])
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
          [cp setTimes: [activity flatten]];
-         [cp labelActivity: makespan];
+         [cp label: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
 //         for(ORInt i = Size.low; i <= Size.up; i++) {
 //            id<ORActivityArray> act = [machine[i] activities];
@@ -151,7 +151,7 @@ int main(int argc, const char * argv[])
       id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
       id<ORSolution> optimum = [pool best];
-      printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
+      printf("Makespan: %d \n",[optimum intValue: makespan]);
       NSLog(@"Solver status: %@\n",cp);
       [cp release];
       NSLog(@"Quitting");

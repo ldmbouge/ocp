@@ -277,17 +277,9 @@
 }
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {
-//   // Creating the disjunctive propagator
-//   id<CPConstraint> o = [[CPDisjunctive alloc] initCPDisjunctive: act];
-//   
-//   // XXX What is the meaning of the following? Variable subscription?
-//   [[act tracker] trackMutable: o];
-//   
-//   // Returning the disjunctive propagator
-//   return o;
-   NSLog(@"Stating the disjunctive constraint");
-   assert(0);
-   return NULL;
+   id<CPConstraint> o = [[CPDisjunctive alloc] initCPTaskDisjunctive: tasks];
+   [[tasks tracker] trackMutable: o];
+   return o;
 }
 
 @end

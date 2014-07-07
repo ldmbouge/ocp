@@ -44,6 +44,7 @@
 
 @protocol CPTaskVar <CPVar,CPTaskVarSubscriber>
 -(ORInt) getId;
+-(id<CPEngine>) engine;
 -(ORInt) est;
 -(ORInt) ect;
 -(ORInt) lst;

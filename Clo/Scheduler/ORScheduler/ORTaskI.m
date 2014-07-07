@@ -64,5 +64,9 @@
 {
    return [ORFactory constraint: self precedes: after];
 }
+-(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date
+{
+   return [ORFactory constraint: self isFinishedBy: date];
+}
 @end
 

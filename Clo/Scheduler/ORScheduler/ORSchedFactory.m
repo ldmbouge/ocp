@@ -183,6 +183,12 @@
    [[before tracker] trackMutable: o];
    return o;
 }
++(id<ORTaskIsFinishedBy>) constraint: (id<ORTaskVar>) task isFinishedBy: (id<ORIntVar>) date
+{
+   id<ORTaskIsFinishedBy> o = [[ORTaskIsFinishedBy alloc] initORTaskIsFinishedBy: task isFinishedBy: date];
+   [[task tracker] trackMutable: o];
+   return o;
+}
 // Cumulative (resource) constraint
 //
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c

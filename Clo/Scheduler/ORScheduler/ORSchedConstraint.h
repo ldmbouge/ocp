@@ -23,6 +23,10 @@
 -(id<ORTaskVar>) after;
 @end
 
+@protocol ORTaskIsFinishedBy <ORConstraint>
+-(id<ORTaskVar>) task;
+-(id<ORIntVar>) date;
+@end
 
 @protocol ORSchedulingCumulative <ORConstraint>
 

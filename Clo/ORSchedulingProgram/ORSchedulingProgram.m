@@ -50,7 +50,85 @@
    }
 }
 
--(void) setTimes: (id<ORActivityArray>) act
+//-(void) setTimes: (id<ORActivityArray>) act
+//{
+//   id<ORIntRange> R = act.range;
+//   ORInt low = R.low;
+//   ORInt up = R.up;
+//   ORInt m = FDMAXINT;
+//   ORInt im = 0;
+//   ORInt found = FALSE;
+//   ORInt hasPostponedActivities = FALSE;
+//   
+//   // optional activities
+////   for (ORInt k = low; k <= up; k++) {
+////      if ((act[k].type & 1) == 1)
+////         [self label: act[k].top];
+////   }
+//   
+//   id<ORTrailableIntArray> postponed = [ORFactory trailableIntArray: [self engine] range: R value: 0];
+//   id<ORTrailableIntArray> ptime = [ORFactory trailableIntArray: [self engine] range: R value: 0];
+//   
+//   while (true) {
+//      found = FALSE;
+//      m = FDMAXINT;
+//      hasPostponedActivities = FALSE;
+//      ORInt lsd = FDMAXINT;
+//      for(ORInt k = low; k <= up; k++) {
+//         
+//         if (![self bound: act[k].startLB]) {
+//            if (![[postponed at: k] value]) {
+//               ORInt vm = [self min: act[k].startLB];
+//               found = TRUE;
+//               if (vm < m) {
+//                  m = vm;
+//                  im = k;
+//               }
+//            }
+//            else {
+//               hasPostponedActivities = TRUE;
+//               ORInt vm = [self max: act[k].startLB];
+//               if (vm < lsd)
+//                  lsd = vm;
+//            }
+//         }
+//      }
+//      if (!found) {
+//         if (hasPostponedActivities)
+//            [[self explorer] fail];
+//         else
+//            break;
+//      }
+//      if (lsd <= m)
+//         [[self explorer] fail];
+//      
+//      for(ORInt k = low; k <= up; k++)
+//         if ([[postponed at: k] value])
+//            if ([self min: act[k].startLB] + [self min: act[k].duration] <= m)
+//               [[self explorer] fail];
+//      
+//      
+//      [self try:
+//       ^() {
+//          
+//          [self label: act[im].startLB with: m];
+//          
+//          for(ORInt k = low; k <= up; k++)
+//             if ([[postponed at: k] value])
+//                if ([self min: act[k].startLB] > [[ptime at: k] value])
+//                   [[postponed at: k] setValue: 0];
+//          
+//       }
+//             or:
+//       ^() {
+//          [[postponed at: im]  setValue: 1];
+//          [[ptime at: im] setValue: m];
+//       }
+//       ];
+//   }
+//}
+
+-(void) setTimes: (id<ORTaskVarArray>) act
 {
    id<ORIntRange> R = act.range;
    ORInt low = R.low;
@@ -61,10 +139,10 @@
    ORInt hasPostponedActivities = FALSE;
    
    // optional activities
-   for (ORInt k = low; k <= up; k++) {
-      if ((act[k].type & 1) == 1)
-         [self label: act[k].top];
-   }
+   //   for (ORInt k = low; k <= up; k++) {
+   //      if ((act[k].type & 1) == 1)
+   //         [self label: act[k].top];
+   //   }
    
    id<ORTrailableIntArray> postponed = [ORFactory trailableIntArray: [self engine] range: R value: 0];
    id<ORTrailableIntArray> ptime = [ORFactory trailableIntArray: [self engine] range: R value: 0];
@@ -76,9 +154,9 @@
       ORInt lsd = FDMAXINT;
       for(ORInt k = low; k <= up; k++) {
          
-         if (![self bound: act[k].startLB]) {
+         if (![self boundACTIVITY: act[k]]) {
             if (![[postponed at: k] value]) {
-               ORInt vm = [self min: act[k].startLB];
+               ORInt vm = [self est:  act[k]];
                found = TRUE;
                if (vm < m) {
                   m = vm;
@@ -87,7 +165,7 @@
             }
             else {
                hasPostponedActivities = TRUE;
-               ORInt vm = [self max: act[k].startLB];
+               ORInt vm = [self lsd: act[k]];
                if (vm < lsd)
                   lsd = vm;
             }
@@ -104,18 +182,18 @@
       
       for(ORInt k = low; k <= up; k++)
          if ([[postponed at: k] value])
-            if ([self min: act[k].startLB] + [self min: act[k].duration] <= m)
+            if ([self ect: act[k]] <= m)
                [[self explorer] fail];
       
       
       [self try:
        ^() {
           
-          [self label: act[im].startLB with: m];
+          [self labelStart: act[im] with: m];
           
           for(ORInt k = low; k <= up; k++)
              if ([[postponed at: k] value])
-                if ([self min: act[k].startLB] > [[ptime at: k] value])
+                if ([self est: act[k]] > [[ptime at: k] value])
                    [[postponed at: k] setValue: 0];
           
        }

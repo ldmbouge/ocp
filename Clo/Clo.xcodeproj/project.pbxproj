@@ -1327,6 +1327,7 @@
 		B19B55A619051B310069ABA0 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		B19B55A719051B310069ABA0 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
 		B19B55A819051B310069ABA0 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		B19BBA53196AAB3E006EE9A9 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
 		B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124615CCA92F001ED0D4 /* ORCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124715CCA930001ED0D4 /* ORCommand.m */; };
 		B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124A15CCAE71001ED0D4 /* ORTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -9326,6 +9327,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B19BBA53196AAB3E006EE9A9 /* ORSchedulingProgram.framework in Frameworks */,
 				B19B55A119051B310069ABA0 /* CPScheduler.framework in Frameworks */,
 				B19B55A219051B310069ABA0 /* CPUKernel.framework in Frameworks */,
 				B19B55A319051B310069ABA0 /* objcp.framework in Frameworks */,
@@ -12706,8 +12708,8 @@
 			isa = PBXGroup;
 			children = (
 				B127A57E19629B0600398AA3 /* ORSchedulingProgram.h */,
-				537EE8AC18FCC5720006FFD2 /* CPConcretizer.m */,
 				B127A57F19629B0600398AA3 /* ORSchedulingProgram.m */,
+				537EE8AC18FCC5720006FFD2 /* CPConcretizer.m */,
 				B127A57819629B0600398AA3 /* Supporting Files */,
 			);
 			name = ORSchedulingProgram;

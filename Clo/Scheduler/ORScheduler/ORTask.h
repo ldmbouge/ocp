@@ -13,6 +13,7 @@
 #import <ORModeling/ORModeling.h>
 
 @protocol ORTaskPrecedes;
+@protocol ORTaskIsFinishedBy;
 
 @protocol ORTaskVar <ORVar>
 -(id<ORTracker>) tracker;
@@ -20,6 +21,7 @@
 -(id<ORIntRange>) duration;
 -(ORBool) isOptional;
 -(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after;
+-(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date;
 @end
 
 @protocol ORTaskVarArray <ORObject>

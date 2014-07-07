@@ -25,6 +25,11 @@
 -(id<ORTaskVar>) after;
 @end
 
+@interface ORTaskIsFinishedBy : ORConstraintI<ORTaskIsFinishedBy>
+-(id<ORTaskIsFinishedBy>) initORTaskIsFinishedBy:(id<ORTaskVar>) task isFinishedBy:(id<ORIntVar>) date;
+-(id<ORTaskVar>) task;
+-(id<ORIntVar>) date;
+@end
 
 // Cumulative (resource) constraint
 @interface ORCumulative : ORConstraintI<ORCumulative>

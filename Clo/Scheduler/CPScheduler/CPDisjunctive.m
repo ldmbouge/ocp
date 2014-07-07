@@ -13,6 +13,7 @@
 #import <objcp/CPIntVarI.h>
 #import "CPDisjunctive.h"
 #import "CPMisc.h"
+#import "CPTask.h"
 
 // TODO Replacing ORUInts by ORInts
 
@@ -129,6 +130,44 @@
     
     return self;
 }
+-(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) task
+{
+   // Checking whether the number of activities is within the limit
+   if (task.count > (NSUInteger) MAXNBTASK) {
+      @throw [[ORExecutionError alloc] initORExecutionError: "CPDisjunctive: Number of elements exceeds beyond the limit!"];
+   }
+   
+   id<CPTaskVar> task0 = task[task.low];
+   self = [super initCPCoreConstraint: [task0 engine]];
+   NSLog(@"Create disjunctive constraint\n");
+   // TODO Changing the priority
+   _priority = LOWEST_PRIO + 3;
+   _task  = task;
+   _start = NULL;
+   _dur   = NULL;
+   _idx   = NULL;
+   
+   _idempotent = true;
+   _dprec = true;
+   _nfnl  = true;
+   _ef    = false;
+   
+   _start0 = NULL;
+   _dur0   = NULL;
+   
+   _est         = NULL;
+   _lct         = NULL;
+   _dur_min     = NULL;
+   _task_id_est = NULL;
+   _task_id_ect = NULL;
+   _task_id_lst = NULL;
+   _task_id_lct = NULL;
+   
+   _size = (ORUInt) _act.count;
+   
+   return self;
+}
+
 -(void) dealloc
 {
     if (_start0  != NULL) free(_start0 );
@@ -171,8 +210,10 @@
             _idx[i] = i + _act.low;
         }
     }
-    
-    // Initial propagation
+    if (_task)
+       return ORSuspend;
+       
+      // Initial propagation
     [self propagate];
     
     // Subscription of variables to the constraint
@@ -202,7 +243,8 @@
 }
 -(void) propagate
 {
-    doPropagation(self);
+   if (!_task)
+      doPropagation(self);
 }
 
 -(NSSet*) allVars

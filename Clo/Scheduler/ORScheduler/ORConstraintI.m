@@ -108,11 +108,47 @@
    NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
    [ms addObject: _before ];
    [ms addObject: _after ];
-   [ms addObject: _after .duration];
    return ms;
 }
 @end
 
+@implementation ORTaskIsFinishedBy {
+   id<ORTaskVar> _task;
+   id<ORIntVar>  _date;
+}
+-(id<ORTaskIsFinishedBy>) initORTaskIsFinishedBy: (id<ORTaskVar>) task isFinishedBy: (id<ORIntVar>)date;
+{
+   self = [super initORConstraintI];
+   _task = task;
+   _date   = date;
+   return self;
+}
+-(void)visit: (ORVisitor*) v
+{
+   [v visitTaskIsFinishedBy: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> TaskIsFinishedBy(%@,%@)>", [self class], self, _task, _date];
+   return buf;
+}
+-(id<ORTaskVar>) task
+{
+   return _task;
+}
+-(id<ORIntVar>) date
+{
+   return _date;
+}
+-(NSSet*) allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
+   [ms addObject: _task ];
+   [ms addObject: _date ];
+   return ms;
+}
+@end
 
 // Cumulative (resource) constraint
 //
