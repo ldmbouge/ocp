@@ -15,6 +15,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
 
 //setTimes for mt06
 //Makespan: 55
@@ -90,27 +91,27 @@ int main(int argc, const char * argv[])
       NSLog(@"Horizon: %@",Horizon);
       
       // variables
-      id<ORActivityMatrix> activity = [ORFactory activityMatrix: model range: Size : Size horizon: Horizon duration: duration];
-      id<ORActivity> makespan = [ORFactory activity: model horizon: Horizon duration: 0];
-      id<ORDisjunctiveResourceArray> machine = [ORFactory disjunctiveResourceArray: model range: Size];
+      id<ORTaskVarMatrix> activity = [ORFactory taskVarMatrix: model range: Size : Size horizon: Horizon duration: duration];
+      id<ORIntVar> makespan = [ORFactory intVar: model domain: Horizon];
+      id<ORTaskDisjunctiveArray> machine = [ORFactory taskDisjunctiveArray: model range: Size];
       
 //      id<ORIntArray> demand = [ORFactory intArray: model range: Size with: ^ORInt(ORInt i) { return 1; } ];
       // constraints and objective
-      [model minimize: makespan.startLB];
+      [model minimize: makespan];
       
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j < Size.up; j++)
             [model add: [[activity at: i : j] precedes: [activity at: i : j+1]]];
       
       for(ORInt i = Size.low; i <= Size.up; i++)
-         [model add: [[activity at: i : Size.up] precedes: makespan]];
+         [model add: [[activity at: i : Size.up] finishesBy: makespan]];
 
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j <= Size.up; j++)
             [machine[[resource at: i : j]] isRequiredBy: [activity at: i : j]];
       
        for(ORInt i = Size.low; i <= Size.up; i++)
-          [model add: [ORFactory schedulingDisjunctive: [machine[i] activities]]];      
+          [model add: machine[i]];
 
 //      for(ORInt i = Size.low; i <= Size.up; i++)
 //         for(ORInt j = Size.low; j <= Size.up; j++)
@@ -138,7 +139,7 @@ int main(int argc, const char * argv[])
       [cp solve: ^{
          [cp setTimes: [activity flatten]];
          [cp labelActivity: makespan];
-         printf("makespan = [%d,%d] \n",[cp min: makespan.startLB],[cp max: makespan.startLB]);
+         printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
 //         for(ORInt i = Size.low; i <= Size.up; i++) {
 //            id<ORActivityArray> act = [machine[i] activities];
 //            for(ORInt k = act.range.low; k <= act.range.up; k++) {

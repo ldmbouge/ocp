@@ -310,5 +310,17 @@
    }
 }
 
+// Disjunctive (resource) constraint
+-(void) visitTaskDisjunctive:(id<ORTaskDisjunctive>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORTaskVarArray> tasks = [cstr taskVars];
+      [tasks visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 
 @end;

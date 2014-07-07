@@ -253,10 +253,8 @@
 }
 -(void) dealloc
 {
-    if (_closed) {
-        [_acc release];
-    }
-    [super dealloc];
+   [_acc release];
+   [super dealloc];
 }
 -(void) isRequiredBy: (id<ORActivity>) act
 {

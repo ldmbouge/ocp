@@ -159,6 +159,16 @@
     }
     return (id<ORDisjunctiveResourceArray>) o;
 }
++(id<ORTaskDisjunctiveArray>) taskDisjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range
+{
+   id<ORIdArray> o = [ORFactory idArray: model range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      id<ORTaskDisjunctive> dr = [ORFactory disjunctiveConstraint: model];
+      [o set: dr at:k];
+   }
+   return (id<ORTaskDisjunctiveArray>) o;
+}
+
 // Precedes
 //
 +(id<ORPrecedes>) precedence: (id<ORActivity>) before precedes:(id<ORActivity>) after
@@ -231,6 +241,21 @@
     return o;
 }
 
++(id<ORTaskDisjunctive>) taskDisjunctive: (id<ORTaskVarArray>) task
+{
+   id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctive: task];
+   [[task tracker] trackObject:o];
+   return o;
+}
+
++(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model
+{
+   id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctiveEmpty: model];
+   [model trackObject:o];
+   return o;
+}
+
+
 // Difference Logic constraint
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems
 {
@@ -294,6 +319,22 @@
 {
    return [ORFactory taskVarArray: model range: range with: ^id<ORTaskVar>(ORInt i) {
       return [ORFactory task: model horizon: horizon duration: [duration at:i]];
+   }];
+}
+// TaskVar matrix
++(id<ORTaskVarMatrix>) taskVarMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2  with: (id<ORTaskVar>(^)(ORInt,ORInt)) clo;
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix: model range: R1 : R2];
+   for(ORInt i=R1.low;i <= R1.up;i++)
+      for(ORInt j=R2.low;j <= R2.up;j++)
+         [o set: clo(i,j) at: i : j];
+   return (id<ORTaskVarMatrix>) o;
+}
++(id<ORTaskVarMatrix>) taskVarMatrix: (id<ORModel>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
+                             horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration
+{
+   return [ORFactory taskVarMatrix: model range: R1 : R2  with: ^id<ORTaskVar>(ORInt i,ORInt j) {
+      return [ORFactory task: model horizon: horizon duration: [duration at: i : j]];
    }];
 }
 

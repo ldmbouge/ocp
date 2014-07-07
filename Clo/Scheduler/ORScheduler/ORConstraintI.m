@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import "ORConstraintI.h"
 #import "ORVisit.h"
+#import "ORSchedFactory.h"
 
 
 // ORPrecedes
@@ -510,3 +511,75 @@
     return [[[NSSet alloc] initWithObjects:_b,_x,_y,nil] autorelease];
 }
 @end
+
+
+@implementation ORTaskDisjunctive {
+   BOOL _closed;
+   id<ORTracker> _tracker;
+   NSMutableArray* _acc;
+   id<ORTaskVarArray> _tasks;
+}
+-(id<ORTaskDisjunctive>) initORTaskDisjunctive: (id<ORTaskVarArray>) tasks
+{
+   self = [super initORConstraintI];
+   _tracker = [tasks tracker];
+   _tasks = tasks;
+   _acc = 0;
+   _closed = TRUE;
+   return self;
+}
+-(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;
+{
+   self = [super initORConstraintI];
+   _tracker = tracker;
+   _tasks = 0;
+    _acc = [[NSMutableArray alloc] initWithCapacity: 16];
+   _closed = FALSE;
+   return self;
+}
+-(void) dealloc
+{
+   if (_acc)
+      [_acc dealloc];
+   [super dealloc];
+}
+-(void) isRequiredBy: (id<ORTaskVar>) task
+{
+   if (_closed) {
+      @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
+   }
+   [_acc addObject: task];
+}
+-(void)visit: (ORVisitor*) v
+{
+   [v visitTaskDisjunctive: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> disjunctive(%@)>", [self class], self, _tasks];
+   return buf;
+}
+-(id<ORTaskVarArray>) taskVars
+{
+   if (!_closed) {
+      _closed = true;
+      _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]-1) with: ^id<ORTaskVar>(ORInt i) {
+            return _acc[i];
+         }];
+   }
+   return _tasks;
+}
+-(NSSet*) allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_tasks count]] autorelease];
+   id<ORIntRange> R = _tasks.range;
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt k = low; k <= up; k++){
+      [ms addObject: _tasks[k]];
+   }
+   return ms;
+}
+@end
+

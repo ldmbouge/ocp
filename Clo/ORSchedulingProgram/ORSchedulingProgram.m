@@ -14,7 +14,9 @@
 #import <ORProgram/CPSolver.h>
 #import <CPScheduler/CPTask.h>
 
-// PVH: to clean up the code for optional activities; this is ugly right now
+// [pvh]: I am not sure that I want a class CPSchedulerSolver: That makes it harder to compose with other extensions
+// [pvh]: probaby the engine should have a key-value chain for global data structures
+// [pvh]: the alternative is to have it in the CPProgram and to pass it to constraints; not sure I like this
 
 @interface CPSchedulingSolver : CPSolver<CPSchedulingProgram>
 -(CPSchedulingSolver*) initCPSchedulingSolver;
@@ -287,10 +289,4 @@
    [notes release];
    return program;
 }
-//+(id<CPSchedulingProgram>) createCPSchedulingProgram: (id<ORModel>) model
-//{
-//   return (id<CPSchedulingProgram>) [ORFactory createCPProgram: model];
-//}
-
-
 @end

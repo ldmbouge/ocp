@@ -64,4 +64,17 @@
 -(void) labelPresent: (ORBool) present;
 @end
 
+@protocol CPTaskVarArray <ORObject>
+-(id<CPTaskVar>) at: (ORInt) idx;
+-(void) set: (id<CPTaskVar>) value at: (ORInt)idx;
+-(id<CPTaskVar>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<CPTaskVar>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+
 

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <objcp/CPConstraint.h>
+#import <ORScheduler/ORTask.h>
 #import "CPFactory.h"
 #import "CPConstraint.h"
 #import "CPCumulative.h"
@@ -273,6 +274,20 @@
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after
 {
    return [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
+}
++(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
+{
+//   // Creating the disjunctive propagator
+//   id<CPConstraint> o = [[CPDisjunctive alloc] initCPDisjunctive: act];
+//   
+//   // XXX What is the meaning of the following? Variable subscription?
+//   [[act tracker] trackMutable: o];
+//   
+//   // Returning the disjunctive propagator
+//   return o;
+   NSLog(@"Stating the disjunctive constraint");
+   assert(0);
+   return NULL;
 }
 
 @end

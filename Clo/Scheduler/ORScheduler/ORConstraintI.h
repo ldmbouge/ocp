@@ -57,6 +57,12 @@
 -(id<ORActivityArray>) activities;
 @end
 
+@interface ORTaskDisjunctive : ORConstraintI<ORTaskDisjunctive>
+-(id<ORTaskDisjunctive>) initORTaskDisjunctive:(id<ORTaskVarArray>) tasks;
+-(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;
+-(id<ORTaskVarArray>) taskVars;
+-(void) isRequiredBy: (id<ORTaskVar>) act;
+@end
 
 // Difference logic constraint
 @interface ORDifference : ORConstraintI<ORDifference>

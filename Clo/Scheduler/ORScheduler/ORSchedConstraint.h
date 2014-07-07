@@ -23,7 +23,9 @@
 -(id<ORTaskVar>) after;
 @end
 
+
 @protocol ORSchedulingCumulative <ORConstraint>
+
 -(id<ORActivityArray>) activities;
 -(id<ORIntArray>) usage;
 -(id<ORIntVar>) capacity;
@@ -36,10 +38,27 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@protocol ORTaskDisjunctive <ORConstraint>
+-(void) isRequiredBy: (id<ORTaskVar>) act;
+-(id<ORTaskVarArray>) taskVars;
+@end
+
+@protocol ORTaskDisjunctiveArray <ORObject>
+-(id<ORTaskDisjunctive>) at: (ORInt) idx;
+-(void) set: (id<ORTaskDisjunctive>) value at: (ORInt)idx;
+-(id<ORTaskDisjunctive>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORTaskDisjunctive>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+
 @protocol ORSchedulingDisjunctive <ORConstraint>
 -(id<ORActivityArray>) activities;
 @end
-
 
 @protocol ORDisjunctive <ORConstraint>
 -(id<ORActivityArray>) act;
