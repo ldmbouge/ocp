@@ -15,16 +15,10 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 @interface ORVisitor (ORScheduler)
--(void) visitActivity: (id<ORActivity> ) activity;
 -(void) visitTask: (id<ORTaskVar> ) task;
--(void) visitDisjunctiveResource: (id<ORDisjunctiveResource> ) dr;
--(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
 -(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
--(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
--(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
--(void) visitSchedulingDisjunctive:  (id<ORSchedulingDisjunctive> ) cstr;
 -(void) visitTaskDisjunctive:  (id<ORTaskDisjunctive> ) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
 -(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr;
@@ -33,16 +27,10 @@
 @end;
 
 @interface ORNOopVisit (ORScheduler)
--(void) visitActivity: (id<ORActivity> ) activity;
 -(void) visitTask: (id<ORTaskVar> ) task;
--(void) visitDisjunctiveResource: (id<ORDisjunctiveResource> ) dr;
--(void) visitPrecedes:  (id<ORPrecedes> ) cstr;
 -(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
--(void) visitSchedulingCumulative:  (id<ORSchedulingCumulative> ) cstr;
--(void) visitDisjunctive: (id<ORDisjunctive>) cstr;
--(void) visitSchedulingDisjunctive:  (id<ORSchedulingDisjunctive> ) cstr;
 -(void) visitTaskDisjunctive:  (id<ORTaskDisjunctive> ) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
 -(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr;

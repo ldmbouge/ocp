@@ -13,12 +13,6 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 
-@interface ORPrecedes : ORConstraintI<ORPrecedes>
--(id<ORPrecedes>) initORPrecedes:(id<ORActivity>) before precedes:(id<ORActivity>) after;
--(id<ORActivity>) before;
--(id<ORActivity>) after;
-@end
-
 @interface ORTaskPrecedes : ORConstraintI<ORTaskPrecedes>
 -(id<ORTaskPrecedes>) initORTaskPrecedes:(id<ORTaskVar>) before precedes:(id<ORTaskVar>) after;
 -(id<ORTaskVar>) before;
@@ -38,28 +32,6 @@
 -(id<ORIntVarArray>) duration;
 -(id<ORIntArray>) usage;
 -(id<ORIntVar>) capacity;
-@end
-
-@interface ORSchedulingCumulative : ORConstraintI<ORSchedulingCumulative>
--(id<ORSchedulingCumulative>) initORSchedulingCumulative:(id<ORActivityArray>) act usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
--(id<ORActivityArray>) activities;
--(id<ORIntArray>) usage;
--(id<ORIntVar>) capacity;
-@end
-
-
-// Disjunctive (resource) constraint
-@interface ORDisjunctive : ORConstraintI<ORDisjunctive>
--(id<ORDisjunctive>) initORDisjunctive:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d;
--(id<ORDisjunctive>) initORDisjunctive:(id<ORActivityArray>) act;
--(id<ORActivityArray>) act;
--(id<ORIntVarArray>) start;
--(id<ORIntVarArray>) duration;
-@end
-
-@interface ORSchedulingDisjunctive : ORConstraintI<ORSchedulingDisjunctive>
--(id<ORSchedulingDisjunctive>) initORSchedulingDisjunctive:(id<ORActivityArray>) act;
--(id<ORActivityArray>) activities;
 @end
 
 @interface ORTaskDisjunctive : ORConstraintI<ORTaskDisjunctive>

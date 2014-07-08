@@ -14,14 +14,6 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 @implementation ORVisitor (ORScheduler)
--(void) visitActivity: (id<ORActivity>) activity
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "activity: visit method not defined"];
-}
--(void) visitDisjunctiveResource: (id<ORDisjunctiveResource>) dr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive resource: visit method not defined"];
-}
 -(void) visitPrecedes: (id<ORPrecedes>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "precedes: visit method not defined"];
@@ -34,14 +26,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "taskIsFinishedBy: visit method not defined"];
 }
--(void) visitDisjunctive: (id<ORDisjunctive>) cstr
-{
-    @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
-}
--(void) visitSchedulingDisjunctive: (id<ORSchedulingDisjunctive>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
-}
 -(void) visitTaskDisjunctive: (id<ORTaskDisjunctive>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
@@ -49,10 +33,6 @@
 -(void) visitCumulative: (id<ORCumulative>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "cumulative: visit method not defined"];
-}
--(void) visitSchedulingCumulative: (id<ORSchedulingCumulative>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "cumulative: visit method not defined"];
 }
 -(void) visitDifference: (id<ORDifference>) cstr
 {
@@ -73,29 +53,9 @@
 @end
 
 @implementation ORNOopVisit (ORScheduler)
--(void) visitActivity: (id<ORActivity>) activity
-{
-    
-}
--(void) visitDisjunctiveResource: (id<ORDisjunctiveResource>) activity
-{
-   
-}
--(void) visitPrecedes: (id<ORPrecedes>) cstr
-{
-    
-}
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr
 {
   
-}
--(void) visitDisjunctive: (id<ORDisjunctive>) cstr
-{
-    
-}
--(void) visitSchedulingDisjunctive: (id<ORSchedulingDisjunctive>) cstr
-{
-
 }
 -(void) visitTaskDisjunctive: (id<ORTaskDisjunctive>) cstr
 {
@@ -104,10 +64,6 @@
 -(void) visitCumulative: (id<ORCumulative>) cstr
 {
     
-}
--(void) visitSchedulingCumulative: (id<ORSchedulingCumulative>) cstr
-{
-   
 }
 -(void) visitDifference: (id<ORDifference>) cstr
 {

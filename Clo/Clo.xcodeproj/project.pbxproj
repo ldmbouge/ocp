@@ -1170,8 +1170,6 @@
 		B12BE46719012786006D1D59 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B12BE46A19014C56006D1D59 /* ORActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = B12BE46819014C56006D1D59 /* ORActivity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B12BE46B19014C56006D1D59 /* ORActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = B12BE46919014C56006D1D59 /* ORActivity.m */; };
-		B12BE46F190158B2006D1D59 /* CPActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = B12BE46D190158B2006D1D59 /* CPActivity.h */; };
-		B12BE470190158B2006D1D59 /* CPActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = B12BE46E190158B2006D1D59 /* CPActivity.m */; };
 		B12ED8C2159E0C2200713C8E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B12ED8C5159E0C2200713C8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B12ED8C4159E0C2200713C8E /* main.m */; };
 		B12ED8C9159E0C2200713C8E /* sport.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B12ED8C8159E0C2200713C8E /* sport.1 */; };
@@ -7910,8 +7908,6 @@
 		B12BE44A19012746006D1D59 /* shiploading.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = shiploading.1; sourceTree = "<group>"; };
 		B12BE46819014C56006D1D59 /* ORActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORActivity.h; sourceTree = "<group>"; };
 		B12BE46919014C56006D1D59 /* ORActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORActivity.m; sourceTree = "<group>"; };
-		B12BE46D190158B2006D1D59 /* CPActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPActivity.h; sourceTree = "<group>"; };
-		B12BE46E190158B2006D1D59 /* CPActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPActivity.m; sourceTree = "<group>"; };
 		B12ED8C0159E0C2200713C8E /* sport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sport; sourceTree = BUILT_PRODUCTS_DIR; };
 		B12ED8C4159E0C2200713C8E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B12ED8C7159E0C2200713C8E /* sport-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sport-Prefix.pch"; sourceTree = "<group>"; };
@@ -10974,8 +10970,6 @@
 		537EE89F18FCC5720006FFD2 /* CPScheduler */ = {
 			isa = PBXGroup;
 			children = (
-				B12BE46D190158B2006D1D59 /* CPActivity.h */,
-				B12BE46E190158B2006D1D59 /* CPActivity.m */,
 				537EE8A018FCC5720006FFD2 /* CPConstraint.h */,
 				537EE8A118FCC5720006FFD2 /* CPConstraint.m */,
 				537EE8A218FCC5720006FFD2 /* CPCumulative.h */,
@@ -13271,7 +13265,6 @@
 				B19ADA6C19049EA0009E233D /* CPSearch.h in Headers */,
 				537EEA5B18FCE35E0006FFD2 /* CPScheduler.h in Headers */,
 				535D133118FF7F1D008D48BD /* CPMisc.h in Headers */,
-				B12BE46F190158B2006D1D59 /* CPActivity.h in Headers */,
 				537EEA5618FCE35E0006FFD2 /* CPConstraint.h in Headers */,
 				537EEA5718FCE35E0006FFD2 /* CPCumulative.h in Headers */,
 				537EEA5818FCE35E0006FFD2 /* CPDifference.h in Headers */,
@@ -16063,7 +16056,6 @@
 				537EEA5318FCE2FC0006FFD2 /* CPDifference.m in Sources */,
 				537EEA5418FCE2FC0006FFD2 /* CPDisjunctive.m in Sources */,
 				B127A56F19628CA100398AA3 /* CPTaskI.m in Sources */,
-				B12BE470190158B2006D1D59 /* CPActivity.m in Sources */,
 				B19ADA6D19049EA0009E233D /* CPSearch.m in Sources */,
 				B19BBA57196B6CEE006EE9A9 /* CPTaskDisjunctive.m in Sources */,
 				537EEA5518FCE2FC0006FFD2 /* CPFactory.m in Sources */,

@@ -14,10 +14,6 @@
 #import "ORConstraintI.h"
 
 @implementation ORFlatten (ORScheduler)
--(void) visitPrecedes:(id<ORPrecedes>) cstr
-{
-    _result = [_into addConstraint:cstr];
-}
 -(void) visitTaskPrecedes:(id<ORTaskPrecedes>) cstr
 {
    _result = [_into addConstraint:cstr];
@@ -25,18 +21,6 @@
 -(void) visitCumulative:(id<ORCumulative>) cstr
 {
     _result = [_into addConstraint:cstr];
-}
--(void) visitSchedulingCumulative:(id<ORSchedulingCumulative>) cstr
-{
-   _result = [_into addConstraint:cstr];
-}
--(void) visitDisjunctive:(id<ORDisjunctive>) cstr
-{
-    _result = [_into addConstraint:cstr];
-}
--(void) visitSchedulingDisjunctive:(id<ORSchedulingDisjunctive>) cstr
-{
-   _result = [_into addConstraint:cstr];
 }
 -(void) visitDifference:(id<ORDifference>) cstr
 {

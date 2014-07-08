@@ -13,39 +13,25 @@
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
-#import "CPActivity.h"
 #import "CPTask.h"
 #import "CPTaskI.h"
 
 
-    // Single precedence propagator
-    //
-@interface CPPrecedence : CPCoreConstraint<NSCoding> {
-    id<CPActivity> _before; // Optional activity
-    id<CPActivity> _after;  // Optional activity
-}
--(id) initCPPrecedence: (id<CPActivity>) before after: (id<CPActivity>) after;
--(void) dealloc;
--(ORStatus) post;
--(void) propagate;
--(NSSet*) allVars;
--(ORUInt) nbUVars;
-@end
 
-    // Alternative propagator
-    //
-@interface CPAlternative : CPCoreConstraint<NSCoding> {
-    id<CPActivity>      _act;
-    id<CPActivityArray> _alter;
-}
-
--(id) initCPAlternative: (id<CPActivity>) act alternatives: (id<CPActivityArray>) alter;
--(void) dealloc;
--(ORStatus) post;
--(void) propagate;
--(NSSet*) allVars;
--(ORUInt) nbUVars;
-@end
+//    // Alternative propagator
+//    //
+//@interface CPAlternative : CPCoreConstraint<NSCoding> {
+//    id<CPActivity>      _act;
+//    id<CPActivityArray> _alter;
+//}
+//
+//-(id) initCPAlternative: (id<CPActivity>) act alternatives: (id<CPActivityArray>) alter;
+//-(void) dealloc;
+//-(ORStatus) post;
+//-(void) propagate;
+//-(NSSet*) allVars;
+//-(ORUInt) nbUVars;
+//@end
 
 @interface CPTaskPrecedence : CPCoreConstraint<NSCoding> {
    id<CPTaskVar> _before;

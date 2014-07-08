@@ -13,10 +13,6 @@
 #import <ORScheduler/ORActivity.h>
 #import <ORScheduler/ORTask.h>
 
-@protocol ORPrecedes <ORConstraint>
--(id<ORActivity>) before;
--(id<ORActivity>) after;
-@end
 
 @protocol ORTaskPrecedes <ORConstraint>
 -(id<ORTaskVar>) before;
@@ -26,13 +22,6 @@
 @protocol ORTaskIsFinishedBy <ORConstraint>
 -(id<ORTaskVar>) task;
 -(id<ORIntVar>) date;
-@end
-
-@protocol ORSchedulingCumulative <ORConstraint>
-
--(id<ORActivityArray>) activities;
--(id<ORIntArray>) usage;
--(id<ORIntVar>) capacity;
 @end
 
 @protocol ORCumulative <ORConstraint>
@@ -58,16 +47,6 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
-@end
-
-@protocol ORSchedulingDisjunctive <ORConstraint>
--(id<ORActivityArray>) activities;
-@end
-
-@protocol ORDisjunctive <ORConstraint>
--(id<ORActivityArray>) act;
--(id<ORIntVarArray>) start;
--(id<ORIntVarArray>) duration;
 @end
 
 @protocol ORDifference <ORConstraint>
