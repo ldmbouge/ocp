@@ -165,7 +165,7 @@
             }
             else {
                hasPostponedActivities = TRUE;
-               ORInt vm = [self lsd: act[k]];
+               ORInt vm = [self lst: act[k]];
                if (vm < lsd)
                   lsd = vm;
             }
@@ -190,7 +190,7 @@
        ^() {
           
           [self labelStart: act[im] with: m];
-          
+//          NSLog(@"labelStart[%i] %@ with %d",im,act[im],m);
           for(ORInt k = low; k <= up; k++)
              if ([[postponed at: k] value])
                 if ([self est: act[k]] > [[ptime at: k] value])

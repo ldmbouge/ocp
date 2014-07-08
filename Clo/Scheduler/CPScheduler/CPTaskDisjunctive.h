@@ -17,15 +17,9 @@
 #import "CPTask.h"
 
 
-@interface CPDisjunctive : CPCoreConstraint<NSCoding> {
-    id<CPActivityArray> _act;   // (Optional) activities
-    id<CPTaskVarArray>  _tasks;   // TaskVar
-    id<CPIntVarArray>   _start; // Start times of tasks
-    id<CPIntVarArray>   _dur;   // Durations of tasks
+@interface CPTaskDisjunctive : CPCoreConstraint<NSCoding> {
+   id<CPTaskVarArray>  _tasks;   // TaskVar
 }
-
--(id) initCPDisjunctive: (id<CPIntVarArray>) s duration: (id<CPIntVarArray>) d;
--(id) initCPDisjunctive: (id<CPActivityArray>) act;
 -(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) tasks;
 -(void) dealloc;
 -(ORStatus) post;
@@ -35,3 +29,4 @@
 -(ORInt) globalSlack;
 -(ORInt) localSlack;
 @end
+

@@ -41,6 +41,7 @@
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
 -(NSSet*)allVars;
+-(void) close;
 @end
 
 @protocol ORPost<NSObject>
@@ -523,5 +524,6 @@ enum ORGroupType {
 @interface ORConstraintI : ORObject<ORConstraint,NSCoding>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
+-(void) close;
 @end
 

@@ -296,8 +296,10 @@ typedef struct  {
 }
 -(void) changeDurationEvt
 {
-   id<CPClosureList> mList[1];
+   id<CPClosureList> mList[2];
    ORUInt k = 0;
+   mList[k] = _net._boundEvt[0]._val;
+   k += mList[k] != NULL;
    mList[k] = _net._durationEvt[0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;

@@ -536,7 +536,7 @@
 {
    if ([_task isPresent])
       [_date updateMin: [_task ect]];
-   [_task updateEnd: [_date min]];
+   [_task updateEnd: [_date max]];
 }
 -(NSSet*) allVars
 {

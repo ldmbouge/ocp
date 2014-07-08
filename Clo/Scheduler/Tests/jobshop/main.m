@@ -26,39 +26,39 @@
 //26972 propagations
 
 
-//ORInt size = 6;
-//ORInt iresource[6][6] = {
-//   { 3, 1, 2, 4, 6, 5},
-//   { 2, 3, 5, 6, 1, 4},
-//   { 3, 4, 6, 1, 2, 5},
-//   { 2, 1, 3, 4, 5, 6},
-//   { 3, 2, 5, 6, 1, 4},
-//   { 2, 4, 6, 1, 5, 3}
-//};
-//ORInt iduration[6][6] = {
-//   {  1,  3,  6,  7,  3,  6},
-//   {  8,  5, 10, 10, 10,  4},
-//   {  5,  4,  8,  9,  1,  7},
-//   {  5,  5,  5,  3,  8,  9},
-//   {  9,  3,  5,  4,  3,  1},
-//   {  3,  3,  9, 10,  4,  2}
-//};
-
-ORInt size = 10;
-
-ORInt iresource[10][10] = {
-   { 0,  1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9},
-   { 0,  2 , 4 , 9 , 3 , 1 , 6 , 5 , 7 , 8},
-   { 1,  0 , 3 , 2 , 8 , 5 , 7 , 6 , 9 , 4},
-   { 1,  2 , 0 , 4 , 6 , 8 , 7 , 3 , 9 , 5},
-   { 2,  0 , 1 , 5 , 3 , 4 , 8 , 7 , 9 , 6},
-   { 2,  1 , 5 , 3 , 8 , 9 , 0 , 6 , 4 , 7},
-   { 1,  0 , 3 , 2 , 6 , 5 , 9 , 8 , 7 , 4},
-   { 2,  0 , 1 , 5 , 4 , 6 , 8 , 9 , 7 , 3},
-   { 0,  1 , 3 , 5 , 2 , 9 , 6 , 7 , 4 , 8},
-   { 1,  0 , 2 , 6 , 8 , 9 , 5 , 3 , 4 , 7}
+ORInt size6 = 6;
+ORInt iresource6[6][6] = {
+   { 3, 1, 2, 4, 6, 5},
+   { 2, 3, 5, 6, 1, 4},
+   { 3, 4, 6, 1, 2, 5},
+   { 2, 1, 3, 4, 5, 6},
+   { 3, 2, 5, 6, 1, 4},
+   { 2, 4, 6, 1, 5, 3}
 };
-ORInt iduration[10][10] = {
+ORInt iduration6[6][6] = {
+   {  1,  3,  6,  7,  3,  6},
+   {  8,  5, 10, 10, 10,  4},
+   {  5,  4,  8,  9,  1,  7},
+   {  5,  5,  5,  3,  8,  9},
+   {  9,  3,  5,  4,  3,  1},
+   {  3,  3,  9, 10,  4,  2}
+};
+
+ORInt size10 = 10;
+
+ORInt iresource10[10][10] = {
+   { 1,  2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10},
+   { 1,  3 , 5 , 10 , 4 , 2 , 7 , 6 , 8 , 9},
+   { 2,  1 , 4 , 3 , 9 , 6 , 8 , 7 , 10 , 5},
+   { 2,  3 , 1 , 5 , 7 , 9 , 8 , 4 , 10 , 6},
+   { 3,  1,  2 , 6 , 4 , 5 , 9 , 8 , 10 , 7},
+   { 3,  2 , 6 , 4 , 9 , 10 , 1 , 7 , 5 , 8},
+   { 2,  1 , 4 , 3 , 7 , 6 , 10 , 9 , 8 , 5},
+   { 3,  1 , 2 , 6 , 5 , 7 , 9 , 10 , 8 , 4},
+   { 1,  2 , 4 , 6 , 3 , 10 , 7 , 8 , 5 , 9},
+   { 2,  1 , 3 , 7 , 9 , 10 , 6 , 4 , 5 , 8}
+};
+ORInt iduration10[10][10] = {
    {  29,  78 ,  9 , 36 , 49 , 11 , 62 , 56 , 44 , 21},
    {  43,  90 , 75 , 11 , 69 , 28 , 46 , 46 , 72 , 30},
    {  91,  85 , 39 , 74 , 90 , 10 , 12 , 89 , 45 , 33},
@@ -71,83 +71,60 @@ ORInt iduration[10][10] = {
    {  85,  13 , 61 ,  7 , 64 , 76 , 47 , 52 , 90 , 45}
 };
 
+
 int main(int argc, const char * argv[])
 {
-   
    @autoreleasepool {
       
+
       id<ORModel> model = [ORFactory createModel];
 
       // data
+      
+      ORInt size = size6;
       id<ORIntRange> Size = RANGE(model,1,size);
-      id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iduration[i-1][j-1]; } ];
-      id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource[i-1][j-1]+1; } ];
+      id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iduration6[i-1][j-1]; } ];
+      id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource6[i-1][j-1]; } ];
    
       ORInt totalDuration = 0;
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j <= Size.up; j++)
             totalDuration += [duration at: i : j];
       id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
-      NSLog(@"Horizon: %@",Horizon);
       
       // variables
-      id<ORTaskVarMatrix> activity = [ORFactory taskVarMatrix: model range: Size : Size horizon: Horizon duration: duration];
-      id<ORIntVar> makespan = [ORFactory intVar: model domain: Horizon];
-      id<ORTaskDisjunctiveArray> machine = [ORFactory taskDisjunctiveArray: model range: Size];
       
-//      id<ORIntArray> demand = [ORFactory intArray: model range: Size with: ^ORInt(ORInt i) { return 1; } ];
-      // constraints and objective
+      id<ORTaskVarMatrix> task = [ORFactory taskVarMatrix: model range: Size : Size horizon: Horizon duration: duration];
+      id<ORIntVar> makespan = [ORFactory intVar: model domain: RANGE(model,1,1100)];
+      id<ORTaskDisjunctiveArray> disjunctive = [ORFactory taskDisjunctiveArray: model range: Size];
+      
+      // model
+      
       [model minimize: makespan];
       
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j < Size.up; j++)
-            [model add: [[activity at: i : j] precedes: [activity at: i : j+1]]];
+            [model add: [[task at: i : j] precedes: [ task at: i : j+1]]];
       
       for(ORInt i = Size.low; i <= Size.up; i++)
-         [model add: [[activity at: i : Size.up] isFinishedBy: makespan]];
+         [model add: [[task at: i : Size.up] isFinishedBy: makespan]];
 
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j <= Size.up; j++)
-            [machine[[resource at: i : j]] isRequiredBy: [activity at: i : j]];
+            [disjunctive[[resource at: i : j]] isRequiredBy: [ task at: i : j]];
       
        for(ORInt i = Size.low; i <= Size.up; i++)
-          [model add: machine[i]];
+          [model add: disjunctive[i]];
 
-//      for(ORInt i = Size.low; i <= Size.up; i++)
-//         for(ORInt j = Size.low; j <= Size.up; j++)
-//            NSLog(@" %d %@",[activity at: i : j].getId,[activity at: i : j].duration);
-//      
-//      for(ORInt i = Size.low; i <= Size.up; i++) {
-//         id<ORActivityArray> a = [machine[i] activities];
-//         NSLog(@"Machine %d",i);
-//         for(ORInt k = a.range.low; k <= a.range.up; k++)
-//            NSLog(@" %d %@",[a at: k].getId,[a at: k].duration);
-//         NSLog(@" ");
-//      }
-
-//           for(ORInt i = Size.low; i <= Size.up; i++) {
-//              id<ORActivityArray> a = [machine[i] activities];
-//              
-//               for(ORInt k = a.range.low; k < a.range.up; k++)
-//                  for(ORInt l = k=1; l <= a.range.up; l++)
-//                     [model add: [ORFactory expr: [[a at: k] precedes: [a at: l]] or: [[a at: l] precedes: [a at: k]] track: model]];
-//              NSLog(@" ");
-      
       
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{
-         [cp setTimes: [activity flatten]];
+         [cp setTimes: [task flatten]];
          [cp label: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
-//         for(ORInt i = Size.low; i <= Size.up; i++) {
-//            id<ORActivityArray> act = [machine[i] activities];
-//            for(ORInt k = act.range.low; k <= act.range.up; k++) {
-//               printf("[%d): %d --(%d) --> %d]",act[k].getId,[cp intValue: act[k].startLB],[cp intValue: act[k].duration],[cp intValue: act[k].startLB] + [cp intValue: act[k].duration]);
-//            }
-//            printf("\n");
-//         }
       }];
+      
       id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
       id<ORSolution> optimum = [pool best];

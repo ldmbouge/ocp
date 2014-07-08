@@ -596,15 +596,18 @@
    [buf appendFormat:@"<%@ : %p> -> disjunctive(%@)>", [self class], self, _tasks];
    return buf;
 }
--(id<ORTaskVarArray>) taskVars
+-(void) close
 {
    if (!_closed) {
       _closed = true;
       _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]-1) with: ^id<ORTaskVar>(ORInt i) {
-            return _acc[i];
-         }];
+         return _acc[i];
+      }];
    }
-   return _tasks;
+}
+-(id<ORTaskVarArray>) taskVars
+{
+    return _tasks;
 }
 -(NSSet*) allVars
 {

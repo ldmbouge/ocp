@@ -622,6 +622,10 @@
 {
    return (id)[ORFactory expr:(id)self imply:(id)e track:t];
 }
+-(void) close
+{
+   
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {}
 - (id)initWithCoder:(NSCoder *)aDecoder;

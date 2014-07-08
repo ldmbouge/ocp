@@ -15,6 +15,7 @@
 #import "CPConstraint.h"
 #import "CPCumulative.h"
 #import "CPDisjunctive.h"
+#import "CPTaskDisjunctive.h"
 #import "CPDifference.h"
 #import "CPTaskI.h"
 
@@ -50,9 +51,11 @@
 // disjunctive resource
 +(id<CPDisjunctiveResource>) disjunctiveResource:  (id<ORTracker>) tracker  activities: (id<CPActivityArray>) activities
 {
-    id<CPDisjunctiveResource> dr = [[CPDisjunctiveResource alloc] initCPDisjunctiveResource: tracker activities: activities];
-    [tracker trackMutable: dr];
-    return dr;
+   assert(false);
+   return 0;
+//    id<CPDisjunctiveResource> dr = [[CPDisjunctiveResource alloc] initCPDisjunctiveResource: tracker activities: activities];
+//    [tracker trackMutable: dr];
+//    return dr;
 }
 
 // Precedence
@@ -217,25 +220,29 @@
 //
 +(id<CPConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d
 {
-    // Creating the disjunctive propagator
-    id<CPConstraint> o = [[CPDisjunctive alloc] initCPDisjunctive:s duration:d];
-    
-    // XXX What is the meaning of the following? Variable subscription?
-    [[s tracker] trackMutable: o];
-    
-    // Returning the disjunctive propagator
-    return o;
+   assert(false);
+   return 0;
+//    // Creating the disjunctive propagator
+//    id<CPConstraint> o = [[CPDisjunctive alloc] initCPDisjunctive:s duration:d];
+//    
+//    // XXX What is the meaning of the following? Variable subscription?
+//    [[s tracker] trackMutable: o];
+//    
+//    // Returning the disjunctive propagator
+//    return o;
 }
 +(id<CPConstraint>) disjunctive:(id<CPActivityArray>)act
 {
-    // Creating the disjunctive propagator
-    id<CPConstraint> o = [[CPDisjunctive alloc] initCPDisjunctive: act];
-    
-    // XXX What is the meaning of the following? Variable subscription?
-    [[act tracker] trackMutable: o];
-    
-    // Returning the disjunctive propagator
-    return o;
+   assert(false);
+   return 0;
+//    // Creating the disjunctive propagator
+//    id<CPConstraint> o = [[CPDisjunctive alloc] initCPDisjunctive: act];
+//    
+//    // XXX What is the meaning of the following? Variable subscription?
+//    [[act tracker] trackMutable: o];
+//    
+//    // Returning the disjunctive propagator
+//    return o;
 }
 
 
@@ -281,7 +288,7 @@
 }
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {
-   id<CPConstraint> o = [[CPDisjunctive alloc] initCPTaskDisjunctive: tasks];
+   id<CPConstraint> o = [[CPTaskDisjunctive alloc] initCPTaskDisjunctive: tasks];
    [[tasks tracker] trackMutable: o];
    return o;
 }

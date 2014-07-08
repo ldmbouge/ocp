@@ -30,6 +30,9 @@
    [_trail release];
    [super dealloc];
 }
+-(void) close
+{
+}
 // Constraint method
 -(void) post
 {

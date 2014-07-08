@@ -1328,6 +1328,8 @@
 		B19B55A719051B310069ABA0 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
 		B19B55A819051B310069ABA0 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B19BBA53196AAB3E006EE9A9 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
+		B19BBA56196B6CEE006EE9A9 /* CPTaskDisjunctive.h in Headers */ = {isa = PBXBuildFile; fileRef = B19BBA54196B6CEE006EE9A9 /* CPTaskDisjunctive.h */; };
+		B19BBA57196B6CEE006EE9A9 /* CPTaskDisjunctive.m in Sources */ = {isa = PBXBuildFile; fileRef = B19BBA55196B6CEE006EE9A9 /* CPTaskDisjunctive.m */; };
 		B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124615CCA92F001ED0D4 /* ORCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124715CCA930001ED0D4 /* ORCommand.m */; };
 		B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124A15CCAE71001ED0D4 /* ORTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -8037,6 +8039,8 @@
 		B19B5587190518CF0069ABA0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B19B558A190518CF0069ABA0 /* jobshop-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "jobshop-Prefix.pch"; sourceTree = "<group>"; };
 		B19B558B190518CF0069ABA0 /* jobshop.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = jobshop.1; sourceTree = "<group>"; };
+		B19BBA54196B6CEE006EE9A9 /* CPTaskDisjunctive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTaskDisjunctive.h; sourceTree = "<group>"; };
+		B19BBA55196B6CEE006EE9A9 /* CPTaskDisjunctive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTaskDisjunctive.m; sourceTree = "<group>"; };
 		B1A0124615CCA92F001ED0D4 /* ORCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCommand.h; sourceTree = "<group>"; };
 		B1A0124715CCA930001ED0D4 /* ORCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCommand.m; sourceTree = "<group>"; };
 		B1A0124A15CCAE71001ED0D4 /* ORTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTracer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -10980,6 +10984,8 @@
 				537EE8A518FCC5720006FFD2 /* CPDifference.m */,
 				537EE8A618FCC5720006FFD2 /* CPDisjunctive.h */,
 				537EE8A718FCC5720006FFD2 /* CPDisjunctive.m */,
+				B19BBA54196B6CEE006EE9A9 /* CPTaskDisjunctive.h */,
+				B19BBA55196B6CEE006EE9A9 /* CPTaskDisjunctive.m */,
 				537EE8A818FCC5720006FFD2 /* CPFactory.h */,
 				537EE8A918FCC5720006FFD2 /* CPFactory.m */,
 				535D132C18FF7A46008D48BD /* CPMisc.h */,
@@ -13272,6 +13278,7 @@
 				537EEA5918FCE35E0006FFD2 /* CPDisjunctive.h in Headers */,
 				537EEA5A18FCE35E0006FFD2 /* CPFactory.h in Headers */,
 				B127A56E19628CA100398AA3 /* CPTaskI.h in Headers */,
+				B19BBA56196B6CEE006EE9A9 /* CPTaskDisjunctive.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16058,6 +16065,7 @@
 				B127A56F19628CA100398AA3 /* CPTaskI.m in Sources */,
 				B12BE470190158B2006D1D59 /* CPActivity.m in Sources */,
 				B19ADA6D19049EA0009E233D /* CPSearch.m in Sources */,
+				B19BBA57196B6CEE006EE9A9 /* CPTaskDisjunctive.m in Sources */,
 				537EEA5518FCE2FC0006FFD2 /* CPFactory.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -391,6 +391,7 @@
 }
 -(id<ORConstraint>) add: (id<ORConstraint>) c
 {
+   [c close];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c];
    }

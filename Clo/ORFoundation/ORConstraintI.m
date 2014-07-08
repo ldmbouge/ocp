@@ -33,6 +33,10 @@
 {
    return [[[NSSet alloc] init] autorelease];
 }
+-(void) close
+{
+   
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
 }
@@ -69,6 +73,9 @@
    [_content addObject:c];
    [_model trackConstraintInGroup:c];
    return c;
+}
+-(void) close
+{
 }
 -(NSString*) description
 {

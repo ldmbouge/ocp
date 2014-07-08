@@ -346,6 +346,8 @@
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
+   NSLog(@"Objective v.getId: %d",v.getId);
+   NSLog(@"visitMinimizeVar: %@",_gamma[v.getId]);
    if (_gamma[v.getId] == NULL) {
       id<ORVar> o = [v var];
       [o visit: self];
