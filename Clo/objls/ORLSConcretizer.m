@@ -13,6 +13,7 @@
 #import <objls/LSFactory.h>
 #import <objls/LSIntVar.h>
 #import <objls/LSConstraint.h>
+#import "ORVarI.h"
 
 
 @implementation ORLSConcretizer

@@ -170,10 +170,7 @@
 @end
 
 
-@implementation ORIntRangeI {
-   ORInt _low;
-   ORInt _up;
-}
+@implementation ORIntRangeI 
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up
 {
    self = [super init];

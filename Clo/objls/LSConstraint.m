@@ -16,6 +16,7 @@
 #import "LSSystem.h"
 #import "LSLinear.h"
 #import "LSBasic.h"
+#import "LSFunVariable.h"
 
 @implementation LSConstraint
 -(id)init:(LSEngineI*)engine
@@ -140,5 +141,17 @@
    LSOr* o = [[LSOr alloc] init:[x engine] boolean:b equal:x or: y];
    [[x engine] trackMutable:o];
    return o;
+}
++(id<LSFunction>)varRef:(id<LSEngine>)engine var:(id<LSIntVar>)x
+{
+   LSFunVariable* f = [[LSFunVariable alloc] init:engine with:x];
+   [engine trackMutable:f];
+   return f;
+}
++(id<LSFunction>)disjunction:(id<LSEngine>)engine terms:(id<ORIdArray>)terms
+{
+   LSFunOr*  f = [[LSFunOr alloc] init:engine withTerms:terms];
+   [engine trackMutable:f];
+   return f;
 }
 @end

@@ -16,10 +16,12 @@
 @protocol LSVar;
 @protocol LSIntVar;
 @protocol LSConstraint;
+@protocol LSFunction;
 
 @protocol LSEngine <NSObject,ORSearchEngine>
 -(void)add:(LSPropagator*)i;
 -(id<LSConstraint>)addConstraint:(id<LSConstraint>)cstr;
+-(id<LSFunction>)addFunction:(id<LSFunction>)fun;
 -(void)label:(id<LSIntVar>)x with:(ORInt)v;
 -(void)notify:(id<LSVar>)x;
 -(void)atomic:(ORClosure)block;

@@ -268,7 +268,7 @@
 -(void) cleanup
 {
    while (_sz > 0)
-      [_tab[--_sz] letgo];
+      letgo(_tab[--_sz]);
    [_tracer popToNode:_atRoot];
 }
 

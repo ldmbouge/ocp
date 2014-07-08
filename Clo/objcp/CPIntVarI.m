@@ -1006,8 +1006,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(CPIntVar*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
 {
-   self = [self initCPIntVarCore: engine low: [b low] up: [b up]];
-   _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: [b low] up: [b up]];
+   ORInt l = [b low],u = [b up];
+   self = [self initCPIntVarCore: engine low: l up: u];
+   _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: l up: u];
    return self;
 }
 
@@ -1051,7 +1052,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    CPIntVarI* x = nil;
    ORLong sz = (ORLong)up - low + 1;
    if (low==0 && up==1)
-      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];     // binary domain. Use bounds only.
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: [fdm boolRange]];     // binary domain. Use bounds only.
    else if (sz >= 65536)
       x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,low,up)];  // large domain. Fall back to bounds only.
    else
@@ -1061,7 +1062,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 +(CPIntVar*) initCPBoolVar: (id<CPEngine>) fdm
 {
-   CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];
+   CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: [fdm boolRange]];
    x->_isBool = YES;
    return x;
 }

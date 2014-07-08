@@ -178,26 +178,32 @@ inline static ContPool* instancePool()
 
 -(void)letgo 
 {
-   assert(_cnt > 0);
-   if (--_cnt == 0) {
+   letgo(self);
+}
+
+void letgo(NSCont* c)
+{
+   assert(c->_cnt > 0);
+   if (--c->_cnt == 0) {
       ContPool* pool = instancePool();
       ORUInt next = (pool->high + 1) % pool->sz;
       if (next == pool->low) {
-         free(_data);
+         free(c->_data);
          pool->nbCont -= 1;
 #if defined(__APPLE__) || !defined(__x86_64__)
-         NSDeallocateObject(self);
+         NSDeallocateObject(c);
 #else
-	 char* ptr = (char*)self;
-	 ptr = ptr - 16;
-	 free(ptr);
+         char* ptr = (char*)c;
+         ptr = ptr - 16;
+         free(ptr);
 #endif
          return;
       }
-      pool->pool[pool->high] = self;
-      pool->high = next;      
+      pool->pool[pool->high] = c;
+      pool->high = next;
    }
 }
+
 
 @synthesize field;
 @synthesize fieldId;

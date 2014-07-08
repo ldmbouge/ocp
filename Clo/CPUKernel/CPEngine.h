@@ -44,7 +44,7 @@
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
-
+-(id<ORIntRange>)boolRange;
 @end
 
 #define ISLOADED(q)  ((q)->_csz)

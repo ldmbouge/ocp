@@ -15,45 +15,157 @@
 #import "LSCount.h"
 #import "LSIntVar.h"
 
-@implementation LSGradient
-+(id<LSGradient>)maxOf:(id<LSGradient>)g1 and:(id<LSGradient>)g2
+@interface LSVarGradient : LSGradient<LSGradient> {
+   id<LSIntVar>   _x;
+}
+-(ORBool)isConstant;
+-(ORBool)isVar;
+-(ORBool)isLinear;
+-(ORInt)constant;
+-(id<LSIntVar>)variable;
+@end
+
+@interface LSCstGradient : LSGradient<LSGradient> {
+   int  _cst;
+}
+-(ORBool)isConstant;
+-(ORBool)isVar;
+-(ORBool)isLinear;
+-(ORInt)constant;
+-(id<LSIntVar>)variable;
+@end
+
+@interface LSLinGradient : LSGradient<LSGradient> {
+   NSMutableArray* _terms;
+   id<LSIntVar>    _final;
+   ORInt               _b;
+}
+-(ORBool)isConstant;
+-(ORBool)isVar;
+-(ORBool)isLinear;
+-(ORInt)constant;
+-(id<LSIntVar>)variable;
+@end
+
+@interface LSLinTerm : NSObject {
+   id<LSIntVar> _x;
+   ORInt        _a;
+}
+-(id)init:(id<LSIntVar>)x coef:(ORInt)a;
+-(void)updateCoefFor:(id<LSIntVar>)x coef:(ORInt)c;
+-(ORInt)coef;
+-(id<LSIntVar>)variable;
+@end
+
+@implementation LSLinTerm
+-(id)init:(id<LSIntVar>)x coef:(ORInt)a
 {
-   if ([g1 isConstant] && [g2 isConstant])
-      return [LSCstGradient newCstGradient:max([g1 constant],[g2 constant])];
-   else if ([g1 isConstant]) {
-      id<LSIntVar> v = [g2 variable];
-      id<ORIntRange> d = v.domain;
-      ORInt g1c = [g1 constant];
-      if (g1c >= d.up)
-         return g1;
-      else if (g1c <= d.low)
-         return g2;
-      else {
-         id<LSIntVar> ng = [LSFactory intVarView:[v engine] domain:d fun:^ORInt{
-            return max(getLSIntValue(v),g1c);
-         } src:@[v]];
-         return [LSVarGradient newVarGradient:ng];
-      }
-   } else if ([g2 isConstant]) {
-      return [self maxOf:g2 and:g1];
-   } else {
-      id<LSIntVar> v1 = [g1 variable];
-      id<LSIntVar> v2 = [g2 variable];
-      id<LSEngine> e = [v1 engine];
-      id<LSIntVar> rv = [LSFactory intVar:e domain:v1.domain];
-      [e add:[LSFactory inv:rv equal:^ORInt{
-         return max(getLSIntValue(v1),getLSIntValue(v2));
-      } vars:@[v1,v2]]];
-      return [LSVarGradient newVarGradient:rv];
+   self = [super init];
+   _x = x;
+   _a = a;
+   return self;
+}
+-(void)updateCoefFor:(id<LSIntVar>)x coef:(ORInt)c
+{
+   if (getId(x) == getId(_x))
+      _a += c;
+}
+-(ORInt)coef
+{
+   return _a;
+}
+-(id<LSIntVar>)variable
+{
+   return _x;
+}
+@end
+
+@implementation LSLinGradient
+-(id)init
+{
+   self = [super init];
+   _terms = [[NSMutableArray alloc] initWithCapacity:2];
+   _final = nil;
+   _b     = 0;
+   return self;
+}
+-(void)dealloc
+{
+   [_terms release];
+   [super dealloc];
+}
+-(ORBool)isConstant
+{
+   return NO;
+}
+-(ORBool)isVar
+{
+   return NO;
+}
+-(ORBool)isLinear
+{
+   return YES;
+}
+-(ORInt)constant
+{
+   return 0;
+}
+-(id<LSIntVar>)variable
+{
+   return _final;
+}
+-(id<LSIntVar>)intVar:(id<LSEngine>)engine
+{
+   ORInt min=FDMAXINT,max=FDMININT;
+   for(LSLinTerm* t in _terms) {
+      min = MIN([t coef], min);
+      max = MAX([t coef],max);
    }
+   _final = [LSFactory intVar:engine domain:RANGE(engine,min,max)];
+   ORInt cnt = (ORInt)[_terms count];
+   id<ORIntRange> R = RANGE(engine,0,cnt-1);
+   id<ORIntArray> coefs = [ORFactory intArray:engine range:R with:^ORInt(ORInt i) {
+      return [(LSLinTerm*)_terms[i] coef];
+   }];
+   id<LSIntVarArray> vars = [LSFactory intVarArray:engine range:R with:^id<LSIntVar>(ORInt i) {
+      return [(LSLinTerm*)_terms[i] variable];
+   }];
+   [engine add:[LSFactory sum:_final is:coefs times:vars]];
+   assert(_b == 0);
+   return _final;
+}
+-(id<LSGradient>)addConst:(ORInt)c
+{
+   _b += c;
+   return self;
+}
+-(id<LSGradient>)addTerm:(id<LSIntVar>)x coef:(ORInt)a
+{
+   ORInt xid = getId(x);
+   for(LSLinTerm* t in _terms) {
+      if (getId([t variable]) == xid) {
+         [t updateCoefFor:x coef:a];
+         return self;
+      }
+   }
+   [_terms addObject:[[LSLinTerm alloc] init:x coef:a]];
+   return self;
+}
+-(id<LSGradient>)addLinear:(LSLinGradient*)g
+{
+   // [ldm] quadratic. Must improve.
+   _b += g->_b;
+   for(LSLinTerm* t in g->_terms)
+      [self addTerm:[t variable] coef:[t coef]];
+   return self;
+}
+-(NSString*)description
+{
+   return [[[NSString alloc] initWithFormat:@"<LinGradient: %p (%lu) %@>",self,[_terms count],_final] autorelease];
 }
 @end
 
 @implementation LSVarGradient
-+(id<LSGradient>)newVarGradient:(id<LSIntVar>)x
-{
-   return [[LSVarGradient alloc] init:x];
-}
 -(id)init:(id<LSIntVar>)x
 {
    self = [super init];
@@ -68,6 +180,10 @@
 {
    return YES;
 }
+-(ORBool)isLinear
+{
+   return NO;
+}
 -(ORInt)constant
 {
    return 0;
@@ -76,13 +192,29 @@
 {
    return _x;
 }
+-(id<LSIntVar>)intVar:(id<LSEngine>)engine
+{
+   return _x;
+}
+-(id<LSGradient>)addConst:(ORInt)c
+{
+   return [[[LSGradient linGradient] addTerm:_x coef:1] addConst:c];
+}
+-(id<LSGradient>)addTerm:(id<LSIntVar>)x coef:(ORInt)a
+{
+   return [[[LSGradient linGradient] addTerm:_x coef:1] addTerm:x coef:a];
+}
+-(id<LSGradient>)addLinear:(LSLinGradient*)g
+{
+   return [g addTerm:_x coef:1];
+}
+-(NSString*)description
+{
+   return [[[NSString alloc] initWithFormat:@"<VarGradient: %p : %@>",self,_x] autorelease];
+}
 @end
 
 @implementation LSCstGradient
-+(id<LSGradient>)newCstGradient:(ORInt)c
-{
-   return [[LSCstGradient alloc] init:c];
-}
 -(id)init:(ORInt)c
 {
    self = [super init];
@@ -97,6 +229,10 @@
 {
    return NO;
 }
+-(ORBool)isLinear
+{
+   return NO;
+}
 -(ORInt)constant
 {
    return _cst;
@@ -104,6 +240,83 @@
 -(id<LSIntVar>)variable
 {
    return nil;
+}
+-(id<LSIntVar>)intVar:(id<LSEngine>)engine
+{
+   return [LSFactory intVar:engine domain:RANGE(engine,_cst,_cst)];
+}
+-(id<LSGradient>)addConst:(ORInt)c
+{
+   _cst += c;
+   return self;
+}
+-(id<LSGradient>)addTerm:(id<LSIntVar>)x coef:(ORInt)a
+{
+   return [[[LSGradient linGradient] addConst:_cst] addTerm:x coef:a];
+}
+-(id<LSGradient>)addLinear:(LSLinGradient*)g
+{
+   return [g addConst:_cst];
+}
+-(NSString*)description
+{
+   return [[[NSString alloc] initWithFormat:@"<CstGradient: %p : %d>",self,_cst] autorelease];
+}
+@end
+
+@implementation LSGradient
++(LSGradient*)varGradient:(id<LSIntVar>)x
+{
+   return [[LSVarGradient alloc] init:x];
+}
++(LSGradient*)cstGradient:(ORInt)c
+{
+   return [[LSCstGradient alloc] init:c];
+}
++(LSGradient*)linGradient
+{
+   return [[LSLinGradient alloc] init];
+}
+
++(id<LSGradient>)maxOf:(id<LSGradient>)g1 and:(id<LSGradient>)g2
+{
+   if ([g1 isConstant] && [g2 isConstant])
+      return [LSGradient cstGradient:max([g1 constant],[g2 constant])];
+   else if ([g1 isConstant]) {
+      id<LSIntVar> v = [g2 variable];
+      id<ORIntRange> d = v.domain;
+      ORInt g1c = [g1 constant];
+      if (g1c >= d.up)
+         return g1;
+      else if (g1c <= d.low)
+         return g2;
+      else {
+         id<LSIntVar> ng = [LSFactory intVarView:[v engine] domain:d fun:^ORInt{
+            return max(getLSIntValue(v),g1c);
+         } src:@[v]];
+         return [LSGradient varGradient:ng];
+      }
+   } else if ([g2 isConstant]) {
+      return [self maxOf:g2 and:g1];
+   } else {
+      id<LSIntVar> v1 = [g1 variable];
+      id<LSIntVar> v2 = [g2 variable];
+      id<LSEngine> e = [v1 engine];
+      id<LSIntVar> rv = [LSFactory intVar:e domain:v1.domain];
+      [e add:[LSFactory inv:rv equal:^ORInt{
+         return max(getLSIntValue(v1),getLSIntValue(v2));
+      } vars:@[v1,v2]]];
+      return [LSGradient varGradient:rv];
+   }
+}
++(id<LSGradient>)sumOf:(id<LSGradient>)g1 and:(id<LSGradient>)g2
+{
+   if ([g2 isConstant])
+      return [g1 addConst:g2.constant];
+   else if ([g2 isVar])
+      return [g1 addTerm:g2.variable coef:1];
+   else
+      return [g1 addLinear:g2];
 }
 @end
 
@@ -177,8 +390,8 @@ void collectSources(id<LSIntVarArray> x,NSArray** asv)
       ++k;
    }
 }
-int varComparator(const ORObject* a, const ORObject* b) {
-   return getId(a) - getId(b);
+int varComparator(const ORObject** a, const ORObject** b) {
+   return getId(*a) - getId(*b);
 }
 id<LSIntVarArray> sortById(id<LSIntVarArray> array)
 {

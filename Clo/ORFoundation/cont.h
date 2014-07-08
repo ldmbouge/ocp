@@ -45,4 +45,5 @@
 @property (readwrite,retain) id  fieldId;
 @end 
 
+void letgo(NSCont*);
 

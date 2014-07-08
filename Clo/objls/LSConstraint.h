@@ -63,5 +63,7 @@
 +(id<LSConstraint>) lEqual: (id<LSIntVar>)x to: (id<LSIntVar>) y plus:(ORInt)c;
 +(id<LSConstraint>) nEqualc: (id<LSIntVar>)x to: (ORInt) c;
 +(id<LSConstraint>) boolean:(id<LSIntVar>)x or:(id<LSIntVar>)y equal:(id<LSIntVar>)b;
++(id<LSFunction>)varRef:(id<LSEngine>)engine var:(id<LSIntVar>)x;
++(id<LSFunction>)disjunction:(id<LSEngine>)engine terms:(id<ORIdArray>)terms;
 +(id<LSConstraint>) minimize:(id<LSEngine>)e var:(id<LSIntVar>)x;
 @end

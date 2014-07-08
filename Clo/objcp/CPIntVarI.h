@@ -25,7 +25,7 @@ typedef struct  {
    TRId            _domEvt[2];
    TRId            _minEvt[2];
    TRId            _maxEvt[2];
-   TRId               _valueClosureQueue[2];
+   TRId _valueClosureQueue[2];
 } CPEventNetwork;
 
 @class CPIntVar;

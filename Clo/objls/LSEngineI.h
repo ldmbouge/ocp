@@ -45,6 +45,7 @@ typedef enum LSMode {
 -(id<ORSearchObjectiveFunction>)objective;
 -(void)add:(id<LSPropagator>)i;
 -(id<LSConstraint>)addConstraint:(id<LSConstraint>)cstr;
+-(id<LSFunction>)addFunction:(id<LSFunction>)fun;
 -(NSMutableArray*)variables;
 -(NSMutableArray*)invariants;
 -(ORUInt)nbObjects;

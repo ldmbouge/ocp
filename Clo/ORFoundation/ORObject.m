@@ -12,8 +12,15 @@
 #import <Foundation/Foundation.h>
 #import "ORObject.h"
 #import "ORError.h"
+#import <objc/runtime.h>
+
+static Class __orObjectClass = nil;
 
 @implementation ORObject
++(void)load
+{
+   __orObjectClass = [ORObject class];
+}
 -(id)init
 {
    self = [super init];
@@ -65,7 +72,8 @@
 {}
 - (BOOL)isEqual:(id)object
 {
-   if ([object isKindOfClass:[ORObject class]]) {
+   Class me = object_getClass(self);
+   if ([me isKindOfClass:__orObjectClass]) {
       return _name == getId(object);
    } else return NO;
 }

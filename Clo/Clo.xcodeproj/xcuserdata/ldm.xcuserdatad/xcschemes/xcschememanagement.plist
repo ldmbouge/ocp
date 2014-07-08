@@ -22,7 +22,7 @@
 		<key>CardinalityTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>75</integer>
+			<integer>76</integer>
 		</dict>
 		<key>Clo.xcscheme_^#shared#^_</key>
 		<dict>
@@ -52,7 +52,7 @@
 		<key>LPRelaxation.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>73</integer>
+			<integer>74</integer>
 		</dict>
 		<key>LPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
@@ -62,7 +62,7 @@
 		<key>MD5.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>78</integer>
+			<integer>79</integer>
 		</dict>
 		<key>ORFoundation.xcscheme_^#shared#^_</key>
 		<dict>
@@ -107,7 +107,7 @@
 		<key>TEST.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>99</integer>
+			<integer>98</integer>
 		</dict>
 		<key>TEST2.xcscheme</key>
 		<dict>
@@ -117,12 +117,12 @@
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>74</integer>
+			<integer>75</integer>
 		</dict>
 		<key>TestAssignment.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>77</integer>
+			<integer>78</integer>
 		</dict>
 		<key>Testing.xcscheme</key>
 		<dict>
@@ -137,7 +137,7 @@
 		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>79</integer>
+			<integer>80</integer>
 		</dict>
 		<key>bacp.xcscheme</key>
 		<dict>
@@ -172,7 +172,7 @@
 		<key>bugTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>82</integer>
+			<integer>83</integer>
 		</dict>
 		<key>circle.xcscheme</key>
 		<dict>
@@ -207,7 +207,7 @@
 		<key>costas2.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>81</integer>
+			<integer>82</integer>
 		</dict>
 		<key>debruijn.xcscheme_^#shared#^_</key>
 		<dict>
@@ -237,7 +237,7 @@
 		<key>fwarehouse.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>76</integer>
+			<integer>77</integer>
 		</dict>
 		<key>golomb.xcscheme_^#shared#^_</key>
 		<dict>
@@ -279,6 +279,11 @@
 			<key>orderHint</key>
 			<integer>31</integer>
 		</dict>
+		<key>large.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>103</integer>
+		</dict>
 		<key>latinSquare.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -297,7 +302,7 @@
 		<key>magicSquareLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>98</integer>
+			<integer>97</integer>
 		</dict>
 		<key>magicserie.xcscheme_^#shared#^_</key>
 		<dict>
@@ -337,7 +342,7 @@
 		<key>minesweeper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>71</integer>
+			<integer>72</integer>
 		</dict>
 		<key>model.xcscheme_^#shared#^_</key>
 		<dict>
@@ -387,7 +392,7 @@
 		<key>objcpTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>103</integer>
+			<integer>102</integer>
 		</dict>
 		<key>objlp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -397,12 +402,12 @@
 		<key>objls.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>85</integer>
+			<integer>86</integer>
 		</dict>
 		<key>objlsTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>89</integer>
+			<integer>90</integer>
 		</dict>
 		<key>objmp.xcscheme</key>
 		<dict>
@@ -412,7 +417,7 @@
 		<key>objmp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>83</integer>
+			<integer>84</integer>
 		</dict>
 		<key>order.xcscheme_^#shared#^_</key>
 		<dict>
@@ -422,7 +427,7 @@
 		<key>order2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>86</integer>
+			<integer>87</integer>
 		</dict>
 		<key>order2.xcscheme_^#shared#^_</key>
 		<dict>
@@ -432,7 +437,7 @@
 		<key>paq.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>72</integer>
+			<integer>73</integer>
 		</dict>
 		<key>partition.xcscheme_^#shared#^_</key>
 		<dict>
@@ -537,7 +542,7 @@
 		<key>scene.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>100</integer>
+			<integer>99</integer>
 		</dict>
 		<key>sceneLS.xcscheme</key>
 		<dict>
@@ -552,7 +557,7 @@
 		<key>slabIP.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>84</integer>
+			<integer>85</integer>
 		</dict>
 		<key>slabLNSModel.xcscheme_^#shared#^_</key>
 		<dict>
@@ -567,7 +572,7 @@
 		<key>slabZIB.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>88</integer>
+			<integer>89</integer>
 		</dict>
 		<key>slow_convergence.xcscheme_^#shared#^_</key>
 		<dict>
@@ -652,7 +657,7 @@
 		<key>wka.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>80</integer>
+			<integer>81</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -728,6 +733,11 @@
 			<true/>
 		</dict>
 		<key>5B4055AB193E253E00A2B1DD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B42A9C9196C0CF9000E97D8</key>
 		<dict>
 			<key>primary</key>
 			<true/>

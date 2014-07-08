@@ -38,7 +38,11 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : ORObject<ORIntRange,NSCopying>
+@interface ORIntRangeI : ORObject<ORIntRange,NSCopying> {
+@package
+   ORInt _low;
+   ORInt _up;
+}
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;

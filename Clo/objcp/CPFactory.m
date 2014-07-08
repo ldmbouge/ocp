@@ -39,9 +39,13 @@
 }
 +(id<CPIntVar>) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
 {
-   if ([range low] == [range up])
-      return [CPFactory intVar: cp value: [range low]];
-    return [CPIntVarI initCPIntVar: cp low: [range low] up: [range up]];
+   ORInt low = [range low],up = [range up];
+   if (low == up)
+      return [CPFactory intVar: cp value: low];
+   else if (low == 0 && up==1)
+      return [CPIntVarI initCPBoolVar:cp];
+   else
+      return [CPIntVarI initCPIntVar: cp low: low up: up];
 }
 +(id<CPIntVar>) intVar: (CPIntVar*) x shift: (ORInt) b
 {

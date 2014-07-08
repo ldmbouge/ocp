@@ -38,32 +38,21 @@
 @protocol LSGradient<NSObject>
 -(ORBool)isConstant;
 -(ORBool)isVar;
+-(ORBool)isLinear;
 -(ORInt)constant;
 -(id<LSIntVar>)variable;
+-(id<LSIntVar>)intVar:(id<LSEngine>)engine;
+@optional -(id<LSGradient>)addTerm:(id<LSIntVar>)x coef:(ORInt)a;
+@optional -(id<LSGradient>)addConst:(ORInt)c;
+@optional -(id<LSGradient>)addLinear:(id<LSGradient>)g;
 @end
 
 @interface LSGradient : NSObject
++(id<LSGradient>)varGradient:(id<LSIntVar>)x;
++(id<LSGradient>)cstGradient:(ORInt)c;
++(id<LSGradient>)linGradient;
 +(id<LSGradient>)maxOf:(id<LSGradient>)g1 and:(id<LSGradient>)g2;
-@end
-
-@interface LSVarGradient : LSGradient<LSGradient> {
-   id<LSIntVar>   _x;
-}
-+(id<LSGradient>)newVarGradient:(id<LSIntVar>)x;
--(ORBool)isConstant;
--(ORBool)isVar;
--(ORInt)constant;
--(id<LSIntVar>)variable;
-@end
-
-@interface LSCstGradient : LSGradient<LSGradient> {
-   int  _cst;
-}
-+(id<LSGradient>)newCstGradient:(ORInt)c;
--(ORBool)isConstant;
--(ORBool)isVar;
--(ORInt)constant;
--(id<LSIntVar>)variable;
++(id<LSGradient>)sumOf:(id<LSGradient>)g1 and:(id<LSGradient>)g2;
 @end
 
 @protocol  LSIntVar <LSVar>

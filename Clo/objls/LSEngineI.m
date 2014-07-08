@@ -188,6 +188,11 @@
    [_cstr addObject:cstr];
    return cstr;
 }
+-(id<LSFunction>)addFunction:(id<LSFunction>)fun
+{
+   [_cstr addObject:fun];
+   return fun;
+}
 -(void)atomic:(ORClosure)block
 {
    _atomic = YES;

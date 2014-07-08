@@ -240,6 +240,7 @@
 -(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v
 {
    assert(NO);
+   return 1;
 }
 @end
 // ========================================================================================
@@ -311,9 +312,9 @@
 -(id<LSGradient>)decrease:(id<LSIntVar>)x
 {
    if (getId(_x) == getId(x))
-      return [LSVarGradient newVarGradient:self];
+      return [LSGradient varGradient:self];
    else
-      return [LSCstGradient newCstGradient:0];
+      return [LSGradient cstGradient:0];
 }
 -(id<LSGradient>)increase:(id<LSIntVar>)x
 {
@@ -322,10 +323,10 @@
       [_engine add:[LSFactory inv:fv equal:^ORInt{
          return 1 - self.value;
       } vars:@[self]]];
-      return [LSVarGradient newVarGradient:fv];
+      return [LSGradient varGradient:fv];
    }
    else
-      return [LSCstGradient newCstGradient:0];
+      return [LSGradient cstGradient:0];
 }
 @end
 

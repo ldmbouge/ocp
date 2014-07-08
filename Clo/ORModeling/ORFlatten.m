@@ -25,7 +25,7 @@
    self = [super init];
    _into = into;
    _fresh = nil;
-   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory|NSPointerFunctionsObjectPointerPersonality
                                         valueOptions:NSPointerFunctionsOpaqueMemory
                                             capacity:64];
    return self;

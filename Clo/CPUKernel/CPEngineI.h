@@ -45,6 +45,7 @@ enum CPEngineState {
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
    ORFailException*         _fex;
+   id<ORIntRange>           _br;
 }
 -(CPEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)      dealloc;
@@ -83,6 +84,7 @@ enum CPEngineState {
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
+-(id<ORIntRange>)boolRange;
 @end
 
 ORStatus propagateFDM(CPEngineI* fdm);

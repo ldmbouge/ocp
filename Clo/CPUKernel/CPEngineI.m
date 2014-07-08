@@ -290,7 +290,12 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
    _propagFail = nil;
    _propagDone = nil;
+   _br = RANGE(self, 0, 1);
    return self;
+}
+-(id<ORIntRange>)boolRange
+{
+   return _br;
 }
 -(void) dealloc
 {
