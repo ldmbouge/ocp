@@ -66,7 +66,7 @@
    id<CPTaskVar> task0 = tasks[tasks.low];
    self = [super initCPCoreConstraint: [task0 engine]];
    // TODO Changing the priority
-   _priority = LOWEST_PRIO + 3;
+   _priority = LOWEST_PRIO + 2;
    _tasks  = tasks;
 
    
