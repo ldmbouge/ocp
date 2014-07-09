@@ -38,8 +38,16 @@
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive:(id<ORTaskVarArray>) tasks;
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;
 -(id<ORTaskVarArray>) taskVars;
--(void) isRequiredBy: (id<ORTaskVar>) act;
+-(void) add: (id<ORTaskVar>) act;
 @end
+
+@interface ORTaskSequence : ORConstraintI<ORTaskSequence>
+-(id<ORTaskSequence>) initORTaskSequenceEmpty: (id<ORTracker>) tracker;
+-(id<ORTaskVarArray>) taskVars;
+-(id<ORIntVarArray>) successors;
+-(void) add: (id<ORTaskVar>) act;
+@end
+
 
 // Difference logic constraint
 @interface ORDifference : ORConstraintI<ORDifference>

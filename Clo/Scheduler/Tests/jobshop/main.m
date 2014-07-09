@@ -19,11 +19,12 @@
 
 //setTimes for mt06
 //Makespan: 55
-//2014-06-29 15:01:07.168 jobshop[6054:303] Solver status: Solver: 74 vars
+//2014-07-09 12:07:25.064 jobshop[1216:303] Solver status: Solver: 1 vars
 //43 constraints
-//2054 choices
-//1972 fail
-//26972 propagations
+//154 choices
+//2 fail
+//3662 propagations
+// [pvh; Need to see this var count]
 
 
 ORInt size6 = 6;
@@ -96,7 +97,8 @@ int main(int argc, const char * argv[])
       
       id<ORTaskVarMatrix> task = [ORFactory taskVarMatrix: model range: Size : Size horizon: Horizon duration: duration];
       id<ORIntVar> makespan = [ORFactory intVar: model domain: RANGE(model,1,1100)];
-      id<ORTaskDisjunctiveArray> disjunctive = [ORFactory taskDisjunctiveArray: model range: Size];
+      id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray: model range: Size];
+      id<ORTaskSequenceArray> sequence = [ORFactory sequenceArray: model range: Size];
       
       // model
       
@@ -111,12 +113,17 @@ int main(int argc, const char * argv[])
 
       for(ORInt i = Size.low; i <= Size.up; i++)
          for(ORInt j = Size.low; j <= Size.up; j++)
-            [disjunctive[[resource at: i : j]] isRequiredBy: [ task at: i : j]];
+            [disjunctive[[resource at: i : j]] add: [ task at: i : j]];
       
-       for(ORInt i = Size.low; i <= Size.up; i++)
+      for(ORInt i = Size.low; i <= Size.up; i++)
+         for(ORInt j = Size.low; j <= Size.up; j++)
+            [sequence[[resource at: i : j]] add: [ task at: i : j]];
+      
+      for(ORInt i = Size.low; i <= Size.up; i++) {
           [model add: disjunctive[i]];
+          [model add: sequence[i]];
+      }
 
-      
       // search
       id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
       [cp solve: ^{

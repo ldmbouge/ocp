@@ -375,7 +375,7 @@
       [_acc dealloc];
    [super dealloc];
 }
--(void) isRequiredBy: (id<ORTaskVar>) task
+-(void) add: (id<ORTaskVar>) task
 {
    if (_closed) {
       @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
@@ -413,6 +413,83 @@
    ORInt up = R.up;
    for(ORInt k = low; k <= up; k++){
       [ms addObject: _tasks[k]];
+   }
+   return ms;
+}
+@end
+
+
+@implementation ORTaskSequence {
+   BOOL _closed;
+   id<ORTracker> _tracker;
+   NSMutableArray* _acc;
+   id<ORTaskVarArray> _tasks;
+   id<ORIntVarArray> _successors;
+}
+-(id<ORTaskSequence>) initORTaskSequenceEmpty: (id<ORTracker>) tracker;
+{
+   self = [super initORConstraintI];
+   _tracker = tracker;
+   _tasks = 0;
+   _successors = 0;
+   _acc = [[NSMutableArray alloc] initWithCapacity: 16];
+   _closed = FALSE;
+   return self;
+}
+-(void) dealloc
+{
+   if (_acc)
+      [_acc dealloc];
+   [super dealloc];
+}
+-(void) add: (id<ORTaskVar>) task
+{
+   if (_closed) {
+      @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
+   }
+   [_acc addObject: task];
+}
+-(void)visit: (ORVisitor*) v
+{
+   [v visitTaskSequence: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> sequence(%@)>", [self class], self, _tasks];
+   return buf;
+}
+-(void) close
+{
+   if (!_closed) {
+      _closed = true;
+      _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_acc count]) with: ^id<ORTaskVar>(ORInt i) {
+         return _acc[i-1];
+      }];
+      _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,1,(ORInt) [_acc count]+1)];
+   }
+}
+-(id<ORTaskVarArray>) taskVars
+{
+   return _tasks;
+}
+-(id<ORIntVarArray>) successors
+{
+   return _successors;
+}
+-(NSSet*) allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2*[_tasks count]+1] autorelease];
+   id<ORIntRange> R = _tasks.range;
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt k = low; k <= up; k++){
+      [ms addObject: _tasks[k]];
+   }
+   low = _successors.low;
+   up = _successors.up;
+   for(ORInt k = low; k <= up; k++){
+      [ms addObject: _successors[k]];
    }
    return ms;
 }

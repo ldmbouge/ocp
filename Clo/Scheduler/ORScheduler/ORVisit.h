@@ -20,6 +20,7 @@
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitTaskDisjunctive:  (id<ORTaskDisjunctive> ) cstr;
+-(void) visitTaskSequence:  (id<ORTaskSequence> ) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
 -(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr;
 -(void) visitDiffReifyLEqual:  (id<ORDiffReifyLEqual> ) cstr;
@@ -32,6 +33,7 @@
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
 -(void) visitTaskDisjunctive:  (id<ORTaskDisjunctive> ) cstr;
+-(void) visitTaskSequence:  (id<ORTaskSequence> ) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
 -(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr;
 -(void) visitDiffReifyLEqual:  (id<ORDiffReifyLEqual> ) cstr;

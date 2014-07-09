@@ -30,6 +30,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
 }
+-(void) visitTaskSequence: (id<ORTaskSequence>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "sequence: visit method not defined"];
+}
 -(void) visitCumulative: (id<ORCumulative>) cstr
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "cumulative: visit method not defined"];
@@ -58,6 +62,10 @@
   
 }
 -(void) visitTaskDisjunctive: (id<ORTaskDisjunctive>) cstr
+{
+   
+}
+-(void) visitTaskSequence: (id<ORTaskSequence>) cstr
 {
    
 }

@@ -1333,6 +1333,8 @@
 		B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124A15CCAE71001ED0D4 /* ORTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124B15CCAE72001ED0D4 /* ORTracer.m */; };
 		B1A0A5F715CDAB42005992E7 /* CPData.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0A5F615CDAB42005992E7 /* CPData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1A6581C196CE42000D318A6 /* CPTaskSequence.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A6581A196CE42000D318A6 /* CPTaskSequence.h */; };
+		B1A6581D196CE42000D318A6 /* CPTaskSequence.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A6581B196CE42000D318A6 /* CPTaskSequence.m */; };
 		B1AAA30B16495E9700CE9AED /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
 		B1AAA33A164AADAD00CE9AED /* ORObject.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AAA338164AADAD00CE9AED /* ORObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1AAA33B164AADAD00CE9AED /* ORObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA339164AADAD00CE9AED /* ORObject.m */; };
@@ -7358,8 +7360,8 @@
 		537EE8AC18FCC5720006FFD2 /* CPConcretizer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = CPConcretizer.m; path = ../Scheduler/ORScheduler/CPConcretizer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		537EE8AD18FCC5720006FFD2 /* ORConstraintI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORConstraintI.h; sourceTree = "<group>"; };
 		537EE8AE18FCC5720006FFD2 /* ORConstraintI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORConstraintI.m; sourceTree = "<group>"; };
-		537EE8AF18FCC5720006FFD2 /* ORFlatten.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORFlatten.h; sourceTree = "<group>"; };
-		537EE8B018FCC5720006FFD2 /* ORFlatten.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORFlatten.m; sourceTree = "<group>"; };
+		537EE8AF18FCC5720006FFD2 /* ORFlatten.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ORFlatten.h; path = ../Scheduler/ORScheduler/ORFlatten.h; sourceTree = "<group>"; };
+		537EE8B018FCC5720006FFD2 /* ORFlatten.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ORFlatten.m; path = ../Scheduler/ORScheduler/ORFlatten.m; sourceTree = "<group>"; };
 		537EE8B118FCC5720006FFD2 /* ORSchedConstraint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORSchedConstraint.h; sourceTree = "<group>"; };
 		537EE8B218FCC5720006FFD2 /* ORSchedFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSchedFactory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		537EE8B318FCC5720006FFD2 /* ORSchedFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSchedFactory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -8042,6 +8044,8 @@
 		B1A0124A15CCAE71001ED0D4 /* ORTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTracer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1A0124B15CCAE72001ED0D4 /* ORTracer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORTracer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1A0A5F615CDAB42005992E7 /* CPData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		B1A6581A196CE42000D318A6 /* CPTaskSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTaskSequence.h; sourceTree = "<group>"; };
+		B1A6581B196CE42000D318A6 /* CPTaskSequence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTaskSequence.m; sourceTree = "<group>"; };
 		B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPMultiStartSolver.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1AAA338164AADAD00CE9AED /* ORObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORObject.h; sourceTree = "<group>"; };
 		B1AAA339164AADAD00CE9AED /* ORObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORObject.m; sourceTree = "<group>"; };
@@ -10978,6 +10982,8 @@
 				537EE8A518FCC5720006FFD2 /* CPDifference.m */,
 				537EE8A618FCC5720006FFD2 /* CPDisjunctive.h */,
 				537EE8A718FCC5720006FFD2 /* CPDisjunctive.m */,
+				B1A6581A196CE42000D318A6 /* CPTaskSequence.h */,
+				B1A6581B196CE42000D318A6 /* CPTaskSequence.m */,
 				B19BBA54196B6CEE006EE9A9 /* CPTaskDisjunctive.h */,
 				B19BBA55196B6CEE006EE9A9 /* CPTaskDisjunctive.m */,
 				537EE8A818FCC5720006FFD2 /* CPFactory.h */,
@@ -11001,8 +11007,6 @@
 				B12BE46919014C56006D1D59 /* ORActivity.m */,
 				537EE8AD18FCC5720006FFD2 /* ORConstraintI.h */,
 				537EE8AE18FCC5720006FFD2 /* ORConstraintI.m */,
-				537EE8AF18FCC5720006FFD2 /* ORFlatten.h */,
-				537EE8B018FCC5720006FFD2 /* ORFlatten.m */,
 				537EE8B118FCC5720006FFD2 /* ORSchedConstraint.h */,
 				537EE8B218FCC5720006FFD2 /* ORSchedFactory.h */,
 				537EE8B318FCC5720006FFD2 /* ORSchedFactory.m */,
@@ -12710,6 +12714,8 @@
 				B127A57E19629B0600398AA3 /* ORSchedulingProgram.h */,
 				B127A57F19629B0600398AA3 /* ORSchedulingProgram.m */,
 				537EE8AC18FCC5720006FFD2 /* CPConcretizer.m */,
+				537EE8AF18FCC5720006FFD2 /* ORFlatten.h */,
+				537EE8B018FCC5720006FFD2 /* ORFlatten.m */,
 				B127A57819629B0600398AA3 /* Supporting Files */,
 			);
 			name = ORSchedulingProgram;
@@ -13266,6 +13272,7 @@
 				537EEA5B18FCE35E0006FFD2 /* CPScheduler.h in Headers */,
 				535D133118FF7F1D008D48BD /* CPMisc.h in Headers */,
 				537EEA5618FCE35E0006FFD2 /* CPConstraint.h in Headers */,
+				B1A6581C196CE42000D318A6 /* CPTaskSequence.h in Headers */,
 				537EEA5718FCE35E0006FFD2 /* CPCumulative.h in Headers */,
 				537EEA5818FCE35E0006FFD2 /* CPDifference.h in Headers */,
 				537EEA5918FCE35E0006FFD2 /* CPDisjunctive.h in Headers */,
@@ -16058,6 +16065,7 @@
 				B127A56F19628CA100398AA3 /* CPTaskI.m in Sources */,
 				B19ADA6D19049EA0009E233D /* CPSearch.m in Sources */,
 				B19BBA57196B6CEE006EE9A9 /* CPTaskDisjunctive.m in Sources */,
+				B1A6581D196CE42000D318A6 /* CPTaskSequence.m in Sources */,
 				537EEA5518FCE2FC0006FFD2 /* CPFactory.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

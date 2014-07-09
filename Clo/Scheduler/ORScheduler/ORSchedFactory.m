@@ -107,7 +107,7 @@
 //    return o;
 //}
 
-+(id<ORTaskDisjunctiveArray>) taskDisjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range
++(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range
 {
    id<ORIdArray> o = [ORFactory idArray: model range:range];
    for(ORInt k=range.low;k <= range.up;k++) {
@@ -115,6 +115,16 @@
       [o set: dr at:k];
    }
    return (id<ORTaskDisjunctiveArray>) o;
+}
+
++(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
+{
+   id<ORIdArray> o = [ORFactory idArray: model range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      id<ORTaskSequence> dr = [ORFactory sequenceConstraint: model];
+      [o set: dr at:k];
+   }
+   return (id<ORTaskSequenceArray>) o;
 }
 
 // Precedes
@@ -157,8 +167,9 @@
 
 // Disjunctive (resource) constraint
 //
+// [pvh: Unify these two guys: this is ugly]
 
-+(id<ORTaskDisjunctive>) taskDisjunctive: (id<ORTaskVarArray>) task
++(id<ORTaskDisjunctive>) disjunctive: (id<ORTaskVarArray>) task
 {
    id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctive: task];
    [[task tracker] trackObject:o];
@@ -172,6 +183,12 @@
    return o;
 }
 
++(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model
+{
+   id<ORTaskSequence> o = [[ORTaskSequence alloc] initORTaskSequenceEmpty: model];
+   [model trackObject:o];
+   return o;
+}
 
 // Difference Logic constraint
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems

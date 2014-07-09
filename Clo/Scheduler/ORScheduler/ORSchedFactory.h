@@ -35,15 +35,19 @@
 +(id<ORTaskVarMatrix>) taskVarMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
                                horizon: (id<ORIntRange>) horizon duration: (id<ORIntMatrix>) duration;
 
-+(id<ORTaskDisjunctiveArray>) taskDisjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
+
 
 // Cumulative Resource constraints
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c;
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r maxCapacity:(ORInt) c;
 
 // Disjunctive Resource constraint
-+(id<ORTaskDisjunctive>) taskDisjunctive: (id<ORTaskVarArray>) task;
++(id<ORTaskDisjunctive>) disjunctive: (id<ORTaskVarArray>) task;
 +(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model;
++(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model;
+
++(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
++(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
 
 // Difference Logic constraints
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems;

@@ -32,8 +32,14 @@
 @end
 
 @protocol ORTaskDisjunctive <ORConstraint>
--(void) isRequiredBy: (id<ORTaskVar>) act;
+-(void) add: (id<ORTaskVar>) act;
 -(id<ORTaskVarArray>) taskVars;
+@end
+
+@protocol ORTaskSequence <ORConstraint>
+-(void) add: (id<ORTaskVar>) act;
+-(id<ORTaskVarArray>) taskVars;
+-(id<ORIntVarArray>) successors;
 @end
 
 @protocol ORTaskDisjunctiveArray <ORObject>
@@ -41,6 +47,19 @@
 -(void) set: (id<ORTaskDisjunctive>) value at: (ORInt)idx;
 -(id<ORTaskDisjunctive>)objectAtIndexedSubscript:(NSUInteger)key;
 -(void)setObject:(id<ORTaskDisjunctive>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+
+@protocol ORTaskSequenceArray <ORObject>
+-(id<ORTaskSequence>) at: (ORInt) idx;
+-(void) set: (id<ORTaskDisjunctive>) value at: (ORInt)idx;
+-(id<ORTaskSequence>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORTaskSequence>)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(id<ORIntRange>) range;
