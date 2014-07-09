@@ -13,8 +13,8 @@
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
-#import "CPTask.h"
-#import "CPTaskI.h"
+
+@protocol CPTaskVar;
 
 
 

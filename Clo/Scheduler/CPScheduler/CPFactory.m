@@ -16,6 +16,7 @@
 #import "CPCumulative.h"
 #import "CPDisjunctive.h"
 #import "CPTaskDisjunctive.h"
+#import "CPTaskSequence.h"
 #import "CPDifference.h"
 #import "CPTaskI.h"
 
@@ -243,5 +244,10 @@
    [[tasks tracker] trackMutable: o];
    return o;
 }
-
++(id<CPConstraint>) taskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ
+{
+   id<CPConstraint> o = [[CPTaskSequence alloc] initCPTaskSequence: tasks successors: succ];
+   [[tasks tracker] trackMutable: o];
+   return o;
+}
 @end

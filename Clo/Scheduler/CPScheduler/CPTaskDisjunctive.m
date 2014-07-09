@@ -70,10 +70,10 @@
    _tasks  = tasks;
 
    
-   _idempotent = true;
+   _idempotent = false;
    _dprec = true;
    _nfnl  = true;
-   _ef    = false;
+   _ef    = true;
    
    _start0 = NULL;
    _dur0   = NULL;
@@ -1506,6 +1506,7 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj, const ORInt size)
       const ORInt t = disj->_idx[i];
       if ([disj->_tasks[t] isAbsent])
          continue;
+      // [pvh: this test cannot do anything]
       if (est_min <= disj->_est[i] && disj->_lct[i] <= lct_max) {
          len_min += disj->_dur_min[i];
       }

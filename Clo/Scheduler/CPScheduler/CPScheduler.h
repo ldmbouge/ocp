@@ -10,4 +10,7 @@
  ***********************************************************************/
 
 #import <CPScheduler/CPConstraint.h>
+#import <CPScheduler/CPDisjunctive.h>
+#import <CPScheduler/CPTaskSequence.h>
+#import <CPScheduler/CPTask.h>
 #import <CPScheduler/CPFactory.h>

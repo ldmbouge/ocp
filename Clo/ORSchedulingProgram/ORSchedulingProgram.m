@@ -12,7 +12,7 @@
 #import "ORScheduler.h"
 #import "ORSchedulingProgram.h"
 #import <ORProgram/CPSolver.h>
-#import <CPScheduler/CPTask.h>
+#import <CPScheduler/CPScheduler.h>
 
 // [pvh]: I am not sure that I want a class CPSchedulerSolver: That makes it harder to compose with other extensions
 // [pvh]: probaby the engine should have a key-value chain for global data structures
@@ -321,7 +321,12 @@
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
 }
-
+-(ORInt) globalSlack: (id<ORTaskDisjunctive>) d
+{
+   ORInt gs = [((CPDisjunctive*)_gamma[d.getId]) globalSlack];
+//   NSLog(@"Global slack: %d",gs);
+   return gs;
+}
 -(NSString*) description: (id<ORObject>) o
 {
    return [_gamma[o.getId] description];

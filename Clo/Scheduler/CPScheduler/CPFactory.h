@@ -12,7 +12,9 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORScheduler/ORScheduler.h>
 #import <objcp/CPFactory.h>
-#import "CPtask.h"
+
+@protocol CPTaskVarArray;
+@protocol CPTaskVar;
 
 @interface CPFactory (CPScheduler)
 //+(id<CPConstraint>) alternative: (id<CPActivity>) act composedBy: (id<CPActivityArray>) alternatives;
@@ -25,6 +27,7 @@
 +(id<CPConstraint>) cumulative: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d end:(id<CPIntVarArray>) e usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;
 +(id<CPConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d;
 +(id<CPConstraint>) taskDisjunctive: (id<CPTaskVarArray>) tasks;
++(id<CPConstraint>) taskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 
 +(id<CPConstraint>) difference: (id<ORTracker>) tracker engine: (id<CPEngine>) e withInitCapacity:(ORInt) numItems;
 

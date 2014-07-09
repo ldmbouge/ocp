@@ -35,6 +35,7 @@
 -(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end;
 -(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration;
 -(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present;
+-(ORInt) globalSlack: (id<ORTaskDisjunctive>) d;
 
 -(NSString*) description: (id<ORObject>) o;
 @end

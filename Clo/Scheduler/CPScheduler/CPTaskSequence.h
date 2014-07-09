@@ -9,10 +9,14 @@
  
  ***********************************************************************/
 
+@protocol CPTaskVarArray;
+@protocol CPTaskVar;
+
 @interface CPTaskSequence : CPCoreConstraint<NSCoding> {
    id<CPTaskVarArray>  _tasks;   // TaskVar
+   id<CPIntVarArray>  _succ;   // TaskVar
 }
--(id) initCPTaskSequence: (id<CPTaskVarArray>) tasks;
+-(id) initCPTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
