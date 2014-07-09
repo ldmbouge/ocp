@@ -5,48 +5,36 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>A6787962-A0C4-45BE-B24B-0C9A7674FC48</string>
+	<string>EBE0EC8D-BD46-4204-B794-7A16D461D111</string>
 	<key>IDESourceControlProjectName</key>
 	<string>ObjecticeCP</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>3A83F562-7140-4003-BE78-30ADFE4571B3</key>
-		<string>git+ssh://ash.engr.uconn.edu/home/ldm/git/public.git</string>
-		<key>BF1923E3-9EE4-44BB-8981-BBF2C4E8A063</key>
-		<string>git+ssh://scm.forge.nicta.com.au/scmrepos/git/objectivecp/platform.git</string>
+		<key>926D55DE-1E48-45EA-B00B-C6B9061A7D1C</key>
+		<string>git+ssh://forge.nicta.com.au//var/lib/gforge/chroot/scmrepos/git/objectivecpdev/objectivecpdev.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Clo/ObjecticeCP.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3A83F562-7140-4003-BE78-30ADFE4571B3</key>
+		<key>926D55DE-1E48-45EA-B00B-C6B9061A7D1C</key>
 		<string>../..</string>
-		<key>BF1923E3-9EE4-44BB-8981-BBF2C4E8A063</key>
-		<string>../../../platform</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>git+ssh://ash.engr.uconn.edu/home/ldm/git/public.git</string>
+	<string>git+ssh://forge.nicta.com.au//var/lib/gforge/chroot/scmrepos/git/objectivecpdev/objectivecpdev.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>3A83F562-7140-4003-BE78-30ADFE4571B3</string>
+	<string>926D55DE-1E48-45EA-B00B-C6B9061A7D1C</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>BF1923E3-9EE4-44BB-8981-BBF2C4E8A063</string>
+			<string>926D55DE-1E48-45EA-B00B-C6B9061A7D1C</string>
 			<key>IDESourceControlWCCName</key>
-			<string>platform</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3A83F562-7140-4003-BE78-30ADFE4571B3</string>
-			<key>IDESourceControlWCCName</key>
-			<string>public</string>
+			<string>objcpdev</string>
 		</dict>
 	</array>
 </dict>
