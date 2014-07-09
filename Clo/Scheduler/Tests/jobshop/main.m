@@ -17,15 +17,10 @@
 #import <ORScheduler/ORScheduler.h>
 #import <ORSchedulingProgram/ORSchedulingProgram.h>
 
-//setTimes for mt06
-//Makespan: 55
-//2014-07-09 12:07:25.064 jobshop[1216:303] Solver status: Solver: 1 vars
-//43 constraints
-//154 choices
-//2 fail
-//3662 propagations
-// [pvh; Need to see this var count]
-
+//121 constraints
+//235670 choices
+//227271 fail
+//30545589 propagations
 
 ORInt size6 = 6;
 ORInt iresource6[6][6] = {
@@ -47,30 +42,30 @@ ORInt iduration6[6][6] = {
 
 ORInt size10 = 10;
 
-//ORInt iresource10[10][10] = {
-//   { 1,  2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10},
-//   { 1,  3 , 5 , 10 , 4 , 2 , 7 , 6 , 8 , 9},
-//   { 2,  1 , 4 , 3 , 9 , 6 , 8 , 7 , 10 , 5},
-//   { 2,  3 , 1 , 5 , 7 , 9 , 8 , 4 , 10 , 6},
-//   { 3,  1,  2 , 6 , 4 , 5 , 9 , 8 , 10 , 7},
-//   { 3,  2 , 6 , 4 , 9 , 10 , 1 , 7 , 5 , 8},
-//   { 2,  1 , 4 , 3 , 7 , 6 , 10 , 9 , 8 , 5},
-//   { 3,  1 , 2 , 6 , 5 , 7 , 9 , 10 , 8 , 4},
-//   { 1,  2 , 4 , 6 , 3 , 10 , 7 , 8 , 5 , 9},
-//   { 2,  1 , 3 , 7 , 9 , 10 , 6 , 4 , 5 , 8}
-//};
-//ORInt iduration10[10][10] = {
-//   {  29,  78 ,  9 , 36 , 49 , 11 , 62 , 56 , 44 , 21},
-//   {  43,  90 , 75 , 11 , 69 , 28 , 46 , 46 , 72 , 30},
-//   {  91,  85 , 39 , 74 , 90 , 10 , 12 , 89 , 45 , 33},
-//   {  81,  95 , 71 , 99 ,  9 , 52 , 85 , 98 , 22 , 43},
-//   {  14,   6 , 22 , 61 , 26 , 69 , 21 , 49 , 72 , 53},
-//   {  84,   2 , 52 , 95 , 48 , 72 , 47 , 65 ,  6 , 25},
-//   {  46,  37 , 61 , 13 , 32 , 21 , 32 , 89 , 30 , 55},
-//   {  31,  86 , 46 , 74 , 32 , 88 , 19 , 48 , 36 , 79},
-//   {  76,  69 , 76 , 51 , 85 , 11 , 40 , 89 , 26 , 74},
-//   {  85,  13 , 61 ,  7 , 64 , 76 , 47 , 52 , 90 , 45}
-//};
+ORInt iresource10[10][10] = {
+   { 1,  2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10},
+   { 1,  3 , 5 , 10 , 4 , 2 , 7 , 6 , 8 , 9},
+   { 2,  1 , 4 , 3 , 9 , 6 , 8 , 7 , 10 , 5},
+   { 2,  3 , 1 , 5 , 7 , 9 , 8 , 4 , 10 , 6},
+   { 3,  1,  2 , 6 , 4 , 5 , 9 , 8 , 10 , 7},
+   { 3,  2 , 6 , 4 , 9 , 10 , 1 , 7 , 5 , 8},
+   { 2,  1 , 4 , 3 , 7 , 6 , 10 , 9 , 8 , 5},
+   { 3,  1 , 2 , 6 , 5 , 7 , 9 , 10 , 8 , 4},
+   { 1,  2 , 4 , 6 , 3 , 10 , 7 , 8 , 5 , 9},
+   { 2,  1 , 3 , 7 , 9 , 10 , 6 , 4 , 5 , 8}
+};
+ORInt iduration10[10][10] = {
+   {  29,  78 ,  9 , 36 , 49 , 11 , 62 , 56 , 44 , 21},
+   {  43,  90 , 75 , 11 , 69 , 28 , 46 , 46 , 72 , 30},
+   {  91,  85 , 39 , 74 , 90 , 10 , 12 , 89 , 45 , 33},
+   {  81,  95 , 71 , 99 ,  9 , 52 , 85 , 98 , 22 , 43},
+   {  14,   6 , 22 , 61 , 26 , 69 , 21 , 49 , 72 , 53},
+   {  84,   2 , 52 , 95 , 48 , 72 , 47 , 65 ,  6 , 25},
+   {  46,  37 , 61 , 13 , 32 , 21 , 32 , 89 , 30 , 55},
+   {  31,  86 , 46 , 74 , 32 , 88 , 19 , 48 , 36 , 79},
+   {  76,  69 , 76 , 51 , 85 , 11 , 40 , 89 , 26 , 74},
+   {  85,  13 , 61 ,  7 , 64 , 76 , 47 , 52 , 90 , 45}
+};
 
 //ORInt iresource10[10][10] = {
 //   {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
@@ -98,31 +93,31 @@ ORInt size10 = 10;
 //};
 //
 
-ORInt iresource10[10][10] = {
-   {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-   {0, 3, 4, 8, 9, 6, 7, 5, 2, 1},
-   {0, 7, 3, 2, 6, 4, 1, 5, 8, 9},
-   {0, 1, 3, 8, 5, 2, 4, 7, 6, 9},
-   {0, 6, 1, 3, 5, 2, 9, 7, 8, 4},
-   {4, 0, 6, 8, 2, 3, 9, 7, 5, 1},
-   {4, 3, 0, 9, 2, 1, 8, 7, 6, 5},
-   {4, 6, 9, 3, 8, 2, 7, 5, 0, 1},
-   {2, 6, 8, 7, 4, 9, 3, 1, 5, 0},
-   {2, 9, 5, 8, 6, 3, 7, 4, 1, 0}
-};
-
-ORInt iduration10[10][10] = {
-   { 72, 54, 33, 86, 75, 16, 96, 7, 99, 76},
-   { 16, 88, 48, 52, 60, 29, 18, 89, 80, 76},
-   { 47, 11, 14, 56, 16, 83, 10, 61, 24, 58},
-   { 49, 31, 17, 50, 63, 35, 65, 23, 50, 29},
-   { 55, 6, 28, 96, 86, 99, 14, 70, 64, 24},
-   { 46, 23, 70, 19, 54, 22, 85, 87, 79, 93},
-   { 76, 60, 76, 98, 76, 50, 86, 14, 27, 57},
-   { 93, 27, 57, 87, 86, 54, 24, 49, 20, 47},
-   { 28, 11, 78, 85, 63, 81, 10, 9, 46, 32},
-   { 22, 76, 89, 13, 88, 10, 75, 98, 78, 17}
-};
+//ORInt iresource10[10][10] = {
+//   {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+//   {0, 3, 4, 8, 9, 6, 7, 5, 2, 1},
+//   {0, 7, 3, 2, 6, 4, 1, 5, 8, 9},
+//   {0, 1, 3, 8, 5, 2, 4, 7, 6, 9},
+//   {0, 6, 1, 3, 5, 2, 9, 7, 8, 4},
+//   {4, 0, 6, 8, 2, 3, 9, 7, 5, 1},
+//   {4, 3, 0, 9, 2, 1, 8, 7, 6, 5},
+//   {4, 6, 9, 3, 8, 2, 7, 5, 0, 1},
+//   {2, 6, 8, 7, 4, 9, 3, 1, 5, 0},
+//   {2, 9, 5, 8, 6, 3, 7, 4, 1, 0}
+//};
+//
+//ORInt iduration10[10][10] = {
+//   { 72, 54, 33, 86, 75, 16, 96, 7, 99, 76},
+//   { 16, 88, 48, 52, 60, 29, 18, 89, 80, 76},
+//   { 47, 11, 14, 56, 16, 83, 10, 61, 24, 58},
+//   { 49, 31, 17, 50, 63, 35, 65, 23, 50, 29},
+//   { 55, 6, 28, 96, 86, 99, 14, 70, 64, 24},
+//   { 46, 23, 70, 19, 54, 22, 85, 87, 79, 93},
+//   { 76, 60, 76, 98, 76, 50, 86, 14, 27, 57},
+//   { 93, 27, 57, 87, 86, 54, 24, 49, 20, 47},
+//   { 28, 11, 78, 85, 63, 81, 10, 9, 46, 32},
+//   { 22, 76, 89, 13, 88, 10, 75, 98, 78, 17}
+//};
 
 
 int main(int argc, const char * argv[])
@@ -137,7 +132,7 @@ int main(int argc, const char * argv[])
       ORInt size = size10;
       id<ORIntRange> Size = RANGE(model,1,size);
       id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iduration10[i-1][j-1]; } ];
-      id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource10[i-1][j-1]+1; } ];
+      id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource10[i-1][j-1]; } ];
    
       ORInt totalDuration = 0;
       for(ORInt i = Size.low; i <= Size.up; i++)
@@ -183,17 +178,11 @@ int main(int argc, const char * argv[])
            suchThat:^bool(ORInt i) { return TRUE;}
           orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]]; }
                  do: ^(ORInt i)
-//         for(ORInt i = 1; i <= size; i++)
-         {
-//            NSLog(@"Slecting Machine %d",i);
+          {
             id<ORIntVarArray> s = sequence[i].successors;
             id<ORTaskVarArray> t = sequence[i].taskVars;
             ORInt k = 0;
             for(ORInt j = 1; j <= size; j++) {
-               [cp diff: s[k] with: size + 1];
-//               for(ORInt a = 1; a <= size; a++) {
-//                  NSLog(@"task[%d] = %@",a,[cp description: t[a]]);
-//               }
                while (![cp bound: s[k]]) {
                   id<ORSelect> sel = [ORFactory selectRandom:cp range: Size
                                               suchThat:^bool(ORInt i) { return [cp member: i in: s[k]];}
@@ -201,19 +190,17 @@ int main(int argc, const char * argv[])
                   ORInt v = [sel min];
                   [cp try: ^() { [cp label: s[k] with: v]; } or: ^() { [cp diff: s[k] with: v]; }];
                }
-//                  [cp label: s[k]];
                k = [cp intValue: s[k]];
             }
          }
           ];
-//         [cp setTimes: [task flatten]];
          [cp label: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
       }];
       ORLong timeEnd = [ORRuntimeMonitor cputime];
       NSLog(@"Time: %lld:",timeEnd - timeStart);
       id<ORSolutionPool> pool = [cp solutionPool];
-      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
+//      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
       id<ORSolution> optimum = [pool best];
       printf("Makespan: %d \n",[optimum intValue: makespan]);
       NSLog(@"Solver status: %@\n",cp);
