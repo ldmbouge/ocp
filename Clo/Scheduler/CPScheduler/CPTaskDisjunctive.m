@@ -1542,6 +1542,8 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
       disj->_est[tt] = [disj->_tasks[t] est];
       disj->_lct[tt] = [disj->_tasks[t] lct];
       disj->_dur_min[tt] = [disj->_tasks[t] minDuration];
+       disj->_task_id_est[tt] = tt;
+       disj->_task_id_lct[tt] = tt;
    }
    
    // Sorting of the tasks
@@ -1794,9 +1796,9 @@ static void doPropagation(CPTaskDisjunctive * disj) {
       }
    } while (disj->_idempotent && update);
    
-   // Updating the global slack
-   const ORInt globalSlack = getGlobalSlack(disj, size);
-   assignTRInt(&(disj->_global_slack), globalSlack, disj->_trail);
+    // Updating the global slack
+    const ORInt globalSlack = getGlobalSlack(disj, size);
+    assignTRInt(&(disj->_global_slack), globalSlack, disj->_trail);
 }
 
 @end
