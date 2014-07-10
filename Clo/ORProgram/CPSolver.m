@@ -1044,12 +1044,40 @@
       ];
    }
 }
-
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   return [self selectValueImpl: _gamma[v.getId] by: o];
+}
+-(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Float) o
+{
+   float bestFound = MAXFLOAT;
+   ORInt indexFound = MAXINT;
+   ORInt low = [x min];
+   ORInt up = [x max];
+   for(ORInt i = low; i <= up; i++) {
+      if ([x member: i]) {
+         ORFloat v = o(i);
+         if (v < bestFound) {
+            bestFound = v;
+            indexFound = i;
+         }
+      }
+   }
+   return indexFound;
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   id<CPIntVar> x = _gamma[v.getId];
+   while (![x bound]) {
+      ORInt v = [self selectValueImpl: x by: o];
+      [self try: ^() { [self labelImpl: x with: v]; } or: ^() { [self diffImpl: x with: v]; }];
+   }
+}
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
    return [self labelImpl: _gamma[var.getId] with: val];
 }
--(void) diff: (id<CPIntVar>) var with: (ORInt) val
+-(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
    [self diffImpl: _gamma[var.getId] with: val];
 }

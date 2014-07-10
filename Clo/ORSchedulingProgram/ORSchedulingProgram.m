@@ -237,6 +237,16 @@
 //   }
 //}
 
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o
+{
+   ORInt low = succ.range.low;
+   ORInt size = succ.range.size - 1;
+   ORInt k = low;
+   for(ORInt j = 1; j <= size; j++) {
+      [self label: succ[k] by: o];
+      k = [self intValue: succ[k]];
+   }
+}
 -(ORInt) est: (id<ORTaskVar>) task
 {
    return [((id<CPTaskVar>)_gamma[task.getId]) est];
@@ -327,6 +337,13 @@
 //   NSLog(@"Global slack: %d",gs);
    return gs;
 }
+-(ORInt) localSlack: (id<ORTaskDisjunctive>) d
+{
+   ORInt gs = [((CPDisjunctive*)_gamma[d.getId]) localSlack];
+   //   NSLog(@"Global slack: %d",gs);
+   return gs;
+}
+
 -(NSString*) description: (id<ORObject>) o
 {
    return [_gamma[o.getId] description];

@@ -228,15 +228,24 @@
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
 {
-   return [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
+   id<CPEngine> engine = [before engine];
+   id<CPConstraint> cstr = [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
+   [engine trackMutable: cstr];
+   return cstr;
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after
 {
-   return [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
+   id<CPEngine> engine = [before engine];
+   id<CPConstraint> cstr = [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
+   [engine trackMutable: cstr];
+   return cstr;
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date
 {
-   return [[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
+   id<CPEngine> engine = [task engine];
+   id<CPConstraint> cstr =[[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
+   [engine trackMutable: cstr];
+   return cstr;
 }
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {

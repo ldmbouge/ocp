@@ -17,6 +17,7 @@
 
 @protocol CPSchedulingProgram <CPProgram>
 -(void) setTimes: (id<ORTaskVarArray>) act;
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o;
 //-(void) labelTimes: (id<ORActivityArray>) act;
 
 -(ORInt) est: (id<ORTaskVar>) task;
@@ -36,6 +37,7 @@
 -(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration;
 -(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present;
 -(ORInt) globalSlack: (id<ORTaskDisjunctive>) d;
+-(ORInt) localSlack: (id<ORTaskDisjunctive>) d;
 
 -(NSString*) description: (id<ORObject>) o;
 @end
