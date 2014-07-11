@@ -193,16 +193,7 @@
 }
 @end
 
-@interface ORCPTakeSnapshot  : ORNOopVisit<NSObject>
--(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver;
--(void) dealloc;
-@end
-
 @implementation ORCPTakeSnapshot
-{
-   id<CPCommonProgram> _solver;
-   id            _snapshot;
-}
 -(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver
 {
    self = [super init];
@@ -252,6 +243,7 @@
    NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
    ORCPTakeSnapshot* visit = [[ORCPTakeSnapshot alloc] initORCPTakeSnapshot: solver];
    for(id obj in av) {
+      NSLog(@"printing variable: %@",obj);
       id shot = [visit snapshot:obj];
       if (shot)
          [snapshots addObject: shot];
@@ -299,6 +291,10 @@
 -(id<ORObjectiveValue>) objectiveValue
 {
    return _objValue;
+}
+-(id<ORSnapshot>) concretize: (id) var
+{
+   return [self value: var];
 }
 -(id<ORSnapshot>) value: (id) var
 {
@@ -1064,6 +1060,45 @@
       }
    }
    return indexFound;
+}
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   return [self selectValueImpl: _gamma[v.getId] by: o1 then: o2];
+}
+-(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   float bestFound1 = MAXFLOAT;
+   float bestFound2 = MAXFLOAT;
+   ORInt indexFound = MAXINT;
+   ORInt low = [x min];
+   ORInt up = [x max];
+   for(ORInt i = low; i <= up; i++) {
+      if ([x member: i]) {
+         ORFloat v = o1(i);
+         if (v < bestFound1) {
+            bestFound1 = v;
+            bestFound2 = o2(i);
+            indexFound = i;
+         }
+         else if (v == bestFound1) {
+            ORFloat w = o2(i);
+            if (w < bestFound2) {
+               bestFound2 = w;
+               indexFound = i;
+            }
+         }
+      }
+   }
+   return indexFound;
+}
+
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   id<CPIntVar> x = _gamma[v.getId];
+   while (![x bound]) {
+      ORInt v = [self selectValueImpl: x by: o1 then: o2];
+      [self try: ^() { [self labelImpl: x with: v]; } or: ^() { [self diffImpl: x with: v]; }];
+   }
 }
 -(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
 {

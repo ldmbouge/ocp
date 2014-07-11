@@ -339,6 +339,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    assert(false);
+   return 0;
 }
 @end
 
@@ -396,6 +397,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    assert(false);
+   return 0;
 }
 @end
 
@@ -448,6 +450,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    assert(false);
+   return 0;
 }
 @end
 

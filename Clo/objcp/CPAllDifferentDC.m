@@ -142,6 +142,8 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
    [self initMatching];
 
    [self propagate];
+   
+   // idempotent, so I can leave this here
    for(ORInt k = 0 ; k < _varSize; k++)
       if (![_var[k] bound]) {
          [_var[k] whenBindDo: ^{ removeOnBind(self,k);} onBehalf:self];

@@ -232,7 +232,7 @@
 +(id<ORTaskVar>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
 {
    id<ORTaskVar> o = [[ORTaskVar alloc] initORTaskVar: model horizon: horizon duration: RANGE(model,duration,duration)];
-   [model trackMutable:o];
+   [model trackVariable:o];
    return o;
 }
 +(id<ORTaskVar>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration

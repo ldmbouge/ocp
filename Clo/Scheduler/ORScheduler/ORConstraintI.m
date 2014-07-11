@@ -350,12 +350,16 @@
    id<ORTracker> _tracker;
    NSMutableArray* _acc;
    id<ORTaskVarArray> _tasks;
+   id<ORIntVarArray> _successors;
 }
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive: (id<ORTaskVarArray>) tasks
 {
    self = [super initORConstraintI];
    _tracker = [tasks tracker];
    _tasks = tasks;
+   ORInt low = _tasks.range.low;
+   ORInt up = _tasks.range.up;
+   _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,low-1,up) domain: RANGE(_tracker,low,up+1)];
    _acc = 0;
    _closed = TRUE;
    return self;
@@ -396,23 +400,31 @@
 {
    if (!_closed) {
       _closed = true;
-      _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]-1) with: ^id<ORTaskVar>(ORInt i) {
-         return _acc[i];
+      _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_acc count]) with: ^id<ORTaskVar>(ORInt i) {
+         return _acc[i-1];
       }];
+      _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,1,(ORInt) [_acc count]+1)];
    }
 }
 -(id<ORTaskVarArray>) taskVars
 {
     return _tasks;
 }
+-(id<ORIntVarArray>) successors
+{
+   return _successors;
+}
 -(NSSet*) allVars
 {
-   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_tasks count]] autorelease];
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2*[_tasks count]+1] autorelease];
    id<ORIntRange> R = _tasks.range;
    ORInt low = R.low;
    ORInt up = R.up;
    for(ORInt k = low; k <= up; k++){
       [ms addObject: _tasks[k]];
+   }
+   for(ORInt k = low-1; k <= up; k++){
+      [ms addObject: _successors[k]];
    }
    return ms;
 }

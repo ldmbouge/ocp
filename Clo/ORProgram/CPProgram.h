@@ -71,8 +71,10 @@
 -(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
 -(void)               label: (id<ORIntVar>) mx by: (ORInt2Float) o;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Float) o1 then: (ORInt2Float) o2;
 
 -(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Float) o;
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2;
 
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;

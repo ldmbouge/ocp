@@ -15,6 +15,17 @@
 @protocol ORTaskPrecedes;
 @protocol ORTaskIsFinishedBy;
 
+@protocol ORTaskVarQuery
+-(ORInt) est;
+-(ORInt) ect;
+-(ORInt) lst;
+-(ORInt) lct;
+-(ORInt) minDuration;
+-(ORInt) maxDuration;
+-(ORBool) isPresent;
+-(ORBool) isAbsent;
+@end
+
 @protocol ORTaskVar <ORVar>
 -(id<ORTracker>) tracker;
 -(id<ORIntRange>) horizon;
@@ -22,6 +33,14 @@
 -(ORBool) isOptional;
 -(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after;
 -(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date;
+-(ORInt) est: (id) store;
+-(ORInt) ect: (id) store;
+-(ORInt) lst: (id) store;
+-(ORInt) lct: (id) store;
+-(ORInt) minDuration: (id) store;
+-(ORInt) maxDuration: (id) store;
+-(ORBool) isPresent: (id) store;
+-(ORBool) isAbsent: (id) store;
 @end
 
 @protocol ORTaskVarArray <ORObject>
@@ -51,3 +70,7 @@
 -(id<ORTracker>) tracker;
 -(id<ORTaskVarArray>) flatten;
 @end
+
+@protocol ORTaskVarSnapshot
+-(ORInt) ect;
+@end;

@@ -276,6 +276,7 @@ typedef struct {
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     assert(false);
+   return 0;
 }
 
 -(void) addDifference:(id<CPIntVar>)x minus:(id<CPIntVar>)y leq:(ORInt)d

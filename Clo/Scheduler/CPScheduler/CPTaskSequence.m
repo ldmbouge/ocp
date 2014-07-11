@@ -53,12 +53,10 @@
 }
 -(ORStatus) post
 {
-   [_engine addInternal:[CPFactory alldifferent: _engine over: _succ /*annotation: ValueConsistency*/]];
+   [_engine addInternal:[CPFactory alldifferent: _engine over: _succ annotation: ValueConsistency]];
    for(ORInt k = _low; k <= _up; k++)
       [_assigned set: 0 at: k];
       
-   // Initial propagation
-   [self propagate];
    
    // precedence constraints
    for(ORInt k = _low; k <= _up; k++) {
@@ -80,6 +78,10 @@
    // Subscription of variables to the constraint
    for (ORInt i = _low-1; i <= _up; i++)
       [_succ[i] whenBindPropagate: self];
+   
+   // Initial propagation
+   [self propagate];
+
    return ORSuspend;
 }
 
@@ -114,6 +116,7 @@
    }
    if (nb <= _size) {
       [_succ[i] remove: _up + 1];
+//      NSLog(@"_succ[%d] = %@",i,_succ[i]);
    }
    if (i != _up + 1) {
       ORInt min = [_succ[i] min];
@@ -157,5 +160,6 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    assert(false);
+   return 0;
 }
 @end

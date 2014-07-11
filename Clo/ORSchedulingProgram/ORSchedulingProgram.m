@@ -13,6 +13,107 @@
 #import "ORSchedulingProgram.h"
 #import <ORProgram/CPSolver.h>
 #import <CPScheduler/CPScheduler.h>
+#import <ORProgram/CPSolver.h>
+#import <CPScheduler/CPTask.h>
+
+
+@interface ORCPTaskVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+   ORUInt    _name;
+   ORInt     _start;
+   ORInt     _end;
+   ORInt     _present;
+   ORInt     _absent;
+   ORInt     _minDuration;
+   ORInt     _maxDuration;
+   ORBool    _bound;
+}
+-(ORCPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<ORTaskVar>) t with: (id<CPCommonProgram>) solver;
+-(NSString*) description;
+-(ORBool)isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation ORCPTaskVarSnapshot
+-(ORCPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<ORTaskVar>) t with: (id<CPSchedulingProgram>) solver
+{
+   self = [super init];
+   _name = [t getId];
+   _start = [solver est: t];
+   _end = [solver ect: t];
+   _minDuration = [solver minDuration: t];
+   _maxDuration = [solver maxDuration: t];
+   _present = [solver isPresent: t];
+   _absent = [solver isAbsent: t];
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"task(%d,%d,%d,%d,%d,%d,%d)",_name,_start,_end,_minDuration,_maxDuration,_present,_absent];
+   return buf;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      ORCPTaskVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _start == other->_start && _end == other->_end  && _minDuration == other->_minDuration &&
+         _maxDuration == other->_maxDuration && _present == other->_present && _absent == other->_absent;
+      }
+      else
+         return NO;
+   } else
+      return NO;
+}
+-(ORInt) intValue
+{
+   assert(false);
+   return 0;
+}
+-(ORBool) boolValue
+{
+   assert(false);
+   return 0;
+}
+-(ORFloat) floatValue
+{
+   assert(false);
+   return 0;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + _start * _end;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+- (void) encodeWithCoder: (NSCoder *) aCoder
+{
+   assert(false);
+}
+- (id) initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   assert(false);
+   return self;
+}
+-(ORInt) ect
+{
+   return _start + _minDuration;
+}
+@end
+
+@implementation ORCPTakeSnapshot (ORScheduler)
+-(void) visitTask: (id<ORTaskVar>) v
+{
+   _snapshot = [[ORCPTaskVarSnapshot alloc] initCPTaskVarSnapshot: v with: _solver];
+}
+@end
+
+
+
 
 // [pvh]: I am not sure that I want a class CPSchedulerSolver: That makes it harder to compose with other extensions
 // [pvh]: probaby the engine should have a key-value chain for global data structures
@@ -247,6 +348,37 @@
       k = [self intValue: succ[k]];
    }
 }
+-(void) printSequence: (id<ORIntVarArray>) succ
+{
+   ORInt low = succ.range.low;
+   ORInt up = succ.range.up;
+   ORInt k = low;
+   while (true) {
+      printf("%d -> ",k);
+      if (k == up+1)
+         break;
+      if (![self bound: succ[k]])
+         break;
+      k = [self intValue: succ[k]];
+   }
+   printf("\n");
+}
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   ORInt low = succ.range.low;
+   ORInt up = succ.range.up;
+   ORInt size = succ.range.size - 1;
+   ORInt k = low;
+   for(ORInt j = 1; j <= size; j++) {
+      assert(0 <= k && k <= up + 1);
+//      [self printSequence: succ];
+//      NSLog(@"succ[%d] = %@",k,_gamma[succ[k].getId]);
+      [self label: succ[k] by: o1 then: o2];
+      k = [self intValue: succ[k]];
+      if (k == up+1 && j <= size)
+         [[self explorer] fail];
+   }
+}
 -(ORInt) est: (id<ORTaskVar>) task
 {
    return [((id<CPTaskVar>)_gamma[task.getId]) est];
@@ -274,6 +406,14 @@
 -(ORInt) maxDuration: (id<ORTaskVar>) task
 {
    return [((id<CPTaskVar>)_gamma[task.getId]) maxDuration];
+}
+-(ORInt) isPresent: (id<ORTaskVar>) task
+{
+   return [((id<CPTaskVar>)_gamma[task.getId]) isPresent];
+}
+-(ORInt) isAbsent: (id<ORTaskVar>) task
+{
+   return [((id<CPTaskVar>)_gamma[task.getId]) isAbsent];
 }
 -(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart
 {

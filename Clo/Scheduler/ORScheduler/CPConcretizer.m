@@ -177,8 +177,12 @@
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORTaskVarArray> tasks = [cstr taskVars];
+      id<ORIntVarArray> succ = [cstr successors];
       [tasks visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
+      [succ visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
+      [_engine add: concreteCstr];
+      concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

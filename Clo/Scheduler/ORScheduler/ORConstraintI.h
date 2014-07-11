@@ -38,6 +38,7 @@
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive:(id<ORTaskVarArray>) tasks;
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;
 -(id<ORTaskVarArray>) taskVars;
+-(id<ORIntVarArray>) successors;
 -(void) add: (id<ORTaskVar>) act;
 @end
 

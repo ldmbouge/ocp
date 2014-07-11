@@ -34,6 +34,7 @@
 @protocol ORTaskDisjunctive <ORConstraint>
 -(void) add: (id<ORTaskVar>) act;
 -(id<ORTaskVarArray>) taskVars;
+-(id<ORIntVarArray>) successors;
 @end
 
 @protocol ORTaskSequence <ORConstraint>

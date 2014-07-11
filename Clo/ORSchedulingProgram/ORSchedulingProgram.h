@@ -18,12 +18,15 @@
 @protocol CPSchedulingProgram <CPProgram>
 -(void) setTimes: (id<ORTaskVarArray>) act;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o;
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2;
 //-(void) labelTimes: (id<ORActivityArray>) act;
 
 -(ORInt) est: (id<ORTaskVar>) task;
 -(ORInt) ect: (id<ORTaskVar>) task;
 -(ORInt) lst: (id<ORTaskVar>) task;
 -(ORInt) lct: (id<ORTaskVar>) task;
+-(ORInt) isPresent: (id<ORTaskVar>) task;
+-(ORInt) isAbsent: (id<ORTaskVar>) task;
 -(ORBool) boundActivity: (id<ORTaskVar>) task;
 -(ORInt) minDuration: (id<ORTaskVar>) task;
 -(ORInt) maxDuration: (id<ORTaskVar>) task;

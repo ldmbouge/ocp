@@ -122,15 +122,16 @@
    for (ORInt i = 0; i < _size; i++)
       _idx[i] = i + _tasks.low;
    
-   // Initial propagation
-   [self propagate];
-   
    // Subscription of variables to the constraint
-   for (ORInt i = 0; i < _size; i++) {
+   for (ORInt i = _low; i <= _up; i++) {
       [_tasks[i] whenChangePropagate: self];
       if ([_tasks[i] isOptional])
          [_tasks[i] whenPresentPropagate: self];
    }
+   
+   // Initial propagation
+   [self propagate];
+
    return ORSuspend;
 }
 -(void) propagate
@@ -174,6 +175,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    assert(false);
+   return 0;
 }
 
 

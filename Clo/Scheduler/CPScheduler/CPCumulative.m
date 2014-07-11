@@ -308,6 +308,7 @@ static void propagationLoopPreamble(CPCumulative* cumu, ORInt* i_max_usage)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     assert(false);
+   return 0;
 }
 
 

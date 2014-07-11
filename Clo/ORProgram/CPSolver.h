@@ -18,6 +18,15 @@
 /*                  This file should be private                            */
 /***************************************************************************/
 
+@interface ORCPTakeSnapshot  : ORNOopVisit<NSObject>
+{
+   id<CPCommonProgram> _solver;
+   id                  _snapshot;
+}
+-(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver;
+-(void) dealloc;
+@end
+
 @class ORRTModel;
 @class CPCoreSolver;
 @interface CPINCModel : NSObject<ORPost,ORAddToModel> {
