@@ -34,6 +34,7 @@
 -(ORInt) shift;
 -(ORInt) literal;
 -(id<ORIntVar>)base;
+-(ORInt) value: (id<ORSolution>) solution;
 @end
 
 @protocol ORBitVar <ORVar>
