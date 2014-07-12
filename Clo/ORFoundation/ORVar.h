@@ -54,12 +54,6 @@
 -(ORBool) bound: (id<ORSolution>) solution;
 @end
 
-@protocol ORBitVar <ORVar>
--(ORUInt*)low;
--(ORUInt*)up;
--(ORUInt)bitLength;
--(NSString*)stringValue;
-@end
 
 @protocol ORExprArray<ORIdArray>
 -(id<ORExpr>) at: (ORInt) value;
