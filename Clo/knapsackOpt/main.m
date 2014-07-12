@@ -121,17 +121,17 @@ int main(int argc, const char * argv[])
 //               NSLog(@"sol: %@ obj = %@  <-- %d",b,[[cp objective] value],[NSThread threadID]);
 //            }
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
+         id<ORSolution> sol = [[cp solutionPool] best];
          assert(sol);
          ORInt tot = 0;
          for(int k=0;k<n;k++)
-            tot += p[k] * [sol intValue: x[k]];
+            tot += p[k] * [x[k] value: sol];
          assert(tot == opt);
          NSLog(@"objective: %d == %d",tot,opt);
          for(int i=0;i<m;i++) {
             ORInt lhs = 0;
             for(int j=0;j<n;j++)
-               lhs += r[i][j] * [sol intValue: x[j]];
+               lhs += r[i][j] * [x[j] value: sol];
             assert(lhs <= b[i]);
             NSLog(@"C[%d] %d <= %d",i,lhs,b[i]);
          }

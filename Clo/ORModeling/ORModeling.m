@@ -15,6 +15,7 @@
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
 #import "ORLinearize.h"
+#import "ORSolutionI.h"
 
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
@@ -64,5 +65,9 @@
     }
     //[tracker trackMutable: s];
     return s;
+}
++(id<ORSolution>) solution: (id<ORModel>) m solver: (id<ORASolver>) solver
+{
+   return [[ORSolution alloc] initORSolution: m with: solver];
 }
 @end

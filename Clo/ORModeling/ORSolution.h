@@ -13,8 +13,26 @@
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVar.h>
 
-@protocol ORSolution <ORObject>
--(id<ORSnapshot>) value: (id) var;
+// [pvh] need to clean this; it must be opaque but for the objective function
+
+@protocol ORSnapshot
+-(ORInt)  intValue;
+-(ORBool) boolValue;
+-(ORFloat) floatValue;
+@end
+
+@protocol ORQueryIntVar
+-(ORInt) value;
+-(ORBool) bound;
+@end;
+
+@protocol ORQueryFloatVar
+-(ORFloat) value;
+-(ORBool) bound;
+@end;
+
+@protocol ORSolution <NSObject>
+-(id) value: (id) var;
 -(ORInt) intValue: (id<ORIntVar>) var;
 -(ORBool) boolValue: (id<ORIntVar>) var;
 -(ORFloat) floatValue: (id<ORFloatVar>) var;

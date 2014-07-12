@@ -15,11 +15,7 @@
 #import "ORSet.h"
 #import "ORConstraint.h"
 
-@protocol ORSnapshot
--(ORInt)  intValue;
--(ORBool) boolValue;
--(ORFloat) floatValue;
-@end
+
 
 @protocol ORVar <ORObject,ORExpr>
 -(ORInt) getId;
@@ -35,13 +31,7 @@
 -(ORInt) literal;
 -(id<ORIntVar>)base;
 -(ORInt) value: (id<ORSolution>) solution;
-@end
-
-@protocol ORBitVar <ORVar>
--(ORUInt*)low;
--(ORUInt*)up;
--(ORUInt)bitLength;
--(NSString*)stringValue;
+-(ORBool) bound: (id<ORSolution>) solution;
 @end
 
 @protocol ORFloatVar <ORVar>
@@ -49,6 +39,15 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
+-(ORFloat) value: (id<ORSolution>) solution;
+-(ORBool) bound: (id<ORSolution>) solution;
+@end
+
+@protocol ORBitVar <ORVar>
+-(ORUInt*)low;
+-(ORUInt*)up;
+-(ORUInt)bitLength;
+-(NSString*)stringValue;
 @end
 
 @protocol ORExprArray<ORIdArray>

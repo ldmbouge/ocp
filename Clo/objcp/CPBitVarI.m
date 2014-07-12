@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import <ORmodeling/ORSOlution.h>
 #import "CPBitVarI.h"
 #import "CPEngineI.h"
 #import "CPTrigger.h"

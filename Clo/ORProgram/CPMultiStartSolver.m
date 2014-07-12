@@ -29,7 +29,7 @@
    ORInt          _nb;
    NSCondition*   _terminated;
    ORInt          _nbDone;
-   id<ORCPSolutionPool> _sPool;
+   id<ORSolutionPool> _sPool;
 }
 -(CPMultiStartSolver*) initCPMultiStartSolver: (ORInt) k
 {
@@ -42,7 +42,7 @@
    
    _terminated = [[NSCondition alloc] init];
    
-   _sPool   = (id<ORCPSolutionPool>) [ORFactory createSolutionPool];
+   _sPool   = (id<ORSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
@@ -425,7 +425,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
 }
--(id<ORCPSolutionPool>) solutionPool
+-(id<ORSolutionPool>) solutionPool
 {
    return _sPool;
 }
@@ -575,9 +575,9 @@
 {
    return [[self worker] constraints:x];
 }
--(id<ORCPSolution>) captureSolution
+-(id<ORSolution>) captureSolution
 {
-   return (id<ORCPSolution>) [[self worker] captureSolution];
+   return (id<ORSolution>) [[self worker] captureSolution];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

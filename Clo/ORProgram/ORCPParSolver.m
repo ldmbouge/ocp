@@ -687,9 +687,9 @@
 {
    return [((id<CPCommonProgram>) [self worker]) boolValue: x];
 }
--(id<ORCPSolution>) captureSolution
+-(id<ORSolution>) captureSolution
 {
-   return (id<ORCPSolution>) [[self worker] captureSolution];
+   return (id<ORSolution>) [[self worker] captureSolution];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
