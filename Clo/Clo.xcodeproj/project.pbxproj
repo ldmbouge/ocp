@@ -1170,6 +1170,8 @@
 		B12BE46719012786006D1D59 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B12BE46A19014C56006D1D59 /* ORActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = B12BE46819014C56006D1D59 /* ORActivity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B12BE46B19014C56006D1D59 /* ORActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = B12BE46919014C56006D1D59 /* ORActivity.m */; };
+		B1267E50197101650035BCC3 /* ORSolutionI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1267E4E197101650035BCC3 /* ORSolutionI.h */; };
+		B1267E51197101650035BCC3 /* ORSolutionI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1267E4F197101650035BCC3 /* ORSolutionI.m */; };
 		B12ED8C2159E0C2200713C8E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B12ED8C5159E0C2200713C8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B12ED8C4159E0C2200713C8E /* main.m */; };
 		B12ED8C9159E0C2200713C8E /* sport.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B12ED8C8159E0C2200713C8E /* sport.1 */; };
@@ -7775,7 +7777,7 @@
 		5BD601C417F9A627006A9CDC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BD601C717F9A627006A9CDC /* bugTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bugTest-Prefix.pch"; sourceTree = "<group>"; };
 		5BD601C817F9A627006A9CDC /* bugTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bugTest.1; sourceTree = "<group>"; };
-		5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSolution.h; sourceTree = "<group>"; };
+		5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSolution.h; path = ../ORModeling/ORSolution.h; sourceTree = "<group>"; };
 		5BDBBAA91718D96B00322163 /* stressLimit */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = stressLimit; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BDBBAAC1718D96C00322163 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BDBBAAF1718D96C00322163 /* stressLimit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "stressLimit-Prefix.pch"; sourceTree = "<group>"; };
@@ -7901,6 +7903,8 @@
 		B127A58E19629B0600398AA3 /* ORSchedulingProgramTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORSchedulingProgramTests-Info.plist"; sourceTree = "<group>"; };
 		B127A59019629B0600398AA3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B127A59219629B0600398AA3 /* ORSchedulingProgramTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORSchedulingProgramTests.m; sourceTree = "<group>"; };
+		B1267E4E197101650035BCC3 /* ORSolutionI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSolutionI.h; path = ../ORFoundation/ORSolutionI.h; sourceTree = "<group>"; };
+		B1267E4F197101650035BCC3 /* ORSolutionI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSolutionI.m; path = ../ORFoundation/ORSolutionI.m; sourceTree = "<group>"; };
 		B12B178B151DC9CB008AB289 /* ORConcurrency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConcurrency.h; sourceTree = "<group>"; };
 		B12B178D151DCA16008AB289 /* ORConcurrencyI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConcurrencyI.h; sourceTree = "<group>"; };
 		B12B178E151DCA16008AB289 /* ORConcurrencyI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORConcurrencyI.m; sourceTree = "<group>"; };
@@ -12149,8 +12153,9 @@
 		5BAD1151161E5E430014EBCB /* ORModeling */ = {
 			isa = PBXGroup;
 			children = (
+				B1267E4E197101650035BCC3 /* ORSolutionI.h */,
+				B1267E4F197101650035BCC3 /* ORSolutionI.m */,
 				379CDEEB16F17D71000E7338 /* ORModelTransformation.h */,
-				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
 				5BAD1158161E5E430014EBCB /* ORModeling.h */,
 				5BAD1159161E5E430014EBCB /* ORModeling.m */,
 				5BAD1164161E5F2B0014EBCB /* ORModelI.h */,
@@ -12627,6 +12632,7 @@
 				B10ECF12150C382000B82836 /* ORSet.h */,
 				B10ECF14150C38CB00B82836 /* ORSetI.h */,
 				B10ECF15150C38CB00B82836 /* ORSetI.m */,
+				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
 				B1A0124A15CCAE71001ED0D4 /* ORTracer.h */,
 				B1A0124B15CCAE72001ED0D4 /* ORTracer.m */,
 				5BE64310139D49610056F448 /* ORTrail.h */,
@@ -13508,6 +13514,7 @@
 				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
 				5B57E5DF161F275200DB249A /* ORExpr.h in Headers */,
 				B148C0C8182175B0009BE440 /* ORFunc.h in Headers */,
+				B1267E50197101650035BCC3 /* ORSolutionI.h in Headers */,
 				5B57E5E0161F275F00DB249A /* ORExprI.h in Headers */,
 				5B57E5E3161F280D00DB249A /* ORVar.h in Headers */,
 				5B57E5E5161F295000DB249A /* ORVisit.h in Headers */,
@@ -16821,6 +16828,7 @@
 				B148C0C9182175B0009BE440 /* ORFunc.m in Sources */,
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
+				B1267E51197101650035BCC3 /* ORSolutionI.m in Sources */,
 				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,
 				B1CC82F815D27C66008DE335 /* ORConstraintI.m in Sources */,
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,

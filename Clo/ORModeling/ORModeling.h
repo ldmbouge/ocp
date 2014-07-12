@@ -88,5 +88,6 @@
 +(id<ORSolutionPool>) createSolutionPool;
 +(id<ORConstraintSet>) createConstraintSet;
 +(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
++(id<ORSolution>) solution: (id<ORModel>) m solver: (id<ORASolver>) solver;
 @end
 

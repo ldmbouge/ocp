@@ -408,7 +408,7 @@
 -(void) solve
 {
    [_lpsolver solve];
-   ORLPSolutionI* sol = [self captureSolution];
+   ORLPSolutionI* sol = (ORLPSolutionI*) [self captureSolution];
    [_sPool addSolution: sol];
    [sol release];
 }
@@ -442,7 +442,7 @@
 -(void) addColumn: (LPColumn*) column
 {
    [_lpsolver postColumn: [column column]];
-   ORLPSolutionI* sol = [self captureSolution];
+   ORLPSolutionI* sol = (ORLPSolutionI*) [self captureSolution];
    [_sPool addSolution: sol];
    [sol release];
 }

@@ -30,15 +30,15 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol ORCPSolution <ORSolution>
-@end
-
-@protocol ORCPSolutionPool <ORSolutionPool>
--(void) addSolution: (id<ORCPSolution>) s;
--(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
--(id<ORInformer>) solutionAdded;
--(id<ORCPSolution>) best;
-@end
+//@protocol ORCPSolution <ORSolution>
+//@end
+//
+//@protocol ORCPSolutionPool <ORSolutionPool>
+//-(void) addSolution: (id<ORCPSolution>) s;
+//-(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
+//-(id<ORInformer>) solutionAdded;
+//-(id<ORCPSolution>) best;
+//@end
 
 @protocol CPCommonProgram  <ORASolver,ORGamma>
 -(void) setSource:(id<ORModel>)src;
@@ -119,8 +119,8 @@
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 
 -(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;

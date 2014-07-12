@@ -87,7 +87,7 @@ int main(int argc, const char * argv[])
             [cp labelArray:x];
          }];
          NSLog(@"Solver status: %@\n",cp);
-         id<ORCPSolutionPool> pool = [cp solutionPool];
+         id<ORSolutionPool> pool = [cp solutionPool];
          id<ORModel> mip = [ORFactory createModel];
          id<ORIntVarArray> slab = [ORFactory intVarArray:mip range:RANGE(mip,0,(int)pool.count - 1) domain:RANGE(mdl,0,1)];
          [SetOrders enumerateWithBlock:^(ORInt o) {

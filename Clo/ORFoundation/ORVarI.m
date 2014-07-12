@@ -12,6 +12,7 @@
 #import "ORVarI.h"
 #import "ORError.h"
 #import "ORFactory.h"
+#import "ORSolution.h"
 
 @implementation ORIntVarI {
 @protected
@@ -120,6 +121,16 @@
 -(void) visit: (ORVisitor*) v
 {
    [v visitIntVar: self];
+}
+-(ORInt) value: (id<ORSolution>) solution
+{
+   id<ORQueryIntVar> q = [solution value: self];
+   return [q value];
+}
+-(ORBool) bound: (id<ORSolution>) solution
+{
+   id<ORQueryIntVar> q = [solution value: self];
+   return [q bound];
 }
 @end
 
@@ -305,6 +316,16 @@
 -(ORFloat) up
 {
    return _domain.up;
+}
+-(ORFloat) value: (id<ORSolution>) solution
+{
+   id<ORQueryFloatVar> q = [solution value: self];
+   return [q value];
+}
+-(ORBool) bound: (id<ORSolution>) solution
+{
+   id<ORQueryFloatVar> q = [solution value: self];
+   return [q bound];
 }
 @end
 

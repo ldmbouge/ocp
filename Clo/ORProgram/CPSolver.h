@@ -68,8 +68,8 @@
 -(void) restartHeuristics;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 -(ORInt) maxBound:(id<ORIdArray>) x;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel) n;
