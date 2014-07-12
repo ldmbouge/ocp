@@ -53,7 +53,7 @@
 
 @implementation ORFactory (Concretization)
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model
++(id) createCPProgram: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
    id<CPProgram> program = [self createCPProgram:model annotation:notes];

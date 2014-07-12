@@ -35,7 +35,7 @@
 @end
 
 @implementation ORCPTaskVarSnapshot
--(ORCPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<ORTaskVar>) t with: (id<CPSchedulingProgram>) solver
+-(ORCPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<ORTaskVar>) t with: (id<CPProgram,CPScheduler>) solver
 {
    self = [super init];
    _name = [t getId];
@@ -99,9 +99,37 @@
    assert(false);
    return self;
 }
+-(ORInt) est
+{
+   return _start;
+}
 -(ORInt) ect
 {
    return _start + _minDuration;
+}
+-(ORInt) lst
+{
+   return _end - _minDuration;
+}
+-(ORInt) lct
+{
+   return _end;
+}
+-(ORInt) minDuration
+{
+   return _minDuration;
+}
+-(ORInt) maxDuration
+{
+   return _maxDuration;
+}
+-(ORInt) isAbsent
+{
+   return _absent;
+}
+-(ORInt) isPresent
+{
+   return _present;
 }
 @end
 
@@ -113,26 +141,7 @@
 @end
 
 
-
-
-// [pvh]: I am not sure that I want a class CPSchedulerSolver: That makes it harder to compose with other extensions
-// [pvh]: probaby the engine should have a key-value chain for global data structures
-// [pvh]: the alternative is to have it in the CPProgram and to pass it to constraints; not sure I like this
-
-@interface CPSchedulingSolver : CPSolver<CPSchedulingProgram>
--(CPSchedulingSolver*) initCPSchedulingSolver;
-@end
-
-
-@implementation CPSchedulingSolver
-{
-// new instance variables
-}
--(CPSchedulingSolver*) initCPSchedulingSolver
-{
-   self = [super initCPSolver];
-   return self;
-}
+@implementation CPSolver (CPScheduler)
 //-(void) labelActivities: (id<ORActivityArray>) act
 //{
 //   for (ORInt i = act.range.low; i <= act.range.up; i++)
@@ -148,84 +157,6 @@
 //   [self label: act.duration];
 //   if (act.type > 1) {
 //      [self labelActivities:act.composition];
-//   }
-//}
-
-//-(void) setTimes: (id<ORActivityArray>) act
-//{
-//   id<ORIntRange> R = act.range;
-//   ORInt low = R.low;
-//   ORInt up = R.up;
-//   ORInt m = FDMAXINT;
-//   ORInt im = 0;
-//   ORInt found = FALSE;
-//   ORInt hasPostponedActivities = FALSE;
-//   
-//   // optional activities
-////   for (ORInt k = low; k <= up; k++) {
-////      if ((act[k].type & 1) == 1)
-////         [self label: act[k].top];
-////   }
-//   
-//   id<ORTrailableIntArray> postponed = [ORFactory trailableIntArray: [self engine] range: R value: 0];
-//   id<ORTrailableIntArray> ptime = [ORFactory trailableIntArray: [self engine] range: R value: 0];
-//   
-//   while (true) {
-//      found = FALSE;
-//      m = FDMAXINT;
-//      hasPostponedActivities = FALSE;
-//      ORInt lsd = FDMAXINT;
-//      for(ORInt k = low; k <= up; k++) {
-//         
-//         if (![self bound: act[k].startLB]) {
-//            if (![[postponed at: k] value]) {
-//               ORInt vm = [self min: act[k].startLB];
-//               found = TRUE;
-//               if (vm < m) {
-//                  m = vm;
-//                  im = k;
-//               }
-//            }
-//            else {
-//               hasPostponedActivities = TRUE;
-//               ORInt vm = [self max: act[k].startLB];
-//               if (vm < lsd)
-//                  lsd = vm;
-//            }
-//         }
-//      }
-//      if (!found) {
-//         if (hasPostponedActivities)
-//            [[self explorer] fail];
-//         else
-//            break;
-//      }
-//      if (lsd <= m)
-//         [[self explorer] fail];
-//      
-//      for(ORInt k = low; k <= up; k++)
-//         if ([[postponed at: k] value])
-//            if ([self min: act[k].startLB] + [self min: act[k].duration] <= m)
-//               [[self explorer] fail];
-//      
-//      
-//      [self try:
-//       ^() {
-//          
-//          [self label: act[im].startLB with: m];
-//          
-//          for(ORInt k = low; k <= up; k++)
-//             if ([[postponed at: k] value])
-//                if ([self min: act[k].startLB] > [[ptime at: k] value])
-//                   [[postponed at: k] setValue: 0];
-//          
-//       }
-//             or:
-//       ^() {
-//          [[postponed at: im]  setValue: 1];
-//          [[ptime at: im] setValue: m];
-//       }
-//       ];
 //   }
 //}
 
@@ -490,43 +421,3 @@
 }
 @end
 
-
-@implementation CPSchedulerFactory
-+(id<CPSchedulingProgram>) solver
-{
-   return [[CPSchedulingSolver alloc] initCPSchedulingSolver];
-}
-//+(id<CPSemanticProgramDFS>) semanticSolverDFS
-//{
-//   return [[CPSemanticSolver alloc] initCPSemanticSolverDFS];
-//}
-//+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
-//{
-//   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
-//}
-@end
-
-
-// Now I need to create a scheduling program
-@implementation ORFactory (CPScheduling)
-+(id<CPSchedulingProgram>) createCPSchedulingProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
-{
-   __block id<CPSchedulingProgram> cpprogram = [CPSchedulerFactory solver];
-   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
-   id<ORSolutionPool> sp = [cpprogram solutionPool];
-   [cpprogram onSolution:^{
-      id<ORSolution> s = [cpprogram captureSolution];
-      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
-      [sp addSolution: s];
-      [s release];
-   }];
-   return cpprogram;
-}
-+(id<CPSchedulingProgram>) createCPSchedulingProgram: (id<ORModel>) model
-{
-   id<ORAnnotation> notes = [ORFactory annotation];
-   id<CPSchedulingProgram> program = [self createCPSchedulingProgram:model annotation:notes];
-   [notes release];
-   return program;
-}
-@end

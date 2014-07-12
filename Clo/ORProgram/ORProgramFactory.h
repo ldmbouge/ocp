@@ -17,7 +17,7 @@
 
 @interface ORFactory (Concretization)
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model;
++(id) createCPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;

@@ -125,7 +125,7 @@ ORInt iduration10[10][10] = {
 //};
 
 
-int mainPosLNS(int argc, const char * argv[])
+int mainBasicLNS(int argc, const char * argv[])
 {
    @autoreleasepool {
       
@@ -170,7 +170,7 @@ int mainPosLNS(int argc, const char * argv[])
           [model add: disjunctive[i]];
 
       // search
-      id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
+      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
       /*
       [cp solve: ^{
          [cp forall: Size orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]]; } do: ^(ORInt i) {
@@ -183,9 +183,6 @@ int mainPosLNS(int argc, const char * argv[])
        */
       [cp solve: ^{
          id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,1,100)];
-         id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range:RANGE(model,1,10)];
-         id<ORUniformDistribution> sD = [ORFactory uniformDistribution:model range:RANGE(model,0,10)];
-         id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,4,10)];
          [cp limitTime: 10000 in: ^{
             [cp repeat: ^{
                [cp limitFailures: 1000 in: ^{
@@ -203,12 +200,12 @@ int mainPosLNS(int argc, const char * argv[])
                for(ORInt k = 1; k <= size; k++) {
                   id<ORIntVarArray> succ = disjunctive[k].successors;
                   id<ORTaskVarArray> t = disjunctive[k].taskVars;
-                  for(ORInt j = succ.range.low; j <= succ.range.up; j++) {
+                  for(ORInt j = succ.range.low+1; j <= succ.range.up; j++) {
                      if ([s intValue: succ[j]] != size + 1) {
                         ORInt next = [s intValue: succ[j]];
-                        ORInt ect = [s ect: t[j]];     // This is not supported yet
-                        ORInt est = [s est: t[next]];
-                        if (ect == est) { // this precedence constraint is tight
+                        ORInt ect = [t[j] ect: s];
+                        ORInt est = [t[next] est: s];
+                        if (ect != est) { // this precedence constraint is not tight
                            if ([d next] <= 50)
                               [cp label: succ[j] with: next];
                         }
@@ -235,7 +232,7 @@ int mainPosLNS(int argc, const char * argv[])
    return 0;
 }
 
-int mainBasicLNS(int argc, const char * argv[])
+int mainSubpathLNS(int argc, const char * argv[])
 {
    @autoreleasepool {
       
@@ -280,7 +277,7 @@ int mainBasicLNS(int argc, const char * argv[])
          [model add: disjunctive[i]];
       
       // search
-      id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
+      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
       /*
        [cp solve: ^{
        [cp forall: Size orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]]; } do: ^(ORInt i) {
@@ -292,13 +289,13 @@ int mainBasicLNS(int argc, const char * argv[])
        }];
        */
       [cp solve: ^{
-         id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,1,100)];
+         id<ORUniformDistribution> pD = [ORFactory uniformDistribution:model range:RANGE(model,1,100)];
          id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range:RANGE(model,1,10)];
          id<ORUniformDistribution> sD = [ORFactory uniformDistribution:model range:RANGE(model,0,10)];
          id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,4,10)];
-         [cp limitTime: 10000 in: ^{
+         [cp limitTime: 20000 in: ^{
             [cp repeat: ^{
-               [cp limitFailures: 1000 in: ^{
+               [cp limitFailures: 500 in: ^{
                   [cp forall: Size orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]]; } do: ^(ORInt i) {
                      id<ORTaskVarArray> t = disjunctive[i].taskVars;
                      [cp sequence: disjunctive[i].successors by: ^ORFloat(ORInt i) { return [cp est: t[i]]; } then: ^ORFloat(ORInt i) { return [cp ect: t[i]];}];
@@ -308,19 +305,27 @@ int mainBasicLNS(int argc, const char * argv[])
                   ORLong timeEnd = [ORRuntimeMonitor cputime];
                   NSLog(@"Time: %lld:",timeEnd - timeStart);
                }];
-            } onRepeat: ^{
-               id<ORSolution> s = [[cp solutionPool] best];
-               for(ORInt k = 0; k <= 1; k++) {
+            }
+            onRepeat: ^{
+               id<ORSolution> sol = [[cp solutionPool] best];
+               for(ORInt k = 1; k <= 3; k++) {
                   ORInt i = [sM next];
-                  id<ORIntVarArray> v = disjunctive[i].successors;
+                  id<ORIntVarArray> succ = disjunctive[i].successors;
                   id<ORTaskVarArray> t = disjunctive[i].taskVars;
-                  ORInt st = [sD next];
-                  ORInt le = [lD next];
-                  ORInt est = [t[1] ect: s];
-                  ORInt ect = [t[1] ect: cp];
-                  for(ORInt j = v.range.low; j <= v.range.up; j++) {
-                     if (!(j >= st && j <= st + le)) {
-                        [cp label: v[j] with: [s intValue:v[j]]];
+                  ORInt s = [sD next];
+                  ORInt d = [lD next];
+                  // need to fix everything outside the bounds but the tight constraints
+                  for(ORInt j = s; j <= min(s+d,size); j++) {
+                     if (j != 0) {
+                        ORInt next = [sol intValue: succ[j]];
+                        if (next != size+1) {
+                           ORInt ect = [t[j] ect: sol];
+                           ORInt est = [t[next] est: sol];
+                           if (ect != est) {
+                              if ([pD next] <= 20)
+                                 [cp label: succ[j] with: [sol intValue: succ[j]]];
+                           }
+                        }
                      }
                   }
                }
@@ -344,8 +349,77 @@ int mainBasicLNS(int argc, const char * argv[])
    return 0;
 }
 
+int mainPureCP(int argc, const char * argv[])
+{
+   @autoreleasepool {
+      
+      [ORStreamManager setRandomized];
+      id<ORModel> model = [ORFactory createModel];
+      
+      // data
+      ORLong timeStart = [ORRuntimeMonitor cputime];
+      ORInt size = size10;
+      id<ORIntRange> Size = RANGE(model,1,size);
+      id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iduration10[i-1][j-1]; } ];
+      id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource10[i-1][j-1]; } ];
+      
+      ORInt totalDuration = 0;
+      for(ORInt i = Size.low; i <= Size.up; i++)
+         for(ORInt j = Size.low; j <= Size.up; j++)
+            totalDuration += [duration at: i : j];
+      id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
+      
+      // variables
+      
+      id<ORTaskVarMatrix> task = [ORFactory taskVarMatrix: model range: Size : Size horizon: Horizon duration: duration];
+      id<ORIntVar> makespan = [ORFactory intVar: model domain: RANGE(model,1,10000)];
+      id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray: model range: Size];
+      
+      // model
+      
+      [model minimize: makespan];
+      
+      for(ORInt i = Size.low; i <= Size.up; i++)
+         for(ORInt j = Size.low; j < Size.up; j++)
+            [model add: [[task at: i : j] precedes: [ task at: i : j+1]]];
+      
+      for(ORInt i = Size.low; i <= Size.up; i++)
+         [model add: [[task at: i : Size.up] isFinishedBy: makespan]];
+      
+      for(ORInt i = Size.low; i <= Size.up; i++)
+         for(ORInt j = Size.low; j <= Size.up; j++)
+            [disjunctive[[resource at: i : j]] add: [ task at: i : j]];
+      
+      for(ORInt i = Size.low; i <= Size.up; i++)
+         [model add: disjunctive[i]];
+      
+      // search
+      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
+      [cp solve: ^{
+         [cp forall: Size orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]]; } do: ^(ORInt i) {
+            id<ORTaskVarArray> t = disjunctive[i].taskVars;
+            [cp sequence: disjunctive[i].successors by: ^ORFloat(ORInt i) { return [cp est: t[i]]; } then: ^ORFloat(ORInt i) { return [cp ect: t[i]];}];
+         }];
+         [cp label: makespan];
+         printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+      }];
+      ORLong timeEnd = [ORRuntimeMonitor cputime];
+      NSLog(@"Time: %lld:",timeEnd - timeStart);
+      id<ORSolutionPool> pool = [cp solutionPool];
+      //      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
+      id<ORSolution> optimum = [pool best];
+      printf("Makespan: %d \n",[optimum intValue: makespan]);
+      NSLog(@"Solver status: %@\n",cp);
+      [cp release];
+      NSLog(@"Quitting");
+      //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+      
+   }
+   return 0;
+}
+
 int main(int argc, const char * argv[])
 {
-   return mainBasicLNS(argc,argv);
+   return mainPureCP(argc,argv);
 }
 

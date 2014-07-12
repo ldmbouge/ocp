@@ -243,7 +243,7 @@
    NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
    ORCPTakeSnapshot* visit = [[ORCPTakeSnapshot alloc] initORCPTakeSnapshot: solver];
    for(id obj in av) {
-      NSLog(@"printing variable: %@",obj);
+//      NSLog(@"printing variable: %@",obj);
       id shot = [visit snapshot:obj];
       if (shot)
          [snapshots addObject: shot];

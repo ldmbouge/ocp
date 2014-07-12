@@ -15,7 +15,7 @@
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORTask.h>
 
-@protocol CPSchedulingProgram <CPProgram>
+@protocol CPScheduler
 -(void) setTimes: (id<ORTaskVarArray>) act;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2;
@@ -45,13 +45,4 @@
 -(NSString*) description: (id<ORObject>) o;
 @end
 
-@interface CPSchedulerFactory : NSObject
-+(id<CPSchedulingProgram>) solver;
-//+(id<CPSemanticProgramDFS>) semanticSolverDFS;
-//+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
-@end
-
-@interface ORFactory (CPScheduling)
-+(id<CPSchedulingProgram>) createCPSchedulingProgram: (id<ORModel>) model;
-@end
 
