@@ -82,10 +82,11 @@
    ORFloat* coef = [obj coef];
    _objectiveType = [obj type];
    for(ORInt i = 0; i < s; i++)
-      if (_objectiveType == LPminimize)
-         GRBsetdblattrelement(_model,"Obj",idx[i],coef[i]);
-      else
-         GRBsetdblattrelement(_model,"Obj",idx[i],-coef[i]);
+      GRBsetdblattrelement(_model,"Obj",idx[i],coef[i]);
+   if (_objectiveType == LPminimize)
+      GRBsetintattr(_model, "ModelSense", 1);
+   else
+      GRBsetintattr(_model, "ModelSense", -1);
 }
 
 -(void) addColumn: (LPColumnI*) col
@@ -168,10 +169,7 @@
 {
    ORFloat objVal;
    GRBgetdblattr(_model,"ObjVal",&objVal);
-   if (_objectiveType == LPmaximize)
-      return -objVal;
-   else
-      return objVal;
+   return objVal;
 }
 
 -(ORFloat) reducedCost: (LPVariableI*) var
@@ -184,7 +182,7 @@
 -(ORFloat) dual: (LPConstraintI*) cstr
 {
    ORFloat value;
-   GRBgetdblattrelement(_model,"Pi",[cstr idx],&value);
+   GRBgetdblattrelement(_model,"PI",[cstr idx],&value);
    return value;
 }
 
