@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,8 +11,9 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
+#import "ORConcurrencyI.h"
 #import "ORModeling.h"
-#import "ORSolutionI.h"
+#import "ORSolution.h"
 
 // [pvh] generic but absolutely boring and this is how it should be. The essence is in the concrete variables and the protocols
 
@@ -27,27 +28,32 @@
 @end;
 
 @implementation ORSolution
-{
-   NSArray*             _varShots;
-   id<ORObjectiveValue> _objValue;
-}
 
 -(ORSolution*) initORSolution: (id<ORModel>) model with: (id<ORASolver>) solver
 {
    self = [super init];
    NSArray* av = [model variables];
+   NSArray* ac = [model constraints];
    ORULong sz = [av count];
-   NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
+   NSMutableArray* varShots = [[NSMutableArray alloc] initWithCapacity:sz];
    for(id obj in av) {
-      id shot = [[solver concretize: obj] takeSnapshot];
+//      NSLog(@" variable id: %d",[obj getId]);
+      id shot = [[solver concretize: obj] takeSnapshot: [obj getId]];
       if (shot)
-         [snapshots addObject: shot];
+         [varShots addObject: shot];
       [shot release];
    }
-   _varShots = snapshots;
-   
+   _varShots = varShots;
+
+   for(id obj in ac) {
+//      NSLog(@" Constraint id: %d",[obj getId]);
+      id shot = [[solver concretize: obj] takeSnapshot: [obj getId]];
+      if (shot)
+         [varShots addObject: shot];
+      [shot release];
+   }
    if ([model objective])
-      _objValue = [[solver objective] value];
+      _objValue = [solver objectiveValue];
    else
       _objValue = nil;
    return self;
@@ -150,3 +156,80 @@
    return buf;
 }
 @end
+
+@implementation ORSolutionPoolI
+-(id) init
+{
+   self = [super init];
+   _all = [[NSMutableArray alloc] initWithCapacity:64];
+   // [pvh] This is ugly and needs to be fixed
+   _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
+   return self;
+}
+
+-(void) dealloc
+{
+   NSLog(@"dealloc ORSolutionPoolI");
+   // pvh this is buggy
+   [_all release];
+   [super dealloc];
+}
+-(NSUInteger) count
+{
+   return [_all count];
+}
+-(void) addSolution:(id<ORSolution>)s
+{
+   [_all addObject:s];
+   [_solutionAddedInformer notifyWithSolution: s];
+}
+
+-(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key
+{
+   return [_all objectAtIndexedSubscript:key];
+}
+
+-(void) enumerateWith:(void(^)(id<ORSolution>))block
+{
+   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
+      block(obj);
+   }];
+}
+
+-(id<ORInformer>)solutionAdded
+{
+   return _solutionAddedInformer;
+}
+
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"pool["];
+   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
+      [buf appendFormat:@"\t%@\n",obj];
+   }];
+   [buf appendFormat:@"]"];
+   return buf;
+}
+
+-(id<ORSolution>) best
+{
+   __block id<ORSolution> sel = nil;
+   __block id<ORObjectiveValue> bestSoFar = nil;
+   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
+      if (bestSoFar == nil) {
+         bestSoFar = [obj objectiveValue];
+         sel = obj;
+      }
+      else {
+         id<ORObjectiveValue> nv = [obj objectiveValue];
+         if ([bestSoFar compare: nv] == 1) {
+            bestSoFar = nv;
+            sel = obj;
+         }
+      }
+   }];
+   return [sel retain];
+}
+@end
+

@@ -24,7 +24,7 @@
    ORFloat   _value;
    ORBool    _bound;
 }
--(CPFloatVarSnapshot*) initCPFloatVarSnapshot: (CPFloatVarI*) v;
+-(CPFloatVarSnapshot*) initCPFloatVarSnapshot: (CPFloatVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
 -(ORFloat) floatValue;
 -(NSString*) description;
@@ -33,10 +33,10 @@
 @end
 
 @implementation CPFloatVarSnapshot
--(CPFloatVarSnapshot*) initCPFloatVarSnapshot: (CPFloatVarI*) v
+-(CPFloatVarSnapshot*) initCPFloatVarSnapshot: (CPFloatVarI*) v name: (ORInt) name
 {
    self = [super init];
-   _name = [v getId];
+   _name = name;
    if ([v bound]) {
       _bound = TRUE;
       _value = [v value];
@@ -140,9 +140,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return _engine;
 }
--(id) takeSnapshot
+-(id) takeSnapshot: (ORInt) id
 {
-   return [[CPFloatVarSnapshot alloc] initCPFloatVarSnapshot: self];
+   return [[CPFloatVarSnapshot alloc] initCPFloatVarSnapshot: self name: id];
 }
 -(NSMutableSet*)constraints
 {

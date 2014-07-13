@@ -15,6 +15,7 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <ORModeling/ORModeling.h>
 #import <objcp/CPObjectQueue.h>
+#import "ORSolution.h"
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;
@@ -426,7 +427,10 @@
 {
    return _globalPool;
 }
-
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[self worker] objectiveValue];
+}
 -(void)setupWork:(id<ORProblem>)theSub forCP:(id<CPSemanticProgram>)cp
 {
    //NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);

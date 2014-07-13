@@ -29,7 +29,7 @@
    ORInt     _value;
    ORBool    _bound;
 }
--(CPIntVarSnapshot*) initCPIntVarSnapshot: (CPIntVar*) v;
+-(CPIntVarSnapshot*) initCPIntVarSnapshot: (CPIntVar*) v name: (ORInt) name;
 -(int) intValue;
 -(ORBool) boolValue;
 -(NSString*) description;
@@ -39,10 +39,10 @@
 @end
 
 @implementation CPIntVarSnapshot
--(CPIntVarSnapshot*) initCPIntVarSnapshot: (CPIntVar*) v
+-(CPIntVarSnapshot*) initCPIntVarSnapshot: (CPIntVar*) v name: (ORInt) name
 {
    self = [super init];
-   _name = [v getId];
+   _name = name;
    if ([v bound]) {
       _bound = TRUE;
       _value = [v value];
@@ -177,9 +177,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _vc;
 }
--(id) takeSnapshot
+-(id) takeSnapshot: (ORInt) id
 {
-   return [[CPIntVarSnapshot alloc] initCPIntVarSnapshot: self];
+   return [[CPIntVarSnapshot alloc] initCPIntVarSnapshot: self name: id];
 }
 -(ORInt)degree
 {

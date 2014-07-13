@@ -15,6 +15,148 @@
 #import "LPGurobi.h"
 //#endif
 
+@interface LPFloatVarSnapshot : NSObject <NSCoding> {
+   ORUInt    _name;
+   ORFloat   _value;
+   ORFloat   _reducedCost;
+   
+}
+-(LPFloatVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name;
+-(ORFloat) floatValue;
+-(ORFloat) reducedCost;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation LPFloatVarSnapshot
+-(LPFloatVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   _value = [v floatValue];
+   _reducedCost = [v reducedCost];
+   return self;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORFloat) reducedCost
+{
+   return _reducedCost;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      LPFloatVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return (_value == other->_value) && (_reducedCost == other->_reducedCost);
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"float(%d) : (%f,%f)",_name,_value,_reducedCost];
+   return buf;
+}
+
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_reducedCost];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_reducedCost];
+   return self;
+}
+@end
+
+@interface LPConstraintSnapshot : NSObject <NSCoding> {
+   ORUInt    _name;
+   ORFloat   _dual;
+}
+-(LPConstraintSnapshot*) initLPConstraintSnapshot: (LPConstraintI*) cstr name: (ORInt) name;
+-(ORFloat) dual;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation LPConstraintSnapshot
+-(LPConstraintSnapshot*) initLPConstraintSnapshot: (LPConstraintI*) cstr name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   _dual = [cstr dual];
+   return self;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORFloat) dual
+{
+   return _dual;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      LPConstraintSnapshot* other = object;
+      if (_name == other->_name) {
+         return _dual == other->_dual;
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + (ORInt) _dual;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"lp(constraint)(%d) : (%f)",_name,_dual];
+   return buf;
+}
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_dual];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_dual];
+   return self;
+}
+@end
+
+
 @implementation LPConstraintI;
 
 -(LPConstraintI*) initLPConstraintI: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
@@ -51,6 +193,10 @@
       free(_col);
    free(_coef);
    [super dealloc];
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[LPConstraintSnapshot alloc] initLPConstraintSnapshot: self name: id];
 }
 -(void) resize
 {
@@ -450,6 +596,10 @@
    _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
    
    return self;
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[LPFloatVarSnapshot alloc] initLPFloatVarSnapshot: self name: id];
 }
 -(ORBool) hasBounds
 {

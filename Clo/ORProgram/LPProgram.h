@@ -20,17 +20,10 @@
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
 @end
 
-@protocol ORLPSolution <ORSolution>
--(ORFloat) reducedCost: (id<ORFloatVar>) var;
--(ORFloat) dual: (id<ORConstraint>) var;
--(id<ORObjectiveValue>) objectiveValue;
-@end
-
-@protocol ORLPSolutionPool <ORSolutionPool>
--(void) addSolution: (id<ORLPSolution>) s;
--(void) enumerateWith: (void(^)(id<ORLPSolution>)) block;
--(id<ORInformer>) solutionAdded;
--(id<ORLPSolution>) best;
+@protocol LPSolution
+-(ORFloat) floatValue: (id<ORFloatVar>) var;
+-(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORFloatVar>) x;
 @end
 
 @protocol LPProgram <ORASolver>
@@ -46,8 +39,8 @@
 -(ORFloat) reducedCost: (id<ORFloatVar>) v;
 -(ORFloat) floatValue: (id<ORFloatVar>) v;
 -(id<ORObjectiveValue>) objectiveValue;
--(id<ORLPSolutionPool>) solutionPool;
--(id<ORLPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 @end
 
 @protocol LPRelaxation <ORASolver>

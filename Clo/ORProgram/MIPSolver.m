@@ -16,6 +16,7 @@
 #import "MIPProgram.h"
 #import "MIPSolver.h"
 #import <objmp/MIPSolverI.h>
+#import "ORSolution.h"
 
 @interface ORMIPFloatVarSnapshot : NSObject <NSCoding> {
    ORUInt    _name;

@@ -6,6 +6,7 @@
 #import <ORFoundation/ORControl.h>
 #import <ORProgram/ORProgram.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORSolution.h>
 #import <ORProgram/LPProgram.h>
 
 
@@ -37,7 +38,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
 //   NSLog(@"Objective value: %@",[[model objective] value]);
    id<ORSolutionPool> test = [lp solutionPool];
-   NSLog(@"test %@",test);
+   NSLog(@"test %@",[test best]);
    
    for(ORInt i = 0; i < nbRows; i++) {
       printf("The id of constraint %d is %d \n",i,[ca[i] getId]);
@@ -45,12 +46,12 @@ int main_lp(int argc, const char * argv[])
    for(ORInt i = 0; i < nbRows; i++) {
       printf("The dual of constraint %d is %f \n",i,[lp dual: ca[i]]);
    }
-   id<ORLPSolution> sol = [[lp solutionPool] best];
+   id<ORSolution,LPSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbColumns-1; i++)
       printf("x[%d] = %10.5f : %10.5f \n",i,[sol floatValue: x[i]],[sol reducedCost: x[i]]);
-   for(ORInt i = 0; i < nbRows; i++)
-      printf("dual c[%d] = %f \n",i,[sol dual: ca[i]]);
+//   for(ORInt i = 0; i < nbRows; i++)
+//      printf("dual c[%d] = %f \n",i,[sol dual: ca[i]]);
    [sol release];
    NSLog(@"we are done (Part I) \n\n");
    

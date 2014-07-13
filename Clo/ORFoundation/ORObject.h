@@ -25,7 +25,7 @@
 -(id) init;
 -(void) setId:(ORUInt)name;
 -(ORUInt) getId;
--(id) takeSnapshot;
+-(id) takeSnapshot: (ORInt) id;
 @end
 
 static inline ORUInt getId(ORObject* ptr) { return ptr->_name;}

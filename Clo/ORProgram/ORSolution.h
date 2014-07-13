@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVar.h>
+#import <ORModeling/ORModeling.h>
 
 
 @protocol ORSolution <NSObject>
@@ -25,8 +26,32 @@
 @protocol ORSolutionPool <NSObject>
 -(void) addSolution: (id<ORSolution>) s;
 -(void) enumerateWith: (void(^)(id<ORSolution>)) block;
--(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
+-(id) objectAtIndexedSubscript: (NSUInteger) key;
 -(id<ORInformer>) solutionAdded;
--(id<ORSolution>) best;
+-(id) best;
+-(NSUInteger) count;
+@end
+
+@interface ORSolution : NSObject<ORSolution>
+{
+   NSArray*             _varShots;
+   NSArray*             _cstrShots;
+   id<ORObjectiveValue> _objValue;
+}
+-(ORSolution*) initORSolution: (id<ORModel>) model with: (id<ORASolver>) solver;
+-(id) value: (id) var;
+-(id<ORObjectiveValue>) objectiveValue;
+@end
+
+@interface ORSolutionPoolI : NSObject<ORSolutionPool> {
+   NSMutableArray* _all;
+   id<ORSolutionInformer> _solutionAddedInformer;
+}
+-(id)init;
+-(void)addSolution:(id<ORSolution>)s;
+-(void)enumerateWith:(void(^)(id<ORSolution>))block;
+-(id<ORInformer>)solutionAdded;
+-(id<ORSolution>)best;
+-(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
 -(NSUInteger) count;
 @end
