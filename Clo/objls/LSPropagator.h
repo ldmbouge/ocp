@@ -89,6 +89,15 @@
 -(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v;
 @end
 
+@interface LSAffineView : LSCoreView {
+   ORInt         _a,_b;
+   id<LSIntVar>     _x;
+}
+-(id)initWithEngine:(id<LSEngine>)engine a:(ORInt)a times:(id<LSIntVar>)x plus:(ORInt)b;
+-(ORInt)value;
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v;
+@end
+
 // [pvh]: Not sue what this is at this point
 
 @interface LSBlock : LSPropagator {

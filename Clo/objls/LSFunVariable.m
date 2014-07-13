@@ -201,32 +201,46 @@
    id<LSEngine>     _engine;
    id<LSIntVarArray>   _src;
    id<ORIdArray>     _terms;
+   id<ORIntArray>    _coefs;
    id<LSIntVar>        _sum;
    id<ORIdArray>    _ig,_dg;
 }
--(LSFunSum*)init:(id<LSEngine>)engine withTerms:(id<ORIdArray>)terms
+-(LSFunSum*)init:(id<LSEngine>)engine withTerms:(id<ORIdArray>)terms coefs:(id<ORIntArray>)coefs;
 {
    self = [super init];
    _engine = engine;
    _terms = terms;
+   _coefs = coefs;
    return self;
 }
 -(void)post
 {
-   _sum = [LSFactory intVar:_engine domain:RANGE(_engine,
-                                                 sumSet(_terms.range, ^ORInt(ORInt i) {return [_terms[i] evaluation].domain.low;}),
-                                                 sumSet(_terms.range, ^ORInt(ORInt i) {return [_terms[i] evaluation].domain.up;}))];
    id<LSIntVarArray> vk = [LSFactory intVarArray:_engine range:_terms.range with:^id<LSIntVar>(ORInt k) {
       return [_terms[k] evaluation];
    }];
-   [_engine add:[LSFactory sum:_sum over:vk]];
+   ORInt lb = 0,ub = 0;
+   for(ORInt i=vk.range.low;i <= vk.range.up;i++) {
+      ORInt lk = [_terms[i] evaluation].domain.low;
+      ORInt uk = [_terms[i] evaluation].domain.up;
+      ORInt ck = [_coefs at:i];
+      ORInt ubk = max(lk * ck,uk * ck);
+      ORInt lbk = min(lk * ck,uk * ck);
+      lb += lbk;
+      ub += ubk;
+   }
+   _sum = [LSFactory intVar:_engine domain:RANGE(_engine,lb,ub)];
+   [_engine add:[LSFactory sum:_sum is:_coefs times:vk]];
    id<LSIntVarArray> av = sortById([self variables]);
    _ig = [ORFactory idArray:_engine range:[av range]];
    for(ORInt i = av.range.low;i <= av.range.up;i++) {
       id<LSIntVar> x = av[i];
       id<LSGradient> g = [LSGradient cstGradient:0];
-      for(id<LSFunction> tk in _terms)
-         g = [LSGradient sumOf:g and:[tk increase:x]];
+      ORInt k = _terms.range.low;
+      for(id<LSFunction> tk in _terms) {
+         id<LSGradient> gk = [tk increase:x];
+         g = [LSGradient sumOf:g and:[gk scaleBy:[_coefs at:k]]];
+         k++;
+      }
       id<LSIntVar> gv  = [g intVar:_engine];
       _ig[i] = [LSGradient varGradient:gv];
    }
@@ -234,8 +248,12 @@
    for(ORInt i = av.range.low;i <= av.range.up;i++) {
       id<LSIntVar> x = av[i];
       id<LSGradient> g = [LSGradient cstGradient:0];
-      for(id<LSFunction> tk in _terms)
-         g = [LSGradient maxOf:g and:[tk decrease:x]];
+      ORInt k = _terms.range.low;
+      for(id<LSFunction> tk in _terms) {
+         id<LSGradient> gk = [tk decrease:x];
+         g = [LSGradient sumOf:g and:[gk scaleBy:[_coefs at:k]]];
+         k++;
+      }
       id<LSIntVar>  gv = [g intVar:_engine];
       _dg[i] = [LSGradient varGradient:gv];
    }
@@ -257,18 +275,22 @@
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
    ORInt ttl = 0;
+   ORInt k = _terms.range.low;
    for(id<LSFunction> tk in _terms) {
-      ORInt dk = [tk deltaWhenAssign:x to:v];
+      ORInt dk = [tk deltaWhenAssign:x to:v] * [_coefs at:k];
       ttl += dk;
+      k++;
    }
    return ttl;
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
    ORInt ttl = 0;
+   ORInt k = _terms.range.low;
    for(id<LSFunction> tk in _terms) {
-      ORInt dk = [tk deltaWhenSwap:x with:y];
+      ORInt dk = [tk deltaWhenSwap:x with:y] * [_coefs at:k];
       ttl += dk;
+      k++;
    }
    return ttl;
 }

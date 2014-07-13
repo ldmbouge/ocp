@@ -55,6 +55,7 @@
 -(void)updateCoefFor:(id<LSIntVar>)x coef:(ORInt)c;
 -(ORInt)coef;
 -(id<LSIntVar>)variable;
+-(void)scaleBy:(ORInt)c;
 @end
 
 @implementation LSLinTerm
@@ -70,6 +71,10 @@
    if (getId(x) == getId(_x))
       _a += c;
 }
+-(void)scaleBy:(ORInt)c
+{
+   _a *= c;
+}
 -(ORInt)coef
 {
    return _a;
@@ -77,6 +82,12 @@
 -(id<LSIntVar>)variable
 {
    return _x;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSLinTerm: %p is (%@ * %d)>",self,_x,_a];
+   return buf;
 }
 @end
 
@@ -116,10 +127,25 @@
 }
 -(id<LSIntVar>)intVar:(id<LSEngine>)engine
 {
+   if ([_terms count] == 1 && _b == 0) {
+      LSLinTerm* lt = _terms[0];
+      if (lt.coef == 1)
+         return [lt variable];
+      else
+         return [LSFactory intVarView:engine a:lt.coef times:lt.variable plus:_b];
+   } else if ([_terms count] == 1) {
+      LSLinTerm* lt = _terms[0];
+      return [LSFactory intVarView:engine a:lt.coef times:lt.variable plus:_b];
+   }
    ORInt min=FDMAXINT,max=FDMININT;
    for(LSLinTerm* t in _terms) {
-      min = MIN([t coef], min);
-      max = MAX([t coef],max);
+      if ([t coef] >= 0) {
+         min = MIN([t coef] * [t variable].domain.low, min);
+         max = MAX([t coef] * [t variable].domain.up,  max);
+      } else {
+         min = MIN([t coef] * [t variable].domain.up, min);
+         max = MAX([t coef] * [t variable].domain.low, max);
+      }
    }
    _final = [LSFactory intVar:engine domain:RANGE(engine,min,max)];
    ORInt cnt = (ORInt)[_terms count];
@@ -159,9 +185,16 @@
       [self addTerm:[t variable] coef:[t coef]];
    return self;
 }
+-(id<LSGradient>)scaleBy:(ORInt)c
+{
+   _b *= c;
+   for(LSLinTerm* t in _terms)
+      [t scaleBy:c];
+   return self;
+}
 -(NSString*)description
 {
-   return [[[NSString alloc] initWithFormat:@"<LinGradient: %p (%lu) %@>",self,[_terms count],_final] autorelease];
+   return [[[NSString alloc] initWithFormat:@"<LinGradient: %p  (%lu)[%@] final:%@>",self,[_terms count],_terms,_final] autorelease];
 }
 @end
 
@@ -208,6 +241,11 @@
 {
    return [g addTerm:_x coef:1];
 }
+-(id<LSGradient>)scaleBy:(ORInt)c
+{
+   return [[LSGradient linGradient] addTerm:_x coef:c];
+}
+
 -(NSString*)description
 {
    return [[[NSString alloc] initWithFormat:@"<VarGradient: %p : %@>",self,_x] autorelease];
@@ -257,6 +295,11 @@
 -(id<LSGradient>)addLinear:(LSLinGradient*)g
 {
    return [g addConst:_cst];
+}
+-(id<LSGradient>)scaleBy:(ORInt)c
+{
+   _cst *= c;
+   return self;
 }
 -(NSString*)description
 {

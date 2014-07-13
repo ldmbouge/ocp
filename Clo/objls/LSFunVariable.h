@@ -37,7 +37,7 @@
 @end
 
 @interface LSFunSum : ORObject<LSFunction>
--(LSFunSum*)init:(id<LSEngine>)engine withTerms:(id<ORIdArray>)terms;
+-(LSFunSum*)init:(id<LSEngine>)engine withTerms:(id<ORIdArray>)terms coefs:(id<ORIntArray>)coefs;
 -(void)post;
 -(id<LSIntVar>)evaluation;
 -(id<LSGradient>)increase:(id<LSIntVar>)x;

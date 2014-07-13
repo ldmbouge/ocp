@@ -26,6 +26,10 @@
 {
    return [[LSEQLitView alloc] initWithEngine:engine on:x eqLit:lit];
 }
++(id<LSIntVar>)intVarView:(id<LSEngine>)engine a:(ORInt)a times:(id<LSIntVar>)x plus:(ORInt)b
+{
+   return [[LSAffineView alloc] initWithEngine:engine a:a times:x plus:b];
+}
 +(id<LSIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
    return (id)[ORFactory idArray:cp range:range];

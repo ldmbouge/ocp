@@ -330,3 +330,54 @@
 }
 @end
 
+// ===============================================================================
+// [ldm] View for a * x + b (affine).
+// Supports gradients.
+
+@implementation LSAffineView
+-(id)initWithEngine:(id<LSEngine>)engine a:(ORInt)a times:(id<LSIntVar>)x plus:(ORInt)b
+{
+   ORInt lb = min(a * x.domain.low + b,a * x.domain.up + b);
+   ORInt ub = max(a * x.domain.low + b,a * x.domain.up + b);
+   self = [super initWith:engine domain:RANGE(engine,lb,ub) src:@[x]];
+   _a = a;
+   _b = b;
+   _x = x;
+   return self;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"AffineView<LS>(%p,%d,%@) (%d * %p  + %d) = %d",self,_name,_rank,_a,_x,_b,[self value]];
+   return buf;
+}
+-(ORInt)value
+{
+   return _a * getLSIntValue(_x) + _b;
+}
+-(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v
+{
+   if (getId(_x) == getId(x))
+      return _a * v + _b;
+   else
+      return _a * getLSIntValue(_x) + _b;
+}
+-(id<LSGradient>)decrease:(id<LSIntVar>)x
+{
+   if (getId(_x) == getId(x)) {
+      id<LSGradient> g = _a >= 0 ? [_x decrease:x] : [_x increase:_x];
+      return [[g scaleBy:_a] addConst:_b];
+   } else
+      return [LSGradient cstGradient:0];
+}
+-(id<LSGradient>)increase:(id<LSIntVar>)x
+{
+   if (getId(_x) == getId(x)) {
+      id<LSGradient> g = _a >= 0 ? [_x increase:x] : [_x decrease:_x];
+      return [[g scaleBy:_a] addConst:_b];
+   }
+   else
+      return [LSGradient cstGradient:0];
+}
+@end
+

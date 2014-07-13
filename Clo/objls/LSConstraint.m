@@ -154,4 +154,10 @@
    [engine trackMutable:f];
    return f;
 }
++(id<LSFunction>)sum:(id<LSEngine>)engine terms:(id<ORIdArray>)terms coefs:(id<ORIntArray>)coefs
+{
+   LSFunSum* f = [[LSFunSum alloc] init:engine withTerms:terms coefs:coefs];
+   [engine trackMutable:f];
+   return f;
+}
 @end

@@ -67,6 +67,56 @@
    }
 }
 
+-(void) testORSum
+{
+   id<LSEngine>  ls = [[LSEngineI alloc] initEngine];
+   id<ORIntRange> d = RANGE(ls, 0, 10);
+   id<LSIntVarArray> x = [LSFactory intVarArray:ls range:d domain:d];
+   id<ORIdArray>  terms = [ORFactory idArray:ls range:RANGE(ls,0,10)];
+   int av[11] = {1,10,100,1000,10000,100000,1000000,10000000,100000000,999,666};
+   id<ORIntArray> coefs = [ORFactory intArray:ls range:RANGE(ls,0,10) values:av];
+   for(ORInt i=0;i <= 10;i++)
+      terms[i] = [LSFactory varRef:ls var:[LSFactory intVarView:ls var:x[i] eq:i]];
+   id<LSFunction> f = [ls addFunction:[LSFactory sum:ls terms:terms coefs:coefs]];
+   [ls close];
+   NSLog(@"Fun: %@",f);
+   printf("eval: %d\n",[[f evaluation] value]);
+   for(ORInt i=0;i <= 10;i++) {
+      printf("increase(x[%d]) =  %s\n",i,[[[f increase:x[i]] description] UTF8String]);
+      printf("decrease(x[%d]) =  %s\n",i,[[[f decrease:x[i]] description] UTF8String]);
+      for(ORInt v = 0 ; v <= 10;v++) {
+         printf("\tassignDelta(x[%d],%d) = %d\n",i,v,[f deltaWhenAssign:x[i] to:v]);
+      }
+   }
+   [ls atomic:^{
+      [ls label:x[0] with:1];
+   }];
+   NSLog(@"Fun: %@",f);
+   printf("eval: %d\n",[[f evaluation] value]);
+   for(ORInt i=0;i <= 10;i++) {
+      printf("increase(x[%d]) =  %s\n",i,[[[f increase:x[i]] description] UTF8String]);
+      printf("decrease(x[%d]) =  %s\n",i,[[[f decrease:x[i]] description] UTF8String]);
+      for(ORInt v = 0 ; v <= 10;v++) {
+         printf("\tassignDelta(x[%d],%d) = %d\n",i,v,[f deltaWhenAssign:x[i] to:v]);
+      }
+   }
+   [ls atomic:^{
+      [ls label:x[0] with:0];
+      [ls label:x[1] with:1];
+      [ls label:x[2] with:2];
+      [ls label:x[3] with:3];
+   }];
+   NSLog(@"Fun: %@",f);
+   printf("eval: %d\n",[[f evaluation] value]);
+   for(ORInt i=0;i <= 10;i++) {
+      printf("increase(x[%d]) =  %s\n",i,[[[f increase:x[i]] description] UTF8String]);
+      printf("decrease(x[%d]) =  %s\n",i,[[[f decrease:x[i]] description] UTF8String]);
+      for(ORInt v = 0 ; v <= 10;v++) {
+         printf("\tassignDelta(x[%d],%d) = %d\n",i,v,[f deltaWhenAssign:x[i] to:v]);
+      }
+   }
+}
+
 -(void) testCard1
 {
    id<LSEngine>  ls = [[LSEngineI alloc] initEngine];

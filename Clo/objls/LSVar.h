@@ -45,6 +45,7 @@
 @optional -(id<LSGradient>)addTerm:(id<LSIntVar>)x coef:(ORInt)a;
 @optional -(id<LSGradient>)addConst:(ORInt)c;
 @optional -(id<LSGradient>)addLinear:(id<LSGradient>)g;
+@optional -(id<LSGradient>)scaleBy:(ORInt)c;
 @end
 
 @interface LSGradient : NSObject
