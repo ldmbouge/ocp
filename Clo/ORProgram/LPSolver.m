@@ -16,7 +16,7 @@
 #import <objmp/LPSolverI.h>
 
 
-@interface ORLPFloatVarSnapshot : NSObject <ORSnapshot,NSCoding> {
+@interface ORLPFloatVarSnapshot : NSObject <NSCoding> {
    ORUInt    _name;
    ORFloat   _value;
    ORFloat   _reducedCost;
@@ -100,7 +100,7 @@
 }
 @end
 
-@interface ORLPConstraintSnapshot : NSObject <ORSnapshot,NSCoding> {
+@interface ORLPConstraintSnapshot : NSObject <NSCoding> {
    ORUInt    _name;
    ORFloat   _dual;
 }
@@ -180,7 +180,7 @@
 
 @interface ORLPSolutionI : ORObject<ORLPSolution>
 -(ORLPSolutionI*) initORLPSolutionI: (id<ORModel>) model with: (id<LPProgram>) solver;
--(id<ORSnapshot>) value: (id<ORFloatVar>) var;
+-(id) value: (id<ORFloatVar>) var;
 -(ORFloat) reducedCost: (id<ORFloatVar>) var;
 -(ORFloat) dual: (id<ORConstraint>) var;
 -(NSUInteger) count;
@@ -260,7 +260,7 @@
 {
    return _objValue;
 }
--(id<ORSnapshot>) value: (id) var
+-(id) value: (id) var
 {
    NSUInteger idx = [var getId];
    if (idx < [_varShots count])
@@ -281,7 +281,7 @@
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [obj getId] == [var getId];
    }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
+   return [(id) [_varShots objectAtIndex:idx] floatValue];
 }
 -(ORFloat) reducedCost: (id<ORFloatVar>) var
 {
@@ -323,10 +323,10 @@
    else
       [buf appendString:@"SOL("];
    NSUInteger last = [_varShots count] - 1;
-   [_varShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
+   [_varShots enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
    }];
-   [_cstrShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
+   [_cstrShots enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"cstr(%@%c)",obj,idx < last ? ',' : ')'];
    }];
    return buf;

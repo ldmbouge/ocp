@@ -17,7 +17,7 @@
 #import "MIPSolver.h"
 #import <objmp/MIPSolverI.h>
 
-@interface ORMIPFloatVarSnapshot : NSObject <ORSnapshot,NSCoding> {
+@interface ORMIPFloatVarSnapshot : NSObject <NSCoding> {
    ORUInt    _name;
    ORFloat   _value;
 }
@@ -86,7 +86,7 @@
 }
 @end
 
-@interface ORMIPIntVarSnapshot : NSObject <ORSnapshot,NSCoding> {
+@interface ORMIPIntVarSnapshot : NSObject <NSCoding> {
    ORUInt _name;
    ORInt  _value;
 }
@@ -202,7 +202,7 @@
 
 @interface ORMIPSolutionI : ORObject<ORMIPSolution>
 -(ORMIPSolutionI*) initORMIPSolutionI: (id<ORModel>) model with: (id<MIPProgram>) solver;
--(id<ORSnapshot>) value: (id) var;
+-(id) value: (id) var;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
 -(id<ORObjectiveValue>) objectiveValue;
@@ -271,7 +271,7 @@
 {
    return _objValue;
 }
--(id<ORSnapshot>) value: (id) var
+-(id) value: (id) var
 {
    NSUInteger idx = [var getId];
    if (idx < [_varShots count])
@@ -284,21 +284,21 @@
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [var getId] == [obj getId];
    }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
+   return [[_varShots objectAtIndex:idx] intValue];
 }
 -(ORBool) boolValue: (id) var
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [var getId] == [obj getId];
    }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
+   return [[_varShots objectAtIndex:idx] intValue];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [var getId] == [obj getId];
    }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
+   return [[_varShots objectAtIndex:idx] floatValue];
 }
 -(NSUInteger) count
 {
@@ -322,7 +322,7 @@
    else
       [buf appendString:@"SOL("];
    NSUInteger last = [_varShots count] - 1;
-   [_varShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
+   [_varShots enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
    }];
    return buf;

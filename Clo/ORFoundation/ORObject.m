@@ -61,6 +61,10 @@
 //   [NSAutoreleasePool addObject:self];
 //   return self;
 }
+-(id) takeSnapshot
+{
+   return NULL;
+}
 @end
 
 

@@ -35,7 +35,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     freeList(net->_maxEvt._val);
 }
 
-@interface CPBitVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+@interface CPBitVarSnapshot : NSObject<NSCoding> {
    ORUInt    _name;
    union {
       ORInt _value;

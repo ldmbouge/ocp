@@ -121,7 +121,7 @@ int main(int argc, const char * argv[])
             NSLog(@"coloring with: %d colors %d",[cp intValue:m],[NSThread threadID]);
          }];
          id<ORSolutionPool> pool = [cp solutionPool];
-         [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
+         [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@ and first variable %d",s,[s objectiveValue],[s intValue: c[1]]); } ];
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
