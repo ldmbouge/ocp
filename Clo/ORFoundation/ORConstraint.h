@@ -452,9 +452,12 @@ enum ORGroupType {
 -(id<OREngine>)       engine;
 -(id) concretize: (id) o;
 -(id<ORObjectiveValue>) objectiveValue;
-@optional-(id<ORSolutionPool>) solutionPool;
-@optional-(id<ORSearchObjectiveFunction>) objective;
 @end
+
+@protocol ORASearchSolver <ORASolver>
+-(id<ORSearchObjectiveFunction>) objective;
+@end
+
 
 // ====== Bit Constraints =====================================
 

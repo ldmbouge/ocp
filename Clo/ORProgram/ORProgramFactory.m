@@ -58,7 +58,7 @@
 }
 +(id<ORSolutionPool>) createSolutionPool
 {
-   return [[ORSolutionPoolI alloc] init];
+   return [[ORSolutionPool alloc] init];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model

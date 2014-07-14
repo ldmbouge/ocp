@@ -277,10 +277,6 @@
       cur = [cur source];
    return cur;
 }
--(id<ORASolver>) solver
-{
-   return nil;
-}
 -(id<ORObjectiveFunction>) objective
 {
    return _objective;

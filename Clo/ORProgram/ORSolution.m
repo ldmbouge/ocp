@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import "ORConcurrencyI.h"
 #import "ORModeling.h"
 #import "ORSolution.h"
 
@@ -157,20 +156,17 @@
 }
 @end
 
-@implementation ORSolutionPoolI
+@implementation ORSolutionPool
 -(id) init
 {
    self = [super init];
    _all = [[NSMutableArray alloc] initWithCapacity:64];
-   // [pvh] This is ugly and needs to be fixed
-   _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
+   _solutionAddedInformer = [ORFactory solutionInformer];
    return self;
 }
 
 -(void) dealloc
 {
-   NSLog(@"dealloc ORSolutionPoolI");
-   // pvh this is buggy
    [_all release];
    [super dealloc];
 }

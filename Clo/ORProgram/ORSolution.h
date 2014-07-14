@@ -43,7 +43,7 @@
 -(id<ORObjectiveValue>) objectiveValue;
 @end
 
-@interface ORSolutionPoolI : NSObject<ORSolutionPool> {
+@interface ORSolutionPool : NSObject<ORSolutionPool> {
    NSMutableArray* _all;
    id<ORSolutionInformer> _solutionAddedInformer;
 }

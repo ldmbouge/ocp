@@ -50,8 +50,8 @@ int main_lp(int argc, const char * argv[])
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbColumns-1; i++)
       printf("x[%d] = %10.5f : %10.5f \n",i,[sol floatValue: x[i]],[sol reducedCost: x[i]]);
-//   for(ORInt i = 0; i < nbRows; i++)
-//      printf("dual c[%d] = %f \n",i,[sol dual: ca[i]]);
+   for(ORInt i = 0; i < nbRows; i++)
+      printf("dual c[%d] = %f \n",i,[sol dual: ca[i]]);
    [sol release];
    NSLog(@"we are done (Part I) \n\n");
    
@@ -83,14 +83,12 @@ int main_mip(int argc, const char * argv[])
       [model add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)coef[i][j])]) leq: @((ORInt)b[i])]];
    [model maximize: Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])])];
    
-
-   
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
    [mip solve];
-   id<ORMIPSolution> sol = [[mip solutionPool] best];
+   id<ORSolution> sol = [[mip solutionPool] best];
    NSLog(@"Solution: %@",sol);
-   printf("Objective value: %f \n",[((id<ORObjectiveValueFloat>) [sol objectiveValue]) value]);
+   NSLog(@"Objective value: %@",[sol objectiveValue]);
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
    NSLog(@"we are done");
@@ -187,8 +185,9 @@ int main_both(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   int st0 =  main_lp(argc,argv);
-//   int st1 = main_mip(argc,argv);
+//   int st0 =  main_lp(argc,argv);
+   int st1 = main_mip(argc,argv);
 //   return st0+st1;
-   return st0;
+   return st1;
+//   return st0;
 }

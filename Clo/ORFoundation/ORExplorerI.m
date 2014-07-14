@@ -415,7 +415,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
 }
 
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search
             onSolution: (ORClosure) onSolution
                 onExit: (ORClosure) onExit
                control:(id<ORSearchController>) newCtrl
@@ -447,10 +447,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {}
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {}
--(void)     nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void)     nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {}
 
--(void) optimizeModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) optimizeModel: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^{
       [self nestedOptimize: solver
@@ -461,7 +461,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }];
 }
 
--(void) solveModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) solveModel: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^()
     {
@@ -472,7 +472,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
     }
     ];
 }
--(void) solveAllModel: (id<ORASolver>) solver using: (ORClosure) search  onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) solveAllModel: (id<ORASearchSolver>) solver using: (ORClosure) search  onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^()
     {
@@ -505,7 +505,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [base release];
    [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> new    = [_cFact makeNestedController];
    id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller._val];
@@ -542,7 +542,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self popController];
    [root release];
 }
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> new     = [_cFact makeNestedController];
    id<ORSearchController> root    = [_cFact makeRootController];
