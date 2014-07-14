@@ -29,7 +29,7 @@ typedef struct  {
 } CPBitEventNetwork;
 
 
-@interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
+@interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber> {
 @private
 @protected
     CPEngineI*                       _engine;

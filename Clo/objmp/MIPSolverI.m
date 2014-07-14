@@ -15,7 +15,7 @@
 #import "MIPGurobi.h"
 //#endif
 
-@interface MIPFloatVarSnapshot : NSObject <NSCoding> {
+@interface MIPFloatVarSnapshot : NSObject {
    ORUInt    _name;
    ORFloat   _value;
    ORFloat   _reducedCost;
@@ -89,7 +89,7 @@
 }
 @end
 
-@interface MIPIntVarSnapshot : NSObject <NSCoding> {
+@interface MIPIntVarSnapshot : NSObject  {
    ORUInt    _name;
    ORInt     _value;
    ORFloat   _reducedCost;
@@ -163,7 +163,7 @@
 }
 @end
 
-@interface MIPConstraintSnapshot : NSObject <NSCoding> {
+@interface MIPConstraintSnapshot : NSObject  {
    ORUInt    _name;
 }
 -(MIPConstraintSnapshot*) initMIPConstraintSnapshot: (MIPConstraintI*) cstr name: (ORInt) name;
