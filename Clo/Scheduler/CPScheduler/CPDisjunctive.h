@@ -19,7 +19,7 @@
 
 
 
-@interface CPDisjunctive : CPCoreConstraint<NSCoding> {
+@interface CPDisjunctive : CPCoreConstraint {
     id<CPTaskVarArray>  _tasks;   // TaskVar
     id<CPIntVarArray>   _start; // Start times of tasks
     id<CPIntVarArray>   _dur;   // Durations of tasks

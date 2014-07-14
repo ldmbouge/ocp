@@ -15,7 +15,7 @@
 #import <objcp/CPVar.h>
 
 
-@interface CPDifference : CPCoreConstraint<NSCoding>
+@interface CPDifference : CPCoreConstraint
 -(id) initCPDifference: (id<CPEngine>) engine withInitCapacity: (ORInt) numItems;
 -(void) dealloc;
 -(ORStatus) post;

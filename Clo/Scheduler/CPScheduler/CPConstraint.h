@@ -33,7 +33,7 @@
 //-(ORUInt) nbUVars;
 //@end
 
-@interface CPTaskPrecedence : CPCoreConstraint<NSCoding> {
+@interface CPTaskPrecedence : CPCoreConstraint {
    id<CPTaskVar> _before;
    id<CPTaskVar> _after;
 }
@@ -45,7 +45,7 @@
 -(ORUInt) nbUVars;
 @end
 
-@interface CPOptionalTaskPrecedence : CPCoreConstraint<NSCoding> {
+@interface CPOptionalTaskPrecedence : CPCoreConstraint {
    id<CPTaskVar> _before;
    id<CPTaskVar> _after;
 }
@@ -57,7 +57,7 @@
 -(ORUInt) nbUVars;
 @end
 
-@interface CPTaskIsFinishedBy : CPCoreConstraint<NSCoding> {
+@interface CPTaskIsFinishedBy : CPCoreConstraint {
    id<CPTaskVar> _task;
    id<CPIntVar> _date;
 }

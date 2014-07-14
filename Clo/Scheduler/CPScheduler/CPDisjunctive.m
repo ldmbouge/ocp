@@ -306,14 +306,6 @@
 //{
 //    return getLocalSlack(self);
 //}
-//- (void)encodeWithCoder:(NSCoder *)aCoder
-//{
-//    assert(false);
-//}
-//- (id)initWithCoder:(NSCoder *)aDecoder
-//{
-//    assert(false);
-//}
 //
 //
 ///*******************************************************************************

@@ -12,7 +12,7 @@
 @protocol CPTaskVarArray;
 @protocol CPTaskVar;
 
-@interface CPTaskSequence : CPCoreConstraint<NSCoding> {
+@interface CPTaskSequence : CPCoreConstraint {
    id<CPTaskVarArray>  _tasks;   // TaskVar
    id<CPIntVarArray>  _succ;   // TaskVar
 }

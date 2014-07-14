@@ -301,17 +301,6 @@ static void propagationLoopPreamble(CPCumulative* cumu, ORInt* i_max_usage)
     return rv;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    assert(false);
-   return 0;
-}
-
-
 //------------------------------
 // Short cuts for tasks
 

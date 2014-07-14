@@ -332,15 +332,6 @@
 {
    return 2;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   assert(false);
-   return 0;
-}
 @end
 
 @implementation CPOptionalTaskPrecedence
@@ -390,15 +381,6 @@
 {
    return 2;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   assert(false);
-   return 0;
-}
 @end
 
 @implementation CPTaskIsFinishedBy
@@ -442,15 +424,6 @@
 -(ORUInt) nbUVars
 {
    return 2;
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   assert(false);
-   return 0;
 }
 @end
 

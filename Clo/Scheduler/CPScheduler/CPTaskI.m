@@ -23,7 +23,7 @@
 /*                        CPTaskVarSnapshot                                              */
 /*****************************************************************************************/
 
-@interface CPTaskVarSnapshot : NSObject<NSCoding> {
+@interface CPTaskVarSnapshot : NSObject {
    ORUInt    _name;
    ORInt     _start;
    ORInt     _end;
@@ -79,16 +79,6 @@
 -(ORUInt) getId
 {
    return _name;
-}
-- (void) encodeWithCoder: (NSCoder *) aCoder
-{
-   assert(false);
-}
-- (id) initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   assert(false);
-   return self;
 }
 -(ORInt) est
 {
