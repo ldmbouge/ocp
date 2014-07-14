@@ -102,7 +102,7 @@ typedef struct  {
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@interface CPBitVarMultiCast : NSObject<CPBitVarNotifier,NSCoding> {
+@interface CPBitVarMultiCast : NSObject<CPBitVarNotifier> {
     CPBitVarI**       _tab;
     BOOL    _tracksLoseEvt;
     ORInt          _nb;
