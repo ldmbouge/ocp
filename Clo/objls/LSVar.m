@@ -174,7 +174,7 @@
          return self;
       }
    }
-   [_terms addObject:[[LSLinTerm alloc] init:x coef:a]];
+   [_terms addObject:[[[LSLinTerm alloc] init:x coef:a] autorelease]];
    return self;
 }
 -(id<LSGradient>)addLinear:(LSLinGradient*)g
@@ -204,6 +204,10 @@
    self = [super init];
    _x = x;
    return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
 }
 -(ORBool)isConstant
 {
@@ -259,6 +263,10 @@
    _cst = c;
    return self;
 }
+-(void)dealloc
+{
+   [super dealloc];
+}
 -(ORBool)isConstant
 {
    return YES;
@@ -310,15 +318,15 @@
 @implementation LSGradient
 +(LSGradient*)varGradient:(id<LSIntVar>)x
 {
-   return [[LSVarGradient alloc] init:x];
+   return [[[LSVarGradient alloc] init:x] autorelease];
 }
 +(LSGradient*)cstGradient:(ORInt)c
 {
-   return [[LSCstGradient alloc] init:c];
+   return [[[LSCstGradient alloc] init:c] autorelease];
 }
 +(LSGradient*)linGradient
 {
-   return [[LSLinGradient alloc] init];
+   return [[[LSLinGradient alloc] init] autorelease];
 }
 
 +(id<LSGradient>)maxOf:(id<LSGradient>)g1 and:(id<LSGradient>)g2

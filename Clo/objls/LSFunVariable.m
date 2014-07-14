@@ -95,42 +95,44 @@
 }
 -(void)post
 {
-   _dis = [LSFactory intVar:_engine domain:RANGE(_engine,0,_terms.range.size)];
-   id<LSIntVarArray> vk = [LSFactory intVarArray:_engine range:_terms.range with:^id<LSIntVar>(ORInt k) {
-      return [_terms[k] evaluation];
-   }];
-   [_engine add:[LSFactory sum:_dis over:vk]];
-   _eval = [LSFactory intVarView:_engine domain:RANGE(_engine,0,1) fun:^ORInt{
-      return getLSIntValue(_dis) > 0;
-   } src:@[_dis]];
-   id<LSIntVarArray> av = sortById([self variables]);
-   _ig = [ORFactory idArray:_engine range:[av range]];
-   for(ORInt i = av.range.low;i <= av.range.up;i++) {
-      id<LSIntVar> x = av[i];
-      id<LSGradient> g = [LSGradient cstGradient:0];
-      for(id<LSFunction> tk in _terms)
-         g = [LSGradient maxOf:g and:[tk increase:x]];
-      assert([g isVar]);
-      id<LSIntVar>   v = [g variable];
-      id<LSIntVar> fgv = [LSFactory intVar:_engine domain:RANGE(_engine,0,1)];
-      [_engine add:[LSFactory inv:fgv equal:^ORInt{
-         return max(0,getLSIntValue(v) - getLSIntValue(_eval));
-      } vars:@[v,_eval]]];
-      _ig[i] = [LSGradient varGradient:fgv];
-   }
-   _dg = [ORFactory idArray:_engine range:[av range]];
-   for(ORInt i = av.range.low;i <= av.range.up;i++) {
-      id<LSIntVar> x = av[i];
-      id<LSGradient> g = [LSGradient cstGradient:0];
-      for(id<LSFunction> tk in _terms)
-         g = [LSGradient maxOf:g and:[tk decrease:x]];
-      assert([g isVar]);
-      id<LSIntVar> v = [g variable];
-      id<LSIntVar> fgv = [LSFactory intVar:_engine domain:RANGE(_engine,0,1)];
-      [_engine add:[LSFactory inv:fgv equal:^ORInt{
-         return getLSIntValue(v) * getLSIntValue(_eval);
-      } vars:@[v,_eval]]];
-      _dg[i] = [LSGradient varGradient:fgv];
+   @autoreleasepool {
+      _dis = [LSFactory intVar:_engine domain:RANGE(_engine,0,_terms.range.size)];
+      id<LSIntVarArray> vk = [LSFactory intVarArray:_engine range:_terms.range with:^id<LSIntVar>(ORInt k) {
+         return [_terms[k] evaluation];
+      }];
+      [_engine add:[LSFactory sum:_dis over:vk]];
+      _eval = [LSFactory intVarView:_engine domain:RANGE(_engine,0,1) fun:^ORInt{
+         return getLSIntValue(_dis) > 0;
+      } src:@[_dis]];
+      id<LSIntVarArray> av = sortById([self variables]);
+      _ig = [ORFactory idArray:_engine range:[av range]];
+      for(ORInt i = av.range.low;i <= av.range.up;i++) {
+         id<LSIntVar> x = av[i];
+         id<LSGradient> g = [LSGradient cstGradient:0];
+         for(id<LSFunction> tk in _terms)
+            g = [LSGradient maxOf:g and:[tk increase:x]];
+         assert([g isVar]);
+         id<LSIntVar>   v = [g variable];
+         id<LSIntVar> fgv = [LSFactory intVar:_engine domain:RANGE(_engine,0,1)];
+         [_engine add:[LSFactory inv:fgv equal:^ORInt{
+            return max(0,getLSIntValue(v) - getLSIntValue(_eval));
+         } vars:@[v,_eval]]];
+         _ig[i] = [[LSGradient varGradient:fgv] retain];
+      }
+      _dg = [ORFactory idArray:_engine range:[av range]];
+      for(ORInt i = av.range.low;i <= av.range.up;i++) {
+         id<LSIntVar> x = av[i];
+         id<LSGradient> g = [LSGradient cstGradient:0];
+         for(id<LSFunction> tk in _terms)
+            g = [LSGradient maxOf:g and:[tk decrease:x]];
+         assert([g isVar]);
+         id<LSIntVar> v = [g variable];
+         id<LSIntVar> fgv = [LSFactory intVar:_engine domain:RANGE(_engine,0,1)];
+         [_engine add:[LSFactory inv:fgv equal:^ORInt{
+            return getLSIntValue(v) * getLSIntValue(_eval);
+         } vars:@[v,_eval]]];
+         _dg[i] = [[LSGradient varGradient:fgv] retain];
+      }
    }
 }
 -(id<LSIntVar>)evaluation
@@ -215,47 +217,49 @@
 }
 -(void)post
 {
-   id<LSIntVarArray> vk = [LSFactory intVarArray:_engine range:_terms.range with:^id<LSIntVar>(ORInt k) {
-      return [_terms[k] evaluation];
-   }];
-   ORInt lb = 0,ub = 0;
-   for(ORInt i=vk.range.low;i <= vk.range.up;i++) {
-      ORInt lk = [_terms[i] evaluation].domain.low;
-      ORInt uk = [_terms[i] evaluation].domain.up;
-      ORInt ck = [_coefs at:i];
-      ORInt ubk = max(lk * ck,uk * ck);
-      ORInt lbk = min(lk * ck,uk * ck);
-      lb += lbk;
-      ub += ubk;
-   }
-   _sum = [LSFactory intVar:_engine domain:RANGE(_engine,lb,ub)];
-   [_engine add:[LSFactory sum:_sum is:_coefs times:vk]];
-   id<LSIntVarArray> av = sortById([self variables]);
-   _ig = [ORFactory idArray:_engine range:[av range]];
-   for(ORInt i = av.range.low;i <= av.range.up;i++) {
-      id<LSIntVar> x = av[i];
-      id<LSGradient> g = [LSGradient cstGradient:0];
-      ORInt k = _terms.range.low;
-      for(id<LSFunction> tk in _terms) {
-         id<LSGradient> gk = [tk increase:x];
-         g = [LSGradient sumOf:g and:[gk scaleBy:[_coefs at:k]]];
-         k++;
+   @autoreleasepool {
+      id<LSIntVarArray> vk = [LSFactory intVarArray:_engine range:_terms.range with:^id<LSIntVar>(ORInt k) {
+         return [_terms[k] evaluation];
+      }];
+      ORInt lb = 0,ub = 0;
+      for(ORInt i=vk.range.low;i <= vk.range.up;i++) {
+         ORInt lk = [_terms[i] evaluation].domain.low;
+         ORInt uk = [_terms[i] evaluation].domain.up;
+         ORInt ck = [_coefs at:i];
+         ORInt ubk = max(lk * ck,uk * ck);
+         ORInt lbk = min(lk * ck,uk * ck);
+         lb += lbk;
+         ub += ubk;
       }
-      id<LSIntVar> gv  = [g intVar:_engine];
-      _ig[i] = [LSGradient varGradient:gv];
-   }
-   _dg = [ORFactory idArray:_engine range:[av range]];
-   for(ORInt i = av.range.low;i <= av.range.up;i++) {
-      id<LSIntVar> x = av[i];
-      id<LSGradient> g = [LSGradient cstGradient:0];
-      ORInt k = _terms.range.low;
-      for(id<LSFunction> tk in _terms) {
-         id<LSGradient> gk = [tk decrease:x];
-         g = [LSGradient sumOf:g and:[gk scaleBy:[_coefs at:k]]];
-         k++;
+      _sum = [LSFactory intVar:_engine domain:RANGE(_engine,lb,ub)];
+      [_engine add:[LSFactory sum:_sum is:_coefs times:vk]];
+      id<LSIntVarArray> av = sortById([self variables]);
+      _ig = [ORFactory idArray:_engine range:[av range]];
+      for(ORInt i = av.range.low;i <= av.range.up;i++) {
+         id<LSIntVar> x = av[i];
+         id<LSGradient> g = [LSGradient cstGradient:0];
+         ORInt k = _terms.range.low;
+         for(id<LSFunction> tk in _terms) {
+            id<LSGradient> gk = [tk increase:x];
+            g = [LSGradient sumOf:g and:[gk scaleBy:[_coefs at:k]]];
+            k++;
+         }
+         id<LSIntVar> gv  = [g intVar:_engine];
+         _ig[i] = [[LSGradient varGradient:gv] retain];
       }
-      id<LSIntVar>  gv = [g intVar:_engine];
-      _dg[i] = [LSGradient varGradient:gv];
+      _dg = [ORFactory idArray:_engine range:[av range]];
+      for(ORInt i = av.range.low;i <= av.range.up;i++) {
+         id<LSIntVar> x = av[i];
+         id<LSGradient> g = [LSGradient cstGradient:0];
+         ORInt k = _terms.range.low;
+         for(id<LSFunction> tk in _terms) {
+            id<LSGradient> gk = [tk decrease:x];
+            g = [LSGradient sumOf:g and:[gk scaleBy:[_coefs at:k]]];
+            k++;
+         }
+         id<LSIntVar>  gv = [g intVar:_engine];
+         _dg[i] = [[LSGradient varGradient:gv] retain];
+      }
    }
 }
 -(id<LSIntVar>)evaluation
