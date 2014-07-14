@@ -196,15 +196,15 @@ int mainBasicLNS(int argc, const char * argv[])
                   NSLog(@"Time: %lld:",timeEnd - timeStart);
                }];
             } onRepeat: ^{
-               id<ORSolution> s = [[cp solutionPool] best];
+               id<ORSolution,CPSchedulerSolution> s = [[cp solutionPool] best];
                for(ORInt k = 1; k <= size; k++) {
                   id<ORIntVarArray> succ = disjunctive[k].successors;
                   id<ORTaskVarArray> t = disjunctive[k].taskVars;
                   for(ORInt j = succ.range.low+1; j <= succ.range.up; j++) {
                      if ([s intValue: succ[j]] != size + 1) {
                         ORInt next = [s intValue: succ[j]];
-                        ORInt ect = [t[j] ect: s];
-                        ORInt est = [t[next] est: s];
+                        ORInt ect = [s ect: t[j]];
+                        ORInt est = [s est: t[next]];
                         if (ect != est) { // this precedence constraint is not tight
                            if ([d next] <= 50)
                               [cp label: succ[j] with: next];
@@ -307,7 +307,7 @@ int mainSubpathLNS(int argc, const char * argv[])
                }];
             }
             onRepeat: ^{
-               id<ORSolution> sol = [[cp solutionPool] best];
+               id<ORSolution,CPSchedulerSolution> sol = [[cp solutionPool] best];
                for(ORInt k = 1; k <= 3; k++) {
                   ORInt i = [sM next];
                   id<ORIntVarArray> succ = disjunctive[i].successors;
@@ -319,8 +319,8 @@ int mainSubpathLNS(int argc, const char * argv[])
                      if (j != 0) {
                         ORInt next = [sol intValue: succ[j]];
                         if (next != size+1) {
-                           ORInt ect = [t[j] ect: sol];
-                           ORInt est = [t[next] est: sol];
+                           ORInt ect = [sol ect: t[j]];
+                           ORInt est = [sol est: t[next]];
                            if (ect != est) {
                               if ([pD next] <= 20)
                                  [cp label: succ[j] with: [sol intValue: succ[j]]];
@@ -420,6 +420,7 @@ int mainPureCP(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   return mainPureCP(argc,argv);
+//   return mainPureCP(argc,argv);
+   return mainSubpathLNS(argc,argv);
 }
 

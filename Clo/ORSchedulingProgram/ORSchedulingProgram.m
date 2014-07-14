@@ -17,130 +17,6 @@
 #import <CPScheduler/CPTask.h>
 
 
-@interface ORCPTaskVarSnapshot : NSObject<ORSnapshot,NSCoding> {
-   ORUInt    _name;
-   ORInt     _start;
-   ORInt     _end;
-   ORInt     _present;
-   ORInt     _absent;
-   ORInt     _minDuration;
-   ORInt     _maxDuration;
-   ORBool    _bound;
-}
--(ORCPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<ORTaskVar>) t with: (id<CPCommonProgram>) solver;
--(NSString*) description;
--(ORBool)isEqual: (id) object;
--(NSUInteger) hash;
--(ORUInt)getId;
-@end
-
-@implementation ORCPTaskVarSnapshot
--(ORCPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<ORTaskVar>) t with: (id<CPProgram,CPScheduler>) solver
-{
-   self = [super init];
-   _name = [t getId];
-   _start = [solver est: t];
-   _end = [solver ect: t];
-   _minDuration = [solver minDuration: t];
-   _maxDuration = [solver maxDuration: t];
-   _present = [solver isPresent: t];
-   _absent = [solver isAbsent: t];
-   return self;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"task(%d,%d,%d,%d,%d,%d,%d)",_name,_start,_end,_minDuration,_maxDuration,_present,_absent];
-   return buf;
-}
--(ORBool) isEqual: (id) object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORCPTaskVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return _start == other->_start && _end == other->_end  && _minDuration == other->_minDuration &&
-         _maxDuration == other->_maxDuration && _present == other->_present && _absent == other->_absent;
-      }
-      else
-         return NO;
-   } else
-      return NO;
-}
--(ORInt) intValue
-{
-   assert(false);
-   return 0;
-}
--(ORBool) boolValue
-{
-   assert(false);
-   return 0;
-}
--(ORFloat) floatValue
-{
-   assert(false);
-   return 0;
-}
--(NSUInteger) hash
-{
-   return (_name << 16) + _start * _end;
-}
--(ORUInt) getId
-{
-   return _name;
-}
-- (void) encodeWithCoder: (NSCoder *) aCoder
-{
-   assert(false);
-}
-- (id) initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   assert(false);
-   return self;
-}
--(ORInt) est
-{
-   return _start;
-}
--(ORInt) ect
-{
-   return _start + _minDuration;
-}
--(ORInt) lst
-{
-   return _end - _minDuration;
-}
--(ORInt) lct
-{
-   return _end;
-}
--(ORInt) minDuration
-{
-   return _minDuration;
-}
--(ORInt) maxDuration
-{
-   return _maxDuration;
-}
--(ORInt) isAbsent
-{
-   return _absent;
-}
--(ORInt) isPresent
-{
-   return _present;
-}
-@end
-
-@implementation ORCPTakeSnapshot (ORScheduler)
--(void) visitTask: (id<ORTaskVar>) v
-{
-   _snapshot = [[ORCPTaskVarSnapshot alloc] initCPTaskVarSnapshot: v with: _solver];
-}
-@end
-
-
 @implementation CPSolver (CPScheduler)
 //-(void) labelActivities: (id<ORActivityArray>) act
 //{
@@ -421,3 +297,89 @@
 }
 @end
 
+@interface ORSolution (CPScheduler)
+-(ORInt) est: (id<ORTaskVar>) task;
+-(ORInt) ect: (id<ORTaskVar>) task;
+-(ORInt) lst: (id<ORTaskVar>) task;
+-(ORInt) lct: (id<ORTaskVar>) task;
+-(ORInt) isPresent: (id<ORTaskVar>) task;
+-(ORInt) isAbsent: (id<ORTaskVar>) task;
+-(ORBool) boundActivity: (id<ORTaskVar>) task;
+-(ORInt) minDuration: (id<ORTaskVar>) task;
+-(ORInt) maxDuration: (id<ORTaskVar>) task;
+@end
+
+@implementation ORSolution (CPScheduler)
+-(ORInt) est: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap est];
+}
+-(ORInt) ect: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap ect];
+}
+-(ORInt) lst: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap lst];
+}
+-(ORInt) lct: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap lct];
+}
+-(ORInt) isPresent: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap isPresent];
+}
+-(ORInt) isAbsent: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap isAbsent];
+}
+-(ORBool) boundActivity: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap bound];
+}
+-(ORInt) minDuration: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap minDuration];
+}
+-(ORInt) maxDuration: (id<ORTaskVar>) task
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [task getId];
+   }];
+   id snap = [_varShots objectAtIndex:idx];
+   return [snap maxDuration];
+}
+@end

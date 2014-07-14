@@ -19,6 +19,115 @@
 #import "CPTaskI.h"
 #import "CPFactory.h"
 
+/*****************************************************************************************/
+/*                        CPTaskVarSnapshot                                              */
+/*****************************************************************************************/
+
+@interface CPTaskVarSnapshot : NSObject<NSCoding> {
+   ORUInt    _name;
+   ORInt     _start;
+   ORInt     _end;
+   ORBool    _present;
+   ORBool    _absent;
+   ORInt     _minDuration;
+   ORInt     _maxDuration;
+   ORBool    _bound;
+}
+-(CPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<CPTaskVar>) t name: (ORInt) name;
+-(NSString*) description;
+-(ORBool)isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation CPTaskVarSnapshot
+-(CPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<CPTaskVar>) t name: (ORInt) name;
+{
+   self = [super init];
+   _name = name;
+   _start = [t est];
+   _end = [t ect];
+   _minDuration = [t minDuration];
+   _maxDuration = [t maxDuration];
+   _present = [t isPresent];
+   _absent = [t isAbsent];
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"task(%d,%d,%d,%d,%d,%d,%d)",_name,_start,_end,_minDuration,_maxDuration,_present,_absent];
+   return buf;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      CPTaskVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _start == other->_start && _end == other->_end  && _minDuration == other->_minDuration &&
+         _maxDuration == other->_maxDuration && _present == other->_present && _absent == other->_absent;
+      }
+      else
+         return NO;
+   } else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + _start * _end;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+- (void) encodeWithCoder: (NSCoder *) aCoder
+{
+   assert(false);
+}
+- (id) initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   assert(false);
+   return self;
+}
+-(ORInt) est
+{
+   return _start;
+}
+-(ORInt) ect
+{
+   return _start + _minDuration;
+}
+-(ORInt) lst
+{
+   return _end - _minDuration;
+}
+-(ORInt) lct
+{
+   return _end;
+}
+-(ORInt) minDuration
+{
+   return _minDuration;
+}
+-(ORInt) maxDuration
+{
+   return _maxDuration;
+}
+-(ORBool) isAbsent
+{
+   return _absent;
+}
+-(ORBool) isPresent
+{
+   return _present;
+}
+-(ORBool) bound
+{
+   return (_start + _minDuration == _end) && (_minDuration == _maxDuration);
+}
+@end
+
 typedef struct  {
    TRId _boundEvt[2];
    TRId _startEvt[2];
@@ -62,6 +171,10 @@ typedef struct  {
       _net._durationEvt[i] = makeTRId(_trail,nil);
    }
    return self;
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[CPTaskVarSnapshot alloc] initCPTaskVarSnapshot: self name: id];
 }
 -(ORInt) est
 {

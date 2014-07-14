@@ -70,36 +70,4 @@
 {
    return [ORFactory constraint: self isFinishedBy: date];
 }
--(ORInt) est: (id) store
-{
-   return [((id<ORTaskVarQuery>) [store concretize: self]) est];
-}
--(ORInt) ect: (id) store
-{
-   return [((id<ORTaskVarQuery>) [store concretize: self]) ect];
-}
--(ORInt) lst: (id) store;
-{
-   return [((id<ORTaskVarQuery>) [store concretize: self]) lst];
-}
--(ORInt) lct: (id) store
-{
-   return [((id<ORTaskVarQuery>) [store concretize: self]) lct];
-}
--(ORInt) minDuration: (id) store
-{
-   return [((id<ORTaskVarQuery>) [store concretize: self]) minDuration];
-}
--(ORInt) maxDuration: (id) store
-{
-   return [((id<ORTaskVarQuery>) [store concretize: self]) maxDuration];
-}
--(ORBool) isPresent: (id) store
-{
-   return [((id<ORTaskVarQuery>) [store concretize: self]) isPresent];
-}
--(ORBool) isAbsent: (id) store
-{
-   return [((id<ORTaskVarQuery>) [store concretize: self]) isAbsent];
-}
 @end

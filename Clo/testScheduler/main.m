@@ -74,7 +74,7 @@ int main(int argc, const char * argv[])
       [model add: [t[0] precedes: t[1]]];
       
       // search
-      id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
+      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
       NSLog(@"Task: %@",[cp description: t[0]]);
       NSLog(@"Task: %@",[cp description: t[1]]);
       NSLog(@"Optional Task: %@",[cp description: o]);

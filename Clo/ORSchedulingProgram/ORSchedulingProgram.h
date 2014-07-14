@@ -45,4 +45,20 @@
 -(NSString*) description: (id<ORObject>) o;
 @end
 
+@protocol CPSchedulerSolution
+-(ORInt) est: (id<ORTaskVar>) task;
+-(ORInt) ect: (id<ORTaskVar>) task;
+-(ORInt) lst: (id<ORTaskVar>) task;
+-(ORInt) lct: (id<ORTaskVar>) task;
+-(ORInt) isPresent: (id<ORTaskVar>) task;
+-(ORInt) isAbsent: (id<ORTaskVar>) task;
+-(ORBool) boundActivity: (id<ORTaskVar>) task;
+-(ORInt) minDuration: (id<ORTaskVar>) task;
+-(ORInt) maxDuration: (id<ORTaskVar>) task;
+@end
+
+
+
+
+
 
