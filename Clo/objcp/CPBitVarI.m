@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORmodeling/ORSOlution.h>
+#import <ORProgram/ORSolution.h>
 #import "CPBitVarI.h"
 #import "CPEngineI.h"
 #import "CPTrigger.h"
@@ -35,7 +35,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     freeList(net->_maxEvt._val);
 }
 
-@interface CPBitVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+@interface CPBitVarSnapshot : NSObject<NSCoding> {
    ORUInt    _name;
    union {
       ORInt _value;

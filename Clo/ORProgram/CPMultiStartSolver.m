@@ -17,6 +17,7 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
+#import "ORSolution.h"
 
 
 /******************************************************************************************/
@@ -598,5 +599,9 @@
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[self worker] objectiveValue];
 }
 @end

@@ -122,16 +122,6 @@
 {
    [v visitIntVar: self];
 }
--(ORInt) value: (id<ORSolution>) solution
-{
-   id<ORQueryIntVar> q = [solution value: self];
-   return [q value];
-}
--(ORBool) bound: (id<ORSolution>) solution
-{
-   id<ORQueryIntVar> q = [solution value: self];
-   return [q bound];
-}
 @end
 
 @implementation ORIntVarAffineI {
@@ -316,16 +306,6 @@
 -(ORFloat) up
 {
    return _domain.up;
-}
--(ORFloat) value: (id<ORSolution>) solution
-{
-   id<ORQueryFloatVar> q = [solution value: self];
-   return [q value];
-}
--(ORBool) bound: (id<ORSolution>) solution
-{
-   id<ORQueryFloatVar> q = [solution value: self];
-   return [q bound];
 }
 @end
 

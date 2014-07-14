@@ -14,7 +14,6 @@
 
 @protocol ORCommand;
 @protocol ORSearchEngine;
-@protocol ORASolver;
 @protocol ORProblem;
 @protocol ORCheckpoint;
 @protocol ORTrail;

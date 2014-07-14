@@ -666,6 +666,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORAnnotation alloc] init];
 }
++(id<ORSolutionInformer>) solutionInformer
+{
+   return [ORConcurrency solutionInformer];
+}
 @end
 
 @implementation ORFactory (Expressions)

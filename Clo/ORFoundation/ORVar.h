@@ -34,8 +34,6 @@
 -(ORInt) shift;
 -(ORInt) literal;
 -(id<ORIntVar>)base;
--(ORInt) value: (id<ORSolution>) solution;
--(ORBool) bound: (id<ORSolution>) solution;
 @end
 
 @protocol ORBitVar <ORExprVar>
@@ -50,8 +48,6 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
--(ORFloat) value: (id<ORSolution>) solution;
--(ORBool) bound: (id<ORSolution>) solution;
 @end
 
 

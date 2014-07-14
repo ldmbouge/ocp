@@ -16,8 +16,8 @@
 @interface MIPSolver : ORGamma<MIPProgram>
 -(id<MIPProgram>) initMIPSolver: (id<ORModel>) model;
 -(id<ORObjectiveValue>) objectiveValue;
--(id<ORMIPSolutionPool>) solutionPool;
--(id<ORMIPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 -(id<ORExplorer>)  explorer;
 @end
 

@@ -40,7 +40,7 @@
 //-(id<ORCPSolution>) best;
 //@end
 
-@protocol CPCommonProgram  <ORASolver,ORGamma>
+@protocol CPCommonProgram  <ORASearchSolver,ORGamma>
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;

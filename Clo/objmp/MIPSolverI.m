@@ -15,6 +15,210 @@
 #import "MIPGurobi.h"
 //#endif
 
+@interface MIPFloatVarSnapshot : NSObject <NSCoding> {
+   ORUInt    _name;
+   ORFloat   _value;
+   ORFloat   _reducedCost;
+   
+}
+-(MIPFloatVarSnapshot*) initMIPFloatVarSnapshot: (MIPVariableI*) v name: (ORInt) name;
+-(ORFloat) floatValue;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation MIPFloatVarSnapshot
+-(MIPFloatVarSnapshot*) initMIPFloatVarSnapshot: (MIPVariableI*) v name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   _value = [v floatValue];
+   return self;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORFloat) reducedCost
+{
+   return _reducedCost;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      MIPFloatVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return (_value == other->_value) && (_reducedCost == other->_reducedCost);
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"float(%d) : (%f,%f)",_name,_value,_reducedCost];
+   return buf;
+}
+
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_reducedCost];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_reducedCost];
+   return self;
+}
+@end
+
+@interface MIPIntVarSnapshot : NSObject <NSCoding> {
+   ORUInt    _name;
+   ORInt     _value;
+   ORFloat   _reducedCost;
+   
+}
+-(MIPIntVarSnapshot*) initMIPIntVarSnapshot: (MIPIntVariableI*) v name: (ORInt) name;
+-(ORInt) intValue;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation MIPIntVarSnapshot
+-(MIPIntVarSnapshot*) initMIPIntVarSnapshot: (MIPIntVariableI*) v name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   _value = [v intValue];
+   return self;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORFloat) reducedCost
+{
+   return _reducedCost;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      MIPIntVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return (_value == other->_value) && (_reducedCost == other->_reducedCost);
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"float(%d) : (%d,%f)",_name,_value,_reducedCost];
+   return buf;
+}
+
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_reducedCost];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_reducedCost];
+   return self;
+}
+@end
+
+@interface MIPConstraintSnapshot : NSObject <NSCoding> {
+   ORUInt    _name;
+}
+-(MIPConstraintSnapshot*) initMIPConstraintSnapshot: (MIPConstraintI*) cstr name: (ORInt) name;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation MIPConstraintSnapshot
+-(MIPConstraintSnapshot*) initMIPConstraintSnapshot: (MIPConstraintI*) cstr name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   return self;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      MIPConstraintSnapshot* other = object;
+      if (_name == other->_name) {
+         return TRUE;
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16);
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"mip(constraint)(%d) :",_name];
+   return buf;
+}
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   return self;
+}
+@end
+
 @implementation MIPConstraintI;
 
 -(MIPConstraintI*) initMIPConstraintI: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
@@ -55,6 +259,10 @@
    if (_tmpCoef)
       free(_tmpCoef);
    [super dealloc];
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[MIPConstraintSnapshot alloc] initMIPConstraintSnapshot: self name: id];
 }
 -(void) resize
 {
@@ -474,6 +682,10 @@
    
    return self;
 }
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[MIPFloatVarSnapshot alloc] initMIPFloatVarSnapshot: self name: id];
+}
 -(ORBool) hasBounds
 {
    return _hasBounds;
@@ -598,6 +810,10 @@
 {
    self = [super initMIPVariableI: solver];
    return self;
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[MIPIntVarSnapshot alloc] initMIPIntVarSnapshot: self name: id];
 }
 -(ORBool) isInteger
 {

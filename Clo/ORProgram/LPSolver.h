@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORProgram/LPProgram.h>
+#import "ORSolution.h"
 
 // LPSolver
 @interface LPSolver : ORGamma<LPProgram>
@@ -21,7 +22,7 @@
 -(id<LPColumn>) createColumn;
 -(void) addColumn: (id<LPColumn>) column;
 -(id<ORObjectiveValue>) objectiveValue;
--(id<ORLPSolution>) captureSolution;
+-(id<ORSolution>) captureSolution;
 @end
 
 @interface LPRelaxation : ORGamma<LPRelaxation>
@@ -37,6 +38,11 @@
 -(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub;
 @end
 
+
+@interface ORSolution (LPSolver)
+-(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORFloatVar>) x;
+@end
 
 // LPSolverFactory
 @interface LPSolverFactory : NSObject

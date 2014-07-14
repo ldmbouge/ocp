@@ -41,6 +41,9 @@
 +(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model;
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model;
 +(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model;
+
++(id<ORSolution>) solution: (id<ORModel>) m solver: (id<ORASolver>) solver;
++(id<ORSolutionPool>) createSolutionPool;
 @end
 
 @interface ORLinearRelaxation : NSObject<ORRelaxation>

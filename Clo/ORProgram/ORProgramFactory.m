@@ -52,6 +52,14 @@
 
 
 @implementation ORFactory (Concretization)
++(id<ORSolution>) solution: (id<ORModel>) m solver: (id<ORASolver>) solver
+{
+   return [[ORSolution alloc] initORSolution: m with: solver];
+}
++(id<ORSolutionPool>) createSolutionPool
+{
+   return [[ORSolutionPool alloc] init];
+}
 
 +(id) createCPProgram: (id<ORModel>) model
 {

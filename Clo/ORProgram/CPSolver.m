@@ -23,6 +23,7 @@
 #import "CPProgram.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
+#import "ORSolution.h"
 
 
 #if defined(__linux__)
@@ -214,6 +215,10 @@
 {
    return [_engine objective];
 }
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[_engine objective] value];
+}
 -(id<ORTracer>) tracer
 {
    return _tracer;
@@ -262,6 +267,7 @@
 {
    return _sPool;
 }
+// [pvh: This method should be higher; no need to repeat for all solvers]
 -(id<ORSolution>) captureSolution
 {
    return [ORFactory solution: _model solver: self];
