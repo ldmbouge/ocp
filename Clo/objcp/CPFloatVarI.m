@@ -18,7 +18,7 @@
 /*                        CPFloatVarSnapshot                                             */
 /*****************************************************************************************/
 
-@interface CPFloatVarSnapshot : NSObject<NSCoding>
+@interface CPFloatVarSnapshot : NSObject
 {
    ORUInt    _name;
    ORFloat   _value;

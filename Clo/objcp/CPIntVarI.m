@@ -24,7 +24,7 @@
 /*                        CPIntVarSnapshot                                               */
 /*****************************************************************************************/
 
-@interface CPIntVarSnapshot : NSObject<NSCoding> {
+@interface CPIntVarSnapshot : NSObject {
    ORUInt    _name;
    ORInt     _value;
    ORBool    _bound;

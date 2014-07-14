@@ -35,7 +35,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     freeList(net->_maxEvt._val);
 }
 
-@interface CPBitVarSnapshot : NSObject<NSCoding> {
+@interface CPBitVarSnapshot : NSObject {
    ORUInt    _name;
    union {
       ORInt _value;
@@ -43,18 +43,19 @@ static void deallocNetwork(CPBitEventNetwork* net)
    }              _rep;
    BOOL         _asDom;
 }
--(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v;
+-(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v name: (ORInt) name;
 -(int)intValue;
 -(ORBool)boolValue;
 @end
 
-// TOFIX: GREG
+// [pvh: Can someone fix this implementation?
 @implementation CPBitVarSnapshot
--(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v
+-(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v name: (ORInt) name
 {
    self = [super init];
-   _name = [v getId];
+   _name = name;
    _asDom = ![v bound];
+   assert(false);
 //   if (_asDom) {
 //      _rep._dom = [[v domain] copy];
 //   } else
@@ -78,28 +79,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(ORFloat) floatValue
 {
    return _asDom ? [_rep._dom min] : _rep._value;   
-}
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_asDom];
-   if (_asDom) {
-      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
-   } else {
-      [aCoder encodeObject:_rep._dom];
-   }
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_asDom];
-   if (_asDom)
-      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
-   else {
-      _rep._dom = [[aDecoder decodeObject] retain];
-   }
-   return self;
 }
 @end
 
@@ -125,6 +104,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
     if (_triggers != nil)
         [_triggers release];    
     [super dealloc];
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[CPBitVarSnapshot alloc] initCPBitVarSnapshot: self name: id];
 }
 -(id<CPEngine>) engine
 {
@@ -462,25 +445,5 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     for(int i=0;i<_nb;i++)
         [_tab[i] bitFixedEvt:dsz sender:sender];
-}
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   for(ORInt k=0;k<_nb;k++)
-      [aCoder encodeObject:_tab[k]];
-   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   _tab = malloc(sizeof(CPBitVarI*)*_mx);
-   for(ORInt k=0;k<_nb;k++)
-      _tab[k] = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];   
-   return self;
 }
 @end

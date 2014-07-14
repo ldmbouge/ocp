@@ -15,7 +15,7 @@
 #import "LPGurobi.h"
 //#endif
 
-@interface LPFloatVarSnapshot : NSObject <NSCoding> {
+@interface LPFloatVarSnapshot : NSObject  {
    ORUInt    _name;
    ORFloat   _value;
    ORFloat   _reducedCost;
@@ -91,7 +91,7 @@
 }
 @end
 
-@interface LPConstraintSnapshot : NSObject <NSCoding> {
+@interface LPConstraintSnapshot : NSObject {
    ORUInt    _name;
    ORFloat   _dual;
 }
