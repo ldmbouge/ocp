@@ -44,10 +44,11 @@
 // Disjunctive Resource constraint
 +(id<ORTaskDisjunctive>) disjunctive: (id<ORTaskVarArray>) task;
 +(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model;
-+(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model;
++(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model transition: (id<ORIntMatrix>) matrix;
+//+(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model;
 
 +(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
-+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
+//+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
 
 // Difference Logic constraints
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems;
@@ -61,5 +62,6 @@
 // Precedence constraints
 +(id<ORTaskPrecedes>) constraint: (id<ORTaskVar>) before precedes: (id<ORTaskVar>) after;
 +(id<ORTaskIsFinishedBy>) constraint: (id<ORTaskVar>) task isFinishedBy: (id<ORIntVar>) date;
-
++(id<ORTaskDuration>) constraint: (id<ORTaskVar>) task duration: (id<ORIntVar>) duration;
++(id<ORTaskAddTransitionTime>) constraint: (id<ORTaskVar>) normal extended:  (id<ORTaskVar>) extended time: (id<ORIntVar>) time;
 @end

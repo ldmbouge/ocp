@@ -117,15 +117,15 @@
    return (id<ORTaskDisjunctiveArray>) o;
 }
 
-+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
-{
-   id<ORIdArray> o = [ORFactory idArray: model range:range];
-   for(ORInt k=range.low;k <= range.up;k++) {
-      id<ORTaskSequence> dr = [ORFactory sequenceConstraint: model];
-      [o set: dr at:k];
-   }
-   return (id<ORTaskSequenceArray>) o;
-}
+//+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
+//{
+//   id<ORIdArray> o = [ORFactory idArray: model range:range];
+//   for(ORInt k=range.low;k <= range.up;k++) {
+//      id<ORTaskSequence> dr = [ORFactory sequenceConstraint: model];
+//      [o set: dr at:k];
+//   }
+//   return (id<ORTaskSequenceArray>) o;
+//}
 
 // Precedes
 //
@@ -139,6 +139,18 @@
 {
    id<ORTaskIsFinishedBy> o = [[ORTaskIsFinishedBy alloc] initORTaskIsFinishedBy: task isFinishedBy: date];
    [[task tracker] trackMutable: o];
+   return o;
+}
++(id<ORTaskDuration>) constraint: (id<ORTaskVar>) task duration: (id<ORIntVar>) duration
+{
+   id<ORTaskDuration> o = [[ORTaskDuration alloc] initORTaskDuration: task duration: duration];
+   [[task tracker] trackMutable: o];
+   return o;
+}
++(id<ORTaskAddTransitionTime>) constraint: (id<ORTaskVar>) normal extended:  (id<ORTaskVar>) extended time: (id<ORIntVar>) time
+{
+   id<ORTaskAddTransitionTime> o = [[ORTaskAddTransitionTime alloc] initORTaskAddTransitionTime: normal extended: extended time: time];
+   [[normal tracker] trackMutable: o];
    return o;
 }
 // Cumulative (resource) constraint
@@ -183,12 +195,18 @@
    return o;
 }
 
-+(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model
++(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model transition: (id<ORIntMatrix>) matrix
 {
-   id<ORTaskSequence> o = [[ORTaskSequence alloc] initORTaskSequenceEmpty: model];
+   id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctiveEmpty: model transition: matrix];
    [model trackObject:o];
    return o;
 }
+//+(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model
+//{
+//   id<ORTaskSequence> o = [[ORTaskSequence alloc] initORTaskSequenceEmpty: model];
+//   [model trackObject:o];
+//   return o;
+//}
 
 // Difference Logic constraint
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems

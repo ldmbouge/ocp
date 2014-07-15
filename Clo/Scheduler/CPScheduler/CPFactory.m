@@ -247,6 +247,13 @@
    [engine trackMutable: cstr];
    return cstr;
 }
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration
+{
+   id<CPEngine> engine = [task engine];
+   id<CPConstraint> cstr =[[CPTaskDuration alloc] initCPTaskDuration: task : duration];
+   [engine trackMutable: cstr];
+   return cstr;
+}
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {
    id<CPConstraint> o = [[CPTaskDisjunctive alloc] initCPTaskDisjunctive: tasks];
@@ -257,6 +264,12 @@
 {
    id<CPConstraint> o = [[CPTaskSequence alloc] initCPTaskSequence: tasks successors: succ];
    [[tasks tracker] trackMutable: o];
+   return o;
+}
++(id<CPConstraint>) constraint: (id<CPTaskVar>) normal extended:  (id<CPTaskVar>) extended time: (id<CPIntVar>) time
+{
+   id<CPConstraint> o = [[CPTaskAddTransitionTime alloc] initCPTaskAddTransitionTime: normal extended: extended time: time];
+   [[normal tracker] trackMutable: o];
    return o;
 }
 @end

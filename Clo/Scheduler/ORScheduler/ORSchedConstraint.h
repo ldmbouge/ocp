@@ -19,6 +19,17 @@
 -(id<ORTaskVar>) after;
 @end
 
+@protocol ORTaskDuration <ORConstraint>
+-(id<ORTaskVar>) task;
+-(id<ORIntVar>)  duration;
+@end
+
+@protocol ORTaskAddTransitionTime <ORConstraint>
+-(id<ORTaskVar>) normal;
+-(id<ORTaskVar>) extended;
+-(id<ORIntVar>)  time;
+@end
+
 @protocol ORTaskIsFinishedBy <ORConstraint>
 -(id<ORTaskVar>) task;
 -(id<ORIntVar>) date;
@@ -33,15 +44,17 @@
 
 @protocol ORTaskDisjunctive <ORConstraint>
 -(void) add: (id<ORTaskVar>) act;
+-(void) add: (id<ORTaskVar>) act type: (ORInt) t;
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORIntVarArray>) successors;
+-(id<ORIntVarArray>) transitionTimes;
 @end
 
-@protocol ORTaskSequence <ORConstraint>
--(void) add: (id<ORTaskVar>) act;
--(id<ORTaskVarArray>) taskVars;
--(id<ORIntVarArray>) successors;
-@end
+//@protocol ORTaskSequence <ORConstraint>
+//-(void) add: (id<ORTaskVar>) act;
+//-(id<ORTaskVarArray>) taskVars;
+//-(id<ORIntVarArray>) successors;
+//@end
 
 @protocol ORTaskDisjunctiveArray <ORObject>
 -(id<ORTaskDisjunctive>) at: (ORInt) idx;
@@ -56,18 +69,18 @@
 -(id<ORTracker>) tracker;
 @end
 
-@protocol ORTaskSequenceArray <ORObject>
--(id<ORTaskSequence>) at: (ORInt) idx;
--(void) set: (id<ORTaskDisjunctive>) value at: (ORInt)idx;
--(id<ORTaskSequence>)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id<ORTaskSequence>)newValue atIndexedSubscript:(NSUInteger)idx;
--(ORInt) low;
--(ORInt) up;
--(id<ORIntRange>) range;
--(NSUInteger) count;
--(NSString*) description;
--(id<ORTracker>) tracker;
-@end
+//@protocol ORTaskSequenceArray <ORObject>
+//-(id<ORTaskSequence>) at: (ORInt) idx;
+//-(void) set: (id<ORTaskDisjunctive>) value at: (ORInt)idx;
+//-(id<ORTaskSequence>)objectAtIndexedSubscript:(NSUInteger)key;
+//-(void)setObject:(id<ORTaskSequence>)newValue atIndexedSubscript:(NSUInteger)idx;
+//-(ORInt) low;
+//-(ORInt) up;
+//-(id<ORIntRange>) range;
+//-(NSUInteger) count;
+//-(NSString*) description;
+//-(id<ORTracker>) tracker;
+//@end
 
 @protocol ORDifference <ORConstraint>
 -(id<ORTracker>) tracker;

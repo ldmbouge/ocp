@@ -30,10 +30,10 @@
 {
    _result = [_into addConstraint:cstr];
 }
--(void) visitTaskSequence:(id<ORTaskSequence>) cstr
-{
-   _result = [_into addConstraint:cstr];
-}
+//-(void) visitTaskSequence:(id<ORTaskSequence>) cstr
+//{
+//   _result = [_into addConstraint:cstr];
+//}
 -(void) visitCumulative:(id<ORCumulative>) cstr
 {
     _result = [_into addConstraint:cstr];

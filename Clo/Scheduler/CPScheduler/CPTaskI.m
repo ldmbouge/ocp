@@ -632,6 +632,10 @@ typedef struct  {
 {
    [_task whenChangeEndDo: todo priority: p onBehalf: c];
 }
+-(void) whenChangeDurationDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
+{
+   [_task whenChangeDurationDo: todo priority: p onBehalf: c];
+}
 -(void) whenAbsentDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
 {
    hookupEvent(_engine, _net._absentEvt, todo, c, p);
@@ -651,6 +655,10 @@ typedef struct  {
 -(void) whenChangeEndDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
 {
    [_task whenChangeEndDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
+-(void) whenChangeDurationDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
+{
+   [_task whenChangeDurationDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
 -(void) whenAbsentDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
 {
@@ -674,6 +682,10 @@ typedef struct  {
 {
    [_task whenChangeEndPropagate: c priority: p];
 }
+-(void) whenChangeDurationPropagate: (id<CPConstraint>) c priority: (ORInt) p
+{
+   [_task whenChangeDurationPropagate: c priority: p];
+}
 -(void) whenAbsentPropagate: (id<CPConstraint>) c priority: (ORInt) p
 {
    hookupEvent(_engine, _net._absentEvt, nil, c, p);
@@ -694,6 +706,10 @@ typedef struct  {
 -(void) whenChangeEndPropagate: (CPCoreConstraint*) c
 {
    [_task whenChangeEndPropagate: c priority: c->_priority];
+}
+-(void) whenChangeDurationPropagate: (CPCoreConstraint*) c
+{
+   [_task whenChangeDurationPropagate: c priority: c->_priority];
 }
 -(void) whenAbsentPropagate: (CPCoreConstraint*) c
 {

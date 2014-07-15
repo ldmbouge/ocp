@@ -344,13 +344,19 @@
 }
 @end
 
-
 @implementation ORTaskDisjunctive {
    BOOL _closed;
    id<ORTracker> _tracker;
    NSMutableArray* _acc;
+   NSMutableArray* _accTypes;
    id<ORTaskVarArray> _tasks;
+   id<ORIntArray> _types;
    id<ORIntVarArray> _successors;
+   id<ORIntMatrix> _transition;
+   id<ORIntMatrix> _typeTransition;
+   id<ORIntRange> _transitionRange;
+   id<ORIntVarArray> _transitionTimes;
+   id<ORIntArray>* _transitionArray;
 }
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive: (id<ORTaskVarArray>) tasks
 {
@@ -373,6 +379,18 @@
    _closed = FALSE;
    return self;
 }
+-(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker transition: (id<ORIntMatrix>) transition;
+{
+   self = [super initORConstraintI];
+   _tracker = tracker;
+   _tasks = 0;
+   _acc = [[NSMutableArray alloc] initWithCapacity: 16];
+   _accTypes = [[NSMutableArray alloc] initWithCapacity: 16];
+   _transition = transition;
+   _closed = FALSE;
+   return self;
+}
+
 -(void) dealloc
 {
    if (_acc)
@@ -386,6 +404,57 @@
    }
    [_acc addObject: task];
 }
+-(void) add: (id<ORTaskVar>) task type: (ORInt) type
+{
+   if (_closed) {
+      @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
+   }
+   [_acc addObject: task];
+   [_accTypes addObject: @(type)];
+}
+-(void) postTransitionTimes
+{
+   if (!_transition)
+      return;
+   ORInt nbAct = (ORInt) [_acc count];
+   _transitionRange = RANGE(_tracker,0,nbAct+1);
+   _typeTransition = [ORFactory intMatrix: _tracker range: _transitionRange : _transitionRange];
+   for(ORInt i = _transitionRange.low; i <= _transitionRange.up ; i++) {
+      [_typeTransition set: 0 at: 0 : i];
+      [_typeTransition set: 0 at: nbAct + 1 : i];
+      [_typeTransition set: 0 at: i : 0];
+      [_typeTransition set: 0 at: i : nbAct + 1];
+   }
+   ORInt maxTransition = -MAXINT;
+   for(ORInt i = 1; i <= nbAct ; i++) {
+      ORInt typei = [_accTypes[i-1] intValue];
+      for(ORInt j = 1; j <= nbAct ; j++) {
+         ORInt typej = [_accTypes[j-1] intValue];
+         ORInt tt = [_transition at: typei : typej];
+         if (tt > maxTransition)
+            maxTransition = tt;
+         [_typeTransition set: tt at: i : j];
+         
+      }
+   }
+   _transitionArray = (id<ORIntArray>*) malloc(sizeof(id<ORIntArray>) * (nbAct + 1));
+   for(ORInt i = 0; i <= nbAct ; i++)
+      _transitionArray[i] = [ORFactory intArray: _tracker range: _transitionRange with: ^ORInt(ORInt j) { return [_typeTransition at: i : j];}];
+      
+   NSLog(@"transition: %@",_transition);
+   NSLog(@"type transition: %@",_typeTransition);
+   _transitionTimes = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,0,maxTransition)];
+   
+   for(ORInt i = 0; i <= nbAct ; i++)
+      [(id<ORModel>) _tracker add: [ORFactory element: _tracker var: _successors[i] idxCstArray: _transitionArray[i] equal: _transitionTimes[i]]];
+   
+   // create the duration variables and impose the constraint; get the initial duration
+   // create the tasks using the FOF
+   // the horizon is easy to get
+   //
+   //   id<ORTaskVarArray> extended = [ORFactory taskVarArray:_tracker range:_tasks.range horizon:<#(id<ORIntRange>)#> duration:<#(id<ORIntArray>)#>]
+}
+
 -(void)visit: (ORVisitor*) v
 {
    [v visitTaskDisjunctive: self];
@@ -404,6 +473,7 @@
          return _acc[i-1];
       }];
       _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,1,(ORInt) [_acc count]+1)];
+      [self postTransitionTimes];
    }
 }
 -(id<ORTaskVarArray>) taskVars
@@ -413,6 +483,10 @@
 -(id<ORIntVarArray>) successors
 {
    return _successors;
+}
+-(id<ORIntVarArray>) transitionTimes
+{
+   return _transitionTimes;
 }
 -(NSSet*) allVars
 {
@@ -431,78 +505,178 @@
 @end
 
 
-@implementation ORTaskSequence {
-   BOOL _closed;
-   id<ORTracker> _tracker;
-   NSMutableArray* _acc;
-   id<ORTaskVarArray> _tasks;
-   id<ORIntVarArray> _successors;
+//@implementation ORTaskSequence {
+//   BOOL _closed;
+//   id<ORTracker> _tracker;
+//   NSMutableArray* _acc;
+//   id<ORTaskVarArray> _tasks;
+//   
+//   id<ORIntVarArray> _successors;
+//   
+//}
+//-(id<ORTaskSequence>) initORTaskSequenceEmpty: (id<ORTracker>) tracker;
+//{
+//   self = [super initORConstraintI];
+//   _tracker = tracker;
+//   _tasks = 0;
+//   _successors = 0;
+//   _acc = [[NSMutableArray alloc] initWithCapacity: 16];
+//   _closed = FALSE;
+//   return self;
+//}
+//-(id<ORTaskSequence>) initORTaskSequenceEmpty: (id<ORTracker>) tracker transition: (id<ORIntMatrix>) transition;
+//{
+//   self = [super initORConstraintI];
+//   _tracker = tracker;
+//   _tasks = 0;
+//   _successors = 0;
+//   _acc = [[NSMutableArray alloc] initWithCapacity: 16];
+//
+//   _closed = FALSE;
+//   return self;
+//}
+//
+//-(void) dealloc
+//{
+//   if (_acc)
+//      [_acc dealloc];
+//   [super dealloc];
+//}
+//-(void) add: (id<ORTaskVar>) task
+//{
+//   if (_closed) {
+//      @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
+//   }
+//   [_acc addObject: task];
+//}
+//-(void)visit: (ORVisitor*) v
+//{
+//   [v visitTaskSequence: self];
+//}
+//-(NSString*) description
+//{
+//   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+//   [buf appendFormat:@"<%@ : %p> -> sequence(%@)>", [self class], self, _tasks];
+//   return buf;
+//}
+//-(void) close
+//{
+//   if (!_closed) {
+//      _closed = true;
+//      _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_acc count]) with: ^id<ORTaskVar>(ORInt i) {
+//         return _acc[i-1];
+//      }];
+//      _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,1,(ORInt) [_acc count]+1)];
+//   }
+//}
+//-(id<ORTaskVarArray>) taskVars
+//{
+//   return _tasks;
+//}
+//-(id<ORIntVarArray>) successors
+//{
+//   return _successors;
+//}
+//-(NSSet*) allVars
+//{
+//   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2*[_tasks count]+1] autorelease];
+//   id<ORIntRange> R = _tasks.range;
+//   ORInt low = R.low;
+//   ORInt up = R.up;
+//   for(ORInt k = low; k <= up; k++){
+//      [ms addObject: _tasks[k]];
+//   }
+//   low = _successors.low;
+//   up = _successors.up;
+//   for(ORInt k = low; k <= up; k++){
+//      [ms addObject: _successors[k]];
+//   }
+//   return ms;
+//}
+//@end
+//
+
+// ORPrecedes
+//
+@implementation ORTaskDuration {
+   id<ORTaskVar> _task;
+   id<ORIntVar> _duration;
 }
--(id<ORTaskSequence>) initORTaskSequenceEmpty: (id<ORTracker>) tracker;
+-(id<ORTaskDuration>) initORTaskDuration: (id<ORTaskVar>) task duration:(id<ORIntVar>) duration
 {
    self = [super initORConstraintI];
-   _tracker = tracker;
-   _tasks = 0;
-   _successors = 0;
-   _acc = [[NSMutableArray alloc] initWithCapacity: 16];
-   _closed = FALSE;
+   _task = task;
+   _duration   = duration;
    return self;
-}
--(void) dealloc
-{
-   if (_acc)
-      [_acc dealloc];
-   [super dealloc];
-}
--(void) add: (id<ORTaskVar>) task
-{
-   if (_closed) {
-      @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
-   }
-   [_acc addObject: task];
 }
 -(void)visit: (ORVisitor*) v
 {
-   [v visitTaskSequence: self];
+   [v visitTaskDuration: self];
 }
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> sequence(%@)>", [self class], self, _tasks];
+   [buf appendFormat:@"<%@ : %p> -> TaskDuration(%@,%@)>", [self class], self, _task, _duration];
    return buf;
 }
--(void) close
+-(id<ORTaskVar>) task
 {
-   if (!_closed) {
-      _closed = true;
-      _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_acc count]) with: ^id<ORTaskVar>(ORInt i) {
-         return _acc[i-1];
-      }];
-      _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,1,(ORInt) [_acc count]+1)];
-   }
+   return _task;
 }
--(id<ORTaskVarArray>) taskVars
+-(id<ORIntVar>) duration
 {
-   return _tasks;
-}
--(id<ORIntVarArray>) successors
-{
-   return _successors;
+   return _duration;
 }
 -(NSSet*) allVars
 {
-   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2*[_tasks count]+1] autorelease];
-   id<ORIntRange> R = _tasks.range;
-   ORInt low = R.low;
-   ORInt up = R.up;
-   for(ORInt k = low; k <= up; k++){
-      [ms addObject: _tasks[k]];
-   }
-   low = _successors.low;
-   up = _successors.up;
-   for(ORInt k = low; k <= up; k++){
-      [ms addObject: _successors[k]];
-   }
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
+   [ms addObject: _task ];
+   [ms addObject: _duration ];
+   return ms;
+}
+@end
+
+@implementation ORTaskAddTransitionTime {
+   id<ORTaskVar> _normal;
+   id<ORTaskVar> _extended;
+   id<ORIntVar> _time;
+}
+-(id<ORTaskAddTransitionTime>) initORTaskAddTransitionTime: (id<ORTaskVar>) normal extended: (id<ORTaskVar>) extended time: (id<ORIntVar>) time
+{
+   self = [super initORConstraintI];
+   _normal = normal;
+   _extended = extended;
+   _time = time;
+   return self;
+}
+-(void)visit: (ORVisitor*) v
+{
+   [v visitTaskAddTransitionTime: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> TaskAddTransitionTime(%@,%@,%@)>", [self class], self, _normal,_extended,_time];
+   return buf;
+}
+-(id<ORTaskVar>) normal
+{
+   return _normal;
+}
+-(id<ORTaskVar>) extended
+{
+   return _extended;
+}
+-(id<ORIntVar>) time
+{
+   return _time;
+}
+-(NSSet*) allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
+   [ms addObject: _normal ];
+   [ms addObject: _extended ];
+   [ms addObject: _time ];
    return ms;
 }
 @end
