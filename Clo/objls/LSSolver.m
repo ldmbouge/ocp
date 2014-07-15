@@ -347,7 +347,7 @@
    if (notes==nil)
       notes = [[ORAnnotation alloc] init];
    id<ORAnnotation> ncpy   = [notes copy];
-   id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
+   id<ORModel> fm = [model lsflatten: ncpy];   // models are AUTORELEASE
    //NSLog(@"FLAT: %@",fm);
    [self concretizeLS:fm program:solver annotation:ncpy];
    return solver;

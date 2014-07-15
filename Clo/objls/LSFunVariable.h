@@ -14,6 +14,17 @@
 #import <objls/LSFactory.h>
 #import <objls/LSConstraint.h>
 
+@interface LSFunConstant : ORObject<LSFunction>
+-(id)init:(id<LSEngine>)engine with:(ORInt)c;
+-(void)post;
+-(id<LSIntVar>)evaluation;
+-(id<LSGradient>)increase:(id<LSIntVar>)x;
+-(id<LSGradient>)decrease:(id<LSIntVar>)x;
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(id<LSIntVarArray>)variables;
+@end
+
 @interface LSFunVariable : ORObject<LSFunction>
 -(LSFunVariable*)init:(id<LSEngine>)engine with:(id<LSIntVar>)var;
 -(void)post;

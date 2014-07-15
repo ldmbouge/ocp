@@ -100,7 +100,7 @@
    [[x[x.range.low] engine] trackMutable:c];
    return c;
 }
-+(id<LSConstraint>) minimize:(id<LSEngine>)e var:(id<LSIntVar>)x
++(id<LSConstraint>) minimize:(id<LSEngine>)e var:(id<LSFunction>)x
 {
    LSMinimize* c = [[LSMinimize alloc] init:e with:x];
    [e trackMutable:c];
@@ -141,6 +141,12 @@
    LSOr* o = [[LSOr alloc] init:[x engine] boolean:b equal:x or: y];
    [[x engine] trackMutable:o];
    return o;
+}
++(id<LSFunction>)constant:(id<LSEngine>)engine constant:(ORInt)c
+{
+   LSFunConstant* f = [[LSFunConstant alloc] init:engine with:c];
+   [engine trackMutable:f];
+   return f;
 }
 +(id<LSFunction>)varRef:(id<LSEngine>)engine var:(id<LSIntVar>)x
 {

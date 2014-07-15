@@ -15,6 +15,9 @@
 #import <objls/LSConstraint.h>
 #import "ORVarI.h"
 
+@interface ExprToLSFun : ORNOopVisit
++(id<LSFunction>)convert:(id<ORExpr>)expr forEngine:(id<LSEngine>)e concretizeWith:(ORLSConcretizer*)cc;
+@end
 
 @implementation ORLSConcretizer
 
@@ -67,18 +70,14 @@
 }
 
 // [pvh] this needs to be replaced with a real scaled view
+// [ldm] done.
 -(id) scaleVar:(id<ORVar>) x coef:(ORInt)a
 {
    [x visit:self];
    if (a == 1) {
       return _gamma[x.getId];
    } else {
-      LSIntVar* cv = _gamma[getId(x)];
-      id<ORIntRange> d = [cv domain];
-      id<ORIntRange> nd = a > 0 ? RANGE(_engine,d.low * a,d.up * a) : RANGE(_engine,d.up * a,d.low * a);
-      return [LSFactory intVarView:_engine domain:nd fun:^ORInt{
-         return cv.value * a;
-      } src:@[_gamma[getId(x)]]];
+      return [LSFactory intVarView:_engine a:a times:_gamma[getId(x)] plus:0];
    }
 }
 -(id) concreteArray: (id<ORVarArray>) x
@@ -123,7 +122,7 @@
 }
 
 // [pvh] this must be transformed into an affine view as well to allow for increase/decrease
-
+// [ldm] done.
 -(void) visitAffineVar:(ORIntVarAffineI*) v
 {
    if (_gamma[v.getId] == NULL) {
@@ -132,11 +131,7 @@
       ORInt a = [v scale];
       ORInt b = [v shift];
       LSIntVar* src = _gamma[getId(mBase)];
-      id<ORIntRange> d = [src domain];
-      id<ORIntRange> nd = a > 0 ? RANGE(_engine,a * d.low + b,a * d.up + b) : RANGE(_engine,a * d.up + b,a * d.low + b);
-      _gamma[getId(v)] = [LSFactory intVarView:_engine domain:nd fun:^ORInt{
-         return a * getLSIntValue(src) + b;
-      } src:@[src]];
+      _gamma[getId(v)] = [LSFactory intVarView:_engine a:a times:src plus:b];
    }
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
@@ -309,7 +304,8 @@
 {
    if (_gamma[getId(v)] == NULL) {
       id<LSIntVar> theVar = [self concreteVar:[v var]];
-      id<LSConstraint> concreteCstr = [LSFactory minimize:_engine var:theVar];
+      id<LSFunction> fun = [LSFactory varRef:_engine var:theVar];
+      id<LSConstraint> concreteCstr = [LSFactory minimize:_engine var:fun];
       [_engine addConstraint:concreteCstr];
       _objective = concreteCstr;
       _gamma[getId(v)] = concreteCstr;
@@ -321,7 +317,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeExpr not yet implemented"];
+   if (_gamma[getId(v)] == NULL) {
+      id<LSFunction> fun = [ExprToLSFun convert:[v expr] forEngine:_engine concretizeWith:self];
+      id<LSConstraint> concreteCstr = [LSFactory minimize:_engine var:fun];
+      [_engine addConstraint:concreteCstr];
+      _objective = concreteCstr;
+      _gamma[getId(v)] = concreteCstr;
+   }
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
@@ -397,5 +399,190 @@
 -(void) visitExprAggMaxI: (id<ORExpr>) e
 {}
 -(void) visitExprVarSubI: (id<ORExpr>) e
+{}
+@end
+
+
+@implementation ExprToLSFun {
+   id<LSEngine> _engine;
+   id<LSFunction>   _rv;
+   ORInt            _rc;
+   ORLSConcretizer* _cc;
+}
+-(id)init:(id<LSEngine>)e concretizeWith:(ORLSConcretizer*)cc
+{
+   self = [super init];
+   _engine = e;
+   _rv     = nil;
+   _rc     = 1;
+   _cc     = cc;
+   return self;
+}
+-(id<LSFunction>)doIt:(id<ORExpr>)e
+{
+   _rv = nil;
+   _rc = 1;
+   [e visit:self];
+   return _rv;
+}
++(id<LSFunction>)convert:(id<ORExpr>)expr forEngine:(id<LSEngine>)e concretizeWith:(ORLSConcretizer *)cc
+{
+   ExprToLSFun* visitor = [[ExprToLSFun alloc] init:e concretizeWith:cc];
+   [expr visit:visitor];
+   id<LSFunction> rv = visitor->_rv;
+   [visitor release];
+   return rv;
+}
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   _rv = [LSFactory constant:_engine constant:[e intValue]];
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{}
+-(void) visitExprPlusI: (id<ORExpr>) e
+{
+   assert(NO);
+}
+-(void) visitExprMinusI: (id<ORExpr>) e
+{
+   assert(NO);
+}
+-(void) visitExprMulI: (ORExprMulI*) e
+{
+   if ([[e left] isConstant] && [[e right] isConstant]) {
+      _rv = [LSFactory constant:_engine constant:[e min]];
+      _rc = 1;
+   } else if ([[e left] isConstant]) {
+      _rv = [self doIt:[e right]];
+      _rc = [[e left] min];
+   } else if ([[e right] isConstant]) {
+      _rv = [self doIt:[e left]];
+      _rc = [[e right] min];
+   } else {
+      id<LSFunction> lf = [self doIt:[e left]];
+      id<LSFunction> rf = [self doIt:[e right]];
+      _rv = [LSFactory funMul:lf by:rf];
+      _rc = 1;
+   }
+}
+-(void) visitExprDivI: (id<ORExpr>) e
+{
+   assert(NO);
+}
+-(void) visitExprModI: (id<ORExpr>) e
+{
+   assert(NO);
+}
+-(void) visitExprMinI: (id<ORExpr>) e
+{
+   assert(NO);
+}
+-(void) visitExprMaxI: (id<ORExpr>) e
+{
+   assert(NO);
+}
+-(void) visitExprEqualI: (ORExprEqualI*) e
+{
+   if ([[e left] isConstant] && [[e right] isConstant]) {
+      _rv = [LSFactory constant:_engine constant:[e min]];
+   } else if ([[e left] isConstant] && [[e right] isVariable]) {
+      id<ORVar> theVar = (id)[e right];
+      id<LSIntVar> theRealVar = [_cc concreteVar:theVar];
+      id<LSIntVar> eqLitView = [LSFactory intVarView:_engine var:theRealVar eq:[[e left] min]];
+      _rv = [LSFactory varRef:_engine var:eqLitView];
+   } else if ([[e right] isConstant] && [[e left] isVariable]) {
+      id<ORVar> theVar = (id)[e left];
+      id<LSIntVar> theRealVar = [_cc concreteVar:theVar];
+      id<LSIntVar> eqLitView = [LSFactory intVarView:_engine var:theRealVar eq:[[e right] min]];
+      _rv = [LSFactory varRef:_engine var:eqLitView];
+   } else {
+      assert(NO);
+   }
+}
+-(void) visitExprNEqualI: (id<ORExpr>) e
+{
+}
+-(void) visitExprLEqualI: (id<ORExpr>) e
+{
+}
+-(ORInt)count:(Class)c in:(ORExprI*)root
+{
+   ORInt nb = 0;
+   while ([root isKindOfClass:c]) {
+      nb += 1;
+      root = [(ORExprBinaryI*)root left];
+   }
+   return nb;
+}
+-(void) visitExprSumI: (ORExprSumI*) e
+{
+   id<ORExpr> root = [e expr];
+   ORInt nb = [self count:[ORExprPlusI class] in:root];
+   id<ORIdArray> terms  = [ORFactory idArray:_engine range:RANGE(_engine,0,nb)];
+   id<ORIntArray> coefs = [ORFactory intArray:_engine range:RANGE(_engine,0,nb) value:1];
+   ORInt i = 0;
+   while ([root isKindOfClass:[ORExprPlusI class]]) {
+      ORExprPlusI* cr   = (ORExprPlusI*)root;
+      id<ORExpr> term = [cr right];
+      [term visit:self];
+      terms[i] = _rv;
+      [coefs set:_rc at:i];
+      i += 1;
+      root = [cr left];
+   }
+   assert([root conformsToProtocol:@protocol(ORInteger)]);
+   id<LSFunction> fun = [LSFactory sum:_engine terms:terms coefs:coefs];
+   _rv = fun;
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{}
+-(void) visitExprAggMinI: (id<ORExpr>) e
+{}
+-(void) visitExprAggMaxI: (id<ORExpr>) e
+{}
+-(void) visitExprAbsI:(id<ORExpr>) e
+{}
+-(void) visitExprSquareI:(id<ORExpr>)e
+{}
+-(void) visitExprNegateI:(id<ORExpr>)e
+{}
+-(void) visitExprCstSubI: (id<ORExpr>) e
+{}
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e
+{}
+-(void) visitExprDisjunctI:(id<ORExpr>) e
+{}
+-(void) visitExprConjunctI: (id<ORExpr>) e
+{}
+-(void) visitExprImplyI: (id<ORExpr>) e
+{}
+-(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   id<ORExpr> root = [e expr];
+   ORInt nb = [self count:[ORDisjunctI class] in:root];
+   id<ORIdArray> terms  = [ORFactory idArray:_engine range:RANGE(_engine,0,nb-1)];
+   ORInt i = 0;
+   while ([root isKindOfClass:[ORDisjunctI class]]) {
+      ORDisjunctI* cr   = (ORDisjunctI*)root;
+      id<ORExpr> term = [cr right];
+      [term visit:self];
+      terms[i] = _rv;
+      i += 1;
+      root = [cr left];
+   }
+   id<LSFunction> fun = [LSFactory disjunction:_engine terms:terms];
+   _rv = fun;
+}
+-(void) visitExprAggAndI: (ORExprAggAndI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprVarSubI: (id<ORExpr>) e
+{}
+-(void) visitExprMatrixVarSubI:(id<ORExpr>)e
 {}
 @end

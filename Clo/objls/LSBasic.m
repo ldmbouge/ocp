@@ -338,24 +338,29 @@ inline static ORInt presentIn(ORInt key,ORInt* t,ORInt sz)
 
 @implementation LSMinimize {
    id<LSIntVarArray> _src;
+   id<ORIdArray>      _dg;
    id<LSIntVar>     _zero;
 }
--(id)init:(id<LSEngine>)engine with:(id<LSIntVar>)x
+-(id)init:(id<LSEngine>)engine with:(id<LSFunction>)f
 {
    self  = [super init:engine];
-   _x = x;
+   _fun = f;
    return self;
 }
 -(void)post
 {
-   _zero = [LSFactory intVar:_engine domain:RANGE(_engine,0,0)];
+   @autoreleasepool {
+      _zero = [LSFactory intVar:_engine domain:RANGE(_engine,0,0)];
+      id<LSIntVarArray> src = [self variables];
+      _dg   = [ORFactory idArray:_engine range:src.range];
+      for(ORInt i=src.range.low;i <= src.range.up;i++)
+         _dg[i] = [[_fun decrease:src[i]] retain];
+   }
 }
 -(id<LSIntVarArray>)variables
 {
-   if (!_src) {
-      _src = [LSFactory intVarArray:(id)_engine range:RANGE((id)_engine,0,0)];
-      _src[0] = _x;
-   }
+   if (!_src)
+      _src = [_fun variables];
    return _src;
 }
 -(ORBool)isTrue
@@ -364,36 +369,32 @@ inline static ORInt presentIn(ORInt key,ORInt* t,ORInt sz)
 }
 -(ORInt)getViolations
 {
-   return getLSIntValue(_x);
+   return getLSIntValue([_fun evaluation]);
 }
--(ORInt)getVarViolations:(id<LSIntVar>)var
+-(ORInt)getVarViolations:(id<LSIntVar>)x
 {
-   if (getId(var) == getId(_x))
-      return getLSIntValue(_x);
-   else return 0;
+   ORInt xr = findRankByName(_src, getId(x)); // [ldm] too slow. Have it O(1) with a map.
+   id<LSGradient> theGradient = _dg[xr];
+   return getLSIntValue([theGradient variable]);
 }
 -(id<LSIntVar>)violations
 {
-   return _x;
+   return [_fun evaluation];
 }
--(id<LSIntVar>)varViolations:(id<LSIntVar>)var
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)x
 {
-   if (getId(var) == getId(_x))
-      return _x;
-   else return _zero;
+   ORInt xr = findRankByName(_src, getId(x)); // [ldm] too slow. Have it O(1) with a map.
+   if (xr >= 0) {
+      id<LSGradient> theGradient = _dg[xr];
+      return theGradient.variable;
+   } else return _zero;
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
-   if (getId(x) == getId(_x))
-      return max(v,_x.domain.low) - getLSIntValue(_x);
-   else return 0;
+   return [_fun deltaWhenAssign:x to:v];
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
-   if (getId(x) == getId(_x))
-      return max(getLSIntValue(y),_x.domain.low) - getLSIntValue(x);
-   else if (getId(y) == getId(_x))
-      return max(getLSIntValue(x),_x.domain.low) - getLSIntValue(y);
-   else return 0;
+   return [_fun deltaWhenSwap:x with:y];
 }
 @end

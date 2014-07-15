@@ -63,9 +63,9 @@
 @end
 
 @interface LSMinimize: LSConstraint {
-   LSIntVar* _x;
+   id<LSFunction> _fun;
 }
--(id)init:(id<LSEngine>)engine with:(id<LSIntVar>)x;
+-(id)init:(id<LSEngine>)engine with:(id<LSFunction>)f;
 -(void)post;
 -(id<LSIntVarArray>)variables;
 -(ORBool)isTrue;

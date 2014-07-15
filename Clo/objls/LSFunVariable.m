@@ -15,6 +15,57 @@
 #import "LSGlobalInvariants.h"
 #import "LSCount.h"
 
+@implementation LSFunConstant {
+   id<LSEngine>   _engine;
+   ORInt               _c;
+   id<LSIntVarArray> _src;
+   id<LSIntVar>     _fake;
+}
+-(id)init:(id<LSEngine>)engine with:(ORInt)c
+{
+   self = [super init];
+   _engine = engine;
+   _c = c;
+   return self;
+}
+-(void)post
+{
+   _fake = [LSFactory intVar:_engine domain:RANGE(_engine,_c,_c)];
+}
+-(id<LSIntVar>)evaluation
+{
+   return _fake;
+}
+-(id<LSGradient>)increase:(id<LSIntVar>)x
+{
+   return [LSGradient cstGradient:0];
+}
+-(id<LSGradient>)decrease:(id<LSIntVar>)x
+{
+   return [LSGradient cstGradient:0];
+}
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return 0;
+}
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return 0;
+}
+-(id<LSIntVarArray>)variables
+{
+   if (_src==nil)
+      _src = [LSFactory intVarArray:_engine range:RANGE(_engine,0,-1)];
+   return _src;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSFunCst %p : %d>",self,_c];
+   return buf;
+}
+@end
+
 @implementation LSFunVariable {
    id<LSEngine>   _engine;
    id<LSIntVar>      _var;  // could be a real variable or a view
@@ -75,6 +126,12 @@
       }
    }
    return _src;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSFunVar %p : %@>",self,_var];
+   return buf;
 }
 @end
 
@@ -197,6 +254,12 @@
    }
    return _src;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSFunOr %p : %@>",self,_terms];
+   return buf;
+}
 @end
 
 @implementation LSFunSum {
@@ -314,5 +377,11 @@
       _src = na;
    }
    return _src;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<LSFunSum %p : %@ coefs:%@>",self,_terms,_coefs];
+   return buf;
 }
 @end

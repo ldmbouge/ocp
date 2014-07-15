@@ -10,8 +10,9 @@
  ***********************************************************************/
 
 #import <ORModeling/ORModeling.h>
-#import "ORModelI.h"
 #import "ORFlatten.h"
+#import "ORLSFlatten.h"
+#import "ORModelI.h"
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
 #import "ORLinearize.h"
@@ -37,6 +38,10 @@
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into
 {
   return [[ORFlatten alloc] initORFlatten:into];
+}
++(id<ORModelTransformation>) createLSFlattener:(id<ORAddToModel>)into
+{
+   return [[ORLSFlatten alloc] initORLSFlatten:into];
 }
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
 {

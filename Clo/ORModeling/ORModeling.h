@@ -46,6 +46,7 @@
 -(NSArray*) immutables;
 // pvh: this should go
 -(id<ORModel>) flatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) lsflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) mipflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) copy;
@@ -82,6 +83,7 @@
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src annotation:(id<ORAnnotation>)notes;
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLSFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;

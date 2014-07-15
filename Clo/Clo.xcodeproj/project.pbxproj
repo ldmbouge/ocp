@@ -604,6 +604,8 @@
 		5B876B2F18AAAF8D006F6258 /* LSAllDifferent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B876B2D18AAAF8D006F6258 /* LSAllDifferent.m */; };
 		5B87B3ED180EF2C6001B1D70 /* ORAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B87B3EE180EF2C6001B1D70 /* ORAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */; };
+		5B889504197469D30005447B /* ORLSFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B889502197469D30005447B /* ORLSFlatten.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B889505197469D30005447B /* ORLSFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B889503197469D30005447B /* ORLSFlatten.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
 		5B8B655318313B250054E2C6 /* vote.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667135181EF228007CBBA6 /* vote.csv */; };
 		5B8B655418313D0D0054E2C6 /* zoo-1.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B667136181EF228007CBBA6 /* zoo-1.csv */; };
@@ -1174,7 +1176,7 @@
 		B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614616D969CD00E95A39 /* ORLPFlatten.m */; };
 		B103614D16D9AAA500E95A39 /* ORFloatDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614B16D9AAA500E95A39 /* ORFloatDecompose.h */; };
 		B103614E16D9AAA500E95A39 /* ORFloatDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */; };
-		B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614F16D9AB9A00E95A39 /* ORIntLinear.h */; };
+		B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614F16D9AB9A00E95A39 /* ORIntLinear.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B103615216D9AB9A00E95A39 /* ORIntLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORIntLinear.m */; };
 		B111FC0113CF3D10003C5119 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B111FC0413CF3D10003C5119 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B111FC0313CF3D10003C5119 /* main.m */; };
@@ -6263,6 +6265,8 @@
 		5B876B2D18AAAF8D006F6258 /* LSAllDifferent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LSAllDifferent.m; sourceTree = "<group>"; };
 		5B87B3EB180EF2C6001B1D70 /* ORAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORAnnotation.h; sourceTree = "<group>"; };
 		5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORAnnotation.m; sourceTree = "<group>"; };
+		5B889502197469D30005447B /* ORLSFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLSFlatten.h; sourceTree = "<group>"; };
+		5B889503197469D30005447B /* ORLSFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLSFlatten.m; sourceTree = "<group>"; };
 		5B8B12DB15A3BF8000300385 /* ORError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORError.m; sourceTree = "<group>"; };
 		5B8C7DE6158674D1007042CA /* CPAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAppDelegate.h; sourceTree = "<group>"; };
 		5B8C7DE7158674D1007042CA /* CPAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -9352,6 +9356,8 @@
 				5BAD1152161E5E430014EBCB /* Supporting Files */,
 				5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */,
 				5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */,
+				5B889502197469D30005447B /* ORLSFlatten.h */,
+				5B889503197469D30005447B /* ORLSFlatten.m */,
 				B103614516D969CD00E95A39 /* ORLPFlatten.h */,
 				B103614616D969CD00E95A39 /* ORLPFlatten.m */,
 				B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */,
@@ -10635,6 +10641,7 @@
 				5BAD1168161E61500014EBCB /* ORModeling.h in Headers */,
 				5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */,
 				5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */,
+				5B889504197469D30005447B /* ORLSFlatten.h in Headers */,
 				3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */,
 				B182C60C173C3DC9002954F6 /* ORMIPLinearize.h in Headers */,
 				5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */,
@@ -13776,6 +13783,7 @@
 				3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */,
 				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
 				B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */,
+				5B889505197469D30005447B /* ORLSFlatten.m in Sources */,
 				B103614E16D9AAA500E95A39 /* ORFloatDecompose.m in Sources */,
 				B103615216D9AB9A00E95A39 /* ORIntLinear.m in Sources */,
 				B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */,

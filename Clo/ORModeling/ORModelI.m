@@ -524,6 +524,17 @@
    [flat release];
    return flatModel;
 }
+-(id<ORModel>) lsflatten:(id<ORAnnotation>)ncpy
+{
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
+   id<ORModelTransformation> flat = [ORFactory createLSFlattener:batch];
+   [flat apply: self with:ncpy];
+   [batch release];
+   [flatModel setSource:self];
+   [flat release];
+   return flatModel;
+}
 -(id<ORModel>) lpflatten:(id<ORAnnotation>)ncpy
 {
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
