@@ -96,8 +96,8 @@ int main(int argc, const char * argv[])
                            [cp swap:shoot[s1] with:shoot[s2]];
                            //printf("\tAFTER : %d\n",[cp getViolations]);
                            //printf("MANUAL TOTAL COST: %d\n",debug());
-                           [tabu set:it+20 at:s1 :s2];
-                           [tabu set:it+20 at:s2 :s1];
+                           [tabu set:it+15 at:s1 :s2];
+                           [tabu set:it+15 at:s2 :s1];
                            if ([cp getViolations] < best) {
                               best = [cp getViolations];
                               printf("(%d)",best);fflush(stdout);

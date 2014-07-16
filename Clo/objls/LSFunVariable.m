@@ -436,31 +436,32 @@
    else if (noy)
       return [self deltaWhenAssign:x to:yval];
    //Both are present in the sum.
+   ORInt* coefs = (ORInt*)[(id)_coefs base];
    ORInt *tx = _map[xid], *ty = _map[yid];
    ORInt nx = _msz[xid],ny = _msz[yid];
    ORInt i=0,j=0;
    while (i < nx && j < ny) {
       if (tx[i] < ty[j]) {
          id<LSFunction> term = _terms[tx[i]];
-         ttl += [term deltaWhenAssign:x to:yval] * [_coefs at:tx[i]];
+         ttl += [term deltaWhenAssign:x to:yval] * coefs[tx[i]];
          i++;
       } else if (ty[j] < tx[i]) {
          id<LSFunction> term = _terms[ty[j]];
-         ttl += [term deltaWhenAssign:y to:xval] * [_coefs at:ty[j]];
+         ttl += [term deltaWhenAssign:y to:xval] * coefs[ty[j]];
          j++;
       } else {
          id<LSFunction> term = _terms[tx[i]];
-         ttl += [term deltaWhenSwap:x with:y] * [_coefs at:tx[i]];
+         ttl += [term deltaWhenSwap:x with:y] * coefs[tx[i]];
          i++;
          j++;
       }
    }
    while (i < nx) {
-      ttl += [_terms[tx[i]] deltaWhenAssign:x to:yval]  * [_coefs at:tx[i]];
+      ttl += [_terms[tx[i]] deltaWhenAssign:x to:yval]  * coefs[tx[i]];
       ++i;
    }
    while (j < ny) {
-      ttl += [_terms[ty[j]] deltaWhenAssign:y to:xval] * [_coefs at:ty[j]];
+      ttl += [_terms[ty[j]] deltaWhenAssign:y to:xval] * coefs[ty[j]];
       ++j;
    }
    return ttl;
