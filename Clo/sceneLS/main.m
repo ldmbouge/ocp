@@ -53,7 +53,7 @@ int main(int argc, const char * argv[])
          ORInt maxScene = (ORInt) [sc count];
          id<ORIntRange> Actors = RANGE(model,0,(ORInt)[an count] - 1);
          id<ORIntRange> Scenes = RANGE(model,0,maxScene-1);
-         id<ORIntRange> Days   = RANGE(model,0,4);
+         id<ORIntRange> Days   = RANGE(model,1,5);
          id<ORIntArray>    fee = [ORFactory intArray:model array:xmlFee];
          id<ORIdArray> appears = [ORFactory idArray:model array:sc ];
          
@@ -75,19 +75,32 @@ int main(int argc, const char * argv[])
          ORInt __block best = FDMAXINT;
          id<ORIntMatrix> tabu = [ORFactory intMatrix:cp range:Scenes :Scenes using:^int(ORInt i, ORInt j) { return 0;}];
          [cp solve:^{
-            while (++it <= 400) {
+            int scene[] = {4,1,2,3,3,1,2,4,2,2,3,1,1,3,2,4,4,3,1};
+            for(ORInt i=shoot.range.low;i <= shoot.range.up;i++)
+               [cp label:shoot[i] with:scene[i]];
+            for(ORInt i=shoot.range.low;i <= shoot.range.up;i++) {
+               printf("%d,",[cp intValue:shoot[i]]);
+            }
+            printf("\n");
+            
+               while (++it <= 400) {
                [cp sweep:^(id<ORSweep> sweep) {
                   for(ORInt s1=Scenes.low;s1 <= Scenes.up;s1++) {
                      for(ORInt s2=Scenes.low;s2 <= Scenes.up;s2++) {
                         if ([cp intValue:shoot[s1]] == [cp intValue:shoot[s2]] || [tabu at:s1 :s2] > it)
                            continue;
-                        [sweep forMininum:[cp deltaWhenSwap:shoot[s1] with:shoot[s2]] do:^{
+                        ORInt delta = [cp deltaWhenSwap:shoot[s1] with:shoot[s2]];
+//                        printf("DELTA %d <-> %d = %d\n",s1,s2,delta);
+                        [sweep forMininum:delta do:^{
+                           //printf("\tBEFORE: %d  DELTA=%d\n",[cp getViolations],delta);
                            [cp swap:shoot[s1] with:shoot[s2]];
-                           [tabu set:it+15 at:s1 :s2];
-                           [tabu set:it+15 at:s2 :s1];
+                           //printf("\tAFTER : %d\n",[cp getViolations]);
+                           //printf("MANUAL TOTAL COST: %d\n",debug());
+                           [tabu set:it+20 at:s1 :s2];
+                           [tabu set:it+20 at:s2 :s1];
                            if ([cp getViolations] < best) {
                               best = [cp getViolations];
-                              printf("Current best: %d\n",best);
+                              printf("(%d)",best);fflush(stdout);
                               [cp saveSolution];
                            }
                         }];
@@ -97,8 +110,9 @@ int main(int argc, const char * argv[])
                it++;
             }
          }];
+         printf("\n");
          NSLog(@"Solver status: %@\n",cp);
-         struct ORResult res = REPORT(found, it, 0,0);
+         struct ORResult res = REPORT(found, it, best,0);
          [ORFactory shutdown];
          return res;
       }];

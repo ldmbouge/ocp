@@ -300,7 +300,7 @@
 }
 -(ORInt)value
 {
-   return _x.value == _lit;
+   return getLSIntValue(_x) == _lit;
 }
 -(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v
 {

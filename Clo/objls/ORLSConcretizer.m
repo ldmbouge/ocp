@@ -402,7 +402,6 @@
 {}
 @end
 
-
 @implementation ExprToLSFun {
    id<LSEngine> _engine;
    id<LSFunction>   _rv;
@@ -455,6 +454,7 @@
 {
    if ([[e left] isConstant] && [[e right] isConstant]) {
       _rv = [LSFactory constant:_engine constant:[e min]];
+      [_engine addFunction:_rv];
       _rc = 1;
    } else if ([[e left] isConstant]) {
       _rv = [self doIt:[e right]];
@@ -489,16 +489,19 @@
 {
    if ([[e left] isConstant] && [[e right] isConstant]) {
       _rv = [LSFactory constant:_engine constant:[e min]];
+      [_engine addFunction:_rv];
    } else if ([[e left] isConstant] && [[e right] isVariable]) {
       id<ORVar> theVar = (id)[e right];
       id<LSIntVar> theRealVar = [_cc concreteVar:theVar];
       id<LSIntVar> eqLitView = [LSFactory intVarView:_engine var:theRealVar eq:[[e left] min]];
       _rv = [LSFactory varRef:_engine var:eqLitView];
+      [_engine addFunction:_rv];
    } else if ([[e right] isConstant] && [[e left] isVariable]) {
       id<ORVar> theVar = (id)[e left];
       id<LSIntVar> theRealVar = [_cc concreteVar:theVar];
       id<LSIntVar> eqLitView = [LSFactory intVarView:_engine var:theRealVar eq:[[e right] min]];
       _rv = [LSFactory varRef:_engine var:eqLitView];
+      [_engine addFunction:_rv];
    } else {
       assert(NO);
    }
@@ -522,8 +525,8 @@
 {
    id<ORExpr> root = [e expr];
    ORInt nb = [self count:[ORExprPlusI class] in:root];
-   id<ORIdArray> terms  = [ORFactory idArray:_engine range:RANGE(_engine,0,nb)];
-   id<ORIntArray> coefs = [ORFactory intArray:_engine range:RANGE(_engine,0,nb) value:1];
+   id<ORIdArray> terms  = [ORFactory idArray:_engine range:RANGE(_engine,0,nb-1)];
+   id<ORIntArray> coefs = [ORFactory intArray:_engine range:RANGE(_engine,0,nb-1) value:1];
    ORInt i = 0;
    while ([root isKindOfClass:[ORExprPlusI class]]) {
       ORExprPlusI* cr   = (ORExprPlusI*)root;
@@ -536,6 +539,7 @@
    }
    assert([root conformsToProtocol:@protocol(ORInteger)]);
    id<LSFunction> fun = [LSFactory sum:_engine terms:terms coefs:coefs];
+   [_engine addFunction:fun];
    _rv = fun;
 }
 -(void) visitExprProdI: (id<ORExpr>) e
@@ -575,6 +579,7 @@
       root = [cr left];
    }
    id<LSFunction> fun = [LSFactory disjunction:_engine terms:terms];
+   [_engine addFunction:fun];
    _rv = fun;
 }
 -(void) visitExprAggAndI: (ORExprAggAndI*) e
