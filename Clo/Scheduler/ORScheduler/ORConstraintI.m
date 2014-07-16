@@ -354,9 +354,12 @@
    id<ORIntVarArray> _successors;
    id<ORIntMatrix> _transition;
    id<ORIntMatrix> _typeTransition;
+   id<ORTaskVarArray> _transitionTasks;   
+   
    id<ORIntRange> _transitionRange;
    id<ORIntVarArray> _transitionTimes;
    id<ORIntArray>* _transitionArray;
+
 }
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive: (id<ORTaskVarArray>) tasks
 {
@@ -416,6 +419,7 @@
 {
    if (!_transition)
       return;
+   id<ORModel> model = (id<ORModel>) _tracker;
    ORInt nbAct = (ORInt) [_acc count];
    _transitionRange = RANGE(_tracker,0,nbAct+1);
    _typeTransition = [ORFactory intMatrix: _tracker range: _transitionRange : _transitionRange];
@@ -446,13 +450,39 @@
    _transitionTimes = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,0,maxTransition)];
    
    for(ORInt i = 0; i <= nbAct ; i++)
-      [(id<ORModel>) _tracker add: [ORFactory element: _tracker var: _successors[i] idxCstArray: _transitionArray[i] equal: _transitionTimes[i]]];
+      [model add: [ORFactory element: _tracker var: _successors[i] idxCstArray: _transitionArray[i] equal: _transitionTimes[i]]];
    
-   // create the duration variables and impose the constraint; get the initial duration
-   // create the tasks using the FOF
-   // the horizon is easy to get
-   //
-   //   id<ORTaskVarArray> extended = [ORFactory taskVarArray:_tracker range:_tasks.range horizon:<#(id<ORIntRange>)#> duration:<#(id<ORIntArray>)#>]
+   ORInt minDuration = MAXINT;
+   ORInt maxDuration = -MAXINT;
+   ORInt minHorizon = MAXINT;
+   ORInt maxHorizon = -MAXINT;
+   for(ORInt i = 1; i <= nbAct; i++) {
+      ORInt m = _tasks[i].duration.low;
+      ORInt M = _tasks[i].duration.up;
+      if (m < minDuration)
+         minDuration = m;
+      if (M > maxDuration)
+         maxDuration = M;
+      m = _tasks[i].horizon.low;
+      M = _tasks[i].horizon.up;
+      if (m < minHorizon)
+         minHorizon = m;
+      if (M > maxHorizon)
+         maxHorizon = M;
+   }
+
+   // Create the transition tasks
+   id<ORIntRange> RT = RANGE(_tracker,minDuration,maxDuration + maxTransition);
+   id<ORIntRange> HT = RANGE(_tracker,minHorizon,maxHorizon);
+   _transitionTasks = [ORFactory taskVarArray:_tracker range:_tasks.range horizon:HT range: RT];
+   
+   id<ORIntVarArray> dt = [ORFactory intVarArray: _tracker range: _tasks.range domain: RT];
+   id<ORIntVarArray> dtt = [ORFactory intVarArray: _tracker range: _tasks.range domain: RT];
+   for(ORInt i = 1; i <= nbAct; i++) {
+      [model add: [ORFactory constraint: _tasks[i] duration: dt[i]]];
+      [model add: [ORFactory constraint: _transitionTasks[i] duration: dtt[i]]];
+      [model add: [[dt[i] plus: _transitionTimes[i]] eq: dtt[i]]];
+   }
 }
 
 -(void)visit: (ORVisitor*) v

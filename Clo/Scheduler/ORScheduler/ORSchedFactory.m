@@ -253,6 +253,12 @@
    [model trackVariable:o];
    return o;
 }
++(id<ORTaskVar>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+{
+   id<ORTaskVar> o = [[ORTaskVar alloc] initORTaskVar: model horizon: horizon duration: duration];
+   [model trackVariable:o];
+   return o;
+}
 +(id<ORTaskVar>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
 {
    id<ORTaskVar> o = [[ORTaskVar alloc] initOROptionalTaskVar: model horizon: horizon duration: RANGE(model,duration,duration)];
@@ -271,6 +277,12 @@
 {
    return [ORFactory taskVarArray: model range: range with: ^id<ORTaskVar>(ORInt i) {
       return [ORFactory task: model horizon: horizon duration: [duration at:i]];
+   }];
+}
++(id<ORTaskVarArray>) taskVarArray: (id<ORModel>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) duration
+{
+   return [ORFactory taskVarArray: model range: range with: ^id<ORTaskVar>(ORInt i) {
+      return [ORFactory task: model horizon: horizon durationRange: duration];
    }];
 }
 // TaskVar matrix

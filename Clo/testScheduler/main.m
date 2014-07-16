@@ -130,9 +130,13 @@ int mainTransition(int argc, const char * argv[])
       [machine add: task[1] type: 1];
       [model add: machine];
       
+      id<ORIntVar> dur = [ORFactory intVar: model domain: RANGE(model,0,100)];
+      [model add: [ORFactory constraint: task[0] duration: dur]];
+      
       // search
       id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
       [cp solve: ^{
+         NSLog(@"duration: %d..%d",[cp min: dur],[cp max: dur]);
          [cp sequence: machine.successors by: ^ORFloat(ORInt i) { return i;}];
 
          id<ORTaskVarArray> taskVar = machine.taskVars;
