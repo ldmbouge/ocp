@@ -482,6 +482,7 @@
       [model add: [ORFactory constraint: _tasks[i] duration: dt[i]]];
       [model add: [ORFactory constraint: _transitionTasks[i] duration: dtt[i]]];
       [model add: [[dt[i] plus: _transitionTimes[i]] eq: dtt[i]]];
+      [model add: [ORFactory constraint: _tasks[i] extended: _transitionTasks[i] time: _transitionTimes[i]]];
    }
 }
 
@@ -509,6 +510,14 @@
 -(id<ORTaskVarArray>) taskVars
 {
     return _tasks;
+}
+-(id<ORTaskVarArray>) transitionTaskVars
+{
+   return _transitionTasks;
+}
+-(ORBool) hasTransition
+{
+   return _transition != 0;
 }
 -(id<ORIntVarArray>) successors
 {

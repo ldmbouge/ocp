@@ -46,6 +46,8 @@
 -(void) add: (id<ORTaskVar>) act;
 -(void) add: (id<ORTaskVar>) act type: (ORInt) t;
 -(id<ORTaskVarArray>) taskVars;
+-(id<ORTaskVarArray>) transitionTaskVars;
+-(ORBool) hasTransition;
 -(id<ORIntVarArray>) successors;
 -(id<ORIntVarArray>) transitionTimes;
 @end

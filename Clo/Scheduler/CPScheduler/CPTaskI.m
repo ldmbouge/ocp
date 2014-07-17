@@ -162,6 +162,32 @@ typedef struct  {
    }
    return self;
 }
+-(id<CPTaskVar>) initCPTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+{
+   self = [super init];
+   _engine = engine;
+   _trail = [engine trail];
+   
+   // domain [who said I do not write comments?]
+   _start = makeTRInt(_trail,horizon.low);
+   _end = makeTRInt(_trail,horizon.up);
+   _durationMin = makeTRInt(_trail,duration.low);
+   _durationMax = makeTRInt(_trail,duration.up);
+   _constantDuration = FALSE;
+   
+   // need a consistency check
+   assert(_start._val + _durationMax._val <= _end._val);
+   
+   // network
+   for(ORInt i = 0;i < 2;i++) {
+      _net._boundEvt[i] = makeTRId(_trail,nil);
+      _net._startEvt[i] = makeTRId(_trail,nil);
+      _net._endEvt[i] = makeTRId(_trail,nil);
+      _net._durationEvt[i] = makeTRId(_trail,nil);
+   }
+   return self;
+}
+
 -(id) takeSnapshot: (ORInt) id
 {
    return [[CPTaskVarSnapshot alloc] initCPTaskVarSnapshot: self name: id];
@@ -467,6 +493,23 @@ typedef struct  {
    }
    return self;
 }
+-(id<CPTaskVar>) initCPOptionalTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+{
+   self = [super init];
+   _engine = engine;
+   _trail = [engine trail];
+   
+   _task = [CPFactory task: engine horizon: horizon durationRange: duration];
+   _presentMin = makeTRInt(_trail,0);
+   _presentMax = makeTRInt(_trail,1);
+   // network
+   for(ORInt i = 0;i < 2;i++) {
+      _net._presentEvt[i] = makeTRId(_trail,nil);
+      _net._absentEvt[i] = makeTRId(_trail,nil);
+   }
+   return self;
+}
+
 -(ORInt) est
 {
    return [_task est];

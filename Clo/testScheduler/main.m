@@ -140,6 +140,7 @@ int mainTransition(int argc, const char * argv[])
          [cp sequence: machine.successors by: ^ORFloat(ORInt i) { return i;}];
 
          id<ORTaskVarArray> taskVar = machine.taskVars;
+         id<ORTaskVarArray> transitionTaskVar = machine.transitionTaskVars;
          id<ORIntVarArray> transitionTimes = machine.transitionTimes;
          id<ORIntVarArray> successors = machine.successors;
 //         NSLog(@"tasks[0] = %@",[cp description: task[0]]);
@@ -150,6 +151,8 @@ int mainTransition(int argc, const char * argv[])
          NSLog(@"successors[2] = %d",[cp intValue: successors[2]]);
          NSLog(@"transitionTime[1] = %d",[cp intValue: transitionTimes[1]]);
          NSLog(@"transitionTime[2] = %d",[cp intValue: transitionTimes[2]]);
+         NSLog(@"transitiontasks[1] = %@",[cp description: transitionTaskVar[1]]);
+         NSLog(@"transitiontasks[2] = %@",[cp description: transitionTaskVar[2]]);
       }
        ];
       //      id<ORSolutionPool> pool = [cp solutionPool];

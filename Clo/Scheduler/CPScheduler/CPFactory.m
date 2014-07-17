@@ -226,6 +226,19 @@
    [engine trackMutable: task];
    return task;
 }
++(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+{
+   id<CPTaskVar> task = [[CPTaskVar alloc] initCPTaskVar: engine horizon: horizon durationRange: duration];
+   [engine trackVariable: task];
+   return task;
+}
++(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+{
+   id<CPTaskVar> task = [[CPOptionalTaskVar alloc] initCPOptionalTaskVar: engine horizon: horizon durationRange: duration];
+   [engine trackMutable: task];
+   return task;
+}
+
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
 {
    id<CPEngine> engine = [before engine];

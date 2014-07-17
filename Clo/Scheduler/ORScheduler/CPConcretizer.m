@@ -132,6 +132,7 @@
 }
 
 // Task
+// [pvh]: to clean up the case analysis on the duration
 -(void) visitTask:(id<ORTaskVar>) task
 {
    if (_gamma[task.getId] == NULL) {
@@ -147,8 +148,10 @@
             concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration.low];
       }
       else {
-         // pvh to fill
-         assert(false);
+         if (![task isOptional])
+            concreteTask = [CPFactory task: _engine horizon: horizon durationRange: duration];
+         else
+            concreteTask = [CPFactory optionalTask: _engine horizon: horizon durationRange: duration];
       }
       _gamma[task.getId] = concreteTask;
    }
@@ -186,17 +189,42 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitTaskAddTransitionTime:(id<ORTaskAddTransitionTime>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORTaskVar> normal = [cstr normal];
+      id<ORTaskVar> extended = [cstr extended];
+      id<ORIntVar> time  = [cstr time];
+      [normal visit: self];
+      [extended visit: self];
+      [time visit: self];
+      id<CPConstraint> concreteCstr;
+      concreteCstr = [CPFactory constraint: _gamma[normal.getId] extended: _gamma[extended.getId] time: _gamma[time.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 // Disjunctive (resource) constraint
 -(void) visitTaskDisjunctive:(id<ORTaskDisjunctive>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORTaskVarArray> tasks = [cstr taskVars];
+      id<ORTaskVarArray> transitionTasks = [cstr transitionTaskVars];
       id<ORIntVarArray> succ = [cstr successors];
       [tasks visit: self];
+      [transitionTasks visit: self];
       [succ visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
+      id<CPConstraint> concreteCstr;
+      if ([cstr hasTransition])
+         concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
+      else
+         concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
       [_engine add: concreteCstr];
-      concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
+      if ([cstr hasTransition])
+         concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
+      else
+         concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

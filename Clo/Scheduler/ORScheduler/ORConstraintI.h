@@ -53,6 +53,8 @@
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker transition: (id<ORIntMatrix>) transition;
 -(id<ORTaskVarArray>) taskVars;
+-(id<ORTaskVarArray>) transitionTaskVars;
+-(ORBool) hasTransition;
 -(id<ORIntVarArray>) successors;
 -(void) add: (id<ORTaskVar>) act;
 -(void) add: (id<ORTaskVar>) act type: (ORInt) type;
