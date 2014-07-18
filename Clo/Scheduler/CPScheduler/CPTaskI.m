@@ -137,32 +137,7 @@ typedef struct  {
    ORBool             _constantDuration;
    CPTaskVarEventNetwork _net;
 }
--(id<CPTaskVar>) initCPTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
-{
-   self = [super init];
-   _engine = engine;
-   _trail = [engine trail];
-   
-   // domain [who said I do not write comments?]
-   _start = makeTRInt(_trail,horizon.low);
-   _end = makeTRInt(_trail,horizon.up);
-   _durationMin = makeTRInt(_trail,duration);
-   _durationMax = makeTRInt(_trail,duration);
-   _constantDuration = TRUE;
-
-   // need a consistency check
-   assert(_start._val + _durationMax._val <= _end._val);
-
-   // network
-   for(ORInt i = 0;i < 2;i++) {
-      _net._boundEvt[i] = makeTRId(_trail,nil);
-      _net._startEvt[i] = makeTRId(_trail,nil);
-      _net._endEvt[i] = makeTRId(_trail,nil);
-      _net._durationEvt[i] = makeTRId(_trail,nil);
-   }
-   return self;
-}
--(id<CPTaskVar>) initCPTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+-(id<CPTaskVar>) initCPTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    self = [super init];
    _engine = engine;
@@ -173,7 +148,7 @@ typedef struct  {
    _end = makeTRInt(_trail,horizon.up);
    _durationMin = makeTRInt(_trail,duration.low);
    _durationMax = makeTRInt(_trail,duration.up);
-   _constantDuration = FALSE;
+   _constantDuration = (duration.low == duration.up);
    
    // need a consistency check
    assert(_start._val + _durationMax._val <= _end._val);
@@ -477,29 +452,13 @@ typedef struct  {
    
    CPOptionalTaskVarEventNetwork _net;
 }
--(id<CPTaskVar>) initCPOptionalTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
+-(id<CPTaskVar>) initCPOptionalTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    self = [super init];
    _engine = engine;
    _trail = [engine trail];
    
    _task = [CPFactory task: engine horizon: horizon duration: duration];
-   _presentMin = makeTRInt(_trail,0);
-   _presentMax = makeTRInt(_trail,1);
-   // network
-   for(ORInt i = 0;i < 2;i++) {
-      _net._presentEvt[i] = makeTRId(_trail,nil);
-      _net._absentEvt[i] = makeTRId(_trail,nil);
-   }
-   return self;
-}
--(id<CPTaskVar>) initCPOptionalTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
-{
-   self = [super init];
-   _engine = engine;
-   _trail = [engine trail];
-   
-   _task = [CPFactory task: engine horizon: horizon durationRange: duration];
    _presentMin = makeTRInt(_trail,0);
    _presentMax = makeTRInt(_trail,1);
    // network

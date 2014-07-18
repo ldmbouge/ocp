@@ -214,27 +214,15 @@
 
 // Task of fixed duration
 
-+(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
++(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    id<CPTaskVar> task = [[CPTaskVar alloc] initCPTaskVar: engine horizon: horizon duration: duration];
    [engine trackVariable: task];
    return task;
 }
-+(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
++(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    id<CPTaskVar> task = [[CPOptionalTaskVar alloc] initCPOptionalTaskVar: engine horizon: horizon duration: duration];
-   [engine trackMutable: task];
-   return task;
-}
-+(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
-{
-   id<CPTaskVar> task = [[CPTaskVar alloc] initCPTaskVar: engine horizon: horizon durationRange: duration];
-   [engine trackVariable: task];
-   return task;
-}
-+(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
-{
-   id<CPTaskVar> task = [[CPOptionalTaskVar alloc] initCPOptionalTaskVar: engine horizon: horizon durationRange: duration];
    [engine trackMutable: task];
    return task;
 }

@@ -39,7 +39,6 @@
     }
 }
 
-
 // Difference logic constraint
 -(void) visitDifference:(id<ORDifference>) cstr
 {
@@ -132,7 +131,6 @@
 }
 
 // Task
-// [pvh]: to clean up the case analysis on the duration
 -(void) visitTask:(id<ORTaskVar>) task
 {
    if (_gamma[task.getId] == NULL) {
@@ -140,19 +138,10 @@
       id<ORIntRange> duration = [task duration];
       
       id<CPTaskVar> concreteTask;
-      
-      if (duration.low == duration.up) {
-         if (![task isOptional])
-            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration.low];
-         else
-            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration.low];
-      }
-      else {
-         if (![task isOptional])
-            concreteTask = [CPFactory task: _engine horizon: horizon durationRange: duration];
-         else
-            concreteTask = [CPFactory optionalTask: _engine horizon: horizon durationRange: duration];
-      }
+      if (![task isOptional])
+         concreteTask = [CPFactory task: _engine horizon: horizon duration: duration];
+      else
+         concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration];
       _gamma[task.getId] = concreteTask;
    }
 }
@@ -229,21 +218,6 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
-
-// Disjunctive (resource) constraint
-//-(void) visitTaskSequence:(id<ORTaskSequence>) cstr
-//{
-//   if (_gamma[cstr.getId] == NULL) {
-//      id<ORTaskVarArray> tasks = [cstr taskVars];
-//      id<ORIntVarArray> succ = [cstr successors];
-//      [tasks visit: self];
-//      [succ visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
-//      [_engine add: concreteCstr];
-//      _gamma[cstr.getId] = concreteCstr;
-//   }
-//}
-
 
 -(void) visitTaskIsFinishedBy:(id<ORTaskIsFinishedBy>) cstr
 {
