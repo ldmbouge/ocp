@@ -47,10 +47,8 @@
 +(id<ORTaskDisjunctive>) disjunctive: (id<ORTaskVarArray>) task;
 +(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model;
 +(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model transition: (id<ORIntMatrix>) matrix;
-//+(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model;
 
 +(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
-//+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
 
 // Difference Logic constraints
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems;

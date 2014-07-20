@@ -20,6 +20,9 @@
 #import "CPFactory.h"
 
 // [pvh: no optional tasks in this one at this point]
+// [pvh: need to generalize that]
+// [pvh: need to add the constraint on the end date
+// [pvh: just need to prune the latest task in the path
 
 @implementation CPTaskSequence {
    id<CPEngine> _engine;

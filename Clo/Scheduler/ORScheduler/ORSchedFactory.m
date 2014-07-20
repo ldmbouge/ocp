@@ -179,7 +179,6 @@
 
 // Disjunctive (resource) constraint
 //
-// [pvh: Unify these two guys: this is ugly]
 
 +(id<ORTaskDisjunctive>) disjunctive: (id<ORTaskVarArray>) task
 {
@@ -201,12 +200,6 @@
    [model trackObject:o];
    return o;
 }
-//+(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model
-//{
-//   id<ORTaskSequence> o = [[ORTaskSequence alloc] initORTaskSequenceEmpty: model];
-//   [model trackObject:o];
-//   return o;
-//}
 
 // Difference Logic constraint
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems

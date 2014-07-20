@@ -60,14 +60,6 @@
 -(void) add: (id<ORTaskVar>) act type: (ORInt) type;
 @end
 
-//@interface ORTaskSequence : ORConstraintI<ORTaskSequence>
-//-(id<ORTaskSequence>) initORTaskSequenceEmpty: (id<ORTracker>) tracker;
-//-(id<ORTaskVarArray>) taskVars;
-//-(id<ORIntVarArray>) successors;
-//-(void) add: (id<ORTaskVar>) act;
-//@end
-
-
 // Difference logic constraint
 @interface ORDifference : ORConstraintI<ORDifference>
 -(id<ORDifference>) initORDifference:(id<ORTracker>) model initWithCapacity:(ORInt) numItems;
