@@ -64,4 +64,5 @@
 +(id<ORTaskIsFinishedBy>) constraint: (id<ORTaskVar>) task isFinishedBy: (id<ORIntVar>) date;
 +(id<ORTaskDuration>) constraint: (id<ORTaskVar>) task duration: (id<ORIntVar>) duration;
 +(id<ORTaskAddTransitionTime>) constraint: (id<ORTaskVar>) normal extended:  (id<ORTaskVar>) extended time: (id<ORIntVar>) time;
++(id<ORSumTransitionTimes>) sumTransitionTimes: (id<ORTaskDisjunctive>) disjunctive leq: (id<ORIntVar>) sumTransitionTimes;
 @end

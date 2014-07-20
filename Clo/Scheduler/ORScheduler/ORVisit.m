@@ -30,6 +30,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "taskAddTransitionTime: visit method not defined"];
 }
+-(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr;
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "sumTransitionTimes: visit method not defined"];
+}
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "taskIsFinishedBy: visit method not defined"];
@@ -78,6 +82,10 @@
    
 }
 -(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
+{
+   
+}
+-(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr
 {
    
 }

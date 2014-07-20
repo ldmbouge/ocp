@@ -117,6 +117,7 @@ int mainTransition(int argc, const char * argv[])
       // variables
       
       id<ORTaskVarArray> task = [ORFactory taskVarArray: model range: R horizon: Horizon duration: duration];
+      id<ORIntVar> cost = [ORFactory intVar: model domain: RANGE(model,0,10)];
       id<ORIntMatrix> transition = [ORFactory intMatrix: model range: R : R];
       for(ORInt i = R.low; i <= R.up; i++)
          for(ORInt j = R.low; j <= R.up; j++)
@@ -132,10 +133,11 @@ int mainTransition(int argc, const char * argv[])
       
       id<ORIntVar> dur = [ORFactory intVar: model domain: RANGE(model,0,100)];
       [model add: [ORFactory constraint: task[0] duration: dur]];
+      [model add: [ORFactory sumTransitionTimes: machine leq:cost]];
       
       // search
       id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
-      [cp solve: ^{
+      [cp solveAll: ^{
          NSLog(@"duration: %d..%d",[cp min: dur],[cp max: dur]);
          [cp sequence: machine.successors by: ^ORFloat(ORInt i) { return i;}];
 
@@ -147,12 +149,15 @@ int mainTransition(int argc, const char * argv[])
 //         NSLog(@"tasks[1] = %@",[cp description: task[1]]);
          NSLog(@"tasks[1] = %@",[cp description: taskVar[1]]);
          NSLog(@"tasks[2] = %@",[cp description: taskVar[2]]);
+         NSLog(@"successors = %d-%d",successors.low,successors.up);
+          NSLog(@"successors[0] = %d",[cp intValue: successors[0]]);
          NSLog(@"successors[1] = %d",[cp intValue: successors[1]]);
          NSLog(@"successors[2] = %d",[cp intValue: successors[2]]);
          NSLog(@"transitionTime[1] = %d",[cp intValue: transitionTimes[1]]);
          NSLog(@"transitionTime[2] = %d",[cp intValue: transitionTimes[2]]);
          NSLog(@"transitiontasks[1] = %@",[cp description: transitionTaskVar[1]]);
          NSLog(@"transitiontasks[2] = %@",[cp description: transitionTaskVar[2]]);
+         NSLog(@"cost = [%d,%d]",[cp min: cost],[cp max: cost]);
       }
        ];
       //      id<ORSolutionPool> pool = [cp solutionPool];

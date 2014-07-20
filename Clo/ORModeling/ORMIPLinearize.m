@@ -307,7 +307,7 @@
 {
    _result = c;
 }
--(void) visitNoCycle:(id<ORNoCycle>) c
+-(void) visitPath:(id<ORPath>) c
 {
    _result = c;
 }

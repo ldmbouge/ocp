@@ -48,6 +48,7 @@
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORTaskVarArray>) transitionTaskVars;
 -(ORBool) hasTransition;
+-(id<ORIntMatrix>) extendedTransitionMatrix;
 -(id<ORIntVarArray>) successors;
 -(id<ORIntVarArray>) transitionTimes;
 @end
@@ -92,3 +93,9 @@
 -(ORInt)        d;
 -(id<ORDifference>) diff;
 @end
+
+@protocol ORSumTransitionTimes <ORConstraint>
+-(id<ORTaskDisjunctive>) disjunctive;
+-(id<ORIntVar>) ub;
+@end
+

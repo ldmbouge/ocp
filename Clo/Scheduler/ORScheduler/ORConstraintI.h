@@ -38,6 +38,11 @@
 -(id<ORIntVar>) time;
 @end
 
+@interface ORSumTransitionTimes : ORConstraintI<ORSumTransitionTimes>
+-(id<ORSumTransitionTimes>) initORSumTransitionTimes: (id<ORTaskDisjunctive>) normal leq: (id<ORIntVar>) ub;
+-(id<ORTaskDisjunctive>) disjunctive;
+-(id<ORIntVar>) ub;
+@end
 
 // Cumulative (resource) constraint
 @interface ORCumulative : ORConstraintI<ORCumulative>
@@ -55,6 +60,7 @@
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORTaskVarArray>) transitionTaskVars;
 -(ORBool) hasTransition;
+-(id<ORIntMatrix>) extendedTransitionMatrix;
 -(id<ORIntVarArray>) successors;
 -(void) add: (id<ORTaskVar>) act;
 -(void) add: (id<ORTaskVar>) act type: (ORInt) type;

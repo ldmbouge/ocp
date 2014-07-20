@@ -356,7 +356,8 @@
    id<ORIntMatrix> _typeTransition;
    id<ORTaskVarArray> _transitionTasks;   
    
-   id<ORIntRange> _transitionRange;
+   id<ORIntRange> _transitionRow;
+   id<ORIntRange> _transitionColumn;
    id<ORIntVarArray> _transitionTimes;
    id<ORIntArray>* _transitionArray;
 
@@ -421,14 +422,13 @@
       return;
    id<ORModel> model = (id<ORModel>) _tracker;
    ORInt nbAct = (ORInt) [_acc count];
-   _transitionRange = RANGE(_tracker,0,nbAct+1);
-   _typeTransition = [ORFactory intMatrix: _tracker range: _transitionRange : _transitionRange];
-   for(ORInt i = _transitionRange.low; i <= _transitionRange.up ; i++) {
+   _transitionRow = RANGE(_tracker,0,nbAct);
+   _transitionColumn = RANGE(_tracker,1,nbAct+1);
+   _typeTransition = [ORFactory intMatrix: _tracker range: _transitionRow : _transitionColumn];
+   for(ORInt i = _transitionColumn.low; i <= _transitionColumn.up ; i++) 
       [_typeTransition set: 0 at: 0 : i];
-      [_typeTransition set: 0 at: nbAct + 1 : i];
-      [_typeTransition set: 0 at: i : 0];
+   for(ORInt i = _transitionRow.low; i <= _transitionRow.up ; i++)
       [_typeTransition set: 0 at: i : nbAct + 1];
-   }
    ORInt maxTransition = -MAXINT;
    for(ORInt i = 1; i <= nbAct ; i++) {
       ORInt typei = [_accTypes[i-1] intValue];
@@ -443,7 +443,7 @@
    }
    _transitionArray = (id<ORIntArray>*) malloc(sizeof(id<ORIntArray>) * (nbAct + 1));
    for(ORInt i = 0; i <= nbAct ; i++)
-      _transitionArray[i] = [ORFactory intArray: _tracker range: _transitionRange with: ^ORInt(ORInt j) { return [_typeTransition at: i : j];}];
+      _transitionArray[i] = [ORFactory intArray: _tracker range: _transitionColumn with: ^ORInt(ORInt j) { return [_typeTransition at: i : j];}];
       
    NSLog(@"transition: %@",_transition);
    NSLog(@"type transition: %@",_typeTransition);
@@ -526,6 +526,10 @@
 -(id<ORIntVarArray>) transitionTimes
 {
    return _transitionTimes;
+}
+-(id<ORIntMatrix>) extendedTransitionMatrix
+{
+   return _typeTransition;
 }
 -(NSSet*) allVars
 {
@@ -643,3 +647,41 @@
 }
 @end
 
+
+
+@implementation ORSumTransitionTimes {
+   id<ORTaskDisjunctive> _disjunctive;
+   id<ORIntVar> _ub;
+}
+-(id<ORSumTransitionTimes>) initORSumTransitionTimes: (id<ORTaskDisjunctive>) disjunctive leq: (id<ORIntVar>) ub
+{
+   self = [super initORConstraintI];
+   _disjunctive = disjunctive;
+   _ub = ub;
+   return self;
+}
+-(void)visit: (ORVisitor*) v
+{
+   [v visitSumTransitionTimes: self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> SumransitionTime(%@,%@)>", [self class], self, _disjunctive,_ub];
+   return buf;
+}
+-(id<ORTaskDisjunctive>) disjunctive
+{
+   return _disjunctive;
+}
+-(id<ORIntVar>) ub
+{
+   return _ub;
+}
+-(NSSet*) allVars
+{
+   NSMutableSet* ms = (NSMutableSet*)[_disjunctive allVars];
+   [ms addObject: _ub];
+   return ms;
+}
+@end

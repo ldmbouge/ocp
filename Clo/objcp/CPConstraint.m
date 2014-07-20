@@ -126,7 +126,7 @@
 
 +(id<ORConstraint>) circuit: (id<CPIntVarArray>) x
 {
-   id<ORConstraint> o = [[CPCircuitI alloc] initCPCircuitI:x];
+   id<ORConstraint> o = [[CPCircuit alloc] initCPCircuit:x];
    [[x tracker] trackMutable: o];
    return o;
 }
@@ -143,9 +143,9 @@
    [[x tracker] trackMutable: o];
    return o;
 }
-+(id<ORConstraint>) nocycle: (id<CPIntVarArray>) x
++(id<ORConstraint>) path: (id<CPIntVarArray>) x
 {
-   id<ORConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];
+   id<ORConstraint> o = [[CPPath alloc] initCPPath:x];
    [[x tracker] trackMutable: o];
    return o;
 }

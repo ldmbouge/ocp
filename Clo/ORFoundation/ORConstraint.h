@@ -381,7 +381,7 @@ enum ORGroupType {
 -(id<ORIntVarArray>) array;
 @end
 
-@protocol ORNoCycle <ORConstraint>
+@protocol ORPath <ORConstraint>
 -(id<ORIntVarArray>) array;
 @end
 

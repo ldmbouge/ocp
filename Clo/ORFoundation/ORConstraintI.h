@@ -402,13 +402,13 @@
 -(id<ORIntVarArray>)y;
 @end
 
-@interface ORCircuitI : ORConstraintI<ORCircuit>
--(ORCircuitI*)initORCircuitI:(id<ORIntVarArray>)x;
+@interface ORCircuit : ORConstraintI<ORCircuit>
+-(ORCircuit*)initORCircuit:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) array;
 @end
 
-@interface ORNoCycleI : ORConstraintI<ORNoCycle>
--(ORCircuitI*)initORNoCycleI:(id<ORIntVarArray>)x;
+@interface ORPath : ORConstraintI<ORPath>
+-(ORPath*)initORPath:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) array;
 @end
 

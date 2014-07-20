@@ -30,6 +30,14 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+-(void) visitSumTransitionTimes:(id<ORSumTransitionTimes>) cstr
+{
+   _result = [_into addConstraint:cstr];
+}
 -(void) visitCumulative:(id<ORCumulative>) cstr
 {
     _result = [_into addConstraint:cstr];

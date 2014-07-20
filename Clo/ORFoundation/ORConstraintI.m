@@ -2825,10 +2825,10 @@
 }
 @end
 
-@implementation ORCircuitI {
+@implementation ORCircuit {
    id<ORIntVarArray> _x;
 }
--(ORCircuitI*)initORCircuitI:(id<ORIntVarArray>)x
+-(ORCircuit*)initORCircuit:(id<ORIntVarArray>)x
 {
    self = [super initORConstraintI];
    _x = x;
@@ -2858,10 +2858,10 @@
 }
 @end
 
-@implementation ORNoCycleI {
+@implementation ORPath {
    id<ORIntVarArray> _x;
 }
--(ORNoCycleI*)initORNoCycleI:(id<ORIntVarArray>)x
+-(ORPath*) initORPath:(id<ORIntVarArray>)x
 {
    self = [super initORConstraintI];
    _x = x;
@@ -2873,12 +2873,12 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitNoCycle:self];
+   [v visitPath:self];
 }
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> nocycle(%@)>",[self class],self,_x];
+   [buf appendFormat:@"<%@ : %p> -> path(%@)>",[self class],self,_x];
    return buf;
 }
 -(NSSet*)allVars

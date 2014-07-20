@@ -232,4 +232,24 @@
    }
 }
 
+-(void) visitSumTransitionTimes:(id<ORSumTransitionTimes>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORTaskDisjunctive> disjunctive = [cstr disjunctive];
+      id<ORIntVar> ub = [cstr ub];
+      [disjunctive visit: self];
+      [ub visit: self];
+      id<ORIntVarArray> successors = [disjunctive successors];
+      id<ORIntMatrix> matrix = [disjunctive extendedTransitionMatrix];
+      id<CPConstraint> concreteCstr;
+      concreteCstr = [CPFactory assignment: _engine
+                                     array: _gamma[successors.getId]
+                                    matrix: matrix
+                                      cost: _gamma[ub.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+
 @end;

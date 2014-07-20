@@ -1151,13 +1151,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x
 {
-   id<ORConstraint> o = [[ORCircuitI alloc] initORCircuitI:x];
+   id<ORConstraint> o = [[ORCircuit alloc] initORCircuit:x];
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x
++(id<ORConstraint>) path: (id<ORIntVarArray>) x
 {
-   id<ORConstraint> o = [[ORNoCycleI alloc] initORNoCycleI:x];
+   id<ORConstraint> o = [[ORPath alloc] initORPath:x];
    [[x tracker] trackObject:o];
    return o;
 }

@@ -282,12 +282,12 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitNoCycle:(id<ORNoCycle>) cstr
+-(void) visitPath:(id<ORPath>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory nocycle: _gamma[ax.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory path: _gamma[ax.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

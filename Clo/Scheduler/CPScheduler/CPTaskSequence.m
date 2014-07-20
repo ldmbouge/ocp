@@ -57,6 +57,7 @@
 -(ORStatus) post
 {
    [_engine addInternal:[CPFactory alldifferent: _engine over: _succ annotation: ValueConsistency]];
+   [_engine addInternal:[CPFactory path: _succ]];
    for(ORInt k = _low; k <= _up; k++)
       [_assigned set: 0 at: k];
       

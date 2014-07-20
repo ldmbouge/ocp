@@ -294,6 +294,11 @@
       return [ORFactory task: model horizon: horizon duration: [duration at: i : j]];
    }];
 }
-
++(id<ORSumTransitionTimes>) sumTransitionTimes: (id<ORTaskDisjunctive>) disjunctive leq: (id<ORIntVar>) sumTransitionTimes
+{
+   id<ORSumTransitionTimes> o = [[ORSumTransitionTimes alloc] initORSumTransitionTimes: disjunctive  leq: sumTransitionTimes];
+   [[sumTransitionTimes tracker] trackMutable: o];
+   return o;
+}
 
 @end
