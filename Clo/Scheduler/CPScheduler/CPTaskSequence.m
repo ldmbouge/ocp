@@ -119,8 +119,11 @@
       }
    }
    if (nb <= _size) {
-      [_succ[i] remove: _up + 1];
+      if (i == _up + 1)
+         failNow();
 //      NSLog(@"_succ[%d] = %@",i,_succ[i]);
+//      NSLog(@"_succ[%d] = %@",i,_succ[i]);
+      [_succ[i] remove: _up + 1];
    }
    if (i != _up + 1) {
       ORInt min = [_succ[i] min];

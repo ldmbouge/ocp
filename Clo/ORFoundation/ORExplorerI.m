@@ -244,6 +244,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self push: limit];
    [limit release];
    cl();
+   [limit succeeds];
    [self popController];
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl

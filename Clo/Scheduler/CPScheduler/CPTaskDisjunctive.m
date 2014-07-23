@@ -71,7 +71,7 @@
 
    
    _idempotent = false;
-   _dprec = true;
+   _dprec = false;
    _nfnl  = true;
    _ef    = true;
    
