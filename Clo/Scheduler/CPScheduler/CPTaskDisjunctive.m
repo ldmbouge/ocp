@@ -88,8 +88,8 @@
    _task_id_lct = NULL;
    
    _size = (ORUInt) _tasks.count;
-   _low = _tasks.range.low;
-   _up = _tasks.range.up;
+   _low  = _tasks.range.low;
+   _up   = _tasks.range.up;
    
    return self;
 }
@@ -97,8 +97,8 @@
 -(void) dealloc
 {
    if (_start0 != NULL) free(_start0);
-   if (_dur0 != NULL) free(_dur0);
-   if (_idx != NULL) free(_idx);
+   if (_dur0   != NULL) free(_dur0  );
+   if (_idx    != NULL) free(_idx   );
    
    [super dealloc];
 }
