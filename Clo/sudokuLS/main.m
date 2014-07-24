@@ -1,0 +1,93 @@
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
+
+#import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <objls/LSFactory.h>
+#import <objls/LSConstraint.h>
+#import <objls/LSSolver.h>
+
+void show(id<LSProgram> cp,id<ORIntVarMatrix> m)
+{
+   id<ORIntRange> R = [m range: 0];
+   id<ORIntRange> C = [m range: 1];
+   for(ORInt i = [R low] ; i <= [R up]; i++) {
+      for(ORInt j = C.low ; j <= C.up; j++)
+         printf("%d  ",[cp intValue:[m at: i : j]]);
+      printf("\n");
+   }
+   printf("\n");
+}
+
+int main (int argc, const char * argv[])
+{
+   @autoreleasepool {
+      FILE* f = fopen("sudokuFile3.txt","r");
+      int nb;
+      int r, c, v;
+      fscanf(f,"%d \n",&nb);
+      printf("number of entries %d \n",nb);
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORAnnotation> notes = [ORFactory annotation];
+      id<ORIntRange> R = RANGE(mdl,1,9);
+      id<ORIntVarMatrix> x = [ORFactory intVarMatrix: mdl range: R : R domain: R];
+      for(ORInt i = 0; i < nb; i++) {
+         fscanf(f,"%d%d%d",&r,&c,&v);
+         [notes hard:[mdl  add: [[x at: r : c] eq:@(v)]]];
+      }
+      for(ORInt i = 1; i <= 9; i++)
+         [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar,j,R,[x at:i :j])] ];
+      for(ORInt j = 1; j <= 9; j++)
+         [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar,i,R,[x at:i :j])]];
+      for(ORInt i = 0; i <= 2; i++)
+         for(ORInt j = 0; j <= 2; j++)
+            [notes hard:[mdl add: [ORFactory alldifferent: All2(mdl, ORIntVar,
+                                                                r, RANGE(mdl,i*3+1,i*3+3),
+                                                                c, RANGE(mdl,j*3+1,j*3+3),
+                                                                [x at:r :c])]]];
+      
+      id<LSProgram> __block cp = [ORFactory createLSProgram:mdl annotation:notes];
+      ORInt __block it = 0;
+      [cp solve:
+       ^() {
+          while ([cp getViolations] > 0) {
+             [cp sweep:^(id<ORSweep> sweep) {
+                for(id<ORConstraint> c in [cp modelHard]) {
+                   NSSet* cx = [c allVars];
+                   for(id<ORIntVar> x1 in cx) {
+                      for(id<ORIntVar> x2 in cx) {
+                         if (x1 == x2) continue;
+                         ORInt delta = [cp deltaWhenSwap:x1 with:x2];
+                         //printf("Delta for swap(%d,%d): %d\n",getId(x1),getId(x2),delta);
+                         [sweep forMininum:delta do:^{
+                            printf("from %d \tdelta = %d\n",[cp getViolations],delta);
+                            [cp swap:x1 with:x2];
+                         }];
+                      }
+                   }
+                }
+             }];
+             it++;
+          }
+          show(cp,x);
+       }
+       ];
+      
+      NSLog(@"Solver status: %@\n",cp);
+      NSLog(@"Quitting");
+      [cp release];
+      [ORFactory shutdown];
+   }
+   return 0;
+}
+

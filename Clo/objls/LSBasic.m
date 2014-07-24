@@ -184,6 +184,82 @@
 }
 @end
 
+@implementation LSEqualc {
+   id<LSIntVarArray> _src;
+   id<LSIntVar>     _viol;
+   id<LSIntVar>     _zero;
+}
+-(id)init:(id<LSEngine>)engine x:(id<LSIntVar>)x eq:(ORInt)c;  // x == c
+{
+   self = [super init:engine];
+   _x = x;
+   _c = c;
+   _src = nil;
+   return self;
+}
+-(void)post
+{
+   id<LSEngine> engine = (id)_engine;
+   // viol = abs(x - c)
+   _viol = [LSFactory intVar:engine domain:RANGE(engine,0,_x.domain.size)];
+   [_engine add:[LSFactory inv:_viol equal:^ORInt{
+      return abs(getLSIntValue(_x) - _c);
+   } vars:@[_x]]];
+   _zero = [LSFactory intVar:_engine domain:RANGE(_engine,0,0)];
+}
+-(void)hardInit
+{
+   [_x setValue:_c];
+}
+-(id<LSIntVarArray>)variables
+{
+   if (!_src) {
+      _src = [LSFactory intVarArray:(id)_engine range:RANGE((id)_engine,0,0)];
+      _src[0] = _x;
+   }
+   return _src;
+}
+-(ORBool)isTrue
+{
+   return getLSIntValue(_x) == _c;
+}
+-(ORInt)getViolations
+{
+   return getLSIntValue(_viol);
+}
+-(ORInt)getVarViolations:(id<LSIntVar>)var
+{
+   if (getId(var) == getId(_x))
+      return getLSIntValue(_viol);
+   else return 0;
+}
+-(id<LSIntVar>)violations
+{
+   return _viol;
+}
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var
+{
+   if (getId(var) == getId(_x))
+      return _viol;
+   else return _zero;
+}
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   if (getId(x) == getId(_x)) {
+      return abs(v - _c) - getLSIntValue(_viol);
+   } else return 0;
+}
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   ORInt xid = getId(_x);
+   if (xid == getId(x))
+      return [self deltaWhenAssign:x to:getLSIntValue(y)];
+   else if (xid == getId(y))
+      return [self deltaWhenAssign:y to:getLSIntValue(x)];
+   else return 0;
+}
+@end
+
 @implementation LSOr {
    id<LSIntVarArray> _src;
    id<LSIntVar>      _viol;

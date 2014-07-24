@@ -21,6 +21,7 @@
 @implementation LSSolver {
    LSLRSystem* _sys;
    NSArray*    _hard;
+   NSArray*    _mhard;
 }
 
 -(id)initLSSolver
@@ -29,6 +30,7 @@
    _engine = [[LSEngineI alloc] initEngine];
    _pool = [ORFactory createSolutionPool];
    _hard = nil;
+   _mhard = nil;
    return self;
 }
 -(void)dealloc
@@ -40,6 +42,15 @@
 {
    [_hard release];
    _hard = [hc retain];
+}
+-(void)setModelHard:(NSArray*)mhc
+{
+   [_mhard release];
+   _mhard = [mhc retain];
+}
+-(id<NSFastEnumeration>)modelHard
+{
+   return _mhard;
 }
 -(void)setRoot:(LSLRSystem*)sys
 {
@@ -335,6 +346,7 @@
    [program setRoot:sys];
    [program setSource:m];
    [program setHard:[concretizer hardSet]];
+   [program setModelHard:[concretizer hardModel]];
    [concretizer release];
    return program;
 }

@@ -61,6 +61,7 @@
 -(ORInt)valueWhenVar:(id<LSIntVar>)x equal:(ORInt)v;
 -(void)setValue:(ORInt)v;
 -(id<ORIntRange>)domain;
+-(void)setHardDomain:(id<ORIntRange>)newDomain;
 -(id<LSGradient>)decrease:(id<LSIntVar>)x;
 -(id<LSGradient>)increase:(id<LSIntVar>)x;
 @end

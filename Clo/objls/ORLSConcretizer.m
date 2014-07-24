@@ -30,6 +30,7 @@
    _notes = notes;
    _allCstrs = [[NSMutableArray alloc] initWithCapacity:64];
    _hardCstrs = [[NSMutableArray alloc] initWithCapacity:64];
+   _hardModel = [[NSMutableArray alloc] initWithCapacity:64];
    _objective = nil;
    return self;
 }
@@ -38,6 +39,7 @@
    [_solver release];
    [_allCstrs release];
    [_hardCstrs release];
+   [_hardModel release];
    [super dealloc];
 }
 - (void)doesNotRecognizeSelector:(SEL)aSelector
@@ -61,6 +63,10 @@
 -(NSMutableArray*)hardSet
 {
    return _hardCstrs;
+}
+-(NSMutableArray*)hardModel
+{
+   return _hardModel;
 }
 // Helper function
 -(id) concreteVar: (id<ORVar>) x
@@ -185,6 +191,23 @@
 -(void) visitTable:(id<ORTable>) v
 {
 }
+-(void) visitEqualc: (id<OREqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<LSIntVar> left  = [self  concreteVar:[cstr left]];
+      ORInt        right = [cstr cst];
+      id<LSConstraint> concreteCstr = [LSFactory equalc:left  to: right];
+      [_engine addConstraint: concreteCstr];
+      [_allCstrs addObject:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+      ORCLevel annotation = [_notes levelFor:cstr];
+      if (annotation == HardConsistency) {
+         [_hardCstrs addObject:concreteCstr];
+         [_hardModel addObject:cstr];
+         [left setHardDomain:RANGE(_engine, right, right)];
+      }
+   }
+}
 -(void) visitLEqual: (id<ORLEqual>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -194,6 +217,11 @@
       [_engine addConstraint: concreteCstr];
       [_allCstrs addObject:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
+      ORCLevel annotation = [_notes levelFor:cstr];
+      if (annotation == HardConsistency) {
+         [_hardCstrs addObject:concreteCstr];
+         [_hardModel addObject:cstr];
+      }
    }
 }
 
@@ -205,6 +233,11 @@
       [_engine addConstraint:concreteCstr];
       [_allCstrs addObject:concreteCstr];
       _gamma[getId(cstr)] = concreteCstr;
+      ORCLevel annotation = [_notes levelFor:cstr];
+      if (annotation == HardConsistency) {
+         [_hardCstrs addObject:concreteCstr];
+         [_hardModel addObject:cstr];
+      }
    }
 }
 -(void) visitOr: (id<OROr>)cstr
@@ -250,8 +283,10 @@
       [_allCstrs addObject:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
       ORCLevel annotation = [_notes levelFor:cstr];
-      if (annotation == HardConsistency)
-          [_hardCstrs addObject:concreteCstr];
+      if (annotation == HardConsistency) {
+         [_hardCstrs addObject:concreteCstr];
+         [_hardModel addObject:cstr];
+      }
    }
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
@@ -264,8 +299,10 @@
       [_allCstrs addObject:concreteCstr];
       _gamma[getId(cstr)] = concreteCstr;
       ORCLevel annotation = [_notes levelFor:cstr];
-      if (annotation == HardConsistency)
+      if (annotation == HardConsistency) {
          [_hardCstrs addObject:concreteCstr];
+         [_hardModel addObject:cstr];
+      }
    }
 }
 

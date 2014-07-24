@@ -18,6 +18,8 @@
 
 @protocol LSProgram<ORGamma,ORTracker>
 -(void)setHard:(NSArray*)hardCstrs;
+-(void)setModelHard:(NSArray*)hardCstrs;
+-(id<NSFastEnumeration>)modelHard;
 -(id<ORSearchObjectiveFunction>) objective;
 
 -(void)label:(id<ORIntVar>)x with:(ORInt)v;

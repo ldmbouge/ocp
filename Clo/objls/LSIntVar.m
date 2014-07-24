@@ -50,6 +50,10 @@ Class __lsivc = nil;
       return _name == getId(object);
    } else return NO;
 }
+-(void)setHardDomain:(id<ORIntRange>)newDomain
+{
+   _dom = newDomain;
+}
 -(LSEngineI*)engine
 {
    return _engine;

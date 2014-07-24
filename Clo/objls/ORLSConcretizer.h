@@ -21,10 +21,12 @@
    id<ORAnnotation>      _notes;
    NSMutableArray*    _allCstrs;
    NSMutableArray*   _hardCstrs;
+   NSMutableArray*   _hardModel;
    id<LSConstraint>  _objective;
 }
 -(ORLSConcretizer*) initORLSConcretizer: (id<LSProgram>) solver annotation:(id<ORAnnotation>)notes;
 -(id<LSConstraint>)wrapUp;
 -(NSMutableArray*)hardSet;
+-(NSMutableArray*)hardModel;
 @end
 

@@ -15,6 +15,7 @@
 #import "LSGlobalInvariants.h"
 #import "LSCount.h"
 #import "LSIntVar.h"
+#import <ORFoundation/ORSetI.h>
 
 @implementation LSAllDifferent {
    unsigned char* _present;  // boolean array (one boolean per var in _x)
@@ -85,6 +86,39 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       _sb = idRange(_x,(ORBounds){FDMAXINT,0});
       return _src = _x;
    }
+}
+-(void)hardInit
+{
+   id<ORIntRange> valRange = _c.range;
+   [_engine atomic:^{
+      ORInt sub = valRange.size;
+      ORInt vals[sub];
+      ORInt k = 0;
+      ORBool fixed[sub];
+      memset(fixed,0,sizeof(ORBool)*sub);
+      for(id<LSIntVar> aVar in _x) {
+         if ([[aVar domain] size] == 1)
+            fixed[getLSIntValue(aVar) - valRange.low] |= true;
+      }
+      for(ORInt i =valRange.low;i <= valRange.up;i++) {
+         if (!fixed[i - valRange.low])
+            vals[k++] = i;
+      }
+      ORInt nbUsable = k;
+      id<ORIntRange> AV = [[ORIntRangeI alloc] initORIntRangeI: 0 up: nbUsable-1];
+      id<ORRandomPermutation> p = [ORFactory randomPermutation:AV];
+      for(ORInt k = _x.range.low; k <= _x.range.up;k++) {
+         id<ORIntRange> xkd = [_x[k] domain];
+         if (xkd.size == 1)
+            assert(getLSIntValue(_x[k]) == xkd.low);
+         else {
+            ORInt theValue = vals[p.next];
+            [_x[k] setValue:theValue];
+         }
+      }
+      [AV release];
+      [p release];
+   }];
 }
 
 -(void)post

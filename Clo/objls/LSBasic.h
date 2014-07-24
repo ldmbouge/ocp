@@ -29,6 +29,22 @@
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
 
+@interface LSEqualc : LSConstraint {
+   LSIntVar* _x;
+   ORInt     _c;
+}
+-(id)init:(id<LSEngine>)engine x:(id<LSIntVar>)x eq:(ORInt)c;
+-(void)post;
+-(id<LSIntVarArray>)variables;
+-(ORBool)isTrue;
+-(ORInt)getViolations;
+-(ORInt)getVarViolations:(id<LSIntVar>)var;
+-(id<LSIntVar>)violations;
+-(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
+-(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+@end
+
 @interface LSNEqualc : LSConstraint {
    LSIntVar* _x;
    ORInt     _c;

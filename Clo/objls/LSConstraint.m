@@ -124,6 +124,12 @@
    [e trackMutable:c];
    return c;
 }
++(id<LSConstraint>) equalc: (id<LSIntVar>)x to:(ORInt)c
+{
+   LSEqualc* cstr = [[LSEqualc alloc] init:[x engine] x:x eq:c];
+   [[x engine] trackMutable:cstr];
+   return cstr;
+}
 +(id<LSConstraint>) lEqual: (id<LSIntVar>)x to: (id<LSIntVar>) y plus:(ORInt)c
 {
    LSLEqual* cstr = [[LSLEqual alloc] init:[x engine] x:x leq:y plus:c];

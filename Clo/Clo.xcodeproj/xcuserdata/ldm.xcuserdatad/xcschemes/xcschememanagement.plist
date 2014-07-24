@@ -604,6 +604,11 @@
 			<key>orderHint</key>
 			<integer>55</integer>
 		</dict>
+		<key>sudokuLS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>104</integer>
+		</dict>
 		<key>testDistrib.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -713,6 +718,11 @@
 			<true/>
 		</dict>
 		<key>5B33370313A2B866001DFC38</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B34EC2D197993A8004B694E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
