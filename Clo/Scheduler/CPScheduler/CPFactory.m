@@ -15,6 +15,7 @@
 #import "CPConstraint.h"
 #import "CPCumulative.h"
 #import "CPDisjunctive.h"
+#import "CPTaskCumulative.h"
 #import "CPTaskDisjunctive.h"
 #import "CPTaskSequence.h"
 #import "CPDifference.h"
@@ -254,6 +255,12 @@
    id<CPConstraint> cstr =[[CPTaskDuration alloc] initCPTaskDuration: task : duration];
    [engine trackMutable: cstr];
    return cstr;
+}
++(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
+{
+    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
+    [[tasks tracker] trackMutable:o];
+    return o;
 }
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {

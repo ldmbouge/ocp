@@ -15,6 +15,10 @@
 #import "CPMisc.h"
 #import "CPTask.h"
 
+
+// NOTE that the TTEF filtering is not adjusted for optional tasks yet, but the
+// TT filtering.
+
 // Randomly set
 #define MAXNBTASK ((MAXINT)/4)
 
@@ -76,7 +80,7 @@ typedef struct {
     ORULong _nb_ttef_props;     // Number of time-tabling-edge-finding propagations
 }
 
--(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks withUsages:(id<CPIntVarArray>)usages andCapacity:(id<CPIntVar>)capacity
+-(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with:(id<CPIntVarArray>)usages and:(id<CPIntVar>)capacity
 {
     // Checking whether the number of activities is within the limit
     if (tasks.count > (NSUInteger) MAXNBTASK) {
@@ -232,24 +236,6 @@ typedef struct {
             [_tasks[i] whenPresentPropagate:self];
         }
     }
-//    for (ORInt i = 0; i < _size; i++) {
-//        // XXX More efficient subscriptions, e.g., _end0[i] doesn't need to be subscribed
-//        // when it is a view on _start0[i]
-//        if (!_start0[i].bound)
-//            [_start0[i] whenChangeBoundsPropagate: self];
-//        
-//        if (!_end0[i].bound)
-//            [_end0[i]   whenChangeBoundsPropagate: self];
-//        
-//        if (!_dur0[i].bound)
-//            [_dur0[i]   whenChangeMinPropagate:    self];
-//        
-//        if (!_usage0[i].bound)
-//            [_usage0[i] whenChangeMinPropagate:    self];
-//        
-//        if (!_area0[i].bound)
-//            [_area0[i]  whenChangeMinPropagate:    self];
-//    }
     if (!_capacity.bound)
         [_capacity whenChangeMaxPropagate:self];
 
@@ -412,23 +398,23 @@ typedef struct {
     ORInt _change;
 } ProfileChange;
 
-int compareProfileChange(const ProfileChange* r1, const ProfileChange* r2)
+static int compareProfileChange(const ProfileChange* r1, const ProfileChange* r2)
 {
     if (r1->_time == r2->_time) return r1->_change - r2->_change;
     return r1->_time - r2->_time;
 }
 
-int sortEstAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortEstAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return est(cumu, *r1) - est(cumu, *r2);
 }
 
-int sortEctAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortEctAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return ect(cumu, *r1) - ect(cumu, *r2);
 }
 
-int sortLctAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortLctAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return lct(cumu, *r1) - lct(cumu, *r2);
 }

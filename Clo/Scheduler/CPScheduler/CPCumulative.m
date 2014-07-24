@@ -446,23 +446,23 @@ typedef struct {
     ORInt _change;
 } ProfileChange;
 
-int compareProfileChange(const ProfileChange* r1, const ProfileChange* r2)
+static int compareProfileChange(const ProfileChange* r1, const ProfileChange* r2)
 {
     if (r1->_time == r2->_time) return r1->_change - r2->_change;
     return r1->_time - r2->_time;
 }
 
-int sortEstAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortEstAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return est(cumu, *r1) - est(cumu, *r2);
 }
 
-int sortEctAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortEctAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return ect(cumu, *r1) - ect(cumu, *r2);
 }
 
-int sortLctAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortLctAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return lct(cumu, *r1) - lct(cumu, *r2);
 }

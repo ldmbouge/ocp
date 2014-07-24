@@ -148,7 +148,7 @@
 		537EEA8B18FCF9880006FFD2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		537EEA8C18FCF9880006FFD2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		537EEA9318FCFD0B0006FFD2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8BC18FCC5720006FFD2 /* main.m */; };
-		53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B437D7197F371100BE9F4D /* CPTaskCumulative.h */; };
+		53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B437D7197F371100BE9F4D /* CPTaskCumulative.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53B437DC197F373E00BE9F4D /* CPTaskCumulative.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B437DA197F373A00BE9F4D /* CPTaskCumulative.m */; };
 		53C4BE341929C2E700DE6498 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		53C4BE351929C2E700DE6498 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
@@ -13401,12 +13401,12 @@
 				537EEA5918FCE35E0006FFD2 /* CPDisjunctive.h in Headers */,
 				537EEA5718FCE35E0006FFD2 /* CPCumulative.h in Headers */,
 				537EEA5618FCE35E0006FFD2 /* CPConstraint.h in Headers */,
+				53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */,
 				B19BBA56196B6CEE006EE9A9 /* CPTaskDisjunctive.h in Headers */,
 				537EEA5818FCE35E0006FFD2 /* CPDifference.h in Headers */,
 				537EEA5A18FCE35E0006FFD2 /* CPFactory.h in Headers */,
 				B1A6581C196CE42000D318A6 /* CPTaskSequence.h in Headers */,
 				537EEA5B18FCE35E0006FFD2 /* CPScheduler.h in Headers */,
-				53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */,
 				535D133118FF7F1D008D48BD /* CPMisc.h in Headers */,
 				B127A56E19628CA100398AA3 /* CPTaskI.h in Headers */,
 			);
@@ -26234,6 +26234,7 @@
 				B15746A4197D754000CAC841 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B1595B4913C11F2A001FCB61 /* Build configuration list for PBXNativeTarget "Sudoku" */ = {
 			isa = XCConfigurationList;

@@ -29,7 +29,7 @@
     id<CPIntVarArray>  _usages;     // Resource usage of the tasks on the resource
     id<CPIntVar>       _capacity;   // Resource capacity
 }
--(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks withUsages: (id<CPIntVarArray>)usages andCapacity: (id<CPIntVar>)capacity;
+-(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>)usages and: (id<CPIntVar>)capacity;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

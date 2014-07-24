@@ -176,6 +176,18 @@
     [[s tracker] trackObject:o];
     return o;
 }
++(id<ORTaskCumulative>) cumulative: (id<ORTaskVarArray>) task with: (id<ORIntVarArray>) usage and: (id<ORIntVar>) capacity
+{
+    id<ORTaskCumulative> o = [[ORTaskCumulative alloc] initORTaskCumulative: task with: usage and: capacity];
+    [[task tracker] trackObject:o];
+    return o;
+}
++(id<ORTaskCumulative>) cumulativeConstraint: (id<ORIntVar>) capacity
+{
+    id<ORTaskCumulative> o = [[ORTaskCumulative alloc] initORTaskCumulativeEmpty: capacity];
+    [[capacity tracker] trackObject:o];
+    return o;
+}
 
 // Disjunctive (resource) constraint
 //

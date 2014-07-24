@@ -26,6 +26,10 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitTaskCumulative:(id<ORTaskCumulative>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
 -(void) visitTaskDisjunctive:(id<ORTaskDisjunctive>) cstr
 {
    _result = [_into addConstraint:cstr];

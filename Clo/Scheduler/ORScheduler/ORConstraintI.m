@@ -344,6 +344,115 @@
 }
 @end
 
+@implementation ORTaskCumulative {
+    BOOL _closed;
+    
+    id<ORTracker>      _tracker;
+    NSMutableArray*    _accT;
+    NSMutableArray*    _accU;
+    id<ORTaskVarArray> _tasks;
+    id<ORIntVarArray>  _usages;
+    id<ORIntVar>       _capacity;
+}
+-(id<ORTaskCumulative>) initORTaskCumulative: (id<ORTaskVarArray>) tasks with: (id<ORIntVarArray>) usages and: (id<ORIntVar>) capacity
+{
+    // Checking whether the size and indices of the arrays tasks and usages are consistent
+    if (tasks.count != usages.count || tasks.low != usages.low || tasks.up != usages.up) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: the arrays 'tasks' and 'usages' must have the same size and indices!"];
+    }
+    
+    self = [super initORConstraintI];
+    
+    _tracker  = [tasks tracker];
+    _tasks    = tasks;
+    _usages   = usages;
+    _capacity = capacity;
+
+    _accT   = 0;
+    _accU   = 0;
+    _closed = TRUE;
+    
+    return self;
+}
+-(id<ORTaskCumulative>) initORTaskCumulativeEmpty: (id<ORIntVar>) capacity
+{
+    self = [super initORConstraintI];
+    
+    _tracker  = [capacity tracker];
+    _tasks    = 0;
+    _usages   = 0;
+    _capacity = capacity;
+    _accT     = [[NSMutableArray alloc] initWithCapacity: 16];
+    _accU     = [[NSMutableArray alloc] initWithCapacity: 16];
+    _closed   = FALSE;
+    
+    return self;
+}
+-(void) dealloc
+{
+    if (_accT)
+        [_accT dealloc];
+    if (_accU)
+        [_accU dealloc];
+    [super dealloc];
+}
+-(void) add: (id<ORTaskVar>) task with:(id<ORIntVar>)usage
+{
+    if (_closed) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
+    }
+    [_accT addObject: task ];
+    [_accU addObject: usage];
+}
+-(void) visit: (ORVisitor*) v
+{
+    [v visitTaskCumulative: self];
+}
+-(NSString*) description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"<%@ : %p> -> cumulative(%@, %@, %@)>", [self class], self, _tasks, _usages, _capacity];
+    return buf;
+}
+-(void) close
+{
+    if (!_closed) {
+        _closed = true;
+        _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_accT count]) with: ^id<ORTaskVar>(ORInt i) {
+            return _accT[i-1];
+        }];
+        _usages = [ORFactory intVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_accU count]) with: ^id<ORIntVar>(ORInt i) {
+            return _accU[i-1];
+        }];
+    }
+}
+-(id<ORTaskVarArray>) taskVars
+{
+    return _tasks;
+}
+-(id<ORIntVarArray>) usages
+{
+    return _usages;
+}
+-(id<ORIntVar>) capacity
+{
+    return _capacity;
+}
+-(NSSet*) allVars
+{
+    NSMutableSet* ms;
+    ms = [[[NSMutableSet alloc] initWithCapacity:2*[_tasks count]+1] autorelease];
+    const ORInt low  = _tasks.range.low;
+    const ORInt up   = _tasks.range.up;
+    for(ORInt k = low; k <= up; k++){
+        [ms addObject: _tasks [k]];
+        [ms addObject: _usages[k]];
+    }
+    [ms addObject: _capacity];
+    return ms;
+}
+@end
+
 @implementation ORTaskDisjunctive {
    BOOL _closed;
    id<ORTracker> _tracker;

@@ -42,6 +42,8 @@
 // Cumulative Resource constraints
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r capacity:(id<ORIntVar>) c;
 +(id<ORCumulative>) cumulative: (id<ORIntVarArray>) s duration:(id<ORIntArray>) d usage:(id<ORIntArray>)r maxCapacity:(ORInt) c;
++(id<ORTaskCumulative>) cumulative: (id<ORTaskVarArray>) task with: (id<ORIntVarArray>) usage and: (id<ORIntVar>) capacity;
++(id<ORTaskCumulative>) cumulativeConstraint: (id<ORIntVar>) capacity;
 
 // Disjunctive Resource constraint
 +(id<ORTaskDisjunctive>) disjunctive: (id<ORTaskVarArray>) task;
