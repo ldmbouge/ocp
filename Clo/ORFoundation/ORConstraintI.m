@@ -2541,12 +2541,19 @@
 
 @implementation ORAlldifferentI {
    id<ORExprArray> _x;
+   NSSet*         _av;
 }
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x
 {
    self = [super initORConstraintI];
    _x = x;
+   _av = nil;
    return self;
+}
+-(void)dealloc
+{
+   [_av release];
+   [super dealloc];
 }
 -(id<ORExprArray>) array
 {
@@ -2568,11 +2575,16 @@
 }
 -(NSSet*)allVars
 {
-   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
-   [_x enumerateWith:^(id obj, int idx) {
-      [ms addObject:obj];
-   }];
-   return ms;
+   if (_av == nil) {
+      NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+      for(id<ORExpr> e in _x)
+         [ms addObject:e];
+//      [_x enumerateWith:^(id obj, int idx) {
+//         [ms addObject:obj];
+//      }];
+      _av = [ms retain];
+   }
+   return _av;
 }
 @end
 

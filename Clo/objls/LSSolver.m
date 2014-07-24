@@ -195,6 +195,17 @@
 {
    return [_sys deltaWhenSwap:_gamma[getId(x)] with:_gamma[getId(y)]];
 }
+-(ORBool)legalSwap:(id<ORIntVar>)x with:(id<ORIntVar>)y
+{
+   id<LSIntVar> cx = _gamma[getId(x)];
+   id<LSIntVar> cy = _gamma[getId(y)];
+   for(id<LSConstraint> c in _hard) {
+      ORInt cViolIf = [c deltaWhenSwap:cx with:cy];
+      if (cViolIf != 0)
+         return NO;
+   }
+   return YES;
+}
 -(ORInt)weightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v
 {
    return [_sys weightedDeltaWhenAssign:_gamma[getId(x)] to:v];

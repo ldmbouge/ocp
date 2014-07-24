@@ -139,6 +139,7 @@
 -(void)dealloc
 {
    [_bestBlock release];
+   [_stream release];
    [super dealloc];
 }
 -(void)reset

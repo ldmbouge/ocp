@@ -17,6 +17,8 @@
 #import <objls/LSConstraint.h>
 #import <objls/LSSolver.h>
 
+#import "ORCmdLineArgs.h"
+
 void show(id<LSProgram> cp,id<ORIntVarMatrix> m)
 {
    id<ORIntRange> R = [m range: 0];
@@ -32,61 +34,75 @@ void show(id<LSProgram> cp,id<ORIntVarMatrix> m)
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
-      FILE* f = fopen("sudokuFile3.txt","r");
-      int nb;
-      int r, c, v;
-      fscanf(f,"%d \n",&nb);
-      printf("number of entries %d \n",nb);
-      id<ORModel> mdl = [ORFactory createModel];
-      id<ORAnnotation> notes = [ORFactory annotation];
-      id<ORIntRange> R = RANGE(mdl,1,9);
-      id<ORIntVarMatrix> x = [ORFactory intVarMatrix: mdl range: R : R domain: R];
-      for(ORInt i = 0; i < nb; i++) {
-         fscanf(f,"%d%d%d",&r,&c,&v);
-         [notes hard:[mdl  add: [[x at: r : c] eq:@(v)]]];
-      }
-      for(ORInt i = 1; i <= 9; i++)
-         [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar,j,R,[x at:i :j])] ];
-      for(ORInt j = 1; j <= 9; j++)
-         [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar,i,R,[x at:i :j])]];
-      for(ORInt i = 0; i <= 2; i++)
-         for(ORInt j = 0; j <= 2; j++)
-            [notes hard:[mdl add: [ORFactory alldifferent: All2(mdl, ORIntVar,
-                                                                r, RANGE(mdl,i*3+1,i*3+3),
-                                                                c, RANGE(mdl,j*3+1,j*3+3),
-                                                                [x at:r :c])]]];
-      
-      id<LSProgram> __block cp = [ORFactory createLSProgram:mdl annotation:notes];
-      ORInt __block it = 0;
-      [cp solve:
-       ^() {
-          while ([cp getViolations] > 0) {
-             [cp sweep:^(id<ORSweep> sweep) {
-                for(id<ORConstraint> c in [cp modelHard]) {
-                   NSSet* cx = [c allVars];
-                   for(id<ORIntVar> x1 in cx) {
-                      for(id<ORIntVar> x2 in cx) {
-                         if (x1 == x2) continue;
-                         ORInt delta = [cp deltaWhenSwap:x1 with:x2];
-                         //printf("Delta for swap(%d,%d): %d\n",getId(x1),getId(x2),delta);
-                         [sweep forMininum:delta do:^{
-                            printf("from %d \tdelta = %d\n",[cp getViolations],delta);
-                            [cp swap:x1 with:x2];
-                         }];
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         
+         FILE* f = fopen("sudokuFile3.txt","r");
+         int nb;
+         int r, c, v;
+         fscanf(f,"%d \n",&nb);
+         printf("number of entries %d \n",nb);
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORAnnotation> notes = [ORFactory annotation];
+         id<ORIntRange> R = RANGE(mdl,1,9);
+         id<ORIntVarMatrix> x = [ORFactory intVarMatrix: mdl range: R : R domain: R];
+         for(ORInt i = 0; i < nb; i++) {
+            fscanf(f,"%d%d%d",&r,&c,&v);
+            [notes hard:[mdl  add: [[x at: r : c] eq:@(v)]]];
+         }
+         for(ORInt i = 1; i <= 9; i++)
+            [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar,j,R,[x at:i :j])] ];
+         for(ORInt j = 1; j <= 9; j++)
+            [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar,i,R,[x at:i :j])]];
+         for(ORInt i = 0; i <= 2; i++)
+            for(ORInt j = 0; j <= 2; j++)
+               [notes hard:[mdl add: [ORFactory alldifferent: All2(mdl, ORIntVar,
+                                                                   r, RANGE(mdl,i*3+1,i*3+3),
+                                                                   c, RANGE(mdl,j*3+1,j*3+3),
+                                                                   [x at:r :c])]]];
+         
+         id<LSProgram> __block cp = [ORFactory createLSProgram:mdl annotation:notes];
+         ORInt __block it = 0;
+         ORInt __block found = NO;
+         [cp solve:
+          ^() {
+             ORBounds xb = idRange([ORFactory flattenMatrix:x], (ORBounds){FDMAXINT,0});
+             id<ORIntRange> xidr = RANGE(cp, xb.min, xb.max);
+             id<ORIntMatrix> tabu = [ORFactory intMatrix:cp range:xidr :xidr using:^int(ORInt i, ORInt j) { return 0;}];
+             while ([cp getViolations] > 0) {
+                [cp sweep:^(id<ORSweep> sweep) {
+                   for(id<ORConstraint> c in [cp modelHard]) {
+                      NSSet* cx = [c allVars];
+                      for(id<ORIntVar> x1 in cx) {
+                         for(id<ORIntVar> x2 in cx) {
+                            if (x1 == x2) continue;
+                            if (![cp legalSwap:x1 with:x2]) continue;
+                            if ([tabu at:getId(x1) :getId(x2)] > it) continue;
+                            ORInt delta = [cp deltaWhenSwap:x1 with:x2];
+                            //printf("Delta for swap(%d,%d): %d\n",getId(x1),getId(x2),delta);
+                            [sweep forMininum:delta do:^{
+                               //printf("from %d swap(%d,%d) \tdelta = %d\n",[cp getViolations],getId(x1),getId(x2),delta);
+                               [cp swap:x1 with:x2];
+                               [tabu set:it+10 at:getId(x1) :getId(x2)];
+                               [tabu set:it+10 at:getId(x2) :getId(x1)];
+                            }];
+                         }
                       }
                    }
-                }
-             }];
-             it++;
+                }];
+                it++;
+             }
+             show(cp,x);
+             found = YES;
           }
-          show(cp,x);
-       }
-       ];
-      
-      NSLog(@"Solver status: %@\n",cp);
-      NSLog(@"Quitting");
-      [cp release];
-      [ORFactory shutdown];
+          ];
+         
+         NSLog(@"Solver status: %@\n",cp);
+         NSLog(@"Quitting");
+         [ORFactory shutdown];
+         struct ORResult res = REPORT(found, it, 0,0);
+         return res;
+      }];
    }
    return 0;
 }

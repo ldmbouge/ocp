@@ -43,6 +43,7 @@
 -(ORInt)deltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v inConstraint:(id<ORConstraint>)c;
 -(ORInt)weightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
 -(ORInt)unweightedDeltaWhenAssign:(id<ORIntVar>)x to:(ORInt)v;
+-(ORBool)legalSwap:(id<ORIntVar>)x with:(id<ORIntVar>)y;
 
 -(void)selectMax:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;

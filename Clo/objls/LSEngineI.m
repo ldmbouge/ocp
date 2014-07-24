@@ -209,6 +209,7 @@
          [x scheduleOutbound:self];
       } atPriority:x.rank];
       [_queue enQueue:b atPriority:x.rank];
+      [b release]; // [ldm] leak fixed
    }
    else {
       [x scheduleOutbound:self];

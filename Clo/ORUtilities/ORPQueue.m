@@ -179,7 +179,7 @@ static void heapify(ORPQueue* pq,ORInt i)
    _tab[0] = _tab[--_sz];
    _tab[0]->_ofs = 0;
    heapify(self, 0);
-   id rv = [t object];
+   id rv = [[t object] retain]; // [ldm] leak fixed
    [t release];
    return rv;
 }

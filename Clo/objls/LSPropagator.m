@@ -41,6 +41,7 @@
 -(void)execute
 {
    _block();
+   [self release]; // [ldm] we should no longer need him after execution.
 }
 -(id<LSPriority>)rank
 {
@@ -62,6 +63,11 @@
    _rank = [[[engine space] nifty] retain];    
    _inQueue = NO;
    return self;
+}
+-(void)dealloc
+{
+   [_inbound release];
+   [super dealloc];
 }
 -(void)post
 {
@@ -161,6 +167,10 @@
    [_outbound release];
    [_inbound release];
    [super dealloc];
+}
+-(void)setHardDomain:(id<ORIntRange>)newDomain
+{
+   _dom  = newDomain;
 }
 -(NSArray*)sourceVars
 {
