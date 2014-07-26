@@ -228,15 +228,21 @@
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
 {
-   return [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
+   id<CPConstraint> rc = [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
+   [[before engine] trackMutable:rc];
+   return rc;
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after
 {
-   return [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
+   id<CPConstraint> rc =  [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
+   [[before engine] trackMutable:rc];
+   return rc;
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date
 {
-   return [[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
+   id<CPConstraint> rc =  [[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
+   [[task engine] trackMutable:rc];
+   return rc;
 }
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {
