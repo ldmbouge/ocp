@@ -227,6 +227,14 @@ typedef struct LSConstraintList {
       return ttl;
    }
 }
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
+}
 @end
 
 @implementation LSLRSystem {
@@ -531,6 +539,15 @@ typedef struct LSConstraintList {
       }
       return ttl;
    }
+}
+
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
 }
 
 -(void) updateMultipliers

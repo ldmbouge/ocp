@@ -25,6 +25,8 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @optional -(void)hardInit;
 @end
 

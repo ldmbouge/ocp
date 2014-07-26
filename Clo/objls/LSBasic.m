@@ -107,6 +107,14 @@
       return [self deltaWhenAssign:y to:getLSIntValue(x)];
    } else return 0;
 }
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
+}
 @end
 
 
@@ -181,6 +189,14 @@
    else if (xid == getId(y))
       return [self deltaWhenAssign:y to:getLSIntValue(x)];
    else return 0;
+}
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
 }
 @end
 
@@ -257,6 +273,23 @@
    else if (xid == getId(y))
       return [self deltaWhenAssign:y to:getLSIntValue(x)];
    else return 0;
+}
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   if (x == _x)
+      return v == _c;
+   else
+      return YES; 
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   ORInt me = getId(_x),xid = getId(x),yid = getId(y);
+   if (me == xid)
+      return getLSIntValue(y) == _c;
+   else if (me == yid)
+      return getLSIntValue(x) == _c;
+   else
+      return YES;
 }
 @end
 
@@ -410,6 +443,14 @@ inline static ORInt presentIn(ORInt key,ORInt* t,ORInt sz)
    [buf appendFormat:@"<LSOr : %p   %@ == (%@ || %@)>",self,_b,_x,_y];
    return buf;
 }
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
+}
 @end
 
 @implementation LSMinimize {
@@ -472,5 +513,13 @@ inline static ORInt presentIn(ORInt key,ORInt* t,ORInt sz)
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
    return [_fun deltaWhenSwap:x with:y];
+}
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
 }
 @end

@@ -59,4 +59,12 @@
 {
    return 0;
 }
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
+}
 @end

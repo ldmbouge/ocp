@@ -202,9 +202,10 @@
       _gamma[cstr.getId] = concreteCstr;
       ORCLevel annotation = [_notes levelFor:cstr];
       if (annotation == HardConsistency) {
-         [_hardCstrs addObject:concreteCstr];
-         [_hardModel addObject:cstr];
+//         [_hardCstrs addObject:concreteCstr];
+//         [_hardModel addObject:cstr];
          [left setHardDomain:RANGE(_engine, right, right)];
+         [left setValue:right];
       }
    }
 }

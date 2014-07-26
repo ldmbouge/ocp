@@ -30,6 +30,8 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
 
 @interface LSPacking : LSConstraint {
@@ -53,6 +55,8 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
 
 @interface LSMeetAtmost : LSConstraint {
@@ -76,6 +80,8 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
 
 @interface LSMeetAtmostSat : LSConstraint {
@@ -99,6 +105,8 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
 
 
@@ -124,6 +132,8 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end
 
 @interface LSPackingOneSat : LSConstraint {
@@ -148,4 +158,6 @@
 -(id<LSIntVar>)varViolations:(id<LSIntVar>)var;
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v;
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v;
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y;
 @end

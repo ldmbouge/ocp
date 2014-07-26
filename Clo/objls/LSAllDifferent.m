@@ -241,6 +241,43 @@ static inline ORBool isPresent(LSAllDifferent* ad,id<LSIntVar> v)
       }
    }
 }
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORInt) trueValueFor:(id<LSIntVar>)x   // x can be a source variable. -> use the map! [if there is one]
+{
+   ORInt xid = getId(x);
+   if (_map && _sb.min <= xid && xid <= _sb.max)
+      return getLSIntValue(_map[xid]);
+   else return getLSIntValue(x);
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   ORInt xid = getId(x),yid = getId(y);
+   ORInt cx = [self trueValueFor:x],cy = [self trueValueFor:y];
+   ORInt nx,ny;
+   if (_map && _sb.min <= xid && xid <= _sb.max) {
+      nx = [_map[xid] valueWhenVar:x equal:cy];
+      x  = _map[xid];
+   } else nx = cy;
+   if (_map && _sb.min <= yid && yid <= _sb.max) {
+      ny = [_map[yid] valueWhenVar:y equal:cx];
+      y = _map[yid];
+   } else ny = cx;
+   ORBool xP = isPresent(self,x);
+   ORBool yP = isPresent(self,y);
+   ORBool legal = YES;
+   if (xP && yP)
+      legal = [x.domain inRange:nx] && [y.domain inRange:ny];
+   else if (xP==0 && yP==0)
+      legal = YES;
+   else if (xP)
+      legal = [x.domain inRange:nx];
+   else if (yP)
+      legal = [y.domain inRange:ny];
+   return legal; // TODO: Check
+}
 @end
 
 
@@ -410,6 +447,15 @@ static inline ORBool isPresentPacking(LSPacking* ad,id<LSIntVar> v)
 {
    abort();
 }
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
+}
+
 @end
 
 
@@ -596,6 +642,14 @@ static inline ORBool isPresentMeetAtmost(LSMeetAtmost* ad,id<LSIntVar> v)
 {
    abort();
 }
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
+}
 @end
 
 
@@ -757,6 +811,14 @@ static inline ORBool isPresentPackingOne(LSPackingOne* ad,id<LSIntVar> v)
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
    abort();
+}
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
 }
 @end
 
@@ -968,6 +1030,14 @@ static inline ORBool isPresentMeetAtmostSat(LSMeetAtmostSat* ad,id<LSIntVar> v)
 {
    abort();
 }
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
+}
 @end
 
 
@@ -1129,6 +1199,14 @@ static inline ORBool isPresentPackingOneSat(LSPackingOneSat* ad,id<LSIntVar> v)
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
 {
    abort();
+}
+-(ORBool)legalAssign:(id<LSIntVar>)x to:(ORInt)v
+{
+   return YES; // TODO: Check
+}
+-(ORBool)legalSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
+{
+   return YES; // TODO: Check
 }
 @end
 

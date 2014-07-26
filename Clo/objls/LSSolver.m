@@ -200,8 +200,8 @@
    id<LSIntVar> cx = _gamma[getId(x)];
    id<LSIntVar> cy = _gamma[getId(y)];
    for(id<LSConstraint> c in _hard) {
-      ORInt cViolIf = [c deltaWhenSwap:cx with:cy];
-      if (cViolIf != 0)
+      ORBool legal = [c legalSwap:cx with:cy];
+      if (!legal)
          return NO;
    }
    return YES;
