@@ -119,7 +119,7 @@
 }
 @end
 
-@implementation ORSweeper {
+@implementation ORMinSelector {
    ORClosure _bestBlock;
    ORFloat   _bestValue;
    ORLong     _bestRand;
@@ -153,11 +153,10 @@
 {
    if (_bestBlock) {
       _bestBlock();
-      [_bestBlock release];
-      _bestBlock = nil;
+      [self reset];
    }
 }
--(void)forMininum:(ORFloat)v do:(ORClosure)block
+-(void)neighbor:(ORFloat)v do:(ORClosure)block
 {
    if (v < _bestValue) {
       _bestValue = v;

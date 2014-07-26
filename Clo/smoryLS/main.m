@@ -58,15 +58,16 @@ int main(int argc, const char * argv[])
                [cp label:xi with:[d next]];
             ORBounds b = idRange(x,(ORBounds){FDMAXINT,0});
             id<ORIntArray> tabu = [ORFactory intArray:cp range:RANGE(cp,b.min,b.max) with:^ORInt(ORInt k) {return -1;}];
+            id<ORSelector> sw = [ORFactory selectMin:cp];
             while([cp getViolations] > 0) {
                [cp selectRandom:car suchThat:^ORBool(ORInt i) { return [cp getCstrViolations:ca[i]] > 0;} do:^(ORInt i) {
                   id<ORConstraint> ci = ca[i];
-                  [cp sweep:^(id<ORSweep> sw) {
+                  [cp sweep:sw with:^{
                      for(id<ORIntVar> xv in [ci allVars]) {
                         if ([tabu at:getId(xv)] > it) continue;
                         for(ORInt val = xv.domain.low; val <= xv.domain.up; val++) {
                            if ([cp deltaWhenAssign:xv to:val inConstraint:ci] >= 0) continue;
-                           [sw forMininum:[cp deltaWhenAssign:xv to:val] do:^{
+                           [sw neighbor:[cp deltaWhenAssign:xv to:val] do:^{
                               [cp label:xv with:val];
                               [tabu set:it+5 at:getId(xv)];
                               printf("(%d)",[cp getViolations]);fflush(stdout);

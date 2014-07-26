@@ -50,7 +50,7 @@
 -(void)selectMax:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectMin:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter orderedBy:(ORFloat(^)(ORInt))fun do:(void(^)(ORInt))block;
 -(void)selectRandom:(id<ORIntRange>)r suchThat:(ORBool(^)(ORInt))filter do:(void(^)(ORInt))block;
--(void)sweep:(void(^)(id<ORSweep>))block;
+-(void)sweep:(id<ORSelector>)sel with:(ORClosure)block;
 -(void)solve:(ORClosure)block;
 
 -(id<ORSolutionPool>) solutionPool;

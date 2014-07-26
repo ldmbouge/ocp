@@ -82,16 +82,16 @@ int main(int argc, const char * argv[])
                printf("%d,",[cp intValue:shoot[i]]);
             }
             printf("\n");
-            
-               while (++it <= 400) {
-               [cp sweep:^(id<ORSweep> sweep) {
+            id<ORSelector> sweep = [ORFactory selectMin:cp];
+            while (++it <= 400) {
+               [cp sweep:sweep with:^{
                   for(ORInt s1=Scenes.low;s1 <= Scenes.up;s1++) {
                      for(ORInt s2=Scenes.low;s2 <= Scenes.up;s2++) {
                         if ([cp intValue:shoot[s1]] == [cp intValue:shoot[s2]] || [tabu at:s1 :s2] > it)
                            continue;
                         ORInt delta = [cp deltaWhenSwap:shoot[s1] with:shoot[s2]];
 //                        printf("DELTA %d <-> %d = %d\n",s1,s2,delta);
-                        [sweep forMininum:delta do:^{
+                        [sweep neighbor:delta do:^{
                            //printf("\tBEFORE: %d  DELTA=%d\n",[cp getViolations],delta);
                            [cp swap:shoot[s1] with:shoot[s2]];
                            //printf("\tAFTER : %d\n",[cp getViolations]);

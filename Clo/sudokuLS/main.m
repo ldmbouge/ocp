@@ -63,14 +63,16 @@ int main (int argc, const char * argv[])
          
          id<LSProgram> __block cp = [ORFactory createLSProgram:mdl annotation:notes];
          ORInt __block it = 0;
+         ORInt __block tLen  = 10;
          ORInt __block found = NO;
          [cp solve:
           ^() {
              ORBounds xb = idRange([ORFactory flattenMatrix:x], (ORBounds){FDMAXINT,0});
              id<ORIntRange> xidr = RANGE(cp, xb.min, xb.max);
              id<ORIntMatrix> tabu = [ORFactory intMatrix:cp range:xidr :xidr using:^int(ORInt i, ORInt j) { return 0;}];
+             id<ORSelector>  ms   = [ORFactory selectMin:cp];
              while ([cp getViolations] > 0) {
-                [cp sweep:^(id<ORSweep> sweep) {
+                [cp sweep:ms with:^ {
                    for(id<ORConstraint> c in [cp modelHard]) {
                       NSSet* cx = [c allVars];
                       for(id<ORIntVar> x1 in cx) {
@@ -80,11 +82,13 @@ int main (int argc, const char * argv[])
                             if ([tabu at:getId(x1) :getId(x2)] > it) continue;
                             ORInt delta = [cp deltaWhenSwap:x1 with:x2];
                             //printf("Delta for swap(%d,%d): %d\n",getId(x1),getId(x2),delta);
-                            [sweep forMininum:delta do:^{
+                            [ms neighbor:delta do:^{
                                //printf("from %d swap(%d,%d) \tdelta = %d\n",[cp getViolations],getId(x1),getId(x2),delta);
                                [cp swap:x1 with:x2];
-                               [tabu set:it+10 at:getId(x1) :getId(x2)];
-                               [tabu set:it+10 at:getId(x2) :getId(x1)];
+                               [tabu set:it+tLen at:getId(x1) :getId(x2)];
+                               [tabu set:it+tLen at:getId(x2) :getId(x1)];
+                               if (delta <  0 && tLen >= 10) tLen /= 2;
+                               if (delta >= 0 && tLen < 20)  tLen++;
                             }];
                          }
                       }

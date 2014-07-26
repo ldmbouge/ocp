@@ -381,9 +381,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackMutable: o];
    return o;
 }
-+(id<ORSweep>) sweeper:(id<ORTracker>)tracker
++(id<ORSelector>) selectMin:(id<ORTracker>)tracker
 {
-   id<ORSweep> sweeper = [[ORSweeper alloc] init];
+   id<ORSelector> sweeper = [[ORMinSelector alloc] init];
    [tracker trackMutable:sweeper];
    return sweeper;
 }

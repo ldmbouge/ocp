@@ -152,82 +152,82 @@ typedef struct LSOccurrence {
 }
 -(id<LSIntVar>)downGSum:(id<LSIntVar>)sk
 {
-   id<LSIntVar> gv[_x.range.size];
-   ORInt        gc[_x.range.size];
-   id<LSIntVar>* gvPtr = gv;
-   ORInt        nbt = 0;
-   ORInt        gi = 0;
-   for(ORInt t=_x.range.low; t <= _x.range.up;t++) {
-      ORInt ct = [_coefs at:t];
-      id<LSIntVar> xt = _x[t];
-      if (ct > 0) {
-         id<LSGradient> gt = [xt decrease:sk];
-         if (gt.isConstant)
-            gi += gt.constant;
-         else {
-            gv[nbt] = gt.variable;
-            gc[nbt] = ct;
-            nbt++;
+   @autoreleasepool {
+      id<LSIntVar> gv[_x.range.size];
+      ORInt        gc[_x.range.size];
+      id<LSIntVar>* gvPtr = gv;
+      ORInt        nbt = 0;
+      ORInt        gi = 0;
+      for(ORInt t=_x.range.low; t <= _x.range.up;t++) {
+         ORInt ct = [_coefs at:t];
+         id<LSIntVar> xt = _x[t];
+         if (ct > 0) {
+            id<LSGradient> gt = [xt decrease:sk];
+            if (gt.isConstant)
+               gi += gt.constant;
+            else {
+               gv[nbt] = gt.variable;
+               gc[nbt] = ct;
+               nbt++;
+            }
+         } else {
+            id<LSGradient> gt = [xt increase:sk];
+            if (gt.isConstant)
+               gi -= gt.constant;
+            else {
+               gv[nbt] = gt.variable;
+               gc[nbt] = abs(ct);
+               nbt++;
+            }
          }
-         [gt release];
-      } else {
-         id<LSGradient> gt = [xt increase:sk];
-         if (gt.isConstant)
-            gi -= gt.constant;
-         else {
-            gv[nbt] = gt.variable;
-            gc[nbt] = abs(ct);
-            nbt++;
-         }
-         [gt release];
       }
+      id<ORIntRange> R = RANGE(_engine,0,nbt-1);
+      id<LSIntVarArray> gtv = [LSFactory intVarArray:_engine range:R with:^id<LSIntVar>(ORInt k) { return gvPtr[k];}];
+      id<ORIntArray> gcoef  = [ORFactory intArray:_engine range:R values:gc];
+      id<LSIntVar> downG = [LSFactory intVar:_engine domain:RANGE(_engine,FDMININT,FDMAXINT)];
+      [_engine add:[LSFactory sum:downG is:gcoef times:gtv]];
+      return downG;
    }
-   id<ORIntRange> R = RANGE(_engine,0,nbt-1);
-   id<LSIntVarArray> gtv = [LSFactory intVarArray:_engine range:R with:^id<LSIntVar>(ORInt k) { return gvPtr[k];}];
-   id<ORIntArray> gcoef  = [ORFactory intArray:_engine range:R values:gc];
-   id<LSIntVar> downG = [LSFactory intVar:_engine domain:RANGE(_engine,FDMININT,FDMAXINT)];
-   [_engine add:[LSFactory sum:downG is:gcoef times:gtv]];
-   return downG;
 }
 -(id<LSIntVar>)upGSum:(id<LSIntVar>)sk
 {
-   id<LSIntVar> gv[[[_x range] size]];
-   ORInt        gc[[[_x range] size]];
-   id<LSIntVar>* gvPtr = gv;
-   ORInt        nbt = 0;
-   ORInt        gi = 0;
-   for(ORInt t=_x.range.low; t <= _x.range.up;t++) {
-      ORInt ct = [_coefs at:t];
-      id<LSIntVar> xt = _x[t];
-      if (ct > 0) {
-         id<LSGradient> gt = [xt increase:sk];
-         if (gt.isConstant)
-            gi += gt.constant;
-         else {
-            gv[nbt] = gt.variable;
-            gc[nbt] = ct;
-            nbt++;
+   @autoreleasepool {
+      id<LSIntVar> gv[[[_x range] size]];
+      ORInt        gc[[[_x range] size]];
+      id<LSIntVar>* gvPtr = gv;
+      ORInt        nbt = 0;
+      ORInt        gi = 0;
+      for(ORInt t=_x.range.low; t <= _x.range.up;t++) {
+         ORInt ct = [_coefs at:t];
+         id<LSIntVar> xt = _x[t];
+         if (ct > 0) {
+            id<LSGradient> gt = [xt increase:sk];
+            if (gt.isConstant)
+               gi += gt.constant;
+            else {
+               gv[nbt] = gt.variable;
+               gc[nbt] = ct;
+               nbt++;
+            }
          }
-         [gt release];
-      }
-      else {
-         id<LSGradient> gt = [xt decrease:sk];
-         if (gt.isConstant)
-            gi -= gt.constant;
          else {
-            gv[nbt] = gt.variable;
-            gc[nbt] = abs(ct);
-            nbt++;
+            id<LSGradient> gt = [xt decrease:sk];
+            if (gt.isConstant)
+               gi -= gt.constant;
+            else {
+               gv[nbt] = gt.variable;
+               gc[nbt] = abs(ct);
+               nbt++;
+            }
          }
-         [gt release];
       }
+      id<ORIntRange> R = RANGE(_engine,0,nbt-1);
+      id<LSIntVarArray> gtv = [LSFactory intVarArray:_engine range:R with:^id<LSIntVar>(ORInt k) { return gvPtr[k];}];
+      id<ORIntArray> gcoef  = [ORFactory intArray:_engine range:R values:gc];
+      id<LSIntVar> upG = [LSFactory intVar:_engine domain:RANGE(_engine,FDMININT,FDMAXINT)];
+      [_engine add:[LSFactory sum:upG is:gcoef times:gtv]];
+      return upG;
    }
-   id<ORIntRange> R = RANGE(_engine,0,nbt-1);
-   id<LSIntVarArray> gtv = [LSFactory intVarArray:_engine range:R with:^id<LSIntVar>(ORInt k) { return gvPtr[k];}];
-   id<ORIntArray> gcoef  = [ORFactory intArray:_engine range:R values:gc];
-   id<LSIntVar> upG = [LSFactory intVar:_engine domain:RANGE(_engine,FDMININT,FDMAXINT)];
-   [_engine add:[LSFactory sum:upG is:gcoef times:gtv]];
-   return upG;
 }
 
 -(id<LSIntVarArray>)variables

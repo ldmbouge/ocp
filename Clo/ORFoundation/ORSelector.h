@@ -18,7 +18,7 @@
 -(ORInt)              any;
 @end
 
-@protocol ORSweep<NSObject>
+@protocol ORSelector<NSObject>
 -(void)commit;
--(void)forMininum:(ORFloat)v do:(ORClosure)block;
+-(void)neighbor:(ORFloat)v do:(ORClosure)block;
 @end

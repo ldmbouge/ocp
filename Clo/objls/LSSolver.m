@@ -326,12 +326,10 @@
    [stream release];
 }
 
--(void)sweep:(void(^)(id<ORSweep>))block
+-(void)sweep:(id<ORSelector>)sel with:(ORClosure)block;
 {
-   id<ORSweep> sweep = [ORFactory sweeper:nil]; // no tracker. Release manually.
-   block(sweep);
-   [sweep commit];
-   [sweep release];
+   block();
+   [sel commit];
 }
 @end
 

@@ -31,8 +31,8 @@
 @end
 
 
-@interface ORSweeper : ORObject<ORSweep>
+@interface ORMinSelector : ORObject<ORSelector>
 -(id)init;
 -(void)commit;
--(void)forMininum:(ORFloat)v do:(ORClosure)block;
+-(void)neighbor:(ORFloat)v do:(ORClosure)block;
 @end

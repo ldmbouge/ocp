@@ -62,15 +62,16 @@ int main(int argc, const char * argv[])
          __block ORInt it = 0;
          [cp solve: ^{
             id<ORIntMatrix> tabu = [ORFactory intMatrix:cp range:R :R using:^int(ORInt i, ORInt j) { return -1;}];
-            ORInt tLen = 2;
+            ORInt __block tLen = 2;
             id<ORRandomPermutation> p = [ORFactory randomPermutation:D];
             for(ORInt i=1;i <= n;i++)
                for(ORInt j=1;j <= n;j++)
                   [cp label:[s at:i :j] with:[p next]];
             NSLog(@"viol ? : %d",[cp getViolations]);
             printSquare(cp, s);
+            id<ORSelector> S = [ORFactory selectMin:cp];
             while ([cp getViolations] > 0) {
-               [cp sweep: ^(id<ORSweep> S) {
+               [cp sweep:S with: ^ {
                   for(ORInt i=R.low,u = R.up;i <= u;i++) {
                      for(ORInt j=R.low; j <= u;j++) {
                         id<ORIntVar> alpha = [s at:i :j];
@@ -78,11 +79,15 @@ int main(int argc, const char * argv[])
                         for(ORInt i1=R.low;i1 <= u;i1++) {
                            for(ORInt j1=R.low;j1 <= u;j1++) {
                               if (!([tabu at:i1 :j1] <= it && (i != i1 || j != j1))) continue;
-                              [S forMininum:(ORFloat)[cp deltaWhenSwap:alpha with:[s at:i1 :j1]] do:^{
+                              ORFloat delta = (ORFloat)[cp deltaWhenSwap:alpha with:[s at:i1 :j1]];
+                              [S neighbor:delta do:^{
                                  [cp swap:alpha with:[s at:i1 :j1]];
                                  [tabu set:it + tLen at:i :j];
                                  [tabu set:it + tLen at:i1 :j1];
+                                 //printf("(%d %d %d %d,%d)",i,j,i1,j1,[cp getViolations]);fflush(stdout);
                                  printf("(%d)",[cp getViolations]);fflush(stdout);
+//                                 if (delta < 0 && tLen >= 10) tLen /= 2;
+//                                 if (delta >=0 && tLen <= n*n/2) tLen *= 2;
                               }];
                            }
                         }

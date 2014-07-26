@@ -10,13 +10,13 @@
  ***********************************************************************/
 
 
-#import <ORFoundation/ORFactory.h>
-#import <objcp/CPConstraint.h>
-#import <objcp/CPFactory.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgramFactory.h>
-
-#import "ORCmdLineArgs.h"
+//#import <ORFoundation/ORFactory.h>
+//#import <objcp/CPConstraint.h>
+//#import <objcp/CPFactory.h>
+//#import <ORModeling/ORModeling.h>
+//#import <ORProgram/ORProgramFactory.h>
+//
+//#import "ORCmdLineArgs.h"
 
 class H {
    id<ORExpr> _h;

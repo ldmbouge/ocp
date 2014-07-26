@@ -34,12 +34,12 @@ int main(int argc, const char * argv[])
          
          [ls solve: ^{
             
-            printf("Violations: %d \n",[ls violations]);
+            printf("Violations: %d \n",[ls getViolations]);
             for(ORInt i = 1; i <= n; i++) {
                printf("x[%d] = %d\n",i,[ls intValue:x[i]]);
                printf("violations[%d] = %d\n",i,[ls getVarViolations: x[i]]);
             }
-            while ([ls violations] > 0 && it < 50 * n) {
+            while ([ls getViolations] > 0 && it < 50 * n) {
                [ls selectMax:D orderedBy:^ORFloat(ORInt i) { return [ls getVarViolations:x[i]];} do:^(ORInt i) {
                   [ls selectMin: D orderedBy:^ORFloat(ORInt v) { return [ls deltaWhenAssign:x[i] to:v];} do:^(ORInt v) {
                      [ls label:x[i] with:v];

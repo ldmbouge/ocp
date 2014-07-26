@@ -18,7 +18,6 @@
 
 int main(int argc, const char * argv[])
 {
-   [ORStreamManager setRandomized];
    ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
    [args measure:^struct ORResult(){
       ORInt n = [args size];
