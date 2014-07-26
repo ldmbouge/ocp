@@ -27,7 +27,7 @@ typedef enum {
     CVAR_SAE
 } TaskType;
 
-@interface CPCumulative : CPCoreConstraint<NSCoding> {
+@interface CPCumulative : CPCoreConstraint {
     id<CPIntVarArray> _start;   // Start times of tasks
     id<CPIntVarArray> _dur;     // Durations of tasks
     id<CPIntVarArray> _usage;   // Resource usages of tasks

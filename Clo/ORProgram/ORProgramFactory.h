@@ -17,7 +17,7 @@
 
 @interface ORFactory (Concretization)
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model;
++(id) createCPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;
@@ -41,6 +41,9 @@
 +(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model;
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model;
 +(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model;
+
++(id<ORSolution>) solution: (id<ORModel>) m solver: (id<ORASolver>) solver;
++(id<ORSolutionPool>) createSolutionPool;
 @end
 
 @interface ORLinearRelaxation : NSObject<ORRelaxation>

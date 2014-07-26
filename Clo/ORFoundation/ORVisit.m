@@ -142,9 +142,9 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Circuit: visit method not defined"]; 
 }
--(void) visitNoCycle:(id<ORNoCycle>) cstr
+-(void) visitPath:(id<ORPath>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NoCycle: visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "Path: visit method not defined"];
 }
 -(void) visitPackOne:(id<ORPackOne>) cstr
 {
@@ -575,7 +575,7 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr  {}
 -(void) visitLexLeq:(id<ORLexLeq>) cstr  {}
 -(void) visitCircuit:(id<ORCircuit>) cstr  {}
--(void) visitNoCycle:(id<ORNoCycle>) cstr  {}
+-(void) visitPath:(id<ORPath>) cstr  {}
 -(void) visitPackOne:(id<ORPackOne>) cstr  {}
 -(void) visitPacking:(id<ORPacking>) cstr  {}
 -(void) visitKnapsack:(id<ORKnapsack>) cstr  {}

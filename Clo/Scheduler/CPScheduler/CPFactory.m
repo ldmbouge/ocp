@@ -15,6 +15,7 @@
 #import "CPConstraint.h"
 #import "CPCumulative.h"
 #import "CPDisjunctive.h"
+#import "CPTaskCumulative.h"
 #import "CPTaskDisjunctive.h"
 #import "CPTaskSequence.h"
 #import "CPDifference.h"
@@ -214,20 +215,22 @@
 
 // Task of fixed duration
 
-+(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
++(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    id<CPTaskVar> task = [[CPTaskVar alloc] initCPTaskVar: engine horizon: horizon duration: duration];
-   [engine trackMutable: task];
+   [engine trackVariable: task];
    return task;
 }
-+(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
++(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    id<CPTaskVar> task = [[CPOptionalTaskVar alloc] initCPOptionalTaskVar: engine horizon: horizon duration: duration];
    [engine trackMutable: task];
    return task;
 }
+
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
 {
+<<<<<<< HEAD
    id<CPConstraint> rc = [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
    [[before engine] trackMutable:rc];
    return rc;
@@ -243,6 +246,39 @@
    id<CPConstraint> rc =  [[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
    [[task engine] trackMutable:rc];
    return rc;
+=======
+   id<CPEngine> engine = [before engine];
+   id<CPConstraint> cstr = [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
+   [engine trackMutable: cstr];
+   return cstr;
+}
++(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after
+{
+   id<CPEngine> engine = [before engine];
+   id<CPConstraint> cstr = [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
+   [engine trackMutable: cstr];
+   return cstr;
+}
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date
+{
+   id<CPEngine> engine = [task engine];
+   id<CPConstraint> cstr =[[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
+   [engine trackMutable: cstr];
+   return cstr;
+}
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration
+{
+   id<CPEngine> engine = [task engine];
+   id<CPConstraint> cstr =[[CPTaskDuration alloc] initCPTaskDuration: task : duration];
+   [engine trackMutable: cstr];
+   return cstr;
+}
++(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
+{
+    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
+    [[tasks tracker] trackMutable:o];
+    return o;
+>>>>>>> 6313405c33539ebd8d59c184d54c7d6346849ce9
 }
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {
@@ -254,6 +290,12 @@
 {
    id<CPConstraint> o = [[CPTaskSequence alloc] initCPTaskSequence: tasks successors: succ];
    [[tasks tracker] trackMutable: o];
+   return o;
+}
++(id<CPConstraint>) constraint: (id<CPTaskVar>) normal extended:  (id<CPTaskVar>) extended time: (id<CPIntVar>) time
+{
+   id<CPConstraint> o = [[CPTaskAddTransitionTime alloc] initCPTaskAddTransitionTime: normal extended: extended time: time];
+   [[normal tracker] trackMutable: o];
    return o;
 }
 @end

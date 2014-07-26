@@ -19,6 +19,105 @@
 #import "CPTaskI.h"
 #import "CPFactory.h"
 
+/*****************************************************************************************/
+/*                        CPTaskVarSnapshot                                              */
+/*****************************************************************************************/
+
+@interface CPTaskVarSnapshot : NSObject {
+   ORUInt    _name;
+   ORInt     _start;
+   ORInt     _end;
+   ORBool    _present;
+   ORBool    _absent;
+   ORInt     _minDuration;
+   ORInt     _maxDuration;
+   ORBool    _bound;
+}
+-(CPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<CPTaskVar>) t name: (ORInt) name;
+-(NSString*) description;
+-(ORBool)isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation CPTaskVarSnapshot
+-(CPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<CPTaskVar>) t name: (ORInt) name;
+{
+   self = [super init];
+   _name = name;
+   _start = [t est];
+   _end = [t ect];
+   _minDuration = [t minDuration];
+   _maxDuration = [t maxDuration];
+   _present = [t isPresent];
+   _absent = [t isAbsent];
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"task(%d,%d,%d,%d,%d,%d,%d)",_name,_start,_end,_minDuration,_maxDuration,_present,_absent];
+   return buf;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      CPTaskVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _start == other->_start && _end == other->_end  && _minDuration == other->_minDuration &&
+         _maxDuration == other->_maxDuration && _present == other->_present && _absent == other->_absent;
+      }
+      else
+         return NO;
+   } else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + _start * _end;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORInt) est
+{
+   return _start;
+}
+-(ORInt) ect
+{
+   return _start + _minDuration;
+}
+-(ORInt) lst
+{
+   return _end - _minDuration;
+}
+-(ORInt) lct
+{
+   return _end;
+}
+-(ORInt) minDuration
+{
+   return _minDuration;
+}
+-(ORInt) maxDuration
+{
+   return _maxDuration;
+}
+-(ORBool) isAbsent
+{
+   return _absent;
+}
+-(ORBool) isPresent
+{
+   return _present;
+}
+-(ORBool) bound
+{
+   return (_start + _minDuration == _end) && (_minDuration == _maxDuration);
+}
+@end
+
 typedef struct  {
    TRId _boundEvt[2];
    TRId _startEvt[2];
@@ -38,7 +137,7 @@ typedef struct  {
    ORBool             _constantDuration;
    CPTaskVarEventNetwork _net;
 }
--(id<CPTaskVar>) initCPTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
+-(id<CPTaskVar>) initCPTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    self = [super init];
    _engine = engine;
@@ -47,13 +146,13 @@ typedef struct  {
    // domain [who said I do not write comments?]
    _start = makeTRInt(_trail,horizon.low);
    _end = makeTRInt(_trail,horizon.up);
-   _durationMin = makeTRInt(_trail,duration);
-   _durationMax = makeTRInt(_trail,duration);
-   _constantDuration = TRUE;
-
+   _durationMin = makeTRInt(_trail,duration.low);
+   _durationMax = makeTRInt(_trail,duration.up);
+   _constantDuration = (duration.low == duration.up);
+   
    // need a consistency check
    assert(_start._val + _durationMax._val <= _end._val);
-
+   
    // network
    for(ORInt i = 0;i < 2;i++) {
       _net._boundEvt[i] = makeTRId(_trail,nil);
@@ -62,6 +161,11 @@ typedef struct  {
       _net._durationEvt[i] = makeTRId(_trail,nil);
    }
    return self;
+}
+
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[CPTaskVarSnapshot alloc] initCPTaskVarSnapshot: self name: id];
 }
 -(ORInt) est
 {
@@ -348,7 +452,7 @@ typedef struct  {
    
    CPOptionalTaskVarEventNetwork _net;
 }
--(id<CPTaskVar>) initCPOptionalTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
+-(id<CPTaskVar>) initCPOptionalTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    self = [super init];
    _engine = engine;
@@ -364,6 +468,7 @@ typedef struct  {
    }
    return self;
 }
+
 -(ORInt) est
 {
    return [_task est];
@@ -529,6 +634,10 @@ typedef struct  {
 {
    [_task whenChangeEndDo: todo priority: p onBehalf: c];
 }
+-(void) whenChangeDurationDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
+{
+   [_task whenChangeDurationDo: todo priority: p onBehalf: c];
+}
 -(void) whenAbsentDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c
 {
    hookupEvent(_engine, _net._absentEvt, todo, c, p);
@@ -548,6 +657,10 @@ typedef struct  {
 -(void) whenChangeEndDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
 {
    [_task whenChangeEndDo: todo priority: HIGHEST_PRIO onBehalf:c];
+}
+-(void) whenChangeDurationDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
+{
+   [_task whenChangeDurationDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
 -(void) whenAbsentDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c
 {
@@ -571,6 +684,10 @@ typedef struct  {
 {
    [_task whenChangeEndPropagate: c priority: p];
 }
+-(void) whenChangeDurationPropagate: (id<CPConstraint>) c priority: (ORInt) p
+{
+   [_task whenChangeDurationPropagate: c priority: p];
+}
 -(void) whenAbsentPropagate: (id<CPConstraint>) c priority: (ORInt) p
 {
    hookupEvent(_engine, _net._absentEvt, nil, c, p);
@@ -591,6 +708,10 @@ typedef struct  {
 -(void) whenChangeEndPropagate: (CPCoreConstraint*) c
 {
    [_task whenChangeEndPropagate: c priority: c->_priority];
+}
+-(void) whenChangeDurationPropagate: (CPCoreConstraint*) c
+{
+   [_task whenChangeDurationPropagate: c priority: c->_priority];
 }
 -(void) whenAbsentPropagate: (CPCoreConstraint*) c
 {

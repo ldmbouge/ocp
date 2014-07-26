@@ -33,7 +33,7 @@
 //-(ORUInt) nbUVars;
 //@end
 
-@interface CPTaskPrecedence : CPCoreConstraint<NSCoding> {
+@interface CPTaskPrecedence : CPCoreConstraint {
    id<CPTaskVar> _before;
    id<CPTaskVar> _after;
 }
@@ -45,7 +45,7 @@
 -(ORUInt) nbUVars;
 @end
 
-@interface CPOptionalTaskPrecedence : CPCoreConstraint<NSCoding> {
+@interface CPOptionalTaskPrecedence : CPCoreConstraint {
    id<CPTaskVar> _before;
    id<CPTaskVar> _after;
 }
@@ -57,7 +57,7 @@
 -(ORUInt) nbUVars;
 @end
 
-@interface CPTaskIsFinishedBy : CPCoreConstraint<NSCoding> {
+@interface CPTaskIsFinishedBy : CPCoreConstraint {
    id<CPTaskVar> _task;
    id<CPIntVar> _date;
 }
@@ -69,3 +69,27 @@
 -(ORUInt) nbUVars;
 @end
 
+@interface CPTaskDuration : CPCoreConstraint {
+   id<CPTaskVar> _task;
+   id<CPIntVar> _duration;
+}
+-(id) initCPTaskDuration: (id<CPTaskVar>) task : (id<CPIntVar>) duration;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
+@interface CPTaskAddTransitionTime : CPCoreConstraint {
+   id<CPTaskVar> _normal;
+   id<CPTaskVar> _extended;
+   id<CPIntVar>  _time;
+}
+-(id) initCPTaskAddTransitionTime: (id<CPTaskVar>) normal extended: (id<CPTaskVar>) extended time: (id<CPIntVar>) time;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end

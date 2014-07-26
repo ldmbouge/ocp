@@ -17,6 +17,7 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
+#import "ORSolution.h"
 
 
 /******************************************************************************************/
@@ -29,7 +30,7 @@
    ORInt          _nb;
    NSCondition*   _terminated;
    ORInt          _nbDone;
-   id<ORCPSolutionPool> _sPool;
+   id<ORSolutionPool> _sPool;
 }
 -(CPMultiStartSolver*) initCPMultiStartSolver: (ORInt) k
 {
@@ -42,7 +43,7 @@
    
    _terminated = [[NSCondition alloc] init];
    
-   _sPool   = (id<ORCPSolutionPool>) [ORFactory createSolutionPool];
+   _sPool   = (id<ORSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
@@ -342,6 +343,22 @@
 {
    [[self worker] label: mx];
 }
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   return [[self worker] selectValue: v by: o];
+}
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   return [[self worker] selectValue: v by: o1 then: o2];
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   return [[self worker] label: v by:o1 then:o2];
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   return [[self worker] label: v by: o];
+}
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
    [[self worker] label: var with: val];
@@ -391,6 +408,10 @@
 {
    [[self worker] once: cl];
 }
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   [[self worker] try: left then: right];
+}
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
    [[self worker] limitSolutions: maxSolutions in: cl];
@@ -425,7 +446,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
 }
--(id<ORCPSolutionPool>) solutionPool
+-(id<ORSolutionPool>) solutionPool
 {
    return _sPool;
 }
@@ -575,12 +596,16 @@
 {
    return [[self worker] constraints:x];
 }
--(id<ORCPSolution>) captureSolution
+-(id<ORSolution>) captureSolution
 {
-   return (id<ORCPSolution>) [[self worker] captureSolution];
+   return (id<ORSolution>) [[self worker] captureSolution];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[self worker] objectiveValue];
 }
 @end

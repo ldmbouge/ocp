@@ -282,12 +282,12 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitNoCycle:(id<ORNoCycle>) cstr
+-(void) visitPath:(id<ORPath>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory nocycle: _gamma[ax.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory path: _gamma[ax.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1185,8 +1185,12 @@
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   if (!_gamma[v.getId])
-      _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
+   if (!_gamma[v.getId]) {
+      if ([v hasDenseDomain])
+         _gamma[v.getId] = [CPFactory intVar: _engine bounds: [v domain]];
+      else
+         _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
+   }
 }
 
 -(void) visitFloatVar: (id<ORFloatVar>) v

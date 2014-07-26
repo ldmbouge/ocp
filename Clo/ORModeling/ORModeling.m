@@ -50,10 +50,6 @@
 {
    return [[ORLinearize alloc] initORLinearize:into];
 }
-+(id<ORSolutionPool>) createSolutionPool
-{
-   return [[ORSolutionPoolI alloc] init];
-}
 +(id<ORConstraintSet>) createConstraintSet {
     return [[ORConstraintSetI alloc] init];
 }

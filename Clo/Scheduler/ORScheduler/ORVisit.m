@@ -22,17 +22,29 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "taskPrecedes: visit method not defined"];
 }
+-(void) visitTaskDuration: (id<ORTaskDuration>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "taskDuration: visit method not defined"];
+}
+-(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "taskAddTransitionTime: visit method not defined"];
+}
+-(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr;
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "sumTransitionTimes: visit method not defined"];
+}
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "taskIsFinishedBy: visit method not defined"];
 }
+-(void) visitTaskCumulative: (id<ORTaskCumulative>) cstr
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
+}
 -(void) visitTaskDisjunctive: (id<ORTaskDisjunctive>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "disjunctive: visit method not defined"];
-}
--(void) visitTaskSequence: (id<ORTaskSequence>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "sequence: visit method not defined"];
 }
 -(void) visitCumulative: (id<ORCumulative>) cstr
 {
@@ -61,11 +73,27 @@
 {
   
 }
+-(void) visitTaskCumlative: (id<ORTaskCumulative>) cstr
+{
+    
+}
 -(void) visitTaskDisjunctive: (id<ORTaskDisjunctive>) cstr
 {
    
 }
--(void) visitTaskSequence: (id<ORTaskSequence>) cstr
+-(void) visitTaskPrecedes: (id<ORPrecedes>) cstr
+{
+
+}
+-(void) visitTaskDuration: (id<ORTaskDuration>) cstr
+{
+   
+}
+-(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
+{
+   
+}
+-(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr
 {
    
 }

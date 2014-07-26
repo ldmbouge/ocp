@@ -51,3 +51,7 @@
 -(id<ORTracker>) tracker;
 -(id<ORTaskVarArray>) flatten;
 @end
+
+@protocol ORTaskVarSnapshot
+-(ORInt) ect;
+@end;

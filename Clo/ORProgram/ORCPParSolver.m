@@ -15,6 +15,7 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <ORModeling/ORModeling.h>
 #import <objcp/CPObjectQueue.h>
+#import "ORSolution.h"
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;
@@ -296,6 +297,22 @@
 {
    [[self worker] label: mx];
 }
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   return [[self worker] selectValue: v by: o];
+}
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   return [[self worker] selectValue: v by: o1 then: o2];
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   return [[self worker] label: v by:o1 then:o2];
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   return [[self worker] label: v by: o];
+}
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
    [[self worker] label: var with: val];
@@ -347,6 +364,10 @@
 -(void) once: (ORClosure) cl
 {
    [[self worker] once: cl];
+}
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   [[self worker] try: left then: right];
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
@@ -426,7 +447,10 @@
 {
    return _globalPool;
 }
-
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[self worker] objectiveValue];
+}
 -(void)setupWork:(id<ORProblem>)theSub forCP:(id<CPSemanticProgram>)cp
 {
    //NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);
@@ -687,9 +711,9 @@
 {
    return [((id<CPCommonProgram>) [self worker]) boolValue: x];
 }
--(id<ORCPSolution>) captureSolution
+-(id<ORSolution>) captureSolution
 {
-   return (id<ORCPSolution>) [[self worker] captureSolution];
+   return (id<ORSolution>) [[self worker] captureSolution];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

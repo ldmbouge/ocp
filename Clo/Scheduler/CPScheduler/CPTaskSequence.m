@@ -20,6 +20,9 @@
 #import "CPFactory.h"
 
 // [pvh: no optional tasks in this one at this point]
+// [pvh: need to generalize that]
+// [pvh: need to add the constraint on the end date
+// [pvh: just need to prune the latest task in the path
 
 @implementation CPTaskSequence {
    id<CPEngine> _engine;
@@ -37,7 +40,7 @@
    _succ = succ;
    _assigned = [CPFactory TRIntArray: _engine range: _succ.range];
    
-   _priority = HIGHEST_PRIO-1;
+   _priority = LOWEST_PRIO;
 
    _size = (ORUInt) _tasks.count;
    _low = _tasks.range.low;
@@ -53,12 +56,11 @@
 }
 -(ORStatus) post
 {
-   [_engine addInternal:[CPFactory alldifferent: _engine over: _succ /*annotation: ValueConsistency*/]];
+   [_engine addInternal:[CPFactory alldifferent: _engine over: _succ annotation: ValueConsistency]];
+   [_engine addInternal:[CPFactory path: _succ]];
    for(ORInt k = _low; k <= _up; k++)
       [_assigned set: 0 at: k];
       
-   // Initial propagation
-   [self propagate];
    
    // precedence constraints
    for(ORInt k = _low; k <= _up; k++) {
@@ -78,13 +80,23 @@
    }
 
    // Subscription of variables to the constraint
-   for (ORInt i = _low-1; i <= _up; i++)
+   for (ORInt i = _low-1; i <= _up  ; i++)
       [_succ[i] whenBindPropagate: self];
+   for (ORInt i = _low; i <= _up; i++) {
+      [_tasks[i] whenChangeStartPropagate: self];
+      [_tasks[i] whenChangeEndPropagate: self];
+   }
+   
+   // Initial propagation
+   [self propagate];
+
    return ORSuspend;
 }
 
 -(void) propagate
 {
+//   for(ORInt i = _succ.low; i <= _succ.up; i++)
+//      NSLog(@"succ[%d] = %@",i,[_succ[i] description]);
    ORInt i = 0;
    ORInt start = -MAXINT;
    ORInt nb = 0;
@@ -113,6 +125,10 @@
       }
    }
    if (nb <= _size) {
+      if (i == _up + 1)
+         failNow();
+//      NSLog(@"_succ[%d] = %@",i,_succ[i]);
+//      NSLog(@"_succ[%d] = %@",i,_succ[i]);
       [_succ[i] remove: _up + 1];
    }
    if (i != _up + 1) {
@@ -125,37 +141,36 @@
          }
       }
    }
+//   for(ORInt i = _succ.low; i <= _succ.up; i++)
+//      NSLog(@"succ[%d] = %@",i,[_succ[i] description]);
+//   NSLog(@" ");
 }
 
 -(NSSet*) allVars
 {
-//   NSUInteger nb = 2 * _size;
-//   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
-//   for(ORInt i = _low; i <= _up; i++)
-//      [rv addObject:_tasks[i]];
-//   [rv autorelease];
-//   return rv;
-   return 0;
+   NSUInteger nb = [_tasks count] + [_succ count];
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
+   for(ORInt i = _low; i <= _up; i++)
+      [rv addObject:_tasks[i]];
+   for(ORInt i = _succ.low; i <= _succ.up; i++)
+      [rv addObject:_succ[i]];
+   [rv autorelease];
+   return rv;
 }
 -(ORUInt) nbUVars
 {
-//   ORUInt nb = 0;
-//   for(ORInt i = _low; i <= _up; i++)
-//      if ([_tasks[i] bound])
-//         nb++;
-//   return nb;
+   ORUInt nb = 0;
+   for(ORInt i = _low; i <= _up; i++)
+      if (![_tasks[i] bound])
+         nb++;
+   for(ORInt i = _succ.low; i <= _succ.up; i++)
+       if (![_succ[i] bound])
+          nb++;
+   return nb;
    return 0;
 }
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"CPTaskSequence"];
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   assert(false);
 }
 @end

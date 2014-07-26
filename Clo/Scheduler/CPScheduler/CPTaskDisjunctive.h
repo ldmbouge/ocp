@@ -18,7 +18,7 @@
 @protocol CPTaskVar;
 
 
-@interface CPTaskDisjunctive : CPCoreConstraint<NSCoding> {
+@interface CPTaskDisjunctive : CPCoreConstraint {
    id<CPTaskVarArray>  _tasks;   // TaskVar
 }
 -(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) tasks;

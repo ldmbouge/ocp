@@ -74,7 +74,6 @@
    _dprec = true;
    _nfnl  = true;
    _ef    = true;
-   
    _start0 = NULL;
    _dur0   = NULL;
    _idx   = NULL;
@@ -88,8 +87,8 @@
    _task_id_lct = NULL;
    
    _size = (ORUInt) _tasks.count;
-   _low = _tasks.range.low;
-   _up = _tasks.range.up;
+   _low  = _tasks.range.low;
+   _up   = _tasks.range.up;
    
    return self;
 }
@@ -97,8 +96,8 @@
 -(void) dealloc
 {
    if (_start0 != NULL) free(_start0);
-   if (_dur0 != NULL) free(_dur0);
-   if (_idx != NULL) free(_idx);
+   if (_dur0   != NULL) free(_dur0  );
+   if (_idx    != NULL) free(_idx   );
    
    [super dealloc];
 }
@@ -122,15 +121,16 @@
    for (ORInt i = 0; i < _size; i++)
       _idx[i] = i + _tasks.low;
    
-   // Initial propagation
-   [self propagate];
-   
    // Subscription of variables to the constraint
-   for (ORInt i = 0; i < _size; i++) {
+   for (ORInt i = _low; i <= _up; i++) {
       [_tasks[i] whenChangePropagate: self];
       if ([_tasks[i] isOptional])
          [_tasks[i] whenPresentPropagate: self];
    }
+   
+   // Initial propagation
+   [self propagate];
+
    return ORSuspend;
 }
 -(void) propagate
@@ -151,7 +151,7 @@
 {
    ORUInt nb = 0;
    for(ORInt i = _low; i <= _up; i++)
-      if ([_tasks[i] bound])
+      if (![_tasks[i] bound])
          nb++;
    return nb;
 }
@@ -167,14 +167,7 @@
 {
    return getLocalSlack(self);
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   assert(false);
-}
+
 
 
 /*******************************************************************************
@@ -1542,6 +1535,8 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
       disj->_est[tt] = [disj->_tasks[t] est];
       disj->_lct[tt] = [disj->_tasks[t] lct];
       disj->_dur_min[tt] = [disj->_tasks[t] minDuration];
+       disj->_task_id_est[tt] = tt;
+       disj->_task_id_lct[tt] = tt;
    }
    
    // Sorting of the tasks
@@ -1794,9 +1789,9 @@ static void doPropagation(CPTaskDisjunctive * disj) {
       }
    } while (disj->_idempotent && update);
    
-   // Updating the global slack
-   const ORInt globalSlack = getGlobalSlack(disj, size);
-   assignTRInt(&(disj->_global_slack), globalSlack, disj->_trail);
+    // Updating the global slack
+    const ORInt globalSlack = getGlobalSlack(disj, size);
+    assignTRInt(&(disj->_global_slack), globalSlack, disj->_trail);
 }
 
 @end

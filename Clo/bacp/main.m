@@ -88,7 +88,7 @@ int main(int argc, const char * argv[])
                printf("%d%c",[cp intValue: l[i]],((i < l.up) ? ',' : ']'));
             printf("\tObjective: %d\n",[[[[cp engine] objective] value] intValue]);
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
+         id<ORSolution> sol = [[cp solutionPool] best];
          printf("x = [");
          for(ORInt i = x.low; i <= x.up; i++)
             printf("%d%c",[sol intValue: x[i]],((i < x.up) ? ',' : ']'));

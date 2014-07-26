@@ -115,9 +115,10 @@
    _lowc = [Columns low];
    _upc = [Columns up];
    
-   if ((_low != _lowr) || (_up != _upr))
+   if ((_low != _lowr) || (_up != _upr)) {
+      NSLog(@" (%d,%d) versus (%d,%d)",_low,_up,_lowr,_upr);
       @throw [[ORExecutionError alloc] initORExecutionError: "Assignment: The range of the variables does not agree with the rows of the matrix"];
-   
+   }
    _varSize = (_up - _low + 1);
    _var = malloc(_varSize * sizeof(CPIntVar*));
    _var -= _low;

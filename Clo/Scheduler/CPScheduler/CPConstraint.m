@@ -332,14 +332,6 @@
 {
    return 2;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   assert(false);
-}
 @end
 
 @implementation CPOptionalTaskPrecedence
@@ -389,14 +381,6 @@
 {
    return 2;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   assert(false);
-}
 @end
 
 @implementation CPTaskIsFinishedBy
@@ -441,14 +425,101 @@
 {
    return 2;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
+@end
+
+
+@implementation CPTaskDuration
+
+-(id) initCPTaskDuration: (id<CPTaskVar>) task : (id<CPIntVar>) duration
 {
-   assert(false);
+   self = [super initCPCoreConstraint: [task engine]];
+   
+   _task = task;
+   _duration  = duration;
+   return self;
 }
-- (id)initWithCoder:(NSCoder *)aDecoder
+-(void) dealloc
 {
-   assert(false);
+   [super dealloc];
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_task bound] && ![_duration bound]) {
+      [_task whenChangeDurationPropagate: self];
+      [_duration whenChangeBoundsPropagate: self];
+   }
+   return ORSuspend;
+}
+-(void) propagate
+{
+   [_duration updateMin: [_task minDuration]];
+   [_duration updateMax: [_task maxDuration]];
+   [_task updateMinDuration: [_duration min]];
+   [_task updateMaxDuration: [_duration max]];
+}
+-(NSSet*) allVars
+{
+   ORInt size = 2;
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+   [rv addObject:_task];
+   [rv addObject:_duration];
+   [rv autorelease];
+   return rv;
+}
+-(ORUInt) nbUVars
+{
+   return 2;
 }
 @end
 
+@implementation CPTaskAddTransitionTime
+
+-(id) initCPTaskAddTransitionTime:(id<CPTaskVar>) normal extended:(id<CPTaskVar>)extended time:(id<CPIntVar>)time
+{
+   self = [super initCPCoreConstraint: [normal engine]];
+   
+   _normal = normal;
+   _extended = extended;
+   _time  = time;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_normal bound] && ![_extended bound] && ![_time bound]) {
+      [_normal whenChangeStartPropagate: self];
+      [_normal whenChangeEndPropagate: self];
+      [_extended whenChangeStartPropagate: self];
+      [_extended whenChangeEndPropagate: self];
+      [_time whenChangeMinPropagate: self];
+   }
+   return ORSuspend;
+}
+-(void) propagate
+{
+   [_normal updateStart: [_extended est]];
+   [_extended updateStart: [_normal est]];
+   [_normal updateEnd: [_extended lct] - [_time min]];
+   [_extended updateEnd: [_normal lct] + [_time max]];
+}
+-(NSSet*) allVars
+{
+   ORInt size = 2;
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+   [rv addObject:_normal];
+   [rv addObject:_extended];
+   [rv addObject:_time];
+   [rv autorelease];
+   return rv;
+}
+-(ORUInt) nbUVars
+{
+   return 2;
+}
+@end
 

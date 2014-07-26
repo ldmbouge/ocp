@@ -269,14 +269,6 @@ typedef struct {
 {
     return [NSString stringWithFormat:@"CPDifference"];
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    assert(false);
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    assert(false);
-}
 
 -(void) addDifference:(id<CPIntVar>)x minus:(id<CPIntVar>)y leq:(ORInt)d
 {

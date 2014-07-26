@@ -20,12 +20,14 @@
 -(void) whenChangeEndDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c;
 -(void) whenAbsentDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c;
 -(void) whenPresentDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c;
+-(void) whenChangeDurationDo: (ORClosure) todo priority: (ORInt) p onBehalf: (id<CPConstraint>) c;
 
 -(void) whenChangeDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c;
 -(void) whenChangeStartDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c;
 -(void) whenChangeEndDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c;
 -(void) whenAbsentDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c;
 -(void) whenPresentDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c;
+-(void) whenChangeDurationDo: (ORClosure) todo onBehalf: (id<CPConstraint>) c;
 
 // AC3 Constraint Event
 -(void) whenChangePropagate:  (id<CPConstraint>) c priority: (ORInt) p;
@@ -33,12 +35,15 @@
 -(void) whenChangeEndPropagate: (id<CPConstraint>) c priority: (ORInt) p;
 -(void) whenAbsentPropagate: (id<CPConstraint>) c priority: (ORInt) p;
 -(void) whenPresentPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenChangeDurationPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+
 
 -(void) whenChangePropagate: (id<CPConstraint>) c;
 -(void) whenChangeStartPropagate: (id<CPConstraint>) c;
 -(void) whenChangeEndPropagate: (id<CPConstraint>) c;
 -(void) whenAbsentPropagate: (id<CPConstraint>) c;
 -(void) whenPresentPropagate: (id<CPConstraint>) c;
+-(void) whenChangeDurationPropagate: (CPCoreConstraint*) c;
 @end
 
 @protocol CPTaskVar <CPVar,CPTaskVarSubscriber>

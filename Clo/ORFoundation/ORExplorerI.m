@@ -211,6 +211,25 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self limitSolutions: 1 in: cl];
 }
 
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   ORMutableIntegerI* found = [[ORMutableIntegerI alloc] initORMutableIntegerI: _engine value: 0];
+   [self try:
+    ^() { [self once: ^() { left(); }];
+         [found setValue: true];
+        }
+          or:
+    ^() {
+       ORBool f = [found intValue];
+       [found release];
+       if (f)
+         right();
+       else
+          [self fail];
+    }
+    ];
+}
+
 -(void) limitSolutions: (ORInt) nb in: (ORClosure) cl
 {
    ORLimitSolutions* limit = [[ORLimitSolutions alloc] initORLimitSolutions: nb];
@@ -244,6 +263,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self push: limit];
    [limit release];
    cl();
+   [limit succeeds];
    [self popController];
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
@@ -415,7 +435,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
 }
 
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search
             onSolution: (ORClosure) onSolution
                 onExit: (ORClosure) onExit
                control:(id<ORSearchController>) newCtrl
@@ -447,10 +467,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {}
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {}
--(void)     nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void)     nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {}
 
--(void) optimizeModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) optimizeModel: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^{
       [self nestedOptimize: solver
@@ -461,7 +481,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }];
 }
 
--(void) solveModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) solveModel: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^()
     {
@@ -472,7 +492,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
     }
     ];
 }
--(void) solveAllModel: (id<ORASolver>) solver using: (ORClosure) search  onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) solveAllModel: (id<ORASearchSolver>) solver using: (ORClosure) search  onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^()
     {
@@ -505,7 +525,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [base release];
    [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> new    = [_cFact makeNestedController];
    id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller._val];
@@ -542,7 +562,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self popController];
    [root release];
 }
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> new     = [_cFact makeNestedController];
    id<ORSearchController> root    = [_cFact makeRootController];

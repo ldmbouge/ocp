@@ -117,15 +117,15 @@
    return (id<ORTaskDisjunctiveArray>) o;
 }
 
-+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
-{
-   id<ORIdArray> o = [ORFactory idArray: model range:range];
-   for(ORInt k=range.low;k <= range.up;k++) {
-      id<ORTaskSequence> dr = [ORFactory sequenceConstraint: model];
-      [o set: dr at:k];
-   }
-   return (id<ORTaskSequenceArray>) o;
-}
+//+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
+//{
+//   id<ORIdArray> o = [ORFactory idArray: model range:range];
+//   for(ORInt k=range.low;k <= range.up;k++) {
+//      id<ORTaskSequence> dr = [ORFactory sequenceConstraint: model];
+//      [o set: dr at:k];
+//   }
+//   return (id<ORTaskSequenceArray>) o;
+//}
 
 // Precedes
 //
@@ -139,6 +139,18 @@
 {
    id<ORTaskIsFinishedBy> o = [[ORTaskIsFinishedBy alloc] initORTaskIsFinishedBy: task isFinishedBy: date];
    [[task tracker] trackMutable: o];
+   return o;
+}
++(id<ORTaskDuration>) constraint: (id<ORTaskVar>) task duration: (id<ORIntVar>) duration
+{
+   id<ORTaskDuration> o = [[ORTaskDuration alloc] initORTaskDuration: task duration: duration];
+   [[task tracker] trackMutable: o];
+   return o;
+}
++(id<ORTaskAddTransitionTime>) constraint: (id<ORTaskVar>) normal extended:  (id<ORTaskVar>) extended time: (id<ORIntVar>) time
+{
+   id<ORTaskAddTransitionTime> o = [[ORTaskAddTransitionTime alloc] initORTaskAddTransitionTime: normal extended: extended time: time];
+   [[normal tracker] trackMutable: o];
    return o;
 }
 // Cumulative (resource) constraint
@@ -164,10 +176,21 @@
     [[s tracker] trackObject:o];
     return o;
 }
++(id<ORTaskCumulative>) cumulative: (id<ORTaskVarArray>) task with: (id<ORIntVarArray>) usage and: (id<ORIntVar>) capacity
+{
+    id<ORTaskCumulative> o = [[ORTaskCumulative alloc] initORTaskCumulative: task with: usage and: capacity];
+    [[task tracker] trackObject:o];
+    return o;
+}
++(id<ORTaskCumulative>) cumulativeConstraint: (id<ORIntVar>) capacity
+{
+    id<ORTaskCumulative> o = [[ORTaskCumulative alloc] initORTaskCumulativeEmpty: capacity];
+    [[capacity tracker] trackObject:o];
+    return o;
+}
 
 // Disjunctive (resource) constraint
 //
-// [pvh: Unify these two guys: this is ugly]
 
 +(id<ORTaskDisjunctive>) disjunctive: (id<ORTaskVarArray>) task
 {
@@ -183,9 +206,9 @@
    return o;
 }
 
-+(id<ORTaskSequence>) sequenceConstraint: (id<ORTracker>) model
++(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model transition: (id<ORIntMatrix>) matrix
 {
-   id<ORTaskSequence> o = [[ORTaskSequence alloc] initORTaskSequenceEmpty: model];
+   id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctiveEmpty: model transition: matrix];
    [model trackObject:o];
    return o;
 }
@@ -232,7 +255,13 @@
 +(id<ORTaskVar>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
 {
    id<ORTaskVar> o = [[ORTaskVar alloc] initORTaskVar: model horizon: horizon duration: RANGE(model,duration,duration)];
-   [model trackMutable:o];
+   [model trackVariable:o];
+   return o;
+}
++(id<ORTaskVar>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+{
+   id<ORTaskVar> o = [[ORTaskVar alloc] initORTaskVar: model horizon: horizon duration: duration];
+   [model trackVariable:o];
    return o;
 }
 +(id<ORTaskVar>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration
@@ -255,6 +284,12 @@
       return [ORFactory task: model horizon: horizon duration: [duration at:i]];
    }];
 }
++(id<ORTaskVarArray>) taskVarArray: (id<ORModel>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) duration
+{
+   return [ORFactory taskVarArray: model range: range with: ^id<ORTaskVar>(ORInt i) {
+      return [ORFactory task: model horizon: horizon durationRange: duration];
+   }];
+}
 // TaskVar matrix
 +(id<ORTaskVarMatrix>) taskVarMatrix: (id<ORTracker>) model range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2  with: (id<ORTaskVar>(^)(ORInt,ORInt)) clo;
 {
@@ -271,6 +306,11 @@
       return [ORFactory task: model horizon: horizon duration: [duration at: i : j]];
    }];
 }
-
++(id<ORSumTransitionTimes>) sumTransitionTimes: (id<ORTaskDisjunctive>) disjunctive leq: (id<ORIntVar>) sumTransitionTimes
+{
+   id<ORSumTransitionTimes> o = [[ORSumTransitionTimes alloc] initORSumTransitionTimes: disjunctive  leq: sumTransitionTimes];
+   [[sumTransitionTimes tracker] trackMutable: o];
+   return o;
+}
 
 @end

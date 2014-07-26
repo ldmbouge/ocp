@@ -23,344 +23,18 @@
 #import "CPProgram.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
+#import "ORSolution.h"
 
 
 #if defined(__linux__)
 #import <values.h>
 #endif
 
-// to do 23/12/2012
+// [pvh: this is from a long time ago]
 //
 // 1. Look at IncModel to implement the incremental addition of constraints
 // 2. Need to check how variables/constraints/objects are created during the search
 // 3. Need to concretize them directly
-
-
-@interface ORCPIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
-   ORUInt    _name;
-   ORInt     _value;
-   ORBool    _bound;
-}
--(ORCPIntVarSnapshot*) initCPIntVarSnapshot: (id<ORIntVar>) v with: (id<CPCommonProgram>) solver;
--(int) intValue;
--(ORBool) boolValue;
--(NSString*) description;
--(ORBool)isEqual: (id) object;
--(NSUInteger) hash;
--(ORUInt)getId;
-@end
-
-@implementation ORCPIntVarSnapshot
--(ORCPIntVarSnapshot*) initCPIntVarSnapshot: (id<ORIntVar>) v with: (id<CPCommonProgram>) solver;
-{
-   self = [super init];
-   _name = [v getId];
-   _bound = [solver bound:v];
-   if (_bound)
-      _value = [solver intValue: v];
-   else _value = 0;
-   return self;
-}
--(ORUInt)getId
-{
-   return _name;
-}
--(ORInt) intValue
-{
-   return _value;
-}
--(ORFloat) floatValue
-{
-   return _value;
-}
--(ORBool) boolValue
-{
-   return _value;
-}
--(ORBool)isEqual: (id) object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORCPIntVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return _value == other->_value;
-      }
-      else
-         return NO;
-   } else
-      return NO;
-}
--(NSUInteger) hash
-{
-   return (_name << 16) + _value;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   if (_bound)
-      [buf appendFormat:@"int(%d) : %d",_name,_value];
-   else
-      [buf appendFormat:@"int(%d) : NA",_name];
-   return buf;
-}
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
-}
-- (id) initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
-   return self;
-}
-@end
-
-@interface ORCPFloatVarSnapshot : NSObject <ORSnapshot,NSCoding>
-{
-   ORUInt    _name;
-   ORFloat   _value;
-}
--(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
--(ORUInt) getId;
--(ORFloat) floatValue;
--(ORInt) intValue;
--(NSString*) description;
--(ORBool) isEqual: (id) object;
--(NSUInteger) hash;
-@end
-
-@implementation ORCPFloatVarSnapshot
--(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
-{
-   self = [super init];
-   _name = [v getId];
-   _value = [solver floatValue: v];
-   return self;
-}
--(ORInt) intValue
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "intValue called on a snapshot for float variables"];
-   return 0;
-}
--(ORBool) boolValue
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "boolValue called on a snapshot for float variables"];
-   return 0;
-}
--(ORFloat) floatValue
-{
-   return _value;
-}
--(ORUInt) getId
-{
-   return _name;
-}
--(ORBool) isEqual: (id) object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORCPFloatVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return _value == other->_value;
-      }
-      else
-         return NO;
-   }
-   else
-      return NO;
-}
--(NSUInteger)hash
-{
-   return (_name << 16) + (ORInt) _value;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"float(%d) : %f",_name,_value];
-   return buf;
-}
-- (void) encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
-}
-- (id) initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
-   return self;
-}
-@end
-
-@interface ORCPTakeSnapshot  : ORNOopVisit<NSObject>
--(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver;
--(void) dealloc;
-@end
-
-@implementation ORCPTakeSnapshot
-{
-   id<CPCommonProgram> _solver;
-   id            _snapshot;
-}
--(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver
-{
-   self = [super init];
-   _solver = solver;
-   return self;
-}
--(id) snapshot:(id)obj
-{
-   _snapshot = NULL;
-   [obj visit:self];
-   return _snapshot;
-}
--(void) dealloc
-{
-   [super dealloc];
-}
--(void) visitIntVar: (id<ORIntVar>) v
-{
-   _snapshot = [[ORCPIntVarSnapshot alloc] initCPIntVarSnapshot: v with: _solver];
-}
--(void) visitFloatVar: (id<ORFloatVar>) v
-{
-   _snapshot = [[ORCPFloatVarSnapshot alloc] initCPFloatVarSnapshot: v with: _solver];
-}
-@end
-
-@interface ORCPSolutionI : ORObject<ORCPSolution>
--(ORCPSolutionI*) initORCPSolutionI: (id<ORModel>) model with: (id<CPCommonProgram>) solver;
--(id<ORSnapshot>) value: (id) var;
--(ORBool) isEqual: (id) object;
--(NSUInteger) hash;
--(id<ORObjectiveValue>) objectiveValue;
-@end
-
-
-// PVH: need to be generalized when the global numbering will be available
-@implementation ORCPSolutionI {
-   NSArray*             _varShots;
-   id<ORObjectiveValue> _objValue;
-}
-
--(ORCPSolutionI*) initORCPSolutionI: (id<ORModel>) model with: (id<CPCommonProgram>) solver
-{
-   self = [super init];
-   NSArray* av = [model variables];
-   ORULong sz = [av count];
-   NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
-   ORCPTakeSnapshot* visit = [[ORCPTakeSnapshot alloc] initORCPTakeSnapshot: solver];
-   for(id obj in av) {
-      id shot = [visit snapshot:obj];
-      if (shot)
-         [snapshots addObject: shot];
-      [shot release];
-   }
-   _varShots = snapshots;
-   
-   if ([model objective])
-      _objValue = [[solver objective] value];
-   else
-      _objValue = nil;
-   [visit release];
-   return self;
-}
-
--(void) dealloc
-{
-//   NSLog(@"dealloc ORCPSolutionI");
-   [_varShots release];
-   [_objValue release];
-   [super dealloc];
-}
-
--(ORBool) isEqual: (id) object
-{
-   if ([object isKindOfClass: [self class]]) {
-      ORCPSolutionI* other = object;
-      if (_objValue && other->_objValue) {
-         if ([_objValue isEqual:other->_objValue]) {
-            return [_varShots isEqual:other->_varShots];
-         }
-         else
-            return NO;
-      }
-      else
-         return NO;
-   }
-   else
-      return NO;
-}
--(NSUInteger) hash
-{
-   return [_varShots hash];
-}
--(id<ORObjectiveValue>) objectiveValue
-{
-   return _objValue;
-}
--(id<ORSnapshot>) value: (id) var
-{
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   if (idx < [_varShots count])
-      return [_varShots objectAtIndex:idx];
-   else
-      return nil;
-}
--(ORInt) intValue: (id) var
-{
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
-}
--(ORBool) boolValue: (id) var
-{
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] boolValue];
-}
--(ORFloat) floatValue: (id<ORFloatVar>) var
-{
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
-}
--(NSUInteger) count
-{
-   return [_varShots count];
-}
-- (void) encodeWithCoder: (NSCoder *)aCoder
-{
-   [aCoder encodeObject:_varShots];
-   [aCoder encodeObject:_objValue];
-}
-- (id) initWithCoder:(NSCoder *) aDecoder
-{
-   self = [super init];
-   _varShots = [[aDecoder decodeObject] retain];
-   _objValue = [aDecoder decodeObject];
-   return self;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   if (_objValue)
-      [buf appendFormat:@"SOL[%@](",_objValue];
-   else
-      [buf appendString:@"SOL("];
-   NSUInteger last = [_varShots count] - 1;
-   [_varShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
-      [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
-   }];
-   return buf;
-}
-@end
 
 @implementation CPHeuristicSet
 {
@@ -541,6 +215,10 @@
 {
    return [_engine objective];
 }
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[_engine objective] value];
+}
 -(id<ORTracer>) tracer
 {
    return _tracer;
@@ -589,9 +267,10 @@
 {
    return _sPool;
 }
+// [pvh: This method should be higher; no need to repeat for all solvers]
 -(id<ORSolution>) captureSolution
 {
-   return [[ORCPSolutionI alloc] initORCPSolutionI: _model with: self];
+   return [ORFactory solution: _model solver: self];
 }
 -(void) doOnSolution
 {
@@ -1044,12 +723,79 @@
       ];
    }
 }
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   return [self selectValueImpl: _gamma[v.getId] by: o];
+}
+-(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Float) o
+{
+   float bestFound = MAXFLOAT;
+   ORInt indexFound = MAXINT;
+   ORInt low = [x min];
+   ORInt up = [x max];
+   for(ORInt i = low; i <= up; i++) {
+      if ([x member: i]) {
+         ORFloat v = o(i);
+         if (v < bestFound) {
+            bestFound = v;
+            indexFound = i;
+         }
+      }
+   }
+   return indexFound;
+}
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   return [self selectValueImpl: _gamma[v.getId] by: o1 then: o2];
+}
+-(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   float bestFound1 = MAXFLOAT;
+   float bestFound2 = MAXFLOAT;
+   ORInt indexFound = MAXINT;
+   ORInt low = [x min];
+   ORInt up = [x max];
+   for(ORInt i = low; i <= up; i++) {
+      if ([x member: i]) {
+         ORFloat v = o1(i);
+         if (v < bestFound1) {
+            bestFound1 = v;
+            bestFound2 = o2(i);
+            indexFound = i;
+         }
+         else if (v == bestFound1) {
+            ORFloat w = o2(i);
+            if (w < bestFound2) {
+               bestFound2 = w;
+               indexFound = i;
+            }
+         }
+      }
+   }
+   return indexFound;
+}
 
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   id<CPIntVar> x = _gamma[v.getId];
+   while (![x bound]) {
+      ORInt v = [self selectValueImpl: x by: o1 then: o2];
+      [self try: ^() { [self labelImpl: x with: v]; } or: ^() { [self diffImpl: x with: v]; }];
+   }
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   id<CPIntVar> x = _gamma[v.getId];
+   while (![x bound]) {
+      ORInt v = [self selectValueImpl: x by: o];
+      [self try: ^() { [self labelImpl: x with: v]; } or: ^() { [self diffImpl: x with: v]; }];
+   }
+}
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
    return [self labelImpl: _gamma[var.getId] with: val];
 }
--(void) diff: (id<CPIntVar>) var with: (ORInt) val
+-(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
    [self diffImpl: _gamma[var.getId] with: val];
 }
@@ -1109,6 +855,10 @@
 -(void) once: (ORClosure) cl
 {
    [_search once: cl];
+}
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   [_search try: left then: right];
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {

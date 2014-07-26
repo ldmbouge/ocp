@@ -9,10 +9,18 @@
  
  ***********************************************************************/
 
-#import "CPCumulative.h"
+#import "CPTaskCumulative.h"
 #import <objcp/CPIntVarI.h>
 #import <CPUKernel/CPEngineI.h>
 #import "CPMisc.h"
+#import "CPTask.h"
+
+
+// NOTE that the TTEF filtering is not adjusted for optional tasks yet, but the
+// TT filtering.
+
+// Randomly set
+#define MAXNBTASK ((MAXINT)/4)
 
     // Whether skipping of dominated time intervals should be activated wrt.
     // TTEF propagation rule
@@ -36,16 +44,19 @@ typedef struct {
 } ProfilePeak;
 
 
-@implementation CPCumulative {
+@implementation CPTaskCumulative {
     // Attributs of tasks
-    CPIntVar**  _start0;   // Start times
-    CPIntVar**  _dur0;     // Durations
-    CPIntVar**  _usage0;   // Resource usages (requirements)
-    CPIntVar**  _area0;    // Area (energy)
-    CPIntVar**  _end0;     // End times
-    TaskType*    _type0;    // Type of tasks
+    ORInt * _est;       // Earliest starting time
+    ORInt * _ect;       // Earliest completion time
+    ORInt * _lst;       // Latest starting time
+    ORInt * _lct;       // Latest completion time
+    ORInt * _dur_min;   // Minimal duration
+    ORInt * _usage_min; // Minimal usage
 
-    ORLong       _size;     // Number of considered tasks
+    ORInt        _size;     // Number of considered tasks
+    ORInt*       _idx;      // Indices of activities
+    TRInt        _cIdx;     // Size of present activities
+    TRInt        _uIdx;     // Size of present and non-present activities
 
     // Array of identifiers of tasks whereas fixed (bound) tasks sitting at the
     // right end
@@ -69,36 +80,53 @@ typedef struct {
     ORULong _nb_ttef_props;     // Number of time-tabling-edge-finding propagations
 }
 
--(id) initCPCumulative:(id<CPIntVarArray>)s duration:(id<CPIntVarArray>)d usage:(id<CPIntVarArray>)r energy:(id<CPIntVarArray>)a end:(id<CPIntVarArray>)e type:(TaskType*)t capacity:(CPIntVar*)c;
+-(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with:(id<CPIntVarArray>)usages and:(id<CPIntVar>)capacity
 {
-    self = [super initCPCoreConstraint: [c engine]];
-    _priority = LOWEST_PRIO;
-    _start = s;
-    _dur   = d;
-    _usage = r;
-    _area  = a;
-    _end   = e;
-    _type  = t;
-    _cap   = c;
+    // Checking whether the number of activities is within the limit
+    if (tasks.count > (NSUInteger) MAXNBTASK) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: Number of elements exceeds beyond the limit!"];
+    }
 
+    // Checking whether the size and indices of the arrays tasks and usages are consistent
+    if (tasks.count != usages.count || tasks.low != usages.low || tasks.up != usages.up) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the arrays 'tasks' and 'usages' must have the same size and indices!"];
+    }
+    
+    // Checking wether the domain of the capacity contains non-negative values
+    if (capacity.max < 0) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the domain of the variable 'capacity' must contain at least one non-negative value!"];
+    }
+    
+    // Checking whether the domain ot the usage variables contain non-negative values
+    for (ORInt i = usages.low; i <= usages.up; i++) {
+        if (usages[i].max < 0) {
+            @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the domain of the 'usages' variables must contain at least one non-negative value!"];
+        }
+    }
+    
+    id<CPTaskVar> task0 = tasks[tasks.low];
+    self = [super initCPCoreConstraint: [task0 engine]];
+    
+    _priority = LOWEST_PRIO;
+    _tasks    = tasks;
+    _usages   = usages;
+    _capacity = capacity;
+
+    // Setup for propagation
     _idempotent = false;
     _tt_filt    = true;
     _ttef_check = false;
-//    _ttef_check = true;
     _ttef_filt  = false;
-//    _ttef_filt  = true;
 
+    // Initialisation of the counters
     _nb_tt_incons   = 0;
     _nb_tt_props    = 0;
     _nb_ttef_incons = 0;
     _nb_ttef_props  = 0;
-    
-    _start0  = NULL;
-    _dur0    = NULL;
-    _usage0  = NULL;
-    _area0   = NULL;
-    _end0    = NULL;
-    _type0   = NULL;
+
+    // Initialisation of other data structures
+    _fixed   = NULL;
+    _idx     = NULL;
     _profile = NULL;
     
     return self;
@@ -110,125 +138,106 @@ typedef struct {
     printf("%%%% #TT props: %lld\n",   _nb_tt_props   );
     printf("%%%% #TTEF fails: %lld\n", _nb_ttef_incons);
     printf("%%%% #TTEF props: %lld\n", _nb_ttef_props );
-    
-    if (_start0  != NULL) free(_start0 );
-    if (_dur0    != NULL) free(_dur0   );
-    if (_usage0  != NULL) free(_usage0 );
-    if (_area0   != NULL) free(_area0  );
-    if (_end0    != NULL) free(_end0   );
-    if (_type0   != NULL) free(_type0  );
+
+    if (_fixed   != NULL) free(_fixed  );
+    if (_idx     != NULL) free(_idx    );
     if (_profile != NULL) free(_profile);
+    
     [super dealloc];
 }
 
 -(ORUInt) nbUVars {
     ORUInt nb = 0;
-    for (ORInt i = 0; i < _first_fixed._val; i++) {
-        nb += nbUnfixedVars(self, _fixed[i]);
+    for (ORInt ii = 0; ii <= _size; ii++) {
+        if (!_tasks[_idx[ii]].bound) nb++;
     }
     return nb;
 }
 
 -(ORStatus) post
 {
-//    printf("CPCumulative: post\n");
-    ORLong size = _start.count;
+//    printf("CPTaskCumulative: post\n");
+    assert(_tasks.count == _usages.count);
+    assert(_tasks.low == _usages.low && _tasks.up == _usages.up);
 
-    // Checking the size of all arrays
-    if (size != _dur.count || size != _usage.count || size != _area.count || size != _end.count) {
-        // Throw exception
-        @throw [[ORExecutionError alloc] initORExecutionError: "Cumulative: Number of elements in the input arrays differ!"];
-    }
-    
-    bool consider[size];
+    // Identifying of unnecessary tasks
     _size = 0;
-    ORInt offsetArea = _area.low;
-    
-    // Identifying unnecessary tasks
-    for (ORInt i = 0; i < size; i++) {
-        consider[i] = true;
-        if ([[_area at: i + offsetArea] max] > 0) {
-            consider[i] = true;
-            _size++;
+    bool consider[_tasks.count];
+ 
+    for (ORInt t = _tasks.low, i = 0; t <= _tasks.up; t++, i++) {
+        if (_tasks[t].maxDuration <= 0 || _tasks[t].isAbsent || _usages[t].max <= 0) {
+            consider[i] = false;
         }
         else {
-            consider[i] = false;
+            consider[i] = true;
+            _size++;
         }
     }
 
     if (_size <= 0) {
+        // No necessary tasks => constraint satisfied
         return ORSuccess;
     }
     
-    _first_fixed = makeTRInt(_trail, (ORInt) _size);
+    _cIdx        = makeTRInt(_trail, 0    );
+    _uIdx        = makeTRInt(_trail, _size);
+    _first_fixed = makeTRInt(_trail, _size);
     
     // Allocating memory
-    _start0  = malloc(    _size * sizeof(CPIntVar* ));
-    _dur0    = malloc(    _size * sizeof(CPIntVar* ));
-    _usage0  = malloc(    _size * sizeof(CPIntVar* ));
-    _area0   = malloc(    _size * sizeof(CPIntVar* ));
-    _end0    = malloc(    _size * sizeof(CPIntVar* ));
-    _type0   = malloc(    _size * sizeof(TaskType   ));
     _fixed   = malloc(    _size * sizeof(ORInt      ));
+    _idx     = malloc(    _size * sizeof(ORInt      ));
     _profile = malloc(2 * _size * sizeof(ProfilePeak));
     
     // Checking whether memory allocation was successful
-    if (_start0 == NULL || _dur0 == NULL  || _usage0 == NULL || _area0 == NULL ||
-        _end0 == NULL   || _fixed == NULL || _type0 == NULL  || _profile == NULL) {
+    if (_fixed == NULL || _idx == NULL  || _profile == NULL) {
 
         @throw [[ORExecutionError alloc] initORExecutionError: "Cumulative: Out of memory!"];
     }
     
     // Copying elements to the new created C arrays
-    ORInt iSt = _start.low;
-    ORInt iDu = _dur  .low;
-    ORInt iUs = _usage.low;
-    ORInt iAr = _area .low;
-    ORInt iEn = _end  .low;
     ORInt idx = 0;
-    
-    for (ORInt i = 0; i < size; i++, iSt++, iDu++, iUs++, iAr++, iEn++) {
-        if (consider[i]) {
-            _start0[idx] = (CPIntVar*)[_start at: iSt];
-            _dur0  [idx] = (CPIntVar*)[_dur   at: iDu];
-            _usage0[idx] = (CPIntVar*)[_usage at: iUs];
-            _area0 [idx] = (CPIntVar*)[_area  at: iAr];
-            _end0  [idx] = (CPIntVar*)[_end   at: iEn];
-            _type0 [idx] = _type[i];
+
+    for (ORInt t = _tasks.low; t <= _tasks.up; t++) {
+        if (consider[t]) {
+            _idx  [idx] = t;
+            _fixed[idx] = t;
             idx++;
         }
     }
     
     assert(idx == _size);
     
-    for (ORInt i = 0; i < _size; i++) {
-        _fixed[i] = i;
+    // Remove negative values from the domains
+    if (_capacity.min < 0) {
+        [_capacity updateMin:0];
+    }
+    for (ORInt ii = 0; ii < _size; ii++) {
+        const ORInt i = _idx[ii];
+        if (_usages[i].min < 0 && _tasks[i].isPresent) {
+            [_usages[i] updateMin:0];
+        }
     }
     
     // Call for initial propagation
     [self propagate];
 
     // Subscription of variables to the constraint
-    for (ORInt i = 0; i < _size; i++) {
-        // XXX More efficient subscriptions, e.g., _end0[i] doesn't need to be subscribed
-        // when it is a view on _start0[i]
-        if (!_start0[i].bound)
-            [_start0[i] whenChangeBoundsPropagate: self];
-        
-        if (!_end0[i].bound)
-            [_end0[i]   whenChangeBoundsPropagate: self];
-        
-        if (!_dur0[i].bound)
-            [_dur0[i]   whenChangeMinPropagate:    self];
-        
-        if (!_usage0[i].bound)
-            [_usage0[i] whenChangeMinPropagate:    self];
-        
-        if (!_area0[i].bound)
-            [_area0[i]  whenChangeMinPropagate:    self];
+    // XXX Currently, no propagation is performed on non-present tasks
+    for (ORInt ii = 0; ii < _size; ii++) {
+        const ORInt i = _idx[ii];
+        if (_tasks[i].isPresent) {
+            if (!_tasks[i].bound)
+                [_tasks[i] whenChangePropagate:self];
+            if (!_usages[i].bound)
+                [_usages[i] whenChangeMinPropagate:self];
+        }
+        else {
+            assert(_tasks[i].isOptional && !_tasks[i].isAbsent);
+            [_tasks[i] whenPresentPropagate:self];
+        }
     }
-    if (!_cap.bound)
-        [_cap whenChangeMaxPropagate:self];
+    if (!_capacity.bound)
+        [_capacity whenChangeMaxPropagate:self];
 
     // Return of the state
     return ORSuspend;
@@ -236,201 +245,144 @@ typedef struct {
 
 -(void) propagate
 {
-    //NSLog(@"Cumulative: propagate/0: Start\n");
-    // propagate
-    //printf("CPCumulative: propagate\n");
-    bool update;
-    ORInt i_max_usage = -1;
-    
-    do {
-        update = false;
-        // Generation of the resource profile and TT consistency check
-        propagationLoopPreamble(self, & i_max_usage);
-
-        if (i_max_usage >= 0) {
-            ORInt maxLevel = _profile[i_max_usage]._level;
-            // TT filtering on resource capacity variable
-            tt_filter_cap(self, maxLevel);
-            // TT filtering on start and end times variables
-            if (_tt_filt)
-                tt_filter_start_end_times(self, maxLevel, & update);
-            // TTEF propagation
-            if (!update && (_ttef_check || _ttef_filt)) {
-                ttef_bounds_propagation(self, & update);
-            }
-        }
-    } while (_idempotent && update);
-    //NSLog(@"Cumulative: propagate/0: End\n");
+    doPropagation(self);
 }
 
-static void propagationLoopPreamble(CPCumulative* cumu, ORInt* i_max_usage)
+static void propagationLoopPreamble(CPTaskCumulative* cumu, const ORInt cSize, ORInt* i_max_usage)
 {
     // Building the resource profile
-    *i_max_usage = tt_build_profile(cumu);
-    //    printf("i_max_usage: %d; level: %d\n", *i_max_usage, cumu->_profile[*i_max_usage]._level);
-    if (*i_max_usage > -1) {
-        
-        // Swapping newly fixed tasks to the end of the array
-        ORInt new = cumu->_first_fixed._val;
-        for (ORInt ii = new - 1; ii >= 0; ii--) {
-            ORInt i = cumu->_fixed[ii];
-            if (isBounded(cumu, i)) {
-                new--;
-                assert(new >= 0);
-                cumu->_fixed[ii] = cumu->_fixed[new];
-                cumu->_fixed[new] = i;
-            }
-        }
-        // Trailing of the 'first_fixed' index
-        assignTRInt(&(cumu->_first_fixed), new, cumu->_trail);
-    }
+    *i_max_usage = tt_build_profile(cumu, cSize);
+//    //    printf("i_max_usage: %d; level: %d\n", *i_max_usage, cumu->_profile[*i_max_usage]._level);
+//    if (*i_max_usage > -1) {
+//        
+//        // Swapping newly fixed tasks to the end of the array
+//        ORInt new = cumu->_first_fixed._val;
+//        for (ORInt ii = new - 1; ii >= 0; ii--) {
+//            ORInt i = cumu->_fixed[ii];
+//            if (isBounded(cumu, i)) {
+//                new--;
+//                assert(new >= 0);
+//                cumu->_fixed[ii] = cumu->_fixed[new];
+//                cumu->_fixed[new] = i;
+//            }
+//        }
+//        // Trailing of the 'first_fixed' index
+//        assignTRInt(&(cumu->_first_fixed), new, cumu->_trail);
+//    }
 }
 
 -(NSSet*)allVars
 {
-    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:5*_size + 1];
-    for(ORInt i = 0; i < _size; i++) {
-        [rv addObject: _start0[i] ];
-        [rv addObject: _dur0  [i] ];
-        [rv addObject: _usage0[i] ];
-        [rv addObject: _area0 [i] ];
-        [rv addObject: _end0  [i] ];
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:2 * _size + 1];
+    for(ORInt ii = 0; ii < _size; ii++) {
+        const ORInt i = _idx[ii];
+        [rv addObject: _tasks [i] ];
+        [rv addObject: _usages[i] ];
     }
-    [rv addObject: _cap];
+    [rv addObject: _capacity];
     [rv autorelease];
     return rv;
 }
 
-//------------------------------
-// Short cuts for tasks
+/*******************************************************************************
+ * Short cuts for tasks
+ ******************************************************************************/
 
-static inline ORInt est(CPCumulative* cumu, ORInt i);
-static inline ORInt lst(CPCumulative* cumu, ORInt i);
-static inline ORInt ect(CPCumulative* cumu, ORInt i);
-static inline ORInt lct(CPCumulative* cumu, ORInt i);
+static inline ORInt est(CPTaskCumulative* cumu, ORInt i);
+static inline ORInt lst(CPTaskCumulative* cumu, ORInt i);
+static inline ORInt ect(CPTaskCumulative* cumu, ORInt i);
+static inline ORInt lct(CPTaskCumulative* cumu, ORInt i);
 
-static inline ORInt est(CPCumulative* cumu, ORInt i)
+static inline ORInt est(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
-    return cumu->_start0[i].min;
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_est[i];
 }
 
-static inline ORInt lst(CPCumulative* cumu, ORInt i)
+static inline ORInt lst(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
-    return cumu->_start0[i].max;
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_lst[i];
 }
 
-static inline ORInt ect(CPCumulative* cumu, ORInt i)
+static inline ORInt ect(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
-    switch (cumu->_type[i])
-    {
-        case CVAR_S:
-        case CVAR_SA:
-        case CVAR_SD:
-        case CVAR_SR:
-        case CVAR_SDR:
-            return cumu->_start0[i].min + cumu->_dur0[i].min;
-        case CVAR_SE:
-        case CVAR_SAE:
-        case CVAR_SDE:
-        case CVAR_SDRE:
-            return cumu->_end0[i].min;
-    }
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_ect[i];
 }
 
-static inline ORInt lct(CPCumulative* cumu, ORInt i)
+static inline ORInt lct(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
-    switch (cumu->_type[i])
-    {
-        case CVAR_S:
-        case CVAR_SA:
-        case CVAR_SD:
-        case CVAR_SR:
-        case CVAR_SDR:
-            return cumu->_start0[i].max + cumu->_dur0[i].max;
-        case CVAR_SE:
-        case CVAR_SAE:
-        case CVAR_SDE:
-        case CVAR_SDRE:
-            return cumu->_end0[i].max;
-    }
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_lct[i];
 }
 
-static inline ORInt dur_min(CPCumulative* cumu, ORInt i)
+static inline ORInt dur_min(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
-    return cumu->_dur0[i].min;
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_dur_min[i];
 }
 
-static inline ORInt usage_min(CPCumulative* cumu, ORInt i)
+static inline ORInt dur_max(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
-    return cumu->_usage0[i].min;
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_tasks[i].maxDuration;
 }
 
-static inline ORInt area_min(CPCumulative* cumu, ORInt i)
+static inline ORInt usage_min(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
-    return cumu->_area0[i].min;
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_usage_min[i];
 }
 
-static inline ORInt free_energy(CPCumulative* cumu, ORInt i)
+static inline ORInt usage_max(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_usages[i].max;
+}
+
+static inline ORInt area_min(CPTaskCumulative* cumu, ORInt i)
+{
+    assert(0 <= i && i < cumu->_tasks.count);
+    return (usage_min(cumu, i) * dur_min(cumu, i));
+}
+
+static inline ORInt free_energy(CPTaskCumulative* cumu, ORInt i)
+{
+    assert(0 <= i && i < cumu->_tasks.count);
     return  area_min(cumu, i) - usage_min(cumu, i) * max(0, ect(cumu, i) - lst(cumu, i));
 }
 
-static inline ORInt cap_min(CPCumulative* cumu)
+static inline ORInt cap_min(CPTaskCumulative* cumu)
 {
-    return cumu->_cap.min;
+    return cumu->_capacity.min;
 }
 
-static inline ORInt cap_max(CPCumulative* cumu)
+static inline ORInt cap_max(CPTaskCumulative* cumu)
 {
-    return cumu->_cap.max;
+    return cumu->_capacity.max;
 }
 
-static inline bool isCapBounded(CPCumulative* cumu)
+static inline ORBool isCapBounded(CPTaskCumulative* cumu)
 {
-    return cumu->_cap.bound;
+    return cumu->_capacity.bound;
 }
 
-static inline BOOL isBounded(CPCumulative* cumu, ORInt i)
+static inline ORBool isBounded(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_size);
-    switch (cumu->_type[i])
-    {
-        case CVAR_S:
-        case CVAR_SE:
-            return (cumu->_start0[i].bound);
-        case CVAR_SA:
-        case CVAR_SAE:
-            return (cumu->_start0[i].bound && cumu->_area0[i].bound && cumu->_dur0[i].bound);
-        case CVAR_SD:
-        case CVAR_SDE:
-            return (cumu->_start0[i].bound && cumu->_dur0[i].bound);
-        case CVAR_SR:
-            return (cumu->_start0[i].bound && cumu->_usage0[i].bound);
-        case CVAR_SDR:
-        case CVAR_SDRE:
-            return (cumu->_start0[i].bound && cumu->_dur0[i].bound && cumu->_usage0[i].bound);
-    }
+    assert(0 <= i && i < cumu->_tasks.count);
+    return cumu->_tasks[i].bound;
 }
 
-    // Counting the unfixed variables for a task
-    //
-static inline ORUInt nbUnfixedVars(CPCumulative* cumu, ORInt i)
+
+static inline ORBool isRelevant(CPTaskCumulative * cumu, const ORInt i)
 {
-    ORUInt count = 0;
-    if (!cumu->_start0[i].bound) count++;
-    if (!cumu->_dur0  [i].bound) count++;
-    if (!cumu->_usage0[i].bound) count++;
-    if (!cumu->_area0 [i].bound) count++;
-    if (!cumu->_end0  [i].bound) count++;
-    return count;
+    return (cumu->_tasks[i].isPresent && usage_min(cumu, i) > 0 && dur_min(cumu, i) > 0);
+}
+
+static inline ORBool isIrrelevant(CPTaskCumulative * cumu, const ORInt i)
+{
+    return (cumu->_tasks[i].isAbsent || usage_max(cumu, i) <= 0 || dur_max(cumu, i));
 }
 
 
@@ -452,48 +404,58 @@ static int compareProfileChange(const ProfileChange* r1, const ProfileChange* r2
     return r1->_time - r2->_time;
 }
 
-static int sortEstAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortEstAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return est(cumu, *r1) - est(cumu, *r2);
 }
 
-static int sortEctAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortEctAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return ect(cumu, *r1) - ect(cumu, *r2);
 }
 
-static int sortLctAsc(CPCumulative* cumu, const ORInt* r1, const ORInt* r2)
+static int sortLctAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
 {
     return lct(cumu, *r1) - lct(cumu, *r2);
 }
 
-static ORInt tt_build_profile(CPCumulative* cumu)
+static ORInt tt_build_profile(CPTaskCumulative* cumu, const ORInt cSize)
 {
     ORLong k = 0;   // Number of profile change points
     
     // Memory allocation
-    ProfileChange* toSort = (ProfileChange*) alloca(2 * cumu->_size * sizeof(ProfileChange));
+    ProfileChange* toSort = (ProfileChange*) alloca(2 * cSize * sizeof(ProfileChange));
     if (toSort == NULL) {
         @throw [[ORExecutionError alloc] initORExecutionError: "Cumulative: Out of memory!"];
     }
     
-    // Adding the profile change points from fixed tasks
-    for (ORInt ii = cumu->_first_fixed._val; ii < cumu->_size; ii++) {
-        ORInt i = cumu->_fixed[ii];
-        toSort[k++] = (ProfileChange){lst(cumu, i),  usage_min(cumu, i)};
-        toSort[k++] = (ProfileChange){ect(cumu, i), -usage_min(cumu, i)};
-    }
-    
-    // Adding the profile change points from unfixed tasks with compulsory parts
-    // that require at least one resource unit
-    for (ORInt ii = 0; ii < cumu->_first_fixed._val; ii++) {
-        ORInt i = cumu->_fixed[ii];
-        if (usage_min(cumu, i) > 0 && dur_min(cumu, i) > 0 && lst(cumu, i) < ect(cumu, i)) {
+    for (ORInt ii = 0; ii < cSize; ii++) {
+        const ORInt i = cumu->_idx[ii];
+        assert(isRelevant(cumu, i));
+        if (lst(cumu, i) < ect(cumu, i)) {
             // Tasks creates a compulsory part
             toSort[k++] = (ProfileChange){lst(cumu, i),  usage_min(cumu, i)};
             toSort[k++] = (ProfileChange){ect(cumu, i), -usage_min(cumu, i)};
         }
     }
+    
+//    // Adding the profile change points from fixed tasks
+//    for (ORInt ii = cumu->_first_fixed._val; ii < cumu->_size; ii++) {
+//        ORInt i = cumu->_fixed[ii];
+//        toSort[k++] = (ProfileChange){lst(cumu, i),  usage_min(cumu, i)};
+//        toSort[k++] = (ProfileChange){ect(cumu, i), -usage_min(cumu, i)};
+//    }
+//    
+//    // Adding the profile change points from unfixed tasks with compulsory parts
+//    // that require at least one resource unit
+//    for (ORInt ii = 0; ii < cumu->_first_fixed._val; ii++) {
+//        ORInt i = cumu->_fixed[ii];
+//        if (usage_min(cumu, i) > 0 && dur_min(cumu, i) > 0 && lst(cumu, i) < ect(cumu, i)) {
+//            // Tasks creates a compulsory part
+//            toSort[k++] = (ProfileChange){lst(cumu, i),  usage_min(cumu, i)};
+//            toSort[k++] = (ProfileChange){ect(cumu, i), -usage_min(cumu, i)};
+//        }
+//    }
     
     if (k == 0) return -1;
 //    // XXX For debugging purpose
@@ -549,18 +511,22 @@ static ORInt tt_build_profile(CPCumulative* cumu)
     return max_peak;
 }
 
-static inline void tt_filter_cap(CPCumulative* cumu, const ORInt maxLevel)
+static inline void tt_filter_cap(CPTaskCumulative* cumu, const ORInt maxLevel)
 {
     if (maxLevel > cap_min(cumu))
-        [cumu->_cap updateMin: maxLevel];
+        [cumu->_capacity updateMin: maxLevel];
 }
 
-static void tt_filter_start_end_times(CPCumulative* cumu, const ORInt maxLevel, bool* update)
+static void tt_filter_start_end_times(CPTaskCumulative* cumu, const ORInt uSize, const ORInt maxLevel, bool* update)
 {
     ORInt maxCapacity = cap_max(cumu);
     ORInt index = 0;    // Profile index
-    for (ORInt ii = 0; ii < cumu->_first_fixed._val; ii++) {
-        ORInt i = cumu->_fixed[ii];
+//    for (ORInt ii = 0; ii < cumu->_first_fixed._val; ii++) {
+//        ORInt i = cumu->_fixed[ii];
+    for (ORInt ii = 0; ii < uSize; ii++) {
+        const ORInt i = cumu->_idx[ii];
+        if (isBounded(cumu, i))
+            continue;
         // Check whether an update is possible
         if (maxLevel + usage_min(cumu, i) > maxCapacity && dur_min(cumu, i) > 0) {
             
@@ -593,7 +559,7 @@ static void tt_filter_start_end_times(CPCumulative* cumu, const ORInt maxLevel, 
             // Imposing the new earliest start time
             if (new_est > est(cumu, i)) {
                 cumu->_nb_tt_props++;
-                [cumu->_start0[i] updateMin: new_est];
+                [cumu->_tasks[i] updateStart:new_est];
                 *update = true;
             }
             
@@ -626,7 +592,7 @@ static void tt_filter_start_end_times(CPCumulative* cumu, const ORInt maxLevel, 
             // Imposing the new latest completion time
             if (new_lct < lct(cumu, i)) {
                 cumu->_nb_tt_props++;
-                [cumu->_end0[i] updateMax: new_lct];
+                [cumu->_tasks[i] updateEnd:new_lct];
                 *update = true;
             }
         }
@@ -722,7 +688,7 @@ get_no_shift(const ORInt begin, const ORInt end, const ORInt est, const ORInt ec
 }
 
 
-static void ttef_initialise_parameters(CPCumulative* cumu, ORInt* task_id_est, ORInt* task_id_lct, ORInt* ttEnAfterEst, ORInt* ttEnAfterLct)
+static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt* task_id_est, ORInt* task_id_lct, ORInt* ttEnAfterEst, ORInt* ttEnAfterLct)
 {
     const ORInt fsize = cumu->_first_fixed._val;
     
@@ -814,7 +780,7 @@ static void ttef_initialise_parameters(CPCumulative* cumu, ORInt* task_id_est, O
     // skip them
     // Time complexity: O(u^2) where u is the number of unfixed tasks
     // Space complexity: O(u)
-static void ttef_consistency_check(CPCumulative* cumu, const ORInt* task_id_est, const ORInt* task_id_lct,
+static void ttef_consistency_check(CPTaskCumulative* cumu, const ORInt* task_id_est, const ORInt* task_id_lct,
     const ORInt* ttEnAfterEst, const ORInt* ttEnAfterLct,
     ORInt shift_in(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt))
 {
@@ -908,7 +874,7 @@ static void ttef_consistency_check(CPCumulative* cumu, const ORInt* task_id_est,
     }
 }
 
-static void ttef_filter_start_and_end_times(CPCumulative* cumu, ORInt* task_id_est, ORInt* task_id_lct,
+static void ttef_filter_start_and_end_times(CPTaskCumulative* cumu, ORInt* task_id_est, ORInt* task_id_lct,
     ORInt* ttEnAfterEst, ORInt* ttEnAfterLct,
     ORInt shift_in1(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt),
     ORInt shift_in2(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt),
@@ -942,15 +908,15 @@ static void ttef_filter_start_and_end_times(CPCumulative* cumu, ORInt* task_id_e
     for (ORInt ii = 0; ii < fsize; ii++) {
         ORInt i = cumu->_fixed[ii];
         if (new_est[i] > est(cumu, i)) {
-            [cumu->_start0[i] updateMin: new_est[i]];
+            [cumu->_tasks[i] updateStart:new_est[i]];
         }
         if (new_lct[i] < lct(cumu, i)) {
-            [cumu->_end0[i] updateMax: new_lct[i]];
+            [cumu->_tasks[i] updateEnd:new_lct[i]];
         }
     }
 }
 
-static void ttef_filter_start_times(CPCumulative* cumu, const ORInt* task_id_est, const ORInt* task_id_lct,
+static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id_est, const ORInt* task_id_lct,
     const ORInt* ttEnAfterEst, const ORInt* ttEnAfterLct, ORInt* new_est, ORInt* new_lct,
     ORInt shift_in(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt),
     bool* update)
@@ -1115,7 +1081,7 @@ static void ttef_filter_start_times(CPCumulative* cumu, const ORInt* task_id_est
     }
 }
 
-static void ttef_filter_end_times(CPCumulative* cumu, const ORInt* task_id_est, const ORInt* task_id_lct,
+static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_est, const ORInt* task_id_lct,
     const ORInt* ttEnAfterEst, const ORInt* ttEnAfterLct, ORInt* new_est, ORInt* new_lct,
     ORInt shift_in(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt),
     bool* update)
@@ -1268,7 +1234,7 @@ static void ttef_filter_end_times(CPCumulative* cumu, const ORInt* task_id_est, 
     }
 }
 
-static void tteef_filter_start_times_in_interval(CPCumulative* cumu, ORInt* new_est, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update)
+static void tteef_filter_start_times_in_interval(CPTaskCumulative* cumu, ORInt* new_est, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update)
 {
     ORInt free_ect = (lst(cumu, j) < ect(cumu, j) ? lst(cumu, j) : ect(cumu, j));
     
@@ -1290,7 +1256,7 @@ static void tteef_filter_start_times_in_interval(CPCumulative* cumu, ORInt* new_
     }
 }
 
-static void tteef_filter_end_times_in_interval(CPCumulative* cumu, ORInt* new_lct, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update) {
+static void tteef_filter_end_times_in_interval(CPTaskCumulative* cumu, ORInt* new_lct, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update) {
     ORInt free_lst = (lst(cumu, j) < ect(cumu, j) ? ect(cumu, j) : lst(cumu, j));
     // TTEEF bounds propagation for task j with respect to the time interval [., end)
     ORInt min_en_req = usage_min(cumu, j) * (min(tw_end, lct(cumu, j)) - max(tw_begin, free_lst));
@@ -1314,7 +1280,7 @@ static void tteef_filter_end_times_in_interval(CPCumulative* cumu, ORInt* new_lc
 
     // Main method for the time-tabling-edge-finding (TTEF) propagation
     //
-static void ttef_bounds_propagation(CPCumulative* cumu, bool* update)
+static void ttef_bounds_propagation(CPTaskCumulative* cumu, bool* update)
 {
     assert(cumu->_ttef_check || cumu->_ttef_filt);
     
@@ -1360,7 +1326,7 @@ static void ttef_bounds_propagation(CPCumulative* cumu, bool* update)
 
 // Computation of the contention profile for the earliest-start-time schedule
 //
-static Profile cumuGetEarliestContentionProfile(CPCumulative * cumu)
+static Profile cumuGetEarliestContentionProfile(CPTaskCumulative * cumu)
 {
     ORInt estA  [cumu->_size];
     ORInt ectA  [cumu->_size];
@@ -1393,7 +1359,7 @@ static Profile cumuGetEarliestContentionProfile(CPCumulative * cumu)
  Computation of the partial order
  ******************************************************************************/
 
-static Precedence * cumuGetPartialOrder(CPCumulative * cumu, ORInt * psize)
+static Precedence * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psize)
 {
     // XXX Assumption all activities are fixed
     ORInt id_est[cumu->_size];
@@ -1440,7 +1406,7 @@ static Precedence * cumuGetPartialOrder(CPCumulative * cumu, ORInt * psize)
                     prec = (Precedence *) realloc(prec, cap * sizeof(Precedence));
                 }
                 if (prec == NULL) {
-                    @throw [[ORExecutionError alloc] initORExecutionError: "CPCumulative: Out of memory!"];
+                    @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: Out of memory!"];
                 }
             }
             // Adding precedence relations
@@ -1469,6 +1435,121 @@ static Precedence * cumuGetPartialOrder(CPCumulative * cumu, ORInt * psize)
     *psize = size;
     
     return prec;
+}
+/*******************************************************************************
+ Auxiliary Functions
+ ******************************************************************************/
+
+static void cleanUp(CPTaskCumulative * cumu) {
+    cumu->_est         = NULL;
+    cumu->_ect         = NULL;
+    cumu->_lst         = NULL;
+    cumu->_lct         = NULL;
+    cumu->_dur_min     = NULL;
+    cumu->_usage_min   = NULL;
+}
+
+/*******************************************************************************
+ Functions regarding optional activities
+ ******************************************************************************/
+
+static inline void swapORInt(ORInt * arr, const ORInt i, const ORInt j)
+{
+    if (i != j) {
+        const ORInt temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
+
+static void updateIndices(CPTaskCumulative * cumu)
+{
+    if (cumu->_cIdx._val < cumu->_uIdx._val) {
+        ORInt cIdx = cumu->_cIdx._val;
+        ORInt uIdx = cumu->_uIdx._val;
+        for (ORInt ii = cIdx; ii < uIdx; ii++) {
+            const ORInt i = cumu->_idx[ii];
+            if (isRelevant(cumu, i)) {
+                // Swap elements in 'ii' and 'cIdx'
+                swapORInt(cumu->_idx, ii, cIdx++);
+            }
+            else if (isIrrelevant(cumu, i)) {
+                // Swap elements in 'ii' and 'uIdx'
+                swapORInt(cumu->_idx, ii, --uIdx);
+                ii--;
+            }
+        }
+        // Update counters
+        if (cumu->_cIdx._val < cIdx) assignTRInt(&(cumu->_cIdx), cIdx, cumu->_trail);
+        if (cumu->_uIdx._val > uIdx) assignTRInt(&(cumu->_uIdx), uIdx, cumu->_trail);
+    }
+}
+
+/*******************************************************************************
+ Main Propagation Loop
+ ******************************************************************************/
+
+static void doPropagation(CPTaskCumulative * cumu) {
+    //NSLog(@"Cumulative: propagate/0: Start\n");
+    bool update;
+    ORInt i_max_usage = -1;
+    
+    // Clean up
+    cleanUp(cumu);
+    
+    // Update the indices
+    updateIndices(cumu);
+    
+    // XXX size should only depend on the considered tasks
+    const ORInt size  = (ORInt) cumu->_tasks.count;
+    const ORInt uSize = cumu->_uIdx._val;
+    const ORInt cSize = cumu->_cIdx._val;
+    
+    // Allocating memory
+    // XXX Should be permanently and maybe even trailed
+    cumu->_est       = alloca(size * sizeof(ORInt));
+    cumu->_ect       = alloca(size * sizeof(ORInt));
+    cumu->_lst       = alloca(size * sizeof(ORInt));
+    cumu->_lct       = alloca(size * sizeof(ORInt));
+    cumu->_dur_min   = alloca(size * sizeof(ORInt));
+    cumu->_usage_min = alloca(size * sizeof(ORInt));
+    
+    // Check whether memory allocation was successful
+    if (cumu->_est == NULL || cumu->_ect == NULL || cumu->_lst == NULL || cumu->_lct == NULL ||
+        cumu->_dur_min == NULL || cumu->_usage_min == NULL) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: Out of memory!"];
+    }
+    
+    for (ORInt tt = 0; tt < uSize; tt++) {
+        const ORInt t = cumu->_idx[tt];
+        cumu->_est      [t] = cumu->_tasks [t].est;
+        cumu->_ect      [t] = cumu->_tasks [t].ect;
+        cumu->_lst      [t] = cumu->_tasks [t].lst;
+        cumu->_lct      [t] = cumu->_tasks [t].lct;
+        cumu->_dur_min  [t] = cumu->_tasks [t].minDuration;
+        cumu->_usage_min[t] = cumu->_usages[t].min;
+    }
+    
+    do {
+        update = false;
+        // Generation of the resource profile and TT consistency check
+        propagationLoopPreamble(cumu, cSize, & i_max_usage);
+        
+        if (i_max_usage >= 0) {
+            ORInt maxLevel = cumu->_profile[i_max_usage]._level;
+            // TT filtering on resource capacity variable
+            tt_filter_cap(cumu, maxLevel);
+            // TT filtering on start and end times variables
+            if (cumu->_tt_filt)
+                tt_filter_start_end_times(cumu, uSize, maxLevel, & update);
+            // TTEF propagation
+            // TODO Adjustment for optional tasks
+//            if (!update && (cumu->_ttef_check || cumu->_ttef_filt)) {
+//                ttef_bounds_propagation(cumu, & update);
+//            }
+        }
+    } while (cumu->_idempotent && update);
+    //NSLog(@"Cumulative: propagate/0: End\n");
 }
 
 @end

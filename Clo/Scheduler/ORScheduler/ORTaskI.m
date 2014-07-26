@@ -15,6 +15,8 @@
 #import "ORTaskI.h"
 #import <ORScheduler/ORSchedFactory.h>
 #import <ORScheduler/ORVisit.h>
+#import <ORProgram/CPSolver.h>
+
 
 @implementation ORTaskVar {
    id<ORModel> _model;
@@ -69,4 +71,3 @@
    return [ORFactory constraint: self isFinishedBy: date];
 }
 @end
-

@@ -71,6 +71,7 @@
 
 @interface ORConcurrency : NSObject 
 +(void) parall: (ORRange) R do: (ORInt2Void) closure;
++(id<ORSolutionInformer>) solutionInformer;
 +(id<ORIntInformer>) intInformer;
 +(id<ORIdInformer>) idInformer;
 +(id<ORVoidInformer>) voidInformer;

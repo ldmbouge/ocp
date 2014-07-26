@@ -18,6 +18,15 @@
 /*                  This file should be private                            */
 /***************************************************************************/
 
+@interface ORCPTakeSnapshot  : ORNOopVisit<NSObject>
+{
+   id<CPCommonProgram> _solver;
+   id                  _snapshot;
+}
+-(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver;
+-(void) dealloc;
+@end
+
 @class ORRTModel;
 @class CPCoreSolver;
 @interface CPINCModel : NSObject<ORPost,ORAddToModel> {
@@ -49,6 +58,7 @@
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2;
 -(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 -(void) once: (ORClosure) cl;
+-(void) try: (ORClosure) left then: (ORClosure) right;
 -(void) limitSolutions: (ORInt) maxSolutions  in: (ORClosure) cl;
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
@@ -59,8 +69,8 @@
 -(void) restartHeuristics;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 -(ORInt) maxBound:(id<ORIdArray>) x;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel) n;

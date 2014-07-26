@@ -15,11 +15,7 @@
 #import "ORSet.h"
 #import "ORConstraint.h"
 
-@protocol ORSnapshot
--(ORInt)  intValue;
--(ORBool) boolValue;
--(ORFloat) floatValue;
-@end
+
 
 @protocol ORVar <ORObject>
 -(ORInt) getId;
@@ -34,6 +30,7 @@
 -(ORInt) low;
 -(ORInt) up;
 -(ORBool) isBool;
+-(ORBool) hasDenseDomain;
 -(ORInt) scale;
 -(ORInt) shift;
 -(ORInt) literal;
@@ -53,6 +50,7 @@
 -(ORFloat) low;
 -(ORFloat) up;
 @end
+
 
 @protocol ORExprArray<ORIdArray>
 -(id<ORExpr>) at: (ORInt) value;

@@ -39,7 +39,6 @@
     }
 }
 
-
 // Difference logic constraint
 -(void) visitDifference:(id<ORDifference>) cstr
 {
@@ -139,17 +138,10 @@
       id<ORIntRange> duration = [task duration];
       
       id<CPTaskVar> concreteTask;
-      
-      if (duration.low == duration.up) {
-         if (![task isOptional])
-            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration.low];
-         else
-            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration.low];
-      }
-      else {
-         // pvh to fill
-         assert(false);
-      }
+      if (![task isOptional])
+         concreteTask = [CPFactory task: _engine horizon: horizon duration: duration];
+      else
+         concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration];
       _gamma[task.getId] = concreteTask;
    }
 }
@@ -172,32 +164,76 @@
    }
 }
 
+// Duration constraint
+-(void) visitTaskDuration:(id<ORTaskDuration>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORTaskVar> task = [cstr task];
+      id<ORIntVar> duration  = [cstr duration];
+      [task visit: self];
+      [duration  visit: self];
+      id<CPConstraint> concreteCstr;
+      concreteCstr = [CPFactory constraint: _gamma[task.getId] duration: _gamma[duration.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitTaskAddTransitionTime:(id<ORTaskAddTransitionTime>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORTaskVar> normal = [cstr normal];
+      id<ORTaskVar> extended = [cstr extended];
+      id<ORIntVar> time  = [cstr time];
+      [normal visit: self];
+      [extended visit: self];
+      [time visit: self];
+      id<CPConstraint> concreteCstr;
+      concreteCstr = [CPFactory constraint: _gamma[normal.getId] extended: _gamma[extended.getId] time: _gamma[time.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 // Disjunctive (resource) constraint
 -(void) visitTaskDisjunctive:(id<ORTaskDisjunctive>) cstr
 {
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORTaskVarArray> tasks = [cstr taskVars];
-      [tasks visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORTaskVarArray> tasks = [cstr taskVars];
+        id<ORTaskVarArray> transitionTasks = [cstr transitionTaskVars];
+        id<ORIntVarArray> succ = [cstr successors];
+        [tasks visit: self];
+        [transitionTasks visit: self];
+        [succ visit: self];
+        id<CPConstraint> concreteCstr;
+        if ([cstr hasTransition])
+            concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
+        else
+            concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
+        [_engine add: concreteCstr];
+        if ([cstr hasTransition])
+            concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
+        else
+            concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 
-// Disjunctive (resource) constraint
--(void) visitTaskSequence:(id<ORTaskSequence>) cstr
+// Cumulative (resource) constraint
+-(void) visitTaskCumulative:(id<ORTaskCumulative>) cstr
 {
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORTaskVarArray> tasks = [cstr taskVars];
-      id<ORIntVarArray> succ = [cstr successors];
-      [tasks visit: self];
-      [succ visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORTaskVarArray> tasks    = [cstr taskVars];
+        id<ORIntVarArray>  usages   = [cstr usages  ];
+        id<ORIntVar>       capacity = [cstr capacity];
+        [tasks    visit: self];
+        [usages   visit: self];
+        [capacity visit: self];
+        id<CPConstraint> concreteCstr;
+        concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] with:_gamma[usages.getId] and:_gamma[capacity.getId]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
-
 
 -(void) visitTaskIsFinishedBy:(id<ORTaskIsFinishedBy>) cstr
 {
@@ -211,5 +247,25 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+
+-(void) visitSumTransitionTimes:(id<ORSumTransitionTimes>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORTaskDisjunctive> disjunctive = [cstr disjunctive];
+      id<ORIntVar> ub = [cstr ub];
+      [disjunctive visit: self];
+      [ub visit: self];
+      id<ORIntVarArray> successors = [disjunctive successors];
+      id<ORIntMatrix> matrix = [disjunctive extendedTransitionMatrix];
+      id<CPConstraint> concreteCstr;
+      concreteCstr = [CPFactory assignment: _engine
+                                     array: _gamma[successors.getId]
+                                    matrix: matrix
+                                      cost: _gamma[ub.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 
 @end;

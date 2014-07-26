@@ -15,11 +15,11 @@
 #import <CPScheduler/CPTask.h>
 
 @interface CPTaskVar : ORObject<CPTaskVar>
--(id<CPTaskVar>) initCPTaskVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+-(id<CPTaskVar>) initCPTaskVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 -(void) changeStartEvt;
 -(void) changeEndEvt;
 @end
 
 @interface CPOptionalTaskVar : ORObject<CPTaskVar>
--(id<CPTaskVar>) initCPOptionalTaskVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
+-(id<CPTaskVar>) initCPOptionalTaskVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 @end

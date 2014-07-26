@@ -50,7 +50,7 @@ ORPrecedence precedence[42] = {
 
 int dura[2] = {5,10};
 
-int main(int argc, const char * argv[])
+int mainOptional(int argc, const char * argv[])
 {
    
    @autoreleasepool {
@@ -74,7 +74,7 @@ int main(int argc, const char * argv[])
       [model add: [t[0] precedes: t[1]]];
       
       // search
-      id<CPSchedulingProgram> cp  = [ORFactory createCPSchedulingProgram: model];
+      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
       NSLog(@"Task: %@",[cp description: t[0]]);
       NSLog(@"Task: %@",[cp description: t[1]]);
       NSLog(@"Optional Task: %@",[cp description: o]);
@@ -100,3 +100,78 @@ int main(int argc, const char * argv[])
    return 0;
 }
 
+int mainTransition(int argc, const char * argv[])
+{
+   
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
+      
+      // data
+      id<ORIntRange> Horizon = RANGE(model,0,100);
+      id<ORIntRange> R = RANGE(model,0,1);
+      
+      
+      id<ORIntArray> duration = [ORFactory intArray: model range: R with: ^ORInt(ORInt i) { return dura[i]; }];
+      
+      // variables
+      
+      id<ORTaskVarArray> task = [ORFactory taskVarArray: model range: R horizon: Horizon duration: duration];
+      id<ORIntVar> cost = [ORFactory intVar: model domain: RANGE(model,0,10)];
+      id<ORIntMatrix> transition = [ORFactory intMatrix: model range: R : R];
+      for(ORInt i = R.low; i <= R.up; i++)
+         for(ORInt j = R.low; j <= R.up; j++)
+            [transition set: 0 at: i : j];
+      [transition set: 3 at: 1 : 0];
+      [transition set: 20 at: 0: 1];
+      id<ORTaskDisjunctive> machine = [ORFactory disjunctiveConstraint: model transition: transition];
+      
+      // constraints and objective
+      [machine add: task[0] type: 0];
+      [machine add: task[1] type: 1];
+      [model add: machine];
+      
+      id<ORIntVar> dur = [ORFactory intVar: model domain: RANGE(model,0,100)];
+      [model add: [ORFactory constraint: task[0] duration: dur]];
+      [model add: [ORFactory sumTransitionTimes: machine leq:cost]];
+      
+      // search
+      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
+      [cp solveAll: ^{
+         NSLog(@"duration: %d..%d",[cp min: dur],[cp max: dur]);
+         [cp sequence: machine.successors by: ^ORFloat(ORInt i) { return i;}];
+
+         id<ORTaskVarArray> taskVar = machine.taskVars;
+         id<ORTaskVarArray> transitionTaskVar = machine.transitionTaskVars;
+         id<ORIntVarArray> transitionTimes = machine.transitionTimes;
+         id<ORIntVarArray> successors = machine.successors;
+//         NSLog(@"tasks[0] = %@",[cp description: task[0]]);
+//         NSLog(@"tasks[1] = %@",[cp description: task[1]]);
+         NSLog(@"tasks[1] = %@",[cp description: taskVar[1]]);
+         NSLog(@"tasks[2] = %@",[cp description: taskVar[2]]);
+         NSLog(@"successors = %d-%d",successors.low,successors.up);
+          NSLog(@"successors[0] = %d",[cp intValue: successors[0]]);
+         NSLog(@"successors[1] = %d",[cp intValue: successors[1]]);
+         NSLog(@"successors[2] = %d",[cp intValue: successors[2]]);
+         NSLog(@"transitionTime[1] = %d",[cp intValue: transitionTimes[1]]);
+         NSLog(@"transitionTime[2] = %d",[cp intValue: transitionTimes[2]]);
+         NSLog(@"transitiontasks[1] = %@",[cp description: transitionTaskVar[1]]);
+         NSLog(@"transitiontasks[2] = %@",[cp description: transitionTaskVar[2]]);
+         NSLog(@"cost = [%d,%d]",[cp min: cost],[cp max: cost]);
+      }
+       ];
+      //      id<ORSolutionPool> pool = [cp solutionPool];
+      //      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
+      //      id<ORSolution> optimum = [pool best];
+      //      printf("Makespan: %d \n",[optimum intValue: makespan.startLB]);
+      NSLog(@"Solver status: %@\n",cp);
+      NSLog(@"Quitting");
+      [cp release];
+   }
+   return 0;
+}
+
+int main(int argc, const char * argv[])
+{
+   return mainTransition(argc,argv);
+}

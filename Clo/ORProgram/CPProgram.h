@@ -30,17 +30,17 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol ORCPSolution <ORSolution>
-@end
+//@protocol ORCPSolution <ORSolution>
+//@end
+//
+//@protocol ORCPSolutionPool <ORSolutionPool>
+//-(void) addSolution: (id<ORCPSolution>) s;
+//-(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
+//-(id<ORInformer>) solutionAdded;
+//-(id<ORCPSolution>) best;
+//@end
 
-@protocol ORCPSolutionPool <ORSolutionPool>
--(void) addSolution: (id<ORCPSolution>) s;
--(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
--(id<ORInformer>) solutionAdded;
--(id<ORCPSolution>) best;
-@end
-
-@protocol CPCommonProgram  <ORASolver,ORGamma>
+@protocol CPCommonProgram  <ORASearchSolver,ORGamma>
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
@@ -70,6 +70,11 @@
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
 -(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Float) o;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Float) o1 then: (ORInt2Float) o2;
+
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Float) o;
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2;
 
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;
@@ -90,6 +95,7 @@
                   onFailure: (ORInt2Void) onFailure;
 
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
+-(void)                 try: (ORClosure) body then: (ORClosure) body;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
@@ -114,8 +120,8 @@
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 
 -(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;

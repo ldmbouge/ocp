@@ -14,6 +14,10 @@
 #import "ORConstraintI.h"
 
 @implementation ORFlatten (ORScheduler)
+-(void) visitTask:(id<ORTaskVar>) t
+{
+   _result = t;
+}
 -(void) visitTaskPrecedes:(id<ORTaskPrecedes>) cstr
 {
    _result = [_into addConstraint:cstr];
@@ -22,11 +26,19 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitTaskCumulative:(id<ORTaskCumulative>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
 -(void) visitTaskDisjunctive:(id<ORTaskDisjunctive>) cstr
 {
    _result = [_into addConstraint:cstr];
 }
--(void) visitTaskSequence:(id<ORTaskSequence>) cstr
+-(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
+-(void) visitSumTransitionTimes:(id<ORSumTransitionTimes>) cstr
 {
    _result = [_into addConstraint:cstr];
 }

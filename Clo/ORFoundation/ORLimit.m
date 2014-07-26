@@ -126,6 +126,11 @@
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
+-(void) succeeds
+{
+//   NSLog(@"succeeds");
+   _nbFailures = 0;
+}
 @end
 
 @implementation ORLimitTime

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2012-2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -408,6 +408,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
 }
++(id<ORIntVar>) intVar: (id<ORTracker>) model bounds: (id<ORIntRange>) r
+{
+   return [[ORIntVarI alloc]  initORIntVarI: model bounds: r];
+}
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker value: (ORInt) value
 {
    return [[ORIntVarI alloc]  initORIntVarI: tracker domain: RANGE(tracker,value,value)];
@@ -505,6 +509,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
       [o set: [ORFactory intVar: tracker domain:domain] at:k];
+   return (id<ORIntVarArray>)o;
+}
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range bounds: (id<ORIntRange>) domain
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set: [ORFactory intVar: tracker bounds:domain] at:k];
    return (id<ORIntVarArray>)o;
 }
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo
@@ -621,6 +632,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
          [o set:[ORFactory intVar:cp domain:domain] at:i :j];
    return (id<ORIntVarMatrix>)o;
 }
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 bounds: (id<ORIntRange>) domain
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
+   for(ORInt i=[r0 low];i <= [r0 up];i++)
+      for(ORInt j= [r1 low];j <= [r1 up];j++)
+         [o set:[ORFactory intVar:cp bounds:domain] at:i :j];
+   return (id<ORIntVarMatrix>)o;
+}
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
@@ -630,6 +649,16 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
             [o set:[ORFactory intVar:cp domain:domain] at:i :j :k];
    return (id<ORIntVarMatrix>)o;
 }
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 bounds: (id<ORIntRange>) domain
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
+   for(ORInt i= [r0 low];i <= [r0 up]; i++)
+      for(ORInt j= [r1 low]; j <= [r1 up]; j++)
+         for(ORInt k= [r2 low]; k <= [r2 up];k++)
+            [o set:[ORFactory intVar:cp bounds:domain] at:i :j :k];
+   return (id<ORIntVarMatrix>)o;
+}
+
 +(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
@@ -665,6 +694,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORAnnotation>) annotation
 {
    return [[ORAnnotation alloc] init];
+}
++(id<ORSolutionInformer>) solutionInformer
+{
+   return [ORConcurrency solutionInformer];
 }
 @end
 
@@ -1147,13 +1180,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x
 {
-   id<ORConstraint> o = [[ORCircuitI alloc] initORCircuitI:x];
+   id<ORConstraint> o = [[ORCircuit alloc] initORCircuit:x];
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x
++(id<ORConstraint>) path: (id<ORIntVarArray>) x
 {
-   id<ORConstraint> o = [[ORNoCycleI alloc] initORNoCycleI:x];
+   id<ORConstraint> o = [[ORPath alloc] initORPath:x];
    [[x tracker] trackObject:o];
    return o;
 }

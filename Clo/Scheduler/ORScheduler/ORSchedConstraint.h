@@ -19,6 +19,17 @@
 -(id<ORTaskVar>) after;
 @end
 
+@protocol ORTaskDuration <ORConstraint>
+-(id<ORTaskVar>) task;
+-(id<ORIntVar>)  duration;
+@end
+
+@protocol ORTaskAddTransitionTime <ORConstraint>
+-(id<ORTaskVar>) normal;
+-(id<ORTaskVar>) extended;
+-(id<ORIntVar>)  time;
+@end
+
 @protocol ORTaskIsFinishedBy <ORConstraint>
 -(id<ORTaskVar>) task;
 -(id<ORIntVar>) date;
@@ -31,15 +42,22 @@
 -(id<ORIntVar>) capacity;
 @end
 
-@protocol ORTaskDisjunctive <ORConstraint>
--(void) add: (id<ORTaskVar>) act;
+@protocol ORTaskCumulative <ORConstraint>
+-(void) add: (id<ORTaskVar>) act with: (id<ORIntVar>) usage;
 -(id<ORTaskVarArray>) taskVars;
+-(id<ORIntVarArray>) usages;
+-(id<ORIntVar>) capacity;
 @end
 
-@protocol ORTaskSequence <ORConstraint>
+@protocol ORTaskDisjunctive <ORConstraint>
 -(void) add: (id<ORTaskVar>) act;
+-(void) add: (id<ORTaskVar>) act type: (ORInt) t;
 -(id<ORTaskVarArray>) taskVars;
+-(id<ORTaskVarArray>) transitionTaskVars;
+-(ORBool) hasTransition;
+-(id<ORIntMatrix>) extendedTransitionMatrix;
 -(id<ORIntVarArray>) successors;
+-(id<ORIntVarArray>) transitionTimes;
 @end
 
 @protocol ORTaskDisjunctiveArray <ORObject>
@@ -47,19 +65,6 @@
 -(void) set: (id<ORTaskDisjunctive>) value at: (ORInt)idx;
 -(id<ORTaskDisjunctive>)objectAtIndexedSubscript:(NSUInteger)key;
 -(void)setObject:(id<ORTaskDisjunctive>)newValue atIndexedSubscript:(NSUInteger)idx;
--(ORInt) low;
--(ORInt) up;
--(id<ORIntRange>) range;
--(NSUInteger) count;
--(NSString*) description;
--(id<ORTracker>) tracker;
-@end
-
-@protocol ORTaskSequenceArray <ORObject>
--(id<ORTaskSequence>) at: (ORInt) idx;
--(void) set: (id<ORTaskDisjunctive>) value at: (ORInt)idx;
--(id<ORTaskSequence>)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id<ORTaskSequence>)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(id<ORIntRange>) range;
@@ -95,3 +100,9 @@
 -(ORInt)        d;
 -(id<ORDifference>) diff;
 @end
+
+@protocol ORSumTransitionTimes <ORConstraint>
+-(id<ORTaskDisjunctive>) disjunctive;
+-(id<ORIntVar>) ub;
+@end
+

@@ -25,6 +25,25 @@
 -(id<ORIntVar>) date;
 @end
 
+@interface ORTaskDuration : ORConstraintI<ORTaskDuration>
+-(id<ORTaskDuration>) initORTaskDuration:(id<ORTaskVar>) task duration:(id<ORIntVar>) duration;
+-(id<ORTaskVar>) task;
+-(id<ORIntVar>) duration;
+@end
+
+@interface ORTaskAddTransitionTime : ORConstraintI<ORTaskAddTransitionTime>
+-(id<ORTaskDuration>) initORTaskAddTransitionTime: (id<ORTaskVar>) normal extended: (id<ORTaskVar>) extended time: (id<ORIntVar>) time;
+-(id<ORTaskVar>) normal;
+-(id<ORTaskVar>) extended;
+-(id<ORIntVar>) time;
+@end
+
+@interface ORSumTransitionTimes : ORConstraintI<ORSumTransitionTimes>
+-(id<ORSumTransitionTimes>) initORSumTransitionTimes: (id<ORTaskDisjunctive>) normal leq: (id<ORIntVar>) ub;
+-(id<ORTaskDisjunctive>) disjunctive;
+-(id<ORIntVar>) ub;
+@end
+
 // Cumulative (resource) constraint
 @interface ORCumulative : ORConstraintI<ORCumulative>
 -(id<ORCumulative>) initORCumulative:(id<ORIntVarArray>) s duration:(id<ORIntVarArray>) d usage:(id<ORIntArray>) ru capacity:(id<ORIntVar>)c;
@@ -34,20 +53,27 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@interface ORTaskCumulative : ORConstraintI<ORTaskCumulative>
+-(id<ORTaskCumulative>) initORTaskCumulative: (id<ORTaskVarArray>) tasks with: (id<ORIntVarArray>) usages and: (id<ORIntVar>) capacity;
+-(id<ORTaskCumulative>) initORTaskCumulativeEmpty: (id<ORIntVar>) capacity;
+-(id<ORTaskVarArray>) taskVars;
+-(id<ORIntVarArray>) usages;
+-(id<ORIntVar>) capacity;
+-(void) add: (id<ORTaskVar>) act with: (id<ORIntVar>) usage;
+@end
+
 @interface ORTaskDisjunctive : ORConstraintI<ORTaskDisjunctive>
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive:(id<ORTaskVarArray>) tasks;
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;
+-(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker transition: (id<ORIntMatrix>) transition;
 -(id<ORTaskVarArray>) taskVars;
--(void) add: (id<ORTaskVar>) act;
-@end
-
-@interface ORTaskSequence : ORConstraintI<ORTaskSequence>
--(id<ORTaskSequence>) initORTaskSequenceEmpty: (id<ORTracker>) tracker;
--(id<ORTaskVarArray>) taskVars;
+-(id<ORTaskVarArray>) transitionTaskVars;
+-(ORBool) hasTransition;
+-(id<ORIntMatrix>) extendedTransitionMatrix;
 -(id<ORIntVarArray>) successors;
 -(void) add: (id<ORTaskVar>) act;
+-(void) add: (id<ORTaskVar>) act type: (ORInt) type;
 @end
-
 
 // Difference logic constraint
 @interface ORDifference : ORConstraintI<ORDifference>
