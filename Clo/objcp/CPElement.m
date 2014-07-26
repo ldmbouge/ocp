@@ -93,6 +93,9 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(void) propagate
 {
+//   NSLog(@"element x: %@",[_x description]);
+//   NSLog(@"element y: %@",[_y description]);
+//   NSLog(@"element c: %@",[_c description]);
    if (bound(_x)) {
       [_y bind:[_c at:[_x min]]];
    } else {
@@ -283,7 +286,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 }
 -(ORUInt)nbUVars
 {
-   return !bound(_x) && !bound(_y);
+   return !bound(_x) + !bound(_y);
 }
 -(NSString*)description
 {

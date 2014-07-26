@@ -173,17 +173,11 @@
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2
 {
    ORInt low = succ.range.low;
-   ORInt up = succ.range.up;
    ORInt size = succ.range.size - 1;
    ORInt k = low;
    for(ORInt j = 1; j <= size; j++) {
-      assert(0 <= k && k <= up + 1);
-//      [self printSequence: succ];
-//      NSLog(@"succ[%d] = %@",k,_gamma[succ[k].getId]);
       [self label: succ[k] by: o1 then: o2];
       k = [self intValue: succ[k]];
-      if (k == up+1 && j <= size)
-         [[self explorer] fail];
    }
 }
 -(ORInt) est: (id<ORTaskVar>) task

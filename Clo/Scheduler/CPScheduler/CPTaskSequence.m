@@ -40,7 +40,7 @@
    _succ = succ;
    _assigned = [CPFactory TRIntArray: _engine range: _succ.range];
    
-   _priority = HIGHEST_PRIO-1;
+   _priority = LOWEST_PRIO;
 
    _size = (ORUInt) _tasks.count;
    _low = _tasks.range.low;
@@ -80,8 +80,12 @@
    }
 
    // Subscription of variables to the constraint
-   for (ORInt i = _low-1; i <= _up; i++)
+   for (ORInt i = _low-1; i <= _up  ; i++)
       [_succ[i] whenBindPropagate: self];
+   for (ORInt i = _low; i <= _up; i++) {
+      [_tasks[i] whenChangeStartPropagate: self];
+      [_tasks[i] whenChangeEndPropagate: self];
+   }
    
    // Initial propagation
    [self propagate];
@@ -91,6 +95,8 @@
 
 -(void) propagate
 {
+//   for(ORInt i = _succ.low; i <= _succ.up; i++)
+//      NSLog(@"succ[%d] = %@",i,[_succ[i] description]);
    ORInt i = 0;
    ORInt start = -MAXINT;
    ORInt nb = 0;
@@ -135,25 +141,32 @@
          }
       }
    }
+//   for(ORInt i = _succ.low; i <= _succ.up; i++)
+//      NSLog(@"succ[%d] = %@",i,[_succ[i] description]);
+//   NSLog(@" ");
 }
 
 -(NSSet*) allVars
 {
-//   NSUInteger nb = 2 * _size;
-//   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
-//   for(ORInt i = _low; i <= _up; i++)
-//      [rv addObject:_tasks[i]];
-//   [rv autorelease];
-//   return rv;
-   return 0;
+   NSUInteger nb = [_tasks count] + [_succ count];
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
+   for(ORInt i = _low; i <= _up; i++)
+      [rv addObject:_tasks[i]];
+   for(ORInt i = _succ.low; i <= _succ.up; i++)
+      [rv addObject:_succ[i]];
+   [rv autorelease];
+   return rv;
 }
 -(ORUInt) nbUVars
 {
-//   ORUInt nb = 0;
-//   for(ORInt i = _low; i <= _up; i++)
-//      if ([_tasks[i] bound])
-//         nb++;
-//   return nb;
+   ORUInt nb = 0;
+   for(ORInt i = _low; i <= _up; i++)
+      if (![_tasks[i] bound])
+         nb++;
+   for(ORInt i = _succ.low; i <= _succ.up; i++)
+       if (![_succ[i] bound])
+          nb++;
+   return nb;
    return 0;
 }
 -(NSString*) description

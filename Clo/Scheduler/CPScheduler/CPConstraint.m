@@ -505,7 +505,7 @@
    [_normal updateStart: [_extended est]];
    [_extended updateStart: [_normal est]];
    [_normal updateEnd: [_extended lct] - [_time min]];
-   [_extended updateEnd: [_normal lct] + [_time min]];
+   [_extended updateEnd: [_normal lct] + [_time max]];
 }
 -(NSSet*) allVars
 {

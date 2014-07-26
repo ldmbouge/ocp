@@ -103,6 +103,10 @@ void assignCircuit(CPCircuit* cstr,int i)
 @end
 
 // low is the source and up+1 is the sink
+// [pvh: this should be upgraded to see
+//    if there is a path from the sink to source
+//    if the current state is a path from sink to source not including everyone -> fail.
+
 @implementation CPPath {
    id<CPIntVarArray>  _x;
    CPIntVar**         _var;
@@ -144,6 +148,18 @@ void assignPath(CPPath* cstr,int i)
    [cstr->_succ set: end at: start];
    if (end <= cstr->_up)
       [cstr->_var[end] remove: start];
+   else {
+      if (start == cstr->_low) {
+         ORInt curr = start;
+         ORInt nb = 0;
+         while (curr != cstr->_up+1) {
+            nb += 1;
+            curr = [cstr->_var[curr] min];
+         }
+         if (nb < cstr->_varSize)
+            failNow();
+      }
+   }
 }
 
 -(void) post

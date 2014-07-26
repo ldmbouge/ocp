@@ -129,7 +129,7 @@
 -(void) succeeds
 {
 //   NSLog(@"succeeds");
-//   _nbFailures = 0;
+   _nbFailures = 0;
 }
 @end
 

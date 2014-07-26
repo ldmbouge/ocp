@@ -71,10 +71,9 @@
 
    
    _idempotent = false;
-   _dprec = false;
+   _dprec = true;
    _nfnl  = true;
    _ef    = true;
-   
    _start0 = NULL;
    _dur0   = NULL;
    _idx   = NULL;
@@ -152,7 +151,7 @@
 {
    ORUInt nb = 0;
    for(ORInt i = _low; i <= _up; i++)
-      if ([_tasks[i] bound])
+      if (![_tasks[i] bound])
          nb++;
    return nb;
 }
