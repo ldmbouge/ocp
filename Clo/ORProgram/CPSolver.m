@@ -856,6 +856,10 @@
 {
    [_search once: cl];
 }
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   [_search try: left then: right];
+}
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
    [_search limitSolutions: maxSolutions in: cl];

@@ -95,6 +95,7 @@
                   onFailure: (ORInt2Void) onFailure;
 
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
+-(void)                 try: (ORClosure) body then: (ORClosure) body;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;

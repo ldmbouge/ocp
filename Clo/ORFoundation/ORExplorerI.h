@@ -40,6 +40,7 @@
 
 // combinators
 -(void)               once: (ORClosure) cl;
+-(void)                try: (ORClosure) left then: (ORClosure) right;
 -(void)     limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
 -(void)     limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;

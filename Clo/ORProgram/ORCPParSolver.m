@@ -365,6 +365,10 @@
 {
    [[self worker] once: cl];
 }
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   [[self worker] try: left then: right];
+}
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
    [[self worker] limitSolutions: maxSolutions in: cl];
