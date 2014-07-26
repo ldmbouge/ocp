@@ -38,19 +38,23 @@ void fillLocations(FILE* data,id<ORIntRange> Locations,id<ORIntArray> service,id
    fscanf(data, "%d",&endw);
 }
 
-void fillCost(FILE* data,id<ORIntRange> Locations,id<ORIntMatrix> cost)
+void fillCost(FILE* data,id<ORIntRange> Locations,id<ORIntMatrix> cost,ORInt* maxCost)
 {
    ORInt tmp;
    for(ORInt j = 0; j < Locations.size + 2; j++)
       fscanf(data, "%d",&tmp);
+   ORInt M = -MAXINT;
    for(ORInt i = Locations.low; i <= Locations.up; i++) {
       fscanf(data, "%d",&tmp);
       for(ORInt j = Locations.low; j <= Locations.up; j++) {
          fscanf(data, "%d",&tmp);
          [cost set: tmp at: i : j ];
+         if (tmp> M)
+            M = tmp;
       }
       fscanf(data, "%d",&tmp);
    }
+   *maxCost = M;
 }
 
 int main1(int argc, const char * argv[])
@@ -61,6 +65,7 @@ int main1(int argc, const char * argv[])
       [ORStreamManager setRandomized];
       FILE* data = fopen("/Users/pvh/NICTA/project/objectivecp-dev/objectivecpdev/data/rbg048a.tw","r");
       ORInt nbLocations;
+      ORInt maxCost;
       
       fscanf(data, "%d",&nbLocations);
       printf("NbLocations: %d \n",nbLocations);
@@ -75,13 +80,13 @@ int main1(int argc, const char * argv[])
       fillLocations(data,Locations,service,startWindow,endWindow);
   
       id<ORIntMatrix> cost = [ORFactory intMatrix:model range: Locations : Locations];
-      fillCost(data,Locations,cost);
+      fillCost(data,Locations,cost,&maxCost);
       
       // variables
       id<ORTaskVarArray> task = [ORFactory taskVarArray: model range: Locations with: ^id<ORTaskVar>(ORInt i) {
          return [ORFactory task: model horizon: RANGE(model,[startWindow at: i],[endWindow at: i] + [service at: i]) duration: [service at: i]];
       }];
-      id<ORIntVar> obj = [ORFactory intVar: model domain: RANGE(model,0,120000)];
+      id<ORIntVar> obj = [ORFactory intVar: model domain: RANGE(model,0,nbLocations * maxCost)];
 
       // coonstraints
       id<ORTaskDisjunctive> robot = [ORFactory disjunctiveConstraint: model  transition: cost];
@@ -157,8 +162,9 @@ int main2(int argc, const char * argv[])
    @autoreleasepool {
       
       [ORStreamManager setRandomized];
-      FILE* data = fopen("/Users/pvh/NICTA/project/objectivecp-dev/objectivecpdev/data/rbg048a.tw","r");
+      FILE* data = fopen("/Users/pvh/NICTA/project/objectivecp-dev/objectivecpdev/data/rbg233.tw","r");
       ORInt nbLocations;
+      ORInt maxCost;
       
       fscanf(data, "%d",&nbLocations);
       printf("NbLocations: %d \n",nbLocations);
@@ -173,13 +179,13 @@ int main2(int argc, const char * argv[])
       fillLocations(data,Locations,service,startWindow,endWindow);
       
       id<ORIntMatrix> cost = [ORFactory intMatrix:model range: Locations : Locations];
-      fillCost(data,Locations,cost);
+      fillCost(data,Locations,cost,&maxCost);
       
       // variables
       id<ORTaskVarArray> task = [ORFactory taskVarArray: model range: Locations with: ^id<ORTaskVar>(ORInt i) {
          return [ORFactory task: model horizon: RANGE(model,[startWindow at: i],[endWindow at: i] + [service at: i]) duration: [service at: i]];
       }];
-      id<ORIntVar> obj = [ORFactory intVar: model domain: RANGE(model,0,120000)];
+      id<ORIntVar> obj = [ORFactory intVar: model bounds: RANGE(model,0,nbLocations * maxCost)];
       
       // coonstraints
       id<ORTaskDisjunctive> robot = [ORFactory disjunctiveConstraint: model  transition: cost];
@@ -189,7 +195,6 @@ int main2(int argc, const char * argv[])
       [model add: [ORFactory sumTransitionTimes: robot leq: obj]];
       [model minimize: obj];
       
-      
       id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
       id<ORIntVarArray> succ = robot.successors;
       id<ORTaskVarArray> ttask = robot.transitionTaskVars;
@@ -198,7 +203,7 @@ int main2(int argc, const char * argv[])
       id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,0,99)];
       id<ORUniformDistribution> dc = [ORFactory uniformDistribution:model range:RANGE(model,0,1)];
       id<ORUniformDistribution> dp = [ORFactory uniformDistribution:model range: [succ range]];
-      id<ORUniformDistribution> dl = [ORFactory uniformDistribution:model range: RANGE(model,5,25)];
+      id<ORUniformDistribution> dl = [ORFactory uniformDistribution:model range: RANGE(model,5,30)];
       
       ORInt pr = 100 - 2500/nbLocations;
       // search
@@ -212,7 +217,7 @@ int main2(int argc, const char * argv[])
                NSLog(@" then");
                [cp limitTime: 300000 in: ^{
                   [cp repeat: ^{
-                     [cp limitFailures: 500 in: ^{
+                     [cp limitFailures: 700 in: ^{
                         ORInt low = succ.low;
                         ORInt size = succ.range.size - 1;
                         __block ORInt k = low;

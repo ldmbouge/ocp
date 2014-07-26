@@ -27,8 +27,16 @@
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
-//   if (domain.low == domain.up)
-//      NSLog(@"Variable with singleton domain: %@",self);
+   return self;
+}
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain
+{
+   self = [super init];
+   _tracker = [track tracker];
+   _domain = domain;
+   _ba[0] = false; // dense
+   _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
+   [track trackVariable: self];
    return self;
 }
 -(void) dealloc
@@ -88,7 +96,7 @@
 }
 -(ORBool) isBool
 {
-      return _ba[1]; // isBool
+   return _ba[1]; // isBool
 }
 -(id<ORTracker>) tracker
 {

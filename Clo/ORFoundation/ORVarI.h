@@ -20,7 +20,7 @@
 
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
-// [ldm] All the methods below were missing??????
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker bounds: (id<ORIntRange>) domain;
 -(id<ORIntRange>) domain;
 -(ORInt) value;
 -(ORInt)scale;

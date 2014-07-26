@@ -30,6 +30,7 @@
 -(ORInt) low;
 -(ORInt) up;
 -(ORBool) isBool;
+-(ORBool) hasDenseDomain;
 -(ORInt) scale;
 -(ORInt) shift;
 -(ORInt) literal;

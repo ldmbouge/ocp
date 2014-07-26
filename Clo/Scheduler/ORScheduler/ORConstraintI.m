@@ -556,7 +556,7 @@
       
 //   NSLog(@"transition: %@",_transition);
 //   NSLog(@"type transition: %@",_typeTransition);
-   _transitionTimes = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,0,maxTransition)];
+   _transitionTimes = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) bounds: RANGE(_tracker,0,maxTransition)];
    
    for(ORInt i = 0; i <= nbAct ; i++)
       [model add: [ORFactory element: _tracker var: _successors[i] idxCstArray: _transitionArray[i] equal: _transitionTimes[i]]];
@@ -584,8 +584,8 @@
    id<ORIntRange> RT = RANGE(_tracker,minDuration,maxDuration + maxTransition);
    id<ORIntRange> HT = RANGE(_tracker,minHorizon,2*maxHorizon);
    _transitionTasks = [ORFactory taskVarArray:_tracker range:_tasks.range horizon:HT range: RT];
-   id<ORIntVarArray> dt = [ORFactory intVarArray: _tracker range: _tasks.range domain: RT];
-   id<ORIntVarArray> dtt = [ORFactory intVarArray: _tracker range: _tasks.range domain: RT];
+   id<ORIntVarArray> dt = [ORFactory intVarArray: _tracker range: _tasks.range bounds: RT];
+   id<ORIntVarArray> dtt = [ORFactory intVarArray: _tracker range: _tasks.range bounds: RT];
    for(ORInt i = 1; i <= nbAct; i++) {
       [model add: [ORFactory constraint: _tasks[i] duration: dt[i]]];
       [model add: [ORFactory constraint: _transitionTasks[i] duration: dtt[i]]];

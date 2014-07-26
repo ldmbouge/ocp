@@ -1185,8 +1185,12 @@
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   if (!_gamma[v.getId])
-      _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
+   if (!_gamma[v.getId]) {
+      if ([v hasDenseDomain])
+         _gamma[v.getId] = [CPFactory intVar: _engine bounds: [v domain]];
+      else
+         _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
+   }
 }
 
 -(void) visitFloatVar: (id<ORFloatVar>) v
