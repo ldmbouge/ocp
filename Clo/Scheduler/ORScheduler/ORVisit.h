@@ -22,6 +22,7 @@
 -(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr;
 -(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
+-(void) visitTaskCumulative:  (id<ORTaskCumulative> ) cstr;
 -(void) visitTaskDisjunctive:  (id<ORTaskDisjunctive> ) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
 -(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr;
@@ -37,6 +38,7 @@
 -(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr;
 -(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr;
 -(void) visitCumulative:  (id<ORCumulative> ) cstr;
+-(void) visitTaskCumulative:  (id<ORTaskCumulative> ) cstr;
 -(void) visitTaskDisjunctive:  (id<ORTaskDisjunctive> ) cstr;
 -(void) visitDifference:  (id<ORDifference> ) cstr;
 -(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr;

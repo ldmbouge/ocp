@@ -53,6 +53,15 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@interface ORTaskCumulative : ORConstraintI<ORTaskCumulative>
+-(id<ORTaskCumulative>) initORTaskCumulative: (id<ORTaskVarArray>) tasks with: (id<ORIntVarArray>) usages and: (id<ORIntVar>) capacity;
+-(id<ORTaskCumulative>) initORTaskCumulativeEmpty: (id<ORIntVar>) capacity;
+-(id<ORTaskVarArray>) taskVars;
+-(id<ORIntVarArray>) usages;
+-(id<ORIntVar>) capacity;
+-(void) add: (id<ORTaskVar>) act with: (id<ORIntVar>) usage;
+@end
+
 @interface ORTaskDisjunctive : ORConstraintI<ORTaskDisjunctive>
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive:(id<ORTaskVarArray>) tasks;
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;

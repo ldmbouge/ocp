@@ -148,6 +148,8 @@
 		537EEA8B18FCF9880006FFD2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		537EEA8C18FCF9880006FFD2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		537EEA9318FCFD0B0006FFD2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8BC18FCC5720006FFD2 /* main.m */; };
+		53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B437D7197F371100BE9F4D /* CPTaskCumulative.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53B437DC197F373E00BE9F4D /* CPTaskCumulative.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B437DA197F373A00BE9F4D /* CPTaskCumulative.m */; };
 		53C4BE341929C2E700DE6498 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		53C4BE351929C2E700DE6498 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
 		53C4BE361929C2E700DE6498 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -7461,6 +7463,8 @@
 		537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CPScheduler.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		537EEA6018FCF1C70006FFD2 /* jsp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jsp; sourceTree = BUILT_PRODUCTS_DIR; };
 		537EEA9218FCF9880006FFD2 /* rcpsp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rcpsp; sourceTree = BUILT_PRODUCTS_DIR; };
+		53B437D7197F371100BE9F4D /* CPTaskCumulative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTaskCumulative.h; sourceTree = "<group>"; };
+		53B437DA197F373A00BE9F4D /* CPTaskCumulative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTaskCumulative.m; sourceTree = "<group>"; };
 		53C4BE421929C2E700DE6498 /* fjsp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fjsp; sourceTree = BUILT_PRODUCTS_DIR; };
 		53E386FE192B2CE60075F0F0 /* fjsp-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fjsp-Prefix.pch"; sourceTree = "<group>"; };
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -11086,10 +11090,12 @@
 				537EE8A518FCC5720006FFD2 /* CPDifference.m */,
 				537EE8A618FCC5720006FFD2 /* CPDisjunctive.h */,
 				537EE8A718FCC5720006FFD2 /* CPDisjunctive.m */,
-				B1A6581A196CE42000D318A6 /* CPTaskSequence.h */,
-				B1A6581B196CE42000D318A6 /* CPTaskSequence.m */,
+				53B437D7197F371100BE9F4D /* CPTaskCumulative.h */,
+				53B437DA197F373A00BE9F4D /* CPTaskCumulative.m */,
 				B19BBA54196B6CEE006EE9A9 /* CPTaskDisjunctive.h */,
 				B19BBA55196B6CEE006EE9A9 /* CPTaskDisjunctive.m */,
+				B1A6581A196CE42000D318A6 /* CPTaskSequence.h */,
+				B1A6581B196CE42000D318A6 /* CPTaskSequence.m */,
 				537EE8A818FCC5720006FFD2 /* CPFactory.h */,
 				537EE8A918FCC5720006FFD2 /* CPFactory.m */,
 				535D132C18FF7A46008D48BD /* CPMisc.h */,
@@ -13395,6 +13401,7 @@
 				537EEA5918FCE35E0006FFD2 /* CPDisjunctive.h in Headers */,
 				537EEA5718FCE35E0006FFD2 /* CPCumulative.h in Headers */,
 				537EEA5618FCE35E0006FFD2 /* CPConstraint.h in Headers */,
+				53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */,
 				B19BBA56196B6CEE006EE9A9 /* CPTaskDisjunctive.h in Headers */,
 				537EEA5818FCE35E0006FFD2 /* CPDifference.h in Headers */,
 				537EEA5A18FCE35E0006FFD2 /* CPFactory.h in Headers */,
@@ -16213,6 +16220,7 @@
 				537EEA5318FCE2FC0006FFD2 /* CPDifference.m in Sources */,
 				537EEA5418FCE2FC0006FFD2 /* CPDisjunctive.m in Sources */,
 				B127A56F19628CA100398AA3 /* CPTaskI.m in Sources */,
+				53B437DC197F373E00BE9F4D /* CPTaskCumulative.m in Sources */,
 				B19BBA57196B6CEE006EE9A9 /* CPTaskDisjunctive.m in Sources */,
 				B1A6581D196CE42000D318A6 /* CPTaskSequence.m in Sources */,
 				537EEA5518FCE2FC0006FFD2 /* CPFactory.m in Sources */,
@@ -26226,6 +26234,7 @@
 				B15746A4197D754000CAC841 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B1595B4913C11F2A001FCB61 /* Build configuration list for PBXNativeTarget "Sudoku" */ = {
 			isa = XCConfigurationList;

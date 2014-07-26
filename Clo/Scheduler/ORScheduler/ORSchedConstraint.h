@@ -42,6 +42,13 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@protocol ORTaskCumulative <ORConstraint>
+-(void) add: (id<ORTaskVar>) act with: (id<ORIntVar>) usage;
+-(id<ORTaskVarArray>) taskVars;
+-(id<ORIntVarArray>) usages;
+-(id<ORIntVar>) capacity;
+@end
+
 @protocol ORTaskDisjunctive <ORConstraint>
 -(void) add: (id<ORTaskVar>) act;
 -(void) add: (id<ORTaskVar>) act type: (ORInt) t;
