@@ -83,11 +83,11 @@
 }
 -(ORInt)deltaWhenAssign:(id<LSIntVar>)x to:(ORInt)v
 {
-   ORInt cv = getLSIntValue(_viol) == 0;
+   ORInt cv = getLSIntValue(_viol);
    if (getId(x) == getId(_x))
-      return (max(0,v - getLSIntValue(_y) - _c) == 0) - cv;
+      return max(0,v - getLSIntValue(_y) - _c) - cv;
    else if (getId(x) == getId(_y))
-      return (max(0,getLSIntValue(_x) - v - _c) == 0) - cv;
+      return max(0,getLSIntValue(_x) - v - _c) - cv;
    else return 0;
 }
 -(ORInt)deltaWhenSwap:(id<LSIntVar>)x with:(id<LSIntVar>)y
@@ -97,10 +97,10 @@
    ORBool xIn = (xid == vid[0] || xid == vid[1]);
    ORBool yIn = (yid == vid[0] || yid == vid[1]);
    if (xIn && yIn) {
-      ORInt xv = getLSIntValue(x),yv = getLSIntValue(y);
-      ORInt cv = xv <= yv + _c;
-      ORInt nv = yv <= xv + _c;
-      return nv - cv;
+      ORInt xv = getLSIntValue(_x),yv = getLSIntValue(_y); // [ldm] beware _x,_y could be passed in as (x,y). So query the original ones!
+      ORInt cviol = max(0,xv - yv - _c);
+      ORInt nviol = max(0,yv - xv - _c);
+      return nviol - cviol;
    } else if (xIn) {
       return [self deltaWhenAssign:x to:getLSIntValue(y)];
    } else if (yIn) {

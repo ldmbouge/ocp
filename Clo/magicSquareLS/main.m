@@ -51,12 +51,14 @@ int main(int argc, const char * argv[])
          }
          [model add:[Sum(model, i, R, [s at:i :i]) eq: @(T)]];
          [model add:[Sum(model, i, R, [s at:i :n-i+1]) eq: @(T)]];
-         for(ORInt i=1;i<=n-1;i++) {
-            [model add:[[s at:i :i]     lt:[s at:i+1 :i+1]]];
-            [model add:[[s at:i :n-i+1] lt:[s at:i+1 :n-i]]];
-         }
-         [model add:[[s at:1 :1] lt: [s at: 1 :n]]];
-         [model add:[[s at:1 :1] lt: [s at: n :1]]];
+
+         // Symmetry breaking is _BAD_ for LS!
+//         for(ORInt i=1;i<=n-1;i++) {
+//            [model add:[[s at:i :i]     lt:[s at:i+1 :i+1]]];
+//            [model add:[[s at:i :n-i+1] lt:[s at:i+1 :n-i]]];
+//         }
+//         [model add:[[s at:1 :1] lt: [s at: 1 :n]]];
+//         [model add:[[s at:1 :1] lt: [s at: n :1]]];
          
          id<LSProgram> cp = [ORFactory createLSProgram:model annotation:nil];
          __block ORInt it = 0;
@@ -69,6 +71,7 @@ int main(int argc, const char * argv[])
                   [cp label:[s at:i :j] with:[p next]];
             NSLog(@"viol ? : %d",[cp getViolations]);
             printSquare(cp, s);
+            
             id<ORSelector> S = [ORFactory selectMin:cp];
             while ([cp getViolations] > 0) {
                [cp sweep:S with: ^ {
@@ -84,10 +87,9 @@ int main(int argc, const char * argv[])
                                  [cp swap:alpha with:[s at:i1 :j1]];
                                  [tabu set:it + tLen at:i :j];
                                  [tabu set:it + tLen at:i1 :j1];
-                                 //printf("(%d %d %d %d,%d)",i,j,i1,j1,[cp getViolations]);fflush(stdout);
                                  printf("(%d)",[cp getViolations]);fflush(stdout);
-//                                 if (delta < 0 && tLen >= 10) tLen /= 2;
-//                                 if (delta >=0 && tLen <= n*n/2) tLen *= 2;
+                                 if (delta < 0 && tLen >= 5) tLen /= 2;
+                                 if (delta >=0 && tLen <= n*2) tLen *= 2;
                               }];
                            }
                         }
@@ -96,6 +98,7 @@ int main(int argc, const char * argv[])
                 }];
                it++;
             }
+            printf("\n");
             printSquare(cp, s);
 //            for(ORInt i=1;i<n;i++)
 //               for(ORInt j=1;j<n;j++)

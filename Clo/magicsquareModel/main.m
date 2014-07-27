@@ -53,6 +53,17 @@ int main(int argc, const char * argv[])
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
          __block BOOL found = NO;
          [cp solve:^{
+//            [cp labelArray:[ORFactory flattenMatrix:s]];
+//            [cp label:[s at:1 :1] with:1];
+//            [cp label:[s at:1 :2] with:7];
+//            [cp label:[s at:1 :3] with:2];
+//            [cp label:[s at:2 :1] with:6];
+//            [cp label:[s at:2 :2] with:5];
+//            [cp label:[s at:2 :3] with:4];
+//            [cp label:[s at:3 :1] with:8];
+//            [cp label:[s at:3 :2] with:3];
+//            [cp label:[s at:3 :3] with:9];
+            
             [cp limitTime:maxTime in: ^ {
                ///[cp repeat:^{
                while(!found) {
