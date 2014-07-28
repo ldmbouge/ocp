@@ -301,55 +301,55 @@ static inline ORInt est(CPTaskCumulative* cumu, ORInt i)
 
 static inline ORInt lst(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_lst[i];
 }
 
 static inline ORInt ect(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_ect[i];
 }
 
 static inline ORInt lct(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_lct[i];
 }
 
 static inline ORInt dur_min(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_dur_min[i];
 }
 
 static inline ORInt dur_max(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_tasks[i].maxDuration;
 }
 
 static inline ORInt usage_min(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_usage_min[i];
 }
 
 static inline ORInt usage_max(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_usages[i].max;
 }
 
 static inline ORInt area_min(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return (usage_min(cumu, i) * dur_min(cumu, i));
 }
 
 static inline ORInt free_energy(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return  area_min(cumu, i) - usage_min(cumu, i) * max(0, ect(cumu, i) - lst(cumu, i));
 }
 
