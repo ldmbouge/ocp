@@ -1380,6 +1380,7 @@
 		B19A0CEB1984496000685629 /* la38.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51B18FCC56C0006FFD2 /* la38.jss */; };
 		B19A0CEC1984496000685629 /* la39.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51C18FCC56C0006FFD2 /* la39.jss */; };
 		B19A0CED1984496000685629 /* la40.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51D18FCC56C0006FFD2 /* la40.jss */; };
+		B19A0CEE1986EC4800685629 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
 		B19ABA0B146D68FE004EB77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B19ABA0E146D68FE004EB77E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA0D146D68FE004EB77E /* main.m */; };
 		B19ABA18146D6930004EB77E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -9319,6 +9320,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B19A0CEE1986EC4800685629 /* ORSchedulingProgram.framework in Frameworks */,
 				B12BE46019012786006D1D59 /* CPScheduler.framework in Frameworks */,
 				B12BE46119012786006D1D59 /* CPUKernel.framework in Frameworks */,
 				B12BE46219012786006D1D59 /* objcp.framework in Frameworks */,
