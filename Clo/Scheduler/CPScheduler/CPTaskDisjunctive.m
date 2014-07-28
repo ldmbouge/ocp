@@ -72,7 +72,7 @@
    
    _idempotent = false;
    _dprec = true;
-   _nfnl  = true;
+   _nfnl  = false;
    _ef    = true;
    _start0 = NULL;
    _dur0   = NULL;

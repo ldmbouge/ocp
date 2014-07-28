@@ -99,24 +99,27 @@
 }
 -(void) startTryLeft
 {
-   if (_nbFailures >= _maxFailures)
+   if (_nbFailures >= _maxFailures) {
       [_controller fail: true];
+   }
    else
       [_controller startTryLeft];
 }
 -(void) startTryRight
 {
    _nbFailures++;
-   if (_nbFailures >= _maxFailures)
+   if (_nbFailures >= _maxFailures) {
       [_controller fail: true];
+   }
    else
       [_controller startTryRight];
 }
 -(void) startTryallOnFailure
 {
    _nbFailures++;
-   if (_nbFailures >= _maxFailures)
+   if (_nbFailures >= _maxFailures) {
       [_controller fail: true];
+   }
    else
       [_controller startTryallOnFailure];
 }
@@ -129,6 +132,7 @@
 -(void) succeeds
 {
 //   NSLog(@"succeeds");
+   //printf(".");
    _nbFailures = 0;
 }
 @end

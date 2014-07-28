@@ -95,8 +95,6 @@
 
 -(void) propagate
 {
-//   for(ORInt i = _succ.low; i <= _succ.up; i++)
-//      NSLog(@"succ[%d] = %@",i,[_succ[i] description]);
    ORInt i = 0;
    ORInt start = -MAXINT;
    ORInt nb = 0;
@@ -114,6 +112,7 @@
       start = [_tasks[next] ect];
    }
    ORInt maxLct = -MAXINT;
+   ORInt minEct = MAXINT;
    ORInt duration = 0;
    for(ORInt k = _low; k <= _up; k++) {
       if (k != i && ![_assigned at: k]) {
@@ -121,29 +120,33 @@
          ORInt lct = [_tasks[k] lct];
          if (lct > maxLct)
             maxLct = lct;
+         ORInt ect = [_tasks[k] ect];
+         if (ect < minEct)
+            minEct = ect;
          duration += [_tasks[k] minDuration];
       }
    }
    if (nb <= _size) {
       if (i == _up + 1)
          failNow();
-//      NSLog(@"_succ[%d] = %@",i,_succ[i]);
-//      NSLog(@"_succ[%d] = %@",i,_succ[i]);
       [_succ[i] remove: _up + 1];
    }
    if (i != _up + 1) {
       ORInt min = [_succ[i] min];
       ORInt max = [_succ[i] max];
       for(ORInt k = min; k <= max; k++) {
-         if ([_succ[i] member: k] && k != _up + 1) {
-            if ([_tasks[k] est] + duration > maxLct)
-               [_succ[i] remove: k];
+         if ([_succ[i] member: k]) {
+            if (k != _up + 1) {
+               if ([_tasks[k] est] + duration > maxLct) {
+                  [_succ[i] remove: k];
+                  [_tasks[k] updateStart: minEct];
+               }
+            }
          }
       }
+      if (i != 0)
+         [_tasks[i] updateEnd: maxLct - duration];
    }
-//   for(ORInt i = _succ.low; i <= _succ.up; i++)
-//      NSLog(@"succ[%d] = %@",i,[_succ[i] description]);
-//   NSLog(@" ");
 }
 
 -(NSSet*) allVars

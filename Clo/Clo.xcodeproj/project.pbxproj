@@ -1320,6 +1320,66 @@
 		B19624201630D4350079D2C8 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		B198E75A15D90768000BE64A /* ORTrailI.h in Headers */ = {isa = PBXBuildFile; fileRef = B198E75815D90768000BE64A /* ORTrailI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B198E75B15D90768000BE64A /* ORTrailI.m in Sources */ = {isa = PBXBuildFile; fileRef = B198E75915D90768000BE64A /* ORTrailI.m */; };
+		B19A0CB219843AFC00685629 /* orb01.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51E18FCC56C0006FFD2 /* orb01.jss */; };
+		B19A0CB319843C1900685629 /* orb10.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52718FCC56C0006FFD2 /* orb10.jss */; };
+		B19A0CB419843CF900685629 /* orb01.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51E18FCC56C0006FFD2 /* orb01.jss */; };
+		B19A0CB519843CF900685629 /* orb02.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51F18FCC56C0006FFD2 /* orb02.jss */; };
+		B19A0CB619843CF900685629 /* orb03.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52018FCC56C0006FFD2 /* orb03.jss */; };
+		B19A0CB719843CF900685629 /* orb04.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52118FCC56C0006FFD2 /* orb04.jss */; };
+		B19A0CB819843CF900685629 /* orb05.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52218FCC56C0006FFD2 /* orb05.jss */; };
+		B19A0CB919843CF900685629 /* orb06.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52318FCC56C0006FFD2 /* orb06.jss */; };
+		B19A0CBA19843CF900685629 /* orb07.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52418FCC56C0006FFD2 /* orb07.jss */; };
+		B19A0CBB19843CF900685629 /* orb08.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52518FCC56C0006FFD2 /* orb08.jss */; };
+		B19A0CBC19843CF900685629 /* orb09.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52618FCC56C0006FFD2 /* orb09.jss */; };
+		B19A0CBD19843CF900685629 /* orb10.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE52718FCC56C0006FFD2 /* orb10.jss */; };
+		B19A0CBE1984496000685629 /* abz5.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4EE18FCC56C0006FFD2 /* abz5.jss */; };
+		B19A0CBF1984496000685629 /* abz6.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4EF18FCC56C0006FFD2 /* abz6.jss */; };
+		B19A0CC01984496000685629 /* abz7.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F018FCC56C0006FFD2 /* abz7.jss */; };
+		B19A0CC11984496000685629 /* abz8.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F118FCC56C0006FFD2 /* abz8.jss */; };
+		B19A0CC21984496000685629 /* abz9.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F218FCC56C0006FFD2 /* abz9.jss */; };
+		B19A0CC31984496000685629 /* ft06.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F318FCC56C0006FFD2 /* ft06.jss */; };
+		B19A0CC41984496000685629 /* ft10.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F418FCC56C0006FFD2 /* ft10.jss */; };
+		B19A0CC51984496000685629 /* ft20.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F518FCC56C0006FFD2 /* ft20.jss */; };
+		B19A0CC61984496000685629 /* la01.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F618FCC56C0006FFD2 /* la01.jss */; };
+		B19A0CC71984496000685629 /* la02.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F718FCC56C0006FFD2 /* la02.jss */; };
+		B19A0CC81984496000685629 /* la03.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F818FCC56C0006FFD2 /* la03.jss */; };
+		B19A0CC91984496000685629 /* la04.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F918FCC56C0006FFD2 /* la04.jss */; };
+		B19A0CCA1984496000685629 /* la05.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4FA18FCC56C0006FFD2 /* la05.jss */; };
+		B19A0CCB1984496000685629 /* la06.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4FB18FCC56C0006FFD2 /* la06.jss */; };
+		B19A0CCC1984496000685629 /* la07.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4FC18FCC56C0006FFD2 /* la07.jss */; };
+		B19A0CCD1984496000685629 /* la08.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4FD18FCC56C0006FFD2 /* la08.jss */; };
+		B19A0CCE1984496000685629 /* la09.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4FE18FCC56C0006FFD2 /* la09.jss */; };
+		B19A0CCF1984496000685629 /* la10.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4FF18FCC56C0006FFD2 /* la10.jss */; };
+		B19A0CD01984496000685629 /* la11.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50018FCC56C0006FFD2 /* la11.jss */; };
+		B19A0CD11984496000685629 /* la12.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50118FCC56C0006FFD2 /* la12.jss */; };
+		B19A0CD21984496000685629 /* la13.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50218FCC56C0006FFD2 /* la13.jss */; };
+		B19A0CD31984496000685629 /* la14.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50318FCC56C0006FFD2 /* la14.jss */; };
+		B19A0CD41984496000685629 /* la15.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50418FCC56C0006FFD2 /* la15.jss */; };
+		B19A0CD51984496000685629 /* la16.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50518FCC56C0006FFD2 /* la16.jss */; };
+		B19A0CD61984496000685629 /* la17.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50618FCC56C0006FFD2 /* la17.jss */; };
+		B19A0CD71984496000685629 /* la18.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50718FCC56C0006FFD2 /* la18.jss */; };
+		B19A0CD81984496000685629 /* la19.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50818FCC56C0006FFD2 /* la19.jss */; };
+		B19A0CD91984496000685629 /* la20.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50918FCC56C0006FFD2 /* la20.jss */; };
+		B19A0CDA1984496000685629 /* la21.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50A18FCC56C0006FFD2 /* la21.jss */; };
+		B19A0CDB1984496000685629 /* la22.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50B18FCC56C0006FFD2 /* la22.jss */; };
+		B19A0CDC1984496000685629 /* la23.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50C18FCC56C0006FFD2 /* la23.jss */; };
+		B19A0CDD1984496000685629 /* la24.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50D18FCC56C0006FFD2 /* la24.jss */; };
+		B19A0CDE1984496000685629 /* la25.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50E18FCC56C0006FFD2 /* la25.jss */; };
+		B19A0CDF1984496000685629 /* la26.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE50F18FCC56C0006FFD2 /* la26.jss */; };
+		B19A0CE01984496000685629 /* la27.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51018FCC56C0006FFD2 /* la27.jss */; };
+		B19A0CE11984496000685629 /* la28.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51118FCC56C0006FFD2 /* la28.jss */; };
+		B19A0CE21984496000685629 /* la29.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51218FCC56C0006FFD2 /* la29.jss */; };
+		B19A0CE31984496000685629 /* la30.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51318FCC56C0006FFD2 /* la30.jss */; };
+		B19A0CE41984496000685629 /* la31.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51418FCC56C0006FFD2 /* la31.jss */; };
+		B19A0CE51984496000685629 /* la32.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51518FCC56C0006FFD2 /* la32.jss */; };
+		B19A0CE61984496000685629 /* la33.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51618FCC56C0006FFD2 /* la33.jss */; };
+		B19A0CE71984496000685629 /* la34.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51718FCC56C0006FFD2 /* la34.jss */; };
+		B19A0CE81984496000685629 /* la35.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51818FCC56C0006FFD2 /* la35.jss */; };
+		B19A0CE91984496000685629 /* la36.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51918FCC56C0006FFD2 /* la36.jss */; };
+		B19A0CEA1984496000685629 /* la37.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51A18FCC56C0006FFD2 /* la37.jss */; };
+		B19A0CEB1984496000685629 /* la38.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51B18FCC56C0006FFD2 /* la38.jss */; };
+		B19A0CEC1984496000685629 /* la39.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51C18FCC56C0006FFD2 /* la39.jss */; };
+		B19A0CED1984496000685629 /* la40.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE51D18FCC56C0006FFD2 /* la40.jss */; };
 		B19ABA0B146D68FE004EB77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B19ABA0E146D68FE004EB77E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA0D146D68FE004EB77E /* main.m */; };
 		B19ABA18146D6930004EB77E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -5886,13 +5946,15 @@
 		};
 		B1574697197D753F00CAC841 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
+				B19A0CB319843C1900685629 /* orb10.jss in CopyFiles */,
+				B19A0CB219843AFC00685629 /* orb01.jss in CopyFiles */,
 				B15746A1197D753F00CAC841 /* ATPTW.1 in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B1595B3C13C11F2A001FCB61 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -6015,13 +6077,71 @@
 		};
 		B19B5582190518CF0069ABA0 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
+				B19A0CBE1984496000685629 /* abz5.jss in CopyFiles */,
+				B19A0CBF1984496000685629 /* abz6.jss in CopyFiles */,
+				B19A0CC01984496000685629 /* abz7.jss in CopyFiles */,
+				B19A0CC11984496000685629 /* abz8.jss in CopyFiles */,
+				B19A0CC21984496000685629 /* abz9.jss in CopyFiles */,
+				B19A0CC31984496000685629 /* ft06.jss in CopyFiles */,
+				B19A0CC41984496000685629 /* ft10.jss in CopyFiles */,
+				B19A0CC51984496000685629 /* ft20.jss in CopyFiles */,
+				B19A0CC61984496000685629 /* la01.jss in CopyFiles */,
+				B19A0CC71984496000685629 /* la02.jss in CopyFiles */,
+				B19A0CC81984496000685629 /* la03.jss in CopyFiles */,
+				B19A0CC91984496000685629 /* la04.jss in CopyFiles */,
+				B19A0CCA1984496000685629 /* la05.jss in CopyFiles */,
+				B19A0CCB1984496000685629 /* la06.jss in CopyFiles */,
+				B19A0CCC1984496000685629 /* la07.jss in CopyFiles */,
+				B19A0CCD1984496000685629 /* la08.jss in CopyFiles */,
+				B19A0CCE1984496000685629 /* la09.jss in CopyFiles */,
+				B19A0CCF1984496000685629 /* la10.jss in CopyFiles */,
+				B19A0CD01984496000685629 /* la11.jss in CopyFiles */,
+				B19A0CD11984496000685629 /* la12.jss in CopyFiles */,
+				B19A0CD21984496000685629 /* la13.jss in CopyFiles */,
+				B19A0CD31984496000685629 /* la14.jss in CopyFiles */,
+				B19A0CD41984496000685629 /* la15.jss in CopyFiles */,
+				B19A0CD51984496000685629 /* la16.jss in CopyFiles */,
+				B19A0CD61984496000685629 /* la17.jss in CopyFiles */,
+				B19A0CD71984496000685629 /* la18.jss in CopyFiles */,
+				B19A0CD81984496000685629 /* la19.jss in CopyFiles */,
+				B19A0CD91984496000685629 /* la20.jss in CopyFiles */,
+				B19A0CDA1984496000685629 /* la21.jss in CopyFiles */,
+				B19A0CDB1984496000685629 /* la22.jss in CopyFiles */,
+				B19A0CDC1984496000685629 /* la23.jss in CopyFiles */,
+				B19A0CDD1984496000685629 /* la24.jss in CopyFiles */,
+				B19A0CDE1984496000685629 /* la25.jss in CopyFiles */,
+				B19A0CDF1984496000685629 /* la26.jss in CopyFiles */,
+				B19A0CE01984496000685629 /* la27.jss in CopyFiles */,
+				B19A0CE11984496000685629 /* la28.jss in CopyFiles */,
+				B19A0CE21984496000685629 /* la29.jss in CopyFiles */,
+				B19A0CE31984496000685629 /* la30.jss in CopyFiles */,
+				B19A0CE41984496000685629 /* la31.jss in CopyFiles */,
+				B19A0CE51984496000685629 /* la32.jss in CopyFiles */,
+				B19A0CE61984496000685629 /* la33.jss in CopyFiles */,
+				B19A0CE71984496000685629 /* la34.jss in CopyFiles */,
+				B19A0CE81984496000685629 /* la35.jss in CopyFiles */,
+				B19A0CE91984496000685629 /* la36.jss in CopyFiles */,
+				B19A0CEA1984496000685629 /* la37.jss in CopyFiles */,
+				B19A0CEB1984496000685629 /* la38.jss in CopyFiles */,
+				B19A0CEC1984496000685629 /* la39.jss in CopyFiles */,
+				B19A0CED1984496000685629 /* la40.jss in CopyFiles */,
+				B19A0CB419843CF900685629 /* orb01.jss in CopyFiles */,
+				B19A0CB519843CF900685629 /* orb02.jss in CopyFiles */,
+				B19A0CB619843CF900685629 /* orb03.jss in CopyFiles */,
+				B19A0CB719843CF900685629 /* orb04.jss in CopyFiles */,
+				B19A0CB819843CF900685629 /* orb05.jss in CopyFiles */,
+				B19A0CB919843CF900685629 /* orb06.jss in CopyFiles */,
+				B19A0CBA19843CF900685629 /* orb07.jss in CopyFiles */,
+				B19A0CBB19843CF900685629 /* orb08.jss in CopyFiles */,
+				B19A0CBC19843CF900685629 /* orb09.jss in CopyFiles */,
+				B19A0CBD19843CF900685629 /* orb10.jss in CopyFiles */,
 				B19B558C190518CF0069ABA0 /* jobshop.1 in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B1B68C72159FC16E008BC463 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;

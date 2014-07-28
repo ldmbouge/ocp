@@ -203,7 +203,7 @@ int main2(int argc, const char * argv[])
       id<ORUniformDistribution> d = [ORFactory uniformDistribution:model range:RANGE(model,0,99)];
       id<ORUniformDistribution> dc = [ORFactory uniformDistribution:model range:RANGE(model,0,1)];
       id<ORUniformDistribution> dp = [ORFactory uniformDistribution:model range: [succ range]];
-      id<ORUniformDistribution> dl = [ORFactory uniformDistribution:model range: RANGE(model,5,30)];
+      id<ORUniformDistribution> dl = [ORFactory uniformDistribution:model range: RANGE(model,5,25)];
       
       ORInt pr = 100 - 2500/nbLocations;
       // search
@@ -217,7 +217,7 @@ int main2(int argc, const char * argv[])
                NSLog(@" then");
                [cp limitTime: 300000 in: ^{
                   [cp repeat: ^{
-                     [cp limitFailures: 700 in: ^{
+                     [cp limitFailures: 500 in: ^{
                         ORInt low = succ.low;
                         ORInt size = succ.range.size - 1;
                         __block ORInt k = low;
