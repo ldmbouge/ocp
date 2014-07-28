@@ -377,12 +377,12 @@ static inline ORBool isBounded(CPTaskCumulative* cumu, ORInt i)
 
 static inline ORBool isRelevant(CPTaskCumulative * cumu, const ORInt i)
 {
-    return (cumu->_tasks[i].isPresent && usage_min(cumu, i) > 0 && dur_min(cumu, i) > 0);
+    return (cumu->_tasks[i].isPresent && cumu->_usages[i].min > 0 && cumu->_tasks[i].minDuration > 0);
 }
 
 static inline ORBool isIrrelevant(CPTaskCumulative * cumu, const ORInt i)
 {
-    return (cumu->_tasks[i].isAbsent || usage_max(cumu, i) <= 0 || dur_max(cumu, i));
+    return (cumu->_tasks[i].isAbsent || cumu->_usages[i].max <= 0 || cumu->_tasks[i].maxDuration <= 0);
 }
 
 
