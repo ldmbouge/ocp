@@ -295,7 +295,7 @@ static inline ORInt lct(CPTaskCumulative* cumu, ORInt i);
 
 static inline ORInt est(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_est[i];
 }
 
@@ -370,7 +370,7 @@ static inline ORBool isCapBounded(CPTaskCumulative* cumu)
 
 static inline ORBool isBounded(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_tasks[i].bound;
 }
 
