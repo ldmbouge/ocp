@@ -6,6 +6,7 @@
 #import <ORFoundation/ORControl.h>
 #import <ORProgram/ORProgram.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORSolution.h>
 #import <ORProgram/LPProgram.h>
 
 
@@ -37,7 +38,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
 //   NSLog(@"Objective value: %@",[[model objective] value]);
    id<ORSolutionPool> test = [lp solutionPool];
-   NSLog(@"test %@",test);
+   NSLog(@"test %@",[test best]);
    
    for(ORInt i = 0; i < nbRows; i++) {
       printf("The id of constraint %d is %d \n",i,[ca[i] getId]);
@@ -45,7 +46,7 @@ int main_lp(int argc, const char * argv[])
    for(ORInt i = 0; i < nbRows; i++) {
       printf("The dual of constraint %d is %f \n",i,[lp dual: ca[i]]);
    }
-   id<ORLPSolution> sol = [[lp solutionPool] best];
+   id<ORSolution,LPSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbColumns-1; i++)
       printf("x[%d] = %10.5f : %10.5f \n",i,[sol floatValue: x[i]],[sol reducedCost: x[i]]);
@@ -82,14 +83,12 @@ int main_mip(int argc, const char * argv[])
       [model add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)coef[i][j])]) leq: @((ORInt)b[i])]];
    [model maximize: Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])])];
    
-
-   
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
    [mip solve];
-   id<ORMIPSolution> sol = [[mip solutionPool] best];
+   id<ORSolution> sol = [[mip solutionPool] best];
    NSLog(@"Solution: %@",sol);
-   printf("Objective value: %f \n",[((id<ORObjectiveValueFloat>) [sol objectiveValue]) value]);
+   NSLog(@"Objective value: %@",[sol objectiveValue]);
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
    NSLog(@"we are done");
@@ -186,7 +185,9 @@ int main_both(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   int st0 =  main_lp(argc,argv);
+//   int st0 =  main_lp(argc,argv);
    int st1 = main_mip(argc,argv);
-   return st0+st1;
+//   return st0+st1;
+   return st1;
+//   return st0;
 }

@@ -23,6 +23,26 @@
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
 
+@interface OROrderedSweep : NSObject<OROrderedSweep> {
+   BOOL*    _used;
+   ORInt      _low;
+   ORInt      _sz;
+   ORInt     _nbo;
+   ORInt     _mxo;
+   ORFloat* _best;
+   ORFloat* _curr;
+   ORInt2Float* _of;
+   ORInt2Bool   _filter;
+   id<ORIntIterable> _col;
+}
+-(id)initWith:(id<ORIntIterable>)col;
+-(void)startup;
+-(void)addFilter:(ORInt2Bool)f;
+-(void)addOrdered:(ORInt2Float)f;
+-(BOOL)next:(ORInt*)v;
+@end
+
+
 @implementation ORFactory
 +(void) shutdown
 {
@@ -354,6 +374,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackMutable: ite];
    return ite;
 }
++(id<OROrderedSweep>) orderedSweep: (id<ORTracker>) t over: (id<ORIntIterable>) r filter: (ORInt2Bool) filter orderedBy: (ORInt2Float) o;
+{
+   OROrderedSweep* ite = [[OROrderedSweep alloc] initWith: r];
+   [ite addFilter:filter];
+   [ite addOrdered:o];
+   [t trackObject:ite];
+   [ite startup];
+   return ite;
+}
 +(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order
 {
    ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: false];
@@ -636,6 +665,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORAnnotation>) annotation
 {
    return [[ORAnnotation alloc] init];
+}
++(id<ORSolutionInformer>) solutionInformer
+{
+   return [ORConcurrency solutionInformer];
 }
 @end
 
@@ -1297,3 +1330,104 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return o;
 }
 @end
+
+
+@implementation OROrderedSweep
+
+-(id)initWith:(id<ORIntIterable>)col
+{
+   self = [super init];
+   _sz = [col size];
+   _low = [col low];
+   _used = malloc(sizeof(BOOL)*_sz);
+   memset(_used,0,sizeof(BOOL)*_sz);
+   _used -= _low;
+   _col = col;
+   _mxo = 2;
+   _nbo = 0;
+   _of = malloc(sizeof(ORInt2Float)*_mxo);
+   _filter =  NULL;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"OROrderedSweep (%p) dealloc'd",self);
+   _used += _low;
+   free(_used);
+   free(_best);
+   free(_curr);
+   for(ORInt i=0;i<_nbo;i++)
+      [_of[i] release];
+   free(_of);
+   [_filter release];
+   [super dealloc];
+}
+-(void)startup
+{
+   _best = malloc(sizeof(ORFloat)*_nbo);
+   _curr = malloc(sizeof(ORFloat)*_nbo);
+}
+-(void)addFilter:(ORInt2Bool)f
+{
+   [_filter release];
+   _filter = [f copy];
+}
+
+-(void)addOrdered:(ORInt2Float)f
+{
+   if (_nbo >= _mxo) {
+      _of = realloc(_of,sizeof(ORInt2Float)*_mxo*2);
+      _mxo = _mxo * 2;
+   }
+   _of[_nbo++] = [f copy];
+}
+-(void)updateBest:(ORInt)from
+{
+   for(ORInt i=from;i<_nbo;i++)
+      _best[i] = _curr[i];
+}
+-(BOOL)next:(ORInt*)v
+{
+   __block ORInt sel = -1;
+   __block BOOL found = NO;
+   for(ORInt k=0;k < _nbo;k++)
+      _best[k] = FDMAXINT;
+   [_col enumerateWithBlock:^(ORInt i) {
+      if (!_used[i]) {
+         BOOL keep = !_filter || _filter(i);
+         if (!keep) {
+            _used[i] = YES;
+            return;
+         }
+         for(ORInt k=0;k < _nbo;k++)
+            _curr[k] = _of[k](i);
+         BOOL tieBreak = YES;
+         for(ORInt k=0;k < _nbo;k++) {
+            if (_curr[k] < _best[k]) {
+               tieBreak = NO;
+               [self updateBest:k];
+               sel = i;
+               found = YES;
+               break;
+            } else if (_curr[k] > _best[k]) {
+               tieBreak = NO;
+               break;
+            } else {
+               assert(_curr[k] == _best[k]);
+            }
+         }
+         if (tieBreak) {
+            
+         }
+      }
+   }];
+   if (found) {
+      _used[sel] = YES;
+      *v = sel;
+      return YES;
+   } else {
+      return NO;
+   }
+}
+@end
+
