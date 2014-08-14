@@ -13,6 +13,8 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
+
 
 
 	// Maximal input length of the char vector for reading a line in the data file
@@ -223,45 +225,62 @@ int main(int argc, const char * argv[])
     	id<ORModel> model = [ORFactory createModel];
       	id<ORIntRange> dom = [ORFactory intRange: model low: 0 up: ms_max];
       	id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n_act - 1];
-      	id<ORIntVarArray> start = [ORFactory intVarArray: model range: R domain: dom];
+        id<ORIntVar> makespan = [ORFactory intVar: model domain: dom];
+        
+        id<ORTaskVarArray> Tasks = [ORFactory taskVarArray: model range: R with: ^id<ORTaskVar>(ORInt k) {
+            return [ORFactory task: model horizon: dom duration: dur[k]];
+        }];
       
 	  	// Adding precedence constraints
 		for (ORInt i = 0; i < n_act; i++) {
 			for (ORInt jj = 0; jj < n_succ[i]; jj++) {
-				ORInt j = succ[i][jj];
+				const ORInt j = succ[i][jj];
 				//printf("Add constraint: s[%d] <= s[%d] - %d\n", i, j, dur[i]);
-				[model add: [ORFactory lEqual: model var: start[i] to: [start at:j] plus: -dur[i]]];
+                [model add: [Tasks[i] precedes:Tasks[j]]];
 			}
+            if (n_succ[i] == 0) {
+                [model add: [Tasks[i] isFinishedBy: makespan]];
+            }
 		}
 
 		// Adding resource constraints
-        id<ORIntArray> dura = [ORFactory intArray:model range:R values: dur];
         for (ORInt r = 0; r < n_res; r++) {
-            id<ORIntRange> domRCap = [ORFactory intRange: model low: rcap[r] up: rcap[r]];
-            id<ORIntVar> RCap = [ORFactory intVar: model domain: domRCap];
-//            id<ORIntVar> RCap = [ORFactory intVar: model value: rcap[r]];
-            id<ORIntArray> rreq = [ORFactory intArray:model range:R values:rr[r]];
+            id<ORIntVar> RCap = [ORFactory intVar: model value: rcap[r]];
+            id<ORTaskCumulative> cumulative = [ORFactory cumulativeConstraint: RCap];
             //printf("Add constraint: cumulative(start, dur, rr, %d)\n", rcap[r]);
-            [model add: [ORFactory cumulative:start duration:dura usage:rreq capacity:RCap]];
+            for (ORInt i = 0; i < n_act; i++) {
+                if (rr[r][i] > 0) {
+                    id<ORIntVar> rr_i = [ORFactory intVar: model value: rr[r][i]];
+                    [cumulative add:Tasks[i] with:rr_i];
+                }
+            }
+            [model add: cumulative];
         }
         
         // Adding objective
-        [model minimizeVar: start[n_act - 1]];
+        [model minimize: makespan];
 
 		// Solving
-		id<CPProgram> cp = [ORFactory createCPProgram: model];
+		id<CPProgram,CPScheduler> cp = [ORFactory createCPProgram: model];
 		[cp solve:
 			^() {
 				// Search strategy
-				[cp labelArray: start];
+				[cp setTimes: Tasks];
+                [cp label: makespan];
 				// Output of solution
 				printf("start = [");
 				for (ORInt i = 0; i < n_act; i++) {
                     if (i > 0) printf(", ");
-					printf("%d", [cp intValue: start[i]]);
+					printf("%d", [cp est: Tasks[i]]);
 				}
 				printf("];\n");
-                printf("objective = %d;\n", [cp intValue: start[n_act - 1]]);
+				printf("dur = [");
+				for (ORInt i = 0; i < n_act; i++) {
+                    if (i > 0) printf(", ");
+					printf("%d", dur[i]);
+				}
+				printf("];\n");
+                printf("objective = %d;\n", [cp intValue: makespan]);
                 printf("----------\n");
 			}
 		];

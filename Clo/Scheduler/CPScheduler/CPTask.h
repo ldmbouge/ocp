@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
+#import <objcp/CPVar.h>
 
 @protocol CPTaskVarSubscriber <NSObject>
 

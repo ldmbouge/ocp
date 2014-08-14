@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CPUKernel/CPUKernel.h>
+#import "CPTask.h"
 
 
 // Resource profile
@@ -31,3 +32,8 @@ typedef struct {
     ORInt _first;
     ORInt _second;
 } Precedence;
+
+typedef struct {
+    id<CPTaskVar> _before;
+    id<CPTaskVar> _after;
+} CPTaskVarPrec;
