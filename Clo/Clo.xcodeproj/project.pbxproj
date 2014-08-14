@@ -161,6 +161,7 @@
 		53C4BE3C1929C2E700DE6498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		53C4BE431929C54700DE6498 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 533C588619230E57007D33BB /* main.m */; };
 		53E386FF192B2CE60075F0F0 /* fjsp-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 53E386FE192B2CE60075F0F0 /* fjsp-Prefix.pch */; };
+		53E5AEE3199B3F7F00E954BD /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
 		5B04F30B1922709D006BDCB6 /* st103_1.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE54218FCC56C0006FFD2 /* st103_1.rcp */; };
 		5B115520171B1CF5005371AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B115523171B1CF5005371AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B115522171B1CF5005371AA /* main.m */; };
@@ -1659,6 +1660,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 537EEA2618FCE1FE0006FFD2;
 			remoteInfo = CPScheduler;
+		};
+		53E5AEE4199B3FBB00E954BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B127A57419629B0600398AA3;
+			remoteInfo = ORSchedulingProgram;
 		};
 		5B11552B171B1D01005371AA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -8380,6 +8388,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53E5AEE3199B3F7F00E954BD /* ORSchedulingProgram.framework in Frameworks */,
 				537EEA7018FCF33F0006FFD2 /* objcp.framework in Frameworks */,
 				537EEA6D18FCF33F0006FFD2 /* CPScheduler.framework in Frameworks */,
 				537EEA6E18FCF33F0006FFD2 /* CPUKernel.framework in Frameworks */,
@@ -13876,6 +13885,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				53E5AEE5199B3FBB00E954BD /* PBXTargetDependency */,
 				537EEA7918FCF4080006FFD2 /* PBXTargetDependency */,
 				537EEA7B18FCF4080006FFD2 /* PBXTargetDependency */,
 			);
@@ -17529,6 +17539,11 @@
 			target = 537EEA2618FCE1FE0006FFD2 /* CPScheduler */;
 			targetProxy = 53C4BE301929C2E700DE6498 /* PBXContainerItemProxy */;
 		};
+		53E5AEE5199B3FBB00E954BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B127A57419629B0600398AA3 /* ORSchedulingProgram */;
+			targetProxy = 53E5AEE4199B3FBB00E954BD /* PBXContainerItemProxy */;
+		};
 		5B11552C171B1D01005371AA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
@@ -20477,7 +20492,7 @@
 				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_EMPTY_BODY = NO;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -20486,7 +20501,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -20500,13 +20515,13 @@
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_EMPTY_BODY = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Scheduler/Tests/jsp/jsp-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Coverage;
@@ -20520,13 +20535,13 @@
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_EMPTY_BODY = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Scheduler/Tests/jsp/jsp-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
