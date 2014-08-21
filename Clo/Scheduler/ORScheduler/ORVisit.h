@@ -15,6 +15,7 @@
 #import <ORScheduler/ORSchedConstraint.h>
 
 @interface ORVisitor (ORScheduler)
+-(void) visitAlterantiveTask: (id<ORAlternativeVar> ) task;
 -(void) visitTask: (id<ORTaskVar> ) task;
 -(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
 -(void) visitTaskDuration:  (id<ORTaskDuration> ) cstr;
@@ -31,6 +32,7 @@
 @end;
 
 @interface ORNOopVisit (ORScheduler)
+-(void) visitAlterantiveTask: (id<ORAlternativeVar> ) task;
 -(void) visitTask: (id<ORTaskVar> ) task;
 -(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
 -(void) visitTaskDuration:  (id<ORTaskDuration> ) cstr;

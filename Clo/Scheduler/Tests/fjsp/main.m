@@ -13,6 +13,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
 
 
 	// Maximal input length of the char vector for reading a line in the data file
@@ -278,33 +279,38 @@ int main(int argc, const char * argv[])
         
             // Creating of some ranges
             //
-      	id<ORIntRange> dom      = [ORFactory intRange:model low:0 up:ms_max   ];
-        id<ORIntRange> ActsR    = [ORFactory intRange:model low:0 up:n_act - 1];
-        id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt - 1];
+      	id<ORIntRange> dom      = [ORFactory intRange:model low:0 up:ms_max    ];
+        id<ORIntRange> ActsR    = [ORFactory intRange:model low:0 up:n_act  - 1];
+        id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt  - 1];
+        id<ORIntRange> MachR    = [ORFactory intRange:model low:0 up:n_mach - 1];
+        
+            // Disjunctive resource
+            //
+        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray:model range:MachR];
+
+            // Objective variable (makespan)
+            //
+        id<ORIntVar> MS = [ORFactory intVar:model bounds: dom];
         
             // Creating optional activities
             //
-        id<ORActivityArray> OptActs = [ORFactory activityArray:model range:OptActsR with: ^id<ORActivity>(ORInt k) {
+        id<ORTaskVarArray> OptActs = [ORFactory taskVarArray:model range:OptActsR with:^id<ORTaskVar>(ORInt k) {
             if (act_nopt[opt_act[k]] == 1) {
-                return [ORFactory activity:model horizon:dom duration:RANGE(model, dur[k], dur[k])];
+                return [ORFactory task: model horizon: dom duration: dur[k]];
             }
-            return [ORFactory optionalActivity:model horizon:dom duration:RANGE(model, dur[k], dur[k])];
+            return [ORFactory optionalTask: model horizon: dom duration: dur[k]];
         }];
         
             // Creating of "alternative" activities
             //
-        id<ORActivityArray> Acts = [ORFactory activityArray:model range:ActsR with:^id<ORActivity>(ORInt k) {
+        id<ORTaskVarArray> Acts = [ORFactory taskVarArray:model range:ActsR with:^id<ORTaskVar>(ORInt k) {
             if (act_nopt[k] == 1) {
                 return OptActs[act_fopt[k]];
             }
-            return [ORFactory activity:model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) withAlternatives:^id<ORActivity>(ORInt o) {
+            return [ORFactory task: model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) withAlternatives:^id<ORTaskVar>(ORInt o) {
                 return OptActs[o];
             }];
         }];
-        
-            // Creating the sink activity (representing the end of the project)
-            //
-        id<ORActivity> end = [ORFactory activity:model horizon:dom duration:RANGE(model, 0, 0)];
         
             // Adding precedence constraints
             //
@@ -318,36 +324,36 @@ int main(int argc, const char * argv[])
 
             // Adding resource constraints
             //
-        for (ORInt m = 0; m < n_mach; m++) {
-            id<ORActivityArray> m_acts = [ORFactory activityArray:model range:RANGE(model, 0, mach_nopt[m] - 1) with:^id<ORActivity>(ORInt k) {
-                return OptActs[mach_opt[m][k]];
-            }];
-            [model add: [ORFactory disjunctive:m_acts]];
+        for (ORInt m = MachR.low; m <= MachR.up; m++) {
+            for (ORInt k = 0; k < mach_nopt[m]; k++) {
+                [disjunctive[m] add:OptActs[mach_opt[m][k]]];
+            }
+            [model add:disjunctive[m]];
         }
         
             // Adding objective constraints
             //
 		for (ORInt j = 0; j < n_job; j++) {
             const ORInt last = job_fact[j] + job_nact[j] - 1;
-            [model add: [Acts[last] precedes:end]];
+            [model add: [Acts[last] isFinishedBy:MS]];
 		}
         
             // Adding objective
             //
-        [model minimizeVar: end.startLB];
+        [model minimize: MS];
 
             // Creating the CPScheduleProgram
             //
-		id<CPSchedulingProgram> cp = [ORFactory createCPSchedulingProgram: model];
+		id<CPProgram,CPScheduler> cp = [ORFactory createCPProgram: model];
 		[cp solve:
 			^() {
 				// Search strategy
-                [cp labelActivities: Acts];
-                [cp labelActivity:   end ];
+                [cp setTimes: Acts];
+                [cp label: MS];
                 printf("start = [");
                 for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
                     if (t > ActsR.low) printf(", ");
-                    printf("%2d", [cp intValue:Acts[t].startLB]);
+                    printf("%2d", [cp est: Acts[t]]);
                 }
                 printf("];\n");
                 printf("dur   = [");
@@ -356,19 +362,17 @@ int main(int argc, const char * argv[])
                     printf("%2d", [cp intValue:Acts[t].duration]);
                 }
                 printf("];\n");
-                for (ORInt m = 0; m < n_mach; m++) {
+                for (ORInt m = MachR.low; m <= MachR.up; m++) {
                     printf("%%%% mach %d: ", m + mach_id_min);
                     for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
                         const ORInt k = mach_opt[m][kk];
-                        if (!OptActs[k].isOptional || [cp intValue:OptActs[k].top] == 1) {
-                            const ORInt start = [cp intValue:OptActs[k].startUB];
-                            const ORInt dur = [cp intValue:OptActs[k].duration] + start;
-                            printf("[%2d, %2d) ", start, dur);
+                        if ([cp isPresent: OptActs[k]]) {
+                            printf("[%2d, %2d) ", [cp est: OptActs[k]], [cp lct: OptActs[k]]);
                         }
                     }
                     printf("\n");
                 }
-                printf("objective = %d;\n", [cp intValue: end.startLB]);
+                printf("objective = %d;\n", [cp intValue: MS]);
                 printf("----------\n");
 			}
 		];

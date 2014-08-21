@@ -13,6 +13,8 @@
 #import <ORModeling/ORModeling.h>
 #import <objcp/CPVar.h>
 
+@protocol CPTaskVarArray;
+
 @protocol CPTaskVarSubscriber <NSObject>
 
 // AC3 Closure Event
@@ -68,6 +70,10 @@
 -(void) labelEnd: (ORInt) end;
 -(void) labelDuration: (ORInt) duration;
 -(void) labelPresent: (ORBool) present;
+@end
+
+@protocol CPAlternativeVar <CPTaskVar>
+-(id<CPTaskVarArray>) alternatives;
 @end
 
 @protocol CPTaskVarArray <ORObject>

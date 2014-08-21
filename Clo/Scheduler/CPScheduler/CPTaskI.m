@@ -762,3 +762,37 @@ typedef struct  {
    return d;
 }
 @end
+
+
+@implementation CPAlternativeVar
+{
+    id<CPTaskVarArray> _alt;
+}
+-(id<CPAlternativeVar>) initCPAlternativeVar:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration alternatives:(id<CPTaskVarArray>)alternatives
+{
+    self = [super initCPTaskVar:engine horizon:horizon duration:duration];
+    _alt = alternatives;
+    return self;
+}
+-(id<CPTaskVarArray>) alternatives
+{
+    return _alt;
+}
+@end
+
+
+@implementation CPOptionalAlternativeVar
+{
+    id<CPTaskVarArray> _alt;
+}
+-(id<CPAlternativeVar>) initCPOptionalAlternativeVar:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration alternatives:(id<CPTaskVarArray>)alternatives
+{
+    self = [super initCPOptionalTaskVar:engine horizon:horizon duration:duration];
+    _alt = alternatives;
+    return self;
+}
+-(id<CPTaskVarArray>) alternatives
+{
+    return _alt;
+}
+@end

@@ -71,3 +71,55 @@
    return [ORFactory constraint: self isFinishedBy: date];
 }
 @end
+
+@implementation ORAlternativeVar {
+    id<ORTaskVarArray> _alt;
+}
+-(id<ORAlternativeVar>) initORAlternativeVar:(id<ORModel>)model alternatives:(id<ORTaskVarArray>)alt {
+    
+    ORInt minHor = MAXINT;
+    ORInt maxHor = MININT;
+    ORInt minDur = MAXINT;
+    ORInt maxDur = MININT;
+    for (ORInt k = alt.low; k <= alt.up; k++) {
+        minHor = min(minHor, alt[k].horizon.low );
+        maxHor = max(maxHor, alt[k].horizon.up  );
+        minDur = min(minDur, alt[k].duration.low);
+        maxDur = max(maxDur, alt[k].duration.up );
+    }
+    
+    self = [super initORTaskVar: model horizon:RANGE(model, minHor, maxHor) duration:RANGE(model, minDur, maxDur)];
+    
+    _alt = alt;
+    
+    return self;
+}
+-(id<ORAlternativeVar>) initOROptionalAlternativeVar:(id<ORModel>)model alternatives:(id<ORTaskVarArray>)alt {
+    
+    ORInt minHor = MAXINT;
+    ORInt maxHor = MININT;
+    ORInt minDur = MAXINT;
+    ORInt maxDur = MININT;
+    for (ORInt k = alt.low; k <= alt.up; k++) {
+        minHor = min(minHor, alt[k].horizon.low );
+        maxHor = max(maxHor, alt[k].horizon.up  );
+        minDur = min(minDur, alt[k].duration.low);
+        maxDur = max(maxDur, alt[k].duration.up );
+    }
+    
+    self = [super initOROptionalTaskVar: model horizon:RANGE(model, minHor, maxHor) duration:RANGE(model, minDur, maxDur)];
+    
+    _alt = alt;
+    
+    return self;
+}
+-(id<ORTaskVarArray>) alternatives
+{
+    return _alt;
+}
+-(void)visit:(ORVisitor*) v
+{
+    [v visitAlternativeTask: self];
+//    [v visitTask:self];
+}
+@end

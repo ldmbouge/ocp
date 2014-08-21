@@ -92,6 +92,7 @@
 		535D132F18FF7A47008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
 		535D133018FF7EFA008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
 		535D133118FF7F1D008D48BD /* CPMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 535D132C18FF7A46008D48BD /* CPMisc.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		537476D719A5C2300002AB44 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
 		537EEA0118FCDCFC0006FFD2 /* ORConstraintI.h in Headers */ = {isa = PBXBuildFile; fileRef = 537EE8AD18FCC5720006FFD2 /* ORConstraintI.h */; };
 		537EEA0218FCDCFC0006FFD2 /* ORFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = 537EE8AF18FCC5720006FFD2 /* ORFlatten.h */; };
 		537EEA0318FCDCFC0006FFD2 /* ORSchedConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 537EE8B118FCC5720006FFD2 /* ORSchedConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1530,6 +1531,13 @@
 			remoteInfo = objmp;
 		};
 		535096FD199C869700625B3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B127A57419629B0600398AA3;
+			remoteInfo = ORSchedulingProgram;
+		};
+		537476D519A5C2220002AB44 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -8430,6 +8438,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				537476D719A5C2300002AB44 /* ORSchedulingProgram.framework in Frameworks */,
 				53C4BE341929C2E700DE6498 /* objcp.framework in Frameworks */,
 				53C4BE351929C2E700DE6498 /* CPScheduler.framework in Frameworks */,
 				53C4BE361929C2E700DE6498 /* CPUKernel.framework in Frameworks */,
@@ -13934,6 +13943,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				537476D619A5C2220002AB44 /* PBXTargetDependency */,
 				53C4BE2D1929C2E700DE6498 /* PBXTargetDependency */,
 				53C4BE2F1929C2E700DE6498 /* PBXTargetDependency */,
 			);
@@ -17458,6 +17468,11 @@
 			isa = PBXTargetDependency;
 			target = B127A57419629B0600398AA3 /* ORSchedulingProgram */;
 			targetProxy = 535096FD199C869700625B3C /* PBXContainerItemProxy */;
+		};
+		537476D619A5C2220002AB44 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B127A57419629B0600398AA3 /* ORSchedulingProgram */;
+			targetProxy = 537476D519A5C2220002AB44 /* PBXContainerItemProxy */;
 		};
 		537EEA1218FCDD450006FFD2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

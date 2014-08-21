@@ -270,6 +270,16 @@
    [model trackMutable:o];
    return o;
 }
+// ORAlternativeVar
++(id<ORAlternativeVar>) task: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORTaskVar>(^)(ORInt)) clo;
+{
+    id<ORIdArray> alts = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [alts set: clo(k) at:k];
+    id<ORAlternativeVar> o = [[ORAlternativeVar alloc] initORAlternativeVar: model alternatives: (id<ORTaskVarArray>) alts];
+    [model trackMutable:o];
+    return o;
+}
 // ORTaskVar array
 +(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskVar>(^)(ORInt)) clo;
 {

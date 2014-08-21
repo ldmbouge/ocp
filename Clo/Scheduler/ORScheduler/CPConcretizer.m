@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPConstraint.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORScheduler/ORTaskI.h>
 #import <ORScheduler/ORActivity.h>
 #import <ORProgram/CPConcretizer.h>
 #import "CPScheduler/CPFactory.h"
@@ -133,17 +134,41 @@
 // Task
 -(void) visitTask:(id<ORTaskVar>) task
 {
-   if (_gamma[task.getId] == NULL) {
-      id<ORIntRange> horizon = [task horizon];
-      id<ORIntRange> duration = [task duration];
-      
-      id<CPTaskVar> concreteTask;
-      if (![task isOptional])
-         concreteTask = [CPFactory task: _engine horizon: horizon duration: duration];
-      else
-         concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration];
-      _gamma[task.getId] = concreteTask;
-   }
+    if ([task isMemberOfClass:[ORAlternativeVar class]]) {
+        [self visitAlternativeTask: (id<ORAlternativeVar>) task];
+    }
+    else if (_gamma[task.getId] == NULL) {
+        id<ORIntRange> horizon = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        
+        id<CPTaskVar> concreteTask;
+        if (![task isOptional])
+            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration];
+        else
+            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration];
+        _gamma[task.getId] = concreteTask;
+    }
+}
+
+// Alternative Task
+-(void) visitAlternativeTask:(id<ORAlternativeVar>) task
+{
+    if (_gamma[task.getId] == NULL) {
+        id<ORIntRange> horizon  = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        id<ORTaskVarArray> alt  = [task alternatives];
+        
+        [alt visit: self];
+        
+        id<CPAlternativeVar> concreteTask;
+        if (![task isOptional]) {
+            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration withAlternatives:_gamma[alt.getId]];
+        }
+        else {
+            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration withAlternatives:_gamma[alt.getId]];
+        }
+        _gamma[task.getId] = concreteTask;
+    }
 }
 
 // Precedence constraint
