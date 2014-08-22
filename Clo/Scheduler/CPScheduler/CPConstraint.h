@@ -15,23 +15,22 @@
 #import <objcp/CPVar.h>
 
 @protocol CPTaskVar;
+@protocol CPTaskVarArray;
 
 
-
-//    // Alternative propagator
-//    //
-//@interface CPAlternative : CPCoreConstraint<NSCoding> {
-//    id<CPActivity>      _act;
-//    id<CPActivityArray> _alter;
-//}
-//
-//-(id) initCPAlternative: (id<CPActivity>) act alternatives: (id<CPActivityArray>) alter;
-//-(void) dealloc;
-//-(ORStatus) post;
-//-(void) propagate;
-//-(NSSet*) allVars;
-//-(ORUInt) nbUVars;
-//@end
+    // Alternative propagator
+    //
+@interface CPAlternative : CPCoreConstraint {
+    id<CPTaskVar>      _task;
+    id<CPTaskVarArray> _alt;
+}
+-(id) initCPAlternative: (id<CPTaskVar>) task alternatives: (id<CPTaskVarArray>) alt;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
 
 @interface CPTaskPrecedence : CPCoreConstraint {
    id<CPTaskVar> _before;

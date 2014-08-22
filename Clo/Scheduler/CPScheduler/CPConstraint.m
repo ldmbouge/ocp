@@ -18,93 +18,375 @@
 
     // Alternative propagator
     //
-//@implementation CPAlternative {
-//    ORInt * _idx;
-//    TRInt   _size;
-//}
-//-(id) initCPAlternative: (id<CPActivity>) act alternatives: (id<CPActivityArray>) alter
-//{
-//    self = [super initCPCoreConstraint:act.startLB.engine];
-//    
-//    _act   = act;
-//    _alter = alter;
-//    _idx   = NULL;
-//    
-//    NSLog(@"Create alternative constraint\n");
-//    
-//    return self;
-//}
-//-(void) dealloc
-//{
-//    if (_idx != NULL) free(_idx);
-//    [super dealloc];
-//}
-//-(ORStatus) post
-//{
-//    // Initialise trailed parameters
-//    _size = makeTRInt(_trail, (ORInt)_alter.count);
-//    
-//    // Allocate memory
-//    _idx = malloc(_alter.count * sizeof(ORInt));
-//    
-//    // Check whether memory allocation was successful
-//    if (_idx == NULL) {
-//        @throw [[ORExecutionError alloc] initORExecutionError: "CPAlternative: Out of memory!"];
-//    }
-//    
-//    // Initialise misc
-//    for (ORInt i = 0; i < _alter.count; i++) {
-//        _idx[i] = i + _alter.range.low;
-//    }
-//    
-//    // Initial propagation
-//    [self propagate];
-//    
-//    // Subscription of variables to the constraint
-//    for (ORInt i = _alter.range.low; i <= _alter.range.up; i++) {
-//        assert(_alter[i].isOptional);
-//        if (_alter[i].top.max == 0) continue;
-//        [_alter[i].top whenBindPropagate:self priority:LOWEST_PRIO];
-//        if (!_alter[i].startLB.bound)
-//            [_alter[i].startLB whenChangeMinDo:^{
-//                if (_alter[i].startLB.min > _act.startLB.min)
-//                    [self propAlterStartMin];
-//            } priority:LOWEST_PRIO + 1 onBehalf:self];
-//        if (!_alter[i].startUB.bound)
-//            [_alter[i].startUB whenChangeMaxDo:^{
-//                if (_alter[i].startLB.max < _act.startLB.max)
-//                    [self propAlterStartMax];
-//            } priority:LOWEST_PRIO + 1 onBehalf:self];
-//        if (!_alter[i].duration.bound) {
-//            [_alter[i].duration whenChangeMinDo:^{
-//                if (_alter[i].duration.min > _act.duration.min)
-//                    [self propAlterDurMin];
-//            } priority:LOWEST_PRIO + 1 onBehalf:self];
-//            [_alter[i].duration whenChangeMaxDo:^{
-//                if (_alter[i].duration.max < _act.duration.max)
-//                    [self propAlterDurMax];
-//            } priority:LOWEST_PRIO + 1 onBehalf:self];
-//        }
-//    }
-//    if (_act.isOptional && !_act.top.bound)
-//        [_act.top whenBindDo:^{[self bindActivity];} priority:LOWEST_PRIO onBehalf:self];
-//    if (!_act.startLB.bound)
-//        [_act.startLB whenChangeMinDo:^{
-//            for (ORInt ii = 0; ii < _size._val; ii++)
-//                [_alter[_idx[ii]] updateStartMin:_act.startLB.min];
-//        } priority:LOWEST_PRIO + 1 onBehalf:self];
-//    if (!_act.startUB.bound)
-//        [_act.startUB whenChangeMaxDo:^{
-//            for (ORInt ii = 0; ii < _size._val; ii++)
-//                [_alter[_idx[ii]] updateStartMax:_act.startUB.max];
-//        } priority:LOWEST_PRIO + 1 onBehalf:self];
-//    if (!_act.duration.bound) {
-//        [_act.duration whenChangeMinDo:^{[self propActDurMin];} priority:LOWEST_PRIO + 1 onBehalf:self];
-//        [_act.duration whenChangeMaxDo:^{[self propActDurMax];} priority:LOWEST_PRIO + 1 onBehalf:self];
-//    }
-//
-//    return ORSuspend;
-//}
+@implementation CPAlternative {
+    ORInt * _idx;   // Array of alternative task's indices
+    TRInt   _size;  // Pointer to the first absent alternative task in the array _idx
+    
+    TRInt   _watchStart;
+    TRInt   _watchEnd;
+    TRInt   _watchMinDur;
+    TRInt   _watchMaxDur;
+}
+-(id) initCPAlternative: (id<CPTaskVar>) task alternatives: (id<CPTaskVarArray>) alt
+{
+    self = [super initCPCoreConstraint:task.engine];
+    
+    _task = task;
+    _alt  = alt;
+    _idx  = NULL;
+    
+    NSLog(@"Create alternative constraint\n");
+    
+    return self;
+}
+-(void) dealloc
+{
+    if (_idx != NULL) free(_idx);
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    const ORInt size = [_alt count];
+    const ORInt low  = [_alt low  ];
+    const ORInt up   = [_alt up   ];
+    
+    // Initialise trailed parameters
+    _size        = makeTRInt(_trail, size);
+    _watchStart  = makeTRInt(_trail, size);
+    _watchEnd    = makeTRInt(_trail, size);
+    _watchMinDur = makeTRInt(_trail, size);
+    _watchMaxDur = makeTRInt(_trail, size);
+    
+    // Allocate memory
+    _idx = malloc(size * sizeof(ORInt));
+    
+    // Check whether memory allocation was successful
+    if (_idx == NULL) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPAlternative: Out of memory!"];
+    }
+    
+    // Initialise misc
+    for (ORInt i = 0; i < size; i++) {
+        _idx[i] = i + low;
+    }
+    
+    // Initial propagation
+    [self initPropagation];
+    
+    // Subscription of the alternative tasks
+    for (ORInt i = low; i <= up; i++) {
+        if (_alt[i].isPresent) {
+            // Bound change on start
+            [_alt[i] whenChangeStartDo:^{
+                [_task updateStart:_alt[i].est];
+            } onBehalf: self];
+            // Bound change on end
+            [_alt[i] whenChangeEndDo:^{
+                [_task updateEnd:_alt[i].lct];
+            } onBehalf: self];
+            // Bound change on duration
+            if (_alt[i].minDuration < _alt[i].maxDuration) {
+                [_alt[i] whenChangeDurationDo: ^{
+                    [_task updateMinDuration: _alt[i].minDuration];
+                    [_task updateMaxDuration: _alt[i].maxDuration];
+                } onBehalf: self];
+            }
+        }
+        else if (!_alt[i].isAbsent) {
+            // Change to present
+            [_alt[i] whenPresentDo: ^{
+                [self propagateAlternativePresence: i];
+            } onBehalf: self];
+            // Change to absent
+            [_alt[i] whenAbsentDo: ^{
+                [self propagateAlternativeAbsence: i];
+            } onBehalf: self];
+            // Bound change on start
+            [_alt[i] whenChangeStartDo: ^{
+                if (_size._val == 1) {
+                    assert(_idx[0] == i);
+                    [_task updateStart: _alt[i].est];
+                }
+                else if (_watchStart._val == i) {
+                    [self propagateAlternativeStart];
+                }
+            } onBehalf: self];
+            // Bound change on end
+            [_alt[i] whenChangeEndDo: ^{
+                if (_size._val == 1) {
+                    assert(_idx[0] == i);
+                    [_task updateEnd: _alt[i].lct];
+                }
+                else if (_watchEnd._val == i) {
+                    [self propagateAlternativeEnd];
+                }
+            } onBehalf: self];
+            // Bound change on duration
+            [_alt[i] whenChangeDurationDo: ^{
+                if (_size._val == 1) {
+                    assert(_idx[0] == i);
+                    [_task updateMinDuration: _alt[i].minDuration];
+                    [_task updateMaxDuration: _alt[i].maxDuration];
+                }
+                else if (_watchMinDur._val == i || _watchMaxDur._val == i) {
+                    [self propagateAlternativeDuration];
+                }
+            } onBehalf: self];
+        }
+    }
+    
+    if (!_task.isAbsent) {
+        // Bound change on start
+        [_task whenChangeStartDo: ^{
+            
+        } onBehalf: self];
+    }
+    
+    return ORSuspend;
+}
+-(void) propagateTaskAbsence
+{
+    assert(_task.isAbsent);
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_alt[i] labelPresent: false];
+    }
+    assignTRInt(&(_size), 0, _trail);
+}
+-(void) propagateAllVariablesOfTask
+{
+    assert(!_task.isAbsent);
+    const ORInt start  = _task.est;
+    const ORInt end    = _task.lct;
+    const ORInt minDur = _task.minDuration;
+    const ORInt maxDur = _task.maxDuration;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_alt[i] updateStart      : start ];
+        [_alt[i] updateEnd        : end   ];
+        [_alt[i] updateMinDuration: minDur];
+        [_alt[i] updateMaxDuration: maxDur];
+    }
+}
+-(void) propagateAlternativeStart
+{
+    ORInt minStart = MAXINT;
+    ORInt wStart   = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (minStart > _alt[i].est) {
+            minStart = _alt[i].est;
+            wStart   = i;
+        }
+    }
+    assert(_alt.low <= wStart  && wStart  <= _alt.up);
+    [_task updateStart: minStart];
+    if (wStart != _watchStart._val)
+        assignTRInt(&(_watchStart), wStart, _trail);
+}
+-(void) propagateAlternativeEnd
+{
+    ORInt maxEnd = MININT;
+    ORInt wEnd   = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (maxEnd < _alt[i].lct) {
+            maxEnd = _alt[i].lct;
+            wEnd   = i;
+        }
+    }
+    assert(_alt.low <= wEnd    && wEnd    <= _alt.up);
+    [_task updateEnd: maxEnd];
+    if (wEnd != _watchEnd._val)
+        assignTRInt(&(_watchEnd), wEnd, _trail);
+}
+-(void) propagateAlternativeDuration
+{
+    ORInt minDur  = MAXINT;
+    ORInt maxDur  = MININT;
+    ORInt wMinDur = MAXINT;
+    ORInt wMaxDur = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (minDur > _alt[i].minDuration) {
+            minDur  = _alt[i].minDuration;
+            wMinDur = i;
+        }
+        if (maxDur < _alt[i].maxDuration) {
+            maxDur  = _alt[i].maxDuration;
+            wMaxDur = i;
+        }
+    }
+    assert(_alt.low <= wMinDur && wMinDur <= _alt.up);
+    assert(_alt.low <= wMaxDur && wMaxDur <= _alt.up);
+    [_task updateMinDuration: minDur];
+    [_task updateMaxDuration: maxDur];
+    if (wMinDur != _watchMinDur._val)
+        assignTRInt(&(_watchMinDur), wMinDur, _trail);
+    if (wMaxDur != _watchMaxDur._val)
+        assignTRInt(&(_watchMaxDur), wMaxDur, _trail);
+}
+-(void) propagateAlternativePresence: (ORInt) k
+{
+    if (_size._val > 1) {
+        for (ORInt ii = 0; ii < _size._val; ii++) {
+            const ORInt i = _idx[ii];
+            if (i == k) {
+                _idx[ii] = _idx[0];
+                _idx[0 ] = i;
+            }
+            else
+                [_alt[i] labelPresent: false];
+        }
+        assignTRInt(&(_size), 1, _trail);
+    }
+    assert(_size._val == 1);
+    assert(_idx[0] == k);
+    assert(_alt[k].isPresent);
+    [_task labelPresent: true];
+    [self propagateAllEqualities];
+}
+-(void) propagateAlternativeAbsence: (ORInt) k
+{
+    if (_size._val == 1) {
+        assert(_idx[0] == k);
+        [_task labelPresent: false];
+    }
+    else {
+        const ORInt size = _size._val - 1;
+        for (ORInt ii = 0; ii <= size; ii++) {
+            const ORInt i = _idx[ii];
+            if (i == k) {
+                _idx[ii]   = _idx[size];
+                _idx[size] = i;
+                break;
+            }
+        }
+        if (size == 1) {
+            if (_task.isPresent)
+                [_alt[_idx[0]] labelPresent: true];
+            else
+                [self propagateAllEqualities];
+        }
+        else {
+            if (_watchStart._val == k)
+                [self propagateAlternativeStart];
+            if (_watchEnd._val == k)
+                [self propagateAlternativeEnd];
+            if (_watchMinDur._val == k || _watchMaxDur._val == k)
+                [self propagateAlternativeDuration];
+        }
+        assignTRInt(&(_size), size, _trail);
+    }
+}
+-(void) propagateAllEqualities
+{
+    const ORInt k = _idx[0];
+    ORBool test = false;
+    do {
+        [_task updateStart      : _alt[k].est        ];
+        [_task updateEnd        : _alt[k].lct        ];
+        [_task updateMinDuration: _alt[k].minDuration];
+        [_task updateMaxDuration: _alt[k].maxDuration];
+        test = (_task.est != _alt[k].est || _task.lct != _alt[k].lct ||
+             _task.minDuration != _alt[k].minDuration ||
+             _task.maxDuration != _alt[k].maxDuration);
+    } while (test && !_task.isAbsent && !_alt[k].isAbsent);
+}
+-(void) initPropagation
+{
+    ORInt size = _size._val;
+    ORInt minStart = MAXINT;
+    ORInt maxEnd   = MININT;
+    ORInt minDur   = MAXINT;
+    ORInt maxDur   = MININT;
+    ORInt wStart   = MAXINT;
+    ORInt wEnd     = MAXINT;
+    ORInt wMinDur  = MAXINT;
+    ORInt wMaxDur  = MAXINT;
+    ORBool update  = false;
+    ORBool noAltPresent = true;
+    
+    do {
+        if (_task.isAbsent)
+            [self propagateTaskAbsence];
+        else {
+            // Retrieving information from the alternative tasks
+            for (ORInt ii = 0; ii < size; ii++) {
+                const ORInt i = _idx[ii];
+                // Check whether alternative task is absent
+                if (_alt[i].isAbsent) {
+                    // Alternative task is absent, swap it to the end
+                    if (ii < size - 1) {
+                        size--;
+                        _idx[ii  ] = _idx[size];
+                        _idx[size] = i;
+                        ii--;
+                    }
+                }
+                else if (_alt[i].isPresent) {
+                    // Alternative task is present
+                    [self propagateAlternativePresence: i];
+                    noAltPresent = false;
+                    break;
+                }
+                else {
+                    // Presence of alternative task is still unknown
+                    if (_alt[i].est < minStart) {
+                        minStart = _alt[i].est;
+                        wStart   = i;
+                    }
+                    if (_alt[i].lct > maxEnd) {
+                        maxEnd = _alt[i].lct;
+                        wEnd   = i;
+                    }
+                    if (_alt[i].minDuration < minDur) {
+                        minDur  = _alt[i].minDuration;
+                        wMinDur = i;
+                    }
+                    if (_alt[i].maxDuration > maxDur) {
+                        maxDur  = _alt[i].maxDuration;
+                        wMaxDur = i;
+                    }
+                }
+            }
+            if (size == 1) {
+                if (_task.isPresent) {
+                    [_alt[_idx[0]] labelPresent: true];
+                    noAltPresent = false;
+                }
+                [self propagateAllEqualities];
+            }
+            else {
+                // Updating the task bounds
+                [_task updateStart      : minStart];
+                [_task updateEnd        : maxEnd  ];
+                [_task updateMinDuration: minDur  ];
+                [_task updateMaxDuration: maxDur  ];
+                // Updating the alternative task bounds
+                if (_task.isAbsent)
+                    update = true;
+                else if (_task.est > minStart || _task.lct < maxEnd || _task.minDuration > minDur || _task.maxDuration < maxDur) {
+                    [self propagateAllVariablesOfTask];
+                    update = true;
+                }
+            }
+        }
+    } while (update && noAltPresent);
+    
+    if (noAltPresent) {
+        assert(_alt.low <= wStart  && wStart  <= _alt.up);
+        assert(_alt.low <= wEnd    && wEnd    <= _alt.up);
+        assert(_alt.low <= wMinDur && wMinDur <= _alt.up);
+        assert(_alt.low <= wMaxDur && wMaxDur <= _alt.up);
+        assignTRInt(&(_watchStart ), wStart , _trail);
+        assignTRInt(&(_watchEnd   ), wEnd   , _trail);
+        assignTRInt(&(_watchMinDur), wMinDur, _trail);
+        assignTRInt(&(_watchMaxDur), wMaxDur, _trail);
+        if (size < _size._val)
+            assignTRInt(&(_size), size, _trail);
+    }
+}
 //-(void) propagate
 //{
 //    ORInt size = _size._val;
@@ -287,8 +569,8 @@
 //{
 //    assert(false);
 //}
-//@end
-//
+@end
+
 
 
 @implementation CPTaskPrecedence

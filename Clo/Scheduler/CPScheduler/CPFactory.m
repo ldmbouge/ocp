@@ -24,13 +24,13 @@
 @implementation CPFactory (CPScheduler)
 // activity
 
-//// Alternative propagator
-//+(id<CPConstraint>) alternative:(id<CPActivity>)act composedBy:(id<CPActivityArray>)alternatives
-//{
-//    id<CPConstraint> cstr = [[CPAlternative alloc] initCPAlternative:act alternatives:alternatives];
-//    [[act.startLB tracker] trackMutable:cstr];
-//    return cstr;
-//}
+// Alternative propagator
++(id<CPConstraint>) constraint:(id<CPTaskVar>)task alternatives:(id<CPTaskVarArray>)alternatives
+{
+    id<CPConstraint> cstr = [[CPAlternative alloc] initCPAlternative:act alternatives:alternatives];
+    [[act.startLB tracker] trackMutable:cstr];
+    return cstr;
+}
 
 
 // Cumulative (resource) constraint

@@ -18,7 +18,7 @@
 @protocol CPAlternativeVar;
 
 @interface CPFactory (CPScheduler)
-//+(id<CPConstraint>) alternative: (id<CPActivity>) act composedBy: (id<CPActivityArray>) alternatives;
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task alternatives: (id<CPTaskVarArray>) alternatives;
 
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after;
