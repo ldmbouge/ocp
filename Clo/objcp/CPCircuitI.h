@@ -23,3 +23,9 @@
 static ORStatus assign(CPCircuitI* cstr,int i);
 @end
 
+@interface CPSubCircuit : CPCoreConstraint<CPConstraint>
+-(CPCircuitI*) initCPSubCircuit: (id<CPIntVarArray>) x;
+-(void) dealloc;
+-(void) post;
+static ORStatus assignSubCircuit(CPSubCircuit* cstr,int i);
+@end

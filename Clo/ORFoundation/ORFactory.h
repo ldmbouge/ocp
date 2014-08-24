@@ -226,6 +226,7 @@
 +(id<ORConstraint>)element:(id<ORTracker>)model matrix:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y;
 +(id<ORConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x;
++(id<ORConstraint>) subCircuit: (id<ORIntVarArray>) x;
 +(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x;
 +(id<ORConstraint>) packing:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
 +(id<ORConstraint>) packing:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load;
