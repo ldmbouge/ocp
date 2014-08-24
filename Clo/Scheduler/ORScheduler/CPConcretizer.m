@@ -160,6 +160,7 @@
         
         [alt visit: self];
         
+        // Create of a task composed by alternative tasks
         id<CPAlternativeVar> concreteTask;
         if (![task isOptional]) {
             concreteTask = [CPFactory task: _engine horizon: horizon duration: duration withAlternatives:_gamma[alt.getId]];
@@ -167,6 +168,12 @@
         else {
             concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration withAlternatives:_gamma[alt.getId]];
         }
+        
+        // Create and post the alternative constraint
+        id<CPConstraint> concreteCstr;
+        concreteCstr = [CPFactory constraint: concreteTask alternatives:_gamma[alt.getId]];
+        [_engine add: concreteCstr];
+        
         _gamma[task.getId] = concreteTask;
     }
 }

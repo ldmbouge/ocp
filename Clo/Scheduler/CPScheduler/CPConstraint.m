@@ -46,7 +46,7 @@
 }
 -(ORStatus) post
 {
-    const ORInt size = [_alt count];
+    const ORInt size = (ORInt) [_alt count];
     const ORInt low  = [_alt low  ];
     const ORInt up   = [_alt up   ];
     
@@ -136,10 +136,20 @@
     }
     
     if (!_task.isAbsent) {
+        if (!_task.isPresent) {
+            // Change to present
+            [_task whenPresentDo: ^{
+                if (_size._val == 1) [_alt[_idx[0]] labelPresent: true];
+            } onBehalf: self];
+            // Change to absent
+            [_task whenAbsentDo: ^{ [self propagateTaskAbsence]; } onBehalf: self];
+        }
         // Bound change on start
-        [_task whenChangeStartDo: ^{
-            
-        } onBehalf: self];
+        [_task whenChangeStartDo: ^{ [self propagateTaskStart]; } onBehalf: self];
+        // Bound change on end
+        [_task whenChangeEndDo: ^{ [self propagateTaskEnd]; } onBehalf: self];
+        // Bound change on duration
+        [_task whenChangeDurationDo: ^{ [self propagateTaskDuration]; } onBehalf: self];
     }
     
     return ORSuspend;
@@ -152,6 +162,28 @@
         [_alt[i] labelPresent: false];
     }
     assignTRInt(&(_size), 0, _trail);
+}
+-(void) propagateTaskStart
+{
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_alt[i] updateStart: _task.est];
+    }
+}
+-(void) propagateTaskEnd
+{
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_alt[i] updateEnd: _task.lct];
+    }
+}
+-(void) propagateTaskDuration
+{
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_alt[i] updateMinDuration: _task.minDuration];
+        [_alt[i] updateMaxDuration: _task.maxDuration];
+    }
 }
 -(void) propagateAllVariablesOfTask
 {
@@ -386,6 +418,26 @@
         if (size < _size._val)
             assignTRInt(&(_size), size, _trail);
     }
+}
+-(NSSet*) allVars
+{
+    NSUInteger nb = [_alt count] + 1;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
+    for(ORInt i = _alt.low; i <= _alt.up; i++)
+        [rv addObject:_alt[i]];
+    [rv addObject:_task];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    ORUInt nb = 0;
+    for(ORInt ii = 0; ii < _size._val; ii++)
+        if (![_alt[_idx[ii]] bound])
+            nb++;
+    if ([_task bound])
+        nb++;
+    return nb;
 }
 //-(void) propagate
 //{
