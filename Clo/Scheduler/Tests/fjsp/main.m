@@ -25,6 +25,7 @@ ORInt   n_mach = 0;		// (input) Number of machines
 ORInt   n_job  = 0;		// (input) Number of jobs
 ORInt   n_act  = 0;		//         Number of activities
 ORInt   n_opt  = 0;     //         Number of optional activities
+ORInt   n_alt  = 0;		//         Number of pure alternative activities (act_nopt[.] > 1)
 ORInt * dur    = NULL;	// (input) Optional activities' durations
 ORInt * mach   = NULL;	// (input) Machines' ID
 
@@ -33,6 +34,7 @@ ORInt *  job_fact  = NULL;  // Index of first activity in job
 ORInt *  act_nopt  = NULL;  // Number of optional activities in activity
 ORInt *  act_fopt  = NULL;  // Index of first optional activity per activity
 ORInt *  opt_act   = NULL;  // Mapping of optional activities to their activities
+ORInt *  alt_act   = NULL;  // Mapping of alternative activities to activities
 ORInt *  mach_nopt = NULL;  // Number of optional activities per machine
 ORInt ** mach_opt  = NULL;  // Optional activities per machine
 
@@ -50,6 +52,7 @@ void freeMemory() {
     if (act_nopt  != NULL) free(act_nopt );
     if (act_fopt  != NULL) free(act_fopt );
     if (opt_act   != NULL) free(opt_act  );
+    if (alt_act   != NULL) free(alt_act  );
     
     if (mach_opt != NULL) {
         for (ORInt m = 0; m < n_mach; m++) {
@@ -162,6 +165,7 @@ void readDataFJSS(const char * filename) {
         for (ORInt i = 0; i < job_nact[j]; i++) {
             s = strtok(NULL, " \t\n");
             act_nopt[t] = atoi(s);
+            if (act_nopt[t] > 1) n_alt++;
             act_fopt[t] = o;
             for (ORInt k = 0; k < act_nopt[t]; k++) {
                 s = strtok(NULL, " \t\n");
@@ -233,6 +237,16 @@ void preprocessData(void) {
             exit(2);
         }
     }
+    
+    alt_act = (ORInt * ) malloc(n_alt * sizeof(ORInt));
+    
+    ORInt idx = 0;
+    for (ORInt i = 0; i < n_act; i++) {
+        if (act_nopt[i]) {
+            alt_act[idx] = i;
+            idx++;
+        }
+    }
 }
 
 bool file_exists(const char * filename)
@@ -282,6 +296,7 @@ int main(int argc, const char * argv[])
       	id<ORIntRange> dom      = [ORFactory intRange:model low:0 up:ms_max    ];
         id<ORIntRange> ActsR    = [ORFactory intRange:model low:0 up:n_act  - 1];
         id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt  - 1];
+        id<ORIntRange> AltsR    = [ORFactory intRange:model low:0 up:n_alt  - 1];
         id<ORIntRange> MachR    = [ORFactory intRange:model low:0 up:n_mach - 1];
         
             // Disjunctive resource
@@ -310,6 +325,12 @@ int main(int argc, const char * argv[])
             return [ORFactory task: model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) withAlternatives:^id<ORTaskVar>(ORInt o) {
                 return OptActs[o];
             }];
+        }];
+        
+            // Creating an array of all alternative tasks
+            //
+        id<ORAlternativeVarArray> Alts = [ORFactory alternativeVarArray:model range:AltsR with: ^id<ORAlternativeVar>(ORInt k) {
+            return (id<ORAlternativeVar>) Acts[alt_act[k]];
         }];
         
             // Adding precedence constraints
@@ -348,6 +369,7 @@ int main(int argc, const char * argv[])
 		[cp solve:
 			^() {
 				// Search strategy
+                [cp setAlternatives: Alts];
                 [cp setTimes: Acts];
                 [cp label: MS];
                 printf("start = [");

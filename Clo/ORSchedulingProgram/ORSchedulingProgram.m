@@ -35,7 +35,15 @@
 //      [self labelActivities:act.composition];
 //   }
 //}
-
+-(void) setAlternatives: (id<ORAlternativeVarArray>) act
+{
+    for (ORInt i = act.low; i <= act.up; i++) {
+        id<ORTaskVarArray> alt = [act[i] alternatives];
+        for (ORInt j = alt.low; j <= alt.up; j++) {
+            [self labelPresent: alt[j] with:true];
+        }
+    }
+}
 -(void) setTimes: (id<ORTaskVarArray>) act
 {
    id<ORIntRange> R = act.range;

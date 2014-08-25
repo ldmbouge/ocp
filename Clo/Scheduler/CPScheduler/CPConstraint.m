@@ -280,36 +280,69 @@
 }
 -(void) propagateAlternativeAbsence: (ORInt) k
 {
-    if (_size._val == 1) {
-        assert(_idx[0] == k);
-        [_task labelPresent: false];
-    }
-    else {
-        const ORInt size = _size._val - 1;
-        for (ORInt ii = 0; ii <= size; ii++) {
-            const ORInt i = _idx[ii];
-            if (i == k) {
-                _idx[ii]   = _idx[size];
-                _idx[size] = i;
-                break;
-            }
+    const ORInt size = _size._val - 1;
+    for (ORInt ii = 0; ii <= size; ii++) {
+        const ORInt i = _idx[ii];
+        if (i == k) {
+            _idx[ii]   = _idx[size];
+            _idx[size] = i;
+            break;
         }
-        if (size == 1) {
+    }
+    if (_size._val > 0)
+        assignTRInt(&(_size), size, _trail);
+    if (_size._val == 0) {
+        [_task labelPresent: false];
+    } else {
+        if (_size._val == 1) {
             if (_task.isPresent)
                 [_alt[_idx[0]] labelPresent: true];
-            else
+            else if (_alt[_idx[0]].isPresent) {
+                [_task labelPresent: true];
+            }
+            if (!_alt[_idx[0]].isAbsent)
                 [self propagateAllEqualities];
         }
-        else {
-            if (_watchStart._val == k)
-                [self propagateAlternativeStart];
-            if (_watchEnd._val == k)
-                [self propagateAlternativeEnd];
-            if (_watchMinDur._val == k || _watchMaxDur._val == k)
-                [self propagateAlternativeDuration];
-        }
-        assignTRInt(&(_size), size, _trail);
+        if (_watchStart._val == k)
+            [self propagateAlternativeStart];
+        if (_watchEnd._val == k)
+            [self propagateAlternativeEnd];
+        if (_watchMinDur._val == k || _watchMaxDur._val == k)
+            [self propagateAlternativeDuration];
     }
+    
+//    if (_size._val == 1) {
+//        printf("k = %d;\n", k);
+//        [self dumpState];
+//        assert(_idx[0] == k);
+//        [_task labelPresent: false];
+//    }
+//    else {
+//        const ORInt size = _size._val - 1;
+//        for (ORInt ii = 0; ii <= size; ii++) {
+//            const ORInt i = _idx[ii];
+//            if (i == k) {
+//                _idx[ii]   = _idx[size];
+//                _idx[size] = i;
+//                break;
+//            }
+//        }
+//        if (size == 1) {
+//            if (_task.isPresent)
+//                [_alt[_idx[0]] labelPresent: true];
+//            else
+//                [self propagateAllEqualities];
+//        }
+//        else {
+//            if (_watchStart._val == k)
+//                [self propagateAlternativeStart];
+//            if (_watchEnd._val == k)
+//                [self propagateAlternativeEnd];
+//            if (_watchMinDur._val == k || _watchMaxDur._val == k)
+//                [self propagateAlternativeDuration];
+//        }
+//        assignTRInt(&(_size), size, _trail);
+//    }
 }
 -(void) propagateAllEqualities
 {
@@ -417,6 +450,13 @@
         assignTRInt(&(_watchMaxDur), wMaxDur, _trail);
         if (size < _size._val)
             assignTRInt(&(_size), size, _trail);
+    } else {
+        assert(_alt[_idx[0]].isPresent);
+        assignTRInt(&(_watchStart ), _idx[0], _trail);
+        assignTRInt(&(_watchEnd   ), _idx[0], _trail);
+        assignTRInt(&(_watchMinDur), _idx[0], _trail);
+        assignTRInt(&(_watchMaxDur), _idx[0], _trail);
+        assignTRInt(&(_size), 1, _trail);
     }
 }
 -(NSSet*) allVars
@@ -438,6 +478,25 @@
     if ([_task bound])
         nb++;
     return nb;
+}
+-(void) dumpState
+{
+    printf("-+-+- Alternative Dump -+-+-\n");
+    printf("task: est %d; lct %d;\n", _task.est, _task.lct);
+    printf("\tpresent %d; absent %d\n", _task.isPresent, _task.isAbsent);
+    printf("size %d;\n", _size._val);
+    printf("wStart %d; wEnd %d; wMinDur %d; wMaxDur %d;\n", _watchStart._val, _watchEnd._val, _watchMinDur._val, _watchMaxDur._val);
+    printf("_idx = ");
+    for (ORInt ii = 0; ii < [_alt count]; ii++) {
+        printf("%d:%d ", ii, _idx[ii]);
+    }
+    printf("\n");
+    printf("alternative:\n");
+    for (ORInt ii = 0; ii < [_alt count]; ii++) {
+        id<CPTaskVar> t = _alt[_idx[ii]];
+        printf("\ttask (%d): est %d; lct %d; present %d; absent %d\n", _idx[ii], t.est, t.lct, t.isPresent, t.isAbsent);
+    }
+    printf("-+-+-+-+-+-+-+-+-+-+-+--+-+-\n");
 }
 //-(void) propagate
 //{

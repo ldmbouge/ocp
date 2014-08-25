@@ -16,6 +16,7 @@
 #import <ORScheduler/ORTask.h>
 
 @protocol CPScheduler
+-(void) setAlternatives: (id<ORAlternativeVarArray>) act;
 -(void) setTimes: (id<ORTaskVarArray>) act;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2;

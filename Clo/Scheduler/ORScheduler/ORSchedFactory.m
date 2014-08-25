@@ -280,6 +280,14 @@
     [model trackMutable:o];
     return o;
 }
+// ORAlternativeVar array
++(id<ORAlternativeVarArray>) alternativeVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORAlternativeVar>(^)(ORInt)) clo;
+{
+    id<ORIdArray> o = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [o set: clo(k) at:k];
+    return (id<ORAlternativeVarArray>) o;
+}
 // ORTaskVar array
 +(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskVar>(^)(ORInt)) clo;
 {
