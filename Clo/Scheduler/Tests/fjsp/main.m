@@ -370,6 +370,7 @@ int main(int argc, const char * argv[])
 //                [cp labelActivities: OptActs];
                 [cp setTimes: Acts];
                 [cp label: MS];
+                printf("start = [");
                 for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
                     if (t > ActsR.low) printf(", ");
                     printf("%2d", [cp est: Acts[t]]);
