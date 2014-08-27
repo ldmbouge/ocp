@@ -236,11 +236,23 @@
         [transitionTasks visit: self];
         [succ visit: self];
         id<CPConstraint> concreteCstr;
-        if ([cstr hasTransition])
-            concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
-        else
-            concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
-        [_engine add: concreteCstr];
+        // NOTE the task sequence propagator for optional tasks
+        // haven't been implemented yet. Once it is then the
+        // following check can be removed.
+        ORBool hasOptionalTasks = false;
+        for (ORInt i = tasks.low; i <= tasks.up; i++) {
+            if ([tasks[i] isOptional]) {
+                hasOptionalTasks = true;
+                break;
+            }
+        }
+        if (!hasOptionalTasks) {
+            if ([cstr hasTransition])
+                concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
+            else
+                concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
+            [_engine add: concreteCstr];
+        }
         if ([cstr hasTransition])
             concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
         else

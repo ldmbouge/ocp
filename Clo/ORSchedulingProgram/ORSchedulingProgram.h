@@ -16,6 +16,8 @@
 #import <ORScheduler/ORTask.h>
 
 @protocol CPScheduler
+-(void) labelActivity: (id<ORTaskVar>) act;
+-(void) labelActivities: (id<ORTaskVarArray>) act;
 -(void) setAlternatives: (id<ORAlternativeVarArray>) act;
 -(void) setTimes: (id<ORTaskVarArray>) act;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o;
@@ -36,9 +38,13 @@
 -(void) updateMinDuration: (id<ORTaskVar>) task with: (ORInt) newMinDuration;
 -(void) updateMaxDuration: (id<ORTaskVar>) task with: (ORInt) newMaxDuration;
 
+-(void) labelStart: (id<ORTaskVar>) task;
 -(void) labelStart: (id<ORTaskVar>) task with: (ORInt) start;
+-(void) labelEnd: (id<ORTaskVar>) task;
 -(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end;
+-(void) labelDuration: (id<ORTaskVar>) task;
 -(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration;
+-(void) labelPresent: (id<ORTaskVar>) task;
 -(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present;
 -(ORInt) globalSlack: (id<ORTaskDisjunctive>) d;
 -(ORInt) localSlack: (id<ORTaskDisjunctive>) d;

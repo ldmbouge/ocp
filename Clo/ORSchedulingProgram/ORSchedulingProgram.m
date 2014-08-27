@@ -18,29 +18,26 @@
 
 
 @implementation CPSolver (CPScheduler)
-//-(void) labelActivities: (id<ORActivityArray>) act
-//{
-//   for (ORInt i = act.range.low; i <= act.range.up; i++)
-//      [self labelActivity:act[i]];
-//}
-//
-//-(void) labelActivity: (id<ORActivity>) act
-//{
-//   if ((act.type & 1) == 1) {
-//      [self label: act.top];
-//   }
-//   [self label: act.startLB ];
-//   [self label: act.duration];
-//   if (act.type > 1) {
-//      [self labelActivities:act.composition];
-//   }
-//}
+-(void) labelActivity: (id<ORTaskVar>) act
+{
+    [self labelPresent  : act];
+    [self labelStart    : act];
+    [self labelDuration : act];
+    [self labelEnd      : act];
+}
+-(void) labelActivities: (id<ORTaskVarArray>) act
+{
+    for (ORInt i = act.low; i <= act.up; i++)
+        [self labelActivity:act[i]];
+}
 -(void) setAlternatives: (id<ORAlternativeVarArray>) act
 {
+    // TODO better heuristic that takes the slack of
+    // corresponding machines into account
     for (ORInt i = act.low; i <= act.up; i++) {
         id<ORTaskVarArray> alt = [act[i] alternatives];
         for (ORInt j = alt.low; j <= alt.up; j++) {
-            [self labelPresent: alt[j] with:true];
+            [self labelPresent: alt[j]];
         }
     }
 }
@@ -252,12 +249,34 @@
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelStart: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self est: task] < [self lst: task]) {
+            ORInt est = [self est: task];
+            [self try: ^{ [self labelStart : task with: est    ]; }
+                   or: ^{ [self updateStart: task with: est + 1]; }
+             ];
+        }
+    }
+}
 -(void) labelStart: (id<ORTaskVar>) task with: (ORInt) start
 {
    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelStart: start]; }];
    if (status == ORFailure)
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
+}
+-(void) labelEnd: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self ect: task] < [self lct: task]) {
+            ORInt ect = [self ect: task];
+            [self try: ^{ [self labelEnd : task with: ect    ]; }
+                   or: ^{ [self updateEnd: task with: ect + 1]; }
+             ];
+        }
+    }
 }
 -(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end
 {
@@ -266,12 +285,31 @@
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelDuration: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self minDuration: task] < [self maxDuration: task]) {
+            ORInt m = [self minDuration: task];
+            [self try: ^{ [self labelDuration    : task with: m    ]; }
+                   or: ^{ [self updateMinDuration: task with: m + 1]; }
+             ];
+        }
+    }
+}
 -(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration
 {
    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelDuration: duration]; }];
    if (status == ORFailure)
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
+}
+-(void) labelPresent: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task] && ![self isPresent: task]) {
+        [self try: ^{ [self labelPresent: task with: true ]; }
+               or: ^{ [self labelPresent: task with: false]; }
+         ];
+    }
 }
 -(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present
 {

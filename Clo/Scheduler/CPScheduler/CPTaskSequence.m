@@ -16,6 +16,7 @@
 
 #import <objcp/CPVar.h>
 #import "CPTask.h"
+#import "CPTaskI.h"
 #import "CPTaskSequence.h"
 #import "CPFactory.h"
 
@@ -32,7 +33,12 @@
    id<ORTRIntArray> _assigned;
 }
 -(id) initCPTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
-{   
+{
+    // NOTE temporary check for optional task, can be removed once the propagator
+    // is extended for optional tasks
+    for (ORInt i = tasks.low; i <= tasks.up; i++) {
+        assert([tasks[i] isKindOfClass: [CPTaskVar class]]);
+    }
    id<CPTaskVar> task0 = tasks[tasks.low];
    _engine = [task0 engine];
    self = [super initCPCoreConstraint: _engine];

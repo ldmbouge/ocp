@@ -298,10 +298,6 @@ int main(int argc, const char * argv[])
         id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt  - 1];
         id<ORIntRange> AltsR    = [ORFactory intRange:model low:0 up:n_alt  - 1];
         id<ORIntRange> MachR    = [ORFactory intRange:model low:0 up:n_mach - 1];
-        
-            // Disjunctive resource
-            //
-        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray:model range:MachR];
 
             // Objective variable (makespan)
             //
@@ -345,6 +341,7 @@ int main(int argc, const char * argv[])
 
             // Adding resource constraints
             //
+        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray:model range:MachR];
         for (ORInt m = MachR.low; m <= MachR.up; m++) {
             for (ORInt k = 0; k < mach_nopt[m]; k++) {
                 [disjunctive[m] add:OptActs[mach_opt[m][k]]];
@@ -370,9 +367,9 @@ int main(int argc, const char * argv[])
 			^() {
 				// Search strategy
                 [cp setAlternatives: Alts];
+//                [cp labelActivities: OptActs];
                 [cp setTimes: Acts];
                 [cp label: MS];
-                printf("start = [");
                 for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
                     if (t > ActsR.low) printf(", ");
                     printf("%2d", [cp est: Acts[t]]);
@@ -381,9 +378,16 @@ int main(int argc, const char * argv[])
                 printf("dur   = [");
                 for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
                     if (t > ActsR.low) printf(", ");
-                    printf("%2d", [cp intValue:Acts[t].duration]);
+                    printf("%2d", [cp minDuration: Acts[t]]);
                 }
                 printf("];\n");
+                for (ORInt j = 0; j < n_job; j++) {
+                    printf("%%%% job %d:\n", j);
+                    for (ORInt t1 = 0; t1 < job_nact[j]; t1++) {
+                        const ORInt idx1 = t1 + job_fact[j];
+                        printf("%%%%\ttask (%2d): est %2d; lct %2d; dur [%2d, %2d]\n",t1, [cp est:Acts[idx1]], [cp lct:Acts[idx1]], [cp minDuration:Acts[idx1]], [cp maxDuration:Acts[idx1]]);
+                    }
+                }
                 for (ORInt m = MachR.low; m <= MachR.up; m++) {
                     printf("%%%% mach %d: ", m + mach_id_min);
                     for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
