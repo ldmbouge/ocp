@@ -15,7 +15,7 @@
 
 @protocol CPTaskVarArray;
 @protocol CPTaskVar;
-@protocol CPAlternativeVar;
+@protocol CPAlternativeTask;
 
 @interface CPFactory (CPScheduler)
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task alternatives: (id<CPTaskVarArray>) alternatives;
@@ -37,6 +37,6 @@
 
 +(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 +(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
-+(id<CPAlternativeVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
-+(id<CPAlternativeVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
++(id<CPAlternativeTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
++(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
 @end

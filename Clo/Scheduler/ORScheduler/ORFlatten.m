@@ -14,7 +14,7 @@
 #import "ORConstraintI.h"
 
 @implementation ORFlatten (ORScheduler)
--(void) visitAlternativeTask:(id<ORAlternativeVar>) t
+-(void) visitAlternativeTask:(id<ORAlternativeTask>) t
 {
     _result = t;
 }

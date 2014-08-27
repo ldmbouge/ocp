@@ -325,8 +325,8 @@ int main(int argc, const char * argv[])
         
             // Creating an array of all alternative tasks
             //
-        id<ORAlternativeVarArray> Alts = [ORFactory alternativeVarArray:model range:AltsR with: ^id<ORAlternativeVar>(ORInt k) {
-            return (id<ORAlternativeVar>) Acts[alt_act[k]];
+        id<ORAlternativeTaskArray> Alts = [ORFactory alternativeVarArray:model range:AltsR with: ^id<ORAlternativeTask>(ORInt k) {
+            return (id<ORAlternativeTask>) Acts[alt_act[k]];
         }];
         
             // Adding precedence constraints

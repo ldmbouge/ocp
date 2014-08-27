@@ -16,7 +16,7 @@
 -(id<ORTaskVar>) initOROptionalTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 @end
 
-@interface ORAlternativeVar : ORTaskVar<ORAlternativeVar>
--(id<ORAlternativeVar>) initORAlternativeVar: (id<ORModel>) model alternatives: (id<ORTaskVarArray>) alternatives;
--(id<ORAlternativeVar>) initOROptionalAlternativeVar: (id<ORModel>) model alternatives: (id<ORTaskVarArray>) alternatives;
+@interface ORAlternativeTask : ORTaskVar<ORAlternativeTask>
+-(id<ORAlternativeTask>) initORAlternativeTask: (id<ORModel>) model alternatives: (id<ORTaskVarArray>) alternatives;
+-(id<ORAlternativeTask>) initOROptionalAlternativeTask: (id<ORModel>) model alternatives: (id<ORTaskVarArray>) alternatives;
 @end

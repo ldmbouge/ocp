@@ -764,11 +764,11 @@ typedef struct  {
 @end
 
 
-@implementation CPAlternativeVar
+@implementation CPAlternativeTask
 {
     id<CPTaskVarArray> _alt;
 }
--(id<CPAlternativeVar>) initCPAlternativeVar:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration alternatives:(id<CPTaskVarArray>)alternatives
+-(id<CPAlternativeTask>) initCPAlternativeTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration alternatives:(id<CPTaskVarArray>)alternatives
 {
     self = [super initCPTaskVar:engine horizon:horizon duration:duration];
     _alt = alternatives;
@@ -781,11 +781,11 @@ typedef struct  {
 @end
 
 
-@implementation CPOptionalAlternativeVar
+@implementation CPOptionalAlternativeTask
 {
     id<CPTaskVarArray> _alt;
 }
--(id<CPAlternativeVar>) initCPOptionalAlternativeVar:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration alternatives:(id<CPTaskVarArray>)alternatives
+-(id<CPAlternativeTask>) initCPOptionalAlternativeTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration alternatives:(id<CPTaskVarArray>)alternatives
 {
     self = [super initCPOptionalTaskVar:engine horizon:horizon duration:duration];
     _alt = alternatives;

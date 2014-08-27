@@ -18,7 +18,7 @@
 @protocol CPScheduler
 -(void) labelActivity: (id<ORTaskVar>) act;
 -(void) labelActivities: (id<ORTaskVarArray>) act;
--(void) setAlternatives: (id<ORAlternativeVarArray>) act;
+-(void) setAlternatives: (id<ORAlternativeTaskArray>) act;
 -(void) setTimes: (id<ORTaskVarArray>) act;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2;

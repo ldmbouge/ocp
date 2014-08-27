@@ -227,15 +227,15 @@
    [engine trackMutable: task];
    return task;
 }
-+(id<CPAlternativeVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives:(id<CPTaskVarArray>)alternatives
++(id<CPAlternativeTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives:(id<CPTaskVarArray>)alternatives
 {
-    id<CPAlternativeVar> task = [[CPAlternativeVar alloc] initCPAlternativeVar:engine horizon:horizon duration:duration alternatives:alternatives];
+    id<CPAlternativeTask> task = [[CPAlternativeTask alloc] initCPAlternativeTask:engine horizon:horizon duration:duration alternatives:alternatives];
     [engine trackMutable: task];
     return task;
 }
-+(id<CPAlternativeVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives:(id<CPTaskVarArray>)alternatives
++(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives:(id<CPTaskVarArray>)alternatives
 {
-    id<CPAlternativeVar> task = [[CPOptionalAlternativeVar alloc] initCPOptionalAlternativeVar: engine horizon: horizon duration: duration alternatives:alternatives];
+    id<CPAlternativeTask> task = [[CPOptionalAlternativeTask alloc] initCPOptionalAlternativeTask: engine horizon: horizon duration: duration alternatives:alternatives];
     [engine trackMutable: task];
     return task;
 }

@@ -134,8 +134,8 @@
 // Task
 -(void) visitTask:(id<ORTaskVar>) task
 {
-    if ([task isMemberOfClass:[ORAlternativeVar class]]) {
-        [self visitAlternativeTask: (id<ORAlternativeVar>) task];
+    if ([task isMemberOfClass:[ORAlternativeTask class]]) {
+        [self visitAlternativeTask: (id<ORAlternativeTask>) task];
     }
     else if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon = [task horizon];
@@ -151,7 +151,7 @@
 }
 
 // Alternative Task
--(void) visitAlternativeTask:(id<ORAlternativeVar>) task
+-(void) visitAlternativeTask:(id<ORAlternativeTask>) task
 {
     if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon  = [task horizon];
@@ -161,7 +161,7 @@
         [alt visit: self];
         
         // Create of a task composed by alternative tasks
-        id<CPAlternativeVar> concreteTask;
+        id<CPAlternativeTask> concreteTask;
         if (![task isOptional]) {
             concreteTask = [CPFactory task: _engine horizon: horizon duration: duration withAlternatives:_gamma[alt.getId]];
         }

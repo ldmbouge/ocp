@@ -30,7 +30,7 @@
     for (ORInt i = act.low; i <= act.up; i++)
         [self labelActivity:act[i]];
 }
--(void) setAlternatives: (id<ORAlternativeVarArray>) act
+-(void) setAlternatives: (id<ORAlternativeTaskArray>) act
 {
     // TODO better heuristic that takes the slack of
     // corresponding machines into account

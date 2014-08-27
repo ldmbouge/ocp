@@ -72,7 +72,7 @@
 -(void) labelPresent: (ORBool) present;
 @end
 
-@protocol CPAlternativeVar <CPTaskVar>
+@protocol CPAlternativeTask <CPTaskVar>
 -(id<CPTaskVarArray>) alternatives;
 @end
 

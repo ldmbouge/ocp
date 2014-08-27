@@ -72,10 +72,10 @@
 }
 @end
 
-@implementation ORAlternativeVar {
+@implementation ORAlternativeTask {
     id<ORTaskVarArray> _alt;
 }
--(id<ORAlternativeVar>) initORAlternativeVar:(id<ORModel>)model alternatives:(id<ORTaskVarArray>)alt {
+-(id<ORAlternativeTask>) initORAlternativeTask:(id<ORModel>)model alternatives:(id<ORTaskVarArray>)alt {
     
     ORInt minHor = MAXINT;
     ORInt maxHor = MININT;
@@ -94,7 +94,7 @@
     
     return self;
 }
--(id<ORAlternativeVar>) initOROptionalAlternativeVar:(id<ORModel>)model alternatives:(id<ORTaskVarArray>)alt {
+-(id<ORAlternativeTask>) initOROptionalAlternativeTask:(id<ORModel>)model alternatives:(id<ORTaskVarArray>)alt {
     
     ORInt minHor = MAXINT;
     ORInt maxHor = MININT;

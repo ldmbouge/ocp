@@ -24,10 +24,10 @@
 -(id<CPTaskVar>) initCPOptionalTaskVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 @end
 
-@interface CPAlternativeVar : CPTaskVar<CPAlternativeVar>
--(id<CPAlternativeVar>) initCPAlternativeVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration alternatives: (id<CPTaskVarArray>) alternatives;
+@interface CPAlternativeTask : CPTaskVar<CPAlternativeTask>
+-(id<CPAlternativeTask>) initCPAlternativeTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration alternatives: (id<CPTaskVarArray>) alternatives;
 @end
 
-@interface CPOptionalAlternativeVar : CPOptionalTaskVar<CPAlternativeVar>
--(id<CPAlternativeVar>) initCPOptionalAlternativeVar: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration alternatives: (id<CPTaskVarArray>) alternatives;
+@interface CPOptionalAlternativeTask : CPOptionalTaskVar<CPAlternativeTask>
+-(id<CPAlternativeTask>) initCPOptionalAlternativeTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration alternatives: (id<CPTaskVarArray>) alternatives;
 @end

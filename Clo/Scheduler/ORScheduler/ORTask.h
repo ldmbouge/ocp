@@ -25,7 +25,7 @@
 -(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date;
 @end
 
-@protocol ORAlternativeVar <ORTaskVar>
+@protocol ORAlternativeTask <ORTaskVar>
 -(id<ORTaskVarArray>) alternatives;
 @end
 
@@ -61,11 +61,11 @@
 -(ORInt) ect;
 @end;
 
-@protocol ORAlternativeVarArray <ORObject>
--(id<ORAlternativeVar>) at: (ORInt) idx;
--(void) set: (id<ORAlternativeVar>) value at: (ORInt)idx;
--(id<ORAlternativeVar>)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id<ORAlternativeVar>)newValue atIndexedSubscript:(NSUInteger)idx;
+@protocol ORAlternativeTaskArray <ORObject>
+-(id<ORAlternativeTask>) at: (ORInt) idx;
+-(void) set: (id<ORAlternativeTask>) value at: (ORInt)idx;
+-(id<ORAlternativeTask>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORAlternativeTask>)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(id<ORIntRange>) range;
