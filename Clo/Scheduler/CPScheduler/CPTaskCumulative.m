@@ -224,15 +224,13 @@ typedef struct {
     // XXX Currently, no propagation is performed on non-present tasks
     for (ORInt ii = 0; ii < _size; ii++) {
         const ORInt i = _idx[ii];
-        if (_tasks[i].isPresent) {
+        if (!_tasks[i].isAbsent) {
+            if (!_tasks[i].isPresent)
+                [_tasks[i] whenPresentPropagate:self];
             if (!_tasks[i].bound)
                 [_tasks[i] whenChangePropagate:self];
             if (!_usages[i].bound)
                 [_usages[i] whenChangeMinPropagate:self];
-        }
-        else {
-            assert(_tasks[i].isOptional && !_tasks[i].isAbsent);
-            [_tasks[i] whenPresentPropagate:self];
         }
     }
     if (!_capacity.bound)

@@ -22,8 +22,6 @@
 
 @implementation CPTaskDisjunctive {
     // Attributs of tasks
-    CPIntVar **  _start0;   // Start times
-    CPIntVar **  _dur0;     // Durations
     ORInt    *   _idx;      // Indices of activities
     
     ORUInt       _size;     // Number of considered tasks
@@ -74,8 +72,6 @@
     _dprec = true;
     _nfnl  = true;
     _ef    = true;
-    _start0 = NULL;
-    _dur0   = NULL;
     _idx   = NULL;
     
     _est         = NULL;
@@ -95,8 +91,6 @@
 
 -(void) dealloc
 {
-    if (_start0 != NULL) free(_start0);
-    if (_dur0   != NULL) free(_dur0  );
     if (_idx    != NULL) free(_idx   );
     
     [super dealloc];
@@ -108,12 +102,10 @@
     _global_slack = makeTRInt(_trail, MAXINT);
     
     // Allocating memory
-    _start0 = malloc(_size * sizeof(CPIntVar*));
-    _dur0   = malloc(_size * sizeof(CPIntVar*));
     _idx    = malloc(_size * sizeof(ORInt    ));
     
     // Checking whether memory allocation was successful
-    if (_start0 == NULL || _dur0 == NULL || _idx == NULL) {
+    if (_idx == NULL) {
         @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskDisjunctive: Out of memory!"];
     }
     
