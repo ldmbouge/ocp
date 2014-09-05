@@ -1385,8 +1385,7 @@ static CPTaskVarPrec * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psiz
 
     // Assumption all activities are fixed
     for (ORInt tt = 0; tt < cumu->_size; tt++) {
-        const ORInt t = cumu->_idx[tt];
-        assert(isBounded(cumu, t));
+        assert(isBounded(cumu, cumu->_idx[tt]));
     }
 
     // XXX Assumption all activities are fixed

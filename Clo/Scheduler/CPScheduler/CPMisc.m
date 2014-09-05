@@ -106,4 +106,52 @@ void dumpProfile(Profile prof)
     printf("\n");
 }
 
+/*******************************************************************************
+ * Sorting Algorithms
+ ******************************************************************************/
 
+// Bubble sort
+//
+void bsort_r(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, const ORInt*, const ORInt*)) {
+    for (ORInt i = 0; i < size; i++) {
+        ORBool swapped = false;
+        for (ORInt j = size - 1; j > i; j--) {
+            if (compare(thunk, &base[j-1], &base[j]) > 0) {
+                ORInt tmp = base[j-1];
+                base[j-1] = base[j];
+                base[j] = tmp;
+                swapped = true;
+            }
+        }
+        if (!swapped)
+            break;
+    }
+}
+
+// Insertion sort
+//
+void isort_r(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, const ORInt*, const ORInt*)) {
+    for (ORInt i = 1; i < size; i++) {
+        for (ORInt j = i; j > 0 && compare(thunk, &base[j-1], &base[j]) > 0; j--) {
+            ORInt tmp   = base[j - 1];
+            base[j - 1] = base[j    ];
+            base[j    ] = tmp;
+        }
+    }
+}
+
+// Quick sort
+//
+void qusort_r(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, const ORInt*, const ORInt*)) {
+    // NOTE: qsort_r the 3rd argument of qsort_r is at the last position in glibc (GNU/Linux)
+    qsort_r(base, size, sizeof(ORInt), thunk, (int(*)(void*, const void*, const void*)) compare);
+}
+
+
+ORBool test_sorted_array(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, const ORInt*, const ORInt*)) {
+    for (ORInt i = 0, j = 1; j < size; i++, j++) {
+        if (compare(thunk, &base[j-1], &base[j]) > 0)
+            return false;
+    }
+    return true;
+}
