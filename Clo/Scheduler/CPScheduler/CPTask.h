@@ -62,6 +62,7 @@
 -(ORBool) isPresent;
 -(ORBool) isAbsent;
 -(ORBool) isOptional;
+-(void) readEssentials: (ORBool *) bound est: (ORInt *) est lct: (ORInt *) lct minDuration: (ORInt *) minD maxDuration: (ORInt *) maxD present: (ORBool *) present absent: (ORBool *) absent;
 -(void) updateStart: (ORInt) newStart;
 -(void) updateEnd: (ORInt) newEnd;
 -(void) updateMinDuration: (ORInt) newMinDuration;

@@ -207,6 +207,16 @@ typedef struct  {
 {
    return FALSE;
 }
+-(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent
+{
+    *bound   = (_start._val + _durationMin._val == _end._val) && (_durationMin._val == _durationMax._val);
+    *est     = _start._val;
+    *lct     = _end._val;
+    *minD    = _durationMin._val;
+    *maxD    = _durationMax._val;
+    *present = TRUE;
+    *absent  = FALSE;
+}
 -(void) updateStart: (ORInt) newStart
 {
    if (newStart > _start._val) {
@@ -508,6 +518,13 @@ typedef struct  {
 -(ORBool) bound
 {
    return ([_task bound] && (_presentMin._val == 1)) || (_presentMax._val == 0);
+}
+-(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent
+{
+    [_task readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
+    *bound   = [self bound    ];
+    *present = [self isPresent];
+    *absent  = [self isAbsent ];
 }
 -(void) handleFailure: (ORClosure) cl
 {
