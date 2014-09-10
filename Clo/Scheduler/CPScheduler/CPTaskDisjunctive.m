@@ -736,7 +736,6 @@ static void ef_overload_check_vilim(CPTaskDisjunctive * disj, const ORInt size, 
     initThetaTree(theta, tsize, MININT);
     // Iteration in non-decreasing order of the latest completion time
     for (ORInt tt = disj->_beginIdx; tt < disj->_endIdx; tt++) {
-//    for (ORInt tt = 0; tt < size; tt++) {
         const ORInt t0 = disj->_task_id_lct[tt] - disj->_low;
         // Retrieve task's position in task_id_est
         const ORUInt tree_idx = idx_map_est[t0];
@@ -765,7 +764,7 @@ static void ef_overload_check_optional_vilim(CPTaskDisjunctive * disj, const ORI
     // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
     const ORUInt offset = (1 << tdepth) - 1;
     // Iteration in non-descreasing order of the latest completion time
-    for (ORInt tt = 0; tt < size; tt++) {
+    for (ORInt tt = disj->_beginIdx; tt < disj->_endIdx; tt++) {
         const ORInt t0 = disj->_task_id_lct[tt] - disj->_low;
         if (isRelevant(disj, t0)) {
             // Relevant activity
@@ -831,17 +830,14 @@ static void dprec_filter_est_vilim(CPTaskDisjunctive * disj, const ORInt size, c
     // Inititialise Theta tree
     initThetaTree(theta, tsize, MININT);
     ORInt jj = disj->_beginIdx;
-//    ORInt jj = 0;
     ORUInt j0 = disj->_task_id_lst[jj] - disj->_low;
     // Outer loop:
     //  Iterating over the tasks in ascending order of their earliest completion time
     for (ORInt ii = disj->_beginIdx; ii < disj->_endIdx; ii++) {
-//    for (ORInt ii = 0; ii < size; ii++) {
         const ORInt i0 = disj->_task_id_ect[ii] - disj->_low;
         // Inner loop:
         // Iterating over the tasks in ascending order of their latest start time
         while (jj < disj->_endIdx && disj->_est[i0] + disj->_dur_min[i0] > disj->_lct[j0] - disj->_dur_min[j0]) {
-//        while (jj < size && disj->_est[i0] + disj->_dur_min[i0] > disj->_lct[j0] - disj->_dur_min[j0]) {
             // Task 'j' precedes task 'i'
             const ORUInt tree_idx = idx_map_est[j0];
             insertThetaNodeAtIdxEct(theta, tsize, tree_idx, disj->_dur_min[j0], disj->_est[j0] + disj->_dur_min[j0]);
@@ -875,17 +871,14 @@ static void dprec_filter_lct_vilim(CPTaskDisjunctive * disj, const ORInt size, c
     // Inititialise Theta tree
     initThetaTree(theta, tsize, MAXINT);
     ORInt jj = disj->_endIdx - 1;
-//    ORInt jj = size - 1;
     ORUInt j0 = disj->_task_id_ect[jj] - disj->_low;
     // Outer loop:
     // Iterating over the tasks in descending order of their latest start time
     for (ORInt ii = disj->_endIdx - 1; ii >= 0; ii--) {
-//    for (ORInt ii = size - 1; ii >= 0; ii--) {
         const ORUInt i0 = disj->_task_id_lst[ii] - disj->_low;
         // Inner loop:
         // Iterating over the tasks in descending order of their earliest completion time
         while (jj >= disj->_beginIdx && disj->_lct[i0] - disj->_dur_min[i0] < disj->_est[j0] + disj->_dur_min[j0]) {
-//        while (jj >= 0 && disj->_lct[i0] - disj->_dur_min[i0] < disj->_est[j0] + disj->_dur_min[j0]) {
             // Task 'i' precedes task 'j'
             insertThetaNodeAtIdxLst(theta, tsize, idx_map_lct[j0], disj->_dur_min[j0], disj->_lct[j0] - disj->_dur_min[j0]);
             jj--;
@@ -930,17 +923,17 @@ static void dprec_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORIn
     // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
     const ORUInt offset = (1 << tdepth) - 1;
     // Initialisations for the inner while-loop
-    ORInt jj = 0;
+    ORInt jj = disj->_beginIdx;
     ORInt j0 = disj->_task_id_lst[jj] - disj->_low;
     // Outer loop:
     //  Iterating over the tasks in ascending order of their earliest completion time
-    for (ORInt ii = 0; ii < size; ii++) {
+    for (ORInt ii = disj->_beginIdx; ii < disj->_endIdx; ii++) {
         const ORInt i0 = disj->_task_id_ect[ii] - disj->_low;
         // Check for absent activities
         if (isIrrelevant(disj, i0)) continue;
         // Inner loop:
         // Iterating over the tasks in ascending order of their latest start time
-        while (jj < size && disj->_est[i0] + disj->_dur_min[i0] > disj->_lct[j0] - disj->_dur_min[j0]) {
+        while (jj < disj->_endIdx && disj->_est[i0] + disj->_dur_min[i0] > disj->_lct[j0] - disj->_dur_min[j0]) {
             // Task 'j' precedes task 'i'
             const ORUInt tree_idx = idx_map_est[j0];
             const ORInt  dur_j    = disj->_dur_min[j0];
@@ -1020,17 +1013,17 @@ static void dprec_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORIn
     initLambdaTree(lambda, tsize, MAXINT);
     // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
     const ORUInt offset = (1 << tdepth) - 1;
-    ORInt jj = size - 1;
+    ORInt jj = disj->_endIdx - 1;
     ORUInt j0 = disj->_task_id_ect[jj] - disj->_low;
     // Outer loop:
     // Iterating over the tasks in descending order of their latest start time
-    for (ORInt ii = size - 1; ii >= 0; ii--) {
+    for (ORInt ii = disj->_endIdx - 1; ii >= disj->_beginIdx; ii--) {
         const ORUInt i0 = disj->_task_id_lst[ii] - disj->_low;
         // Check for absent activities
         if (isIrrelevant(disj, i0)) continue;
         // Inner loop:
         // Iterating over the tasks in descending order of their earliest completion time
-        while (jj >= 0 && disj->_lct[i0] - disj->_dur_min[i0] < disj->_est[j0] + disj->_dur_min[j0]) {
+        while (jj >= disj->_beginIdx && disj->_lct[i0] - disj->_dur_min[i0] < disj->_est[j0] + disj->_dur_min[j0]) {
             // Task 'i' succeeds task 'j'
             const ORUInt tree_idx = idx_map_lct[j0];
             const ORInt  dur_j    = disj->_dur_min[j0];
@@ -1119,20 +1112,17 @@ static void nfnl_filter_est_vilim(CPTaskDisjunctive * disj, const ORInt size, co
     // Initialise Theta tree
     initThetaTree(theta, tsize, MAXINT);
     ORInt jj = disj->_endIdx - 1;
-//    ORInt jj = size - 1;
     ORUInt j0 = disj->_task_id_ect[jj] - disj->_low;
     ORUInt jLastInserted0 = MAXINT;
     // Outer loop:
     // Iterating over the tasks in descending order of their earliest start time
     for (ORInt ii = disj->_endIdx - 1; ii >= disj->_beginIdx; ii--) {
-//    for (ORInt ii = size - 1; ii >= 0; ii--) {
         const ORUInt i0 = disj->_task_id_est[ii] - disj->_low;
         // No propagation on tasks with zero duration
         if (disj->_dur_min[i0] == 0) continue;
         // Inner loop:
         // Iterating over the tasks in descending order of their earliest completion time
         while (jj >= disj->_beginIdx && disj->_est[i0] < disj->_est[j0] + disj->_dur_min[j0]) {
-//        while (jj >= 0 && disj->_est[i0] < disj->_est[j0] + disj->_dur_min[j0]) {
             if (disj->_dur_min[j0] > 0) {
                 // Checking for a new bound update of task 'j'
                 if (theta[0]._time < disj->_est[j0] + disj->_dur_min[j0]) {
@@ -1166,20 +1156,17 @@ static void nfnl_filter_lct_vilim(CPTaskDisjunctive * disj, const ORInt size, co
     // Inititialise Theta tree
     initThetaTree(theta, tsize, MININT);
     ORInt jj = disj->_beginIdx;
-//    ORInt jj = 0;
     ORUInt j0 = disj->_task_id_lst[jj] - disj->_low;
     ORUInt jLastInserted0 = MAXINT;
     // Outer loop:
     // Iterating over the tasks in ascending order of their latest completion time
     for (ORInt ii = disj->_beginIdx; ii < size; ii++) {
-//    for (ORInt ii = 0; ii < size; ii++) {
         const ORUInt i0 = disj->_task_id_lct[ii] - disj->_low;
         // No propagation on tasks with zero duration
         if (disj->_dur_min[i0] == 0) continue;
         // Inner loop:
         // Iterating over the tasks in ascending order of their latest start time
         while (jj < disj->_endIdx && disj->_lct[i0] > disj->_lct[j0] - disj->_dur_min[j0]) {
-//        while (jj < size && disj->_lct[i0] > disj->_lct[j0] - disj->_dur_min[j0]) {
             if (disj->_dur_min > 0) {
                 // Checking for a new bound update of task 'j'
                 if (theta[0]._time > disj->_lct[j0] - disj->_dur_min[j0]) {
@@ -1224,13 +1211,13 @@ static void nfnl_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORInt
     initLambdaTree(lambda, tsize, MAXINT);
     // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
     const ORUInt offset = (1 << tdepth) - 1;
-    ORInt jj = size - 1;
+    ORInt jj = disj->_endIdx - 1;
     ORUInt j0 = disj->_task_id_ect[jj] - disj->_low;
     ORUInt jLastInserted = MAXINT;
     ORUInt jLastInserted2 = MAXINT;
     // Outer loop:
     // Iterating over the tasks in descending order of their earliest start time
-    for (ORInt ii = size - 1; ii >= 0; ii--) {
+    for (ORInt ii = disj->_endIdx - 1; ii >= disj->_beginIdx; ii--) {
         const ORUInt i0 = disj->_task_id_est[ii] - disj->_low;
         // Check for absent activities
         if (isIrrelevant(disj, i0)) continue;
@@ -1238,7 +1225,7 @@ static void nfnl_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORInt
         if (disj->_dur_min[i0] == 0) continue;
         // Inner loop:
         // Iterating over the tasks in descending order of their earliest completion time
-        while (jj >= 0 && disj->_est[i0] < disj->_est[j0] + disj->_dur_min[j0]) {
+        while (jj >= disj->_beginIdx && disj->_est[i0] < disj->_est[j0] + disj->_dur_min[j0]) {
             if (disj->_dur_min[j0] > 0 && !isIrrelevant(disj, j0)) {
                 const ORInt tree_idx = idx_map_lct[j0];
                 const ORInt dur_j    = disj->_dur_min[j0];
@@ -1322,13 +1309,13 @@ static void nfnl_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORInt
     initLambdaTree(lambda, tsize, MININT);
     // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
     const ORUInt offset = (1 << tdepth) - 1;
-    ORInt jj = 0;
+    ORInt jj = disj->_beginIdx;
     ORUInt j0 = disj->_task_id_lst[jj] - disj->_low;
     ORUInt jLastInserted  = MAXINT;
     ORUInt jLastInserted2 = MAXINT;
     // Outer loop:
     // Iterating over the tasks in ascending order of their latest completion time
-    for (ORInt ii = 0; ii < size; ii++) {
+    for (ORInt ii = disj->_beginIdx; ii < disj->_endIdx; ii++) {
         const ORUInt i0 = disj->_task_id_lct[ii] - disj->_low;
         // Check for absent activities
         if (isIrrelevant(disj, i0)) continue;
@@ -1336,7 +1323,7 @@ static void nfnl_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORInt
         if (disj->_dur_min[i0] == 0) continue;
         // Inner loop:
         // Iterating over the tasks in ascending order of their latest start time
-        while (jj < size && disj->_lct[i0] > disj->_lct[j0] - disj->_dur_min[j0]) {
+        while (jj < disj->_endIdx && disj->_lct[i0] > disj->_lct[j0] - disj->_dur_min[j0]) {
             if (disj->_dur_min > 0 && !isIrrelevant(disj, j0)) {
                 const ORInt tree_idx = idx_map_est[j0];
                 const ORInt dur_j    = disj->_dur_min[j0];
@@ -1436,14 +1423,12 @@ static void ef_filter_est_vilim(CPTaskDisjunctive * disj, const ORInt size, cons
     // Initialise Theta-Lambda tree with (T, {})
     initThetaLambdaTreeWithEct(disj, size, idx_map_est, theta, lambda, tsize);
     ORInt jj = disj->_endIdx - 1;
-//    ORInt jj = size - 1;
     ORUInt j0 = disj->_task_id_lct[jj] - disj->_low;
     // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
     const ORUInt offset = (1 << tdepth) - 1;
     // Outer loop:
     // Iterating over the tasks in descending order of their latest completion time
     while (jj > disj->_beginIdx) {
-//    while (jj > 0) {
         if (disj->_dur_min[j0] == 0) {
             j0 = disj->_task_id_lct[--jj] - disj->_low;
             continue;
@@ -1481,14 +1466,12 @@ static void ef_filter_lct_vilim(CPTaskDisjunctive * disj, const ORInt size, cons
     // Initialise Theta-Lambda tree with (T, {})
     initThetaLambdaTreeWithLst(disj, size, idx_map_lct, theta, lambda, tsize);
     ORInt jj = disj->_beginIdx;
-//    ORInt jj = 0;
     ORUInt j0 = disj->_task_id_est[jj] - disj->_low;
     // 'offset' reflects the total of nodes in the trees except the nodes in the deepest level
     const ORUInt offset = (1 << tdepth) - 1;
     // Outer loop:
     // Iterating over the tasks in ascending order of their earliest start time
     while (jj < disj->_endIdx - 1) {
-//    while (jj < size - 1) {
         if (disj->_dur_min[j0] == 0) {
             j0 = disj->_task_id_est[++jj] - disj->_low;
             continue;
@@ -1521,7 +1504,7 @@ static void ef_filter_lct_vilim(CPTaskDisjunctive * disj, const ORInt size, cons
     }
 }
 
-// Edge-Finding algorithm
+// Edge-Finding algorithms from Nuijten
 //  Time: O(n^2)
 //  Space: O(n)
 //
@@ -1537,14 +1520,14 @@ static void ef_filter_est_and_lct_nuijten(CPTaskDisjunctive * disj, const ORInt 
 static void ef_filter_est_nuijten(CPTaskDisjunctive * disj, const ORInt size, bool * update)
 {
     ORInt Ci[size];
-    for (ORInt kk = 0; kk < size; kk++) {
+    for (ORInt kk = disj->_beginIdx; kk < disj->_endIdx; kk++) {
         const ORInt k0 = disj->_task_id_est[kk] - disj->_low;
         if (disj->_dur_min[k0] <= 0)
             continue;
         ORInt P = 0;
         ORInt C = MININT;
         ORInt H = MININT;
-        for (ORInt ii = size - 1; ii >= 0; ii--) {
+        for (ORInt ii = disj->_endIdx - 1; ii >= disj->_beginIdx; ii--) {
             const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
             if (disj->_dur_min[i0] <= 0)
                 continue;
@@ -1554,7 +1537,7 @@ static void ef_filter_est_nuijten(CPTaskDisjunctive * disj, const ORInt size, bo
             }
             Ci[ii] = C;
         }
-        for (ORInt ii = 0; ii < size; ii++) {
+        for (ORInt ii = disj->_beginIdx; ii < disj->_endIdx; ii++) {
             const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
             if (disj->_dur_min[i0] <= 0)
                 continue;
@@ -1583,14 +1566,14 @@ static void ef_filter_est_nuijten(CPTaskDisjunctive * disj, const ORInt size, bo
 static void ef_filter_lct_nuijten(CPTaskDisjunctive * disj, const ORInt size, bool * update)
 {
     ORInt Ci[size];
-    for (ORInt kk = size - 1; kk >= 0; kk--) {
+    for (ORInt kk = disj->_endIdx - 1; kk >= disj->_beginIdx; kk--) {
         const ORInt k0 = disj->_task_id_lct[kk] - disj->_low;
         if (disj->_dur_min[k0] <= 0)
             continue;
         ORInt P = 0;
         ORInt C = MAXINT;
         ORInt H = MAXINT;
-        for (ORInt ii = 0; ii < size; ii++) {
+        for (ORInt ii = disj->_beginIdx; ii < disj->_endIdx; ii++) {
             const ORInt i0 = disj->_task_id_lct[ii] - disj->_low;
             if (disj->_dur_min[i0] <= 0)
                 continue;
@@ -1600,7 +1583,7 @@ static void ef_filter_lct_nuijten(CPTaskDisjunctive * disj, const ORInt size, bo
             }
             Ci[ii] = C;
         }
-        for (ORInt ii = size - 1; ii >= 0; ii--) {
+        for (ORInt ii = disj->_endIdx - 1; ii >= disj->_beginIdx; ii--) {
             const ORInt i0 = disj->_task_id_lct[ii] - disj->_low;
             if (disj->_dur_min[i0] <= 0)
                 continue;
@@ -1792,13 +1775,6 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
     const ORInt size = disj->_cIdx._val;
     const ORInt sortSize = disj->_uIdx._val;
     
-    // Allocation of memory
-//    disj->_est           = alloca(disj->_size * sizeof(ORInt ));
-//    disj->_lct           = alloca(disj->_size * sizeof(ORInt ));
-//    disj->_dur_min       = alloca(disj->_size * sizeof(ORInt ));
-//    disj->_task_id_est   = alloca(size * sizeof(ORInt ));
-//    disj->_task_id_lct   = alloca(size * sizeof(ORInt ));
-    
     // Check whether memory allocation was successful
     if (disj->_est == NULL || disj->_lct == NULL || disj->_dur_min == NULL ||
         disj->_task_id_est == NULL || disj->_task_id_lct == NULL) {
@@ -1814,13 +1790,9 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
         disj->_est    [t0] = [disj->_tasks[t] est        ];
         disj->_lct    [t0] = [disj->_tasks[t] lct        ];
         disj->_dur_min[t0] = [disj->_tasks[t] minDuration];
-//        disj->_task_id_est[tt] = tt;
-//        disj->_task_id_lct[tt] = tt;
     }
     
     // Sorting of the tasks
-    // NOTE: qsort_r the 3rd argument of qsort_r is at the last position in glibc (GNU/Linux)
-    // instead of the second last
     if (sortSize >= size) {
         isort_r(disj->_task_id_est, size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
         isort_r(disj->_task_id_lct, size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAsc);
@@ -1983,8 +1955,10 @@ static void doPropagation(CPTaskDisjunctive * disj) {
         assert(disj->_dur_min[t0] >= 0);
         assert(disj->_est[t0] + disj->_dur_min[t0] <= disj->_lct[t0]);
         
+        // Swap bounded or irrelevant tasks to the beginning of the array
         if (bound || isIrrelevant(disj, t0))
             swapORInt(disj->_bound, boundSize++, tt);
+        // Compute relevant time horizon
         if (!isIrrelevant(disj, t0)) {
             disj->_begin = min(disj->_begin, disj->_est[t0]);
             disj->_end   = max(disj->_end  , disj->_lct[t0]);
@@ -1997,24 +1971,16 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     // Updating indices
     updateIndices(disj);
     
+    if (disj->_uIdx._val <= 1) {
+        return ;
+    }
+
     const ORInt size  = disj->_uIdx._val;
     const ORInt cSize = disj->_cIdx._val;
     
-    if (size <= 1) {
-        //        assignTRInt(&(disj->_active), NO, (disj->_trail));
-        return ;
-    }
-    
     // Allocation of memory
-//    disj->_est           = alloca(disj->_size * sizeof(ORInt ));
-//    disj->_lct           = alloca(disj->_size * sizeof(ORInt ));
-//    disj->_dur_min       = alloca(disj->_size * sizeof(ORInt ));
     disj->_new_est       = alloca(disj->_size * sizeof(ORInt ));
     disj->_new_lct       = alloca(disj->_size * sizeof(ORInt ));
-//    disj->_task_id_est   = alloca(size * sizeof(ORInt ));
-//    disj->_task_id_ect   = alloca(size * sizeof(ORInt ));
-//    disj->_task_id_lst   = alloca(size * sizeof(ORInt ));
-//    disj->_task_id_lct   = alloca(size * sizeof(ORInt ));
     ORUInt * idx_map_est = alloca(disj->_size * sizeof(ORUInt));
     ORUInt * idx_map_lct = alloca(disj->_size * sizeof(ORUInt));
     
@@ -2036,24 +2002,9 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     for (ORInt tt = 0; tt < size; tt++) {
         const ORInt t  = disj->_idx[tt];
         const ORInt t0 = t - disj->_low;
-//        disj->_est    [t0] = [disj->_tasks[t] est        ];
-//        disj->_lct    [t0] = [disj->_tasks[t] lct        ];
-//        disj->_dur_min[t0] = [disj->_tasks[t] minDuration];
-//        disj->_dur_max[t0] = [disj->_tasks[t] maxDuration];
-//        disj->_present[t0] = [disj->_tasks[t] isPresent  ];
-//        disj->_absent [t0] = [disj->_tasks[t] isAbsent   ];
-//
-//        assert(disj->_dur_min[t0] >= 0);
-//        assert(disj->_est[t0] + disj->_dur_min[t0] <= disj->_lct[t0]);
-        
+
         disj->_new_est[t0] = disj->_est[t0];
         disj->_new_lct[t0] = disj->_lct[t0];
-//        disj->_task_id_est[tt] = tt;
-//        disj->_task_id_ect[tt] = tt;
-//        disj->_task_id_lst[tt] = tt;
-//        disj->_task_id_lct[tt] = tt;
-//        idx_map_est[tt] = tt;
-//        idx_map_lct[tt] = tt;
     }
     //   for (ORInt tt = 0; tt < size; tt++)
     //      NSLog(@" Task[%d] = %@",tt,disj->_tasks[tt]);
