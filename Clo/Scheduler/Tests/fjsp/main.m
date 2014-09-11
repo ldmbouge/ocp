@@ -242,11 +242,12 @@ void preprocessData(void) {
     
     ORInt idx = 0;
     for (ORInt i = 0; i < n_act; i++) {
-        if (act_nopt[i]) {
+        if (act_nopt[i] > 1) {
             alt_act[idx] = i;
             idx++;
         }
     }
+    assert(n_alt == idx);
 }
 
 bool file_exists(const char * filename)
@@ -367,8 +368,9 @@ int main(int argc, const char * argv[])
 			^() {
 				// Search strategy
                 [cp setAlternatives: Alts];
-//                [cp labelActivities: OptActs];
-                [cp setTimes: Acts];
+                [cp labelActivities: OptActs];
+                // XXX setTimes seems to be buggy
+//                [cp setTimes: Acts];
                 [cp label: MS];
                 printf("start = [");
                 for (ORInt t = ActsR.low; t <= ActsR.up; t++) {

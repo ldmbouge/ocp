@@ -43,6 +43,9 @@
 }
 -(void) setTimes: (id<ORTaskVarArray>) act
 {
+    // WARNING this method might not work for optional and alternative tasks
+    // or tasks with variable duration
+    
    id<ORIntRange> R = act.range;
    ORInt low = R.low;
    ORInt up = R.up;

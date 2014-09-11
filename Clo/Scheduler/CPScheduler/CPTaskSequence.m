@@ -36,9 +36,13 @@
 {
     // NOTE temporary check for optional task, can be removed once the propagator
     // is extended for optional tasks
-    for (ORInt i = tasks.low; i <= tasks.up; i++) {
-        assert([tasks[i] isKindOfClass: [CPTaskVar class]]);
-    }
+    assert(^ORBool() {
+        for (ORInt i = tasks.low; i <= tasks.up; i++) {
+            if (![tasks[i] isMemberOfClass: [CPTaskVar class]])
+                return false;
+        }
+        return true;
+    });
    id<CPTaskVar> task0 = tasks[tasks.low];
    _engine = [task0 engine];
    self = [super initCPCoreConstraint: _engine];
@@ -53,6 +57,7 @@
    _up = _tasks.range.up;
    
    assert(_low == _succ.low + 1);
+    NSLog(@"Create constraint CPTaskSequence\n");
    return self;
 }
 

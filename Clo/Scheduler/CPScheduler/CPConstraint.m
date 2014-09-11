@@ -36,7 +36,7 @@
     _alt  = alt;
     _idx  = NULL;
     
-    NSLog(@"Create alternative constraint\n");
+    NSLog(@"Create constraint CPAlternative\n");
     
     return self;
 }
@@ -718,6 +718,7 @@
 
    _before = before;
    _after  = after;
+    NSLog(@"Create constraint CPTaskPrecedence\n");
    return self;
 }
 -(void) dealloc
@@ -762,6 +763,7 @@
    
    _before = before;
    _after  = after;
+    NSLog(@"Create constraint CPOptionalTaskPrecedence\n");
    return self;
 }
 -(void) dealloc
@@ -812,6 +814,7 @@
    
    _task = task;
    _date  = date;
+    NSLog(@"Create constraint CPTaskIsFinishedBy\n");
    return self;
 }
 -(void) dealloc
@@ -857,6 +860,7 @@
    
    _task = task;
    _duration  = duration;
+    NSLog(@"Create constraint CPTaskDuration\n");
    return self;
 }
 -(void) dealloc
@@ -903,6 +907,7 @@
    _normal = normal;
    _extended = extended;
    _time  = time;
+    NSLog(@"Create constraint CPTaskAddTransitionTime\n");
    return self;
 }
 -(void) dealloc
