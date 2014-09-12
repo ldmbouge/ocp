@@ -1915,6 +1915,9 @@ static void updateIndices(CPTaskDisjunctive * disj)
     }
 }
 
+// Reading the tasks data and storing them in the data structure of the propagator
+// - Data read: bound, est,  lct, minDuration, maxDuration,  present,  absent
+// - Data stored:     _est, _lct,    _dur_min,    _dur_max, _present, _absent
 static void readData(CPTaskDisjunctive * disj)
 {
     ORInt boundSize = disj->_boundSize._val;
@@ -1951,7 +1954,6 @@ static void readData(CPTaskDisjunctive * disj)
  ******************************************************************************/
 
 static void doPropagation(CPTaskDisjunctive * disj) {
-    bool update;
     const ORInt sortSize = disj->_sortSize._val;
     
     cleanUp(disj);
@@ -1959,13 +1961,13 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     // Storing the change data in the disjunctive data structures
     readData(disj);
     
-    // Updating indices
+    // Updating indices stored in '_idx'. It will change '_uIdx' and '_cIdx' too.
     updateIndices(disj);
     
-    const ORInt size  = disj->_uIdx._val;
-    const ORInt cSize = disj->_cIdx._val;
+    const ORInt unknownSize = disj->_uIdx._val;
+    const ORInt presentSize = disj->_cIdx._val;
 
-    if (size <= 1 || cSize < 1 || disj->_begin == MAXINT) {
+    if (unknownSize <= 1 || presentSize < 1 || disj->_begin == MAXINT) {
         return ;
     }
     
@@ -1976,7 +1978,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     ORInt * idx_map_lct = alloca(disj->_size * sizeof(ORInt));
     
     // Determing the size of the tree
-    const ORInt tsize = 2 * size - 1;
+    const ORInt tsize = 2 * unknownSize - 1;
     const ORInt tdepth = getDepth(tsize);
     ThetaTree  * theta  = alloca(tsize * sizeof(ThetaTree ));
     LambdaTree * lambda = alloca(tsize * sizeof(LambdaTree));
@@ -1990,7 +1992,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     }
     
     // Initialisation of the arrays
-    for (ORInt tt = 0; tt < size; tt++) {
+    for (ORInt tt = 0; tt < unknownSize; tt++) {
         const ORInt t  = disj->_idx[tt];
         const ORInt t0 = t - disj->_low;
 
@@ -2000,12 +2002,8 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     //   for (ORInt tt = 0; tt < size; tt++)
     //      NSLog(@" Task[%d] = %@",tt,disj->_tasks[tt]);
     
-    disj->_beginIdx = MININT;
-    disj->_endIdx   = MININT;
-    
-    update = false;
     // Sorting tasks regarding their earliest start and latest completion times
-    if (cSize >= sortSize) {
+    if (presentSize >= sortSize) {
         isort_r(disj->_task_id_est, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
         isort_r(disj->_task_id_lct, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAsc);
     }
@@ -2040,40 +2038,40 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     
     // Computation of the sorting array indices determining which tasks need
     // to be considered during current propagation
-    if (disj->_beginIdx < 0) {
-        for (ORInt ii = 0; ii < sortSize; ii++) {
-            const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
-            if (!isIrrelevant(disj, i0) && disj->_lct[i0] > disj->_begin) {
-                disj->_beginIdx = ii;
-                break;
-            }
+    disj->_beginIdx = MININT;
+    disj->_endIdx   = MININT;
+    for (ORInt ii = 0; ii < sortSize; ii++) {
+        const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
+        if (!isIrrelevant(disj, i0) && disj->_lct[i0] > disj->_begin) {
+            disj->_beginIdx = ii;
+            break;
         }
-        assert(0 <= disj->_beginIdx && disj->_beginIdx < sortSize);
-        for (ORInt ii = sortSize - 1; ii >= disj->_beginIdx; ii--) {
-            const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
-            if (!isIrrelevant(disj, i0) && disj->_est[i0] < disj->_end) {
-                disj->_endIdx = ii + 1;
-                break;
-            }
-        }
-        assert(0 < disj->_endIdx && disj->_endIdx <= sortSize);
-        assert(disj->_endIdx - disj->_beginIdx <= size);
     }
+    assert(0 <= disj->_beginIdx && disj->_beginIdx < sortSize);
+    for (ORInt ii = sortSize - 1; ii >= disj->_beginIdx; ii--) {
+        const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
+        if (!isIrrelevant(disj, i0) && disj->_est[i0] < disj->_end) {
+            disj->_endIdx = ii + 1;
+            break;
+        }
+    }
+    assert(0 < disj->_endIdx && disj->_endIdx <= sortSize);
+    assert(disj->_endIdx - disj->_beginIdx <= size);
     
     // Initialisation of the positions of the tasks
-    initIndexMap(disj, disj->_task_id_est, idx_map_est, size, tsize, tdepth);
-    
+    initIndexMap(disj, disj->_task_id_est, idx_map_est, unknownSize, tsize, tdepth);
+
     // Consistency check
-    if (cSize >= size) {
-        ef_overload_check_vilim(disj, size, idx_map_est, theta, tsize);
+    if (presentSize >= unknownSize) {
+        ef_overload_check_vilim(disj, unknownSize, idx_map_est, theta, tsize);
     }
     else {
-        ef_overload_check_optional_vilim(disj, size, idx_map_est, theta, lambda, tsize, tdepth);
+        ef_overload_check_optional_vilim(disj, unknownSize, idx_map_est, theta, lambda, tsize, tdepth);
     }
     
     // Further initialisations needed for the filtering algorithm
-    initIndexMap(disj, disj->_task_id_lct, idx_map_lct, size, tsize, tdepth);
-    if (cSize >= sortSize) {
+    initIndexMap(disj, disj->_task_id_lct, idx_map_lct, unknownSize, tsize, tdepth);
+    if (presentSize >= sortSize) {
         isort_r(disj->_task_id_ect, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEctAsc);
         isort_r(disj->_task_id_lst, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLstAsc);
     }
@@ -2108,40 +2106,42 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     
     if (disj->_uIdx._val < disj->_sortSize._val)
         assignTRInt(&(disj->_sortSize), disj->_uIdx._val, disj->_trail);
+
+    bool update = false;
     
     // Detectable precedences
     if (disj->_dprec) {
-        if (cSize >= size) {
-            dprec_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, tsize, & update);
+        if (presentSize >= unknownSize) {
+            dprec_filter_est_and_lct_vilim(disj, unknownSize, idx_map_est, idx_map_lct, theta, tsize, & update);
         }
         else {
-            dprec_filter_est_and_lct_optional_vilim(disj, size, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
+            dprec_filter_est_and_lct_optional_vilim(disj, unknownSize, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
         }
     }
     // Not-first/not-last
     if (!update && disj->_nfnl) {
-        if (cSize >= size) {
-            nfnl_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, tsize, & update);
+        if (presentSize >= unknownSize) {
+            nfnl_filter_est_and_lct_vilim(disj, unknownSize, idx_map_est, idx_map_lct, theta, tsize, & update);
         }
         else {
-            nfnl_filter_est_and_lct_optional_vilim(disj, size, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
+            nfnl_filter_est_and_lct_optional_vilim(disj, unknownSize, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
         }
     }
     // Edge-finding
     if (!update && disj->_ef) {
-        if (cSize >= size) {
+        if (presentSize >= unknownSize) {
             // NOTE: Nuijten's algorithm has a time complexity of O(n^2)
 //            ef_filter_est_and_lct_nuijten(disj, size, & update);
-            ef_filter_est_and_lct_vilim(disj, size, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
+            ef_filter_est_and_lct_vilim(disj, unknownSize, idx_map_est, idx_map_lct, theta, lambda, tsize, tdepth, & update);
         }
         else {
             // NOTE: This algorithms has a time-complexity of O(n^2)
-            ef_filter_est_and_lct_optional_nuijten(disj, size, & update);
+            ef_filter_est_and_lct_optional_nuijten(disj, unknownSize, & update);
         }
     }
     
     // Updating the global slack
-    const ORInt globalSlack = getGlobalSlack(disj, size);
+    const ORInt globalSlack = getGlobalSlack(disj, unknownSize);
     assignTRInt(&(disj->_global_slack), globalSlack, disj->_trail);
 }
 
