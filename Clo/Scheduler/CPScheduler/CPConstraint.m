@@ -374,10 +374,14 @@
     const ORInt k = _idx[0];
     ORBool test = false;
     do {
-        [_task updateStart      : _alt[k].est        ];
-        [_task updateEnd        : _alt[k].lct        ];
-        [_task updateMinDuration: _alt[k].minDuration];
-        [_task updateMaxDuration: _alt[k].maxDuration];
+        [_task   updateStart      : _alt[k].est        ];
+        [_task   updateEnd        : _alt[k].lct        ];
+        [_task   updateMinDuration: _alt[k].minDuration];
+        [_task   updateMaxDuration: _alt[k].maxDuration];
+        [_alt[k] updateStart      : _task.est        ];
+        [_alt[k] updateEnd        : _task.lct        ];
+        [_alt[k] updateMinDuration: _task.minDuration];
+        [_alt[k] updateMaxDuration: _task.maxDuration];
         test = (_task.est != _alt[k].est || _task.lct != _alt[k].lct ||
              _task.minDuration != _alt[k].minDuration ||
              _task.maxDuration != _alt[k].maxDuration);
@@ -718,7 +722,7 @@
 
    _before = before;
    _after  = after;
-    NSLog(@"Create constraint CPTaskPrecedence\n");
+//    NSLog(@"Create constraint CPTaskPrecedence\n");
    return self;
 }
 -(void) dealloc
