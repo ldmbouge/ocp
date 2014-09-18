@@ -61,9 +61,6 @@
     ORBool _dprec;          // Detectable precedences filtering
     ORBool _nfnl;           // Not-first/not-last filtering
     ORBool _ef;             // Edge-finding
-    
-    // Additional informations
-    TRInt _global_slack; // Global slack of the disjunctive constraint
 }
 -(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) tasks
 {
@@ -124,11 +121,10 @@
 }
 -(ORStatus) post
 {
-    _cIdx         = makeTRInt(_trail, 0     );
-    _uIdx         = makeTRInt(_trail, _size );
-    _boundSize    = makeTRInt(_trail, 0     );
-    _global_slack = makeTRInt(_trail, MAXINT);
-    _sortSize     = makeTRInt(_trail, _size );
+    _cIdx        = makeTRInt(_trail, 0     );
+    _uIdx        = makeTRInt(_trail, _size );
+    _boundSize   = makeTRInt(_trail, 0     );
+    _sortSize    = makeTRInt(_trail, _size );
     
     // Allocating memory
     _idx         = malloc(_size * sizeof(ORInt));
@@ -204,7 +200,7 @@
 }
 -(ORInt) globalSlack
 {
-    return _global_slack._val;
+    return getGlobalSlack(self);
 }
 -(ORInt) localSlack
 {
@@ -1724,74 +1720,121 @@ static inline ORBool isUnfixed(CPTaskDisjunctive * disj, const ORInt i)
 // The global slack measures the tightness of the resource for unfixed
 // tasks. It only considers the time interval in that those tasks must be
 // scheduled.
-static ORInt getGlobalSlack(CPTaskDisjunctive * disj, const ORInt size)
+static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
 {
+    // Assumptions
+    // - called outside the propagation loop =>
+    // - the arrays '_est', '_lct', and '_dur_min' contain the current values from
+    //   the present and non-absent tasks
+    // - the parameters '_begin' and '_end' represent the tightest time window
+    //   in that all unbounded tasks (present or non-absent) need to be scheduled
+    // - the sorting arrays '_task_id_est' and '_task_id_lct' are sorted
+    // - the indices '_beginIdx' and '_endIdx' pointing to the first task and the
+    //   task immediately after the last task that fully or partially overlaps
+    //   with the tightest time windows in the sorting arrays
+    
+    // Testing the data
+    assert(^ORBool(){
+        for (ORInt tt = 0; tt < disj->_uIdx._val; tt++) {
+            const ORInt t  = disj->_idx[tt];
+            const ORInt t0 = t - disj->_low;
+            if (disj->_est[t0] != disj->_tasks[t].est || disj->_lct[t0] != disj->_tasks[t].lct || disj->_dur_min[t0] != disj->_tasks[t].minDuration)
+                return false;
+        }
+        return true;
+    });
+    
+    // Testing the sorting of the sorting array '_task_id_est'
+    assert(^ORBool() {
+        for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
+            const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
+            const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
+            if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
+                return false;
+            else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_est[i0] > disj->_est[i1])
+                return false;
+        }
+        return true;
+    });
+
     ORInt est_min = MAXINT;
     ORInt lct_max = MININT;
     ORInt len_min = 0;
     // Computing the tightest time interval [est_min, lct_max) that enclosed all
     // unfixed present tasks.
-    for (ORInt i = 0; i < size; i++) {
+    for (ORInt tt = disj->_beginIdx; tt < disj->_endIdx; tt++) {
         // XXX For the moment being only unfixed present activities are considered
-        const ORInt t0 = disj->_idx[i] - disj->_low;
-        if (isPresent(disj, t0) && isUnfixed(disj, t0)) {
+        const ORInt t0 = disj->_task_id_est[tt] - disj->_low;
+        if (isRelevant(disj, t0) && isUnfixed(disj, t0)) {
             est_min = min(est_min, disj->_est[t0]);
             lct_max = max(lct_max, disj->_lct[t0]);
         }
     }
-    // Suming up the length of present tasks that must be run in the pre-computed
-    // time interval
-    for (ORInt i = 0; i < size; i++) {
-        // XXX For the moment being only unfixed present activities are considered
-        const ORInt t0 = disj->_idx[i] - disj->_low;
-        if (isPresent(disj, t0) && est_min <= disj->_est[t0] && disj->_lct[t0] <= lct_max) {
-            len_min += disj->_dur_min[i];
-        }
+    for (ORInt tt = disj->_beginIdx; tt < disj->_endIdx; tt++) {
+        const ORInt t0 = disj->_task_id_est[tt] - disj->_low;
+        if (isRelevant(disj, t0) && disj->_begin <= disj->_est[t0] && disj->_lct[t0] <= disj->_end)
+            len_min += disj->_dur_min[t0];
     }
+    
     return (lct_max - est_min - len_min);
 }
 
 static ORInt getLocalSlack(CPTaskDisjunctive * disj)
 {
-    cleanUp(disj);
+    // Assumptions
+    // - called outside the propagation loop =>
+    // - the arrays '_est', '_lct', and '_dur_min' contain the current values from
+    //   the present and non-absent tasks
+    // - the parameters '_begin' and '_end' represent the tightest time window
+    //   in that all unbounded tasks (present or non-absent) need to be scheduled
+    // - the sorting arrays '_task_id_est' and '_task_id_lct' are sorted
+    // - the indices '_beginIdx' and '_endIdx' pointing to the first task and the
+    //   task immediately after the last task that fully or partially overlaps
+    //   with the tightest time windows in the sorting arrays
+
+    // Testing the data
+    assert(^ORBool(){
+        for (ORInt tt = 0; tt < disj->_uIdx._val; tt++) {
+            const ORInt t  = disj->_idx[tt];
+            const ORInt t0 = t - disj->_low;
+            if (disj->_est[t0] != disj->_tasks[t].est || disj->_lct[t0] != disj->_tasks[t].lct || disj->_dur_min[t0] != disj->_tasks[t].minDuration)
+                return false;
+        }
+        return true;
+    });
     
-    // XXX Temporary assignment (it should be '_cIdx' or '_uIdx')
-    const ORInt size = disj->_cIdx._val;
-    const ORInt sortSize = disj->_uIdx._val;
+    // Testing the sorting of the sorting array '_task_id_est'
+    assert(^ORBool() {
+        for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
+            const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
+            const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
+            if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
+                return false;
+            else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_est[i0] > disj->_est[i1])
+                return false;
+        }
+        return true;
+    });
+    // Testing the sorting of the sorting array '_task_id_lct'
+    assert(^ORBool() {
+        for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
+            const ORInt i0 = disj->_task_id_lct[ii    ] - disj->_low;
+            const ORInt i1 = disj->_task_id_lct[ii + 1] - disj->_low;
+            if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
+                return false;
+            else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_lct[i0] > disj->_lct[i1])
+                return false;
+        }
+        return false;
+    });
     
-    // Check whether memory allocation was successful
-    if (disj->_est == NULL || disj->_lct == NULL || disj->_dur_min == NULL ||
-        disj->_task_id_est == NULL || disj->_task_id_lct == NULL) {
-        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskDisjunctive: Out of memory!"];
-    }
-    
-    // Initialisation of the arrays
-    for (ORInt tt = 0; tt < size; tt++) {
-        const ORInt t  = disj->_idx[tt];
-        const ORInt t0 = t - disj->_low;
-        // XXX Only consider present activities for the moment
-        assert(isRelevant(disj, t0));
-        disj->_est    [t0] = [disj->_tasks[t] est        ];
-        disj->_lct    [t0] = [disj->_tasks[t] lct        ];
-        disj->_dur_min[t0] = [disj->_tasks[t] minDuration];
-    }
-    
-    // Sorting of the tasks
-    if (sortSize >= size) {
-        isort_r(disj->_task_id_est, size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
-        isort_r(disj->_task_id_lct, size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAsc);
-    }
-    else {
-        isort_r(disj->_task_id_est, size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscOpt);
-        isort_r(disj->_task_id_lct, size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAscOpt);
-    }
-    
+    const ORInt presentSize = disj->_cIdx._val;
     ORInt localSlack = MAXINT;
     ORInt len_min = 0;
     ORInt jjPrev  = 0;
-    ORInt jjLast  = size - 1;
+    ORInt jjLast  = presentSize - 1;
     
-    for (ORInt jj = size - 1; jj >= 0; jj--) {
+    for (ORInt jj = presentSize - 1; jj >= 0; jj--) {
         const ORInt j0 = disj->_task_id_lct[jj] - disj->_low;
         if (isUnfixed(disj, j0)) {
             jjLast = jj;
@@ -1799,7 +1842,7 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
         }
     }
     
-    for (ORInt ii = 0; ii < size; ii++) {
+    for (ORInt ii = 0; ii < presentSize; ii++) {
         const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
         if (isUnfixed(disj, i0)) {
             const ORInt est_min = disj->_est[i0];
@@ -1835,47 +1878,23 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
 //
 static Profile disjGetEarliestContentionProfile(CPTaskDisjunctive * disj)
 {
-    // FIXME
-    assert(false);
-    cleanUp(disj);
+    const ORInt presentSize = disj->_cIdx._val;
     
-    // XXX Temporary assignment (it should be '_cIdx' or '_uIdx')
-    const ORInt size = disj->_cIdx._val;
-    
-    // Allocation of memory
-    disj->_est           = alloca(size * sizeof(ORInt));
-    disj->_dur_min       = alloca(size * sizeof(ORInt));
-    disj->_task_id_est   = alloca(size * sizeof(ORInt));
-    disj->_task_id_ect   = alloca(size * sizeof(ORInt));
-    
-    // Check whether memory allocation was successful
-    if (disj->_est == NULL || disj->_dur_min == NULL || disj->_task_id_est == NULL ||
-        disj->_task_id_ect == NULL) {
-        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskDisjunctive: Out of memory!"];
-    }
-    
-    ORInt ect[size];
-    ORInt h[  size];
+    ORInt ect[presentSize];
+    ORInt h[  presentSize];
     
     // Initialisation of the arrays
-    for (ORInt tt = 0; tt < size; tt++) {
-        const ORInt t = disj->_idx[tt];
+    for (ORInt tt = 0; tt < presentSize; tt++) {
+        const ORInt t0 = disj->_idx[tt] - disj->_low;
         // XXX Only consider present activities for the moment
-        assert(isRelevant(disj, disj->_idx[tt] - disj->_low));
-        disj->_est[tt] = [disj->_tasks[t] est];
-        disj->_dur_min[tt] = [disj->_tasks[t] minDuration];
-        ect[tt] = [disj->_tasks[t] ect];
-        disj->_task_id_est[tt] = tt;
-        disj->_task_id_ect[tt] = tt;
+        assert(isRelevant(disj, t0));
+        assert(isRelevant(disj, disj->_task_id_est[tt] - disj->_low));
+        assert(isRelevant(disj, disj->_task_id_ect[tt] - disj->_low));
+        ect[tt] = disj->_est[t0] + disj->_dur_min[t0];
         h[tt] = 1;
     }
-    // Sorting of the tasks
-    // NOTE: qsort_r the 3rd argument of qsort_r is at the last position in glibc (GNU/Linux)
-    // instead of the second last
-    qsort_r(disj->_task_id_est, size, sizeof(ORInt), disj, (int(*)(void*, const void*, const void*)) &sortDisjEstAsc);
-    qsort_r(disj->_task_id_ect, size, sizeof(ORInt), disj, (int(*)(void*, const void*, const void*)) &sortDisjEctAsc);
     
-    Profile prof = getEarliestContentionProfile(disj->_task_id_est, disj->_task_id_ect, disj->_est, ect, h, size);
+    Profile prof = getEarliestContentionProfile(disj->_task_id_est, disj->_task_id_ect, disj->_est, ect, h, presentSize);
     
     return prof;
 }
@@ -2056,7 +2075,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
         }
     }
     assert(0 < disj->_endIdx && disj->_endIdx <= sortSize);
-    assert(disj->_endIdx - disj->_beginIdx <= size);
+    assert(disj->_endIdx - disj->_beginIdx <= unknownSize);
     
     // Initialisation of the positions of the tasks
     initIndexMap(disj, disj->_task_id_est, idx_map_est, unknownSize, tsize, tdepth);
@@ -2104,7 +2123,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
         return true;
     });
     
-    if (disj->_uIdx._val < disj->_sortSize._val)
+    if (disj->_uIdx._val != disj->_sortSize._val)
         assignTRInt(&(disj->_sortSize), disj->_uIdx._val, disj->_trail);
 
     bool update = false;
@@ -2139,10 +2158,6 @@ static void doPropagation(CPTaskDisjunctive * disj) {
             ef_filter_est_and_lct_optional_nuijten(disj, unknownSize, & update);
         }
     }
-    
-    // Updating the global slack
-    const ORInt globalSlack = getGlobalSlack(disj, unknownSize);
-    assignTRInt(&(disj->_global_slack), globalSlack, disj->_trail);
 }
 
 @end

@@ -330,7 +330,7 @@
 -(ORInt) localSlack: (id<ORTaskDisjunctive>) d
 {
    ORInt gs = [((CPDisjunctive*)_gamma[d.getId]) localSlack];
-   //   NSLog(@"Global slack: %d",gs);
+   //   NSLog(@"Local slack: %d",gs);
    return gs;
 }
 
