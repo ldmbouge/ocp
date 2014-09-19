@@ -388,7 +388,7 @@ typedef struct  {
 }
 -(void) changeStartEvt
 {
-   id<CPClosureList> mList[2];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._boundEvt[0]._val;
    k += mList[k] != NULL;
@@ -399,7 +399,7 @@ typedef struct  {
 }
 -(void) changeEndEvt
 {
-   id<CPClosureList> mList[2];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._boundEvt[0]._val;
    k += mList[k] != NULL;
@@ -410,7 +410,7 @@ typedef struct  {
 }
 -(void) changeDurationEvt
 {
-   id<CPClosureList> mList[2];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._boundEvt[0]._val;
    k += mList[k] != NULL;
@@ -740,7 +740,7 @@ typedef struct  {
 }
 -(void) presentEvt
 {
-   id<CPClosureList> mList[1];
+   id<CPClosureList> mList[2];
    ORUInt k = 0;
    mList[k] = _net._presentEvt[0]._val;
    k += mList[k] != NULL;
@@ -749,7 +749,7 @@ typedef struct  {
 }
 -(void) absentEvt
 {
-   id<CPClosureList> mList[1];
+   id<CPClosureList> mList[2];
    ORUInt k = 0;
    mList[k] = _net._absentEvt[0]._val;
    k += mList[k] != NULL;
