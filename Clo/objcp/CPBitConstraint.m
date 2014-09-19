@@ -39,7 +39,27 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    return string;
 }
 
+ORUInt numSetBits(TRUInt* low, TRUInt* up, int wordLength)
+{
+   ORUInt setBits = 0;
+   for(int i=0; i< wordLength;i++){
+      unsigned int boundLow = ~low[i]._val & ~ up[i]._val;
+      unsigned int boundUp = up[i]._val & low[i]._val;
+      setBits += __builtin_popcount(boundLow || boundUp);
+   }
+   return setBits;
+}
 
+ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
+{
+   ORUInt setBits = 0;
+   for(int i=0; i< wordLength;i++){
+      unsigned int boundLow = ~low[i] & ~ up[i];
+      unsigned int boundUp = up[i] & low[i];
+      setBits += __builtin_popcount(boundLow || boundUp);
+   }
+   return setBits;
+}
 
 @implementation CPFactory (BitConstraint)
 //Bit Vector Constraints
@@ -1071,17 +1091,17 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
       
       upXORlow = newXUp[i] ^ newXLow[i];
       inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
-      if (inconsistencyFound){
-         //         NSLog(@"Inconsistency found in Shift L Bit constraint X Variable.");
-         failNow();
-      }
+//      if (inconsistencyFound){
+//         //         NSLog(@"Inconsistency found in Shift L Bit constraint X Variable.");
+//         failNow();
+//      }
       
       upXORlow = newYUp[i] ^ newYLow[i];
       inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
-      if (inconsistencyFound){
-         //         NSLog(@"Inconsistency found in Shift L Bit constraint Y Variable.");
-         failNow();
-      }
+//      if (inconsistencyFound){
+//         //         NSLog(@"Inconsistency found in Shift L Bit constraint Y Variable.");
+//         failNow();
+//      }
       
    }
    
@@ -1115,7 +1135,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    [super dealloc];
 }
 
--(ORStatus) post
+-(void) post
 {
    [self propagate];
 //<<<<<<< HEAD
@@ -1125,7 +1145,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
       [_y whenChangePropagate: self];
 
 //   [self propagate];
-   return ORSuspend;
 //=======
 //>>>>>>> master
 }
@@ -1249,8 +1268,8 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //>>>>>>> master
 }
 -(void) propagate
-{
-//   NSLog(@"Bit Sum Constraint Propagated");
+{//   NSLog(@"Bit Sum Constraint Propagated");
+   
     unsigned int wordLength = [_x getWordLength];
     bool change = true;
 
@@ -1283,6 +1302,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    [_cin getUp:&cinUp andLow:&cinLow];
    [_cout getUp:&coutUp andLow:&coutLow];
    
+#ifdef BIT_CONSISTENT_CHECK
+   ORUInt xSetBitsBefore = numSetBits(xLow, xUp, wordLength);
+   ORUInt ySetBitsBefore = numSetBits(yLow, yUp, wordLength);
+   ORUInt zSetBitsBefore = numSetBits(zLow, zUp, wordLength);
+   ORUInt cinSetBitsBefore = numSetBits(cinLow, cinUp, wordLength);
+   ORUInt coutSetBitsBefore = numSetBits(coutLow, coutUp, wordLength);
+#endif
 
     unsigned int* prevXUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* prevXLow  = alloca(sizeof(unsigned int)*wordLength);
@@ -1880,6 +1906,20 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //   [_cout setLow:newCoutLow];
 //   [_cout setUp:newCoutUp];
    
+#ifdef BIT_CONSISTENT_CHECK
+   ORUInt xSetBitsAfter = numSetBitsORUInt(newXLow, newXUp, wordLength);
+   ORUInt ySetBitsAfter = numSetBitsORUInt(newYLow, newYUp, wordLength);
+   ORUInt zSetBitsAfter = numSetBitsORUInt(newZLow, newZUp, wordLength);
+   ORUInt cinSetBitsAfter = numSetBitsORUInt(newCinLow, newCinUp, wordLength);
+   ORUInt coutSetBitsAfter = numSetBitsORUInt(newCoutLow, newCoutUp, wordLength);
+   
+   NSAssert(xSetBitsBefore <= xSetBitsAfter, @"ERROR - Number of set bits decreased after Sum constraint propagated?!");
+   NSAssert(ySetBitsBefore <= ySetBitsAfter, @"ERROR - Number of set bits decreased after Sum constraint propagated?!");
+   NSAssert(zSetBitsBefore <= zSetBitsAfter, @"ERROR - Number of set bits decreased after Sum constraint propagated?!");
+   NSAssert(cinSetBitsBefore <= cinSetBitsAfter, @"ERROR - Number of set bits decreased after Sum constraint propagated?!");
+   NSAssert(coutSetBitsBefore <= coutSetBitsAfter, @"ERROR - Number of set bits decreased after Sum constraint propagated?!");
+#endif
+   
 #ifdef BIT_DEBUG
    NSLog(@"Done propagating sum constraint");
    NSLog(@" Cin  =%@",_cin);
@@ -2054,7 +2094,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    //Check to see that upper (zero) bits are not set to 1
    unsigned int xWordLength = [_x getWordLength];
    unsigned int yWordLength = [_y getWordLength];
-   unsigned int wordDiff = yWordLength - xWordLength;
+//   unsigned int wordDiff = yWordLength - xWordLength;
    
    TRUInt* xLow;
    TRUInt* xUp;
@@ -2133,58 +2173,147 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    [_x getUp:&xUp andLow:&xLow];
    [_y getUp:&yUp andLow:&yLow];
    
+//   NSLog(@"*******************************************");
+//   NSLog(@"x=%@\n",_x);
+//   NSLog(@"y=%@\n",_y);
+//   
    unsigned int* up = alloca(sizeof(unsigned int)*yWordLength);
    unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
    unsigned int* xUpForY = alloca(sizeof(unsigned int)*yWordLength);
-   unsigned int* xLowForY = alloca(sizeof(unsigned int)*yWordLength);
+   unsigned int* xLowForY =  alloca(sizeof(unsigned int)*yWordLength);
    unsigned int* newXUp = alloca(sizeof(unsigned int)*xWordLength);
    unsigned int* newXLow = alloca(sizeof(unsigned int)*xWordLength);
+   unsigned int* yLowForX = alloca(sizeof(unsigned int)*yWordLength);
+   unsigned int* yUpForX = alloca(sizeof(unsigned int)*yWordLength);
    
    unsigned int  upXORlow;
-   
-   int xWordShift = (_lsb/32);
-   int xBitShift = (_lsb%32);
-   for(int i=0;i<yWordLength;i++){
-      xUpForY[i] = xUp[i+xWordShift]._val>>xBitShift;
-      xLowForY[i] = xLow[i+xWordShift]._val>>xBitShift;
-      if (xBitShift!=0 && ((i+1) < xWordLength)) {
-         xUpForY[i] &= xUp[i+xWordShift+1]._val << (32 - xBitShift);
-         xLowForY[i] |= xLow[i+xWordShift+1]._val << (32 - xBitShift);
-      }
+   bool    inconsistencyFound = false;
+
+//
+//   int xWordShift = (_lsb/32);
+//   int xBitShift = (_lsb%32);
+//   for(int i=0;i<yWordLength;i++){
+//      xUpForY[i] = xUp[i+xWordShift]._val>>xBitShift;
+//      xLowForY[i] = xLow[i+xWordShift]._val>>xBitShift;
+//      if (xBitShift!=0 && ((i+1) < xWordLength)) {
+//         xUpForY[i] &= xUp[i+xWordShift+1]._val << (32 - xBitShift);
+//         xLowForY[i] |= xLow[i+xWordShift+1]._val << (32 - xBitShift);
+//      }
+//   }
+//   ORUInt mask = CP_UMASK;
+////   mask >>= 32 - [_x bitLength]%32;
+//   mask >>= 32 - ((_msb - _lsb)+1);
+//   xUpForY[xWordLength-1] &= mask;
+//   xLowForY[xWordLength-1] &= mask;
+//   
+//   for(int i=0;i<yWordLength;i++){
+//      up[i] = xUpForY[i] & yUp[i]._val;
+//      low[i] = xLowForY[i] | yLow[i]._val;
+//      upXORlow = up[i] ^ low[i];
+//      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+//         failNow();
+//      }
+//   }
+//   
+//   
+//   for(int i=0;i<xWordLength;i++){
+//      //edit GAJ 082114
+//      newXUp[i+xWordShift] &= (up[i]>>xBitShift) | ~mask;
+//      newXLow[i+xWordShift] |= (low[i]>>xBitShift) & mask;
+//      if (xBitShift!=0 && ((i+1) < xWordLength)) {
+//         newXUp[i+xWordShift] &= up[i+1] << (32 - xBitShift);
+//         newXLow[i+xWordShift] |= low[i+1] << (32 - xBitShift);
+//      }
+//   }
+//
+//   NSLog(@"x=%@\n",bitvar2NSString(newXLow, newXUp, xWordLength));
+//   NSLog(@"y=%@\n",bitvar2NSString(low, up, yWordLength));
+//   NSLog(@"*******************************************");
+
+   for (int i = 0; i < yWordLength; i++) {
+      low[i] = yLowForX[i] = yLow[i]._val;
+      up[i] = yUpForX[i] = yUp[i]._val;
+      
    }
-   ORUInt mask = CP_UMASK;
-   mask >>= 32 - [_x bitLength]%32;
-   xUpForY[xWordLength-1] &= mask;
-   xLowForY[xWordLength-1] &= mask;
+   up[yWordLength-1] = yUpForX[yWordLength-1] |= CP_UMASK << (32 - [_y bitLength]);
+   low[yWordLength-1] = yLowForX[yWordLength-1] &= ~(CP_UMASK << (32 - [_y bitLength]));
    
-   for(int i=0;i<yWordLength;i++){
-      up[i] = xUpForY[i] & yUp[i]._val;
-      low[i] = xLowForY[i] | yLow[i]._val;
-      upXORlow = up[i] ^ low[i];
-      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+   NSLog(@"yForX = %@\n",bitvar2NSString(yLowForX, yUpForX, yWordLength));
+
+   for(int i=0;i<xWordLength;i++){
+      if ((i+_lsb/32) < xWordLength) {
+         
+         up[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|((ISFALSE(xUp[i+_lsb/32]._val, xLow[i+_lsb/32]._val)>>(_lsb%32))));
+         low[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|((ISTRUE(xUp[i+_lsb/32]._val, xLow[i+_lsb/32]._val)>>(_lsb%32)));
+         //         NSLog(@"i=%i",i+_places/32);
+         if((i+_lsb/32+1) < xWordLength) {
+            up[i] &= ~(ISFALSE(xUp[i+_lsb/32+1]._val, xLow[i+_lsb/32+1]._val)<<(32-(_lsb%32)));
+            low[i] |= ISTRUE(xUp[i+_lsb/32+1]._val, xLow[i+_lsb/32+1]._val)<<(32-(_lsb%32));
+            //            NSLog(@"i=%i",i+_places/32+1);
+         }
+         if (i==(yWordLength-1)) {
+            up[i] &= UP_MASK >> [_y bitLength]%32;
+            low[i] &= UP_MASK >> [_y bitLength]%32;
+         }
+      }
+//      else{
+//         up[i] = 0;
+//         low[i] = 0;
+//      }
+      
+      if ((i-(int)_lsb/32) >= 0) {
+         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|((ISFALSE(yUpForX[i-_lsb/32], yLow[i-_lsb/32]._val)<<(_lsb%32))));
+         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|((ISTRUE(yUpForX[i-_lsb/32], yLow[i-_lsb/32]._val)<<(_lsb%32)));
+         //         NSLog(@"i=%i",i-_places/32);
+         if((i-(int)_lsb/32-1) >= 0) {
+            newXUp[i] &= ~(ISFALSE(yUpForX[(i-(int)_lsb/32-1)],yLowForX[(i-(int)_lsb/32-1)])>>(32-(_lsb%32)));
+            newXLow[i] |= ISTRUE(yUpForX[(i-(int)_lsb/32-1)],yLowForX[(i-(int)_lsb/32-1)])>>(32-(_lsb%32));
+            //            NSLog(@"i=%i",i-(int)_places/32-1);
+         }
+      }
+      else{
+         newXUp[i] = xUp[i]._val;
+         newXLow[i] = xLow[i]._val;
+      }
+      
+   }
+   
+   //clear unused upper bits
+//   ORUInt mask = CP_UMASK << (_msb-_lsb)%32;
+//   newXUp[xWordLength-1] |= mask;
+//   newXLow[xWordLength-1] &= ~mask;
+
+   //check domain consistency
+   for(int i=0;i<xWordLength;i++){
+      upXORlow = newXUp[i] ^ newXLow[i];
+      inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
+      if (inconsistencyFound){
+         NSLog(@"Inconsistency found in Bit Extract constraint X Variable.");
+         NSLog(@"x=%@\n",bitvar2NSString(newXLow, newXUp, xWordLength));
          failNow();
       }
-   }
-   
-   
-   for(int i=0;i<xWordLength;i++){
-      newXUp[i+xWordShift] = up[i]>>xBitShift;
-      newXLow[i+xWordShift] = low[i]>>xBitShift;
-      if (xBitShift!=0 && ((i+1) < xWordLength)) {
-         newXUp[i+xWordShift] &= up[i+1] << (32 - xBitShift);
-         newXLow[i+xWordShift] |= low[i+1] << (32 - xBitShift);
+      
+      upXORlow = up[i] ^ low[i];
+      inconsistencyFound |= (upXORlow&(~up[i]))&(upXORlow & low[i]);
+      if (inconsistencyFound){
+         NSLog(@"Inconsistency found in Bit Extract constraint Y Variable.");
+         NSLog(@"y=%@\n",bitvar2NSString(low, up, yWordLength));
+         failNow();
       }
+      
    }
-
+   
+   if (inconsistencyFound){
+      NSLog(@"Inconsistency found in Bit Extract constraint.");
+      failNow();
+   }
    
    [_x setUp:newXUp andLow:newXLow];
    [_y setUp:up andLow:low];
-   
 }
 @end
 
 @implementation CPBitConcat
-
 -(id) initCPBitConcat:(CPBitVarI*) x concat:(CPBitVarI *)y eq:(CPBitVarI *)z
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -2208,8 +2337,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    if (zWordLength != (xWordLength + yWordLength)) {
       failNow();
    }
-   
-   
+
    [self propagate];
    if (![_x bound])
       [_x whenChangePropagate: self];
@@ -2252,8 +2380,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    unsigned int* newZUp = alloca(sizeof(unsigned int)*zWordLength);
    unsigned int* newZLow = alloca(sizeof(unsigned int)*zWordLength);
    unsigned int  upXORlow;
-   
-   
    
    for(int i=0;i<yWordLength;i++){
       zUpForY[i] = zUp[i]._val;
@@ -2389,7 +2515,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    one[0] = 0x00000001;
    
    ORUInt mask = CP_UMASK;
-   mask >>= zBitLength % WORDLENGTH;
+   mask >>= zBitLength % BITSPERWORD;
    one[zWordLength] &=mask;
    
    ORBool zFixed = false;
@@ -2487,7 +2613,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    one[0] = 0x00000001;
    
    ORUInt mask = CP_UMASK;
-   mask >>= zBitLength % WORDLENGTH;
+   mask >>= zBitLength % BITSPERWORD;
    one[zWordLength] &=mask;
    
    ORBool xyFixed = true;

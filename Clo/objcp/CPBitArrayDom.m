@@ -58,8 +58,8 @@
    ORUInt remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
    ORUInt mask = CP_UMASK;
    mask >>= 32 - remainingbits;
-   up[_wordLength-1] &= mask;
-   low[_wordLength-1] &= mask;
+   up[0] &= mask;
+   low[0] &= mask;
 
     for(int i=0;i<_wordLength;i++){
         _low[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
@@ -821,11 +821,10 @@
     if (lmod)
        [x bitFixedEvt:_freebits._val sender:self];
    
-   uint32 idx = 0;
    for (int i=0; i<_wordLength; i++) {
-      for (int j=0; j<WORDLENGTH; j++) {
+      for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
-            [x bitFixedAtEvt:idx++ sender:self];
+            [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
       }
@@ -850,11 +849,10 @@
     if (umod)
        [x bitFixedEvt:_freebits._val sender:self];
    
-   uint32 idx = 0;
    for (int i=0; i<_wordLength; i++) {
-      for (int j=0; j<WORDLENGTH; j++) {
+      for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
-            [x bitFixedAtEvt:idx++ sender:self];
+            [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
       }
@@ -881,11 +879,10 @@
    if (umod || lmod)
       [x bitFixedEvt:_freebits._val sender:self];
 
-   uint32 idx = 0;
    for (int i=0; i<_wordLength; i++) {
-      for (int j=0; j<WORDLENGTH; j++) {
+      for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
-            [x bitFixedAtEvt:idx++ sender:self];
+            [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
       }

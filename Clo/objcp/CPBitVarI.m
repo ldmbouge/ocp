@@ -409,7 +409,7 @@ return self;
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[8];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
@@ -429,7 +429,7 @@ return self;
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[8];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
@@ -446,7 +446,7 @@ return self;
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[8];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0]._val;
    k += mList[k] != NULL;
@@ -467,7 +467,7 @@ return self;
 
 //   [_dom updateFreeBitCount];
     //Empty implementation
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[8];
    ORUInt k = 0;
    mList[k] = _net._bitFixedEvt[0]._val;
    k += mList[k] != NULL;
@@ -483,9 +483,8 @@ return self;
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
    
-   //   [_dom updateFreeBitCount];
    //Empty implementation
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[8];
    ORUInt k = 0;
    mList[k] = _net._bitFixedAtIEvt[0]._val;
    k += mList[k] != NULL;
@@ -503,13 +502,12 @@ return self;
    
    //   [_dom updateFreeBitCount];
    //Empty implementation
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[8];
    ORUInt k = 0;
    mList[k] = _net._bitFixedAtEvt[idx][0]._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleAC3:mList];
-   
    
    return ORSuspend;
 }

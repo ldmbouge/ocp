@@ -38,7 +38,7 @@
 {
    return _cp;
 }
--(id<CPVarArray>)allBitVars
+-(id<ORVarArray>)allBitVars
 {
    return (id<ORVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }

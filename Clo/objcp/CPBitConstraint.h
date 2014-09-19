@@ -17,6 +17,8 @@
 
 #define UP_MASK 0xFFFFFFFF
 
+#define BIT_CONSISTENT_CHECK
+
 @interface CPFactory (BitConstraint)
 //Bit Constraints
 +(id<CPConstraint>) bitEqual:(id<CPBitVar>)x to:(id<CPBitVar>)y;
