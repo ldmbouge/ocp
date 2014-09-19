@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+
 #if !defined(__APPLE__) || defined(__IPHONE_NA)
 typedef unsigned long long uint64;
 typedef long long sint64;
@@ -21,10 +22,10 @@ typedef unsigned char uint8;
 typedef signed char sint8;
 #endif
 
-typedef sint32 ORInt;
-typedef uint32 ORUInt;
-typedef sint64 ORLong;
-typedef uint64 ORULong;
+typedef int ORInt;
+typedef unsigned int ORUInt;
+typedef long long ORLong;
+typedef unsigned long long ORULong;
 typedef double ORFloat;
 typedef BOOL   ORBool;
 

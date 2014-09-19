@@ -93,7 +93,7 @@
 // pvh: we should really use our arrays for consistency in the interfaces [ldm:done]
 // pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable [ldm:caching]
 
--(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs
+-(void)initInternal:(id<ORVarArray>)t with:(id<CPVarArray>)cvs
 {
    ORUInt len = (ORUInt) [t count];
    _vars = t;

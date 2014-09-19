@@ -239,11 +239,11 @@
 {
    return [(ORMutableId*)[solver concretize:self] idValue];
 }
--(void) setId:(id)v in:(id<ORGamma>)solver
+-(void) setIdValue:(id)v in:(id<ORGamma>)solver
 {
-   [(ORMutableId*)[solver concretize:self] setId:v];
+   [(ORMutableId*)[solver concretize:self] setIdValue:v];
 }
--(void)setId:(id)v
+-(void)setIdValue:(id)v
 {
    _value = v;
 }

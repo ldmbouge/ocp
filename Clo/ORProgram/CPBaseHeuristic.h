@@ -16,7 +16,7 @@
 -(ORFloat) varOrdering: (id<CPIntVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
 -(void)initHeuristic:(NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
--(void)initInternal:(id<ORVarArray>)t and:(id<ORVarArray>)cv;
+-(void)initInternal:(id<ORVarArray>)t with:(id<ORVarArray>)cv;
 -(void) restart;
 -(id<ORIntVarArray>) allIntVars;
 -(id<CPProgram>)solver;
@@ -27,7 +27,7 @@
 -(CPVirtualHeuristic*)initWithBindings:(id<ORBindingArray>)bindings;
 -(ORFloat) varOrdering: (id<CPIntVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
--(void) initInternal: (id<CPIntVarArray>) t and:(id<ORVarArray>)cv;
+-(void) initInternal: (id<CPIntVarArray>) t with:(id<ORVarArray>)cv;
 -(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void) restart;
 -(id<ORIntVarArray>) allIntVars;

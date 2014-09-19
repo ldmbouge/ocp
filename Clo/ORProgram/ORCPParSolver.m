@@ -152,17 +152,17 @@
 {
   [[self worker] forall:S suchThat:filter orderedBy:order do:body];
 }
--(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
-  [[self worker] forall:S orderedBy:o1 and:o2 do:b];
+  [[self worker] forall:S orderedBy:o1 then:o2 do:b];
 }
--(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
-  [[self worker] forall:S suchThat:suchThat orderedBy:o1 and:o2  do:b];
+  [[self worker] forall:S suchThat:suchThat orderedBy:o1 then:o2  do:b];
 }
--(void) try: (ORClosure) left or: (ORClosure) right
+-(void) try: (ORClosure) left alt: (ORClosure) right
 {
-   [[[self worker] explorer] try: left or: right];
+   [[[self worker] explorer] try: left alt: right];
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {

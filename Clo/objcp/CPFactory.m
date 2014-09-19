@@ -15,7 +15,7 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORUtilities/ORUtilities.h>
-#import <CPUKernel/CPEngineI.h>
+//#import <CPUKernel/CPEngineI.h>
 #import "CPFactory.h"
 #import "CPData.h"
 #import "CPTableI.h"
@@ -221,9 +221,9 @@
 {
    return [ORFactory sum:cp over: S suchThat:f of:e];
 }
-+(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
++(id<ORRelation>) lor: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
-   return [ORFactory or:cp over: S suchThat:f of:e];
+   return [ORFactory lor:cp over: S suchThat:f of:e];
 }
 
 @end

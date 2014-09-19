@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORData.h"
+#import <ORFoundation/ORData.h>
 #import "ORExprI.h"
 #import "ORError.h"
 
@@ -41,8 +41,8 @@
 -(id) initWith:(id)v;
 -(id) idValue;
 -(id) idValue:(id<ORGamma>)solver;
--(void) setId:(id)v in:(id<ORGamma>)solver;
--(void)setId:(id)v;
+-(void) setIdValue:(id)v in:(id<ORGamma>)solver;
+-(void)setIdValue:(id)v;
 @end
 
 @interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>

@@ -13,14 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <CPUKernel/CPTypes.h>
 
-@interface CPObjectQueue : NSObject {
-   @package
-   ORInt      _mxs;
-   id*            _tab;
-   ORInt    _enter;
-   ORInt     _exit;
-   ORInt     _mask;
-}
+@interface CPObjectQueue : NSObject
 -(id)initEvtQueue:(ORInt)sz;
 -(void)dealloc;
 -(id)deQueue;
@@ -30,21 +23,7 @@
 @end
 
 // Producer-Consumer queue
-@interface PCObjectQueue  : NSObject {
-   ORInt           _mxs;
-   id*             _tab;
-   ORInt         _enter;
-   ORInt          _exit;
-   ORInt          _mask;  
-   ORInt        _nbUsed;
-   ORInt     _nbWorkers;
-   ORInt    _nbWWaiting;
-   NSCondition*  _avail;
-#if defined(__APPLE__)
-   OSSpinLock    _slock;
-#endif
-   BOOL _pretend;
-}
+@interface PCObjectQueue  : NSObject 
 -(id)initPCQueue:(ORInt)sz nbWorkers:(ORInt)nbw;
 -(void)dealloc;
 -(id)deQueue;

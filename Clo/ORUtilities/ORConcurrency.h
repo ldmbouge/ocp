@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORTypes.h"
+#import <ORUtilities/ORTypes.h>
 
 @protocol ORSolution;
 @protocol ORConstraint;

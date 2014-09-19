@@ -12,6 +12,7 @@
 #import "CPBitConstraint.h"
 #import "CPUKernel/CPEngineI.h"
 #import "CPBitMacros.h"
+#import "CPBitVarI.h"
 
 #define ISTRUE(up, low) ((up) & (low))
 #define ISFALSE(up, low) ((~up) & (~low))

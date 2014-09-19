@@ -11,10 +11,10 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
-#import "ORObject.h"
-#import "ORData.h"
-#import "ORSet.h"
-#import "ORAVLTree.h"
+#import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORAVLTree.h>
 
 @interface ORIntSetI : ORObject<ORIntSet>
 

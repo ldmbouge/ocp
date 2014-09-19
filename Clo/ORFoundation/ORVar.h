@@ -67,8 +67,8 @@
 @protocol ORIntVarArray <ORVarArray>
 -(id<ORIntVar>) at: (ORInt) value;
 -(void) set: (id<ORIntVar>) x at: (ORInt) value;
--(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORIntVar>) objectAtIndexedSubscript: (NSInteger) key;
+-(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSInteger) idx;
 -(id<ORASolver>) solver;
 @end
 

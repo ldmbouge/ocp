@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CPUKernel/CPEngine.h>
-#import <objcp/CPData.h>
+//#import <objcp/CPData.h>
 
 @protocol CPIntVarArray;
 @protocol CPProgram;
@@ -20,7 +20,7 @@
 @protocol CPHeuristic <NSObject>
 -(ORFloat) varOrdering: (id<CPIntVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x;
--(void) initInternal: (id<ORVarArray>) t  and:(id<ORVarArray>)cv;
+-(void) initInternal: (id<ORVarArray>) t  with:(id<ORVarArray>)cv;
 -(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void) restart;
 -(id<ORIntVarArray>) allIntVars;

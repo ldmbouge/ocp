@@ -20,6 +20,15 @@
 #import "CPEngineI.h"
 #import "CPEvent.h"
 
+typedef struct  {
+   TRId         _boundsEvt[2];
+   TRId           _bindEvt[2];
+   TRId            _domEvt[2];
+   TRId            _minEvt[2];
+   TRId            _maxEvt[2];
+   TRId _valueClosureQueue[2];
+} CPEventNetwork;
+
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
 /*****************************************************************************************/
@@ -586,7 +595,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 /*                        CPIntVarI                                                      */
 /*****************************************************************************************/
 
-@implementation CPIntVarI
+@implementation CPIntVarI {
+   @public
+   CPEventNetwork  _net;
+}
 
 #define TRACKLOSSES (_net._valueClosureQueue._val != nil || _triggers != nil)
 
@@ -798,6 +810,22 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 // nothing to do here
 -(void) setTracksLoseEvt
 {
+}
+
+BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
+{
+   switch(((CPIntVar*)x)->_vc) {
+      case CPVCBare: {
+         CPIntVarI* y = (CPIntVarI*)x;
+         if (y->_net._valueClosureQueue[0] != nil || y->_triggers != nil)
+            return YES;
+         else if (y->_recv && [y->_recv tracksLoseEvt])
+            return YES;
+         else
+            return NO;
+      }
+      default: return [x tracksLoseEvt];
+   }
 }
 
 // AC3 Closure Events
@@ -1946,7 +1974,18 @@ void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender)
  }
 @end
 
-@implementation CPLiterals
+@implementation CPLiterals {
+   CPIntVar*     _ref;
+   CPEQLitView** _pos;
+   ORInt          _nb;
+   ORInt         _ofs;
+   TRInt           _a;
+   TRInt           _b;
+   BOOL       _tracksLoseEvt;
+   IMP  _changeMaxEvtIMP;
+   IMP  _changeMinEvtIMP;
+   IMP  _domEvtIMP;
+}
 -(id) initCPLiterals: (CPIntVar*) ref
 {
    self = [super init];

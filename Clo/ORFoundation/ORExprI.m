@@ -88,13 +88,13 @@
 {
    return [[self asExpression:[e tracker]] gt:e];
 }
--(id<ORRelation>) and: (id<ORExpr>) e
+-(id<ORRelation>) land: (id<ORExpr>) e
 {
-   return [[self asExpression:[e tracker]] and:e];
+   return [[self asExpression:[e tracker]] land:e];
 }
--(id<ORRelation>) or: (id<ORExpr>) e
+-(id<ORRelation>) lor: (id<ORExpr>) e
 {
-   return [[self asExpression:[e tracker]] or:e];
+   return [[self asExpression:[e tracker]] lor:e];
 }
 @end
 
@@ -458,19 +458,19 @@
 {
    return [ORFactory exprNegate:self track:[self tracker]];
 }
--(id<ORExpr>)and:(id<ORRelation>)e
+-(id<ORExpr>) land:(id<ORRelation>)e
 {
    if (e == NULL)
       return self;
    else
-      return [self and:e track:[self tracker]];
+      return [self land:e track:[self tracker]];
 }
--(id<ORExpr>) or: (id<ORRelation>)e
+-(id<ORExpr>) lor: (id<ORRelation>)e
 {
    if (e == NULL)
       return self;
    else
-      return [self or:e track:[self tracker]];
+      return [self lor:e track:[self tracker]];
 }
 -(id<ORExpr>) imply:(id<ORRelation>)e
 {
@@ -605,18 +605,18 @@
 {
    return (id)[ORFactory exprNegate:self track:t];
 }
--(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t
+-(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t
 {
    if ([e conformsToProtocol:@protocol(ORExpr)])
-      return (id)[ORFactory expr:(id)self and:(id)e track:t];
+      return (id)[ORFactory expr:(id)self land:(id)e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
-      return (id)[ORFactory expr:(id)self and:(id)[(id)e asExpression:t] track:t];
+      return (id)[ORFactory expr:(id)self land:(id)[(id)e asExpression:t] track:t];
    else
       return NULL;
 }
--(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t
+-(id<ORRelation>) lor: (id<ORExpr>) e track:(id<ORTracker>)t
 {
-   return (id)[ORFactory expr:(id)self or:(id)e track:t];
+   return (id)[ORFactory expr:(id)self lor:(id)e track:t];
 }
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t
 {
@@ -1881,12 +1881,12 @@
    if (f!=NULL) {
       [S enumerateWithBlock:^(ORInt i) {
          if (!f(i))
-            _e = [_e or: e(i)];
+            _e = [_e lor: e(i)];
       }];
    }
    else {
       [S enumerateWithBlock:^(ORInt i) {
-         _e = [_e or: e(i)];
+         _e = [_e lor: e(i)];
       }];
    }
    return self;
@@ -1954,12 +1954,12 @@
    if (f!=NULL) {
       [S enumerateWithBlock:^(ORInt i) {
          if (!f(i))
-            _e = [_e and: e(i)];
+            _e = [_e land: e(i)];
       }];
    }
    else {
       [S enumerateWithBlock:^(ORInt i) {
-         _e = [_e and: e(i)];
+         _e = [_e land: e(i)];
       }];
    }
    return self;

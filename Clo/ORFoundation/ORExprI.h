@@ -10,13 +10,13 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORObject.h"
-#import "ORExpr.h"
-#import "ORArray.h"
-#import "ORData.h"
-#import "ORSet.h"
-#import "ORConstraint.h"
-#import "ORVisit.h"
+#import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORExpr.h>
+#import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORVisit.h>
 
 @interface ORExprI: ORObject<ORExpr,NSCoding>
 -(id<ORExpr>) abs;
@@ -35,8 +35,8 @@
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORExpr>) neg;
--(id<ORExpr>) and:(id<ORRelation>) e;
--(id<ORExpr>) or:(id<ORRelation>) e;
+-(id<ORExpr>) land:(id<ORRelation>) e;
+-(id<ORExpr>) lor:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
@@ -55,8 +55,8 @@
 -(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) negTrack:(id<ORTracker>)t;
--(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
--(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
+-(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) lor: (id<ORExpr>) e track:(id<ORTracker>)t;
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
 
 -(void) encodeWithCoder:(NSCoder*) aCoder;

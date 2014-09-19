@@ -10,11 +10,9 @@
  ***********************************************************************/
 
 
-#import "CPWatch.h"
-#import "CPConstraintI.h"
-#import "CPIntVarI.h"
-#import "CPEngineI.h"
-#import <ORProgram/CPProgram.h>
+#import <objcp/CPWatch.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <objcp/CPIntVarI.h>
 
 @interface CPWatch : CPCoreConstraint {
    CPIntVar* _theVar;
@@ -84,7 +82,7 @@
 @end
 
 @implementation CPFactory(Visualize)
-+(id<ORConstraint>)solver:(id<CPProgram>)cp
++(id<ORConstraint>)solver:(id<ORASolver>)cp
             watchVariable:(id<ORIntVar>)x
               onValueLost:(ORInt2Void)lost
               onValueBind:(ORInt2Void)bind

@@ -206,7 +206,7 @@
    assert(0);
 }
 
--(void) try: (ORClosure) left or: (ORClosure) right
+-(void) try: (ORClosure) left alt: (ORClosure) right
 {
    [_controller startTry];
    NSCont* k = [NSCont takeContinuation];
@@ -269,7 +269,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    // releases (decreased by 1) upon failure. So if the onfailure succeeds, it remembers it will
    // have to eventually release and it proceeds to the next iteration where the number of references
    // increases again. Naturally the subsequent retain are matched by their own releases, so it all
-   // pans out. 
+   // pans out.
+   
    struct TAOutput nv = nextTAValue(ite, filter);
    while (nv.found) {
       NSCont* k = [NSCont takeContinuation];

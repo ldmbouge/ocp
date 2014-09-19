@@ -30,7 +30,7 @@
    k = 0;
    for(id<ORVar> v in cvar)
       cv[k++] = v;
-   [self initInternal:mv and:cv];
+   [self initInternal:mv with:cv];
    /*
    __block ORUInt nbViews = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
@@ -49,7 +49,7 @@
    [self initInternal: direct];   
     */
 }
--(void) initInternal: (id<ORVarArray>) t and:(id<ORVarArray>)cv
+-(void) initInternal: (id<ORVarArray>) t with:(id<ORVarArray>)cv
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];      
 }
@@ -106,9 +106,9 @@
 {
    return [_binding[[NSThread threadID]] valOrdering:v forVar:x];
 }
--(void) initInternal: (id<CPIntVarArray>) t and:(id<ORVarArray>)cvs
+-(void) initInternal: (id<CPIntVarArray>) t with:(id<ORVarArray>)cvs
 {
-   [_binding[[NSThread threadID]] initInternal:t and:cvs];
+   [_binding[[NSThread threadID]] initInternal:t with:cvs];
 }
 -(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol
 {

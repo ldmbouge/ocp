@@ -12,7 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORFoundation/ORArrayI.h>
 
 @interface ORMIPLinearize : ORNOopVisit<ORModelTransformation>
 -(id) initORMIPLinearize: (id<ORAddToModel>) into;

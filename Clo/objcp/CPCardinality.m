@@ -57,7 +57,21 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     *upArrayr = upArray;
 }
 
-@implementation CPCardinalityCst
+@implementation CPCardinalityCst {
+   CPEngineI*        _fdm;
+   ORRange       _values;
+   CPIntVar**         _x;  // CPIntVar[_lx .. _ux]
+   ORInt*             _low;  // raw version of _low
+   ORInt*              _up;  // raw version of _up
+   ORInt               _lo; // int low[lo..uo] && int up[lo..uo]
+   ORInt               _uo;
+   ORInt               _lx;
+   ORInt               _ux;
+   ORUInt        _so; // size of low/up
+   ORUInt        _sx; // size of ax
+   TRInt*      _required; //_required[v]= how many variables are assigned to value v
+   TRInt*      _possible; //_possible[v]= how many variables have value v in their domain
+}
 
 -(void) findValueRange
 {

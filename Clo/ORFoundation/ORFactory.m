@@ -11,15 +11,8 @@
 
 #import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORFoundation.h>
-#import "ORFactory.h"
-#import "ORError.h"
-#import "ORExprI.h"
-#import "ORData.h"
-#import "ORDataI.h"
 #import "ORArrayI.h"
-#import "ORSetI.h"
 #import "ORConstraintI.h"
-#import "ORTrailI.h"
 #import "ORSelectorI.h" 
 #import "ORVarI.h"
 
@@ -671,17 +664,17 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right track:(id<ORTracker>)t
 {
-   id<ORExpr> o = [[ORExprPlusI alloc] initORExprPlusI: left and: right]; 
+   id<ORExpr> o = [[ORExprPlusI alloc] initORExprPlusI: left and: right];
    return [self validate:o onError:"No CP tracker in Add Expression" track:t];
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right track:(id<ORTracker>)t
 {
-   id<ORExpr> o = [[ORExprMinusI alloc] initORExprMinusI: left and: right]; 
+   id<ORExpr> o = [[ORExprMinusI alloc] initORExprMinusI: left and: right];
    return [self validate:o onError:"No CP tracker in Sub Expression" track:t];
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right track:(id<ORTracker>)t
 {
-   id<ORExpr> o = [[ORExprMulI alloc] initORExprMulI: left and: right]; 
+   id<ORExpr> o = [[ORExprMulI alloc] initORExprMulI: left and: right];
    return [self validate:o onError:"No CP tracker in Mul Expression" track:t];
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left div: (id<ORExpr>) right track:(id<ORTracker>)t
@@ -728,12 +721,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [self validate:o onError:"No CP tracker in >= Expression" track:t];
    return o;
 }
-+(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right track:(id<ORTracker>)t
++(id<ORExpr>) expr: (id<ORRelation>) left land: (id<ORRelation>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORConjunctI alloc] initORConjunctI:left and:right];
    return [self validate:o onError:"No CP tracker in && Expression" track:t];
 }
-+(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right track:(id<ORTracker>)t
++(id<ORExpr>) expr: (id<ORRelation>) left lor: (id<ORRelation>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORDisjunctI alloc] initORDisjunctI:left or:right];
    return [self validate:o onError:"No CP tracker in || Expression" track:t];
@@ -802,12 +795,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    ORExprProdI* o = [[ORExprProdI alloc] init: tracker over: S suchThat: f of: e];
    return [tracker trackObject: o];
 }
-+(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
++(id<ORRelation>) lor: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    ORExprAggOrI* o = [[ORExprAggOrI alloc] init: tracker over: S suchThat: f of: e];
    return [tracker trackObject: o];
 }
-+(id<ORRelation>) and: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
++(id<ORRelation>) land: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    ORExprAggAndI* o = [[ORExprAggAndI alloc] init: tracker over: S suchThat: f of: e];
    return [tracker trackObject: o];
@@ -955,13 +948,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b
++(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x lor:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[OROr alloc] initOROr:b eq:x or:y];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)b
++(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x land:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[ORAnd alloc] initORAnd:b eq:x and:y];
    [model trackObject:o];
@@ -1084,13 +1077,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return o;
 }
 
-+(id<ORConstraint>) min:(id<ORTracker>)model var:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z
++(id<ORConstraint>) min:(id<ORTracker>)model var:(id<ORIntVar>)x land:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {
    id<ORConstraint> o = [[ORMin alloc] init:x and:y equal:z];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) max:(id<ORTracker>)model var:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z
++(id<ORConstraint>) max:(id<ORTracker>)model var:(id<ORIntVar>)x land:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {
    id<ORConstraint> o = [[ORMax alloc] init:x and:y equal:z];
    [model trackObject:o];
@@ -1289,25 +1282,25 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) bit:(id<ORBitVar>)x or:(id<ORBitVar>)y eq:(id<ORBitVar>)z
++(id<ORConstraint>) bit:(id<ORBitVar>)x bor:(id<ORBitVar>)y eq:(id<ORBitVar>)z
 {
    id<ORConstraint> o = [[ORBitOr alloc] initORBitOr:x or:y eq:z];
    [[x tracker]trackObject:o];
    return o;
 }
-+(id<ORConstraint>) bit:(id<ORBitVar>)x and:(id<ORBitVar>)y eq:(id<ORBitVar>)z
++(id<ORConstraint>) bit:(id<ORBitVar>)x band:(id<ORBitVar>)y eq:(id<ORBitVar>)z
 {
    id<ORConstraint> o = [[ORBitAnd alloc] initORBitAnd:x and:y eq:z];
    [[x tracker]trackObject:o];
    return o;
 }
-+(id<ORConstraint>) bit:(id<ORBitVar>)x not:(id<ORBitVar>)y
++(id<ORConstraint>) bit:(id<ORBitVar>)x bnot:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitNot alloc] initORBitNot:x not:y];
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) bit:(id<ORBitVar>)x xor:(id<ORBitVar>)y eq:(id<ORBitVar>)z
++(id<ORConstraint>) bit:(id<ORBitVar>)x bxor:(id<ORBitVar>)y eq:(id<ORBitVar>)z
 {
    id<ORConstraint> o = [[ORBitXor alloc] initORBitXor:x xor:y eq:z];
    [[x tracker]trackObject:o];

@@ -9,10 +9,10 @@
  
  ***********************************************************************/
 
-#import "LPGurobi.h"
+#import <objmp/LPGurobi.h>
 #import <objmp/LPType.h>
 #import <objmp/LPSolverI.h>
-
+#import "gurobi_c.h"
 
 
 @implementation LPGurobiSolver;

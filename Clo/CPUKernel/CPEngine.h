@@ -75,3 +75,7 @@
 -(ORBool) loaded;
 @end
 
+@class CPEngineI;
+ORStatus propagateFDM(CPEngineI* fdm);
+void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist);
+

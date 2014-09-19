@@ -14,7 +14,14 @@
 
 #define SPINLOCK 1
 
-@implementation CPObjectQueue
+@implementation CPObjectQueue  {
+   @package
+   ORInt      _mxs;
+   id*        _tab;
+   ORInt    _enter;
+   ORInt     _exit;
+   ORInt     _mask;
+}
 -(id) initEvtQueue: (ORInt) sz {   
    self = [super init];
    _mxs = sz;
@@ -84,7 +91,21 @@
 }   
 @end
 
-@implementation PCObjectQueue
+@implementation PCObjectQueue {
+   ORInt           _mxs;
+   id*             _tab;
+   ORInt         _enter;
+   ORInt          _exit;
+   ORInt          _mask;
+   ORInt        _nbUsed;
+   ORInt     _nbWorkers;
+   ORInt    _nbWWaiting;
+   NSCondition*  _avail;
+#if defined(__APPLE__)
+   OSSpinLock    _slock;
+#endif
+   BOOL _pretend;
+}
 -(id) initPCQueue: (ORInt) sz nbWorkers:(ORInt)nbw
 {   
    self = [super init];

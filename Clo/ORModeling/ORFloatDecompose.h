@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPTypes.h>
-#import <CPUKernel/CPConstraintI.h>
+//#import <CPUKernel/CPTypes.h>
+//#import <CPUKernel/CPConstraintI.h>
 #import "ORFloatLinear.h"
 
 @interface ORFloatLinearizer : ORVisitor<NSObject>

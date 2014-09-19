@@ -9,11 +9,11 @@
  
  ***********************************************************************/
 
+#import  <ORFoundation/ORFoundation.h>
 #import "CPEngineI.h"
 #import "CPTypes.h"
 #import "CPClosureEvent.h"
-#import <ORFoundation/ORSetI.h>
-
+//#import <ORFoundation/ORSetI.h>
 
 typedef struct CPClosureEntry {
    ORClosure             cb;

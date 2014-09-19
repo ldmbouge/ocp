@@ -12,8 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPWatch.h>
 
-@protocol CPProgram;
-
 @interface NSBoardController : NSObject {
    NSView*           _drawOn;
    NSMutableArray*   _toDraw;
@@ -29,6 +27,6 @@
 -(void)neverStop;
 -(void)toggleGrid:(id)grid row:(ORInt)r col:(ORInt)c to:(enum CPDomValue)dv;
 -(void)drawRect:(NSRect)dirtyRect inView:(id)view;
--(void)watchSearch:(id<CPProgram>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
+-(void)watchSearch:(id<ORExplorer>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
 @end
 

@@ -9,12 +9,9 @@
 
  ***********************************************************************/
 
-#import "ORSetI.h"
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORAVLTree.h>
-#import "ORFactoryI.h"
-#import "ORError.h"
 #import <objc/objc-runtime.h>
+#import "ORFactoryI.h"
 
 @implementation ORIntSetI
 {

@@ -79,6 +79,8 @@
 -(id<CPHeuristic>) createSDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
+
+-(void) defaultSearch;
 @end
 
 // Pure DFS CPSolver

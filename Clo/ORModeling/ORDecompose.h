@@ -10,11 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPTypes.h>
-#import <CPUKernel/CPConstraintI.h>
-#import <objcp/CPData.h>
-#import "ORIntLinear.h"
-#import "ORFloatLinear.h"
+#import <ORModeling/ORIntLinear.h>
+#import <ORModeling/ORFloatLinear.h>
 
 @protocol ORModel;
 @protocol ORAddToModel;

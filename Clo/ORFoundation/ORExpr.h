@@ -95,8 +95,8 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORRelation>) neg;
--(id<ORRelation>) and: (id) e;
--(id<ORRelation>) or: (id) e;
+-(id<ORRelation>) land: (id) e;
+-(id<ORRelation>) lor: (id) e;
 -(id<ORRelation>) imply:(id)e;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
@@ -114,8 +114,8 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) negTrack:(id<ORTracker>)t;
--(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
--(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
+-(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) lor: (id<ORExpr>) e track:(id<ORTracker>)t;
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
 -(ORRelationType) type;
 -(ORVType)vtype;
@@ -123,8 +123,8 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
 @protocol ORRelation <ORExpr>
 -(ORRelationType) type;
--(id<ORRelation>) and: (id<ORExpr>) e;
--(id<ORRelation>) or: (id<ORExpr>) e;
+-(id<ORRelation>) land: (id<ORExpr>) e;
+-(id<ORRelation>) lor: (id<ORExpr>) e;
 -(id<ORRelation>) imply: (id<ORExpr>) e;
 @end
 

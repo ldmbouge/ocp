@@ -270,7 +270,7 @@ struct CPVarPair {
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
    struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
-   [_model addConstraint:[ORFactory model:_model boolean:vars.lV and:vars.rV equal:vars.boolVar]];
+   [_model addConstraint:[ORFactory model:_model boolean:vars.lV land:vars.rV equal:vars.boolVar]];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
@@ -809,7 +809,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
    ORLong d = minOf(lub,rub);
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,bindDown(a),bindUp(d))];
-   [_model addConstraint: [ORFactory min:_model var:lV and:rV equal:_rv]];
+   [_model addConstraint: [ORFactory min:_model var:lV land:rV equal:_rv]];
    [lT release];
    [rT release];   
 }
@@ -828,7 +828,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
    ORLong d = maxOf(lub,rub);
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,bindDown(a),bindUp(d))];
-   [_model addConstraint: [ORFactory max:_model var:lV and:rV equal:_rv]];
+   [_model addConstraint: [ORFactory max:_model var:lV land:rV equal:_rv]];
    [lT release];
    [rT release];   
 }
@@ -977,7 +977,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
       id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-      [_model addConstraint:[ORFactory model:_model boolean:lV or:rV equal:_rv]];
+      [_model addConstraint:[ORFactory model:_model boolean:lV lor:rV equal:_rv]];
    }
    [linLeft release];
    [linRight release];
@@ -1001,7 +1001,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
    } else {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-      [_model addConstraint:[ORFactory model:_model boolean:lV and:rV equal:_rv]];
+      [_model addConstraint:[ORFactory model:_model boolean:lV land:rV equal:_rv]];
    }
    [linLeft release];
    [linRight release];

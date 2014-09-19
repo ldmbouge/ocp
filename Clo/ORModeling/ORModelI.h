@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORFoundation/ORObject.h>
 
 @interface ORModelMappings : NSObject<ORModelMappings>
 -(ORModelMappings*) initORModelMappings;

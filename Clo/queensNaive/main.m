@@ -12,7 +12,6 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgramFactory.h>
-#import <ORProgram/ORProgramFactory.h>
 
 NSString* indent(int t)
 {
@@ -36,21 +35,20 @@ int main (int argc, const char * argv[])
             [model add: [x[i] neq: [x[j] plus: @(j-i)]]];
          }
       }
-      id<CPProgram> cp = [ORFactory createCPProgram: model];      
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
       [cp solveAll:
        ^() {
-          [cp labelArray: x ];
-          @autoreleasepool {
-             NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-             for(int i = 0; i < n; i++)
-                [buf appendFormat:@"%d ",[cp intValue:x[i]]];
-             NSLog(@"sol [%d]: %@\n",[nbSol intValue:cp],buf);
-          }
+          [cp labelArray: x];
+//          @autoreleasepool {
+//             NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//             for(int i = 0; i < n; i++)
+//                [buf appendFormat:@"%d ",[cp intValue:x[i]]];
+//             NSLog(@"sol [%d]: %@\n",[nbSol intValue:cp],buf);
+//          }
           [nbSol incr:cp];
        }
        ];
       printf("GOT %d solutions\n",[nbSol intValue:cp]);
-      [cp release];
       [ORFactory shutdown];
       return 0;
    }

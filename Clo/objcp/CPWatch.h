@@ -11,9 +11,6 @@
 
 #import <objcp/CPFactory.h>
 
-@class CPIntVarI;
-@protocol CPProgram;
-
 enum CPDomValue {
    Required = 0,
    Possible = 1,
@@ -30,7 +27,7 @@ enum CPDomValue {
 @end
 
 @interface CPFactory (Visualize)
-+(id<ORConstraint>)solver:(id<CPProgram>)cp
++(id<ORConstraint>)solver:(id<ORASolver>)cp
             watchVariable:(id<ORIntVar>)x
               onValueLost:(ORInt2Void)lost
               onValueBind:(ORInt2Void)bind

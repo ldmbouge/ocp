@@ -17,4 +17,8 @@
 	self = [super initORExecutionError: "Removing a value from a dense domain"];
 	return self;
 }
++(void)raise
+{
+   @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+}
 @end  

@@ -10,28 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORTypes.h"
+#import <ORUtilities/ORUtilities.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include "context.h"
-
-@interface NSCont : NSObject {
-@private
-#if defined(__x86_64__)
-   struct Ctx64   _target __attribute__ ((aligned(16)));
-#else
-   jmp_buf _target;
-#endif
-   size_t _length;
-   void* _start;   
-   char* _data;
-   int _used;
-   ORInt field;  // a stored property
-   id  fieldId;
-   ORInt _cnt;
-}
+@interface NSCont : NSObject
 +(id)new;
 -(void)saveStack:(size_t)len startAt:(void*)s;
 -(void)call; 
@@ -47,3 +28,5 @@
 
 void letgo(NSCont*);
 
+void initContinuationLibrary(int *base);
+char* getContBase();

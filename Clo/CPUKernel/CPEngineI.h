@@ -50,6 +50,7 @@ enum CPEngineState {
 -(CPEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
+-(id<ORTracker>)tracker;
 -(id)        trackVariable:(id)var;
 -(id)        trackMutable:(id)obj;
 -(id)        trackImmutable:(id)obj;
@@ -80,12 +81,8 @@ enum CPEngineState {
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 
-//-(id<ORIntVarArray>)intVars;
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 -(id<ORIntRange>)boolRange;
 @end
-
-ORStatus propagateFDM(CPEngineI* fdm);
-void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist);

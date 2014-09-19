@@ -45,9 +45,9 @@
          ORULong     ulongVal;          // 8-bytes
          float       floatVal;          // 4-bytes
          double     doubleVal;          // 8-bytes
-         id             idVal;          // 4-bytes OR 8-bytes depending 32/64 compilation mode
+//         id             idVal;          // 4-bytes OR 8-bytes depending 32/64 compilation mode
          void*         ptrVal;          // 4 or 8 (pointer)
-         void (^cloVal)(void);
+//         void (^cloVal)(void);
       };
       ORInt code;
    };
@@ -82,11 +82,7 @@
 @end
 
 @class ORCommandList;
-@interface ORMemoryTrailI : NSObject<ORMemoryTrail,NSCopying> {
-   id*   _tab;
-   ORInt _mxs;
-   ORInt _csz;
-}
+@interface ORMemoryTrailI : NSObject<ORMemoryTrail,NSCopying> 
 -(id)init;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)dealloc;
@@ -240,7 +236,7 @@ static inline void inline_trailIdNCFun(ORTrailI* t,id* ptr)
    struct Slot* s = seg->tab + seg->top++;
    s->ptr = ptr;
    s->code = TAGIdNC;
-   s->idVal = *ptr;
+   s->ptrVal = (__bridge void*) *ptr;
 }
 static inline void inline_assignTRInt(TRInt* v,int val,id<ORTrail> trail)
 {
@@ -282,8 +278,12 @@ static inline void  inline_assignTRDouble(TRDouble* v,double val,ORTrailI* trail
 static inline void  inline_assignTRId(TRId* v,id val,id<ORTrail> trail)
 {
    [trail trailId:v];
+#if __has_feature(objc_arc)
+   *v = val;
+#else
    [*v release];
    *v = [val retain];
+#endif
 }
 static inline void  inline_assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail)
 {
@@ -363,18 +363,7 @@ static inline V* get##T(T* v) { return v->_val;}
 
 
 
-@interface ORTRIntMatrixI : NSObject<ORTRIntMatrix,NSCoding> {
-@private
-   ORTrailI*       _trail;
-   TRInt*          _flat;
-   ORInt           _arity;
-   id<ORIntRange>* _range;
-   ORInt*          _low;
-   ORInt*          _up;
-   ORInt*          _size;
-   ORInt*          _i;
-   ORInt           _nb;
-}
+@interface ORTRIntMatrixI : NSObject<ORTRIntMatrix,NSCoding> 
 -(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSearchEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSearchEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;

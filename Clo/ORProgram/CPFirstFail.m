@@ -48,7 +48,7 @@
 {
    return -v;   
 }
--(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv
+-(void)initInternal:(id<ORVarArray>)t with:(id<CPVarArray>)cv
 {
    _vars = t;
    _cvs  = cv;

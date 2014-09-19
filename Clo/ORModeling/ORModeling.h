@@ -10,12 +10,14 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORConstraint.h>
-#import <ORFoundation/ORFactory.h>
 #import <ORModeling/ORSolution.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORSet.h>
-
+#import <ORModeling/ORFlatten.h>
+#import <ORModeling/ORLSFlatten.h>
+#import <ORModeling/ORLinear.h>
+#import <ORModeling/ORIntLinear.h>
+#import <ORModeling/ORLinearize.h>
+#import <ORModeling/ORMIPLinearize.h>
 
 @protocol ORModelTransformation;
 

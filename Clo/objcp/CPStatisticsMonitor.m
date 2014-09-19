@@ -66,7 +66,14 @@ static BOOL refresh(CPVarInfo* vi)
 }
 @end
 
-@implementation CPStatisticsMonitor
+@implementation CPStatisticsMonitor {
+   CPVarInfo**          _varInfo;
+   ORLong                  _nbVI;
+   id<CPEngine>          _engine;
+   CPVarInfo**        _curActive;
+   ORUInt              _nbActive;
+   id<ORVarArray>        _monVar;
+}
 -(id)initCPMonitor:(id<CPEngine>)engine vars:(id<ORVarArray>)allVars
 {
    self = [super initCPCoreConstraint:engine];

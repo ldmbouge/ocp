@@ -2052,7 +2052,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 @end
 
 
-@implementation CPAllDifferenceVC
+@implementation CPAllDifferenceVC {
+   CPIntVar**   _x;
+   ORLong       _nb;
+}
 -(id) initCPAllDifferenceVC:(CPIntVar**)x nb:(ORInt) n
 {
    self = [super init];

@@ -9,15 +9,14 @@
  
  ***********************************************************************/
 
-#import "ORTrail.h"
-#import "ORTrailI.h"
+#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORTrailI.h>
 #import <ORFoundation/OREngine.h>
-#import "ORError.h"
-#import "ORData.h"
+#import <ORFoundation/ORError.h>
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORCommand.h>
 #import <assert.h>
-#import "ORVisit.h"
-#import "ORCommand.h"
-
 
 @implementation ORTrailI
 -(ORTrailI*) init
@@ -86,7 +85,7 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = ptr;
    s->code = TAGId;
-   s->idVal = obj;
+   s->ptrVal = obj;
    ++_seg[_cSeg]->top;
 }
 -(void)trailIdNC:(id*)ptr
@@ -96,7 +95,7 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = ptr;
    s->code = TAGIdNC;
-   s->idVal = obj;
+   s->ptrVal = obj;
    ++_seg[_cSeg]->top;
 }
 -(void) trailLong:(ORLong*) ptr
@@ -152,7 +151,7 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = 0;
    s->code = TAGClosure;
-   s->cloVal = [clo copy];
+   s->ptrVal = [clo copy];
    ++_seg[_cSeg]->top;
 }
 -(void) trailRelease:(id)obj
@@ -161,7 +160,7 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = 0;
    s->code = TAGRelease;
-   s->idVal = obj;
+   s->ptrVal = obj;
    ++_seg[_cSeg]->top;
 }
 -(void) trailFree:(void*)ptr
@@ -207,7 +206,7 @@
             case TAGId: {
                if (*((id*)cs->ptr))
                   [(*((id*)cs->ptr)) release];
-               *((id*)cs->ptr) = cs->idVal;
+               *((id*)cs->ptr) = cs->ptrVal;
             }break;
             case TAGFloat:
                *((float*)cs->ptr) = cs->floatVal;
@@ -219,17 +218,17 @@
                *((void**)cs->ptr) = cs->ptrVal;
                break;
             case TAGClosure:
-               cs->cloVal();
-               [cs->cloVal release];
+               ((ORClosure)cs->ptrVal)();
+               [(id)(cs->ptrVal) release];
                break;
             case TAGRelease:
-               [cs->idVal release];
+               [(id)cs->ptrVal release];
                break;
             case TAGFree:
                free(cs->ptrVal);
                break;
             case TAGIdNC:
-               *((id*)cs->ptr) = cs->idVal;
+               *((id*)cs->ptr) = cs->ptrVal;
                break;
             default:
                break;
@@ -335,7 +334,7 @@ void trailIdNCFun(ORTrailI* t,id* ptr)
    struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
    s->ptr = ptr;
    s->code = TAGIdNC;
-   s->idVal = obj;
+   s->ptrVal = obj;
    ++(t->_seg[t->_cSeg]->top);
 }
 
@@ -420,7 +419,11 @@ ORInt trailMagic(ORTrailI* trail)
 }
 @end
 
-@implementation ORMemoryTrailI
+@implementation ORMemoryTrailI {
+   id __strong* __strong _tab;
+   ORInt _mxs;
+   ORInt _csz;
+}
 -(id)init
 {
    self = [super init];
@@ -730,7 +733,18 @@ void freeTRIntArray(TRIntArray a)
 /*             Multi-Dimensional Matrix of Trailable Int                         */
 /*********************************************************************************/
 
-@implementation ORTRIntMatrixI
+@implementation ORTRIntMatrixI {
+@private
+   ORTrailI*       _trail;
+   TRInt*          _flat;
+   ORInt           _arity;
+   id<ORIntRange>* _range;
+   ORInt*          _low;
+   ORInt*          _up;
+   ORInt*          _size;
+   ORInt*          _i;
+   ORInt           _nb;
+}
 
 -(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSearchEngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {

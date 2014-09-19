@@ -10,10 +10,9 @@
  ***********************************************************************/
 
 #import "UIBoardController.h"
-#import "CPConstraintI.h"
-#import "CPIntVarI.h"
-#import "CPEngineI.h"
-#import "CPWatch.h"
+#import <objcp/CPConstraintI.h>
+#import <objcp/CPIntVarI.h>
+#import <objcp/CPWatch.h>
 
 
 @interface CPGrid : NSObject {
@@ -127,11 +126,11 @@
    }
    [_drawOn performSelectorOnMainThread:@selector(setNeedsDisplay) withObject:0 waitUntilDone:NO];
 }
--(void)watchSearch:(id<CPProgram>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf
+-(void)watchSearch:(id<ORExplorer>)explorer onChoose:(ORClosure)onc onFail:(ORClosure)onf
 {
-   [[cp explorer] setController: [[CPViewController alloc] initCPViewController:[[cp explorer] controller]
-                                                                       onChoose:onc
-                                                                         onFail:onf]];
+   [explorer setController: [[CPViewController alloc] initCPViewController:[explorer controller]
+                                                                  onChoose:onc
+                                                                    onFail:onf]];
 }
 
 -(void)pause

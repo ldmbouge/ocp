@@ -95,7 +95,7 @@
           annotation:Default];
    }
    /*
-   [_board watchSearch:cp
+   [_board watchSearch:[cp explorer]
               onChoose: ^void() { [_board pause];}
                 onFail: ^void() { [_board pause];}
     ];

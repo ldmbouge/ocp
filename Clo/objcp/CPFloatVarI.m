@@ -11,7 +11,7 @@
 
 #import "CPFloatVarI.h"
 #import <CPUKernel/CPUKernel.h>
-#import <CPUKernel/CPEngineI.h>
+//#import <CPUKernel/CPEngineI.h>
 #import "CPFloatDom.h"
 
 static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
@@ -286,7 +286,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(id<ORTracker>) tracker
 {
-   return _engine;
+   return [_engine tracker];
 }
 -(NSMutableSet*)constraints
 {

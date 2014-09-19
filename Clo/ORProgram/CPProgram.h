@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORProgram/CPHeuristic.h>
-#import <objcp/CPData.h>
+//#import <objcp/CPData.h>
 
 @protocol ORModel;
 @protocol ORSearchController;
@@ -78,10 +78,10 @@
 -(id<ORForall>)      forall: (id<ORIntIterable>) S;
 -(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b;
--(void)                 try: (ORClosure) left or: (ORClosure) right;
--(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
+-(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b;
+-(void)                 try: (ORClosure) left alt: (ORClosure) right;
+-(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f do: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)              tryall: (id<ORIntIterable>) range
                    suchThat: (ORInt2Bool) filter
@@ -112,6 +112,7 @@
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
+-(void) defaultSearch;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORCPSolutionPool>) solutionPool;

@@ -9,9 +9,11 @@
  
  ***********************************************************************/
 
-#import "MIPGurobi.h"
+#import <objmp/MIPGurobi.h>
 #import <objmp/MIPType.h>
 #import <objmp/MIPSolverI.h>
+#import "gurobi_c.h"
+
 
 @implementation MIPGurobiSolver;
 

@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPConstraintI.h>
-#import <CPUKernel/CPEngineI.h>
+#import "CPEngineI.h"
 
 @implementation CPCoreConstraint
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m

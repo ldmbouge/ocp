@@ -514,6 +514,7 @@
 }
 -(void) dealloc
 {
+   NSLog(@"CPSolver dealloc'd %p",self);
    [_model release];
    [_hSet release];
    [_portal release];
@@ -679,16 +680,19 @@
 }
 -(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
+   filter = [_mt track:[filter copy]];
+   order = [_mt track:[order copy]];
+   body = [_mt track:[body copy]];
    [ORControl forall: S suchThat: filter orderedBy: order do: body];  
 }
--(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
    id<ORForall> forall = [ORControl forall: self set: S];
    [forall orderedBy:o1];
    [forall orderedBy:o2];
    [forall do: b];
 }
--(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
    id<ORForall> forall = [ORControl forall: self set: S];
    [forall suchThat: suchThat];
@@ -696,12 +700,14 @@
    [forall orderedBy:o2];
    [forall do: b];
 }
--(void) try: (ORClosure) left or: (ORClosure) right
+-(void) try: (ORClosure) left alt: (ORClosure) right
 {
-   [_search try: left or: right];   
+   [_search try: left alt: right];
 }
--(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter do: (ORInt2Void) body
 {
+   filter = [_mt track:[filter copy]];
+   body   = [_mt track:[body copy]];
    [_search tryall: range suchThat: filter in: body];   
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
@@ -835,7 +841,7 @@
 -(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
 {
    [_search try: ^() { [self labelBV:x at:i with:false];}
-             or: ^() { [self labelBV:x at:i with:true];}];
+            alt: ^() { [self labelBV:x at:i with:true];}];
 }
 -(void) labelUpFromLSB:(id<CPBitVar>) x
 {
@@ -844,7 +850,7 @@
    while ((i=[bv lsFreeBit])>=0) {
       NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
       [_search try: ^() { [self labelBV:x at:i with:false];}
-                or: ^() { [self labelBV:x at:i with:true];}];
+               alt: ^() { [self labelBV:x at:i with:true];}];
    }
 }
 
@@ -909,7 +915,7 @@
       while ([minDom domsize] > 0) {
          j= [minDom randomFreeBit];
          [_search try: ^() { [self labelBVImpl:(id)minDom at:j with:false];}
-                   or: ^() { [self labelBVImpl:(id)minDom at:j with:true];}];
+                  alt: ^() { [self labelBVImpl:(id)minDom at:j with:true];}];
       }
 
       //NSLog(@"Labeled %@ at %d.", minDom, j);
@@ -925,7 +931,7 @@
       while (!bound(xi)) { 
          ORInt m = minDom(xi);
          [_search try: ^{ [self labelImpl: xi with: m]; }
-                   or: ^{ [self  diffImpl: xi with: m]; }
+                  alt: ^{ [self  diffImpl: xi with: m]; }
           ];
       }
    }
@@ -991,7 +997,7 @@
          assert(_gamma[x[bi+x.range.low].getId] == sx);
          [_search try:^{
             [self label:x[bi+x.range.low] with:xb.min];
-         } or:^{
+         } alt:^{
             [self diff:x[bi+x.range.low] with:xb.min];
          }];
          xb = [sx bounds];
@@ -1036,7 +1042,7 @@
             return;
          x = av[i];
          //NSLog(@"-->Chose variable: %p",x);
-         [last setId:x];
+         [last setIdValue:x];
       }/* else {
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
@@ -1066,7 +1072,7 @@
       if (bestIndex != low - 1)  {
         [_search try: ^{
            [self label:x with: bestIndex];
-        } or: ^{
+        } alt: ^{
            [self diff:x with: bestIndex];
         }];
       }
@@ -1078,7 +1084,7 @@
    while (![x bound]) {
       ORInt m = [x min];
       [_search try: ^{ [self label: mx with: m]; }
-                or: ^{ [self  diff: mx with: m]; }
+               alt: ^{ [self  diff: mx with: m]; }
       ];
    }
 }
@@ -1317,6 +1323,15 @@
 {
    [((ORMutableIntegerI*) _gamma[i.getId]) incr];
 }
+
+-(void) defaultSearch
+{
+   id<CPHeuristic> h = [self createFF];
+   [self solveAll:^{
+      [self labelHeuristic:h];
+   }];
+}
+
 @end
 
 /******************************************************************************************/
@@ -1450,6 +1465,7 @@
 }
 -(void) dealloc
 {
+   NSLog(@"CPSolver dealloc'd (%p)",self);
    [_trail release];
    [_mt release];
    [_engine release];
@@ -1709,7 +1725,7 @@
 @implementation CPSolverFactory 
 +(id<CPProgram>) solver
 {
-   return [[CPSolver alloc] initCPSolver];
+   return [[[CPSolver alloc] initCPSolver] autorelease];
 }
 +(id<CPSemanticProgramDFS>) semanticSolverDFS
 {

@@ -321,10 +321,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAllDifferenceVC : CPCoreConstraint {
-   CPIntVar**   _x;
-   ORLong       _nb;
-}
+@interface CPAllDifferenceVC : CPCoreConstraint 
 -(id) initCPAllDifferenceVC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x;
 -(id) initCPAllDifferenceVC: (CPIntVar**) x nb: (ORInt) n;
 -(id) initCPAllDifferenceVC: (id) x;

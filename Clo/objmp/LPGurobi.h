@@ -13,8 +13,6 @@
 #import <Foundation/NSObject.h>
 #import <ORFoundation/ORFoundation.h>
 #import <objmp/LPType.h>
-#import "gurobi_c.h"
-
 
 @interface LPGurobiSolver: NSObject
 {

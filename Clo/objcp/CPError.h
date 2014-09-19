@@ -13,9 +13,8 @@
 #import <ORFoundation/ORError.h>
 
 @interface CPRemoveOnDenseDomainError : ORExecutionError <ORError>
-{
-}
 -(CPRemoveOnDenseDomainError*) initCPRemoveOnDenseDomainError;
++(void)raise;
 @end  
 
 

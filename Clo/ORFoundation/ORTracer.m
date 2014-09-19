@@ -10,9 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTracer.h>
-#import <CPUKernel/CPTypes.h>
-#import "ORTrailI.h"
 #include <pthread.h>
 
 

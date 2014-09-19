@@ -45,9 +45,6 @@ __attribute__((noinline)) NSCont* restoreCtx(struct Ctx64* ctx,char* start,char*
 #include <setjmp.h>
 #endif
 
-void initContinuationLibrary(int *base);
-char* getContBase();
-
 #endif
 
 

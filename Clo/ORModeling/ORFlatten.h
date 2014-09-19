@@ -13,7 +13,6 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORAnnotation.h>
 
-
 @interface ORFlatten : ORNOopVisit<ORModelTransformation> {
    id<ORAddToModel>   _into;
    id               _result;

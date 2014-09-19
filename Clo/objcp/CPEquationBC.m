@@ -14,7 +14,28 @@
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 
-@implementation CPEquationBC
+@class CPIntVar;
+typedef struct CPEQTerm {
+   UBType  update;
+   CPIntVar* var;
+   ORLong     low;
+   ORLong      up;
+   BOOL   updated;
+} CPEQTerm;
+
+MAKETRPointer(TRCPEQTerm,CPEQTerm);
+
+@implementation CPEquationBC { // sum(i in S) x_i == c
+@private
+   CPIntVar**               _x;  // array of vars
+   ORLong                   _nb;  // size
+   ORInt                     _c;  // constant c in:: sum(i in S) x_i == c
+   UBType*        _updateBounds;
+   CPEQTerm*          _allTerms;
+   TRCPEQTerm*           _inUse;
+   TRInt                  _used;
+   TRLong                   _ec; // expanded constant c (including the bound terms)
+}
 
 -(CPEquationBC*) initCPEquationBC: (ORIdArrayI*) x equal: (ORInt) c
 {
@@ -187,7 +208,13 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 }
 @end
 
-@implementation CPINEquationBC 
+@implementation CPINEquationBC  { // sum(i in S) x_i <= c
+@private
+   CPIntVar**        _x;  // array of vars
+   ORLong            _nb;  // size
+   ORInt              _c;  // constant c in:: sum(i in S) x_i <= c
+   UBType*    _updateMax;
+}
 -(CPINEquationBC*) initCPINEquationBC: (ORIdArrayI*) x lequal: (ORInt) c
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];

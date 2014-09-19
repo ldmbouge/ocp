@@ -12,7 +12,16 @@
 #import "ORModeling/ORModeling.h"
 
 
-@implementation ORIntLinear
+@implementation ORIntLinear {
+   struct CPTerm {
+      id<ORIntVar>  _var;
+      ORInt        _coef;
+   };
+   struct CPTerm* _terms;
+   ORInt             _nb;
+   ORInt            _max;
+   ORInt          _indep;
+}
 -(ORIntLinear*)initORLinear:(ORInt)mxs
 {
    self = [super init];
@@ -391,7 +400,9 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 @end
 
 
-@implementation ORLinearFlip
+@implementation ORLinearFlip {
+   id<ORIntLinear> _real;
+}
 -(ORLinearFlip*) initORLinearFlip: (id<ORIntLinear>)r
 {
    self = [super init];

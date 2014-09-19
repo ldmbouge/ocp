@@ -13,15 +13,6 @@
 #import <ORUtilities/ORCrFactory.h>
 #import <ORFoundation/ORObject.h>
 
-//typedef enum {
-//   DomainConsistency,
-//   RangeConsistency,
-//   ValueConsistency,
-//   Hard,
-//   Soft,
-//   Default
-//} ORAnnotation;
-
 @protocol ORExpr;
 @protocol ORIntRange;
 @protocol ORASolver;
@@ -56,7 +47,7 @@
 -(id) copy;
 @end
 
-@interface ORGamma : NSObject<ORGamma>
+@interface ORGamma : ORObject<ORGamma>
 {
 @protected
    id __strong*  _gamma;
@@ -81,7 +72,7 @@
 
 @protocol ORMutableId <ORObject>
 -(id) idValue:(id<ORGamma>)solver;
--(void) setId:(id)v in:(id<ORGamma>)solver;
+-(void) setIdValue:(id)v in:(id<ORGamma>)solver;
 @end
 
 @protocol ORMutableInteger <ORObject,ORExpr>

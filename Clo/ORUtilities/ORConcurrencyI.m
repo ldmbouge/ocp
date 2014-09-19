@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/NSThread.h>
-#import "ORConcurrencyI.h"
-#import "ORConcurrency.h"
-#import "ORCrFactory.h"
+#import <ORUtilities/ORConcurrency.h>
+#import <ORUtilities/ORCrFactory.h>
+
 #import "ORConcurrencyI.h"
 #import "pthread.h"
 

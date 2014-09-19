@@ -57,7 +57,8 @@
 }
 +(id<ORSolutionPool>) createSolutionPool
 {
-   return [[ORSolutionPoolI alloc] init];
+   id<ORSolutionPool> sp = [[ORSolutionPoolI alloc] init];
+   return sp;
 }
 +(id<ORConstraintSet>) createConstraintSet {
     return [[ORConstraintSetI alloc] init];

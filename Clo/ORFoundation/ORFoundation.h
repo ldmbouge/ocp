@@ -15,10 +15,12 @@
 #import <ORFoundation/ORFactory.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORData.h>
+#import <ORFoundation/ORDataI.h>
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORExpr.h>
+#import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORControl.h>
 #import <ORFoundation/ORFunc.h>
 #import <ORFoundation/ORCommand.h>
@@ -27,12 +29,18 @@
 #import <ORFoundation/ORSelector.h>
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORExplorer.h>
+#import <ORFoundation/ORExplorerI.h>
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORLimit.h>
+#import <ORFoundation/ORParallel.h>
+#import <ORFoundation/ORSetI.h>
+#import <ORFoundation/ORTrailI.h>
+
 
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());

@@ -60,7 +60,7 @@
                                         }
                 ]  annotation:Default];
    }
-   [_board watchSearch:cp 
+   [_board watchSearch:[cp explorer]
               onChoose: ^ { [_board pause];}
                 onFail: ^ { [_board pause];}
     ];

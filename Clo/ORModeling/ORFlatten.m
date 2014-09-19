@@ -9,12 +9,10 @@
  
  ***********************************************************************/
 
-#import "ORFlatten.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORFlatten.h>
 #import "ORModelI.h"
 #import "ORDecompose.h"
-#import "ORSetI.h"
-#import "ORVarI.h"
-#import <ORFoundation/ORArrayI.h>
 
 
 @implementation ORFlatten {
@@ -78,23 +76,23 @@
    }];
 }
 
--(void) visitIntVar: (ORIntVarI*) v
+-(void) visitIntVar: (id) v
 {
    _result = v;
 }
--(void) visitBitVar: (ORBitVarI*) v
+-(void) visitBitVar: (id) v
 {
    _result = v;
 }
--(void) visitFloatVar: (ORFloatVarI*) v
+-(void) visitFloatVar: (id) v
 {
    _result = v;
 }
--(void) visitIntVarLitEQView:(ORIntVarLitEQView*)v
+-(void) visitIntVarLitEQView:(id)v
 {
    _result = v;
 }
--(void) visitAffineVar:(ORIntVarAffineI*) v
+-(void) visitAffineVar:(id) v
 {
    _result = v;
 }

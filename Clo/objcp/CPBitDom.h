@@ -164,7 +164,7 @@ static inline void domRemove(CPBoundsDom* x,ORInt val,id<CPIntVarNotifier> recv,
          else if (val == x->_max._val)
             [x updateMax:val-1 for:recv tle:tle];
          else
-            @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+            [CPRemoveOnDenseDomainError raise];
       }
       case DCBits: {
          domBitRemove((CPBitDom*)x,val,recv);
