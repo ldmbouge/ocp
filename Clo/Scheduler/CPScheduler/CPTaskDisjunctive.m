@@ -1733,6 +1733,8 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
     //   task immediately after the last task that fully or partially overlaps
     //   with the tightest time windows in the sorting arrays
     
+    // Reading the data
+    readData(disj);
     // Testing the data
     assert(^ORBool(){
         for (ORInt tt = 0; tt < disj->_uIdx._val; tt++) {
@@ -1742,8 +1744,17 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
                 return false;
         }
         return true;
-    });
+    }());
     
+    // Sorting tasks regarding their earliest start times
+    const ORInt sortSize    = disj->_sortSize._val;
+    const ORInt presentSize = disj->_cIdx._val;
+    if (presentSize >= sortSize) {
+        isort_r(disj->_task_id_est, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
+    }
+    else {
+        isort_r(disj->_task_id_est, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscOpt);
+    }
     // Testing the sorting of the sorting array '_task_id_est'
     assert(^ORBool() {
         for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
@@ -1755,7 +1766,7 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
                 return false;
         }
         return true;
-    });
+    }());
 
     ORInt est_min = MAXINT;
     ORInt lct_max = MININT;
@@ -1792,6 +1803,8 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
     //   task immediately after the last task that fully or partially overlaps
     //   with the tightest time windows in the sorting arrays
 
+    // Reading the data
+    readData(disj);
     // Testing the data
     assert(^ORBool(){
         for (ORInt tt = 0; tt < disj->_uIdx._val; tt++) {
@@ -1801,8 +1814,19 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
                 return false;
         }
         return true;
-    });
+    }());
     
+    // Sorting tasks regarding their earliest start times
+    const ORInt sortSize    = disj->_sortSize._val;
+    const ORInt presentSize = disj->_cIdx._val;
+    if (presentSize >= sortSize) {
+        isort_r(disj->_task_id_est, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
+        isort_r(disj->_task_id_lct, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAsc);
+    }
+    else {
+        isort_r(disj->_task_id_est, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscOpt);
+        isort_r(disj->_task_id_lct, sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAscOpt);
+    }
     // Testing the sorting of the sorting array '_task_id_est'
     assert(^ORBool() {
         for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
@@ -1814,7 +1838,7 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
                 return false;
         }
         return true;
-    });
+    }());
     // Testing the sorting of the sorting array '_task_id_lct'
     assert(^ORBool() {
         for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
@@ -1825,10 +1849,10 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
             else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_lct[i0] > disj->_lct[i1])
                 return false;
         }
-        return false;
-    });
+        return true;
+    }());
     
-    const ORInt presentSize = disj->_cIdx._val;
+//    const ORInt presentSize = disj->_cIdx._val;
     ORInt localSlack = MAXINT;
     ORInt len_min = 0;
     ORInt jjPrev  = 0;
@@ -1858,8 +1882,9 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
                     if (isUnfixed(disj, j0)) {
                         if (est_min <= disj->_est[j0]) len_min += disj->_dur_min[j0];
                         localSlack = min(localSlack, disj->_lct[j0] - est_min - len_min);
+                        assert(localSlack >= 0);
                     }
-                    else {
+                    else if (est_min <= disj->_est[j0]) {
                         len_min += disj->_dur_min[j0];
                     }
                 }
@@ -2041,7 +2066,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
                 return false;
         }
         return true;
-    });
+    }());
     // Testing the sorting of the sorting array '_task_id_lct'
     assert(^ORBool() {
         for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
@@ -2052,8 +2077,8 @@ static void doPropagation(CPTaskDisjunctive * disj) {
             else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_lct[i0] > disj->_lct[i1])
                 return false;
         }
-        return false;
-    });
+        return true;
+    }());
     
     // Computation of the sorting array indices determining which tasks need
     // to be considered during current propagation
@@ -2109,7 +2134,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
                 return false;
         }
         return true;
-    });
+    }());
     // Testing the sorting of the sorting array '_task_id_lst'
     assert(^ORBool() {
         for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
@@ -2121,7 +2146,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
                 return false;
         }
         return true;
-    });
+    }());
     
     if (disj->_uIdx._val != disj->_sortSize._val)
         assignTRInt(&(disj->_sortSize), disj->_uIdx._val, disj->_trail);

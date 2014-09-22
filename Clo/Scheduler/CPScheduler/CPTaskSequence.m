@@ -42,7 +42,7 @@
                 return false;
         }
         return true;
-    });
+    }());
    id<CPTaskVar> task0 = tasks[tasks.low];
    _engine = [task0 engine];
    self = [super initCPCoreConstraint: _engine];
