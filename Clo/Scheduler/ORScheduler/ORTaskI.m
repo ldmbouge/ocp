@@ -122,3 +122,44 @@
     [v visitAlternativeTask: self];
 }
 @end
+
+@implementation ORMachineTask {
+    id<ORTaskDisjunctiveArray> _disj;
+    id<ORIntArray>             _durArray;
+}
+-(id<ORMachineTask>) initORMachineTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration runsOnOneOf:(id<ORTaskDisjunctiveArray>)disjunctives
+{
+    ORInt minDur = MAXINT;
+    ORInt maxDur = MININT;
+    for (ORInt k = duration.low; k <= duration.up; k++) {
+        minDur = min(minDur, [duration at:k]);
+        maxDur = max(maxDur, [duration at:k]);
+    }
+    
+    self = [super initORTaskVar:model horizon:horizon duration:RANGE(model, minDur, maxDur)];
+    _disj = disjunctives;
+    _durArray = duration;
+    
+    return self;
+}
+-(id<ORTaskDisjunctiveArray>) disjunctives
+{
+    return _disj;
+}
+-(id<ORIntArray>) durationArray
+{
+    return _durArray;
+}
+-(ORInt) getIndex:(id<ORTaskDisjunctive>)disjunctive
+{
+    ORInt index = _disj.low;
+    for (; index <= _disj.up; index++)
+        if (_disj[index].getId == disjunctive.getId)
+            return index;
+    return ++index;
+}
+-(void)visit:(ORVisitor*) v
+{
+    [v visitMachineTask: self];
+}
+@end

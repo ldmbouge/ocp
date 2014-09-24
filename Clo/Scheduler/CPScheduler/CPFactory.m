@@ -213,6 +213,14 @@
     return o;
 }
 
++(id<CPDisjunctiveArray>) disjunctiveArray:(id<CPEngine>)engine range:(id<ORIntRange>)range with:(CPTaskDisjunctive *(^)(ORInt))clo
+{
+    id<ORIdArray> disj = [ORFactory idArray:engine range:range];
+    for (ORInt k = range.low; k <= range.up; k++)
+        [disj set: clo(k) at: k];
+    return (id<CPDisjunctiveArray>) disj;
+}
+
 // Task of fixed duration
 //
 +(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
@@ -236,6 +244,12 @@
 +(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives:(id<CPTaskVarArray>)alternatives
 {
     id<CPAlternativeTask> task = [[CPOptionalAlternativeTask alloc] initCPOptionalAlternativeTask: engine horizon: horizon duration: duration alternatives:alternatives];
+    [engine trackMutable: task];
+    return task;
+}
++(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPDisjunctiveArray>)disjunctives
+{
+    id<CPMachineTask> task = [[CPMachineTask alloc] initCPMachineTask:engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:disjunctives];
     [engine trackMutable: task];
     return task;
 }

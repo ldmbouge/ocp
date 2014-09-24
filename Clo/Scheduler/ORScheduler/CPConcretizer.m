@@ -137,6 +137,9 @@
     if ([task isMemberOfClass:[ORAlternativeTask class]]) {
         [self visitAlternativeTask: (id<ORAlternativeTask>) task];
     }
+    else if ([task isMemberOfClass:[ORMachineTask class]]) {
+        [self visitMachineTask: (id<ORMachineTask>) task];
+    }
     else if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon = [task horizon];
         id<ORIntRange> duration = [task duration];
@@ -173,6 +176,33 @@
         id<CPConstraint> concreteCstr;
         concreteCstr = [CPFactory constraint: concreteTask alternatives:_gamma[alt.getId]];
         [_engine add: concreteCstr];
+        
+        _gamma[task.getId] = concreteTask;
+    }
+}
+
+// Machine Task
+-(void) visitMachineTask:(id<ORMachineTask>) task
+{
+    assert(false);
+    if (_gamma[task.getId] != NULL) {
+        id<ORIntRange> horizon  = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        id<ORIntArray> durationArray = [task durationArray];
+        id<ORTaskDisjunctiveArray> disj  = [task disjunctives];
+        
+        assert(![task isOptional]);
+
+        // TODO Here it needs to be decided whether to generate one machine task or alternative task with m optional tasks
+        // For the time being only machine tasks are created
+        
+        id<CPMachineTask> concreteTask;
+        
+        id<CPDisjunctiveArray> emptyDisj;
+        emptyDisj = [CPFactory disjunctiveArray:_engine range:[disj range] with:^CPTaskDisjunctive*(ORInt k) {
+            return NULL;
+        }];
+        concreteTask = [CPFactory task:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyDisj];
         
         _gamma[task.getId] = concreteTask;
     }
@@ -259,6 +289,18 @@
             concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
+        
+        // Check for machine tasks and set the concrete disjunctive constraint
+        for (ORInt i = tasks.low; i <= tasks.up; i++) {
+            if ([tasks[i] isMemberOfClass:[ORMachineTask class]]) {
+                id<ORMachineTask> t = (id<ORMachineTask>) tasks[i];
+                assert(_gamma[t.getId] != NULL);
+                ORInt idx = [t getIndex:cstr];
+                assert([t disjunctives].low <= idx && idx <= [t disjunctives].up);
+                id<CPMachineTask> concreteT = _gamma[t.getId];
+                [concreteT set:concreteCstr at:idx];
+            }
+        }
     }
 }
 

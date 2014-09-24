@@ -14,6 +14,7 @@
 #import <objcp/CPVar.h>
 
 @protocol CPTaskVarArray;
+@protocol CPDisjunctiveArray;
 
 @protocol CPTaskVarSubscriber <NSObject>
 
@@ -75,6 +76,11 @@
 
 @protocol CPAlternativeTask <CPTaskVar>
 -(id<CPTaskVarArray>) alternatives;
+@end
+
+@protocol CPMachineTask <CPTaskVar>
+-(id<CPDisjunctiveArray>) disjunctives;
+-(void) set: (id<CPConstraint>) disjunctive at: (ORInt) idx;
 @end
 
 @protocol CPTaskVarArray <ORObject>

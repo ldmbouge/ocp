@@ -15,6 +15,8 @@
 @protocol ORTaskPrecedes;
 @protocol ORTaskIsFinishedBy;
 @protocol ORTaskVarArray;
+@protocol ORTaskDisjunctive;
+@protocol ORTaskDisjunctiveArray;
 
 @protocol ORTaskVar <ORVar>
 -(id<ORTracker>) tracker;
@@ -27,6 +29,12 @@
 
 @protocol ORAlternativeTask <ORTaskVar>
 -(id<ORTaskVarArray>) alternatives;
+@end
+
+@protocol ORMachineTask <ORTaskVar>
+-(id<ORTaskDisjunctiveArray>) disjunctives;
+-(id<ORIntArray>) durationArray;
+-(ORInt) getIndex: (id<ORTaskDisjunctive>) disjunctive;
 @end
 
 @protocol ORTaskVarArray <ORObject>

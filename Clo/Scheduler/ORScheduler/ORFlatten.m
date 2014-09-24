@@ -18,6 +18,10 @@
 {
     _result = t;
 }
+-(void) visitMachineTask:(id<ORMachineTask>) t
+{
+    _result = t;
+}
 -(void) visitTask:(id<ORTaskVar>) t
 {
    _result = t;

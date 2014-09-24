@@ -127,8 +127,8 @@ typedef struct  {
 
 @implementation CPTaskVar
 {
-   CPEngineI*         _engine;
-   id<ORTrail>        _trail;
+   @protected CPEngineI*  _engine;
+   @protected id<ORTrail> _trail;
    id<ORIntRange>     _horizon;
    TRInt              _start;
    TRInt              _end;
@@ -811,5 +811,191 @@ typedef struct  {
 -(id<CPTaskVarArray>) alternatives
 {
     return _alt;
+}
+@end
+
+
+@implementation CPMachineTask
+{
+    id<CPDisjunctiveArray> _disj;
+    id<ORIntArray> _durArray;
+    id<CPIntVar> blah;
+    ORInt * _index;
+    TRInt   _uSize;
+    ORInt   _size;
+    TRInt   _bind;
+}
+-(id<CPMachineTask>) initCPMachineTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPDisjunctiveArray>)disjunctives
+{
+    assert(durationArray.low == disjunctives.low);
+    assert(durationArray.up  == disjunctives.up );
+    self = [super initCPTaskVar:engine horizon:horizon duration:duration];
+    _disj = disjunctives;
+    _durArray = durationArray;
+    _size = (ORInt)[disjunctives count];
+    _index = NULL;
+    _index = malloc(_size * sizeof(ORInt));
+    if (_index == NULL)
+         @throw [[ORExecutionError alloc] initORExecutionError: "CPMachineTask: Out of memory!"];
+    _uSize = makeTRInt(_trail, _size);
+    _bind  = makeTRInt(_trail, 0);
+    
+    // Initialisation of the index array
+    for (ORInt i = 0; i < _size; i++)
+        _index[i] = i + _disj.low;
+    
+    return self;
+}
+-(id<CPDisjunctiveArray>) disjunctives
+{
+    return _disj;
+}
+-(void) set:(id<CPConstraint>)disjunctive at:(ORInt)idx
+{
+    assert(_disj.low <= idx && idx <= _disj.up);
+    assert([disjunctive isMemberOfClass: [CPTaskDisjunctive class]]);
+    [_disj set:(CPTaskDisjunctive*) disjunctive at:idx];
+}
+-(void) updateMinDuration:(ORInt)newMinDuration
+{
+    if (newMinDuration > _durationMin._val) {
+        [super updateMinDuration:newMinDuration];
+        ORInt uSize = _uSize._val;
+        for (ORInt i = 0; i < uSize; i++) {
+            const ORInt idx = _index[i];
+            if ([_durArray at:idx] < newMinDuration) {
+                uSize--;
+                _index[i]     = _index[uSize];
+                _index[uSize] = idx;
+            }
+        }
+        if (uSize == 0)
+            failNow();
+        if (uSize < _uSize._val)
+            assignTRInt(&(_uSize), uSize, _trail);
+        if (uSize == 1 && !_bind._val)
+            [self bindWithIndex:_index[0]];
+    }
+}
+-(void) updateMaxDuration:(ORInt)newMaxDuration
+{
+    if (newMaxDuration < _durationMax._val) {
+        [super updateMaxDuration:newMaxDuration];
+        ORInt uSize = _uSize._val;
+        for (ORInt i = 0; i < uSize; i++) {
+            const ORInt idx = _index[i];
+            if ([_durArray at:idx] > newMaxDuration) {
+                uSize--;
+                _index[i]     = _index[uSize];
+                _index[uSize] = idx;
+            }
+        }
+        if (uSize == 0)
+            failNow();
+        if (uSize < _uSize._val)
+            assignTRInt(&(_uSize), uSize, _trail);
+        if (uSize == 1 && !_bind._val)
+            [self bindWithIndex:_index[0]];
+    }
+}
+-(ORBool) isPresentOn: (CPTaskDisjunctive*) disjunctive
+{
+    return (_uSize._val == 1 && _index[0] == [self getIndex:disjunctive]);
+}
+-(ORBool) isAbsentOn: (CPTaskDisjunctive*) disjunctive
+{
+    const ORInt idx = [self getIndex:disjunctive];
+    for (ORInt i = 0; i < _uSize._val; i++)
+        if (_index[i] == idx)
+            return FALSE;
+    return TRUE;
+}
+-(void) bind: (CPTaskDisjunctive*) disjunctive
+{
+    const ORInt idx = [self getIndex:disjunctive];
+    [self bindWithIndex: idx];
+}
+-(void) bindWithIndex: (const ORInt) idx
+{
+    if (_uSize._val == 1) {
+        if (_index[0] != idx)
+            failNow();
+    }
+    else {
+        ORInt i = 0;
+        for (; i < _uSize._val; i++) {
+            if (_index[i] == idx) {
+                _index[i] = _index[0];
+                _index[0] = idx;
+                break;
+            }
+        }
+        if (i >= _uSize._val)
+            failNow();
+        assignTRInt(&(_uSize), 1, _trail);
+    }
+    assert(_index[0] == idx);
+    if (!_bind._val) {
+        assignTRInt(&(_bind), 1, _trail);
+        [self updateMinDuration:[_durArray at: idx]];
+        [self updateMaxDuration:[_durArray at: idx]];
+        // TODO queue disjunctive propagator
+        [_disj[idx] propagate];
+    }
+}
+-(void) remove: (CPTaskDisjunctive*) disjunctive
+{
+    const ORInt idx = [self getIndex:disjunctive];
+    [self removeWithIndex:idx];
+}
+-(void) removeWithIndex: (const ORInt) idx
+{
+    if (_uSize._val == 1) {
+        if (_index[0] == idx)
+            failNow();
+    }
+    else {
+        ORBool newDur = false;
+        for (ORInt i = 0; i < _uSize._val; i++) {
+            if (_index[i] == idx) {
+                const ORInt j = _uSize._val - 1;
+                assignTRInt(&(_uSize), j, _trail);
+                _index[i] = _index[j];
+                _index[j] = idx;
+                newDur = true;
+                break;
+            }
+        }
+        if (_uSize._val == 1) {
+            assert(!_bind._val);
+            [self bindWithIndex:_index[0]];
+        }
+        else if (newDur && _durationMin._val < _durationMax._val) {
+            // XXX With "watches" on the disjunctive holding the minimal and maximal
+            // duration the above test can be refined
+            
+            // Checking for new duration bounds
+            ORInt minDur = MAXINT;
+            ORInt maxDur = MININT;
+            for (ORInt i = 0; i < _uSize._val; i++) {
+                minDur = min(minDur, [_durArray at: _index[i]]);
+                maxDur = max(maxDur, [_durArray at: _index[i]]);
+            }
+            assert(minDur < MAXINT);
+            assert(maxDur > MININT);
+            [self updateMinDuration:minDur];
+            [self updateMaxDuration:maxDur];
+        }
+    }
+}
+-(ORInt) getIndex: (CPTaskDisjunctive*) disjunctive
+{
+    ORInt idx = _disj.low;
+    for (; idx <= _disj.up; idx++)
+        if (_disj[idx] == disjunctive)
+            return idx;
+    // Program never should reach this point
+    assert(false);
+    return ++idx;
 }
 @end

@@ -31,3 +31,15 @@
 -(ORInt) localSlack;
 @end
 
+@protocol CPDisjunctiveArray <ORObject>
+-(CPTaskDisjunctive*) at: (ORInt) idx;
+-(void) set: (CPTaskDisjunctive*) value at: (ORInt)idx;
+-(CPTaskDisjunctive*)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(CPTaskDisjunctive*)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end

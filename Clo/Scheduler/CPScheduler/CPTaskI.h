@@ -31,3 +31,7 @@
 @interface CPOptionalAlternativeTask : CPOptionalTaskVar<CPAlternativeTask>
 -(id<CPAlternativeTask>) initCPOptionalAlternativeTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration alternatives: (id<CPTaskVarArray>) alternatives;
 @end
+
+@interface CPMachineTask : CPTaskVar<CPMachineTask>
+-(id<CPMachineTask>) initCPMachineTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPDisjunctiveArray>) disjunctives;
+@end

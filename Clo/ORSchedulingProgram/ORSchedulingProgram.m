@@ -9,7 +9,6 @@
  
  ***********************************************************************/
 
-#import "ORScheduler.h"
 #import "ORSchedulingProgram.h"
 #import <ORProgram/CPSolver.h>
 #import <CPScheduler/CPScheduler.h>
