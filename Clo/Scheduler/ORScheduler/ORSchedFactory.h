@@ -27,6 +27,7 @@
 +(id<ORTaskVar>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration;
 +(id<ORTaskVar>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (ORInt) duration;
 +(id<ORAlternativeTask>) task: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORTaskVar>(^)(ORInt)) clo;
++(id<ORMachineTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) range runsOnOneOf: (id<ORTaskDisjunctive>(^)(ORInt)) cloDisjunctives withDuration: (ORInt(^)(ORInt)) cloDurations;
 
 // Alternative Task array
 +(id<ORAlternativeTaskArray>) alternativeVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORAlternativeTask>(^)(ORInt)) clo;
@@ -55,6 +56,7 @@
 +(id<ORTaskDisjunctive>) disjunctiveConstraint: (id<ORTracker>) model transition: (id<ORIntMatrix>) matrix;
 
 +(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
++(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskDisjunctive>(^)(ORInt)) clo;
 
 // Difference Logic constraints
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems;

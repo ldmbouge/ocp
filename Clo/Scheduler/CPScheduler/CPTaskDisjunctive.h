@@ -17,7 +17,6 @@
 @protocol CPTaskVarArray;
 @protocol CPTaskVar;
 
-
 @interface CPTaskDisjunctive : CPCoreConstraint {
    id<CPTaskVarArray>  _tasks;   // TaskVar
 }

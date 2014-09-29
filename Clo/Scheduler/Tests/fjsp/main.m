@@ -287,6 +287,9 @@ int main(int argc, const char * argv[])
         for (ORInt o = act_fopt[t]; o < act_fopt[t] + act_nopt[t]; o++) dur_max = max(dur_max, dur[o]);
         ms_max += dur_max;
     }
+    
+    // Use machine tasks
+    ORBool useMachineTasks = false;
 
 	@autoreleasepool {
       
@@ -299,36 +302,54 @@ int main(int argc, const char * argv[])
         id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt  - 1];
         id<ORIntRange> AltsR    = [ORFactory intRange:model low:0 up:n_alt  - 1];
         id<ORIntRange> MachR    = [ORFactory intRange:model low:0 up:n_mach - 1];
+        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray:model range:MachR];
+        
+        id<ORTaskVarArray> OptActs = NULL;
+        id<ORTaskVarArray> Acts    = NULL;
+        id<ORAlternativeTaskArray> Alts = NULL;
 
             // Objective variable (makespan)
             //
         id<ORIntVar> MS = [ORFactory intVar:model bounds: dom];
         
+        if (useMachineTasks) {
+            // Creating machine activities
+            //
+            Acts = [ORFactory taskVarArray:model range:ActsR with:^id<ORTaskVar>(ORInt k) {
+                if (act_nopt[k] == 1) {
+                    return [ORFactory task: model horizon: dom duration: dur[k]];
+                }
+                return [ORFactory task: model horizon: dom range: RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1)  runsOnOneOf:^id<ORTaskDisjunctive>(ORInt l) {return [disjunctive at:mach[l] - mach_id_min];} withDuration:^ORInt(ORInt l) {return dur[l];}];
+            }];
+        }
+        else {
             // Creating optional activities
             //
-        id<ORTaskVarArray> OptActs = [ORFactory taskVarArray:model range:OptActsR with:^id<ORTaskVar>(ORInt k) {
-            if (act_nopt[opt_act[k]] == 1) {
-                return [ORFactory task: model horizon: dom duration: dur[k]];
-            }
-            return [ORFactory optionalTask: model horizon: dom duration: dur[k]];
-        }];
-        
+            OptActs = [ORFactory taskVarArray:model range:OptActsR with:^id<ORTaskVar>(ORInt k) {
+                if (act_nopt[opt_act[k]] == 1) {
+                    return [ORFactory task: model horizon: dom duration: dur[k]];
+                }
+                return [ORFactory optionalTask: model horizon: dom duration: dur[k]];
+            }];
+            
             // Creating of "alternative" activities
             //
-        id<ORTaskVarArray> Acts = [ORFactory taskVarArray:model range:ActsR with:^id<ORTaskVar>(ORInt k) {
-            if (act_nopt[k] == 1) {
-                return OptActs[act_fopt[k]];
-            }
-            return [ORFactory task: model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) withAlternatives:^id<ORTaskVar>(ORInt o) {
-                return OptActs[o];
+            Acts = [ORFactory taskVarArray:model range:ActsR with:^id<ORTaskVar>(ORInt k) {
+                if (act_nopt[k] == 1) {
+                    return OptActs[act_fopt[k]];
+                }
+                return [ORFactory task: model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) withAlternatives:^id<ORTaskVar>(ORInt o) {
+                    return OptActs[o];
+                }];
             }];
-        }];
-        
+            
             // Creating an array of all alternative tasks
             //
-        id<ORAlternativeTaskArray> Alts = [ORFactory alternativeVarArray:model range:AltsR with: ^id<ORAlternativeTask>(ORInt k) {
-            return (id<ORAlternativeTask>) Acts[alt_act[k]];
-        }];
+            Alts = [ORFactory alternativeVarArray:model range:AltsR with: ^id<ORAlternativeTask>(ORInt k) {
+                return (id<ORAlternativeTask>) Acts[alt_act[k]];
+            }];
+
+        }
         
             // Adding precedence constraints
             //
@@ -342,14 +363,26 @@ int main(int argc, const char * argv[])
 
             // Adding resource constraints
             //
-        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray:model range:MachR];
-        for (ORInt m = MachR.low; m <= MachR.up; m++) {
-            for (ORInt k = 0; k < mach_nopt[m]; k++) {
-                [disjunctive[m] add:OptActs[mach_opt[m][k]]];
+        if (useMachineTasks) {
+            for (ORInt m = MachR.low; m <= MachR.up; m++) {
+                for (ORInt k = 0; k < mach_nopt[m]; k++) {
+                    const ORInt o = mach_opt[m][k];
+                    const ORInt t = opt_act[o];
+                    [disjunctive[m] add:Acts[t]];
+                }
+                // Closing the disjunctive constraint
+                [model add:disjunctive[m]];
             }
-            [model add:disjunctive[m]];
         }
-        
+        else {
+            for (ORInt m = MachR.low; m <= MachR.up; m++) {
+                for (ORInt k = 0; k < mach_nopt[m]; k++) {
+                    [disjunctive[m] add:OptActs[mach_opt[m][k]]];
+                }
+                // Closing the disjunctive constraint
+                [model add:disjunctive[m]];
+            }
+        }
             // Adding objective constraints
             //
 		for (ORInt j = 0; j < n_job; j++) {
@@ -367,11 +400,18 @@ int main(int argc, const char * argv[])
 		[cp solve:
 			^() {
 				// Search strategy
-                [cp setAlternatives: Alts];
-                [cp labelActivities: OptActs];
+                if (useMachineTasks) {
+                    [cp labelActivities:Acts];
+                }
+                else {
+                    [cp setAlternatives: Alts];
+                    [cp labelActivities: OptActs];
+                }
                 // XXX setTimes seems to be buggy
 //                [cp setTimes: Acts];
                 [cp label: MS];
+                
+                // Print outs
                 printf("start = [");
                 for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
                     if (t > ActsR.low) printf(", ");
@@ -392,11 +432,27 @@ int main(int argc, const char * argv[])
                     }
                 }
                 for (ORInt m = MachR.low; m <= MachR.up; m++) {
+                    const ORInt mId = [disjunctive[m] getId];
                     printf("%%%% mach %d: ", m + mach_id_min);
-                    for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
-                        const ORInt k = mach_opt[m][kk];
-                        if ([cp isPresent: OptActs[k]]) {
-                            printf("[%2d, %2d) ", [cp est: OptActs[k]], [cp lct: OptActs[k]]);
+                    if (useMachineTasks) {
+                        for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
+                            const ORInt k = mach_opt[m][kk];
+                            const ORInt t = opt_act[k];
+                            if (act_nopt[t] == 1)
+                                printf("[%2d, %2d) ", [cp est: Acts[t]], [cp lct: Acts[t]]);
+                            else {
+                                const ORUInt runsOnId = [[cp runsOn: (id<ORMachineTask>) Acts[t]] getId];
+                                if (mId == runsOnId)
+                                    printf("[%2d, %2d) ", [cp est: Acts[t]], [cp lct: Acts[t]]);
+                            }
+                        }
+                    }
+                    else {
+                        for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
+                            const ORInt k = mach_opt[m][kk];
+                            if ([cp isPresent: OptActs[k]]) {
+                                printf("[%2d, %2d) ", [cp est: OptActs[k]], [cp lct: OptActs[k]]);
+                            }
                         }
                     }
                     printf("\n");

@@ -819,7 +819,6 @@ typedef struct  {
 {
     id<CPDisjunctiveArray> _disj;
     id<ORIntArray> _durArray;
-    id<CPIntVar> blah;
     ORInt * _index;
     TRInt   _uSize;
     ORInt   _size;
@@ -846,6 +845,11 @@ typedef struct  {
     
     return self;
 }
+-(void) dealloc
+{
+    if (_index != NULL) free(_index);
+    [super dealloc];
+}
 -(id<CPDisjunctiveArray>) disjunctives
 {
     return _disj;
@@ -855,6 +859,46 @@ typedef struct  {
     assert(_disj.low <= idx && idx <= _disj.up);
     assert([disjunctive isMemberOfClass: [CPTaskDisjunctive class]]);
     [_disj set:(CPTaskDisjunctive*) disjunctive at:idx];
+}
+-(id<ORIntArray>) getAvailDisjunctives
+{
+    // XXX Maybe sort in order to return in the same order
+    return [ORFactory intArray:_engine range:RANGE(_engine, 0, _uSize._val) with:^ORInt(ORInt k) {return _index[k];}];
+}
+-(ORBool) isAssigned
+{
+    return (_uSize._val == 1);
+}
+-(ORBool) bound
+{
+    if (_uSize._val != 1)
+        return false;
+    return [super bound];
+}
+-(ORBool) isPresentOn: (CPTaskDisjunctive*) disjunctive
+{
+    return (_uSize._val == 1 && _index[0] == [self getIndex:disjunctive]);
+}
+-(ORBool) isAbsentOn: (CPTaskDisjunctive*) disjunctive
+{
+    const ORInt idx = [self getIndex:disjunctive];
+    for (ORInt i = 0; i < _uSize._val; i++)
+        if (_index[i] == idx)
+            return FALSE;
+    return TRUE;
+}
+-(ORInt) runsOn
+{
+    if (_uSize._val != 1)
+        @throw [[ORExecutionError alloc] initORExecutionError: "The task is not assigned to any machine"];
+    return _index[0];
+}
+-(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forMachine:(CPTaskDisjunctive *)disjunctive
+{
+    [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
+    *bound   = [self bound    ];
+    *present = [self isPresentOn:disjunctive];
+    *absent  = [self isAbsentOn:disjunctive ];
 }
 -(void) updateMinDuration:(ORInt)newMinDuration
 {
@@ -897,18 +941,6 @@ typedef struct  {
         if (uSize == 1 && !_bind._val)
             [self bindWithIndex:_index[0]];
     }
-}
--(ORBool) isPresentOn: (CPTaskDisjunctive*) disjunctive
-{
-    return (_uSize._val == 1 && _index[0] == [self getIndex:disjunctive]);
-}
--(ORBool) isAbsentOn: (CPTaskDisjunctive*) disjunctive
-{
-    const ORInt idx = [self getIndex:disjunctive];
-    for (ORInt i = 0; i < _uSize._val; i++)
-        if (_index[i] == idx)
-            return FALSE;
-    return TRUE;
 }
 -(void) bind: (CPTaskDisjunctive*) disjunctive
 {

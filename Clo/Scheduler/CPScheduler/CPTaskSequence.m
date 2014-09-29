@@ -38,7 +38,7 @@
     // is extended for optional tasks
     assert(^ORBool() {
         for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if (![tasks[i] isMemberOfClass: [CPTaskVar class]])
+            if ([tasks[i] isOptional])
                 return false;
         }
         return true;

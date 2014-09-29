@@ -134,13 +134,8 @@
 // Task
 -(void) visitTask:(id<ORTaskVar>) task
 {
-    if ([task isMemberOfClass:[ORAlternativeTask class]]) {
-        [self visitAlternativeTask: (id<ORAlternativeTask>) task];
-    }
-    else if ([task isMemberOfClass:[ORMachineTask class]]) {
-        [self visitMachineTask: (id<ORMachineTask>) task];
-    }
-    else if (_gamma[task.getId] == NULL) {
+    assert([task isMemberOfClass:[ORTaskVar class]]);
+    if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon = [task horizon];
         id<ORIntRange> duration = [task duration];
         
@@ -184,8 +179,7 @@
 // Machine Task
 -(void) visitMachineTask:(id<ORMachineTask>) task
 {
-    assert(false);
-    if (_gamma[task.getId] != NULL) {
+    if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon  = [task horizon];
         id<ORIntRange> duration = [task duration];
         id<ORIntArray> durationArray = [task durationArray];
@@ -266,12 +260,12 @@
         [transitionTasks visit: self];
         [succ visit: self];
         id<CPConstraint> concreteCstr;
-        // NOTE the task sequence propagator for optional tasks
+        // NOTE the task sequence propagator for optional or machine tasks
         // haven't been implemented yet. Once it is then the
         // following check can be removed.
         ORBool hasOptionalTasks = false;
         for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if ([tasks[i] isOptional]) {
+            if ([tasks[i] isOptional] || [tasks[i] isMemberOfClass:[ORMachineTask class]]) {
                 hasOptionalTasks = true;
                 break;
             }

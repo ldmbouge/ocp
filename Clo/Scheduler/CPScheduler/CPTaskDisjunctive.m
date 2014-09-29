@@ -14,6 +14,7 @@
 #import "CPTaskDisjunctive.h"
 #import "CPMisc.h"
 #import "CPTask.h"
+#import "CPTaskI.h"
 
 // Randomly set, but it should be less than MAXINT/2, because Vilim's algorithms
 // need a tree of size 2 * (#tasks) - 1
@@ -32,6 +33,7 @@
     ORInt  * _bound;        // Activities' ID sorted in [Bound | Not Bound]
     TRInt    _boundSize;    // Size of bounded tasks
 
+    ORBool * _machineTask;  // Machine task
     
     // Variables needed for the propagation
     ORInt  * _new_est;      // New earliest start times (dynamic memory allocation)
@@ -81,6 +83,7 @@
     _ef    = true;
     _idx   = NULL;
     _bound = NULL;
+    _machineTask = NULL;
     
     _est         = NULL;
     _lct         = NULL;
@@ -117,6 +120,8 @@
     if (_present     != NULL) free(_present    );
     if (_absent      != NULL) free(_absent     );
     
+    if (_machineTask != NULL) free(_machineTask);
+    
     [super dealloc];
 }
 -(ORStatus) post
@@ -141,10 +146,13 @@
     _present     = malloc(_size * sizeof(ORBool));
     _absent      = malloc(_size * sizeof(ORBool));
 
+    _machineTask = malloc(_size * sizeof(ORBool));
+
     // Checking whether memory allocation was successful
     if (_idx == NULL || _task_id_est == NULL || _task_id_ect == NULL || _task_id_lst == NULL || _task_id_lct == NULL
         || _est == NULL || _lct == NULL || _dur_min == NULL
         || _dur_max == NULL || _present == NULL || _absent == NULL
+        || _machineTask == NULL
     ) {
         @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskDisjunctive: Out of memory!"];
     }
@@ -157,6 +165,8 @@
         _task_id_ect[i] = idx;
         _task_id_lst[i] = idx;
         _task_id_lct[i] = idx;
+        
+        _machineTask[i] = [_tasks[idx] isMemberOfClass:[CPMachineTask class]];
     }
     
     // Subscription of variables to the constraint
@@ -679,6 +689,8 @@ static void updateBounds(CPTaskDisjunctive * disj, const ORInt size)
     for (ORInt tt = 0; tt < size; tt++) {
         const ORInt t  = disj->_idx[tt];
         const ORInt t0 = t - disj->_low;
+        if (disj->_machineTask[t0] && !isRelevant(disj, t0))
+            continue;
         if (disj->_new_est[t0] > disj->_est[t0]) {
             [disj->_tasks[t] updateStart: disj->_new_est[t0]];
         }
@@ -1974,7 +1986,10 @@ static void readData(CPTaskDisjunctive * disj)
         const ORInt t  = disj->_bound[tt];
         const ORInt t0 = t - disj->_low;
         ORBool bound;
-        [disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0])];
+        if (disj->_machineTask[t0])
+            [(id<CPMachineTask>)disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0]) forMachine:disj];
+        else
+            [disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0])];
         
         assert(disj->_dur_min[t0] >= 0);
         assert(disj->_est[t0] + disj->_dur_min[t0] <= disj->_lct[t0]);
