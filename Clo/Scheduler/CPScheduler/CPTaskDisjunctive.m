@@ -783,7 +783,10 @@ static void ef_overload_check_optional_vilim(CPTaskDisjunctive * disj, const ORI
             assert(leaf_idx == idx_map_est[k0]);
             
             // Set to absent
-            [disj->_tasks[k] labelPresent: FALSE];
+            if (disj->_machineTask[k0])
+                [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+            else
+                [disj->_tasks[k] labelPresent: FALSE];
             
             // Remove from Lambda tree
             insertLambdaNodeAtIdxEct(theta, lambda, tsize, idx_map_est[k0], 0, MININT);
@@ -975,7 +978,10 @@ static void dprec_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORIn
                 assert(leaf_idx == idx_map_est[k0]);
                 
                 // Set to absent
-                [disj->_tasks[k] labelPresent: FALSE];
+                if (disj->_machineTask[k0])
+                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                else
+                    [disj->_tasks[k] labelPresent: FALSE];
                 // Remove from Lambda tree
                 insertLambdaNodeAtIdxEct(theta, lambda, tsize, idx_map_est[k0], 0, MININT);
             }
@@ -1059,7 +1065,10 @@ static void dprec_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORIn
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_lct[k0]);
                 // Set to absent
-                [disj->_tasks[k] labelPresent: FALSE];
+                if (disj->_machineTask[k0])
+                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                else
+                    [disj->_tasks[k] labelPresent: FALSE];
                 // Remove task 'k' from the Lambda tree
                 insertLambdaNodeAtIdxLst(theta, lambda, tsize, idx_map_lct[k0], 0, MAXINT);
             }
@@ -1288,7 +1297,11 @@ static void nfnl_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORInt
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_lct[k0]);
                 // Set to absent
-                [disj->_tasks[k] labelPresent: FALSE];
+                if (disj->_machineTask[k0])
+                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                else
+                    [disj->_tasks[k] labelPresent: FALSE];
+
                 // Remove task 'k' from the Lambda tree
                 insertLambdaNodeAtIdxLst(theta, lambda, tsize, idx_map_lct[k0], 0, MAXINT);
             }
@@ -1389,7 +1402,10 @@ static void nfnl_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORInt
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_est[k0]);
                 // Set to absent
-                [disj->_tasks[k] labelPresent: FALSE];
+                if (disj->_machineTask[k0])
+                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                else
+                    [disj->_tasks[k] labelPresent: FALSE];
                 // Remove from Lambda tree
                 insertLambdaNodeAtIdxEct(theta, lambda, tsize, idx_map_est[k0], 0, MININT);
             }

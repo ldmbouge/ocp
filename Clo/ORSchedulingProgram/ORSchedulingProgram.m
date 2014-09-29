@@ -252,7 +252,7 @@
     id<ORTaskDisjunctiveArray> disj = [task disjunctives];
     return [disj at: [((id<CPMachineTask>)_gamma[task.getId]) runsOn]];
 }
--(ORInt) isAssigned: (id<ORMachineTask>) task
+-(ORBool) isAssigned: (id<ORMachineTask>) task
 {
     return [((id<CPMachineTask>)_gamma[task.getId]) isAssigned];
 }
