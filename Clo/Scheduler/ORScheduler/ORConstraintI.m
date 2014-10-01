@@ -350,6 +350,7 @@
     id<ORTracker>      _tracker;
     NSMutableArray*    _accT;
     NSMutableArray*    _accU;
+    NSMutableSet   *   _accIds;
     id<ORTaskVarArray> _tasks;
     id<ORIntVarArray>  _usages;
     id<ORIntVar>       _capacity;
@@ -372,6 +373,15 @@
     _accU   = 0;
     _closed = TRUE;
     
+    // Check for duplicates
+    for (ORInt i = _tasks.low; i <= _tasks.up; i++) {
+        if ([_accIds containsObject: _tasks[i]])
+            @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is defined with duplicate tasks"];
+        [_accIds addObject: _tasks[i]];
+    }
+    [_accIds dealloc];
+    _accIds = 0;
+    
     return self;
 }
 -(id<ORTaskCumulative>) initORTaskCumulativeEmpty: (id<ORIntVar>) capacity
@@ -390,19 +400,23 @@
 }
 -(void) dealloc
 {
-    if (_accT)
-        [_accT dealloc];
-    if (_accU)
-        [_accU dealloc];
+    if (_accT  ) [_accT   dealloc];
+    if (_accU  ) [_accU   dealloc];
+    if (_accIds) [_accIds dealloc];
+    
     [super dealloc];
 }
 -(void) add: (id<ORTaskVar>) task with:(id<ORIntVar>)usage
 {
-    if (_closed) {
-        @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
+    // Check whether 'task' is already added
+    if (![_accIds containsObject:@([task getId])]) {
+        if (_closed)
+            @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
+        // Add task
+        [_accT   addObject: task           ];
+        [_accU   addObject: usage          ];
+        [_accIds addObject: @([task getId])];
     }
-    [_accT addObject: task ];
-    [_accU addObject: usage];
 }
 -(void) visit: (ORVisitor*) v
 {
@@ -454,90 +468,141 @@
 @end
 
 @implementation ORTaskDisjunctive {
-   BOOL _closed;
-   id<ORTracker> _tracker;
-   NSMutableArray* _acc;
-   NSMutableArray* _accTypes;
-   id<ORTaskVarArray> _tasks;
-   id<ORIntArray> _types;
-   id<ORIntVarArray> _successors;
-   id<ORIntMatrix> _transition;
-   id<ORIntMatrix> _typeTransition;
-   id<ORTaskVarArray> _transitionTasks;   
-   
-   id<ORIntRange> _transitionRow;
-   id<ORIntRange> _transitionColumn;
-   id<ORIntVarArray> _transitionTimes;
-   id<ORIntArray>* _transitionArray;
-
+    BOOL _closed;
+    
+    id<ORTracker>      _tracker;
+    NSMutableArray *   _acc;
+    NSMutableArray *   _accTypes;
+    NSMutableSet   *   _accIds;
+    id<ORTaskVarArray> _tasks;
+    id<ORIntArray>     _types;
+    id<ORIntVarArray>  _successors;
+    id<ORIntMatrix>    _transition;
+    id<ORIntMatrix>    _typeTransition;
+    id<ORTaskVarArray> _transitionTasks;
+    
+    id<ORIntRange>    _transitionRow;
+    id<ORIntRange>    _transitionColumn;
+    id<ORIntVarArray> _transitionTimes;
+    id<ORIntArray>*   _transitionArray;
 }
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive: (id<ORTaskVarArray>) tasks
 {
-   self = [super initORConstraintI];
-   _tracker = [tasks tracker];
-   _tasks = tasks;
-   ORInt low = _tasks.range.low;
-   ORInt up = _tasks.range.up;
-   _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,low-1,up) domain: RANGE(_tracker,low,up+1)];
-   _acc = 0;
-   _closed = TRUE;
-   return self;
+    const ORInt low = _tasks.range.low;
+    const ORInt up  = _tasks.range.up;
+
+    self = [super initORConstraintI];
+    
+    _tracker    = [tasks tracker];
+    _tasks      = tasks;
+    _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,low-1,up) domain: RANGE(_tracker,low,up+1)];
+    _acc        = 0;
+    _accTypes   = 0;
+    _accIds     = [[NSMutableSet alloc] initWithCapacity:tasks.count];
+    _closed     = TRUE;
+    
+    // Check for duplicates
+    for (ORInt i = low; i <= up; i++) {
+        if ([_accIds containsObject: _tasks[i]])
+            @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is defined with duplicate tasks"];
+        [_accIds addObject: _tasks[i]];
+    }
+    [_accIds dealloc];
+    _accIds = 0;
+    
+    return self;
 }
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;
 {
-   self = [super initORConstraintI];
-   _tracker = tracker;
-   _tasks = 0;
-    _acc = [[NSMutableArray alloc] initWithCapacity: 16];
-   _closed = FALSE;
-   return self;
+    self = [super initORConstraintI];
+    
+    _tracker    = tracker;
+    _tasks      = 0;
+    _acc        = [[NSMutableArray alloc] initWithCapacity: 16];
+    _accTypes   = 0;
+    _accIds     = [[NSMutableSet   alloc] initWithCapacity: 16];
+    _transition = 0;
+    _closed     = FALSE;
+
+    return self;
 }
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker transition: (id<ORIntMatrix>) transition;
 {
-   self = [super initORConstraintI];
-   _tracker = tracker;
-   _tasks = 0;
-   _acc = [[NSMutableArray alloc] initWithCapacity: 16];
-   _accTypes = [[NSMutableArray alloc] initWithCapacity: 16];
-   _transition = transition;
-   _closed = FALSE;
-   return self;
+    self = [super initORConstraintI];
+    
+    _tracker    = tracker;
+    _tasks      = 0;
+    _acc        = [[NSMutableArray alloc] initWithCapacity: 16];
+    _accTypes   = [[NSMutableArray alloc] initWithCapacity: 16];
+    _accIds     = [[NSMutableSet   alloc] initWithCapacity: 16];
+    _transition = transition;
+    _closed     = FALSE;
+    
+    return self;
 }
 
 -(void) dealloc
 {
-   if (_acc)
-      [_acc dealloc];
-   [super dealloc];
+    if (_acc     ) [_acc      dealloc];
+    if (_accTypes) [_accTypes dealloc];
+    if (_accIds  ) [_accIds   dealloc];
+
+    [super dealloc];
 }
 -(void) add: (id<ORTaskVar>) task
 {
-   if (_closed) {
-      @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
-   }
-   [_acc addObject: task];
+    // Check whether 'task' is already added
+    if (![_accIds containsObject:@([task getId])]) {
+        if (_closed)
+            @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
+        // Add task
+        [_acc    addObject: task           ];
+        [_accIds addObject: @([task getId])];
+    }
 }
 -(void) add: (id<ORTaskVar>) task type: (ORInt) type
 {
-   if (_closed) {
-      @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
-   }
-   [_acc addObject: task];
-   [_accTypes addObject: @(type)];
+    if (_transition)
+        @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource was created without transition"];
+    // Check whether 'task' is already added
+    if (![_accIds containsObject:@([task getId])]) {
+        if (_closed)
+            @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
+        // Add task
+        [_acc      addObject: task           ];
+        [_accTypes addObject: @(type)        ];
+        [_accIds   addObject: @([task getId])];
+    }
+}
+-(void) add: (id<ORMachineTask>) task duration:(ORInt)duration
+{
+    // Check whether 'task' is already added
+    if (![_accIds containsObject:@([task getId])]) {
+        if (_closed)
+            @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
+        // Add task
+        [_acc    addObject: task           ];
+        [_accIds addObject: @([task getId])];
+        // Add disjunctive to machine task
+        [task addDisjunctive:self with:duration];
+    }
 }
 -(void) postTransitionTimes
 {
    if (!_transition)
       return;
    id<ORModel> model = (id<ORModel>) _tracker;
-   ORInt nbAct = (ORInt) [_acc count];
-   _transitionRow = RANGE(_tracker,0,nbAct);
+   ORInt       nbAct = (ORInt) [_acc count];
+    
+   _transitionRow    = RANGE(_tracker,0,nbAct);
    _transitionColumn = RANGE(_tracker,1,nbAct+1);
-   _typeTransition = [ORFactory intMatrix: _tracker range: _transitionRow : _transitionColumn];
+   _typeTransition   = [ORFactory intMatrix: _tracker range: _transitionRow : _transitionColumn];
+    
    for(ORInt i = _transitionColumn.low; i <= _transitionColumn.up ; i++) 
       [_typeTransition set: 0 at: 0 : i];
    for(ORInt i = _transitionRow.low; i <= _transitionRow.up ; i++)
       [_typeTransition set: 0 at: i : nbAct + 1];
+    
    ORInt maxTransition = -MAXINT;
    for(ORInt i = 1; i <= nbAct ; i++) {
       ORInt typei = [_accTypes[i-1] intValue];

@@ -23,4 +23,5 @@
 
 @interface ORMachineTask : ORTaskVar<ORMachineTask>
 -(id<ORMachineTask>) initORMachineTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationArray: (id<ORIntArray>) duration runsOnOneOf: (id<ORTaskDisjunctiveArray>) disjunctives;
+-(id<ORMachineTask>) initORMachineTaskEmpty: (id<ORModel>) model horizon: (id<ORIntRange>) horizon;
 @end

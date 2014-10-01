@@ -10,16 +10,13 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORModeling/ORModeling.h>
 #import "ORTaskI.h"
 #import <ORScheduler/ORSchedFactory.h>
 #import <ORScheduler/ORVisit.h>
-#import <ORProgram/CPSolver.h>
 
 
 @implementation ORTaskVar {
-   id<ORModel> _model;
+   @protected id<ORModel> _model;
    id<ORIntRange>  _horizon;
    id<ORIntRange>  _duration;
    ORBool _isOptional;
@@ -126,6 +123,10 @@
 @implementation ORMachineTask {
     id<ORTaskDisjunctiveArray> _disj;
     id<ORIntArray>             _durArray;
+
+    NSMutableDictionary * _dictDisj;
+    NSMutableDictionary * _dictDur;
+    ORBool _closed;
 }
 -(id<ORMachineTask>) initORMachineTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration runsOnOneOf:(id<ORTaskDisjunctiveArray>)disjunctives
 {
@@ -136,30 +137,103 @@
         maxDur = max(maxDur, [duration at:k]);
     }
     
-    self = [super initORTaskVar:model horizon:horizon duration:RANGE(model, minDur, maxDur)];
-    _disj = disjunctives;
+    self = [super initORTaskVar:model horizon:horizon duration:nil];
+    
+    _disj     = disjunctives;
     _durArray = duration;
+    
+    _dictDisj  = NULL;
+    _dictDur   = NULL;
+    _closed    = true;
+    
+    // Adding the machine task to the disjunctive resource
+    for (ORInt k = duration.low; k <= duration.up; k++)
+        [disjunctives[k] add:self duration:[duration at:k]];
     
     return self;
 }
+-(id<ORMachineTask>) initORMachineTaskEmpty:(id<ORModel>)model horizon:(id<ORIntRange>)horizon
+{
+    self = [super initORTaskVar:model horizon:horizon duration:RANGE(model, 0, 0)];
+    
+    _dictDisj = [[NSMutableDictionary alloc] initWithCapacity: 16];
+    _dictDur  = [[NSMutableDictionary alloc] initWithCapacity: 16];
+    _closed  = false;
+    
+    return self;
+}
+-(void) dealloc
+{
+    if (_dictDisj != NULL)
+        [_dictDisj dealloc];
+    if (_dictDur != NULL)
+        [_dictDur dealloc];
+    [super dealloc];
+}
 -(id<ORTaskDisjunctiveArray>) disjunctives
 {
+    if (!_closed)
+        @throw [[ORExecutionError alloc] initORExecutionError: "The machine task is not closed yet"];
     return _disj;
 }
 -(id<ORIntArray>) durationArray
 {
+    if (!_closed)
+        @throw [[ORExecutionError alloc] initORExecutionError: "The machine task is not closed yet"];
     return _durArray;
 }
 -(ORInt) getIndex:(id<ORTaskDisjunctive>)disjunctive
 {
+    if (!_closed)
+        @throw [[ORExecutionError alloc] initORExecutionError: "The machine task is not closed yet"];
     ORInt index = _disj.low;
     for (; index <= _disj.up; index++)
         if (_disj[index].getId == disjunctive.getId)
             return index;
     return ++index;
 }
--(void)visit:(ORVisitor*) v
+-(void) close
 {
+    if (!_closed) {
+        _closed = true;
+        id<ORIntRange> range = RANGE(_model, 1, (ORInt)[_dictDisj count]);
+        NSArray * keys = [_dictDisj allKeys];
+        _disj     = [ORFactory disjunctiveArray:_model range:range with: ^id<ORTaskDisjunctive>(ORInt i) {
+            assert([_dictDisj objectForKey:keys[i - 1]] != NULL);
+            return (id<ORTaskDisjunctive>)[_dictDisj objectForKey:keys[i - 1]];
+        }];
+        _durArray = [ORFactory intArray:_model range: range with:^ORInt(ORInt i) {
+            assert([_dictDur objectForKey:keys[i - 1]] != NULL);
+            return [[_dictDur objectForKey:keys[i - 1]] intValue];
+        }];
+        
+        ORInt minDur = MAXINT;
+        ORInt maxDur = MININT;
+        for (ORInt k = _durArray.low; k <= _durArray.up; k++) {
+            minDur = min(minDur, [_durArray at:k]);
+            maxDur = max(maxDur, [_durArray at:k]);
+        }
+        _duration = RANGE(_model, minDur, maxDur);
+    }
+}
+-(void) addDisjunctive: (id<ORTaskDisjunctive>) disjunctive with: (ORInt) duration
+{
+    ORInt key = [disjunctive getId];
+    // Check whether it is already added
+    if ([_dictDisj objectForKey: @(key)] == nil) {
+        if (_closed)
+            @throw [[ORExecutionError alloc] initORExecutionError: "The machine task is already closed"];
+        // Adding the disjunctive and duration
+        [_dictDisj setObject:disjunctive forKey:@(key)];
+        [_dictDur  setObject:@(duration) forKey:@(key)];
+        // Add machine task to disjunctive
+        [disjunctive add:self duration:duration];
+    }
+}
+-(void) visit:(ORVisitor*) v
+{
+    if (!_closed)
+        [self close];
     [v visitMachineTask: self];
 }
 @end

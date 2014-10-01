@@ -116,7 +116,7 @@
    }
    return (id<ORTaskDisjunctiveArray>) o;
 }
-+(id<ORTaskDisjunctiveArray>) disjuntiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskDisjunctive>(^)(ORInt)) clo
++(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskDisjunctive>(^)(ORInt)) clo
 {
     id<ORIdArray> o = [ORFactory idArray: model range:range];
     for (ORInt k = range.low; k <= range.up; k++)
@@ -203,6 +203,9 @@
 {
    id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctive: task];
    [[task tracker] trackObject:o];
+    // XXX 'trackObject' does not assign a unique ID to the object but 'trackConstraintInGroup'
+    // 'trackConstraintInGroup' can be removed when 'trackObject' assigns a unique ID
+    [[task tracker] trackConstraintInGroup:o];
    return o;
 }
 
@@ -210,6 +213,9 @@
 {
    id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctiveEmpty: model];
    [model trackObject:o];
+    // XXX 'trackObject' does not assign a unique ID to the object but 'trackConstraintInGroup'
+    // 'trackConstraintInGroup' can be removed when 'trackObject' assigns a unique ID
+    [model trackConstraintInGroup:o];
    return o;
 }
 
@@ -217,6 +223,9 @@
 {
    id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctiveEmpty: model transition: matrix];
    [model trackObject:o];
+    // XXX 'trackObject' does not assign a unique ID to the object but 'trackConstraintInGroup'
+    // 'trackConstraintInGroup' can be removed when 'trackObject' assigns a unique ID
+    [model trackConstraintInGroup:o];
    return o;
 }
 
@@ -291,8 +300,14 @@
 +(id<ORMachineTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOf: (id<ORTaskDisjunctive>(^)(ORInt)) cloDisjunctives withDuration: (ORInt(^)(ORInt)) cloDuration
 {
     id<ORIntArray> dur = [ORFactory intArray:model range:range with:cloDuration];
-    id<ORTaskDisjunctiveArray> disj = [ORFactory disjuntiveArray:model range:range with:cloDisjunctives];
+    id<ORTaskDisjunctiveArray> disj = [ORFactory disjunctiveArray:model range:range with:cloDisjunctives];
     id<ORMachineTask> o = [[ORMachineTask alloc] initORMachineTask:model horizon:horizon durationArray:dur runsOnOneOf:disj];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORMachineTask>) machineTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon
+{
+    id<ORMachineTask> o = [[ORMachineTask alloc] initORMachineTaskEmpty:model horizon:horizon];
     [model trackMutable:o];
     return o;
 }

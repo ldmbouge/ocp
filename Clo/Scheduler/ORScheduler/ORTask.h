@@ -34,7 +34,9 @@
 @protocol ORMachineTask <ORTaskVar>
 -(id<ORTaskDisjunctiveArray>) disjunctives;
 -(id<ORIntArray>) durationArray;
+-(void) addDisjunctive: (id<ORTaskDisjunctive>) disjunctive with: (ORInt) duration;
 -(ORInt) getIndex: (id<ORTaskDisjunctive>) disjunctive;
+-(void) close;
 @end
 
 @protocol ORTaskVarArray <ORObject>

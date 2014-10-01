@@ -52,6 +52,7 @@
 @protocol ORTaskDisjunctive <ORConstraint>
 -(void) add: (id<ORTaskVar>) act;
 -(void) add: (id<ORTaskVar>) act type: (ORInt) t;
+-(void) add: (id<ORMachineTask>) act duration: (ORInt) duration;
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORTaskVarArray>) transitionTaskVars;
 -(ORBool) hasTransition;
