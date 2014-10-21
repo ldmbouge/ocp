@@ -1865,9 +1865,6 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
     // - the parameters '_begin' and '_end' represent the tightest time window
     //   in that all unbounded tasks (present or non-absent) need to be scheduled
     // - the sorting arrays '_task_id_est' and '_task_id_lct' are sorted
-    // - the indices '_beginIdx' and '_endIdx' pointing to the first task and the
-    //   task immediately after the last task that fully or partially overlaps
-    //   with the tightest time windows in the sorting arrays
     
     // Reading the data
     readData(disj);
@@ -1883,33 +1880,66 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
     }());
     
     // Sorting tasks regarding their earliest start times
-    const ORInt sortSize    = disj->_sortSize._val;
-    const ORInt presentSize = disj->_cIdx._val;
-    if (presentSize >= sortSize) {
-        isort_r(&(disj->_task_id_est[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
+    ORInt beginIdx;
+    ORInt endIdx;
+    if (!disj->_machineTaskAsOptional) {
+        const ORInt sortAbsentOT = disj->_sortAbsentOT._val;
+        const ORInt sortFirstAbsentMT = disj->_sortFirstAbsentMT._val;
+        const ORInt size = sortFirstAbsentMT - sortAbsentOT;
+        isort_r(&(disj->_task_id_est[sortAbsentOT]), size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscMT);
+        assert(^ORBool() {
+            for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
+                const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
+                const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
+                if (isPresent(disj, i0)) {
+                    if (isAbsent(disj, i1) && !disj->_machineTask[i1])
+                        return false;
+                    if ((isPresent(disj, i1) || !disj->_machineTask[i1]) && disj->_est[i0] > disj->_est[i1])
+                        return false;
+                }
+                else if (disj->_machineTask[i0]) {
+                    if (!isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || isPresent(disj, i1)))
+                        return false;
+                    if (isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || !isIrrelevant(disj, i1)))
+                        return false;
+                }
+            }
+            return true;
+        }());
+        beginIdx = sortAbsentOT;
+        endIdx   = sortFirstAbsentMT;
     }
     else {
-        isort_r(&(disj->_task_id_est[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscOpt);
-    }
-    // Testing the sorting of the sorting array '_task_id_est'
-    assert(^ORBool() {
-        for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
-            const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
-            const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
-            if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
-                return false;
-            else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_est[i0] > disj->_est[i1])
-                return false;
+        const ORInt sortSize    = disj->_sortSize._val;
+        const ORInt presentSize = disj->_cIdx._val;
+        if (presentSize >= sortSize) {
+            isort_r(&(disj->_task_id_est[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
         }
-        return true;
-    }());
+        else {
+            isort_r(&(disj->_task_id_est[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscOpt);
+        }
+        // Testing the sorting of the sorting array '_task_id_est'
+        assert(^ORBool() {
+            for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
+                const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
+                const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
+                if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
+                    return false;
+                else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_est[i0] > disj->_est[i1])
+                    return false;
+            }
+            return true;
+        }());
+        beginIdx = 0;
+        endIdx   = sortSize;
+    }
 
     ORInt est_min = MAXINT;
     ORInt lct_max = MININT;
     ORInt len_min = 0;
     // Computing the tightest time interval [est_min, lct_max) that enclosed all
     // unfixed present tasks.
-    for (ORInt tt = disj->_beginIdx; tt < disj->_endIdx; tt++) {
+    for (ORInt tt = beginIdx; tt < endIdx; tt++) {
         // XXX For the moment being only unfixed present activities are considered
         const ORInt t0 = disj->_task_id_est[tt] - disj->_low;
         if (isRelevant(disj, t0) && isUnfixed(disj, t0)) {
@@ -1917,7 +1947,7 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
             lct_max = max(lct_max, disj->_lct[t0]);
         }
     }
-    for (ORInt tt = disj->_beginIdx; tt < disj->_endIdx; tt++) {
+    for (ORInt tt = beginIdx; tt < endIdx; tt++) {
         const ORInt t0 = disj->_task_id_est[tt] - disj->_low;
         if (isRelevant(disj, t0) && disj->_begin <= disj->_est[t0] && disj->_lct[t0] <= disj->_end)
             len_min += disj->_dur_min[t0];
@@ -1935,9 +1965,6 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
     // - the parameters '_begin' and '_end' represent the tightest time window
     //   in that all unbounded tasks (present or non-absent) need to be scheduled
     // - the sorting arrays '_task_id_est' and '_task_id_lct' are sorted
-    // - the indices '_beginIdx' and '_endIdx' pointing to the first task and the
-    //   task immediately after the last task that fully or partially overlaps
-    //   with the tightest time windows in the sorting arrays
 
     // Reading the data
     readData(disj);
@@ -1951,66 +1978,99 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
         }
         return true;
     }());
-    
+
+    ORInt beginIdx;
+    ORInt endIdx;
     // Sorting tasks regarding their earliest start times
-    const ORInt sortSize    = disj->_sortSize._val;
-    const ORInt presentSize = disj->_cIdx._val;
-    if (presentSize >= sortSize) {
-        isort_r(&(disj->_task_id_est[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
-        isort_r(&(disj->_task_id_lct[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAsc);
+    if (!disj->_machineTaskAsOptional) {
+        const ORInt sortAbsentOT = disj->_sortAbsentOT._val;
+        const ORInt sortFirstAbsentMT = disj->_sortFirstAbsentMT._val;
+        const ORInt size = sortFirstAbsentMT - sortAbsentOT;
+        isort_r(&(disj->_task_id_est[sortAbsentOT]), size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscMT);
+        isort_r(&(disj->_task_id_lct[sortAbsentOT]), size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAscMT);
+        assert(^ORBool() {
+            for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
+                const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
+                const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
+                if (isPresent(disj, i0)) {
+                    if (isAbsent(disj, i1) && !disj->_machineTask[i1])
+                        return false;
+                    if ((isPresent(disj, i1) || !disj->_machineTask[i1]) && disj->_est[i0] > disj->_est[i1])
+                        return false;
+                }
+                else if (disj->_machineTask[i0]) {
+                    if (!isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || isPresent(disj, i1)))
+                        return false;
+                    if (isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || !isIrrelevant(disj, i1)))
+                        return false;
+                }
+            }
+            return true;
+        }());
+        beginIdx = sortAbsentOT;
+        endIdx   = sortFirstAbsentMT;
     }
     else {
-        isort_r(&(disj->_task_id_est[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscOpt);
-        isort_r(&(disj->_task_id_lct[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAscOpt);
+        const ORInt sortSize    = disj->_sortSize._val;
+        const ORInt presentSize = disj->_cIdx._val;
+        if (presentSize >= sortSize) {
+            isort_r(&(disj->_task_id_est[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAsc);
+            isort_r(&(disj->_task_id_lct[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAsc);
+        }
+        else {
+            isort_r(&(disj->_task_id_est[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscOpt);
+            isort_r(&(disj->_task_id_lct[0]), sortSize, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAscOpt);
+        }
+        // Testing the sorting of the sorting array '_task_id_est'
+        assert(^ORBool() {
+            for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
+                const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
+                const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
+                if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
+                    return false;
+                else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_est[i0] > disj->_est[i1])
+                    return false;
+            }
+            return true;
+        }());
+        // Testing the sorting of the sorting array '_task_id_lct'
+        assert(^ORBool() {
+            for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
+                const ORInt i0 = disj->_task_id_lct[ii    ] - disj->_low;
+                const ORInt i1 = disj->_task_id_lct[ii + 1] - disj->_low;
+                if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
+                    return false;
+                else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_lct[i0] > disj->_lct[i1])
+                    return false;
+            }
+            return true;
+        }());
+        beginIdx = 0;
+        endIdx   = sortSize;
     }
-    // Testing the sorting of the sorting array '_task_id_est'
-    assert(^ORBool() {
-        for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
-            const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
-            const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
-            if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
-                return false;
-            else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_est[i0] > disj->_est[i1])
-                return false;
-        }
-        return true;
-    }());
-    // Testing the sorting of the sorting array '_task_id_lct'
-    assert(^ORBool() {
-        for (ORInt ii = 0; ii < disj->_size - 1; ii++) {
-            const ORInt i0 = disj->_task_id_lct[ii    ] - disj->_low;
-            const ORInt i1 = disj->_task_id_lct[ii + 1] - disj->_low;
-            if (isIrrelevant(disj, i0) && !isIrrelevant(disj, i1))
-                return false;
-            else if (!isIrrelevant(disj, i0) && !isIrrelevant(disj, i1) && disj->_lct[i0] > disj->_lct[i1])
-                return false;
-        }
-        return true;
-    }());
-    
-//    const ORInt presentSize = disj->_cIdx._val;
+
     ORInt localSlack = MAXINT;
     ORInt len_min = 0;
     ORInt jjPrev  = 0;
-    ORInt jjLast  = presentSize - 1;
+    ORInt jjLast  = endIdx - 1;
     
-    for (ORInt jj = presentSize - 1; jj >= 0; jj--) {
+    for (ORInt jj = endIdx - 1; jj >= 0; jj--) {
         const ORInt j0 = disj->_task_id_lct[jj] - disj->_low;
-        if (isUnfixed(disj, j0)) {
+        if (isRelevant(disj, j0) && isUnfixed(disj, j0)) {
             jjLast = jj;
             break;
         }
     }
     
-    for (ORInt ii = 0; ii < presentSize; ii++) {
+    for (ORInt ii = 0; ii < endIdx; ii++) {
         const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
-        if (isUnfixed(disj, i0)) {
+        if (isRelevant(disj, i0) && isUnfixed(disj, i0)) {
             const ORInt est_min = disj->_est[i0];
             ORBool first = true;
             len_min = 0;
             for (ORInt jj = jjPrev; jj <= jjLast; jj++) {
                 const ORInt j0 = disj->_task_id_lct[jj] - disj->_low;
-                if (est_min < disj->_lct[j0]) {
+                if (isRelevant(disj, j0) && est_min < disj->_lct[j0]) {
                     if (first) {
                         jjPrev = jj;
                         first = false;
