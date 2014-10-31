@@ -13,6 +13,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
 
 
 	// Maximal input length of the char vector for reading a line in the data file
@@ -237,12 +238,19 @@ int main(int argc, const char * argv[])
     	id<ORModel> model = [ORFactory createModel];
       	id<ORIntRange> dom   = [ORFactory intRange: model low: 0 up: ms_max    ];
       	id<ORIntRange> Tasks = [ORFactory intRange: model low: 0 up: n_task - 1];
-      	id<ORIntRange> Jobs  = [ORFactory intRange: model low: 0 up: n_job  - 1];
-      	id<ORIntVarArray> start = [ORFactory intVarArray: model range: Tasks domain: dom];
-		id<ORIntVarArray> dura  = [ORFactory intVarArray: model range: Tasks with: ^id<ORIntVar>(ORInt k) {
-            id<ORIntRange> singleton = [ORFactory intRange: model low: dur[k] up: dur[k]];
-            return [ORFactory intVar: model domain: singleton];
+//      	id<ORIntRange> Jobs  = [ORFactory intRange: model low: 0 up: n_job  - 1];
+      	id<ORIntRange> Mach  = [ORFactory intRange: model low: 0 up: n_mach  - 1];
+        
+        id<ORTaskVarArray> TaskVar = [ORFactory taskVarArray: model range: Tasks with: ^id<ORTaskVar>(ORInt k) {
+            return [ORFactory task: model horizon:dom duration:dur[k]];
         }];
+        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray: model range: Mach];
+        
+//      	id<ORIntVarArray> start = [ORFactory intVarArray: model range: Tasks domain: dom];
+//		id<ORIntVarArray> dura  = [ORFactory intVarArray: model range: Tasks with: ^id<ORIntVar>(ORInt k) {
+//            id<ORIntRange> singleton = [ORFactory intRange: model low: dur[k] up: dur[k]];
+//            return [ORFactory intVar: model domain: singleton];
+//        }];
 		id<ORIntVar> MS = [ORFactory intVar: model domain: dom];
         ORInt nbDiff = (globalDiff == TRUE ? n_job * n_mach * (n_mach - 1) / 2 : 0);
         id<ORDifference> diff = (globalDiff == TRUE ? [ORFactory difference:model initWithCapacity:nbDiff] : NULL);
@@ -257,66 +265,73 @@ int main(int argc, const char * argv[])
 				ORInt idx1 = get_index(n_mach, j, t1);
 				ORInt idx2 = get_index(n_mach, j, t2);
                 if (globalDiff == TRUE) {
-                    [model add: [ORFactory diffLEqual: diff var: start[idx1] to: start[idx2] plus: -dur[idx1]]];
+//                    [model add: [ORFactory diffLEqual: diff var: start[idx1] to: start[idx2] plus: -dur[idx1]]];
                 }
                 else {
-                    [model add: [ORFactory lEqual: model var: start[idx1] to: start[idx2] plus: -dur[idx1]]];
+                    [model add: [TaskVar[idx1] precedes: TaskVar[idx2]]];
+//                    [model add: [ORFactory lEqual: model var: start[idx1] to: start[idx2] plus: -dur[idx1]]];
                 }
 			}
 		}
 
         // Adding resource constraints
         for (ORInt m = 0; m < n_mach; m++) {
-            id<ORIntVarArray> m_start = [ORFactory intVarArray: model range: Jobs with: ^id<ORIntVar>(ORInt k) {
-                return start[mach_task[m][k]];
-            }];
-            id<ORIntVarArray> m_dura = [ORFactory intVarArray: model range: Jobs with: ^id<ORIntVar>(ORInt k) {
-                return dura[mach_task[m][k]];
-            }];
-            [model add: [ORFactory disjunctive: m_start duration: m_dura]];
+            for (ORInt j = 0; j < n_job; j++) {
+                [disjunctive[m] add: TaskVar[mach_task[m][j]]];
+            }
+            [model add: disjunctive[m]];
+//            id<ORIntVarArray> m_start = [ORFactory intVarArray: model range: Jobs with: ^id<ORIntVar>(ORInt k) {
+//                return start[mach_task[m][k]];
+//            }];
+//            id<ORIntVarArray> m_dura = [ORFactory intVarArray: model range: Jobs with: ^id<ORIntVar>(ORInt k) {
+//                return dura[mach_task[m][k]];
+//            }];
+//            [model add: [ORFactory disjunctive: m_start duration: m_dura]];
         }
         
 		// Adding objective constraints
 		for (ORInt j = 0; j < n_job; j++) {
 			ORInt idx = get_index(n_mach, j, n_mach - 1);
             if (globalDiff == TRUE) {
-                [model add: [ORFactory diffLEqual: diff var: start[idx] to: MS plus: -dur[idx]]];
+//                [model add: [ORFactory diffLEqual: diff var: start[idx] to: MS plus: -dur[idx]]];
             }
             else {
-                [model add: [ORFactory lEqual: model var: start[idx] to: MS plus: -dur[idx]]];
+                [model add: [TaskVar[idx] isFinishedBy: MS]];
+//                [model add: [ORFactory lEqual: model var: start[idx] to: MS plus: -dur[idx]]];
             }
 		}
         
-        id<ORIntRange> RAllVars = [ORFactory intRange: model low: 0 up: n_task];
-        id<ORIntVarArray> allVars = [ORFactory intVarArray: model range: RAllVars with: ^id<ORIntVar>(ORInt k) {
-            if (k < n_task)
-                return start[k];
-            else
-                return MS;
-        }];
+//        id<ORIntRange> RAllVars = [ORFactory intRange: model low: 0 up: n_task];
+//        id<ORIntVarArray> allVars = [ORFactory intVarArray: model range: RAllVars with: ^id<ORIntVar>(ORInt k) {
+//            if (k < n_task)
+//                return start[k];
+//            else
+//                return MS;
+//        }];
 
         // Adding objective
-        [model minimizeVar: MS];
+        [model minimize: MS];
 
 		// Solving
-		id<CPProgram> cp = [ORFactory createCPProgram: model];
+		id<CPProgram,CPScheduler> cp = [ORFactory createCPProgram: model];
 		[cp solve:
 			^() {
 				// Search strategy
-				[cp labelArray: allVars];
+				[cp setTimes: TaskVar];
+                [cp label: MS];
 				// Output of solution
 				printf("start = [|\n\t");
 				for (ORInt t = 0; t < n_task; t++) {
                     if (t > 0 && t % n_mach == 0) printf("\n\t");
 					if (t % n_mach > 0) printf(", ");
-					printf("%2d", [cp intValue: start[t]]);
+					printf("%2d", [cp est: TaskVar[t]]);
 				}
 				printf("];\n");
                 for (ORInt m = 0; m < n_mach; m++) {
                     printf("%%%% mach %d: ", m + mach_id_min);
                     for (ORInt k = 0; k < n_job; k++) {
                         const ORInt t = mach_task[m][k];
-                        printf("[%2d, %2d) ", [cp intValue: start[t]], [cp intValue: start[t]] + dur[t]);
+                        printf("[%2d, %2d) ", [cp est: TaskVar[t]], [cp lct: TaskVar[t]]);
                     }
                     printf("\n");
                 }

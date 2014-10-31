@@ -12,12 +12,16 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORScheduler/ORScheduler.h>
 #import <objcp/CPFactory.h>
+#import "CPTaskDisjunctive.h"
 
 @protocol CPTaskVarArray;
 @protocol CPTaskVar;
+@protocol CPAlternativeTask;
+@protocol CPMachineTask;
+@protocol CPDisjunctiveArray;
 
 @interface CPFactory (CPScheduler)
-//+(id<CPConstraint>) alternative: (id<CPActivity>) act composedBy: (id<CPActivityArray>) alternatives;
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task alternatives: (id<CPTaskVarArray>) alternatives;
 
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after;
@@ -34,6 +38,13 @@
 
 +(id<CPConstraint>) difference: (id<ORTracker>) tracker engine: (id<CPEngine>) e withInitCapacity:(ORInt) numItems;
 
+// Creating disjunctive arrays
++(id<CPDisjunctiveArray>) disjunctiveArray: (id<CPEngine>) engine range:(id<ORIntRange>) range with: (CPTaskDisjunctive*(^)(ORInt)) clo;
+
+// Creating tasks
 +(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 +(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
++(id<CPAlternativeTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
++(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
++(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPDisjunctiveArray>) disjunctives;
 @end

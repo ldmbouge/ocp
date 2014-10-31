@@ -13,6 +13,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
 
 
 	// Maximal input length of the char vector for reading a line in the data file
@@ -24,6 +25,7 @@ ORInt   n_mach = 0;		// (input) Number of machines
 ORInt   n_job  = 0;		// (input) Number of jobs
 ORInt   n_act  = 0;		//         Number of activities
 ORInt   n_opt  = 0;     //         Number of optional activities
+ORInt   n_alt  = 0;		//         Number of pure alternative activities (act_nopt[.] > 1)
 ORInt * dur    = NULL;	// (input) Optional activities' durations
 ORInt * mach   = NULL;	// (input) Machines' ID
 
@@ -32,6 +34,7 @@ ORInt *  job_fact  = NULL;  // Index of first activity in job
 ORInt *  act_nopt  = NULL;  // Number of optional activities in activity
 ORInt *  act_fopt  = NULL;  // Index of first optional activity per activity
 ORInt *  opt_act   = NULL;  // Mapping of optional activities to their activities
+ORInt *  alt_act   = NULL;  // Mapping of alternative activities to activities
 ORInt *  mach_nopt = NULL;  // Number of optional activities per machine
 ORInt ** mach_opt  = NULL;  // Optional activities per machine
 
@@ -49,6 +52,7 @@ void freeMemory() {
     if (act_nopt  != NULL) free(act_nopt );
     if (act_fopt  != NULL) free(act_fopt );
     if (opt_act   != NULL) free(opt_act  );
+    if (alt_act   != NULL) free(alt_act  );
     
     if (mach_opt != NULL) {
         for (ORInt m = 0; m < n_mach; m++) {
@@ -161,6 +165,7 @@ void readDataFJSS(const char * filename) {
         for (ORInt i = 0; i < job_nact[j]; i++) {
             s = strtok(NULL, " \t\n");
             act_nopt[t] = atoi(s);
+            if (act_nopt[t] > 1) n_alt++;
             act_fopt[t] = o;
             for (ORInt k = 0; k < act_nopt[t]; k++) {
                 s = strtok(NULL, " \t\n");
@@ -232,6 +237,17 @@ void preprocessData(void) {
             exit(2);
         }
     }
+    
+    alt_act = (ORInt * ) malloc(n_alt * sizeof(ORInt));
+    
+    ORInt idx = 0;
+    for (ORInt i = 0; i < n_act; i++) {
+        if (act_nopt[i] > 1) {
+            alt_act[idx] = i;
+            idx++;
+        }
+    }
+    assert(n_alt == idx);
 }
 
 bool file_exists(const char * filename)
@@ -271,6 +287,9 @@ int main(int argc, const char * argv[])
         for (ORInt o = act_fopt[t]; o < act_fopt[t] + act_nopt[t]; o++) dur_max = max(dur_max, dur[o]);
         ms_max += dur_max;
     }
+    
+    // Use machine tasks
+    ORBool useMachineTasks = false;
 
 	@autoreleasepool {
       
@@ -278,33 +297,59 @@ int main(int argc, const char * argv[])
         
             // Creating of some ranges
             //
-      	id<ORIntRange> dom      = [ORFactory intRange:model low:0 up:ms_max   ];
-        id<ORIntRange> ActsR    = [ORFactory intRange:model low:0 up:n_act - 1];
-        id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt - 1];
+      	id<ORIntRange> dom      = [ORFactory intRange:model low:0 up:ms_max    ];
+        id<ORIntRange> ActsR    = [ORFactory intRange:model low:0 up:n_act  - 1];
+        id<ORIntRange> OptActsR = [ORFactory intRange:model low:0 up:n_opt  - 1];
+        id<ORIntRange> AltsR    = [ORFactory intRange:model low:0 up:n_alt  - 1];
+        id<ORIntRange> MachR    = [ORFactory intRange:model low:0 up:n_mach - 1];
+        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray:model range:MachR];
         
+        id<ORTaskVarArray> OptActs = NULL;
+        id<ORTaskVarArray> Acts    = NULL;
+        id<ORAlternativeTaskArray> Alts = NULL;
+
+            // Objective variable (makespan)
+            //
+        id<ORIntVar> MS = [ORFactory intVar:model bounds: dom];
+        
+        if (useMachineTasks) {
+            // Creating machine activities
+            //
+            Acts = [ORFactory taskVarArray:model range:ActsR with:^id<ORTaskVar>(ORInt k) {
+                if (act_nopt[k] == 1) {
+                    return [ORFactory task: model horizon: dom duration: dur[k]];
+                }
+                return [ORFactory task: model horizon: dom range: RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1)  runsOnOneOf:^id<ORTaskDisjunctive>(ORInt l) {return [disjunctive at:mach[l] - mach_id_min];} withDuration:^ORInt(ORInt l) {return dur[l];}];
+            }];
+        }
+        else {
             // Creating optional activities
             //
-        id<ORActivityArray> OptActs = [ORFactory activityArray:model range:OptActsR with: ^id<ORActivity>(ORInt k) {
-            if (act_nopt[opt_act[k]] == 1) {
-                return [ORFactory activity:model horizon:dom duration:RANGE(model, dur[k], dur[k])];
-            }
-            return [ORFactory optionalActivity:model horizon:dom duration:RANGE(model, dur[k], dur[k])];
-        }];
-        
+            OptActs = [ORFactory taskVarArray:model range:OptActsR with:^id<ORTaskVar>(ORInt k) {
+                if (act_nopt[opt_act[k]] == 1) {
+                    return [ORFactory task: model horizon: dom duration: dur[k]];
+                }
+                return [ORFactory optionalTask: model horizon: dom duration: dur[k]];
+            }];
+            
             // Creating of "alternative" activities
             //
-        id<ORActivityArray> Acts = [ORFactory activityArray:model range:ActsR with:^id<ORActivity>(ORInt k) {
-            if (act_nopt[k] == 1) {
-                return OptActs[act_fopt[k]];
-            }
-            return [ORFactory activity:model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) withAlternatives:^id<ORActivity>(ORInt o) {
-                return OptActs[o];
+            Acts = [ORFactory taskVarArray:model range:ActsR with:^id<ORTaskVar>(ORInt k) {
+                if (act_nopt[k] == 1) {
+                    return OptActs[act_fopt[k]];
+                }
+                return [ORFactory task: model range:RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1) withAlternatives:^id<ORTaskVar>(ORInt o) {
+                    return OptActs[o];
+                }];
             }];
-        }];
-        
-            // Creating the sink activity (representing the end of the project)
+            
+            // Creating an array of all alternative tasks
             //
-        id<ORActivity> end = [ORFactory activity:model horizon:dom duration:RANGE(model, 0, 0)];
+            Alts = [ORFactory alternativeVarArray:model range:AltsR with: ^id<ORAlternativeTask>(ORInt k) {
+                return (id<ORAlternativeTask>) Acts[alt_act[k]];
+            }];
+
+        }
         
             // Adding precedence constraints
             //
@@ -318,57 +363,101 @@ int main(int argc, const char * argv[])
 
             // Adding resource constraints
             //
-        for (ORInt m = 0; m < n_mach; m++) {
-            id<ORActivityArray> m_acts = [ORFactory activityArray:model range:RANGE(model, 0, mach_nopt[m] - 1) with:^id<ORActivity>(ORInt k) {
-                return OptActs[mach_opt[m][k]];
-            }];
-            [model add: [ORFactory disjunctive:m_acts]];
+        if (useMachineTasks) {
+            for (ORInt m = MachR.low; m <= MachR.up; m++) {
+                for (ORInt k = 0; k < mach_nopt[m]; k++) {
+                    const ORInt o = mach_opt[m][k];
+                    const ORInt t = opt_act[o];
+                    [disjunctive[m] add:Acts[t]];
+                }
+                // Closing the disjunctive constraint
+                [model add:disjunctive[m]];
+            }
         }
-        
+        else {
+            for (ORInt m = MachR.low; m <= MachR.up; m++) {
+                for (ORInt k = 0; k < mach_nopt[m]; k++) {
+                    [disjunctive[m] add:OptActs[mach_opt[m][k]]];
+                }
+                // Closing the disjunctive constraint
+                [model add:disjunctive[m]];
+            }
+        }
             // Adding objective constraints
             //
 		for (ORInt j = 0; j < n_job; j++) {
             const ORInt last = job_fact[j] + job_nact[j] - 1;
-            [model add: [Acts[last] precedes:end]];
+            [model add: [Acts[last] isFinishedBy:MS]];
 		}
         
             // Adding objective
             //
-        [model minimizeVar: end.startLB];
+        [model minimize: MS];
 
             // Creating the CPScheduleProgram
             //
-		id<CPSchedulingProgram> cp = [ORFactory createCPSchedulingProgram: model];
+		id<CPProgram,CPScheduler> cp = [ORFactory createCPProgram: model];
 		[cp solve:
 			^() {
 				// Search strategy
-                [cp labelActivities: Acts];
-                [cp labelActivity:   end ];
+                if (useMachineTasks) {
+                    [cp labelActivities:Acts];
+                }
+                else {
+                    [cp setAlternatives: Alts];
+                    [cp labelActivities: OptActs];
+                }
+                // XXX setTimes seems to be buggy
+//                [cp setTimes: Acts];
+                [cp label: MS];
+                
+                // Print outs
                 printf("start = [");
                 for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
                     if (t > ActsR.low) printf(", ");
-                    printf("%2d", [cp intValue:Acts[t].startLB]);
+                    printf("%2d", [cp est: Acts[t]]);
                 }
                 printf("];\n");
                 printf("dur   = [");
                 for (ORInt t = ActsR.low; t <= ActsR.up; t++) {
                     if (t > ActsR.low) printf(", ");
-                    printf("%2d", [cp intValue:Acts[t].duration]);
+                    printf("%2d", [cp minDuration: Acts[t]]);
                 }
                 printf("];\n");
-                for (ORInt m = 0; m < n_mach; m++) {
+                for (ORInt j = 0; j < n_job; j++) {
+                    printf("%%%% job %d:\n", j);
+                    for (ORInt t1 = 0; t1 < job_nact[j]; t1++) {
+                        const ORInt idx1 = t1 + job_fact[j];
+                        printf("%%%%\ttask (%2d): est %2d; lct %2d; dur [%2d, %2d]\n",t1, [cp est:Acts[idx1]], [cp lct:Acts[idx1]], [cp minDuration:Acts[idx1]], [cp maxDuration:Acts[idx1]]);
+                    }
+                }
+                for (ORInt m = MachR.low; m <= MachR.up; m++) {
+                    const ORInt mId = [disjunctive[m] getId];
                     printf("%%%% mach %d: ", m + mach_id_min);
-                    for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
-                        const ORInt k = mach_opt[m][kk];
-                        if (!OptActs[k].isOptional || [cp intValue:OptActs[k].top] == 1) {
-                            const ORInt start = [cp intValue:OptActs[k].startUB];
-                            const ORInt dur = [cp intValue:OptActs[k].duration] + start;
-                            printf("[%2d, %2d) ", start, dur);
+                    if (useMachineTasks) {
+                        for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
+                            const ORInt k = mach_opt[m][kk];
+                            const ORInt t = opt_act[k];
+                            if (act_nopt[t] == 1)
+                                printf("[%2d, %2d) ", [cp est: Acts[t]], [cp lct: Acts[t]]);
+                            else {
+                                const ORUInt runsOnId = [[cp runsOn: (id<ORMachineTask>) Acts[t]] getId];
+                                if (mId == runsOnId)
+                                    printf("[%2d, %2d) ", [cp est: Acts[t]], [cp lct: Acts[t]]);
+                            }
+                        }
+                    }
+                    else {
+                        for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
+                            const ORInt k = mach_opt[m][kk];
+                            if ([cp isPresent: OptActs[k]]) {
+                                printf("[%2d, %2d) ", [cp est: OptActs[k]], [cp lct: OptActs[k]]);
+                            }
                         }
                     }
                     printf("\n");
                 }
-                printf("objective = %d;\n", [cp intValue: end.startLB]);
+                printf("objective = %d;\n", [cp intValue: MS]);
                 printf("----------\n");
 			}
 		];

@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CPUKernel/CPUKernel.h>
+#import "CPTask.h"
 
 
 // Resource profile
@@ -31,3 +32,18 @@ typedef struct {
     ORInt _first;
     ORInt _second;
 } Precedence;
+
+typedef struct {
+    id<CPTaskVar> _before;
+    id<CPTaskVar> _after;
+} CPTaskVarPrec;
+
+
+// Sorting algorithms
+
+    // Bubble sort
+void bsort_r(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, const ORInt*, const ORInt*));
+    // Insertion sort
+void isort_r(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, const ORInt*, const ORInt*));
+    // Quick sort
+void qusort_r(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, const ORInt*, const ORInt*));

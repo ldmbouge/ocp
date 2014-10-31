@@ -24,13 +24,13 @@
 @implementation CPFactory (CPScheduler)
 // activity
 
-//// Alternative propagator
-//+(id<CPConstraint>) alternative:(id<CPActivity>)act composedBy:(id<CPActivityArray>)alternatives
-//{
-//    id<CPConstraint> cstr = [[CPAlternative alloc] initCPAlternative:act alternatives:alternatives];
-//    [[act.startLB tracker] trackMutable:cstr];
-//    return cstr;
-//}
+// Alternative propagator
++(id<CPConstraint>) constraint:(id<CPTaskVar>)task alternatives:(id<CPTaskVarArray>)alternatives
+{
+    id<CPConstraint> cstr = [[CPAlternative alloc] initCPAlternative:task alternatives:alternatives];
+    [[task tracker] trackMutable:cstr];
+    return cstr;
+}
 
 
 // Cumulative (resource) constraint
@@ -213,12 +213,20 @@
     return o;
 }
 
-// Task of fixed duration
++(id<CPDisjunctiveArray>) disjunctiveArray:(id<CPEngine>)engine range:(id<ORIntRange>)range with:(CPTaskDisjunctive *(^)(ORInt))clo
+{
+    id<ORIdArray> disj = [ORFactory idArray:engine range:range];
+    for (ORInt k = range.low; k <= range.up; k++)
+        [disj set: clo(k) at: k];
+    return (id<CPDisjunctiveArray>) disj;
+}
 
+// Task of fixed duration
+//
 +(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
    id<CPTaskVar> task = [[CPTaskVar alloc] initCPTaskVar: engine horizon: horizon duration: duration];
-   [engine trackVariable: task];
+   [engine trackMutable: task];
    return task;
 }
 +(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
@@ -226,6 +234,24 @@
    id<CPTaskVar> task = [[CPOptionalTaskVar alloc] initCPOptionalTaskVar: engine horizon: horizon duration: duration];
    [engine trackMutable: task];
    return task;
+}
++(id<CPAlternativeTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives:(id<CPTaskVarArray>)alternatives
+{
+    id<CPAlternativeTask> task = [[CPAlternativeTask alloc] initCPAlternativeTask:engine horizon:horizon duration:duration alternatives:alternatives];
+    [engine trackMutable: task];
+    return task;
+}
++(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives:(id<CPTaskVarArray>)alternatives
+{
+    id<CPAlternativeTask> task = [[CPOptionalAlternativeTask alloc] initCPOptionalAlternativeTask: engine horizon: horizon duration: duration alternatives:alternatives];
+    [engine trackMutable: task];
+    return task;
+}
++(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPDisjunctiveArray>)disjunctives
+{
+    id<CPMachineTask> task = [[CPMachineTask alloc] initCPMachineTask:engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:disjunctives];
+    [engine trackMutable: task];
+    return task;
 }
 
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after

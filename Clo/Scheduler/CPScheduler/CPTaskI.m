@@ -127,8 +127,8 @@ typedef struct  {
 
 @implementation CPTaskVar
 {
-   CPEngineI*         _engine;
-   id<ORTrail>        _trail;
+   @protected CPEngineI*  _engine;
+   @protected id<ORTrail> _trail;
    id<ORIntRange>     _horizon;
    TRInt              _start;
    TRInt              _end;
@@ -206,6 +206,16 @@ typedef struct  {
 -(ORBool) isAbsent
 {
    return FALSE;
+}
+-(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent
+{
+    *bound   = (_start._val + _durationMin._val == _end._val) && (_durationMin._val == _durationMax._val);
+    *est     = _start._val;
+    *lct     = _end._val;
+    *minD    = _durationMin._val;
+    *maxD    = _durationMax._val;
+    *present = TRUE;
+    *absent  = FALSE;
 }
 -(void) updateStart: (ORInt) newStart
 {
@@ -378,7 +388,7 @@ typedef struct  {
 }
 -(void) changeStartEvt
 {
-   id<CPClosureList> mList[2];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._boundEvt[0]._val;
    k += mList[k] != NULL;
@@ -389,7 +399,7 @@ typedef struct  {
 }
 -(void) changeEndEvt
 {
-   id<CPClosureList> mList[2];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._boundEvt[0]._val;
    k += mList[k] != NULL;
@@ -400,7 +410,7 @@ typedef struct  {
 }
 -(void) changeDurationEvt
 {
-   id<CPClosureList> mList[2];
+   id<CPClosureList> mList[3];
    ORUInt k = 0;
    mList[k] = _net._boundEvt[0]._val;
    k += mList[k] != NULL;
@@ -508,6 +518,13 @@ typedef struct  {
 -(ORBool) bound
 {
    return ([_task bound] && (_presentMin._val == 1)) || (_presentMax._val == 0);
+}
+-(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent
+{
+    [_task readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
+    *bound   = [self bound    ];
+    *present = [self isPresent];
+    *absent  = [self isAbsent ];
 }
 -(void) handleFailure: (ORClosure) cl
 {
@@ -723,7 +740,7 @@ typedef struct  {
 }
 -(void) presentEvt
 {
-   id<CPClosureList> mList[1];
+   id<CPClosureList> mList[2];
    ORUInt k = 0;
    mList[k] = _net._presentEvt[0]._val;
    k += mList[k] != NULL;
@@ -732,7 +749,7 @@ typedef struct  {
 }
 -(void) absentEvt
 {
-   id<CPClosureList> mList[1];
+   id<CPClosureList> mList[2];
    ORUInt k = 0;
    mList[k] = _net._absentEvt[0]._val;
    k += mList[k] != NULL;
@@ -760,5 +777,257 @@ typedef struct  {
    [_net._absentEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    [_net._presentEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    return d;
+}
+@end
+
+
+@implementation CPAlternativeTask
+{
+    id<CPTaskVarArray> _alt;
+}
+-(id<CPAlternativeTask>) initCPAlternativeTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration alternatives:(id<CPTaskVarArray>)alternatives
+{
+    self = [super initCPTaskVar:engine horizon:horizon duration:duration];
+    _alt = alternatives;
+    return self;
+}
+-(id<CPTaskVarArray>) alternatives
+{
+    return _alt;
+}
+@end
+
+
+@implementation CPOptionalAlternativeTask
+{
+    id<CPTaskVarArray> _alt;
+}
+-(id<CPAlternativeTask>) initCPOptionalAlternativeTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration alternatives:(id<CPTaskVarArray>)alternatives
+{
+    self = [super initCPOptionalTaskVar:engine horizon:horizon duration:duration];
+    _alt = alternatives;
+    return self;
+}
+-(id<CPTaskVarArray>) alternatives
+{
+    return _alt;
+}
+@end
+
+
+@implementation CPMachineTask
+{
+    id<CPDisjunctiveArray> _disj;
+    id<ORIntArray> _durArray;
+    ORInt * _index;
+    TRInt   _uSize;
+    ORInt   _size;
+    TRInt   _bind;
+}
+-(id<CPMachineTask>) initCPMachineTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPDisjunctiveArray>)disjunctives
+{
+    assert(durationArray.low == disjunctives.low);
+    assert(durationArray.up  == disjunctives.up );
+    self = [super initCPTaskVar:engine horizon:horizon duration:duration];
+    _disj = disjunctives;
+    _durArray = durationArray;
+    _size = (ORInt)[disjunctives count];
+    _index = NULL;
+    _index = malloc(_size * sizeof(ORInt));
+    if (_index == NULL)
+         @throw [[ORExecutionError alloc] initORExecutionError: "CPMachineTask: Out of memory!"];
+    _uSize = makeTRInt(_trail, _size);
+    _bind  = makeTRInt(_trail, 0);
+    
+    // Initialisation of the index array
+    for (ORInt i = 0; i < _size; i++)
+        _index[i] = i + _disj.low;
+    
+    return self;
+}
+-(void) dealloc
+{
+    if (_index != NULL) free(_index);
+    [super dealloc];
+}
+-(id<CPDisjunctiveArray>) disjunctives
+{
+    return _disj;
+}
+-(void) set:(id<CPConstraint>)disjunctive at:(ORInt)idx
+{
+    assert(_disj.low <= idx && idx <= _disj.up);
+    assert([disjunctive isMemberOfClass: [CPTaskDisjunctive class]]);
+    [_disj set:(CPTaskDisjunctive*) disjunctive at:idx];
+}
+-(id<ORIntArray>) getAvailDisjunctives
+{
+    // XXX Maybe sort in order to return in the same order
+    return [ORFactory intArray:_engine range:RANGE(_engine, 0, _uSize._val) with:^ORInt(ORInt k) {return _index[k];}];
+}
+-(ORBool) isAssigned
+{
+    return (_uSize._val == 1);
+}
+-(ORBool) bound
+{
+    if (_uSize._val != 1)
+        return false;
+    return [super bound];
+}
+-(ORBool) isPresentOn: (CPTaskDisjunctive*) disjunctive
+{
+    return (_uSize._val == 1 && _index[0] == [self getIndex:disjunctive]);
+}
+-(ORBool) isAbsentOn: (CPTaskDisjunctive*) disjunctive
+{
+    const ORInt idx = [self getIndex:disjunctive];
+    for (ORInt i = 0; i < _uSize._val; i++)
+        if (_index[i] == idx)
+            return FALSE;
+    return TRUE;
+}
+-(ORInt) runsOn
+{
+    if (_uSize._val != 1)
+        @throw [[ORExecutionError alloc] initORExecutionError: "The task is not assigned to any machine"];
+    return _index[0];
+}
+-(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forMachine:(CPTaskDisjunctive *)disjunctive
+{
+    [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
+    *bound   = [self bound    ];
+    *present = [self isPresentOn:disjunctive];
+    *absent  = [self isAbsentOn:disjunctive ];
+}
+-(void) updateMinDuration:(ORInt)newMinDuration
+{
+    if (newMinDuration > _durationMin._val) {
+        [super updateMinDuration:newMinDuration];
+        ORInt uSize = _uSize._val;
+        for (ORInt i = 0; i < uSize; i++) {
+            const ORInt idx = _index[i];
+            if ([_durArray at:idx] < newMinDuration) {
+                uSize--;
+                _index[i]     = _index[uSize];
+                _index[uSize] = idx;
+            }
+        }
+        if (uSize == 0)
+            failNow();
+        if (uSize < _uSize._val)
+            assignTRInt(&(_uSize), uSize, _trail);
+        if (uSize == 1 && !_bind._val)
+            [self bindWithIndex:_index[0]];
+    }
+}
+-(void) updateMaxDuration:(ORInt)newMaxDuration
+{
+    if (newMaxDuration < _durationMax._val) {
+        [super updateMaxDuration:newMaxDuration];
+        ORInt uSize = _uSize._val;
+        for (ORInt i = 0; i < uSize; i++) {
+            const ORInt idx = _index[i];
+            if ([_durArray at:idx] > newMaxDuration) {
+                uSize--;
+                _index[i]     = _index[uSize];
+                _index[uSize] = idx;
+            }
+        }
+        if (uSize == 0)
+            failNow();
+        if (uSize < _uSize._val)
+            assignTRInt(&(_uSize), uSize, _trail);
+        if (uSize == 1 && !_bind._val)
+            [self bindWithIndex:_index[0]];
+    }
+}
+-(void) bind: (CPTaskDisjunctive*) disjunctive
+{
+    const ORInt idx = [self getIndex:disjunctive];
+    [self bindWithIndex: idx];
+}
+-(void) bindWithIndex: (const ORInt) idx
+{
+    if (_uSize._val == 1) {
+        if (_index[0] != idx)
+            failNow();
+    }
+    else {
+        ORInt i = 0;
+        for (; i < _uSize._val; i++) {
+            if (_index[i] == idx) {
+                _index[i] = _index[0];
+                _index[0] = idx;
+                break;
+            }
+        }
+        if (i >= _uSize._val)
+            failNow();
+        assignTRInt(&(_uSize), 1, _trail);
+    }
+    assert(_index[0] == idx);
+    if (!_bind._val) {
+        assignTRInt(&(_bind), 1, _trail);
+        [self updateMinDuration:[_durArray at: idx]];
+        [self updateMaxDuration:[_durArray at: idx]];
+        // TODO queue disjunctive propagator
+        [_disj[idx] propagate];
+    }
+}
+-(void) remove: (CPTaskDisjunctive*) disjunctive
+{
+    const ORInt idx = [self getIndex:disjunctive];
+    [self removeWithIndex:idx];
+}
+-(void) removeWithIndex: (const ORInt) idx
+{
+    if (_uSize._val == 1) {
+        if (_index[0] == idx)
+            failNow();
+    }
+    else {
+        ORBool newDur = false;
+        for (ORInt i = 0; i < _uSize._val; i++) {
+            if (_index[i] == idx) {
+                const ORInt j = _uSize._val - 1;
+                assignTRInt(&(_uSize), j, _trail);
+                _index[i] = _index[j];
+                _index[j] = idx;
+                newDur = true;
+                break;
+            }
+        }
+        if (_uSize._val == 1) {
+            assert(!_bind._val);
+            [self bindWithIndex:_index[0]];
+        }
+        else if (newDur && _durationMin._val < _durationMax._val) {
+            // XXX With "watches" on the disjunctive holding the minimal and maximal
+            // duration the above test can be refined
+            
+            // Checking for new duration bounds
+            ORInt minDur = MAXINT;
+            ORInt maxDur = MININT;
+            for (ORInt i = 0; i < _uSize._val; i++) {
+                minDur = min(minDur, [_durArray at: _index[i]]);
+                maxDur = max(maxDur, [_durArray at: _index[i]]);
+            }
+            assert(minDur < MAXINT);
+            assert(maxDur > MININT);
+            [self updateMinDuration:minDur];
+            [self updateMaxDuration:maxDur];
+        }
+    }
+}
+-(ORInt) getIndex: (CPTaskDisjunctive*) disjunctive
+{
+    ORInt idx = _disj.low;
+    for (; idx <= _disj.up; idx++)
+        if (_disj[idx] == disjunctive)
+            return idx;
+    // Program never should reach this point
+    assert(false);
+    return ++idx;
 }
 @end

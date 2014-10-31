@@ -15,3 +15,12 @@
 -(id<ORTaskVar>) initORTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 -(id<ORTaskVar>) initOROptionalTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 @end
+
+@interface ORAlternativeTask : ORTaskVar<ORAlternativeTask>
+-(id<ORAlternativeTask>) initORAlternativeTask: (id<ORModel>) model alternatives: (id<ORTaskVarArray>) alternatives;
+-(id<ORAlternativeTask>) initOROptionalAlternativeTask: (id<ORModel>) model alternatives: (id<ORTaskVarArray>) alternatives;
+@end
+
+@interface ORMachineTask : ORTaskVar<ORMachineTask>
+-(id<ORMachineTask>) initORMachineTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationArray: (id<ORIntArray>) duration runsOnOneOf: (id<ORTaskDisjunctiveArray>) disjunctives;
+@end

@@ -9,35 +9,64 @@
  
  ***********************************************************************/
 
-#import "ORScheduler.h"
 #import "ORSchedulingProgram.h"
 #import <ORProgram/CPSolver.h>
 #import <CPScheduler/CPScheduler.h>
 #import <ORProgram/CPSolver.h>
 #import <CPScheduler/CPTask.h>
-
+#import "ORTaskI.h"
 
 @implementation CPSolver (CPScheduler)
-//-(void) labelActivities: (id<ORActivityArray>) act
-//{
-//   for (ORInt i = act.range.low; i <= act.range.up; i++)
-//      [self labelActivity:act[i]];
-//}
-//
-//-(void) labelActivity: (id<ORActivity>) act
-//{
-//   if ((act.type & 1) == 1) {
-//      [self label: act.top];
-//   }
-//   [self label: act.startLB ];
-//   [self label: act.duration];
-//   if (act.type > 1) {
-//      [self labelActivities:act.composition];
-//   }
-//}
-
+-(void) labelActivity: (id<ORTaskVar>) act
+{
+    if ([act isMemberOfClass: [ORMachineTask class]])
+        [self labelMachineTask: (id<ORMachineTask>)act];
+    [self labelPresent  : act];
+    [self labelStart    : act];
+    [self labelDuration : act];
+    [self labelEnd      : act];
+}
+-(void) labelActivities: (id<ORTaskVarArray>) act
+{
+    for (ORInt i = act.low; i <= act.up; i++)
+        [self labelActivity:act[i]];
+}
+-(void) setAlternatives: (id<ORAlternativeTaskArray>) act
+{
+    // TODO better heuristic that takes the slack of
+    // corresponding machines into account
+    for (ORInt i = act.low; i <= act.up; i++) {
+        id<ORTaskVarArray> alt = [act[i] alternatives];
+        for (ORInt j = alt.low; j <= alt.up; j++) {
+            [self labelPresent: alt[j]];
+        }
+    }
+}
+-(void) labelMachineTask: (id<ORMachineTask>) act
+{
+    assert([act isMemberOfClass: [ORMachineTask class]]);
+    assert(_gamma[act.getId] != NULL);
+    id<ORMachineTask> machAct = (id<ORMachineTask>) act;
+    id<ORIntArray> avail = [((id<CPMachineTask>)_gamma[act.getId]) getAvailDisjunctives];
+    id<ORTaskDisjunctiveArray> disj = [machAct disjunctives];
+    assert(^ORBool(){
+        for (ORInt i = avail.low; i <= avail.up; i++)
+            if ([avail at:i] < disj.low || [avail at:i] > disj.up)
+                return false;
+        return true;
+    });
+    for (ORInt i = avail.low; i <= avail.up; i++) {
+        if ([self isAssigned:act])
+            break;
+        id<ORTaskDisjunctive> d = [disj at: [avail at:i]];
+        [self labelMachineTask:act to:d];
+    }
+}
 -(void) setTimes: (id<ORTaskVarArray>) act
 {
+    // WARNING this method might not work for optional and alternative tasks
+    // or tasks with variable duration
+    
    id<ORIntRange> R = act.range;
    ORInt low = R.low;
    ORInt up = R.up;
@@ -216,6 +245,17 @@
 {
    return [((id<CPTaskVar>)_gamma[task.getId]) isAbsent];
 }
+-(id<ORTaskDisjunctive>) runsOn: (id<ORMachineTask>) task
+{
+    if (![self isAssigned:task])
+        @throw [[ORExecutionError alloc] initORExecutionError: "The task is not assigned to any machine"];
+    id<ORTaskDisjunctiveArray> disj = [task disjunctives];
+    return [disj at: [((id<CPMachineTask>)_gamma[task.getId]) runsOn]];
+}
+-(ORBool) isAssigned: (id<ORMachineTask>) task
+{
+    return [((id<CPMachineTask>)_gamma[task.getId]) isAssigned];
+}
 -(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart
 {
    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) updateStart: newStart]; }];
@@ -244,12 +284,34 @@
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelStart: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self est: task] < [self lst: task]) {
+            ORInt est = [self est: task];
+            [self try: ^{ [self labelStart : task with: est    ]; }
+                   or: ^{ [self updateStart: task with: est + 1]; }
+             ];
+        }
+    }
+}
 -(void) labelStart: (id<ORTaskVar>) task with: (ORInt) start
 {
    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelStart: start]; }];
    if (status == ORFailure)
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
+}
+-(void) labelEnd: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self ect: task] < [self lct: task]) {
+            ORInt ect = [self ect: task];
+            [self try: ^{ [self labelEnd : task with: ect    ]; }
+                   or: ^{ [self updateEnd: task with: ect + 1]; }
+             ];
+        }
+    }
 }
 -(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end
 {
@@ -258,6 +320,17 @@
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelDuration: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self minDuration: task] < [self maxDuration: task]) {
+            ORInt m = [self minDuration: task];
+            [self try: ^{ [self labelDuration    : task with: m    ]; }
+                   or: ^{ [self updateMinDuration: task with: m + 1]; }
+             ];
+        }
+    }
+}
 -(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration
 {
    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelDuration: duration]; }];
@@ -265,12 +338,42 @@
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelPresent: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task] && ![self isPresent: task]) {
+        [self try: ^{ [self labelPresent: task with: true ]; }
+               or: ^{ [self labelPresent: task with: false]; }
+         ];
+    }
+}
 -(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present
 {
    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelPresent: present]; }];
    if (status == ORFailure)
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
+}
+-(void) labelMachineTask: (id<ORMachineTask>) task to: (id<ORTaskDisjunctive>) disj
+{
+    if (![self isAssigned:task]) {
+        [self try: ^{ [self   bindMachineTask:task with:disj]; }
+               or: ^{ [self removeMachineTask:task with:disj]; }
+         ];
+    }
+}
+-(void) bindMachineTask: (id<ORMachineTask>) task with: (id<ORTaskDisjunctive>) disj
+{
+    ORStatus status = [[self engine] enforce:^{ [((id<CPMachineTask>) _gamma[task.getId]) bind:(CPTaskDisjunctive*) _gamma[disj.getId]]; }];
+    if (status == ORFailure)
+        [[self explorer] fail];
+    [ORConcurrency pumpEvents];
+}
+-(void) removeMachineTask: (id<ORMachineTask>) task with: (id<ORTaskDisjunctive>) disj
+{
+    ORStatus status = [[self engine] enforce:^{ [((id<CPMachineTask>) _gamma[task.getId]) remove:(CPTaskDisjunctive*) _gamma[disj.getId]]; }];
+    if (status == ORFailure)
+        [[self explorer] fail];
+    [ORConcurrency pumpEvents];
 }
 -(ORInt) globalSlack: (id<ORTaskDisjunctive>) d
 {
@@ -281,7 +384,7 @@
 -(ORInt) localSlack: (id<ORTaskDisjunctive>) d
 {
    ORInt gs = [((CPDisjunctive*)_gamma[d.getId]) localSlack];
-   //   NSLog(@"Global slack: %d",gs);
+   //   NSLog(@"Local slack: %d",gs);
    return gs;
 }
 

@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPConstraint.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORScheduler/ORTaskI.h>
 #import <ORScheduler/ORActivity.h>
 #import <ORProgram/CPConcretizer.h>
 #import "CPScheduler/CPFactory.h"
@@ -133,17 +134,72 @@
 // Task
 -(void) visitTask:(id<ORTaskVar>) task
 {
-   if (_gamma[task.getId] == NULL) {
-      id<ORIntRange> horizon = [task horizon];
-      id<ORIntRange> duration = [task duration];
-      
-      id<CPTaskVar> concreteTask;
-      if (![task isOptional])
-         concreteTask = [CPFactory task: _engine horizon: horizon duration: duration];
-      else
-         concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration];
-      _gamma[task.getId] = concreteTask;
-   }
+    assert([task isMemberOfClass:[ORTaskVar class]]);
+    if (_gamma[task.getId] == NULL) {
+        id<ORIntRange> horizon = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        
+        id<CPTaskVar> concreteTask;
+        if (![task isOptional])
+            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration];
+        else
+            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration];
+        _gamma[task.getId] = concreteTask;
+    }
+}
+
+// Alternative Task
+-(void) visitAlternativeTask:(id<ORAlternativeTask>) task
+{
+    if (_gamma[task.getId] == NULL) {
+        id<ORIntRange> horizon  = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        id<ORTaskVarArray> alt  = [task alternatives];
+        
+        [alt visit: self];
+        
+        // Create of a task composed by alternative tasks
+        id<CPAlternativeTask> concreteTask;
+        if (![task isOptional]) {
+            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration withAlternatives:_gamma[alt.getId]];
+        }
+        else {
+            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration withAlternatives:_gamma[alt.getId]];
+        }
+        
+        // Create and post the alternative constraint
+        id<CPConstraint> concreteCstr;
+        concreteCstr = [CPFactory constraint: concreteTask alternatives:_gamma[alt.getId]];
+        [_engine add: concreteCstr];
+        
+        _gamma[task.getId] = concreteTask;
+    }
+}
+
+// Machine Task
+-(void) visitMachineTask:(id<ORMachineTask>) task
+{
+    if (_gamma[task.getId] == NULL) {
+        id<ORIntRange> horizon  = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        id<ORIntArray> durationArray = [task durationArray];
+        id<ORTaskDisjunctiveArray> disj  = [task disjunctives];
+        
+        assert(![task isOptional]);
+
+        // TODO Here it needs to be decided whether to generate one machine task or alternative task with m optional tasks
+        // For the time being only machine tasks are created
+        
+        id<CPMachineTask> concreteTask;
+        
+        id<CPDisjunctiveArray> emptyDisj;
+        emptyDisj = [CPFactory disjunctiveArray:_engine range:[disj range] with:^CPTaskDisjunctive*(ORInt k) {
+            return NULL;
+        }];
+        concreteTask = [CPFactory task:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyDisj];
+        
+        _gamma[task.getId] = concreteTask;
+    }
 }
 
 // Precedence constraint
@@ -204,17 +260,41 @@
         [transitionTasks visit: self];
         [succ visit: self];
         id<CPConstraint> concreteCstr;
-        if ([cstr hasTransition])
-            concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
-        else
-            concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
-        [_engine add: concreteCstr];
+        // NOTE the task sequence propagator for optional or machine tasks
+        // haven't been implemented yet. Once it is then the
+        // following check can be removed.
+        ORBool hasOptionalTasks = false;
+        for (ORInt i = tasks.low; i <= tasks.up; i++) {
+            if ([tasks[i] isOptional] || [tasks[i] isMemberOfClass:[ORMachineTask class]]) {
+                hasOptionalTasks = true;
+                break;
+            }
+        }
+        if (!hasOptionalTasks) {
+            if ([cstr hasTransition])
+                concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
+            else
+                concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
+            [_engine add: concreteCstr];
+        }
         if ([cstr hasTransition])
             concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
         else
             concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
+        
+        // Check for machine tasks and set the concrete disjunctive constraint
+        for (ORInt i = tasks.low; i <= tasks.up; i++) {
+            if ([tasks[i] isMemberOfClass:[ORMachineTask class]]) {
+                id<ORMachineTask> t = (id<ORMachineTask>) tasks[i];
+                assert(_gamma[t.getId] != NULL);
+                ORInt idx = [t getIndex:cstr];
+                assert([t disjunctives].low <= idx && idx <= [t disjunctives].up);
+                id<CPMachineTask> concreteT = _gamma[t.getId];
+                [concreteT set:concreteCstr at:idx];
+            }
+        }
     }
 }
 

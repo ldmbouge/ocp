@@ -16,6 +16,7 @@
 
 #import <objcp/CPVar.h>
 #import "CPTask.h"
+#import "CPTaskI.h"
 #import "CPTaskSequence.h"
 #import "CPFactory.h"
 
@@ -32,7 +33,16 @@
    id<ORTRIntArray> _assigned;
 }
 -(id) initCPTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
-{   
+{
+    // NOTE temporary check for optional task, can be removed once the propagator
+    // is extended for optional tasks
+    assert(^ORBool() {
+        for (ORInt i = tasks.low; i <= tasks.up; i++) {
+            if ([tasks[i] isOptional])
+                return false;
+        }
+        return true;
+    }());
    id<CPTaskVar> task0 = tasks[tasks.low];
    _engine = [task0 engine];
    self = [super initCPCoreConstraint: _engine];
@@ -47,6 +57,7 @@
    _up = _tasks.range.up;
    
    assert(_low == _succ.low + 1);
+    NSLog(@"Create constraint CPTaskSequence\n");
    return self;
 }
 
@@ -95,8 +106,6 @@
 
 -(void) propagate
 {
-//   for(ORInt i = _succ.low; i <= _succ.up; i++)
-//      NSLog(@"succ[%d] = %@",i,[_succ[i] description]);
    ORInt i = 0;
    ORInt start = -MAXINT;
    ORInt nb = 0;
@@ -114,6 +123,7 @@
       start = [_tasks[next] ect];
    }
    ORInt maxLct = -MAXINT;
+   ORInt minEct = MAXINT;
    ORInt duration = 0;
    for(ORInt k = _low; k <= _up; k++) {
       if (k != i && ![_assigned at: k]) {
@@ -121,29 +131,33 @@
          ORInt lct = [_tasks[k] lct];
          if (lct > maxLct)
             maxLct = lct;
+         ORInt ect = [_tasks[k] ect];
+         if (ect < minEct)
+            minEct = ect;
          duration += [_tasks[k] minDuration];
       }
    }
    if (nb <= _size) {
       if (i == _up + 1)
          failNow();
-//      NSLog(@"_succ[%d] = %@",i,_succ[i]);
-//      NSLog(@"_succ[%d] = %@",i,_succ[i]);
       [_succ[i] remove: _up + 1];
    }
    if (i != _up + 1) {
       ORInt min = [_succ[i] min];
       ORInt max = [_succ[i] max];
       for(ORInt k = min; k <= max; k++) {
-         if ([_succ[i] member: k] && k != _up + 1) {
-            if ([_tasks[k] est] + duration > maxLct)
-               [_succ[i] remove: k];
+         if ([_succ[i] member: k]) {
+            if (k != _up + 1) {
+               if ([_tasks[k] est] + duration > maxLct) {
+                  [_succ[i] remove: k];
+                  [_tasks[k] updateStart: minEct];
+               }
+            }
          }
       }
+      if (i != 0)
+         [_tasks[i] updateEnd: maxLct - duration];
    }
-//   for(ORInt i = _succ.low; i <= _succ.up; i++)
-//      NSLog(@"succ[%d] = %@",i,[_succ[i] description]);
-//   NSLog(@" ");
 }
 
 -(NSSet*) allVars

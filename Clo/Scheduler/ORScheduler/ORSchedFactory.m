@@ -116,6 +116,13 @@
    }
    return (id<ORTaskDisjunctiveArray>) o;
 }
++(id<ORTaskDisjunctiveArray>) disjuntiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskDisjunctive>(^)(ORInt)) clo
+{
+    id<ORIdArray> o = [ORFactory idArray: model range:range];
+    for (ORInt k = range.low; k <= range.up; k++)
+        [o set: clo(k) at: k];
+    return (id<ORTaskDisjunctiveArray>) o;
+}
 
 //+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
 //{
@@ -270,8 +277,35 @@
    [model trackMutable:o];
    return o;
 }
+// ORAlternativeTask
++(id<ORAlternativeTask>) task: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORTaskVar>(^)(ORInt)) clo
+{
+    id<ORIdArray> alts = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [alts set: clo(k) at:k];
+    id<ORAlternativeTask> o = [[ORAlternativeTask alloc] initORAlternativeTask: model alternatives: (id<ORTaskVarArray>) alts];
+    [model trackMutable:o];
+    return o;
+}
+// ORMachineTask
++(id<ORMachineTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOf: (id<ORTaskDisjunctive>(^)(ORInt)) cloDisjunctives withDuration: (ORInt(^)(ORInt)) cloDuration
+{
+    id<ORIntArray> dur = [ORFactory intArray:model range:range with:cloDuration];
+    id<ORTaskDisjunctiveArray> disj = [ORFactory disjuntiveArray:model range:range with:cloDisjunctives];
+    id<ORMachineTask> o = [[ORMachineTask alloc] initORMachineTask:model horizon:horizon durationArray:dur runsOnOneOf:disj];
+    [model trackMutable:o];
+    return o;
+}
+// ORAlternativeTask array
++(id<ORAlternativeTaskArray>) alternativeVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORAlternativeTask>(^)(ORInt)) clo
+{
+    id<ORIdArray> o = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [o set: clo(k) at:k];
+    return (id<ORAlternativeTaskArray>) o;
+}
 // ORTaskVar array
-+(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskVar>(^)(ORInt)) clo;
++(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskVar>(^)(ORInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:model range:range];
    for(ORInt k = range.low; k <= range.up; k++)

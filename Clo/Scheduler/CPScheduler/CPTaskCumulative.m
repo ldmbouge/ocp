@@ -12,7 +12,6 @@
 #import "CPTaskCumulative.h"
 #import <objcp/CPIntVarI.h>
 #import <CPUKernel/CPEngineI.h>
-#import "CPMisc.h"
 #import "CPTask.h"
 
 
@@ -197,8 +196,8 @@ typedef struct {
     // Copying elements to the new created C arrays
     ORInt idx = 0;
 
-    for (ORInt t = _tasks.low; t <= _tasks.up; t++) {
-        if (consider[t]) {
+    for (ORInt t = _tasks.low, i = 0; t <= _tasks.up; t++, i++) {
+        if (consider[i]) {
             _idx  [idx] = t;
             _fixed[idx] = t;
             idx++;
@@ -225,15 +224,13 @@ typedef struct {
     // XXX Currently, no propagation is performed on non-present tasks
     for (ORInt ii = 0; ii < _size; ii++) {
         const ORInt i = _idx[ii];
-        if (_tasks[i].isPresent) {
+        if (!_tasks[i].isAbsent) {
+            if (!_tasks[i].isPresent)
+                [_tasks[i] whenPresentPropagate:self];
             if (!_tasks[i].bound)
                 [_tasks[i] whenChangePropagate:self];
             if (!_usages[i].bound)
                 [_usages[i] whenChangeMinPropagate:self];
-        }
-        else {
-            assert(_tasks[i].isOptional && !_tasks[i].isAbsent);
-            [_tasks[i] whenPresentPropagate:self];
         }
     }
     if (!_capacity.bound)
@@ -246,6 +243,28 @@ typedef struct {
 -(void) propagate
 {
     doPropagation(self);
+    
+//    // XXX Just for testing the partial ordering stuff
+//    // Remove it once completed
+//    ORBool allBounded = true;
+//    for (ORInt tt = 0; tt < _size; tt++) {
+//        const ORInt t = _idx[tt];
+//        if (!isBounded(self, t)) {
+//            allBounded = false;
+//            break;
+//        }
+//    }
+//    if (allBounded) {
+//        ORInt posize = 0;
+//        CPTaskVarPrec * prec = [self getPartialOrder: &posize];
+//        printf("posize %d;\n", posize);
+//        free(prec);
+//    }
+}
+
+-(CPTaskVarPrec *) getPartialOrder: (ORInt *) posize
+{
+    return cumuGetPartialOrder(self, posize);
 }
 
 static void propagationLoopPreamble(CPTaskCumulative* cumu, const ORInt cSize, ORInt* i_max_usage)
@@ -295,61 +314,61 @@ static inline ORInt lct(CPTaskCumulative* cumu, ORInt i);
 
 static inline ORInt est(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_est[i];
 }
 
 static inline ORInt lst(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_lst[i];
 }
 
 static inline ORInt ect(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_ect[i];
 }
 
 static inline ORInt lct(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_lct[i];
 }
 
 static inline ORInt dur_min(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_dur_min[i];
 }
 
 static inline ORInt dur_max(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_tasks[i].maxDuration;
 }
 
 static inline ORInt usage_min(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_usage_min[i];
 }
 
 static inline ORInt usage_max(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_usages[i].max;
 }
 
 static inline ORInt area_min(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return (usage_min(cumu, i) * dur_min(cumu, i));
 }
 
 static inline ORInt free_energy(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return  area_min(cumu, i) - usage_min(cumu, i) * max(0, ect(cumu, i) - lst(cumu, i));
 }
 
@@ -370,19 +389,19 @@ static inline ORBool isCapBounded(CPTaskCumulative* cumu)
 
 static inline ORBool isBounded(CPTaskCumulative* cumu, ORInt i)
 {
-    assert(0 <= i && i < cumu->_tasks.count);
+    assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
     return cumu->_tasks[i].bound;
 }
 
 
 static inline ORBool isRelevant(CPTaskCumulative * cumu, const ORInt i)
 {
-    return (cumu->_tasks[i].isPresent && usage_min(cumu, i) > 0 && dur_min(cumu, i) > 0);
+    return (cumu->_tasks[i].isPresent && cumu->_usages[i].min > 0 && cumu->_tasks[i].minDuration > 0);
 }
 
 static inline ORBool isIrrelevant(CPTaskCumulative * cumu, const ORInt i)
 {
-    return (cumu->_tasks[i].isAbsent || usage_max(cumu, i) <= 0 || dur_max(cumu, i));
+    return (cumu->_tasks[i].isAbsent || cumu->_usages[i].max <= 0 || cumu->_tasks[i].maxDuration <= 0);
 }
 
 
@@ -1359,36 +1378,61 @@ static Profile cumuGetEarliestContentionProfile(CPTaskCumulative * cumu)
  Computation of the partial order
  ******************************************************************************/
 
-static Precedence * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psize)
+static CPTaskVarPrec * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psize)
 {
+    const ORInt aSize  = (ORInt) cumu->_tasks.count;
+    const ORInt cSize = cumu->_cIdx._val;
+
+    // Assumption all activities are fixed
+    for (ORInt tt = 0; tt < cumu->_size; tt++) {
+        assert(isBounded(cumu, cumu->_idx[tt]));
+    }
+
     // XXX Assumption all activities are fixed
-    ORInt id_est[cumu->_size];
-    ORInt id_ect[cumu->_size];
-    Precedence * prec = NULL;
+    ORInt id_est[cSize];
+    ORInt id_ect[cSize];
+    CPTaskVarPrec * prec = NULL;
+
     ORInt cap  = 0;
     ORInt size = 0;
 
-    // Initialisation of the arrays
-    for (ORInt t = 0; t < cumu->_size; t++) {
-        id_est[t] = t;
-        id_ect[t] = t;
+    // Clean up
+    cleanUp(cumu);
+    
+    // Allocating memory
+    // XXX Should be permanently and maybe even trailed
+    cumu->_est = alloca(aSize * sizeof(ORInt));
+    cumu->_ect = alloca(aSize * sizeof(ORInt));
+    
+    // Check whether memory allocation was successful
+    if (cumu->_est == NULL || cumu->_ect == NULL) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: Out of memory!"];
     }
 
+    // Initialisation of the arrays
+    for (ORInt tt = 0; tt < cSize; tt++) {
+        const ORInt t = cumu->_idx[tt];
+        cumu->_est[t] = cumu->_tasks[t].est;
+        cumu->_ect[t] = cumu->_tasks[t].ect;
+        id_est[tt] = t;
+        id_ect[tt] = t;
+    }
+    
     // NOTE: qsort_r the 3rd argument of qsort_r is at the last position in glibc (GNU/Linux)
     // instead of the second last
     // Sorting the tasks in non-decreasing order by the earliest start time
-    qsort_r(id_est, cumu->_size, sizeof(ORInt), cumu, (int(*)(void*, const void*, const void*)) &sortEstAsc);
+    qsort_r(id_est, cSize, sizeof(ORInt), cumu, (int(*)(void*, const void*, const void*)) &sortEstAsc);
     // Sorting the tasks in non-decreasing order by the latest completion time
-    qsort_r(id_ect, cumu->_size, sizeof(ORInt), cumu, (int(*)(void*, const void*, const void*)) &sortEctAsc);
+    qsort_r(id_ect, cSize, sizeof(ORInt), cumu, (int(*)(void*, const void*, const void*)) &sortEctAsc);
     
     ORInt tt1  = 0;
     ORInt tt2  = 0;
     ORInt time = MININT;
     NSMutableSet * prevAct = [[NSMutableSet alloc] init];
     
-    while (tt1 < cumu->_size) {
-        assert(tt1 < cumu->_size);
-        assert(tt2 < cumu->_size);
+    while (tt1 < cSize) {
+        assert(tt1 < cSize);
+        assert(tt2 < cSize);
         
         const ORInt t1 = id_est[tt1];
         const ORInt t2 = id_ect[tt2];
@@ -1401,9 +1445,9 @@ static Precedence * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psize)
                 cap = (cap > 0 ? cap << 1 : 16);
                 cap = (size + prevAct.count >= cap ? size + (ORInt) (prevAct.count) + 1 : cap);
                 if (prec == NULL) {
-                    prec = (Precedence *) malloc(cap * sizeof(Precedence));
+                    prec = (CPTaskVarPrec *) malloc(cap * sizeof(CPTaskVarPrec));
                 } else {
-                    prec = (Precedence *) realloc(prec, cap * sizeof(Precedence));
+                    prec = (CPTaskVarPrec *) realloc(prec, cap * sizeof(CPTaskVarPrec));
                 }
                 if (prec == NULL) {
                     @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: Out of memory!"];
@@ -1413,8 +1457,8 @@ static Precedence * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psize)
             NSEnumerator * myEnum = [prevAct objectEnumerator];
             NSNumber * num;
             while ((num = [myEnum nextObject])) {
-                prec[size]._first  = t1;
-                prec[size]._second = (ORInt) [num intValue];
+                prec[size]._before = cumu->_tasks[t1];
+                prec[size]._after  = cumu->_tasks[(ORInt) [num intValue]];
                 size++;
             }
             tt1++;

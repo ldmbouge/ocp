@@ -14,6 +14,9 @@
 
 @protocol ORTaskPrecedes;
 @protocol ORTaskIsFinishedBy;
+@protocol ORTaskVarArray;
+@protocol ORTaskDisjunctive;
+@protocol ORTaskDisjunctiveArray;
 
 @protocol ORTaskVar <ORVar>
 -(id<ORTracker>) tracker;
@@ -22,6 +25,16 @@
 -(ORBool) isOptional;
 -(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after;
 -(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date;
+@end
+
+@protocol ORAlternativeTask <ORTaskVar>
+-(id<ORTaskVarArray>) alternatives;
+@end
+
+@protocol ORMachineTask <ORTaskVar>
+-(id<ORTaskDisjunctiveArray>) disjunctives;
+-(id<ORIntArray>) durationArray;
+-(ORInt) getIndex: (id<ORTaskDisjunctive>) disjunctive;
 @end
 
 @protocol ORTaskVarArray <ORObject>
@@ -55,3 +68,16 @@
 @protocol ORTaskVarSnapshot
 -(ORInt) ect;
 @end;
+
+@protocol ORAlternativeTaskArray <ORObject>
+-(id<ORAlternativeTask>) at: (ORInt) idx;
+-(void) set: (id<ORAlternativeTask>) value at: (ORInt)idx;
+-(id<ORAlternativeTask>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORAlternativeTask>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end

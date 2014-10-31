@@ -14,6 +14,14 @@
 #import "ORConstraintI.h"
 
 @implementation ORFlatten (ORScheduler)
+-(void) visitAlternativeTask:(id<ORAlternativeTask>) t
+{
+    _result = t;
+}
+-(void) visitMachineTask:(id<ORMachineTask>) t
+{
+    _result = t;
+}
 -(void) visitTask:(id<ORTaskVar>) t
 {
    _result = t;

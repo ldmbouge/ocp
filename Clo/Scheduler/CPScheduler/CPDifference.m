@@ -284,8 +284,10 @@ typedef struct {
         // TODO Check whether this difference constraint is implied
         // Perform consistency check and add an edge to the graph
         doCottonMaler(self, indexX, indexY, d);
-        ORInt rdC = _nodes0[indexX]._pi + d - _nodes0[indexY]._pi;
-        assert(rdC >= 0);
+        assert(^ORBool(){
+            ORInt rdC = _nodes0[indexX]._pi + d - _nodes0[indexY]._pi;
+            return (rdC >= 0);
+        }());
         // Adding constraint to the database
         addConstraint(self, NULL, (CPIntVar *)x, (CPIntVar *)y, d, DLConsPure, DLSigma);
     }
@@ -1032,10 +1034,12 @@ static void checkImplicationByBounds(CPDifference * diff, ORInt indexCons)
         const CPIntVar   * y = diff->_cons0._cons[indexCons]._y;
         const ORInt        d = diff->_cons0._cons[indexCons]._d;
         const DLConsType   t = diff->_cons0._cons[indexCons]._type;
-        const DLConsLabel  l = diff->_cons0._cons[indexCons]._label->_val;
         const ORInt        indexConsNext = diff->_cons0._cons[indexCons]._next->_val;
         
-        assert(l == DLLambda   || l == DLSigma   );
+        assert(^ORBool() {
+            const DLConsLabel  l = diff->_cons0._cons[indexCons]._label->_val;
+            return (l == DLLambda   || l == DLSigma);
+        }());
         
         if (x.max - y.min <= d) {
             // 'x - y <= d' is implied
