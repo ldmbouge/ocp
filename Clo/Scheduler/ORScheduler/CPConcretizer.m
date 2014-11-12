@@ -202,6 +202,32 @@
     }
 }
 
+// Resource Task
+-(void) visitResourceTask:(id<ORResourceTask>) task
+{
+    if (_gamma[task.getId] == NULL) {
+        id<ORIntRange> horizon  = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        id<ORIntArray> durationArray = [task durationArray];
+        id<ORResourceArray> res = [task resources];
+        
+        assert(![task isOptional]);
+        
+        // TODO Here it needs to be decided whether to generate one machine task or alternative task with m optional tasks
+        // For the time being only machine tasks are created
+        
+        id<CPResourceTask> concreteTask;
+        
+        id<CPResourceArray> emptyRes;
+        emptyRes = [CPFactory resourceArray:_engine range:[res range] with:^id<CPConstraint>(ORInt k) {
+            return NULL;
+        }];
+        concreteTask = [CPFactory taskRT:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
+        
+        _gamma[task.getId] = concreteTask;
+    }
+}
+
 // Precedence constraint
 -(void) visitTaskPrecedes:(id<ORTaskPrecedes>) cstr
 {
@@ -292,6 +318,14 @@
                 ORInt idx = [t getIndex:cstr];
                 assert([t disjunctives].low <= idx && idx <= [t disjunctives].up);
                 id<CPMachineTask> concreteT = _gamma[t.getId];
+                [concreteT set:concreteCstr at:idx];
+            }
+            else if ([tasks[i] isMemberOfClass:[ORResourceTask class]]) {
+                id<ORResourceTask> t = (id<ORResourceTask>) tasks[i];
+                assert(_gamma[t.getId] != NULL);
+                ORInt idx = [t getIndex:cstr];
+                assert([t resources].low <= idx && idx <= [t resources].up);
+                id<CPResourceTask> concreteT = _gamma[t.getId];
                 [concreteT set:concreteCstr at:idx];
             }
         }

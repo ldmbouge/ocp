@@ -22,6 +22,10 @@
 {
     _result = t;
 }
+-(void) visitResourceTask:(id<ORResourceTask>) t
+{
+    _result = t;
+}
 -(void) visitTask:(id<ORTaskVar>) t
 {
    _result = t;

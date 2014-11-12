@@ -13,6 +13,7 @@
 #import "ORConstraintI.h"
 #import "ORVisit.h"
 #import "ORSchedFactory.h"
+#import "ORTaskI.h"
 
 // ORPrecedes
 //
@@ -348,8 +349,8 @@
     BOOL _closed;
     
     id<ORTracker>      _tracker;
-    NSMutableArray*    _accT;
-    NSMutableArray*    _accU;
+    NSMutableArray *   _accT;
+    NSMutableArray *   _accU;
     NSMutableSet   *   _accIds;
     id<ORTaskVarArray> _tasks;
     id<ORIntVarArray>  _usages;
@@ -381,7 +382,7 @@
     }
     [_accIds dealloc];
     _accIds = 0;
-    
+
     return self;
 }
 -(id<ORTaskCumulative>) initORTaskCumulativeEmpty: (id<ORIntVar>) capacity
@@ -416,6 +417,24 @@
         [_accT   addObject: task           ];
         [_accU   addObject: usage          ];
         [_accIds addObject: @([task getId])];
+    }
+}
+-(void) addRT:(id<ORResourceTask>)task duration:(ORInt)duration
+{
+    [self addRT:task duration:duration with:_capacity];
+}
+-(void) addRT:(id<ORResourceTask>)task duration:(ORInt)duration with:(id<ORIntVar>)usage
+{
+    // Check whether 'task' is already added
+    if (![_accIds containsObject:@([task getId])]) {
+        if (_closed)
+            @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
+        // Add task
+        [_accT   addObject: task           ];
+        [_accU   addObject: usage          ];
+        [_accIds addObject: @([task getId])];
+        // Add resource to resource task
+        [task addResource:self with:duration];
     }
 }
 -(void) visit: (ORVisitor*) v
@@ -510,6 +529,14 @@
     [_accIds dealloc];
     _accIds = 0;
     
+    // TODO Check whether this resource is added to a machine or resource task
+//    for (ORInt i = low; i <= up; i++) {
+//        if ([_tasks[i] isMemberOfClass:[ORMachineTask class]])
+//            TODO
+//        else if ([_tasks[i] isMemberOfClass:[ORResourceTask class]])
+//            TODO
+//    }
+    
     return self;
 }
 -(id<ORTaskDisjunctive>) initORTaskDisjunctiveEmpty: (id<ORTracker>) tracker;
@@ -585,6 +612,19 @@
         [_accIds addObject: @([task getId])];
         // Add disjunctive to machine task
         [task addDisjunctive:self with:duration];
+    }
+}
+-(void) addRT: (id<ORResourceTask>) task duration:(ORInt)duration
+{
+    // Check whether 'task' is already added
+    if (![_accIds containsObject:@([task getId])]) {
+        if (_closed)
+            @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
+        // Add task
+        [_acc    addObject: task           ];
+        [_accIds addObject: @([task getId])];
+        // Add resource to resource task
+        [task addResource:self with:duration];
     }
 }
 -(void) postTransitionTimes

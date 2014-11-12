@@ -177,7 +177,7 @@
         _task_id_lst[i] = idx;
         _task_id_lct[i] = idx;
         
-        _machineTask[i] = [_tasks[idx] isMemberOfClass:[CPMachineTask class]];
+        _machineTask[i] = ([_tasks[idx] isMemberOfClass:[CPMachineTask class]] || [_tasks[idx] isMemberOfClass:[CPResourceTask class]]);
         nbMT += _machineTask[i];
     }
     if (nbMT == 0)
@@ -891,8 +891,12 @@ static void ef_overload_check_optional_vilim(CPTaskDisjunctive * disj, const ORI
             assert(leaf_idx == idx_map_est[k0]);
             
             // Set to absent
-            if (disj->_machineTask[k0])
-                [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+            if (disj->_machineTask[k0]) {
+                if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
+                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                else
+                    [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
+            }
             else
                 [disj->_tasks[k] labelPresent: FALSE];
             
@@ -1086,8 +1090,12 @@ static void dprec_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORIn
                 assert(leaf_idx == idx_map_est[k0]);
                 
                 // Set to absent
-                if (disj->_machineTask[k0])
-                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                if (disj->_machineTask[k0]) {
+                    if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
+                        [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                    else
+                        [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
+                }
                 else
                     [disj->_tasks[k] labelPresent: FALSE];
                 // Remove from Lambda tree
@@ -1173,8 +1181,12 @@ static void dprec_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORIn
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_lct[k0]);
                 // Set to absent
-                if (disj->_machineTask[k0])
-                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                if (disj->_machineTask[k0]) {
+                    if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
+                        [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                    else
+                        [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
+                }
                 else
                     [disj->_tasks[k] labelPresent: FALSE];
                 // Remove task 'k' from the Lambda tree
@@ -1405,8 +1417,12 @@ static void nfnl_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORInt
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_lct[k0]);
                 // Set to absent
-                if (disj->_machineTask[k0])
-                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                if (disj->_machineTask[k0]) {
+                    if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
+                        [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                    else
+                        [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
+                }
                 else
                     [disj->_tasks[k] labelPresent: FALSE];
 
@@ -1510,8 +1526,12 @@ static void nfnl_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORInt
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_est[k0]);
                 // Set to absent
-                if (disj->_machineTask[k0])
-                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                if (disj->_machineTask[k0]) {
+                    if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
+                        [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
+                    else
+                        [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
+                }
                 else
                     [disj->_tasks[k] labelPresent: FALSE];
                 // Remove from Lambda tree
@@ -2170,8 +2190,12 @@ static void readData(CPTaskDisjunctive * disj)
         const ORInt t  = disj->_bound[tt];
         const ORInt t0 = t - disj->_low;
         ORBool bound;
-        if (disj->_machineTask[t0])
-            [(id<CPMachineTask>)disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0]) forMachine:disj];
+        if (disj->_machineTask[t0]) {
+            if ([disj->_tasks[t] isMemberOfClass:[CPMachineTask class]])
+                [(id<CPMachineTask>)disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0]) forMachine:disj];
+            else
+                [(id<CPResourceTask>)disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0]) forResource:disj];
+        }
         else
             [disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0])];
         

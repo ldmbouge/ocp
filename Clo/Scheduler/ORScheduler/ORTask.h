@@ -17,6 +17,7 @@
 @protocol ORTaskVarArray;
 @protocol ORTaskDisjunctive;
 @protocol ORTaskDisjunctiveArray;
+@protocol ORResourceArray;
 
 @protocol ORTaskVar <ORVar>
 -(id<ORTracker>) tracker;
@@ -36,6 +37,14 @@
 -(id<ORIntArray>) durationArray;
 -(void) addDisjunctive: (id<ORTaskDisjunctive>) disjunctive with: (ORInt) duration;
 -(ORInt) getIndex: (id<ORTaskDisjunctive>) disjunctive;
+-(void) close;
+@end
+
+@protocol ORResourceTask <ORTaskVar>
+-(id<ORResourceArray>) resources;
+-(id<ORIntArray>) durationArray;
+-(void) addResource: (id<ORConstraint>) resource with: (ORInt) duration;
+-(ORInt) getIndex: (id<ORConstraint>) resource;
 -(void) close;
 @end
 
@@ -76,6 +85,19 @@
 -(void) set: (id<ORAlternativeTask>) value at: (ORInt)idx;
 -(id<ORAlternativeTask>)objectAtIndexedSubscript:(NSUInteger)key;
 -(void)setObject:(id<ORAlternativeTask>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+
+@protocol ORResourceArray <ORObject>
+-(id<ORConstraint>) at: (ORInt) idx;
+-(void) set: (id<ORConstraint>) value at: (ORInt)idx;
+-(id<ORConstraint>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORConstraint>)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(id<ORIntRange>) range;

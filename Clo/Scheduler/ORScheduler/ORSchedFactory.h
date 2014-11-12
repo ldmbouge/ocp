@@ -58,6 +58,7 @@
 
 +(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range;
 +(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskDisjunctive>(^)(ORInt)) clo;
++(id<ORResourceArray>) resourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORConstraint>(^)(ORInt)) clo;
 
 // Difference Logic constraints
 +(id<ORDifference>) difference: (id<ORTracker>) model initWithCapacity:(ORInt) numItems;

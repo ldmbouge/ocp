@@ -123,6 +123,13 @@
         [o set: clo(k) at: k];
     return (id<ORTaskDisjunctiveArray>) o;
 }
++(id<ORResourceArray>) resourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORConstraint>(^)(ORInt)) clo
+{
+    id<ORIdArray> o = [ORFactory idArray: model range:range];
+    for (ORInt k = range.low; k <= range.up; k++)
+        [o set: clo(k) at: k];
+    return (id<ORResourceArray>) o;
+}
 
 //+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
 //{

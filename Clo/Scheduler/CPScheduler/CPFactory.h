@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORScheduler/ORScheduler.h>
 #import <objcp/CPFactory.h>
+#import "CPTaskCumulative.h"
 #import "CPTaskDisjunctive.h"
 
 @protocol CPTaskVarArray;
@@ -40,6 +41,7 @@
 
 // Creating disjunctive arrays
 +(id<CPDisjunctiveArray>) disjunctiveArray: (id<CPEngine>) engine range:(id<ORIntRange>) range with: (CPTaskDisjunctive*(^)(ORInt)) clo;
++(id<CPResourceArray>) resourceArray: (id<CPEngine>) engine range:(id<ORIntRange>) range with: (id<CPConstraint>(^)(ORInt)) clo;
 
 // Creating tasks
 +(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
@@ -47,4 +49,5 @@
 +(id<CPAlternativeTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
 +(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
 +(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPDisjunctiveArray>) disjunctives;
++(id<CPResourceTask>) taskRT: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
 @end
