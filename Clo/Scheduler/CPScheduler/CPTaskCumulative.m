@@ -13,6 +13,7 @@
 #import <objcp/CPIntVarI.h>
 #import <CPUKernel/CPEngineI.h>
 #import "CPTask.h"
+#import "CPTaskI.h"
 
 
 // NOTE that the TTEF filtering is not adjusted for optional tasks yet, but the
@@ -63,17 +64,26 @@ typedef struct {
     ORBool * _present;   // Whether the activity is present
     ORBool * _absent;    // Whether the activity is absent
     
+    ORBool * _resourceTask; // Resource task
+    ORBool   _resourceTaskAsOptional;
+    
     // Relevant time horizon
     ORInt    _begin;    // Start time of the horizon considered during propagation
     ORInt    _end;      // End time of the horizon considered during propagation
 
-    ORInt * _index;                 // Normalised activities' ID in [Absent | Unknown | Present]
+    ORInt * _index;                 // Normalised activities' ID in [Irrelevant | Unknown | Present | PresentRT | UnknownRT | IrrelevantRT]
     TRInt   _indexFirstUnknown;     // Size of present activities
     TRInt   _indexFirstPresent;     // Size of present and non-present activities
+    TRInt   _indexFirstUnknownRT;   // Index of first unknown resource activity
+    TRInt   _indexFirstIrrelevantRT;// Index of first irrelevant resource activity
     
-    ORInt * _bound;                 // Activities' ID sorted in [Irrelevant | Unbound | Bound]
+    ORInt * _bound;                 // Activities' ID sorted in [Irrelevant | Unbound | Bound | BoundRT | UnboundRT | IrrelevantRT]
     TRInt   _boundFirstUnbound;     // Index of first unbound activity
     TRInt   _boundFirstBound;       // Index of first bound activity
+    TRInt   _boundFirstUnboundRT;   // Index of first unbound resource activity
+    TRInt   _boundFirstIrrelevantRT;// Index of first irrelevant resource activity
+    
+    ORInt   _firstRT;
     
     // Storage for the resource profile
     ProfilePeak * _profile;
@@ -115,6 +125,12 @@ typedef struct {
         }
     }
     
+    // Checking whether tasks belonging not to the machine tasks
+    for (ORInt i = tasks.low; i <= tasks.up; i++) {
+        if ([tasks[i] isMemberOfClass:[CPMachineTask class]])
+            @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: a machine is wrongly assigned to a cumulative resource!"];
+    }
+    
     id<CPTaskVar> task0 = tasks[tasks.low];
     self = [super initCPCoreConstraint: [task0 engine]];
     
@@ -122,7 +138,7 @@ typedef struct {
     _tasks    = tasks;
     _usages   = usages;
     _capacity = capacity;
-
+    
     // Setup for propagation
     _tt_filt    = true;
     _ttef_check = true;
@@ -138,7 +154,11 @@ typedef struct {
     _bound   = NULL;
     _index   = NULL;
     _profile = NULL;
-    
+
+    // Resource tasks
+    _resourceTask = NULL;
+    _resourceTaskAsOptional = false;
+
     return self;
 }
 
@@ -149,17 +169,18 @@ typedef struct {
     printf("%%%% #TTEF fails: %lld\n", _nb_ttef_incons);
     printf("%%%% #TTEF props: %lld\n", _nb_ttef_props );
 
-    if (_est       != NULL) free(_est      );
-    if (_lct       != NULL) free(_lct      );
-    if (_dur_min   != NULL) free(_dur_min  );
-    if (_dur_max   != NULL) free(_dur_max  );
-    if (_usage_min != NULL) free(_usage_min);
-    if (_usage_max != NULL) free(_usage_max);
-    if (_present   != NULL) free(_present  );
-    if (_absent    != NULL) free(_absent   );
-    if (_bound     != NULL) free(_bound    );
-    if (_index     != NULL) free(_index    );
-    if (_profile   != NULL) free(_profile  );
+    if (_est          != NULL) free(_est         );
+    if (_lct          != NULL) free(_lct         );
+    if (_dur_min      != NULL) free(_dur_min     );
+    if (_dur_max      != NULL) free(_dur_max     );
+    if (_usage_min    != NULL) free(_usage_min   );
+    if (_usage_max    != NULL) free(_usage_max   );
+    if (_present      != NULL) free(_present     );
+    if (_absent       != NULL) free(_absent      );
+    if (_bound        != NULL) free(_bound       );
+    if (_index        != NULL) free(_index       );
+    if (_profile      != NULL) free(_profile     );
+    if (_resourceTask != NULL) free(_resourceTask);
     
     [super dealloc];
 }
@@ -182,25 +203,21 @@ typedef struct {
     _size = (ORInt) _tasks.count;
     _low  = _tasks.low;
     _up   = _tasks.up;
-
-    
-    _boundFirstUnbound = makeTRInt(_trail, 0    );
-    _boundFirstBound   = makeTRInt(_trail, _size);
-    _indexFirstPresent = makeTRInt(_trail, _size);
-    _indexFirstUnknown = makeTRInt(_trail, 0    );
     
     // Allocating memory
-    _est       = malloc(_size * sizeof(ORInt ));
-    _lct       = malloc(_size * sizeof(ORInt ));
-    _dur_min   = malloc(_size * sizeof(ORInt ));
-    _dur_max   = malloc(_size * sizeof(ORInt ));
-    _usage_min = malloc(_size * sizeof(ORInt ));
-    _usage_max = malloc(_size * sizeof(ORInt ));
-    _present   = malloc(_size * sizeof(ORBool));
-    _absent    = malloc(_size * sizeof(ORBool));
+    _est          = malloc(_size * sizeof(ORInt ));
+    _lct          = malloc(_size * sizeof(ORInt ));
+    _dur_min      = malloc(_size * sizeof(ORInt ));
+    _dur_max      = malloc(_size * sizeof(ORInt ));
+    _usage_min    = malloc(_size * sizeof(ORInt ));
+    _usage_max    = malloc(_size * sizeof(ORInt ));
+    _present      = malloc(_size * sizeof(ORBool));
+    _absent       = malloc(_size * sizeof(ORBool));
+    _resourceTask = malloc(_size * sizeof(ORBool));
     
     if (_est == NULL || _lct == NULL || _dur_min == NULL || _dur_max == NULL
-        || _usage_min == NULL || _usage_max == NULL || _present == NULL || _absent == NULL)
+        || _usage_min == NULL || _usage_max == NULL || _present == NULL || _absent == NULL
+        || _resourceTask == NULL)
         @throw [[ORExecutionError alloc] initORExecutionError: "Cumulative: Out of memory!"];
     
     // Allocating memory
@@ -214,10 +231,34 @@ typedef struct {
     }
 
     // Initialising the arrays
+    ORInt idx_normal = 0;
+    _firstRT         = _size;
     for (ORInt t0 = 0; t0 < _size; t0++) {
-        _bound[t0] = t0;
-        _index[t0] = t0;
+        const ORInt t = t0 +  _low;
+        _resourceTask[t0] = [_tasks[t] isMemberOfClass:[CPResourceTask class]];
+        if (!_resourceTaskAsOptional && _resourceTask[t0]) {
+            _firstRT--;
+            _bound[_firstRT] = t0;
+            _index[_firstRT] = t0;
+        }
+        else {
+            _bound[idx_normal] = t0;
+            _index[idx_normal] = t0;
+            idx_normal++;
+        }
     }
+    assert(idx_normal == _firstRT);
+    assert(!_resourceTaskAsOptional || _firstRT == _size);
+    
+    // Initialising trailed variables
+    _boundFirstUnbound      = makeTRInt(_trail, 0       );
+    _boundFirstBound        = makeTRInt(_trail, _firstRT);
+    _boundFirstUnboundRT    = makeTRInt(_trail, _firstRT);
+    _boundFirstIrrelevantRT = makeTRInt(_trail, _size   );
+    _indexFirstUnknown      = makeTRInt(_trail, 0       );
+    _indexFirstPresent      = makeTRInt(_trail, _firstRT);
+    _indexFirstUnknownRT    = makeTRInt(_trail, _firstRT);
+    _indexFirstIrrelevantRT = makeTRInt(_trail, _size   );
     
     // Remove negative values from the domains
     if (_capacity.min < 0) {
@@ -234,12 +275,13 @@ typedef struct {
     [self propagate];
 
     // Subscription of variables to the constraint
-    // XXX Currently, no propagation is performed on non-present tasks
     for (ORInt tt = 0; tt < _size; tt++) {
         const ORInt t = _index[tt] + _low;
         if (!_tasks[t].isAbsent) {
-            if (!_tasks[t].isPresent)
+            if (!_tasks[t].isPresent) {
+                assert([_tasks[t] isMemberOfClass:[CPResourceTask class]]);
                 [_tasks[t] whenPresentPropagate:self];
+            }
             if (!_tasks[t].bound)
                 [_tasks[t] whenChangePropagate:self];
             if (!_usages[t].bound)
@@ -367,7 +409,7 @@ static inline ORInt usage_min(CPTaskCumulative * cumu, const ORInt t0)
 static inline ORInt usage_max(CPTaskCumulative * cumu, const ORInt t0)
 {
     assert(0 <= t0 && t0 < cumu->_size);
-    return cumu->_usages[t0].max;
+    return cumu->_usage_max[t0];
 }
 
 static inline ORInt area_min(CPTaskCumulative * cumu, const ORInt t0)
@@ -400,7 +442,7 @@ static inline ORBool isCapBounded(CPTaskCumulative* cumu)
 static inline ORBool isBounded(CPTaskCumulative* cumu, ORInt i)
 {
     assert(cumu->_tasks.low <= i && i <= cumu->_tasks.up);
-    return cumu->_tasks[i].bound;
+    return (cumu->_tasks[i].bound && cumu->_usages[i].bound);
 }
 
 
@@ -464,11 +506,12 @@ static int sortLctAsc(CPTaskCumulative* cumu, const ORInt* r1, const ORInt* r2)
 
 static ORInt tt_build_profile(CPTaskCumulative* cumu)
 {
-    const ORInt firstPresent = cumu->_indexFirstPresent._val;
+    const ORInt firstPresent   = cumu->_indexFirstPresent._val;
+    const ORInt firstUnknownRT = cumu->_indexFirstUnknownRT._val;
     ORInt nbCompParts = 0;
     
     // Determine the number of activities with compulsory parts to be considered
-    for (ORInt tt = firstPresent; tt < cumu->_size; tt++) {
+    for (ORInt tt = firstPresent; tt < firstUnknownRT; tt++) {
         const ORInt t0 = cumu->_index[tt];
         assert(isRelevant(cumu, t0));
         if (lst(cumu, t0) < ect(cumu, t0) && cumu->_begin < ect(cumu, t0) && lst(cumu, t0) < cumu->_end)
@@ -483,7 +526,7 @@ static ORInt tt_build_profile(CPTaskCumulative* cumu)
     ProfileChange toSort[2 * nbCompParts];
     ORInt k = 0;   // Number of profile change points
     
-    for (ORInt tt = firstPresent; tt < cumu->_size; tt++) {
+    for (ORInt tt = firstPresent; tt < firstUnknownRT; tt++) {
         const ORInt t0 = cumu->_index[tt];
         assert(isRelevant(cumu, t0));
         if (lst(cumu, t0) < ect(cumu, t0) && cumu->_begin < ect(cumu, t0) && lst(cumu, t0) < cumu->_end) {
@@ -544,15 +587,12 @@ static inline void tt_filter_cap(CPTaskCumulative* cumu, const ORInt maxLevel)
         [cumu->_capacity updateMin: maxLevel];
 }
 
-static void tt_filter_start_end_times(CPTaskCumulative* cumu, const ORInt maxLevel, bool* update)
+static void tt_filter_start_end_times(CPTaskCumulative* cumu, ORInt * unbound, const ORInt unboundSize, const ORInt maxLevel, bool* update)
 {
-    const ORInt firstUnbound = cumu->_boundFirstUnbound._val;
-    const ORInt firstBound   = cumu->_boundFirstBound._val;
-    
     ORInt maxCapacity = cap_max(cumu);
     ORInt index = 0;    // Profile index
-    for (ORInt tt = firstUnbound; tt < firstBound; tt++) {
-        const ORInt t0 = cumu->_bound[tt];
+    for (ORInt tt = 0; tt < unboundSize; tt++) {
+        const ORInt t0 = unbound[tt];
         
         // Check whether an update is possible
         if (maxLevel + usage_min(cumu, t0) > maxCapacity && dur_min(cumu, t0) > 0) {
@@ -582,14 +622,6 @@ static void tt_filter_start_end_times(CPTaskCumulative* cumu, const ORInt maxLev
                     }
                 }
             }
-            // Imposing the new earliest start time
-            if (new_est > est(cumu, t0)) {
-                const ORInt t = t0 + cumu->_low;
-                cumu->_nb_tt_props++;
-                [cumu->_tasks[t] updateStart:new_est];
-                *update = true;
-            }
-            
             
             /* Determining a new lastest end time for the task i */
             
@@ -616,6 +648,31 @@ static void tt_filter_start_end_times(CPTaskCumulative* cumu, const ORInt maxLev
                     }
                 }
             }
+            
+            // Propagating absence
+            if (new_est + dur_min(cumu, t0) > new_lct) {
+                const ORInt t = t0 + cumu->_low;
+                cumu->_nb_tt_props++;
+                if (cumu->_resourceTask[t0]) {
+                    assert([cumu->_tasks[t] isMemberOfClass:[CPResourceTask class]]);
+                    [(id<CPResourceTask>)cumu->_tasks[t] remove:cumu];
+                }
+                else
+                    [cumu->_tasks[t] labelPresent: FALSE];
+            }
+            
+            // Do not propagate bounds of non-relevant resource tasks
+            if (cumu->_resourceTask[t0] && !isRelevant(cumu, t0))
+                continue;
+            
+            // Imposing the new earliest start time
+            if (new_est > est(cumu, t0)) {
+                const ORInt t = t0 + cumu->_low;
+                cumu->_nb_tt_props++;
+                [cumu->_tasks[t] updateStart:new_est];
+                *update = true;
+            }
+            
             // Imposing the new latest completion time
             if (new_lct < lct(cumu, t0)) {
                 const ORInt t = t0 + cumu->_low;
@@ -716,14 +773,14 @@ get_no_shift(const ORInt begin, const ORInt end, const ORInt est, const ORInt ec
 }
 
 
-static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt* task_id_est, ORInt* task_id_lct, ORInt* ttEnAfterEst, ORInt* ttEnAfterLct, const ORInt unboundSize)
+static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt * unbound, ORInt* task_id_est, ORInt* task_id_lct, ORInt* ttEnAfterEst, ORInt* ttEnAfterLct, const ORInt unboundSize)
 {
     assert(unboundSize > 0);
     
     // Initialisation
-    for (ORInt tt = 0, ii = cumu->_boundFirstUnbound._val; tt < unboundSize; tt++, ii++) {
-        task_id_est[tt] = cumu->_bound[ii];
-        task_id_lct[tt] = cumu->_bound[ii];
+    for (ORInt tt = 0; tt < unboundSize; tt++) {
+        task_id_est[tt] = unbound[tt];
+        task_id_lct[tt] = unbound[tt];
     }
     
     // Sorting the tasks in non-decreasing order by the earliest start time
@@ -894,17 +951,14 @@ static void ttef_filter_start_and_end_times(CPTaskCumulative* cumu, ORInt* task_
 {
     assert(unboundSize > 0);
     
-    const ORInt firstUnbound = cumu->_boundFirstUnbound._val;
-    const ORInt firstBound   = cumu->_boundFirstBound._val;
-
     // Allocation of memory for recording the new bounds
     ORInt new_cap_min = cap_min(cumu);
     ORInt new_est[cumu->_size];
     ORInt new_lct[cumu->_size];
 
     // Initialisation of the arrays
-    for (ORInt tt = firstUnbound; tt < firstBound; tt++) {
-        const ORInt t0 = cumu->_bound[tt];
+    for (ORInt tt = 0; tt < unboundSize; tt++) {
+        const ORInt t0 = task_id_est[tt];
         new_est[t0] = est(cumu, t0);
         new_lct[t0] = lct(cumu, t0);
     }
@@ -914,10 +968,22 @@ static void ttef_filter_start_and_end_times(CPTaskCumulative* cumu, ORInt* task_
     // TTEF propagaiton of the end times
     ttef_filter_end_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize, new_est, new_lct, &new_cap_min, shift_in2, update);
 
-    // Updating the bounds
-    for (ORInt tt = firstUnbound; tt < firstBound; tt++) {
-        const ORInt t0 = cumu->_bound[tt];
+    // Propagation of absence and bounds
+    for (ORInt tt = 0; tt < unboundSize; tt++) {
+        const ORInt t0 = task_id_est[tt];
         const ORInt t  = t0 + cumu->_low;
+        // Propagation of absence
+        if (new_est[t0] + dur_min(cumu, t0) > new_lct[t0]) {
+            if (cumu->_resourceTask[t0]) {
+                [(id<CPResourceTask>)cumu->_tasks[t] remove:cumu];
+            }
+            else
+                [cumu->_tasks[t] labelPresent:FALSE];
+        }
+        // Do not propagate bounds for non-relevant resource tasks
+        if (cumu->_resourceTask[t0] && !isRelevant(cumu, t0))
+            continue;
+        // Update of bounds
         if (new_est[t0] > est(cumu, t0))
             [cumu->_tasks[t] updateStart:new_est[t0]];
         if (new_lct[t0] < lct(cumu, t0))
@@ -1341,21 +1407,20 @@ static void tteef_filter_end_times_in_interval(CPTaskCumulative* cumu, ORInt* ne
 
     // Main method for the time-tabling-edge-finding (TTEF) propagation
     //
-static void ttef_bounds_propagation(CPTaskCumulative* cumu, bool* update)
+static void ttef_bounds_propagation(CPTaskCumulative* cumu, ORInt * unbound, const ORInt unboundSize, bool* update)
 {
     assert(cumu->_ttef_check || cumu->_ttef_filt);
     
-    const ORInt unboundSize = cumu->_boundFirstBound._val - cumu->_boundFirstUnbound._val;
     if (unboundSize <= 0)
         return ;
     
-    ORInt task_id_est[unboundSize];     // Unbound activities order wrt. their est
-    ORInt task_id_lct[unboundSize];     // Unbound activities order wrt. their lct
+    ORInt task_id_est [unboundSize];     // Unbound activities order wrt. their est
+    ORInt task_id_lct [unboundSize];     // Unbound activities order wrt. their lct
     ORInt ttEnAfterEst[unboundSize];
     ORInt ttEnAfterLct[unboundSize];
     
     // Initialise all the parameters
-    ttef_initialise_parameters(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize);
+    ttef_initialise_parameters(cumu, unbound, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize);
     
     if (cumu->_ttef_filt) {
         // TTEF bounds filtering incl. consistency check
@@ -1389,14 +1454,15 @@ static Profile cumuGetEarliestContentionProfile(CPTaskCumulative * cumu)
     updateIndices(cumu);
     
     const ORInt firstPresent = cumu->_indexFirstPresent._val;
-    const ORInt size = cumu->_size - firstPresent;
+    const ORInt firstUnknownRT = cumu->_indexFirstUnknownRT._val;
+    const ORInt size = firstUnknownRT - firstPresent;
 
     ORInt ectA  [size];
     ORInt id_est[size];
     ORInt id_ect[size];
     
     // Initialisation of the arrays
-    for (ORInt tt = firstPresent; tt < cumu->_size; tt++) {
+    for (ORInt tt = firstPresent; tt < firstUnknownRT; tt++) {
         const ORInt i = tt - firstPresent;
         const ORInt t0 = cumu->_index[tt];
         id_est[i ] = t0;
@@ -1425,9 +1491,11 @@ static CPTaskVarPrec * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psiz
     // - activities are either present or absent
     assert(cumu->_boundFirstBound._val == cumu->_boundFirstBound._val);
     assert(cumu->_indexFirstPresent._val == cumu->_indexFirstUnknown._val);
+    assert(cumu->_indexFirstUnknown._val == cumu->_indexFirstIrrelevantRT._val);
     
-    const ORInt firstPresent = cumu->_indexFirstPresent._val;
-    const ORInt presentSize = cumu->_size - firstPresent;
+    const ORInt firstPresent   = cumu->_indexFirstPresent._val;
+    const ORInt firstUnknownRT = cumu->_indexFirstUnknownRT._val;
+    const ORInt presentSize    = firstUnknownRT - firstPresent;
     
     ORInt id_est[presentSize];
     ORInt id_ect[presentSize];
@@ -1438,7 +1506,7 @@ static CPTaskVarPrec * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psiz
     ORInt size = 0;
 
     // Initialisation of the arrays
-    for (ORInt tt = firstPresent; tt < cumu->_size; tt++) {
+    for (ORInt tt = firstPresent; tt < firstUnknownRT; tt++) {
         const ORInt i  = tt - firstPresent;
         const ORInt t0 = cumu->_index[tt];
         id_est[i] = t0;
@@ -1446,9 +1514,9 @@ static CPTaskVarPrec * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psiz
     }
     
     // Sorting the tasks in non-decreasing order by the earliest start time
-    qusort_r(id_est, size, cumu, (ORInt (*)(void *, const ORInt *, const ORInt *)) &sortEstAsc);
+    qusort_r(id_est, presentSize, cumu, (ORInt (*)(void *, const ORInt *, const ORInt *)) &sortEstAsc);
     // Sorting the tasks in non-decreasing order by the latest completion time
-    qusort_r(id_ect, size, cumu, (ORInt (*)(void *, const ORInt *, const ORInt *)) &sortEctAsc);
+    qusort_r(id_ect, presentSize, cumu, (ORInt (*)(void *, const ORInt *, const ORInt *)) &sortEctAsc);
     
     ORInt tt1  = 0;
     ORInt tt2  = 0;
@@ -1530,7 +1598,7 @@ static inline void swapORInt(ORInt * arr, const ORInt i, const ORInt j)
 
 static void updateIndices(CPTaskCumulative * cumu)
 {
-    // array '_index' is partitioned in [Absent | Unknown | Present]
+    // array '_index' is partitioned in [Irrelevant | Unknown | Present | PresentRT | UnknownRT | IrrelevantRT]
     ORInt firstUnknown = cumu->_indexFirstUnknown._val;
     ORInt firstPresent = cumu->_indexFirstPresent._val;
     
@@ -1550,12 +1618,39 @@ static void updateIndices(CPTaskCumulative * cumu)
         assignTRInt(&(cumu->_indexFirstPresent), firstPresent, cumu->_trail);
 }
 
+static ORBool updateIndicesRT(CPTaskCumulative * cumu)
+{
+    // array '_index' is partitioned in [Irrelevant | Unknown | Present | PresentRT | UnknownRT | IrrelevantRT]
+    ORInt firstUnknownRT    = cumu->_indexFirstUnknownRT._val;
+    ORInt firstIrrelevantRT = cumu->_indexFirstIrrelevantRT._val;
+    
+    // Update indices array
+    for (ORInt tt = firstUnknownRT; tt < firstIrrelevantRT; tt++) {
+        const ORInt t0 = cumu->_index[tt];
+        if (isIrrelevant(cumu, t0))
+            swapORInt(cumu->_index, --firstIrrelevantRT, tt--);
+        else if (isRelevant(cumu, t0))
+            swapORInt(cumu->_index, firstUnknownRT++, tt);
+    }
+    
+    ORBool newRelevant = false;
+    // Trail indices pointers
+    if (firstUnknownRT > cumu->_indexFirstUnknownRT._val) {
+        assignTRInt(&(cumu->_indexFirstUnknownRT), firstUnknownRT, cumu->_trail);
+        newRelevant = true;
+    }
+    if (firstIrrelevantRT < cumu->_indexFirstIrrelevantRT._val)
+        assignTRInt(&(cumu->_indexFirstIrrelevantRT), firstIrrelevantRT, cumu->_trail);
+    
+    return newRelevant;
+}
+
 // Reading the activities data and storing them in the data structure of the propagator
 // - Data read: bound, est,  lct, minDuration, maxDuration,   minUsage,   maxUsage, present,  absent
 // - Data stored:     _est, _lct,    _dur_min,    _dur_max, _usage_min, _usage_max, _present, _absent
 static void readData(CPTaskCumulative * cumu)
 {
-    // array '_bound' is partition in [ Irrelevant | Unbound | Bound ]
+    // array '_bound' is partition in [ Irrelevant | Unbound | Bound | BoundRT | UnboundRT | IrrelevantRT ]
     ORInt firstUnbound = cumu->_boundFirstUnbound._val;
     ORInt firstBound   = cumu->_boundFirstBound._val;
     
@@ -1569,7 +1664,10 @@ static void readData(CPTaskCumulative * cumu)
         const ORInt t  = t0 + cumu->_low;
         ORBool bound;
         
-        [cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0])];
+        if (cumu->_resourceTask[t0])
+            [(id<CPResourceTask>)cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+        else
+            [cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0])];
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
         
@@ -1586,6 +1684,32 @@ static void readData(CPTaskCumulative * cumu)
         cumu->_end   = max(cumu->_end  , lct(cumu, t0));
     }
     
+    // Retrieve all necessary data from resource activities
+    const ORInt firstPresentRT = cumu->_firstRT;
+    const ORInt firstUnknownRT = cumu->_indexFirstUnknownRT._val;
+    for (ORInt tt = firstPresentRT; tt < firstUnknownRT; tt++) {
+        const ORInt t0 = cumu->_index[tt];
+        const ORInt t  = t0 + cumu->_low;
+        ORBool bound;
+        const ORInt est_t       = cumu->_est      [t0];
+        const ORInt lct_t       = cumu->_lct      [t0];
+        const ORInt dur_min_t   = cumu->_dur_min  [t0];
+        const ORInt dur_max_t   = cumu->_dur_max  [t0];
+        const ORInt usage_min_t = cumu->_usage_min[t0];
+        const ORInt usage_max_t = cumu->_usage_max[t0];
+        
+        assert(cumu->_resourceTask[t0]);
+        [(id<CPResourceTask>)cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+        cumu->_usage_min[t0] = cumu->_usages[t].min;
+        cumu->_usage_max[t0] = cumu->_usages[t].max;
+        
+        if (est_t != cumu->_est[t0] || lct_t != cumu->_lct[t0] || dur_min_t != cumu->_dur_min[t0] || dur_max_t != cumu->_dur_max[t0] || usage_min_t != cumu->_usage_min[t0] || usage_max_t != cumu->_usage_max[t0]) {
+            // Update the relevant time horizon
+            cumu->_begin = min(cumu->_begin, est(cumu, t0));
+            cumu->_end   = max(cumu->_end  , lct(cumu, t0));
+        }
+    }
+    
     // Trail indices pointers
     if (firstUnbound > cumu->_boundFirstUnbound._val)
         assignTRInt(&(cumu->_boundFirstUnbound), firstUnbound, cumu->_trail);
@@ -1595,6 +1719,88 @@ static void readData(CPTaskCumulative * cumu)
     // Update resource capacity
     cumu->_cap_min = cumu->_capacity.min;
     cumu->_cap_max = cumu->_capacity.max;
+}
+
+static void readDataRT(CPTaskCumulative * cumu)
+{
+    // array '_bound' is partition in [ Irrelevant | Unbound | Bound | BoundRT | UnboundRT | IrrelevantRT ]
+    ORInt firstUnboundRT    = cumu->_boundFirstUnboundRT._val;
+    ORInt firstIrrelevantRT = cumu->_boundFirstIrrelevantRT._val;
+    
+    // Relevant time horizon for propagation and consistency check
+    cumu->_begin = MAXINT;
+    cumu->_end   = MAXINT;
+    
+    // Retrieve all necessary data from the activities
+    for (ORInt tt = firstUnboundRT; tt < firstIrrelevantRT; tt++) {
+        const ORInt t0 = cumu->_bound[tt];
+        const ORInt t  = t0 + cumu->_low;
+        ORBool bound;
+        
+        assert(cumu->_resourceTask[t0]);
+        [(id<CPResourceTask>)cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+        cumu->_usage_min[t0] = cumu->_usages[t].min;
+        cumu->_usage_max[t0] = cumu->_usages[t].max;
+        
+        // Swap bounded or irrelevant tasks to the beginning of the array
+        if (isIrrelevant(cumu, t0)) {
+            swapORInt(cumu->_bound, --firstIrrelevantRT, tt--);
+            continue;
+        }
+        if (bound && cumu->_usage_max[t0] - cumu->_usage_min[t0] == 0)
+            swapORInt(cumu->_bound, firstUnboundRT++, tt);
+        
+        // Update the relevant time horizon
+        cumu->_begin = min(cumu->_begin, est(cumu, t0));
+        cumu->_end   = max(cumu->_end  , lct(cumu, t0));
+    }
+    
+    // Trail indices pointers
+    if (firstUnboundRT > cumu->_boundFirstUnboundRT._val)
+        assignTRInt(&(cumu->_boundFirstUnboundRT), firstUnboundRT, cumu->_trail);
+    if (firstIrrelevantRT < cumu->_boundFirstIrrelevantRT._val)
+        assignTRInt(&(cumu->_boundFirstIrrelevantRT), firstIrrelevantRT, cumu->_trail);
+    
+    // Update resource capacity
+    cumu->_cap_min = cumu->_capacity.min;
+    cumu->_cap_max = cumu->_capacity.max;
+}
+
+void getUnboundTasks(CPTaskCumulative * cumu, ORInt * unbound, ORInt * size)
+{
+    const ORInt firstUnbound = cumu->_boundFirstUnbound._val;
+    const ORInt firstBound   = cumu->_boundFirstBound._val;
+    
+    ORInt idx = 0;
+    
+    for (ORInt tt = firstUnbound; tt < firstBound; tt++)
+        unbound[idx++] = cumu->_bound[tt];
+    
+    const ORInt firstUnknownRT = cumu->_indexFirstUnknownRT._val;
+    
+    for (ORInt tt = cumu->_firstRT; tt < firstUnknownRT; tt++) {
+        const ORInt t0 = cumu->_index[tt];
+        const ORInt t  = t0 + cumu->_low;
+        
+        if (!isBounded(cumu, t))
+            unbound[idx++] = t0;
+    }
+    assert(idx <= *size);
+    *size = idx;
+}
+
+void getUnboundTasksRT(CPTaskCumulative * cumu, ORInt * unbound, ORInt * size)
+{
+    const ORInt firstUnboundRT    = cumu->_boundFirstUnboundRT._val;
+    const ORInt firstIrrelevantRT = cumu->_boundFirstIrrelevantRT._val;
+    
+    ORInt idx = 0;
+    
+    for (ORInt tt = firstUnboundRT; tt < firstIrrelevantRT; tt++)
+        unbound[idx++] = cumu->_bound[tt];
+    
+    assert(idx <= *size);
+    *size = idx;
 }
 
 /*******************************************************************************
@@ -1614,22 +1820,63 @@ static void doPropagation(CPTaskCumulative * cumu)
     
     // Generation of the resource profile and TT consistency check
     const ORInt i_max_usage = tt_build_profile(cumu);
-    
-    if (i_max_usage >= 0) {
-        assert(i_max_usage < cumu->_profileSize);
+    assert(i_max_usage < cumu->_profileSize);
 
-        const ORInt maxLevel = cumu->_profile[i_max_usage]._level;
-        // TT filtering on resource capacity variable
-        tt_filter_cap(cumu, maxLevel);
+    // TT filtering on resource capacity variable
+    if (i_max_usage >= 0)
+        tt_filter_cap(cumu, cumu->_profile[i_max_usage]._level);
+
+    if ((cumu->_tt_filt && i_max_usage >= 0) || cumu->_ttef_check || cumu->_ttef_filt) {
+        // Retrieving all unbounded activities
+        ORInt unboundSize = cumu->_boundFirstBound._val - cumu->_boundFirstUnbound._val + cumu->_boundFirstIrrelevantRT._val - cumu->_boundFirstUnboundRT._val;
+        ORInt unbound[unboundSize];
+        getUnboundTasks(cumu, unbound, &unboundSize);
+        
         // TT filtering on start and end times variables
-        if (cumu->_tt_filt)
-            tt_filter_start_end_times(cumu, maxLevel, & update);
-        // TTEF propagation
+        if (cumu->_tt_filt && i_max_usage >= 0)
+            tt_filter_start_end_times(cumu, unbound, unboundSize, cumu->_profile[i_max_usage]._level, & update);
+        // TTEF propagation and consistency check
         if (!update && (cumu->_ttef_check || cumu->_ttef_filt)) {
-            ttef_bounds_propagation(cumu, & update);
+            ttef_bounds_propagation(cumu, unbound, unboundSize, & update);
         }
     }
+    const ORInt firstUnboundRT = cumu->_boundFirstUnboundRT._val;
+    const ORInt firstIrrelevantRT = cumu->_boundFirstIrrelevantRT._val;
+    if (!update && !cumu->_resourceTaskAsOptional && firstUnboundRT < firstIrrelevantRT)
+        doPropagationRT(cumu);
 //    NSLog(@"Cumulative: propagate/0: End\n");
+}
+
+static void doPropagationRT(CPTaskCumulative * cumu)
+{
+    bool update = false;
+    
+    // Read/update data from resource activities
+    readDataRT(cumu);
+
+    // Update the indices
+    if (updateIndicesRT(cumu))
+        doPropagation(cumu);
+    else {
+        // Generation of the resource profile and TT consistency check
+        const ORInt i_max_usage = tt_build_profile(cumu);
+        assert(i_max_usage < cumu->_profileSize);
+        
+        if ((cumu->_tt_filt && i_max_usage >= 0) || cumu->_ttef_check || cumu->_ttef_filt) {
+            // Retrieving all unbounded activities
+            ORInt unboundSize = cumu->_boundFirstIrrelevantRT._val - cumu->_boundFirstUnboundRT._val;
+            ORInt unbound[unboundSize];
+            getUnboundTasksRT(cumu, unbound, &unboundSize);
+            
+            // TT filtering on start and end times variables
+            if (cumu->_tt_filt && i_max_usage >= 0)
+                tt_filter_start_end_times(cumu, unbound, unboundSize, cumu->_profile[i_max_usage]._level, & update);
+            // TTEF propagation and consistency check
+            if (!update && (cumu->_ttef_check || cumu->_ttef_filt)) {
+                ttef_bounds_propagation(cumu, unbound, unboundSize, & update);
+            }
+        }
+    }
 }
 
 @end
