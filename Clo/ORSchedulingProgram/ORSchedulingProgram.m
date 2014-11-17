@@ -15,12 +15,15 @@
 #import <ORProgram/CPSolver.h>
 #import <CPScheduler/CPTask.h>
 #import "ORTaskI.h"
+#import "ORConstraintI.h"
 
 @implementation CPSolver (CPScheduler)
 -(void) labelActivity: (id<ORTaskVar>) act
 {
     if ([act isMemberOfClass: [ORMachineTask class]])
         [self labelMachineTask: (id<ORMachineTask>)act];
+    else if ([act isMemberOfClass: [ORResourceTask class]])
+        [self labelResourceTask: (id<ORResourceTask>)act];
     [self labelPresent  : act];
     [self labelStart    : act];
     [self labelDuration : act];
@@ -60,6 +63,26 @@
             break;
         id<ORTaskDisjunctive> d = [disj at: [avail at:i]];
         [self labelMachineTask:act to:d];
+    }
+}
+-(void) labelResourceTask: (id<ORResourceTask>) act
+{
+    assert([act isMemberOfClass: [ORResourceTask class]]);
+    assert(_gamma[act.getId] != NULL);
+    id<ORResourceTask> resAct = (id<ORResourceTask>) act;
+    id<ORIntArray> avail = [((id<CPResourceTask>)_gamma[act.getId]) getAvailResources];
+    id<ORResourceArray> res = [resAct resources];
+    assert(^ORBool(){
+        for (ORInt i = avail.low; i <= avail.up; i++)
+            if ([avail at:i] < res.low || [avail at:i] > res.up)
+                return false;
+        return true;
+    });
+    for (ORInt i = avail.low; i <= avail.up; i++) {
+        if ([self isResourceAssigned:act])
+            break;
+        id<ORConstraint> d = [res at: [avail at:i]];
+        [self labelResourceTask:act to:d];
     }
 }
 -(void) setTimes: (id<ORTaskVarArray>) act
@@ -252,9 +275,20 @@
     id<ORTaskDisjunctiveArray> disj = [task disjunctives];
     return [disj at: [((id<CPMachineTask>)_gamma[task.getId]) runsOn]];
 }
+-(id<ORConstraint>) runsOnResource: (id<ORResourceTask>) task
+{
+    if (![self isResourceAssigned:task])
+        @throw [[ORExecutionError alloc] initORExecutionError: "The task is not assigned to any machine"];
+    id<ORResourceArray> res = [task resources];
+    return [res at: [((id<CPResourceTask>)_gamma[task.getId]) runsOn]];
+}
 -(ORBool) isAssigned: (id<ORMachineTask>) task
 {
     return [((id<CPMachineTask>)_gamma[task.getId]) isAssigned];
+}
+-(ORBool) isResourceAssigned: (id<ORResourceTask>) task
+{
+    return [((id<CPResourceTask>)_gamma[task.getId]) isAssigned];
 }
 -(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart
 {
@@ -371,6 +405,28 @@
 -(void) removeMachineTask: (id<ORMachineTask>) task with: (id<ORTaskDisjunctive>) disj
 {
     ORStatus status = [[self engine] enforce:^{ [((id<CPMachineTask>) _gamma[task.getId]) remove:(CPTaskDisjunctive*) _gamma[disj.getId]]; }];
+    if (status == ORFailure)
+        [[self explorer] fail];
+    [ORConcurrency pumpEvents];
+}
+-(void) labelResourceTask: (id<ORResourceTask>) task to: (id<ORConstraint>) res
+{
+    if (![self isResourceAssigned:task]) {
+        [self try: ^{ [self   bindResourceTask:task with:res]; }
+               or: ^{ [self removeResourceTask:task with:res]; }
+         ];
+    }
+}
+-(void) bindResourceTask: (id<ORResourceTask>) task with: (id<ORConstraint>) res
+{
+    ORStatus status = [[self engine] enforce:^{ [((id<CPResourceTask>) _gamma[task.getId]) bind: _gamma[res.getId]]; }];
+    if (status == ORFailure)
+        [[self explorer] fail];
+    [ORConcurrency pumpEvents];
+}
+-(void) removeResourceTask: (id<ORResourceTask>) task with: (id<ORConstraint>) res
+{
+    ORStatus status = [[self engine] enforce:^{ [((id<CPResourceTask>) _gamma[task.getId]) remove: _gamma[res.getId]]; }];
     if (status == ORFailure)
         [[self explorer] fail];
     [ORConcurrency pumpEvents];

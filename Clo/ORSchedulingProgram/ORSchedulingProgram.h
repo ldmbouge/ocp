@@ -31,6 +31,7 @@
 -(ORInt) isPresent: (id<ORTaskVar>) task;
 -(ORInt) isAbsent: (id<ORTaskVar>) task;
 -(id<ORTaskDisjunctive>) runsOn: (id<ORMachineTask>) task;
+-(id<ORConstraint>) runsOnResource: (id<ORResourceTask>) task;
 -(ORBool) boundActivity: (id<ORTaskVar>) task;
 -(ORInt) minDuration: (id<ORTaskVar>) task;
 -(ORInt) maxDuration: (id<ORTaskVar>) task;
