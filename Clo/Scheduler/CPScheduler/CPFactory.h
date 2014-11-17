@@ -43,11 +43,18 @@
 +(id<CPDisjunctiveArray>) disjunctiveArray: (id<CPEngine>) engine range:(id<ORIntRange>) range with: (CPTaskDisjunctive*(^)(ORInt)) clo;
 +(id<CPResourceArray>) resourceArray: (id<CPEngine>) engine range:(id<ORIntRange>) range with: (id<CPConstraint>(^)(ORInt)) clo;
 
-// Creating tasks
+// Creating standard tasks
 +(id<CPTaskVar>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 +(id<CPTaskVar>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+
+// Creating alternative tasks
 +(id<CPAlternativeTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
 +(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
+
 +(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPDisjunctiveArray>) disjunctives;
+
+// Creating Resource tasks
 +(id<CPResourceTask>) taskRT: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
++(id<CPResourceTask>) optionalTaskRT: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
+
 @end

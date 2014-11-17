@@ -303,6 +303,15 @@
     [model trackMutable:o];
     return o;
 }
++(id<ORAlternativeTask>) optionalTask: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORTaskVar>(^)(ORInt)) clo
+{
+    id<ORIdArray> alts = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [alts set: clo(k) at:k];
+    id<ORAlternativeTask> o = [[ORAlternativeTask alloc] initOROptionalAlternativeTask: model alternatives: (id<ORTaskVarArray>) alts];
+    [model trackMutable:o];
+    return o;
+}
 // ORMachineTask
 +(id<ORMachineTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOf: (id<ORTaskDisjunctive>(^)(ORInt)) cloDisjunctives withDuration: (ORInt(^)(ORInt)) cloDuration
 {
@@ -315,6 +324,35 @@
 +(id<ORMachineTask>) machineTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon
 {
     id<ORMachineTask> o = [[ORMachineTask alloc] initORMachineTaskEmpty:model horizon:horizon];
+    [model trackMutable:o];
+    return o;
+}
+// ORResourceTask
++(id<ORResourceTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDuration
+{
+    id<ORIntArray> dur = [ORFactory intArray:model range:range with:cloDuration];
+    id<ORResourceArray> res = [ORFactory resourceArray:model range:range with:cloResources];
+    id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTask:model horizon:horizon durationArray:dur runsOnOneOf:res];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORResourceTask>) resourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon
+{
+    id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTaskEmpty:model horizon:horizon];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORResourceTask>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDuration
+{
+    id<ORIntArray> dur = [ORFactory intArray:model range:range with:cloDuration];
+    id<ORResourceArray> res = [ORFactory resourceArray:model range:range with:cloResources];
+    id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTask:model horizon:horizon durationArray:dur runsOnOneOf:res];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORResourceTask>) optionalResourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon
+{
+    id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTaskEmpty:model horizon:horizon];
     [model trackMutable:o];
     return o;
 }

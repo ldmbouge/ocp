@@ -177,7 +177,7 @@
         _task_id_lst[i] = idx;
         _task_id_lct[i] = idx;
         
-        _machineTask[i] = ([_tasks[idx] isMemberOfClass:[CPMachineTask class]] || [_tasks[idx] isMemberOfClass:[CPResourceTask class]]);
+        _machineTask[i] = ([_tasks[idx] isMemberOfClass:[CPMachineTask class]] || [_tasks[idx] isMemberOfClass:[CPResourceTask class]] || [_tasks[idx] isMemberOfClass:[CPOptionalResourceTask class]]);
         nbMT += _machineTask[i];
     }
     if (nbMT == 0)

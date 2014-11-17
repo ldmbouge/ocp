@@ -235,7 +235,7 @@ typedef struct {
     _firstRT         = _size;
     for (ORInt t0 = 0; t0 < _size; t0++) {
         const ORInt t = t0 +  _low;
-        _resourceTask[t0] = [_tasks[t] isMemberOfClass:[CPResourceTask class]];
+        _resourceTask[t0] = ([_tasks[t] isMemberOfClass:[CPResourceTask class]] || [_tasks[t] isMemberOfClass:[CPOptionalResourceTask class]]);
         if (!_resourceTaskAsOptional && _resourceTask[t0]) {
             _firstRT--;
             _bound[_firstRT] = t0;

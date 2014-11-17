@@ -222,7 +222,10 @@
         emptyRes = [CPFactory resourceArray:_engine range:[res range] with:^id<CPConstraint>(ORInt k) {
             return NULL;
         }];
-        concreteTask = [CPFactory taskRT:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
+        if (![task isOptional])
+            concreteTask = [CPFactory taskRT:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
+        else
+            concreteTask = [CPFactory optionalTaskRT:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
         
         _gamma[task.getId] = concreteTask;
     }

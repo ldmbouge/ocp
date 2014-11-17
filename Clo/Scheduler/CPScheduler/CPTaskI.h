@@ -39,3 +39,7 @@
 @interface CPResourceTask : CPTaskVar<CPResourceTask>
 -(id<CPResourceTask>) initCPResourceTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
 @end
+
+@interface CPOptionalResourceTask : CPOptionalTaskVar<CPResourceTask>
+-(id<CPResourceTask>) initCPOptionalResourceTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
+@end

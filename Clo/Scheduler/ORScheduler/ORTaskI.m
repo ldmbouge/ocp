@@ -339,6 +339,98 @@
     
     return self;
 }
+-(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration runsOnOneOf:(id<ORResourceArray>)resources
+{
+    assert(duration.low == resources.low);
+    assert(duration.up  == resources.up );
+    const ORInt low = duration.low;
+    const ORInt up  = duration.up;
+    
+    // Checking for the right resources
+    for (ORInt k = low; k <= up; k++) {
+        if (![resources[k] isMemberOfClass: [ORTaskDisjunctive class]] && ![resources[k] isMemberOfClass: [ORTaskCumulative class]])
+            @throw [[ORExecutionError alloc] initORExecutionError: "The resource task contains references to non-resource constraints"];
+    }
+    
+    ORInt minDur = MAXINT;
+    ORInt maxDur = MININT;
+    for (ORInt k = low; k <= up; k++) {
+        minDur = min(minDur, [duration at:k]);
+        maxDur = max(maxDur, [duration at:k]);
+    }
+    
+    self = [super initOROptionalTaskVar:model horizon:horizon duration:nil];
+    
+    _res      = resources;
+    _durArray = duration;
+    
+    _dictRes  = NULL;
+    _dictDur  = NULL;
+    _closed   = true;
+    
+    // Adding the resource task to the resources
+    for (ORInt k = low; k <= up; k++) {
+        if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
+            [(ORTaskDisjunctive*) resources[k] addRT:self duration:[duration at:k]];
+        else
+            [(ORTaskCumulative *) resources[k] addRT:self duration:[duration at:k]];
+    }
+    
+    return self;
+}
+-(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources
+{
+    assert(duration.low == resources.low);
+    assert(duration.up  == resources.up );
+    assert(duration.low == usage.low);
+    assert(duration.up  == usage.up );
+    const ORInt low = duration.low;
+    const ORInt up  = duration.up;
+    
+    // Checking for the right resources
+    for (ORInt k = low; k <= up; k++) {
+        if (![resources[k] isMemberOfClass: [ORTaskDisjunctive class]] && ![resources[k] isMemberOfClass: [ORTaskCumulative class]])
+            @throw [[ORExecutionError alloc] initORExecutionError: "The resource task contains references to non-resource constraints"];
+        if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]] && !([[usage at: k] min] == 1 && [[usage at: k] max] == 1))
+            @throw [[ORExecutionError alloc] initORExecutionError: "The resource task contains references to non-resource constraints"];
+    }
+    
+    ORInt minDur = MAXINT;
+    ORInt maxDur = MININT;
+    for (ORInt k = low; k <= up; k++) {
+        minDur = min(minDur, [duration at:k]);
+        maxDur = max(maxDur, [duration at:k]);
+    }
+    
+    self = [super initOROptionalTaskVar:model horizon:horizon duration:nil];
+    
+    _res      = resources;
+    _durArray = duration;
+    
+    _dictRes  = NULL;
+    _dictDur  = NULL;
+    _closed   = true;
+    
+    // Adding the resource task to the resources
+    for (ORInt k = low; k <= up; k++) {
+        if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
+            [(ORTaskDisjunctive*) resources[k] addRT:self duration:[duration at:k]];
+        else
+            [(ORTaskCumulative *) resources[k] addRT:self duration:[duration at:k] with:[usage at:k]];
+    }
+    
+    return self;
+}
+-(id<ORResourceTask>) initOROptionalResourceTaskEmpty:(id<ORModel>)model horizon:(id<ORIntRange>)horizon
+{
+    self = [super initOROptionalTaskVar:model horizon:horizon duration:RANGE(model, 0, 0)];
+    
+    _dictRes = [[NSMutableDictionary alloc] initWithCapacity: 16];
+    _dictDur = [[NSMutableDictionary alloc] initWithCapacity: 16];
+    _closed  = false;
+    
+    return self;
+}
 -(void) dealloc
 {
     if (_dictRes != NULL)

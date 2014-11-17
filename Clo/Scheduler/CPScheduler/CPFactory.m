@@ -266,6 +266,12 @@
     [engine trackMutable: task];
     return task;
 }
++(id<CPResourceTask>) optionalTaskRT: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPResourceArray>)resources
+{
+    id<CPResourceTask> task = [[CPResourceTask alloc] initCPResourceTask:engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:resources];
+    [engine trackMutable: task];
+    return task;
+}
 
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
 {
