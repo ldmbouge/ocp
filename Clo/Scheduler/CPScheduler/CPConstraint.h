@@ -32,6 +32,19 @@
 -(ORUInt) nbUVars;
 @end
 
+// Span propagator
+//
+@interface CPSpan : CPCoreConstraint {
+    id<CPTaskVar>      _task;
+    id<CPTaskVarArray> _compound;
+}
+-(id) initCPSpan: (id<CPTaskVar>) task compound: (id<CPTaskVarArray>) compound;
+-(void) dealloc;
+-(ORStatus) post;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
 @interface CPTaskPrecedence : CPCoreConstraint {
    id<CPTaskVar> _before;
    id<CPTaskVar> _after;

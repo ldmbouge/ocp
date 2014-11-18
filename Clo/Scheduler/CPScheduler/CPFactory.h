@@ -23,6 +23,7 @@
 
 @interface CPFactory (CPScheduler)
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task alternatives: (id<CPTaskVarArray>) alternatives;
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task spans: (id<CPTaskVarArray>) spans;
 
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after;
@@ -50,6 +51,10 @@
 // Creating alternative tasks
 +(id<CPAlternativeTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
 +(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives: (id<CPTaskVarArray>) alternatives;
+
+// Creating span tasks
++(id<CPSpanTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withSpans: (id<CPTaskVarArray>) spans;
++(id<CPSpanTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withSpans: (id<CPTaskVarArray>) spans;
 
 +(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPDisjunctiveArray>) disjunctives;
 

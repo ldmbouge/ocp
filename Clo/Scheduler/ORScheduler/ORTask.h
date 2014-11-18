@@ -32,6 +32,10 @@
 -(id<ORTaskVarArray>) alternatives;
 @end
 
+@protocol ORSpanTask <ORTaskVar>
+-(id<ORTaskVarArray>) compound;
+@end
+
 @protocol ORMachineTask <ORTaskVar>
 -(id<ORTaskDisjunctiveArray>) disjunctives;
 -(id<ORIntArray>) durationArray;

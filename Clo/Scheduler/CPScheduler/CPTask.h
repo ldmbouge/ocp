@@ -82,6 +82,10 @@
 -(id<CPTaskVarArray>) alternatives;
 @end
 
+@protocol CPSpanTask <CPTaskVar>
+-(id<CPTaskVarArray>) compound;
+@end
+
 @protocol CPMachineTask <CPTaskVar>
 -(id<CPDisjunctiveArray>) disjunctives;
 -(void) set: (id<CPConstraint>) disjunctive at: (ORInt) idx;

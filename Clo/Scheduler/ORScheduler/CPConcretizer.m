@@ -175,6 +175,33 @@
         _gamma[task.getId] = concreteTask;
     }
 }
+// Span Task
+-(void) visitSpanTask:(id<ORSpanTask>) task
+{
+    if (_gamma[task.getId] == NULL) {
+        id<ORIntRange> horizon  = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        id<ORTaskVarArray> compound = [task compound];
+        
+        [compound visit: self];
+        
+        // Create of a task composed by alternative tasks
+        id<CPSpanTask> concreteTask;
+        if (![task isOptional]) {
+            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration withSpans:_gamma[compound.getId]];
+        }
+        else {
+            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration withSpans:_gamma[compound.getId]];
+        }
+        
+        // Create and post the alternative constraint
+        id<CPConstraint> concreteCstr;
+        concreteCstr = [CPFactory constraint: concreteTask spans:_gamma[compound.getId]];
+        [_engine add: concreteCstr];
+        
+        _gamma[task.getId] = concreteTask;
+    }
+}
 
 // Machine Task
 -(void) visitMachineTask:(id<ORMachineTask>) task

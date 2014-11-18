@@ -32,6 +32,13 @@
     return cstr;
 }
 
+// Span propagator
++(id<CPConstraint>) constraint:(id<CPTaskVar>)task spans:(id<CPTaskVarArray>)spans
+{
+    id<CPConstraint> cstr = [[CPSpan alloc] initCPSpan:task compound:spans];
+    [[task tracker] trackMutable:cstr];
+    return cstr;
+}
 
 // Cumulative (resource) constraint
 //
@@ -251,6 +258,18 @@
 +(id<CPAlternativeTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withAlternatives:(id<CPTaskVarArray>)alternatives
 {
     id<CPAlternativeTask> task = [[CPOptionalAlternativeTask alloc] initCPOptionalAlternativeTask: engine horizon: horizon duration: duration alternatives:alternatives];
+    [engine trackMutable: task];
+    return task;
+}
++(id<CPSpanTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withSpans:(id<CPTaskVarArray>)spans
+{
+    id<CPSpanTask> task = [[CPSpanTask alloc] initCPSpanTask:engine horizon:horizon duration:duration compound:spans];
+    [engine trackMutable: task];
+    return task;
+}
++(id<CPSpanTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withSpans:(id<CPTaskVarArray>)spans
+{
+    id<CPSpanTask> task = [[CPOptionalSpanTask alloc] initCPOptionalSpanTask: engine horizon: horizon duration: duration compound:spans];
     [engine trackMutable: task];
     return task;
 }

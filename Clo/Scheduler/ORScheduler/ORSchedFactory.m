@@ -312,6 +312,35 @@
     [model trackMutable:o];
     return o;
 }
+// ORSpanTask
++(id<ORSpanTask>) task: (id<ORModel>) model range: (id<ORIntRange>) range withSpans: (id<ORTaskVar>(^)(ORInt)) clo
+{
+    id<ORTaskVarArray> spans = (id<ORTaskVarArray>)[ORFactory idArray:model range:range];
+    ORInt minHor = MAXINT;
+    ORInt maxHor = MININT;
+    for(ORInt k = range.low; k <= range.up; k++) {
+        [spans set: clo(k) at:k];
+        minHor = min(minHor, spans[k].horizon.low );
+        maxHor = max(maxHor, spans[k].horizon.up  );
+    }
+    id<ORSpanTask> o = [[ORSpanTask alloc] initORSpanTask: model horizon:RANGE(model, minHor, maxHor) compound:spans];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORSpanTask>) optionalTask: (id<ORModel>) model range: (id<ORIntRange>) range withSpans: (id<ORTaskVar>(^)(ORInt)) clo
+{
+    id<ORTaskVarArray> spans = (id<ORTaskVarArray>)[ORFactory idArray:model range:range];
+    ORInt minHor = MAXINT;
+    ORInt maxHor = MININT;
+    for(ORInt k = range.low; k <= range.up; k++) {
+        [spans set: clo(k) at:k];
+        minHor = min(minHor, spans[k].horizon.low );
+        maxHor = max(maxHor, spans[k].horizon.up  );
+    }
+    id<ORSpanTask> o = [[ORSpanTask alloc] initOROptionalSpanTask:model horizon:RANGE(model, minHor, maxHor) compound:spans];
+    [model trackMutable:o];
+    return o;
+}
 // ORMachineTask
 +(id<ORMachineTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOf: (id<ORTaskDisjunctive>(^)(ORInt)) cloDisjunctives withDuration: (ORInt(^)(ORInt)) cloDuration
 {

@@ -528,191 +528,330 @@
     }
     printf("-+-+-+-+-+-+-+-+-+-+-+--+-+-\n");
 }
-//-(void) propagate
-//{
-//    ORInt size = _size._val;
-//    for (ORInt ii = 0; ii < size; ii++) {
-//        const ORInt i = _idx[ii];
-//        if (_alter[i].top.bound) {
-//            if (_alter[i].top.value == 1) {
-//                if (_act.isOptional)
-//                    [_act.top bind:1];
-//                _idx[ii] = _idx[0];
-//                _idx[0]  = i;
-//                for (ORInt kk = 1; kk < size; kk++)
-//                    [_alter[_idx[kk]].top bind:0];
-//                size = 1;
-//                break;
-//            }
-//            else {
-//                _idx[ii]       = _idx[size - 1];
-//                _idx[size - 1] = i;
-//                size--;
-//                ii--;
-//            }
-//        }
-//        else {
-//            // Check present
-//            if (_alter[i].startLB.min > _act.startUB.max || _alter[i].startUB.max < _act.startLB.min
-//                || _alter[i].duration.min > _act.duration.max || _alter[i].duration.max < _act.duration.min
-//            ) {
-//                [_alter[i].top bind: 0];
-//                _idx[ii]       = _idx[size - 1];
-//                _idx[size - 1] = i;
-//                size--;
-//                ii--;
-//            }
-//        }
-//    }
-//    assignTRInt(&_size, size, _trail);
-//    if (size == 1 && _alter[_idx[0]].top.bound) {
-//        if (_act.isOptional)
-//            [_act.top bind: 1];
-//        [self propagateEqual];
-//    }
-//    if (size == 0) {
-//        if (_act.isOptional)
-//            [_act.top bind:0];
-//        else {
-//            failNow();
-//        }
-//    }
-//}
-//-(void) dumpState
-//{
-//    printf("Meta: start [%d,%d]; dur [%d,%d]\n", _act.startLB.min, _act.startUB.max, _act.duration.min, _act.duration.max);
-//    for (ORInt i = _alter.range.low; i <= _alter.range.up; i++) {
-//        printf("\t%d: top [%d,%d]; start [%d,%d]; dur [%d,%d]\n", i, _alter[i].top.min, _alter[i].top.max, _alter[i].startLB.min, _alter[i].startUB.max, _alter[i].duration.min, _alter[i].duration.max);
-//    }
-//}
-//-(void) bindActivity
-//{
-//    assert(_act.top.bound);
-//    if (_act.top.value == 1) {
-//        if (_size._val == 1) {
-//            [_alter[_idx[0]].top bind:1];
-//            [self propagateEqual];
-//        }
-//    }
-//    else {
-//        for (ORInt ii = 0; ii < _size._val; ii++) {
-//            [_alter[_idx[ii]].top bind:0];
-//        }
-//        assignTRInt(&_size, 0, _trail);
-//        // Disentail propagator
-//        assignTRInt(&_active, NO, _trail);
-//    }
-//}
-//-(void) propActDurMin
-//{
-//    for (ORInt ii = 0; ii < _size._val; ii++) {
-//        const ORInt i = _idx[ii];
-//        if (_alter[i].duration.max < _act.duration.min)
-//            [_alter[i].top bind:0];
-//        else
-//            [_alter[i].duration updateMin:_act.duration.min];
-//    }
-//}
-//-(void) propActDurMax
-//{
-//    for (ORInt ii = 0; ii < _size._val; ii++) {
-//        const ORInt i = _idx[ii];
-//        if (_alter[i].duration.min > _act.duration.max)
-//            [_alter[i].top bind:0];
-//        else
-//            [_alter[i].duration updateMax:_act.duration.max];
-//    }
-//}
-//-(void) propAlterStartMin
-//{
-//    ORInt startMin = MAXINT;
-//    for (ORInt ii = 0; ii < _size._val; ii++)
-//        startMin = min(startMin, _alter[_idx[ii]].startLB.min);
-//    [_act updateStartMin:startMin];
-//}
-//-(void) propAlterStartMax
-//{
-//    ORInt startMax = MININT;
-//    for (ORInt ii = 0; ii < _size._val; ii++)
-//        startMax = max(startMax, _alter[_idx[ii]].startUB.max);
-//    [_act updateStartMax:startMax];
-//}
-//-(void) propAlterDurMin
-//{
-//    ORInt durMin = MAXINT;
-//    for (ORInt ii = 0; ii < _size._val; ii++)
-//        durMin = min(durMin, _alter[_idx[ii]].duration.min);
-//    if (_act.duration.max < durMin)
-//        [_act.top bind:0];
-//    else
-//        [_act.duration updateMin:durMin];
-//}
-//-(void) propAlterDurMax
-//{
-//    ORInt durMax = MININT;
-//    for (ORInt ii = 0; ii < _size._val; ii++)
-//        durMax = max(durMax, _alter[_idx[ii]].duration.max);
-//    if (_act.duration.min > durMax)
-//        [_act.top bind:0];
-//    else
-//        [_act.duration updateMax:durMax];
-//}
-//-(void) propagateEqual
-//{
-//    assert(_size._val == 1 && _alter[_idx[0]].top.bound && _alter[_idx[0]].top.value == 1);
-//    assert((_act.isOptional && _act.top.value == 1) || !_act.isOptional);
-//    const ORInt i = _idx[0];
-//    id<CPEngine> engine = [_act.startLB engine];
-//    [engine addInternal:[CPFactory equal:_act.startLB  to:_alter[i].startLB  plus:0]];
-//    [engine addInternal:[CPFactory equal:_act.startUB  to:_alter[i].startUB  plus:0]];
-//    [engine addInternal:[CPFactory equal:_act.duration to:_alter[i].duration plus:0]];
-//    // Disentail propagator
-//    assignTRInt(&_active, NO, _trail);
-//}
-//-(NSSet*) allVars
-//{
-//    NSUInteger nb = 4 * [_alter count] + (_act.isOptional ? 4 : 3);
-//    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
-//    for (ORInt i = _alter.range.low; i < _alter.range.up; i++) {
-//        [rv addObject:_alter[i].top     ];
-//        [rv addObject:_alter[i].startLB ];
-//        [rv addObject:_alter[i].startUB ];
-//        [rv addObject:_alter[i].duration];
-//    }
-//    if (_act.isOptional)
-//        [rv addObject:_act.top];
-//    [rv addObject:_act.startLB ];
-//    [rv addObject:_act.startUB ];
-//    [rv addObject:_act.duration];
-//    [rv autorelease];
-//    return rv;
-//}
-//-(ORUInt) nbUVars
-//{
-//    ORUInt nb = 0;
-//    for (ORInt ii = 0; ii < _size._val; ii++) {
-//        const ORInt i = _idx[ii];
-//        if (!_alter[i].top.bound     ) nb++;
-//        if (!_alter[i].startLB.bound ) nb++;
-//        if (!_alter[i].duration.bound) nb++;
-//    }
-//    if (_act.isOptional && !_act.top.bound) nb++;
-//    if (!_act.startLB.bound ) nb++;
-//    if (!_act.duration.bound) nb++;
-//    
-//    return nb;
-//}
-//-(void) encodeWithCoder:(NSCoder *)aCoder
-//{
-//    assert(false);
-//}
-//-(id) initWithCoder:(NSCoder *)aDecoder
-//{
-//    assert(false);
-//}
 @end
 
 
+// Span constraint
+//
+@implementation CPSpan {
+    ORInt * _idx;   // Array of task's indices
+    TRInt   _size;  // Pointer to the first absent compound task in the array _idx
+    
+    TRInt   _watchStart;
+    TRInt   _watchEnd;
+}
+-(id) initCPSpan:(id<CPTaskVar>)task compound:(id<CPTaskVarArray>)compound
+{
+    self = [super initCPCoreConstraint:[task engine]];
+    
+    _task     = task;
+    _compound = compound;
+    _idx      = NULL;
+    
+    return self;
+}
+-(void) dealloc
+{
+    if (_idx != NULL) free(_idx);
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    const ORInt size = (ORInt) [_compound count];
+    const ORInt low  = [_compound low  ];
+    const ORInt up   = [_compound up   ];
+    
+    // Initialise trailed parameters
+    _size        = makeTRInt(_trail, size);
+    _watchStart  = makeTRInt(_trail, size);
+    _watchEnd    = makeTRInt(_trail, size);
+    
+    // Allocate memory
+    _idx = malloc(size * sizeof(ORInt));
+    
+    // Check whether memory allocation was successful
+    if (_idx == NULL) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPAlternative: Out of memory!"];
+    }
+    
+    // Initialise misc
+    for (ORInt i = 0; i < size; i++) {
+        _idx[i] = i + low;
+    }
+    
+    // Initial propagation
+    [self initPropagation];
+    
+    // Subscription of the span tasks
+    for (ORInt i = low; i <= up; i++) {
+        if (!_compound[i].isAbsent) {
+            // Change to present
+            [_compound[i] whenPresentDo: ^{ [self propagateSpanPresence: i]; } onBehalf: self];
+            // Change to absent
+            [_compound[i] whenAbsentDo: ^{ [self propagateSpanAbsence: i]; } onBehalf: self];
+            // Bound change on start
+            [_compound[i] whenChangeStartDo: ^{
+                if (_size._val == 1) {
+                    assert(_idx[0] == i);
+                    [_task updateStart: _compound[i].est];
+                }
+                else if (_watchStart._val == i) {
+                    [self propagateSpanStart];
+                }
+            } onBehalf: self];
+            // Bound change on end
+            [_compound[i] whenChangeEndDo: ^{
+                if (_size._val == 1) {
+                    assert(_idx[0] == i);
+                    [_task updateEnd: _compound[i].lct];
+                }
+                else if (_watchEnd._val == i) {
+                    [self propagateSpanEnd];
+                }
+            } onBehalf: self];
+        }
+    }
+    
+    // Subscription of the meta task
+    if (!_task.isAbsent) {
+        if (!_task.isPresent) {
+            // Change to present
+            [_task whenPresentDo: ^{ [self propagateTaskPresence]; } onBehalf: self];
+            // Change to absent
+            [_task whenAbsentDo: ^{ [self propagateTaskAbsence]; } onBehalf: self];
+        }
+        // Bound change on start
+        [_task whenChangeStartDo: ^{ [self propagateTaskStart]; } onBehalf: self];
+        // Bound change on end
+        [_task whenChangeEndDo: ^{ [self propagateTaskEnd]; } onBehalf: self];
+    }
+    
+    return ORSuspend;
+}
+-(void) propagateTaskPresence
+{
+    if (VERBOSE) printf("*** propagateTaskPresence (Start) ***\n");
+    if (_size._val <= 1)
+        [_compound[_idx[0]] labelPresent: true];
+    if (VERBOSE) printf("*** propagateTaskPresence (End) ***\n");
+}
+-(void) propagateTaskAbsence
+{
+    if (VERBOSE) printf("*** propagateTaskAbsence (Start) ***\n");
+    assert(_task.isAbsent);
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_compound[i] labelPresent: false];
+    }
+    assignTRInt(&(_size), 0, _trail);
+    if (VERBOSE) printf("*** propagateTaskAbsence (End) ***\n");
+}
+-(void) propagateTaskStart
+{
+    if (VERBOSE) printf("*** propagateTaskStart (Start) ***\n");
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_compound[i] updateStart: _task.est];
+    }
+    if (VERBOSE) printf("*** propagateTaskStart (End) ***\n");
+}
+-(void) propagateTaskEnd
+{
+    if (VERBOSE) printf("*** propagateTaskEnd (Start) ***\n");
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_compound[i] updateEnd: _task.lct];
+    }
+    if (VERBOSE) printf("*** propagateTaskEnd (End) ***\n");
+}
+-(void) propagateTaskAll
+{
+    if (VERBOSE) printf("*** propagateTaskAll (Start) ***\n");
+    assert(!_task.isAbsent);
+    const ORInt start  = _task.est;
+    const ORInt end    = _task.lct;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_compound[i] updateStart      : start ];
+        [_compound[i] updateEnd        : end   ];
+    }
+    if (VERBOSE) printf("*** propagateTaskAll (End) ***\n");
+}
+-(void) propagateSpanStart
+{
+    if (VERBOSE) printf("*** propagateSpanStart (Start) ***\n");
+    ORInt minStart = MAXINT;
+    ORInt wStart   = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (minStart > _compound[i].est) {
+            minStart = _compound[i].est;
+            wStart   = i;
+        }
+    }
+    assert(_compound.low <= wStart  && wStart  <= _compound.up);
+    [_task updateStart: minStart];
+    if (wStart != _watchStart._val)
+        assignTRInt(&(_watchStart), wStart, _trail);
+    if (VERBOSE) printf("*** propagateSpanStart (End) ***\n");
+}
+-(void) propagateSpanEnd
+{
+    if (VERBOSE) printf("*** propagateSpanEnd (Start) ***\n");
+    ORInt maxEnd = MININT;
+    ORInt wEnd   = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (maxEnd < _compound[i].lct) {
+            maxEnd = _compound[i].lct;
+            wEnd   = i;
+        }
+    }
+    assert(_compound.low <= wEnd && wEnd <= _compound.up);
+    [_task updateEnd: maxEnd];
+    if (wEnd != _watchEnd._val)
+        assignTRInt(&(_watchEnd), wEnd, _trail);
+    if (VERBOSE) printf("*** propagateSpanEnd (End) ***\n");
+}
+-(void) propagateSpanPresence: (ORInt) k
+{
+    if (VERBOSE) printf("*** propagateSpanPresence(%d) (Start) ***\n", k);
+    [_task labelPresent: true];
+    if (VERBOSE) printf("*** propagateSpanPresence(%d) (End) ***\n", k);
+}
+-(void) propagateSpanAbsence: (ORInt) k
+{
+    if (VERBOSE) printf("*** propagateSpanAbsence(%d) (Start) ***\n", k);
+    ORInt size = _size._val;
+    for (ORInt ii = 0; ii < size; ii++) {
+        const ORInt i = _idx[ii];
+        if (i == k) {
+            size--;
+            _idx[ii]   = _idx[size];
+            _idx[size] = i;
+            break;
+        }
+    }
+    if (size < _size._val)
+        assignTRInt(&(_size), size, _trail);
+    if (_size._val == 0) {
+        [_task labelPresent: false];
+    }
+    else {
+        if (_size._val == 1 && _task.isPresent) {
+            [_compound[_idx[0]] labelPresent: true];
+            [self propagateAllEqualities];
+        }
+        if (_watchStart._val == k)
+            [self propagateSpanStart];
+        if (_watchEnd._val == k)
+            [self propagateSpanEnd];
+    }
+    if (VERBOSE) printf("*** propagateSpanAbsence(%d) (End) ***\n", k);
+}
+-(void) propagateAllEqualities
+{
+    assert(_size._val == 1);
+    if (VERBOSE) printf("*** propagateAllEqualities (Start) ***\n");
+    const ORInt k = _idx[0];
+    ORBool test = false;
+    do {
+        [_task        updateStart      : _compound[k].est ];
+        [_task        updateEnd        : _compound[k].lct ];
+        [_compound[k] updateStart      : _task.est        ];
+        [_compound[k] updateEnd        : _task.lct        ];
+        test = (_task.est != _compound[k].est || _task.lct != _compound[k].lct);
+    } while (test && !_task.isAbsent && !_compound[k].isAbsent);
+    if (VERBOSE) printf("*** propagateAllEqualities (End) ***\n");
+}
+-(void) initPropagation
+{
+    ORInt size = _size._val;
+    ORInt minStart = MAXINT;
+    ORInt maxEnd   = MININT;
+    ORInt wStart   = MAXINT;
+    ORInt wEnd     = MAXINT;
+    ORBool update  = false;
+    
+    do {
+        if (_task.isAbsent)
+            [self propagateTaskAbsence];
+        else {
+            // Retrieving information from the compound tasks
+            for (ORInt ii = 0; ii < size; ii++) {
+                const ORInt i = _idx[ii];
+                // Check whether alternative task is absent
+                if (_compound[i].isAbsent) {
+                    // Alternative task is absent, swap it to the end
+                    if (ii < size - 1) {
+                        size--;
+                        _idx[ii  ] = _idx[size];
+                        _idx[size] = i;
+                        ii--;
+                    }
+                }
+                else {
+                    if (_compound[i].isPresent && !_task.isPresent)
+                        [self propagateSpanPresence:i];
+                    // Presence of compound task is still unknown
+                    if (_compound[i].est < minStart) {
+                        minStart = _compound[i].est;
+                        wStart   = i;
+                    }
+                    if (_compound[i].lct > maxEnd) {
+                        maxEnd = _compound[i].lct;
+                        wEnd   = i;
+                    }
+                }
+            }
+            if (size == 1) {
+                if (_task.isPresent)
+                    [_compound[_idx[0]] labelPresent: true];
+                [self propagateAllEqualities];
+            }
+            else {
+                // Updating the task bounds
+                [_task updateStart      : minStart];
+                [_task updateEnd        : maxEnd  ];
+                // Updating the alternative task bounds
+                if (_task.isAbsent)
+                    update = true;
+                else if (_task.est > minStart || _task.lct < maxEnd) {
+                    [self propagateTaskAll];
+                    update = true;
+                }
+            }
+        }
+    } while (update);
+    
+    assert(_compound.low <= wStart  && wStart  <= _compound.up);
+    assert(_compound.low <= wEnd    && wEnd    <= _compound.up);
+    assignTRInt(&(_watchStart ), wStart , _trail);
+    assignTRInt(&(_watchEnd   ), wEnd   , _trail);
+    if (size < _size._val)
+        assignTRInt(&(_size), size, _trail);
+}
+-(NSSet*) allVars
+{
+    NSUInteger nb = [_compound count] + 1;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
+    for(ORInt i = _compound.low; i <= _compound.up; i++)
+        [rv addObject:_compound[i]];
+    [rv addObject:_task];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    ORUInt nb = 0;
+    for(ORInt ii = 0; ii < _size._val; ii++)
+        if (![_compound[_idx[ii]] bound])
+            nb++;
+    if ([_task bound])
+        nb++;
+    return nb;
+}
+@end
 
 @implementation CPTaskPrecedence
 

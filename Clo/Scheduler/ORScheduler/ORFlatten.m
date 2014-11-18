@@ -18,6 +18,10 @@
 {
     _result = t;
 }
+-(void) visitSpanTask:(id<ORSpanTask>) t
+{
+    _result = t;
+}
 -(void) visitMachineTask:(id<ORMachineTask>) t
 {
     _result = t;

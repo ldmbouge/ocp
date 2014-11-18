@@ -815,6 +815,40 @@ typedef struct  {
 @end
 
 
+@implementation CPSpanTask
+{
+    id<CPTaskVarArray> _compound;
+}
+-(id<CPSpanTask>) initCPSpanTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration compound:(id<CPTaskVarArray>)compound
+{
+    self      = [super initCPTaskVar:engine horizon:horizon duration:duration];
+    _compound = compound;
+    return self;
+}
+-(id<CPTaskVarArray>) compound
+{
+    return _compound;
+}
+@end
+
+
+@implementation CPOptionalSpanTask
+{
+    id<CPTaskVarArray> _compound;
+}
+-(id<CPSpanTask>) initCPOptionalSpanTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration compound:(id<CPTaskVarArray>)compound
+{
+    self      = [super initCPOptionalTaskVar:engine horizon:horizon duration:duration];
+    _compound = compound;
+    return self;
+}
+-(id<CPTaskVarArray>) compound
+{
+    return _compound;
+}
+@end
+
+
 @implementation CPMachineTask
 {
     id<CPDisjunctiveArray> _disj;

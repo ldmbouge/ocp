@@ -121,6 +121,35 @@
 }
 @end
 
+@implementation ORSpanTask {
+    id<ORTaskVarArray> _compound;
+}
+-(id<ORSpanTask>) initORSpanTask:(id<ORModel>)model horizon:(id<ORIntRange>) horizon compound:(id<ORTaskVarArray>)compound {
+    
+    self = [super initORTaskVar: model horizon:horizon duration:horizon];
+    
+    _compound = compound;
+    
+    return self;
+}
+-(id<ORSpanTask>) initOROptionalSpanTask:(id<ORModel>)model horizon:(id<ORIntRange>) horizon compound:(id<ORTaskVarArray>)compound {
+    
+    self = [super initOROptionalTaskVar: model horizon:horizon duration:horizon];
+    
+    _compound = compound;
+    
+    return self;
+}
+-(id<ORTaskVarArray>) compound
+{
+    return _compound;
+}
+-(void)visit:(ORVisitor*) v
+{
+    [v visitSpanTask: self];
+}
+@end
+
 @implementation ORMachineTask {
     id<ORTaskDisjunctiveArray> _disj;
     id<ORIntArray>             _durArray;
