@@ -87,9 +87,6 @@
 }
 -(void) setTimes: (id<ORTaskVarArray>) act
 {
-    // WARNING this method might not work for optional and alternative tasks
-    // or tasks with variable duration
-    
    id<ORIntRange> R = act.range;
    ORInt low = R.low;
    ORInt up = R.up;
@@ -97,13 +94,17 @@
    ORInt im = 0;
    ORInt found = FALSE;
    ORInt hasPostponedActivities = FALSE;
-   
-   // optional activities
-   //   for (ORInt k = low; k <= up; k++) {
-   //      if ((act[k].type & 1) == 1)
-   //         [self label: act[k].top];
-   //   }
-   
+
+    // Assumptions
+    // - activities must be present or absent
+    // - present activities must have a fixed duration
+    for (ORInt k = low; k <= up; k++) {
+        if (![self isPresent: act[k]] || ![self isAbsent: act[k]])
+            @throw [[ORExecutionError alloc] initORExecutionError: "An activity is neither present nor absent immediately before running setTimes"];
+        if ([self isPresent: act[k]] && [self minDuration: act[k]] < [self maxDuration: act[k]])
+            @throw [[ORExecutionError alloc] initORExecutionError: "The duration of a present activity is not fixed immediately before running setTimes"];
+    }
+    
    id<ORTrailableIntArray> postponed = [ORFactory trailableIntArray: [self engine] range: R value: 0];
    id<ORTrailableIntArray> ptime = [ORFactory trailableIntArray: [self engine] range: R value: 0];
    
@@ -114,7 +115,7 @@
       ORInt lsd = FDMAXINT;
       for(ORInt k = low; k <= up; k++) {
          
-         if (![self boundActivity: act[k]]) {
+         if (![self boundActivity: act[k]] && [self isPresent: act[k]]) {
             if (![[postponed at: k] value]) {
                ORInt vm = [self est:  act[k]];
                found = TRUE;
