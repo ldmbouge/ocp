@@ -321,7 +321,7 @@
         // following check can be removed.
         ORBool hasOptionalTasks = false;
         for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if ([tasks[i] isOptional] || [tasks[i] isMemberOfClass:[ORMachineTask class]]) {
+            if ([tasks[i] isOptional] || [tasks[i] isMemberOfClass:[ORMachineTask class]] || [tasks[i] isMemberOfClass:[ORResourceTask class]]) {
                 hasOptionalTasks = true;
                 break;
             }
