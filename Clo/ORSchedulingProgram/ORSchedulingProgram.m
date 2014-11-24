@@ -45,6 +45,19 @@
         }
     }
 }
+-(void) assignResources: (id<ORTaskVarArray>) act
+{
+    const ORInt low = act.low;
+    const ORInt up  = act.up;
+    for (ORInt i = low; i <= up; i++) {
+        if ([self isAbsent: act[i]])
+            continue;
+        if ([act[i] isMemberOfClass:[ORResourceTask class]])
+            [self labelResourceTask: (id<ORResourceTask>) act[i]];
+        else if ([act[i] isMemberOfClass:[ORMachineTask class]])
+            [self labelMachineTask: (id<ORMachineTask>) act[i]];
+    }
+}
 -(void) labelMachineTask: (id<ORMachineTask>) act
 {
     assert([act isMemberOfClass: [ORMachineTask class]]);
@@ -99,7 +112,7 @@
     // - activities must be present or absent
     // - present activities must have a fixed duration
     for (ORInt k = low; k <= up; k++) {
-        if (![self isPresent: act[k]] || ![self isAbsent: act[k]])
+        if (![self isPresent: act[k]] && ![self isAbsent: act[k]])
             @throw [[ORExecutionError alloc] initORExecutionError: "An activity is neither present nor absent immediately before running setTimes"];
         if ([self isPresent: act[k]] && [self minDuration: act[k]] < [self maxDuration: act[k]])
             @throw [[ORExecutionError alloc] initORExecutionError: "The duration of a present activity is not fixed immediately before running setTimes"];

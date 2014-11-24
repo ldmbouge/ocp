@@ -289,7 +289,7 @@ int main(int argc, const char * argv[])
     }
     
     // Use machine tasks
-    ORBool useMachineTasks = false;
+    ORBool useMachineTasks = true;
 
 	@autoreleasepool {
       
@@ -411,14 +411,14 @@ int main(int argc, const char * argv[])
 			^() {
 				// Search strategy
                 if (useMachineTasks) {
-                    [cp labelActivities:Acts];
+                    [cp assignResources:Acts];
+//                    [cp labelActivities:Acts];
                 }
                 else {
                     [cp setAlternatives: Alts];
-                    [cp labelActivities: OptActs];
+//                    [cp labelActivities: OptActs];
                 }
-                // XXX setTimes seems to be buggy
-//                [cp setTimes: Acts];
+                [cp setTimes: Acts];
                 [cp label: MS];
                 
                 // Print outs

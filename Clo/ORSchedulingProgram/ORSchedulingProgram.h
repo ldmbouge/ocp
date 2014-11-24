@@ -19,6 +19,7 @@
 -(void) labelActivity: (id<ORTaskVar>) act;
 -(void) labelActivities: (id<ORTaskVarArray>) act;
 -(void) setAlternatives: (id<ORAlternativeTaskArray>) act;
+-(void) assignResources: (id<ORTaskVarArray>) act;
 -(void) setTimes: (id<ORTaskVarArray>) act;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o;
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2;
