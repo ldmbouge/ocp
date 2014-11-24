@@ -2349,7 +2349,8 @@ static void doPropagation(CPTaskDisjunctive * disj) {
         for (ORInt ii = i; ii < j; ii++) {
             const ORInt i0 = disj->_task_id_est[ii] - disj->_low;
             if (!isIrrelevant(disj, i0) && disj->_lct[i0] > disj->_begin) {
-                disj->_beginIdx = ii;
+                if (disj->_est[i0] < disj->_end)
+                    disj->_beginIdx = ii;
                 break;
             }
         }
@@ -2399,6 +2400,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
                 break;
             }
         }
+        assert(disj->_endIdx >= 0);
     }
     else {
         consideredSize = unknownSize;
