@@ -13628,8 +13628,7 @@
 				B127A53E196274CE00398AA3 /* testScheduler.1 */,
 				B127A53C196274CE00398AA3 /* Supporting Files */,
 			);
-			name = testScheduler;
-			path = ../../testScheduler;
+			path = testScheduler;
 			sourceTree = "<group>";
 		};
 		B127A53C196274CE00398AA3 /* Supporting Files */ = {
