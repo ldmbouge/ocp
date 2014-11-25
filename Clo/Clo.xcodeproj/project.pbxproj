@@ -10879,6 +10879,7 @@
 				B127A57719629B0600398AA3 /* ORSchedulingProgram */,
 				537EE8AB18FCC5720006FFD2 /* ORScheduler */,
 				537EE8B718FCC5720006FFD2 /* Tests */,
+				B127A58C19629B0600398AA3 /* ORSchedulingProgramTests */,
 			);
 			path = Scheduler;
 			sourceTree = "<group>";
@@ -12460,7 +12461,6 @@
 				5B67A4FE17E227BB00516F50 /* wka */,
 				5B27573217E87B560082934E /* costas2 */,
 				5BD601C317F9A627006A9CDC /* bugTest */,
-				B127A58C19629B0600398AA3 /* ORSchedulingProgramTests */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -15337,7 +15337,7 @@
 			name = objcpTests;
 			productName = objcpTests;
 			productReference = 5B9ABD021391329D000997E5 /* objcpTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		5B9B2447177873D3001AB944 /* nonogram */ = {
 			isa = PBXNativeTarget;
@@ -15884,7 +15884,7 @@
 			name = searchTest;
 			productName = objcpTests;
 			productReference = 5BEA4E89178365FA00614A82 /* searchTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		5BEAD78415ABE38500A012FE /* bibd */ = {
 			isa = PBXNativeTarget;
