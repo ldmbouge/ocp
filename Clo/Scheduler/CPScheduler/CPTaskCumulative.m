@@ -279,7 +279,6 @@ typedef struct {
         const ORInt t = _index[tt] + _low;
         if (!_tasks[t].isAbsent) {
             if (!_tasks[t].isPresent) {
-                assert([_tasks[t] isMemberOfClass:[CPResourceTask class]]);
                 [_tasks[t] whenPresentPropagate:self];
             }
             if (!_tasks[t].bound)

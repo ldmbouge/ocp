@@ -161,6 +161,10 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitLinearLeq: (id<ORLinearLeq>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    id<ORExprArray> ax = [cstr array];

@@ -29,6 +29,7 @@
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration;
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task presence: (id<CPIntVar>) presence;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) normal extended:  (id<CPTaskVar>) extended time: (id<CPIntVar>) time;
 
 +(id<CPConstraint>) cumulative: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;

@@ -320,6 +320,13 @@
    [engine trackMutable: cstr];
    return cstr;
 }
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task presence: (id<CPIntVar>) presence
+{
+    id<CPEngine> engine = [task engine];
+    id<CPConstraint> cstr =[[CPTaskPresence alloc] initCPTaskPresence: task : presence];
+    [engine trackMutable: cstr];
+    return cstr;
+}
 +(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
 {
     id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];

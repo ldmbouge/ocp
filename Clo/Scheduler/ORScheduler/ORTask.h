@@ -26,6 +26,7 @@
 -(ORBool) isOptional;
 -(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after;
 -(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date;
+-(id<ORIntVar>) getPresenceVar;
 @end
 
 @protocol ORAlternativeTask <ORTaskVar>

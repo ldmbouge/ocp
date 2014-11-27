@@ -45,6 +45,21 @@
         }
     }
 }
+-(void) assignAlternatives: (id<ORTaskVarArray>) act
+{
+    const ORInt low = act.low;
+    const ORInt up  = act.up;
+    for (ORInt i = low; i <= up; i++) {
+        if ([self isAbsent: act[i]])
+            continue;
+        if (![self isAbsent: act[i]] && [act[i] isMemberOfClass:[ORAlternativeTask class]]) {
+            id<ORTaskVarArray> alt = [(id<ORAlternativeTask>)act[i] alternatives];
+            for (ORInt j = alt.low; j <= alt.up; j++) {
+                [self labelPresent: alt[j]];
+            }
+        }
+    }
+}
 -(void) assignResources: (id<ORTaskVarArray>) act
 {
     const ORInt low = act.low;

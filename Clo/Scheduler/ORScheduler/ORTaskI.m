@@ -21,6 +21,7 @@
    id<ORIntRange>  _horizon;
    id<ORIntRange>  _duration;
    ORBool _isOptional;
+    id<ORIntVar>   _presenceVar;
 }
 -(id<ORTaskVar>) initORTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
@@ -29,6 +30,7 @@
    _duration = duration;
    _horizon = horizon;
    _isOptional = FALSE;
+    _presenceVar = NULL;
    return self;
 }
 -(id<ORTaskVar>) initOROptionalTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
@@ -38,6 +40,7 @@
    _duration = duration;
    _horizon = horizon;
    _isOptional = TRUE;
+    _presenceVar = NULL;
    return self;
 }
 -(id<ORTracker>) tracker
@@ -67,6 +70,20 @@
 -(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date
 {
    return [ORFactory constraint: self isFinishedBy: date];
+}
+-(id<ORIntVar>) getPresenceVar
+{
+    if (_presenceVar == NULL) {
+        if (_isOptional)
+            _presenceVar = [ORFactory boolVar:_model];
+        else
+            _presenceVar = [ORFactory intVar:_model value:1];
+    }
+    return _presenceVar;
+}
+-(id<ORIntVar>) presenceVar
+{
+    return _presenceVar;
 }
 @end
 

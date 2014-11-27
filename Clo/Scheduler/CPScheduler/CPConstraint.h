@@ -81,6 +81,17 @@
 -(ORUInt) nbUVars;
 @end
 
+@interface CPTaskPresence : CPCoreConstraint {
+    id<CPTaskVar> _task;
+    id<CPIntVar>  _bool;
+}
+-(id) initCPTaskPresence: (id<CPTaskVar>) task : (id<CPIntVar>) presence;
+-(void) dealloc;
+-(ORStatus) post;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
 @interface CPTaskDuration : CPCoreConstraint {
    id<CPTaskVar> _task;
    id<CPIntVar> _duration;

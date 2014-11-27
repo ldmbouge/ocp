@@ -995,6 +995,50 @@
 @end
 
 
+@implementation CPTaskPresence
+
+-(id) initCPTaskPresence: (id<CPTaskVar>) task : (id<CPIntVar>) presence
+{
+    self = [super initCPCoreConstraint: [task engine]];
+    
+    _task = task;
+    _bool = presence;
+    NSLog(@"Create constraint CPTaskPresence\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    [self propagate];
+    if (![_task bound] && ![_bool bound]) {
+        [_task whenAbsentDo:^(){[_bool updateMax:0];} onBehalf:self];
+        [_task whenPresentDo:^(){[_bool updateMin:1];} onBehalf:self];
+        [_bool whenChangeBoundsPropagate: self];
+        [_bool whenChangeBoundsDo:^(){
+            assert([_bool bound] && (_bool.value == 0 || _bool.value == 1));
+            [_task labelPresent:_bool.value];
+        } onBehalf:self];
+    }
+    return ORSuspend;
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_task];
+    [rv addObject:_bool];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
+}
+@end
+
 @implementation CPTaskDuration
 
 -(id) initCPTaskDuration: (id<CPTaskVar>) task : (id<CPIntVar>) duration
