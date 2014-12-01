@@ -931,6 +931,9 @@ typedef struct  {
 {
     [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
     *bound   = [self bound    ];
+    const ORInt idx = [self getIndex:disjunctive];
+    *minD    = [_durArray at: idx];
+    *maxD    = [_durArray at: idx];
     *present = [self isPresentOn:disjunctive];
     *absent  = [self isAbsentOn:disjunctive ];
 }
@@ -1154,6 +1157,9 @@ typedef struct  {
 {
     [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
     *bound   = [self bound    ];
+    const ORInt idx = [self getIndex:resource];
+    *minD    = [_durArray at: idx];
+    *maxD    = [_durArray at: idx];
     *present = [self isPresentOn:resource];
     *absent  = [self isAbsentOn :resource];
 }
@@ -1467,6 +1473,9 @@ typedef struct  {
 {
     [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
     *bound   = [self bound    ];
+    const ORInt idx = [self getIndex:resource];
+    *minD    = [_durArray at: idx];
+    *maxD    = [_durArray at: idx];
     *present = [self isPresentOn:resource];
     *absent  = [self isAbsentOn :resource];
 }
