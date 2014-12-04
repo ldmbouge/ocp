@@ -44,7 +44,7 @@
 
 @protocol ORTaskCumulative <ORConstraint>
 -(void) add: (id<ORTaskVar>) act with: (id<ORIntVar>) usage;
--(void) addRT: (id<ORResourceTask>) act duration: (ORInt) duration with: (id<ORIntVar>) usage;
+-(void) add: (id<ORResourceTask>) act duration: (ORInt) duration with: (id<ORIntVar>) usage;
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORIntVarArray>) usages;
 -(id<ORIntVar>) capacity;
@@ -53,7 +53,7 @@
 @protocol ORTaskDisjunctive <ORConstraint>
 -(void) add: (id<ORTaskVar>) act;
 -(void) add: (id<ORTaskVar>) act type: (ORInt) t;
--(void) addRT: (id<ORResourceTask>) act duration: (ORInt) duration;
+-(void) add: (id<ORResourceTask>) act duration: (ORInt) duration;
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORTaskVarArray>) transitionTaskVars;
 -(ORBool) hasTransition;

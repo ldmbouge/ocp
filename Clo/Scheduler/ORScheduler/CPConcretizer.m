@@ -247,9 +247,9 @@
             return NULL;
         }];
         if (![task isOptional])
-            concreteTask = [CPFactory taskRT:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
+            concreteTask = [CPFactory task:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
         else
-            concreteTask = [CPFactory optionalTaskRT:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
+            concreteTask = [CPFactory optionalTask:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
         
         // Posting presence constraint
         if (presence != NULL) {

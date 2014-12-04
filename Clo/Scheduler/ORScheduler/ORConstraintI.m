@@ -419,11 +419,11 @@
         [_accIds addObject: @([task getId])];
     }
 }
--(void) addRT:(id<ORResourceTask>)task duration:(ORInt)duration
+-(void) add:(id<ORResourceTask>)task duration:(ORInt)duration
 {
-    [self addRT:task duration:duration with:_capacity];
+    [self add:task duration:duration with:_capacity];
 }
--(void) addRT:(id<ORResourceTask>)task duration:(ORInt)duration with:(id<ORIntVar>)usage
+-(void) add:(id<ORResourceTask>)task duration:(ORInt)duration with:(id<ORIntVar>)usage
 {
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
@@ -601,7 +601,7 @@
         [_accIds   addObject: @([task getId])];
     }
 }
--(void) addRT: (id<ORResourceTask>) task duration:(ORInt)duration
+-(void) add: (id<ORResourceTask>) task duration:(ORInt)duration
 {
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
