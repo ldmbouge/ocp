@@ -601,19 +601,6 @@
         [_accIds   addObject: @([task getId])];
     }
 }
--(void) add: (id<ORMachineTask>) task duration:(ORInt)duration
-{
-    // Check whether 'task' is already added
-    if (![_accIds containsObject:@([task getId])]) {
-        if (_closed)
-            @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
-        // Add task
-        [_acc    addObject: task           ];
-        [_accIds addObject: @([task getId])];
-        // Add disjunctive to machine task
-        [task addDisjunctive:self with:duration];
-    }
-}
 -(void) addRT: (id<ORResourceTask>) task duration:(ORInt)duration
 {
     // Check whether 'task' is already added

@@ -15,8 +15,6 @@
 @protocol ORTaskPrecedes;
 @protocol ORTaskIsFinishedBy;
 @protocol ORTaskVarArray;
-@protocol ORTaskDisjunctive;
-@protocol ORTaskDisjunctiveArray;
 @protocol ORResourceArray;
 
 @protocol ORTaskVar <ORVar>
@@ -35,14 +33,6 @@
 
 @protocol ORSpanTask <ORTaskVar>
 -(id<ORTaskVarArray>) compound;
-@end
-
-@protocol ORMachineTask <ORTaskVar>
--(id<ORTaskDisjunctiveArray>) disjunctives;
--(id<ORIntArray>) durationArray;
--(void) addDisjunctive: (id<ORTaskDisjunctive>) disjunctive with: (ORInt) duration;
--(ORInt) getIndex: (id<ORTaskDisjunctive>) disjunctive;
--(void) close;
 @end
 
 @protocol ORResourceTask <ORTaskVar>

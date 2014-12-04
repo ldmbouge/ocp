@@ -273,12 +273,6 @@
     [engine trackMutable: task];
     return task;
 }
-+(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPDisjunctiveArray>)disjunctives
-{
-    id<CPMachineTask> task = [[CPMachineTask alloc] initCPMachineTask:engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:disjunctives];
-    [engine trackMutable: task];
-    return task;
-}
 +(id<CPResourceTask>) taskRT: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPResourceArray>)resources
 {
     id<CPResourceTask> task = [[CPResourceTask alloc] initCPResourceTask:engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:resources];

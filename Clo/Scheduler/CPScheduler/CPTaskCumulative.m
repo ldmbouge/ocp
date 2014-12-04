@@ -125,12 +125,6 @@ typedef struct {
         }
     }
     
-    // Checking whether tasks belonging not to the machine tasks
-    for (ORInt i = tasks.low; i <= tasks.up; i++) {
-        if ([tasks[i] isMemberOfClass:[CPMachineTask class]])
-            @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: a machine is wrongly assigned to a cumulative resource!"];
-    }
-    
     id<CPTaskVar> task0 = tasks[tasks.low];
     self = [super initCPCoreConstraint: [task0 engine]];
     

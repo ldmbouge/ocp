@@ -27,11 +27,6 @@
 -(id<ORSpanTask>) initOROptionalSpanTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon compound:(id<ORTaskVarArray>)compound;
 @end
 
-@interface ORMachineTask : ORTaskVar<ORMachineTask>
--(id<ORMachineTask>) initORMachineTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationArray: (id<ORIntArray>) duration runsOnOneOf: (id<ORTaskDisjunctiveArray>) disjunctives;
--(id<ORMachineTask>) initORMachineTaskEmpty: (id<ORModel>) model horizon: (id<ORIntRange>) horizon;
-@end
-
 @interface ORResourceTask : ORTaskVar<ORResourceTask>
 -(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration runsOnOneOf:(id<ORResourceArray>)resources;
 -(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources;

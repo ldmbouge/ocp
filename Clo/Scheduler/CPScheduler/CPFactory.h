@@ -57,8 +57,6 @@
 +(id<CPSpanTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withSpans: (id<CPTaskVarArray>) spans;
 +(id<CPSpanTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withSpans: (id<CPTaskVarArray>) spans;
 
-+(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPDisjunctiveArray>) disjunctives;
-
 // Creating Resource tasks
 +(id<CPResourceTask>) taskRT: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
 +(id<CPResourceTask>) optionalTaskRT: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;

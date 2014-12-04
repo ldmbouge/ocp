@@ -86,19 +86,6 @@
 -(id<CPTaskVarArray>) compound;
 @end
 
-@protocol CPMachineTask <CPTaskVar>
--(id<CPDisjunctiveArray>) disjunctives;
--(void) set: (id<CPConstraint>) disjunctive at: (ORInt) idx;
--(id<ORIntArray>) getAvailDisjunctives;
--(ORBool) isPresentOn: (CPTaskDisjunctive*) disjunctive;
--(ORBool) isAbsentOn: (CPTaskDisjunctive*) disjunctive;
--(ORBool) isAssigned;
--(void) readEssentials: (ORBool *) bound est: (ORInt *) est lct: (ORInt *) lct minDuration: (ORInt *) minD maxDuration: (ORInt *) maxD present: (ORBool *) present absent: (ORBool *) absent forMachine: (CPTaskDisjunctive*) disjunctive;
--(void) bind: (CPTaskDisjunctive*) disjunctive;
--(void) remove: (CPTaskDisjunctive*) disjunctive;
--(ORInt) runsOn;
-@end
-
 @protocol CPResourceTask <CPTaskVar>
 -(id<CPResourceArray>) resources;
 -(void) set: (id<CPConstraint>) resource at: (ORInt) idx;

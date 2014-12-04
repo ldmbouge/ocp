@@ -33,8 +33,8 @@
     ORInt  * _bound;        // Activities' ID sorted in [Bound | Not Bound]
     TRInt    _boundSize;    // Size of bounded tasks
 
-    ORBool * _machineTask;  // Machine task
-    ORBool   _machineTaskAsOptional;
+    ORBool * _resourceTask;  // Machine task
+    ORBool   _resourceTaskAsOptional;
     
     // Variables needed for the propagation
     ORInt  * _new_est;      // New earliest start times (dynamic memory allocation)
@@ -88,8 +88,8 @@
     _ef    = true;
     _idx   = NULL;
     _bound = NULL;
-    _machineTask = NULL;
-    _machineTaskAsOptional = false;
+    _resourceTask = NULL;
+    _resourceTaskAsOptional = false;
     
     _est         = NULL;
     _lct         = NULL;
@@ -126,7 +126,7 @@
     if (_present     != NULL) free(_present    );
     if (_absent      != NULL) free(_absent     );
     
-    if (_machineTask != NULL) free(_machineTask);
+    if (_resourceTask != NULL) free(_resourceTask);
     
     [super dealloc];
 }
@@ -156,13 +156,13 @@
     _present     = malloc(_size * sizeof(ORBool));
     _absent      = malloc(_size * sizeof(ORBool));
 
-    _machineTask = malloc(_size * sizeof(ORBool));
+    _resourceTask = malloc(_size * sizeof(ORBool));
 
     // Checking whether memory allocation was successful
     if (_idx == NULL || _task_id_est == NULL || _task_id_ect == NULL || _task_id_lst == NULL || _task_id_lct == NULL
         || _est == NULL || _lct == NULL || _dur_min == NULL
         || _dur_max == NULL || _present == NULL || _absent == NULL
-        || _machineTask == NULL
+        || _resourceTask == NULL
     ) {
         @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskDisjunctive: Out of memory!"];
     }
@@ -177,11 +177,11 @@
         _task_id_lst[i] = idx;
         _task_id_lct[i] = idx;
         
-        _machineTask[i] = ([_tasks[idx] isMemberOfClass:[CPMachineTask class]] || [_tasks[idx] isMemberOfClass:[CPResourceTask class]] || [_tasks[idx] isMemberOfClass:[CPOptionalResourceTask class]]);
-        nbMT += _machineTask[i];
+        _resourceTask[i] = ([_tasks[idx] isMemberOfClass:[CPResourceTask class]] || [_tasks[idx] isMemberOfClass:[CPOptionalResourceTask class]]);
+        nbMT += _resourceTask[i];
     }
     if (nbMT == 0)
-        _machineTaskAsOptional = true;
+        _resourceTaskAsOptional = true;
     
     // Subscription of variables to the constraint
     for (ORInt i = _low; i <= _up; i++) {
@@ -556,7 +556,7 @@ static void cleanUp(CPTaskDisjunctive* disj) {
 static void dumpTask(CPTaskDisjunctive * disj, ORInt t0) {
     printf("task %d: est %d; ect %d; lst %d; lct %d; dur_min %d;", t0, disj->_est[t0], disj->_est[t0] + disj->_dur_min[t0], disj->_lct[t0] - disj->_dur_min[t0], disj->_lct[t0], disj->_dur_min[t0]);
     printf(" present %d; absent %d;", disj->_present[t0], disj->_absent[t0]);
-    printf(" MT %d\n", disj->_machineTask[t0]);
+    printf(" MT %d\n", disj->_resourceTask[t0]);
 }
 
 // Printing the contain of the Theta tree to standard out
@@ -623,17 +623,17 @@ int sortDisjEstAscMT(CPTaskDisjunctive * disj, const ORInt * r1, const ORInt * r
     assert(0 <= i2 && i2 < disj->_size);
     if (isIrrelevant(disj, i1)) {
         if (isIrrelevant(disj, i2))
-            return (disj->_machineTask[i1] - disj->_machineTask[i2]);
-        return (disj->_machineTask[i1] ? 1 : -1);
+            return (disj->_resourceTask[i1] - disj->_resourceTask[i2]);
+        return (disj->_resourceTask[i1] ? 1 : -1);
     }
     if (isIrrelevant(disj, i2))
-        return (disj->_machineTask[i2] ? -1 : 1);
-    if (disj->_machineTask[i1] && !isPresent(disj, i1)) {
-        if (!disj->_machineTask[i2])
+        return (disj->_resourceTask[i2] ? -1 : 1);
+    if (disj->_resourceTask[i1] && !isPresent(disj, i1)) {
+        if (!disj->_resourceTask[i2])
             return 1;
         return (isPresent(disj, i2) ? 1 : 0);
     }
-    if (disj->_machineTask[i2] && !isPresent(disj, i2))
+    if (disj->_resourceTask[i2] && !isPresent(disj, i2))
         return -1;
     return disj->_est[i1] - disj->_est[i2];
 }
@@ -673,17 +673,17 @@ int sortDisjEctAscMT(CPTaskDisjunctive * disj, const ORInt * r1, const ORInt * r
     assert(0 <= i2 && i2 < disj->_size);
     if (isIrrelevant(disj, i1)) {
         if (isIrrelevant(disj, i2))
-            return (disj->_machineTask[i1] - disj->_machineTask[i2]);
-        return (disj->_machineTask[i1] ? 1 : -1);
+            return (disj->_resourceTask[i1] - disj->_resourceTask[i2]);
+        return (disj->_resourceTask[i1] ? 1 : -1);
     }
     if (isIrrelevant(disj, i2))
-        return (disj->_machineTask[i2] ? -1 : 1);
-    if (disj->_machineTask[i1] && !isPresent(disj, i1)) {
-        if (!disj->_machineTask[i2])
+        return (disj->_resourceTask[i2] ? -1 : 1);
+    if (disj->_resourceTask[i1] && !isPresent(disj, i1)) {
+        if (!disj->_resourceTask[i2])
             return 1;
         return (isPresent(disj, i2) ? 1 : 0);
     }
-    if (disj->_machineTask[i2] && !isPresent(disj, i2))
+    if (disj->_resourceTask[i2] && !isPresent(disj, i2))
         return -1;
     return disj->_est[i1] - disj->_est[i2] + disj->_dur_min[i1] - disj->_dur_min[i2];
 }
@@ -723,17 +723,17 @@ int sortDisjLstAscMT(CPTaskDisjunctive * disj, const ORInt * r1, const ORInt * r
     assert(0 <= i2 && i2 < disj->_size);
     if (isIrrelevant(disj, i1)) {
         if (isIrrelevant(disj, i2))
-            return (disj->_machineTask[i1] - disj->_machineTask[i2]);
-        return (disj->_machineTask[i1] ? 1 : -1);
+            return (disj->_resourceTask[i1] - disj->_resourceTask[i2]);
+        return (disj->_resourceTask[i1] ? 1 : -1);
     }
     if (isIrrelevant(disj, i2))
-        return (disj->_machineTask[i2] ? -1 : 1);
-    if (disj->_machineTask[i1] && !isPresent(disj, i1)) {
-        if (!disj->_machineTask[i2])
+        return (disj->_resourceTask[i2] ? -1 : 1);
+    if (disj->_resourceTask[i1] && !isPresent(disj, i1)) {
+        if (!disj->_resourceTask[i2])
             return 1;
         return (isPresent(disj, i2) ? 1 : 0);
     }
-    if (disj->_machineTask[i2] && !isPresent(disj, i2))
+    if (disj->_resourceTask[i2] && !isPresent(disj, i2))
         return -1;
     return disj->_lct[i1] - disj->_lct[i2] - disj->_dur_min[i1] + disj->_dur_min[i2];
 }
@@ -773,17 +773,17 @@ int sortDisjLctAscMT(CPTaskDisjunctive * disj, const ORInt * r1, const ORInt * r
     assert(0 <= i2 && i2 < disj->_size);
     if (isIrrelevant(disj, i1)) {
         if (isIrrelevant(disj, i2))
-            return (disj->_machineTask[i1] - disj->_machineTask[i2]);
-        return (disj->_machineTask[i1] ? 1 : -1);
+            return (disj->_resourceTask[i1] - disj->_resourceTask[i2]);
+        return (disj->_resourceTask[i1] ? 1 : -1);
     }
     if (isIrrelevant(disj, i2))
-        return (disj->_machineTask[i2] ? -1 : 1);
-    if (disj->_machineTask[i1] && !isPresent(disj, i1)) {
-        if (!disj->_machineTask[i2])
+        return (disj->_resourceTask[i2] ? -1 : 1);
+    if (disj->_resourceTask[i1] && !isPresent(disj, i1)) {
+        if (!disj->_resourceTask[i2])
             return 1;
         return (isPresent(disj, i2) ? 1 : 0);
     }
-    if (disj->_machineTask[i2] && !isPresent(disj, i2))
+    if (disj->_resourceTask[i2] && !isPresent(disj, i2))
         return -1;
     return disj->_lct[i1] - disj->_lct[i2];
 }
@@ -798,7 +798,7 @@ static void updateBounds(CPTaskDisjunctive * disj, const ORInt size)
     for (ORInt tt = 0; tt < size; tt++) {
         const ORInt t  = disj->_idx[tt];
         const ORInt t0 = t - disj->_low;
-        if (disj->_machineTask[t0] && !isRelevant(disj, t0))
+        if (disj->_resourceTask[t0] && !isRelevant(disj, t0))
             continue;
         if (disj->_new_est[t0] > disj->_est[t0]) {
             [disj->_tasks[t] updateStart: disj->_new_est[t0]];
@@ -891,12 +891,8 @@ static void ef_overload_check_optional_vilim(CPTaskDisjunctive * disj, const ORI
             assert(leaf_idx == idx_map_est[k0]);
             
             // Set to absent
-            if (disj->_machineTask[k0]) {
-                if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
-                    [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
-                else
-                    [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
-            }
+            if (disj->_resourceTask[k0])
+                [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
             else
                 [disj->_tasks[k] labelPresent: FALSE];
             
@@ -1090,12 +1086,8 @@ static void dprec_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORIn
                 assert(leaf_idx == idx_map_est[k0]);
                 
                 // Set to absent
-                if (disj->_machineTask[k0]) {
-                    if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
-                        [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
-                    else
-                        [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
-                }
+                if (disj->_resourceTask[k0])
+                    [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
                 else
                     [disj->_tasks[k] labelPresent: FALSE];
                 // Remove from Lambda tree
@@ -1181,12 +1173,8 @@ static void dprec_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORIn
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_lct[k0]);
                 // Set to absent
-                if (disj->_machineTask[k0]) {
-                    if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
-                        [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
-                    else
-                        [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
-                }
+                if (disj->_resourceTask[k0])
+                    [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
                 else
                     [disj->_tasks[k] labelPresent: FALSE];
                 // Remove task 'k' from the Lambda tree
@@ -1417,12 +1405,8 @@ static void nfnl_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORInt
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_lct[k0]);
                 // Set to absent
-                if (disj->_machineTask[k0]) {
-                    if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
-                        [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
-                    else
+                if (disj->_resourceTask[k0])
                         [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
-                }
                 else
                     [disj->_tasks[k] labelPresent: FALSE];
 
@@ -1526,12 +1510,8 @@ static void nfnl_filter_lct_optional_vilim(CPTaskDisjunctive * disj, const ORInt
                 const ORInt k0 = k - disj->_low;
                 assert(leaf_idx == idx_map_est[k0]);
                 // Set to absent
-                if (disj->_machineTask[k0]) {
-                    if ([disj->_tasks[k] isMemberOfClass:[CPMachineTask class]])
-                        [(id<CPMachineTask>)disj->_tasks[k] remove:disj];
-                    else
-                        [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
-                }
+                if (disj->_resourceTask[k0])
+                    [(id<CPResourceTask>)disj->_tasks[k] remove:disj];
                 else
                     [disj->_tasks[k] labelPresent: FALSE];
                 // Remove from Lambda tree
@@ -1902,7 +1882,7 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
     // Sorting tasks regarding their earliest start times
     ORInt beginIdx;
     ORInt endIdx;
-    if (!disj->_machineTaskAsOptional) {
+    if (!disj->_resourceTaskAsOptional) {
         const ORInt sortAbsentOT = disj->_sortAbsentOT._val;
         const ORInt sortFirstAbsentMT = disj->_sortFirstAbsentMT._val;
         const ORInt size = sortFirstAbsentMT - sortAbsentOT;
@@ -1912,15 +1892,15 @@ static ORInt getGlobalSlack(CPTaskDisjunctive * disj)
                 const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
                 const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
                 if (isPresent(disj, i0)) {
-                    if (isAbsent(disj, i1) && !disj->_machineTask[i1])
+                    if (isAbsent(disj, i1) && !disj->_resourceTask[i1])
                         return false;
-                    if ((isPresent(disj, i1) || !disj->_machineTask[i1]) && disj->_est[i0] > disj->_est[i1])
+                    if ((isPresent(disj, i1) || !disj->_resourceTask[i1]) && disj->_est[i0] > disj->_est[i1])
                         return false;
                 }
-                else if (disj->_machineTask[i0]) {
-                    if (!isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || isPresent(disj, i1)))
+                else if (disj->_resourceTask[i0]) {
+                    if (!isIrrelevant(disj, i0) && (!disj->_resourceTask[i1] || isPresent(disj, i1)))
                         return false;
-                    if (isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || !isIrrelevant(disj, i1)))
+                    if (isIrrelevant(disj, i0) && (!disj->_resourceTask[i1] || !isIrrelevant(disj, i1)))
                         return false;
                 }
             }
@@ -2002,7 +1982,7 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
     ORInt beginIdx;
     ORInt endIdx;
     // Sorting tasks regarding their earliest start times
-    if (!disj->_machineTaskAsOptional) {
+    if (!disj->_resourceTaskAsOptional) {
         const ORInt sortAbsentOT = disj->_sortAbsentOT._val;
         const ORInt sortFirstAbsentMT = disj->_sortFirstAbsentMT._val;
         const ORInt size = sortFirstAbsentMT - sortAbsentOT;
@@ -2013,15 +1993,15 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
                 const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
                 const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
                 if (isPresent(disj, i0)) {
-                    if (isAbsent(disj, i1) && !disj->_machineTask[i1])
+                    if (isAbsent(disj, i1) && !disj->_resourceTask[i1])
                         return false;
-                    if ((isPresent(disj, i1) || !disj->_machineTask[i1]) && disj->_est[i0] > disj->_est[i1])
+                    if ((isPresent(disj, i1) || !disj->_resourceTask[i1]) && disj->_est[i0] > disj->_est[i1])
                         return false;
                 }
-                else if (disj->_machineTask[i0]) {
-                    if (!isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || isPresent(disj, i1)))
+                else if (disj->_resourceTask[i0]) {
+                    if (!isIrrelevant(disj, i0) && (!disj->_resourceTask[i1] || isPresent(disj, i1)))
                         return false;
-                    if (isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || !isIrrelevant(disj, i1)))
+                    if (isIrrelevant(disj, i0) && (!disj->_resourceTask[i1] || !isIrrelevant(disj, i1)))
                         return false;
                 }
             }
@@ -2190,12 +2170,8 @@ static void readData(CPTaskDisjunctive * disj)
         const ORInt t  = disj->_bound[tt];
         const ORInt t0 = t - disj->_low;
         ORBool bound;
-        if (disj->_machineTask[t0]) {
-            if ([disj->_tasks[t] isMemberOfClass:[CPMachineTask class]])
-                [(id<CPMachineTask>)disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0]) forMachine:disj];
-            else
-                [(id<CPResourceTask>)disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0]) forResource:disj];
-        }
+        if (disj->_resourceTask[t0])
+            [(id<CPResourceTask>)disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0]) forResource:disj];
         else
             [disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0])];
         
@@ -2267,7 +2243,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     //      NSLog(@" Task[%d] = %@",tt,disj->_tasks[tt]);
     
     // Sorting tasks regarding their earliest start and latest completion times
-    if (!disj->_machineTaskAsOptional) {
+    if (!disj->_resourceTaskAsOptional) {
         const ORInt size = sortFirstAbsentMT - sortAbsentOT;
         isort_r(&(disj->_task_id_est[sortAbsentOT]), size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEstAscMT);
         isort_r(&(disj->_task_id_lct[sortAbsentOT]), size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLctAscMT);
@@ -2276,15 +2252,15 @@ static void doPropagation(CPTaskDisjunctive * disj) {
                 const ORInt i0 = disj->_task_id_est[ii    ] - disj->_low;
                 const ORInt i1 = disj->_task_id_est[ii + 1] - disj->_low;
                 if (isPresent(disj, i0)) {
-                    if (isAbsent(disj, i1) && !disj->_machineTask[i1])
+                    if (isAbsent(disj, i1) && !disj->_resourceTask[i1])
                         return false;
-                    if ((isPresent(disj, i1) || !disj->_machineTask[i1]) && disj->_est[i0] > disj->_est[i1])
+                    if ((isPresent(disj, i1) || !disj->_resourceTask[i1]) && disj->_est[i0] > disj->_est[i1])
                         return false;
                 }
-                else if (disj->_machineTask[i0]) {
-                    if (!isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || isPresent(disj, i1)))
+                else if (disj->_resourceTask[i0]) {
+                    if (!isIrrelevant(disj, i0) && (!disj->_resourceTask[i1] || isPresent(disj, i1)))
                         return false;
-                    if (isIrrelevant(disj, i0) && (!disj->_machineTask[i1] || !isIrrelevant(disj, i1)))
+                    if (isIrrelevant(disj, i0) && (!disj->_resourceTask[i1] || !isIrrelevant(disj, i1)))
                         return false;
                 }
             }
@@ -2331,17 +2307,17 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     disj->_beginIdx = MININT;
     disj->_endIdx   = MININT;
     ORInt consideredSize;
-    if (!disj->_machineTaskAsOptional) {
+    if (!disj->_resourceTaskAsOptional) {
         ORInt i = sortAbsentOT;
         for (; i < disj->_size; i++) {
             const ORInt i0 = disj->_task_id_est[i] - disj->_low;
-            if (!isAbsent(disj, i0) || disj->_machineTask[i0])
+            if (!isAbsent(disj, i0) || disj->_resourceTask[i0])
                 break;
         }
         ORInt j = i;
         for (; j < disj->_size; j++) {
             const ORInt j0 = disj->_task_id_est[j] - disj->_low;
-            if (disj->_machineTask[j0] && !isPresent(disj, j0))
+            if (disj->_resourceTask[j0] && !isPresent(disj, j0))
                 break;
         }
         consideredSize = j;
@@ -2364,7 +2340,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
             // Detecting absent optional tasks
             for (; i < disj->_size; i++) {
                 const ORInt i0 = disj->_task_id_lst[i] - disj->_low;
-                if (!isAbsent(disj, i0) || disj->_machineTask[i0])
+                if (!isAbsent(disj, i0) || disj->_resourceTask[i0])
                     break;
             }
             if (i > sortAbsentOT)
@@ -2373,7 +2349,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
             i = max(i, sortFirstUnknownMT);
             for (; i < disj->_size; i++) {
                 const ORInt i0 = disj->_task_id_lst[i] - disj->_low;
-                if (disj->_machineTask[i0] && !isPresent(disj, i0))
+                if (disj->_resourceTask[i0] && !isPresent(disj, i0))
                     break;
             }
             if (i > sortFirstUnknownMT)
@@ -2381,7 +2357,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
             // Detecting absent machine tasks
             for (; i < disj->_size; i++) {
                 const ORInt i0 = disj->_task_id_lst[i] - disj->_low;
-                if (disj->_machineTask[i0] && isAbsent(disj, i0))
+                if (disj->_resourceTask[i0] && isAbsent(disj, i0))
                     break;
             }
             if (i < sortFirstAbsentMT)
@@ -2442,7 +2418,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
     
     // Further initialisations needed for the filtering algorithm
     initIndexMap(disj, disj->_task_id_lct, idx_map_lct, consideredSize, tsize, tdepth);
-    if (!disj->_machineTaskAsOptional) {
+    if (!disj->_resourceTaskAsOptional) {
         const ORInt size = sortFirstAbsentMT - sortAbsentOT;
         isort_r(&(disj->_task_id_ect[sortAbsentOT]), size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjEctAscMT);
         isort_r(&(disj->_task_id_lst[sortAbsentOT]), size, disj, (ORInt(*)(void*, const ORInt*, const ORInt*)) &sortDisjLstAscMT);
@@ -2452,7 +2428,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
         // Detecting absent optional tasks
         for (; i < disj->_size; i++) {
             const ORInt i0 = disj->_task_id_lst[i] - disj->_low;
-            if (!isAbsent(disj, i0) || disj->_machineTask[i0])
+            if (!isAbsent(disj, i0) || disj->_resourceTask[i0])
                 break;
         }
         if (i > sortAbsentOT)
@@ -2461,7 +2437,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
         i = max(i, sortFirstUnknownMT);
         for (; i < disj->_size; i++) {
             const ORInt i0 = disj->_task_id_lst[i] - disj->_low;
-            if (disj->_machineTask[i0] && !isPresent(disj, i0))
+            if (disj->_resourceTask[i0] && !isPresent(disj, i0))
                 break;
         }
         if (i > sortFirstUnknownMT)
@@ -2469,7 +2445,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
         // Detecting absent machine tasks
         for (; i < disj->_size; i++) {
             const ORInt i0 = disj->_task_id_lst[i] - disj->_low;
-            if (disj->_machineTask[i0] && isAbsent(disj, i0))
+            if (disj->_resourceTask[i0] && isAbsent(disj, i0))
                 break;
         }
         if (i < sortFirstAbsentMT)
@@ -2548,7 +2524,7 @@ static void doPropagation(CPTaskDisjunctive * disj) {
         }
     }
     // Propagation of absence
-    if (!update && !disj->_machineTaskAsOptional && disj->_sortFirstUnknownMT._val < disj->_sortFirstAbsentMT._val) {
+    if (!update && !disj->_resourceTaskAsOptional && disj->_sortFirstUnknownMT._val < disj->_sortFirstAbsentMT._val) {
         propagateAbsenceMT(disj, idx_map_est);
     }
 }

@@ -225,39 +225,6 @@
     }
 }
 
-// Machine Task
--(void) visitMachineTask:(id<ORMachineTask>) task
-{
-    if (_gamma[task.getId] == NULL) {
-        id<ORIntRange> horizon  = [task horizon];
-        id<ORIntRange> duration = [task duration];
-        id<ORIntArray> durationArray = [task durationArray];
-        id<ORTaskDisjunctiveArray> disj  = [task disjunctives];
-        id<ORIntVar>   presence = [(ORMachineTask *)task presenceVar];
-        
-        assert(![task isOptional]);
-
-        // TODO Here it needs to be decided whether to generate one machine task or alternative task with m optional tasks
-        // For the time being only machine tasks are created
-        
-        id<CPMachineTask> concreteTask;
-        
-        id<CPDisjunctiveArray> emptyDisj;
-        emptyDisj = [CPFactory disjunctiveArray:_engine range:[disj range] with:^CPTaskDisjunctive*(ORInt k) {
-            return NULL;
-        }];
-        concreteTask = [CPFactory task:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyDisj];
-        
-        // Posting presence constraint
-        if (presence != NULL) {
-            [presence visit:self];
-            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presence.getId]]];
-        }
-        
-        _gamma[task.getId] = concreteTask;
-    }
-}
-
 // Resource Task
 -(void) visitResourceTask:(id<ORResourceTask>) task
 {
@@ -357,7 +324,7 @@
         // following check can be removed.
         ORBool hasOptionalTasks = false;
         for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if ([tasks[i] isOptional] || [tasks[i] isMemberOfClass:[ORMachineTask class]] || [tasks[i] isMemberOfClass:[ORResourceTask class]]) {
+            if ([tasks[i] isOptional] || [tasks[i] isMemberOfClass:[ORResourceTask class]]) {
                 hasOptionalTasks = true;
                 break;
             }
@@ -376,17 +343,9 @@
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
         
-        // Check for machine tasks and set the concrete disjunctive constraint
+        // Check for resource tasks and set the concrete disjunctive constraint
         for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if ([tasks[i] isMemberOfClass:[ORMachineTask class]]) {
-                id<ORMachineTask> t = (id<ORMachineTask>) tasks[i];
-                assert(_gamma[t.getId] != NULL);
-                ORInt idx = [t getIndex:cstr];
-                assert([t disjunctives].low <= idx && idx <= [t disjunctives].up);
-                id<CPMachineTask> concreteT = _gamma[t.getId];
-                [concreteT set:concreteCstr at:idx];
-            }
-            else if ([tasks[i] isMemberOfClass:[ORResourceTask class]]) {
+            if ([tasks[i] isMemberOfClass:[ORResourceTask class]]) {
                 id<ORResourceTask> t = (id<ORResourceTask>) tasks[i];
                 assert(_gamma[t.getId] != NULL);
                 ORInt idx = [t getIndex:cstr];

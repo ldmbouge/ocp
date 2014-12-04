@@ -17,7 +17,6 @@
 @interface ORVisitor (ORScheduler)
 -(void) visitAlternativeTask: (id<ORAlternativeTask> ) task;
 -(void) visitSpanTask: (id<ORSpanTask> ) task;
--(void) visitMachineTask: (id<ORMachineTask>) task;
 -(void) visitResourceTask: (id<ORResourceTask>) task;
 -(void) visitTask: (id<ORTaskVar> ) task;
 -(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
@@ -37,7 +36,6 @@
 @interface ORNOopVisit (ORScheduler)
 -(void) visitAlternativeTask: (id<ORAlternativeTask> ) task;
 -(void) visitSpanTask: (id<ORSpanTask> ) task;
--(void) visitMachineTask: (id<ORMachineTask>) task;
 -(void) visitResourceTask: (id<ORResourceTask>) task;
 -(void) visitTask: (id<ORTaskVar> ) task;
 -(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;

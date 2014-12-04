@@ -341,21 +341,6 @@
     [model trackMutable:o];
     return o;
 }
-// ORMachineTask
-+(id<ORMachineTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOf: (id<ORTaskDisjunctive>(^)(ORInt)) cloDisjunctives withDuration: (ORInt(^)(ORInt)) cloDuration
-{
-    id<ORIntArray> dur = [ORFactory intArray:model range:range with:cloDuration];
-    id<ORTaskDisjunctiveArray> disj = [ORFactory disjunctiveArray:model range:range with:cloDisjunctives];
-    id<ORMachineTask> o = [[ORMachineTask alloc] initORMachineTask:model horizon:horizon durationArray:dur runsOnOneOf:disj];
-    [model trackMutable:o];
-    return o;
-}
-+(id<ORMachineTask>) machineTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon
-{
-    id<ORMachineTask> o = [[ORMachineTask alloc] initORMachineTaskEmpty:model horizon:horizon];
-    [model trackMutable:o];
-    return o;
-}
 // ORResourceTask
 +(id<ORResourceTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDuration
 {

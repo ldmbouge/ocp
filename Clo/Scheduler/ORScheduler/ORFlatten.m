@@ -22,10 +22,6 @@
 {
     _result = t;
 }
--(void) visitMachineTask:(id<ORMachineTask>) t
-{
-    _result = t;
-}
 -(void) visitResourceTask:(id<ORResourceTask>) t
 {
     _result = t;

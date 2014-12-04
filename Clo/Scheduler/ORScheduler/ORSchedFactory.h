@@ -37,10 +37,6 @@
 +(id<ORSpanTask>) optionalTask: (id<ORModel>) model range: (id<ORIntRange>) range withSpans: (id<ORTaskVar>(^)(ORInt)) clo;
 
 
-// Machine activities
-+(id<ORMachineTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) range runsOnOneOf: (id<ORTaskDisjunctive>(^)(ORInt)) cloDisjunctives withDuration: (ORInt(^)(ORInt)) cloDurations;
-+(id<ORMachineTask>) machineTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon;
-
 // Resource activities
 +(id<ORResourceTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDurations;
 +(id<ORResourceTask>) resourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon;

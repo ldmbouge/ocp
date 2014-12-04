@@ -40,10 +40,6 @@
 -(id<CPSpanTask>) initCPOptionalSpanTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration compound: (id<CPTaskVarArray>) compound;
 @end
 
-@interface CPMachineTask : CPTaskVar<CPMachineTask>
--(id<CPMachineTask>) initCPMachineTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPDisjunctiveArray>) disjunctives;
-@end
-
 @interface CPResourceTask : CPTaskVar<CPResourceTask>
 -(id<CPResourceTask>) initCPResourceTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration durationArray:(id<ORIntArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
 @end
