@@ -37,8 +37,8 @@
 
 @protocol ORResourceTask <ORTaskVar>
 -(id<ORResourceArray>) resources;
--(id<ORIntArray>) durationArray;
--(void) addResource: (id<ORConstraint>) resource with: (ORInt) duration;
+-(id<ORIntRangeArray>) durationArray;
+-(void) addResource: (id<ORConstraint>) resource with: (id<ORIntRange>) duration;
 -(ORInt) getIndex: (id<ORConstraint>) resource;
 -(void) close;
 @end

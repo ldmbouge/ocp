@@ -170,13 +170,13 @@
 
 @implementation ORResourceTask {
     id<ORResourceArray> _res;
-    id<ORIntArray>      _durArray;
+    id<ORIntRangeArray> _durArray;
     
     NSMutableDictionary * _dictRes;
     NSMutableDictionary * _dictDur;
     ORBool _closed;
 }
--(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration runsOnOneOf:(id<ORResourceArray>)resources
+-(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration runsOnOneOf:(id<ORResourceArray>)resources
 {
     assert(duration.low == resources.low);
     assert(duration.up  == resources.up );
@@ -192,8 +192,8 @@
     ORInt minDur = MAXINT;
     ORInt maxDur = MININT;
     for (ORInt k = low; k <= up; k++) {
-        minDur = min(minDur, [duration at:k]);
-        maxDur = max(maxDur, [duration at:k]);
+        minDur = min(minDur, [duration at:k].low);
+        maxDur = max(maxDur, [duration at:k].up );
     }
     
     self = [super initORTaskVar:model horizon:horizon duration:nil];
@@ -208,14 +208,14 @@
     // Adding the resource task to the resources
     for (ORInt k = low; k <= up; k++) {
         if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*) resources[k] add:self duration:[duration at:k]];
+            [(ORTaskDisjunctive*) resources[k] add:self durationRange:[duration at:k]];
         else
-            [(ORTaskCumulative *) resources[k] add:self duration:[duration at:k]];
+            [(ORTaskCumulative *) resources[k] add:self durationRange:[duration at:k]];
     }
     
     return self;
 }
--(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources
+-(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources
 {
     assert(duration.low == resources.low);
     assert(duration.up  == resources.up );
@@ -235,8 +235,8 @@
     ORInt minDur = MAXINT;
     ORInt maxDur = MININT;
     for (ORInt k = low; k <= up; k++) {
-        minDur = min(minDur, [duration at:k]);
-        maxDur = max(maxDur, [duration at:k]);
+        minDur = min(minDur, [duration at:k].low);
+        maxDur = max(maxDur, [duration at:k].up );
     }
     
     self = [super initORTaskVar:model horizon:horizon duration:nil];
@@ -251,9 +251,9 @@
     // Adding the resource task to the resources
     for (ORInt k = low; k <= up; k++) {
         if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*) resources[k] add:self duration:[duration at:k]];
+            [(ORTaskDisjunctive*) resources[k] add:self durationRange:[duration at:k]];
         else
-            [(ORTaskCumulative *) resources[k] add:self duration:[duration at:k] with:[usage at:k]];
+            [(ORTaskCumulative *) resources[k] add:self durationRange:[duration at:k] with:[usage at:k]];
     }
     
     return self;
@@ -268,7 +268,7 @@
     
     return self;
 }
--(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration runsOnOneOf:(id<ORResourceArray>)resources
+-(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration runsOnOneOf:(id<ORResourceArray>)resources
 {
     assert(duration.low == resources.low);
     assert(duration.up  == resources.up );
@@ -284,8 +284,8 @@
     ORInt minDur = MAXINT;
     ORInt maxDur = MININT;
     for (ORInt k = low; k <= up; k++) {
-        minDur = min(minDur, [duration at:k]);
-        maxDur = max(maxDur, [duration at:k]);
+        minDur = min(minDur, [duration at:k].low);
+        maxDur = max(maxDur, [duration at:k].up );
     }
     
     self = [super initOROptionalTaskVar:model horizon:horizon duration:nil];
@@ -300,14 +300,14 @@
     // Adding the resource task to the resources
     for (ORInt k = low; k <= up; k++) {
         if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*) resources[k] add:self duration:[duration at:k]];
+            [(ORTaskDisjunctive*) resources[k] add:self durationRange:[duration at:k]];
         else
-            [(ORTaskCumulative *) resources[k] add:self duration:[duration at:k]];
+            [(ORTaskCumulative *) resources[k] add:self durationRange:[duration at:k]];
     }
     
     return self;
 }
--(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources
+-(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources
 {
     assert(duration.low == resources.low);
     assert(duration.up  == resources.up );
@@ -327,8 +327,8 @@
     ORInt minDur = MAXINT;
     ORInt maxDur = MININT;
     for (ORInt k = low; k <= up; k++) {
-        minDur = min(minDur, [duration at:k]);
-        maxDur = max(maxDur, [duration at:k]);
+        minDur = min(minDur, [duration at:k].low);
+        maxDur = max(maxDur, [duration at:k].up );
     }
     
     self = [super initOROptionalTaskVar:model horizon:horizon duration:nil];
@@ -343,9 +343,9 @@
     // Adding the resource task to the resources
     for (ORInt k = low; k <= up; k++) {
         if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*) resources[k] add:self duration:[duration at:k]];
+            [(ORTaskDisjunctive*) resources[k] add:self durationRange:[duration at:k]];
         else
-            [(ORTaskCumulative *) resources[k] add:self duration:[duration at:k] with:[usage at:k]];
+            [(ORTaskCumulative *) resources[k] add:self durationRange:[duration at:k] with:[usage at:k]];
     }
     
     return self;
@@ -374,7 +374,7 @@
         @throw [[ORExecutionError alloc] initORExecutionError: "The resource task is not closed yet"];
     return _res;
 }
--(id<ORIntArray>) durationArray
+-(id<ORIntRangeArray>) durationArray
 {
     if (!_closed)
         @throw [[ORExecutionError alloc] initORExecutionError: "The resource task is not closed yet"];
@@ -400,21 +400,21 @@
             assert([_dictRes objectForKey:keys[i - 1]] != NULL);
             return (id<ORConstraint>)[_dictRes objectForKey:keys[i - 1]];
         }];
-        _durArray = [ORFactory intArray:_model range: range with:^ORInt(ORInt i) {
+        _durArray = [ORFactory intRangeArray:_model range: range with:^id<ORIntRange>(ORInt i) {
             assert([_dictDur objectForKey:keys[i - 1]] != NULL);
-            return [[_dictDur objectForKey:keys[i - 1]] intValue];
+            return (id<ORIntRange>)[_dictDur objectForKey:keys[i - 1]];
         }];
         
         ORInt minDur = MAXINT;
         ORInt maxDur = MININT;
         for (ORInt k = _durArray.low; k <= _durArray.up; k++) {
-            minDur = min(minDur, [_durArray at:k]);
-            maxDur = max(maxDur, [_durArray at:k]);
+            minDur = min(minDur, [_durArray at:k].low);
+            maxDur = max(maxDur, [_durArray at:k].up );
         }
         _duration = RANGE(_model, minDur, maxDur);
     }
 }
--(void) addResource: (id<ORConstraint>) resource with: (ORInt) duration
+-(void) addResource: (id<ORConstraint>) resource with: (id<ORIntRange>) duration
 {
     if (![resource isMemberOfClass: [ORTaskDisjunctive class]] && ![resource isMemberOfClass: [ORTaskDisjunctive class]])
         @throw [[ORExecutionError alloc] initORExecutionError: "Tried to add a non-resource to resource task"];
@@ -424,13 +424,13 @@
         if (_closed)
             @throw [[ORExecutionError alloc] initORExecutionError: "The resource task is already closed"];
         // Adding the resource and duration
-        [_dictRes setObject:resource    forKey:@(key)];
-        [_dictDur setObject:@(duration) forKey:@(key)];
+        [_dictRes setObject:resource forKey:@(key)];
+        [_dictDur setObject:duration forKey:@(key)];
         // Add machine task to disjunctive
         if ([resource isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*)resource add:self duration:duration];
+            [(ORTaskDisjunctive*)resource add:self durationRange:duration];
         else
-            [(ORTaskCumulative*) resource add:self duration:duration];
+            [(ORTaskCumulative*) resource add:self durationRange:duration];
     }
 }
 -(void) visit:(ORVisitor*) v

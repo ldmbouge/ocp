@@ -231,7 +231,7 @@
     if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon  = [task horizon];
         id<ORIntRange> duration = [task duration];
-        id<ORIntArray> durationArray = [task durationArray];
+        id<ORIntRangeArray> durationArray = [task durationArray];
         id<ORResourceArray> res = [task resources];
         id<ORIntVar>   presence = [(ORResourceTask *)task presenceVar];
         

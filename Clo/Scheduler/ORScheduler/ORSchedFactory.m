@@ -342,9 +342,9 @@
     return o;
 }
 // ORResourceTask
-+(id<ORResourceTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDuration
++(id<ORResourceTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (id<ORIntRange>(^)(ORInt)) cloDuration
 {
-    id<ORIntArray> dur = [ORFactory intArray:model range:range with:cloDuration];
+    id<ORIntRangeArray> dur = [ORFactory intRangeArray:model range:range with:cloDuration];
     id<ORResourceArray> res = [ORFactory resourceArray:model range:range with:cloResources];
     id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTask:model horizon:horizon durationArray:dur runsOnOneOf:res];
     [model trackMutable:o];
@@ -356,9 +356,9 @@
     [model trackMutable:o];
     return o;
 }
-+(id<ORResourceTask>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDuration
++(id<ORResourceTask>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (id<ORIntRange>(^)(ORInt)) cloDuration
 {
-    id<ORIntArray> dur = [ORFactory intArray:model range:range with:cloDuration];
+    id<ORIntRangeArray> dur = [ORFactory intRangeArray:model range:range with:cloDuration];
     id<ORResourceArray> res = [ORFactory resourceArray:model range:range with:cloResources];
     id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTask:model horizon:horizon durationArray:dur runsOnOneOf:res];
     [model trackMutable:o];
@@ -421,4 +421,12 @@
    return o;
 }
 
+// Miscellaneous
++(id<ORIntRangeArray>) intRangeArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORIntRange>(^)(ORInt)) clo
+{
+    id<ORIdArray> o = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [o set: clo(k) at:k];
+    return (id<ORIntRangeArray>) o;
+}
 @end

@@ -423,7 +423,15 @@
 {
     [self add:task duration:duration with:_capacity];
 }
+-(void) add:(id<ORResourceTask>)task durationRange:(id<ORIntRange>)duration
+{
+    [self add:task durationRange:duration with:_capacity];
+}
 -(void) add:(id<ORResourceTask>)task duration:(ORInt)duration with:(id<ORIntVar>)usage
+{
+    [self add:task durationRange:RANGE(_tracker, duration, duration) with:usage];
+}
+-(void) add:(id<ORResourceTask>)task durationRange:(id<ORIntRange>)durationRange with:(id<ORIntVar>)usage
 {
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
@@ -434,7 +442,7 @@
         [_accU   addObject: usage          ];
         [_accIds addObject: @([task getId])];
         // Add resource to resource task
-        [task addResource:self with:duration];
+        [task addResource:self with:durationRange];
     }
 }
 -(void) visit: (ORVisitor*) v
@@ -603,6 +611,10 @@
 }
 -(void) add: (id<ORResourceTask>) task duration:(ORInt)duration
 {
+    [self add:task durationRange:RANGE(_tracker, duration, duration)];
+}
+-(void) add:(id<ORResourceTask>)task durationRange:(id<ORIntRange>)durationRange
+{
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
         if (_closed)
@@ -611,7 +623,7 @@
         [_acc    addObject: task           ];
         [_accIds addObject: @([task getId])];
         // Add resource to resource task
-        [task addResource:self with:duration];
+        [task addResource:self with:durationRange];
     }
 }
 -(void) postTransitionTimes

@@ -38,7 +38,7 @@
 
 
 // Resource activities
-+(id<ORResourceTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDurations;
++(id<ORResourceTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (id<ORIntRange>(^)(ORInt)) cloDurations;
 +(id<ORResourceTask>) resourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon;
 +(id<ORResourceTask>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDurations;
 +(id<ORResourceTask>) optionalResourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon;
@@ -88,4 +88,7 @@
 +(id<ORTaskDuration>) constraint: (id<ORTaskVar>) task duration: (id<ORIntVar>) duration;
 +(id<ORTaskAddTransitionTime>) constraint: (id<ORTaskVar>) normal extended:  (id<ORTaskVar>) extended time: (id<ORIntVar>) time;
 +(id<ORSumTransitionTimes>) sumTransitionTimes: (id<ORTaskDisjunctive>) disjunctive leq: (id<ORIntVar>) sumTransitionTimes;
+
+// Miscellaneous
++(id<ORIntRangeArray>) intRangeArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORIntRange>(^)(ORInt)) clo;
 @end

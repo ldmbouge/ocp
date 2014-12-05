@@ -852,30 +852,30 @@ typedef struct  {
 @implementation CPResourceTask
 {
     id<CPResourceArray> _res;
-    id<ORIntArray> _durArray;
-    id<ORIntArray> _usageArray;
-    TRInt   _usageMin;
-    TRInt   _usageMax;
+    id<ORIntRangeArray>   _durArray;
+//    id<ORIntArray> _usageArray;
+//    TRInt   _usageMin;
+//    TRInt   _usageMax;
     ORInt * _index;
     TRInt   _uSize;
     ORInt   _size;
     TRInt   _bind;
 }
--(id<CPResourceTask>) initCPResourceTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPResourceArray>)resources
+-(id<CPResourceTask>) initCPResourceTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntRangeArray>)durationArray runsOnOneOf:(id<CPResourceArray>)resources
 {
     assert(durationArray.low == resources.low);
     assert(durationArray.up  == resources.up );
     self = [super initCPTaskVar:engine horizon:horizon duration:duration];
     _res = resources;
     _durArray = durationArray;
-    _usageArray = 0;
+//    _usageArray = 0;
     _size = (ORInt)[resources count];
     _index = NULL;
     _index = malloc(_size * sizeof(ORInt));
     if (_index == NULL)
         @throw [[ORExecutionError alloc] initORExecutionError: "CPResourceTask: Out of memory!"];
-    _usageMin = makeTRInt(_trail, 0);
-    _usageMax = makeTRInt(_trail, 0);
+//    _usageMin = makeTRInt(_trail, 0);
+//    _usageMax = makeTRInt(_trail, 0);
     _uSize = makeTRInt(_trail, _size);
     _bind  = makeTRInt(_trail, 0);
     
@@ -938,8 +938,8 @@ typedef struct  {
     [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
     *bound   = [self bound    ];
     const ORInt idx = [self getIndex:resource];
-    *minD    = [_durArray at: idx];
-    *maxD    = [_durArray at: idx];
+    *minD    = max(*minD, [_durArray at: idx].low);
+    *maxD    = min(*maxD, [_durArray at: idx].up);
     *present = [self isPresentOn:resource];
     *absent  = [self isAbsentOn :resource];
 }
@@ -955,7 +955,7 @@ typedef struct  {
         ORInt uSize = _uSize._val;
         for (ORInt i = 0; i < uSize; i++) {
             const ORInt idx = _index[i];
-            if ([_durArray at:idx] < newMinDuration) {
+            if ([_durArray at:idx].up < newMinDuration) {
                 uSize--;
                 _index[i]     = _index[uSize];
                 _index[uSize] = idx;
@@ -976,7 +976,7 @@ typedef struct  {
         ORInt uSize = _uSize._val;
         for (ORInt i = 0; i < uSize; i++) {
             const ORInt idx = _index[i];
-            if ([_durArray at:idx] > newMaxDuration) {
+            if ([_durArray at:idx].low > newMaxDuration) {
                 uSize--;
                 _index[i]     = _index[uSize];
                 _index[uSize] = idx;
@@ -990,62 +990,62 @@ typedef struct  {
             [self bindWithIndex:_index[0]];
     }
 }
--(void) updateMinUsage:(ORInt)newMinUsage
-{
-    assert(false);
-    if (newMinUsage > _usageMin._val) {
-        // Update usage
-        if (newMinUsage > _usageMax._val)
-            failNow();
-        // TODO trigger propagation events
-        [self changeDurationEvt];
-        assignTRInt(&_usageMin, newMinUsage, _trail);
-        // Update resource task
-        ORInt uSize = _uSize._val;
-        for (ORInt i = 0; i < uSize; i++) {
-            const ORInt idx = _index[i];
-            if ([_usageArray at:idx] < newMinUsage) {
-                uSize--;
-                _index[i]     = _index[uSize];
-                _index[uSize] = idx;
-            }
-        }
-        if (uSize == 0)
-            failNow();
-        if (uSize < _uSize._val)
-            assignTRInt(&(_uSize), uSize, _trail);
-        if (uSize == 1 && !_bind._val)
-            [self bindWithIndex:_index[0]];
-    }
-}
--(void) updateMaxUsage:(ORInt)newMaxUsage
-{
-    assert(false);
-    if (newMaxUsage < _usageMax._val) {
-        // Update max usage
-        if (newMaxUsage < _usageMin._val)
-            failNow();
-        // TODO trigger propagation events
-        [self changeDurationEvt];
-        assignTRInt(&_usageMax, newMaxUsage, _trail);
-        // Update resource task
-        ORInt uSize = _uSize._val;
-        for (ORInt i = 0; i < uSize; i++) {
-            const ORInt idx = _index[i];
-            if ([_usageArray at:idx] > newMaxUsage) {
-                uSize--;
-                _index[i]     = _index[uSize];
-                _index[uSize] = idx;
-            }
-        }
-        if (uSize == 0)
-            failNow();
-        if (uSize < _uSize._val)
-            assignTRInt(&(_uSize), uSize, _trail);
-        if (uSize == 1 && !_bind._val)
-            [self bindWithIndex:_index[0]];
-    }
-}
+//-(void) updateMinUsage:(ORInt)newMinUsage
+//{
+//    assert(false);
+//    if (newMinUsage > _usageMin._val) {
+//        // Update usage
+//        if (newMinUsage > _usageMax._val)
+//            failNow();
+//        // TODO trigger propagation events
+//        [self changeDurationEvt];
+//        assignTRInt(&_usageMin, newMinUsage, _trail);
+//        // Update resource task
+//        ORInt uSize = _uSize._val;
+//        for (ORInt i = 0; i < uSize; i++) {
+//            const ORInt idx = _index[i];
+//            if ([_usageArray at:idx] < newMinUsage) {
+//                uSize--;
+//                _index[i]     = _index[uSize];
+//                _index[uSize] = idx;
+//            }
+//        }
+//        if (uSize == 0)
+//            failNow();
+//        if (uSize < _uSize._val)
+//            assignTRInt(&(_uSize), uSize, _trail);
+//        if (uSize == 1 && !_bind._val)
+//            [self bindWithIndex:_index[0]];
+//    }
+//}
+//-(void) updateMaxUsage:(ORInt)newMaxUsage
+//{
+//    assert(false);
+//    if (newMaxUsage < _usageMax._val) {
+//        // Update max usage
+//        if (newMaxUsage < _usageMin._val)
+//            failNow();
+//        // TODO trigger propagation events
+//        [self changeDurationEvt];
+//        assignTRInt(&_usageMax, newMaxUsage, _trail);
+//        // Update resource task
+//        ORInt uSize = _uSize._val;
+//        for (ORInt i = 0; i < uSize; i++) {
+//            const ORInt idx = _index[i];
+//            if ([_usageArray at:idx] > newMaxUsage) {
+//                uSize--;
+//                _index[i]     = _index[uSize];
+//                _index[uSize] = idx;
+//            }
+//        }
+//        if (uSize == 0)
+//            failNow();
+//        if (uSize < _uSize._val)
+//            assignTRInt(&(_uSize), uSize, _trail);
+//        if (uSize == 1 && !_bind._val)
+//            [self bindWithIndex:_index[0]];
+//    }
+//}
 -(void) bind: (id<CPConstraint>) resource
 {
     const ORInt idx = [self getIndex:resource];
@@ -1073,8 +1073,8 @@ typedef struct  {
     assert(_index[0] == idx);
     if (!_bind._val) {
         assignTRInt(&(_bind), 1, _trail);
-        [self updateMinDuration:[_durArray   at: idx]];
-        [self updateMaxDuration:[_durArray   at: idx]];
+        [self updateMinDuration:[_durArray   at: idx].low];
+        [self updateMaxDuration:[_durArray   at: idx].up];
 //        [self updateMinUsage   :[_usageArray at: idx]];
 //        [self updateMaxUsage   :[_usageArray at: idx]];
         // TODO queue propagator
@@ -1122,8 +1122,8 @@ typedef struct  {
                 ORInt minDur = MAXINT;
                 ORInt maxDur = MININT;
                 for (ORInt i = 0; i < _uSize._val; i++) {
-                    minDur = min(minDur, [_durArray at: _index[i]]);
-                    maxDur = max(maxDur, [_durArray at: _index[i]]);
+                    minDur = min(minDur, [_durArray at: _index[i]].low);
+                    maxDur = max(maxDur, [_durArray at: _index[i]].up );
                 }
                 assert(minDur < MAXINT);
                 assert(maxDur > MININT);
@@ -1162,30 +1162,30 @@ typedef struct  {
 @implementation CPOptionalResourceTask
 {
     id<CPResourceArray> _res;
-    id<ORIntArray> _durArray;
-    id<ORIntArray> _usageArray;
-    TRInt   _usageMin;
-    TRInt   _usageMax;
+    id<ORIntRangeArray> _durArray;
+//    id<ORIntArray> _usageArray;
+//    TRInt   _usageMin;
+//    TRInt   _usageMax;
     ORInt * _index;
     TRInt   _uSize;
     ORInt   _size;
     TRInt   _bind;
 }
--(id<CPResourceTask>) initCPOptionalResourceTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPResourceArray>)resources
+-(id<CPResourceTask>) initCPOptionalResourceTask:(id<CPEngine>)engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntRangeArray>)durationArray runsOnOneOf:(id<CPResourceArray>)resources
 {
     assert(durationArray.low == resources.low);
     assert(durationArray.up  == resources.up );
     self = [super initCPOptionalTaskVar:engine horizon:horizon duration:duration];
     _res = resources;
     _durArray = durationArray;
-    _usageArray = 0;
+//    _usageArray = 0;
     _size = (ORInt)[resources count];
     _index = NULL;
     _index = malloc(_size * sizeof(ORInt));
     if (_index == NULL)
         @throw [[ORExecutionError alloc] initORExecutionError: "CPResourceTask: Out of memory!"];
-    _usageMin = makeTRInt(_trail, 0);
-    _usageMax = makeTRInt(_trail, 0);
+//    _usageMin = makeTRInt(_trail, 0);
+//    _usageMax = makeTRInt(_trail, 0);
     _uSize = makeTRInt(_trail, _size);
     _bind  = makeTRInt(_trail, 0);
     
@@ -1254,8 +1254,8 @@ typedef struct  {
     [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
     *bound   = [self bound    ];
     const ORInt idx = [self getIndex:resource];
-    *minD    = [_durArray at: idx];
-    *maxD    = [_durArray at: idx];
+    *minD    = max(*minD, [_durArray at: idx].low);
+    *maxD    = min(*maxD, [_durArray at: idx].up );
     *present = [self isPresentOn:resource];
     *absent  = [self isAbsentOn :resource];
 }
@@ -1284,7 +1284,7 @@ typedef struct  {
         ORInt uSize = _uSize._val;
         for (ORInt i = 0; i < uSize; i++) {
             const ORInt idx = _index[i];
-            if ([_durArray at:idx] < newMinDuration) {
+            if ([_durArray at:idx].up < newMinDuration) {
                 uSize--;
                 _index[i]     = _index[uSize];
                 _index[uSize] = idx;
@@ -1307,7 +1307,7 @@ typedef struct  {
         ORInt uSize = _uSize._val;
         for (ORInt i = 0; i < uSize; i++) {
             const ORInt idx = _index[i];
-            if ([_durArray at:idx] > newMaxDuration) {
+            if ([_durArray at:idx].low > newMaxDuration) {
                 uSize--;
                 _index[i]     = _index[uSize];
                 _index[uSize] = idx;
@@ -1321,62 +1321,62 @@ typedef struct  {
             [self bindWithIndex:_index[0]];
     }
 }
--(void) updateMinUsage:(ORInt)newMinUsage
-{
-    assert(false);
-    if (newMinUsage > _usageMin._val) {
-        // Update usage
-        if (newMinUsage > _usageMax._val)
-            failNow();
-        // TODO trigger propagation events
-//        [self changeDurationEvt];
-        assignTRInt(&_usageMin, newMinUsage, _trail);
-        // Update resource task
-        ORInt uSize = _uSize._val;
-        for (ORInt i = 0; i < uSize; i++) {
-            const ORInt idx = _index[i];
-            if ([_usageArray at:idx] < newMinUsage) {
-                uSize--;
-                _index[i]     = _index[uSize];
-                _index[uSize] = idx;
-            }
-        }
-        if (uSize == 0)
-            [self labelPresent: FALSE];
-        if (uSize < _uSize._val)
-            assignTRInt(&(_uSize), uSize, _trail);
-        if (uSize == 1 && [self isPresent] && !_bind._val)
-            [self bindWithIndex:_index[0]];
-    }
-}
--(void) updateMaxUsage:(ORInt)newMaxUsage
-{
-    assert(false);
-    if (newMaxUsage < _usageMax._val) {
-        // Update max usage
-        if (newMaxUsage < _usageMin._val)
-            failNow();
-        // TODO trigger propagation events
-//        [self changeDurationEvt];
-        assignTRInt(&_usageMax, newMaxUsage, _trail);
-        // Update resource task
-        ORInt uSize = _uSize._val;
-        for (ORInt i = 0; i < uSize; i++) {
-            const ORInt idx = _index[i];
-            if ([_usageArray at:idx] > newMaxUsage) {
-                uSize--;
-                _index[i]     = _index[uSize];
-                _index[uSize] = idx;
-            }
-        }
-        if (uSize == 0)
-            [self labelPresent: FALSE];
-        if (uSize < _uSize._val)
-            assignTRInt(&(_uSize), uSize, _trail);
-        if (uSize == 1 && [self isPresent] && !_bind._val)
-            [self bindWithIndex:_index[0]];
-    }
-}
+//-(void) updateMinUsage:(ORInt)newMinUsage
+//{
+//    assert(false);
+//    if (newMinUsage > _usageMin._val) {
+//        // Update usage
+//        if (newMinUsage > _usageMax._val)
+//            failNow();
+//        // TODO trigger propagation events
+////        [self changeDurationEvt];
+//        assignTRInt(&_usageMin, newMinUsage, _trail);
+//        // Update resource task
+//        ORInt uSize = _uSize._val;
+//        for (ORInt i = 0; i < uSize; i++) {
+//            const ORInt idx = _index[i];
+//            if ([_usageArray at:idx] < newMinUsage) {
+//                uSize--;
+//                _index[i]     = _index[uSize];
+//                _index[uSize] = idx;
+//            }
+//        }
+//        if (uSize == 0)
+//            [self labelPresent: FALSE];
+//        if (uSize < _uSize._val)
+//            assignTRInt(&(_uSize), uSize, _trail);
+//        if (uSize == 1 && [self isPresent] && !_bind._val)
+//            [self bindWithIndex:_index[0]];
+//    }
+//}
+//-(void) updateMaxUsage:(ORInt)newMaxUsage
+//{
+//    assert(false);
+//    if (newMaxUsage < _usageMax._val) {
+//        // Update max usage
+//        if (newMaxUsage < _usageMin._val)
+//            failNow();
+//        // TODO trigger propagation events
+////        [self changeDurationEvt];
+//        assignTRInt(&_usageMax, newMaxUsage, _trail);
+//        // Update resource task
+//        ORInt uSize = _uSize._val;
+//        for (ORInt i = 0; i < uSize; i++) {
+//            const ORInt idx = _index[i];
+//            if ([_usageArray at:idx] > newMaxUsage) {
+//                uSize--;
+//                _index[i]     = _index[uSize];
+//                _index[uSize] = idx;
+//            }
+//        }
+//        if (uSize == 0)
+//            [self labelPresent: FALSE];
+//        if (uSize < _uSize._val)
+//            assignTRInt(&(_uSize), uSize, _trail);
+//        if (uSize == 1 && [self isPresent] && !_bind._val)
+//            [self bindWithIndex:_index[0]];
+//    }
+//}
 -(void) bind: (id<CPConstraint>) resource
 {
     const ORInt idx = [self getIndex:resource];
@@ -1405,10 +1405,10 @@ typedef struct  {
     assert(_index[0] == idx);
     if (!_bind._val) {
         assignTRInt(&(_bind), 1, _trail);
-        [self updateMinDuration:[_durArray   at: idx]];
-        [self updateMaxDuration:[_durArray   at: idx]];
-        //        [self updateMinUsage   :[_usageArray at: idx]];
-        //        [self updateMaxUsage   :[_usageArray at: idx]];
+        [self updateMinDuration:[_durArray   at: idx].low];
+        [self updateMaxDuration:[_durArray   at: idx].up ];
+//        [self updateMinUsage   :[_usageArray at: idx]];
+//        [self updateMaxUsage   :[_usageArray at: idx]];
         // TODO queue propagator
         if ([_res[idx] isMemberOfClass: [CPTaskDisjunctive class]])
             [(CPTaskDisjunctive*)_res[idx] propagate];
@@ -1454,28 +1454,28 @@ typedef struct  {
             ORInt minDur = MAXINT;
             ORInt maxDur = MININT;
             for (ORInt i = 0; i < _uSize._val; i++) {
-                minDur = min(minDur, [_durArray at: _index[i]]);
-                maxDur = max(maxDur, [_durArray at: _index[i]]);
+                minDur = min(minDur, [_durArray at: _index[i]].low);
+                maxDur = max(maxDur, [_durArray at: _index[i]].up );
             }
             assert(minDur < MAXINT);
             assert(maxDur > MININT);
             [self updateMinDuration:minDur];
             [self updateMaxDuration:maxDur];
         }
-        //            // Currently, their is no resource usage in the concept of a task
-        //            if (_usageMin._val < _usageMax._val) {
-        //                // Checking for new usage bounds
-        //                ORInt minUsage = MAXINT;
-        //                ORInt maxUsage = MININT;
-        //                for (ORInt i = 0; i < _uSize._val; i++) {
-        //                    minUsage = min(minUsage, [_usageArray at: _index[i]]);
-        //                    maxUsage = max(maxUsage, [_usageArray at: _index[i]]);
-        //                }
-        //                assert(minUsage < MAXINT);
-        //                assert(maxUsage > MININT);
-        //                [self updateMinUsage:minUsage];
-        //                [self updateMaxUsage:maxUsage];
-        //            }
+//        // Currently, their is no resource usage in the concept of a task
+//        if (_usageMin._val < _usageMax._val) {
+//            // Checking for new usage bounds
+//            ORInt minUsage = MAXINT;
+//            ORInt maxUsage = MININT;
+//            for (ORInt i = 0; i < _uSize._val; i++) {
+//                minUsage = min(minUsage, [_usageArray at: _index[i]]);
+//                maxUsage = max(maxUsage, [_usageArray at: _index[i]]);
+//            }
+//            assert(minUsage < MAXINT);
+//            assert(maxUsage > MININT);
+//            [self updateMinUsage:minUsage];
+//            [self updateMaxUsage:maxUsage];
+//        }
     }
 }
 -(ORInt) getIndex: (id<CPConstraint>) resource

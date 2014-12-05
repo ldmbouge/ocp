@@ -60,6 +60,7 @@
 -(id<ORIntVarArray>) usages;
 -(id<ORIntVar>) capacity;
 -(void) add: (id<ORResourceTask>) act duration: (ORInt) duration;
+-(void) add: (id<ORResourceTask>) act durationRange: (id<ORIntRange>) durationRange;
 @end
 
 @interface ORTaskDisjunctive : ORConstraintI<ORTaskDisjunctive>
