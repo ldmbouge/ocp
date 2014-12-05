@@ -208,9 +208,9 @@
     // Adding the resource task to the resources
     for (ORInt k = low; k <= up; k++) {
         if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*) resources[k] addRT:self duration:[duration at:k]];
+            [(ORTaskDisjunctive*) resources[k] add:self duration:[duration at:k]];
         else
-            [(ORTaskCumulative *) resources[k] addRT:self duration:[duration at:k]];
+            [(ORTaskCumulative *) resources[k] add:self duration:[duration at:k]];
     }
     
     return self;
@@ -251,9 +251,9 @@
     // Adding the resource task to the resources
     for (ORInt k = low; k <= up; k++) {
         if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*) resources[k] addRT:self duration:[duration at:k]];
+            [(ORTaskDisjunctive*) resources[k] add:self duration:[duration at:k]];
         else
-            [(ORTaskCumulative *) resources[k] addRT:self duration:[duration at:k] with:[usage at:k]];
+            [(ORTaskCumulative *) resources[k] add:self duration:[duration at:k] with:[usage at:k]];
     }
     
     return self;
@@ -300,9 +300,9 @@
     // Adding the resource task to the resources
     for (ORInt k = low; k <= up; k++) {
         if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*) resources[k] addRT:self duration:[duration at:k]];
+            [(ORTaskDisjunctive*) resources[k] add:self duration:[duration at:k]];
         else
-            [(ORTaskCumulative *) resources[k] addRT:self duration:[duration at:k]];
+            [(ORTaskCumulative *) resources[k] add:self duration:[duration at:k]];
     }
     
     return self;
@@ -343,9 +343,9 @@
     // Adding the resource task to the resources
     for (ORInt k = low; k <= up; k++) {
         if ([resources[k] isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*) resources[k] addRT:self duration:[duration at:k]];
+            [(ORTaskDisjunctive*) resources[k] add:self duration:[duration at:k]];
         else
-            [(ORTaskCumulative *) resources[k] addRT:self duration:[duration at:k] with:[usage at:k]];
+            [(ORTaskCumulative *) resources[k] add:self duration:[duration at:k] with:[usage at:k]];
     }
     
     return self;
@@ -428,9 +428,9 @@
         [_dictDur setObject:@(duration) forKey:@(key)];
         // Add machine task to disjunctive
         if ([resource isMemberOfClass: [ORTaskDisjunctive class]])
-            [(ORTaskDisjunctive*)resource addRT:self duration:duration];
+            [(ORTaskDisjunctive*)resource add:self duration:duration];
         else
-            [(ORTaskCumulative*) resource addRT:self duration:duration];
+            [(ORTaskCumulative*) resource add:self duration:duration];
     }
 }
 -(void) visit:(ORVisitor*) v
