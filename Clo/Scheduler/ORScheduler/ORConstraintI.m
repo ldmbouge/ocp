@@ -597,7 +597,7 @@
 }
 -(void) add: (id<ORTaskVar>) task type: (ORInt) type
 {
-    if (_transition)
+    if (_transition == NULL)
         @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource was created without transition"];
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
@@ -628,7 +628,7 @@
 }
 -(void) postTransitionTimes
 {
-   if (!_transition)
+   if (_transition == NULL)
       return;
    id<ORModel> model = (id<ORModel>) _tracker;
    ORInt       nbAct = (ORInt) [_acc count];
