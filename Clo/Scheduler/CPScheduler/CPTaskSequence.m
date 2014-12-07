@@ -45,8 +45,8 @@
         }
         return true;
     }());
-    assert(tasks.low == _succ.low + 1);
-    assert(tasks.up  == _succ.up     );
+    assert(tasks.low == succ.low + 1);
+    assert(tasks.up  == succ.up     );
     
     _engine = [tasks[tasks.low] engine];
 
