@@ -155,12 +155,6 @@
    [[task tracker] trackMutable: o];
    return o;
 }
-+(id<ORTaskDuration>) constraint: (id<ORTaskVar>) task duration: (id<ORIntVar>) duration
-{
-   id<ORTaskDuration> o = [[ORTaskDuration alloc] initORTaskDuration: task duration: duration];
-   [[task tracker] trackMutable: o];
-   return o;
-}
 +(id<ORTaskAddTransitionTime>) constraint: (id<ORTaskVar>) normal extended:  (id<ORTaskVar>) extended time: (id<ORIntVar>) time
 {
    id<ORTaskAddTransitionTime> o = [[ORTaskAddTransitionTime alloc] initORTaskAddTransitionTime: normal extended: extended time: time];
@@ -350,9 +344,9 @@
     [model trackMutable:o];
     return o;
 }
-+(id<ORResourceTask>) resourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon
++(id<ORResourceTask>) resourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
-    id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTaskEmpty:model horizon:horizon];
+    id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTaskEmpty:model horizon:horizon duration:duration];
     [model trackMutable:o];
     return o;
 }
@@ -364,9 +358,9 @@
     [model trackMutable:o];
     return o;
 }
-+(id<ORResourceTask>) optionalResourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon
++(id<ORResourceTask>) optionalResourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
-    id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTaskEmpty:model horizon:horizon];
+    id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTaskEmpty:model horizon:horizon duration:duration];
     [model trackMutable:o];
     return o;
 }

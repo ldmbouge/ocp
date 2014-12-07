@@ -131,8 +131,7 @@ int mainTransition(int argc, const char * argv[])
       [machine add: task[1] type: 1];
       [model add: machine];
       
-      id<ORIntVar> dur = [ORFactory intVar: model domain: RANGE(model,0,100)];
-      [model add: [ORFactory constraint: task[0] duration: dur]];
+      id<ORIntVar> dur = [task[0] getDurationVar];
       [model add: [ORFactory sumTransitionTimes: machine leq:cost]];
       
       // search

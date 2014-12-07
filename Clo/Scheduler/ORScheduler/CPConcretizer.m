@@ -138,7 +138,8 @@
     if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon = [task horizon];
         id<ORIntRange> duration = [task duration];
-        id<ORIntVar>   presence = [(ORTaskVar *)task presenceVar];
+        id<ORIntVar>   durationVar = [(ORTaskVar *)task durationVar];
+        id<ORIntVar>   presenceVar = [(ORTaskVar *)task presenceVar];
         
         id<CPTaskVar> concreteTask;
         if (![task isOptional])
@@ -147,10 +148,15 @@
             concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration];
         _gamma[task.getId] = concreteTask;
         
+        // Posting duration constraint
+        if (durationVar != NULL) {
+            [durationVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask duration:_gamma[durationVar.getId]]];
+        }
         // Posting presence constraint
-        if (presence != NULL) {
-            [presence visit:self];
-            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presence.getId]]];
+        if (presenceVar != NULL) {
+            [presenceVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presenceVar.getId]]];
         }
     }
 }
@@ -162,7 +168,8 @@
         id<ORIntRange> horizon  = [task horizon];
         id<ORIntRange> duration = [task duration];
         id<ORTaskVarArray> alt  = [task alternatives];
-        id<ORIntVar>   presence = [(ORAlternativeTask *)task presenceVar];
+        id<ORIntVar>   durationVar = [(ORAlternativeTask *)task durationVar];
+        id<ORIntVar>   presenceVar = [(ORAlternativeTask *)task presenceVar];
         
         [alt visit: self];
         
@@ -180,10 +187,15 @@
         concreteCstr = [CPFactory constraint: concreteTask alternatives:_gamma[alt.getId]];
         [_engine add: concreteCstr];
 
+        // Posting duration constraint
+        if (durationVar != NULL) {
+            [durationVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask duration:_gamma[durationVar.getId]]];
+        }
         // Posting presence constraint
-        if (presence != NULL) {
-            [presence visit:self];
-            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presence.getId]]];
+        if (presenceVar != NULL) {
+            [presenceVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presenceVar.getId]]];
         }
         
         _gamma[task.getId] = concreteTask;
@@ -196,7 +208,8 @@
         id<ORIntRange> horizon  = [task horizon];
         id<ORIntRange> duration = [task duration];
         id<ORTaskVarArray> compound = [task compound];
-        id<ORIntVar>   presence = [(ORSpanTask *)task presenceVar];
+        id<ORIntVar>   durationVar = [(ORSpanTask *)task durationVar];
+        id<ORIntVar>   presenceVar = [(ORSpanTask *)task presenceVar];
         
         [compound visit: self];
         
@@ -214,11 +227,15 @@
         concreteCstr = [CPFactory constraint: concreteTask spans:_gamma[compound.getId]];
         [_engine add: concreteCstr];
         
-        
+        // Posting duration constraint
+        if (durationVar != NULL) {
+            [durationVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask duration:_gamma[durationVar.getId]]];
+        }
         // Posting presence constraint
-        if (presence != NULL) {
-            [presence visit:self];
-            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presence.getId]]];
+        if (presenceVar != NULL) {
+            [presenceVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presenceVar.getId]]];
         }
         
         _gamma[task.getId] = concreteTask;
@@ -233,7 +250,8 @@
         id<ORIntRange> duration = [task duration];
         id<ORIntRangeArray> durationArray = [task durationArray];
         id<ORResourceArray> res = [task resources];
-        id<ORIntVar>   presence = [(ORResourceTask *)task presenceVar];
+        id<ORIntVar>   durationVar = [(ORResourceTask *)task durationVar];
+        id<ORIntVar>   presenceVar = [(ORResourceTask *)task presenceVar];
         
         assert(![task isOptional]);
         
@@ -251,10 +269,15 @@
         else
             concreteTask = [CPFactory optionalTask:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
         
+        // Posting duration constraint
+        if (durationVar != NULL) {
+            [durationVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask duration:_gamma[durationVar.getId]]];
+        }
         // Posting presence constraint
-        if (presence != NULL) {
-            [presence visit:self];
-            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presence.getId]]];
+        if (presenceVar != NULL) {
+            [presenceVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presenceVar.getId]]];
         }
         
         _gamma[task.getId] = concreteTask;
@@ -279,20 +302,6 @@
    }
 }
 
-// Duration constraint
--(void) visitTaskDuration:(id<ORTaskDuration>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORTaskVar> task = [cstr task];
-      id<ORIntVar> duration  = [cstr duration];
-      [task visit: self];
-      [duration  visit: self];
-      id<CPConstraint> concreteCstr;
-      concreteCstr = [CPFactory constraint: _gamma[task.getId] duration: _gamma[duration.getId]];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}
 -(void) visitTaskAddTransitionTime:(id<ORTaskAddTransitionTime>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

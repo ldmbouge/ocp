@@ -688,11 +688,13 @@
    id<ORIntRange> RT = RANGE(_tracker,minDuration,maxDuration + maxTransition);
    id<ORIntRange> HT = RANGE(_tracker,minHorizon,2*maxHorizon);
    _transitionTasks = [ORFactory taskVarArray:_tracker range:_tasks.range horizon:HT range: RT];
-   id<ORIntVarArray> dt = [ORFactory intVarArray: _tracker range: _tasks.range bounds: RT];
-   id<ORIntVarArray> dtt = [ORFactory intVarArray: _tracker range: _tasks.range bounds: RT];
+   id<ORIntVarArray> dt = [ORFactory intVarArray:_tracker range:_tasks.range with:^id<ORIntVar>(ORInt k) {
+        return [_tasks[k] getDurationVar];
+    }];
+   id<ORIntVarArray> dtt = [ORFactory intVarArray:_tracker range:_tasks.range with:^id<ORIntVar>(ORInt k) {
+        return [_tasks[k] getDurationVar];
+    }];
    for(ORInt i = 1; i <= nbAct; i++) {
-      [model add: [ORFactory constraint: _tasks[i] duration: dt[i]]];
-      [model add: [ORFactory constraint: _transitionTasks[i] duration: dtt[i]]];
       [model add: [[dt[i] plus: _transitionTimes[i]] eq: dtt[i]]];
       [model add: [ORFactory constraint: _tasks[i] extended: _transitionTasks[i] time: _transitionTimes[i]]];
    }
@@ -773,46 +775,6 @@
 }
 @end
 
-
-// ORPrecedes
-//
-@implementation ORTaskDuration {
-   id<ORTaskVar> _task;
-   id<ORIntVar> _duration;
-}
--(id<ORTaskDuration>) initORTaskDuration: (id<ORTaskVar>) task duration:(id<ORIntVar>) duration
-{
-   self = [super initORConstraintI];
-   _task = task;
-   _duration   = duration;
-   return self;
-}
--(void)visit: (ORVisitor*) v
-{
-   [v visitTaskDuration: self];
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> TaskDuration(%@,%@)>", [self class], self, _task, _duration];
-   return buf;
-}
--(id<ORTaskVar>) task
-{
-   return _task;
-}
--(id<ORIntVar>) duration
-{
-   return _duration;
-}
--(NSSet*) allVars
-{
-   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity: 2] autorelease];
-   [ms addObject: _task ];
-   [ms addObject: _duration ];
-   return ms;
-}
-@end
 
 @implementation ORTaskAddTransitionTime {
    id<ORTaskVar> _normal;

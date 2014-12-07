@@ -19,11 +19,6 @@
 -(id<ORTaskVar>) after;
 @end
 
-@protocol ORTaskDuration <ORConstraint>
--(id<ORTaskVar>) task;
--(id<ORIntVar>)  duration;
-@end
-
 @protocol ORTaskAddTransitionTime <ORConstraint>
 -(id<ORTaskVar>) normal;
 -(id<ORTaskVar>) extended;

@@ -21,6 +21,7 @@
    id<ORIntRange>  _horizon;
    id<ORIntRange>  _duration;
    ORBool _isOptional;
+    id<ORIntVar>   _durationVar;
     id<ORIntVar>   _presenceVar;
 }
 -(id<ORTaskVar>) initORTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
@@ -30,6 +31,7 @@
    _duration = duration;
    _horizon = horizon;
    _isOptional = FALSE;
+    _durationVar = NULL;
     _presenceVar = NULL;
    return self;
 }
@@ -40,6 +42,7 @@
    _duration = duration;
    _horizon = horizon;
    _isOptional = TRUE;
+    _durationVar = NULL;
     _presenceVar = NULL;
    return self;
 }
@@ -71,6 +74,12 @@
 {
    return [ORFactory constraint: self isFinishedBy: date];
 }
+-(id<ORIntVar>) getDurationVar
+{
+    if (_durationVar == NULL)
+        _durationVar = [ORFactory intVar:_model bounds:_duration];
+    return _durationVar;
+}
 -(id<ORIntVar>) getPresenceVar
 {
     if (_presenceVar == NULL) {
@@ -80,6 +89,10 @@
             _presenceVar = [ORFactory intVar:_model value:1];
     }
     return _presenceVar;
+}
+-(id<ORIntVar>) durationVar
+{
+    return _durationVar;
 }
 -(id<ORIntVar>) presenceVar
 {
@@ -196,7 +209,7 @@
         maxDur = max(maxDur, [duration at:k].up );
     }
     
-    self = [super initORTaskVar:model horizon:horizon duration:nil];
+    self = [super initORTaskVar:model horizon:horizon duration:RANGE(_model, minDur, maxDur)];
     
     _res      = resources;
     _durArray = duration;
@@ -239,7 +252,7 @@
         maxDur = max(maxDur, [duration at:k].up );
     }
     
-    self = [super initORTaskVar:model horizon:horizon duration:nil];
+    self = [super initORTaskVar:model horizon:horizon duration:RANGE(_model, minDur, maxDur)];
     
     _res      = resources;
     _durArray = duration;
@@ -258,9 +271,9 @@
     
     return self;
 }
--(id<ORResourceTask>) initORResourceTaskEmpty:(id<ORModel>)model horizon:(id<ORIntRange>)horizon
+-(id<ORResourceTask>) initORResourceTaskEmpty:(id<ORModel>)model horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration
 {
-    self = [super initORTaskVar:model horizon:horizon duration:RANGE(model, 0, 0)];
+    self = [super initORTaskVar:model horizon:horizon duration:duration];
     
     _dictRes = [[NSMutableDictionary alloc] initWithCapacity: 16];
     _dictDur = [[NSMutableDictionary alloc] initWithCapacity: 16];
@@ -288,7 +301,7 @@
         maxDur = max(maxDur, [duration at:k].up );
     }
     
-    self = [super initOROptionalTaskVar:model horizon:horizon duration:nil];
+    self = [super initOROptionalTaskVar:model horizon:horizon duration:RANGE(_model, minDur, maxDur)];
     
     _res      = resources;
     _durArray = duration;
@@ -331,7 +344,7 @@
         maxDur = max(maxDur, [duration at:k].up );
     }
     
-    self = [super initOROptionalTaskVar:model horizon:horizon duration:nil];
+    self = [super initOROptionalTaskVar:model horizon:horizon duration:RANGE(_model, minDur, maxDur)];
     
     _res      = resources;
     _durArray = duration;
@@ -350,9 +363,9 @@
     
     return self;
 }
--(id<ORResourceTask>) initOROptionalResourceTaskEmpty:(id<ORModel>)model horizon:(id<ORIntRange>)horizon
+-(id<ORResourceTask>) initOROptionalResourceTaskEmpty:(id<ORModel>)model horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration
 {
-    self = [super initOROptionalTaskVar:model horizon:horizon duration:RANGE(model, 0, 0)];
+    self = [super initOROptionalTaskVar:model horizon:horizon duration:duration];
     
     _dictRes = [[NSMutableDictionary alloc] initWithCapacity: 16];
     _dictDur = [[NSMutableDictionary alloc] initWithCapacity: 16];
@@ -404,14 +417,6 @@
             assert([_dictDur objectForKey:keys[i - 1]] != NULL);
             return (id<ORIntRange>)[_dictDur objectForKey:keys[i - 1]];
         }];
-        
-        ORInt minDur = MAXINT;
-        ORInt maxDur = MININT;
-        for (ORInt k = _durArray.low; k <= _durArray.up; k++) {
-            minDur = min(minDur, [_durArray at:k].low);
-            maxDur = max(maxDur, [_durArray at:k].up );
-        }
-        _duration = RANGE(_model, minDur, maxDur);
     }
 }
 -(void) addResource: (id<ORConstraint>) resource with: (id<ORIntRange>) duration

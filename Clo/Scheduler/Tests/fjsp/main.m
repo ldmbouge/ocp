@@ -320,7 +320,7 @@ int main(int argc, const char * argv[])
                     return [ORFactory task: model horizon: dom duration: dur[k]];
                 }
 //                return [ORFactory task: model horizon: dom range: RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1)  runsOnOneOf:^id<ORTaskDisjunctive>(ORInt l) {return [disjunctive at:mach[l] - mach_id_min];} withDuration:^ORInt(ORInt l) {return dur[l];}];
-                return [ORFactory resourceTask: model horizon: dom];
+                return [ORFactory resourceTask: model horizon: dom duration:dom];
             }];
         }
         else {
@@ -373,7 +373,7 @@ int main(int argc, const char * argv[])
                     if (act_nopt[t] == 1)
                         [disjunctive[m] add:Acts[t]];
                     else
-                        [disjunctive[m] addRT:(id<ORResourceTask>)Acts[t] duration:dur[o]];
+                        [disjunctive[m] add:(id<ORResourceTask>)Acts[t] duration:dur[o]];
                 }
                 // Closing the disjunctive constraint
                 [model add:disjunctive[m]];

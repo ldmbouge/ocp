@@ -25,14 +25,8 @@
 -(id<ORIntVar>) date;
 @end
 
-@interface ORTaskDuration : ORConstraintI<ORTaskDuration>
--(id<ORTaskDuration>) initORTaskDuration:(id<ORTaskVar>) task duration:(id<ORIntVar>) duration;
--(id<ORTaskVar>) task;
--(id<ORIntVar>) duration;
-@end
-
 @interface ORTaskAddTransitionTime : ORConstraintI<ORTaskAddTransitionTime>
--(id<ORTaskDuration>) initORTaskAddTransitionTime: (id<ORTaskVar>) normal extended: (id<ORTaskVar>) extended time: (id<ORIntVar>) time;
+-(id<ORTaskAddTransitionTime>) initORTaskAddTransitionTime: (id<ORTaskVar>) normal extended: (id<ORTaskVar>) extended time: (id<ORIntVar>) time;
 -(id<ORTaskVar>) normal;
 -(id<ORTaskVar>) extended;
 -(id<ORIntVar>) time;
