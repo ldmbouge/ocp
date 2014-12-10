@@ -500,9 +500,11 @@
     id<ORTracker>      _tracker;
     NSMutableArray *   _acc;
     NSMutableArray *   _accTypes;
+    NSMutableArray *   _accResTask;
     NSMutableSet   *   _accIds;
     id<ORTaskVarArray> _tasks;
     id<ORIntArray>     _types;
+    id<ORIntArray>     _resourceTasks;
     id<ORIntVarArray>  _successors;
     id<ORIntMatrix>    _transition;
     id<ORIntMatrix>    _typeTransition;
@@ -522,9 +524,11 @@
     
     _tracker    = [tasks tracker];
     _tasks      = tasks;
+    _resourceTasks = [ORFactory intArray:_tracker range:_tasks.range value:0];
     _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,low-1,up) domain: RANGE(_tracker,low,up+1)];
     _acc        = 0;
     _accTypes   = 0;
+    _accResTask = 0;
     _accIds     = [[NSMutableSet alloc] initWithCapacity:tasks.count];
     _closed     = TRUE;
     
@@ -555,8 +559,10 @@
     _tasks      = 0;
     _acc        = [[NSMutableArray alloc] initWithCapacity: 16];
     _accTypes   = 0;
+    _accResTask = [[NSMutableArray alloc] initWithCapacity: 16];
     _accIds     = [[NSMutableSet   alloc] initWithCapacity: 16];
     _transition = 0;
+    _resourceTasks = 0;
     _closed     = FALSE;
 
     return self;
@@ -569,8 +575,10 @@
     _tasks      = 0;
     _acc        = [[NSMutableArray alloc] initWithCapacity: 16];
     _accTypes   = [[NSMutableArray alloc] initWithCapacity: 16];
+    _accResTask = [[NSMutableArray alloc] initWithCapacity: 16];
     _accIds     = [[NSMutableSet   alloc] initWithCapacity: 16];
     _transition = transition;
+    _resourceTasks = 0;
     _closed     = FALSE;
     
     return self;
@@ -578,9 +586,10 @@
 
 -(void) dealloc
 {
-    if (_acc     ) [_acc      dealloc];
-    if (_accTypes) [_accTypes dealloc];
-    if (_accIds  ) [_accIds   dealloc];
+    if (_acc       ) [_acc        dealloc];
+    if (_accTypes  ) [_accTypes   dealloc];
+    if (_accResTask) [_accResTask dealloc];
+    if (_accIds    ) [_accIds     dealloc];
 
     [super dealloc];
 }
@@ -687,6 +696,7 @@
    // Create the transition tasks
    id<ORIntRange> RT = RANGE(_tracker,minDuration,maxDuration + maxTransition);
    id<ORIntRange> HT = RANGE(_tracker,minHorizon,2*maxHorizon);
+    // TODO  Optiona tasks
    _transitionTasks = [ORFactory taskVarArray:_tracker range:_tasks.range horizon:HT range: RT];
    id<ORIntVarArray> dt = [ORFactory intVarArray:_tracker range:_tasks.range with:^id<ORIntVar>(ORInt k) {
         return [_tasks[k] getDurationVar];

@@ -1110,6 +1110,11 @@
       [_extended whenChangeStartPropagate: self];
       [_extended whenChangeEndPropagate: self];
       [_time whenChangeMinPropagate: self];
+       // Presence and absence propagation
+       [_normal   whenAbsentDo :^(){[_extended labelPresent:false];} onBehalf:self];
+       [_normal   whenPresentDo:^(){[_extended labelPresent:true ];} onBehalf:self];
+       [_extended whenAbsentDo :^(){[_normal   labelPresent:false];} onBehalf:self];
+       [_extended whenPresentDo:^(){[_normal   labelPresent:true ];} onBehalf:self];
    }
    return ORSuspend;
 }
