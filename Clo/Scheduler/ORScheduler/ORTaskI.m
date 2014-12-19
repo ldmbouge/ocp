@@ -182,11 +182,19 @@
 
 
 @implementation ORResourceTask {
-    id<ORResourceArray> _res;
-    id<ORIntRangeArray> _durArray;
-    
+    id<ORResourceArray>   _res;
+    id<ORIntRangeArray>   _durArray;
     NSMutableDictionary * _dictRes;
     NSMutableDictionary * _dictDur;
+    
+    // Variables concerning transition times
+    id<ORResourceTask>    _transitionSource;
+    id<ORResourceTask>    _transitionTask;
+    id<ORIntVarArray>     _transitionTime;
+    NSMutableDictionary * _transitionDictTime;
+    
+
+    
     ORBool _closed;
 }
 -(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration runsOnOneOf:(id<ORResourceArray>)resources
@@ -213,6 +221,10 @@
     
     _res      = resources;
     _durArray = duration;
+    _transitionSource   = NULL;
+    _transitionTask     = NULL;
+    _transitionTime     = NULL;
+    _transitionDictTime = NULL;
     
     _dictRes  = NULL;
     _dictDur  = NULL;
@@ -256,6 +268,10 @@
     
     _res      = resources;
     _durArray = duration;
+    _transitionSource   = NULL;
+    _transitionTask     = NULL;
+    _transitionTime     = NULL;
+    _transitionDictTime = NULL;
     
     _dictRes  = NULL;
     _dictDur  = NULL;
@@ -274,6 +290,11 @@
 -(id<ORResourceTask>) initORResourceTaskEmpty:(id<ORModel>)model horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration
 {
     self = [super initORTaskVar:model horizon:horizon duration:duration];
+
+    _transitionSource   = NULL;
+    _transitionTask     = NULL;
+    _transitionTime     = NULL;
+    _transitionDictTime = NULL;
     
     _dictRes = [[NSMutableDictionary alloc] initWithCapacity: 16];
     _dictDur = [[NSMutableDictionary alloc] initWithCapacity: 16];
@@ -305,6 +326,10 @@
     
     _res      = resources;
     _durArray = duration;
+    _transitionSource   = NULL;
+    _transitionTask     = NULL;
+    _transitionTime     = NULL;
+    _transitionDictTime = NULL;
     
     _dictRes  = NULL;
     _dictDur  = NULL;
@@ -348,6 +373,10 @@
     
     _res      = resources;
     _durArray = duration;
+    _transitionSource   = NULL;
+    _transitionTask     = NULL;
+    _transitionTime     = NULL;
+    _transitionDictTime = NULL;
     
     _dictRes  = NULL;
     _dictDur  = NULL;
@@ -366,6 +395,11 @@
 -(id<ORResourceTask>) initOROptionalResourceTaskEmpty:(id<ORModel>)model horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration
 {
     self = [super initOROptionalTaskVar:model horizon:horizon duration:duration];
+    
+    _transitionSource   = NULL;
+    _transitionTask     = NULL;
+    _transitionTime     = NULL;
+    _transitionDictTime = NULL;
     
     _dictRes = [[NSMutableDictionary alloc] initWithCapacity: 16];
     _dictDur = [[NSMutableDictionary alloc] initWithCapacity: 16];
@@ -403,6 +437,34 @@
             return index;
     return ++index;
 }
+-(id<ORResourceTask>) getTransitionTask
+{
+    if (_transitionTask == NULL) {
+        if (_isOptional)
+            _transitionTask = [ORFactory optionalResourceTask:_model horizon:RANGE(_model,_horizon.low,MAXINT) duration:RANGE(_model, MININT, MAXINT)];
+        else
+            _transitionTask = [ORFactory resourceTask:_model horizon:RANGE(_model,_horizon.low,MAXINT) duration:RANGE(_model, MININT, MAXINT)];
+        [(ORResourceTask *)_transitionTask setTransitionSource:self];
+        if (_closed)
+            _transitionTime = [ORFactory intVarArray:_model range:_res.range with:^id<ORIntVar>(ORInt k) {return NULL;}];
+        else {
+            _transitionDictTime = [[NSMutableDictionary alloc] initWithCapacity: 16];
+        }
+    }
+    return _transitionTask;
+}
+-(id<ORResourceTask>) getTransitionSource
+{
+    return _transitionSource;
+}
+-(id<ORIntVarArray>) getTransitionTime
+{
+    return _transitionTime;
+}
+-(void) setTransitionSource:(id<ORResourceTask>)source
+{
+    _transitionSource = source;
+}
 -(void) close
 {
     if (!_closed) {
@@ -417,11 +479,16 @@
             assert([_dictDur objectForKey:keys[i - 1]] != NULL);
             return (id<ORIntRange>)[_dictDur objectForKey:keys[i - 1]];
         }];
+        if (_transitionTask != NULL) {
+            _transitionTime = [ORFactory intVarArray:_model range:range with:^id<ORIntVar>(ORInt i) {
+                return (id<ORIntVar>)[_transitionDictTime objectForKey:keys[i - 1]];
+            }];
+        }
     }
 }
 -(void) addResource: (id<ORConstraint>) resource with: (id<ORIntRange>) duration
 {
-    if (![resource isMemberOfClass: [ORTaskDisjunctive class]] && ![resource isMemberOfClass: [ORTaskDisjunctive class]])
+    if (![resource isMemberOfClass: [ORTaskDisjunctive class]] && ![resource isMemberOfClass: [ORTaskCumulative class]])
         @throw [[ORExecutionError alloc] initORExecutionError: "Tried to add a non-resource to resource task"];
     ORInt key = [resource getId];
     // Check whether it is already added
@@ -437,6 +504,55 @@
         else
             [(ORTaskCumulative*) resource add:self durationRange:duration];
     }
+}
+-(void) addTransition: (id<ORConstraint>) resource with: (id<ORIntVar>) duration
+{
+    if (![resource isMemberOfClass: [ORTaskDisjunctive class]] && ![resource isMemberOfClass: [ORTaskCumulative class]])
+        @throw [[ORExecutionError alloc] initORExecutionError: "Tried to add a non-resource to resource task"];
+    const ORInt key = [resource getId];
+    if (_closed) {
+        ORInt r = _res.range.low;
+        for (; r <= _res.range.up; r++) {
+            if (_res[r].getId == key)
+                break;
+        }
+        if (r > _res.range.up)
+            @throw [[ORExecutionError alloc] initORExecutionError: "Resource is not part of the resource task"];
+        [_transitionTime set:duration at:r];
+    }
+    else {
+        assert([_dictRes objectForKey:@(key)] != nil);
+        assert([_transitionDictDur objectForKey:@(key)] == nil);
+        [_transitionDictTime setObject:duration forKey:@(key)];
+    }
+}
+-(void) finaliseTransitionTask
+{
+    assert(_transitionTime != NULL);
+    assert(_transitionTime.low == _res.low && _transitionTime.up == _res.up);
+    ORInt tmin = MAXINT;
+    ORInt tmax = MININT;
+    // Compute the transition time range
+    for (ORInt i = _transitionTime.low; i <= _transitionTime.up; i++) {
+        id<ORIntVar> time = [_transitionTime at:i];
+        if (time == NULL) {
+            time = [ORFactory intVar:_model value:0];
+            [_transitionTime set:time at:i];
+        }
+        tmin = min(tmin, time.min);
+        tmax = max(tmax, time.max);
+    }
+    // Compute all ranges
+    id<ORIntRange> horizon  = RANGE(_model, _horizon.low, _horizon.up + tmax);
+    id<ORIntRange> duration = RANGE(_model, _duration.low + tmin, _duration.up + tmax);
+    // Update the ranges
+    [(ORResourceTask *)_transitionTask updateTransitionTask:horizon duration:duration];
+}
+-(void) updateTransitionTask:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration
+{
+    assert(_transitionSource != NULL);
+    _horizon  = horizon;
+    _duration = duration;
 }
 -(void) visit:(ORVisitor*) v
 {

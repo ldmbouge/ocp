@@ -287,6 +287,12 @@
    [model trackMutable:o];
    return o;
 }
++(id<ORTaskVar>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+{
+    id<ORTaskVar> o = [[ORTaskVar alloc] initOROptionalTaskVar: model horizon: horizon duration: duration];
+    [model trackVariable:o];
+    return o;
+}
 // ORAlternativeTask
 +(id<ORAlternativeTask>) task: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORTaskVar>(^)(ORInt)) clo
 {

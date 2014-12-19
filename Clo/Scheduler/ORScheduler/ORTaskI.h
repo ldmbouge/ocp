@@ -35,4 +35,11 @@
 -(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration runsOnOneOf:(id<ORResourceArray>)resources;
 -(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources;
 -(id<ORResourceTask>) initOROptionalResourceTaskEmpty: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<ORResourceTask>) getTransitionTask;
+-(id<ORResourceTask>) getTransitionSource;
+-(id<ORIntVarArray>)  getTransitionTime;
+-(void) addTransition: (id<ORConstraint>) resource with: (id<ORIntVar>) duration;
+-(void) setTransitionSource: (id<ORResourceTask>)source;
+-(void) finaliseTransitionTask;
+-(void) updateTransitionTask:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration;
 @end

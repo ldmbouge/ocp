@@ -600,8 +600,9 @@
         if (_closed)
             @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
         // Add task
-        [_acc    addObject: task           ];
-        [_accIds addObject: @([task getId])];
+        [_acc        addObject: task           ];
+        [_accIds     addObject: @([task getId])];
+        [_accResTask addObject: @(0           )];
     }
 }
 -(void) add: (id<ORTaskVar>) task type: (ORInt) type
@@ -613,9 +614,10 @@
         if (_closed)
             @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
         // Add task
-        [_acc      addObject: task           ];
-        [_accTypes addObject: @(type)        ];
-        [_accIds   addObject: @([task getId])];
+        [_acc        addObject: task           ];
+        [_accTypes   addObject: @(type)        ];
+        [_accIds     addObject: @([task getId])];
+        [_accResTask addObject: @(0           )];
     }
 }
 -(void) add: (id<ORResourceTask>) task duration:(ORInt)duration
@@ -629,8 +631,9 @@
         if (_closed)
             @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is already closed"];
         // Add task
-        [_acc    addObject: task           ];
-        [_accIds addObject: @([task getId])];
+        [_acc        addObject: task           ];
+        [_accIds     addObject: @([task getId])];
+        [_accResTask addObject: @(1           )];
         // Add resource to resource task
         [task addResource:self with:durationRange];
     }
@@ -696,18 +699,24 @@
    // Create the transition tasks
    id<ORIntRange> RT = RANGE(_tracker,minDuration,maxDuration + maxTransition);
    id<ORIntRange> HT = RANGE(_tracker,minHorizon,2*maxHorizon);
-    // TODO  Optiona tasks
-   _transitionTasks = [ORFactory taskVarArray:_tracker range:_tasks.range horizon:HT range: RT];
-   id<ORIntVarArray> dt = [ORFactory intVarArray:_tracker range:_tasks.range with:^id<ORIntVar>(ORInt k) {
-        return [_tasks[k] getDurationVar];
+    // TODO Resource tasks
+    _transitionTasks = [ORFactory taskVarArray:_tracker range:_tasks.range with:^id<ORTaskVar>(ORInt k) {
+        if ([_resourceTasks at:k] == 1) {
+            id<ORResourceTask> transRT = [(ORResourceTask *)_tasks[k] getTransitionTask];
+            return transRT;
+        } else {
+            if (_tasks[k].isOptional)
+                return [ORFactory optionalTask:(id<ORModel>)_tracker horizon:HT durationRange:RT];
+            else
+                return [ORFactory task:(id<ORModel>)_tracker horizon:HT durationRange:RT];
+        }
     }];
-   id<ORIntVarArray> dtt = [ORFactory intVarArray:_tracker range:_tasks.range with:^id<ORIntVar>(ORInt k) {
-        return [_tasks[k] getDurationVar];
-    }];
-   for(ORInt i = 1; i <= nbAct; i++) {
-      [model add: [[dt[i] plus: _transitionTimes[i]] eq: dtt[i]]];
-      [model add: [ORFactory constraint: _tasks[i] extended: _transitionTasks[i] time: _transitionTimes[i]]];
-   }
+    for(ORInt i = 1; i <= nbAct; i++) {
+        if ([_resourceTasks at:i] == 1)
+            [(ORResourceTask *)_tasks[i] addTransition:self with:_transitionTimes[i]];
+        else
+            [model add: [ORFactory constraint: _tasks[i] extended: _transitionTasks[i] time: _transitionTimes[i]]];
+    }
 }
 
 -(void)visit: (ORVisitor*) v
@@ -728,6 +737,9 @@
          return _acc[i-1];
       }];
       _successors = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) domain: RANGE(_tracker,1,(ORInt) [_acc count]+1)];
+       _resourceTasks = [ORFactory intArray:_tracker range:RANGE(_tracker, 1, (ORInt) [_acc count]) with:^ORInt(ORInt i) {
+           return [_accResTask[i-1] intValue];
+       }];
       [self postTransitionTimes];
    }
 }

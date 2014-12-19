@@ -42,8 +42,14 @@
 
 @interface CPResourceTask : CPTaskVar<CPResourceTask>
 -(id<CPResourceTask>) initCPResourceTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration durationArray:(id<ORIntRangeArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
+-(const ORInt *) getInternalIndexArray:(ORInt *)firstAbsent;
+-(void) bindWithIndex  : (const ORInt) idx;
+-(void) removeWithIndex: (const ORInt) idx;
 @end
 
 @interface CPOptionalResourceTask : CPOptionalTaskVar<CPResourceTask>
 -(id<CPResourceTask>) initCPOptionalResourceTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration durationArray:(id<ORIntRangeArray>) durationArray runsOnOneOf: (id<CPResourceArray>) resources;
+-(const ORInt *) getInternalIndexArray:(ORInt *)firstAbsent;
+-(void) bindWithIndex  : (const ORInt) idx;
+-(void) removeWithIndex: (const ORInt) idx;
 @end

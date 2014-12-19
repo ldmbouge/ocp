@@ -250,14 +250,15 @@
         id<ORIntRange> duration = [task duration];
         id<ORIntRangeArray> durationArray = [task durationArray];
         id<ORResourceArray> res = [task resources];
-        id<ORIntVar>   durationVar = [(ORResourceTask *)task durationVar];
-        id<ORIntVar>   presenceVar = [(ORResourceTask *)task presenceVar];
+        id<ORIntVar>       durationVar = [(ORResourceTask *)task durationVar];
+        id<ORIntVar>       presenceVar = [(ORResourceTask *)task presenceVar];
+        id<ORResourceTask> transSource = [(ORResourceTask *)task getTransitionSource];
         
         assert(![task isOptional]);
         
+        
         // TODO Here it needs to be decided whether to generate one machine task or alternative task with m optional tasks
         // For the time being only machine tasks are created
-        
         id<CPResourceTask> concreteTask;
         
         id<CPResourceArray> emptyRes;
@@ -268,6 +269,14 @@
             concreteTask = [CPFactory task:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
         else
             concreteTask = [CPFactory optionalTask:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
+
+        // Check whether it is a transition-time resource task
+        if (transSource != NULL) {
+            id<ORIntVarArray> transTime = [(ORResourceTask *)transSource getTransitionTime];
+            [transSource visit:self];
+            [transTime   visit:self];
+            [CPFactory constraint:_gamma[transSource.getId] resourceExtended:concreteTask time:_gamma[transTime.getId]];
+        }
         
         // Posting duration constraint
         if (durationVar != NULL) {
@@ -328,23 +337,13 @@
         [transitionTasks visit: self];
         [succ visit: self];
         id<CPConstraint> concreteCstr;
-        // NOTE the task sequence propagator for optional or machine tasks
-        // haven't been implemented yet. Once it is then the
-        // following check can be removed.
-        ORBool hasOptionalTasks = false;
-        for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if ([tasks[i] isOptional] || [tasks[i] isMemberOfClass:[ORResourceTask class]]) {
-                hasOptionalTasks = true;
-                break;
-            }
-        }
-        if (!hasOptionalTasks) {
-            if ([cstr hasTransition])
-                concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
-            else
-                concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
-            [_engine add: concreteCstr];
-        }
+
+        // NOTE XXX TODO sequence constraint is not working on resource tasks
+        if ([cstr hasTransition])
+            concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
+        else
+            concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
+        [_engine add: concreteCstr];
         if ([cstr hasTransition])
             concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
         else

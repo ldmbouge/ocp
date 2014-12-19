@@ -1089,55 +1089,178 @@
 
 -(id) initCPTaskAddTransitionTime:(id<CPTaskVar>) normal extended:(id<CPTaskVar>)extended time:(id<CPIntVar>)time
 {
-   self = [super initCPCoreConstraint: [normal engine]];
-   
-   _normal = normal;
-   _extended = extended;
-   _time  = time;
+    self = [super initCPCoreConstraint: [normal engine]];
+    
+    _normal   = normal;
+    _extended = extended;
+    _time     = time;
     NSLog(@"Create constraint CPTaskAddTransitionTime\n");
-   return self;
+    return self;
 }
 -(void) dealloc
 {
-   [super dealloc];
+    [super dealloc];
 }
 -(ORStatus) post
 {
-   [self propagate];
-   if (![_normal bound] && ![_extended bound] && ![_time bound]) {
-      [_normal whenChangeStartPropagate: self];
-      [_normal whenChangeEndPropagate: self];
-      [_extended whenChangeStartPropagate: self];
-      [_extended whenChangeEndPropagate: self];
-      [_time whenChangeMinPropagate: self];
-       // Presence and absence propagation
-       [_normal   whenAbsentDo :^(){[_extended labelPresent:false];} onBehalf:self];
-       [_normal   whenPresentDo:^(){[_extended labelPresent:true ];} onBehalf:self];
-       [_extended whenAbsentDo :^(){[_normal   labelPresent:false];} onBehalf:self];
-       [_extended whenPresentDo:^(){[_normal   labelPresent:true ];} onBehalf:self];
-   }
-   return ORSuspend;
+    [self propagate];
+    if (![_normal bound] && ![_extended bound] && ![_time bound]) {
+        [_normal   whenChangeStartPropagate: self];
+        [_normal   whenChangeEndPropagate  : self];
+        [_extended whenChangeStartPropagate: self];
+        [_extended whenChangeEndPropagate  : self];
+        [_time     whenChangePropagate     : self];
+        // Presence and absence propagation
+        [_normal   whenAbsentDo :^(){[_extended labelPresent:false];} onBehalf:self];
+        [_normal   whenPresentDo:^(){[_extended labelPresent:true ];} onBehalf:self];
+        [_extended whenAbsentDo :^(){[_normal   labelPresent:false];} onBehalf:self];
+        [_extended whenPresentDo:^(){[_normal   labelPresent:true ];} onBehalf:self];
+    }
+    return ORSuspend;
 }
 -(void) propagate
 {
-   [_normal updateStart: [_extended est]];
-   [_extended updateStart: [_normal est]];
-   [_normal updateEnd: [_extended lct] - [_time min]];
-   [_extended updateEnd: [_normal lct] + [_time max]];
+    if (_normal.isAbsent)
+        return ;
+    
+    // Updating the duration
+    [_normal   updateMinDuration:[_extended minDuration] - [_time min]];
+    [_normal   updateMaxDuration:[_extended maxDuration] - [_time max]];
+    [_extended updateMinDuration:[_normal   minDuration] + [_time min]];
+    [_extended updateMaxDuration:[_normal   maxDuration] + [_time max]];
+    [_time     updateMin:[_extended minDuration] - [_normal minDuration]];
+    [_time     updateMax:[_extended maxDuration] - [_normal maxDuration]];
+    
+    // Updating the start and end time
+    [_normal   updateStart: [_extended est]];
+    [_extended updateStart: [_normal   est]];
+    [_normal   updateEnd  : [_extended lct] - [_time min]];
+    [_extended updateEnd  : [_normal   lct] + [_time max]];
 }
 -(NSSet*) allVars
 {
-   ORInt size = 2;
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
-   [rv addObject:_normal];
-   [rv addObject:_extended];
-   [rv addObject:_time];
-   [rv autorelease];
-   return rv;
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_normal];
+    [rv addObject:_extended];
+    [rv addObject:_time];
+    [rv autorelease];
+    return rv;
 }
 -(ORUInt) nbUVars
 {
-   return 2;
+    return 2;
 }
 @end
 
+@implementation CPResourceTaskAddTransitionTime
+{
+    TRInt   _normalSize;
+    TRInt   _extendedSize;
+}
+-(id) initCPResourceTaskAddTransitionTime:(id<CPResourceTask>) normal extended:(id<CPResourceTask>)extended time:(id<CPIntVarArray>)time
+{
+    self = [super initCPCoreConstraint: [normal engine]];
+    
+    _normal   = normal;
+    _extended = extended;
+    _time     = time;
+    NSLog(@"Create constraint CPResourceTaskAddTransitionTime\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    _normalSize   = makeTRInt(_trail, (ORInt)[_time count]);
+    _extendedSize = makeTRInt(_trail, (ORInt)[_time count]);
+    
+    [self propagate];
+    
+    [_normal   whenChangeStartPropagate: self];
+    [_normal   whenChangeEndPropagate  : self];
+    [_extended whenChangeStartPropagate: self];
+    [_extended whenChangeEndPropagate  : self];
+    
+    for (ORInt i = _time.low; i <= _time.up; i++) {
+        [_time[i] whenChangeMinPropagate: self];
+    }
+    
+    // Presence and absence propagation
+    [_normal   whenAbsentDo :^(){[_extended labelPresent:false];} onBehalf:self];
+    [_normal   whenPresentDo:^(){[_extended labelPresent:true ];} onBehalf:self];
+    [_extended whenAbsentDo :^(){[_normal   labelPresent:false];} onBehalf:self];
+    [_extended whenPresentDo:^(){[_normal   labelPresent:true ];} onBehalf:self];
+
+    return ORSuspend;
+}
+-(void) propagate
+{
+    if ([_normal isAbsent])
+        return ;
+
+    ORInt normalAbsent   = 0;
+    ORInt extendedAbsent = 0;
+    // NOTE Do not modify the following arrays, which are internal data structures
+    // of resource tasks
+    const ORInt * normalIndex   = [(CPResourceTask *)_normal   getInternalIndexArray: & normalAbsent  ];
+    const ORInt * extendedIndex = [(CPResourceTask *)_extended getInternalIndexArray: & extendedAbsent];
+    
+    for (ORInt ii = normalAbsent; ii < _normalSize._val; ii++)
+        [(CPResourceTask *)_extended removeWithIndex:normalIndex[ii]];
+    for (ORInt ii = extendedAbsent; ii < _extendedSize._val; ii++)
+        [(CPResourceTask *)_extended removeWithIndex:extendedIndex[ii]];
+
+    const ORInt * normalIndex0 = [(CPResourceTask *)_normal   getInternalIndexArray: & normalAbsent  ];
+    [(CPResourceTask *)_extended getInternalIndexArray: & extendedAbsent];
+    
+    assert(normalAbsent == extendedAbsent);
+    
+    if (normalAbsent < _normalSize._val)
+        assignTRInt(&(_normalSize), normalAbsent, _trail);
+    if (extendedAbsent < _extendedSize._val)
+        assignTRInt(&(_extendedSize), extendedAbsent, _trail);
+    
+    // Compute minimal and maximal time
+    ORInt tmin = MAXINT;
+    ORInt tmax = MININT;
+    // Iterate over relevant resource constraint
+    for (ORInt ii = 0; ii < normalAbsent; ii++) {
+        const ORInt i = normalIndex0[ii];
+        tmin = min(tmin, [_time[i] min]);
+        tmax = max(tmax, [_time[i] max]);
+    }
+
+    // Updating the duration
+    [_normal   updateMinDuration:[_extended minDuration] - tmin]];
+    [_normal   updateMaxDuration:[_extended maxDuration] - tmax]];
+    [_extended updateMinDuration:[_normal   minDuration] + tmin]];
+    [_extended updateMaxDuration:[_normal   maxDuration] + tmax]];
+    if (normalAbsent == 1 && [_normal isPresent]) {
+        [_time updateMin:[_extended minDuration] - [_normal minDuration]];
+        [_time updateMax:[_extended maxDuration] - [_normal maxDuration]];
+    }
+    
+    // Updating the start and end
+    [_normal   updateStart: [_extended est]];
+    [_extended updateStart: [_normal   est]];
+    [_normal   updateEnd  : [_extended lct] - tmin];
+    [_extended updateEnd  : [_normal   lct] + tmax];
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_normal];
+    [rv addObject:_extended];
+    [rv addObject:_time];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
+}
+@end

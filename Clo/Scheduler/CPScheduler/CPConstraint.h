@@ -16,6 +16,7 @@
 
 @protocol CPTaskVar;
 @protocol CPTaskVarArray;
+@protocol CPResourceTask;
 
 
     // Alternative propagator
@@ -110,6 +111,19 @@
    id<CPIntVar>  _time;
 }
 -(id) initCPTaskAddTransitionTime: (id<CPTaskVar>) normal extended: (id<CPTaskVar>) extended time: (id<CPIntVar>) time;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
+@interface CPResourceTaskAddTransitionTime : CPCoreConstraint {
+    id<CPResourceTask> _normal;
+    id<CPResourceTask> _extended;
+    id<CPIntVarArray>  _time;
+}
+-(id) initCPResourceTaskAddTransitionTime: (id<CPResourceTask>) normal extended: (id<CPResourceTask>) extended time: (id<CPIntVarArray>) time;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

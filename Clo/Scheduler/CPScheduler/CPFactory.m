@@ -345,4 +345,10 @@
    [[normal tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>) constraint:(id<CPResourceTask>)normal resourceExtended:(id<CPResourceTask>)extended time:(id<CPIntVarArray>)time
+{
+    id<CPConstraint> o = [[CPResourceTaskAddTransitionTime alloc] initCPResourceTaskAddTransitionTime:normal extended:extended time:time];
+    [[normal tracker] trackMutable:o];
+    return o;
+}
 @end

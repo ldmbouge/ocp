@@ -905,6 +905,11 @@ typedef struct  {
     // XXX Maybe sort in order to return in the same order
     return [ORFactory intArray:_engine range:RANGE(_engine, 0, _uSize._val) with:^ORInt(ORInt k) {return _index[k];}];
 }
+-(const ORInt *) getInternalIndexArray:(ORInt *)size
+{
+    *size = _uSize._val;
+    return _index;
+}
 -(ORBool) isAssigned
 {
     return (_uSize._val == 1);
@@ -1214,6 +1219,11 @@ typedef struct  {
 {
     // XXX Maybe sort in order to return in the same order
     return [ORFactory intArray:_engine range:RANGE(_engine, 0, _uSize._val) with:^ORInt(ORInt k) {return _index[k];}];
+}
+-(const ORInt *) getInternalIndexArray:(ORInt *)size
+{
+    *size = _uSize._val;
+    return _index;
 }
 -(ORBool) isAssigned
 {

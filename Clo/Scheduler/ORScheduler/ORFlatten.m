@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORFlatten.h>
+#import <ORScheduler/ORTaskI.h>
 #import "ORConstraintI.h"
 
 @implementation ORFlatten (ORScheduler)
@@ -24,6 +25,9 @@
 }
 -(void) visitResourceTask:(id<ORResourceTask>) t
 {
+    id<ORResourceTask> transSource = [(ORResourceTask *)t getTransitionSource];
+    if (transSource != NULL)
+        [(ORResourceTask *)t finaliseTransitionTask];
     _result = t;
 }
 -(void) visitTask:(id<ORTaskVar>) t
