@@ -2062,11 +2062,11 @@ void literalDomEvt(CPLiterals* x,id<CPDom> sender)
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
 {
    ORInt min = [_ref min];
-   for(ORInt i=_a._val;i <min;i++) {
+   for(ORInt i=_a._val;i <min - _ofs;i++) {
       CPIntVar* lv = _pos[i];
       [lv bindEvt:sender];
    }
-   assignTRInt(&_a,min-1,[[_ref engine] trail]);
+   assignTRInt(&_a,min - _ofs - 1,[[_ref engine] trail]);
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
       [lv bindEvt:sender];
@@ -2075,11 +2075,11 @@ void literalDomEvt(CPLiterals* x,id<CPDom> sender)
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    ORInt max = [_ref max];
-   for(ORInt i = max+1;i<_b._val;i++) {
+   for(ORInt i = max + 1 - _ofs;i<_b._val;i++) {
       CPIntVar* lv = _pos[i];
       [lv bindEvt:sender];
    }
-   assignTRInt(&_b, max+1, [[_ref engine] trail]);
+   assignTRInt(&_b, max - _ofs + 1, [[_ref engine] trail]);
    if (dsz==1) {
       CPIntVar* lv = _pos[[sender min] - _ofs];
       return [lv bindEvt:sender];
