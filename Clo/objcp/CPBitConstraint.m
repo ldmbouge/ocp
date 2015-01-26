@@ -19,7 +19,7 @@
 NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
    NSMutableString* string = [[NSMutableString alloc] init];
-   for(int i=0; i< wordLength;i++){
+   for(int i=wordLength-1; i>=0;i--){
       unsigned int boundLow = ~low[i] & ~ up[i];
       unsigned int boundUp = up[i] & low[i];
       unsigned int err = ~up[i] & low[i];
@@ -60,6 +60,14 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    }
    return setBits;
 }
+
+//ORStatus checkBVSAC(id<CPBitVar> x, CPEngineI* engine, id<CPCommonProgram> cp)
+//{
+//   for (int i=0; i<[x bitLength]; i++) {
+//      <#statements#>
+//   }
+//   return ORSuccess;
+//}
 
 @implementation CPFactory (BitConstraint)
 //Bit Vector Constraints
@@ -264,7 +272,20 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
             failNow();
         }
     }
+   
+   id<CPEngine> engine = [_x engine];
+//   id<CPCommonProgram> cp = [engine ];
 
+   int idx = 0;
+   ORUInt freebits;
+   for (int i=0; i<wordLength; i++) {
+      if ((freebits = up[i] & ~low[i])) {
+         for (int j=0; j<BITSPERWORD; j++) {
+            
+         }
+      }
+   }
+   
    [_x setUp:up andLow:low];
    [_y setUp:up andLow:low];
    
@@ -2179,8 +2200,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 //   
    unsigned int* up = alloca(sizeof(unsigned int)*yWordLength);
    unsigned int* low = alloca(sizeof(unsigned int)*yWordLength);
-   unsigned int* xUpForY = alloca(sizeof(unsigned int)*yWordLength);
-   unsigned int* xLowForY =  alloca(sizeof(unsigned int)*yWordLength);
+//   unsigned int* xUpForY = alloca(sizeof(unsigned int)*yWordLength);
+//   unsigned int* xLowForY =  alloca(sizeof(unsigned int)*yWordLength);
    unsigned int* newXUp = alloca(sizeof(unsigned int)*xWordLength);
    unsigned int* newXLow = alloca(sizeof(unsigned int)*xWordLength);
    unsigned int* yLowForX = alloca(sizeof(unsigned int)*yWordLength);
@@ -2189,56 +2210,15 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    unsigned int  upXORlow;
    bool    inconsistencyFound = false;
 
-//
-//   int xWordShift = (_lsb/32);
-//   int xBitShift = (_lsb%32);
-//   for(int i=0;i<yWordLength;i++){
-//      xUpForY[i] = xUp[i+xWordShift]._val>>xBitShift;
-//      xLowForY[i] = xLow[i+xWordShift]._val>>xBitShift;
-//      if (xBitShift!=0 && ((i+1) < xWordLength)) {
-//         xUpForY[i] &= xUp[i+xWordShift+1]._val << (32 - xBitShift);
-//         xLowForY[i] |= xLow[i+xWordShift+1]._val << (32 - xBitShift);
-//      }
-//   }
-//   ORUInt mask = CP_UMASK;
-////   mask >>= 32 - [_x bitLength]%32;
-//   mask >>= 32 - ((_msb - _lsb)+1);
-//   xUpForY[xWordLength-1] &= mask;
-//   xLowForY[xWordLength-1] &= mask;
-//   
-//   for(int i=0;i<yWordLength;i++){
-//      up[i] = xUpForY[i] & yUp[i]._val;
-//      low[i] = xLowForY[i] | yLow[i]._val;
-//      upXORlow = up[i] ^ low[i];
-//      if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
-//         failNow();
-//      }
-//   }
-//   
-//   
-//   for(int i=0;i<xWordLength;i++){
-//      //edit GAJ 082114
-//      newXUp[i+xWordShift] &= (up[i]>>xBitShift) | ~mask;
-//      newXLow[i+xWordShift] |= (low[i]>>xBitShift) & mask;
-//      if (xBitShift!=0 && ((i+1) < xWordLength)) {
-//         newXUp[i+xWordShift] &= up[i+1] << (32 - xBitShift);
-//         newXLow[i+xWordShift] |= low[i+1] << (32 - xBitShift);
-//      }
-//   }
-//
-//   NSLog(@"x=%@\n",bitvar2NSString(newXLow, newXUp, xWordLength));
-//   NSLog(@"y=%@\n",bitvar2NSString(low, up, yWordLength));
-//   NSLog(@"*******************************************");
-
    for (int i = 0; i < yWordLength; i++) {
       low[i] = yLowForX[i] = yLow[i]._val;
       up[i] = yUpForX[i] = yUp[i]._val;
       
    }
-   up[yWordLength-1] = yUpForX[yWordLength-1] |= CP_UMASK << (32 - [_y bitLength]);
-   low[yWordLength-1] = yLowForX[yWordLength-1] &= ~(CP_UMASK << (32 - [_y bitLength]));
+   yUpForX[yWordLength-1] |= CP_UMASK << [_y bitLength];
+   yLowForX[yWordLength-1] &= ~(CP_UMASK << [_y bitLength]);
    
-   NSLog(@"yForX = %@\n",bitvar2NSString(yLowForX, yUpForX, yWordLength));
+//   NSLog(@"yForX = %@\n",bitvar2NSString(yLowForX, yUpForX, yWordLength));
 
    for(int i=0;i<xWordLength;i++){
       if ((i+_lsb/32) < xWordLength) {
@@ -2252,8 +2232,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
             //            NSLog(@"i=%i",i+_places/32+1);
          }
          if (i==(yWordLength-1)) {
-            up[i] &= UP_MASK >> [_y bitLength]%32;
-            low[i] &= UP_MASK >> [_y bitLength]%32;
+            up[i] &= UP_MASK >> (32 - ([_y bitLength]%32));
+            low[i] &= UP_MASK >> (32 - ([_y bitLength]%32));
          }
       }
 //      else{
@@ -2334,7 +2314,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    unsigned int yWordLength = [_y getWordLength];
    unsigned int zWordLength = [_z getWordLength];
    
-   if (zWordLength != (xWordLength + yWordLength)) {
+   if (zWordLength < (xWordLength + yWordLength)-1) {
       failNow();
    }
 
@@ -2381,16 +2361,22 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    unsigned int* newZLow = alloca(sizeof(unsigned int)*zWordLength);
    unsigned int  upXORlow;
    
+   for(int i=0;i<zWordLength;i++){
+      newZUp[i] = zUp[i]._val;
+      newZLow[i] = zLow[i]._val;
+   }
+   
    for(int i=0;i<yWordLength;i++){
       zUpForY[i] = zUp[i]._val;
       zLowForY[i] = zLow[i]._val;
    }
    uint32 mask = CP_UMASK;
-   mask >>= 32 - [_y bitLength]%32;
+   mask >>= 32 - ([_y bitLength]%32);
    zUpForY[yWordLength-1] &= mask;
    zLowForY[yWordLength-1] &= mask;
    
    int xWordShift = ([_y bitLength]/32);
+
    int xBitShift = ([_y bitLength]%32);
    for(int i=0;i<xWordLength;i++){
       zUpForX[i] = zUp[i+xWordShift]._val>>xBitShift;
@@ -2413,7 +2399,9 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          failNow();
       }
    }
-   
+
+
+
    for(int i=0;i<yWordLength;i++){
       newYUp[i] = yUp[i]._val & zUpForY[i];
       newYLow[i] = yLow[i]._val | zLowForY[i];
@@ -2422,24 +2410,29 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          failNow();
       }
    }
-   
-   for(int i=0;i<yWordLength;i++){
-      newZUp[i] = yUp[i]._val;
-      newZLow[i] = yLow[i]._val;
-   }
    mask = CP_UMASK;
-   mask >>= 32 - [_y bitLength]%32;
-   newZUp[yWordLength-1] &= mask;
-   newZLow[yWordLength-1] &= mask;
+   mask >>= 32 - xBitShift;
+   for(int i=0;i<yWordLength;i++){
+      newZUp[i] &= (yUp[i]._val & mask) | ~mask;
+      newZLow[i] |= (yLow[i]._val & mask);
+   }
    
+   mask = CP_UMASK;
+   mask = (CP_UMASK >> (32 - [_x bitLength])) << xBitShift;
+//   newZUp[yWordLength-1] &= mask;
+//   newZLow[yWordLength-1] &= mask;
+   
+//fix for bv not on 32 bit boundary
    for(int i=0;i<xWordLength;i++){
-      newZUp[i+xWordShift] = newXUp[i]>>xBitShift;
-      newZLow[i+xWordShift] = newXLow[i]>>xBitShift;
+      newZUp[i+xWordShift] &= ((xUp[i]._val<<xBitShift) & mask) | ~mask;//>>xBitShift;
+      newZLow[i+xWordShift] |= (xLow[i]._val<<xBitShift) & mask;//>>xBitShift;
       if (xBitShift!=0 && ((i+1) < xWordLength)) {
          newZUp[i+xWordShift] &= newXUp[i+1] << (32 - xBitShift);
          newZLow[i+xWordShift] |= newXLow[i+1] << (32 - xBitShift);
       }
    }
+
+   NSLog(@"%@\n",bitvar2NSString(newZLow, newZUp, zWordLength));
    for(int i=0;i<zWordLength;i++){
       upXORlow = newZUp[i] ^ newZLow[i];
       if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0){
@@ -2721,56 +2714,115 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    unsigned int* low = alloca(sizeof(unsigned int)*wordLength);
    unsigned int  upXORlow;
    
-   ORUInt tXORe = 0;
+//   ORUInt tXORe = 0;
    
-   int setbits = 0;
+   unsigned int setbits = 0;
    for (int i=0; i<wordLength; i++) {
       setbits += __builtin_popcount(iLow[i]._val);
    }
+   
    if (setbits > 0) {
       for(int i=0;i<wordLength;i++){
-         up[i] = tUp[i]._val;
-         low[i] = tLow[i]._val;
+         up[i] = tUp[i]._val & rUp[i]._val;
+         low[i] = tLow[i]._val | rLow[i]._val;
          upXORlow = up[i] ^ low[i];
-         if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+         if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0)
             failNow();
-         }
       }
       
+      [_t setUp:up andLow:low];
       [_r setUp:up andLow:low];
       return;
    }
-   if ([_i bound]) {
+   else if ([_i bound]) {
       for(int i=0;i<wordLength;i++){
-         up[i] = eUp[i]._val;
-         low[i] = eLow[i]._val;
+         up[i] = eUp[i]._val & rUp[i]._val;
+         low[i] = eLow[i]._val | rLow[i]._val;
          upXORlow = up[i] ^ low[i];
          if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
             failNow();
          }
       }
       
+      [_e setUp:up andLow:low];
       [_r setUp:up andLow:low];
       return;
    }
    
-   if ([_t bound] && [_e bound]) {
-      for(int i=0;i<wordLength;i++)
-         tXORe |= tLow[i]._val ^ eLow[i]._val;
-      if (tXORe == 0) {
-         for(int i=0;i<wordLength;i++){
-            up[i] = eUp[i]._val;
-            low[i] = eLow[i]._val;
-            upXORlow = up[i] ^ low[i];
-            if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
-               failNow();
-            }
+//   if ([_i bound] && [_r bound]) {
+//      
+//      setbits = 0;
+//      for (int i=0; i<wordLength; i++)
+//         setbits += __builtin_popcount(iLow[i]._val);
+//      if (setbits==0)
+//         failNow();
+//      
+//   }
+   //if then and else are the same (if condition is irrelevant)
+//   if ([_t bound] && [_e bound]) {
+//      
+//   }
+   
+   //if _r is bound
+   if ([_r bound]) {
+      ORUInt rNEQt = 0;
+      ORUInt rNEQe = 0;
+      for (int i=0; i<wordLength; i++) {
+         rNEQt |= (tLow[i]._val & ~rUp[i]._val);// ^ xLow[i]._val;
+         rNEQt |= (~tUp[i]._val & rLow[i]._val);// ^ ~xUp[i]._val;
+         rNEQe |= (eLow[i]._val & ~rUp[i]._val);// ^ xLow[i]._val;
+         rNEQe |= (~eUp[i]._val & rLow[i]._val);// ^ ~xUp[i]._val;
+      }
+   // if (_r == _t) && (_r != _e) && (_i is bound)
+      if (!rNEQt && rNEQe) {
+         for (int i=0; i<wordLength; i++)
+            setbits += __builtin_popcount(iLow[i]._val);
+         //    if countbits in i is zero
+         //       fail
+         if ([_i bound] && setbits==0)
+            failNow();
+         ORUInt trueVector[wordLength];
+         for (int i=1; i<wordLength; i++) {
+            trueVector[i] = 0;
          }
-         
-         [_r setUp:up andLow:low];
+         trueVector[0] = 1;
+         [_i setUp:trueVector andLow:trueVector];
+      }
+   // else if (_r == _e) && (_r != _t)
+      else if (!rNEQe) {
+         for (int i=0; i<wordLength; i++)
+            setbits += __builtin_popcount(iLow[i]._val);
+         //    if countbits in i is > zero
+         //       fail
+         if (setbits>0)
+            failNow();
+         ORUInt zeroVector[wordLength];
+         if(![_i bound]){
+            for (int i=0; i<wordLength; i++) {
+               zeroVector[i] = 0;
+            }
+            [_i setUp:zeroVector andLow:zeroVector];
+         }
       }
    }
    
+//   if ([_t bound] && [_e bound]) {
+//      for(int i=0;i<wordLength;i++)
+//         tXORe |= tLow[i]._val ^ eLow[i]._val;
+//      if (tXORe == 0) {
+//         for(int i=0;i<wordLength;i++){
+//            up[i] = eUp[i]._val;
+//            low[i] = eLow[i]._val;
+//            upXORlow = up[i] ^ low[i];
+//            if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
+//               failNow();
+//            }
+//         }
+//         
+//         [_r setUp:up andLow:low];
+//      }
+//   }
+
    return;
 }
 @end
@@ -2810,6 +2862,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 #endif
    
    unsigned int wordLength = [_x getWordLength];
+   unsigned int zWordLength = [_z getWordLength];
    
    TRUInt* xLow;
    TRUInt* xUp;
@@ -2818,8 +2871,20 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    TRUInt* zLow;
    TRUInt* zUp;
    
-   unsigned int one = 0x00000001;
-   unsigned int zero = 0x00000000;
+   unsigned int one[zWordLength];
+   unsigned int zero[zWordLength];
+   for (int i=1; i<zWordLength; i++) {
+      one[i] = zero[i] = 0x00000000;
+   }
+   one[0] = 0x00000001;
+   zero[0] = 0x00000000;
+   
+   unsigned int* newZUp = alloca(sizeof(unsigned int)*zWordLength);
+   unsigned int* newZLow = alloca(sizeof(unsigned int)*zWordLength);
+
+   unsigned int* up = alloca(sizeof(unsigned int)*wordLength);
+   unsigned int* low = alloca(sizeof(unsigned int)*wordLength);
+   unsigned int  upXORlow;
    
    [_x getUp:&xUp andLow:&xLow];
    [_y getUp:&yUp andLow:&yLow];
@@ -2828,8 +2893,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    unsigned int different = 0;
    unsigned int makesame = 0;
    for (int i=0; i<wordLength; i++) {
-      different |= (xLow[i]._val & ~yUp[i]._val) ^ xLow[i]._val;
-      different |= (~xUp[i]._val & ~yLow[i]._val) ^ ~xUp[i]._val;
+      different |= (xLow[i]._val & ~yUp[i]._val);// ^ xLow[i]._val;
+      different |= (~xUp[i]._val & yLow[i]._val);// ^ ~xUp[i]._val;
    }
    
    for (int i=0; i<[_z getWordLength]; i++) {
@@ -2837,10 +2902,6 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    }
    
    if(makesame){
-      unsigned int* up = alloca(sizeof(unsigned int)*wordLength);
-      unsigned int* low = alloca(sizeof(unsigned int)*wordLength);
-      unsigned int  upXORlow;
-      
       for(int i=0;i<wordLength;i++){
          up[i] = xUp[i]._val & yUp[i]._val;
          low[i] = xLow[i]._val | yLow[i]._val;
@@ -2855,12 +2916,33 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    }
 
    if (different) {
-      [_z setUp:&zero andLow:&zero];
+      for (int i=0; i<zWordLength; i++) {
+         newZUp[i] = zUp[i]._val & zero[i];
+         newZLow[i] = zLow[i]._val | zero[i];
+         upXORlow = newZUp[i] ^ newZLow[i];
+         if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0)
+            failNow();
+      }
+      [_z setUp:newZUp andLow:newZLow];
    }
    else if ([_x bound] && [_y bound]){
-      [_z setUp:&one andLow:&one];
+      //LSB should be 1
+      newZUp[0] = zUp[0]._val & one[0];
+      newZLow[0] = zLow[0]._val | one[0];
+      upXORlow = newZUp[0] ^ newZLow[0];
+      if(((upXORlow & (~newZUp[0])) & (upXORlow & newZLow[0])) != 0)
+         failNow();
+
+      //check the rest of the words in the bitvector if present
+      for (int i=1; i<zWordLength; i++) {
+         newZUp[i] = zUp[i]._val & zero[i];
+         newZLow[i] = zLow[i]._val | zero[i];
+         upXORlow = newZUp[i] ^ newZLow[i];
+         if(((upXORlow & (~newZUp[i])) & (upXORlow & newZLow[i])) != 0)
+            failNow();
+      }
+      [_z setUp:newZUp andLow:newZLow];
    }
-   
    return;
 }
 @end
@@ -2932,9 +3014,9 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if (!unboundExists) {
       for (int k=1; k<[_r getWordLength]; k++)
          rup[k] = rlow[k] = 0;
-         rup[0] = rlow[0] = 1;
-         [_r setUp:rup andLow:rlow];
-         return;
+      rup[0] = rlow[0] = 1;
+      [_r setUp:rup andLow:rlow];
+      return;
    }
    return;
 }

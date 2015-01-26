@@ -402,9 +402,17 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftL: visit method not defined"]; 
 }
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftL_BV: visit method not defined"];
+}
 -(void) visitBitShiftR:(id<ORBitShiftR>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftR: visit method not defined"];
+}
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftR_BV: visit method not defined"];
 }
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
@@ -688,6 +696,7 @@
 -(void) visitBitXor:(id<ORBitXor>)c {}
 -(void) visitBitShiftL:(id<ORBitShiftL>)c {}
 -(void) visitBitShiftR:(id<ORBitShiftR>)c {}
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c {}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c {}
 -(void) visitBitSum:(id<ORBitSum>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}

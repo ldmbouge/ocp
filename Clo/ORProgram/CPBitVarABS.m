@@ -611,7 +611,7 @@
    int nbProbes = [_aggregator nbProbes];
    BOOL more = NO;
    NSSet* varIDs = [_aggregator variableIDs];
-   //NSLog(@"AGG: %@",_aggregator);
+   NSLog(@"AGG: %@",_aggregator);
    for(NSNumber* vid in varIDs) {
       int k = [vid intValue];
       ORFloat muk = [_aggregator avgActivity:k];
@@ -622,12 +622,12 @@
       ORFloat upCI  = muk + 1.95 * ratiok;
       ORFloat low  = muk * (1.0 - prc);
       ORFloat up   = muk * (1.0 + prc);
-      //NSLog(@"MOREPROBE: k=%d  %lf [%lf .. %lf] : [%lf .. %lf]  muk = %lf muk2 = %lf ratiok = %lf",k,prc,lowCI,upCI,low,up,muk,muk2,ratiok);
+      NSLog(@"MOREPROBE: k=%d  %lf [%lf .. %lf] : [%lf .. %lf]  muk = %lf muk2 = %lf ratiok = %lf",k,prc,lowCI,upCI,low,up,muk,muk2,ratiok);
       more |= (low > lowCI || up < upCI );
       if (more)
          break;
    }
-   //NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
+   NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
    return more;
 }
 -(void)installActivities
@@ -739,7 +739,7 @@
                if (s == ORFailure) {
                   if (depth == 0) {
                      ABSBitVarNogood* nogood = [[ABSBitVarNogood alloc] initABSBitVarNogood:xi atIndex:idx value:v];
-                     //NSLog(@"Adding SAC %@",nogood);
+                     NSLog(@"Adding SAC %@",nogood);
                      [killSet addObject:nogood];
                      [localKill addObject:nogood];
                      [nogood release];
@@ -763,7 +763,7 @@
          }
          while (depth-- != 0)
             [tracer popNode];
-         //NSLog(@"THEPROBE: %@",probe);
+         NSLog(@"THEPROBE: %@",probe);
          [_aggregator addProbe:probe];
          [probe release];
          for(ABSBitVarNogood* b in localKill) {

@@ -829,7 +829,8 @@
       [_search try: ^() {  domainBefore = domainAfter = 0;
                            for(int j=0;j<[variables count];j++)
                               domainBefore += [variables[j] domsize];
-                           [self labelBV:x at:i with:false];
+                           //[self labelBV:x at:i with:false];
+                           [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[x.getId] at:i with: false];
                            for(int j=0;j<[variables count];j++)
                               domainBefore += [variables[j] domsize];
                               domainDiff = domainBefore-domainAfter;
@@ -840,7 +841,8 @@
                 or: ^() { domainBefore = domainAfter = 0;
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
-                   [self labelBV:x at:i with:true];
+                   //[self labelBV:x at:i with:true];
+                   [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[x.getId] at:i with: true];
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
                      domainDiff = domainBefore-domainAfter;
@@ -1210,15 +1212,16 @@
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
+   __block ORInt i ;
    do {
       id<CPBitVar> x = [last idValue];
       //NSLog(@"at top: last = %p",x);
       if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [x bound])) {
-         ORInt i = [select max];
+         i = [select max];
          if (i == MAXINT)
             return;
          x = av[i];
-         //NSLog(@"-->Chose variable: %p=%@",x,x);
+//         NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setId:x];
       } else {
         //NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
@@ -1249,8 +1252,120 @@
       if (bestIndex != - 1)  {
          [_search try: ^{
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+            
+            //Added 1/8/15 testing SAC constraint effectiveness
+            id<ORTracer> tracer = [self tracer];
+            ORStatus oc;
+            
+            ORUInt wordLength = [(CPBitVarI*)x getWordLength];
+            TRUInt* up;
+            TRUInt* low;
+            ORUInt freeBits;
+            ORUInt failUp = 0;
+            ORUInt failLow = 0;
+            
+            [(CPBitVarI*)x getUp:&up andLow:&low];
+            
+            for (int i=0; i<wordLength; i++) {
+               freeBits = up[i]._val & ~(low[i]._val);
+               for (int j=0; j<32; j++) {
+                  if (freeBits&1) {
+                     [tracer pushNode];
+                     oc = [_engine enforce:^void{[x bind:j to:true];[ORConcurrency pumpEvents];}];
+                     if (oc==ORFailure) {
+                        //NSLog(@"Failure in probing for SAC.");
+                        failUp &= 1;
+                     }
+                     [tracer popNode];
+                     
+                     [tracer pushNode];
+                     oc = [_engine enforce:^void{[x bind:j to:false];[ORConcurrency pumpEvents];}];
+                     if (oc==ORFailure) {
+                        //NSLog(@"Failure in probing for SAC.");
+                        failLow &= 1;
+                     }
+                     [tracer popNode];
+               }
+                  freeBits <<= 1;
+               }
+               if (failUp & failLow) {
+                  NSLog(@"Backtracking on SAC constraint.");
+                  failNow();
+               }
+               for (int k=31; k>=0; k--) {
+                  if (failUp & 1) {
+                     [x bind:(i*32)+k to:false];
+                  }
+                  if (failLow & 1) {
+                     [x bind:(i*32)+k to:true];
+                  }
+                  failUp >>= 1;
+                  failLow >>=1;
+               }
+            }
+//            NSLog(@"Labeling %i with false",i);
+//            NSLog(@"%@",[_engine model]);
+//            for (int j=[av low]; j<[av up]+1; j++) {
+//               NSLog(@"av[%i]%@",j,av[j]);
+//            }
          } or: ^{
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+            
+            //Added 1/8/15 testing SAC constraint effectiveness
+            id<ORTracer> tracer = [self tracer];
+            ORStatus oc;
+            
+            ORUInt wordLength = [(CPBitVarI*)x getWordLength];
+            TRUInt* up;
+            TRUInt* low;
+            ORUInt freeBits;
+            ORUInt failUp = 0;
+            ORUInt failLow = 0;
+            
+            [(CPBitVarI*)x getUp:&up andLow:&low];
+            
+            for (int i=0; i<wordLength; i++) {
+               freeBits = up[i]._val & ~(low[i]._val);
+               for (int j=0; j<32; j++) {
+                  if (freeBits&1) {
+                     [tracer pushNode];
+                     oc = [_engine enforce:^void{[x bind:j to:true];[ORConcurrency pumpEvents];}];
+                     if (oc==ORFailure) {
+                        //NSLog(@"Failure in probing for SAC.");
+                        failUp &= 1;
+                     }
+                     [tracer popNode];
+                     
+                     [tracer pushNode];
+                     oc = [_engine enforce:^void{[x bind:j to:false];[ORConcurrency pumpEvents];}];
+                     if (oc==ORFailure) {
+                        //NSLog(@"Failure in probing for SAC.");
+                        failLow &= 1;
+                     }
+                     [tracer popNode];
+                  }
+                  freeBits <<= 1;
+               }
+               if (failUp & failLow) {
+                  NSLog(@"Backtracking on SAC constraint.");
+                  failNow();
+               }
+               for (int k=31; k>=0; k--) {
+                  if (failUp & 1) {
+                     [x bind:(i*32)+k to:false];
+                  }
+                  if (failLow & 1) {
+                     [x bind:(i*32)+k to:true];
+                  }
+                  failUp >>= 1;
+                  failLow >>=1;
+               }
+            }
+//            NSLog(@"Labeling %i with true",i);
+//            NSLog(@"%@",[_engine model]);
+//            for (int j=[av low]; j<[av up]+1; j++) {
+//               NSLog(@"av[%i]%@",j,av[j]);
+//            }
          }];
       }
    } while (true);

@@ -126,12 +126,12 @@
 }
 -(id<CPProgram>)solver
 {
-   id<CPHeuristic> h = _binding[[NSThread threadID]];
+   id<CPBitVarHeuristic> h = _binding[[NSThread threadID]];
    return [h solver];
 }
 -(void) restart
 {
-   id<CPHeuristic> h = _binding[[NSThread threadID]];
+   id<CPBitVarHeuristic> h = _binding[[NSThread threadID]];
    return [h restart];
 }
 @end

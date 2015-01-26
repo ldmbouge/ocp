@@ -56,12 +56,15 @@
    NSString* _name;
    OBJCPType* _type;
    ORInt    _size;
+   id<ORBitVar> _var;
 }
 -initExplicit:(NSString*)name withType:(OBJCPType*)type;
 -initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size;
 -(NSString*) getName;
 -(OBJCPType*) getType;
 -(ORUInt) getSize;
+-(id<ORBitVar>) getVariable;
+-(void) setVariable:(id<ORBitVar>)v;
 -(id)copyWithZone:(NSZone *)zone;
    @end
 
@@ -71,6 +74,7 @@
    _name = name;
    _type = (OBJCPType*)type;
    _size = 1;
+   _var = NULL;
    return self;
 }
 -(OBJCPDecl*)initExplicitWithSize:(NSString*)name withType:(OBJCPType*)type andSize:(ORInt)size{
@@ -78,6 +82,7 @@
    _name = name;
    _type = (OBJCPType*)type;
    _size = size;
+   _var = NULL;
    return self;
 }
 -(NSString*) getName{
@@ -88,6 +93,12 @@
 }
 -(ORUInt) getSize{
    return _size;
+}
+-(id<ORBitVar>) getVariable{
+   return _var;
+}
+-(void)setVariable:(id<ORBitVar>)v{
+   _var = v;
 }
 -(id) copyWithZone:(NSZone *)zone{
    OBJCPDecl* newObject = [[OBJCPDecl alloc] initExplicitWithSize:_name withType:_type andSize:_size];
@@ -123,11 +134,11 @@
 }
 
 -(objcp_context) objcp_mk_context{
-   NSLog(@"Make context not implemented");
+//   NSLog(@"Make context not implemented");
    return NULL;
 }
 -(void) objcp_del_context:(objcp_context) ctxt{
-   NSLog(@"delete context not implemented");
+//   NSLog(@"delete context not implemented");
 }
 
 
@@ -137,7 +148,8 @@
 }
 
 -(objcp_var_decl) objcp_mk_var_decl:(objcp_context) ctx withName:(char*) name andType:(objcp_type) type{
-//   NSLog(@"Make variable declaration not implemented. Name was %s and type was %ld", name, (long)type);
+//   NSLog(@"Make variable declaration. Name was %s and type was %ld", name, (long)type);
+
 //   ORUInt* min;
 //   ORUInt* max;
 //   
@@ -157,12 +169,12 @@
 }
 
 -(objcp_var_decl) objcp_get_var_decl:(objcp_context) ctx withExpr:(objcp_expr)t{
-   NSLog(@"Get variable declaration not implemented");
+//   NSLog(@"Get variable declaration not implemented");
    return NULL;
 }
 
 -(objcp_var_decl) objcp_get_var_decl_from_name:(objcp_context) ctx withName:(const char*) name{
-//   NSLog(@"Get variable declaration from name not implemented. Name was %s",name);
+//   NSLog(@"Getting variable declaration from name. Name was %s",name);
    NSString *key = [[NSString alloc] initWithUTF8String:name];
    OBJCPDecl* d = [_declarations objectForKey:key];
    return d;
@@ -171,16 +183,22 @@
 -(objcp_expr) objcp_mk_var_from_decl:(objcp_context) ctx withDecl:(objcp_var_decl) d{
 //   NSLog(@"Make var from declaration not implemented");
    OBJCPDecl* decl = d;
-   ORUInt size = [decl getSize];
-   NSLog(@"Making bit vector of size %d\n",size);
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
-   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
-   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
-   for(int i=0; i< wordlength;i++){
-      low[i] = 0;
-      up[i] = CP_UMASK;
+
+   id<ORBitVar> bv = [decl getVariable];
+//   id<ORBitVar> bv;
+   if (bv == NULL) {
+      ORUInt size = [decl getSize];
+      //NSLog(@"Making bit vector (from declaration) of size %d\n",size);
+      ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
+      ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+      ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+      for(int i=0; i< wordlength;i++){
+         low[i] = 0;
+         up[i] = CP_UMASK;
+      }
+      bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+      [decl setVariable:bv];
    }
-   id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    return bv;
 }
 
@@ -189,7 +207,7 @@
 }
 
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name{
-   NSLog(@"Make type with name not implemented. Name was %s",name);
+//   NSLog(@"Make type with name not implemented. Name was %s",name);
    return NULL;
 }
 
@@ -268,30 +286,118 @@ return 0;
  The method #yices_inconsistent may be used to check that.
  */
 -(void) objcp_assert:(objcp_context) ctx withExpr:(objcp_expr) expr{
-   
-   NSLog(@"Assert not implemented");
+//   NSLog(@"Assert not implemented");
+   ORUInt dom = 0x00000001;
+   id<ORBitVar> trueVar = [ORFactory bitVar:_model low:&dom up:&dom bitLength:1];
+   [_model add:[ORFactory bit:trueVar eq:(id<ORBitVar>)expr]];
+   return;
 }
 
 -(ORBool) objcp_check:(objcp_context) ctx{
-   NSLog(@"Checking CP Model\n");
+   clock_t start;
+   start = clock();
+
+//   NSLog(@"Checking CP Model\n");
    __block ORBool sat = false;
+   __block clock_t searchStart;
+   __block clock_t searchFinish;
+   double totalTime, searchTime;
    
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _model];
-   id<CPEngine> engine = [cp engine];
+//   id<CPEngine> engine = [cp engine];
    id<CPBitVarHeuristic> h =[cp createBitVarFF];
-   id<ORExplorer> explorer = [cp explorer];
+//   id<ORExplorer> explorer = [cp explorer];
    NSArray* allvars = [[[cp engine] model] variables];
+   NSLog(@"%@",_model);
 
+   searchStart = clock();
    [cp solve: ^{
+      id<CPEngine> engine = [cp engine];
+//      NSLog(@"%@",[[cp engine] model]);
+//      NSLog(@"%@",_model);
+      for (id object in allvars){
+         NSLog(@"%@",object);
+//////////
+         //Added 1/8/15 testing SAC constraint effectiveness
+         id<ORTracer> tracer = [cp tracer];
+         ORStatus oc;
+         
+         ORUInt wordLength = [(CPBitVarI*)object getWordLength];
+         TRUInt* up;
+         TRUInt* low;
+         ORUInt freeBits;
+         ORUInt failUp = 0;
+         ORUInt failLow = 0;
+         
+         [(CPBitVarI*)object getUp:&up andLow:&low];
+         
+         for (int i=0; i<wordLength; i++) {
+            freeBits = up[i]._val & ~(low[i]._val);
+            for (int j=0; j<32; j++) {
+               if (freeBits&1) {
+                  [tracer pushNode];
+                  oc = [engine enforce:^void{[object bind:j to:true];[ORConcurrency pumpEvents];}];
+                  if (oc==ORFailure) {
+                     //NSLog(@"Failure in probing for SAC.");
+                     failUp &= 1;
+                  }
+                  [tracer popNode];
+                  
+                  [tracer pushNode];
+                  oc = [engine enforce:^void{[object bind:j to:false];[ORConcurrency pumpEvents];}];
+                  if (oc==ORFailure) {
+                     //NSLog(@"Failure in probing for SAC.");
+                     failLow &= 1;
+                  }
+                  [tracer popNode];
+               }
+               freeBits <<= 1;
+            }
+            if (failUp & failLow) {
+               NSLog(@"Backtracking on SAC constraint.");
+               failNow();
+            }
+            for (int k=31; k>=0; k--) {
+               if (failUp & 1) {
+                  [object bind:(i*32)+k to:false];
+               }
+               if (failLow & 1) {
+                  [object bind:(i*32)+k to:true];
+               }
+               failUp >>= 1;
+               failLow >>=1;
+            }
+         }
+//////////
+      }
+      
       [cp labelBitVarHeuristic:h];
-      NSLog(@"Number propagations: %d",[engine nbPropagation]);
-      NSLog(@"     Number choices: %d",[explorer nbChoices]);
-      NSLog(@"    Number Failures: %d", [explorer nbFailures]);
+      searchFinish = clock();
+//      NSLog(@"  Search Finish Time : %ld",searchFinish);
       for (id object in allvars){
          NSLog(@"%@",object);
       }
       sat = true;
+      NSLog(@"%@",[[cp engine] model]);
    }];
+   searchFinish = clock();
+   totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
+   searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
+   NSLog(@"%@",[[cp engine] model]);
+
+//   double totalTime, searchTime;
+//   totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
+//   searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
+
+//   NSLog(@"  Number propagations: %d",[engine nbPropagation]);
+//   NSLog(@"       Number choices: %d",[explorer nbChoices]);
+//   NSLog(@"      Number Failures: %d", [explorer nbFailures]);
+//   NSLog(@"   Search Start Time : %ld",searchStart);
+//   NSLog(@"  Search Finish Time : %ld",searchFinish);
+   NSLog(@"      Search Time (s): %f",searchTime);
+   NSLog(@"       Total Time (s): %f\n\n",totalTime);
+   NSLog(@"Solver status: %@\n",cp);
+
    return sat;
 }
 
@@ -325,17 +431,29 @@ return 0;
 }
 
 -(objcp_expr) objcp_mk_bv_constant_from_array:(objcp_context) ctx withSize:(ORUInt)size fromArray:(ORUInt*)bv{
-   NSLog(@"Making bitvector constant from array");
-   ORUInt* pattern = alloca(sizeof(ORUInt)*(size%32));
-   for (int i = 0; i<size%32; i++)
+//   NSMutableString* sourceArray = [[NSMutableString alloc] initWithCapacity:size];
+//   for(int i=0;i<size;i++)
+//      [sourceArray appendFormat:@"%d",bv[i]];
+//   NSLog(@"%@",sourceArray);
+   
+//   NSLog(@"Making bitvector constant from array with size %u and pattern %@",size,sourceArray);
+//   [sourceArray release];
+
+   ORUInt wordLength = size/BITSPERWORD;
+   if (size%BITSPERWORD > 0)
+      wordLength++;
+      
+   ORUInt* pattern = alloca(sizeof(ORUInt)*wordLength);
+   for (int i = 0; i<wordLength; i++)
       pattern[i] = 0;
 
-   for (int i=size; i<=0; i--) {
-      if (bv[i] != 0) {
-         pattern[i] += 1;
-      }
-      if (i%32 != 0)
-         pattern[i%32] <<= 1;
+   for (int i=0; i<size; i++) {
+      pattern[i/BITSPERWORD] += bv[size-i-1];
+      if ((size-i-1 != 0) && ((size-i-1)%BITSPERWORD != 0))
+         pattern[i/BITSPERWORD] <<= 1;
+   }
+   for (int i=0; i<wordLength; i++) {
+//      NSLog(@"%x",pattern[i]);
    }
    id<ORBitVar> bitv = [ORFactory bitVar:_model low:pattern up:pattern bitLength:size];
    return bitv;
@@ -351,10 +469,10 @@ return 0;
 }
 
 -(objcp_expr) objcp_mk_and:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs{
-   ORUInt* low = alloca(sizeof(ORUInt));
-   ORUInt* up = alloca(sizeof(ORUInt));
-   *low = 0;
-   *up = 0xFFFFFFFF;
+//   ORUInt* low = alloca(sizeof(ORUInt));
+//   ORUInt* up = alloca(sizeof(ORUInt));
+//   *low = 0;
+//   *up = 0xFFFFFFFF;
 
    ORUInt* zero = alloca(sizeof(ORUInt));
    ORUInt* one = alloca(sizeof(ORUInt));
@@ -373,10 +491,10 @@ return 0;
 }
 
 -(objcp_expr) objcp_mk_or:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs{
-   ORUInt* low = alloca(sizeof(ORUInt));
-   ORUInt* up = alloca(sizeof(ORUInt));
-   *low = 0;
-   *up = 0xFFFFFFFF;
+//   ORUInt* low = alloca(sizeof(ORUInt));
+//   ORUInt* up = alloca(sizeof(ORUInt));
+//   *low = 0;
+//   *up = 0x00000001;
    
    ORUInt* zero = alloca(sizeof(ORUInt));
    ORUInt* one = alloca(sizeof(ORUInt));
@@ -398,12 +516,13 @@ return 0;
    ORUInt* low = alloca(sizeof(ORUInt));
    ORUInt* up = alloca(sizeof(ORUInt));
    *low = 0;
-   *up = 0xFFFFFFFF;
+   *up = 0x00000001;
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:1];
   
    [_model add:[ORFactory bit:(id<ORBitVar>)arg1 EQ:(id<ORBitVar>)arg2 eval:(id<ORBitVar>)bv]];
-   NSLog(@"Added Logical EQUAL Constraint\n");
+//   [_model add:[ORFactory bit:(id<ORBitVar>)arg1 eq:(id<ORBitVar>)arg2]];
+//   NSLog(@"Added Logical EQUAL Constraint\n");
    return bv;
 }
 
@@ -417,14 +536,23 @@ return 0;
 /**
  \brief Return an expression representing <tt>(if c t e)</tt>.
  */
--(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr) c then:(objcp_expr) t else:(objcp_expr)e //{return NULL;}
+-(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr)c then:(objcp_expr) t else:(objcp_expr)e //{return NULL;}
 {
-id<ORBitVar> result;
-   
-   ORUInt low = 0x00000000;
-   ORUInt up = 0x00000001;
-   result = [ORFactory bitVar:_model low:&low up:&up bitLength:1];
-   [_model add:[ORFactory bit:result trueIf:c equals:t zeroIfXEquals:e]];
+   id<ORBitVar> result;
+   ORUInt thenSize = [(id<ORBitVar>)t bitLength];
+   ORUInt elseSize = [(id<ORBitVar>)e bitLength];
+   ORUInt resultSize = max(thenSize, elseSize);
+   ORUInt resultWordLength = resultSize/BITSPERWORD + ((resultSize % BITSPERWORD != 0) ? 1: 0);
+   ORUInt* low = alloca(sizeof(ORUInt)*resultWordLength);
+   ORUInt* up = alloca(sizeof(ORUInt)*resultWordLength);
+   for(int i = 0; i<resultWordLength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
+      
+   result = [ORFactory bitVar:_model low:low up:up bitLength:resultSize];
+//   [_model add:[ORFactory bit:result trueIf:c equals:t zeroIfXEquals:e]];
+   [_model add:[ORFactory bit:c then:t else:e result:result]];
    return result;
 }
 
@@ -435,14 +563,14 @@ id<ORBitVar> result;
    int ySize = [(id<ORBitVar>)arg2 bitLength];
    int size = xSize + ySize;
 
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
       low[i] = 0;
       up[i] = CP_UMASK;
       if (i == (wordlength-1)) {
-         up[i] >>= 32 - (size % 32);
+         up[i] >>= BITSPERWORD - (size % BITSPERWORD);
       }
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
@@ -453,7 +581,7 @@ id<ORBitVar> result;
 -(objcp_expr) objcp_mk_bv_not:(objcp_context) ctx withArg:(objcp_expr) a1{
    int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -462,14 +590,14 @@ id<ORBitVar> result;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 not:bv]];
-   NSLog(@"Added BVNOT Constraint\n");
+//   NSLog(@"Added BVNOT Constraint\n");
    return bv;
 }
 
 -(objcp_expr) objcp_mk_bv_and:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
    int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -478,14 +606,14 @@ id<ORBitVar> result;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 and:(id<ORBitVar>)a2 eq:bv]];
-   NSLog(@"Added BVAND Constraint\n");
+//   NSLog(@"Added BVAND Constraint\n");
    return bv;
 }
 
 -(objcp_expr) objcp_mk_bv_or:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
    int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -494,14 +622,14 @@ id<ORBitVar> result;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[_model add:[ORFactory bit:(id<ORBitVar>)a1 or:(id<ORBitVar>)a2 eq:bv]]];
-   NSLog(@"Added BVOR Constraint\n");
+//   NSLog(@"Added BVOR Constraint\n");
    return bv;
 }
 
 -(objcp_expr) objcp_mk_bv_xor:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
    int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -510,14 +638,14 @@ id<ORBitVar> result;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 xor:(id<ORBitVar>)a2 eq:bv]];
-   NSLog(@"Added BVXOR Constraint\n");
+//   NSLog(@"Added BVXOR Constraint\n");
    return bv;
 }
 
 -(objcp_expr) objcp_mk_bv_lt:(objcp_context)ctx x:(objcp_expr)x lt:(objcp_expr) y{
    int size = [(id<ORBitVar>)x bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -532,7 +660,7 @@ id<ORBitVar> result;
 -(objcp_expr) objcp_mk_bv_shl:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
    int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -540,14 +668,14 @@ id<ORBitVar> result;
       up[i] = CP_UMASK;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-   [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftLBy:(ORUInt)a2 eq:bv]];
-   NSLog(@"Added BitShiftL Constraint\n");
+   [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftLByBV:(id<ORBitVar>)a2 eq:bv]];
+//   NSLog(@"Added BitShiftL Constraint\n");
    return bv;
 }
 -(objcp_expr) objcp_mk_bv_shrl:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
    int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -555,14 +683,14 @@ id<ORBitVar> result;
       up[i] = CP_UMASK;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-   [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftRBy:(ORUInt)a2 eq:bv]];
-   NSLog(@"Added BitShiftR Constraint\n");
+   [_model add:[ORFactory bit:(id<ORBitVar>)a1 shiftRByBV:(id<ORBitVar>)a2 eq:bv]];
+//   NSLog(@"Added BitShiftR Constraint\n");
    return bv;
 }
 -(objcp_expr) objcp_mk_bv_le:(objcp_context)ctx x:(objcp_expr)x le:(objcp_expr) y{
    int size = [(id<ORBitVar>)x bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -589,7 +717,7 @@ id<ORBitVar> result;
 -(objcp_expr) objcp_mk_bv_add:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
    int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -600,7 +728,7 @@ id<ORBitVar> result;
    id<ORBitVar> cin = [ORFactory bitVar:_model low:low up:up bitLength:size];
    id<ORBitVar> cout = [ORFactory bitVar:_model low:low up:up bitLength:size];
    [_model add:[ORFactory bit:(id<ORBitVar>)a1 plus:a2 withCarryIn:cin eq:bv withCarryOut:cout]];
-   NSLog(@"Added BVAdd Constraint\n");
+//   NSLog(@"Added BVAdd Constraint\n");
    return bv;
 }
 //objcp_mk_bv_sub
@@ -608,7 +736,7 @@ id<ORBitVar> result;
 -(objcp_expr) objcp_mk_bv_extract:(objcp_context)ctx from:(ORUInt)msb downTo:(ORUInt)lsb in:(objcp_expr)bv{
    //[ORFactory bit:(id<ORBitVar>)arg1 from:lsb to:msb eq:bv];
    ORUInt size = msb - lsb + 1;
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -621,12 +749,30 @@ id<ORBitVar> result;
 }
 //objcp_mk_bv_sign_extend
 //objcp_mk_bv_rotl
-//objcp_mk_bv_rotr
--(objcp_expr) objcp_mk_bv_zero_extend:(objcp_context)ctx withArg:(objcp_expr)arg1 andAmount:(ORUInt)amt{
-   int size = [(id<ORBitVar>)arg1 bitLength];
+-(objcp_expr) objcp_mk_bv_rotl:(objcp_context) ctx withArg:(objcp_expr) a1 andAmount:(ORUInt)a2{
+   int size = [(id<ORBitVar>)a1 bitLength];
    
-   ORUInt wordlength = (size / 32) + ((size % 32 != 0) ? 1: 0);
-   wordlength += amt;
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   for(int i=0; i< wordlength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
+   id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
+  [_model add:[ORFactory bit:(id<ORBitVar>)a1 rotateLBy:(ORUInt)a2 eq:bv]];
+   //   NSLog(@"Added BVAdd Constraint\n");
+   return bv;
+}
+//objcp_mk_bv_rotr
+-(objcp_expr) objcp_mk_bv_rotr:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
+   return NULL;
+}
+
+-(objcp_expr) objcp_mk_bv_zero_extend:(objcp_context)ctx withArg:(objcp_expr)arg1 andAmount:(ORUInt)amt{
+   int size = [(id<ORBitVar>)arg1 bitLength] + amt;
+   
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD != 0) ? 1: 0);
    ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
    ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
    for(int i=0; i< wordlength;i++){
@@ -637,5 +783,4 @@ id<ORBitVar> result;
    [_model add:[ORFactory bit:(id<ORBitVar>)arg1 zeroExtendTo:(id<ORBitVar>)bv]];
    return bv;
 }
-
 @end

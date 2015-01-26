@@ -412,7 +412,15 @@
 {
    _result = c;
 }
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c
+{
+   _result = c;
+}
 -(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   _result = c;
+}
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c
 {
    _result = c;
 }

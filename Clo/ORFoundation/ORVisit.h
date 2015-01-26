@@ -150,7 +150,9 @@
 -(void) visitBitNot:(id<ORBitNot>)c;
 -(void) visitBitXor:(id<ORBitXor>)c;
 -(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c;
 -(void) visitBitShiftR:(id<ORBitShiftR>)c;
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c;
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;

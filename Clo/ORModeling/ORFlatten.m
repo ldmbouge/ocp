@@ -498,7 +498,15 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitBitShiftR:(id<ORBitShiftR>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c
 {
    _result = [_into addConstraint:c];
 }

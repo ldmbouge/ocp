@@ -1021,12 +1021,52 @@
    }
 }
 
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> places = [self concreteVar:[cstr places]];
+      
+      if(![places bound])
+         @throw [[ORExecutionError alloc] initORExecutionError: "OR Bit Shift Left with Bitvector only implemented for bitvector constants."];
+      
+//      if([(CPBitVarI*)places getWordLength]!=1)
+//         @throw [[ORExecutionError alloc] initORExecutionError: "OR Bit Shift Left with Bitvector only implemented for bitvector constants with at most 32 bits for the number of places to shift."];
+      
+      ORUInt p = [(CPBitVarI*)places getLow][0]._val;
+      id<CPConstraint> concreteCstr = [CPFactory bitShiftL:x by:p equals:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitBitShiftR:(id<ORBitShiftR>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       ORInt p = [cstr places];
+      id<CPConstraint> concreteCstr = [CPFactory bitShiftR:x by:p equals:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> places = [self concreteVar:[cstr places]];
+      
+      if(![places bound])
+         @throw [[ORExecutionError alloc] initORExecutionError: "OR Bit Shift Right with Bitvector only implemented for bitvector constants."];
+
+//      if([(CPBitVarI*)places getWordLength]!=1)
+//         @throw [[ORExecutionError alloc] initORExecutionError: "OR Bit Shift Right with Bitvector only implemented for bitvector constants with at most 32 bits for the number of places to shift."];
+      
+      ORUInt p = [(CPBitVarI*)places getLow][0]._val;
       id<CPConstraint> concreteCstr = [CPFactory bitShiftR:x by:p equals:y];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;

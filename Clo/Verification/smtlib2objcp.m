@@ -405,7 +405,7 @@ static void smtlib2_objcp_parser_declare_function(smtlib2_parser_interface *p,
                                                   const char *name,
                                                   smtlib2_sort sort)
 {
-   fprintf(stdout, "Declaring function\n");
+//   fprintf(stdout, "Declaring function\n");
     smtlib2_objcp_parser *yp = (smtlib2_objcp_parser *)p;
     smtlib2_abstract_parser *ap = (smtlib2_abstract_parser *)p;
     
@@ -1439,7 +1439,10 @@ SMTLIB2_OBJCP_DECLHANDLER(sign_extend) { return NULL; /* TODO */ }
 //}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(rotate_left) { return NULL; /* TODO */ }
+SMTLIB2_OBJCP_DECLHANDLER(rotate_left) {
+   size_t amount = (size_t)smtlib2_vector_at(idx, 0);
+   return [objcpgw objcp_mk_bv_rotl:YCTX(ctx) withArg:(objcp_expr)smtlib2_vector_at(args, 0) andAmount:amount];
+}
 SMTLIB2_OBJCP_DECLHANDLER(rotate_right)  { return NULL; /* TODO */ }
 
 

@@ -562,7 +562,7 @@ void smtlib2_abstract_parser_print_response(smtlib2_abstract_parser *p)
     switch (p->response_) {
     case SMTLIB2_RESPONSE_SUCCESS:
         if (p->print_success_) {
-            fprintf(p->outstream_, "success\n");
+            //fprintf(p->outstream_, "success\n");
         }
         break;
     case SMTLIB2_RESPONSE_ERROR:

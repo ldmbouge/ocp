@@ -491,10 +491,22 @@ enum ORGroupType {
 -(ORInt) places;
 @end
 
+@protocol  ORBitShiftL_BV <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) places;
+@end
+
 @protocol  ORBitShiftR <ORConstraint>
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 -(ORInt) places;
+@end
+
+@protocol  ORBitShiftR_BV <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) places;
 @end
 
 @protocol  ORBitRotateL <ORConstraint>

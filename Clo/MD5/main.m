@@ -390,7 +390,7 @@ int main(int argc, const char* argv[])
 //   twoByteMD4(@"rand7-mssg.txt", BVABS);
 //
 //   twoByteMD5(@"rand0-mssg.txt", BVIBS);
-   twoByteMD5(@"rand0-mssg.txt", BVABS);
+//   twoByteMD5(@"rand0-mssg.txt", BVABS);
 //   twoByteMD5(@"rand0-mssg.txt", BVFF);
 //   twoByteMD5(@"rand1-mssg.txt", BVFF);
 //   twoByteMD5(@"rand2-mssg.txt", BVFF);
@@ -408,7 +408,7 @@ int main(int argc, const char* argv[])
 //   twoByteSHA1(@"fifteen.txt", BVIBS);
 
    
-//   twoByteSHA1(@"lorem-mssg.txt", BVFF);
+   twoByteSHA1(@"lorem-mssg.txt", BVFF);
 //   twoByteSHA1(@"lorem-mssg.txt", BVABS);
 
 

@@ -139,7 +139,9 @@
 -(void) visitBitNot:(id<ORBitNot>)c;
 -(void) visitBitXor:(id<ORBitXor>)c;
 -(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c;
 -(void) visitBitShiftR:(id<ORBitShiftR>)c;
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c;
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
@@ -341,11 +343,31 @@
    [[c left] visit:self];
    [[c right] visit:self];
 }
+
+-(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   //Current implementation of CPBitShiftL only shifts by a constant
+   //Must "visit" places variable when this is corrected
+   [[c places] visit:self];
+}
+
 -(void) visitBitShiftR:(id<ORBitShiftR>)c
 {
    [[c left] visit:self];
    [[c right] visit:self];
 }
+
+-(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   //Current implementation of CPBitShiftR only shifts by a constant
+   //Must "visit" places variable when this is corrected
+   [[c places] visit:self];
+}
+
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    [[c left] visit:self];

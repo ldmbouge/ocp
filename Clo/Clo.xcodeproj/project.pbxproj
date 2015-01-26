@@ -1309,6 +1309,8 @@
 		F5578B9318BC175A0067F74D /* objcpgateway.h in Headers */ = {isa = PBXBuildFile; fileRef = F5578B9218BC175A0067F74D /* objcpgateway.h */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
 		F5618DA518C1075D0044D997 /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F5618DA118C104AD0044D997 /* libgmp.dylib */; };
+		F585088E19CCB20300993B2C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F585088D19CCB20300993B2C /* XCTest.framework */; };
+		F585089119CCD22D00993B2C /* bitvarConstraintTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F585089019CCD22D00993B2C /* bitvarConstraintTests.m */; };
 		F5EA7D3F18885EC200A27F2F /* SHA1b.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D3018885EC200A27F2F /* SHA1b.h */; };
 		F5EA7D4118885EC200A27F2F /* SHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EA7D3218885EC200A27F2F /* SHA1.h */; };
 		F5EA7D7318885F9D00A27F2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EA7D6518885F9D00A27F2F /* main.m */; };
@@ -5827,7 +5829,7 @@
 		5B9ABCF81391329D000997E5 /* objcp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objcp-Info.plist"; sourceTree = "<group>"; };
 		5B9ABCFA1391329D000997E5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5B9ABCFC1391329D000997E5 /* objcp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objcp-Prefix.pch"; sourceTree = "<group>"; };
-		5B9ABD021391329D000997E5 /* objcpTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objcpTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B9ABD021391329D000997E5 /* objcpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objcpTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B9ABD091391329D000997E5 /* objcpTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objcpTests-Info.plist"; sourceTree = "<group>"; };
 		5B9ABD0B1391329D000997E5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5B9ABD0D1391329D000997E5 /* objcpTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objcpTests-Prefix.pch"; sourceTree = "<group>"; };
@@ -6264,6 +6266,8 @@
 		F5618DA118C104AD0044D997 /* libgmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.dylib; path = ../../../../../../usr/local/lib/libgmp.dylib; sourceTree = "<group>"; };
 		F5618DA318C104F60044D997 /* libgmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmp.a; path = ../../../../../../usr/local/lib/libgmp.a; sourceTree = "<group>"; };
 		F5618DA618C107800044D997 /* libgmp.la */ = {isa = PBXFileReference; lastKnownFileType = text; name = libgmp.la; path = ../../../../../../usr/local/lib/libgmp.la; sourceTree = "<group>"; };
+		F585088D19CCB20300993B2C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		F585089019CCD22D00993B2C /* bitvarConstraintTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = bitvarConstraintTests.m; sourceTree = "<group>"; };
 		F5EA7D2F18885EC200A27F2F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SHA1/main.m; sourceTree = "<group>"; };
 		F5EA7D3018885EC200A27F2F /* SHA1b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA1b.h; path = SHA1/SHA1/SHA1b.h; sourceTree = "<group>"; };
 		F5EA7D3118885EC200A27F2F /* SHA1b.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA1b.m; path = SHA1/SHA1/SHA1b.m; sourceTree = "<group>"; };
@@ -6721,6 +6725,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F585088E19CCB20300993B2C /* XCTest.framework in Frameworks */,
 				5BBFBFE11661211300FB7505 /* CPUKernel.framework in Frameworks */,
 				5BBFBFE21661211300FB7505 /* ORModeling.framework in Frameworks */,
 				5BBFBFE31661211300FB7505 /* ORProgram.framework in Frameworks */,
@@ -7907,6 +7912,7 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				F585088F19CCD1E100993B2C /* bitvarTest */,
 				F515FEBE18BA7122000429E7 /* Verification */,
 				F5EA7D6118885F9C00A27F2F /* SHA1 */,
 				F5EA7D2F18885EC200A27F2F /* main.m */,
@@ -7959,7 +7965,7 @@
 			isa = PBXGroup;
 			children = (
 				5B6E89201379D3E9005DB4CA /* Clo */,
-				5B9ABD021391329D000997E5 /* objcpTests.octest */,
+				5B9ABD021391329D000997E5 /* objcpTests.xctest */,
 				5BEEF61013970B6F002ADBD4 /* queens2 */,
 				5BB3836313B3C0E1005B7D52 /* magicserie */,
 				B103533F13BBD7AC00627058 /* queensAC */,
@@ -8054,6 +8060,7 @@
 		5B6E89231379D3E9005DB4CA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F585088D19CCB20300993B2C /* XCTest.framework */,
 				F5618DA618C107800044D997 /* libgmp.la */,
 				F5618DA318C104F60044D997 /* libgmp.a */,
 				F5618DA118C104AD0044D997 /* libgmp.dylib */,
@@ -9614,6 +9621,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F585088F19CCD1E100993B2C /* bitvarTest */ = {
+			isa = PBXGroup;
+			children = (
+				F585089019CCD22D00993B2C /* bitvarConstraintTests.m */,
+			);
+			name = bitvarTest;
+			sourceTree = "<group>";
+		};
 		F5EA7D6118885F9C00A27F2F /* SHA1 */ = {
 			isa = PBXGroup;
 			children = (
@@ -10661,8 +10676,8 @@
 			);
 			name = objcpTests;
 			productName = objcpTests;
-			productReference = 5B9ABD021391329D000997E5 /* objcpTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = 5B9ABD021391329D000997E5 /* objcpTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		5B9B2447177873D3001AB944 /* nonogram */ = {
 			isa = PBXNativeTarget;
@@ -11209,7 +11224,7 @@
 			name = searchTest;
 			productName = objcpTests;
 			productReference = 5BEA4E89178365FA00614A82 /* searchTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		5BEAD78415ABE38500A012FE /* bibd */ = {
 			isa = PBXNativeTarget;
@@ -12524,6 +12539,7 @@
 				5BC43CB613A13C56009119FF /* testCard.m in Sources */,
 				5B7408AF156286C700C05277 /* bitTest.m in Sources */,
 				5B8DCD91165FDDB6007CC562 /* testBitConstraints.m in Sources */,
+				F585089119CCD22D00993B2C /* bitvarConstraintTests.m in Sources */,
 				5BEA4E661783641E00614A82 /* searchTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16064,6 +16080,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -16072,6 +16089,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -16578,6 +16596,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_OBJC_RETAIN_COUNT = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -16595,7 +16614,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				LLVM_LTO = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DUSEVIEWS=1",
@@ -16611,6 +16630,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_OBJC_RETAIN_COUNT = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -16629,7 +16649,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CFLAGS = (
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
@@ -16761,6 +16781,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_OBJC_RETAIN_COUNT = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
@@ -16778,7 +16799,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				LLVM_LTO = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DUSEVIEWS=1",
@@ -16968,21 +16989,25 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_MODULES_AUTOLINK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_DIR)/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
 				INFOPLIST_FILE = "objcpTests/objcpTests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Coverage;
 		};
@@ -16990,6 +17015,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Coverage;
@@ -18124,7 +18150,7 @@
 				INFOPLIST_FILE = "searchTest-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = searchTest;
 				SDKROOT = macosx;
@@ -18441,21 +18467,26 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_MODULES_AUTOLINK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_DIR)/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
 				INFOPLIST_FILE = "objcpTests/objcpTests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -18463,21 +18494,25 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_MODULES_AUTOLINK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_DIR)/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
 				INFOPLIST_FILE = "objcpTests/objcpTests-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -19275,7 +19310,7 @@
 				INFOPLIST_FILE = "searchTest-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = searchTest;
 				SDKROOT = macosx;
@@ -19297,7 +19332,7 @@
 				INFOPLIST_FILE = "searchTest-Info.plist";
 				OTHER_LDFLAGS = (
 					"-framework",
-					SenTestingKit,
+					XCTest,
 				);
 				PRODUCT_NAME = searchTest;
 				SDKROOT = macosx;

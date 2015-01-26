@@ -567,9 +567,23 @@
 -(id<ORBitVar>) right;
 @end
 
+@interface ORBitShiftL_BV : ORConstraintI<ORBitShiftL_BV>
+-(ORBitShiftL_BV*)initORBitShiftL_BV: (id<ORBitVar>) x by:(id<ORBitVar>)p eq: (id<ORBitVar>) y;
+-(id<ORBitVar>) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
 @interface ORBitShiftR : ORConstraintI<ORBitShiftR>
 -(ORBitShiftR*)initORBitShiftR: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
 -(ORInt) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitShiftR_BV : ORConstraintI<ORBitShiftR_BV>
+-(ORBitShiftR_BV*)initORBitShiftR_BV: (id<ORBitVar>) x by:(id<ORBitVar>)p eq: (id<ORBitVar>) y;
+-(id<ORBitVar>) places;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 @end
