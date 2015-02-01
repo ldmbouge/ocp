@@ -1209,6 +1209,78 @@
 //       } while(![x bound]);
 //       */
 //   } while (true);
+   
+   
+   /*************************************************************
+    Apply SAC constraint to all variables
+    ************************************************************/
+   id<ORTracer> tracer = [self tracer];
+   ORStatus oc;
+   
+   ORUInt wordLength;
+   TRUInt* up;
+   TRUInt* low;
+   ORUInt freeBits;
+   ORUInt failUp = 0;
+   ORUInt failLow = 0;
+   
+   for (int i = [av low]; i<[av up];i++){
+      id<CPBitVar>bv = [av at:i];
+      wordLength = [(CPBitVarI*)bv getWordLength];
+      [(CPBitVarI*)bv getUp:&up andLow:&low];
+      
+      for (int i=0; i<wordLength; i++) {
+         freeBits = up[i]._val & ~(low[i]._val);
+         for (int j=0; j<32; j++) {
+            if (freeBits&1) {
+               [tracer pushNode];
+               oc = [_engine enforce:^void{[bv bind:j to:true];[ORConcurrency pumpEvents];}];
+               if (oc==ORFailure) {
+                  NSLog(@"Failure in probing for SAC upon search startup.");
+                  failUp &= 1;
+                  [tracer popNode];
+                  freeBits >>= 1;
+                  [bv bind:(i*32)+j to:false];
+                  continue;
+               }
+               [tracer popNode];
+               
+               [tracer pushNode];
+               oc = [_engine enforce:^void{[bv bind:j to:false];[ORConcurrency pumpEvents];}];
+               if (oc==ORFailure) {
+                  NSLog(@"Failure in probing for SAC upon search startup.");
+                  failLow &= 1;
+                  [tracer popNode];
+                  [bv bind:(i*32)+j to:true];
+                  freeBits >>= 1;
+                  continue;
+               }
+               [tracer popNode];
+            }
+            freeBits >>= 1;
+         }
+         if (failUp & failLow) {
+            NSLog(@"Backtracking on SAC constraint.");
+            failNow();
+         }
+         for (int k=31; k>=0; k--) {
+            if (failUp & 1) {
+               [bv bind:(i*32)+k to:false];
+            }
+            if (failLow & 1) {
+               [bv bind:(i*32)+k to:true];
+            }
+            failUp >>= 1;
+            failLow >>=1;
+         }
+      }
+   }
+   
+   
+   
+   
+   
+   
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
    ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
@@ -1286,7 +1358,7 @@
                      }
                      [tracer popNode];
                }
-                  freeBits <<= 1;
+                  freeBits >>= 1;
                }
                if (failUp & failLow) {
                   NSLog(@"Backtracking on SAC constraint.");
@@ -1344,7 +1416,7 @@
                      }
                      [tracer popNode];
                   }
-                  freeBits <<= 1;
+                  freeBits >>= 1;
                }
                if (failUp & failLow) {
                   NSLog(@"Backtracking on SAC constraint.");

@@ -478,7 +478,7 @@ return self;
    return ORSuspend;
 }
 
--(ORStatus) bitFixedAtIEvt:(ORUInt)idx sender:(CPBitArrayDom*)sender
+-(ORStatus) bitFixedAtIEvt:(ORUInt)dsz at:(ORUInt)idx sender:(CPBitArrayDom*)sender
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
@@ -495,7 +495,7 @@ return self;
    return ORSuspend;
 }
 
--(ORStatus) bitFixedAtEvt:(ORUInt)idx sender:(CPBitArrayDom*)sender
+-(ORStatus) bitFixedAtEvt:(ORUInt)dsz at:(ORUInt)idx sender:(CPBitArrayDom*)sender
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;

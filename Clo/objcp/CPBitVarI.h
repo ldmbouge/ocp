@@ -64,7 +64,7 @@ typedef struct  {
 -(void) setTracksLoseEvt;
 
 // subscription
--(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ConstraintCallback) todo;
+-(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt) idx do:(ConstraintCallback) todo;
 -(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p do:(ConstraintCallback) todo;
 -(void) whenBitFixedAt:(ORUInt)i propagate:(CPCoreConstraint*) c;
 -(void) whenBitFixed:(CPCoreConstraint*)c do:(ConstraintIntCallBack)todo at:(int)p;
@@ -81,7 +81,8 @@ typedef struct  {
 -(ORStatus) changeMinEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedAtEvt:(ORUInt)dsz at:(ORUInt)idx sender:(CPBitArrayDom*)sender;
+//-(ORStatus) bitFixedAtEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
 -(ORStatus) bindEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender;
 // access
 -(ORInt) bitLength;
@@ -154,7 +155,8 @@ typedef struct  {
 -(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) loseValEvt:(ORUInt)val sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtEvt:(ORUInt) i sender:(CPBitArrayDom*)sender;
+//-(ORStatus) bitFixedAtEvt:(ORUInt) i sender:(CPBitArrayDom*)sender;
+-(ORStatus) bitFixedAtEvt:(ORUInt)dsz at:(ORUInt) i sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedAtIEvt:(ORUInt)i sender:(CPBitArrayDom *)sender;
 @end
 

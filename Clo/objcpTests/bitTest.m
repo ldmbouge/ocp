@@ -38,6 +38,24 @@
    [super tearDown];
 }
 
+-(void) testGetBit
+{
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0x0006000F;
+   max[0] = 0x0006000F;
+   
+   id<ORTrail>   dummyTrail = [[ORTrailI alloc] init];
+   CPBitArrayDom* bitDomain = [[CPBitArrayDom alloc] initWithBitPat:32 withLow:min andUp:max andTrail:dummyTrail];
+
+   unsigned char test;
+   if(test=[bitDomain getBit:18])
+      NSLog(@"Works!\n");
+   else
+      NSLog(@"Whaaaaaat? %ud\n",(unsigned short)test);
+}
+
 -(void)testEnumerate
 {
    unsigned int min[2];

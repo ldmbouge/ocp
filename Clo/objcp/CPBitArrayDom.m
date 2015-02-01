@@ -228,7 +228,10 @@
 {
    if (BITFREE(idx)) 
       @throw [[ORExecutionError alloc] initORExecutionError: "Trying to 'get' unbound bit in CPBitArrayDom"];
-   return _low[WORDIDX(idx)]._val  & ONEAT(idx);
+   if (_low[WORDIDX(idx)]._val  & ONEAT(idx))
+      return true;
+   else
+      return false;
 }
 
 -(ORStatus) setBit:(unsigned int) idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
@@ -246,6 +249,8 @@
    }
    [self updateFreeBitCount];
    [x bitFixedEvt:_freebits._val sender:self];
+   //Added _freebits._val when I included bitFixedAtEvt here, not sure it is needed
+   [x bitFixedAtEvt:_freebits._val at:idx sender:self];
    return ORSuspend;
 }
 -(ORBool) isFree:(unsigned int)idx
@@ -852,7 +857,7 @@
    for (int i=0; i<_wordLength; i++) {
       for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
-            [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
+            [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
       }
@@ -882,7 +887,7 @@
    for (int i=0; i<_wordLength; i++) {
       for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
-            [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
+            [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
       }
