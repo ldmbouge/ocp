@@ -514,6 +514,8 @@
     id<ORIntRange>    _transitionColumn;
     id<ORIntVarArray> _transitionTimes;
     id<ORIntArray>*   _transitionArray;
+    
+    ORBool _hasOptionalTasks;
 }
 -(id<ORTaskDisjunctive>) initORTaskDisjunctive: (id<ORTaskVarArray>) tasks
 {
@@ -532,11 +534,16 @@
     _accIds     = [[NSMutableSet alloc] initWithCapacity:tasks.count];
     _closed     = TRUE;
     
-    // Check for duplicates
+    _hasOptionalTasks = FALSE;
+    
+    // Check for duplicates and optional tasks
     for (ORInt i = low; i <= up; i++) {
         if ([_accIds containsObject: _tasks[i]])
             @throw [[ORExecutionError alloc] initORExecutionError: "The disjunctive resource is defined with duplicate tasks"];
         [_accIds addObject: _tasks[i]];
+        
+        if ([_tasks[i] isOptional])
+            _hasOptionalTasks = TRUE;
     }
     [_accIds dealloc];
     _accIds = 0;
@@ -564,6 +571,8 @@
     _transition = 0;
     _resourceTasks = 0;
     _closed     = FALSE;
+    
+    _hasOptionalTasks = FALSE;
 
     return self;
 }
@@ -580,7 +589,9 @@
     _transition = transition;
     _resourceTasks = 0;
     _closed     = FALSE;
-    
+
+    _hasOptionalTasks = FALSE;
+
     return self;
 }
 
@@ -603,6 +614,9 @@
         [_acc        addObject: task           ];
         [_accIds     addObject: @([task getId])];
         [_accResTask addObject: @(0           )];
+        
+        if ([task isOptional])
+            _hasOptionalTasks = TRUE;
     }
 }
 -(void) add: (id<ORTaskVar>) task type: (ORInt) type
@@ -618,6 +632,9 @@
         [_accTypes   addObject: @(type)        ];
         [_accIds     addObject: @([task getId])];
         [_accResTask addObject: @(0           )];
+        
+        if ([task isOptional])
+            _hasOptionalTasks = TRUE;
     }
 }
 -(void) add: (id<ORResourceTask>) task duration:(ORInt)duration
@@ -636,6 +653,8 @@
         [_accResTask addObject: @(1           )];
         // Add resource to resource task
         [task addResource:self with:durationRange];
+        
+        _hasOptionalTasks = TRUE;
     }
 }
 -(void) postTransitionTimes
@@ -766,6 +785,14 @@
 -(id<ORIntMatrix>) extendedTransitionMatrix
 {
    return _typeTransition;
+}
+-(ORBool) hasOptionalTasks
+{
+    return _hasOptionalTasks;
+}
+-(id<ORIntArray>) resourceTasks
+{
+    return _resourceTasks;
 }
 -(NSSet*) allVars
 {

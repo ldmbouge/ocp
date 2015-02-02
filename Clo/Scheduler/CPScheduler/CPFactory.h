@@ -39,6 +39,7 @@
 +(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>) tasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity;
 +(id<CPConstraint>) taskDisjunctive: (id<CPTaskVarArray>) tasks;
 +(id<CPConstraint>) taskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
++(id<CPConstraint>) optionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 
 +(id<CPConstraint>) difference: (id<ORTracker>) tracker engine: (id<CPEngine>) e withInitCapacity:(ORInt) numItems;
 

@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPConstraint.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORScheduler/ORConstraintI.h>
 #import <ORScheduler/ORTaskI.h>
 #import <ORScheduler/ORActivity.h>
 #import <ORProgram/CPConcretizer.h>
@@ -337,31 +338,70 @@
         [transitionTasks visit: self];
         [succ visit: self];
         id<CPConstraint> concreteCstr;
+        const ORBool hasOptionalTasks = [(ORTaskDisjunctive *)cstr hasOptionalTasks];
 
+        const ORUInt idTasks = ([cstr hasTransition] ? transitionTasks.getId : tasks.getId);
         // NOTE XXX TODO sequence constraint is not working on resource tasks
-        if ([cstr hasTransition])
-            concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
-        else
-            concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
-        [_engine add: concreteCstr];
-        if ([cstr hasTransition])
-            concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
-        else
-            concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
+        if (hasOptionalTasks) {
+            id<ORIntArray> resTasks = [(ORTaskDisjunctive *)cstr resourceTasks];
+            assert(tasks.low == resTasks.low && tasks.up == resTasks.up);
+            ORBool hasResourceTasks = FALSE;
+            for (ORInt i = tasks.low; i <= tasks.up; i++) {
+                if ([resTasks at: i] == 1) {
+                    hasResourceTasks = TRUE;
+                    break;
+                }
+            }
+            // TODO The sequence propagator is not yet working with resource tasks
+            if (!hasResourceTasks)
+                [_engine add: [CPFactory optionalTaskSequence:_gamma[idTasks] successors:_gamma[succ.getId]]];
+            concreteCstr = [CPFactory taskDisjunctive:_gamma[idTasks]];
+            
+            // Check for resource tasks and set the concrete disjunctive constraint
+            for (ORInt i = tasks.low; i <= tasks.up; i++) {
+                if ([resTasks at:i] == 1) {
+                    id<ORResourceTask> t = (id<ORResourceTask>) tasks[i];
+                    assert(_gamma[t.getId] != NULL);
+                    const ORInt idx = [t getIndex:cstr];
+                    assert([t resources].low <= idx && idx <= [t resources].up);
+                    id<CPResourceTask> concreteT = _gamma[t.getId];
+                    [concreteT set:concreteCstr at:idx];
+                    if ([cstr hasTransition]) {
+                        t = (id<ORResourceTask>) transitionTasks[i];
+                        assert(_gamma[t.getId] != NULL);
+                        concreteT = _gamma[t.getId];
+                        [concreteT set:concreteCstr at:idx];
+                    }
+                }
+            }
+        }
+        else {
+            [_engine add: [CPFactory taskSequence:_gamma[idTasks] successors:_gamma[succ.getId]]];
+            concreteCstr = [CPFactory taskDisjunctive:_gamma[idTasks]];
+        }
+//        if ([cstr hasTransition])
+//            concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
+//        else
+//            concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
+//        [_engine add: concreteCstr];
+//        if ([cstr hasTransition])
+//            concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
+//        else
+//            concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
         
         // Check for resource tasks and set the concrete disjunctive constraint
-        for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if ([tasks[i] isMemberOfClass:[ORResourceTask class]]) {
-                id<ORResourceTask> t = (id<ORResourceTask>) tasks[i];
-                assert(_gamma[t.getId] != NULL);
-                ORInt idx = [t getIndex:cstr];
-                assert([t resources].low <= idx && idx <= [t resources].up);
-                id<CPResourceTask> concreteT = _gamma[t.getId];
-                [concreteT set:concreteCstr at:idx];
-            }
-        }
+//        for (ORInt i = tasks.low; i <= tasks.up; i++) {
+//            if ([tasks[i] isMemberOfClass:[ORResourceTask class]]) {
+//                id<ORResourceTask> t = (id<ORResourceTask>) tasks[i];
+//                assert(_gamma[t.getId] != NULL);
+//                ORInt idx = [t getIndex:cstr];
+//                assert([t resources].low <= idx && idx <= [t resources].up);
+//                id<CPResourceTask> concreteT = _gamma[t.getId];
+//                [concreteT set:concreteCstr at:idx];
+//            }
+//        }
     }
 }
 

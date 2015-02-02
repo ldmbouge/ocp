@@ -352,6 +352,7 @@
 }
 +(id<ORResourceTask>) resourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
+    @throw [[ORExecutionError alloc] initORExecutionError: "Resource tasks are not available yet!"];
     id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTaskEmpty:model horizon:horizon duration:duration];
     [model trackMutable:o];
     return o;
@@ -366,6 +367,7 @@
 }
 +(id<ORResourceTask>) optionalResourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
+    @throw [[ORExecutionError alloc] initORExecutionError: "Resource tasks are not available yet!"];
     id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTaskEmpty:model horizon:horizon duration:duration];
     [model trackMutable:o];
     return o;

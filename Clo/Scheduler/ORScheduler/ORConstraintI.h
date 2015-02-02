@@ -68,6 +68,8 @@
 -(id<ORIntVarArray>) successors;
 -(void) add: (id<ORTaskVar>) act;
 -(void) add: (id<ORTaskVar>) act type: (ORInt) type;
+-(ORBool) hasOptionalTasks;
+-(id<ORIntArray>) resourceTasks;
 @end
 
 // Difference logic constraint

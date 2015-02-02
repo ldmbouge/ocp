@@ -203,13 +203,14 @@
     ORInt   _size;      // Number of tasks (size of the array '_tasks')
     TRInt   _last;      // Index of first absent task or sink index
     id<ORTRIntArray> _assigned;
+    id<CPResourceArray> _res;
 }
--(id) initCPTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
+-(id) initCPOptionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ
 {
     NSLog(@"Create constraint CPTaskSequence\n");
     
-    assert(tasks.low == _succ.low + 1);
-    assert(tasks.up  == _succ.up     );
+    assert(tasks.low == succ.low + 1);
+    assert(tasks.up  == succ.up     );
     
     _engine = [tasks[tasks.low] engine];
     
@@ -225,13 +226,51 @@
     _low  = _tasks.range.low;
     _up   = _tasks.range.up;
     _last = makeTRInt(_trail, _up + 1);
+    _res  = NULL;
     
     return self;
 }
+-(id) initCPOptionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ resource:(id<CPResourceArray>) resource
+{
+    NSLog(@"Create constraint CPTaskSequence\n");
+    
+    assert(tasks.low == succ.low + 1);
+    assert(tasks.up  == succ.up     );
+    assert(tasks.low == resource.low && tasks.up == resource.up);
+    
+    _engine = [tasks[tasks.low] engine];
+    
+    self = [super initCPCoreConstraint: _engine];
+    
+    _tasks    = tasks;
+    _succ     = succ;
+    _assigned = [CPFactory TRIntArray: _engine range: _succ.range];
+    
+    _priority = LOWEST_PRIO;
+    
+    _size = (ORUInt) _tasks.count;
+    _low  = _tasks.range.low;
+    _up   = _tasks.range.up;
+    _last = makeTRInt(_trail, _up + 1);
+    _res  = resource;
 
+    return self;
+}
 -(void) dealloc
 {
     [super dealloc];
+}
+static inline ORBool isAbsent(CPOptionalTaskSequence * seq, const ORInt t)
+{
+    if (seq->_res != NULL && [seq->_res at:t] != NULL)
+        return [(CPResourceTask *)[seq->_tasks at:t] isAbsentOn:[seq->_res at:t]];
+    return [[seq->_tasks at:t] isAbsent];
+}
+static inline ORBool isPresent(CPOptionalTaskSequence * seq, const ORInt t)
+{
+    if (seq->_res != NULL && [seq->_res at:t] != NULL)
+        return [(CPResourceTask *)[seq->_tasks at:t] isPresentOn:[seq->_res at:t]];
+    return [[seq->_tasks at:t] isPresent];
 }
 -(ORStatus) post
 {
@@ -253,10 +292,10 @@
     for (ORInt i = _low - 1; i <= _up; i++)
         [_succ[i] whenBindPropagate: self];
     for (ORInt i = _low; i <= _up; i++) {
-        if (![_tasks[i] isAbsent]) {
+        if (!isAbsent(self, i)) {
             [_tasks[i] whenChangeStartPropagate: self];
             [_tasks[i] whenChangeEndPropagate: self];
-            if (![_tasks[i] isPresent]) {
+            if (!isPresent(self, i)) {
                 [_tasks[i] whenAbsentDo:^(){[self propagateAbsent:i];} priority:_priority + 1 onBehalf:self];
                 [_tasks[i] whenPresentDo:^(){[self propagatePresence:i];} priority:_priority + 1 onBehalf:self];
             }
@@ -275,7 +314,7 @@
     NSMutableArray * removeVals = [[NSMutableArray alloc] initWithCapacity:4];
     ORInt last = _last._val;
     for (ORInt k = _low; k <= _up; k++) {
-        if (![_assigned at: k] && [_tasks[k] isAbsent]) {
+        if (![_assigned at: k] && isAbsent(self, k)) {
             [_succ[k] bind:last];
             [_assigned set: 1 at: k];
             [removeVals addObject:@(last)];
@@ -287,7 +326,7 @@
         assignTRInt(&(_last), last, _trail);
     // Removal of invalid values
     for (ORInt j = _low - 1; j <= _up; j++) {
-        if (![_assigned at: j] && ![_tasks[j] isAbsent]) {
+        if (![_assigned at: j] && !isAbsent(self, j)) {
             for (ORInt k = 0; k < [removeVals count]; k++)
                 [_succ[j] remove: [removeVals[k] intValue]];
         }
@@ -298,7 +337,7 @@
     ORInt start = -MAXINT;
     ORInt nb = 0;
     while (true) {
-        if (![_succ[i] bound] || (i > 0 && [_tasks[i] isAbsent]))
+        if (![_succ[i] bound] || (i > 0 && isAbsent(self, i)))
             break;
         nb++;
         ORInt next = [_succ[i] value];
@@ -307,9 +346,9 @@
         i = next;
         if (next == _up + 1)
             break;
-        if (i == 0 || [_tasks[i] isPresent])
+        if (i == 0 || isPresent(self, i))
             [_tasks[next] updateStart: start];
-        if ([_tasks[next] isPresent])
+        if (isPresent(self, next))
             start = [_tasks[next] ect];
     }
     assert(0 <= nb && nb <= _size + 1);
@@ -317,7 +356,7 @@
     ORInt minEct = MAXINT;
     ORInt duration = 0;
     for(ORInt k = _low; k <= _up; k++) {
-        if (k != i && ![_assigned at: k] && [_tasks[k] isPresent]) {
+        if (k != i && ![_assigned at: k] && isPresent(self, k)) {
             [_tasks[k] updateStart: start];
             ORInt lct = [_tasks[k] lct];
             if (lct > maxLct)
@@ -338,7 +377,7 @@
         ORInt max = [_succ[i] max];
         for(ORInt k = min; k <= max; k++) {
             if ([_succ[i] member: k]) {
-                if (k != _up + 1 && [_tasks[k] isPresent]) {
+                if (k != _up + 1 && isPresent(self, k)) {
                     if ([_tasks[k] est] + duration > maxLct) {
                         [_succ[i] remove: k];
                         [_tasks[k] updateStart: minEct];
@@ -354,15 +393,22 @@
 {
     if ([_succ[k] bound]) {
         const ORInt next = [_succ[k] value];
-        if (next != _up + 1)
-            [_tasks[next] labelPresent:FALSE];
+        if (next != _up + 1) {
+            if (_res != NULL && _res[next] != NULL)
+                [(CPResourceTask *)_tasks[next] remove:_res[next]];
+            else
+                [_tasks[next] labelPresent:FALSE];
+        }
     }
 }
 -(void) propagatePresence: (ORInt) k
 {
     for (ORInt i = _low; i <= _up; i++) {
-        if (i != k && [_succ[i] bound] && k == [_succ[i] value])
+        if (i != k && [_succ[i] bound] && k == [_succ[i] value]) {
+            if (_res != NULL && _res[i] != NULL)
+                [(CPResourceTask *)_tasks[i] bind:_res[i]];
             [_tasks[i] labelPresent:TRUE];
+        }
     }
 }
 -(void) postPrecedenceConstraint: (ORInt) k
@@ -370,13 +416,21 @@
     ORInt next = [_succ[k] value];
     if (next != _up + 1) {
         if ([_tasks[next] isPresent]) {
+            if (_res != NULL && _res[k] != NULL)
+                [(CPResourceTask *)_tasks[k] bind:_res[k]];
             [_tasks[k] labelPresent:TRUE];
             [_engine addInternal: [CPFactory constraint: _tasks[k] precedes: _tasks[next]]];
         }
-        else if ([_tasks[k] isAbsent])
-            [_tasks[next] labelPresent:FALSE];
-        else if (![_tasks[next] isAbsent])
+        else if ([_tasks[k] isAbsent]) {
+            if (_res != NULL && _res[next] != NULL)
+                [(CPResourceTask *)_tasks[next] remove:_res[next]];
+            else
+                [_tasks[next] labelPresent:FALSE];
+        }
+        else if (![_tasks[next] isAbsent]) {
+            // TODO Below doesn't work for resource tasks!!!
             [_engine addInternal: [CPFactory constraint: _tasks[k] optionalPrecedes: _tasks[next]]];
+        }
     }
 }
 -(NSSet*) allVars

@@ -1234,13 +1234,14 @@
     }
 
     // Updating the duration
-    [_normal   updateMinDuration:[_extended minDuration] - tmin]];
-    [_normal   updateMaxDuration:[_extended maxDuration] - tmax]];
-    [_extended updateMinDuration:[_normal   minDuration] + tmin]];
-    [_extended updateMaxDuration:[_normal   maxDuration] + tmax]];
+    [_normal   updateMinDuration:[_extended minDuration] - tmin];
+    [_normal   updateMaxDuration:[_extended maxDuration] - tmax];
+    [_extended updateMinDuration:[_normal   minDuration] + tmin];
+    [_extended updateMaxDuration:[_normal   maxDuration] + tmax];
     if (normalAbsent == 1 && [_normal isPresent]) {
-        [_time updateMin:[_extended minDuration] - [_normal minDuration]];
-        [_time updateMax:[_extended maxDuration] - [_normal maxDuration]];
+        const ORInt i = normalIndex0[0];
+        [_time[i] updateMin:[_extended minDuration] - [_normal minDuration]];
+        [_time[i] updateMax:[_extended maxDuration] - [_normal maxDuration]];
     }
     
     // Updating the start and end

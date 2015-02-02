@@ -339,6 +339,12 @@
    [[tasks tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>) optionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ
+{
+    id<CPConstraint> o = [[CPOptionalTaskSequence alloc] initCPOptionalTaskSequence: tasks successors: succ];
+    [[tasks tracker] trackMutable: o];
+    return o;
+}
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) normal extended:  (id<CPTaskVar>) extended time: (id<CPIntVar>) time
 {
    id<CPConstraint> o = [[CPTaskAddTransitionTime alloc] initCPTaskAddTransitionTime: normal extended: extended time: time];

@@ -522,7 +522,7 @@
     }
     else {
         assert([_dictRes objectForKey:@(key)] != nil);
-        assert([_transitionDictDur objectForKey:@(key)] == nil);
+        assert([_transitionDictTime objectForKey:@(key)] == nil);
         [_transitionDictTime setObject:duration forKey:@(key)];
     }
 }
