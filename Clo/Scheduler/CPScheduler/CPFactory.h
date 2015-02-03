@@ -27,6 +27,7 @@
 
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after;
++(id<CPConstraint>) constraint: (id<CPTaskVar>) before onResource:(id<CPConstraint>)bRes optionalPrecedes:(id<CPTaskVar>) after onResource:(id<CPConstraint>)aRes;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task presence: (id<CPIntVar>) presence;

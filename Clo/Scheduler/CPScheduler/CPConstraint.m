@@ -949,6 +949,136 @@
 }
 @end
 
+@implementation CPOptionalResourceTaskPrecedence {
+    id<CPConstraint> _beforeRes;
+    id<CPConstraint> _afterRes;
+}
+-(id) initCPOptionalResourceTaskPrecedence:(id<CPTaskVar>)before res:(id<CPConstraint>)bRes after:(id<CPTaskVar>)after res:(id<CPConstraint>)aRes
+{
+    self = [super initCPCoreConstraint: [before engine]];
+    
+    _before    = before;
+    _after     = after;
+    _beforeRes = bRes;
+    _afterRes  = aRes;
+    NSLog(@"Create constraint CPOptionalResourceTaskPrecedence\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    if (_beforeRes != NULL && _afterRes != NULL) {
+        CPResourceTask * before = (CPResourceTask *)_before;
+        CPResourceTask * after  = (CPResourceTask *)_after;
+        [self propagateResTaskBeforeResTask];
+        if (![_before bound] && ![_after bound] && ![before isAbsentOn:_beforeRes] && ![after isAbsentOn:_afterRes]) {
+            [_before whenChangeStartDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+            [_before whenChangeDurationDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+            [_after whenChangeEndDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+            if ([_before isOptional])
+                [_before whenPresentDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+            if ([_after isOptional])
+                [_after whenPresentDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+        }
+    }
+    else if (_beforeRes != NULL) {
+        CPResourceTask * before = (CPResourceTask *)_before;
+        [self propagateResTaskBeforeTask];
+        if (![_before bound] && ![_after bound] && ![before isAbsentOn:_beforeRes]) {
+            [_before whenChangeStartDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+            [_before whenChangeDurationDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+            [_after whenChangeEndDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+            if ([_before isOptional])
+                [_before whenPresentDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+            if ([_after isOptional])
+                [_after whenPresentDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+        }
+    }
+    else if (_afterRes != NULL) {
+        CPResourceTask * after  = (CPResourceTask *)_after;
+        [self propagateTaskBeforeResTask];
+        if (![_before bound] && ![_after bound] && ![after isAbsentOn:_afterRes]) {
+            [_before whenChangeStartDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+            [_before whenChangeDurationDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+            [_after whenChangeEndDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+            if ([_before isOptional])
+                [_before whenPresentDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+            if ([_after isOptional])
+                [_after whenPresentDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+        }
+    }
+    else {
+        assert(_beforeRes == NULL && _afterRes == NULL);
+        [self propagate];
+        if (![_before bound] && ![_after bound]) {
+            [_before whenChangeStartPropagate: self];
+            [_before whenChangeDurationPropagate: self];
+            [_after whenChangeEndPropagate: self];
+            if ([_before isOptional])
+                [_before whenPresentPropagate: self];
+            if ([_after isOptional])
+                [_after whenPresentPropagate: self];
+        }
+    }
+    return ORSuspend;
+}
+-(void) propagateResTaskBeforeTask
+{
+    assert(_beforeRes != NULL && _afterRes == NULL);
+    CPResourceTask * before = (CPResourceTask *)_before;
+    if ([before isPresentOn:_beforeRes]) {
+        [_after updateStart: [_before ect]];
+        if ([_after isPresent])
+            [_before updateEnd: [_after lst]];
+    }
+}
+-(void) propagateTaskBeforeResTask
+{
+    assert(_beforeRes == NULL && _afterRes != NULL);
+    CPResourceTask * after = (CPResourceTask *)_after;
+    if ([after isPresentOn:_afterRes]) {
+        if ([_before isPresent])
+            [_after updateStart: [_before ect]];
+        [_before updateEnd: [_after lst]];
+    }
+}
+-(void) propagateResTaskBeforeResTask
+{
+    assert(_beforeRes != NULL && _afterRes != NULL);
+    CPResourceTask * before = (CPResourceTask *)_before;
+    CPResourceTask * after  = (CPResourceTask *)_after;
+    if ([before isPresentOn:_beforeRes] && [after isPresentOn:_afterRes]) {
+        if ([_before isPresent])
+            [_after updateStart: [_before ect]];
+        [_before updateEnd: [_after lst]];
+    }
+}
+-(void) propagate
+{
+    assert(_beforeRes == NULL && _afterRes == NULL);
+    if ([_before isPresent])
+        [_after updateStart: [_before ect]];
+    if ([_after isPresent])
+        [_before updateEnd: [_after lst]];
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_before];
+    [rv addObject:_after];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
+}
+@end
+
 @implementation CPTaskIsFinishedBy
 
 -(id) initCPTaskIsFinishedBy: (id<CPTaskVar>) task : (id<CPIntVar>) date

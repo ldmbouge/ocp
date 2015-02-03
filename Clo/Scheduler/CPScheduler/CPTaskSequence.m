@@ -428,8 +428,10 @@ static inline ORBool isPresent(CPOptionalTaskSequence * seq, const ORInt t)
                 [_tasks[next] labelPresent:FALSE];
         }
         else if (![_tasks[next] isAbsent]) {
-            // TODO Below doesn't work for resource tasks!!!
-            [_engine addInternal: [CPFactory constraint: _tasks[k] optionalPrecedes: _tasks[next]]];
+            if (_res != NULL)
+                [_engine addInternal:[CPFactory constraint:_tasks[k] onResource:_res[k] optionalPrecedes:_tasks[next] onResource:_res[next]]];
+            else
+                [_engine addInternal: [CPFactory constraint: _tasks[k] optionalPrecedes: _tasks[next]]];
         }
     }
 }

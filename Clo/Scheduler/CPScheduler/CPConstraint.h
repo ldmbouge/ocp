@@ -70,6 +70,18 @@
 -(ORUInt) nbUVars;
 @end
 
+@interface CPOptionalResourceTaskPrecedence : CPCoreConstraint {
+    id<CPTaskVar> _before;
+    id<CPTaskVar> _after;
+}
+-(id) initCPOptionalResourceTaskPrecedence: (id<CPTaskVar>) before res: (id<CPConstraint>) bRes after: (id<CPTaskVar>) after res: (id<CPConstraint>) aRes;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
 @interface CPTaskIsFinishedBy : CPCoreConstraint {
    id<CPTaskVar> _task;
    id<CPIntVar> _date;

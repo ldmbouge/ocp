@@ -300,6 +300,15 @@
    [engine trackMutable: cstr];
    return cstr;
 }
++(id<CPConstraint>) constraint:(id<CPTaskVar>)before onResource:(id<CPConstraint>)bRes optionalPrecedes:(id<CPTaskVar>)after onResource:(id<CPConstraint>)aRes
+{
+    if (bRes == NULL && aRes == NULL)
+        return [self constraint:before optionalPrecedes:after];
+    id<CPEngine> engine = [before engine];
+    id<CPConstraint> cstr = [[CPOptionalResourceTaskPrecedence alloc] initCPOptionalResourceTaskPrecedence:before res:bRes after:after res:aRes];
+    [engine trackMutable: cstr];
+    return cstr;
+}
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date
 {
    id<CPEngine> engine = [task engine];
