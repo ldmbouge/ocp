@@ -11,10 +11,11 @@
 
 @protocol CPTaskVarArray;
 @protocol CPTaskVar;
+@protocol CPResourceArray;
 
 @interface CPTaskSequence : CPCoreConstraint {
-   id<CPTaskVarArray>  _tasks;   // TaskVar
-   id<CPIntVarArray>  _succ;   // TaskVar
+   id<CPTaskVarArray> _tasks;   // TaskVar
+   id<CPIntVarArray>  _succ;    // Successors
 }
 -(id) initCPTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 -(void) dealloc;
@@ -25,10 +26,11 @@
 @end
 
 @interface CPOptionalTaskSequence : CPCoreConstraint {
-    id<CPTaskVarArray>  _tasks;   // TaskVar
-    id<CPIntVarArray>  _succ;   // TaskVar
+    id<CPTaskVarArray> _tasks;  // TaskVar
+    id<CPIntVarArray>  _succ;   // Successors
 }
 -(id) initCPOptionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
+-(id) initCPOptionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ resource:(id<CPResourceArray>) resource;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

@@ -341,7 +341,7 @@
         const ORBool hasOptionalTasks = [(ORTaskDisjunctive *)cstr hasOptionalTasks];
 
         const ORUInt idTasks = ([cstr hasTransition] ? transitionTasks.getId : tasks.getId);
-        // NOTE XXX TODO sequence constraint is not working on resource tasks
+
         if (hasOptionalTasks) {
             id<ORIntArray> resTasks = [(ORTaskDisjunctive *)cstr resourceTasks];
             assert(tasks.low == resTasks.low && tasks.up == resTasks.up);
@@ -352,10 +352,20 @@
                     break;
                 }
             }
-            // TODO The sequence propagator is not yet working with resource tasks
-            if (!hasResourceTasks)
-                [_engine add: [CPFactory optionalTaskSequence:_gamma[idTasks] successors:_gamma[succ.getId]]];
+            // Adding the disjunctive constraint
             concreteCstr = [CPFactory taskDisjunctive:_gamma[idTasks]];
+            // Adding the sequence constraint
+            if (hasResourceTasks) {
+                id<CPResourceArray> res;
+                res = [CPFactory resourceArray:_engine range:[resTasks range] with:^id<CPConstraint>(ORInt k) {
+                    if ([resTasks at: k] == 1)
+                        return concreteCstr;
+                    return NULL;
+                }];
+                [_engine add: [CPFactory optionalTaskSequence:_gamma[idTasks] successors:_gamma[succ.getId] resource:res]];
+            }
+            else
+                [_engine add: [CPFactory optionalTaskSequence:_gamma[idTasks] successors:_gamma[succ.getId]]];
             
             // Check for resource tasks and set the concrete disjunctive constraint
             for (ORInt i = tasks.low; i <= tasks.up; i++) {
