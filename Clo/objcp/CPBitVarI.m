@@ -381,11 +381,12 @@ return self;
    hookupEvent(_engine, _net._maxEvt, todo, c, p);
 }
 
--(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ConstraintCallback) todo
+-(void) whenBitFixed: (CPCoreConstraint*)c at:(ORUInt)p do: (ConstraintCallback) todo
 {
    hookupEvent(_engine, _net._bitFixedEvt, todo, c, p);
 }
--(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p withI:(int)i do:(ConstraintIntCallBack) todo
+//-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p withI:(int)i do:(ConstraintCallback) todo
+-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(ORUInt)p do:(ConstraintCallback) todo
 {
    hookupEvent(_engine, _net._bitFixedAtIEvt, todo, c, p);
 }

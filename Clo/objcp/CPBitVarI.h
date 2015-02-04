@@ -65,9 +65,9 @@ typedef struct  {
 
 // subscription
 -(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt) idx do:(ConstraintCallback) todo;
--(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p do:(ConstraintCallback) todo;
+-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(ORUInt)p do:(ConstraintCallback) todo;
 -(void) whenBitFixedAt:(ORUInt)i propagate:(CPCoreConstraint*) c;
--(void) whenBitFixed:(CPCoreConstraint*)c do:(ConstraintIntCallBack)todo at:(int)p;
+//-(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt)p do:(ConstraintIntCallBack)todo;
 
 -(void) whenChangeDo:(CPCoreConstraint*) c;
 -(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
