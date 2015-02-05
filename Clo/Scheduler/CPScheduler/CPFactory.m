@@ -336,11 +336,23 @@
     [[tasks tracker] trackMutable:o];
     return o;
 }
++(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
+{
+    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
+    [[tasks tracker] trackMutable:o];
+    return o;
+}
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {
    id<CPConstraint> o = [[CPTaskDisjunctive alloc] initCPTaskDisjunctive: tasks];
    [[tasks tracker] trackMutable: o];
    return o;
+}
++(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks resourceTasks:(id<ORIntArray>)resTasks
+{
+    id<CPConstraint> o = [[CPTaskDisjunctive alloc] initCPTaskDisjunctive: tasks resourceTasks:resTasks];
+    [[tasks tracker] trackMutable: o];
+    return o;
 }
 +(id<CPConstraint>) taskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ
 {

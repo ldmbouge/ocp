@@ -38,7 +38,9 @@
 +(id<CPConstraint>) cumulative: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d end:(id<CPIntVarArray>) e usage:(id<ORIntArray>)r capacity:(id<CPIntVar>) c;
 +(id<CPConstraint>) disjunctive: (id<CPIntVarArray>) s duration:(id<CPIntVarArray>) d;
 +(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>) tasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity;
++(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>) tasks resourceTasks:(id<ORIntArray>)resTasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity;
 +(id<CPConstraint>) taskDisjunctive: (id<CPTaskVarArray>) tasks;
++(id<CPConstraint>) taskDisjunctive: (id<CPTaskVarArray>) tasks resourceTasks:(id<ORIntArray>)resTasks;
 +(id<CPConstraint>) taskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 +(id<CPConstraint>) optionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 +(id<CPConstraint>) optionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ resource:(id<CPResourceArray>) res;

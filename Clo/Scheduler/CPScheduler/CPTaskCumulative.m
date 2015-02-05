@@ -130,6 +130,7 @@ typedef struct {
     
     _priority = LOWEST_PRIO;
     _tasks    = tasks;
+    _resTasks = NULL;
     _usages   = usages;
     _capacity = capacity;
     
@@ -153,6 +154,61 @@ typedef struct {
     _resourceTask = NULL;
     _resourceTaskAsOptional = false;
 
+    return self;
+}
+-(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with:(id<CPIntVarArray>)usages and:(id<CPIntVar>)capacity
+{
+    // Checking whether the number of activities is within the limit
+    if (tasks.count > (NSUInteger) MAXNBTASK) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: Number of elements exceeds beyond the limit!"];
+    }
+    
+    // Checking whether the size and indices of the arrays tasks and usages are consistent
+    if (tasks.count != usages.count || tasks.low != usages.low || tasks.up != usages.up) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the arrays 'tasks' and 'usages' must have the same size and indices!"];
+    }
+    
+    // Checking wether the domain of the capacity contains non-negative values
+    if (capacity.max < 0) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the domain of the variable 'capacity' must contain at least one non-negative value!"];
+    }
+    
+    // Checking whether the domain ot the usage variables contain non-negative values
+    for (ORInt i = usages.low; i <= usages.up; i++) {
+        if (usages[i].max < 0) {
+            @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the domain of the 'usages' variables must contain at least one non-negative value!"];
+        }
+    }
+    
+    id<CPTaskVar> task0 = tasks[tasks.low];
+    self = [super initCPCoreConstraint: [task0 engine]];
+    
+    _priority = LOWEST_PRIO;
+    _tasks    = tasks;
+    _resTasks = resTasks;
+    _usages   = usages;
+    _capacity = capacity;
+    
+    // Setup for propagation
+    _tt_filt    = true;
+    _ttef_check = true;
+    _ttef_filt  = true;
+    
+    // Initialisation of the counters
+    _nb_tt_incons   = 0;
+    _nb_tt_props    = 0;
+    _nb_ttef_incons = 0;
+    _nb_ttef_props  = 0;
+    
+    // Initialisation of other data structures
+    _bound   = NULL;
+    _index   = NULL;
+    _profile = NULL;
+    
+    // Resource tasks
+    _resourceTask = NULL;
+    _resourceTaskAsOptional = false;
+    
     return self;
 }
 
@@ -229,7 +285,7 @@ typedef struct {
     _firstRT         = _size;
     for (ORInt t0 = 0; t0 < _size; t0++) {
         const ORInt t = t0 +  _low;
-        _resourceTask[t0] = ([_tasks[t] isMemberOfClass:[CPResourceTask class]] || [_tasks[t] isMemberOfClass:[CPOptionalResourceTask class]]);
+        _resourceTask[t0] = (_resTasks != NULL && [_resTasks at:t] == 1);
         if (!_resourceTaskAsOptional && _resourceTask[t0]) {
             _firstRT--;
             _bound[_firstRT] = t0;

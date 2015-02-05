@@ -33,7 +33,7 @@
     ORInt  * _bound;        // Activities' ID sorted in [Bound | Not Bound]
     TRInt    _boundSize;    // Size of bounded tasks
 
-    ORBool * _resourceTask;  // Machine task
+    ORBool * _resourceTask;  // Resource task
     ORBool   _resourceTaskAsOptional;
     
     // Variables needed for the propagation
@@ -69,7 +69,7 @@
     ORBool _nfnl;           // Not-first/not-last filtering
     ORBool _ef;             // Edge-finding
 }
--(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) tasks
+-(id) initCPTaskDisjunctive: (id<CPTaskVarArray>)tasks
 {
     // Checking whether the number of activities is within the limit
     if (tasks.count > (NSUInteger) MAXNBTASK) {
@@ -80,7 +80,8 @@
     self = [super initCPCoreConstraint: [task0 engine]];
     // TODO Changing the priority
     _priority = LOWEST_PRIO + 2;
-    _tasks  = tasks;
+    _tasks    = tasks;
+    _resTasks = NULL;
     
     
     _dprec = true;
@@ -109,7 +110,47 @@
     
     return self;
 }
-
+-(id) initCPTaskDisjunctive: (id<CPTaskVarArray>)tasks resourceTasks: (id<ORIntArray>)res
+{
+    // Checking whether the number of activities is within the limit
+    if (tasks.count > (NSUInteger) MAXNBTASK) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskDisjunctive: Number of elements exceeds beyond the limit!"];
+    }
+    
+    id<CPTaskVar> task0 = tasks[tasks.low];
+    self = [super initCPCoreConstraint: [task0 engine]];
+    // TODO Changing the priority
+    _priority = LOWEST_PRIO + 2;
+    _tasks    = tasks;
+    _resTasks = res;
+    
+    
+    _dprec = true;
+    _nfnl  = true;
+    _ef    = true;
+    _idx   = NULL;
+    _bound = NULL;
+    _resourceTask = NULL;
+    _resourceTaskAsOptional = false;
+    
+    _est         = NULL;
+    _lct         = NULL;
+    _dur_min     = NULL;
+    _task_id_est = NULL;
+    _task_id_ect = NULL;
+    _task_id_lst = NULL;
+    _task_id_lct = NULL;
+    
+    _dur_max     = NULL;
+    _present     = NULL;
+    _absent      = NULL;
+    
+    _size = (ORInt) _tasks.count;
+    _low  = _tasks.range.low;
+    _up   = _tasks.range.up;
+    
+    return self;
+}
 -(void) dealloc
 {
     if (_idx         != NULL) free(_idx        );
@@ -177,7 +218,7 @@
         _task_id_lst[i] = idx;
         _task_id_lct[i] = idx;
         
-        _resourceTask[i] = ([_tasks[idx] isMemberOfClass:[CPResourceTask class]] || [_tasks[idx] isMemberOfClass:[CPOptionalResourceTask class]]);
+        _resourceTask[i] = (_resTasks != NULL && [_resTasks at:idx] == 1);
         nbMT += _resourceTask[i];
     }
     if (nbMT == 0)
