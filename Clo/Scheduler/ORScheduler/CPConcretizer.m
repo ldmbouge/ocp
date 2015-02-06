@@ -426,11 +426,24 @@
         id<ORTaskVarArray> tasks    = [cstr taskVars];
         id<ORIntVarArray>  usages   = [cstr usages  ];
         id<ORIntVar>       capacity = [cstr capacity];
+        id<ORIntArray>     resourceT = [(ORTaskCumulative *)cstr resourceTasks];
         [tasks    visit: self];
         [usages   visit: self];
         [capacity visit: self];
+        
+        BOOL hasResourceT = FALSE;
+        for (ORInt i = [resourceT low]; i <= [resourceT up]; i++) {
+            if ([resourceT at:i] == 1) {
+                hasResourceT = TRUE;
+                break;
+            }
+        }
+        
         id<CPConstraint> concreteCstr;
-        concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] with:_gamma[usages.getId] and:_gamma[capacity.getId]];
+        if (hasResourceT)
+            concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] resourceTasks:resourceT with:_gamma[usages.getId] and:_gamma[capacity.getId]];
+        else
+            concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] with:_gamma[usages.getId] and:_gamma[capacity.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

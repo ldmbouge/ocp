@@ -350,9 +350,11 @@
     
     id<ORTracker>      _tracker;
     NSMutableArray *   _accT;
+    NSMutableArray *   _accResT;
     NSMutableArray *   _accU;
     NSMutableSet   *   _accIds;
     id<ORTaskVarArray> _tasks;
+    id<ORIntArray>     _resourceTasks;
     id<ORIntVarArray>  _usages;
     id<ORIntVar>       _capacity;
 }
@@ -370,9 +372,13 @@
     _usages   = usages;
     _capacity = capacity;
 
-    _accT   = 0;
-    _accU   = 0;
-    _closed = TRUE;
+    _resourceTasks = [ORFactory intArray:_tracker range:[_tasks range] value:0];
+    
+    _accT    = 0;
+    _accIds  = 0;
+    _accU    = 0;
+    _accResT = 0;
+    _closed  = TRUE;
     
     // Check for duplicates
     for (ORInt i = _tasks.low; i <= _tasks.up; i++) {
@@ -394,6 +400,7 @@
     _usages   = 0;
     _capacity = capacity;
     _accT     = [[NSMutableArray alloc] initWithCapacity: 16];
+    _accResT  = [[NSMutableArray alloc] initWithCapacity: 16];
     _accU     = [[NSMutableArray alloc] initWithCapacity: 16];
     _closed   = FALSE;
     
@@ -401,9 +408,10 @@
 }
 -(void) dealloc
 {
-    if (_accT  ) [_accT   dealloc];
-    if (_accU  ) [_accU   dealloc];
-    if (_accIds) [_accIds dealloc];
+    if (_accT   ) [_accT    dealloc];
+    if (_accResT) [_accResT dealloc];
+    if (_accU   ) [_accU    dealloc];
+    if (_accIds ) [_accIds  dealloc];
     
     [super dealloc];
 }
@@ -414,9 +422,10 @@
         if (_closed)
             @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
         // Add task
-        [_accT   addObject: task           ];
-        [_accU   addObject: usage          ];
-        [_accIds addObject: @([task getId])];
+        [_accT    addObject: task           ];
+        [_accU    addObject: usage          ];
+        [_accIds  addObject: @([task getId])];
+        [_accResT addObject: @(0           )];
     }
 }
 -(void) add:(id<ORResourceTask>)task duration:(ORInt)duration
@@ -438,9 +447,10 @@
         if (_closed)
             @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
         // Add task
-        [_accT   addObject: task           ];
-        [_accU   addObject: usage          ];
-        [_accIds addObject: @([task getId])];
+        [_accT    addObject: task           ];
+        [_accU    addObject: usage          ];
+        [_accIds  addObject: @([task getId])];
+        [_accResT addObject: @(1           )];
         // Add resource to resource task
         [task addResource:self with:durationRange];
     }
@@ -459,11 +469,15 @@
 {
     if (!_closed) {
         _closed = true;
+        id<ORIntRange> range = RANGE(_tracker, 1, (ORInt) [_accT count]);
         _tasks = [ORFactory taskVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_accT count]) with: ^id<ORTaskVar>(ORInt i) {
             return _accT[i-1];
         }];
         _usages = [ORFactory intVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_accU count]) with: ^id<ORIntVar>(ORInt i) {
             return _accU[i-1];
+        }];
+        _resourceTasks = [ORFactory intArray:_tracker range:range with:^ORInt(ORInt i) {
+            return [_accResT[i-1] intValue];
         }];
     }
 }
@@ -478,6 +492,10 @@
 -(id<ORIntVar>) capacity
 {
     return _capacity;
+}
+-(id<ORIntArray>) resourceTasks
+{
+    return _resourceTasks;
 }
 -(NSSet*) allVars
 {
@@ -547,14 +565,6 @@
     }
     [_accIds dealloc];
     _accIds = 0;
-    
-    // TODO Check whether this resource is added to a machine or resource task
-//    for (ORInt i = low; i <= up; i++) {
-//        if ([_tasks[i] isMemberOfClass:[ORMachineTask class]])
-//            TODO
-//        else if ([_tasks[i] isMemberOfClass:[ORResourceTask class]])
-//            TODO
-//    }
     
     return self;
 }
