@@ -17,6 +17,9 @@
 @protocol ORTaskVarArray;
 @protocol ORResourceArray;
 
+/*!
+ *  @brief A standard task variable which can be optional, too.
+ */
 @protocol ORTaskVar <ORVar>
 -(id<ORTracker>) tracker;
 -(id<ORIntRange>) horizon;
@@ -28,14 +31,23 @@
 -(id<ORIntVar>) getPresenceVar;
 @end
 
+/*!
+ * @brief An alternative task variable that is equal to exactly one of its alternative task variables and extends standard task variables.
+ */
 @protocol ORAlternativeTask <ORTaskVar>
 -(id<ORTaskVarArray>) alternatives;
 @end
 
+/*!
+ * @brief A span task variable that is composed by a set of other task variables and extends standard task variables.
+ */
 @protocol ORSpanTask <ORTaskVar>
 -(id<ORTaskVarArray>) compound;
 @end
 
+/*!
+ * @brief A resource task variable that is like ORAlternativeTask, but without creation of other task variables. It also extends standard task variables.
+ */
 @protocol ORResourceTask <ORTaskVar>
 -(id<ORResourceArray>) resources;
 -(id<ORIntRangeArray>) durationArray;
@@ -44,6 +56,9 @@
 -(void) close;
 @end
 
+/*!
+ * @brief An array storing task variables.
+ */
 @protocol ORTaskVarArray <ORObject>
 -(id<ORTaskVar>) at: (ORInt) idx;
 -(void) set: (id<ORTaskVar>) value at: (ORInt)idx;
@@ -57,6 +72,9 @@
 -(id<ORTracker>) tracker;
 @end
 
+/*!
+ * @brief A matrix storing task variables.
+ */
 @protocol ORTaskVarMatrix <ORObject>
 -(id) flat:(ORInt)i;
 -(id<ORTaskVar>) at: (ORInt) i1 : (ORInt) i2;
@@ -76,6 +94,9 @@
 -(ORInt) ect;
 @end;
 
+/*!
+ * @brief An array storing alternative task variables.
+ */
 @protocol ORAlternativeTaskArray <ORObject>
 -(id<ORAlternativeTask>) at: (ORInt) idx;
 -(void) set: (id<ORAlternativeTask>) value at: (ORInt)idx;
@@ -89,6 +110,9 @@
 -(id<ORTracker>) tracker;
 @end
 
+/*!
+ * @brief An array storing resource task variables.
+ */
 @protocol ORResourceArray <ORObject>
 -(id<ORConstraint>) at: (ORInt) idx;
 -(void) set: (id<ORConstraint>) value at: (ORInt)idx;
