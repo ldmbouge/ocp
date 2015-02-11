@@ -1,13 +1,23 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2014 NICTA, Andreas Schutt and Pascal Van Hentenryck
+ Copyright (c) 2014-2015 NICTA, Andreas Schutt and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
  ***********************************************************************/
+
+/*!
+ *  @header
+ *
+ *  For information, contact <a href="http://org.nicta.com.au/people/andreas-schutt/">Andreas Schutt</a>.
+ *
+ *  @author Andreas Schutt and Pascal Van Hentenryck
+ *  @copyright 2014-2015 NICTA
+ *  @updated 2015-02-11
+ */
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>

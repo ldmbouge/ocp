@@ -1,13 +1,23 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2014 NICTA, Andreas Schutt and Pascal Van Hentenryck
+ Copyright (c) 2014-2015 NICTA, Andreas Schutt and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
  ***********************************************************************/
+
+/*!
+ *  @header
+ *
+ *  For information, contact <a href="http://org.nicta.com.au/people/andreas-schutt/">Andreas Schutt</a>.
+ *
+ *  @author Andreas Schutt and Pascal Van Hentenryck
+ *  @copyright 2014-2015 NICTA
+ *  @updated 2015-02-11
+ */
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORScheduler/ORActivity.h>
@@ -129,12 +139,50 @@
 +(id<ORResourceTask>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (ORInt(^)(ORInt)) cloDurations;
 +(id<ORResourceTask>) optionalResourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 
-// Alternative Task array
+/*!
+ * @brief Creation of an array containing alternative tasks.
+ *
+ * @param model A model to which the array belongs.
+ * @param range An integer range for calling the closure.
+ * @param clo A closure returning alternative task variables.
+ *
+ * @return An array with alternative task variables.
+ */
 +(id<ORAlternativeTaskArray>) alternativeVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORAlternativeTask>(^)(ORInt)) clo;
 
-// Task array
+/*!
+ * @brief Creation of an array containing tasks.
+ *
+ * @param model A model to which the array belongs.
+ * @param range An integer range for calling the closure.
+ * @param clo A closure returning task variables.
+ *
+ * @return An array with task variables.
+ */
 +(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskVar>(^)(ORInt)) clo;
+
+/*!
+ * @brief Creation of standard tasks which are <b>compulsory</b> and have a fixed duration.
+ *
+ * @param model A model to which the array and the tasks belong.
+ * @param range An integer range for calling the closure.
+ * @param horizon A planning horizon in that the tasks must be executed.
+ * @param duration An array containing the fixed duration of each task.
+ *
+ * @return An array with standard task variables that are present.
+ */
 +(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon duration: (id<ORIntArray>) duration;
+
+/*!
+ * @brief Creation of standard tasks which are <b>compulsory</b> and have a flexible duration.
+ *
+ * @param model A model to which the array and the tasks belong.
+ * @param range An integer range for calling the closure.
+ * @param horizon A planning horizon in that the tasks must be executed.
+ * @param duration An integer range of possible durations for the tasks.
+ *
+ * @return An array with standard task variables that are present.
+ */
 +(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) duration;
 
 // Task matrix

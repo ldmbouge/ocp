@@ -53,8 +53,6 @@
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORIntVarArray>) usages;
 -(id<ORIntVar>) capacity;
--(void) add: (id<ORResourceTask>) act duration: (ORInt) duration;
--(void) add: (id<ORResourceTask>) act durationRange: (id<ORIntRange>) durationRange;
 -(id<ORIntArray>) resourceTasks;
 @end
 
@@ -67,8 +65,6 @@
 -(ORBool) hasTransition;
 -(id<ORIntMatrix>) extendedTransitionMatrix;
 -(id<ORIntVarArray>) successors;
--(void) add: (id<ORTaskVar>) act;
--(void) add: (id<ORTaskVar>) act type: (ORInt) type;
 -(ORBool) hasOptionalTasks;
 -(id<ORIntArray>) resourceTasks;
 @end
