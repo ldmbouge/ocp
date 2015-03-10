@@ -21,6 +21,7 @@
    id<ORIntRange>  _horizon;
    id<ORIntRange>  _duration;
    ORBool _isOptional;
+    id<ORIntVar>   _startVar;
     id<ORIntVar>   _durationVar;
     id<ORIntVar>   _presenceVar;
 }
@@ -31,6 +32,7 @@
    _duration = duration;
    _horizon = horizon;
    _isOptional = FALSE;
+    _startVar    = NULL;
     _durationVar = NULL;
     _presenceVar = NULL;
    return self;
@@ -42,6 +44,7 @@
    _duration = duration;
    _horizon = horizon;
    _isOptional = TRUE;
+    _startVar    = NULL;
     _durationVar = NULL;
     _presenceVar = NULL;
    return self;
@@ -74,8 +77,18 @@
 {
    return [ORFactory constraint: self isFinishedBy: date];
 }
+-(id<ORIntVar>) getStartVar
+{
+    if (_isOptional)
+        @throw [[ORExecutionError alloc] initORExecutionError: "Method getStartVar is not supported for optional task variables yet"];
+    if (_startVar == NULL)
+        _startVar = [ORFactory intVar:_model bounds:RANGE(_model, [_horizon low], [_horizon up] - [_duration low])];
+    return _startVar;
+}
 -(id<ORIntVar>) getDurationVar
 {
+    if (_isOptional)
+        @throw [[ORExecutionError alloc] initORExecutionError: "Method getDurationVar is not supported for optional task variables yet"];
     if (_durationVar == NULL)
         _durationVar = [ORFactory intVar:_model bounds:_duration];
     return _durationVar;
@@ -89,6 +102,10 @@
             _presenceVar = [ORFactory intVar:_model value:1];
     }
     return _presenceVar;
+}
+-(id<ORIntVar>) startVar
+{
+    return _startVar;
 }
 -(id<ORIntVar>) durationVar
 {

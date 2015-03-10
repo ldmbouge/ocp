@@ -251,6 +251,7 @@
         id<ORIntRange> duration = [task duration];
         id<ORIntRangeArray> durationArray = [task durationArray];
         id<ORResourceArray> res = [task resources];
+        id<ORIntVar>       startVar    = [(ORResourceTask *)task startVar   ];
         id<ORIntVar>       durationVar = [(ORResourceTask *)task durationVar];
         id<ORIntVar>       presenceVar = [(ORResourceTask *)task presenceVar];
         id<ORResourceTask> transSource = [(ORResourceTask *)task getTransitionSource];
@@ -279,6 +280,11 @@
             [CPFactory constraint:_gamma[transSource.getId] resourceExtended:concreteTask time:_gamma[transTime.getId]];
         }
         
+        // Posting start constraint
+        if (startVar != NULL) {
+            [startVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask start:_gamma[startVar.getId]]];
+        }
         // Posting duration constraint
         if (durationVar != NULL) {
             [durationVar visit:self];

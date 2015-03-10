@@ -37,6 +37,7 @@
 -(ORBool) isOptional;
 -(id<ORTaskPrecedes>) precedes: (id<ORTaskVar>) after;
 -(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date;
+-(id<ORIntVar>) getStartVar;
 -(id<ORIntVar>) getDurationVar;
 -(id<ORIntVar>) getPresenceVar;
 @end

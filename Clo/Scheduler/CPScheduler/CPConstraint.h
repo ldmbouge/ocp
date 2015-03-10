@@ -105,6 +105,18 @@
 -(ORUInt) nbUVars;
 @end
 
+@interface CPTaskStart : CPCoreConstraint {
+    id<CPTaskVar> _task;
+    id<CPIntVar>  _start;
+}
+-(id) initCPTaskStart:(id<CPTaskVar>)task :(id<CPIntVar>)start;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
 @interface CPTaskDuration : CPCoreConstraint {
    id<CPTaskVar> _task;
    id<CPIntVar> _duration;

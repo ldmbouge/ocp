@@ -316,6 +316,13 @@
    [engine trackMutable: cstr];
    return cstr;
 }
++(id<CPConstraint>) constraint:(id<CPTaskVar>) task start:(id<CPIntVar>) start
+{
+    id<CPEngine> engine = [task engine];
+    id<CPConstraint> cstr =[[CPTaskStart alloc] initCPTaskStart: task : start];
+    [engine trackMutable: cstr];
+    return cstr;
+}
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration
 {
    id<CPEngine> engine = [task engine];

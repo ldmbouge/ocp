@@ -1169,6 +1169,53 @@
 }
 @end
 
+@implementation CPTaskStart
+
+-(id) initCPTaskStart:(id<CPTaskVar>)task :(id<CPIntVar>)start
+{
+    self = [super initCPCoreConstraint:[task engine]];
+    
+    _task  = task;
+    _start = start;
+    NSLog(@"Create constraint CPTaskStart\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    [self propagate];
+    if (![_task bound] && ![_start bound]) {
+        [_task  whenChangeStartPropagate : self];
+        [_start whenChangeBoundsPropagate: self];
+    }
+    return ORSuspend;
+}
+-(void) propagate
+{
+    [_start updateMin: [_task est]];
+    [_start updateMax: [_task lst]];
+    [_task  updateStart: [_start min]];
+    [_task  updateEnd: [_start max] + [_task maxDuration]];
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_task];
+    [rv addObject:_start];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
+}
+@end
+
+
 @implementation CPTaskDuration
 
 -(id) initCPTaskDuration: (id<CPTaskVar>) task : (id<CPIntVar>) duration
