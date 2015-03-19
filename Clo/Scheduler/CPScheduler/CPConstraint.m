@@ -1188,8 +1188,10 @@
 {
     [self propagate];
     if (![_task bound] && ![_start bound]) {
-        [_task  whenChangeStartPropagate : self];
-        [_start whenChangeBoundsPropagate: self];
+        [_task  whenChangeStartPropagate   : self];
+        [_task  whenChangeEndPropagate     : self];
+        [_task  whenChangeDurationPropagate: self];
+        [_start whenChangeBoundsPropagate  : self];
     }
     return ORSuspend;
 }
