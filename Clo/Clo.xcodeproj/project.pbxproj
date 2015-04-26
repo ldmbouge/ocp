@@ -10338,7 +10338,7 @@
 			name = objcpTests;
 			productName = objcpTests;
 			productReference = 5B9ABD021391329D000997E5 /* objcpTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		5B9B2447177873D3001AB944 /* nonogram */ = {
 			isa = PBXNativeTarget;
@@ -10885,7 +10885,7 @@
 			name = searchTest;
 			productName = objcpTests;
 			productReference = 5BEA4E89178365FA00614A82 /* searchTest.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		5BEAD78415ABE38500A012FE /* bibd */ = {
 			isa = PBXNativeTarget;
