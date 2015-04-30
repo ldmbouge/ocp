@@ -47,7 +47,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5B9ABD011391329D000997E5"
-               BuildableName = "objcpTests.octest"
+               BuildableName = "objcpTests.xctest"
                BlueprintName = "objcpTests"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
@@ -108,7 +108,8 @@
             </ActionContent>
          </ExecutionAction>
       </PostActions>
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B6E891F1379D3E9005DB4CA"

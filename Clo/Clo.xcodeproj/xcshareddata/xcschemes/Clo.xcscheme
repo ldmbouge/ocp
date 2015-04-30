@@ -732,33 +732,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B9ABD011391329D000997E5"
-               BuildableName = "objcpTests.octest"
-               BlueprintName = "objcpTests"
-               ReferencedContainer = "container:Clo.xcodeproj">
-            </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "bitTest">
-               </Test>
-               <Test
-                  Identifier = "testCard">
-               </Test>
-               <Test
-                  Identifier = "testBitConstraints">
-               </Test>
-               <Test
-                  Identifier = "searchTest">
-               </Test>
-               <Test
-                  Identifier = "objcpTests">
-               </Test>
-            </SkippedTests>
-         </TestableReference>
-         <TestableReference
-            skipped = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "5BEA4E67178365FA00614A82"
                BuildableName = "searchTest.octest"
                BlueprintName = "searchTest"
@@ -787,7 +760,8 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B6E891F1379D3E9005DB4CA"
@@ -813,7 +787,8 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5BB3836213B3C0E1005B7D52"
