@@ -729,7 +729,138 @@ static void tt_filter_start_end_times(CPTaskCumulative* cumu, ORInt * unbound, c
                 [cumu->_tasks[t] updateEnd:new_lct];
                 *update = true;
             }
+            
+            // Update duration
+            if (dur_min(cumu, t0) < dur_max(cumu, t0)) {
+                tt_filter_duration_ub_i(cumu, t0, update);
+            }
+            
+            // Update usages
+            if (usage_min(cumu, t0) < usage_max(cumu, t0))
+                tt_filter_usage_ub_i(cumu, t0, update);
         }
+    }
+}
+
+static void tt_filter_duration_ub_i(CPTaskCumulative * cumu, const ORInt t0, bool * update)
+{
+    assert(!(cumu->_resourceTask[t0] && !isRelevant(cumu, t0)));
+    assert(dur_min(cumu, t0) < dur_max(cumu, t0));
+    
+    const ORInt maxCapacity = cap_max(cumu);
+
+    const ORInt low = find_first_profile_peak_for_lb(cumu->_profile, est(cumu, t0), 0, cumu->_profileSize - 1);
+    const ORInt up  = find_first_profile_peak_for_ub(cumu->_profile, lct(cumu, t0), 0, cumu->_profileSize - 1);
+
+    // Update the duration
+    ORInt begin = est(cumu, t0);
+    ORInt maxDur = dur_min(cumu, t0);
+    // Find the maximal duration with the minimal resource usage
+    if (cumu->_profile[low]._end <= begin)
+        maxDur = lct(cumu, t0) - begin;
+    else {
+        for (ORInt p = low; p <= up; p++) {
+            assert(begin < cumu->_profile[p]._end);
+            maxDur = max(maxDur, min(lct(cumu, t0), cumu->_profile[p]._begin) - begin);
+            if (maxDur >= dur_max(cumu, t0))
+                break;
+            if (cumu->_profile[p]._level + usage_min(cumu, t0) > maxCapacity) {
+                // Check whether the task does not have a compulsory part in the profile peak
+                if (!(lst(cumu, t0) < ect(cumu, t0) && lst(cumu, t0) <= cumu->_profile[p]._begin &&
+                      cumu->_profile[p]._end <= ect(cumu, t0))) {
+                    // A new latest completion time
+                    begin = cumu->_profile[p]._end;
+                }
+            }
+            
+        }
+    }
+    assert(maxDur >= dur_min(cumu, t0));
+    // Update the upper bound on the duration
+    if (maxDur < dur_max(cumu, t0)) {
+        const ORInt t = t0 + cumu->_low;
+        cumu->_nb_tt_props++;
+        [cumu->_tasks[t] updateMaxDuration:maxDur];
+        *update = true;
+    }
+}
+
+static void tt_filter_usage_ub_i(CPTaskCumulative * cumu, const ORInt t0, bool * update)
+{
+    assert(!(cumu->_resourceTask[t0] && !isRelevant(cumu, t0)));
+    assert(dur_min(cumu, t0) < dur_max(cumu, t0));
+    
+    const ORInt maxCapacity = cap_max(cumu);
+    
+    const ORInt low = find_first_profile_peak_for_lb(cumu->_profile, est(cumu, t0), 0, cumu->_profileSize - 1);
+    const ORInt up  = find_first_profile_peak_for_ub(cumu->_profile, lct(cumu, t0), 0, cumu->_profileSize - 1);
+    
+    ORInt begin = est(cumu, t0);
+    ORInt maxUsage = usage_min(cumu, t0);
+    // Find the maximal resource usage with the minimal duration
+    if (cumu->_profile[low]._end <= begin)
+        maxUsage = maxCapacity;
+    else {
+        for (ORInt p = low; p <= up && maxUsage < usage_max(cumu, t0); p++) {
+            assert(begin < cumu->_profile[p]._end);
+            // Check whether the task does not have a compulsory part in the profile peak
+            ORInt comp_p = 0;
+            if (lst(cumu, t0) < ect(cumu, t0) && lst(cumu, t0) <= cumu->_profile[p]._begin &&
+                cumu->_profile[p]._end <= ect(cumu, t0)) {
+                comp_p = usage_min(cumu, t0);
+            }
+            const ORInt peak_p = cumu->_profile[p]._level - comp_p;
+            if (begin + dur_min(cumu, t0) <= cumu->_profile[p]._begin) {
+                maxUsage = maxCapacity;
+            }
+            else if (begin + dur_min(cumu, t0) <= cumu->_profile[p]._end) {
+                maxUsage = max(maxUsage, maxCapacity - peak_p);
+                begin = cumu->_profile[p]._end;
+            }
+            else if (maxUsage + peak_p >= maxCapacity) {
+                begin = cumu->_profile[p]._end;
+            }
+            else {
+                ORInt q;
+                for (q = p + 1; q <= up; q++) {
+                    if (begin + dur_min(cumu, t0) <= cumu->_profile[q]._begin) {
+                        maxUsage = max(maxUsage, maxCapacity - peak_p);
+                        begin = cumu->_profile[p]._end;
+                        break;
+                    }
+                    assert(begin + dur_min(cumu, t0) > cumu->_profile[q]._begin);
+                    // Check whether the task does not have a compulsory part in the profile peak
+                    ORInt comp_q = 0;
+                    if (lst(cumu, t0) < ect(cumu, t0) && lst(cumu, t0) <= cumu->_profile[q]._begin &&
+                        cumu->_profile[q]._end <= ect(cumu, t0)) {
+                        comp_q = usage_min(cumu, t0);
+                    }
+                    const ORInt peak_q = cumu->_profile[q]._level - comp_q;
+                    if (peak_p < peak_q) {
+                        p = q - 1;
+                        break;
+                    }
+                    assert(peak_p >= peak_q);
+                    if (begin + dur_min(cumu, t0) <= cumu->_profile[q]._end) {
+                        maxUsage = max(maxUsage, maxCapacity - peak_p);
+                        begin = cumu->_profile[p]._end;
+                        break;
+                    }
+                }
+                if (q > up && begin + dur_min(cumu, t0) <= lct(cumu, t0)) {
+                    maxUsage = max(maxUsage, maxCapacity - peak_p);
+                    begin = cumu->_profile[p]._end;
+                }
+            }
+        }
+    }
+    assert(maxUsage >= usage_min(cumu, t0));
+    // Update the upper bound on the duration
+    if (maxUsage < usage_max(cumu, t0)) {
+        const ORInt t = t0 + cumu->_low;
+        cumu->_nb_tt_props++;
+        [cumu->_usages[t] updateMax:maxUsage];
+        *update = true;
     }
 }
 
