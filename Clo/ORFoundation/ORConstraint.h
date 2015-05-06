@@ -374,6 +374,10 @@ enum ORGroupType {
 -(id<ORIntVarArray>) array;
 @end
 
+@protocol ORSubCircuit <ORConstraint>
+-(id<ORIntVarArray>) array;
+@end
+
 @protocol ORNoCycle <ORConstraint>
 -(id<ORIntVarArray>) array;
 @end
@@ -451,9 +455,13 @@ enum ORGroupType {
 -(void)               close;
 -(id<OREngine>)       engine;
 -(id) concretize: (id) o;
-@optional-(id<ORSolutionPool>) solutionPool;
-@optional-(id<ORSearchObjectiveFunction>) objective;
+-(id<ORObjectiveValue>) objectiveValue;
 @end
+
+@protocol ORASearchSolver <ORASolver>
+-(id<ORSearchObjectiveFunction>) objective;
+@end
+
 
 // ====== Bit Constraints =====================================
 

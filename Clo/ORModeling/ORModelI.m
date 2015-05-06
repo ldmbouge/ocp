@@ -277,10 +277,6 @@
       cur = [cur source];
    return cur;
 }
--(id<ORASolver>) solver
-{
-   return nil;
-}
 -(id<ORObjectiveFunction>) objective
 {
    return _objective;
@@ -773,80 +769,6 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 }
 @end
 
-@implementation ORSolutionPoolI
--(id) init
-{
-    self = [super init];
-    _all = [[NSMutableArray alloc] initWithCapacity:64];
-    _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
-    return self;
-}
-
--(void) dealloc
-{
-   NSLog(@"dealloc ORSolutionPoolI");
-   // pvh this is buggy
-   [_all release];
-   [super dealloc];
-}
--(NSUInteger) count
-{
-   return [_all count];
-}
--(void) addSolution:(id<ORSolution>)s
-{
-    [_all addObject:s];
-    [_solutionAddedInformer notifyWithSolution: s];
-}
-
--(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key
-{
-   return [_all objectAtIndexedSubscript:key];
-}
-
--(void) enumerateWith:(void(^)(id<ORSolution>))block
-{
-   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
-      block(obj);
-   }];
-}
-
--(id<ORInformer>)solutionAdded 
-{
-    return _solutionAddedInformer;
-}
-
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"pool["];
-   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
-      [buf appendFormat:@"\t%@\n",obj];
-   }];
-   [buf appendFormat:@"]"];
-   return buf;
-}
-
--(id<ORSolution>) best
-{
-   __block id<ORSolution> sel = nil;
-   __block id<ORObjectiveValue> bestSoFar = nil;
-   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
-      if (bestSoFar == nil) {
-         bestSoFar = [obj objectiveValue];
-         sel = obj;
-      }
-      else {
-         id<ORObjectiveValue> nv = [obj objectiveValue];
-         if ([bestSoFar compare: nv] == 1) {
-            bestSoFar = nv;
-            sel = obj;
-         }
-      }
-   }];
-   return [sel retain];
-}
-@end
 
 @implementation ORConstraintSetI
 -(id) init

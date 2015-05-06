@@ -15,6 +15,7 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <ORModeling/ORModeling.h>
 #import <objcp/CPObjectQueue.h>
+#import "ORSolution.h"
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;
@@ -239,8 +240,7 @@
 }
 -(id*) gamma
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "gamma never called on CPParProgram"];
-   return NULL;
+   return [[self worker] gamma];
 }
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
@@ -427,7 +427,10 @@
 {
    return _globalPool;
 }
-
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[self worker] objectiveValue];
+}
 -(void)setupWork:(id<ORProblem>)theSub forCP:(id<CPSemanticProgram>)cp
 {
    //NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);
@@ -688,9 +691,9 @@
 {
    return [((id<CPCommonProgram>) [self worker]) boolValue: x];
 }
--(id<ORCPSolution>) captureSolution
+-(id<ORSolution>) captureSolution
 {
-   return (id<ORCPSolution>) [[self worker] captureSolution];
+   return (id<ORSolution>) [[self worker] captureSolution];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

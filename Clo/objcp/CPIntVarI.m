@@ -21,6 +21,100 @@
 #import "CPEvent.h"
 
 /*****************************************************************************************/
+/*                        CPIntVarSnapshot                                               */
+/*****************************************************************************************/
+
+@interface CPIntVarSnapshot : NSObject {
+   ORUInt    _name;
+   ORInt     _value;
+   ORBool    _bound;
+}
+-(CPIntVarSnapshot*) initCPIntVarSnapshot: (CPIntVar*) v name: (ORInt) name;
+-(int) intValue;
+-(ORBool) boolValue;
+-(NSString*) description;
+-(ORBool)isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation CPIntVarSnapshot
+-(CPIntVarSnapshot*) initCPIntVarSnapshot: (CPIntVar*) v name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   if ([v bound]) {
+      _bound = TRUE;
+      _value = [v value];
+   }
+   else {
+      _value = 0;
+      _bound = FALSE;
+   }
+   return self;
+}
+-(ORUInt)getId
+{
+   return _name;
+}
+-(ORBool) bound
+{
+   return _bound;
+}
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) boolValue
+{
+   return _value;
+}
+-(ORBool)isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      CPIntVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _value == other->_value && _bound == other->_bound;
+      }
+      else
+         return NO;
+   } else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   if (_bound)
+      [buf appendFormat:@"int(%d) : %d",_name,_value];
+   else
+      [buf appendFormat:@"int(%d) : NA",_name];
+   return buf;
+}
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_bound];
+}
+- (id) initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_bound];
+   return self;
+}
+@end
+
+/*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
 /*****************************************************************************************/
 
@@ -82,6 +176,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(enum CPVarClass) varClass
 {
    return _vc;
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[CPIntVarSnapshot alloc] initCPIntVarSnapshot: self name: id];
 }
 -(ORInt)degree
 {
@@ -1952,7 +2050,14 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBool) tracksLoseEvt
 {
-    return _tracksLoseEvt;
+   return _tracksLoseEvt;
+   if (_tracksLoseEvt)
+      return true;
+   else {
+      for(ORUInt k=0;k<_nb && !_tracksLoseEvt;k++)
+	 _tracksLoseEvt |= [_tab[k] tracksLoseEvt];
+      return _tracksLoseEvt;
+   }
 }
 void bindEvt(CPMultiCast* x,id<CPDom> sender)
 {

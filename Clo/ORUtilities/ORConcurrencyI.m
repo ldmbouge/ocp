@@ -261,8 +261,8 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 }
 @end
 
-@implementation ORInformerI 
--(ORInformerI*) initORInformerI
+@implementation ORInformer
+-(ORInformer*) initORInformer
 {
    self = [super init];
    _lock = [[NSLock alloc] init];
@@ -456,19 +456,23 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 }
 +(id<ORIntInformer>) intInformer
 {
-    return [[ORInformerI alloc] initORInformerI];
+    return [[ORInformer alloc] initORInformer];
+}
++(id<ORSolutionInformer>) solutionInformer
+{
+   return [[ORInformer alloc] initORInformer];
 }
 +(id<ORInformer>) idInformer
 {
-   return [[ORInformerI alloc] initORInformerI];
+   return [[ORInformer alloc] initORInformer];
 }
 +(id<ORVoidInformer>) voidInformer
 {
-   return [[ORInformerI alloc] initORInformerI];
+   return [[ORInformer alloc] initORInformer];
 }
 +(id<ORIdxIntInformer>) idxIntInformer
 {
-   return [[ORInformerI alloc] initORInformerI];
+   return [[ORInformer alloc] initORInformer];
 }
 +(id<ORBarrier>)  barrier: (ORInt) nb
 {

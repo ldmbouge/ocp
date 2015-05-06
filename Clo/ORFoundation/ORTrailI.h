@@ -33,7 +33,7 @@
 #define TAGFree         0xC
 #define TAGIdNC         0xD
 
-@interface ORTrailI : NSObject<NSCoding,ORTrail>
+@interface ORTrailI : NSObject<ORTrail>
 {
    @public
    struct Slot {
@@ -341,7 +341,7 @@ static inline V* get##T(T* v) { return v->_val;}
 
 @end
 
-@interface ORTRIntArrayI : NSObject<ORTRIntArray,NSCoding> {
+@interface ORTRIntArrayI : NSObject<ORTRIntArray> {
    @package
    ORTrailI*    _trail;
    TRInt*       _array;
@@ -363,7 +363,7 @@ static inline V* get##T(T* v) { return v->_val;}
 
 
 
-@interface ORTRIntMatrixI : NSObject<ORTRIntMatrix,NSCoding> {
+@interface ORTRIntMatrixI : NSObject<ORTRIntMatrix> {
 @private
    ORTrailI*       _trail;
    TRInt*          _flat;

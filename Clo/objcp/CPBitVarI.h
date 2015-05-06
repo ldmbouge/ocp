@@ -29,7 +29,7 @@ typedef struct  {
 } CPBitEventNetwork;
 
 
-@interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
+@interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber> {
 @private
 @protected
     CPEngineI*                       _engine;
@@ -102,7 +102,7 @@ typedef struct  {
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@interface CPBitVarMultiCast : NSObject<CPBitVarNotifier,NSCoding> {
+@interface CPBitVarMultiCast : NSObject<CPBitVarNotifier> {
     CPBitVarI**       _tab;
     BOOL    _tracksLoseEvt;
     ORInt          _nb;

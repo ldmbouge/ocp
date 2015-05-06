@@ -115,3 +115,87 @@ ORStatus assign(CPCircuitI* cstr,int i)
 }
 
 @end
+
+@implementation CPSubCircuit {
+   id<CPIntVarArray>  _x;
+   CPIntVar**        _var;
+   ORInt             _varSize;
+   ORInt             _low;
+   ORInt             _up;
+   id<ORTRIntArray>  _pred;
+   id<ORTRIntArray>  _succ;
+   bool             _noCycle;
+   bool             _posted;
+}
+
+-(void) initInstanceVariables
+{
+   _priority = HIGHEST_PRIO;
+   _posted = false;
+}
+-(CPSubCircuit*) initCPSubCircuit: (id<CPIntVarArray>) x
+{
+   self = [super initCPCoreConstraint: [[x at:[x low]] engine]];
+   _x =x;
+   [self initInstanceVariables];
+   return self;
+}
+-(void) dealloc
+{
+   NSLog(@"SubCircuit dealloc called ...");
+   if (_posted) {
+      _var += _low;
+      free(_var);
+   }
+   [super dealloc];
+}
+
+ORStatus assignSubCircuit(CPSubCircuit* cstr,int i)
+{
+   ORInt val = [cstr->_var[i] min];
+   if (val != i) {
+      ORInt end = [cstr->_succ at: val];
+      ORInt start = [cstr->_pred at: i];
+      [cstr->_pred set: start at: end];
+      [cstr->_succ set: end at: start];
+      [cstr->_var[end] remove: start];
+   }
+   return ORSuspend;
+}
+
+-(void) post
+{
+   if (_posted)
+      return ;
+   _posted = true;
+   
+   _low = [_x low];
+   _up = [_x up];
+   _varSize = (_up - _low + 1);
+   _var = malloc(_varSize * sizeof(CPIntVar*));
+   for(ORInt i = 0; i < _varSize; i++)
+      _var[i] = (CPIntVar*) [_x at: _low + i];
+   _var -= _low;
+   
+   id<ORIntRange> R = RANGE([_x tracker],_low,_up);
+   _pred = [CPFactory TRIntArray: [_x tracker] range: R];
+   _succ = [CPFactory TRIntArray: [_x tracker] range: R];
+   for(int i = _low; i <= _up; i++) {
+      [_pred set: i at: i];
+      [_succ set: i at: i];
+   }
+   for(int i = _low; i <= _up; i++) {
+      [_var[i] updateMin: _low];
+      [_var[i] updateMax: _up];
+   }
+   for(int i = _low; i <= _up; i++) {
+      if ([_var[i] bound]) {
+         assignSubCircuit(self,i);
+      }
+      else
+         [_var[i] whenBindDo: ^ { assignSubCircuit(self,i); } onBehalf:self];
+   }
+}
+
+@end
+

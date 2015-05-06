@@ -6,7 +6,7 @@
 //
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORAVLTree.h>
 #import <ORModeling/ORModeling.h>
@@ -14,7 +14,7 @@
 #import <objcp/CPObjectQueue.h>
 #import <objcp/CPFactory.h>
 
-@interface testIdempotence : SenTestCase
+@interface testIdempotence : XCTestCase
 
 @end
 

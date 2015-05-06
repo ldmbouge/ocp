@@ -88,7 +88,7 @@
    self = [super init];
    _drawOn = [theView retain];
    _toDraw = [[NSMutableArray alloc] initWithCapacity:32];
-   [theView setDelegate:self];
+   [theView setDelegate:(id)self];
    _pause = [[NSCondition alloc] init];
    _isPaused = NO;
    _canPause = YES;

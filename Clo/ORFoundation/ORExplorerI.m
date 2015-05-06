@@ -15,124 +15,6 @@
 #import "ORLimit.h"
 #import "ORExplorerI.h"
 
-@interface OROrderedSweep : NSObject {
-   BOOL*    _used;
-   ORInt      _low;
-   ORInt      _sz;
-   ORInt     _nbo;
-   ORInt     _mxo;
-   ORFloat* _best;
-   ORFloat* _curr;
-   ORInt2Float* _of;
-   ORInt2Bool   _filter;
-   id<ORIntIterable> _col;
-}
--(id)initWith:(id<ORIntIterable>)col;
--(void)startup;
--(void)addFilter:(ORInt2Bool)f;
--(void)addOrdered:(ORInt2Float)f;
--(BOOL)next:(ORInt*)v;
-@end
-
-@implementation OROrderedSweep
-
--(id)initWith:(id<ORIntIterable>)col
-{
-   self = [super init];
-   _sz = [col size];
-   _low = [col low];
-   _used = malloc(sizeof(BOOL)*_sz);
-   memset(_used,0,sizeof(BOOL)*_sz);
-   _used -= _low;
-   _col = col;
-   _mxo = 2;
-   _nbo = 0;
-   _of = malloc(sizeof(ORInt2Float)*_mxo);
-   _filter =  NULL;
-   return self;
-}
--(void)dealloc
-{
-   //NSLog(@"OROrderedSweep (%p) dealloc'd",self);
-   _used += _low;
-   free(_used);
-   free(_best);
-   free(_curr);
-   for(ORInt i=0;i<_nbo;i++)
-       [_of[i] release];
-   free(_of);
-   [_filter release];
-   [super dealloc];
-}
--(void)startup
-{
-   _best = malloc(sizeof(ORFloat)*_nbo);
-   _curr = malloc(sizeof(ORFloat)*_nbo);
-}
--(void)addFilter:(ORInt2Bool)f
-{
-   [_filter release];
-   _filter = [f copy];
-}
-
--(void)addOrdered:(ORInt2Float)f
-{
-   if (_nbo >= _mxo) {
-      _of = realloc(_of,sizeof(ORInt2Float)*_mxo*2);
-      _mxo = _mxo * 2;
-   }
-   _of[_nbo++] = [f copy];
-}
--(void)updateBest:(ORInt)from
-{
-   for(ORInt i=from;i<_nbo;i++)
-      _best[i] = _curr[i];
-}
--(BOOL)next:(ORInt*)v
-{
-   __block ORInt sel = -1;
-   __block BOOL found = NO;
-   for(ORInt k=0;k < _nbo;k++)
-      _best[k] = FDMAXINT;
-   [_col enumerateWithBlock:^(ORInt i) {
-      if (!_used[i]) {
-         BOOL keep = !_filter || _filter(i);
-         if (!keep) {
-            _used[i] = YES;
-            return;
-         }
-         for(ORInt k=0;k < _nbo;k++)
-            _curr[k] = _of[k](i);
-         BOOL tieBreak = YES;
-         for(ORInt k=0;k < _nbo;k++) {
-            if (_curr[k] < _best[k]) {
-               tieBreak = NO;
-               [self updateBest:k];
-               sel = i;
-               found = YES;
-               break;
-            } else if (_curr[k] > _best[k]) {
-               tieBreak = NO;
-               break;
-            } else {
-               assert(_curr[k] == _best[k]);
-            }
-         }
-         if (tieBreak) {
-            
-         }
-      }
-   }];
-   if (found) {
-      _used[sel] = YES;
-      *v = sel;
-      return YES;
-   } else {
-      return NO;
-   }
-}
-@end
-
 @implementation ORCoreExplorerI
 {
    @protected
@@ -262,16 +144,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    [_controller._val startTryall];
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
-   //NSLog(@"Got an iterator: %p [%lu]",ite,(unsigned long)[ite retainCount]);
-   // The [ite release] inserted on the trail will _not_ necessarily occur last but it will
-   // consume one reference to ite, so it matches the "initial" reference.
-   // Every subsequence "try" retains (increases by 1) and is matched by a trailRelease that
-   // releases (decreased by 1) upon failure. So if the onfailure succeeds, it remembers it will
-   // have to eventually release and it proceeds to the next iteration where the number of references
-   // increases again. Naturally the subsequent retain are matched by their own releases, so it all
-   // pans out. 
-   struct TAOutput nv = nextTAValue(ite, filter);
-   while (nv.found) {
+   struct TAOutput nv;
+   while (true) {
+      nv = nextTAValue(ite, filter);
+      if (!nv.found)
+         [_controller._val fail];
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls] == 0) {
          [_controller._val startTryallBody];
@@ -282,47 +159,32 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          break;
       }
       else {
-         // [ldm] In the case of an optimization, the startTryRight will enforce the primalBound and _may_ fail as as
-         // result. Hence, we are not even guaranteed to reach the call to right() and we must letgo of the continuation
-         // now or face memory leaks. *do not move the letgo further down*
          [k letgo];
-         // We must trust to increase the choice point identifier or the semantic path are all busted and the suffix
-         // deconstruction fails.
          [_controller._val trust];
          [_controller._val startTryallOnFailure];
-         // The continuation is used only twice, so we are guaranteed that it is safe and correct to letgo now. 
          if (onFailure)
             onFailure(nv.value);
-         // There is a caveat here. We can call "startTryallOnFailure" but *never* call its matching "exitTRyallOnFailure"
-         // It all depends on the semantics we assign to this pair. Do we wish to guarantee that both are called? or that
-         // the exit is called only when the onFailure succeeded?
          [_controller._val exitTryallOnFailure];
-         nv = nextTAValue(ite, filter);
-         if (!nv.found)
-            [_controller._val fail];
       }
    }
-   // A release here *should not* be necessary. Even if the filtered range is empty, the initial delayed release
-   // will occur upon backtrack.
    [_controller._val exitTryall];
 }
 
 -(void) tryall: (id<ORIntIterable>) range
       suchThat: (ORInt2Bool) filter
-     orderedBy: (ORInt2Float)o1
+     orderedBy: (ORInt2Float)o
             in: (ORInt2Void) body
      onFailure: (ORInt2Void) onFailure
 {
    [_controller._val startTryall];
-   OROrderedSweep* ite = [[OROrderedSweep alloc] initWith:range];
-   [ite addFilter:filter];
-   [ite addOrdered:o1];
-   [_engine trackObject:ite];
-   [ite startup];
+   // pvh: This is ugly: should be hidden in the factory. I will clean that up
+   id<OROrderedSweep> ite = [ORFactory orderedSweep: _engine over: range filter: filter orderedBy: o];
    BOOL found = YES;
    ORInt sel = FDMININT;
-   found = [ite next:&sel];
-   while (found) {
+   while (true) {
+      found = [ite next:&sel];
+      if (!found)
+         [_controller._val fail];
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls]==0) {
          [_controller._val startTryallBody];
@@ -331,13 +193,14 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          body(sel);
          [_controller._val exitTryallBody];
          break;
-      } else {
+      }
+      else {
          [k letgo];
          [_controller._val trust];
          [_controller._val startTryallOnFailure];
-         if (onFailure) onFailure(sel);
+         if (onFailure)
+            onFailure(sel);
          [_controller._val exitTryallOnFailure];
-         found = [ite next:&sel];
       }
    }   
    [_controller._val exitTryall];
@@ -552,7 +415,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
 }
 
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search
             onSolution: (ORClosure) onSolution
                 onExit: (ORClosure) onExit
                control:(id<ORSearchController>) newCtrl
@@ -584,10 +447,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {}
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {}
--(void)     nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void)     nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {}
 
--(void) optimizeModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) optimizeModel: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^{
       [self nestedOptimize: solver
@@ -598,7 +461,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }];
 }
 
--(void) solveModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) solveModel: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^()
     {
@@ -609,7 +472,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
     }
     ];
 }
--(void) solveAllModel: (id<ORASolver>) solver using: (ORClosure) search  onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
+-(void) solveAllModel: (id<ORASearchSolver>) solver using: (ORClosure) search  onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^()
     {
@@ -642,7 +505,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [base release];
    [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> new    = [_cFact makeNestedController];
    id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller._val];
@@ -679,7 +542,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self popController];
    [root release];
 }
--(void) nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    id<ORSearchController> new     = [_cFact makeNestedController];
    id<ORSearchController> root    = [_cFact makeRootController];

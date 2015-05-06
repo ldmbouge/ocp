@@ -59,8 +59,8 @@
 -(void) restartHeuristics;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 -(ORInt) maxBound:(id<ORIdArray>) x;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel) n;
@@ -83,6 +83,7 @@
 // Pure DFS CPSolver
 @interface CPSolver : CPCoreSolver<CPProgram>
 -(id<CPProgram>) initCPSolver;
+-(id<CPProgram>) initCPSolverWithEngine: (id<CPEngine>) engine;
 @end
 
 // SemanticPath CPSolver
