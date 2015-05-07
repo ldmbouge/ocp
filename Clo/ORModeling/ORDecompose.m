@@ -696,14 +696,13 @@ static inline ORLong maxSeq(ORLong v[4])  {
 }
 -(void) visitExprDivI: (ORExprDivI*) e
 {
-   /*
-   ORLinear* lT = [ORNormalizer linearFrom:[e left] model:_model];
-   ORLinear* rT = [ORNormalizer linearFrom:[e right] model:_model];
-   id<ORIntVar> lV = [ORSubst normSide:lT for:_model];
-   id<ORIntVar> rV = [ORSubst normSide:rT for:_model];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e left] model:_model];
+   id<ORIntLinear> rT = [ORNormalizer intLinearFrom:[e right] model:_model];
+   id<ORIntVar> lV = [ORNormalizer intVarIn:lT for:_model];
+   id<ORIntVar> rV = [ORNormalizer intVarIn:rT for:_model];
    
    if ([lT size] == 0) {  // z ==  c / y
-      id<ORIntVar> y = [ORSubst normSide:rT for:_model];
+      id<ORIntVar> y = rV;
       ORInt c = [lT independent];
       ORLong yMin = y.min == 0 ? 1  : y.min;
       ORLong yMax = y.max == 0 ? -1 : y.max;
@@ -713,65 +712,53 @@ static inline ORLong maxSeq(ORLong v[4])  {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain: RANGE(_model,bindDown(low),bindUp(up))];
       if(c)
-         [_model addConstraint:[ORFactory expr:_rv neq:[ORFactory integer:_model value:0]]];
-      [_model addConstraint:[[_rv mul:y] eqi:c]];
+         [_model addConstraint:[_rv neq:@(0)]];
+      [_model addConstraint:[[_rv mul:y] eq:@(c)]];
    }
    else if ([rT size] == 0) { // z == x / c
-      id<ORIntVar> x = [ORSubst normSide:lT for:_model];
+      id<ORIntVar> x = lV;
       ORInt c = [rT independent];
       if (c==0)
          [_model addConstraint:[ORFactory fail:_model]];
       
-      int xMin = x->getIMin();
-      int xMax = x->getIMax();
-      int low,up;
-      if (c > 0) {
-         low = xMin / c;
-         up  = xMax / c;
-      } else {
-         low = xMax / c;
-         up  = xMin / c;
-      }
-      CotCPIntVar* rem  = _mgr->adaptiveCreateIntVariable(-c+1,c-1);
-      CotCPIntVar* prod = _mgr->adaptiveCreateIntVariable(c*low,c*up);
-      CotCPIntVar* z = hasContext() ?
-      topContext() : _mgr->adaptiveCreateIntVariable(low,up);
-      setSuccess(_mgr->post(cf.mod(x,c,rem)));
-      setSuccess(_mgr->post(cf.mul(z,c,prod)));
-      setSuccess(_mgr->post(cf.equalTern(prod,rem,x)));
-      if (!_term) _term = new (_alloc) ColCPlinearTerm(_alloc,1);
-      _term->addTerm(1,z);
+      int xMin = x.min;
+      int xMax = x.max;
+      int low = c>0 ? xMin/c : xMax/c;
+      int up  = c>0 ? xMax/c : xMin/c;
+      id<ORIntVar> rem  = [ORFactory intVar:_model domain:RANGE(_model,-c+1,c-1)];
+      id<ORIntVar> prod = [ORFactory intVar:_model domain:RANGE(_model,xMin,xMax)];
+      id<ORIntVar> z    = _rv ? _rv : [ORFactory intVar:_model domain:RANGE(_model,low,up)];
+      [_model addConstraint:[ORFactory mod:_model var:x modi:c equal:rem]];
+      [_model addConstraint:[ORFactory mult:_model var:z by:[ORFactory intVar:_model value:c] equal:prod]];
+      [_model addConstraint:[ORFactory equal3:_model var:x to:prod plus:rem]];
+      _rv = z;
    }
-   else {
-      CotCPIntVarI *v1 = postEqualToVar(tl);
-      CotCPIntVarI *v2 = postEqualToVar(tr);
-      sint64 v1Min = v1->getIMin();
-      sint64 v1Max = v1->getIMax();
-      sint64 yp = v2->getIMin() == 0 ? v2->after(0)  : v2->getIMin();
-      sint64 ym = v2->getIMax() == 0 ? v2->before(0) : v2->getIMax();
+   else {  // z = x / y
+      id<ORIntVar> x = lV;
+      id<ORIntVar> y = rV;
+      sint64 v1Min = x.min;
+      sint64 v1Max = x.max;
+      sint64 yp = y.min == 0 ? 1  : y.min;
+      sint64 ym = y.max == 0 ? -1 : y.max;
       
       sint64 mxvals[4] = { v1Min/yp,v1Min/ym,v1Max/yp,v1Max/ym};
-      int low = CotCP::bindDown(minSeq(mxvals,4));
-      int up  = CotCP::bindUp(maxSeq(mxvals,4));
-      sint64 pxvals[4] = { low * v2->getMin(),low * v2->getMax(), up * v2->getMin(), up * v2->getMax()};
-      int pxlow = CotCP::bindDown(minSeq(pxvals,4));
-      int pxup  = CotCP::bindUp(maxSeq(pxvals,4));
-      int rb = max(abs(yp),abs(ym))-1;
-      CotCPIntVar* rem  = _mgr->adaptiveCreateIntVariable(-rb,rb);
-      CotCPIntVar* prod = _mgr->adaptiveCreateIntVariable(pxlow,pxup);
-      CotCPIntVar* z = hasContext() ?
-      topContext() : _mgr->adaptiveCreateIntVariable(low,up);
-      setSuccess(_mgr->post(cf.mod(v1,v2,rem)));
-      setSuccess(_mgr->post(cf.nequalCst(v2,0)));
-      setSuccess(_mgr->post(cf.mul(z,v2,prod)));
-      setSuccess(_mgr->post(cf.equalTern(prod,rem,v1)));
-      if (!_term) _term = new (_alloc) ColCPlinearTerm(_alloc,1);
-      _term->addTerm(1,z);
+      int low = bindDown(minSeq(mxvals));
+      int up  = bindUp(maxSeq(mxvals));
+      sint64 pxvals[4] = { low * y.min,low * y.max, up * y.min, up * y.max};
+      int pxlow = bindDown(minSeq(pxvals));
+      int pxup  = bindUp(maxSeq(pxvals));
+      int rb = max((int)labs(yp),(int)labs(ym))-1;
+      id<ORIntVar> rem  = [ORFactory intVar:_model domain:RANGE(_model,-rb,rb)];
+      id<ORIntVar> prod = [ORFactory intVar:_model domain:RANGE(_model,pxlow,pxup)];
+      id<ORIntVar> z    = _rv ? _rv : [ORFactory intVar:_model domain:RANGE(_model,low,up)];
+      [_model addConstraint:[ORFactory mod:_model var:x mod:y equal:rem]];
+      [_model addConstraint:[ORFactory notEqualc:_model var:y to:0]];
+      [_model addConstraint:[ORFactory mult:_model var:z by:y equal:prod]];
+      [_model addConstraint:[ORFactory equal3:_model var:x to:prod plus:rem]];
+      _rv = z;
    }
-   
    [lT release];
    [rT release];
-    */
 }
 
 -(void) visitExprModI:(ORExprModI *)e

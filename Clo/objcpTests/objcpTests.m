@@ -411,7 +411,6 @@
    }];
 }
 
-/*
 -(void)testDiv
 {
    @autoreleasepool {
@@ -424,6 +423,10 @@
       id<CPProgram> testSolver = [ORFactory createCPProgram:test];
       [testSolver solveAll:^{
          [testSolver label:foo];
+         XCTAssert([testSolver bound:foo] && [testSolver bound:bar],"both vars should be bound");
+         int fv = [testSolver min:foo];
+         int bv = [testSolver min:bar];
+         XCTAssertEqual(bv, fv * 10 / 2, "Satisfy relation");
          NSLog(@"foo: [%d,%d], bar: [%d,%d]",
                [testSolver min:foo],
                [testSolver max:foo],
@@ -431,10 +434,7 @@
                [testSolver max:bar]
                );
       }];
-      
    }
-   exit(EXIT_SUCCESS);
 }
- */
 
 @end
