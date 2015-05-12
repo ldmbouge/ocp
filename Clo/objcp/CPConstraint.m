@@ -139,6 +139,7 @@
 +(id<ORConstraint>) nocycle:(id<CPIntVarArray>)x
 {
    assert(NO);
+   return nil;
 }
 
 +(id<ORConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize

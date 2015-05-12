@@ -132,7 +132,7 @@ void assignCircuit(CPCircuit* cstr,int i)
 }
 -(void) dealloc
 {
-   NSLog(@"NoCycle dealloc called ...");
+   NSLog(@"CPPath dealloc called ...");
    if (_posted) {
       _var += _low;
       free(_var);

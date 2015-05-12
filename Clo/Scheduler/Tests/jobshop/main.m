@@ -381,7 +381,8 @@ int mainPureCP(int argc, const char * argv[])
 {
    @autoreleasepool {
       
-      FILE* data = fopen("orb03.jss","r");
+      //FILE* data = fopen("orb03.jss","r");
+      FILE* data = fopen("ft10.jss","r");
       ORInt nbJobs, nbMachines;
       fscanf(data, "%d",&nbJobs);
       fscanf(data, "%d",&nbMachines);
@@ -434,7 +435,9 @@ int mainPureCP(int argc, const char * argv[])
       [cp solve: ^{
          [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 10*[cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
             id<ORTaskVarArray> t = disjunctive[i].taskVars;
-            [cp sequence: disjunctive[i].successors by: ^ORFloat(ORInt i) { return [cp est: t[i]]; } then: ^ORFloat(ORInt i) { return [cp ect: t[i]];}];
+            [cp sequence: disjunctive[i].successors
+                      by: ^ORFloat(ORInt i) { return [cp est: t[i]]; }
+                    then: ^ORFloat(ORInt i) { return [cp ect: t[i]];}];
          }];
          [cp label: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
