@@ -53,6 +53,8 @@
 
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) path: (id<CPIntVarArray>) x;
++(id<CPConstraint>) subCircuit: (id<CPIntVarArray>) x;
++(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize;
 +(id<CPConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<CPIntVar>)c;
 +(id<CPConstraint>) affine:(id<CPIntVar>)y equal:(ORInt)a times:(id<CPIntVar>)x plus:(ORInt)b annotation:(ORCLevel)n;

@@ -56,7 +56,7 @@
    }
     ];
    NSLog(@"Got %@ solutions\n",nbSolutions);
-   STAssertTrue([cp intValue:nbSolutions]==92, @"queens-8 has 92 solutions");
+   XCTAssertTrue([cp intValue:nbSolutions]==92, @"queens-8 has 92 solutions");
    [m release];
    [ORFactory shutdown];
 }
@@ -81,7 +81,7 @@
       }
       //printf("]\n");
       [nbSolutions  incr:cp];
-      STAssertTrue(nbOne>=2, @"Each solution must have at least 2 ones");
+      XCTAssertTrue(nbOne>=2, @"Each solution must have at least 2 ones");
    }
     ];
    printf("GOT %d solutions\n",[cp intValue: nbSolutions]);
@@ -109,7 +109,7 @@
       }
       //printf("]\n");
       [nbSolutions  incr:cp];
-      STAssertTrue(nbOne>=8, @"Each solution must have at least 2 ones");
+      XCTAssertTrue(nbOne>=8, @"Each solution must have at least 2 ones");
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
@@ -148,8 +148,8 @@
       //}
       //printf("]\n");
       [nbSolutions  incr:cp];
-      STAssertTrue(nbOne>=2, @"Each solution must have at least 2 ones");
-      STAssertTrue(nbZero>=8, @"Each solution must have at least 8 zeroes");
+      XCTAssertTrue(nbOne>=2, @"Each solution must have at least 2 ones");
+      XCTAssertTrue(nbZero>=8, @"Each solution must have at least 8 zeroes");
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
@@ -174,7 +174,7 @@
          nbOne += [cp min:x[k]] == 1;
       NSLog(@"SOL: %@",x);
       [nbSolutions  incr:cp];
-      STAssertTrue(nbOne == 4, @"Each solution must have at least 4 ones");
+      XCTAssertTrue(nbOne == 4, @"Each solution must have at least 4 ones");
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
@@ -198,7 +198,7 @@
    [cp solveAll: ^() {
       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
       for(ORInt k=0;k<s;k++) {
-         STAssertTrue([cp min:x[k]] == ![cp min:nx[k]], @"x and nx should be negations of each other");
+         XCTAssertTrue([cp min:x[k]] == ![cp min:nx[k]], @"x and nx should be negations of each other");
       }
       [nbSolutions  incr:cp];
    }
@@ -218,7 +218,7 @@
    [cp solveAll:^() {
       [cp label:x];
       NSLog(@"solution: %@\n",av);
-      STAssertTrue([cp min:b] == ([cp min:x]!=5), @"reification not ok");
+      XCTAssertTrue([cp min:b] == ([cp min:x]!=5), @"reification not ok");
    }
     ];
    [m release];
@@ -234,7 +234,7 @@
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll:^() {
       [cp label:x];
-      STAssertTrue([cp min:b] == ([cp min:x]==5), @"reification not ok");
+      XCTAssertTrue([cp min:b] == ([cp min:x]==5), @"reification not ok");
    }
     ];
    [m release];
@@ -254,7 +254,7 @@
       [cp label:x];
       [cp label:y];
       [cp label:b];
-      STAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b<=> (x==y)) not ok");
+      XCTAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b<=> (x==y)) not ok");
    }
     ];
    [m release];
@@ -273,7 +273,7 @@
    [cp solveAll:^() {
       [cp label:b];
       [cp label:x];
-      STAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b first) (b<=> (x==y)) not ok");
+      XCTAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b first) (b<=> (x==y)) not ok");
    }
     ];
    [m release];
@@ -350,7 +350,7 @@
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
-   STAssertTrue([cp intValue:nbSolutions] == 92, @"Expecting 92 solutions");
+   XCTAssertTrue([cp intValue:nbSolutions] == 92, @"Expecting 92 solutions");
    [cp release];
    [ORFactory shutdown];
 }
@@ -409,6 +409,32 @@
       [cp label:cap];
       NSLog(@"KS2: SOL: %@ = %@",x,cap);
    }];
+}
+
+-(void)testDiv
+{
+   @autoreleasepool {
+      id<ORModel> test = [ORFactory createModel];
+      id<ORIntVar> foo = [ORFactory intVar:test domain:RANGE(test, 4,6)];
+      id<ORIntVar> bar = [ORFactory intVar:test domain:RANGE(test, 0,FDMAXINT)];
+      
+      // bar = (10*foo) / 2
+      [test add:[bar eq:[[foo mul:@(10)] div:@(2)]]];
+      id<CPProgram> testSolver = [ORFactory createCPProgram:test];
+      [testSolver solveAll:^{
+         [testSolver label:foo];
+         XCTAssert([testSolver bound:foo] && [testSolver bound:bar],"both vars should be bound");
+         int fv = [testSolver min:foo];
+         int bv = [testSolver min:bar];
+         XCTAssertEqual(bv, fv * 10 / 2, "Satisfy relation");
+         NSLog(@"foo: [%d,%d], bar: [%d,%d]",
+               [testSolver min:foo],
+               [testSolver max:foo],
+               [testSolver min:bar],
+               [testSolver max:bar]
+               );
+      }];
+   }
 }
 
 @end

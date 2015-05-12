@@ -54,12 +54,8 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    self = [super init];
    _name = name;
-   _asDom = ![v bound];
-   assert(false);
-//   if (_asDom) {
-//      _rep._dom = [[v domain] copy];
-//   } else
-//      _rep._value = [v min];
+   _asDom = YES;
+   _rep._dom = [[v domain] copy];
    return self;
 }
 -(void)dealloc

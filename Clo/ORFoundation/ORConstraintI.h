@@ -412,6 +412,16 @@
 -(id<ORIntVarArray>) array;
 @end
 
+@interface ORSubCircuit : ORConstraintI<ORSubCircuit>
+-(ORSubCircuit*)initORSubCircuit:(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>) array;
+@end
+
+@interface ORNoCycleI : ORConstraintI<ORNoCycle>
+-(ORNoCycleI*)initORNoCycleI:(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>) array;
+@end
+
 @interface ORPackOneI : ORConstraintI<ORPackOne>
 -(ORPackOneI*)initORPackOneI:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
 -(id<ORIntVarArray>) item;

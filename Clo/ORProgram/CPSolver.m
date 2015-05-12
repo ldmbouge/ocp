@@ -1143,15 +1143,19 @@
 @implementation CPSolver
 -(id<CPProgram>) initCPSolver
 {
-   self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
    _mt    = [ORFactory memoryTrail];
    _engine = [CPFactory engine: _trail memory:_mt];
+   return [self initCPSolverWithEngine: _engine];
+}
+-(id<CPProgram>) initCPSolverWithEngine: (id<CPEngine>) engine
+{
+   self = [super initCPCoreSolver];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
                                                                   nestedControllerClass: [ORDFSController class]];
-   _search = [ORExplorerFactory explorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory explorer: engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }

@@ -10,10 +10,9 @@
  ***********************************************************************/
 
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-
-@interface objcpTests : SenTestCase {
+@interface objcpTests : XCTestCase {
 @private
     
 }

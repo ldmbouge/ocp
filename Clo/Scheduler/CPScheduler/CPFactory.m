@@ -288,7 +288,6 @@
 
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) before precedes:(id<CPTaskVar>) after
 {
-<<<<<<< HEAD
    id<CPConstraint> rc = [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
    [[before engine] trackMutable:rc];
    return rc;
@@ -304,34 +303,22 @@
    id<CPConstraint> rc =  [[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
    [[task engine] trackMutable:rc];
    return rc;
-=======
-   id<CPEngine> engine = [before engine];
-   id<CPConstraint> cstr = [[CPTaskPrecedence alloc] initCPTaskPrecedence: before after: after];
-   [engine trackMutable: cstr];
-   return cstr;
 }
-+(id<CPConstraint>) constraint: (id<CPTaskVar>) before optionalPrecedes:(id<CPTaskVar>) after
-{
-   id<CPEngine> engine = [before engine];
-   id<CPConstraint> cstr = [[CPOptionalTaskPrecedence alloc] initCPOptionalTaskPrecedence: before after: after];
-   [engine trackMutable: cstr];
-   return cstr;
-}
-+(id<CPConstraint>) constraint:(id<CPTaskVar>)before onResource:(id<CPConstraint>)bRes optionalPrecedes:(id<CPTaskVar>)after onResource:(id<CPConstraint>)aRes
+
++(id<CPConstraint>) constraint:(id<CPTaskVar>)before
+                    onResource:(id<CPConstraint>)bRes
+              optionalPrecedes:(id<CPTaskVar>)after
+                    onResource:(id<CPConstraint>)aRes
 {
     if (bRes == NULL && aRes == NULL)
         return [self constraint:before optionalPrecedes:after];
     id<CPEngine> engine = [before engine];
-    id<CPConstraint> cstr = [[CPOptionalResourceTaskPrecedence alloc] initCPOptionalResourceTaskPrecedence:before res:bRes after:after res:aRes];
+    id<CPConstraint> cstr = [[CPOptionalResourceTaskPrecedence alloc] initCPOptionalResourceTaskPrecedence:before
+                                                                                                       res:bRes
+                                                                                                     after:after
+                                                                                                       res:aRes];
     [engine trackMutable: cstr];
     return cstr;
-}
-+(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date
-{
-   id<CPEngine> engine = [task engine];
-   id<CPConstraint> cstr =[[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
-   [engine trackMutable: cstr];
-   return cstr;
 }
 +(id<CPConstraint>) constraint:(id<CPTaskVar>) task start:(id<CPIntVar>) start
 {
@@ -359,7 +346,6 @@
     id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
     [[tasks tracker] trackMutable:o];
     return o;
->>>>>>> 6313405c33539ebd8d59c184d54c7d6346849ce9
 }
 +(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
 {

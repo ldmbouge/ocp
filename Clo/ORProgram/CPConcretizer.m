@@ -287,6 +287,27 @@
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       [ax visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory path:_gamma[ax.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitSubCircuit:(id<ORCircuit>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVarArray> ax = [cstr array];
+      [ax visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory subCircuit: _gamma[ax.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitNocycle:(id<ORNoCycle>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVarArray> ax = [cstr array];
+      [ax visit: self];
       id<CPConstraint> concreteCstr = [CPFactory path: _gamma[ax.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;

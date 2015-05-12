@@ -1190,6 +1190,20 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker] trackObject:o];
    return o;
 }
+
++(id<ORConstraint>) subCircuit: (id<ORIntVarArray>) x
+{
+   id<ORConstraint> o = [[ORSubCircuit alloc] initORSubCircuit:x];
+   [[x tracker] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x
+{
+   id<ORConstraint> o = [[ORNoCycleI alloc] initORNoCycleI:x];
+   [[x tracker] trackObject:o];
+   return o;
+}
+
 +(id<ORConstraint>) packing:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
 {
    id<ORConstraint> o = [[ORPackingI alloc] initORPackingI:item itemSize:itemSize load:load];

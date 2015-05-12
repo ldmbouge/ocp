@@ -401,6 +401,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitSubCircuit:(id<ORSubCircuit>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitNoCycle:(id<ORNoCycle>) c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
    _result = [_into addConstraint:c];

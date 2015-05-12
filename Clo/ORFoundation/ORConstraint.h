@@ -385,6 +385,14 @@ enum ORGroupType {
 -(id<ORIntVarArray>) array;
 @end
 
+@protocol ORSubCircuit <ORConstraint>
+-(id<ORIntVarArray>) array;
+@end
+
+@protocol ORNoCycle <ORConstraint>
+-(id<ORIntVarArray>) array;
+@end
+
 @protocol ORPackOne <ORConstraint>
 -(id<ORIntVarArray>) item;
 -(id<ORIntArray>) itemSize;

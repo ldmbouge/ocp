@@ -50,6 +50,8 @@
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitCircuit:(id<ORCircuit>) cstr;
 -(void) visitPath:(id<ORPath>) cstr;
+-(void) visitSubCircuit:(id<ORSubCircuit>) cstr;
+-(void) visitNoCycle:(id<ORNoCycle>) cstr;
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitPacking:(id<ORPacking>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;

@@ -59,6 +59,18 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 #endif
 }
 
+-(void)callInvisible
+{
+#if defined(__x86_64__)
+   register struct Ctx64* ctx = &_target;
+   self->_used--;
+   ctx->rax = (long)self;
+   restoreCtx(ctx,_start,_data,_length);
+#else
+   _longjmp(_target,(long)self); // dot not save signal mask --> overhead
+#endif
+}
+
 +(NSCont*)takeContinuation 
 {
    NSCont* k = [NSCont new];

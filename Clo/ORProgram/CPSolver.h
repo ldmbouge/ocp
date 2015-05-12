@@ -93,6 +93,7 @@
 // Pure DFS CPSolver
 @interface CPSolver : CPCoreSolver<CPProgram>
 -(id<CPProgram>) initCPSolver;
+-(id<CPProgram>) initCPSolverWithEngine: (id<CPEngine>) engine;
 @end
 
 // SemanticPath CPSolver

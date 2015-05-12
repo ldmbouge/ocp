@@ -2050,7 +2050,14 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBool) tracksLoseEvt
 {
-    return _tracksLoseEvt;
+   return _tracksLoseEvt;
+   if (_tracksLoseEvt)
+      return true;
+   else {
+      for(ORUInt k=0;k<_nb && !_tracksLoseEvt;k++)
+	 _tracksLoseEvt |= [_tab[k] tracksLoseEvt];
+      return _tracksLoseEvt;
+   }
 }
 void bindEvt(CPMultiCast* x,id<CPDom> sender)
 {

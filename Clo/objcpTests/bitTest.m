@@ -54,8 +54,8 @@
       unsigned long long rank = [bitDomain getRank:bits];
       unsigned int* pat = [bitDomain atRank:rank];
       NSLog(@"Value [%llu] is %x%x : %x%x",rank,bits[0],bits[1],pat[0],pat[1]);
-      STAssertEquals(bits[0], pat[0],@"bit pattern (high) must be equal");
-      STAssertEquals(bits[1], pat[1],@"bit pattern (low) must be equal");
+      XCTAssertEqual(bits[0], pat[0],@"bit pattern (high) must be equal");
+      XCTAssertEqual(bits[1], pat[1],@"bit pattern (low) must be equal");
       free(pat);
    }];
 }

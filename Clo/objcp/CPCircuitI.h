@@ -28,3 +28,10 @@ static void assignCircuit(CPCircuit* cstr,int i);
 -(void) post;
 static void assignPath(CPPath* cstr,int i);
 @end
+
+@interface CPSubCircuit : CPCoreConstraint<CPConstraint>
+-(CPSubCircuit*) initCPSubCircuit: (id<CPIntVarArray>) x;
+-(void) dealloc;
+-(void) post;
+static ORStatus assignSubCircuit(CPSubCircuit* cstr,int i);
+@end
