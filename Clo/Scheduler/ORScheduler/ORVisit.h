@@ -16,10 +16,10 @@
 
 @interface ORVisitor (ORScheduler)
 -(void) visitAlternativeTask: (id<ORAlternativeTask> ) task;
--(void) visitMachineTask: (id<ORMachineTask>) task;
+-(void) visitSpanTask: (id<ORSpanTask> ) task;
+-(void) visitResourceTask: (id<ORResourceTask>) task;
 -(void) visitTask: (id<ORTaskVar> ) task;
 -(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
--(void) visitTaskDuration:  (id<ORTaskDuration> ) cstr;
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr;
 -(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr;
 -(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr;
@@ -34,10 +34,10 @@
 
 @interface ORNOopVisit (ORScheduler)
 -(void) visitAlternativeTask: (id<ORAlternativeTask> ) task;
--(void) visitMachineTask: (id<ORMachineTask>) task;
+-(void) visitSpanTask: (id<ORSpanTask> ) task;
+-(void) visitResourceTask: (id<ORResourceTask>) task;
 -(void) visitTask: (id<ORTaskVar> ) task;
 -(void) visitTaskPrecedes:  (id<ORTaskPrecedes> ) cstr;
--(void) visitTaskDuration:  (id<ORTaskDuration> ) cstr;
 -(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr;
 -(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr;
 -(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr;

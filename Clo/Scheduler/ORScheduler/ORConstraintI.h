@@ -25,14 +25,8 @@
 -(id<ORIntVar>) date;
 @end
 
-@interface ORTaskDuration : ORConstraintI<ORTaskDuration>
--(id<ORTaskDuration>) initORTaskDuration:(id<ORTaskVar>) task duration:(id<ORIntVar>) duration;
--(id<ORTaskVar>) task;
--(id<ORIntVar>) duration;
-@end
-
 @interface ORTaskAddTransitionTime : ORConstraintI<ORTaskAddTransitionTime>
--(id<ORTaskDuration>) initORTaskAddTransitionTime: (id<ORTaskVar>) normal extended: (id<ORTaskVar>) extended time: (id<ORIntVar>) time;
+-(id<ORTaskAddTransitionTime>) initORTaskAddTransitionTime: (id<ORTaskVar>) normal extended: (id<ORTaskVar>) extended time: (id<ORIntVar>) time;
 -(id<ORTaskVar>) normal;
 -(id<ORTaskVar>) extended;
 -(id<ORIntVar>) time;
@@ -59,7 +53,9 @@
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORIntVarArray>) usages;
 -(id<ORIntVar>) capacity;
--(void) add: (id<ORTaskVar>) act with: (id<ORIntVar>) usage;
+-(id<ORIntArray>) resourceTasks;
+-(void) add:(id<ORResourceTask>)task duration:(ORInt)duration;
+-(void) add:(id<ORResourceTask>)task durationRange:(id<ORIntRange>)duration;
 @end
 
 @interface ORTaskDisjunctive : ORConstraintI<ORTaskDisjunctive>
@@ -71,8 +67,8 @@
 -(ORBool) hasTransition;
 -(id<ORIntMatrix>) extendedTransitionMatrix;
 -(id<ORIntVarArray>) successors;
--(void) add: (id<ORTaskVar>) act;
--(void) add: (id<ORTaskVar>) act type: (ORInt) type;
+-(ORBool) hasOptionalTasks;
+-(id<ORIntArray>) resourceTasks;
 @end
 
 // Difference logic constraint

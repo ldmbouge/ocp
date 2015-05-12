@@ -18,9 +18,11 @@
 @protocol CPTaskVar;
 
 @interface CPTaskDisjunctive : CPCoreConstraint {
-   id<CPTaskVarArray>  _tasks;   // TaskVar
+    id<CPTaskVarArray>  _tasks;     // TaskVar
+    id<ORIntArray>      _resTasks;  // Whether a task is treated as resource task
 }
 -(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) tasks;
+-(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) tasks resourceTasks: (id<ORIntArray>)res;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

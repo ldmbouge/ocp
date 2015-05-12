@@ -22,10 +22,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "taskPrecedes: visit method not defined"];
 }
--(void) visitTaskDuration: (id<ORTaskDuration>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "taskDuration: visit method not defined"];
-}
 -(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "taskAddTransitionTime: visit method not defined"];
@@ -84,10 +80,6 @@
 -(void) visitTaskPrecedes: (id<ORPrecedes>) cstr
 {
 
-}
--(void) visitTaskDuration: (id<ORTaskDuration>) cstr
-{
-   
 }
 -(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
 {

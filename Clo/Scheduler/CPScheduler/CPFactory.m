@@ -32,6 +32,13 @@
     return cstr;
 }
 
+// Span propagator
++(id<CPConstraint>) constraint:(id<CPTaskVar>)task spans:(id<CPTaskVarArray>)spans
+{
+    id<CPConstraint> cstr = [[CPSpan alloc] initCPSpan:task compound:spans];
+    [[task tracker] trackMutable:cstr];
+    return cstr;
+}
 
 // Cumulative (resource) constraint
 //
@@ -220,6 +227,13 @@
         [disj set: clo(k) at: k];
     return (id<CPDisjunctiveArray>) disj;
 }
++(id<CPResourceArray>) resourceArray:(id<CPEngine>)engine range:(id<ORIntRange>)range with:(id<CPConstraint>(^)(ORInt))clo
+{
+    id<ORIdArray> res = [ORFactory idArray:engine range:range];
+    for (ORInt k = range.low; k <= range.up; k++)
+        [res set: clo(k) at: k];
+    return (id<CPResourceArray>) res;
+}
 
 // Task of fixed duration
 //
@@ -247,9 +261,27 @@
     [engine trackMutable: task];
     return task;
 }
-+(id<CPMachineTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntArray>)durationArray runsOnOneOf:(id<CPDisjunctiveArray>)disjunctives
++(id<CPSpanTask>) task: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withSpans:(id<CPTaskVarArray>)spans
 {
-    id<CPMachineTask> task = [[CPMachineTask alloc] initCPMachineTask:engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:disjunctives];
+    id<CPSpanTask> task = [[CPSpanTask alloc] initCPSpanTask:engine horizon:horizon duration:duration compound:spans];
+    [engine trackMutable: task];
+    return task;
+}
++(id<CPSpanTask>) optionalTask: (id<CPEngine>) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration withSpans:(id<CPTaskVarArray>)spans
+{
+    id<CPSpanTask> task = [[CPOptionalSpanTask alloc] initCPOptionalSpanTask: engine horizon: horizon duration: duration compound:spans];
+    [engine trackMutable: task];
+    return task;
+}
++(id<CPResourceTask>) task: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntRangeArray>)durationArray runsOnOneOf:(id<CPResourceArray>)resources
+{
+    id<CPResourceTask> task = [[CPResourceTask alloc] initCPResourceTask:engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:resources];
+    [engine trackMutable: task];
+    return task;
+}
++(id<CPResourceTask>) optionalTask: (id<CPEngine>) engine horizon:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration durationArray:(id<ORIntRangeArray>)durationArray runsOnOneOf:(id<CPResourceArray>)resources
+{
+    id<CPResourceTask> task = [[CPResourceTask alloc] initCPResourceTask:engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:resources];
     [engine trackMutable: task];
     return task;
 }
@@ -285,12 +317,28 @@
    [engine trackMutable: cstr];
    return cstr;
 }
++(id<CPConstraint>) constraint:(id<CPTaskVar>)before onResource:(id<CPConstraint>)bRes optionalPrecedes:(id<CPTaskVar>)after onResource:(id<CPConstraint>)aRes
+{
+    if (bRes == NULL && aRes == NULL)
+        return [self constraint:before optionalPrecedes:after];
+    id<CPEngine> engine = [before engine];
+    id<CPConstraint> cstr = [[CPOptionalResourceTaskPrecedence alloc] initCPOptionalResourceTaskPrecedence:before res:bRes after:after res:aRes];
+    [engine trackMutable: cstr];
+    return cstr;
+}
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date
 {
    id<CPEngine> engine = [task engine];
    id<CPConstraint> cstr =[[CPTaskIsFinishedBy alloc] initCPTaskIsFinishedBy: task : date];
    [engine trackMutable: cstr];
    return cstr;
+}
++(id<CPConstraint>) constraint:(id<CPTaskVar>) task start:(id<CPIntVar>) start
+{
+    id<CPEngine> engine = [task engine];
+    id<CPConstraint> cstr =[[CPTaskStart alloc] initCPTaskStart: task : start];
+    [engine trackMutable: cstr];
+    return cstr;
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration
 {
@@ -299,6 +347,13 @@
    [engine trackMutable: cstr];
    return cstr;
 }
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task presence: (id<CPIntVar>) presence
+{
+    id<CPEngine> engine = [task engine];
+    id<CPConstraint> cstr =[[CPTaskPresence alloc] initCPTaskPresence: task : presence];
+    [engine trackMutable: cstr];
+    return cstr;
+}
 +(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
 {
     id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
@@ -306,11 +361,23 @@
     return o;
 >>>>>>> 6313405c33539ebd8d59c184d54c7d6346849ce9
 }
++(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
+{
+    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
+    [[tasks tracker] trackMutable:o];
+    return o;
+}
 +(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks
 {
    id<CPConstraint> o = [[CPTaskDisjunctive alloc] initCPTaskDisjunctive: tasks];
    [[tasks tracker] trackMutable: o];
    return o;
+}
++(id<CPConstraint>) taskDisjunctive:(id<CPTaskVarArray>) tasks resourceTasks:(id<ORIntArray>)resTasks
+{
+    id<CPConstraint> o = [[CPTaskDisjunctive alloc] initCPTaskDisjunctive: tasks resourceTasks:resTasks];
+    [[tasks tracker] trackMutable: o];
+    return o;
 }
 +(id<CPConstraint>) taskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ
 {
@@ -318,10 +385,28 @@
    [[tasks tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>) optionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ
+{
+    id<CPConstraint> o = [[CPOptionalTaskSequence alloc] initCPOptionalTaskSequence: tasks successors: succ];
+    [[tasks tracker] trackMutable: o];
+    return o;
+}
++(id<CPConstraint>) optionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ resource:(id<CPResourceArray>) res
+{
+    id<CPConstraint> o = [[CPOptionalTaskSequence alloc] initCPOptionalTaskSequence: tasks successors: succ resource:res];
+    [[tasks tracker] trackMutable: o];
+    return o;
+}
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) normal extended:  (id<CPTaskVar>) extended time: (id<CPIntVar>) time
 {
    id<CPConstraint> o = [[CPTaskAddTransitionTime alloc] initCPTaskAddTransitionTime: normal extended: extended time: time];
    [[normal tracker] trackMutable: o];
    return o;
+}
++(id<CPConstraint>) constraint:(id<CPResourceTask>)normal resourceExtended:(id<CPResourceTask>)extended time:(id<CPIntVarArray>)time
+{
+    id<CPConstraint> o = [[CPResourceTaskAddTransitionTime alloc] initCPResourceTaskAddTransitionTime:normal extended:extended time:time];
+    [[normal tracker] trackMutable:o];
+    return o;
 }
 @end

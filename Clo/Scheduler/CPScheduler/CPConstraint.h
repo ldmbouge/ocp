@@ -16,6 +16,7 @@
 
 @protocol CPTaskVar;
 @protocol CPTaskVarArray;
+@protocol CPResourceTask;
 
 
     // Alternative propagator
@@ -28,6 +29,19 @@
 -(void) dealloc;
 -(ORStatus) post;
 //-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
+// Span propagator
+//
+@interface CPSpan : CPCoreConstraint {
+    id<CPTaskVar>      _task;
+    id<CPTaskVarArray> _compound;
+}
+-(id) initCPSpan: (id<CPTaskVar>) task compound: (id<CPTaskVarArray>) compound;
+-(void) dealloc;
+-(ORStatus) post;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end
@@ -56,11 +70,46 @@
 -(ORUInt) nbUVars;
 @end
 
+@interface CPOptionalResourceTaskPrecedence : CPCoreConstraint {
+    id<CPTaskVar> _before;
+    id<CPTaskVar> _after;
+}
+-(id) initCPOptionalResourceTaskPrecedence: (id<CPTaskVar>) before res: (id<CPConstraint>) bRes after: (id<CPTaskVar>) after res: (id<CPConstraint>) aRes;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
 @interface CPTaskIsFinishedBy : CPCoreConstraint {
    id<CPTaskVar> _task;
    id<CPIntVar> _date;
 }
 -(id) initCPTaskIsFinishedBy: (id<CPTaskVar>) task : (id<CPIntVar>) date;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
+@interface CPTaskPresence : CPCoreConstraint {
+    id<CPTaskVar> _task;
+    id<CPIntVar>  _bool;
+}
+-(id) initCPTaskPresence: (id<CPTaskVar>) task : (id<CPIntVar>) presence;
+-(void) dealloc;
+-(ORStatus) post;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
+@interface CPTaskStart : CPCoreConstraint {
+    id<CPTaskVar> _task;
+    id<CPIntVar>  _start;
+}
+-(id) initCPTaskStart:(id<CPTaskVar>)task :(id<CPIntVar>)start;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -86,6 +135,19 @@
    id<CPIntVar>  _time;
 }
 -(id) initCPTaskAddTransitionTime: (id<CPTaskVar>) normal extended: (id<CPTaskVar>) extended time: (id<CPIntVar>) time;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
+@interface CPResourceTaskAddTransitionTime : CPCoreConstraint {
+    id<CPResourceTask> _normal;
+    id<CPResourceTask> _extended;
+    id<CPIntVarArray>  _time;
+}
+-(id) initCPResourceTaskAddTransitionTime: (id<CPResourceTask>) normal extended: (id<CPResourceTask>) extended time: (id<CPIntVarArray>) time;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

@@ -528,191 +528,330 @@
     }
     printf("-+-+-+-+-+-+-+-+-+-+-+--+-+-\n");
 }
-//-(void) propagate
-//{
-//    ORInt size = _size._val;
-//    for (ORInt ii = 0; ii < size; ii++) {
-//        const ORInt i = _idx[ii];
-//        if (_alter[i].top.bound) {
-//            if (_alter[i].top.value == 1) {
-//                if (_act.isOptional)
-//                    [_act.top bind:1];
-//                _idx[ii] = _idx[0];
-//                _idx[0]  = i;
-//                for (ORInt kk = 1; kk < size; kk++)
-//                    [_alter[_idx[kk]].top bind:0];
-//                size = 1;
-//                break;
-//            }
-//            else {
-//                _idx[ii]       = _idx[size - 1];
-//                _idx[size - 1] = i;
-//                size--;
-//                ii--;
-//            }
-//        }
-//        else {
-//            // Check present
-//            if (_alter[i].startLB.min > _act.startUB.max || _alter[i].startUB.max < _act.startLB.min
-//                || _alter[i].duration.min > _act.duration.max || _alter[i].duration.max < _act.duration.min
-//            ) {
-//                [_alter[i].top bind: 0];
-//                _idx[ii]       = _idx[size - 1];
-//                _idx[size - 1] = i;
-//                size--;
-//                ii--;
-//            }
-//        }
-//    }
-//    assignTRInt(&_size, size, _trail);
-//    if (size == 1 && _alter[_idx[0]].top.bound) {
-//        if (_act.isOptional)
-//            [_act.top bind: 1];
-//        [self propagateEqual];
-//    }
-//    if (size == 0) {
-//        if (_act.isOptional)
-//            [_act.top bind:0];
-//        else {
-//            failNow();
-//        }
-//    }
-//}
-//-(void) dumpState
-//{
-//    printf("Meta: start [%d,%d]; dur [%d,%d]\n", _act.startLB.min, _act.startUB.max, _act.duration.min, _act.duration.max);
-//    for (ORInt i = _alter.range.low; i <= _alter.range.up; i++) {
-//        printf("\t%d: top [%d,%d]; start [%d,%d]; dur [%d,%d]\n", i, _alter[i].top.min, _alter[i].top.max, _alter[i].startLB.min, _alter[i].startUB.max, _alter[i].duration.min, _alter[i].duration.max);
-//    }
-//}
-//-(void) bindActivity
-//{
-//    assert(_act.top.bound);
-//    if (_act.top.value == 1) {
-//        if (_size._val == 1) {
-//            [_alter[_idx[0]].top bind:1];
-//            [self propagateEqual];
-//        }
-//    }
-//    else {
-//        for (ORInt ii = 0; ii < _size._val; ii++) {
-//            [_alter[_idx[ii]].top bind:0];
-//        }
-//        assignTRInt(&_size, 0, _trail);
-//        // Disentail propagator
-//        assignTRInt(&_active, NO, _trail);
-//    }
-//}
-//-(void) propActDurMin
-//{
-//    for (ORInt ii = 0; ii < _size._val; ii++) {
-//        const ORInt i = _idx[ii];
-//        if (_alter[i].duration.max < _act.duration.min)
-//            [_alter[i].top bind:0];
-//        else
-//            [_alter[i].duration updateMin:_act.duration.min];
-//    }
-//}
-//-(void) propActDurMax
-//{
-//    for (ORInt ii = 0; ii < _size._val; ii++) {
-//        const ORInt i = _idx[ii];
-//        if (_alter[i].duration.min > _act.duration.max)
-//            [_alter[i].top bind:0];
-//        else
-//            [_alter[i].duration updateMax:_act.duration.max];
-//    }
-//}
-//-(void) propAlterStartMin
-//{
-//    ORInt startMin = MAXINT;
-//    for (ORInt ii = 0; ii < _size._val; ii++)
-//        startMin = min(startMin, _alter[_idx[ii]].startLB.min);
-//    [_act updateStartMin:startMin];
-//}
-//-(void) propAlterStartMax
-//{
-//    ORInt startMax = MININT;
-//    for (ORInt ii = 0; ii < _size._val; ii++)
-//        startMax = max(startMax, _alter[_idx[ii]].startUB.max);
-//    [_act updateStartMax:startMax];
-//}
-//-(void) propAlterDurMin
-//{
-//    ORInt durMin = MAXINT;
-//    for (ORInt ii = 0; ii < _size._val; ii++)
-//        durMin = min(durMin, _alter[_idx[ii]].duration.min);
-//    if (_act.duration.max < durMin)
-//        [_act.top bind:0];
-//    else
-//        [_act.duration updateMin:durMin];
-//}
-//-(void) propAlterDurMax
-//{
-//    ORInt durMax = MININT;
-//    for (ORInt ii = 0; ii < _size._val; ii++)
-//        durMax = max(durMax, _alter[_idx[ii]].duration.max);
-//    if (_act.duration.min > durMax)
-//        [_act.top bind:0];
-//    else
-//        [_act.duration updateMax:durMax];
-//}
-//-(void) propagateEqual
-//{
-//    assert(_size._val == 1 && _alter[_idx[0]].top.bound && _alter[_idx[0]].top.value == 1);
-//    assert((_act.isOptional && _act.top.value == 1) || !_act.isOptional);
-//    const ORInt i = _idx[0];
-//    id<CPEngine> engine = [_act.startLB engine];
-//    [engine addInternal:[CPFactory equal:_act.startLB  to:_alter[i].startLB  plus:0]];
-//    [engine addInternal:[CPFactory equal:_act.startUB  to:_alter[i].startUB  plus:0]];
-//    [engine addInternal:[CPFactory equal:_act.duration to:_alter[i].duration plus:0]];
-//    // Disentail propagator
-//    assignTRInt(&_active, NO, _trail);
-//}
-//-(NSSet*) allVars
-//{
-//    NSUInteger nb = 4 * [_alter count] + (_act.isOptional ? 4 : 3);
-//    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
-//    for (ORInt i = _alter.range.low; i < _alter.range.up; i++) {
-//        [rv addObject:_alter[i].top     ];
-//        [rv addObject:_alter[i].startLB ];
-//        [rv addObject:_alter[i].startUB ];
-//        [rv addObject:_alter[i].duration];
-//    }
-//    if (_act.isOptional)
-//        [rv addObject:_act.top];
-//    [rv addObject:_act.startLB ];
-//    [rv addObject:_act.startUB ];
-//    [rv addObject:_act.duration];
-//    [rv autorelease];
-//    return rv;
-//}
-//-(ORUInt) nbUVars
-//{
-//    ORUInt nb = 0;
-//    for (ORInt ii = 0; ii < _size._val; ii++) {
-//        const ORInt i = _idx[ii];
-//        if (!_alter[i].top.bound     ) nb++;
-//        if (!_alter[i].startLB.bound ) nb++;
-//        if (!_alter[i].duration.bound) nb++;
-//    }
-//    if (_act.isOptional && !_act.top.bound) nb++;
-//    if (!_act.startLB.bound ) nb++;
-//    if (!_act.duration.bound) nb++;
-//    
-//    return nb;
-//}
-//-(void) encodeWithCoder:(NSCoder *)aCoder
-//{
-//    assert(false);
-//}
-//-(id) initWithCoder:(NSCoder *)aDecoder
-//{
-//    assert(false);
-//}
 @end
 
 
+// Span constraint
+//
+@implementation CPSpan {
+    ORInt * _idx;   // Array of task's indices
+    TRInt   _size;  // Pointer to the first absent compound task in the array _idx
+    
+    TRInt   _watchStart;
+    TRInt   _watchEnd;
+}
+-(id) initCPSpan:(id<CPTaskVar>)task compound:(id<CPTaskVarArray>)compound
+{
+    self = [super initCPCoreConstraint:[task engine]];
+    
+    _task     = task;
+    _compound = compound;
+    _idx      = NULL;
+    
+    return self;
+}
+-(void) dealloc
+{
+    if (_idx != NULL) free(_idx);
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    const ORInt size = (ORInt) [_compound count];
+    const ORInt low  = [_compound low  ];
+    const ORInt up   = [_compound up   ];
+    
+    // Initialise trailed parameters
+    _size        = makeTRInt(_trail, size);
+    _watchStart  = makeTRInt(_trail, size);
+    _watchEnd    = makeTRInt(_trail, size);
+    
+    // Allocate memory
+    _idx = malloc(size * sizeof(ORInt));
+    
+    // Check whether memory allocation was successful
+    if (_idx == NULL) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPAlternative: Out of memory!"];
+    }
+    
+    // Initialise misc
+    for (ORInt i = 0; i < size; i++) {
+        _idx[i] = i + low;
+    }
+    
+    // Initial propagation
+    [self initPropagation];
+    
+    // Subscription of the span tasks
+    for (ORInt i = low; i <= up; i++) {
+        if (!_compound[i].isAbsent) {
+            // Change to present
+            [_compound[i] whenPresentDo: ^{ [self propagateSpanPresence: i]; } onBehalf: self];
+            // Change to absent
+            [_compound[i] whenAbsentDo: ^{ [self propagateSpanAbsence: i]; } onBehalf: self];
+            // Bound change on start
+            [_compound[i] whenChangeStartDo: ^{
+                if (_size._val == 1) {
+                    assert(_idx[0] == i);
+                    [_task updateStart: _compound[i].est];
+                }
+                else if (_watchStart._val == i) {
+                    [self propagateSpanStart];
+                }
+            } onBehalf: self];
+            // Bound change on end
+            [_compound[i] whenChangeEndDo: ^{
+                if (_size._val == 1) {
+                    assert(_idx[0] == i);
+                    [_task updateEnd: _compound[i].lct];
+                }
+                else if (_watchEnd._val == i) {
+                    [self propagateSpanEnd];
+                }
+            } onBehalf: self];
+        }
+    }
+    
+    // Subscription of the meta task
+    if (!_task.isAbsent) {
+        if (!_task.isPresent) {
+            // Change to present
+            [_task whenPresentDo: ^{ [self propagateTaskPresence]; } onBehalf: self];
+            // Change to absent
+            [_task whenAbsentDo: ^{ [self propagateTaskAbsence]; } onBehalf: self];
+        }
+        // Bound change on start
+        [_task whenChangeStartDo: ^{ [self propagateTaskStart]; } onBehalf: self];
+        // Bound change on end
+        [_task whenChangeEndDo: ^{ [self propagateTaskEnd]; } onBehalf: self];
+    }
+    
+    return ORSuspend;
+}
+-(void) propagateTaskPresence
+{
+    if (VERBOSE) printf("*** propagateTaskPresence (Start) ***\n");
+    if (_size._val <= 1)
+        [_compound[_idx[0]] labelPresent: true];
+    if (VERBOSE) printf("*** propagateTaskPresence (End) ***\n");
+}
+-(void) propagateTaskAbsence
+{
+    if (VERBOSE) printf("*** propagateTaskAbsence (Start) ***\n");
+    assert(_task.isAbsent);
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_compound[i] labelPresent: false];
+    }
+    assignTRInt(&(_size), 0, _trail);
+    if (VERBOSE) printf("*** propagateTaskAbsence (End) ***\n");
+}
+-(void) propagateTaskStart
+{
+    if (VERBOSE) printf("*** propagateTaskStart (Start) ***\n");
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_compound[i] updateStart: _task.est];
+    }
+    if (VERBOSE) printf("*** propagateTaskStart (End) ***\n");
+}
+-(void) propagateTaskEnd
+{
+    if (VERBOSE) printf("*** propagateTaskEnd (Start) ***\n");
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_compound[i] updateEnd: _task.lct];
+    }
+    if (VERBOSE) printf("*** propagateTaskEnd (End) ***\n");
+}
+-(void) propagateTaskAll
+{
+    if (VERBOSE) printf("*** propagateTaskAll (Start) ***\n");
+    assert(!_task.isAbsent);
+    const ORInt start  = _task.est;
+    const ORInt end    = _task.lct;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        [_compound[i] updateStart      : start ];
+        [_compound[i] updateEnd        : end   ];
+    }
+    if (VERBOSE) printf("*** propagateTaskAll (End) ***\n");
+}
+-(void) propagateSpanStart
+{
+    if (VERBOSE) printf("*** propagateSpanStart (Start) ***\n");
+    ORInt minStart = MAXINT;
+    ORInt wStart   = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (minStart > _compound[i].est) {
+            minStart = _compound[i].est;
+            wStart   = i;
+        }
+    }
+    assert(_compound.low <= wStart  && wStart  <= _compound.up);
+    [_task updateStart: minStart];
+    if (wStart != _watchStart._val)
+        assignTRInt(&(_watchStart), wStart, _trail);
+    if (VERBOSE) printf("*** propagateSpanStart (End) ***\n");
+}
+-(void) propagateSpanEnd
+{
+    if (VERBOSE) printf("*** propagateSpanEnd (Start) ***\n");
+    ORInt maxEnd = MININT;
+    ORInt wEnd   = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (maxEnd < _compound[i].lct) {
+            maxEnd = _compound[i].lct;
+            wEnd   = i;
+        }
+    }
+    assert(_compound.low <= wEnd && wEnd <= _compound.up);
+    [_task updateEnd: maxEnd];
+    if (wEnd != _watchEnd._val)
+        assignTRInt(&(_watchEnd), wEnd, _trail);
+    if (VERBOSE) printf("*** propagateSpanEnd (End) ***\n");
+}
+-(void) propagateSpanPresence: (ORInt) k
+{
+    if (VERBOSE) printf("*** propagateSpanPresence(%d) (Start) ***\n", k);
+    [_task labelPresent: true];
+    if (VERBOSE) printf("*** propagateSpanPresence(%d) (End) ***\n", k);
+}
+-(void) propagateSpanAbsence: (ORInt) k
+{
+    if (VERBOSE) printf("*** propagateSpanAbsence(%d) (Start) ***\n", k);
+    ORInt size = _size._val;
+    for (ORInt ii = 0; ii < size; ii++) {
+        const ORInt i = _idx[ii];
+        if (i == k) {
+            size--;
+            _idx[ii]   = _idx[size];
+            _idx[size] = i;
+            break;
+        }
+    }
+    if (size < _size._val)
+        assignTRInt(&(_size), size, _trail);
+    if (_size._val == 0) {
+        [_task labelPresent: false];
+    }
+    else {
+        if (_size._val == 1 && _task.isPresent) {
+            [_compound[_idx[0]] labelPresent: true];
+            [self propagateAllEqualities];
+        }
+        if (_watchStart._val == k)
+            [self propagateSpanStart];
+        if (_watchEnd._val == k)
+            [self propagateSpanEnd];
+    }
+    if (VERBOSE) printf("*** propagateSpanAbsence(%d) (End) ***\n", k);
+}
+-(void) propagateAllEqualities
+{
+    assert(_size._val == 1);
+    if (VERBOSE) printf("*** propagateAllEqualities (Start) ***\n");
+    const ORInt k = _idx[0];
+    ORBool test = false;
+    do {
+        [_task        updateStart      : _compound[k].est ];
+        [_task        updateEnd        : _compound[k].lct ];
+        [_compound[k] updateStart      : _task.est        ];
+        [_compound[k] updateEnd        : _task.lct        ];
+        test = (_task.est != _compound[k].est || _task.lct != _compound[k].lct);
+    } while (test && !_task.isAbsent && !_compound[k].isAbsent);
+    if (VERBOSE) printf("*** propagateAllEqualities (End) ***\n");
+}
+-(void) initPropagation
+{
+    ORInt size = _size._val;
+    ORInt minStart = MAXINT;
+    ORInt maxEnd   = MININT;
+    ORInt wStart   = MAXINT;
+    ORInt wEnd     = MAXINT;
+    ORBool update  = false;
+    
+    do {
+        if (_task.isAbsent)
+            [self propagateTaskAbsence];
+        else {
+            // Retrieving information from the compound tasks
+            for (ORInt ii = 0; ii < size; ii++) {
+                const ORInt i = _idx[ii];
+                // Check whether alternative task is absent
+                if (_compound[i].isAbsent) {
+                    // Alternative task is absent, swap it to the end
+                    if (ii < size - 1) {
+                        size--;
+                        _idx[ii  ] = _idx[size];
+                        _idx[size] = i;
+                        ii--;
+                    }
+                }
+                else {
+                    if (_compound[i].isPresent && !_task.isPresent)
+                        [self propagateSpanPresence:i];
+                    // Presence of compound task is still unknown
+                    if (_compound[i].est < minStart) {
+                        minStart = _compound[i].est;
+                        wStart   = i;
+                    }
+                    if (_compound[i].lct > maxEnd) {
+                        maxEnd = _compound[i].lct;
+                        wEnd   = i;
+                    }
+                }
+            }
+            if (size == 1) {
+                if (_task.isPresent)
+                    [_compound[_idx[0]] labelPresent: true];
+                [self propagateAllEqualities];
+            }
+            else {
+                // Updating the task bounds
+                [_task updateStart      : minStart];
+                [_task updateEnd        : maxEnd  ];
+                // Updating the alternative task bounds
+                if (_task.isAbsent)
+                    update = true;
+                else if (_task.est > minStart || _task.lct < maxEnd) {
+                    [self propagateTaskAll];
+                    update = true;
+                }
+            }
+        }
+    } while (update);
+    
+    assert(_compound.low <= wStart  && wStart  <= _compound.up);
+    assert(_compound.low <= wEnd    && wEnd    <= _compound.up);
+    assignTRInt(&(_watchStart ), wStart , _trail);
+    assignTRInt(&(_watchEnd   ), wEnd   , _trail);
+    if (size < _size._val)
+        assignTRInt(&(_size), size, _trail);
+}
+-(NSSet*) allVars
+{
+    NSUInteger nb = [_compound count] + 1;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:nb];
+    for(ORInt i = _compound.low; i <= _compound.up; i++)
+        [rv addObject:_compound[i]];
+    [rv addObject:_task];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    ORUInt nb = 0;
+    for(ORInt ii = 0; ii < _size._val; ii++)
+        if (![_compound[_idx[ii]] bound])
+            nb++;
+    if ([_task bound])
+        nb++;
+    return nb;
+}
+@end
 
 @implementation CPTaskPrecedence
 
@@ -810,6 +949,136 @@
 }
 @end
 
+@implementation CPOptionalResourceTaskPrecedence {
+    id<CPConstraint> _beforeRes;
+    id<CPConstraint> _afterRes;
+}
+-(id) initCPOptionalResourceTaskPrecedence:(id<CPTaskVar>)before res:(id<CPConstraint>)bRes after:(id<CPTaskVar>)after res:(id<CPConstraint>)aRes
+{
+    self = [super initCPCoreConstraint: [before engine]];
+    
+    _before    = before;
+    _after     = after;
+    _beforeRes = bRes;
+    _afterRes  = aRes;
+    NSLog(@"Create constraint CPOptionalResourceTaskPrecedence\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    if (_beforeRes != NULL && _afterRes != NULL) {
+        CPResourceTask * before = (CPResourceTask *)_before;
+        CPResourceTask * after  = (CPResourceTask *)_after;
+        [self propagateResTaskBeforeResTask];
+        if (![_before bound] && ![_after bound] && ![before isAbsentOn:_beforeRes] && ![after isAbsentOn:_afterRes]) {
+            [_before whenChangeStartDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+            [_before whenChangeDurationDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+            [_after whenChangeEndDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+            if ([_before isOptional])
+                [_before whenPresentDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+            if ([_after isOptional])
+                [_after whenPresentDo:^(){[self propagateResTaskBeforeResTask];} onBehalf:self];
+        }
+    }
+    else if (_beforeRes != NULL) {
+        CPResourceTask * before = (CPResourceTask *)_before;
+        [self propagateResTaskBeforeTask];
+        if (![_before bound] && ![_after bound] && ![before isAbsentOn:_beforeRes]) {
+            [_before whenChangeStartDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+            [_before whenChangeDurationDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+            [_after whenChangeEndDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+            if ([_before isOptional])
+                [_before whenPresentDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+            if ([_after isOptional])
+                [_after whenPresentDo:^(){[self propagateResTaskBeforeTask];} onBehalf:self];
+        }
+    }
+    else if (_afterRes != NULL) {
+        CPResourceTask * after  = (CPResourceTask *)_after;
+        [self propagateTaskBeforeResTask];
+        if (![_before bound] && ![_after bound] && ![after isAbsentOn:_afterRes]) {
+            [_before whenChangeStartDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+            [_before whenChangeDurationDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+            [_after whenChangeEndDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+            if ([_before isOptional])
+                [_before whenPresentDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+            if ([_after isOptional])
+                [_after whenPresentDo:^(){[self propagateTaskBeforeResTask];} onBehalf:self];
+        }
+    }
+    else {
+        assert(_beforeRes == NULL && _afterRes == NULL);
+        [self propagate];
+        if (![_before bound] && ![_after bound]) {
+            [_before whenChangeStartPropagate: self];
+            [_before whenChangeDurationPropagate: self];
+            [_after whenChangeEndPropagate: self];
+            if ([_before isOptional])
+                [_before whenPresentPropagate: self];
+            if ([_after isOptional])
+                [_after whenPresentPropagate: self];
+        }
+    }
+    return ORSuspend;
+}
+-(void) propagateResTaskBeforeTask
+{
+    assert(_beforeRes != NULL && _afterRes == NULL);
+    CPResourceTask * before = (CPResourceTask *)_before;
+    if ([before isPresentOn:_beforeRes]) {
+        [_after updateStart: [_before ect]];
+        if ([_after isPresent])
+            [_before updateEnd: [_after lst]];
+    }
+}
+-(void) propagateTaskBeforeResTask
+{
+    assert(_beforeRes == NULL && _afterRes != NULL);
+    CPResourceTask * after = (CPResourceTask *)_after;
+    if ([after isPresentOn:_afterRes]) {
+        if ([_before isPresent])
+            [_after updateStart: [_before ect]];
+        [_before updateEnd: [_after lst]];
+    }
+}
+-(void) propagateResTaskBeforeResTask
+{
+    assert(_beforeRes != NULL && _afterRes != NULL);
+    CPResourceTask * before = (CPResourceTask *)_before;
+    CPResourceTask * after  = (CPResourceTask *)_after;
+    if ([before isPresentOn:_beforeRes] && [after isPresentOn:_afterRes]) {
+        if ([_before isPresent])
+            [_after updateStart: [_before ect]];
+        [_before updateEnd: [_after lst]];
+    }
+}
+-(void) propagate
+{
+    assert(_beforeRes == NULL && _afterRes == NULL);
+    if ([_before isPresent])
+        [_after updateStart: [_before ect]];
+    if ([_after isPresent])
+        [_before updateEnd: [_after lst]];
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_before];
+    [rv addObject:_after];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
+}
+@end
+
 @implementation CPTaskIsFinishedBy
 
 -(id) initCPTaskIsFinishedBy: (id<CPTaskVar>) task : (id<CPIntVar>) date
@@ -852,6 +1121,99 @@
 -(ORUInt) nbUVars
 {
    return 2;
+}
+@end
+
+
+@implementation CPTaskPresence
+
+-(id) initCPTaskPresence: (id<CPTaskVar>) task : (id<CPIntVar>) presence
+{
+    self = [super initCPCoreConstraint: [task engine]];
+    
+    _task = task;
+    _bool = presence;
+    NSLog(@"Create constraint CPTaskPresence\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    [self propagate];
+    if (![_task bound] && ![_bool bound]) {
+        [_task whenAbsentDo:^(){[_bool updateMax:0];} onBehalf:self];
+        [_task whenPresentDo:^(){[_bool updateMin:1];} onBehalf:self];
+        [_bool whenChangeBoundsPropagate: self];
+        [_bool whenChangeBoundsDo:^(){
+            assert([_bool bound] && (_bool.value == 0 || _bool.value == 1));
+            [_task labelPresent:_bool.value];
+        } onBehalf:self];
+    }
+    return ORSuspend;
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_task];
+    [rv addObject:_bool];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
+}
+@end
+
+@implementation CPTaskStart
+
+-(id) initCPTaskStart:(id<CPTaskVar>)task :(id<CPIntVar>)start
+{
+    self = [super initCPCoreConstraint:[task engine]];
+    
+    _task  = task;
+    _start = start;
+    NSLog(@"Create constraint CPTaskStart\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    [self propagate];
+    if (![_task bound] && ![_start bound]) {
+        [_task  whenChangeStartPropagate   : self];
+        [_task  whenChangeEndPropagate     : self];
+        [_task  whenChangeDurationPropagate: self];
+        [_start whenChangeBoundsPropagate  : self];
+    }
+    return ORSuspend;
+}
+-(void) propagate
+{
+    [_start updateMin: [_task est]];
+    [_start updateMax: [_task lst]];
+    [_task  updateStart: [_start min]];
+    [_task  updateEnd: [_start max] + [_task maxDuration]];
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_task];
+    [rv addObject:_start];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
 }
 @end
 
@@ -906,50 +1268,179 @@
 
 -(id) initCPTaskAddTransitionTime:(id<CPTaskVar>) normal extended:(id<CPTaskVar>)extended time:(id<CPIntVar>)time
 {
-   self = [super initCPCoreConstraint: [normal engine]];
-   
-   _normal = normal;
-   _extended = extended;
-   _time  = time;
+    self = [super initCPCoreConstraint: [normal engine]];
+    
+    _normal   = normal;
+    _extended = extended;
+    _time     = time;
     NSLog(@"Create constraint CPTaskAddTransitionTime\n");
-   return self;
+    return self;
 }
 -(void) dealloc
 {
-   [super dealloc];
+    [super dealloc];
 }
 -(ORStatus) post
 {
-   [self propagate];
-   if (![_normal bound] && ![_extended bound] && ![_time bound]) {
-      [_normal whenChangeStartPropagate: self];
-      [_normal whenChangeEndPropagate: self];
-      [_extended whenChangeStartPropagate: self];
-      [_extended whenChangeEndPropagate: self];
-      [_time whenChangeMinPropagate: self];
-   }
-   return ORSuspend;
+    [self propagate];
+    if (![_normal bound] && ![_extended bound] && ![_time bound]) {
+        [_normal   whenChangeStartPropagate: self];
+        [_normal   whenChangeEndPropagate  : self];
+        [_extended whenChangeStartPropagate: self];
+        [_extended whenChangeEndPropagate  : self];
+        [_time     whenChangePropagate     : self];
+        // Presence and absence propagation
+        [_normal   whenAbsentDo :^(){[_extended labelPresent:false];} onBehalf:self];
+        [_normal   whenPresentDo:^(){[_extended labelPresent:true ];} onBehalf:self];
+        [_extended whenAbsentDo :^(){[_normal   labelPresent:false];} onBehalf:self];
+        [_extended whenPresentDo:^(){[_normal   labelPresent:true ];} onBehalf:self];
+    }
+    return ORSuspend;
 }
 -(void) propagate
 {
-   [_normal updateStart: [_extended est]];
-   [_extended updateStart: [_normal est]];
-   [_normal updateEnd: [_extended lct] - [_time min]];
-   [_extended updateEnd: [_normal lct] + [_time max]];
+    if (_normal.isAbsent)
+        return ;
+    
+    // Updating the duration
+    [_normal   updateMinDuration:[_extended minDuration] - [_time min]];
+    [_normal   updateMaxDuration:[_extended maxDuration] - [_time max]];
+    [_extended updateMinDuration:[_normal   minDuration] + [_time min]];
+    [_extended updateMaxDuration:[_normal   maxDuration] + [_time max]];
+    [_time     updateMin:[_extended minDuration] - [_normal minDuration]];
+    [_time     updateMax:[_extended maxDuration] - [_normal maxDuration]];
+    
+    // Updating the start and end time
+    [_normal   updateStart: [_extended est]];
+    [_extended updateStart: [_normal   est]];
+    [_normal   updateEnd  : [_extended lct] - [_time min]];
+    [_extended updateEnd  : [_normal   lct] + [_time max]];
 }
 -(NSSet*) allVars
 {
-   ORInt size = 2;
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
-   [rv addObject:_normal];
-   [rv addObject:_extended];
-   [rv addObject:_time];
-   [rv autorelease];
-   return rv;
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_normal];
+    [rv addObject:_extended];
+    [rv addObject:_time];
+    [rv autorelease];
+    return rv;
 }
 -(ORUInt) nbUVars
 {
-   return 2;
+    return 2;
 }
 @end
 
+@implementation CPResourceTaskAddTransitionTime
+{
+    TRInt   _normalSize;
+    TRInt   _extendedSize;
+}
+-(id) initCPResourceTaskAddTransitionTime:(id<CPResourceTask>) normal extended:(id<CPResourceTask>)extended time:(id<CPIntVarArray>)time
+{
+    self = [super initCPCoreConstraint: [normal engine]];
+    
+    _normal   = normal;
+    _extended = extended;
+    _time     = time;
+    NSLog(@"Create constraint CPResourceTaskAddTransitionTime\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    _normalSize   = makeTRInt(_trail, (ORInt)[_time count]);
+    _extendedSize = makeTRInt(_trail, (ORInt)[_time count]);
+    
+    [self propagate];
+    
+    [_normal   whenChangeStartPropagate: self];
+    [_normal   whenChangeEndPropagate  : self];
+    [_extended whenChangeStartPropagate: self];
+    [_extended whenChangeEndPropagate  : self];
+    
+    for (ORInt i = _time.low; i <= _time.up; i++) {
+        [_time[i] whenChangeMinPropagate: self];
+    }
+    
+    // Presence and absence propagation
+    [_normal   whenAbsentDo :^(){[_extended labelPresent:false];} onBehalf:self];
+    [_normal   whenPresentDo:^(){[_extended labelPresent:true ];} onBehalf:self];
+    [_extended whenAbsentDo :^(){[_normal   labelPresent:false];} onBehalf:self];
+    [_extended whenPresentDo:^(){[_normal   labelPresent:true ];} onBehalf:self];
+
+    return ORSuspend;
+}
+-(void) propagate
+{
+    if ([_normal isAbsent])
+        return ;
+
+    ORInt normalAbsent   = 0;
+    ORInt extendedAbsent = 0;
+    // NOTE Do not modify the following arrays, which are internal data structures
+    // of resource tasks
+    const ORInt * normalIndex   = [(CPResourceTask *)_normal   getInternalIndexArray: & normalAbsent  ];
+    const ORInt * extendedIndex = [(CPResourceTask *)_extended getInternalIndexArray: & extendedAbsent];
+    
+    for (ORInt ii = normalAbsent; ii < _normalSize._val; ii++)
+        [(CPResourceTask *)_extended removeWithIndex:normalIndex[ii]];
+    for (ORInt ii = extendedAbsent; ii < _extendedSize._val; ii++)
+        [(CPResourceTask *)_extended removeWithIndex:extendedIndex[ii]];
+
+    const ORInt * normalIndex0 = [(CPResourceTask *)_normal   getInternalIndexArray: & normalAbsent  ];
+    [(CPResourceTask *)_extended getInternalIndexArray: & extendedAbsent];
+    
+    assert(normalAbsent == extendedAbsent);
+    
+    if (normalAbsent < _normalSize._val)
+        assignTRInt(&(_normalSize), normalAbsent, _trail);
+    if (extendedAbsent < _extendedSize._val)
+        assignTRInt(&(_extendedSize), extendedAbsent, _trail);
+    
+    // Compute minimal and maximal time
+    ORInt tmin = MAXINT;
+    ORInt tmax = MININT;
+    // Iterate over relevant resource constraint
+    for (ORInt ii = 0; ii < normalAbsent; ii++) {
+        const ORInt i = normalIndex0[ii];
+        tmin = min(tmin, [_time[i] min]);
+        tmax = max(tmax, [_time[i] max]);
+    }
+
+    // Updating the duration
+    [_normal   updateMinDuration:[_extended minDuration] - tmin];
+    [_normal   updateMaxDuration:[_extended maxDuration] - tmax];
+    [_extended updateMinDuration:[_normal   minDuration] + tmin];
+    [_extended updateMaxDuration:[_normal   maxDuration] + tmax];
+    if (normalAbsent == 1 && [_normal isPresent]) {
+        const ORInt i = normalIndex0[0];
+        [_time[i] updateMin:[_extended minDuration] - [_normal minDuration]];
+        [_time[i] updateMax:[_extended maxDuration] - [_normal maxDuration]];
+    }
+    
+    // Updating the start and end
+    [_normal   updateStart: [_extended est]];
+    [_extended updateStart: [_normal   est]];
+    [_normal   updateEnd  : [_extended lct] - tmin];
+    [_extended updateEnd  : [_normal   lct] + tmax];
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_normal];
+    [rv addObject:_extended];
+    [rv addObject:_time];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
+}
+@end

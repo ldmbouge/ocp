@@ -56,7 +56,7 @@ Profile getEarliestContentionProfile(ORInt * sort_id_est, ORInt * sort_id_ect, O
     
     // Check whether memory allocation was successful
     if (prof._level == NULL || prof._time == NULL) {
-        @throw [[ORExecutionError alloc] initORExecutionError: "CPDisjunctive: Out of memory!"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "ContentionProfile: Out of memory!"];
     }
     
     // Creating resource profile

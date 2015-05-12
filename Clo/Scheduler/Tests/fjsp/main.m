@@ -288,8 +288,8 @@ int main(int argc, const char * argv[])
         ms_max += dur_max;
     }
     
-    // Use machine tasks
-    ORBool useMachineTasks = false;
+    // Use resource tasks
+    ORBool useResourceTasks = true;
 
 	@autoreleasepool {
       
@@ -312,14 +312,15 @@ int main(int argc, const char * argv[])
             //
         id<ORIntVar> MS = [ORFactory intVar:model bounds: dom];
         
-        if (useMachineTasks) {
-            // Creating machine activities
+        if (useResourceTasks) {
+            // Creating resource activities
             //
             Acts = [ORFactory taskVarArray:model range:ActsR with:^id<ORTaskVar>(ORInt k) {
                 if (act_nopt[k] == 1) {
                     return [ORFactory task: model horizon: dom duration: dur[k]];
                 }
-                return [ORFactory task: model horizon: dom range: RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1)  runsOnOneOf:^id<ORTaskDisjunctive>(ORInt l) {return [disjunctive at:mach[l] - mach_id_min];} withDuration:^ORInt(ORInt l) {return dur[l];}];
+//                return [ORFactory task: model horizon: dom range: RANGE(model, act_fopt[k], act_fopt[k] + act_nopt[k] - 1)  runsOnOneOf:^id<ORTaskDisjunctive>(ORInt l) {return [disjunctive at:mach[l] - mach_id_min];} withDuration:^ORInt(ORInt l) {return dur[l];}];
+                return [ORFactory resourceTask: model horizon: dom duration:dom];
             }];
         }
         else {
@@ -363,15 +364,24 @@ int main(int argc, const char * argv[])
 
             // Adding resource constraints
             //
-        if (useMachineTasks) {
+        if (useResourceTasks) {
             for (ORInt m = MachR.low; m <= MachR.up; m++) {
                 for (ORInt k = 0; k < mach_nopt[m]; k++) {
                     const ORInt o = mach_opt[m][k];
                     const ORInt t = opt_act[o];
-                    [disjunctive[m] add:Acts[t]];
+//                    [disjunctive[m] add:Acts[t]];
+                    if (act_nopt[t] == 1)
+                        [disjunctive[m] add:Acts[t]];
+                    else
+                        [disjunctive[m] add:(id<ORResourceTask>)Acts[t] duration:dur[o]];
                 }
                 // Closing the disjunctive constraint
                 [model add:disjunctive[m]];
+            }
+            // Closing resource tasks
+            for (ORInt t = 0; t < n_act; t++) {
+                if (act_nopt[t] > 1)
+                    [(id<ORResourceTask>)Acts[t] close];
             }
         }
         else {
@@ -400,15 +410,15 @@ int main(int argc, const char * argv[])
 		[cp solve:
 			^() {
 				// Search strategy
-                if (useMachineTasks) {
-                    [cp labelActivities:Acts];
+                if (useResourceTasks) {
+                    [cp assignResources:Acts];
+//                    [cp labelActivities:Acts];
                 }
                 else {
                     [cp setAlternatives: Alts];
-                    [cp labelActivities: OptActs];
+//                    [cp labelActivities: OptActs];
                 }
-                // XXX setTimes seems to be buggy
-//                [cp setTimes: Acts];
+                [cp setTimes: Acts];
                 [cp label: MS];
                 
                 // Print outs
@@ -434,14 +444,14 @@ int main(int argc, const char * argv[])
                 for (ORInt m = MachR.low; m <= MachR.up; m++) {
                     const ORInt mId = [disjunctive[m] getId];
                     printf("%%%% mach %d: ", m + mach_id_min);
-                    if (useMachineTasks) {
+                    if (useResourceTasks) {
                         for (ORInt kk = 0; kk < mach_nopt[m]; kk++) {
                             const ORInt k = mach_opt[m][kk];
                             const ORInt t = opt_act[k];
                             if (act_nopt[t] == 1)
                                 printf("[%2d, %2d) ", [cp est: Acts[t]], [cp lct: Acts[t]]);
                             else {
-                                const ORUInt runsOnId = [[cp runsOn: (id<ORMachineTask>) Acts[t]] getId];
+                                const ORUInt runsOnId = [[cp runsOnResource: (id<ORResourceTask>) Acts[t]] getId];
                                 if (mId == runsOnId)
                                     printf("[%2d, %2d) ", [cp est: Acts[t]], [cp lct: Acts[t]]);
                             }

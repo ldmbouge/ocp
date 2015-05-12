@@ -116,12 +116,19 @@
    }
    return (id<ORTaskDisjunctiveArray>) o;
 }
-+(id<ORTaskDisjunctiveArray>) disjuntiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskDisjunctive>(^)(ORInt)) clo
++(id<ORTaskDisjunctiveArray>) disjunctiveArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORTaskDisjunctive>(^)(ORInt)) clo
 {
     id<ORIdArray> o = [ORFactory idArray: model range:range];
     for (ORInt k = range.low; k <= range.up; k++)
         [o set: clo(k) at: k];
     return (id<ORTaskDisjunctiveArray>) o;
+}
++(id<ORResourceArray>) resourceArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORConstraint>(^)(ORInt)) clo
+{
+    id<ORIdArray> o = [ORFactory idArray: model range:range];
+    for (ORInt k = range.low; k <= range.up; k++)
+        [o set: clo(k) at: k];
+    return (id<ORResourceArray>) o;
 }
 
 //+(id<ORTaskSequenceArray>) sequenceArray: (id<ORTracker>) model range: (id<ORIntRange>) range
@@ -145,12 +152,6 @@
 +(id<ORTaskIsFinishedBy>) constraint: (id<ORTaskVar>) task isFinishedBy: (id<ORIntVar>) date
 {
    id<ORTaskIsFinishedBy> o = [[ORTaskIsFinishedBy alloc] initORTaskIsFinishedBy: task isFinishedBy: date];
-   [[task tracker] trackMutable: o];
-   return o;
-}
-+(id<ORTaskDuration>) constraint: (id<ORTaskVar>) task duration: (id<ORIntVar>) duration
-{
-   id<ORTaskDuration> o = [[ORTaskDuration alloc] initORTaskDuration: task duration: duration];
    [[task tracker] trackMutable: o];
    return o;
 }
@@ -203,6 +204,9 @@
 {
    id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctive: task];
    [[task tracker] trackObject:o];
+    // XXX 'trackObject' does not assign a unique ID to the object but 'trackConstraintInGroup'
+    // 'trackConstraintInGroup' can be removed when 'trackObject' assigns a unique ID
+    [[task tracker] trackConstraintInGroup:o];
    return o;
 }
 
@@ -210,6 +214,9 @@
 {
    id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctiveEmpty: model];
    [model trackObject:o];
+    // XXX 'trackObject' does not assign a unique ID to the object but 'trackConstraintInGroup'
+    // 'trackConstraintInGroup' can be removed when 'trackObject' assigns a unique ID
+    [model trackConstraintInGroup:o];
    return o;
 }
 
@@ -217,6 +224,9 @@
 {
    id<ORTaskDisjunctive> o = [[ORTaskDisjunctive alloc] initORTaskDisjunctiveEmpty: model transition: matrix];
    [model trackObject:o];
+    // XXX 'trackObject' does not assign a unique ID to the object but 'trackConstraintInGroup'
+    // 'trackConstraintInGroup' can be removed when 'trackObject' assigns a unique ID
+    [model trackConstraintInGroup:o];
    return o;
 }
 
@@ -277,6 +287,12 @@
    [model trackMutable:o];
    return o;
 }
++(id<ORTaskVar>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
+{
+    id<ORTaskVar> o = [[ORTaskVar alloc] initOROptionalTaskVar: model horizon: horizon duration: duration];
+    [model trackVariable:o];
+    return o;
+}
 // ORAlternativeTask
 +(id<ORAlternativeTask>) task: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORTaskVar>(^)(ORInt)) clo
 {
@@ -287,12 +303,72 @@
     [model trackMutable:o];
     return o;
 }
-// ORMachineTask
-+(id<ORMachineTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOf: (id<ORTaskDisjunctive>(^)(ORInt)) cloDisjunctives withDuration: (ORInt(^)(ORInt)) cloDuration
++(id<ORAlternativeTask>) optionalTask: (id<ORModel>) model range: (id<ORIntRange>) range withAlternatives: (id<ORTaskVar>(^)(ORInt)) clo
 {
-    id<ORIntArray> dur = [ORFactory intArray:model range:range with:cloDuration];
-    id<ORTaskDisjunctiveArray> disj = [ORFactory disjuntiveArray:model range:range with:cloDisjunctives];
-    id<ORMachineTask> o = [[ORMachineTask alloc] initORMachineTask:model horizon:horizon durationArray:dur runsOnOneOf:disj];
+    id<ORIdArray> alts = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [alts set: clo(k) at:k];
+    id<ORAlternativeTask> o = [[ORAlternativeTask alloc] initOROptionalAlternativeTask: model alternatives: (id<ORTaskVarArray>) alts];
+    [model trackMutable:o];
+    return o;
+}
+// ORSpanTask
++(id<ORSpanTask>) task: (id<ORModel>) model range: (id<ORIntRange>) range withSpans: (id<ORTaskVar>(^)(ORInt)) clo
+{
+    id<ORTaskVarArray> spans = (id<ORTaskVarArray>)[ORFactory idArray:model range:range];
+    ORInt minHor = MAXINT;
+    ORInt maxHor = MININT;
+    for(ORInt k = range.low; k <= range.up; k++) {
+        [spans set: clo(k) at:k];
+        minHor = min(minHor, spans[k].horizon.low );
+        maxHor = max(maxHor, spans[k].horizon.up  );
+    }
+    id<ORSpanTask> o = [[ORSpanTask alloc] initORSpanTask: model horizon:RANGE(model, minHor, maxHor) compound:spans];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORSpanTask>) optionalTask: (id<ORModel>) model range: (id<ORIntRange>) range withSpans: (id<ORTaskVar>(^)(ORInt)) clo
+{
+    id<ORTaskVarArray> spans = (id<ORTaskVarArray>)[ORFactory idArray:model range:range];
+    ORInt minHor = MAXINT;
+    ORInt maxHor = MININT;
+    for(ORInt k = range.low; k <= range.up; k++) {
+        [spans set: clo(k) at:k];
+        minHor = min(minHor, spans[k].horizon.low );
+        maxHor = max(maxHor, spans[k].horizon.up  );
+    }
+    id<ORSpanTask> o = [[ORSpanTask alloc] initOROptionalSpanTask:model horizon:RANGE(model, minHor, maxHor) compound:spans];
+    [model trackMutable:o];
+    return o;
+}
+// ORResourceTask
++(id<ORResourceTask>) task: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (id<ORIntRange>(^)(ORInt)) cloDuration
+{
+    id<ORIntRangeArray> dur = [ORFactory intRangeArray:model range:range with:cloDuration];
+    id<ORResourceArray> res = [ORFactory resourceArray:model range:range with:cloResources];
+    id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTask:model horizon:horizon durationArray:dur runsOnOneOf:res];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORResourceTask>) resourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "Resource tasks are not available yet!"];
+    id<ORResourceTask> o = [[ORResourceTask alloc] initORResourceTaskEmpty:model horizon:horizon duration:duration];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORResourceTask>) optionalTask: (id<ORModel>) model horizon: (id<ORIntRange>)horizon range: (id<ORIntRange>) range runsOnOneOfResource: (id<ORConstraint>(^)(ORInt)) cloResources withDuration: (id<ORIntRange>(^)(ORInt)) cloDuration
+{
+    id<ORIntRangeArray> dur = [ORFactory intRangeArray:model range:range with:cloDuration];
+    id<ORResourceArray> res = [ORFactory resourceArray:model range:range with:cloResources];
+    id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTask:model horizon:horizon durationArray:dur runsOnOneOf:res];
+    [model trackMutable:o];
+    return o;
+}
++(id<ORResourceTask>) optionalResourceTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "Resource tasks are not available yet!"];
+    id<ORResourceTask> o = [[ORResourceTask alloc] initOROptionalResourceTaskEmpty:model horizon:horizon duration:duration];
     [model trackMutable:o];
     return o;
 }
@@ -347,4 +423,12 @@
    return o;
 }
 
+// Miscellaneous
++(id<ORIntRangeArray>) intRangeArray: (id<ORTracker>) model range: (id<ORIntRange>) range with: (id<ORIntRange>(^)(ORInt)) clo
+{
+    id<ORIdArray> o = [ORFactory idArray:model range:range];
+    for(ORInt k = range.low; k <= range.up; k++)
+        [o set: clo(k) at:k];
+    return (id<ORIntRangeArray>) o;
+}
 @end

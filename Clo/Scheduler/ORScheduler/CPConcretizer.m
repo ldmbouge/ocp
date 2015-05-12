@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPConstraint.h>
 #import <ORScheduler/ORScheduler.h>
+#import <ORScheduler/ORConstraintI.h>
 #import <ORScheduler/ORTaskI.h>
 #import <ORScheduler/ORActivity.h>
 #import <ORProgram/CPConcretizer.h>
@@ -138,6 +139,9 @@
     if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon = [task horizon];
         id<ORIntRange> duration = [task duration];
+        id<ORIntVar>   startVar    = [(ORTaskVar *)task startVar   ];
+        id<ORIntVar>   durationVar = [(ORTaskVar *)task durationVar];
+        id<ORIntVar>   presenceVar = [(ORTaskVar *)task presenceVar];
         
         id<CPTaskVar> concreteTask;
         if (![task isOptional])
@@ -145,6 +149,22 @@
         else
             concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration];
         _gamma[task.getId] = concreteTask;
+        
+        // Posting start constraint
+        if (startVar != NULL) {
+            [startVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask start:_gamma[startVar.getId]]];
+        }
+        // Posting duration constraint
+        if (durationVar != NULL) {
+            [durationVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask duration:_gamma[durationVar.getId]]];
+        }
+        // Posting presence constraint
+        if (presenceVar != NULL) {
+            [presenceVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presenceVar.getId]]];
+        }
     }
 }
 
@@ -155,6 +175,9 @@
         id<ORIntRange> horizon  = [task horizon];
         id<ORIntRange> duration = [task duration];
         id<ORTaskVarArray> alt  = [task alternatives];
+        id<ORIntVar>   startVar    = [(ORAlternativeTask *)task startVar   ];
+        id<ORIntVar>   durationVar = [(ORAlternativeTask *)task durationVar];
+        id<ORIntVar>   presenceVar = [(ORAlternativeTask *)task presenceVar];
         
         [alt visit: self];
         
@@ -171,32 +194,125 @@
         id<CPConstraint> concreteCstr;
         concreteCstr = [CPFactory constraint: concreteTask alternatives:_gamma[alt.getId]];
         [_engine add: concreteCstr];
+
+        // Posting start constraint
+        if (startVar != NULL) {
+            [startVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask start:_gamma[startVar.getId]]];
+        }
+        // Posting duration constraint
+        if (durationVar != NULL) {
+            [durationVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask duration:_gamma[durationVar.getId]]];
+        }
+        // Posting presence constraint
+        if (presenceVar != NULL) {
+            [presenceVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presenceVar.getId]]];
+        }
+        
+        _gamma[task.getId] = concreteTask;
+    }
+}
+// Span Task
+-(void) visitSpanTask:(id<ORSpanTask>) task
+{
+    if (_gamma[task.getId] == NULL) {
+        id<ORIntRange> horizon  = [task horizon];
+        id<ORIntRange> duration = [task duration];
+        id<ORTaskVarArray> compound = [task compound];
+        id<ORIntVar>   startVar    = [(ORSpanTask *)task startVar   ];
+        id<ORIntVar>   durationVar = [(ORSpanTask *)task durationVar];
+        id<ORIntVar>   presenceVar = [(ORSpanTask *)task presenceVar];
+        
+        [compound visit: self];
+        
+        // Create of a task composed by alternative tasks
+        id<CPSpanTask> concreteTask;
+        if (![task isOptional]) {
+            concreteTask = [CPFactory task: _engine horizon: horizon duration: duration withSpans:_gamma[compound.getId]];
+        }
+        else {
+            concreteTask = [CPFactory optionalTask: _engine horizon: horizon duration: duration withSpans:_gamma[compound.getId]];
+        }
+        
+        // Create and post the alternative constraint
+        id<CPConstraint> concreteCstr;
+        concreteCstr = [CPFactory constraint: concreteTask spans:_gamma[compound.getId]];
+        [_engine add: concreteCstr];
+        
+        // Posting start constraint
+        if (startVar != NULL) {
+            [startVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask start:_gamma[startVar.getId]]];
+        }
+        // Posting duration constraint
+        if (durationVar != NULL) {
+            [durationVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask duration:_gamma[durationVar.getId]]];
+        }
+        // Posting presence constraint
+        if (presenceVar != NULL) {
+            [presenceVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presenceVar.getId]]];
+        }
         
         _gamma[task.getId] = concreteTask;
     }
 }
 
-// Machine Task
--(void) visitMachineTask:(id<ORMachineTask>) task
+// Resource Task
+-(void) visitResourceTask:(id<ORResourceTask>) task
 {
     if (_gamma[task.getId] == NULL) {
         id<ORIntRange> horizon  = [task horizon];
         id<ORIntRange> duration = [task duration];
-        id<ORIntArray> durationArray = [task durationArray];
-        id<ORTaskDisjunctiveArray> disj  = [task disjunctives];
+        id<ORIntRangeArray> durationArray = [task durationArray];
+        id<ORResourceArray> res = [task resources];
+        id<ORIntVar>       startVar    = [(ORResourceTask *)task startVar   ];
+        id<ORIntVar>       durationVar = [(ORResourceTask *)task durationVar];
+        id<ORIntVar>       presenceVar = [(ORResourceTask *)task presenceVar];
+        id<ORResourceTask> transSource = [(ORResourceTask *)task getTransitionSource];
         
         assert(![task isOptional]);
-
+        
+        
         // TODO Here it needs to be decided whether to generate one machine task or alternative task with m optional tasks
         // For the time being only machine tasks are created
+        id<CPResourceTask> concreteTask;
         
-        id<CPMachineTask> concreteTask;
-        
-        id<CPDisjunctiveArray> emptyDisj;
-        emptyDisj = [CPFactory disjunctiveArray:_engine range:[disj range] with:^CPTaskDisjunctive*(ORInt k) {
+        id<CPResourceArray> emptyRes;
+        emptyRes = [CPFactory resourceArray:_engine range:[res range] with:^id<CPConstraint>(ORInt k) {
             return NULL;
         }];
-        concreteTask = [CPFactory task:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyDisj];
+        if (![task isOptional])
+            concreteTask = [CPFactory task:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
+        else
+            concreteTask = [CPFactory optionalTask:_engine horizon:horizon duration:duration durationArray:durationArray runsOnOneOf:emptyRes];
+
+        // Check whether it is a transition-time resource task
+        if (transSource != NULL) {
+            id<ORIntVarArray> transTime = [(ORResourceTask *)transSource getTransitionTime];
+            [transSource visit:self];
+            [transTime   visit:self];
+            [CPFactory constraint:_gamma[transSource.getId] resourceExtended:concreteTask time:_gamma[transTime.getId]];
+        }
+        
+        // Posting start constraint
+        if (startVar != NULL) {
+            [startVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask start:_gamma[startVar.getId]]];
+        }
+        // Posting duration constraint
+        if (durationVar != NULL) {
+            [durationVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask duration:_gamma[durationVar.getId]]];
+        }
+        // Posting presence constraint
+        if (presenceVar != NULL) {
+            [presenceVar visit:self];
+            [_engine add:[CPFactory constraint:concreteTask presence:_gamma[presenceVar.getId]]];
+        }
         
         _gamma[task.getId] = concreteTask;
     }
@@ -220,20 +336,6 @@
    }
 }
 
-// Duration constraint
--(void) visitTaskDuration:(id<ORTaskDuration>) cstr
-{
-   if (_gamma[cstr.getId] == NULL) {
-      id<ORTaskVar> task = [cstr task];
-      id<ORIntVar> duration  = [cstr duration];
-      [task visit: self];
-      [duration  visit: self];
-      id<CPConstraint> concreteCstr;
-      concreteCstr = [CPFactory constraint: _gamma[task.getId] duration: _gamma[duration.getId]];
-      [_engine add: concreteCstr];
-      _gamma[cstr.getId] = concreteCstr;
-   }
-}
 -(void) visitTaskAddTransitionTime:(id<ORTaskAddTransitionTime>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -260,41 +362,84 @@
         [transitionTasks visit: self];
         [succ visit: self];
         id<CPConstraint> concreteCstr;
-        // NOTE the task sequence propagator for optional or machine tasks
-        // haven't been implemented yet. Once it is then the
-        // following check can be removed.
-        ORBool hasOptionalTasks = false;
-        for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if ([tasks[i] isOptional] || [tasks[i] isMemberOfClass:[ORMachineTask class]]) {
-                hasOptionalTasks = true;
-                break;
+        const ORBool hasOptionalTasks = [(ORTaskDisjunctive *)cstr hasOptionalTasks];
+
+        const ORUInt idTasks = ([cstr hasTransition] ? transitionTasks.getId : tasks.getId);
+
+        if (hasOptionalTasks) {
+            id<ORIntArray> resTasks = [(ORTaskDisjunctive *)cstr resourceTasks];
+            assert(tasks.low == resTasks.low && tasks.up == resTasks.up);
+            ORBool hasResourceTasks = FALSE;
+            for (ORInt i = tasks.low; i <= tasks.up; i++) {
+                if ([resTasks at: i] == 1) {
+                    hasResourceTasks = TRUE;
+                    break;
+                }
+            }
+            if (hasResourceTasks) {
+                // Creating the disjunctive constraint
+                concreteCstr = [CPFactory taskDisjunctive:_gamma[idTasks] resourceTasks:resTasks];
+                // Creating and adding the sequence constraint
+                id<CPResourceArray> res;
+                res = [CPFactory resourceArray:_engine range:[resTasks range] with:^id<CPConstraint>(ORInt k) {
+                    if ([resTasks at: k] == 1)
+                        return concreteCstr;
+                    return NULL;
+                }];
+                [_engine add: [CPFactory optionalTaskSequence:_gamma[idTasks] successors:_gamma[succ.getId] resource:res]];
+            }
+            else {
+                // Creating the disjunctive constraint
+                concreteCstr = [CPFactory taskDisjunctive:_gamma[idTasks]];
+                // Creating and adding sequence constraint
+                [_engine add: [CPFactory optionalTaskSequence:_gamma[idTasks] successors:_gamma[succ.getId]]];
+            }
+            
+            // Check for resource tasks and set the concrete disjunctive constraint
+            for (ORInt i = tasks.low; i <= tasks.up; i++) {
+                if ([resTasks at:i] == 1) {
+                    id<ORResourceTask> t = (id<ORResourceTask>) tasks[i];
+                    assert(_gamma[t.getId] != NULL);
+                    const ORInt idx = [t getIndex:cstr];
+                    assert([t resources].low <= idx && idx <= [t resources].up);
+                    id<CPResourceTask> concreteT = _gamma[t.getId];
+                    [concreteT set:concreteCstr at:idx];
+                    if ([cstr hasTransition]) {
+                        t = (id<ORResourceTask>) transitionTasks[i];
+                        assert(_gamma[t.getId] != NULL);
+                        concreteT = _gamma[t.getId];
+                        [concreteT set:concreteCstr at:idx];
+                    }
+                }
             }
         }
-        if (!hasOptionalTasks) {
-            if ([cstr hasTransition])
-                concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
-            else
-                concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
-            [_engine add: concreteCstr];
+        else {
+            [_engine add: [CPFactory taskSequence:_gamma[idTasks] successors:_gamma[succ.getId]]];
+            concreteCstr = [CPFactory taskDisjunctive:_gamma[idTasks]];
         }
-        if ([cstr hasTransition])
-            concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
-        else
-            concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
+//        if ([cstr hasTransition])
+//            concreteCstr = [CPFactory taskSequence: _gamma[transitionTasks.getId] successors: _gamma[succ.getId]];
+//        else
+//            concreteCstr = [CPFactory taskSequence: _gamma[tasks.getId] successors: _gamma[succ.getId]];
+//        [_engine add: concreteCstr];
+//        if ([cstr hasTransition])
+//            concreteCstr = [CPFactory taskDisjunctive: _gamma[transitionTasks.getId]];
+//        else
+//            concreteCstr = [CPFactory taskDisjunctive: _gamma[tasks.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
         
-        // Check for machine tasks and set the concrete disjunctive constraint
-        for (ORInt i = tasks.low; i <= tasks.up; i++) {
-            if ([tasks[i] isMemberOfClass:[ORMachineTask class]]) {
-                id<ORMachineTask> t = (id<ORMachineTask>) tasks[i];
-                assert(_gamma[t.getId] != NULL);
-                ORInt idx = [t getIndex:cstr];
-                assert([t disjunctives].low <= idx && idx <= [t disjunctives].up);
-                id<CPMachineTask> concreteT = _gamma[t.getId];
-                [concreteT set:concreteCstr at:idx];
-            }
-        }
+        // Check for resource tasks and set the concrete disjunctive constraint
+//        for (ORInt i = tasks.low; i <= tasks.up; i++) {
+//            if ([tasks[i] isMemberOfClass:[ORResourceTask class]]) {
+//                id<ORResourceTask> t = (id<ORResourceTask>) tasks[i];
+//                assert(_gamma[t.getId] != NULL);
+//                ORInt idx = [t getIndex:cstr];
+//                assert([t resources].low <= idx && idx <= [t resources].up);
+//                id<CPResourceTask> concreteT = _gamma[t.getId];
+//                [concreteT set:concreteCstr at:idx];
+//            }
+//        }
     }
 }
 
@@ -305,11 +450,24 @@
         id<ORTaskVarArray> tasks    = [cstr taskVars];
         id<ORIntVarArray>  usages   = [cstr usages  ];
         id<ORIntVar>       capacity = [cstr capacity];
+        id<ORIntArray>     resourceT = [(ORTaskCumulative *)cstr resourceTasks];
         [tasks    visit: self];
         [usages   visit: self];
         [capacity visit: self];
+        
+        BOOL hasResourceT = FALSE;
+        for (ORInt i = [resourceT low]; i <= [resourceT up]; i++) {
+            if ([resourceT at:i] == 1) {
+                hasResourceT = TRUE;
+                break;
+            }
+        }
+        
         id<CPConstraint> concreteCstr;
-        concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] with:_gamma[usages.getId] and:_gamma[capacity.getId]];
+        if (hasResourceT)
+            concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] resourceTasks:resourceT with:_gamma[usages.getId] and:_gamma[capacity.getId]];
+        else
+            concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] with:_gamma[usages.getId] and:_gamma[capacity.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

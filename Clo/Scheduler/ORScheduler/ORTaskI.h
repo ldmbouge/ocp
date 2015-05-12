@@ -14,6 +14,9 @@
 @interface ORTaskVar : ORObject<ORTaskVar>
 -(id<ORTaskVar>) initORTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 -(id<ORTaskVar>) initOROptionalTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<ORIntVar>) startVar;
+-(id<ORIntVar>) durationVar;
+-(id<ORIntVar>) presenceVar;
 @end
 
 @interface ORAlternativeTask : ORTaskVar<ORAlternativeTask>
@@ -21,6 +24,23 @@
 -(id<ORAlternativeTask>) initOROptionalAlternativeTask: (id<ORModel>) model alternatives: (id<ORTaskVarArray>) alternatives;
 @end
 
-@interface ORMachineTask : ORTaskVar<ORMachineTask>
--(id<ORMachineTask>) initORMachineTask: (id<ORModel>) model horizon: (id<ORIntRange>) horizon durationArray: (id<ORIntArray>) duration runsOnOneOf: (id<ORTaskDisjunctiveArray>) disjunctives;
+@interface ORSpanTask : ORTaskVar<ORSpanTask>
+-(id<ORSpanTask>) initORSpanTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon compound:(id<ORTaskVarArray>)compound;
+-(id<ORSpanTask>) initOROptionalSpanTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon compound:(id<ORTaskVarArray>)compound;
+@end
+
+@interface ORResourceTask : ORTaskVar<ORResourceTask>
+-(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration runsOnOneOf:(id<ORResourceArray>)resources;
+-(id<ORResourceTask>) initORResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources;
+-(id<ORResourceTask>) initORResourceTaskEmpty: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration runsOnOneOf:(id<ORResourceArray>)resources;
+-(id<ORResourceTask>) initOROptionalResourceTask:(id<ORModel>)model horizon:(id<ORIntRange>)horizon durationArray:(id<ORIntRangeArray>)duration usageArray:(id<ORIntVarArray>)usage runsOnOneOf:(id<ORResourceArray>)resources;
+-(id<ORResourceTask>) initOROptionalResourceTaskEmpty: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
+-(id<ORResourceTask>) getTransitionTask;
+-(id<ORResourceTask>) getTransitionSource;
+-(id<ORIntVarArray>)  getTransitionTime;
+-(void) addTransition: (id<ORConstraint>) resource with: (id<ORIntVar>) duration;
+-(void) setTransitionSource: (id<ORResourceTask>)source;
+-(void) finaliseTransitionTask;
+-(void) updateTransitionTask:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration;
 @end

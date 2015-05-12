@@ -14,8 +14,11 @@
 #import <objcp/CPVar.h>
 
 @class CPTaskDisjunctive;
+@class CPTaskCumulative;
 @protocol CPTaskVarArray;
 @protocol CPDisjunctiveArray;
+@protocol CPResourceArray;
+
 
 @protocol CPTaskVarSubscriber <NSObject>
 
@@ -79,16 +82,20 @@
 -(id<CPTaskVarArray>) alternatives;
 @end
 
-@protocol CPMachineTask <CPTaskVar>
--(id<CPDisjunctiveArray>) disjunctives;
--(void) set: (id<CPConstraint>) disjunctive at: (ORInt) idx;
--(id<ORIntArray>) getAvailDisjunctives;
--(ORBool) isPresentOn: (CPTaskDisjunctive*) disjunctive;
--(ORBool) isAbsentOn: (CPTaskDisjunctive*) disjunctive;
+@protocol CPSpanTask <CPTaskVar>
+-(id<CPTaskVarArray>) compound;
+@end
+
+@protocol CPResourceTask <CPTaskVar>
+-(id<CPResourceArray>) resources;
+-(void) set: (id<CPConstraint>) resource at: (ORInt) idx;
+-(id<ORIntArray>) getAvailResources;
+-(ORBool) isPresentOn: (id<CPConstraint>) resource;
+-(ORBool) isAbsentOn: (id<CPConstraint>) resource;
 -(ORBool) isAssigned;
--(void) readEssentials: (ORBool *) bound est: (ORInt *) est lct: (ORInt *) lct minDuration: (ORInt *) minD maxDuration: (ORInt *) maxD present: (ORBool *) present absent: (ORBool *) absent forMachine: (CPTaskDisjunctive*) disjunctive;
--(void) bind: (CPTaskDisjunctive*) disjunctive;
--(void) remove: (CPTaskDisjunctive*) disjunctive;
+-(void) readEssentials: (ORBool *) bound est: (ORInt *) est lct: (ORInt *) lct minDuration: (ORInt *) minD maxDuration: (ORInt *) maxD present: (ORBool *) present absent: (ORBool *) absent forResource: (id) resource;
+-(void) bind: (id<CPConstraint>) resource;
+-(void) remove: (id<CPConstraint>) resource;
 -(ORInt) runsOn;
 @end
 
@@ -105,4 +112,16 @@
 -(id<ORTracker>) tracker;
 @end
 
+@protocol CPResourceArray <ORObject>
+-(id<CPConstraint>) at: (ORInt) idx;
+-(void) set: (id<CPConstraint>) value at: (ORInt)idx;
+-(id<CPConstraint>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<CPConstraint>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
 

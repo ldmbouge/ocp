@@ -27,10 +27,12 @@
     //  - A negative integer for any of them will throw an exception.
 @interface CPTaskCumulative : CPCoreConstraint {
     id<CPTaskVarArray> _tasks;      // Array of tasks
+    id<ORIntArray>     _resTasks;
     id<CPIntVarArray>  _usages;     // Resource usage of the tasks on the resource
     id<CPIntVar>       _capacity;   // Resource capacity
 }
 -(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>)usages and: (id<CPIntVar>)capacity;
+-(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with: (id<CPIntVarArray>)usages and: (id<CPIntVar>)capacity;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
