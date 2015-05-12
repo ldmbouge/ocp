@@ -12,41 +12,33 @@
 	<dict>
 		<key>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</key>
 		<string>git+ssh://scm.forge.nicta.com.au/scmrepos/git/cpglobalopt/cpglobalopt.git</string>
+		<key>D2D8EB46BA5C8E354237CFF9B3605891E8A5CEEE</key>
+		<string>git+ssh://scm.forge.nicta.com.au/scmrepos/git/cpglobalopt/cpglobalopt.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Clo/ObjecticeCP.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3CA110B7-9684-468F-A9D0-BA12707EEB6C</key>
-		<string>../LSprogressive</string>
-		<key>7260A511-154F-4039-8D95-9DDCE33937E1</key>
-		<string>../LSprog</string>
 		<key>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</key>
-		<string>../progressiveLS</string>
+		<string>../../../progressiveLS</string>
+		<key>D2D8EB46BA5C8E354237CFF9B3605891E8A5CEEE</key>
+		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>git+ssh://scm.forge.nicta.com.au/scmrepos/git/cpglobalopt/cpglobalopt.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</string>
+	<string>D2D8EB46BA5C8E354237CFF9B3605891E8A5CEEE</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>7260A511-154F-4039-8D95-9DDCE33937E1</string>
+			<string>D2D8EB46BA5C8E354237CFF9B3605891E8A5CEEE</string>
 			<key>IDESourceControlWCCName</key>
-			<string>LSprog</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3CA110B7-9684-468F-A9D0-BA12707EEB6C</string>
-			<key>IDESourceControlWCCName</key>
-			<string>LSprogressive</string>
+			<string>objcppriv</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
