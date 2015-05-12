@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>ATPTW.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>98</integer>
+		</dict>
 		<key>AtomicTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -59,6 +64,16 @@
 			<key>orderHint</key>
 			<integer>72</integer>
 		</dict>
+		<key>MicroRouting.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>89</integer>
+		</dict>
+		<key>OBJCP-TEST.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>90</integer>
+		</dict>
 		<key>ORFoundation.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -88,6 +103,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>48</integer>
+		</dict>
+		<key>Routing.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>91</integer>
 		</dict>
 		<key>SHA1.xcscheme</key>
 		<dict>
@@ -123,6 +143,31 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>8</integer>
+		</dict>
+		<key>VCRP-A.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>93</integer>
+		</dict>
+		<key>VCRP-B.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>94</integer>
+		</dict>
+		<key>VCRP-B2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>95</integer>
+		</dict>
+		<key>VCRP.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>92</integer>
+		</dict>
+		<key>VRXReader.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>97</integer>
 		</dict>
 		<key>ais.xcscheme_^#shared#^_</key>
 		<dict>
@@ -348,6 +393,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>19</integer>
+		</dict>
+		<key>mrcpsp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>99</integer>
 		</dict>
 		<key>nfraction.xcscheme_^#shared#^_</key>
 		<dict>
@@ -589,6 +639,11 @@
 			<key>orderHint</key>
 			<integer>16</integer>
 		</dict>
+		<key>vrp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>96</integer>
+		</dict>
 		<key>warehouse.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -628,6 +683,11 @@
 			<true/>
 		</dict>
 		<key>537EEA7C18FCF9880006FFD2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>53BDBC221A244EB9003EEFA6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -1068,6 +1128,11 @@
 			<true/>
 		</dict>
 		<key>B1571EEC13EEBC00007B5E88</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B1574698197D753F00CAC841</key>
 		<dict>
 			<key>primary</key>
 			<true/>
