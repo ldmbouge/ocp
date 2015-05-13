@@ -32,24 +32,22 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B9ABD011391329D000997E5"
-               BuildableName = "objcpTests.octest"
-               BlueprintName = "objcpTests"
+               BlueprintIdentifier = "5B2309B61AF2C2900083A8E7"
+               BuildableName = "OBJCP-TEST.xctest"
+               BlueprintName = "OBJCP-TEST"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "bitTest">
-               </Test>
-               <Test
-                  Identifier = "objcpTests">
-               </Test>
-               <Test
-                  Identifier = "testCard">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5B9ABCEE1391329D000997E5"
+            BuildableName = "objcp.framework"
+            BlueprintName = "objcp"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -62,6 +60,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5B9ABCEE1391329D000997E5"
+            BuildableName = "objcp.framework"
+            BlueprintName = "objcp"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -73,6 +80,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5B9ABCEE1391329D000997E5"
+            BuildableName = "objcp.framework"
+            BlueprintName = "objcp"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -115,6 +115,7 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,O
                                                       cstr:c
                                                         at:priority
                                                      trail:trail];
+   [engine trackMutable: evt];
    if (evtList->_val == nil) {
       assignTRId(&evtList[0], evt, trail);
       assignTRId(&evtList[1], evt, trail);

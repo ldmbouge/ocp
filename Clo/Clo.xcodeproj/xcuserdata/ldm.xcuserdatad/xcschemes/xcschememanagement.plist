@@ -14,6 +14,11 @@
 			<key>orderHint</key>
 			<integer>58</integer>
 		</dict>
+		<key>CPScheduler.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>80</integer>
+		</dict>
 		<key>CPUKernel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -54,6 +59,16 @@
 			<key>orderHint</key>
 			<integer>72</integer>
 		</dict>
+		<key>MicroRouting.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>84</integer>
+		</dict>
+		<key>OBJCP-TEST.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>97</integer>
+		</dict>
 		<key>ORFoundation.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -69,10 +84,25 @@
 			<key>orderHint</key>
 			<integer>46</integer>
 		</dict>
+		<key>ORScheduler.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>85</integer>
+		</dict>
+		<key>ORSchedulingProgram.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>86</integer>
+		</dict>
 		<key>ORUtilities.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>48</integer>
+		</dict>
+		<key>Routing.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>88</integer>
 		</dict>
 		<key>SHA1.xcscheme</key>
 		<dict>
@@ -108,6 +138,31 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>8</integer>
+		</dict>
+		<key>VCRP-A.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>92</integer>
+		</dict>
+		<key>VCRP-B.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>93</integer>
+		</dict>
+		<key>VCRP-B2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>94</integer>
+		</dict>
+		<key>VCRP.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>91</integer>
+		</dict>
+		<key>VRXReader.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>96</integer>
 		</dict>
 		<key>ais.xcscheme_^#shared#^_</key>
 		<dict>
@@ -204,6 +259,11 @@
 			<key>orderHint</key>
 			<integer>20</integer>
 		</dict>
+		<key>fjsp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>81</integer>
+		</dict>
 		<key>fwarehouse.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -233,6 +293,16 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>5</integer>
+		</dict>
+		<key>jobshop.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>82</integer>
+		</dict>
+		<key>jsp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>83</integer>
 		</dict>
 		<key>knapsack.xcscheme_^#shared#^_</key>
 		<dict>
@@ -339,11 +409,6 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>objcpTests.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>29</integer>
-		</dict>
 		<key>objlp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -422,7 +487,7 @@
 		<key>queensMIP.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>64</integer>
+			<integer>81</integer>
 		</dict>
 		<key>queensModel.xcscheme</key>
 		<dict>
@@ -449,6 +514,11 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
+		<key>rcpsp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>87</integer>
+		</dict>
 		<key>regular.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -458,6 +528,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>55</integer>
+		</dict>
+		<key>shiploading.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>89</integer>
 		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
@@ -534,6 +609,11 @@
 			<key>orderHint</key>
 			<integer>45</integer>
 		</dict>
+		<key>testScheduler.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>90</integer>
+		</dict>
 		<key>tests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -543,6 +623,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>16</integer>
+		</dict>
+		<key>vrp.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>95</integer>
 		</dict>
 		<key>warehouse.xcscheme_^#shared#^_</key>
 		<dict>
@@ -578,6 +663,21 @@
 			<true/>
 		</dict>
 		<key>5B2000E0156D585E00D80105</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B2309891AF2BFD60083A8E7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B2309951AF2C13B0083A8E7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B2309B61AF2C2900083A8E7</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
             } while (true);
             nbSol++;
          }];
-         [[cp solutionPool] enumerateWith:^(id<ORCPSolution> sol) {
+         [[cp solutionPool] enumerateWith:^(id<ORSolution> sol) {
             printf("[x,y] = [");
             for(ORInt i = a.low; i <= a.up; i++)
                printf("%f%c",[sol floatValue: a[i]],((i < a.up) ? ',' : ']'));

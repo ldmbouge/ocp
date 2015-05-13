@@ -13,7 +13,7 @@
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 
-@interface CPFloatDom : NSObject<CPFDom,NSCoding,NSCopying> {
+@interface CPFloatDom : NSObject<CPFDom,NSCopying> {
    id<ORTrail>        _trail;
    ORFloat            _imin;
    ORFloat            _imax;

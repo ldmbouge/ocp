@@ -130,6 +130,13 @@
    [[x tracker] trackMutable: o];
    return o;
 }
++(id<ORConstraint>) subCircuit: (id<CPIntVarArray>) x
+{
+   id<ORConstraint> o = [[CPSubCircuit alloc] initCPSubCircuit:x];
+   [[x tracker] trackMutable: o];
+   return o;
+}
+
 
 +(id<ORConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize
 {

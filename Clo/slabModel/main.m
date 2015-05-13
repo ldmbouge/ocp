@@ -148,7 +148,7 @@ int main0(int argc, const char * argv[])
       onLimit: ^{ printf("limit reached\n"); }
      ];
     }];
-   id<ORCPSolution> sol = [[cp solutionPool] best];
+   id<ORSolution> sol = [[cp solutionPool] best];
    for(ORInt i = [SetOrders low]; i <= [SetOrders up]; i++)
       printf("slab[%d] = %d \n",i,[sol intValue: slab[i]]);
    printf("\n");
