@@ -19,7 +19,6 @@
 @class CPClosureQueue;
 @class CPValueClosureQueue;
 
-
 enum CPEngineState {
    CPOpen    = 0,
    CPClosing = 1,

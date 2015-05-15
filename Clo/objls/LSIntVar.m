@@ -14,6 +14,68 @@
 #import "LSFactory.h"
 #import "LSCount.h"
 
+@interface LSIntVarSnapshot : NSObject {
+   ORUInt    _name;
+   ORInt     _value;
+}
+-(id) init: (LSIntVar*)v with: (ORUInt) name;
+-(int) intValue;
+-(ORBool) boolValue;
+-(NSString*) description;
+-(ORBool)isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation LSIntVarSnapshot
+-(id) init: (LSIntVar*)v with: (ORUInt) name
+{
+   self = [super init];
+   _name = name;
+   _value = v->_value;
+   return self;
+}
+-(ORUInt)getId
+{
+   return _name;
+}
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) boolValue
+{
+   return _value;
+}
+-(ORBool)isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      LSIntVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _value == other->_value;
+      }
+      else
+         return NO;
+   } else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"int(%d) : %d",_name,_value];
+   return buf;
+}
+@end
+
+
 // =======================================================================================
 // Int Variables
 
@@ -50,6 +112,11 @@ Class __lsivc = nil;
       return _name == getId(object);
    } else return NO;
 }
+-(id) takeSnapshot: (ORInt) vid
+{
+   return [[LSIntVarSnapshot alloc] init:self with:vid];
+}
+
 -(void)setHardDomain:(id<ORIntRange>)newDomain
 {
    _dom = newDomain;

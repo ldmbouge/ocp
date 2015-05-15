@@ -14,9 +14,10 @@
 #import "LSConstraint.h"
 #import "LSSystem.h"
 #import "ORLSConcretizer.h"
-#import "ORLSSolution.h"
 #import <ORFoundation/ORDataI.h>
 #import <ORFoundation/ORSelector.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORSolution.h>
 
 @implementation LSSolver {
    LSLRSystem* _sys;
@@ -121,6 +122,10 @@
 {
    return [_engine memoize:obj];
 }
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[_engine objective] value];
+}
 -(id<ORSearchObjectiveFunction>) objective
 {
    return [_engine objective]; 
@@ -135,13 +140,13 @@
    block();
    //   if ([_sys violations].value == 0) {
    //save solution
-   id<ORSolution> sol = [[ORLSSolution alloc] initORLSSolution:_srcModel with:self];
+   id<ORSolution> sol = [ORFactory solution: _srcModel solver:self];
    [_pool addSolution:sol];
    //   }
 }
 -(id<ORSolution>)saveSolution
 {
-   id<ORSolution> sol = [[ORLSSolution alloc] initORLSSolution:_srcModel with:self];
+   id<ORSolution> sol = [ORFactory solution: _srcModel solver:self];
    [_pool addSolution:sol];
    return sol;
 }

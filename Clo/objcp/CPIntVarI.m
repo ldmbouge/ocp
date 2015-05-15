@@ -14,10 +14,9 @@
 #import "CPData.h"
 #import "CPDom.h"
 #import "CPIntVarI.h"
-#import "CPEngineI.h"
-#import "CPTrigger.h"
+#import <CPUKernel/CPTrigger.h>
+#import <CPUKernel/CPEngineI.h>
 #import "CPBitDom.h"
-#import "CPEngineI.h"
 #import "CPEvent.h"
 
 /*****************************************************************************************/

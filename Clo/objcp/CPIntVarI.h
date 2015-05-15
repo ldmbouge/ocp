@@ -31,6 +31,7 @@ typedef struct  {
 @class CPIntVar;
 @class CPLiterals;
 @class CPMultiCast;
+@class CPEngineI;
 
 
 @protocol CPIntVarNotifier<NSObject>
