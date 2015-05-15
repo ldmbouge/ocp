@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-               BuildableName = "coloringModel"
-               BlueprintName = "coloringModel"
+               BlueprintIdentifier = "5B40968F183263F300660DDD"
+               BuildableName = "market2s copy"
+               BlueprintName = "market2sLR"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "5B40968F183263F300660DDD"
+            BuildableName = "market2s copy"
+            BlueprintName = "market2sLR"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -51,13 +51,18 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "5B40968F183263F300660DDD"
+            BuildableName = "market2s copy"
+            BlueprintName = "market2sLR"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
+         <AdditionalOption
+            key = "NSZombieEnabled"
+            value = "YES"
+            isEnabled = "YES">
+         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
@@ -69,9 +74,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "5B40968F183263F300660DDD"
+            BuildableName = "market2s copy"
+            BlueprintName = "market2sLR"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

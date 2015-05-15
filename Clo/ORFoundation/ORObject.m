@@ -81,6 +81,10 @@ static Class __orObjectClass = nil;
 {
    return _name;
 }
+-(id) takeSnapshot: (ORInt) id
+{
+   return NULL;
+}
 @end
 
 

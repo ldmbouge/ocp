@@ -50,6 +50,7 @@
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
 
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
++(id<CPConstraint>) subCircuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize;
 +(id<CPConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<CPIntVar>)c;

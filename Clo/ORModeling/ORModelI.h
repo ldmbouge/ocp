@@ -114,18 +114,7 @@
 -(id) trackVariable: (id) obj;
 @end
 
-@interface ORSolutionPoolI : NSObject<ORSolutionPool> {
-    NSMutableArray* _all;
-    id<ORSolutionInformer> _solutionAddedInformer;
-}
--(id)init;
--(void)addSolution:(id<ORSolution>)s;
--(void)enumerateWith:(void(^)(id<ORSolution>))block;
--(id<ORInformer>)solutionAdded;
--(id<ORSolution>)best;
--(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
--(NSUInteger) count;
-@end
+
 
 @interface ORConstraintSetI : NSObject<ORConstraintSet> {
     NSMutableSet* _all;

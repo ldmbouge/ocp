@@ -894,7 +894,10 @@ class SECFloat {
    };
    friend class USRFloat;
 public:
-   SECFloat(void);
+   SECFloat(void) {
+      for(int i=0;i<8;i++)
+         w[i] = 0x0000;
+   }
    SECFloat(double d);
    SECFloat(const SECFloat& sf);
    SECFloat(const USRFloat& uf);
@@ -956,9 +959,6 @@ public:
 
 const unsigned short IEEEBIAS = 0x3fff;
 
-static  SECFloat equot(0.0);
-static  SECFloat rbit(0.0);
-
 static unsigned short etens[NTEN+1][NE] = {
    {0x979b,0x8a20,0x5202,0xc460,0x7525},
    {0x5de5,0xc53d,0x3b5d,0x9e8b,0x5a92},
@@ -1005,6 +1005,9 @@ static void sprint(double v,char* string,int ndigs)
    USRFloat x;
    SECFloat ww;
    SECFloat z;
+   SECFloat equot;
+
+   
    int pos;
    int digit;
    unsigned short sign;
@@ -1261,11 +1264,6 @@ static void mtherr(const char* name,int t)
 {
    NSLog(@"Function: [%s] reported error: %d",name,t);
    exit(t);
-}
-
-SECFloat::SECFloat(void)
-{
-   clear();
 }
 
 SECFloat::SECFloat(double d)
@@ -1612,6 +1610,8 @@ int  SECFloat::mulm(SECFloat& s)
 {
    unsigned short *p,*q;
    int i,j,k;
+   SECFloat equot;
+
    equot[0] = s[0];
    equot[1] = s[1];
    for(i=M;i<NI;i++)
@@ -1649,6 +1649,7 @@ int  SECFloat::divm(SECFloat& s)
    unsigned short *num = w;
    int i,j;
    unsigned short *p,*q;
+   SECFloat equot;
    p = &equot[0];
    *p++ = num[0];
    *p++ = num[1];
@@ -1994,6 +1995,8 @@ SECFloat SECFloat::rem(SECFloat op2)
 
 {
    SECFloat res;
+   SECFloat equot;
+
    equot.clear();
    if (isZero()) {
       return res;
@@ -2025,6 +2028,7 @@ SECFloat SECFloat::rem(SECFloat op2)
 void SECFloat::rnorm(int lost,int subflg,int exp,int rcntrl)
 
 {
+   SECFloat rbit;
    unsigned short* s = w;
    int i,j;
    j = normlz();

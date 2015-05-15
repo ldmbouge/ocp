@@ -75,14 +75,15 @@
             indexFound = i;
             bestRand = [_stream next];
          }
-         else if (_randomized && val == bestFound) {
-            ORLong r = [_stream next];
-            if (r < bestRand) {
-               indexFound = i;
-               bestRand = r;
-            }
-         }
+//         else if (_randomized && val == bestFound) {
+//            ORLong r = [_stream next];
+//            if (r < bestRand) {
+//               indexFound = i;
+//               bestRand = r;
+//            }
+//         }
       }
+ 
    }];
    return indexFound;
 }

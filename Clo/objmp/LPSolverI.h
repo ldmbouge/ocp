@@ -14,7 +14,7 @@
 
 @class LPGurobiSolver;
 
-@interface LPVariableI : NSObject 
+@interface LPVariableI : ORObject
 {
 @protected
    LPSolverI*            _solver;
@@ -61,7 +61,7 @@
 @end
 
 
-@interface LPConstraintI : NSObject 
+@interface LPConstraintI : ORObject
 {
 @protected
    LPSolverI*          _solver;
@@ -112,7 +112,7 @@
 -(LPConstraintI*) initLPConstraintEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
 @end
 
-@interface LPObjectiveI : NSObject 
+@interface LPObjectiveI : ORObject
 {
 @protected
    LPSolverI*          _solver;
