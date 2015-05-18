@@ -433,7 +433,7 @@ int mainPureCP(int argc, const char * argv[])
       // search
       id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
       [cp solve: ^{
-         [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 10*[cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
+         [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
             id<ORTaskVarArray> t = disjunctive[i].taskVars;
             [cp sequence: disjunctive[i].successors
                       by: ^ORFloat(ORInt i) { return [cp est: t[i]]; }

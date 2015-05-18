@@ -2118,7 +2118,7 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
                     }
                     if (isUnfixed(disj, j0)) {
                         if (est_min <= disj->_est[j0]) len_min += disj->_dur_min[j0];
-                        localSlack = min(localSlack, disj->_lct[j0] - est_min - len_min);
+                        localSlack = min(localSlack, disj->_lct[j0] /*- est_min*/ - len_min);
                         assert(localSlack >= 0);
                     }
                     else if (est_min <= disj->_est[j0]) {

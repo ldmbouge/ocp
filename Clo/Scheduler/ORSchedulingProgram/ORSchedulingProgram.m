@@ -405,13 +405,13 @@
 }
 -(ORInt) globalSlack: (id<ORTaskDisjunctive>) d
 {
-   ORInt gs = [((CPDisjunctive*)_gamma[d.getId]) globalSlack];
+   ORInt gs = [((CPTaskDisjunctive*)_gamma[d.getId]) globalSlack];
 //   NSLog(@"Global slack: %d",gs);
    return gs;
 }
 -(ORInt) localSlack: (id<ORTaskDisjunctive>) d
 {
-   ORInt gs = [((CPDisjunctive*)_gamma[d.getId]) localSlack];
+   ORInt gs = [((CPTaskDisjunctive*)_gamma[d.getId]) localSlack];
    //   NSLog(@"Local slack: %d",gs);
    return gs;
 }
