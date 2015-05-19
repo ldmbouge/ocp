@@ -207,15 +207,16 @@ typedef struct  {
 {
    return FALSE;
 }
--(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent
+-(ORBool) readEst:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)resource
 {
-    *bound   = (_start._val + _durationMin._val == _end._val) && (_durationMin._val == _durationMax._val);
+    ORBool bound   = (_start._val + _durationMin._val == _end._val) && (_durationMin._val == _durationMax._val);
     *est     = _start._val;
     *lct     = _end._val;
     *minD    = _durationMin._val;
     *maxD    = _durationMax._val;
     *present = TRUE;
     *absent  = FALSE;
+    return bound;
 }
 -(void) updateStart: (ORInt) newStart
 {
@@ -245,6 +246,25 @@ typedef struct  {
       }
    }
 }
+-(void) updateStart: (ORInt) newStart end:(ORInt) newEnd
+{
+   ORBool work = newStart > _start._val || newEnd < _end._val;
+   if (work) {
+      newStart = max(_start._val,newStart);
+      newEnd   = min(_end._val,newEnd);
+      if (newStart + _durationMin._val > newEnd || newEnd < newStart + _durationMin._val)
+         failNow();
+      [self changeStartEvt];
+      [self changeEndEvt];
+      assignTRInt(&_start, newStart, _trail);
+      assignTRInt(&_end, newEnd, _trail);
+      if (!_constantDuration) {
+         ORInt newDurationMax = _end._val - _start._val;
+         [self updateMaxDuration: newDurationMax];
+      }
+   }
+}
+
 -(void) updateMinDuration: (ORInt) newDurationMin
 {
    if (newDurationMin > _durationMin._val) {
@@ -519,12 +539,12 @@ typedef struct  {
 {
    return ([_task bound] && (_presentMin._val == 1)) || (_presentMax._val == 0);
 }
--(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent
+-(ORBool) readEst:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)res
 {
-    [_task readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
-    *bound   = [self bound    ];
+    [_task readEst:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:res];
     *present = [self isPresent];
     *absent  = [self isAbsent ];
+   return [self bound];
 }
 -(void) handleFailure: (ORClosure) cl
 {
@@ -549,6 +569,19 @@ typedef struct  {
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
 }
+-(void) updateStart: (ORInt) newStart end:(ORInt) newEnd
+{
+   if (_presentMin._val) {
+      [_task updateStart:newStart end:newEnd];
+   } else if (_presentMax._val) {
+      tryfail(
+              ^ORStatus() { [_task updateStart:newStart end: newEnd]; return ORSuccess;},
+              ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+              );
+   }
+   
+}
+
 -(void) updateMinDuration: (ORInt) newMinDuration
 {
    if (_presentMin._val)
@@ -938,15 +971,15 @@ typedef struct  {
         @throw [[ORExecutionError alloc] initORExecutionError: "The task is not assigned to any resource"];
     return _index[0];
 }
--(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id<CPConstraint>) resource
+-(ORBool) readEst:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id<CPConstraint>) resource
 {
-    [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
-    *bound   = [self bound    ];
+    [super readEst:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:resource];
     const ORInt idx = [self getIndex:resource];
     *minD    = max(*minD, [_durArray at: idx].low);
     *maxD    = min(*maxD, [_durArray at: idx].up);
     *present = [self isPresentOn:resource];
     *absent  = [self isAbsentOn :resource];
+   return [self bound    ];
 }
 -(void) labelDuration: (ORInt) duration
 {
@@ -1259,15 +1292,15 @@ typedef struct  {
             @throw [[ORExecutionError alloc] initORExecutionError: "The task is not assigned to any resource"];
     return _index[0];
 }
--(void) readEssentials:(ORBool *)bound est:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id<CPConstraint>) resource
+-(ORBool) readEst:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id<CPConstraint>) resource
 {
-    [super readEssentials:bound est:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent];
-    *bound   = [self bound    ];
+    [super readEst:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:resource];
     const ORInt idx = [self getIndex:resource];
     *minD    = max(*minD, [_durArray at: idx].low);
     *maxD    = min(*maxD, [_durArray at: idx].up );
     *present = [self isPresentOn:resource];
     *absent  = [self isAbsentOn :resource];
+   return [self bound    ];
 }
 -(void) labelPresent: (ORBool) present
 {

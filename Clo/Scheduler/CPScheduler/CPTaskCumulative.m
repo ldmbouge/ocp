@@ -1714,9 +1714,9 @@ static void readData(CPTaskCumulative * cumu)
         ORBool bound;
         
         if (cumu->_resourceTask[t0])
-            [(id<CPResourceTask>)cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+            bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         else
-            [cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0])];
+            bound = [cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
         
@@ -1748,7 +1748,7 @@ static void readData(CPTaskCumulative * cumu)
         const ORInt usage_max_t = cumu->_usage_max[t0];
         
         assert(cumu->_resourceTask[t0]);
-        [(id<CPResourceTask>)cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+        bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
         
@@ -1787,7 +1787,7 @@ static void readDataRT(CPTaskCumulative * cumu)
         ORBool bound;
         
         assert(cumu->_resourceTask[t0]);
-        [(id<CPResourceTask>)cumu->_tasks[t] readEssentials:&bound est:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+        bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
         

@@ -67,9 +67,10 @@
 -(ORBool) isPresent;
 -(ORBool) isAbsent;
 -(ORBool) isOptional;
--(void) readEssentials: (ORBool *) bound est: (ORInt *) est lct: (ORInt *) lct minDuration: (ORInt *) minD maxDuration: (ORInt *) maxD present: (ORBool *) present absent: (ORBool *) absent;
+-(ORBool) readEst: (ORInt *) est lct: (ORInt *) lct minDuration: (ORInt *) minD maxDuration: (ORInt *) maxD present: (ORBool *) present absent: (ORBool *) absent forResource:(id)resource;
 -(void) updateStart: (ORInt) newStart;
 -(void) updateEnd: (ORInt) newEnd;
+-(void) updateStart: (ORInt) newStart end:(ORInt) newEnd;
 -(void) updateMinDuration: (ORInt) newMinDuration;
 -(void) updateMaxDuration: (ORInt) newMaxDuration;
 -(void) labelStart: (ORInt) start;
@@ -93,7 +94,6 @@
 -(ORBool) isPresentOn: (id<CPConstraint>) resource;
 -(ORBool) isAbsentOn: (id<CPConstraint>) resource;
 -(ORBool) isAssigned;
--(void) readEssentials: (ORBool *) bound est: (ORInt *) est lct: (ORInt *) lct minDuration: (ORInt *) minD maxDuration: (ORInt *) maxD present: (ORBool *) present absent: (ORBool *) absent forResource: (id) resource;
 -(void) bind: (id<CPConstraint>) resource;
 -(void) remove: (id<CPConstraint>) resource;
 -(ORInt) runsOn;

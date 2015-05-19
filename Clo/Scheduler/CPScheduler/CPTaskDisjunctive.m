@@ -357,11 +357,11 @@ static void insertThetaNodeAtIdxEct(ThetaTree * theta, const ORInt tsize, ORInt 
     theta[idx]._time   = time;
     // Propagation of the changes
     while (idx > 0) {
-        idx = PARENT(idx);
-        const ORInt l = LEFTCHILD( idx);
-        const ORInt r = RIGHTCHILD(idx);
-        theta[idx]._length = theta[l]._length + theta[r]._length;
-        theta[idx]._time   = max(theta[r]._time, theta[l]._time + theta[r]._length);
+       idx = (idx - 1)>>1;
+       ThetaTree* l = theta + LEFTCHILD(idx);
+       ThetaTree* r = l + 1;
+       theta[idx]._length = l->_length + r->_length;
+       theta[idx]._time   = max(r->_time, l->_time + r->_length);
     }
     assert(idx == 0);
 }
@@ -375,11 +375,11 @@ static void insertThetaNodeAtIdxLst(ThetaTree * theta, const ORInt tsize, ORInt 
     theta[idx]._time   = time;
     // Propagation of the changes
     while (idx > 0) {
-        idx = PARENT(idx);
-        const ORInt l = LEFTCHILD( idx);
-        const ORInt r = RIGHTCHILD(idx);
-        theta[idx]._length = theta[l]._length + theta[r]._length;
-        theta[idx]._time   = min(theta[l]._time, theta[r]._time - theta[l]._length);
+       idx = (idx - 1)>>1;
+       ThetaTree* l = theta + LEFTCHILD(idx);
+       ThetaTree* r = l + 1;
+        theta[idx]._length = l->_length + r->_length;
+        theta[idx]._time   = min(l->_time, r->_time - l->_length);
     };
     assert(idx == 0);
 }
@@ -841,12 +841,7 @@ static void updateBounds(CPTaskDisjunctive * disj, const ORInt size)
         const ORInt t0 = t - disj->_low;
         if (disj->_resourceTask[t0] && !isRelevant(disj, t0))
             continue;
-        if (disj->_new_est[t0] > disj->_est[t0]) {
-            [disj->_tasks[t] updateStart: disj->_new_est[t0]];
-        }
-        if (disj->_new_lct[t0] < disj->_lct[t0]) {
-            [disj->_tasks[t] updateEnd: disj->_new_lct[t0]];
-        }
+        [disj->_tasks[t] updateStart:disj->_new_est[t0] end:disj->_new_lct[t0]];
     }
     //   NSLog(@" results of the propagation ");
     //   for (ORInt tt = 0; tt < size; tt++)
@@ -958,7 +953,7 @@ static void dprec_filter_est_and_lct_vilim(CPTaskDisjunctive * disj, const ORInt
 {
     dprec_filter_est_vilim(disj, size, idx_map_est, theta, tsize, update);
     dprec_filter_lct_vilim(disj, size, idx_map_lct, theta, tsize, update);
-    if (update) updateBounds(disj, size);
+    if (*update) updateBounds(disj, size);
 }
 
 static void dprec_filter_est_vilim(CPTaskDisjunctive * disj, const ORInt size, const ORInt * idx_map_est, ThetaTree * theta, const ORInt tsize, bool * update)
@@ -1054,7 +1049,7 @@ static void dprec_filter_est_and_lct_optional_vilim(CPTaskDisjunctive * disj, co
 {
     dprec_filter_est_optional_vilim(disj, size, idx_map_est, theta, lambda, tsize, tdepth, update);
     dprec_filter_lct_optional_vilim(disj, size, idx_map_lct, theta, lambda, tsize, tdepth, update);
-    if (update) updateBounds(disj, size);
+    if (*update) updateBounds(disj, size);
 }
 
 static void dprec_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORInt size, const ORInt * idx_map_est, ThetaTree * theta, LambdaTree * lambda, const ORInt tsize, const ORInt tdepth, bool * update)
@@ -1252,7 +1247,7 @@ static void nfnl_filter_est_and_lct_vilim(CPTaskDisjunctive * disj, const ORInt 
 {
     nfnl_filter_est_vilim(disj, size, idx_map_lct, theta, tsize, update);
     nfnl_filter_lct_vilim(disj, size, idx_map_est, theta, tsize, update);
-    if (update) updateBounds(disj, size);
+    if (*update) updateBounds(disj, size);
 }
 
 static void nfnl_filter_est_vilim(CPTaskDisjunctive * disj, const ORInt size, const ORInt * idx_map_lct, ThetaTree * theta, const ORInt tsize, bool * update)
@@ -1359,7 +1354,7 @@ static void nfnl_filter_est_and_lct_optional_vilim(CPTaskDisjunctive * disj, con
 {
     nfnl_filter_est_optional_vilim(disj, size, idx_map_lct, theta, lambda, tsize, tdepth, update);
     nfnl_filter_lct_optional_vilim(disj, size, idx_map_est, theta, lambda, tsize, tdepth, update);
-    if (update) updateBounds(disj, size);
+    if (*update) updateBounds(disj, size);
 }
 
 static void nfnl_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORInt size, const ORInt * idx_map_lct, ThetaTree * theta, LambdaTree * lambda, const ORInt tsize, const ORInt tdepth, bool * update)
@@ -1583,7 +1578,7 @@ static void ef_filter_est_and_lct_vilim(CPTaskDisjunctive * disj, const ORInt si
 {
     ef_filter_est_vilim(disj, size, idx_map_est, theta, lambda, tsize, tdepth, update);
     ef_filter_lct_vilim(disj, size, idx_map_lct, theta, lambda, tsize, tdepth, update);
-    if (update) updateBounds(disj, size);
+    if (*update) updateBounds(disj, size);
 }
 
 static void ef_filter_est_vilim(CPTaskDisjunctive * disj, const ORInt size, const ORInt * idx_map_est, ThetaTree * theta, LambdaTree * lambda, const ORInt tsize, const ORInt tdepth, bool * update)
@@ -1686,7 +1681,7 @@ static void ef_filter_est_and_lct_nuijten(CPTaskDisjunctive * disj, const ORInt 
 {
     ef_filter_est_nuijten(disj, size, update);
     ef_filter_lct_nuijten(disj, size, update);
-    if (update) updateBounds(disj, size);
+    if (*update) updateBounds(disj, size);
 }
 
 static void ef_filter_est_nuijten(CPTaskDisjunctive * disj, const ORInt size, bool * update)
@@ -1789,7 +1784,7 @@ static void ef_filter_est_and_lct_optional_nuijten(CPTaskDisjunctive * disj, con
 {
     ef_filter_est_optional_nuijten(disj, size, update);
     ef_filter_lct_optional_nuijten(disj, size, update);
-    if (update) updateBounds(disj, size);
+    if (*update) updateBounds(disj, size);
 }
 
 static void ef_filter_est_optional_nuijten(CPTaskDisjunctive * disj, const ORInt size, bool * update)
@@ -2210,11 +2205,13 @@ static void readData(CPTaskDisjunctive * disj)
     for (ORInt tt = boundSize; tt < disj->_size; tt++) {
         const ORInt t  = disj->_bound[tt];
         const ORInt t0 = t - disj->_low;
-        ORBool bound;
-        if (disj->_resourceTask[t0])
-            [(id<CPResourceTask>)disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0]) forResource:disj];
-        else
-            [disj->_tasks[t] readEssentials:&bound est:&(disj->_est[t0]) lct:&(disj->_lct[t0]) minDuration:&(disj->_dur_min[t0]) maxDuration:&(disj->_dur_max[t0]) present:&(disj->_present[t0]) absent:&(disj->_absent[t0])];
+        ORBool bound = [disj->_tasks[t] readEst:disj->_est+t0
+                                            lct:disj->_lct+t0
+                                    minDuration:disj->_dur_min+t0
+                                    maxDuration:disj->_dur_max+t0
+                                        present:disj->_present+t0
+                                         absent:disj->_absent+t0
+                                    forResource:disj];
         
         assert(disj->_dur_min[t0] >= 0);
         assert(disj->_est[t0] + disj->_dur_min[t0] <= disj->_lct[t0]);
