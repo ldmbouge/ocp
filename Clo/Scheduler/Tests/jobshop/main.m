@@ -436,6 +436,7 @@ int mainPureCP(int argc, const char * argv[])
       // search
       id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
       [cp solve: ^{
+         NSLog(@"MKS: %@n\n",[cp concretize:makespan]);
          [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
             id<ORTaskVarArray> t = disjunctive[i].taskVars;
             [cp sequence: disjunctive[i].successors

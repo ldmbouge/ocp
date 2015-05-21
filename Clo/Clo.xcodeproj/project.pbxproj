@@ -87,7 +87,6 @@
 		37A715E316FB948200E02DC6 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		37A715E416FB948200E02DC6 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		37A715E516FB948900E02DC6 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		535096FF199C86A100625B3C /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
 		535D132E18FF7A47008D48BD /* CPMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 535D132C18FF7A46008D48BD /* CPMisc.h */; };
 		535D132F18FF7A47008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
 		535D133018FF7EFA008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
@@ -139,15 +138,6 @@
 		537EEA7518FCF33F0006FFD2 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
 		537EEA7618FCF33F0006FFD2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		537EEA7718FCF38B0006FFD2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8BA18FCC5720006FFD2 /* main.m */; };
-		537EEA8418FCF9880006FFD2 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		537EEA8518FCF9880006FFD2 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
-		537EEA8618FCF9880006FFD2 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
-		537EEA8718FCF9880006FFD2 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		537EEA8818FCF9880006FFD2 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
-		537EEA8918FCF9880006FFD2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
-		537EEA8A18FCF9880006FFD2 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
-		537EEA8B18FCF9880006FFD2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		537EEA8C18FCF9880006FFD2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		537EEA9318FCFD0B0006FFD2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8BC18FCC5720006FFD2 /* main.m */; };
 		53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B437D7197F371100BE9F4D /* CPTaskCumulative.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53B437DC197F373E00BE9F4D /* CPTaskCumulative.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B437DA197F373A00BE9F4D /* CPTaskCumulative.m */; };
@@ -20324,36 +20314,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B2309B41AF2C2900083A8E7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5B2309D01AF2C2CF0083A8E7 /* CPUKernel.framework in Frameworks */,
-				5B2309D11AF2C2CF0083A8E7 /* ORFoundation.framework in Frameworks */,
-				5B2309D21AF2C2CF0083A8E7 /* ORModeling.framework in Frameworks */,
-				5B2309D31AF2C2CF0083A8E7 /* ORProgram.framework in Frameworks */,
-				5B2309D41AF2C2CF0083A8E7 /* ORUtilities.framework in Frameworks */,
-				5B2309BD1AF2C2910083A8E7 /* objcp.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B27572D17E87B560082934E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				535096FF199C86A100625B3C /* ORSchedulingProgram.framework in Frameworks */,
-				537EEA8418FCF9880006FFD2 /* objcp.framework in Frameworks */,
-				537EEA8518FCF9880006FFD2 /* CPScheduler.framework in Frameworks */,
-				537EEA8618FCF9880006FFD2 /* CPUKernel.framework in Frameworks */,
-				537EEA8718FCF9880006FFD2 /* ORFoundation.framework in Frameworks */,
-				537EEA8818FCF9880006FFD2 /* ORModeling.framework in Frameworks */,
-				537EEA8918FCF9880006FFD2 /* ORProgram.framework in Frameworks */,
-				537EEA8A18FCF9880006FFD2 /* ORScheduler.framework in Frameworks */,
-				537EEA8B18FCF9880006FFD2 /* ORUtilities.framework in Frameworks */,
-				537EEA8C18FCF9880006FFD2 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		53BDBC2B1A244EB9003EEFA6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -20426,6 +20386,19 @@
 				5B920ECA15A432CF00AD0820 /* ORFoundation.framework in Frameworks */,
 				5B2000E6156D585E00D80105 /* objcp.framework in Frameworks */,
 				5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B2309B41AF2C2900083A8E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B2309D01AF2C2CF0083A8E7 /* CPUKernel.framework in Frameworks */,
+				5B2309D11AF2C2CF0083A8E7 /* ORFoundation.framework in Frameworks */,
+				5B2309D21AF2C2CF0083A8E7 /* ORModeling.framework in Frameworks */,
+				5B2309D31AF2C2CF0083A8E7 /* ORProgram.framework in Frameworks */,
+				5B2309D41AF2C2CF0083A8E7 /* ORUtilities.framework in Frameworks */,
+				5B2309BD1AF2C2910083A8E7 /* objcp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21596,7 +21569,6 @@
 			isa = PBXGroup;
 			children = (
 				533C56DE1922F545007D33BB /* barnes */,
-				533C56F61922F545007D33BB /* behnke */,
 				533C57331922F546007D33BB /* brandimarte */,
 				533C57451922F546007D33BB /* dauzere */,
 				533C575A1922F546007D33BB /* fattahi */,
@@ -21634,114 +21606,6 @@
 				533C56F51922F545007D33BB /* seti5xyz.fjs */,
 			);
 			path = barnes;
-			sourceTree = "<group>";
-		};
-		5B23098B1AF2BFD60083A8E7 /* OBJCPTest */ = {
-			isa = PBXGroup;
-			children = (
-				5B23098C1AF2BFD60083A8E7 /* main.m */,
-			);
-			path = OBJCPTest;
-			sourceTree = "<group>";
-		};
-		5B2309971AF2C13B0083A8E7 /* ObjCPTest */ = {
-			isa = PBXGroup;
-			children = (
-				5B2309981AF2C13B0083A8E7 /* Supporting Files */,
-			);
-			path = ObjCPTest;
-			sourceTree = "<group>";
-		};
-		5B2309981AF2C13B0083A8E7 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				5B2309991AF2C13B0083A8E7 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		5B2309B81AF2C2910083A8E7 /* OBJCP-TEST */ = {
-			isa = PBXGroup;
-			children = (
-				5B2309BB1AF2C2910083A8E7 /* OBJCP_TEST.m */,
-				5B2309B91AF2C2910083A8E7 /* Supporting Files */,
-			);
-			path = "OBJCP-TEST";
-			sourceTree = "<group>";
-		};
-		5B2309B91AF2C2910083A8E7 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				5B2309BA1AF2C2910083A8E7 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		5B27573217E87B560082934E /* costas2 */ = {
-			isa = PBXGroup;
-			children = (
-				533C56F71922F545007D33BB /* lar_1_1.fjs */,
-				533C56F81922F545007D33BB /* lar_1_2.fjs */,
-				533C56F91922F545007D33BB /* lar_1_3.fjs */,
-				533C56FA1922F545007D33BB /* lar_1_4.fjs */,
-				533C56FB1922F545007D33BB /* lar_1_5.fjs */,
-				533C56FC1922F545007D33BB /* lar_2_1.fjs */,
-				533C56FD1922F545007D33BB /* lar_2_2.fjs */,
-				533C56FE1922F545007D33BB /* lar_2_3.fjs */,
-				533C56FF1922F545007D33BB /* lar_2_4.fjs */,
-				533C57001922F545007D33BB /* lar_2_5.fjs */,
-				533C57011922F545007D33BB /* lar_3_1.fjs */,
-				533C57021922F545007D33BB /* lar_3_2.fjs */,
-				533C57031922F545007D33BB /* lar_3_3.fjs */,
-				533C57041922F545007D33BB /* lar_3_4.fjs */,
-				533C57051922F545007D33BB /* lar_3_5.fjs */,
-				533C57061922F545007D33BB /* lar_4_1.fjs */,
-				533C57071922F545007D33BB /* lar_4_2.fjs */,
-				533C57081922F545007D33BB /* lar_4_3.fjs */,
-				533C57091922F545007D33BB /* lar_4_4.fjs */,
-				533C570A1922F545007D33BB /* lar_4_5.fjs */,
-				533C570B1922F545007D33BB /* med_1_1.fjs */,
-				533C570C1922F545007D33BB /* med_1_2.fjs */,
-				533C570D1922F545007D33BB /* med_1_3.fjs */,
-				533C570E1922F545007D33BB /* med_1_4.fjs */,
-				533C570F1922F545007D33BB /* med_1_5.fjs */,
-				533C57101922F545007D33BB /* med_2_1.fjs */,
-				533C57111922F545007D33BB /* med_2_2.fjs */,
-				533C57121922F545007D33BB /* med_2_3.fjs */,
-				533C57131922F545007D33BB /* med_2_4.fjs */,
-				533C57141922F545007D33BB /* med_2_5.fjs */,
-				533C57151922F545007D33BB /* med_3_1.fjs */,
-				533C57161922F545007D33BB /* med_3_2.fjs */,
-				533C57171922F545007D33BB /* med_3_3.fjs */,
-				533C57181922F545007D33BB /* med_3_4.fjs */,
-				533C57191922F546007D33BB /* med_3_5.fjs */,
-				533C571A1922F546007D33BB /* med_4_1.fjs */,
-				533C571B1922F546007D33BB /* med_4_2.fjs */,
-				533C571C1922F546007D33BB /* med_4_3.fjs */,
-				533C571D1922F546007D33BB /* med_4_4.fjs */,
-				533C571E1922F546007D33BB /* med_4_5.fjs */,
-				533C571F1922F546007D33BB /* sm_1_1.fjs */,
-				533C57201922F546007D33BB /* sm_1_2.fjs */,
-				533C57211922F546007D33BB /* sm_1_3.fjs */,
-				533C57221922F546007D33BB /* sm_1_4.fjs */,
-				533C57231922F546007D33BB /* sm_1_5.fjs */,
-				533C57241922F546007D33BB /* sm_2_1.fjs */,
-				533C57251922F546007D33BB /* sm_2_2.fjs */,
-				533C57261922F546007D33BB /* sm_2_3.fjs */,
-				533C57271922F546007D33BB /* sm_2_4.fjs */,
-				533C57281922F546007D33BB /* sm_2_5.fjs */,
-				533C57291922F546007D33BB /* sm_3_1.fjs */,
-				533C572A1922F546007D33BB /* sm_3_2.fjs */,
-				533C572B1922F546007D33BB /* sm_3_3.fjs */,
-				533C572C1922F546007D33BB /* sm_3_4.fjs */,
-				533C572D1922F546007D33BB /* sm_3_5.fjs */,
-				533C572E1922F546007D33BB /* sm_4_1.fjs */,
-				533C572F1922F546007D33BB /* sm_4_2.fjs */,
-				533C57301922F546007D33BB /* sm_4_3.fjs */,
-				533C57311922F546007D33BB /* sm_4_4.fjs */,
-				533C57321922F546007D33BB /* sm_4_5.fjs */,
-			);
-			path = behnke;
 			sourceTree = "<group>";
 		};
 		533C57331922F546007D33BB /* brandimarte */ = {
@@ -34707,6 +34571,47 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5B23098B1AF2BFD60083A8E7 /* OBJCPTest */ = {
+			isa = PBXGroup;
+			children = (
+				5B23098C1AF2BFD60083A8E7 /* main.m */,
+			);
+			path = OBJCPTest;
+			sourceTree = "<group>";
+		};
+		5B2309971AF2C13B0083A8E7 /* ObjCPTest */ = {
+			isa = PBXGroup;
+			children = (
+				5B2309981AF2C13B0083A8E7 /* Supporting Files */,
+			);
+			path = ObjCPTest;
+			sourceTree = "<group>";
+		};
+		5B2309981AF2C13B0083A8E7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B2309991AF2C13B0083A8E7 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5B2309B81AF2C2910083A8E7 /* OBJCP-TEST */ = {
+			isa = PBXGroup;
+			children = (
+				5B2309BB1AF2C2910083A8E7 /* OBJCP_TEST.m */,
+				5B2309B91AF2C2910083A8E7 /* Supporting Files */,
+			);
+			path = "OBJCP-TEST";
+			sourceTree = "<group>";
+		};
+		5B2309B91AF2C2910083A8E7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B2309BA1AF2C2910083A8E7 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		5B27573217E87B560082934E /* costas2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -37296,7 +37201,6 @@
 			buildConfigurationList = 537EEA8E18FCF9880006FFD2 /* Build configuration list for PBXNativeTarget "rcpsp" */;
 			buildPhases = (
 				537EEA8118FCF9880006FFD2 /* Sources */,
-				537EEA8318FCF9880006FFD2 /* Frameworks */,
 				537EEA8D18FCF9880006FFD2 /* CopyFiles */,
 			);
 			buildRules = (
@@ -37425,7 +37329,6 @@
 			buildPhases = (
 				5B2309B31AF2C2900083A8E7 /* Sources */,
 				5B2309B41AF2C2900083A8E7 /* Frameworks */,
-				5B2309B51AF2C2900083A8E7 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -38065,30 +37968,6 @@
 			productReference = 5B9ABCEF1391329D000997E5 /* objcp.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		5B9ABD011391329D000997E5 /* objcpTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5B9ABD151391329D000997E5 /* Build configuration list for PBXNativeTarget "objcpTests" */;
-			buildPhases = (
-				5B9ABCFD1391329D000997E5 /* Sources */,
-				5B9ABCFE1391329D000997E5 /* Frameworks */,
-				5B9ABCFF1391329D000997E5 /* Resources */,
-				5B9ABD001391329D000997E5 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				5BBFBFDA1661210900FB7505 /* PBXTargetDependency */,
-				5BBFBFDC1661210900FB7505 /* PBXTargetDependency */,
-				5BBFBFDE1661210900FB7505 /* PBXTargetDependency */,
-				5BBFBFE01661210900FB7505 /* PBXTargetDependency */,
-				5BE7C24615A9109B00B2CBC1 /* PBXTargetDependency */,
-				5B9ABD051391329D000997E5 /* PBXTargetDependency */,
-			);
-			name = objcpTests;
-			productName = objcpTests;
-			productReference = 5B9ABD021391329D000997E5 /* objcpTests.octest */;
-			productType = "com.apple.product-type.bundle.ocunit-test";
-		};
 		5B9B2447177873D3001AB944 /* nonogram */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B9B2453177873D3001AB944 /* Build configuration list for PBXNativeTarget "nonogram" */;
@@ -38611,30 +38490,6 @@
 			productName = warehouse;
 			productReference = 5BE7C24B15A94BDF00B2CBC1 /* warehouse */;
 			productType = "com.apple.product-type.tool";
-		};
-		5BEA4E67178365FA00614A82 /* searchTest */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5BEA4E86178365FA00614A82 /* Build configuration list for PBXNativeTarget "searchTest" */;
-			buildPhases = (
-				5BEA4E74178365FA00614A82 /* Sources */,
-				5BEA4E7A178365FA00614A82 /* Frameworks */,
-				5BEA4E82178365FA00614A82 /* Resources */,
-				5BEA4E85178365FA00614A82 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				5BEA4E68178365FA00614A82 /* PBXTargetDependency */,
-				5BEA4E6A178365FA00614A82 /* PBXTargetDependency */,
-				5BEA4E6C178365FA00614A82 /* PBXTargetDependency */,
-				5BEA4E6E178365FA00614A82 /* PBXTargetDependency */,
-				5BEA4E70178365FA00614A82 /* PBXTargetDependency */,
-				5BEA4E72178365FA00614A82 /* PBXTargetDependency */,
-			);
-			name = searchTest;
-			productName = objcpTests;
-			productReference = 5BEA4E89178365FA00614A82 /* searchTest.octest */;
-			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		5BEAD78415ABE38500A012FE /* bibd */ = {
 			isa = PBXNativeTarget;
@@ -39480,6 +39335,7 @@
 				B154427F16D19D8E001BD7B3 /* objmp */,
 				537EE9A618FCDC520006FFD2 /* ORScheduler */,
 				537EEA2618FCE1FE0006FFD2 /* CPScheduler */,
+				B127A57419629B0600398AA3 /* ORSchedulingProgram */,
 				5B9EE52715175CF900619B47 /* CPLib */,
 				5B33370313A2B866001DFC38 /* allProgs */,
 				5B6E891F1379D3E9005DB4CA /* Clo */,
@@ -39567,7 +39423,6 @@
 				B19B5583190518CF0069ABA0 /* jobshop */,
 				53C4BE2C1929C2E700DE6498 /* fjsp */,
 				B127A536196274CE00398AA3 /* testScheduler */,
-				B127A57419629B0600398AA3 /* ORSchedulingProgram */,
 				B127A58419629B0600398AA3 /* ORSchedulingProgramTests */,
 				B1574698197D753F00CAC841 /* ATPTW */,
 				53BDBC221A244EB9003EEFA6 /* mrcpsp */,
@@ -43770,7 +43625,6 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -43789,7 +43643,6 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -43809,7 +43662,6 @@
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -43828,7 +43680,6 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -43847,7 +43698,6 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -43867,7 +43717,6 @@
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -45298,7 +45147,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -46757,7 +46605,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -46776,7 +46623,6 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -47559,50 +47405,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		5BEA4E87178365FA00614A82 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
-				INFOPLIST_FILE = "searchTest-Info.plist";
-				OTHER_LDFLAGS = (
-					"-framework",
-					SenTestingKit,
-				);
-				PRODUCT_NAME = searchTest;
-				SDKROOT = macosx;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		5BEA4E88178365FA00614A82 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "objcpTests/objcpTests-Prefix.pch";
-				INFOPLIST_FILE = "searchTest-Info.plist";
-				OTHER_LDFLAGS = (
-					"-framework",
-					SenTestingKit,
-				);
-				PRODUCT_NAME = searchTest;
-				SDKROOT = macosx;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -49116,6 +48918,7 @@
 				5B2309C31AF2C2910083A8E7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B27573B17E87B560082934E /* Build configuration list for PBXNativeTarget "costas2" */ = {
 			isa = XCConfigurationList;
