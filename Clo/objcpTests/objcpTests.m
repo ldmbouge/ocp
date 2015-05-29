@@ -437,4 +437,32 @@
    }
 }
 
+-(void)testDiv2
+{
+   @autoreleasepool {
+      id<ORModel> test = [ORFactory createModel];
+      id<ORIntVar> foo = [ORFactory intVar:test domain:RANGE(test, 1,9)];
+      id<ORIntVar> bar = [ORFactory intVar:test domain:RANGE(test, 1,9)];
+      id<ORIntVar> zoo = [ORFactory intVar:test domain:RANGE(test, 0,FDMAXINT)];
+      
+      [test add:[zoo eq:[[foo mul:@(13)] div:bar]]];
+      id<CPProgram> testSolver = [ORFactory createCPProgram:test];
+      [testSolver solveAll:^{
+         [testSolver label:foo with:6];
+         [testSolver label:bar with:3];
+         XCTAssert(false);
+         XCTAssert([testSolver bound:foo] && [testSolver bound:bar],"both vars should be bound");
+         int fv = [testSolver min:foo];
+         int bv = [testSolver min:bar];
+         XCTAssertEqual(bv, fv * 10 / 2, "Satisfy relation");
+         NSLog(@"foo: [%d,%d], bar: [%d,%d]",
+               [testSolver min:foo],
+               [testSolver max:foo],
+               [testSolver min:bar],
+               [testSolver max:bar]
+               );
+      }];
+   }
+}
+
 @end
