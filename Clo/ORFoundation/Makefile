@@ -1,10 +1,10 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = clang
+OC = clang-3.5
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. -msse4.1
+CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. -msse4.1 -fblocks -fobjc-nonfragile-abi
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities -lORUtilities
 
@@ -15,13 +15,13 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 # 	-L../ORUtilities \
 # 	-lORUtilities $(USER_DEFINES)
 
-SRCS = context.m   ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \
+SRCS =  ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \
 	ORFoundation.m  ORObject.m     ORSemBDSController.m  ORTracer.m \
-	cont.m      ORCommand.m     ORDataI.m    ORError.m      ORFactoryI.m  \
+	ORCommand.m     ORDataI.m    ORError.m      ORFactoryI.m  \
 	ORLimit.m       ORParallel.m   ORSemDFSController.m  ORTrailI.m \
 	ORArrayI.m  ORController.m  ORData.m     ORExplorerI.m  ORFactory.m  \
 	ORSelectorI.m  ORSetI.m ORVisit.m   ORVarI.m ORConstraintI.m \
-	ORInterval.mm ORAnnotation.m
+	ORAnnotation.m
 
 
 OBJEXT=o

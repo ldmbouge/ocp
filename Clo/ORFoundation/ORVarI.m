@@ -12,7 +12,7 @@
 #import "ORVarI.h"
 #import "ORError.h"
 #import "ORFactory.h"
-#import "ORSolution.h"
+//#import "ORSolution.h"
 
 @implementation ORIntVarI {
 @protected
