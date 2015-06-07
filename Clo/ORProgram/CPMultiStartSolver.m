@@ -18,6 +18,7 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import "ORSolution.h"
+#import "ORProgramFactory.h"
 
 
 /******************************************************************************************/

@@ -14,6 +14,7 @@
 #import "LPProgram.h"
 #import "LPSolver.h"
 #import <objmp/LPSolverI.h>
+#import "ORProgramFactory.h"
 
 @interface LPColumn : ORObject<LPColumn>
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col;

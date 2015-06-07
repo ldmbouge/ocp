@@ -17,6 +17,7 @@
 #import "MIPSolver.h"
 #import <objmp/MIPSolverI.h>
 #import "ORSolution.h"
+#import "ORProgramFactory.h"
 
 @implementation MIPSolver
 {

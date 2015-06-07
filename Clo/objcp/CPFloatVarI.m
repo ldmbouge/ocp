@@ -132,6 +132,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    [_engine trackVariable: self];
    return self;
 }
+-(void)dealloc
+{
+   deallocNetwork(&_net);
+   [super dealloc];
+}
 -(CPEngineI*) engine
 {
    return _engine;
