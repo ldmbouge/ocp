@@ -5562,8 +5562,8 @@
 		5B6A960415879F1600019903 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B6A960715879F1600019903 /* knapsack-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "knapsack-Prefix.pch"; sourceTree = "<group>"; };
 		5B6A960815879F1600019903 /* knapsack.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = knapsack.1; sourceTree = "<group>"; };
-		5B6B0EF61787533000104246 /* ORInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORInterval.h; path = ../ORFoundation/ORInterval.h; sourceTree = "<group>"; };
-		5B6B0EF71787533000104246 /* ORInterval.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ORInterval.mm; path = ../ORFoundation/ORInterval.mm; sourceTree = "<group>"; };
+		5B6B0EF61787533000104246 /* ORInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORInterval.h; sourceTree = "<group>"; };
+		5B6B0EF71787533000104246 /* ORInterval.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ORInterval.mm; sourceTree = "<group>"; };
 		5B6B0EFE178B557F00104246 /* circle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = circle; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6B0F01178B558000104246 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B6B0F04178B558000104246 /* circle-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "circle-Prefix.pch"; sourceTree = "<group>"; };
@@ -5839,10 +5839,10 @@
 		5BE5A7F2158A8390006703CB /* fdmul2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = fdmul2.1; sourceTree = "<group>"; };
 		5BE642EC139D49320056F448 /* CPBasicConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPBasicConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE642ED139D49320056F448 /* CPBasicConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBasicConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5BE642EE139D49320056F448 /* cont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cont.h; path = ../ORFoundation/cont.h; sourceTree = "<group>"; };
-		5BE642EF139D49320056F448 /* cont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = cont.m; path = ../ORFoundation/cont.m; sourceTree = "<group>"; };
-		5BE642F0139D49320056F448 /* context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = context.h; path = ../ORFoundation/context.h; sourceTree = "<group>"; };
-		5BE642F1139D49320056F448 /* context.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = context.m; path = ../ORFoundation/context.m; sourceTree = "<group>"; };
+		5BE642EE139D49320056F448 /* cont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cont.h; sourceTree = "<group>"; };
+		5BE642EF139D49320056F448 /* cont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cont.m; sourceTree = "<group>"; };
+		5BE642F0139D49320056F448 /* context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; };
+		5BE642F1139D49320056F448 /* context.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = context.m; sourceTree = "<group>"; };
 		5BE642F4139D49320056F448 /* CPConstraintI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConstraintI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE642FD139D49320056F448 /* CPEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEngine.h; sourceTree = "<group>"; };
 		5BE64310139D49610056F448 /* ORTrail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTrail.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -20248,6 +20248,7 @@
 				5BA07B161B179074005BB066 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BA345881680B7BD00485366 /* Build configuration list for PBXNativeTarget "latinSquare" */ = {
 			isa = XCConfigurationList;
