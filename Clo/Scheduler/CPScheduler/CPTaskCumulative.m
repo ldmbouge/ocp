@@ -595,6 +595,24 @@ static inline ORInt comp_part_right_shift(CPTaskCumulative * cumu, const ORInt t
 }
 
 /*!
+ *  @brief Computing the energy/area of the compulsory part intersecting an
+ *      time interval.
+ *
+ *  @param t0 A normalised index of a task
+ *  @param begin A point in time specifying the time interval [begin, end].
+ *  @param end A point in time specifying the time interval [begin, end].
+ *  @return Energy of the compulsory part intersecting the time interval [begin, end].
+ */
+static inline ORInt comp_part_interval(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt end)
+{
+    assert(0 <= t0 && t0 < cumu->_size);
+    if (lst(cumu, t0) < ect(cumu, t0) && lst(cumu, t0) < end && begin < ect(cumu, begin)) {
+        return usage_min(cumu, t0) * (min(end, ect(cumu, t0)) - max(begin, lst(cumu, t0)));
+    }
+    return 0;
+}
+
+/*!
  *  @brief Computing the minimal required energy for a task in a left-open time interval to
  *      be run at its earliest start time.
  *
@@ -611,6 +629,46 @@ static inline ORInt req_energy_start_est_right_shift(CPTaskCumulative * cumu, co
         return area_min(cumu, t0);
     assert(usage_min(cumu, t0) * dur_min(cumu, t0) == area_min(cumu, t0) || usage_min(cumu, t0) == area_min(cumu, t0) / dur_max(cumu, t0));
     return min(area_min(cumu, t0), usage_min(cumu, t0) * (time - est(cumu, t0)));
+}
+
+/*!
+ *  @brief Computing the minimal required energy for a task in a right-open time interval to
+ *      be run at latest as possible.
+ *
+ *  @param t0 A normalised index of a task.
+ *  @param time A point in time specifying the time interval [time, inf[
+ *  @return The minimal required energy of the task in the time interval for its execution at latest as possible.
+ */
+static inline ORInt req_energy_end_lct_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt time)
+{
+    assert(0 <= t0 && t0 < cumu->_size);
+    if (lct(cumu, t0) <= time)
+        return 0;
+    if (time <= lct(cumu, t0) - dur_max(cumu, t0))
+        return area_min(cumu, t0);
+    assert(usage_min(cumu, t0) * dur_min(cumu, t0) == area_min(cumu, t0) || usage_min(cumu, t0) == area_min(cumu, t0) / dur_max(cumu, t0));
+    return min(area_min(cumu, t0), usage_min(cumu, t0) * (lct(cumu, t0) - time));
+}
+
+/*!
+ *  @brief Computing the minimal required energy for a task in a time interval [begin, end) to
+ *      be run at latest as possible.
+ *
+ *  @param t0 A normalised index of a task.
+ *  @param begin A point in time specifying the beginning of the time interval [begin, end[
+ *  @param end A point in time specifying the end of the time interval [begin, end[
+ *  @return The minimal required energy of the task in the time interval for its execution at its earliest start time.
+ */
+static inline ORInt req_energy_end_lct_interval(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt end)
+{
+    assert(0 <= t0 && t0 < cumu->_size);
+    if (end <= est(cumu, t0) || lct(cumu, t0) <= begin)
+        return 0;
+    if (lct(cumu, t0) <= end)
+        return req_energy_end_lct_right_shift(cumu, t0, begin);
+    // Minimal required energy before end when the task is run at latest as possible
+    const ORInt en_rs = energy_right_shift(cumu, t0, end);
+    return min(usage_min(cumu, t0) * (end - begin), en_rs);
 }
 
 static inline ORInt cap_min(CPTaskCumulative * cumu)
@@ -1697,43 +1755,63 @@ static void tteef_filter_start_times_in_interval(CPTaskCumulative* cumu, ORInt* 
 
 static void tteef_filter_end_times_in_interval(CPTaskCumulative* cumu, ORInt* new_lct, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update) {
     assert(area_min(cumu, j) > 0);
-    if (isPresent(cumu, j)) {
-        const ORInt free_lst = (lst(cumu, j) < ect(cumu, j) ? ect(cumu, j) : lst(cumu, j));
-        // TTEEF bounds propagation for task j with respect to the time interval [., end)
-        const ORInt min_en_req = usage_min(cumu, j) * (min(tw_end, lct(cumu, j)) - max(tw_begin, free_lst));
-        
-        if (tw_begin > MININT && en_avail < min_en_req) {
-            assert(free_lst < tw_end);
-            // Calculate the new upper bound
-            const ORInt dur_cp_in = max(0, min(tw_end, ect(cumu, j)) - max(tw_begin, lst(cumu, j)));
-            const ORInt dur_avail = (en_avail / usage_min(cumu, j)) + dur_cp_in;
-            const ORInt lct_new = tw_begin + dur_avail;
-            // Check whether a new upper bound was found
-            if (lct_new < new_lct[j]) {
-                cumu->_nb_ttef_props++;
-                *update = true;
-                // Push possible update into queue
-                new_lct[j] = lct_new;
-            }
+    if (tw_begin <= est(cumu, j))
+        return;
+    // Compute the minimal required energy in a interval for executing the task at latest as possible
+    const ORInt en_comp_part = (isRelevant(cumu, j) ? comp_part_interval(cumu, j, tw_begin, tw_end) : 0);
+    const ORInt en_req_rs = req_energy_end_lct_interval(cumu, j, tw_begin, tw_end);
+    const ORInt min_en_req = en_req_rs - en_comp_part;
+    assert(0 <= min_en_req);
+    // Check for TTEEF propagation
+    if (en_avail < min_en_req) {
+        // Calculate the new upper bound
+        const ORInt lct_new = tw_begin + ((en_avail + en_comp_part) / usage_min(cumu, j));
+        // Check whether a new upper bound was found
+        if (lct_new < new_lct[j]) {
+            cumu->_nb_ttef_props++;
+            *update = true;
+            // Push possible update into queue
+            new_lct[j] = lct_new;
         }
     }
-    else {
-        assert(!isAbsent(cumu, j));
-        const ORInt min_en_req = usage_min(cumu, j) * (min(tw_end, lct(cumu, j)) - max(tw_begin, lst(cumu, j)));
-        
-        if (tw_begin > MININT && en_avail < min_en_req) {
-            // Calculate the new upper bound
-            const ORInt dur_avail = en_avail / usage_min(cumu, j);
-            const ORInt lct_new   = tw_begin + dur_avail;
-            // Check whether a new upper bound was found
-            if (lct_new < new_lct[j]) {
-                cumu->_nb_ttef_props++;
-                *update = true;
-                // Push possible update into queue
-                new_lct[j] = lct_new;
-            }
-        }
-    }
+#warning XXX Old code before considering area variables
+//    if (isPresent(cumu, j)) {
+//        const ORInt free_lst = (lst(cumu, j) < ect(cumu, j) ? ect(cumu, j) : lst(cumu, j));
+//        // TTEEF bounds propagation for task j with respect to the time interval [., end)
+//        const ORInt min_en_req = usage_min(cumu, j) * (min(tw_end, lct(cumu, j)) - max(tw_begin, free_lst));
+//        
+//        if (tw_begin > MININT && en_avail < min_en_req) {
+//            assert(free_lst < tw_end);
+//            // Calculate the new upper bound
+//            const ORInt dur_cp_in = max(0, min(tw_end, ect(cumu, j)) - max(tw_begin, lst(cumu, j)));
+//            const ORInt dur_avail = (en_avail / usage_min(cumu, j)) + dur_cp_in;
+//            const ORInt lct_new = tw_begin + dur_avail;
+//            // Check whether a new upper bound was found
+//            if (lct_new < new_lct[j]) {
+//                cumu->_nb_ttef_props++;
+//                *update = true;
+//                // Push possible update into queue
+//                new_lct[j] = lct_new;
+//            }
+//        }
+//    }
+//    else {
+//        assert(!isAbsent(cumu, j));
+//        const ORInt min_en_req = usage_min(cumu, j) * (min(tw_end, lct(cumu, j)) - max(tw_begin, lst(cumu, j)));
+//        
+//        if (tw_begin > MININT && en_avail < min_en_req) {
+//            // Calculate the new upper bound
+//            const ORInt dur_avail = en_avail / usage_min(cumu, j);
+//            const ORInt lct_new   = tw_begin + dur_avail;
+//            // Check whether a new upper bound was found
+//            if (lct_new < new_lct[j]) {
+//                cumu->_nb_ttef_props++;
+//                *update = true;
+//                // Push possible update into queue
+//                new_lct[j] = lct_new;
+//            }
+//        }
+//    }
 }
 
 
