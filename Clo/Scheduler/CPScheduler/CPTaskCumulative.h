@@ -29,6 +29,7 @@
     id<CPTaskVarArray> _tasks;      // Array of tasks
     id<ORIntArray>     _resTasks;
     id<CPIntVarArray>  _usages;     // Resource usage of the tasks on the resource
+    id<CPIntVarArray>  _area;       // Work load (product of duration and usage) of the tasks on the resource
     id<CPIntVar>       _capacity;   // Resource capacity
 }
 -(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>)usages and: (id<CPIntVar>)capacity;

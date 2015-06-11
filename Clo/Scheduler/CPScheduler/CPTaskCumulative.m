@@ -61,6 +61,8 @@ typedef struct {
     ORInt  * _dur_max;   // Maximal duration
     ORInt  * _usage_min; // Minimal resource usage
     ORInt  * _usage_max; // Maximal resource usage
+    ORInt  * _area_min;  // Minimal resource usage
+    ORInt  * _area_max;  // Maximal resource usage
     ORBool * _present;   // Whether the activity is present
     ORBool * _absent;    // Whether the activity is absent
     
@@ -132,6 +134,7 @@ typedef struct {
     _tasks    = tasks;
     _resTasks = NULL;
     _usages   = usages;
+    _area     = NULL;
     _capacity = capacity;
     
     // Setup for propagation
@@ -187,6 +190,7 @@ typedef struct {
     _tasks    = tasks;
     _resTasks = resTasks;
     _usages   = usages;
+    _area     = NULL;
     _capacity = capacity;
     
     // Setup for propagation
@@ -261,13 +265,15 @@ typedef struct {
     _dur_max      = malloc(_size * sizeof(ORInt ));
     _usage_min    = malloc(_size * sizeof(ORInt ));
     _usage_max    = malloc(_size * sizeof(ORInt ));
+    _area_min     = malloc(_size * sizeof(ORInt ));
+    _area_max     = malloc(_size * sizeof(ORInt ));
     _present      = malloc(_size * sizeof(ORBool));
     _absent       = malloc(_size * sizeof(ORBool));
     _resourceTask = malloc(_size * sizeof(ORBool));
     
     if (_est == NULL || _lct == NULL || _dur_min == NULL || _dur_max == NULL
-        || _usage_min == NULL || _usage_max == NULL || _present == NULL || _absent == NULL
-        || _resourceTask == NULL)
+        || _usage_min == NULL || _usage_max == NULL || _area_min == NULL || _area_max == NULL
+        || _present == NULL || _absent == NULL || _resourceTask == NULL)
         @throw [[ORExecutionError alloc] initORExecutionError: "Cumulative: Out of memory!"];
     
     // Allocating memory
@@ -334,6 +340,9 @@ typedef struct {
             if (!_tasks[t].bound)
                 [_tasks[t] whenChangePropagate:self];
             if (!_usages[t].bound)
+                [_usages[t] whenChangeMinPropagate:self];
+#warning Check whether first test is necessary
+            if (!_area != NULL && !_area[t] != NULL && !_area[t].bound)
                 [_usages[t] whenChangeMinPropagate:self];
         }
     }
@@ -463,14 +472,145 @@ static inline ORInt usage_max(CPTaskCumulative * cumu, const ORInt t0)
 
 static inline ORInt area_min(CPTaskCumulative * cumu, const ORInt t0)
 {
+#warning Changed for taking an area variable into account
     assert(0 <= t0 && t0 < cumu->_size);
-    return (cumu->_usage_min[t0] * cumu->_dur_min[t0]);
+    return  cumu->_area_min[t0];
 }
 
 static inline ORInt free_energy(CPTaskCumulative * cumu, const ORInt t0)
 {
     assert(0 <= t0 && t0 < cumu->_size);
     return  area_min(cumu, t0) - usage_min(cumu, t0) * max(0, ect(cumu, t0) - lst(cumu, t0));
+}
+
+
+/*!
+ *  @brief Computing the minimal required energy of a task after a specific point in time,
+ *      i.e., in the left-open time interval [time, inf[.
+ *
+ *  @param t0 A normalised index of a task.
+ *  @param time A point in time specifying the time interval [time, inf[.
+ *  @return Minimal required energy of a task t0 in the time interval [time, inf[.
+ */
+static inline ORInt energy_left_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt time)
+{
+    // Considering only the usage and duration variables
+    const ORInt energy_1 = usage_min(cumu, t0) * min(dur_min(cumu, t0), max(0, ect(cumu, t0) - time));
+    assert(0 <= energy_1 && energy_1 <= usage_min(cumu, t0) * dur_min(cumu, t0));
+    // Considering the area variable
+    const ORInt energy_2 = area_min(cumu, t0) - usage_max(cumu, t0) * max(0, time - est(cumu, t0));
+    assert(energy_2 <= area_min(cumu, t0));
+    assert(est(cumu, t0) < time || max(energy_1, energy_2) == area_min(cumu, t0));
+    return max(energy_1, energy_2);
+}
+
+/*!
+ *  @brief Computing the minimal required energy of a task after a specific point in time,
+ *      i.e., in the left-open time interval [time, inf[, excluding the energy for the
+ *      compulsory part.
+ *
+ *  @param t0 A normalised index of a task.
+ *  @param time A point in time specifying the time interval [time, inf[.
+ *  @return Minimal required energy of a task t0 in the time interval [time, inf[
+ *      excluding the energy of the compulsory part.
+ */
+static inline ORInt free_energy_left_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt time)
+{
+    assert(0 <= t0 && t0 < cumu->_size);
+    if (time <= est(cumu, t0))
+        return free_energy(cumu, t0);
+    return energy_left_shift(cumu, t0, time) - comp_part_left_shift(cumu, t0, time);
+}
+
+/*!
+ *  @brief Computing the energy/area of the compulsory part intersecting a right-open
+ *      time interval.
+ *
+ *  @param t0 A normalised index of a task
+ *  @param time A point in time specifying the time interval [time, inf[.
+ *  @return Energy of the compulsory part intersecting the time interval ]time, inf[.
+ */
+static inline ORInt comp_part_left_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt time)
+{
+    assert(0 <= t0 && t0 < cumu->_size);
+    if (lst(cumu, t0) < ect(cumu, t0) && time < ect(cumu, t0)) {
+        return usage_min(cumu, t0) * (ect(cumu, t0) - max(time, lst(cumu, t0)));
+    }
+    return 0;
+}
+
+/*!
+ *  @brief Computing the minimal required energy of a task before a specific point in time,
+ *      i.e., in the left-open time interval ]-inf, time].
+ *
+ *  @param t0 A normalised index of a task.
+ *  @param time A point in time specifying the time interval ]-inf, time].
+ *  @return Minimal required energy of a task t0 in the time interval ]-inf, time].
+ */
+static inline ORInt energy_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt time)
+{
+    // Considering only the usage and duration variables
+    const ORInt energy_1 = usage_min(cumu, t0) * min(dur_min(cumu, t0), max(0, time - lst(cumu, t0)));
+    assert(0 <= energy_1 && energy_1 <= usage_min(cumu, t0) * dur_min(cumu, t0));
+    // Considering the area variable
+    const ORInt energy_2 = area_min(cumu, t0) - usage_max(cumu, t0) * max(0, lct(cumu, t0) - time);
+    assert(energy_2 <= area_min(cumu, t0));
+    assert(time < lct(cumu, t0) || max(energy_1, energy_2) == area_min(cumu, t0));
+    return max(energy_1, energy_2);
+}
+
+/*!
+ *  @brief Computing the minimal required energy of a task before a specific point in time,
+ *      i.e., in the left-open time interval ]-inf, time], excluding the energy for the
+ *      compulsory part.
+ *
+ *  @param t0 A normalised index of a task.
+ *  @param time A point in time specifying the time interval ]-inf, time].
+ *  @return Minimal required energy of a task t0 in the time interval ]-inf, time]
+ *      excluding the energy of the compulsory part.
+ */
+static inline ORInt free_energy_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt time)
+{
+    assert(0 <= t0 && t0 < cumu->_size);
+    if (lct(cumu, t0) <= time)
+        return free_energy(cumu, t0);
+    return energy_right_shift(cumu, t0, time) - comp_part_right_shift(cumu, t0, time);
+}
+
+/*!
+ *  @brief Computing the energy/area of the compulsory part intersecting a left-open
+ *      time interval.
+ *
+ *  @param t0 A normalised index of a task
+ *  @param time A point in time specifying the time interval ]-inf, time].
+ *  @return Energy of the compulsory part intersecting the time interval ]-inf, time].
+ */
+static inline ORInt comp_part_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt time)
+{
+    assert(0 <= t0 && t0 < cumu->_size);
+    if (lst(cumu, t0) < ect(cumu, t0) && lst(cumu, t0) < time) {
+        return usage_min(cumu, t0) * (min(time, ect(cumu, t0)) - lst(cumu, t0));
+    }
+    return 0;
+}
+
+/*!
+ *  @brief Computing the minimal required energy for a task in a left-open time interval to
+ *      be run at its earliest start time.
+ *
+ *  @param t0 A normalised index of a task.
+ *  @param time A point in time specifying the time interval ]-inf, time]
+ *  @return The minimal required energy of the task in the time interval for its execution at its earliest start time.
+ */
+static inline ORInt req_energy_start_est_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt time)
+{
+    assert(0 <= t0 && t0 < cumu->_size);
+    if (time <= est(cumu, t0))
+        return 0;
+    if (est(cumu, t0) + dur_max(cumu, t0) <= time)
+        return area_min(cumu, t0);
+    assert(usage_min(cumu, t0) * dur_min(cumu, t0) == area_min(cumu, t0) || usage_min(cumu, t0) == area_min(cumu, t0) / dur_max(cumu, t0));
+    return min(area_min(cumu, t0), usage_min(cumu, t0) * (time - est(cumu, t0)));
 }
 
 static inline ORInt cap_min(CPTaskCumulative * cumu)
@@ -1081,17 +1221,19 @@ static void ttef_consistency_check(CPTaskCumulative * cumu, const ORInt * task_i
             
             // Adding the required energy of j in the intervals [begin', end)
             // where begin' <= est(cumu, j)
-            if (lct(cumu, j) <= end) {
-                // Task j fully lies in the interval [begin, end)
-                en_req_free += free_energy(cumu, j);
-            }
-            else {
-                // Calculation whether a free part of the task partially lies
-                // in the interval
-                ORInt dur_fixed = max(0, ect(cumu, j) - lst(cumu, j));
-                ORInt dur_shift = shift_in(begin, end, est(cumu, j), ect(cumu, j), lst(cumu, j), lct(cumu, j), dur_fixed);
-                en_req_free += usage_min(cumu, j) * dur_shift;
-            }
+            en_req_free += free_energy_right_shift(cumu, j, end);
+#warning XXX Old code before considering area variables
+//            if (lct(cumu, j) <= end) {
+//                // Task j fully lies in the interval [begin, end)
+//                en_req_free += free_energy(cumu, j);
+//            }
+//            else {
+//                // Calculation whether a free part of the task partially lies
+//                // in the interval
+//                ORInt dur_fixed = max(0, ect(cumu, j) - lst(cumu, j));
+//                ORInt dur_shift = shift_in(begin, end, est(cumu, j), ect(cumu, j), lst(cumu, j), lct(cumu, j), dur_fixed);
+//                en_req_free += usage_min(cumu, j) * dur_shift;
+//            }
             
             // Computing the total required energy in the interval [begin, end)
             assert(0 <= jj && jj < unboundSize);
@@ -1275,11 +1417,18 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
             else {
                 // Calculation whether a free part of the task partially lies
                 // in the interval
-                ORInt dur_fixed = max(0, ect(cumu, j) - lst(cumu, j));
-                ORInt dur_shift = shift_in(begin, end, est(cumu, j), ect(cumu, j), lst(cumu, j), lct(cumu, j), dur_fixed);
-                en_req_free += usage_min(cumu, j) * dur_shift;
+                const ORInt en_rs = energy_right_shift(cumu, j, end);
+                const ORInt en_comp_part = comp_part_right_shift(cumu, j, end);
+                en_req_free += en_rs - en_comp_part;
+#warning XXX Old code before considering area variables
+//                const ORInt dur_fixed = max(0, ect(cumu, j) - lst(cumu, j));
+//                const ORInt dur_shift = shift_in(begin, end, est(cumu, j), ect(cumu, j), lst(cumu, j), lct(cumu, j), dur_fixed);
+//                en_req_free += usage_min(cumu, j) * dur_shift;
                 // Calculation of the required energy for starting at est(j)
-                ORInt en_req_start = min(free_energy(cumu, j), usage_min(cumu, j) * (end - est(cumu, j))) - usage_min(cumu, j) * dur_shift;
+                const ORInt en_req_start = req_energy_start_est_right_shift(cumu, j, end) - en_rs;
+                assert(0 <= en_req_start);
+#warning XXX Old code before considering area variables
+//                const ORInt en_req_start = min(free_energy(cumu, j), usage_min(cumu, j) * (end - est(cumu, j))) - usage_min(cumu, j) * dur_shift;
                 if (en_req_start > update_en_req_start) {
                     update_en_req_start = en_req_start;
                     update_idx = jj;
@@ -1290,7 +1439,7 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
             const ORInt en_req = en_req_free + ttEnAfterEst[jj] - ttEnAfterLct[ii];
             const ORInt en_avail = cap_max(cumu) * (end - begin) - en_req;
             
-            // Checking for a rresource overload
+            // Checking for a resource overload
             if (en_avail < 0) {
                 // Increment conflict counter
                 cumu->_nb_ttef_incons++;
@@ -1328,10 +1477,13 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
                 j = task_id_est[update_idx];
                 // Calculation of the possible new lower bound wrt. the current
                 // time interval [begin, end)
-                int dur_cp_in = max(0, min(end, ect(cumu, j)) - lst(cumu, j));
-                int dur_shift = shift_in(begin, end, est(cumu, j), ect(cumu, j), lst(cumu, j), lct(cumu, j), dur_cp_in);
-                int dur_avail = (en_avail / usage_min(cumu, j)) + dur_cp_in + dur_shift;
-                int start_new = end - dur_avail;
+                const ORInt en_avail_j = en_avail + energy_right_shift(cumu, j, end);
+                const ORInt start_new  = end - (en_avail_j / usage_min(cumu, j));
+#warning XXX Old code before considering area variables
+//                int dur_cp_in = max(0, min(end, ect(cumu, j)) - lst(cumu, j));
+//                int dur_shift = shift_in(begin, end, est(cumu, j), ect(cumu, j), lst(cumu, j), lct(cumu, j), dur_cp_in);
+//                int dur_avail = (en_avail / usage_min(cumu, j)) + dur_cp_in + dur_shift;
+//                int start_new = end - dur_avail;
                 
                 // Check whether a new lower bound was found
                 if (start_new > new_est[j]) {
@@ -1851,6 +2003,15 @@ static void readData(CPTaskCumulative * cumu)
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
         
+        if (cumu->_area != NULL && cumu->_area[t0] != NULL) {
+            cumu->_area_min[t0] = cumu->_area[t].min;
+            cumu->_area_max[t0] = cumu->_area[t].max;
+        }
+        else {
+            cumu->_area_min[t0] = cumu->_usage_min[t0] * cumu->_dur_min[t0];
+            cumu->_area_max[t0] = cumu->_usage_max[t0] * cumu->_dur_max[t0];
+        }
+        
         // Swap bounded or irrelevant tasks to the beginning of the array
         if (isIrrelevant(cumu, t0)) {
             swapORInt(cumu->_bound, firstUnbound++, tt);
@@ -1882,6 +2043,15 @@ static void readData(CPTaskCumulative * cumu)
         bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
+
+        if (cumu->_area != NULL && cumu->_area[t0] != NULL) {
+            cumu->_area_min[t0] = cumu->_area[t].min;
+            cumu->_area_max[t0] = cumu->_area[t].max;
+        }
+        else {
+            cumu->_area_min[t0] = cumu->_usage_min[t0] * cumu->_dur_min[t0];
+            cumu->_area_max[t0] = cumu->_usage_max[t0] * cumu->_dur_max[t0];
+        }
         
         if (est_t != cumu->_est[t0] || lct_t != cumu->_lct[t0] || dur_min_t != cumu->_dur_min[t0] || dur_max_t != cumu->_dur_max[t0] || usage_min_t != cumu->_usage_min[t0] || usage_max_t != cumu->_usage_max[t0]) {
             // Update the relevant time horizon

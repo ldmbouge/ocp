@@ -69,6 +69,14 @@
  */
 -(void) add: (id<ORTaskVar>) act with: (id<ORIntVar>) usage;
 /*!
+ * @brief Adding a task requiring the cumulative resource.
+ * @param act A task.
+ * @param usage An integer variable representing possible resource unit required by the task.
+ * @param area An integer variable representing the product of the task's duration and usage
+ * @throws ORExecutionError when the cumulative resource constraint is closed.
+ */
+-(void) add:(id<ORTaskVar>)act with:(id<ORIntVar>)usage and:(id<ORIntVar>)area;
+/*!
  * @brief Adding a resource task with a fixed duration that may require the cumulative resource.
  * @param act A resource task.
  * @param duration An integer.

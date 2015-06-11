@@ -52,6 +52,7 @@
 -(id<ORTaskCumulative>) initORTaskCumulativeEmpty: (id<ORIntVar>) capacity;
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORIntVarArray>) usages;
+-(id<ORIntVarArray>) areas;
 -(id<ORIntVar>) capacity;
 -(id<ORIntArray>) resourceTasks;
 -(void) add:(id<ORResourceTask>)task duration:(ORInt)duration;
