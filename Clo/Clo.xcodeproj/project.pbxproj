@@ -197,6 +197,12 @@
 		5B28CB2116691F57008AB802 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B28CB2216691F57008AB802 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B28CB2316691F57008AB802 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B2971311B288B25009CCCDC /* CPTrailIntSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B2971301B288B25009CCCDC /* CPTrailIntSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B2971331B288B93009CCCDC /* CPTrailIntSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B2971321B288B93009CCCDC /* CPTrailIntSet.m */; };
+		5B2971351B28970D009CCCDC /* CPISVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B2971341B28970D009CCCDC /* CPISVarI.m */; };
+		5B2971371B28972D009CCCDC /* CPISVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B2971361B28972D009CCCDC /* CPISVarI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B2971391B28CF91009CCCDC /* CPIntSetConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B2971381B28CF91009CCCDC /* CPIntSetConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B29713B1B28D044009CCCDC /* CPIntSetConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B29713A1B28D044009CCCDC /* CPIntSetConstraint.m */; };
 		5B2D58451844F1A40044EF1D /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B2D92CA17036DA8007F330B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B2D92CD17036DA8007F330B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B2D92CC17036DA8007F330B /* main.m */; };
@@ -5456,6 +5462,12 @@
 		5B28CB0916691F0D008AB802 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B28CB0C16691F0D008AB802 /* langford-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "langford-Prefix.pch"; sourceTree = "<group>"; };
 		5B28CB0D16691F0D008AB802 /* langford.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = langford.1; sourceTree = "<group>"; };
+		5B2971301B288B25009CCCDC /* CPTrailIntSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTrailIntSet.h; sourceTree = "<group>"; };
+		5B2971321B288B93009CCCDC /* CPTrailIntSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTrailIntSet.m; sourceTree = "<group>"; };
+		5B2971341B28970D009CCCDC /* CPISVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPISVarI.m; sourceTree = "<group>"; };
+		5B2971361B28972D009CCCDC /* CPISVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPISVarI.h; sourceTree = "<group>"; };
+		5B2971381B28CF91009CCCDC /* CPIntSetConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPIntSetConstraint.h; sourceTree = "<group>"; };
+		5B29713A1B28D044009CCCDC /* CPIntSetConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPIntSetConstraint.m; sourceTree = "<group>"; };
 		5B2D92C917036DA8007F330B /* models */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = models; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2D92CC17036DA8007F330B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B2D92CF17036DA8007F330B /* models-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "models-Prefix.pch"; sourceTree = "<group>"; };
@@ -8271,6 +8283,8 @@
 				5B778BA0154EF7DA0078EB07 /* CPBitVar.h */,
 				5B778B96154EF67C0078EB07 /* CPBitVarI.h */,
 				5B778B97154EF67C0078EB07 /* CPBitVarI.m */,
+				5B2971301B288B25009CCCDC /* CPTrailIntSet.h */,
+				5B2971321B288B93009CCCDC /* CPTrailIntSet.m */,
 				5B3606931392A9C5008B0EE8 /* CPBitDom.h */,
 				5B3606941392A9C5008B0EE8 /* CPBitDom.m */,
 				5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */,
@@ -8295,12 +8309,16 @@
 				B1583D3113A4CF7D0002FBD8 /* CPExprI.m */,
 				B1C8C5F414BEBE1C000C5486 /* CPFactory.h */,
 				B1C8C5F514BEBE1C000C5486 /* CPFactory.m */,
+				5B2971381B28CF91009CCCDC /* CPIntSetConstraint.h */,
+				5B29713A1B28D044009CCCDC /* CPIntSetConstraint.m */,
 				5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */,
 				5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */,
 				5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */,
 				5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */,
 				B17ABE9013CC852C00DC7288 /* CPIntVarI.h */,
 				B17ABE9113CC852C00DC7288 /* CPIntVarI.m */,
+				5B2971341B28970D009CCCDC /* CPISVarI.m */,
+				5B2971361B28972D009CCCDC /* CPISVarI.h */,
 				5B65615C15AD58F6002F344B /* CPKnapsack.h */,
 				5B65615D15AD58F6002F344B /* CPKnapsack.m */,
 				5BEAD77D15ABBAFC00A012FE /* CPLexConstraint.h */,
@@ -9476,11 +9494,14 @@
 			files = (
 				5B3606911392A8DA008B0EE8 /* CPDom.h in Headers */,
 				5B3606951392A9C5008B0EE8 /* CPBitDom.h in Headers */,
+				5B2971371B28972D009CCCDC /* CPISVarI.h in Headers */,
+				5B2971391B28CF91009CCCDC /* CPIntSetConstraint.h in Headers */,
 				5BE642FE139D49320056F448 /* CPBasicConstraint.h in Headers */,
 				B19ABA26146DC7FA004EB77E /* CPCardinality.h in Headers */,
 				5B92975713A01F45002AA188 /* CPValueConstraint.h in Headers */,
 				B15A2B5013995F12002401A0 /* CPError.h in Headers */,
 				B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */,
+				5B2971311B288B25009CCCDC /* CPTrailIntSet.h in Headers */,
 				5BB3835C13B3B624005B7D52 /* CPEquationBC.h in Headers */,
 				B169F9C814EF87D500B2F3A6 /* CPConstraint.h in Headers */,
 				5B40C21114F80A7D0041D162 /* CPObjectQueue.h in Headers */,
@@ -12170,11 +12191,14 @@
 				B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */,
 				B169F9C914EF87D500B2F3A6 /* CPConstraint.m in Sources */,
 				5B40C21214F80A7D0041D162 /* CPObjectQueue.m in Sources */,
+				5B29713B1B28D044009CCCDC /* CPIntSetConstraint.m in Sources */,
 				5B73E55E151F45F60043192D /* NSBoardController.m in Sources */,
 				5B729C42153F79A4001BE95A /* CPWatch.m in Sources */,
 				B1C25AA21557540E009CB8A8 /* CPCircuitI.m in Sources */,
 				B17715B61557D9D200BA14BF /* CPTableI.m in Sources */,
+				5B2971331B288B93009CCCDC /* CPTrailIntSet.m in Sources */,
 				5B778B99154EF67C0078EB07 /* CPBitArray.m in Sources */,
+				5B2971351B28970D009CCCDC /* CPISVarI.m in Sources */,
 				5B778B9B154EF67C0078EB07 /* CPBitArrayDom.m in Sources */,
 				5B778B9D154EF67C0078EB07 /* CPBitConstraint.m in Sources */,
 				5B778B9F154EF67C0078EB07 /* CPBitVarI.m in Sources */,

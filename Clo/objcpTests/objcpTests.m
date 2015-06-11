@@ -18,6 +18,7 @@
 #import <ORProgram/ORProgram.h>
 #import <objcp/CPObjectQueue.h>
 #import <objcp/CPFactory.h>
+#import <ORProgram/CPSolver.h>
 
 @implementation objcpTests
 
@@ -450,19 +451,52 @@
       [testSolver solveAll:^{
          [testSolver label:foo with:6];
          [testSolver label:bar with:3];
-         XCTAssert(false);
          XCTAssert([testSolver bound:foo] && [testSolver bound:bar],"both vars should be bound");
          int fv = [testSolver min:foo];
          int bv = [testSolver min:bar];
-         XCTAssertEqual(bv, fv * 10 / 2, "Satisfy relation");
-         NSLog(@"foo: [%d,%d], bar: [%d,%d]",
+         int zv = [testSolver min:zoo];
+         XCTAssertEqual(zv, fv * 13 / bv, "Satisfy relation");
+         NSLog(@"foo: [%d,%d], bar: [%d,%d] zoo:[%d,%d]",
                [testSolver min:foo],
                [testSolver max:foo],
                [testSolver min:bar],
-               [testSolver max:bar]
+               [testSolver max:bar],
+               [testSolver min:zoo],
+               [testSolver max:zoo]
                );
       }];
    }
 }
-
+-(void)testISV1
+{
+   @autoreleasepool {
+      CPSolver* p = [CPSolverFactory solver];
+      NSSet* s = [NSSet setWithObjects:@0,@1,@2,@3,@4,@5,@6,@7,@8,@9, nil];
+      id<ORIntSet> src = [ORFactory intSet:p set:s];
+      id<CPIntSetVar> x = [CPFactory intSetVar:[p engine] withSet:src];
+      id<CPIntSetVar> y = [CPFactory intSetVar:[p engine] withSet:src];
+      id<CPIntSetVar> z = [CPFactory intSetVar:[p engine] withSet:src];
+      [[p engine] add:[CPFactory inter:x with:y eq:z]];
+      [p solveAll:^{
+         [[p engine] enforce:^{
+            [z require:9];
+         }];
+         NSLog(@"%@\nINTER \n%@ = \n%@",x,y,z);
+         [[p engine] enforce:^{
+            [x exclude:8];
+         }];
+         NSLog(@"%@\nINTER \n%@ = \n%@",x,y,z);
+         [[p engine] enforce:^{
+            [x require:0];
+         }];
+         NSLog(@"%@\nINTER \n%@ = \n%@",x,y,z);
+         [[p engine] enforce:^{
+            [z exclude:0];
+         }];
+         NSLog(@"%@\nINTER \n%@ = \n%@",x,y,z);
+         
+      }];
+      NSLog(@"the var is: %@",x);
+   }
+}
 @end

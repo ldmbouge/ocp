@@ -158,3 +158,28 @@ enum CPVarClass {
 -(id<ORASolver>) solver;
 @end
 
+@protocol CPIntSetVar <CPVar>
+-(id<CPIntVar>)cardinality;
+-(ORBool)bound;
+-(id<IntEnumerator>)required;
+-(id<IntEnumerator>)possible;
+-(id<IntEnumerator>)excluded;
+-(ORInt)cardRequired;
+-(ORInt)cardPossible;
+-(ORBool)isRequired:(ORInt)v;
+-(ORBool)isPossible:(ORInt)v;
+-(ORBool)isExcluded:(ORInt)v;
+-(void)require:(ORInt)v;
+-(void)exclude:(ORInt)v;
+// notifications APIs
+-(void)whenRequired:(id<CPConstraint>)c do:(ORIntClosure)todo;
+-(void)whenExcluded:(id<CPConstraint>)c do:(ORIntClosure)todo;
+-(void)whenBound:(id<CPConstraint>)c do:(ORClosure)todo;
+-(void)whenChange:(id<CPConstraint>)c do:(ORClosure)todo;
+// events
+-(void)requireEvt:(ORInt)v;
+-(void)excludeEvt:(ORInt)v;
+-(void)bindEvt;
+-(void)changeEvt;
+@end
+

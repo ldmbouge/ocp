@@ -9,14 +9,13 @@
  
  ***********************************************************************/
 
+
 #import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPTypes.h>
+#import <objcp/CPError.h>
 
-@interface CPValueLossEvent : NSObject<CPValueEvent> {
-   id<CPClosureList> _theList;
-   ORInt             _theVal;
-}
-+(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list;
--(void)letgo;
+@interface CPTrailIntSet : ORObject<ORIntSet>
+
+-(id)initWithSet:(id<ORIntSet>)theSource trail:(id<ORTrail>)t;
+
 @end
-
