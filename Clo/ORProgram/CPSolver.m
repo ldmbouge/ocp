@@ -250,7 +250,14 @@
 {
   [_hSet applyToAll:^(id<CPHeuristic> h) { [h restart];}];
 }
-
+-(void) clearOnSolution
+{
+   [_doOnSolArray removeAllObjects];
+}
+-(void) clearOnExit
+{
+   [_doOnExitArray removeAllObjects];
+}
 -(void) onSolution: (ORClosure) onSolution
 {
    id block = [onSolution copy];

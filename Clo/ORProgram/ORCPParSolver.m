@@ -427,6 +427,11 @@
 -(void) doOnExit
 {
 }
+-(void) clearOnSolution
+{
+   for(ORInt k = 0; k < _nbWorkers; k++)
+      [_workers[k] clearOnSolution];
+}
 
 -(id<ORSolutionPool>) solutionPool
 {
