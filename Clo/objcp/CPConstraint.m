@@ -27,6 +27,8 @@
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
 #import "CPFloatConstraint.h"
+#import "CPIntSetConstraint.h"
+
 
 @implementation CPFactory (Constraint)
 
@@ -600,6 +602,15 @@
 {
    id<CPConstraint> o = [[CPFloatVarMaximize alloc] init: x];
    [[x engine] trackMutable: o];
+   return o;
+}
+@end
+
+@implementation CPFactory (ORIntSet)
++(id<CPConstraint>) inter:(id<CPIntSetVar>)x with:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z
+{
+   id<CPConstraint> o = [[CPISInterAC alloc] init:x inter:y eq:z];
+   [[x engine] trackMutable:o];
    return o;
 }
 @end

@@ -9,14 +9,20 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
+#import <Foundation/Foundation.h>
 #import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <objcp/CPBitDom.h>
+#import <objcp/CPVar.h>
+#import <objcp/CPISVarI.h>
 
-@interface CPValueLossEvent : NSObject<CPValueEvent> {
-   id<CPClosureList> _theList;
-   ORInt             _theVal;
+@interface CPISInterAC : CPCoreConstraint { // z == x INTER y
+   id<CPIntSetVar> _x;
+   id<CPIntSetVar> _y;
+   id<CPIntSetVar> _z;
 }
-+(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list;
--(void)letgo;
+-(id)init:(id<CPIntSetVar>)x inter:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
 @end
-

@@ -33,6 +33,8 @@
 -(void) removeObjectForKey:(ORInt) k;
 -(void) removeNode:(ORAVLTreeNode<Position>*)n;
 -(NSEnumerator*)iterator;
+-(ORAVLTreeNode<Position>*)smallest:(ORAVLTreeNode<Position>*)x;
+-(ORAVLTreeNode<Position>*)largest:(ORAVLTreeNode<Position>*)x;
 @end
 
 @interface ORAVLTreeKeyIntEnumerator : NSObject<IntEnumerator>

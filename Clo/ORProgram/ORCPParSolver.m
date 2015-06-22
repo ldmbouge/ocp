@@ -16,6 +16,7 @@
 #import <ORModeling/ORModeling.h>
 #import <objcp/CPObjectQueue.h>
 #import "ORSolution.h"
+#import "ORProgramFactory.h"
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;

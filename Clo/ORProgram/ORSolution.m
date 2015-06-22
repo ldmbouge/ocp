@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import "ORModeling.h"
+#import <ORModeling/ORModeling.h>
 #import "ORSolution.h"
 
 // [pvh] generic but absolutely boring and this is how it should be. The essence is in the concrete variables and the protocols
