@@ -26,6 +26,7 @@
 -(void)onSolution:(ORClosure)onSolution;
 -(void) doOnSolution;
 -(void) doOnExit;
+-(void) clearOnSolution;
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;

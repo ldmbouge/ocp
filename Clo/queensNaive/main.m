@@ -13,6 +13,7 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgramFactory.h>
 #import <ORProgram/ORProgramFactory.h>
+#import "ORCmdLineArgs.h"
 
 NSString* indent(int t)
 {
@@ -24,34 +25,43 @@ NSString* indent(int t)
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
-      int n = 8;
-      id<ORModel> model = [ORFactory createModel];
-      id<ORIntRange> R = RANGE(model,0,n-1);
-      id<ORMutableInteger> nbSol = INTEGER(model,0);
-      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
-      for(ORUInt i =0;i < n; i++) {
-         for(ORUInt j=i+1;j< n;j++) {
-            [model add: [x[i] neq: x[j]]];
-            [model add: [x[i] neq: [x[j] plus: @(i-j)]]];
-            [model add: [x[i] neq: [x[j] plus: @(j-i)]]];
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+      int n = [args size];
+         
+         id<ORModel> model = [ORFactory createModel];
+         id<ORIntRange> R = RANGE(model,0,n-1);
+         id<ORMutableInteger> nbSol = INTEGER(model,0);
+         id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
+         for(ORUInt i =0;i < n; i++) {
+            for(ORUInt j=i+1;j< n;j++) {
+               [model add: [x[i] neq: x[j]]];
+               [model add: [x[i] neq: [x[j] plus: @(i-j)]]];
+               [model add: [x[i] neq: [x[j] plus: @(j-i)]]];
+            }
          }
-      }
-      id<CPProgram> cp = [ORFactory createCPProgram: model];      
-      [cp solveAll:
-       ^() {
-          [cp labelArray: x ];
-          @autoreleasepool {
-             NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-             for(int i = 0; i < n; i++)
-                [buf appendFormat:@"%d ",[cp intValue:x[i]]];
-             NSLog(@"sol [%d]: %@\n",[nbSol intValue:cp],buf);
+         id<CPProgram> cp = [ORFactory createCPProgram: model];
+         [cp clearOnSolution];
+         [cp solveAll:
+          ^() {
+             [cp labelArray: x ];
+//             @autoreleasepool {
+//                NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+//                for(int i = 0; i < n; i++)
+//                   [buf appendFormat:@"%d ",[cp intValue:x[i]]];
+//                NSLog(@"sol [%d]: %@\n",[nbSol intValue:cp],buf);
+//             }
+             [nbSol incr:cp];
           }
-          [nbSol incr:cp];
-       }
-       ];
-      printf("GOT %d solutions\n",[nbSol intValue:cp]);
-      [cp release];
-      [ORFactory shutdown];
-      return 0;
+          ];
+         printf("GOT %d solutions\n",[nbSol intValue:cp]);
+         NSLog(@"Solver status: %@\n",cp);
+         struct ORResult r = REPORT([nbSol intValue:cp], [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [cp release];
+         [ORFactory shutdown];
+         
+         return r;
+      }];
+
    }
 }

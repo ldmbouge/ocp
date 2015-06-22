@@ -99,6 +99,8 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 -(void)          onSolution: (ORClosure) onSolution;
 -(void)              onExit: (ORClosure) onExit;
+-(void) clearOnSolution;
+-(void) clearOnExit;
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
