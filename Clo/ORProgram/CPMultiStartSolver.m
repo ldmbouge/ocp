@@ -230,9 +230,9 @@
 {
    [[self worker] try: left alt: right];
 }
--(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter do: (ORInt2Void) body
 {
-   [[self worker] tryall: range suchThat: filter in: body];
+   [[self worker] tryall: range suchThat: filter do: body];
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
@@ -424,6 +424,13 @@
 -(void) doOnExit
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
+}
+-(void) defaultSearch
+{
+   id<CPHeuristic> h = [self createFF];
+   [self solveAll:^{
+      [self labelHeuristic:h];
+   }];
 }
 -(id<ORCPSolutionPool>) solutionPool
 {

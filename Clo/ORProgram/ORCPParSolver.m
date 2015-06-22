@@ -164,7 +164,7 @@
 {
    [[[self worker] explorer] try: left alt: right];
 }
--(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter do: (ORInt2Void) body
 {
    [[[self worker] explorer] tryall: range suchThat: filter in: body];
 }
@@ -430,7 +430,13 @@
 -(void) doOnExit
 {
 }
-
+-(void) defaultSearch
+{
+   id<CPHeuristic> h = [self createFF];
+   [self solveAll:^{
+      [self labelHeuristic:h];
+   }];
+}
 -(id<ORSolutionPool>) solutionPool
 {
    return _globalPool;

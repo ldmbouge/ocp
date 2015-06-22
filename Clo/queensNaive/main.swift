@@ -1,10 +1,13 @@
-//
-//  main.swift
-//  Clo
-//
-//  Created by Laurent Michel on 7/27/14.
-//
-//
+/************************************************************************
+Mozilla Public License
+
+Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+***********************************************************************/
 
 import ORFoundation
 import ORProgram
@@ -32,38 +35,18 @@ for var i  = 0; i < Int(n) ; i++ {
    }
 }
 let cp = ORFactory.createCPProgram(model)
-//cp.onSolution  {
-//   nbSol.incr(cp)
-//   let s = ORFactory.intArray(cp,range:x.range()) {
-//      (k : ORInt) -> ORInt in cp.intValue(x[Int(k)])
-//   }
-//   println(s)
-//}
 
-let a1 = ORFactory.intVarArray(cp, range: ORFactory.intRange(cp, low: 0, up: (n-1)/2)) { (k : ORInt) -> ORIntVar! in x[Int(k)]}!
-let a2 = ORFactory.intVarArray(cp, range: ORFactory.intRange(cp, low: (n-1)/2+1, up: n-1)) { (k : ORInt) -> ORIntVar! in x[Int(k)]}!
-
-cp.solveAll { [weak cp,weak a1,weak a2] in
-   cp!.labelArray(a1)
-   cp!.labelArray(a2)
-   
-//   cp.forall(R, suchThat: { (k : ORInt) -> Bool in !cp.bound(x[Int(k)]) },
-//      orderedBy: { (k : ORInt) -> ORInt in cp.domsize(x[Int(k)]) }, `do`: { (k : ORInt) -> Void in
-//         cp.tryall(R, suchThat: { (v : ORInt) -> Bool in Int(cp.member(v,`in`: x[Int(k)])) != 0}, `do`: { (v : ORInt) -> Void in
-//               cp.label(x[Int(k)],with:v)
-//            })
-//      })
-
-   
-//   cp.labelArray(x)
+cp.onSolution {
    nbSol.incr(cp)
    let s = ORFactory.intArray(cp,range:x.range()) {
-      (k : ORInt) -> ORInt in cp!.intValue(x[Int(k)])
+      (k : ORInt) -> ORInt in cp.intValue(x[Int(k)])
    }
    println(s)
 }
-//cp.defaultSearch()
+
+//cp.solveAll {
+//   cp.labelArray(x)
+//}
+cp.defaultSearch()
 println(cp.solutionPool())
 println("Number of solutions \(cp.solutionPool().count())")
-
-

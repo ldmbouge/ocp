@@ -956,8 +956,8 @@ public:
 
 const unsigned short IEEEBIAS = 0x3fff;
 
-static __thread SECFloat equot;
-static __thread SECFloat rbit;
+static  SECFloat equot;
+static  SECFloat rbit;
 
 static unsigned short etens[NTEN+1][NE] = {
    {0x979b,0x8a20,0x5202,0xc460,0x7525},
