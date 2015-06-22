@@ -432,7 +432,11 @@
    for(ORInt k = 0; k < _nbWorkers; k++)
       [_workers[k] clearOnSolution];
 }
-
+-(void) clearOnExit
+{
+   for(ORInt k = 0; k < _nbWorkers; k++)
+      [_workers[k] clearOnExit];
+}
 -(id<ORSolutionPool>) solutionPool
 {
    return _globalPool;
