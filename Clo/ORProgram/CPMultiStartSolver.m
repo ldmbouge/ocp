@@ -18,6 +18,7 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import "ORSolution.h"
+#import "ORProgramFactory.h"
 
 
 /******************************************************************************************/
@@ -418,6 +419,17 @@
    for(ORInt k = 0; k < _nb; k++)   
       [_solver[k] onExit: onExit];
 }
+-(void) clearOnSolution
+{
+   for(ORInt k = 0; k < _nb; k++)
+      [_solver[k] clearOnSolution];
+}
+-(void) clearOnExit
+{
+   for(ORInt k = 0; k < _nb; k++)
+      [_solver[k] clearOnExit];
+}
+
 -(void) doOnSolution
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];

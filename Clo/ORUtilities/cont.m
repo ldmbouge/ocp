@@ -161,7 +161,7 @@ inline static ContPool* instancePool()
       // respected by GNUstep.
       void* ptr = NULL;
       size_t sz = class_getInstanceSize(self) + 16; // add 16 bytes
-      int err = posix_memalign(&ptr,16,sz);
+      posix_memalign(&ptr,16,sz);
       memset(ptr,0,sz);
       rv = (id)(((char*)ptr)+16);
       object_setClass(rv,self);

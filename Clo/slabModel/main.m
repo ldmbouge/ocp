@@ -92,8 +92,10 @@ int main0(int argc, const char * argv[])
                NSLog(@"INTER %d | %d = %@",i,j,ns);
          }
       }
-      
-   [model add: [ORFactory packing:model item: slab itemSize: weight load: load]];
+   for (ORInt j=Slabs.low; j <= Slabs.up; j++) {
+      [model add:[Sum(model, i, SetOrders, [[slab[i] eq:@(j)] mul:weight[i]]) eq:load[j]]];
+   }
+   //[model add: [ORFactory packing:model item: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
 //   [model add: [o eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];

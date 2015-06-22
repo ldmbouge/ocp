@@ -16,6 +16,7 @@
 #import <ORModeling/ORModeling.h>
 #import <objcp/CPObjectQueue.h>
 #import "ORSolution.h"
+#import "ORProgramFactory.h"
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;
@@ -430,7 +431,16 @@
 -(void) doOnExit
 {
 }
-
+-(void) clearOnSolution
+{
+   for(ORInt k = 0; k < _nbWorkers; k++)
+      [_workers[k] clearOnSolution];
+}
+-(void) clearOnExit
+{
+   for(ORInt k = 0; k < _nbWorkers; k++)
+      [_workers[k] clearOnExit];
+}
 -(id<ORSolutionPool>) solutionPool
 {
    return _globalPool;

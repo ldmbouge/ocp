@@ -96,6 +96,10 @@
 +(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
 @end
 
+@interface CPFactory (ORIntSet)
++(id<CPConstraint>) inter:(id<CPIntSetVar>)x with:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z;
+@end
+
 @interface CPSearchFactory : NSObject
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(ORInt) c;
 +(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c;

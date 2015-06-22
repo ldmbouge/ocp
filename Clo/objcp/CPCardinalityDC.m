@@ -65,9 +65,6 @@
 }
 
 static void SCC(CPCardinalityDC* card);
-static void SCCvar(CPCardinalityDC* card,ORInt k);
-static void SCCval(CPCardinalityDC* card,ORInt k);
-static void SCCsink(CPCardinalityDC* card);
 
 -(void) initInstanceVariables 
 {

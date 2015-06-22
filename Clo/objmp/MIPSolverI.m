@@ -189,7 +189,7 @@
    if ([object isKindOfClass:[self class]]) {
       MIPConstraintSnapshot* other = object;
       if (_name == other->_name) {
-         return TRUE;
+         return YES;
       }
       else
          return NO;
