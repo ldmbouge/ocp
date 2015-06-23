@@ -657,17 +657,9 @@
 -(void) solveAll: (ORClosure) search
 {
    _oneSol = NO;
-   ORInt nbs = (ORInt) [_doOnSolArray count];
-   ORInt nbe = (ORInt) [_doOnExitArray count];
    [_search solveAllModel: self using: search
-               onSolution: ^{
-                  for(ORInt i = 0; i < nbs; i++)
-                     ((ORClosure) [_doOnSolArray objectAtIndex: i])();
-               }
-                   onExit: ^{
-                      for(ORInt i = 0; i < nbe; i++)
-                         ((ORClosure) [_doOnExitArray objectAtIndex: i])();
-                   }
+               onSolution: ^{ [self doOnSolution];}
+                   onExit: ^{ [self doOnExit];}
     ];
 }
 -(id<ORForall>) forall: (id<ORIntIterable>) S
@@ -1329,6 +1321,7 @@
    id<CPHeuristic> h = [self createFF];
    [self solveAll:^{
       [self labelHeuristic:h];
+      
    }];
 }
 

@@ -13,13 +13,6 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgramFactory.h>
 
-NSString* indent(int t)
-{
-   NSMutableString* tab = [NSMutableString stringWithCapacity:64];
-   for(int i=0;i<t;i++)
-      [tab appendString:@"   "];
-   return tab;
-}
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -36,20 +29,19 @@ int main (int argc, const char * argv[])
          }
       }
       id<CPProgram> cp = [ORFactory createCPProgram: model];
-      [cp solveAll:
-       ^() {
+      __unsafe_unretained id<CPProgram> cpw = cp; // necessary, otherwise we have a strong cycle and a leak.
+      [cp onSolution:^{
+         [nbSol incr:cpw];
+         id s = [ORFactory intArray:cpw range:x.range with:^ORInt(ORInt k) {
+            return [cpw intValue:x[k]];
+         }];
+         NSLog(@"Sol: %@",s);
+      }];
+      [cp solveAll: ^{
           [cp labelArray: x];
-//          @autoreleasepool {
-//             NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-//             for(int i = 0; i < n; i++)
-//                [buf appendFormat:@"%d ",[cp intValue:x[i]]];
-//             NSLog(@"sol [%d]: %@\n",[nbSol intValue:cp],buf);
-//          }
-          [nbSol incr:cp];
-       }
-       ];
+       }];
       printf("GOT %d solutions\n",[nbSol intValue:cp]);
       [ORFactory shutdown];
-      return 0;
    }
+   return 0;
 }
