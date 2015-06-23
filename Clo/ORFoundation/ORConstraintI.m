@@ -2987,6 +2987,40 @@
 }
 @end
 
+@implementation ORSubCircuit {
+   id<ORIntVarArray> _x;
+}
+-(ORSubCircuit*)initORSubCircuit:(id<ORIntVarArray>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitSubCircuit:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> subcircuit(%@)>",[self class],self,_x];
+   return buf;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+
 @implementation ORNoCycleI {
    id<ORIntVarArray> _x;
 }

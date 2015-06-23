@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORPQueue.h"
+#import <ORUtilities/ORPQueue.h>
 
 @interface ORPQLocator : NSObject<ORLocator> {
    id _key;

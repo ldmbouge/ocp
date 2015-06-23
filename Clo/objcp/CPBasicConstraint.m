@@ -1755,79 +1755,19 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    if (bound(_x)) {
       ORInt c = [_x value];
       ORBounds yb = bounds(_y);
-      ORBounds zb = bounds(_z);   // zb = c MOD yb
-      while (zb.min <= zb.max) {  // scan all remainders
-         ORInt cp   = c - zb.min; // q * y + z = x AND x=c =>  q * y = c - z.
-         ORInt ycur = yb.min;     // Scan all y values. If we find something that divides exactly, we should keep that z value
-         while (ycur <= yb.max) { // if we do not find anything that divides exactly, that remainder is impossible, increase low(z)
-            if (ycur < 0) {
-               ORInt rem = cp % ycur;
-               if (rem==0) break; // if y_k divides c-z exactly, that we can keep that z value (break)
-               else ++ycur;
-            } else if (ycur==0)   // skip the 0 divisor.
-               ++ycur;
-            else {
-               ORInt rem  = cp % ycur;
-               if (rem == 0)
-                  break;          // if y_k divides c-z exactly, we can keep that z value (break)
-               ORInt q   = cp / ycur;  // compute the inexact division.
-               if (q==0) {             // if we don't even get a whole unit.....
-                  ycur = yb.max+1;     // there is no point trying larger y values. So set y_k past the last value and break.
-                  break;
-               }
-               // q = (c - z_k) DIV y_k  : integer division. rem is the matching remainder. Therefore ->
-               // q * y_k + rem = c - z_k
-               ORInt inc = rem / q;  // The fraction of the remainder that could be "spread" among all q "copies" of y_k
-               ORInt rp  = rem % q;  // Whether the fraction above is exact! If not, there is no way.
-               if (rp == 0) {        // If rem can be evenly spread
-                  ycur += inc;       // increase y_k with the ideal fraction so that the division becomes exact (and we can break)
-                  assert(cp % ycur == 0);
-                  break;
-               } else
-                  ycur += inc + 1;   // If there is no way to evenly spread, we might as well skip the values in the range.
-            }
-         }
-         if (ycur > yb.max)     // We didn't find a match, increase low(z)
-            ++zb.min;
-         else break;            // we found a match, we are consistent for the LB.
-      }
-      [_z updateMin:zb.min];
+      ORInt  ycur = yb.min;
+      ORInt lowR = yb.max - 1;
+      ORInt upR  = 0;
       
-      while (zb.min <= zb.max) {
-         ORInt cp = c - zb.max;
-         ORInt ycur = yb.min;
-         while (ycur <= yb.max) {
-            if (ycur<0) {
-               ORInt rem = cp % ycur;
-               if (rem==0) break;
-               else ++ycur;
-            } else if (ycur==0)
-               ++ycur;
-            else {
-               ORInt rem  = cp % ycur;
-               if (rem == 0)
-                  break;
-               ORInt q   = cp / ycur;
-               if (q==0) {
-                  ycur = yb.max+1;
-                  break;
-               }
-               ORInt inc = rem / q,rp  = rem % q;
-               if (rp == 0) {
-                  ycur += inc;
-                  assert(cp % ycur == 0);
-                  break;
-               } else
-                  ycur += inc + 1;
-            }
-         }
-         if (ycur > yb.max)
-            --zb.max;
-         else break;
+      while (ycur <= yb.max) {
+         const ORInt m = c % ycur++;
+         lowR = m < lowR ? m : lowR;
+         upR  = m > upR ? m : upR;
       }
-      [_z updateMax:zb.max];
+      [_z updateMin:lowR andMax:upR];
+
       yb = bounds(_y);
-      zb = bounds(_z);
+      ORBounds zb = bounds(_z);
       ORInt dcur = yb.min;
       while (dcur <= yb.max) {
          if (dcur!=0) {

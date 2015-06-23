@@ -9,8 +9,8 @@
 
  ***********************************************************************/
 
-#import "cont.h"
-#import "context.h"
+#import <ORUtilities/cont.h>
+#import <ORUtilities/context.h>
 #import "pthread.h"
 #import <stdlib.h>
 #include <string.h>
@@ -81,6 +81,18 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 #else
    _used++;
    _longjmp(_target,(long)self); // dot not save signal mask --> overhead   
+#endif
+}
+
+-(void)callInvisible
+{
+#if defined(__x86_64__)
+   register struct Ctx64* ctx = &_target;
+   self->_used--;
+   ctx->rax = (long)self;
+   restoreCtx(ctx,_start,_data,_length);
+#else
+   _longjmp(_target,(long)self); // dot not save signal mask --> overhead
 #endif
 }
 
@@ -165,7 +177,7 @@ inline static ContPool* instancePool()
       // respected by GNUstep.
       void* ptr = NULL;
       size_t sz = class_getInstanceSize(self) + 16; // add 16 bytes
-      int err = posix_memalign(&ptr,16,sz);
+      posix_memalign(&ptr,16,sz);
       memset(ptr,0,sz);
       rv = (id)(((char*)ptr)+16);
       object_setClass(rv,self);

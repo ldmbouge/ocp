@@ -113,10 +113,10 @@ char *int2bin(int a, char *buffer, int buf_size) {
           NSLog(@"x = %@\n", [cp stringValue:x]);
           NSLog(@"y = %@\n", [cp stringValue:y]);
           NSLog(@"z = %@\n", [cp stringValue:z]);
-          STAssertTrue([[cp stringValue:x] isEqualToString:[cp stringValue:y]], @"testBitEqualityConstraint: Bit Patterns for x and y should be equal.");
-          STAssertTrue([[cp stringValue:x] isEqualToString:[cp stringValue:z]], @"testBitEqualityConstraint: Bit Patterns for x and z should be equal.");
-          STAssertTrue([[cp stringValue:a] isEqualToString:[cp stringValue:b]], @"testBitEqualityConstraint: Bit Patterns for a and b should be equal.");
-          STAssertTrue([[cp stringValue:a] isEqualToString:[cp stringValue:c]], @"testBitEqualityConstraint: Bit Patterns for a and c should be equal.");
+          XCTAssertTrue([[cp stringValue:x] isEqualToString:[cp stringValue:y]], @"testBitEqualityConstraint: Bit Patterns for x and y should be equal.");
+          XCTAssertTrue([[cp stringValue:x] isEqualToString:[cp stringValue:z]], @"testBitEqualityConstraint: Bit Patterns for x and z should be equal.");
+          XCTAssertTrue([[cp stringValue:a] isEqualToString:[cp stringValue:b]], @"testBitEqualityConstraint: Bit Patterns for a and b should be equal.");
+          XCTAssertTrue([[cp stringValue:a] isEqualToString:[cp stringValue:c]], @"testBitEqualityConstraint: Bit Patterns for a and c should be equal.");
        }
        @catch (NSException *exception) {
           NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);
@@ -173,11 +173,11 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"b = %@\n", [cp stringValue:b]);
          NSLog(@"c = %@\n", [cp stringValue:c]);
          
-         STAssertTrue([[cp stringValue:a] isEqualToString:@"1110111011101000100010001000100010001000100010001000100010001000"],
+         XCTAssertTrue([[cp stringValue:a] isEqualToString:@"1110111011101000100010001000100010001000100010001000100010001000"],
                       @"testBitANDConstraint: Bit Pattern for a is incorrect.");
-         STAssertTrue([[cp stringValue:b] isEqualToString:@"1111111011100000111100000000000011110000000000001111000000000000"],
+         XCTAssertTrue([[cp stringValue:b] isEqualToString:@"1111111011100000111100000000000011110000000000001111000000000000"],
                       @"testBitANDConstraint: Bit Pattern for b is incorrect.");
-         STAssertTrue([[cp stringValue:c] isEqualToString:@"1110111011100000100000000000000010000000000000001000000000000000"],
+         XCTAssertTrue([[cp stringValue:c] isEqualToString:@"1110111011100000100000000000000010000000000000001000000000000000"],
                       @"testBitANDConstraint: Bit Pattern for c is incorrect.");
       }
       @catch (NSException *exception) {
@@ -233,11 +233,11 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"d = %@\n", [cp stringValue:d]);
          NSLog(@"e = %@\n", [cp stringValue:e]);
          NSLog(@"f = %@\n", [cp stringValue:f]);
-         STAssertTrue([[cp stringValue:d] isEqualToString:@"1000100010001110100010001000100010001000100010001000100010001000"],
+         XCTAssertTrue([[cp stringValue:d] isEqualToString:@"1000100010001110100010001000100010001000100010001000100010001000"],
                       @"testBitORConstraint: Bit Pattern for d is incorrect.");
-         STAssertTrue([[cp stringValue:e] isEqualToString:@"1111011101110000111100000000000011110000000000001111000000000000"],
+         XCTAssertTrue([[cp stringValue:e] isEqualToString:@"1111011101110000111100000000000011110000000000001111000000000000"],
                       @"testBitORConstraint: Bit Pattern for e is incorrect.");
-         STAssertTrue([[cp stringValue:f] isEqualToString:@"1111111111111110111110001000100011111000100010001111100010001000"],
+         XCTAssertTrue([[cp stringValue:f] isEqualToString:@"1111111111111110111110001000100011111000100010001111100010001000"],
                       @"testBitORConstraint: Bit Pattern for f is incorrect.");
 
       }
@@ -345,11 +345,11 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"i = %@\n", [cp stringValue:i]);
          NSLog(@"j = %@\n", [cp stringValue:j]);
          NSLog(@"k = %@\n", [cp stringValue:k]);
-         STAssertTrue([[cp stringValue:i] isEqualToString:@"1000100010001110100010001000100010001000100010001110100010001000"],
+         XCTAssertTrue([[cp stringValue:i] isEqualToString:@"1000100010001110100010001000100010001000100010001110100010001000"],
                       @"testBitORConstraint: Bit Pattern for i is incorrect.");
-         STAssertTrue([[cp stringValue:j] isEqualToString:@"1111011101110000111100000000000011110000000000001111100010000000"],
+         XCTAssertTrue([[cp stringValue:j] isEqualToString:@"1111011101110000111100000000000011110000000000001111100010000000"],
                       @"testBitORConstraint: Bit Pattern for j is incorrect.");
-         STAssertTrue([[cp stringValue:k] isEqualToString:@"0111111111111110011110001000100001111000100010000001000000001000"],
+         XCTAssertTrue([[cp stringValue:k] isEqualToString:@"0111111111111110011110001000100001111000100010000001000000001000"],
                       @"testBitORConstraint: Bit Pattern for k is incorrect.");
 
       }
@@ -404,9 +404,9 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"Solution Found:");
          NSLog(@"p = %@\n", [cp stringValue:p]);
          NSLog(@"q = %@\n", [cp stringValue:q]);
-         STAssertTrue([[cp stringValue:p] isEqualToString:@"1011011101111011111011111101111111011111111011111111101111111111"],
+         XCTAssertTrue([[cp stringValue:p] isEqualToString:@"1011011101111011111011111101111111011111111011111111101111111111"],
                       @"testBitORConstraint: Bit Pattern for p is incorrect.");
-         STAssertTrue([[cp stringValue:q] isEqualToString:@"1011101111011111011111101111111011111111011111111101111111111000"],
+         XCTAssertTrue([[cp stringValue:q] isEqualToString:@"1011101111011111011111101111111011111111011111111101111111111000"],
                       @"testBitORConstraint: Bit Pattern for q is incorrect.");
       }
          @catch (NSException *exception) {
@@ -512,11 +512,11 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"q = %@\n", q);
 //         STAssertTrue([[p stringValue] isEqualToString:@"1011011101111011111011111101111111011111111011111111101111111111"],@"testBitORConstraint: Bit Pattern for p is incorrect.");
 //         STAssertTrue([[q stringValue] isEqualToString:@"1011111111011111111101111111111101101110111101111101111110111111"],@"testBitORConstraint: Bit Pattern for q is incorrect.");
-         STAssertTrue([[cp stringValue:p] isEqualToString:@"10110111011110111110111111011111"],
+         XCTAssertTrue([[cp stringValue:p] isEqualToString:@"10110111011110111110111111011111"],
                       @"testBitORConstraint: Bit Pattern for p is incorrect.");
-         STAssertTrue([[cp stringValue:q] isEqualToString:@"10111101111101111110111111011011"],
+         XCTAssertTrue([[cp stringValue:q] isEqualToString:@"10111101111101111110111111011011"],
                       @"testBitORConstraint: Bit Pattern for q is incorrect.");
-         STAssertTrue([[cp stringValue:r] isEqualToString:@"10110111011110111110111111011111"],
+         XCTAssertTrue([[cp stringValue:r] isEqualToString:@"10110111011110111110111111011111"],
                       @"testBitORConstraint: Bit Pattern for p is incorrect.");
 
       }
@@ -1125,7 +1125,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"x = %@\n", x);
          NSLog(@"y = %@\n", y);
          NSLog(@"z = %@\n", z);
-         STAssertTrue([[w stringValue] isEqualToString:@"0000000000000000000000000000000000000000000000000000000000000000"],@"testBitIFConstraint: Bit Pattern for w is incorrect.");
+         XCTAssertTrue([[w stringValue] isEqualToString:@"0000000000000000000000000000000000000000000000000000000000000000"],@"testBitIFConstraint: Bit Pattern for w is incorrect.");
 //         STAssertTrue([[x stringValue] isEqualToString:@"0000000100100011010001010110011110001001101010111100110111101111"],@"testBitIFConstraint: Bit Pattern for x is incorrect.");
 //         STAssertTrue([[y stringValue] isEqualToString:@"1111111011011100101110101001100001110110010101000011001000010000"],@"testBitIFConstraint: Bit Pattern for y is incorrect.");
 //         STAssertTrue([[z stringValue] isEqualToString:@"1111111111111111111111111111111111111111111111111111111111111111"],@"testBitIFConstraint: Bit Pattern for z is incorrect.");

@@ -13,7 +13,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPFactory.h>
 
 #import "ORCmdLineArgs.h"

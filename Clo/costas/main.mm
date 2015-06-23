@@ -66,7 +66,8 @@ int main(int argc, const char * argv[])
          
          id<ORIntVarArray> costas = [ORFactory intVarArray: mdl range:R domain: R];
          id<ORIntVarMatrix>  diff = [ORFactory intVarMatrix:mdl range:R : R domain:D];
-         [mdl add:[ORFactory alldifferent:costas]];
+         id<ORAnnotation> notes = [ORFactory annotation];
+         [notes  dc: [mdl add:[ORFactory alldifferent:costas]]];
          for(ORUInt i=R.low;i<=R.up;i++) {
             for(ORUInt j=R.low;j<=R.up;j++) {
                if (i < j)
@@ -78,7 +79,7 @@ int main(int argc, const char * argv[])
             id<ORIntVarArray> slice = All(mdl,ORIntVar, j, RANGE(mdl,i+1,n), [diff at:i :j]);
             [mdl add:[ORFactory alldifferent:slice]];
          }
-         //[mdl add:[[costas at:1] leq:[costas at:n]]];
+         [mdl add:[[costas at:1] leq:[costas at:n]]];
          for(ORUInt i=R.low;i<=R.up;i++) {
             for(ORUInt j=i+1;j<=R.up;j++) {
                [mdl add:[[diff at:i :j] neq:@0]];
@@ -90,27 +91,22 @@ int main(int argc, const char * argv[])
                 H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
             }
          }
-         
-         //         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-         //         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
-         //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
-         
          __block ORInt nbSol = 0;
-         id<CPProgram> cp = [args makeProgram:mdl];
+         id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
+         
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
          [cp solveAll: ^{
             NSLog(@"Searching...");
             //[cp labelHeuristic:h];
             [cp labelArray:[mdl intVars]];
-            
-            @autoreleasepool {
+//            @autoreleasepool {
 //               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
 //                  return [cp intValue:costas[i]];
 //               }];
 //               NSLog(@"Solution: %@",s);
-               @synchronized(cp) {
-                  nbSol++;
-               }
+//            }
+            @synchronized(cp) {
+               nbSol++;
             }
          }];
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

@@ -150,7 +150,7 @@ int main(int argc, const char * argv[])
             NSLog(@"Objective value: %@",[obj value]);
             improved = YES;
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
+         id<ORSolution> sol = [[cp solutionPool] best];
          for(ORInt i = [SetOrders low]; i <= [SetOrders up]; i++)
             printf("slab[%d] = %d \n",i,[sol intValue: slab[i]]);
          printf("\n");

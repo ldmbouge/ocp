@@ -404,6 +404,11 @@
 -(id<ORIntVarArray>) array;
 @end
 
+@interface ORSubCircuit : ORConstraintI<ORSubCircuit>
+-(ORSubCircuit*)initORSubCircuit:(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>) array;
+@end
+
 @interface ORNoCycleI : ORConstraintI<ORNoCycle>
 -(ORCircuitI*)initORNoCycleI:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) array;

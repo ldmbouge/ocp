@@ -10,7 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORSolution.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORFactory.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORModeling/ORFlatten.h>
 #import <ORModeling/ORLSFlatten.h>
@@ -89,7 +90,6 @@
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
-+(id<ORSolutionPool>) createSolutionPool;
 +(id<ORConstraintSet>) createConstraintSet;
 +(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
 @end

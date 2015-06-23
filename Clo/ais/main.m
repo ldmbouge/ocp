@@ -35,8 +35,8 @@ int main(int argc, const char * argv[])
 
          [notes dc:[mdl add:[ORFactory alldifferent:sx]]];
          for(ORUInt i=SD.low;i<=SD.up;i++) {
-            //[mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]] annotation: DomainConsistency];
-            [mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]]];
+            [notes dc:[mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]]]];
+            //[mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]]];
          }
          [notes dc:[mdl add:[ORFactory alldifferent:dx]]];
 //         [mdl add:[sx[1]   leq:sx[2]]];
@@ -48,6 +48,7 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp =  [args makeProgram:mdl annotation:notes];
 //         id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
          __block ORInt nbSolutions = 0;
+         [cp clearOnSolution];
          [cp solveAll: ^{
 //            [cp labelHeuristic:h];
 //            [cp labelArrayFF:sx];

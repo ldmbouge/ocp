@@ -51,11 +51,18 @@ static __thread id vLossCache = nil;
    id ptr = vLossCache;
    if (ptr) {
       vLossCache = *(id*)ptr;
-   } else ptr = [super allocWithZone:NULL];
+   } else {
+      ptr = [super allocWithZone:NULL];
+      [ptr init];
+   }
    // now generic code.
    *(Class*)ptr = self;
-   id rv = [ptr initValueLoss:value notify:list];
-   return rv;
+   CPValueLossEvent* evt = (CPValueLossEvent*)ptr;
+   evt->_theVal = value;
+   evt->_theList = list;
+   return evt;
+//   id rv = [ptr initValueLoss:value notify:list];
+//   return rv;
 }
 -(void)letgo
 {

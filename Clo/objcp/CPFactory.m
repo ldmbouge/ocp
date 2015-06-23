@@ -15,9 +15,9 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORUtilities/ORUtilities.h>
-//#import <CPUKernel/CPEngineI.h>
-#import "CPFactory.h"
-#import "CPData.h"
+#import <objcp/CPFactory.h>
+
+#import <objcp/CPData.h>
 #import "CPTableI.h"
 #import "CPBitVarI.h"
 #import "CPFloatVarI.h"
@@ -88,7 +88,10 @@
 {
    return [[CPFloatViewOnIntVarI alloc] initCPFloatViewIntVar:cp intVar:x];
 }
-
++(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet
+{
+   return [[CPIntSetVarI alloc] initWith:cp set:theSet];
+}
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    return [ORFactory intMatrix: tracker range: r1 : r2];

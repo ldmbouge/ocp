@@ -492,7 +492,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
    CPValueClosureQueue* vcQueue = fdm->_valueClosureQueue;
    CPClosureQueue** cQueue = fdm->_closureQueue;
    __block ORInt nbp = 0;
-   return tryfail(^ORStatus{
+   TRYFAIL
       id<CPConstraint>* last = &fdm->_last;
       *last = nil;
       ORStatus status = ORSuspend;
@@ -527,8 +527,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          [fdm->_propagDone notify];
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
-      return status;
-   }, ^ORStatus{
+   ONFAIL(status);
       id<CPConstraint>* last = &fdm->_last;
       while (ISLOADED(cQueue[ALWAYS_PRIO])) {
          ORStatus as = executeClosure(ClosureQueueDequeue(cQueue[ALWAYS_PRIO]), last);
@@ -543,8 +542,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       //[exception release];
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
-      return ORFailure;
-   });
+   ENDFAIL(ORFailure)
 }
 
 -(ORStatus) propagate
@@ -634,12 +632,11 @@ ORStatus propagateFDM(CPEngineI* fdm)
 -(ORStatus) enforce: (ORClosure) cl
 {
    _last = NULL;
-   return tryfail(^ORStatus{
+   TRYFAIL
       cl();
-      return propagateFDM(self);
-   }, ^ORStatus{
-      return ORFailure;
-   });
+      ORStatus st = propagateFDM(self);
+   ONFAIL(st);
+   ENDFAIL(ORFailure);
 }
 
 -(void) tryEnforce: (ORClosure) cl

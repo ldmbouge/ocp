@@ -45,3 +45,19 @@
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());
 void failNow();
+
+extern __thread jmp_buf* ptr;
+
+#define TRYFAIL  { \
+   jmp_buf buf; \
+   jmp_buf* old = ptr; \
+   int st = _setjmp(buf); \
+   if (st==0) { \
+      ptr = &buf;
+
+#define ONFAIL(rv)  return (rv); \
+   } else { \
+      ptr = old;
+
+#define ENDFAIL(rv) return (rv);}}
+

@@ -18,6 +18,5 @@
 }
 +(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list;
 -(void)letgo;
--(id)initValueLoss:(ORInt)value notify:(id<CPClosureList>)list;
--(ORInt)execute;
 @end
+

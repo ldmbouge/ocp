@@ -21,32 +21,29 @@ func +(lhs: ORExpr,rhs : Int) -> ORExpr {
 func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.plus(rhs);
 }
-
-let n : ORInt = 8
-let model = ORFactory.createModel()
-let R     = ORFactory.intRange(model, low: 0, up: n - 1)
-let nbSol = ORFactory.mutable(model, value: 0)
-let x     = ORFactory.intVarArray(model, range: R, domain: R)
-for var i  = 0; i < Int(n) ; i++ {
-   for var j = i+1; j < Int(n); j++ {
-      model.add(x[i] != x[j])
-      model.add(x[i] != x[j] + (i-j))
-      model.add(x[i] != x[j] + (j-i))
+autoreleasepool {
+   let n : ORInt = 8
+   let model = ORFactory.createModel()
+   let R     = ORFactory.intRange(model, low: 0, up: n - 1)
+   let nbSol = ORFactory.mutable(model, value: 0)
+   let x     = ORFactory.intVarArray(model, range: R, domain: R)
+   for var i  = 0; i < Int(n) ; i++ {
+      for var j = i+1; j < Int(n); j++ {
+         model.add(x[i] != x[j])
+         model.add(x[i] != x[j] + (i-j))
+         model.add(x[i] != x[j] + (j-i))
+      }
    }
-}
-let cp = ORFactory.createCPProgram(model)
-
-cp.onSolution {
-   nbSol.incr(cp)
-   let s = ORFactory.intArray(cp,range:x.range()) {
-      (k : ORInt) -> ORInt in cp.intValue(x[Int(k)])
+   let cp = ORFactory.createCPProgram(model)
+   cp.onSolution {
+      nbSol.incr(cp)
+      let s = ORFactory.intArray(cp,range:x.range()) {
+         (k : ORInt) -> ORInt in cp.intValue(x[Int(k)])
+      }
+      println(s)
    }
-   println(s)
+   cp.defaultSearch()
+   cp.clearOnSolution()
+   println("Number of solutions \(cp!.solutionPool().count())")
+   ORFactory.shutdown()
 }
-
-//cp.solveAll {
-//   cp.labelArray(x)
-//}
-cp.defaultSearch()
-println(cp.solutionPool())
-println("Number of solutions \(cp.solutionPool().count())")

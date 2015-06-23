@@ -108,7 +108,8 @@
             </ActionContent>
          </ExecutionAction>
       </PostActions>
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B6E891F1379D3E9005DB4CA"

@@ -56,7 +56,7 @@
       for(ORInt k=0;k<s;k++)
          cnt[[cp min:x[k]]]++;
       for(NSInteger k=0;k<n;k++)
-         STAssertTrue(cnt[k]>=2 && cnt[k] <=3, @"cnt should always be in 2..3");
+         XCTAssertTrue(cnt[k]>=2 && cnt[k] <=3, @"cnt should always be in 2..3");
       [nbSolutions incr:cp];
    }
     ];
@@ -69,10 +69,10 @@
 
 -(void) testCard1
 {
-   STAssertTrue([self setupCardWith:8 size:8]==0, @"card-1 has 0 solutions");
+   XCTAssertTrue([self setupCardWith:8 size:8]==0, @"card-1 has 0 solutions");
 }
 -(void) testCard2
 {
-   STAssertTrue([self setupCardWith:4 size:8]==2520, @"card-2 has 2520 solutions");
+   XCTAssertTrue([self setupCardWith:4 size:8]==2520, @"card-2 has 2520 solutions");
 }
 @end

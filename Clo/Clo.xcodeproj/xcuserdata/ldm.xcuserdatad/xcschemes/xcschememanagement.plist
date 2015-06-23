@@ -34,20 +34,10 @@
 			<key>orderHint</key>
 			<integer>17</integer>
 		</dict>
-		<key>GAP.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>71</integer>
-		</dict>
-		<key>GAP.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>87</integer>
-		</dict>
 		<key>GraveYard.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>56</integer>
+			<integer>53</integer>
 		</dict>
 		<key>LPRelaxation.xcscheme_^#shared#^_</key>
 		<dict>
@@ -104,16 +94,6 @@
 			<key>orderHint</key>
 			<integer>16</integer>
 		</dict>
-		<key>TEST.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>98</integer>
-		</dict>
-		<key>TEST2.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>100</integer>
-		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -157,12 +137,12 @@
 		<key>bitArrayTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>21</integer>
+			<integer>18</integer>
 		</dict>
 		<key>bug.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>70</integer>
+			<integer>65</integer>
 		</dict>
 		<key>bugTest.xcscheme</key>
 		<dict>
@@ -189,20 +169,10 @@
 			<key>orderHint</key>
 			<integer>12</integer>
 		</dict>
-		<key>coloringModelCP.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>97</integer>
-		</dict>
 		<key>costas.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>26</integer>
-		</dict>
-		<key>costas2.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>93</integer>
 		</dict>
 		<key>costas2.xcscheme_^#shared#^_</key>
 		<dict>
@@ -217,7 +187,7 @@
 		<key>driver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>64</integer>
+			<integer>53</integer>
 		</dict>
 		<key>eq20.xcscheme_^#shared#^_</key>
 		<dict>
@@ -257,7 +227,7 @@
 		<key>iCP.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>38</integer>
+			<integer>31</integer>
 		</dict>
 		<key>iQueens.xcscheme_^#shared#^_</key>
 		<dict>
@@ -279,11 +249,6 @@
 			<key>orderHint</key>
 			<integer>29</integer>
 		</dict>
-		<key>large.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>103</integer>
-		</dict>
 		<key>latinSquare.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -299,20 +264,10 @@
 			<key>orderHint</key>
 			<integer>10</integer>
 		</dict>
-		<key>magicSquareLS.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>97</integer>
-		</dict>
 		<key>magicserie.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>15</integer>
-		</dict>
-		<key>magicserieLS.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>92</integer>
 		</dict>
 		<key>magicseriesModel.xcscheme_^#shared#^_</key>
 		<dict>
@@ -328,11 +283,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>39</integer>
-		</dict>
-		<key>market2sLR.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>90</integer>
 		</dict>
 		<key>marriage.xcscheme_^#shared#^_</key>
 		<dict>
@@ -392,27 +342,12 @@
 		<key>objcpTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>102</integer>
+			<integer>29</integer>
 		</dict>
 		<key>objlp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>13</integer>
-		</dict>
-		<key>objls.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>86</integer>
-		</dict>
-		<key>objlsTests.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>90</integer>
-		</dict>
-		<key>objmp.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>88</integer>
 		</dict>
 		<key>objmp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -427,7 +362,7 @@
 		<key>order2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>87</integer>
+			<integer>80</integer>
 		</dict>
 		<key>order2.xcscheme_^#shared#^_</key>
 		<dict>
@@ -454,21 +389,6 @@
 			<key>orderHint</key>
 			<integer>51</integer>
 		</dict>
-		<key>progressiveLRP.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>94</integer>
-		</dict>
-		<key>progressiveLRP.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>90</integer>
-		</dict>
-		<key>progressiveLS.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>96</integer>
-		</dict>
 		<key>qg7.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -493,11 +413,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>4</integer>
-		</dict>
-		<key>queensLS.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>91</integer>
 		</dict>
 		<key>queensMIP.xcscheme</key>
 		<dict>
@@ -529,11 +444,6 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
-		<key>queensNaiveSwift.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>80</integer>
-		</dict>
 		<key>regular.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -543,16 +453,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>55</integer>
-		</dict>
-		<key>scene.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>99</integer>
-		</dict>
-		<key>sceneLS.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>101</integer>
 		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
@@ -584,16 +484,6 @@
 			<key>orderHint</key>
 			<integer>36</integer>
 		</dict>
-		<key>smory.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>97</integer>
-		</dict>
-		<key>smoryLS.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>105</integer>
-		</dict>
 		<key>sport.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -608,11 +498,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>52</integer>
-		</dict>
-		<key>sudokuLS.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>104</integer>
 		</dict>
 		<key>testDistrib.xcscheme_^#shared#^_</key>
 		<dict>
@@ -658,11 +543,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>11</integer>
-		</dict>
-		<key>wka.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>95</integer>
 		</dict>
 		<key>wka.xcscheme_^#shared#^_</key>
 		<dict>
@@ -717,17 +597,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5B32A485194A4AD100466123</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>5B33370313A2B866001DFC38</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5B34EC2D197993A8004B694E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -743,21 +613,6 @@
 			<true/>
 		</dict>
 		<key>5B3895E81795BE07004CCE93</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5B3E7377198A822100763732</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5B4055AB193E253E00A2B1DD</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5B42A9C9196C0CF9000E97D8</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -782,16 +637,6 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5B57F90F18B8DE68000171E7</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5B57F92A18B8DEC2000171E7</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>5B5F547A165D6EB200E674DA</key>
 		<dict>
 			<key>primary</key>
@@ -803,16 +648,6 @@
 			<true/>
 		</dict>
 		<key>5B60E5D515AE907E002FF2B3</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5B6295A518D239D100A8F53C</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5B65049D1940C21600AEA65C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -887,11 +722,6 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5B8CBDD6193F743200AF3D60</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>5B8DA1F415B98BC300684FD8</key>
 		<dict>
 			<key>primary</key>
@@ -948,6 +778,11 @@
 			<true/>
 		</dict>
 		<key>5BB1700D1582820500D4791A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BB1C2431B39F598008A9E51</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -1052,27 +887,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5BE8BB971857A41600D99445</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5BE8BBA71857A41600D99445</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>5BEA4E67178365FA00614A82</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>5BEAD78415ABE38500A012FE</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>5BED464C1934C60B0082FAB7</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -1193,16 +1013,6 @@
 			<true/>
 		</dict>
 		<key>B17ABF7813CE4E7700DC7288</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>B17CF9E018EF95610063395D</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>B17E35881900BC6900766DC6</key>
 		<dict>
 			<key>primary</key>
 			<true/>

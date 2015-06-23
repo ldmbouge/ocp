@@ -50,6 +50,7 @@ int main(int argc, const char * argv[])
          //id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
          //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         [cp clearOnSolution];
          __block ORInt nbSol = 0;
          NSLog(@"model: %@",mdl);
          [cp solveAll:
@@ -57,6 +58,7 @@ int main(int argc, const char * argv[])
              //[cp labelHeuristic:h];
              [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
              //[cp labelArray: x];
+             /*
              id* gamma = [cp gamma];
              id<CPIntVarArray> cx = gamma[x.getId];
              for(ORInt i=1;i<=n;i++) {
@@ -73,6 +75,7 @@ int main(int argc, const char * argv[])
                    }];
                 }
              }
+              */
              @synchronized(cp) {
                 nbSol++;
 /*                for(ORInt i = 1; i <= 8; i++)

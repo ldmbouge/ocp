@@ -121,7 +121,7 @@ int main(int argc, const char * argv[])
 //               NSLog(@"sol: %@ obj = %@  <-- %d",b,[[cp objective] value],[NSThread threadID]);
 //            }
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
+         id<ORSolution> sol = [[cp solutionPool] best];
          assert(sol);
          ORInt tot = 0;
          for(int k=0;k<n;k++)

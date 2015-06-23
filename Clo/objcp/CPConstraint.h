@@ -50,6 +50,7 @@
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
 
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
++(id<CPConstraint>) subCircuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize;
 +(id<CPConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<CPIntVar>)c;
@@ -93,6 +94,10 @@
 +(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORCLevel)n;
 +(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x;
 +(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
+@end
+
+@interface CPFactory (ORIntSet)
++(id<CPConstraint>) inter:(id<CPIntSetVar>)x with:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z;
 @end
 
 @interface CPSearchFactory : NSObject

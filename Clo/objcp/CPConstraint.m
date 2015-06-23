@@ -27,6 +27,8 @@
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
 #import "CPFloatConstraint.h"
+#import "CPIntSetConstraint.h"
+
 
 @implementation CPFactory (Constraint)
 
@@ -76,9 +78,9 @@
          @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];
          break;
       default:
-         //NSLog(@"Default Consistency");
-         o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: engine over: x];
-         break;
+	NSLog(@"Default Consistency");
+	o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
+	break;
    }
    [[x tracker] trackMutable: o];
    return o;
@@ -130,6 +132,13 @@
    [[x tracker] trackMutable: o];
    return o;
 }
++(id<ORConstraint>) subCircuit: (id<CPIntVarArray>) x
+{
+   id<ORConstraint> o = [[CPSubCircuit alloc] initCPSubCircuit:x];
+   [[x tracker] trackMutable: o];
+   return o;
+}
+
 
 +(id<ORConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize
 {
@@ -137,12 +146,14 @@
    [[item tracker] trackMutable: o];
    return o;
 }
+
 +(id<ORConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<CPIntVar>)c
 {
    id<ORConstraint> o = [[CPKnapsack alloc] initCPKnapsackDC:x weights:w capacity:c];
    [[x tracker] trackMutable: o];
    return o;
 }
+
 +(id<ORConstraint>) nocycle: (id<CPIntVarArray>) x
 {
    id<ORConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];
@@ -591,6 +602,15 @@
 {
    id<CPConstraint> o = [[CPFloatVarMaximize alloc] init: x];
    [[x engine] trackMutable: o];
+   return o;
+}
+@end
+
+@implementation CPFactory (ORIntSet)
++(id<CPConstraint>) inter:(id<CPIntSetVar>)x with:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z
+{
+   id<CPConstraint> o = [[CPISInterAC alloc] init:x inter:y eq:z];
+   [[x engine] trackMutable:o];
    return o;
 }
 @end

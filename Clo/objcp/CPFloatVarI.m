@@ -14,6 +14,90 @@
 //#import <CPUKernel/CPEngineI.h>
 #import "CPFloatDom.h"
 
+/*****************************************************************************************/
+/*                        CPFloatVarSnapshot                                             */
+/*****************************************************************************************/
+
+@interface CPFloatVarSnapshot : NSObject
+{
+   ORUInt    _name;
+   ORFloat   _value;
+   ORBool    _bound;
+}
+-(CPFloatVarSnapshot*) initCPFloatVarSnapshot: (CPFloatVarI*) v name: (ORInt) name;
+-(ORUInt) getId;
+-(ORFloat) floatValue;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+@end
+
+@implementation CPFloatVarSnapshot
+-(CPFloatVarSnapshot*) initCPFloatVarSnapshot: (CPFloatVarI*) v name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   if ([v bound]) {
+      _bound = TRUE;
+      _value = [v value];
+   }
+   else {
+      _value = 0.0;
+      _bound = FALSE;
+   }
+   return self;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) bound
+{
+   return _bound;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      CPFloatVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _value == other->_value && _bound == other->_bound;
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger)hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"float(%d) : %f",_name,_value];
+   return buf;
+}
+- (void) encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_bound];
+}
+- (id) initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_bound];
+   return self;
+}
+@end
+
 static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
 {
    net->_bindEvt   = makeTRId(t,nil);
@@ -50,6 +134,11 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    [_engine trackVariable: self];
    return self;
 }
+-(void)dealloc
+{
+   deallocNetwork(&_net);
+   [super dealloc];
+}
 -(CPEngineI*) engine
 {
    return _engine;
@@ -57,6 +146,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(CPEngineI*) tracker
 {
    return _engine;
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[CPFloatVarSnapshot alloc] initCPFloatVarSnapshot: self name: id];
 }
 -(NSMutableSet*)constraints
 {

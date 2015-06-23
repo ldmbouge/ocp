@@ -22,7 +22,7 @@ enum CPDomClass {
    DCLRanges = 2
 };
 
-@interface CPBoundsDom : NSObject<CPDom,NSCoding,NSCopying> {
+@interface CPBoundsDom : NSObject<CPDom,NSCopying> {
 @package
    enum CPDomClass    _dc;
    id<ORTrail>     _trail;

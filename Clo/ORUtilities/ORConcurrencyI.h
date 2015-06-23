@@ -43,14 +43,14 @@
 -(void) main;
 @end
 
-@interface ORInformerI : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer,
+@interface ORInformer : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer,
     ORSolutionInformer, ORConstraintInformer, ORIntArrayInformer, ORFloatArrayInformer, ORConstraintSetInformer> {
     NSLock* _lock;
     NSMutableArray* _whenList;
     NSMutableArray* _wheneverList;
     NSMutableArray* _sleeperList;
 }
--(ORInformerI*) initORInformerI;
+-(ORInformer*) initORInformer;
 -(void) whenNotifiedDo: (id) closure;
 -(void) sleepUntilNotified;
 -(void) notify;

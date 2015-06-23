@@ -86,7 +86,7 @@ struct Bounds {
    long long _sumUp;
    ORULong     _nb;
 };
-
+/*
 static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 {
    long long slow = 0,sup = 0;
@@ -109,6 +109,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    bnd->_sumUp  = sup  + bnd->_bndUp;
    bnd->_nb     = nb;
 }
+*/
 
 -(void) post
 {

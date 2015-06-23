@@ -30,17 +30,17 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol ORCPSolution <ORSolution>
-@end
+//@protocol ORCPSolution <ORSolution>
+//@end
+//
+//@protocol ORCPSolutionPool <ORSolutionPool>
+//-(void) addSolution: (id<ORCPSolution>) s;
+//-(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
+//-(id<ORInformer>) solutionAdded;
+//-(id<ORCPSolution>) best;
+//@end
 
-@protocol ORCPSolutionPool <ORSolutionPool>
--(void) addSolution: (id<ORCPSolution>) s;
--(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
--(id<ORInformer>) solutionAdded;
--(id<ORCPSolution>) best;
-@end
-
-@protocol CPCommonProgram  <ORASolver,ORGamma>
+@protocol CPCommonProgram  <ORASearchSolver,ORGamma>
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
@@ -99,6 +99,8 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 -(void)          onSolution: (ORClosure) onSolution;
 -(void)              onExit: (ORClosure) onExit;
+-(void) clearOnSolution;
+-(void) clearOnExit;
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
@@ -115,8 +117,8 @@
 -(void) defaultSearch;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 
 -(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;

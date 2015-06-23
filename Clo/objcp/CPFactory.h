@@ -15,6 +15,7 @@
 #import <objcp/CPData.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPBitVar.h>
+#import <objcp/CPISVarI.h>
 
 
 @interface CPFactory (DataStructure)
@@ -30,6 +31,8 @@
 
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range;
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(id<CPIntVar>)x;
+
++(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet;
 
 +(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<CPIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;

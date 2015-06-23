@@ -319,6 +319,10 @@
 {
    _result = c;
 }
+-(void) visitSubCircuit:(id<ORSubCircuit>) c
+{
+   _result = c;
+}
 -(void) visitNoCycle:(id<ORNoCycle>) c
 {
    _result = c;
