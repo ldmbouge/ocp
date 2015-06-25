@@ -1332,6 +1332,127 @@
 }
 @end
 
+@implementation CPTaskMultDur
+
+-(id) initCPTaskMultDur:(id<CPTaskVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z
+{
+    if ([y min] < 0 || [z min] < 0) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskMultDur: Non-negative values for y and z expected!"];
+    }
+    
+    self = [super initCPCoreConstraint:[x engine]];
+    
+    _priority = HIGHEST_PRIO - 1;
+    _x = x;
+    _y = (CPIntVar*)y;
+    _z = (CPIntVar*)z;
+    NSLog(@"Create constraint CPTaskMultDur\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    [self propagate];
+    
+    // Subscribe variables to the propagators
+    if ([_x isPresent]) {
+        [_x whenChangeDurationDo:^{[self propagateWhenXPresent];} onBehalf:self];
+        [_y whenChangeDo:^{[self propagateWhenXPresent];} onBehalf:self];
+        [_z whenChangeDo:^{[self propagateWhenXPresent];} onBehalf:self];
+    }
+    else if (![_x isAbsent]) {
+        [_x whenChangePropagate:self];
+        [_x whenPresentPropagate:self];
+        [_y whenChangePropagate:self];
+        [_z whenChangePropagate:self];
+    }
+    return ORSuspend;
+}
+-(void) propagate
+{
+    if ([_x isPresent])
+        [self propagateWhenXPresent];
+    else if (![_x isAbsent])
+        [self propagateWhenXNotAbsent];
+}
+-(void) propagateWhenXNotAbsent
+{
+    assert(![_x isAbsent] && ![_x isPresent]);
+    // Only propagation on x can be performed
+    const ORInt y_min = [_y min];
+    const ORInt y_max = [_y max];
+    const ORInt z_min = [_z min];
+    const ORInt z_max = [_z max];
+    
+    if (z_max <= 0) {
+        if (0 < y_min && 0 < [_x minDuration])
+            [_x labelPresent:FALSE];
+    }
+    else if (y_max <= 0) {
+        if (0 < z_min)
+            [_x labelPresent:FALSE];
+    }
+    else {
+        // Updating the multiplicator x
+        [_x updateMinDuration:roundUpDiv(z_min, y_max)];
+        if (0 < [_y min])
+            [_x updateMaxDuration:roundUpDiv(z_max, y_min)];
+    }
+}
+-(void) propagateWhenXPresent
+{
+    assert([_x isPresent]);
+    const ORInt x_min = [_x minDuration];
+    const ORInt x_max = [_x maxDuration];
+    const ORInt y_min = [_y min];
+    const ORInt y_max = [_y max];
+    // Updating the product
+    [_z updateMin:(x_min * y_min) andMax:(x_max * y_max)];
+
+    const ORInt z_min = [_z min];
+    const ORInt z_max = [_z max];
+    if (z_max <= 0) {
+        if (0 < y_min)
+            [_x updateMaxDuration:0];
+        else
+            [_y updateMax:0];
+    }
+    else {
+        assert(0 < x_max && 0 < y_max);
+        // Updating the multiplicator y
+        [_y updateMin:roundUpDiv(z_min, x_max)];
+        if (0 < x_min)
+            [_y updateMax:roundUpDiv(z_max, x_min)];
+        // Updating the multiplicator x
+        [_x updateMinDuration:roundUpDiv(z_min, [_y max])];
+        if (0 < [_y min])
+            [_x updateMaxDuration:roundUpDiv(z_max, [_y min])];
+    }
+}
+static inline ORInt roundUpDiv(const ORInt a, const ORInt b)
+{
+    assert(0 <= a && 0 < b);
+    return (a < b ? 0 : (a / b + (a % b > 0)));
+}
+-(NSSet*) allVars
+{
+    ORInt size = 3;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_x];
+    [rv addObject:_y];
+    [rv addObject:_z];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 3;
+}
+@end
+
 @implementation CPResourceTaskAddTransitionTime
 {
     TRInt   _normalSize;

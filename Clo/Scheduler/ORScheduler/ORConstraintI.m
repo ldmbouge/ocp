@@ -424,26 +424,18 @@
 }
 -(void) add: (id<ORTaskVar>) task with:(id<ORIntVar>)usage
 {
-//    const ORInt min = [usage min] * [task duration].min;
-//    id<ORIntVar> area = [ORFactory intVar:_tracker bounds:RANGE(_tracker, 0, 10)];
-    // Check whether 'task' is already added
-    if (![_accIds containsObject:@([task getId])]) {
-        if (_closed)
-            @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
-        // Add task
-        [_accT    addObject: task           ];
-        [_accU    addObject: usage          ];
-        [_accA    addObject: NULL           ];
-        [_accIds  addObject: @([task getId])];
-        [_accResT addObject: @(0           )];
-    }
+    [self add:task with:usage and:NULL];
 }
 -(void) add:(id<ORTaskVar>)task with:(id<ORIntVar>)usage and:(id<ORIntVar>)area
 {
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
         if (_closed)
-            @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: The cumulative resource is already closed"];
+        if ([usage min] < 0)
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: Non-negative values for usage expected!"];
+        if (area != NULL && [area min] < 0)
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: Non-negative values for area expected!"];
         // Add task
         [_accT    addObject: task           ];
         [_accU    addObject: usage          ];
@@ -469,7 +461,11 @@
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
         if (_closed)
-            @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: The cumulative resource is already closed"];
+        if ([usage min] < 0)
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: Non-negative domain values for usage expected!"];
+        if ([durationRange low] < 0)
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: Non-negative values for durationRange expected!"];
         // Add task
         [_accT    addObject: task           ];
         [_accU    addObject: usage          ];

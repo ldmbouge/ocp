@@ -465,6 +465,10 @@
                 [areas[k] visit:self];
                 return _gamma[areas[k].getId];
             }];
+            for (ORInt k = [areas range].low; k <= [areas range].up; k++) {
+                if (areas[k] != NULL)
+                    [_engine add: [CPFactory multDur:_gamma[tasks[k].getId] by:_gamma[usages[k].getId] equal:_gamma[areas[k].getId]]];
+            }
             concreteArea = _gamma[areas.getId];
         }
         

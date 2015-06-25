@@ -330,15 +330,21 @@
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration
 {
    id<CPEngine> engine = [task engine];
-   id<CPConstraint> cstr =[[CPTaskDuration alloc] initCPTaskDuration: task : duration];
+   id<CPConstraint> cstr = [[CPTaskDuration alloc] initCPTaskDuration: task : duration];
    [engine trackMutable: cstr];
    return cstr;
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task presence: (id<CPIntVar>) presence
 {
     id<CPEngine> engine = [task engine];
-    id<CPConstraint> cstr =[[CPTaskPresence alloc] initCPTaskPresence: task : presence];
+    id<CPConstraint> cstr = [[CPTaskPresence alloc] initCPTaskPresence: task : presence];
     [engine trackMutable: cstr];
+    return cstr;
+}
++(id<CPConstraint>) multDur:(id<CPTaskVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z
+{
+    id<CPConstraint> cstr = NULL;
+    [[x engine] trackMutable:cstr];
     return cstr;
 }
 +(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>)capacity
