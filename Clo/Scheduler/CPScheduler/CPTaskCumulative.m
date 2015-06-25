@@ -103,7 +103,7 @@ typedef struct {
     ORULong _nb_ttef_props;     // Number of time-tabling-edge-finding propagations
 }
 
--(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with:(id<CPIntVarArray>)usages and:(id<CPIntVar>)capacity
+-(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with:(id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>)capacity
 {
     // Checking whether the number of activities is within the limit
     if (tasks.count > (NSUInteger) MAXNBTASK) {
@@ -113,6 +113,11 @@ typedef struct {
     // Checking whether the size and indices of the arrays tasks and usages are consistent
     if (tasks.count != usages.count || tasks.low != usages.low || tasks.up != usages.up) {
         @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the arrays 'tasks' and 'usages' must have the same size and indices!"];
+    }
+
+    // Checking whether the size and indices of the arrays tasks and area are consistent
+    if (area != NULL && (tasks.count != area.count || tasks.low != area.low || tasks.up != area.up)) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the arrays 'tasks' and 'area' must have the same size and indices!"];
     }
     
     // Checking wether the domain of the capacity contains non-negative values
@@ -130,11 +135,14 @@ typedef struct {
     id<CPTaskVar> task0 = tasks[tasks.low];
     self = [super initCPCoreConstraint: [task0 engine]];
     
+    // Priority in the propagation queue
     _priority = LOWEST_PRIO;
+    
+    // Input data structures
     _tasks    = tasks;
     _resTasks = NULL;
     _usages   = usages;
-    _area     = NULL;
+    _area     = area;
     _capacity = capacity;
     
     // Setup for propagation
@@ -159,7 +167,7 @@ typedef struct {
 
     return self;
 }
--(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with:(id<CPIntVarArray>)usages and:(id<CPIntVar>)capacity
+-(id) initCPTaskCumulative:(id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with:(id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>)capacity
 {
     // Checking whether the number of activities is within the limit
     if (tasks.count > (NSUInteger) MAXNBTASK) {
@@ -169,6 +177,11 @@ typedef struct {
     // Checking whether the size and indices of the arrays tasks and usages are consistent
     if (tasks.count != usages.count || tasks.low != usages.low || tasks.up != usages.up) {
         @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the arrays 'tasks' and 'usages' must have the same size and indices!"];
+    }
+    
+    // Checking whether the size and indices of the arrays tasks and area are consistent
+    if (area != NULL && (tasks.count != area.count || tasks.low != area.low || tasks.up != area.up)) {
+        @throw [[ORExecutionError alloc] initORExecutionError: "CPTaskCumulative: the arrays 'tasks' and 'area' must have the same size and indices!"];
     }
     
     // Checking wether the domain of the capacity contains non-negative values
@@ -190,7 +203,7 @@ typedef struct {
     _tasks    = tasks;
     _resTasks = resTasks;
     _usages   = usages;
-    _area     = NULL;
+    _area     = area;
     _capacity = capacity;
     
     // Setup for propagation
@@ -342,7 +355,7 @@ typedef struct {
             if (!_usages[t].bound)
                 [_usages[t] whenChangeMinPropagate:self];
 #warning Check whether first test is necessary
-            if (!_area != NULL && !_area[t] != NULL && !_area[t].bound)
+            if (_area != NULL && _area[t] != NULL && !_area[t].bound)
                 [_usages[t] whenChangeMinPropagate:self];
         }
     }
@@ -1302,6 +1315,7 @@ static void ttef_consistency_check(CPTaskCumulative * cumu, const ORInt * task_i
             // Adding the required energy of j in the intervals [begin', end)
             // where begin' <= est(cumu, j)
             en_req_free += free_energy_right_shift(cumu, j, end);
+#warning TODO Propagation on the upper bound of area variables
 #warning XXX Old code before considering area variables
 //            if (lct(cumu, j) <= end) {
 //                // Task j fully lies in the interval [begin, end)
@@ -1493,6 +1507,7 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
             if (lct(cumu, j) <= end) {
                 // Task j fully lies in the interval [begin, end)
                 en_req_free += free_energy(cumu, j);
+#warning TODO Propagation on the upper bound of area variables
             }
             else {
                 // Calculation whether a free part of the task partially lies
@@ -1660,6 +1675,7 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
             if (begin <= est(cumu, j)) {
                 // Task j is contained in the time interval [begin, end)
                 en_req_free += free_energy(cumu, j);
+#warning TODO Propagation on the upper bound of area variables
             } else {
                 // Task j might be partially contained in [begin, end)
                 const ORInt en_ls = energy_left_shift(cumu, j, begin);

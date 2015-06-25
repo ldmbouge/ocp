@@ -94,6 +94,7 @@
 -(void) add: (id<ORResourceTask>) act durationRange: (id<ORIntRange>) duration with: (id<ORIntVar>) usage;
 -(id<ORTaskVarArray>) taskVars;
 -(id<ORIntVarArray>) usages;
+-(id<ORIntVarArray>) areas;
 -(id<ORIntVar>) capacity;
 @end
 

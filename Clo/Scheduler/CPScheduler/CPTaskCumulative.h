@@ -32,8 +32,8 @@
     id<CPIntVarArray>  _area;       // Work load (product of duration and usage) of the tasks on the resource
     id<CPIntVar>       _capacity;   // Resource capacity
 }
--(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>)usages and: (id<CPIntVar>)capacity;
--(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with: (id<CPIntVarArray>)usages and: (id<CPIntVar>)capacity;
+-(id) initCPTaskCumulative:(id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity: (id<CPIntVar>)capacity;
+-(id) initCPTaskCumulative:(id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with:(id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>) capacity;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

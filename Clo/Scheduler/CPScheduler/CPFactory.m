@@ -341,15 +341,15 @@
     [engine trackMutable: cstr];
     return cstr;
 }
-+(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
++(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>)capacity
 {
-    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
+    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages area:area capacity:capacity];
     [[tasks tracker] trackMutable:o];
     return o;
 }
-+(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
++(id<CPConstraint>) taskCumulative:(id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with:(id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>)capacity
 {
-    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
+    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative:tasks resourceTasks:resTasks with:usages area:area capacity:capacity];
     [[tasks tracker] trackMutable:o];
     return o;
 }

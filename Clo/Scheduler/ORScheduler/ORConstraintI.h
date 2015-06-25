@@ -50,10 +50,10 @@
 @interface ORTaskCumulative : ORConstraintI<ORTaskCumulative>
 -(id<ORTaskCumulative>) initORTaskCumulative: (id<ORTaskVarArray>) tasks with: (id<ORIntVarArray>) usages and: (id<ORIntVar>) capacity;
 -(id<ORTaskCumulative>) initORTaskCumulativeEmpty: (id<ORIntVar>) capacity;
--(id<ORTaskVarArray>) taskVars;
--(id<ORIntVarArray>) usages;
--(id<ORIntVarArray>) areas;
--(id<ORIntVar>) capacity;
+//-(id<ORTaskVarArray>) taskVars;
+//-(id<ORIntVarArray>) usages;
+//-(id<ORIntVarArray>) areas;
+//-(id<ORIntVar>) capacity;
 -(id<ORIntArray>) resourceTasks;
 -(void) add:(id<ORResourceTask>)task duration:(ORInt)duration;
 -(void) add:(id<ORResourceTask>)task durationRange:(id<ORIntRange>)duration;
