@@ -68,7 +68,7 @@
 
 -(id<ORIntSet>)inter:(id<ORIntSet>)s2
 {
-   id<ORIntSet> rv = [ORFactory intSet:nil];
+   id<ORIntSet> rv = [[ORIntSetI alloc] initORIntSetI];
    [self enumerateWithBlock:^(ORInt e) {
       if ([s2 member:e])
          [rv insert:e];

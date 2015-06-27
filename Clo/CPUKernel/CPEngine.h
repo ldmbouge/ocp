@@ -27,6 +27,7 @@
 -(void) scheduleClosures: (id<CPClosureList>*) mlist;
 -(void) scheduleValueClosure: (id<CPValueEvent>) evt;
 -(void) propagate;
+-(void) open;
 
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>) objective;

@@ -67,3 +67,4 @@
 +(id<ORExplorer>) explorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
 +(id<ORExplorer>) semanticExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
 @end
+

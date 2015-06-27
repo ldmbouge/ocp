@@ -18,16 +18,7 @@
 @class SemCP;
 @protocol CPSemanticProgram;
 
-@interface CPGenerator : ORDefaultController<ORSearchController> {
-   id<CPSemanticProgram>   _solver;
-   id<ORTracer>        _tracer;
-   PCObjectQueue*      _pool;
-   NSCont**             _tab;
-   id<ORCheckpoint>*  _cpTab;
-   int                   _sz;
-   int                   _mx;
-   id<ORPost>          _model;
-}
+@interface CPGenerator : ORDefaultController<ORSearchController> 
 -(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq post:(id<ORPost>)model;
 -(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
@@ -36,13 +27,7 @@
 -(void)       exitTryall;
 @end
 
-@interface CPParallelAdapter : ORNestedController<ORSearchController> {
-   id<CPSemanticProgram>  _solver;
-   PCObjectQueue*           _pool;
-   BOOL               _publishing;
-   BOOL*                 _stopNow;
-   CPGenerator*              _gen;
-}
+@interface CPParallelAdapter : ORNestedController<ORSearchController> 
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver
                     onPool:(PCObjectQueue*)pcq
              stopIndicator:(BOOL*)stopNow;

@@ -43,6 +43,7 @@
 -(CPCoreSolver*) initCPCoreSolver;
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
+-(id<ORModel>)source;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart;
@@ -65,6 +66,7 @@
 -(id<ORSolution>) captureSolution;
 -(ORInt) maxBound:(id<ORIdArray>) x;
 -(ORBool) allBound:(id<ORIdArray>) x;
+-(id<ORIntVar>)smallestDom:(id<ORIdArray>)x;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
 
@@ -83,6 +85,7 @@
 -(id<CPHeuristic>) createABS;
 
 -(void) defaultSearch;
+-(void) search:(id<ORSTask>)stask;
 @end
 
 // Pure DFS CPSolver

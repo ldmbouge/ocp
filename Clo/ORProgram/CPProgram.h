@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORProgram/CPHeuristic.h>
-//#import <objcp/CPData.h>
+#import <ORProgram/ORProgram.h>
 
 @protocol ORModel;
 @protocol ORSearchController;
@@ -22,6 +22,9 @@
 @protocol ORTracer;
 @protocol ORSolutionPool;
 @protocol CPBitVar;
+@protocol ORSTask;
+
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
@@ -30,25 +33,15 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-//@protocol ORCPSolution <ORSolution>
-//@end
-//
-//@protocol ORCPSolutionPool <ORSolutionPool>
-//-(void) addSolution: (id<ORCPSolution>) s;
-//-(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
-//-(id<ORInformer>) solutionAdded;
-//-(id<ORCPSolution>) best;
-//@end
-
 @protocol CPCommonProgram  <ORASearchSolver,ORGamma>
 -(void) setSource:(id<ORModel>)src;
+-(id<ORModel>)       source;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
 -(id<ORSearchObjectiveFunction>) objective;
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
-
 
 -(void)                 add: (id<ORConstraint>) c;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
@@ -81,10 +74,10 @@
 -(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left alt: (ORClosure) right;
--(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f do: (ORInt2Void) body;
--(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
+-(void)              tryall: (id<ORIntIterable>) range suchThat: (__nullable ORInt2Bool) f do: (ORInt2Void) body;
+-(void)              tryall: (id<ORIntIterable>) range suchThat: (__nullable ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)              tryall: (id<ORIntIterable>) range
-                   suchThat: (ORInt2Bool) filter
+                   suchThat: (__nullable ORInt2Bool) filter
                   orderedBy: (ORInt2Float)o1
                          in: (ORInt2Void) body
                   onFailure: (ORInt2Void) onFailure;
@@ -115,6 +108,7 @@
 -(id<CPHeuristic>) createABS;
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) defaultSearch;
+-(void) search:(id<ORSTask>)stask;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
@@ -137,12 +131,12 @@
 
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
+-(__unsafe_unretained id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 @end
 
 // CPSolver with syntactic DFS Search
 @protocol CPProgram <CPCommonProgram>
-
 -(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
 -(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
@@ -180,3 +174,5 @@
 -(void) labelBitVarsFirstFail: (NSArray*)vars;
 -(NSString*)stringValue:(id<ORBitVar>)x;
 @end
+NS_ASSUME_NONNULL_END
+

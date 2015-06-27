@@ -14,7 +14,13 @@
 #import "CPProgram.h"
 #import "CPSolver.h"
 
-@implementation CPParallelAdapter
+@implementation CPParallelAdapter {
+   id<CPSemanticProgram>  _solver;
+   PCObjectQueue*           _pool;
+   BOOL               _publishing;
+   BOOL*                 _stopNow;
+   CPGenerator*              _gen;
+}
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver
                     onPool:(PCObjectQueue *)pcq
              stopIndicator:(BOOL*)si
@@ -140,8 +146,16 @@
 }
 @end
 
-@implementation CPGenerator
-
+@implementation CPGenerator {
+   id<CPSemanticProgram>   _solver;
+   id<ORTracer>        _tracer;
+   PCObjectQueue*      _pool;
+   NSCont**             _tab;
+   id<ORCheckpoint>*  _cpTab;
+   int                   _sz;
+   int                   _mx;
+   id<ORPost>          _model;
+}
 -(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq post:(id<ORPost>)model
 {
    self = [super initORDefaultController];

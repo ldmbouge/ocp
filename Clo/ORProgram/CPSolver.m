@@ -179,6 +179,10 @@
    [_model release];
    _model = [src retain];
 }
+-(id<ORModel>)source
+{
+   return _model;
+}
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",
@@ -487,6 +491,23 @@
    }
    return YES;
 }
+-(id<ORIntVar>)smallestDom:(id<ORIdArray>)x
+{
+   ORInt low = x.low,up = x.up;
+   ORInt M = FDMAXINT,best = low-1;
+   for(ORInt i=low;i <= up;i++) {
+      ORInt dsz = [self domsize:x[i]];
+      if (dsz == 1) continue;
+      if (dsz < M) {
+         best = i;
+         M = dsz;
+      }
+   }
+   if (best != low-1)
+      return x[best];
+   else return nil;
+}
+
 -(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
 {
    [_search try: ^() { [self labelBV:x at:i with:false];}
@@ -978,10 +999,19 @@
    id<CPHeuristic> h = [self createFF];
    [self solveAll:^{
       [self labelHeuristic:h];
-      
    }];
+    [_engine open];
+    _closed = NO;
 }
 
+-(void) search:(id<ORSTask>)stask
+{
+   [self solveAll:^{
+      [stask execute];
+   }];
+   [_engine open];
+   _closed = NO;
+}
 @end
 
 /******************************************************************************************/

@@ -17,7 +17,12 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>
 
-@implementation ORCPConcretizer
+@implementation ORCPConcretizer {
+   id<CPCommonProgram> _solver;
+   id<CPEngine>        _engine;
+   id*                 _gamma;
+   id<ORAnnotation>    _notes;
+}
 
 -(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes
 {
@@ -1165,7 +1170,11 @@
 @end
 
 
-@implementation ORCPSearchConcretizer
+@implementation ORCPSearchConcretizer {
+   id<CPEngine>        _engine;
+   id*                 _gamma;
+}
+
 -(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine gamma:(id<ORGamma>)gamma
 {
    self = [super init];

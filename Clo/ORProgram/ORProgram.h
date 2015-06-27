@@ -23,9 +23,26 @@
 #import <ORProgram/CPIBS.h>
 #import <ORProgram/CPABS.h>
 #import <ORProgram/CPFirstFail.h>
+#import <ORProgram/CPConcretizer.h>
+#import <ORProgram/CPMultiStartSolver.h>
+#import <ORProgram/CPParallel.h>
+#import <ORProgram/ORCPParSolver.h>
 
 
 @interface ORGamma (Model)
--(void) initialize: (id<ORModel>) model;
+-(void) initialize: (__nonnull id<ORModel>) model;
 @end
 
+@protocol ORSTask<NSObject>
+-(void)execute;
+@end
+
+__nonnull id<ORSTask> equal(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
+__nonnull id<ORSTask> diff(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
+__nonnull id<ORSTask> firstFail(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVarArray> x);
+__nonnull id<ORSTask> sequence(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
+__nonnull id<ORSTask> alts(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
+__nonnull id<ORSTask> selectAndBranch(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
+                                      id<ORIntVar>__nonnull __unsafe_unretained(^ __nonnull varSel)(),
+                                      ORInt(^ __nonnull valSel)(__nonnull id<ORIntVar>),
+                                      id<ORSTask> __nonnull __unsafe_unretained (^__nonnull branch)(__nonnull __unsafe_unretained id<ORIntVar>,ORInt));

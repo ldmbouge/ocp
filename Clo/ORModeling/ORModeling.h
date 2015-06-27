@@ -22,6 +22,8 @@
 
 @protocol ORModelTransformation;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
 -(void) addVariable: (id<ORVar>) x;
@@ -48,10 +50,10 @@
 -(NSArray*) mutables;
 -(NSArray*) immutables;
 // pvh: this should go
--(id<ORModel>) flatten:(id<ORAnnotation>)notes;
--(id<ORModel>) lsflatten:(id<ORAnnotation>)notes;
--(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;
--(id<ORModel>) mipflatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) flatten:(__nullable id<ORAnnotation>)notes;
+-(id<ORModel>) lsflatten:(__nullable id<ORAnnotation>)notes;
+-(id<ORModel>) lpflatten:(__nullable id<ORAnnotation>)notes;
+-(id<ORModel>) mipflatten:(__nullable id<ORAnnotation>)notes;
 -(id<ORModel>) copy;
 -(void) setSource: (id<ORModel>) src;
 -(id<ORModel>) source;
@@ -77,12 +79,12 @@
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModelMappings>) modelMappings;
--(void)setCurrent:(id<ORConstraint>)cstr;
+-(void)setCurrent:(__nullable id<ORConstraint>)cstr;
 @end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
-+(id<ORModel>) createModel:(ORUInt)nbo mappings: (id<ORModelMappings>) mappings;
++(id<ORModel>) createModel:(ORUInt)nbo mappings: (__nullable id<ORModelMappings>) mappings;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src annotation:(id<ORAnnotation>)notes;
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;
@@ -94,3 +96,4 @@
 +(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
 @end
 
+NS_ASSUME_NONNULL_END

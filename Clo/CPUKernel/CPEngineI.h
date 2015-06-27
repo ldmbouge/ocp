@@ -74,7 +74,8 @@ enum CPEngineState {
 -(NSMutableArray*) constraints;
 -(NSMutableArray*) objects;
 -(ORStatus)   close;
--(ORBool)      closed;
+-(ORBool)     closed;
+-(void)       open;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;

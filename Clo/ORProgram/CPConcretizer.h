@@ -14,19 +14,11 @@
 #import <ORProgram/CPSolver.h>
 
 @interface ORCPConcretizer  : ORVisitor<NSObject>
-{
-   id<CPCommonProgram> _solver;
-   id<CPEngine>        _engine;
-   id*                 _gamma;
-   id<ORAnnotation>    _notes;
-}
--(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes;
+-(ORCPConcretizer*) initORCPConcretizer:(id<CPCommonProgram>) solver
+                             annotation:(id<ORAnnotation>)notes;
 @end
 
 @interface ORCPSearchConcretizer : ORVisitor<NSObject>
-{
-   id<CPEngine>        _engine;
-   id*                 _gamma;
-}
--(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine gamma:(id<ORGamma>)gamma;
+-(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine
+                                        gamma:(id<ORGamma>)gamma;
 @end

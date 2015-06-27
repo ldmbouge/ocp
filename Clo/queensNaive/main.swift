@@ -42,8 +42,19 @@ autoreleasepool {
       }
       println(s)
    }
-   cp.defaultSearch()
+   let R1 = ORFactory.intRange(model, low: 0, up: n/2)
+   let R2 = ORFactory.intRange(model, low: n/2+1, up: n - 1)
+   let y1 = ORFactory.intVarArray(model, range: R1) { k in x[Int(k)] }
+   let y2 = ORFactory.intVarArray(model, range: R2) { k in x[Int(k)] }
+   //cp.search(firstFail(cp, x))
+   //cp.search(sequence(cp,[firstFail(cp, y1),firstFail(cp,y2)]))
+   cp.search(selectAndBranch(cp,
+      { unowned(unsafe) let rv = cp.smallestDom(x); return rv},
+      { y in cp.min(y)},
+      { (unowned y : ORIntVar,v : ORInt) -> ORSTask  in unowned(unsafe) let rv = alts(cp,[equal(cp,y,v),diff(cp,y,v)])
+                                                     return rv}))
    cp.clearOnSolution()
+   let cx = cp.concretize(x)
    println("Number of solutions \(cp!.solutionPool().count())")
    ORFactory.shutdown()
 }

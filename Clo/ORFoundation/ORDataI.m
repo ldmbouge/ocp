@@ -9,8 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORDataI.h"
-#import "ORSet.h"
+#import <ORFoundation/ORDataI.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORSetI.h>
 #import <sys/time.h>
 #import <sys/types.h>
 #import <sys/resource.h>
@@ -515,7 +516,7 @@ static ORInt _deterministic;
 {
    self = [super init];
    _theSet = set;
-   _thePool = [ORFactory intSet:nil];
+   _thePool = [[ORIntSetI alloc] initORIntSetI];
    [set enumerateWithBlock:^(ORInt i) {
       [_thePool insert:i];
    }];

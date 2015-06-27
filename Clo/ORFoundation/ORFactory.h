@@ -27,6 +27,8 @@
 @protocol ORTRIntMatrix;
 @protocol ORAutomaton;
 
+
+NS_ASSUME_NONNULL_BEGIN
 @protocol OROrderedSweep <NSObject>
 -(BOOL) next: (ORInt*) v;
 @end
@@ -47,7 +49,7 @@
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORMutableFloat>) mutableFloat: (id<ORTracker>) tracker value: (ORFloat) value;
-+(id<ORMutableId>) mutableId:(id<ORTracker>) tracker value:(id) value;
++(id<ORMutableId>) mutableId:(id<ORTracker>) tracker value:(__nullable id) value;
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker;
 +(id<ORIntSet>) intSet:(id<ORTracker>) tracker set:(NSSet*)theSet;
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
@@ -73,7 +75,7 @@
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker with: (id<ORIdMatrix>) m;
-+(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker arity:(ORInt)arity ranges:(id<ORIntRange>*)ranges;
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker arity:(ORInt)arity ranges:(__nullable id<ORIntRange>* __nonnull)ranges;
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 using: (ORIntxInt2Int)block;
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker with: (id<ORIntMatrix>) m;
@@ -84,10 +86,10 @@
 +(id<ORIntSet>) collect: (id<ORTracker>) tracker range: (id<ORIntRange>)r1 range:(id<ORIntRange>)r2
                suchThat: (ORIntxInt2Bool) f
                      of: (ORIntxInt2Int) e;
-+(id) slice:(id<ORTracker>)model range:(id<ORIntRange>)r suchThat:(ORInt2Bool)f of:(ORInt2Id)e;
++(id) slice:(id<ORTracker>)model range:(id<ORIntRange>)r suchThat:(__nullable ORInt2Bool)f of:(ORInt2Id)e;
 
-+(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e;
-+(ORInt) maxOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e;
++(ORInt) minOver: (id<ORIntRange>) r suchThat: (__nullable ORInt2Bool) filter of: (ORInt2Int)e;
++(ORInt) maxOver: (id<ORIntRange>) r suchThat: (__nullable ORInt2Bool) filter of: (ORInt2Int)e;
 
 +(id<IntEnumerator>) intEnumerator: (id<ORTracker>) cp over: (id<ORIntIterable>) r;
 +(id<OROrderedSweep>) orderedSweep: (id<ORTracker>) t over: (id<ORIntIterable>) r filter: (ORInt2Bool) filter orderedBy: (ORInt2Float) o;
@@ -114,7 +116,7 @@
 //+(id<ORIntVarArray>) intVarArrayDereference: (id<ORTracker>) tracker array: (id<ORIntVarArray>) a;
 +(id<ORExprArray>) arrayORExpr: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORExpr>(^)(ORInt)) clo;
 +(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
-+(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>)r2  with:(id<ORIntVar>(^)(ORInt,ORInt)) clo;
++(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>)r2  with:(nonnull id<ORIntVar>(^)(ORInt,ORInt)) clo;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with:(id<ORIntVar>(^)(ORInt,ORInt)) clo;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with:(id<ORIntVar>(^)(ORInt,ORInt,ORInt)) clo;
 
@@ -144,6 +146,7 @@
 
 #define COLLECT(m,P,R,E) [ORFactory collect: m range:(R) suchThat:nil of:^ORInt(ORInt P) { return (ORInt)(E);}]
 
+
 @interface ORFactory (Expressions)
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right track:(id<ORTracker>)t;
@@ -162,8 +165,8 @@
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t;
-+(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
++(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (__nullable ORInt2Bool) f of: (ORInt2Expr) e;
++(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (__nullable ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
 +(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<ORRelation>) lor:  (id<ORTracker>) tracker over: (id<ORIntIterable>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 +(id<ORRelation>) land: (id<ORTracker>) tracker over: (id<ORIntIterable>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
@@ -271,6 +274,9 @@
 +(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (ORBool) b;
 +(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (ORBool) b;
 @end
+
+NS_ASSUME_NONNULL_END
+
 
 #define INTEGER(track,v)      [ORFactory mutable:track value:(v)]
 #define RANGE(track,a,b)      [ORFactory intRange: track low: a up: b]

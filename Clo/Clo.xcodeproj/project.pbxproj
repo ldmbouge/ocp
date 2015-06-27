@@ -1020,6 +1020,7 @@
 		5BF1388C16822F13005EAC6B /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BF1388D16822F13005EAC6B /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BF1388E16822F13005EAC6B /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BF333331B3B0CC00030F127 /* ORProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF333321B3B0CC00030F127 /* ORProgram.m */; };
 		5BF62F211647F4A3008E672E /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BF62F221647F4A3008E672E /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BF62F231647F4A3008E672E /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
@@ -5951,6 +5952,7 @@
 		5BEAD78D15ABE38500A012FE /* bibd.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bibd.1; sourceTree = "<group>"; };
 		5BEC4A68156E5F3A0085F2B0 /* CPIBS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPIBS.h; sourceTree = "<group>"; };
 		5BEC4A69156E5F3A0085F2B0 /* CPIBS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPIBS.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5BEC7FB81B3A4DFA00B7A133 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = MyPlayground.playground; path = ../../../Desktop/MyPlayground.playground; sourceTree = "<group>"; };
 		5BEEF61013970B6F002ADBD4 /* queens2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queens2; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BEEF61413970B6F002ADBD4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BEEF61713970B6F002ADBD4 /* queens2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queens2-Prefix.pch"; sourceTree = "<group>"; };
@@ -5959,6 +5961,7 @@
 		5BF1387416822EFC005EAC6B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BF1387716822EFC005EAC6B /* golomb-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "golomb-Prefix.pch"; sourceTree = "<group>"; };
 		5BF1387816822EFC005EAC6B /* golomb.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = golomb.1; sourceTree = "<group>"; };
+		5BF333321B3B0CC00030F127 /* ORProgram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORProgram.m; sourceTree = "<group>"; };
 		5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORAVLTree.h; sourceTree = "<group>"; };
 		5BF3E1D713C3BC6400C3F1A5 /* ORAVLTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORAVLTree.m; sourceTree = "<group>"; };
 		5BF9F38B186353390022C300 /* mainZIB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mainZIB.m; sourceTree = "<group>"; };
@@ -7721,6 +7724,7 @@
 			isa = PBXGroup;
 			children = (
 				5B93489116558D0F00757F89 /* ORProgram.h */,
+				5BF333321B3B0CC00030F127 /* ORProgram.m */,
 				B17832FA161F5FCC00C7298D /* ORProgramFactory.h */,
 				B17832FB161F5FCC00C7298D /* ORProgramFactory.m */,
 				5B57E5E8161F2DB100DB249A /* CPConcretizer.h */,
@@ -7815,6 +7819,7 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				5BEC7FB81B3A4DFA00B7A133 /* MyPlayground.playground */,
 				B100EE8B17C7265500FC4FDC /* libgurobi55.so */,
 				B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */,
 				B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */,
@@ -12156,6 +12161,7 @@
 				5BB1C27B1B3A01E6008A9E51 /* ORSolution.m in Sources */,
 				5B6811A0161F99C700F4480F /* CPSolver.m in Sources */,
 				5BA6F96918464836002434E3 /* CPDeg.m in Sources */,
+				5BF333331B3B0CC00030F127 /* ORProgram.m in Sources */,
 				5B84692B163856BF00F4D749 /* CPDDeg.m in Sources */,
 				5B84692C163856BF00F4D749 /* CPFirstFail.m in Sources */,
 				5B84692D163856BF00F4D749 /* CPIBS.m in Sources */,
@@ -20533,6 +20539,7 @@
 				5BB1C24A1B39F598008A9E51 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BB3836C13B3C0E1005B7D52 /* Build configuration list for PBXNativeTarget "magicserie" */ = {
 			isa = XCConfigurationList;

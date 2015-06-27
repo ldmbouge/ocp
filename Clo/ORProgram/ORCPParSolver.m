@@ -87,6 +87,10 @@
    [_source release];
    _source = [src retain];
 }
+-(id<ORModel>)       source
+{
+   return _source;
+}
 -(ORInt)nbWorkers
 {
    return _nbWorkers;
@@ -436,6 +440,13 @@
    id<CPHeuristic> h = [self createFF];
    [self solveAll:^{
       [self labelHeuristic:h];
+   }];
+}
+-(void) search:(id<ORSTask>)stask
+{
+   //TODO: This is not correct yet.
+   [self solveAll:^{
+      [stask execute];
    }];
 }
 -(void) clearOnSolution

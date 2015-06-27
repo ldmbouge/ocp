@@ -61,7 +61,8 @@ static Class __orObjectClass = nil;
 }
 -(id)autorelease
 {
-   assert(_ba[3] == 0);
+   //assert(_ba[3] == 0);
+   NSLog(@"   AUTORELEASE(%p) CNT=%d  -- obj: %@\n",self,_rc,self);
    id rv = [super autorelease];
    _ba[3] = 1;
    return rv;

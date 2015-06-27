@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B3E7377198A822100763732"
+               BlueprintIdentifier = "5BB1C2431B39F598008A9E51"
                BuildableName = "queensNaiveSwift"
                BlueprintName = "queensNaiveSwift"
                ReferencedContainer = "container:Clo.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B3E7377198A822100763732"
+            BlueprintIdentifier = "5BB1C2431B39F598008A9E51"
             BuildableName = "queensNaiveSwift"
             BlueprintName = "queensNaiveSwift"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -52,26 +52,31 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B3E7377198A822100763732"
+            BlueprintIdentifier = "5BB1C2431B39F598008A9E51"
             BuildableName = "queensNaiveSwift"
             BlueprintName = "queensNaiveSwift"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
+         <AdditionalOption
+            key = "NSZombieEnabled"
+            value = "YES"
+            isEnabled = "YES">
+         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B3E7377198A822100763732"
+            BlueprintIdentifier = "5BB1C2431B39F598008A9E51"
             BuildableName = "queensNaiveSwift"
             BlueprintName = "queensNaiveSwift"
             ReferencedContainer = "container:Clo.xcodeproj">

@@ -675,7 +675,10 @@ ORStatus propagateFDM(CPEngineI* fdm)
     if (status == ORFailure)
         failNow();
 }
-
+-(void) open
+{
+   _state = CPOpen;
+}
 -(ORStatus) close
 {
     if (_state == CPOpen) {
