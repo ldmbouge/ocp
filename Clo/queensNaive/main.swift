@@ -21,6 +21,7 @@ func +(lhs: ORExpr,rhs : Int) -> ORExpr {
 func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.plus(rhs);
 }
+
 autoreleasepool {
    let n : ORInt = 8
    let model = ORFactory.createModel()
@@ -37,24 +38,22 @@ autoreleasepool {
    let cp = ORFactory.createCPProgram(model)
    cp.onSolution {
       nbSol.incr(cp)
-      let s = ORFactory.intArray(cp,range:x.range()) {
-         (k : ORInt) -> ORInt in cp.intValue(x[Int(k)])
-      }
-      println(s)
+      println(ORFactory.intArray(cp,range:x.range()) {
+         k in cp.intValue(x[Int(k)])
+      })
    }
-   let R1 = ORFactory.intRange(model, low: 0, up: n/2)
-   let R2 = ORFactory.intRange(model, low: n/2+1, up: n - 1)
-   let y1 = ORFactory.intVarArray(model, range: R1) { k in x[Int(k)] }
-   let y2 = ORFactory.intVarArray(model, range: R2) { k in x[Int(k)] }
+   //let R1 = ORFactory.intRange(model, low: 0, up: n/2)
+   //let R2 = ORFactory.intRange(model, low: n/2+1, up: n - 1)
+   //let y1 = ORFactory.intVarArray(model, range: R1) { k in x[Int(k)] }
+   //let y2 = ORFactory.intVarArray(model, range: R2) { k in x[Int(k)] }
    //cp.search(firstFail(cp, x))
    //cp.search(sequence(cp,[firstFail(cp, y1),firstFail(cp,y2)]))
-   cp.search(selectAndBranch(cp,
-      { unowned(unsafe) let rv = cp.smallestDom(x); return rv},
-      { y in cp.min(y)},
-      { (unowned y : ORIntVar,v : ORInt) -> ORSTask  in unowned(unsafe) let rv = alts(cp,[equal(cp,y,v),diff(cp,y,v)])
-                                                     return rv}))
+   cp.search { selectAndBranch(cp,
+                  { cp.smallestDom(x)},
+                  { y in cp.min(y)},
+                  { y,v in alts(cp,[equal(cp,y,v),diff(cp,y,v)])})
+   }
    cp.clearOnSolution()
-   let cx = cp.concretize(x)
    println("Number of solutions \(cp!.solutionPool().count())")
    ORFactory.shutdown()
 }

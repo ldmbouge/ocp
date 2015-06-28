@@ -449,11 +449,12 @@
       [self labelHeuristic:h];
    }];
 }
--(void) search:(id<ORSTask>)stask
+-(void) search:(void*(^)())stask
 {
    //TODO: This is not correct yet.
+   id<ORSTask> theTask = (id)stask();
    [self solveAll:^{
-      [stask execute];
+      [theTask execute];
    }];
 }
 -(id<ORSolutionPool>) solutionPool

@@ -1004,10 +1004,11 @@
     _closed = NO;
 }
 
--(void) search:(id<ORSTask>)stask
+-(void) search:(void*(^)())stask
 {
    [self solveAll:^{
-      [stask execute];
+      id<ORSTask> theTask = (id<ORSTask>)stask();
+      [theTask execute];
    }];
    [_engine open];
    _closed = NO;

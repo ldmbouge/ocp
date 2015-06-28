@@ -85,7 +85,6 @@
 -(id<CPHeuristic>) createABS;
 
 -(void) defaultSearch;
--(void) search:(id<ORSTask>)stask;
 @end
 
 // Pure DFS CPSolver

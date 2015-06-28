@@ -41,8 +41,8 @@ __nonnull id<ORSTask> equal(__nonnull id<CPCommonProgram> solver,__nonnull id<OR
 __nonnull id<ORSTask> diff(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
 __nonnull id<ORSTask> firstFail(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVarArray> x);
 __nonnull id<ORSTask> sequence(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
-__nonnull id<ORSTask> alts(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
-__nonnull id<ORSTask> selectAndBranch(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
-                                      id<ORIntVar>__nonnull __unsafe_unretained(^ __nonnull varSel)(),
+void* __nonnull alts(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
+void* __nonnull selectAndBranch(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
+                                      void* __nullable(^ __nonnull varSel)(),
                                       ORInt(^ __nonnull valSel)(__nonnull id<ORIntVar>),
-                                      id<ORSTask> __nonnull __unsafe_unretained (^__nonnull branch)(__nonnull __unsafe_unretained id<ORIntVar>,ORInt));
+                                      void* __nonnull(^__nonnull branch)(__nonnull __unsafe_unretained id<ORIntVar>,ORInt));

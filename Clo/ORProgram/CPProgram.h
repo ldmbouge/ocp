@@ -108,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(id<CPHeuristic>) createABS;
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) defaultSearch;
--(void) search:(id<ORSTask>)stask;
+-(void) search:(void*(^)())stask;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
@@ -131,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
--(__unsafe_unretained id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x;
+-(void*)smallestDom:(id<ORIntVarArray>)x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 @end
 

@@ -71,6 +71,11 @@
 {
    [super dealloc];
 }
+-(oneway void)release
+{
+   //printf("Release called on solver: RC=%d [%s]\n",_rc,[[[self class] description] UTF8String]);
+   [super release];
+}
 -(void)execute
 {
    [_solver label:_x with:_v];
@@ -160,7 +165,7 @@
 -(id)initWith:(id<CPCommonProgram>)solver tasks:(NSArray*)t
 {
    self = [super init];
-   _t = [t retain];
+   _t = [[NSArray alloc] initWithArray:t];
    _r = [ORFactory intRange:solver low:0 up:(ORInt)_t.count-1];
    _solver = solver;
    return self;
@@ -172,10 +177,11 @@
 }
 -(void)execute
 {
+   __unsafe_unretained NSArray* theArray = _t;
    [_solver tryall:_r
           suchThat:nil
                 do:^(ORInt k) {
-                   [(id<ORSTask>)(_t[k]) execute];
+                   [(id<ORSTask>)(theArray[k]) execute];
                 }];
 }
 @end
@@ -230,17 +236,17 @@ id<ORSTask> sequence(id<CPCommonProgram> solver,NSArray* s)
    return task;
 }
 
-id<ORSTask> selectAndBranch(id<CPCommonProgram> solver,
-                           id<ORIntVar>(^varSel)(),
+void* selectAndBranch(id<CPCommonProgram> solver,
+                           void*(^varSel)(),
                            ORInt(^valSel)(id<ORIntVar>),
-                           id<ORSTask>(^branch)(id<ORIntVar>,ORInt))
+                           void*(^branch)(id<ORIntVar>,ORInt))
 {
-   id<ORSTask> task = [[ORSBranch alloc] initWithVar:varSel val:valSel branch:branch];
+   id<ORSTask> task = [[ORSBranch alloc] initWithVar:(id<ORIntVar>(^)())varSel val:valSel branch:(id<ORSTask>(^)(id<ORIntVar>,ORInt))branch];
    [solver trackObject:task];
    return task;
 }
 
-id<ORSTask> alts(id<CPCommonProgram> solver,NSArray* s)
+void* alts(id<CPCommonProgram> solver,NSArray* s)
 {
    id<ORSTask> task = [[ORSAlts alloc] initWith:solver tasks:s];
    [solver trackObject:task];
