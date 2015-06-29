@@ -22,15 +22,19 @@ func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.plus(rhs);
 }
 
-func sequence(solver: CPCommonProgram, s: [UnsafeMutablePointer<Void>]) -> UnsafeMutablePointer<Void>
-{
-   var arg = [AnyObject]()
-   for v in s {
-      let elt : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(v)).takeUnretainedValue()
-      arg.append(elt)
-   }
-   return sequence(solver,arg)
+func convertArray(s : [UnsafeMutablePointer<Void>]) -> [AnyObject] {
+   return s.map({v  in Unmanaged<AnyObject>.fromOpaque(COpaquePointer(v)).takeUnretainedValue() })
+//   var ts = [AnyObject]()
+//   for v in s {
+//      let elt : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(v)).takeUnretainedValue()
+//      ts.append(elt)
+//   }
+//   return ts
 }
+func sequence(solver: CPCommonProgram, s: [UnsafeMutablePointer<Void>]) -> UnsafeMutablePointer<Void> {
+   return sequence(solver,convertArray(s))
+}
+
 autoreleasepool {
    let n : ORInt = 8
    let model = ORFactory.createModel()
