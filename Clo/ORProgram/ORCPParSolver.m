@@ -445,8 +445,8 @@
 -(void) search:(void*(^)())stask
 {
    //TODO: This is not correct yet.
-   id<ORSTask> theTask = (id<ORSTask>)stask();
    [self solveAll:^{
+      id<ORSTask> theTask = (id<ORSTask>)stask();
       [theTask execute];
    }];
 }

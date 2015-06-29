@@ -22,6 +22,15 @@ func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.plus(rhs);
 }
 
+func sequence(solver: CPCommonProgram, s: [UnsafeMutablePointer<Void>]) -> UnsafeMutablePointer<Void>
+{
+   var arg = [AnyObject]()
+   for v in s {
+      let elt : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(v)).takeUnretainedValue()
+      arg.append(elt)
+   }
+   return sequence(solver,arg)
+}
 autoreleasepool {
    let n : ORInt = 8
    let model = ORFactory.createModel()
@@ -42,12 +51,12 @@ autoreleasepool {
          k in cp.intValue(x[Int(k)])
       })
    }
-   //let R1 = ORFactory.intRange(model, low: 0, up: n/2)
-   //let R2 = ORFactory.intRange(model, low: n/2+1, up: n - 1)
-   //let y1 = ORFactory.intVarArray(model, range: R1) { k in x[Int(k)] }
-   //let y2 = ORFactory.intVarArray(model, range: R2) { k in x[Int(k)] }
-   //cp.search(firstFail(cp, x))
-   //cp.search(sequence(cp,[firstFail(cp, y1),firstFail(cp,y2)]))
+   let R1 = ORFactory.intRange(model, low: 0, up: n/2)
+   let R2 = ORFactory.intRange(model, low: n/2+1, up: n - 1)
+   let y1 = ORFactory.intVarArray(model, range: R1) { k in x[Int(k)] }
+   let y2 = ORFactory.intVarArray(model, range: R2) { k in x[Int(k)] }
+   //cp.search { firstFail(cp, x) }
+   //cp.search { sequence(cp,[firstFail(cp, y1),firstFail(cp, y2)])}
    cp.search { selectAndBranch(cp,
                   { cp.smallestDom(x)},
                   { y in cp.min(y)},

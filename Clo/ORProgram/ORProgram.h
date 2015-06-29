@@ -39,8 +39,8 @@
 
 __nonnull id<ORSTask> equal(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
 __nonnull id<ORSTask> diff(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
-__nonnull id<ORSTask> firstFail(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVarArray> x);
-__nonnull id<ORSTask> sequence(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
+void* __nonnull firstFail(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVarArray> x);
+void* __nonnull sequence(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
 void* __nonnull alts(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
 void* __nonnull selectAndBranch(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
                                       void* __nullable(^ __nonnull varSel)(),

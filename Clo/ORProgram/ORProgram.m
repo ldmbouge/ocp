@@ -222,14 +222,14 @@
 }
 @end
 
-id<ORSTask> firstFail(id<CPCommonProgram> solver,id<ORIntVarArray> x)
+void* firstFail(id<CPCommonProgram> solver,id<ORIntVarArray> x)
 {
    ORSFFTask* task = [[ORSFFTask alloc] initWith:solver vars:x];
    [solver trackObject:task];
    return task;
 }
 
-id<ORSTask> sequence(id<CPCommonProgram> solver,NSArray* s)
+void* sequence(id<CPCommonProgram> solver,NSArray* s)
 {
    id<ORSTask> task = [[ORSSequence alloc] initWith:s];
    [solver trackObject:task];
