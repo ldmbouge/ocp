@@ -87,6 +87,12 @@
 		37A715E316FB948200E02DC6 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		37A715E416FB948200E02DC6 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		37A715E516FB948900E02DC6 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		532BC7331B43C66E00A4673A /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		532BC7341B43C67700A4673A /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		532BC7351B43C67D00A4673A /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		532BC7361B43C68100A4673A /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		532BC7371B43C68900A4673A /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
+		532BC7381B43C68E00A4673A /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		535D132E18FF7A47008D48BD /* CPMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 535D132C18FF7A46008D48BD /* CPMisc.h */; };
 		535D132F18FF7A47008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
 		535D133018FF7EFA008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
@@ -20329,6 +20335,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		532BC7321B43C66100A4673A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				532BC7381B43C68E00A4673A /* CPUKernel.framework in Frameworks */,
+				532BC7371B43C68900A4673A /* CPScheduler.framework in Frameworks */,
+				532BC7361B43C68100A4673A /* ORUtilities.framework in Frameworks */,
+				532BC7351B43C67D00A4673A /* ORProgram.framework in Frameworks */,
+				532BC7341B43C67700A4673A /* ORModeling.framework in Frameworks */,
+				532BC7331B43C66E00A4673A /* ORFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		537EE9CD18FCDC520006FFD2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -37286,6 +37305,7 @@
 			buildPhases = (
 				537EEA8118FCF9880006FFD2 /* Sources */,
 				537EEA8D18FCF9880006FFD2 /* CopyFiles */,
+				532BC7321B43C66100A4673A /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -49492,6 +49512,7 @@
 				5BA07B161B179074005BB066 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BA345881680B7BD00485366 /* Build configuration list for PBXNativeTarget "latinSquare" */ = {
 			isa = XCConfigurationList;
