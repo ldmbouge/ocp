@@ -93,6 +93,10 @@
 		532BC7361B43C68100A4673A /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		532BC7371B43C68900A4673A /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
 		532BC7381B43C68E00A4673A /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		532BC73D1B43C9FF00A4673A /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		532BC73E1B43C9FF00A4673A /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		532BC73F1B43C9FF00A4673A /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
+		532BC7401B43C9FF00A4673A /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
 		535D132E18FF7A47008D48BD /* CPMisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 535D132C18FF7A46008D48BD /* CPMisc.h */; };
 		535D132F18FF7A47008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
 		535D133018FF7EFA008D48BD /* CPMisc.m in Sources */ = {isa = PBXBuildFile; fileRef = 535D132D18FF7A46008D48BD /* CPMisc.m */; };
@@ -20339,6 +20343,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				532BC73D1B43C9FF00A4673A /* objcp.framework in Frameworks */,
+				532BC73E1B43C9FF00A4673A /* objmp.framework in Frameworks */,
+				532BC73F1B43C9FF00A4673A /* ORScheduler.framework in Frameworks */,
+				532BC7401B43C9FF00A4673A /* ORSchedulingProgram.framework in Frameworks */,
 				532BC7381B43C68E00A4673A /* CPUKernel.framework in Frameworks */,
 				532BC7371B43C68900A4673A /* CPScheduler.framework in Frameworks */,
 				532BC7361B43C68100A4673A /* ORUtilities.framework in Frameworks */,
