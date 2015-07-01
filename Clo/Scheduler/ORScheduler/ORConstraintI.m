@@ -439,7 +439,10 @@
         // Add task
         [_accT    addObject: task           ];
         [_accU    addObject: usage          ];
-        [_accA    addObject: area           ];
+        if (area == NULL)
+            [_accA addObject: [NSNull null]];
+        else
+            [_accA addObject: area];
         [_accIds  addObject: @([task getId])];
         [_accResT addObject: @(0           )];
     }
@@ -469,7 +472,7 @@
         // Add task
         [_accT    addObject: task           ];
         [_accU    addObject: usage          ];
-        [_accA    addObject: NULL           ];
+        [_accA    addObject: [NSNull null]  ];
         [_accIds  addObject: @([task getId])];
         [_accResT addObject: @(1           )];
         // Add resource to resource task
@@ -498,6 +501,8 @@
             return _accU[i-1];
         }];
         _area = [ORFactory intVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_accA count]) with: ^id<ORIntVar>(ORInt i) {
+            if (_accA[i-1] == [NSNull null])
+                return NULL;
             return _accA[i-1];
         }];
         _resourceTasks = [ORFactory intArray:_tracker range:range with:^ORInt(ORInt i) {
