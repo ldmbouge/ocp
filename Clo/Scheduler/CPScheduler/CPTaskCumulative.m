@@ -619,7 +619,7 @@ static inline ORInt comp_part_right_shift(CPTaskCumulative * cumu, const ORInt t
 static inline ORInt comp_part_interval(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt end)
 {
     assert(0 <= t0 && t0 < cumu->_size);
-    if (lst(cumu, t0) < ect(cumu, t0) && lst(cumu, t0) < end && begin < ect(cumu, begin)) {
+    if (lst(cumu, t0) < ect(cumu, t0) && lst(cumu, t0) < end && begin < ect(cumu, t0)) {
         return usage_min(cumu, t0) * (min(end, ect(cumu, t0)) - max(begin, lst(cumu, t0)));
     }
     return 0;
