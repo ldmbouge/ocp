@@ -22,17 +22,16 @@ func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.plus(rhs);
 }
 
-func convertArray(s : [UnsafeMutablePointer<Void>]) -> [AnyObject] {
-   return s.map({v  in Unmanaged<AnyObject>.fromOpaque(COpaquePointer(v)).takeUnretainedValue() })
-//   var ts = [AnyObject]()
-//   for v in s {
-//      let elt : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(v)).takeUnretainedValue()
-//      ts.append(elt)
-//   }
-//   return ts
-}
 func sequence(solver: CPCommonProgram, s: [UnsafeMutablePointer<Void>]) -> UnsafeMutablePointer<Void> {
-   return sequence(solver,convertArray(s))
+   let c : [AnyObject] = unsafeBitCast(s,[AnyObject].self)
+   return sequence(solver,c)
+}
+
+func wrap<T>(x : T) -> UnsafeMutablePointer<Void> {
+   return unsafeBitCast(x, UnsafeMutablePointer<Void>.self)
+}
+func unwrap<T>(x : UnsafeMutablePointer<Void>) -> T {
+   return unsafeBitCast(x, T.self)
 }
 
 autoreleasepool {
@@ -61,12 +60,28 @@ autoreleasepool {
    let y2 = ORFactory.intVarArray(model, range: R2) { k in x[Int(k)] }
    //cp.search { firstFail(cp, x) }
    //cp.search { sequence(cp,[firstFail(cp, y1),firstFail(cp, y2)])}
-   cp.search { selectAndBranch(cp,
-                  { cp.smallestDom(x)},
-                  { y in cp.min(y)},
-                  { y,v in alts(cp,[equal(cp,y,v),diff(cp,y,v)])})
+//   cp.search {
+//      whileDo(cp, { !cp.allBound(x) }) {
+//         let y : ORIntVar = unwrap(cp.smallestDom(x)),
+//             v : ORInt    = cp.min(y)
+//         return alts(cp,[equal(cp,y,v),diff(cp,y,v)])
+//      }
+//   }
+   cp.search {
+      forallDo(cp,R) { k in
+         let y = x[Int(k)]
+         return whileDo(cp,{ !cp.bound(y)}) {
+            let v = cp.min(y)
+            return alts(cp,[equal(cp,y,v),diff(cp,y,v)])
+         }
+      }
    }
+//   cp.search { selectAndBranch(cp,
+//                  { cp.smallestDom(x)},
+//                  { y in cp.min(y)},
+//                  { y,v in alts(cp,[equal(cp,y,v),diff(cp,y,v)])})
+//   }
    cp.clearOnSolution()
-   println("Number of solutions \(cp!.solutionPool().count())")
+   println("Number of solutions \(cp.solutionPool().count())")
    ORFactory.shutdown()
 }

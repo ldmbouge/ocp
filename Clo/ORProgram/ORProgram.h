@@ -46,3 +46,12 @@ void* __nonnull selectAndBranch(__nonnull __unsafe_unretained id<CPCommonProgram
                                       void* __nullable(^ __nonnull varSel)(),
                                       ORInt(^ __nonnull valSel)(__nonnull id<ORIntVar>),
                                       void* __nonnull(^__nonnull branch)(__nonnull __unsafe_unretained id<ORIntVar>,ORInt));
+void* __nonnull whileDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
+                        bool(^__nonnull cond)(),
+                        void* __nonnull (^__nonnull body)());
+
+void* __nonnull forallDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
+                         __nonnull __unsafe_unretained id<ORIntRange> R,
+                         void* __nonnull(^__nonnull body)(ORInt)
+                         );
+

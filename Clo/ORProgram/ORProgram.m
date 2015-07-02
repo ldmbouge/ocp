@@ -57,6 +57,16 @@
 -(void)execute;
 @end
 
+@interface ORSDoWhile : ORObject<ORSTask>
+-(id)initWithCondition:(bool(^)())cond body:(id<ORSTask>(^)())body;
+-(void)execute;
+@end
+
+@interface ORSForallDo : ORObject<ORSTask>
+-(id)initWithRange:(id<ORIntRange>)range
+              body:(id<ORSTask>(^)(ORInt))body;
+-(void)execute;
+@end
 
 @implementation ORSEqual
 -(id)initWith:(id<CPCommonProgram>)solver var:(id<ORIntVar>)x andVal:(ORInt)v
@@ -222,6 +232,58 @@
 }
 @end
 
+@implementation ORSDoWhile {
+   bool(^_cond)();
+   id<ORSTask>(^_body)();
+}
+-(id)initWithCondition:(bool(^)())cond body:(id<ORSTask>(^)())body
+{
+   self = [super init];
+   _cond = [cond copy];
+   _body = [body copy];
+   return self;
+}
+-(void)dealloc
+{
+   [_cond release];
+   [_body release];
+   [super dealloc];
+}
+-(void)execute
+{
+   while (_cond()) {
+      id<ORSTask> t = _body();
+      [t execute];
+   }
+}
+@end
+
+@implementation ORSForallDo {
+   id<ORIntRange> _range;
+   id<ORSTask>(^_body)(ORInt);
+}
+-(id)initWithRange:(id<ORIntRange>)range body:(id<ORSTask>(^)(ORInt))body
+{
+   self = [super init];
+   _range = range;
+   _body  = [body copy];
+   return self;
+}
+-(void)dealloc
+{
+   [_body release];
+   [super dealloc];
+}
+-(void)execute
+{
+   ORInt l = _range.low,u =_range.up;
+   for(ORInt k=l;k <= u;k++) {
+      id<ORSTask> alts = _body(k);
+      [alts execute];
+   }
+}
+@end
+
 void* firstFail(id<CPCommonProgram> solver,id<ORIntVarArray> x)
 {
    ORSFFTask* task = [[ORSFFTask alloc] initWith:solver vars:x];
@@ -264,4 +326,25 @@ id<ORSTask> diff(id<CPCommonProgram> solver,id<ORIntVar> x,ORInt v)
    [solver trackObject:task];
    return task;
 }
+
+void* __nonnull whileDo(id<CPCommonProgram> solver,
+                        bool(^__nonnull cond)(),
+                        void* __nonnull (^__nonnull body)())
+{
+   id<ORSTask> task = [[ORSDoWhile alloc] initWithCondition:cond body:(id)body];
+   [solver trackObject:task];
+   return task;
+}
+
+void* __nonnull forallDo(id<CPCommonProgram> solver,
+                         id<ORIntRange> R,
+                         void* __nonnull(^__nonnull body)(ORInt)
+                         )
+{
+   id<ORSTask> task = [[ORSForallDo alloc] initWithRange:R body:(id)body];
+   [solver trackObject:task];
+   return task;
+}
+
+
 

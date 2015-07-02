@@ -15,6 +15,8 @@
 #import <ORProgram/LPProgram.h>
 #import <ORProgram/MIPProgram.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ORFactory (Concretization)
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
@@ -53,3 +55,6 @@
 -(void) close;
 -(OROutcome) solve;
 @end
+
+NS_ASSUME_NONNULL_END
+

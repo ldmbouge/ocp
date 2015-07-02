@@ -611,6 +611,10 @@
 {
    return [[self worker] allBound:x];
 }
+-(void*)smallestDom:(id<ORIntVarArray>)x
+{
+   return [[self worker] smallestDom:x];
+}
 -(NSSet*)constraints:(id<ORVar>)x
 {
    return [[self worker] constraints:x];
