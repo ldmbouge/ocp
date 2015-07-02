@@ -65,8 +65,8 @@
 @protocol ORIdArray <ORObject,NSFastEnumeration>
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
--(id)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
+-(id)objectAtIndexedSubscript:(ORInt)key;
+-(void)setObject:(id)newValue atIndexedSubscript:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(id<ORIntRange>) range;

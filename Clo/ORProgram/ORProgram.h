@@ -52,6 +52,6 @@ void* __nonnull whileDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver
 
 void* __nonnull forallDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
                          __nonnull __unsafe_unretained id<ORIntRange> R,
-                         void* __nonnull(^__nonnull body)(ORInt)
+                         void* __nonnull(^__nonnull body)(SInt)
                          );
 

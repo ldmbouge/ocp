@@ -338,7 +338,7 @@ void* __nonnull whileDo(id<CPCommonProgram> solver,
 
 void* __nonnull forallDo(id<CPCommonProgram> solver,
                          id<ORIntRange> R,
-                         void* __nonnull(^__nonnull body)(ORInt)
+                         void* __nonnull(^__nonnull body)(SInt)
                          )
 {
    id<ORSTask> task = [[ORSForallDo alloc] initWithRange:R body:(id)body];
