@@ -41,8 +41,6 @@
 #import <ORFoundation/ORSetI.h>
 #import <ORFoundation/ORTrailI.h>
 
-
-
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());
 void failNow();
 

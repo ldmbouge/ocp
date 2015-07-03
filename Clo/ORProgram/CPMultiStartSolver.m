@@ -611,7 +611,7 @@
 {
    return [[self worker] allBound:x];
 }
--(void*)smallestDom:(id<ORIntVarArray>)x
+-(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x
 {
    return [[self worker] smallestDom:x];
 }

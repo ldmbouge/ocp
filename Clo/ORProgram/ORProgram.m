@@ -50,13 +50,6 @@
 -(void)execute;
 @end
 
-@interface ORSBranch : ORObject<ORSTask>
--(id)initWithVar:(id<ORIntVar>(^)())varSel
-             val:(ORInt(^)(id<ORIntVar>))valSel
-          branch:(id<ORSTask>(^)(id<ORIntVar>,ORInt))branch;
--(void)execute;
-@end
-
 @interface ORSDoWhile : ORObject<ORSTask>
 -(id)initWithCondition:(bool(^)())cond body:(id<ORSTask>(^)())body;
 -(void)execute;
@@ -196,42 +189,6 @@
 }
 @end
 
-@implementation ORSBranch {
-   id<ORIntVar>(^_varSel)();
-   ORInt(^_valSel)(id<ORIntVar>);
-   id<ORSTask>(^_branch)(id<ORIntVar>,ORInt);
-}
--(id)initWithVar:(id<ORIntVar>(^)())varSel
-             val:(ORInt(^)(id<ORIntVar>))valSel
-          branch:(id<ORSTask>(^)(id<ORIntVar>,ORInt))branch
-{
-   self = [super init];
-   _varSel  = [varSel copy];
-   _valSel  = [valSel copy];
-   _branch  = [branch copy];
-   return self;
-}
--(void)dealloc
-{
-   [_varSel release];
-   [_valSel release];
-   [_branch release];
-   [super dealloc];
-}
--(void)execute
-{
-   do {
-      id<ORIntVar> sv = _varSel();
-      if (sv==nil) return;
-      else {
-         ORInt value      = _valSel(sv);
-         id<ORSTask> alts = _branch(sv,value);
-         [alts execute];
-      }
-   } while(true);
-}
-@end
-
 @implementation ORSDoWhile {
    bool(^_cond)();
    id<ORSTask>(^_body)();
@@ -294,16 +251,6 @@ void* firstFail(id<CPCommonProgram> solver,id<ORIntVarArray> x)
 void* sequence(id<CPCommonProgram> solver,NSArray* s)
 {
    id<ORSTask> task = [[ORSSequence alloc] initWith:s];
-   [solver trackObject:task];
-   return task;
-}
-
-void* selectAndBranch(id<CPCommonProgram> solver,
-                           void*(^varSel)(),
-                           ORInt(^valSel)(id<ORIntVar>),
-                           void*(^branch)(id<ORIntVar>,ORInt))
-{
-   id<ORSTask> task = [[ORSBranch alloc] initWithVar:(id<ORIntVar>(^)())varSel val:valSel branch:(id<ORSTask>(^)(id<ORIntVar>,ORInt))branch];
    [solver trackObject:task];
    return task;
 }

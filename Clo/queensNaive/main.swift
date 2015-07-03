@@ -9,30 +9,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ***********************************************************************/
 
-import ORFoundation
 import ORProgram
-
-func !=(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
-   return lhs.neq(rhs)
-}
-func +(lhs: ORExpr,rhs : Int) -> ORExpr {
-   return lhs.plus(rhs);
-}
-func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
-   return lhs.plus(rhs);
-}
-
-func sequence(solver: CPCommonProgram, s: [UnsafeMutablePointer<Void>]) -> UnsafeMutablePointer<Void> {
-   let c : [AnyObject] = unsafeBitCast(s,[AnyObject].self)
-   return sequence(solver,c)
-}
-
-func wrap<T>(x : T) -> UnsafeMutablePointer<Void> {
-   return unsafeBitCast(x, UnsafeMutablePointer<Void>.self)
-}
-func unwrap<T>(x : UnsafeMutablePointer<Void>) -> T {
-   return unsafeBitCast(x, T.self)
-}
 
 autoreleasepool {
    let n : ORInt = 8
@@ -63,7 +40,7 @@ autoreleasepool {
    //cp.search { sequence(cp,[firstFail(cp, y1),firstFail(cp, y2)])}
 //   cp.search {
 //      whileDo(cp, { !cp.allBound(x) }) {
-//         let y : ORIntVar = unwrap(cp.smallestDom(x)),
+//         let y : ORIntVar = cp.smallestDom(x),
 //             v : ORInt    = cp.min(y)
 //         return alts(cp,[equal(cp,y,v),diff(cp,y,v)])
 //      }
@@ -77,11 +54,6 @@ autoreleasepool {
          }
       }
    }
-//   cp.search { selectAndBranch(cp,
-//                  { cp.smallestDom(x)},
-//                  { y in cp.min(y)},
-//                  { y,v in alts(cp,[equal(cp,y,v),diff(cp,y,v)])})
-//   }
    cp.clearOnSolution()
    println("Number of solutions \(cp.solutionPool().count())")
    ORFactory.shutdown()

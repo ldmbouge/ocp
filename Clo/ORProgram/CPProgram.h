@@ -131,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
--(void*)smallestDom:(id<ORIntVarArray>)x;
+-(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 @end
 
