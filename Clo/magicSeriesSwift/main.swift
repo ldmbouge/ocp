@@ -27,14 +27,12 @@ autoreleasepool {
    m.add(Σ(m,R) {i in x[i] * i    } == n)
    m.add(Σ(m,R) {i in x[i] * (i-1)} == 0)
 
-   var ns = 0
    let cp = ORFactory.createCPProgram(m)
-   cp.onSolution {
-      ns++
-      println([Int](0...n-1).map({k in cp.intValue(x[ORInt(k)])}))
-   }
    cp.search { firstFail(cp, x) }
-   cp.clearOnSolution()
-   println("Number of solutions: \(ns)")
+   println("Number of solutions: \(cp.solutionPool().count())")
+   if let sol = cp.solutionPool().best() {
+      let z = [ORInt](0..<n).map { k in sol.intValue(x[k])}
+      println("Solution is: " + z.description)
+   }
    ORFactory.shutdown()
 }

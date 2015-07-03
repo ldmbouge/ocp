@@ -14,7 +14,6 @@
 #import <ORFoundation/ORVar.h>
 #import <ORModeling/ORModeling.h>
 
-
 @protocol ORSolution <NSObject>
 -(id) value: (id) var;
 -(ORInt) intValue: (id<ORIntVar>) var;
@@ -28,7 +27,7 @@
 -(void) enumerateWith: (void(^)(id<ORSolution>)) block;
 -(id) objectAtIndexedSubscript: (NSUInteger) key;
 -(id<ORInformer>) solutionAdded;
--(id) best;
+-(id<ORSolution>) best;
 -(NSUInteger) count;
 @end
 
