@@ -13,9 +13,9 @@ import ORProgram
 
 autoreleasepool {
    println("magicSerie in swift!")
-   let n : ORInt = 12
+   let n : ORInt = 14
    let m = ORFactory.createModel()
-   let R = ORFactory.intRange(m, low: 0, up: n-1)
+   let R = range(m,0...n-1)
    let x = ORFactory.intVarArray(m, range: R, domain: R)
    for i in 0..<n {
       m.add(sum(m, R) {k in x[k] == i} == x[i])
@@ -23,13 +23,11 @@ autoreleasepool {
    m.add(sum(m,R) {i in x[i] * i    } == n)
    m.add(sum(m,R) {i in x[i] * (i-1)} == 0)
 
-   var ns    = 0
+   var ns = 0
    let cp = ORFactory.createCPProgram(m)
    cp.onSolution {
       ns++
-   println(ORFactory.intArray(cp,range:R) {
-         k in cp.intValue(x[k])
-      })
+      println([Int](0...n-1).map({k in cp.intValue(x[ORInt(k)])}))
    }
    cp.search { firstFail(cp, x) }
    cp.clearOnSolution()

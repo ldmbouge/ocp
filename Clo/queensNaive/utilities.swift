@@ -64,3 +64,6 @@ func sum(tracker : ORTracker,R : ORIntRange,b : ORInt -> ORExpr) -> ORExpr {
 //   }
 //   return rv
 }
+func range(tracker : ORTracker,r : Range<Int>) -> ORIntRange {
+   return ORFactory.intRange(tracker, low: ORInt(r.startIndex), up: ORInt(r.endIndex - 1))
+}
