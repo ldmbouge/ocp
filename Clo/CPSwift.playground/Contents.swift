@@ -13,7 +13,6 @@ func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
    return lhs.plus(rhs);
 }
 
-var str = "Hello, playground"
 let n : ORInt = 8
 let model = ORFactory.createModel()
 let R     = ORFactory.intRange(model, low: 0, up: n - 1)
@@ -61,6 +60,17 @@ let a0 = [1,2,3,4]
 doit(a0)
 
 doit([4,5,6,7])
+
+func sumOf(tracker : ORTracker,R : ORIntRange,b : ((ORInt) -> ORExpr)) -> ORExpr {
+   var rv : ORExpr = ORFactory.integer(tracker, value: 0)
+   for var i : ORInt = R.low(); i <= R.up(); i++ {
+      rv = rv.plus(b(i))
+   }
+   return rv
+}
+
+let e = sumOf(model,R) { k in x[k]}
+println(e)
 
 
 

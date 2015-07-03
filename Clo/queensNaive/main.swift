@@ -15,20 +15,18 @@ autoreleasepool {
    let n : ORInt = 8
    let model = ORFactory.createModel()
    let R     = ORFactory.intRange(model, low: 0, up: n - 1)
-   let nbSol = ORFactory.mutable(model, value: 0)
    let x     = ORFactory.intVarArray(model, range: R, domain: R)
-   let y : ORIntVarArray? = nil
+   let e     = sum(model, R) { k in x[k] }
    for var i : ORInt = 0; i < n ; i++ {
       for var j : ORInt = i+1; j < n; j++ {
-         model.add(x[i] != x[j])
-         model.add(x[i] != x[j] + (i-j))
-         model.add(x[i] != x[j] + (j-i))
+         model.add(x[i] ≠ x[j])
+         model.add(x[i] ≠ x[j] + (i-j))
+         model.add(x[i] ≠ x[j] + (j-i))
       }
    }
    let cp = ORFactory.createCPProgram(model)
    cp.onSolution {
-      nbSol.incr(cp)
-      println(ORFactory.intArray(cp,range:x.range()) {
+      println(ORFactory.intArray(cp,range:R) {
          k in cp.intValue(x[k])
       })
    }
@@ -55,6 +53,6 @@ autoreleasepool {
       }
    }
    cp.clearOnSolution()
-   println("Number of solutions \(cp.solutionPool().count())")
+   println("Number of solutions: \(cp.solutionPool().count())")
    ORFactory.shutdown()
 }

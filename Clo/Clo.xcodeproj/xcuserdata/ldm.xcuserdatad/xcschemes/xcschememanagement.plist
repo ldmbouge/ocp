@@ -309,6 +309,11 @@
 			<key>orderHint</key>
 			<integer>10</integer>
 		</dict>
+		<key>magicSeriesSwift.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>114</integer>
+		</dict>
 		<key>magicSquareLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -898,6 +903,11 @@
 			<true/>
 		</dict>
 		<key>5BAEE09C15AEA08D006CEE1E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BAF72B21B470CB900BBA8CB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
