@@ -1,5 +1,4 @@
 //: Playground - Experimental pen.
-
 import ORFoundation
 import ORProgram
 
@@ -103,11 +102,9 @@ public func |(a : UnsafeMutablePointer<Void>, b : UnsafeMutablePointer<Void>) ->
    }
 }
 
-
 func range(tracker : ORTracker,r : Range<Int>) -> ORIntRange {
    return ORFactory.intRange(tracker, low: ORInt(r.startIndex), up: ORInt(r.endIndex - 1))
 }
-
 //: This is the model per se (vietnamese Snake)
 
 let m  = ORFactory.createModel()
