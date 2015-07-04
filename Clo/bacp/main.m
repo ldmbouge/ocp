@@ -61,7 +61,7 @@ int main(int argc, const char * argv[])
             
             [cp forall:Courses suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}
              orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];}
-                   and:^ORInt(ORInt i) { return - [credits at:i];}
+                  then:^ORInt(ORInt i) { return - [credits at:i];}
                     do:^(ORInt i) {
                        id<ORIntArray> cc = [ORFactory intArray:cp range:Periods with:^ORInt(ORInt p) {
                           ORInt ttl = 0;

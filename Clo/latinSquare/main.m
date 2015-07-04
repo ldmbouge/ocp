@@ -104,7 +104,7 @@ int main(int argc, const char * argv[])
 //                        printf("%s , ",[[cav description] cStringUsingEncoding:NSASCIIStringEncoding]);
 //                     }
 //                     printf("\n");
-                  } or:^{
+                  } alt:^{
                      [cp diff:av[i] with:v];
                   }];
                }

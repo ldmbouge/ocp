@@ -124,7 +124,7 @@ int main_cp(int argc, const char * argv[])
                    //             NSLog(@"Mid value: %d for [%d,%d]",m,[cp min: x[i]],[cp max: x[i]]);
                    [cp try:
                     ^()  { [cp gthen: x[i] with: m]; /* NSLog(@"After gthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
-                        or:
+                       alt:
                     ^()  { [cp lthen: x[i] with: m+1]; /* NSLog(@"After lthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
                     
                     ];
@@ -184,7 +184,7 @@ int main_hybrid(int argc, const char * argv[])
                    //             NSLog(@"Mid value: %d for [%d,%d]",m,[cp min: x[i]],[cp max: x[i]]);
                    [cp try:
                     ^()  { [cp gthen: x[i] with: m]; /* NSLog(@"After gthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
-                        or:
+                       alt:
                     ^()  { [cp lthen: x[i] with: m+1]; /* NSLog(@"After lthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
                     
                     ];
@@ -242,7 +242,7 @@ int main_hybrid_branching(int argc, const char * argv[])
                    break;
                 [cp try:
                         ^{ [cp gthen: x[idx] float: ifval]; }
-                     or:
+                    alt:
                         ^{ [cp lthen: x[idx] float: ifval]; }
                  ];
 //                NSLog(@"new Objective: %f",[lp objective]);

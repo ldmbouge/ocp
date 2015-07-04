@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <CPUKernel/CPEngine.h>
-//#import <objcp/CPData.h>
 
 @protocol CPIntVarArray;
 @protocol CPProgram;

@@ -68,7 +68,6 @@ int main(int argc, const char * argv[])
           }
           ];
          struct ORResult res = REPORT(nbSol,[[cpp explorer] nbFailures],[[cpp explorer] nbChoices], [[cpp engine] nbPropagation]);
-         [cpp release];
          [ORFactory shutdown];
          return res;
       }];

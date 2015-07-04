@@ -216,7 +216,7 @@ int main(int argc, const char * argv[])
                      if ([cp bound:[x at:r :c]]) continue;
                      [cp try:^{
                         [cp label:[x at:r :c] with:1];
-                     } or:^{
+                     } alt:^{
                         [cp label:[x at:r :c] with:0];
                      }];
                   }
@@ -227,7 +227,7 @@ int main(int argc, const char * argv[])
                      if ([cp bound:[x at:r :c]]) continue;
                      [cp try:^{
                         [cp label:[x at:r :c] with:1];
-                     } or:^{
+                     } alt:^{
                         [cp label:[x at:r :c] with:0];
                      }];
                   }
@@ -245,7 +245,6 @@ int main(int argc, const char * argv[])
             }
          }];
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          [ORFactory shutdown];
          return res;
       }];

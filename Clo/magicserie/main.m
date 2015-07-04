@@ -38,7 +38,7 @@ int main (int argc, const char * argv[])
                   ORInt v = [cp max:x[i]];
                   [cp try:^{
                      [cp label:x[i] with:v];
-                  } or:^{
+                  } alt:^{
                      [cp diff:x[i] with:v];
                   }];
                }

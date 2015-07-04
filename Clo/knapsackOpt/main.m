@@ -104,7 +104,7 @@ int main(int argc, const char * argv[])
                      //NSLog(@"%@?x(%d)==%d",tab(i),i,v);
                      [cp label:x[i] with:v];
                      //NSLog(@"%@+x(%d)==%d \tC:%d",tab(i),i,v,[[cp explorer] nbChoices]);
-                  } or:^{
+                  } alt:^{
                      //NSLog(@"%@?x(%d)!=%d ",tab(i),i,v);
                      [cp diff:x[i] with:v];
                      //NSLog(@"%@+x(%d)!=%d \tC:%d",tab(i),i,v,[[cp explorer] nbChoices]);

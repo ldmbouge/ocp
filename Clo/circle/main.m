@@ -44,7 +44,7 @@ int main(int argc, const char * argv[])
                ORFloat mid = [cp floatMin:a[i]] + ([cp floatMax:a[i]] - [cp floatMin:a[i]])/2.0;
                [cp try:^{
                   [cp floatLthen:a[i] with:mid];
-               } or:^{
+               } alt:^{
                   [cp floatGthen:a[i] with:mid];
                }];
             } while (true);
@@ -57,7 +57,6 @@ int main(int argc, const char * argv[])
             printf("\n");
          }];
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          [ORFactory shutdown];
          return res;
       }];

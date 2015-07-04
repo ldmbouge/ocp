@@ -74,7 +74,7 @@ int main(int argc, const char * argv[])
             [cp forall: V suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}  orderedBy:^ORInt(ORInt i) { return -tw[i];} do:^(ORInt i) {
                [cp try:^{
                   [cp label:x[i] with:0];
-               } or:^{
+               } alt:^{
                   [cp label:x[i] with:1];
                }];
             }];

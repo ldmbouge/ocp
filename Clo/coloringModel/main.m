@@ -105,7 +105,7 @@ int main(int argc, const char * argv[])
             [cp forall: V
               suchThat:^bool(ORInt i) { return ![cp bound: c[i]];}
              orderedBy: ^ORInt(ORInt i) { return [cp domsize: c[i]]; }
-                   and: ^ORInt(ORInt i) { return - [deg at:i];}
+                  then: ^ORInt(ORInt i) { return - [deg at:i];}
                     do: ^(ORInt i) {
                        ORInt maxc = max(0,[cp maxBound: c]);
                        [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {

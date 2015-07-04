@@ -69,7 +69,7 @@ int main(int argc, const char * argv[])
                   ORInt val = [cp max:costas[i]];
                   [cp try:^{
                      [cp label:costas[i] with:val];
-                  } or:^{
+                  } alt:^{
                      [cp diff:costas[i] with:val];
                   }];
                }

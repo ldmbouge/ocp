@@ -337,13 +337,13 @@
    id<ORBitVar> t2 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    id<ORBitVar> t3 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    //_m.post(BitAnd<CP>(x,y,t0));
-   [_m add:[ORFactory bit:x and:y eq:t0]];
+   [_m add:[ORFactory bit:x band:y eq:t0]];
    //_m.post(BitNegate<CP>(x,t1));
-   [_m add:[ORFactory bit:x not:t1]];
+   [_m add:[ORFactory bit:x bnot:t1]];
    //_m.post(BitAnd<CP>(t1,z,t2));
-   [_m add:[ORFactory bit:t1 and:z eq:t2]];
+   [_m add:[ORFactory bit:t1 band:z eq:t2]];
    //_m.post(BitOr<CP>(t0,t2,t3));
-   [_m add:[ORFactory bit:t0 or:t2 eq:t3]];
+   [_m add:[ORFactory bit:t0 bor:t2 eq:t3]];
    //[_temps addObject:t3];
    return t3;
 }
@@ -361,15 +361,15 @@
    id<ORBitVar> t3 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    id<ORBitVar> t4 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 //   _m.post(BitAnd<CP>(x,y,t0));
-   [_m add:[ORFactory bit:x and:y eq:t0]];
+   [_m add:[ORFactory bit:x band:y eq:t0]];
 //   _m.post(BitAnd<CP>(x,z,t1));
-   [_m add:[ORFactory bit:x and:z eq:t1]];
+   [_m add:[ORFactory bit:x band:z eq:t1]];
 //   _m.post(BitAnd<CP>(y,z,t2));
-   [_m add:[ORFactory bit:y and:z eq:t2]];
+   [_m add:[ORFactory bit:y band:z eq:t2]];
 //   _m.post(BitOr<CP>(t0,t1,t3));
-   [_m add:[ORFactory bit:t0 or:t1 eq:t3]];
+   [_m add:[ORFactory bit:t0 bor:t1 eq:t3]];
 //   _m.post(BitOr<CP>(t2,t3,t4));
-   [_m add:[ORFactory bit:t2 or:t3 eq:t4]];
+   [_m add:[ORFactory bit:t2 bor:t3 eq:t4]];
    //[_temps addObject:t4];
    return t4;
 }
@@ -384,9 +384,9 @@
 id<ORBitVar> t0 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    //_m.post(BitXor<CP>(x,y,t0));
-   [_m add:[ORFactory bit:x xor:y eq:t0]];
+   [_m add:[ORFactory bit:x bxor:y eq:t0]];
    //_m.post(BitXor<CP>(t0,z,t1));
-   [_m add:[ORFactory bit:t0 xor:z eq:t1]];
+   [_m add:[ORFactory bit:t0 bxor:z eq:t1]];
    //[_temps addObject:t1];
    return t1;
 }

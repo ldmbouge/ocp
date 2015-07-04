@@ -41,7 +41,7 @@ int main(int argc, const char * argv[])
          [cp solve:^{
             NSLog(@"About to search...");
             [cp tryall:D3 suchThat:^bool(ORInt v) { return true;}
-                    in:^(ORInt v) {
+                    do:^(ORInt v) {
                        [cp gthen:x[0] with:v-1];
                        [cp lthen:x[n] with:v+n+1];
                     }];

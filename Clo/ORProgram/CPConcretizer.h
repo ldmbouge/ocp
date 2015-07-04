@@ -11,7 +11,10 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/CPSolver.h>
+//#import <ORProgram/CPSolver.h>
+
+@protocol CPCommonProgram;
+@protocol ORAnnotation;
 
 @interface ORCPConcretizer  : ORVisitor<NSObject>
 -(ORCPConcretizer*) initORCPConcretizer:(id<CPCommonProgram>) solver

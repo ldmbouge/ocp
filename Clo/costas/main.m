@@ -9,50 +9,12 @@
 
  ***********************************************************************/
 
+#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgramFactory.h>
 
-//#import <ORFoundation/ORFactory.h>
-//#import <objcp/CPConstraint.h>
-//#import <objcp/CPFactory.h>
-//#import <ORModeling/ORModeling.h>
-//#import <ORProgram/ORProgramFactory.h>
-//
-//#import "ORCmdLineArgs.h"
-
-class H {
-   id<ORExpr> _h;
-public:
-   H(id<ORExpr> v) { _h = v;}
-   operator id<ORExpr>() { return _h;}
-   H operator+(H e2)
-   {
-      return [_h plus:e2];
-   }
-   H operator-(H e2)
-   {
-      return [_h sub:e2];
-   }
-   H operator*(H e2)
-   {
-      return [_h mul:e2];
-   }
-   H operator==(id<ORExpr> e2)
-   {
-      return [_h eq:e2];
-   }
-   H operator==(H e2)
-   {
-      return [_h eq:e2];
-   }
-};
-
-H operator-(id<ORIntVar> x,H y)
-{
-   return [x sub:y];
-}
-H operator==(id<ORIntVar> x,H y)
-{
-   return [x eq:y];
-}
+#import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
 {
@@ -68,10 +30,11 @@ int main(int argc, const char * argv[])
          id<ORIntVarMatrix>  diff = [ORFactory intVarMatrix:mdl range:R : R domain:D];
          id<ORAnnotation> notes = [ORFactory annotation];
          [notes  dc: [mdl add:[ORFactory alldifferent:costas]]];
+         
          for(ORUInt i=R.low;i<=R.up;i++) {
             for(ORUInt j=R.low;j<=R.up;j++) {
                if (i < j)
-                  [mdl add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
+                  [mdl add:[[diff at:i :j] eq: [[costas at:j] sub:[costas at:j-i]]]];
                else [mdl add:[[diff at:i :j] eq: @0]];
             }
          }
@@ -87,10 +50,11 @@ int main(int argc, const char * argv[])
          }
          for (ORInt k=3; k<=n; k++) {
             for (ORInt l=k+1; l<=n; l++) {
-               [mdl add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
-                H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
+               [mdl add:[[[diff at:k-2 :l-1] plus: [diff at:k :l]] eq:
+                         [[diff at:k-1 :l-1] plus: [diff at:k-1 :l]]]];
             }
          }
+
          __block ORInt nbSol = 0;
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
          

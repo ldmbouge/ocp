@@ -770,7 +770,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5BA07B0F1B179073005BB066"
+               BlueprintIdentifier = "5BFDB31F1B485FC600CF0648"
                BuildableName = "vietnameseSnake"
                BlueprintName = "vietnameseSnake"
                ReferencedContainer = "container:Clo.xcodeproj">

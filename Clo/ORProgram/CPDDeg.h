@@ -14,6 +14,8 @@
 #import <ORProgram/CPProgram.h>
 #import <objcp/CPVar.h>
 
+@protocol CPCommonProgram;
+
 @interface CPDDeg : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>  _vars;  // Model variables
    id<CPVarArray>   _cvs;  // concrete variables

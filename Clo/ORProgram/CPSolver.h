@@ -20,6 +20,7 @@
 
 @class ORRTModel;
 @class CPCoreSolver;
+
 @interface CPINCModel : NSObject<ORPost,ORAddToModel> {
    id<CPEngine>  _engine;
 }

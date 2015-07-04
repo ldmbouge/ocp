@@ -70,8 +70,8 @@ infix operator | { associativity left precedence 80 }
 
 func getSolver(a : VoidPtr) -> CPCommonProgram
 {
-   var at : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(a)).takeUnretainedValue()
-   var tracker =  at.tracker() as! CPCommonProgram
+   let at : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(a)).takeUnretainedValue()
+   let tracker =  at.tracker() as! CPCommonProgram
    return tracker
 }
 

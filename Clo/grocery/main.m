@@ -75,7 +75,7 @@ void splitUpFF(id<CPProgram> cp,id<ORIntVarArray> vars)
          ORInt mid = ([cp min:vars[si]] + [cp max:vars[si]]) / 2;
          [cp try:^{
             [cp gthen:vars[si] with:mid];
-         } or:^{
+         } alt:^{
             [cp lthen:vars[si] with:mid+1];
          }];
       }

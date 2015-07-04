@@ -351,7 +351,7 @@
 		5B6CFD7816D91CD600BCB95F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B6CFD7916D91CD600BCB95F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B6CFD8716D9200800BCB95F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */; };
-		5B6CFD8816D9242A00BCB95F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BE777581594D27C00ADE34E /* main.mm */; };
+		5B6CFD8816D9242A00BCB95F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE777581594D27C00ADE34E /* main.m */; };
 		5B6CFD8B16D9396C00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B6CFD8C16D939C400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B6CFD8D16D939C800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
@@ -5702,7 +5702,6 @@
 		5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPObjectQueue.h; sourceTree = "<group>"; };
 		5B40C21014F80A7D0041D162 /* CPObjectQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPObjectQueue.m; sourceTree = "<group>"; };
 		5B43634015AECE4D00E9458D /* CPDDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDDeg.m; sourceTree = "<group>"; };
-		5B4C342F1B46CC4E0032DA77 /* CPSwift.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = CPSwift.playground; sourceTree = "<group>"; };
 		5B5096E01619B6CB00171F9D /* testDistrib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testDistrib; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B5096E41619B6CC00171F9D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B5096E71619B6CC00171F9D /* testDistrib-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testDistrib-Prefix.pch"; sourceTree = "<group>"; };
@@ -5968,7 +5967,6 @@
 		5BAF72AC1B46F56800BBA8CB /* utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = utilities.swift; sourceTree = "<group>"; };
 		5BAF72B31B470CB900BBA8CB /* magicSeriesSwift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = magicSeriesSwift; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BAF72B51B470CB900BBA8CB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		5BAF72D11B4732C100BBA8CB /* CPSwiftExpe.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = CPSwiftExpe.playground; sourceTree = "<group>"; };
 		5BB1700E1582820500D4791A /* driver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = driver; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BB170121582820500D4791A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BB170151582820500D4791A /* driver-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "driver-Prefix.pch"; sourceTree = "<group>"; };
@@ -6083,7 +6081,7 @@
 		5BE777441594C9E500ADE34E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BE777471594C9E500ADE34E /* fdmul-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fdmul-Prefix.pch"; sourceTree = "<group>"; };
 		5BE777481594C9E500ADE34E /* fdmul.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = fdmul.1; sourceTree = "<group>"; };
-		5BE777581594D27C00ADE34E /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = main.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BE777581594D27C00ADE34E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE7775B1594D27C00ADE34E /* costas-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "costas-Prefix.pch"; sourceTree = "<group>"; };
 		5BE7775C1594D27C00ADE34E /* costas.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = costas.1; sourceTree = "<group>"; };
 		5BE7C24B15A94BDF00B2CBC1 /* warehouse */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = warehouse; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7577,7 +7575,7 @@
 				5B27573517E87B560082934E /* Supporting Files */,
 			);
 			path = costas2;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		5B27573517E87B560082934E /* Supporting Files */ = {
 			isa = PBXGroup;
@@ -8000,8 +7998,6 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
-				5BAF72D11B4732C100BBA8CB /* CPSwiftExpe.playground */,
-				5B4C342F1B46CC4E0032DA77 /* CPSwift.playground */,
 				5BEC7FB81B3A4DFA00B7A133 /* queen-chess-piece-114.png */,
 				B100EE8B17C7265500FC4FDC /* libgurobi55.so */,
 				B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */,
@@ -8034,10 +8030,7 @@
 				5BDBBAAB1718D96C00322163 /* stressLimit */,
 				5B115521171B1CF5005371AA /* slabLNSModel */,
 				5BE12176173C75A3000C9AA9 /* bug */,
-				5B67A4FE17E227BB00516F50 /* wka */,
-				5B27573217E87B560082934E /* costas2 */,
 				5BD601C317F9A627006A9CDC /* bugTest */,
-				5BFDB3211B485FC600CF0648 /* vietnameseSnake */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -8196,6 +8189,9 @@
 				5B6B0F00178B558000104246 /* circle */,
 				5B6E89281379D3EA005DB4CA /* Clo */,
 				5B7B476D15F0E4AD005FF875 /* coloringModel */,
+				5B67A4FE17E227BB00516F50 /* wka */,
+				5B27573217E87B560082934E /* costas2 */,
+				5BFDB3211B485FC600CF0648 /* vietnameseSnake */,
 				5BE777571594D27C00ADE34E /* costas */,
 				5B28CAE51668FC63008AB802 /* debruijn */,
 				5BB898F71697564D00FED099 /* eq20 */,
@@ -9000,7 +8996,7 @@
 		5BE777571594D27C00ADE34E /* costas */ = {
 			isa = PBXGroup;
 			children = (
-				5BE777581594D27C00ADE34E /* main.mm */,
+				5BE777581594D27C00ADE34E /* main.m */,
 				5BE7775C1594D27C00ADE34E /* costas.1 */,
 				5BE7775A1594D27C00ADE34E /* Supporting Files */,
 			);
@@ -12742,7 +12738,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B6CFD8816D9242A00BCB95F /* main.mm in Sources */,
+				5B6CFD8816D9242A00BCB95F /* main.m in Sources */,
 				5B6CFD9516D939E500BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -21318,6 +21314,7 @@
 				5BFDB3271B485FC600CF0648 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BFF68361860D98E00B50286 /* Build configuration list for PBXNativeTarget "slabIP" */ = {
 			isa = XCConfigurationList;
