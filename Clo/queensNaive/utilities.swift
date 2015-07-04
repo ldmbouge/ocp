@@ -31,17 +31,41 @@ infix operator ≠ { associativity left precedence 130 }
 public func ≠(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.neq(rhs)
 }
-public func +(lhs: ORExpr,rhs : Int) -> ORExpr {
-   return lhs.plus(rhs);
-}
 public func +(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
-   return lhs.plus(rhs);
+   return lhs.plus(rhs)
+}
+public func +(lhs: ORExpr,rhs : Int) -> ORExpr {
+   return lhs.plus(rhs)
+}
+public func +(lhs: ORExpr,rhs : ORInt) -> ORExpr {
+   return lhs.plus(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func -(lhs: ORExpr,rhs : AnyObject) -> ORExpr {
+   return lhs.sub(rhs)
+}
+public func -(lhs: ORExpr,rhs : Int) -> ORExpr {
+   return lhs.sub(rhs)
+}
+public func -(lhs: ORExpr,rhs : ORInt) -> ORExpr {
+   return lhs.sub(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func *(lhs: ORExpr, rhs : ORExpr) -> ORExpr {
+   return lhs.mul(rhs)
 }
 public func *(lhs: ORExpr, rhs : Int) -> ORExpr {
    return lhs.mul(rhs)
 }
 public func *(lhs: ORExpr, rhs : ORInt) -> ORExpr {
    return lhs.mul(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func /(lhs: ORExpr, rhs : ORExpr) -> ORExpr {
+   return lhs.div(rhs)
+}
+public func /(lhs: ORExpr, rhs : Int) -> ORExpr {
+   return lhs.div(rhs)
+}
+public func /(lhs: ORExpr, rhs : ORInt) -> ORExpr {
+   return lhs.div(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
 }
 
 func convertArray(s : [UnsafeMutablePointer<Void>]) -> [AnyObject] {
