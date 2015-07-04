@@ -14,8 +14,6 @@
    id<CPCommonProgram> _solver;
 }
 -(id)initWith:(id<CPCommonProgram>)solver var:(id<ORIntVar>)x andVal:(ORInt)v;
--(void)execute;
--(id<ORTracker>)tracker;
 @end
 
 @interface ORSDiff : ORObject<ORSTask> {
@@ -24,8 +22,6 @@
    id<CPCommonProgram> _solver;
 }
 -(id)initWith:(id<CPCommonProgram>)solver var:(id<ORIntVar>)x andVal:(ORInt)v;
--(void)execute;
--(id<ORTracker>)tracker;
 @end
 
 @interface ORSFFTask : ORObject<ORSTask> {
@@ -33,8 +29,6 @@
    id<CPCommonProgram> _solver;
 }
 -(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x;
--(void)execute;
--(id<ORTracker>)tracker;
 @end
 
 @interface ORSDo : ORObject<ORSTask> {
@@ -42,8 +36,6 @@
    void(^_body)();
 }
 -(id)initWith:(id<CPCommonProgram>)solver block:(void(^)())body;
--(void)execute;
--(id<ORTracker>)tracker;
 @end
 
 @interface ORSSequence : ORObject<ORSTask> {
@@ -52,8 +44,6 @@
    ORInt               _cnt;
 }
 -(id)initWith:(id<CPCommonProgram>)solver tasks:(id*)t count:(int)n;
--(void)execute;
--(id<ORTracker>)tracker;
 @end
 
 @interface ORSAlts : ORObject<ORSTask> {
@@ -63,23 +53,21 @@
    ORInt               _cnt;
 }
 -(id)initWith:(id<CPCommonProgram>)solver tasks:(id*)buf count:(ORInt)n;
--(void)execute;
--(id<ORTracker>)tracker;
 @end
 
 @interface ORSDoWhile : ORObject<ORSTask>
 -(id)initWith:(id<CPCommonProgram>)solver condition:(bool(^)())cond body:(id<ORSTask>(^)())body;
--(void)execute;
--(id<ORTracker>)tracker;
 @end
 
 @interface ORSForallDo : ORObject<ORSTask>
 -(id)initWith:(id<CPCommonProgram>)solver
         range:(id<ORIntRange>)range
          body:(id<ORSTask>(^)(ORInt))body;
--(void)execute;
--(id<ORTracker>)tracker;
 @end
+
+// -----------------------------------------------------------------------------------------------
+// Implementation
+// -----------------------------------------------------------------------------------------------
 
 @implementation ORSEqual
 -(id)initWith:(id<CPCommonProgram>)solver var:(id<ORIntVar>)x andVal:(ORInt)v
