@@ -15,6 +15,7 @@
 }
 -(id)initWith:(id<CPCommonProgram>)solver var:(id<ORIntVar>)x andVal:(ORInt)v;
 -(void)execute;
+-(id<ORTracker>)tracker;
 @end
 
 @interface ORSDiff : ORObject<ORSTask> {
@@ -24,6 +25,7 @@
 }
 -(id)initWith:(id<CPCommonProgram>)solver var:(id<ORIntVar>)x andVal:(ORInt)v;
 -(void)execute;
+-(id<ORTracker>)tracker;
 @end
 
 @interface ORSFFTask : ORObject<ORSTask> {
@@ -32,33 +34,51 @@
 }
 -(id)initWith:(id<CPCommonProgram>)solver vars:(id<ORIntVarArray>)x;
 -(void)execute;
+-(id<ORTracker>)tracker;
+@end
+
+@interface ORSDo : ORObject<ORSTask> {
+   id<CPCommonProgram> _solver;
+   void(^_body)();
+}
+-(id)initWith:(id<CPCommonProgram>)solver block:(void(^)())body;
+-(void)execute;
+-(id<ORTracker>)tracker;
 @end
 
 @interface ORSSequence : ORObject<ORSTask> {
-   NSArray* _t;
+   id<CPCommonProgram> _solver;
+   id<ORSTask>*      _tasks;
+   ORInt               _cnt;
 }
--(id)initWith:(NSArray*)t;
+-(id)initWith:(id<CPCommonProgram>)solver tasks:(id*)t count:(int)n;
 -(void)execute;
+-(id<ORTracker>)tracker;
 @end
 
 @interface ORSAlts : ORObject<ORSTask> {
    id<CPCommonProgram> _solver;
-   NSArray* _t;
-   id<ORIntRange> _r;
+   id<ORIntRange>      _r;
+   id<ORSTask>*      _tasks;
+   ORInt               _cnt;
 }
--(id)initWith:(id<CPCommonProgram>)solver tasks:(NSArray*)t;
+-(id)initWith:(id<CPCommonProgram>)solver tasks:(id*)buf count:(ORInt)n;
 -(void)execute;
+-(id<ORTracker>)tracker;
 @end
 
 @interface ORSDoWhile : ORObject<ORSTask>
--(id)initWithCondition:(bool(^)())cond body:(id<ORSTask>(^)())body;
+-(id)initWith:(id<CPCommonProgram>)solver condition:(bool(^)())cond body:(id<ORSTask>(^)())body;
 -(void)execute;
+-(id<ORTracker>)tracker;
 @end
 
 @interface ORSForallDo : ORObject<ORSTask>
--(id)initWithRange:(id<ORIntRange>)range
-              body:(id<ORSTask>(^)(ORInt))body;
+-(id)initWith:(id<CPCommonProgram>)solver
+        range:(id<ORIntRange>)range
+         body:(id<ORSTask>(^)(ORInt))body;
 -(void)execute;
+-(id<ORTracker>)tracker;
 @end
 
 @implementation ORSEqual
@@ -73,6 +93,18 @@
 -(void)dealloc
 {
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
+}
+-(id)retain
+{
+   return [super retain];
+}
+-(id)autorelease
+{
+   return [super autorelease];
 }
 -(oneway void)release
 {
@@ -98,6 +130,10 @@
 {
    [super dealloc];
 }
+-(id<ORTracker>)tracker
+{
+   return _solver;
+}
 -(void)execute
 {
    [_solver diff:_x with:_v];
@@ -112,6 +148,10 @@
    _solver = solver;
    _vars = x;
    return self;
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
 }
 -(void)execute
 {
@@ -144,47 +184,83 @@
 }
 @end
 
-@implementation ORSSequence
--(id)initWith:(NSArray*)t
+@implementation ORSDo
+-(id)initWith:(id<CPCommonProgram>)solver block:(void(^)())body
 {
    self = [super init];
-   _t = [t retain];
+   _solver = solver;
+   _body = [body copy];
    return self;
 }
 -(void)dealloc
 {
-   [_t release];
+   [_body release];
    [super dealloc];
 }
 -(void)execute
 {
-   for(id<ORSTask> t in _t) {
-      [t execute];
-   }
+   _body();
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
+}
+@end
+
+
+@implementation ORSSequence
+-(id)initWith:(id<CPCommonProgram>)solver tasks:(id*)t count:(int)n
+{
+   self = [super init];
+   _solver = solver;
+   _tasks = malloc(sizeof(id)*n);
+   _cnt = n;
+   memcpy(_tasks, t, sizeof(id)*n);
+   return self;
+}
+-(void)dealloc
+{
+   free(_tasks);
+   [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
+}
+-(void)execute
+{
+   for(int k=0;k<_cnt;k++)
+      [_tasks[k] execute];
 }
 @end
 
 @implementation ORSAlts
--(id)initWith:(id<CPCommonProgram>)solver tasks:(NSArray*)t
+-(id)initWith:(id<CPCommonProgram>)solver tasks:(id*)buf count:(ORInt)n
 {
    self = [super init];
-   _t = [[NSArray alloc] initWithArray:t];
-   _r = [ORFactory intRange:solver low:0 up:(ORInt)_t.count-1];
+   _cnt   = n;
+   _tasks = malloc(n*sizeof(id));
+   memcpy(_tasks, buf, sizeof(id)*n);
+   _r = [ORFactory intRange:solver low:0 up:(ORInt)n-1];
    _solver = solver;
    return self;
 }
 -(void)dealloc
 {
-   [_t release];
+   free(_tasks);
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
 }
 -(void)execute
 {
-   __unsafe_unretained NSArray* theArray = _t;
+   id<ORSTask>* ptr = _tasks;
    [_solver tryall:_r
           suchThat:nil
                 do:^(ORInt k) {
-                   [(id<ORSTask>)(theArray[k]) execute];
+                   [ptr[k] execute];
                 }];
 }
 @end
@@ -192,10 +268,12 @@
 @implementation ORSDoWhile {
    bool(^_cond)();
    id<ORSTask>(^_body)();
+   id<CPCommonProgram> _solver;
 }
--(id)initWithCondition:(bool(^)())cond body:(id<ORSTask>(^)())body
+-(id)initWith:(id<CPCommonProgram>)solver condition:(bool(^)())cond body:(id<ORSTask>(^)())body
 {
    self = [super init];
+   _solver = solver;
    _cond = [cond copy];
    _body = [body copy];
    return self;
@@ -205,6 +283,10 @@
    [_cond release];
    [_body release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
 }
 -(void)execute
 {
@@ -218,10 +300,12 @@
 @implementation ORSForallDo {
    id<ORIntRange> _range;
    id<ORSTask>(^_body)(ORInt);
+   id<CPCommonProgram> _solver;
 }
--(id)initWithRange:(id<ORIntRange>)range body:(id<ORSTask>(^)(ORInt))body
+-(id)initWith:(id<CPCommonProgram>)solver range:(id<ORIntRange>)range body:(id<ORSTask>(^)(ORInt))body
 {
    self = [super init];
+   _solver = solver;
    _range = range;
    _body  = [body copy];
    return self;
@@ -230,6 +314,10 @@
 {
    [_body release];
    [super dealloc];
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
 }
 -(void)execute
 {
@@ -248,26 +336,25 @@ void* firstFail(id<CPCommonProgram> solver,id<ORIntVarArray> x)
    return task;
 }
 
-void* sequence(id<CPCommonProgram> solver,NSArray* s)
+void* sequence(id<CPCommonProgram> solver,int n,void** s)
 {
-   id<ORSTask> task = [[ORSSequence alloc] initWith:s];
+   id<ORSTask> task = [[ORSSequence alloc] initWith:solver tasks:(id*)s count:n];
    [solver trackObject:task];
    return task;
 }
-
-void* alts(id<CPCommonProgram> solver,NSArray* s)
+void* alts(id<CPCommonProgram> solver,int n,void** s)
 {
-   id<ORSTask> task = [[ORSAlts alloc] initWith:solver tasks:s];
+   id<ORSTask> task = [[ORSAlts alloc] initWith:solver tasks:(id*)s count:n];
    [solver trackObject:task];
    return task;
 }
-id<ORSTask> equal(id<CPCommonProgram> solver,id<ORIntVar> x,ORInt v)
+void* equal(id<CPCommonProgram> solver,id<ORIntVar> x,ORInt v)
 {
    id<ORSTask> task = [[ORSEqual alloc] initWith:solver var:x andVal:v];
    [solver trackObject:task];
    return task;
 }
-id<ORSTask> diff(id<CPCommonProgram> solver,id<ORIntVar> x,ORInt v)
+void* diff(id<CPCommonProgram> solver,id<ORIntVar> x,ORInt v)
 {
    id<ORSTask> task = [[ORSDiff alloc] initWith:solver var:x andVal:v];
    [solver trackObject:task];
@@ -278,7 +365,7 @@ void* __nonnull whileDo(id<CPCommonProgram> solver,
                         bool(^__nonnull cond)(),
                         void* __nonnull (^__nonnull body)())
 {
-   id<ORSTask> task = [[ORSDoWhile alloc] initWithCondition:cond body:(id)body];
+   id<ORSTask> task = [[ORSDoWhile alloc] initWith:solver condition:cond body:(id)body];
    [solver trackObject:task];
    return task;
 }
@@ -288,10 +375,15 @@ void* __nonnull forallDo(id<CPCommonProgram> solver,
                          void* __nonnull(^__nonnull body)(SInt)
                          )
 {
-   id<ORSTask> task = [[ORSForallDo alloc] initWithRange:R body:(id)body];
+   id<ORSTask> task = [[ORSForallDo alloc] initWith:solver range:R body:(id)body];
    [solver trackObject:task];
    return task;
 }
 
-
+void* __nonnull Do(id<CPCommonProgram> solver,void(^__nonnull body)())
+{
+   id<ORSTask> task = [[ORSDo alloc] initWith:solver block:(id)body];
+   [solver trackObject:task];
+   return task;
+}
 

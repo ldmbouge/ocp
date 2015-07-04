@@ -5901,6 +5901,7 @@
 		5BAF72AC1B46F56800BBA8CB /* utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = utilities.swift; sourceTree = "<group>"; };
 		5BAF72B31B470CB900BBA8CB /* magicSeriesSwift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = magicSeriesSwift; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BAF72B51B470CB900BBA8CB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		5BAF72D11B4732C100BBA8CB /* CPSwiftExpe.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = CPSwiftExpe.playground; sourceTree = "<group>"; };
 		5BB1700E1582820500D4791A /* driver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = driver; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BB170121582820500D4791A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BB170151582820500D4791A /* driver-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "driver-Prefix.pch"; sourceTree = "<group>"; };
@@ -7916,6 +7917,7 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				5BAF72D11B4732C100BBA8CB /* CPSwiftExpe.playground */,
 				5B4C342F1B46CC4E0032DA77 /* CPSwift.playground */,
 				5BEC7FB81B3A4DFA00B7A133 /* queen-chess-piece-114.png */,
 				B100EE8B17C7265500FC4FDC /* libgurobi55.so */,

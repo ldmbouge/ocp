@@ -35,13 +35,14 @@
 
 @protocol ORSTask<NSObject>
 -(void)execute;
+-(__nonnull id<ORTracker>  __unsafe_unretained)tracker;
 @end
 
-__nonnull id<ORSTask> equal(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
-__nonnull id<ORSTask> diff(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
+void* __nonnull equal(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
+void* __nonnull diff(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
 void* __nonnull firstFail(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVarArray> x);
-void* __nonnull sequence(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
-void* __nonnull alts(__nonnull id<CPCommonProgram> solver,NSArray* __nonnull s);
+void* __nonnull sequence(__nonnull id<CPCommonProgram> solver,int n,void* __nonnull*__nonnull s);
+void* __nonnull alts(__nonnull id<CPCommonProgram> solver,int n,void*__nonnull* __nonnull s);
 void* __nonnull whileDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
                         bool(^__nonnull cond)(),
                         void* __nonnull (^__nonnull body)());
@@ -50,4 +51,5 @@ void* __nonnull forallDo(__nonnull __unsafe_unretained id<CPCommonProgram> solve
                          __nonnull __unsafe_unretained id<ORIntRange> R,
                          void* __nonnull(^__nonnull body)(SInt)
                          );
+void* __nonnull Do(__nonnull __unsafe_unretained id<CPCommonProgram> solver,void(^__nonnull body)());
 

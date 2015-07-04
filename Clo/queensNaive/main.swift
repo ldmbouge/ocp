@@ -25,11 +25,6 @@ autoreleasepool {
       }
    }
    let cp = ORFactory.createCPProgram(model)
-   cp.onSolution {
-      println(ORFactory.intArray(cp,range:R) {
-         k in cp.intValue(x[k])
-      })
-   }
    let R1 = ORFactory.intRange(model, low: 0, up: n/2)
    let R2 = ORFactory.intRange(model, low: n/2+1, up: n - 1)
    let y1 = ORFactory.intVarArray(model, range: R1) { k in x[k] }
@@ -48,8 +43,16 @@ autoreleasepool {
          let y = x[k]
          return whileDo(cp,{ !cp.bound(y)}) {
             let v = cp.min(y)
-            return alts(cp,[equal(cp,y,v),diff(cp,y,v)])
+            return equal(cp,y,v) | diff(cp,y,v)
          }
+      } »
+      Do(cp) {
+         print("Solution: " + ORFactory.intArray(cp,range:R) {
+            k in cp.intValue(x[k])
+         }.description)
+      } »
+      Do(cp) {
+         println("\tAnother message...")
       }
    }
    cp.clearOnSolution()
