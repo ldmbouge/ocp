@@ -55,41 +55,48 @@ func unwrap<T>(x : UnsafeMutablePointer<Void>) -> T {
    return unsafeBitCast(x, T.self)
 }
 
+typealias VoidPtr = UnsafeMutablePointer<Void>
+typealias VoidBuf = UnsafeMutableBufferPointer<VoidPtr>
 
-infix operator » { associativity left precedence 80 }
+infix operator » { associativity left precedence 70 }
 infix operator | { associativity left precedence 80 }
 
-public func »(a : UnsafeMutablePointer<Void>, b : UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void> {
+func getSolver(a : VoidPtr) -> CPCommonProgram
+{
    var at : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(a)).takeUnretainedValue()
    var tracker =  at.tracker() as! CPCommonProgram
-   var ptr = UnsafeMutablePointer<UnsafeMutablePointer<Void>>.alloc(2)
-   var ta = UnsafeMutableBufferPointer<UnsafeMutablePointer<Void>>(start: ptr, count: 2)
-   ta[0] = a
-   ta[1] = b
-   let rv = sequence(tracker, Int32(2), ptr)
-   ptr.dealloc(2)
-   return rv
+   return tracker
+}
+
+func packageVoidArray(sz : Int,body : (Int32,UnsafeMutablePointer<VoidPtr>,VoidBuf) -> VoidPtr) -> VoidPtr
+{
+   var ptr = UnsafeMutablePointer<VoidPtr>.alloc(sz)
+   var ta = UnsafeMutableBufferPointer<VoidPtr>(start: ptr, count: sz)
+   let rv = body(Int32(sz), ptr,ta)
+   ptr.dealloc(sz)
+   return rv;
+}
+
+public func »(a : UnsafeMutablePointer<Void>, b : UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void> {
+   return packageVoidArray(2) { n,base,ptr in
+      var tracker = getSolver(a)
+      ptr[0] = a
+      ptr[1] = b
+      return sequence(tracker,n,base)
+   }
 }
 
 public func |(a : UnsafeMutablePointer<Void>, b : UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void> {
-   var at : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(a)).takeUnretainedValue()
-   var tracker =  at.tracker() as! CPCommonProgram
-   var ptr = UnsafeMutablePointer<UnsafeMutablePointer<Void>>.alloc(2)
-   var ta = UnsafeMutableBufferPointer<UnsafeMutablePointer<Void>>(start: ptr, count: 2)
-   ta[0] = a
-   ta[1] = b
-   let rv = alts(tracker, Int32(2), ptr)
-   ptr.dealloc(2)
-   return rv
+   return packageVoidArray(2) { n,base,ptr in
+      var tracker = getSolver(a)
+      ptr[0] = a
+      ptr[1] = b
+      return alts(tracker,n,base)
+   }
 }
 
 func sum(tracker : ORTracker,R : ORIntRange,b : ORInt -> ORExpr) -> ORExpr {
    return ORFactory.sum(tracker, over: R, suchThat: nil, of: b)
-//   var rv : ORExpr = ORFactory.integer(tracker, value: 0)
-//   for var i : ORInt = R.low(); i <= R.up(); i++ {
-//      rv = rv.plus(b(i))
-//   }
-//   return rv
 }
 func range(tracker : ORTracker,r : Range<Int>) -> ORIntRange {
    return ORFactory.intRange(tracker, low: ORInt(r.startIndex), up: ORInt(r.endIndex - 1))
