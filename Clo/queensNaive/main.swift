@@ -11,14 +11,29 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import ORProgram
 
+//func createCPProgram(model : ORModel) -> CPProgram {
+//   let cp  = CPSolverFactory.solver()                      // creates a solver
+//   let fm  = model.flatten(nil)                            // flatten the model
+//   cp.concretize(fm)                                       // concretize model in solver
+//   cp.onSolution {
+//      cp.solutionPool().addSolution(cp.captureSolution())  // add the solution to the pool
+//   }
+//   return cp
+//}
+
+func repeatDo(p : CPProgram,body : Void -> UnsafeMutablePointer<Void>,rep : Void -> Void) -> UnsafeMutablePointer<Void>? {
+   return nil
+}
+
+
 autoreleasepool {
    let n : ORInt = 8
    let model = ORFactory.createModel()
    let R     = ORFactory.intRange(model, low: 0, up: n - 1)
    let x     = ORFactory.intVarArray(model, range: R, domain: R)
    let e     = sum(model, R) { k in x[k] }
-   for var i : ORInt = 0; i < n ; i++ {
-      for var j : ORInt = i+1; j < n; j++ {
+   for  i : ORInt in 0..<n  {
+      for j : ORInt in i+1..<n {
          model.add(x[i] ≠ x[j])
          model.add(x[i] ≠ x[j] + (i-j))
          model.add(x[i] ≠ x[j] + (j-i))
@@ -38,12 +53,23 @@ autoreleasepool {
 //         return alts(cp,[equal(cp,y,v),diff(cp,y,v)])
 //      }
 //   }
+   let nbF = ORFactory.mutable(cp, value: 0)
    cp.search {
-      forallDo(cp,R) { k in
-         let y = x[k]
-         return whileDo(cp,{ !cp.bound(y)}) {
-            let v = cp.min(y)
-            return equal(cp,y,v) | diff(cp,y,v)
+//      repeatDo(cp, {
+//            limitSolutionsDo(cp, nbF.intValue()) { firstFail(cp, x) }
+//         }, { nbF *= 2 }
+//      )
+//      
+//      withController(cp,ORSemBDSController.self) {
+//         firstFail(cp, x)
+//      }
+      
+      limitSolutionsDo(cp,4) {
+         forallDo(cp,R) { k in
+            whileDo(cp,{ !cp.bound(x[k])}) {
+               let v = cp.min(x[k])
+               return equal(cp,x[k],v) | diff(cp,x[k],v)
+            }
          }
       } »
       Do(cp) {

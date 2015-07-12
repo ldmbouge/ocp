@@ -38,6 +38,14 @@
 -(id)initWith:(id<CPCommonProgram>)solver block:(void(^)())body;
 @end
 
+@interface ORSLimitSolutionsDo : ORObject<ORSTask> {
+   id<CPProgram> _solver;
+   id<ORSTask>(^_body)();
+   ORInt _lim;
+}
+-(id)initWith:(id<CPCommonProgram>)solver limit:(ORInt)k block:(id<ORSTask>(^)())body;
+@end
+
 @interface ORSSequence : ORObject<ORSTask> {
    id<CPCommonProgram> _solver;
    id<ORSTask>*      _tasks;
@@ -194,6 +202,34 @@
    return _solver;
 }
 @end
+
+@implementation ORSLimitSolutionsDo
+-(id)initWith:(id<CPCommonProgram>)solver limit:(ORInt)k block:(id<ORSTask>(^)())body
+{
+   self = [super init];
+   _solver = (id)solver;
+   _body = [body copy];
+   _lim  = k;
+   return self;
+}
+-(void)dealloc
+{
+   [_body release];
+   [super dealloc];
+}
+-(void)execute
+{
+   [_solver limitSolutions:_lim in: ^{      
+      id<ORSTask> todo = _body();
+      [todo execute];
+   }];
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
+}
+@end
+
 
 
 @implementation ORSSequence
@@ -371,6 +407,13 @@ void* __nonnull forallDo(id<CPCommonProgram> solver,
 void* __nonnull Do(id<CPCommonProgram> solver,void(^__nonnull body)())
 {
    id<ORSTask> task = [[ORSDo alloc] initWith:solver block:(id)body];
+   [solver trackObject:task];
+   return task;
+}
+
+void* __nonnull limitSolutionsDo(id<CPCommonProgram> solver,ORInt k,void*(^__nonnull body)())
+{
+   id<ORSTask> task = [[ORSLimitSolutionsDo alloc] initWith:solver limit:k block:(id)body];
    [solver trackObject:task];
    return task;
 }

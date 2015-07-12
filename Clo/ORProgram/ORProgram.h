@@ -52,4 +52,8 @@ void* __nonnull forallDo(__nonnull __unsafe_unretained id<CPCommonProgram> solve
                          void* __nonnull(^__nonnull body)(SInt)
                          );
 void* __nonnull Do(__nonnull __unsafe_unretained id<CPCommonProgram> solver,void(^__nonnull body)());
+void* __nonnull limitSolutionsDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
+                                 ORInt k,
+                                 void* __nonnull(^__nonnull body)());
+
 
