@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2012-2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -288,9 +288,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackMutable: o];
    return o;
 }
-+(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 using: (ORIntxInt2Int)block
++(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with: (ORIntxInt2Int)block
 {
-   ORIntMatrixI* o = [[ORIntMatrixI alloc] initORIntMatrix: tracker range: r1 : r2 using: block];
+   ORIntMatrixI* o = [[ORIntMatrixI alloc] initORIntMatrix: tracker range: r1 : r2 with: block];
    [tracker trackMutable: o];
    return o;
 }
@@ -423,6 +423,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
 }
++(id<ORIntVar>) intVar: (id<ORTracker>) model bounds: (id<ORIntRange>) r
+{
+   return [[ORIntVarI alloc]  initORIntVarI: model bounds: r];
+}
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker value: (ORInt) value
 {
    return [[ORIntVarI alloc]  initORIntVarI: tracker domain: RANGE(tracker,value,value)];
@@ -520,6 +524,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
       [o set: [ORFactory intVar: tracker domain:domain] at:k];
+   return (id<ORIntVarArray>)o;
+}
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range bounds: (id<ORIntRange>) domain
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set: [ORFactory intVar: tracker bounds:domain] at:k];
    return (id<ORIntVarArray>)o;
 }
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo
@@ -636,6 +647,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
          [o set:[ORFactory intVar:cp domain:domain] at:i :j];
    return (id<ORIntVarMatrix>)o;
 }
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 bounds: (id<ORIntRange>) domain
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
+   for(ORInt i=[r0 low];i <= [r0 up];i++)
+      for(ORInt j= [r1 low];j <= [r1 up];j++)
+         [o set:[ORFactory intVar:cp bounds:domain] at:i :j];
+   return (id<ORIntVarMatrix>)o;
+}
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
@@ -645,6 +664,16 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
             [o set:[ORFactory intVar:cp domain:domain] at:i :j :k];
    return (id<ORIntVarMatrix>)o;
 }
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 bounds: (id<ORIntRange>) domain
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
+   for(ORInt i= [r0 low];i <= [r0 up]; i++)
+      for(ORInt j= [r1 low]; j <= [r1 up]; j++)
+         for(ORInt k= [r2 low]; k <= [r2 up];k++)
+            [o set:[ORFactory intVar:cp bounds:domain] at:i :j :k];
+   return (id<ORIntVarMatrix>)o;
+}
+
 +(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
@@ -867,6 +896,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) imply:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i
+{
+    id<ORConstraint> o = [[ORImplyEqualc alloc] initImply: b equiv:x eqi: i];
+    [model trackObject:o];
+    return o;
+}
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyEqualc alloc] initReify: b equiv:x eqi: i];
@@ -1054,6 +1089,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) geq:(id<ORTracker>)model  x: (id<ORIntVar>)x y: (id<ORIntVar>) y plus:(ORInt)c
+{
+   return [self lEqual: model var: y to: x plus: -c];
+}
 +(id<ORConstraint>) lEqual:(id<ORTracker>)model  coef:(ORInt)a times: (id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>) y plus:(ORInt)c
 {
    id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:a times:x leq:b times:y plus:c];
@@ -1156,10 +1195,17 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x
 {
-   id<ORConstraint> o = [[ORCircuitI alloc] initORCircuitI:x];
+   id<ORConstraint> o = [[ORCircuit alloc] initORCircuit:x];
    [[x tracker] trackObject:o];
    return o;
 }
++(id<ORConstraint>) path: (id<ORIntVarArray>) x
+{
+   id<ORConstraint> o = [[ORPath alloc] initORPath:x];
+   [[x tracker] trackObject:o];
+   return o;
+}
+
 +(id<ORConstraint>) subCircuit: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORSubCircuit alloc] initORSubCircuit:x];
@@ -1172,6 +1218,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker] trackObject:o];
    return o;
 }
+
 +(id<ORConstraint>) packing:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
 {
    id<ORConstraint> o = [[ORPackingI alloc] initORPackingI:item itemSize:itemSize load:load];

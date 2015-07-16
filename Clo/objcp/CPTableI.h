@@ -15,7 +15,7 @@
 #import <ORFoundation/ORDataI.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
-#import "CPIntVarI.h"
+#import <objcp/CPIntVarI.h>
 
 @interface CPTableCstrI : CPCoreConstraint<CPConstraint> {
     CPIntVar**     _var;

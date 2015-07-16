@@ -9,15 +9,14 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
 #import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORConstraint.h>
-#import "ORArray.h"
-#import "ORSet.h"
-#import "ORVar.h"
-#import "ORExprI.h"
-#import "ORVisit.h"
+#import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORVisit.h>
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
@@ -207,6 +206,10 @@
 -(id<ORFloatArray>) array;
 -(id<ORIntVar>)       idx;
 -(id<ORFloatVar>)     res;
+@end
+
+@interface ORImplyEqualc : ORConstraintI<ORImplyEqualc>
+-(ORImplyEqualc*)initImply:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c;
 @end
 
 @interface ORReifyEqualc : ORConstraintI<ORReifyEqualc>
@@ -399,8 +402,13 @@
 -(id<ORIntVarArray>)y;
 @end
 
-@interface ORCircuitI : ORConstraintI<ORCircuit>
--(ORCircuitI*)initORCircuitI:(id<ORIntVarArray>)x;
+@interface ORCircuit : ORConstraintI<ORCircuit>
+-(ORCircuit*)initORCircuit:(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>) array;
+@end
+
+@interface ORPath : ORConstraintI<ORPath>
+-(ORPath*)initORPath:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) array;
 @end
 
@@ -410,7 +418,7 @@
 @end
 
 @interface ORNoCycleI : ORConstraintI<ORNoCycle>
--(ORCircuitI*)initORNoCycleI:(id<ORIntVarArray>)x;
+-(ORNoCycleI*)initORNoCycleI:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) array;
 @end
 

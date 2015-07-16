@@ -9,12 +9,12 @@
 
  ***********************************************************************/
 
-#import "CPBitArrayDom.h"
-#import "CPError.h"
-#import "CPBitVar.h"
+#import <objcp/CPBitArrayDom.h>
+#import <objcp/CPError.h>
+#import <objcp/CPBitVar.h>
+#import <objcp/CPBitMacros.h>
+#import <objcp/CPIntVarI.h>
 #import "CPBitVarI.h"
-#import "CPBitMacros.h"
-#import "CPIntVarI.h"
 
 #define BITFREE(idx)     ((_low[WORDIDX(idx)]._val ^ _up[WORDIDX(idx)]._val) & ONEAT(idx))
 #define SETBITTRUE(idx)   (assignTRUInt(&_low[WORDIDX(idx)],_low[WORDIDX(idx)]._val | ONEAT(idx),_trail))

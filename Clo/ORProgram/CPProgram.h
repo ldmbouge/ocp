@@ -63,6 +63,11 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
 -(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Float) o;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Float) o1 then: (ORInt2Float) o2;
+
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Float) o;
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2;
 
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;
@@ -95,6 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
                   onFailure: (ORInt2Void) onFailure;
 
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
+-(void)                 try: (ORClosure) body then: (ORClosure) body;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;

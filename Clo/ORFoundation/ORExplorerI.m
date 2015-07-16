@@ -211,6 +211,26 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self limitSolutions: 1 in: cl];
 }
 
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   ORMutableIntegerI* found = [[ORMutableIntegerI alloc] initORMutableIntegerI: _engine value: 0];
+   [self try:
+    ^{
+       [self once: ^ { left(); }];
+       [found setValue: true];
+    }
+         alt:
+    ^{
+       ORBool f = [found intValue];
+       [found release];
+       if (f)
+         right();
+       else
+          [self fail];
+    }
+   ];
+}
+
 -(void) limitSolutions: (ORInt) nb in: (ORClosure) cl
 {
    ORLimitSolutions* limit = [[ORLimitSolutions alloc] initORLimitSolutions: nb];
@@ -244,6 +264,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self push: limit];
    [limit release];
    cl();
+   [limit succeeds];
    [self popController];
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl

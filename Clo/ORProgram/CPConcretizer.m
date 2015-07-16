@@ -313,6 +313,16 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitPath:(id<ORPath>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVarArray> ax = [cstr array];
+      [ax visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory path:_gamma[ax.getId]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitSubCircuit:(id<ORCircuit>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -324,12 +334,12 @@
    }
 }
 
--(void) visitNocycle:(id<ORSubCircuit>) cstr
+-(void) visitNocycle:(id<ORNoCycle>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory nocycle: _gamma[ax.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory path: _gamma[ax.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -388,6 +398,8 @@
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
+   NSLog(@"Objective v.getId: %d",v.getId);
+   NSLog(@"visitMinimizeVar: %@",_gamma[v.getId]);
    if (_gamma[v.getId] == NULL) {
       id<ORVar> o = [v var];
       [o visit: self];
@@ -764,6 +776,19 @@
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"reached elementMatrixVar in CPConcretizer"];
+}
+-(void) visitImplyEqualc: (id<ORImplyEqualc>) cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> b = [cstr b];
+        id<ORIntVar> x = [cstr x];
+        ORInt cst = [cstr cst];
+        [b visit: self];
+        [x visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory imply: _gamma[b.getId] with: _gamma[x.getId] eqi: cst];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
 {
@@ -1217,8 +1242,12 @@
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   if (!_gamma[v.getId])
-      _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
+   if (!_gamma[v.getId]) {
+      if ([v hasDenseDomain])
+         _gamma[v.getId] = [CPFactory intVar: _engine bounds: [v domain]];
+      else
+         _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
+   }
 }
 
 -(void) visitFloatVar: (id<ORFloatVar>) v

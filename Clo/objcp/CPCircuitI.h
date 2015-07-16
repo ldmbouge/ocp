@@ -15,17 +15,23 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-@interface CPCircuitI : CPCoreConstraint<CPConstraint>
--(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
--(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
+@interface CPCircuit : CPCoreConstraint<CPConstraint>
+-(CPCircuit*) initCPCircuit: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(void) post;
-//static ORStatus assign(CPCircuitI* cstr,int i);
+static void assignCircuit(CPCircuit* cstr,int i);
+@end
+
+@interface CPPath : CPCoreConstraint<CPConstraint>
+-(CPPath*) initCPPath: (id<CPIntVarArray>) x;
+-(void) dealloc;
+-(void) post;
+static void assignPath(CPPath* cstr,int i);
 @end
 
 @interface CPSubCircuit : CPCoreConstraint<CPConstraint>
--(CPCircuitI*) initCPSubCircuit: (id<CPIntVarArray>) x;
+-(CPSubCircuit*) initCPSubCircuit: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(void) post;
-//static ORStatus assignSubCircuit(CPSubCircuit* cstr,int i);
+static ORStatus assignSubCircuit(CPSubCircuit* cstr,int i);
 @end

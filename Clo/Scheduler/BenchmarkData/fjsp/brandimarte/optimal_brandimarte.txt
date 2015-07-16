@@ -1,0 +1,15 @@
+Mk01	40	40		Behnke et al. 2012 (Proof)
+Mk02	24	26
+Mk03	204	204
+Mk04	48	60
+Mk05	168	172
+Mk06	33	57		Gutierrez et al. 2011
+Mk07	133	139
+Mk08	523	523
+Mk09	307	307		Behnke et al. 2012 (Proof)
+Mk10	165	196		Gutierrez et al. 2011
+Mk11	594	615		Behnke et al. 2012
+Mk12	508	508		Behnke et al. 2012
+Mk13	353	478		Behnke et al. 2012
+Mk14	694	694		Behnke et al. 2012
+Mk15	283	341		Behnke et al. 2012

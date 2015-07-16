@@ -33,6 +33,10 @@
 {
    return [[[NSSet alloc] init] autorelease];
 }
+-(void) close
+{
+   
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
 }
@@ -69,6 +73,9 @@
    [_content addObject:c];
    [_model trackConstraintInGroup:c];
    return c;
+}
+-(void) close
+{
 }
 -(NSString*) description
 {
@@ -1364,6 +1371,63 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_idx,_z, nil] autorelease];
+}
+@end
+
+
+@implementation ORImplyEqualc {
+    id<ORIntVar> _b;
+    id<ORIntVar> _x;
+    ORInt        _c;
+}
+-(ORImplyEqualc*)initImply:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c
+{
+    self = [super initORConstraintI];
+    _b = b;
+    _x = x;
+    _c = c;
+    return self;
+}
+-(NSString*) description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %d)",[self class],self,_b,_x,_c];
+    return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+    [v visitImplyEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+    return _b;
+}
+-(id<ORIntVar>) x
+{
+    return _x;
+}
+-(ORInt) cst
+{
+    return _c;
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:_b];
+    [aCoder encodeObject:_x];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    _b = [aDecoder decodeObject];
+    _x = [aDecoder decodeObject];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+    return self;
 }
 @end
 
@@ -2954,10 +3018,10 @@
 }
 @end
 
-@implementation ORCircuitI {
+@implementation ORCircuit {
    id<ORIntVarArray> _x;
 }
--(ORCircuitI*)initORCircuitI:(id<ORIntVarArray>)x
+-(ORCircuit*)initORCircuit:(id<ORIntVarArray>)x
 {
    self = [super initORConstraintI];
    _x = x;
@@ -2987,6 +3051,39 @@
 }
 @end
 
+@implementation ORPath {
+   id<ORIntVarArray> _x;
+}
+-(ORPath*) initORPath:(id<ORIntVarArray>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitPath:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> path(%@)>",[self class],self,_x];
+   return buf;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+   
 @implementation ORSubCircuit {
    id<ORIntVarArray> _x;
 }
@@ -3024,7 +3121,7 @@
 @implementation ORNoCycleI {
    id<ORIntVarArray> _x;
 }
--(ORNoCycleI*)initORNoCycleI:(id<ORIntVarArray>)x
+-(id) initORNoCycleI:(id<ORIntVarArray>)x
 {
    self = [super initORConstraintI];
    _x = x;

@@ -159,6 +159,10 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitLinearLeq: (id<ORLinearLeq>) cstr
+{
+    _result = [_into addConstraint:cstr];
+}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    id<ORExprArray> ax = [cstr array];
@@ -405,6 +409,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitPath:(id<ORPath>) c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitSubCircuit:(id<ORSubCircuit>) c
 {
    _result = [_into addConstraint:c];
@@ -416,6 +424,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
    _result = [_into addConstraint:c];
+}
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c
+{
+    _result = [_into addConstraint:c];
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {

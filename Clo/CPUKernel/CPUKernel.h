@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTrigger.h>
+#import <CPUKernel/CPClosureEvent.h>
 
 /*
  
@@ -43,15 +44,6 @@ typedef enum {
 
 @protocol CPValueEvent<NSObject>
 -(ORInt) execute;
-@end
-
-// [PVH] To display the closure + the non-created closure to propagate constraints
-
-@protocol CPClosureList <NSObject>
--(ORClosure) trigger;                
--(id<CPClosureList>) next;           // fetches the tail of the list
--(void) scanWithBlock:(void(^)(id))block;
--(void) scanCstrWithBlock:(void(^)(id))block;
 @end
 
 typedef void(^ORID2Void)(id);

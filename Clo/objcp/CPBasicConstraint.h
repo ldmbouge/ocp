@@ -9,7 +9,6 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPBitDom.h>

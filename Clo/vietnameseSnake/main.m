@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
          NSLog(@"#solutions: %d - %d",[cp intValue:nbSolutions],nbs);
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(nbs, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
+        [ORFactory shutdown];
          return res;
       }];
    }

@@ -9,7 +9,6 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 
 @protocol CPValueEvent;

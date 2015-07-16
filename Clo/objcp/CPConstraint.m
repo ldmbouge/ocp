@@ -128,7 +128,7 @@
 
 +(id<ORConstraint>) circuit: (id<CPIntVarArray>) x
 {
-   id<ORConstraint> o = [[CPCircuitI alloc] initCPCircuitI:x];
+   id<ORConstraint> o = [[CPCircuit alloc] initCPCircuit:x];
    [[x tracker] trackMutable: o];
    return o;
 }
@@ -138,7 +138,11 @@
    [[x tracker] trackMutable: o];
    return o;
 }
-
++(id<ORConstraint>) nocycle:(id<CPIntVarArray>)x
+{
+   assert(NO);
+   return nil;
+}
 
 +(id<ORConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize
 {
@@ -156,7 +160,13 @@
 
 +(id<ORConstraint>) nocycle: (id<CPIntVarArray>) x
 {
-   id<ORConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];
+   assert(NO);
+   return nil;
+}
+
++(id<ORConstraint>) path: (id<CPIntVarArray>) x
+{
+   id<ORConstraint> o = [[CPPath alloc] initCPPath:x];
    [[x tracker] trackMutable: o];
    return o;
 }
@@ -200,6 +210,13 @@
       [literals addPositive: litView forValue:c];
    }
    return litView;
+}
+
++(id<ORConstraint>) imply: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
+{
+    id<ORConstraint> o = [[CPImplyEqualcDC alloc] initCPImplyEqualcDC: b when: x eq: i];
+    [[x engine] trackMutable: o];
+    return o;
 }
 
 +(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i

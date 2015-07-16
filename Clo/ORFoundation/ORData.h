@@ -64,7 +64,7 @@
 
 @interface NSObject (Concretization)
 -(void) visit: (ORVisitor*) visitor;
-@end;
+@end
 
 @protocol ORInteger <ORObject,ORExpr>
 -(ORInt) value;

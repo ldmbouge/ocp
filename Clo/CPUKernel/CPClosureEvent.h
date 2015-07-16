@@ -9,8 +9,10 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPClosureList.h>
+
+@class CPCoreConstraint;
 
 @interface CPClosureList : NSObject<CPClosureList> {
 @public

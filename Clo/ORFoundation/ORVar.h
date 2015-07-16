@@ -10,39 +10,45 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORExpr.h>
-#import "ORTracker.h"
-#import "ORArray.h"
-#import "ORSet.h"
-#import "ORConstraint.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORConstraint.h>
 
-
-
-@protocol ORVar <ORObject,ORExpr>
+@protocol ORVar <ORObject>
 -(ORInt) getId;
 @end
 
-@protocol ORIntVar <ORVar>
+@protocol ORExprVar <ORVar,ORExpr>
+-(ORInt) getId;
+@end
+
+@protocol ORIntVar <ORExprVar>
 -(id<ORIntRange>) domain;
 -(ORInt) low;
 -(ORInt) up;
 -(ORBool) isBool;
+-(ORBool) hasDenseDomain;
+-(ORInt) scale;
+-(ORInt) shift;
 -(ORInt) literal;
 -(id<ORIntVar>)base;
 @end
 
-@protocol ORFloatVar <ORVar>
+@protocol ORBitVar <ORExprVar>
+-(ORUInt*)low;
+-(ORUInt*)up;
+-(ORUInt)bitLength;
+-(NSString*)stringValue;
+@end
+
+@protocol ORFloatVar <ORExprVar>
 -(id<ORFloatRange>) domain;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 @end
 
-@protocol ORBitVar <ORVar>
--(ORUInt*)low;
--(ORUInt*)up;
--(ORUInt)bitLength;
--(NSString*)stringValue;
-@end
 
 @protocol ORExprArray<ORIdArray>
 -(id<ORExpr>) at: (ORInt) value;

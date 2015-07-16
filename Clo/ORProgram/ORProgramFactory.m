@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2014 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -61,7 +61,7 @@
    return [[ORSolutionPool alloc] init];
 }
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model
++(id) createCPProgram: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
    id<CPProgram> program = [self createCPProgram:model annotation:notes];

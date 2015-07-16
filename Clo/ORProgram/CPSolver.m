@@ -758,12 +758,79 @@
       ];
    }
 }
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   return [self selectValueImpl: _gamma[v.getId] by: o];
+}
+-(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Float) o
+{
+   float bestFound = MAXFLOAT;
+   ORInt indexFound = MAXINT;
+   ORInt low = [x min];
+   ORInt up = [x max];
+   for(ORInt i = low; i <= up; i++) {
+      if ([x member: i]) {
+         ORFloat v = o(i);
+         if (v < bestFound) {
+            bestFound = v;
+            indexFound = i;
+         }
+      }
+   }
+   return indexFound;
+}
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   return [self selectValueImpl: _gamma[v.getId] by: o1 then: o2];
+}
+-(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   float bestFound1 = MAXFLOAT;
+   float bestFound2 = MAXFLOAT;
+   ORInt indexFound = MAXINT;
+   ORInt low = [x min];
+   ORInt up = [x max];
+   for(ORInt i = low; i <= up; i++) {
+      if ([x member: i]) {
+         ORFloat v = o1(i);
+         if (v < bestFound1) {
+            bestFound1 = v;
+            bestFound2 = o2(i);
+            indexFound = i;
+         }
+         else if (v == bestFound1) {
+            ORFloat w = o2(i);
+            if (w < bestFound2) {
+               bestFound2 = w;
+               indexFound = i;
+            }
+         }
+      }
+   }
+   return indexFound;
+}
 
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+{
+   id<CPIntVar> x = _gamma[v.getId];
+   while (![x bound]) {
+      ORInt v = [self selectValueImpl: x by: o1 then: o2];
+      [self try: ^() { [self labelImpl: x with: v]; } or: ^() { [self diffImpl: x with: v]; }];
+   }
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
+{
+   id<CPIntVar> x = _gamma[v.getId];
+   while (![x bound]) {
+      ORInt v = [self selectValueImpl: x by: o];
+      [self try: ^() { [self labelImpl: x with: v]; } or: ^() { [self diffImpl: x with: v]; }];
+   }
+}
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
    return [self labelImpl: _gamma[var.getId] with: val];
 }
--(void) diff: (id<CPIntVar>) var with: (ORInt) val
+-(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
    [self diffImpl: _gamma[var.getId] with: val];
 }
@@ -823,6 +890,10 @@
 -(void) once: (ORClosure) cl
 {
    [_search once: cl];
+}
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   [_search try: left then: right];
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {

@@ -41,6 +41,7 @@
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
 -(NSSet*)allVars;
+-(void) close;
 @end
 
 @protocol ORPost<NSObject>
@@ -218,6 +219,12 @@ enum ORGroupType {
 -(id<ORFloatVar>)   res;
 @end
 
+@protocol ORImplyEqualc <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
+@end
+
 @protocol ORReify <ORConstraint>
 @end
 
@@ -372,6 +379,10 @@ enum ORGroupType {
 @end
 
 @protocol ORCircuit <ORConstraint>
+-(id<ORIntVarArray>) array;
+@end
+
+@protocol ORPath <ORConstraint>
 -(id<ORIntVarArray>) array;
 @end
 
@@ -545,5 +556,6 @@ enum ORGroupType {
 @interface ORConstraintI : ORObject<ORConstraint,NSCoding>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
+-(void) close;
 @end
 

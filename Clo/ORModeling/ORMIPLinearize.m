@@ -319,6 +319,10 @@
 {
    _result = c;
 }
+-(void) visitPath:(id<ORPath>) c
+{
+   _result = c;
+}
 -(void) visitSubCircuit:(id<ORSubCircuit>) c
 {
    _result = c;
@@ -330,6 +334,10 @@
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
    _result = c;
+}
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c
+{
+    _result = c;
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {

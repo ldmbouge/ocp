@@ -12,9 +12,9 @@
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
 #import <ORFoundation/ORData.h>
-#import "ORObject.h"
-#import "ORTracker.h"
-#import "ORArray.h"
+#import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORArray.h>
 
 
 @interface ORIntArrayI : ORObject<NSCoding,ORIntArray>
@@ -89,7 +89,7 @@
 
 @interface ORIntMatrixI : ORObject<ORIntMatrix,NSCoding>
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 using: (ORIntxInt2Int)block;
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 with: (ORIntxInt2Int)block;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) matrix;
 -(void) dealloc;
@@ -129,5 +129,6 @@
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 -(void)visit:(ORVisitor*)v;
+-(id<ORIdArray>) flatten;
 @end
 

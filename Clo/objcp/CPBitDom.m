@@ -11,10 +11,10 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTrailI.h>
-#import "CPBitDom.h"
+#import <objcp/CPBitDom.h>
+#import <objcp/CPIntVarI.h>
+#import <objcp/CPError.h>
 #import "CPEngineI.h"
-#import "CPIntVarI.h"
-#import "CPError.h"
 
 @implementation CPBoundsDom
 

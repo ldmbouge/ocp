@@ -16,7 +16,7 @@
 #import <objcp/CPDom.h>
 #import <objcp/CPData.h>
 #import <objcp/CPConstraint.h>
-#import "CPIntVarI.h"
+#import <objcp/CPIntVarI.h>
 
 @protocol CPFloatVarNotifier;
 

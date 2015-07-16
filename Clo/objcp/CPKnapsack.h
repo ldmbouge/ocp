@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
-#import "CPConstraintI.h"
-#import "CPBitDom.h"
+#import <objcp/CPConstraintI.h>
+#import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
 
 @class CPIntVar;

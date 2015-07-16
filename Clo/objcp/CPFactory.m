@@ -16,8 +16,8 @@
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORUtilities/ORUtilities.h>
 #import <objcp/CPFactory.h>
-
 #import <objcp/CPData.h>
+
 #import "CPTableI.h"
 #import "CPBitVarI.h"
 #import "CPFloatVarI.h"

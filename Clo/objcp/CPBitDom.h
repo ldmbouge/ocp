@@ -9,10 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPTypes.h>
-#import <objcp/CPDom.h>
-#import <objcp/CPError.h>
+#import <objcp/objcp.h>
 
 @class CPEngineI;
 

@@ -49,6 +49,7 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitCircuit:(id<ORCircuit>) cstr;
+-(void) visitPath:(id<ORPath>) cstr;
 -(void) visitSubCircuit:(id<ORSubCircuit>) cstr;
 -(void) visitNoCycle:(id<ORNoCycle>) cstr;
 -(void) visitPackOne:(id<ORPackOne>) cstr;
@@ -90,6 +91,7 @@
 -(void) visitElementVar: (id<ORElementVar>)c;
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c;
 -(void) visitFloatElementCst: (id<ORFloatElementCst>)c;
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c;
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
 -(void) visitReifyEqual: (id<ORReifyEqual>)c;
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;

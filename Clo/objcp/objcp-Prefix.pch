@@ -3,7 +3,6 @@
 //
 
 #ifdef __OBJC__
-   #import <Cocoa/Cocoa.h>
    #import <ORFoundation/ORFoundation.h>
-   #import <objcp/CPFactory.h>
+   #import <CPUKernel/CPUKernel.h>
 #endif

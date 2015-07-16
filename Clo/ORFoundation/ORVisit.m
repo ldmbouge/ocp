@@ -142,13 +142,17 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Circuit: visit method not defined"]; 
 }
+-(void) visitPath:(id<ORPath>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Path: visit method not defined"];
+}
 -(void) visitSubCircuit:(id<ORSubCircuit>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "SubCircuit: visit method not defined"];
 }
 -(void) visitNoCycle:(id<ORNoCycle>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NoCycle: visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "NoCycle: visit method not defined"];
 }
 -(void) visitPackOne:(id<ORPackOne>) cstr
 {
@@ -301,6 +305,10 @@
 -(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatElementCst: visit method not defined"]; 
+}
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ImplyEqualc: visit method not defined"];
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
@@ -587,6 +595,7 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr  {}
 -(void) visitLexLeq:(id<ORLexLeq>) cstr  {}
 -(void) visitCircuit:(id<ORCircuit>) cstr  {}
+-(void) visitPath:(id<ORPath>) cstr  {}
 -(void) visitSubCircuit:(id<ORSubCircuit>) cstr  {}
 -(void) visitNoCycle:(id<ORNoCycle>) cstr  {}
 -(void) visitPackOne:(id<ORPackOne>) cstr  {}
@@ -627,6 +636,7 @@
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
 -(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr {}
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c  {}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c  {}
 -(void) visitReifyEqual: (id<ORReifyEqual>)c  {}
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c  {}

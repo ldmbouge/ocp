@@ -14,10 +14,22 @@
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <CPUKernel/CPTrigger.h>
-#import "CPIntVarI.h"
+#import <objcp/CPIntVarI.h>
 
 @class CPIntVarI;
 @class CPEngineI;
+
+@interface CPImplyEqualcDC : CPCoreConstraint {
+@private
+    CPIntVar * _b;
+    CPIntVar * _x;
+    ORInt      _c;
+}
+-(id) initCPImplyEqualcDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(ORInt)c;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPReifyNotEqualcDC : CPCoreConstraint {
 @private

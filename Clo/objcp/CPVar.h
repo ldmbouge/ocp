@@ -33,7 +33,6 @@ enum CPVarClass {
 -(ORBool) bound;
 -(NSSet*)constraints;
 -(ORInt)degree;
--(enum CPVarClass)varClass;
 @end
 
 
@@ -111,7 +110,6 @@ enum CPVarClass {
 -(void) updateMin: (ORInt) newMin;
 -(void) updateMax: (ORInt) newMax;
 -(ORBounds) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
--(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 @end
 
 @protocol CPVarArray <ORVarArray>
