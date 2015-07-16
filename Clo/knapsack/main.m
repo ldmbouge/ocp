@@ -92,7 +92,6 @@ int main(int argc, const char * argv[])
             }            
          }];
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          return res;
       }];
       [ORFactory shutdown];

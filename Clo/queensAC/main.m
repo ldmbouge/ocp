@@ -87,9 +87,7 @@ int main(int argc, const char * argv[])
          printf("GOT %d solutions\n",nbSol);
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          [ORFactory shutdown];
-         
          return r;
       }];
    }
@@ -136,7 +134,6 @@ int main0(int argc, const char * argv[])
       printf("GOT %d solutions\n",nbSol);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [cp release];
       [ORFactory shutdown];
    }
    return 0;

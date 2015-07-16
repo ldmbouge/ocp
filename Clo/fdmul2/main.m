@@ -68,7 +68,6 @@ int main(int argc, const char * argv[])
             [nsex release];
          }
        }];
-      [cp release];
       [ORFactory shutdown];
    }
    return 0;

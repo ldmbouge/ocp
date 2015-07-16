@@ -69,10 +69,22 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)               close;
 
 -(id<ORForall>)      forall: (id<ORIntIterable>) S;
--(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterable>) S suchThat: (__nullable ORInt2Bool) suchThat orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterable>) S suchThat: (__nullable ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S
+                  orderedBy: (__nullable ORInt2Int) o
+                         do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S
+                   suchThat: (__nullable ORInt2Bool) suchThat
+                  orderedBy: (__nullable ORInt2Int) o
+                         do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S
+                  orderedBy: (ORInt2Int) o1
+                       then: (ORInt2Int) o2
+                         do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S
+                   suchThat: (__nullable ORInt2Bool) suchThat
+                  orderedBy: (ORInt2Int) o1
+                       then: (ORInt2Int) o2
+                         do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left alt: (ORClosure) right;
 -(void)              tryall: (id<ORIntIterable>) range suchThat: (__nullable ORInt2Bool) f do: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterable>) range suchThat: (__nullable ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;

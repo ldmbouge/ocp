@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5B2000E0156D585E00D80105"
-               BuildableName = "queensNaive copy"
+               BuildableName = "queensNaiveView"
                BlueprintName = "queensNaiveView"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
@@ -33,11 +33,13 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B2000E0156D585E00D80105"
-            BuildableName = "queensNaive copy"
+            BuildableName = "queensNaiveView"
             BlueprintName = "queensNaiveView"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -47,12 +49,14 @@
       buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B2000E0156D585E00D80105"
-            BuildableName = "queensNaive copy"
+            BuildableName = "queensNaiveView"
             BlueprintName = "queensNaiveView"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
@@ -66,11 +70,12 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5B2000E0156D585E00D80105"
-            BuildableName = "queensNaive copy"
+            BuildableName = "queensNaiveView"
             BlueprintName = "queensNaiveView"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>

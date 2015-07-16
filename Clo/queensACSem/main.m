@@ -84,7 +84,6 @@ int main (int argc, const char * argv[])
          NSLog(@"Solver: %@",cp);
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          NSLog(@"CPU Time: %lld\n",(int) endTime - startTime);
-         [cp release];
          [ORFactory shutdown];
          return r;
       }];

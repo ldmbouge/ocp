@@ -5712,7 +5712,7 @@
 		5B19097A16DAAB45006D1D24 /* eq20.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = eq20.1; sourceTree = "<group>"; };
 		5B19097B16DAAB45006D1D24 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B19098216DAACA7006D1D24 /* eq20 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eq20; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B2000ED156D585E00D80105 /* queensNaive copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "queensNaive copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B2000ED156D585E00D80105 /* queensNaiveView */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensNaiveView; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2000F0156D58A800D80105 /* mainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = mainView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B27573017E87B560082934E /* costas2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = costas2; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B27573317E87B560082934E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -8140,7 +8140,7 @@
 				B1771594155798AA00BA14BF /* Euler */,
 				5B778BB1154F1D030078EB07 /* bitArrayTest */,
 				5B558C051563F01000D2BCD7 /* queensNaive */,
-				5B2000ED156D585E00D80105 /* queensNaive copy */,
+				5B2000ED156D585E00D80105 /* queensNaiveView */,
 				5BB1700E1582820500D4791A /* driver */,
 				B1672FD0158491DE00EFE5C3 /* TableTest */,
 				B1672FEC1584A7A500EFE5C3 /* CardinalityTest */,
@@ -10110,7 +10110,7 @@
 			);
 			name = queensNaiveView;
 			productName = queensNaive;
-			productReference = 5B2000ED156D585E00D80105 /* queensNaive copy */;
+			productReference = 5B2000ED156D585E00D80105 /* queensNaiveView */;
 			productType = "com.apple.product-type.tool";
 		};
 		5B27572F17E87B560082934E /* costas2 */ = {
@@ -12070,6 +12070,7 @@
 		5B6E89171379D3E9005DB4CA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
@@ -16228,7 +16229,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				PRODUCT_NAME = "queensNaive copy";
+				PRODUCT_NAME = queensNaiveView;
 			};
 			name = Debug;
 		};
@@ -16236,7 +16237,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				PRODUCT_NAME = "queensNaive copy";
+				PRODUCT_NAME = queensNaiveView;
 			};
 			name = Release;
 		};
@@ -17237,7 +17238,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -17583,7 +17583,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				PRODUCT_NAME = "queensNaive copy";
+				PRODUCT_NAME = queensNaiveView;
 			};
 			name = Coverage;
 		};
@@ -18834,7 +18834,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -18855,7 +18854,6 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -21194,6 +21192,7 @@
 				5B7FDB411B48AB9A0042E724 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B80561C16076DFE00659ECC /* Build configuration list for PBXNativeTarget "magicsquareModel" */ = {
 			isa = XCConfigurationList;
