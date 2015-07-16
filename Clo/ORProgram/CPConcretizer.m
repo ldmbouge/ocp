@@ -17,12 +17,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>
 
-@implementation ORCPConcretizer {
-   id<CPCommonProgram> _solver;
-   id<CPEngine>        _engine;
-   id*                 _gamma;
-   id<ORAnnotation>    _notes;
-}
+@implementation ORCPConcretizer
 
 -(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes
 {
@@ -37,6 +32,18 @@
 {
    [_solver release];
    [super dealloc];
+}
+-(BOOL)isConcretized:(id<ORObject>)obj
+{
+   return _gamma[obj.getId] != nil;
+}
+-(BOOL)mustConcretize:(id<ORObject>)obj
+{
+   return _gamma[obj.getId] == nil;
+}
+-(id)gamma:(id<ORObject>)obj
+{
+   return _gamma[obj.getId];
 }
 - (void)doesNotRecognizeSelector:(SEL)aSelector
 {

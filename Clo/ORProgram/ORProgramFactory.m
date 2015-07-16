@@ -9,12 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORModeling/ORFlatten.h>
-#import <ORModeling/ORMIPLinearize.h>
-#import "ORProgramFactory.h"
+#import <ORProgram/ORProgramFactory.h>
 
 // CP Solver
 #import <ORProgram/ORProgram.h>
@@ -61,7 +56,7 @@
    return [[ORSolutionPool alloc] init];
 }
 
-+(id) createCPProgram: (id<ORModel>) model
++(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
    id<CPProgram> program = [self createCPProgram:model annotation:notes];

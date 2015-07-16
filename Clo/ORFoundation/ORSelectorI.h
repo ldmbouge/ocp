@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORTracker.h"
-#import "ORSet.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORSet.h>
 
 
 @interface OROPTSelect : NSObject

@@ -13,7 +13,7 @@
 #import <ORFoundation/ORData.h>
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/ORSet.h>
-#import "ORObject.h"
+#import <ORFoundation/ORObject.h>
 
 @protocol ORSearchEngine;
 

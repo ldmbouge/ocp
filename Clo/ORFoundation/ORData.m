@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORData.h>
-#import "ORDataI.h"
 #import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORDataI.h>
 
 @implementation ORCrFactory (OR)
 +(id<ORMutableInteger>) integer:(ORInt) value

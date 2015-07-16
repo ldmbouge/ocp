@@ -10,9 +10,8 @@
  ***********************************************************************/
 
 #import "ORVarI.h"
-#import "ORError.h"
-#import "ORFactory.h"
-//#import "ORSolution.h"
+#import <ORFoundation/ORError.h>
+#import <ORFoundation/ORFactory.h>
 
 @implementation ORIntVarI {
 @protected

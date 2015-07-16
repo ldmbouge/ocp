@@ -410,9 +410,9 @@ typedef struct  {
 {
    id<CPClosureList> mList[3];
    ORUInt k = 0;
-   mList[k] = _net._boundEvt[0]._val;
+   mList[k] = _net._boundEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._startEvt[0]._val;
+   mList[k] = _net._startEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
@@ -421,9 +421,9 @@ typedef struct  {
 {
    id<CPClosureList> mList[3];
    ORUInt k = 0;
-   mList[k] = _net._boundEvt[0]._val;
+   mList[k] = _net._boundEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._endEvt[0]._val;
+   mList[k] = _net._endEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
@@ -432,9 +432,9 @@ typedef struct  {
 {
    id<CPClosureList> mList[3];
    ORUInt k = 0;
-   mList[k] = _net._boundEvt[0]._val;
+   mList[k] = _net._boundEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._durationEvt[0]._val;
+   mList[k] = _net._durationEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
@@ -450,19 +450,19 @@ typedef struct  {
 -(NSSet*) constraints
 {
    NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:2] autorelease];
-   collectList(_net._boundEvt[0]._val,rv);
-   collectList(_net._startEvt[0]._val,rv);
-   collectList(_net._endEvt[0]._val,rv);
-   collectList(_net._durationEvt[0]._val,rv);
+   collectList(_net._boundEvt[0],rv);
+   collectList(_net._startEvt[0],rv);
+   collectList(_net._endEvt[0],rv);
+   collectList(_net._durationEvt[0],rv);
    return rv;
 }
 -(ORInt) degree
 {
    __block ORUInt d = 0;
-   [_net._boundEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
-   [_net._startEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
-   [_net._endEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
-   [_net._durationEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._boundEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._startEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._endEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._durationEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    return d;
 }
 @end
@@ -775,7 +775,7 @@ typedef struct  {
 {
    id<CPClosureList> mList[2];
    ORUInt k = 0;
-   mList[k] = _net._presentEvt[0]._val;
+   mList[k] = _net._presentEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
@@ -784,7 +784,7 @@ typedef struct  {
 {
    id<CPClosureList> mList[2];
    ORUInt k = 0;
-   mList[k] = _net._absentEvt[0]._val;
+   mList[k] = _net._absentEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
    scheduleClosures(_engine,mList);
@@ -800,15 +800,15 @@ typedef struct  {
 -(NSSet*) constraints
 {
    NSMutableSet* rv = (NSMutableSet*) [_task constraints];
-   collectList(_net._absentEvt[0]._val,rv);
-   collectList(_net._presentEvt[0]._val,rv);
+   collectList(_net._absentEvt[0],rv);
+   collectList(_net._presentEvt[0],rv);
    return rv;
 }
 -(ORInt) degree
 {
    __block ORUInt d = [_task degree];
-   [_net._absentEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
-   [_net._presentEvt[0]._val scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._absentEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._presentEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
    return d;
 }
 @end

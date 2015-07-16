@@ -11,14 +11,21 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-//#import <ORProgram/CPSolver.h>
 
 @protocol CPCommonProgram;
 @protocol ORAnnotation;
 
-@interface ORCPConcretizer  : ORVisitor<NSObject>
+@interface ORCPConcretizer  : ORVisitor<NSObject> {
+   id<CPCommonProgram> _solver;
+   id<CPEngine>        _engine;
+   id __unsafe_unretained* _gamma;
+   id<ORAnnotation>    _notes;
+}
 -(ORCPConcretizer*) initORCPConcretizer:(id<CPCommonProgram>) solver
                              annotation:(id<ORAnnotation>)notes;
+-(BOOL)isConcretized:(id<ORObject>)obj;
+-(BOOL)mustConcretize:(id<ORObject>)obj;
+-(id)gamma:(id<ORObject>)obj;
 @end
 
 @interface ORCPSearchConcretizer : ORVisitor<NSObject>

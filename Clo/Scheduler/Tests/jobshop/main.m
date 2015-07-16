@@ -194,7 +194,7 @@ int mainBasicLNS(int argc, const char * argv[])
           [model add: disjunctive[i]];
 
       // search
-      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
+      id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram: model];
       /*
       [cp solve: ^{
          [cp forall: Size orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]]; } do: ^(ORInt i) {
@@ -220,7 +220,7 @@ int mainBasicLNS(int argc, const char * argv[])
                   NSLog(@"Time: %lld:",timeEnd - timeStart);
                }];
             } onRepeat: ^{
-               id<ORSolution,CPSchedulerSolution> s = [[cp solutionPool] best];
+               id<ORSolution,CPSchedulerSolution> s = (id)[[cp solutionPool] best];
                for(ORInt k = Machines.low; k <= Machines.up; k++) {
                   id<ORIntVarArray> succ = disjunctive[k].successors;
                   id<ORTaskVarArray> t = disjunctive[k].taskVars;
@@ -315,7 +315,7 @@ int mainSubpathLNS(int argc, const char * argv[])
          [model add: disjunctive[i]];
 
       // search
-      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
+      id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram: model];
        [cp solve: ^{
          id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range: Machines];
          id<ORUniformDistribution> sD = [ORFactory uniformDistribution:model range: Jobs];
@@ -334,7 +334,7 @@ int mainSubpathLNS(int argc, const char * argv[])
                }];
             }
             onRepeat: ^{
-               id<ORSolution,CPSchedulerSolution> sol = [[cp solutionPool] best];
+               id<ORSolution,CPSchedulerSolution> sol = (id) [[cp solutionPool] best];
                for(ORInt k = 1; k <= 2; k++) {
                   ORInt i = [sM next];
                   id<ORIntVarArray> succ = disjunctive[i].successors;
@@ -434,7 +434,7 @@ int mainPureCP(int argc, const char * argv[])
          [model add: disjunctive[i]];
       
       // search
-      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
+      id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram: model];
       [cp solve: ^{
          NSLog(@"MKS: %@n\n",[cp concretize:makespan]);
          [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
@@ -453,7 +453,6 @@ int mainPureCP(int argc, const char * argv[])
       id<ORSolution> optimum = [pool best];
       printf("Makespan: %d \n",[optimum intValue: makespan]);
       NSLog(@"Solver status: %@\n",cp);
-      [cp release];
       NSLog(@"Quitting");
       //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
       

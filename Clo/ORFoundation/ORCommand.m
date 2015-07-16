@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
-#import "ORCommand.h"
-#import "ORConstraint.h"
+#import <ORFoundation/ORCommand.h>
+#import <ORFoundation/ORConstraint.h>
 #import <pthread.h>
 #import <objc/runtime.h>
 

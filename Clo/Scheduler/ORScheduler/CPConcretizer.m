@@ -16,7 +16,7 @@
 #import <ORScheduler/ORTaskI.h>
 #import <ORScheduler/ORActivity.h>
 #import <ORProgram/CPConcretizer.h>
-#import "CPScheduler/CPFactory.h"
+#import <CPScheduler/CPFactory.h>
 #import "CPSCheduler/CPDifference.h"
 #import "CPTask.h"
 #import "CPTaskI.h"
@@ -26,7 +26,7 @@
 // Cumulative (resource) constraint
 -(void) visitCumulative:(id<ORCumulative>) cstr
 {
-    if (_gamma[cstr.getId] == NULL) {
+    if ([self mustConcretize:cstr]) {
         id<ORIntVarArray> start = [cstr start];
         id<ORIntVarArray> duration = [cstr duration];
         id<ORIntArray> usage = [cstr usage];

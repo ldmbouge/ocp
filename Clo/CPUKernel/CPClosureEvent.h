@@ -11,6 +11,7 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPClosureList.h>
+#import <ORFoundation/ORTrail.h>
 
 @class CPCoreConstraint;
 

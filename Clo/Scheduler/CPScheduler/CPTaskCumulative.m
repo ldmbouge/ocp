@@ -14,6 +14,7 @@
 #import <CPUKernel/CPEngineI.h>
 #import "CPTask.h"
 #import "CPTaskI.h"
+#import "CPMisc.h"
 
 
 // NOTE that the TTEF filtering is not adjusted for optional tasks yet, but the

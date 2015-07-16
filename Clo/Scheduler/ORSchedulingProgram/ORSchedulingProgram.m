@@ -162,7 +162,7 @@
                    [[postponed at: k] setValue: 0];
           
        }
-             or:
+             alt:
        ^() {
           [[postponed at: im]  setValue: 1];
           [[ptime at: im] setValue: m];
@@ -318,7 +318,7 @@
         while ([self est: task] < [self lst: task]) {
             ORInt est = [self est: task];
             [self try: ^{ [self labelStart : task with: est    ]; }
-                   or: ^{ [self updateStart: task with: est + 1]; }
+                  alt: ^{ [self updateStart: task with: est + 1]; }
              ];
         }
     }
@@ -336,7 +336,7 @@
         while ([self ect: task] < [self lct: task]) {
             ORInt ect = [self ect: task];
             [self try: ^{ [self labelEnd : task with: ect    ]; }
-                   or: ^{ [self updateEnd: task with: ect + 1]; }
+                  alt: ^{ [self updateEnd: task with: ect + 1]; }
              ];
         }
     }
@@ -354,7 +354,7 @@
         while ([self minDuration: task] < [self maxDuration: task]) {
             ORInt m = [self minDuration: task];
             [self try: ^{ [self labelDuration    : task with: m    ]; }
-                   or: ^{ [self updateMinDuration: task with: m + 1]; }
+                  alt: ^{ [self updateMinDuration: task with: m + 1]; }
              ];
         }
     }
@@ -370,7 +370,7 @@
 {
     if (![self isAbsent: task] && ![self isPresent: task]) {
         [self try: ^{ [self labelPresent: task with: true ]; }
-               or: ^{ [self labelPresent: task with: false]; }
+              alt: ^{ [self labelPresent: task with: false]; }
          ];
     }
 }
@@ -385,7 +385,7 @@
 {
     if (![self isResourceAssigned:task]) {
         [self try: ^{ [self   bindResourceTask:task with:res]; }
-               or: ^{ [self removeResourceTask:task with:res]; }
+              alt: ^{ [self removeResourceTask:task with:res]; }
          ];
     }
 }

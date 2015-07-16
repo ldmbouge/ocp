@@ -10,6 +10,8 @@
  ***********************************************************************/
 
 #import <CPUKernel/CPTypes.h>
+#import <ORFoundation/OREngine.h>
+#import <ORFoundation/ORConstraint.h>
 
 @protocol CPValueEvent;
 @protocol CPConstraint;

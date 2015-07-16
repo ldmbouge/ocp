@@ -14,6 +14,7 @@
 #import <objcp/CPFactory.h>
 #import <CPScheduler/CPTaskCumulative.h>
 #import <CPScheduler/CPTaskDisjunctive.h>
+#import <CPScheduler/CPTask.h>
 
 @protocol CPTaskVarArray;
 @protocol CPTaskVar;

@@ -10,8 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-//#import <CPUKernel/CPTypes.h>
-//#import <CPUKernel/CPConstraintI.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORLinear.h>
 

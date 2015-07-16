@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "ORSemBDSController.h"
+#import <ORFoundation/ORSemBDSController.h>
 
 @interface BDSStack : NSObject {
    struct BDSNode {

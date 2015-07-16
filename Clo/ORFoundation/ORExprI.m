@@ -10,11 +10,11 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORExpr.h>
-#import "ORExprI.h"
-#import "ORFactory.h"
-#import "ORError.h"
-#import "ORConstraint.h"
-#import "ORVisit.h"
+#import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORError.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORVisit.h>
 
 
 @implementation NSNumber (Expressions)

@@ -17,6 +17,7 @@
 @class CPIntVar;
 @class ORIntSetI;
 @class CPEngine;
+@class CPBitDom;
 @protocol CPIntVarArray;
 
 

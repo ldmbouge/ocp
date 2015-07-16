@@ -158,12 +158,6 @@
    return o;
 }
 
-+(id<ORConstraint>) nocycle: (id<CPIntVarArray>) x
-{
-   assert(NO);
-   return nil;
-}
-
 +(id<ORConstraint>) path: (id<CPIntVarArray>) x
 {
    id<ORConstraint> o = [[CPPath alloc] initCPPath:x];

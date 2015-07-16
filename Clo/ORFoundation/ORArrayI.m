@@ -10,10 +10,10 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORTypes.h>
+#import <ORFoundation/ORError.h>
+#import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORFactory.h>
 #import "ORArrayI.h"
-#import "ORError.h"
-#import "ORExprI.h"
-#import "ORFactory.h"
 
 /**********************************************************************************************/
 /*                          ORIntArray                                                        */

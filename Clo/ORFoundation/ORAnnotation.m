@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
-#import "ORAnnotation.h"
-#import "ORConstraint.h"
+#import <ORFoundation/ORAnnotation.h>
+#import <ORFoundation/ORConstraint.h>
 #import "ORConstraintI.h"
 
 @interface ORAnnotationCopy : ORAnnotation<ORAnnotation,NSCopying>

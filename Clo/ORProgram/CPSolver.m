@@ -815,7 +815,8 @@
    id<CPIntVar> x = _gamma[v.getId];
    while (![x bound]) {
       ORInt v = [self selectValueImpl: x by: o1 then: o2];
-      [self try: ^() { [self labelImpl: x with: v]; } or: ^() { [self diffImpl: x with: v]; }];
+      [self try: ^() { [self labelImpl: x with: v]; }
+            alt: ^() { [self diffImpl: x with: v]; }];
    }
 }
 -(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
@@ -823,7 +824,8 @@
    id<CPIntVar> x = _gamma[v.getId];
    while (![x bound]) {
       ORInt v = [self selectValueImpl: x by: o];
-      [self try: ^() { [self labelImpl: x with: v]; } or: ^() { [self diffImpl: x with: v]; }];
+      [self try: ^() { [self labelImpl: x with: v]; }
+            alt: ^() { [self diffImpl: x with: v]; }];
    }
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val

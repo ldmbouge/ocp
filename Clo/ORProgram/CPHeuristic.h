@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <CPUKernel/CPEngine.h>
 
 @protocol CPIntVarArray;
 @protocol CPProgram;

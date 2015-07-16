@@ -14,3 +14,6 @@
 #import <CPScheduler/CPTaskSequence.h>
 #import <CPScheduler/CPTask.h>
 #import <CPScheduler/CPFactory.h>
+#import <CPScheduler/CPCumulative.h>
+#import <CPScheduler/CPDifference.h>
+

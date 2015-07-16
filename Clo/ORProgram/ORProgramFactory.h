@@ -14,12 +14,13 @@
 #import <ORProgram/CPProgram.h>
 #import <ORProgram/LPProgram.h>
 #import <ORProgram/MIPProgram.h>
+#import <ORProgram/ORSTask.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ORFactory (Concretization)
 
-+(id) createCPProgram: (id<ORModel>) model;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;

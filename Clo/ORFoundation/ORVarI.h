@@ -10,12 +10,12 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORArray.h"
-#import "ORSet.h"
-#import "ORConstraint.h"
-#import "ORVar.h"
-#import "ORExprI.h"
-#import "ORVisit.h"
+#import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORVisit.h>
 
 
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>

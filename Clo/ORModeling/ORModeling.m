@@ -10,12 +10,12 @@
  ***********************************************************************/
 
 #import <ORModeling/ORModeling.h>
-#import "ORFlatten.h"
-#import "ORLSFlatten.h"
+#import <ORModeling/ORFlatten.h>
+#import <ORModeling/ORLSFlatten.h>
+#import <ORModeling/ORLPFlatten.h>
+#import <ORModeling/ORMIPFlatten.h>
+#import <ORModeling/ORLinearize.h>
 #import "ORModelI.h"
-#import "ORLPFlatten.h"
-#import "ORMIPFlatten.h"
-#import "ORLinearize.h"
 
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel

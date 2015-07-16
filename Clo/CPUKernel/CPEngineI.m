@@ -13,7 +13,6 @@
 #import "CPEngineI.h"
 #import "CPTypes.h"
 #import "CPClosureEvent.h"
-//#import <ORFoundation/ORSetI.h>
 
 typedef struct CPClosureEntry {
    ORClosure             cb;

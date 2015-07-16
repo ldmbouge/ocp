@@ -12,7 +12,6 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
-#import "CPMisc.h"
 
 @class CPIntVar;
 
@@ -37,6 +36,6 @@
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*) allVars;
--(CPTaskVarPrec *) getPartialOrder: (ORInt *) posize;
+//-(CPTaskVarPrec *) getPartialOrder: (ORInt *) posize;
 -(ORUInt) nbUVars;
 @end

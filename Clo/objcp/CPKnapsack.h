@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
 

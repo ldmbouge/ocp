@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTrailI.h>
+#import <CPUKernel/CPTypes.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPIntVarI.h>
 #import <objcp/CPError.h>

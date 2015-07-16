@@ -5,5 +5,4 @@
 #ifdef __OBJC__
    #import <Cocoa/Cocoa.h>
    #import <ORFoundation/ORFoundation.h>
-   #import <ORProgram/ORProgram.h>
 #endif

@@ -11,21 +11,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import ORProgram
 
-//func createCPProgram(model : ORModel) -> CPProgram {
-//   let cp  = CPSolverFactory.solver()                      // creates a solver
-//   let fm  = model.flatten(nil)                            // flatten the model
-//   cp.concretize(fm)                                       // concretize model in solver
-//   cp.onSolution {
-//      cp.solutionPool().addSolution(cp.captureSolution())  // add the solution to the pool
-//   }
-//   return cp
-//}
-
-func repeatDo(p : CPProgram,body : Void -> UnsafeMutablePointer<Void>,rep : Void -> Void) -> UnsafeMutablePointer<Void>? {
-   return nil
-}
-
-
 autoreleasepool {
    let n : ORInt = 8
    let model = ORFactory.createModel()
