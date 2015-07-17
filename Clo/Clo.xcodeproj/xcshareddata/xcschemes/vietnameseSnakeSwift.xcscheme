@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-               BuildableName = "coloringModel"
-               BlueprintName = "coloringModel"
+               BlueprintIdentifier = "5B7FDB3A1B48AB9A0042E724"
+               BuildableName = "vietnameseSnakeSwift"
+               BlueprintName = "vietnameseSnakeSwift"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "5B7FDB3A1B48AB9A0042E724"
+            BuildableName = "vietnameseSnakeSwift"
+            BlueprintName = "vietnameseSnakeSwift"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -52,18 +52,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "5B7FDB3A1B48AB9A0042E724"
+            BuildableName = "vietnameseSnakeSwift"
+            BlueprintName = "vietnameseSnakeSwift"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-p2"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -77,9 +71,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "5B7FDB3A1B48AB9A0042E724"
+            BuildableName = "vietnameseSnakeSwift"
+            BlueprintName = "vietnameseSnakeSwift"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

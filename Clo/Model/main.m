@@ -9,11 +9,14 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
-#import <objcp/CPSolver.h>
+#import <ORProgram/ORProgramFactory.h>
+
+//#import <ORModeling/ORModeling.h>
+//#import <objcp/CPError.h>
+//#import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
 {
@@ -45,17 +48,15 @@ int oldMain(int argc, const char * argv[])
       
       [model add: cstr];
       
-      id<CPSolver> cp = [CPFactory createSolver];
-      [cp addModel: model];
+      id<CPCommonProgram> cp = [ORFactory createCPProgram:model];
       
       [cp solve: ^{
-         [CPLabel array: a];
+         [cp labelArray:a];
       }];
       for(ORInt i = 0; i <= 10; i++)
-         printf("x[%d] = %d \n",i,[a[i] value]);
+         printf("x[%d] = %d \n",i,[cp intValue:a[i]]);
       NSLog(@"Solver status: %@\n",cp);
-      [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }

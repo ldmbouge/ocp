@@ -393,7 +393,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order
 {
-   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: false];
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range
+                                          suchThat: filter
+                                         orderedBy: order
+                                        randomized: [ORStreamManager randomized]];
    [tracker trackMutable: o];
    return o;
 }

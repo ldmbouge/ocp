@@ -81,7 +81,7 @@ int main(int argc, const char * argv[])
       [model add: [ORFactory cumulative: activities with: usage and: capa]];
       
       // search
-      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
+      id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram: model];
       [cp solve: ^{
          [cp setTimes: activities];
          [cp label: makespan];
@@ -90,7 +90,7 @@ int main(int argc, const char * argv[])
       ];
       id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
-      id<ORSolution,CPSchedulerSolution> optimum = [pool best];
+      id<ORSolution,CPSchedulerSolution> optimum = (id)[pool best];
       printf("Makespan: %d \n",[optimum intValue: makespan]);
       for(ORInt i = 1; i <= nbTasks; i++) {
          ORInt s = [optimum est: activities[i]];
@@ -100,7 +100,6 @@ int main(int argc, const char * argv[])
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
 //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-      [cp release];
    }
     return 0;
 }

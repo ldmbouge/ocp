@@ -19,7 +19,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ORFactory (Concretization)
-
+/**
+ * @brief The method takes a model and return a concrete program based on a CP technology solver.
+ * @param model : an ORModel instance.
+ */
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;

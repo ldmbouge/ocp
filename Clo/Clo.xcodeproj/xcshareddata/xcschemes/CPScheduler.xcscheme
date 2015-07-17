@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-               BuildableName = "coloringModel"
-               BlueprintName = "coloringModel"
+               BlueprintIdentifier = "537EEA2618FCE1FE0006FFD2"
+               BuildableName = "CPScheduler.framework"
+               BlueprintName = "CPScheduler"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,15 +29,6 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
-            ReferencedContainer = "container:Clo.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -48,22 +39,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "537EEA2618FCE1FE0006FFD2"
+            BuildableName = "CPScheduler.framework"
+            BlueprintName = "CPScheduler"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-p2"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -73,16 +57,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "537EEA2618FCE1FE0006FFD2"
+            BuildableName = "CPScheduler.framework"
+            BlueprintName = "CPScheduler"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

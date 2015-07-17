@@ -116,6 +116,7 @@
 +(void) setDeterministic;
 +(void) setRandomized;
 +(ORInt) deterministic;
++(ORInt) randomized;
 +(void) initSeed: (unsigned short*) seed;
 @end
 

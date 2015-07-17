@@ -14,9 +14,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-               BuildableName = "coloringModel"
-               BlueprintName = "coloringModel"
+               BlueprintIdentifier = "B127A57419629B0600398AA3"
+               BuildableName = "ORSchedulingProgram.framework"
+               BlueprintName = "ORSchedulingProgram"
+               ReferencedContainer = "container:Clo.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B127A58419629B0600398AA3"
+               BuildableName = "ORSchedulingProgramTests.xctest"
+               BlueprintName = "ORSchedulingProgramTests"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,13 +42,23 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B127A58419629B0600398AA3"
+               BuildableName = "ORSchedulingProgramTests.xctest"
+               BlueprintName = "ORSchedulingProgramTests"
+               ReferencedContainer = "container:Clo.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "B127A57419629B0600398AA3"
+            BuildableName = "ORSchedulingProgram.framework"
+            BlueprintName = "ORSchedulingProgram"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -48,22 +72,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "B127A57419629B0600398AA3"
+            BuildableName = "ORSchedulingProgram.framework"
+            BlueprintName = "ORSchedulingProgram"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-p2"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -73,16 +90,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
-            BuildableName = "coloringModel"
-            BlueprintName = "coloringModel"
+            BlueprintIdentifier = "B127A57419629B0600398AA3"
+            BuildableName = "ORSchedulingProgram.framework"
+            BlueprintName = "ORSchedulingProgram"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

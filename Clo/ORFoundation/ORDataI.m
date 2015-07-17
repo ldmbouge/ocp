@@ -413,6 +413,10 @@ static ORInt _deterministic;
 {
    return _deterministic;
 }
++(ORInt) randomized
+{
+   return !_deterministic;
+}
 +(void) initSeed: (unsigned short*) seed
 {
    if (_deterministic) {
