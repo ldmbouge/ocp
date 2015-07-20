@@ -136,7 +136,7 @@
 		537EEA7518FCF33F0006FFD2 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
 		537EEA7618FCF33F0006FFD2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		537EEA9318FCFD0B0006FFD2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8BC18FCC5720006FFD2 /* main.m */; };
-		53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B437D7197F371100BE9F4D /* CPTaskCumulative.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B437D7197F371100BE9F4D /* CPTaskCumulative.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53B437DC197F373E00BE9F4D /* CPTaskCumulative.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B437DA197F373A00BE9F4D /* CPTaskCumulative.m */; };
 		53BD901A1A240117003EEFA6 /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8B018FCC5720006FFD2 /* ORFlatten.m */; };
 		53BDBC2C1A244EB9003EEFA6 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
@@ -20524,7 +20524,6 @@
 		B1C4F3FF161F87070010A5C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1C4F402161F87070010A5C8 /* queensModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensModel-Prefix.pch"; sourceTree = "<group>"; };
 		B1C4F403161F87070010A5C8 /* queensModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensModel.1; sourceTree = "<group>"; };
-		B1C4F445161F9CBA0010A5C8 /* CPProgramI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPProgramI.m; path = ../ORProgram/CPProgramI.m; sourceTree = "<group>"; };
 		B1C8C5F414BEBE1C000C5486 /* CPFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFactory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1C8C5F514BEBE1C000C5486 /* CPFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPFactory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1C9DF1315A8045C00EE924C /* SportDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -36718,7 +36717,6 @@
 			isa = PBXGroup;
 			children = (
 				B15442A216D1A247001BD7B3 /* main.m */,
-				B1C4F445161F9CBA0010A5C8 /* CPProgramI.m */,
 				B15442A616D1A247001BD7B3 /* GraveYard.1 */,
 				B15442A416D1A247001BD7B3 /* Supporting Files */,
 			);
@@ -47615,7 +47613,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
