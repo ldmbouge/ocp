@@ -4,5 +4,7 @@
 
 #ifdef __OBJC__
    #import <Cocoa/Cocoa.h>
-//   #import <ORFoundation/ORFoundation.h>
+   #import <ORUtilities/ORUtilities.h>
+   #import <ORFoundation/ORFoundation.h>
+   #import <ORModeling/ORModeling.h>
 #endif
