@@ -11,9 +11,8 @@
 
 #import <ORFoundation/ORSet.h>
 #import <objmp/LPSolverI.h>
-#import "LPProgram.h"
+#import <ORProgram/LPProgram.h>
 #import "LPConcretizer.h"
-#import "ORVarI.h"
 
 @implementation ORLPConcretizer
 {
@@ -286,7 +285,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
--(void) visitAffineVar:(ORIntVarAffineI*) v
+-(void) visitAffineVar:(id<ORIntVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }

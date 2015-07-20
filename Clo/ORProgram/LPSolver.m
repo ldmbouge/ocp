@@ -9,12 +9,11 @@
  
  ***********************************************************************/
 
-// LPSolver
 #import <ORFoundation/ORFoundation.h>
-#import "LPProgram.h"
-#import "LPSolver.h"
+#import <ORProgram/LPProgram.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <objmp/LPSolverI.h>
-#import "ORProgramFactory.h"
+#import "LPSolver.h"
 
 @interface LPColumn : ORObject<LPColumn>
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col;

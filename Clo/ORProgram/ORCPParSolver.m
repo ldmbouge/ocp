@@ -10,13 +10,8 @@
  ***********************************************************************/
 
 
-#import "ORCPParSolver.h"
-#import <ORProgram/CPParallel.h>
-#import <ORProgram/CPBaseHeuristic.h>
-#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPObjectQueue.h>
-#import "ORSolution.h"
-#import "ORProgramFactory.h"
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;

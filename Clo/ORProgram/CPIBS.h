@@ -14,9 +14,10 @@
 #import <ORProgram/ORProgramFactory.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/CPProgram.h>
-#import <objcp/CPVar.h>
 
 @class CPStatisticsMonitor;
+@protocol CPVarArray;
+
 
 #define ALPHA 8.0L
 

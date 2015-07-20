@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import <ORProgram/CPParallel.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import "CPProgram.h"
-#import "CPSolver.h"
+#import <ORProgram/CPProgram.h>
+#import <ORProgram/CPSolver.h>
+#import <objcp/CPObjectQueue.h>
 
 @implementation CPParallelAdapter {
    id<CPSemanticProgram>  _solver;

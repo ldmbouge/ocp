@@ -9,14 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <objcp/CPFactory.h>
-#import <objcp/CPConstraint.h>
-#import <ORProgram/ORProgramFactory.h>
-
-//#import <ORModeling/ORModeling.h>
-//#import <objcp/CPError.h>
-//#import "ORCmdLineArgs.h"
+#import <ORProgram/ORProgram.h>
 
 int main(int argc, const char * argv[])
 {

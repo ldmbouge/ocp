@@ -10,8 +10,10 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPWDeg.h"
-#import "CPEngineI.h"
+#import <ORProgram/CPWDeg.h>
+#import <CPUKernel/CPEngine.h>
+#import <objcp/CPVar.h>
+
 
 @implementation CPWDeg {
    id<ORVarArray>   _vars;  // Model variables
@@ -20,7 +22,7 @@
    ORUInt         _nbVars;
    ORUInt*           _map;
    id<CPCommonProgram>      _cp;
-   CPEngineI*     _solver;
+   id<CPEngine>   _solver;
    ORUInt            _nbc;
    ORUInt            _nbv;
    ORUInt*             _w;
@@ -31,7 +33,7 @@
 {
    self = [super init];
    _cp = cp;
-   _solver  = (CPEngineI*)[cp engine];
+   _solver  = [cp engine];
    _vars = nil;
    _rvars = rvars;
    _w = 0;
@@ -111,7 +113,7 @@
       _cv[k - low] = [_cvs[k] constraints];
    }
    _nbv = len;
-   NSArray* allC = [_solver constraints];
+   NSArray* allC = [(id)_solver constraints];
    _nbc = (ORUInt)[allC count];
    _w   = malloc(sizeof(ORUInt)*_nbc);
    _vOfC = malloc(sizeof(id)*_nbc);

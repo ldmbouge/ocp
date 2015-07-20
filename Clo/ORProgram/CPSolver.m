@@ -15,16 +15,12 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORFlatten.h>
 #import <ORProgram/ORProgram.h>
+#import <ORProgram/CPProgram.h>
+
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPIntVarI.h>
-
-#import "CPProgram.h"
-#import "CPSolver.h"
-#import "CPConcretizer.h"
-#import "ORSolution.h"
-
 
 #if defined(__linux__)
 #import <values.h>

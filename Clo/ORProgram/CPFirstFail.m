@@ -9,8 +9,9 @@
 
  ***********************************************************************/
 
-#import "CPFirstFail.h"
-#import "CPEngine.h"
+#import <ORProgram/CPFirstFail.h>
+#import <CPUKernel/CPEngine.h>
+#import <objcp/CPVar.h>
 
 @implementation CPFirstFail
 -(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars

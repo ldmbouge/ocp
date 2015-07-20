@@ -9,8 +9,6 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
 #import <ORProgram/CPProgram.h>
 #import <ORProgram/LPProgram.h>
 #import <ORProgram/MIPProgram.h>

@@ -9,10 +9,8 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/CPSolver.h>
-
 
 @interface ORLPConcretizer  : ORVisitor<NSObject>
 -(ORLPConcretizer*) initORLPConcretizer: (id<LPProgram>) solver;

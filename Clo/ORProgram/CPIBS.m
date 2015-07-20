@@ -9,12 +9,12 @@
 
  ***********************************************************************/
 
-#import "CPIBS.h"
+#import <ORProgram/CPIBS.h>
 #import <ORFoundation/ORTracer.h>
 #import <CPUKernel/CPUKernel.h>
+#import <ORPRogram/CPConcretizer.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
-#import "CPConcretizer.h"
 #import <objcp/CPFactory.h>
 
 #if defined(__linux__)

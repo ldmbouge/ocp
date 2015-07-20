@@ -12,8 +12,9 @@
 #import <ORProgram/CPProgram.h>
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <objcp/CPVar.h>
 
+@protocol CPIntVar;
+@protocol CPVarArray;
 @class CPStatisticsMonitor;
 @protocol CPIntVarArray;
 

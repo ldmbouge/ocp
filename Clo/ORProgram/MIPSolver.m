@@ -12,12 +12,12 @@
 // MIPSolver
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModelTransformation.h>
-
-#import "MIPProgram.h"
-#import "MIPSolver.h"
+#import <ORProgram/MIPProgram.h>
+#import <ORProgram/ORSolution.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <objmp/MIPSolverI.h>
-#import "ORSolution.h"
-#import "ORProgramFactory.h"
+
+#import "MIPSolver.h"
 
 @implementation MIPSolver
 {

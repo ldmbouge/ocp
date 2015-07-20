@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 
 @protocol CPIntVarArray;
 @protocol CPProgram;

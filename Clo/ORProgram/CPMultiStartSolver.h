@@ -9,10 +9,7 @@
  
  ***********************************************************************/
 
-
-#import <Foundation/Foundation.h>
-#import <ORProgram/CPProgram.h> 
-#import <ORProgram/CPSolver.h>
+#import <ORProgram/CPProgram.h>
 
 // MultiStart DFS CPSolver
 @interface CPMultiStartSolver : ORGamma<CPProgram>

@@ -9,9 +9,13 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgram.h>
+
+@protocol CPProgram;
+@protocol CPCommonProgram;
+@protocol LPProgram;
+@protocol MIPProgram;
+@protocol LPRelaxation;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORUtilities.h>
-#import "CPBaseHeuristic.h"
+#import <ORProgram/CPBaseHeuristic.h>
 #import <objcp/CPVar.h>
 
 @implementation CPBaseHeuristic {

@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPClosureEvent.h>

@@ -9,12 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORControl.h>
 #import <ORProgram/ORProgram.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/LPProgram.h>
-#import <ORProgram/CPProgram.h>
 #import "math.h"
 
 #import "ORCmdLineArgs.h"

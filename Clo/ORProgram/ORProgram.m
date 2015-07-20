@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORProgram/ORProgram.h>
+#import <objcp/objcp.h>
 
 @interface ORSEqual : ORObject<ORSTask> {
    id<ORIntVar> _x;

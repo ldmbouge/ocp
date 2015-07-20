@@ -9,11 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFactory.h>
-#import <objcp/CPConstraint.h>
-#import <objcp/CPFactory.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPError.h>
 
 ORInt ipow(ORInt b,ORInt e)

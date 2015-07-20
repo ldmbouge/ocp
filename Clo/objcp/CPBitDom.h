@@ -9,8 +9,6 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 #import <objcp/CPError.h>
 

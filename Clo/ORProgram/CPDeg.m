@@ -9,8 +9,9 @@
  
  ***********************************************************************/
 
-#import "CPDeg.h"
-#import "CPEngineI.h"
+#import <ORProgram/CPDeg.h>
+#import <CPUKernel/CPEngine.h>
+#import <objcp/CPVar.h>
 
 @implementation CPDeg {
    CPEngineI*    _solver;

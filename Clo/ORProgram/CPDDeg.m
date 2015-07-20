@@ -9,17 +9,19 @@
 
  ***********************************************************************/
 
-#import "CPDDeg.h"
-#import "CPEngineI.h"
+#import <ORProgram/CPDDeg.h>
+#import <CPUKernel/CPEngine.h>
+#import <objcp/CPVar.h>
+
 
 @implementation CPDDeg {
-   CPEngineI*    _solver;
+   id<CPEngine>    _solver;
 }
 -(id)initCPDDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
-   _solver  = (CPEngineI*)[cp engine];
+   _solver  = [cp engine];
    _rvars = rvars;
    return self;
 }

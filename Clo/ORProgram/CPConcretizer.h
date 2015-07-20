@@ -9,11 +9,11 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 
 @protocol CPCommonProgram;
 @protocol ORAnnotation;
+@protocol CPEngine;
 
 @interface ORCPConcretizer  : ORVisitor<NSObject> {
    id<CPCommonProgram> _solver;

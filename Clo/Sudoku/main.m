@@ -9,12 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 
 void show(id<CPProgram> cp,id<ORIntVarMatrix> m)
 {

@@ -14,8 +14,6 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 
-#import <ORProgram/CPSolver.h>
-
 // LP Solver
 #import "LPSolver.h"
 #import "LPConcretizer.h"

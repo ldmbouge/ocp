@@ -9,10 +9,7 @@
  
  ***********************************************************************/
 
-
-#import <Foundation/Foundation.h>
 #import <ORProgram/CPProgram.h> 
-#import <ORProgram/CPSolver.h>
 
 @interface CPParSolverI : ORGamma<CPProgram> {
    ORInt              _nbWorkers;

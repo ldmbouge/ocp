@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORSet.h>
+#import <ORProgram/MIPProgram.h>
 #import <objmp/MIPSolverI.h>
-#import "MIPProgram.h"
 #import "MIPConcretizer.h"
 
 

@@ -9,7 +9,6 @@
 
  ***********************************************************************/
 
-#import <CPUKernel/CPTypes.h>
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORConstraint.h>
 
@@ -38,6 +37,7 @@
 -(ORStatus) enforce: (ORClosure) cl;
 -(void)  tryEnforce:(ORClosure) cl;
 -(void)  tryAtomic:(ORClosure) cl;
+-(ORStatus) atomic: (ORClosure) cl;
 
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;

@@ -9,10 +9,9 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORSet.h>
-#import "CPProgram.h"
-#import "CPConcretizer.h"
-#import "ORvarI.h"
+#import <ORProgram/CPConcretizer.h>
+#import <ORProgram/ORProgram.h>
+#import <CPUKernel/CPEngine.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>
@@ -109,7 +108,7 @@
       _gamma[v.getId] = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
 }
 
--(void) visitAffineVar:(ORIntVarAffineI*) v
+-(void) visitAffineVar:(id<ORIntVar>) v
 {
    if (_gamma[v.getId] == NULL) {
       id<ORIntVar> mBase = [v base];
@@ -1269,7 +1268,7 @@
       _gamma[v.getId] = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
 }
 
--(void) visitAffineVar:(ORIntVarAffineI*) v
+-(void) visitAffineVar:(id<ORIntVar>) v
 {
    if (_gamma[v.getId] == NULL) {
       id<ORIntVar> mBase = [v base];

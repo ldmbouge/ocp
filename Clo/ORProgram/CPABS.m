@@ -9,12 +9,12 @@
 
  ***********************************************************************/
 
-#import "CPABS.h"
-#import "CPEngineI.h"
+#import <ORProgram/CPABS.h>
 #import <ORFoundation/ORDataI.h>
-#import <objcp/CPStatisticsMonitor.h>
 #import <ORFoundation/ORTracer.h>
+#import <objcp/CPVar.h>
 #import <objcp/CPFactory.h>
+#import <objcp/CPStatisticsMonitor.h>
 
 @interface ABSNogood : NSObject {
    id<CPIntVar> _var;
@@ -389,7 +389,7 @@
 @end
 
 @implementation CPABS {
-   CPEngineI*               _solver;
+   id<CPEngine>               _solver;
    CPStatisticsMonitor*    _monitor;
    ORULong                     _nbv;
    NSMutableDictionary*       _varActivity;
@@ -406,7 +406,7 @@
 {
    self = [super init];
    _cp = cp;
-   _solver = (CPEngineI*)[cp engine];
+   _solver = [cp engine];
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;

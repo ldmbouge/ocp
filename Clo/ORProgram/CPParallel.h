@@ -12,10 +12,10 @@
 
 #import <Foundation/Foundation.h>
 #import <CPUKernel/CPUKernel.h>
-#import <objcp/CPObjectQueue.h>
 
 @class SemTracer;
 @class SemCP;
+@class PCObjectQueue;
 @protocol CPSemanticProgram;
 
 @interface CPGenerator : ORDefaultController<ORSearchController> 
