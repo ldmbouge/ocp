@@ -10,8 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORConstraint.h>
-#import <ORFoundation/ORVar.h>
 #import <ORModeling/ORModeling.h>
 
 @protocol ORSolution <NSObject>

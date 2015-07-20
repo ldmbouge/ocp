@@ -9,10 +9,8 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORProgram/CPHeuristic.h>
-//#import <ORProgram/ORProgram.h>
 
 @protocol ORModel;
 @protocol ORSearchController;

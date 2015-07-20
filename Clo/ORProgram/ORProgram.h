@@ -13,7 +13,9 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/CPProgram.h>
 #import <ORProgram/LPProgram.h>
+#import <ORProgram/MIPProgram.h>
 #import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/CPSolver.h>
 #import <ORProgram/ORSolution.h>
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPDDeg.h>
@@ -26,6 +28,7 @@
 #import <ORProgram/CPMultiStartSolver.h>
 #import <ORProgram/CPParallel.h>
 #import <ORProgram/ORCPParSolver.h>
+#import <ORProgram/ORSTask.h>
 
 @interface ORGamma (Model)
 -(void) initialize: (__nonnull id<ORModel>) model;

@@ -9,30 +9,18 @@
  
  ***********************************************************************/
 
-#import <ORProgram/ORProgramFactory.h>
-
-// CP Solver
 #import <ORProgram/ORProgram.h>
-#import <ORProgram/CPFirstFail.h>
-#import <ORProgram/ORCPParSolver.h>
-#import <ORProgram/CPMultiStartSolver.h>
+
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
-#import "CPSolver.h"
-#import "CPConcretizer.h"
-#import "CPDDeg.h"
-#import "CPDeg.h"
-#import "CPWDeg.h"
-#import "CPIBS.h"
-#import "CPABS.h"
+
+#import <ORProgram/CPSolver.h>
 
 // LP Solver
-#import "LPProgram.h"
 #import "LPSolver.h"
 #import "LPConcretizer.h"
 
 // MIP Solver
-#import "MIPProgram.h"
 #import "MIPSolver.h"
 #import "MIPConcretizer.h"
 

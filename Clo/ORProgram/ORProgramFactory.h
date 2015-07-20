@@ -11,10 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/CPProgram.h>
-#import <ORProgram/LPProgram.h>
-#import <ORProgram/MIPProgram.h>
-#import <ORProgram/ORSTask.h>
+#import <ORProgram/ORProgram.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

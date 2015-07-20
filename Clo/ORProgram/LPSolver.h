@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORProgram/LPProgram.h>
-#import "ORSolution.h"
+#import <ORProgram/ORSolution.h>
 
 // LPSolver
 @interface LPSolver : ORGamma<LPProgram>
