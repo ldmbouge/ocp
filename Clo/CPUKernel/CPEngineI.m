@@ -280,6 +280,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _nbCstrs = 0;
    _objective = nil;
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _closureQueue[i] = [[CPClosureQueue alloc] initClosureQueue:512];
@@ -610,11 +611,15 @@ ORStatus propagateFDM(CPEngineI* fdm)
       return [self post: c];
    }
    else {
-      CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      [cstr setId: (ORUInt)[_mStore count]];
+      [c setId: _nbCstrs++];
       [_mStore addObject: c];
       return ORSuspend;
    }
+}
+
+-(void) assignIdToConstraint:(id<ORConstraint>)c
+{
+   [c setId: _nbCstrs++];
 }
 
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj

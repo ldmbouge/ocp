@@ -180,10 +180,13 @@
             break;
       }
       [_engine add:cg]; // Do this first!!!! We want to have the group posted before posting the constraints of the group.
+      id<CPEngine> old = _engine;
+      _engine = (id)cg;
       [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
          [ck visit:self];
-         [cg add: _gamma[ck.getId]];
+//         [cg add: _gamma[ck.getId]];
       }];
+      _engine = old;
       _gamma[g.getId] = cg;
    }
 }

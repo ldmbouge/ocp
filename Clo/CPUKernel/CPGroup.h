@@ -22,6 +22,7 @@
 }
 -(id)   init: (id<CPEngine>) engine;
 -(void) add: (id<CPConstraint>) p;
+-(void)  assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure: (id<CPClosureList>) evt;
 -(void) scheduleValueClosure: (id<CPValueEvent>) evt;
@@ -41,6 +42,7 @@
 }
 -(id) init:(id<CPEngine>)engine;
 -(void) add:(id<CPConstraint>)p;
+-(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure:(id<CPClosureList>)evt;
 -(void) scheduleValueClosure: (id<CPValueEvent>)evt;

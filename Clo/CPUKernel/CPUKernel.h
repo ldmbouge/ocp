@@ -35,10 +35,12 @@ typedef enum {
 -(ORUInt)      getId;
 -(void)        setGroup:(id<CPGroup>) g;
 -(id<CPGroup>) group;
+-(void) post;
 @end
 
 @protocol CPGroup <CPConstraint>
 -(void)  add:(id<CPConstraint>)p;
+-(void)  assignIdToConstraint:(id<ORConstraint>)c;
 -(void)  scheduleClosure:(id<CPClosureList>)evt;
 @end
 

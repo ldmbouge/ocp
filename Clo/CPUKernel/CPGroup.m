@@ -35,6 +35,10 @@
 {
    [p setGroup:self];
 }
+-(void)assignIdToConstraint:(id<ORConstraint>)c
+{
+   [_engine assignIdToConstraint:c];
+}
 -(void)setGroup:(id<CPGroup>)g
 {
    assert(0);
@@ -162,6 +166,21 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
    }
    _inGroup[_nbIn++] = p;
    [p setGroup:self];
+   [self assignIdToConstraint:p];
+}
+-(void)assignIdToConstraint:(id<ORConstraint>)c
+{
+   [_engine assignIdToConstraint:c];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CPBergeGroup(%p):",self];
+   for(ORInt i=0;i<_nbIn;i++) {
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
+   }
+   [buf appendString:@"\n\t>"];
+   return buf;
 }
 -(void) post
 {
@@ -180,8 +199,10 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
    memset(_map,0,sizeof(ORInt)*sz);
    _map -= _low;
    for(ORInt i=0;i < _nbIn;i++) 
-      _map[[_inGroup[i] getId]] = i;
+      _map[_inGroup[i].getId] = i;
    memset(_scanMap,0,sizeof(CPClosureList*)*_nbIn);
+   for(ORInt i=0;i<_nbIn;i++)
+      [_inGroup[i] post];
 }
 -(void)scheduleClosure:(CPClosureList*)evt
 {
@@ -205,6 +226,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
          CPClosureList* evt = _scanMap[k];
          if (evt) {
             ORStatus status = executeClosure(evt->_trigger,evt->_cstr,&last);
+            _scanMap[k] = nil;
             nbp += status !=ORSkip;
          }
       }
@@ -212,10 +234,10 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
          CPClosureList* evt = _scanMap[k];
          if (evt) {
             ORStatus status = executeClosure(evt->_trigger,evt->_cstr,&last);
+            _scanMap[k] = nil;
             nbp += status !=ORSkip;
          }
       }
-      memset(_scanMap,0,sizeof(CPClosureList*)*_nbIn);
       [_engine incNbPropagation:nbp];
       return ORSuspend;
    }, ^ORStatus{

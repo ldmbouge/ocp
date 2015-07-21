@@ -34,6 +34,7 @@ enum CPEngineState {
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
+   ORUInt                   _nbCstrs;
    id<ORSearchObjectiveFunction> _objective;
    CPClosureQueue*          _closureQueue[NBPRIORITIES];
    CPValueClosureQueue*     _valueClosureQueue;
@@ -79,6 +80,7 @@ enum CPEngineState {
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
+-(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 
