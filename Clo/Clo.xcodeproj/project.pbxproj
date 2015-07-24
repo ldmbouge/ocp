@@ -46605,11 +46605,11 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi55";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Coverage;
@@ -49936,11 +49936,11 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi55";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -49964,11 +49964,11 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi55";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

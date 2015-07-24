@@ -33,6 +33,83 @@ float coef[7][12] = {
    {  0,   0,  40, 70,   4,  63,   0,  0, 60,   0, 4, 0},
    {  0,  32,   0,  0,   0,   5,   0,  3,  0, 660, 0, 9}};
 
+int TDP(int argc,const char * argv[])
+{
+   id<ORModel> model = [ORFactory createModel];
+   id<ORIntRange> Binary = [ORFactory intRange: model low: 0 up: 1];
+   id<ORIntRange> Constraints = [ORFactory intRange: model low: 0 up: 2];
+   id<ORFloatVar> ac = [ORFactory floatVar: model low: 0.0 up: 200];
+   id<ORFloatVar> bc = [ORFactory floatVar: model low: 0.0 up: 200];
+   id<ORFloatVar> co = [ORFactory floatVar: model low: 0.0 up: 200];
+   id<ORIntVar> bac = [ORFactory intVar: model bounds: Binary];
+   id<ORIntVar> bbc = [ORFactory intVar: model bounds: Binary];
+   id<ORIntVar> bco = [ORFactory intVar: model bounds: Binary];
+   id<ORIdArray> ca = [ORFactory idArray:model range: Constraints];
+   ca[0] = [model add: [ac leq: [@(70) mul: bac]]];
+   ca[1] = [model add: [bc leq: [@(60) mul: bbc]]];
+   ca[2] = [model add: [co leq: [@(80) mul: bco]]];
+   [model add: [[ac plus: bc] eq: co]];
+   [model maximize: [ac plus: bc]];
+    
+    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
+    
+    [mip solve];
+    id<ORSolution> sol = [[mip solutionPool] best];
+    NSLog(@"Solution: %@",sol);
+    NSLog(@"Objective value: %@",[sol objectiveValue]);
+    printf("ac = %f \n",[sol floatValue: ac]);
+    printf("bc = %f \n",[sol floatValue: bc]);
+    printf("co = %f \n",[sol floatValue: co]);
+    NSLog(@"we are done");
+   
+   id<ORModel> submodel = [ORFactory createModel];
+   id<ORIntRange> Horizon = [ORFactory intRange: submodel low: 1 up: 10];
+   id<ORFloatVarArray> fac = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORFloatVarArray> fbc = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORFloatVarArray> fco = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORFloatVar> sac = [ORFactory floatVar: submodel];
+   id<ORFloatVar> sbc = [ORFactory floatVar: submodel];
+   id<ORFloatVar> sco = [ORFactory floatVar: submodel];
+
+   id<ORIdArray> cac = [ORFactory idArray:submodel range: Horizon];
+   id<ORIdArray> cbc = [ORFactory idArray:submodel range: Horizon];
+   id<ORIdArray> cco = [ORFactory idArray:submodel range: Horizon];
+   for(ORInt i=1; i <= 10; i++) {
+      if (i <= 7)
+         cac[i] = [submodel add: [fac[i] leq: @(7 * [sol intValue: bac])]];
+      else
+         cac[i] = [submodel add: [fac[i] leq: @(0 * [sol intValue: bac])]];
+      if (i <= 6)
+         cbc[i] = [submodel add: [fbc[i] leq: @(6 * [sol intValue: bbc])]];
+      else
+         cbc[i] = [submodel add: [fbc[i] leq: @(0 * [sol intValue: bbc])]];
+      cco[i] = [submodel add: [fco[i] leq: @(8 * [sol intValue: bco])]];
+      [submodel add: [[fac[i] plus: fbc[i]] eq: fco[i]]];
+   }
+   [submodel add: [sac eq: Sum(submodel,k,Horizon,fac[k])]];
+   [submodel add: [sbc eq: Sum(submodel,k,Horizon,fbc[k])]];
+   [submodel add: [sco eq: Sum(submodel,k,Horizon,fco[k])]];
+   [submodel maximize: [sac plus: sbc]];
+   id<LPProgram> lp = [ORFactory createLPProgram: submodel];
+   
+   [lp solve];
+   NSLog(@"Solution: %@",[lp objectiveValue]);
+   NSLog(@"Objective value: %@",[submodel objective]);
+   id<ORSolution> subsol = [[lp solutionPool] best];
+   for(ORInt i=1; i <= 10; i++) {
+      printf("fac[%d]=%f\n",i,[subsol floatValue: fac[i]]);
+      printf("fbc[%d]=%f\n",i,[subsol floatValue: fbc[i]]);
+      printf("fco[%d]=%f\n",i,[subsol floatValue: fco[i]]);
+   }
+   for(ORInt i=1; i <= 10; i++) {
+      printf("dual cac[%d]=%f\n",i,[lp dual: cac[i]]);
+      printf("dual cbc[%d]=%f\n",i,[lp dual: cbc[i]]);
+      printf("dual cco[%d]=%f\n",i,[lp dual: cco[i]]);
+   }
+   return 0;
+}
+
+
 int main_lp(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
@@ -195,7 +272,7 @@ int main_both(int argc, const char * argv[])
 int main(int argc, const char * argv[])
 {
 //   int st0 =  main_lp(argc,argv);
-   int st1 = main_mip(argc,argv);
+   int st1 = TDP(argc,argv);
 //   return st0+st1;
    return st1;
 //   return st0;
