@@ -9,20 +9,8 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-
+#import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
-
-
-NSString* tab(int d)
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   for(int i=0;i<d;i++)
-      [buf appendString:@"   "];
-   return buf;
-}
-
 
 int main(int argc, const char * argv[])
 {
@@ -79,15 +67,13 @@ int main(int argc, const char * argv[])
          }
          [mdl maximize: Sum(mdl,i, N, [x[i] mul: @(p[i])])];
          id<CPProgram> cp  = [args makeProgram:mdl];
-         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
-         //NSLog(@"MODEL: %@",mdl);
 
          [cp solve: ^{
-            //[cp labelHeuristic:h];
-            //[cp labelArrayFF:x];
-            //[cp labelArray:x];
-            
             for(ORInt k=0;k<n;k++) {
+               // Manual implementation of "smallest dom" first (to make it as similar as possible to
+               // other solvers)
+               // bs is the size of the smallest domain
+               // i is  the index of the first non-bound variable with the smallest domain. No tie breaks.
                int i = -1;
                int bs = 10000000;
                for(ORInt j=0;j<n;j++) {
@@ -101,33 +87,22 @@ int main(int argc, const char * argv[])
                while (i >= 0 && ![cp bound:x[i]]) {
                   ORInt v = [cp min:x[i]];
                   [cp try:^{
-                     //NSLog(@"%@?x(%d)==%d",tab(i),i,v);
                      [cp label:x[i] with:v];
-                     //NSLog(@"%@+x(%d)==%d \tC:%d",tab(i),i,v,[[cp explorer] nbChoices]);
                   } alt:^{
-                     //NSLog(@"%@?x(%d)!=%d ",tab(i),i,v);
                      [cp diff:x[i] with:v];
-                     //NSLog(@"%@+x(%d)!=%d \tC:%d",tab(i),i,v,[[cp explorer] nbChoices]);
                   }];
                }
             }
-
-            
-//            @autoreleasepool {
-//               NSMutableString* b = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-//               [b appendString:@"["];
-//               for(ORInt i=0;i<=n-1;i++)
-//                  [b appendFormat:@"%d%c",[cp intValue:x[i]],i < n-1 ? ',' : ']'];
-//               NSLog(@"sol: %@ obj = %@  <-- %d",b,[[cp objective] value],[NSThread threadID]);
-//            }
          }];
          id<ORSolution> sol = [[cp solutionPool] best];
          assert(sol);
+         // Sanity check: verify that we the optimum is consistent with the decision variable.
          ORInt tot = 0;
          for(int k=0;k<n;k++)
             tot += p[k] * [sol intValue: x[k]];
          assert(tot == opt);
          NSLog(@"objective: %d == %d",tot,opt);
+         // Sanity check: verify that the constraints are satisfied.
          for(int i=0;i<m;i++) {
             ORInt lhs = 0;
             for(int j=0;j<n;j++)
@@ -144,4 +119,3 @@ int main(int argc, const char * argv[])
    }
    return 0;
 }
-

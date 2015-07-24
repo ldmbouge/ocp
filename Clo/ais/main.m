@@ -9,13 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFactory.h>
-#import <objcp/CPConstraint.h>
-#import <objcp/CPFactory.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgramFactory.h>
-#import <objcp/CPError.h>
-
+#import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
@@ -36,26 +30,23 @@ int main(int argc, const char * argv[])
          [notes dc:[mdl add:[ORFactory alldifferent:sx]]];
          for(ORUInt i=SD.low;i<=SD.up;i++) {
             [notes dc:[mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]]]];
-            //[mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]]];
          }
          [notes dc:[mdl add:[ORFactory alldifferent:dx]]];
-//         [mdl add:[sx[1]   leq:sx[2]]];
-//         [mdl add:[dx[n-1] leq:dx[1]]];
 
          [mdl add:[sx[1] leq:sx[n]]];
          [mdl add:[dx[1] leq:dx[2]]];
 
          id<CPProgram> cp =  [args makeProgram:mdl annotation:notes];
-//         id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
          __block ORInt nbSolutions = 0;
-         [cp clearOnSolution];
+         [cp clearOnSolution]; // other solvers are not saving the solutions. So we shouldn't either.
          [cp solveAll: ^{
-//            [cp labelHeuristic:h];
-//            [cp labelArrayFF:sx];
-//            [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
-//               return [cp domsize:sx[i]];
-//            }];
             while(true) {
+               /**
+                * Manual implementation of 'mindom' heuristic to have a deterministic 
+                * tie break and be as close as possible to other solvers
+                * sd is the size of the smallest domain so-far
+                * sdi is the index of the first variable  in 'sx' with the smallest domain.
+                */
                ORInt sd  = FDMAXINT;
                ORInt sdi = -1;
                for(ORInt i=1;i<=n;i++) {
@@ -73,10 +64,6 @@ int main(int argc, const char * argv[])
                        }];
             }
             nbSolutions++;
-//            id<ORIntArray> a = [ORFactory intArray:cp range: R  with:^ORInt(ORInt i) {
-//               return [cp intValue:sx[i]];
-//            }];
-//            NSLog(@"Solution: %@",a);
          }];
          NSLog(@"#solutions: %d",nbSolutions);
          NSLog(@"Solver: %@",cp);
@@ -88,4 +75,3 @@ int main(int argc, const char * argv[])
    }
    return 0;
 }
-

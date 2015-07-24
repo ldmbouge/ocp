@@ -9,11 +9,7 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgramFactory.h>
-
+#import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
@@ -30,7 +26,7 @@ int main(int argc, const char * argv[])
          id<ORIntVarMatrix>  diff = [ORFactory intVarMatrix:mdl range:R : R domain:D];
          id<ORAnnotation> notes = [ORFactory annotation];
          [notes  dc: [mdl add:[ORFactory alldifferent:costas]]];
-         
+
          for(ORUInt i=R.low;i<=R.up;i++) {
             for(ORUInt j=R.low;j<=R.up;j++) {
                if (i < j)
@@ -54,25 +50,16 @@ int main(int argc, const char * argv[])
                          [[diff at:k-1 :l-1] plus: [diff at:k-1 :l]]]];
             }
          }
-
          __block ORInt nbSol = 0;
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
-         
-         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
          [cp solveAll: ^{
             NSLog(@"Searching...");
-            //[cp labelHeuristic:h];
-            [cp labelArray:[mdl intVars]];
-//            @autoreleasepool {
-//               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
-//                  return [cp intValue:costas[i]];
-//               }];
-//               NSLog(@"Solution: %@",s);
-//            }
-            @synchronized(cp) {
+            [cp labelArray:costas];
+            @synchronized(cp) { // synchronized to work correctly even if you ask for a parallel run on the command line.
                nbSol++;
             }
          }];
+         NSLog(@"#sols: %d\n",nbSol);
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [ORFactory shutdown];
          return r;
@@ -80,4 +67,3 @@ int main(int argc, const char * argv[])
    }
    return 0;
 }
-

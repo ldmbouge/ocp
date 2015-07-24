@@ -9,16 +9,7 @@
 
  ***********************************************************************/
 
-
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORProgramFactory.h>
-
-//20639 choices
-//20579 fail
-//622276 propagations
-
+#import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
@@ -58,10 +49,8 @@ int main(int argc, const char * argv[])
             [mdl add: [[team at:p :n :0] lt:[team at:p :n :1]]];
          
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
-         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:allgames];
          [cp solve:
           ^() {
-             //[cp labelHeuristic:h restricted:allgames];
              [cp  labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allgames at:i]];}];
              NSLog(@"after");
              [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allteams at:i]];}];

@@ -9,10 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORProgramFactory.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
 int main (int argc, const char * argv[])
@@ -33,15 +30,10 @@ int main (int argc, const char * argv[])
             }
          }
          id<CPProgram> cp = [ORFactory createCPProgram: model];
-         __unsafe_unretained id<CPProgram> cpw = cp; // necessary, otherwise we have a strong cycle and a leak.
-         [cp onSolution:^{
-            [nbSol incr:cpw];
-            NSLog(@"Sol: %@",[ORFactory intArray:cpw range:x.range with:^ORInt(ORInt k) {
-               return [cpw intValue:x[k]];
-            }]);
-         }];
+         [cp clearOnSolution]; // other solvers do not save solutions. We shouldn't either.
          [cp solveAll: ^{
-            [cp labelArray: x];
+            [cp labelArrayFF: x];
+            [nbSol incr:cp];
          }];
          printf("GOT %d solutions\n",[nbSol intValue:cp]);
          NSLog(@"Solver status: %@\n",cp);

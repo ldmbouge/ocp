@@ -9,11 +9,6 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
@@ -51,19 +46,14 @@ int main(int argc, const char * argv[])
             [cp labelArray:[model intVars]];
             long t1 = [ORRuntimeMonitor cputime];
             NSLog(@"labelArray time: %ld",t1-t0);
-            @autoreleasepool {
-               NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-               [buf appendString:@"["];
-               for(ORInt k=0;k<=n;k++)
-                  [buf appendFormat:@"%d%c",[cp intValue:x[k]],k < n ? ',' : ']'];
-               NSLog(@"x = %@",buf);
-               buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-               [buf appendString:@"["];
-               for(ORInt k=0;k<=n;k++)
-                  [buf appendFormat:@"%d%c",[cp intValue:y[k]],k < n ? ',' : ']'];
-               NSLog(@"y = %@",buf);
-               nbSol++;
-            }
+            printf("x = [");
+            for(ORInt k=0;k<=n;k++)
+               printf("%d%c",[cp intValue:x[k]],k < n ? ',' : ']');
+            printf("\ny = [");
+            for(ORInt k=0;k<=n;k++)
+               printf("%d%c",[cp intValue:y[k]],k < n ? ',' : ']');
+            printf("\n");
+            nbSol++;
          }];
          
          ORLong endTime = [ORRuntimeMonitor wctime];

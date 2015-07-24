@@ -9,14 +9,8 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
-
 
 int main(int argc, const char * argv[])
 {
@@ -31,7 +25,6 @@ int main(int argc, const char * argv[])
          
          id<ORIntVarMatrix> d = [ORFactory intVarMatrix:model range:R :R domain:D];
          id<ORIntVarArray>  m = [ORFactory intVarArray:model range:R domain:D];
-         //int length[15] = {0,0,1,3,6,11,17,25,34,44,55,72,85,106,127};
          [model minimize:m[n]];
          [model add:[m[1] eq:@0]];
          for(ORInt i=1;i<=n;i++)
@@ -48,7 +41,7 @@ int main(int argc, const char * argv[])
          for(ORInt i=2;i<=n;i++)
             [model add:[m[i-1] leq: m[i]]];
          [model add:[m[2] leq: [d at:n-1 :n]]];
-         id<ORIntVarArray> ad = [ORFactory intVarArray:model range:RANGE(model,0,n*(n-1)/2 - 1) with:^id<ORIntVar>(ORInt k) { return nil;}];
+         id<ORIntVarArray> ad = [ORFactory intVarArray:model range:RANGE(model,0,n*(n-1)/2 - 1)];
          ORInt k =0;
          for(ORInt i=1;i<=n;i++)
             for(ORInt j=i+1;j <= n;j++)
@@ -56,8 +49,6 @@ int main(int argc, const char * argv[])
          [notes dc:[model add:[ORFactory alldifferent:ad ]]];
          
          id<CPProgram> cp  = [args makeProgram:model annotation:notes];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
-         //id<ORIntVarArray> fd = [ORFactory flattenMatrix:d];
          [cp solve: ^{
             for(ORInt i=1;i<=n;i++) {
                if ([cp bound:m[i]]) continue;
@@ -67,8 +58,6 @@ int main(int argc, const char * argv[])
                   [cp diff:m[i] with:v];
                }];
             }
-            [cp labelHeuristic:h];
-            //[cp once: ^{ [cp labelArray:fd];}];
             NSLog(@"Optimum: %d",[cp intValue:m[n]]);
          }];         
          NSLog(@"Solver status: %@\n",cp);

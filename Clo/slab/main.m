@@ -9,13 +9,7 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORFoundation.h>
 #import <ORProgram/ORProgram.h>
-#import <ORProgram/ORProgramFactory.h>
-
 #import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
@@ -89,15 +83,18 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp  = [args makeProgram:mdl annotation:nil];
          [cp solve: ^{
             NSLog(@"In the search ... ");
-            [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [cp domsize:slab[o]];} do: ^(ORInt o)
+            [cp forall: SetOrders
+              suchThat: nil
+             orderedBy: ^ORInt(ORInt o) { return [cp domsize:slab[o]];}
+                    do: ^(ORInt o)
              {
                 ORInt ms = max(0,[cp maxBound: slab]);
-                [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1 && [cp member:s in:slab[o]]; } in: ^void(ORInt s)
-                 {
+                [cp tryall: Slabs
+                  suchThat: ^bool(ORInt s) { return s <= ms + 1 && [cp member:s in:slab[o]]; }
+                        in: ^void(ORInt s) {
                     [cp label: slab[o] with: s];
                  }
-                 onFailure: ^void(ORInt s)
-                 {
+                 onFailure: ^void(ORInt s) {
                     [cp diff: slab[o] with: s];
                  }
                  ];

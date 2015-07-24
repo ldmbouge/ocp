@@ -522,6 +522,14 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return (id<ORFloatVarArray>)o;
 }
 
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set: nil at:k];
+   return (id<ORIntVarArray>)o;
+}
+
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
