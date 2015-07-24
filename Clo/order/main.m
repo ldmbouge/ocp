@@ -23,27 +23,25 @@ int main(int argc, const char * argv[])
          id<ORModel> model = [ORFactory createModel];
          ORInt n = [args size];
          id<ORIntRange> D = RANGE(model,0,n);
+         id<ORIntRange> D1 = RANGE(model,0,n-1);
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
          id<ORGroup> g = [ORFactory bergeGroup:model];
-         [D enumerateWithBlock:^(ORInt k) {
-            if (k < n)
-               [g add:[x[k] lt:x[k+1]]];
-            //[model add:[x[k] lt:x[k+1]]];
+         [D1 enumerateWithBlock:^(ORInt k) {
+            [g add:[x[k] lt:x[k+1]]];
+//            [model add:[x[k] lt:x[k+1]]];
          }];
          [model add:g];
-         //NSLog(@"Group: %@",g);
-         //NSLog(@"MODEL %@",model);
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          __block ORInt nbSol = 0;
          [cp solve:^{
             NSLog(@"About to search...");
-//             @autoreleasepool {
-//                id<ORIntArray> xv = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
-//                   return [cp intValue:x[i]];
-//                }];
-//                NSLog(@"solution: %@",xv);
-//                nbSol++;
-//            }
+             @autoreleasepool {
+                id<ORIntArray> xv = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt i) {
+                   return [cp intValue:x[i]];
+                }];
+                NSLog(@"solution: %@",xv);
+                nbSol++;
+            }
          }];
          ORLong endTime = [ORRuntimeMonitor cputime];
          NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);

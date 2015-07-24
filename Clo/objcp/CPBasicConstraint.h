@@ -161,7 +161,7 @@ typedef int (^intgetter) (void) ;
 @private
    CPIntVar*  _x;
    CPIntVar*  _y;
-   ORInt       _c;
+   ORInt      _c;
 }
 -(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c;
 -(void) post;
