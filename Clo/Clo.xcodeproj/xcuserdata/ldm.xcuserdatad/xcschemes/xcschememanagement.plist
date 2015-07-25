@@ -389,6 +389,11 @@
 			<key>orderHint</key>
 			<integer>120</integer>
 		</dict>
+		<key>orderSwift.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>121</integer>
+		</dict>
 		<key>paq.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -703,6 +708,11 @@
 			<true/>
 		</dict>
 		<key>5B3895E81795BE07004CCE93</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B40A9201B6321460033D351</key>
 		<dict>
 			<key>primary</key>
 			<true/>
