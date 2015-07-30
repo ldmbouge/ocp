@@ -69,7 +69,7 @@
          }];
       }
    }];
-   [_theVar setBindTrigger: ^ { 
+   [_theVar whenBindDo:^ {
       ORInt val = [_theVar min];
       if (_bind) _bind(val);
       if (_unb) {
@@ -77,7 +77,7 @@
             _unb(val);
          }];
       }
-   } onBehalf:self];
+   }priority:LOWEST_PRIO onBehalf:self];
 }
 @end
 

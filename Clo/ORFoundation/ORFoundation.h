@@ -58,4 +58,3 @@ extern __thread jmp_buf* ptr;
       ptr = old;
 
 #define ENDFAIL(rv) return (rv);}}
-

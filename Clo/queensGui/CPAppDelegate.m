@@ -11,13 +11,7 @@
 
 
 #import "CPAppDelegate.h"
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
-#import <objcp/CPConstraint.h>
-
 #import <objcp/NSBoardController.h>
 
 @implementation CPAppDelegate
@@ -58,7 +52,7 @@
                                         onValueUnbind:^void(ORInt val) {
                                            [_board toggleGrid:grid row:val col:i to:Possible];
                                         }
-                ]  annotation:Default];
+                ]];
    }
    [_board watchSearch:[cp explorer]
               onChoose: ^ { [_board pause];}
@@ -87,7 +81,6 @@
        [_board pause];
     }
     ];
-   [cp release];
    [ORFactory shutdown];
 }
 

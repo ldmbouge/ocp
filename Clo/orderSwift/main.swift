@@ -23,9 +23,7 @@ autoreleasepool {
    let cp = ORFactory.createCPProgram(model)
    cp.search {
       Do(cp) {
-         let xv = ORFactory.intArray(cp, range: x.range()) { i in
-            cp.intValue(x[i])
-         }
+         let xv = (0...n).map { i in cp.intValue(x[i]) }
          println("solution: \(xv)")
       }
    }
