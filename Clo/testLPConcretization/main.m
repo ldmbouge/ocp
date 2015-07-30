@@ -74,8 +74,11 @@ int TDP(int argc,const char * argv[])
    id<ORIdArray> cac = [ORFactory idArray:submodel range: Horizon];
    id<ORIdArray> cbc = [ORFactory idArray:submodel range: Horizon];
    id<ORIdArray> cco = [ORFactory idArray:submodel range: Horizon];
+   
    for(ORInt i=1; i <= 10; i++) {
-      if (i <= 7)
+      if (i == 1)
+         cac[i] = [submodel add: [fac[i] leq: @(0 * [sol intValue: bac])]];
+      else if (i <= 7)
          cac[i] = [submodel add: [fac[i] leq: @(7 * [sol intValue: bac])]];
       else
          cac[i] = [submodel add: [fac[i] leq: @(0 * [sol intValue: bac])]];
@@ -89,6 +92,7 @@ int TDP(int argc,const char * argv[])
    [submodel add: [sac eq: Sum(submodel,k,Horizon,fac[k])]];
    [submodel add: [sbc eq: Sum(submodel,k,Horizon,fbc[k])]];
    [submodel add: [sco eq: Sum(submodel,k,Horizon,fco[k])]];
+//   id<ORConstraint> demand = [submodel add: [sac leq: @(10)]];
    [submodel maximize: [sac plus: sbc]];
    id<LPProgram> lp = [ORFactory createLPProgram: submodel];
    
@@ -106,6 +110,7 @@ int TDP(int argc,const char * argv[])
       printf("dual cbc[%d]=%f\n",i,[lp dual: cbc[i]]);
       printf("dual cco[%d]=%f\n",i,[lp dual: cco[i]]);
    }
+//    printf("dual demand=%f\n",[lp dual: demand]);
    return 0;
 }
 

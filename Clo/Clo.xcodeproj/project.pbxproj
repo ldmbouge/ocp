@@ -812,7 +812,6 @@
 		5B6CB2741B585203006E3FAB /* utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CB26C1B5851BB006E3FAB /* utilities.swift */; };
 		5B6CB2751B58521D006E3FAB /* utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CB26C1B5851BB006E3FAB /* utilities.swift */; };
 		5B6CB2761B5852D3006E3FAB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CB2641B5851BA006E3FAB /* main.m */; };
-		5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */; };
 		5B6CFD7616D91CD600BCB95F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B6CFD7716D91CD600BCB95F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B6CFD7816D91CD600BCB95F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
@@ -922,11 +921,6 @@
 		5B7B477715F0E4BE005FF875 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B7B477815F0E4BE005FF875 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B7B477915F0E4BE005FF875 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		5B7B478115F0EC12005FF875 /* test-n80-p40-0.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7B478015F0EBF7005FF875 /* test-n80-p40-0.col */; };
-		5B7B478315F0F538005FF875 /* test-n30-e50.col in Resources */ = {isa = PBXBuildFile; fileRef = 5B7B478215F0F538005FF875 /* test-n30-e50.col */; };
-		5B7B478415F0F554005FF875 /* test-n30-e50.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7B478215F0F538005FF875 /* test-n30-e50.col */; };
-		5B7B478615F0F733005FF875 /* smallColoring.col in Resources */ = {isa = PBXBuildFile; fileRef = 5B7B478515F0F733005FF875 /* smallColoring.col */; };
-		5B7B478715F0F758005FF875 /* smallColoring.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7B478515F0F733005FF875 /* smallColoring.col */; };
 		5B7C8948187EFD5100D82789 /* cont.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642EE139D49320056F448 /* cont.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B7C8949187EFD5100D82789 /* cont.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642EF139D49320056F448 /* cont.m */; };
 		5B7C894A187EFD5100D82789 /* context.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642F0139D49320056F448 /* context.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1346,7 +1340,6 @@
 		5BC116A51595067900E0F5C8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC116A41595067900E0F5C8 /* main.m */; };
 		5BC116A91595067900E0F5C8 /* ais.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BC116A81595067900E0F5C8 /* ais.1 */; };
 		5BC116AF1595068900E0F5C8 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		5BC43CB613A13C56009119FF /* testCard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC43CB513A13C56009119FF /* testCard.m */; };
 		5BC97A2B177384C2005C48A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BC97A2E177384C2005C48A8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC97A2D177384C2005C48A8 /* main.m */; };
 		5BC97A32177384C2005C48A8 /* regular.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BC97A31177384C2005C48A8 /* regular.1 */; };
@@ -7051,9 +7044,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				5B7B478715F0F758005FF875 /* smallColoring.col in CopyFiles */,
-				5B7B478415F0F554005FF875 /* test-n30-e50.col in CopyFiles */,
-				5B7B478115F0EC12005FF875 /* test-n80-p40-0.col in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7721,7 +7711,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20525,7 +20514,6 @@
 		5B6CB26B1B5851BB006E3FAB /* queensNaive.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = queensNaive.1; sourceTree = "<group>"; };
 		5B6CB26C1B5851BB006E3FAB /* utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = utilities.swift; sourceTree = "<group>"; };
 		5B6CFD7316D90F2200BCB95F /* rbg049a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg049a.tw; sourceTree = "<group>"; };
-		5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "lorem-mssg.txt"; sourceTree = "<group>"; };
 		5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5B6CFD8916D9390A00BCB95F /* ORCmdLineArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORCmdLineArgs.h; sourceTree = "<group>"; };
 		5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORCmdLineArgs.m; sourceTree = "<group>"; };
@@ -20567,9 +20555,6 @@
 		5B7B476E15F0E4AD005FF875 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B7B477115F0E4AD005FF875 /* coloringModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "coloringModel-Prefix.pch"; sourceTree = "<group>"; };
 		5B7B477215F0E4AD005FF875 /* coloringModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = coloringModel.1; sourceTree = "<group>"; };
-		5B7B478015F0EBF7005FF875 /* test-n80-p40-0.col */ = {isa = PBXFileReference; lastKnownFileType = text; path = "test-n80-p40-0.col"; sourceTree = "<group>"; };
-		5B7B478215F0F538005FF875 /* test-n30-e50.col */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test-n30-e50.col"; sourceTree = "<group>"; };
-		5B7B478515F0F733005FF875 /* smallColoring.col */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = smallColoring.col; sourceTree = "<group>"; };
 		5B7C896C187F455F00D82789 /* order2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = order2; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B7C896D187F45A000D82789 /* main2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main2.m; sourceTree = "<group>"; };
 		5B7CB9D713C2141600783BB3 /* SomeDocumentation.pages */ = {isa = PBXFileReference; lastKnownFileType = file; path = SomeDocumentation.pages; sourceTree = "<group>"; };
@@ -20776,16 +20761,12 @@
 		5BC116A41595067900E0F5C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BC116A71595067900E0F5C8 /* ais-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ais-Prefix.pch"; sourceTree = "<group>"; };
 		5BC116A81595067900E0F5C8 /* ais.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ais.1; sourceTree = "<group>"; };
-		5BC43CB413A13C56009119FF /* testCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testCard.h; path = ../testCard.h; sourceTree = "<group>"; };
-		5BC43CB513A13C56009119FF /* testCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = testCard.m; path = ../testCard.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BC794C91389D81900EC7B21 /* SillyVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SillyVar.h; sourceTree = "<group>"; };
 		5BC794CA1389D81900EC7B21 /* SillyVar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SillyVar.m; sourceTree = "<group>"; };
 		5BC97A2A177384C1005C48A8 /* regular */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = regular; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC97A2D177384C2005C48A8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BC97A30177384C2005C48A8 /* regular-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "regular-Prefix.pch"; sourceTree = "<group>"; };
 		5BC97A31177384C2005C48A8 /* regular.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = regular.1; sourceTree = "<group>"; };
-		5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libgurobi_g++4.2.a"; path = "/Users/ldm/work/platform/Clo/../../../../../Library/gurobi461/mac64/lib/libgurobi_g++4.2.a"; sourceTree = "<absolute>"; };
-		5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgurobi46.so; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/../../../../../../../../../Library/gurobi461/mac64/lib/libgurobi46.so; sourceTree = "<absolute>"; };
 		5BCCC4031417F8CE0079E833 /* queensACSem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensACSem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
@@ -20901,7 +20882,6 @@
 		B11D862215CD8AE20019729B /* ORExplorerI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORExplorerI.m; sourceTree = "<group>"; };
 		B11D862515CD8E310019729B /* ORLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORLimit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B11D862615CD8E310019729B /* ORLimit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORLimit.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B1255E83161A0129009A7AC3 /* libgurobi.so.4.6.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = libgurobi.so.4.6.1; path = /Users/ldm/work/platform/Clo/../../../../../../Library/gurobi461/mac64/lib/libgurobi.so.4.6.1; sourceTree = "<absolute>"; };
 		B127A537196274CE00398AA3 /* testScheduler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testScheduler; sourceTree = BUILT_PRODUCTS_DIR; };
 		B127A53A196274CE00398AA3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B127A53E196274CE00398AA3 /* testScheduler.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testScheduler.1; sourceTree = "<group>"; };
@@ -36005,9 +35985,6 @@
 				B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */,
 				5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */,
 				B15441FC16D17A75001BD7B3 /* gurobi_c.h */,
-				B1255E83161A0129009A7AC3 /* libgurobi.so.4.6.1 */,
-				5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */,
-				5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */,
 				B111FBF913CF3C81003C5119 /* Foundation.framework */,
 				5B9ABCEF1391329D000997E5 /* objcp.framework */,
 				B1943A1015B0E33C00E1771B /* data */,
@@ -36629,8 +36606,6 @@
 				5BEA4E8A178365FA00614A82 /* searchTest-Info.plist */,
 				5B8DCD8F165FDDB6007CC562 /* testBitConstraints.h */,
 				5B8DCD90165FDDB6007CC562 /* testBitConstraints.m */,
-				5BC43CB413A13C56009119FF /* testCard.h */,
-				5BC43CB513A13C56009119FF /* testCard.m */,
 				5BEA4E641783641E00614A82 /* searchTest.h */,
 				5BEA4E651783641E00614A82 /* searchTest.m */,
 				5B9ABD0E1391329D000997E5 /* objcpTests.h */,
@@ -37599,11 +37574,7 @@
 			isa = PBXGroup;
 			children = (
 				5B6CFD7316D90F2200BCB95F /* rbg049a.tw */,
-				5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */,
 				5B36F25D1682683000020E94 /* GAPDATA */,
-				5B7B478215F0F538005FF875 /* test-n30-e50.col */,
-				5B7B478515F0F733005FF875 /* smallColoring.col */,
-				5B7B478015F0EBF7005FF875 /* test-n80-p40-0.col */,
 				B1935C7415B90FFB00107399 /* slab.dat */,
 				5B7D696C15B9C99200C9A10C /* market.dta */,
 				5B27ABDB15B1518300E4A3DF /* MKNAP */,
@@ -40734,8 +40705,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BFD594A15A3ACA500825BC3 /* InfoPlist.strings in Resources */,
-				5B7B478315F0F538005FF875 /* test-n30-e50.col in Resources */,
-				5B7B478615F0F733005FF875 /* smallColoring.col in Resources */,
 				5B19097C16DAAB45006D1D24 /* eq20.1 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -41221,7 +41190,6 @@
 			files = (
 				5B9ABD111391329D000997E5 /* objcpTests.m in Sources */,
 				5BA5D51D1889E62D003884EE /* testIdempotence.m in Sources */,
-				5BC43CB613A13C56009119FF /* testCard.m in Sources */,
 				5B7408AF156286C700C05277 /* bitTest.m in Sources */,
 				5B8DCD91165FDDB6007CC562 /* testBitConstraints.m in Sources */,
 				5BEA4E661783641E00614A82 /* searchTest.m in Sources */,
@@ -46987,11 +46955,11 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi55";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Coverage;
@@ -50350,11 +50318,11 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi55";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -50378,11 +50346,11 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi55";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -51276,6 +51244,7 @@
 				5B40A9271B6321470033D351 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B5096EC1619B6CC00171F9D /* Build configuration list for PBXNativeTarget "testDistrib" */ = {
 			isa = XCConfigurationList;
