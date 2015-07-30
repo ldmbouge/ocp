@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:../Extensions.playground">
+      location = "group:Extensions.playground">
    </FileRef>
    <FileRef
       location = "group:CPSwift.playground">
