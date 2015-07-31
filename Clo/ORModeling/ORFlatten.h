@@ -9,9 +9,10 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORAnnotation.h>
+
+@protocol ORAddToModel;
+@protocol ORModel;
 
 @interface ORFlatten : ORNOopVisit<ORModelTransformation> {
    id<ORAddToModel>   _into;

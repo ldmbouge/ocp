@@ -11,9 +11,9 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORFlatten.h>
+#import "ORFloatLinear.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
-
 
 @implementation ORFlatten {
    NSMapTable* _mapping;

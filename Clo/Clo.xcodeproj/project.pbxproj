@@ -1553,7 +1553,7 @@
 		B103534113BBD7B200627058 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B103534B13BBD81300627058 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B103534F13BBD82D00627058 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B103534313BBD7B200627058 /* main.m */; };
-		B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614516D969CD00E95A39 /* ORLPFlatten.h */; };
+		B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614516D969CD00E95A39 /* ORLPFlatten.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614616D969CD00E95A39 /* ORLPFlatten.m */; };
 		B103614D16D9AAA500E95A39 /* ORFloatDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614B16D9AAA500E95A39 /* ORFloatDecompose.h */; };
 		B103614E16D9AAA500E95A39 /* ORFloatDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */; };
@@ -1898,7 +1898,7 @@
 		B1E1C79B170372FB006AACFC /* MIPProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C79A170372FB006AACFC /* MIPProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1E1C79E1703741E006AACFC /* MIPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C79C1703741E006AACFC /* MIPConcretizer.h */; };
 		B1E1C79F1703741E006AACFC /* MIPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C79D1703741E006AACFC /* MIPConcretizer.m */; };
-		B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */; };
+		B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */; };
 		B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A817038783006AACFC /* ORFloatLinear.h */; };
 		B1E1C7AB17038784006AACFC /* ORFloatLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A917038784006AACFC /* ORFloatLinear.m */; };

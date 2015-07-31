@@ -11,7 +11,7 @@
 
 #import "ORMallocWatch.h"
 
-#if defined(__x86_64__) && defined(__APPLE__)
+#if defined(__x86_64__) && defined(__APPLE__) && TARGET_OS_IPHONE==0
 
 #include <stdlib.h>
 #include <unistd.h>

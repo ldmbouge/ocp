@@ -40,21 +40,42 @@
 #import <ORFoundation/ORParallel.h>
 #import <ORFoundation/ORSetI.h>
 #import <ORFoundation/ORTrailI.h>
+#import "TargetConditionals.h"
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());
 void failNow();
 
+#if TARGET_OS_IPHONE
+
+#define TRYFAIL { \
+jmp_buf buf; \
+NSValue* tv = [NSThread.currentThread.threadDictionary objectForKey:@(2)]; \
+jmp_buf* old = tv.pointerValue; \
+int st = _setjmp(buf); \
+if (st==0) { \
+   [NSThread.currentThread.threadDictionary setObject:[NSValue valueWithPointer:&buf] forKey:@(2)]; 
+
+#define ONFAIL(rv) return (rv); \
+} else { \
+   [NSThread.currentThread.threadDictionary setObject:[NSValue valueWithPointer:old] forKey:@(2)];
+#define ENDFAIL(rv) return (rv);}}
+
+#else
 extern __thread jmp_buf* ptr;
 
 #define TRYFAIL  { \
-   jmp_buf buf; \
-   jmp_buf* old = ptr; \
-   int st = _setjmp(buf); \
-   if (st==0) { \
-      ptr = &buf;
+jmp_buf buf; \
+jmp_buf* old = ptr; \
+int st = _setjmp(buf); \
+if (st==0) { \
+ptr = &buf;
 
 #define ONFAIL(rv)  return (rv); \
-   } else { \
-      ptr = old;
+} else { \
+ptr = old;
 
 #define ENDFAIL(rv) return (rv);}}
+
+#endif
+
+

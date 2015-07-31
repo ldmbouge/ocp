@@ -14,6 +14,8 @@
 #import <ORFoundation/ORFactory.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORModeling/ORFlatten.h>
+#import <ORModeling/ORLPFlatten.h>
+#import <ORModeling/ORMIPFlatten.h>
 #import <ORModeling/ORLSFlatten.h>
 #import <ORModeling/ORLinear.h>
 #import <ORModeling/ORIntLinear.h>

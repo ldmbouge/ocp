@@ -13,7 +13,11 @@
 #import <ORUtilities/cont.h>
 #import "pthread.h"
 
+#if TARGET_OS_IPHONE==0
 static __thread char* baseStack = 0;
+#else
+static __declspec(thread) char* baseStack = 0;
+#endif
 
 #if defined(__x86_64__)
 

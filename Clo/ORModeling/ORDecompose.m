@@ -737,15 +737,15 @@ static inline ORLong maxSeq(ORLong v[4])  {
    else {  // z = x / y
       id<ORIntVar> x = lV;
       id<ORIntVar> y = rV;
-      sint64 v1Min = x.min;
-      sint64 v1Max = x.max;
-      sint64 yp = y.min == 0 ? 1  : y.min;
-      sint64 ym = y.max == 0 ? -1 : y.max;
+      ORLong v1Min = x.min;
+      ORLong v1Max = x.max;
+      ORLong yp = y.min == 0 ? 1  : y.min;
+      ORLong ym = y.max == 0 ? -1 : y.max;
       
-      sint64 mxvals[4] = { v1Min/yp,v1Min/ym,v1Max/yp,v1Max/ym};
+      ORLong mxvals[4] = { v1Min/yp,v1Min/ym,v1Max/yp,v1Max/ym};
       int low = bindDown(minSeq(mxvals));
       int up  = bindUp(maxSeq(mxvals));
-      sint64 pxvals[4] = { low * y.min,low * y.max, up * y.min, up * y.max};
+      ORLong pxvals[4] = { low * y.min,low * y.max, up * y.min, up * y.max};
       int pxlow = bindDown(minSeq(pxvals));
       int pxup  = bindUp(maxSeq(pxvals));
       int rb = max((int)labs(yp),(int)labs(ym))-1;

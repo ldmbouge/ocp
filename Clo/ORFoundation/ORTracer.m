@@ -224,6 +224,24 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    return _path;
 }
 
+#if TARGET_OS_IPHONE
++(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
+{
+   id ptr = [super allocWithZone:NULL];
+   *(Class*)ptr = self;
+   ptr = [ptr initCheckpoint:cmds memory:mt];
+   ((ORCheckpointI*)ptr)->_cnt = 1;
+   return ptr;
+}
+-(void) letgo
+{
+   assert(_cnt > 0);
+   if (--_cnt == 0) {
+      [_mt clear];
+      [self release];
+   }
+}
+#else
 static __thread id checkPointCache = NULL;
 
 +(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
@@ -269,6 +287,7 @@ static __thread id checkPointCache = NULL;
       checkPointCache = self;
    }
 }
+#endif
 
 -(id)grab
 {

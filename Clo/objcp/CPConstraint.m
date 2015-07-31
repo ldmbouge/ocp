@@ -78,9 +78,9 @@
          @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];
          break;
       default:
-	NSLog(@"Default Consistency");
-	o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
-	break;
+         //NSLog(@"Default Consistency");
+         o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
+         break;
    }
    [[x tracker] trackMutable: o];
    return o;

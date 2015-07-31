@@ -129,12 +129,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom bound];
 }
  
--(uint64) min
+-(ORULong) min
 {
     return [_dom min];
 }
 
--(uint64) max 
+-(ORULong) max
 { 
     return [_dom max];
 }
@@ -234,8 +234,8 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(void) createTriggers
 {
     if (_triggers == nil) {
-        uint64 low = [_dom min];
-        uint64 up = [_dom max];
+        ORULong low = [_dom min];
+        ORULong up = [_dom max];
         _triggers = [CPTriggerMap triggerMapFrom:(ORInt)low to:(ORInt)up dense:(up-low+1)<256];
     }
 }
@@ -295,12 +295,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
    [_engine scheduleClosures:mList];
 }
 
--(ORStatus) updateMin: (uint64) newMin
+-(ORStatus) updateMin: (ORULong) newMin
 {
     return [_dom updateMin:newMin for:_recv];
 }
 
--(ORStatus) updateMax: (uint64) newMax
+-(ORStatus) updateMax: (ORULong) newMax
 {
     return [_dom updateMax:newMax for:_recv];
 }
@@ -331,7 +331,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    return [_dom getUp:currUp andLow:currLow];
 }
 
--(ORStatus) bindUInt64:(uint64)val
+-(ORStatus) bindUInt64:(ORULong)val
 {
     return [_dom bind:val for:_recv];
 }

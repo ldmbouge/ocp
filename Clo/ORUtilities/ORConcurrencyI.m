@@ -540,6 +540,7 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 
 @implementation ORConcurrency (Internals)
 
+#if TARGET_OS_IPHONE == 0
 +(OREventList*) eventList  // Returns *the* event list in TLS (for the invoking thread)
 {
    static __thread OREventList* eventlist = NULL;
@@ -547,10 +548,24 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
       eventlist = [[OREventList alloc] initOREventList];
    return eventlist;
 }
+#else
++(OREventList*) eventList  // Returns *the* event list in TLS (for the invoking thread)
+{
+   NSValue* ptr = [NSThread.currentThread.threadDictionary objectForKey:@(4)];
+   if (ptr==nil) {
+      OREventList* eventList = [[OREventList alloc] initOREventList];
+      ptr = [NSValue valueWithPointer:eventList];
+      [NSThread.currentThread.threadDictionary setObject:ptr forKey:@(4)];
+   }
+   return ptr.pointerValue;
+}
+#endif
+
 @end
 
 @implementation NSThread (ORData)
 
+#if TARGET_OS_IPHONE == 0
 static ORInt __thread tidTLS = 0;
 
 +(void)setThreadID:(ORInt)tid
@@ -561,4 +576,19 @@ static ORInt __thread tidTLS = 0;
 {
    return tidTLS;
 }
+#else
+
++(void)setThreadID:(ORInt)tid
+{
+   [NSThread.currentThread.threadDictionary setObject:[NSNumber numberWithInt:(int)tid]
+                                               forKey:@(3)];
+}
++(ORInt)threadID
+{
+   NSNumber* n = [NSThread.currentThread.threadDictionary objectForKey:@(3)];
+   assert(n);
+   return n.intValue;
+}
+#endif
+
 @end

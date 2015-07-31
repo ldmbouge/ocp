@@ -9,12 +9,12 @@
  
  ***********************************************************************/
 
-
-#import <Foundation/Foundation.h>
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORController.h>
-
 @protocol ORASearchSolver;
+@protocol ORSearchController;
+@protocol ORControllerFactory;
+@protocol ORIntIterable;
+@protocol ORTracer;
+@protocol ORSearchEngine;
 
 @protocol ORExplorer <NSObject>
 -(void) push: (id<ORSearchController>) c;

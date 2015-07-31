@@ -77,7 +77,7 @@
             _unb(val);
          }];
       }
-   }priority:LOWEST_PRIO onBehalf:self];
+   }priority:ALWAYS_PRIO onBehalf:self];
 }
 @end
 

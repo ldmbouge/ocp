@@ -18,8 +18,8 @@
 -(ORUInt) getId;
 -(ORBool) bound;
 -(CPBitArrayDom*) domain;
--(uint64)min;
--(uint64)max;
+-(ORULong)min;
+-(ORULong)max;
 -(ORInt)  domsize;
 -(ORBool) member: (unsigned int*) v;
 -(id<CPEngine>) engine;

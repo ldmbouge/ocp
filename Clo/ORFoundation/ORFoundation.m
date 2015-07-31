@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 
+#if TARGET_OS_IPHONE==0
 __thread jmp_buf* ptr = 0;
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)())
@@ -33,4 +34,29 @@ void failNow()
 {
    _longjmp(*ptr, 1);
 }
+#else
+ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)())
+{
+   jmp_buf buf;
+   NSValue* tv = [NSThread.currentThread.threadDictionary objectForKey:@(2)];
+   jmp_buf* old = tv.pointerValue;
+   int st = _setjmp(buf);
+   if (st==0) {
+      [NSThread.currentThread.threadDictionary setObject:[NSValue valueWithPointer:&buf] forKey:@(2)];
+      ORStatus rv = block();
+      [NSThread.currentThread.threadDictionary setObject:[NSValue valueWithPointer:old] forKey:@(2)];
+      return rv;
+   } else {
+      [NSThread.currentThread.threadDictionary setObject:[NSValue valueWithPointer:old] forKey:@(2)];
+      return handle();
+   }
+}
+
+void failNow()
+{
+   NSValue* tv = [NSThread.currentThread.threadDictionary objectForKey:@(2)];
+   jmp_buf* old = tv.pointerValue;
+   _longjmp(*old, 1);
+}
+#endif
 

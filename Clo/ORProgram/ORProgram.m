@@ -400,7 +400,7 @@ void* __nonnull whileDo(id<CPCommonProgram> solver,
 
 void* __nonnull forallDo(id<CPCommonProgram> solver,
                          id<ORIntRange> R,
-                         void* __nonnull(^__nonnull body)(SInt)
+                         void* __nonnull(^__nonnull body)(NSInteger)
                          )
 {
    id<ORSTask> task = [[ORSForallDo alloc] initWith:solver range:R body:(id)body];

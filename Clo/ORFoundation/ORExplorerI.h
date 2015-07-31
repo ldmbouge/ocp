@@ -9,9 +9,11 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
 #import <ORUtilities/cont.h>
-#import <ORFoundation/ORController.h>
+#import <ORFoundation/ORExplorer.h>
+
+@protocol ORSearchController;
+@protocol ORControllerFactory;
 
 @interface ORCoreExplorerI : NSObject
 

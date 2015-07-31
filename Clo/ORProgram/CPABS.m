@@ -694,7 +694,7 @@
     } while (carryOn && cntProbes < maxProbes);
     
     ORStatus status = [_solver atomic:^{
-        NSLog(@"Imposing %ld SAC constraints",[killSet count]);
+        NSLog(@"Imposing %ld SAC constraints",(unsigned long)[killSet count]);
         ORStatus status = ORSuspend;
         for(ABSNogood* b in killSet) {
             if ([_solver enforce: ^{ [[b variable] remove:[b value]];}] == ORFailure)

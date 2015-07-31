@@ -42,6 +42,7 @@
    return rv;
 }
 
+#if TARGET_OS_IPHONE==0
 static __thread id vLossCache = nil;
 
 +(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list
@@ -71,6 +72,20 @@ static __thread id vLossCache = nil;
    return;
    [super dealloc];
 }
+#else
++(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list
+{
+   CPValueLossEvent* ptr = [[CPValueLossEvent alloc] init];
+   ptr->_theVal = value;
+   ptr->_theList = list;
+   return ptr;
+}
+-(void)letgo
+{
+   [self release];
+}
+#endif
+
 
 
 @end

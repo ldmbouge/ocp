@@ -37,8 +37,7 @@ int main (int argc, const char * argv[])
       id<ORIntVarArray> a  = [ORFactory intVarArray: mdl range: R : R with: ^id<ORIntVar>(ORInt i,ORInt j) { return [x at: i : j]; }];
       for(ORInt i = 0; i < nb; i++) {
          fscanf(f,"%d%d%d",&r,&c,&v);
-//         [mdl  add: [[x at: r : c] eq: @(v)]];
-         [mdl  add: [[x at: r : c] eq: [ORFactory intVar: mdl value: v]]];
+         [mdl  add: [[x at: r : c] eq: @(v)]];
       }
       for(ORInt i = 1; i <= 9; i++)
          [mdl add: [ORFactory alldifferent: [ORFactory intVarArray: mdl range: R with: ^id<ORIntVar>(ORInt j) { return [x at: i : j]; }]]];

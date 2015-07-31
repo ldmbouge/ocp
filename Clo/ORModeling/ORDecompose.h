@@ -11,10 +11,10 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORIntLinear.h>
-#import <ORModeling/ORFloatLinear.h>
 
 @protocol ORModel;
 @protocol ORAddToModel;
+@protocol ORFloatLinear;
 @class ORExprI;
 
 @interface ORNormalizer : NSObject

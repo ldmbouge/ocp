@@ -66,8 +66,8 @@ typedef struct  {
 -(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
 -(ORBool) bound;
--(uint64) min;
--(uint64) max;
+-(ORULong) min;
+-(ORULong) max;
 -(CPBitArrayDom*) domain;
 -(unsigned int*) minArray;
 -(unsigned int*) maxArray;
@@ -79,8 +79,8 @@ typedef struct  {
 -(ORBool) member:(unsigned int*)v;
 
 // update
--(ORStatus)     updateMin: (uint64) newMin;
--(ORStatus)     updateMax: (uint64) newMax;
+-(ORStatus)     updateMin: (ORULong) newMin;
+-(ORStatus)     updateMax: (ORULong) newMax;
 -(void)         setLow: (unsigned int*) newLow;
 -(void)         setUp: (unsigned int*) newUp;
 -(void)         setUp:(unsigned int*) newUp andLow:(unsigned int*)newLow;
@@ -88,7 +88,7 @@ typedef struct  {
 -(TRUInt*)    getUp;
 -(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
 -(ORStatus)     bind:(unsigned int*) val;
--(ORStatus)     bindUInt64:(uint64) val;
+-(ORStatus)     bindUInt64:(ORULong) val;
 //-(ORStatus)     remove:(int) val;
 -(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 -(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;

@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if defined(__x86_64__) && defined(__APPLE__)
+#if defined(__x86_64__) && defined(__APPLE__) && TARGET_OS_IPHONE==0
 #import <Cocoa/Cocoa.h>
 #endif
 

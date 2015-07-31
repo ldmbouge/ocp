@@ -8,8 +8,8 @@ extension Array {
       get {
          return self[Int(i)]
       }
-      set(newValue) {
-         self[Int(i)] = newValue
+      set(nv) {
+         self[Int(i)] = nv
       }
    }
 }

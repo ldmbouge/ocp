@@ -13,6 +13,7 @@
 #import <ORFoundation/ORConstraint.h>
 #import <pthread.h>
 #import <objc/runtime.h>
+#import <Foundation/NSThread.h>
 
 typedef struct {
    Class  _poolClass;
@@ -31,8 +32,24 @@ struct CNode {
    struct CNode*    _next;
 };
 
+#if TARGET_OS_IPHONE
++(ComListPool*)instancePool
+{
+   NSMutableDictionary* mt = NSThread.currentThread.threadDictionary;
+   NSValue* pool =[mt objectForKey:@(1)];
+   if (!pool) {
+      ComListPool* poolPtr = malloc(sizeof(ComListPool));
+      poolPtr->_low = poolPtr->_high = poolPtr->_sz = 0;
+      poolPtr->_mxs = 8192;
+      poolPtr->_poolClass = self;
+      poolPtr->_pool = malloc(sizeof(id)*poolPtr->_mxs);
+      pool = [NSValue valueWithPointer:poolPtr];
+      [mt setObject:pool forKey:@(1)];
+   }
+   return (ComListPool*)[pool pointerValue];
+}
+#else
 static __thread ComListPool* pool = NULL;
-
 +(ComListPool*)instancePool
 {
    if (!pool) {
@@ -44,6 +61,8 @@ static __thread ComListPool* pool = NULL;
    }
    return pool;
 }
+#endif
+
 
 +(id)newCommandList:(ORInt)node from:(ORInt)fh to:(ORInt)th
 {

@@ -10,7 +10,11 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORFoundation/ORVisit.h>
 #import <ORModeling/ORModelTransformation.h>
+
+@protocol ORConstraint;
+@protocol ORExpr;
 
 @interface ORLPFlatten : ORNOopVisit<ORModelTransformation>
 -(id) initORLPFlatten: (id<ORAddToModel>) target;
