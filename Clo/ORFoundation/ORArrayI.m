@@ -511,10 +511,12 @@
 }
 -(id) objectAtIndexedSubscript: (NSUInteger)key
 {
+    assert(_low <= key && key <= _up);
    return _array[key];
 }
 -(void) setObject: (id) newValue atIndexedSubscript: (NSUInteger) key
 {
+    assert(_low <= key && key <= _up);
    _array[key] = newValue;
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx

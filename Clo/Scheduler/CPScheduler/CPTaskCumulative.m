@@ -2148,7 +2148,7 @@ static void readData(CPTaskCumulative * cumu)
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
         
-        if (cumu->_area != NULL && cumu->_area[t0] != NULL) {
+        if (cumu->_area != NULL && cumu->_area[t] != NULL) {
             cumu->_area_min[t0] = cumu->_area[t].min;
             cumu->_area_max[t0] = cumu->_area[t].max;
         }
@@ -2189,7 +2189,7 @@ static void readData(CPTaskCumulative * cumu)
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
 
-        if (cumu->_area != NULL && cumu->_area[t0] != NULL) {
+        if (cumu->_area != NULL && cumu->_area[t] != NULL) {
             cumu->_area_min[t0] = cumu->_area[t].min;
             cumu->_area_max[t0] = cumu->_area[t].max;
         }
