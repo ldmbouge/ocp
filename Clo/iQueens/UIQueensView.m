@@ -29,7 +29,7 @@
 
 - (void)drawRect:(CGRect)dirtyRect
 {
-   [[UIColor whiteColor] setFill];
+   [[UIColor yellowColor] setFill];
    UIRectFill(dirtyRect);
    [_delegate drawRect:dirtyRect inView:self];
 }

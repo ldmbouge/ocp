@@ -11,6 +11,7 @@
 
 
 #import <objcp/CPObjectQueue.h>
+#include <libkern/OSAtomic.h>
 
 #define SPINLOCK 1
 

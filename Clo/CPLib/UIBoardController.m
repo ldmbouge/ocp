@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "UIBoardController.h"
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPIntVarI.h>
 #import <objcp/CPWatch.h>
 
@@ -57,7 +57,7 @@
 }
 -(void)drawRect:(CGRect)dirtyRect inView:(UIView*)view
 {
-   CGRect bnds  = [view frame];
+   CGRect bnds  = [view bounds];
    NSInteger nbRows = _rows.up - _rows.low + 1;
    NSInteger nbCols = _cols.up - _cols.low + 1;
    float stripW = bnds.size.width / nbCols;

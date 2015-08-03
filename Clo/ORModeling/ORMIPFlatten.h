@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORFoundation/ORVisit.h>
 #import <ORModeling/ORModelTransformation.h>
 
 @interface ORMIPFlatten : ORNOopVisit<ORModelTransformation>

@@ -1340,6 +1340,26 @@
 		5BC116A51595067900E0F5C8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC116A41595067900E0F5C8 /* main.m */; };
 		5BC116A91595067900E0F5C8 /* ais.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BC116A81595067900E0F5C8 /* ais.1 */; };
 		5BC116AF1595068900E0F5C8 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BC13A401B6F54D300FC9A01 /* ORPQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B67F8111B5824D700F223DC /* ORPQueue.m */; };
+		5BC13A411B6F54D300FC9A01 /* ORInterval.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0EF71787533000104246 /* ORInterval.mm */; };
+		5BC13A421B6F552800FC9A01 /* ORAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B87B3EC180EF2C6001B1D70 /* ORAnnotation.m */; };
+		5BC13A431B6F552800FC9A01 /* ORVisit.m in Sources */ = {isa = PBXBuildFile; fileRef = B1FBA2F017BF1AE0000F5F43 /* ORVisit.m */; };
+		5BC13A441B6F552800FC9A01 /* ORLSFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C2671B39FE8E008A9E51 /* ORLSFlatten.m */; };
+		5BC13A451B6F552800FC9A01 /* ORMIPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */; };
+		5BC13A461B6F552800FC9A01 /* ORModelTransformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C26A1B39FF0C008A9E51 /* ORModelTransformation.m */; };
+		5BC13A471B6F552800FC9A01 /* ORMIPLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = B182C60B173C3DC9002954F6 /* ORMIPLinearize.m */; };
+		5BC13A481B6F552800FC9A01 /* MIPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C79D1703741E006AACFC /* MIPConcretizer.m */; };
+		5BC13A491B6F552800FC9A01 /* ORSolution.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C2791B3A01E6008A9E51 /* ORSolution.m */; };
+		5BC13A4A1B6F552800FC9A01 /* MIPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7971703725B006AACFC /* MIPSolver.m */; };
+		5BC13A4B1B6F552800FC9A01 /* CPDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6F96718464836002434E3 /* CPDeg.m */; };
+		5BC13A4C1B6F552800FC9A01 /* CPIntSetConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C26D1B3A0098008A9E51 /* CPIntSetConstraint.m */; };
+		5BC13A4D1B6F552800FC9A01 /* CPTrailIntSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C2711B3A0098008A9E51 /* CPTrailIntSet.m */; };
+		5BC13A4E1B6F552800FC9A01 /* CPFloatConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */; };
+		5BC13A4F1B6F591D00FC9A01 /* CPFloatVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */; };
+		5BC13A501B6F593D00FC9A01 /* CPFloatDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */; };
+		5BC13A511B6F596D00FC9A01 /* CPISVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C26F1B3A0098008A9E51 /* CPISVarI.m */; };
+		5BC13A521B6F598800FC9A01 /* ORFloatLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A917038784006AACFC /* ORFloatLinear.m */; };
+		5BC13A531B6F59CF00FC9A01 /* MIPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C78B17036D27006AACFC /* MIPSolverI.m */; };
 		5BC97A2B177384C2005C48A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BC97A2E177384C2005C48A8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC97A2D177384C2005C48A8 /* main.m */; };
 		5BC97A32177384C2005C48A8 /* regular.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BC97A31177384C2005C48A8 /* regular.1 */; };
@@ -1393,7 +1413,6 @@
 		5BD8BEC916E123E200D9BF0B /* CPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* CPSolver.m */; };
 		5BD8BECB16E123E200D9BF0B /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
 		5BD8BECC16E123E200D9BF0B /* ORCPParSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */; };
-		5BD8BECD16E123E200D9BF0B /* (null) in Sources */ = {isa = PBXBuildFile; };
 		5BD8BECE16E123E200D9BF0B /* ORModeling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1159161E5E430014EBCB /* ORModeling.m */; };
 		5BD8BECF16E123E200D9BF0B /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1165161E5F2B0014EBCB /* ORModelI.m */; };
 		5BD8BED016E123E200D9BF0B /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */; };
@@ -41219,6 +41238,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BC13A531B6F59CF00FC9A01 /* MIPSolverI.m in Sources */,
+				5BC13A521B6F598800FC9A01 /* ORFloatLinear.m in Sources */,
+				5BC13A511B6F596D00FC9A01 /* CPISVarI.m in Sources */,
+				5BC13A501B6F593D00FC9A01 /* CPFloatDom.m in Sources */,
+				5BC13A4F1B6F591D00FC9A01 /* CPFloatVarI.m in Sources */,
+				5BC13A421B6F552800FC9A01 /* ORAnnotation.m in Sources */,
+				5BC13A431B6F552800FC9A01 /* ORVisit.m in Sources */,
+				5BC13A441B6F552800FC9A01 /* ORLSFlatten.m in Sources */,
+				5BC13A451B6F552800FC9A01 /* ORMIPFlatten.m in Sources */,
+				5BC13A461B6F552800FC9A01 /* ORModelTransformation.m in Sources */,
+				5BC13A471B6F552800FC9A01 /* ORMIPLinearize.m in Sources */,
+				5BC13A481B6F552800FC9A01 /* MIPConcretizer.m in Sources */,
+				5BC13A491B6F552800FC9A01 /* ORSolution.m in Sources */,
+				5BC13A4A1B6F552800FC9A01 /* MIPSolver.m in Sources */,
+				5BC13A4B1B6F552800FC9A01 /* CPDeg.m in Sources */,
+				5BC13A4C1B6F552800FC9A01 /* CPIntSetConstraint.m in Sources */,
+				5BC13A4D1B6F552800FC9A01 /* CPTrailIntSet.m in Sources */,
+				5BC13A4E1B6F552800FC9A01 /* CPFloatConstraint.m in Sources */,
+				5BC13A401B6F54D300FC9A01 /* ORPQueue.m in Sources */,
+				5BC13A411B6F54D300FC9A01 /* ORInterval.mm in Sources */,
 				5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */,
 				5BD8BEE116E12A0600D9BF0B /* LPSolverI.m in Sources */,
 				5BD8BEE016E1299300D9BF0B /* LPSolver.m in Sources */,
@@ -41242,7 +41281,6 @@
 				5BD8BEC916E123E200D9BF0B /* CPSolver.m in Sources */,
 				5BD8BECB16E123E200D9BF0B /* CPMultiStartSolver.m in Sources */,
 				5BD8BECC16E123E200D9BF0B /* ORCPParSolver.m in Sources */,
-				5BD8BECD16E123E200D9BF0B /* (null) in Sources */,
 				5BD8BECE16E123E200D9BF0B /* ORModeling.m in Sources */,
 				5BD8BECF16E123E200D9BF0B /* ORModelI.m in Sources */,
 				5BD8BED016E123E200D9BF0B /* ORFlatten.m in Sources */,
@@ -47189,7 +47227,7 @@
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "iQueens/iQueens-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -49070,7 +49108,7 @@
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "iQueens/iQueens-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -49096,7 +49134,7 @@
 				GCC_PREFIX_HEADER = "iQueens/iQueens-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "iQueens/iQueens-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = (
 					"-ObjC",

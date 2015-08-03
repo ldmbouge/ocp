@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORError.h>
+#import <ORFoundation/ORConstraint.h>
 
 @implementation ORVisitor
 

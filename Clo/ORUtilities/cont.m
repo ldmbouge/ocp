@@ -120,7 +120,11 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 
 inline static ContPool* instancePool()
 {
+#if TARGET_OS_IPHONE==1
+   static __declspec(thread) ContPool* pool = 0;
+#else
    static __thread ContPool* pool = 0;
+#endif
    if (!pool) {
       pool = malloc(sizeof(ContPool));
       pool->low = pool->high = pool->nbCont = 0;

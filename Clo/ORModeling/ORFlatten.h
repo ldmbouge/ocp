@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORModeling/ORModelTransformation.h>
+#import <ORFoundation/ORVisit.h>
 
 @protocol ORAddToModel;
 @protocol ORModel;

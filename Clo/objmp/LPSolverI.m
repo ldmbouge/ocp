@@ -11,9 +11,9 @@
 
 #import "LPSolverI.h"
 
-//#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+#if TARGET_OS_IPHONE==0
 #import "LPGurobi.h"
-//#endif
+#endif
 
 @interface LPFloatVarSnapshot : NSObject  {
    ORUInt    _name;
@@ -1018,7 +1018,7 @@
 -(LPSolverI*) initLPSolverI
 {
    self = [super init];
-#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+#if TARGET_OS_IPHONE==0
    _lp = [[LPGurobiSolver alloc] initLPGurobiSolver];
 #else
    _lp = nil; // [ldm] we do not have GUROBI on IOS
@@ -1422,7 +1422,11 @@
 }
 -(ORFloat) lpValue
 {
+#if TARGET_OS_IPHONE==1
+   return 0.0;
+#else
    return [_lp objectiveValue];
+#endif
 }
 
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb
