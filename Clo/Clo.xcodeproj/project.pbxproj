@@ -1272,6 +1272,7 @@
 		5BB3836813B3C0E1005B7D52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3836713B3C0E1005B7D52 /* main.m */; };
 		5BB3837113B3C0F5005B7D52 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BB4239F162CA2B300B0EF42 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BB848181B70BD160084C52D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */; };
 		5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB9541F16DA888500932681 /* CPMultiStartSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBA3F8A151CCB0C00D6F6AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5BBA3FA0151CCB1F00D6F6AD /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -40672,6 +40673,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B8C7E0815867D7E007042CA /* InfoPlist.strings in Resources */,
+				5BB848181B70BD160084C52D /* Default-568h@2x.png in Resources */,
 				5B8C7E0915867D7E007042CA /* MainStoryboard_iPad.storyboard in Resources */,
 				5B8C7E0A15867D7E007042CA /* MainStoryboard_iPhone.storyboard in Resources */,
 			);

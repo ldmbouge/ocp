@@ -11,7 +11,6 @@
 
 
 #import "OCPViewController.h"
-#import <ORFoundation/ORFoundation.h>
 #import <ORProgram/ORProgram.h>
 
 @interface OCPViewController ()
@@ -50,30 +49,32 @@
 - (IBAction)redo:(id)sender 
 {
    int n = 8;
-   ORRange R = (ORRange){1,n};
-   id<CPProgram> cp = [CPFactory createSolver];
-   id<CPInteger> nbSolutions = [CPFactory integer:cp value:0];
-   [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 
-   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
-   [cp solveAll: 
-    ^() {
-       [cp add: [CPFactory alldifferent: x annotation:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xp annotation:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xn annotation:ValueConsistency]];
-    }   
-          using: 
-    ^() {
-       [CPLabel array: x orderedBy: ^int(int i) { return [[x at:i] domsize];}];
-       [log  insertText:[NSString stringWithFormat:@"sol [%d]: %@\n",[nbSolutions value],[x description]]];
-       [nbSolutions incr];
-    }
-    ];
-   [log insertText: [NSString stringWithFormat:@"GOT %ld solutions\n",[nbSolutions value]]];
+   id<ORModel> m = [ORFactory createModel];
+   id<ORIntRange> R = RANGE(m,1,n);
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable:m value:0];
+   id<ORIntVarArray> x = [ORFactory intVarArray:m range:R domain: R];
+   id<ORIntVarArray> xp = [ORFactory intVarArray:m range: R with: ^id<ORIntVar>(int i) {
+      return [ORFactory intVar:m var:x[i] shift:i];
+   }];
+   id<ORIntVarArray> xn = [ORFactory intVarArray:m range: R with: ^id<ORIntVar>(int i) {
+      return [ORFactory intVar:m var:x[i] shift:-i];
+   }];
+   [m add: [ORFactory alldifferent: x]];
+   [m add: [ORFactory alldifferent: xp]];
+   [m add: [ORFactory alldifferent: xn]];
    
+   id<CPProgram> cp = [ORFactory createCPProgram:m];
+   
+   [cp solveAll:^{
+      [cp labelArrayFF:x];
+      id<ORIntArray> s = [ORFactory intArray:cp range:R with:^ORInt(ORInt k) {
+         return [cp intValue:x[k]];
+      }];
+      [log  insertText:[NSString stringWithFormat:@"sol [%d]: %@\n",[nbSolutions intValue:cp],s]];
+      [nbSolutions incr:cp];
+   }];
+   [log insertText: [NSString stringWithFormat:@"GOT %d solutions\n",[nbSolutions intValue:cp]]];
    [log insertText: [NSString stringWithFormat:@"Solver status: %@\n",cp]];
-   [cp release];
    [ORFactory shutdown];
 }
 
