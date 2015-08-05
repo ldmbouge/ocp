@@ -104,6 +104,11 @@
 			<key>orderHint</key>
 			<integer>97</integer>
 		</dict>
+		<key>SudokuSwift.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>122</integer>
+		</dict>
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -648,6 +653,11 @@
 			<true/>
 		</dict>
 		<key>53C4BE2C1929C2E700DE6498</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B0FE4361B70F3D500F1DD03</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -16,6 +16,8 @@
 @protocol ORIntSet;
 @protocol ORIntRange;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ORIntArray <ORObject>
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
@@ -126,4 +128,6 @@
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 @end
+
+NS_ASSUME_NONNULL_END
 

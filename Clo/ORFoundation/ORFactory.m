@@ -525,8 +525,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
-   for(ORInt k=range.low;k <= range.up;k++)
-      [o set: nil at:k];
    return (id<ORIntVarArray>)o;
 }
 

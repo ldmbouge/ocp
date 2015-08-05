@@ -134,9 +134,30 @@ public func |(a : UnsafeMutablePointer<Void>, b : UnsafeMutablePointer<Void>) ->
    }
 }
 
-func sum(tracker : ORTracker,R : ORIntRange,b : ORInt -> ORExpr) -> ORExpr {
+public func sum(tracker : ORTracker,R : ORIntRange,b : ORInt -> ORExpr) -> ORExpr {
    return ORFactory.sum(tracker, over: R, suchThat: nil, of: b)
 }
-func range(tracker : ORTracker,r : Range<Int>) -> ORIntRange {
+public func range(tracker : ORTracker,r : Range<Int>) -> ORIntRange {
    return ORFactory.intRange(tracker, low: ORInt(r.startIndex), up: ORInt(r.endIndex - 1))
 }
+
+public func Σ(tracker : ORTracker,R : ORIntRange,b : ORInt -> ORExpr) -> ORExpr {
+   return ORFactory.sum(tracker, over: R, suchThat: nil, of: b)
+}
+
+public func all(t : ORTracker,r : ORIntRange,body : ((i : ORInt) -> ORIntVar)) -> ORIntVarArray {
+   return ORFactory.intVarArray(t, range: r, with: body)
+}
+
+public func all(t : ORTracker,r1 : ORIntRange,r2 : ORIntRange, body : (i : ORInt, j : ORInt) -> ORIntVar) -> ORIntVarArray {
+   return ORFactory.intVarArray(t, range: r1,r2, with: body)
+}
+
+
+/*
+extension ORIntVarMatrix {
+   public subscript(i : ORInt,j : ORInt) {
+   
+   }
+}
+*/

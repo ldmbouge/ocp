@@ -11,10 +11,6 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import ORProgram
 
-func Σ(tracker : ORTracker,R : ORIntRange,b : ORInt -> ORExpr) -> ORExpr {
-   return ORFactory.sum(tracker, over: R, suchThat: nil, of: b)
-}
-
 autoreleasepool {
    println("magicSerie in swift!")
    let n : ORInt = 14
