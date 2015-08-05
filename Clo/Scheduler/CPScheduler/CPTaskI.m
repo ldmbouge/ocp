@@ -127,15 +127,19 @@ typedef struct  {
 
 @implementation CPTaskVar
 {
-   @protected CPEngineI*  _engine;
-   @protected id<ORTrail> _trail;
-   id<ORIntRange>     _horizon;
-   TRInt              _start;
-   TRInt              _end;
-   TRInt              _durationMin;
-   TRInt              _durationMax;
-   ORBool             _constantDuration;
-   CPTaskVarEventNetwork _net;
+    @protected CPEngineI*  _engine;
+    @protected id<ORTrail> _trail;
+    id<ORIntRange>  _horizon;
+    // Trailed values
+    TRInt _start;       // Earliest start time
+    TRInt _lst;         // Latest start time
+    TRInt _ect;         // Earliest completion time
+    TRInt _end;         // Latest completion time
+    TRInt _durationMin; // Minimal duration
+    TRInt _durationMax; // Maximal duration
+    
+    ORBool             _constantDuration;
+    CPTaskVarEventNetwork _net;
 }
 -(id<CPTaskVar>) initCPTaskVar: (CPEngineI*) engine horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
 {
@@ -145,11 +149,13 @@ typedef struct  {
    
    // domain [who said I do not write comments?]
    _start = makeTRInt(_trail,horizon.low);
+    _lst = makeTRInt(_trail, horizon.up - duration.low);
+    _ect = makeTRInt(_trail, horizon.low + duration.low);
    _end = makeTRInt(_trail,horizon.up);
    _durationMin = makeTRInt(_trail,duration.low);
    _durationMax = makeTRInt(_trail,duration.up);
    _constantDuration = (duration.low == duration.up);
-   
+    
    // need a consistency check
    assert(_start._val + _durationMax._val <= _end._val);
    
@@ -173,11 +179,13 @@ typedef struct  {
 }
 -(ORInt) lst
 {
-   return _end._val - _durationMin._val;
+    return _lst._val;
+//   return _end._val - _durationMin._val;
 }
 -(ORInt) ect
 {
-   return _start._val + _durationMin._val;
+    return _ect._val;
+//   return _start._val + _durationMin._val;
 }
 -(ORInt) lct
 {
@@ -221,10 +229,15 @@ typedef struct  {
 -(void) updateStart: (ORInt) newStart
 {
    if (newStart > _start._val) {
-      if (newStart + _durationMin._val > _end._val)
-         failNow();
+       if (newStart > _lst._val)
+           failNow();
+       assert(newStart + _durationMin._val <= _end._val);
+//      if (newStart + _durationMin._val > _end._val)
+//         failNow();
       [self changeStartEvt];
       assignTRInt(&_start,newStart,_trail);
+       if (newStart + _durationMin._val > _ect._val)
+           assignTRInt(&_ect, newStart + _durationMin._val, _trail);
       
       if (!_constantDuration) {
          ORInt newDurationMax = _end._val - _start._val;
@@ -235,10 +248,15 @@ typedef struct  {
 -(void) updateEnd: (ORInt) newEnd
 {
    if (newEnd < _end._val) {
-      if (newEnd < _start._val + _durationMin._val)
-         failNow();
+       if (newEnd < _ect._val)
+           failNow();
+       assert(newEnd >= _start._val + _durationMin._val);
+//      if (newEnd < _start._val + _durationMin._val)
+//         failNow();
       [self changeEndEvt];
       assignTRInt(&_end,newEnd,_trail);
+       if (newEnd - _durationMin._val < _lst._val)
+           assignTRInt(&_lst, newEnd - _durationMin._val, _trail);
       
       if (!_constantDuration) {
          ORInt newDurationMax = _end._val - _start._val;
@@ -252,19 +270,24 @@ typedef struct  {
    if (work) {
       newStart = max(_start._val,newStart);
       newEnd   = min(_end._val,newEnd);
+       if (newStart > _lst._val || newEnd < _ect._val)
+           failNow();
       if (newStart + _durationMin._val > newEnd || newEnd < newStart + _durationMin._val)
          failNow();
       [self changeStartEvt];
       [self changeEndEvt];
       assignTRInt(&_start, newStart, _trail);
       assignTRInt(&_end, newEnd, _trail);
+       if (newStart + _durationMin._val > _ect._val)
+           assignTRInt(&_ect, newStart + _durationMin._val, _trail);
+       if (newEnd - _durationMin._val < _lst._val)
+           assignTRInt(&_lst, newEnd - _durationMin._val, _trail);
       if (!_constantDuration) {
          ORInt newDurationMax = _end._val - _start._val;
          [self updateMaxDuration: newDurationMax];
       }
    }
 }
-
 -(void) updateMinDuration: (ORInt) newDurationMin
 {
    if (newDurationMin > _durationMin._val) {
@@ -274,6 +297,14 @@ typedef struct  {
          failNow();
       [self changeDurationEvt];
       assignTRInt(&_durationMin,newDurationMin,_trail);
+       if (_start._val + newDurationMin > _ect._val) {
+           [self changeEndEvt];
+           assignTRInt(&_ect, _start._val + newDurationMin, _trail);
+       }
+       if (_end._val - newDurationMin < _lst._val) {
+           [self changeStartEvt];
+           assignTRInt(&_lst, _end._val - newDurationMin, _trail);
+       }
    }
 }
 -(void) updateMaxDuration: (ORInt) newDurationMax
@@ -283,16 +314,28 @@ typedef struct  {
          failNow();
       [self changeDurationEvt];
       assignTRInt(&_durationMax,newDurationMax,_trail);
+       if (_lst._val + newDurationMax < _end._val)
+           [self updateEnd:_lst._val + newDurationMax];
+       if (_ect._val - newDurationMax > _start._val)
+           [self updateStart:_ect._val - newDurationMax];
    }
 }
 -(void) labelStart: (ORInt) start
 {
    [self updateStart: start];
+    if (_lst._val > start) {
+        [self changeStartEvt];
+        assignTRInt(&_lst, start, _trail);
+    }
    [self updateEnd: start + _durationMax._val];
 }
 -(void) labelEnd: (ORInt) end
 {
    [self updateEnd: end];
+    if (_ect._val < end) {
+        [self changeEndEvt];
+        assignTRInt(&_ect, end, _trail);
+    }
    [self updateStart: end - _durationMax._val];
 }
 -(void) labelDuration: (ORInt) duration
