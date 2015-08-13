@@ -16,7 +16,7 @@ autoreleasepool {
    let model = ORFactory.createModel()
    let R     = ORFactory.intRange(model, low: 0, up: n - 1)
    let x     = ORFactory.intVarArray(model, range: R, domain: R)
-   let e     = sum(model, R) { k in x[k] }
+   let e     = sum(model, R : R) { k in x[k] }
    for  i : ORInt in 0..<n  {
       for j : ORInt in i+1..<n {
          model.add(x[i] ≠ x[j])
@@ -50,23 +50,24 @@ autoreleasepool {
 //      }
       
       limitSolutionsDo(cp,4) {
-         forallDo(cp,R) { k in
-            whileDo(cp,{ !cp.bound(x[k])}) {
-               let v = cp.min(x[k])
-               return equal(cp,x[k],v) | diff(cp,x[k],v)
+         forallDo(cp,R) { (k : Int) -> UnsafeMutablePointer<Void> in
+            whileDo(cp, { !cp.bound(x[ORInt(k)])}) {
+               let v = cp.min(x[ORInt(k)])
+               return equal(cp,x[ORInt(k)],v) | diff(cp,x[ORInt(k)],v)
             }
          }
-      } »
+      }
+         »
       Do(cp) {
          print("Solution: " + ORFactory.intArray(cp,range:R) {
             k in cp.intValue(x[k])
-         }.description)
+            }.description,appendNewline: false)
       } »
       Do(cp) {
-         println("\tAnother message...")
+         print("\tAnother message...")
       }
    }
    cp.clearOnSolution()
-   println("Number of solutions: \(cp.solutionPool().count())")
+   print("Number of solutions: \(cp.solutionPool().count())\n")
    ORFactory.shutdown()
 }
