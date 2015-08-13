@@ -24,7 +24,7 @@
 
 @protocol ORModelTransformation;
 
-NS_ASSUME_NONNULL_BEGIN
+PORTABLE_BEGIN
 
 @protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
@@ -98,4 +98,4 @@ NS_ASSUME_NONNULL_BEGIN
 +(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
 @end
 
-NS_ASSUME_NONNULL_END
+PORTABLE_END

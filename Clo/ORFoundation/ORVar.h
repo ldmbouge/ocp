@@ -15,7 +15,7 @@
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORConstraint.h>
 
-NS_ASSUME_NONNULL_BEGIN
+PORTABLE_BEGIN
 
 @protocol ORVar <ORObject>
 -(ORInt) getId;
@@ -124,5 +124,5 @@ typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROu
 -(void) close;
 @end
 
-NS_ASSUME_NONNULL_END
+PORTABLE_END
 

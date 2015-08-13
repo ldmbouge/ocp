@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-//#import <ORFoundation/ORData.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORTrail.h>
@@ -27,7 +26,7 @@
 @protocol ORAutomaton;
 
 
-NS_ASSUME_NONNULL_BEGIN
+PORTABLE_BEGIN
 @protocol OROrderedSweep <NSObject>
 -(BOOL) next: (ORInt*) v;
 @end
@@ -119,7 +118,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(id<ORExprArray>) arrayORExpr: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORExpr>(^)(ORInt)) clo;
 // Macros friendly
 +(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
-+(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>)r2  with:(nonnull id<ORIntVar>(^)(ORInt,ORInt)) clo;
++(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>)r2  with:(id<ORIntVar>(^)(ORInt,ORInt)) clo;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with:(id<ORIntVar>(^)(ORInt,ORInt)) clo;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with:(id<ORIntVar>(^)(ORInt,ORInt,ORInt)) clo;
 
@@ -285,7 +284,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (ORBool) b;
 @end
 
-NS_ASSUME_NONNULL_END
+PORTABLE_END
 
 
 #define INTEGER(track,v)      [ORFactory mutable:track value:(v)]

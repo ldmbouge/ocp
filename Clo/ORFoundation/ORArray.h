@@ -16,7 +16,7 @@
 @protocol ORIntSet;
 @protocol ORIntRange;
 
-NS_ASSUME_NONNULL_BEGIN
+PORTABLE_BEGIN
 
 @protocol ORIntArray <ORObject>
 -(ORInt) at: (ORInt) value;
@@ -129,5 +129,5 @@ NS_ASSUME_NONNULL_BEGIN
 -(id<ORTracker>) tracker;
 @end
 
-NS_ASSUME_NONNULL_END
+PORTABLE_END
 
