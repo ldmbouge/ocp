@@ -30,9 +30,9 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solveAll:^{
             NSLog(@"Starting...");
-            NSLog(@"X = %@",[cp gamma][x.getId]);
-            NSLog(@"Y = %@",[cp gamma][y.getId]);
-            NSLog(@"MODEL is: %@",[[cp engine] model]);
+            NSLog(@"X = %@",cp.gamma[x.getId]);
+            NSLog(@"Y = %@",cp.gamma[y.getId]);
+            NSLog(@"MODEL is: %@",cp.engine.model);
             id<ORSelect> select = [ORFactory select: cp
                                               range: a.range
                                            suchThat: ^bool(ORInt i)   { return ![cp bound:a[i]]; }

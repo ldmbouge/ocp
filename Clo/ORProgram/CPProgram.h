@@ -22,7 +22,7 @@
 @protocol CPBitVar;
 @protocol ORSTask;
 
-NS_ASSUME_NONNULL_BEGIN
+PORTABLE_BEGIN
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
@@ -190,5 +190,5 @@ NS_ASSUME_NONNULL_BEGIN
 -(void) labelBitVarsFirstFail: (NSArray*)vars;
 -(NSString*)stringValue:(id<ORBitVar>)x;
 @end
-NS_ASSUME_NONNULL_END
+PORTABLE_END
 
