@@ -18,10 +18,10 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 
-@protocol CPFloatVarNotifier;
+@protocol CPRealVarNotifier;
 
 
-@protocol CPFloatVarSubscriber <NSObject>
+@protocol CPRealVarSubscriber <NSObject>
 // AC3 Closure Event
 -(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
@@ -47,7 +47,7 @@
 
 // Interface for CP extensions
 
-@protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
+@protocol CPRealVarExtendedItf <CPRealVarSubscriber>
 -(void) updateMin: (ORFloat) newMin;
 -(void) updateMax: (ORFloat) newMax;
 -(ORStatus) updateInterval: (ORInterval)nb;
@@ -59,26 +59,26 @@ typedef struct  {
    TRId            _minEvt;
    TRId            _maxEvt;
    TRId         _boundsEvt;
-} CPFloatEventNetwork;
+} CPRealEventNetwork;
 
-@class CPFloatVarI;
+@class CPRealVarI;
 
-@protocol CPFloatVarNotifier <NSObject>
--(CPFloatVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
+@protocol CPRealVarNotifier <NSObject>
+-(CPRealVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
 -(void) bindEvt:(id<CPFDom>)sender;
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender;
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender;
 @end
 
-@interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPFloatVarExtendedItf> {
+@interface CPRealVarI : ORObject<CPRealVar,CPRealVarNotifier,CPRealVarExtendedItf> {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    id<CPFDom>               _dom;
-   CPFloatEventNetwork      _net;
+   CPRealEventNetwork      _net;
    CPMultiCast*             _recv;
 }
--(id)initCPFloatVar:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
+-(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(CPEngineI*) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
@@ -86,12 +86,12 @@ typedef struct  {
 -(ORFloat) domwidth;
 @end
 
-@interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
+@interface CPRealViewOnIntVarI : ORObject<CPRealVar,CPRealVarExtendedItf,CPIntVarNotifier> {
    CPEngineI* _engine;
    CPIntVar* _theVar;
-   CPFloatEventNetwork _net;
+   CPRealEventNetwork _net;
 }
--(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
+-(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;

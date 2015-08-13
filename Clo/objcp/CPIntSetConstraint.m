@@ -13,7 +13,7 @@
 #import "ORConstraintI.h"
 #import "CPIntSetConstraint.h"
 #import "CPIntVarI.h"
-#import "CPFloatVarI.h"
+#import "CPRealVarI.h"
 #import "CPEngineI.h"
 
 @implementation CPISInterAC

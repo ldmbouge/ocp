@@ -28,11 +28,11 @@
 @end
 
 @interface ORFloatLinear :  NSObject<ORFloatLinear> {
-   struct CPFloatTerm {
+   struct ORFloatTerm {
       id<ORVar>   _var;
       ORFloat    _coef;
    };
-   struct CPFloatTerm* _terms;
+   struct ORFloatTerm* _terms;
    ORInt             _nb;
    ORInt            _max;
    ORFloat          _indep;

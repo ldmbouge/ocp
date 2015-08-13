@@ -15,45 +15,45 @@
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
 
-@class CPFloatVarI;
+@class CPRealVarI;
 @class CPIntVar;
 @class CPEngine;
-@protocol CPFloatVarArray;
+@protocol CPRealVarArray;
 
-@interface CPFloatSquareBC : CPCoreConstraint { // z == x^2
-   CPFloatVarI* _x;
-   CPFloatVarI* _z;
+@interface CPRealSquareBC : CPCoreConstraint { // z == x^2
+   CPRealVarI* _x;
+   CPRealVarI* _z;
 }
--(id)initCPFloatSquareBC:(id)z equalSquare:(id)x;
+-(id)initCPRealSquareBC:(id)z equalSquare:(id)x;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatEquationBC : CPCoreConstraint {
-   id<CPFloatVarArray> _x;
+@interface CPRealEquationBC : CPCoreConstraint {
+   id<CPRealVarArray> _x;
    id<ORFloatArray>    _coefs;
    ORFloat             _c;
 }
--(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
+-(id)init:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatINEquationBC : CPCoreConstraint {
-   id<CPFloatVarArray> _x;
+@interface CPRealINEquationBC : CPCoreConstraint {
+   id<CPRealVarArray> _x;
    id<ORFloatArray>    _coefs;
    ORFloat             _c;
 }
--(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
+-(id)init:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatEqualc : CPCoreConstraint {
-   CPFloatVarI* _x;
+@interface CPRealEqualc : CPCoreConstraint {
+   CPRealVarI* _x;
    ORFloat      _c;
 }
 -(id) init:(id)x and:(ORFloat)c;
@@ -62,10 +62,10 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatElementCstBC : CPCoreConstraint { // y == c[x]
+@interface CPRealElementCstBC : CPCoreConstraint { // y == c[x]
 @private
    CPIntVar*       _x;
-   CPFloatVarI*     _y;
+   CPRealVarI*     _y;
    id<ORFloatArray> _c;
 }
 -(id) init: (id) x indexCstArray:(id<ORFloatArray>) c equal:(id)y;
@@ -74,8 +74,8 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPFloatVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
--(id)        init: (id<CPFloatVar>) x;
+@interface CPRealVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
+-(id)        init: (id<CPRealVar>) x;
 -(void)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
@@ -87,8 +87,8 @@
 -(id<ORObjectiveValue>)value;
 @end
 
-@interface CPFloatVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
--(id)        init: (id<CPFloatVar>) x;
+@interface CPRealVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
+-(id)        init: (id<CPRealVar>) x;
 -(void)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;

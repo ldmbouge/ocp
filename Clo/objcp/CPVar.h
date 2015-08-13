@@ -141,7 +141,7 @@ enum CPVarClass {
 -(id<ORASolver>) solver;
 @end
 
-@protocol CPFloatVar<CPVar>
+@protocol CPRealVar<CPVar>
 -(ORFloat) min;
 -(ORFloat) max;
 -(ORFloat) value;
@@ -156,11 +156,11 @@ enum CPVarClass {
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 
-@protocol CPFloatVarArray <CPVarArray>
--(id<CPFloatVar>) at: (ORInt) value;
--(void) set: (id<CPFloatVar>) x at: (ORInt) value;
--(id<CPFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<CPFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+@protocol CPRealVarArray <CPVarArray>
+-(id<CPRealVar>) at: (ORInt) value;
+-(void) set: (id<CPRealVar>) x at: (ORInt) value;
+-(id<CPRealVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPRealVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 

@@ -26,7 +26,7 @@
 #import "CPLexConstraint.h"
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
-#import "CPFloatConstraint.h"
+#import "CPRealConstraint.h"
 #import "CPIntSetConstraint.h"
 
 
@@ -572,46 +572,46 @@
 @end
 
 @implementation CPFactory (ORFloat)
-+(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORCLevel)c
++(id<CPConstraint>) floatSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c
 {
-   id<CPConstraint> o = [[CPFloatSquareBC alloc] initCPFloatSquareBC:z equalSquare:x];
+   id<CPConstraint> o = [[CPRealSquareBC alloc] initCPRealSquareBC:z equalSquare:x];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
 {
-   id<CPConstraint> o = [[CPFloatEquationBC alloc] init:x coef:coefs eqi:c];
+   id<CPConstraint> o = [[CPRealEquationBC alloc] init:x coef:coefs eqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c
 {
-   id<CPConstraint> o = [[CPFloatINEquationBC alloc] init:x coef:coefs leqi:c];
+   id<CPConstraint> o = [[CPRealINEquationBC alloc] init:x coef:coefs leqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
 +(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c
 {
-   id<CPConstraint> o = [[CPFloatEqualc alloc] init:x and:c];
+   id<CPConstraint> o = [[CPRealEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORCLevel)n
++(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n
 {
    id<CPConstraint> o = nil;
-   o = [[CPFloatElementCstBC alloc] init:x indexCstArray:c equal:y];
+   o = [[CPRealElementCstBC alloc] init:x indexCstArray:c equal:y];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x
++(id<CPConstraint>) floatMinimize: (id<CPRealVar>) x
 {
-   id<CPConstraint> o = [[CPFloatVarMinimize alloc] init: x];
+   id<CPConstraint> o = [[CPRealVarMinimize alloc] init: x];
    [[x engine] trackMutable: o];
    return o;
 }
-+(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x
++(id<CPConstraint>) floatMaximize: (id<CPRealVar>) x
 {
-   id<CPConstraint> o = [[CPFloatVarMaximize alloc] init: x];
+   id<CPConstraint> o = [[CPRealVarMaximize alloc] init: x];
    [[x engine] trackMutable: o];
    return o;
 }

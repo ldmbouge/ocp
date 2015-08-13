@@ -20,7 +20,7 @@
 
 #import "CPTableI.h"
 #import "CPBitVarI.h"
-#import "CPFloatVarI.h"
+#import "CPRealVarI.h"
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 
@@ -80,13 +80,13 @@
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVar*)x];
 }
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
++(id<CPRealVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
 {
-   return [[CPFloatVarI alloc] initCPFloatVar:cp low:range.low up:range.up];
+   return [[CPRealVarI alloc] init:cp low:range.low up:range.up];
 }
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
++(id<CPRealVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
-   return [[CPFloatViewOnIntVarI alloc] initCPFloatViewIntVar:cp intVar:x];
+   return [[CPRealViewOnIntVarI alloc] init:cp intVar:x];
 }
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet
 {

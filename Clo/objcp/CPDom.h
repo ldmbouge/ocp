@@ -41,12 +41,12 @@
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
 
-@protocol CPFloatVarNotifier;
+@protocol CPRealVarNotifier;
 @protocol CPFDom
--(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
--(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
--(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
+-(void) updateMin:(ORFloat)newMin for:(id<CPRealVarNotifier>)x;
+-(void) updateMax:(ORFloat)newMax for:(id<CPRealVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRealVarNotifier>)x;
+-(void) bind:(ORFloat)val  for:(id<CPRealVarNotifier>)x;
 -(ORFloat) min;
 -(ORFloat) max;
 -(ORFloat) imin;
@@ -58,5 +58,5 @@
 -(NSString*)description;
 -(id) copy;
 -(void) restoreDomain:(id<CPFDom>)toRestore;
--(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
+-(void) restoreValue:(ORFloat)toRestore for:(id<CPRealVarNotifier>)x;
 @end

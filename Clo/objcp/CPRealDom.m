@@ -10,17 +10,17 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPFloatDom.h"
+#import "CPRealDom.h"
 #import "CPEngineI.h"
 #import "CPError.h"
-#import "CPFloatVarI.h"
+#import "CPRealVarI.h"
 
 #define BIND_EPSILON (0.0000001)
 #define TOLERANCE    (0.0000001)
 
-@implementation CPFloatDom
+@implementation CPRealDom
 
--(id)initCPFloatDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up
+-(id)initCPRealDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up
 {
    self = [super init];
    _trail = trail;
@@ -32,14 +32,14 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   return [[CPFloatDom allocWithZone:zone] initCPFloatDom:_trail low:_imin up:_imax];
+   return [[CPRealDom allocWithZone:zone] initCPRealDom:_trail low:_imin up:_imax];
 }
 -(NSString*) description
 {
    ORIReady();
    return ORIFormat(createORI2(_min._val, _max._val));
 }
--(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
+-(void) updateMin:(ORFloat)newMin for:(id<CPRealVarNotifier>)x
 {
    ORIReady();
    ORInterval me = createORI2(_min._val, _max._val);
@@ -57,7 +57,7 @@
    if (isBound)
       [x bindEvt:self];
 }
--(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
+-(void) updateMax:(ORFloat)newMax for:(id<CPRealVarNotifier>)x
 {
    ORIReady();
    ORInterval me = createORI2(_min._val, _max._val);
@@ -75,7 +75,7 @@
    if (isBound)
       [x bindEvt:self];
 }
--(ORNarrowing) updateInterval: (ORInterval) v for: (id<CPFloatVarNotifier>) x
+-(ORNarrowing) updateInterval: (ORInterval) v for: (id<CPRealVarNotifier>) x
 {
    ORIReady();
    ORInterval src= createORI2(_min._val, _max._val);
@@ -121,7 +121,7 @@
    }
 }
 
--(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x
+-(void) bind:(ORFloat)val  for:(id<CPRealVarNotifier>)x
 {
    ORIReady();
    if (_min._val <= val && val <= _max._val) {
@@ -173,14 +173,14 @@
 }
 -(id) copy
 {
-   return [[CPFloatDom alloc] initCPFloatDom:_trail low:_imin up:_imax];
+   return [[CPRealDom alloc] initCPRealDom:_trail low:_imin up:_imax];
 }
 -(void) restoreDomain:(id<CPFDom>)toRestore
 {
    _min._val = [toRestore min];
    _max._val = [toRestore max];
 }
--(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x
+-(void) restoreValue:(ORFloat)toRestore for:(id<CPRealVarNotifier>)x
 {
    _min._val = _max._val = toRestore;
    [x bindEvt:self];

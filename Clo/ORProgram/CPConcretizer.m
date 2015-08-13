@@ -608,8 +608,8 @@
 -(void) visitFloatSquare: (id<ORSquare>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<CPFloatVar> res = [self concreteVar:[cstr res]];
-      id<CPFloatVar> op  = [self concreteVar:[cstr op]];
+      id<CPRealVar> res = [self concreteVar:[cstr res]];
+      id<CPRealVar> op  = [self concreteVar:[cstr op]];
       ORCLevel annotation = [_notes levelFor:cstr];
       id<CPConstraint> concrete = [CPFactory floatSquare:op equal:res annotation:annotation];
       [_engine add:concrete];
@@ -759,7 +759,7 @@
       [res visit: self];
       id<CPConstraint> concreteCstr = [CPFactory floatElement: (id<CPIntVar>) _gamma[idx.getId]
                                                   idxCstArray: array
-                                                        equal: (id<CPFloatVar>) _gamma[res.getId]
+                                                        equal: (id<CPRealVar>) _gamma[res.getId]
                                                    annotation: [_notes levelFor:cstr]
                                        ];
       [_engine add: concreteCstr];
@@ -996,7 +996,7 @@
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORVarArray> av = [cstr vars];
-      id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+      id<CPRealVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
          id<CPVar> theCPVar = [self concreteVar:[av at:k]];
          if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
             return [CPFactory floatVar:_engine castFrom:(id)theCPVar];
@@ -1014,7 +1014,7 @@
    if (_gamma[cstr.getId] == NULL) {
 
       id<ORVarArray> av = [cstr vars];
-      id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+      id<CPRealVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
          id<CPVar> theCPVar = [self concreteVar:[av at:k]];
          if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
             return [CPFactory floatVar:_engine castFrom:(id)theCPVar];

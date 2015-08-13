@@ -448,11 +448,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method gthenImpl not implemented"];
 }
--(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+-(void) floatLthenImpl: (id<CPRealVar>) var with: (ORFloat) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLthenImpl not implemented"];
 }
--(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+-(void) floatGthenImpl: (id<CPRealVar>) var with: (ORFloat) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGthenImpl not implemented"];
 }
@@ -1043,15 +1043,15 @@
 }
 -(ORFloat) domwidth:(id<ORFloatVar>) x
 {
-   return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
+   return [((id<CPRealVar>)_gamma[x.getId]) domwidth];
 }
 -(ORFloat) floatMin:(id<ORFloatVar>)x
 {
-   return [((id<CPFloatVar>)_gamma[x.getId]) min];
+   return [((id<CPRealVar>)_gamma[x.getId]) min];
 }
 -(ORFloat) floatMax:(id<ORFloatVar>)x
 {
-   return [((id<CPFloatVar>)_gamma[x.getId]) max];
+   return [((id<CPRealVar>)_gamma[x.getId]) max];
 }
 
 -(NSSet*) constraints: (id<ORVar>)x
@@ -1297,14 +1297,14 @@
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
--(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+-(void) floatLthenImpl: (id<CPRealVar>) var with: (ORFloat) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+-(void) floatGthenImpl: (id<CPRealVar>) var with: (ORFloat) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
    if (status == ORFailure)

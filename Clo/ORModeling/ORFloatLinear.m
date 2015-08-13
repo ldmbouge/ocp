@@ -18,7 +18,7 @@
 {
    self = [super init];
    _max   = mxs;
-   _terms = malloc(sizeof(struct CPFloatTerm) *_max);
+   _terms = malloc(sizeof(struct ORFloatTerm) *_max);
    _nb    = 0;
    _indep = 0.0;
    return self;
@@ -97,17 +97,17 @@
       _terms[mid]._coef += c;
    } else {
       if (_nb >= _max) {
-         _terms = realloc(_terms, sizeof(struct CPFloatTerm)*_max*2);
+         _terms = realloc(_terms, sizeof(struct ORFloatTerm)*_max*2);
          _max <<= 1;
       }
       if (mid==-1)
-         _terms[_nb++] = (struct CPFloatTerm){x,c};
+         _terms[_nb++] = (struct ORFloatTerm){x,c};
       else {
          if (xid > kid)
             mid++;
          for(int k=_nb-1;k>=mid;--k)
             _terms[k+1] = _terms[k];
-         _terms[mid] = (struct CPFloatTerm){x,c};
+         _terms[mid] = (struct ORFloatTerm){x,c};
          _nb += 1;
       }
    }
@@ -154,13 +154,13 @@
       nbN += (_terms[k]._coef < 0);
    return nbN;
 }
-static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
+static int decCoef(const struct ORFloatTerm* t1,const struct ORFloatTerm* t2)
 {
    return t2->_coef - t1->_coef;
 }
 -(void) positiveFirst  // sort by decreasing coefficient
 {
-   qsort(_terms, _nb, sizeof(struct CPFloatTerm),(int(*)(const void*,const void*))&decCoef);
+   qsort(_terms, _nb, sizeof(struct ORFloatTerm),(int(*)(const void*,const void*))&decCoef);
 }
 
 -(NSString*) description

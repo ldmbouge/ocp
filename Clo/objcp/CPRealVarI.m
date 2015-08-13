@@ -9,22 +9,22 @@
  
  ***********************************************************************/
 
-#import "CPFloatVarI.h"
+#import "CPRealVarI.h"
 #import <CPUKernel/CPUKernel.h>
 //#import <CPUKernel/CPEngineI.h>
-#import "CPFloatDom.h"
+#import "CPRealDom.h"
 
 /*****************************************************************************************/
-/*                        CPFloatVarSnapshot                                             */
+/*                        CPRealVarSnapshot                                              */
 /*****************************************************************************************/
 
-@interface CPFloatVarSnapshot : NSObject
+@interface CPRealVarSnapshot : NSObject
 {
    ORUInt    _name;
    ORFloat   _value;
    ORBool    _bound;
 }
--(CPFloatVarSnapshot*) initCPFloatVarSnapshot: (CPFloatVarI*) v name: (ORInt) name;
+-(CPRealVarSnapshot*) init: (CPRealVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
 -(ORFloat) floatValue;
 -(NSString*) description;
@@ -32,8 +32,8 @@
 -(NSUInteger) hash;
 @end
 
-@implementation CPFloatVarSnapshot
--(CPFloatVarSnapshot*) initCPFloatVarSnapshot: (CPFloatVarI*) v name: (ORInt) name
+@implementation CPRealVarSnapshot
+-(CPRealVarSnapshot*) init: (CPRealVarI*) v name: (ORInt) name
 {
    self = [super init];
    _name = name;
@@ -62,7 +62,7 @@
 -(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass:[self class]]) {
-      CPFloatVarSnapshot* other = object;
+      CPRealVarSnapshot* other = object;
       if (_name == other->_name) {
          return _value == other->_value && _bound == other->_bound;
       }
@@ -98,21 +98,21 @@
 }
 @end
 
-static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
+static void setUpNetwork(CPRealEventNetwork* net,id<ORTrail> t)
 {
    net->_bindEvt   = makeTRId(t,nil);
    net->_minEvt    = makeTRId(t,nil);
    net->_maxEvt    = makeTRId(t,nil);
 }
 
-static void deallocNetwork(CPFloatEventNetwork* net)
+static void deallocNetwork(CPRealEventNetwork* net)
 {
    freeList(net->_bindEvt);
    freeList(net->_minEvt);
    freeList(net->_maxEvt);
 }
 
-static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* rv)
+static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv)
 {
    collectList(net->_bindEvt,rv);
    collectList(net->_minEvt,rv);
@@ -120,13 +120,13 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    return rv;
 }
 
-@implementation CPFloatVarI
+@implementation CPRealVarI
 
--(id)initCPFloatVar:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up
+-(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up
 {
    self = [super init];
    _engine = engine;
-   _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:low up:up];
+   _dom = [[CPRealDom alloc] initCPRealDom:[engine trail] low:low up:up];
    _recv = nil;
    _hasValue = false;
    _value = 0.0;  
@@ -149,7 +149,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(id) takeSnapshot: (ORInt) id
 {
-   return [[CPFloatVarSnapshot alloc] initCPFloatVarSnapshot: self name: id];
+   return [[CPRealVarSnapshot alloc] init: self name: id];
 }
 -(NSMutableSet*)constraints
 {
@@ -174,15 +174,15 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    [buf appendString:[_dom description]];
    return buf;
 }
--(void)setDelegate:(id<CPFloatVarNotifier>)delegate
+-(void)setDelegate:(id<CPRealVarNotifier>)delegate
 {}
--(void) addVar:(CPFloatVarI*)var
+-(void) addVar:(CPRealVarI*)var
 {}
 -(enum CPVarClass)varClass
 {
    return CPVCBare;
 }
--(CPFloatVarI*) findAffine: (ORFloat) scale shift:(ORFloat) shift
+-(CPRealVarI*) findAffine: (ORFloat) scale shift:(ORFloat) shift
 {
    return nil;
 }
@@ -354,8 +354,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 @end
 
-@implementation CPFloatViewOnIntVarI
--(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVar*)iv
+@implementation CPRealViewOnIntVarI
+-(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv
 {
    self = [super init];
    _engine = (id)engine;
@@ -467,10 +467,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
 }
--(void) setDelegate:(id<CPFloatVarNotifier>)delegate
+-(void) setDelegate:(id<CPRealVarNotifier>)delegate
 {
 }
--(void) addVar:(CPFloatVarI*)var
+-(void) addVar:(CPRealVarI*)var
 {
 }
 -(enum CPVarClass)varClass
