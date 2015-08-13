@@ -20945,14 +20945,12 @@
 		5BFDB3221B485FC600CF0648 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BFF683A1860D98E00B50286 /* slabIP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = slabIP; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BFF683B1860DA3100B50286 /* mainIP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mainIP.m; sourceTree = "<group>"; };
-		B100EE8B17C7265500FC4FDC /* libgurobi55.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi55.so; path = "/Users/ldm/Library/Developer/Xcode/DerivedData/ObjecticeCP-azsdoocmmwfkhhdmoovkwzwhlkja/Build/Products/Debug/../../../../../../../../../../Library/gurobi550/mac64/lib/libgurobi55.so"; sourceTree = "<absolute>"; };
 		B103533F13BBD7AC00627058 /* queensAC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensAC; sourceTree = BUILT_PRODUCTS_DIR; };
 		B103534313BBD7B200627058 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B103534613BBD7B200627058 /* queensAC-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensAC-Prefix.pch"; sourceTree = "<group>"; };
 		B103534713BBD7B200627058 /* queensAC.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensAC.1; sourceTree = "<group>"; };
 		B103614516D969CD00E95A39 /* ORLPFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLPFlatten.h; sourceTree = "<group>"; };
 		B103614616D969CD00E95A39 /* ORLPFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORLPFlatten.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = /Library/gurobi500/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<absolute>"; };
 		B103614B16D9AAA500E95A39 /* ORFloatDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFloatDecompose.h; sourceTree = "<group>"; };
 		B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFloatDecompose.m; sourceTree = "<group>"; };
 		B103614F16D9AB9A00E95A39 /* ORIntLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORIntLinear.h; sourceTree = "<group>"; };
@@ -36091,9 +36089,7 @@
 			isa = PBXGroup;
 			children = (
 				5BEC7FB81B3A4DFA00B7A133 /* queen-chess-piece-114.png */,
-				B100EE8B17C7265500FC4FDC /* libgurobi55.so */,
 				B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */,
-				B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */,
 				5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */,
 				B15441FC16D17A75001BD7B3 /* gurobi_c.h */,
 				B111FBF913CF3C81003C5119 /* Foundation.framework */,
@@ -46902,7 +46898,7 @@
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -46935,7 +46931,7 @@
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -47085,7 +47081,7 @@
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
-				SDKROOT = macosx;
+				SDKROOT = macosx10.10;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Coverage;
@@ -47106,6 +47102,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
+				);
 				PRODUCT_NAME = ORFoundation;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = framework;
@@ -49966,6 +49966,10 @@
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
+				);
 				PRODUCT_NAME = ORFoundation;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -49985,6 +49989,10 @@
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
+				);
 				PRODUCT_NAME = ORFoundation;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -51424,6 +51432,7 @@
 				5B0FE43D1B70F3D600F1DD03 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B11552A171B1CF5005371AA /* Build configuration list for PBXNativeTarget "slabLNSModel" */ = {
 			isa = XCConfigurationList;

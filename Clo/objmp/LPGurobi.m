@@ -15,9 +15,14 @@
 #import "gurobi_c.h"
 
 
-@implementation LPGurobiSolver;
+@implementation LPGurobiSolver {
+   struct _GRBenv*                _env;
+   struct _GRBmodel*              _model;
+   OROutcome                      _status;
+   LPObjectiveType                _objectiveType;
+}
 
--(LPGurobiSolver*) initLPGurobiSolver
+-(LPGurobiSolver*) init
 {
    self = [super init];
    int error = GRBloadenv(&_env, "");

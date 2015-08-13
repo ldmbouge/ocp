@@ -38,7 +38,7 @@ int main(int argc, const char * argv[])
          NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
-         struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [ORFactory shutdown];
          return r;
       }];

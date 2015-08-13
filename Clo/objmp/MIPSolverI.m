@@ -935,7 +935,7 @@
 {
    self = [super init];
 #if TARGET_OS_IPHONE==0
-   _MIP = [[MIPGurobiSolver alloc] initMIPGurobiSolver];
+   _MIP = [[MIPGurobiSolver alloc] init];
 #else
    _MIP = nil; // [ldm] we do not have GUROBI on IOS
 #endif
