@@ -332,7 +332,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    id<ORConstraint> rv = NULL;
    switch(_nb) {
-      case 0: assert(FALSE);return NULL;
+      case 0: assert(false);return NULL;
       case 1: {  // x <= c
          if (_terms[0]._coef == 1)
             rv = [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
@@ -378,7 +378,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    id<ORConstraint> rv = NULL;
    switch (_nb) {
-      case 0: assert(FALSE);return NULL;
+      case 0: assert(false);return NULL;
       case 1: {
          assert(_terms[0]._coef == 1 && _indep == 0);
          rv = [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:1]];

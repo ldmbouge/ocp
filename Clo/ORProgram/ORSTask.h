@@ -17,26 +17,26 @@
 
 @protocol ORSTask<NSObject>
 -(void)execute;
--(__nonnull id<ORTracker>  __unsafe_unretained)tracker;
+-(PNONNULL id<ORTracker>  __unsafe_unretained)tracker;
 @end
 
-void* __nonnull equal(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
-void* __nonnull diff(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVar> x,ORInt v);
-void* __nonnull firstFail(__nonnull id<CPCommonProgram> solver,__nonnull id<ORIntVarArray> x);
-void* __nonnull sequence(__nonnull id<CPCommonProgram> solver,int n,void* __nonnull*__nonnull s);
-void* __nonnull alts(__nonnull id<CPCommonProgram> solver,int n,void*__nonnull* __nonnull s);
-void* __nonnull whileDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
-                        bool(^__nonnull cond)(),
-                        void* __nonnull (^__nonnull body)());
+void* PNONNULL equal(PNONNULL id<CPCommonProgram> solver,PNONNULL id<ORIntVar> x,ORInt v);
+void* PNONNULL diff(PNONNULL id<CPCommonProgram> solver,PNONNULL id<ORIntVar> x,ORInt v);
+void* PNONNULL firstFail(PNONNULL id<CPCommonProgram> solver,PNONNULL id<ORIntVarArray> x);
+void* PNONNULL sequence(PNONNULL id<CPCommonProgram> solver,int n,void* PNONNULL*PNONNULL s);
+void* PNONNULL alts(PNONNULL id<CPCommonProgram> solver,int n,void*PNONNULL* PNONNULL s);
+void* PNONNULL whileDo(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,
+                        bool(^PNONNULL cond)(),
+                        void* PNONNULL (^PNONNULL body)());
 
-void* __nonnull forallDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
-                         __nonnull __unsafe_unretained id<ORIntRange> R,
-                         void* __nonnull(^__nonnull body)(NSInteger)
+void* PNONNULL forallDo(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,
+                         PNONNULL __unsafe_unretained id<ORIntRange> R,
+                         void* PNONNULL(^PNONNULL body)(NSInteger)
                          );
-void* __nonnull Do(__nonnull __unsafe_unretained id<CPCommonProgram> solver,void(^__nonnull body)());
-void* __nonnull limitSolutionsDo(__nonnull __unsafe_unretained id<CPCommonProgram> solver,
+void* PNONNULL Do(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,void(^PNONNULL body)());
+void* PNONNULL limitSolutionsDo(PNONNULL __unsafe_unretained id<CPCommonProgram> solver,
                                  ORInt k,
-                                 void* __nonnull(^__nonnull body)());
+                                 void* PNONNULL(^PNONNULL body)());
 
 
 

@@ -5,7 +5,8 @@ OC = clang-3.5
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
-	-msse4.1  -fblocks -fobjc-nonfragile-abi
+	-msse4.1  -fblocks -fobjc-nonfragile-abi -DUSEVIEWS=1
+
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
@@ -29,8 +30,8 @@ SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m CPConstraint.m  \
 	CPBitConstraint.m  CPCardinality.m    CPEquationBC.m  \
 	CPFactory.m  CPObjectQueue.m CPWatch.m CPBinPacking.m CPBitDom.m \
 	CPFloatDom.m    \
-	CPCircuitI.m CPError.m  CPIntVarI.m CPFloatVarI.m \
-	CPStatisticsMonitor.m 
+	CPCircuitI.m CPError.m  CPIntVarI.m CPFloatVarI.m CPISVarI.m CPIntSetConstraint.m \
+	CPTrailIntSet.m CPStatisticsMonitor.m 
 
 #	./NSBoardController.m
 

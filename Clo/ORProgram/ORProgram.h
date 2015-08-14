@@ -29,6 +29,6 @@
 #import <ORProgram/ORSTask.h>
 
 @interface ORGamma (Model)
--(void) initialize: (__nonnull id<ORModel>) model;
+-(void) initialize: (PNONNULL id<ORModel>) model;
 @end
 
