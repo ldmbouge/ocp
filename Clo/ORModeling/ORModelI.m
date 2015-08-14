@@ -21,6 +21,7 @@
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
 
+#import <objc/runtime.h>
 
 @implementation ORTau
 {
@@ -41,6 +42,8 @@
 }
 -(void) set: (id) value forKey: (id) key
 {
+   if (key==nil)
+      return;
    [_mapping setObject: value forKey: key];
 }
 -(id) get: (id) key
@@ -590,6 +593,7 @@
    _src    = src;
    _notes  = notes;
    _current = nil;
+   NSLog(@"size: %zu",class_getInstanceSize([ORBatchModel class]));
    return self;
 }
 -(id<ORVar>) addVariable: (id<ORVar>) var
