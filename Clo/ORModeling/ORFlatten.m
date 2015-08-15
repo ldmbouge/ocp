@@ -69,7 +69,9 @@
       [_into addImmutable:x];
    }
    onConstraints: ^(id<ORConstraint> c) {
+      [_into setCurrent:c];
       [self flattenIt:c];
+      [_into setCurrent:nil];
    }
    onObjective: ^(id<ORObjectiveFunction> o) {
       [self flattenIt:o];
