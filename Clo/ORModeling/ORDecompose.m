@@ -948,7 +948,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
    id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
    id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model];
    if ([linLeft isZero] && [linRight isZero]) {
-      assert(FALSE);
+      assert(0);
    } else if ([linLeft isZero]) {
       id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
       if (_rv != nil)

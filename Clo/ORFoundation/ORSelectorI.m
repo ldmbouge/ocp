@@ -68,7 +68,7 @@
    __block ORLong bestRand = 0x7fffffffffffffff;
    __block ORInt indexFound = MAXINT;
    [_range enumerateWithBlock:^(ORInt i) {
-      if (_filter==nil || _filter(i)) {
+       if ((id)_filter==nil || _filter(i)) {
          ORFloat val = _direction * (_order ? _order(i) : 0.0);
          if (val < bestFound) {
             bestFound = val;

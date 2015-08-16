@@ -11,7 +11,10 @@
 
 
 #import <objcp/CPObjectQueue.h>
+
+#if defined(__APPLE__)
 #include <libkern/OSAtomic.h>
+#endif
 
 #define SPINLOCK 1
 
