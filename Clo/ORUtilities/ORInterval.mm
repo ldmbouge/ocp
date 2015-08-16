@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,9 +37,9 @@
    //NSLog(@"ORILib::load called...");
    @autoreleasepool {
       NSLog(@"Infinity: %@",ORIFormat(INF));
-      //NSLog(@"Epsilon : %@",ORIFormat(EPSILON));
+//      NSLog(@"Epsilon : %@",ORIFormat(EPSILON));
       NSLog(@"Zero    : %@",ORIFormat(ZERO));
-      //NSLog(@"Flip    : %@",ORIFormat(FLIP));
+//      NSLog(@"Flip    : %@",ORIFormat(FLIP));
    }
 }
 @end
@@ -894,10 +894,7 @@ class SECFloat {
    };
    friend class USRFloat;
 public:
-   SECFloat(void) {
-      for(int i=0;i<8;i++)
-         w[i] = 0x0000;
-   }
+   SECFloat(void);
    SECFloat(double d);
    SECFloat(const SECFloat& sf);
    SECFloat(const USRFloat& uf);
@@ -921,15 +918,15 @@ public:
    int      cmp(SECFloat op2);
    SECFloat mul(SECFloat op2);
    SECFloat div(SECFloat op2);
-   SECFloat rem(SECFloat op2);
+   SECFloat rem(SECFloat op2,SECFloat& equot);
    void clear();
    int shift(int sc);
    int normlz();
    void addm(SECFloat& s);
    void subm(SECFloat& s);
    int  cmpm(SECFloat& s);
-   int  mulm(SECFloat& s);
-   int  divm(SECFloat& s);
+   int  mulm(SECFloat& s,SECFloat& equot);
+   int  divm(SECFloat& s,SECFloat& equot);
    void eshdn1();
    void eshdn8();
    void eshdn16();
@@ -1005,9 +1002,6 @@ static void sprint(double v,char* string,int ndigs)
    USRFloat x;
    SECFloat ww;
    SECFloat z;
-   SECFloat equot;
-
-   
    int pos;
    int digit;
    unsigned short sign;
@@ -1129,7 +1123,8 @@ tnzro:
 isone:
    SECFloat a(t);
    SECFloat b(y);
-   b = b.rem(a);
+   SECFloat equot;
+   b = b.rem(a,equot);
    digit = equot[NI-1];
    while (digit==0 && b.cmp(0) != 0) {
       b.eshup1();
@@ -1137,7 +1132,7 @@ isone:
       c.eshup1();
       c.eshup1();
       b.addm(c);
-      b = b.rem(t);
+      b = b.rem(t,equot);
       digit = equot[NI-1];
       expon -= 1;
    }
@@ -1152,7 +1147,7 @@ isone:
       a.eshup1();
       a.eshup1();
       b.addm(a);
-      b = b.rem(t);
+      b = b.rem(t,equot);
       *s++ = (char) equot[NI-1] + '0';
    }
    digit = equot[NI-1];
@@ -1266,6 +1261,11 @@ static void mtherr(const char* name,int t)
    exit(t);
 }
 
+SECFloat::SECFloat(void)
+{
+   clear();
+}
+
 SECFloat::SECFloat(double d)
 
 {
@@ -1324,8 +1324,8 @@ SECFloat& SECFloat::operator=(const SECFloat& sf)
 SECFloat& SECFloat::operator=(const USRFloat& sf)
 
 {
-   unsigned short *q;
-   unsigned short k;
+    unsigned short *q;
+    unsigned short k;
    k = NE-1;
    q = w;
    if (sf.w[k] & 0x8000)
@@ -1345,7 +1345,7 @@ SECFloat& SECFloat::operator=(const USRFloat& sf)
 SECFloat::SECFloat(const USRFloat& uf)
 
 {
-   unsigned short *p,*q;
+    unsigned short *p,*q;
    q = w;
    p = (unsigned short*) (uf.w +(NE-1));
    if (*p & 0x8000)
@@ -1368,7 +1368,7 @@ double SECFloat::getDouble()
    unsigned short *e = (unsigned short*)&res;
    SECFloat xi(*this);
    int i,k;
-   unsigned short *p;
+    unsigned short *p;
    e += 3;
    *e = 0;
    p = &xi[0] + 1;
@@ -1428,8 +1428,8 @@ nornd:
 void SECFloat::clear()
 
 {
-   unsigned short *xi = w;
-   int i;
+    unsigned short *xi = w;
+    int i;
    for(i=0;i<NI;i++)
       *xi++ = 0x0000;
 }
@@ -1499,7 +1499,7 @@ int SECFloat::normlz()
 
 {
    unsigned short *x = w;
-   unsigned short *p;
+    unsigned short *p;
    int sc;
    sc  = 0;
    p = &x[M];
@@ -1548,7 +1548,7 @@ void SECFloat::addm(SECFloat& s)
 {
    unsigned short* x = &s[0];
    unsigned short* y = w;
-   unsigned int a;
+    unsigned int a;
    int i;
    unsigned int carry;
    x += NI-1;
@@ -1590,8 +1590,8 @@ void SECFloat::subm(SECFloat& s)
 int  SECFloat::cmpm(SECFloat& s)
 
 {
-   unsigned short *a = w;
-   unsigned short *b = &s[0];
+    unsigned short *a = w;
+    unsigned short *b = &s[0];
    int i;
    a += M;
    b += M;
@@ -1605,13 +1605,11 @@ int  SECFloat::cmpm(SECFloat& s)
    return 0;
 }
 
-int  SECFloat::mulm(SECFloat& s)
+int  SECFloat::mulm(SECFloat& s,SECFloat& equot)
 
 {
    unsigned short *p,*q;
    int i,j,k;
-   SECFloat equot;
-
    equot[0] = s[0];
    equot[1] = s[1];
    for(i=M;i<NI;i++)
@@ -1642,14 +1640,13 @@ int  SECFloat::mulm(SECFloat& s)
    
 }
 
-int  SECFloat::divm(SECFloat& s)
+int  SECFloat::divm(SECFloat& s,SECFloat& equot)
 
 {
    unsigned short *den = &s[0];
    unsigned short *num = w;
    int i,j;
-   unsigned short *p,*q;
-   SECFloat equot;
+    unsigned short *p,*q;
    p = &equot[0];
    *p++ = num[0];
    *p++ = num[1];
@@ -1706,8 +1703,8 @@ divdon:
 void SECFloat::eshdn1()
 
 {
-   unsigned short *x = w;
-   unsigned short bits;
+    unsigned short *x = w;
+    unsigned short bits;
    int i;
    x += M;
    bits = 0;
@@ -1725,8 +1722,8 @@ void SECFloat::eshdn1()
 void SECFloat::eshup1()
 
 {
-   unsigned short *x = w;
-   unsigned short bits;
+    unsigned short *x = w;
+    unsigned short bits;
    int i;
    x += NI-1;
    bits = 0;
@@ -1744,8 +1741,8 @@ void SECFloat::eshup1()
 void SECFloat::eshdn8()
 
 {
-   unsigned short *x = w;
-   unsigned short newbyt,oldbyt;
+    unsigned short *x = w;
+    unsigned short newbyt,oldbyt;
    int i;
    x += M;
    oldbyt = 0;
@@ -1762,8 +1759,8 @@ void SECFloat::eshup8()
 
 {
    int i;
-   unsigned short *x = w;
-   unsigned short newbyt,oldbyt;
+    unsigned short *x = w;
+    unsigned short newbyt,oldbyt;
    x += NI - 1;
    oldbyt = 0;
    for(i=M;i<NI;i++) {
@@ -1779,8 +1776,8 @@ void SECFloat::eshup16()
 
 {
    int i;
-   unsigned short *x = w;
-   unsigned short *p;
+    unsigned short *x = w;
+    unsigned short *p;
    p = x + M;
    x += M + 1;
    for(i=M;i<NI-1;i++)
@@ -1792,8 +1789,8 @@ void SECFloat::eshdn16()
 
 {
    int i;
-   unsigned short *x = w;
-   unsigned short *p;
+    unsigned short *x = w;
+    unsigned short *p;
    x += NI-1;
    p = x + 1;
    for(i=M;i<NI-1;i++)
@@ -1804,8 +1801,8 @@ void SECFloat::eshdn16()
 void SECFloat::makeInf()
 
 {
-   unsigned short *x = w;
-   int i;
+    unsigned short *x = w;
+    int i;
    for(i=0;i<NE-1;i++)
       *x++ = 0xffff;
    *x |= 0x7fff;
@@ -1878,8 +1875,8 @@ done:
 int SECFloat::cmp(SECFloat op2)
 
 {
-   unsigned short *p,*q;
-   int i;
+    unsigned short *p,*q;
+    int i;
    int msign;
    p = w;
    q = &op2[0];
@@ -1916,7 +1913,7 @@ diff:
 SECFloat SECFloat::mul(SECFloat op2)
 
 {
-   SECFloat res;
+   SECFloat res,equot;
    int i,j;
    int lt,lta,ltb;
    lta = exponent();
@@ -1942,7 +1939,7 @@ mnzer1:
    }
 mnzer2:
    res = *this;
-   j = res.mulm(op2);
+   j = res.mulm(op2,equot);
    lt = lta + ltb - (IEEEBIAS-1);
    res.rnorm(j,0,lt,64);
    if (sign() == op2.sign())
@@ -1954,7 +1951,7 @@ mnzer2:
 SECFloat SECFloat::div(SECFloat op2)
 
 {
-   SECFloat res;
+   SECFloat res,equot;
    int i;
    int lt,lta,ltb;
    lta = exponent();
@@ -1982,7 +1979,7 @@ dnzro1:
    }
 dnzro2:
    res = *this;
-   i = res.divm(op2);
+   i = res.divm(op2,equot);
    lt = lta - ltb + IEEEBIAS;
    res.rnorm(i,0,lt,64);
    if (sign() == op2.sign())
@@ -1991,12 +1988,10 @@ dnzro2:
    return res;
 }
 
-SECFloat SECFloat::rem(SECFloat op2)
+SECFloat SECFloat::rem(SECFloat op2,SECFloat& equot)
 
 {
    SECFloat res;
-   SECFloat equot;
-
    equot.clear();
    if (isZero()) {
       return res;
@@ -2127,7 +2122,7 @@ USRFloat::USRFloat(double d)
 USRFloat::USRFloat(const SECFloat& f)
 
 {
-   unsigned short *p,*q;
+    unsigned short *p,*q;
    unsigned short i;
    p = (unsigned short*) f.w;
    q = w + (NE-1);
@@ -2174,8 +2169,8 @@ USRFloat& USRFloat::operator=(const USRFloat& f)
 USRFloat& USRFloat::operator=(const SECFloat& f)
 
 {
-   unsigned short *q;
-   unsigned short i,j;
+    unsigned short *q;
+    unsigned short i,j;
    j = 0;
    q = w + (NE-1);
    i = f.w[j++];
@@ -2231,7 +2226,7 @@ USRFloat USRFloat::floor()
    USRFloat one(1);
    USRFloat cpy(*this);
    USRFloat res;
-   unsigned short *p;
+    unsigned short *p;
    int e,expon,i;
    expon = exponent();
    e = (expon & 0x7fff) - (IEEEBIAS -1);
