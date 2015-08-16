@@ -11,6 +11,19 @@
 
 #import <Foundation/Foundation.h>
 
+#if (defined(__APPLE__)) && (__MAC_OS_X_VERSION_MAX_ALLOWED > __MAC_10_9)
+#define PORTABLE_BEGIN NS_ASSUME_NONNULL_BEGIN
+#define PORTABLE_END NS_ASSUME_NONNULL_END
+#define PNONNULL   __nonnull
+#define PNULLABLE  __nullable
+#else
+#define PORTABLE_BEGIN
+#define PORTABLE_END
+#define PNONNULL 
+#define PNULLABLE 
+#endif
+
+
 #if !defined(__APPLE__) || defined(__IPHONE_NA)
 typedef unsigned long long uint64;
 typedef long long sint64;

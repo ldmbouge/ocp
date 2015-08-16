@@ -45,10 +45,6 @@ autoreleasepool {
 //         }, { nbF *= 2 }
 //      )
 //      
-//      withController(cp,ORSemBDSController.self) {
-//         firstFail(cp, x)
-//      }
-      
       limitSolutionsDo(cp,4) {
          forallDo(cp,R) { (k : Int) -> UnsafeMutablePointer<Void> in
             whileDo(cp, { !cp.bound(x[ORInt(k)])}) {
@@ -66,6 +62,15 @@ autoreleasepool {
       Do(cp) {
          print("\tAnother message...")
       }
+//         »
+//      Do(cp) {
+//         print("Solution: " + ORFactory.intArray(cp,range:R) {
+//            k in cp.intValue(x[k])
+//         }.description)
+//      } »
+//      Do(cp) {
+//         println("\tAnother message...")
+//      }
    }
    cp.clearOnSolution()
    print("Number of solutions: \(cp.solutionPool().count())\n")

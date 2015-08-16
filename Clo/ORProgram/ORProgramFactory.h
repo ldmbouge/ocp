@@ -17,7 +17,7 @@
 @protocol MIPProgram;
 @protocol LPRelaxation;
 
-NS_ASSUME_NONNULL_BEGIN
+PORTABLE_BEGIN
 
 @interface ORFactory (Concretization)
 /**
@@ -64,5 +64,5 @@ NS_ASSUME_NONNULL_BEGIN
 -(OROutcome) solve;
 @end
 
-NS_ASSUME_NONNULL_END
+PORTABLE_END
 

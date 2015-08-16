@@ -16,6 +16,9 @@
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
 
+enum {
+   ORTReal = 5
+};
 
 @implementation NSNumber (Expressions)
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
@@ -2176,16 +2179,3 @@
    return self;
 }
 @end
-
-
-id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r)
-{
-   return [r mul: l];
-}
-id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r)
-{
-   return [l mul: r];
-}
-
-
-

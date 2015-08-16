@@ -1019,7 +1019,7 @@
 {
    self = [super init];
 #if TARGET_OS_IPHONE==0
-   _lp = [[LPGurobiSolver alloc] initLPGurobiSolver];
+   _lp = [[LPGurobiSolver alloc] init];
 #else
    _lp = nil; // [ldm] we do not have GUROBI on IOS
 #endif

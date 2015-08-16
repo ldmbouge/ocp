@@ -40,7 +40,9 @@
 #import <ORFoundation/ORParallel.h>
 #import <ORFoundation/ORSetI.h>
 #import <ORFoundation/ORTrailI.h>
+#if defined(__APPLE__)
 #import "TargetConditionals.h"
+#endif
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());
 void failNow();

@@ -21,6 +21,7 @@
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
 
+#import <objc/runtime.h>
 
 @implementation ORTau
 {
@@ -41,6 +42,8 @@
 }
 -(void) set: (id) value forKey: (id) key
 {
+   if (key==nil)
+      return;
    [_mapping setObject: value forKey: key];
 }
 -(id) get: (id) key
@@ -100,6 +103,21 @@
    ORLambda* lambda = [[ORLambda alloc] initORLambda];
    lambda->_mapping = [_mapping copy];
    return lambda;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   @autoreleasepool {
+      NSEnumerator* i = [_mapping keyEnumerator];
+      id key;
+      [buf appendString:@"{"];
+      while ((key = [i nextObject]) !=nil) {
+         id obj = [_mapping objectForKey:key];
+         [buf appendFormat:@"%@ -> %@,",key,obj];
+      }
+      [buf appendString:@"}"];
+   }
+   return buf;
 }
 @end
 
@@ -590,6 +608,7 @@
    _src    = src;
    _notes  = notes;
    _current = nil;
+   NSLog(@"size: %zu",class_getInstanceSize([ORBatchModel class]));
    return self;
 }
 -(id<ORVar>) addVariable: (id<ORVar>) var
@@ -620,7 +639,7 @@
 {
    if (cstr && (id)cstr != [NSNull null]) {
       [_target add: cstr];
-      [[[_target modelMappings] tau] set:cstr forKey:_current];
+      [_target.modelMappings.tau set:cstr forKey:_current];
       if (_current)
          [_notes transfer: _current toConstraint: cstr];
    }

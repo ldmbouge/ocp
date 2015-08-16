@@ -10,7 +10,11 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#if defined(__APPLE__)
 #import <objc/objc-runtime.h>
+#else
+#import <objc/runtime.h>
+#endif
 #import "ORFactoryI.h"
 
 @implementation ORIntSetI

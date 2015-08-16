@@ -15,15 +15,8 @@
 #import <objmp/MIPType.h>
 
 @interface MIPGurobiSolver: NSObject
-{
-@private
-   struct _GRBenv*                _env;
-   struct _GRBmodel*              _model;
-   MIPOutcome                      _status;
-   MIPObjectiveType                _objectiveType;
-}
 
--(MIPGurobiSolver*) initMIPGurobiSolver;
+-(MIPGurobiSolver*) init;
 -(void) dealloc;
 
 -(void) addVariable: (MIPVariableI*) var;

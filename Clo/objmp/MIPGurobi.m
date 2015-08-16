@@ -15,9 +15,14 @@
 #import "gurobi_c.h"
 
 
-@implementation MIPGurobiSolver;
+@implementation MIPGurobiSolver {
+   struct _GRBenv*                _env;
+   struct _GRBmodel*              _model;
+   MIPOutcome                      _status;
+   MIPObjectiveType                _objectiveType;
+}
 
--(MIPGurobiSolver*) initMIPGurobiSolver
+-(MIPGurobiSolver*) init
 {
    self = [super init];
    int error = GRBloadenv(&_env, "");

@@ -15,15 +15,8 @@
 #import <objmp/LPType.h>
 
 @interface LPGurobiSolver: NSObject
-{
-@private
-   struct _GRBenv*                _env;
-   struct _GRBmodel*              _model;
-   OROutcome                      _status;
-   LPObjectiveType                _objectiveType;
-}
 
--(LPGurobiSolver*) initLPGurobiSolver;
+-(LPGurobiSolver*) init;
 -(void) dealloc;
 
 -(void) addVariable: (LPVariableI*) var;
