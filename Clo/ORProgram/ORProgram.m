@@ -389,18 +389,18 @@ void* diff(id<CPCommonProgram> solver,id<ORIntVar> x,ORInt v)
    return task;
 }
 
-void* __nonnull whileDo(id<CPCommonProgram> solver,
-                        bool(^__nonnull cond)(),
-                        void* __nonnull (^__nonnull body)())
+void* PNONNULL whileDo(id<CPCommonProgram> solver,
+                        bool(^PNONNULL cond)(),
+                        void* PNONNULL (^PNONNULL body)())
 {
    id<ORSTask> task = [[ORSDoWhile alloc] initWith:solver condition:cond body:(id)body];
    [solver trackObject:task];
    return task;
 }
 
-void* __nonnull forallDo(id<CPCommonProgram> solver,
+void* PNONNULL forallDo(id<CPCommonProgram> solver,
                          id<ORIntRange> R,
-                         void* __nonnull(^__nonnull body)(NSInteger)
+                         void* PNONNULL(^PNONNULL body)(NSInteger)
                          )
 {
    id<ORSTask> task = [[ORSForallDo alloc] initWith:solver range:R body:(id)body];
@@ -408,14 +408,14 @@ void* __nonnull forallDo(id<CPCommonProgram> solver,
    return task;
 }
 
-void* __nonnull Do(id<CPCommonProgram> solver,void(^__nonnull body)())
+void* PNONNULL Do(id<CPCommonProgram> solver,void(^PNONNULL body)())
 {
    id<ORSTask> task = [[ORSDo alloc] initWith:solver block:(id)body];
    [solver trackObject:task];
    return task;
 }
 
-void* __nonnull limitSolutionsDo(id<CPCommonProgram> solver,ORInt k,void*(^__nonnull body)())
+void* PNONNULL limitSolutionsDo(id<CPCommonProgram> solver,ORInt k,void*(^PNONNULL body)())
 {
    id<ORSTask> task = [[ORSLimitSolutionsDo alloc] initWith:solver limit:k block:(id)body];
    [solver trackObject:task];
