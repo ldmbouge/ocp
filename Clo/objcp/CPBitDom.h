@@ -11,6 +11,7 @@
 
 #import <objcp/CPDom.h>
 #import <objcp/CPError.h>
+#import <CPUKernel/CPTypes.h>
 
 @class CPEngineI;
 
