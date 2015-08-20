@@ -27,7 +27,7 @@ int main (int argc, const char * argv[])
       [notes dc:[model add: [ORFactory alldifferent: xp ]]];
       [notes dc:[model add: [ORFactory alldifferent: xn ]]];
       
-      id<CPProgram> cp = [ORFactory createCPProgram: model];
+      id<CPProgram> cp = [ORFactory createCPProgram: model annotation:notes];
       //id<CPHeuristic> h = [cp createFF];
       [cp solveAll:
        ^() {
