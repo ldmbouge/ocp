@@ -34,17 +34,6 @@
 #define TAGIdNC         0xD
 #define TAGLDouble      0xF
 
-typedef union UTag {
-   ORInt         intVal;          // 4-bytes
-   ORUInt       uintVal;          // 4-bytes
-   ORLong       longVal;          // 8-bytes
-   ORULong     ulongVal;          // 8-bytes
-   float       floatVal;          // 4-bytes
-   double     doubleVal;          // 8-bytes
-   long double    ldVal;          // 10-byte
-   void*         ptrVal;          // 4 or 8 (pointer)
-} TUTag;
-
 @interface ORTrailI : NSObject<ORTrail>
 {
    @public
