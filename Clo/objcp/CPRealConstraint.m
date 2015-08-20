@@ -10,11 +10,9 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "ORConstraintI.h"
 #import "CPRealConstraint.h"
 #import "CPIntVarI.h"
 #import "CPRealVarI.h"
-#import "CPEngineI.h"
 
 @implementation CPRealSquareBC
 
@@ -425,7 +423,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
          _primalBound = bound;
    }
 }
--(void) tightenPrimalBound: (ORObjectiveValueFloatI*) newBound
+-(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound
 {
    @synchronized(self) {
       if ([newBound value] < _primalBound)
@@ -435,12 +433,13 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 -(void) tightenWithDualBound: (id) newBound
 {
    @synchronized(self) {
-      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-         ORFloat b = [((ORObjectiveValueIntI*) newBound) value];
+      
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+         ORFloat b = [((id<ORObjectiveValueInt>) newBound) value];
          [_x updateMin: b];
       }
-      else if ([newBound isKindOfClass:[ORObjectiveValueFloatI class]]) {
-         ORFloat b = [((ORObjectiveValueFloatI*) newBound) value];
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+         ORFloat b = [((id<ORObjectiveValueFloat>) newBound) value];
          [_x updateMin: b];
       }
    }
@@ -448,7 +447,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x value] minimize:YES];
+   return [ORFactory objectiveValueFloat:_x.value minimize:YES];
 }
 -(ORStatus) check
 {
@@ -461,7 +460,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(id<ORObjectiveValue>) primalBound
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: _primalBound minimize:YES];
+   return [ORFactory objectiveValueFloat:_primalBound minimize:YES];
 }
 -(NSString*)description
 {
@@ -499,7 +498,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x value] minimize: NO];
+   return [ORFactory objectiveValueFloat:_x.value minimize:NO];
 }
 -(ORUInt)nbUVars
 {
@@ -512,19 +511,19 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
       _primalBound = bound;
    NSLog(@"primal bound: %f",_primalBound);
 }
--(void) tightenPrimalBound: (ORObjectiveValueFloatI*) newBound
+-(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound
 {
    if ([newBound value] > _primalBound)
       _primalBound = [newBound value];
 }
 -(void) tightenWithDualBound: (id) newBound
 {
-   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-      ORFloat b = [((ORObjectiveValueIntI*) newBound) value];
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      ORFloat b = [((id<ORObjectiveValueInt>) newBound) value];
       [_x updateMax: b];
    }
-   else if ([newBound isKindOfClass:[ORObjectiveValueFloatI class]]) {
-      ORFloat b = [((ORObjectiveValueFloatI*) newBound) value];
+   else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+      ORFloat b = [((id<ORObjectiveValueFloat>) newBound) value];
       [_x updateMax: b];
    }
 }
@@ -542,7 +541,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(id<ORObjectiveValue>) primalBound
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: _primalBound minimize: NO];
+   return [ORFactory objectiveValueFloat:_primalBound minimize:NO];
 }
 -(NSString*)description
 {

@@ -1301,11 +1301,7 @@
 		5BBB08E416C562520087ACF0 /* CPGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBB08E216C562520087ACF0 /* CPGroup.h */; };
 		5BBB08E516C562520087ACF0 /* CPGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB08E316C562520087ACF0 /* CPGroup.m */; };
 		5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442E416D1B414001BD7B3 /* LPConcretizer.m */; };
-		5BBFBFE11661211300FB7505 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
-		5BBFBFE21661211300FB7505 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
-		5BBFBFE31661211300FB7505 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
-		5BBFBFE41661211300FB7505 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		5BBFE0A5178C63DA00BEAD83 /* CPRealVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A3178C63DA00BEAD83 /* CPRealVarI.h */; };
+		5BBFE0A5178C63DA00BEAD83 /* CPRealVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A3178C63DA00BEAD83 /* CPRealVarI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBFE0A6178C63DA00BEAD83 /* CPRealVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPRealVarI.m */; };
 		5BBFE0A9178C981B00BEAD83 /* CPRealDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A7178C981B00BEAD83 /* CPRealDom.h */; settings = {ATTRIBUTES = (); }; };
 		5BBFE0AA178C981B00BEAD83 /* CPRealDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A8178C981B00BEAD83 /* CPRealDom.m */; };
@@ -51522,6 +51518,7 @@
 				5BAB12801B81DC62004803EA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BAD115D161E5E430014EBCB /* Build configuration list for PBXNativeTarget "ORModeling" */ = {
 			isa = XCConfigurationList;

@@ -79,7 +79,7 @@ typedef struct  {
    CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
--(CPEngineI*) engine;
+-(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 -(ORFloat) floatValue;
