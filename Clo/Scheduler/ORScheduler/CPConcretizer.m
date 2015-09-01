@@ -449,11 +449,28 @@
     if (_gamma[cstr.getId] == NULL) {
         id<ORTaskVarArray> tasks    = [cstr taskVars];
         id<ORIntVarArray>  usages   = [cstr usages  ];
+        id<ORIntVarArray>  areas    = [cstr areas   ];
         id<ORIntVar>       capacity = [cstr capacity];
         id<ORIntArray>     resourceT = [(ORTaskCumulative *)cstr resourceTasks];
         [tasks    visit: self];
         [usages   visit: self];
         [capacity visit: self];
+        // NOTE the array area can contain NULL pointers, which breaks the underlying
+        // assumption for the visit method
+        id<CPIntVarArray> concreteArea = NULL;
+        if (areas != NULL) {
+            _gamma[areas.getId] = [CPFactory intVarArray:_engine range:[areas range] with:^id<CPIntVar>(ORInt k) {
+               if (areas[k] == NULL)
+                   return NULL;
+                [areas[k] visit:self];
+                return _gamma[areas[k].getId];
+            }];
+            for (ORInt k = [areas range].low; k <= [areas range].up; k++) {
+                if (areas[k] != NULL)
+                    [_engine add: [CPFactory multDur:_gamma[tasks[k].getId] by:_gamma[usages[k].getId] equal:_gamma[areas[k].getId]]];
+            }
+            concreteArea = _gamma[areas.getId];
+        }
         
         BOOL hasResourceT = FALSE;
         for (ORInt i = [resourceT low]; i <= [resourceT up]; i++) {
@@ -462,12 +479,12 @@
                 break;
             }
         }
-        
+
         id<CPConstraint> concreteCstr;
         if (hasResourceT)
-            concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] resourceTasks:resourceT with:_gamma[usages.getId] and:_gamma[capacity.getId]];
+            concreteCstr = [CPFactory taskCumulative:_gamma[tasks.getId] resourceTasks:resourceT with:_gamma[usages.getId] area:concreteArea capacity:_gamma[capacity.getId]];
         else
-            concreteCstr = [CPFactory taskCumulative: _gamma[tasks.getId] with:_gamma[usages.getId] and:_gamma[capacity.getId]];
+            concreteCstr = [CPFactory taskCumulative:_gamma[tasks.getId] with:_gamma[usages.getId] area:concreteArea capacity:_gamma[capacity.getId]];
         [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }

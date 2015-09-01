@@ -262,6 +262,7 @@
 }
 static inline ORBool isAbsent(CPOptionalTaskSequence * seq, const ORInt t)
 {
+    assert(seq->_low <= t && t <= seq->_up);
     if (seq->_res != NULL && [seq->_res at:t] != NULL)
         return [(CPResourceTask *)[seq->_tasks at:t] isAbsentOn:[seq->_res at:t]];
     return [[seq->_tasks at:t] isAbsent];
@@ -326,7 +327,7 @@ static inline ORBool isPresent(CPOptionalTaskSequence * seq, const ORInt t)
         assignTRInt(&(_last), last, _trail);
     // Removal of invalid values
     for (ORInt j = _low - 1; j <= _up; j++) {
-        if (![_assigned at: j] && !isAbsent(self, j)) {
+        if (![_assigned at: j] && (j < _low || !isAbsent(self, j))) {
             for (ORInt k = 0; k < [removeVals count]; k++)
                 [_succ[j] remove: [removeVals[k] intValue]];
         }
