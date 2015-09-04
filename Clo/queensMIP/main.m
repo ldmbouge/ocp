@@ -10,11 +10,7 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORFoundation.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 
 int main_alldiff(int argc, const char * argv[])
 {
@@ -88,14 +84,15 @@ int main_neq(int argc, const char * argv[])
       
       id<ORVarLitterals> l = [ORFactory varLitterals: mdl var: x[1]];
       NSLog(@"literals: %@",l);
-      id<CPProgram> cp = [ORFactory createCPLinearizedProgram: mdl annotation:nil];
+      id<ORAnnotation> notes = [ORFactory annotation];
+      id<CPProgram> cp = [ORFactory createCPLinearizedProgram: mdl annotation:notes];
       
       ORLong startTime = [ORRuntimeMonitor wctime];
       __block ORInt nbSol = 0;
       //id* gamma = [cp gamma];
       [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
+          [cp labelArray:x orderedBy:  ^ORDouble(ORInt i) { return [cp domsize:x[i]];} ];
 /*          [cp forall:x.range orderedBy:^ORInt(ORInt i) {
              return [cp domsize:x[i]];
           } do:^(ORInt i) {
@@ -133,9 +130,7 @@ int main_neq(int argc, const char * argv[])
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [cp release];
       [ORFactory shutdown];
-      
    }
    return 0;
 }
