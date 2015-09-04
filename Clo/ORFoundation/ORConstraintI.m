@@ -243,11 +243,11 @@
 }
 @end
 
-@implementation ORFloatEqualc {
-   id<ORFloatVar> _x;
-   ORFloat        _c;
+@implementation ORRealEqualc {
+   id<ORRealVar> _x;
+   ORDouble        _c;
 }
--(ORFloatEqualc*)init:(id<ORFloatVar>)x eqi:(ORFloat)c
+-(ORRealEqualc*)init:(id<ORRealVar>)x eqi:(ORDouble)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -264,11 +264,11 @@
 {
    [v visitFloatEqualc:self];
 }
--(id<ORFloatVar>) left
+-(id<ORRealVar>) left
 {
    return _x;
 }
--(ORFloat) cst
+-(ORDouble) cst
 {
    return _c;
 }
@@ -280,13 +280,13 @@
 {
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_c];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_c];
    return self;
 }
 @end
@@ -843,7 +843,7 @@
 }
 @end
 
-@implementation ORFloatSquare
+@implementation ORRealSquare
 -(void)visit:(ORVisitor*)v
 {
    [v visitFloatSquare:self];
@@ -1333,12 +1333,12 @@
 @end
 
 
-@implementation ORFloatElementCst {  // y[idx] == z
+@implementation ORRealElementCst {  // y[idx] == z
    id<ORIntVar>   _idx;
-   id<ORFloatArray> _y;
-   id<ORFloatVar>   _z;
+   id<ORDoubleArray> _y;
+   id<ORRealVar>   _z;
 }
--(id)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z
+-(id)initORElement:(id<ORIntVar>)idx array:(id<ORDoubleArray>)y equal:(id<ORRealVar>)z
 {
    self = [super initORConstraintI];
    _idx = idx;
@@ -1356,7 +1356,7 @@
 {
    [v visitFloatElementCst:self];
 }
--(id<ORFloatArray>) array
+-(id<ORDoubleArray>) array
 {
    return _y;
 }
@@ -1364,7 +1364,7 @@
 {
    return _idx;
 }
--(id<ORFloatVar>) res
+-(id<ORRealVar>) res
 {
    return _z;
 }
@@ -2508,12 +2508,12 @@
 }
 @end
 
-@implementation ORFloatLinearEq {
+@implementation ORRealLinearEq {
    id<ORVarArray> _ia;
-   id<ORFloatArray>  _coefs;
-   ORFloat _c;
+   id<ORDoubleArray>  _coefs;
+   ORDouble _c;
 }
--(ORFloatLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat) c
+-(ORRealLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -2536,11 +2536,11 @@
 {
    return _ia;
 }
--(id<ORFloatArray>) coefs
+-(id<ORDoubleArray>) coefs
 {
    return _coefs;
 }
--(ORFloat) cst
+-(ORDouble) cst
 {
    return _c;
 }
@@ -2554,12 +2554,12 @@
 }
 @end
 
-@implementation ORFloatLinearLeq {
+@implementation ORRealLinearLeq {
    id<ORVarArray> _ia;
-   id<ORFloatArray> _coefs;
-   ORFloat _c;
+   id<ORDoubleArray> _coefs;
+   ORDouble _c;
 }
--(ORFloatLinearLeq*) initFloatLinearLeq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat)c
+-(ORRealLinearLeq*) initFloatLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble)c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -2582,11 +2582,11 @@
 {
    return _ia;
 }
--(id<ORFloatArray>) coefs
+-(id<ORDoubleArray>) coefs
 {
    return _coefs;
 }
--(ORFloat) cst
+-(ORDouble) cst
 {
    return _c;
 }
@@ -2765,7 +2765,7 @@
 {
    [_theSet addObject:v];
 }
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitFloatVar: (id<ORRealVar>) v
 {
    [_theSet addObject:v];
 }
@@ -2783,7 +2783,7 @@
 {}
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e
 {}
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {}
 -(void) visitExprPlusI: (ORExprBinaryI*) e
 {
@@ -3558,7 +3558,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value;
 }
@@ -3566,7 +3566,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _pBound;
 }
--(ORFloat) key
+-(ORDouble) key
 {
    return _value * _direction;
 }
@@ -3607,7 +3607,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveValueFloatI
--(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b
+-(id) initObjectiveValueFloatI: (ORDouble) pb minimize: (ORBool) b
 {
    self = [super init];
    _value = pb;
@@ -3615,19 +3615,19 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    _direction = b ? 1 : -1;
    return self;
 }
--(ORFloat) value
+-(ORDouble) value
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value;
 }
--(ORFloat) primal
+-(ORDouble) primal
 {
    return _pBound;
 }
--(ORFloat) key
+-(ORDouble) key
 {
    return _value * _direction;
 }
@@ -3691,7 +3691,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveFunctionLinearI
--(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
    self = [super init];
    _array = array;
@@ -3702,7 +3702,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _array;
 }
--(id<ORFloatArray>) coef
+-(id<ORDoubleArray>) coef
 {
    return _coef;
 }
@@ -3814,7 +3814,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMaximizeLinearI
--(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
    self = [super initORObjectiveFunctionLinearI: array coef: coef];
    return self;
@@ -3837,7 +3837,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMinimizeLinearI
--(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
    self = [super initORObjectiveFunctionLinearI: array coef: coef];
    return self;

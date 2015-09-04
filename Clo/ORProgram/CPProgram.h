@@ -45,11 +45,11 @@ PORTABLE_BEGIN
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<ORIntVar>) var float: (ORFloat) val;
--(void)               lthen: (id<ORIntVar>) var float: (ORFloat) val;
+-(void)               gthen: (id<ORIntVar>) var float: (ORDouble) val;
+-(void)               lthen: (id<ORIntVar>) var float: (ORDouble) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)          floatLthen: (id<ORFloatVar>) var with: (ORFloat) val;
--(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          floatLthen: (id<ORRealVar>) var with: (ORDouble) val;
+-(void)          floatGthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)         addConstraintDuringSearch: (id<ORConstraint>) c;
 
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
@@ -139,11 +139,11 @@ PORTABLE_BEGIN
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
 
--(void)    assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x;
--(ORFloat) floatValue: (id<ORFloatVar>) x;
--(ORFloat) floatMin: (id<ORFloatVar>)x;
--(ORFloat) floatMax: (id<ORFloatVar>)x;
--(ORFloat) domwidth: (id<ORFloatVar>)x;
+-(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
+-(ORDouble) floatValue: (id<ORRealVar>) x;
+-(ORDouble) floatMin: (id<ORRealVar>)x;
+-(ORDouble) floatMax: (id<ORRealVar>)x;
+-(ORDouble) domwidth: (id<ORRealVar>)x;
 
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;

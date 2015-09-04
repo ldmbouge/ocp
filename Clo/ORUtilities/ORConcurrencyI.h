@@ -44,7 +44,7 @@
 @end
 
 @interface ORInformer : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer,
-    ORSolutionInformer, ORConstraintInformer, ORIntArrayInformer, ORFloatArrayInformer, ORConstraintSetInformer> {
+    ORSolutionInformer, ORConstraintInformer, ORIntArrayInformer, ORDoubleArrayInformer, ORConstraintSetInformer> {
     NSLock* _lock;
     NSMutableArray* _whenList;
     NSMutableArray* _wheneverList;

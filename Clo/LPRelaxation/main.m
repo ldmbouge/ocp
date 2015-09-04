@@ -36,7 +36,7 @@ int main_lp(int argc, const char * argv[])
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-   id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+   id<ORRealVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
    
    id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
@@ -72,7 +72,7 @@ int main_mip(int argc, const char * argv[])
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-   id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+   id<ORRealVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
    
    id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
@@ -98,7 +98,7 @@ int main_cp(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+         id<ORRealVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
          
          //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
          for(ORInt i = 0; i < nbRows; i++)
@@ -151,7 +151,7 @@ int main_hybrid(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-//         id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+//         id<ORRealVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
          
          //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
          for(ORInt i = 0; i < nbRows; i++)
@@ -214,7 +214,7 @@ int main_hybrid_branching(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         id<ORFloatVar> y = [ORFactory floatVar: model low: -1.0 up: 1.0];
+         id<ORRealVar> y = [ORFactory floatVar: model low: -1.0 up: 1.0];
         
          for(ORInt i = 0; i < nbRows; i++)
             [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i]-1)]]];
@@ -228,10 +228,10 @@ int main_hybrid_branching(int argc, const char * argv[])
           ^() {
              id<ORSelect> sel = [ORFactory select:cp range: Columns
                                          suchThat:^bool(ORInt i)    { return true;}
-                                        orderedBy:^ORFloat(ORInt i) { return frac([lp value: x[i]]);}];
+                                        orderedBy:^ORDouble(ORInt i) { return frac([lp value: x[i]]);}];
              while (true) {
                 ORInt idx = [sel max];
-                ORFloat ifval = [lp value: x[idx]];
+                ORDouble ifval = [lp value: x[idx]];
                 //NSLog(@"Index: %d -> %f in [%d,%d]",idx,ifval,[cp min: x[idx]],[cp max: x[idx]]);
                 if (ifval == 0.0)
                    break;

@@ -17,8 +17,8 @@
 
 @interface LPColumn : ORObject<LPColumn>
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col;
--(void) addObjCoef: (ORFloat) coef;
--(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
+-(void) addObjCoef: (ORDouble) coef;
+-(void) addConstraint: (id<ORConstraint>) cstr coef: (ORDouble) coef;
 @end
 
 @implementation LPColumn
@@ -41,11 +41,11 @@
 {
    return _lpcolumn;
 }
--(void) addObjCoef: (ORFloat) coef
+-(void) addObjCoef: (ORDouble) coef
 {
    [_lpcolumn addObjCoef: coef];
 }
--(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef
+-(void) addConstraint: (id<ORConstraint>) cstr coef: (ORDouble) coef
 {
    [_lpcolumn addConstraint: [_lpsolver concretize: cstr] coef: coef];
 }
@@ -93,15 +93,15 @@
    [_sPool addSolution: sol];
    [sol release];
 }
--(ORFloat) dual: (id<ORConstraint>) c
+-(ORDouble) dual: (id<ORConstraint>) c
 {
    return [_lpsolver dual: [self concretize: c]];
 }
--(ORFloat) floatValue: (id<ORFloatVar>) v
+-(ORDouble) floatValue: (id<ORRealVar>) v
 {
    return [_lpsolver floatValue: _gamma[v.getId]];
 }
--(ORFloat) reducedCost: (id<ORFloatVar>) v
+-(ORDouble) reducedCost: (id<ORRealVar>) v
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
 }
@@ -112,7 +112,7 @@
    [self trackMutable: o];
    return o;
 }
--(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up
+-(id<LPColumn>) createColumn: (ORDouble) low up: (ORDouble) up
 {
    LPColumnI* col = [_lpsolver createColumn: low up: up];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
@@ -204,19 +204,19 @@
 {
    return [_lpsolver solve];
 }
--(ORFloat) dual: (id<ORConstraint>) c
+-(ORDouble) dual: (id<ORConstraint>) c
 {
    return [_lpsolver dual: [self concretize: c]];
 }
--(ORFloat) floatValue: (id<ORFloatVar>) v
+-(ORDouble) floatValue: (id<ORRealVar>) v
 {
    return [_lpsolver floatValue: _gamma[v.getId]];
 }
--(ORFloat) reducedCost: (id<ORFloatVar>) v
+-(ORDouble) reducedCost: (id<ORRealVar>) v
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
 }
--(ORFloat) objective
+-(ORDouble) objective
 {
    return [_lpsolver lpValue];
 }
@@ -224,19 +224,19 @@
 {
    return [_lpsolver objectiveValue];
 }
--(ORFloat) lowerBound: (id<ORVar>) v
+-(ORDouble) lowerBound: (id<ORVar>) v
 {
    return [_lpsolver lowerBound: _gamma[v.getId]];
 }
--(ORFloat) upperBound: (id<ORVar>) v
+-(ORDouble) upperBound: (id<ORVar>) v
 {
    return [_lpsolver upperBound: _gamma[v.getId]];
 }
--(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb
+-(void) updateLowerBound: (id<ORVar>) v with: (ORDouble) lb
 {
    [_lpsolver updateLowerBound: _gamma[v.getId] lb: lb];
 }
--(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub
+-(void) updateUpperBound: (id<ORVar>) v with: (ORDouble) ub
 {
    [_lpsolver updateUpperBound: _gamma[v.getId] ub: ub];
 }
@@ -267,7 +267,7 @@
 @end
 
 @implementation ORSolution (LPSolver)
--(ORFloat) dual: (id<ORConstraint>) c
+-(ORDouble) dual: (id<ORConstraint>) c
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [obj getId] == [c getId];
@@ -275,7 +275,7 @@
    id snap = [_varShots objectAtIndex:idx];
    return [snap dual];
 }
--(ORFloat) reducedCost: (id<ORFloatVar>) x
+-(ORDouble) reducedCost: (id<ORRealVar>) x
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [obj getId] == [x getId];

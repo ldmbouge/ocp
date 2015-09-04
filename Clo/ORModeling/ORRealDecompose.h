@@ -10,20 +10,20 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "ORFloatLinear.h"
+#import "ORRealLinear.h"
 
-@interface ORFloatLinearizer : ORVisitor<NSObject>
--(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model;
--(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x;
+@interface ORRealLinearizer : ORVisitor<NSObject>
+-(id) init: (id<ORRealLinear>) t model: (id<ORAddToModel>) model;
+-(id) init: (id<ORRealLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORRealVar>)x;
 @end
 
-@interface ORFloatSubst   : ORVisitor<NSObject> {
-   id<ORFloatVar>      _rv;
+@interface ORRealSubst   : ORVisitor<NSObject> {
+   id<ORRealVar>      _rv;
    id<ORAddToModel> _model;
    ORCLevel             _c;
 }
 -(id)initORSubst:(id<ORAddToModel>) model;
--(id)initORSubst:(id<ORAddToModel>) model by:(id<ORFloatVar>)x;
--(id<ORFloatVar>)result;
+-(id)initORSubst:(id<ORAddToModel>) model by:(id<ORRealVar>)x;
+-(id<ORRealVar>)result;
 @end
 

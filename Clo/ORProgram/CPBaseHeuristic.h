@@ -13,8 +13,8 @@
 #import <ORProgram/CPHeuristic.h>
 
 @interface CPBaseHeuristic : NSObject<CPHeuristic>
--(ORFloat) varOrdering: (id<CPIntVar>)x;
--(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
+-(ORDouble) varOrdering: (id<CPIntVar>)x;
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
 -(void)initHeuristic:(NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void)initInternal:(id<ORVarArray>)t with:(id<ORVarArray>)cv;
 -(void) restart;
@@ -25,8 +25,8 @@
 
 @interface CPVirtualHeuristic: NSObject<CPHeuristic> 
 -(CPVirtualHeuristic*)initWithBindings:(id<ORBindingArray>)bindings;
--(ORFloat) varOrdering: (id<CPIntVar>)x;
--(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
+-(ORDouble) varOrdering: (id<CPIntVar>)x;
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
 -(void) initInternal: (id<CPIntVarArray>) t with:(id<ORVarArray>)cv;
 -(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void) restart;

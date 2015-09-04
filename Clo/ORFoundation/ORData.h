@@ -82,20 +82,20 @@
 -(ORInt) decr: (id<ORGamma>) solver;
 -(ORInt) value: (id<ORGamma>) solver;
 -(ORInt) intValue: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORDouble) floatValue: (id<ORGamma>) solver;
 @end
 
-@protocol ORFloatNumber <ORObject,ORExpr>
--(ORFloat) floatValue;
--(ORFloat) value;
+@protocol ORDoubleNumber <ORObject,ORExpr>
+-(ORDouble) floatValue;
+-(ORDouble) value;
 -(ORInt) intValue;
 @end
 
 @protocol ORMutableFloat <ORObject,ORExpr>
--(ORFloat) initialValue;
--(ORFloat) value: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(ORDouble) initialValue;
+-(ORDouble) value: (id<ORGamma>) solver;
+-(ORDouble) floatValue: (id<ORGamma>) solver;
+-(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 @end
 
 @protocol ORTrailableInt <ORObject>

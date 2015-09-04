@@ -35,9 +35,25 @@ struct Ctx64 {
    long r14;
    long r15;
    long   rip;
-   long   pad; // alignment padding.
+   unsigned int   pad; // alignment padding.
+   unsigned int   mxcsr;
    double xmm0[2];
    double xmm1[2];
+   double xmm2[2];
+   double xmm3[2];
+   double xmm4[2];
+   double xmm5[2];
+   double xmm6[2];
+   double xmm7[2];
+   double xmm8[2];
+   double xmm9[2];
+   double xmm10[2];
+   double xmm11[2];
+   double xmm12[2];
+   double xmm13[2];
+   double xmm14[2];
+   double xmm15[2];
+   char   fpu[108];
 };
 __attribute__((noinline)) NSCont* saveCtx(struct Ctx64* ctx,NSCont* k);
 __attribute__((noinline)) NSCont* restoreCtx(struct Ctx64* ctx,char* start,char* data,size_t length);

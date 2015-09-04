@@ -288,8 +288,8 @@ int main(int argc, const char * argv[])
         ms_max += dur_max;
     }
     
-    // Use resource tasks
-    ORBool useResourceTasks = true;
+    // Use resource tasks (
+    ORBool useResourceTasks = false;
 
 	@autoreleasepool {
       

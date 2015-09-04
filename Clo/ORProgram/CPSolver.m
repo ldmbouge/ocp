@@ -448,11 +448,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method gthenImpl not implemented"];
 }
--(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+-(void) floatLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLthenImpl not implemented"];
 }
--(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+-(void) floatGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGthenImpl not implemented"];
 }
@@ -692,8 +692,8 @@
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i) { return ![cav[i] bound]; }
-                                       orderedBy: ^ORFloat(ORInt i) {
-                                          ORFloat rv = [h varOrdering:cav[i]];
+                                       orderedBy: ^ORDouble(ORInt i) {
+                                          ORDouble rv = [h varOrdering:cav[i]];
                                           return rv;
                                        }];
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
@@ -713,7 +713,7 @@
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
       [failStamp setValue:[_search nbFailures]];
-      ORFloat bestValue = - MAXFLOAT;
+      ORDouble bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = x.min;
       ORInt up  = x.max;
@@ -721,7 +721,7 @@
       id<CPIntVar> cx = _gamma[x.getId];
       for(ORInt v = low;v <= up;v++) {
         if ([cx member:v]) {
-          ORFloat vValue = [h valOrdering:v forVar:cx];
+          ORDouble vValue = [h valOrdering:v forVar:cx];
           if (vValue > bestValue) {
             bestValue = vValue;
             bestIndex = v;
@@ -766,7 +766,7 @@
    ORInt up = [x max];
    for(ORInt i = low; i <= up; i++) {
       if ([x member: i]) {
-         ORFloat v = o(i);
+         ORDouble v = o(i);
          if (v < bestFound) {
             bestFound = v;
             indexFound = i;
@@ -788,14 +788,14 @@
    ORInt up = [x max];
    for(ORInt i = low; i <= up; i++) {
       if ([x member: i]) {
-         ORFloat v = o1(i);
+         ORDouble v = o1(i);
          if (v < bestFound1) {
             bestFound1 = v;
             bestFound2 = o2(i);
             indexFound = i;
          }
          else if (v == bestFound1) {
-            ORFloat w = o2(i);
+            ORDouble w = o2(i);
             if (w < bestFound2) {
                bestFound2 = w;
                indexFound = i;
@@ -840,11 +840,11 @@
 {
    [self gthenImpl: _gamma[var.getId] with: val];
 }
--(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+-(void) lthen: (id<ORIntVar>) var float: (ORDouble) val
 {
    [self lthenImpl: _gamma[var.getId] with: rint(ceil(val))];
 }
--(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+-(void) gthen: (id<ORIntVar>) var float: (ORDouble) val
 {
    [self gthenImpl: _gamma[var.getId] with: rint(floor(val))];
 }
@@ -857,11 +857,11 @@
 {
    return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
 }
--(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+-(void) floatLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
    [self floatLthenImpl: _gamma[var.getId] with: val];
 }
--(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+-(void) floatGthen: (id<ORRealVar>) var with: (ORDouble) val
 {
    [self floatGthenImpl: _gamma[var.getId] with: val];
 }
@@ -1013,11 +1013,11 @@
 {
    return [_gamma[x.getId] intValue];
 }
--(ORFloat) floatValue: (id<ORFloatVar>) x
+-(ORDouble) floatValue: (id<ORRealVar>) x
 {
-   return [(id<ORFloatVar>)_gamma[x.getId] floatValue];
+   return [(id<ORRealVar>)_gamma[x.getId] floatValue];
 }
--(void)  assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
+-(void)  assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
    [_gamma[x.getId] assignRelaxationValue: f];
 }
@@ -1041,17 +1041,17 @@
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];
 }
--(ORFloat) domwidth:(id<ORFloatVar>) x
+-(ORDouble) domwidth:(id<ORRealVar>) x
 {
-   return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
+   return [((id<CPRealVar>)_gamma[x.getId]) domwidth];
 }
--(ORFloat) floatMin:(id<ORFloatVar>)x
+-(ORDouble) floatMin:(id<ORRealVar>)x
 {
-   return [((id<CPFloatVar>)_gamma[x.getId]) min];
+   return [((id<CPRealVar>)_gamma[x.getId]) min];
 }
--(ORFloat) floatMax:(id<ORFloatVar>)x
+-(ORDouble) floatMax:(id<ORRealVar>)x
 {
-   return [((id<CPFloatVar>)_gamma[x.getId]) max];
+   return [((id<CPRealVar>)_gamma[x.getId]) max];
 }
 
 -(NSSet*) constraints: (id<ORVar>)x
@@ -1164,11 +1164,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize: not allowed during search"];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize:coef: not allowed during search"];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
@@ -1297,14 +1297,14 @@
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
--(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+-(void) floatLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+-(void) floatGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
    if (status == ORFailure)

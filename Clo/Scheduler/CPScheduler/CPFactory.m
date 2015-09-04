@@ -330,26 +330,32 @@
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration
 {
    id<CPEngine> engine = [task engine];
-   id<CPConstraint> cstr =[[CPTaskDuration alloc] initCPTaskDuration: task : duration];
+   id<CPConstraint> cstr = [[CPTaskDuration alloc] initCPTaskDuration: task : duration];
    [engine trackMutable: cstr];
    return cstr;
 }
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task presence: (id<CPIntVar>) presence
 {
     id<CPEngine> engine = [task engine];
-    id<CPConstraint> cstr =[[CPTaskPresence alloc] initCPTaskPresence: task : presence];
+    id<CPConstraint> cstr = [[CPTaskPresence alloc] initCPTaskPresence: task : presence];
     [engine trackMutable: cstr];
     return cstr;
 }
-+(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
++(id<CPConstraint>) multDur:(id<CPTaskVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z
 {
-    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
+    id<CPConstraint> cstr = NULL;
+    [[x engine] trackMutable:cstr];
+    return cstr;
+}
++(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>) usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>)capacity
+{
+    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages area:area capacity:capacity];
     [[tasks tracker] trackMutable:o];
     return o;
 }
-+(id<CPConstraint>) taskCumulative: (id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with: (id<CPIntVarArray>) usages and: (id<CPIntVar>) capacity
++(id<CPConstraint>) taskCumulative:(id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with:(id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>)capacity
 {
-    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative: tasks with: usages and: capacity];
+    id<CPConstraint> o = [[CPTaskCumulative alloc] initCPTaskCumulative:tasks resourceTasks:resTasks with:usages area:area capacity:capacity];
     [[tasks tracker] trackMutable:o];
     return o;
 }

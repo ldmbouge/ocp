@@ -61,9 +61,9 @@ int main(int argc, const char * argv[])
          
          [cp solve: ^{
             NSLog(@"Start...");
-            [cp labelArray:cost orderedBy:^ORFloat(ORInt i) { return [cp domsize:cost[i]];}];
-            [cp labelArray:supp orderedBy:^ORFloat(ORInt i) { return [cp domsize:supp[i]];}];
-            [cp labelArray:open orderedBy:^ORFloat(ORInt i) { return [cp domsize:open[i]];}];
+            [cp labelArray:cost orderedBy:^ORDouble(ORInt i) { return [cp domsize:cost[i]];}];
+            [cp labelArray:supp orderedBy:^ORDouble(ORInt i) { return [cp domsize:supp[i]];}];
+            [cp labelArray:open orderedBy:^ORDouble(ORInt i) { return [cp domsize:open[i]];}];
             nbSol++;
             @autoreleasepool {
                id<ORIntArray> ops = [ORFactory intArray:cp range:open.range with:^ORInt(ORInt k) {

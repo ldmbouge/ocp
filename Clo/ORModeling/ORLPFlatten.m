@@ -13,7 +13,7 @@
 #import "ORModelI.h"
 #import "ORVarI.h"
 #import "ORDecompose.h"
-#import "ORFloatDecompose.h"
+#import "ORRealDecompose.h"
 
 @implementation ORLPFlatten {
    id<ORAddToModel> _into;
@@ -117,7 +117,7 @@
 {
    _result = v;
 }
--(void) visitFloatVar: (ORFloatVarI*) v
+-(void) visitFloatVar: (ORRealVarI*) v
 {
    _result = v;
 }
@@ -138,7 +138,7 @@
 {
    _result = v;
 }
--(void) visitFloatArray:(id<ORFloatArray>)v
+-(void) visitFloatArray:(id<ORDoubleArray>)v
 {
    _result = v;
 }
@@ -158,7 +158,7 @@
 {
    _result = v;
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitFloatRange:(id<ORRealRange>)v
 {
    _result = v;
 }
@@ -189,13 +189,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
+   ORRealLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
    _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
    [terms release];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
+   ORRealLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
    _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
    [terms release];
 }

@@ -10,8 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-#import <CPUKernel/CPUKernel.h>
 #import <objcp/CPDom.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPBasicConstraint.h>
@@ -31,5 +29,6 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPData.h>
 #import <objcp/CPIntVarI.h>
+#import <objcp/CPRealVarI.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>

@@ -65,7 +65,7 @@
    [_sPool addSolution: s];
    [s release];
 }
--(ORFloat) floatValue: (id<ORFloatVar>) v
+-(ORDouble) floatValue: (id<ORRealVar>) v
 {
    return [_MIPsolver floatValue: _gamma[v.getId]];
 }

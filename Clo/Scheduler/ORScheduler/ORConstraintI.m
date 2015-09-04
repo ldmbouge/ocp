@@ -352,10 +352,12 @@
     NSMutableArray *   _accT;
     NSMutableArray *   _accResT;
     NSMutableArray *   _accU;
+    NSMutableArray *   _accA;
     NSMutableSet   *   _accIds;
     id<ORTaskVarArray> _tasks;
     id<ORIntArray>     _resourceTasks;
     id<ORIntVarArray>  _usages;
+    id<ORIntVarArray>  _area;
     id<ORIntVar>       _capacity;
 }
 -(id<ORTaskCumulative>) initORTaskCumulative: (id<ORTaskVarArray>) tasks with: (id<ORIntVarArray>) usages and: (id<ORIntVar>) capacity
@@ -370,6 +372,7 @@
     _tracker  = [tasks tracker];
     _tasks    = tasks;
     _usages   = usages;
+    _area     = NULL;
     _capacity = capacity;
 
     _resourceTasks = [ORFactory intArray:_tracker range:[_tasks range] value:0];
@@ -377,6 +380,7 @@
     _accT    = 0;
     _accIds  = 0;
     _accU    = 0;
+    _accA    = 0;
     _accResT = 0;
     _closed  = TRUE;
     
@@ -398,10 +402,12 @@
     _tracker  = [capacity tracker];
     _tasks    = 0;
     _usages   = 0;
+    _area     = 0;
     _capacity = capacity;
     _accT     = [[NSMutableArray alloc] initWithCapacity: 16];
     _accResT  = [[NSMutableArray alloc] initWithCapacity: 16];
     _accU     = [[NSMutableArray alloc] initWithCapacity: 16];
+    _accA     = [[NSMutableArray alloc] initWithCapacity: 16];
     _closed   = FALSE;
     
     return self;
@@ -411,19 +417,32 @@
     if (_accT   ) [_accT    dealloc];
     if (_accResT) [_accResT dealloc];
     if (_accU   ) [_accU    dealloc];
+    if (_accA   ) [_accA    dealloc];
     if (_accIds ) [_accIds  dealloc];
     
     [super dealloc];
 }
 -(void) add: (id<ORTaskVar>) task with:(id<ORIntVar>)usage
 {
+    [self add:task with:usage and:NULL];
+}
+-(void) add:(id<ORTaskVar>)task with:(id<ORIntVar>)usage and:(id<ORIntVar>)area
+{
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
         if (_closed)
-            @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: The cumulative resource is already closed"];
+        if ([usage min] < 0)
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: Non-negative values for usage expected!"];
+        if (area != NULL && [area min] < 0)
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: Non-negative values for area expected!"];
         // Add task
         [_accT    addObject: task           ];
         [_accU    addObject: usage          ];
+        if (area == NULL)
+            [_accA addObject: [NSNull null]];
+        else
+            [_accA addObject: area];
         [_accIds  addObject: @([task getId])];
         [_accResT addObject: @(0           )];
     }
@@ -445,10 +464,15 @@
     // Check whether 'task' is already added
     if (![_accIds containsObject:@([task getId])]) {
         if (_closed)
-            @throw [[ORExecutionError alloc] initORExecutionError: "The cumulative resource is already closed"];
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: The cumulative resource is already closed"];
+        if ([usage min] < 0)
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: Non-negative domain values for usage expected!"];
+        if ([durationRange low] < 0)
+            @throw [[ORExecutionError alloc] initORExecutionError: "ORTaskCumulative: Non-negative values for durationRange expected!"];
         // Add task
         [_accT    addObject: task           ];
         [_accU    addObject: usage          ];
+        [_accA    addObject: [NSNull null]  ];
         [_accIds  addObject: @([task getId])];
         [_accResT addObject: @(1           )];
         // Add resource to resource task
@@ -476,6 +500,11 @@
         _usages = [ORFactory intVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_accU count]) with: ^id<ORIntVar>(ORInt i) {
             return _accU[i-1];
         }];
+        _area = [ORFactory intVarArray: _tracker range: RANGE(_tracker,1,(ORInt) [_accA count]) with: ^id<ORIntVar>(ORInt i) {
+            if (_accA[i-1] == [NSNull null])
+                return NULL;
+            return _accA[i-1];
+        }];
         _resourceTasks = [ORFactory intArray:_tracker range:range with:^ORInt(ORInt i) {
             return [_accResT[i-1] intValue];
         }];
@@ -488,6 +517,10 @@
 -(id<ORIntVarArray>) usages
 {
     return _usages;
+}
+-(id<ORIntVarArray>) areas
+{
+    return _area;
 }
 -(id<ORIntVar>) capacity
 {

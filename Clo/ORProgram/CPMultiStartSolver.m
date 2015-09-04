@@ -376,11 +376,11 @@
 {
    [[self worker] gthen: var with: val];
 }
--(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+-(void) lthen: (id<ORIntVar>) var float: (ORDouble) val
 {
    [[self worker] lthen: var with: val];
 }
--(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+-(void) gthen: (id<ORIntVar>) var float: (ORDouble) val
 {
    [[self worker] gthen: var with: val];
 }
@@ -389,11 +389,11 @@
 {
    [[self worker] restrict: var to: S];
 }
--(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+-(void) floatLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
    [[self worker] floatLthen: var with: val];
 }
--(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+-(void) floatGthen: (id<ORRealVar>) var with: (ORDouble) val
 {
    [[self worker] floatGthen: var with: val];
 }
@@ -595,23 +595,23 @@
 {
    return [[self worker] member: v in: x];
 }
--(ORFloat) floatValue: (id<ORFloatVar>) x
+-(ORDouble) floatValue: (id<ORRealVar>) x
 {
    return [((id<CPProgram>)[self worker]) floatValue: x];
 }
--(ORFloat) domwidth:(id<ORFloatVar>)x
+-(ORDouble) domwidth:(id<ORRealVar>)x
 {
    return [[self worker] domwidth: x];
 }
--(ORFloat) floatMin:(id<ORFloatVar>)x
+-(ORDouble) floatMin:(id<ORRealVar>)x
 {
    return [[self worker] floatMin:x];
 }
--(ORFloat) floatMax:(id<ORFloatVar>)x
+-(ORDouble) floatMax:(id<ORRealVar>)x
 {
    return [[self worker] floatMax:x];
 }
--(void) assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
+-(void) assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
    return [[self worker] assignRelaxationValue:  f to:  x];
 }

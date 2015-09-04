@@ -53,7 +53,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve:
        ^() {
-          [cp labelArray: a orderedBy: ^ORFloat(ORInt i) { return [cp domsize:a[i]];}];
+          [cp labelArray: a orderedBy: ^ORDouble(ORInt i) { return [cp domsize:a[i]];}];
           show(cp,x);
        }
        ];

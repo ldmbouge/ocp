@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORFlatten.h>
-#import "ORFloatLinear.h"
+#import "ORRealLinear.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
 
@@ -118,7 +118,7 @@
 {
    _result = v;
 }
--(void) visitFloatArray:(id<ORFloatArray>)v
+-(void) visitFloatArray:(id<ORDoubleArray>)v
 {
    _result = v;
 }
@@ -138,7 +138,7 @@
 {
    _result = v;
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitFloatRange:(id<ORRealRange>)v
 {
    _result = v;
 }
@@ -230,7 +230,6 @@
    id<ORTracker> t = [_into tracker];
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
-   [_into setCurrent:cstr];
    for(ORInt b = brlow; b <= brup; b++) { /*note:RangeConsistency*/
       [ORFlatten flattenExpression: [Sum(t,i,IR,[[item[i] eq: @(b) track:t] mul:@([itemSize at:i]) track:t]) eq: binSize[b]]
                               into: _into];
@@ -267,15 +266,13 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [_into setCurrent:cstr];
    [ORFlatten flattenExpression:[cstr expr] into:_into];
-   [_into setCurrent:nil];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
    _result = [_into addConstraint:cstr];
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)cstr
+-(void) visitFloatEqualc: (id<ORRealEqualc>)cstr
 {
    _result = [_into addConstraint:cstr];
 }
@@ -367,7 +364,7 @@
 {
    _result = [_into addConstraint:c];
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+-(void) visitFloatElementCst: (id<ORRealElementCst>) c
 {
    _result = [_into addConstraint:c];
 }
@@ -560,8 +557,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          _result = [_into minimizeVar: alpha];
       }break;
       case ORTFloat: {
-         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
-         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+         ORRealLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
+         id<ORRealVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
          _result = [_into minimizeVar:alpha];
       }break;
       default:
@@ -577,8 +574,8 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          _result = [_into maximizeVar: alpha];
       }break;
       case ORTFloat:{
-         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
-         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+         ORRealLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
+         id<ORRealVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
          _result = [_into maximizeVar:alpha];
       }break;
       default: break;
@@ -587,13 +584,13 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
    id<ORIntVarArray> ca = [self flattenIt:[v array]];
-   id<ORFloatArray>  cc = [self flattenIt:[v coef]];
+   id<ORDoubleArray>  cc = [self flattenIt:[v coef]];
    _result = [_into minimize:ca coef:cc];
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
    id<ORIntVarArray> ca = [self flattenIt:[v array]];
-   id<ORFloatArray>  cc = [self flattenIt:[v coef]];
+   id<ORDoubleArray>  cc = [self flattenIt:[v coef]];
    _result = [_into maximize:ca coef:cc];
 }
 

@@ -29,22 +29,22 @@
 -(OROutcome) solve;
 
 -(OROutcome) status;
--(ORFloat) value: (LPVariableI*) var;
--(ORFloat) lowerBound: (LPVariableI*) var;
--(ORFloat) upperBound: (LPVariableI*) var;
--(ORFloat) objectiveValue;
--(ORFloat) reducedCost: (LPVariableI*) var;
--(ORFloat) dual: (LPConstraintI*) cstr;
+-(ORDouble) value: (LPVariableI*) var;
+-(ORDouble) lowerBound: (LPVariableI*) var;
+-(ORDouble) upperBound: (LPVariableI*) var;
+-(ORDouble) objectiveValue;
+-(ORDouble) reducedCost: (LPVariableI*) var;
+-(ORDouble) dual: (LPConstraintI*) cstr;
 
--(void) setBounds: (LPVariableI*) var low: (ORFloat) low up: (ORFloat) up;
+-(void) setBounds: (LPVariableI*) var low: (ORDouble) low up: (ORDouble) up;
 -(void) setUnboundUpperBound: (LPVariableI*) var;
 -(void) setUnboundLowerBound: (LPVariableI*) var;
 
--(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb;
--(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub;
+-(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb;
+-(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORFloat) val;
+-(void) setFloatParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(ORStatus) postConstraint: (LPConstraintI*) cstr;

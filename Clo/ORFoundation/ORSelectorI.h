@@ -34,5 +34,5 @@
 @interface ORMinSelector : ORObject<ORSelector>
 -(id)init;
 -(void)commit;
--(void)neighbor:(ORFloat)v do:(ORClosure)block;
+-(void)neighbor:(ORDouble)v do:(ORClosure)block;
 @end

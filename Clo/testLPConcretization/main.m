@@ -38,9 +38,9 @@ int TDP(int argc,const char * argv[])
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Binary = [ORFactory intRange: model low: 0 up: 1];
    id<ORIntRange> Constraints = [ORFactory intRange: model low: 0 up: 2];
-   id<ORFloatVar> ac = [ORFactory floatVar: model low: 0.0 up: 200];
-   id<ORFloatVar> bc = [ORFactory floatVar: model low: 0.0 up: 200];
-   id<ORFloatVar> co = [ORFactory floatVar: model low: 0.0 up: 200];
+   id<ORRealVar> ac = [ORFactory floatVar: model low: 0.0 up: 200];
+   id<ORRealVar> bc = [ORFactory floatVar: model low: 0.0 up: 200];
+   id<ORRealVar> co = [ORFactory floatVar: model low: 0.0 up: 200];
    id<ORIntVar> bac = [ORFactory intVar: model bounds: Binary];
    id<ORIntVar> bbc = [ORFactory intVar: model bounds: Binary];
    id<ORIntVar> bco = [ORFactory intVar: model bounds: Binary];
@@ -64,12 +64,12 @@ int TDP(int argc,const char * argv[])
    
    id<ORModel> submodel = [ORFactory createModel];
    id<ORIntRange> Horizon = [ORFactory intRange: submodel low: 1 up: 10];
-   id<ORFloatVarArray> fac = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
-   id<ORFloatVarArray> fbc = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
-   id<ORFloatVarArray> fco = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
-   id<ORFloatVar> sac = [ORFactory floatVar: submodel];
-   id<ORFloatVar> sbc = [ORFactory floatVar: submodel];
-   id<ORFloatVar> sco = [ORFactory floatVar: submodel];
+   id<ORRealVarArray> fac = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVarArray> fbc = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVarArray> fco = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVar> sac = [ORFactory floatVar: submodel];
+   id<ORRealVar> sbc = [ORFactory floatVar: submodel];
+   id<ORRealVar> sco = [ORFactory floatVar: submodel];
 
    id<ORIdArray> cac = [ORFactory idArray:submodel range: Horizon];
    id<ORIdArray> cbc = [ORFactory idArray:submodel range: Horizon];
@@ -119,7 +119,7 @@ int main_lp(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
-   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns];
+   id<ORRealVarArray> x = [ORFactory floatVarArray: model range: Columns];
     id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
       ca[i] = [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
@@ -202,7 +202,7 @@ int main_cp(int argc, const char * argv[])
    [mip solve:^{
       NSLog(@"x = %@",x);
       [mip labelHeuristic:h];
-      [mip labelArray:x orderedBy:^ORFloat(ORInt i) {
+      [mip labelArray:x orderedBy:^ORDouble(ORInt i) {
          return -((ORInt)(c[i]) << 7) +  [mip domsize:x[i]];
       }];
    }];

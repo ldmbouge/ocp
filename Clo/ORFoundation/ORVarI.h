@@ -51,13 +51,13 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORFloatVarI : ORExprI<ORFloatVar>
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker;
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker up: (ORFloat) up;
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
+@interface ORRealVarI : ORExprI<ORRealVar>
+-(ORRealVarI*) init: (id<ORTracker>) tracker;
+-(ORRealVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up;
+-(ORRealVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up;
 -(ORBool) hasBounds;
--(ORFloat) low;
--(ORFloat) up;
+-(ORDouble) low;
+-(ORDouble) up;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
 -(id) initWithCoder:(NSCoder *)aDecoder;

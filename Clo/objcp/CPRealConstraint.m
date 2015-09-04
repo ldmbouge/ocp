@@ -10,15 +10,13 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "ORConstraintI.h"
-#import "CPFloatConstraint.h"
+#import "CPRealConstraint.h"
 #import "CPIntVarI.h"
-#import "CPFloatVarI.h"
-#import "CPEngineI.h"
+#import "CPRealVarI.h"
 
-@implementation CPFloatSquareBC
+@implementation CPRealSquareBC
 
--(id)initCPFloatSquareBC:(CPFloatVarI*)z equalSquare:(CPFloatVarI*)x  // z == x^2
+-(id)initCPRealSquareBC:(CPRealVarI*)z equalSquare:(CPRealVarI*)x  // z == x^2
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -68,12 +66,12 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatSquareBC:%02d %@ == %@^2>",_name,_z,_x];
+   return [NSMutableString stringWithFormat:@"<CPRealSquareBC:%02d %@ == %@^2>",_name,_z,_x];
 }
 @end
 
-@implementation CPFloatEquationBC
--(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c   // sum(i in S) c_i * x_i == c  [[ saved constant is -c ]]
+@implementation CPRealEquationBC
+-(id)init:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c   // sum(i in S) c_i * x_i == c  [[ saved constant is -c ]]
 {
    self = [super initCPCoreConstraint:(id)[x[x.range.low] engine]];
    _x = x;
@@ -85,7 +83,7 @@
 -(void) post
 {
    [self propagate];
-   [_x enumerateWith:^(CPFloatVarI* obj, int k) {
+   [_x enumerateWith:^(CPRealVarI* obj, int k) {
       if (![obj bound])
          [obj whenChangeBoundsPropagate:self];
    }];
@@ -97,15 +95,15 @@
    BOOL changed = NO;
    do {
       __block ORInterval S = createORI1(_c);
-      [_x enumerateWith:^(CPFloatVarI* xk,int k) {
+      [_x enumerateWith:^(CPRealVarI* xk,int k) {
          S = ORIAdd(S,ORIMul([xk bounds],createORI1([_coefs at:k])));
          if (ORIEmpty(S))
             @throw [[ORExecutionError alloc] initORExecutionError:"interval empty in FloatEquation"];
       }];
       changed = NO;
       for(ORInt i=_x.low;i <= _x.up;i++) {
-         ORFloat ci = [_coefs at:i];
-         CPFloatVarI* xi = (id)_x[i];
+         ORDouble ci = [_coefs at:i];
+         CPRealVarI* xi = (id)_x[i];
          ORInterval xii  = xi.bounds;
          ORInterval TMP = ORISubPointwise(S, ORIMul(xii, ci > 0 ? createORI1(ci) : ORISwap(createORI1(ci))));
          ORInterval NEW = ORIDiv(ORIOpposite(TMP), createORI1(ci));
@@ -128,19 +126,19 @@
 -(ORUInt)nbUVars
 {
    __block ORUInt nb=0;
-   [_x enumerateWith:^(id<CPFloatVar> obj, int idx) {
+   [_x enumerateWith:^(id<CPRealVar> obj, int idx) {
       nb += ![obj bound];
    }];
    return nb;
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatEquationBC:%02d %@ %@ + (%f) == 0>",_name,_x,_coefs,_c];
+   return [NSMutableString stringWithFormat:@"<CPRealEquationBC:%02d %@ %@ + (%f) == 0>",_name,_x,_coefs,_c];
 }
 @end
 
-@implementation CPFloatINEquationBC
--(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c   // sum(i in S) c_i * x_i <= c  [[ saved constant is -c ]]
+@implementation CPRealINEquationBC
+-(id)init:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c   // sum(i in S) c_i * x_i <= c  [[ saved constant is -c ]]
 {
    self = [super initCPCoreConstraint:(id)[x[x.range.low] engine]];
    _x = x;
@@ -151,8 +149,8 @@
 -(void) post
 {
    [self propagate];
-   [_x enumerateWith:^(CPFloatVarI* obj, int k) {
-      ORFloat ck = [_coefs at:k];
+   [_x enumerateWith:^(CPRealVarI* obj, int k) {
+      ORDouble ck = [_coefs at:k];
       if (ck > 0) {
          if (![obj bound])
             [obj whenChangeMinPropagate:self];
@@ -168,15 +166,15 @@
    BOOL changed = NO;
    do {
       __block ORInterval S = createORI1(_c);
-      [_x enumerateWith:^(CPFloatVarI* xk,int k) {
+      [_x enumerateWith:^(CPRealVarI* xk,int k) {
          S = ORIAdd(S,ORIMul([xk bounds],createORI1([_coefs at:k])));
       }];
       if (ORISurePositive(S))
          failNow();
       changed = NO;
       for(ORInt i=_x.low;i <= _x.up;i++) {
-         ORFloat ci = [_coefs at:i];
-         CPFloatVarI* xi = (id)_x[i];
+         ORDouble ci = [_coefs at:i];
+         CPRealVarI* xi = (id)_x[i];
          ORInterval xii  = xi.bounds;
          ORInterval TMP = ORISubPointwise(S, ORIMul(xii, ci > 0 ? createORI1(ci) : ORISwap(createORI1(ci))));
          ORInterval NEW = ORIDiv(ORIOpposite(TMP), createORI1(ci));
@@ -218,19 +216,19 @@
 -(ORUInt)nbUVars
 {
    __block ORUInt nb=0;
-   [_x enumerateWith:^(id<CPFloatVar> obj, int idx) {
+   [_x enumerateWith:^(id<CPRealVar> obj, int idx) {
       nb += ![obj bound];
    }];
    return nb;
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPFloatINEquationBC:%02d %@ %@ + (%f) <= 0>",_name,_x,_coefs,_c];
+   return [NSMutableString stringWithFormat:@"<CPRealINEquationBC:%02d %@ %@ + (%f) <= 0>",_name,_x,_coefs,_c];
 }
 @end
 
-@implementation CPFloatEqualc
--(id) init:(CPFloatVarI*)x and:(ORFloat)c
+@implementation CPRealEqualc
+-(id) init:(CPRealVarI*)x and:(ORDouble)c
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -258,19 +256,19 @@
 
 
 
-typedef struct CPlFoatEltRecordTag {
+typedef struct CPRealEltRecordTag {
    ORInt   _idx;
-   ORFloat _val;
-} CPFloatEltRecord;
+   ORDouble _val;
+} CPRealEltRecord;
 
-@implementation CPFloatElementCstBC {
-   CPFloatEltRecord* _tab;
+@implementation CPRealElementCstBC {
+   CPRealEltRecord* _tab;
    ORInt              _sz;
    TRInt            _from;
    TRInt              _to;
 }
 
--(id) init: (CPIntVar*) x indexCstArray:(id<ORFloatArray>) c equal:(CPFloatVarI*)y
+-(id) init: (CPIntVar*) x indexCstArray:(id<ORDoubleArray>) c equal:(CPRealVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -285,7 +283,7 @@ typedef struct CPlFoatEltRecordTag {
    free(_tab);
    [super dealloc];
 }
-int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* r2)
+int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 {
    ORInt d1 = r1->_val - r2->_val;
    if (d1==0)
@@ -310,12 +308,12 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
       _sz = cUp - cLow + 1;
-      _tab = malloc(sizeof(CPFloatEltRecord)*_sz);
+      _tab = malloc(sizeof(CPRealEltRecord)*_sz);
       for(ORInt k=cLow;k <= cUp;k++)
-         _tab[k - cLow] = (CPFloatEltRecord){k,[_c at:k]};
-      qsort(_tab, _sz,sizeof(CPFloatEltRecord),(int(*)(const void*,const void*)) &compareCPFloatEltRecords);
-      ORFloat ybmin = [_y min];
-      ORFloat ybmax = [_y max];
+         _tab[k - cLow] = (CPRealEltRecord){k,[_c at:k]};
+      qsort(_tab, _sz,sizeof(CPRealEltRecord),(int(*)(const void*,const void*)) &compareCPRealEltRecords);
+      ORDouble ybmin = [_y min];
+      ORDouble ybmax = [_y max];
       _from = makeTRInt(_trail, -1);
       _to   = makeTRInt(_trail, -1);
       for(ORInt k=0;k < _sz;k++) {
@@ -358,8 +356,8 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
       }
       else
          failNow();
-      ORFloat ybmin = [_y min];
-      ORFloat ybmax = [_y max];
+      ORDouble ybmin = [_y min];
+      ORDouble ybmax = [_y max];
       k = _from._val;
       while (k < _sz && _tab[k]._val < ybmin)
          removeDom(_x, _tab[k++]._idx);
@@ -381,24 +379,24 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"CPFloatElementCstBC: <%02d %@ [ %@ ] == %@ >",_name,_c,_x,_y];
+   [buf appendFormat:@"CPRealElementCstBC: <%02d %@ [ %@ ] == %@ >",_name,_c,_x,_y];
    return buf;
 }
 @end
 
-@implementation CPFloatVarMinimize
+@implementation CPRealVarMinimize
 {
-   CPFloatVarI*  _x;
-   ORFloat        _primalBound;
+   CPRealVarI*  _x;
+   ORDouble        _primalBound;
 }
--(id) init: (CPFloatVarI*) x
+-(id) init: (CPRealVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = MAXINT;
    return self;
 }
--(id<CPFloatVar>)var
+-(id<CPRealVar>)var
 {
    return _x;
 }
@@ -419,13 +417,13 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 -(void) updatePrimalBound
 {
-   ORFloat bound = [_x min];
+   ORDouble bound = [_x min];
    @synchronized(self) {
       if (bound < _primalBound)
          _primalBound = bound;
    }
 }
--(void) tightenPrimalBound: (ORObjectiveValueFloatI*) newBound
+-(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound
 {
    @synchronized(self) {
       if ([newBound value] < _primalBound)
@@ -435,12 +433,13 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(void) tightenWithDualBound: (id) newBound
 {
    @synchronized(self) {
-      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-         ORFloat b = [((ORObjectiveValueIntI*) newBound) value];
+      
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+         ORDouble b = [((id<ORObjectiveValueInt>) newBound) value];
          [_x updateMin: b];
       }
-      else if ([newBound isKindOfClass:[ORObjectiveValueFloatI class]]) {
-         ORFloat b = [((ORObjectiveValueFloatI*) newBound) value];
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+         ORDouble b = [((id<ORObjectiveValueFloat>) newBound) value];
          [_x updateMin: b];
       }
    }
@@ -448,7 +447,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x value] minimize:YES];
+   return [ORFactory objectiveValueFloat:_x.value minimize:YES];
 }
 -(ORStatus) check
 {
@@ -461,7 +460,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 -(id<ORObjectiveValue>) primalBound
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: _primalBound minimize:YES];
+   return [ORFactory objectiveValueFloat:_primalBound minimize:YES];
 }
 -(NSString*)description
 {
@@ -471,18 +470,18 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 @end
 
-@implementation CPFloatVarMaximize {
-   CPFloatVarI*  _x;
-   ORFloat       _primalBound;
+@implementation CPRealVarMaximize {
+   CPRealVarI*  _x;
+   ORDouble       _primalBound;
 }
--(id) init: (CPFloatVarI*) x
+-(id) init: (CPRealVarI*) x
 {
     self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = -MAXINT;
    return self;
 }
--(id<CPFloatVar>)var
+-(id<CPRealVar>)var
 {
    return _x;
 }
@@ -499,7 +498,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x value] minimize: NO];
+   return [ORFactory objectiveValueFloat:_x.value minimize:NO];
 }
 -(ORUInt)nbUVars
 {
@@ -507,24 +506,24 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 -(void) updatePrimalBound
 {
-   ORFloat bound = [_x max];
+   ORDouble bound = [_x max];
    if (bound > _primalBound)
       _primalBound = bound;
    NSLog(@"primal bound: %f",_primalBound);
 }
--(void) tightenPrimalBound: (ORObjectiveValueFloatI*) newBound
+-(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound
 {
    if ([newBound value] > _primalBound)
       _primalBound = [newBound value];
 }
 -(void) tightenWithDualBound: (id) newBound
 {
-   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-      ORFloat b = [((ORObjectiveValueIntI*) newBound) value];
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      ORDouble b = [((id<ORObjectiveValueInt>) newBound) value];
       [_x updateMax: b];
    }
-   else if ([newBound isKindOfClass:[ORObjectiveValueFloatI class]]) {
-      ORFloat b = [((ORObjectiveValueFloatI*) newBound) value];
+   else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
+      ORDouble b = [((id<ORObjectiveValueFloat>) newBound) value];
       [_x updateMax: b];
    }
 }
@@ -542,7 +541,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 }
 -(id<ORObjectiveValue>) primalBound
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: _primalBound minimize: NO];
+   return [ORFactory objectiveValueFloat:_primalBound minimize:NO];
 }
 -(NSString*)description
 {

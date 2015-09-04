@@ -46,8 +46,8 @@ autoreleasepool {
 //      )
 //      
       limitSolutionsDo(cp,4) {
-         forallDo(cp,R) { (k : Int) -> UnsafeMutablePointer<Void> in
-            whileDo(cp, { !cp.bound(x[ORInt(k)])}) {
+         forallDo(cp,R) { k in
+            whileDo(cp,{ !cp.bound(x[ORInt(k)])}) {
                let v = cp.min(x[ORInt(k)])
                return equal(cp,x[ORInt(k)],v) | diff(cp,x[ORInt(k)],v)
             }
@@ -57,20 +57,11 @@ autoreleasepool {
       Do(cp) {
          print("Solution: " + ORFactory.intArray(cp,range:R) {
             k in cp.intValue(x[k])
-            }.description,appendNewline: false)
+         }.description)
       } »
       Do(cp) {
-         print("\tAnother message...")
+         println("\tAnother message...")
       }
-//         »
-//      Do(cp) {
-//         print("Solution: " + ORFactory.intArray(cp,range:R) {
-//            k in cp.intValue(x[k])
-//         }.description)
-//      } »
-//      Do(cp) {
-//         println("\tAnother message...")
-//      }
    }
    cp.clearOnSolution()
    print("Number of solutions: \(cp.solutionPool().count())\n")

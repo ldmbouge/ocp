@@ -11,24 +11,24 @@
 
 #import "ORModeling.h"
 #import "ORDecompose.h"
-#import "ORFloatDecompose.h"
-#import "ORFloatLinear.h"
+#import "ORRealDecompose.h"
+#import "ORRealLinear.h"
 #import "ORExprI.h"
 
-@implementation ORFloatLinearizer
+@implementation ORRealLinearizer
 {
-   id<ORFloatLinear>   _terms;
+   id<ORRealLinear>   _terms;
    id<ORAddToModel>    _model;
-   id<ORFloatVar>       _eqto;
+   id<ORRealVar>       _eqto;
 }
--(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model
+-(id) init: (id<ORRealLinear>) t model: (id<ORAddToModel>) model
 {
    self = [super init];
    _terms = t;
    _model = model;
    return self;
 }
--(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x
+-(id) init: (id<ORRealLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORRealVar>)x
 {
    self = [super init];
    _terms = t;
@@ -46,7 +46,7 @@
    } else
       [_terms addTerm:e by:1];
 }
--(void) visitFloatVar:(id<ORFloatVar>) e
+-(void) visitFloatVar:(id<ORRealVar>) e
 {
    if (_eqto) {
       [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
@@ -76,14 +76,14 @@
 {
    [_terms addIndependent:[e initialValue]];
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {
    [_terms addIndependent:[e floatValue]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
    if (_eqto) {
-      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+      id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
       [_terms addTerm:alpha by:1];
       _eqto = nil;
    } else {
@@ -94,13 +94,13 @@
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
    if (_eqto) {
-      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+      id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
       [_terms addTerm:alpha by:1];
       _eqto = nil;
    } else {
       [[e left] visit:self];
-      id<ORFloatLinear> old = _terms;
-      _terms = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: _terms];
+      id<ORRealLinear> old = _terms;
+      _terms = [[ORRealLinearFlip alloc] initORRealLinearFlip: _terms];
       [[e right] visit:self];
       [_terms release];
       _terms = old;
@@ -109,21 +109,21 @@
 -(void) visitExprMulI: (ORExprMulI*) e
 {
    if (_eqto) {
-      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+      id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
       [_terms addTerm:alpha by:1];
       _eqto = nil;
    } else {
       BOOL cv = [[e left] isConstant] && [[e right] isVariable];
       BOOL vc = [[e left] isVariable] && [[e right] isConstant];
       if (cv || vc) {
-         ORFloat coef = cv ? [[e left] floatValue] : [[e right] floatValue];
+         ORDouble coef = cv ? [[e left] floatValue] : [[e right] floatValue];
          id       x = cv ? [e right] : [e left];
          [_terms addTerm: x by: coef];
       } else if ([[e left] isConstant]) {
          id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:[e right]];
          [_terms addTerm:alpha by:[[e left] min]];
       } else if ([[e right] isConstant]) {
-         id<ORFloatLinear> left = [ORNormalizer floatLinearFrom:[e left] model:_model];
+         id<ORRealLinear> left = [ORNormalizer floatLinearFrom:[e left] model:_model];
          [left scaleBy:[[e right] min]];
          [_terms addLinear:left];
       } else {
@@ -142,63 +142,63 @@
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSquareI:(ORExprSquareI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprNegateI:(ORExprNegateI*) e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*) e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
-   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
+   id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSumI: (ORExprSumI*) e
@@ -227,7 +227,7 @@
 }
 @end
 
-@implementation ORFloatSubst
+@implementation ORRealSubst
 -(id)initORSubst:(id<ORAddToModel>) model
 {
    self = [super init];
@@ -235,14 +235,14 @@
    _model = model;
    return self;
 }
--(id)initORSubst:(id<ORAddToModel>) model by:(id<ORFloatVar>)x
+-(id)initORSubst:(id<ORAddToModel>) model by:(id<ORRealVar>)x
 {
    self = [super init];
    _rv  = x;
    _model = model;
    return self;
 }
--(id<ORFloatVar>)result
+-(id<ORRealVar>)result
 {
    return _rv;
 }
@@ -253,7 +253,7 @@
    else
       _rv = (id)e;
 }
--(void) visitFloatVar: (id<ORFloatVar>) e
+-(void) visitFloatVar: (id<ORRealVar>) e
 {
    if (_rv)
       [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
@@ -266,7 +266,7 @@
       _rv = [ORFactory floatVar:_model low:[e value] up:[e value]];
    [_model addConstraint:[ORFactory floatEqualc:_model var:_rv to:[e value]]];
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {
    if (!_rv)
       _rv = [ORFactory floatVar:_model low:[e floatValue] up:[e floatValue]];
@@ -274,7 +274,7 @@
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
-   id<ORFloatLinear> terms = [ORNormalizer floatLinearFrom:e model:_model];
+   id<ORRealLinear> terms = [ORNormalizer floatLinearFrom:e model:_model];
    if (_rv==nil)
       _rv = [ORFactory floatVar:_model low:[terms fmin] up:[terms fmax]];
    [terms addTerm:_rv by:-1];
@@ -283,7 +283,7 @@
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
-   id<ORFloatLinear> terms = [ORNormalizer floatLinearFrom:e model:_model];
+   id<ORRealLinear> terms = [ORNormalizer floatLinearFrom:e model:_model];
    if (_rv==nil)
       _rv = [ORFactory floatVar:_model low:[terms fmin] up:[terms fmax]];
    [terms addTerm:_rv by:-1];
@@ -292,12 +292,12 @@
 }
 -(void) visitExprSquareI:(ORExprSquareI *)e
 {
-   id<ORFloatLinear> lT = [ORNormalizer floatLinearFrom:[e operand] model:_model];
-   id<ORFloatVar> oV = [ORNormalizer floatVarIn:lT for:_model];
-   ORFloat lb = [lT fmin];
-   ORFloat ub = [lT fmax];
-   ORFloat nlb = lb < 0 ? 0 : lb*lb;
-   ORFloat nub = max(lb*lb, ub*ub);
+   id<ORRealLinear> lT = [ORNormalizer floatLinearFrom:[e operand] model:_model];
+   id<ORRealVar> oV = [ORNormalizer floatVarIn:lT for:_model];
+   ORDouble lb = [lT fmin];
+   ORDouble ub = [lT fmax];
+   ORDouble nlb = lb < 0 ? 0 : lb*lb;
+   ORDouble nub = max(lb*lb, ub*ub);
    if (_rv == nil)
       _rv = [ORFactory floatVar:_model low:nlb up:nub];
    [_model addConstraint:[ORFactory floatSquare:_model var:oV equal:_rv]];
@@ -307,9 +307,9 @@
 {
    id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e index] model:_model];
    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model];
-   id<ORFloatArray> a = [e array];
-   ORFloat lb = [a min];
-   ORFloat ub = [a max];
+   id<ORDoubleArray> a = [e array];
+   ORDouble lb = [a min];
+   ORDouble ub = [a max];
    if (_rv == nil)
       _rv = [ORFactory floatVar:_model low:lb up:ub];
    [_model addConstraint:[ORFactory floatElement:_model var:oV idxCstArray:a equal:_rv]];

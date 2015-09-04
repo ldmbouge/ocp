@@ -44,11 +44,11 @@ PORTABLE_BEGIN
 -(NSString*)stringValue;
 @end
 
-@protocol ORFloatVar <ORExprVar>
--(id<ORFloatRange>) domain;
+@protocol ORRealVar <ORExprVar>
+-(id<ORRealRange>) domain;
 -(ORBool) hasBounds;
--(ORFloat) low;
--(ORFloat) up;
+-(ORDouble) low;
+-(ORDouble) up;
 @end
 
 
@@ -76,11 +76,11 @@ PORTABLE_BEGIN
 -(id<ORASolver>) solver;
 @end
 
-@protocol ORFloatVarArray <ORVarArray>
--(id<ORFloatVar>) at: (ORInt) value;
--(void) set: (id<ORFloatVar>) x at: (ORInt) value;
--(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+@protocol ORRealVarArray <ORVarArray>
+-(id<ORRealVar>) at: (ORInt) value;
+-(void) set: (id<ORRealVar>) x at: (ORInt) value;
+-(id<ORRealVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORRealVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 
@@ -113,13 +113,13 @@ PORTABLE_BEGIN
 typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROutcome;
 
 @protocol ORRelaxation <NSObject>
--(ORFloat) objective;
+-(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
--(ORFloat) value: (id<ORVar>) x;
--(ORFloat) lowerBound: (id<ORVar>) x;
--(ORFloat) upperBound: (id<ORVar>) x;
--(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f;
--(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f;
+-(ORDouble) value: (id<ORVar>) x;
+-(ORDouble) lowerBound: (id<ORVar>) x;
+-(ORDouble) upperBound: (id<ORVar>) x;
+-(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f;
+-(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
 -(OROutcome) solve;
 -(void) close;
 @end

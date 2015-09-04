@@ -226,7 +226,7 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+-(void) visitFloatEqualc: (id<ORRealEqualc>)c
 {
 }
 -(void) visitEqualc: (id<OREqualc>)c
@@ -283,7 +283,7 @@
 -(void) visitElementVar: (id<ORElementVar>)c
 {
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+-(void) visitFloatElementCst: (id<ORRealElementCst>) c
 {
 }
 // Expressions
@@ -299,7 +299,7 @@
 {
    _exprResult = e;
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {
    _exprResult = e;
 }
@@ -362,7 +362,7 @@
    id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
       return [[binIndexVar at: i] mul: @([[cstSubExpr array] at: i ])];
    }];
-   id<ORFloatVar> sumVar = [ORFactory floatVar: _model low:[linearSumExpr min] up:[linearSumExpr max]];
+   id<ORRealVar> sumVar = [ORFactory floatVar: _model low:[linearSumExpr min] up:[linearSumExpr max]];
    [_model addConstraint: [sumVar eq: linearSumExpr]];
    _exprResult = sumVar;
 }

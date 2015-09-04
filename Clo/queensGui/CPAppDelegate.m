@@ -76,7 +76,7 @@
    [cp solveAll:
     ^() {
        [self visualize:x on:cp];       
-       [cp labelArray:x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
+       [cp labelArray:x orderedBy: ^ORDouble(ORInt i) { return [cp domsize:x[i]];}];
        //[_board neverStop];
        [_board pause];
     }

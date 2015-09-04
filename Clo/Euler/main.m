@@ -64,7 +64,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation:notes];
       [cp solve:
        ^() {
-          [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[jump at:i]];}];
+          [cp labelArray: jump orderedBy: ^ORDouble(ORInt i) { return [cp domsize:[jump at:i]];}];
           printCircuit(cp,jump);
        }
        ];

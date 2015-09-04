@@ -82,7 +82,7 @@
    __block ORInt nbSolutions = 0;
    [cp solveAll: ^{
       [self visualize:x on:cp];
-      [cp labelArray: x orderedBy: ^ORFloat(int i) { return [cp domsize:x[i]];}];
+      [cp labelArray: x orderedBy: ^ORDouble(int i) { return [cp domsize:x[i]];}];
       @autoreleasepool {
          id<ORIntArray> xs = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
             return [cp intValue:x[i]];

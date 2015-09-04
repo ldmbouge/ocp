@@ -24,7 +24,7 @@
    id<ORIntIterable>   _range;
    ORInt2Bool         _filter;
    ORInt2Float         _order;
-   ORFloat         _direction;
+   ORDouble         _direction;
    BOOL           _randomized;
 }
 -(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized
@@ -69,7 +69,7 @@
    __block ORInt indexFound = MAXINT;
    [_range enumerateWithBlock:^(ORInt i) {
        if ((id)_filter==nil || _filter(i)) {
-         ORFloat val = _direction * (_order ? _order(i) : 0.0);
+         ORDouble val = _direction * (_order ? _order(i) : 0.0);
          if (val < bestFound) {
             bestFound = val;
             indexFound = i;
@@ -122,7 +122,7 @@
 
 @implementation ORMinSelector {
    ORClosure _bestBlock;
-   ORFloat   _bestValue;
+   ORDouble   _bestValue;
    ORLong     _bestRand;
    ORBool    _randomized;
    id<ORRandomStream> _stream;
@@ -157,7 +157,7 @@
       [self reset];
    }
 }
--(void)neighbor:(ORFloat)v do:(ORClosure)block
+-(void)neighbor:(ORDouble)v do:(ORClosure)block
 {
    if (v < _bestValue) {
       _bestValue = v;

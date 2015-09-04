@@ -12,7 +12,7 @@
 #import <ORFoundation/ORData.h>
 
 @protocol ORTrailableInt;
-@protocol ORFloatVar;
+@protocol ORRealVar;
 @protocol ORIntMatrix;
 @protocol ORIdMatrix;
 @protocol ORIdArray;
@@ -42,8 +42,8 @@
 @protocol ORMeetAtmost;
 @protocol ORAssignment;
 @protocol ORObjectiveFunction;
-@protocol ORFloatEqualc;
-@protocol ORFloatRange;
+@protocol ORRealEqualc;
+@protocol ORRealRange;
 
 
 @interface ORVisitor : NSObject<NSObject>
@@ -52,14 +52,14 @@
 -(void) visitUniformDistribution:(id) v;
 -(void) visitIntSet:(id<ORIntSet>)v;
 -(void) visitIntRange:(id<ORIntRange>)v;
--(void) visitFloatRange:(id<ORFloatRange>)v;
+-(void) visitFloatRange:(id<ORRealRange>)v;
 -(void) visitIntArray:(id<ORIntArray>)v;
--(void) visitFloatArray:(id<ORFloatArray>)v;
+-(void) visitFloatArray:(id<ORDoubleArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitBitVar: (id<ORBitVar>) v;
--(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitFloatVar: (id<ORRealVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
@@ -97,7 +97,7 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 
--(void) visitFloatEqualc: (id<ORFloatEqualc>)c;
+-(void) visitFloatEqualc: (id<ORRealEqualc>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;
 -(void) visitNEqualc: (id<ORConstraint>)c;
 -(void) visitLEqualc: (id<ORConstraint>)c;
@@ -153,7 +153,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e;
--(void) visitFloatI: (id<ORFloatNumber>) e;
+-(void) visitFloatI: (id<ORDoubleNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;

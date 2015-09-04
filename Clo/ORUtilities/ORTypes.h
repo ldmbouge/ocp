@@ -39,7 +39,8 @@ typedef int ORInt;
 typedef unsigned int ORUInt;
 typedef long long ORLong;
 typedef unsigned long long ORULong;
-typedef double ORFloat;
+typedef float  ORFloat;
+typedef double ORDouble;
 typedef BOOL   ORBool;
 
 //#define minOf(a,b) ((a) < (b) ? (a) : (b))
@@ -67,7 +68,7 @@ static inline ORInt bindDown(ORLong a) { return (a > (ORLong)FDMININT) ? (ORInt)
 @protocol ORSolution;
 @protocol ORConstraint;
 @protocol ORIntArray;
-@protocol ORFloatArray;
+@protocol ORDoubleArray;
 @protocol ORConstraintSet;
 
 typedef struct ORRange {
@@ -116,12 +117,12 @@ typedef void (^ORId2Void)(id);
 typedef void (^ORSolution2Void)(id<ORSolution>);
 typedef void (^ORConstraint2Void)(id<ORConstraint>);
 typedef void (^ORIntArray2Void)(id<ORIntArray>);
-typedef void (^ORFloatArray2Void)(id<ORFloatArray>);
+typedef void (^ORDoubleArray2Void)(id<ORDoubleArray>);
 typedef void (^ORConstraintSet2Void)(id<ORConstraintSet>);
-typedef ORFloat (^ORIntxInt2Float)(ORInt,ORInt);
+typedef ORDouble (^ORIntxInt2Float)(ORInt,ORInt);
 typedef int (^ORIntxInt2Int)(ORInt,ORInt);
 typedef BOOL (^ORIntxInt2Bool)(ORInt,ORInt);
-typedef ORFloat (^ORInt2Float)(ORInt);
+typedef ORDouble (^ORInt2Float)(ORInt);
 typedef id<ORExpr> (^ORInt2Expr)(ORInt);
 typedef id<ORExpr> (^ORIntxInt2Expr)(ORInt, ORInt);
 typedef id<ORRelation> (^ORInt2Relation)(ORInt);

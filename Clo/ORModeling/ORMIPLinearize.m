@@ -86,7 +86,7 @@
 {
    _result = v;
 }
--(void) visitFloatVar: (ORFloatVarI*) v
+-(void) visitFloatVar: (ORRealVarI*) v
 {
    _result = v;
 }
@@ -118,7 +118,7 @@
 {
    _result = v;
 }
--(void) visitFloatArray:(id<ORFloatArray>)v
+-(void) visitFloatArray:(id<ORDoubleArray>)v
 {
    _result = v;
 }
@@ -138,7 +138,7 @@
 {
    _result = v;
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitFloatRange:(id<ORRealRange>)v
 {
    _result = v;
 }
@@ -209,7 +209,7 @@
 {
    _result = cstr;
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+-(void) visitFloatEqualc: (id<ORRealEqualc>)c
 {
    _result = c;
 }
@@ -311,7 +311,7 @@
 {
    _result = c;
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+-(void) visitFloatElementCst: (id<ORRealElementCst>) c
 {
    _result = c;
 }

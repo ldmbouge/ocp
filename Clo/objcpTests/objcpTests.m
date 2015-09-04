@@ -36,6 +36,28 @@
     [super tearDown];
 }
 
+-(void) testContext
+{
+   double a = 1.0;
+   double b = 3.0;
+   initContinuationLibrary(&a);
+   ORIReady();
+   _MM_SET_ROUNDING_MODE(_MM_ROUND_UP);
+   double c  = a / b;
+   _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
+   static NSCont* k = nil;
+   k = [NSCont takeContinuation];
+   if ([k nbCalls] == 0) {
+      double d  = a / b;
+      NSLog(@" c , d = %15f, %15f",c,d);
+      _MM_SET_ROUNDING_MODE(_MM_ROUND_UP);
+      double c1  = a / b;
+      [k call];
+   } else {
+      double d  = a / b;
+      NSLog(@" c , d = %15f, %15f",c,d);
+   }
+}
 - (void)testQueens
 {
    int n = 8;
@@ -52,13 +74,12 @@
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll:
     ^() {
-       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[x at:i]];}];
+       [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize:[x at:i]];}];
        [nbSolutions incr:cp];
    }
     ];
    NSLog(@"Got %@ solutions\n",nbSolutions);
    XCTAssertTrue([cp intValue:nbSolutions]==92, @"queens-8 has 92 solutions");
-   [m release];
    [ORFactory shutdown];
 }
 
@@ -74,7 +95,7 @@
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
@@ -86,7 +107,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue: nbSolutions]);
-   [m release];
    [ORFactory shutdown];
 }
 
@@ -102,7 +122,7 @@
 
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
@@ -114,7 +134,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [m release];
    [ORFactory shutdown];
 }
 
@@ -135,7 +154,7 @@
    id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       int nbOne = 0;
       int nbZero = 0;
       for(ORInt k=0;k<s;k++) {
@@ -154,7 +173,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [m release];
    [ORFactory shutdown];
 }
 
@@ -169,7 +187,7 @@
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++)
          nbOne += [cp min:x[k]] == 1;
@@ -179,7 +197,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [m release];
    [ORFactory shutdown];
 }
 
@@ -197,7 +214,7 @@
    id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       for(ORInt k=0;k<s;k++) {
          XCTAssertTrue([cp min:x[k]] == ![cp min:nx[k]], @"x and nx should be negations of each other");
       }
@@ -205,7 +222,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [m release];
    [ORFactory shutdown];
 }
 -(void)testReify1
@@ -222,7 +238,6 @@
       XCTAssertTrue([cp min:b] == ([cp min:x]!=5), @"reification not ok");
    }
     ];
-   [m release];
    [ORFactory shutdown];
 }
 -(void)testReify2
@@ -238,7 +253,6 @@
       XCTAssertTrue([cp min:b] == ([cp min:x]==5), @"reification not ok");
    }
     ];
-   [m release];
    [ORFactory shutdown];
 }
 
@@ -258,7 +272,6 @@
       XCTAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b<=> (x==y)) not ok");
    }
     ];
-   [m release];
    [ORFactory shutdown];
 }
 
@@ -277,20 +290,19 @@
       XCTAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b first) (b<=> (x==y)) not ok");
    }
     ];
-   [m release];
    [ORFactory shutdown];
 }
 
 -(void)testAVL
 {
-   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-   ORAVLTree* tree = [[[ORAVLTree alloc] initEmptyAVL] autorelease];
-   for(NSInteger i=0;i<20;i++) {
-      ORInt k = random() % 1000;
-      [tree insertObject:[NSNumber numberWithLong:k] forKey:(ORInt)k];
+   @autoreleasepool {
+      ORAVLTree* tree = [[[ORAVLTree alloc] initEmptyAVL] autorelease];
+      for(NSInteger i=0;i<20;i++) {
+         ORInt k = random() % 1000;
+         [tree insertObject:[NSNumber numberWithLong:k] forKey:(ORInt)k];
+      }
+      NSLog(@"content: %@\n",tree);
    }
-   NSLog(@"content: %@\n",tree);
-   [pool release];
 }
 
 -(void)testEQ3
@@ -308,14 +320,13 @@
   
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       NSLog(@"Solution: %@ = %@",x,z);
       [nbSolutions  incr:cp];
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [m release];
-   [ORFactory shutdown]; 
+   [ORFactory shutdown];
 }
 
 /** Currently not working 
@@ -470,7 +481,7 @@
 -(void)testISV1
 {
    @autoreleasepool {
-      CPSolver* p = [CPSolverFactory solver];
+      CPSolver* p = (id)[CPSolverFactory solver];
       NSSet* s = [NSSet setWithObjects:@0,@1,@2,@3,@4,@5,@6,@7,@8,@9, nil];
       id<ORIntSet> src = [ORFactory intSet:p set:s];
       id<CPIntSetVar> x = [CPFactory intSetVar:[p engine] withSet:src];

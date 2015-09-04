@@ -83,7 +83,7 @@ int test0Q(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          [cp solveAll:^{
             makeLimit(l, 0, cp, ^{
-               [cp labelArray:x orderedBy:^ORFloat(ORInt i) {return [cp domsize:x[i]];}];
+               [cp labelArray:x orderedBy:^ORDouble(ORInt i) {return [cp domsize:x[i]];}];
                nbSol++;
                [[cp explorer] fail];
             });
@@ -165,9 +165,9 @@ int test1Q(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          [cp solveAll:^{
-            //[cp labelArray:x orderedBy:^ORFloat(ORInt i) {return [cp domsize:x[i]];}];nbSol++;
+            //[cp labelArray:x orderedBy:^ORDouble(ORInt i) {return [cp domsize:x[i]];}];nbSol++;
             makePF(l,0,14199,cp, ^{
-               [cp labelArray:x orderedBy:^ORFloat(ORInt i) {return [cp domsize:x[i]];}];
+               [cp labelArray:x orderedBy:^ORDouble(ORInt i) {return [cp domsize:x[i]];}];
                nbSol++;
             } );
             [[cp explorer] fail];

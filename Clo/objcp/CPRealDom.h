@@ -13,27 +13,27 @@
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 
-@interface CPFloatDom : NSObject<CPFDom,NSCopying> {
+@interface CPRealDom : NSObject<CPFDom,NSCopying> {
    id<ORTrail>        _trail;
-   ORFloat            _imin;
-   ORFloat            _imax;
+   ORDouble            _imin;
+   ORDouble            _imax;
    TRDouble           _min;
    TRDouble           _max;
 }
--(id)initCPFloatDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up;
--(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
--(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
--(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
--(ORFloat) min;
--(ORFloat) max;
--(ORFloat) imin;
--(ORFloat) imax;
+-(id)initCPRealDom:(id<ORTrail>)trail low:(ORDouble)low up:(ORDouble)up;
+-(void) updateMin:(ORDouble)newMin for:(id<CPRealVarNotifier>)x;
+-(void) updateMax:(ORDouble)newMax for:(id<CPRealVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRealVarNotifier>)x;
+-(void) bind:(ORDouble)val  for:(id<CPRealVarNotifier>)x;
+-(ORDouble) min;
+-(ORDouble) max;
+-(ORDouble) imin;
+-(ORDouble) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORFloat) domwidth;
--(ORBool) member:(ORFloat)v;
+-(ORDouble) domwidth;
+-(ORBool) member:(ORDouble)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPFDom>)toRestore;
--(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
+-(void) restoreValue:(ORDouble)toRestore for:(id<CPRealVarNotifier>)x;
 @end

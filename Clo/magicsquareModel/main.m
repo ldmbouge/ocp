@@ -22,7 +22,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          ORInt n = [args size];
-         ORFloat rf = [args restartRate];
+         ORDouble rf = [args restartRate];
          ORInt t = [args timeOut];
         
          id<ORModel> model = [ORFactory createModel];

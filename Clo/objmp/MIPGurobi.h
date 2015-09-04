@@ -28,21 +28,21 @@
 -(MIPOutcome) solve;
 
 -(MIPOutcome) status;
--(ORFloat) floatValue: (MIPVariableI*) var;
+-(ORDouble) floatValue: (MIPVariableI*) var;
 -(ORInt) intValue: (MIPIntVariableI*) var;
--(ORFloat) lowerBound: (MIPVariableI*) var;
--(ORFloat) upperBound: (MIPVariableI*) var;
--(ORFloat) objectiveValue;
+-(ORDouble) lowerBound: (MIPVariableI*) var;
+-(ORDouble) upperBound: (MIPVariableI*) var;
+-(ORDouble) objectiveValue;
 
--(void) setBounds: (MIPVariableI*) var low: (ORFloat) low up: (ORFloat) up;
+-(void) setBounds: (MIPVariableI*) var low: (ORDouble) low up: (ORDouble) up;
 -(void) setUnboundUpperBound: (MIPVariableI*) var;
 -(void) setUnboundLowerBound: (MIPVariableI*) var;
 
--(void) updateLowerBound: (MIPVariableI*) var lb: (ORFloat) lb;
--(void) updateUpperBound: (MIPVariableI*) var ub: (ORFloat) ub;
+-(void) updateLowerBound: (MIPVariableI*) var lb: (ORDouble) lb;
+-(void) updateUpperBound: (MIPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORFloat) val;
+-(void) setFloatParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr;

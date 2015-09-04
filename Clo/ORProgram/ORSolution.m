@@ -20,7 +20,7 @@
 @end;
 
 @protocol ORQueryFloatVar
--(ORFloat) floatValue;
+-(ORDouble) floatValue;
 -(ORBool) bound;
 @end;
 
@@ -115,7 +115,7 @@
    id snap = [_varShots objectAtIndex:idx];
    return [snap intValue];
 }
--(ORFloat) floatValue: (id<ORFloatVar>) var
+-(ORDouble) floatValue: (id<ORRealVar>) var
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [obj getId] == [var getId];
