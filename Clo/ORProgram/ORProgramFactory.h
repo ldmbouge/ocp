@@ -55,11 +55,11 @@ PORTABLE_BEGIN
 
 @interface ORLinearRelaxation : NSObject<ORRelaxation>
 -(ORLinearRelaxation*) initLinearRelaxation: (id<ORModel>) m;
--(ORFloat) objective;
--(ORFloat) lowerBound: (id<ORVar>) x;
--(ORFloat) upperBound: (id<ORVar>) x;
--(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f;
--(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f;
+-(ORDouble) objective;
+-(ORDouble) lowerBound: (id<ORVar>) x;
+-(ORDouble) upperBound: (id<ORVar>) x;
+-(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f;
+-(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
 -(void) close;
 -(OROutcome) solve;
 @end

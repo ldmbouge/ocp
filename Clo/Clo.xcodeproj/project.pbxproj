@@ -727,8 +727,8 @@
 		5B57E5E1161F276800DB249A /* ORExprI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EAE15A3F5B000AD0820 /* ORExprI.m */; };
 		5B57E5E3161F280D00DB249A /* ORVar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E2161F280D00DB249A /* ORVar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B57E5E5161F295000DB249A /* ORVisit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E4161F294F00DB249A /* ORVisit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B5AAA8017905AAC0076C729 /* CPFloatConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */; };
-		5B5AAA8117905AAC0076C729 /* CPFloatConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */; };
+		5B5AAA8017905AAC0076C729 /* CPRealConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B5AAA7E17905AAC0076C729 /* CPRealConstraint.h */; };
+		5B5AAA8117905AAC0076C729 /* CPRealConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5AAA7F17905AAC0076C729 /* CPRealConstraint.m */; };
 		5B60E5D715AE907E002FF2B3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B60E5DD15AE907F002FF2B3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B60E5DB15AE907F002FF2B3 /* InfoPlist.strings */; };
 		5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60E5E015AE907F002FF2B3 /* ORUtilities.m */; };
@@ -1299,10 +1299,10 @@
 		5BBB08E416C562520087ACF0 /* CPGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBB08E216C562520087ACF0 /* CPGroup.h */; };
 		5BBB08E516C562520087ACF0 /* CPGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB08E316C562520087ACF0 /* CPGroup.m */; };
 		5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442E416D1B414001BD7B3 /* LPConcretizer.m */; };
-		5BBFE0A5178C63DA00BEAD83 /* CPFloatVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */; };
-		5BBFE0A6178C63DA00BEAD83 /* CPFloatVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */; };
-		5BBFE0A9178C981B00BEAD83 /* CPFloatDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */; settings = {ATTRIBUTES = (); }; };
-		5BBFE0AA178C981B00BEAD83 /* CPFloatDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */; };
+		5BBFE0A5178C63DA00BEAD83 /* CPRealVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A3178C63DA00BEAD83 /* CPRealVarI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5BBFE0A6178C63DA00BEAD83 /* CPRealVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPRealVarI.m */; };
+		5BBFE0A9178C981B00BEAD83 /* CPRealDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A7178C981B00BEAD83 /* CPRealDom.h */; settings = {ATTRIBUTES = (); }; };
+		5BBFE0AA178C981B00BEAD83 /* CPRealDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A8178C981B00BEAD83 /* CPRealDom.m */; };
 		5BC0918C167F7F9A009A7712 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BC0918F167F7F9A009A7712 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC0918E167F7F9A009A7712 /* main.m */; };
 		5BC09193167F7F9A009A7712 /* grocery.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BC09192167F7F9A009A7712 /* grocery.1 */; };
@@ -1358,11 +1358,11 @@
 		5BC13A4B1B6F552800FC9A01 /* CPDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA6F96718464836002434E3 /* CPDeg.m */; };
 		5BC13A4C1B6F552800FC9A01 /* CPIntSetConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C26D1B3A0098008A9E51 /* CPIntSetConstraint.m */; };
 		5BC13A4D1B6F552800FC9A01 /* CPTrailIntSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C2711B3A0098008A9E51 /* CPTrailIntSet.m */; };
-		5BC13A4E1B6F552800FC9A01 /* CPFloatConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */; };
-		5BC13A4F1B6F591D00FC9A01 /* CPFloatVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */; };
-		5BC13A501B6F593D00FC9A01 /* CPFloatDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */; };
+		5BC13A4E1B6F552800FC9A01 /* CPRealConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5AAA7F17905AAC0076C729 /* CPRealConstraint.m */; };
+		5BC13A4F1B6F591D00FC9A01 /* CPRealVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPRealVarI.m */; };
+		5BC13A501B6F593D00FC9A01 /* CPRealDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A8178C981B00BEAD83 /* CPRealDom.m */; };
 		5BC13A511B6F596D00FC9A01 /* CPISVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB1C26F1B3A0098008A9E51 /* CPISVarI.m */; };
-		5BC13A521B6F598800FC9A01 /* ORFloatLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A917038784006AACFC /* ORFloatLinear.m */; };
+		5BC13A521B6F598800FC9A01 /* ORRealLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A917038784006AACFC /* ORRealLinear.m */; };
 		5BC13A531B6F59CF00FC9A01 /* MIPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C78B17036D27006AACFC /* MIPSolverI.m */; };
 		5BC97A2B177384C2005C48A8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BC97A2E177384C2005C48A8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC97A2D177384C2005C48A8 /* main.m */; };
@@ -1434,7 +1434,7 @@
 		5BD8BED116E123E200D9BF0B /* ORLPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614616D969CD00E95A39 /* ORLPFlatten.m */; };
 		5BD8BED216E123E200D9BF0B /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		5BD8BED316E123E200D9BF0B /* ORDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1391851629A99D0029FD29 /* ORDecompose.m */; };
-		5BD8BED416E123E200D9BF0B /* ORFloatDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */; };
+		5BD8BED416E123E200D9BF0B /* ORRealDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORRealDecompose.m */; };
 		5BD8BED516E123E200D9BF0B /* ORIntLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORIntLinear.m */; };
 		5BD8BED616E123E200D9BF0B /* CPUKernel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9348741655451D00757F89 /* CPUKernel.m */; };
 		5BD8BED716E123E200D9BF0B /* CPEngineI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */; };
@@ -1577,8 +1577,8 @@
 		B103534F13BBD82D00627058 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B103534313BBD7B200627058 /* main.m */; };
 		B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614516D969CD00E95A39 /* ORLPFlatten.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614616D969CD00E95A39 /* ORLPFlatten.m */; };
-		B103614D16D9AAA500E95A39 /* ORFloatDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614B16D9AAA500E95A39 /* ORFloatDecompose.h */; };
-		B103614E16D9AAA500E95A39 /* ORFloatDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */; };
+		B103614D16D9AAA500E95A39 /* ORRealDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614B16D9AAA500E95A39 /* ORRealDecompose.h */; };
+		B103614E16D9AAA500E95A39 /* ORRealDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORRealDecompose.m */; };
 		B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614F16D9AB9A00E95A39 /* ORIntLinear.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B103615216D9AB9A00E95A39 /* ORIntLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORIntLinear.m */; };
 		B111FC0113CF3D10003C5119 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1922,8 +1922,8 @@
 		B1E1C79F1703741E006AACFC /* MIPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C79D1703741E006AACFC /* MIPConcretizer.m */; };
 		B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */; };
-		B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A817038783006AACFC /* ORFloatLinear.h */; };
-		B1E1C7AB17038784006AACFC /* ORFloatLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A917038784006AACFC /* ORFloatLinear.m */; };
+		B1E1C7AA17038784006AACFC /* ORRealLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A817038783006AACFC /* ORRealLinear.h */; };
+		B1E1C7AB17038784006AACFC /* ORRealLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A917038784006AACFC /* ORRealLinear.m */; };
 		B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */ = {isa = PBXBuildFile; fileRef = B1F531D015AED1DB00E89F98 /* CPBinPacking.h */; };
 		B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F531D115AED1DB00E89F98 /* CPBinPacking.m */; };
 		B1F531DA15AED4B100E89F98 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -20408,7 +20408,7 @@
 		5B150017156EB0E800897252 /* CPBaseHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBaseHeuristic.h; sourceTree = "<group>"; };
 		5B150019156EB1A500897252 /* CPBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBaseHeuristic.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B19097A16DAAB45006D1D24 /* eq20.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = eq20.1; sourceTree = "<group>"; };
-		5B19097B16DAAB45006D1D24 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B19097B16DAAB45006D1D24 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B19098216DAACA7006D1D24 /* eq20 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eq20; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2000ED156D585E00D80105 /* queensNaiveView */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensNaiveView; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B27573017E87B560082934E /* costas2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = costas2; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20456,24 +20456,24 @@
 		5B3848C416E6E59300498DCF /* perfect-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "perfect-Prefix.pch"; sourceTree = "<group>"; };
 		5B3848C516E6E59300498DCF /* perfect.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = perfect.1; sourceTree = "<group>"; };
 		5B3848E016E7883A00498DCF /* partition */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = partition; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B3848E316E7883B00498DCF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B3848E316E7883B00498DCF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B3848E616E7883B00498DCF /* partition-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "partition-Prefix.pch"; sourceTree = "<group>"; };
 		5B3848E716E7883B00498DCF /* partition.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = partition.1; sourceTree = "<group>"; };
 		5B3895E91795BE07004CCE93 /* fwarehouse */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fwarehouse; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B3895EC1795BE07004CCE93 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B3895EC1795BE07004CCE93 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B3895EF1795BE07004CCE93 /* fwarehouse-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fwarehouse-Prefix.pch"; sourceTree = "<group>"; };
 		5B3895F01795BE07004CCE93 /* fwarehouse.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = fwarehouse.1; sourceTree = "<group>"; };
 		5B3F7E021B586F930069F4C2 /* jobshop-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "jobshop-Prefix.pch"; path = "Tests/jobshop/jobshop-Prefix.pch"; sourceTree = "<group>"; };
 		5B3F7E031B586F930069F4C2 /* jobshop.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = jobshop.1; path = Tests/jobshop/jobshop.1; sourceTree = "<group>"; };
-		5B3F7E041B586F930069F4C2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Tests/jobshop/main.m; sourceTree = "<group>"; };
+		5B3F7E041B586F930069F4C2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = main.m; path = Tests/jobshop/main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B40A9211B6321460033D351 /* orderSwift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = orderSwift; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B40A9231B6321470033D351 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPObjectQueue.h; sourceTree = "<group>"; };
 		5B40C21014F80A7D0041D162 /* CPObjectQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPObjectQueue.m; sourceTree = "<group>"; };
 		5B43634015AECE4D00E9458D /* CPDDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDDeg.m; sourceTree = "<group>"; };
-		5B4984C11B6137E4001AFFAC /* mainSwitching.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mainSwitching.m; sourceTree = "<group>"; };
+		5B4984C11B6137E4001AFFAC /* mainSwitching.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = mainSwitching.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B5096E01619B6CB00171F9D /* testDistrib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testDistrib; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B5096E41619B6CC00171F9D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B5096E41619B6CC00171F9D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B5096E71619B6CC00171F9D /* testDistrib-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testDistrib-Prefix.pch"; sourceTree = "<group>"; };
 		5B5096E81619B6CC00171F9D /* testDistrib.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testDistrib.1; sourceTree = "<group>"; };
 		5B558C051563F01000D2BCD7 /* queensNaive */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensNaive; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20483,8 +20483,8 @@
 		5B57E5E9161F2DB100DB249A /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPConcretizer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCPParSolver.h; sourceTree = "<group>"; };
 		5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCPParSolver.m; sourceTree = "<group>"; };
-		5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFloatConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPFloatConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B5AAA7E17905AAC0076C729 /* CPRealConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPRealConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5B5AAA7F17905AAC0076C729 /* CPRealConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPRealConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B60E5DA15AE907F002FF2B3 /* ORUtilities-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORUtilities-Info.plist"; sourceTree = "<group>"; };
 		5B60E5DC15AE907F002FF2B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -20576,7 +20576,7 @@
 		5B7408AE156286C700C05277 /* bitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = bitTest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B7408B015628C1400C05277 /* CPBitMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitMacros.h; sourceTree = "<group>"; };
 		5B76D98E15AAADBD00F8B445 /* marriage */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = marriage; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B76D99215AAADBE00F8B445 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B76D99215AAADBE00F8B445 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B76D99515AAADBE00F8B445 /* marriage-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "marriage-Prefix.pch"; sourceTree = "<group>"; };
 		5B76D99615AAADBE00F8B445 /* marriage.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = marriage.1; sourceTree = "<group>"; };
 		5B778B90154EF67C0078EB07 /* CPBitArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitArray.h; sourceTree = "<group>"; };
@@ -20783,12 +20783,12 @@
 		5BBB08CB16C551960087ACF0 /* order.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = order.1; sourceTree = "<group>"; };
 		5BBB08E216C562520087ACF0 /* CPGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPGroup.h; sourceTree = "<group>"; };
 		5BBB08E316C562520087ACF0 /* CPGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPGroup.m; sourceTree = "<group>"; };
-		5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFloatVarI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPFloatVarI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatDom.h; sourceTree = "<group>"; };
-		5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatDom.m; sourceTree = "<group>"; };
+		5BBFE0A3178C63DA00BEAD83 /* CPRealVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPRealVarI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BBFE0A4178C63DA00BEAD83 /* CPRealVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPRealVarI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5BBFE0A7178C981B00BEAD83 /* CPRealDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPRealDom.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BBFE0A8178C981B00BEAD83 /* CPRealDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPRealDom.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BC0918A167F7F9A009A7712 /* grocery */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = grocery; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BC0918E167F7F9A009A7712 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BC0918E167F7F9A009A7712 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BC09191167F7F9A009A7712 /* grocery-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "grocery-Prefix.pch"; sourceTree = "<group>"; };
 		5BC09192167F7F9A009A7712 /* grocery.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = grocery.1; sourceTree = "<group>"; };
 		5BC091AD167F9095009A7712 /* nfraction */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nfraction; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20800,7 +20800,7 @@
 		5BC091D7167F9D5B009A7712 /* slow_convergence-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slow_convergence-Prefix.pch"; sourceTree = "<group>"; };
 		5BC091D8167F9D5B009A7712 /* slow_convergence.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = slow_convergence.1; sourceTree = "<group>"; };
 		5BC0C752177A191400B12173 /* bacp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bacp; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BC0C755177A191400B12173 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BC0C755177A191400B12173 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BC0C758177A191400B12173 /* bacp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bacp-Prefix.pch"; sourceTree = "<group>"; };
 		5BC0C759177A191400B12173 /* bacp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bacp.1; sourceTree = "<group>"; };
 		5BC116A01595067900E0F5C8 /* ais */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ais; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20821,11 +20821,11 @@
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
 		5BCCC40B1417F8CE0079E833 /* queensACSem.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensACSem.1; sourceTree = "<group>"; };
 		5BD601C117F9A627006A9CDC /* bugTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bugTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BD601C417F9A627006A9CDC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BD601C417F9A627006A9CDC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BD601C717F9A627006A9CDC /* bugTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bugTest-Prefix.pch"; sourceTree = "<group>"; };
 		5BD601C817F9A627006A9CDC /* bugTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bugTest.1; sourceTree = "<group>"; };
 		5BDBBAA91718D96B00322163 /* stressLimit */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = stressLimit; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BDBBAAC1718D96C00322163 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BDBBAAC1718D96C00322163 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BDBBAAF1718D96C00322163 /* stressLimit-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "stressLimit-Prefix.pch"; sourceTree = "<group>"; };
 		5BDBBAB01718D96C00322163 /* stressLimit.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = stressLimit.1; sourceTree = "<group>"; };
 		5BDE360316D905BE0030559D /* ORMallocWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMallocWatch.h; sourceTree = "<group>"; };
@@ -20855,7 +20855,7 @@
 		5BE642F4139D49320056F448 /* CPConstraintI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConstraintI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE642FD139D49320056F448 /* CPEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEngine.h; sourceTree = "<group>"; };
 		5BE64310139D49610056F448 /* ORTrail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTrail.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5BE64312139D49610056F448 /* ORTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORTypes.h; sourceTree = "<group>"; };
+		5BE64312139D49610056F448 /* ORTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTypes.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE777401594C9E500ADE34E /* fdmul */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fdmul; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BE777441594C9E500ADE34E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BE777471594C9E500ADE34E /* fdmul-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fdmul-Prefix.pch"; sourceTree = "<group>"; };
@@ -20879,7 +20879,7 @@
 		5BEC4A69156E5F3A0085F2B0 /* CPIBS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPIBS.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BEC7FB81B3A4DFA00B7A133 /* queen-chess-piece-114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "queen-chess-piece-114.png"; sourceTree = "<group>"; };
 		5BEEF61013970B6F002ADBD4 /* queens2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queens2; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BEEF61413970B6F002ADBD4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BEEF61413970B6F002ADBD4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BEEF61713970B6F002ADBD4 /* queens2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queens2-Prefix.pch"; sourceTree = "<group>"; };
 		5BEEF61813970B6F002ADBD4 /* queens2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queens2.1; sourceTree = "<group>"; };
 		5BF1387016822EFC005EAC6B /* golomb */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = golomb; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20904,13 +20904,13 @@
 		5BFF683A1860D98E00B50286 /* slabIP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = slabIP; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BFF683B1860DA3100B50286 /* mainIP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mainIP.m; sourceTree = "<group>"; };
 		B103533F13BBD7AC00627058 /* queensAC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensAC; sourceTree = BUILT_PRODUCTS_DIR; };
-		B103534313BBD7B200627058 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B103534313BBD7B200627058 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B103534613BBD7B200627058 /* queensAC-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensAC-Prefix.pch"; sourceTree = "<group>"; };
 		B103534713BBD7B200627058 /* queensAC.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensAC.1; sourceTree = "<group>"; };
 		B103614516D969CD00E95A39 /* ORLPFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLPFlatten.h; sourceTree = "<group>"; };
 		B103614616D969CD00E95A39 /* ORLPFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORLPFlatten.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B103614B16D9AAA500E95A39 /* ORFloatDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFloatDecompose.h; sourceTree = "<group>"; };
-		B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFloatDecompose.m; sourceTree = "<group>"; };
+		B103614B16D9AAA500E95A39 /* ORRealDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORRealDecompose.h; sourceTree = "<group>"; };
+		B103614C16D9AAA500E95A39 /* ORRealDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORRealDecompose.m; sourceTree = "<group>"; };
 		B103614F16D9AB9A00E95A39 /* ORIntLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORIntLinear.h; sourceTree = "<group>"; };
 		B103615016D9AB9A00E95A39 /* ORIntLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORIntLinear.m; sourceTree = "<group>"; };
 		B10ECF0E150C34DE00B82836 /* ORFactoryI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFactoryI.h; sourceTree = "<group>"; };
@@ -20989,7 +20989,7 @@
 		B15442AF16D1A3F7001BD7B3 /* LPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolver.h; sourceTree = "<group>"; };
 		B15442B016D1A3F7001BD7B3 /* LPSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSolver.m; sourceTree = "<group>"; };
 		B15442C516D1AAD0001BD7B3 /* testLPConcretization */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testLPConcretization; sourceTree = BUILT_PRODUCTS_DIR; };
-		B15442C816D1AAD1001BD7B3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B15442C816D1AAD1001BD7B3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B15442CB16D1AAD1001BD7B3 /* testLPConcretization-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testLPConcretization-Prefix.pch"; sourceTree = "<group>"; };
 		B15442CC16D1AAD1001BD7B3 /* testLPConcretization.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testLPConcretization.1; sourceTree = "<group>"; };
 		B15442E316D1B414001BD7B3 /* LPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPConcretizer.h; sourceTree = "<group>"; };
@@ -21025,7 +21025,7 @@
 		B169F9C614EF87D500B2F3A6 /* CPConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B169F9C714EF87D500B2F3A6 /* CPConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1771594155798AA00BA14BF /* Euler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Euler; sourceTree = BUILT_PRODUCTS_DIR; };
-		B1771598155798AA00BA14BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B1771598155798AA00BA14BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B177159B155798AA00BA14BF /* Euler-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Euler-Prefix.pch"; sourceTree = "<group>"; };
 		B177159C155798AA00BA14BF /* Euler.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Euler.1; sourceTree = "<group>"; };
 		B17715B31557D9D200BA14BF /* CPTableI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPTableI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -21042,7 +21042,7 @@
 		B181E11D15D7465500AB44DA /* sportModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sportModel-Prefix.pch"; sourceTree = "<group>"; };
 		B181E11E15D7465500AB44DA /* sportModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = sportModel.1; sourceTree = "<group>"; };
 		B182C5EA173C30ED002954F6 /* queensMIP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensMIP; sourceTree = BUILT_PRODUCTS_DIR; };
-		B182C5ED173C30EE002954F6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B182C5ED173C30EE002954F6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B182C5F0173C30EE002954F6 /* queensMIP-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensMIP-Prefix.pch"; sourceTree = "<group>"; };
 		B182C5F1173C30EE002954F6 /* queensMIP.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensMIP.1; sourceTree = "<group>"; };
 		B182C60A173C3DC9002954F6 /* ORMIPLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMIPLinearize.h; sourceTree = "<group>"; };
@@ -21061,7 +21061,7 @@
 		B189514415E0FA5F00B77813 /* slabModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slabModel-Prefix.pch"; sourceTree = "<group>"; };
 		B189514515E0FA5F00B77813 /* slabModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = slabModel.1; sourceTree = "<group>"; };
 		B18DF14A17810C67004E1880 /* LPRelaxation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LPRelaxation; sourceTree = BUILT_PRODUCTS_DIR; };
-		B18DF14D17810C68004E1880 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B18DF14D17810C68004E1880 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B18DF15017810C68004E1880 /* LPRelaxation-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LPRelaxation-Prefix.pch"; sourceTree = "<group>"; };
 		B18DF15117810C68004E1880 /* LPRelaxation.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = LPRelaxation.1; sourceTree = "<group>"; };
 		B1935C5E15B90ECE00107399 /* slab */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = slab; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -21104,7 +21104,7 @@
 		B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCircuitI.h; sourceTree = "<group>"; };
 		B1C25AA01557540E009CB8A8 /* CPCircuitI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPCircuitI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1C4F3FB161F87060010A5C8 /* queensModel */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensModel; sourceTree = BUILT_PRODUCTS_DIR; };
-		B1C4F3FF161F87070010A5C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B1C4F3FF161F87070010A5C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1C4F402161F87070010A5C8 /* queensModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensModel-Prefix.pch"; sourceTree = "<group>"; };
 		B1C4F403161F87070010A5C8 /* queensModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensModel.1; sourceTree = "<group>"; };
 		B1C8C5F414BEBE1C000C5486 /* CPFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFactory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -21139,8 +21139,8 @@
 		B1E1C79D1703741E006AACFC /* MIPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPConcretizer.m; sourceTree = "<group>"; };
 		B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMIPFlatten.h; sourceTree = "<group>"; };
 		B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORMIPFlatten.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B1E1C7A817038783006AACFC /* ORFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFloatLinear.h; sourceTree = "<group>"; };
-		B1E1C7A917038784006AACFC /* ORFloatLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFloatLinear.m; sourceTree = "<group>"; };
+		B1E1C7A817038783006AACFC /* ORRealLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORRealLinear.h; sourceTree = "<group>"; };
+		B1E1C7A917038784006AACFC /* ORRealLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORRealLinear.m; sourceTree = "<group>"; };
 		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPEngineI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPEngineI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OREngine.h; sourceTree = "<group>"; };
@@ -36071,8 +36071,6 @@
 				5BDBBAAB1718D96C00322163 /* stressLimit */,
 				5BE12176173C75A3000C9AA9 /* bug */,
 				5BD601C317F9A627006A9CDC /* bugTest */,
-				5B40A9221B6321470033D351 /* orderSwift */,
-				5B0FE4381B70F3D600F1DD03 /* SudokuSwift */,
 				5BAB12761B81DC62004803EA /* TestAll */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
@@ -36308,6 +36306,8 @@
 				5BE7C24E15A94BDF00B2CBC1 /* warehouse */,
 				5B6CFD8916D9390A00BCB95F /* ORCmdLineArgs.h */,
 				5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */,
+				5B40A9221B6321470033D351 /* orderSwift */,
+				5B0FE4381B70F3D600F1DD03 /* SudokuSwift */,
 			);
 			name = "Objective-CP Examples";
 			sourceTree = "<group>";
@@ -36604,8 +36604,8 @@
 				5B778B97154EF67C0078EB07 /* CPBitVarI.m */,
 				5B3606931392A9C5008B0EE8 /* CPBitDom.h */,
 				5B3606941392A9C5008B0EE8 /* CPBitDom.m */,
-				5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */,
-				5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */,
+				5BBFE0A7178C981B00BEAD83 /* CPRealDom.h */,
+				5BBFE0A8178C981B00BEAD83 /* CPRealDom.m */,
 				5B7408B015628C1400C05277 /* CPBitMacros.h */,
 				B19ABA24146DC7FA004EB77E /* CPCardinality.h */,
 				B19ABA25146DC7FA004EB77E /* CPCardinality.m */,
@@ -36626,10 +36626,10 @@
 				B1583D3113A4CF7D0002FBD8 /* CPExprI.m */,
 				B1C8C5F414BEBE1C000C5486 /* CPFactory.h */,
 				B1C8C5F514BEBE1C000C5486 /* CPFactory.m */,
-				5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */,
-				5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */,
-				5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */,
-				5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */,
+				5B5AAA7E17905AAC0076C729 /* CPRealConstraint.h */,
+				5B5AAA7F17905AAC0076C729 /* CPRealConstraint.m */,
+				5BBFE0A3178C63DA00BEAD83 /* CPRealVarI.h */,
+				5BBFE0A4178C63DA00BEAD83 /* CPRealVarI.m */,
 				B17ABE9013CC852C00DC7288 /* CPIntVarI.h */,
 				B17ABE9113CC852C00DC7288 /* CPIntVarI.m */,
 				5B65615C15AD58F6002F344B /* CPKnapsack.h */,
@@ -36767,12 +36767,12 @@
 				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
 				5B1391841629A99D0029FD29 /* ORDecompose.h */,
 				5B1391851629A99D0029FD29 /* ORDecompose.m */,
-				B103614B16D9AAA500E95A39 /* ORFloatDecompose.h */,
-				B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */,
+				B103614B16D9AAA500E95A39 /* ORRealDecompose.h */,
+				B103614C16D9AAA500E95A39 /* ORRealDecompose.m */,
 				B103614F16D9AB9A00E95A39 /* ORIntLinear.h */,
 				B103615016D9AB9A00E95A39 /* ORIntLinear.m */,
-				B1E1C7A817038783006AACFC /* ORFloatLinear.h */,
-				B1E1C7A917038784006AACFC /* ORFloatLinear.m */,
+				B1E1C7A817038783006AACFC /* ORRealLinear.h */,
+				B1E1C7A917038784006AACFC /* ORRealLinear.m */,
 				B182C60A173C3DC9002954F6 /* ORMIPLinearize.h */,
 				B182C60B173C3DC9002954F6 /* ORMIPLinearize.m */,
 				5B673A2A178DC5AA00886A28 /* ORLinear.h */,
@@ -37953,9 +37953,9 @@
 				B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */,
 				5B94406E1631AEBA006528DE /* CPVar.h in Headers */,
 				5B93488D16554E6C00757F89 /* CPEvent.h in Headers */,
-				5BBFE0A5178C63DA00BEAD83 /* CPFloatVarI.h in Headers */,
-				5BBFE0A9178C981B00BEAD83 /* CPFloatDom.h in Headers */,
-				5B5AAA8017905AAC0076C729 /* CPFloatConstraint.h in Headers */,
+				5BBFE0A5178C63DA00BEAD83 /* CPRealVarI.h in Headers */,
+				5BBFE0A9178C981B00BEAD83 /* CPRealDom.h in Headers */,
+				5B5AAA8017905AAC0076C729 /* CPRealConstraint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38038,10 +38038,10 @@
 				5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */,
 				5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */,
 				B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */,
-				B103614D16D9AAA500E95A39 /* ORFloatDecompose.h in Headers */,
+				B103614D16D9AAA500E95A39 /* ORRealDecompose.h in Headers */,
 				B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */,
 				B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */,
-				B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */,
+				B1E1C7AA17038784006AACFC /* ORRealLinear.h in Headers */,
 				5B673A2B178DC5AA00886A28 /* ORLinear.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -41223,10 +41223,10 @@
 				5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */,
 				B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */,
 				5B93488C16554E6700757F89 /* CPEvent.m in Sources */,
-				5BBFE0A6178C63DA00BEAD83 /* CPFloatVarI.m in Sources */,
-				5BBFE0AA178C981B00BEAD83 /* CPFloatDom.m in Sources */,
+				5BBFE0A6178C63DA00BEAD83 /* CPRealVarI.m in Sources */,
+				5BBFE0AA178C981B00BEAD83 /* CPRealDom.m in Sources */,
 				5BB1C2731B3A0098008A9E51 /* CPIntSetConstraint.m in Sources */,
-				5B5AAA8117905AAC0076C729 /* CPFloatConstraint.m in Sources */,
+				5B5AAA8117905AAC0076C729 /* CPRealConstraint.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41254,10 +41254,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC13A531B6F59CF00FC9A01 /* MIPSolverI.m in Sources */,
-				5BC13A521B6F598800FC9A01 /* ORFloatLinear.m in Sources */,
+				5BC13A521B6F598800FC9A01 /* ORRealLinear.m in Sources */,
 				5BC13A511B6F596D00FC9A01 /* CPISVarI.m in Sources */,
-				5BC13A501B6F593D00FC9A01 /* CPFloatDom.m in Sources */,
-				5BC13A4F1B6F591D00FC9A01 /* CPFloatVarI.m in Sources */,
+				5BC13A501B6F593D00FC9A01 /* CPRealDom.m in Sources */,
+				5BC13A4F1B6F591D00FC9A01 /* CPRealVarI.m in Sources */,
 				5BC13A421B6F552800FC9A01 /* ORAnnotation.m in Sources */,
 				5BC13A431B6F552800FC9A01 /* ORVisit.m in Sources */,
 				5BC13A441B6F552800FC9A01 /* ORLSFlatten.m in Sources */,
@@ -41270,7 +41270,7 @@
 				5BC13A4B1B6F552800FC9A01 /* CPDeg.m in Sources */,
 				5BC13A4C1B6F552800FC9A01 /* CPIntSetConstraint.m in Sources */,
 				5BC13A4D1B6F552800FC9A01 /* CPTrailIntSet.m in Sources */,
-				5BC13A4E1B6F552800FC9A01 /* CPFloatConstraint.m in Sources */,
+				5BC13A4E1B6F552800FC9A01 /* CPRealConstraint.m in Sources */,
 				5BC13A401B6F54D300FC9A01 /* ORPQueue.m in Sources */,
 				5BC13A411B6F54D300FC9A01 /* ORInterval.mm in Sources */,
 				5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */,
@@ -41302,7 +41302,7 @@
 				5BD8BED116E123E200D9BF0B /* ORLPFlatten.m in Sources */,
 				5BD8BED216E123E200D9BF0B /* ORLinearize.m in Sources */,
 				5BD8BED316E123E200D9BF0B /* ORDecompose.m in Sources */,
-				5BD8BED416E123E200D9BF0B /* ORFloatDecompose.m in Sources */,
+				5BD8BED416E123E200D9BF0B /* ORRealDecompose.m in Sources */,
 				5BD8BED516E123E200D9BF0B /* ORIntLinear.m in Sources */,
 				5BD8BED616E123E200D9BF0B /* CPUKernel.m in Sources */,
 				5BD8BED716E123E200D9BF0B /* CPEngineI.m in Sources */,
@@ -41394,10 +41394,10 @@
 				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
 				B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */,
 				5BB1C2691B39FE8E008A9E51 /* ORLSFlatten.m in Sources */,
-				B103614E16D9AAA500E95A39 /* ORFloatDecompose.m in Sources */,
+				B103614E16D9AAA500E95A39 /* ORRealDecompose.m in Sources */,
 				B103615216D9AB9A00E95A39 /* ORIntLinear.m in Sources */,
 				B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */,
-				B1E1C7AB17038784006AACFC /* ORFloatLinear.m in Sources */,
+				B1E1C7AB17038784006AACFC /* ORRealLinear.m in Sources */,
 				B182C60D173C3DC9002954F6 /* ORMIPLinearize.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

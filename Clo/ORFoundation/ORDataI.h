@@ -45,20 +45,20 @@
 -(void)setIdValue:(id)v;
 @end
 
-@interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>
--(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) value;
+@interface ORDoubleI : ORExprI<NSCoding,ORDoubleNumber>
+-(ORDoubleI*) init: (id<ORTracker>) tracker value: (ORDouble) value;
+-(ORDouble) floatValue;
+-(ORDouble) value;
 -(ORInt) intValue;
 -(id<ORTracker>) tracker;
 @end
 
 @interface ORMutableFloatI : ORExprI<NSCoding,ORMutableFloat>
--(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
--(ORFloat) initialValue;
--(ORFloat) value: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORDouble) value;
+-(ORDouble) initialValue;
+-(ORDouble) value: (id<ORGamma>) solver;
+-(ORDouble) floatValue: (id<ORGamma>) solver;
+-(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 -(id<ORTracker>) tracker;
 @end
 

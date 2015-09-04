@@ -252,11 +252,11 @@
 }
 @end
 
-@implementation ORFloatRangeI {
-   ORFloat _low;
-   ORFloat _up;
+@implementation ORRealRangeI {
+   ORDouble _low;
+   ORDouble _up;
 }
--(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up
+-(id<ORRealRange>)init:(ORDouble) low up:(ORDouble)up
 {
    self = [super init];
    _low = low;
@@ -265,23 +265,23 @@
 }
 -(id)copyWithZone:(NSZone *)zone
 {
-   return [[ORFloatRangeI allocWithZone:zone] initORFloatRangeI:_low up:_up];
+   return [[ORRealRangeI allocWithZone:zone] init:_low up:_up];
 }
 -(BOOL)isEqual:(id)object
 {
    if ([object isKindOfClass:[self class]])
-      return _low == ((ORFloatRangeI*)object)->_low && _up == ((ORFloatRangeI*)object)->_up;
+      return _low == ((ORRealRangeI*)object)->_low && _up == ((ORRealRangeI*)object)->_up;
    else return NO;
 }
 -(NSUInteger)hash
 {
    return (NSUInteger)_low ^ (NSUInteger)_up;
 }
--(ORFloat)low
+-(ORDouble)low
 {
    return _low;
 }
--(ORFloat)up
+-(ORDouble)up
 {
    return _up;
 }
@@ -289,7 +289,7 @@
 {
    return _low <= _up;
 }
--(ORBool)inRange:(ORFloat)e
+-(ORBool)inRange:(ORDouble)e
 {
    return _low <= e && e <= _up;
 }
@@ -305,14 +305,14 @@
 }
 - (void) encodeWithCoder:(NSCoder*) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_up];
 }
 - (id) initWithCoder:(NSCoder*) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_up];
    return self;
 }
 @end

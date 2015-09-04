@@ -35,19 +35,19 @@ PORTABLE_BEGIN
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 @end
 
-@protocol ORFloatArray <ORObject>
--(ORFloat) at: (ORInt) value;
--(void) set: (ORFloat) value at: (ORInt) idx;
+@protocol ORDoubleArray <ORObject>
+-(ORDouble) at: (ORInt) value;
+-(void) set: (ORDouble) value at: (ORInt) idx;
 -(ORInt) low;
 -(ORInt) up;
--(ORFloat) max;
--(ORFloat) min;
+-(ORDouble) max;
+-(ORDouble) min;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
+-(void)enumerateWith:(void(^)(ORDouble obj,int idx))block;
 @end
 
 @protocol ORIntRangeArray <ORObject>

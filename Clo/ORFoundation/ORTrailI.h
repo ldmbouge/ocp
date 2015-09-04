@@ -32,12 +32,14 @@
 #define TAGRelease      0xB
 #define TAGFree         0xC
 #define TAGIdNC         0xD
+#define TAGLDouble      0xF
 
 @interface ORTrailI : NSObject<ORTrail>
 {
    @public
    struct Slot {
-      void* ptr;
+      void*               ptr;
+      unsigned short     code;
       union {
          ORInt         intVal;          // 4-bytes
          ORUInt       uintVal;          // 4-bytes
@@ -45,11 +47,9 @@
          ORULong     ulongVal;          // 8-bytes
          float       floatVal;          // 4-bytes
          double     doubleVal;          // 8-bytes
-//         id             idVal;          // 4-bytes OR 8-bytes depending 32/64 compilation mode
+         long double    ldVal;          // 10-byte
          void*         ptrVal;          // 4 or 8 (pointer)
-//         void (^cloVal)(void);
       };
-      ORInt code;
    };
    struct Segment {
       struct Slot tab[NBSLOT];
@@ -74,6 +74,7 @@
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
 -(void) trailDouble:(double*) ptr;
+-(void) trailLDouble:(long double*)ptr;
 -(void) trailPointer:(void**) ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
 -(void) trailRelease:(id)obj;
@@ -163,6 +164,10 @@ static inline TRDouble  inline_makeTRDouble(ORTrailI* trail,double val)
 {
    return (TRDouble){val,[trail magic]-1};
 }
+static inline TRLDouble  inline_makeTRLDouble(ORTrailI* trail,long double val)
+{
+   return (TRLDouble){val,[trail magic]-1};
+}
 
 static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
 {
@@ -174,7 +179,7 @@ static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTr
    return ei->_val = val;
 }
 
-static inline ORFloat inline_assignTRFloatArray(TRFloatArray a,int i,ORFloat val,id<ORTrail> trail)
+static inline ORDouble inline_assignTRFloatArray(TRFloatArray a,int i,ORDouble val,id<ORTrail> trail)
 {
    TRDouble* ei = a._entries + i;
    if (ei->_mgc != [trail magic]) {

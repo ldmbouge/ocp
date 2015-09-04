@@ -23,6 +23,7 @@
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
 -(void) trailDouble:(double*) ptr;
+-(void) trailLDouble:(long double*)ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
 -(void) trailRelease:(id)obj;
 -(void) trailFree:(void*)ptr;
@@ -60,6 +61,11 @@ typedef struct {
    ORUInt    _mgc;
 } TRDouble;
 
+typedef struct {
+   long double _val;
+   ORUInt      _mgc;
+} TRLDouble;
+
 typedef id TRId;
 typedef id TRIdNC;
 
@@ -89,6 +95,7 @@ TRInt makeTRInt(id<ORTrail> trail,int val);
 TRUInt makeTRUInt(id<ORTrail> trail,unsigned val);
 TRLong makeTRLong(id<ORTrail> trail,long long val);
 TRDouble  makeTRDouble(id<ORTrail> trail,double val);
+TRLDouble makeTRLDouble(id<ORTrail> trail,long double val);
 TRId  makeTRId(id<ORTrail> trail,id val);
 TRIdNC  makeTRIdNC(id<ORTrail> trail,id val);
 TRIntArray makeTRIntArray(id<ORTrail> trail,int nb,int low);
@@ -100,11 +107,12 @@ void  assignTRInt(TRInt* v,int val,id<ORTrail> trail);
 void  assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail);
 void  assignTRLong(TRLong* v,long long val,id<ORTrail> trail);
 void  assignTRDouble(TRDouble* v,double val,id<ORTrail> trail);
+void  assignTRLDouble(TRLDouble* v,long double val,id<ORTrail> trail);
 void  assignTRId(TRId* v,id val,id<ORTrail> trail);
 void  assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail);
 ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail);
 ORInt getTRIntArray(TRIntArray a,int i);
-ORFloat assignTRFloatArray(TRIntArray a,int i,ORFloat val,id<ORTrail> trail);
+ORDouble assignTRFloatArray(TRIntArray a,int i,ORDouble val,id<ORTrail> trail);
 ORInt getTRFloatArray(TRFloatArray a,int i);
 
 FXInt makeFXInt(id<ORTrail> trail);

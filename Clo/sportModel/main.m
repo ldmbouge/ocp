@@ -55,8 +55,8 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          
          [cp solve: ^{
-            [cp labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allgames at:i]];}];
-            [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allteams at:i]];}];
+            [cp labelArray: allgames orderedBy: ^ORDouble(ORInt i) { return [cp domsize:[allgames at:i]];}];
+            [cp labelArray: allteams orderedBy: ^ORDouble(ORInt i) { return [cp domsize:[allteams at:i]];}];
             ORLong endTime = [ORRuntimeMonitor cputime];
             printf("Solution \n");
             for(ORInt p = 1; p <= n/2; p++) {

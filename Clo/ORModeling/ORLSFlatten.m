@@ -65,13 +65,13 @@
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
    id<ORIntVarArray> ca = [self flattenIt:[v array]];
-   id<ORFloatArray>  cc = [self flattenIt:[v coef]];
+   id<ORDoubleArray>  cc = [self flattenIt:[v coef]];
    _result = [_into minimize:ca coef:cc];
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
    id<ORIntVarArray> ca = [self flattenIt:[v array]];
-   id<ORFloatArray>  cc = [self flattenIt:[v coef]];
+   id<ORDoubleArray>  cc = [self flattenIt:[v coef]];
    _result = [_into maximize:ca coef:cc];
 }
 @end

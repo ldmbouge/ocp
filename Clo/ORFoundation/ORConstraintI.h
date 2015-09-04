@@ -42,10 +42,10 @@
 -(ORInt) cst;
 @end
 
-@interface ORFloatEqualc : ORConstraintI<ORFloatEqualc>
--(OREqualc*)init:(id<ORFloatVar>)x eqi:(ORFloat)c;
--(id<ORFloatVar>) left;
--(ORFloat) cst;
+@interface ORRealEqualc : ORConstraintI<ORRealEqualc>
+-(OREqualc*)init:(id<ORRealVar>)x eqi:(ORDouble)c;
+-(id<ORRealVar>) left;
+-(ORDouble) cst;
 @end
 
 @interface ORNEqualc : ORConstraintI<ORNEqualc>
@@ -120,7 +120,7 @@
 -(id<ORVar>)op;
 @end
 
-@interface ORFloatSquare : ORSquare
+@interface ORRealSquare : ORSquare
 @end
 
 @interface ORMod : ORConstraintI<ORMod>
@@ -201,11 +201,11 @@
 -(id<ORIntVar>) res;
 @end
 
-@interface ORFloatElementCst : ORConstraintI<ORFloatElementCst>
--(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z; // y[idx] == z
--(id<ORFloatArray>) array;
+@interface ORRealElementCst : ORConstraintI<ORRealElementCst>
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORDoubleArray>)y equal:(id<ORRealVar>)z; // y[idx] == z
+-(id<ORDoubleArray>) array;
 -(id<ORIntVar>)       idx;
--(id<ORFloatVar>)     res;
+-(id<ORRealVar>)     res;
 @end
 
 @interface ORImplyEqualc : ORConstraintI<ORImplyEqualc>
@@ -352,18 +352,18 @@
 @end
 
 
-@interface ORFloatLinearEq : ORConstraintI<ORFloatLinearEq>
--(ORLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
+@interface ORRealLinearEq : ORConstraintI<ORRealLinearEq>
+-(ORLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
--(id<ORFloatArray>) coefs;
--(ORFloat) cst;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
 @end
 
-@interface ORFloatLinearLeq : ORConstraintI<ORFloatLinearLeq>
--(ORFloatLinearLeq*) initFloatLinearLeq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) ca cst: (ORFloat) c;
+@interface ORRealLinearLeq : ORConstraintI<ORRealLinearLeq>
+-(ORRealLinearLeq*) initFloatLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
--(id<ORFloatArray>) coefs;
--(ORFloat) cst;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
 @end
 
 
@@ -483,22 +483,22 @@
 -(id) initObjectiveValueIntI: (ORInt) pb minimize: (ORBool) b ;
 -(ORInt)value;
 -(ORInt)intValue;
--(ORFloat)floatValue;
+-(ORDouble)floatValue;
 -(ORInt)primal;
--(ORFloat)key;
+-(ORDouble)key;
 -(NSString*)description;
 @end
 
 @interface ORObjectiveValueFloatI : ORObject<ORObjectiveValueFloat> {
-   ORFloat _value;
+   ORDouble _value;
    ORInt _direction;
    ORInt _pBound;
 }
--(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b ;
--(ORFloat)value;
--(ORFloat)floatValue;
--(ORFloat)primal;
--(ORFloat)key;
+-(id) initObjectiveValueFloatI: (ORDouble) pb minimize: (ORBool) b ;
+-(ORDouble)value;
+-(ORDouble)floatValue;
+-(ORDouble)primal;
+-(ORDouble)key;
 -(NSString*)description;
 @end
 
@@ -521,11 +521,11 @@
 @interface ORObjectiveFunctionLinearI : ORObjectiveFunctionI<ORObjectiveFunctionLinear>
 {
    id<ORVarArray> _array;
-   id<ORFloatArray> _coef;
+   id<ORDoubleArray> _coef;
 }
--(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
+-(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef;
 -(id<ORVarArray>) array;
--(id<ORFloatArray>) coef;
+-(id<ORDoubleArray>) coef;
 -(void) visit: (ORVisitor*) visitor;
 @end
 
@@ -555,11 +555,11 @@
 @end
 
 @interface ORMinimizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
--(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
+-(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef;
 @end
 
 @interface ORMaximizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
--(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
+-(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef;
 @end
 
 

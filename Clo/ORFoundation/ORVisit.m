@@ -35,7 +35,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntRange: visit method not defined"];    
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitFloatRange:(id<ORRealRange>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatRange: visit method not defined"];    
 }
@@ -43,7 +43,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntArray: visit method not defined"];    
 }
--(void) visitFloatArray:(id<ORFloatArray>)v
+-(void) visitFloatArray:(id<ORDoubleArray>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatArray: visit method not defined"];    
 }
@@ -59,7 +59,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntVar: visit method not defined"];    
 }
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitFloatVar: (id<ORRealVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatVar: visit method not defined"];    
 }
@@ -211,7 +211,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Equalc: visit method not defined"]; 
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+-(void) visitFloatEqualc: (id<ORRealEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];    
 }
@@ -303,7 +303,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ElementMatrixVar: visit method not defined"];   
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr
+-(void) visitFloatElementCst: (id<ORRealElementCst>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatElementCst: visit method not defined"]; 
 }
@@ -395,11 +395,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "LinearEq: visit method not defined"]; 
 }
--(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
+-(void) visitFloatLinearLeq: (id<ORRealLinearLeq>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearLeq: visit method not defined"]; 
 }
--(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
+-(void) visitFloatLinearEq: (id<ORRealLinearEq>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearEq: visit method not defined"]; 
 }
@@ -451,7 +451,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "MutableFloatI: visit method not defined"]; 
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatI: visit method not defined"]; 
 }
@@ -568,13 +568,13 @@
 -(void) visitUniformDistribution:(id) v{}
 -(void) visitIntSet:(id<ORIntSet>)v{}
 -(void) visitIntRange:(id<ORIntRange>)v     {}
--(void) visitFloatRange:(id<ORFloatRange>)v {}
+-(void) visitFloatRange:(id<ORRealRange>)v {}
 -(void) visitIntArray:(id<ORIntArray>)v  {}
--(void) visitFloatArray:(id<ORFloatArray>)v  {}
+-(void) visitFloatArray:(id<ORDoubleArray>)v  {}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v  {}
 -(void) visitTrailableInt:(id<ORTrailableInt>)v  {}
 -(void) visitIntVar: (id<ORIntVar>) v  {}
--(void) visitFloatVar: (id<ORFloatVar>) v  {}
+-(void) visitFloatVar: (id<ORRealVar>) v  {}
 -(void) visitBitVar: (id<ORBitVar>) v {}
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v  {}
 -(void) visitAffineVar:(id<ORIntVar>) v  {}
@@ -636,7 +636,7 @@
 -(void) visitImply: (id<ORImply>)c  {}
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
--(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr {}
+-(void) visitFloatElementCst: (id<ORRealElementCst>) cstr {}
 -(void) visitImplyEqualc: (id<ORImplyEqualc>)c  {}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c  {}
 -(void) visitReifyEqual: (id<ORReifyEqual>)c  {}
@@ -660,8 +660,8 @@
 -(void) visitLinearGeq: (id<ORLinearGeq>) c {}
 -(void) visitLinearLeq: (id<ORLinearLeq>) c {}
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
--(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c {}
--(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c {}
+-(void) visitFloatLinearLeq: (id<ORRealLinearLeq>) c {}
+-(void) visitFloatLinearEq: (id<ORRealLinearEq>) c {}
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c {}
 -(void) visitBitOr:(id<ORBitOr>)c {}
@@ -676,7 +676,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e {}
--(void) visitFloatI: (id<ORFloatNumber>) e  {}
+-(void) visitFloatI: (id<ORDoubleNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMulI: (id<ORExpr>) e  {}

@@ -74,7 +74,7 @@
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll:
     ^() {
-       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[x at:i]];}];
+       [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize:[x at:i]];}];
        [nbSolutions incr:cp];
    }
     ];
@@ -95,7 +95,7 @@
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
@@ -122,7 +122,7 @@
 
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
@@ -154,7 +154,7 @@
    id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       int nbOne = 0;
       int nbZero = 0;
       for(ORInt k=0;k<s;k++) {
@@ -187,7 +187,7 @@
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++)
          nbOne += [cp min:x[k]] == 1;
@@ -214,7 +214,7 @@
    id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       for(ORInt k=0;k<s;k++) {
          XCTAssertTrue([cp min:x[k]] == ![cp min:nx[k]], @"x and nx should be negations of each other");
       }
@@ -320,7 +320,7 @@
   
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
-      [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
+      [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return i;}];
       NSLog(@"Solution: %@ = %@",x,z);
       [nbSolutions  incr:cp];
    }

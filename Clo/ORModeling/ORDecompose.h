@@ -14,7 +14,7 @@
 
 @protocol ORModel;
 @protocol ORAddToModel;
-@protocol ORFloatLinear;
+@protocol ORRealLinear;
 @class ORExprI;
 
 @interface ORNormalizer : NSObject
@@ -27,10 +27,10 @@
 +(id<ORIntVar>) intVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x;
 +(id<ORIntVar>) intVarIn:(id<ORIntLinear>)e for:(id<ORAddToModel>) model;
 // ------ Float (double)
-+(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
-+(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORFloatVar>)x;
-+(id<ORFloatLinear>)addToFloatLinear:(id<ORFloatLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
-+(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
-+(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORFloatVar>)x;
-+(id<ORFloatVar>) floatVarIn:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model;
++(id<ORRealLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
++(id<ORRealLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORRealVar>)x;
++(id<ORRealLinear>)addToFloatLinear:(id<ORRealLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
++(id<ORRealVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
++(id<ORRealVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORRealVar>)x;
++(id<ORRealVar>) floatVarIn:(id<ORRealLinear>)e for:(id<ORAddToModel>) model;
 @end

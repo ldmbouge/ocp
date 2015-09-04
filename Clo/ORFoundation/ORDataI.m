@@ -71,7 +71,7 @@
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value;
 }
@@ -144,7 +144,7 @@
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value;
 }
@@ -160,7 +160,7 @@
 {
    return _value = value;
 }
--(ORFloat) floatValue: (id<ORGamma>) solver
+-(ORDouble) floatValue: (id<ORGamma>) solver
 {
    return _value;
 }
@@ -254,13 +254,13 @@
 }
 @end
 
-@implementation ORFloatI
+@implementation ORDoubleI
 {
-	ORFloat       _value;
+	ORDouble       _value;
    id<ORTracker> _tracker;
 }
 
--(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+-(ORDoubleI*) init: (id<ORTracker>) tracker value: (ORDouble) value
 {
    self = [super init];
    _value = value;
@@ -275,7 +275,7 @@
 {
    return (ORInt)ceil(_value);
 }
--(ORFloat) value
+-(ORDouble) value
 {
    return _value;
 }
@@ -283,7 +283,7 @@
 {
    return (ORInt) _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value;
 }
@@ -309,12 +309,12 @@
 }
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
    return self;
 }
 -(void) visit: (ORVisitor*) visitor
@@ -325,34 +325,34 @@
 
 @implementation ORMutableFloatI
 {
-	ORFloat       _value;
+	ORDouble       _value;
    id<ORTracker> _tracker;
 }
 
--(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+-(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORDouble) value
 {
    self = [super init];
    _value = value;
    _tracker = tracker;
    return self;
 }
--(ORFloat) initialValue
+-(ORDouble) initialValue
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value;
 }
--(ORFloat) value: (id<ORGamma>) solver;
+-(ORDouble) value: (id<ORGamma>) solver;
 {
    return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
 }
--(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORDouble) floatValue: (id<ORGamma>) solver;
 {
    return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
 }
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 {
    return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
 }
@@ -378,12 +378,12 @@
 }
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
    return self;
 }
 -(void) visit: (ORVisitor*) visitor

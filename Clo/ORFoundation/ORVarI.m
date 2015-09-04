@@ -226,14 +226,14 @@
 }
 @end
 
-@implementation ORFloatVarI
+@implementation ORRealVarI
 {
 @protected
    id<ORTracker>    _tracker;
-   id<ORFloatRange> _domain;
+   id<ORRealRange> _domain;
    BOOL             _hasBounds;
 }
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
+-(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up
 {
    self = [super init];
    _tracker = track;
@@ -242,7 +242,7 @@
    [track trackVariable: self];
    return self;
 }
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track up: (ORFloat) up
+-(ORRealVarI*) init: (id<ORTracker>) track up: (ORDouble) up
 {
    self = [super init];
    _tracker = track;
@@ -251,7 +251,7 @@
    [track trackVariable: self];
    return self;
 }
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track
+-(ORRealVarI*) init: (id<ORTracker>) track
 {
    self = [super init];
    _tracker = track;
@@ -259,7 +259,7 @@
    [track trackVariable: self];
    return self;
 }
--(id<ORFloatRange>) domain
+-(id<ORRealRange>) domain
 {
    assert(_domain != NULL);
    return _domain;
@@ -306,11 +306,11 @@
 {
    return _hasBounds;
 }
--(ORFloat) low
+-(ORDouble) low
 {
    return _domain.low;
 }
--(ORFloat) up
+-(ORDouble) up
 {
    return _domain.up;
 }

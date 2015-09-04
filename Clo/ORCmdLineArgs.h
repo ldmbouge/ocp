@@ -34,7 +34,7 @@ struct ORResult {
 
 @interface ORCmdLineArgs : NSObject
 @property (nonatomic,readonly) ORInt size;
-@property (nonatomic,readonly) ORFloat restartRate;
+@property (nonatomic,readonly) ORDouble restartRate;
 @property (nonatomic,readonly) ORInt   timeOut;
 @property (nonatomic,readonly) BOOL    randomized;
 @property (nonatomic,readonly) enum Heuristic heuristic;

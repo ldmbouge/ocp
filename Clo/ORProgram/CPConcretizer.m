@@ -85,7 +85,7 @@
 {}
 -(void) visitIntRange:(id<ORIntRange>) v
 {}
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitFloatRange:(id<ORRealRange>)v
 {}
 -(void) visitUniformDistribution:(id) v
 {}
@@ -96,7 +96,7 @@
       _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
 }
 
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitFloatVar: (id<ORRealVar>) v
 {
    if (!_gamma[v.getId])
       _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
@@ -454,10 +454,10 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeLinear not yet implemented"]; 
 }
 
--(void) visitFloatEqualc: (id<ORFloatEqualc>)cstr
+-(void) visitFloatEqualc: (id<ORRealEqualc>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORFloatVar> left = [cstr left];
+      id<ORRealVar> left = [cstr left];
       ORInt cst = [cstr cst];
       [left visit: self];
       id<CPConstraint> concreteCstr = [CPFactory floatEqualc: (id<CPIntVar>) _gamma[left.getId]  to: cst];
@@ -608,8 +608,8 @@
 -(void) visitFloatSquare: (id<ORSquare>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<CPFloatVar> res = [self concreteVar:[cstr res]];
-      id<CPFloatVar> op  = [self concreteVar:[cstr op]];
+      id<CPRealVar> res = [self concreteVar:[cstr res]];
+      id<CPRealVar> op  = [self concreteVar:[cstr op]];
       ORCLevel annotation = [_notes levelFor:cstr];
       id<CPConstraint> concrete = [CPFactory floatSquare:op equal:res annotation:annotation];
       [_engine add:concrete];
@@ -748,18 +748,18 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr
+-(void) visitFloatElementCst: (id<ORRealElementCst>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<ORFloatArray> array = [cstr array];
+      id<ORDoubleArray> array = [cstr array];
       id<ORIntVar> idx = [cstr idx];
-      id<ORFloatVar> res = [cstr res];
+      id<ORRealVar> res = [cstr res];
       [array visit: self];
       [idx visit: self];
       [res visit: self];
       id<CPConstraint> concreteCstr = [CPFactory floatElement: (id<CPIntVar>) _gamma[idx.getId]
                                                   idxCstArray: array
-                                                        equal: (id<CPFloatVar>) _gamma[res.getId]
+                                                        equal: (id<CPRealVar>) _gamma[res.getId]
                                                    annotation: [_notes levelFor:cstr]
                                        ];
       [_engine add: concreteCstr];
@@ -992,36 +992,36 @@
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {
 }
--(void) visitFloatLinearEq:(id<ORFloatLinearEq>)cstr
+-(void) visitFloatLinearEq:(id<ORRealLinearEq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
       id<ORVarArray> av = [cstr vars];
-      id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+      id<CPRealVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
          id<CPVar> theCPVar = [self concreteVar:[av at:k]];
          if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
             return [CPFactory floatVar:_engine castFrom:(id)theCPVar];
          else
             return theCPVar;
       }];
-      id<ORFloatArray> c = [cstr coefs];
+      id<ORDoubleArray> c = [cstr coefs];
       id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst]];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
 }
--(void)visitFloatLinearLeq:(id<ORFloatLinearLeq>)cstr
+-(void)visitFloatLinearLeq:(id<ORRealLinearLeq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
 
       id<ORVarArray> av = [cstr vars];
-      id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+      id<CPRealVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
          id<CPVar> theCPVar = [self concreteVar:[av at:k]];
          if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
             return [CPFactory floatVar:_engine castFrom:(id)theCPVar];
          else
             return theCPVar;
       }];
-      id<ORFloatArray> c = [cstr coefs];
+      id<ORDoubleArray> c = [cstr coefs];
       id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c leqi:[cstr cst]];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -1150,7 +1150,7 @@
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory mutableFloat: _engine value: [e initialValue]];
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL) 
       _gamma[e.getId] = [ORFactory float: _engine value: [e floatValue]];
@@ -1259,7 +1259,7 @@
    }
 }
 
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitFloatVar: (id<ORRealVar>) v
 {
    if (!_gamma[v.getId])
       _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];

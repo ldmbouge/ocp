@@ -22,7 +22,7 @@ int main(int argc, const char * argv[])
          id<ORIntRange> R = RANGE(mdl,1,n);
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
          id<ORAnnotation> note = [ORFactory annotation];
-         [note bc:[mdl add: [ORFactory alldifferent: x]]];
+         [note dc:[mdl add: [ORFactory alldifferent: x]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i] plus:@(i)])]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i]  sub:@(i)])]]];
          id<CPProgram> cp = [args makeProgram:mdl annotation:note];
@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
-             [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+             [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
              @synchronized(cp) { // synchronized so that it works correctly even when asking parallel tree search
                 nbSol++;
              }

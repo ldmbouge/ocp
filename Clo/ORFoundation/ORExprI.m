@@ -109,7 +109,7 @@ enum {
 // Variables
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitBitVar: (id<ORBitVar>) v;
--(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitFloatVar: (id<ORRealVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 // Expressions
@@ -169,7 +169,7 @@ enum {
 {
    [_ms addObject:v];
 }
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitFloatVar: (id<ORRealVar>) v
 {
    [_ms addObject:v];
 }
@@ -376,7 +376,7 @@ enum {
    @throw [[ORExecutionError alloc] initORExecutionError: "intvalue not defined on expression"];
    return 0;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
    return 0;
@@ -948,7 +948,7 @@ enum {
 
 
 @implementation ORExprCstFloatSubI
--(id<ORExpr>) initORExprCstFloatSubI: (id<ORFloatArray>) array index:(id<ORExpr>) op
+-(id<ORExpr>) initORExprCstFloatSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op
 {
    self = [super init];
    _array = array;
@@ -959,16 +959,16 @@ enum {
 {
    return [_index tracker];
 }
--(ORFloat) fmin
+-(ORDouble) fmin
 {
-   ORFloat minOf = MAXINT;
+   ORDouble minOf = MAXINT;
    for(ORInt k=[_array low];k<=[_array up];k++)
       minOf = minOf <[_array at:k] ? minOf : [_array at:k];
    return minOf;
 }
--(ORFloat) fmax
+-(ORDouble) fmax
 {
-   ORFloat maxOf = MININT;
+   ORDouble maxOf = MININT;
    for(ORInt k=[_array low];k<=[_array up];k++)
       maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
    return maxOf;
@@ -983,7 +983,7 @@ enum {
 {
    return  _index;
 }
--(id<ORFloatArray>)array
+-(id<ORDoubleArray>)array
 {
    return _array;
 }

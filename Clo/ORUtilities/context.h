@@ -53,6 +53,7 @@ struct Ctx64 {
    double xmm13[2];
    double xmm14[2];
    double xmm15[2];
+   char   fpu[108];
 };
 __attribute__((noinline)) NSCont* saveCtx(struct Ctx64* ctx,NSCont* k);
 __attribute__((noinline)) NSCont* restoreCtx(struct Ctx64* ctx,char* start,char* data,size_t length);

@@ -59,8 +59,8 @@ int main(int argc, const char * argv[])
          [cp solveAll:^{
             NSLog(@"concrete: %@",[[cp engine] model]);
             [cp labelHeuristic:h];
-            //[cp labelArray:x ];//  orderedBy:^ORFloat(ORInt i) { return [x[i] domsize];}];
-            [cp labelArray:x orderedBy:^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
+            //[cp labelArray:x ];//  orderedBy:^ORDouble(ORInt i) { return [x[i] domsize];}];
+            [cp labelArray:x orderedBy:^ORDouble(ORInt i) { return [cp domsize:x[i]];}];
             id<ORIntArray> sx = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
             NSLog(@"Sol: %@",sx);
             found = YES;

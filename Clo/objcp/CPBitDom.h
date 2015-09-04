@@ -22,7 +22,7 @@ enum CPDomClass {
 };
 
 @interface CPBoundsDom : NSObject<CPDom,NSCopying> {
-@package
+@public
    enum CPDomClass    _dc;
    id<ORTrail>     _trail;
    ORInt            _imin;
@@ -64,7 +64,7 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 }
 
 @interface CPBitDom : CPBoundsDom {
-@package
+@public
    unsigned*    _bits;
    ORInt*      _magic;
    UBType  _updateMin;

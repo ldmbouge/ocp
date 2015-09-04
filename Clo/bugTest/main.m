@@ -170,7 +170,7 @@ int main(int argc, const char * argv[])
           ^() {
              ip = [[cpp engine] nbPropagation];
              NSLog(@"Searching...");
-             id<ORIntVarArray> sv = (id) [ORFactory sort:cpp idArray:[model intVars] with:^ORFloat(id<ORIntVar> var) {
+             id<ORIntVarArray> sv = (id) [ORFactory sort:cpp idArray:[model intVars] with:^ORDouble(id<ORIntVar> var) {
                 return - [cpp degree:var];
              }];
              [cpp labelArray:sv];

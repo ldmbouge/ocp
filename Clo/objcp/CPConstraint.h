@@ -89,14 +89,14 @@
 +(id<CPConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
 @end
 
-@interface CPFactory (ORFloat)
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
-+(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORCLevel)c;
-+(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c;
-+(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORCLevel)n;
-+(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x;
-+(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
+@interface CPFactory (ORReal)
++(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c;
++(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c;
++(id<CPConstraint>) floatSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c;
++(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORDouble) c;
++(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n;
++(id<CPConstraint>) floatMinimize: (id<CPRealVar>) x;
++(id<CPConstraint>) floatMaximize: (id<CPRealVar>) x;
 @end
 
 @interface CPFactory (ORIntSet)

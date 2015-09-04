@@ -29,5 +29,6 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPData.h>
 #import <objcp/CPIntVarI.h>
+#import <objcp/CPRealVarI.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>

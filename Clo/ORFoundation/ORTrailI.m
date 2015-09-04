@@ -135,6 +135,15 @@
    s->doubleVal = *ptr;
    ++_seg[_cSeg]->top;
 }
+-(void)trailLDouble:(long double*)ptr
+{
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGLDouble;
+   s->ldVal = *ptr;
+   ++_seg[_cSeg]->top;
+}
 -(void) trailPointer:(void**) ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
@@ -214,6 +223,9 @@
             case TAGDouble:
                *((double*)cs->ptr) = cs->doubleVal;
                break;
+            case TAGLDouble:
+               *((long double*)cs->ptr) = cs->ldVal;
+               break;
             case TAGPointer:
                *((void**)cs->ptr) = cs->ptrVal;
                break;
@@ -289,6 +301,11 @@ TRDouble  makeTRDouble(ORTrailI* trail,double val)
 {
    return (TRDouble){val,[trail magic]-1};
 }
+TRLDouble makeTRLDouble(id<ORTrail> trail,long double val)
+{
+   return (TRLDouble){val,[trail magic]-1};
+}
+
 
 ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
 {
@@ -309,7 +326,7 @@ void trailIntFun(ORTrailI* t,int* ptr)
    s->intVal = *ptr;
    ++(t->_seg[t->_cSeg]->top);
 }
-void trailFloatFun(ORTrailI* t,ORFloat* ptr)
+void trailFloatFun(ORTrailI* t,ORDouble* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
    struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
@@ -371,6 +388,14 @@ void  assignTRDouble(TRDouble* v,double val,ORTrailI* trail)
    if (v->_mgc != [trail magic]) {
       v->_mgc = [trail magic];
       [trail trailDouble:&v->_val];
+   }
+   v->_val = val;
+}
+void  assignTRLDouble(TRLDouble* v,long double val,ORTrailI* trail)
+{
+   if (v->_mgc != [trail magic]) {
+      v->_mgc = [trail magic];
+      [trail trailLDouble:&v->_val];
    }
    v->_val = val;
 }

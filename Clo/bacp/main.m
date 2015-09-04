@@ -72,7 +72,7 @@ int main(int argc, const char * argv[])
                           return ttl;
                        }];
                        [cp tryall:Periods suchThat:^bool(ORInt p) { return [cp member:p in:x[i]];}
-                        orderedBy:^ORFloat(ORInt p) { return ([cp min:l[p]] << 16) - [cc at:p];}
+                        orderedBy:^ORDouble(ORInt p) { return ([cp min:l[p]] << 16) - [cc at:p];}
                                in:^(ORInt p) {
                                   [cp label:x[i] with:p];
                                } onFailure:^(ORInt p) {

@@ -30,13 +30,13 @@ int main(int argc, const char * argv[])
       __block ORInt nbSol = 0;
       [cp solveAll:
        ^() {
-          [cp switchOnDepth: ^{ [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}]; }
+          [cp switchOnDepth: ^{ [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}]; }
                          to: ^{
                             NSLog(@"I switched \n");
                             for(ORInt i = 1; i <= 8; i++)
                                printf("%d-%d ",[cp min:x[i]],[cp max:x[i]]);
                             printf("\n");
-                            [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+                            [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
                          }
                       limit: 4
            ];

@@ -59,11 +59,11 @@
 @end
 
 
-@interface ORFloatRangeI : ORObject<ORFloatRange,NSCopying>
--(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up;
--(ORFloat)low;
--(ORFloat)up;
+@interface ORRealRangeI : ORObject<ORRealRange,NSCopying>
+-(id<ORRealRange>)init:(ORDouble) low up:(ORDouble)up;
+-(ORDouble)low;
+-(ORDouble)up;
 -(ORBool)isDefined;
--(ORBool)inRange:(ORFloat)e;
+-(ORBool)inRange:(ORDouble)e;
 -(NSString*)description;
 @end

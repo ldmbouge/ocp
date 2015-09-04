@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
          [cp solve:^{
             //NSLog(@"Concrete model;%@",[[cp engine] model]);
             [cp labelHeuristic:h];
-            //[cp labelArray:xy orderedBy:^ORFloat(ORInt i) { return [xy[i] domsize];}];
+            //[cp labelArray:xy orderedBy:^ORDouble(ORInt i) { return [xy[i] domsize];}];
             id<ORIntArray> solX = [ORFactory intArray:model range:[x range] with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
             id<ORIntArray> solY = [ORFactory intArray:model range:[x range] with:^ORInt(ORInt i) { return [cp intValue:y[i]];}];
             NSLog(@"Sol: %@ -- %@",solX,solY);

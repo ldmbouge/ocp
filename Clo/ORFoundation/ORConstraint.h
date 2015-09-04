@@ -22,7 +22,7 @@
 @protocol ORVar;
 @protocol ORIntVar;
 @protocol ORBitVar;
-@protocol ORFloatVar;
+@protocol ORRealVar;
 @protocol OREngine;
 @protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
@@ -82,9 +82,9 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
-@protocol  ORFloatEqualc <ORConstraint>
--(id<ORFloatVar>) left;
--(ORFloat) cst;
+@protocol  ORRealEqualc <ORConstraint>
+-(id<ORRealVar>) left;
+-(ORDouble) cst;
 @end
 
 @protocol  ORNEqualc <ORConstraint>
@@ -213,10 +213,10 @@ enum ORGroupType {
 -(id<ORIntVar>) res;
 @end
 
-@protocol ORFloatElementCst <ORConstraint>
--(id<ORFloatArray>) array;
+@protocol ORRealElementCst <ORConstraint>
+-(id<ORDoubleArray>) array;
 -(id<ORIntVar>)   idx;
--(id<ORFloatVar>)   res;
+-(id<ORRealVar>)   res;
 @end
 
 @protocol ORImplyEqualc <ORConstraint>
@@ -337,16 +337,16 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
-@protocol ORFloatLinearEq <ORConstraint>
+@protocol ORRealLinearEq <ORConstraint>
 -(id<ORVarArray>) vars;
--(id<ORFloatArray>) coefs;
--(ORFloat) cst;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
 @end
 
-@protocol ORFloatLinearLeq <ORConstraint>
+@protocol ORRealLinearLeq <ORConstraint>
 -(id<ORVarArray>) vars;
--(id<ORFloatArray>) coefs;
--(ORFloat) cst;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
 @end
 
 @protocol ORAlldifferent <ORConstraint>
@@ -442,18 +442,18 @@ enum ORGroupType {
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
 -(NSComparisonResult) compare: (id<ORObjectiveValue>) other;
 @optional-(ORInt) intValue;
--(ORFloat) floatValue;
+-(ORDouble) floatValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
 -(ORInt) value;
 -(ORInt) intValue;
--(ORFloat)floatValue;
+-(ORDouble)floatValue;
 @end
 
 @protocol ORObjectiveValueFloat <ORObjectiveValue>
--(ORFloat) value;
--(ORFloat)floatValue;
+-(ORDouble) value;
+-(ORDouble)floatValue;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
@@ -470,7 +470,7 @@ enum ORGroupType {
 
 @protocol ORObjectiveFunctionLinear <ORObjectiveFunction>
 -(id<ORVarArray>) array;
--(id<ORFloatArray>) coef;
+-(id<ORDoubleArray>) coef;
 @end
 
 @protocol ORSearchObjectiveFunction <NSObject,ORObjectiveFunction>

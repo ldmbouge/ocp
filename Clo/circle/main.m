@@ -20,9 +20,9 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         id<ORFloatVarArray> a = [ORFactory floatVarArray:model range:RANGE(model,0,1) low:-1000.0 up:1000.0];
-         id<ORFloatVar> x = a[0];
-         id<ORFloatVar> y = a[1];
+         id<ORRealVarArray> a = [ORFactory floatVarArray:model range:RANGE(model,0,1) low:-1000.0 up:1000.0];
+         id<ORRealVar> x = a[0];
+         id<ORRealVar> y = a[1];
          [model add:[[[x square] plus:[y square]] eq:@1]];
          [model add:[[x square] eq:y]];
          
@@ -35,13 +35,13 @@ int main(int argc, const char * argv[])
             NSLog(@"MODEL is: %@",cp.engine.model);
             id<ORSelect> select = [ORFactory select: cp
                                               range: a.range
-                                           suchThat: ^bool(ORInt i)   { return ![cp bound:a[i]]; }
-                                          orderedBy:^ORFloat(ORInt i) { return [cp domwidth:a[i]];} ];
+                                           suchThat: ^bool(ORInt i)    { return ![cp bound:a[i]]; }
+                                          orderedBy:^ORDouble(ORInt i) { return [cp domwidth:a[i]];} ];
             do {
                ORInt i = [select min];
                if (i == MAXINT)
                   break;               
-               ORFloat mid = [cp floatMin:a[i]] + ([cp floatMax:a[i]] - [cp floatMin:a[i]])/2.0;
+               ORDouble mid = [cp floatMin:a[i]] + ([cp floatMax:a[i]] - [cp floatMin:a[i]])/2.0;
                [cp try:^{
                   [cp floatLthen:a[i] with:mid];
                } alt:^{
