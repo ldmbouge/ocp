@@ -39,6 +39,7 @@ typedef int ORInt;
 typedef unsigned int ORUInt;
 typedef long long ORLong;
 typedef unsigned long long ORULong;
+typedef float  ORFloat;
 typedef double ORDouble;
 typedef BOOL   ORBool;
 

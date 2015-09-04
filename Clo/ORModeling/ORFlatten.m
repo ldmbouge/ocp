@@ -230,7 +230,6 @@
    id<ORTracker> t = [_into tracker];
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
-   [_into setCurrent:cstr];
    for(ORInt b = brlow; b <= brup; b++) { /*note:RangeConsistency*/
       [ORFlatten flattenExpression: [Sum(t,i,IR,[[item[i] eq: @(b) track:t] mul:@([itemSize at:i]) track:t]) eq: binSize[b]]
                               into: _into];
@@ -267,9 +266,7 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [_into setCurrent:cstr];
    [ORFlatten flattenExpression:[cstr expr] into:_into];
-   [_into setCurrent:nil];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
