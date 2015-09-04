@@ -71,7 +71,7 @@
 @end
 
 @implementation CPRealEquationBC
--(id)init:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c   // sum(i in S) c_i * x_i == c  [[ saved constant is -c ]]
+-(id)init:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c   // sum(i in S) c_i * x_i == c  [[ saved constant is -c ]]
 {
    self = [super initCPCoreConstraint:(id)[x[x.range.low] engine]];
    _x = x;
@@ -102,7 +102,7 @@
       }];
       changed = NO;
       for(ORInt i=_x.low;i <= _x.up;i++) {
-         ORFloat ci = [_coefs at:i];
+         ORDouble ci = [_coefs at:i];
          CPRealVarI* xi = (id)_x[i];
          ORInterval xii  = xi.bounds;
          ORInterval TMP = ORISubPointwise(S, ORIMul(xii, ci > 0 ? createORI1(ci) : ORISwap(createORI1(ci))));
@@ -138,7 +138,7 @@
 @end
 
 @implementation CPRealINEquationBC
--(id)init:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c   // sum(i in S) c_i * x_i <= c  [[ saved constant is -c ]]
+-(id)init:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c   // sum(i in S) c_i * x_i <= c  [[ saved constant is -c ]]
 {
    self = [super initCPCoreConstraint:(id)[x[x.range.low] engine]];
    _x = x;
@@ -150,7 +150,7 @@
 {
    [self propagate];
    [_x enumerateWith:^(CPRealVarI* obj, int k) {
-      ORFloat ck = [_coefs at:k];
+      ORDouble ck = [_coefs at:k];
       if (ck > 0) {
          if (![obj bound])
             [obj whenChangeMinPropagate:self];
@@ -173,7 +173,7 @@
          failNow();
       changed = NO;
       for(ORInt i=_x.low;i <= _x.up;i++) {
-         ORFloat ci = [_coefs at:i];
+         ORDouble ci = [_coefs at:i];
          CPRealVarI* xi = (id)_x[i];
          ORInterval xii  = xi.bounds;
          ORInterval TMP = ORISubPointwise(S, ORIMul(xii, ci > 0 ? createORI1(ci) : ORISwap(createORI1(ci))));
@@ -228,7 +228,7 @@
 @end
 
 @implementation CPRealEqualc
--(id) init:(CPRealVarI*)x and:(ORFloat)c
+-(id) init:(CPRealVarI*)x and:(ORDouble)c
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -258,7 +258,7 @@
 
 typedef struct CPRealEltRecordTag {
    ORInt   _idx;
-   ORFloat _val;
+   ORDouble _val;
 } CPRealEltRecord;
 
 @implementation CPRealElementCstBC {
@@ -268,7 +268,7 @@ typedef struct CPRealEltRecordTag {
    TRInt              _to;
 }
 
--(id) init: (CPIntVar*) x indexCstArray:(id<ORFloatArray>) c equal:(CPRealVarI*)y
+-(id) init: (CPIntVar*) x indexCstArray:(id<ORDoubleArray>) c equal:(CPRealVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -312,8 +312,8 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
       for(ORInt k=cLow;k <= cUp;k++)
          _tab[k - cLow] = (CPRealEltRecord){k,[_c at:k]};
       qsort(_tab, _sz,sizeof(CPRealEltRecord),(int(*)(const void*,const void*)) &compareCPRealEltRecords);
-      ORFloat ybmin = [_y min];
-      ORFloat ybmax = [_y max];
+      ORDouble ybmin = [_y min];
+      ORDouble ybmax = [_y max];
       _from = makeTRInt(_trail, -1);
       _to   = makeTRInt(_trail, -1);
       for(ORInt k=0;k < _sz;k++) {
@@ -356,8 +356,8 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
       }
       else
          failNow();
-      ORFloat ybmin = [_y min];
-      ORFloat ybmax = [_y max];
+      ORDouble ybmin = [_y min];
+      ORDouble ybmax = [_y max];
       k = _from._val;
       while (k < _sz && _tab[k]._val < ybmin)
          removeDom(_x, _tab[k++]._idx);
@@ -387,7 +387,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 @implementation CPRealVarMinimize
 {
    CPRealVarI*  _x;
-   ORFloat        _primalBound;
+   ORDouble        _primalBound;
 }
 -(id) init: (CPRealVarI*) x
 {
@@ -417,7 +417,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(void) updatePrimalBound
 {
-   ORFloat bound = [_x min];
+   ORDouble bound = [_x min];
    @synchronized(self) {
       if (bound < _primalBound)
          _primalBound = bound;
@@ -435,11 +435,11 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
    @synchronized(self) {
       
       if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-         ORFloat b = [((id<ORObjectiveValueInt>) newBound) value];
+         ORDouble b = [((id<ORObjectiveValueInt>) newBound) value];
          [_x updateMin: b];
       }
       else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-         ORFloat b = [((id<ORObjectiveValueFloat>) newBound) value];
+         ORDouble b = [((id<ORObjectiveValueFloat>) newBound) value];
          [_x updateMin: b];
       }
    }
@@ -472,7 +472,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 
 @implementation CPRealVarMaximize {
    CPRealVarI*  _x;
-   ORFloat       _primalBound;
+   ORDouble       _primalBound;
 }
 -(id) init: (CPRealVarI*) x
 {
@@ -506,7 +506,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(void) updatePrimalBound
 {
-   ORFloat bound = [_x max];
+   ORDouble bound = [_x max];
    if (bound > _primalBound)
       _primalBound = bound;
    NSLog(@"primal bound: %f",_primalBound);
@@ -519,11 +519,11 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 -(void) tightenWithDualBound: (id) newBound
 {
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
-      ORFloat b = [((id<ORObjectiveValueInt>) newBound) value];
+      ORDouble b = [((id<ORObjectiveValueInt>) newBound) value];
       [_x updateMax: b];
    }
    else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-      ORFloat b = [((id<ORObjectiveValueFloat>) newBound) value];
+      ORDouble b = [((id<ORObjectiveValueFloat>) newBound) value];
       [_x updateMax: b];
    }
 }

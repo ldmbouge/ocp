@@ -44,7 +44,7 @@ int main_alldiff(int argc, const char * argv[])
           
       [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+          [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
           @synchronized(cp) {
              nbSol++;
           }
@@ -95,7 +95,7 @@ int main_neq(int argc, const char * argv[])
       //id* gamma = [cp gamma];
       [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+          [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
 /*          [cp forall:x.range orderedBy:^ORInt(ORInt i) {
              return [cp domsize:x[i]];
           } do:^(ORInt i) {
@@ -116,7 +116,7 @@ int main_neq(int argc, const char * argv[])
                 NSLog(@"x6 = %@",gamma[x[6].getId]);
              }
           }];*/
-          //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+          //[cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
           id<ORIntArray> sa = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt k) {
              return [cp intValue:x[k]];
           }];

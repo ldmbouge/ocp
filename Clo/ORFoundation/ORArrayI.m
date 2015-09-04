@@ -215,24 +215,24 @@
 @end
 
 /**********************************************************************************************/
-/*                          ORFloatArray                                                      */
+/*                          ORDoubleArray                                                     */
 /**********************************************************************************************/
 
-@implementation ORFloatArrayI
+@implementation ORDoubleArrayI
 {
     id<ORTracker> _tracker;
-    ORFloat*        _array;
+    ORDouble*        _array;
     ORInt             _low;
     ORInt              _up;
     ORInt              _nb;
     id<ORIntRange>  _range;
 }
 
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORFloat) value
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORDouble) value
 {
     self = [super init];
     _tracker = tracker;
-    _array = malloc(nb * sizeof(ORFloat));
+    _array = malloc(nb * sizeof(ORDouble));
     _low = 0;
     _up = nb-1;
     _nb = nb;
@@ -241,11 +241,11 @@
         _array[i] = value;
     return self;
 }
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb with:(ORFloat(^)(ORInt)) clo
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with:(ORDouble(^)(ORInt)) clo
 {
     self = [super init];
     _tracker = tracker;
-    _array = malloc(nb * sizeof(ORFloat));
+    _array = malloc(nb * sizeof(ORDouble));
     _low = 0;
     _up = nb-1;
     _nb = nb;
@@ -254,7 +254,7 @@
         _array[i] = clo(i);
     return self;
 }
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORFloat) value
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORDouble) value
 {
     self = [super init];
     _tracker = tracker;
@@ -262,13 +262,13 @@
     _up = range.up;
     _nb = _up - _low + 1;
     _range = range;
-    _array = malloc(_nb * sizeof(ORFloat));
+    _array = malloc(_nb * sizeof(ORDouble));
     _array -= _low;
     for (ORInt i=_low ; i <= _up; i++)
         _array[i] = value;
     return self;
 }
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORDouble(^)(ORInt)) clo
 {
     self = [super init];
     _tracker = tracker;
@@ -276,13 +276,13 @@
     _up = range.up;
     _nb = _up - _low + 1;
     _range = range;
-    _array = malloc(_nb * sizeof(ORFloat));
+    _array = malloc(_nb * sizeof(ORDouble));
     _array -= _low;
     for (ORInt i=_low ; i <= _up; i++)
         _array[i] = clo(i);
     return self;
 }
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORFloat(^)(ORInt,ORInt)) clo
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORDouble(^)(ORInt,ORInt)) clo
 {
     self = [super init];
     _tracker = tracker;
@@ -290,7 +290,7 @@
     _low = 0;
     _up = _nb-1;
     _range = [ORFactory intRange: tracker low: _low up: _up];
-    _array = malloc(_nb * sizeof(ORFloat));
+    _array = malloc(_nb * sizeof(ORDouble));
     int k = 0;
     for (ORInt i=r1.low ; i <= r1.up; i++)
         for (ORInt j=r2.low ; j <= r2.up; j++)
@@ -308,19 +308,19 @@
     [super dealloc];
 }
 
--(ORFloat) at: (ORInt) value
+-(ORDouble) at: (ORInt) value
 {
     if (value < _low || value > _up)
-        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORFloatArrayElement"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORDoubleArrayElement"];
     return _array[value];
 }
--(void) set: (ORFloat) value at:(ORInt)idx
+-(void) set: (ORDouble) value at:(ORInt)idx
 {
     if (idx < _low || idx > _up)
-        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORFloatArrayElement"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORDoubleArrayElement"];
     _array[idx] = value;
 }
--(void) enumerateWith: (void(^)(ORFloat obj,int idx)) block
+-(void) enumerateWith: (void(^)(ORDouble obj,int idx)) block
 {
     for(ORInt i=_low;i<=_up;i++)
         block(_array[i],i);
@@ -337,14 +337,14 @@
 {
    return [ORFactory elt: _tracker floatArray: self index: idx];
 }
--(ORFloat) max {
-    ORFloat v = _array[0];
+-(ORDouble) max {
+    ORDouble v = _array[0];
     for(int i = 1; i < _nb; i++)
         if(_array[i] > v) v = _array[i];
     return v;
 }
--(ORFloat) min {
-    ORFloat v = _array[0];
+-(ORDouble) min {
+    ORDouble v = _array[0];
     for(int i = 1; i < _nb; i++)
         if(_array[i] < v) v = _array[i];
     return v;
@@ -376,7 +376,7 @@
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
     for(ORInt i=_low;i<=_up;i++)
-        [aCoder encodeValueOfObjCType:@encode(ORFloat) at:_array+i];
+        [aCoder encodeValueOfObjCType:@encode(ORDouble) at:_array+i];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -385,10 +385,10 @@
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-    _array =  malloc(sizeof(ORFloat)*_nb);
+    _array =  malloc(sizeof(ORDouble)*_nb);
     _array -= _low;
     for(ORInt i=_low;i<=_up;i++)
-        [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
+        [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:_array+i];
     return self;
 }
 -(void) visit: (ORVisitor*) v

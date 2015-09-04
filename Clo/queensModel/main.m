@@ -40,7 +40,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram: model annotation: annotate];
       [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]]; }];
+          [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize:x[i]]; }];
           for(int i = 0; i < n; i++)
              printf("%d ",[cp intValue:x[i]]);
           printf("\n");

@@ -67,7 +67,7 @@ void splitUpFF(id<CPProgram> cp,id<ORIntVarArray> vars)
       found = NO;
       id<ORSelect> sel = [ORFactory select:cp range:V
                                   suchThat:^bool(ORInt i)    { return ![cp bound:vars[i]];}
-                                 orderedBy:^ORFloat(ORInt i) { return [cp domsize:vars[i]];}];
+                                 orderedBy:^ORDouble(ORInt i) { return [cp domsize:vars[i]];}];
       ORInt si = [sel min];
       if (si != MAXINT) {
          found = YES;

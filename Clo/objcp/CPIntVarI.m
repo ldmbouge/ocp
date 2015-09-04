@@ -74,7 +74,7 @@ typedef struct  {
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value;
 }
@@ -224,15 +224,15 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method flatDomain not defined"];
    return NULL;
 }
--(ORFloat) floatMin
+-(ORDouble) floatMin
 {
    return [self min];
 }
--(ORFloat) floatMax
+-(ORDouble) floatMax
 {
    return [self max];
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return [self value];
 }
@@ -518,15 +518,15 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return _value;
 }
--(ORFloat) floatMin
+-(ORDouble) floatMin
 {
    return _value;
 }
--(ORFloat) floatMax
+-(ORDouble) floatMax
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value; 
 }
@@ -780,15 +780,15 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       return 0;
    }
 }
--(ORFloat) floatMin
+-(ORDouble) floatMin
 {
    return [_dom min];
 }
--(ORFloat) floatMax
+-(ORDouble) floatMax
 {
    return [_dom max];
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    if ([_dom bound])
       return [_dom min];

@@ -44,11 +44,11 @@
 -(void)enumerateWithBlock:(ORInt2Void)block;
 @end
 
-@protocol ORFloatRange
--(ORFloat)low;
--(ORFloat)up;
+@protocol ORRealRange
+-(ORDouble)low;
+-(ORDouble)up;
 -(ORBool)isDefined;
--(ORBool)inRange:(ORFloat)e;
+-(ORBool)inRange:(ORDouble)e;
 -(NSString*)description;
 @end
 

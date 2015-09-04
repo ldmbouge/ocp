@@ -36,8 +36,8 @@ PORTABLE_BEGIN
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
         onMutables:(void(^)(id<ORObject>))doMutables
@@ -78,8 +78,8 @@ PORTABLE_BEGIN
 -(id<ORObjectiveFunction>) maximizeVar:(id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 -(id<ORModelMappings>) modelMappings;
 -(void)setCurrent:(PNULLABLE id<ORConstraint>)cstr;
 @end

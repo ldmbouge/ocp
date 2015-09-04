@@ -63,9 +63,9 @@ enum CPVarClass {
 @end
 
 @protocol CPNumVar <CPVar,CPNumVarSubscriber>
--(ORFloat) floatMin;
--(ORFloat) floatMax;
--(ORFloat) floatValue;
+-(ORDouble) floatMin;
+-(ORDouble) floatMax;
+-(ORDouble) floatValue;
 @end
 
 @protocol CPIntVarSubscriber <CPNumVarSubscriber>
@@ -142,17 +142,17 @@ enum CPVarClass {
 @end
 
 @protocol CPRealVar<CPVar>
--(ORFloat) min;
--(ORFloat) max;
--(ORFloat) value;
+-(ORDouble) min;
+-(ORDouble) max;
+-(ORDouble) value;
 -(ORInterval) bounds;
--(ORBool) member:(ORFloat)v;
+-(ORBool) member:(ORDouble)v;
 -(ORBool) bound;
--(ORFloat) domwidth;
--(void) bind:(ORFloat) val;
--(void) updateMin:(ORFloat) newMin;
--(void) updateMax:(ORFloat) newMax;
--(void) assignRelaxationValue: (ORFloat) f;
+-(ORDouble) domwidth;
+-(void) bind:(ORDouble) val;
+-(void) updateMin:(ORDouble) newMin;
+-(void) updateMax:(ORDouble) newMax;
+-(void) assignRelaxationValue: (ORDouble) f;
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 

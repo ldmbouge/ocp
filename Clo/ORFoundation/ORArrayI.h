@@ -43,25 +43,25 @@
 -(int*)base;
 @end
 
-@interface ORFloatArrayI : ORObject<NSCoding,ORFloatArray>
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORFloat) v;
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORFloat(^)(ORInt)) clo;
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORFloat) v;
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (ORFloat(^)(ORInt)) clo;
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORFloat(^)(ORInt,ORInt)) clo;
+@interface ORDoubleArrayI : ORObject<NSCoding,ORDoubleArray>
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORDouble) v;
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with: (ORDouble(^)(ORInt)) clo;
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORDouble) v;
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (ORDouble(^)(ORInt)) clo;
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORDouble(^)(ORInt,ORInt)) clo;
 -(void) dealloc;
--(ORFloat) at: (ORInt) value;
--(void) set: (ORFloat) value at:(ORInt)idx;
+-(ORDouble) at: (ORInt) value;
+-(void) set: (ORDouble) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
--(ORFloat) max;
--(ORFloat) min;
+-(ORDouble) max;
+-(ORDouble) min;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
+-(void)enumerateWith:(void(^)(ORDouble obj,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end

@@ -65,7 +65,7 @@
 -(void) visitIntRange:(id<ORIntRange>) v
 {
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitFloatRange:(id<ORRealRange>)v
 {}
 
 -(void) visitIntVar: (id<ORIntVar>) v
@@ -74,7 +74,7 @@
       _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up]];
 }
 
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitFloatVar: (id<ORRealVar>) v
 {
    if (_gamma[v.getId] == NULL) {
       MIPVariableI* cv;
@@ -115,7 +115,7 @@
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
--(void) visitFloatArray:(id<ORFloatArray>) v
+-(void) visitFloatArray:(id<ORDoubleArray>) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
@@ -138,7 +138,7 @@
 {
    if (_gamma[obj.getId] == NULL) {
       id<ORVarArray> x = [obj array];
-      id<ORFloatArray> a = [obj coef];
+      id<ORDoubleArray> a = [obj coef];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a];
@@ -150,7 +150,7 @@
 {
    if (_gamma[obj.getId] == NULL) {
       id<ORVarArray> x = [obj array];
-      id<ORFloatArray> a = [obj coef];
+      id<ORDoubleArray> a = [obj coef];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a];
@@ -162,7 +162,7 @@
 {
    if (_gamma[c.getId]==NULL) {
       MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
-      ORFloat    coef[2] = { [c coefLeft],- [c coefRight]};
+      ORDouble    coef[2] = { [c coefLeft],- [c coefRight]};
       MIPConstraintI* concreteCstr = [_MIPsolver createLEQ:2 var:x coef:coef rhs:[c cst]];
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint:concreteCstr];
@@ -174,10 +174,10 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> fa = [ORFactory floatArray:[a tracker] range:[a range] with:^ORFloat(ORInt k) {
+      id<ORDoubleArray> fa = [ORFactory floatArray:[a tracker] range:[a range] with:^ORDouble(ORInt k) {
          return [a at:k];
       }];
-      ORFloat cst = [c cst];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: fa cst: -cst];
@@ -190,7 +190,7 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> fa = [ORFactory floatArray:_program range:[a range] with:^ORFloat(ORInt k) {
+      id<ORDoubleArray> fa = [ORFactory floatArray:_program range:[a range] with:^ORDouble(ORInt k) {
          return [a at:k];
       }];
       ORInt cst = [c cst];
@@ -205,19 +205,19 @@
 {
    if (_gamma[c.getId] == NULL) {
       id<MIPVariableArray> x = [self concreteArray:[c vars]];
-      id<ORFloatArray> fa = [ORFactory floatArray:_program range:[x range] value:1];
+      id<ORDoubleArray> fa = [ORFactory floatArray:_program range:[x range] value:1];
       MIPConstraintI* concreteCstr = [_MIPsolver createEQ:x coef:fa cst:-[c cst]];
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint:concreteCstr];
    }
 }
 
--(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
+-(void) visitFloatLinearEq: (id<ORRealLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
-      ORFloat cst = [c cst];
+      id<ORDoubleArray> a = [c coefs];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: a cst: -cst];
@@ -225,11 +225,11 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
--(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
+-(void) visitFloatLinearLeq: (id<ORRealLinearLeq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
+      id<ORDoubleArray> a = [c coefs];
       ORInt cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
@@ -256,7 +256,7 @@
       _gamma[e.getId] = [ORFactory mutableFloat: _MIPsolver value: [e initialValue]];
 }
 
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory float: _MIPsolver value: [e floatValue]];

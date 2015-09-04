@@ -63,8 +63,8 @@ int main(int argc, const char * argv[])
          __block ORInt nbSolutions = 0;
          [cp solveAll:^{
             NSLog(@"Start...");
-            [cp labelArray:husband orderedBy:^ORFloat(ORInt i) { return [cp domsize:husband[i]];}];
-            [cp labelArray:wife orderedBy:^ORFloat(ORInt i) { return [cp domsize:wife[i]];}];
+            [cp labelArray:husband orderedBy:^ORDouble(ORInt i) { return [cp domsize:husband[i]];}];
+            [cp labelArray:wife orderedBy:^ORDouble(ORInt i) { return [cp domsize:wife[i]];}];
             nbSolutions++;
             NSLog(@"Solution: H:%@",[cp gamma][husband.getId]);
             NSLog(@"Solution: W:%@",[cp gamma][wife.getId]);

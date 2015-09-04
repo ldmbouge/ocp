@@ -243,9 +243,9 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     };
     [_eventList addEvent:[wrap copy]];
 }
--(void) dispatchWithFloatArray:(id<ORFloatArray>)arr
+-(void) dispatchWithFloatArray:(id<ORDoubleArray>)arr
 {
-    ORFloatArray2Void tClo = (ORFloatArray2Void)_closure;
+    ORDoubleArray2Void tClo = (ORDoubleArray2Void)_closure;
     ORClosure wrap = ^{
         tClo(arr);
     };
@@ -410,7 +410,7 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     }
 }
 
--(void) notifyWithFloatArray:(id<ORFloatArray>)arr
+-(void) notifyWithFloatArray:(id<ORDoubleArray>)arr
 {
     @synchronized(self) {
         for(id event in _whenList)

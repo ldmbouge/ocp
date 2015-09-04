@@ -20,5 +20,5 @@
 
 @protocol ORSelector<NSObject>
 -(void)commit;
--(void)neighbor:(ORFloat)v do:(ORClosure)block;
+-(void)neighbor:(ORDouble)v do:(ORClosure)block;
 @end

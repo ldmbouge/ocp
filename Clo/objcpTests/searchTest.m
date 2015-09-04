@@ -32,7 +32,7 @@
    [cp solveAll:^{
       NSLog(@"START: %@",x);
       [cp forall:RANGE(m,1,2) suchThat:^bool(ORInt i) { return YES;} orderedBy:nil do:^(ORInt i) {
-         [cp tryall:D suchThat:^bool(ORInt v) { return YES;} orderedBy:^ORFloat(ORInt v) { return [z at:i :v];} in:^(ORInt v) {
+         [cp tryall:D suchThat:^bool(ORInt v) { return YES;} orderedBy:^ORDouble(ORInt v) { return [z at:i :v];} in:^(ORInt v) {
             [cp label:x[i] with:v];
          } onFailure:^(ORInt v) {
             [cp diff:x[i] with:v];

@@ -196,7 +196,7 @@ int mainBasicLNS(int argc, const char * argv[])
       [cp solve: ^{
          [cp forall: Size orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]]; } do: ^(ORInt i) {
             id<ORTaskVarArray> t = disjunctive[i].taskVars;
-            [cp sequence: disjunctive[i].successors by: ^ORFloat(ORInt i) { return [cp est: t[i]]; } then: ^ORFloat(ORInt i) { return [cp ect: t[i]];}];
+            [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp est: t[i]]; } then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
          }];
          [cp label: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
@@ -209,7 +209,7 @@ int mainBasicLNS(int argc, const char * argv[])
                [cp limitFailures: 500 in: ^{
                   [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]]; } do: ^(ORInt i) {
                      id<ORTaskVarArray> t = disjunctive[i].taskVars;
-                     [cp sequence: disjunctive[i].successors by: ^ORFloat(ORInt i) { return [cp est: t[i]]; } then: ^ORFloat(ORInt i) { return [cp ect: t[i]];}];
+                     [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp est: t[i]]; } then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
                   }];
                   [cp label: makespan];
                   printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
@@ -322,7 +322,7 @@ int mainSubpathLNS(int argc, const char * argv[])
                [cp limitFailures: 3 *nbJobs * nbMachines in: ^{
                   [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 10 * [cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
                      id<ORTaskVarArray> t = disjunctive[i].taskVars;
-                     [cp sequence: disjunctive[i].successors by: ^ORFloat(ORInt i) { return [cp ect: t[i]]; } then: ^ORFloat(ORInt i) { return [cp est: t[i]];}];
+                     [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
                   }];
                   [cp label: makespan];
                   printf("\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
@@ -437,8 +437,8 @@ int mainPureCP(int argc, const char * argv[])
          [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
             id<ORTaskVarArray> t = disjunctive[i].taskVars;
             [cp sequence: disjunctive[i].successors
-                      by: ^ORFloat(ORInt i) { return [cp est: t[i]]; }
-                    then: ^ORFloat(ORInt i) { return [cp ect: t[i]];}];
+                      by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
+                    then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
          }];
          [cp label: makespan];
          printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);

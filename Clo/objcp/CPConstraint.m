@@ -571,32 +571,32 @@
 }
 @end
 
-@implementation CPFactory (ORFloat)
+@implementation CPFactory (ORReal)
 +(id<CPConstraint>) floatSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c
 {
    id<CPConstraint> o = [[CPRealSquareBC alloc] initCPRealSquareBC:z equalSquare:x];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
 {
    id<CPConstraint> o = [[CPRealEquationBC alloc] init:x coef:coefs eqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c
 {
    id<CPConstraint> o = [[CPRealINEquationBC alloc] init:x coef:coefs leqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c
++(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORDouble) c
 {
    id<CPConstraint> o = [[CPRealEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n
++(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n
 {
    id<CPConstraint> o = nil;
    o = [[CPRealElementCstBC alloc] init:x indexCstArray:c equal:y];

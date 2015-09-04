@@ -73,7 +73,7 @@ int main(int argc, const char * argv[])
             //NSLog(@"Start... %@",[[cp engine] model]);
             id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
             //[cp labelHeuristic:h];
-            [cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [cp domsize:flat[i]];}];
+            [cp labelArray:flat orderedBy:^ORDouble(ORInt i) { return [cp domsize:flat[i]];}];
             //[cp labelArray:[ORFactory flattenMatrix:M]];
             NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);
             show(cp,M);

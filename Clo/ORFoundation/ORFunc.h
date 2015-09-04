@@ -11,5 +11,5 @@
 
 #import <ORFoundation/ORData.h>
 
-ORFloat frac(ORFloat f);
+ORDouble frac(ORDouble f);
 

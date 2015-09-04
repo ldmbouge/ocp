@@ -2337,16 +2337,16 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
             }];
          }
          if (getFXInt(&_updated[i],_trail) == 0) {
-            ORFloat omin = _min[i]._val;
-            ORFloat omax = _max[i]._val;
+            ORDouble omin = _min[i]._val;
+            ORDouble omax = _max[i]._val;
             [_trail trailClosure: ^{
                [_relaxation updateLowerBound: _mv[i] with: omin];
                [_relaxation updateUpperBound: _mv[i] with: omax];
             }];
             incrFXInt(&_updated[i],_trail);
          }
-         ORFloat lb = [_cv[i] floatMin];
-         ORFloat ub = [_cv[i] floatMax];
+         ORDouble lb = [_cv[i] floatMin];
+         ORDouble ub = [_cv[i] floatMax];
          assignTRDouble(&_min[i],lb,_trail);
          assignTRDouble(&_max[i],ub,_trail);
          [_relaxation updateLowerBound: _mv[i] with: lb];

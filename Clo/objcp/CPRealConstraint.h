@@ -31,10 +31,10 @@
 
 @interface CPRealEquationBC : CPCoreConstraint {
    id<CPRealVarArray> _x;
-   id<ORFloatArray>    _coefs;
-   ORFloat             _c;
+   id<ORDoubleArray>    _coefs;
+   ORDouble             _c;
 }
--(id)init:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
+-(id)init:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -42,10 +42,10 @@
 
 @interface CPRealINEquationBC : CPCoreConstraint {
    id<CPRealVarArray> _x;
-   id<ORFloatArray>    _coefs;
-   ORFloat             _c;
+   id<ORDoubleArray>    _coefs;
+   ORDouble             _c;
 }
--(id)init:(id<CPRealVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
+-(id)init:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -53,9 +53,9 @@
 
 @interface CPRealEqualc : CPCoreConstraint {
    CPRealVarI* _x;
-   ORFloat      _c;
+   ORDouble      _c;
 }
--(id) init:(id)x and:(ORFloat)c;
+-(id) init:(id)x and:(ORDouble)c;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -65,9 +65,9 @@
 @private
    CPIntVar*       _x;
    CPRealVarI*     _y;
-   id<ORFloatArray> _c;
+   id<ORDoubleArray> _c;
 }
--(id) init: (id) x indexCstArray:(id<ORFloatArray>) c equal:(id)y;
+-(id) init: (id) x indexCstArray:(id<ORDoubleArray>) c equal:(id)y;
 -(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -82,7 +82,7 @@
 -(id<ORObjectiveValue>) primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
--(id<ORFloatVar>) var;
+-(id<ORRealVar>) var;
 -(id<ORObjectiveValue>)value;
 @end
 
@@ -95,7 +95,7 @@
 -(id<ORObjectiveValue>) primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
--(id<ORFloatVar>) var;
+-(id<ORRealVar>) var;
 -(id<ORObjectiveValue>)value;
 @end
 

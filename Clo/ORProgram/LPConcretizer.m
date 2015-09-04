@@ -63,14 +63,14 @@
 -(void) visitIntRange:(id<ORIntRange>) v
 {
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitFloatRange:(id<ORRealRange>)v
 {}
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "no concretization of integer variables in linear program"];
 }
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitFloatVar: (id<ORRealVar>) v
 {
    if (_gamma[v.getId] == NULL) {
       LPVariableI* cv;
@@ -98,7 +98,7 @@
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
--(void) visitFloatArray:(id<ORFloatArray>) v
+-(void) visitFloatArray:(id<ORDoubleArray>) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
@@ -121,7 +121,7 @@
 {
    if (_gamma[obj.getId] == NULL) {
       id<ORVarArray> x = [obj array];
-      id<ORFloatArray> a = [obj coef];
+      id<ORDoubleArray> a = [obj coef];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
       LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: dx coef: a];
@@ -133,7 +133,7 @@
 {
    if (_gamma[obj.getId] == NULL) {
       id<ORVarArray> x = [obj array];
-      id<ORFloatArray> a = [obj coef];
+      id<ORDoubleArray> a = [obj coef];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId]; 
       LPObjectiveI* concreteObj = [_lpsolver createObjectiveMaximize: dx coef: a];
@@ -142,12 +142,12 @@
    }
 }
 
--(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
+-(void) visitFloatLinearEq: (id<ORRealLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
-      ORFloat cst = [c cst];
+      id<ORDoubleArray> a = [c coefs];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];    
       LPConstraintI* concreteCstr = [_lpsolver createEQ: dx coef: a cst: -cst];
@@ -155,11 +155,11 @@
       [_lpsolver postConstraint: concreteCstr];
    }
 }
--(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
+-(void) visitFloatLinearLeq: (id<ORRealLinearLeq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
+      id<ORDoubleArray> a = [c coefs];
       ORInt cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];     
@@ -182,7 +182,7 @@
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory mutableFloat: _lpsolver value: [e initialValue]];
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory float: _lpsolver value: [e floatValue]];
@@ -260,7 +260,7 @@
 -(void) visitIntRange:(id<ORIntRange>) v
 {
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitFloatRange:(id<ORRealRange>)v
 {}
 -(void) visitIntVar: (id<ORIntVar>) v
 {
@@ -270,7 +270,7 @@
       _gamma[v.getId] = cv;
    }
 }
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitFloatVar: (id<ORRealVar>) v
 {
    if (_gamma[v.getId] == NULL) {
       LPVariableI* cv;
@@ -310,7 +310,7 @@
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
--(void) visitFloatArray:(id<ORFloatArray>) v
+-(void) visitFloatArray:(id<ORDoubleArray>) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
@@ -333,7 +333,7 @@
 {
    if (_gamma[obj.getId] == NULL) {
       id<ORVarArray> x = [obj array];
-      id<ORFloatArray> a = [obj coef];
+      id<ORDoubleArray> a = [obj coef];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
       LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: dx coef: a];
@@ -345,7 +345,7 @@
 {
    if (_gamma[obj.getId] == NULL) {
       id<ORVarArray> x = [obj array];
-      id<ORFloatArray> a = [obj coef];
+      id<ORDoubleArray> a = [obj coef];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
       LPObjectiveI* concreteObj = [_lpsolver createObjectiveMaximize: dx coef: a];
@@ -359,8 +359,8 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORFloat(ORInt i) { return [a at: i]; }  ];
-      ORFloat cst = [c cst];
+      id<ORDoubleArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORDouble(ORInt i) { return [a at: i]; }  ];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
       LPConstraintI* concreteCstr = [_lpsolver createEQ: dx coef: af cst: -cst];
@@ -374,8 +374,8 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORFloat(ORInt i) { return [a at: i]; }];
-      ORFloat cst = [c cst];
+      id<ORDoubleArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORDouble(ORInt i) { return [a at: i]; }];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
       LPConstraintI* concreteCstr = [_lpsolver createLEQ: dx coef: af cst: -cst];
@@ -384,12 +384,12 @@
    }
 }
 
--(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
+-(void) visitFloatLinearEq: (id<ORRealLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
-      ORFloat cst = [c cst];
+      id<ORDoubleArray> a = [c coefs];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
       LPConstraintI* concreteCstr = [_lpsolver createEQ: dx coef: a cst: -cst];
@@ -397,12 +397,12 @@
       [_lpsolver postConstraint: concreteCstr];
    }
 }
--(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
+-(void) visitFloatLinearLeq: (id<ORRealLinearLeq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
 //      NSLog(@"x: %@",x);
-      id<ORFloatArray> a = [c coefs];
+      id<ORDoubleArray> a = [c coefs];
       ORInt cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
@@ -426,7 +426,7 @@
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory mutableFloat: _lpsolver value: [e initialValue]];
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitFloatI: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory float: _lpsolver value: [e floatValue]];

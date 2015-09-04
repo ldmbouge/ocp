@@ -53,11 +53,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];      
 }
--(ORFloat) varOrdering: (id<ORIntVar>)x
+-(ORDouble) varOrdering: (id<ORIntVar>)x
 {
    return 0.0;
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
 {
    return 0.0;
 }
@@ -98,11 +98,11 @@
    [_binding release];
    [super dealloc];
 }
--(ORFloat) varOrdering: (id<CPIntVar>)x
+-(ORDouble) varOrdering: (id<CPIntVar>)x
 {
    return [_binding[[NSThread threadID]] varOrdering:x];
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x
 {
    return [_binding[[NSThread threadID]] valOrdering:v forVar:x];
 }

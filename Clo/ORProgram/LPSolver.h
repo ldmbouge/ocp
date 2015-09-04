@@ -16,9 +16,9 @@
 // LPSolver
 @interface LPSolver : ORGamma<LPProgram>
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model;
--(ORFloat) dual: (id<ORConstraint>) c;
--(ORFloat) reducedCost: (id<ORFloatVar>) x;
--(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORRealVar>) x;
+-(ORDouble) floatValue: (id<ORRealVar>) x;
 -(id<LPColumn>) createColumn;
 -(void) addColumn: (id<LPColumn>) column;
 -(id<ORObjectiveValue>) objectiveValue;
@@ -27,21 +27,21 @@
 
 @interface LPRelaxation : ORGamma<LPRelaxation>
 -(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model;
--(ORFloat) dual: (id<ORConstraint>) c;
--(ORFloat) reducedCost: (id<ORVar>) x;
--(ORFloat) floatValue: (id<ORVar>) x;
--(ORFloat) objective;
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORVar>) x;
+-(ORDouble) floatValue: (id<ORVar>) x;
+-(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
--(ORFloat) lowerBound: (id<ORVar>) v;
--(ORFloat) upperBound: (id<ORVar>) v;
--(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb;
--(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub;
+-(ORDouble) lowerBound: (id<ORVar>) v;
+-(ORDouble) upperBound: (id<ORVar>) v;
+-(void) updateLowerBound: (id<ORVar>) v with: (ORDouble) lb;
+-(void) updateUpperBound: (id<ORVar>) v with: (ORDouble) ub;
 @end
 
 
 @interface ORSolution (LPSolver)
--(ORFloat) dual: (id<ORConstraint>) c;
--(ORFloat) reducedCost: (id<ORFloatVar>) x;
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORRealVar>) x;
 @end
 
 // LPSolverFactory

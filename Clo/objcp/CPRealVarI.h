@@ -48,10 +48,10 @@
 // Interface for CP extensions
 
 @protocol CPRealVarExtendedItf <CPRealVarSubscriber>
--(void) updateMin: (ORFloat) newMin;
--(void) updateMax: (ORFloat) newMax;
+-(void) updateMin: (ORDouble) newMin;
+-(void) updateMax: (ORDouble) newMax;
 -(ORStatus) updateInterval: (ORInterval)nb;
--(void) bind: (ORFloat) val;
+-(void) bind: (ORDouble) val;
 @end
 
 typedef struct  {
@@ -64,7 +64,7 @@ typedef struct  {
 @class CPRealVarI;
 
 @protocol CPRealVarNotifier <NSObject>
--(CPRealVarI*) findAffine: (ORFloat) scale shift: (ORFloat) shift;
+-(CPRealVarI*) findAffine: (ORDouble) scale shift: (ORDouble) shift;
 -(void) bindEvt:(id<CPFDom>)sender;
 -(void) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender;
 -(void) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender;
@@ -73,17 +73,17 @@ typedef struct  {
 @interface CPRealVarI : ORObject<CPRealVar,CPRealVarNotifier,CPRealVarExtendedItf> {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
-   ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
+   ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    id<CPFDom>               _dom;
    CPRealEventNetwork      _net;
    CPMultiCast*             _recv;
 }
--(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
+-(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
--(ORFloat) floatValue;
--(ORFloat) domwidth;
+-(ORDouble) floatValue;
+-(ORDouble) domwidth;
 @end
 
 @interface CPRealViewOnIntVarI : ORObject<CPRealVar,CPRealVarExtendedItf,CPIntVarNotifier> {

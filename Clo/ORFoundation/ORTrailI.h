@@ -179,7 +179,7 @@ static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTr
    return ei->_val = val;
 }
 
-static inline ORFloat inline_assignTRFloatArray(TRFloatArray a,int i,ORFloat val,id<ORTrail> trail)
+static inline ORDouble inline_assignTRFloatArray(TRFloatArray a,int i,ORDouble val,id<ORTrail> trail)
 {
    TRDouble* ei = a._entries + i;
    if (ei->_mgc != [trail magic]) {

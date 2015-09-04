@@ -484,12 +484,12 @@
    return [self trackObjective: _objective];
 }
 
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
    _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
    return [self trackObjective: _objective];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
    _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
    return [self trackObjective: _objective];
@@ -682,11 +682,11 @@
 {
    return [_target maximize: x];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
    return [_target minimize: array coef: coef];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
   return [_target maximize: array coef: coef];
 }
@@ -778,11 +778,11 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return [_target maximize: x];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
    return [_target minimize: array coef: coef];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
    return [_target maximize: array coef: coef];
 }

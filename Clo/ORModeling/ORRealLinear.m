@@ -9,16 +9,16 @@
  
  ***********************************************************************/
 
-#import "ORFloatLinear.h"
+#import "ORRealLinear.h"
 #import "ORModeling/ORModeling.h"
 
 
-@implementation ORFloatLinear
--(ORFloatLinear*) initORFloatLinear: (ORInt) mxs
+@implementation ORRealLinear
+-(ORRealLinear*) initORRealLinear: (ORInt) mxs
 {
    self = [super init];
    _max   = mxs;
-   _terms = malloc(sizeof(struct ORFloatTerm) *_max);
+   _terms = malloc(sizeof(struct ORDoubleTerm) *_max);
    _nb    = 0;
    _indep = 0.0;
    return self;
@@ -28,15 +28,15 @@
    free(_terms);
    [super dealloc];
 }
--(void) setIndependent: (ORFloat) idp
+-(void) setIndependent: (ORDouble) idp
 {
    _indep = idp;
 }
--(void) addIndependent: (ORFloat) idp
+-(void) addIndependent: (ORDouble) idp
 {
    _indep += idp;
 }
--(ORFloat) independent
+-(ORDouble) independent
 {
    return _indep;
 }
@@ -44,39 +44,39 @@
 {
    return _terms[k]._var;
 }
--(ORFloat) coef: (ORInt) k
+-(ORDouble) coef: (ORInt) k
 {
    return _terms[k]._coef;
 }
--(ORFloat) fmin
+-(ORDouble) fmin
 {
-   ORFloat lb = _indep;
+   ORDouble lb = _indep;
    for(ORInt k=0;k < _nb;k++) {
-      ORFloat c = _terms[k]._coef;
-      id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
-      ORFloat vlb = d.low;
-      ORFloat vub = d.up;
-      ORFloat svlb = c > 0 ? vlb * c : vub * c;
+      ORDouble c = _terms[k]._coef;
+      id<ORRealRange> d = [(id<ORRealVar>)_terms[k]._var domain];
+      ORDouble vlb = d.low;
+      ORDouble vub = d.up;
+      ORDouble svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
    return max(MININT,lb);
 }
 
--(ORFloat) fmax
+-(ORDouble) fmax
 {
-   ORFloat ub = _indep;
+   ORDouble ub = _indep;
    for(ORInt k=0;k < _nb;k++) {
-      ORFloat c = _terms[k]._coef;
-      id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
-      ORFloat vlb = d.low;
-      ORFloat vub = d.up;
-      ORFloat svub = c > 0 ? vub * c : vlb * c;
+      ORDouble c = _terms[k]._coef;
+      id<ORRealRange> d = [(id<ORRealVar>)_terms[k]._var domain];
+      ORDouble vlb = d.low;
+      ORDouble vub = d.up;
+      ORDouble svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
    return min(MAXINT,ub);
 }
 
--(void) addTerm: (id<ORVar>) x by: (ORFloat) c
+-(void) addTerm: (id<ORVar>) x by: (ORDouble) c
 {
    if (c==0) return;
    ORInt low = 0,up=_nb-1,mid=-1,kid;
@@ -97,30 +97,30 @@
       _terms[mid]._coef += c;
    } else {
       if (_nb >= _max) {
-         _terms = realloc(_terms, sizeof(struct ORFloatTerm)*_max*2);
+         _terms = realloc(_terms, sizeof(struct ORDoubleTerm)*_max*2);
          _max <<= 1;
       }
       if (mid==-1)
-         _terms[_nb++] = (struct ORFloatTerm){x,c};
+         _terms[_nb++] = (struct ORDoubleTerm){x,c};
       else {
          if (xid > kid)
             mid++;
          for(int k=_nb-1;k>=mid;--k)
             _terms[k+1] = _terms[k];
-         _terms[mid] = (struct ORFloatTerm){x,c};
+         _terms[mid] = (struct ORDoubleTerm){x,c};
          _nb += 1;
       }
    }
 }
 
--(void) addLinear: (ORFloatLinear*) lts
+-(void) addLinear: (ORRealLinear*) lts
 {
    for(ORInt k=0;k < lts->_nb;k++) {
       [self addTerm:lts->_terms[k]._var by:lts->_terms[k]._coef];
    }
    [self addIndependent:lts->_indep];
 }
--(void) scaleBy: (ORFloat) s
+-(void) scaleBy: (ORDouble) s
 {
    for(ORInt k=0;k<_nb;k++)
       _terms[k]._coef *= s;
@@ -154,13 +154,13 @@
       nbN += (_terms[k]._coef < 0);
    return nbN;
 }
-static int decCoef(const struct ORFloatTerm* t1,const struct ORFloatTerm* t2)
+static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 {
    return t2->_coef - t1->_coef;
 }
 -(void) positiveFirst  // sort by decreasing coefficient
 {
-   qsort(_terms, _nb, sizeof(struct ORFloatTerm),(int(*)(const void*,const void*))&decCoef);
+   qsort(_terms, _nb, sizeof(struct ORDoubleTerm),(int(*)(const void*,const void*))&decCoef);
 }
 
 -(NSString*) description
@@ -177,9 +177,9 @@ static int decCoef(const struct ORFloatTerm* t1,const struct ORFloatTerm* t2)
    return [ORFactory varArray: model range: RANGE(model,0,_nb-1) with:^id<ORVar>(ORInt i) { return _terms[i]._var; }];
 }
 
--(id<ORFloatArray>) coefficients: (id<ORAddToModel>) model
+-(id<ORDoubleArray>) coefficients: (id<ORAddToModel>) model
 {
-   return [ORFactory floatArray: model range: RANGE(model,0,_nb-1) with: ^ORFloat(ORInt i) { return _terms[i]._coef; }];
+   return [ORFactory floatArray: model range: RANGE(model,0,_nb-1) with: ^ORDouble(ORInt i) { return _terms[i]._coef; }];
 }
 
 -(ORInt) size
@@ -222,26 +222,26 @@ static int decCoef(const struct ORFloatTerm* t1,const struct ORFloatTerm* t2)
 @end
 
 
-@implementation ORFloatLinearFlip
--(ORFloatLinearFlip*) initORFloatLinearFlip: (id<ORFloatLinear>) r
+@implementation ORRealLinearFlip
+-(id) initORRealLinearFlip: (id<ORRealLinear>) r
 {
    self = [super init];
    _real = r;
    return self;
 }
--(void) setIndependent: (ORFloat) idp
+-(void) setIndependent: (ORDouble) idp
 {
    [_real setIndependent: -idp];
 }
--(void) addIndependent: (ORFloat) idp
+-(void) addIndependent: (ORDouble) idp
 {
    [_real addIndependent: -idp];
 }
--(void) addTerm: (id<ORIntVar>) x by: (ORFloat) c
+-(void) addTerm: (id<ORIntVar>) x by: (ORDouble) c
 {
    [_real addTerm: x by: -c];
 }
--(void) addLinear: (id<ORFloatLinear>) lts
+-(void) addLinear: (id<ORRealLinear>) lts
 {
    for(ORInt k=0;k < [lts size];k++) {
       [_real addTerm:[lts var:k] by: - [lts coef:k]];
@@ -260,11 +260,11 @@ static int decCoef(const struct ORFloatTerm* t1,const struct ORFloatTerm* t2)
 {
    return [_real var: k];
 }
--(ORFloat) coef: (ORInt) k
+-(ORDouble) coef: (ORInt) k
 {
    return [_real coef:k];
 }
--(ORFloat) independent
+-(ORDouble) independent
 {
    return [_real independent];
 }
@@ -272,11 +272,11 @@ static int decCoef(const struct ORFloatTerm* t1,const struct ORFloatTerm* t2)
 {
    return [_real description];
 }
--(ORFloat) fmin
+-(ORDouble) fmin
 {
    return [_real fmin];
 }
--(ORFloat) fmax
+-(ORDouble) fmax
 {
    return [_real fmax];
 }

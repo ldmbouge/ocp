@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
       id<ORSelect> select = [ORFactory select: m
                                         range: R
                                      suchThat: ^bool(ORInt i) { return YES;}
-                                    orderedBy: ^ORFloat(ORInt i) {
+                                    orderedBy: ^ORDouble(ORInt i) {
                                        return key[i];
                                     }];
       int cnt[20];

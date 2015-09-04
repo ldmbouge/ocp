@@ -29,7 +29,7 @@
 +(id<CPIntVar>) boolVar: (id<CPEngine>)cp;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
-+(id<CPRealVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range;
++(id<CPRealVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORRealRange>) range;
 +(id<CPRealVar>) floatVar:(id<CPEngine>)cp castFrom:(id<CPIntVar>)x;
 
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet;

@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
-             [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+             [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
              @synchronized(cp) { // synchronized so that it works correctly even when asking parallel tree search
                 nbSol++;
              }

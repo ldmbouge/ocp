@@ -20,7 +20,7 @@
 
 @implementation CPRealDom
 
--(id)initCPRealDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up
+-(id)initCPRealDom:(id<ORTrail>)trail low:(ORDouble)low up:(ORDouble)up
 {
    self = [super init];
    _trail = trail;
@@ -39,7 +39,7 @@
    ORIReady();
    return ORIFormat(createORI2(_min._val, _max._val));
 }
--(void) updateMin:(ORFloat)newMin for:(id<CPRealVarNotifier>)x
+-(void) updateMin:(ORDouble)newMin for:(id<CPRealVarNotifier>)x
 {
    ORIReady();
    ORInterval me = createORI2(_min._val, _max._val);
@@ -57,7 +57,7 @@
    if (isBound)
       [x bindEvt:self];
 }
--(void) updateMax:(ORFloat)newMax for:(id<CPRealVarNotifier>)x
+-(void) updateMax:(ORDouble)newMax for:(id<CPRealVarNotifier>)x
 {
    ORIReady();
    ORInterval me = createORI2(_min._val, _max._val);
@@ -85,7 +85,7 @@
    switch (ORINarrow(src, is)) {
       case ORBoth:
       {
-         ORFloat nl,nu;
+         ORDouble nl,nu;
          ORIBounds(is, &nl, &nu);
          assignTRDouble(&_min, nl, _trail);
          assignTRDouble(&_max, nu, _trail);
@@ -98,7 +98,7 @@
       }break;
       case ORLow:
       {
-         ORFloat nl = ORILow(is);
+         ORDouble nl = ORILow(is);
          assignTRDouble(&_min, nl, _trail);
          ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
          [x changeMinEvt:isBound sender:self];
@@ -108,7 +108,7 @@
       }break;
       case ORUp:
       {
-         ORFloat nu = ORIUp(is);
+         ORDouble nu = ORIUp(is);
          assignTRDouble(&_max, nu, _trail);
          ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
          [x changeMaxEvt:isBound sender:self];
@@ -121,7 +121,7 @@
    }
 }
 
--(void) bind:(ORFloat)val  for:(id<CPRealVarNotifier>)x
+-(void) bind:(ORDouble)val  for:(id<CPRealVarNotifier>)x
 {
    ORIReady();
    if (_min._val <= val && val <= _max._val) {
@@ -136,19 +136,19 @@
    else
       failNow();
 }
--(ORFloat) min
+-(ORDouble) min
 {
    return _min._val;
 }
--(ORFloat) max
+-(ORDouble) max
 {
    return _max._val;
 }
--(ORFloat) imin
+-(ORDouble) imin
 {
    return _imin;
 }
--(ORFloat) imax
+-(ORDouble) imax
 {
    return _imax;
 }
@@ -162,12 +162,12 @@
    ORIReady();
    return createORI2(_min._val, _max._val);
 }
--(ORFloat) domwidth
+-(ORDouble) domwidth
 {
    ORIReady();
    return ORIWidth(createORI2(_min._val, _max._val));
 }
--(ORBool) member:(ORFloat)v
+-(ORBool) member:(ORDouble)v
 {
    return _min._val <= v && v <= _max._val;
 }
@@ -180,7 +180,7 @@
    _min._val = [toRestore min];
    _max._val = [toRestore max];
 }
--(void) restoreValue:(ORFloat)toRestore for:(id<CPRealVarNotifier>)x
+-(void) restoreValue:(ORDouble)toRestore for:(id<CPRealVarNotifier>)x
 {
    _min._val = _max._val = toRestore;
    [x bindEvt:self];
@@ -188,18 +188,18 @@
 
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_min._val];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_max._val];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_imin];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_imax];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_min._val];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_max._val];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_imin];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_imax];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_min._val];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_max._val];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_imin];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_imax];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_min._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_max._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_imin];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_imax];
    return self;
 }
 @end

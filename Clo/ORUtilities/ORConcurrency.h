@@ -15,7 +15,7 @@
 @protocol ORSolution;
 @protocol ORConstraint;
 @protocol ORIntArray;
-@protocol ORFloatArray;
+@protocol ORDoubleArray;
 @protocol ORConstraintSet;
 
 @protocol ORInformer<NSObject>
@@ -52,8 +52,8 @@
 -(void) notifyWithIntArray: (id<ORIntArray>)arr;
 @end
 
-@protocol ORFloatArrayInformer <ORInformer>
--(void) notifyWithFloatArray: (id<ORFloatArray>)arr;
+@protocol ORDoubleArrayInformer <ORInformer>
+-(void) notifyWithFloatArray: (id<ORDoubleArray>)arr;
 @end
 
 @protocol ORConstraintSetInformer <ORInformer>

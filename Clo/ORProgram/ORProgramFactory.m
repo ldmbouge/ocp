@@ -397,27 +397,27 @@
    _lprelaxation = [ORFactory createLPRelaxation: _model];
    return self;
 }
--(ORFloat) objective
+-(ORDouble) objective
 {
    return [_lprelaxation objective];
 }
--(ORFloat) value: (id<ORVar>) x
+-(ORDouble) value: (id<ORVar>) x
 {
    return [_lprelaxation floatValue: x];
 }
--(ORFloat) lowerBound: (id<ORVar>) x
+-(ORDouble) lowerBound: (id<ORVar>) x
 {
    return [_lprelaxation lowerBound: x];
 }
--(ORFloat) upperBound: (id<ORVar>) x
+-(ORDouble) upperBound: (id<ORVar>) x
 {
    return [_lprelaxation upperBound: x];
 }
--(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f
+-(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f
 {
    [_lprelaxation updateLowerBound: x with:f];
 }
--(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f
+-(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f
 {
    [_lprelaxation updateUpperBound: x with:f];
 }

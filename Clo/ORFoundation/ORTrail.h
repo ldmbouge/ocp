@@ -111,7 +111,7 @@ void  assignTRId(TRId* v,id val,id<ORTrail> trail);
 void  assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail);
 ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail);
 ORInt getTRIntArray(TRIntArray a,int i);
-ORFloat assignTRFloatArray(TRIntArray a,int i,ORFloat val,id<ORTrail> trail);
+ORDouble assignTRFloatArray(TRIntArray a,int i,ORDouble val,id<ORTrail> trail);
 ORInt getTRFloatArray(TRFloatArray a,int i);
 
 FXInt makeFXInt(id<ORTrail> trail);

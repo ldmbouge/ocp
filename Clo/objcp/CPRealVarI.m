@@ -20,12 +20,12 @@
 @interface CPRealVarSnapshot : NSObject
 {
    ORUInt    _name;
-   ORFloat   _value;
+   ORDouble   _value;
    ORBool    _bound;
 }
 -(CPRealVarSnapshot*) init: (CPRealVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
--(ORFloat) floatValue;
+-(ORDouble) floatValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -46,7 +46,7 @@
    }
    return self;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    return _value;
 }
@@ -84,14 +84,14 @@
 - (void) encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_bound];
 }
 - (id) initWithCoder: (NSCoder *) aDecoder
 {
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_bound];
    return self;
 }
@@ -121,7 +121,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 
 @implementation CPRealVarI
 
--(id)init:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up
+-(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up
 {
    self = [super init];
    _engine = engine;
@@ -181,7 +181,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return CPVCBare;
 }
--(CPRealVarI*) findAffine: (ORFloat) scale shift:(ORFloat) shift
+-(CPRealVarI*) findAffine: (ORDouble) scale shift:(ORDouble) shift
 {
    return nil;
 }
@@ -285,15 +285,15 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    scheduleClosures(_engine,mList);
 }
 
--(void) bind:(ORFloat) val
+-(void) bind:(ORDouble) val
 {
    [_dom bind:val for:self];
 }
--(void) updateMin: (ORFloat) newMin
+-(void) updateMin: (ORDouble) newMin
 {
    [_dom updateMin:newMin for:self];
 }
--(void) updateMax: (ORFloat) newMax
+-(void) updateMax: (ORDouble) newMax
 {
    [_dom updateMax:newMax for:self];
 }
@@ -301,35 +301,35 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_dom updateInterval:nb for:self];
 }
--(ORFloat) min
+-(ORDouble) min
 {
    return [_dom min];
 }
--(ORFloat) max
+-(ORDouble) max
 {
    return [_dom max];
 }
--(ORFloat) floatMin
+-(ORDouble) floatMin
 {
    return [_dom min];
 }
--(ORFloat) floatMax
+-(ORDouble) floatMax
 {
    return [_dom max];
 }
--(ORFloat) value
+-(ORDouble) value
 {
    if ([_dom bound])
       return [_dom min];
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) floatValue
 {
    if ([_dom bound])
       return [_dom min];
    return _value;
 }
--(void) assignRelaxationValue: (ORFloat) f
+-(void) assignRelaxationValue: (ORDouble) f
 {
    if (f < [_dom min] && f > [_dom max])
       @throw [[ORExecutionError alloc] initORExecutionError: "Assigning a relaxation value outside the bounds"];
@@ -339,7 +339,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_dom bounds];
 }
--(ORBool) member:(ORFloat)v
+-(ORBool) member:(ORDouble)v
 {
    return [_dom member:v];
 }
@@ -347,7 +347,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_dom bound];
 }
--(ORFloat) domwidth
+-(ORDouble) domwidth
 {
    return [_dom domwidth];
 }
@@ -538,15 +538,15 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    scheduleClosures(_engine,mList);
 }
 
--(void) bind:(ORFloat) val
+-(void) bind:(ORDouble) val
 {
    [_theVar updateMin:(ORInt)ceil(val) andMax:(ORInt)floor(val)];
 }
--(void) updateMin: (ORFloat) newMin
+-(void) updateMin: (ORDouble) newMin
 {
    [_theVar updateMin:(ORInt)ceil(newMin)];
 }
--(void) updateMax: (ORFloat) newMax
+-(void) updateMax: (ORDouble) newMax
 {
    [_theVar updateMax:(ORInt)floor(newMax)];
 }
@@ -566,23 +566,23 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    else
       return ORNone;
 }
--(ORFloat) min
+-(ORDouble) min
 {
    return [_theVar min];
 }
--(ORFloat) max
+-(ORDouble) max
 {
    return [_theVar max];
 }
--(ORFloat) value
+-(ORDouble) value
 {
    return [_theVar min];
 }
--(ORFloat)floatValue
+-(ORDouble)floatValue
 {
    return [_theVar min];
 }
--(void) assignRelaxationValue: (ORFloat) f
+-(void) assignRelaxationValue: (ORDouble) f
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Assigning a relaxation value on a view"];
 }
@@ -591,9 +591,9 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    ORBounds b = [_theVar bounds];
    return createORI2(b.min, b.max);
 }
--(ORBool) member:(ORFloat)v
+-(ORBool) member:(ORDouble)v
 {
-   ORFloat tv = trunc(v);
+   ORDouble tv = trunc(v);
    if (tv == v)
       return [_theVar member:(ORInt)tv];
    else return NO;
@@ -602,7 +602,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_theVar bound];
 }
--(ORFloat) domwidth
+-(ORDouble) domwidth
 {
    ORBounds b = [_theVar bounds];
    return b.max - b.min;

@@ -22,8 +22,8 @@
    id<CPProgram>     _cp;
 }
 -(CPFirstFail*)initCPFirstFail:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
--(ORFloat)varOrdering:(id<CPIntVar>)x;
--(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
+-(ORDouble)varOrdering:(id<CPIntVar>)x;
+-(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
 -(void)initInternal:(id<ORVarArray>)t with:(id<ORVarArray>)cvs;
 -(id<ORIntVarArray>)allIntVars;
 -(id<CPProgram>)solver;

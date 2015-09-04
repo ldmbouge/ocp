@@ -13,44 +13,44 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORLinear.h>
 
-@protocol ORFloatLinear <NSObject,ORLinear>
--(void) setIndependent: (ORFloat) idp;
--(void) addIndependent: (ORFloat) idp;
--(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
--(void) addLinear: (id<ORFloatLinear>) lts;
+@protocol ORRealLinear <NSObject,ORLinear>
+-(void) setIndependent: (ORDouble) idp;
+-(void) addIndependent: (ORDouble) idp;
+-(void) addTerm: (id<ORVar>) x by: (ORDouble) c;
+-(void) addLinear: (id<ORRealLinear>) lts;
 -(void) scaleBy: (ORInt) s;
 -(ORInt) size;
 -(id<ORVar>) var: (ORInt) k;
--(ORFloat) coef: (ORInt) k;
--(ORFloat) independent;
--(ORFloat) fmin;
--(ORFloat) fmax;
+-(ORDouble) coef: (ORInt) k;
+-(ORDouble) independent;
+-(ORDouble) fmin;
+-(ORDouble) fmax;
 @end
 
-@interface ORFloatLinear :  NSObject<ORFloatLinear> {
-   struct ORFloatTerm {
+@interface ORRealLinear :  NSObject<ORRealLinear> {
+   struct ORDoubleTerm {
       id<ORVar>   _var;
-      ORFloat    _coef;
+      ORDouble    _coef;
    };
-   struct ORFloatTerm* _terms;
+   struct ORDoubleTerm* _terms;
    ORInt             _nb;
    ORInt            _max;
-   ORFloat          _indep;
+   ORDouble          _indep;
 }
--(ORFloatLinear*) initORFloatLinear: (ORInt) mxs;
+-(ORRealLinear*) initORRealLinear: (ORInt) mxs;
 -(void) dealloc;
--(void) setIndependent: (ORFloat) idp;
--(void) addIndependent: (ORFloat) idp;
--(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
--(void) addLinear: (ORFloatLinear*) lts;
--(void) scaleBy: (ORFloat) s;
--(ORFloat) independent;
+-(void) setIndependent: (ORDouble) idp;
+-(void) addIndependent: (ORDouble) idp;
+-(void) addTerm: (id<ORVar>) x by: (ORDouble) c;
+-(void) addLinear: (ORRealLinear*) lts;
+-(void) scaleBy: (ORDouble) s;
+-(ORDouble) independent;
 -(NSString*) description;
--(ORFloat) fmin;
--(ORFloat) fmax;
+-(ORDouble) fmin;
+-(ORDouble) fmax;
 
 -(id<ORVarArray>)  variables:  (id<ORAddToModel>)  model;
--(id<ORFloatArray>)  coefficients: (id<ORAddToModel>) model;
+-(id<ORDoubleArray>)  coefficients: (id<ORAddToModel>) model;
 -(ORInt) size;
 -(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model;
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model;
@@ -60,14 +60,14 @@
 -(void)  postMaximize: (id<ORAddToModel>) model;
 @end
 
-@interface ORFloatLinearFlip : NSObject<ORFloatLinear> {
-   id<ORFloatLinear> _real;
+@interface ORRealLinearFlip : NSObject<ORRealLinear> {
+   id<ORRealLinear> _real;
 }
--(ORFloatLinearFlip*) initORFloatLinearFlip: (id<ORFloatLinear>) r;
--(void) setIndependent: (ORFloat) idp;
--(void) addIndependent: (ORFloat) idp;
--(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
--(ORFloat) fmin;
--(ORFloat) fmax;
+-(id) initORRealLinearFlip: (id<ORRealLinear>) r;
+-(void) setIndependent: (ORDouble) idp;
+-(void) addIndependent: (ORDouble) idp;
+-(void) addTerm: (id<ORVar>) x by: (ORDouble) c;
+-(ORDouble) fmin;
+-(ORDouble) fmax;
 @end
 
