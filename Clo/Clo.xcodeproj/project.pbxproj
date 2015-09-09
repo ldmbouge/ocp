@@ -135,6 +135,50 @@
 		537EEA7418FCF33F0006FFD2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		537EEA7518FCF33F0006FFD2 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
 		537EEA7618FCF33F0006FFD2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		53B33F241BA0D04F005C80DE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B33F231BA0CFDD005C80DE /* main.m */; };
+		53B33F251BA0D1EB005C80DE /* bl20_1.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5D318FCC56D0006FFD2 /* bl20_1.rcp */; };
+		53B33F261BA0D1EB005C80DE /* bl20_10.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5D418FCC56D0006FFD2 /* bl20_10.rcp */; };
+		53B33F271BA0D1EB005C80DE /* bl20_11.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5D518FCC56D0006FFD2 /* bl20_11.rcp */; };
+		53B33F281BA0D1EB005C80DE /* bl20_12.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5D618FCC56D0006FFD2 /* bl20_12.rcp */; };
+		53B33F291BA0D1EB005C80DE /* bl20_13.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5D718FCC56D0006FFD2 /* bl20_13.rcp */; };
+		53B33F2A1BA0D1EB005C80DE /* bl20_14.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5D818FCC56D0006FFD2 /* bl20_14.rcp */; };
+		53B33F2B1BA0D1EB005C80DE /* bl20_15.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5D918FCC56D0006FFD2 /* bl20_15.rcp */; };
+		53B33F2C1BA0D1EB005C80DE /* bl20_16.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5DA18FCC56D0006FFD2 /* bl20_16.rcp */; };
+		53B33F2D1BA0D1EB005C80DE /* bl20_17.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5DB18FCC56D0006FFD2 /* bl20_17.rcp */; };
+		53B33F2E1BA0D1EB005C80DE /* bl20_18.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5DC18FCC56D0006FFD2 /* bl20_18.rcp */; };
+		53B33F2F1BA0D1EB005C80DE /* bl20_19.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5DD18FCC56D0006FFD2 /* bl20_19.rcp */; };
+		53B33F301BA0D1EB005C80DE /* bl20_2.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5DE18FCC56D0006FFD2 /* bl20_2.rcp */; };
+		53B33F311BA0D1EB005C80DE /* bl20_20.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5DF18FCC56D0006FFD2 /* bl20_20.rcp */; };
+		53B33F321BA0D1EB005C80DE /* bl20_3.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E018FCC56D0006FFD2 /* bl20_3.rcp */; };
+		53B33F331BA0D1EB005C80DE /* bl20_4.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E118FCC56D0006FFD2 /* bl20_4.rcp */; };
+		53B33F341BA0D1EB005C80DE /* bl20_5.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E218FCC56D0006FFD2 /* bl20_5.rcp */; };
+		53B33F351BA0D1EB005C80DE /* bl20_6.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E318FCC56D0006FFD2 /* bl20_6.rcp */; };
+		53B33F361BA0D1EB005C80DE /* bl20_7.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E418FCC56D0006FFD2 /* bl20_7.rcp */; };
+		53B33F371BA0D1EB005C80DE /* bl20_8.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E518FCC56D0006FFD2 /* bl20_8.rcp */; };
+		53B33F381BA0D1EB005C80DE /* bl20_9.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E618FCC56D0006FFD2 /* bl20_9.rcp */; };
+		53B33F391BA0D1EB005C80DE /* bl25_1.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E718FCC56D0006FFD2 /* bl25_1.rcp */; };
+		53B33F3A1BA0D1EB005C80DE /* bl25_10.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E818FCC56D0006FFD2 /* bl25_10.rcp */; };
+		53B33F3B1BA0D1EB005C80DE /* bl25_11.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5E918FCC56D0006FFD2 /* bl25_11.rcp */; };
+		53B33F3C1BA0D1EB005C80DE /* bl25_12.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5EA18FCC56D0006FFD2 /* bl25_12.rcp */; };
+		53B33F3D1BA0D1EB005C80DE /* bl25_13.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5EB18FCC56D0006FFD2 /* bl25_13.rcp */; };
+		53B33F3E1BA0D1EB005C80DE /* bl25_14.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5EC18FCC56D0006FFD2 /* bl25_14.rcp */; };
+		53B33F3F1BA0D1EB005C80DE /* bl25_15.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5ED18FCC56D0006FFD2 /* bl25_15.rcp */; };
+		53B33F401BA0D1EB005C80DE /* bl25_16.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5EE18FCC56D0006FFD2 /* bl25_16.rcp */; };
+		53B33F411BA0D1EB005C80DE /* bl25_17.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5EF18FCC56D0006FFD2 /* bl25_17.rcp */; };
+		53B33F421BA0D1EB005C80DE /* bl25_18.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F018FCC56D0006FFD2 /* bl25_18.rcp */; };
+		53B33F431BA0D1EB005C80DE /* bl25_19.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F118FCC56D0006FFD2 /* bl25_19.rcp */; };
+		53B33F441BA0D1EB005C80DE /* bl25_2.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F218FCC56D0006FFD2 /* bl25_2.rcp */; };
+		53B33F451BA0D1EB005C80DE /* bl25_20.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F318FCC56D0006FFD2 /* bl25_20.rcp */; };
+		53B33F461BA0D1EB005C80DE /* bl25_3.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F418FCC56D0006FFD2 /* bl25_3.rcp */; };
+		53B33F471BA0D1EB005C80DE /* bl25_4.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F518FCC56D0006FFD2 /* bl25_4.rcp */; };
+		53B33F481BA0D1EB005C80DE /* bl25_5.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F618FCC56D0006FFD2 /* bl25_5.rcp */; };
+		53B33F491BA0D1EB005C80DE /* bl25_6.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F718FCC56D0006FFD2 /* bl25_6.rcp */; };
+		53B33F4A1BA0D1EB005C80DE /* bl25_7.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F818FCC56D0006FFD2 /* bl25_7.rcp */; };
+		53B33F4B1BA0D1EB005C80DE /* bl25_8.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5F918FCC56D0006FFD2 /* bl25_8.rcp */; };
+		53B33F4C1BA0D1EB005C80DE /* bl25_9.rcp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE5FA18FCC56D0006FFD2 /* bl25_9.rcp */; };
+		53B33F7D1BA0D2AE005C80DE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B33F791BA0D25E005C80DE /* main.m */; };
+		53B33F7F1BA0D31E005C80DE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B33F7C1BA0D275005C80DE /* main.m */; };
+		53B33F801BA0D353005C80DE /* ft06.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 537EE4F318FCC56C0006FFD2 /* ft06.jss */; };
 		53B437D9197F371E00BE9F4D /* CPTaskCumulative.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B437D7197F371100BE9F4D /* CPTaskCumulative.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53B437DC197F373E00BE9F4D /* CPTaskCumulative.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B437DA197F373A00BE9F4D /* CPTaskCumulative.m */; };
 		53BD901A1A240117003EEFA6 /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8B018FCC5720006FFD2 /* ORFlatten.m */; };
@@ -148,7 +192,6 @@
 		53BDBC331A244EB9003EEFA6 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
 		53BDBC341A244EB9003EEFA6 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		53BDBC351A244EB9003EEFA6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
-		53BDBC3E1A244F1C003EEFA6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD901E1A2431F4003EEFA6 /* main.m */; };
 		53BDBC3F1A244F39003EEFA6 /* c15_4_3.mm in CopyFiles */ = {isa = PBXBuildFile; fileRef = 53BD91AB1A244CCD003EEFA6 /* c15_4_3.mm */; };
 		53C4BE341929C2E700DE6498 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		53C4BE351929C2E700DE6498 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
@@ -159,7 +202,6 @@
 		53C4BE3A1929C2E700DE6498 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
 		53C4BE3B1929C2E700DE6498 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		53C4BE3C1929C2E700DE6498 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
-		53C4BE431929C54700DE6498 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 533C588619230E57007D33BB /* main.m */; };
 		53DD03E319ADE728004CBF94 /* mt10c1.fjs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 533C56E01922F545007D33BB /* mt10c1.fjs */; };
 		53DD03E419ADE728004CBF94 /* mt10cc.fjs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 533C56E11922F545007D33BB /* mt10cc.fjs */; };
 		53DD03E519ADE728004CBF94 /* mt10x.fjs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 533C56E21922F545007D33BB /* mt10x.fjs */; };
@@ -6482,12 +6524,13 @@
 		};
 		537EEA5E18FCF1C70006FFD2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
+				53B33F801BA0D353005C80DE /* ft06.jss in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		53BDBC361A244EB9003EEFA6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -7294,12 +7337,52 @@
 		};
 		5BC9C3661B95D94800924032 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
+				53B33F251BA0D1EB005C80DE /* bl20_1.rcp in CopyFiles */,
+				53B33F261BA0D1EB005C80DE /* bl20_10.rcp in CopyFiles */,
+				53B33F271BA0D1EB005C80DE /* bl20_11.rcp in CopyFiles */,
+				53B33F281BA0D1EB005C80DE /* bl20_12.rcp in CopyFiles */,
+				53B33F291BA0D1EB005C80DE /* bl20_13.rcp in CopyFiles */,
+				53B33F2A1BA0D1EB005C80DE /* bl20_14.rcp in CopyFiles */,
+				53B33F2B1BA0D1EB005C80DE /* bl20_15.rcp in CopyFiles */,
+				53B33F2C1BA0D1EB005C80DE /* bl20_16.rcp in CopyFiles */,
+				53B33F2D1BA0D1EB005C80DE /* bl20_17.rcp in CopyFiles */,
+				53B33F2E1BA0D1EB005C80DE /* bl20_18.rcp in CopyFiles */,
+				53B33F2F1BA0D1EB005C80DE /* bl20_19.rcp in CopyFiles */,
+				53B33F301BA0D1EB005C80DE /* bl20_2.rcp in CopyFiles */,
+				53B33F311BA0D1EB005C80DE /* bl20_20.rcp in CopyFiles */,
+				53B33F321BA0D1EB005C80DE /* bl20_3.rcp in CopyFiles */,
+				53B33F331BA0D1EB005C80DE /* bl20_4.rcp in CopyFiles */,
+				53B33F341BA0D1EB005C80DE /* bl20_5.rcp in CopyFiles */,
+				53B33F351BA0D1EB005C80DE /* bl20_6.rcp in CopyFiles */,
+				53B33F361BA0D1EB005C80DE /* bl20_7.rcp in CopyFiles */,
+				53B33F371BA0D1EB005C80DE /* bl20_8.rcp in CopyFiles */,
+				53B33F381BA0D1EB005C80DE /* bl20_9.rcp in CopyFiles */,
+				53B33F391BA0D1EB005C80DE /* bl25_1.rcp in CopyFiles */,
+				53B33F3A1BA0D1EB005C80DE /* bl25_10.rcp in CopyFiles */,
+				53B33F3B1BA0D1EB005C80DE /* bl25_11.rcp in CopyFiles */,
+				53B33F3C1BA0D1EB005C80DE /* bl25_12.rcp in CopyFiles */,
+				53B33F3D1BA0D1EB005C80DE /* bl25_13.rcp in CopyFiles */,
+				53B33F3E1BA0D1EB005C80DE /* bl25_14.rcp in CopyFiles */,
+				53B33F3F1BA0D1EB005C80DE /* bl25_15.rcp in CopyFiles */,
+				53B33F401BA0D1EB005C80DE /* bl25_16.rcp in CopyFiles */,
+				53B33F411BA0D1EB005C80DE /* bl25_17.rcp in CopyFiles */,
+				53B33F421BA0D1EB005C80DE /* bl25_18.rcp in CopyFiles */,
+				53B33F431BA0D1EB005C80DE /* bl25_19.rcp in CopyFiles */,
+				53B33F441BA0D1EB005C80DE /* bl25_2.rcp in CopyFiles */,
+				53B33F451BA0D1EB005C80DE /* bl25_20.rcp in CopyFiles */,
+				53B33F461BA0D1EB005C80DE /* bl25_3.rcp in CopyFiles */,
+				53B33F471BA0D1EB005C80DE /* bl25_4.rcp in CopyFiles */,
+				53B33F481BA0D1EB005C80DE /* bl25_5.rcp in CopyFiles */,
+				53B33F491BA0D1EB005C80DE /* bl25_6.rcp in CopyFiles */,
+				53B33F4A1BA0D1EB005C80DE /* bl25_7.rcp in CopyFiles */,
+				53B33F4B1BA0D1EB005C80DE /* bl25_8.rcp in CopyFiles */,
+				53B33F4C1BA0D1EB005C80DE /* bl25_9.rcp in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5BCCC4011417F8CE0079E833 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -7979,7 +8062,6 @@
 		533C58821922F548007D33BB /* kacem3.fjs */ = {isa = PBXFileReference; lastKnownFileType = text; path = kacem3.fjs; sourceTree = "<group>"; };
 		533C58831922F548007D33BB /* kacem4.fjs */ = {isa = PBXFileReference; lastKnownFileType = text; path = kacem4.fjs; sourceTree = "<group>"; };
 		533C58841922F548007D33BB /* optimal_kacem.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = optimal_kacem.txt; sourceTree = "<group>"; };
-		533C588619230E57007D33BB /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		535D132C18FF7A46008D48BD /* CPMisc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPMisc.h; sourceTree = "<group>"; };
 		535D132D18FF7A46008D48BD /* CPMisc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPMisc.m; sourceTree = "<group>"; };
 		537EE4EE18FCC56C0006FFD2 /* abz5.jss */ = {isa = PBXFileReference; lastKnownFileType = text; path = abz5.jss; sourceTree = "<group>"; };
@@ -8945,9 +9027,13 @@
 		537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORScheduler.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CPScheduler.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		537EEA6018FCF1C70006FFD2 /* jsp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jsp; sourceTree = BUILT_PRODUCTS_DIR; };
+		53B33F221BA0CFDD005C80DE /* fjsp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fjsp-Prefix.pch"; sourceTree = "<group>"; };
+		53B33F231BA0CFDD005C80DE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		53B33F791BA0D25E005C80DE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		53B33F7B1BA0D275005C80DE /* jsp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "jsp-Prefix.pch"; sourceTree = "<group>"; };
+		53B33F7C1BA0D275005C80DE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		53B437D7197F371100BE9F4D /* CPTaskCumulative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTaskCumulative.h; sourceTree = "<group>"; };
 		53B437DA197F373A00BE9F4D /* CPTaskCumulative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTaskCumulative.m; sourceTree = "<group>"; };
-		53BD901E1A2431F4003EEFA6 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		53BD90221A244CCB003EEFA6 /* mm2any.awk */ = {isa = PBXFileReference; lastKnownFileType = text; path = mm2any.awk; sourceTree = "<group>"; };
 		53BD90231A244CCB003EEFA6 /* mm2any.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = mm2any.sh; sourceTree = "<group>"; };
 		53BD90251A244CCB003EEFA6 /* a.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = a.txt; sourceTree = "<group>"; };
@@ -24142,6 +24228,35 @@
 			path = ORScheduler;
 			sourceTree = "<group>";
 		};
+		53B33F211BA0CFDD005C80DE /* fjsp */ = {
+			isa = PBXGroup;
+			children = (
+				53B33F221BA0CFDD005C80DE /* fjsp-Prefix.pch */,
+				53B33F231BA0CFDD005C80DE /* main.m */,
+			);
+			name = fjsp;
+			path = Tests/fjsp;
+			sourceTree = "<group>";
+		};
+		53B33F781BA0D25E005C80DE /* mrcpsp */ = {
+			isa = PBXGroup;
+			children = (
+				53B33F791BA0D25E005C80DE /* main.m */,
+			);
+			name = mrcpsp;
+			path = Tests/mrcpsp;
+			sourceTree = "<group>";
+		};
+		53B33F7A1BA0D275005C80DE /* jsp */ = {
+			isa = PBXGroup;
+			children = (
+				53B33F7B1BA0D275005C80DE /* jsp-Prefix.pch */,
+				53B33F7C1BA0D275005C80DE /* main.m */,
+			);
+			name = jsp;
+			path = Tests/jsp;
+			sourceTree = "<group>";
+		};
 		53BD90201A244CCA003EEFA6 /* mrcpsp */ = {
 			isa = PBXGroup;
 			children = (
@@ -35750,9 +35865,12 @@
 		5B3F7E001B586F6D0069F4C2 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				53B33F211BA0CFDD005C80DE /* fjsp */,
+				5B3F7E011B586F790069F4C2 /* jobshop */,
+				53B33F7A1BA0D275005C80DE /* jsp */,
+				53B33F781BA0D25E005C80DE /* mrcpsp */,
 				5BC9C3691B95D94900924032 /* rcpsp */,
 				5B834A551B588B0E00759557 /* shiploading */,
-				5B3F7E011B586F790069F4C2 /* jobshop */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -35765,6 +35883,7 @@
 				5B3F7E041B586F930069F4C2 /* main.m */,
 			);
 			name = jobshop;
+			path = Tests/jobshop;
 			sourceTree = "<group>";
 		};
 		5B40A9221B6321470033D351 /* orderSwift */ = {
@@ -36428,6 +36547,7 @@
 				5B834A581B588B2000759557 /* shiploading.1 */,
 			);
 			name = shiploading;
+			path = Tests/shiploading;
 			sourceTree = "<group>";
 		};
 		5B8C7DE5158674D1007042CA /* queensGui */ = {
@@ -36985,7 +37105,7 @@
 				5BC9C38E1B95DA9200924032 /* main.m */,
 			);
 			name = rcpsp;
-			path = ../rcpsp;
+			path = Tests/rcpsp;
 			sourceTree = "<group>";
 		};
 		5BCCC4061417F8CE0079E833 /* queensACSem */ = {
@@ -38193,6 +38313,7 @@
 			buildPhases = (
 				537EEA5D18FCF1C70006FFD2 /* Frameworks */,
 				537EEA5E18FCF1C70006FFD2 /* CopyFiles */,
+				53B33F7E1BA0D301005C80DE /* Sources */,
 			);
 			buildRules = (
 			);
@@ -40858,11 +40979,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		53B33F7E1BA0D301005C80DE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53B33F7F1BA0D31E005C80DE /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		53BDBC291A244EB9003EEFA6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53BDBC3E1A244F1C003EEFA6 /* main.m in Sources */,
+				53B33F7D1BA0D2AE005C80DE /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40870,7 +40999,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53C4BE431929C54700DE6498 /* main.m in Sources */,
+				53B33F241BA0D04F005C80DE /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
