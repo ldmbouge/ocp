@@ -235,22 +235,44 @@ typedef struct  {
 }
 -(void) updateStart: (ORInt) newStart
 {
-   if (newStart > _start._val) {
-       if (newStart > _lst._val)
-           failNow();
-       assert(newStart + _durationMin._val <= _end._val);
+    if (newStart > _start._val) {
+        if (newStart > _lst._val)
+            failNow();
+        assert(newStart + _durationMin._val <= _end._val);
 //      if (newStart + _durationMin._val > _end._val)
 //         failNow();
-      [self changeStartEvt];
-      assignTRInt(&_start,newStart,_trail);
-       if (newStart + _durationMin._val > _ect._val)
-           assignTRInt(&_ect, newStart + _durationMin._val, _trail);
-      
-      if (!_constantDuration) {
-         ORInt newDurationMax = _end._val - _start._val;
-         [self updateMaxDuration: newDurationMax];
-      }
-   }
+        [self changeStartEvt];
+        assignTRInt(&_start, newStart, _trail);
+        if (newStart + _durationMin._val > _ect._val)
+            assignTRInt(&_ect, newStart + _durationMin._val, _trail);
+        
+        if (!_constantDuration) {
+            ORInt newDurationMax = _end._val - _start._val;
+            [self updateMaxDuration: newDurationMax];
+        }
+    }
+}
+-(void) updateLst:(ORInt)newLst
+{
+    if (newLst < _lst._val) {
+        if (newLst < _start._val)
+            failNow();
+        [self changeStartEvt];
+        assignTRInt(&_lst, newLst, _trail);
+        if (newLst + _durationMax._val < _end._val)
+            [self updateEnd:newLst + _durationMax._val];
+    }
+}
+-(void) updateEct:(ORInt)newEct
+{
+    if (newEct > _ect._val) {
+        if (newEct > _end._val)
+            failNow();
+        [self changeEndEvt];
+        assignTRInt(&_ect, newEct, _trail);
+        if (newEct - _durationMax._val > _start._val)
+            [self updateStart:newEct - _durationMax._val];
+    }
 }
 -(void) updateEnd: (ORInt) newEnd
 {
@@ -608,6 +630,26 @@ typedef struct  {
            ^ORStatus() { [_task updateStart: newStart]; return ORSuccess;},
            ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
            );
+}
+-(void) updateLst:(ORInt)newLst
+{
+    if (_presentMin._val)
+        [_task updateLst: newLst];
+    else if (_presentMax._val)
+        tryfail(
+                ^ORStatus() { [_task updateLst: newLst]; return ORSuccess; },
+                ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+                );
+}
+-(void) updateEct:(ORInt)newEct
+{
+    if (_presentMin._val)
+        [_task updateEct: newEct];
+    else if (_presentMax._val)
+        tryfail(
+                ^ORStatus() { [_task updateEct: newEct]; return ORSuccess; },
+                ^ORStatus() { [self labelPresent: FALSE]; return ORSuccess; }
+                );
 }
 -(void) updateEnd: (ORInt) newEnd
 {

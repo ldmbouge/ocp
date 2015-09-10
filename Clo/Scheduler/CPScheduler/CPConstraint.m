@@ -24,6 +24,8 @@
     TRInt   _size;  // Pointer to the first absent alternative task in the array _idx
     
     TRInt   _watchStart;
+    TRInt   _watchLst;
+    TRInt   _watchEct;
     TRInt   _watchEnd;
     TRInt   _watchMinDur;
     TRInt   _watchMaxDur;
@@ -54,6 +56,8 @@
     // Initialise trailed parameters
     _size        = makeTRInt(_trail, size);
     _watchStart  = makeTRInt(_trail, size);
+    _watchLst    = makeTRInt(_trail, size);
+    _watchEct    = makeTRInt(_trail, size);
     _watchEnd    = makeTRInt(_trail, size);
     _watchMinDur = makeTRInt(_trail, size);
     _watchMaxDur = makeTRInt(_trail, size);
@@ -80,10 +84,12 @@
             // Bound change on start
             [_alt[i] whenChangeStartDo:^{
                 [_task updateStart:_alt[i].est];
+                [_task updateLst  :_alt[i].lst];
             } onBehalf: self];
             // Bound change on end
             [_alt[i] whenChangeEndDo:^{
                 [_task updateEnd:_alt[i].lct];
+                [_task updateEct:_alt[i].ect];
             } onBehalf: self];
             // Bound change on duration
             if (_alt[i].minDuration < _alt[i].maxDuration) {
@@ -107,9 +113,13 @@
                 if (_size._val == 1) {
                     assert(_idx[0] == i);
                     [_task updateStart: _alt[i].est];
+                    [_task updateLst  : _alt[i].lst];
                 }
-                else if (_watchStart._val == i) {
-                    [self propagateAlternativeStart];
+                else {
+                    if (_watchStart._val == i)
+                        [self propagateAlternativeStart];
+                    if (_watchLst._val == i)
+                        [self propagateAlternativeLst];
                 }
             } onBehalf: self];
             // Bound change on end
@@ -117,9 +127,13 @@
                 if (_size._val == 1) {
                     assert(_idx[0] == i);
                     [_task updateEnd: _alt[i].lct];
+                    [_task updateEct: _alt[i].ect];
                 }
-                else if (_watchEnd._val == i) {
-                    [self propagateAlternativeEnd];
+                else {
+                    if (_watchEnd._val == i)
+                        [self propagateAlternativeEnd];
+                    if (_watchEct._val == i)
+                        [self propagateAlternativeEct];
                 }
             } onBehalf: self];
             // Bound change on duration
@@ -174,6 +188,7 @@
     for (ORInt ii = 0; ii < _size._val; ii++) {
         const ORInt i = _idx[ii];
         [_alt[i] updateStart: _task.est];
+        [_alt[i] updateLst  : _task.lst];
     }
     if (VERBOSE) printf("*** propagateTaskStart (End) ***\n");
 }
@@ -183,6 +198,7 @@
     for (ORInt ii = 0; ii < _size._val; ii++) {
         const ORInt i = _idx[ii];
         [_alt[i] updateEnd: _task.lct];
+        [_alt[i] updateEct: _task.ect];
     }
     if (VERBOSE) printf("*** propagateTaskEnd (End) ***\n");
 }
@@ -201,6 +217,8 @@
     if (VERBOSE) printf("*** propagateTaskAll (Start) ***\n");
     assert(!_task.isAbsent);
     const ORInt start  = _task.est;
+    const ORInt lst    = _task.lst;
+    const ORInt ect    = _task.ect;
     const ORInt end    = _task.lct;
     const ORInt minDur = _task.minDuration;
     const ORInt maxDur = _task.maxDuration;
@@ -208,6 +226,8 @@
         const ORInt i = _idx[ii];
         [_alt[i] updateStart      : start ];
         [_alt[i] updateEnd        : end   ];
+        [_alt[i] updateLst        : lst   ];
+        [_alt[i] updateEct        : ect   ];
         [_alt[i] updateMinDuration: minDur];
         [_alt[i] updateMaxDuration: maxDur];
     }
@@ -230,6 +250,42 @@
     if (wStart != _watchStart._val)
         assignTRInt(&(_watchStart), wStart, _trail);
     if (VERBOSE) printf("*** propagateAlternativeStart (End) ***\n");
+}
+-(void) propagateAlternativeLst
+{
+    if (VERBOSE) printf("*** propagateAlternativeLst (Start) ***\n");
+    ORInt maxLst = MININT;
+    ORInt wLst   = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (maxLst < _alt[i].lst) {
+            maxLst = _alt[i].lst;
+            wLst   = i;
+        }
+    }
+    assert(_alt.low <= wLst && wLst <= _alt.up);
+    [_task updateLst: maxLst];
+    if (wLst != _watchLst._val)
+        assignTRInt(&(_watchLst), wLst, _trail);
+    if (VERBOSE) printf("*** propagateAlternativeLst (End) ***\n");
+}
+-(void) propagateAlternativeEct
+{
+    if (VERBOSE) printf("*** propagateAlternativeEct (Start) ***\n");
+    ORInt minEct = MAXINT;
+    ORInt wEct   = MAXINT;
+    for (ORInt ii = 0; ii < _size._val; ii++) {
+        const ORInt i = _idx[ii];
+        if (minEct > _alt[i].ect) {
+            minEct = _alt[i].ect;
+            wEct   = i;
+        }
+    }
+    assert(_alt.low <= wEct  && wEct  <= _alt.up);
+    [_task updateEct: minEct];
+    if (wEct != _watchEct._val)
+        assignTRInt(&(_watchEct), wEct, _trail);
+    if (VERBOSE) printf("*** propagateAlternativeEct (End) ***\n");
 }
 -(void) propagateAlternativeEnd
 {
@@ -330,43 +386,14 @@
             [self propagateAlternativeStart];
         if (_watchEnd._val == k)
             [self propagateAlternativeEnd];
+        if (_watchLst._val == k)
+            [self propagateAlternativeLst];
+        if (_watchEct._val == k)
+            [self propagateAlternativeEct];
         if (_watchMinDur._val == k || _watchMaxDur._val == k)
             [self propagateAlternativeDuration];
     }
     if (VERBOSE) printf("*** propagateAlternativeAbsence(%d) (End) ***\n", k);
-    
-//    if (_size._val == 1) {
-//        printf("k = %d;\n", k);
-//        [self dumpState];
-//        assert(_idx[0] == k);
-//        [_task labelPresent: false];
-//    }
-//    else {
-//        const ORInt size = _size._val - 1;
-//        for (ORInt ii = 0; ii <= size; ii++) {
-//            const ORInt i = _idx[ii];
-//            if (i == k) {
-//                _idx[ii]   = _idx[size];
-//                _idx[size] = i;
-//                break;
-//            }
-//        }
-//        if (size == 1) {
-//            if (_task.isPresent)
-//                [_alt[_idx[0]] labelPresent: true];
-//            else
-//                [self propagateAllEqualities];
-//        }
-//        else {
-//            if (_watchStart._val == k)
-//                [self propagateAlternativeStart];
-//            if (_watchEnd._val == k)
-//                [self propagateAlternativeEnd];
-//            if (_watchMinDur._val == k || _watchMaxDur._val == k)
-//                [self propagateAlternativeDuration];
-//        }
-//        assignTRInt(&(_size), size, _trail);
-//    }
 }
 -(void) propagateAllEqualities
 {
@@ -375,14 +402,19 @@
     ORBool test = false;
     do {
         [_task   updateStart      : _alt[k].est        ];
+        [_task   updateLst        : _alt[k].lst        ];
+        [_task   updateEct        : _alt[k].ect        ];
         [_task   updateEnd        : _alt[k].lct        ];
         [_task   updateMinDuration: _alt[k].minDuration];
         [_task   updateMaxDuration: _alt[k].maxDuration];
         [_alt[k] updateStart      : _task.est        ];
+        [_alt[k] updateLst        : _task.lst        ];
+        [_alt[k] updateEct        : _task.ect        ];
         [_alt[k] updateEnd        : _task.lct        ];
         [_alt[k] updateMinDuration: _task.minDuration];
         [_alt[k] updateMaxDuration: _task.maxDuration];
         test = (_task.est != _alt[k].est || _task.lct != _alt[k].lct ||
+                _task.lst != _alt[k].lst || _task.ect != _alt[k].ect ||
              _task.minDuration != _alt[k].minDuration ||
              _task.maxDuration != _alt[k].maxDuration);
     } while (test && !_task.isAbsent && !_alt[k].isAbsent);
@@ -393,10 +425,14 @@
     ORInt size = _size._val;
     ORInt minStart = MAXINT;
     ORInt maxEnd   = MININT;
+    ORInt minEct   = MAXINT;
+    ORInt maxLst   = MININT;
     ORInt minDur   = MAXINT;
     ORInt maxDur   = MININT;
     ORInt wStart   = MAXINT;
     ORInt wEnd     = MAXINT;
+    ORInt wLst     = MAXINT;
+    ORInt wEct     = MAXINT;
     ORInt wMinDur  = MAXINT;
     ORInt wMaxDur  = MAXINT;
     ORBool update  = false;
@@ -435,6 +471,14 @@
                         maxEnd = _alt[i].lct;
                         wEnd   = i;
                     }
+                    if (_alt[i].lst > maxLst) {
+                        maxLst = _alt[i].lst;
+                        wLst   = i;
+                    }
+                    if (_alt[i].ect < minEct) {
+                        minEct = _alt[i].ect;
+                        wEct   = i;
+                    }
                     if (_alt[i].minDuration < minDur) {
                         minDur  = _alt[i].minDuration;
                         wMinDur = i;
@@ -456,12 +500,16 @@
                 // Updating the task bounds
                 [_task updateStart      : minStart];
                 [_task updateEnd        : maxEnd  ];
+                [_task updateLst        : maxLst  ];
+                [_task updateEct        : minEct  ];
                 [_task updateMinDuration: minDur  ];
                 [_task updateMaxDuration: maxDur  ];
                 // Updating the alternative task bounds
                 if (_task.isAbsent)
                     update = true;
-                else if (_task.est > minStart || _task.lct < maxEnd || _task.minDuration > minDur || _task.maxDuration < maxDur) {
+                else if (_task.est > minStart || _task.lct < maxEnd || _task.minDuration > minDur || _task.maxDuration < maxDur ||
+                         _task.ect > minEct   || _task.lst < maxLst
+                         ) {
                     [self propagateTaskAll];
                     update = true;
                 }
@@ -472,10 +520,14 @@
     if (noAltPresent) {
         assert(_alt.low <= wStart  && wStart  <= _alt.up);
         assert(_alt.low <= wEnd    && wEnd    <= _alt.up);
+        assert(_alt.low <= wLst    && wLst    <= _alt.up);
+        assert(_alt.low <= wEct    && wEct    <= _alt.up);
         assert(_alt.low <= wMinDur && wMinDur <= _alt.up);
         assert(_alt.low <= wMaxDur && wMaxDur <= _alt.up);
         assignTRInt(&(_watchStart ), wStart , _trail);
         assignTRInt(&(_watchEnd   ), wEnd   , _trail);
+        assignTRInt(&(_watchLst   ), wLst   , _trail);
+        assignTRInt(&(_watchEct   ), wEct   , _trail);
         assignTRInt(&(_watchMinDur), wMinDur, _trail);
         assignTRInt(&(_watchMaxDur), wMaxDur, _trail);
         if (size < _size._val)
@@ -484,6 +536,8 @@
         assert(_alt[_idx[0]].isPresent);
         assignTRInt(&(_watchStart ), _idx[0], _trail);
         assignTRInt(&(_watchEnd   ), _idx[0], _trail);
+        assignTRInt(&(_watchLst   ), _idx[0], _trail);
+        assignTRInt(&(_watchEct   ), _idx[0], _trail);
         assignTRInt(&(_watchMinDur), _idx[0], _trail);
         assignTRInt(&(_watchMaxDur), _idx[0], _trail);
         assignTRInt(&(_size), 1, _trail);
@@ -512,10 +566,10 @@
 -(void) dumpState
 {
     printf("-+-+- Alternative Dump -+-+-\n");
-    printf("task: est %d; lct %d; dur [%d, %d]; ", _task.est, _task.lct, _task.minDuration, _task.maxDuration);
+    printf("task: start [%d, %d]; end [%d, %d]; dur [%d, %d]; ", _task.est, _task.lst, _task.ect, _task.lct, _task.minDuration, _task.maxDuration);
     printf("present %d; absent %d\n", _task.isPresent, _task.isAbsent);
     printf("size %d;\n", _size._val);
-    printf("wStart %d; wEnd %d; wMinDur %d; wMaxDur %d;\n", _watchStart._val, _watchEnd._val, _watchMinDur._val, _watchMaxDur._val);
+    printf("wStart %d; wLst %d; wEct %d; wEnd %d; wMinDur %d; wMaxDur %d;\n", _watchStart._val, _watchLst._val, _watchEct._val, _watchEnd._val, _watchMinDur._val, _watchMaxDur._val);
     printf("_idx = ");
     for (ORInt ii = 0; ii < [_alt count]; ii++) {
         printf("%d:%d ", ii, _idx[ii]);
@@ -524,7 +578,7 @@
     printf("alternative:\n");
     for (ORInt ii = 0; ii < [_alt count]; ii++) {
         id<CPTaskVar> t = _alt[_idx[ii]];
-        printf("\ttask (%d): est %d; lct %d; dur [%d, %d];  present %d; absent %d\n", _idx[ii], t.est, t.lct, t.minDuration, t.maxDuration, t.isPresent, t.isAbsent);
+        printf("\ttask (%d): start [%d, %d]; end [%d, %d]; dur [%d, %d];  present %d; absent %d\n", _idx[ii], t.est, t.lst, t.ect, t.lct, t.minDuration, t.maxDuration, t.isPresent, t.isAbsent);
     }
     printf("-+-+-+-+-+-+-+-+-+-+-+--+-+-\n");
 }
