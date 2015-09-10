@@ -522,7 +522,6 @@ int main(int argc, const char * argv[])
         printf("%%%% Solver status: %s\n", [str UTF8String]);
 //     	NSLog(@"Solver status: %@\n",cp);
      	NSLog(@"Quitting");
-     	[cp release];
 	 	[ORFactory shutdown];
    	}
   
