@@ -1251,10 +1251,10 @@
 }
 -(void) propagate
 {
-    [_start updateMin: [_task est]];
-    [_start updateMax: [_task lst]];
+    [_start updateMin  : [_task  est]];
+    [_start updateMax  : [_task  lst]];
     [_task  updateStart: [_start min]];
-    [_task  updateEnd: [_start max] + [_task maxDuration]];
+    [_task  updateLst  : [_start max]];
 }
 -(NSSet*) allVars
 {
@@ -1369,6 +1369,10 @@
     [_extended updateStart: [_normal   est]];
     [_normal   updateEnd  : [_extended lct] - [_time min]];
     [_extended updateEnd  : [_normal   lct] + [_time max]];
+    [_normal   updateLst  : [_extended lst]];
+    [_extended updateLst  : [_normal   lst]];
+    [_normal   updateEct  : [_extended ect] - [_time max]];
+    [_extended updateEct  : [_normal   ect] + [_time min]];
 }
 -(NSSet*) allVars
 {
@@ -1603,6 +1607,10 @@ static inline ORInt roundUpDiv(const ORInt a, const ORInt b)
     [_extended updateStart: [_normal   est]];
     [_normal   updateEnd  : [_extended lct] - tmin];
     [_extended updateEnd  : [_normal   lct] + tmax];
+    [_normal   updateLst  : [_extended lst]];
+    [_extended updateLst  : [_normal   lst]];
+    [_normal   updateEct  : [_extended ect] - tmax];
+    [_extended updateEct  : [_normal   ect] + tmin];
 }
 -(NSSet*) allVars
 {
