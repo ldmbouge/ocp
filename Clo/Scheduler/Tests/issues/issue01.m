@@ -36,7 +36,7 @@ int main(const int argc, const char** argv)
 		}
 		[model add: cumulative];
 		
-		id<CPProgram,CPScheduler> cp = [ORFactory createCPProgram: model];
+		id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPProgram: model];
 		[cp solve:
 			^() {
 				// Search strategy
