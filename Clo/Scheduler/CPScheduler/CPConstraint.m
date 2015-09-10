@@ -593,6 +593,10 @@
     
     TRInt   _watchStart;
     TRInt   _watchEnd;
+    TRInt   _watchLst;
+    TRInt   _watchEct;
+    
+    TRInt   _comPresent;    // If there exist a present compound task
 }
 -(id) initCPSpan:(id<CPTaskVar>)task compound:(id<CPTaskVarArray>)compound
 {
@@ -619,6 +623,9 @@
     _size        = makeTRInt(_trail, size);
     _watchStart  = makeTRInt(_trail, size);
     _watchEnd    = makeTRInt(_trail, size);
+    _watchLst    = makeTRInt(_trail, size);
+    _watchEct    = makeTRInt(_trail, size);
+    _comPresent  = makeTRInt(_trail, 0);
     
     // Allocate memory
     _idx = malloc(size * sizeof(ORInt));
@@ -648,9 +655,13 @@
                 if (_size._val == 1) {
                     assert(_idx[0] == i);
                     [_task updateStart: _compound[i].est];
+                    [_task updateLst  : _compound[i].lst];
                 }
-                else if (_watchStart._val == i) {
-                    [self propagateSpanStart];
+                else {
+                    if (_watchStart._val == i)
+                        [self propagateSpanStart];
+                    if ((_watchLst._val == i && _comPresent._val == 0) || (_compound[i].isPresent && _compound[i].lst < _task.lst))
+                        [self propagateSpanLst];
                 }
             } onBehalf: self];
             // Bound change on end
@@ -658,9 +669,13 @@
                 if (_size._val == 1) {
                     assert(_idx[0] == i);
                     [_task updateEnd: _compound[i].lct];
+                    [_task updateEct: _compound[i].ect];
                 }
-                else if (_watchEnd._val == i) {
-                    [self propagateSpanEnd];
+                else {
+                    if (_watchEnd._val == i)
+                        [self propagateSpanEnd];
+                    if ((_watchEct._val == i && _comPresent._val == 0) || (_compound[i].isPresent && _compound[i].ect > _task.ect))
+                        [self propagateSpanEct];
                 }
             } onBehalf: self];
         }
@@ -703,18 +718,42 @@
 -(void) propagateTaskStart
 {
     if (VERBOSE) printf("*** propagateTaskStart (Start) ***\n");
+    ORInt k = -1;
+    ORInt c = 0;
     for (ORInt ii = 0; ii < _size._val; ii++) {
         const ORInt i = _idx[ii];
         [_compound[i] updateStart: _task.est];
+        if (_compound[i].est <= _task.lst) {
+            k = i;
+            c++;
+        }
+    }
+    if (c == 1) {
+        assert(_compound.low <= k  && k  <= _compound.up);
+        [_compound[k] updateLst:_task.lst];
+        if (_task.isPresent)
+            [_compound[k] labelPresent:true];
     }
     if (VERBOSE) printf("*** propagateTaskStart (End) ***\n");
 }
 -(void) propagateTaskEnd
 {
     if (VERBOSE) printf("*** propagateTaskEnd (Start) ***\n");
+    ORInt k = -1;
+    ORInt c = 0;
     for (ORInt ii = 0; ii < _size._val; ii++) {
         const ORInt i = _idx[ii];
         [_compound[i] updateEnd: _task.lct];
+        if (_task.ect <= _compound[i].lct) {
+            k = i;
+            c++;
+        }
+    }
+    if (c == 1) {
+        assert(_compound.low <= k  && k  <= _compound.up);
+        [_compound[k] updateEct:_task.ect];
+        if (_task.isPresent)
+            [_compound[k] labelPresent:true];
     }
     if (VERBOSE) printf("*** propagateTaskEnd (End) ***\n");
 }
@@ -724,10 +763,34 @@
     assert(!_task.isAbsent);
     const ORInt start  = _task.est;
     const ORInt end    = _task.lct;
+    ORInt kLst = -1;
+    ORInt cLst = 0;
+    ORInt kEct = -1;
+    ORInt cEct = 0;
     for (ORInt ii = 0; ii < _size._val; ii++) {
         const ORInt i = _idx[ii];
-        [_compound[i] updateStart      : start ];
-        [_compound[i] updateEnd        : end   ];
+        [_compound[i] updateStart: start ];
+        [_compound[i] updateEnd  : end   ];
+        if (_task.ect <= _compound[i].lct) {
+            kEct = i;
+            cEct++;
+        }
+        if (_compound[i].est <= _task.lst) {
+            kLst = i;
+            cLst++;
+        }
+    }
+    if (cLst == 1) {
+        assert(_compound.low <= kLst  && kLst  <= _compound.up);
+        [_compound[kLst] updateLst:_task.lst];
+        if (_task.isPresent)
+            [_compound[kLst] labelPresent:true];
+    }
+    if (cEct == 1) {
+        assert(_compound.low <= kEct  && kEct  <= _compound.up);
+        [_compound[kEct] updateEct:_task.ect];
+        if (_task.isPresent)
+            [_compound[kEct] labelPresent:true];
     }
     if (VERBOSE) printf("*** propagateTaskAll (End) ***\n");
 }
@@ -748,6 +811,64 @@
     if (wStart != _watchStart._val)
         assignTRInt(&(_watchStart), wStart, _trail);
     if (VERBOSE) printf("*** propagateSpanStart (End) ***\n");
+}
+-(void) propagateSpanLst
+{
+    if (VERBOSE) printf("*** propagateSpanLst (Start) ***\n");
+    ORInt newLst = MAXINT;
+    ORInt wLst   = MAXINT;
+    if (_comPresent._val == 1) {
+        for (ORInt ii = 0; ii < _size._val; ii++) {
+            const ORInt i = _idx[ii];
+            if (_compound[i].isPresent && newLst > _compound[i].lst) {
+                newLst = _compound[i].lst;
+                wLst   = i;
+            }
+        }
+    }
+    else {
+        for (ORInt ii = 0; ii < _size._val; ii++) {
+            const ORInt i = _idx[ii];
+            if (newLst < _compound[i].lst) {
+                newLst = _compound[i].lst;
+                wLst   = i;
+            }
+        }
+    }
+    assert(_compound.low <= wLst  && wLst  <= _compound.up);
+    [_task updateLst: newLst];
+    if (wLst != _watchLst._val)
+        assignTRInt(&(_watchLst), wLst, _trail);
+    if (VERBOSE) printf("*** propagateSpanLst (End) ***\n");
+}
+-(void) propagateSpanEct
+{
+    if (VERBOSE) printf("*** propagateSpanEct (Start) ***\n");
+    ORInt newEct = MAXINT;
+    ORInt wEct   = MAXINT;
+    if (_comPresent._val == 1) {
+        for (ORInt ii = 0; ii < _size._val; ii++) {
+            const ORInt i = _idx[ii];
+            if (_compound[i].isPresent && newEct < _compound[i].ect) {
+                newEct = _compound[i].ect;
+                wEct   = i;
+            }
+        }
+    }
+    else {
+        for (ORInt ii = 0; ii < _size._val; ii++) {
+            const ORInt i = _idx[ii];
+            if (newEct > _compound[i].ect) {
+                newEct = _compound[i].ect;
+                wEct   = i;
+            }
+        }
+    }
+    assert(_compound.low <= wEct  && wEct  <= _compound.up);
+    [_task updateEct: newEct];
+    if (wEct != _watchEct._val)
+        assignTRInt(&(_watchLst), wEct, _trail);
+    if (VERBOSE) printf("*** propagateSpanEct (End) ***\n");
 }
 -(void) propagateSpanEnd
 {
@@ -771,6 +892,10 @@
 {
     if (VERBOSE) printf("*** propagateSpanPresence(%d) (Start) ***\n", k);
     [_task labelPresent: true];
+    if (_comPresent._val == 0)
+        assignTRInt(&(_comPresent), 1, _trail);
+    [self propagateSpanLst];
+    [self propagateSpanEct];
     if (VERBOSE) printf("*** propagateSpanPresence(%d) (End) ***\n", k);
 }
 -(void) propagateSpanAbsence: (ORInt) k
@@ -800,6 +925,10 @@
             [self propagateSpanStart];
         if (_watchEnd._val == k)
             [self propagateSpanEnd];
+        if (_watchLst._val == k)
+            [self propagateSpanLst];
+        if (_watchEct._val == k)
+            [self propagateSpanEct];
     }
     if (VERBOSE) printf("*** propagateSpanAbsence(%d) (End) ***\n", k);
 }
@@ -812,9 +941,14 @@
     do {
         [_task        updateStart      : _compound[k].est ];
         [_task        updateEnd        : _compound[k].lct ];
+        [_task        updateLst        : _compound[k].lst ];
+        [_task        updateEct        : _compound[k].ect ];
         [_compound[k] updateStart      : _task.est        ];
         [_compound[k] updateEnd        : _task.lct        ];
-        test = (_task.est != _compound[k].est || _task.lct != _compound[k].lct);
+        [_compound[k] updateLst        : _task.lst        ];
+        [_compound[k] updateEct        : _task.ect        ];
+        test = (_task.est != _compound[k].est || _task.lct != _compound[k].lct ||
+                _task.lst != _compound[k].est || _task.ect != _compound[k].ect);
     } while (test && !_task.isAbsent && !_compound[k].isAbsent);
     if (VERBOSE) printf("*** propagateAllEqualities (End) ***\n");
 }
@@ -823,8 +957,12 @@
     ORInt size = _size._val;
     ORInt minStart = MAXINT;
     ORInt maxEnd   = MININT;
+    ORInt newLst   = MININT;
+    ORInt newEct   = MAXINT;
     ORInt wStart   = MAXINT;
     ORInt wEnd     = MAXINT;
+    ORInt wLst     = MAXINT;
+    ORInt wEct     = MAXINT;
     ORBool update  = false;
     
     do {
@@ -845,8 +983,17 @@
                     }
                 }
                 else {
-                    if (_compound[i].isPresent && !_task.isPresent)
-                        [self propagateSpanPresence:i];
+                    if (_compound[i].isPresent) {
+                        if (!_task.isPresent)
+                            [_task labelPresent: true];
+                        if (_comPresent._val == 0) {
+                            assignTRInt(&(_comPresent), 1, _trail);
+                            if (newLst == MININT)
+                                newLst = MAXINT;
+                            if (newEct == MAXINT)
+                                newEct = MININT;
+                        }
+                    }
                     // Presence of compound task is still unknown
                     if (_compound[i].est < minStart) {
                         minStart = _compound[i].est;
@@ -855,6 +1002,16 @@
                     if (_compound[i].lct > maxEnd) {
                         maxEnd = _compound[i].lct;
                         wEnd   = i;
+                    }
+                    if ((_compound[i].isPresent && _compound[i].lst < newLst) ||
+                        (_comPresent._val == 0 && _compound[i].lst > newLst)) {
+                        newLst = _compound[i].lst;
+                        wLst   = i;
+                    }
+                    if ((_compound[i].isPresent && _compound[i].ect > newEct) ||
+                        (_comPresent._val == 0 && _compound[i].ect < newEct)) {
+                        newEct = _compound[i].ect;
+                        wEct   = i;
                     }
                 }
             }
@@ -867,6 +1024,8 @@
                 // Updating the task bounds
                 [_task updateStart      : minStart];
                 [_task updateEnd        : maxEnd  ];
+                [_task updateLst        : newLst  ];
+                [_task updateEct        : newEct  ];
                 // Updating the alternative task bounds
                 if (_task.isAbsent)
                     update = true;
@@ -880,8 +1039,12 @@
     
     assert(_compound.low <= wStart  && wStart  <= _compound.up);
     assert(_compound.low <= wEnd    && wEnd    <= _compound.up);
+    assert(_compound.low <= wLst    && wLst    <= _compound.up);
+    assert(_compound.low <= wEct    && wEct    <= _compound.up);
     assignTRInt(&(_watchStart ), wStart , _trail);
     assignTRInt(&(_watchEnd   ), wEnd   , _trail);
+    assignTRInt(&(_watchLst   ), wLst   , _trail);
+    assignTRInt(&(_watchEct   ), wEct   , _trail);
     if (size < _size._val)
         assignTRInt(&(_size), size, _trail);
 }
