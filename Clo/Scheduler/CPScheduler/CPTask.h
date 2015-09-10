@@ -67,7 +67,7 @@
 -(ORBool) isPresent;
 -(ORBool) isAbsent;
 -(ORBool) isOptional;
--(ORBool) readEst: (ORInt *) est lct: (ORInt *) lct minDuration: (ORInt *) minD maxDuration: (ORInt *) maxD present: (ORBool *) present absent: (ORBool *) absent forResource:(id)resource;
+-(ORBool) readEst:(ORInt *)est lst:(ORInt *)lst ect:(ORInt *)ect lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)resource;
 -(void) updateStart: (ORInt) newStart;
 -(void) updateEnd: (ORInt) newEnd;
 -(void) updateStart: (ORInt) newStart end:(ORInt) newEnd;

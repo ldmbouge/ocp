@@ -28,7 +28,6 @@
 -(id) initCPAlternative: (id<CPTaskVar>) task alternatives: (id<CPTaskVarArray>) alt;
 -(void) dealloc;
 -(ORStatus) post;
-//-(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end

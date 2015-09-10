@@ -57,6 +57,8 @@ typedef struct {
     
     // Attributs of tasks
     ORInt  * _est;       // Earliest starting time
+    ORInt  * _lst;       // Latest starting time
+    ORInt  * _ect;       // Earliest completion time
     ORInt  * _lct;       // Latest completion time
     ORInt  * _dur_min;   // Minimal duration
     ORInt  * _dur_max;   // Maximal duration
@@ -238,6 +240,8 @@ typedef struct {
     printf("%%%% #TTEF props: %lld\n", _nb_ttef_props );
 
     if (_est          != NULL) free(_est         );
+    if (_lst          != NULL) free(_lst         );
+    if (_ect          != NULL) free(_ect         );
     if (_lct          != NULL) free(_lct         );
     if (_dur_min      != NULL) free(_dur_min     );
     if (_dur_max      != NULL) free(_dur_max     );
@@ -274,6 +278,8 @@ typedef struct {
     
     // Allocating memory
     _est          = malloc(_size * sizeof(ORInt ));
+    _lst          = malloc(_size * sizeof(ORInt ));
+    _ect          = malloc(_size * sizeof(ORInt ));
     _lct          = malloc(_size * sizeof(ORInt ));
     _dur_min      = malloc(_size * sizeof(ORInt ));
     _dur_max      = malloc(_size * sizeof(ORInt ));
@@ -287,7 +293,8 @@ typedef struct {
     
     if (_est == NULL || _lct == NULL || _dur_min == NULL || _dur_max == NULL
         || _usage_min == NULL || _usage_max == NULL || _area_min == NULL || _area_max == NULL
-        || _present == NULL || _absent == NULL || _resourceTask == NULL)
+        || _present == NULL || _absent == NULL || _resourceTask == NULL
+        || _lst == NULL || _ect == NULL)
         @throw [[ORExecutionError alloc] initORExecutionError: "Cumulative: Out of memory!"];
     
     // Allocating memory
@@ -445,13 +452,13 @@ static inline ORInt est(CPTaskCumulative * cumu, const ORInt t0)
 static inline ORInt lst(CPTaskCumulative * cumu, const ORInt t0)
 {
     assert(0 <= t0 && t0 < cumu->_size);
-    return cumu->_lct[t0] - cumu->_dur_min[t0];
+    return cumu->_lst[t0];
 }
 
 static inline ORInt ect(CPTaskCumulative * cumu, const ORInt t0)
 {
     assert(0 <= t0 && t0 < cumu->_size);
-    return cumu->_est[t0] + cumu->_dur_min[t0];
+    return cumu->_ect[t0];
 }
 
 static inline ORInt lct(CPTaskCumulative * cumu, const ORInt t0)
@@ -757,7 +764,7 @@ static inline ORBool isIrrelevant(CPTaskCumulative * cumu, const ORInt t0)
  * Time-tabling propagation *
  *
  * TODO:
- *  - Propagation on durations, usages, and area
+ *  - area
  ****************************/
 
 typedef struct {
@@ -1935,7 +1942,6 @@ static Profile cumuGetEarliestContentionProfile(CPTaskCumulative * cumu)
     const ORInt firstUnknownRT = cumu->_indexFirstUnknownRT._val;
     const ORInt size = firstUnknownRT - firstPresent;
 
-    ORInt ectA  [size];
     ORInt id_est[size];
     ORInt id_ect[size];
     
@@ -1943,9 +1949,8 @@ static Profile cumuGetEarliestContentionProfile(CPTaskCumulative * cumu)
     for (ORInt tt = firstPresent; tt < firstUnknownRT; tt++) {
         const ORInt i = tt - firstPresent;
         const ORInt t0 = cumu->_index[tt];
-        id_est[i ] = t0;
-        id_ect[i ] = t0;
-        ectA  [t0] = ect(cumu, t0);
+        id_est[i] = t0;
+        id_ect[i] = t0;
     }
     
     // Sorting the tasks in non-decreasing order by the earliest start time
@@ -1953,7 +1958,7 @@ static Profile cumuGetEarliestContentionProfile(CPTaskCumulative * cumu)
     // Sorting the tasks in non-decreasing order by the latest completion time
     qusort_r(id_ect, size, cumu, (ORInt (*)(void *, const ORInt *, const ORInt *)) &sortEctAsc);
 
-    Profile prof = getEarliestContentionProfile(id_est, id_ect, cumu->_est, ectA, cumu->_usage_min, size);
+    Profile prof = getEarliestContentionProfile(id_est, id_ect, cumu->_est, cumu->_ect, cumu->_usage_min, size);
     
     return prof;
 }
@@ -2056,9 +2061,13 @@ static CPTaskVarPrec * cumuGetPartialOrder(CPTaskCumulative * cumu, ORInt * psiz
  ******************************************************************************/
 
 static void dumpTask(CPTaskCumulative * cumu, ORInt t0) {
-    printf("task %d: est %d; ect %d; lst %d; lct %d; dur_min %d; usage_min %d;", t0, cumu->_est[t0], cumu->_est[t0] + cumu->_dur_min[t0], cumu->_lct[t0] - cumu->_dur_min[t0], cumu->_lct[t0], cumu->_dur_min[t0], cumu->_usage_min[t0]);
+    printf("task %d:", t0);
+    printf(" start [%d, %d];", cumu->_est      [t0], cumu->_lst      [t0]);
+    printf(" end [%d, %d];"  , cumu->_ect      [t0], cumu->_lct      [t0]);
+    printf(" dur [%d, %d];"  , cumu->_dur_min  [t0], cumu->_dur_max  [t0]);
+    printf(" usage [%d, %d];", cumu->_usage_min[t0], cumu->_usage_max[t0]);
+    printf(" area [%d, %d];" , cumu->_area_min [t0], cumu->_area_max [t0]);
     printf(" present %d; absent %d;\n", cumu->_present[t0], cumu->_absent[t0]);
-//    printf(" MT %d\n", cumu->_machineTask[t0]);
 }
 
 /*******************************************************************************
@@ -2124,8 +2133,8 @@ static ORBool updateIndicesRT(CPTaskCumulative * cumu)
 }
 
 // Reading the activities data and storing them in the data structure of the propagator
-// - Data read: bound, est,  lct, minDuration, maxDuration,   minUsage,   maxUsage, present,  absent
-// - Data stored:     _est, _lct,    _dur_min,    _dur_max, _usage_min, _usage_max, _present, _absent
+// - Data read: bound, est,  lst,  ect,  lct, minDuration, maxDuration,   minUsage,   maxUsage,  present,  absent
+// - Data stored:     _est, _lst, _ect, _lct,    _dur_min,    _dur_max, _usage_min, _usage_max, _present, _absent
 static void readData(CPTaskCumulative * cumu)
 {
     // array '_bound' is partition in [ Irrelevant | Unbound | Bound | BoundRT | UnboundRT | IrrelevantRT ]
@@ -2143,9 +2152,9 @@ static void readData(CPTaskCumulative * cumu)
         ORBool bound;
         
         if (cumu->_resourceTask[t0])
-            bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+            bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lst:&(cumu->_lst[t0]) ect:&(cumu->_ect[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         else
-            bound = [cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+            bound = [cumu->_tasks[t] readEst:&(cumu->_est[t0]) lst:&(cumu->_lst[t0]) ect:&(cumu->_ect[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
         
@@ -2186,7 +2195,7 @@ static void readData(CPTaskCumulative * cumu)
         const ORInt usage_max_t = cumu->_usage_max[t0];
         
         assert(cumu->_resourceTask[t0]);
-        bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+        bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lst:&(cumu->_lst[t0]) ect:&(cumu->_ect[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
 
@@ -2234,7 +2243,7 @@ static void readDataRT(CPTaskCumulative * cumu)
         ORBool bound;
         
         assert(cumu->_resourceTask[t0]);
-        bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
+        bound = [(id<CPResourceTask>)cumu->_tasks[t] readEst:&(cumu->_est[t0]) lst:&(cumu->_lst[t0]) ect:&(cumu->_ect[t0]) lct:&(cumu->_lct[t0]) minDuration:&(cumu->_dur_min[t0]) maxDuration:&(cumu->_dur_max[t0]) present:&(cumu->_present[t0]) absent:&(cumu->_absent[t0]) forResource:cumu];
         cumu->_usage_min[t0] = cumu->_usages[t].min;
         cumu->_usage_max[t0] = cumu->_usages[t].max;
         

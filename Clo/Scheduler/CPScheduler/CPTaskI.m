@@ -24,14 +24,16 @@
 /*****************************************************************************************/
 
 @interface CPTaskVarSnapshot : NSObject {
-   ORUInt    _name;
-   ORInt     _start;
-   ORInt     _end;
-   ORBool    _present;
-   ORBool    _absent;
-   ORInt     _minDuration;
-   ORInt     _maxDuration;
-   ORBool    _bound;
+    ORUInt  _name;
+    ORInt   _start;
+    ORInt   _lst;
+    ORInt   _ect;
+    ORInt   _end;
+    ORBool  _present;
+    ORBool  _absent;
+    ORInt   _minDuration;
+    ORInt   _maxDuration;
+    ORBool  _bound;
 }
 -(CPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<CPTaskVar>) t name: (ORInt) name;
 -(NSString*) description;
@@ -43,34 +45,37 @@
 @implementation CPTaskVarSnapshot
 -(CPTaskVarSnapshot*) initCPTaskVarSnapshot: (id<CPTaskVar>) t name: (ORInt) name;
 {
-   self = [super init];
-   _name = name;
-   _start = [t est];
-   _end = [t ect];
-   _minDuration = [t minDuration];
-   _maxDuration = [t maxDuration];
-   _present = [t isPresent];
-   _absent = [t isAbsent];
-   return self;
+    self = [super init];
+    _name = name;
+    _start = [t est];
+    _lst   = [t lst];
+    _ect   = [t ect];
+    _end   = [t lct];
+    _minDuration = [t minDuration];
+    _maxDuration = [t maxDuration];
+    _present = [t isPresent];
+    _absent = [t isAbsent];
+    return self;
 }
 -(NSString*) description
 {
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"task(%d,%d,%d,%d,%d,%d,%d)",_name,_start,_end,_minDuration,_maxDuration,_present,_absent];
-   return buf;
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"task(%d: s[%d,%d]; e[%d,%d]; d[%d,%d]; p[%d,%d])",_name,_start,_lst,_ect,_end,_minDuration,_maxDuration,_present,_absent];
+    return buf;
 }
 -(ORBool) isEqual: (id) object
 {
-   if ([object isKindOfClass:[self class]]) {
-      CPTaskVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return _start == other->_start && _end == other->_end  && _minDuration == other->_minDuration &&
-         _maxDuration == other->_maxDuration && _present == other->_present && _absent == other->_absent;
-      }
-      else
-         return NO;
-   } else
-      return NO;
+    if ([object isKindOfClass:[self class]]) {
+        CPTaskVarSnapshot* other = object;
+        if (_name == other->_name) {
+            return _start == other->_start && _end == other->_end  && _minDuration == other->_minDuration &&
+            _maxDuration == other->_maxDuration && _present == other->_present && _absent == other->_absent &&
+            _lst == other->_lst && _ect == other->_ect;
+        }
+        else
+            return NO;
+    } else
+        return NO;
 }
 -(NSUInteger) hash
 {
@@ -86,11 +91,11 @@
 }
 -(ORInt) ect
 {
-   return _start + _minDuration;
+   return _ect;
 }
 -(ORInt) lst
 {
-   return _end - _minDuration;
+   return _lst;
 }
 -(ORInt) lct
 {
@@ -215,10 +220,12 @@ typedef struct  {
 {
    return FALSE;
 }
--(ORBool) readEst:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)resource
+-(ORBool) readEst:(ORInt *)est lst:(ORInt *)lst ect:(ORInt *)ect lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)resource
 {
     ORBool bound   = (_start._val + _durationMin._val == _end._val) && (_durationMin._val == _durationMax._val);
     *est     = _start._val;
+    *lst     = _lst._val;
+    *ect     = _ect._val;
     *lct     = _end._val;
     *minD    = _durationMin._val;
     *maxD    = _durationMax._val;
@@ -582,9 +589,9 @@ typedef struct  {
 {
    return ([_task bound] && (_presentMin._val == 1)) || (_presentMax._val == 0);
 }
--(ORBool) readEst:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)res
+-(ORBool) readEst:(ORInt *)est lst:(ORInt *)lst ect:(ORInt *)ect lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id)res
 {
-    [_task readEst:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:res];
+    [_task readEst:est lst:lst ect:ect lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:res];
     *present = [self isPresent];
     *absent  = [self isAbsent ];
    return [self bound];
@@ -1014,9 +1021,9 @@ typedef struct  {
         @throw [[ORExecutionError alloc] initORExecutionError: "The task is not assigned to any resource"];
     return _index[0];
 }
--(ORBool) readEst:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id<CPConstraint>) resource
+-(ORBool) readEst:(ORInt *)est lst:(ORInt *)lst ect:(ORInt *)ect lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id<CPConstraint>) resource
 {
-    [super readEst:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:resource];
+    [super readEst:est lst:lst ect:ect lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:resource];
     const ORInt idx = [self getIndex:resource];
     *minD    = max(*minD, [_durArray at: idx].low);
     *maxD    = min(*maxD, [_durArray at: idx].up);
@@ -1335,9 +1342,9 @@ typedef struct  {
             @throw [[ORExecutionError alloc] initORExecutionError: "The task is not assigned to any resource"];
     return _index[0];
 }
--(ORBool) readEst:(ORInt *)est lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id<CPConstraint>) resource
+-(ORBool) readEst:(ORInt *)est lst:(ORInt *)lst ect:(ORInt *)ect lct:(ORInt *)lct minDuration:(ORInt *)minD maxDuration:(ORInt *)maxD present:(ORBool *)present absent:(ORBool *)absent forResource:(id<CPConstraint>) resource
 {
-    [super readEst:est lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:resource];
+    [super readEst:est lst:lst ect:ect lct:lct minDuration:minD maxDuration:maxD present:present absent:absent forResource:resource];
     const ORInt idx = [self getIndex:resource];
     *minD    = max(*minD, [_durArray at: idx].low);
     *maxD    = min(*maxD, [_durArray at: idx].up );

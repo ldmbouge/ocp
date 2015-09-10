@@ -143,8 +143,14 @@ void isort_r(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, con
 // Quick sort
 //
 void qusort_r(ORInt * base, ORInt size, void * thunk, ORInt(* compare)(void*, const ORInt*, const ORInt*)) {
-    // NOTE: qsort_r the 3rd argument of qsort_r is at the last position in glibc (GNU/Linux)
+    // NOTE: qsort_r the 4th argument of qsort_r is at the last position in glibc (GNU/Linux)
+#if (defined __APPLE__)
     qsort_r(base, size, sizeof(ORInt), thunk, (int(*)(void*, const void*, const void*)) compare);
+#elif (defined __linux__)
+    qsort_r(base, size, sizeof(ORInt), (int(*)(void*, const void*, const void*)) compare, thunk);
+#else
+    #error Cannot detect operation system
+#endif
 }
 
 
