@@ -1394,7 +1394,7 @@
     
     _task  = task;
     _start = start;
-    NSLog(@"Create constraint CPTaskStart\n");
+//    NSLog(@"Create constraint CPTaskStart\n");
     return self;
 }
 -(void) dealloc
@@ -1443,7 +1443,7 @@
    
    _task = task;
    _duration  = duration;
-    NSLog(@"Create constraint CPTaskDuration\n");
+//    NSLog(@"Create constraint CPTaskDuration\n");
    return self;
 }
 -(void) dealloc
