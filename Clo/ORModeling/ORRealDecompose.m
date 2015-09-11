@@ -120,14 +120,14 @@
          id       x = cv ? [e right] : [e left];
          [_terms addTerm: x by: coef];
       } else if ([[e left] isConstant]) {
-         id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:[e right]];
+         id<ORRealVar> alpha = [ORNormalizer floatVarIn:_model expr:[e right]];
          [_terms addTerm:alpha by:[[e left] min]];
       } else if ([[e right] isConstant]) {
          id<ORRealLinear> left = [ORNormalizer floatLinearFrom:[e left] model:_model];
          [left scaleBy:[[e right] min]];
          [_terms addLinear:left];
       } else {
-         id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e];
+         id<ORRealVar> alpha =  [ORNormalizer floatVarIn:_model expr:e];
          [_terms addTerm:alpha by:1];
       }
    }
@@ -314,6 +314,88 @@
       _rv = [ORFactory floatVar:_model low:lb up:ub];
    [_model addConstraint:[ORFactory floatElement:_model var:oV idxCstArray:a equal:_rv]];
    [lT release];
+}
+
+-(void) reifyEQc:(ORExprI*)theOther constant:(ORInt)c
+{
+   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model];
+   id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model];
+   [linOther release];
+#if OLDREIFY==1
+   if (_rv==nil) {
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
+   }
+   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
+#else
+   if (_rv != nil) {
+      [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
+   } else {
+      _rv = [ORFactory reifyView:_model var:theVar eqi:c];
+   }
+#endif
+}
+-(void) reifyNEQc:(ORExprI*)theOther constant:(ORInt)c
+{
+   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model];
+   id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model];
+   if (_rv==nil)
+      _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar neqi:c]];
+   [linOther release];
+}
+-(void) reifyLEQc:(ORExprI*)theOther constant:(ORInt)c
+{
+   id<ORRealLinear> linOther  = [ORNormalizer floatLinearFrom:theOther model:_model];
+   id<ORRealVar> theVar = [ORNormalizer floatVarIn:linOther for:_model];
+   if ([[theVar domain] up] <= c) {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,1,1)];
+      else
+         [_model addConstraint:[ORFactory equalc:_model var:_rv to:1]];
+   } else {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+      [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar leqi:c]];
+   }
+   [linOther release];
+}
+-(void) reifyGEQc:(ORExprI*)theOther constant:(ORInt)c
+{
+   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model];
+   id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model];
+   if ([[theVar domain] low] >= c) {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,1,1)];
+      else
+         [_model addConstraint:[ORFactory equalc:_model var:_rv to:1]];
+   } else {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+      [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar geqi:c]];
+   }
+   [linOther release];
+}
+-(void) reifyLEQ:(ORExprI*)left right:(ORExprI*)right
+{
+   id<ORIntLinear> linLeft   = [ORNormalizer intLinearFrom:left model:_model];
+   id<ORIntLinear> linRight  = [ORNormalizer intLinearFrom:right model:_model];
+   id<ORIntVar> varLeft  = [ORNormalizer intVarIn:linLeft for:_model];
+   id<ORIntVar> varRight = [ORNormalizer intVarIn:linRight for:_model];
+   if (_rv==nil)
+      _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:varLeft leq:varRight]];
+   [linLeft release];
+   [linRight release];
+}
+
+-(void) visitExprLEqualI:(ORExprLEqualI*)e
+{
+   if ([[e left] isConstant]) {
+      [self reifyGEQc:[e right] constant:[[e left] min]];
+   } else if ([[e right] isConstant]) {
+      [self reifyLEQc:[e left] constant:[[e right] min]];
+   } else
+      [self reifyLEQ:[e left] right:[e right]];
 }
 
 -(void) visitExprSumI: (ORExprSumI*) e

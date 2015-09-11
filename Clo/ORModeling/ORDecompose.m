@@ -350,7 +350,14 @@ struct CPVarPair {
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for =>"];
+   ORIntLinear*  linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
+   ORRealLinear* linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+   id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
+   id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
+   id<ORIntVar> final = [ORFactory intVar: _model domain:RANGE(_model,0,1)];
+   [_model addConstraint:[ORFactory equalc:_model var:final to:1]];
+   struct CPVarPair vars = {lV,rV,final};
+   [_model addConstraint:[ORFactory model:_model boolean:vars.lV imply:vars.rV equal:vars.boolVar]];
 }
 @end
 

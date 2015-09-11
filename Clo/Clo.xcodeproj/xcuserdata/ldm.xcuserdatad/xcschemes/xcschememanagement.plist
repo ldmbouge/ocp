@@ -247,7 +247,7 @@
 		<key>issue01.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>95</integer>
+			<integer>121</integer>
 		</dict>
 		<key>jobshop.xcscheme_^#shared#^_</key>
 		<dict>
@@ -593,6 +593,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>114</integer>
+		</dict>
+		<key>utc.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>122</integer>
 		</dict>
 		<key>vietnameseSnake.xcscheme_^#shared#^_</key>
 		<dict>
@@ -1018,6 +1023,11 @@
 			<true/>
 		</dict>
 		<key>5BFDB31F1B485FC600CF0648</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BFE50781BA087CE009EB0D7</key>
 		<dict>
 			<key>primary</key>
 			<true/>
