@@ -406,7 +406,7 @@ int main(int argc, const char * argv[])
 
             // Creating the CPScheduleProgram
             //
-		id<CPProgram,CPScheduler> cp = [ORFactory createCPProgram: model];
+		id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPProgram: model];
 		[cp solve:
 			^() {
 				// Search strategy
