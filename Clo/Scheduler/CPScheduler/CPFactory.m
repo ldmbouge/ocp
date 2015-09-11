@@ -343,7 +343,7 @@
 }
 +(id<CPConstraint>) multDur:(id<CPTaskVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z
 {
-    id<CPConstraint> cstr = NULL;
+    id<CPConstraint> cstr = [[CPTaskMultDur alloc] initCPTaskMultDur:x by:y equal:z];
     [[x engine] trackMutable:cstr];
     return cstr;
 }
