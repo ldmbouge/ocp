@@ -689,7 +689,6 @@
 		5B3896061795BE1E004CCE93 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B3DAE4A1677988700F01DBF /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3DAE4B1677988700F01DBF /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
-		5B3F7E051B586FA60069F4C2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3F7E041B586F930069F4C2 /* main.m */; };
 		5B40A9241B6321470033D351 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B40A9231B6321470033D351 /* main.swift */; };
 		5B40A9291B6321620033D351 /* utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CB26C1B5851BB006E3FAB /* utilities.swift */; };
 		5B40A92A1B63219C0033D351 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -1273,6 +1272,7 @@
 		5BB3836813B3C0E1005B7D52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3836713B3C0E1005B7D52 /* main.m */; };
 		5BB3837113B3C0F5005B7D52 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BB4239F162CA2B300B0EF42 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BB79D641BA39A8E00F109C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB79D631BA39A6300F109C3 /* main.m */; };
 		5BB848181B70BD160084C52D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */; };
 		5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB9541F16DA888500932681 /* CPMultiStartSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBA3F8A151CCB0C00D6F6AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
@@ -20514,9 +20514,6 @@
 		5B3895EC1795BE07004CCE93 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B3895EF1795BE07004CCE93 /* fwarehouse-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fwarehouse-Prefix.pch"; sourceTree = "<group>"; };
 		5B3895F01795BE07004CCE93 /* fwarehouse.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = fwarehouse.1; sourceTree = "<group>"; };
-		5B3F7E021B586F930069F4C2 /* jobshop-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "jobshop-Prefix.pch"; path = "Tests/jobshop/jobshop-Prefix.pch"; sourceTree = "<group>"; };
-		5B3F7E031B586F930069F4C2 /* jobshop.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = jobshop.1; path = Tests/jobshop/jobshop.1; sourceTree = "<group>"; };
-		5B3F7E041B586F930069F4C2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = main.m; path = Tests/jobshop/main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B40A9211B6321460033D351 /* orderSwift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = orderSwift; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B40A9231B6321470033D351 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPObjectQueue.h; sourceTree = "<group>"; };
@@ -20825,6 +20822,7 @@
 		5BB3836713B3C0E1005B7D52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BB3836A13B3C0E1005B7D52 /* magicserie-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "magicserie-Prefix.pch"; sourceTree = "<group>"; };
 		5BB3836B13B3C0E1005B7D52 /* magicserie.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = magicserie.1; sourceTree = "<group>"; };
+		5BB79D631BA39A6300F109C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BB9541F16DA888500932681 /* CPMultiStartSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPMultiStartSolver.h; sourceTree = "<group>"; };
 		5BBA3F88151CCB0C00D6F6AD /* queensGui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = queensGui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BBA56D4153F33E70089118E /* iQueens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iQueens.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35937,13 +35935,11 @@
 		5B3F7E011B586F790069F4C2 /* jobshop */ = {
 			isa = PBXGroup;
 			children = (
-				5B3F7E021B586F930069F4C2 /* jobshop-Prefix.pch */,
-				5B3F7E031B586F930069F4C2 /* jobshop.1 */,
-				5B3F7E041B586F930069F4C2 /* main.m */,
+				5BB79D631BA39A6300F109C3 /* main.m */,
 			);
 			name = jobshop;
-			path = Tests/jobshop;
-			sourceTree = "<group>";
+			path = Scheduler/Tests/jobshop;
+			sourceTree = SOURCE_ROOT;
 		};
 		5B40A9221B6321470033D351 /* orderSwift */ = {
 			isa = PBXGroup;
@@ -42141,7 +42137,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B3F7E051B586FA60069F4C2 /* main.m in Sources */,
+				5BB79D641BA39A8E00F109C3 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

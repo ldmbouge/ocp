@@ -244,15 +244,15 @@
 			<key>orderHint</key>
 			<integer>23</integer>
 		</dict>
-		<key>issue01.xcscheme</key>
+		<key>issue01.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>95</integer>
 		</dict>
-		<key>jobshop.xcscheme</key>
+		<key>jobshop.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>30</integer>
+			<integer>97</integer>
 		</dict>
 		<key>jsp.xcscheme_^#shared#^_</key>
 		<dict>
@@ -339,10 +339,10 @@
 			<key>orderHint</key>
 			<integer>39</integer>
 		</dict>
-		<key>mrcpsp.xcscheme</key>
+		<key>mrcpsp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>116</integer>
+			<integer>98</integer>
 		</dict>
 		<key>nfraction.xcscheme_^#shared#^_</key>
 		<dict>
@@ -479,10 +479,10 @@
 			<key>orderHint</key>
 			<integer>63</integer>
 		</dict>
-		<key>rcpsp.xcscheme</key>
+		<key>rcpsp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>111</integer>
+			<integer>99</integer>
 		</dict>
 		<key>regular.xcscheme_^#shared#^_</key>
 		<dict>

@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "53C4BE2C1929C2E700DE6498"
-               BuildableName = "fjsp"
-               BlueprintName = "fjsp"
+               BlueprintIdentifier = "5BC9C3671B95D94800924032"
+               BuildableName = "rcpsp"
+               BlueprintName = "rcpsp"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "53C4BE2C1929C2E700DE6498"
-            BuildableName = "fjsp"
-            BlueprintName = "fjsp"
+            BlueprintIdentifier = "5BC9C3671B95D94800924032"
+            BuildableName = "rcpsp"
+            BlueprintName = "rcpsp"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -52,15 +52,15 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "53C4BE2C1929C2E700DE6498"
-            BuildableName = "fjsp"
-            BlueprintName = "fjsp"
+            BlueprintIdentifier = "5BC9C3671B95D94800924032"
+            BuildableName = "rcpsp"
+            BlueprintName = "rcpsp"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "kacem1.fjs"
+            argument = "Bl20_1.rcp"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
@@ -77,9 +77,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "53C4BE2C1929C2E700DE6498"
-            BuildableName = "fjsp"
-            BlueprintName = "fjsp"
+            BlueprintIdentifier = "5BC9C3671B95D94800924032"
+            BuildableName = "rcpsp"
+            BlueprintName = "rcpsp"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

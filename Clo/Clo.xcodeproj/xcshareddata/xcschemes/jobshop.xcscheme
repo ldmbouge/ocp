@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "53C4BE2C1929C2E700DE6498"
-               BuildableName = "fjsp"
-               BlueprintName = "fjsp"
+               BlueprintIdentifier = "B19B5583190518CF0069ABA0"
+               BuildableName = "jobshop"
+               BlueprintName = "jobshop"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "53C4BE2C1929C2E700DE6498"
-            BuildableName = "fjsp"
-            BlueprintName = "fjsp"
+            BlueprintIdentifier = "B19B5583190518CF0069ABA0"
+            BuildableName = "jobshop"
+            BlueprintName = "jobshop"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -52,18 +52,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "53C4BE2C1929C2E700DE6498"
-            BuildableName = "fjsp"
-            BlueprintName = "fjsp"
+            BlueprintIdentifier = "B19B5583190518CF0069ABA0"
+            BuildableName = "jobshop"
+            BlueprintName = "jobshop"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "kacem1.fjs"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -77,9 +71,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "53C4BE2C1929C2E700DE6498"
-            BuildableName = "fjsp"
-            BlueprintName = "fjsp"
+            BlueprintIdentifier = "B19B5583190518CF0069ABA0"
+            BuildableName = "jobshop"
+            BlueprintName = "jobshop"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
