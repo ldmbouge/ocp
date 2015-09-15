@@ -36,6 +36,7 @@
     // Whether the opportunitic TTEEF rule that considers the least densed time
     // interval regarding the available energy should be executed
 #define TTEEFDENSITYPROP 1
+#define TTEFMAXAREAPROP 1
 
 
 typedef struct {
@@ -104,6 +105,8 @@ typedef struct {
     ORULong _nb_tt_props;       // Number of time-tabling propagations
     ORULong _nb_ttef_incons;    // Number of time-tabling-edge-finding inconsistencies
     ORULong _nb_ttef_props;     // Number of time-tabling-edge-finding propagations
+    ORULong _nb_ttef_area_props;
+
 }
 
 -(id) initCPTaskCumulative: (id<CPTaskVarArray>)tasks with:(id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>)capacity
@@ -158,6 +161,7 @@ typedef struct {
     _nb_tt_props    = 0;
     _nb_ttef_incons = 0;
     _nb_ttef_props  = 0;
+    _nb_ttef_area_props  = 0;
 
     // Initialisation of other data structures
     _bound   = NULL;
@@ -219,6 +223,7 @@ typedef struct {
     _nb_tt_props    = 0;
     _nb_ttef_incons = 0;
     _nb_ttef_props  = 0;
+    _nb_ttef_area_props  = 0;
     
     // Initialisation of other data structures
     _bound   = NULL;
@@ -238,6 +243,8 @@ typedef struct {
     printf("%%%% #TT props: %lld\n",   _nb_tt_props   );
     printf("%%%% #TTEF fails: %lld\n", _nb_ttef_incons);
     printf("%%%% #TTEF props: %lld\n", _nb_ttef_props );
+    printf("%%%% #TTEF props: %lld\n", _nb_ttef_area_props);
+    printf("\n");
 
     if (_est          != NULL) free(_est         );
     if (_lst          != NULL) free(_lst         );
@@ -498,6 +505,13 @@ static inline ORInt area_min(CPTaskCumulative * cumu, const ORInt t0)
 #warning Changed for taking an area variable into account
     assert(0 <= t0 && t0 < cumu->_size);
     return  cumu->_area_min[t0];
+}
+
+static inline ORInt area_max(CPTaskCumulative * cumu, const ORInt t0)
+{
+#warning Changed for taking an area variable into account
+    assert(0 <= t0 && t0 < cumu->_size);
+    return  cumu->_area_max[t0];
 }
 
 static inline ORInt free_energy(CPTaskCumulative * cumu, const ORInt t0)
@@ -1480,6 +1494,10 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
         min_density_begin = MININT;
         min_density = cap_max(cumu) + 1;
 #endif
+#if TTEFMAXAREAPROP
+        ORInt max_req = 0;
+        ORInt max_req_j = MININT;
+#endif
         
         // Inner loop: Iteration over the begin times of the interval [., end)
         //
@@ -1518,7 +1536,12 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
             if (lct(cumu, j) <= end) {
                 // Task j fully lies in the interval [begin, end)
                 en_req_free += free_energy(cumu, j);
-#warning TODO Propagation on the upper bound of area variables
+#if TTEFMAXAREAPROP
+                if (cumu->_area != NULL && cumu->_area[j + cumu->_low] != NULL && max_req < area_max(cumu, j) - area_min(cumu, j)) {
+                    max_req = area_max(cumu, j) - area_min(cumu, j);
+                    max_req_j = j;
+                }
+#endif
             }
             else {
                 // Calculation whether a free part of the task partially lies
@@ -1571,6 +1594,14 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
                 min_density_begin = begin;
                 // Check for a lower bound update on the capacity
                 *new_cap_min = max(*new_cap_min, cap_max(cumu) - approx_density);
+            }
+#endif
+#if TTEFMAXAREAPROP
+            // Check for an area update
+            if (max_req > 0 && en_avail < area_max(cumu, max_req_j) - area_min(cumu, max_req_j)) {
+                cumu->_nb_ttef_area_props++;
+                *update = true;
+                [cumu->_area[max_req_j + cumu->_low] updateMax:en_avail + area_min(cumu, max_req_j)];
             }
 #endif
             
@@ -1653,7 +1684,10 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
         min_density_end = MAXINT;
         min_density = cap_max(cumu) + 1;
 #endif
-        
+#if TTEFMAXAREAPROP
+        ORInt max_req = 0;
+        ORInt max_req_j = MININT;
+#endif
         // Inner loop: iterating over lct in non-decreasing order
         //
         for (ORUInt jj = lct_idx_last; jj < unboundSize; jj++) {
@@ -1686,7 +1720,12 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
             if (begin <= est(cumu, j)) {
                 // Task j is contained in the time interval [begin, end)
                 en_req_free += free_energy(cumu, j);
-#warning TODO Propagation on the upper bound of area variables
+#if TTEFMAXAREAPROP
+                if (cumu->_area != NULL && cumu->_area[j + cumu->_low] != NULL && max_req < area_max(cumu, j) - area_min(cumu, j)) {
+                    max_req = area_max(cumu, j) - area_min(cumu, j);
+                    max_req_j = j;
+                }
+#endif
             } else {
                 // Task j might be partially contained in [begin, end)
                 const ORInt en_ls = energy_left_shift(cumu, j, begin);
@@ -1737,6 +1776,14 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
                 min_density_end = end;
                 // Check for a lower bound update on the capacity
                 *new_cap_min = max(*new_cap_min, cap_max(cumu) - approx_density);
+            }
+#endif
+#if TTEFMAXAREAPROP
+            // Check for an area update
+            if (max_req > 0 && en_avail < area_max(cumu, max_req_j) - area_min(cumu, max_req_j)) {
+                cumu->_nb_ttef_area_props++;
+                *update = true;
+                [cumu->_area[max_req_j + cumu->_low] updateMax:en_avail + area_min(cumu, max_req_j)];
             }
 #endif
             
