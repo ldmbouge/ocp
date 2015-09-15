@@ -247,6 +247,8 @@ typedef struct {
     if (_dur_max      != NULL) free(_dur_max     );
     if (_usage_min    != NULL) free(_usage_min   );
     if (_usage_max    != NULL) free(_usage_max   );
+    if (_area_min     != NULL) free(_area_min    );
+    if (_area_max     != NULL) free(_area_max    );
     if (_present      != NULL) free(_present     );
     if (_absent       != NULL) free(_absent      );
     if (_bound        != NULL) free(_bound       );
@@ -501,6 +503,7 @@ static inline ORInt area_min(CPTaskCumulative * cumu, const ORInt t0)
 static inline ORInt free_energy(CPTaskCumulative * cumu, const ORInt t0)
 {
     assert(0 <= t0 && t0 < cumu->_size);
+    assert(0 <= area_min(cumu, t0) - usage_min(cumu, t0) * max(0, ect(cumu, t0) - lst(cumu, t0)));
     return  area_min(cumu, t0) - usage_min(cumu, t0) * max(0, ect(cumu, t0) - lst(cumu, t0));
 }
 
@@ -648,7 +651,6 @@ static inline ORInt req_energy_start_est_right_shift(CPTaskCumulative * cumu, co
         return 0;
     if (est(cumu, t0) + dur_max(cumu, t0) <= time)
         return area_min(cumu, t0);
-    assert(usage_min(cumu, t0) * dur_min(cumu, t0) == area_min(cumu, t0) || usage_min(cumu, t0) == area_min(cumu, t0) / dur_max(cumu, t0));
     return min(area_min(cumu, t0), usage_min(cumu, t0) * (time - est(cumu, t0)));
 }
 
@@ -667,7 +669,6 @@ static inline ORInt req_energy_end_lct_left_shift(CPTaskCumulative * cumu, const
         return 0;
     if (begin <= lct(cumu, t0) - dur_max(cumu, t0))
         return area_min(cumu, t0);
-    assert(usage_min(cumu, t0) * dur_min(cumu, t0) == area_min(cumu, t0) || usage_min(cumu, t0) == area_min(cumu, t0) / dur_max(cumu, t0));
     return min(area_min(cumu, t0), usage_min(cumu, t0) * (lct(cumu, t0) - begin));
 }
 
@@ -798,6 +799,7 @@ static ORInt tt_build_profile(CPTaskCumulative* cumu)
     const ORInt firstPresent   = cumu->_indexFirstPresent._val;
     const ORInt firstUnknownRT = cumu->_indexFirstUnknownRT._val;
     ORInt nbCompParts = 0;
+    cumu->_profileSize = 0;
     
     // Determine the number of activities with compulsory parts to be considered
     for (ORInt tt = firstPresent; tt < firstUnknownRT; tt++) {
@@ -1029,7 +1031,7 @@ static void tt_filter_duration_ub_i(CPTaskCumulative * cumu, const ORInt t0, boo
 static void tt_filter_usage_ub_i(CPTaskCumulative * cumu, const ORInt t0, bool * update)
 {
     assert(!(cumu->_resourceTask[t0] && !isRelevant(cumu, t0)));
-    assert(dur_min(cumu, t0) < dur_max(cumu, t0));
+    assert(usage_min(cumu, t0) < usage_max(cumu, t0));
     
     const ORInt maxCapacity = cap_max(cumu);
     
@@ -1322,6 +1324,7 @@ static void ttef_consistency_check(CPTaskCumulative * cumu, const ORInt * task_i
             
             // Adding the required energy of j in the intervals [begin', end)
             // where begin' <= est(cumu, j)
+            assert(0 <= free_energy_right_shift(cumu, j, end));
             en_req_free += free_energy_right_shift(cumu, j, end);
 #warning TODO Propagation on the upper bound of area variables
 #warning XXX Old code before considering area variables
@@ -1770,7 +1773,7 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
 static void tteef_filter_start_times_in_interval(CPTaskCumulative* cumu, ORInt* new_est, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update)
 {
     assert(area_min(cumu, j) > 0);
-    if (lct(cumu, j) <= tw_end)
+    if (lct(cumu, j) <= tw_end || area_min(cumu, j) <= en_avail)
         return;
     // Compute the minimal required energy in the interval for executing the task as earliest as possible
     const ORInt en_comp_part = (isRelevant(cumu, j) ? comp_part_interval(cumu, j, tw_begin, tw_end) : 0);
@@ -1830,7 +1833,7 @@ static void tteef_filter_start_times_in_interval(CPTaskCumulative* cumu, ORInt* 
 
 static void tteef_filter_end_times_in_interval(CPTaskCumulative* cumu, ORInt* new_lct, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update) {
     assert(area_min(cumu, j) > 0);
-    if (tw_begin <= est(cumu, j))
+    if (tw_begin <= est(cumu, j) || area_min(cumu, j) <= en_avail)
         return;
     // Compute the minimal required energy in the interval for executing the task at latest as possible
     const ORInt en_comp_part = (isRelevant(cumu, j) ? comp_part_interval(cumu, j, tw_begin, tw_end) : 0);
