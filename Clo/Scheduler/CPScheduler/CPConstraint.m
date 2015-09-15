@@ -1567,7 +1567,7 @@
     _x = x;
     _y = (CPIntVar*)y;
     _z = (CPIntVar*)z;
-    NSLog(@"Create constraint CPTaskMultDur\n");
+//    NSLog(@"Create constraint CPTaskMultDur\n");
     return self;
 }
 -(void) dealloc
