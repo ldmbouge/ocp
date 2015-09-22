@@ -48,6 +48,10 @@
 -(ORDouble) cst;
 @end
 
+@interface ORRealEqual : ORConstraintI<ORRealEqual>
+-(id)init:(id<ORRealVar>)x eq:(id<ORRealVar>)y;
+@end
+
 @interface ORNEqualc : ORConstraintI<ORNEqualc>
 -(ORNEqualc*)initORNEqualc:(id<ORIntVar>)x neqi:(ORInt)c;
 -(id<ORIntVar>) left;
@@ -121,6 +125,10 @@
 @end
 
 @interface ORRealSquare : ORSquare
+@end
+
+@interface ORRealMult : ORConstraintI<ORRealMult>
+-(id)init:(id<ORRealVar>)z eq:(id<ORRealVar>)x times:(id<ORRealVar>)y;
 @end
 
 @interface ORMod : ORConstraintI<ORMod>
@@ -218,51 +226,42 @@
 
 @interface ORReifyNEqualc : ORConstraintI<ORReifyNEqualc>
 -(ORReifyNEqualc*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neqi:(ORInt)c;
--(id<ORIntVar>) b;
--(id<ORIntVar>) x;
--(ORInt)        cst;
 @end
 
 @interface ORReifyEqual : ORConstraintI<ORReifyEqual>
 -(ORReifyEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y;
--(id<ORIntVar>) b;
--(id<ORIntVar>) x;
--(id<ORIntVar>) y;
 @end
 
 @interface ORReifyNEqual : ORConstraintI<ORReifyNEqual>
 -(ORReifyNEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y;
--(id<ORIntVar>) b;
--(id<ORIntVar>) x;
--(id<ORIntVar>) y;
 @end
 
 @interface ORReifyLEqualc : ORConstraintI<ORReifyLEqualc>
 -(ORReifyLEqualc*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leqi:(ORInt)y;
--(id<ORIntVar>) b;
--(id<ORIntVar>) x;
--(ORInt)        cst;
 @end
 
 @interface ORReifyLEqual : ORConstraintI<ORReifyLEqual>
 -(ORReifyLEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y;
--(id<ORIntVar>) b;
--(id<ORIntVar>) x;
--(id<ORIntVar>) y;
 @end
 
 @interface ORReifyGEqualc : ORConstraintI<ORReifyGEqualc>
 -(ORReifyGEqualc*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geqi:(ORInt)y;
--(id<ORIntVar>) b;
--(id<ORIntVar>) x;
--(ORInt)        cst;
 @end
 
 @interface ORReifyGEqual : ORConstraintI<ORReifyGEqual>
 -(ORReifyGEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y;
--(id<ORIntVar>) b;
--(id<ORIntVar>) x;
--(id<ORIntVar>) y;
+@end
+
+@interface ORReifyEqualRealc : ORConstraintI<ORReifyEqualRealc>
+-(id)initReifyReal:(id<ORIntVar>)b equiv:(id<ORRealVar>)x eqi:(ORDouble)c;
+@end
+
+@interface ORReifyLEqualRealc : ORConstraintI<ORReifyLEqualRealc>
+-(id) initReifyReal:(id<ORIntVar>)b equiv:(id<ORRealVar>)x leqi:(ORDouble)y;
+@end
+
+@interface ORReifyGEqualRealc : ORConstraintI<ORReifyGEqualRealc>
+-(id) initReifyReal:(id<ORIntVar>)b equiv:(id<ORRealVar>)x geqi:(ORDouble)y;
 @end
 
 @interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>

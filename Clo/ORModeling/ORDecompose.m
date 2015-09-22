@@ -351,7 +351,7 @@ struct CPVarPair {
 -(void) visitExprImplyI:(ORImplyI*)e
 {
    ORIntLinear*  linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
-   ORRealLinear* linRight = [ORNormalizer floatLinearFrom:[e right] model:_model];
+   ORIntLinear* linRight = [ORNormalizer intLinearFrom:[e right] model:_model];
    id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
    id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
    id<ORIntVar> final = [ORFactory intVar: _model domain:RANGE(_model,0,1)];

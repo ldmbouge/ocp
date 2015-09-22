@@ -97,7 +97,8 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 
--(void) visitFloatEqualc: (id<ORRealEqualc>)c;
+-(void) visitFloatEqualc: (id<ORConstraint>)c;
+-(void) visitFloatEqual: (id<ORConstraint>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;
 -(void) visitNEqualc: (id<ORConstraint>)c;
 -(void) visitLEqualc: (id<ORConstraint>)c;
@@ -110,6 +111,7 @@
 -(void) visitMult: (id<ORConstraint>)c;
 -(void) visitSquare: (id<ORConstraint>)c;
 -(void) visitFloatSquare: (id<ORConstraint>)c;
+-(void) visitRealMult:(id<ORConstraint>)c;
 -(void) visitMod: (id<ORConstraint>)c;
 -(void) visitModc: (id<ORConstraint>)c;
 -(void) visitMin: (id<ORConstraint>)c;
@@ -131,6 +133,9 @@
 -(void) visitReifyLEqual: (id<ORConstraint>)c;
 -(void) visitReifyGEqualc: (id<ORConstraint>)c;
 -(void) visitReifyGEqual: (id<ORConstraint>)c;
+-(void) visitReifyEqualRealc: (id<ORConstraint>)c;
+-(void) visitReifyLEqualRealc: (id<ORConstraint>)c;
+-(void) visitReifyGEqualRealc: (id<ORConstraint>)c;
 -(void) visitReifySumBoolEqualc: (id<ORConstraint>) c;
 -(void) visitReifySumBoolGEqualc: (id<ORConstraint>) c;
 -(void) visitHReifySumBoolEqualc: (id<ORConstraint>) c;

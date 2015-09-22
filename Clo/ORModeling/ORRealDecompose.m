@@ -303,6 +303,45 @@
    [_model addConstraint:[ORFactory floatSquare:_model var:oV equal:_rv]];
    [lT release];
 }
+
+-(void) visitExprMulI: (ORExprMulI*) e
+{
+   id<ORRealLinear> lT = [ORNormalizer floatLinearFrom:[e left] model:_model];
+   id<ORRealLinear> rT = [ORNormalizer floatLinearFrom:[e right] model:_model];
+   if (lT.isOne) {
+      id<ORRealVar> rV = [ORNormalizer floatVarIn:rT for:_model];
+      if (_rv == nil)
+         _rv = rV;
+      else
+         [_model addConstraint:[ORFactory floatEqual:_model var:_rv to:rV]];
+   } else if (rT.isOne) {
+      id<ORRealVar> lV = [ORNormalizer floatVarIn:lT for:_model];
+      if (_rv == nil)
+         _rv  = lV;
+      else
+         [_model addConstraint:[ORFactory floatEqual:_model var:_rv to:lV]];
+   } else {
+      id<ORRealVar> lV = [ORNormalizer floatVarIn:lT for:_model];
+      id<ORRealVar> rV = [ORNormalizer floatVarIn:rT for:_model];
+      ORDouble llb = [[lV domain] low];
+      ORDouble lub = [[lV domain] up];
+      ORDouble rlb = [[rV domain] low];
+      ORDouble rub = [[rV domain] up];
+      ORDouble a = minDouble(llb * rlb,llb * rub);
+      ORDouble b = minDouble(lub * rlb,lub * rub);
+      ORDouble lb = minDouble(a,b);
+      ORDouble c = maxDouble(llb * rlb,llb * rub);
+      ORDouble d = maxDouble(lub * rlb,lub * rub);
+      ORDouble ub = maxDouble(c,d);
+      if (_rv==nil)
+         _rv = [ORFactory floatVar:_model low:lb up:ub];
+      [_model addConstraint: [ORFactory floatMult:_model var:lV by:rV equal:_rv]];
+   }
+   [lT release];
+   [rT release];
+}
+
+
 -(void) visitExprCstFloatSubI:(ORExprCstFloatSubI*)e
 {
    id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e index] model:_model];
@@ -316,7 +355,7 @@
    [lT release];
 }
 
--(void) reifyEQc:(ORExprI*)theOther constant:(ORInt)c
+-(void) reifyEQc:(ORExprI*)theOther constant:(ORDouble)c
 {
    id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model];
    id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model];
@@ -334,7 +373,7 @@
    }
 #endif
 }
--(void) reifyNEQc:(ORExprI*)theOther constant:(ORInt)c
+-(void) reifyNEQc:(ORExprI*)theOther constant:(ORDouble)c
 {
    id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model];
    id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model];
@@ -343,26 +382,26 @@
    [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar neqi:c]];
    [linOther release];
 }
--(void) reifyLEQc:(ORExprI*)theOther constant:(ORInt)c
+-(void) reifyLEQc:(ORExprI*)theOther constant:(ORDouble)c
 {
    id<ORRealLinear> linOther  = [ORNormalizer floatLinearFrom:theOther model:_model];
    id<ORRealVar> theVar = [ORNormalizer floatVarIn:linOther for:_model];
    if ([[theVar domain] up] <= c) {
       if (_rv==nil)
-         _rv = [ORFactory intVar:_model domain:RANGE(_model,1,1)];
+         _rv = [ORFactory intVar:_model value:1];
       else
          [_model addConstraint:[ORFactory equalc:_model var:_rv to:1]];
    } else {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-      [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar leqi:c]];
+      [_model addConstraint: [ORFactory reify:_model boolean:_rv withReal:theVar leqi:c]];
    }
    [linOther release];
 }
--(void) reifyGEQc:(ORExprI*)theOther constant:(ORInt)c
+-(void) reifyGEQc:(ORExprI*)theOther constant:(ORDouble)c
 {
-   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model];
-   id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model];
+   id<ORRealLinear> linOther  = [ORNormalizer floatLinearFrom:theOther model:_model];
+   id<ORRealVar> theVar = [ORNormalizer floatVarIn:linOther for:_model];
    if ([[theVar domain] low] >= c) {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain:RANGE(_model,1,1)];
@@ -371,7 +410,7 @@
    } else {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-      [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar geqi:c]];
+      [_model addConstraint: [ORFactory reify:_model boolean:_rv withReal:theVar geqi:c]];
    }
    [linOther release];
 }
@@ -391,9 +430,9 @@
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
    if ([[e left] isConstant]) {
-      [self reifyGEQc:[e right] constant:[[e left] min]];
+      [self reifyGEQc:[e right] constant:[[e left] floatValue]];
    } else if ([[e right] isConstant]) {
-      [self reifyLEQc:[e left] constant:[[e right] min]];
+      [self reifyLEQc:[e left] constant:[[e right] floatValue]];
    } else
       [self reifyLEQ:[e left] right:[e right]];
 }

@@ -59,7 +59,7 @@
       ORDouble svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
-   return max(MININT,lb);
+   return maxDouble(DBL_MIN,lb);
 }
 
 -(ORDouble) fmax
@@ -73,7 +73,16 @@
       ORDouble svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
-   return min(MAXINT,ub);
+   return minDouble(DBL_MAX,ub);
+}
+
+-(BOOL)isZero
+{
+   return _nb == 0 && _indep == 0;
+}
+-(BOOL)isOne
+{
+   return _nb == 0 && _indep == 1.0;
 }
 
 -(void) addTerm: (id<ORVar>) x by: (ORDouble) c
@@ -266,6 +275,7 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 }
 -(ORDouble) independent
 {
+   // TOCHECK: looks like a bug. Should be - [real indepented]
    return [_real independent];
 }
 -(NSString*) description
@@ -279,6 +289,14 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 -(ORDouble) fmax
 {
    return [_real fmax];
+}
+-(BOOL)isZero
+{
+   return [_real isZero];
+}
+-(BOOL)isOne
+{
+   return [_real size]==0 && [_real independent] == - 1.0;
 }
 
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model

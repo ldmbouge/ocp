@@ -215,6 +215,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];    
 }
+-(void) visitFloatEqual: (id<ORRealEqual>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqual: visit method not defined"];
+}
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NEqualc: visit method not defined"]; 
@@ -258,6 +262,10 @@
 -(void) visitFloatSquare:(id<ORSquare>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "FloatSquare: visit method not defined"]; 
+}
+-(void) visitRealMult:(id<ORRealMult>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealMult: visit method not defined"];
 }
 -(void) visitMod: (id<ORMod>)c
 {
@@ -342,6 +350,18 @@
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ReifyGEqual: visit method not defined"]; 
+}
+-(void) visitReifyEqualRealc: (id<ORConstraint>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ReifyEqualReal: visit method not defined"];
+}
+-(void) visitReifyLEqualRealc: (id<ORConstraint>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ReifyLEqualReal: visit method not defined"];
+}
+-(void) visitReifyGEqualRealc: (id<ORConstraint>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ReifyGEqualReal: visit method not defined"];
 }
 -(void) visitReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c
 {

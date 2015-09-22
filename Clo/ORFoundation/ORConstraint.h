@@ -87,6 +87,11 @@ enum ORGroupType {
 -(ORDouble) cst;
 @end
 
+@protocol  ORRealEqual <ORConstraint>
+-(id<ORRealVar>) left;
+-(id<ORRealVar>) right;
+@end
+
 @protocol  ORNEqualc <ORConstraint>
 -(id<ORIntVar>) left;
 -(ORInt) cst;
@@ -145,6 +150,13 @@ enum ORGroupType {
 -(id<ORVar>)res;
 -(id<ORVar>)op;
 @end
+
+@protocol ORRealMult <ORConstraint>
+-(id<ORRealVar>) res;
+-(id<ORRealVar>) left;
+-(id<ORRealVar>) right;
+@end
+
 
 @protocol ORMod <ORConstraint>
 -(id<ORIntVar>) res;
@@ -274,6 +286,24 @@ enum ORGroupType {
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
+@end
+
+@protocol ORReifyEqualRealc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(ORDouble)    cst;
+@end
+
+@protocol ORReifyLEqualRealc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(ORDouble)    cst;
+@end
+
+@protocol ORReifyGEqualRealc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORRealVar>) x;
+-(ORDouble)    cst;
 @end
 
 @protocol ORReifySumBoolEqc <ORConstraint>

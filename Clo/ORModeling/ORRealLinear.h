@@ -25,6 +25,8 @@
 -(ORDouble) independent;
 -(ORDouble) fmin;
 -(ORDouble) fmax;
+-(BOOL)isZero;
+-(BOOL)isOne;
 @end
 
 @interface ORRealLinear :  NSObject<ORRealLinear> {
@@ -48,6 +50,8 @@
 -(NSString*) description;
 -(ORDouble) fmin;
 -(ORDouble) fmax;
+-(BOOL)isZero;
+-(BOOL)isOne;
 
 -(id<ORVarArray>)  variables:  (id<ORAddToModel>)  model;
 -(id<ORDoubleArray>)  coefficients: (id<ORAddToModel>) model;
@@ -69,5 +73,7 @@
 -(void) addTerm: (id<ORVar>) x by: (ORDouble) c;
 -(ORDouble) fmin;
 -(ORDouble) fmax;
+-(BOOL)isZero;
+-(BOOL)isOne;
 @end
 

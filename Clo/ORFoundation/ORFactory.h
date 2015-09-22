@@ -195,6 +195,10 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x leqi: (ORInt) i;
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x geqi: (ORInt) i;
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x leq: (id<ORIntVar>) y;
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b withReal: (id<ORRealVar>) x eqi: (ORDouble) i;
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b withReal: (id<ORRealVar>) x leqi: (ORDouble) i;
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b withReal: (id<ORRealVar>) x geqi: (ORDouble) i;
+
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x eqi: (ORInt) c;
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x geqi: (ORInt) c;
 +(id<ORConstraint>) hreify:(id<ORTracker>)model boolean:(id<ORIntVar>) b sumbool:(id<ORIntVarArray>) x eqi: (ORInt) c;
@@ -260,9 +264,11 @@ PORTABLE_BEGIN
 @end
 
 @interface ORFactory (ORReal)
++(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORRealVar>)x by:(id<ORRealVar>)y equal:(id<ORRealVar>)z;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  eq: (ORDouble) c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  leq: (ORDouble) c;
 +(id<ORConstraint>) floatSquare:(id<ORTracker>)model var:(id<ORRealVar>)x equal:(id<ORRealVar>)res;
++(id<ORConstraint>) floatEqual:(id<ORTracker>)model var:(id<ORRealVar>)x to:(id<ORRealVar>)y;
 +(id<ORConstraint>) floatEqualc:(id<ORTracker>)model  var: (id<ORRealVar>) x to:(ORDouble) c;
 +(id<ORConstraint>) floatElement:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<ORRealVar>)y;
 @end

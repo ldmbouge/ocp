@@ -43,8 +43,9 @@ typedef float  ORFloat;
 typedef double ORDouble;
 typedef BOOL   ORBool;
 
-//#define minOf(a,b) ((a) < (b) ? (a) : (b))
-//#define maxOf(a,b) ((a) > (b) ? (a) : (b))
+static inline ORDouble minDouble(ORDouble a,ORDouble b) { return a < b ? a : b;}
+static inline ORDouble maxDouble(ORDouble a,ORDouble b) { return a > b ? a : b;}
+
 static inline ORLong minOf(ORLong a,ORLong b) { return a < b ? a : b;}
 static inline ORLong maxOf(ORLong a,ORLong b) { return a > b ? a : b;}
 

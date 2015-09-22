@@ -947,6 +947,26 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
+
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b withReal: (id<ORRealVar>) x eqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORReifyEqualRealc alloc] initReifyReal: b equiv:x eqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b withReal: (id<ORRealVar>) x leqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORReifyLEqualRealc alloc] initReifyReal: b equiv:x leqi: i];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b withReal: (id<ORRealVar>) x geqi: (ORDouble) i
+{
+   id<ORConstraint> o = [[ORReifyGEqualRealc alloc] initReifyReal: b equiv:x geqi: i];
+   [model trackObject:o];
+   return o;
+}
+
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x leq: (id<ORIntVar>) y
 {
    id<ORConstraint> o = [[ORReifyLEqual alloc] initReify: b equiv: x leq: y];
@@ -1338,6 +1358,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORReal)
++(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORRealVar>)x by:(id<ORRealVar>)y equal:(id<ORRealVar>)z
+{
+   id<ORConstraint> o = [[ORRealMult alloc] init:z eq:x times:y];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) floatSquare:(id<ORTracker>)model var:(id<ORRealVar>)x equal:(id<ORRealVar>)res
 {
    id<ORConstraint> o = [[ORRealSquare alloc] init:res square:x];
@@ -1353,6 +1379,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  leq: (ORDouble) c
 {
    id<ORConstraint> o = [[ORRealLinearLeq alloc] initFloatLinearLeq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatEqual:(id<ORTracker>)model var:(id<ORRealVar>)x to:(id<ORRealVar>)y
+{
+   id<ORConstraint> o = [[ORRealEqual alloc] init:x eq:y];
    [model trackObject:o];
    return o;
 }
