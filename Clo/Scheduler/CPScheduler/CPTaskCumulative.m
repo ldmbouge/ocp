@@ -243,7 +243,7 @@ typedef struct {
     printf("%%%% #TT props: %lld\n",   _nb_tt_props   );
     printf("%%%% #TTEF fails: %lld\n", _nb_ttef_incons);
     printf("%%%% #TTEF props: %lld\n", _nb_ttef_props );
-    printf("%%%% #TTEF props: %lld\n", _nb_ttef_area_props);
+    printf("%%%% #TTEF area props: %lld\n", _nb_ttef_area_props);
     printf("\n");
 
     if (_est          != NULL) free(_est         );
@@ -528,15 +528,19 @@ static inline ORInt free_energy(CPTaskCumulative * cumu, const ORInt t0)
  *
  *  @param t0 A normalised index of a task.
  *  @param begin A point in time specifying the time interval [begin, inf[.
+ *  @param tt_before_begin Cumulative energy from the compulsory parts in the time interval [est(cumu, t0), begin).
  *  @return Minimal required energy of a task t0 in the time interval [begin, inf[.
  */
-static inline ORInt energy_left_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin)
+static inline ORInt energy_left_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt tt_before_begin)
 {
     // Considering only the usage and duration variables
     const ORInt energy_1 = usage_min(cumu, t0) * min(dur_min(cumu, t0), max(0, ect(cumu, t0) - begin));
     assert(0 <= energy_1 && energy_1 <= usage_min(cumu, t0) * dur_min(cumu, t0));
+    if (cumu->_area == NULL || cumu->_area[t0 + cumu->_low])
+        return energy_1;
     // Considering the area variable
-    const ORInt energy_2 = area_min(cumu, t0) - usage_max(cumu, t0) * max(0, begin - est(cumu, t0));
+    const ORInt en_avail_before_begin = (begin <= est(cumu, t0) ? 0 : cap_max(cumu) * (begin - est(cumu, t0)) - tt_before_begin + comp_part_interval(cumu, t0, est(cumu, t0), begin));
+    const ORInt energy_2 = area_min(cumu, t0) - min(usage_max(cumu, t0) * max(0, begin - est(cumu, t0)), en_avail_before_begin);
     assert(energy_2 <= area_min(cumu, t0));
     assert(est(cumu, t0) < begin || max(energy_1, energy_2) == area_min(cumu, t0));
     return max(energy_1, energy_2);
@@ -549,15 +553,16 @@ static inline ORInt energy_left_shift(CPTaskCumulative * cumu, const ORInt t0, c
  *
  *  @param t0 A normalised index of a task.
  *  @param begin A point in time specifying the time interval [begin, inf[.
+ *  @param tt_before_begin Cumulative energy from the compulsory parts in the time interval [est(cumu, t0), begin).
  *  @return Minimal required energy of a task t0 in the time interval [begin, inf[
  *      excluding the energy of the compulsory part.
  */
-static inline ORInt free_energy_left_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin)
+static inline ORInt free_energy_left_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt tt_before_begin)
 {
     assert(0 <= t0 && t0 < cumu->_size);
     if (begin <= est(cumu, t0))
         return free_energy(cumu, t0);
-    return energy_left_shift(cumu, t0, begin) - comp_part_left_shift(cumu, t0, begin);
+    return energy_left_shift(cumu, t0, begin, tt_before_begin) - comp_part_left_shift(cumu, t0, begin);
 }
 
 /*!
@@ -583,15 +588,23 @@ static inline ORInt comp_part_left_shift(CPTaskCumulative * cumu, const ORInt t0
  *
  *  @param t0 A normalised index of a task.
  *  @param end A point in time specifying the time interval ]-inf, end].
+ *  @param tt_after_end Cumulative energy from the compulsory parts in the time interval [end, lct(cumu, t0)).
  *  @return Minimal required energy of a task t0 in the time interval ]-inf, end].
  */
-static inline ORInt energy_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt end)
+static inline ORInt energy_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt end, const ORInt tt_after_end)
 {
     // Considering only the usage and duration variables
     const ORInt energy_1 = usage_min(cumu, t0) * min(dur_min(cumu, t0), max(0, end - lst(cumu, t0)));
     assert(0 <= energy_1 && energy_1 <= usage_min(cumu, t0) * dur_min(cumu, t0));
+    if (cumu->_area == NULL || cumu->_area[t0 + cumu->_low] == NULL)
+        return energy_1;
     // Considering the area variable
-    const ORInt energy_2 = area_min(cumu, t0) - usage_max(cumu, t0) * max(0, lct(cumu, t0) - end);
+    const ORInt en_avail_after_end = (lct(cumu, t0) <= end ? 0 : cap_max(cumu) * (lct(cumu, t0) - end) - tt_after_end + comp_part_interval(cumu, t0, end, lct(cumu, t0)));
+    const ORInt energy_2 = area_min(cumu, t0) - min(usage_max(cumu, t0) * max(0, lct(cumu, t0) - end), en_avail_after_end);
+    if (energy_2 > area_min(cumu, t0)) {
+        dumpTask(cumu, t0);
+        printf("end: %d; blah %d\n", end, cap_max(cumu) * (lct(cumu, t0) - end));
+    }
     assert(energy_2 <= area_min(cumu, t0));
     assert(end < lct(cumu, t0) || max(energy_1, energy_2) == area_min(cumu, t0));
     return max(energy_1, energy_2);
@@ -604,15 +617,17 @@ static inline ORInt energy_right_shift(CPTaskCumulative * cumu, const ORInt t0, 
  *
  *  @param t0 A normalised index of a task.
  *  @param end A point in time specifying the time interval ]-inf, end].
+ *  @param tt_after_end Cumulative energy from the compulsory parts in the time interval [end, lct(cumu, t0)).
  *  @return Minimal required energy of a task t0 in the time interval ]-inf, end]
  *      excluding the energy of the compulsory part.
  */
-static inline ORInt free_energy_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt end)
+static inline ORInt free_energy_right_shift(CPTaskCumulative * cumu, const ORInt t0, const ORInt end, const ORInt tt_after_end)
 {
     assert(0 <= t0 && t0 < cumu->_size);
     if (lct(cumu, t0) <= end)
         return free_energy(cumu, t0);
-    return energy_right_shift(cumu, t0, end) - comp_part_right_shift(cumu, t0, end);
+    assert(0 <= tt_after_end);
+    return energy_right_shift(cumu, t0, end, tt_after_end) - comp_part_right_shift(cumu, t0, end);
 }
 
 /*!
@@ -693,9 +708,10 @@ static inline ORInt req_energy_end_lct_left_shift(CPTaskCumulative * cumu, const
  *  @param t0 A normalised index of a task.
  *  @param begin A point in time specifying the beginning of the time interval [begin, end[
  *  @param end A point in time specifying the end of the time interval [begin, end[
+ *  @param tt_after_end Cumulative energy from the compulsory parts in the time interval [end, lct(cumu, t0)).
  *  @return The minimal required energy of the task in the time interval for its execution ending at the latest completion time.
  */
-static inline ORInt req_energy_end_lct_interval(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt end)
+static inline ORInt req_energy_end_lct_interval(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt end, const ORInt tt_after_end)
 {
     assert(0 <= t0 && t0 < cumu->_size);
     if (end <= est(cumu, t0) || lct(cumu, t0) <= begin)
@@ -703,7 +719,7 @@ static inline ORInt req_energy_end_lct_interval(CPTaskCumulative * cumu, const O
     if (lct(cumu, t0) <= end)
         return req_energy_end_lct_left_shift(cumu, t0, begin);
     // Minimal required energy before end when the task is run at latest as possible
-    const ORInt en_rs = energy_right_shift(cumu, t0, end);
+    const ORInt en_rs = energy_right_shift(cumu, t0, end, tt_after_end);
     return min(usage_min(cumu, t0) * (end - begin), en_rs);
 }
 
@@ -714,9 +730,10 @@ static inline ORInt req_energy_end_lct_interval(CPTaskCumulative * cumu, const O
  *  @param t0 A normalised index of a task.
  *  @param begin A point in time specifying the beginning of the time interval [begin, end[
  *  @param end A point in time specifying the end of the time interval [begin, end[
+ *  @param tt_before_begin Cumulative energy from the compulsory parts in the time interval [est(cumu, t0), begin).
  *  @return The minimal required energy of the task in the time interval for its execution at its earliest start time.
  */
-static inline ORInt req_energy_start_est_interval(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt end)
+static inline ORInt req_energy_start_est_interval(CPTaskCumulative * cumu, const ORInt t0, const ORInt begin, const ORInt end, const ORInt tt_before_begin)
 {
     assert(0 <= t0 && t0 < cumu->_size);
     if (end <= est(cumu, t0) || lct(cumu, t0) <= begin)
@@ -724,7 +741,7 @@ static inline ORInt req_energy_start_est_interval(CPTaskCumulative * cumu, const
     if (begin <= est(cumu, t0))
         return req_energy_start_est_right_shift(cumu, t0, end);
     // Minimal required energy after begin when the task is run at eaerliest as possible
-    const ORInt en_rs = energy_left_shift(cumu, t0, begin);
+    const ORInt en_rs = energy_left_shift(cumu, t0, begin, tt_before_begin);
     return min(usage_min(cumu, t0) * (end - begin), en_rs);
 }
 
@@ -1210,7 +1227,7 @@ get_no_shift(const ORInt begin, const ORInt end, const ORInt est, const ORInt ec
 }
 
 
-static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt * unbound, ORInt* task_id_est, ORInt* task_id_lct, ORInt* ttEnAfterEst, ORInt* ttEnAfterLct, const ORInt unboundSize)
+static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt* unbound, ORInt* task_id_est, ORInt* task_id_lct, ORInt* ttEnAfterEst, ORInt* ttEnAfterLct, ORInt* mapEnAfterEst, ORInt* mapEnAfterLct, const ORInt unboundSize)
 {
     assert(unboundSize > 0);
     
@@ -1230,6 +1247,8 @@ static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt * unbound, 
         for (ORInt tt = 0; tt < unboundSize; tt++) {
             ttEnAfterEst[tt] = 0;
             ttEnAfterLct[tt] = 0;
+            mapEnAfterEst[task_id_est[tt]] = 0;
+            mapEnAfterLct[task_id_lct[tt]] = 0;
         }
     }
     else {
@@ -1242,9 +1261,11 @@ static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt * unbound, 
             const ORInt t0 = task_id_est[tt];
             if (p < 0 || profile[p]._end <= est(cumu, t0)) {
                 ttEnAfterEst[tt] = energy;
+                mapEnAfterEst[t0] = tt;
             }
             else if (profile[p]._begin <= est(cumu, t0)) {
                 ttEnAfterEst[tt] = energy + profile[p]._level * (profile[p]._end - est(cumu, t0));
+                mapEnAfterEst[t0] = tt;
             }
             else {
                 assert(profile[p]._begin > est(cumu, t0));
@@ -1253,6 +1274,16 @@ static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt * unbound, 
                 tt++;
             }
         }
+        assert(^ORBool(){
+            for (ORInt tt = unboundSize - 1; tt >= 1; tt--) {
+                const ORInt i = task_id_est[tt];
+                const ORInt j = task_id_est[tt - 1];
+                if (ttEnAfterEst[mapEnAfterEst[j]] < ttEnAfterEst[mapEnAfterEst[i]]) {
+                    return false;
+                }
+            }
+            return true;
+        }());
         
         // Calculation of ttEnAfterLct
         energy = 0;
@@ -1262,9 +1293,11 @@ static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt * unbound, 
             const ORInt t0 = task_id_lct[tt];
             if (p < 0 || profile[p]._end <= lct(cumu, t0)) {
                 ttEnAfterLct[tt] = energy;
+                mapEnAfterLct[t0] = tt;
             }
             else if (profile[p]._begin <= lct(cumu, t0)) {
                 ttEnAfterLct[tt] = energy + profile[p]._level * (profile[p]._end - lct(cumu, t0));
+                mapEnAfterLct[t0] = tt;
             }
             else {
                 assert(profile[p]._begin > lct(cumu, t0));
@@ -1273,6 +1306,15 @@ static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt * unbound, 
                 tt++;
             }
         }
+        assert(^ORBool(){
+            for (ORInt tt = unboundSize - 1; tt >= 1; tt--) {
+                const ORInt i = task_id_lct[tt];
+                const ORInt j = task_id_lct[tt - 1];
+                if (ttEnAfterLct[mapEnAfterLct[j]] < ttEnAfterLct[mapEnAfterLct[i]])
+                    return false;
+            }
+            return true;
+        }());
     }
 }
 
@@ -1281,7 +1323,8 @@ static void ttef_initialise_parameters(CPTaskCumulative* cumu, ORInt * unbound, 
     // Time complexity: O(u^2) where u is the number of unfixed tasks
     // Space complexity: O(u)
 static void ttef_consistency_check(CPTaskCumulative * cumu, const ORInt * task_id_est, const ORInt * task_id_lct,
-    const ORInt * ttEnAfterEst, const ORInt * ttEnAfterLct, const ORInt unboundSize,
+    const ORInt * ttEnAfterEst, const ORInt * ttEnAfterLct, const ORInt * mapEnAfterLct,
+    const ORInt unboundSize,
     ORInt shift_in(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt))
 {
     assert(unboundSize >= 0);
@@ -1338,8 +1381,9 @@ static void ttef_consistency_check(CPTaskCumulative * cumu, const ORInt * task_i
             
             // Adding the required energy of j in the intervals [begin', end)
             // where begin' <= est(cumu, j)
-            assert(0 <= free_energy_right_shift(cumu, j, end));
-            en_req_free += free_energy_right_shift(cumu, j, end);
+            const ORInt tt_after_end = max(0, ttEnAfterLct[ii] - ttEnAfterLct[mapEnAfterLct[j]]);
+            assert(0 <= free_energy_right_shift(cumu, j, end, tt_after_end));
+            en_req_free += free_energy_right_shift(cumu, j, end, tt_after_end);
 #warning TODO Propagation on the upper bound of area variables
 #warning XXX Old code before considering area variables
 //            if (lct(cumu, j) <= end) {
@@ -1385,7 +1429,7 @@ static void ttef_consistency_check(CPTaskCumulative * cumu, const ORInt * task_i
 }
 
 static void ttef_filter_start_and_end_times(CPTaskCumulative* cumu, ORInt* task_id_est, ORInt* task_id_lct,
-    ORInt* ttEnAfterEst, ORInt* ttEnAfterLct, const ORInt unboundSize,
+    ORInt* ttEnAfterEst, ORInt* ttEnAfterLct, ORInt* mapEnAfterEst, ORInt* mapEnAfterLct, const ORInt unboundSize,
     ORInt shift_in1(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt),
     ORInt shift_in2(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt),
     bool* update)
@@ -1405,9 +1449,9 @@ static void ttef_filter_start_and_end_times(CPTaskCumulative* cumu, ORInt* task_
     }
 
     // TTEF propagation of the start times
-    ttef_filter_start_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize, new_est, new_lct, &new_cap_min, shift_in1, update);
+    ttef_filter_start_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, mapEnAfterEst, mapEnAfterLct, unboundSize, new_est, new_lct, &new_cap_min, shift_in1, update);
     // TTEF propagaiton of the end times
-    ttef_filter_end_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize, new_est, new_lct, &new_cap_min, shift_in2, update);
+    ttef_filter_end_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, mapEnAfterEst, mapEnAfterLct, unboundSize, new_est, new_lct, &new_cap_min, shift_in2, update);
 
     // Propagation of absence and bounds
     for (ORInt tt = 0; tt < unboundSize; tt++) {
@@ -1435,7 +1479,8 @@ static void ttef_filter_start_and_end_times(CPTaskCumulative* cumu, ORInt* task_
 }
 
 static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id_est, const ORInt* task_id_lct,
-    const ORInt* ttEnAfterEst, const ORInt* ttEnAfterLct, const ORInt unboundSize, ORInt* new_est, ORInt* new_lct, ORInt * new_cap_min,
+    const ORInt* ttEnAfterEst, const ORInt* ttEnAfterLct, ORInt* mapEnAfterEst, ORInt* mapEnAfterLct,
+    const ORInt unboundSize, ORInt* new_est, ORInt* new_lct, ORInt * new_cap_min,
     ORInt shift_in(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt),
     bool* update)
 {
@@ -1509,16 +1554,20 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
             // Skip activities without area
             if (area_min(cumu, j) <= 0)
                 continue;
-            
+
+#if TTEEFABSOLUTEPROP || TTEEFDENSITYPROP
+            const ORInt tt_after_end = max(0, ttEnAfterLct[ii] - ttEnAfterLct[mapEnAfterLct[j]]);
+            assert(end >= lct(cumu, j) || (0 <= tt_after_end && tt_after_end <= cap_max(cumu) * (lct(cumu, j) - end)));
+#endif
 #if TTEEFABSOLUTEPROP
             // TTEEF bounds propagation for task j with respect to the time interval [., end)
             // containing the minimal available energy
-            tteef_filter_end_times_in_interval(cumu, new_lct, j, min_begin, end, min_en_avail, update);
+            tteef_filter_end_times_in_interval(cumu, new_lct, j, min_begin, end, min_en_avail, tt_after_end, update);
 #endif
 #if TTEEFDENSITYPROP
             // TTEEF bounds propagation for task j with respect to the time interval [., end)
             // that is one of the most dense ones
-            tteef_filter_end_times_in_interval(cumu, new_lct, j, min_density_begin, end, min_density_en_avail, update);
+            tteef_filter_end_times_in_interval(cumu, new_lct, j, min_density_begin, end, min_density_en_avail, tt_after_end, update);
 #endif
             
             // New begin time of the time interval [begin, end)
@@ -1527,7 +1576,7 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
             if (!isPresent(cumu, j)) {
                 const ORInt en_req = en_req_free + ttEnAfterEst[jj] - ttEnAfterLct[ii];
                 const ORInt en_avail = cap_max(cumu) * (end - begin) - en_req;
-                tteef_filter_start_times_in_interval(cumu, new_est, j, begin, end, en_avail, update);
+                tteef_filter_start_times_in_interval(cumu, new_est, j, begin, end, en_avail, 0, update);
                 continue;
             }
             
@@ -1546,7 +1595,10 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
             else {
                 // Calculation whether a free part of the task partially lies
                 // in the interval
-                const ORInt en_rs = energy_right_shift(cumu, j, end);
+#if !TTEEFABSOLUTEPROP || !TTEEFDENSITYPROP
+                const ORInt tt_after_end = max(0, ttEnAfterLct[ii] - ttEnAfterLct[mapEnAfterLct[j]]);
+#endif
+                const ORInt en_rs = energy_right_shift(cumu, j, end, tt_after_end);
                 const ORInt en_comp_part = comp_part_right_shift(cumu, j, end);
                 en_req_free += en_rs - en_comp_part;
 #warning XXX Old code before considering area variables
@@ -1614,7 +1666,8 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
                 j = task_id_est[update_idx];
                 // Calculation of the possible new lower bound wrt. the current
                 // time interval [begin, end)
-                const ORInt en_avail_j = en_avail + energy_right_shift(cumu, j, end);
+                const ORInt tt_after_end = max(0, ttEnAfterLct[ii] - ttEnAfterLct[mapEnAfterLct[j]]);
+                const ORInt en_avail_j = en_avail + energy_right_shift(cumu, j, end, tt_after_end);
                 const ORInt start_new  = end - (en_avail_j / usage_min(cumu, j));
 #warning XXX Old code before considering area variables
 //                int dur_cp_in = max(0, min(end, ect(cumu, j)) - lst(cumu, j));
@@ -1634,7 +1687,8 @@ static void ttef_filter_start_times(CPTaskCumulative* cumu, const ORInt* task_id
 }
 
 static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_est, const ORInt* task_id_lct,
-    const ORInt* ttEnAfterEst, const ORInt* ttEnAfterLct, const ORInt unboundSize, ORInt* new_est, ORInt* new_lct, ORInt * new_cap_min,
+    const ORInt* ttEnAfterEst, const ORInt* ttEnAfterLct, const ORInt* mapEnAfterEst, const ORInt* mapEnAfterLct,
+    const ORInt unboundSize, ORInt* new_est, ORInt* new_lct, ORInt * new_cap_min,
     ORInt shift_in(const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt, const ORInt),
     bool* update)
 {
@@ -1694,16 +1748,20 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
             j = task_id_lct[jj];
             if (area_min(cumu, j) <= 0) continue;
             assert(begin < lct(cumu, j));
-            
+
+#if TTEEFABSOLUTEPROP || TTEEFDENSITYPROP
+            const ORInt tt_before_begin = max(0, ttEnAfterEst[mapEnAfterEst[j]] - ttEnAfterEst[ii]);
+            assert(est(cumu, j) >= begin || (0 <= tt_before_begin && tt_before_begin <= cap_max(cumu) * (begin - est(cumu, j))));
+#endif
 #if TTEEFABSOLUTEPROP
             // TTEEF bounds propagation for task j with respect to the time interval [begin, .)
             // containing the minimal available energy
-            tteef_filter_start_times_in_interval(cumu, new_est, j, begin, min_end, min_en_avail, update);
+            tteef_filter_start_times_in_interval(cumu, new_est, j, begin, min_end, min_en_avail, tt_before_begin, update);
 #endif
 #if TTEEFDENSITYPROP
             // TTEEF bounds propagation for task j with respect to the time interval [begin, .)
             // that is one of the most dense ones
-            tteef_filter_start_times_in_interval(cumu, new_est, j, begin, min_density_end, min_density_en_avail, update);
+            tteef_filter_start_times_in_interval(cumu, new_est, j, begin, min_density_end, min_density_en_avail, tt_before_begin, update);
 #endif
 
             end = lct(cumu, j);
@@ -1711,7 +1769,7 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
             if (!isPresent(cumu, j)) {
                 const ORInt en_req = en_req_free + ttEnAfterEst[ii] - ttEnAfterLct[jj];
                 const ORInt en_avail = cap_max(cumu) * (end - begin) - en_req;
-                tteef_filter_end_times_in_interval(cumu, new_lct, j, begin, end, en_avail, update);
+                tteef_filter_end_times_in_interval(cumu, new_lct, j, begin, end, en_avail, 0, update);
                 continue;
             }
             
@@ -1728,7 +1786,10 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
 #endif
             } else {
                 // Task j might be partially contained in [begin, end)
-                const ORInt en_ls = energy_left_shift(cumu, j, begin);
+#if !TTEEFABSOLUTEPROP || !TTEEFDENSITYPROP
+                const ORInt tt_before_begin = max(0, ttEnAfterEst[mapEnAfterEst[j]] - ttEnAfterEst[ii]);
+#endif
+                const ORInt en_ls = energy_left_shift(cumu, j, begin, tt_before_begin);
                 const ORInt en_comp_part = comp_part_left_shift(cumu, j, begin);
                 en_req_free += en_ls - en_comp_part;
 #warning XXX Old code before considering area variables
@@ -1798,7 +1859,8 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
                 
                 // Calculation of the possible upper bound wrt.
                 // the current time interval [begin, end)
-                const ORInt en_avail_j = en_avail + energy_left_shift(cumu, j, begin);
+                const ORInt tt_before_begin = max(0, ttEnAfterEst[mapEnAfterEst[j]] - ttEnAfterEst[ii]);
+                const ORInt en_avail_j = en_avail + energy_left_shift(cumu, j, begin, tt_before_begin);
                 const ORInt end_new = begin + (en_avail_j / usage_min(cumu, j));
 #warning XXX Old code before considering area variables
 //                ORInt dur_cp_in = max(0, ect(cumu, j) - max(begin, lst(cumu, j)));
@@ -1817,14 +1879,14 @@ static void ttef_filter_end_times(CPTaskCumulative* cumu, const ORInt* task_id_e
     }
 }
 
-static void tteef_filter_start_times_in_interval(CPTaskCumulative* cumu, ORInt* new_est, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update)
+static void tteef_filter_start_times_in_interval(CPTaskCumulative* cumu, ORInt* new_est, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, const ORInt tt_before_begin, bool* update)
 {
     assert(area_min(cumu, j) > 0);
     if (lct(cumu, j) <= tw_end || area_min(cumu, j) <= en_avail)
         return;
     // Compute the minimal required energy in the interval for executing the task as earliest as possible
     const ORInt en_comp_part = (isRelevant(cumu, j) ? comp_part_interval(cumu, j, tw_begin, tw_end) : 0);
-    const ORInt en_req_ls = req_energy_start_est_interval(cumu, j, tw_begin, tw_end);
+    const ORInt en_req_ls = req_energy_start_est_interval(cumu, j, tw_begin, tw_end, tt_before_begin);
     const ORInt min_req_en = en_req_ls - en_comp_part;
     assert(0 <= min_req_en);
     // Check for TTEEF propagation
@@ -1878,13 +1940,13 @@ static void tteef_filter_start_times_in_interval(CPTaskCumulative* cumu, ORInt* 
 //    }
 }
 
-static void tteef_filter_end_times_in_interval(CPTaskCumulative* cumu, ORInt* new_lct, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, bool* update) {
+static void tteef_filter_end_times_in_interval(CPTaskCumulative* cumu, ORInt* new_lct, const ORInt j, const ORInt tw_begin, const ORInt tw_end, const ORInt en_avail, const ORInt tt_after_end, bool* update) {
     assert(area_min(cumu, j) > 0);
     if (tw_begin <= est(cumu, j) || area_min(cumu, j) <= en_avail)
         return;
     // Compute the minimal required energy in the interval for executing the task at latest as possible
     const ORInt en_comp_part = (isRelevant(cumu, j) ? comp_part_interval(cumu, j, tw_begin, tw_end) : 0);
-    const ORInt en_req_rs = req_energy_end_lct_interval(cumu, j, tw_begin, tw_end);
+    const ORInt en_req_rs = req_energy_end_lct_interval(cumu, j, tw_begin, tw_end, tt_after_end);
     const ORInt min_en_req = en_req_rs - en_comp_part;
     assert(0 <= min_en_req);
     // Check for TTEEF propagation
@@ -1953,24 +2015,26 @@ static void ttef_bounds_propagation(CPTaskCumulative* cumu, ORInt * unbound, con
     ORInt task_id_lct [unboundSize];     // Unbound activities order wrt. their lct
     ORInt ttEnAfterEst[unboundSize];
     ORInt ttEnAfterLct[unboundSize];
+    ORInt mapEnAfterEst[cumu->_size];
+    ORInt mapEnAfterLct[cumu->_size];
     
     // Initialise all the parameters
-    ttef_initialise_parameters(cumu, unbound, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize);
+    ttef_initialise_parameters(cumu, unbound, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, mapEnAfterEst, mapEnAfterLct,  unboundSize);
     
     if (cumu->_ttef_filt) {
         // TTEF bounds filtering incl. consistency check
 #if TTEFLEFTRIGHTSHIFT
-        ttef_filter_start_and_end_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize,get_free_dur_right_shift, get_free_dur_left_shift, update);
+        ttef_filter_start_and_end_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, mapEnAfterEst, mapEnAfterLct, unboundSize,get_free_dur_right_shift, get_free_dur_left_shift, update);
 #else
-        ttef_filter_start_and_end_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize, get_no_shift, get_no_shift, update);
+        ttef_filter_start_and_end_times(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, mapEnAfterEst, mapEnAfterLct, unboundSize, get_no_shift, get_no_shift, update);
 #endif
     } else {
         assert(cumu->_ttef_check);
         // TTEF consistency check
 #if TTEFLEFTRIGHTSHIFT
-        ttef_consistency_check(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize, get_free_dur_right_shift);
+        ttef_consistency_check(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, mapEnAfterLct, unboundSize, get_free_dur_right_shift);
 #else
-        ttef_consistency_check(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, unboundSize, get_no_shift);
+        ttef_consistency_check(cumu, task_id_est, task_id_lct, ttEnAfterEst, ttEnAfterLct, mapEnAfterLct, unboundSize, get_no_shift);
 #endif
     }
 }
