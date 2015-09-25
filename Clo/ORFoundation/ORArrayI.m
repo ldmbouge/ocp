@@ -154,14 +154,14 @@
    return _up;
 }
 -(ORInt) max {
-    ORInt v = _array[0];
-    for(int i = 1; i < _nb; i++)
+    ORInt v = _array[_low];
+    for(int i = _low+1; i <= _up; i++)
         if(_array[i] > v) v = _array[i];
     return v;
 }
 -(ORInt) min {
-    ORInt v = _array[0];
-    for(int i = 1; i < _nb; i++)
+    ORInt v = _array[_low];
+    for(int i = _low+1; i <= _up; i++)
         if(_array[i] < v) v = _array[i];
     return v;
 }
@@ -338,14 +338,14 @@
    return [ORFactory elt: _tracker floatArray: self index: idx];
 }
 -(ORDouble) max {
-    ORDouble v = _array[0];
-    for(int i = 1; i < _nb; i++)
+    ORDouble v = _array[_low];
+    for(int i = _low+1; i <= _up; i++)
         if(_array[i] > v) v = _array[i];
     return v;
 }
 -(ORDouble) min {
-    ORDouble v = _array[0];
-    for(int i = 1; i < _nb; i++)
+    ORDouble v = _array[_low];
+    for(int i = _low+1; i <= _up; i++)
         if(_array[i] < v) v = _array[i];
     return v;
 }
