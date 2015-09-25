@@ -18,7 +18,7 @@
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model;
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORRealVar>) x;
--(ORDouble) floatValue: (id<ORRealVar>) x;
+-(ORDouble) dblValue: (id<ORRealVar>) x;
 -(id<LPColumn>) createColumn;
 -(void) addColumn: (id<LPColumn>) column;
 -(id<ORObjectiveValue>) objectiveValue;
@@ -29,7 +29,7 @@
 -(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model;
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORVar>) x;
--(ORDouble) floatValue: (id<ORVar>) x;
+-(ORDouble) dblValue: (id<ORVar>) x;
 -(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lowerBound: (id<ORVar>) v;

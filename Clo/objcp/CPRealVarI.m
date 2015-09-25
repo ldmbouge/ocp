@@ -25,7 +25,7 @@
 }
 -(CPRealVarSnapshot*) init: (CPRealVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
--(ORDouble) floatValue;
+-(ORDouble) dblValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -46,7 +46,7 @@
    }
    return self;
 }
--(ORDouble) floatValue
+-(ORDouble) dblValue
 {
    return _value;
 }
@@ -78,7 +78,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"float(%d) : %f",_name,_value];
+   [buf appendFormat:@"real(%d) : %f",_name,_value];
    return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
@@ -309,11 +309,11 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_dom max];
 }
--(ORDouble) floatMin
+-(ORDouble) dblMin
 {
    return [_dom min];
 }
--(ORDouble) floatMax
+-(ORDouble) dblMax
 {
    return [_dom max];
 }
@@ -323,7 +323,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
       return [_dom min];
    return _value;
 }
--(ORDouble) floatValue
+-(ORDouble) dblValue
 {
    if ([_dom bound])
       return [_dom min];
@@ -510,7 +510,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 }
 -(void) domEvt:(id<CPDom>)sender
 {
-   // [ldm]. There is nothing to do here. We lost a value _inside_ the domain, but floatVars are intervals
+   // [ldm]. There is nothing to do here. We lost a value _inside_ the domain, but realVars are intervals
    // So no hope of propagating. 
 }
 -(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
@@ -578,7 +578,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_theVar min];
 }
--(ORDouble)floatValue
+-(ORDouble)dblValue
 {
    return [_theVar min];
 }

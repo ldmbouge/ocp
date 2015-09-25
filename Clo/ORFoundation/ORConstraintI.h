@@ -353,14 +353,14 @@
 
 
 @interface ORRealLinearEq : ORConstraintI<ORRealLinearEq>
--(ORLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(ORLinearEq*) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
 -(ORDouble) cst;
 @end
 
 @interface ORRealLinearLeq : ORConstraintI<ORRealLinearLeq>
--(ORRealLinearLeq*) initFloatLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(ORRealLinearLeq*) initRealLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
 -(ORDouble) cst;
@@ -483,20 +483,20 @@
 -(id) initObjectiveValueIntI: (ORInt) pb minimize: (ORBool) b ;
 -(ORInt)value;
 -(ORInt)intValue;
--(ORDouble)floatValue;
+-(ORDouble)dblValue;
 -(ORInt)primal;
 -(ORDouble)key;
 -(NSString*)description;
 @end
 
-@interface ORObjectiveValueFloatI : ORObject<ORObjectiveValueFloat> {
+@interface ORObjectiveValueRealI : ORObject<ORObjectiveValueReal> {
    ORDouble _value;
    ORInt _direction;
    ORInt _pBound;
 }
--(id) initObjectiveValueFloatI: (ORDouble) pb minimize: (ORBool) b ;
+-(id) initObjectiveValueRealI: (ORDouble) pb minimize: (ORBool) b ;
 -(ORDouble)value;
--(ORDouble)floatValue;
+-(ORDouble)dblValue;
 -(ORDouble)primal;
 -(ORDouble)key;
 -(NSString*)description;

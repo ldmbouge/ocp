@@ -53,7 +53,7 @@
 @end
 
 @protocol ORDoubleArrayInformer <ORInformer>
--(void) notifyWithFloatArray: (id<ORDoubleArray>)arr;
+-(void) notifyWithDoubleArray: (id<ORDoubleArray>)arr;
 @end
 
 @protocol ORConstraintSetInformer <ORInformer>

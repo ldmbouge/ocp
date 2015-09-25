@@ -80,11 +80,11 @@
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVar*)x];
 }
-+(id<CPRealVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORRealRange>) range
++(id<CPRealVar>) realVar:(id<CPEngine>)cp bounds:(id<ORRealRange>) range
 {
    return [[CPRealVarI alloc] init:cp low:range.low up:range.up];
 }
-+(id<CPRealVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
++(id<CPRealVar>) realVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
    return [[CPRealViewOnIntVarI alloc] init:cp intVar:x];
 }

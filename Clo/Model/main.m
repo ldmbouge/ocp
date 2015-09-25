@@ -17,8 +17,8 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       
       id<ORModel> model = [ORFactory createModel];
-      id<ORRealVar> x = [ORFactory floatVar: model low: 0 up: 100];
-      id<ORRealVar> y = [ORFactory floatVar: model low: 0 up: 100];
+      id<ORRealVar> x = [ORFactory realVar: model low: 0 up: 100];
+      id<ORRealVar> y = [ORFactory realVar: model low: 0 up: 100];
       
       [model add: [x leq: y]];
       NSLog(@"x id: %d",[x getId]);

@@ -162,7 +162,7 @@
          rv += 1.0 - _imps[i];
       }
       return - rv;
-   } else return - MAXFLOAT;
+   } else return - MAXDBL;
 }
 @end
 
@@ -281,7 +281,7 @@
 -(void)dichotomize:(id<CPIntVar>)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set
 {
    if (up - low + 1 <= b) {
-      float ks = 0.0;
+      double ks = 0.0;
       for(CPKillRange* kr in set)
          ks += [kr killed];
       

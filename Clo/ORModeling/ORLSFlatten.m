@@ -40,7 +40,7 @@
 //         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
 //         _result = [_into minimizeVar: alpha];
 //      }break;
-//      case ORTFloat: {
+//      case ORTReal: {
 //         @throw [[ORExecutionError alloc] initORExecutionError:"not implemented yet"];
 //      }break;
 //      default:
@@ -56,7 +56,7 @@
 //         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
 //         _result = [_into maximizeVar: alpha];
 //      }break;
-//      case ORTFloat:{
+//      case ORTReal:{
 //         @throw [[ORExecutionError alloc] initORExecutionError:"not implemented yet"];
 //      }break;
 //      default: break;

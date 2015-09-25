@@ -172,7 +172,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) tryall: (id<ORIntIterable>) range
       suchThat: (ORInt2Bool) filter
-     orderedBy: (ORInt2Float)o
+     orderedBy: (ORInt2Double)o
             in: (ORInt2Void) body
      onFailure: (ORInt2Void) onFailure
 {

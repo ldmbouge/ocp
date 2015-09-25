@@ -96,7 +96,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
    bool done = false;
    while (!done) {
       for(int k = 0; k < nbo; k++)
-         best[k] = MAXFLOAT;
+         best[k] = MAXDBL;
       ORInt chosen = -1;
       ORInt i = 0;
       while (i < nb) {
@@ -155,7 +155,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
    }];
    bool done = false;
    while (!done) {
-      float best = MAXFLOAT;
+      ORDouble best = MAXDBL;
       ORInt chosen = -1;
       ORInt i = 0;
       while (i < nb) {

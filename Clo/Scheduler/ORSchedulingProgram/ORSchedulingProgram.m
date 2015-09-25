@@ -202,7 +202,7 @@
 //   }
 //}
 
--(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Double) o
 {
    ORInt low = succ.range.low;
    ORInt size = succ.range.size - 1;
@@ -227,7 +227,7 @@
    }
    printf("\n");
 }
--(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
    ORInt low = succ.range.low;
    ORInt size = succ.range.size - 1;

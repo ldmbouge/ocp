@@ -44,7 +44,7 @@
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORDouble) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(ORStatus) postConstraint: (LPConstraintI*) cstr;

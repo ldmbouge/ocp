@@ -846,23 +846,23 @@ struct USRalias {
    unsigned short expSign;
 };
 
-class SECFloat;
+class SECDouble;
 
-class USRFloat {
+class USRDouble {
    union {
       unsigned short w[5];
       USRalias al;
    };
-   friend class SECFloat;
+   friend class SECDouble;
 public:
-   USRFloat(void);
-   USRFloat(const SECFloat& f);
-   USRFloat(const USRFloat& f);
-   USRFloat(double d);
-   USRFloat(unsigned short* ptr);
-   USRFloat& operator=(const USRFloat& f);
-   USRFloat& operator=(const SECFloat& f);
-   USRFloat& operator=(unsigned short* f);
+   USRDouble(void);
+   USRDouble(const SECDouble& f);
+   USRDouble(const USRDouble& f);
+   USRDouble(double d);
+   USRDouble(unsigned short* ptr);
+   USRDouble& operator=(const USRDouble& f);
+   USRDouble& operator=(const SECDouble& f);
+   USRDouble& operator=(unsigned short* f);
    int positive() { return (al.expSign & 0x8000) == 0;}
    int negative() { return (al.expSign & 0x8000) == 0x8000;}
    void setPositive() { al.expSign &= 0x7fff;}
@@ -872,34 +872,34 @@ public:
    unsigned short& operator[](int i) { return w[i];}
    double getDouble();
    operator double() { return getDouble();}
-   USRFloat operator+(const USRFloat& op2);
-   USRFloat operator-(const USRFloat& op2);
-   USRFloat operator*(const USRFloat& op2);
-   USRFloat operator/(const USRFloat& op2);
-   int operator==(const USRFloat& op2);
-   int operator!=(const USRFloat& op2);
-   int operator<=(const USRFloat& op2);
-   int operator>=(const USRFloat& op2);
-   int operator<(const USRFloat& op2);
-   int operator>(const USRFloat& op2);
-   int cmp(const USRFloat& op2);
-   USRFloat floor();
+   USRDouble operator+(const USRDouble& op2);
+   USRDouble operator-(const USRDouble& op2);
+   USRDouble operator*(const USRDouble& op2);
+   USRDouble operator/(const USRDouble& op2);
+   int operator==(const USRDouble& op2);
+   int operator!=(const USRDouble& op2);
+   int operator<=(const USRDouble& op2);
+   int operator>=(const USRDouble& op2);
+   int operator<(const USRDouble& op2);
+   int operator>(const USRDouble& op2);
+   int cmp(const USRDouble& op2);
+   USRDouble floor();
    void clear();
 };
 
-class SECFloat {
+class SECDouble {
    union {
       unsigned short w[8];
       SECalias al;
    };
-   friend class USRFloat;
+   friend class USRDouble;
 public:
-   SECFloat(void);
-   SECFloat(double d);
-   SECFloat(const SECFloat& sf);
-   SECFloat(const USRFloat& uf);
-   SECFloat& operator=(const SECFloat& sf);
-   SECFloat& operator=(const USRFloat& sf);
+   SECDouble(void);
+   SECDouble(double d);
+   SECDouble(const SECDouble& sf);
+   SECDouble(const USRDouble& uf);
+   SECDouble& operator=(const SECDouble& sf);
+   SECDouble& operator=(const USRDouble& sf);
    unsigned short& operator[](int i) { return w[i];}
    double getDouble();
    operator double() { return getDouble();}
@@ -914,19 +914,19 @@ public:
    void exponent(unsigned short e) { al.exponent = e;}
    void negate()  { al.sign = ~al.sign;}
    void makeInf();
-   SECFloat add(SECFloat op2,int subflg=0);
-   int      cmp(SECFloat op2);
-   SECFloat mul(SECFloat op2);
-   SECFloat div(SECFloat op2);
-   SECFloat rem(SECFloat op2,SECFloat& equot);
+   SECDouble add(SECDouble op2,int subflg=0);
+   int      cmp(SECDouble op2);
+   SECDouble mul(SECDouble op2);
+   SECDouble div(SECDouble op2);
+   SECDouble rem(SECDouble op2,SECDouble& equot);
    void clear();
    int shift(int sc);
    int normlz();
-   void addm(SECFloat& s);
-   void subm(SECFloat& s);
-   int  cmpm(SECFloat& s);
-   int  mulm(SECFloat& s,SECFloat& equot);
-   int  divm(SECFloat& s,SECFloat& equot);
+   void addm(SECDouble& s);
+   void subm(SECDouble& s);
+   int  cmpm(SECDouble& s);
+   int  mulm(SECDouble& s,SECDouble& equot);
+   int  divm(SECDouble& s,SECDouble& equot);
    void eshdn1();
    void eshdn8();
    void eshdn16();
@@ -991,17 +991,17 @@ static unsigned short emtens[NTEN+1][NE] = {
 
 static void sprint(double v,char* string,int ndigs)
 {
-   USRFloat y(v);
-   USRFloat t(1);
-   USRFloat ezero(0.0);
-   USRFloat u;
-   USRFloat r;
-   USRFloat one(1);
-   USRFloat ten = etens[NTEN];
-   USRFloat p;
-   USRFloat x;
-   SECFloat ww;
-   SECFloat z;
+   USRDouble y(v);
+   USRDouble t(1);
+   USRDouble ezero(0.0);
+   USRDouble u;
+   USRDouble r;
+   USRDouble one(1);
+   USRDouble ten = etens[NTEN];
+   USRDouble p;
+   USRDouble x;
+   SECDouble ww;
+   SECDouble z;
    int pos;
    int digit;
    unsigned short sign;
@@ -1121,14 +1121,14 @@ tnzro:
       t = one / t;
    }
 isone:
-   SECFloat a(t);
-   SECFloat b(y);
-   SECFloat equot;
+   SECDouble a(t);
+   SECDouble b(y);
+   SECDouble equot;
    b = b.rem(a,equot);
    digit = equot[NI-1];
    while (digit==0 && b.cmp(0) != 0) {
       b.eshup1();
-      SECFloat c(b);
+      SECDouble c(b);
       c.eshup1();
       c.eshup1();
       b.addm(c);
@@ -1143,7 +1143,7 @@ isone:
    
    for(k=0;k<=ndigs;k++) {
       b.eshup1();
-      SECFloat a(b);
+      SECDouble a(b);
       a.eshup1();
       a.eshup1();
       b.addm(a);
@@ -1261,12 +1261,12 @@ static void mtherr(const char* name,int t)
    exit(t);
 }
 
-SECFloat::SECFloat(void)
+SECDouble::SECDouble(void)
 {
    clear();
 }
 
-SECFloat::SECFloat(double d)
+SECDouble::SECDouble(double d)
 
 {
    unsigned short* e = (unsigned short*)&d;
@@ -1306,14 +1306,14 @@ SECFloat::SECFloat(double d)
    }
 }
 
-SECFloat::SECFloat(const SECFloat& sf)
+SECDouble::SECDouble(const SECDouble& sf)
 
 {
    for(int i=0;i<NI;i++)
       w[i] = sf.w[i];
 }
 
-SECFloat& SECFloat::operator=(const SECFloat& sf)
+SECDouble& SECDouble::operator=(const SECDouble& sf)
 
 {
    for(int i=0;i<NI;i++)
@@ -1321,7 +1321,7 @@ SECFloat& SECFloat::operator=(const SECFloat& sf)
    return *this;
 }
 
-SECFloat& SECFloat::operator=(const USRFloat& sf)
+SECDouble& SECDouble::operator=(const USRDouble& sf)
 
 {
     unsigned short *q;
@@ -1342,7 +1342,7 @@ SECFloat& SECFloat::operator=(const USRFloat& sf)
    return *this;
 }
 
-SECFloat::SECFloat(const USRFloat& uf)
+SECDouble::SECDouble(const USRDouble& uf)
 
 {
     unsigned short *p,*q;
@@ -1361,12 +1361,12 @@ SECFloat::SECFloat(const USRFloat& uf)
    *q = 0;
 }
 
-double SECFloat::getDouble()
+double SECDouble::getDouble()
 
 {
    double res;
    unsigned short *e = (unsigned short*)&res;
-   SECFloat xi(*this);
+   SECDouble xi(*this);
    int i,k;
     unsigned short *p;
    e += 3;
@@ -1382,7 +1382,7 @@ double SECFloat::getDouble()
          if ((i & 0x800) == 0)
             goto nornd;
       }
-      SECFloat ri;
+      SECDouble ri;
       ri[2+4] = 0x400;
       xi.addm(ri);
       k = xi.normlz();
@@ -1425,7 +1425,7 @@ nornd:
 }
 
 
-void SECFloat::clear()
+void SECDouble::clear()
 
 {
     unsigned short *xi = w;
@@ -1434,7 +1434,7 @@ void SECFloat::clear()
       *xi++ = 0x0000;
 }
 
-int SECFloat::isZero()
+int SECDouble::isZero()
 
 {
    for(int i=0;i<NI;i++)
@@ -1442,14 +1442,14 @@ int SECFloat::isZero()
    return 1;
 }
 
-int SECFloat::isOne()
+int SECDouble::isOne()
 
 {
-   SECFloat onef(1);
+   SECDouble onef(1);
    return cmp(onef);
 }
 
-int SECFloat::shift(int sc)
+int SECDouble::shift(int sc)
 
 {
    unsigned short *x = w;
@@ -1495,7 +1495,7 @@ int SECFloat::shift(int sc)
    return lost;
 }
 
-int SECFloat::normlz()
+int SECDouble::normlz()
 
 {
    unsigned short *x = w;
@@ -1543,7 +1543,7 @@ normdn:
    return sc;
 }
 
-void SECFloat::addm(SECFloat& s)
+void SECDouble::addm(SECDouble& s)
 
 {
    unsigned short* x = &s[0];
@@ -1565,7 +1565,7 @@ void SECFloat::addm(SECFloat& s)
    }
 }
 
-void SECFloat::subm(SECFloat& s)
+void SECDouble::subm(SECDouble& s)
 
 {
    unsigned short* x = &s[0];
@@ -1587,7 +1587,7 @@ void SECFloat::subm(SECFloat& s)
    }
 }
 
-int  SECFloat::cmpm(SECFloat& s)
+int  SECDouble::cmpm(SECDouble& s)
 
 {
     unsigned short *a = w;
@@ -1605,7 +1605,7 @@ int  SECFloat::cmpm(SECFloat& s)
    return 0;
 }
 
-int  SECFloat::mulm(SECFloat& s,SECFloat& equot)
+int  SECDouble::mulm(SECDouble& s,SECDouble& equot)
 
 {
    unsigned short *p,*q;
@@ -1640,7 +1640,7 @@ int  SECFloat::mulm(SECFloat& s,SECFloat& equot)
    
 }
 
-int  SECFloat::divm(SECFloat& s,SECFloat& equot)
+int  SECDouble::divm(SECDouble& s,SECDouble& equot)
 
 {
    unsigned short *den = &s[0];
@@ -1700,7 +1700,7 @@ divdon:
    return j;
 }
 
-void SECFloat::eshdn1()
+void SECDouble::eshdn1()
 
 {
     unsigned short *x = w;
@@ -1719,7 +1719,7 @@ void SECFloat::eshdn1()
    }
 }
 
-void SECFloat::eshup1()
+void SECDouble::eshup1()
 
 {
     unsigned short *x = w;
@@ -1738,7 +1738,7 @@ void SECFloat::eshup1()
    }
 }
 
-void SECFloat::eshdn8()
+void SECDouble::eshdn8()
 
 {
     unsigned short *x = w;
@@ -1755,7 +1755,7 @@ void SECFloat::eshdn8()
    }
 }
 
-void SECFloat::eshup8()
+void SECDouble::eshup8()
 
 {
    int i;
@@ -1772,7 +1772,7 @@ void SECFloat::eshup8()
    }
 }
 
-void SECFloat::eshup16()
+void SECDouble::eshup16()
 
 {
    int i;
@@ -1785,7 +1785,7 @@ void SECFloat::eshup16()
    *p = 0;
 }
 
-void SECFloat::eshdn16()
+void SECDouble::eshdn16()
 
 {
    int i;
@@ -1798,7 +1798,7 @@ void SECFloat::eshdn16()
    *--p = 0;
 }
 
-void SECFloat::makeInf()
+void SECDouble::makeInf()
 
 {
     unsigned short *x = w;
@@ -1808,7 +1808,7 @@ void SECFloat::makeInf()
    *x |= 0x7fff;
 }
 
-SECFloat SECFloat::add(SECFloat op2,int subflg)
+SECDouble SECDouble::add(SECDouble op2,int subflg)
 
 {
    if (subflg) negate();
@@ -1817,7 +1817,7 @@ SECFloat SECFloat::add(SECFloat op2,int subflg)
    int ltb = op2.exponent();
    int lt  = lta - ltb;
    if (lt > 0) {
-      SECFloat tmp = *this;
+      SECDouble tmp = *this;
       *this = op2;
       op2 = tmp;
       ltb = op2.exponent();
@@ -1833,7 +1833,7 @@ SECFloat SECFloat::add(SECFloat op2,int subflg)
       i = cmpm(op2);
       if (i==0) {
          if (sign() != op2.sign()) {
-            SECFloat tmp;
+            SECDouble tmp;
             return   tmp;
          }
          if ((op2.exponent() ==0) && (op2[3] & 0x8000) == 0) {
@@ -1844,7 +1844,7 @@ SECFloat SECFloat::add(SECFloat op2,int subflg)
             if (op2[j] != 0) {
                ltb += 1;
                if (ltb > 32767) {
-                  SECFloat res;
+                  SECDouble res;
                   res.makeInf();
                   return res;
                }
@@ -1855,7 +1855,7 @@ SECFloat SECFloat::add(SECFloat op2,int subflg)
          goto done;
       }
       if (i>0) {
-         SECFloat tmp = *this;
+         SECDouble tmp = *this;
          *this = op2;
          op2 = tmp;
       }
@@ -1872,7 +1872,7 @@ done:
    return op2;
 }
 
-int SECFloat::cmp(SECFloat op2)
+int SECDouble::cmp(SECDouble op2)
 
 {
     unsigned short *p,*q;
@@ -1910,10 +1910,10 @@ diff:
    else return -msign;
 }
 
-SECFloat SECFloat::mul(SECFloat op2)
+SECDouble SECDouble::mul(SECDouble op2)
 
 {
-   SECFloat res,equot;
+   SECDouble res,equot;
    int i,j;
    int lt,lta,ltb;
    lta = exponent();
@@ -1948,10 +1948,10 @@ mnzer2:
    return res;
 }
 
-SECFloat SECFloat::div(SECFloat op2)
+SECDouble SECDouble::div(SECDouble op2)
 
 {
-   SECFloat res,equot;
+   SECDouble res,equot;
    int i;
    int lt,lta,ltb;
    lta = exponent();
@@ -1988,10 +1988,10 @@ dnzro2:
    return res;
 }
 
-SECFloat SECFloat::rem(SECFloat op2,SECFloat& equot)
+SECDouble SECDouble::rem(SECDouble op2,SECDouble& equot)
 
 {
-   SECFloat res;
+   SECDouble res;
    equot.clear();
    if (isZero()) {
       return res;
@@ -2020,10 +2020,10 @@ SECFloat SECFloat::rem(SECFloat op2,SECFloat& equot)
    return res;
 }
 
-void SECFloat::rnorm(int lost,int subflg,int exp,int rcntrl)
+void SECDouble::rnorm(int lost,int subflg,int exp,int rcntrl)
 
 {
-   SECFloat rbit;
+   SECDouble rbit;
    unsigned short* s = w;
    int i,j;
    j = normlz();
@@ -2105,21 +2105,21 @@ mddone:
    s[NI-1] = 0;
 }
 
-USRFloat::USRFloat(void)
+USRDouble::USRDouble(void)
 
 {
    for(int i=0;i<NE;i++)
       w[i] = 0x0000;
 }
 
-USRFloat::USRFloat(double d)
+USRDouble::USRDouble(double d)
 
 {
-   SECFloat dd(d);
+   SECDouble dd(d);
    *this = dd;
 }
 
-USRFloat::USRFloat(const SECFloat& f)
+USRDouble::USRDouble(const SECDouble& f)
 
 {
     unsigned short *p,*q;
@@ -2137,28 +2137,28 @@ USRFloat::USRFloat(const SECFloat& f)
    *q-- = *p++;
 }
 
-USRFloat::USRFloat(const USRFloat& f)
+USRDouble::USRDouble(const USRDouble& f)
 
 {
    for(int i=0;i<NE;i++)
       w[i] = f.w[i];
 }
 
-USRFloat::USRFloat(unsigned short* ptr)
+USRDouble::USRDouble(unsigned short* ptr)
 
 {
    for(int i=0;i<NE;i++)
       w[i] = *ptr++;
 }
 
-double USRFloat::getDouble()
+double USRDouble::getDouble()
 
 {
-   SECFloat tmp(*this);
+   SECDouble tmp(*this);
    return tmp.getDouble();
 }
 
-USRFloat& USRFloat::operator=(const USRFloat& f)
+USRDouble& USRDouble::operator=(const USRDouble& f)
 
 {
    for(int i=0;i<NE;i++)
@@ -2166,7 +2166,7 @@ USRFloat& USRFloat::operator=(const USRFloat& f)
    return *this;
 }
 
-USRFloat& USRFloat::operator=(const SECFloat& f)
+USRDouble& USRDouble::operator=(const SECDouble& f)
 
 {
     unsigned short *q;
@@ -2185,7 +2185,7 @@ USRFloat& USRFloat::operator=(const SECFloat& f)
    return *this;
 }
 
-USRFloat& USRFloat::operator=(unsigned short* f)
+USRDouble& USRDouble::operator=(unsigned short* f)
 
 {
    for(int i=0;i<NE;i++)
@@ -2193,7 +2193,7 @@ USRFloat& USRFloat::operator=(unsigned short* f)
    return *this;
 }
 
-void USRFloat::clear()
+void USRDouble::clear()
 
 {
    for(int i=0;i<NE;i++)
@@ -2220,12 +2220,12 @@ static unsigned short bmask[] = {
    0x0000};
 
 
-USRFloat USRFloat::floor()
+USRDouble USRDouble::floor()
 
 {
-   USRFloat one(1);
-   USRFloat cpy(*this);
-   USRFloat res;
+   USRDouble one(1);
+   USRDouble cpy(*this);
+   USRDouble res;
     unsigned short *p;
    int e,expon,i;
    expon = exponent();
@@ -2254,15 +2254,15 @@ isitneg:
    return res;
 }
 
-USRFloat USRFloat::operator+(const USRFloat& op2) { SECFloat o1(*this);return o1.add(op2,0);}
-USRFloat USRFloat::operator-(const USRFloat& op2) { SECFloat o1(op2);return o1.add(*this,1);}
-USRFloat USRFloat::operator*(const USRFloat& op2) { SECFloat o1(*this);return o1.mul(op2);}
-USRFloat USRFloat::operator/(const USRFloat& op2) { SECFloat o1(*this);return o1.div(op2);}
+USRDouble USRDouble::operator+(const USRDouble& op2) { SECDouble o1(*this);return o1.add(op2,0);}
+USRDouble USRDouble::operator-(const USRDouble& op2) { SECDouble o1(op2);return o1.add(*this,1);}
+USRDouble USRDouble::operator*(const USRDouble& op2) { SECDouble o1(*this);return o1.mul(op2);}
+USRDouble USRDouble::operator/(const USRDouble& op2) { SECDouble o1(*this);return o1.div(op2);}
 
-int USRFloat::operator==(const USRFloat& op2)     { SECFloat o1(*this); return o1.cmp(op2) == 0;}
-int USRFloat::operator<=(const USRFloat& op2)     { SECFloat o1(*this); return o1.cmp(op2) <= 0;}
-int USRFloat::operator>=(const USRFloat& op2)     { SECFloat o1(*this); return o1.cmp(op2) >= 0;}
-int USRFloat::operator<(const USRFloat& op2)      { SECFloat o1(*this); return o1.cmp(op2) < 0;}
-int USRFloat::operator>(const USRFloat& op2)      { SECFloat o1(*this); return o1.cmp(op2) > 0;}
-int USRFloat::cmp(const USRFloat& op2)            { SECFloat o1(*this); return o1.cmp(op2);}
+int USRDouble::operator==(const USRDouble& op2)     { SECDouble o1(*this); return o1.cmp(op2) == 0;}
+int USRDouble::operator<=(const USRDouble& op2)     { SECDouble o1(*this); return o1.cmp(op2) <= 0;}
+int USRDouble::operator>=(const USRDouble& op2)     { SECDouble o1(*this); return o1.cmp(op2) >= 0;}
+int USRDouble::operator<(const USRDouble& op2)      { SECDouble o1(*this); return o1.cmp(op2) < 0;}
+int USRDouble::operator>(const USRDouble& op2)      { SECDouble o1(*this); return o1.cmp(op2) > 0;}
+int USRDouble::cmp(const USRDouble& op2)            { SECDouble o1(*this); return o1.cmp(op2);}
 

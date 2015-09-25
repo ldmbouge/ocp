@@ -16,10 +16,6 @@
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
 
-enum {
-   ORTReal = 5
-};
-
 @implementation NSNumber (Expressions)
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
 {
@@ -27,7 +23,7 @@ enum {
    if (strcmp(tt,@encode(ORInt))==0 || strcmp(tt,@encode(ORUInt)) ==0 || strcmp(tt,@encode(ORLong)) ==0 || strcmp(tt,@encode(ORULong)) ==0)
       return [ORFactory integer:tracker value:[self intValue]];
    else if (strcmp(tt,@encode(float))==0 || strcmp(tt,@encode(double))==0)
-      return [ORFactory float:tracker value:[self floatValue]];  
+      return [ORFactory double:tracker value:[self floatValue]];
    else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
    else {
@@ -109,7 +105,7 @@ enum {
 // Variables
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitBitVar: (id<ORBitVar>) v;
--(void) visitFloatVar: (id<ORRealVar>) v;
+-(void) visitRealVar: (id<ORRealVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 // Expressions
@@ -169,7 +165,7 @@ enum {
 {
    [_ms addObject:v];
 }
--(void) visitFloatVar: (id<ORRealVar>) v
+-(void) visitRealVar: (id<ORRealVar>) v
 {
    [_ms addObject:v];
 }
@@ -256,7 +252,7 @@ enum {
 {
    [[e index] visit:self];
 }
--(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*) e
+-(void) visitExprCstDoubleSubI: (ORExprCstDoubleSubI*) e
 {
    [[e index] visit:self];
 }
@@ -376,9 +372,9 @@ enum {
    @throw [[ORExecutionError alloc] initORExecutionError: "intvalue not defined on expression"];
    return 0;
 }
--(ORDouble) floatValue
+-(ORDouble) dblValue
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "dblValue not defined on expression"];
    return 0;
 }
 -(ORBool) isConstant
@@ -947,8 +943,8 @@ enum {
 @end
 
 
-@implementation ORExprCstFloatSubI
--(id<ORExpr>) initORExprCstFloatSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op
+@implementation ORExprCstDoubleSubI
+-(id<ORExpr>) initORExprCstDoubleSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op
 {
    self = [super init];
    _array = array;
@@ -997,7 +993,7 @@ enum {
 }
 -(void) visit:(ORVisitor*)visitor
 {
-   [visitor visitExprCstFloatSubI:self];
+   [visitor visitExprCstDoubleSubI:self];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

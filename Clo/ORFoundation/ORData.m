@@ -18,7 +18,7 @@
 {
    return [[ORMutableIntegerI alloc] initORMutableIntegerI:nil value:value];
 }
-+(id<ORDoubleNumber>) float: (ORDouble) value
++(id<ORDoubleNumber>) double: (ORDouble) value
 {
    return [[ORDoubleI alloc] init:nil value:value];
 }

@@ -36,7 +36,7 @@ int main_lp(int argc, const char * argv[])
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-   id<ORRealVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+   id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
    
    id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
@@ -47,7 +47,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
    printf("Objective: %f \n",[lp objective]);
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[lp floatValue: x[i]],[lp reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[lp dblValue: x[i]],[lp reducedCost: x[i]]);
    for(ORInt i = 0; i < nbRows; i++)
       printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
    NSLog(@"we are done (Part I) \n\n");
@@ -58,7 +58,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
    
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[lp floatValue: x[i]],[lp reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[lp dblValue: x[i]],[lp reducedCost: x[i]]);
    NSLog(@"we are done (Part II) \n\n");
    
    [lp release];
@@ -72,7 +72,7 @@ int main_mip(int argc, const char * argv[])
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-   id<ORRealVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+   id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
    
    id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
@@ -98,7 +98,7 @@ int main_cp(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         id<ORRealVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+         id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
          
          //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
          for(ORInt i = 0; i < nbRows; i++)
@@ -151,7 +151,7 @@ int main_hybrid(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-//         id<ORRealVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+//         id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
          
          //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
          for(ORInt i = 0; i < nbRows; i++)
@@ -214,7 +214,7 @@ int main_hybrid_branching(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         id<ORRealVar> y = [ORFactory floatVar: model low: -1.0 up: 1.0];
+         id<ORRealVar> y = [ORFactory realVar: model low: -1.0 up: 1.0];
         
          for(ORInt i = 0; i < nbRows; i++)
             [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i]-1)]]];
@@ -236,9 +236,9 @@ int main_hybrid_branching(int argc, const char * argv[])
                 if (ifval == 0.0)
                    break;
                 [cp try:
-                        ^{ [cp gthen: x[idx] float: ifval]; }
+                        ^{ [cp gthen: x[idx] double: ifval]; }
                     alt:
-                        ^{ [cp lthen: x[idx] float: ifval]; }
+                        ^{ [cp lthen: x[idx] double: ifval]; }
                  ];
 //                NSLog(@"new Objective: %f",[lp objective]);
              }
@@ -259,8 +259,8 @@ int main_hybrid_branching(int argc, const char * argv[])
          for(ORInt i = 0; i < nbColumns; i++) {
             NSLog(@"Variable x[%d] is %d",i,[sol intValue: x[i]]);
          }
-         NSLog(@"Variable y is in [%f,%f]",[sol floatMin: y],[sol floatMax: y]);
-         NSLog(@"Variable y is %f",[sol floatValue: y]);
+         NSLog(@"Variable y is in [%f,%f]",[sol dblMin: y],[sol dblMax: y]);
+         NSLog(@"Variable y is %f",[sol dblValue: y]);
          struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          return r;

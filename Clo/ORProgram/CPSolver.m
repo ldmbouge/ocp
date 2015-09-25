@@ -366,7 +366,7 @@
 
 -(void) tryall: (id<ORIntIterable>) range
       suchThat: (ORInt2Bool) filter
-     orderedBy: (ORInt2Float)o1
+     orderedBy: (ORInt2Double)o1
             in: (ORInt2Void) body
      onFailure: (ORInt2Void) onFailure
 {
@@ -448,13 +448,13 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method gthenImpl not implemented"];
 }
--(void) floatLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+-(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLthenImpl not implemented"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method realLthenImpl: not implemented"];
 }
--(void) floatGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+-(void) realGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGthenImpl not implemented"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method realGthenImpl: not implemented"];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
@@ -603,7 +603,7 @@
    }
 }
 
--(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
+-(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy
 {
    // [ldm] there is no leak whatsoever. the range and the selector both get added
    // to the memory trail. When backtracking the objects on the memory trail are released.
@@ -713,7 +713,7 @@
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
       [failStamp setValue:[_search nbFailures]];
-      ORDouble bestValue = - MAXFLOAT;
+      ORDouble bestValue = - MAXDBL;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = x.min;
       ORInt up  = x.max;
@@ -754,13 +754,13 @@
       ];
    }
 }
--(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o
 {
    return [self selectValueImpl: _gamma[v.getId] by: o];
 }
--(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Float) o
+-(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Double) o
 {
-   float bestFound = MAXFLOAT;
+   ORDouble bestFound = MAXDBL;
    ORInt indexFound = MAXINT;
    ORInt low = [x min];
    ORInt up = [x max];
@@ -775,14 +775,14 @@
    }
    return indexFound;
 }
--(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
    return [self selectValueImpl: _gamma[v.getId] by: o1 then: o2];
 }
--(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Float) o1 then: (ORInt2Float) o2
+-(ORInt) selectValueImpl: (id<CPIntVar>) x by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
-   float bestFound1 = MAXFLOAT;
-   float bestFound2 = MAXFLOAT;
+   ORDouble bestFound1 = MAXDBL;
+   ORDouble bestFound2 = MAXDBL;
    ORInt indexFound = MAXINT;
    ORInt low = [x min];
    ORInt up = [x max];
@@ -806,7 +806,7 @@
    return indexFound;
 }
 
--(void) label: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+-(void) label: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
    id<CPIntVar> x = _gamma[v.getId];
    while (![x bound]) {
@@ -815,7 +815,7 @@
             alt: ^() { [self diffImpl: x with: v]; }];
    }
 }
--(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
+-(void) label: (id<ORIntVar>) v by: (ORInt2Double) o
 {
    id<CPIntVar> x = _gamma[v.getId];
    while (![x bound]) {
@@ -840,11 +840,11 @@
 {
    [self gthenImpl: _gamma[var.getId] with: val];
 }
--(void) lthen: (id<ORIntVar>) var float: (ORDouble) val
+-(void) lthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [self lthenImpl: _gamma[var.getId] with: rint(ceil(val))];
 }
--(void) gthen: (id<ORIntVar>) var float: (ORDouble) val
+-(void) gthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [self gthenImpl: _gamma[var.getId] with: rint(floor(val))];
 }
@@ -857,13 +857,13 @@
 {
    return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
 }
--(void) floatLthen: (id<ORRealVar>) var with: (ORDouble) val
+-(void) realLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
-   [self floatLthenImpl: _gamma[var.getId] with: val];
+   [self realLthenImpl: _gamma[var.getId] with: val];
 }
--(void) floatGthen: (id<ORRealVar>) var with: (ORDouble) val
+-(void) realGthen: (id<ORRealVar>) var with: (ORDouble) val
 {
-   [self floatGthenImpl: _gamma[var.getId] with: val];
+   [self realGthenImpl: _gamma[var.getId] with: val];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
@@ -1013,9 +1013,9 @@
 {
    return [_gamma[x.getId] intValue];
 }
--(ORDouble) floatValue: (id<ORRealVar>) x
+-(ORDouble) dblValue: (id<ORRealVar>) x
 {
-   return [(id<ORRealVar>)_gamma[x.getId] floatValue];
+   return [(id<ORRealVar>)_gamma[x.getId] dblValue];
 }
 -(void)  assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
@@ -1045,11 +1045,11 @@
 {
    return [((id<CPRealVar>)_gamma[x.getId]) domwidth];
 }
--(ORDouble) floatMin:(id<ORRealVar>)x
+-(ORDouble) dblMin:(id<ORRealVar>)x
 {
    return [((id<CPRealVar>)_gamma[x.getId]) min];
 }
--(ORDouble) floatMax:(id<ORRealVar>)x
+-(ORDouble) dblMax:(id<ORRealVar>)x
 {
    return [((id<CPRealVar>)_gamma[x.getId]) max];
 }
@@ -1297,14 +1297,14 @@
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
--(void) floatLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+-(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) floatGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+-(void) realGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
    if (status == ORFailure)

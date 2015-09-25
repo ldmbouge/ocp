@@ -442,18 +442,18 @@ enum ORGroupType {
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
 -(NSComparisonResult) compare: (id<ORObjectiveValue>) other;
 @optional-(ORInt) intValue;
--(ORDouble) floatValue;
+-(ORDouble) dblValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
 -(ORInt) value;
 -(ORInt) intValue;
--(ORDouble)floatValue;
+-(ORDouble)dblValue;
 @end
 
-@protocol ORObjectiveValueFloat <ORObjectiveValue>
+@protocol ORObjectiveValueReal <ORObjectiveValue>
 -(ORDouble) value;
--(ORDouble)floatValue;
+-(ORDouble)dblValue;
 @end
 
 @protocol ORObjectiveFunction <ORObject>

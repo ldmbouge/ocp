@@ -20,7 +20,7 @@
 @end
 
 @protocol LPSolution
--(ORDouble) floatValue: (id<ORRealVar>) var;
+-(ORDouble) dblValue: (id<ORRealVar>) var;
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORRealVar>) x;
 @end
@@ -36,7 +36,7 @@
 -(void) addColumn: (id<LPColumn>) column;
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORRealVar>) v;
--(ORDouble) floatValue: (id<ORRealVar>) v;
+-(ORDouble) dblValue: (id<ORRealVar>) v;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolution>) captureSolution;
@@ -50,7 +50,7 @@
 -(OROutcome) solve;
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORVar>) v;
--(ORDouble) floatValue: (id<ORVar>) v;
+-(ORDouble) dblValue: (id<ORVar>) v;
 -(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lowerBound: (id<ORVar>) v;

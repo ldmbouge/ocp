@@ -98,7 +98,7 @@
       [_x enumerateWith:^(CPRealVarI* xk,int k) {
          S = ORIAdd(S,ORIMul([xk bounds],createORI1([_coefs at:k])));
          if (ORIEmpty(S))
-            @throw [[ORExecutionError alloc] initORExecutionError:"interval empty in FloatEquation"];
+            @throw [[ORExecutionError alloc] initORExecutionError:"interval empty in RealEquation"];
       }];
       changed = NO;
       for(ORInt i=_x.low;i <= _x.up;i++) {
@@ -423,7 +423,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
          _primalBound = bound;
    }
 }
--(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound
+-(void) tightenPrimalBound: (id<ORObjectiveValueReal>) newBound
 {
    @synchronized(self) {
       if ([newBound value] < _primalBound)
@@ -438,8 +438,8 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
          ORDouble b = [((id<ORObjectiveValueInt>) newBound) value];
          [_x updateMin: b];
       }
-      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-         ORDouble b = [((id<ORObjectiveValueFloat>) newBound) value];
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+         ORDouble b = [((id<ORObjectiveValueReal>) newBound) value];
          [_x updateMin: b];
       }
    }
@@ -447,7 +447,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat:_x.value minimize:YES];
+   return [ORFactory objectiveValueReal:_x.value minimize:YES];
 }
 -(ORStatus) check
 {
@@ -460,12 +460,12 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(id<ORObjectiveValue>) primalBound
 {
-   return [ORFactory objectiveValueFloat:_primalBound minimize:YES];
+   return [ORFactory objectiveValueReal:_primalBound minimize:YES];
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"Float-MINIMIZE(%@) with f* = %f",[_x description],_primalBound];
+   [buf appendFormat:@"Real-MINIMIZE(%@) with f* = %f",[_x description],_primalBound];
    return buf;
 }
 @end
@@ -498,7 +498,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat:_x.value minimize:NO];
+   return [ORFactory objectiveValueReal:_x.value minimize:NO];
 }
 -(ORUInt)nbUVars
 {
@@ -511,7 +511,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
       _primalBound = bound;
    NSLog(@"primal bound: %f",_primalBound);
 }
--(void) tightenPrimalBound: (id<ORObjectiveValueFloat>) newBound
+-(void) tightenPrimalBound: (id<ORObjectiveValueReal>) newBound
 {
    if ([newBound value] > _primalBound)
       _primalBound = [newBound value];
@@ -522,8 +522,8 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
       ORDouble b = [((id<ORObjectiveValueInt>) newBound) value];
       [_x updateMax: b];
    }
-   else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueFloat)]) {
-      ORDouble b = [((id<ORObjectiveValueFloat>) newBound) value];
+   else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+      ORDouble b = [((id<ORObjectiveValueReal>) newBound) value];
       [_x updateMax: b];
    }
 }
@@ -541,12 +541,12 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(id<ORObjectiveValue>) primalBound
 {
-   return [ORFactory objectiveValueFloat:_primalBound minimize:NO];
+   return [ORFactory objectiveValueReal:_primalBound minimize:NO];
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"Float-MAXIMIZE(%@) with f* = %f  [thread: %d]",[_x description],_primalBound,[NSThread threadID]];
+   [buf appendFormat:@"Real-MAXIMIZE(%@) with f* = %f  [thread: %d]",[_x description],_primalBound,[NSThread threadID]];
    return buf;
 }
 @end

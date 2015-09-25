@@ -82,19 +82,19 @@
 -(ORInt) decr: (id<ORGamma>) solver;
 -(ORInt) value: (id<ORGamma>) solver;
 -(ORInt) intValue: (id<ORGamma>) solver;
--(ORDouble) floatValue: (id<ORGamma>) solver;
+-(ORDouble) dblValue: (id<ORGamma>) solver;
 @end
 
 @protocol ORDoubleNumber <ORObject,ORExpr>
--(ORDouble) floatValue;
+-(ORDouble) dblValue;
 -(ORDouble) value;
 -(ORInt) intValue;
 @end
 
-@protocol ORMutableFloat <ORObject,ORExpr>
+@protocol ORMutableDouble <ORObject,ORExpr>
 -(ORDouble) initialValue;
 -(ORDouble) value: (id<ORGamma>) solver;
--(ORDouble) floatValue: (id<ORGamma>) solver;
+-(ORDouble) dblValue: (id<ORGamma>) solver;
 -(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 @end
 

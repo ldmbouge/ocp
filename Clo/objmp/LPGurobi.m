@@ -229,7 +229,7 @@
    GRBsetintparam(_env,name,val);
 }
 
--(void) setFloatParameter: (const char*) name val: (ORDouble) val
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val
 {
    GRBsetdblparam(_env,name,val);
 }
