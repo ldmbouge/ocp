@@ -117,7 +117,7 @@
 {
    _result = v;
 }
--(void) visitFloatVar: (ORRealVarI*) v
+-(void) visitRealVar: (ORRealVarI*) v
 {
    _result = v;
 }
@@ -129,7 +129,7 @@
 {
    _result = e;
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    _result = e;
 }
@@ -137,7 +137,7 @@
 {
    _result = v;
 }
--(void) visitFloatArray:(id<ORDoubleArray>)v
+-(void) visitDoubleArray:(id<ORDoubleArray>)v
 {
    _result = v;
 }
@@ -157,7 +157,7 @@
 {
    _result = v;
 }
--(void) visitFloatRange:(id<ORRealRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {
    _result = v;
 }
@@ -194,12 +194,12 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORRealLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
+   ORRealLinear* terms = [ORNormalizer realLinearFrom: [v expr] model: _into];
    _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORRealLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
+   ORRealLinear* terms = [ORNormalizer realLinearFrom: [v expr] model: _into];
    _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
 }
 

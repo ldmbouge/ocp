@@ -82,7 +82,7 @@ int main(int argc, const char * argv[])
                         found = YES;
                      }];
                   } alt:^{
-                     [nbFailures setValue:(float)[nbFailures intValue:cp] * rf in:cp];
+                     [nbFailures setValue:(double)[nbFailures intValue:cp] * rf in:cp];
                      [nbRestarts incr:cp];
                      NSLog(@"Hit failure limit. Failure limit now: %d / %d",[nbFailures intValue:cp],[nbRestarts intValue:cp]);
                   }];

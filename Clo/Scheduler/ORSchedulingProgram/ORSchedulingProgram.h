@@ -57,8 +57,8 @@
  * @throws ORExecutionError when a task is neither present nor absent or its duration is unbounded.
  */
 -(void) setTimes: (id<ORTaskVarArray>) act;
--(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o;
--(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Float) o1 then: (ORInt2Float) o2;
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Double) o;
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Double) o1 then: (ORInt2Double) o2;
 //-(void) labelTimes: (id<ORActivityArray>) act;
 
 /*!

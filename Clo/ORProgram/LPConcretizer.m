@@ -63,14 +63,14 @@
 -(void) visitIntRange:(id<ORIntRange>) v
 {
 }
--(void) visitFloatRange:(id<ORRealRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {}
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "no concretization of integer variables in linear program"];
 }
--(void) visitFloatVar: (id<ORRealVar>) v
+-(void) visitRealVar: (id<ORRealVar>) v
 {
    if (_gamma[v.getId] == NULL) {
       LPVariableI* cv;
@@ -98,7 +98,7 @@
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
--(void) visitFloatArray:(id<ORDoubleArray>) v
+-(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
@@ -142,7 +142,7 @@
    }
 }
 
--(void) visitFloatLinearEq: (id<ORRealLinearEq>) c
+-(void) visitRealLinearEq: (id<ORRealLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
@@ -155,7 +155,7 @@
       [_lpsolver postConstraint: concreteCstr];
    }
 }
--(void) visitFloatLinearLeq: (id<ORRealLinearLeq>) c
+-(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
@@ -177,15 +177,15 @@
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory integer: _lpsolver value: [e initialValue]];
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory mutableFloat: _lpsolver value: [e initialValue]];
+      _gamma[e.getId] = [ORFactory mutableDouble: _lpsolver value: [e initialValue]];
 }
--(void) visitFloatI: (id<ORDoubleNumber>) e
+-(void) visitDouble: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory float: _lpsolver value: [e floatValue]];
+      _gamma[e.getId] = [ORFactory double: _lpsolver value: [e dblValue]];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
@@ -260,7 +260,7 @@
 -(void) visitIntRange:(id<ORIntRange>) v
 {
 }
--(void) visitFloatRange:(id<ORRealRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {}
 -(void) visitIntVar: (id<ORIntVar>) v
 {
@@ -270,7 +270,7 @@
       _gamma[v.getId] = cv;
    }
 }
--(void) visitFloatVar: (id<ORRealVar>) v
+-(void) visitRealVar: (id<ORRealVar>) v
 {
    if (_gamma[v.getId] == NULL) {
       LPVariableI* cv;
@@ -310,7 +310,7 @@
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
--(void) visitFloatArray:(id<ORDoubleArray>) v
+-(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
@@ -359,7 +359,7 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORDoubleArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORDouble(ORInt i) { return [a at: i]; }  ];
+      id<ORDoubleArray> af = [ORFactory doubleArray: _lpsolver range: [a range] with: ^ORDouble(ORInt i) { return [a at: i]; }  ];
       ORDouble cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
@@ -374,7 +374,7 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORDoubleArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORDouble(ORInt i) { return [a at: i]; }];
+      id<ORDoubleArray> af = [ORFactory doubleArray: _lpsolver range: [a range] with: ^ORDouble(ORInt i) { return [a at: i]; }];
       ORDouble cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
@@ -384,7 +384,7 @@
    }
 }
 
--(void) visitFloatLinearEq: (id<ORRealLinearEq>) c
+-(void) visitRealLinearEq: (id<ORRealLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
@@ -397,7 +397,7 @@
       [_lpsolver postConstraint: concreteCstr];
    }
 }
--(void) visitFloatLinearLeq: (id<ORRealLinearLeq>) c
+-(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
@@ -421,15 +421,15 @@
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory integer: _lpsolver value: [e initialValue]];
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory mutableFloat: _lpsolver value: [e initialValue]];
+      _gamma[e.getId] = [ORFactory mutableDouble: _lpsolver value: [e initialValue]];
 }
--(void) visitFloatI: (id<ORDoubleNumber>) e
+-(void) visitDouble: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory float: _lpsolver value: [e floatValue]];
+      _gamma[e.getId] = [ORFactory double: _lpsolver value: [e dblValue]];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

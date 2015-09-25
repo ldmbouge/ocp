@@ -39,7 +39,7 @@
 -(void)             tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)              tryall: (id<ORIntIterable>) range
                    suchThat: (ORInt2Bool) filter
-                  orderedBy: (ORInt2Float)o1
+                  orderedBy: (ORInt2Double)o1
                          in: (ORInt2Void) body
                   onFailure: (ORInt2Void) onFailure;
 -(void)               fail;

@@ -42,7 +42,7 @@
 
 -(ORDouble)varOrdering:(id<CPIntVar>)x
 {
-   float rv = - [x domsize];
+   ORDouble rv = - [x domsize];
    return rv;
 }
 -(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x

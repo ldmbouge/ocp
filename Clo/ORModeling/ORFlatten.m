@@ -86,7 +86,7 @@
 {
    _result = v;
 }
--(void) visitFloatVar: (id) v
+-(void) visitRealVar: (id) v
 {
    _result = v;
 }
@@ -109,7 +109,7 @@
 {
    _result = e;
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    _result = e;
 }
@@ -118,7 +118,7 @@
 {
    _result = v;
 }
--(void) visitFloatArray:(id<ORDoubleArray>)v
+-(void) visitDoubleArray:(id<ORDoubleArray>)v
 {
    _result = v;
 }
@@ -138,7 +138,7 @@
 {
    _result = v;
 }
--(void) visitFloatRange:(id<ORRealRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {
    _result = v;
 }
@@ -272,7 +272,7 @@
 {
    _result = [_into addConstraint:cstr];
 }
--(void) visitFloatEqualc: (id<ORRealEqualc>)cstr
+-(void) visitRealEqualc: (id<ORRealEqualc>)cstr
 {
    _result = [_into addConstraint:cstr];
 }
@@ -320,7 +320,7 @@
 {
    _result = [_into addConstraint:c];
 }
--(void) visitFloatSquare:(id<ORSquare>)c
+-(void) visitRealSquare:(id<ORSquare>)c
 {
    _result = [_into addConstraint:c];
 }
@@ -364,7 +364,7 @@
 {
    _result = [_into addConstraint:c];
 }
--(void) visitFloatElementCst: (id<ORRealElementCst>) c
+-(void) visitRealElementCst: (id<ORRealElementCst>) c
 {
    _result = [_into addConstraint:c];
 }
@@ -556,9 +556,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
          _result = [_into minimizeVar: alpha];
       }break;
-      case ORTFloat: {
-         ORRealLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
-         id<ORRealVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+      case ORTReal: {
+         ORRealLinear* terms = [ORNormalizer realLinearFrom: [e expr] model: _into];
+         id<ORRealVar> alpha = [ORNormalizer realVarIn:terms for:_into];
          _result = [_into minimizeVar:alpha];
       }break;
       default:
@@ -573,9 +573,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
          _result = [_into maximizeVar: alpha];
       }break;
-      case ORTFloat:{
-         ORRealLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
-         id<ORRealVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+      case ORTReal:{
+         ORRealLinear* terms = [ORNormalizer realLinearFrom: [e expr] model: _into];
+         id<ORRealVar> alpha = [ORNormalizer realVarIn:terms for:_into];
          _result = [_into maximizeVar:alpha];
       }break;
       default: break;

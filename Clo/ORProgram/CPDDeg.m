@@ -45,7 +45,7 @@
 -(ORDouble)varOrdering: (id<CPIntVar>) ox
 {
    id<CPIntVar> x = (id<CPIntVar>)ox;
-   __block float h = 0.0;
+   __block double h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
       h += ([obj nbUVars] - 1 > 0);

@@ -23,11 +23,11 @@
    id<ORRandomStream> _stream;
    id<ORIntIterable>   _range;
    ORInt2Bool         _filter;
-   ORInt2Float         _order;
+   ORInt2Double         _order;
    ORDouble         _direction;
    BOOL           _randomized;
 }
--(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized: (ORBool) randomized
 {
    self = [super init];
    _range = range;
@@ -64,7 +64,7 @@
 }
 -(ORInt) choose
 {
-   __block float bestFound = MAXFLOAT;
+   __block ORDouble bestFound = MAXDBL;
    __block ORLong bestRand = 0x7fffffffffffffff;
    __block ORInt indexFound = MAXINT;
    [_range enumerateWithBlock:^(ORInt i) {
@@ -93,7 +93,7 @@
 {
    OROPTSelect* _select;
 }
--(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized
+-(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized: (ORBool) randomized
 {
    self = [super init];
    _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order randomized: randomized];
@@ -131,7 +131,7 @@
 {
    self = [super init];
    _bestRand = 0x7fffffffffffffff;
-   _bestValue = MAXFLOAT;
+   _bestValue = MAXDBL;
    _bestBlock = nil;
    _randomized = YES;
    _stream = [[ORRandomStreamI alloc] init];
@@ -147,7 +147,7 @@
 {
    [_bestBlock release];
    _bestRand = 0x7fffffffffffffff;
-   _bestValue = MAXFLOAT;
+   _bestValue = MAXDBL;
    _bestBlock = nil;
 }
 -(void)commit

@@ -139,11 +139,11 @@
 -(void) visit:(ORVisitor*) v;
 @end
 
-@interface ORExprCstFloatSubI : ORExprI<ORExpr,NSCoding> {
+@interface ORExprCstDoubleSubI : ORExprI<ORExpr,NSCoding> {
    id<ORDoubleArray> _array;
    ORExprI*         _index;
 }
--(id<ORExpr>) initORExprCstFloatSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op;
+-(id<ORExpr>) initORExprCstDoubleSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op;
 -(id<ORTracker>) tracker;
 -(ORDouble) fmin;
 -(ORDouble) fmax;

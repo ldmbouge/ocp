@@ -326,7 +326,7 @@ void trailIntFun(ORTrailI* t,int* ptr)
    s->intVal = *ptr;
    ++(t->_seg[t->_cSeg]->top);
 }
-void trailFloatFun(ORTrailI* t,ORDouble* ptr)
+void trailDoubleFun(ORTrailI* t,ORDouble* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
    struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;

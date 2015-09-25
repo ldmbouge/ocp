@@ -335,7 +335,7 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-   return [ORFactory elt: _tracker floatArray: self index: idx];
+   return [ORFactory elt: _tracker doubleArray: self index: idx];
 }
 -(ORDouble) max {
     ORDouble v = _array[_low];
@@ -393,7 +393,7 @@
 }
 -(void) visit: (ORVisitor*) v
 {
-   [v visitFloatArray: self];
+   [v visitDoubleArray: self];
 }
 
 @end
