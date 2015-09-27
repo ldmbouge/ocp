@@ -1013,9 +1013,9 @@
 {
    return [_gamma[x.getId] intValue];
 }
--(ORDouble) dblValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORRealVar>) x
 {
-   return [(id<ORRealVar>)_gamma[x.getId] dblValue];
+   return [(id<ORRealVar>)_gamma[x.getId] doubleValue];
 }
 -(void)  assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
@@ -1045,11 +1045,11 @@
 {
    return [((id<CPRealVar>)_gamma[x.getId]) domwidth];
 }
--(ORDouble) dblMin:(id<ORRealVar>)x
+-(ORDouble) doubleMin:(id<ORRealVar>)x
 {
    return [((id<CPRealVar>)_gamma[x.getId]) min];
 }
--(ORDouble) dblMax:(id<ORRealVar>)x
+-(ORDouble) doubleMax:(id<ORRealVar>)x
 {
    return [((id<CPRealVar>)_gamma[x.getId]) max];
 }

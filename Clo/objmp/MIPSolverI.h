@@ -44,7 +44,7 @@
 -(void) addObjective: (MIPObjectiveI*) obj coef: (ORDouble) coef;
 -(void) print;
 -(void) del;
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
@@ -248,7 +248,7 @@
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;
--(ORDouble) dblValue: (MIPVariableI*) var;
+-(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORDouble) lowerBound: (MIPVariableI*) var;
 -(ORDouble) upperBound: (MIPVariableI*) var;
 -(id<ORObjectiveValue>) objectiveValue;

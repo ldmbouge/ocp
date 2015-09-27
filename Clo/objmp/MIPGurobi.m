@@ -130,7 +130,7 @@
    return (ORInt) value;
 }
 
--(ORDouble) dblValue: (MIPVariableI*) var
+-(ORDouble) doubleValue: (MIPVariableI*) var
 {
    ORDouble value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);

@@ -78,7 +78,7 @@
 }
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
-   [_terms addIndependent:[e dblValue]];
+   [_terms addIndependent:[e doubleValue]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
@@ -116,7 +116,7 @@
       BOOL cv = [[e left] isConstant] && [[e right] isVariable];
       BOOL vc = [[e left] isVariable] && [[e right] isConstant];
       if (cv || vc) {
-         ORDouble coef = cv ? [[e left] dblValue] : [[e right] dblValue];
+         ORDouble coef = cv ? [[e left] doubleValue] : [[e right] doubleValue];
          id       x = cv ? [e right] : [e left];
          [_terms addTerm: x by: coef];
       } else if ([[e left] isConstant]) {
@@ -269,8 +269,8 @@
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
    if (!_rv)
-      _rv = [ORFactory realVar:_model low:[e dblValue] up:[e dblValue]];
-   [_model addConstraint:[ORFactory realEqualc:_model var:_rv to:[e dblValue]]];
+      _rv = [ORFactory realVar:_model low:[e doubleValue] up:[e doubleValue]];
+   [_model addConstraint:[ORFactory realEqualc:_model var:_rv to:[e doubleValue]]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {

@@ -47,7 +47,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
    printf("Objective: %f \n",[lp objective]);
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[lp dblValue: x[i]],[lp reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[lp doubleValue: x[i]],[lp reducedCost: x[i]]);
    for(ORInt i = 0; i < nbRows; i++)
       printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
    NSLog(@"we are done (Part I) \n\n");
@@ -58,7 +58,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
    
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[lp dblValue: x[i]],[lp reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[lp doubleValue: x[i]],[lp reducedCost: x[i]]);
    NSLog(@"we are done (Part II) \n\n");
    
    [lp release];
@@ -196,7 +196,6 @@ int main_hybrid(int argc, const char * argv[])
          NSLog(@"we are done \n\n");
          ORInt valueSol = [(id<ORObjectiveValueInt>)[[[cp solutionPool] best] objectiveValue] value];
          struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          return r;
       }];
    }
@@ -259,10 +258,9 @@ int main_hybrid_branching(int argc, const char * argv[])
          for(ORInt i = 0; i < nbColumns; i++) {
             NSLog(@"Variable x[%d] is %d",i,[sol intValue: x[i]]);
          }
-         NSLog(@"Variable y is in [%f,%f]",[sol dblMin: y],[sol dblMax: y]);
-         NSLog(@"Variable y is %f",[sol dblValue: y]);
+         //NSLog(@"Variable y is in [%f,%f]",[sol doubleMin: y],[sol doubleMax: y]);
+         NSLog(@"Variable y is %f",[sol doubleValue: y]);
          struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          return r;
       }];
    }
@@ -275,6 +273,7 @@ int main(int argc, const char * argv[])
 //   main_lp(argc,argv);
    // 261922 and 24431 failures
 //   return main_hybrid(argc,argv);
+    main_mip(argc,argv);
     return main_hybrid_branching(argc,argv);
    //return main_mip(argc,argv);
    //return main_cp(argc,argv);

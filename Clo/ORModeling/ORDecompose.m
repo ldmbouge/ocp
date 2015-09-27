@@ -300,11 +300,11 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] dblValue] == [[e right] dblValue];
+      bool isOk = [[e left] doubleValue] == [[e right] doubleValue];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
-      ORDouble c = lc ? [[e left] dblValue] : [[e right] dblValue];
+      ORDouble c = lc ? [[e left] doubleValue] : [[e right] doubleValue];
       ORExprI* other = lc ? [e right] : [e left];
       ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model];
       [lin addIndependent: - c];

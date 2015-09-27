@@ -28,7 +28,7 @@
 -(MIPOutcome) solve;
 
 -(MIPOutcome) status;
--(ORDouble) dblValue: (MIPVariableI*) var;
+-(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORInt) intValue: (MIPIntVariableI*) var;
 -(ORDouble) lowerBound: (MIPVariableI*) var;
 -(ORDouble) upperBound: (MIPVariableI*) var;

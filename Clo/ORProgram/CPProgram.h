@@ -140,9 +140,9 @@ PORTABLE_BEGIN
 -(NSSet*) constraints: (id<ORVar>)x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
--(ORDouble) dblValue: (id<ORRealVar>) x;
--(ORDouble) dblMin: (id<ORRealVar>)x;
--(ORDouble) dblMax: (id<ORRealVar>)x;
+-(ORDouble) doubleValue: (id<ORRealVar>) x;
+-(ORDouble) doubleMin: (id<ORRealVar>)x;
+-(ORDouble) doubleMax: (id<ORRealVar>)x;
 -(ORDouble) domwidth: (id<ORRealVar>)x;
 
 -(ORBool) boolValue: (id<ORIntVar>) x;

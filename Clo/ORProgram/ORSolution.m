@@ -20,7 +20,7 @@
 @end;
 
 @protocol ORQueryRealVar
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 -(ORBool) bound;
 @end;
 
@@ -115,13 +115,13 @@
    id snap = [_varShots objectAtIndex:idx];
    return [snap intValue];
 }
--(ORDouble) dblValue: (id<ORRealVar>) var
+-(ORDouble) doubleValue: (id<ORRealVar>) var
 {
    NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [obj getId] == [var getId];
    }];
    id<ORQueryRealVar> snap = [_varShots objectAtIndex:idx];
-   return [snap dblValue];
+   return [snap doubleValue];
 }
 -(NSUInteger) count
 {
