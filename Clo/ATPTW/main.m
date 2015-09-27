@@ -63,7 +63,7 @@ int main1(int argc, const char * argv[])
    @autoreleasepool {
       
       [ORStreamManager setRandomized];
-      FILE* data = fopen("/Users/pvh/NICTA/project/objectivecp-dev/objectivecpdev/data/rbg048a.tw","r");
+      FILE* data = fopen("rbg048a.tw","r");
       ORInt nbLocations;
       ORInt maxCost;
       
@@ -97,7 +97,7 @@ int main1(int argc, const char * argv[])
       [model minimize: obj];
       
 
-      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
+      id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram: model];
       id<ORIntVarArray> succ = robot.successors;
       id<ORTaskVarArray> ttask = robot.transitionTaskVars;
       
@@ -110,7 +110,7 @@ int main1(int argc, const char * argv[])
       // search
       [cp solve: ^{
          [cp try: ^() {
-             [cp sequence: robot.successors by: ^ORFloat(ORInt i) { return [cp lst: ttask[i]]; } then: ^ORFloat(ORInt i) { return [cp est: ttask[i]];}];
+             [cp sequence: robot.successors by: ^ORDouble(ORInt i) { return [cp lst: ttask[i]]; } then: ^ORDouble(ORInt i) { return [cp est: ttask[i]];}];
              [cp label: obj];
           }
             then: ^() {
@@ -118,14 +118,14 @@ int main1(int argc, const char * argv[])
                   [cp repeat: ^{
                      [cp limitFailures: 500 in: ^{
                         //                  [cp sequence: robot.successors by: ^ORFloat(ORInt i) { return [cp domsize: succ[i]]; } then: ^ORFloat(ORInt i) { return [cp ect: ttask[i]];}];
-                        [cp sequence: robot.successors by: ^ORFloat(ORInt i) { return [cp lst: ttask[i]]; } then: ^ORFloat(ORInt i) { return [cp est: ttask[i]];}];
+                        [cp sequence: robot.successors by: ^ORDouble(ORInt i) { return [cp lst: ttask[i]]; } then: ^ORDouble(ORInt i) { return [cp est: ttask[i]];}];
                         [cp label: obj];
                         printf("\n");
                         NSLog(@"obj = %d",[cp min: obj]);
                      }];
                   }
                     onRepeat: ^{
-                       id<ORSolution,CPSchedulerSolution> s = [[cp solutionPool] best];
+                       id<ORSolution,CPSchedulerSolution> s = (id)[[cp solutionPool] best];
                        ORInt ch = [dc next];
                        if (ch == 0) {
                           for(ORInt i = succ.low; i <= succ.up; i++)
@@ -162,7 +162,7 @@ int main2(int argc, const char * argv[])
    @autoreleasepool {
       
       [ORStreamManager setRandomized];
-      FILE* data = fopen("/Users/pvh/NICTA/project/objectivecp-dev/objectivecpdev/data/rbg233.tw","r");
+      FILE* data = fopen("rbg233.tw","r");
       ORInt nbLocations;
       ORInt maxCost;
       
@@ -195,7 +195,7 @@ int main2(int argc, const char * argv[])
       [model add: [ORFactory sumTransitionTimes: robot leq: obj]];
       [model minimize: obj];
       
-      id<CPProgram,CPScheduler> cp  = [ORFactory createCPProgram: model];
+      id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram: model];
       id<ORIntVarArray> succ = robot.successors;
       id<ORTaskVarArray> ttask = robot.transitionTaskVars;
       id<ORIntMatrix> ecost = robot.extendedTransitionMatrix;
@@ -209,7 +209,7 @@ int main2(int argc, const char * argv[])
       // search
       [cp solve: ^{
          [cp try: ^() {
-            [cp sequence: robot.successors by: ^ORFloat(ORInt i) { return [cp lst: ttask[i]]; } then: ^ORFloat(ORInt i) { return [cp est: ttask[i]];}];
+            [cp sequence: robot.successors by: ^ORDouble(ORInt i) { return [cp lst: ttask[i]]; } then: ^ORDouble(ORInt i) { return [cp est: ttask[i]];}];
             [cp label: obj];
             NSLog(@" first success");
          }
@@ -222,8 +222,8 @@ int main2(int argc, const char * argv[])
                         ORInt size = succ.range.size - 1;
                         __block ORInt k = low;
                         for(ORInt j = 1; j <= size; j++) {
-                           [cp label: succ[k] by:  ^ORFloat(ORInt i) { return [cp est: ttask[i]] + [ecost at: k : i]; }
-                                then:  ^ORFloat(ORInt i) { return [cp lst: task[i]];}
+                           [cp label: succ[k] by:  ^ORDouble(ORInt i) { return [cp est: ttask[i]] + [ecost at: k : i]; }
+                                then:  ^ORDouble(ORInt i) { return [cp lst: task[i]];}
                             ];
                            k = [cp intValue: succ[k]];
                         }
@@ -233,7 +233,7 @@ int main2(int argc, const char * argv[])
                      }];
                   }
                     onRepeat: ^{
-                       id<ORSolution,CPSchedulerSolution> s = [[cp solutionPool] best];
+                       id<ORSolution,CPSchedulerSolution> s = (id)[[cp solutionPool] best];
                        ORInt ch = [dc next];
                        if (ch == 0) {
                           for(ORInt i = succ.low; i <= succ.up; i++)
