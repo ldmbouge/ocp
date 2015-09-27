@@ -63,9 +63,9 @@ enum CPVarClass {
 @end
 
 @protocol CPNumVar <CPVar,CPNumVarSubscriber>
--(ORDouble) dblMin;
--(ORDouble) dblMax;
--(ORDouble) dblValue;
+-(ORDouble) doubleMin;
+-(ORDouble) doubleMax;
+-(ORDouble) doubleValue;
 @end
 
 @protocol CPIntVarSubscriber <CPNumVarSubscriber>

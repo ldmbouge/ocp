@@ -70,7 +70,7 @@ int main(int argc, const char * argv[])
                id<ORIntArray> ops = [ORFactory intArray:cp range:open.range with:^ORInt(ORInt k) {
                   return [cp intValue:open[k]];
                }];
-               NSLog(@"Solution: %@  -- cost: %f",ops,[cp dblValue:obj]);
+               NSLog(@"Solution: %@  -- cost: %f",ops,[cp doubleValue:obj]);
             }
          }];
          NSLog(@"#solutions: %d",nbSol);

@@ -45,7 +45,7 @@
 -(void) print;
 -(void) del;
 -(LPColumnI*) column;
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 -(ORDouble) reducedCost;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
@@ -285,7 +285,7 @@
 -(OROutcome) solve;
 
 -(OROutcome) status;
--(ORDouble) dblValue: (LPVariableI*) var;
+-(ORDouble) doubleValue: (LPVariableI*) var;
 -(ORDouble) lowerBound: (LPVariableI*) var;
 -(ORDouble) upperBound: (LPVariableI*) var;
 -(ORDouble) reducedCost: (LPVariableI*) var;

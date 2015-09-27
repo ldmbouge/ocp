@@ -1153,7 +1153,7 @@
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL) 
-      _gamma[e.getId] = [ORFactory double: _engine value: [e dblValue]];
+      _gamma[e.getId] = [ORFactory double: _engine value: [e doubleValue]];
 }
 -(void) visitExprPlusI: (id<ORExpr>) e
 {}

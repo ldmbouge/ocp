@@ -57,9 +57,9 @@ int TDP(int argc,const char * argv[])
     id<ORSolution> sol = [[mip solutionPool] best];
     NSLog(@"Solution: %@",sol);
     NSLog(@"Objective value: %@",[sol objectiveValue]);
-    printf("ac = %f \n",[sol dblValue: ac]);
-    printf("bc = %f \n",[sol dblValue: bc]);
-    printf("co = %f \n",[sol dblValue: co]);
+    printf("ac = %f \n",[sol doubleValue: ac]);
+    printf("bc = %f \n",[sol doubleValue: bc]);
+    printf("co = %f \n",[sol doubleValue: co]);
     NSLog(@"we are done");
    
    id<ORModel> submodel = [ORFactory createModel];
@@ -101,9 +101,9 @@ int TDP(int argc,const char * argv[])
    NSLog(@"Objective value: %@",[submodel objective]);
    id<ORSolution> subsol = [[lp solutionPool] best];
    for(ORInt i=1; i <= 10; i++) {
-      printf("fac[%d]=%f\n",i,[subsol dblValue: fac[i]]);
-      printf("fbc[%d]=%f\n",i,[subsol dblValue: fbc[i]]);
-      printf("fco[%d]=%f\n",i,[subsol dblValue: fco[i]]);
+      printf("fac[%d]=%f\n",i,[subsol doubleValue: fac[i]]);
+      printf("fbc[%d]=%f\n",i,[subsol doubleValue: fbc[i]]);
+      printf("fco[%d]=%f\n",i,[subsol doubleValue: fco[i]]);
    }
    for(ORInt i=1; i <= 10; i++) {
       printf("dual cac[%d]=%f\n",i,[lp dual: cac[i]]);
@@ -140,7 +140,7 @@ int main_lp(int argc, const char * argv[])
    id<ORSolution,LPSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[sol dblValue: x[i]],[sol reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[sol doubleValue: x[i]],[sol reducedCost: x[i]]);
    for(ORInt i = 0; i < nbRows; i++)
       printf("dual c[%d] = %f \n",i,[sol dual: ca[i]]);
    [sol release];

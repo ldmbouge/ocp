@@ -16,7 +16,7 @@
 -(id) value: (id) var;
 -(ORInt) intValue: (id<ORIntVar>) var;
 -(ORBool) boolValue: (id<ORIntVar>) var;
--(ORDouble) dblValue: (id<ORRealVar>) var;
+-(ORDouble) doubleValue: (id<ORRealVar>) var;
 -(id<ORObjectiveValue>) objectiveValue;
 @end
 

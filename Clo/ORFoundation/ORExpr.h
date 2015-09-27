@@ -73,7 +73,7 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
 -(id<ORTracker>) tracker;
 -(ORInt) min;
 -(ORInt) max;
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 -(ORInt) intValue;
 -(ORBool) isConstant;
 -(ORBool) isVariable;

@@ -406,13 +406,13 @@
 {
    return [[self worker] domwidth:x];
 }
--(ORDouble) dblMin:(id<ORRealVar>)x
+-(ORDouble) doubleMin:(id<ORRealVar>)x
 {
-   return [[self worker] dblMin:x];
+   return [[self worker] doubleMin:x];
 }
--(ORDouble) dblMax:(id<ORRealVar>)x
+-(ORDouble) doubleMax:(id<ORRealVar>)x
 {
-   return [[self worker] dblMax:x];
+   return [[self worker] doubleMax:x];
 }
 -(void) assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
@@ -739,9 +739,9 @@
 {
    return [[self worker] intValue: x];
 }
--(ORDouble) dblValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORRealVar>) x
 {
-   return [[self worker] dblValue: x];
+   return [[self worker] doubleValue: x];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {

@@ -65,9 +65,9 @@
    [_sPool addSolution: s];
    [s release];
 }
--(ORDouble) dblValue: (id<ORRealVar>) v
+-(ORDouble) doubleValue: (id<ORRealVar>) v
 {
-   return [_MIPsolver dblValue: _gamma[v.getId]];
+   return [_MIPsolver doubleValue: _gamma[v.getId]];
 }
 -(ORInt) intValue: (id<ORIntVar>) v
 {
