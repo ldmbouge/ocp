@@ -215,9 +215,9 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealEqualc: visit method not defined"];    
 }
--(void) visitFloatEqual: (id<ORRealEqual>)c
+-(void) visitRealEqual: (id<ORRealEqual>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqual: visit method not defined"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealEqual: visit method not defined"];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {

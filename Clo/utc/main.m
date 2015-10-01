@@ -65,7 +65,7 @@ int main(int argc, const char * argv[]) {
    id<ORIntArray> fftWeight = [ORFactory intArray: m range: fftDomain values: rawFFTWeight];
    id<ORIntArray> fftDelay = [ORFactory intArray: m range: fftDomain values: rawFFTDelay];
    id<ORIntArray> fftHeat = [ORFactory intArray: m range: fftDomain values: rawFFTHeat];
-   id<ORDoubleArray> fftFailRate = [ORFactory floatArray: m range: fftDomain values: rawFFTFailRate];
+   id<ORDoubleArray> fftFailRate = [ORFactory doubleArray: m range: fftDomain values: rawFFTFailRate];
    
    id<ORIntArray> sigCondCost = [ORFactory intArray: m range: fftDomain values: rawSignalCondCost];
    id<ORIntArray> sigCondDelay = [ORFactory intArray: m range: fftDomain values: rawSignalCondDelay];
@@ -85,11 +85,11 @@ int main(int argc, const char * argv[]) {
    // Fail Limit
    [m add: [[reps eq: @(1)] imply:
             [[@(1.0) sub: Prod(m, i, fftRange,
-                               [@(1.0) sub: [ORFactory elt: m floatArray: fftFailRate index: fft[i]]])]
+                               [@(1.0) sub: [ORFactory elt: m doubleArray: fftFailRate index: fft[i]]])]
              leq: @(FAIL_LIMIT)]]];
    [m add: [[reps eq: @(2)] imply:
             [[@(1.0) sub: Prod(m, i, fftRange,
-                               [@(1.0) sub: [[ORFactory elt: m floatArray: fftFailRate index: fft[i]] square] ])]
+                               [@(1.0) sub: [[ORFactory elt: m doubleArray: fftFailRate index: fft[i]] square] ])]
              leq: @(FAIL_LIMIT)]]];
    
    // Throughput

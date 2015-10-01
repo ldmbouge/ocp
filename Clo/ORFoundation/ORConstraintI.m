@@ -262,7 +262,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitFloatEqual:self];
+   [v visitRealEqual:self];
 }
 -(id<ORRealVar>) left
 {

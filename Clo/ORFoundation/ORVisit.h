@@ -98,7 +98,7 @@
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 
 -(void) visitRealEqual: (id<ORConstraint>)c;
--(void) visitRealEqualc: (id<ORRealEqualc>)c;
+-(void) visitRealEqualc: (id<ORConstraint>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;
 -(void) visitNEqualc: (id<ORConstraint>)c;
 -(void) visitLEqualc: (id<ORConstraint>)c;
