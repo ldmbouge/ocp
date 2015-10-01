@@ -45,7 +45,7 @@
 -(void) print;
 -(void) del;
 -(LPColumnI*) column;
--(ORDouble) floatValue;
+-(ORDouble) doubleValue;
 -(ORDouble) reducedCost;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
@@ -285,7 +285,7 @@
 -(OROutcome) solve;
 
 -(OROutcome) status;
--(ORDouble) floatValue: (LPVariableI*) var;
+-(ORDouble) doubleValue: (LPVariableI*) var;
 -(ORDouble) lowerBound: (LPVariableI*) var;
 -(ORDouble) upperBound: (LPVariableI*) var;
 -(ORDouble) reducedCost: (LPVariableI*) var;
@@ -298,7 +298,7 @@
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORDouble) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(void) print;

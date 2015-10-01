@@ -15,14 +15,14 @@
 #import "LPGurobi.h"
 #endif
 
-@interface LPFloatVarSnapshot : NSObject  {
+@interface LPDoubleVarSnapshot : NSObject  {
    ORUInt    _name;
    ORDouble   _value;
    ORDouble   _reducedCost;
    
 }
--(LPFloatVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name;
--(ORDouble) floatValue;
+-(LPDoubleVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name;
+-(ORDouble) doubleValue;
 -(ORDouble) reducedCost;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
@@ -30,12 +30,12 @@
 -(ORUInt)getId;
 @end
 
-@implementation LPFloatVarSnapshot
--(LPFloatVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name
+@implementation LPDoubleVarSnapshot
+-(LPDoubleVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name
 {
    self = [super init];
    _name = name;
-   _value = [v floatValue];
+   _value = [v doubleValue];
    _reducedCost = [v reducedCost];
    return self;
 }
@@ -43,7 +43,7 @@
 {
    return _name;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -54,7 +54,7 @@
 -(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass:[self class]]) {
-      LPFloatVarSnapshot* other = object;
+      LPDoubleVarSnapshot* other = object;
       if (_name == other->_name) {
          return (_value == other->_value) && (_reducedCost == other->_reducedCost);
       }
@@ -497,7 +497,7 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: true];
+   return [ORFactory objectiveValueReal: [_solver lpValue] + _cst minimize: true];
 }
 -(ORInt) nb
 {
@@ -532,7 +532,7 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: true];
+   return [ORFactory objectiveValueReal: [_solver lpValue] + _cst minimize: true];
 }
 
 @end
@@ -558,7 +558,7 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: false];
+   return [ORFactory objectiveValueReal: [_solver lpValue] + _cst minimize: false];
 }
 @end
 
@@ -599,7 +599,7 @@
 }
 -(id) takeSnapshot: (ORInt) id
 {
-   return [[LPFloatVarSnapshot alloc] initLPFloatVarSnapshot: self name: id];
+   return [[LPDoubleVarSnapshot alloc] initLPFloatVarSnapshot: self name: id];
 }
 -(ORBool) hasBounds
 {
@@ -641,7 +641,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"LPVariable(%d,%f)",_idx,[_solver floatValue:self]];
+   [buf appendFormat:@"LPVariable(%d,%f)",_idx,[_solver doubleValue:self]];
    return buf;
 }
 -(void) resize
@@ -708,9 +708,9 @@
 {
    return [_solver createColumn:_low up:_up size:_size obj:_objCoef cstr:_cstr coef:_coef];
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
-   return [_solver floatValue:self];
+   return [_solver doubleValue:self];
 }
 
 -(ORDouble) reducedCost
@@ -1383,7 +1383,7 @@
 {
    return [_lp status];
 }
--(ORDouble) floatValue: (LPVariableI*) var
+-(ORDouble) doubleValue: (LPVariableI*) var
 {
    return [_lp value: var];
 }
@@ -1405,7 +1405,7 @@
 }
 -(id<ORDoubleArray>) duals
 {
-    id<ORDoubleArray> arr = [ORFactory floatArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORDouble(ORInt i) {
+    id<ORDoubleArray> arr = [ORFactory doubleArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORDouble(ORInt i) {
         return [_cstr[i] dual];
     }];
    return arr;
@@ -1442,9 +1442,9 @@
 {
    [_lp setIntParameter: name val: val];
 }
--(void) setFloatParameter: (const char*) name val: (ORDouble) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 {
-   [_lp setFloatParameter: name val: val];
+   [_lp setDoubleParameter: name val: val];
 }
 -(void) setStringParameter: (const char*) name val: (char*) val
 {

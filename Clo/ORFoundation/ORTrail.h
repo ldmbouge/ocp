@@ -79,7 +79,7 @@ typedef struct {
    int        _nb;
    int        _low;
    TRDouble*  _entries;
-} TRFloatArray;
+} TRDoubleArray;
 
 typedef struct {
    int    _val;
@@ -88,7 +88,7 @@ typedef struct {
 
 @interface ORTrailFunction : NSObject
 void trailIntFun(id<ORTrail> t,int* ptr);
-void trailFloatFun(id<ORTrail> t,double* ptr);
+void trailDoubleFun(id<ORTrail> t,double* ptr);
 void trailUIntFun(id<ORTrail> t,unsigned* ptr);
 void trailIdNCFun(id<ORTrail> t,id* ptr);
 TRInt makeTRInt(id<ORTrail> trail,int val);
@@ -100,8 +100,8 @@ TRId  makeTRId(id<ORTrail> trail,id val);
 TRIdNC  makeTRIdNC(id<ORTrail> trail,id val);
 TRIntArray makeTRIntArray(id<ORTrail> trail,int nb,int low);
 void  freeTRIntArray(TRIntArray a);
-TRIntArray makeTRFloatArray(id<ORTrail> trail,int nb,int low);
-void  freeTRFloatArray(TRFloatArray a);
+TRDoubleArray makeTRDoubleArray(id<ORTrail> trail,int nb,int low);
+void  freeTRDoubleArray(TRDoubleArray a);
 
 void  assignTRInt(TRInt* v,int val,id<ORTrail> trail);
 void  assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail);
@@ -112,8 +112,8 @@ void  assignTRId(TRId* v,id val,id<ORTrail> trail);
 void  assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail);
 ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail);
 ORInt getTRIntArray(TRIntArray a,int i);
-ORDouble assignTRFloatArray(TRIntArray a,int i,ORDouble val,id<ORTrail> trail);
-ORInt getTRFloatArray(TRFloatArray a,int i);
+ORDouble assignTRDoubleArray(TRIntArray a,int i,ORDouble val,id<ORTrail> trail);
+ORInt getTRDoubleArray(TRDoubleArray a,int i);
 
 FXInt makeFXInt(id<ORTrail> trail);
 void  incrFXInt(FXInt* v,id<ORTrail> trail);

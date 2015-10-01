@@ -15,33 +15,33 @@
 #import "MIPGurobi.h"
 #endif
 
-@interface MIPFloatVarSnapshot : NSObject {
+@interface MIPDoubleVarSnapshot : NSObject {
    ORUInt    _name;
    ORDouble   _value;
    ORDouble   _reducedCost;
    
 }
--(MIPFloatVarSnapshot*) initMIPFloatVarSnapshot: (MIPVariableI*) v name: (ORInt) name;
--(ORDouble) floatValue;
+-(MIPDoubleVarSnapshot*) initMIPFloatVarSnapshot: (MIPVariableI*) v name: (ORInt) name;
+-(ORDouble) doubleValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
 -(ORUInt)getId;
 @end
 
-@implementation MIPFloatVarSnapshot
--(MIPFloatVarSnapshot*) initMIPFloatVarSnapshot: (MIPVariableI*) v name: (ORInt) name
+@implementation MIPDoubleVarSnapshot
+-(MIPDoubleVarSnapshot*) initMIPFloatVarSnapshot: (MIPVariableI*) v name: (ORInt) name
 {
    self = [super init];
    _name = name;
-   _value = [v floatValue];
+   _value = [v doubleValue];
    return self;
 }
 -(ORUInt) getId
 {
    return _name;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -52,7 +52,7 @@
 -(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass:[self class]]) {
-      MIPFloatVarSnapshot* other = object;
+      MIPDoubleVarSnapshot* other = object;
       if (_name == other->_name) {
          return (_value == other->_value) && (_reducedCost == other->_reducedCost);
       }
@@ -583,7 +583,7 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver mipvalue] + _cst minimize: true];
+   return [ORFactory objectiveValueReal: [_solver mipvalue] + _cst minimize: true];
 }
 -(ORInt) nb
 {
@@ -617,7 +617,7 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver mipvalue] + _cst minimize: true];
+   return [ORFactory objectiveValueReal: [_solver mipvalue] + _cst minimize: true];
 }
 
 @end
@@ -643,7 +643,7 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver mipvalue] + _cst minimize: false];
+   return [ORFactory objectiveValueReal: [_solver mipvalue] + _cst minimize: false];
 }
 @end
 
@@ -684,7 +684,7 @@
 }
 -(id) takeSnapshot: (ORInt) id
 {
-   return [[MIPFloatVarSnapshot alloc] initMIPFloatVarSnapshot: self name: id];
+   return [[MIPDoubleVarSnapshot alloc] initMIPFloatVarSnapshot: self name: id];
 }
 -(ORBool) hasBounds
 {
@@ -726,7 +726,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%f",[_solver floatValue:self]];
+   [buf appendFormat:@"%f",[_solver doubleValue:self]];
    return buf;
 }
 -(void) resize
@@ -789,9 +789,9 @@
    for(ORInt i = 0; i < _size; i++)
       printf("(%d,%f)",[_cstr[i] idx],_coef[i]);
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
-   return [_solver floatValue:self];
+   return [_solver doubleValue:self];
 }
 -(ORBool) isInteger
 {
@@ -1282,9 +1282,9 @@
 {
    return (ORInt) [_MIP intValue: var];
 }
--(ORDouble) floatValue: (MIPVariableI*) var
+-(ORDouble) doubleValue: (MIPVariableI*) var
 {
-   return [_MIP floatValue: var];
+   return [_MIP doubleValue: var];
 }
 -(ORDouble) lowerBound: (MIPVariableI*) var
 {
@@ -1326,9 +1326,9 @@
 {
    [_MIP setIntParameter: name val: val];
 }
--(void) setFloatParameter: (const char*) name val: (ORDouble) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 {
-   [_MIP setFloatParameter: name val: val];
+   [_MIP setDoubleParameter: name val: val];
 }
 -(void) setStringParameter: (const char*) name val: (char*) val
 {

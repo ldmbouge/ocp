@@ -243,7 +243,7 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     };
     [_eventList addEvent:[wrap copy]];
 }
--(void) dispatchWithFloatArray:(id<ORDoubleArray>)arr
+-(void) dispatchWithDoubleArray:(id<ORDoubleArray>)arr
 {
     ORDoubleArray2Void tClo = (ORDoubleArray2Void)_closure;
     ORClosure wrap = ^{
@@ -410,14 +410,14 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     }
 }
 
--(void) notifyWithFloatArray:(id<ORDoubleArray>)arr
+-(void) notifyWithDoubleArray:(id<ORDoubleArray>)arr
 {
     @synchronized(self) {
         for(id event in _whenList)
-            [event dispatchWithFloatArray: arr];
+            [event dispatchWithDoubleArray: arr];
         [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
         for(id event in _wheneverList)
-            [event dispatchWithFloatArray: arr];
+            [event dispatchWithDoubleArray: arr];
         for(ORBarrier* barrier in _sleeperList)
             [barrier join];
         [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.

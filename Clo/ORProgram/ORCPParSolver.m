@@ -175,7 +175,7 @@
 }
 -(void) tryall: (id<ORIntIterable>) range
       suchThat: (ORInt2Bool) filter
-     orderedBy: (ORInt2Float)o1
+     orderedBy: (ORInt2Double)o1
             in: (ORInt2Void) body
      onFailure: (ORInt2Void) onFailure
 {
@@ -277,7 +277,7 @@
 {
    [[self worker] labelArray: x];
 }
--(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
+-(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy
 {
    [[self worker] labelArray: x orderedBy: orderedBy];
 }
@@ -297,19 +297,19 @@
 {
    [[self worker] label: mx];
 }
--(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o
 {
    return [[self worker] selectValue: v by: o];
 }
--(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
    return [[self worker] selectValue: v by: o1 then: o2];
 }
--(void) label: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2
+-(void) label: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
    return [[self worker] label: v by:o1 then:o2];
 }
--(void) label: (id<ORIntVar>) v by: (ORInt2Float) o
+-(void) label: (id<ORIntVar>) v by: (ORInt2Double) o
 {
    return [[self worker] label: v by: o];
 }
@@ -329,11 +329,11 @@
 {
    [[self worker] gthen: var with: val];
 }
--(void) lthen: (id<ORIntVar>) var float: (ORDouble) val
+-(void) lthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [[self worker] lthen: var with: val];
 }
--(void) gthen: (id<ORIntVar>) var float: (ORDouble) val
+-(void) gthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [[self worker] gthen: var with: val];
 }
@@ -341,13 +341,13 @@
 {
    [[self worker] restrict: var to: S];
 }
--(void) floatLthen: (id<ORRealVar>) var with: (ORDouble) val
+-(void) realLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
-   [[self worker] floatLthen: var with: val];
+   [[self worker] realLthen: var with: val];
 }
--(void) floatGthen: (id<ORRealVar>) var with: (ORDouble) val
+-(void) realGthen: (id<ORRealVar>) var with: (ORDouble) val
 {
-   [[self worker] floatGthen: var with: val];
+   [[self worker] realGthen: var with: val];
 }
 -(void) fail
 {
@@ -406,13 +406,13 @@
 {
    return [[self worker] domwidth:x];
 }
--(ORDouble) floatMin:(id<ORRealVar>)x
+-(ORDouble) doubleMin:(id<ORRealVar>)x
 {
-   return [[self worker] floatMin:x];
+   return [[self worker] doubleMin:x];
 }
--(ORDouble) floatMax:(id<ORRealVar>)x
+-(ORDouble) doubleMax:(id<ORRealVar>)x
 {
-   return [[self worker] floatMax:x];
+   return [[self worker] doubleMax:x];
 }
 -(void) assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
@@ -739,9 +739,9 @@
 {
    return [[self worker] intValue: x];
 }
--(ORDouble) floatValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORRealVar>) x
 {
-   return [[self worker] floatValue: x];
+   return [[self worker] doubleValue: x];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {

@@ -58,6 +58,9 @@ static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}
 #define FDMAXINT (((ORInt)0x7FFFFFFF)/2)
 #define FDMININT (((ORInt)0x80000000)/2)
 
+#define MAXDBL DBL_MAX
+#define MINDBL DBL_MIN
+
 #define MAXUNSIGNED ((ORUInt)0xFFFFFFFF)
 #define MINUNSIGNED ((ORUInt)0x0)
 
@@ -120,10 +123,10 @@ typedef void (^ORConstraint2Void)(id<ORConstraint>);
 typedef void (^ORIntArray2Void)(id<ORIntArray>);
 typedef void (^ORDoubleArray2Void)(id<ORDoubleArray>);
 typedef void (^ORConstraintSet2Void)(id<ORConstraintSet>);
-typedef ORDouble (^ORIntxInt2Float)(ORInt,ORInt);
+typedef ORDouble (^ORIntxInt2Double)(ORInt,ORInt);
 typedef int (^ORIntxInt2Int)(ORInt,ORInt);
 typedef BOOL (^ORIntxInt2Bool)(ORInt,ORInt);
-typedef ORDouble (^ORInt2Float)(ORInt);
+typedef ORDouble (^ORInt2Double)(ORInt);
 typedef id<ORExpr> (^ORInt2Expr)(ORInt);
 typedef id<ORExpr> (^ORIntxInt2Expr)(ORInt, ORInt);
 typedef id<ORRelation> (^ORInt2Relation)(ORInt);

@@ -40,17 +40,17 @@ int main(int argc, const char * argv[])
          ORDouble* conn = (ORDouble*)connection;
          
          
-         id<ORRealVarArray> cost = [ORFactory floatVarArray: mdl range:Stores low:0 up:maxCost];
+         id<ORRealVarArray> cost = [ORFactory realVarArray: mdl range:Stores low:0 up:maxCost];
          id<ORIntVarArray>   supp = [ORFactory intVarArray: mdl range:Stores domain: Warehouses];
          id<ORIntVarArray>   open = [ORFactory intVarArray: mdl range:Warehouses domain: RANGE(mdl,0,1)];
-         id<ORRealVar>      obj  = [ORFactory floatVar:mdl low:0 up:maxCost*Warehouses.size];
+         id<ORRealVar>      obj  = [ORFactory realVar:mdl low:0 up:maxCost*Warehouses.size];
          
          [mdl add: [obj eq: [Sum(mdl,s, Stores, cost[s]) plus: Sum(mdl,w, Warehouses, [open[w] mul:@(fixed)]) ]]];
          for(ORUInt i=Warehouses.low;i <= Warehouses.up;i++) {
             [mdl add: [Sum(mdl,s, Stores, [supp[s] eq:@(i)]) leq:@(cap[i])]];
          }
          for(ORUInt i=Stores.low;i <= Stores.up; i++) {
-            id<ORDoubleArray> row = [ORFactory floatArray:mdl range:Warehouses with:^ORDouble(ORInt j) { return conn[i*5+j];}];
+            id<ORDoubleArray> row = [ORFactory doubleArray:mdl range:Warehouses with:^ORDouble(ORInt j) { return conn[i*5+j];}];
             [mdl add: [[open elt:supp[i]] eq:@1]];
             [mdl add: [cost[i] eq:[row elt:supp[i]]]];
          }
@@ -70,7 +70,7 @@ int main(int argc, const char * argv[])
                id<ORIntArray> ops = [ORFactory intArray:cp range:open.range with:^ORInt(ORInt k) {
                   return [cp intValue:open[k]];
                }];
-               NSLog(@"Solution: %@  -- cost: %f",ops,[cp floatValue:obj]);
+               NSLog(@"Solution: %@  -- cost: %f",ops,[cp doubleValue:obj]);
             }
          }];
          NSLog(@"#solutions: %d",nbSol);

@@ -90,13 +90,13 @@
 @end
 
 @interface CPFactory (ORReal)
-+(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c;
-+(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c;
-+(id<CPConstraint>) floatSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c;
-+(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORDouble) c;
-+(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n;
-+(id<CPConstraint>) floatMinimize: (id<CPRealVar>) x;
-+(id<CPConstraint>) floatMaximize: (id<CPRealVar>) x;
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c;
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c;
++(id<CPConstraint>) realSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c;
++(id<CPConstraint>) realEqualc: (id<CPIntVar>) x to:(ORDouble) c;
++(id<CPConstraint>) realElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n;
++(id<CPConstraint>) realMinimize: (id<CPRealVar>) x;
++(id<CPConstraint>) realMaximize: (id<CPRealVar>) x;
 @end
 
 @interface CPFactory (ORIntSet)

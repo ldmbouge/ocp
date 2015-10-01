@@ -572,44 +572,44 @@
 @end
 
 @implementation CPFactory (ORReal)
-+(id<CPConstraint>) floatSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c
++(id<CPConstraint>) realSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c
 {
    id<CPConstraint> o = [[CPRealSquareBC alloc] initCPRealSquareBC:z equalSquare:x];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
 {
    id<CPConstraint> o = [[CPRealEquationBC alloc] init:x coef:coefs eqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c
 {
    id<CPConstraint> o = [[CPRealINEquationBC alloc] init:x coef:coefs leqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORDouble) c
++(id<CPConstraint>) realEqualc: (id<CPIntVar>) x to:(ORDouble) c
 {
    id<CPConstraint> o = [[CPRealEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n
++(id<CPConstraint>) realElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n
 {
    id<CPConstraint> o = nil;
    o = [[CPRealElementCstBC alloc] init:x indexCstArray:c equal:y];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatMinimize: (id<CPRealVar>) x
++(id<CPConstraint>) realMinimize: (id<CPRealVar>) x
 {
    id<CPConstraint> o = [[CPRealVarMinimize alloc] init: x];
    [[x engine] trackMutable: o];
    return o;
 }
-+(id<CPConstraint>) floatMaximize: (id<CPRealVar>) x
++(id<CPConstraint>) realMaximize: (id<CPRealVar>) x
 {
    id<CPConstraint> o = [[CPRealVarMaximize alloc] init: x];
    [[x engine] trackMutable: o];

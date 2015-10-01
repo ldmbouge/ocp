@@ -20,7 +20,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         id<ORRealVarArray> a = [ORFactory floatVarArray:model range:RANGE(model,0,1) low:-1000.0 up:1000.0];
+         id<ORRealVarArray> a = [ORFactory realVarArray:model range:RANGE(model,0,1) low:-1000.0 up:1000.0];
          id<ORRealVar> x = a[0];
          id<ORRealVar> y = a[1];
          [model add:[[[x square] plus:[y square]] eq:@1]];
@@ -41,11 +41,11 @@ int main(int argc, const char * argv[])
                ORInt i = [select min];
                if (i == MAXINT)
                   break;               
-               ORDouble mid = [cp floatMin:a[i]] + ([cp floatMax:a[i]] - [cp floatMin:a[i]])/2.0;
+               ORDouble mid = [cp doubleMin:a[i]] + ([cp doubleMax:a[i]] - [cp doubleMin:a[i]])/2.0;
                [cp try:^{
-                  [cp floatLthen:a[i] with:mid];
+                  [cp realLthen:a[i] with:mid];
                } alt:^{
-                  [cp floatGthen:a[i] with:mid];
+                  [cp realGthen:a[i] with:mid];
                }];
             } while (true);
             nbSol++;
@@ -53,9 +53,10 @@ int main(int argc, const char * argv[])
          [[cp solutionPool] enumerateWith:^(id<ORSolution> sol) {
             printf("[x,y] = [");
             for(ORInt i = a.low; i <= a.up; i++)
-               printf("%f%c",[sol floatValue: a[i]],((i < a.up) ? ',' : ']'));
+               printf("%f%c",[sol doubleValue: a[i]],((i < a.up) ? ',' : ']'));
             printf("\n");
          }];
+         NSLog(@"FAIL %d CHOICE: %d\n",[[cp explorer] nbFailures],[[cp explorer] nbChoices]);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [ORFactory shutdown];
          return res;

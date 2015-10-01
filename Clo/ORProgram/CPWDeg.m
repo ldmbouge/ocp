@@ -77,7 +77,7 @@
 
 -(ORDouble) varOrdering:(id<CPIntVar>)x
 {
-   __block float h = 0.0;
+   __block double h = 0.0;
    NSSet* theConstraints = _cv[_map[x.getId]];
    for(id obj in theConstraints) {
       ORInt cid = [obj getId];

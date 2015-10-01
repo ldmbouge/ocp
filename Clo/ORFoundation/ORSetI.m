@@ -301,7 +301,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitFloatRange:self];
+   [v visitRealRange:self];
 }
 - (void) encodeWithCoder:(NSCoder*) aCoder
 {

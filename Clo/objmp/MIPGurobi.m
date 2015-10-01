@@ -130,7 +130,7 @@
    return (ORInt) value;
 }
 
--(ORDouble) floatValue: (MIPVariableI*) var
+-(ORDouble) doubleValue: (MIPVariableI*) var
 {
    ORDouble value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);
@@ -194,7 +194,7 @@
    GRBsetintparam(_env,name,val);
 }
 
--(void) setFloatParameter: (const char*) name val: (ORDouble) val
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val
 {
    GRBsetdblparam(_env,name,val);
 }

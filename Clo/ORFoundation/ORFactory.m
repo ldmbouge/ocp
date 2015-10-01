@@ -24,14 +24,14 @@
    ORInt     _mxo;
    ORDouble* _best;
    ORDouble* _curr;
-   ORInt2Float* _of;
+   ORInt2Double* _of;
    ORInt2Bool   _filter;
    id<ORIntIterable> _col;
 }
 -(id)initWith:(id<ORIntIterable>)col;
 -(void)startup;
 -(void)addFilter:(ORInt2Bool)f;
--(void)addOrdered:(ORInt2Float)f;
+-(void)addOrdered:(ORInt2Double)f;
 -(BOOL)next:(ORInt*)v;
 @end
 
@@ -100,15 +100,15 @@
    [tracker trackMutable: o];
    return o;
 }
-+(id<ORDoubleNumber>) float: (id<ORTracker>) tracker value: (ORDouble) value
++(id<ORDoubleNumber>) double: (id<ORTracker>) tracker value: (ORDouble) value
 {
    ORDoubleI* o = [[ORDoubleI alloc] init: tracker value: value];
    [tracker trackImmutable: o];
    return o;
 }
-+(id<ORMutableFloat>) mutableFloat: (id<ORTracker>)tracker value: (ORDouble) value
++(id<ORMutableDouble>) mutableDouble: (id<ORTracker>)tracker value: (ORDouble) value
 {
-   ORMutableFloatI* o = [[ORMutableFloatI alloc] initORMutableFloatI: tracker value:value];
+   ORMutableDoubleI* o = [[ORMutableDoubleI alloc] initORMutableRealI: tracker value:value];
    [tracker trackMutable: o];
    return o;
 }
@@ -142,7 +142,7 @@
    ORIntRangeI* o = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
    return [tracker trackImmutable: o];
 }
-+(id<ORRealRange>) floatRange: (id<ORTracker>) tracker low:(ORDouble)low up:(ORDouble) up
++(id<ORRealRange>) realRange: (id<ORTracker>) tracker low:(ORDouble)low up:(ORDouble) up
 {
    ORRealRangeI* o = [[ORRealRangeI alloc] init:low up:up];
    return [tracker trackImmutable:o];
@@ -183,33 +183,33 @@
    [tracker trackMutable: o];
    return o;
 }
-+(ORDoubleArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORDouble) value
++(ORDoubleArrayI*) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORDouble) value
 {
     ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range value: (ORDouble) value];
     [tracker trackMutable: o];
     return o;
 }
-+(id<ORDoubleArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORDouble[]) values {
++(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORDouble[]) values {
     ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range value: 0];
     for(ORInt i = [o.range low]; i <= [o.range up]; i++)
         [o set: values[i - [o.range low]]  at: i];
     [tracker trackMutable: o];
     return o;
 }
-+(ORDoubleArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORDouble(^)(ORInt)) clo
++(ORDoubleArrayI*) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORDouble(^)(ORInt)) clo
 {
     ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range with:clo];
     [tracker trackMutable: o];
     return o;
 }
-+(ORDoubleArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORDouble(^)(ORInt,ORInt)) clo
++(ORDoubleArrayI*) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORDouble(^)(ORInt,ORInt)) clo
 {
     ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range: r1 range: r2 with:clo];
     [tracker trackMutable: o];
     return o;
 }
-+(id<ORDoubleArray>) floatArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr {
-    return [ORFactory floatArray: tracker range: [arr range] with:^ORDouble(ORInt i) {
++(id<ORDoubleArray>) doubleArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr {
+    return [ORFactory doubleArray: tracker range: [arr range] with:^ORDouble(ORInt i) {
         return (ORDouble)[[arr at: i] literal];
     }];
 }
@@ -382,7 +382,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackMutable: ite];
    return ite;
 }
-+(id<OROrderedSweep>) orderedSweep: (id<ORTracker>) t over: (id<ORIntIterable>) r filter: (ORInt2Bool) filter orderedBy: (ORInt2Float) o;
++(id<OROrderedSweep>) orderedSweep: (id<ORTracker>) t over: (id<ORIntIterable>) r filter: (ORInt2Bool) filter orderedBy: (ORInt2Double) o;
 {
    OROrderedSweep* ite = [[OROrderedSweep alloc] initWith: r];
    [ite addFilter:filter];
@@ -391,7 +391,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [ite startup];
    return ite;
 }
-+(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order
++(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order
 {
    ORSelectI* o = [[ORSelectI alloc] initORSelectI: range
                                           suchThat: filter
@@ -400,7 +400,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackMutable: o];
    return o;
 }
-+(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order
++(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order
 {
    ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: YES];
    [tracker trackMutable: o];
@@ -490,11 +490,11 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    return [[ORIntVarI alloc] initORIntVarI: model domain: RANGE(model,0,1)];
 }
-+(id<ORRealVar>) floatVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
++(id<ORRealVar>) realVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
    return [[ORRealVarI alloc]  init: tracker low: low up: up];
 }
-+(id<ORRealVar>) floatVar: (id<ORTracker>) tracker
++(id<ORRealVar>) realVar: (id<ORTracker>) tracker
 {
    return [[ORRealVarI alloc]  init: tracker];
 }
@@ -507,18 +507,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return [[ORBindingArrayI alloc] initORBindingArray: nb];
 }
 
-+(id<ORRealVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
++(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
-      [o set:[ORFactory floatVar:tracker low:low up:up] at:k];
+      [o set:[ORFactory realVar:tracker low:low up:up] at:k];
    return (id<ORRealVarArray>)o;
 }
-+(id<ORRealVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range 
++(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range 
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
-      [o set:[ORFactory floatVar:tracker] at:k];
+      [o set:[ORFactory realVar:tracker] at:k];
    return (id<ORRealVarArray>)o;
 }
 
@@ -825,9 +825,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackObject:o];
    return o;
 }
-+(id<ORExpr>) elt: (id<ORTracker>) tracker floatArray: (id<ORDoubleArray>) a index: (id<ORExpr>) index
++(id<ORExpr>) elt: (id<ORTracker>) tracker doubleArray: (id<ORDoubleArray>) a index: (id<ORExpr>) index
 {
-   id<ORExpr> o = [[ORExprCstFloatSubI alloc] initORExprCstFloatSubI: a index: index];
+   id<ORExpr> o = [[ORExprCstDoubleSubI alloc] initORExprCstDoubleSubI: a index: index];
    [tracker trackObject: o];
    return o;
 }
@@ -1347,9 +1347,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ObjectiveValue)
-+(id<ORObjectiveValue>) objectiveValueFloat: (ORDouble) f minimize: (ORBool) b
++(id<ORObjectiveValue>) objectiveValueReal: (ORDouble) f minimize: (ORBool) b
 {
-   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: f minimize: b];
+   return [[ORObjectiveValueRealI alloc] initObjectiveValueRealI: f minimize: b];
 }
 +(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (ORBool) b
 {
@@ -1358,43 +1358,43 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 @end
 
 @implementation ORFactory (ORReal)
-+(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORRealVar>)x by:(id<ORRealVar>)y equal:(id<ORRealVar>)z
++(id<ORConstraint>) realMult:(id<ORTracker>)model  var: (id<ORRealVar>)x by:(id<ORRealVar>)y equal:(id<ORRealVar>)z
 {
    id<ORConstraint> o = [[ORRealMult alloc] init:z eq:x times:y];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) floatSquare:(id<ORTracker>)model var:(id<ORRealVar>)x equal:(id<ORRealVar>)res
++(id<ORConstraint>) realSquare:(id<ORTracker>)model var:(id<ORRealVar>)x equal:(id<ORRealVar>)res
 {
    id<ORConstraint> o = [[ORRealSquare alloc] init:res square:x];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  eq: (ORDouble) c
++(id<ORConstraint>) realSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  eq: (ORDouble) c
 {
-   id<ORConstraint> o = [[ORRealLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
+   id<ORConstraint> o = [[ORRealLinearEq alloc] initRealLinearEq: x coef: coef cst: c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  leq: (ORDouble) c
++(id<ORConstraint>) realSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORDoubleArray>) coef  leq: (ORDouble) c
 {
-   id<ORConstraint> o = [[ORRealLinearLeq alloc] initFloatLinearLeq: x coef: coef cst: c];
+   id<ORConstraint> o = [[ORRealLinearLeq alloc] initRealLinearLeq: x coef: coef cst: c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) floatEqual:(id<ORTracker>)model var:(id<ORRealVar>)x to:(id<ORRealVar>)y
++(id<ORConstraint>) realEqual:(id<ORTracker>)model var:(id<ORRealVar>)x to:(id<ORRealVar>)y
 {
    id<ORConstraint> o = [[ORRealEqual alloc] init:x eq:y];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) floatEqualc:(id<ORTracker>)model  var: (id<ORRealVar>) x to:(ORDouble) c
++(id<ORConstraint>) realEqualc:(id<ORTracker>)model  var: (id<ORRealVar>) x to:(ORDouble) c
 {
    id<ORConstraint> o = [[ORRealEqualc alloc] init:x eqi:c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) floatElement:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<ORRealVar>)y
++(id<ORConstraint>) realElement:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<ORRealVar>)y
 {
    id<ORConstraint> o = [[ORRealElementCst alloc]  initORElement:x array:c equal:y];
    [model trackObject:o];
@@ -1473,7 +1473,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    _col = col;
    _mxo = 2;
    _nbo = 0;
-   _of = malloc(sizeof(ORInt2Float)*_mxo);
+   _of = malloc(sizeof(ORInt2Double)*_mxo);
    _filter =  NULL;
    return self;
 }
@@ -1501,10 +1501,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    _filter = [f copy];
 }
 
--(void)addOrdered:(ORInt2Float)f
+-(void)addOrdered:(ORInt2Double)f
 {
    if (_nbo >= _mxo) {
-      _of = realloc(_of,sizeof(ORInt2Float)*_mxo*2);
+      _of = realloc(_of,sizeof(ORInt2Double)*_mxo*2);
       _mxo = _mxo * 2;
    }
    _of[_nbo++] = [f copy];

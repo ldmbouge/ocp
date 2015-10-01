@@ -21,7 +21,7 @@
 -(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
--(ORDouble) floatValue: (id<ORRealVar>) v;
+-(ORDouble) doubleValue: (id<ORRealVar>) v;
 -(ORInt) intValue: (id<ORIntVar>) v;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORSolutionPool>) solutionPool;

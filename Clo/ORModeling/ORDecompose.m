@@ -63,7 +63,7 @@
          [v release];
          return rv;
       }break;
-      case ORTFloat: {
+      case ORTReal: {
           ORRealNormalizer* v = [[ORRealNormalizer alloc] init:model];
           [rel visit:v];
           ORRealLinear* rv = [v terms];
@@ -100,7 +100,7 @@
    return terms;
 }
 
-+(id<ORRealLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
++(id<ORRealLinear>)realLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
 {
    ORRealLinear* rv = [[ORRealLinear alloc] initORRealLinear:4];
    ORRealLinearizer* v = [[ORRealLinearizer alloc] init: rv model: model];
@@ -108,7 +108,7 @@
    [v release];
    return rv;
 }
-+(id<ORRealLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORRealVar>)x
++(id<ORRealLinear>)realLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORRealVar>)x
 {
    ORRealLinear* rv = [[ORRealLinear alloc] initORRealLinear:4];
    ORRealLinearizer* v = [[ORRealLinearizer alloc] init: rv model: model equalTo:x];
@@ -116,7 +116,7 @@
    [v release];
    return rv;   
 }
-+(id<ORRealLinear>)addToFloatLinear:(id<ORRealLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
++(id<ORRealLinear>)addToRealLinear:(id<ORRealLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
 {
    ORRealLinearizer* v = [[ORRealLinearizer alloc] init: terms model: model];
    [e visit:v];
@@ -155,7 +155,7 @@
       return xv;
    }
 }
-+(id<ORRealVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
++(id<ORRealVar>) realVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
 {
    ORRealSubst* subst = [[ORRealSubst alloc] initORSubst: model];
    [expr visit:subst];
@@ -163,7 +163,7 @@
    [subst release];
    return theVar;   
 }
-+(id<ORRealVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORRealVar>)x
++(id<ORRealVar>) realVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORRealVar>)x
 {
    ORRealSubst* subst = [[ORRealSubst alloc] initORSubst: model by:x];
    [expr visit:subst];
@@ -171,12 +171,12 @@
    [subst release];
    return theVar;
 }
-+(id<ORRealVar>) floatVarIn:(id<ORRealLinear>)e for:(id<ORAddToModel>) model
++(id<ORRealVar>) realVarIn:(id<ORRealLinear>)e for:(id<ORAddToModel>) model
 {
    if ([e size] == 1 && [e coef:0]==1) {
       return (id)[e var:0];
    } else {
-      id<ORRealVar> xv = [ORFactory floatVar: model low:[e fmin] up:[e fmax]];
+      id<ORRealVar> xv = [ORFactory realVar: model low:[e fmin] up:[e fmax]];
       [e addTerm:xv by:-1];
       [e postEQZ: model];
       return xv;
@@ -280,7 +280,7 @@ struct CPVarPair {
 @end
 
 // ========================================================================================================================
-// Float Normalizer
+// Real Normalizer
 // ========================================================================================================================
 
 @implementation ORRealNormalizer
@@ -300,13 +300,13 @@ struct CPVarPair {
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] floatValue] == [[e right] floatValue];
+      bool isOk = [[e left] doubleValue] == [[e right] doubleValue];
       if (!isOk)
          [_model addConstraint:[ORFactory fail:_model]];
    } else if (lc || rc) {
-      ORDouble c = lc ? [[e left] floatValue] : [[e right] floatValue];
+      ORDouble c = lc ? [[e left] doubleValue] : [[e right] doubleValue];
       ORExprI* other = lc ? [e right] : [e left];
-      ORRealLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
+      ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model];
       [lin addIndependent: - c];
       _terms = lin;
    } else {
@@ -315,14 +315,14 @@ struct CPVarPair {
       if (lv || rv) {
          ORExprI* other = lv ? [e right] : [e left];
          ORExprI* var   = lv ? [e left] : [e right];
-         id<ORRealVar> theVar = [ORNormalizer floatVarIn:_model expr:var];
-         ORRealLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model equalTo:theVar];
+         id<ORRealVar> theVar = [ORNormalizer realVarIn:_model expr:var];
+         ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model equalTo:theVar];
          [lin release];
          _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
       } else {
-         ORRealLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model];
+         ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
          ORRealLinearFlip* linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
-         [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
+         [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
          [linRight release];
          _terms = linLeft;
       }
@@ -330,23 +330,23 @@ struct CPVarPair {
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   ORRealLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model];
+   ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
    id<ORRealLinear> linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
-   [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
+   [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
    [linRight release];
    _terms = linLeft;
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for !="];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Real normalization for !="];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for ||"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Real normalization for ||"];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for &&"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Real normalization for &&"];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
@@ -418,14 +418,14 @@ struct CPVarPair {
    } else
       [_terms addIndependent:[e initialValue]];
 }
--(void) visitMutableFloatI: (id<ORMutableInteger>) e
+-(void) visitMutableDouble: (id<ORMutableInteger>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a MutableFloat"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a MutableReal"];
 }
 
--(void) visitFloatI: (id<ORDoubleNumber>) e
+-(void) visitDouble: (id<ORDoubleNumber>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a FloatNumber"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a DoubleNumber"];
 }
 
 -(void) visitExprPlusI: (ORExprPlusI*) e
@@ -580,9 +580,9 @@ struct CPVarPair {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
 }
--(void) visitExprCstFloatSubI:(id<ORExpr>)e
+-(void) visitExprCstDoubleSubI:(id<ORExpr>)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError:"Cannot take a float-var within an integer context without a cast"];
+   @throw [[ORExecutionError alloc] initORExecutionError:"Cannot take a Real-var within an integer context without a cast"];
 }
 
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
@@ -642,13 +642,13 @@ struct CPVarPair {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,[e initialValue],[e initialValue])];
    [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e initialValue]]];
 }
--(void) visitFloatI: (id<ORDoubleNumber>) e
+-(void) visitDouble: (id<ORDoubleNumber>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a FloatNumber"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a Double"];
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a MutableFloat"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a Mutable Double"];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {

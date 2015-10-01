@@ -31,7 +31,7 @@ typedef NS_ENUM(NSUInteger,ORRelationType) {
 
 typedef NS_ENUM(NSUInteger,ORVType) {
    ORTInt = 0,
-   ORTFloat = 1,
+   ORTReal = 1,
    ORTBit  = 2,
    ORTSet  = 3,
    ORTNA = 4
@@ -49,7 +49,7 @@ typedef enum ORRelationType {
 
 typedef enum ORVType {
    ORTInt = 0,
-   ORTFloat = 1,
+   ORTReal = 1,
    ORTBit  = 2,
    ORTSet  = 3,
    ORTNA = 4
@@ -63,7 +63,7 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
    if (t1 == t2)
       return t1;
    else if (t1+t2 <= 1)
-      return ORTFloat;
+      return ORTReal;
    else
       return ORTNA;
 }
@@ -73,7 +73,7 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
 -(id<ORTracker>) tracker;
 -(ORInt) min;
 -(ORInt) max;
--(ORDouble) floatValue;
+-(ORDouble) doubleValue;
 -(ORInt) intValue;
 -(ORBool) isConstant;
 -(ORBool) isVariable;

@@ -44,7 +44,7 @@
 -(void) addObjective: (MIPObjectiveI*) obj coef: (ORDouble) coef;
 -(void) print;
 -(void) del;
--(ORDouble) floatValue;
+-(ORDouble) doubleValue;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
@@ -248,7 +248,7 @@
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;
--(ORDouble) floatValue: (MIPVariableI*) var;
+-(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORDouble) lowerBound: (MIPVariableI*) var;
 -(ORDouble) upperBound: (MIPVariableI*) var;
 -(id<ORObjectiveValue>) objectiveValue;
@@ -258,7 +258,7 @@
 -(void) updateUpperBound: (MIPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORDouble) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(void) print;

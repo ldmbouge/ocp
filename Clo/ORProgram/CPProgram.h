@@ -45,27 +45,27 @@ PORTABLE_BEGIN
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<ORIntVar>) var float: (ORDouble) val;
--(void)               lthen: (id<ORIntVar>) var float: (ORDouble) val;
+-(void)               gthen: (id<ORIntVar>) var double: (ORDouble) val;
+-(void)               lthen: (id<ORIntVar>) var double: (ORDouble) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)          floatLthen: (id<ORRealVar>) var with: (ORDouble) val;
--(void)          floatGthen: (id<ORRealVar>) var with: (ORDouble) val;
+-(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
+-(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)         addConstraintDuringSearch: (id<ORConstraint>) c;
 
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
 -(void)          labelArray: (id<ORIntVarArray>) x;
--(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
+-(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy;
 -(void)        labelArrayFF: (id<ORIntVarArray>) x;
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
 -(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
--(void)               label: (id<ORIntVar>) mx by: (ORInt2Float) o;
--(void)               label: (id<ORIntVar>) mx by: (ORInt2Float) o1 then: (ORInt2Float) o2;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Double) o;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Double) o1 then: (ORInt2Double) o2;
 
--(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Float) o;
--(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Float) o1 then: (ORInt2Float) o2;
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Double) o;
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2;
 
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;
@@ -93,7 +93,7 @@ PORTABLE_BEGIN
 -(void)              tryall: (id<ORIntIterable>) range suchThat: (PNULLABLE ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)              tryall: (id<ORIntIterable>) range
                    suchThat: (PNULLABLE ORInt2Bool) filter
-                  orderedBy: (ORInt2Float)o1
+                  orderedBy: (ORInt2Double)o1
                          in: (ORInt2Void) body
                   onFailure: (ORInt2Void) onFailure;
 
@@ -140,9 +140,9 @@ PORTABLE_BEGIN
 -(NSSet*) constraints: (id<ORVar>)x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
--(ORDouble) floatValue: (id<ORRealVar>) x;
--(ORDouble) floatMin: (id<ORRealVar>)x;
--(ORDouble) floatMax: (id<ORRealVar>)x;
+-(ORDouble) doubleValue: (id<ORRealVar>) x;
+-(ORDouble) doubleMin: (id<ORRealVar>)x;
+-(ORDouble) doubleMax: (id<ORRealVar>)x;
 -(ORDouble) domwidth: (id<ORRealVar>)x;
 
 -(ORBool) boolValue: (id<ORIntVar>) x;

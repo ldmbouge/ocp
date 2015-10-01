@@ -26,11 +26,11 @@
 +(id<ORIntVar>) intVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
 +(id<ORIntVar>) intVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x;
 +(id<ORIntVar>) intVarIn:(id<ORIntLinear>)e for:(id<ORAddToModel>) model;
-// ------ Float (double)
-+(id<ORRealLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
-+(id<ORRealLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORRealVar>)x;
-+(id<ORRealLinear>)addToFloatLinear:(id<ORRealLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
-+(id<ORRealVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
-+(id<ORRealVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORRealVar>)x;
-+(id<ORRealVar>) floatVarIn:(id<ORRealLinear>)e for:(id<ORAddToModel>) model;
+// ------ Real
++(id<ORRealLinear>)realLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
++(id<ORRealLinear>)realLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORRealVar>)x;
++(id<ORRealLinear>)addToRealLinear:(id<ORRealLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
++(id<ORRealVar>) realVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr;
++(id<ORRealVar>) realVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORRealVar>)x;
++(id<ORRealVar>) realVarIn:(id<ORRealLinear>)e for:(id<ORAddToModel>) model;
 @end

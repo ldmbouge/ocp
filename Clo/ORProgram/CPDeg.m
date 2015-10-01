@@ -43,7 +43,7 @@
 }
 -(ORDouble)varOrdering: (id<CPIntVar>)x
 {
-   float h = _cv[_map[x.getId]];
+   double h = _cv[_map[x.getId]];
    return h / [x domsize];
 }
 -(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x

@@ -22,9 +22,9 @@
 static int nbRows = 7;
 static int nbColumns = 12;
 
-float b[7] = { 18209, 7692, 1333, 924, 26638, 61188, 13360 };
-float c[12] = { 96, 76, 56, 11, 86, 10, 66, 86, 83, 12, 9, 81 };
-float coef[7][12] = {
+double b[7] = { 18209, 7692, 1333, 924, 26638, 61188, 13360 };
+double c[12] = { 96, 76, 56, 11, 86, 10, 66, 86, 83, 12, 9, 81 };
+double coef[7][12] = {
    { 19,   1,  10,  1,   1,  14, 152, 11,  1,   1, 1, 1},
    {  0,   4,  53,  0,   0,  80,   0,  4,  5,   0, 0, 0},
    {  4, 660,   3,  0,  30,   0,   3,  0,  4,  90, 0, 0},
@@ -38,9 +38,9 @@ int TDP(int argc,const char * argv[])
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Binary = [ORFactory intRange: model low: 0 up: 1];
    id<ORIntRange> Constraints = [ORFactory intRange: model low: 0 up: 2];
-   id<ORRealVar> ac = [ORFactory floatVar: model low: 0.0 up: 200];
-   id<ORRealVar> bc = [ORFactory floatVar: model low: 0.0 up: 200];
-   id<ORRealVar> co = [ORFactory floatVar: model low: 0.0 up: 200];
+   id<ORRealVar> ac = [ORFactory realVar: model low: 0.0 up: 200];
+   id<ORRealVar> bc = [ORFactory realVar: model low: 0.0 up: 200];
+   id<ORRealVar> co = [ORFactory realVar: model low: 0.0 up: 200];
    id<ORIntVar> bac = [ORFactory intVar: model bounds: Binary];
    id<ORIntVar> bbc = [ORFactory intVar: model bounds: Binary];
    id<ORIntVar> bco = [ORFactory intVar: model bounds: Binary];
@@ -57,19 +57,19 @@ int TDP(int argc,const char * argv[])
     id<ORSolution> sol = [[mip solutionPool] best];
     NSLog(@"Solution: %@",sol);
     NSLog(@"Objective value: %@",[sol objectiveValue]);
-    printf("ac = %f \n",[sol floatValue: ac]);
-    printf("bc = %f \n",[sol floatValue: bc]);
-    printf("co = %f \n",[sol floatValue: co]);
+    printf("ac = %f \n",[sol doubleValue: ac]);
+    printf("bc = %f \n",[sol doubleValue: bc]);
+    printf("co = %f \n",[sol doubleValue: co]);
     NSLog(@"we are done");
    
    id<ORModel> submodel = [ORFactory createModel];
    id<ORIntRange> Horizon = [ORFactory intRange: submodel low: 1 up: 10];
-   id<ORRealVarArray> fac = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
-   id<ORRealVarArray> fbc = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
-   id<ORRealVarArray> fco = [ORFactory floatVarArray: submodel range: Horizon low: 0 up: 200];
-   id<ORRealVar> sac = [ORFactory floatVar: submodel];
-   id<ORRealVar> sbc = [ORFactory floatVar: submodel];
-   id<ORRealVar> sco = [ORFactory floatVar: submodel];
+   id<ORRealVarArray> fac = [ORFactory realVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVarArray> fbc = [ORFactory realVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVarArray> fco = [ORFactory realVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVar> sac = [ORFactory realVar: submodel];
+   id<ORRealVar> sbc = [ORFactory realVar: submodel];
+   id<ORRealVar> sco = [ORFactory realVar: submodel];
 
    id<ORIdArray> cac = [ORFactory idArray:submodel range: Horizon];
    id<ORIdArray> cbc = [ORFactory idArray:submodel range: Horizon];
@@ -101,9 +101,9 @@ int TDP(int argc,const char * argv[])
    NSLog(@"Objective value: %@",[submodel objective]);
    id<ORSolution> subsol = [[lp solutionPool] best];
    for(ORInt i=1; i <= 10; i++) {
-      printf("fac[%d]=%f\n",i,[subsol floatValue: fac[i]]);
-      printf("fbc[%d]=%f\n",i,[subsol floatValue: fbc[i]]);
-      printf("fco[%d]=%f\n",i,[subsol floatValue: fco[i]]);
+      printf("fac[%d]=%f\n",i,[subsol doubleValue: fac[i]]);
+      printf("fbc[%d]=%f\n",i,[subsol doubleValue: fbc[i]]);
+      printf("fco[%d]=%f\n",i,[subsol doubleValue: fco[i]]);
    }
    for(ORInt i=1; i <= 10; i++) {
       printf("dual cac[%d]=%f\n",i,[lp dual: cac[i]]);
@@ -119,7 +119,7 @@ int main_lp(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
-   id<ORRealVarArray> x = [ORFactory floatVarArray: model range: Columns];
+   id<ORRealVarArray> x = [ORFactory realVarArray: model range: Columns];
     id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
       ca[i] = [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
@@ -140,7 +140,7 @@ int main_lp(int argc, const char * argv[])
    id<ORSolution,LPSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[sol floatValue: x[i]],[sol reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[sol doubleValue: x[i]],[sol reducedCost: x[i]]);
    for(ORInt i = 0; i < nbRows; i++)
       printf("dual c[%d] = %f \n",i,[sol dual: ca[i]]);
    [sol release];
@@ -208,7 +208,7 @@ int main_cp(int argc, const char * argv[])
    }];
    id<ORSolution> sol = [[mip solutionPool] best];
    NSLog(@"Solution: %@",sol);
-   printf("Objective value: %f \n",[((id<ORObjectiveValueFloat>) [sol objectiveValue]) value]);
+   printf("Objective value: %f \n",[((id<ORObjectiveValueReal>) [sol objectiveValue]) value]);
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
    NSLog(@"we are done");
@@ -252,7 +252,7 @@ int main_both(int argc, const char * argv[])
 //   id<MIPProgram> mip = [ORFactory createMIPProgram:model];
 //   [mip solve];
 //   id<ORMIPSolution> mipSol = [[mip solutionPool] best];
-//   id<ORObjectiveValueFloat> mipOBJ = [mipSol objectiveValue];
+//   id<ORObjectiveValueReal> mipOBJ = [mipSol objectiveValue];
 //   [cpm add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])]) geq:@((ORInt)[mipOBJ value])]];
    NSLog(@"MODEL: %@",cpm);
    

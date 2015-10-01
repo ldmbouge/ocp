@@ -52,14 +52,14 @@
 -(void) visitUniformDistribution:(id) v;
 -(void) visitIntSet:(id<ORIntSet>)v;
 -(void) visitIntRange:(id<ORIntRange>)v;
--(void) visitFloatRange:(id<ORRealRange>)v;
+-(void) visitRealRange:(id<ORRealRange>)v;
 -(void) visitIntArray:(id<ORIntArray>)v;
--(void) visitFloatArray:(id<ORDoubleArray>)v;
+-(void) visitDoubleArray:(id<ORDoubleArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitBitVar: (id<ORBitVar>) v;
--(void) visitFloatVar: (id<ORRealVar>) v;
+-(void) visitRealVar: (id<ORRealVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
@@ -97,8 +97,8 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 
--(void) visitFloatEqualc: (id<ORConstraint>)c;
--(void) visitFloatEqual: (id<ORConstraint>)c;
+-(void) visitRealEqual: (id<ORConstraint>)c;
+-(void) visitRealEqualc: (id<ORRealEqualc>)c;
 -(void) visitEqualc: (id<ORConstraint>)c;
 -(void) visitNEqualc: (id<ORConstraint>)c;
 -(void) visitLEqualc: (id<ORConstraint>)c;
@@ -110,8 +110,8 @@
 -(void) visitPlus: (id<ORConstraint>)c;
 -(void) visitMult: (id<ORConstraint>)c;
 -(void) visitSquare: (id<ORConstraint>)c;
--(void) visitFloatSquare: (id<ORConstraint>)c;
 -(void) visitRealMult:(id<ORConstraint>)c;
+-(void) visitRealSquare: (id<ORConstraint>)c;
 -(void) visitMod: (id<ORConstraint>)c;
 -(void) visitModc: (id<ORConstraint>)c;
 -(void) visitMin: (id<ORConstraint>)c;
@@ -123,7 +123,7 @@
 -(void) visitElementCst: (id<ORConstraint>)c;
 -(void) visitElementVar: (id<ORConstraint>)c;
 -(void) visitElementMatrixVar:(id<ORConstraint>)c;
--(void) visitFloatElementCst: (id<ORConstraint>)c;
+-(void) visitRealElementCst: (id<ORConstraint>)c;
 -(void) visitImplyEqualc: (id<ORConstraint>)c;
 -(void) visitReifyEqualc: (id<ORConstraint>)c;
 -(void) visitReifyEqual: (id<ORConstraint>)c;
@@ -150,15 +150,15 @@
 -(void) visitLinearGeq: (id<ORConstraint>) c;
 -(void) visitLinearLeq: (id<ORConstraint>) c;
 -(void) visitLinearEq: (id<ORConstraint>) c;
--(void) visitFloatLinearLeq: (id<ORConstraint>) c;
--(void) visitFloatLinearEq: (id<ORConstraint>) c;
+-(void) visitRealLinearLeq: (id<ORConstraint>) c;
+-(void) visitRealLinearEq: (id<ORConstraint>) c;
 
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
--(void) visitMutableFloatI: (id<ORMutableFloat>) e;
--(void) visitFloatI: (id<ORDoubleNumber>) e;
+-(void) visitMutableDouble: (id<ORMutableDouble>) e;
+-(void) visitDouble: (id<ORDoubleNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
@@ -177,7 +177,7 @@
 -(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
--(void) visitExprCstFloatSubI:(id<ORExpr>)e;
+-(void) visitExprCstDoubleSubI:(id<ORExpr>)e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;

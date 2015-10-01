@@ -154,14 +154,14 @@
    return _up;
 }
 -(ORInt) max {
-    ORInt v = _array[0];
-    for(int i = 1; i < _nb; i++)
+    ORInt v = _array[_low];
+    for(int i = _low+1; i <= _up; i++)
         if(_array[i] > v) v = _array[i];
     return v;
 }
 -(ORInt) min {
-    ORInt v = _array[0];
-    for(int i = 1; i < _nb; i++)
+    ORInt v = _array[_low];
+    for(int i = _low+1; i <= _up; i++)
         if(_array[i] < v) v = _array[i];
     return v;
 }
@@ -335,17 +335,17 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-   return [ORFactory elt: _tracker floatArray: self index: idx];
+   return [ORFactory elt: _tracker doubleArray: self index: idx];
 }
 -(ORDouble) max {
-    ORDouble v = _array[0];
-    for(int i = 1; i < _nb; i++)
+    ORDouble v = _array[_low];
+    for(int i = _low+1; i <= _up; i++)
         if(_array[i] > v) v = _array[i];
     return v;
 }
 -(ORDouble) min {
-    ORDouble v = _array[0];
-    for(int i = 1; i < _nb; i++)
+    ORDouble v = _array[_low];
+    for(int i = _low+1; i <= _up; i++)
         if(_array[i] < v) v = _array[i];
     return v;
 }
@@ -393,7 +393,7 @@
 }
 -(void) visit: (ORVisitor*) v
 {
-   [v visitFloatArray: self];
+   [v visitDoubleArray: self];
 }
 
 @end

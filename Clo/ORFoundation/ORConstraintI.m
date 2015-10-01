@@ -310,7 +310,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitFloatEqualc:self];
+   [v visitRealEqualc:self];
 }
 -(id<ORRealVar>) left
 {
@@ -951,7 +951,7 @@
 @implementation ORRealSquare
 -(void)visit:(ORVisitor*)v
 {
-   [v visitFloatSquare:self];
+   [v visitRealSquare:self];
 }
 @end
 
@@ -1459,7 +1459,7 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitFloatElementCst:self];
+   [v visitRealElementCst:self];
 }
 -(id<ORDoubleArray>) array
 {
@@ -2789,7 +2789,7 @@
    id<ORDoubleArray>  _coefs;
    ORDouble _c;
 }
--(ORRealLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
+-(ORRealLinearEq*) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble) c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -2806,7 +2806,7 @@
 }
 -(void) visit: (ORVisitor*) v
 {
-   [v visitFloatLinearEq: self];
+   [v visitRealLinearEq: self];
 }
 -(id<ORVarArray>) vars
 {
@@ -2835,7 +2835,7 @@
    id<ORDoubleArray> _coefs;
    ORDouble _c;
 }
--(ORRealLinearLeq*) initFloatLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble)c
+-(ORRealLinearLeq*) initRealLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble)c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -2852,7 +2852,7 @@
 }
 -(void) visit: (ORVisitor*) v
 {
-   [v visitFloatLinearLeq: self];
+   [v visitRealLinearLeq: self];
 }
 -(id<ORVarArray>) vars
 {
@@ -3041,7 +3041,7 @@
 {
    [_theSet addObject:v];
 }
--(void) visitFloatVar: (id<ORRealVar>) v
+-(void) visitRealVar: (id<ORRealVar>) v
 {
    [_theSet addObject:v];
 }
@@ -3057,9 +3057,9 @@
 {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {}
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {}
--(void) visitFloatI: (id<ORDoubleNumber>) e
+-(void) visitDouble: (id<ORDoubleNumber>) e
 {}
 -(void) visitExprPlusI: (ORExprBinaryI*) e
 {
@@ -3143,7 +3143,7 @@
 {
    [[e index] visit:self];
 }
--(void) visitExprCstFloatSubI:(ORExprCstFloatSubI*)e
+-(void) visitExprCstDoubleSubI:(ORExprCstDoubleSubI*)e
 {
    [[e index] visit:self];
 }
@@ -3834,7 +3834,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _value;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -3882,8 +3882,8 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
-@implementation ORObjectiveValueFloatI
--(id) initObjectiveValueFloatI: (ORDouble) pb minimize: (ORBool) b
+@implementation ORObjectiveValueRealI
+-(id) initObjectiveValueRealI: (ORDouble) pb minimize: (ORBool) b
 {
    self = [super init];
    _value = pb;
@@ -3895,7 +3895,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _value;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -3918,7 +3918,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(ORBool)isEqual:(id)object
 {
    if ([object isKindOfClass:[self class]]) {
-      return _value == [((ORObjectiveValueFloatI*)object) value];
+      return _value == [((ORObjectiveValueRealI*)object) value];
    } else return NO;
 }
 
@@ -3927,7 +3927,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    return _value;
 }
 
--(id<ORObjectiveValue>) best: (ORObjectiveValueFloatI*) other
+-(id<ORObjectiveValue>) best: (ORObjectiveValueRealI*) other
 {
    if ([self key] <= [other key])
       return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _value minimize: _direction == 1];
@@ -3935,7 +3935,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
       return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [other value] minimize: _direction == 1];
 }
 
--(NSComparisonResult) compare: (ORObjectiveValueFloatI*) other
+-(NSComparisonResult) compare: (ORObjectiveValueRealI*) other
 {
    ORInt mykey = [self key];
    ORInt okey = [other key];

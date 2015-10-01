@@ -71,7 +71,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    return _asDom ? [_rep._dom min] : _rep._value;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _asDom ? [_rep._dom min] : _rep._value;   
 }

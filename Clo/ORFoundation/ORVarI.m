@@ -237,7 +237,7 @@
 {
    self = [super init];
    _tracker = track;
-   _domain = [ORFactory floatRange:track low:low up:up];
+   _domain = [ORFactory realRange:track low:low up:up];
    _hasBounds = true;
    [track trackVariable: self];
    return self;
@@ -246,7 +246,7 @@
 {
    self = [super init];
    _tracker = track;
-   _domain = [ORFactory floatRange:track low:0 up:up];
+   _domain = [ORFactory realRange:track low:0 up:up];
    _hasBounds = true;
    [track trackVariable: self];
    return self;
@@ -270,7 +270,7 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTFloat;
+   return ORTReal;
 }
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -292,7 +292,7 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+   return [NSString stringWithFormat:@"var<OR>{real}:%03d(%f,%f)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -300,7 +300,7 @@
 }
 -(void) visit: (ORVisitor*) v
 {
-   [v visitFloatVar: self];
+   [v visitRealVar: self];
 }
 -(ORBool) hasBounds
 {

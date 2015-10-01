@@ -71,7 +71,7 @@
 {
    return _value;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -144,7 +144,7 @@
 {
    return _value;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -160,7 +160,7 @@
 {
    return _value = value;
 }
--(ORDouble) floatValue: (id<ORGamma>) solver
+-(ORDouble) doubleValue: (id<ORGamma>) solver
 {
    return _value;
 }
@@ -283,7 +283,7 @@
 {
    return (ORInt) _value;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -297,7 +297,7 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTFloat;
+   return ORTReal;
 }
 -(id<ORTracker>) tracker
 {
@@ -319,17 +319,17 @@
 }
 -(void) visit: (ORVisitor*) visitor
 {
-   [visitor visitFloatI: self];
+   [visitor visitDouble: self];
 }
 @end
 
-@implementation ORMutableFloatI
+@implementation ORMutableDoubleI
 {
 	ORDouble       _value;
    id<ORTracker> _tracker;
 }
 
--(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORDouble) value
+-(ORMutableDoubleI*) initORMutableRealI: (id<ORTracker>) tracker value: (ORDouble) value
 {
    self = [super init];
    _value = value;
@@ -340,17 +340,17 @@
 {
    return _value;
 }
--(ORDouble) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
 -(ORDouble) value: (id<ORGamma>) solver;
 {
-   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+   return [(ORMutableIntegerI*)[solver concretize: self] doubleValue];
 }
--(ORDouble) floatValue: (id<ORGamma>) solver;
+-(ORDouble) doubleValue: (id<ORGamma>) solver;
 {
-   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+   return [(ORMutableIntegerI*)[solver concretize: self] doubleValue];
 }
 -(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 {
@@ -366,7 +366,7 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTFloat;
+   return ORTReal;
 }
 -(id<ORTracker>) tracker
 {
@@ -388,7 +388,7 @@
 }
 -(void) visit: (ORVisitor*) visitor
 {
-   [visitor visitMutableFloatI: self];
+   [visitor visitMutableDouble: self];
 }
 @end
 

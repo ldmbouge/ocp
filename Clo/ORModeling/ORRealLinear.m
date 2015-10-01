@@ -188,7 +188,7 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 
 -(id<ORDoubleArray>) coefficients: (id<ORAddToModel>) model
 {
-   return [ORFactory floatArray: model range: RANGE(model,0,_nb-1) with: ^ORDouble(ORInt i) { return _terms[i]._coef; }];
+   return [ORFactory doubleArray: model range: RANGE(model,0,_nb-1) with: ^ORDouble(ORInt i) { return _terms[i]._coef; }];
 }
 
 -(ORInt) size
@@ -198,17 +198,17 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model
 {
-   return [model addConstraint:[ORFactory floatSum: model
-                                             array: [self variables: model]
-                                              coef: [self coefficients: model]
-                                                eq: -_indep]];
+   return [model addConstraint:[ORFactory realSum: model
+                                            array: [self variables: model]
+                                             coef: [self coefficients: model]
+                                               eq: -_indep]];
 }
 -(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model
 {
-   return [model addConstraint:[ORFactory floatSum: model
-                                             array: [self variables: model]
-                                              coef: [self coefficients: model]
-                                               leq: -_indep]];
+   return [model addConstraint:[ORFactory realSum: model
+                                            array: [self variables: model]
+                                             coef: [self coefficients: model]
+                                              leq: -_indep]];
 }
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {

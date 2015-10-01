@@ -28,7 +28,7 @@
 -(MIPOutcome) solve;
 
 -(MIPOutcome) status;
--(ORDouble) floatValue: (MIPVariableI*) var;
+-(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORInt) intValue: (MIPIntVariableI*) var;
 -(ORDouble) lowerBound: (MIPVariableI*) var;
 -(ORDouble) upperBound: (MIPVariableI*) var;
@@ -42,7 +42,7 @@
 -(void) updateUpperBound: (MIPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORDouble) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr;
