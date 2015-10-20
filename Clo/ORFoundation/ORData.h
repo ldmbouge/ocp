@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,27 +11,13 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORCrFactory.h>
-
-//typedef enum {
-//   DomainConsistency,
-//   RangeConsistency,
-//   ValueConsistency,
-//   Hard,
-//   Soft,
-//   Default
-//} ORAnnotation;
+#import <ORFoundation/ORObject.h>
 
 @protocol ORExpr;
 @protocol ORIntRange;
 @protocol ORASolver;
 @protocol ORIntSet;
 @class ORVisitor;
-
-@protocol ORObject <NSObject>
--(ORInt) getId;
--(void)setId:(ORUInt)name;
--(void) visit: (ORVisitor*) visitor;
-@end;
 
 @protocol ORTau <NSObject,NSCopying>
 -(void) set: (id) value forKey: (id) key;
@@ -52,6 +38,7 @@
 -(id*)gamma;
 -(id<ORObject>) concretize: (id<ORObject>) o;
 -(id<ORModelMappings>) modelMappings;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
 @end
 
 @protocol ORModelMappings <NSObject>
@@ -60,13 +47,13 @@
 -(id) copy;
 @end
 
-@interface ORGamma : NSObject<ORGamma>
+@interface ORGamma : ORObject<ORGamma>
 {
 @protected
-   id* _gamma;
+   id __strong*  _gamma;
    id<ORModelMappings> _mappings;
 }
--(ORGamma*) initORGamma;
+-(ORGamma*) init;
 -(void) dealloc;
 -(id*) gamma;
 -(id) concretize: (id) o;
@@ -77,7 +64,7 @@
 
 @interface NSObject (Concretization)
 -(void) visit: (ORVisitor*) visitor;
-@end;
+@end
 
 @protocol ORInteger <ORObject,ORExpr>
 -(ORInt) value;
@@ -85,7 +72,7 @@
 
 @protocol ORMutableId <ORObject>
 -(id) idValue:(id<ORGamma>)solver;
--(void) setId:(id)v in:(id<ORGamma>)solver;
+-(void) setIdValue:(id)v in:(id<ORGamma>)solver;
 @end
 
 @protocol ORMutableInteger <ORObject,ORExpr>
@@ -95,20 +82,20 @@
 -(ORInt) decr: (id<ORGamma>) solver;
 -(ORInt) value: (id<ORGamma>) solver;
 -(ORInt) intValue: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORDouble) dblValue: (id<ORGamma>) solver;
 @end
 
-@protocol ORFloatNumber <ORObject,ORExpr>
--(ORFloat) floatValue;
--(ORFloat) value;
+@protocol ORDoubleNumber <ORObject,ORExpr>
+-(ORDouble) dblValue;
+-(ORDouble) value;
 -(ORInt) intValue;
 @end
 
-@protocol ORMutableFloat <ORObject,ORExpr>
--(ORFloat) initialValue;
--(ORFloat) value: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+@protocol ORMutableDouble <ORObject,ORExpr>
+-(ORDouble) initialValue;
+-(ORDouble) value: (id<ORGamma>) solver;
+-(ORDouble) dblValue: (id<ORGamma>) solver;
+-(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 @end
 
 @protocol ORTrailableInt <ORObject>
@@ -129,20 +116,25 @@
 +(void) setDeterministic;
 +(void) setRandomized;
 +(ORInt) deterministic;
++(ORInt) randomized;
 +(void) initSeed: (unsigned short*) seed;
 @end
 
 @protocol ORRandomStream <ORObject>
 -(ORLong) next;
-@end;
+@end
 
 @protocol ORZeroOneStream <ORObject>
 -(double) next;
-@end;
+@end
 
 @protocol ORUniformDistribution <ORObject>
 -(ORInt) next;
-@end;
+@end
+
+@protocol ORRandomPermutation <ORRandomStream>
+-(ORInt) next;
+@end
 
 @interface ORCrFactory (OR)
 +(id<ORMutableInteger>) integer:(ORInt) value;

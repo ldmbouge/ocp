@@ -43,9 +43,9 @@
     if([[cstr expr] type] == ORRGEq || [[cstr expr] type] == ORREq) slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
     else if([[cstr expr] type] == ORRLEq) slackExpr = [[binexpr left] sub: [binexpr right] track: _target];
     
-    id<ORVar> slack = nil;
+    id<ORVar, ORExpr> slack = nil;
     if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, [slackExpr min], [slackExpr max])];
-    else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: [slackExpr min] up: [slackExpr max]];
+    else if([binexpr vtype] == ORTReal) slack = [ORFactory realVar: _target low: [slackExpr min] up: [slackExpr max]];
     else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
     
     id<ORRelation> softExpr = nil;
@@ -95,9 +95,9 @@
     if([[cstr expr] type] == ORRGEq || [[cstr expr] type] == ORREq) slackExpr = [[binexpr right] sub: [binexpr left] track: _target];
     else if([[cstr expr] type] == ORRLEq) slackExpr = [[binexpr left] sub: [binexpr right] track: _target];
     
-    id<ORVar> slack = nil;
+    id<ORVar, ORExpr> slack = nil;
     if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, 0, [slackExpr max])];
-    else if([binexpr vtype] == ORTFloat) slack = [ORFactory floatVar: _target low: 0 up: [slackExpr max]];
+    else if([binexpr vtype] == ORTReal) slack = [ORFactory realVar: _target low: 0 up: [slackExpr max]];
     else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
     
     id<ORRelation> softExpr = nil;

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -63,8 +63,8 @@ int main(int argc, const char * argv[])
          __block ORInt nbSolutions = 0;
          [cp solveAll:^{
             NSLog(@"Start...");
-            [cp labelArray:husband orderedBy:^ORFloat(ORInt i) { return [cp domsize:husband[i]];}];
-            [cp labelArray:wife orderedBy:^ORFloat(ORInt i) { return [cp domsize:wife[i]];}];
+            [cp labelArray:husband orderedBy:^ORDouble(ORInt i) { return [cp domsize:husband[i]];}];
+            [cp labelArray:wife orderedBy:^ORDouble(ORInt i) { return [cp domsize:wife[i]];}];
             nbSolutions++;
             NSLog(@"Solution: H:%@",[cp gamma][husband.getId]);
             NSLog(@"Solution: W:%@",[cp gamma][wife.getId]);
@@ -72,7 +72,6 @@ int main(int argc, const char * argv[])
          NSLog(@"#solutions: %d",nbSolutions);
          NSLog(@"Solver: %@",cp);
          struct ORResult r = REPORT(nbSolutions, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          [ORFactory shutdown];
          return r;
       }];

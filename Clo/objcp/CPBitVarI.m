@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,13 +28,13 @@ static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t)
 
 static void deallocNetwork(CPBitEventNetwork* net) 
 {
-    freeList(net->_boundsEvt._val);
-    freeList(net->_bitFixedEvt._val);
-    freeList(net->_minEvt._val);
-    freeList(net->_maxEvt._val);
+    freeList(net->_boundsEvt);
+    freeList(net->_bitFixedEvt);
+    freeList(net->_minEvt);
+    freeList(net->_maxEvt);
 }
 
-@interface CPBitVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+@interface CPBitVarSnapshot : NSObject {
    ORUInt    _name;
    union {
       ORInt _value;
@@ -42,22 +42,19 @@ static void deallocNetwork(CPBitEventNetwork* net)
    }              _rep;
    BOOL         _asDom;
 }
--(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v;
+-(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v name: (ORInt) name;
 -(int)intValue;
 -(ORBool)boolValue;
 @end
 
-// TOFIX: GREG
+// [pvh: Can someone fix this implementation?
 @implementation CPBitVarSnapshot
--(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v
+-(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v name: (ORInt) name
 {
    self = [super init];
-   _name = [v getId];
-   _asDom = ![v bound];
-//   if (_asDom) {
-//      _rep._dom = [[v domain] copy];
-//   } else
-//      _rep._value = [v min];
+   _name = name;
+   _asDom = YES;
+   _rep._dom = [[v domain] copy];
    return self;
 }
 -(void)dealloc
@@ -74,31 +71,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    return _asDom ? [_rep._dom min] : _rep._value;
 }
--(ORFloat) floatValue
+-(ORDouble) dblValue
 {
    return _asDom ? [_rep._dom min] : _rep._value;   
-}
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_asDom];
-   if (_asDom) {
-      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
-   } else {
-      [aCoder encodeObject:_rep._dom];
-   }
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_asDom];
-   if (_asDom)
-      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
-   else {
-      _rep._dom = [[aDecoder decodeObject] retain];
-   }
-   return self;
 }
 @end
 
@@ -125,6 +100,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
         [_triggers release];    
     [super dealloc];
 }
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[CPBitVarSnapshot alloc] initCPBitVarSnapshot: self name: id];
+}
 -(id<CPEngine>) engine
 {
     return _engine;
@@ -150,12 +129,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom bound];
 }
  
--(uint64) min
+-(ORULong) min
 {
     return [_dom min];
 }
 
--(uint64) max 
+-(ORULong) max
 { 
     return [_dom max];
 }
@@ -255,8 +234,8 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(void) createTriggers
 {
     if (_triggers == nil) {
-        uint64 low = [_dom min];
-        uint64 up = [_dom max];
+        ORULong low = [_dom min];
+        ORULong up = [_dom max];
         _triggers = [CPTriggerMap triggerMapFrom:(ORInt)low to:(ORInt)up dense:(up-low+1)<256];
     }
 }
@@ -265,11 +244,11 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._minEvt._val;
+   mList[k] = _net._minEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._maxEvt._val;
+   mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleClosures:mList];
@@ -281,9 +260,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._minEvt._val;
+   mList[k] = _net._minEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleClosures:mList];
@@ -294,9 +273,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt._val;
+   mList[k] = _net._boundsEvt;
    k += mList[k] != NULL;
-   mList[k] = _net._maxEvt._val;
+   mList[k] = _net._maxEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleClosures:mList];
@@ -310,18 +289,18 @@ static void deallocNetwork(CPBitEventNetwork* net)
     //Empty implementation
    id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._bitFixedEvt._val;
+   mList[k] = _net._bitFixedEvt;
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_engine scheduleClosures:mList];
 }
 
--(ORStatus) updateMin: (uint64) newMin
+-(ORStatus) updateMin: (ORULong) newMin
 {
     return [_dom updateMin:newMin for:_recv];
 }
 
--(ORStatus) updateMax: (uint64) newMax
+-(ORStatus) updateMax: (ORULong) newMax
 {
     return [_dom updateMax:newMax for:_recv];
 }
@@ -352,7 +331,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    return [_dom getUp:currUp andLow:currLow];
 }
 
--(ORStatus) bindUInt64:(uint64)val
+-(ORStatus) bindUInt64:(ORULong)val
 {
     return [_dom bind:val for:_recv];
 }
@@ -461,25 +440,5 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     for(int i=0;i<_nb;i++)
         [_tab[i] bitFixedEvt:dsz sender:sender];
-}
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   for(ORInt k=0;k<_nb;k++)
-      [aCoder encodeObject:_tab[k]];
-   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   _tab = malloc(sizeof(CPBitVarI*)*_mx);
-   for(ORInt k=0;k<_nb;k++)
-      _tab[k] = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];   
-   return self;
 }
 @end

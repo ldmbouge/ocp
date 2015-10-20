@@ -1,12 +1,11 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = clang
-GNUstep = /opt/kitkit-1.0-rc1
+OC = clang-3.5
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
-	-msse4.1
+	-msse4.1 -fblocks -fobjc-nonfragile-abi
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
@@ -24,8 +23,8 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 # 	-lgnustep-base -lobjc 
 
 SRCS = CPABS.m CPConcretizer.m  CPFirstFail.m  CPMultiStartSolver.m  \
-	CPSolver.m  LPConcretizer.m  ORCPParSolver.m CPBaseHeuristic.m  \
-	CPDDeg.m CPIBS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m \
+	CPSolver.m  ORSolution.m LPConcretizer.m  ORCPParSolver.m CPBaseHeuristic.m  \
+	CPDeg.m CPDDeg.m CPIBS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m \
 	MIPConcretizer.m MIPSolver.m
 
 
@@ -41,11 +40,11 @@ all: $(LIBNAME)
 	fi
 
 $(LIBNAME): $(OFILES)
-	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

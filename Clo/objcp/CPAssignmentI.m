@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -115,9 +115,10 @@
    _lowc = [Columns low];
    _upc = [Columns up];
    
-   if ((_low != _lowr) || (_up != _upr))
+   if ((_low != _lowr) || (_up != _upr)) {
+      NSLog(@" (%d,%d) versus (%d,%d)",_low,_up,_lowr,_upr);
       @throw [[ORExecutionError alloc] initORExecutionError: "Assignment: The range of the variables does not agree with the rows of the matrix"];
-   
+   }
    _varSize = (_up - _low + 1);
    _var = malloc(_varSize * sizeof(CPIntVar*));
    _var -= _low;

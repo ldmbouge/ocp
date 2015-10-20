@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger,ORRelationType) {
 
 typedef NS_ENUM(NSUInteger,ORVType) {
    ORTInt = 0,
-   ORTFloat = 1,
+   ORTReal = 1,
    ORTBit  = 2,
    ORTSet  = 3,
    ORTNA = 4
@@ -50,7 +50,7 @@ typedef enum ORRelationType {
 
 typedef enum ORVType {
    ORTInt = 0,
-   ORTFloat = 1,
+   ORTReal = 1,
    ORTBit  = 2,
    ORTSet  = 3,
    ORTNA = 4
@@ -64,19 +64,17 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
    if (t1 == t2)
       return t1;
    else if (t1+t2 <= 1)
-      return ORTFloat;
+      return ORTReal;
    else
       return ORTNA;
 }
 
-id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r);
-id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
 @protocol ORExpr <ORConstraint,NSObject,NSCoding>
 -(id<ORTracker>) tracker;
 -(ORInt) min;
 -(ORInt) max;
--(ORFloat) floatValue;
+-(ORDouble) dblValue;
 -(ORInt) intValue;
 -(ORBool) isConstant;
 -(ORBool) isVariable;
@@ -96,8 +94,8 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORRelation>) neg;
--(id<ORRelation>) and: (id) e;
--(id<ORRelation>) or: (id) e;
+-(id<ORRelation>) land: (id) e;
+-(id<ORRelation>) lor: (id) e;
 -(id<ORRelation>) imply:(id)e;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
@@ -115,8 +113,8 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) negTrack:(id<ORTracker>)t;
--(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
--(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
+-(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) lor: (id<ORExpr>) e track:(id<ORTracker>)t;
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
 -(ORRelationType) type;
 -(ORVType)vtype;
@@ -124,8 +122,8 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
 @protocol ORRelation <ORExpr>
 -(ORRelationType) type;
--(id<ORRelation>) and: (id<ORExpr>) e;
--(id<ORRelation>) or: (id<ORExpr>) e;
+-(id<ORRelation>) land: (id<ORExpr>) e;
+-(id<ORRelation>) lor: (id<ORExpr>) e;
 -(id<ORRelation>) imply: (id<ORExpr>) e;
 @end
 

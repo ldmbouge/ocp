@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -87,7 +87,7 @@ int main(int argc, const char * argv[])
             [cp labelArray:x];
          }];
          NSLog(@"Solver status: %@\n",cp);
-         id<ORCPSolutionPool> pool = [cp solutionPool];
+         id<ORSolutionPool> pool = [cp solutionPool];
          id<ORModel> mip = [ORFactory createModel];
          id<ORIntVarArray> slab = [ORFactory intVarArray:mip range:RANGE(mip,0,(int)pool.count - 1) domain:RANGE(mdl,0,1)];
          [SetOrders enumerateWithBlock:^(ORInt o) {
@@ -117,7 +117,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Chosen configs: %@",cc);
          
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          [ORFactory shutdown];
          return r;
       }];

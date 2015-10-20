@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,12 +15,12 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORUtilities/ORUtilities.h>
-#import <CPUKernel/CPEngineI.h>
-#import "CPFactory.h"
-#import "CPData.h"
+#import <objcp/CPFactory.h>
+#import <objcp/CPData.h>
+
 #import "CPTableI.h"
 #import "CPBitVarI.h"
-#import "CPFloatVarI.h"
+#import "CPRealVarI.h"
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 
@@ -39,9 +39,13 @@
 }
 +(id<CPIntVar>) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
 {
-   if ([range low] == [range up])
-      return [CPFactory intVar: cp value: [range low]];
-    return [CPIntVarI initCPIntVar: cp low: [range low] up: [range up]];
+   ORInt low = [range low],up = [range up];
+   if (low == up)
+      return [CPFactory intVar: cp value: low];
+   else if (low == 0 && up==1)
+      return [CPIntVarI initCPBoolVar:cp];
+   else
+      return [CPIntVarI initCPIntVar: cp low: low up: up];
 }
 +(id<CPIntVar>) intVar: (CPIntVar*) x shift: (ORInt) b
 {
@@ -76,17 +80,21 @@
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVar*)x];
 }
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
++(id<CPRealVar>) realVar:(id<CPEngine>)cp bounds:(id<ORRealRange>) range
 {
-   return [[CPFloatVarI alloc] initCPFloatVar:cp low:range.low up:range.up];
+   return [[CPRealVarI alloc] init:cp low:range.low up:range.up];
 }
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
++(id<CPRealVar>) realVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
-   return [[CPFloatViewOnIntVarI alloc] initCPFloatViewIntVar:cp intVar:x];
+   return [[CPRealViewOnIntVarI alloc] init:cp intVar:x];
 }
-+(id<CPFloatParam>) floatParam:(id<CPEngine>)cp initialValue:(ORFloat)v
++(id<CPRealParam>) realParam:(id<CPEngine>)cp initialValue:(ORDouble)v
 {
-    return [[CPFloatParamI alloc] initCPFloatParam: cp initialValue: v];
+    return [[CPRealParamI alloc] initCPRealParam: cp initialValue: v];
+}
++(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet
+{
+   return [[CPIntSetVarI alloc] initWith:cp set:theSet];
 }
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
@@ -220,9 +228,9 @@
 {
    return [ORFactory sum:cp over: S suchThat:f of:e];
 }
-+(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
++(id<ORRelation>) lor: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
-   return [ORFactory or:cp over: S suchThat:f of:e];
+   return [ORFactory lor:cp over: S suchThat:f of:e];
 }
 
 @end

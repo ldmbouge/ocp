@@ -1,0 +1,264 @@
+edata/abz5	859	1176
+edata/abz6	742	925
+edata/abz7	492	638
+edata/abz8	506	654
+edata/abz9	497	668
+edata/car1	5005	6176
+edata/car2	5929	6455
+edata/car3	5597	6856
+edata/car4	7789	7789
+edata/car5	7229	7229
+edata/car6	5486	8478
+edata/car7	4216	6123
+edata/car8	4613	7689
+edata/la01	609	609
+edata/la02	655	655
+edata/la03	550	550
+edata/la04	568	568
+edata/la05	503	503
+edata/la06	833	833
+edata/la07	762	762
+edata/la08	845	845
+edata/la09	878	878
+edata/la10	866	866
+edata/la11	1087	1103
+edata/la12	960	960
+edata/la13	1053	1053
+edata/la14	1123	1123
+edata/la15	1111	1111
+edata/la16	892	892
+edata/la17	707	707
+edata/la18	842	842
+edata/la19	796	796
+edata/la20	857	857
+edata/la21	895	1009
+edata/la22	832	880
+edata/la23	950	950
+edata/la24	881	908
+edata/la25	894	936
+edata/la26	1089	1107
+edata/la27	1181	1181
+edata/la28	1116	1142
+edata/la29	1058	1111
+edata/la30	1147	1195
+edata/la31	1523	1533
+edata/la32	1698	1698
+edata/la33	1547	1547
+edata/la34	1592	1599
+edata/la35	1736	1736
+edata/la36	1006	1160
+edata/la37	1397	1397		Behnke et al. 2012
+edata/la38	1019	1143
+edata/la39	1151	1184
+edata/la40	1034	1144
+edata/mt06	55	55
+edata/mt10	871	871
+edata/mt20	1088	1088
+edata/orb1	695	988
+edata/orb2	620	870
+edata/orb3	648	960
+edata/orb4	753	1016
+edata/orb5	584	865
+edata/orb6	715	1004
+edata/orb7	275	387
+edata/orb8	894	894
+edata/orb9	659	933
+edata/orb10	681	937
+rdata/abz5	859	962
+rdata/abz6	742	807
+rdata/abz7	492	544
+rdata/abz8	506	555
+rdata/abz9	497	562
+rdata/car1	5005	5057
+rdata/car2	5929	5987
+rdata/car3	5597	5626
+rdata/car4	6514	6518
+rdata/car5	4909	5764
+rdata/car6	5486	6147
+rdata/car7	4216	4432
+rdata/car8	4613	5692
+rdata/la01	570	570 	Yuan et al. 2013
+rdata/la02	529	530
+rdata/la03	477	477 	Yuan et al. 2013
+rdata/la04	502	502
+rdata/la05	457	457
+rdata/la06	799	799
+rdata/la07	749	749 	Yuan et al. 2013
+rdata/la08	765	765
+rdata/la09	853	853
+rdata/la10	804	804
+rdata/la11	1071	1071
+rdata/la12	936	936
+rdata/la13	1038	1038
+rdata/la14	1070	1070
+rdata/la15	1089	1089 	Yuan et al. 2013
+rdata/la16	717	717
+rdata/la17	646	646
+rdata/la18	666	666
+rdata/la19	647	700
+rdata/la20	756	756
+rdata/la21	808	833 	Yuan et al. 2013
+rdata/la22	737	758 	Yuan et al. 2013
+rdata/la23	816	832 	Yuan et al. 2013
+rdata/la24	775	801 	Yuan et al. 2013
+rdata/la25	752	785 	Yuan et al. 2013
+rdata/la26	1056	1061
+rdata/la27	1085	1090 	Yuan et al. 2013
+rdata/la28	1075	1080
+rdata/la29	993	997 	Yuan et al. 2013
+rdata/la30	1068	1078
+rdata/la31	1520	1521
+rdata/la32	1657	1659
+rdata/la33	1497	1498 	Yuan et al. 2013
+rdata/la34	1535	1536
+rdata/la35	1549	1550
+rdata/la36	1016	1028 	Yuan et al. 2013	
+rdata/la37	989	1066 	Yuan et al. 2013
+rdata/la38	943	960 	Yuan et al. 2013
+rdata/la39	966	1018	Behnke et al. 2012
+rdata/la40	955	956 	Yuan et al. 2013
+rdata/mt06	47	47
+rdata/mt10	686	686		Behnke et al. 2012
+rdata/mt20	1022	1022
+rdata/orb1	695	763
+rdata/orb2	620	703
+rdata/orb3	648	720
+rdata/orb4	753	753
+rdata/orb5	584	643
+rdata/orb6	715	766
+rdata/orb7	275	302
+rdata/orb8	573	651
+rdata/orb9	694	694
+rdata/orb10	681	750
+sdata/abz5
+sdata/abz6
+sdata/abz7
+sdata/abz8
+sdata/abz9
+sdata/car1
+sdata/car2
+sdata/car3
+sdata/car4
+sdata/car5
+sdata/car6
+sdata/car7
+sdata/car8
+sdata/la01	666	666
+sdata/la02	930	930
+sdata/la03	1165	1165
+sdata/la04	590	590
+sdata/la05	593	593
+sdata/la06	926	926
+sdata/la07	890	890
+sdata/la08	863	863
+sdata/la09	951	951
+sdata/la10	958	958
+sdata/la11	1222	1222
+sdata/la12	1039	1039
+sdata/la13	1150	1150
+sdata/la14	1292	1292
+sdata/la15	1207	1207
+sdata/la16	945	945
+sdata/la17	784	784
+sdata/la18	848	848
+sdata/la19	842	842
+sdata/la20	902	902
+sdata/la21	1046	1046
+sdata/la22	927	927
+sdata/la23	1032	1032
+sdata/la24	935	935
+sdata/la25	977	977
+sdata/la26	1218	1218
+sdata/la27	1235	1235
+sdata/la28	1216	1216
+sdata/la29	1120	1157
+sdata/la30	1355	1355
+sdata/la31	1784	1784
+sdata/la32	1850	1850
+sdata/la33	1719	1719
+sdata/la34	1721	1721
+sdata/la35	1888	1888
+sdata/la36	1268	1268
+sdata/la37	1397	1397
+sdata/la38	1184	1196
+sdata/la39	1233	1233
+sdata/la40	1222	1222
+sdata/mt06	55	55
+sdata/mt10	930	930
+sdata/mt20	1165	1165
+sdata/orb1
+sdata/orb2
+sdata/orb3
+sdata/orb4
+sdata/orb5
+sdata/orb6
+sdata/orb7
+sdata/orb8
+sdata/orb9
+sdata/orb10
+vdata/abz5	860	860
+vdata/abz6	742	742
+vdata/abz7	492	495
+vdata/abz8	506	509
+vdata/abz9	497	500
+vdata/car1	5005	5013
+vdata/car2	5929	5930
+vdata/car3	5597	5600
+vdata/car4	6514	6517
+vdata/car5	4909	4932
+vdata/car6	5486	5486
+vdata/car7	4281	4281
+vdata/car8	4613	4613
+vdata/la01	570	570
+vdata/la02	529	529
+vdata/la03	477	477
+vdata/la04	502	502
+vdata/la05	457	457
+vdata/la06	799	799
+vdata/la07	749	749
+vdata/la08	765	765
+vdata/la09	853	853
+vdata/la10	804	804
+vdata/la11	1071	1071
+vdata/la12	936	936
+vdata/la13	1038	1038
+vdata/la14	1070	1070
+vdata/la15	1089	1089
+vdata/la16	717	717
+vdata/la17	646	646
+vdata/la18	663	663
+vdata/la19	617	617
+vdata/la20	756	756
+vdata/la21	800	804		Behnke et al. 2012
+vdata/la22	733	735 	Yuan et al. 2013
+vdata/la23	809	813 	Yuan et al. 2013
+vdata/la24	773	775		Behnke et al. 2012
+vdata/la25	751	756
+vdata/la26	1052	1053 	Yuan et al. 2013
+vdata/la27	1084	1084 	Yuan et al. 2013
+vdata/la28	1069	1069 	Yuan et al. 2013
+vdata/la29	993	994
+vdata/la30	1068	1069
+vdata/la31	1520	1520
+vdata/la32	1657	1658
+vdata/la33	1497	1497
+vdata/la34	1535	1535
+vdata/la35	1549	1549
+vdata/la36	948	948
+vdata/la37	986	986
+vdata/la38	943	943
+vdata/la39	922	922
+vdata/la40	955	955
+vdata/mt06	47	47
+vdata/mt10	655	655
+vdata/mt20	1022	1022
+vdata/orb1	695	695
+vdata/orb2	620	620
+vdata/orb3	648	648
+vdata/orb4	753	753
+vdata/orb5	584	584
+vdata/orb6	715	715
+vdata/orb7	275	275
+vdata/orb8	573	573
+vdata/orb9	659	659
+vdata/orb10	681	681

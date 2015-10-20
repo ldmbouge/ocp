@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,7 +22,7 @@
 @protocol ORVar;
 @protocol ORIntVar;
 @protocol ORBitVar;
-@protocol ORFloatVar;
+@protocol ORRealVar;
 @protocol OREngine;
 @protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
@@ -42,6 +42,7 @@
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
 -(NSSet*)allVars;
+-(void) close;
 @end
 
 @protocol ORSoftConstraint <ORConstraint>
@@ -50,6 +51,15 @@
 
 @protocol ORPost<NSObject>
 -(ORStatus)post:(id<ORConstraint>)c;
+@end
+
+@protocol ORConstraintSet <NSObject>
+-(void)addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+@end
+
+@protocol OROrderedConstraintSet <ORConstraintSet>
+-(id<ORConstraint>) at:(ORInt)index;
 @end
 
 enum ORGroupType {
@@ -78,9 +88,9 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
-@protocol  ORFloatEqualc <ORConstraint>
--(id<ORFloatVar>) left;
--(ORFloat) cst;
+@protocol  ORRealEqualc <ORConstraint>
+-(id<ORRealVar>) left;
+-(ORDouble) cst;
 @end
 
 @protocol  ORNEqualc <ORConstraint>
@@ -212,10 +222,16 @@ enum ORGroupType {
 -(id<ORIntVar>) res;
 @end
 
-@protocol ORFloatElementCst <ORConstraint>
--(id<ORFloatArray>) array;
+@protocol ORRealElementCst <ORConstraint>
+-(id<ORDoubleArray>) array;
 -(id<ORIntVar>)   idx;
--(id<ORFloatVar>)   res;
+-(id<ORRealVar>)   res;
+@end
+
+@protocol ORImplyEqualc <ORConstraint>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
 @end
 
 @protocol ORReify <ORConstraint>
@@ -326,24 +342,25 @@ enum ORGroupType {
 @protocol ORLinearEq <ORConstraint>
 -(id<ORIntVarArray>) vars;
 -(id<ORIntArray>) coefs;
+-(NSUInteger)count;
 -(ORInt) cst;
 @end
 
-@protocol ORFloatLinearEq <ORConstraint>
+@protocol ORRealLinearEq <ORConstraint>
 -(id<ORVarArray>) vars;
--(id<ORFloatArray>) coefs;
--(ORFloat) cst;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
 @end
 
-@protocol ORFloatLinearLeq <ORConstraint>
+@protocol ORRealLinearLeq <ORConstraint>
 -(id<ORVarArray>) vars;
--(id<ORFloatArray>) coefs;
--(ORFloat) cst;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
 @end
 
-@protocol ORFloatLinearGeq <ORConstraint>
+@protocol ORRealLinearGeq <ORConstraint>
 -(id<ORVarArray>) vars;
--(id<ORFloatArray>) coefs;
+-(id<ORDoubleArray>) coefs;
 -(ORFloat) cst;
 @end
 
@@ -387,6 +404,14 @@ enum ORGroupType {
 -(id<ORIntVarArray>) array;
 @end
 
+@protocol ORPath <ORConstraint>
+-(id<ORIntVarArray>) array;
+@end
+
+@protocol ORSubCircuit <ORConstraint>
+-(id<ORIntVarArray>) array;
+@end
+
 @protocol ORNoCycle <ORConstraint>
 -(id<ORIntVarArray>) array;
 @end
@@ -402,6 +427,25 @@ enum ORGroupType {
 -(id<ORIntVarArray>) item;
 -(id<ORIntArray>)   itemSize;
 -(id<ORIntVarArray>) binSize;
+@end
+
+@protocol ORMultiKnapsack <ORConstraint>
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>)    itemSize;
+-(id<ORIntArray>)    capacity;
+@end
+
+@protocol ORMultiKnapsackOne <ORConstraint>
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>)    itemSize;
+-(ORInt)             bin;
+-(ORInt)             capacity;
+@end
+
+@protocol ORMeetAtmost <ORConstraint>
+-(id<ORIntVarArray>) x;
+-(id<ORIntVarArray>) y;
+-(ORInt) atmost;
 @end
 
 @protocol ORKnapsack <ORConstraint>
@@ -423,18 +467,18 @@ enum ORGroupType {
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
 -(NSComparisonResult) compare: (id<ORObjectiveValue>) other;
 @optional-(ORInt) intValue;
--(ORFloat) floatValue;
+-(ORDouble) dblValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
 -(ORInt) value;
 -(ORInt) intValue;
--(ORFloat)floatValue;
+-(ORDouble)dblValue;
 @end
 
-@protocol ORObjectiveValueFloat <ORObjectiveValue>
--(ORFloat) value;
--(ORFloat)floatValue;
+@protocol ORObjectiveValueReal <ORObjectiveValue>
+-(ORDouble) value;
+-(ORDouble)dblValue;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
@@ -451,8 +495,7 @@ enum ORGroupType {
 
 @protocol ORObjectiveFunctionLinear <ORObjectiveFunction>
 -(id<ORVarArray>) array;
--(id<ORFloatArray>) coef;
--(ORFloat)independent;
+-(id<ORDoubleArray>) coef;
 @end
 
 @protocol ORSearchObjectiveFunction <NSObject,ORObjectiveFunction>
@@ -468,14 +511,14 @@ enum ORGroupType {
 @protocol ORASolver <NSObject,ORTracker,ORGamma>
 -(void)               close;
 -(id<OREngine>)       engine;
--(ORFloat) floatValue: (id)v;
--(ORInt) intValue: (id)v;
--(ORFloat) floatExprValue: (id<ORExpr>)e;
--(ORInt) intExprValue: (id<ORExpr>)e;
 -(id) concretize: (id) o;
-@optional-(id<ORSolutionPool>) solutionPool;
-@optional-(id<ORSearchObjectiveFunction>) objective;
+-(id<ORObjectiveValue>) objectiveValue;
 @end
+
+@protocol ORASearchSolver <ORASolver>
+-(id<ORSearchObjectiveFunction>) objective;
+@end
+
 
 // ====== Bit Constraints =====================================
 
@@ -539,5 +582,6 @@ enum ORGroupType {
 @interface ORConstraintI : ORObject<ORConstraint,NSCoding>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
+-(void) close;
 @end
 

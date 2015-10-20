@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -99,24 +99,27 @@
 }
 -(void) startTryLeft
 {
-   if (_nbFailures >= _maxFailures)
+   if (_nbFailures >= _maxFailures) {
       [_controller fail: true];
+   }
    else
       [_controller startTryLeft];
 }
 -(void) startTryRight
 {
    _nbFailures++;
-   if (_nbFailures >= _maxFailures)
+   if (_nbFailures >= _maxFailures) {
       [_controller fail: true];
+   }
    else
       [_controller startTryRight];
 }
 -(void) startTryallOnFailure
 {
    _nbFailures++;
-   if (_nbFailures >= _maxFailures)
+   if (_nbFailures >= _maxFailures) {
       [_controller fail: true];
+   }
    else
       [_controller startTryallOnFailure];
 }
@@ -125,6 +128,12 @@
    ORLimitFailures* ctrl = [[[self class] allocWithZone:zone] initORLimitFailures:_maxFailures];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
+}
+-(void) succeeds
+{
+//   NSLog(@"succeeds");
+   //printf(".");
+   _nbFailures = 0;
 }
 @end
 

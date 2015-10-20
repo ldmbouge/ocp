@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -61,17 +61,17 @@ static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks);
 
 static inline void pullNode(KSColumn* col,KSNode* node)
 {
-   KSNode* below = node->_down._val;
-   KSNode* above = node->_up._val;
+   KSNode* below = node->_down;
+   KSNode* above = node->_up;
    id<ORTrail> trail = col->_trail;
-   if (col->_first._val == node) {
+   if (col->_first == node) {
       assert(below == nil);
       inline_assignTRIdNC(&col->_first,above,trail);
    } else {
       assert(below != nil);
       inline_assignTRIdNC(&below->_up,above,trail);
    }
-   if (col->_last._val == node) {
+   if (col->_last == node) {
       assert(above == nil);
       inline_assignTRIdNC(&col->_last,below,trail);
    } else {
@@ -149,7 +149,7 @@ static inline void outboundLossOn(CPKnapsack* ks,KSNode* n,ORInt v)
    if (ns==0)
       removeDom(ks->_xb[colID], v);
    inline_assignTRIdNC(&n->_succ[v],nil,ks->_trail);
-   if (n->_succ[!v]._val == nil)
+   if (n->_succ[!v] == nil)
       backwardPropagateLoss(ks,n);
 }
 static inline void inboundLossOn(CPKnapsack* ks,KSNode* n,ORInt v)
@@ -160,7 +160,7 @@ static inline void inboundLossOn(CPKnapsack* ks,KSNode* n,ORInt v)
    if (ns==0)
       removeDom(ks->_xb[n->_col],v);
    inline_assignTRIdNC(&n->_pred[v],nil,ks->_trail);
-   if (n->_pred[!v]._val ==nil)
+   if (n->_pred[!v] ==nil)
       forwardPropagateLoss(ks,n,ks->_column[n->_col]);
 }
 static inline void forwardPropagateLoss(CPKnapsack* ks,KSNode* n,KSColumn* col)
@@ -168,7 +168,7 @@ static inline void forwardPropagateLoss(CPKnapsack* ks,KSNode* n,KSColumn* col)
    pullNode(col,n);
    if (col->_col == ks->_nb-1)
       removeDom(ks->_c,n->_w);
-   KSNode* succ[2] = { n->_succ[0]._val,n->_succ[1]._val};
+   KSNode* succ[2] = { n->_succ[0],n->_succ[1]};
    if (succ[0]) inboundLossOn(ks,succ[0],0);
    if (succ[1]) inboundLossOn(ks,succ[1],1);
 }
@@ -176,7 +176,7 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 {
    KSColumn* col = ks->_column[n->_col];
    pullNode(col,n);
-   KSNode* pred[2] = {n->_pred[0]._val,n->_pred[1]._val};
+   KSNode* pred[2] = {n->_pred[0],n->_pred[1]};
    if (pred[0]) outboundLossOn(ks,pred[0],0);
    if (pred[1]) outboundLossOn(ks,pred[1],1);
 }
@@ -337,12 +337,12 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 {
    KSNode* cur = self;
    while (cur && cur->_w < w)
-      cur = cur->_up._val;
+      cur = cur->_up;
    return cur;
 }
 static inline CPKSPair looseValue(KSNode* n,ORInt v)
 {
-   KSNode* pv = n->_pred[v]._val;
+   KSNode* pv = n->_pred[v];
    if (pv) {
       inline_assignTRIdNC(&n->_pred[v],nil,n->_trail);
       inline_assignTRIdNC(&pv->_succ[v],nil,n->_trail);
@@ -352,12 +352,12 @@ static inline CPKSPair looseValue(KSNode* n,ORInt v)
 }
 static inline BOOL unreachableFromRight(KSNode* n)
 {
-   return n->_succ[0]._val == nil && n->_succ[1]._val == nil;
+   return n->_succ[0] == nil && n->_succ[1] == nil;
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%p,%d,%d,p:[%p,%p],s:[%p,%p]>",self,_col,_w,_pred[0]._val,_pred[1]._val,_succ[0]._val,_succ[1]._val];
+   [buf appendFormat:@"<%p,%d,%d,p:[%p,%p],s:[%p,%p]>",self,_col,_w,_pred[0],_pred[1],_succ[0],_succ[1]];
    return buf;
 }
 @end
@@ -379,17 +379,17 @@ static inline BOOL unreachableFromRight(KSNode* n)
 }
 -(void)pushOnColumn:(KSNode*)c
 {
-   if (_first._val == nil) {            // we do not have a content yet. Create one with c.
+   if (_first == nil) {            // we do not have a content yet. Create one with c.
       inline_assignTRIdNC(&_first,c,_trail);
       inline_assignTRIdNC(&_last,c,_trail);
    } else {                             // we do have a column. Add on top.
-      [_last._val pushKSNode:c];
+      [_last pushKSNode:c];
       inline_assignTRIdNC(&_last,c,_trail);
    }
 }
 -(void)insert:(KSNode*)n below:(KSNode*)spot
 {
-   KSNode* below = spot->_down._val;
+   KSNode* below = spot->_down;
    assert(below != nil);
    inline_assignTRIdNC(&n->_up, spot, _trail);
    inline_assignTRIdNC(&n->_down,below,_trail);
@@ -399,9 +399,9 @@ static inline BOOL unreachableFromRight(KSNode* n)
 
 static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks)
 {
-   KSNode* cur = k->_first._val;
+   KSNode* cur = k->_first;
    while (cur) {
-      KSNode* next = cur->_up._val;
+      KSNode* next = cur->_up;
       CPKSPair status = looseValue(cur,v);
       if (status.changed) {
          inboundLossOn(ks, cur, v);
@@ -413,21 +413,21 @@ static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks)
 }
 -(void)lostCapacity:(ORInt)v knapsack:(CPKnapsack*)ks
 {
-   KSNode* cur = _first._val;
+   KSNode* cur = _first;
    while (cur) {
       if (cur->_w == v) {     // we found a sparse node. This guy is a goner.
          backwardPropagateLoss(ks,cur);
       } else if (cur->_w > v) // we didn't even have a sparse node for v. stop.
          return;
-      cur = cur->_up._val;
+      cur = cur->_up;
    }
 }
 -(void)pruneCapacity:(CPIntVar*)capVar
 {
-   KSNode* cur = _first._val;
+   KSNode* cur = _first;
    for (ORInt v=[capVar min]; v<= [capVar max];++v) {
       while (cur && cur->_w < v)
-         cur = cur->_up._val;
+         cur = cur->_up;
       if (cur && cur->_w == v) continue;
       assert(!cur || v < cur->_w);
       [capVar remove:v];
@@ -436,7 +436,7 @@ static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks)
 -(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support nbCol:(ORInt)nb
 {
    ORInt idx = into->_col;
-   KSNode* src = _first._val;
+   KSNode* src = _first;
    while(src) {
       if (f[idx][src->_w]) {
          ORInt ofs = SUPP(idx,0);
@@ -446,13 +446,13 @@ static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks)
          [src setSucc:0 as:new];
          [into pushOnColumn:new];
       }
-      src = src->_up._val;
+      src = src->_up;
    }
 }
 -(void)addInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support nbCol:(ORInt)nb addWeight:(ORInt)w bound:(ORInt)U
 {
-   KSNode* dst = into->_first._val;
-   KSNode* src = _first._val;
+   KSNode* dst = into->_first;
+   KSNode* src = _first;
    ORInt   idx = into->_col;
    while (src) {
       ORInt fw = src->_w + w;
@@ -478,16 +478,16 @@ static inline void pullValue(KSColumn* k,ORInt v,CPKnapsack* ks)
             dst = new;
          }
       }
-      src = src->_up._val;
+      src = src->_up;
    }
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   KSNode* cur = _first._val;
+   KSNode* cur = _first;
    [buf appendFormat:@"COL: %d [",_col];
    while (cur) {
-      KSNode* next = cur->_up._val;
+      KSNode* next = cur->_up;
       [buf appendFormat:@" %@ %c",[cur description],next==nil ? ' ' : ','];
       cur = next;
    }

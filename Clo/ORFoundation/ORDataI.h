@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORData.h"
-#import "ORExprI.h"
-#import "ORError.h"
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORError.h>
 
 @interface ORIntegerI : ORExprI<NSCoding,NSCopying,ORInteger>
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value;
@@ -41,24 +41,24 @@
 -(id) initWith:(id)v;
 -(id) idValue;
 -(id) idValue:(id<ORGamma>)solver;
--(void) setId:(id)v in:(id<ORGamma>)solver;
--(void)setId:(id)v;
+-(void) setIdValue:(id)v in:(id<ORGamma>)solver;
+-(void)setIdValue:(id)v;
 @end
 
-@interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>
--(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) value;
+@interface ORDoubleI : ORExprI<NSCoding,ORDoubleNumber>
+-(ORDoubleI*) init: (id<ORTracker>) tracker value: (ORDouble) value;
+-(ORDouble) dblValue;
+-(ORDouble) value;
 -(ORInt) intValue;
 -(id<ORTracker>) tracker;
 @end
 
-@interface ORMutableFloatI : ORExprI<NSCoding,ORMutableFloat>
--(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
--(ORFloat) initialValue;
--(ORFloat) value: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+@interface ORMutableDoubleI : ORExprI<NSCoding,ORMutableDouble>
+-(ORMutableDoubleI*) initORMutableRealI: (id<ORTracker>) tracker value: (ORDouble) value;
+-(ORDouble) initialValue;
+-(ORDouble) value: (id<ORGamma>) solver;
+-(ORDouble) dblValue: (id<ORGamma>) solver;
+-(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 -(id<ORTracker>) tracker;
 @end
 
@@ -78,7 +78,12 @@
 -(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r;
 -(void) dealloc;
 -(ORInt) next;
--(void)setId:(ORUInt)name;
+@end
+
+@interface ORRandomPermutationI : ORObject<ORRandomPermutation>
+-(ORRandomPermutationI*)initWithSet:(id<ORIntIterable>)set;
+-(ORInt)next;
+-(void)reset;
 @end
 
 @interface ORTableI : ORObject<ORTable,NSCoding,NSCopying> {

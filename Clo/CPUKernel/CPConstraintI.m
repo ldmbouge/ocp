@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPConstraintI.h>
-#import <CPUKernel/CPEngineI.h>
+#import "CPEngineI.h"
 
 @implementation CPCoreConstraint
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m
@@ -29,6 +29,9 @@
 {
    [_trail release];
    [super dealloc];
+}
+-(void) close
+{
 }
 // Constraint method
 -(void) post

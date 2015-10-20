@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,29 +40,29 @@ int main(int argc, const char * argv[])
          for(ORInt i=1;i<=n;i++) {
             for(ORInt j=1;j<=n;j++) {
                [model add:[[[board at:i :j] eq:@1] imply:
-                           [ORFactory and:model over:N
+                           [ORFactory land:model over:N
                                  suchThat:nil
                                        of:^id<ORRelation>(ORInt k) {
                                           id<ORRelation> c = nil;
-                                          if (k != i) c = [[[board at:k :j] lt:@2] and:c];
-                                          if (k != j) c = [[[board at:i :k] lt:@2] and:c];
-                                          if (i+k <=n && j+k <= n) c = [[[board at:i+k :j+k] lt:@2] and:c];
-                                          if (i-k >0  && j-k > 0)  c = [[[board at:i-k :j-k] lt:@2] and:c];
-                                          if (i+k <=0 && j-k > 0)  c = [[[board at:i+k :j-k] lt:@2] and:c];
-                                          if (i-k > 0 && j+k <= n) c = [[[board at:i-k :j+k] lt:@2] and:c];
+                                          if (k != i) c = [[[board at:k :j] lt:@2] land:c];
+                                          if (k != j) c = [[[board at:i :k] lt:@2] land:c];
+                                          if (i+k <=n && j+k <= n) c = [[[board at:i+k :j+k] lt:@2] land:c];
+                                          if (i-k >0  && j-k > 0)  c = [[[board at:i-k :j-k] lt:@2] land:c];
+                                          if (i+k <=0 && j-k > 0)  c = [[[board at:i+k :j-k] lt:@2] land:c];
+                                          if (i-k > 0 && j+k <= n) c = [[[board at:i-k :j+k] lt:@2] land:c];
                                           return c;
                                        }]]];
                [model add:[[[board at:i :j] eq:@2] imply:
-                           [ORFactory and:model over:N
+                           [ORFactory land:model over:N
                                  suchThat:nil
                                        of:^id<ORRelation>(ORInt k) {
                                           id<ORRelation> c = nil;
-                                          if (k != i) c = [[[board at:k :j] neq:@1] and:c];
-                                          if (k != j) c = [[[board at:i :k] neq:@1] and:c];
-                                          if (i+k <=n && j+k <= n) c = [[[board at:i+k :j+k] neq:@1] and:c];
-                                          if (i-k >0  && j-k > 0)  c = [[[board at:i-k :j-k] neq:@1] and:c];
-                                          if (i+k <=0 && j-k > 0)  c = [[[board at:i+k :j-k] neq:@1] and:c];
-                                          if (i-k > 0 && j+k <= n) c = [[[board at:i-k :j+k] neq:@1] and:c];
+                                          if (k != i) c = [[[board at:k :j] neq:@1] land:c];
+                                          if (k != j) c = [[[board at:i :k] neq:@1] land:c];
+                                          if (i+k <=n && j+k <= n) c = [[[board at:i+k :j+k] neq:@1] land:c];
+                                          if (i-k >0  && j-k > 0)  c = [[[board at:i-k :j-k] neq:@1] land:c];
+                                          if (i+k <=0 && j-k > 0)  c = [[[board at:i+k :j-k] neq:@1] land:c];
+                                          if (i-k > 0 && j+k <= n) c = [[[board at:i-k :j+k] neq:@1] land:c];
                                           return c;
                                        }]]];
             }
@@ -78,7 +78,7 @@ int main(int argc, const char * argv[])
                   ORInt v = [cp max:x[k]];
                   [cp try:^{
                      [cp label:x[k] with:v];
-                  } or:^{
+                  } alt:^{
                      [cp diff:x[k] with:v];
                   }];
                }
@@ -97,7 +97,6 @@ int main(int argc, const char * argv[])
             }
          }];
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          [ORFactory shutdown];
          return res;
       }];

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,9 +10,8 @@
  ***********************************************************************/
 
 #import "ORVarI.h"
-#import "ORError.h"
-#import "ORFactory.h"
-#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORError.h>
+#import <ORFoundation/ORFactory.h>
 
 @implementation ORIntVarI {
 @protected
@@ -27,8 +26,16 @@
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
-//   if (domain.low == domain.up)
-//      NSLog(@"Variable with singleton domain: %@",self);
+   return self;
+}
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) track bounds: (id<ORIntRange>) domain
+{
+   self = [super init];
+   _tracker = [track tracker];
+   _domain = domain;
+   _ba[0] = false; // dense
+   _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
+   [track trackVariable: self];
    return self;
 }
 -(void) dealloc
@@ -88,7 +95,7 @@
 }
 -(ORBool) isBool
 {
-      return _ba[1]; // isBool
+   return _ba[1]; // isBool
 }
 -(id<ORTracker>) tracker
 {
@@ -219,32 +226,32 @@
 }
 @end
 
-@implementation ORFloatVarI
+@implementation ORRealVarI
 {
 @protected
    id<ORTracker>    _tracker;
-   id<ORFloatRange> _domain;
+   id<ORRealRange> _domain;
    BOOL             _hasBounds;
 }
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
+-(ORRealVarI*) init: (id<ORTracker>) track low: (ORDouble) low up: (ORDouble) up
 {
    self = [super init];
    _tracker = track;
-   _domain = [ORFactory floatRange:track low:low up:up];
+   _domain = [ORFactory realRange:track low:low up:up];
    _hasBounds = true;
    [track trackVariable: self];
    return self;
 }
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track up: (ORFloat) up
+-(ORRealVarI*) init: (id<ORTracker>) track up: (ORDouble) up
 {
    self = [super init];
    _tracker = track;
-   _domain = [ORFactory floatRange:track low:0 up:up];
+   _domain = [ORFactory realRange:track low:0 up:up];
    _hasBounds = true;
    [track trackVariable: self];
    return self;
 }
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track
+-(ORRealVarI*) init: (id<ORTracker>) track
 {
    self = [super init];
    _tracker = track;
@@ -252,7 +259,7 @@
    [track trackVariable: self];
    return self;
 }
--(id<ORFloatRange>) domain
+-(id<ORRealRange>) domain
 {
    assert(_domain != NULL);
    return _domain;
@@ -263,7 +270,7 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTFloat;
+   return ORTReal;
 }
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -285,10 +292,7 @@
 }
 -(NSString*) description
 {
-   if (_domain == nil)
-      return [NSString stringWithFormat:@"var<OR>{float}:%03d(NA)",_name];
-   else
-      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_domain.low,_domain.up];
+   return [NSString stringWithFormat:@"var<OR>{real}:%03d(%f,%f)",_name,_domain.low,_domain.up];
 }
 -(id<ORTracker>) tracker
 {
@@ -296,17 +300,17 @@
 }
 -(void) visit: (ORVisitor*) v
 {
-   [v visitFloatVar: self];
+   [v visitRealVar: self];
 }
 -(ORBool) hasBounds
 {
    return _hasBounds;
 }
--(ORFloat) low
+-(ORDouble) low
 {
    return _domain.low;
 }
--(ORFloat) up
+-(ORDouble) up
 {
    return _domain.up;
 }

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,196 +13,191 @@
 #import "ORModelI.h"
 #import "ORVarI.h"
 #import "ORDecompose.h"
-#import "ORFloatDecompose.h"
+#import "ORRealDecompose.h"
 
 @implementation ORLPFlatten {
-   id<ORAddToModel> _into;
-   NSMapTable*     _mapping;
-   id              _result;
-   id<ORAnnotation> _notes;
-   id<ORTau>       _tau;
+    id<ORAddToModel> _into;
+    NSMapTable*     _mapping;
+    id              _result;
+    id<ORAnnotation> _notes;
+    id<ORTau>       _tau;
 }
 
 -(id)initORLPFlatten: (id<ORAddToModel>) into
 {
-   self = [super init];
-   _into = into;
-   _notes = nil;
-   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
-                                        valueOptions:NSPointerFunctionsOpaqueMemory
-                                            capacity:64];
-   return self;
+    self = [super init];
+    _into = into;
+    _notes = nil;
+    _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
+                                         valueOptions:NSPointerFunctionsOpaqueMemory
+                                             capacity:64];
+    return self;
 }
 
 -(void) dealloc
 {
-   [_mapping release];
-   [super dealloc];
+    [_mapping release];
+    [super dealloc];
 }
 
 -(id<ORAddToModel>) target
 {
-   return _into;
+    return _into;
 }
 -(id) flattenIt: (id) obj
 {
-   id fo = [_mapping objectForKey:obj];
-   if (fo)
-      return fo;
-   else {
-      id pr = _result;  // flattenIt must work if reentrant.
-      _result = NULL;
-      [obj visit: self];
-      id rv = _result;
-      _result = pr;     // restore what used to be result.
-      if (rv == NULL)
-         [_mapping setObject:[NSNull null] forKey:obj];
-      else
-         [_mapping setObject:rv forKey:obj];
-      return rv;
-   }
+    id fo = [_mapping objectForKey:obj];
+    if (fo)
+        return fo;
+    else {
+        id pr = _result;  // flattenIt must work if reentrant.
+        _result = NULL;
+        [obj visit: self];
+        id rv = _result;
+        _result = pr;     // restore what used to be result.
+        if (rv == NULL)
+            [_mapping setObject:[NSNull null] forKey:obj];
+        else
+            [_mapping setObject:rv forKey:obj];
+        return rv;
+    }
 }
 -(void) apply: (id<ORModel>) m  with:(id<ORAnnotation>)notes
 {
-   _notes = notes;
-   _tau = [_into modelMappings].tau;
-   [m applyOnVar:^(id<ORVar> x) {
-      [_into addVariable: [self flattenIt: x]];
-   }
-   onMutables:^(id<ORObject> x) {
-      [_into addMutable:[self flattenIt:x]];
-   }
-   onImmutables:^(id<ORObject> x) {
-      [_into addImmutable: x];
-   }
-   onConstraints:^(id<ORConstraint> c) {
-      [self flattenIt:c]; // [ldm] It has _already_ been added to the model.  an addConstraint would have it _twice_ in.
-   }
-   onObjective:^(id<ORObjectiveFunction> o) {
-      [self flattenIt:o];
-   }];
+    _notes = notes;
+    _tau = [_into modelMappings].tau;
+    [m applyOnVar:^(id<ORVar> x) {
+        [_into addVariable: [self flattenIt: x]];
+    }
+       onMutables:^(id<ORObject> x) {
+           [_into addMutable:[self flattenIt:x]];
+       }
+     onImmutables:^(id<ORObject> x) {
+         [_into addImmutable: x];
+     }
+    onConstraints:^(id<ORConstraint> c) {
+        [_into addConstraint:[self flattenIt:c]];
+    }
+      onObjective:^(id<ORObjectiveFunction> o) {
+          [self flattenIt:o];
+      }];
 }
 
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model
 {
-   id<ORLinear> terms = [ORNormalizer normalize: expr into: model];
-   id<ORConstraint> cstr = NULL;
-   switch ([expr type]) {
-      case ORRBad:
-         assert(NO);
-      case ORREq:
-         {
-            cstr = [terms postEQZ: model affineOk:NO];
-         }
-         break;
-      case ORRNEq:
-         {
+    id<ORLinear> terms = [ORNormalizer normalize: expr into: model];
+    id<ORConstraint> cstr = NULL;
+    switch ([expr type]) {
+        case ORRBad:
+            assert(NO);
+        case ORREq:
+        {
+            cstr = [terms postEQZ: model];
+        }
+            break;
+        case ORRNEq:
+        {
             @throw [[ORExecutionError alloc] initORExecutionError: "No != constraint supported in LP yet"];
-         }
-         break;
-      case ORRLEq:
-         {
-           cstr = [terms postLEQZ: model affineOk:NO];
-         }
-         break;
-      case ORRGEq:
-         {
-            cstr = [terms postGEQZ: model affineOk:NO];
-         }
-         break;
-      default:
-         assert(terms == nil);
-         break;
-   }
-   [terms release];
-   return cstr;
+        }
+            break;
+        case ORRLEq:
+        {
+            cstr = [terms postLEQZ: model];
+        }
+            break;
+        default:
+            assert(terms == nil);
+            break;
+    }
+    [terms release];
+    return cstr;
 }
 
 -(void) visitIntVar: (ORIntVarI*) v
 {
-   _result = v;
+    _result = v;
 }
--(void) visitFloatVar: (ORFloatVarI*) v
+-(void) visitRealVar: (ORRealVarI*) v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   _result = e;
+    _result = e;
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
-   _result = e;
+    _result = e;
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
-   _result = e;
+    _result = e;
 }
 
 -(void) visitIntArray:(id<ORIntArray>)v
 {
-   _result = v;
+    _result = v;
 }
--(void) visitFloatArray:(id<ORFloatArray>)v
+-(void) visitDoubleArray:(id<ORDoubleArray>)v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitIntSet:(id<ORIntSet>)v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitIntRange:(id<ORIntRange>)v
 {
-   _result = v;
+    _result = v;
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitIdArray: (id<ORIdArray>) v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitTable:(id<ORTable>) v
 {
-   _result = v;
+    _result = v;
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   _result = [ORLPFlatten flattenExpression:[cstr expr] into: _into];
-   [_tau set: _result forKey: cstr];
+    _result = [ORLPFlatten flattenExpression:[cstr expr] into: _into];
+    [_tau set: _result forKey: cstr];
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   _result = [_into minimize:[v var]];
+    _result = [_into minimize:[v var]];
 }
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   _result = [_into maximize:[v var]];
+    _result = [_into maximize:[v var]];
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
-   _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into] independent:[terms independent]];
-   [terms release];
+    ORRealLinear* terms = [ORNormalizer realLinearFrom: [v expr] model: _into];
+    _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
+    [terms release];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
-   _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into] independent:[terms independent]];
-   [terms release];
+    ORRealLinear* terms = [ORNormalizer realLinearFrom: [v expr] model: _into];
+    _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
+    [terms release];
 }
 
 @end

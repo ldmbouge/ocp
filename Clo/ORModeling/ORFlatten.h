@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,11 +9,11 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORAnnotation.h>
 #import <ORFoundation/ORVisit.h>
 
+@protocol ORAddToModel;
+@protocol ORModel;
 
 @interface ORFlatten : ORNOopVisit<ORModelTransformation> {
    id<ORAddToModel>   _into;
@@ -23,6 +23,7 @@
 -(id)initORFlatten: (id<ORAddToModel>) into;
 -(void) apply: (id<ORModel>)m with:(id<ORAnnotation>)notes;
 -(id<ORAddToModel>) target;
+-(id)flattenIt:(id)obj;
 +(void) flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m;
 @end

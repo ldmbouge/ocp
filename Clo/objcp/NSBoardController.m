@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,9 @@
 
  ***********************************************************************/
 
-#import "NSBoardController.h"
-#import <ORProgram/CPProgram.h>
-#import "CPWatch.h"
+#import <objcp/NSBoardController.h>
+//#import <ORProgram/CPProgram.h>
+#import <objcp/CPWatch.h>
 
 @interface CPGrid : NSObject {
    ORRange _rows;
@@ -88,7 +88,7 @@
    self = [super init];
    _drawOn = [theView retain];
    _toDraw = [[NSMutableArray alloc] initWithCapacity:32];
-   [theView setDelegate:self];
+   [theView setDelegate:(id)self];
    _pause = [[NSCondition alloc] init];
    _isPaused = NO;
    _canPause = YES;
@@ -126,9 +126,9 @@
    }
    [_drawOn performSelectorOnMainThread:@selector(refresh) withObject:nil waitUntilDone:NO];
 }
--(void)watchSearch: (id<CPProgram>)cp onChoose:(ORClosure) onc onFail:(ORClosure) onf
+-(void)watchSearch: (id<ORExplorer>)explorer onChoose:(ORClosure) onc onFail:(ORClosure) onf
 {
-  [[cp explorer] setController: [[CPViewController alloc] initCPViewController:[[cp explorer] controller]
+  [explorer setController: [[CPViewController alloc] initCPViewController:[explorer controller]
                                                                       onChoose:onc
                                                                         onFail:onf]];
 }

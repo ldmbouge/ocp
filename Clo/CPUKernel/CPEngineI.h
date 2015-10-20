@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,14 +27,14 @@ enum CPEngineState {
 };
 
 @interface CPEngineI : NSObject <CPEngine> {
-   //enum CPEngineState       _state;
-   TRInt                    _state;
+   enum CPEngineState       _state;
    id<ORTrail>              _trail;
    id<ORMemoryTrail>        _mt;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
+   ORUInt                   _nbCstrs;
    id<ORSearchObjectiveFunction> _objective;
    CPClosureQueue*          _closureQueue[NBPRIORITIES];
    CPValueClosureQueue*     _valueClosureQueue;
@@ -46,10 +46,12 @@ enum CPEngineState {
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
    ORFailException*         _fex;
+   id<ORIntRange>           _br;
 }
 -(CPEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
+-(id<ORTracker>)tracker;
 -(id)        trackVariable:(id)var;
 -(id)        trackMutable:(id)obj;
 -(id)        trackImmutable:(id)obj;
@@ -73,18 +75,17 @@ enum CPEngineState {
 -(NSMutableArray*) constraints;
 -(NSMutableArray*) objects;
 -(ORStatus)   close;
--(ORBool)      closed;
+-(ORBool)     closed;
+-(void)       open;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
+-(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 
-//-(id<ORIntVarArray>)intVars;
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
+-(id<ORIntRange>)boolRange;
 @end
-
-ORStatus propagateFDM(CPEngineI* fdm);
-void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist);

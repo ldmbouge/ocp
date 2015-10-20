@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,7 +22,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          ORInt n = [args size];
-         ORFloat rf = [args restartRate];
+         ORDouble rf = [args restartRate];
          ORInt t = [args timeOut];
         
          id<ORModel> model = [ORFactory createModel];
@@ -53,6 +53,17 @@ int main(int argc, const char * argv[])
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
          __block BOOL found = NO;
          [cp solve:^{
+//            [cp labelArray:[ORFactory flattenMatrix:s]];
+//            [cp label:[s at:1 :1] with:1];
+//            [cp label:[s at:1 :2] with:7];
+//            [cp label:[s at:1 :3] with:2];
+//            [cp label:[s at:2 :1] with:6];
+//            [cp label:[s at:2 :2] with:5];
+//            [cp label:[s at:2 :3] with:4];
+//            [cp label:[s at:3 :1] with:8];
+//            [cp label:[s at:3 :2] with:3];
+//            [cp label:[s at:3 :3] with:9];
+            
             [cp limitTime:maxTime in: ^ {
                ///[cp repeat:^{
                while(!found) {
@@ -70,8 +81,8 @@ int main(int argc, const char * argv[])
                         }
                         found = YES;
                      }];
-                  } or:^{
-                     [nbFailures setValue:(float)[nbFailures intValue:cp] * rf in:cp];
+                  } alt:^{
+                     [nbFailures setValue:(double)[nbFailures intValue:cp] * rf in:cp];
                      [nbRestarts incr:cp];
                      NSLog(@"Hit failure limit. Failure limit now: %d / %d",[nbFailures intValue:cp],[nbRestarts intValue:cp]);
                   }];
@@ -83,7 +94,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
          struct ORResult r = REPORT(found, [cp nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          [ORFactory shutdown];
          return r;
       }];

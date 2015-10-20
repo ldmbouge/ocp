@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,6 +15,7 @@
 #import <objcp/CPData.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPBitVar.h>
+#import <objcp/CPISVarI.h>
 
 
 @interface CPFactory (DataStructure)
@@ -28,9 +29,11 @@
 +(id<CPIntVar>) boolVar: (id<CPEngine>)cp;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range;
-+(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(id<CPIntVar>)x;
-+(id<CPFloatParam>) floatParam:(id<CPEngine>)cp initialValue:(ORFloat)v;
++(id<CPRealVar>) realVar:(id<CPEngine>)cp bounds:(id<ORRealRange>) range;
++(id<CPRealVar>) realVar:(id<CPEngine>)cp castFrom:(id<CPIntVar>)x;
++(id<CPRealParam>) realParam:(id<CPEngine>)cp initialValue:(ORDouble)v;
+
++(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet;
 
 +(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<CPIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
@@ -56,9 +59,9 @@
 @end
 
 @interface CPFactory (expression)
-+(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs;
++(id<ORExpr>) dotProduct:(__strong id<ORIntVar>[])vars by:(int[])coefs;
 +(id<ORExpr>) sum: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<ORRelation>) lor: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
 @interface CPFactory (BV)

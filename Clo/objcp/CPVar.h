@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,7 +40,6 @@ enum CPVarClass {
 -(ORBool) bound;
 -(NSSet*)constraints;
 -(ORInt)degree;
--(enum CPVarClass)varClass;
 @end
 
 
@@ -71,9 +70,9 @@ enum CPVarClass {
 @end
 
 @protocol CPNumVar <CPVar,CPNumVarSubscriber>
--(ORFloat) floatMin;
--(ORFloat) floatMax;
--(ORFloat) floatValue;
+-(ORDouble) dblMin;
+-(ORDouble) dblMax;
+-(ORDouble) dblValue;
 @end
 
 @protocol CPIntVarSubscriber <CPNumVarSubscriber>
@@ -109,8 +108,6 @@ enum CPVarClass {
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
--(ORInt) scale;
--(ORInt) shift;
 -(id<ORIntVar>) base;
 -(ORBool) bound;
 -(ORInt) countFrom: (ORInt) from to: (ORInt) to;
@@ -120,7 +117,6 @@ enum CPVarClass {
 -(void) updateMin: (ORInt) newMin;
 -(void) updateMax: (ORInt) newMax;
 -(ORBounds) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
--(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 @end
 
 @protocol CPVarArray <ORVarArray>
@@ -152,31 +148,56 @@ enum CPVarClass {
 -(id<ORASolver>) solver;
 @end
 
-@protocol CPFloatVar<CPVar>
--(ORFloat) min;
--(ORFloat) max;
--(ORFloat) value;
+@protocol CPRealVar<CPVar>
+-(ORDouble) min;
+-(ORDouble) max;
+-(ORDouble) value;
 -(ORInterval) bounds;
--(ORBool) member:(ORFloat)v;
+-(ORBool) member:(ORDouble)v;
 -(ORBool) bound;
--(ORFloat) domwidth;
--(void) bind:(ORFloat) val;
--(void) updateMin:(ORFloat) newMin;
--(void) updateMax:(ORFloat) newMax;
--(void) assignRelaxationValue: (ORFloat) f;
+-(ORDouble) domwidth;
+-(void) bind:(ORDouble) val;
+-(void) updateMin:(ORDouble) newMin;
+-(void) updateMax:(ORDouble) newMax;
+-(void) assignRelaxationValue: (ORDouble) f;
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 
-@protocol CPFloatParam<CPParam>
--(ORFloat) value;
--(void) setValue: (ORFloat)val;
+@protocol CPRealParam<CPParam>
+-(ORDouble) value;
+-(void) setValue: (ORDouble)val;
 @end
 
-@protocol CPFloatVarArray <CPVarArray>
--(id<CPFloatVar>) at: (ORInt) value;
--(void) set: (id<CPFloatVar>) x at: (ORInt) value;
--(id<CPFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<CPFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+@protocol CPRealVarArray <CPVarArray>
+-(id<CPRealVar>) at: (ORInt) value;
+-(void) set: (id<CPRealVar>) x at: (ORInt) value;
+-(id<CPRealVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPRealVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
+@end
+
+@protocol CPIntSetVar <CPVar>
+-(id<CPIntVar>)cardinality;
+-(ORBool)bound;
+-(id<IntEnumerator>)required;
+-(id<IntEnumerator>)possible;
+-(id<IntEnumerator>)excluded;
+-(ORInt)cardRequired;
+-(ORInt)cardPossible;
+-(ORBool)isRequired:(ORInt)v;
+-(ORBool)isPossible:(ORInt)v;
+-(ORBool)isExcluded:(ORInt)v;
+-(void)require:(ORInt)v;
+-(void)exclude:(ORInt)v;
+// notifications APIs
+-(void)whenRequired:(id<CPConstraint>)c do:(ORIntClosure)todo;
+-(void)whenExcluded:(id<CPConstraint>)c do:(ORIntClosure)todo;
+-(void)whenBound:(id<CPConstraint>)c do:(ORClosure)todo;
+-(void)whenChange:(id<CPConstraint>)c do:(ORClosure)todo;
+// events
+-(void)requireEvt:(ORInt)v;
+-(void)excludeEvt:(ORInt)v;
+-(void)bindEvt;
+-(void)changeEvt;
 @end
 

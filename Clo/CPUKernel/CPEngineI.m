@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,24 @@
  
  ***********************************************************************/
 
+#import  <ORFoundation/ORFoundation.h>
 #import "CPEngineI.h"
 #import "CPTypes.h"
 #import "CPClosureEvent.h"
-#import <ORFoundation/ORSetI.h>
 
-@implementation CPClosureQueue
+typedef struct CPClosureEntry {
+   ORClosure             cb;
+   id<CPConstraint>    cstr;
+} CPClosureEntry;
+
+
+@implementation CPClosureQueue {
+   CPClosureEntry*  _tab;
+   CPClosureEntry*  _last;
+   ORInt     _enter;
+   ORInt     _exit;
+   ORInt     _mask;   
+}
 -(id) initClosureQueue: (ORInt) sz
 {
    self = [super init];
@@ -88,13 +100,20 @@ inline static CPClosureEntry ClosureQueueDequeue(CPClosureQueue* q)
 {
    ClosureQueueEnqueue(self, cb,cstr);
 }
--(CPClosureEntry) deQueue
+-(void)deQueue:(ORClosure*)cb forCstr:(id<CPConstraint>*)cstr
 {
-   return ClosureQueueDequeue(self);
+   CPClosureEntry cbe = ClosureQueueDequeue(self);
+   *cb = cbe.cb;
+   *cstr = cbe.cstr;
 }
 @end
 
-@implementation CPValueClosureQueue
+@implementation CPValueClosureQueue {
+   id<CPValueEvent>* _tab;
+   ORInt         _enter;
+   ORInt          _exit;
+   ORInt          _mask;
+}
 -(id) initValueClosureQueue:(ORInt)sz
 {
    self = [super init];
@@ -256,11 +275,12 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    self = [super init];
    _trail = trail;
    _mt    = mt;
-   _state = makeTRInt(_trail, CPOpen);
+   _state = CPOpen;
    _vars  = [[NSMutableArray alloc] init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _nbCstrs = 0;
    _objective = nil;
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _closureQueue[i] = [[CPClosureQueue alloc] initClosureQueue:512];
@@ -270,7 +290,12 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
    _propagFail = nil;
    _propagDone = nil;
+   _br = RANGE(self, 0, 1);
    return self;
+}
+-(id<ORIntRange>)boolRange
+{
+   return _br;
 }
 -(void) dealloc
 {
@@ -335,11 +360,10 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 {
    return obj;
 }
-
 -(id) trackVariable: (id) var
 {
    [var setId:(ORUInt)[_vars count]];
-   if (_state._val != CPClosed) {
+   if (_state != CPClosed) {
       [_vars addObject:var];
       [var release];
    }
@@ -349,7 +373,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 }
 -(id) trackObject:(id)obj
 {
-   if (_state._val != CPClosed) {
+   if (_state != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
    }
@@ -363,7 +387,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 }
 -(id) trackObjective:(id)obj
 {
-   if (_state._val != CPClosed) {
+   if (_state != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
    }
@@ -373,7 +397,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 }
 -(id) trackMutable:(id)obj
 {
-   if (_state._val != CPClosed) {
+   if (_state != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
    }
@@ -383,7 +407,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 }
 -(id) trackImmutable: (id) obj
 {
-   if (_state._val != CPClosed) {
+   if (_state != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
    }
@@ -425,7 +449,7 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
                ClosureQueueEnqueue(fdm->_closureQueue[list->_priority], list->_trigger,lc);
             }
          }
-         list = list->_node._val;
+         list = list->_node;
       }
       ++mlist;
    }
@@ -468,7 +492,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
    CPValueClosureQueue* vcQueue = fdm->_valueClosureQueue;
    CPClosureQueue** cQueue = fdm->_closureQueue;
    __block ORInt nbp = 0;
-   return tryfail(^ORStatus{
+   TRYFAIL
       id<CPConstraint>* last = &fdm->_last;
       *last = nil;
       ORStatus status = ORSuspend;
@@ -503,8 +527,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          [fdm->_propagDone notify];
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
-      return status;
-   }, ^ORStatus{
+   ONFAIL(status);
       id<CPConstraint>* last = &fdm->_last;
       while (ISLOADED(cQueue[ALWAYS_PRIO])) {
          ORStatus as = executeClosure(ClosureQueueDequeue(cQueue[ALWAYS_PRIO]), last);
@@ -519,8 +542,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       //[exception release];
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
-      return ORFailure;
-   });
+   ENDFAIL(ORFailure)
 }
 
 -(ORStatus) propagate
@@ -577,7 +599,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
 
 -(void) addInternal:(id<ORConstraint>) c
 {
-   assert(_state._val != CPOpen);
+   assert(_state != CPOpen);
    ORStatus s = [self post:c];
    if (s==ORFailure)
       failNow();
@@ -585,15 +607,19 @@ ORStatus propagateFDM(CPEngineI* fdm)
 
 -(ORStatus) add: (id<ORConstraint>) c
 {
-   if (_state._val != CPOpen) {
+   if (_state != CPOpen) {
       return [self post: c];
    }
    else {
-      CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      [cstr setId: (ORUInt)[_mStore count]];
+      [c setId: _nbCstrs++];
       [_mStore addObject: c];
       return ORSuspend;
    }
+}
+
+-(void) assignIdToConstraint:(id<ORConstraint>)c
+{
+   [c setId: _nbCstrs++];
 }
 
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj
@@ -610,12 +636,11 @@ ORStatus propagateFDM(CPEngineI* fdm)
 -(ORStatus) enforce: (ORClosure) cl
 {
    _last = NULL;
-   return tryfail(^ORStatus{
+   TRYFAIL
       cl();
-      return propagateFDM(self);
-   }, ^ORStatus{
-      return ORFailure;
-   });
+      ORStatus st = propagateFDM(self);
+   ONFAIL(st);
+   ENDFAIL(ORFailure);
 }
 
 -(void) tryEnforce: (ORClosure) cl
@@ -654,12 +679,14 @@ ORStatus propagateFDM(CPEngineI* fdm)
     if (status == ORFailure)
         failNow();
 }
-
+-(void) open
+{
+   _state = CPOpen;
+}
 -(ORStatus) close
 {
-    if (_state._val == CPOpen) {
-        assignTRInt(&_state,CPClosing,_trail);
-        //_state = CPClosing;
+    if (_state == CPOpen) {
+        _state = CPClosing;
         _propagating++;
         for(id<ORConstraint> c in _mStore) {
             if ([self post: c] == ORFailure) {
@@ -670,8 +697,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
         _propagating--;
         if (propagateFDM(self) == ORFailure)
             return ORFailure;
-        assignTRInt(&_state,CPClosed,_trail);
-        //_state = CPClosed;
+        _state = CPClosed;
     }
     return ORSuspend;
 }
@@ -686,7 +712,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
 
 -(ORBool) closed
 {
-   return _state._val == CPClosed;
+   return _state == CPClosed;
 }
 
 -(id<ORInformer>) propagateFail

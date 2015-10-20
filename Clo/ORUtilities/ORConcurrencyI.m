@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/NSThread.h>
-#import "ORConcurrencyI.h"
-#import "ORConcurrency.h"
-#import "ORCrFactory.h"
+#import <ORUtilities/ORConcurrency.h>
+#import <ORUtilities/ORCrFactory.h>
+
 #import "ORConcurrencyI.h"
 #import "pthread.h"
 
@@ -252,9 +252,9 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     };
     [_eventList addEvent:[wrap copy]];
 }
--(void) dispatchWithFloatArray:(id<ORFloatArray>)arr
+-(void) dispatchWithDoubleArray:(id<ORDoubleArray>)arr
 {
-    ORFloatArray2Void tClo = (ORFloatArray2Void)_closure;
+    ORDoubleArray2Void tClo = (ORDoubleArray2Void)_closure;
     ORClosure wrap = ^{
         tClo(arr);
     };
@@ -270,8 +270,8 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 }
 @end
 
-@implementation ORInformerI 
--(ORInformerI*) initORInformerI
+@implementation ORInformer
+-(ORInformer*) initORInformer
 {
    self = [super init];
    _lock = [[NSLock alloc] init];
@@ -431,14 +431,14 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     }
 }
 
--(void) notifyWithFloatArray:(id<ORFloatArray>)arr
+-(void) notifyWithDoubleArray:(id<ORDoubleArray>)arr
 {
     @synchronized(self) {
         for(id event in _whenList)
-            [event dispatchWithFloatArray: arr];
+            [event dispatchWithDoubleArray: arr];
         [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
         for(id event in _wheneverList)
-            [event dispatchWithFloatArray: arr];
+            [event dispatchWithDoubleArray: arr];
         for(ORBarrier* barrier in _sleeperList)
             [barrier join];
         [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
@@ -477,19 +477,23 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 }
 +(id<ORIntInformer>) intInformer
 {
-    return [[ORInformerI alloc] initORInformerI];
+    return [[ORInformer alloc] initORInformer];
+}
++(id<ORSolutionInformer>) solutionInformer
+{
+   return [[ORInformer alloc] initORInformer];
 }
 +(id<ORInformer>) idInformer
 {
-   return [[ORInformerI alloc] initORInformerI];
+   return [[ORInformer alloc] initORInformer];
 }
 +(id<ORVoidInformer>) voidInformer
 {
-   return [[ORInformerI alloc] initORInformerI];
+   return [[ORInformer alloc] initORInformer];
 }
 +(id<ORIdxIntInformer>) idxIntInformer
 {
-   return [[ORInformerI alloc] initORInformerI];
+   return [[ORInformer alloc] initORInformer];
 }
 +(id<ORBarrier>)  barrier: (ORInt) nb
 {
@@ -557,6 +561,7 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 
 @implementation ORConcurrency (Internals)
 
+#if TARGET_OS_IPHONE == 0
 +(OREventList*) eventList  // Returns *the* event list in TLS (for the invoking thread)
 {
    static __thread OREventList* eventlist = NULL;
@@ -564,10 +569,24 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
       eventlist = [[OREventList alloc] initOREventList];
    return eventlist;
 }
+#else
++(OREventList*) eventList  // Returns *the* event list in TLS (for the invoking thread)
+{
+   NSValue* ptr = [NSThread.currentThread.threadDictionary objectForKey:@(4)];
+   if (ptr==nil) {
+      OREventList* eventList = [[OREventList alloc] initOREventList];
+      ptr = [NSValue valueWithPointer:eventList];
+      [NSThread.currentThread.threadDictionary setObject:ptr forKey:@(4)];
+   }
+   return ptr.pointerValue;
+}
+#endif
+
 @end
 
 @implementation NSThread (ORData)
 
+#if TARGET_OS_IPHONE == 0
 static ORInt __thread tidTLS = 0;
 
 +(void)setThreadID:(ORInt)tid
@@ -578,4 +597,19 @@ static ORInt __thread tidTLS = 0;
 {
    return tidTLS;
 }
+#else
+
++(void)setThreadID:(ORInt)tid
+{
+   [NSThread.currentThread.threadDictionary setObject:[NSNumber numberWithInt:(int)tid]
+                                               forKey:@(3)];
+}
++(ORInt)threadID
+{
+   NSNumber* n = [NSThread.currentThread.threadDictionary objectForKey:@(3)];
+   assert(n);
+   return n.intValue;
+}
+#endif
+
 @end

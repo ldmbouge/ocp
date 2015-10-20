@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,20 @@
  
  ***********************************************************************/
 
-#import "MIPGurobi.h"
+#import <objmp/MIPGurobi.h>
 #import <objmp/MIPType.h>
 #import <objmp/MIPSolverI.h>
+#import "gurobi_c.h"
 
-@implementation MIPGurobiSolver;
 
--(MIPGurobiSolver*) initMIPGurobiSolver
+@implementation MIPGurobiSolver {
+   struct _GRBenv*                _env;
+   struct _GRBmodel*              _model;
+   MIPOutcome                      _status;
+   MIPObjectiveType                _objectiveType;
+}
+
+-(MIPGurobiSolver*) init
 {
    self = [super init];
    int error = GRBloadenv(&_env, "");
@@ -76,7 +83,7 @@
 {
    int s = [obj size];
    int* idx = [obj col];
-   ORFloat* coef = [obj coef];
+   ORDouble* coef = [obj coef];
    _objectiveType = [obj type];
    for(ORInt i = 0; i < s; i++)
       if (_objectiveType == MIPminimize)
@@ -121,6 +128,18 @@
     GRBsetdblparam(env, GRB_DBL_PAR_TIMELIMIT, limit);
 }
 
+-(ORDouble) bestObjectiveBound {
+    ORDouble bnd;
+    GRBgetdblattr(_model, "ObjBound", &bnd);
+    return bnd;
+}
+
+-(ORFloat) dualityGap {
+    ORDouble gap;
+    GRBgetdblattr(_model, "MIPGap", &gap);
+    return gap;
+}
+
 -(MIPOutcome) status
 {
    return _status;
@@ -128,79 +147,43 @@
 
 -(ORInt) intValue: (MIPIntVariableI*) var
 {
-   ORFloat value;
+   ORDouble value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);
    return (ORInt) value;
 }
 
--(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val {
-    int error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_LB, [var idx], val);
-    error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_UB, [var idx], val) || error ;
-    GRBupdatemodel(_model);
-    if(error != 0) NSLog(@"err: %i", error);
-}
-
--(ORFloat) floatValue: (MIPVariableI*) var
+-(ORDouble) dblValue: (MIPVariableI*) var
 {
-   ORFloat value;
+   ORDouble value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);
    return value;
 }
 
--(void) setFloatVar: (MIPVariableI*)var value: (ORFloat)val {
-}
-
-
--(ORFloat) lowerBound: (MIPVariableI*) var
+-(ORDouble) lowerBound: (MIPVariableI*) var
 {
-   ORFloat value;
+   ORDouble value;
    GRBgetdblattrelement(_model,"LB",[var idx],&value);
    return value;
 }
 
--(ORFloat) upperBound: (MIPVariableI*) var
+-(ORDouble) upperBound: (MIPVariableI*) var
 {
-   ORFloat value;
+   ORDouble value;
    GRBgetdblattrelement(_model,"UB",[var idx],&value);
    return value;
 }
--(ORFloat) objectiveValue
+
+-(ORDouble) objectiveValue
 {
-   ORFloat objVal;
+   ORDouble objVal;
    GRBgetdblattr(_model,"ObjVal",&objVal);
    if (_objectiveType == MIPmaximize)
       return -objVal;
    else
       return objVal;
 }
--(ORFloat) bestObjectiveBound {
-    ORFloat bnd;
-    GRBgetdblattr(_model, "ObjBound", &bnd);
-    return bnd;
-}
--(ORFloat) dualityGap {
-    ORFloat gap;
-    GRBgetdblattr(_model, "MIPGap", &gap);
-    return gap;
-}
--(ORFloat) paramFloatValue: (MIPParameterI*) param
-{
-    ORFloat v;
-    int err = GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
-    if(err != 0) return DBL_MAX;
-    return v;
-}
--(void) setParam: (MIPParameterI*) param value: (ORFloat)val
-{
-    int cind[] = { [param cstrIdx] };
-    int vind[] = { [param coefIdx] };
-    double v[] = { val };
-    int err = GRBchgcoeffs(_model, 1, cind, vind, v);
-//    GRBupdatemodel(_model);
-    if(err != 0)
-        NSLog(@"error setting gurobi parameter: %i", err);
-}
--(void) setBounds: (MIPVariableI*) var low: (ORFloat) low up: (ORFloat) up
+
+-(void) setBounds: (MIPVariableI*) var low: (ORDouble) low up: (ORDouble) up
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);
    GRBsetdblattrelement(_model,"UB",[var idx],up);
@@ -216,13 +199,13 @@
    GRBsetdblattrelement(_model,"LB",[var idx],-1e21);
 }
 
--(void) updateLowerBound: (MIPVariableI*) var lb: (ORFloat) lb
+-(void) updateLowerBound: (MIPVariableI*) var lb: (ORDouble) lb
 {
    if (lb > [self lowerBound: var])
       GRBsetdblattrelement(_model,"LB",[var idx],lb);
 }
 
--(void) updateUpperBound: (MIPVariableI*) var ub: (ORFloat) ub
+-(void) updateUpperBound: (MIPVariableI*) var ub: (ORDouble) ub
 {
    if (ub < [self upperBound: var])
       GRBsetdblattrelement(_model,"UB",[var idx],ub);
@@ -233,7 +216,7 @@
    GRBsetintparam(_env,name,val);
 }
 
--(void) setFloatParameter: (const char*) name val: (ORFloat) val
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val
 {
    GRBsetdblparam(_env,name,val);
 }
@@ -241,6 +224,25 @@
 -(void) setStringParameter: (const char*) name val: (char*) val
 {
    GRBsetstrparam(_env,name,val);
+}
+
+-(ORDouble) paramValue: (MIPParameterI*) param
+{
+    ORDouble v;
+    int err = GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
+    if(err != 0) return DBL_MAX;
+    return v;
+}
+
+-(void) setParam: (MIPParameterI*) param value: (ORDouble)val
+{
+    int cind[] = { [param cstrIdx] };
+    int vind[] = { [param coefIdx] };
+    double v[] = { val };
+    int err = GRBchgcoeffs(_model, 1, cind, vind, v);
+    //    GRBupdatemodel(_model);
+    if(err != 0)
+        NSLog(@"error setting gurobi parameter: %i", err);
 }
 
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr

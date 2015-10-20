@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,17 +9,19 @@
 
  ***********************************************************************/
 
-#import "CPDDeg.h"
-#import "CPEngineI.h"
+#import <ORProgram/CPDDeg.h>
+#import <CPUKernel/CPEngine.h>
+#import <objcp/CPVar.h>
+
 
 @implementation CPDDeg {
-   CPEngineI*    _solver;
+   id<CPEngine>    _solver;
 }
 -(id)initCPDDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
-   _solver  = (CPEngineI*)[cp engine];
+   _solver  = [cp engine];
    _rvars = rvars;
    return self;
 }
@@ -40,21 +42,21 @@
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
--(ORFloat)varOrdering: (id<CPIntVar>) ox
+-(ORDouble)varOrdering: (id<CPIntVar>) ox
 {
    id<CPIntVar> x = (id<CPIntVar>)ox;
-   __block float h = 0.0;
+   __block double h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
       h += ([obj nbUVars] - 1 > 0);
    }
    return h / [x domsize];
 }
--(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    return -v;   
 }
--(void)initInternal:(id<ORVarArray>) t and:(id<CPVarArray>)cvs
+-(void)initInternal:(id<ORVarArray>) t with:(id<CPVarArray>)cvs
 {
    _vars = t;
    _cvs  = cvs;

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORSet.h>
+#import <ORProgram/MIPProgram.h>
 #import <objmp/MIPSolverI.h>
-#import "MIPProgram.h"
 #import "MIPConcretizer.h"
 
 
@@ -65,7 +65,7 @@
 -(void) visitIntRange:(id<ORIntRange>) v
 {
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {}
 
 -(void) visitIntVar: (id<ORIntVar>) v
@@ -74,7 +74,7 @@
       _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up]];
 }
 
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitRealVar: (id<ORRealVar>) v
 {
    if (_gamma[v.getId] == NULL) {
       MIPVariableI* cv;
@@ -86,7 +86,7 @@
    }
 }
 
--(void) visitFloatParam:(id<ORFloatParam>)v
+-(void) visitRealParam:(id<ORRealParam>)v
 {
     if (_gamma[v.getId] == NULL) {
         MIPParameterI* cv;
@@ -123,7 +123,7 @@
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
--(void) visitFloatArray:(id<ORFloatArray>) v
+-(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
@@ -146,7 +146,7 @@
 {
    if (_gamma[obj.getId] == NULL) {
       id<ORVarArray> x = [obj array];
-      id<ORFloatArray> a = [obj coef];
+      id<ORDoubleArray> a = [obj coef];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a independent:[obj independent]];
@@ -158,7 +158,7 @@
 {
    if (_gamma[obj.getId] == NULL) {
       id<ORVarArray> x = [obj array];
-      id<ORFloatArray> a = [obj coef];
+      id<ORDoubleArray> a = [obj coef];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a independent:[obj independent]];
@@ -171,7 +171,7 @@
 {
    if (_gamma[c.getId]==NULL) {
       MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
-      ORFloat    coef[2] = { [c coefLeft],- [c coefRight]};
+      ORDouble    coef[2] = { [c coefLeft],- [c coefRight]};
       MIPConstraintI* concreteCstr = [_MIPsolver createLEQ:2 var:x coef:coef rhs:[c cst]];
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint:concreteCstr];
@@ -181,7 +181,7 @@
 {
     if (_gamma[c.getId]==NULL) {
         MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
-        ORFloat    coef[2] = { [c coefLeft],- [c coefRight]};
+        ORDouble    coef[2] = { [c coefLeft],- [c coefRight]};
         MIPConstraintI* concreteCstr = [_MIPsolver createGEQ:2 var:x coef:coef rhs:[c cst]];
         _gamma[c.getId] = concreteCstr;
         [_MIPsolver postConstraint:concreteCstr];
@@ -191,7 +191,7 @@
 {
     if (_gamma[c.getId]==NULL) {
         MIPVariableI* x[1] = { [self concreteVar:[c left]] };
-        ORFloat    coef[1] = { 1.0 };
+        ORDouble    coef[1] = { 1.0 };
         MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: 1 var:x coef:coef rhs:[c cst]];
         _gamma[c.getId] = concreteCstr;
         [_MIPsolver postConstraint:concreteCstr];
@@ -212,10 +212,10 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> fa = [ORFactory floatArray:[_MIPsolver tracker] range:[a range] with:^ORFloat(ORInt k) {
+      id<ORDoubleArray> fa = [ORFactory doubleArray:[a tracker] range:[a range] with:^ORDouble(ORInt k) {
          return [a at:k];
       }];
-      ORFloat cst = [c cst];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: fa cst: -cst];
@@ -228,7 +228,7 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> fa = [ORFactory floatArray:_program range:[a range] with:^ORFloat(ORInt k) {
+      id<ORDoubleArray> fa = [ORFactory doubleArray:_program range:[a range] with:^ORDouble(ORInt k) {
          return [a at:k];
       }];
       ORInt cst = [c cst];
@@ -239,43 +239,23 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
--(void) visitLinearGeq: (id<ORLinearGeq>) c
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
-    if (_gamma[c.getId] == NULL) {
-        id<ORVarArray> x = [c vars];
-        id<ORIntArray> a = [c coefs];
-        id<ORFloatArray> fa = [ORFactory floatArray:_program range:[a range] with:^ORFloat(ORInt k) {
-            return [a at:k];
-        }];
-        ORInt cst = [c cst];
-        [x visit: self];
-        id<MIPVariableArray> dx = _gamma[x.getId];
-        MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: dx coef: fa cst: -cst];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint: concreteCstr];
-    }
+   if (_gamma[c.getId] == NULL) {
+      id<MIPVariableArray> x = [self concreteArray:[c vars]];
+      id<ORDoubleArray> fa = [ORFactory doubleArray:_program range:[x range] value:1];
+      MIPConstraintI* concreteCstr = [_MIPsolver createEQ:x coef:fa cst:-[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint:concreteCstr];
+   }
 }
--(void) visitSumBoolEqualc: (id<ORSumBoolEqc>)c
-{
-    if (_gamma[c.getId] == NULL) {
-        id<ORVarArray> x = [c vars];
-        ORFloat cst = [c cst];
-        [x visit: self];
-        id<MIPVariableArray> dx = _gamma[x.getId];
-        id<ORFloatArray> a = [ORFactory floatArray:_program range:dx.range with:^ORFloat(ORInt k) {
-            return 1.0;
-        }];
-        MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: a cst: -cst];
-        _gamma[c.getId] = concreteCstr;
-        [_MIPsolver postConstraint: concreteCstr];
-    }
-}
--(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
+
+-(void) visitRealLinearEq: (id<ORRealLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
-      ORFloat cst = [c cst];
+      id<ORDoubleArray> a = [c coefs];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: a cst: -cst];
@@ -283,11 +263,11 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
--(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
+-(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
+      id<ORDoubleArray> a = [c coefs];
       ORInt cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
@@ -296,23 +276,10 @@
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
--(void) visitFloatLinearGeq: (id<ORFloatLinearGeq>) c
-{
-   if (_gamma[c.getId] == NULL) {
-      id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
-      ORInt cst = [c cst];
-      [x visit: self];
-      id<MIPVariableArray> dx = _gamma[x.getId];
-      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: dx coef: a cst: -cst];
-      _gamma[c.getId] = concreteCstr;
-      [_MIPsolver postConstraint: concreteCstr];
-   }
-}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory float: _MIPsolver value: [e intValue]];
+      _gamma[e.getId] = [ORFactory double: _MIPsolver value: [e intValue]];
 }
 
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
@@ -320,22 +287,22 @@
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory integer: _MIPsolver value: [e initialValue]];
 }
--(void) visitMutableFloatI: (id<ORMutableInteger>) e
+-(void) visitMutableDouble: (id<ORMutableInteger>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory mutableFloat: _MIPsolver value: [e initialValue]];
+      _gamma[e.getId] = [ORFactory mutableDouble: _MIPsolver value: [e initialValue]];
 }
 
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitDouble: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory float: _MIPsolver value: [e floatValue]];
+      _gamma[e.getId] = [ORFactory double: _MIPsolver value: [e dblValue]];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    // This is called when the constraint is stored in a data structure
 }
--(void) visitFloatWeightedVar:(id<ORWeightedVar>)c
+-(void) visitRealWeightedVar:(id<ORWeightedVar>)c
 {
     if (_gamma[c.getId] == NULL) {
         MIPVariableI* dx = _gamma[[c x].getId];
@@ -346,8 +313,8 @@
         id<ORIdArray> vars = [ORFactory idArray: _MIPsolver range: r];
         [vars set: dx at: 0];
         [vars set: dz at: 1];
-        ORFloat coefValues[] = { [(id<ORFloatParam>)[c weight] initialValue], -1.0 };
-        id<ORFloatArray> coef = [ORFactory floatArray: _MIPsolver range: r values: coefValues];
+        ORDouble coefValues[] = { [(id<ORRealParam>)[c weight] initialValue], -1.0 };
+        id<ORDoubleArray> coef = [ORFactory doubleArray: _MIPsolver range: r values: coefValues];
         
         // w * x - z == 0
         MIPConstraintI* concreteCstr = [_MIPsolver createEQ: (id<MIPVariableArray>)vars coef: coef cst: 0];

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,76 +10,77 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORExpr.h>
-#import "ORTracker.h"
-#import "ORArray.h"
-#import "ORSet.h"
-#import "ORConstraint.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORConstraint.h>
 
-@protocol ORSnapshot
--(ORInt) getId;
--(ORInt)  intValue;
--(ORBool) boolValue;
--(ORFloat) floatValue;
-@end
+PORTABLE_BEGIN
 
-@protocol ORVar <ORObject,ORExpr>
+@protocol ORVar <ORObject>
 -(ORInt) getId;
 @end
 
-@protocol ORIntVar <ORVar>
+@protocol ORExprVar <ORVar,ORExpr>
+-(ORInt) getId;
+@end
+
+@protocol ORIntVar <ORExprVar>
 -(id<ORIntRange>) domain;
 -(ORInt) low;
 -(ORInt) up;
 -(ORBool) isBool;
+-(ORBool) hasDenseDomain;
 -(ORInt) scale;
 -(ORInt) shift;
 -(ORInt) literal;
 -(id<ORIntVar>)base;
 @end
 
-@protocol ORBitVar <ORVar>
+@protocol ORBitVar <ORExprVar>
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
 -(NSString*)stringValue;
 @end
 
-@protocol ORFloatVar <ORVar>
--(id<ORFloatRange>) domain;
+@protocol ORRealVar <ORExprVar>
+-(id<ORRealRange>) domain;
 -(ORBool) hasBounds;
--(ORFloat) low;
--(ORFloat) up;
+-(ORDouble) low;
+-(ORDouble) up;
 @end
+
 
 @protocol ORExprArray<ORIdArray>
 -(id<ORExpr>) at: (ORInt) value;
 -(void) set: (id<ORExpr>) x at: (ORInt) value;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id<ORExpr>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORExpr>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORExpr>) objectAtIndexedSubscript: (ORInt) key;
+-(void) setObject: (id<ORExpr>) newValue atIndexedSubscript: (ORInt) idx;
 @end
 
 @protocol ORVarArray <ORExprArray>
 -(id<ORVar>) at: (ORInt) value;
 -(void) set: (id<ORVar>) x at: (ORInt) value;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORVar>) objectAtIndexedSubscript: (ORInt) key;
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (ORInt) idx;
 @end
 
 @protocol ORIntVarArray <ORVarArray>
 -(id<ORIntVar>) at: (ORInt) value;
 -(void) set: (id<ORIntVar>) x at: (ORInt) value;
--(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORIntVar>) objectAtIndexedSubscript: (ORInt) key;
+-(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (ORInt) idx;
 -(id<ORASolver>) solver;
 @end
 
-@protocol ORFloatVarArray <ORVarArray>
--(id<ORFloatVar>) at: (ORInt) value;
--(void) set: (id<ORFloatVar>) x at: (ORInt) value;
--(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+@protocol ORRealVarArray <ORVarArray>
+-(id<ORRealVar>) at: (ORInt) value;
+-(void) set: (id<ORRealVar>) x at: (ORInt) value;
+-(id<ORRealVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORRealVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 
@@ -112,14 +113,16 @@
 typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROutcome;
 
 @protocol ORRelaxation <NSObject>
--(ORFloat) objective;
+-(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
--(ORFloat) value: (id<ORVar>) x;
--(ORFloat) lowerBound: (id<ORVar>) x;
--(ORFloat) upperBound: (id<ORVar>) x;
--(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f;
--(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f;
+-(ORDouble) value: (id<ORVar>) x;
+-(ORDouble) lowerBound: (id<ORVar>) x;
+-(ORDouble) upperBound: (id<ORVar>) x;
+-(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f;
+-(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
 -(OROutcome) solve;
 -(void) close;
 @end
+
+PORTABLE_END
 

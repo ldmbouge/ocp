@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,33 +11,38 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORProgram/LPProgram.h>
+#import <ORProgram/ORSolution.h>
 
 // LPSolver
 @interface LPSolver : ORGamma<LPProgram>
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model;
--(ORFloat) dual: (id<ORConstraint>) c;
--(ORFloat) reducedCost: (id<ORFloatVar>) x;
--(ORFloat) floatValue: (id<ORFloatVar>) x;
--(id<LPColumn>) freshColumn;
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORRealVar>) x;
+-(ORDouble) dblValue: (id<ORRealVar>) x;
+-(id<LPColumn>) createColumn;
 -(void) addColumn: (id<LPColumn>) column;
 -(id<ORObjectiveValue>) objectiveValue;
--(id<ORLPSolution>) captureSolution;
--(void)enumerateColumnWith:(void(^)(id<LPColumn>))block;
+-(id<ORSolution>) captureSolution;
 @end
 
 @interface LPRelaxation : ORGamma<LPRelaxation>
 -(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model;
--(ORFloat) dual: (id<ORConstraint>) c;
--(ORFloat) reducedCost: (id<ORVar>) x;
--(ORFloat) floatValue: (id<ORVar>) x;
--(ORFloat) objective;
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORVar>) x;
+-(ORDouble) dblValue: (id<ORVar>) x;
+-(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
--(ORFloat) lowerBound: (id<ORVar>) v;
--(ORFloat) upperBound: (id<ORVar>) v;
--(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb;
--(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub;
+-(ORDouble) lowerBound: (id<ORVar>) v;
+-(ORDouble) upperBound: (id<ORVar>) v;
+-(void) updateLowerBound: (id<ORVar>) v with: (ORDouble) lb;
+-(void) updateUpperBound: (id<ORVar>) v with: (ORDouble) ub;
 @end
 
+
+@interface ORSolution (LPSolver)
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORRealVar>) x;
+@end
 
 // LPSolverFactory
 @interface LPSolverFactory : NSObject

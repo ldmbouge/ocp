@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
@@ -58,8 +55,8 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          
          [cp solve: ^{
-            [cp labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allgames at:i]];}];
-            [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allteams at:i]];}];
+            [cp labelArray: allgames orderedBy: ^ORDouble(ORInt i) { return [cp domsize:[allgames at:i]];}];
+            [cp labelArray: allteams orderedBy: ^ORDouble(ORInt i) { return [cp domsize:[allteams at:i]];}];
             ORLong endTime = [ORRuntimeMonitor cputime];
             printf("Solution \n");
             for(ORInt p = 1; p <= n/2; p++) {
@@ -73,7 +70,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);         
-         [cp release];
          [ORFactory shutdown];
          return r;
       }];

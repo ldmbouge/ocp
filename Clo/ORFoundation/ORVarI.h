@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,17 +10,17 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORArray.h"
-#import "ORSet.h"
-#import "ORConstraint.h"
-#import "ORVar.h"
-#import "ORExprI.h"
+#import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORVisit.h>
 
 
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
-// [ldm] All the methods below were missing??????
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker bounds: (id<ORIntRange>) domain;
 -(id<ORIntRange>) domain;
 -(ORInt) value;
 -(ORInt)scale;
@@ -51,13 +51,13 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORFloatVarI : ORExprI<ORFloatVar>
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker;
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker up: (ORFloat) up;
--(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
+@interface ORRealVarI : ORExprI<ORRealVar>
+-(ORRealVarI*) init: (id<ORTracker>) tracker;
+-(ORRealVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up;
+-(ORRealVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up;
 -(ORBool) hasBounds;
--(ORFloat) low;
--(ORFloat) up;
+-(ORDouble) low;
+-(ORDouble) up;
 -(void) visit: (ORVisitor*)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
 -(id) initWithCoder:(NSCoder *)aDecoder;

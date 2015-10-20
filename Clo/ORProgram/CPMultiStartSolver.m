@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,15 +9,12 @@
  
  ***********************************************************************/
 
-#import <ORUtilities/ORConcurrency.h>
-#import <ORFoundation/ORExplorer.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORModeling/ORModeling.h>
 #import <ORProgram/CPMultiStartSolver.h>
-#import <ORProgram/CPBaseHeuristic.h>
+#import <ORProgram/ORProgram.h>
+#import <ORModeling/ORModeling.h>
+
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
-#import <ORFoundation/ORExprEval.h>
 
 
 /******************************************************************************************/
@@ -30,7 +27,7 @@
    ORInt          _nb;
    NSCondition*   _terminated;
    ORInt          _nbDone;
-   id<ORCPSolutionPool> _sPool;
+   id<ORSolutionPool> _sPool;
 }
 -(CPMultiStartSolver*) initCPMultiStartSolver: (ORInt) k
 {
@@ -43,7 +40,7 @@
    
    _terminated = [[NSCondition alloc] init];
    
-   _sPool   = (id<ORCPSolutionPool>) [ORFactory createSolutionPool];
+   _sPool   = (id<ORSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
@@ -64,6 +61,10 @@
 {
    [_source release];
    _source = [src retain];
+}
+-(id<ORModel>)       source
+{
+   return _source;
 }
 
 -(ORInt) nb
@@ -211,14 +212,14 @@
 {
    return [[self worker] forall: S suchThat: filter orderedBy: order do: body];
 }
--(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
    id<ORForall> forall = [ORControl forall: [self worker] set: S];
    [forall orderedBy:o1];
    [forall orderedBy:o2];
    [forall do: b];
 }
--(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
    id<ORForall> forall = [ORControl forall: [self worker] set: S];
    [forall suchThat: suchThat];
@@ -227,13 +228,13 @@
    [forall do: b];
 }
 
--(void) try: (ORClosure) left or: (ORClosure) right
+-(void) try: (ORClosure) left alt: (ORClosure) right
 {
-   [[self worker] try: left or: right];
+   [[self worker] try: left alt: right];
 }
--(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter do: (ORInt2Void) body
 {
-   [[self worker] tryall: range suchThat: filter in: body];
+   [[self worker] tryall: range suchThat: filter do: body];
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
@@ -241,7 +242,7 @@
 }
 -(void)              tryall: (id<ORIntIterable>) range
                    suchThat: (ORInt2Bool) filter
-                  orderedBy: (ORInt2Float)o1
+                  orderedBy: (ORInt2Double)o1
                          in: (ORInt2Void) body
                   onFailure: (ORInt2Void) onFailure
 {
@@ -327,7 +328,7 @@
 {
    [[self worker] labelArrayFF:x];
 }
--(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
+-(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy
 {
    [[self worker] labelArray: x orderedBy: orderedBy];
 }
@@ -342,6 +343,22 @@
 -(void) label: (id<ORIntVar>) mx
 {
    [[self worker] label: mx];
+}
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o
+{
+   return [[self worker] selectValue: v by: o];
+}
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
+{
+   return [[self worker] selectValue: v by: o1 then: o2];
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
+{
+   return [[self worker] label: v by:o1 then:o2];
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Double) o
+{
+   return [[self worker] label: v by: o];
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
@@ -359,11 +376,11 @@
 {
    [[self worker] gthen: var with: val];
 }
--(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+-(void) lthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [[self worker] lthen: var with: val];
 }
--(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+-(void) gthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [[self worker] gthen: var with: val];
 }
@@ -372,13 +389,13 @@
 {
    [[self worker] restrict: var to: S];
 }
--(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+-(void) realLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
-   [[self worker] floatLthen: var with: val];
+   [[self worker] realLthen: var with: val];
 }
--(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+-(void) realGthen: (id<ORRealVar>) var with: (ORDouble) val
 {
-   [[self worker] floatGthen: var with: val];
+   [[self worker] realGthen: var with: val];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
@@ -391,6 +408,10 @@
 -(void) once: (ORClosure) cl
 {
    [[self worker] once: cl];
+}
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   [[self worker] try: left then: right];
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
@@ -418,6 +439,17 @@
    for(ORInt k = 0; k < _nb; k++)   
       [_solver[k] onExit: onExit];
 }
+-(void) clearOnSolution
+{
+   for(ORInt k = 0; k < _nb; k++)
+      [_solver[k] clearOnSolution];
+}
+-(void) clearOnExit
+{
+   for(ORInt k = 0; k < _nb; k++)
+      [_solver[k] clearOnExit];
+}
+
 -(void) doOnSolution
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
@@ -426,7 +458,22 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
 }
--(id<ORCPSolutionPool>) solutionPool
+-(void) defaultSearch
+{
+   id<CPHeuristic> h = [self createFF];
+   [self solveAll:^{
+      [self labelHeuristic:h];
+   }];
+}
+-(void) search:(void*(^)())stask
+{
+   //TODO: This is not correct yet.
+   [self solveAll:^{
+      id<ORSTask> theTask = (id)stask();
+      [theTask execute];
+   }];
+}
+-(id<ORSolutionPool>) solutionPool
 {
    return _sPool;
 }
@@ -548,44 +595,23 @@
 {
    return [[self worker] member: v in: x];
 }
--(ORFloat) floatValue: (id<ORFloatVar>) x
+-(ORDouble) dblValue: (id<ORRealVar>) x
 {
-   return [((id<CPProgram>)[self worker]) floatValue: x];
+   return [((id<CPProgram>)[self worker]) dblValue: x];
 }
--(ORFloat) paramFloatValue: (id<ORFloatParam>)x
-{
-    return [[self worker] paramFloatValue: x];
-}
--(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
-{
-    [[self worker] paramFloat: p setValue: val];
-    return val;
-}
--(ORFloat) floatExprValue: (id<ORExpr>)e {
-    ORFloatExprEval* eval = [[ORFloatExprEval alloc] initORFloatExprEval: self];
-    ORFloat v = [eval floatValue: e];
-    [eval release];
-    return v;
-}
--(ORInt) intExprValue: (id<ORExpr>)e {
-    ORIntExprEval* eval = [[ORIntExprEval alloc] initORIntExprEval: self];
-    ORInt v = [eval intValue: e];
-    [eval release];
-    return v;
-}
--(ORFloat) domwidth:(id<ORFloatVar>)x
+-(ORDouble) domwidth:(id<ORRealVar>)x
 {
    return [[self worker] domwidth: x];
 }
--(ORFloat) floatMin:(id<ORFloatVar>)x
+-(ORDouble) dblMin:(id<ORRealVar>)x
 {
-   return [[self worker] floatMin:x];
+   return [[self worker] dblMin:x];
 }
--(ORFloat) floatMax:(id<ORFloatVar>)x
+-(ORDouble) dblMax:(id<ORRealVar>)x
 {
-   return [[self worker] floatMax:x];
+   return [[self worker] dblMax:x];
 }
--(void) assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x
+-(void) assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
    return [[self worker] assignRelaxationValue:  f to:  x];
 }
@@ -597,16 +623,28 @@
 {
    return [[self worker] maxBound:(id)x];
 }
+-(ORBool) allBound:(id<ORIdArray>) x
+{
+   return [[self worker] allBound:x];
+}
+-(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x
+{
+   return [[self worker] smallestDom:x];
+}
 -(NSSet*)constraints:(id<ORVar>)x
 {
    return [[self worker] constraints:x];
 }
--(id<ORCPSolution>) captureSolution
+-(id<ORSolution>) captureSolution
 {
-   return (id<ORCPSolution>) [[self worker] captureSolution];
+   return (id<ORSolution>) [[self worker] captureSolution];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    return [[self worker] concretize: o];
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[self worker] objectiveValue];
 }
 @end

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,6 +35,10 @@
 {
    [p setGroup:self];
 }
+-(void)assignIdToConstraint:(id<ORConstraint>)c
+{
+   [_engine assignIdToConstraint:c];
+}
 -(void)setGroup:(id<CPGroup>)g
 {
    assert(0);
@@ -58,13 +62,13 @@
 {
     [_closureQueue[HIGHEST_PRIO] enQueue: cb cstr: c];
 }
-static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
+static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<CPConstraint>* last)
 {
-   *last = cb.cstr;
-   if (cb.cb)
-      cb.cb();
+   *last = forCstr;
+   if (cb)
+      cb();
    else {
-      CPCoreConstraint* cstr = cb.cstr;
+      CPCoreConstraint* cstr = forCstr;
       if (cstr->_todo == CPChecked)
          return ORSkip;
       else {
@@ -82,6 +86,8 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
    __block id<CPConstraint> last = nil;
    __block ORInt nbp = 0;
    return tryfail(^ORStatus{
+      ORClosure cb;
+      id<CPConstraint> forCstr;
       while (!done) {
          
          while (ISLOADED(_valueClosureQueue)) {
@@ -94,7 +100,8 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
             --p;
          done = p < LOWEST_PRIO;
          while (!done) {
-            status = executeClosure([_closureQueue[p] deQueue],&last);
+            [_closureQueue[p] deQueue:&cb forCstr:&forCstr];
+            status = executeClosure(cb,forCstr,&last);
             nbp += status !=ORSkip;
             if (ISLOADED(_valueClosureQueue))
                break;
@@ -105,15 +112,19 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
          }
       }
       while (ISLOADED(_closureQueue[ALWAYS_PRIO])) {
-         ORStatus as = executeClosure([_closureQueue[ALWAYS_PRIO] deQueue],&last);
+         [_closureQueue[ALWAYS_PRIO] deQueue:&cb forCstr:&forCstr];
+         ORStatus as = executeClosure(cb,forCstr,&last);
          nbp += as != ORSkip;
          assert(as != ORFailure);
       }
       [_engine incNbPropagation:nbp];
       return status;
    }, ^ORStatus{
+      ORClosure cb;
+      id<CPConstraint> forCstr;
       while (ISLOADED(_closureQueue[ALWAYS_PRIO])) {
-         ORStatus as = executeClosure([_closureQueue[ALWAYS_PRIO] deQueue],&last);
+         [_closureQueue[ALWAYS_PRIO] deQueue:&cb forCstr:&forCstr];
+         ORStatus as = executeClosure(cb,forCstr,&last);
          nbp += as != ORSkip;
          assert(as != ORFailure);
       }
@@ -155,6 +166,21 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
    }
    _inGroup[_nbIn++] = p;
    [p setGroup:self];
+   [self assignIdToConstraint:p];
+}
+-(void)assignIdToConstraint:(id<ORConstraint>)c
+{
+   [_engine assignIdToConstraint:c];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CPBergeGroup(%p):",self];
+   for(ORInt i=0;i<_nbIn;i++) {
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
+   }
+   [buf appendString:@"\n\t>"];
+   return buf;
 }
 -(void) post
 {
@@ -173,8 +199,10 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
    memset(_map,0,sizeof(ORInt)*sz);
    _map -= _low;
    for(ORInt i=0;i < _nbIn;i++) 
-      _map[[_inGroup[i] getId]] = i;
+      _map[_inGroup[i].getId] = i;
    memset(_scanMap,0,sizeof(CPClosureList*)*_nbIn);
+   for(ORInt i=0;i<_nbIn;i++)
+      [_inGroup[i] post];
 }
 -(void)scheduleClosure:(CPClosureList*)evt
 {
@@ -197,18 +225,19 @@ static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
       for(ORInt k=0;k<_nbIn;k++) {
          CPClosureList* evt = _scanMap[k];
          if (evt) {
-            ORStatus status = executeClosure((CPClosureEntry){evt->_trigger,evt->_cstr},&last);
+            ORStatus status = executeClosure(evt->_trigger,evt->_cstr,&last);
+            _scanMap[k] = nil;
             nbp += status !=ORSkip;
          }
       }
       for(ORInt k=_nbIn-1;k>=0;k--) {
          CPClosureList* evt = _scanMap[k];
          if (evt) {
-            ORStatus status = executeClosure((CPClosureEntry){evt->_trigger,evt->_cstr},&last);
+            ORStatus status = executeClosure(evt->_trigger,evt->_cstr,&last);
+            _scanMap[k] = nil;
             nbp += status !=ORSkip;
          }
       }
-      memset(_scanMap,0,sizeof(CPClosureList*)*_nbIn);
       [_engine incNbPropagation:nbp];
       return ORSuspend;
    }, ^ORStatus{

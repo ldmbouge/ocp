@@ -15,6 +15,6 @@
 -(ORIntParamI*) initORIntParamI: (id<ORTracker>) track initialValue: (ORInt)val;
 @end
 
-@interface ORFloatParamI : ORExprI<ORFloatParam,NSCoding>
--(ORIntParamI*) initORFloatParamI: (id<ORTracker>) track initialValue: (ORFloat)val;
+@interface ORRealParamI : ORExprI<ORRealParam,NSCoding>
+-(ORRealParamI*) initORRealParamI: (id<ORTracker>) track initialValue: (ORDouble)val;
 @end

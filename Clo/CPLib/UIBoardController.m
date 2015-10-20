@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,9 @@
  ***********************************************************************/
 
 #import "UIBoardController.h"
-#import "CPConstraintI.h"
-#import "CPIntVarI.h"
-#import "CPEngineI.h"
-#import "CPWatch.h"
+#import <CPUKernel/CPConstraintI.h>
+#import <objcp/CPIntVarI.h>
+#import <objcp/CPWatch.h>
 
 
 @interface CPGrid : NSObject {
@@ -58,7 +57,7 @@
 }
 -(void)drawRect:(CGRect)dirtyRect inView:(UIView*)view
 {
-   CGRect bnds  = [view frame];
+   CGRect bnds  = [view bounds];
    NSInteger nbRows = _rows.up - _rows.low + 1;
    NSInteger nbCols = _cols.up - _cols.low + 1;
    float stripW = bnds.size.width / nbCols;
@@ -127,11 +126,11 @@
    }
    [_drawOn performSelectorOnMainThread:@selector(setNeedsDisplay) withObject:0 waitUntilDone:NO];
 }
--(void)watchSearch:(id<CPProgram>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf
+-(void)watchSearch:(id<ORExplorer>)explorer onChoose:(ORClosure)onc onFail:(ORClosure)onf
 {
-   [[cp explorer] setController: [[CPViewController alloc] initCPViewController:[[cp explorer] controller]
-                                                                       onChoose:onc
-                                                                         onFail:onf]];
+   [explorer setController: [[CPViewController alloc] initCPViewController:[explorer controller]
+                                                                  onChoose:onc
+                                                                    onFail:onf]];
 }
 
 -(void)pause

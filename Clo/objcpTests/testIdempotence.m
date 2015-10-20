@@ -1,12 +1,15 @@
-//
-//  testIdempotence.m
-//  Clo
-//
-//  Created by Laurent Michel on 1/17/14.
-//
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORAVLTree.h>
 #import <ORModeling/ORModeling.h>
@@ -14,7 +17,7 @@
 #import <objcp/CPObjectQueue.h>
 #import <objcp/CPFactory.h>
 
-@interface testIdempotence : SenTestCase
+@interface testIdempotence : XCTestCase
 
 @end
 

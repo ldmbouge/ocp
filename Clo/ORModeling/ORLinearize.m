@@ -11,13 +11,30 @@
 #import "ORModelI.h"
 #import "ORExprI.h"
 #import <ORFoundation/ORVisit.h>
+#import <ORScheduler/ORScheduler.h>
 
-@interface ORLinearizeConstraint : ORVisitor<NSObject>
+@interface ORLinearizeConstraint : ORVisitor<NSObject> {
+@protected
+    id<ORAddToModel>  _model;
+    NSMapTable*   _binMap;
+    id<ORExpr> _exprResult;
+}
 -(id)init:(id<ORAddToModel>)m;
 
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
 -(id<ORIntRange>) unionOfVarArrayRanges: (id<ORExprArray>)arr;
 -(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr;
+@end
+
+@interface ORLinearizeSchedConstraint : ORLinearizeConstraint
+-(id)init:(id<ORAddToModel>)m taskMapping: (NSMapTable*)taskMapping;
+-(void) noOverlap: (id<ORTaskVar>) t0 with: (id<ORTaskVar>) t1;
+@end
+
+// Time Indexed linearization
+@interface ORLinearizeSchedConstraintTI : ORLinearizeConstraint
+-(id)init:(id<ORAddToModel>)m taskMapping: (NSMapTable*)taskMapping resourceMapping: (NSMapTable*)resMapping
+indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon;
 @end
 
 @interface ORLinearizeObjective : ORVisitor<NSObject>
@@ -26,22 +43,22 @@
 @end
 
 @implementation ORLinearize {
-   id<ORAddToModel> _into;
+    id<ORAddToModel> _into;
 }
 -(id)initORLinearize:(id<ORAddToModel>)into
 {
-   self = [super init];
-   _into = into;
-   return self;
+    self = [super init];
+    _into = into;
+    return self;
 }
 
 +(id<ORModel>) linearize:(id<ORModel>)model
 {
-   id<ORModel> lin = [ORFactory createModel];
-   ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model annotation:nil];
-   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize :lm];
-   [linearizer apply: model with:nil]; //TOFIX
-   return lin;
+    id<ORModel> lin = [ORFactory createModel];
+    ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model annotation:nil];
+    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize :lm];
+    [linearizer apply: model with:nil]; //TOFIX
+    return lin;
 }
 
 -(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
@@ -52,7 +69,7 @@
     } onMutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
     } onImmutables:^(id<ORObject> x) {
-       //NSLog(@"Got an object: %@",x);
+        //NSLog(@"Got an object: %@",x);
     } onConstraints:^(id<ORConstraint> c) {
         [c visit: lc];
     } onObjective:^(id<ORObjectiveFunction> o) {
@@ -64,11 +81,7 @@
 
 @end
 
-@implementation ORLinearizeConstraint {
-    id<ORAddToModel>  _model;
-    NSMapTable*   _binMap;
-    id<ORExpr> _exprResult;
-}
+@implementation ORLinearizeConstraint
 -(id)init:(id<ORAddToModel>) m;
 {
     if ((self = [super init]) != nil) {
@@ -91,14 +104,15 @@
 }
 -(id<ORIntVarArray>) binarizeIntVar:(id<ORIntVar>)x
 {
-   id<ORIntVarArray> o = [ORFactory intVarArray:_model range:[x domain] with:^id<ORIntVar>(ORInt i) {
-      return [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-   }];
-   id<ORExpr> sumBinVars = Sum(_model, i,[x domain], o[i]);
-   id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] mul: @(i)]);
-   [_model addConstraint: [sumBinVars eq: @(1)]];
-   [_model addConstraint: [sumExpr eq: x]];
-   return o;
+    id<ORIntVarArray> o = [ORFactory intVarArray:_model range:[x domain] with:^id<ORIntVar>(ORInt i) {
+        return [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+    }];
+    id<ORExpr> sumBinVars = Sum(_model, i,[x domain], o[i]);
+    id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] mul: @(i)]);
+    [_model addConstraint: [sumBinVars eq: @(1)]];
+    [_model addConstraint: [sumExpr eq: x]];
+    [[[_model modelMappings] tau] set: o forKey: x];
+    return o;
 }
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var
 {
@@ -117,7 +131,7 @@
 -(void) visitIntVar: (id<ORIntVar>) v  { _exprResult = v; }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   // [ldm] this code needs to be revised if the input is an array of expressions. 
+    // [ldm] this code needs to be revised if the input is an array of expressions.
     id<ORIntVarArray> varsOfC = (id) [cstr array];
     id<ORIntRange> dom = [self unionOfVarArrayRanges: varsOfC];
     for (int d = [dom low]; d <= [dom up]; d++) {
@@ -133,7 +147,19 @@
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {
-   assert(NO);
+    assert(NO);
+}
+-(void) visitMultiKnapsack:(id<ORMultiKnapsack>) cstr
+{
+    assert(NO);
+}
+-(void) visitMultiKnapsackOne:(id<ORMultiKnapsackOne>) cstr
+{
+    assert(NO);
+}
+-(void) visitMeetAtmost:(id<ORMeetAtmost>) cstr
+{
+    assert(NO);
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
@@ -204,13 +230,14 @@
         case ORRLEq: {
             left = [self linearizeExpr: [binExpr left]];
             right = [self linearizeExpr: [binExpr right]];
-            [_model addConstraint: [left leq: right]];
+            id<ORConstraint> c = [_model addConstraint: [left leq: right]];
+            [[[_model modelMappings] tau] set: c forKey: cstr];
         }break;
-       case ORRGEq: {
-           left = [self linearizeExpr: [binExpr left]];
-           right = [self linearizeExpr: [binExpr right]];
-           [_model addConstraint: [left geq: right]];
-       }break;
+        case ORRGEq: {
+            left = [self linearizeExpr: [binExpr left]];
+            right = [self linearizeExpr: [binExpr right]];
+            [_model addConstraint: [left geq: right]];
+        }break;
         default:
             assert(true);
             break;
@@ -224,7 +251,7 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+-(void) visitRealEqualc: (id<ORRealEqualc>)c
 {
 }
 -(void) visitEqualc: (id<OREqualc>)c
@@ -296,25 +323,25 @@
 -(void) visitElementVar: (id<ORElementVar>)c
 {
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+-(void) visitRealElementCst: (id<ORRealElementCst>) c
 {
 }
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   _exprResult = e;
+    _exprResult = e;
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
     _exprResult = e;
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble:(id<ORMutableDouble>)e
 {
-   _exprResult = e;
+    _exprResult = e;
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitDouble:(id<ORDoubleNumber>)e
 {
-   _exprResult = e;
+    _exprResult = e;
 }
 
 -(void) visitExprPlusI: (id<ORExpr>) e  {
@@ -336,8 +363,8 @@
 }
 -(void) visitExprProdI: (id<ORExpr>) e
 {
-   ORExprProdI* pExpr = (ORExprProdI*)e;
-   [[pExpr expr] visit: self];
+    ORExprProdI* pExpr = (ORExprProdI*)e;
+    [[pExpr expr] visit: self];
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e  {
     ORExprCstSubI* cstSubExpr = (ORExprCstSubI*)e;
@@ -345,10 +372,10 @@
     // Create the index variable if needed.
     if([[cstSubExpr index] conformsToProtocol: @protocol(ORIntVar)]) indexVar = (id<ORIntVar>)[cstSubExpr index];
     else {
-       id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
-       id<ORIntRange> dom = [ORFactory intRange:_model low:[linearIndexExpr min] up:[linearIndexExpr max]];
-       indexVar = [ORFactory intVar: _model domain: dom];
-       [_model addConstraint: [indexVar eq: linearIndexExpr]];
+        id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
+        id<ORIntRange> dom = [ORFactory intRange:_model low:[linearIndexExpr min] up:[linearIndexExpr max]];
+        indexVar = [ORFactory intVar: _model domain: dom];
+        [_model addConstraint: [indexVar eq: linearIndexExpr]];
     }
     id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
     id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
@@ -359,26 +386,27 @@
     [_model addConstraint: [sumVar eq: linearSumExpr]];
     _exprResult = sumVar;
 }
--(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*)cstSubExpr
+-(void) visitExprCstDoubleSubI: (ORExprCstDoubleSubI*)cstSubExpr
 {
-   id<ORIntVar> indexVar;
-   // Create the index variable if needed.
-   if([[cstSubExpr index] conformsToProtocol: @protocol(ORIntVar)])
-      indexVar = (id<ORIntVar>)[cstSubExpr index];
-   else {
-      id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
-      id<ORIntRange> dom = [ORFactory intRange:_model low:[linearIndexExpr min] up:[linearIndexExpr max]];
-      indexVar = [ORFactory intVar: _model domain: dom];
-      [_model addConstraint: [indexVar eq: linearIndexExpr]];
-   }
-   id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
-   id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
-      return [[binIndexVar at: i] mul: @([[cstSubExpr array] at: i ])];
-   }];
-   id<ORFloatVar> sumVar = [ORFactory floatVar: _model low:[linearSumExpr min] up:[linearSumExpr max]];
-   [_model addConstraint: [sumVar eq: linearSumExpr]];
-   _exprResult = sumVar;
+    id<ORIntVar> indexVar;
+    // Create the index variable if needed.
+    if([[cstSubExpr index] conformsToProtocol: @protocol(ORIntVar)])
+        indexVar = (id<ORIntVar>)[cstSubExpr index];
+    else {
+        id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
+        id<ORIntRange> dom = [ORFactory intRange:_model low:[linearIndexExpr min] up:[linearIndexExpr max]];
+        indexVar = [ORFactory intVar: _model domain: dom];
+        [_model addConstraint: [indexVar eq: linearIndexExpr]];
+    }
+    id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
+    id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
+        return [[binIndexVar at: i] mul: @([[cstSubExpr array] at: i ])];
+    }];
+    id<ORRealVar> sumVar = [ORFactory realVar: _model low:[linearSumExpr min] up:[linearSumExpr max]];
+    [_model addConstraint: [sumVar eq: linearSumExpr]];
+    _exprResult = sumVar;
 }
+
 @end
 
 @implementation ORLinearizeObjective {
@@ -401,13 +429,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   //assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
-   [_model minimize:[v expr]];
+    //assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
+    [_model minimize:[v expr]];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   //assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
-   [_model maximize:[v expr]];
+    //assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
+    [_model maximize:[v expr]];
 }
 -(void) visitIntVar: (id<ORIntVar>) v  { _result = v; }
 
@@ -416,12 +444,342 @@
 @implementation ORFactory(Linearize)
 +(id<ORModel>) linearizeModel:(id<ORModel>)m
 {
-   id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
-   ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
-   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
-   [linearizer apply: m with:nil]; // TOFIX
-   [batch release];
-   [linearizer release];
-   return lm;
+    id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
+    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
+    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
+    [linearizer apply: m with:nil]; // TOFIX
+    [batch release];
+    [linearizer release];
+    return lm;
+}
++(id<ORModel>) linearizeSchedulingModel: (id<ORModel>)m encoding: (MIPSchedEncoding)enc {
+    id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
+    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
+    
+    // Choose the correct linearizer
+    id<ORModelTransformation> linearizer;
+    if(enc == MIPSchedTimeIndexed) linearizer = [[ORLinearizeSchedulingTI alloc] initORLinearizeSched: batch];
+    else linearizer = [[ORLinearizeScheduling alloc] initORLinearizeSched:batch];
+    
+    [linearizer apply: m with:nil]; // TOFIX
+    [batch release];
+    [linearizer release];
+    return lm;
 }
 @end
+
+
+// Standard Scheduling
+@implementation ORLinearizeSchedConstraint {
+    NSMapTable* _taskVarMap;
+}
+-(id) init:(id<ORAddToModel>)m taskMapping:(NSMapTable *)taskMapping {
+    self = [super init: m];
+    if(self) {
+        _taskVarMap = taskMapping;
+    }
+    return self;
+}
+
+-(void) noOverlap: (id<ORTaskVar>) t0 with: (id<ORTaskVar>) t1 {
+    id<ORIntVar> sx0 = [_taskVarMap objectForKey: t0];
+    id<ORIntVar> sx1 = [_taskVarMap objectForKey: t1];
+    ORInt d0 = [[t0 duration] up];
+    ORInt d1 = [[t1 duration] up];
+    
+    ORInt M = 99999;
+    id<ORIntVar> z = [ORFactory intVar: _model domain: RANGE(_model, 0, 1)];
+    [_model addVariable: z];
+    [_model addConstraint: [[sx0 plus: @(d0)] leq: [sx1 plus: [z mul: @(M)]]]];
+    [_model addConstraint: [[sx1 plus: @(d1)] leq: [sx0 plus: [[@(1) sub: z] mul: @(M)]]]];
+}
+
+//-(void) visitPrecedes: (id<ORPrecedes>) cstr
+//{
+//}
+-(void) visitTaskPrecedes: (id<ORPrecedes>) cstr
+{
+    id<ORTaskPrecedes> precedesCstr = (id<ORTaskPrecedes>)cstr;
+    id<ORIntVar> sx0 = [_taskVarMap objectForKey: [precedesCstr before]];
+    ORInt d0 = [[[precedesCstr before] duration] up];
+    id<ORIntVar> sx1 = [_taskVarMap objectForKey: [precedesCstr after]];
+    [_model addConstraint: [[sx0 plus: @(d0)] leq: sx1]];
+}
+//-(void) visitTaskDuration: (id<ORTaskDuration>) cstr
+//{
+//}
+//-(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
+//{
+//}
+//-(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr;
+//{
+//}
+-(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr
+{
+    id<ORIntVar> sx0 = [_taskVarMap objectForKey: [cstr task]];
+    ORInt duration = [[[cstr task] duration] up];
+    [_model addConstraint: [[sx0 plus: @(duration)] leq: [cstr date]]];
+}
+//-(void) visitTaskCumulative: (id<ORTaskCumulative>) cstr
+//{
+//}
+-(void) visitTaskDisjunctive: (id<ORTaskDisjunctive>) cstr
+{
+    id<ORTaskVarArray> tasks = [cstr taskVars];
+    for(ORInt i = [tasks low]+1; i <= [tasks up]; i++) {
+        for(ORInt j = [tasks low]; j < i; j++) {
+            id<ORTaskVar> t0 = [tasks objectAtIndexedSubscript: i];
+            id<ORTaskVar> t1 = [tasks objectAtIndexedSubscript: j];
+            [self noOverlap: t0 with: t1];
+        }
+    }
+}
+//-(void) visitSoftTaskDisjunctive:  (id<ORSoftTaskDisjunctive> ) cstr
+//{
+//}
+//-(void) visitCumulative: (id<ORCumulative>) cstr
+//{
+//}
+//-(void) visitDifference: (id<ORDifference>) cstr
+//{
+//}
+//-(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr
+//{
+//}
+//-(void) visitDiffReifyLEqual:  (id<ORDiffReifyLEqual> ) cstr
+//{
+//}
+//-(void) visitDiffImplyLEqual:  (id<ORDiffImplyLEqual> ) cstr
+//{
+//}
+@end
+
+
+@implementation ORLinearizeScheduling {
+    id<ORAddToModel> _into;
+    NSMapTable*   _taskVarMap;
+}
+-(id)initORLinearizeSched:(id<ORAddToModel>)into
+{
+    self = [super init];
+    _into = into;
+    _taskVarMap = [[NSMapTable alloc] init];
+    return self;
+}
+
+//+(id<ORModel>) linearize:(id<ORModel>)m
+//{
+//   id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
+//   ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
+//   id<ORModelTransformation> linearizer = [[ORLinearizeScheduling alloc] initORLinearizeSched:batch];
+//   [linearizer apply: m with:nil]; // TOFIX
+//   [batch release];
+//   [linearizer release];
+//   return lm;
+//}
+
+-(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
+{
+    ORLinearizeSchedConstraint* lc = [[ORLinearizeSchedConstraint alloc] init: _into taskMapping: _taskVarMap];
+    [m applyOnVar:^(id<ORVar> x) {
+        if([x conformsToProtocol: @protocol(ORTaskVar)]) {
+            id<ORTaskVar> task = (id<ORTaskVar>)x;
+            id<ORIntVar> sx = [ORFactory intVar: _into domain: [task horizon]];
+            [_into addVariable: sx];
+            NSLog(@"%@ (dur: %i)==> %@", task, [[task duration] up], sx);
+            [_taskVarMap setObject: sx forKey: task];
+        }
+        else {
+            [_into addVariable: x];
+        }
+    } onMutables:^(id<ORObject> x) {
+        //NSLog(@"Got an object: %@",x);
+    } onImmutables:^(id<ORObject> x) {
+        //NSLog(@"Got an object: %@",x);
+    } onConstraints:^(id<ORConstraint> c) {
+        [c visit: lc];
+    } onObjective:^(id<ORObjectiveFunction> o) {
+        ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: _into];
+        [o visit: lo];
+    }];
+    [lc release];
+}
+@end
+
+// Time Indexed
+@implementation ORLinearizeSchedConstraintTI {
+    NSMapTable* _taskVarMap;
+    NSMapTable* _resMap;
+    id<ORIntVar>***   _y;
+    ORInt _horizon;
+}
+-(id)init:(id<ORAddToModel>)m taskMapping: (NSMapTable*)taskMapping resourceMapping: (NSMapTable*)resMapping
+indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon {
+    self = [super init: m];
+    if(self) {
+        _taskVarMap = taskMapping;
+        _resMap = resMapping;
+        _y = y;
+        _horizon = horizon;
+    }
+    return self;
+}
+//-(void) visitPrecedes: (id<ORPrecedes>) cstr
+//{
+//}
+-(void) visitTaskPrecedes: (id<ORPrecedes>) cstr
+{
+    id<ORTaskPrecedes> precedesCstr = (id<ORTaskPrecedes>)cstr;
+    ORInt j0 = [[_taskVarMap objectForKey: [precedesCstr before]] intValue];
+    ORInt d0 = [[[precedesCstr before] duration] up];
+    ORInt j1 = [[_taskVarMap objectForKey: [precedesCstr after]] intValue];
+    id<ORIntRange> r1 = RANGE(_model, 0, _horizon);
+    for(ORInt k = 0; k < [_resMap count]; k++) {
+        [_model addConstraint:
+         [Sum(_model, t, r1, [_y[k][j0][t] mul: @(t+d0)]) lt:
+          Sum(_model, t, r1, [_y[k][j1][t] mul: @(t)])]];
+    }
+}
+//-(void) visitTaskDuration: (id<ORTaskDuration>) cstr
+//{
+//}
+//-(void) visitTaskAddTransitionTime:  (id<ORTaskAddTransitionTime>) cstr
+//{
+//}
+//-(void) visitSumTransitionTimes:  (id<ORSumTransitionTimes>) cstr;
+//{
+//}
+-(void) visitTaskIsFinishedBy:  (id<ORTaskIsFinishedBy> ) cstr
+{
+    ORInt j0 = [[_taskVarMap objectForKey: [cstr task]] intValue];
+    ORInt d0 = [[[cstr task] duration] up];
+    id<ORIntRange> r1 = RANGE(_model, 0, _horizon);
+    for(ORInt k = 0; k < [_resMap count]; k++) {
+        [_model addConstraint: [Sum(_model, t, r1, [_y[k][j0][t] mul: @(t+d0)]) leq: [cstr date]]];
+    }
+}
+//-(void) visitTaskCumulative: (id<ORTaskCumulative>) cstr
+//{
+//}
+-(void) visitTaskDisjunctive: (id<ORTaskDisjunctive>) cstr
+{
+    id<ORTaskVarArray> tasks = [cstr taskVars];
+    id<ORIntArray> ji = [ORFactory intArray: _model range: [tasks range] value: 0];
+    id<ORIdMatrix> T = [ORFactory idMatrix: _model range: [tasks range] : RANGE(_model, 0, _horizon)];
+    for(ORInt j = [tasks low]; j <= [tasks up]; j++) {
+        id<ORTaskVar> task = [tasks at: j];
+        [ji set: [[_taskVarMap objectForKey: task] intValue] at: j];
+        for(ORInt t = 0; t <= _horizon; t++) {
+            [T set: RANGE(_model, max(0, t - [[task duration] up]+1), t) at: j : t];
+        }
+    }
+    ORInt ki = [[_resMap objectForKey: cstr] intValue];
+    for(ORInt t = 0; t <= _horizon; t++) {
+        id<ORExpr> sum = Sum(_model, j, [tasks range], Sum(_model, tt, [T at: j:t], _y[ki][[ji at: j]][tt]));
+        [_model addConstraint: [sum leq: @(1)]];
+    }
+}
+//-(void) visitSoftTaskDisjunctive:  (id<ORSoftTaskDisjunctive> ) cstr
+//{
+//}
+//-(void) visitCumulative: (id<ORCumulative>) cstr
+//{
+//}
+//-(void) visitDifference: (id<ORDifference>) cstr
+//{
+//}
+//-(void) visitDiffLEqual:  (id<ORDiffLEqual> ) cstr
+//{
+//}
+//-(void) visitDiffReifyLEqual:  (id<ORDiffReifyLEqual> ) cstr
+//{
+//}
+//-(void) visitDiffImplyLEqual:  (id<ORDiffImplyLEqual> ) cstr
+//{
+//}
+@end
+
+
+@implementation ORLinearizeSchedulingTI {
+    id<ORAddToModel> _into;
+    NSMapTable* _taskVarMap;
+    NSMapTable* _resMap;
+    id<ORIntVar>***   _y;
+}
+-(id)initORLinearizeSched:(id<ORAddToModel>)into
+{
+    self = [super init];
+    _into = into;
+    _taskVarMap = [[NSMapTable alloc] init];
+    _resMap = [[NSMapTable alloc] init];
+    return self;
+}
+-(ORInt) initializeMapping: (id<ORModel>)m {
+    ORInt horizon = 0;
+    ORInt taskCount = 0;
+    NSMutableArray* tasks = [[NSMutableArray alloc] init];
+    for(id<ORVar> x in [m variables]) {
+        if([x conformsToProtocol: @protocol(ORTaskVar)]) {
+            id<ORTaskVar> task = (id<ORTaskVar>)x;
+            if([[task horizon] up] > horizon) horizon = [[task horizon] up];
+            ORInt idx = (ORInt)[_taskVarMap count];
+            [_taskVarMap setObject: @(idx) forKey: task];
+            [tasks addObject: task];
+            taskCount++;
+        }
+    }
+    ORInt resCount = 0;
+    for(id<ORConstraint> c in [m constraints]) {
+        if([c conformsToProtocol: @protocol(ORTaskDisjunctive)]) {
+            ORInt idx = (ORInt)[_resMap count];
+            [_resMap setObject: @(idx) forKey: c];
+            resCount++;
+        }
+    }
+    _y = malloc(resCount * sizeof(id<ORIntVar>));
+    for(ORInt k = 0; k < resCount; k++) {
+        _y[k] = malloc(taskCount * sizeof(id<ORIntVar>));
+        for(ORInt j = 0; j < taskCount; j++) {
+            _y[k][j] = malloc((horizon+1) * sizeof(id<ORIntVar>));
+            for(ORInt t = 0; t <= horizon; t++) {
+                _y[k][j][t] = [ORFactory intVar: _into domain: RANGE(_into, 0, 1)];
+            }
+        }
+    }
+    // Add mapping constraints
+    for(id<ORTaskVar> task in tasks) {
+        ORInt j = [[_taskVarMap objectForKey: task] intValue];
+        ORInt release = [[task horizon] low];
+        ORInt due = [[task horizon] up];
+        ORInt dur = [[task duration] up];
+        for(ORInt k = 0; k < resCount; k++) {
+            id<ORIntRange> rng = RANGE(_into, release, due - dur);
+            [_into addConstraint: [Sum(_into, t, rng, _y[k][j][t]) eq: @(1)]];
+        }
+    }
+    return horizon;
+}
+-(void)apply:(id<ORModel>)m with:(id<ORAnnotation>)notes
+{
+    ORInt horizon = [self initializeMapping: m];
+    ORLinearizeSchedConstraintTI* lc = [[ORLinearizeSchedConstraintTI alloc] init: _into taskMapping: _taskVarMap resourceMapping: _resMap indexVars: _y horizon: horizon];
+    [m applyOnVar:^(id<ORVar> x) {
+        if(![x conformsToProtocol: @protocol(ORTaskVar)]) {
+            [_into addVariable: x];
+        }
+    } onMutables:^(id<ORObject> x) {
+        //NSLog(@"Got an object: %@",x);
+    } onImmutables:^(id<ORObject> x) {
+        //NSLog(@"Got an object: %@",x);
+    } onConstraints:^(id<ORConstraint> c) {
+        [c visit: lc];
+    } onObjective:^(id<ORObjectiveFunction> o) {
+        ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: _into];
+        [o visit: lo];
+    }];
+    [lc release];
+}
+
+
+@end
+

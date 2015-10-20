@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,15 +9,20 @@
  
  ***********************************************************************/
 
-#import "LPGurobi.h"
+#import <objmp/LPGurobi.h>
 #import <objmp/LPType.h>
 #import <objmp/LPSolverI.h>
+#import "gurobi_c.h"
 
 
+@implementation LPGurobiSolver {
+   struct _GRBenv*                _env;
+   struct _GRBmodel*              _model;
+   OROutcome                      _status;
+   LPObjectiveType                _objectiveType;
+}
 
-@implementation LPGurobiSolver;
-
--(LPGurobiSolver*) initLPGurobiSolver
+-(LPGurobiSolver*) init
 {
    self = [super init];
    int error = GRBloadenv(&_env, "");
@@ -79,18 +84,19 @@
 {
    int s = [obj size];
    int* idx = [obj col];
-   ORFloat* coef = [obj coef];
+   ORDouble* coef = [obj coef];
    _objectiveType = [obj type];
    for(ORInt i = 0; i < s; i++)
-      if (_objectiveType == LPminimize)
-         GRBsetdblattrelement(_model,"Obj",idx[i],coef[i]);
-      else
-         GRBsetdblattrelement(_model,"Obj",idx[i],-coef[i]);
+      GRBsetdblattrelement(_model,"Obj",idx[i],coef[i]);
+   if (_objectiveType == LPminimize)
+      GRBsetintattr(_model, "ModelSense", 1);
+   else
+      GRBsetintattr(_model, "ModelSense", -1);
 }
 
 -(void) addColumn: (LPColumnI*) col
 {
-   ORFloat o = [col objCoef];
+   ORDouble o = [col objCoef];
    if (_objectiveType == LPmaximize)
       o = -o;
    if ([col hasBounds])
@@ -108,9 +114,9 @@
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
 //   for(ORInt i = 0; i < 12; i++) {
-//      ORFloat lb;
+//      ORDouble lb;
 //      GRBgetdblattrelement(_model,"LB",i,&lb);
-//      ORFloat ub;
+//      ORDouble ub;
 //      GRBgetdblattrelement(_model,"UB",i,&ub);
 //      printf("Variable %i has bounds in lp: [%f,%f] \n",i,lb,ub);
 //   }
@@ -143,67 +149,49 @@
    return _status;
 }
 
--(ORFloat) value: (LPVariableI*) var
+-(ORDouble) value: (LPVariableI*) var
 {
-   ORFloat value;
+   ORDouble value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);
    return value;
 }
 
--(ORFloat) paramFloatValue: (LPParameterI*) param
+-(ORDouble) lowerBound: (LPVariableI*) var
 {
-    ORFloat v;
-    GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
-    return v;
-}
--(void) setParam: (LPParameterI*) param value: (ORFloat)val
-{
-    int cind[] = { [param cstrIdx] };
-    int vind[] = { [param coefIdx] };
-    double v[] = { val };
-    GRBchgcoeffs(_model, 1, cind, vind, v);
-}
-
-
--(ORFloat) lowerBound: (LPVariableI*) var
-{
-   ORFloat value;
+   ORDouble value;
    GRBgetdblattrelement(_model,"LB",[var idx],&value);
    return value;
 }
 
--(ORFloat) upperBound: (LPVariableI*) var
+-(ORDouble) upperBound: (LPVariableI*) var
 {
-   ORFloat value;
+   ORDouble value;
    GRBgetdblattrelement(_model,"UB",[var idx],&value);
    return value;
 }
 
--(ORFloat) objectiveValue
+-(ORDouble) objectiveValue
 {
-   ORFloat objVal;
+   ORDouble objVal;
    GRBgetdblattr(_model,"ObjVal",&objVal);
-   if (_objectiveType == LPmaximize)
-      return -objVal;
-   else
-      return objVal;
+   return objVal;
 }
 
--(ORFloat) reducedCost: (LPVariableI*) var
+-(ORDouble) reducedCost: (LPVariableI*) var
 {
-   ORFloat value;
+   ORDouble value;
    GRBgetdblattrelement(_model,"RC",[var idx],&value);
    return value;
 }
 
--(ORFloat) dual: (LPConstraintI*) cstr
+-(ORDouble) dual: (LPConstraintI*) cstr
 {
-   ORFloat value;
-   GRBgetdblattrelement(_model,"Pi",[cstr idx],&value);
+   ORDouble value;
+   GRBgetdblattrelement(_model,"PI",[cstr idx],&value);
    return value;
 }
 
--(void) setBounds: (LPVariableI*) var low: (ORFloat) low up: (ORFloat) up
+-(void) setBounds: (LPVariableI*) var low: (ORDouble) low up: (ORDouble) up
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);
    GRBsetdblattrelement(_model,"UB",[var idx],low);
@@ -222,14 +210,14 @@
    GRBupdatemodel(_model);
 }
 
--(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb
+-(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb
 {
 //   if (lb > [self lowerBound: var])
    GRBsetdblattrelement(_model,"LB",[var idx],lb);
    GRBupdatemodel(_model);
 }
 
--(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub
+-(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub
 {
 //   if (ub < [self upperBound: var])
    GRBsetdblattrelement(_model,"UB",[var idx],ub);
@@ -241,7 +229,7 @@
    GRBsetintparam(_env,name,val);
 }
 
--(void) setFloatParameter: (const char*) name val: (ORFloat) val
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val
 {
    GRBsetdblparam(_env,name,val);
 }
@@ -249,6 +237,25 @@
 -(void) setStringParameter: (const char*) name val: (char*) val
 {
    GRBsetstrparam(_env,name,val);
+}
+
+-(ORDouble) paramValue: (LPParameterI*) param
+{
+    ORDouble v;
+    int err = GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
+    if(err != 0) return DBL_MAX;
+    return v;
+}
+
+-(void) setParam: (LPParameterI*) param value: (ORDouble)val
+{
+    int cind[] = { [param cstrIdx] };
+    int vind[] = { [param coefIdx] };
+    double v[] = { val };
+    int err = GRBchgcoeffs(_model, 1, cind, vind, v);
+    //    GRBupdatemodel(_model);
+    if(err != 0)
+        NSLog(@"error setting gurobi parameter: %i", err);
 }
 
 -(ORStatus) postConstraint: (LPConstraintI*) cstr

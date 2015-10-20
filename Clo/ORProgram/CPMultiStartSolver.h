@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,10 @@
  
  ***********************************************************************/
 
-
-#import <Foundation/Foundation.h>
-#import <ORProgram/CPProgram.h> 
-#import <ORProgram/CPSolver.h>
+#import <ORProgram/CPProgram.h>
 
 // MultiStart DFS CPSolver
-@interface CPMultiStartSolver : NSObject<CPProgram>
+@interface CPMultiStartSolver : ORGamma<CPProgram>
 -(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
 -(void) setSource:(id<ORModel>)src;
 -(id<CPProgram>) at: (ORInt) i;

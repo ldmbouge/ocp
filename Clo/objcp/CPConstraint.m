@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,7 +26,9 @@
 #import "CPLexConstraint.h"
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
-#import "CPFloatConstraint.h"
+#import "CPRealConstraint.h"
+#import "CPIntSetConstraint.h"
+
 
 @implementation CPFactory (Constraint)
 
@@ -76,9 +78,9 @@
          @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];
          break;
       default:
-	NSLog(@"Default Consistency");
-	o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
-	break;
+         //NSLog(@"Default Consistency");
+         o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
+         break;
    }
    [[x tracker] trackMutable: o];
    return o;
@@ -126,9 +128,20 @@
 
 +(id<ORConstraint>) circuit: (id<CPIntVarArray>) x
 {
-   id<ORConstraint> o = [[CPCircuitI alloc] initCPCircuitI:x];
+   id<ORConstraint> o = [[CPCircuit alloc] initCPCircuit:x];
    [[x tracker] trackMutable: o];
    return o;
+}
++(id<ORConstraint>) subCircuit: (id<CPIntVarArray>) x
+{
+   id<ORConstraint> o = [[CPSubCircuit alloc] initCPSubCircuit:x];
+   [[x tracker] trackMutable: o];
+   return o;
+}
++(id<ORConstraint>) nocycle:(id<CPIntVarArray>)x
+{
+   assert(NO);
+   return nil;
 }
 
 +(id<ORConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize
@@ -145,9 +158,9 @@
    return o;
 }
 
-+(id<ORConstraint>) nocycle: (id<CPIntVarArray>) x
++(id<ORConstraint>) path: (id<CPIntVarArray>) x
 {
-   id<ORConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];
+   id<ORConstraint> o = [[CPPath alloc] initCPPath:x];
    [[x tracker] trackMutable: o];
    return o;
 }
@@ -191,6 +204,13 @@
       [literals addPositive: litView forValue:c];
    }
    return litView;
+}
+
++(id<ORConstraint>) imply: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
+{
+    id<ORConstraint> o = [[CPImplyEqualcDC alloc] initCPImplyEqualcDC: b when: x eq: i];
+    [[x engine] trackMutable: o];
+    return o;
 }
 
 +(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
@@ -551,63 +571,63 @@
 }
 @end
 
-@implementation CPFactory (ORFloat)
-+(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORCLevel)c
+@implementation CPFactory (ORReal)
++(id<CPConstraint>) realSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c
 {
-   id<CPConstraint> o = [[CPFloatSquareBC alloc] initCPFloatSquareBC:z equalSquare:x];
+   id<CPConstraint> o = [[CPRealSquareBC alloc] initCPRealSquareBC:z equalSquare:x];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatWeightedVar: (id<CPFloatVar>)z equal:(id<CPFloatVar>)x weight: (id<CPFloatParam>)w
++(id<CPConstraint>) realWeightedVar: (id<CPRealVar>)z equal:(id<CPRealVar>)x weight: (id<CPRealParam>)w
 {
-    id<CPConstraint> o = [[CPFloatWeightedVarBC alloc] initCPFloatWeightedVarBC: z equal: x weight: w];
+    id<CPConstraint> o = [[CPRealWeightedVarBC alloc] initCPRealWeightedVarBC: z equal: x weight: w];
     [[x tracker] trackMutable: o];
     return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
 {
-   id<CPConstraint> o = [[CPFloatEquationBC alloc] init:x coef:coefs eqi:c];
+   id<CPConstraint> o = [[CPRealEquationBC alloc] init:x coef:coefs eqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c
 {
-   id<CPConstraint> o = [[CPFloatINEquationBC alloc] init:x coef:coefs leqi:c];
+   id<CPConstraint> o = [[CPRealINEquationBC alloc] init:x coef:coefs leqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs geqi:(ORFloat)c
++(id<CPConstraint>) realEqualc: (id<CPIntVar>) x to:(ORDouble) c
 {
-   id<ORFloatArray> nc = [ORFactory floatArray:[coefs tracker] range:[coefs range] with:^ORFloat(ORInt k) {
-      return - [coefs at: k];
-   }];
-   id<CPConstraint> o = [[CPFloatINEquationBC alloc] init:x coef:nc leqi: - c];
+   id<CPConstraint> o = [[CPRealEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c
-{
-   id<CPConstraint> o = [[CPFloatEqualc alloc] init:x and:c];
-   [[x tracker] trackMutable:o];
-   return o;
-}
-+(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORCLevel)n
++(id<CPConstraint>) realElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n
 {
    id<CPConstraint> o = nil;
-   o = [[CPFloatElementCstBC alloc] init:x indexCstArray:c equal:y];
+   o = [[CPRealElementCstBC alloc] init:x indexCstArray:c equal:y];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x
++(id<CPConstraint>) realMinimize: (id<CPRealVar>) x
 {
-   id<CPConstraint> o = [[CPFloatVarMinimize alloc] init: x];
+   id<CPConstraint> o = [[CPRealVarMinimize alloc] init: x];
    [[x engine] trackMutable: o];
    return o;
 }
-+(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x
++(id<CPConstraint>) realMaximize: (id<CPRealVar>) x
 {
-   id<CPConstraint> o = [[CPFloatVarMaximize alloc] init: x];
+   id<CPConstraint> o = [[CPRealVarMaximize alloc] init: x];
    [[x engine] trackMutable: o];
+   return o;
+}
+@end
+
+@implementation CPFactory (ORIntSet)
++(id<CPConstraint>) inter:(id<CPIntSetVar>)x with:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z
+{
+   id<CPConstraint> o = [[CPISInterAC alloc] init:x inter:y eq:z];
+   [[x engine] trackMutable:o];
    return o;
 }
 @end

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,22 +41,22 @@
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
 
-@protocol CPFloatVarNotifier;
+@protocol CPRealVarNotifier;
 @protocol CPFDom
--(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
--(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
--(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
--(ORFloat) min;
--(ORFloat) max;
--(ORFloat) imin;
--(ORFloat) imax;
+-(void) updateMin:(ORDouble)newMin for:(id<CPRealVarNotifier>)x;
+-(void) updateMax:(ORDouble)newMax for:(id<CPRealVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRealVarNotifier>)x;
+-(void) bind:(ORDouble)val  for:(id<CPRealVarNotifier>)x;
+-(ORDouble) min;
+-(ORDouble) max;
+-(ORDouble) imin;
+-(ORDouble) imax;
 -(ORBool) bound;
 -(ORInterval) bounds;
--(ORFloat) domwidth;
--(ORBool) member:(ORFloat)v;
+-(ORDouble) domwidth;
+-(ORBool) member:(ORDouble)v;
 -(NSString*)description;
 -(id) copy;
 -(void) restoreDomain:(id<CPFDom>)toRestore;
--(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
+-(void) restoreValue:(ORDouble)toRestore for:(id<CPRealVarNotifier>)x;
 @end

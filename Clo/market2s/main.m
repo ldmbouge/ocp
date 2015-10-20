@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -79,7 +79,7 @@ int main(int argc, const char * argv[])
             [cp forall: V suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}  orderedBy:^ORInt(ORInt i) { return -tw[i];} do:^(ORInt i) {
                [cp try:^{
                   [cp label:x[i] with:0];
-               } or:^{
+               } alt:^{
                   [cp label:x[i] with:1];
                }];
             }];
@@ -94,7 +94,9 @@ int main(int argc, const char * argv[])
             NSLog(@"got: %d == %d",sum,rhs[k]);
             assert(sum == rhs[k]);
          }
-         struct ORResult r;
+         NSLog(@"Solver: %@",cp);
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [ORFactory shutdown];
          return r;
          //NSLog(@"Solver: %@",cp);
          //struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

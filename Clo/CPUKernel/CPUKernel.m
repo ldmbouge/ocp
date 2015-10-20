@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -52,7 +52,7 @@
 {
    //NSLog(@"CPClosureList::dealloc] %p\n",self);
    [_trigger release];
-   [_node._val release];
+   [_node release];
    [super dealloc];
 }
 
@@ -62,7 +62,7 @@
 }
 -(id<CPClosureList>) next
 {
-   return _node._val;
+   return _node;
 }
 
 -(void)scanWithBlock:(void(^)(id))block
@@ -70,7 +70,7 @@
    CPClosureList* cur = self;
    while(cur) {
       block(cur->_trigger);
-      cur = cur->_node._val;
+      cur = cur->_node;
    }
 }
 -(void)scanCstrWithBlock:(void(^)(id))block
@@ -78,7 +78,7 @@
    CPClosureList* cur = self;
    while(cur) {
       block(cur->_cstr);
-      cur = cur->_node._val;
+      cur = cur->_node;
    }
 }
 
@@ -86,14 +86,14 @@ void scanListWithBlock(CPClosureList* cur,ORID2Void block)
 {
    while(cur) {
       block(cur->_trigger);
-      cur = cur->_node._val;
+      cur = cur->_node;
    }
 }
 
 void collectList(CPClosureList* list,NSMutableSet* rv)
 {
    while(list) {
-      CPClosureList* next = list->_node._val;
+      CPClosureList* next = list->_node;
       [rv addObject:list->_cstr];
       list = next;
    }
@@ -102,7 +102,7 @@ void collectList(CPClosureList* list,NSMutableSet* rv)
 void freeList(CPClosureList* list)
 {
    while (list) {
-      CPClosureList* next = list->_node._val;
+      CPClosureList* next = list->_node;
       [list release];
       list = next;
    }
@@ -115,11 +115,12 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,O
                                                       cstr:c
                                                         at:priority
                                                      trail:trail];
-   if (evtList->_val == nil) {
+   [engine trackMutable: evt];
+   if (*evtList == nil) {
       assignTRId(&evtList[0], evt, trail);
       assignTRId(&evtList[1], evt, trail);
    } else {
-      assignTRId(&evt->_node, evtList[0]._val, trail);
+      assignTRId(&evt->_node, evtList[0], trail);
       assignTRId(&evtList[0],evt,trail);
    }
 //

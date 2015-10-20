@@ -1,4 +1,13 @@
-
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORSemBDSController.h>
@@ -6,15 +15,16 @@
 #import <ORFoundation/ORControl.h>
 #import <ORProgram/ORProgram.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORSolution.h>
 #import <ORProgram/LPProgram.h>
 
 
 static int nbRows = 7;
 static int nbColumns = 12;
 
-float b[7] = { 18209, 7692, 1333, 924, 26638, 61188, 13360 };
-float c[12] = { 96, 76, 56, 11, 86, 10, 66, 86, 83, 12, 9, 81 };
-float coef[7][12] = {
+double b[7] = { 18209, 7692, 1333, 924, 26638, 61188, 13360 };
+double c[12] = { 96, 76, 56, 11, 86, 10, 66, 86, 83, 12, 9, 81 };
+double coef[7][12] = {
    { 19,   1,  10,  1,   1,  14, 152, 11,  1,   1, 1, 1},
    {  0,   4,  53,  0,   0,  80,   0,  4,  5,   0, 0, 0},
    {  4, 660,   3,  0,  30,   0,   3,  0,  4,  90, 0, 0},
@@ -23,11 +33,93 @@ float coef[7][12] = {
    {  0,   0,  40, 70,   4,  63,   0,  0, 60,   0, 4, 0},
    {  0,  32,   0,  0,   0,   5,   0,  3,  0, 660, 0, 9}};
 
+int TDP(int argc,const char * argv[])
+{
+   id<ORModel> model = [ORFactory createModel];
+   id<ORIntRange> Binary = [ORFactory intRange: model low: 0 up: 1];
+   id<ORIntRange> Constraints = [ORFactory intRange: model low: 0 up: 2];
+   id<ORRealVar> ac = [ORFactory realVar: model low: 0.0 up: 200];
+   id<ORRealVar> bc = [ORFactory realVar: model low: 0.0 up: 200];
+   id<ORRealVar> co = [ORFactory realVar: model low: 0.0 up: 200];
+   id<ORIntVar> bac = [ORFactory intVar: model bounds: Binary];
+   id<ORIntVar> bbc = [ORFactory intVar: model bounds: Binary];
+   id<ORIntVar> bco = [ORFactory intVar: model bounds: Binary];
+   id<ORIdArray> ca = [ORFactory idArray:model range: Constraints];
+   ca[0] = [model add: [ac leq: [@(70) mul: bac]]];
+   ca[1] = [model add: [bc leq: [@(60) mul: bbc]]];
+   ca[2] = [model add: [co leq: [@(80) mul: bco]]];
+   [model add: [[ac plus: bc] eq: co]];
+   [model maximize: [ac plus: bc]];
+    
+    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
+    
+    [mip solve];
+    id<ORSolution> sol = [[mip solutionPool] best];
+    NSLog(@"Solution: %@",sol);
+    NSLog(@"Objective value: %@",[sol objectiveValue]);
+    printf("ac = %f \n",[sol dblValue: ac]);
+    printf("bc = %f \n",[sol dblValue: bc]);
+    printf("co = %f \n",[sol dblValue: co]);
+    NSLog(@"we are done");
+   
+   id<ORModel> submodel = [ORFactory createModel];
+   id<ORIntRange> Horizon = [ORFactory intRange: submodel low: 1 up: 10];
+   id<ORRealVarArray> fac = [ORFactory realVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVarArray> fbc = [ORFactory realVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVarArray> fco = [ORFactory realVarArray: submodel range: Horizon low: 0 up: 200];
+   id<ORRealVar> sac = [ORFactory realVar: submodel];
+   id<ORRealVar> sbc = [ORFactory realVar: submodel];
+   id<ORRealVar> sco = [ORFactory realVar: submodel];
+
+   id<ORIdArray> cac = [ORFactory idArray:submodel range: Horizon];
+   id<ORIdArray> cbc = [ORFactory idArray:submodel range: Horizon];
+   id<ORIdArray> cco = [ORFactory idArray:submodel range: Horizon];
+   
+   for(ORInt i=1; i <= 10; i++) {
+      if (i == 1)
+         cac[i] = [submodel add: [fac[i] leq: @(0 * [sol intValue: bac])]];
+      else if (i <= 7)
+         cac[i] = [submodel add: [fac[i] leq: @(7 * [sol intValue: bac])]];
+      else
+         cac[i] = [submodel add: [fac[i] leq: @(0 * [sol intValue: bac])]];
+      if (i <= 6)
+         cbc[i] = [submodel add: [fbc[i] leq: @(6 * [sol intValue: bbc])]];
+      else
+         cbc[i] = [submodel add: [fbc[i] leq: @(0 * [sol intValue: bbc])]];
+      cco[i] = [submodel add: [fco[i] leq: @(8 * [sol intValue: bco])]];
+      [submodel add: [[fac[i] plus: fbc[i]] eq: fco[i]]];
+   }
+   [submodel add: [sac eq: Sum(submodel,k,Horizon,fac[k])]];
+   [submodel add: [sbc eq: Sum(submodel,k,Horizon,fbc[k])]];
+   [submodel add: [sco eq: Sum(submodel,k,Horizon,fco[k])]];
+//   id<ORConstraint> demand = [submodel add: [sac leq: @(10)]];
+   [submodel maximize: [sac plus: sbc]];
+   id<LPProgram> lp = [ORFactory createLPProgram: submodel];
+   
+   [lp solve];
+   NSLog(@"Solution: %@",[lp objectiveValue]);
+   NSLog(@"Objective value: %@",[submodel objective]);
+   id<ORSolution> subsol = [[lp solutionPool] best];
+   for(ORInt i=1; i <= 10; i++) {
+      printf("fac[%d]=%f\n",i,[subsol dblValue: fac[i]]);
+      printf("fbc[%d]=%f\n",i,[subsol dblValue: fbc[i]]);
+      printf("fco[%d]=%f\n",i,[subsol dblValue: fco[i]]);
+   }
+   for(ORInt i=1; i <= 10; i++) {
+      printf("dual cac[%d]=%f\n",i,[lp dual: cac[i]]);
+      printf("dual cbc[%d]=%f\n",i,[lp dual: cbc[i]]);
+      printf("dual cco[%d]=%f\n",i,[lp dual: cco[i]]);
+   }
+//    printf("dual demand=%f\n",[lp dual: demand]);
+   return 0;
+}
+
+
 int main_lp(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
-   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns];
+   id<ORRealVarArray> x = [ORFactory realVarArray: model range: Columns];
     id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
       ca[i] = [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
@@ -37,7 +129,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
 //   NSLog(@"Objective value: %@",[[model objective] value]);
    id<ORSolutionPool> test = [lp solutionPool];
-   NSLog(@"test %@",test);
+   NSLog(@"test %@",[test best]);
    
    for(ORInt i = 0; i < nbRows; i++) {
       printf("The id of constraint %d is %d \n",i,[ca[i] getId]);
@@ -45,10 +137,10 @@ int main_lp(int argc, const char * argv[])
    for(ORInt i = 0; i < nbRows; i++) {
       printf("The dual of constraint %d is %f \n",i,[lp dual: ca[i]]);
    }
-   id<ORLPSolution> sol = [[lp solutionPool] best];
+   id<ORSolution,LPSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[sol floatValue: x[i]],[sol reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[sol dblValue: x[i]],[sol reducedCost: x[i]]);
    for(ORInt i = 0; i < nbRows; i++)
       printf("dual c[%d] = %f \n",i,[sol dual: ca[i]]);
    [sol release];
@@ -82,14 +174,12 @@ int main_mip(int argc, const char * argv[])
       [model add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)coef[i][j])]) leq: @((ORInt)b[i])]];
    [model maximize: Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])])];
    
-
-   
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
    [mip solve];
-   id<ORMIPSolution> sol = [[mip solutionPool] best];
+   id<ORSolution> sol = [[mip solutionPool] best];
    NSLog(@"Solution: %@",sol);
-   printf("Objective value: %f \n",[((id<ORObjectiveValueFloat>) [sol objectiveValue]) value]);
+   NSLog(@"Objective value: %@",[sol objectiveValue]);
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
    NSLog(@"we are done");
@@ -112,13 +202,13 @@ int main_cp(int argc, const char * argv[])
    [mip solve:^{
       NSLog(@"x = %@",x);
       [mip labelHeuristic:h];
-      [mip labelArray:x orderedBy:^ORFloat(ORInt i) {
+      [mip labelArray:x orderedBy:^ORDouble(ORInt i) {
          return -((ORInt)(c[i]) << 7) +  [mip domsize:x[i]];
       }];
    }];
    id<ORSolution> sol = [[mip solutionPool] best];
    NSLog(@"Solution: %@",sol);
-   printf("Objective value: %f \n",[((id<ORObjectiveValueFloat>) [sol objectiveValue]) value]);
+   printf("Objective value: %f \n",[((id<ORObjectiveValueReal>) [sol objectiveValue]) value]);
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
    NSLog(@"we are done");
@@ -162,7 +252,7 @@ int main_both(int argc, const char * argv[])
 //   id<MIPProgram> mip = [ORFactory createMIPProgram:model];
 //   [mip solve];
 //   id<ORMIPSolution> mipSol = [[mip solutionPool] best];
-//   id<ORObjectiveValueFloat> mipOBJ = [mipSol objectiveValue];
+//   id<ORObjectiveValueReal> mipOBJ = [mipSol objectiveValue];
 //   [cpm add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])]) geq:@((ORInt)[mipOBJ value])]];
    NSLog(@"MODEL: %@",cpm);
    
@@ -186,7 +276,9 @@ int main_both(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   int st0 =  main_lp(argc,argv);
-   int st1 = main_mip(argc,argv);
-   return st0+st1;
+//   int st0 =  main_lp(argc,argv);
+   int st1 = TDP(argc,argv);
+//   return st0+st1;
+   return st1;
+//   return st0;
 }

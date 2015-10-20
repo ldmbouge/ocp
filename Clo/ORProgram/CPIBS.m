@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,12 @@
 
  ***********************************************************************/
 
-#import "CPIBS.h"
+#import <ORProgram/CPIBS.h>
 #import <ORFoundation/ORTracer.h>
 #import <CPUKernel/CPUKernel.h>
+#import <ORPRogram/CPConcretizer.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
-#import "CPConcretizer.h"
 #import <objcp/CPFactory.h>
 
 #if defined(__linux__)
@@ -162,7 +162,7 @@
          rv += 1.0 - _imps[i];
       }
       return - rv;
-   } else return - MAXFLOAT;
+   } else return - MAXDBL;
 }
 @end
 
@@ -198,14 +198,14 @@
    return _cp;
 }
 
--(ORFloat)varOrdering:(id<CPIntVar>)x
+-(ORDouble)varOrdering:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
--(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForValue:v];
@@ -213,7 +213,7 @@
    return rv;
 }
 // pvh: this dictionary business seems pretty heavy; lots of memory allocation
--(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs
+-(void)initInternal:(id<ORVarArray>)t with:(id<CPVarArray>)cvs
 {
    _vars = t;
    _cvs  = cvs;
@@ -281,7 +281,7 @@
 -(void)dichotomize:(id<CPIntVar>)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set
 {
    if (up - low + 1 <= b) {
-      float ks = 0.0;
+      double ks = 0.0;
       for(CPKillRange* kr in set)
          ks += [kr killed];
       

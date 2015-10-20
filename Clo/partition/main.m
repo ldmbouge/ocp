@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
          [cp solve:^{
             //NSLog(@"Concrete model;%@",[[cp engine] model]);
             [cp labelHeuristic:h];
-            //[cp labelArray:xy orderedBy:^ORFloat(ORInt i) { return [xy[i] domsize];}];
+            //[cp labelArray:xy orderedBy:^ORDouble(ORInt i) { return [xy[i] domsize];}];
             id<ORIntArray> solX = [ORFactory intArray:model range:[x range] with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
             id<ORIntArray> solY = [ORFactory intArray:model range:[x range] with:^ORInt(ORInt i) { return [cp intValue:y[i]];}];
             NSLog(@"Sol: %@ -- %@",solX,solY);
@@ -67,7 +67,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          [ORFactory shutdown];
          return r;
       }];

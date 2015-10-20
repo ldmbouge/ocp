@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,13 +11,155 @@
 
 #import "LPSolverI.h"
 
-//#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+#if TARGET_OS_IPHONE==0
 #import "LPGurobi.h"
-//#endif
+#endif
+
+@interface LPDoubleVarSnapshot : NSObject  {
+   ORUInt    _name;
+   ORDouble   _value;
+   ORDouble   _reducedCost;
+   
+}
+-(LPDoubleVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name;
+-(ORDouble) dblValue;
+-(ORDouble) reducedCost;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation LPDoubleVarSnapshot
+-(LPDoubleVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   _value = [v dblValue];
+   _reducedCost = [v reducedCost];
+   return self;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORDouble) dblValue
+{
+   return _value;
+}
+-(ORDouble) reducedCost
+{
+   return _reducedCost;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      LPDoubleVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return (_value == other->_value) && (_reducedCost == other->_reducedCost);
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"float(%d) : (%f,%f)",_name,_value,_reducedCost];
+   return buf;
+}
+
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_reducedCost];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_reducedCost];
+   return self;
+}
+@end
+
+@interface LPConstraintSnapshot : NSObject {
+   ORUInt    _name;
+   ORDouble   _dual;
+}
+-(LPConstraintSnapshot*) initLPConstraintSnapshot: (LPConstraintI*) cstr name: (ORInt) name;
+-(ORDouble) dual;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation LPConstraintSnapshot
+-(LPConstraintSnapshot*) initLPConstraintSnapshot: (LPConstraintI*) cstr name: (ORInt) name
+{
+   self = [super init];
+   _name = name;
+   _dual = [cstr dual];
+   return self;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORDouble) dual
+{
+   return _dual;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      LPConstraintSnapshot* other = object;
+      if (_name == other->_name) {
+         return _dual == other->_dual;
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + (ORInt) _dual;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"lp(constraint)(%d) : (%f)",_name,_dual];
+   return buf;
+}
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_dual];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_dual];
+   return self;
+}
+@end
+
 
 @implementation LPConstraintI;
 
--(LPConstraintI*) initLPConstraintI: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
+-(LPConstraintI*) initLPConstraintI: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
 {
    if (size < 0)
       @throw [[NSException alloc] initWithName:@"LPConstraint Error"
@@ -34,7 +176,7 @@
    for(ORInt i = 0; i < _size; i++)
       _var[i] = var[i];
    _col = NULL;
-   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    for(ORInt i = 0; i < _size; i++)
       _coef[i] = coef[i];
    _rhs = rhs;
@@ -52,11 +194,15 @@
    free(_coef);
    [super dealloc];
 }
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[LPConstraintSnapshot alloc] initLPConstraintSnapshot: self name: id];
+}
 -(void) resize
 {
    if (_size == _maxSize) {
       LPVariableI** nvar = (LPVariableI**) malloc(2 * _maxSize * sizeof(LPVariableI*));
-      ORFloat* ncoef = (ORFloat*) malloc(2 * _maxSize * sizeof(ORFloat));
+      ORDouble* ncoef = (ORDouble*) malloc(2 * _maxSize * sizeof(ORDouble));
       for(ORInt i = 0; i < _size; i++) {
          nvar[i] = _var[i];
          ncoef[i] = _coef[i];
@@ -98,19 +244,19 @@
 {
    return [_var[i] idx];
 }
--(ORFloat*) coef
+-(ORDouble*) coef
 {
-   _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
+   _tmpCoef = (ORDouble*) malloc(_size * sizeof(ORDouble));
    for(ORInt i = 0; i < _size; i++)
       _tmpCoef[i] = _coef[i];
    return _tmpCoef;
 }
--(ORFloat) coef: (ORInt) i
+-(ORDouble) coef: (ORInt) i
 {
    return _coef[i];
 }
 
--(ORFloat) rhs
+-(ORDouble) rhs
 {
    return _rhs;
 }
@@ -145,7 +291,7 @@
       }
    }
 }
--(void) addVariable: (LPVariableI*) var coef: (ORFloat) coef
+-(void) addVariable: (LPVariableI*) var coef: (ORDouble) coef
 {
    [self resize];
    _var[_size] = var;
@@ -169,7 +315,7 @@
 {
    [self print: "?"];
 }
--(ORFloat) dual
+-(ORDouble) dual
 {
    return [_solver dual: self];
 }
@@ -187,7 +333,7 @@
 
 @implementation LPConstraintLEQ;
 
--(LPConstraintI*) initLPConstraintLEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
+-(LPConstraintI*) initLPConstraintLEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
 {
    self = [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = LPleq;
@@ -201,7 +347,7 @@
 
 @implementation LPConstraintGEQ;
 
--(LPConstraintI*) initLPConstraintGEQ: (LPSolverI*) solver size:  (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
+-(LPConstraintI*) initLPConstraintGEQ: (LPSolverI*) solver size:  (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
 {
    self = [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = LPgeq;
@@ -216,7 +362,7 @@
 
 @implementation LPConstraintEQ;
 
--(LPConstraintI*) initLPConstraintEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
+-(LPConstraintI*) initLPConstraintEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
 {
    self = [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = LPeq;
@@ -232,7 +378,7 @@
 
 @implementation LPObjectiveI;
 
--(LPObjectiveI*) initLPObjectiveI: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
+-(LPObjectiveI*) initLPObjectiveI: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef cst: (ORDouble) cst
 {
    self = [super init];
    _solver = solver;
@@ -246,7 +392,7 @@
    for(ORInt i = 0; i < _size; i++)
       _var[i] = var[i];
    _col = NULL;
-   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    for(ORInt i = 0; i < _size; i++)
       _coef[i] = coef[i];
    _cst = cst;
@@ -258,7 +404,7 @@
 {
    if (_size == _maxSize) {
       LPVariableI** nvar = (LPVariableI**) malloc(2 * _maxSize * sizeof(LPVariableI*));
-      ORFloat* ncoef = (ORFloat*) malloc(2 * _maxSize * sizeof(ORFloat));
+      ORDouble* ncoef = (ORDouble*) malloc(2 * _maxSize * sizeof(ORDouble));
       for(ORInt i = 0; i < _size; i++) {
          nvar[i] = _var[i];
          ncoef[i] = _coef[i];
@@ -301,9 +447,9 @@
       _col[i] = [_var[i] idx];
    return _col;
 }
--(ORFloat*) coef
+-(ORDouble*) coef
 {
-   _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
+   _tmpCoef = (ORDouble*) malloc(_size * sizeof(ORDouble));
    for(ORInt i = 0; i < _size; i++)
       _tmpCoef[i] = _coef[i];
    return _tmpCoef;
@@ -334,14 +480,14 @@
       }
    }
 }
--(void) addVariable: (LPVariableI*) var coef: (ORFloat) coef
+-(void) addVariable: (LPVariableI*) var coef: (ORDouble) coef
 {
    [self resize];
    _var[_size] = var;
    _coef[_size] = coef;
    _size++;
 }
--(void) addCst: (ORFloat) cst
+-(void) addCst: (ORDouble) cst
 {
    _cst += cst;
 }
@@ -351,7 +497,7 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: true];
+   return [ORFactory objectiveValueReal: [_solver lpValue] + _cst minimize: true];
 }
 -(ORInt) nb
 {
@@ -367,13 +513,13 @@
 
 @implementation LPMinimize;
 
--(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef
+-(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef
 {
    self = [super initLPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
    _type = LPminimize;
    return self;
 }
--(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
+-(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef cst: (ORDouble) cst
 {
    self = [super initLPObjectiveI: solver size: size var: var coef: coef cst: cst];
    _type = LPminimize;
@@ -386,20 +532,20 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: true];
+   return [ORFactory objectiveValueReal: [_solver lpValue] + _cst minimize: true];
 }
 
 @end
 
 @implementation LPMaximize;
 
--(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef
+-(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef
 {
    self = [super initLPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
    _type = LPmaximize;
    return self;
 }
--(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
+-(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef cst: (ORDouble) cst
 {
    self = [super initLPObjectiveI: solver size: size var: var coef: coef cst: cst];
    _type = LPmaximize;
@@ -412,12 +558,12 @@
 }
 -(id<ORObjectiveValue>) value
 {
-   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: false];
+   return [ORFactory objectiveValueReal: [_solver lpValue] + _cst minimize: false];
 }
 @end
 
 @implementation LPVariableI
--(LPVariableI*) initLPVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up
+-(LPVariableI*) initLPVariableI: (LPSolverI*) solver low: (ORDouble) low up: (ORDouble) up
 {
    self = [super init];
    _hasBounds = true;
@@ -431,7 +577,7 @@
    _size = 0;
    _cstr = (LPConstraintI**) malloc(_maxSize * sizeof(LPConstraintI*));
    _cstrIdx = NULL;
-   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    
    return self;
 }
@@ -447,9 +593,13 @@
    _size = 0;
    _cstr = (LPConstraintI**) malloc(_maxSize * sizeof(LPConstraintI*));
    _cstrIdx = NULL;
-   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    
    return self;
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[LPDoubleVarSnapshot alloc] initLPFloatVarSnapshot: self name: id];
 }
 -(ORBool) hasBounds
 {
@@ -480,25 +630,25 @@
    _nb = nb;
 }
 
--(ORFloat) low
+-(ORDouble) low
 {
    return _low;
 }
--(ORFloat) up
+-(ORDouble) up
 {
    return _up;
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"LPVariable(%d,%f)",_idx,[_solver floatValue:self]];
+   [buf appendFormat:@"LPVariable(%d,%f)",_idx,[_solver dblValue:self]];
    return buf;
 }
 -(void) resize
 {
    if (_size == _maxSize) {
       LPConstraintI** ncstr = (LPConstraintI**) malloc(2 * _maxSize * sizeof(LPConstraintI*));
-      ORFloat* ncoef = (ORFloat*) malloc(2 * _maxSize * sizeof(ORFloat));
+      ORDouble* ncoef = (ORDouble*) malloc(2 * _maxSize * sizeof(ORDouble));
       for(ORInt i = 0; i < _size; i++) {
          ncstr[i] = _cstr[i];
          ncoef[i] = _coef[i];
@@ -510,7 +660,7 @@
       _maxSize *= 2;
    }
 }
--(void) addConstraint: (LPConstraintI*) c coef: (ORFloat) coef
+-(void) addConstraint: (LPConstraintI*) c coef: (ORDouble) coef
 {
    [self resize];
    _cstr[_size] = c;
@@ -541,7 +691,7 @@
       [_cstr[i] delVariable: self];
    _idx = -1;
 }
--(void) addObjective: (LPObjectiveI*) obj coef: (ORFloat) coef
+-(void) addObjective: (LPObjectiveI*) obj coef: (ORDouble) coef
 {
    _obj = obj;
    _objCoef = coef;
@@ -556,14 +706,14 @@
 }
 -(LPColumnI*) column
 {
-   return [_solver createColumn:self low:_low up:_up size:_size obj:_objCoef cstr:_cstr coef:_coef];
+   return [_solver createColumn: _low up:_up size:_size obj:_objCoef cstr:_cstr coef:_coef];
 }
--(ORFloat) floatValue
+-(ORDouble) dblValue
 {
-   return [_solver floatValue:self];
+   return [_solver dblValue:self];
 }
 
--(ORFloat) reducedCost
+-(ORDouble) reducedCost
 {
    return [_solver reducedCost: self];
 }
@@ -590,13 +740,13 @@
 {
     _cstrIdx = idx;
 }
--(ORFloat) floatValue
+-(ORDouble) doubleValue
 {
-    return [_solver floatParamValue: self];
+    return [_solver paramValue: self];
 }
--(void) setFloatValue: (ORFloat)val
+-(void) setDoubleValue: (ORDouble)val
 {
-    [_solver setORFloatParameter: self value: val];
+    [_solver setParam: self value: val];
 }
 -(ORInt) coefIdx
 {
@@ -609,7 +759,7 @@
 -(NSString*)description
 {
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"%f",[_solver floatParamValue:self]];
+    [buf appendFormat:@"%f",[self doubleValue]];
     return buf;
 }
 -(ORBool) isInteger
@@ -621,18 +771,16 @@
 @implementation LPColumnI
 
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver
-                        low: (ORFloat) low
-                         up: (ORFloat) up
+                        low: (ORDouble) low
+                         up: (ORDouble) up
                        size: (ORInt) size
-                        obj: (ORFloat) obj
+                        obj: (ORDouble) obj
                        cstr: (LPConstraintI**) cstr
-                       coef: (ORFloat*) coef
-                     forVar: (LPVariableI*) theVar
+                       coef: (ORDouble*) coef
 
 {
    self = [super init];
    _solver = solver;
-   _theVar = theVar;
    _hasBounds = true;
    _low = low;
    _up = up;
@@ -645,7 +793,7 @@
    for(ORInt i = 0; i < _size; i++)
       _cstr[i] = cstr[i];
    _cstrIdx = NULL;
-   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    for(ORInt i = 0; i < _size; i++)
       _coef[i] = coef[i];
    _tmpCstr = NULL;
@@ -654,13 +802,11 @@
 }
 
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver
-                        low: (ORFloat) low
-                         up: (ORFloat) up
-                     forVar: (LPVariableI*) theVar
+                        low: (ORDouble) low
+                         up: (ORDouble) up
 {
    self = [super init];
    _solver = solver;
-   _theVar = theVar;
    _hasBounds = true;
    _low = low;
    _up = up;
@@ -668,20 +814,19 @@
    _maxSize = 8;
    _cstr = (LPConstraintI**) malloc(_maxSize * sizeof(LPConstraintI*));
    _cstrIdx = NULL;
-   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    return self;
 }
--(LPColumnI*) initLPColumnI: (LPSolverI*) solver forVar:(LPVariableI*)theVar
+-(LPColumnI*) initLPColumnI: (LPSolverI*) solver
 {
    self = [super init];
    _solver = solver;
-   _theVar = theVar;
    _hasBounds = false;
    _size = 0;
    _maxSize = 8;
    _cstr = (LPConstraintI**) malloc(_maxSize * sizeof(LPConstraintI*));
    _cstrIdx = NULL;
-   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    return self;
 }
 -(LPVariableI*)theVar
@@ -713,7 +858,7 @@
 {
    if (_size == _maxSize) {
       LPConstraintI** ncstr = (LPConstraintI**) malloc(2 * _maxSize * sizeof(LPConstraintI*));
-      ORFloat* ncoef = (ORFloat*) malloc(2 * _maxSize * sizeof(ORFloat));
+      ORDouble* ncoef = (ORDouble*) malloc(2 * _maxSize * sizeof(ORDouble));
       for(ORInt i = 0; i < _size; i++) {
          ncstr[i] = _cstr[i];
          ncoef[i] = _coef[i];
@@ -738,15 +883,15 @@
 {
    return _hasBounds;
 }
--(ORFloat) low
+-(ORDouble) low
 {
    return _low;
 }
--(ORFloat) up
+-(ORDouble) up
 {
    return _up;
 }
--(ORFloat) objCoef
+-(ORDouble) objCoef
 {
    return _objCoef;
 }
@@ -772,11 +917,11 @@
       _cstrIdx[i] = [_cstr[i] idx];
    return _cstrIdx;
 }
--(ORFloat*) coef
+-(ORDouble*) coef
 {
    if (_tmpCoef)
       free(_tmpCoef);
-   _tmpCoef = (ORFloat*) malloc(_size * sizeof(ORFloat));
+   _tmpCoef = (ORDouble*) malloc(_size * sizeof(ORDouble));
    for(ORInt i = 0; i < _size; i++)
       _tmpCoef[i] = _coef[i];
    return _tmpCoef;
@@ -801,11 +946,11 @@
    for(ORInt i = 0; i < _size; i++)
       [_cstr[i] addVariable: v coef: _coef[i]];
 }
--(void) addObjCoef: (ORFloat) coef
+-(void) addObjCoef: (ORDouble) coef
 {
    _objCoef = coef;
 }
--(void) addConstraint: (LPConstraintI*) cstr coef: (ORFloat) coef
+-(void) addConstraint: (LPConstraintI*) cstr coef: (ORDouble) coef
 {
    [self resize];
    _cstr[_size] = cstr;
@@ -834,7 +979,7 @@
    if (_maxSize == 0)
       _maxSize++;
    _var = (LPVariableI**) malloc(_maxSize * sizeof(LPVariableI*));
-   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    return self;
 }
 -(void) dealloc
@@ -847,7 +992,7 @@
 {
    if (_size == _maxSize) {
       LPVariableI** nvar = (LPVariableI**) malloc(2 * _maxSize * sizeof(LPVariableI*));
-      ORFloat* ncoef = (ORFloat*) malloc(2 * _maxSize * sizeof(ORFloat));
+      ORDouble* ncoef = (ORDouble*) malloc(2 * _maxSize * sizeof(ORDouble));
       for(ORInt i = 0; i < _size; i++) {
          nvar[i] = _var[i];
          ncoef[i] = _coef[i];
@@ -867,19 +1012,19 @@
 {
    return _var;
 }
--(ORFloat*) coef
+-(ORDouble*) coef
 {
    return _coef;
 }
--(ORFloat) cst
+-(ORDouble) cst
 {
    return _cst;
 }
--(void) add: (ORFloat) cst
+-(void) add: (ORDouble) cst
 {
    _cst = cst;
 }
--(void) add: (ORFloat) coef times: (LPVariableI*) var
+-(void) add: (ORDouble) coef times: (LPVariableI*) var
 {
    [self resize];
    _var[_size] = var;
@@ -898,7 +1043,7 @@
          uidx = idx;
    }
    int sizeIdx = (uidx - lidx + 1);
-   ORFloat* bucket = (ORFloat*) alloca(sizeIdx * sizeof(ORFloat));
+   ORDouble* bucket = (ORDouble*) alloca(sizeIdx * sizeof(ORDouble));
    LPVariableI** bucketVar = (LPVariableI**) alloca(sizeIdx * sizeof(LPVariableI*));
    bucket -= lidx;
    bucketVar -= lidx;
@@ -930,8 +1075,8 @@
 -(LPSolverI*) initLPSolverI
 {
    self = [super init];
-#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
-   _lp = [[LPGurobiSolver alloc] initLPGurobiSolver];
+#if TARGET_OS_IPHONE==0
+   _lp = [[LPGurobiSolver alloc] init];
 #else
    _lp = nil; // [ldm] we do not have GUROBI on IOS
 #endif
@@ -990,7 +1135,7 @@
    [self trackVariable: v];
    return v;
 }
--(LPVariableI*) createVariable: (ORFloat) low up: (ORFloat) up
+-(LPVariableI*) createVariable: (ORDouble) low up: (ORDouble) up
 {
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self low: low up: up];
    [v setNb: _createdVars++];
@@ -999,30 +1144,23 @@
    return v;
 }
 
--(LPColumnI*) createColumn:(LPVariableI*)x low:(ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) cstr coef: (ORFloat*) coef
+-(LPColumnI*) createColumn: (ORDouble) low up: (ORDouble) up size: (ORInt) size obj: (ORDouble) obj cstr: (LPConstraintI**) cstr coef: (ORDouble*) coef
 {
-   LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up size: size obj: obj cstr: cstr coef: coef forVar:x];
+   LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up size: size obj: obj cstr: cstr coef: coef];
    [c setNb: _createdCols++];
    [self trackMutable: c];
    return c;
 }
--(LPColumnI*) createColumn:(LPVariableI*)x low: (ORFloat) low up: (ORFloat) up
+-(LPColumnI*) createColumn: (ORDouble) low up: (ORDouble) up
 {
-   LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up forVar:x];
+   LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up];
    [c setNb: _createdCols++];
    [self trackMutable: c];
    return c;
 }
--(LPColumnI*) createColumn:(LPVariableI*)x
+-(LPColumnI*) createColumn
 {
-   LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self forVar:x];
-   [c setNb: _createdCols++];
-   [self trackMutable: c];
-   return c;
-}
--(LPColumnI*) freshColumn
-{
-   LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self forVar:nil];
+   LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self];
    [c setNb: _createdCols++];
    [self trackMutable: c];
    return c;
@@ -1047,14 +1185,14 @@
    
    int size = [cstr size];
    LPVariableI** var = [cstr var];
-   ORFloat* coef = [cstr coef];
+   ORDouble* coef = [cstr coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addConstraint: cstr coef: coef[i]];
    free(coef);
    return cstr;
    
 }
--(LPConstraintI*) createLEQ: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
+-(LPConstraintI*) createLEQ: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
 {
    LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
@@ -1062,7 +1200,7 @@
    return [self createLEQ: t rhs: rhs];
 }
 
--(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
+-(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst
 {
    LPLinearTermI* t = [self createLinearTerm];
    id<ORIntRange> R = [var range];
@@ -1072,17 +1210,7 @@
       [t add: [coef at: i] times: var[i]];
    return [self createLEQ: t rhs: -cst];
 }
--(LPConstraintI*) createGEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
-{
-   LPLinearTermI* t = [self createLinearTerm];
-   id<ORIntRange> R = [var range];
-   ORInt low = R.low;
-   ORInt up = R.up;
-   for(ORInt i = low; i <= up; i++)
-      [t add: [coef at: i] times: var[i]];
-   return [self createGEQ: t rhs: -cst];
-}
--(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
+-(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst
 {
    LPLinearTermI* t = [self createLinearTerm];
    id<ORIntRange> R = [var range];
@@ -1105,7 +1233,7 @@
    return [self createMaximize: t];
 }
 
--(LPConstraintI*) createGEQ: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
+-(LPConstraintI*) createGEQ: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
 {
    LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
@@ -1113,21 +1241,21 @@
    return [self createGEQ: t rhs: rhs];
    
 }
--(LPConstraintI*) createEQ: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
+-(LPConstraintI*) createEQ: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs
 {
    LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
       [t add: coef[i] times: var[i]];
    return [self createEQ: t rhs: rhs];
 }
--(LPObjectiveI*) createMinimize: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef
+-(LPObjectiveI*) createMinimize: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef
 {
    LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
       [t add: coef[i] times: var[i]];
    return [self createMinimize: t];
 }
--(LPObjectiveI*) createMaximize: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef
+-(LPObjectiveI*) createMaximize: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef
 {
    LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
@@ -1150,7 +1278,7 @@
    [self trackMutable: o];
    return o;
 }
--(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef
+-(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef
 {
    LPLinearTermI* t = [self createLinearTerm];
    ORInt low = [var low];
@@ -1159,7 +1287,7 @@
       [t add: [coef at: i] times: var[i]];
    return [self createMinimize: t];
 }
--(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef
+-(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef
 {
    LPLinearTermI* t = [self createLinearTerm];
    ORInt low = [var low];
@@ -1169,7 +1297,7 @@
    return [self createMaximize: t];
 }
 
--(LPConstraintI*) createLEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
+-(LPConstraintI*) createLEQ: (LPLinearTermI*) t rhs: (ORDouble) rhs;
 {
    [t close];
    LPConstraintI* c = [[LPConstraintLEQ alloc] initLPConstraintLEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
@@ -1177,7 +1305,7 @@
    [self trackMutable: c];
    return c;
 }
--(LPConstraintI*) createGEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
+-(LPConstraintI*) createGEQ: (LPLinearTermI*) t rhs: (ORDouble) rhs;
 {
    [t close];
    LPConstraintI* c = [[LPConstraintGEQ alloc] initLPConstraintGEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
@@ -1185,7 +1313,7 @@
    [self trackMutable: c];
    return c;
 }
--(LPConstraintI*) createEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
+-(LPConstraintI*) createEQ: (LPLinearTermI*) t rhs: (ORDouble) rhs;
 {
    [t close];
    LPConstraintI* c = [[LPConstraintEQ alloc] initLPConstraintEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
@@ -1269,7 +1397,7 @@
    
    int size = [obj size];
    LPVariableI** var = [obj var];
-   ORFloat* coef = [obj coef];
+   ORDouble* coef = [obj coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addObjective: obj coef: coef[i]];
    free(coef);
@@ -1319,42 +1447,29 @@
 {
    return [_lp status];
 }
--(ORInt) intValue: (LPVariableI*) var
-{
-    return (ORInt) [_lp value: var];
-}
--(ORFloat) floatValue: (LPVariableI*) var
+-(ORDouble) dblValue: (LPVariableI*) var
 {
    return [_lp value: var];
 }
--(ORFloat) paramFloatValue: (id<ORFloatParam>)p
-{
-    return [_lp paramFloatValue: p];
-}
--(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val
-{
-    [_lp setParam: p value: val];
-    return val;
-}
--(ORFloat) lowerBound: (LPVariableI*) var
+-(ORDouble) lowerBound: (LPVariableI*) var
 {
    return [_lp lowerBound: var];
 }
--(ORFloat) upperBound: (LPVariableI*) var
+-(ORDouble) upperBound: (LPVariableI*) var
 {
    return [_lp upperBound: var];
 }
--(ORFloat) reducedCost: (LPVariableI*) var
+-(ORDouble) reducedCost: (LPVariableI*) var
 {
    return [_lp reducedCost: var];
 }
--(ORFloat) dual: (LPConstraintI*) cstr;
+-(ORDouble) dual: (LPConstraintI*) cstr;
 {
    return [_lp dual: cstr];
 }
--(id<ORFloatArray>) duals
+-(id<ORDoubleArray>) duals
 {
-    id<ORFloatArray> arr = [ORFactory floatArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORFloat(ORInt i) {
+    id<ORDoubleArray> arr = [ORFactory doubleArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORDouble(ORInt i) {
         return [_cstr[i] dual];
     }];
    return arr;
@@ -1369,16 +1484,20 @@
                                       userInfo:nil];
    return NULL;
 }
--(ORFloat) lpValue
+-(ORDouble) lpValue
 {
+#if TARGET_OS_IPHONE==1
+   return 0.0;
+#else
    return [_lp objectiveValue];
+#endif
 }
 
--(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb
+-(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb
 {
    [_lp updateLowerBound: var lb: lb];
 }
--(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub
+-(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub
 {
    [_lp updateUpperBound: var ub: ub];
 }
@@ -1387,21 +1506,21 @@
 {
    [_lp setIntParameter: name val: val];
 }
--(void) setFloatParameter: (const char*) name val: (ORFloat) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 {
-   [_lp setFloatParameter: name val: val];
+   [_lp setDoubleParameter: name val: val];
 }
 -(void) setStringParameter: (const char*) name val: (char*) val
 {
    [_lp setStringParameter: name val: val];
 }
--(ORFloat) floatParamValue: (LPParameterI*) param
+-(ORDouble) paramValue: (LPParameterI*) param
 {
-    return [_lp paramFloatValue: param];
+   return [_lp paramValue: param];
 }
--(void) setORFloatParameter: (LPParameterI*)param value: (ORFloat)val
+-(void) setParam: (LPParameterI*) param value: (ORDouble)val
 {
-    [_lp setParam: param value: val];
+   [_lp setParam: param value: val];
 }
 -(void) print;
 {

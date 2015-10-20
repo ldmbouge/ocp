@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,14 +17,7 @@
 
 // PVH: Need another name for this baby
 
-@interface CPStatisticsMonitor : CPCoreConstraint {
-   CPVarInfo**          _varInfo;
-   ORLong                  _nbVI;
-   id<CPEngine>          _engine;
-   CPVarInfo**        _curActive;
-   ORUInt              _nbActive;
-   id<ORVarArray>        _monVar;
-}
+@interface CPStatisticsMonitor : CPCoreConstraint 
 -(id)initCPMonitor:(id<CPEngine>)engine vars:(id<ORVarArray>)allVars;
 -(void) post;
 -(NSString*) description;

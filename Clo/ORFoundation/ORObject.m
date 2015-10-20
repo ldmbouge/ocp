@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,8 +12,15 @@
 #import <Foundation/Foundation.h>
 #import "ORObject.h"
 #import "ORError.h"
+#import <objc/runtime.h>
+
+static Class __orObjectClass = nil;
 
 @implementation ORObject
++(void)load
+{
+   __orObjectClass = [ORObject class];
+}
 -(id)init
 {
    self = [super init];
@@ -47,19 +54,38 @@
 }
 -(oneway void)release
 {
+   //printf("Release called on solver: RC=%d [%s]\n",_rc,[[[self class] description] UTF8String]);
    if (--_rc == 0) {
       [self dealloc];
    }
 }
 -(id)autorelease
 {
-   //assert(_ba[3] == 0); // Dan removed this
+   //assert(_ba[3] == 0);
+   //NSLog(@"   AUTORELEASE(%p) CNT=%d  -- obj: %@\n",self,_rc,self);
    id rv = [super autorelease];
    _ba[3] = 1;
    return rv;
 //   _rc += 1;
 //   [NSAutoreleasePool addObject:self];
 //   return self;
+}
+-(void) visit: (ORVisitor*) visitor
+{}
+- (BOOL)isEqual:(id)object
+{
+   Class me = object_getClass(self);
+   if ([me isKindOfClass:__orObjectClass]) {
+      return _name == getId(object);
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   return _name;
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return NULL;
 }
 @end
 

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,24 +9,11 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 
 @class MIPSolverI;
 @protocol ORModel;
 @protocol ORFloatParam;
-
-@protocol ORMIPSolution <ORSolution>
--(id<ORObjectiveValue>) objectiveValue;
-@end
-
-@protocol ORMIPSolutionPool <ORSolutionPool>
--(void) addSolution: (id<ORMIPSolution>) s;
--(void) enumerateWith: (void(^)(id<ORMIPSolution>)) block;
--(id<ORInformer>) solutionAdded;
--(id<ORMIPSolution>) best;
--(void) emptyPool;
-@end
 
 
 @protocol MIPProgram <ORASolver>
@@ -35,18 +22,15 @@
 -(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
--(void) setTimeLimit: (double)limit;
--(ORFloat) bestObjectiveBound;
--(ORFloat) dualityGap;
--(ORFloat) floatValue: (id<ORFloatVar>) v;
--(void) setFloatVar: (id<ORFloatVar>)v value:(ORFloat)val;
+-(ORDouble) dblValue: (id<ORRealVar>) v;
 -(ORInt) intValue: (id<ORIntVar>) v;
 -(void) setIntVar: (id<ORIntVar>)v value:(ORInt)val;
--(ORFloat) paramFloatValue: (id<ORFloatParam>)p;
--(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
+-(ORDouble) paramValue: (id<ORRealParam>)p;
+-(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;
 -(id<ORObjectiveValue>) objectiveValue;
--(id<ORMIPSolutionPool>) solutionPool;
--(id<ORMIPSolution>) captureSolution;
+-(ORDouble) bestObjectiveBound;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 -(id<ORExplorer>)  explorer;
 @end
 

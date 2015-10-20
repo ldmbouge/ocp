@@ -18,6 +18,6 @@
 -(ORInt) initialValue;
 @end
 
-@protocol ORFloatParam <ORParameter>
--(ORFloat) initialValue;
+@protocol ORRealParam <ORParameter>
+-(ORDouble) initialValue;
 @end

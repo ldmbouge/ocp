@@ -57,12 +57,12 @@
 }
 @end
 
-@implementation ORFloatParamI {
+@implementation ORRealParamI {
 @protected
     id<ORTracker>  _tracker;
     ORFloat _val;
 }
--(ORFloatParamI*) initORFloatParamI: (id<ORTracker>) track initialValue:(ORFloat)val
+-(ORRealParamI*) initORRealParamI: (id<ORTracker>) track initialValue:(ORDouble)val
 {
     self = [super init];
     _tracker = track;
@@ -90,9 +90,9 @@
 }
 -(enum ORVType) vtype
 {
-    return ORTFloat;
+    return ORTReal;
 }
--(ORFloat) initialValue
+-(ORDouble) initialValue
 {
     return _val;
 }
@@ -102,6 +102,6 @@
 }
 - (void)visit:(ORVisitor*)visitor
 {
-    [visitor visitFloatParam: self];
+    [visitor visitRealParam: self];
 }
 @end

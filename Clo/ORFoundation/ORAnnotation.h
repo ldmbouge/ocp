@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,8 @@ typedef enum {
    RangeConsistency,
    ValueConsistency,
    RelaxedConsistency,
+   HardConsistency,
+   SoftConsistency,
    Default
 } ORCLevel;
 
@@ -29,7 +31,7 @@ typedef enum {
 -(id<ORConstraint>) vc: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) relax: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) cstr: (id<ORConstraint>) cstr consistency: (ORCLevel) cl;
-
+-(id<ORConstraint>) hard:(id<ORConstraint>) cstr;
 -(void) alldifferent: (ORCLevel) cl;
 
 -(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) o;

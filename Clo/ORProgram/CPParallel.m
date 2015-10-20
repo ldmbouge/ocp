@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,11 +10,17 @@
  ***********************************************************************/
 
 #import <ORProgram/CPParallel.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import "CPProgram.h"
-#import "CPSolver.h"
+#import <ORProgram/CPProgram.h>
+#import <ORProgram/CPSolver.h>
+#import <objcp/CPObjectQueue.h>
 
-@implementation CPParallelAdapter
+@implementation CPParallelAdapter {
+   id<CPSemanticProgram>  _solver;
+   PCObjectQueue*           _pool;
+   BOOL               _publishing;
+   BOOL*                 _stopNow;
+   CPGenerator*              _gen;
+}
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver
                     onPool:(PCObjectQueue *)pcq
              stopIndicator:(BOOL*)si
@@ -140,8 +146,16 @@
 }
 @end
 
-@implementation CPGenerator
-
+@implementation CPGenerator {
+   id<CPSemanticProgram>   _solver;
+   id<ORTracer>        _tracer;
+   PCObjectQueue*      _pool;
+   NSCont**             _tab;
+   id<ORCheckpoint>*  _cpTab;
+   int                   _sz;
+   int                   _mx;
+   id<ORPost>          _model;
+}
 -(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq post:(id<ORPost>)model
 {
    self = [super initORDefaultController];

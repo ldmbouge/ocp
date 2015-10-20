@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,17 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORFactory.h>
-#import <ORModeling/ORSolution.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORSet.h>
-
+#import <ORModeling/ORFlatten.h>
+#import <ORModeling/ORLPFlatten.h>
+#import <ORModeling/ORMIPFlatten.h>
+#import <ORModeling/ORLSFlatten.h>
+#import <ORModeling/ORIntLinear.h>
+#import <ORModeling/ORMIPLinearize.h>
 
 @protocol ORModelTransformation;
+
+PORTABLE_BEGIN
 
 @protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
@@ -29,8 +34,8 @@
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
         onMutables:(void(^)(id<ORObject>))doMutables
@@ -45,10 +50,10 @@
 -(NSArray*) mutables;
 -(NSArray*) immutables;
 // pvh: this should go
--(id<ORModel>) relaxConstraints: (NSArray*) cstrs;
--(id<ORModel>) flatten:(id<ORAnnotation>)notes;
--(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;
--(id<ORModel>) mipflatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) flatten:(PNULLABLE id<ORAnnotation>)notes;
+-(id<ORModel>) lsflatten:(PNULLABLE id<ORAnnotation>)notes;
+-(id<ORModel>) lpflatten:(PNULLABLE id<ORAnnotation>)notes;
+-(id<ORModel>) mipflatten:(PNULLABLE id<ORAnnotation>)notes;
 -(id<ORModel>) copy;
 -(void) setSource: (id<ORModel>) src;
 -(id<ORModel>) source;
@@ -71,10 +76,10 @@
 -(id<ORObjectiveFunction>) maximizeVar:(id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 -(id<ORModelMappings>) modelMappings;
--(void)setCurrent:(id<ORConstraint>)cstr;
+-(void)setCurrent:(PNULLABLE id<ORConstraint>)cstr;
 @end
 
 @protocol ORParameterizedModel <ORModel>
@@ -88,13 +93,16 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
-+(id<ORModel>) createModel:(ORUInt)nbo mappings: (id<ORModelMappings>) mappings;
++(id<ORModel>) createModel:(ORUInt)nbo mappings: (PNULLABLE id<ORModelMappings>) mappings;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src annotation:(id<ORAnnotation>)notes;
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLSFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
-+(id<ORSolutionPool>) createSolutionPool;
++(id<ORConstraintSet>) createConstraintSet;
+//+(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
 @end
 
+PORTABLE_END

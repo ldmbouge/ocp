@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,14 +43,14 @@
 -(void) main;
 @end
 
-@interface ORInformerI : NSObject<ORVoidInformer,ORIntInformer, ORFloatInformer, ORIdxIntInformer,
-    ORSolutionInformer, ORConstraintInformer, ORIntArrayInformer, ORFloatArrayInformer, ORConstraintSetInformer> {
+@interface ORInformer : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer,ORDoubleInformer,
+    ORSolutionInformer, ORConstraintInformer, ORIntArrayInformer, ORDoubleArrayInformer, ORConstraintSetInformer> {
     NSLock* _lock;
     NSMutableArray* _whenList;
     NSMutableArray* _wheneverList;
     NSMutableArray* _sleeperList;
 }
--(ORInformerI*) initORInformerI;
+-(ORInformer*) initORInformer;
 -(void) whenNotifiedDo: (id) closure;
 -(void) sleepUntilNotified;
 -(void) notify;

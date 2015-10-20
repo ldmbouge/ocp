@@ -1,13 +1,38 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
  ***********************************************************************/
+
+//014-06-27 14:38:21.817 coloringModel[3194:303] Infinity: [-inf..+inf]
+//2014-06-27 14:38:21.818 coloringModel[3194:303] Zero    : [0.00000000000000 .. 0.00000000000000]
+//2014-06-27 14:38:21.826 coloringModel[3194:303] local adr is: 0x7fff5fbfefa4
+//2014-06-27 14:38:21.826 coloringModel[3194:303] base  adr is: 0x7fff5fbff048
+//2014-06-27 14:38:21.826 coloringModel[3194:303] distance    : 164
+//2014-06-27 14:38:21.829 coloringModel[3194:303] coloring with: 12 colors 0
+//2014-06-27 14:38:21.830 coloringModel[3194:303] coloring with: 11 colors 0
+//2014-06-27 14:38:27.431 coloringModel[3194:303] coloring with: 10 colors 0
+//2014-06-27 14:38:34.352 coloringModel[3194:303] top-level success
+//2014-06-27 14:38:34.352 coloringModel[3194:303] Optimal Solution: 10 thread:0
+//2014-06-27 14:38:34.353 coloringModel[3194:303] Solution 0x102736eb0 found with value 12
+//2014-06-27 14:38:34.353 coloringModel[3194:303] Solution 0x1007053c0 found with value 11
+//2014-06-27 14:38:34.353 coloringModel[3194:303] Solution 0x1027388d0 found with value 10
+//2014-06-27 14:38:34.354 coloringModel[3194:303] Solver status: Solver: 81 vars
+//1310 constraints
+//452212 choices
+//452077 fail
+//47861724 propagations
+//2014-06-27 14:38:34.354 coloringModel[3194:303] Quitting
+//2014-06-27 14:38:34.354 coloringModel[3194:303] released 82 continuations out of 82...
+//FMT:heur,rand,threads,size,found,restartRate,#f,#c,#p,cpu,wc,mUsed,mPeak
+//OUT:FF,0,0,4,1,0.000000,452077,452212,47861724,12530,12537,1381600,1733008
+//Program ended with exit code: 0
+
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORSemBDSController.h>
@@ -328,7 +353,7 @@ int main(int argc, const char * argv[])
             [cp forall: V
               suchThat:^bool(ORInt i) { return ![cp bound: c[i]];}
              orderedBy: ^ORInt(ORInt i) { return [cp domsize: c[i]]; }
-                   and: ^ORInt(ORInt i) { return - [deg at:i];}
+                  then: ^ORInt(ORInt i) { return - [deg at:i];}
                     do: ^(ORInt i) {
                        ORInt maxc = max(0,[cp maxBound: c]);
                        [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {
@@ -341,11 +366,15 @@ int main(int argc, const char * argv[])
                     }
              ];
             [cp label:m with:[cp min: m]];
-            NSDate* t2 = [NSDate date];
-            NSTimeInterval time2 = [t2 timeIntervalSinceDate: t0];
-            if([cp intValue:m] < cpbnd) { cpbnd = [cp intValue:m]; bndtime = time2; }
-            NSLog(@"coloring with: %d colors -- time %f",[cp intValue:m], time2);
+            NSLog(@"coloring with: %d colors %d and first variable %d",[cp intValue:m],[NSThread threadID],[cp intValue: c[1]]);
          }];
+         id<ORSolutionPool> pool = [cp solutionPool];
+         [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@ and first variable %d",s,[s objectiveValue],[s intValue: c[1]]); } ];
+         NSLog(@"Solver status: %@\n",cp);
+         NSLog(@"Quitting");
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [ORFactory shutdown];
+         return r;
       }];
       t1 = [NSDate date];
       time = [t1 timeIntervalSinceDate: t0];

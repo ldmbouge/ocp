@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,12 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPTypes.h>
+#import <ORFoundation/OREngine.h>
+#import <ORFoundation/ORConstraint.h>
 
 @protocol CPValueEvent;
 @protocol CPConstraint;
 @protocol CPClosureList;
-@class CPCoreConstraint;
 
 #define NBPRIORITIES ((ORInt)8)
 #define ALWAYS_PRIO  ((ORInt)0)
@@ -28,6 +27,7 @@
 -(void) scheduleClosures: (id<CPClosureList>*) mlist;
 -(void) scheduleValueClosure: (id<CPValueEvent>) evt;
 -(void) propagate;
+-(void) open;
 
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>) objective;
@@ -37,6 +37,7 @@
 -(ORStatus) enforce: (ORClosure) cl;
 -(void)  tryEnforce:(ORClosure) cl;
 -(void)  tryAtomic:(ORClosure) cl;
+-(ORStatus) atomic: (ORClosure) cl;
 
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
@@ -45,29 +46,19 @@
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
-
+-(id<ORIntRange>)boolRange;
 @end
 
 #define ISLOADED(q)  ((q)->_csz)
-
-typedef struct CPClosureEntry {
-   ORClosure  cb;
-   CPCoreConstraint*    cstr;
-} CPClosureEntry;
 
 @interface CPClosureQueue : NSObject {
    @package
    ORInt      _mxs;
    ORInt      _csz;
-   CPClosureEntry*  _tab;
-   CPClosureEntry*  _last;
-   ORInt     _enter;
-   ORInt     _exit;
-   ORInt     _mask;
 }
 -(id) initClosureQueue: (ORInt) sz;
 -(void) dealloc;
--(CPClosureEntry) deQueue;
+-(void) deQueue:(ORClosure*)cb forCstr:(id<CPConstraint>*)cstr;
 -(void) enQueue:(ORClosure) cb cstr: (id<CPConstraint>)cstr;
 -(void) reset;
 -(ORBool) loaded;
@@ -75,12 +66,8 @@ typedef struct CPClosureEntry {
 
 @interface CPValueClosureQueue : NSObject {
    @package
-   ORInt           _mxs;
-   ORInt           _csz;
-   id<CPValueEvent>* _tab;
-   ORInt         _enter;
-   ORInt          _exit;
-   ORInt          _mask;
+   ORInt      _mxs;
+   ORInt      _csz;
 }
 -(id) initValueClosureQueue: (ORInt) sz;
 -(void) dealloc;
@@ -89,4 +76,8 @@ typedef struct CPClosureEntry {
 -(void) reset;
 -(ORBool) loaded;
 @end
+
+@class CPEngineI;
+ORStatus propagateFDM(CPEngineI* fdm);
+void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist);
 

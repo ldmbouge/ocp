@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@
 #import <ORFoundation/ORDataI.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
-#import "CPIntVarI.h"
+#import <objcp/CPIntVarI.h>
 
 @interface CPTableCstrI : CPCoreConstraint<CPConstraint> {
     CPIntVar**     _var;

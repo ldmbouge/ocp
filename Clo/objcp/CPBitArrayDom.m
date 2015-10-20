@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,12 @@
 
  ***********************************************************************/
 
-#import "CPBitArrayDom.h"
-#import "CPError.h"
-#import "CPBitVar.h"
+#import <objcp/CPBitArrayDom.h>
+#import <objcp/CPError.h>
+#import <objcp/CPBitVar.h>
+#import <objcp/CPBitMacros.h>
+#import <objcp/CPIntVarI.h>
 #import "CPBitVarI.h"
-#import "CPBitMacros.h"
-#import "CPIntVarI.h"
 
 #define BITFREE(idx)     ((_low[WORDIDX(idx)]._val ^ _up[WORDIDX(idx)]._val) & ONEAT(idx))
 #define SETBITTRUE(idx)   (assignTRUInt(&_low[WORDIDX(idx)],_low[WORDIDX(idx)]._val | ONEAT(idx),_trail))
@@ -122,9 +122,9 @@
     return _freebits._val==0;
 }
 
--(uint64)   min
+-(ORULong)   min
 {
-    uint64 minimum;
+    ORULong minimum;
     
     minimum = _min[0]._val;
     if(_wordLength > 1){
@@ -160,9 +160,9 @@
 
 
 
--(uint64)   max
+-(ORULong)   max
 {
-    uint64 maximum;
+    ORULong maximum;
     
     maximum = _max[0]._val;
     if(_wordLength > 1){
@@ -357,7 +357,7 @@
     if(_wordLength>2)
         @throw[[ORExecutionError alloc] initORExecutionError:"CPBitArrayDomIterator does not support bit arrays with length > 64 bits.\n"];
     
-    uint64 x64bit = x[0];
+    ORULong x64bit = x[0];
     if (_wordLength>1) {
         x64bit <<= 32;
         x64bit += x[1];
@@ -373,27 +373,27 @@
         upa[i] = _up[i]._val;
     }
     
-    uint64 low = lowa[0];
+    ORULong low = lowa[0];
     if (_wordLength>1) {
         low <<= 32;
         low += lowa[1];
     }
     
-    uint64 up = upa[0];
+    ORULong up = upa[0];
     if (_wordLength>1) {
         up <<= 32;
         up += upa[1];
     }
     
-    uint64 m = 1, sm=1;
+    ORULong m = 1, sm=1;
     while (*x & ~m){
         m = (m<<1) |1;
         sm <<= 1;
     }
     
-    uint64 mup = up & m;
-    uint64 out = low & m;
-    uint64 pm = m;
+    ORULong mup = up & m;
+    ORULong out = low & m;
+    ORULong pm = m;
     
     while(sm){
         bool isOne = (x64bit & sm) == sm;
@@ -435,18 +435,18 @@
 
 #define INTERPRETATION(t) ((((unsigned long long)(t)[0]._val)<<BITSPERWORD) | (t)[1]._val)
 
--(ORStatus)updateMin:(uint64)newMin for:(id<CPBitVarNotifier>)x
+-(ORStatus)updateMin:(ORULong)newMin for:(id<CPBitVarNotifier>)x
 {
-   uint64 oldMin = INTERPRETATION(_low);
-   uint64 oldMax = INTERPRETATION(_up);
+   ORULong oldMin = INTERPRETATION(_low);
+   ORULong oldMax = INTERPRETATION(_up);
    int oldDS = _freebits._val;
    int msbIndex = BITSPERWORD - 1;
    while (msbIndex) {
-      uint64 curMin = INTERPRETATION(_low);
-      uint64 curMax = INTERPRETATION(_up);
+      ORULong curMin = INTERPRETATION(_low);
+      ORULong curMax = INTERPRETATION(_up);
       if ((curMax < newMin) || (curMin > oldMax))
          failNow();
-      uint64 freeBits = curMin ^ curMax;
+      ORULong freeBits = curMin ^ curMax;
       if ((0x1 << msbIndex) & freeBits) {
          if (curMax - (0x1 << msbIndex) < newMin) {
             curMin = curMin | (0x1 << msbIndex);
@@ -464,8 +464,8 @@
       }
       msbIndex--;
    }
-   uint64 finalMin = INTERPRETATION(_low);
-   uint64 finalMax = INTERPRETATION(_up);
+   ORULong finalMin = INTERPRETATION(_low);
+   ORULong finalMax = INTERPRETATION(_up);
    if (finalMin > oldMin)
       [x changeMinEvt:oldDS sender:self];
    if (finalMax < oldMax)
@@ -473,10 +473,10 @@
    return ORSuspend;
 }
 
--(ORStatus)updateMax:(uint64)newMax for:(id<CPBitVarNotifier>)x
+-(ORStatus)updateMax:(ORULong)newMax for:(id<CPBitVarNotifier>)x
 {
-    uint64 originalMax = _max[0]._val;
-    uint64 min = _min[0]._val;
+    ORULong originalMax = _max[0]._val;
+    ORULong min = _min[0]._val;
     if(_wordLength>1){
         originalMax <<= 32;
         originalMax += _max[1]._val;
@@ -484,7 +484,7 @@
         min += _min[1]._val;
     }
     
-   uint64 newMax64 = newMax;
+   ORULong newMax64 = newMax;
     
     if(newMax64 >= originalMax)
         return ORSuspend;
@@ -509,8 +509,8 @@
         newMax64 <<= 32;
         newMax64 += _max[1]._val;
     }
-    uint64 newUp = 1;
-    uint64 mask = 1;
+    ORULong newUp = 1;
+    ORULong mask = 1;
     int bit = 0;
     
     while(newMax64) {
@@ -536,8 +536,8 @@
     // Since _max is guaranteed to be >= _min, I can't have bits in _low that are set to 1
     // and the corresponding bit in the target part of up be 0. The bits can be reset all
     // at once. The loop is merely meant to count the number of zapped bits. 
-    uint64 low = _low[0]._val;
-    uint64 up = _up[0]._val;
+    ORULong low = _low[0]._val;
+    ORULong up = _up[0]._val;
     
     if(_wordLength > 1){
         low <<= 32;
@@ -546,7 +546,7 @@
         up += _up[1]._val;
     }
     
-    uint64 inc = ~newUp & up;
+    ORULong inc = ~newUp & up;
     int bith = 0;
     while(inc) {
         if (inc & 0x1) 
@@ -557,7 +557,7 @@
     // ======================================================================
     // Next phase, force some bits in the up part masked by newUp to 0 if we can
     // be sure that this specific bit can never be set to 1.   
-    uint64 atLeast = low;
+    ORULong atLeast = low;
     newMax64 = _max[0]._val;
     if(_wordLength > 1){
         newMax64 <<= 32;
@@ -610,7 +610,7 @@
    return ORSuspend;
 }
 
--(ORStatus)bind:(uint64)val for:(id<CPBitVarNotifier>)x
+-(ORStatus)bind:(ORULong)val for:(id<CPBitVarNotifier>)x
 {
     if ((val < [self min]) || (val > [self max]))
        failNow();
@@ -628,7 +628,7 @@
 
 -(ORStatus) bindToPat:(unsigned int*) pat for:(id<CPBitVarNotifier>)x
 {
-   uint64  val = (((unsigned long long)pat[0]) << BITSPERWORD) | pat[1];
+   ORULong  val = (((unsigned long long)pat[0]) << BITSPERWORD) | pat[1];
    if(_wordLength > 1){
       val <<= 32;
       val+= pat[1];

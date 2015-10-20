@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,28 @@
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 
-@implementation CPEquationBC
+@class CPIntVar;
+typedef struct CPEQTerm {
+   UBType  update;
+   CPIntVar* var;
+   ORLong     low;
+   ORLong      up;
+   BOOL   updated;
+} CPEQTerm;
+
+MAKETRPointer(TRCPEQTerm,CPEQTerm);
+
+@implementation CPEquationBC { // sum(i in S) x_i == c
+@private
+   CPIntVar**               _x;  // array of vars
+   ORLong                   _nb;  // size
+   ORInt                     _c;  // constant c in:: sum(i in S) x_i == c
+   UBType*        _updateBounds;
+   CPEQTerm*          _allTerms;
+   TRCPEQTerm*           _inUse;
+   TRInt                  _used;
+   TRLong                   _ec; // expanded constant c (including the bound terms)
+}
 
 -(CPEquationBC*) initCPEquationBC: (ORIdArrayI*) x equal: (ORInt) c
 {
@@ -65,7 +86,7 @@ struct Bounds {
    long long _sumUp;
    ORULong     _nb;
 };
-
+/*
 static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 {
    long long slow = 0,sup = 0;
@@ -88,6 +109,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    bnd->_sumUp  = sup  + bnd->_bndUp;
    bnd->_nb     = nb;
 }
+*/
 
 -(void) post
 {
@@ -187,7 +209,13 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 }
 @end
 
-@implementation CPINEquationBC 
+@implementation CPINEquationBC  { // sum(i in S) x_i <= c
+@private
+   CPIntVar**        _x;  // array of vars
+   ORLong            _nb;  // size
+   ORInt              _c;  // constant c in:: sum(i in S) x_i <= c
+   UBType*    _updateMax;
+}
 -(CPINEquationBC*) initCPINEquationBC: (ORIdArrayI*) x lequal: (ORInt) c
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];

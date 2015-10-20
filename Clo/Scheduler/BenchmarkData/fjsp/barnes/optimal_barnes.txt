@@ -1,0 +1,21 @@
+mt10c1	655	927
+mt10cc	655	908		Yuan et al. 2013
+mt10x	655	918
+mt10xx	655	918
+mt10xxx	655	918
+mt10xy	655	905
+mt10xyz	655	847
+setb4c9	857	914
+setb4cc	857	907		Yuan et al. 2013
+setb4x	846	925
+setb4xx	846	925
+setb4xxx	846	925
+setb4xy	845	910		Yuan et al. 2013
+setb4xyz	838	903		Yuan et al. 2013
+seti5c12	1027	1171 	Yuan et al. 2013 
+seti5cc	955	1136
+seti5x	955	1198
+seti5xx	955	1197		Yuan et al. 2013
+seti5xxx	955	1197
+seti5xy	955	1136
+seti5xyz	955	1125

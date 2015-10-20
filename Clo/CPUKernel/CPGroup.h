@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,6 +22,7 @@
 }
 -(id)   init: (id<CPEngine>) engine;
 -(void) add: (id<CPConstraint>) p;
+-(void)  assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure: (id<CPClosureList>) evt;
 -(void) scheduleValueClosure: (id<CPValueEvent>) evt;
@@ -41,6 +42,7 @@
 }
 -(id) init:(id<CPEngine>)engine;
 -(void) add:(id<CPConstraint>)p;
+-(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure:(id<CPClosureList>)evt;
 -(void) scheduleValueClosure: (id<CPValueEvent>)evt;

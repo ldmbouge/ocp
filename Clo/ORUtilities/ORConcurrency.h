@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,12 +10,13 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORTypes.h"
+#import <ORUtilities/ORTypes.h>
 
 @protocol ORSolution;
 @protocol ORConstraint;
 @protocol ORIntArray;
-@protocol ORFloatArray;
+@protocol ORDoubleArray;
+@protocol ORConstraintSet;
 
 @protocol ORInformer<NSObject>
 -(void) whenNotifiedDo: (id) closure;
@@ -31,7 +32,7 @@
 -(void) notifyWith:(int)a0;
 @end
 
-@protocol ORFloatInformer<ORInformer>
+@protocol ORDoubleInformer<ORInformer>
 -(void) notifyWithFloat:(double)a0;
 @end
 
@@ -55,8 +56,8 @@
 -(void) notifyWithIntArray: (id<ORIntArray>)arr;
 @end
 
-@protocol ORFloatArrayInformer <ORInformer>
--(void) notifyWithFloatArray: (id<ORFloatArray>)arr;
+@protocol ORDoubleArrayInformer <ORInformer>
+-(void) notifyWithDoubleArray: (id<ORDoubleArray>)arr;
 @end
 
 @protocol ORConstraintSetInformer <ORInformer>
@@ -74,6 +75,7 @@
 
 @interface ORConcurrency : NSObject 
 +(void) parall: (ORRange) R do: (ORInt2Void) closure;
++(id<ORSolutionInformer>) solutionInformer;
 +(id<ORIntInformer>) intInformer;
 +(id<ORIdInformer>) idInformer;
 +(id<ORVoidInformer>) voidInformer;

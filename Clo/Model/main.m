@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
-#import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
 {
@@ -20,8 +17,8 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       
       id<ORModel> model = [ORFactory createModel];
-      id<ORFloatVar> x = [ORFactory floatVar: model low: 0 up: 100];
-      id<ORFloatVar> y = [ORFactory floatVar: model low: 0 up: 100];      
+      id<ORRealVar> x = [ORFactory realVar: model low: 0 up: 100];
+      id<ORRealVar> y = [ORFactory realVar: model low: 0 up: 100];
       
       [model add: [x leq: y]];
       NSLog(@"x id: %d",[x getId]);
@@ -43,7 +40,7 @@ int oldMain(int argc, const char * argv[])
       
       [model add: cstr];
       
-      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      id<CPCommonProgram> cp = [ORFactory createCPProgram:model];
       
       [cp solve: ^{
          [cp labelArray:a];
@@ -51,7 +48,6 @@ int oldMain(int argc, const char * argv[])
       for(ORInt i = 0; i <= 10; i++)
          printf("x[%d] = %d \n",i,[cp intValue:a[i]]);
       NSLog(@"Solver status: %@\n",cp);
-      [cp release];
       [ORFactory shutdown];
    }
    return 0;

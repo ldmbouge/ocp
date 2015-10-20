@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,7 +44,8 @@
    id grid = [board makeGrid:[[x at:[x  low]] domain] by: [x range]];
    for(ORInt i = [x low];i <= [x up];i++) {
       id<ORIntVar> xi = [x at:i];
-      [cp addConstraintDuringSearch: [CPFactory watchVariable:xi 
+      [cp addConstraintDuringSearch: [CPFactory solver:cp
+                                         watchVariable:xi
                             onValueLost:^void(ORInt val) {
                                [board toggleGrid:grid row:val col:i to:Removed];
                             } 
@@ -58,10 +59,9 @@
                              [board toggleGrid:grid row:val col:i to:Possible];
                           }
                 ]
-       annotation:Default
        ];
    }
-   [board watchSearch:cp 
+   [board watchSearch:[cp explorer]
               onChoose: ^void() { [board pause];}  
                 onFail: ^void() { [board pause];}
     ];
@@ -79,26 +79,25 @@
    [model add: [ORFactory alldifferent: xp]];
    [model add: [ORFactory alldifferent: xn]];
    id<CPProgram> cp = [ORFactory createCPProgram:model];
-   id<ORMutableInteger> nbSolutions = [ORFactory integer:model value:0];
+   __block ORInt nbSolutions = 0;
    [cp solveAll: ^{
       [self visualize:x on:cp];
-      [cp labelArray: x orderedBy: ^ORFloat(int i) { return [[x at:i] domsize];}];
+      [cp labelArray: x orderedBy: ^ORDouble(int i) { return [cp domsize:x[i]];}];
       @autoreleasepool {
          id<ORIntArray> xs = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
-            return [x[i] value];
+            return [cp intValue:x[i]];
          }];
-         NSString* buf = [NSString stringWithFormat:@"sol [%d]: %@\n",[nbSolutions value],xs];
+         NSString* buf = [NSString stringWithFormat:@"sol [%d]: %@\n",nbSolutions,xs];
          [_view2 performSelectorOnMainThread:@selector(insertText:)
                                   withObject:buf
                                waitUntilDone:YES];
       }
-      [nbSolutions incr];
+      nbSolutions++;
     }
     ];
    [_view2 performSelectorOnMainThread:@selector(insertText:) 
-                            withObject:[NSString stringWithFormat:@"GOT %d solutions\nSolver status %@",[nbSolutions value],cp]
+                            withObject:[NSString stringWithFormat:@"GOT %d solutions\nSolver status %@",nbSolutions,cp]
                          waitUntilDone:NO];
-   [cp release];
    [ORFactory shutdown];
 }
 

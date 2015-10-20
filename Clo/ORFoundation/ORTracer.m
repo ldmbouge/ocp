@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,9 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTracer.h>
-#import <CPUKernel/CPTypes.h>
-#import "ORTrailI.h"
 #include <pthread.h>
 
 
@@ -227,6 +224,24 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    return _path;
 }
 
+#if TARGET_OS_IPHONE
++(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
+{
+   id ptr = [super allocWithZone:NULL];
+   *(Class*)ptr = self;
+   ptr = [ptr initCheckpoint:cmds memory:mt];
+   ((ORCheckpointI*)ptr)->_cnt = 1;
+   return ptr;
+}
+-(void) letgo
+{
+   assert(_cnt > 0);
+   if (--_cnt == 0) {
+      [_mt clear];
+      [self release];
+   }
+}
+#else
 static __thread id checkPointCache = NULL;
 
 +(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
@@ -272,6 +287,7 @@ static __thread id checkPointCache = NULL;
       checkPointCache = self;
    }
 }
+#endif
 
 -(id)grab
 {

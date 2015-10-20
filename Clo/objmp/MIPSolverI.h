@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,31 +20,31 @@
    MIPSolverI*            _solver;
    int                   _nb;
    int                   _idx;
-   ORFloat               _low;
-   ORFloat               _up;
+   ORDouble               _low;
+   ORDouble               _up;
    MIPObjectiveI*         _obj;
-   ORFloat               _objCoef;
+   ORDouble               _objCoef;
    int                   _size;
    int                   _maxSize;
    MIPConstraintI**       _cstr;
    int*                  _cstrIdx;
-   ORFloat*              _coef;
+   ORDouble*              _coef;
    bool                  _hasBounds;
 }
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver;
--(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
+-(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver low: (ORDouble) low up: (ORDouble) up;
 -(ORBool) hasBounds;
--(ORFloat) low;
--(ORFloat) up;
+-(ORDouble) low;
+-(ORDouble) up;
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
 
--(void) addConstraint: (MIPConstraintI*) c coef: (ORFloat) coef;
+-(void) addConstraint: (MIPConstraintI*) c coef: (ORDouble) coef;
 -(void) delConstraint: (MIPConstraintI*) c;
--(void) addObjective: (MIPObjectiveI*) obj coef: (ORFloat) coef;
+-(void) addObjective: (MIPObjectiveI*) obj coef: (ORDouble) coef;
 -(void) print;
 -(void) del;
--(ORFloat) floatValue;
+-(ORDouble) dblValue;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
@@ -53,7 +53,7 @@
 
 @interface MIPIntVariableI : MIPVariableI
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver;
--(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
+-(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORDouble) low up: (ORDouble) up;
 -(ORBool) isInteger;
 -(ORInt) intValue;
 @end
@@ -78,8 +78,8 @@
 -(void) setCstrIdx: (ORInt) idx;
 -(ORInt) coefIdx;
 -(void) setCoefIdx: (ORInt) idx;
--(ORFloat) floatValue;
--(void) setFloatValue: (ORFloat)val;
+-(ORDouble) doubleValue;
+-(void) setDoubleValue: (ORDouble)val;
 
 -(NSString*)description;
 -(ORBool) isInteger;
@@ -96,14 +96,14 @@
    int                 _size;
    MIPVariableI**       _var;
    int*                _col;
-   ORFloat*            _coef;
-   ORFloat             _rhs;
+   ORDouble*            _coef;
+   ORDouble             _rhs;
    
    MIPVariableI**       _tmpVar;
-   ORFloat*            _tmpCoef;
+   ORDouble*            _tmpCoef;
 }
 
--(MIPConstraintI*)      initMIPConstraintI: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
+-(MIPConstraintI*)      initMIPConstraintI: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
 -(void)                dealloc;
 -(MIPConstraintType)    type;
 -(ORInt)               size;
@@ -111,28 +111,28 @@
 -(MIPVariableI*)        var: (ORInt) i;
 -(ORInt*)              col;
 -(ORInt)               col: (ORInt) i;
--(ORFloat*)            coef;
--(ORFloat)             coef: (ORInt) i;
--(ORFloat)             rhs;
+-(ORDouble*)            coef;
+-(ORDouble)             coef: (ORInt) i;
+-(ORDouble)             rhs;
 -(ORInt)               idx;
 -(void)                setIdx: (ORInt) idx;
 -(void)                del;
 -(void)                delVariable: (MIPVariableI*) var;
--(void)                addVariable: (MIPVariableI*) var coef: (ORFloat) coef;
+-(void)                addVariable: (MIPVariableI*) var coef: (ORDouble) coef;
 -(void)                setNb: (ORInt) nb;
 -(ORInt)               nb;
 @end
 
 @interface MIPConstraintLEQ : MIPConstraintI
--(MIPConstraintI*) initMIPConstraintLEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
+-(MIPConstraintI*) initMIPConstraintLEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
 @end
 
 @interface MIPConstraintGEQ : MIPConstraintI
--(MIPConstraintI*) initMIPConstraintGEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
+-(MIPConstraintI*) initMIPConstraintGEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
 @end
 
 @interface MIPConstraintEQ : MIPConstraintI
--(MIPConstraintI*) initMIPConstraintEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
+-(MIPConstraintI*) initMIPConstraintEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
 @end
 
 @interface MIPObjectiveI : NSObject
@@ -145,23 +145,23 @@
    int                _maxSize;
    MIPVariableI**        _var;
    int*                _col;
-   ORFloat*             _coef;
-   ORFloat              _cst;
+   ORDouble*             _coef;
+   ORDouble              _cst;
    bool                _posted;
    MIPVariableI**       _tmpVar;
-   ORFloat*             _tmpCoef;
+   ORDouble*             _tmpCoef;
 }
--(MIPObjectiveI*) initMIPObjectiveI: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst;
+-(MIPObjectiveI*) initMIPObjectiveI: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef cst: (ORDouble) cst;
 -(void) dealloc;
 -(MIPObjectiveType) type;
 -(ORInt) size;
 -(MIPVariableI**) var;
 -(ORInt*) col;
--(ORFloat*) coef;
+-(ORDouble*) coef;
 -(void) print;
 -(void) delVariable: (MIPVariableI*) var;
--(void) addVariable: (MIPVariableI*) var coef: (ORFloat) coef;
--(void) addCst: (ORFloat) cst;
+-(void) addVariable: (MIPVariableI*) var coef: (ORDouble) coef;
+-(void) addCst: (ORDouble) cst;
 -(id<ORObjectiveValue>) value;
 -(void) setPosted;
 -(void) setNb: (ORInt) nb;
@@ -169,14 +169,14 @@
 @end
 
 @interface MIPMinimize : MIPObjectiveI
--(MIPObjectiveI*) initMIPMinimize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef;
--(MIPObjectiveI*) initMIPMinimize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst;
+-(MIPObjectiveI*) initMIPMinimize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef;
+-(MIPObjectiveI*) initMIPMinimize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef cst: (ORDouble) cst;
 -(void) print;
 @end
 
 @interface MIPMaximize : MIPObjectiveI
--(MIPObjectiveI*) initMIPMaximize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef;
--(MIPObjectiveI*) initMIPMaximize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst;
+-(MIPObjectiveI*) initMIPMaximize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef;
+-(MIPObjectiveI*) initMIPMaximize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef cst: (ORDouble) cst;
 -(void) print;
 @end
 
@@ -187,17 +187,17 @@
    int                 _size;
    int                 _maxSize;
    MIPVariableI**        _var;
-   ORFloat*             _coef;
-   ORFloat              _cst;
+   ORDouble*             _coef;
+   ORDouble              _cst;
 }
 -(MIPLinearTermI*) initMIPLinearTermI: (MIPSolverI*) solver;
 -(void) dealloc;
 -(ORInt) size;
 -(MIPVariableI**) var;
--(ORFloat*) coef;
--(ORFloat) cst;
--(void) add: (ORFloat) cst;
--(void) add: (ORFloat) coef times: (MIPVariableI*) var;
+-(ORDouble*) coef;
+-(ORDouble) cst;
+-(void) add: (ORDouble) cst;
+-(void) add: (ORDouble) coef times: (MIPVariableI*) var;
 -(void) close;
 @end
 
@@ -228,31 +228,30 @@
 
 +(MIPSolverI*)      create;
 -(MIPVariableI*)    createVariable;
--(MIPVariableI*)    createVariable: (ORFloat) low up: (ORFloat) up;
--(MIPIntVariableI*) createIntVariable;
--(MIPIntVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up;
+-(MIPVariableI*)    createVariable: (ORDouble) low up: (ORDouble) up;
 -(MIPParameterI*) createParameter;
+-(MIPIntVariableI*) createIntVariable;
+-(MIPIntVariableI*) createIntVariable: (ORDouble) low up: (ORDouble) up;
 -(MIPLinearTermI*)  createLinearTerm;
 
--(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
--(MIPConstraintI*) createGEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
--(MIPConstraintI*) createEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
--(MIPObjectiveI*)  createMinimize: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef;
--(MIPObjectiveI*)  createMaximize: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef;
+-(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
+-(MIPConstraintI*) createGEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
+-(MIPConstraintI*) createEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef rhs: (ORDouble) rhs;
+-(MIPObjectiveI*)  createMinimize: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef;
+-(MIPObjectiveI*)  createMaximize: (ORInt) size var: (MIPVariableI**) var coef: (ORDouble*) coef;
 
--(MIPConstraintI*) createLEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
--(MIPConstraintI*) createGEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
--(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
+-(MIPConstraintI*) createLEQ: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
+-(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
 
 
 -(MIPObjectiveI*)  createObjectiveMinimize: (MIPVariableI*) x;
 -(MIPObjectiveI*)  createObjectiveMaximize: (MIPVariableI*) x;
--(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
--(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
+-(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef;
+-(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef;
 
--(MIPConstraintI*) createLEQ: (MIPLinearTermI*) t rhs: (ORFloat) rhs;
--(MIPConstraintI*) createGEQ: (MIPLinearTermI*) t rhs: (ORFloat) rhs;
--(MIPConstraintI*) createEQ:  (MIPLinearTermI*) t  rhs: (ORFloat) rhs;
+-(MIPConstraintI*) createLEQ: (MIPLinearTermI*) t rhs: (ORDouble) rhs;
+-(MIPConstraintI*) createGEQ: (MIPLinearTermI*) t rhs: (ORDouble) rhs;
+-(MIPConstraintI*) createEQ:  (MIPLinearTermI*) t  rhs: (ORDouble) rhs;
 -(MIPObjectiveI*)  createMinimize: (MIPLinearTermI*) t;
 -(MIPObjectiveI*)  createMaximize: (MIPLinearTermI*) t;
 
@@ -266,27 +265,26 @@
 -(ORBool) isClosed;
 -(MIPOutcome) solve;
 -(void) setTimeLimit: (double)limit;
--(ORFloat) bestObjectiveBound;
+-(ORDouble) bestObjectiveBound;
 -(ORFloat) dualityGap;
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;
--(void) setIntVar: (MIPVariableI*)var value:(ORInt)val;
--(ORFloat) floatValue: (MIPVariableI*) var;
--(void) setFloatVar: (MIPVariableI*)var value:(ORFloat)val;
--(ORFloat) floatParamValue: (MIPParameterI*) var;
--(void) setORFloatParameter: (MIPParameterI*)param value: (ORFloat)val;
--(ORFloat) lowerBound: (MIPVariableI*) var;
--(ORFloat) upperBound: (MIPVariableI*) var;
+-(ORDouble) dblValue: (MIPVariableI*) var;
+-(ORDouble) lowerBound: (MIPVariableI*) var;
+-(ORDouble) upperBound: (MIPVariableI*) var;
 -(id<ORObjectiveValue>) objectiveValue;
--(ORFloat) mipvalue;
+-(ORDouble) mipvalue;
 
--(void) updateLowerBound: (MIPVariableI*) var lb: (ORFloat) lb;
--(void) updateUpperBound: (MIPVariableI*) var ub: (ORFloat) ub;
+-(void) updateLowerBound: (MIPVariableI*) var lb: (ORDouble) lb;
+-(void) updateUpperBound: (MIPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORFloat) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
+
+-(ORDouble) paramValue: (MIPParameterI*) param;
+-(void) setParam: (MIPParameterI*) param value: (ORDouble)val;
 
 -(void) print;
 -(void) printModelToFile: (char*) fileName;

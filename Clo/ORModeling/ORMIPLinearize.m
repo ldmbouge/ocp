@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012,2013 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -86,7 +86,7 @@
 {
    _result = v;
 }
--(void) visitFloatVar: (ORFloatVarI*) v
+-(void) visitRealVar: (ORRealVarI*) v
 {
    _result = v;
 }
@@ -109,7 +109,7 @@
 {
    _result = e;
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    _result = e;
 }
@@ -118,7 +118,7 @@
 {
    _result = v;
 }
--(void) visitFloatArray:(id<ORFloatArray>)v
+-(void) visitDoubleArray:(id<ORDoubleArray>)v
 {
    _result = v;
 }
@@ -138,7 +138,7 @@
 {
    _result = v;
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {
    _result = v;
 }
@@ -177,6 +177,18 @@
 {
    assert(false);
 }
+-(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
+{
+   assert(false);
+}
+-(void) visitMultiKnapsackOne: (id<ORMultiKnapsackOne>) cstr
+{
+   assert(false);
+}
+-(void) visitMeetAmost: (id<ORMeetAtmost>) cstr
+{
+   assert(false);
+}
 -(void) visitGroup:(id<ORGroup>)g
 {
     assert(false);
@@ -197,7 +209,7 @@
 {
    _result = cstr;
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+-(void) visitRealEqualc: (id<ORRealEqualc>)c
 {
    _result = c;
 }
@@ -255,7 +267,7 @@
 {
    _result = c;
 }
--(void) visitFloatSquare:(id<ORSquare>)c
+-(void) visitRealSquare:(id<ORSquare>)c
 {
    _result = c;
 }
@@ -299,11 +311,19 @@
 {
    _result = c;
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+-(void) visitRealElementCst: (id<ORRealElementCst>) c
 {
    _result = c;
 }
 -(void) visitCircuit:(id<ORCircuit>) c
+{
+   _result = c;
+}
+-(void) visitPath:(id<ORPath>) c
+{
+   _result = c;
+}
+-(void) visitSubCircuit:(id<ORSubCircuit>) c
 {
    _result = c;
 }
@@ -314,6 +334,10 @@
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
    _result = c;
+}
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c
+{
+    _result = c;
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
@@ -445,11 +469,11 @@
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
-   _result = [_into minimize: [v array] coef: [v coef] independent:[v independent]];
+    _result = [_into minimize: [v array] coef: [v coef]];
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
-   _result = [_into maximize: [v array] coef: [v coef] independent:[v independent]];
+    _result = [_into maximize: [v array] coef: [v coef]];
 }
 
 @end

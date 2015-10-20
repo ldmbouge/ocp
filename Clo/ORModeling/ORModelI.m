@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,6 +21,7 @@
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
 
+#import <objc/runtime.h>
 
 @implementation ORTau
 {
@@ -41,6 +42,8 @@
 }
 -(void) set: (id) value forKey: (id) key
 {
+   if (key==nil)
+      return;
    [_mapping setObject: value forKey: key];
 }
 -(id) get: (id) key
@@ -52,6 +55,21 @@
    ORTau* tau = [[ORTau alloc] initORTau];
    tau->_mapping = [_mapping copy];
    return tau;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   @autoreleasepool {
+      NSEnumerator* i = [_mapping keyEnumerator];
+      id key;
+      [buf appendString:@"{"];
+      while ((key = [i nextObject]) !=nil) {
+         id obj = [_mapping objectForKey:key];
+         [buf appendFormat:@"%@ -> %@,",key,obj];
+      }
+      [buf appendString:@"}"];
+   }
+   return buf;
 }
 @end
 
@@ -85,6 +103,21 @@
    ORLambda* lambda = [[ORLambda alloc] initORLambda];
    lambda->_mapping = [_mapping copy];
    return lambda;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   @autoreleasepool {
+      NSEnumerator* i = [_mapping keyEnumerator];
+      id key;
+      [buf appendString:@"{"];
+      while ((key = [i nextObject]) !=nil) {
+         id obj = [_mapping objectForKey:key];
+         [buf appendFormat:@"%@ -> %@,",key,obj];
+      }
+      [buf appendString:@"}"];
+   }
+   return buf;
 }
 @end
 
@@ -295,10 +328,6 @@
       cur = [cur source];
    return cur;
 }
--(id<ORASolver>) solver
-{
-   return nil;
-}
 -(id<ORObjectiveFunction>) objective
 {
    return _objective;
@@ -409,6 +438,7 @@
 }
 -(id<ORConstraint>) add: (id<ORConstraint>) c
 {
+   [c close];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c];
    }
@@ -471,16 +501,15 @@
    _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
    return [self trackObjective: _objective];
 }
-
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef  independent:(ORFloat)c
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef independent:c];
-   return [self trackObjective: _objective];
+    _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
+    return [self trackObjective: _objective];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef independent:c];
-   return [self trackObjective: _objective];
+    _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
+    return [self trackObjective: _objective];
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
          onMutables: (void(^)(id<ORObject>)) doMutable
@@ -525,6 +554,17 @@
    id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: self with:ncpy];
+   [batch release];
+   [flatModel setSource:self];
+   [flat release];
+   return flatModel;
+}
+-(id<ORModel>) lsflatten:(id<ORAnnotation>)ncpy
+{
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self annotation:ncpy];
+   id<ORModelTransformation> flat = [ORFactory createLSFlattener:batch];
    [flat apply: self with:ncpy];
    [batch release];
    [flatModel setSource:self];
@@ -589,6 +629,7 @@
    _src    = src;
    _notes  = notes;
    _current = nil;
+   NSLog(@"size: %zu",class_getInstanceSize([ORBatchModel class]));
    return self;
 }
 -(id<ORVar>) addVariable: (id<ORVar>) var
@@ -619,6 +660,7 @@
 {
    if (cstr && (id)cstr != [NSNull null]) {
       [_target add: cstr];
+      [_target.modelMappings.tau set:cstr forKey:_current];
       if (_current)
          [_notes transfer: _current toConstraint: cstr];
    }
@@ -661,13 +703,13 @@
 {
    return [_target maximize: x];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   return [_target minimize: array coef: coef independent:c];
+    return [_target minimize: array coef: coef];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-  return [_target maximize: array coef: coef independent:c];
+    return [_target maximize: array coef: coef];
 }
 -(id) trackObject: (id) obj
 {
@@ -778,7 +820,7 @@
 }
 -(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x
 {
-    id<ORWeightedVar> c = [[ORFloatWeightedVarI alloc] initFloatWeightedVar: x];
+    id<ORWeightedVar> c = [[ORRealWeightedVarI alloc] initRealWeightedVar: x];
     [_paramMap setObject: c forKey: x];
     [_params addObject: [c weight]];
     [self add: c];
@@ -847,13 +889,13 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return [_target maximize: x];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   return [_target minimize: array coef: coef independent:c];
+    return [_target minimize: array coef: coef];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef independent:(ORFloat)c
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   return [_target maximize: array coef: coef independent:c];
+    return [_target maximize: array coef: coef];
 }
 
 -(id<ORAddToModel>) model
@@ -886,78 +928,30 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 }
 @end
 
-@implementation ORSolutionPoolI
+
+@implementation ORConstraintSetI
 -(id) init
 {
     self = [super init];
-    _all = [[NSMutableArray alloc] initWithCapacity:64];
-    _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
+    _all = [[NSMutableSet alloc] initWithCapacity:64];
     return self;
 }
 
 -(void) dealloc
 {
-   NSLog(@"dealloc ORSolutionPoolI");
-   // pvh this is buggy
-   [_all release];
-   [super dealloc];
-}
--(NSUInteger) count
-{
-   return [_all count];
-}
--(void) addSolution:(id<ORSolution>)s
-{
-    [_all addObject:s];
-    [_solutionAddedInformer notifyWithSolution: s];
+    [_all release];
+    [super dealloc];
 }
 
--(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c
 {
-   return [_all objectAtIndexedSubscript:key];
+   [_all addObject: c];
+   return c;
 }
 
--(void) enumerateWith:(void(^)(id<ORSolution>))block
+-(ORInt) size
 {
-   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
-      block(obj);
-   }];
-}
-
--(id<ORInformer>)solutionAdded 
-{
-    return _solutionAddedInformer;
-}
-
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"pool["];
-   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
-      [buf appendFormat:@"\t%@\n",obj];
-   }];
-   [buf appendFormat:@"]"];
-   return buf;
-}
-
--(id<ORSolution>) best
-{
-   __block id<ORSolution> sel = nil;
-   __block id<ORObjectiveValue> bestSoFar = nil;
-   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
-      if (bestSoFar == nil) {
-         bestSoFar = [obj objectiveValue];
-         sel = obj;
-      }
-      else {
-         id<ORObjectiveValue> nv = [obj objectiveValue];
-         if ([bestSoFar compare: nv] == 1) {
-            bestSoFar = nv;
-            sel = obj;
-         }
-      }
-   }];
-   return [sel retain];
+    return (ORInt)[_all count];
 }
 
 -(void) emptyPool
@@ -966,4 +960,40 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 }
 @end
 
+@implementation OROrderedConstraintSetI
+-(id) init
+{
+    self = [super init];
+    _all = [[NSMutableArray alloc] initWithCapacity:64];
+    return self;
+}
+
+-(void) dealloc
+{
+    [_all release];
+    [super dealloc];
+}
+
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c
+{
+    [_all addObject: c];
+    return c;
+}
+
+-(ORInt) size {
+    return (ORInt)[_all count];
+}
+
+-(id<ORConstraint>) at:(ORInt)index {
+    return [_all objectAtIndex: index];
+}
+
+-(void) enumerateWith:(void(^)(id<ORConstraint>))block
+{
+    [_all enumerateObjectsUsingBlock:^(id obj, NSUInteger i, BOOL *stop) {
+        block(obj);
+    }];
+}
+
+@end
 

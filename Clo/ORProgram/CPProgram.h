@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,11 +9,9 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORParameter.h>
 #import <ORProgram/CPHeuristic.h>
-#import <objcp/CPData.h>
 
 @protocol ORModel;
 @protocol ORSearchController;
@@ -23,6 +21,9 @@
 @protocol ORTracer;
 @protocol ORSolutionPool;
 @protocol CPBitVar;
+@protocol ORSTask;
+
+PORTABLE_BEGIN
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
@@ -31,18 +32,9 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol ORCPSolution <ORSolution>
-@end
-
-@protocol ORCPSolutionPool <ORSolutionPool>
--(void) addSolution: (id<ORCPSolution>) s;
--(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
--(id<ORInformer>) solutionAdded;
--(id<ORCPSolution>) best;
-@end
-
-@protocol CPCommonProgram  <ORASolver,ORGamma>
+@protocol CPCommonProgram  <ORASearchSolver,ORGamma>
 -(void) setSource:(id<ORModel>)src;
+-(id<ORModel>)       source;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
@@ -50,27 +42,31 @@
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
 
-
 -(void)                 add: (id<ORConstraint>) c;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<ORIntVar>) var float: (ORFloat) val;
--(void)               lthen: (id<ORIntVar>) var float: (ORFloat) val;
+-(void)               gthen: (id<ORIntVar>) var double: (ORDouble) val;
+-(void)               lthen: (id<ORIntVar>) var double: (ORDouble) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)          floatLthen: (id<ORFloatVar>) var with: (ORFloat) val;
--(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
+-(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)         addConstraintDuringSearch: (id<ORConstraint>) c;
 
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
 -(void)          labelArray: (id<ORIntVarArray>) x;
--(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
+-(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy;
 -(void)        labelArrayFF: (id<ORIntVarArray>) x;
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
 -(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Double) o;
+-(void)               label: (id<ORIntVar>) mx by: (ORInt2Double) o1 then: (ORInt2Double) o2;
+
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Double) o;
+-(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2;
 
 -(void)               solve: (ORClosure) body;
 -(void)               solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
@@ -78,20 +74,33 @@
 -(void)               close;
 
 -(id<ORForall>)      forall: (id<ORIntIterable>) S;
--(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b;
--(void)                 try: (ORClosure) left or: (ORClosure) right;
--(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
--(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
+-(void)              forall: (id<ORIntIterable>) S
+                  orderedBy: (PNULLABLE ORInt2Int) o
+                         do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S
+                   suchThat: (PNULLABLE ORInt2Bool) suchThat
+                  orderedBy: (PNULLABLE ORInt2Int) o
+                         do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S
+                  orderedBy: (ORInt2Int) o1
+                       then: (ORInt2Int) o2
+                         do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S
+                   suchThat: (PNULLABLE ORInt2Bool) suchThat
+                  orderedBy: (ORInt2Int) o1
+                       then: (ORInt2Int) o2
+                         do: (ORInt2Void) b;
+-(void)                 try: (ORClosure) left alt: (ORClosure) right;
+-(void)              tryall: (id<ORIntIterable>) range suchThat: (PNULLABLE ORInt2Bool) f do: (ORInt2Void) body;
+-(void)              tryall: (id<ORIntIterable>) range suchThat: (PNULLABLE ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)              tryall: (id<ORIntIterable>) range
-                   suchThat: (ORInt2Bool) filter
-                  orderedBy: (ORInt2Float)o1
+                   suchThat: (PNULLABLE ORInt2Bool) filter
+                  orderedBy: (ORInt2Double)o1
                          in: (ORInt2Void) body
                   onFailure: (ORInt2Void) onFailure;
 
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
+-(void)                 try: (ORClosure) body then: (ORClosure) body;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
@@ -101,6 +110,8 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 -(void)          onSolution: (ORClosure) onSolution;
 -(void)              onExit: (ORClosure) onExit;
+-(void) clearOnSolution;
+-(void) clearOnExit;
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
@@ -114,14 +125,15 @@
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
+-(void) defaultSearch;
+-(void) search:(void*(^)())stask;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 
 -(ORUInt) degree:(id<ORVar>)x;
 -(ORInt) intValue: (id) x;
--(ORInt) intExprValue: (id<ORExpr>)e;
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
@@ -129,23 +141,22 @@
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
 
--(void)    assignRelaxationValue: (ORFloat) f to: (id<ORFloatVar>) x;
--(ORFloat) floatValue: (id<ORFloatVar>) x;
--(ORFloat) paramFloatValue: (id<ORFloatParam>)x;
--(ORFloat) paramFloat: (id<ORFloatParam>)p setValue: (ORFloat)val;
--(ORFloat) floatExprValue: (id<ORExpr>)e;
--(ORFloat) domwidth:(id<ORFloatVar>)x;
--(ORFloat) fmin:(id<ORFloatVar>)x;
--(ORFloat) fmax:(id<ORFloatVar>)x;
--(ORFloat) floatMin: (id<ORFloatVar>)x;
--(ORFloat) floatMax: (id<ORFloatVar>)x;
+-(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
+-(ORDouble) dblValue: (id<ORRealVar>) x;
+-(ORDouble) dblMin: (id<ORRealVar>)x;
+-(ORDouble) dblMax: (id<ORRealVar>)x;
+-(ORDouble) domwidth: (id<ORRealVar>)x;
+-(ORDouble) paramValue: (id<ORRealParam>)p;
+-(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;
+
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
+-(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x;
+-(ORBool) allBound:(id<ORIdArray>) x;
 @end
 
 // CPSolver with syntactic DFS Search
 @protocol CPProgram <CPCommonProgram>
-
 -(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
 -(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
@@ -183,3 +194,5 @@
 -(void) labelBitVarsFirstFail: (NSArray*)vars;
 -(NSString*)stringValue:(id<ORBitVar>)x;
 @end
+PORTABLE_END
+

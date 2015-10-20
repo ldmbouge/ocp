@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORParameter.h>
 
 @interface ORModelMappings : NSObject<ORModelMappings>
@@ -63,13 +63,12 @@
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
 -(void) setSource:(id<ORModel>)src;
 -(id<ORModel>)source;
 
 -(id<ORModel>) relaxConstraints: (NSArray*) cstrs;
 -(id<ORModel>) flatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) lsflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) mipflatten:(id<ORAnnotation>)notes;
 
@@ -89,8 +88,8 @@
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef independent:(ORFloat)c;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 -(id<ORModel>) model;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;
@@ -130,15 +129,23 @@
 -(id) trackVariable: (id) obj;
 @end
 
-@interface ORSolutionPoolI : NSObject<ORSolutionPool> {
-    NSMutableArray* _all;
-    id<ORSolutionInformer> _solutionAddedInformer;
+
+
+@interface ORConstraintSetI : NSObject<ORConstraintSet> {
+    NSMutableSet* _all;
 }
 -(id)init;
--(void)addSolution:(id<ORSolution>)s;
--(void)enumerateWith:(void(^)(id<ORSolution>))block;
--(id<ORInformer>)solutionAdded;
--(id<ORSolution>)best;
--(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
--(NSUInteger) count;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+//-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
+@end
+
+@interface OROrderedConstraintSetI : NSObject<OROrderedConstraintSet> {
+    NSMutableArray* _all;
+}
+-(id)init;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+-(id<ORConstraint>) at:(ORInt)index;
+//-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end

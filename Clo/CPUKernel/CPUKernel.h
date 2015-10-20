@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,10 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
+#import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPEngine.h>
+#import <CPUKernel/CPTrigger.h>
+#import <CPUKernel/CPClosureEvent.h>
 
 /*
  
@@ -33,24 +35,17 @@ typedef enum {
 -(ORUInt)      getId;
 -(void)        setGroup:(id<CPGroup>) g;
 -(id<CPGroup>) group;
+-(void) post;
 @end
 
 @protocol CPGroup <CPConstraint>
 -(void)  add:(id<CPConstraint>)p;
+-(void)  assignIdToConstraint:(id<ORConstraint>)c;
 -(void)  scheduleClosure:(id<CPClosureList>)evt;
 @end
 
 @protocol CPValueEvent<NSObject>
 -(ORInt) execute;
-@end
-
-// [PVH] To display the closure + the non-created closure to propagate constraints
-
-@protocol CPClosureList <NSObject>
--(ORClosure) trigger;                
--(id<CPClosureList>) next;           // fetches the tail of the list
--(void) scanWithBlock:(void(^)(id))block;
--(void) scanCstrWithBlock:(void(^)(id))block;
 @end
 
 typedef void(^ORID2Void)(id);
@@ -64,4 +59,7 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,OR
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 +(id<CPGroup>) group:(id<CPEngine>)engine;
 +(id<CPGroup>) bergeGroup:(id<CPEngine>)engine;
-@end;
+@end
+
+#import <CPUKernel/CPConstraintI.h>
+

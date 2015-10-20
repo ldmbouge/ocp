@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,14 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORData.h>
 
 @protocol ORExpr;
 @protocol ORIntSet;
 @protocol ORIntRange;
+
+PORTABLE_BEGIN
 
 @protocol ORIntArray <ORObject>
 -(ORInt) at: (ORInt) value;
@@ -35,20 +36,32 @@
 -(ORInt) sumWith: (ORInt(^)(ORInt value,int idx))block;
 @end
 
-@protocol ORFloatArray <ORObject>
--(ORFloat) at: (ORInt) value;
--(void) set: (ORFloat) value at: (ORInt) idx;
+@protocol ORDoubleArray <ORObject>
+-(ORDouble) at: (ORInt) value;
+-(void) set: (ORDouble) value at: (ORInt) idx;
 -(ORInt) low;
 -(ORInt) up;
--(ORFloat) max;
--(ORFloat) min;
+-(ORDouble) max;
+-(ORDouble) min;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
--(ORFloat) sumWith: (ORFloat(^)(ORFloat value,int idx))block;
+-(void)enumerateWith:(void(^)(ORDouble obj,int idx))block;
+@end
+
+@protocol ORIntRangeArray <ORObject>
+-(id<ORIntRange>) at: (ORInt) value;
+-(void) set: (id<ORIntRange>) value at: (ORInt) idx;
+-(id<ORIntRange>)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id<ORIntRange>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 @end
 
 @protocol ORIntSetArray <ORObject>
@@ -64,11 +77,11 @@
 -(id<ORTracker>) tracker;
 @end
 
-@protocol ORIdArray <ORObject>
+@protocol ORIdArray <ORObject,NSFastEnumeration>
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
--(id)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
+-(id)objectAtIndexedSubscript:(ORInt)key;
+-(void)setObject:(id)newValue atIndexedSubscript:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(id<ORIntRange>) range;
@@ -92,6 +105,7 @@
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
+-(id<ORIdArray>) flatten;
 @end
 
 @protocol ORIntMatrix <ORObject>
@@ -117,4 +131,6 @@
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 @end
+
+PORTABLE_END
 
