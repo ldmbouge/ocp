@@ -270,6 +270,7 @@
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;
+-(void) setIntVar: (MIPVariableI*)var value:(ORInt)val;
 -(ORDouble) dblValue: (MIPVariableI*) var;
 -(ORDouble) lowerBound: (MIPVariableI*) var;
 -(ORDouble) upperBound: (MIPVariableI*) var;

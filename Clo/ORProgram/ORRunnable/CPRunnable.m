@@ -9,7 +9,7 @@
 #import "CPRunnable.h"
 #import "ORRunnablePiping.h"
 #import "ORProgramFactory.h"
-
+#import <ORProgram/ORSolution.h>
 
 @implementation CPRunnableI {
     id<CPProgram> _program;
@@ -47,9 +47,9 @@
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
 }
 
--(void) receiveLowerBound:(ORFloat)bound
+-(void) receiveLowerBound:(ORDouble)bound
 {
-    NSLog(@"(%p) recieved lower bound: %i", self, bound);
+    NSLog(@"(%p) recieved lower bound: %f", self, bound);
 }
 
 -(void) receiveSolution:(id<ORSolution>)sol {

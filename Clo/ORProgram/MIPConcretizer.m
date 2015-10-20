@@ -144,27 +144,27 @@
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
-   if (_gamma[obj.getId] == NULL) {
-      id<ORVarArray> x = [obj array];
-      id<ORDoubleArray> a = [obj coef];
-      [x visit: self];
-      id<MIPVariableArray> dx = _gamma[x.getId];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a independent:[obj independent]];
-      _gamma[obj.getId] = concreteObj;
-      [_MIPsolver postObjective: concreteObj];
-   }
+    if (_gamma[obj.getId] == NULL) {
+        id<ORVarArray> x = [obj array];
+        id<ORDoubleArray> a = [obj coef];
+        [x visit: self];
+        id<MIPVariableArray> dx = _gamma[x.getId];
+        MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a];
+        _gamma[obj.getId] = concreteObj;
+        [_MIPsolver postObjective: concreteObj];
+    }
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
-   if (_gamma[obj.getId] == NULL) {
-      id<ORVarArray> x = [obj array];
-      id<ORDoubleArray> a = [obj coef];
-      [x visit: self];
-      id<MIPVariableArray> dx = _gamma[x.getId];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a independent:[obj independent]];
-      _gamma[obj.getId] = concreteObj;
-      [_MIPsolver postObjective: concreteObj];
-   }
+    if (_gamma[obj.getId] == NULL) {
+        id<ORVarArray> x = [obj array];
+        id<ORDoubleArray> a = [obj coef];
+        [x visit: self];
+        id<MIPVariableArray> dx = _gamma[x.getId];
+        MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a];
+        _gamma[obj.getId] = concreteObj;
+        [_MIPsolver postObjective: concreteObj];
+    }
 }
 
 -(void) visitLEqual: (id<ORLEqual>)c
@@ -201,7 +201,7 @@
 {
     if (_gamma[c.getId]==NULL) {
         MIPVariableI* x[1] = { [self concreteVar:[c left]] };
-        ORFloat    coef[1] = { 1.0 };
+        ORDouble    coef[1] = { 1.0 };
         MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: 1 var:x coef:coef rhs:[c cst]];
         _gamma[c.getId] = concreteCstr;
         [_MIPsolver postConstraint:concreteCstr];

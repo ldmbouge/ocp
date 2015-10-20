@@ -34,6 +34,7 @@
 -(MIPOutcome) status;
 -(ORDouble) dblValue: (MIPVariableI*) var;
 -(ORInt) intValue: (MIPIntVariableI*) var;
+-(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val;
 -(ORDouble) lowerBound: (MIPVariableI*) var;
 -(ORDouble) upperBound: (MIPVariableI*) var;
 -(ORDouble) objectiveValue;

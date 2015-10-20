@@ -14,7 +14,7 @@
 @end
 
 @protocol ORLowerBoundStreamConsumer
--(void) receiveLowerBound: (ORFloat)bound;
+-(void) receiveLowerBound: (ORDouble)bound;
 @end
 
 @protocol ORUpperBoundStreamProducer

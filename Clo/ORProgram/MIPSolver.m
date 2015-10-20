@@ -65,6 +65,10 @@
    [_sPool addSolution: s];
    [s release];
 }
+-(ORDouble) bestObjectiveBound
+{
+    return [_MIPsolver bestObjectiveBound];
+}
 -(ORDouble) dblValue: (id<ORRealVar>) v
 {
    return [_MIPsolver dblValue: _gamma[v.getId]];
@@ -80,6 +84,9 @@
 -(ORInt) intValue: (id<ORIntVar>) v
 {
    return [_MIPsolver intValue: _gamma[v.getId]];
+}
+-(void) setIntVar: (id<ORIntVar>)v value:(ORInt)val {
+    [_MIPsolver setIntVar: _gamma[v.getId] value: val];
 }
 -(id<ORObjectiveValue>) objectiveValue
 {

@@ -41,12 +41,16 @@
 -(id<ORObjectiveValue>) objectiveValue;
 @end
 
-@interface ORParameterizedSolution : ORSolution
+@protocol ORParameterizedSolution <ORSolution>
+-(ORDouble) paramValue: (id<ORParameter>) param;
+@end
+
+@interface ORParameterizedSolution : ORSolution<ORParameterizedSolution>
 {
     NSArray*             _paramShots;
 }
 -(ORParameterizedSolution*) initORParameterizedSolution: (id<ORParameterizedModel>) model with: (id<ORASolver>) solver;
--(id) value: (id) var;
+-(ORDouble) paramValue: (id<ORParameter>) param;
 @end
 
 @interface ORSolutionPool : NSObject<ORSolutionPool> {

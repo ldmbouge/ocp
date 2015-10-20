@@ -15,7 +15,7 @@
 #import <ORProgram/ORRunnablePiping.h>
 
 
-typedef id<ORRunnable> (^ORFloatArray2Runnable)(id<ORFloatArray>);
+typedef id<ORRunnable> (^ORDoubleArray2Runnable)(id<ORDoubleArray>);
 typedef id<LPColumn> (^Void2Column)();
 
 @interface ORColumnGeneration : ORPipedRunnable<ORColumnConsumer>

@@ -8,6 +8,7 @@
 
 #import "LPRunnable.h"
 #import "LPSolver.h"
+#import "ORProgramFactory.h"
 
 @implementation LPRunnableI {
     id<ORModel> _model;

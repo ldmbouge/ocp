@@ -1336,6 +1336,14 @@
 {
     return [_MIP dualityGap];
 }
+-(id) inCache:(id)obj
+{
+    return nil;
+}
+-(id)addToCache:(id)obj
+{
+    return nil;
+}
 -(MIPOutcome) status;
 {
    return [_MIP status];
@@ -1343,6 +1351,9 @@
 -(ORInt) intValue: (MIPIntVariableI*) var
 {
    return (ORInt) [_MIP intValue: var];
+}
+-(void) setIntVar: (MIPIntVariableI*)var value:(ORInt)val {
+    [_MIP setIntVar: var value: val];
 }
 -(ORDouble) dblValue: (MIPVariableI*) var
 {

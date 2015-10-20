@@ -16,6 +16,7 @@
 #import "ORConstraintI.h"
 #import <ORFoundation/ORVisit.h>
 #import <ORProgram/ORSolution.h>
+#import <ORProgramFactory.h>
 
 @interface ORTermCollector : ORNOopVisit<NSObject> {
     NSMutableArray* _terms;
@@ -158,15 +159,15 @@
 @implementation ORSubgradientTemplate {
 @protected
     id<ORParameterizedModel> _model;
-    id<ORSolution> _bestSolution;
-    ORFloat _bestBound;
-    ORFloat _ub;
+    id<ORParameterizedSolution> _bestSolution;
+    ORDouble _bestBound;
+    ORDouble _ub;
     id<ORSignature> _sig;
-    ORFloat _solverTimeLimit;
-    ORFloat _subgradientTimeLimit;
+    ORDouble _solverTimeLimit;
+    ORDouble _subgradientTimeLimit;
     ORInt _iters;
-    ORFloat _agility;
-    ORFloat _runtime;
+    ORDouble _agility;
+    ORDouble _runtime;
 }
 
 -(id) initSubgradient: (id<ORParameterizedModel>)m bound: (ORFloat) ub
@@ -217,7 +218,7 @@
 -(id<ORSolution>) lagrangianSubgradientSolve {
     ORFloat pi = _agility;
     __block ORFloat slackSum = 0.0;
-    id<ORSolution> bestSol = nil;
+    id<ORParameterizedSolution> bestSol = nil;
     
     id<ORVarArray> slacks = [_model slacks];
     id<ORIntRange> slackRange = [slacks range];
@@ -250,11 +251,11 @@
         ORFloat programTimeLimit = MIN(fabs(_solverTimeLimit), fabs(remainingTime));
         if(programTimeLimit < 0) programTimeLimit = 0;
         [[program solutionPool] emptyPool];
-        if([program respondsToSelector: @selector(setTimeLimit:)]) [program setTimeLimit: programTimeLimit];
+        //if([program respondsToSelector: @selector(setTimeLimit:)]) [program setTimeLimit: programTimeLimit];
         [self solveIt: program];
         _iters++;
         
-        id<ORSolution> sol = [[program solutionPool] best];
+        id<ORParameterizedSolution> sol = (id<ORParameterizedSolution>)[[program solutionPool] best];
         id<ORObjectiveValue> objValue = (id<ORObjectiveValue>)[sol objectiveValue];
         ORDouble bound = ([program respondsToSelector: @selector(bestObjectiveBound)]) ? [(id<MIPProgram>)program bestObjectiveBound] : [objValue dblValue];
         
@@ -285,8 +286,8 @@
             if(timeIncrease++ < 3) newTime = _solverTimeLimit * 2;
             else newTime = DBL_MAX;
             
-            if(_solverTimeLimit > 0.0 && [program respondsToSelector: @selector(setTimeLimit:)])
-                [program setTimeLimit: newTime];
+            //if(_solverTimeLimit > 0.0 && [program respondsToSelector: @selector(setTimeLimit:)])
+            //    [program setTimeLimit: newTime];
             [self setSolverTimeLimit: newTime];
         }
         if(_bestSolution == nil) _bestSolution = sol;
@@ -307,10 +308,10 @@
         
         [lambdas enumerateWith:^(id obj, ORInt idx) {
             id<ORRealParam> lambda = obj;
-            ORDouble value = [sol dblValue: lambda];
+            ORDouble value = [sol paramValue: lambda];
             id<ORVar> slack = [slacks at: idx];
             ORFloat newValue = MAX(0, value + stepSize * [sol dblValue: (id<ORRealVar>)slack]);
-            [(id<CPProgram>)program paramFloat: lambda setValue: newValue];
+            [(id<CPProgram>)program param: lambda setValue: newValue];
             //NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
         }];
         
@@ -339,7 +340,7 @@
 
 -(void) run
 {
-    _bestSolution = [self lagrangianSubgradientSolve];
+    _bestSolution = (id<ORParameterizedSolution>)[self lagrangianSubgradientSolve];
 }
 
 -(ORFloat) bestBound
@@ -440,12 +441,12 @@
 -(NSSet*) updateLambdas: (id<ORIdArray>) lambdas
                  values: (NSMapTable*)values
                 withSlacks: (id<ORIdArray>)slacks
-               solution: (id<ORSolution>)sol
+               solution: (id<ORParameterizedSolution>)sol
                   bound: (ORFloat)bound
                      pi: (ORFloat)pi {
     NSMutableSet* modifiedProblems = [[NSMutableSet alloc] init];
     __block ORFloat slackSum = 0.0;
-    [slacks enumerateWith:^(id<ORDoubleVar> obj, ORInt idx) {
+    [slacks enumerateWith:^(id<ORRealVar> obj, ORInt idx) {
         double val = [sol dblValue: obj];
         slackSum += val * val;
         NSLog(@"slack: %f", [sol dblValue: obj]);
@@ -456,11 +457,11 @@
     
     __block BOOL satisfied = YES;
     [lambdas enumerateWith:^(id obj, ORInt idx) {
-        id<ORFloatParam> lambda = obj;
+        id<ORRealParam> lambda = obj;
         ORDouble value = [sol paramValue: lambda];
         if(value != DBL_MAX) {
-            id<ORDoubleVar> slack = [slacks at: idx];
-            ORFloat newValue = MAX(0, value + stepSize * [sol floatValue: slack]);
+            id<ORRealVar> slack = [slacks at: idx];
+            ORDouble newValue = MAX(0, value + stepSize * [sol dblValue: slack]);
             
             if(newValue != value) {
                 [values setObject: @(newValue) forKey: lambda];
@@ -476,7 +477,7 @@
     return modifiedProblems;
 }
     
--(id<ORSolution>) runAllProblems: (id<ORParameterizedModel>)m solver: (id<MIPProgram>)program withIncumbents: (NSMapTable*)incumbents {
+-(id<ORParameterizedSolution>) runAllProblems: (id<ORParameterizedModel>)m solver: (id<MIPProgram>)program withIncumbents: (NSMapTable*)incumbents {
     for(id<ORIntVar> v in _surrogateBranchVars) {
         NSNumber* value = [incumbents objectForKey: v];
         if(value) [program setIntVar: v value: [value intValue]];
@@ -487,7 +488,7 @@
         NSLog(@"infeasible...");
         return nil;
     }
-    id<ORSolution> sol = [[program solutionPool] best];
+    id<ORParameterizedSolution> sol = (id<ORParameterizedSolution>)[[program solutionPool] best];
     id<ORObjectiveValueReal> objValue = (id<ORObjectiveValueReal>)[sol objectiveValue];
     NSLog(@"objective: %f", [objValue value]);
     return sol;
@@ -527,7 +528,7 @@
     
     // Step 0: solve all subproblems
     id<MIPProgram> program = [ORFactory createMIPProgram: _model];
-    id<ORSolution> allsol = [self runAllProblems: _model solver: program withIncumbents: incumbents];
+    id<ORParameterizedSolution> allsol = [self runAllProblems: _model solver: program withIncumbents: incumbents];
     for(id<ORIntVar> x in _surrogateBranchVars) [incumbents setObject: @([allsol intValue: x]) forKey: x];
     
     //ORFloat cutoff = 0.005;
@@ -548,8 +549,8 @@
         }
         
         id<ORObjectiveValueReal> objValue = (id<ORObjectiveValueReal>)[allsol objectiveValue];
-        if([objValue floatValue] > _bestBound) {
-            _bestBound = [objValue floatValue];
+        if([objValue value] > _bestBound) {
+            _bestBound = [objValue value];
             _bestSolution = allsol;
             noImprove = 0;
         }
@@ -560,7 +561,7 @@
         
         program = [ORFactory createMIPProgram: _model];
         [[program solver] close];
-        for(id<ORFloatParam> p in [_model parameters]) [program paramFloat: p setValue: [(NSNumber*)[lambdaValues objectForKey: p] floatValue]];
+        for(id<ORRealParam> p in [_model parameters]) [program param: p setValue: [(NSNumber*)[lambdaValues objectForKey: p] floatValue]];
         id<ORSolution> sol1 = [self runAllProblems: _model solver: program withIncumbents: incumbents];
         
         // Step 2: solve subproblem
@@ -579,13 +580,13 @@
         for(id<ORVar> x in [subproblem variables]) {
             NSSet* vset = [_split objectAtIndex: probIdx];
             if(![vset member: x]) {
-                if([x vtype] == ORTInt)
+                if([(id<ORExpr>)x vtype] == ORTInt)
                     [subproblemSolver setIntVar: (id<ORIntVar>)x value: [[candidIncumbents objectForKey: x] intValue]];
             }
         }
-        for(id<ORFloatParam> p in [subproblem parameters]) {
-            ORFloat value = [(NSNumber*)[lambdaValues objectForKey: p] floatValue];
-            [subproblemSolver paramFloat: p setValue: value];
+        for(id<ORRealParam> p in [subproblem parameters]) {
+            ORDouble value = [(NSNumber*)[lambdaValues objectForKey: p] floatValue];
+            [subproblemSolver param: p setValue: value];
         }
         
         [subproblemSolver solve];
@@ -599,10 +600,10 @@
         
         program = [ORFactory createMIPProgram: _model];
         [[program solver] close];
-        for(id<ORFloatParam> p in [_model parameters]) [program paramFloat: p setValue: [(NSNumber*)[lambdaValues objectForKey: p] floatValue]];
-        id<ORSolution> sol0 = [self runAllProblems: _model solver: program withIncumbents: candidIncumbents];
+        for(id<ORRealParam> p in [_model parameters]) [program param: p setValue: [(NSNumber*)[lambdaValues objectForKey: p] floatValue]];
+        id<ORParameterizedSolution> sol0 = [self runAllProblems: _model solver: program withIncumbents: candidIncumbents];
         
-        if([[sol0 objectiveValue] floatValue] < [[sol1 objectiveValue] floatValue]) {
+        if([[sol0 objectiveValue] dblValue] < [[sol1 objectiveValue] dblValue]) {
             allsol = sol0;
             [incumbents release];
             incumbents = candidIncumbents;
@@ -724,7 +725,7 @@
 
 -(void) run
 {
-    _bestSolution = [self lagrangianSurrogateSolve];
+    _bestSolution = (id<ORParameterizedSolution>)[self lagrangianSurrogateSolve];
 }
 
 @end

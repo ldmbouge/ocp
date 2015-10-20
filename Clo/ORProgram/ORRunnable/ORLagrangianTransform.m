@@ -256,7 +256,7 @@
     id<ORIntRange> slackRange = RANGE(relaxedModel, 0, (ORInt)myCstrs.count-1);
     id<ORExpr> slackSum = [ORFactory sum: relaxedModel over: slackRange suchThat: nil of: ^id<ORExpr>(ORInt i) {
         id<ORSoftConstraint> c = [[relaxedModel tau] get: [myCstrs objectAtIndex: i]];
-        return [c slack];
+        return (id<ORExpr>)[c slack];
     }];
     id<ORExpr> prevObjective = [((id<ORObjectiveFunctionExpr>)[relaxedModel objective]) expr];
     if(prevObjective) [relaxedModel minimize: [prevObjective plus: slackSum track: relaxedModel]]; // Changed sub to plus

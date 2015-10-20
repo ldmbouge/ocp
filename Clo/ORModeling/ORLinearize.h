@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORModeling/ORModeling.h>
 
 @interface ORLinearize : NSObject<ORModelTransformation>
 -(id)initORLinearize:(id<ORAddToModel>)into;
@@ -31,7 +30,7 @@
 @end
 
 typedef enum {
-    MIPSchedStandard,
+    MIPSchedDisjunctive,
     MIPSchedTimeIndexed
 } MIPSchedEncoding;
 

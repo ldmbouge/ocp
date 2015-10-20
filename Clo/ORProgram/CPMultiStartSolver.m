@@ -114,6 +114,14 @@
 {
    return [[self worker] tracer];
 }
+-(ORDouble) paramValue:(id<ORRealParam>)p
+{
+    return  [[self worker] paramValue: p];
+}
+-(void) param:(id<ORRealParam>)p setValue:(ORDouble)val
+{
+    [[self worker] param: p setValue: val];
+}
 -(void) close
 {
    CPSolver* solver = [self worker];
@@ -144,6 +152,12 @@
    if (_nbDone == _nb)
       [_terminated signal];
    [_terminated unlock];
+}
+
+-(void) solveOn:(void (^)(id<CPCommonProgram>))body withTimeLimit:(ORFloat)limit
+{
+    // Not implemented
+    assert(NO);
 }
 
 -(void) solveAllOne: (NSArray*) input

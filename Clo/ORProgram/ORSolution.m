@@ -206,16 +206,13 @@
     }
     return [super value: var];
 }
--(ORDouble) dblValue: (id<ORRealVar>) var
+-(ORDouble) paramValue: (id<ORParameter>) param;
 {
-    if([var conformsToProtocol: @protocol(ORParameter)]) {
-        NSUInteger idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [obj getId] == [var getId];
-        }];
-        id<ORQueryRealVar> snap = [_paramShots objectAtIndex:idx];
-        return [snap dblValue];
-    }
-    return [super dblValue: var];
+    NSUInteger idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return [obj getId] == [param getId];
+    }];
+    id<ORQueryRealVar> snap = [_paramShots objectAtIndex:idx];
+    return [snap dblValue];
 }
 -(NSUInteger) count
 {

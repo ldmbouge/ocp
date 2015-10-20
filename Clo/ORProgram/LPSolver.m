@@ -66,125 +66,115 @@
 
 @implementation LPSolver
 {
-   LPSolverI*  _lpsolver;
-   id<ORModel> _model;
-   id<ORSolutionPool> _sPool;
+    LPSolverI*  _lpsolver;
+    id<ORModel> _model;
+    id<ORSolutionPool> _sPool;
 }
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
-   self = [super init];
-   _lpsolver = [LPFactory solver];
-   _model = model;
-   _sPool = (id<ORSolutionPool>) [ORFactory createSolutionPool];
-   return self;
+    self = [super init];
+    _lpsolver = [LPFactory solver];
+    _model = model;
+    _sPool = (id<ORSolutionPool>) [ORFactory createSolutionPool];
+    return self;
 }
 -(void) dealloc
 {
-   NSLog(@"dealloc LPSolver");
-   [_lpsolver release];
-   [_sPool release];
-   [super dealloc];
+    NSLog(@"dealloc LPSolver");
+    [_lpsolver release];
+    [_sPool release];
+    [super dealloc];
 }
 -(id<ORTracker>)tracker
 {
-   return self;
+    return self;
 }
 -(void)close
 {}
 -(id<OREngine>) engine
 {
-   return _lpsolver;
+    return _lpsolver;
 }
 -(LPSolverI*) solver
 {
-   return _lpsolver;
+    return _lpsolver;
 }
--(void)enumerateColumnWith:(void(^)(id<LPColumn>))block
-{
-   [_lpsolver enumerateColumnWith:block];
-}
-
 -(void) solve
 {
-   [_lpsolver solve];
-   id<ORSolution> sol = [self captureSolution];
-   [_sPool addSolution: sol];
-   [sol release];
+    [_lpsolver solve];
+    id<ORSolution> sol = [self captureSolution];
+    [_sPool addSolution: sol];
+    [sol release];
 }
 -(ORDouble) dual: (id<ORConstraint>) c
 {
-   return [_lpsolver dual: [self concretize: c]];
+    return [_lpsolver dual: [self concretize: c]];
 }
 -(ORDouble) dblValue: (id<ORRealVar>) v
 {
-   return [_lpsolver dblValue: _gamma[v.getId]];
+    return [_lpsolver dblValue: _gamma[v.getId]];
 }
 -(ORDouble) reducedCost: (id<ORRealVar>) v
 {
-   return [_lpsolver reducedCost: _gamma[v.getId]];
+    return [_lpsolver reducedCost: _gamma[v.getId]];
 }
--(ORDouble) paramValue: (id<ORRealParam>)p
+-(id<LPColumn>) createColumn
 {
-    return [_lpsolver paramValue: _gamma[p.getId]];
-}
--(void) param: (id<ORRealParam>)p setValue: (ORDouble)val
-{
-    [_lpsolver setParam: _gamma[p.getId] value: val];
-}
--(ORInt) intValue: (id<ORIntVar>) v
-{
-   return (ORInt)[_lpsolver dblValue: _gamma[v.getId]];
+    LPColumnI* col = [_lpsolver createColumn];
+    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
+    [self trackMutable: o];
+    return o;
 }
 -(id<LPColumn>) createColumn: (ORDouble) low up: (ORDouble) up
 {
-   LPColumnI* col = [_lpsolver createColumn: low up: up];
-   id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
-   [self trackMutable: o];
-   return o;
+    LPColumnI* col = [_lpsolver createColumn: low up: up];
+    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
+    [self trackMutable: o];
+    return o;
 }
 
 -(void) addColumn: (LPColumn*) column
 {
-   [_lpsolver postColumn: [column column]];
-   id<ORSolution> sol = [self captureSolution];
-   [_sPool addSolution: sol];
-   [sol release];
+    [_lpsolver postColumn: [column column]];
+    id<ORSolution> sol = [self captureSolution];
+    [_sPool addSolution: sol];
+    [sol release];
 }
 -(id) trackObject: (id) obj
 {
-   return [_lpsolver trackObject:obj];
+    return [_lpsolver trackObject:obj];
 }
 -(id) trackConstraintInGroup:(id)obj
 {
-   return [_lpsolver trackConstraintInGroup:obj];
+    return [_lpsolver trackConstraintInGroup:obj];
 }
 -(id) trackObjective: (id) obj
 {
-   return [_lpsolver trackObjective:obj];
+    return [_lpsolver trackObjective:obj];
 }
 -(id) trackMutable: (id) obj
 {
-   return [_lpsolver trackMutable:obj];
+    return [_lpsolver trackMutable:obj];
 }
 -(id) trackVariable: (id) obj
 {
-   return [_lpsolver trackVariable:obj];
+    return [_lpsolver trackVariable:obj];
 }
 -(id) trackImmutable:(id)obj
 {
-   return [_lpsolver trackImmutable:obj];
+    return [_lpsolver trackImmutable:obj];
 }
 -(id<ORSolutionPool>) solutionPool
 {
-   return _sPool;
+    return _sPool;
 }
 -(id<ORObjectiveValue>) objectiveValue
 {
-   return [_lpsolver objectiveValue];
+    return [_lpsolver objectiveValue];
 }
 -(id<ORSolution>) captureSolution
 {
-   return [ORFactory solution: _model solver: self];
+    return [ORFactory solution: _model solver: self];
 }
 @end
 

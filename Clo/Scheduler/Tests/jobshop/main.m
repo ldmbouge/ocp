@@ -469,8 +469,8 @@ int mainPureMIP(int argc, const char * argv[])
         ORLong timeStart = [ORRuntimeMonitor cputime];
         ORInt size = size6;
         id<ORIntRange> Size = RANGE(model,1,size);
-        id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size using: ^ORInt(ORInt i,ORInt j) { return iduration6[i-1][j-1]; } ];
-        id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size using: ^ORInt(ORInt i,ORInt j) { return iresource6[i-1][j-1]; } ];
+        id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iduration6[i-1][j-1]; } ];
+        id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource6[i-1][j-1]; } ];
         
         ORInt totalDuration = 0;
         for(ORInt i = Size.low; i <= Size.up; i++)
@@ -503,8 +503,8 @@ int mainPureMIP(int argc, const char * argv[])
             [model add: disjunctive[i]];
         
         // Linearize
-        [model close];
-        id<ORModel> linearModel = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedTimeIndexed];
+        //[model close];
+        id<ORModel> linearModel = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
         id<ORRunnable> r = [ORFactory MIPRunnable: linearModel];
         [r run];
         

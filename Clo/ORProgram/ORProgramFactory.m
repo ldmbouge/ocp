@@ -37,6 +37,10 @@
 {
    return [[ORSolution alloc] initORSolution: m with: solver];
 }
++(id<ORSolution>) parameterizedSolution: (id<ORParameterizedModel>) m solver: (id<ORASolver>) solver
+{
+   return [[ORParameterizedSolution alloc] initORParameterizedSolution: m with: solver];
+}
 +(id<ORSolutionPool>) createSolutionPool
 {
    return [[ORSolutionPool alloc] init];

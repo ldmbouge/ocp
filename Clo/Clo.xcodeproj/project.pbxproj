@@ -116,7 +116,7 @@
 		37D62BBA1BD5CFAD005A6DBC /* ORRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D62BA01BD5CFAD005A6DBC /* ORRunnable.m */; };
 		37D62BBB1BD5CFAD005A6DBC /* ORRunnablePiping.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D62BA11BD5CFAD005A6DBC /* ORRunnablePiping.h */; };
 		37D62BBC1BD5CFAD005A6DBC /* ORRunnablePiping.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D62BA21BD5CFAD005A6DBC /* ORRunnablePiping.m */; };
-		37D62BBD1BD5CFAD005A6DBC /* ORSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D62BA31BD5CFAD005A6DBC /* ORSignature.h */; };
+		37D62BBD1BD5CFAD005A6DBC /* ORSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D62BA31BD5CFAD005A6DBC /* ORSignature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37D62BBE1BD5CFAD005A6DBC /* ORSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D62BA41BD5CFAD005A6DBC /* ORSignature.m */; };
 		53432BF11BA1C771009F8038 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B834A561B588B2000759557 /* main.m */; };
 		53432BF21BA1C78B009F8038 /* shiploading.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B834A581B588B2000759557 /* shiploading.1 */; };

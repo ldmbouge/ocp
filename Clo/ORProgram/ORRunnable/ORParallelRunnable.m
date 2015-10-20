@@ -9,6 +9,7 @@
 #import "ORParallelRunnable.h"
 #import "ORModelI.h"
 #import "ORConcurrencyI.h"
+#import <ORProgram/ORSolution.h>
 
 @implementation ORCompleteParallelRunnableI {
     id<ORRunnable> _r0;
@@ -16,7 +17,7 @@
     id<ORSolutionPool> _solutionPool;
     NSThread* _t0;
     NSThread* _t1;
-    ORFloat _bestBound;
+    ORDouble _bestBound;
     id<ORRunnable> _solvedRunnable;
 }
 
@@ -26,7 +27,7 @@
         _r1 = r1;
         _t0 = nil;
         _t1 = nil;
-        _solutionPool = [[ORSolutionPoolI alloc] init];
+        _solutionPool = [[ORSolutionPool alloc] init];
         _bestBound = -DBL_MAX;
         _solvedRunnable = nil;
     }
@@ -89,11 +90,11 @@
     id<ORSolution> s0 = [_r0 bestSolution];
     id<ORSolution> s1 = [_r1 bestSolution];
     if(s0 && s1) {
-        _solvedRunnable = ([[s0 objectiveValue] floatValue] >= [[s1 objectiveValue] floatValue]) ? _r0 : _r1;
-        _bestBound = MAX([[s0 objectiveValue] floatValue], [[s1 objectiveValue] floatValue]);
+        _solvedRunnable = ([[s0 objectiveValue] dblValue] >= [[s1 objectiveValue] dblValue]) ? _r0 : _r1;
+        _bestBound = MAX([[s0 objectiveValue] dblValue], [[s1 objectiveValue] dblValue]);
     }
-    else if(s0) { _bestBound = [[s0 objectiveValue] floatValue]; _solvedRunnable = _r0; }
-    else if(s1) { _bestBound = [[s1 objectiveValue] floatValue]; _solvedRunnable = _r1; }
+    else if(s0) { _bestBound = [[s0 objectiveValue] dblValue]; _solvedRunnable = _r0; }
+    else if(s1) { _bestBound = [[s1 objectiveValue] dblValue]; _solvedRunnable = _r1; }
 }
 
 -(id<ORRunnable>) primaryRunnable { return _r0; }
