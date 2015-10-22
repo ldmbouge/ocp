@@ -394,7 +394,7 @@
       return [ORFactory task: model horizon: horizon duration: [duration at:i]];
    }];
 }
-+(id<ORTaskVarArray>) taskVarArray: (id<ORModel>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) duration
++(id<ORTaskVarArray>) taskVarArray: (id<ORModel>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration
 {
    return [ORFactory taskVarArray: model range: range with: ^id<ORTaskVar>(ORInt i) {
       return [ORFactory task: model horizon: horizon durationRange: duration];
