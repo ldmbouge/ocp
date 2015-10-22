@@ -49,7 +49,6 @@ int oldMain(int argc, const char * argv[])
       for(ORInt i = 0; i <= 10; i++)
          printf("x[%d] = %d \n",i,[cp intValue:a[i]]);
       NSLog(@"Solver status: %@\n",cp);
-      [ORFactory shutdown];
    }
    return 0;
 }

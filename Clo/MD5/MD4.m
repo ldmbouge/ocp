@@ -39,7 +39,6 @@
 
 -(void) dealloc
 {
-   [ORFactory shutdown];
    [super dealloc];
 }
 

@@ -64,7 +64,6 @@ int main(int argc, const char * argv[])
             [nsex release];
          }
        }];
-      [ORFactory shutdown];
    }
    return 0;
 }

@@ -57,7 +57,6 @@ int main(int argc, const char * argv[])
             printf("\n");
          }];
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }

@@ -158,7 +158,6 @@ int main0(int argc, const char * argv[])
    NSLog(@"Execution Time (WC): %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
-   [ORFactory shutdown];
    return 0;
 }
 
@@ -282,7 +281,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult res = REPORT(ov, [[cp explorer] nbFailures],
                                       [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }

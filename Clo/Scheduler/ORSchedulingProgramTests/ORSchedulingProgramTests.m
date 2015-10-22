@@ -224,7 +224,6 @@
         id<ORSolutionPool> pool = [cp solutionPool];
         id<ORSolution,CPSchedulerSolution> best = (id)[pool best];
         optVal = [best intValue:objVar];
-        [ORFactory shutdown];
     }
     return optVal;
 }

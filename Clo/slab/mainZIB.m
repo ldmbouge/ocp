@@ -117,7 +117,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Chosen configs: %@",cc);
          
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return r;
       }];
    }

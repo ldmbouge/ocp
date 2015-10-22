@@ -52,7 +52,6 @@ int test0(int argc, const char * argv[])
          NSLog(@"Solver %@",cp);
          NSLog(@"#sol: %d",nbSol);
          struct ORResult res = REPORT(l, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }
@@ -91,7 +90,6 @@ int test0Q(int argc, const char * argv[])
          NSLog(@"Solver %@",cp);
          NSLog(@"#sol: %d",nbSol);
          struct ORResult res = REPORT(l, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }
@@ -135,7 +133,6 @@ int test1(int argc, const char * argv[])
          NSLog(@"Solver %@",cp);
          NSLog(@"#sol: %d",nbSol);
          struct ORResult res = REPORT(l, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }
@@ -176,7 +173,6 @@ int test1Q(int argc, const char * argv[])
          NSLog(@"Solver %@",cp);
          NSLog(@"#sol: %d",nbSol);
          struct ORResult res = REPORT(l, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }

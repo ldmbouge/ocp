@@ -54,7 +54,6 @@
     }
     ];
    [m release];
-   [ORFactory shutdown];
 }
 
 @end

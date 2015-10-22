@@ -51,9 +51,6 @@ int main_alldiff(int argc, const char * argv[])
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [cp release];
-      [ORFactory shutdown];
-      
    }
    return 0;
 }
@@ -130,7 +127,6 @@ int main_neq(int argc, const char * argv[])
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [ORFactory shutdown];
    }
    return 0;
 }

@@ -81,7 +81,6 @@
        [_board pause];
     }
     ];
-   [ORFactory shutdown];
 }
 
 - (IBAction)run:(id)sender 

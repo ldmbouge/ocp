@@ -50,7 +50,6 @@ int main(int argc, const char * argv[])
       printf("GOT %d solutions\n",nbSol);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [ORFactory shutdown];
    }
    return 0;
 }

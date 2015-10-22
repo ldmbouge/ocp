@@ -75,7 +75,6 @@ int main(int argc, const char * argv[])
          NSLog(@"#solutions: %d",nbSol);
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }

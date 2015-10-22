@@ -337,7 +337,7 @@
 +(id<CPConstraint>) constraint:(id<CPTaskVar>) task end:(id<CPIntVar>) end
 {
     id<CPEngine> engine = [task engine];
-    id<CPConstraint> cstr =[[CPTaskEnd alloc] initCPTaskStart: task : end];
+    id<CPConstraint> cstr =[[CPTaskEnd alloc] initCPTaskEnd: task : end];
     [engine trackMutable: cstr];
     return cstr;
 }

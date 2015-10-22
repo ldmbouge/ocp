@@ -51,7 +51,6 @@ int main(int argc, const char * argv[])
          }];
          
          struct ORResult res = REPORT(1, [[cp1 explorer] nbFailures], [[cp1 explorer] nbChoices], [[cp1 engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }
