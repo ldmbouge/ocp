@@ -179,11 +179,11 @@
  * @param model A model to which the array and the tasks belong.
  * @param range An integer range for calling the closure.
  * @param horizon A planning horizon in that the tasks must be executed.
- * @param duration An integer range of possible durations for the tasks.
+ * @param durationRange An integer range of possible durations for the tasks.
  *
  * @return An array with standard task variables that are present.
  */
-+(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon range: (id<ORIntRange>) duration;
++(id<ORTaskVarArray>) taskVarArray: (id<ORTracker>) model range: (id<ORIntRange>) range horizon: (id<ORIntRange>) horizon durationRange: (id<ORIntRange>) duration;
 
 // Task matrix
 +(id<ORTaskVarMatrix>) taskVarMatrix: (id<ORTracker>) model range: (id<ORIntRange>) horizon with: (id<ORTaskVar>(^)(ORInt,ORInt)) clo;

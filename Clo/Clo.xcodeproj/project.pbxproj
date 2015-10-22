@@ -1614,11 +1614,6 @@
 		B127A57619629B0600398AA3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B127A57C19629B0600398AA3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B127A57A19629B0600398AA3 /* InfoPlist.strings */; };
 		B127A58019629B0600398AA3 /* ORSchedulingProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = B127A57F19629B0600398AA3 /* ORSchedulingProgram.m */; };
-		B127A58719629B0600398AA3 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A58619629B0600398AA3 /* XCTest.framework */; };
-		B127A58819629B0600398AA3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
-		B127A58B19629B0600398AA3 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
-		B127A59119629B0600398AA3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B127A58F19629B0600398AA3 /* InfoPlist.strings */; };
-		B127A59319629B0700398AA3 /* ORSchedulingProgramTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B127A59219629B0600398AA3 /* ORSchedulingProgramTests.m */; };
 		B127A5AE19629CE400398AA3 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
 		B127A5AF19629CE400398AA3 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		B127A5B019629CE400398AA3 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -5895,13 +5890,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B1B68C73159FC16E008BC463;
 			remoteInfo = TestAssignment;
-		};
-		B127A58919629B0600398AA3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B127A57419629B0600398AA3;
-			remoteInfo = ORSchedulingProgram;
 		};
 		B127A59C19629C9C00398AA3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21380,7 +21368,6 @@
 		B127A57D19629B0600398AA3 /* ORSchedulingProgram-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ORSchedulingProgram-Prefix.pch"; sourceTree = "<group>"; };
 		B127A57E19629B0600398AA3 /* ORSchedulingProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSchedulingProgram.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B127A57F19629B0600398AA3 /* ORSchedulingProgram.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSchedulingProgram.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B127A58519629B0600398AA3 /* ORSchedulingProgramTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ORSchedulingProgramTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B127A58619629B0600398AA3 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		B127A58E19629B0600398AA3 /* ORSchedulingProgramTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORSchedulingProgramTests-Info.plist"; sourceTree = "<group>"; };
 		B127A59019629B0600398AA3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -22718,16 +22705,6 @@
 				B127A5B519629CE400398AA3 /* ORScheduler.framework in Frameworks */,
 				B127A5B619629CE400398AA3 /* ORUtilities.framework in Frameworks */,
 				B127A57619629B0600398AA3 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B127A58219629B0600398AA3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B127A58B19629B0600398AA3 /* ORSchedulingProgram.framework in Frameworks */,
-				B127A58819629B0600398AA3 /* Cocoa.framework in Frameworks */,
-				B127A58719629B0600398AA3 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37095,7 +37072,6 @@
 				B19B5584190518CF0069ABA0 /* jobshop */,
 				53C4BE421929C2E700DE6498 /* fjsp */,
 				B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */,
-				B127A58519629B0600398AA3 /* ORSchedulingProgramTests.xctest */,
 				B1574699197D753F00CAC841 /* ATPTW */,
 				53BDBC3C1A244EB9003EEFA6 /* rcpsp copy */,
 				5BB2A3661B611DF300054830 /* orderGroup */,
@@ -40878,24 +40854,6 @@
 			productReference = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B127A58419629B0600398AA3 /* ORSchedulingProgramTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B127A59819629B0700398AA3 /* Build configuration list for PBXNativeTarget "ORSchedulingProgramTests" */;
-			buildPhases = (
-				B127A58119629B0600398AA3 /* Sources */,
-				B127A58219629B0600398AA3 /* Frameworks */,
-				B127A58319629B0600398AA3 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B127A58A19629B0600398AA3 /* PBXTargetDependency */,
-			);
-			name = ORSchedulingProgramTests;
-			productName = ORSchedulingProgramTests;
-			productReference = B127A58519629B0600398AA3 /* ORSchedulingProgramTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		B12BE44219012746006D1D59 /* shiploading */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B12BE44F19012746006D1D59 /* Build configuration list for PBXNativeTarget "shiploading" */;
@@ -41641,7 +41599,6 @@
 				B12BE44219012746006D1D59 /* shiploading */,
 				B19B5583190518CF0069ABA0 /* jobshop */,
 				53C4BE2C1929C2E700DE6498 /* fjsp */,
-				B127A58419629B0600398AA3 /* ORSchedulingProgramTests */,
 				B1574698197D753F00CAC841 /* ATPTW */,
 				53BDBC221A244EB9003EEFA6 /* mrcpsp */,
 				5BB2A3481B611DF300054830 /* orderGroup */,
@@ -41777,14 +41734,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B127A57C19629B0600398AA3 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B127A58319629B0600398AA3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B127A59119629B0600398AA3 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42745,14 +42694,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B127A58019629B0600398AA3 /* ORSchedulingProgram.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B127A58119629B0600398AA3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B127A59319629B0700398AA3 /* ORSchedulingProgramTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45814,11 +45755,6 @@
 			target = B1B68C73159FC16E008BC463 /* TestAssignment */;
 			targetProxy = B109681B180B01EB00F010E3 /* PBXContainerItemProxy */;
 		};
-		B127A58A19629B0600398AA3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B127A57419629B0600398AA3 /* ORSchedulingProgram */;
-			targetProxy = B127A58919629B0600398AA3 /* PBXContainerItemProxy */;
-		};
 		B127A59D19629C9C00398AA3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
@@ -46807,7 +46743,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -46844,7 +46780,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -46878,7 +46814,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -47905,17 +47841,6 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = queensNaiveSwift;
-			};
-			name = Debug;
-		};
-		5B67F80B1B5821E200F223DC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = ORSchedulingProgramTests;
 			};
 			name = Debug;
 		};
@@ -51510,74 +51435,6 @@
 			};
 			name = Release;
 		};
-		B127A59A19629B0700398AA3 /* Coverage */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ORFoundation.framework/Versions/A/ORFoundation";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ORSchedulingProgram/ORSchedulingProgram-Prefix.pch";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "ORSchedulingProgramTests/ORSchedulingProgramTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Coverage;
-		};
-		B127A59B19629B0700398AA3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/ORFoundation.framework/Versions/A/ORFoundation";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ORSchedulingProgram/ORSchedulingProgram-Prefix.pch";
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				INFOPLIST_FILE = "ORSchedulingProgramTests/ORSchedulingProgramTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 		B12BE44C19012746006D1D59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -53316,16 +53173,6 @@
 				B127A59519629B0700398AA3 /* Debug */,
 				B127A59619629B0700398AA3 /* Coverage */,
 				B127A59719629B0700398AA3 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B127A59819629B0700398AA3 /* Build configuration list for PBXNativeTarget "ORSchedulingProgramTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B127A59A19629B0700398AA3 /* Coverage */,
-				B127A59B19629B0700398AA3 /* Release */,
-				5B67F80B1B5821E200F223DC /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

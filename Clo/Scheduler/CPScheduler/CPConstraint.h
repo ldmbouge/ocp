@@ -128,6 +128,18 @@
 -(ORUInt) nbUVars;
 @end
 
+@interface CPTaskEnd : CPCoreConstraint {
+    id<CPTaskVar> _task;
+    id<CPIntVar>  _end;
+}
+-(id) initCPTaskEnd:(id<CPTaskVar>)task :(id<CPIntVar>)end;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+
 @interface CPTaskAddTransitionTime : CPCoreConstraint {
    id<CPTaskVar> _normal;
    id<CPTaskVar> _extended;

@@ -28,9 +28,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B127A58419629B0600398AA3"
-               BuildableName = "ORSchedulingProgramTests.xctest"
-               BlueprintName = "ORSchedulingProgramTests"
+               BlueprintIdentifier = "53B8329F1BA377A700EC9224"
+               BuildableName = "testScheduler.xctest"
+               BlueprintName = "testScheduler"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,9 +46,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B127A58419629B0600398AA3"
-               BuildableName = "ORSchedulingProgramTests.xctest"
-               BlueprintName = "ORSchedulingProgramTests"
+               BlueprintIdentifier = "53B8329F1BA377A700EC9224"
+               BuildableName = "testScheduler.xctest"
+               BlueprintName = "testScheduler"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </TestableReference>

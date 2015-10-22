@@ -32,6 +32,7 @@
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task isFinishedBy: (id<CPIntVar>) date;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task start: (id<CPIntVar>) start;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task duration: (id<CPIntVar>) duration;
++(id<CPConstraint>) constraint: (id<CPTaskVar>) task end: (id<CPIntVar>) end;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task presence: (id<CPIntVar>) presence;
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) normal extended:  (id<CPTaskVar>) extended time: (id<CPIntVar>) time;
 +(id<CPConstraint>) constraint: (id<CPResourceTask>) normal resourceExtended:  (id<CPResourceTask>) extended time: (id<CPIntVarArray>) time;

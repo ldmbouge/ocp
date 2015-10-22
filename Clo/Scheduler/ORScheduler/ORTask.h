@@ -39,6 +39,7 @@
 -(id<ORTaskIsFinishedBy>) isFinishedBy: (id<ORIntVar>) date;
 -(id<ORIntVar>) getStartVar;
 -(id<ORIntVar>) getDurationVar;
+-(id<ORIntVar>) getEndVar;
 -(id<ORIntVar>) getPresenceVar;
 @end
 
