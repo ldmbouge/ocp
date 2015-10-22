@@ -1481,6 +1481,55 @@
 }
 @end
 
+@implementation CPTaskEnd
+
+-(id) initCPTaskEnd:(id<CPTaskVar>)task :(id<CPIntVar>)end
+{
+    self = [super initCPCoreConstraint:[task engine]];
+    
+    _task  = task;
+    _end = end;
+//    NSLog(@"Create constraint CPTaskEnd\n");
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORStatus) post
+{
+    [self propagate];
+    if (![_task bound] && ![_end bound]) {
+        [_task  whenChangeStartPropagate   : self];
+        [_task  whenChangeEndPropagate     : self];
+        [_task  whenChangeDurationPropagate: self];
+        [_end   whenChangeBoundsPropagate  : self];
+    }
+    return ORSuspend;
+}
+-(void) propagate
+{
+    [_end  updateMin: [_task ect]];
+    [_end  updateMax: [_task lct]];
+    [_task updateEct: [_end  min]];
+    [_task updateEnd: [_end  max]];
+}
+-(NSSet*) allVars
+{
+    ORInt size = 2;
+    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:size];
+    [rv addObject:_task];
+    [rv addObject:_end];
+    [rv autorelease];
+    return rv;
+}
+-(ORUInt) nbUVars
+{
+    return 2;
+}
+@end
+
+
 @implementation CPTaskAddTransitionTime
 
 -(id) initCPTaskAddTransitionTime:(id<CPTaskVar>) normal extended:(id<CPTaskVar>)extended time:(id<CPIntVar>)time
