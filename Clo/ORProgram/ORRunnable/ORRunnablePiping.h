@@ -60,11 +60,11 @@
 -(void) doExit;
 
 -(void) notifyUpperBound: (ORInt)bound;
--(void) notifyLowerBound: (ORFloat)bound;
+-(void) notifyLowerBound: (ORDouble)bound;
 -(id<ORIntInformer>) upperBoundStreamInformer;
 -(id<ORDoubleInformer>) lowerBoundStreamInformer;
 -(void) receiveUpperBound: (ORInt)bound;
--(void) receiveLowerBound: (ORFloat)bound;
+-(void) receiveLowerBound: (ORDouble)bound;
 -(void) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)c;
 -(void) addLowerBoundStreamConsumer: (id<ORLowerBoundStreamConsumer>)c;
 -(id<ORSolutionInformer>) solutionStreamInformer;

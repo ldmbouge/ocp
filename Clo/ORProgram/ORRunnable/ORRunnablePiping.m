@@ -63,7 +63,7 @@
 -(void) addLowerBoundStreamConsumer:(id<ORLowerBoundStreamConsumer>)c
 {
     NSLog(@"Adding lower bound consumer...");
-    [_lowerBoundStreamInformer wheneverNotifiedDo: ^(ORFloat b) { [c receiveLowerBound: b]; }];
+    [_lowerBoundStreamInformer wheneverNotifiedDo: ^(ORDouble b) { [c receiveLowerBound: b]; }];
 }
 
 -(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c
@@ -73,7 +73,7 @@
 }
 
 -(void) receivedUpperBound: (ORInt)bound {}
--(void) receivedLowerBound: (ORFloat)bound {}
+-(void) receivedLowerBound: (ORDouble)bound {}
 -(void) receivedSolution: (id<ORSolution>)sol {}
 
 -(void) produceColumn: (id<ORDoubleArray>)col
@@ -90,7 +90,7 @@
     [_upperBoundStreamInformer notifyWith: bound];
 }
 
--(void) notifyLowerBound: (ORFloat)bound {
+-(void) notifyLowerBound: (ORDouble)bound {
     [_lowerBoundStreamInformer notifyWithFloat: bound];
 }
 
@@ -101,7 +101,7 @@
 -(id<ORIntInformer>) upperBoundStreamInformer { return _upperBoundStreamInformer; }
 -(id<ORDoubleInformer>) lowerBoundStreamInformer { return _lowerBoundStreamInformer; }
 -(void) receiveUpperBound: (ORInt)bound {}
--(void) receiveLowerBound: (ORFloat)bound {}
+-(void) receiveLowerBound: (ORDouble)bound {}
 -(id<ORSolutionInformer>) solutionStreamInformer { return nil; }
 -(void) receiveSolution: (id<ORSolution>)sol {}
 -(id<ORConstraintSetInformer>) constraintSetInformer { return nil; }

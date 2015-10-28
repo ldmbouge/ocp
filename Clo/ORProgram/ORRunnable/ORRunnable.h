@@ -12,6 +12,7 @@
 #import <ORUtilities/ORTypes.h>
 #import <ORUtilities/ORTypes.h>
 #import <ORProgram/ORSignature.h>
+#import <ORProgram/ORParallelCombinator.h>
 
 //Forward Declarations
 @protocol ORModel;

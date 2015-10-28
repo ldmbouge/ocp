@@ -44,7 +44,7 @@
 -(id<ORSignature>) signature
 {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut"];
+        _sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut.lowerStreamIn.lowerStreamOut"];
     }
     return _sig;
 }
@@ -76,6 +76,17 @@
 -(void) receivedUpperBound:(ORInt)bound
 {
     NSLog(@"(%p) recieved upper bound: %i", self, bound);
+    //MIPSolverI* mipSolver = [[self solver] solver];
+    //MIPVariableI* objVar = [[((ORObjectiveFunctionExprI*)[[self model] objective]) expr] dereference];
+    //MIPVariableI* varArr[] = {objVar};
+    //ORFloat coefArr[] = {1.0};
+    //MIPConstraintI* c = [mipSolver createLEQ: 1 var: varArr coef: coefArr rhs: bound];
+    //[mipSolver postConstraint: c];
+}
+
+-(void) receiveLowerBound:(ORDouble)bound
+{
+    NSLog(@"(%p) recieved upper bound: %f", self, bound);
     //MIPSolverI* mipSolver = [[self solver] solver];
     //MIPVariableI* objVar = [[((ORObjectiveFunctionExprI*)[[self model] objective]) expr] dereference];
     //MIPVariableI* varArr[] = {objVar};

@@ -634,10 +634,12 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon {
     ORInt d0 = [[[precedesCstr before] duration] up];
     ORInt j1 = [[_taskVarMap objectForKey: [precedesCstr after]] intValue];
     id<ORIntRange> r1 = RANGE(_model, 0, _horizon);
-    for(ORInt k = 0; k < [_resMap count]; k++) {
-        [_model addConstraint:
-         [Sum(_model, t, r1, [_y[k][j0][t] mul: @(t+d0)]) lt:
-          Sum(_model, t, r1, [_y[k][j1][t] mul: @(t)])]];
+    for(ORInt k0 = 0; k0 < [_resMap count]; k0++) {
+        for(ORInt k1 = 0; k1 < [_resMap count]; k1++) {
+            [_model addConstraint:
+             [Sum(_model, t, r1, [_y[k0][j0][t] mul: @(t+d0)]) leq:
+              Sum(_model, t, r1, [_y[k1][j1][t] mul: @(t)])]];
+        }
     }
 }
 //-(void) visitTaskDuration: (id<ORTaskDuration>) cstr

@@ -17,6 +17,7 @@
 #import <ORScheduler/ORScheduler.h>
 #import <ORSchedulingProgram/ORSchedulingProgram.h>
 #import <ORProgram/ORRunnable.h>
+#import <ORModeling/ORLinearize.h>
 
 //121 constraints
 //235670 choices
@@ -61,17 +62,30 @@ ORInt iresource10[10][10] = {
    { 2,  1 , 3 , 7 , 9 , 10 , 6 , 4 , 5 , 8}
 };
 ORInt iduration10[10][10] = {
-   {  29,  78 ,  9 , 36 , 49 , 11 , 62 , 56 , 44 , 21},
-   {  43,  90 , 75 , 11 , 69 , 28 , 46 , 46 , 72 , 30},
-   {  91,  85 , 39 , 74 , 90 , 10 , 12 , 89 , 45 , 33},
-   {  81,  95 , 71 , 99 ,  9 , 52 , 85 , 98 , 22 , 43},
-   {  14,   6 , 22 , 61 , 26 , 69 , 21 , 49 , 72 , 53},
-   {  84,   2 , 52 , 95 , 48 , 72 , 47 , 65 ,  6 , 25},
-   {  46,  37 , 61 , 13 , 32 , 21 , 32 , 89 , 30 , 55},
-   {  31,  86 , 46 , 74 , 32 , 88 , 19 , 48 , 36 , 79},
-   {  76,  69 , 76 , 51 , 85 , 11 , 40 , 89 , 26 , 74},
-   {  85,  13 , 61 ,  7 , 64 , 76 , 47 , 52 , 90 , 45}
+    {  3,  8 ,  1 , 4 , 5 , 1 , 6 , 6 , 4 , 2},
+    {  4,  9 , 8 , 1 , 7 , 3 , 5 , 5 , 7 , 3},
+    {  9,  9 , 4 , 7 , 9 , 1 , 1 , 9 , 5 , 3},
+    {  8,  10 , 7 , 10 ,  1 , 5 , 9 , 10 , 2 , 4},
+    {  1,   1 , 2 , 6 , 3 , 7 , 2 , 5 , 7 , 5},
+    {  8,   0 , 5 , 10 , 5 , 7 , 5 , 7 ,  1 , 3},
+    {  5,  4 , 6 , 1 , 3 , 2 , 3 , 9 , 3 , 6},
+    {  3,  9 , 5 , 7 , 3 , 9 , 2 , 5 , 4 , 8},
+    {  8,  7 , 8 , 5 , 9 , 1 , 4 , 9 , 3 , 7},
+    {  9,  1 , 6 ,  1 , 6 , 8 , 5 , 5 , 9 , 5}
 };
+
+//ORInt iduration10[10][10] = {
+//   {  29,  78 ,  9 , 36 , 49 , 11 , 62 , 56 , 44 , 21},
+//   {  43,  90 , 75 , 11 , 69 , 28 , 46 , 46 , 72 , 30},
+//   {  91,  85 , 39 , 74 , 90 , 10 , 12 , 89 , 45 , 33},
+//   {  81,  95 , 71 , 99 ,  9 , 52 , 85 , 98 , 22 , 43},
+//   {  14,   6 , 22 , 61 , 26 , 69 , 21 , 49 , 72 , 53},
+//   {  84,   2 , 52 , 95 , 48 , 72 , 47 , 65 ,  6 , 25},
+//   {  46,  37 , 61 , 13 , 32 , 21 , 32 , 89 , 30 , 55},
+//   {  31,  86 , 46 , 74 , 32 , 88 , 19 , 48 , 36 , 79},
+//   {  76,  69 , 76 , 51 , 85 , 11 , 40 , 89 , 26 , 74},
+//   {  85,  13 , 61 ,  7 , 64 , 76 , 47 , 52 , 90 , 45}
+//};
 
 //ORInt iresource10[10][10] = {
 //   {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
@@ -383,7 +397,7 @@ int mainPureCP(int argc, const char * argv[])
    @autoreleasepool {
       
       //FILE* data = fopen("orb03.jss","r");
-      FILE* data = fopen("ft10.jss","r");
+      FILE* data = fopen("la01.jss","r");
       ORInt nbJobs, nbMachines;
       fscanf(data, "%d",&nbJobs);
       fscanf(data, "%d",&nbMachines);
@@ -467,21 +481,21 @@ int mainPureMIP(int argc, const char * argv[])
         
         // data
         ORLong timeStart = [ORRuntimeMonitor cputime];
-        ORInt size = size6;
+        ORInt size = size10;
         id<ORIntRange> Size = RANGE(model,1,size);
-        id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iduration6[i-1][j-1]; } ];
-        id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource6[i-1][j-1]; } ];
+        id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iduration10[i-1][j-1]; } ];
+        id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource10[i-1][j-1]; } ];
         
         ORInt totalDuration = 0;
         for(ORInt i = Size.low; i <= Size.up; i++)
             for(ORInt j = Size.low; j <= Size.up; j++)
                 totalDuration += [duration at: i : j];
-        id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
+        id<ORIntRange> Horizon = RANGE(model,0,100);//totalDuration);
         
         // variables
         
         id<ORTaskVarMatrix> task = [ORFactory taskVarMatrix: model range: Size : Size horizon: Horizon duration: duration];
-        id<ORIntVar> makespan = [ORFactory intVar: model domain: RANGE(model,1,1500)];
+        id<ORIntVar> makespan = [ORFactory intVar: model domain: RANGE(model,1,100)];
         id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray: model range: Size];
         
         // model
@@ -503,14 +517,16 @@ int mainPureMIP(int argc, const char * argv[])
             [model add: disjunctive[i]];
         
         // Linearize
-        //[model close];
-        id<ORModel> linearModel = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
-        id<ORRunnable> r = [ORFactory MIPRunnable: linearModel];
-        [r run];
+        //id<ORModel> lm0 = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
+        id<ORModel> lm1 = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedTimeIndexed];
+        //id<ORRunnable> r0 = [ORFactory MIPRunnable: lm0];
+        id<ORRunnable> r1 = [ORFactory MIPRunnable: lm1];
+        //id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
+        [r1 run];
         
         ORLong timeEnd = [ORRuntimeMonitor cputime];
         NSLog(@"Time: %lld:",timeEnd - timeStart);
-        NSLog(@"%@", [r bestSolution]);
+        NSLog(@"%@", [r1 bestSolution]);
         NSLog(@"Quitting");
         
     }
