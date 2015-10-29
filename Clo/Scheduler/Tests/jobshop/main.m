@@ -397,7 +397,7 @@ int mainPureCP(int argc, const char * argv[])
    @autoreleasepool {
       
       //FILE* data = fopen("orb03.jss","r");
-      FILE* data = fopen("orb10.jss","r");
+      FILE* data = fopen("la19.jss","r");
       ORInt nbJobs, nbMachines;
       fscanf(data, "%d",&nbJobs);
       fscanf(data, "%d",&nbMachines);
@@ -436,7 +436,7 @@ int mainPureCP(int argc, const char * argv[])
             [model add: [[task at: i : j] precedes: [ task at: i : j+1]]];
       
       for(ORInt i = Jobs.low; i <= Jobs.up; i++)
-         [model add: [[task at: i : Jobs.up] isFinishedBy: makespan]];
+         [model add: [[task at: i : Machines.up] isFinishedBy: makespan]];
       
       for(ORInt i = Jobs.low; i <= Jobs.up; i++)
          for(ORInt j = Machines.low; j <= Machines.up; j++) 
@@ -476,8 +476,8 @@ int mainPureMIP(int argc, const char * argv[])
 {
     @autoreleasepool {
         
-        //FILE* data = fopen("orb03.jss","r");
-        FILE* data = fopen("orb10.jss","r");
+        FILE* data = fopen("la19.jss","r");
+        //FILE* data = fopen("orb10.jss","r");
         ORInt nbJobs, nbMachines;
         fscanf(data, "%d",&nbJobs);
         fscanf(data, "%d",&nbMachines);
@@ -516,7 +516,7 @@ int mainPureMIP(int argc, const char * argv[])
                 [model add: [[task at: i : j] precedes: [ task at: i : j+1]]];
         
         for(ORInt i = Jobs.low; i <= Jobs.up; i++)
-            [model add: [[task at: i : Jobs.up] isFinishedBy: makespan]];
+            [model add: [[task at: i : Machines.up] isFinishedBy: makespan]];
         
         for(ORInt i = Jobs.low; i <= Jobs.up; i++)
             for(ORInt j = Machines.low; j <= Machines.up; j++)
@@ -548,7 +548,7 @@ int mainHybrid(int argc, const char * argv[])
     @autoreleasepool {
         
         //FILE* data = fopen("orb03.jss","r");
-        FILE* data = fopen("orb10.jss","r");
+        FILE* data = fopen("abz9.jss","r");
         ORInt nbJobs, nbMachines;
         fscanf(data, "%d",&nbJobs);
         fscanf(data, "%d",&nbMachines);
@@ -587,7 +587,7 @@ int mainHybrid(int argc, const char * argv[])
                 [model add: [[task at: i : j] precedes: [ task at: i : j+1]]];
         
         for(ORInt i = Jobs.low; i <= Jobs.up; i++)
-            [model add: [[task at: i : Jobs.up] isFinishedBy: makespan]];
+            [model add: [[task at: i : Machines.up] isFinishedBy: makespan]];
         
         for(ORInt i = Jobs.low; i <= Jobs.up; i++)
             for(ORInt j = Machines.low; j <= Machines.up; j++)
@@ -628,10 +628,10 @@ int mainHybrid(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-//    return mainHybrid(argc,argv);
+    return mainHybrid(argc,argv);
 //    return mainPureMIP(argc,argv);
-   return mainPureCP(argc,argv);
+//   return mainPureCP(argc,argv);
 //   return mainSubpathLNS(argc,argv);
-//   return mainBasicLNS(argc,argv);
+   return mainBasicLNS(argc,argv);
 }
 

@@ -20,7 +20,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    struct _GRBenv*                _env;
    struct _GRBmodel*              _model;
    MIPOutcome                      _status;
-   MIPObjectiveType                _objectiveType;
+   MIPObjectiveI*                 _objective;
    id<ORDoubleInformer>           _informer;
 @public
    ORDouble                       _newBnd;
@@ -89,12 +89,12 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 }
 -(void) addObjective: (MIPObjectiveI*) obj
 {
+   _objective = obj;
    int s = [obj size];
    int* idx = [obj col];
    ORDouble* coef = [obj coef];
-   _objectiveType = [obj type];
    for(ORInt i = 0; i < s; i++)
-      if (_objectiveType == MIPminimize)
+      if ([_objective type] == MIPminimize)
          GRBsetdblattrelement(_model,"Obj",idx[i],coef[i]);
       else
          GRBsetdblattrelement(_model,"Obj",idx[i],-coef[i]);
@@ -106,11 +106,13 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 }
 -(MIPOutcome) solve
 {
-   //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
-    GRBupdatemodel(_model);
-    //[self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
-    GRBsetcallbackfunc(_model, &gurobi_callback, self);
-    GRBoptimize(_model);
+   int error = GRBsetintparam(GRBgetenv(_model), "LazyConstraints", 1); // Enable lazy constraints for bounds update
+   if(error != 0) assert(YES);
+   GRBupdatemodel(_model);
+   //[self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
+   GRBsetcallbackfunc(_model, &gurobi_callback, self);
+   
+   GRBoptimize(_model);
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
@@ -193,7 +195,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 {
    ORDouble objVal;
    GRBgetdblattr(_model,"ObjVal",&objVal);
-   if (_objectiveType == MIPmaximize)
+   if ([_objective type] == MIPmaximize)
       return -objVal;
    else
       return objVal;
@@ -305,12 +307,19 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 -(void) pumpEvents
 {
-   if(_newBnd < _bnd) {
-      _bnd = _newBnd;
-      [self setDoubleParameter: "Cutoff" val: _newBnd];
-      [self updateModel];
-   }
    [ORConcurrency pumpEvents];
+}
+
+// Called from Gurobi callback function
+-(void) lazyBoundTighten: (void*)cbdata {
+   if(_newBnd < _bnd && _objective) {
+      _bnd = _newBnd;
+      int s = [_objective size];
+      int* idx = [_objective col];
+      ORDouble* coef = [_objective coef];
+      char sense = ([_objective type] == MIPminimize) ? GRB_LESS_EQUAL : GRB_GREATER_EQUAL;
+      GRBcblazy(cbdata, s, idx, coef, sense, _newBnd);
+   }
 }
 
 @end
@@ -322,6 +331,9 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata) {
        GRBcbget(cbdata, where, GRB_CB_MIPSOL_OBJ, (void *) &bnd);
        solver->_bnd = bnd;
        [[solver boundInformer] notifyWithFloat: bnd];
+    }
+    else if(where == GRB_CB_MIPNODE) {
+       [solver lazyBoundTighten: cbdata];
     }
     else if (where == GRB_CB_POLLING) [solver pumpEvents];
     return 0;
