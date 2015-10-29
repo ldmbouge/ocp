@@ -1416,6 +1416,16 @@
     [_MIP setParam: param value: val];
 }
 
+-(void) tightenBound: (ORDouble)bnd
+{
+    [_MIP tightenBound: bnd];
+}
+
+-(id<ORDoubleInformer>) boundInformer
+{
+    return [_MIP boundInformer];
+}
+
 -(void) print;
 {
    //

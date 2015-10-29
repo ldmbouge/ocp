@@ -23,10 +23,10 @@
 {
     if((self = [super initWithModel: m]) != nil) {
         _sig = nil;
+        _col = nil;
         _upperBoundStreamInformer = [[ORInformer alloc] initORInformer];
         _lowerBoundStreamInformer = [[ORInformer alloc] initORInformer];
         _solutionStreamInformer = [[ORInformer alloc] initORInformer];
-        _col = nil;
     }
     return self;
 }

@@ -397,7 +397,7 @@ int mainPureCP(int argc, const char * argv[])
    @autoreleasepool {
       
       //FILE* data = fopen("orb03.jss","r");
-      FILE* data = fopen("la01.jss","r");
+      FILE* data = fopen("orb10.jss","r");
       ORInt nbJobs, nbMachines;
       fscanf(data, "%d",&nbJobs);
       fscanf(data, "%d",&nbMachines);
@@ -476,49 +476,59 @@ int mainPureMIP(int argc, const char * argv[])
 {
     @autoreleasepool {
         
+        //FILE* data = fopen("orb03.jss","r");
+        FILE* data = fopen("orb10.jss","r");
+        ORInt nbJobs, nbMachines;
+        fscanf(data, "%d",&nbJobs);
+        fscanf(data, "%d",&nbMachines);
+        
+        NSLog(@" nbJobs: %d nbMachines: %d",nbJobs,nbMachines);
         [ORStreamManager setRandomized];
         id<ORModel> model = [ORFactory createModel];
         
         // data
         ORLong timeStart = [ORRuntimeMonitor cputime];
-        ORInt size = size10;
-        id<ORIntRange> Size = RANGE(model,1,size);
-        id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iduration10[i-1][j-1]; } ];
-        id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Size : Size with: ^ORInt(ORInt i,ORInt j) { return iresource10[i-1][j-1]; } ];
+        
+        id<ORIntRange> Jobs = [ORFactory intRange: model low: 0 up: nbJobs-1];
+        id<ORIntRange> Machines = [ORFactory intRange: model low: 0 up: nbMachines-1];
+        id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Jobs : Machines];
+        id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Jobs : Machines];
+        fill(data,Jobs,Machines,duration,resource);
         
         ORInt totalDuration = 0;
-        for(ORInt i = Size.low; i <= Size.up; i++)
-            for(ORInt j = Size.low; j <= Size.up; j++)
+        for(ORInt i = Jobs.low; i <= Jobs.up; i++)
+            for(ORInt j = Machines.low; j <= Machines.up; j++)
                 totalDuration += [duration at: i : j];
-        id<ORIntRange> Horizon = RANGE(model,0,100);//totalDuration);
+        id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
         
         // variables
         
-        id<ORTaskVarMatrix> task = [ORFactory taskVarMatrix: model range: Size : Size horizon: Horizon duration: duration];
-        id<ORIntVar> makespan = [ORFactory intVar: model domain: RANGE(model,1,100)];
-        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray: model range: Size];
+        id<ORTaskVarMatrix> task = [ORFactory taskVarMatrix: model range: Jobs : Machines horizon: Horizon duration: duration];
+        id<ORIntVar> makespan = [ORFactory intVar: model domain: RANGE(model,0,totalDuration)];
+        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray: model range: Machines];
         
         // model
         
         [model minimize: makespan];
         
-        for(ORInt i = Size.low; i <= Size.up; i++)
-            for(ORInt j = Size.low; j < Size.up; j++)
+        for(ORInt i = Jobs.low; i <= Jobs.up; i++)
+            for(ORInt j = Machines.low; j < Machines.up; j++)
                 [model add: [[task at: i : j] precedes: [ task at: i : j+1]]];
         
-        for(ORInt i = Size.low; i <= Size.up; i++)
-            [model add: [[task at: i : Size.up] isFinishedBy: makespan]];
+        for(ORInt i = Jobs.low; i <= Jobs.up; i++)
+            [model add: [[task at: i : Jobs.up] isFinishedBy: makespan]];
         
-        for(ORInt i = Size.low; i <= Size.up; i++)
-            for(ORInt j = Size.low; j <= Size.up; j++)
+        for(ORInt i = Jobs.low; i <= Jobs.up; i++)
+            for(ORInt j = Machines.low; j <= Machines.up; j++)
                 [disjunctive[[resource at: i : j]] add: [ task at: i : j]];
         
-        for(ORInt i = Size.low; i <= Size.up; i++)
+        for(ORInt i =Machines.low; i <= Machines.up; i++)
             [model add: disjunctive[i]];
+        
         
         // Linearize
         //id<ORModel> lm0 = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
-        id<ORModel> lm1 = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedTimeIndexed];
+        id<ORModel> lm1 = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
         //id<ORRunnable> r0 = [ORFactory MIPRunnable: lm0];
         id<ORRunnable> r1 = [ORFactory MIPRunnable: lm1];
         //id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
@@ -533,10 +543,94 @@ int mainPureMIP(int argc, const char * argv[])
     return 0;
 }
 
+int mainHybrid(int argc, const char * argv[])
+{
+    @autoreleasepool {
+        
+        //FILE* data = fopen("orb03.jss","r");
+        FILE* data = fopen("orb10.jss","r");
+        ORInt nbJobs, nbMachines;
+        fscanf(data, "%d",&nbJobs);
+        fscanf(data, "%d",&nbMachines);
+        
+        NSLog(@" nbJobs: %d nbMachines: %d",nbJobs,nbMachines);
+        [ORStreamManager setRandomized];
+        id<ORModel> model = [ORFactory createModel];
+        
+        // data
+        ORLong timeStart = [ORRuntimeMonitor cputime];
+        
+        id<ORIntRange> Jobs = [ORFactory intRange: model low: 0 up: nbJobs-1];
+        id<ORIntRange> Machines = [ORFactory intRange: model low: 0 up: nbMachines-1];
+        id<ORIntMatrix> duration = [ORFactory intMatrix: model range: Jobs : Machines];
+        id<ORIntMatrix> resource = [ORFactory intMatrix: model range: Jobs : Machines];
+        fill(data,Jobs,Machines,duration,resource);
+        
+        ORInt totalDuration = 0;
+        for(ORInt i = Jobs.low; i <= Jobs.up; i++)
+            for(ORInt j = Machines.low; j <= Machines.up; j++)
+                totalDuration += [duration at: i : j];
+        id<ORIntRange> Horizon = RANGE(model,0,totalDuration);
+        
+        // variables
+        
+        id<ORTaskVarMatrix> task = [ORFactory taskVarMatrix: model range: Jobs : Machines horizon: Horizon duration: duration];
+        id<ORIntVar> makespan = [ORFactory intVar: model domain: RANGE(model,0,totalDuration)];
+        id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray: model range: Machines];
+        
+        // model
+        
+        [model minimize: makespan];
+        
+        for(ORInt i = Jobs.low; i <= Jobs.up; i++)
+            for(ORInt j = Machines.low; j < Machines.up; j++)
+                [model add: [[task at: i : j] precedes: [ task at: i : j+1]]];
+        
+        for(ORInt i = Jobs.low; i <= Jobs.up; i++)
+            [model add: [[task at: i : Jobs.up] isFinishedBy: makespan]];
+        
+        for(ORInt i = Jobs.low; i <= Jobs.up; i++)
+            for(ORInt j = Machines.low; j <= Machines.up; j++)
+                [disjunctive[[resource at: i : j]] add: [ task at: i : j]];
+        
+        for(ORInt i =Machines.low; i <= Machines.up; i++)
+            [model add: disjunctive[i]];
+        
+        // Create Hybrid
+        id<ORModel> lm = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
+        id<ORRunnable> r0 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
+            id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
+            NSLog(@"MKS: %@n\n",[cp concretize:makespan]);
+            [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
+                id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                [cp sequence: disjunctive[i].successors
+                          by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
+                        then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
+            }];
+            [cp label: makespan];
+            printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+        }];
+        id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
+        id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
+        [r run];
+        
+        ORLong timeEnd = [ORRuntimeMonitor cputime];
+        NSLog(@"Time: %lld:",timeEnd - timeStart);
+        //      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
+        id<ORSolution> optimum = [r bestSolution];
+        printf("Makespan: %d \n",[optimum intValue: makespan]);
+        NSLog(@"Quitting");
+        //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+        
+    }
+    return 0;
+}
+
 int main(int argc, const char * argv[])
 {
-    return mainPureMIP(argc,argv);
-//   return mainPureCP(argc,argv);
+//    return mainHybrid(argc,argv);
+//    return mainPureMIP(argc,argv);
+   return mainPureCP(argc,argv);
 //   return mainSubpathLNS(argc,argv);
 //   return mainBasicLNS(argc,argv);
 }

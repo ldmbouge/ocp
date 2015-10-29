@@ -205,7 +205,7 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 }
 -(void) dispatchWithFloat:(double)a0
 {
-    ORFloat2Void tClo = (ORFloat2Void)_closure;
+    ORDouble2Void tClo = (ORDouble2Void)_closure;
     ORClosure wrap = ^{
         tClo(a0);
     };
@@ -476,6 +476,10 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     [barrier release];
 }
 +(id<ORIntInformer>) intInformer
+{
+    return [[ORInformer alloc] initORInformer];
+}
++(id<ORDoubleInformer>) doubleInformer
 {
     return [[ORInformer alloc] initORInformer];
 }

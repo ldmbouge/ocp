@@ -14,6 +14,7 @@
 @implementation CPRunnableI {
     id<CPProgram> _program;
     id<ORSignature> _sig;
+    void(^_search)(id<CPCommonProgram>);
 }
 
 -(id) initWithModel: (id<ORModel>)m
@@ -21,6 +22,17 @@
     if((self = [super initWithModel: m]) != nil) {
         _program = [ORFactory createCPProgram: m];
         _sig = nil;
+        _search = nil;
+    }
+    return self;
+}
+
+-(id) initWithModel: (id<ORModel>)m search: (void(^)(id<CPCommonProgram>))search
+{
+    if((self = [super initWithModel: m]) != nil) {
+        _program = [ORFactory createCPProgram: m];
+        _sig = nil;
+        _search = [search retain];
     }
     return self;
 }
@@ -28,6 +40,7 @@
 -(void) dealloc
 {
     [_program release];
+    [_search release];
     [super dealloc];
 }
 
@@ -41,7 +54,7 @@
 
 -(id<CPProgram>) solver { return _program; }
 
--(void) receiveUpperBound:(ORInt)bound
+-(void) receiveUpperBound: (ORInt)bound
 {
     NSLog(@"(%p) recieved upper bound: %i", self, bound);
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
@@ -59,7 +72,6 @@
 -(void) run
 {
     NSLog(@"Running CP runnable(%p)...", _program);
-    id<CPHeuristic> h = [_program createFF];
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution:^{
         id<ORSolution> s = [_program captureSolution];
@@ -81,20 +93,36 @@
         NSLog(@"best: %@", best);
     }];
     
-    [_program solve:
-     ^() {
-         NSLog(@"Solving CP program...");
-         NSIndexSet* intVarSet = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger i, BOOL* stop) {
-             return [obj conformsToProtocol: @protocol(ORIntVar)];
+    if(_search) {
+        [_program solveOn: _search];
+    }
+    else {
+        id<CPHeuristic> h = [_program createFF];
+        [_program solve:
+         ^() {
+             NSLog(@"Solving CP program...");
+             NSIndexSet* intVarSet = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger i, BOOL* stop) {
+                 return [obj conformsToProtocol: @protocol(ORIntVar)];
+             }];
+             NSArray* intVarArray = [[_model variables] objectsAtIndexes: intVarSet];
+             id<ORIntVarArray> intVars = [ORFactory intVarArray: _program range: RANGE(_program, 0, (ORInt)intVarArray.count-1) with: ^id<ORIntVar>(ORInt i) {
+                 return [intVarArray objectAtIndex: i];
+             }];
+             [_program labelHeuristic: h restricted: intVars];
          }];
-         NSArray* intVarArray = [[_model variables] objectsAtIndexes: intVarSet];
-         id<ORIntVarArray> intVars = [ORFactory intVarArray: _program range: RANGE(_program, 0, (ORInt)intVarArray.count-1) with: ^id<ORIntVar>(ORInt i) {
-             return [intVarArray objectAtIndex: i];
-         }];
-         [_program labelHeuristic: h restricted: intVars];
-     }];
+    }
     NSLog(@"status: %@", _program);
     NSLog(@"Finishing CP runnable(%p)...", _program);
+}
+
+-(id<ORSolution>) bestSolution
+{
+    return [[_program solutionPool] best];
+}
+
+-(ORDouble) bestBound
+{
+    return [[[[_program solutionPool] best] objectiveValue] dblValue];
 }
 
 //-(void) restore: (id<ORSolution>)s {

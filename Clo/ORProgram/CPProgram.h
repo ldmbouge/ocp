@@ -69,6 +69,7 @@ PORTABLE_BEGIN
 -(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2;
 
 -(void)               solve: (ORClosure) body;
+-(void)             solveOn: (void(^)(id<CPCommonProgram>))body;
 -(void)               solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 -(void)            solveAll: (ORClosure) body;
 -(void)               close;

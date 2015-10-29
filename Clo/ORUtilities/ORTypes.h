@@ -117,6 +117,7 @@ typedef ORInt (^ORInt2Int)(ORInt);
 typedef id   (^ORInt2Id)(ORInt);
 typedef void (^ORInt2Void)(ORInt);
 typedef void (^ORFloat2Void)(ORFloat);
+typedef void (^ORDouble2Void)(ORDouble);
 typedef void (^ORFloatxFloat2Void)(ORFloat, ORFloat);
 typedef void (^ORId2Void)(id);
 typedef void (^ORSolution2Void)(id<ORSolution>);

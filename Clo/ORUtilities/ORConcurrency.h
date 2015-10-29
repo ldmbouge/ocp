@@ -77,6 +77,7 @@
 +(void) parall: (ORRange) R do: (ORInt2Void) closure;
 +(id<ORSolutionInformer>) solutionInformer;
 +(id<ORIntInformer>) intInformer;
++(id<ORDoubleInformer>) doubleInformer;
 +(id<ORIdInformer>) idInformer;
 +(id<ORVoidInformer>) voidInformer;
 +(id<ORIdxIntInformer>) idxIntInformer;

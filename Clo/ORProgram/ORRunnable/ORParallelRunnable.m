@@ -49,7 +49,7 @@
     return [_r0 model];
 }
 
--(ORFloat) bestBound {
+-(ORDouble) bestBound {
     return _bestBound;
 }
 
@@ -77,21 +77,20 @@
     [_t1 start];
     //[NSThread sleepForTimeInterval:0.5]; //so MIP doesn't receive bounds before it starts
     [_t0 start];
-
     
     // Wait for the runnables to finish
     while([_t0 isExecuting] && [_t1 isExecuting]) {
         [NSThread sleepForTimeInterval: 0.25];
         //NSLog(@"r2 bound: %@", [[[_r1 model] objective] description]);
-        [ORConcurrency pumpEvents];
+        //[ORConcurrency pumpEvents];
     }
     [_t0 cancel];
     [_t1 cancel];
     id<ORSolution> s0 = [_r0 bestSolution];
     id<ORSolution> s1 = [_r1 bestSolution];
-    if(s0 && s1) {
-        _solvedRunnable = ([[s0 objectiveValue] dblValue] >= [[s1 objectiveValue] dblValue]) ? _r0 : _r1;
-        _bestBound = MAX([[s0 objectiveValue] dblValue], [[s1 objectiveValue] dblValue]);
+    if(s0 && s1) {        
+        _solvedRunnable = ([[s0 objectiveValue] dblValue] <= [[s1 objectiveValue] dblValue]) ? _r0 : _r1;
+        _bestBound = MIN([[s0 objectiveValue] dblValue], [[s1 objectiveValue] dblValue]);
     }
     else if(s0) { _bestBound = [[s0 objectiveValue] dblValue]; _solvedRunnable = _r0; }
     else if(s1) { _bestBound = [[s1 objectiveValue] dblValue]; _solvedRunnable = _r1; }

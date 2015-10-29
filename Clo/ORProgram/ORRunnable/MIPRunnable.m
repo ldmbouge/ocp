@@ -55,6 +55,7 @@
 -(void) run
 {
     NSLog(@"Running MIP runnable(%p)...", _program);
+    [[[_program solver] boundInformer] wheneverNotifiedDo: ^(ORDouble bnd) { [self notifyUpperBound: (ORInt)bnd]; }];
     [_program solve];
     NSLog(@"Finishing MIP runnable(%p)...", _program);
 }
@@ -73,9 +74,10 @@
    return [[_program solutionPool] best];
 }
 
--(void) receivedUpperBound:(ORInt)bound
+-(void) receiveUpperBound: (ORInt)bound
 {
     NSLog(@"(%p) recieved upper bound: %i", self, bound);
+    [[_program solver] tightenBound: bound];
     //MIPSolverI* mipSolver = [[self solver] solver];
     //MIPVariableI* objVar = [[((ORObjectiveFunctionExprI*)[[self model] objective]) expr] dereference];
     //MIPVariableI* varArr[] = {objVar};

@@ -55,6 +55,8 @@
 
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr;
 
+-(id<ORDoubleInformer>) boundInformer;
+-(void) tightenBound: (ORDouble)bnd;
 -(void) printModelToFile: (char*) fileName;
 -(void) print;
 @end

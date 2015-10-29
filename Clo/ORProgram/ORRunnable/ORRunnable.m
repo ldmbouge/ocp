@@ -90,6 +90,11 @@
     id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m];
     return r;
 }
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m solve: (void(^)(id<CPCommonProgram>))body
+{
+    id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m search: body];
+    return r;
+}
 +(id<ORRunnable>) LPRunnable: (id<ORModel>)m
 {
     id<ORRunnable> r = [[LPRunnableI alloc] initWithModel: m];

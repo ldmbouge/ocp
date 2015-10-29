@@ -14,12 +14,17 @@
 #import <objmp/MIPSolverI.h>
 #import "gurobi_c.h"
 
+int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 @implementation MIPGurobiSolver {
    struct _GRBenv*                _env;
    struct _GRBmodel*              _model;
    MIPOutcome                      _status;
    MIPObjectiveType                _objectiveType;
+   id<ORDoubleInformer>           _informer;
+@public
+   ORDouble                       _newBnd;
+   ORDouble                       _bnd;
 }
 
 -(MIPGurobiSolver*) init
@@ -32,6 +37,9 @@
                                       userInfo:nil];
    }
    GRBnewmodel(_env, &_model, "", 0, NULL, NULL, NULL, NULL, NULL);
+   _informer = [ORConcurrency doubleInformer];
+   _bnd = MAXDBL;
+   _newBnd = MAXDBL;
    return self;
 }
 
@@ -101,6 +109,7 @@
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
     GRBupdatemodel(_model);
     //[self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
+    GRBsetcallbackfunc(_model, &gurobi_callback, self);
     GRBoptimize(_model);
    int status;
    GRBgetintattr(_model,"Status",&status);
@@ -284,6 +293,38 @@
    GRBwrite(_model,fileName);
 }
 
+-(id<ORDoubleInformer>) boundInformer
+{
+   return _informer;
+}
+
+-(void) tightenBound: (ORDouble)bnd
+{
+   if(bnd < _newBnd) _newBnd = bnd;
+}
+
+-(void) pumpEvents
+{
+   if(_newBnd < _bnd) {
+      _bnd = _newBnd;
+      [self setDoubleParameter: "Cutoff" val: _newBnd];
+      [self updateModel];
+   }
+   [ORConcurrency pumpEvents];
+}
+
 @end
+
+int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata) {
+    MIPGurobiSolver* solver = (MIPGurobiSolver*)usrdata;
+    if(where == GRB_CB_MIPSOL) {
+       ORDouble bnd;
+       GRBcbget(cbdata, where, GRB_CB_MIPSOL_OBJ, (void *) &bnd);
+       solver->_bnd = bnd;
+       [[solver boundInformer] notifyWithFloat: bnd];
+    }
+    else if (where == GRB_CB_POLLING) [solver pumpEvents];
+    return 0;
+}
 
 
