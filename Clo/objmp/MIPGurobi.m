@@ -107,6 +107,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 -(MIPOutcome) solve
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
+
     GRBupdatemodel(_model);
     //[self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
     GRBsetcallbackfunc(_model, &gurobi_callback, self);
@@ -234,7 +235,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 -(void) setDoubleParameter: (const char*) name val: (ORDouble) val
 {
-   GRBsetdblparam(_env,name,val);
+   int err = GRBsetdblparam(_env,name,val);
+   if(err != 0) NSLog(@"Error setting parameter: %s", name);
 }
 
 -(void) setStringParameter: (const char*) name val: (char*) val

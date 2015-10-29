@@ -629,8 +629,8 @@ int mainHybrid(int argc, const char * argv[])
 int main(int argc, const char * argv[])
 {
 //    return mainHybrid(argc,argv);
-//    return mainPureMIP(argc,argv);
-   return mainPureCP(argc,argv);
+    return mainPureMIP(argc,argv);
+//   return mainPureCP(argc,argv);
 //   return mainSubpathLNS(argc,argv);
 //   return mainBasicLNS(argc,argv);
 }
