@@ -288,6 +288,7 @@
 -(void) setParam: (MIPParameterI*) param value: (ORDouble)val;
 
 -(void) tightenBound: (ORDouble)bnd;
+-(void) injectSolution: (NSArray*)vars values: (NSArray*)vals size: (ORInt)size;
 -(id<ORDoubleInformer>) boundInformer;
 -(void) print;
 -(void) printModelToFile: (char*) fileName;

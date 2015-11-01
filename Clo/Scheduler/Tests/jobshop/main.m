@@ -476,7 +476,7 @@ int mainPureMIP(int argc, const char * argv[])
 {
     @autoreleasepool {
         
-        FILE* data = fopen("la19.jss","r");
+        FILE* data = fopen("ft06.jss","r");
         //FILE* data = fopen("orb10.jss","r");
         ORInt nbJobs, nbMachines;
         fscanf(data, "%d",&nbJobs);
@@ -528,7 +528,7 @@ int mainPureMIP(int argc, const char * argv[])
         
         // Linearize
         //id<ORModel> lm0 = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
-        id<ORModel> lm1 = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
+        id<ORModel> lm1 = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedTimeIndexed];
         //id<ORRunnable> r0 = [ORFactory MIPRunnable: lm0];
         id<ORRunnable> r1 = [ORFactory MIPRunnable: lm1];
         //id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
@@ -632,6 +632,6 @@ int main(int argc, const char * argv[])
 //    return mainPureMIP(argc,argv);
 //   return mainPureCP(argc,argv);
 //   return mainSubpathLNS(argc,argv);
-   return mainBasicLNS(argc,argv);
+//   return mainBasicLNS(argc,argv);
 }
 

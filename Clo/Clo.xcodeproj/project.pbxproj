@@ -20944,7 +20944,7 @@
 		5BB1C26F1B3A0098008A9E51 /* CPISVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPISVarI.m; sourceTree = "<group>"; };
 		5BB1C2701B3A0098008A9E51 /* CPTrailIntSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTrailIntSet.h; sourceTree = "<group>"; };
 		5BB1C2711B3A0098008A9E51 /* CPTrailIntSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTrailIntSet.m; sourceTree = "<group>"; };
-		5BB1C2781B3A01E6008A9E51 /* ORSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSolution.h; sourceTree = "<group>"; };
+		5BB1C2781B3A01E6008A9E51 /* ORSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.c.h; path = ORSolution.h; sourceTree = "<group>"; tabWidth = 3; };
 		5BB1C2791B3A01E6008A9E51 /* ORSolution.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSolution.m; sourceTree = "<group>"; };
 		5BB1C27C1B3A02BB008A9E51 /* objcp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcp.h; sourceTree = "<group>"; };
 		5BB1C27E1B3A03B6008A9E51 /* objmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objmp.h; sourceTree = "<group>"; };

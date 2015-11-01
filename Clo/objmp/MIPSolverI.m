@@ -1421,6 +1421,11 @@
     [_MIP tightenBound: bnd];
 }
 
+-(void) injectSolution: (NSArray*)vars values: (NSArray*)vals size: (ORInt)size;
+{
+    [_MIP injectSolution: vars values: vals size: size];
+}
+
 -(id<ORDoubleInformer>) boundInformer
 {
     return [_MIP boundInformer];

@@ -12,6 +12,8 @@
 #import <objmp/MIPGurobi.h>
 #import <objmp/MIPType.h>
 #import <objmp/MIPSolverI.h>
+#import <ORProgram/ORSolution.h>
+#import <ORFoundation/ORConstraint.h>
 #import "gurobi_c.h"
 
 int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
@@ -23,6 +25,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    MIPObjectiveI*                 _objective;
    id<ORDoubleInformer>           _informer;
 @public
+   NSArray*                       _newSolVars;
+   NSArray*                       _newSolVals;
    ORDouble                       _newBnd;
    ORDouble                       _bnd;
 }
@@ -40,6 +44,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    _informer = [ORConcurrency doubleInformer];
    _bnd = MAXDBL;
    _newBnd = MAXDBL;
+   _newSolVars = nil;
+   _newSolVals = nil;
    return self;
 }
 
@@ -106,8 +112,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 }
 -(MIPOutcome) solve
 {
-   int error = GRBsetintparam(GRBgetenv(_model), "LazyConstraints", 1); // Enable lazy constraints for bounds update
-   if(error != 0) assert(YES);
+   //int error = GRBsetintparam(GRBgetenv(_model), "LazyConstraints", 1); // Enable lazy constraints for bounds update
+   //if(error != 0) assert(YES);
    GRBupdatemodel(_model);
    //[self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
    GRBsetcallbackfunc(_model, &gurobi_callback, self);
@@ -305,20 +311,55 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    if(bnd < _newBnd) _newBnd = bnd;
 }
 
+-(void) injectSolution: (NSArray*)vars values: (NSArray*)vals size: (ORInt)size;
+{
+      _newSolVars = vars;
+      _newSolVals = vals;
+}
+
 -(void) pumpEvents
 {
    [ORConcurrency pumpEvents];
 }
 
 // Called from Gurobi callback function
--(void) lazyBoundTighten: (void*)cbdata {
+-(void) lazyBoundTighten: (void*)cbdata
+{
    if(_newBnd < _bnd && _objective) {
       _bnd = _newBnd;
       int s = [_objective size];
       int* idx = [_objective col];
       ORDouble* coef = [_objective coef];
       char sense = ([_objective type] == MIPminimize) ? GRB_LESS_EQUAL : GRB_GREATER_EQUAL;
-      GRBcblazy(cbdata, s, idx, coef, sense, _newBnd);
+      int error = GRBcblazy(cbdata, s, idx, coef, sense, _newBnd);
+      if (error != 0) assert(NO);
+   }
+}
+
+-(void) lazySolutionInject: (void*)cbdata
+{
+   if(_newSolVars && _newSolVals) {
+      int numVars;
+      GRBgetintattr(_model, "NumVars", &numVars);
+      double* solution = malloc(numVars * sizeof(double));
+      for(ORInt i = 0; i < numVars; i++) {
+         solution[i] = GRB_UNDEFINED;
+      }
+      for(ORInt k = 0; k < [_newSolVars count]; k++) {
+         ORInt idx = [(MIPVariableI*)_newSolVars[k] idx];
+         ORDouble val = [_newSolVals[k] doubleValue];
+         //NSLog(@"idx: %i => %f", idx, val);
+         solution[idx] = val;
+      }
+      
+      int error = GRBcbsolution(cbdata, solution);
+      if (error != 0) assert(NO);
+      
+      free(solution);
+      free(_newSolVars);
+      free(_newSolVals);
+      _newSolVars = nil;
+      _newSolVals = nil;
    }
 }
 
@@ -333,7 +374,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata) {
        [[solver boundInformer] notifyWithFloat: bnd];
     }
     else if(where == GRB_CB_MIPNODE) {
-       [solver lazyBoundTighten: cbdata];
+       [solver lazySolutionInject: cbdata];
+       //[solver lazyBoundTighten: cbdata];
     }
     else if (where == GRB_CB_POLLING) [solver pumpEvents];
     return 0;

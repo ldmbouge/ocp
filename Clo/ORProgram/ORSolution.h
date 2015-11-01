@@ -18,6 +18,7 @@
 -(ORBool) boolValue: (id<ORIntVar>) var;
 -(ORDouble) dblValue: (id<ORRealVar>) var;
 -(id<ORObjectiveValue>) objectiveValue;
+-(id<ORModel>) model;
 @end
 
 @protocol ORSolutionPool <NSObject>
@@ -32,6 +33,7 @@
 
 @interface ORSolution : NSObject<ORSolution>
 {
+   id<ORModel>          _model;
    NSArray*             _varShots;
    NSArray*             _cstrShots;
    id<ORObjectiveValue> _objValue;
@@ -39,6 +41,7 @@
 -(ORSolution*) initORSolution: (id<ORModel>) model with: (id<ORASolver>) solver;
 -(id) value: (id) var;
 -(id<ORObjectiveValue>) objectiveValue;
+-(id<ORModel>) model;
 @end
 
 @protocol ORParameterizedSolution <ORSolution>

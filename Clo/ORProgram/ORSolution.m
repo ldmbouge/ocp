@@ -29,6 +29,7 @@
 -(ORSolution*) initORSolution: (id<ORModel>) model with: (id<ORASolver>) solver
 {
    self = [super init];
+    _model = model;
    NSArray* av = [model variables];
    NSArray* ac = [model constraints];
    ORULong sz = [av count];
@@ -126,6 +127,10 @@
 -(NSUInteger) count
 {
    return [_varShots count];
+}
+-(id<ORModel>) model
+{
+    return _model;
 }
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
