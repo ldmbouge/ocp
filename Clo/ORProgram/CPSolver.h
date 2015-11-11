@@ -60,7 +60,7 @@
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
--(id<ORSolutionPool>) globalSolutionPool;
+//-(id<ORSolutionPool>) globalSolutionPool;
 //-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation*)n;
 //-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 //-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
@@ -101,6 +101,7 @@
 // Pure DFS CPSolver
 @interface CPSolver : CPCoreSolver<CPProgram>
 -(id<CPProgram>) initCPSolver;
+-(id<CPProgram>) initCPSolverBackjumpingDFS;
 @end
 
 // SemanticPath CPSolver
@@ -111,6 +112,7 @@
 
 @interface CPSolverFactory : NSObject
 +(id<CPProgram>) solver;
++(id<CPProgram>) solverBackjumpingDFS;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
 @end

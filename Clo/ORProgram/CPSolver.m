@@ -12,6 +12,7 @@
 #import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORBackjumpingDFSController.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORFlatten.h>
 #import <ORProgram/ORProgram.h>
@@ -19,7 +20,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPIntVarI.h>
 #import <objcp/CPBitVar.h>
-//#import <objcp/CPBitVarI.h>
+#import <objcp/CPBitVarI.h>
 
 #import "CPProgram.h"
 #import "CPSolver.h"
@@ -829,8 +830,8 @@
       [_search try: ^() {  domainBefore = domainAfter = 0;
                            for(int j=0;j<[variables count];j++)
                               domainBefore += [variables[j] domsize];
-                           //[self labelBV:x at:i with:false];
-                           [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[x.getId] at:i with: false];
+                           [self labelBV:x at:i with:false];
+//                           [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[x.getId] at:i with: false];
                            for(int j=0;j<[variables count];j++)
                               domainBefore += [variables[j] domsize];
                               domainDiff = domainBefore-domainAfter;
@@ -841,8 +842,8 @@
                 or: ^() { domainBefore = domainAfter = 0;
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
-                   //[self labelBV:x at:i with:true];
-                   [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[x.getId] at:i with: true];
+                   [self labelBV:x at:i with:true];
+//                   [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[x.getId] at:i with: true];
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
                      domainDiff = domainBefore-domainAfter;
@@ -1119,6 +1120,10 @@
 {
    [self labelBitVarHeuristic:h withConcrete:(id)[h allBitVars]];
 }
+-(void) labelBitVarHeuristicCDCL: (id<CPBitVarHeuristic>) h
+{
+   [self labelBitVarHeuristicCDCL:h withConcrete:(id)[h allBitVars]];
+}
 -(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h restricted:(id<ORBitVarArray>)av
 {
    id<CPBitVarArray> cav = (id<CPBitVarArray>)[ORFactory varArray:self range:av.range with:^id<ORBitVar>(ORInt k) {
@@ -1128,7 +1133,6 @@
 }
 -(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
 {
-//   id<ORBitVarArray> av= [h allBitVars];
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
 //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
@@ -1137,149 +1141,78 @@
                                           ORFloat rv = [h varOrdering:av[i]];
                                           return rv;
                                        }];
-//   id<ORBitVar>* last = malloc(sizeof(id<ORBitVar>));
-//   id<ORRandomStream> valStream = [ORCrFactory randomStream:_engine];
-//   [_trail trailClosure:^{
-//      free(last);
-//      [valStream release];
-//   }];
+   
+//   /*************************************************************
+//    Apply SAC constraint to all variables
+//    ************************************************************/
+//   NSLog(@"Pruning with SAC constraint.");
+//
+//   id<ORTracer> tracer = [self tracer];
+//   ORStatus oc;
 //   
-//   *last = nil;
-//   //id<ORMutableInteger> failStamp = [ORFactory mutable:self value:-1];
-//   __block ORInt failStamp = -1;
-//   do {
-//      id<ORBitVar> x = *last;
-//      if (failStamp == [_search nbFailures] || (x == nil || [_gamma[x.getId ] bound])) {
-//         ORInt i = [select max];
-//         if (i == MAXINT)
-//            return;
-////         NSLog(@"Chose variable: %d",i);
-//         x = (id<ORBitVar>)_gamma[av[i].getId];
-//         *last = x;
-//      }/* else {
-//        NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
-//        }*/
-////      [failStamp setValue:[_search nbFailures] in:(id<ORGamma>)_gamma];
-//      failStamp = [_search nbFailures];
-//      ORFloat bestValue = - MAXFLOAT;
-//      ORLong bestRand = 0x7fffffffffffffff;
-//      ORUInt up  = [_gamma[x.getId] msFreeBit];
-//      ORUInt low = [_gamma[x.getId] lsFreeBit];
-//      ORInt bestIndex = -1;
-//      for(ORInt v = low;v <= up;v++) {
-//      if ([_gamma[x.getId] isFree:v]) {
-//            ORFloat vValue = [h valOrdering:v forVar:x];
-//            if (vValue > bestValue) {
-//               bestValue = vValue;
-//               bestIndex = v;
-//               bestRand  = [valStream next];
-//            }
-//            else if (vValue == bestValue) {
-//               ORLong rnd = [valStream next];
-//               if (rnd < bestRand) {
-//                  bestIndex = v;
-//                  bestRand = rnd;
+//   ORUInt wordLength;
+//   TRUInt* up;
+//   TRUInt* low;
+//   ORUInt freeBits;
+//   ORBool failUp = false;
+//   ORUInt failLow = 0;
+//   ORUInt bitsInWord = 0;
+//   
+//   for (int k = [av low]; k<=[av up];k++){
+//      id<CPBitVar>bv = [av at:k];
+//      wordLength = [(CPBitVarI*)bv getWordLength];
+//      [(CPBitVarI*)bv getUp:&up andLow:&low];
+//
+//      for (int i=0; i<wordLength; i++) {
+//         freeBits = up[i]._val & ~(low[i]._val);
+//         if (i==wordLength-1)
+//            bitsInWord = [(CPBitVarI*)bv bitLength]%32;
+//         else
+//            bitsInWord = 32;
+//         for (int j=0; j<bitsInWord; j++) {
+//            if (freeBits&1) {
+//               [tracer pushNode];
+//               oc = [_engine enforce:^void{[bv bind:j to:true];[ORConcurrency pumpEvents];}];
+//               if (oc==ORFailure) {
+//                  NSLog(@"Failure in probing for SAC upon search startup.");
+//                  failUp = true;
+//                  [tracer popNode];
+//                  freeBits >>= 1;
+//                  [bv bind:(i*32)+j to:false];
 //               }
+//               else
+//                  [tracer popNode];
+//               
+//               [tracer pushNode];
+//               oc = [_engine enforce:^void{[bv bind:j to:false];[ORConcurrency pumpEvents];}];
+//               if (oc==ORFailure) {
+//                  NSLog(@"Failure in probing for SAC upon search startup.");
+//                  failLow = true;
+//                  [tracer popNode];
+//                  [bv bind:(i*32)+j to:true];
+//                  freeBits >>= 1;
+//               }
+//               else
+//                  [tracer popNode];
 //            }
+//            freeBits >>= 1;
+//
+//            if (failUp & failLow) {
+//               NSLog(@"Backtracking on SAC constraint.");
+//            failNow();
+//            }
+//            if (failUp & 1) {
+//               [bv bind:(i*32)+j to:false];
+//            }
+//            if (failLow & 1) {
+//               [bv bind:(i*32)+j to:true];
+//            }
+//            failUp = false;
+//            failLow = false;
 //         }
 //      }
-//      
-//      if (bestIndex != - 1)  {
-////         NSLog(@"Trying %x at index %u",x,bestIndex);
-//         [self try: ^{
-//            [self labelBVImpl:_gamma[x.getId] at:bestIndex with:false];
-//         } or: ^{
-//            [self labelBVImpl:_gamma[x.getId] at:bestIndex with:true];
-//         }];
-//      }
-//      /*
-//       id<ORSelect> valSelect = [ORFactory select: _engine
-//       range:RANGE(_engine,[x min],[x max])
-//       suchThat:^bool(ORInt v)    { return [x member:v];}
-//       orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
-//       do {
-//       ORInt curVal = [valSelect max];
-//       if (curVal == MAXINT)
-//       break;
-//       [self try:^{
-//       [self label: x with: curVal];
-//       } or:^{
-//       [self diff: x with: curVal];
-//       }];
-//       } while(![x bound]);
-//       */
-//   } while (true);
-   
-   
-   /*************************************************************
-    Apply SAC constraint to all variables
-    ************************************************************/
-   id<ORTracer> tracer = [self tracer];
-   ORStatus oc;
-   
-   ORUInt wordLength;
-   TRUInt* up;
-   TRUInt* low;
-   ORUInt freeBits;
-   ORUInt failUp = 0;
-   ORUInt failLow = 0;
-   
-   for (int i = [av low]; i<[av up];i++){
-      id<CPBitVar>bv = [av at:i];
-      wordLength = [(CPBitVarI*)bv getWordLength];
-      [(CPBitVarI*)bv getUp:&up andLow:&low];
-      
-      for (int i=0; i<wordLength; i++) {
-         freeBits = up[i]._val & ~(low[i]._val);
-         for (int j=0; j<32; j++) {
-            if (freeBits&1) {
-               [tracer pushNode];
-               oc = [_engine enforce:^void{[bv bind:j to:true];[ORConcurrency pumpEvents];}];
-               if (oc==ORFailure) {
-                  NSLog(@"Failure in probing for SAC upon search startup.");
-                  failUp &= 1;
-                  [tracer popNode];
-                  freeBits >>= 1;
-                  [bv bind:(i*32)+j to:false];
-                  continue;
-               }
-               [tracer popNode];
-               
-               [tracer pushNode];
-               oc = [_engine enforce:^void{[bv bind:j to:false];[ORConcurrency pumpEvents];}];
-               if (oc==ORFailure) {
-                  NSLog(@"Failure in probing for SAC upon search startup.");
-                  failLow &= 1;
-                  [tracer popNode];
-                  [bv bind:(i*32)+j to:true];
-                  freeBits >>= 1;
-                  continue;
-               }
-               [tracer popNode];
-            }
-            freeBits >>= 1;
-         }
-         if (failUp & failLow) {
-            NSLog(@"Backtracking on SAC constraint.");
-            failNow();
-         }
-         for (int k=31; k>=0; k--) {
-            if (failUp & 1) {
-               [bv bind:(i*32)+k to:false];
-            }
-            if (failLow & 1) {
-               [bv bind:(i*32)+k to:true];
-            }
-            failUp >>= 1;
-            failLow >>=1;
-         }
-      }
-   }
-   
-   
-   
-   
-   
+//   }
+//   NSLog(@"Pruning with SAC constraint finished.");
    
    id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
    ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
@@ -1287,7 +1220,7 @@
    __block ORInt i ;
    do {
       id<CPBitVar> x = [last idValue];
-      //NSLog(@"at top: last = %p",x);
+//      NSLog(@"at top: last = %p",x);
       if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [x bound])) {
          i = [select max];
          if (i == MAXINT)
@@ -1296,7 +1229,7 @@
 //         NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setId:x];
       } else {
-        //NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+//        NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
         }
       NSAssert([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);      
       [failStamp setValue:[_search nbFailures]];
@@ -1321,128 +1254,161 @@
             }
          }
       }
+
       if (bestIndex != - 1)  {
          [_search try: ^{
+            NSLog(@"Setting bit %i of %ld to 0 at level %i\n",bestIndex,x,[(CPLearningEngineI*)_engine getLevel]);
+            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+//            NSLog(@"%@\n",[_engine variables]);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
             
-            //Added 1/8/15 testing SAC constraint effectiveness
-            id<ORTracer> tracer = [self tracer];
-            ORStatus oc;
-            
-            ORUInt wordLength = [(CPBitVarI*)x getWordLength];
-            TRUInt* up;
-            TRUInt* low;
-            ORUInt freeBits;
-            ORUInt failUp = 0;
-            ORUInt failLow = 0;
-            
-            [(CPBitVarI*)x getUp:&up andLow:&low];
-            
-            for (int i=0; i<wordLength; i++) {
-               freeBits = up[i]._val & ~(low[i]._val);
-               for (int j=0; j<32; j++) {
-                  if (freeBits&1) {
-                     [tracer pushNode];
-                     oc = [_engine enforce:^void{[x bind:j to:true];[ORConcurrency pumpEvents];}];
-                     if (oc==ORFailure) {
-                        //NSLog(@"Failure in probing for SAC.");
-                        failUp &= 1;
-                     }
-                     [tracer popNode];
-                     
-                     [tracer pushNode];
-                     oc = [_engine enforce:^void{[x bind:j to:false];[ORConcurrency pumpEvents];}];
-                     if (oc==ORFailure) {
-                        //NSLog(@"Failure in probing for SAC.");
-                        failLow &= 1;
-                     }
-                     [tracer popNode];
-               }
-                  freeBits >>= 1;
-               }
-               if (failUp & failLow) {
-                  NSLog(@"Backtracking on SAC constraint.");
-                  failNow();
-               }
-               for (int k=31; k>=0; k--) {
-                  if (failUp & 1) {
-                     [x bind:(i*32)+k to:false];
-                  }
-                  if (failLow & 1) {
-                     [x bind:(i*32)+k to:true];
-                  }
-                  failUp >>= 1;
-                  failLow >>=1;
-               }
-            }
-//            NSLog(@"Labeling %i with false",i);
-//            NSLog(@"%@",[_engine model]);
-//            for (int j=[av low]; j<[av up]+1; j++) {
-//               NSLog(@"av[%i]%@",j,av[j]);
-//            }
          } or: ^{
+            NSLog(@"Setting bit %i of %ld to 1 at level %i\n",bestIndex,x,[(CPLearningEngineI*)_engine getLevel]);
+//            NSLog(@"%@",[_engine variables]);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
-            
-            //Added 1/8/15 testing SAC constraint effectiveness
-            id<ORTracer> tracer = [self tracer];
-            ORStatus oc;
-            
-            ORUInt wordLength = [(CPBitVarI*)x getWordLength];
-            TRUInt* up;
-            TRUInt* low;
-            ORUInt freeBits;
-            ORUInt failUp = 0;
-            ORUInt failLow = 0;
-            
-            [(CPBitVarI*)x getUp:&up andLow:&low];
-            
-            for (int i=0; i<wordLength; i++) {
-               freeBits = up[i]._val & ~(low[i]._val);
-               for (int j=0; j<32; j++) {
-                  if (freeBits&1) {
-                     [tracer pushNode];
-                     oc = [_engine enforce:^void{[x bind:j to:true];[ORConcurrency pumpEvents];}];
-                     if (oc==ORFailure) {
-                        //NSLog(@"Failure in probing for SAC.");
-                        failUp &= 1;
-                     }
-                     [tracer popNode];
-                     
-                     [tracer pushNode];
-                     oc = [_engine enforce:^void{[x bind:j to:false];[ORConcurrency pumpEvents];}];
-                     if (oc==ORFailure) {
-                        //NSLog(@"Failure in probing for SAC.");
-                        failLow &= 1;
-                     }
-                     [tracer popNode];
-                  }
-                  freeBits >>= 1;
-               }
-               if (failUp & failLow) {
-                  NSLog(@"Backtracking on SAC constraint.");
-                  failNow();
-               }
-               for (int k=31; k>=0; k--) {
-                  if (failUp & 1) {
-                     [x bind:(i*32)+k to:false];
-                  }
-                  if (failLow & 1) {
-                     [x bind:(i*32)+k to:true];
-                  }
-                  failUp >>= 1;
-                  failLow >>=1;
-               }
-            }
-//            NSLog(@"Labeling %i with true",i);
-//            NSLog(@"%@",[_engine model]);
-//            for (int j=[av low]; j<[av up]+1; j++) {
-//               NSLog(@"av[%i]%@",j,av[j]);
-//            }
+            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
          }];
       }
    } while (true);
 
 }
+
+
+-(void) labelBitVarHeuristicCDCL: (id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
+{
+   __block id<ORSelect> select = [ORFactory selectRandom: _engine
+                                           range: RANGE(_engine,[av low],[av up])
+                          //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
+                                        suchThat: ^bool(ORInt i) { return ![av[i] bound]; }
+                                       orderedBy: ^ORFloat(ORInt i) {
+                                          ORFloat rv = [h varOrdering:av[i]];
+                                          return rv;
+                                       }];
+   
+   /*************************************************************
+    Apply SAC constraint to all variables
+    ************************************************************/
+//   NSLog(@"Pruning with SAC constraint.");
+//   
+//   id<ORTracer> tracer = [self tracer];
+//   ORStatus oc;
+//   
+//   ORUInt wordLength;
+//   TRUInt* up;
+//   TRUInt* low;
+//   ORUInt freeBits;
+//   ORUInt failUp = 0;
+//   ORUInt failLow = 0;
+//   
+//   for (int i = [av low]; i<[av up];i++){
+//      id<CPBitVar>bv = [av at:i];
+//      wordLength = [(CPBitVarI*)bv getWordLength];
+//      [(CPBitVarI*)bv getUp:&up andLow:&low];
+//      
+//      for (int i=0; i<wordLength; i++) {
+//         freeBits = up[i]._val & ~(low[i]._val);
+//         for (int j=0; j<32; j++) {
+//            if (freeBits&1) {
+//               [tracer pushNode];
+//               oc = [_engine enforce:^void{[bv bind:j to:true];[ORConcurrency pumpEvents];}];
+//               if (oc==ORFailure) {
+//                  NSLog(@"Failure in probing for SAC upon search startup.");
+//                  failUp &= 1;
+//                  [tracer popNode];
+//                  freeBits >>= 1;
+//                  [bv bind:(i*32)+j to:false];
+//                  continue;
+//               }
+//               [tracer popNode];
+//               
+//               [tracer pushNode];
+//               oc = [_engine enforce:^void{[bv bind:j to:false];[ORConcurrency pumpEvents];}];
+//               if (oc==ORFailure) {
+//                  NSLog(@"Failure in probing for SAC upon search startup.");
+//                  failLow &= 1;
+//                  [tracer popNode];
+//                  [bv bind:(i*32)+j to:true];
+//                  freeBits >>= 1;
+//                  continue;
+//               }
+//               [tracer popNode];
+//            }
+//            freeBits >>= 1;
+//         }
+//         if (failUp & failLow) {
+//            NSLog(@"Backtracking on SAC constraint.");
+//            failNow();
+//         }
+//         for (int k=31; k>=0; k--) {
+//            if (failUp & 1) {
+//               [bv bind:(i*32)+k to:false];
+//            }
+//            if (failLow & 1) {
+//               [bv bind:(i*32)+k to:true];
+//            }
+//            failUp >>= 1;
+//            failLow >>=1;
+//         }
+//      }
+//   }
+   
+   id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
+   ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
+   ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
+   __block ORInt i ;
+   do {
+      id<CPBitVar> x = [last idValue];
+      //NSLog(@"at top: last = %p",x);
+      if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [x bound])) {
+         i = [select max];
+         if (i == MAXINT)
+            return;
+         x = av[i];
+//                  NSLog(@"-->Chose variable: %p=%@",x,x);
+         [last setId:x];
+      } else {
+//         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+      }
+      NSAssert([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
+      [failStamp setValue:[_search nbFailures]];
+      ORFloat bestValue = - MAXFLOAT;
+      ORLong bestRand = 0x7fffffffffffffff;
+      ORInt low = [x lsFreeBit];
+      ORInt up  = [x msFreeBit];
+      ORInt bestIndex = 0;
+      for(ORInt v = low;v <= up;v++) {
+         if ([x isFree:v]) {
+            ORFloat vValue = [h valOrdering:v forVar:x];
+            if (vValue > bestValue) {
+               bestValue = vValue;
+               bestIndex = v;
+               bestRand  = [valStream next];
+            } else if (vValue == bestValue) {
+               ORLong rnd = [valStream next];
+               if (rnd < bestRand) {
+                  bestIndex = v;
+                  bestRand = rnd;
+               }
+            }
+         }
+      }
+      
+      if (bestIndex != - 1)  {
+         [_search try: ^{
+//            NSLog(@"Choicepoint: setting %lx[%d] = false",x, bestIndex);
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
+         } or: ^{
+//            NSLog(@"Choicepoint: setting %lx[%d] = true",x, bestIndex);
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
+         }];
+      }
+   } while (true);
+//   NSLog(@"Level %d\n",[_tracer level]);
+}
+
+
+
+
 -(void) labelBitVar: (id<ORBitVar>) var at:(ORUInt)idx with: (ORUInt) val
 {
    
@@ -1452,10 +1418,6 @@
 {
    [self diffBVImpl:_gamma[var.getId] with: val];
 }
-
-
-
-
 
 -(void) label: (id<ORIntVar>) mx
 {
@@ -1867,7 +1829,24 @@
    [cFact release];
    return self;
 }
--(void) dealloc
+-(id<CPProgram>) initCPSolverBackjumpingDFS
+{
+   self = [super initCPCoreSolver];
+   _trail = [ORFactory trail];
+   _mt    = [ORFactory memoryTrail];
+   _engine = [CPFactory learningEngine: _trail memory:_mt];
+   _tracer =    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
+//   _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
+
+   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+//                                                                    rootControllerClass: [ORDFSController class]
+                                                                    rootControllerClass: [ORBackjumpingDFSController class]
+//                                                                  nestedControllerClass: [ORDFSController class]];
+                                                                  nestedControllerClass: [ORBackjumpingDFSController class]];
+   _search = [ORExplorerFactory explorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   [cFact release];
+   return self;
+}-(void) dealloc
 {
    [_trail release];
    [_mt release];
@@ -1935,7 +1914,9 @@
 }
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
+   //changed by gaj 08/07/15
    ORStatus status = [_engine enforce:^{ [[var domain] setBit:i to:val for:var];}];
+//   ORStatus status = [_engine enforce:^{ [var bind:i to:val];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
@@ -2118,6 +2099,10 @@
 +(id<CPProgram>) solver
 {
    return [[CPSolver alloc] initCPSolver];
+}
++(id<CPProgram>) solverBackjumpingDFS
+{
+   return [[CPSolver alloc] initCPSolverBackjumpingDFS];
 }
 +(id<CPSemanticProgramDFS>) semanticSolverDFS
 {

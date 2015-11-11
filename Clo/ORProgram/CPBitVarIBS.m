@@ -412,7 +412,7 @@
 -(void)initImpacts
 {
 //   ORInt blockWidth = 1;
-   id<ORBitVarArray> av = [self allBitVars];
+   id<CPBitVarArray> av = [self allBitVars];
 
    
    for(ORInt k=0; k <[av count];k++) {

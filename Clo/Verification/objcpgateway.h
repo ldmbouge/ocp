@@ -81,7 +81,7 @@ typedef int assertion_id;
 -(void) objcp_set_arith_only:(int) flag;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name;
 -(objcp_type) objcp_mk_bitvector_type:(objcp_context)ctx withSize:(unsigned int) size;
--(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned int) size andRange:(objcp_type) range;
+-(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range;
 -(int)        objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value;
 
 /**

@@ -61,6 +61,13 @@
    [notes release];
    return program;
 }
++(id<CPProgram>) createCPProgramBackjumpingDFS: (id<ORModel>) model
+{
+   id<ORAnnotation> notes = [ORFactory annotation];
+   id<CPProgram> program = [self createCPProgramBackjumpingDFS:model annotation:notes];
+   [notes release];
+   return program;
+}
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
@@ -125,7 +132,19 @@
    }];
    return cpprogram;
 }
-
++(id<CPProgram>) createCPProgramBackjumpingDFS: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
+{
+   __block id<CPProgram> cpprogram = [CPSolverFactory solverBackjumpingDFS];
+   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [cpprogram captureSolution];
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      [sp addSolution: s];
+      [s release];
+   }];
+   return cpprogram;
+}
 
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model annotation:(id<ORAnnotation>)notes
 {

@@ -11,16 +11,18 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPBitArrayDom.h>
+//#import <CPUKernel/CPLearningEngineI.h>
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPData.h>
 
-
 @protocol CPBitVarNotifier;
 @class CPBitArrayIterator;
+@class CPLearningEngineI;
 
 @interface CPBitArrayDom : NSObject {
 @private
     id<ORTrail>     _trail;
+    id<CPEngine>    _engine;
     TRUInt*         _low;
     TRUInt*         _up;
     unsigned int    _wordLength;
@@ -28,15 +30,18 @@
     TRUInt          _freebits;
     TRUInt*         _min;
     TRUInt*         _max;
+    TRUInt*         _levels;  //tracks at what level in the search that a bit was set
+   
     NSMutableArray*        _remValues;
 }
--(CPBitArrayDom*)       initWithLength: (int) len withTrail:(id<ORTrail>) tr;
--(CPBitArrayDom*)       initWithBitPat: (int) len withLow: (unsigned int*) low andUp:(unsigned int*) up andTrail:(id<ORTrail>)tr;
+-(CPBitArrayDom*)       initWithLength: (int) len withEngine:engine withTrail:(id<ORTrail>) tr;
+-(CPBitArrayDom*)       initWithBitPat: (int) len withLow: (unsigned int*) low andUp:(unsigned int*) up withEngine:(id<CPEngine>)engine andTrail:(id<ORTrail>)tr;
 
+-(void)                 setEngine:(id<CPEngine>)engine;
 -(unsigned int)         getLength;
 -(unsigned int)         getWordLength;
 -(ORUInt)               getSize;
--(ORInt)               domsize;
+-(ORInt)                domsize;
 -(ORULong)              numPatterns;
 -(void)                 updateFreeBitCount;
 -(ORBounds)             bounds;
@@ -47,14 +52,14 @@
 -(unsigned int*)        maxArray;
 -(unsigned int*)        lowArray;
 -(unsigned int*)        upArray;
--(ORBool)                 getBit:(unsigned int) idx;
+-(ORBool)               getBit:(unsigned int) idx;
 -(ORStatus)             setBit:(unsigned int) idx to:(ORBool) val for:(id<CPBitVarNotifier>)x;
--(ORBool)                 isFree:(unsigned int) idx;
+-(ORBool)               isFree:(unsigned int) idx;
 -(unsigned int)         lsFreeBit;
 -(unsigned int)         msFreeBit;
 -(unsigned int)         midFreeBit;
 -(unsigned int)         randomFreeBit;
--(ORBool)                 member:(unsigned int*) val;
+-(ORBool)               member:(unsigned int*) val;
 -(unsigned long long)   getRank:(unsigned int*) val;
 -(unsigned int*)        atRank:(unsigned long long) rnk;
 -(unsigned int)         getMaxRank;
@@ -74,5 +79,5 @@
 -(void)                 enumerateWith:(void(^)(unsigned int*,ORInt))body;
 -(void)                 restoreDomain:(CPBitArrayDom*)toRestore;
 -(void)                 restoreValue:(ORInt)toRestore;
-
+-(ORUInt)               getLevelForBit:(ORUInt)bit;
 @end

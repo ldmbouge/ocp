@@ -19,6 +19,36 @@
 
 #define BIT_CONSISTENT_CHECK
 
+typedef struct _CPBitAssignment{
+   CPBitVarI* var;
+   ORUInt   index;
+   ORBool   value;
+} CPBitAssignment;
+
+typedef struct _CPBitAntecedents{
+   CPBitAssignment**     antecedents;
+   ORUInt            numAntecedents;
+} CPBitAntecedents;
+
+
+
+
+//Heap Structures and functions
+typedef struct heapnode{
+   unsigned long int* value;
+   struct heapnode* leftchild;
+   struct heapnode* rightchild;
+} heapnode;
+
+static inline bool imax(unsigned long int a, unsigned long int b);
+static inline unsigned long int* get_max(unsigned long int* a, unsigned long int* b);
+static inline unsigned long int* get_min(unsigned long int* a, unsigned long int* b);
+static inline bool item_gt(unsigned long int* a, unsigned long int* b);
+heapnode* insert(unsigned long int* v, heapnode* heap);
+heapnode* combineheaps(heapnode* left, heapnode* right);
+heapnode* remove_top_prio(heapnode* heap);
+
+
 @interface CPFactory (BitConstraint)
 //Bit Constraints
 +(id<CPConstraint>) bitEqual:(id<CPBitVar>)x to:(id<CPBitVar>)y;
@@ -41,6 +71,7 @@
 +(id<CPConstraint>) bitLogicalEqual:(id<CPBitVar>)x EQ:(id<CPBitVar>)y eval:(id<CPBitVar>)r;
 +(id<CPConstraint>) bitLogicalAnd:(id<CPBitVarArray>)x eval:(id<CPBitVar>)r;
 +(id<CPConstraint>) bitLogicalOr:(id<CPBitVarArray>)x eval:(id<CPBitVar>)r;
++(id<CPConstraint>) bitConflict:(CPBitAntecedents*)a;
 @end
 
 @interface CPBitEqual : CPCoreConstraint {
@@ -50,6 +81,8 @@
 }
 -(id) initCPBitEqual: (CPBitVarI*) x and: (CPBitVarI*) y ;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -61,6 +94,8 @@
 }
 -(id) initCPBitNOT: (CPBitVarI*) x equals: (CPBitVarI*) y;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -73,6 +108,8 @@
 }
 -(id) initCPBitAND: (CPBitVarI*) x and: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -85,6 +122,8 @@
 }
 -(id) initCPBitOR: (CPBitVarI*) x or: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -97,6 +136,8 @@
 }
 -(id) initCPBitXOR: (CPBitVarI*) x xor: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -110,6 +151,8 @@
 }
 -(id) initCPBitIF: (CPBitVarI*) w equalsOneIf:(CPBitVarI*) x equals: (CPBitVarI*) y andZeroIfXEquals: (CPBitVarI*) z;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -122,6 +165,8 @@
 }
 -(id) initCPBitShiftL: (CPBitVarI*) x shiftLBy:(int) places equals: (CPBitVarI*) y;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -134,6 +179,8 @@
 }
 -(id) initCPBitShiftR: (CPBitVarI*) x shiftRBy:(int) places equals: (CPBitVarI*) y;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -146,6 +193,8 @@
 }
 -(id) initCPBitRotateL: (CPBitVarI*) x rotateLBy:(int) places equals: (CPBitVarI*) y;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -160,6 +209,8 @@
 }
 -(id) initCPBitAdd: (CPBitVarI*) x plus: (CPBitVarI*) y equals:(CPBitVarI*) z withCarryIn:(CPBitVarI*) cin andCarryOut:(CPBitVarI*)cout;
 -(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
 -(void) post;
 -(void) propagate;
 @end
@@ -171,7 +222,9 @@
 }
 -(id) initCPBitCount: (CPBitVarI*) x count: (CPIntVarI*) p ;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -182,7 +235,9 @@
 }
 -(id) initCPBitZeroExtend: (CPBitVarI*) x extendTo: (CPBitVarI*) y ;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -195,7 +250,9 @@
 }
 -(id) initCPBitExtract: (CPBitVarI*) x from:(ORUInt)lsb to:(ORUInt)msb eq:(CPBitVarI*) y ;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -207,7 +264,9 @@
 }
 -(id) initCPBitConcat: (CPBitVarI*) x concat: (CPBitVarI*) y eq:(CPBitVarI*)z;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -219,7 +278,9 @@
 }
 -(id) initCPBitLogicalEqual: (CPBitVarI*) x EQ: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -231,7 +292,9 @@
 }
 -(id) initCPBitLT: (CPBitVarI*) x LT: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -243,7 +306,9 @@
 }
 -(id) initCPBitLE: (CPBitVarI*) x LE: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -256,7 +321,9 @@
 }
 -(id) initCPBitITE: (CPBitVarI*) i then: (CPBitVarI*) t else: (CPBitVarI*) e result:(CPBitVarI*)r;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -267,7 +334,9 @@
 }
 -(id) initCPBitLogicalAnd:(id<CPBitVarArray>) x eval:(CPBitVarI*)r;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
 -(void) propagate;
 @end
 
@@ -278,6 +347,24 @@
 }
 -(id) initCPBitLogicalOr:(id<CPBitVarArray>) x eval:(CPBitVarI*)r;
 -(void) dealloc;
--(ORStatus) post;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitVarI*) var at:(ORUInt)i;
+-(void) post;
+-(void) propagate;
+@end
+
+@interface CPBitConflict : CPCoreConstraint{
+@private
+//   id<CPBitVarArray>       _vars;
+//   ORUInt                   _bit;
+//   ORUInt*       _conflictValues;
+   CPBitAntecedents* _assignments;
+}
+//-(id) initCPBitConflict:(id<CPBitVarArray>)vars atBit:(ORUInt)conflictBit withValues:(ORUInt*)values;
+-(id) initCPBitConflict:(CPBitAntecedents*)a;
+-(void)dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
+-(void) post;
 -(void) propagate;
 @end

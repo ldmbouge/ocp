@@ -12,15 +12,18 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPEngine.h>
+#import <CPUKernel/CPLearningEngineI.h>
 #import <CPUKernel/CPTrigger.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPDom.h>
 #import <objcp/CPBitArrayDom.h>
+#import <objcp/CPBitMacros.h>
 
-//@class CPBitArrayDom;
+@class CPBitArrayDom;
 @class CPBitArrayIterator;
 @class CPEngineI;
+@class CPLearningEngineI;
 @class CPTriggerMap;
 @class CPBitVarMultiCast;
 @class CPBitVarLiterals;
@@ -42,11 +45,15 @@ typedef struct  {
 @private
 @protected
     CPEngineI*                       _engine;
+    id<ORTrail>                       _trail;
     CPBitArrayDom*                      _dom;
     CPBitEventNetwork                   _net;
     CPTriggerMap*                  _triggers;
     CPBitVarMultiCast*                 _recv;
     enum CPVarClass                      _vc;
+   
+    TRUInt*                          _levels;
+    TRId*                       _implications;
 }
 -(CPBitVarI*) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 -(void) dealloc;
@@ -103,18 +110,25 @@ typedef struct  {
 -(ORUInt) midFreeBit;
 -(ORBool) isFree:(ORUInt)pos;
 -(ORBool) member:(unsigned int*)v;
+-(ORBool) getBit:(ORUInt) index;
+-(ORUInt) getLevelBitWasSet:(ORUInt)bit;
+-(void) bit:(ORUInt)i setAtLevel:(ORUInt)l;
+-(CPCoreConstraint*) getImplicationForBit:(ORUInt)i;
 
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
 -(ORStatus)     updateMax: (uint64) newMax;
 -(void)         setLow: (unsigned int*) newLow;
 -(void)         setUp: (unsigned int*) newUp;
+-(void)         setUp:(unsigned int*) newUp andLow:(unsigned int*)newLow for:(CPCoreConstraint*)constraint;
+-(void)         setLow: (unsigned int*) newLow for:(CPCoreConstraint*)constraint;
+-(void)         setUp: (unsigned int*) newUp for:(CPCoreConstraint*)constraint;
 -(void)         setUp:(unsigned int*) newUp andLow:(unsigned int*)newLow;
 -(TRUInt*)    getLow;
 -(TRUInt*)    getUp;
 -(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
 -(ORStatus)     bind:(ORUInt*) val;
--(ORStatus)     bind:(ORUInt)bit to:(BOOL)value;
+-(ORStatus)     bind:(ORUInt)bit to:(ORBool)value;
 -(ORStatus)     bindUInt64:(uint64) val;
 -(ORStatus)     remove:(ORUInt) val;
 -(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;

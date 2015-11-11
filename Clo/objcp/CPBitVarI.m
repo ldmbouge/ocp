@@ -156,15 +156,22 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 //    _recv = self;
 //}
    self = [super init];
+   _trail = [engine trail];
 //_vc = CPVCBare;
 //_isBool = NO;
    _engine  = engine;
    [_engine trackVariable: self];
    
-   setUpNetwork(&_net, [_engine trail],*low,*up,len);
+   setUpNetwork(&_net, _trail,*low,*up,len);
    _triggers = nil;
 //_dom = nil;
-   _dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
+   _dom = [[CPBitArrayDom alloc] initWithLength:len withTrail:_trail];
+   _levels = malloc(sizeof(TRUInt)*len);
+   _implications = malloc(sizeof(TRId)*len);
+   for (int i=0; i<len; i++) {
+      _levels[i] = makeTRUInt(_trail, -1);
+      _implications[i] = makeTRId(_trail, 0);
+   }
    _vc = CPVCBare;
    _recv = nil;
 return self;
@@ -317,7 +324,7 @@ return self;
 //   return midFreeBit;
    return [_dom midFreeBit];
 }
--(ORStatus) bind:(ORUInt)bit to:(BOOL)value
+-(ORStatus) bind:(ORUInt)bit to:(ORBool)value
 {
    return [_dom setBit:bit to:value for:self];
 }
@@ -325,10 +332,29 @@ return self;
 {
     return [_dom member:v];
 }
+
+-(ORBool) getBit:(ORUInt) index
+{
+   return[_dom getBit:index];
+}
+
+-(ORUInt) getLevelBitWasSet:(ORUInt)bit{
+   return [_dom getLevelForBit:bit];
+//   return _levels[bit]._val;
+}
+-(void) bit:(ORUInt)i setAtLevel:(ORUInt)l
+{
+   assignTRUInt(&_levels[i], l, _trail);
+}
+-(CPCoreConstraint*) getImplicationForBit:(ORUInt)i
+{
+   return (CPCoreConstraint*)_implications[i]._val;
+}
+
 -(ORBool) isFree:(ORUInt)pos{
-   ORBool temp = [_dom isFree:pos];
-   return temp;
-//   return [_dom isFree:pos];
+//   ORBool temp = [_dom isFree:pos];
+//   return temp;
+   return [_dom isFree:pos];
 }
 -(NSString*)stringValue
 {
@@ -538,6 +564,86 @@ return self;
    [_dom setUp: newUp andLow:newLow for:self];
 }
 
+
+//versions of setUp and setLow for learning nogoods
+
+-(void) setLow:(unsigned int *)newLow for:(CPCoreConstraint*) constraint
+{
+   TRUInt* oldLow = [_dom getLow];
+   ORUInt changedLow;
+   
+   for (int i=0; i<[_dom getWordLength]; i++) {
+      changedLow = oldLow[i]._val ^ newLow[i];
+      for(int j=0;j<BITSPERWORD; j++){
+         if (changedLow & 0x1) {
+            if([_engine isKindOfClass:[CPLearningEngineI class]])
+              // assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
+//               _levels[i*BITSPERWORD+j] = [(CPLearningEngineI*)_engine getLevel];
+//            _implications[i*BITSPERWORD+j] = constraint;
+               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
+
+         }
+         changedLow >>= 1;
+      }
+   }
+   [_dom setLow: newLow for:self];
+
+}
+
+-(void) setUp:(unsigned int *)newUp for:(CPCoreConstraint*) constraint
+{
+   TRUInt* oldUp = [_dom getUp];
+   ORUInt changedUp;
+   
+   for (int i=0; i<[_dom getWordLength]; i++) {
+      changedUp = oldUp[i]._val ^ newUp[i];
+      for(int j=0;j<BITSPERWORD; j++){
+         if (changedUp & 0x1) {
+            if([_engine isKindOfClass:[CPLearningEngineI class]])
+               //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
+            //_implications[i*BITSPERWORD+j] = constraint;
+               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
+
+         }
+         changedUp >>= 1;
+      }
+   }
+   [_dom setUp: newUp for:self];
+}
+
+-(void) setUp:(unsigned int *)newUp andLow:(unsigned int *)newLow for:(CPCoreConstraint*) constraint
+{
+   TRUInt* oldUp = [_dom getUp];
+   TRUInt* oldLow = [_dom getLow];
+   ORUInt changedUp;
+   ORUInt changedLow;
+   ORUInt mask;
+   
+   for (int i=0; i<[_dom getWordLength]; i++) {
+      changedUp = oldUp[i]._val ^ newUp[i];
+      changedLow = oldLow[i]._val ^ newLow[i];
+      mask = 0x1;
+      for(int j=0;j<BITSPERWORD; j++){
+         if ((changedUp & mask) || (changedLow & mask)) {
+            if([_engine isKindOfClass:[CPLearningEngineI class]]){
+               //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
+               //_implications[i*BITSPERWORD+j] = constraint;
+               assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
+//               NSLog(@"Updating %lx[%d] for %@ \@ %ld",self, i*BITSPERWORD+j,constraint,[_engine getLevel]);
+            }
+         }
+         mask <<= 1;
+      }
+   }
+//   NSLog(@"done.");
+   [_dom setUp: newUp andLow:newLow for:self];
+//   NSLog(@"%lx updated by %@ \@ %ld",self,constraint,[_engine getLevel]);
+   
+}
+//end of setup and setlow for nogoods
+
+
+
 -(TRUInt*) getLow
 {
     return [_dom getLow];
@@ -576,9 +682,17 @@ return self;
     self = [super init];
     _engine  = engine;
     [_engine trackVariable: self];
-    setUpNetwork(&_net, [_engine trail], *low, *up,len);
+   _trail = [engine trail];
+    setUpNetwork(&_net, _trail, *low, *up,len);
     _triggers = nil;
-    _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:[_engine trail]];
+    _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:_trail];
+    [_dom setEngine:engine];
+   _levels = malloc(sizeof(TRUInt)*len);
+   _implications = malloc(sizeof(TRId)*len);
+   for (int i=0; i<len; i++) {
+      _levels[i] = makeTRUInt(_trail, 0);
+      _implications[i] = makeTRId(_trail, 0);
+   }
     _recv = nil;
     return self;
 }

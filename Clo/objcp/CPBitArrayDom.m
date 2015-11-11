@@ -1,3 +1,4 @@
+
 /************************************************************************
  Mozilla Public License
  
@@ -33,12 +34,16 @@
    _up = malloc(sizeof(TRUInt)*_wordLength);
    _min = malloc(sizeof(TRUInt)*_wordLength);
    _max = malloc(sizeof(TRUInt)*_wordLength);
+   _levels = malloc(sizeof(TRUInt)*len);
    
    for(int i=0;i<_wordLength;i++){
       _low[i] = makeTRUInt(tr, 0);
       _up[i]  = makeTRUInt(tr, CP_UMASK);
       _min[i] = makeTRUInt(tr, 0);
-      _max[i] = makeTRUInt(tr, CP_UMASK);      
+      _max[i] = makeTRUInt(tr, CP_UMASK);
+   }
+   for (int i=0; i<len; i++) {
+      _levels[i] = makeTRUInt(tr, -1);
    }
    return self;
 }
@@ -53,6 +58,7 @@
     _up = malloc(sizeof(TRUInt)*_wordLength);
     _min = malloc(sizeof(TRUInt)*_wordLength);
     _max = malloc(sizeof(TRUInt)*_wordLength);
+    _levels = malloc(sizeof(TRUInt)*len);
 
    //Mask out unused bits - bits are bound to zero
    ORUInt remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
@@ -67,6 +73,9 @@
         _min[_wordLength - 1 - i] = makeTRUInt(tr, low[i]);
         _max[_wordLength - 1 - i] = makeTRUInt(tr, up[i]);
     }
+   for (int i=0; i<len; i++) {
+      _levels[i] = makeTRUInt(tr, -1);
+   }
     unsigned int boundBits = 0;
     unsigned int freeBits = 0;
     for (int i=0; i<_wordLength; i++) {
@@ -74,9 +83,12 @@
         freeBits += __builtin_popcount(boundBits);
     }
    
-   //Shouldn't
     _freebits = makeTRUInt(tr, freeBits);
     return self;
+}
+
+-(void) setEngine:(id<CPEngine>)engine{
+   _engine = engine;
 }
 
 -(NSString*)    description
@@ -234,20 +246,27 @@
       return false;
 }
 
--(ORStatus) setBit:(unsigned int) idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
+-(ORStatus) setBit:(unsigned int)idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
 {
    if (BITFREE(idx)) {
-      if (val)
+      if (val){
          SETBITTRUE(idx);
-      else SETBITFALSE(idx);
+      }
+      else {
+         SETBITFALSE(idx);
+      }
    } else {
       bool theBit = _low[WORDIDX(idx)]._val  & ONEAT(idx);
       if (theBit ^ val)
          failNow();
-      else
+      else{
          return ORSuspend;
+      }
    }
+
    [self updateFreeBitCount];
+   if([_engine isKindOfClass:[CPLearningEngineI class]])
+      assignTRUInt(&(_levels[idx]),[(CPLearningEngineI*)_engine getLevel], _trail);
    [x bitFixedEvt:_freebits._val sender:self];
    //Added _freebits._val when I included bitFixedAtEvt here, not sure it is needed
    [x bitFixedAtEvt:_freebits._val at:idx sender:self];
@@ -829,6 +848,7 @@
    for (int i=0; i<_wordLength; i++) {
       for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
+            assignTRUInt(&_levels[i], [(CPLearningEngineI*)_engine getLevel], _trail);
             [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
@@ -840,6 +860,7 @@
 -(void) setUp: (unsigned int*) newUp  for:(id<CPBitVarNotifier>)x
 {
     bool umod = false;
+//   ORUInt level = [(CPLearningEngineI*)_engine getLevel];
 
    uint32* isChanged;
    isChanged = alloca(sizeof(uint32)*_wordLength);
@@ -858,18 +879,23 @@
       for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
             [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
+//            assignTRUInt(&_levels[i], level, _trail);
+            assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel],_trail);
          }
          isChanged[i] >>= 1;
       }
    }
-
 }
+
 -(void) setUp: (unsigned int*) newUp andLow:(unsigned int*)newLow for:(id<CPBitVarNotifier>)x
 {
-   bool umod = false;
-   bool lmod = false;
+   uint32 umod = false;
+   uint32 lmod = false;
+//   ORUInt level = [(CPLearningEngineI*)_engine getLevel];
    
    uint32* isChanged;
+//   uint32 k;
+
    isChanged = alloca(sizeof(uint32)*_wordLength);
    
    for(int i=0;i<_wordLength;i++){
@@ -881,18 +907,20 @@
       assignTRUInt(&_low[i], newLow[i], _trail);
    }
    [self updateFreeBitCount];
-   if (umod || lmod)
+   
+   if (umod || lmod){
       [x bitFixedEvt:_freebits._val sender:self];
 
-   for (int i=0; i<_wordLength; i++) {
-      for (int j=0; j<BITSPERWORD; j++) {
-         if (isChanged[i] & 0x00000001) {
-            [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
+      for (int i=0; i<_wordLength; i++) {
+         for (int j=0; j<BITSPERWORD; j++) {
+            if (isChanged[i] & 0x00000001) {
+               [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
+               assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(CPLearningEngineI*)_engine getLevel], _trail);
+            }
+            isChanged[i] >>= 1;
          }
-         isChanged[i] >>= 1;
       }
    }
-   
 }
 
 -(void)enumerateWith:(void(^)(unsigned int*,ORInt))body
@@ -929,6 +957,9 @@
 //   _min._val = toRestore;
 //   _max._val = toRestore;
 //   _sz._val  = 1;
+}
+-(ORUInt) getLevelForBit:(ORUInt)bit{
+   return _levels[bit]._val;
 }
 
 @end

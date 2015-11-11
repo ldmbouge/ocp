@@ -174,7 +174,7 @@ smtlib2_objcp_parser *smtlib2_objcp_parser_new(void)
     smtlib2_parser_interface *pi;
     smtlib2_term_parser *tp;
    
-    objcpgw = [[OBJCPGateway initOBJCPGateway] initExplicitOBJCPGateway];
+    objcpgw = [OBJCPGateway initOBJCPGateway];
    
     ret->ctx_ = [objcpgw objcp_mk_context];
     smtlib2_abstract_parser_init((smtlib2_abstract_parser *)ret,
@@ -502,7 +502,7 @@ static smtlib2_sort smtlib2_objcp_parser_make_function_sort(
         objcp_type *domain;
         objcp_type range;
         objcp_type tp;
-        unsigned domain_size;
+        unsigned long domain_size;
 
         domain_size = smtlib2_vector_size(tps)-1;
         domain = (objcp_type *)&(smtlib2_vector_at(tps, 0));

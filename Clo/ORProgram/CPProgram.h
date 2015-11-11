@@ -180,6 +180,7 @@
 -(void) labelRandomFreeBit:(id<CPBitVar>) x;
 //-(void) labelBitVarsFirstFail: (NSArray*)vars;
 -(void) labelBitVarHeuristic:(id<CPBitVarHeuristic>) h;
+-(void) labelBitVarHeuristicCDCL:(id<CPBitVarHeuristic>) h;
 
 -(id<CPBitVarHeuristic>) createBitVarFF;
 -(id<CPBitVarHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;

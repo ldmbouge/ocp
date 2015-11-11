@@ -225,7 +225,7 @@
 @end
 
 @implementation CPFactory (BV)
-+(id<CPBitVar>) bitVar:(id<CPEngine>)engine withLow: (ORUInt*) low andUp:(ORUInt*) up andLength:(int) len
++(id<CPBitVar>) bitVar:(id<CPEngine>)engine withLow: (ORUInt*) low andUp:(ORUInt*) up andLength:(unsigned int) len
 {
    return [[CPBitVarI alloc] initCPExplicitBitVarPat:engine withLow:low andUp:up andLen:len];
 }

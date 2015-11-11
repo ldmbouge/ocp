@@ -203,7 +203,7 @@
    [_m add:[ORFactory bit:digest[3] eq:digestVars[3]]];
    
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 //   id<ORBasicModel> model = [engine model];
@@ -212,7 +212,7 @@
    //CPBitVarFF
    __block id* gamma = [cp gamma];
    
-   NSLog(@"Message Blocks (Original)");
+   NSLog(@"MD4 Message Blocks (Original)");
    id<ORBitVar>* bitVars;
    for(int i=0; i<_numBlocks;i++){
       bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
@@ -237,7 +237,7 @@
          break;
       case BVIBS: h = [cp createBitVarIBS:(id<CPBitVarArray>)o];
          break;
-      case BVFF:  h =[cp createBitVarFF:(id<CPBitVarArray>)o];
+      case BVFF:  h =[cp createBitVarFF];
                   break;
    }
    
@@ -290,7 +290,7 @@
                }
             break;
          case BVFF:
-            [cp labelBitVarHeuristic:h];
+            [cp labelBitVarHeuristicCDCL:h];
             break;
             
 

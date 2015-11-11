@@ -1,7 +1,7 @@
 /* -*- C -*-
  *
  * SMT-LIB v2 interface to objcp 1
- *
+ * Modified from code by:
  * Author: Alberto Griggio <griggio@fbk.eu>
  *
  * Copyright (C) 2010 Alberto Griggio
@@ -24,6 +24,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef BIT_DEBUG
+#define BIT_DEBUG
+#endif
+
 #ifndef SMTLIB2OBJCP_H_INCLUDED
 #define SMTLIB2OBJCP_H_INCLUDED
 

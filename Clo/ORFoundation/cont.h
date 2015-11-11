@@ -44,6 +44,7 @@ typedef struct  {
 +(id)new;
 -(void)saveStack:(size_t)len startAt:(void*)s;
 -(void)call; 
+-(void)callInvisible;
 -(ORInt)nbCalls;
 -(void)dealloc;
 -(void)letgo;

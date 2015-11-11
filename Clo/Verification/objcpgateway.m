@@ -134,11 +134,11 @@
 }
 
 -(objcp_context) objcp_mk_context{
-//   NSLog(@"Make context not implemented");
+   NSLog(@"Make context not implemented");
    return NULL;
 }
 -(void) objcp_del_context:(objcp_context) ctxt{
-//   NSLog(@"delete context not implemented");
+   NSLog(@"delete context not implemented");
 }
 
 
@@ -228,7 +228,7 @@
    return (void*)t;
 }
 
--(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned int) size andRange:(objcp_type) range{
+-(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range{
    NSLog(@"Make function type not implemented");
    return NULL;
 }
@@ -303,87 +303,87 @@ return 0;
    __block clock_t searchFinish;
    double totalTime, searchTime;
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _model];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _model];
 //   id<CPEngine> engine = [cp engine];
    id<CPBitVarHeuristic> h =[cp createBitVarFF];
 //   id<ORExplorer> explorer = [cp explorer];
    NSArray* allvars = [[[cp engine] model] variables];
-   NSLog(@"%@",_model);
+//   NSLog(@"%@",_model);
 
    searchStart = clock();
    [cp solve: ^{
-      id<CPEngine> engine = [cp engine];
-//      NSLog(@"%@",[[cp engine] model]);
+//      id<CPEngine> engine = [cp engine];
+      NSLog(@"%@",[[cp engine] model]);
 //      NSLog(@"%@",_model);
-      for (id object in allvars){
-         NSLog(@"%@",object);
+      for (int k=0;k<[allvars count];k++)
+         NSLog(@"%ld = %@",allvars[k],allvars[k]);
 //////////
-         //Added 1/8/15 testing SAC constraint effectiveness
-         id<ORTracer> tracer = [cp tracer];
-         ORStatus oc;
-         
-         ORUInt wordLength = [(CPBitVarI*)object getWordLength];
-         TRUInt* up;
-         TRUInt* low;
-         ORUInt freeBits;
-         ORUInt failUp = 0;
-         ORUInt failLow = 0;
-         
-         [(CPBitVarI*)object getUp:&up andLow:&low];
-         
-         for (int i=0; i<wordLength; i++) {
-            freeBits = up[i]._val & ~(low[i]._val);
-            for (int j=0; j<32; j++) {
-               if (freeBits&1) {
-                  [tracer pushNode];
-                  oc = [engine enforce:^void{[object bind:j to:true];[ORConcurrency pumpEvents];}];
-                  if (oc==ORFailure) {
-                     //NSLog(@"Failure in probing for SAC.");
-                     failUp &= 1;
-                  }
-                  [tracer popNode];
-                  
-                  [tracer pushNode];
-                  oc = [engine enforce:^void{[object bind:j to:false];[ORConcurrency pumpEvents];}];
-                  if (oc==ORFailure) {
-                     //NSLog(@"Failure in probing for SAC.");
-                     failLow &= 1;
-                  }
-                  [tracer popNode];
-               }
-               freeBits <<= 1;
-            }
-            if (failUp & failLow) {
-               NSLog(@"Backtracking on SAC constraint.");
-               failNow();
-            }
-            for (int k=31; k>=0; k--) {
-               if (failUp & 1) {
-                  [object bind:(i*32)+k to:false];
-               }
-               if (failLow & 1) {
-                  [object bind:(i*32)+k to:true];
-               }
-               failUp >>= 1;
-               failLow >>=1;
-            }
-         }
-//////////
-      }
-      
-      [cp labelBitVarHeuristic:h];
+//         //Added 1/8/15 testing SAC constraint effectiveness
+//         id<ORTracer> tracer = [cp tracer];
+//         ORStatus oc;
+//         
+//         ORUInt wordLength = [(CPBitVarI*)object getWordLength];
+//         TRUInt* up;
+//         TRUInt* low;
+//         ORUInt freeBits;
+//         ORUInt failUp = 0;
+//         ORUInt failLow = 0;
+//         
+//         [(CPBitVarI*)object getUp:&up andLow:&low];
+//         
+//         for (int i=0; i<wordLength; i++) {
+//            freeBits = up[i]._val & ~(low[i]._val);
+//            for (int j=0; j<32; j++) {
+//               if (freeBits&1) {
+//                  [tracer pushNode];
+//                  oc = [engine enforce:^void{[object bind:j to:true];[ORConcurrency pumpEvents];}];
+//                  if (oc==ORFailure) {
+//                     NSLog(@"Failure in probing for SAC.");
+//                     failUp &= 1;
+//                  }
+//                  [tracer popNode];
+//                  
+//                  [tracer pushNode];
+//                  oc = [engine enforce:^void{[object bind:j to:false];[ORConcurrency pumpEvents];}];
+//                  if (oc==ORFailure) {
+//                     NSLog(@"Failure in probing for SAC.");
+//                     failLow &= 1;
+//                  }
+//                  [tracer popNode];
+//               }
+//               freeBits <<= 1;
+//            }
+//            if (failUp & failLow) {
+//               NSLog(@"Backtracking on SAC constraint.");
+//               failNow();
+//            }
+//            for (int k=31; k>=0; k--) {
+//               if (failUp & 1) {
+//                  [object bind:(i*32)+k to:false];
+//               }
+//               if (failLow & 1) {
+//                  [object bind:(i*32)+k to:true];
+//               }
+//               failUp >>= 1;
+//               failLow >>=1;
+//            }
+//         }
+////////////
+//      }
+//      [(CPBitVarI*)allvars[33] bind:2 to:true];
+      [cp labelBitVarHeuristicCDCL:h];
       searchFinish = clock();
 //      NSLog(@"  Search Finish Time : %ld",searchFinish);
-      for (id object in allvars){
-         NSLog(@"%@",object);
-      }
+//      for (id object in allvars){
+//         NSLog(@"%@",object);
+//      }
       sat = true;
-      NSLog(@"%@",[[cp engine] model]);
+//      NSLog(@"%@",[[cp engine] model]);
    }];
    searchFinish = clock();
    totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
    searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
-   NSLog(@"%@",[[cp engine] model]);
+//   NSLog(@"%@",[[cp engine] model]);
 
 //   double totalTime, searchTime;
 //   totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
@@ -765,7 +765,7 @@ return 0;
    return bv;
 }
 //objcp_mk_bv_rotr
--(objcp_expr) objcp_mk_bv_rotr:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
+-(objcp_expr) objcp_mk_bv_rotr:(objcp_context) ctx withArg:(objcp_expr) a1 andAmount:(ORUInt)amt{
    return NULL;
 }
 

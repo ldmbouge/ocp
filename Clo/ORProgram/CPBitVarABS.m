@@ -17,7 +17,7 @@
 #import "CPBitVar.h"
 #import "CPBitVarI.h"
 
-@interface CPBitAssignment : NSObject<NSCopying> {
+@interface CPBitAssignmentObj : NSObject<NSCopying> {
    id<CPBitVar>    _x;
    ORUInt        _idx;
    ORBool        _val;
@@ -106,8 +106,8 @@
 -(NSString*)description;
 @end
 
-@implementation CPBitAssignment
--(id)initCPBitAssignment:(id<CPBitVar>)x idx:(ORUInt) idx val:(ORBool) val{
+@implementation CPBitAssignmentObj
+-(id)initCPBitAssignmentObj:(id<CPBitVar>)x idx:(ORUInt) idx val:(ORBool) val{
    self = [super init];
    _x = x;
    _idx = idx;
@@ -115,7 +115,7 @@
    return self;
 }
 -(id) copyWithZone:(NSZone *)zone{
-   CPBitAssignment* newObject = [[CPBitAssignment alloc] initCPBitAssignment:_x idx:_idx val:_val];
+   CPBitAssignmentObj* newObject = [[CPBitAssignmentObj alloc] initCPBitAssignmentObj:_x idx:_idx val:_val];
    return newObject;
 }
 -(BOOL) isEqual:(id)object{
@@ -209,7 +209,7 @@
 -(void)addAssignment:(id<CPBitVar>)x atIndex:(ORUInt)idx toValue:(ORBool)v withActivity:(ORFloat)act
 {
    //NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
-   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:(id<CPBitVar>)x idx:idx val:v];
+   CPBitAssignmentObj* key = [[CPBitAssignmentObj alloc] initCPBitAssignmentObj:(id<CPBitVar>)x idx:idx val:v];
    ABSBitValueActivity* valueActivity = [_values objectForKey:key];
    if (valueActivity == nil) {
       valueActivity = [[ABSBitValueActivity alloc] initABSBitActivity:x];
@@ -312,7 +312,7 @@
 }
 -(void)scanProbe:(void(^)(ORInt varID,ORFloat activity))block
 {
-   for(CPBitAssignment* key in _inProbe) {
+   for(CPBitAssignmentObj* key in _inProbe) {
       assert(_low <= [[key getVar] getId] && [[key getVar]getId] <= _up);
       block([[key getVar]getId],_tab[[[key getVar] getId]]);
    }
@@ -393,14 +393,14 @@
 }
 -(void)setActivity:(ORFloat)a atIndex:(ORUInt)idx forValue:(ORBool)v
 {
-   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:_theVar idx:idx val:v];
+   CPBitAssignmentObj* key = [[CPBitAssignmentObj alloc] initCPBitAssignmentObj:_theVar idx:idx val:v];
 
    [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
    [key release];
 }
 -(void)addActivity:(ORFloat)a atIndex:(ORUInt)idx forValue:(ORBool)v
 {
-   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:_theVar idx:idx val:v];
+   CPBitAssignmentObj* key = [[CPBitAssignmentObj alloc] initCPBitAssignmentObj:_theVar idx:idx val:v];
    NSNumber* valAct = [_values objectForKey:key];
    if (valAct==nil) {
       [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
@@ -412,7 +412,7 @@
 }
 -(void)addProbeActivity:(ORFloat)a atIndex:(ORUInt)idx forValue:(ORBool)v
 {
-   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:_theVar idx:idx val:v];
+   CPBitAssignmentObj* key = [[CPBitAssignmentObj alloc] initCPBitAssignmentObj:_theVar idx:idx val:v];
    NSNumber* valAct = [_values objectForKey:key];
    if (valAct==nil) {
       [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
@@ -432,7 +432,7 @@
 //      keyhash++;
 //   }
 //   NSNumber* key = [[NSNumber alloc] initWithLong:keyhash];
-   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:_theVar idx:idx val:v];
+   CPBitAssignmentObj* key = [[CPBitAssignmentObj alloc] initCPBitAssignmentObj:_theVar idx:idx val:v];
    NSNumber* valAct = [_values objectForKey:key];
    [key release];
    if (valAct == nil)
@@ -443,7 +443,7 @@
 -(void)enumerate:(void(^)(ORUInt idx, ORBool val, id activity,BOOL* stop))block
 {
    BOOL stop = NO;
-   for(CPBitAssignment* key in _values) {
+   for(CPBitAssignmentObj* key in _values) {
       //extract index and value from key
 //      block(key,[_values objectForKey:key],&stop);
       block([key getIndex], [key getValue],[_values objectForKey:key],&stop);
@@ -549,7 +549,7 @@
       ++nbActive;
    }];
    //NSNumber* key = [[NSNumber alloc] initWithInt:[forVar getId]];
-   CPBitAssignment* key = [[CPBitAssignment alloc] initCPBitAssignment:(id<CPBitVar>)forVar idx:idx val:val];
+   CPBitAssignmentObj* key = [[CPBitAssignmentObj alloc] initCPBitAssignmentObj:(id<CPBitVar>)forVar idx:idx val:val];
    ABSBitValueActivity* valAct = [_valActivity objectForKey:key];
    if (!valAct) {
       valAct = [[ABSBitValueActivity alloc] initABSBitActivity:forVar];

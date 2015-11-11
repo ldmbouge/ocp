@@ -11,6 +11,7 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import "CPEngineI.h"
+#import "CPLearningEngineI.h"
 #import "CPAC3Event.h"
 #import "CPGroup.h"
 
@@ -18,6 +19,10 @@
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
 {
    return [[CPEngineI alloc] initEngine: trail memory:mt];
+}
++(id<CPEngine>) learningEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
+{
+   return [[CPLearningEngineI alloc] initEngine: trail memory:mt];
 }
 +(id<CPGroup>)group:(id<CPEngine>)engine
 {
