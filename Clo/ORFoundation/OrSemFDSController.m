@@ -157,7 +157,7 @@
             else [k letgo];
          }
       } else {
-         NSLog(@"Branches depleted... Pull from the pending queue");
+         //NSLog(@"Branches depleted... Pull from the pending queue");
          if ([_pending empty])
             return;
          FDSNode* bestNode = [_pending extractBest];

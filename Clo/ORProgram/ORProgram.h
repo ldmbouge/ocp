@@ -21,6 +21,7 @@
 #import <ORProgram/CPWDeg.h>
 #import <ORProgram/CPIBS.h>
 #import <ORProgram/CPABS.h>
+#import <ORProgram/CPFDS.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPConcretizer.h>
 #import <ORProgram/CPMultiStartSolver.h>

@@ -689,6 +689,13 @@
     binding[i] = [_workers[i] createABS:rvars];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createFDS:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createFF
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -729,6 +736,13 @@
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
   for(ORInt i=0;i < _nbWorkers;i++)
     binding[i] = [_workers[i] createABS];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createFDS
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createFDS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
 -(ORUInt) degree:(id<ORVar>)x

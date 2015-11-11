@@ -116,12 +116,14 @@ PORTABLE_BEGIN
 -(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;
 -(id<CPHeuristic>) createSDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
+-(id<CPHeuristic>) createFDS;
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) defaultSearch;
 -(void) search:(void*(^)())stask;

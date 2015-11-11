@@ -508,8 +508,8 @@ static __thread id checkPointCache = NULL;
       [_trail incMagic];
       for(ORInt j=i;j < getStackSize(toRestore);j++) {
          ORCommandList* theList = peekAt(toRestore,j);
-         [_mt comply:acp->_mt upTo:theList];
          [_trStack pushNode:theList->_ndId];
+         [_mt comply:acp->_mt upTo:theList];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
             BOOL pOk = [theList apply: ^BOOL(id<ORConstraint> c) {

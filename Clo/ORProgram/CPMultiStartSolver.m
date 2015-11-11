@@ -543,6 +543,10 @@
 {
    return [self setupHeuristic:_cmd with:rvars];
 }
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars
+{
+   return [self setupHeuristic:_cmd with:rvars];
+}
 -(id<CPHeuristic>) createFF
 {
    return [self setupHeuristic:_cmd];
@@ -564,6 +568,10 @@
    return [self setupHeuristic:_cmd];
 }
 -(id<CPHeuristic>) createABS
+{
+   return [self setupHeuristic:_cmd];
+}
+-(id<CPHeuristic>) createFDS
 {
    return [self setupHeuristic:_cmd];
 }

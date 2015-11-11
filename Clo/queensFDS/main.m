@@ -17,7 +17,8 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
-         ORInt n = [args size];
+//         ORInt n = [args size];
+         ORInt n = 8;
          id<ORModel> mdl = [ORFactory createModel];
          id<ORIntRange> R = RANGE(mdl,1,n);
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
@@ -26,11 +27,30 @@ int main(int argc, const char * argv[])
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i] plus:@(i)])]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i]  sub:@(i)])]]];
          id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl annotation:note with:[ORSemFDSController class]];
+         id<CPHeuristic> h = [cp createFDS];
          [cp clearOnSolution];     // do not save the solutions (the other solvers do not).
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
-             [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
+             while (![cp allBound:x]) {
+                ORInt ld = FDMININT;
+                ORInt bi = R.low - 1;
+                for(ORInt i=R.low;i <= R.up;i++) {
+                   ORInt ds = [cp domsize:x[i]];
+                   ld = max(ld,ds);
+                   if (ld == ds) bi = i;
+                }
+                ORInt lb = [cp min:x[bi]], ub = [cp max:x[bi]];
+                ORInt mp = lb + (ub - lb)/2;
+                [cp try: ^ {
+                   [cp lthen:x[bi] with:mp+1];
+                }
+                    alt: ^{
+                   [cp gthen:x[bi] with:mp];
+                }];
+             }
+             
+             //[cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
              @synchronized(cp) { // synchronized so that it works correctly even when asking parallel tree search
                 nbSol++;
              }

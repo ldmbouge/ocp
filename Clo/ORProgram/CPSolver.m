@@ -961,6 +961,12 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPFDS alloc] initCPFDS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createFF
 {
    id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:nil];
@@ -997,6 +1003,13 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createFDS
+{
+   id<CPHeuristic> h = [[CPFDS alloc] initCPFDS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+
 -(NSString*)stringValue:(id<ORBitVar>)x
 {
    return [_gamma[x.getId] stringValue];
@@ -1398,7 +1411,16 @@
    [self diffImpl: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory notEqualc:self var:var to: val]];
 }
-
+-(void) lthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self lthenImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory lEqualc:self var:var to:val-1]];
+}
+-(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self gthenImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory gEqualc:self var:var to:val+1]];
+}
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^ {[var bind: val];}];

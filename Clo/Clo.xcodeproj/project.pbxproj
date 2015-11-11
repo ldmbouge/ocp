@@ -1413,6 +1413,8 @@
 		5BCAF15F1BF148C000C18360 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BCAF1601BF148C000C18360 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BCAF1611BF148C900C18360 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */; };
+		5BCAF1631BF385F500C18360 /* CPFDS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BCAF1621BF385F500C18360 /* CPFDS.m */; };
+		5BCAF1651BF386FB00C18360 /* CPFDS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BCAF1641BF3861700C18360 /* CPFDS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BCCC4051417F8CE0079E833 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BCCC4081417F8CE0079E833 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BCCC4071417F8CE0079E833 /* main.m */; };
 		5BCCC40C1417F8CE0079E833 /* queensACSem.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BCCC40B1417F8CE0079E833 /* queensACSem.1 */; };
@@ -21310,6 +21312,8 @@
 		5BCAF1411BF146BF00C18360 /* OrSemFDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OrSemFDSController.m; sourceTree = "<group>"; };
 		5BCAF1471BF1479A00C18360 /* queensFDS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensFDS; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCAF1491BF1479A00C18360 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BCAF1621BF385F500C18360 /* CPFDS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPFDS.m; path = ../ORFoundation/CPFDS.m; sourceTree = "<group>"; };
+		5BCAF1641BF3861700C18360 /* CPFDS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPFDS.h; sourceTree = "<group>"; };
 		5BCCC4031417F8CE0079E833 /* queensACSem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensACSem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
@@ -36957,6 +36961,8 @@
 				5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */,
 				5B8259841608BB04006CE539 /* CPABS.h */,
 				5B8259851608BB04006CE539 /* CPABS.m */,
+				5BCAF1641BF3861700C18360 /* CPFDS.h */,
+				5BCAF1621BF385F500C18360 /* CPFDS.m */,
 				5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */,
 				5B150017156EB0E800897252 /* CPBaseHeuristic.h */,
 				5B150019156EB1A500897252 /* CPBaseHeuristic.m */,
@@ -38872,6 +38878,7 @@
 				5B84692A163856B300F4D749 /* CPABS.h in Headers */,
 				5B8469301638583000F4D749 /* CPHeuristic.h in Headers */,
 				5B8469311638583000F4D749 /* CPBaseHeuristic.h in Headers */,
+				5BCAF1651BF386FB00C18360 /* CPFDS.h in Headers */,
 				5B681199161F99C700F4480F /* CPConcretizer.h in Headers */,
 				B1E1C79B170372FB006AACFC /* MIPProgram.h in Headers */,
 				5B93489216558D1000757F89 /* ORProgram.h in Headers */,
@@ -42153,6 +42160,7 @@
 				5B84692B163856BF00F4D749 /* CPDDeg.m in Sources */,
 				5B84692C163856BF00F4D749 /* CPFirstFail.m in Sources */,
 				5B84692D163856BF00F4D749 /* CPIBS.m in Sources */,
+				5BCAF1631BF385F500C18360 /* CPFDS.m in Sources */,
 				5B84692E163856BF00F4D749 /* CPWDeg.m in Sources */,
 				5B84692F163856BF00F4D749 /* CPABS.m in Sources */,
 				5B8469321638583800F4D749 /* CPBaseHeuristic.m in Sources */,
