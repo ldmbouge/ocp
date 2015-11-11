@@ -430,7 +430,8 @@ static __thread id checkPointCache = NULL;
 }
 -(void)       trust
 {
-   assignTRInt(&_level,_level._val+1,_trail);
+ //  assignTRInt(&_level,_level._val+1,_trail);
+   [self pushNode];
 }
 -(ORInt)      level
 {

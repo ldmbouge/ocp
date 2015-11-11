@@ -134,7 +134,6 @@ int main_cp(int argc, const char * argv[])
          NSLog(@"we are done \n\n");
          ORInt valueSol = [(id<ORObjectiveValueInt>)[[[cp solutionPool] best] objectiveValue] value];
          struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          return r;
       }];
    }
