@@ -32,12 +32,14 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
+             id<CPIntVarArray> cx = [cp concretize:x];
              while (![cp allBound:x]) {
-                ORInt ld = FDMININT;
+                ORDouble ld = FDMAXINT;
                 ORInt bi = R.low - 1;
                 for(ORInt i=R.low;i <= R.up;i++) {
-                   ORInt ds = [cp domsize:x[i]];
-                   ld = max(ld,ds);
+                   if ([cp bound:x[i]]) continue;
+                   ORDouble ds = [h varOrdering:cx[i]];
+                   ld = min(ld,ds);
                    if (ld == ds) bi = i;
                 }
                 ORInt lb = [cp min:x[bi]], ub = [cp max:x[bi]];

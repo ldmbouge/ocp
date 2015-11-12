@@ -132,6 +132,8 @@
 
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
+   id<ORIdxIntInformer>  _returnLT;
+   id<ORIdxIntInformer>  _returnGT;
    BOOL                  _closed;
    BOOL                  _oneSol;
    NSMutableArray*       _doOnSolArray;
@@ -143,7 +145,7 @@
    self = [super init];
    _model = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
-   _returnLabel = _failLabel = nil;
+   _returnLabel = _failLabel = _returnLT = _returnGT = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
@@ -160,6 +162,8 @@
    [_hSet release];
    [_portal release];
    [_returnLabel release];
+   [_returnLT release];
+   [_returnGT release];
    [_failLabel release];
    [_sPool release];
    [_doOnSolArray release];
@@ -189,6 +193,18 @@
    if (_returnLabel==nil)
       _returnLabel = [ORConcurrency idxIntInformer];
    return _returnLabel;
+}
+-(id<ORIdxIntInformer>) retLT
+{
+   if (_returnLT==nil)
+      _returnLT = [ORConcurrency idxIntInformer];
+   return _returnLT;
+}
+-(id<ORIdxIntInformer>) retGT
+{
+   if (_returnGT==nil)
+      _returnGT = [ORConcurrency idxIntInformer];
+   return _returnGT;
 }
 -(id<ORIdxIntInformer>) failLabel
 {
@@ -1285,15 +1301,21 @@
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^{ [var updateMax:val-1];}];
-   if (status == ORFailure)
+   if (status == ORFailure) {
+      [_failLabel notifyWith:var andInt:val];
       [_search fail];
+   }
+   [_returnLT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val+1];}];
-   if (status == ORFailure)
+   if (status == ORFailure) {
+      [_failLabel notifyWith:var andInt:val];
       [_search fail];
+   }
+   [_returnGT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
@@ -1441,15 +1463,21 @@
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^ {  [var updateMax:val-1];}];
-   if (status == ORFailure)
+   if (status == ORFailure) {
+      [_failLabel notifyWith:var andInt:val];
       [_search fail];
+   }
+   [_returnLT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^ { [var updateMin:val+1];}];
-   if (status == ORFailure)
-      [_search fail];   
+   if (status == ORFailure) {
+      [_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   [_returnGT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
@@ -1483,6 +1511,14 @@
 -(id<ORIdxIntInformer>) retLabel
 {
    return [_cp retLabel];
+}
+-(id<ORIdxIntInformer>) retLT
+{
+   return [_cp retLT];
+}
+-(id<ORIdxIntInformer>) retGT
+{
+   return [_cp retGT];
 }
 -(id<ORIdxIntInformer>) failLabel
 {

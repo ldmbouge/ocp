@@ -156,7 +156,7 @@
 
 -(ORDouble)varOrdering:(id<CPIntVar>)x
 {
-   return 0.0;
+   return - [x domsize];
 }
 -(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
@@ -178,14 +178,23 @@
    
 //   [self initImpacts];       // [ldm] init called _after_ adding the monitor so that the reduction is tracked (but before watching label)
 
-   [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
+   [[[_cp portal] retLT] wheneverNotifiedDo:^void(id var,ORInt val) {
+      int d = [[_cp tracer] level];
+      NSLog(@"[%d]%@ ≤ %d ==> %f",d,var,val,1.0 + [_monitor reduction]);
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
       //[[_impacts objectForKey:key] addImpact:1.0 - [_monitor reduction] forValue:val];
       [key release];
    }];
-   [[[_cp portal] failLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
+   [[[_cp portal] retGT] wheneverNotifiedDo:^void(id var,ORInt val) {
+      int d = [[_cp tracer] level];
+      NSLog(@"[%d]%@ ≥ %d ==> %f",d,var,val,1.0 + [_monitor reduction]);
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
       //[[_impacts objectForKey:key] addImpact: 1.0 forValue:val];
+      [key release];
+   }];
+   [[[_cp portal] failLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
+      NSLog(@"%@ ≤?≥ %d FAIL ==> %f",var,val,0.0);
+      NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
       [key release];
    }];
    [[_cp engine] tryEnforceObjective];
