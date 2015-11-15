@@ -26,6 +26,8 @@
 #import <ORProgram/CPMultiStartSolver.h>
 #import <ORProgram/CPParallel.h>
 #import <ORProgram/ORCPParSolver.h>
+#import <ORProgram/ORCombinator.h>
+#import <ORProgram/ORParallelCombinator.h>
 #import <ORProgram/ORSTask.h>
 
 @interface ORGamma (Model)
