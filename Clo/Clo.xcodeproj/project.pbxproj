@@ -8071,7 +8071,6 @@
 		37D62B931BD5CFAC005A6DBC /* ORCombinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORCombinator.h; path = ORRunnable/ORCombinator.h; sourceTree = "<group>"; };
 		37D62B941BD5CFAC005A6DBC /* ORLagrangeRelax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORLagrangeRelax.h; path = ORRunnable/ORLagrangeRelax.h; sourceTree = "<group>"; };
 		37D62B951BD5CFAC005A6DBC /* ORLagrangeRelax.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = ORLagrangeRelax.m; path = ORRunnable/ORLagrangeRelax.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		37D62B961BD5CFAC005A6DBC /* ORLagrangeRelax.m~ */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "ORLagrangeRelax.m~"; path = "ORRunnable/ORLagrangeRelax.m~"; sourceTree = "<group>"; };
 		37D62B971BD5CFAC005A6DBC /* ORLagrangianTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORLagrangianTransform.h; path = ORRunnable/ORLagrangianTransform.h; sourceTree = "<group>"; };
 		37D62B981BD5CFAC005A6DBC /* ORLagrangianTransform.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORLagrangianTransform.m; path = ORRunnable/ORLagrangianTransform.m; sourceTree = "<group>"; };
 		37D62B991BD5CFAC005A6DBC /* ORLogicBenders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORLogicBenders.h; path = ORRunnable/ORLogicBenders.h; sourceTree = "<group>"; };
@@ -23341,7 +23340,6 @@
 				37D62B931BD5CFAC005A6DBC /* ORCombinator.h */,
 				37D62B941BD5CFAC005A6DBC /* ORLagrangeRelax.h */,
 				37D62B951BD5CFAC005A6DBC /* ORLagrangeRelax.m */,
-				37D62B961BD5CFAC005A6DBC /* ORLagrangeRelax.m~ */,
 				37D62B971BD5CFAC005A6DBC /* ORLagrangianTransform.h */,
 				37D62B981BD5CFAC005A6DBC /* ORLagrangianTransform.m */,
 				37D62B991BD5CFAC005A6DBC /* ORLogicBenders.h */,

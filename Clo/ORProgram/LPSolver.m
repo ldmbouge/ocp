@@ -213,6 +213,11 @@
 {
    return _lpsolver;
 }
+-(id<ORSolutionPool>) solutionPool
+{
+   assert(0);
+   return nil;
+}
 -(OROutcome) solve
 {
    return [_lpsolver solve];

@@ -513,6 +513,7 @@ enum ORGroupType {
 -(id<OREngine>)       engine;
 -(id) concretize: (id) o;
 -(id<ORObjectiveValue>) objectiveValue;
+-(id<ORSolutionPool>) solutionPool;
 @end
 
 @protocol ORASearchSolver <ORASolver>
