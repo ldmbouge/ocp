@@ -257,12 +257,12 @@
         
         id<ORParameterizedSolution> sol = (id<ORParameterizedSolution>)[[program solutionPool] best];
         id<ORObjectiveValue> objValue = (id<ORObjectiveValue>)[sol objectiveValue];
-        ORDouble bound = ([program respondsToSelector: @selector(bestObjectiveBound)]) ? [(id<MIPProgram>)program bestObjectiveBound] : [objValue dblValue];
+        ORDouble bound = ([program respondsToSelector: @selector(bestObjectiveBound)]) ? [(id<MIPProgram>)program bestObjectiveBound] : [objValue doubleValue];
         
         __block BOOL satisfied = YES;
         slackSum = 0.0;
         [slacks enumerateWith:^(id<ORRealVar> obj, ORInt idx) {
-            double s = [sol dblValue: obj];
+            double s = [sol doubleValue: obj];
             slackSum += s * s;
             if(s > 0) satisfied = NO;
         }];
@@ -277,7 +277,7 @@
             [ORConcurrency pumpEvents];
             NSLog(@"new bound: %f", _bestBound);
             if(satisfied &&
-               [[bestSol objectiveValue] dblValue] == _bestBound &&
+               [[bestSol objectiveValue] doubleValue] == _bestBound &&
                [program respondsToSelector: @selector(bestObjectiveBound)]) break;
         }
         else if(++noImprove > noImproveLimit) { pi /= 2.0; noImprove = 0; }
@@ -310,7 +310,7 @@
             id<ORRealParam> lambda = obj;
             ORDouble value = [sol paramValue: lambda];
             id<ORVar> slack = [slacks at: idx];
-            ORFloat newValue = MAX(0, value + stepSize * [sol dblValue: (id<ORRealVar>)slack]);
+            ORFloat newValue = MAX(0, value + stepSize * [sol doubleValue: (id<ORRealVar>)slack]);
             [(id<CPProgram>)program param: lambda setValue: newValue];
             //NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
         }];
@@ -447,9 +447,9 @@
     NSMutableSet* modifiedProblems = [[NSMutableSet alloc] init];
     __block ORFloat slackSum = 0.0;
     [slacks enumerateWith:^(id<ORRealVar> obj, ORInt idx) {
-        double val = [sol dblValue: obj];
+        double val = [sol doubleValue: obj];
         slackSum += val * val;
-        NSLog(@"slack: %f", [sol dblValue: obj]);
+        NSLog(@"slack: %f", [sol doubleValue: obj]);
     }];
     
     id<ORObjectiveValueReal> objValue = (id<ORObjectiveValueReal>)[sol objectiveValue];
@@ -461,7 +461,7 @@
         ORDouble value = [sol paramValue: lambda];
         if(value != DBL_MAX) {
             id<ORRealVar> slack = [slacks at: idx];
-            ORDouble newValue = MAX(0, value + stepSize * [sol dblValue: slack]);
+            ORDouble newValue = MAX(0, value + stepSize * [sol doubleValue: slack]);
             
             if(newValue != value) {
                 [values setObject: @(newValue) forKey: lambda];
@@ -603,7 +603,7 @@
         for(id<ORRealParam> p in [_model parameters]) [program param: p setValue: [(NSNumber*)[lambdaValues objectForKey: p] floatValue]];
         id<ORParameterizedSolution> sol0 = [self runAllProblems: _model solver: program withIncumbents: candidIncumbents];
         
-        if([[sol0 objectiveValue] dblValue] < [[sol1 objectiveValue] dblValue]) {
+        if([[sol0 objectiveValue] doubleValue] < [[sol1 objectiveValue] doubleValue]) {
             allsol = sol0;
             [incumbents release];
             incumbents = candidIncumbents;

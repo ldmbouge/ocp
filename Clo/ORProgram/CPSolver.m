@@ -131,7 +131,11 @@
    id<CPPortal>          _portal;
 
    id<ORIdxIntInformer>  _returnLabel;
+   id<ORIdxIntInformer>  _returnLT;
+   id<ORIdxIntInformer>  _returnGT;
    id<ORIdxIntInformer>  _failLabel;
+   id<ORIdxIntInformer>  _failLT;
+   id<ORIdxIntInformer>  _failGT;
    TRInt                 _closed;
    BOOL                  _oneSol;
    NSMutableArray*       _doOnSolArray;
@@ -143,7 +147,7 @@
    self = [super init];
    _model = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
-   _returnLabel = _failLabel = nil;
+   _returnLabel = _failLabel = _returnLT = _returnGT = _failLT = _failGT = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
@@ -159,7 +163,11 @@
    [_hSet release];
    [_portal release];
    [_returnLabel release];
+   [_returnLT release];
+   [_returnGT release];
    [_failLabel release];
+   [_failLT release];
+   [_failGT release];
    [_sPool release];
    [_doOnSolArray release];
    [_doOnExitArray release];
@@ -189,11 +197,35 @@
       _returnLabel = [ORConcurrency idxIntInformer];
    return _returnLabel;
 }
+-(id<ORIdxIntInformer>) retLT
+{
+   if (_returnLT==nil)
+      _returnLT = [ORConcurrency idxIntInformer];
+   return _returnLT;
+}
+-(id<ORIdxIntInformer>) retGT
+{
+   if (_returnGT==nil)
+      _returnGT = [ORConcurrency idxIntInformer];
+   return _returnGT;
+}
 -(id<ORIdxIntInformer>) failLabel
 {
    if (_failLabel==nil)
       _failLabel = [ORConcurrency idxIntInformer];
    return _failLabel;
+}
+-(id<ORIdxIntInformer>) failLT
+{
+   if (_failLT==nil)
+      _failLT = [ORConcurrency idxIntInformer];
+   return _failLT;
+}
+-(id<ORIdxIntInformer>) failGT
+{
+   if (_failGT==nil)
+      _failGT= [ORConcurrency idxIntInformer];
+   return _failGT;
 }
 -(id<CPPortal>) portal
 {
@@ -1011,6 +1043,12 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPFDS alloc] initCPFDS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
 -(id<CPHeuristic>) createFF
 {
    id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:nil];
@@ -1047,6 +1085,13 @@
    [self addHeuristic:h];
    return h;
 }
+-(id<CPHeuristic>) createFDS
+{
+   id<CPHeuristic> h = [[CPFDS alloc] initCPFDS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+
 -(NSString*)stringValue:(id<ORBitVar>)x
 {
    return [_gamma[x.getId] stringValue];
@@ -1063,9 +1108,9 @@
 {
    return [_gamma[x.getId] intValue];
 }
--(ORDouble) dblValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORRealVar>) x
 {
-   return [(id<ORRealVar>)_gamma[x.getId] dblValue];
+   return [(id<ORRealVar>)_gamma[x.getId] doubleValue];
 }
 -(ORDouble) paramValue: (id<ORRealParam>)x
 {
@@ -1105,11 +1150,11 @@
 {
    return [((id<CPRealVar>)_gamma[x.getId]) domwidth];
 }
--(ORDouble) dblMin:(id<ORRealVar>)x
+-(ORDouble) doubleMin:(id<ORRealVar>)x
 {
    return [((id<CPRealVar>)_gamma[x.getId]) min];
 }
--(ORDouble) dblMax:(id<ORRealVar>)x
+-(ORDouble) doubleMax:(id<ORRealVar>)x
 {
    return [((id<CPRealVar>)_gamma[x.getId]) max];
 }
@@ -1330,15 +1375,21 @@
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^{ [var updateMax:val-1];}];
-   if (status == ORFailure)
+   if (status == ORFailure) {
+      [_failLT notifyWith:var andInt:val];
       [_search fail];
+   }
+   [_returnLT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val+1];}];
-   if (status == ORFailure)
+   if (status == ORFailure) {
+      [_failGT notifyWith:var andInt:val];
       [_search fail];
+   }
+   [_returnGT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
@@ -1458,7 +1509,16 @@
    [self diffImpl: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory notEqualc:self var:var to: val]];
 }
-
+-(void) lthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self lthenImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory lEqualc:self var:var to:val-1]];
+}
+-(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self gthenImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory gEqualc:self var:var to:val+1]];
+}
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^ {[var bind: val];}];
@@ -1479,15 +1539,21 @@
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^ {  [var updateMax:val-1];}];
-   if (status == ORFailure)
+   if (status == ORFailure) {
+      [_failLT notifyWith:var andInt:val];
       [_search fail];
+   }
+   [_returnLT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce:^ { [var updateMin:val+1];}];
-   if (status == ORFailure)
-      [_search fail];   
+   if (status == ORFailure) {
+      [_failGT notifyWith:var andInt:val];
+      [_search fail];
+   }
+   [_returnGT notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
@@ -1522,9 +1588,25 @@
 {
    return [_cp retLabel];
 }
+-(id<ORIdxIntInformer>) retLT
+{
+   return [_cp retLT];
+}
+-(id<ORIdxIntInformer>) retGT
+{
+   return [_cp retGT];
+}
 -(id<ORIdxIntInformer>) failLabel
 {
    return [_cp failLabel];
+}
+-(id<ORIdxIntInformer>) failLT
+{
+   return [_cp failLT];
+}
+-(id<ORIdxIntInformer>) failGT
+{
+   return [_cp failGT];
 }
 -(id<ORInformer>) propagateFail
 {

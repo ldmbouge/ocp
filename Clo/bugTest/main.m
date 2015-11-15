@@ -203,7 +203,6 @@ int main(int argc, const char * argv[])
                [[cpp engine] nbPropagation] - ip);
          struct ORResult r = REPORT(nbSol, [[cpp explorer] nbFailures],[[cpp explorer] nbChoices], [[cpp engine] nbPropagation]);
          [cpp release];
-         [ORFactory shutdown];
          return r;
       }];
    }

@@ -46,8 +46,6 @@ int main(int argc, const char * argv[])
           NSLog(@"here: %@",[[cp engine] variables]);
        }
        ];
-      [cp release];
-      [ORFactory shutdown];
    }
    return 0;
 }

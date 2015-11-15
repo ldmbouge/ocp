@@ -184,7 +184,7 @@
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory double: _lpsolver value: [e dblValue]];
+      _gamma[e.getId] = [ORFactory double: _lpsolver value: [e doubleValue]];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
@@ -427,7 +427,7 @@
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory double: _lpsolver value: [e dblValue]];
+      _gamma[e.getId] = [ORFactory double: _lpsolver value: [e doubleValue]];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

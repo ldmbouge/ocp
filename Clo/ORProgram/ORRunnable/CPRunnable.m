@@ -122,7 +122,7 @@
 
 -(ORDouble) bestBound
 {
-    return [[[[_program solutionPool] best] objectiveValue] dblValue];
+    return [[[[_program solutionPool] best] objectiveValue] doubleValue];
 }
 
 //-(void) restore: (id<ORSolution>)s {

@@ -407,7 +407,7 @@
 }
 -(ORDouble) value: (id<ORVar>) x
 {
-   return [_lprelaxation dblValue: x];
+   return [_lprelaxation doubleValue: x];
 }
 -(ORDouble) lowerBound: (id<ORVar>) x
 {

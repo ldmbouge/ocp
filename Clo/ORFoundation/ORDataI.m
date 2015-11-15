@@ -71,7 +71,7 @@
 {
    return _value;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -144,7 +144,7 @@
 {
    return _value;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -160,7 +160,7 @@
 {
    return _value = value;
 }
--(ORDouble) dblValue: (id<ORGamma>) solver
+-(ORDouble) doubleValue: (id<ORGamma>) solver
 {
    return _value;
 }
@@ -283,7 +283,7 @@
 {
    return (ORInt) _value;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -340,17 +340,17 @@
 {
    return _value;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
 -(ORDouble) value: (id<ORGamma>) solver;
 {
-   return [(ORMutableIntegerI*)[solver concretize: self] dblValue];
+   return [(ORMutableIntegerI*)[solver concretize: self] doubleValue];
 }
--(ORDouble) dblValue: (id<ORGamma>) solver;
+-(ORDouble) doubleValue: (id<ORGamma>) solver;
 {
-   return [(ORMutableIntegerI*)[solver concretize: self] dblValue];
+   return [(ORMutableIntegerI*)[solver concretize: self] doubleValue];
 }
 -(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 {

@@ -32,7 +32,7 @@
 -(ORFloat) dualityGap;
 
 -(MIPOutcome) status;
--(ORDouble) dblValue: (MIPVariableI*) var;
+-(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORInt) intValue: (MIPIntVariableI*) var;
 -(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val;
 -(ORDouble) lowerBound: (MIPVariableI*) var;

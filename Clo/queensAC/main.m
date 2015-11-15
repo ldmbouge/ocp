@@ -38,7 +38,6 @@ int main(int argc, const char * argv[])
          printf("GOT %d solutions\n",nbSol);
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return r;
       }];
    }

@@ -118,39 +118,53 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 #endif
 }
 
+#if TARGET_OS_IPHONE==1
+static __declspec(thread) ContPool* _thePool = 0;
+#else
+static __thread ContPool* _thePool = 0;
+#endif
+
 inline static ContPool* instancePool()
 {
-#if TARGET_OS_IPHONE==1
-   static __declspec(thread) ContPool* pool = 0;
-#else
-   static __thread ContPool* pool = 0;
-#endif
-   if (!pool) {
-      pool = malloc(sizeof(ContPool));
-      pool->low = pool->high = pool->nbCont = 0;
-      pool->poolClass = nil;
+   if (!_thePool) {
+      _thePool = malloc(sizeof(ContPool));
+      _thePool->low = _thePool->high = _thePool->nbCont = 0;
+      _thePool->poolClass = [NSCont self];
+      _thePool->sz = 1000;
+      _thePool->pool = malloc(sizeof(id)*_thePool->sz);
+      atexit_b(^{
+         [NSCont shutdown];
+      });
    }
-   return pool;
+   return _thePool;
+}
+
+inline static void freePool()
+{
+   _thePool = NULL;
 }
 
 +(void)shutdown
 {
-   ContPool* pool = instancePool();
+   ContPool* pool = _thePool;
    if (pool) {
       ORInt nb=0;
       for(ORInt k=pool->low;k != pool->high;) {
 #if defined(__APPLE__) || !defined(__x86_64__)
          [pool->pool[k] release];
 #else
-	 NSCont* ptr = pool->pool[k];
-	 free(ptr->_data);
-	 char* adr = ((char*)ptr) - 16;
-	 free(adr);
+         NSCont* ptr = pool->pool[k];
+         free(ptr->_data);
+         char* adr = ((char*)ptr) - 16;
+         free(adr);
 #endif
          k = (k+1) % pool->sz;
          nb++;
       }
       pool->low = pool->high = 0;
+      free(pool->pool);
+      free(pool);
+      freePool(pool);
       NSLog(@"released %d continuations out of %d...",nb,pool->nbCont);
    }
 }
@@ -158,15 +172,6 @@ inline static ContPool* instancePool()
 +(id)new 
 {
    ContPool* pool = instancePool();
-   if (!pool->poolClass) {
-      pool->poolClass = self;
-      pool->sz = 1000;
-      pool->pool = malloc(sizeof(id)*pool->sz);
-   } else {
-      if (pool->poolClass != self)
-         [NSException raise:NSGenericException
-                     format:@"the pool we got is for the wrong class!"];
-   }
    NSCont* rv = nil;
    if (pool->low == pool->high) {
       pool->nbCont += 1;

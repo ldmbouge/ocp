@@ -23,6 +23,7 @@
    ORBool _isOptional;
     id<ORIntVar>   _startVar;
     id<ORIntVar>   _durationVar;
+    id<ORIntVar>   _endVar;
     id<ORIntVar>   _presenceVar;
 }
 -(id<ORTaskVar>) initORTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration
@@ -34,6 +35,7 @@
    _isOptional = FALSE;
     _startVar    = NULL;
     _durationVar = NULL;
+    _endVar      = NULL;
     _presenceVar = NULL;
    return self;
 }
@@ -46,6 +48,7 @@
    _isOptional = TRUE;
     _startVar    = NULL;
     _durationVar = NULL;
+    _endVar      = NULL;
     _presenceVar = NULL;
    return self;
 }
@@ -93,6 +96,14 @@
         _durationVar = [ORFactory intVar:_model bounds:_duration];
     return _durationVar;
 }
+-(id<ORIntVar>) getEndVar
+{
+    if (_isOptional)
+        @throw [[ORExecutionError alloc] initORExecutionError: "Method getEndVar is not supported for optional task variables yet"];
+    if (_endVar == NULL)
+        _endVar = [ORFactory intVar:_model bounds:RANGE(_model, [_horizon low] + [_duration low], [_horizon up])];
+    return _endVar;
+}
 -(id<ORIntVar>) getPresenceVar
 {
     if (_presenceVar == NULL) {
@@ -110,6 +121,10 @@
 -(id<ORIntVar>) durationVar
 {
     return _durationVar;
+}
+-(id<ORIntVar>) endVar
+{
+    return _endVar;
 }
 -(id<ORIntVar>) presenceVar
 {

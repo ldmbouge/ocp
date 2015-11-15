@@ -406,13 +406,13 @@
 {
    return [[self worker] domwidth:x];
 }
--(ORDouble) dblMin:(id<ORRealVar>)x
+-(ORDouble) doubleMin:(id<ORRealVar>)x
 {
-   return [[self worker] dblMin:x];
+   return [[self worker] doubleMin:x];
 }
--(ORDouble) dblMax:(id<ORRealVar>)x
+-(ORDouble) doubleMax:(id<ORRealVar>)x
 {
-   return [[self worker] dblMax:x];
+   return [[self worker] doubleMax:x];
 }
 -(void) assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
@@ -694,6 +694,13 @@
     binding[i] = [_workers[i] createABS:rvars];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createFDS:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createFF
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -736,6 +743,13 @@
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createFDS
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createFDS];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(ORUInt) degree:(id<ORVar>)x
 {
    return [[self worker] degree:x];
@@ -744,9 +758,9 @@
 {
    return [[self worker] intValue: x];
 }
--(ORDouble) dblValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORRealVar>) x
 {
-   return [[self worker] dblValue: x];
+   return [[self worker] doubleValue: x];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {

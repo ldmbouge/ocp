@@ -64,5 +64,4 @@ autoreleasepool {
    }
    print("Solver status: \(cp)\n")
    print("Quitting\n")
-   ORFactory.shutdown()
 }

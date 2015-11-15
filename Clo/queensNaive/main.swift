@@ -65,5 +65,4 @@ autoreleasepool {
    }
    cp.clearOnSolution()
    println("Number of solutions: \(cp.solutionPool().count())")
-   ORFactory.shutdown()
 }

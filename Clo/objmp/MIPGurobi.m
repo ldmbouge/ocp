@@ -169,14 +169,15 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    return (ORInt) value;
 }
 
--(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val {
+-(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val
+{
     int error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_LB, [var idx], val);
     error = GRBsetdblattrelement(_model, GRB_DBL_ATTR_UB, [var idx], val) || error ;
     GRBupdatemodel(_model);
     if(error != 0) NSLog(@"err: %i", error);
 }
 
--(ORDouble) dblValue: (MIPVariableI*) var
+-(ORDouble) doubleValue: (MIPVariableI*) var
 {
    ORDouble value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);

@@ -117,12 +117,12 @@
 		<key>SportDemo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>88</integer>
+			<integer>87</integer>
 		</dict>
 		<key>Sudoku.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>91</integer>
+			<integer>90</integer>
 		</dict>
 		<key>SudokuSwift.xcscheme</key>
 		<dict>
@@ -132,7 +132,7 @@
 		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>92</integer>
+			<integer>91</integer>
 		</dict>
 		<key>TestAll.xcscheme</key>
 		<dict>
@@ -142,7 +142,7 @@
 		<key>TestAssignment.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>93</integer>
+			<integer>92</integer>
 		</dict>
 		<key>ais.xcscheme_^#shared#^_</key>
 		<dict>
@@ -557,7 +557,7 @@
 		<key>sceneLS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>95</integer>
+			<integer>94</integer>
 		</dict>
 		<key>shiploading.xcscheme_^#shared#^_</key>
 		<dict>
@@ -612,12 +612,12 @@
 		<key>sportModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>89</integer>
+			<integer>88</integer>
 		</dict>
 		<key>stressLimit.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>90</integer>
+			<integer>89</integer>
 		</dict>
 		<key>sudokuLS.xcscheme</key>
 		<dict>
@@ -632,27 +632,27 @@
 		<key>testDistrib.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>94</integer>
+			<integer>93</integer>
 		</dict>
 		<key>testLPConcretization.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>96</integer>
+			<integer>95</integer>
 		</dict>
 		<key>testLPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>97</integer>
+			<integer>96</integer>
 		</dict>
 		<key>testMIP.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>98</integer>
+			<integer>97</integer>
 		</dict>
 		<key>testPacking.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>99</integer>
+			<integer>98</integer>
 		</dict>
 		<key>testScheduler.xcscheme</key>
 		<dict>
@@ -672,22 +672,22 @@
 		<key>vietnameseSnake.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>100</integer>
+			<integer>99</integer>
 		</dict>
 		<key>vietnameseSnakeSwift.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>101</integer>
+			<integer>100</integer>
 		</dict>
 		<key>warehouse.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>102</integer>
+			<integer>101</integer>
 		</dict>
 		<key>wka.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>103</integer>
+			<integer>102</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -1048,6 +1048,11 @@
 			<true/>
 		</dict>
 		<key>5BC9C3671B95D94800924032</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BCAF1461BF1479A00C18360</key>
 		<dict>
 			<key>primary</key>
 			<true/>

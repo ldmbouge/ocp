@@ -52,7 +52,6 @@ int main (int argc, const char * argv[])
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       NSLog(@"Total runtime: %ld\n",endTime - startTime);
-      [ORFactory shutdown];
    }
    return 0;
 }

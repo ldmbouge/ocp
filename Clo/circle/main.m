@@ -41,7 +41,7 @@ int main(int argc, const char * argv[])
                ORInt i = [select min];
                if (i == MAXINT)
                   break;               
-               ORDouble mid = [cp dblMin:a[i]] + ([cp dblMax:a[i]] - [cp dblMin:a[i]])/2.0;
+               ORDouble mid = [cp doubleMin:a[i]] + ([cp doubleMax:a[i]] - [cp doubleMin:a[i]])/2.0;
                [cp try:^{
                   [cp realLthen:a[i] with:mid];
                } alt:^{
@@ -53,11 +53,10 @@ int main(int argc, const char * argv[])
          [[cp solutionPool] enumerateWith:^(id<ORSolution> sol) {
             printf("[x,y] = [");
             for(ORInt i = a.low; i <= a.up; i++)
-               printf("%f%c",[sol dblValue: a[i]],((i < a.up) ? ',' : ']'));
+               printf("%f%c",[sol doubleValue: a[i]],((i < a.up) ? ',' : ']'));
             printf("\n");
          }];
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }

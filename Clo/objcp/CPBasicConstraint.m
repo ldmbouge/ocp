@@ -2311,8 +2311,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    incrFXInt(&_solved,_trail);
    for(NSUInteger i = 0; i < nb; i++) {
       _updated[i] = makeFXInt(_trail);
-      _min[i] = makeTRDouble(_trail,[_cv[i] dblMin]);
-      _max[i] = makeTRDouble(_trail,[_cv[i] dblMax]);
+      _min[i] = makeTRDouble(_trail,[_cv[i] doubleMin]);
+      _max[i] = makeTRDouble(_trail,[_cv[i] doubleMax]);
    }
    return self;
 }
@@ -2329,10 +2329,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    NSUInteger nb = [_cv count];
    for(ORInt i = 0; i < nb; i++) {
       //CPIntVar* x = (CPIntVar*) _cv[i];
-      assignTRDouble(&_min[i],[_cv[i] dblMin],_trail);
-      assignTRDouble(&_max[i],[_cv[i] dblMax],_trail);
-      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] dblMin]];
-      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] dblMax]];
+      assignTRDouble(&_min[i],[_cv[i] doubleMin],_trail);
+      assignTRDouble(&_max[i],[_cv[i] doubleMax],_trail);
+      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] doubleMin]];
+      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
       
       [_cv[i] whenChangeBoundsPropagate: self];
       
@@ -2352,8 +2352,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
             }];
             incrFXInt(&_updated[i],_trail);
          }
-         ORDouble lb = [_cv[i] dblMin];
-         ORDouble ub = [_cv[i] dblMax];
+         ORDouble lb = [_cv[i] doubleMin];
+         ORDouble ub = [_cv[i] doubleMax];
          assignTRDouble(&_min[i],lb,_trail);
          assignTRDouble(&_max[i],ub,_trail);
          [_relaxation updateLowerBound: _mv[i] with: lb];
@@ -2367,8 +2367,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
 //   NSUInteger nb = [_cv count];
 //   for(ORInt i = 0; i < nb; i++) {
-//      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] dblMin]];
-//      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] dblMax]];
+//      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] doubleMin]];
+//      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
 //   }
    
    OROutcome outcome = [_relaxation solve];

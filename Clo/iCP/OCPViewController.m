@@ -75,7 +75,6 @@
    }];
    [log insertText: [NSString stringWithFormat:@"GOT %d solutions\n",[nbSolutions intValue:cp]]];
    [log insertText: [NSString stringWithFormat:@"Solver status: %@\n",cp]];
-   [ORFactory shutdown];
 }
 
 - (IBAction)clear:(id)sender {

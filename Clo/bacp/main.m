@@ -94,8 +94,6 @@ int main(int argc, const char * argv[])
             printf("%d%c",[sol intValue: x[i]],((i < x.up) ? ',' : ']'));
          printf("\tObjective: %d\n",[[sol objectiveValue] intValue]);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }

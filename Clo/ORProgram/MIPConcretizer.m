@@ -296,7 +296,7 @@
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
    if (_gamma[e.getId] == NULL)
-      _gamma[e.getId] = [ORFactory double: _MIPsolver value: [e dblValue]];
+      _gamma[e.getId] = [ORFactory double: _MIPsolver value: [e doubleValue]];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

@@ -110,9 +110,9 @@
 {
     return [_lpsolver dual: [self concretize: c]];
 }
--(ORDouble) dblValue: (id<ORRealVar>) v
+-(ORDouble) doubleValue: (id<ORRealVar>) v
 {
-    return [_lpsolver dblValue: _gamma[v.getId]];
+   return [_lpsolver doubleValue: _gamma[v.getId]];
 }
 -(ORDouble) reducedCost: (id<ORRealVar>) v
 {
@@ -221,9 +221,9 @@
 {
    return [_lpsolver dual: [self concretize: c]];
 }
--(ORDouble) dblValue: (id<ORRealVar>) v
+-(ORDouble) doubleValue: (id<ORRealVar>) v
 {
-   return [_lpsolver dblValue: _gamma[v.getId]];
+   return [_lpsolver doubleValue: _gamma[v.getId]];
 }
 -(ORDouble) reducedCost: (id<ORRealVar>) v
 {

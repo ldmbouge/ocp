@@ -30,5 +30,4 @@ autoreleasepool {
       let z = [ORInt](0..<n).map { k in sol.intValue(x[k])}
       println("Solution is: " + z.description)
    }
-   ORFactory.shutdown()
 }
