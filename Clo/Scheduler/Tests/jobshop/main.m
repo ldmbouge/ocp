@@ -277,7 +277,7 @@ int mainSubpathLNS(int argc, const char * argv[])
    
    @autoreleasepool {
       
-      FILE* data = fopen("la29.jss","r");
+      FILE* data = fopen("abz7.jss","r");
       ORInt nbJobs, nbMachines;
       fscanf(data, "%d",&nbJobs);
       fscanf(data, "%d",&nbMachines);
@@ -579,9 +579,9 @@ int mainHybrid(int argc, const char * argv[])
         id<ORTaskDisjunctiveArray> disjunctive = [ORFactory disjunctiveArray: model range: Machines];
         
         // model
-        
-        [model minimize: makespan];
-        
+       
+       [model minimize: makespan];
+       
         for(ORInt i = Jobs.low; i <= Jobs.up; i++)
             for(ORInt j = Machines.low; j < Machines.up; j++)
                 [model add: [[task at: i : j] precedes: [ task at: i : j+1]]];
@@ -609,6 +609,57 @@ int mainHybrid(int argc, const char * argv[])
             }];
             [cp label: makespan];
             printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+           
+//            
+//            id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range: Machines];
+//            id<ORUniformDistribution> sD = [ORFactory uniformDistribution:model range: Jobs];
+//            id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,2,nbMachines/5)];
+//            [cp solve: ^{//limitTime: 180000 in: ^{
+//                [cp repeat: ^{
+//                    [cp limitFailures: 3 *nbJobs * nbMachines in: ^{
+//                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 10 * [cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
+//                            id<ORTaskVarArray> t = disjunctive[i].taskVars;
+//                            [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
+//                        }];
+//                        [cp label: makespan];
+//                        printf("\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+//                        ORLong timeEnd = [ORRuntimeMonitor cputime];
+//                        NSLog(@"Time: %lld:",timeEnd - timeStart);
+//                    }];
+//                }
+//                  onRepeat: ^{
+//                      id<ORSolution,CPSchedulerSolution> sol = (id) [[cp solutionPool] best];
+//                      for(ORInt k = 1; k <= 2; k++) {
+//                          ORInt i = [sM next];
+//                          id<ORIntVarArray> succ = disjunctive[i].successors;
+//                          id<ORTaskVarArray> t = disjunctive[i].taskVars;
+//                          ORInt st = [sD next];
+//                          ORInt d = [lD next];
+//                          ORInt en = st + d;
+//                          // need to fix everything outside the bounds but the tight constraints
+//                          ORInt j = 0;
+//                          ORInt curr = 0;
+//                          while (curr <= succ.up) {
+//                              if ((j < st || j >= en)) {
+//                                  ORInt n = [sol intValue: succ[curr]];
+//                                  if (n != nbJobs + 1) {
+//                                      ORInt est = [sol ect: t[n]];
+//                                      ORInt ect = [sol ect: t[n]];
+//                                      ORInt duration = [sol minDuration: t[n]];
+//                                      if (est + duration != ect)
+//                                          [cp label: succ[curr] with: [sol intValue: succ[curr]]];
+//                                  }
+//                              }
+//                              j++;
+//                              curr = [sol intValue: succ[curr]];
+//                          }
+//                      }
+//                      printf("R");
+//                  }];
+//            }];
+
+            
+            
         }];
         id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
         id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
@@ -628,10 +679,10 @@ int mainHybrid(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-    return mainHybrid(argc,argv);
+//    return mainHybrid(argc,argv);
 //    return mainPureMIP(argc,argv);
-//   return mainPureCP(argc,argv);
-//   return mainSubpathLNS(argc,argv);
+   return mainPureCP(argc,argv);
+//    return mainSubpathLNS(argc,argv);
 //   return mainBasicLNS(argc,argv);
 }
 

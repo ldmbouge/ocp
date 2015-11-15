@@ -313,8 +313,10 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 -(void) injectSolution: (NSArray*)vars values: (NSArray*)vals size: (ORInt)size;
 {
-      _newSolVars = vars;
-      _newSolVals = vals;
+   if(_newSolVars) [_newSolVars release];
+   _newSolVars = vars;
+   if(_newSolVals) [_newSolVals release];
+   _newSolVals = vals;
 }
 
 -(void) pumpEvents
