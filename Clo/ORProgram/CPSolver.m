@@ -131,9 +131,11 @@
    id<CPPortal>          _portal;
 
    id<ORIdxIntInformer>  _returnLabel;
-   id<ORIdxIntInformer>  _failLabel;
    id<ORIdxIntInformer>  _returnLT;
    id<ORIdxIntInformer>  _returnGT;
+   id<ORIdxIntInformer>  _failLabel;
+   id<ORIdxIntInformer>  _failLT;
+   id<ORIdxIntInformer>  _failGT;
    BOOL                  _closed;
    BOOL                  _oneSol;
    NSMutableArray*       _doOnSolArray;
@@ -145,7 +147,7 @@
    self = [super init];
    _model = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
-   _returnLabel = _failLabel = _returnLT = _returnGT = nil;
+   _returnLabel = _failLabel = _returnLT = _returnGT = _failLT = _failGT = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
@@ -165,6 +167,8 @@
    [_returnLT release];
    [_returnGT release];
    [_failLabel release];
+   [_failLT release];
+   [_failGT release];
    [_sPool release];
    [_doOnSolArray release];
    [_doOnExitArray release];
@@ -211,6 +215,18 @@
    if (_failLabel==nil)
       _failLabel = [ORConcurrency idxIntInformer];
    return _failLabel;
+}
+-(id<ORIdxIntInformer>) failLT
+{
+   if (_failLT==nil)
+      _failLT = [ORConcurrency idxIntInformer];
+   return _failLT;
+}
+-(id<ORIdxIntInformer>) failGT
+{
+   if (_failGT==nil)
+      _failGT= [ORConcurrency idxIntInformer];
+   return _failGT;
 }
 -(id<CPPortal>) portal
 {
@@ -1302,7 +1318,7 @@
 {
    ORStatus status = [_engine enforce: ^{ [var updateMax:val-1];}];
    if (status == ORFailure) {
-      [_failLabel notifyWith:var andInt:val];
+      [_failLT notifyWith:var andInt:val];
       [_search fail];
    }
    [_returnLT notifyWith:var andInt:val];
@@ -1312,7 +1328,7 @@
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val+1];}];
    if (status == ORFailure) {
-      [_failLabel notifyWith:var andInt:val];
+      [_failGT notifyWith:var andInt:val];
       [_search fail];
    }
    [_returnGT notifyWith:var andInt:val];
@@ -1464,7 +1480,7 @@
 {
    ORStatus status = [_engine enforce:^ {  [var updateMax:val-1];}];
    if (status == ORFailure) {
-      [_failLabel notifyWith:var andInt:val];
+      [_failLT notifyWith:var andInt:val];
       [_search fail];
    }
    [_returnLT notifyWith:var andInt:val];
@@ -1474,7 +1490,7 @@
 {
    ORStatus status = [_engine enforce:^ { [var updateMin:val+1];}];
    if (status == ORFailure) {
-      [_failLabel notifyWith:var andInt:val];
+      [_failGT notifyWith:var andInt:val];
       [_search fail];
    }
    [_returnGT notifyWith:var andInt:val];
@@ -1523,6 +1539,14 @@
 -(id<ORIdxIntInformer>) failLabel
 {
    return [_cp failLabel];
+}
+-(id<ORIdxIntInformer>) failLT
+{
+   return [_cp failLT];
+}
+-(id<ORIdxIntInformer>) failGT
+{
+   return [_cp failGT];
 }
 -(id<ORInformer>) propagateFail
 {
