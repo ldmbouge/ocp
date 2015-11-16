@@ -52,6 +52,12 @@
     _presenceVar = NULL;
    return self;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"var<OR>{task}:%d(%@,%@,%c)",getId(self),_horizon,_duration,_isOptional ? 'O' : 'M' ];
+   return buf;
+}
 -(id<ORTracker>) tracker
 {
    return _model;

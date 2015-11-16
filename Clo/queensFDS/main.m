@@ -32,25 +32,26 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
-             id<CPIntVarArray> cx = [cp concretize:x];
-             while (![cp allBound:x]) {
-                ORDouble ld = FDMAXINT;
-                ORInt bi = R.low - 1;
-                for(ORInt i=R.low;i <= R.up;i++) {
-                   if ([cp bound:x[i]]) continue;
-                   ORDouble ds =[h varOrdering:cx[i]];
-                   ld = ld < ds ? ld : ds;
-                   if (ld == ds) bi = i;
-                }
-                ORInt lb = [cp min:x[bi]], ub = [cp max:x[bi]];
-                ORInt mp = lb + (ub - lb)/2;
-                [cp try: ^ {
-                   [cp lthen:x[bi] with:mp+1];
-                }
-                    alt: ^{
-                   [cp gthen:x[bi] with:mp];
-                }];
-             }
+             [cp splitArray:x];
+//             id<CPIntVarArray> cx = [cp concretize:x];
+//             while (![cp allBound:x]) {
+//                ORDouble ld = FDMAXINT;
+//                ORInt bi = R.low - 1;
+//                for(ORInt i=R.low;i <= R.up;i++) {
+//                   if ([cp bound:x[i]]) continue;
+//                   ORDouble ds =[h varOrdering:cx[i]];
+//                   ld = ld < ds ? ld : ds;
+//                   if (ld == ds) bi = i;
+//                }
+//                ORInt lb = [cp min:x[bi]], ub = [cp max:x[bi]];
+//                ORInt mp = lb + (ub - lb)/2;
+//                [cp try: ^ {
+//                   [cp lthen:x[bi] with:mp+1];
+//                }
+//                    alt: ^{
+//                   [cp gthen:x[bi] with:mp];
+//                }];
+//             }
              
              //[cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
              @synchronized(cp) { // synchronized so that it works correctly even when asking parallel tree search

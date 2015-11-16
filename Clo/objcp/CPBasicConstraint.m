@@ -2158,7 +2158,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
+   if (bound(_x))
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
+   else {
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _x.max+1 minimize:YES];
+   }
 }
 
 

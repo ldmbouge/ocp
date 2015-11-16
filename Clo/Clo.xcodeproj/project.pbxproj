@@ -1546,6 +1546,8 @@
 		5BE1218F173C75C0000C9AA9 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BE12190173C75C0000C9AA9 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BE12191173C75C0000C9AA9 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BE2D73F1BFA386D0054B848 /* ORSemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* ORSemBDSController.m */; };
+		5BE2D7401BFA790D0054B848 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */; };
 		5BE5A7EC158A8390006703CB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BE5A7EF158A8390006703CB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE5A7EE158A8390006703CB /* main.m */; };
 		5BE5A7F3158A8390006703CB /* fdmul2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE5A7F2158A8390006703CB /* fdmul2.1 */; };
@@ -43047,7 +43049,6 @@
 				5BD2DFC915A3CEC700D4C616 /* ORSetI.m in Sources */,
 				5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */,
 				5B920EB415A3F6DD00AD0820 /* ORFactory.m in Sources */,
-				5BCAF1421BF146BF00C18360 /* OrSemFDSController.m in Sources */,
 				5B920EBC15A3FDB800AD0820 /* ORDataI.m in Sources */,
 				5B920EC015A402A600AD0820 /* ORArrayI.m in Sources */,
 				5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */,
@@ -43064,7 +43065,9 @@
 				B1CC82F815D27C66008DE335 /* ORConstraintI.m in Sources */,
 				374555041BD09ED200E6DC5F /* ORParameterI.m in Sources */,
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,
+				5BCAF1421BF146BF00C18360 /* OrSemFDSController.m in Sources */,
 				5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */,
+				5BE2D73F1BFA386D0054B848 /* ORSemBDSController.m in Sources */,
 				B189512115DE434A00B77813 /* ORSelectorI.m in Sources */,
 				5B57E5E1161F276800DB249A /* ORExprI.m in Sources */,
 				5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */,
@@ -43291,6 +43294,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BE2D7401BFA790D0054B848 /* ORCmdLineArgs.m in Sources */,
 				5BB79D641BA39A8E00F109C3 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

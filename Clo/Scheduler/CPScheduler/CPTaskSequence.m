@@ -34,7 +34,7 @@
 }
 -(id) initCPTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 {
-    NSLog(@"Create constraint CPTaskSequence\n");
+    //NSLog(@"Create constraint CPTaskSequence\n");
 
     // NOTE temporary check for optional task, can be removed once the propagator
     // is extended for optional tasks
@@ -207,7 +207,7 @@
 }
 -(id) initCPOptionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ
 {
-    NSLog(@"Create constraint CPTaskSequence\n");
+   // NSLog(@"Create constraint CPTaskSequence\n");
     
     assert(tasks.low == succ.low + 1);
     assert(tasks.up  == succ.up     );
@@ -232,7 +232,7 @@
 }
 -(id) initCPOptionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ resource:(id<CPResourceArray>) resource
 {
-    NSLog(@"Create constraint CPTaskSequence\n");
+    //NSLog(@"Create constraint CPTaskSequence\n");
     
     assert(tasks.low == succ.low + 1);
     assert(tasks.up  == succ.up     );

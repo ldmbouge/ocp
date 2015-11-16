@@ -40,6 +40,7 @@ struct ORResult {
 @property (nonatomic,readonly) enum Heuristic heuristic;
 @property (nonatomic,readonly) ORInt    nbThreads;
 @property (nonatomic,readonly) ORInt    nArg;
+@property (nonatomic,readonly) NSString* fName;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;

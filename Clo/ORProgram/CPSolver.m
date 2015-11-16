@@ -58,6 +58,10 @@
 {
    return _tab[--_sz];
 }
+-(id<CPHeuristic>) top
+{
+   return _tab[_sz - 1];
+}
 -(void) reset
 {
    for(ORUInt k=0;k<_sz;k++)
@@ -670,13 +674,35 @@
    }
 }
 
+-(void)splitArray:(id<ORIntVarArray>)x
+{
+   id<ORIntRange> R = x.range;
+   id<CPHeuristic> h = _hSet.top;
+   while (![self allBound:x]) {
+      ORDouble ld = FDMAXINT;
+      ORInt bi = R.low - 1;
+      for(ORInt i=R.low;i <= R.up;i++) {
+         CPIntVar* cxi = _gamma[getId(x[i])];
+         if (bound(cxi)) continue;
+         ORDouble ds =[h varOrdering:cxi];
+         ld = ld < ds ? ld : ds;
+         if (ld == ds) bi = i;
+      }
+      CPIntVar* bxi = _gamma[getId(x[bi])];
+      ORInt lb =bxi.min,ub = bxi.max;
+      ORInt mp = lb + (ub - lb)/2;
+      [self try: ^{ [self lthen:x[bi] with:mp+1];}
+            alt: ^{ [self gthen:x[bi] with:mp];}];
+   }
+}
+
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
       CPIntVar* xi = _gamma[getId(x[i])];
-      while (!bound(xi)) { 
+      while (!bound(xi)) {
          ORInt m = minDom(xi);
          [_search try: ^{ [self labelImpl: xi with: m]; }
                   alt: ^{ [self  diffImpl: xi with: m]; }
@@ -888,22 +914,22 @@
    return indexFound;
 }
 
--(void) label: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
+-(void) label: (id<ORIntVar>) var by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
-   id<CPIntVar> x = _gamma[v.getId];
+   id<CPIntVar> x = _gamma[getId(var)];
    while (![x bound]) {
-      ORInt v = [self selectValueImpl: x by: o1 then: o2];
-      [self try: ^() { [self labelImpl: x with: v]; }
-            alt: ^() { [self diffImpl: x with: v]; }];
+      ORInt val = [self selectValueImpl: x by: o1 then: o2];
+      [self try: ^() { [self label: var with: val]; }
+            alt: ^() { [self diff: var with: val]; }];
    }
 }
--(void) label: (id<ORIntVar>) v by: (ORInt2Double) o
+-(void) label: (id<ORIntVar>) var by: (ORInt2Double) o
 {
-   id<CPIntVar> x = _gamma[v.getId];
+   id<CPIntVar> x = _gamma[getId(var)];
    while (![x bound]) {
-      ORInt v = [self selectValueImpl: x by: o];
-      [self try: ^() { [self labelImpl: x with: v]; }
-            alt: ^() { [self diffImpl: x with: v]; }];
+      ORInt val = [self selectValueImpl: x by: o];
+      [self try: ^() { [self label: var with: val]; }
+            alt: ^() { [self diff: var with: val]; }];
    }
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val

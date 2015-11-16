@@ -112,6 +112,12 @@
 {
    return _rating;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"%f",_rating];
+   return buf;
+}
 @end
 
 @implementation ORAvgRating
@@ -132,6 +138,12 @@
 {
    _nb += 1.0;
    _ttl += val;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"[%d] %f --> %f",(int)_nb,_ttl,[self avgRating]];
+   return buf;
 }
 @end
 
@@ -177,9 +189,15 @@
 {
    return (getId(_var)<<16) + _val * _side;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"key(%@,%d,%c)",_var,_val,_side>0 ? '+' : '-'];
+   return buf;
+}
 @end
 
-#define ALPHA 0.95
+#define ALPHA 0.9
 
 @implementation CPFDS {
    id<CPEngine>             _engine;
@@ -361,17 +379,21 @@
       ORStatus status = ORSuspend;
       for(CPFDSKillRange* kr in sacs) {
          if (rank == 0 && [kr low] == [v min]) {
+            NSLog(@"SAC:%@ ≥ %d",v,kr.up+1);
             if ([_engine enforce: ^{ [v updateMin:[kr up]+1];}] == ORFailure)   // gthen:v with:[kr up]];
                status = ORFailure;
          }
          else if (rank == lastRank && [kr up] == [v max]) {
+            NSLog(@"SAC:%@ ≤ %d",v,kr.low-1);
             if ([_engine enforce: ^{ [v updateMax:[kr low]-1];}] == ORFailure) // lthen:v with:[kr low]];
                status = ORFailure;
          }
          else {
-            for(ORInt i=[kr low];i <= [kr up];i++)
+            for(ORInt i=[kr low];i <= [kr up];i++) {
+               NSLog(@"SAC:%@ ≠ %d",v,i);
                if ([_engine enforce: ^{ [v remove:i];}] == ORFailure) // diff:v with:i];
                   status = ORFailure;
+            }
          }
          rank++;
       }
@@ -381,6 +403,8 @@
       //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
    }
    [_monitor rootRefresh];
+   id<ORObjectiveValue> ov = [_cp objectiveValue];
+   [[_cp objective] tightenPrimalBound: ov];
    //NSLog(@"VARS AT END OF INIT:%@ ",av);
 }
 
@@ -430,7 +454,7 @@
          ORRating* theOtherRating = [self branchForSide:-1 var:x cst:mid+1];
          [vr setRating:ratingChoice + theOtherRating.rating];
 
-         [self dichotomize:d+1 var:x from:low to:mid block:b sac:set];
+         [self dichotomize:d+1 var:x from:x.min to:x.max block:b sac:set];
       } else {
          // [ldm] We know that x IN [l..mid] leads to an inconsistency. -> record a SAC.
          [self addKillSetFrom:low to:mid size:[x countFrom:low to:mid] into:set];
@@ -451,7 +475,7 @@
          ORRating* theOtherRating = [self branchForSide:+1 var:x cst:mid];
          [vr setRating:ratingChoice + theOtherRating.rating];
          
-         [self dichotomize:d+1 var:x from:mid+1 to:up block:b sac:set];
+         [self dichotomize:d+1 var:x from:x.min to:x.max block:b sac:set];
       } else {
          // [ldm] We know that x IN [mid+1..up] leads to an inconsistency. -> record a SAC.
          [self addKillSetFrom:mid+1 to:up size:[x countFrom:mid+1 to:up] into:set];

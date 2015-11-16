@@ -60,6 +60,7 @@ PORTABLE_BEGIN
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
+-(void)          splitArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy;
 -(void)        labelArrayFF: (id<ORIntVarArray>) x;
