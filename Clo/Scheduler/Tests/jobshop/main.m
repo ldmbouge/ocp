@@ -397,7 +397,7 @@ int mainPureCP(int argc, const char * argv[])
    @autoreleasepool {
       
       //FILE* data = fopen("orb03.jss","r");
-      FILE* data = fopen("la19.jss","r");
+      FILE* data = fopen("la36.jss","r");
       ORInt nbJobs, nbMachines;
       fscanf(data, "%d",&nbJobs);
       fscanf(data, "%d",&nbMachines);

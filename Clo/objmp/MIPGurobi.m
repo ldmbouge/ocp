@@ -367,13 +367,23 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 @end
 
+
+FILE* outFile = 0;
+ORLong timeStart = -1;
+
 int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata) {
+   if(outFile == 0) outFile = fopen("/Users/dan/Desktop/mipout.txt", "w+");
+   if(timeStart == -1) timeStart = [ORRuntimeMonitor cputime];
+   
     MIPGurobiSolver* solver = (MIPGurobiSolver*)usrdata;
     if(where == GRB_CB_MIPSOL) {
        ORDouble bnd;
        GRBcbget(cbdata, where, GRB_CB_MIPSOL_OBJ, (void *) &bnd);
        solver->_bnd = bnd;
        [[solver boundInformer] notifyWithFloat: bnd];
+       
+       fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor cputime] - timeStart) / 1000.0, (ORInt)bnd);
+       fflush(outFile);
     }
     else if(where == GRB_CB_MIPNODE) {
        [solver lazySolutionInject: cbdata];

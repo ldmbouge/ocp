@@ -115,7 +115,6 @@
 		37D62BAD1BD5CFAD005A6DBC /* ORCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D62B931BD5CFAC005A6DBC /* ORCombinator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37D62BAE1BD5CFAD005A6DBC /* ORLagrangeRelax.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D62B941BD5CFAC005A6DBC /* ORLagrangeRelax.h */; };
 		37D62BAF1BD5CFAD005A6DBC /* ORLagrangeRelax.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D62B951BD5CFAC005A6DBC /* ORLagrangeRelax.m */; };
-		37D62BB01BD5CFAD005A6DBC /* ORLagrangeRelax.m~ in Resources */ = {isa = PBXBuildFile; fileRef = 37D62B961BD5CFAC005A6DBC /* ORLagrangeRelax.m~ */; };
 		37D62BB11BD5CFAD005A6DBC /* ORLagrangianTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D62B971BD5CFAC005A6DBC /* ORLagrangianTransform.h */; };
 		37D62BB21BD5CFAD005A6DBC /* ORLagrangianTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D62B981BD5CFAC005A6DBC /* ORLagrangianTransform.m */; };
 		37D62BB31BD5CFAD005A6DBC /* ORLogicBenders.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D62B991BD5CFAC005A6DBC /* ORLogicBenders.h */; };
@@ -41306,7 +41305,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37D62BB01BD5CFAD005A6DBC /* ORLagrangeRelax.m~ in Resources */,
 				5B681187161F98FB00F4480F /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
