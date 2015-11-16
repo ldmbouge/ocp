@@ -174,7 +174,6 @@
       
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [ORFactory shutdown];
    }
 }
 

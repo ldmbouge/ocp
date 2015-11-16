@@ -80,7 +80,6 @@
     ];
    NSLog(@"Got %@ solutions\n",nbSolutions);
    XCTAssertTrue([cp intValue:nbSolutions]==92, @"queens-8 has 92 solutions");
-   [ORFactory shutdown];
 }
 
 - (void) testWL1
@@ -107,7 +106,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue: nbSolutions]);
-   [ORFactory shutdown];
 }
 
 - (void) testWL2
@@ -134,7 +132,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [ORFactory shutdown];
 }
 
 - (void) testWL3 
@@ -173,7 +170,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [ORFactory shutdown];
 }
 
 - (void) testWLSBEqc
@@ -197,7 +193,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [ORFactory shutdown];
 }
 
 - (void) testBoolView
@@ -222,7 +217,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [ORFactory shutdown];
 }
 -(void)testReify1
 {
@@ -238,7 +232,6 @@
       XCTAssertTrue([cp min:b] == ([cp min:x]!=5), @"reification not ok");
    }
     ];
-   [ORFactory shutdown];
 }
 -(void)testReify2
 {
@@ -253,7 +246,6 @@
       XCTAssertTrue([cp min:b] == ([cp min:x]==5), @"reification not ok");
    }
     ];
-   [ORFactory shutdown];
 }
 
 -(void)testReify3
@@ -272,7 +264,6 @@
       XCTAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b<=> (x==y)) not ok");
    }
     ];
-   [ORFactory shutdown];
 }
 
 -(void)testReify4
@@ -290,7 +281,6 @@
       XCTAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b first) (b<=> (x==y)) not ok");
    }
     ];
-   [ORFactory shutdown];
 }
 
 -(void)testAVL
@@ -326,7 +316,6 @@
    }
     ];
    printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
-   [ORFactory shutdown];
 }
 
 /** Currently not working 
@@ -364,7 +353,6 @@
    NSLog(@"Quitting");
    XCTAssertTrue([cp intValue:nbSolutions] == 92, @"Expecting 92 solutions");
    [cp release];
-   [ORFactory shutdown];
 }
 */
 

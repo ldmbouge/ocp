@@ -452,7 +452,7 @@ ORInt trailMagic(ORTrailI* trail)
 -(id)init
 {
    self = [super init];
-   _mxs = 128;
+   _mxs = 16;
    _csz = 0;
    _tab = malloc(sizeof(id)*_mxs);
    return self;
@@ -463,8 +463,10 @@ ORInt trailMagic(ORTrailI* trail)
    _mxs = mt->_mxs;
    _csz = mt->_csz;
    _tab = malloc(sizeof(id)*_mxs);
-   for(ORInt i=0;i<_csz;i++)
+   for(ORInt i=0;i<_csz;i++) {
+      assert(mt->_tab[i] != nil);
       _tab[i] = [mt->_tab[i] retain];
+   }
    return self;
 }
 -(void)dealloc
@@ -487,6 +489,7 @@ ORInt trailMagic(ORTrailI* trail)
 {
    if (_csz >= _mxs)
       [self resize];
+   assert(obj != nil);
    _tab[_csz++] = [obj retain];
    return obj;
 }
@@ -512,15 +515,20 @@ ORInt trailMagic(ORTrailI* trail)
 {
    ORInt fh = [cl memoryFrom];
    ORInt th = [cl memoryTo];
-   for(ORInt k=fh;k < th;k++)
+   for(ORInt k=fh;k < th;k++) {
+      assert(mt->_tab[k] != nil);
+      if (_csz >= _mxs) [self resize];
       _tab[_csz++] = [mt->_tab[k] retain];
+   }
 }
 -(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th
 {
    while (_csz + (th - fh) >= _mxs)
       [self resize];
-   for(ORInt k=fh;k < th;k++)
+   for(ORInt k=fh;k < th;k++) {
+      assert(mt->_tab[k] != nil);
       _tab[_csz++] = [mt->_tab[k] retain];
+   }
 }
 -(void)reload:(ORMemoryTrailI*)t
 {
@@ -532,6 +540,7 @@ ORInt trailMagic(ORTrailI* trail)
    while(_csz < t->_csz) {
       if (_csz >= _mxs)
          [self resize];
+      assert(t->_tab[i] != nil);
       _tab[_csz++] = [t->_tab[i++] retain];
    }
 }

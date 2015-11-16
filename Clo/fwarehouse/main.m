@@ -70,13 +70,12 @@ int main(int argc, const char * argv[])
                id<ORIntArray> ops = [ORFactory intArray:cp range:open.range with:^ORInt(ORInt k) {
                   return [cp intValue:open[k]];
                }];
-               NSLog(@"Solution: %@  -- cost: %f",ops,[cp dblValue:obj]);
+               NSLog(@"Solution: %@  -- cost: %f",ops,[cp doubleValue:obj]);
             }
          }];
          NSLog(@"#solutions: %d",nbSol);
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }

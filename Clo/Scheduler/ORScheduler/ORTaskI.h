@@ -16,6 +16,7 @@
 -(id<ORTaskVar>) initOROptionalTaskVar: (id<ORModel>) model horizon: (id<ORIntRange>) horizon duration: (id<ORIntRange>) duration;
 -(id<ORIntVar>) startVar;
 -(id<ORIntVar>) durationVar;
+-(id<ORIntVar>) endVar;
 -(id<ORIntVar>) presenceVar;
 @end
 
@@ -44,3 +45,4 @@
 -(void) finaliseTransitionTask;
 -(void) updateTransitionTask:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration;
 @end
+

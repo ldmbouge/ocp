@@ -378,9 +378,9 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "intvalue not defined on expression"];
    return 0;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "dblValue not defined on expression"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "doubleValue not defined on expression"];
    return 0;
 }
 -(ORBool) isConstant

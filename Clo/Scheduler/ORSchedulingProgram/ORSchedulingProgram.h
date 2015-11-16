@@ -25,6 +25,10 @@
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORTask.h>
 
+@protocol ORSchedulingModel <ORModel>
+-(id<ORTaskVarArray>)taskVars;
+@end
+
 /*!
  * @brief The CP program for the scheduling modul.
  */
@@ -119,6 +123,8 @@
  * @return The maximal duration.
  */
 -(ORInt) maxDuration: (id<ORTaskVar>) task;
+-(ORBool) isResourceAssigned: (id<ORResourceTask>) task;
+
 -(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart;
 -(void) updateEnd: (id<ORTaskVar>) task with: (ORInt) newEnd;
 -(void) updateMinDuration: (id<ORTaskVar>) task with: (ORInt) newMinDuration;

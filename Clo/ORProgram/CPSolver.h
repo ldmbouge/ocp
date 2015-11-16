@@ -42,6 +42,7 @@
 -(CPHeuristicSet*) initCPHeuristicSet;
 -(void) push: (id<CPHeuristic>) h;
 -(id<CPHeuristic>) pop;
+-(id<CPHeuristic>) top;
 -(void) reset;
 -(void) applyToAll: (void(^)(id<CPHeuristic> h)) closure;
 -(BOOL)empty;
@@ -78,23 +79,7 @@
 -(ORInt) maxBound:(id<ORIdArray>) x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 -(id<ORIntVar>)smallestDom:(id<ORIdArray>)x;
-
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
-
-// pvh: do we have to put these here. Any way to externalize them.
--(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createSDeg: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createFF;
--(id<CPHeuristic>) createWDeg;
--(id<CPHeuristic>) createDDeg;
--(id<CPHeuristic>) createSDeg;
--(id<CPHeuristic>) createIBS;
--(id<CPHeuristic>) createABS;
-
 -(void) defaultSearch;
 @end
 
@@ -122,7 +107,11 @@
 }
 -(CPInformerPortal*) initCPInformerPortal: (CPCoreSolver*) cp;
 -(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) retLT;
+-(id<ORIdxIntInformer>) retGT;
 -(id<ORIdxIntInformer>) failLabel;
+-(id<ORIdxIntInformer>) failLT;
+-(id<ORIdxIntInformer>) failGT;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end

@@ -25,7 +25,7 @@
 }
 -(CPRealVarSnapshot*) init: (CPRealVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -46,7 +46,7 @@
    }
    return self;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -309,11 +309,11 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_dom max];
 }
--(ORDouble) dblMin
+-(ORDouble) doubleMin
 {
    return [_dom min];
 }
--(ORDouble) dblMax
+-(ORDouble) doubleMax
 {
    return [_dom max];
 }
@@ -323,7 +323,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
       return [_dom min];
    return _value;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    if ([_dom bound])
       return [_dom min];
@@ -578,7 +578,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return [_theVar min];
 }
--(ORDouble)dblValue
+-(ORDouble)doubleValue
 {
    return [_theVar min];
 }

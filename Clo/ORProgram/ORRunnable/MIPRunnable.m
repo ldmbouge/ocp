@@ -11,6 +11,7 @@
 #import "ORProgramFactory.h"
 #import <ORProgram/ORSolution.h>
 #import <ORScheduler/ORScheduler.h>
+//#import <ORSchedulingProgram/ORSchedulingProgram.h>
 
 @implementation MIPRunnableI {
     id<ORModel> _model;
@@ -102,7 +103,8 @@
             id<ORTaskVar> t = (id<ORTaskVar>)v;
             MIPVariableI* x = [_program concretize: [t getStartVar]];
             [vars addObject: x];
-            [vals addObject: @((ORInt)[[sol value: t] est])];
+            //[vals addObject: @((ORInt)[[sol value: t] est])];
+            [vals addObject: @((ORInt)[sol est:t])];
         }
     }
     

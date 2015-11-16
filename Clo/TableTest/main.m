@@ -71,7 +71,6 @@ int main (int argc, const char * argv[])
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
    [cp release];
-   [CPFactory shutdown];
    return 0;
 }
 

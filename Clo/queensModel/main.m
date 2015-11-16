@@ -49,7 +49,6 @@ int main (int argc, const char * argv[])
        ];
       NSLog(@"GOT %d solutions\n",[nbSolutions intValue:cp]);
       NSLog(@"Solver status: %@\n",cp);
-      [ORFactory shutdown];
    }
    return 0;
 }

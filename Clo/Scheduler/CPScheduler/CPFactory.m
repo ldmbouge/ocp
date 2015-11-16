@@ -334,6 +334,13 @@
    [engine trackMutable: cstr];
    return cstr;
 }
++(id<CPConstraint>) constraint:(id<CPTaskVar>) task end:(id<CPIntVar>) end
+{
+    id<CPEngine> engine = [task engine];
+    id<CPConstraint> cstr =[[CPTaskEnd alloc] initCPTaskEnd: task : end];
+    [engine trackMutable: cstr];
+    return cstr;
+}
 +(id<CPConstraint>) constraint: (id<CPTaskVar>) task presence: (id<CPIntVar>) presence
 {
     id<CPEngine> engine = [task engine];

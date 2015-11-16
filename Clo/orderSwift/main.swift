@@ -29,5 +29,4 @@ autoreleasepool {
    }
    let end = ORRuntimeMonitor.cputime()
    println("solving time: \(end - start)")
-   ORFactory.shutdown()
 }

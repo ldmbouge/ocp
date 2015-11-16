@@ -27,7 +27,11 @@ PORTABLE_BEGIN
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) retLT;
+-(id<ORIdxIntInformer>) retGT;
 -(id<ORIdxIntInformer>) failLabel;
+-(id<ORIdxIntInformer>) failLT;
+-(id<ORIdxIntInformer>) failGT;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end
@@ -56,6 +60,7 @@ PORTABLE_BEGIN
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
+-(void)          splitArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy;
 -(void)        labelArrayFF: (id<ORIntVarArray>) x;
@@ -119,12 +124,14 @@ PORTABLE_BEGIN
 -(id<CPHeuristic>) createSDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;
 -(id<CPHeuristic>) createSDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
+-(id<CPHeuristic>) createFDS;
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) defaultSearch;
 -(void) search:(void*(^)())stask;
@@ -143,9 +150,9 @@ PORTABLE_BEGIN
 -(NSSet*) constraints: (id<ORVar>)x;
 
 -(void)    assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x;
--(ORDouble) dblValue: (id<ORRealVar>) x;
--(ORDouble) dblMin: (id<ORRealVar>)x;
--(ORDouble) dblMax: (id<ORRealVar>)x;
+-(ORDouble) doubleValue: (id<ORRealVar>) x;
+-(ORDouble) doubleMin: (id<ORRealVar>)x;
+-(ORDouble) doubleMax: (id<ORRealVar>)x;
 -(ORDouble) domwidth: (id<ORRealVar>)x;
 -(ORDouble) paramValue: (id<ORRealParam>)p;
 -(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;

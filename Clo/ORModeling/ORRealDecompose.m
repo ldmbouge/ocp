@@ -78,7 +78,7 @@
 }
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
-    [_terms addIndependent:[e dblValue]];
+   [_terms addIndependent:[e doubleValue]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
@@ -108,29 +108,29 @@
 }
 -(void) visitExprMulI: (ORExprMulI*) e
 {
-    if (_eqto) {
-        id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-        [_terms addTerm:alpha by:1];
-        _eqto = nil;
-    } else {
-        BOOL cv = [[e left] isConstant] && [[e right] isVariable];
-        BOOL vc = [[e left] isVariable] && [[e right] isConstant];
-        if (cv || vc) {
-            ORDouble coef = cv ? [[e left] dblValue] : [[e right] dblValue];
-            id       x = cv ? [e right] : [e left];
-            [_terms addTerm: x by: coef];
-        } else if ([[e left] isConstant]) {
-            id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:[e right]];
-            [_terms addTerm:alpha by:[[e left] min]];
-        } else if ([[e right] isConstant]) {
-            id<ORRealLinear> left = [ORNormalizer realLinearFrom:[e left] model:_model];
-            [left scaleBy:[[e right] min]];
-            [_terms addLinear:left];
-        } else {
-            id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e];
-            [_terms addTerm:alpha by:1];
-        }
-    }
+   if (_eqto) {
+      id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      BOOL cv = [[e left] isConstant] && [[e right] isVariable];
+      BOOL vc = [[e left] isVariable] && [[e right] isConstant];
+      if (cv || vc) {
+         ORDouble coef = cv ? [[e left] doubleValue] : [[e right] doubleValue];
+         id       x = cv ? [e right] : [e left];
+         [_terms addTerm: x by: coef];
+      } else if ([[e left] isConstant]) {
+         id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:[e right]];
+         [_terms addTerm:alpha by:[[e left] min]];
+      } else if ([[e right] isConstant]) {
+         id<ORRealLinear> left = [ORNormalizer realLinearFrom:[e left] model:_model];
+         [left scaleBy:[[e right] min]];
+         [_terms addLinear:left];
+      } else {
+         id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e];
+         [_terms addTerm:alpha by:1];
+      }
+   }
 }
 -(void) visitExprDivI: (ORExprDivI*) e
 {
@@ -268,9 +268,9 @@
 }
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
-    if (!_rv)
-        _rv = [ORFactory realVar:_model low:[e dblValue] up:[e dblValue]];
-    [_model addConstraint:[ORFactory realEqualc:_model var:_rv to:[e dblValue]]];
+   if (!_rv)
+      _rv = [ORFactory realVar:_model low:[e doubleValue] up:[e doubleValue]];
+   [_model addConstraint:[ORFactory realEqualc:_model var:_rv to:[e doubleValue]]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {

@@ -89,11 +89,11 @@
     id<ORSolution> s0 = [_r0 bestSolution];
     id<ORSolution> s1 = [_r1 bestSolution];
     if(s0 && s1) {        
-        _solvedRunnable = ([[s0 objectiveValue] dblValue] <= [[s1 objectiveValue] dblValue]) ? _r0 : _r1;
-        _bestBound = MIN([[s0 objectiveValue] dblValue], [[s1 objectiveValue] dblValue]);
+        _solvedRunnable = ([[s0 objectiveValue] doubleValue] <= [[s1 objectiveValue] doubleValue]) ? _r0 : _r1;
+        _bestBound = MIN([[s0 objectiveValue] doubleValue], [[s1 objectiveValue] doubleValue]);
     }
-    else if(s0) { _bestBound = [[s0 objectiveValue] dblValue]; _solvedRunnable = _r0; }
-    else if(s1) { _bestBound = [[s1 objectiveValue] dblValue]; _solvedRunnable = _r1; }
+    else if(s0) { _bestBound = [[s0 objectiveValue] doubleValue]; _solvedRunnable = _r0; }
+    else if(s1) { _bestBound = [[s1 objectiveValue] doubleValue]; _solvedRunnable = _r1; }
 }
 
 -(id<ORRunnable>) primaryRunnable { return _r0; }

@@ -24,5 +24,4 @@ autoreleasepool {
       firstFail(cp, x) » Do(cp) { nbs++ }
    }
    println("Number of sols \(nbs)")
-   ORFactory.shutdown()
 }

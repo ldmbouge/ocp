@@ -47,7 +47,7 @@
 
 @interface ORDoubleI : ORExprI<NSCoding,ORDoubleNumber>
 -(ORDoubleI*) init: (id<ORTracker>) tracker value: (ORDouble) value;
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 -(ORDouble) value;
 -(ORInt) intValue;
 -(id<ORTracker>) tracker;
@@ -57,7 +57,7 @@
 -(ORMutableDoubleI*) initORMutableRealI: (id<ORTracker>) tracker value: (ORDouble) value;
 -(ORDouble) initialValue;
 -(ORDouble) value: (id<ORGamma>) solver;
--(ORDouble) dblValue: (id<ORGamma>) solver;
+-(ORDouble) doubleValue: (id<ORGamma>) solver;
 -(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 -(id<ORTracker>) tracker;
 @end

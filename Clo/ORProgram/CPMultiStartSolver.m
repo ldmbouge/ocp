@@ -557,6 +557,10 @@
 {
    return [self setupHeuristic:_cmd with:rvars];
 }
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars
+{
+   return [self setupHeuristic:_cmd with:rvars];
+}
 -(id<CPHeuristic>) createFF
 {
    return [self setupHeuristic:_cmd];
@@ -578,6 +582,10 @@
    return [self setupHeuristic:_cmd];
 }
 -(id<CPHeuristic>) createABS
+{
+   return [self setupHeuristic:_cmd];
+}
+-(id<CPHeuristic>) createFDS
 {
    return [self setupHeuristic:_cmd];
 }
@@ -609,21 +617,21 @@
 {
    return [[self worker] member: v in: x];
 }
--(ORDouble) dblValue: (id<ORRealVar>) x
+-(ORDouble) doubleValue: (id<ORRealVar>) x
 {
-   return [((id<CPProgram>)[self worker]) dblValue: x];
+   return [((id<CPProgram>)[self worker]) doubleValue: x];
 }
 -(ORDouble) domwidth:(id<ORRealVar>)x
 {
    return [[self worker] domwidth: x];
 }
--(ORDouble) dblMin:(id<ORRealVar>)x
+-(ORDouble) doubleMin:(id<ORRealVar>)x
 {
-   return [[self worker] dblMin:x];
+   return [[self worker] doubleMin:x];
 }
--(ORDouble) dblMax:(id<ORRealVar>)x
+-(ORDouble) doubleMax:(id<ORRealVar>)x
 {
-   return [[self worker] dblMax:x];
+   return [[self worker] doubleMax:x];
 }
 -(void) assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {

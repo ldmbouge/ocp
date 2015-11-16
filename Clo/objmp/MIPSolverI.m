@@ -22,7 +22,7 @@
    
 }
 -(MIPDoubleVarSnapshot*) initMIPFloatVarSnapshot: (MIPVariableI*) v name: (ORInt) name;
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -34,14 +34,14 @@
 {
    self = [super init];
    _name = name;
-   _value = [v dblValue];
+   _value = [v doubleValue];
    return self;
 }
 -(ORUInt) getId
 {
    return _name;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -726,7 +726,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%f",[_solver dblValue:self]];
+   [buf appendFormat:@"%f",[_solver doubleValue:self]];
    return buf;
 }
 -(void) resize
@@ -789,9 +789,9 @@
    for(ORInt i = 0; i < _size; i++)
       printf("(%d,%f)",[_cstr[i] idx],_coef[i]);
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
-   return [_solver dblValue:self];
+   return [_solver doubleValue:self];
 }
 -(ORBool) isInteger
 {
@@ -1352,12 +1352,13 @@
 {
    return (ORInt) [_MIP intValue: var];
 }
--(void) setIntVar: (MIPIntVariableI*)var value:(ORInt)val {
+-(void) setIntVar: (MIPIntVariableI*)var value:(ORInt)val
+{
     [_MIP setIntVar: var value: val];
 }
--(ORDouble) dblValue: (MIPVariableI*) var
+-(ORDouble) doubleValue: (MIPVariableI*) var
 {
-   return [_MIP dblValue: var];
+   return [_MIP doubleValue: var];
 }
 -(ORDouble) lowerBound: (MIPVariableI*) var
 {

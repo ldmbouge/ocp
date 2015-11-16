@@ -15,7 +15,7 @@
 #import <ORModeling/ORLPFlatten.h>
 #import <ORModeling/ORMIPFlatten.h>
 #import <ORModeling/ORLinearize.h>
-#import "ORModelI.h"
+#import <ORModeling/ORModelI.h>
 
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel

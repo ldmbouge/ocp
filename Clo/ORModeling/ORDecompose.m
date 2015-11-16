@@ -297,36 +297,36 @@ struct CPVarPair {
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-    bool lc = [[e left] isConstant];
-    bool rc = [[e right] isConstant];
-    if (lc && rc) {
-        bool isOk = [[e left] dblValue] == [[e right] dblValue];
-        if (!isOk)
-            [_model addConstraint:[ORFactory fail:_model]];
-    } else if (lc || rc) {
-        ORDouble c = lc ? [[e left] dblValue] : [[e right] dblValue];
-        ORExprI* other = lc ? [e right] : [e left];
-        ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model];
-        [lin addIndependent: - c];
-        _terms = lin;
-    } else {
-        bool lv = [[e left] isVariable];
-        bool rv = [[e right] isVariable];
-        if (lv || rv) {
-            ORExprI* other = lv ? [e right] : [e left];
-            ORExprI* var   = lv ? [e left] : [e right];
-            id<ORRealVar> theVar = [ORNormalizer realVarIn:_model expr:var];
-            ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model equalTo:theVar];
-            [lin release];
-            _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
-        } else {
-            ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
-            ORRealLinearFlip* linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
-            [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
-            [linRight release];
-            _terms = linLeft;
-        }
-    }
+   bool lc = [[e left] isConstant];
+   bool rc = [[e right] isConstant];
+   if (lc && rc) {
+      bool isOk = [[e left] doubleValue] == [[e right] doubleValue];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      ORDouble c = lc ? [[e left] doubleValue] : [[e right] doubleValue];
+      ORExprI* other = lc ? [e right] : [e left];
+      ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model];
+      [lin addIndependent: - c];
+      _terms = lin;
+   } else {
+      bool lv = [[e left] isVariable];
+      bool rv = [[e right] isVariable];
+      if (lv || rv) {
+         ORExprI* other = lv ? [e right] : [e left];
+         ORExprI* var   = lv ? [e left] : [e right];
+         id<ORRealVar> theVar = [ORNormalizer realVarIn:_model expr:var];
+         ORRealLinear* lin  = [ORNormalizer realLinearFrom:other model:_model equalTo:theVar];
+         [lin release];
+         _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
+      } else {
+         ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
+         ORRealLinearFlip* linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
+         [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
+         [linRight release];
+         _terms = linLeft;
+      }
+   }
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {

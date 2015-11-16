@@ -22,7 +22,7 @@
    
 }
 -(LPDoubleVarSnapshot*) initLPFloatVarSnapshot: (LPVariableI*) v name: (ORInt) name;
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 -(ORDouble) reducedCost;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
@@ -35,7 +35,7 @@
 {
    self = [super init];
    _name = name;
-   _value = [v dblValue];
+   _value = [v doubleValue];
    _reducedCost = [v reducedCost];
    return self;
 }
@@ -43,7 +43,7 @@
 {
    return _name;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -641,7 +641,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"LPVariable(%d,%f)",_idx,[_solver dblValue:self]];
+   [buf appendFormat:@"LPVariable(%d,%f)",_idx,[_solver doubleValue:self]];
    return buf;
 }
 -(void) resize
@@ -708,9 +708,9 @@
 {
    return [_solver createColumn: _low up:_up size:_size obj:_objCoef cstr:_cstr coef:_coef];
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
-   return [_solver dblValue:self];
+   return [_solver doubleValue:self];
 }
 
 -(ORDouble) reducedCost
@@ -1447,7 +1447,7 @@
 {
    return [_lp status];
 }
--(ORDouble) dblValue: (LPVariableI*) var
+-(ORDouble) doubleValue: (LPVariableI*) var
 {
    return [_lp value: var];
 }

@@ -21,11 +21,14 @@
 #import <ORProgram/CPWDeg.h>
 #import <ORProgram/CPIBS.h>
 #import <ORProgram/CPABS.h>
+#import <ORProgram/CPFDS.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPConcretizer.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <ORProgram/CPParallel.h>
 #import <ORProgram/ORCPParSolver.h>
+#import <ORProgram/ORCombinator.h>
+#import <ORProgram/ORParallelCombinator.h>
 #import <ORProgram/ORSTask.h>
 
 @interface ORGamma (Model)

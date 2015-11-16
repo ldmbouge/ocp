@@ -19,6 +19,10 @@
 #import <ORProgram/ORRunnable.h>
 #import <ORModeling/ORLinearize.h>
 
+
+#import "ORCmdLineArgs.h"
+
+
 //121 constraints
 //235670 choices
 //227271 fail
@@ -395,7 +399,6 @@ int mainSubpathLNS(int argc, const char * argv[])
 int mainPureCP(int argc, const char * argv[])
 {
    @autoreleasepool {
-      
       //FILE* data = fopen("orb03.jss","r");
       FILE* data = fopen("la36.jss","r");
       ORInt nbJobs, nbMachines;
@@ -455,19 +458,16 @@ int mainPureCP(int argc, const char * argv[])
                       by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
                     then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
          }];
-         [cp label: makespan];
-         printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+         ORLong timeEnd = [ORRuntimeMonitor cputime];
+         NSLog(@"Time: %lld:",timeEnd - timeStart);
+         id<ORSolutionPool> pool = [cp solutionPool];
+         id<ORSolution> optimum = [pool best];
+         printf("Makespan: %d \n",[optimum intValue: makespan]);
+         NSLog(@"Solver status: %@\n",cp);
+         NSLog(@"Quitting");
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
       }];
-      ORLong timeEnd = [ORRuntimeMonitor cputime];
-      NSLog(@"Time: %lld:",timeEnd - timeStart);
-      id<ORSolutionPool> pool = [cp solutionPool];
-      //      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
-      id<ORSolution> optimum = [pool best];
-      printf("Makespan: %d \n",[optimum intValue: makespan]);
-      NSLog(@"Solver status: %@\n",cp);
-      NSLog(@"Quitting");
-      //      struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-      
    }
    return 0;
 }

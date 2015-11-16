@@ -69,9 +69,9 @@
 {
     return [_MIPsolver bestObjectiveBound];
 }
--(ORDouble) dblValue: (id<ORRealVar>) v
+-(ORDouble) doubleValue: (id<ORRealVar>) v
 {
-   return [_MIPsolver dblValue: _gamma[v.getId]];
+   return [_MIPsolver doubleValue: _gamma[v.getId]];
 }
 -(ORDouble) paramValue: (id<ORRealParam>)p
 {

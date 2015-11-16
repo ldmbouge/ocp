@@ -3662,7 +3662,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _value;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -3723,7 +3723,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _value;
 }
--(ORDouble) dblValue
+-(ORDouble) doubleValue
 {
    return _value;
 }

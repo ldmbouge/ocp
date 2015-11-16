@@ -505,7 +505,7 @@
 -(id) initObjectiveValueIntI: (ORInt) pb minimize: (ORBool) b ;
 -(ORInt)value;
 -(ORInt)intValue;
--(ORDouble)dblValue;
+-(ORDouble)doubleValue;
 -(ORInt)primal;
 -(ORDouble)key;
 -(NSString*)description;
@@ -518,7 +518,7 @@
 }
 -(id) initObjectiveValueRealI: (ORDouble) pb minimize: (ORBool) b ;
 -(ORDouble)value;
--(ORDouble)dblValue;
+-(ORDouble)doubleValue;
 -(ORDouble)primal;
 -(ORDouble)key;
 -(NSString*)description;

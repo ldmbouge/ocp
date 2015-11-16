@@ -467,18 +467,18 @@ enum ORGroupType {
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
 -(NSComparisonResult) compare: (id<ORObjectiveValue>) other;
 @optional-(ORInt) intValue;
--(ORDouble) dblValue;
+-(ORDouble) doubleValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
 -(ORInt) value;
 -(ORInt) intValue;
--(ORDouble)dblValue;
+-(ORDouble)doubleValue;
 @end
 
 @protocol ORObjectiveValueReal <ORObjectiveValue>
 -(ORDouble) value;
--(ORDouble)dblValue;
+-(ORDouble)doubleValue;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
@@ -513,6 +513,7 @@ enum ORGroupType {
 -(id<OREngine>)       engine;
 -(id) concretize: (id) o;
 -(id<ORObjectiveValue>) objectiveValue;
+-(id<ORSolutionPool>) solutionPool;
 @end
 
 @protocol ORASearchSolver <ORASolver>
