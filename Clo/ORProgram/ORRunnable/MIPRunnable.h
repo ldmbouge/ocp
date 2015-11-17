@@ -17,6 +17,7 @@
 
 @interface MIPRunnableI : ORPipedRunnable<MIPRunnable>
 -(id) initWithModel: (id<ORModel>)m;
+-(id) initWithModel: (id<ORModel>)m numThreads: (ORInt)nth;
 -(id<ORSignature>) signature;
 -(id<MIPProgram>) solver;
 -(void) injectColumn: (id<ORDoubleArray>) col;
