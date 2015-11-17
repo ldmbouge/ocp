@@ -43,11 +43,14 @@ int main(int argc, const char * argv[]) {
         BOOL doMIP = NO;
         BOOL doHybrid = NO;
         BOOL doHybridLNS = NO;
+        BOOL doHybridLNS_CP = NO;
         
         if([args containsObject: @"-cp"]) doCP = YES;
         if([args containsObject: @"-mip"]) doMIP = YES;
         if([args containsObject: @"-cp-mip"]) doHybrid = YES;
         if([args containsObject: @"-lns-mip"]) doHybridLNS = YES;
+        if([args containsObject: @"-lns-cp"]) doHybridLNS_CP = YES;
+
         
         NSString* path = [args lastObject];//@"/Users/dan/Work/platform/Clo/Scheduler/BenchmarkData/jsp/la19.jss"
         
@@ -103,9 +106,10 @@ int main(int argc, const char * argv[]) {
         // Solve CP
         if(doCP) {
             FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
-            
-            id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram: model];
-            ORLong timeStart = [ORRuntimeMonitor cputime];
+            id<ORAnnotation> notes = [ORFactory annotation];
+            id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model nb: 2 annotation: notes with:[ORSemDFSController class]];
+
+            ORLong timeStart = [ORRuntimeMonitor wctime];
             [cp solve: ^{
                 [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
                     id<ORTaskVarArray> t = disjunctive[i].taskVars;
@@ -115,13 +119,13 @@ int main(int argc, const char * argv[]) {
                 }];
                 [cp label: makespan];
                 printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
-                fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor cputime] - timeStart) / 1000.0, [cp min: makespan]);
+                fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
                 fflush(outFile);
             }];
             
             fclose(outFile);
             
-            ORLong timeEnd = [ORRuntimeMonitor cputime];
+            ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolutionPool> pool = [cp solutionPool];
             id<ORSolution> optimum = [pool best];
@@ -132,9 +136,9 @@ int main(int argc, const char * argv[]) {
             // Linearize
             id<ORModel> lm = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
             id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-            ORLong timeStart = [ORRuntimeMonitor cputime];
+            ORLong timeStart = [ORRuntimeMonitor wctime];
             [r run];
-            ORLong timeEnd = [ORRuntimeMonitor cputime];
+            ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolution> optimum = [r bestSolution];
             printf("!! MIP makespan: %d \n",[optimum intValue: makespan]);
@@ -156,9 +160,9 @@ int main(int argc, const char * argv[]) {
             }];
             id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
             id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
-            ORLong timeStart = [ORRuntimeMonitor cputime];
+            ORLong timeStart = [ORRuntimeMonitor wctime];
             [r run];
-            ORLong timeEnd = [ORRuntimeMonitor cputime];
+            ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolution> optimum = [r bestSolution];
             printf("!! CP/MIP makespan: %d \n",[optimum intValue: makespan]);
@@ -166,7 +170,7 @@ int main(int argc, const char * argv[]) {
         
         if(doHybridLNS) {
             id<ORModel> lm = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
-            ORLong timeStart = [ORRuntimeMonitor cputime];
+            ORLong timeStart = [ORRuntimeMonitor wctime];
             id<ORRunnable> r0 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
                 id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range: Machines];
@@ -180,7 +184,7 @@ int main(int argc, const char * argv[]) {
                         }];
                         [cp label: makespan];
                         printf("\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
-                        ORLong timeEnd = [ORRuntimeMonitor cputime];
+                        ORLong timeEnd = [ORRuntimeMonitor wctime];
                         NSLog(@"Time: %lld:",timeEnd - timeStart);
                     }];
                 }
@@ -217,12 +221,86 @@ int main(int argc, const char * argv[]) {
             id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
             id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
             [r run];
-            ORLong timeEnd = [ORRuntimeMonitor cputime];
+            ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolution> optimum = [r bestSolution];
             printf("!! LNS/MIP makespan: %d \n",[optimum intValue: makespan]);
         }
 
+        if(doHybridLNS_CP) {
+            id<ORRunnable> r0 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
+                id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
+                id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range: Machines];
+                id<ORUniformDistribution> sD = [ORFactory uniformDistribution:model range: Jobs];
+                id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,2,nbMachines/5)];
+                [cp repeat: ^{
+                    [cp limitFailures: 3 *nbJobs * nbMachines in: ^{
+                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 10 * [cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
+                            id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                            [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
+                        }];
+                        [cp label: makespan];
+                        printf("\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                    }];
+                }
+                  onRepeat: ^{
+                      id<ORSolution,CPSchedulerSolution> sol = (id) [[cp solutionPool] best];
+                      for(ORInt k = 1; k <= 2; k++) {
+                          ORInt i = [sM next];
+                          id<ORIntVarArray> succ = disjunctive[i].successors;
+                          id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                          ORInt st = [sD next];
+                          ORInt d = [lD next];
+                          ORInt en = st + d;
+                          // need to fix everything outside the bounds but the tight constraints
+                          ORInt j = 0;
+                          ORInt curr = 0;
+                          while (curr <= succ.up) {
+                              if ((j < st || j >= en)) {
+                                  ORInt n = [sol intValue: succ[curr]];
+                                  if (n != nbJobs + 1) {
+                                      ORInt est = [sol ect: t[n]];
+                                      ORInt ect = [sol ect: t[n]];
+                                      ORInt duration = [sol minDuration: t[n]];
+                                      if (est + duration != ect)
+                                          [cp label: succ[curr] with: [sol intValue: succ[curr]]];
+                                  }
+                              }
+                              j++;
+                              curr = [sol intValue: succ[curr]];
+                          }
+                      }
+                      printf("R");
+                  }];
+            }];
+            
+            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+            ORLong timeStart = [ORRuntimeMonitor wctime];
+            id<ORRunnable> r1 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
+                id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
+                NSLog(@"MKS: %@n\n",[cp concretize:makespan]);
+                [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
+                    id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                    [cp sequence: disjunctive[i].successors
+                              by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
+                            then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
+                }];
+                [cp label: makespan];
+                printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
+                fflush(outFile);
+            }];
+            
+            id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
+            [r run];
+            fclose(outFile);
+            ORLong timeEnd = [ORRuntimeMonitor wctime];
+            NSLog(@"Time: %lld",timeEnd - timeStart);
+            id<ORSolution> optimum = [r bestSolution];
+            printf("!! LNS/CP makespan: %d \n",[optimum intValue: makespan]);
+        }
+
+        
     }
     return 0;
 }
