@@ -38,9 +38,9 @@ int main (int argc, const char * argv[])
           [note vc: [model add: [ORFactory alldifferent: xp]]];
           [note vc:[model add: [ORFactory alldifferent: xn]]];
          __block ORInt nbSol = 0;        
-         id<CPProgram> cp = [args makeProgram:model annotation: note];
+         //id<CPProgram> cp = [args makeProgram:model annotation: note];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
-         //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
 
          //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:6 with:[ORSemDFSController class]];
          
@@ -68,7 +68,7 @@ int main (int argc, const char * argv[])
                   int v = [cp min:x[i]];
                   [cp try:^{
                      [cp label: x[i] with:v];
-                  } or:^{
+                  }   alt:^{
                      [cp diff: x[i] with:v];
                   }];
                }

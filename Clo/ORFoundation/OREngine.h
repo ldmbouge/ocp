@@ -28,6 +28,7 @@
 -(id)   trackMutable:(id)obj;
 -(NSMutableArray*) variables;
 -(id<ORTrail>) trail;
+-(ORStatus)currentStatus;
 -(ORStatus)propagate;
 -(ORStatus)enforceObjective;
 -(void)tryEnforceObjective;
