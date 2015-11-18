@@ -452,6 +452,7 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon;
     [linearizer release];
     return lm;
 }
+
 +(id<ORModel>) linearizeSchedulingModel: (id<ORModel>)m encoding: (MIPSchedEncoding)enc {
     id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
     ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
