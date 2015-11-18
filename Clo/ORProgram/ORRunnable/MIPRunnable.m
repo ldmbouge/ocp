@@ -29,6 +29,18 @@
     return self;
 }
 
+-(id) initWithModel: (id<ORModel>)m numThreads: (ORInt)nth
+{
+    if((self = [super initWithModel:m]) != nil) {
+        _model = [m retain];
+        _sig = nil;
+        _program = [ORFactory createMIPProgram: _model];
+        MIPSolverI* solver = (MIPSolverI*)[_program engine];
+        [solver setIntParameter: "Threads" val: nth];
+    }
+    return self;
+}
+
 -(void) dealloc
 {
     [_model release];

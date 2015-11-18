@@ -90,9 +90,19 @@
     id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m];
     return r;
 }
++(id<ORRunnable>) CPRunnable:(id<ORModel>)m numThreads: (ORInt)nth
+{
+    id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m numThreads: nth];
+    return r;
+}
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m solve: (void(^)(id<CPCommonProgram>))body
 {
     id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m search: body];
+    return r;
+}
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m numThreads: (ORInt)nth solve: (void(^)(id<CPCommonProgram>))body
+{
+    id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m numThreads: nth search: body];
     return r;
 }
 +(id<ORRunnable>) LPRunnable: (id<ORModel>)m
@@ -103,6 +113,11 @@
 +(id<ORRunnable>) MIPRunnable: (id<ORModel>)m
 {
     id<ORRunnable> r = [[MIPRunnableI alloc] initWithModel: m];
+    return r;
+}
++(id<ORRunnable>) MIPRunnable: (id<ORModel>)m numThreads: (ORInt)nth
+{
+    id<ORRunnable> r = [[MIPRunnableI alloc] initWithModel: m numThreads: nth];
     return r;
 }
 @end

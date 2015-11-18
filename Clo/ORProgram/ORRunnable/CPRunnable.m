@@ -37,6 +37,29 @@
     return self;
 }
 
+-(id) initWithModel: (id<ORModel>)m numThreads: (ORInt) nth
+{
+    if((self = [super initWithModel: m]) != nil) {
+        _program = (id)[ORFactory createCPParProgram: m nb: nth annotation: [ORFactory annotation]
+                                                with:[ORSemDFSController class]];
+        _sig = nil;
+        _search = nil;
+    }
+    return self;
+}
+
+-(id) initWithModel: (id<ORModel>)m numThreads: (ORInt) nth search: (void(^)(id<CPCommonProgram>))search
+{
+    if((self = [super initWithModel: m]) != nil) {
+        _program = (id)[ORFactory createCPParProgram: m nb: nth annotation: [ORFactory annotation]
+                                                with:[ORSemDFSController class]];
+        _sig = nil;
+        _search = [search retain];
+    }
+    return self;
+}
+
+
 -(void) dealloc
 {
     [_program release];

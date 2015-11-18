@@ -238,17 +238,22 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val
 {
-   GRBsetintparam(_env,name,val);
+   struct _GRBenv* modelEnv = GRBgetenv(_model);
+   int error = GRBsetintparam(modelEnv,name,val);
+   if(error) assert(false);
 }
 
 -(void) setDoubleParameter: (const char*) name val: (ORDouble) val
 {
-   GRBsetdblparam(_env,name,val);
-}
+   struct _GRBenv* modelEnv = GRBgetenv(_model);
+   int error = GRBsetdblparam(modelEnv,name,val);
+   if(error) assert(false);}
 
 -(void) setStringParameter: (const char*) name val: (char*) val
 {
-   GRBsetstrparam(_env,name,val);
+   struct _GRBenv* modelEnv = GRBgetenv(_model);
+   int error = GRBsetstrparam(modelEnv,name,val);
+   if(error) assert(false);
 }
 
 -(ORDouble) paramValue: (MIPParameterI*) param

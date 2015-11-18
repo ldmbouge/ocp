@@ -19,5 +19,7 @@
 @interface CPRunnableI : ORPipedRunnable<CPRunnable>
 -(id) initWithModel: (id<ORModel>)m;
 -(id) initWithModel: (id<ORModel>)m search: (void(^)(id<CPCommonProgram>))search;
+-(id) initWithModel: (id<ORModel>)m numThreads: (ORInt) nt;
+-(id) initWithModel: (id<ORModel>)m numThreads: (ORInt) nt search: (void(^)(id<CPCommonProgram>))search;
 @end
 
