@@ -451,16 +451,18 @@ int mainPureCP(int argc, const char * argv[])
          
          for(ORInt i =Machines.low; i <= Machines.up; i++)
             [model add: disjunctive[i]];
-         //[model add: [makespan lt:@(930)]];
+         //[model add: [makespan lt:@(59)]];
          // search
-//               id<CPProgram,CPScheduler> cp  = (id)[ORFactory createCPProgram:model
-//                                                                   annotation:notes];
+//               id<CPProgram,CPScheduler> cp  = (id)[ORFactory  createCPSemanticProgram:model
+//                                                                            annotation:notes
+//                                                                                  with:[ORSemBDSController class]];
          
-         id<CPProgram,CPScheduler> cp = (id)[args makeProgram:model annotation:notes];
-//                  id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model
-//                                                                                nb: 2
-//                                                                        annotation:notes
-//                                                                              with:[ORSemDFSController class]];
+//         id<CPProgram,CPScheduler> cp = [args makeProgram:model annotation:notes];
+
+         id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model
+                                                                       nb:args.nbThreads
+                                                               annotation:notes
+                                                                     with:[ORSemDFSController class]];
          //[cp createFDS];
          [cp solve: ^{
             NSLog(@"MKS: %@\n",[cp concretize:makespan]);
@@ -468,7 +470,11 @@ int mainPureCP(int argc, const char * argv[])
             //[cp labelArrayFF:av];
             //[cp splitArray:av];
             
-            [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + ([cp localSlack: disjunctive[i]] << 16);} do: ^(ORInt i) {
+            [cp forall: Machines orderedBy: ^ORInt(ORInt i) {
+               ORInt gs = [cp globalSlack: disjunctive[i]];
+               ORInt ls = [cp localSlack: disjunctive[i]];
+               return  gs + (ls << 16);
+            } do: ^(ORInt i) {
                id<ORTaskVarArray> t = disjunctive[i].taskVars;
                [cp sequence: disjunctive[i].successors
                          by: ^ORDouble(ORInt i) { return i <= t.up ? [cp est: t[i]] : MAXDBL;}

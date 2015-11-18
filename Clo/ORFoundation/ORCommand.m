@@ -183,7 +183,7 @@ static __thread ComListPool* pool = NULL;
 -(NSString*)description
 {
    NSMutableString* str = [NSMutableString stringWithCapacity:512];
-   [str appendFormat:@" [%d | %d - %d]:{",_ndId,_fh,_th];
+   [str appendFormat:@" [%2d | %2d - %2d]:{",_ndId,_fh,_th];
    struct CNode* cur = _head;
    while (cur) {
       [str appendString:[cur->_c description]];
@@ -222,7 +222,7 @@ static __thread ComListPool* pool = NULL;
       ok = clo(cur->_c);
       cur = cur->_next;
    }
-   return YES;
+   return ok;
 }
 -(ORBool)empty
 {

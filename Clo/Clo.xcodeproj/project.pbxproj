@@ -1548,6 +1548,7 @@
 		5BE12191173C75C0000C9AA9 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BE2D73F1BFA386D0054B848 /* ORSemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* ORSemBDSController.m */; };
 		5BE2D7401BFA790D0054B848 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */; };
+		5BE2D7421BFB9DDE0054B848 /* ft05.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE2D7411BFB9DCD0054B848 /* ft05.jss */; };
 		5BE5A7EC158A8390006703CB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BE5A7EF158A8390006703CB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE5A7EE158A8390006703CB /* main.m */; };
 		5BE5A7F3158A8390006703CB /* fdmul2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE5A7F2158A8390006703CB /* fdmul2.1 */; };
@@ -7939,6 +7940,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				5BE2D7421BFB9DDE0054B848 /* ft05.jss in CopyFiles */,
 				B19A0CBE1984496000685629 /* abz5.jss in CopyFiles */,
 				B19A0CBF1984496000685629 /* abz6.jss in CopyFiles */,
 				B19A0CC01984496000685629 /* abz7.jss in CopyFiles */,
@@ -21494,6 +21496,7 @@
 		5BE19F261582654F008DF214 /* CPFirstFail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFirstFail.m; sourceTree = "<group>"; };
 		5BE19F2915826A28008DF214 /* CPDDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPDDeg.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE2D73E1BF927150054B848 /* JobShopBenchmarks */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JobShopBenchmarks; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BE2D7411BFB9DCD0054B848 /* ft05.jss */ = {isa = PBXFileReference; lastKnownFileType = text; path = ft05.jss; sourceTree = "<group>"; };
 		5BE5A7EA158A838F006703CB /* fdmul2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fdmul2; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BE5A7EE158A8390006703CB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BE5A7F1158A8390006703CB /* fdmul2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fdmul2-Prefix.pch"; sourceTree = "<group>"; };
@@ -23904,6 +23907,7 @@
 		537EE4ED18FCC56C0006FFD2 /* jsp */ = {
 			isa = PBXGroup;
 			children = (
+				5BE2D7411BFB9DCD0054B848 /* ft05.jss */,
 				537EE4EE18FCC56C0006FFD2 /* abz5.jss */,
 				537EE4EF18FCC56C0006FFD2 /* abz6.jss */,
 				537EE4F018FCC56C0006FFD2 /* abz7.jss */,

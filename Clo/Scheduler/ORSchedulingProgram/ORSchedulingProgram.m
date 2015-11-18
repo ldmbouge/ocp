@@ -253,9 +253,37 @@
    ORInt low = succ.range.low;
    ORInt size = succ.range.size - 1;
    ORInt k = low;
-   for(ORInt j = 1; j <= size; j++) {
+//   for(ORInt i=succ.range.low;i <= succ.range.up;i++) {
+//      if ([self bound:succ[i]]) {
+//         ORInt pv = [self intValue:succ[i]];
+//         for(ORInt j=succ.range.low; j <= succ.range.up;j++) {
+//            if (j == i) continue;
+//            if ([self member:pv in:succ[j]]) {
+//               assert(NO);
+//            }
+//         }
+//      }
+//   }
+//   for(ORInt j = 1; j <= size; j++) {
+   while (![self allBound:succ]) {
+      ORInt k = low;
+      while ([self bound:succ[k]])
+         k = [self intValue:succ[k]];
       [self label: succ[k] by: o1 then: o2];
-      k = [self intValue: succ[k]];
+      
+//      for(ORInt i=succ.range.low;i <= succ.range.up;i++) {
+//         if ([self bound:succ[i]]) {
+//            ORInt pv = [self intValue:succ[i]];
+//            for(ORInt j=succ.range.low; j <= succ.range.up;j++) {
+//               if (j == i) continue;
+//               if ([self member:pv in:succ[j]]) {
+//                  assert(NO);
+//               }
+//            }
+//         }
+//      }
+      
+      //k = [self intValue: succ[k]];
    }
 }
 -(ORInt) est: (id<ORTaskVar>) task

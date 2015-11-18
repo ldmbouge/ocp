@@ -2163,8 +2163,10 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
         beginIdx = 0;
         endIdx   = sortSize;
     }
-
-    ORInt localSlack = MAXINT;
+   ORInt localSlack;
+redo:
+   {
+    localSlack = MAXINT;
     ORInt len_min = 0;
     ORInt jjPrev  = 0;
     ORInt jjLast  = endIdx - 1;
@@ -2193,7 +2195,11 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
                     if (isUnfixed(disj, j0)) {
                         if (est_min <= disj->_est[j0]) len_min += disj->_dur_min[j0];
                         localSlack = min(localSlack, disj->_lct[j0] /*- est_min*/ - len_min);
-                        assert(localSlack >= 0);
+//                       if (localSlack < 0) {
+//                          NSLog(@"Something really wrong....");
+//                          goto redo;
+//                       }
+//                        assert(localSlack >= 0);
                     }
                     else if (est_min <= disj->_est[j0]) {
                         len_min += disj->_dur_min[j0];
@@ -2202,7 +2208,8 @@ static ORInt getLocalSlack(CPTaskDisjunctive * disj)
             }
         }
     }
-    
+   }
+   
     return localSlack;
 }
 

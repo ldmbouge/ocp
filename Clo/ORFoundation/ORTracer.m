@@ -132,7 +132,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    NSMutableString* buf = [NSMutableString stringWithCapacity:512];
    for(ORUInt i = 0;i<_sz;i++) {
-      [buf appendFormat:@"d:%d = ",i];
+      [buf appendFormat:@"d:%2d = ",i];
       [buf appendString:[_tab[i] description]];
       [buf appendString:@"\n"];
    }
@@ -403,6 +403,7 @@ static __thread id checkPointCache = NULL;
 }
 -(ORInt) pushNode
 {
+   assert([_cmds size] == [_trStack size]);
    [_trStack pushNode: _lastNode];
    [_cmds pushList: _lastNode memory:[_mt trailSize]];     // add a list of constraint
    [_trail incMagic];
@@ -506,27 +507,40 @@ static __thread id checkPointCache = NULL;
          ORCommandList* lst = popList(_cmds);
          [lst letgo];
       }
+      assert([_cmds size] == [_trStack size]);
+      ORStatus status = [engine currentStatus];
+      if (status == ORFailure)
+         return status;
+
       //NSLog(@"SemTracer AFTER SUFFIXUNDO: %@ - in thread %p",[self description],[NSThread currentThread]);
       //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
       [_trail incMagic];
       for(ORInt j=i;j < getStackSize(toRestore);j++) {
+         assert([_cmds size] == [_trStack size]);
          ORCommandList* theList = peekAt(toRestore,j);
          [_trStack pushNode:theList->_ndId];
          [_mt comply:acp->_mt upTo:theList];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
-            BOOL pOk = [theList apply: ^BOOL(id<ORConstraint> c) {
-               ORStatus cok = [model post:c];
-               return cok != ORFailure;
+            [theList apply: ^BOOL(id<ORConstraint> c) {
+               [model post:c];
+               return YES;
             }];
-            if (!pOk) {
-               //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
-               return ORFailure;
+            ORStatus status = [engine currentStatus];
+            if (status == ORFailure) {
+               trailPop(_trStack);
+               assert([_cmds size] == [_trStack size]);
+               return status;
             }
-            [engine propagate];
+            status = [engine propagate];
+            if (status == ORFailure) {
+               trailPop(_trStack);
+               assert([_cmds size] == [_trStack size]);
+               return status;
+            }
             [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
-            return ORSuspend;
+            return status;
          }, ^ORStatus{
             [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
