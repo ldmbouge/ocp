@@ -291,6 +291,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _propagFail = nil;
    _propagDone = nil;
    _br = RANGE(self, 0, 1);
+   _iStat = makeTRInt(_trail,ORSuspend);
    return self;
 }
 -(id<ORIntRange>)boolRange
@@ -488,6 +489,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
    if (fdm->_propagating > 0)
       return ORDelay;
+   if (fdm->_iStat._val == ORFailure)
+      return ORFailure;
    ++fdm->_propagating;
    CPValueClosureQueue* vcQueue = fdm->_valueClosureQueue;
    CPClosureQueue** cQueue = fdm->_closureQueue;
@@ -527,6 +530,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          [fdm->_propagDone notify];
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
+      assignTRInt(&fdm->_iStat, status, fdm->_trail);
    ONFAIL(status);
       id<CPConstraint>* last = &fdm->_last;
       while (ISLOADED(cQueue[ALWAYS_PRIO])) {
@@ -542,6 +546,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       //[exception release];
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
+      assignTRInt(&fdm->_iStat, ORFailure, fdm->_trail);
    ENDFAIL(ORFailure)
 }
 
@@ -560,6 +565,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          ok = propagateFDM(self);
       return ok;
    }, ^ORStatus{
+      assignTRInt(&_iStat, ORFailure, _trail);
       return ORFailure;
    });
 }
@@ -590,6 +596,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       }
       return pstatus;
    }, ^ORStatus{
+      assignTRInt(&_iStat, ORFailure, _trail);
       return ORFailure;
    });
 }
@@ -601,8 +608,9 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
    assert(_state != CPOpen);
    ORStatus s = [self post:c];
-   if (s==ORFailure)
+   if (s==ORFailure) {
       failNow();
+   }
 }
 
 -(ORStatus) add: (id<ORConstraint>) c
@@ -660,6 +668,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       return propagateFDM(self);
    }, ^ORStatus{
       _propagating = oldPropag;
+      assignTRInt(&_iStat, ORFailure, _trail);
       return ORFailure;
    });
 }
@@ -674,6 +683,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
         return propagateFDM(self);
     }, ^ORStatus{
         _propagating = oldPropag;
+        assignTRInt(&_iStat, ORFailure, _trail);
         return ORFailure;
     });
     if (status == ORFailure)
@@ -682,6 +692,10 @@ ORStatus propagateFDM(CPEngineI* fdm)
 -(void) open
 {
    _state = CPOpen;
+}
+-(ORStatus)currentStatus
+{
+   return _iStat._val;
 }
 -(ORStatus) close
 {

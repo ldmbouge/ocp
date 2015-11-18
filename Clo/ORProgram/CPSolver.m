@@ -1245,7 +1245,7 @@
                                     into: self];
         else
             [ORFlatten flatten: c into:self];
-        return ORSuspend;
+        return [_engine currentStatus];
     }, ^ORStatus {
         return ORFailure;
     });

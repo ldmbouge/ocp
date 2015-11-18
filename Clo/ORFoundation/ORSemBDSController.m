@@ -144,15 +144,15 @@
          return;  // Nothing left to process. Go back!
       else {
          if ([_tab empty]) {
-            //NSLog(@"next wave: %@",_next);
+            NSLog(@"**************************** next wave: [%d]",[_next size]);
             BDSStack* tmp = _tab;
             _tab = _next;
             _next = tmp;
-            _maxDisc++;
+            _maxDisc += 3;
          }
          struct BDSNode node = [_tab pop];
          _nbDisc = node._disc;
-         //NSLog(@"********** RESTORING: %@",node._cp);
+         //NSLog(@"Restoring: %@", node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver model:_model];
          [node._cp letgo];
          //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);

@@ -211,7 +211,7 @@
 -(void) finitelyFailed
 {
    _isFF = YES;
-   [_controller cleanup];
+   //[_controller cleanup];
    [_parent fail];
 }
 -(ORBool) isFinitelyFailed
