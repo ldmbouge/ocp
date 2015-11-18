@@ -44,6 +44,7 @@ int main(int argc, const char * argv[]) {
         BOOL doHybrid = NO;
         BOOL doHybridLNS = NO;
         BOOL doHybridLNS_CP = NO;
+        BOOL doBDS = NO;
         ORInt numThreads = 0;
         
         if([args containsObject: @"-cp"]) doCP = YES;
@@ -51,10 +52,11 @@ int main(int argc, const char * argv[]) {
         if([args containsObject: @"-cp-mip"]) doHybrid = YES;
         if([args containsObject: @"-lns-mip"]) doHybridLNS = YES;
         if([args containsObject: @"-lns-cp"]) doHybridLNS_CP = YES;
+        if([args containsObject: @"-bds"]) doBDS = YES;
         if([args containsObject: @"-t1"]) numThreads = 1;
         if([args containsObject: @"-t2"]) numThreads = 2;
         if([args containsObject: @"-t4"]) numThreads = 4;
-
+        
         
         NSString* path = [args lastObject];//@"/Users/dan/Work/platform/Clo/Scheduler/BenchmarkData/jsp/la19.jss"
         
@@ -236,7 +238,7 @@ int main(int argc, const char * argv[]) {
             id<ORSolution> optimum = [r bestSolution];
             NSLog(@"!! LNS/MIP makespan: %d \n",[optimum intValue: makespan]);
         }
-
+        
         if(doHybridLNS_CP) {
             id<ORRunnable> r0 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
@@ -309,7 +311,48 @@ int main(int argc, const char * argv[]) {
             id<ORSolution> optimum = [r bestSolution];
             NSLog(@"!! LNS/CP makespan: %d \n",[optimum intValue: makespan]);
         }
-
+        
+        
+        if(doBDS) {
+            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+            id<ORAnnotation> notes = [ORFactory annotation];
+            id<CPProgram,CPScheduler> cp = nil;
+            cp = //(id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemBDSController class]];
+            (id)[ORFactory  createCPSemanticProgram:model
+                                         annotation:notes
+                                               with:[ORSemBDSController class]];
+            ORLong timeStart = [ORRuntimeMonitor wctime];
+            [cp solve: ^{
+                NSLog(@"MKS: %@\n",[cp concretize:makespan]);
+                //id<ORIntVarArray> av = [model intVars];
+                //[cp labelArrayFF:av];
+                //[cp splitArray:av];
+                
+                [cp forall: Machines orderedBy: ^ORInt(ORInt i) {
+                    ORInt gs = [cp globalSlack: disjunctive[i]];
+                    ORInt ls = [cp localSlack: disjunctive[i]];
+                    return  gs + (ls << 16);
+                } do: ^(ORInt i) {
+                    id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                    [cp sequence: disjunctive[i].successors
+                              by: ^ORDouble(ORInt i) { return i <= t.up ? [cp est: t[i]] : MAXDBL;}
+                            then: ^ORDouble(ORInt i) { return i <= t.up ? [cp ect: t[i]] : MAXDBL;}];
+                }];
+                [cp label: makespan];
+                printf("(%d)\tmakespan = [%d,%d] \n",[NSThread threadID],[cp min: makespan],[cp max: makespan]);
+                fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
+                fflush(outFile);
+            }];
+            
+            fclose(outFile);
+            
+            ORLong timeEnd = [ORRuntimeMonitor wctime];
+            NSLog(@"Time: %lld",timeEnd - timeStart);
+            id<ORSolutionPool> pool = [cp solutionPool];
+            id<ORSolution> optimum = [pool best];
+            NSLog(@"!! BDS makespan: %d \n",[optimum intValue: makespan]);
+        }
+        
         
     }
     return 0;
