@@ -44,12 +44,16 @@ int main(int argc, const char * argv[]) {
         BOOL doHybrid = NO;
         BOOL doHybridLNS = NO;
         BOOL doHybridLNS_CP = NO;
+        ORInt numThreads = 0;
         
         if([args containsObject: @"-cp"]) doCP = YES;
         if([args containsObject: @"-mip"]) doMIP = YES;
         if([args containsObject: @"-cp-mip"]) doHybrid = YES;
         if([args containsObject: @"-lns-mip"]) doHybridLNS = YES;
         if([args containsObject: @"-lns-cp"]) doHybridLNS_CP = YES;
+        if([args containsObject: @"-t1"]) numThreads = 1;
+        if([args containsObject: @"-t2"]) numThreads = 2;
+        if([args containsObject: @"-t4"]) numThreads = 4;
 
         
         NSString* path = [args lastObject];//@"/Users/dan/Work/platform/Clo/Scheduler/BenchmarkData/jsp/la19.jss"
@@ -107,8 +111,12 @@ int main(int argc, const char * argv[]) {
         if(doCP) {
             FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
             id<ORAnnotation> notes = [ORFactory annotation];
-            id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model nb: 2 annotation: notes with:[ORSemDFSController class]];
-
+            id<CPProgram,CPScheduler> cp = nil;
+            
+            if(numThreads > 0)
+                cp = (id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemDFSController class]];
+            else cp = (id)[ORFactory createCPProgram: model];
+            
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [cp solve: ^{
                 [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
@@ -118,7 +126,7 @@ int main(int argc, const char * argv[]) {
                             then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
                 }];
                 [cp label: makespan];
-                printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
                 fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
                 fflush(outFile);
             }];
@@ -129,19 +137,21 @@ int main(int argc, const char * argv[]) {
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolutionPool> pool = [cp solutionPool];
             id<ORSolution> optimum = [pool best];
-            printf("!! CP makespan: %d \n",[optimum intValue: makespan]);
+            NSLog(@"!! CP makespan: %d \n",[optimum intValue: makespan]);
         }
         
         if(doMIP) {
             // Linearize
             id<ORModel> lm = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
-            id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+            id<ORRunnable> r = nil;
+            if(numThreads > 0) r = [ORFactory MIPRunnable: lm numThreads: numThreads];
+            else r = [ORFactory MIPRunnable: lm];
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [r run];
             ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolution> optimum = [r bestSolution];
-            printf("!! MIP makespan: %d \n",[optimum intValue: makespan]);
+            NSLog(@"!! MIP makespan: %d \n",[optimum intValue: makespan]);
         }
         
         if(doHybrid) {
@@ -156,7 +166,7 @@ int main(int argc, const char * argv[]) {
                             then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
                 }];
                 [cp label: makespan];
-                printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
             }];
             id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
             id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
@@ -165,7 +175,7 @@ int main(int argc, const char * argv[]) {
             ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolution> optimum = [r bestSolution];
-            printf("!! CP/MIP makespan: %d \n",[optimum intValue: makespan]);
+            NSLog(@"!! CP/MIP makespan: %d \n",[optimum intValue: makespan]);
         }
         
         if(doHybridLNS) {
@@ -183,7 +193,7 @@ int main(int argc, const char * argv[]) {
                             [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
                         }];
                         [cp label: makespan];
-                        printf("\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                        NSLog(@"\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
                         ORLong timeEnd = [ORRuntimeMonitor wctime];
                         NSLog(@"Time: %lld:",timeEnd - timeStart);
                     }];
@@ -215,7 +225,7 @@ int main(int argc, const char * argv[]) {
                               curr = [sol intValue: succ[curr]];
                           }
                       }
-                      printf("R");
+                      NSLog(@"R");
                   }];
             }];
             id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
@@ -224,7 +234,7 @@ int main(int argc, const char * argv[]) {
             ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolution> optimum = [r bestSolution];
-            printf("!! LNS/MIP makespan: %d \n",[optimum intValue: makespan]);
+            NSLog(@"!! LNS/MIP makespan: %d \n",[optimum intValue: makespan]);
         }
 
         if(doHybridLNS_CP) {
@@ -240,7 +250,7 @@ int main(int argc, const char * argv[]) {
                             [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
                         }];
                         [cp label: makespan];
-                        printf("\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                        NSLog(@"\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
                     }];
                 }
                   onRepeat: ^{
@@ -270,7 +280,7 @@ int main(int argc, const char * argv[]) {
                               curr = [sol intValue: succ[curr]];
                           }
                       }
-                      printf("R");
+                      NSLog(@"R");
                   }];
             }];
             
@@ -286,7 +296,7 @@ int main(int argc, const char * argv[]) {
                             then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
                 }];
                 [cp label: makespan];
-                printf("makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
                 fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
                 fflush(outFile);
             }];
@@ -297,7 +307,7 @@ int main(int argc, const char * argv[]) {
             ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolution> optimum = [r bestSolution];
-            printf("!! LNS/CP makespan: %d \n",[optimum intValue: makespan]);
+            NSLog(@"!! LNS/CP makespan: %d \n",[optimum intValue: makespan]);
         }
 
         
