@@ -12,29 +12,28 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
 
+@interface ORLinearizeConstraint : ORVisitor<NSObject> {
+@protected
+   id<ORAddToModel>  _model;
+   NSMapTable*      _binMap;
+   id<ORExpr>   _exprResult;
+}
+-(id)init:(id<ORAddToModel>)m;
+-(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
+-(id<ORIntRange>) unionOfVarArrayRanges: (id<ORExprArray>)arr;
+-(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr;
+@end
+
+@interface ORLinearizeObjective : ORVisitor<NSObject>
+-(id)init:(id<ORAddToModel>)m;
+@end
+
 @interface ORLinearize : NSObject<ORModelTransformation>
 -(id)initORLinearize:(id<ORAddToModel>)into;
 -(void) apply:(id<ORModel>)m with:(id<ORAnnotation>)notes;
 +(id<ORModel>)linearize:(id<ORModel>)model;
 @end
 
-@interface ORLinearizeScheduling : ORLinearize
--(id)initORLinearizeSched:(id<ORAddToModel>)into;
--(void) apply:(id<ORModel>)m with:(id<ORAnnotation>)notes;
-@end
-
-// Time Indexed
-@interface ORLinearizeSchedulingTI : ORLinearize
--(id)initORLinearizeSched:(id<ORAddToModel>)into;
--(void) apply:(id<ORModel>)m with:(id<ORAnnotation>)notes;
-@end
-
-typedef enum {
-    MIPSchedDisjunctive,
-    MIPSchedTimeIndexed
-} MIPSchedEncoding;
-
-@interface ORFactory(Linearize)
+@interface ORFactory (Linearize)
 +(id<ORModel>) linearizeModel: (id<ORModel>)m;
-+(id<ORModel>) linearizeSchedulingModel: (id<ORModel>)m encoding: (MIPSchedEncoding)enc;
 @end

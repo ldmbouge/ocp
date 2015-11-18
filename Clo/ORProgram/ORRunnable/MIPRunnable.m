@@ -93,7 +93,7 @@
     //[mipSolver postConstraint: c];
 }
 
--(void) receiveSolution:(id<ORSolution>)sol
+-(void) receiveSolution:(id<ORSolution,ORSchedulerSolution>)sol
 {
     NSArray* modelVars = [[sol model] variables];
     NSMutableArray* vars = [[NSMutableArray alloc] init];
@@ -104,7 +104,7 @@
             MIPVariableI* x = [_program concretize: [t getStartVar]];
             [vars addObject: x];
             //[vals addObject: @((ORInt)[[sol value: t] est])];
-            [vals addObject: @((ORInt)[sol est:t])];
+            [vals addObject: @([sol est:t])];
         }
     }
     

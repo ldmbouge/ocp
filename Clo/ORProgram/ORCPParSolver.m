@@ -273,6 +273,10 @@
 }
 // ********
 
+-(void) splitArray: (id<ORIntVarArray>) x
+{
+   [[self worker] splitArray:x];
+}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    [[self worker] labelArray: x];
@@ -650,6 +654,12 @@
 {
    assert(FALSE);
    return NULL;
+}
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body
+{
+   //LDM: needs testing.
+   ORClosure search = ^() { body(self); };
+   [self solve: search];
 }
 
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars

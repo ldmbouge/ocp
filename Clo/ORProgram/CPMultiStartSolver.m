@@ -203,6 +203,12 @@
    }
    [self waitWorkers];
 }
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body
+{
+   id<CPCommonProgram> w = [self worker];
+   ORClosure search = ^() { body(w); };
+   [self solve: search];
+}
 
 -(void) solveAll: (ORClosure) search
 {
@@ -333,6 +339,10 @@
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c
 {
    [[self worker] addConstraintDuringSearch: c];
+}
+-(void) splitArray: (id<ORIntVarArray>) x
+{
+   [[self worker] splitArray:x];
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {

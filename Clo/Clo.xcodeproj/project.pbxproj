@@ -789,6 +789,9 @@
 		5B5E67E41BB34459005801A2 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EE9FF18FCDC520006FFD2 /* ORScheduler.framework */; };
 		5B5E67E51BB34459005801A2 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B127A57519629B0600398AA3 /* ORSchedulingProgram.framework */; };
 		5B5E67E61BB34459005801A2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B60C6841BFCCAA700A685C6 /* ORSchedLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B60C6831BFCCAA700A685C6 /* ORSchedLinearize.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B60C6861BFCCB4500A685C6 /* ORSchedLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60C6851BFCCB4500A685C6 /* ORSchedLinearize.m */; };
+		5B60C6891BFCD1C300A685C6 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B60E5D715AE907E002FF2B3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B60E5DD15AE907F002FF2B3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B60E5DB15AE907F002FF2B3 /* InfoPlist.strings */; };
 		5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60E5E015AE907F002FF2B3 /* ORUtilities.m */; };
@@ -3727,6 +3730,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B127A57419629B0600398AA3;
 			remoteInfo = ORSchedulingProgram;
+		};
+		5B60C6871BFCD1BB00A685C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
 		};
 		5B6526CF164813B90095A4D9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21131,6 +21141,8 @@
 		5B5AAA7F17905AAC0076C729 /* CPRealConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPRealConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B5E67D51BB34383005801A2 /* testBug */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testBug; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B5E67D71BB34383005801A2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B60C6831BFCCAA700A685C6 /* ORSchedLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSchedLinearize.h; sourceTree = "<group>"; };
+		5B60C6851BFCCB4500A685C6 /* ORSchedLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSchedLinearize.m; sourceTree = "<group>"; };
 		5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B60E5DA15AE907F002FF2B3 /* ORUtilities-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORUtilities-Info.plist"; sourceTree = "<group>"; };
 		5B60E5DC15AE907F002FF2B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -23013,6 +23025,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B60C6891BFCD1C300A685C6 /* ORModeling.framework in Frameworks */,
 				B154429916D19EB9001BD7B3 /* ORUtilities.framework in Frameworks */,
 				B154429816D19EB3001BD7B3 /* ORFoundation.framework in Frameworks */,
 				B154428116D19D8F001BD7B3 /* Cocoa.framework in Frameworks */,
@@ -24957,6 +24970,8 @@
 				B127A55F1962816000398AA3 /* ORTask.h */,
 				B127A5631962817400398AA3 /* ORTaskI.h */,
 				B127A5641962817400398AA3 /* ORTaskI.m */,
+				5B60C6831BFCCAA700A685C6 /* ORSchedLinearize.h */,
+				5B60C6851BFCCB4500A685C6 /* ORSchedLinearize.m */,
 			);
 			path = ORScheduler;
 			sourceTree = "<group>";
@@ -39042,6 +39057,7 @@
 				537EEA0118FCDCFC0006FFD2 /* ORConstraintI.h in Headers */,
 				537EEA0218FCDCFC0006FFD2 /* ORFlatten.h in Headers */,
 				537EEA0618FCDCFC0006FFD2 /* ORVisit.h in Headers */,
+				5B60C6841BFCCAA700A685C6 /* ORSchedLinearize.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41323,6 +41339,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5B60C6881BFCD1BB00A685C6 /* PBXTargetDependency */,
 				B154429216D19DDC001BD7B3 /* PBXTargetDependency */,
 				B154429016D19DD7001BD7B3 /* PBXTargetDependency */,
 			);
@@ -42179,6 +42196,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B60C6861BFCCB4500A685C6 /* ORSchedLinearize.m in Sources */,
 				53BD901A1A240117003EEFA6 /* ORFlatten.m in Sources */,
 				537EEA2118FCDD760006FFD2 /* CPConcretizer.m in Sources */,
 				537EEA2218FCDD760006FFD2 /* ORConstraintI.m in Sources */,
@@ -44597,6 +44615,11 @@
 			isa = PBXTargetDependency;
 			target = B127A57419629B0600398AA3 /* ORSchedulingProgram */;
 			targetProxy = 5B5E67F91BB34476005801A2 /* PBXContainerItemProxy */;
+		};
+		5B60C6881BFCD1BB00A685C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5B60C6871BFCD1BB00A685C6 /* PBXContainerItemProxy */;
 		};
 		5B6526D0164813B90095A4D9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

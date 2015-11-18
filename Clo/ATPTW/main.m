@@ -125,7 +125,7 @@ int main1(int argc, const char * argv[])
                      }];
                   }
                     onRepeat: ^{
-                       id<ORSolution,CPSchedulerSolution> s = (id)[[cp solutionPool] best];
+                       id<ORSolution,ORSchedulerSolution> s = (id)[[cp solutionPool] best];
                        ORInt ch = [dc next];
                        if (ch == 0) {
                           for(ORInt i = succ.low; i <= succ.up; i++)
@@ -233,7 +233,7 @@ int main2(int argc, const char * argv[])
                      }];
                   }
                     onRepeat: ^{
-                       id<ORSolution,CPSchedulerSolution> s = (id)[[cp solutionPool] best];
+                       id<ORSolution,ORSchedulerSolution> s = (id)[[cp solutionPool] best];
                        ORInt ch = [dc next];
                        if (ch == 0) {
                           for(ORInt i = succ.low; i <= succ.up; i++)

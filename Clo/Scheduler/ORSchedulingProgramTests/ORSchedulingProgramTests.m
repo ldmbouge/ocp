@@ -222,7 +222,7 @@
             printf("Found a solution!\n");
         }];
         id<ORSolutionPool> pool = [cp solutionPool];
-        id<ORSolution,CPSchedulerSolution> best = (id)[pool best];
+        id<ORSolution,ORSchedulerSolution> best = (id)[pool best];
         optVal = [best intValue:objVar];
     }
     return optVal;
