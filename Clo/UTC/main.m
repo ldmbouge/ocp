@@ -12,7 +12,7 @@
 #import <ORProgram/ORProgram.h>
 
 typedef enum {
-    None = 0, FPGA, SOFT, D_SOFT
+    None = 0, FPGA, FPGA2, SOFT
 } FFT_COMP;
 
 typedef enum {
@@ -69,12 +69,15 @@ ORInt CON_WGHT = 1;
 //ORInt PROB_SCALE = 10000;
 
 int main(int argc, const char * argv[]) {
+    ORInt nbComponent = 5;
+    ORInt COMP = nbComponent;
+    
     id<ORModel> m = [ORFactory createModel];
     id<ORIntRange> fftARange = RANGE(m, 0, 1);
     id<ORIntRange> fftADomain = RANGE(m, 0, 3);
     id<ORIntRange> fftBRange = RANGE(m, 0, 2);
     id<ORIntRange> fftBDomain = RANGE(m, 0, 3);
-    id<ORIntRange> sigConnRange = RANGE(m, 0, 10);
+    id<ORIntRange> sigConnRange = RANGE(m, 0, 5);
     id<ORIntRange> sigConnDomain = RANGE(m, 0, 1);
     
     id<ORIntArray> fftACost = [ORFactory intArray: m range: fftADomain values: rawFFTACost];
@@ -91,17 +94,17 @@ int main(int argc, const char * argv[]) {
     
     id<ORIntVarArray> fftA = [ORFactory intVarArray: m range: fftARange domain: fftADomain];
     id<ORIntVarArray> fftB = [ORFactory intVarArray: m range: fftBRange domain: fftBDomain];
-    id<ORIntVarArray> conn = [ORFactory intVarArray: m range: sigConnRange domain: sigConnDomain];
-    id<ORIntVarArray> isConnA = [ORFactory intVarArray: m range: fftARange domain: RANGE(m, 0, 1)];
-    id<ORIntVarArray> isConnB = [ORFactory intVarArray: m range: fftBRange domain: RANGE(m, 0, 1)];
-    id<ORIntVar> useBus = [ORFactory intVar: m domain: RANGE(m, 0, 1)];
+    id<ORIntVarMatrix> conn = [ORFactory intVarMatrix: m range: sigConnRange : sigConnRange domain: sigConnDomain];
+    id<ORIntVar> useCompResource = [ORFactory intVar: m domain: RANGE(m, 0, 1)];
 
+    id<ORIntVarArray>
+    
     // Connectivity
-    [m add: [[[conn at: 4] eq: @(1)] imply: [[isConnA at: 0] eq: @(1)]]];
-    [m add: [[[conn at: 10] eq: @(1)] imply: [[isConnA at: 1] eq: @(1)]]];
-    [m add: [[[conn at: 1] eq: @(1)] imply: [[isConnB at: 0] eq: @(1)]]];
-    [m add: [[[conn at: 0] eq: @(1)] imply: [[isConnB at: 1] eq: @(1)]]];
-    [m add: [[[conn at: 5] eq: @(1)] imply: [[isConnB at: 2] eq: @(1)]]];
+//    [m add: [[[conn at: 4] eq: @(1)] imply: [[isConnA at: 0] eq: @(1)]]];
+//    [m add: [[[conn at: 10] eq: @(1)] imply: [[isConnA at: 1] eq: @(1)]]];
+//    [m add: [[[conn at: 1] eq: @(1)] imply: [[isConnB at: 0] eq: @(1)]]];
+//    [m add: [[[conn at: 0] eq: @(1)] imply: [[isConnB at: 1] eq: @(1)]]];
+//    [m add: [[[conn at: 5] eq: @(1)] imply: [[isConnB at: 2] eq: @(1)]]];
 
     
     // Weight Limit
