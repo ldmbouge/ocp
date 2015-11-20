@@ -92,13 +92,13 @@
 // SemanticPath CPSolver
 @interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram,CPSemanticProgramDFS>
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
--(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
+-(id<CPSemanticProgram>)    initCPSemanticSolver: (id<ORSearchController>) ctrlProto;
 @end
 
 @interface CPSolverFactory : NSObject
 +(id<CPProgram>) solver;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
-+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
++(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto;
 @end
 
 

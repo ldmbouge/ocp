@@ -10,7 +10,13 @@
  ***********************************************************************/
 
 
-#import <ORProgram/ORProgram.h>
+#import <ORProgram/ORCPParSolver.h>
+#import <ORProgram/CPSolver.h>
+#import <ORProgram/CPParallel.h>
+#import <ORProgram/CPBaseHeuristic.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORSolution.h>
+#import <ORProgram/ORSTask.h>
 #import <objcp/CPObjectQueue.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
@@ -29,7 +35,7 @@
    PCObjectQueue*       _queue;
    NSCondition*    _terminated;
    ORInt               _nbDone;
-   Class               _defCon;
+   id<ORSearchController> _defCon;
    BOOL         _doneSearching;
    id<ORModel>        _source;
    NSCondition*      _allClosed;
@@ -38,7 +44,7 @@
    BOOL                _boundOk;
    ORLong                _sowct;
 }
--(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
+-(id<CPProgram>) initParSolver:(ORInt)nbt withController:(id<ORSearchController>)ctrlProto
 {
    self = [super init];
    _source = NULL;
@@ -48,13 +54,13 @@
    _queue = [[PCObjectQueue alloc] initPCQueue:128 nbWorkers:_nbWorkers];
    _terminated = [[NSCondition alloc] init];
    _allClosed  = [[NSCondition alloc] init];
-   _defCon     = ctrlClass;
+   _defCon     = ctrlProto;
    _nbDone     = 0;
    _nbClosed   = 0;
    _boundOk    = NO;
    _primal     = NULL;
    for(ORInt i=0;i<_nbWorkers;i++)
-      _workers[i] = [CPSolverFactory semanticSolver:ctrlClass];
+      _workers[i] = [CPSolverFactory semanticSolver:[ctrlProto copy]];
    _globalPool = [ORFactory createSolutionPool];
    _onSol = nil;
    _doneSearching = NO;
@@ -497,8 +503,9 @@
    id<ORPost> pItf = [[CPINCModel alloc] init:_workers[[NSThread threadID]]];
    ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine] model:pItf];
    [pItf release];
-   if (status == ORFailure)
+   if (status == ORFailure) {
       [[cp explorer] fail];
+   }
     [cp restartHeuristics];
 }
 -(ORLong)setupAndGo:(id<ORProblem>)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
@@ -513,6 +520,7 @@
                                                                     stopIndicator:&_doneSearching];
    [nested release];
    id<ORSearchObjectiveFunction> objective = [me objective];
+   //NSLog(@"SetupAndGo(%d): obj* = %@",[NSThread threadID],[objective value]);
    if (objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
@@ -551,7 +559,7 @@
       }
    }
    ORLong t1 = [ORRuntimeMonitor cputime];
-   NSLog(@"Thread %d back from sub: %lld  AT [%lld]",[NSThread threadID],t1-t0,([ORRuntimeMonitor wctime]-_sowct)/1000);
+   //NSLog(@"Thread %d back from sub: %lld  AT [%lld]",[NSThread threadID],t1-t0,([ORRuntimeMonitor wctime]-_sowct)/1000);
    return t1 - t0;
 }
 

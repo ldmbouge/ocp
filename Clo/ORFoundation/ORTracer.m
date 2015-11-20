@@ -89,6 +89,7 @@ inline static void pushCommandList(ORCmdStack* cmd,ORCommandList* list)
       cmd->_tab = realloc(cmd->_tab,sizeof(ORCommandList*)*cmd->_mxs*2);
       cmd->_mxs <<= 1;
    }
+   assert(cmd->_sz==0 || list.memoryFrom >= cmd->_tab[cmd->_sz-1].memoryTo);
    cmd->_tab[cmd->_sz++] = grab(list);
 }
 inline static ORCommandList* peekAt(ORCmdStack* cmd,ORUInt d) { return cmd->_tab[d];}
@@ -104,6 +105,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    if (_sz  >= 1) {
       [_tab[_sz - 1] setMemoryTo:mh];
    }
+   assert(_sz == 0 || mh >= _tab[_sz-1].memoryTo);
    ORCommandList* list = [ORCommandList newCommandList:node from:mh to:mh];
    _tab[_sz++] = list;
 }
@@ -185,8 +187,13 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    self = [super init];
    _path = [[ORCmdStack alloc] initCPCmdStack:64];
    ORInt ub = getStackSize(cmds);
-   for(ORInt i=0;i< ub;i++)
-      pushCommandList(_path, peekAt(cmds, i));
+   for(ORInt i=0;i< ub;i++) {
+      assert(i==0 || cmds->_tab[i].memoryFrom >= cmds->_tab[i-1].memoryTo);
+      ORCommandList* cl = peekAt(cmds, i);
+      ORCommandList* cc = [cl copy];
+      cc->_frozen = YES;
+      pushCommandList(_path,cc);
+   }
    _nodeId = -1;
    _mt = [mt copy];
    _level = -1;
@@ -220,10 +227,6 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 -(ORInt)nodeId
 {
    return _nodeId;
-}
--(ORCmdStack*)commands
-{
-   return _path;
 }
 
 #if TARGET_OS_IPHONE
@@ -267,8 +270,11 @@ static __thread id checkPointCache = NULL;
          [lst letgo];
       }
       ORInt ub = getStackSize(cmds);
-      for(;i < ub;i++)
-         pushCommandList(theCP->_path, peekAt(cmds, i));
+      for(;i < ub;i++) {
+         ORCommandList* cl = peekAt(cmds, i).copy;
+         cl->_frozen = YES;
+         pushCommandList(theCP->_path,cl);
+      }
       [theCP->_mt reload:mt];
    } else {
       //NSLog(@"Fresh checkpoint...");
@@ -492,6 +498,8 @@ static __thread id checkPointCache = NULL;
    NSLog(@"into tracer: %@",_cmds);
    NSLog(@"-----------------------------");
     */
+
+   assert([_cmds size] == [_trStack size]);
    ORCmdStack* toRestore =  acp->_path;
    int i=0;
    bool pfxEq = true;
@@ -502,9 +510,11 @@ static __thread id checkPointCache = NULL;
    if (i <= getStackSize(_cmds) && i <= getStackSize(toRestore)) {
       // the suffix in _cmds [i+1 .. cmd.top] should be backtracked.
       // the suffix in toRestore [i+1 toR.top] should be replayed
+      assert([_cmds size] == [_trStack size]);
       while (i != getStackSize(_cmds)) {
          trailPop(_trStack);
          ORCommandList* lst = popList(_cmds);
+         assert([_cmds size] == [_trStack size]);
          [lst letgo];
       }
       assert([_cmds size] == [_trStack size]);
@@ -523,8 +533,8 @@ static __thread id checkPointCache = NULL;
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
             [theList apply: ^BOOL(id<ORConstraint> c) {
-               [model post:c];
-               return YES;
+               ORStatus s = [model post:c];
+               return s != ORFailure;
             }];
             ORStatus status = [engine currentStatus];
             if (status == ORFailure) {
@@ -538,11 +548,11 @@ static __thread id checkPointCache = NULL;
                assert([_cmds size] == [_trStack size]);
                return status;
             }
-            [_cmds pushCommandList:theList];
+            [_cmds pushCommandList:theList.copy];
             assert([_cmds size] == [_trStack size]);
             return status;
          }, ^ORStatus{
-            [_cmds pushCommandList:theList];
+            [_cmds pushCommandList:theList.copy];
             assert([_cmds size] == [_trStack size]);
             return ORFailure;
          });
@@ -564,16 +574,25 @@ static __thread id checkPointCache = NULL;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
       bool ok = [p apply:^bool(id<ORConstraint> c) {
-          return [model post:c] != ORFailure;
+          ORStatus s = [model post:c];
+         return s != ORFailure;
       }];
-      assert(ok);
+      ORStatus status = [engine currentStatus];
+      if (status == ORFailure) {
+         trailPop(_trStack);
+         assert([_cmds size] == [_trStack size]);
+         return status;
+      }
 #pragma clang diagnostic pop
       [[p theList] setNodeId:_lastNode-1];
       [_cmds pushCommandList:[p theList]];
       assert([_cmds size] == [_trStack size]);
-      return [engine propagate];
+      ORStatus rv = [engine propagate];
+      return rv;
    }, ^ORStatus{
+      assert([_cmds size] == [_trStack size]);
       [_cmds pushCommandList:[p theList]];
+      assert([_cmds size] == [_trStack size]);
       return ORFailure;
    });
 }

@@ -113,8 +113,8 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 {
    switch(nbThreads) {
       case 0: return [ORFactory createCPProgram:model annotation:notes];
-      case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController class]];
-      default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController class]];
+      case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
+      default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];
    }
 }
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x

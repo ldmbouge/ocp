@@ -456,22 +456,19 @@ int mainPureCP(int argc, const char * argv[])
             [model add: disjunctive[i]];
          //[model add: [makespan lt:@(59)]];
          // search
-               id<CPProgram,CPScheduler> cp  = (id)[ORFactory  createCPSemanticProgram:model
-                                                                            annotation:notes
-                                                                                  with:[ORSemBDSController class]];
+//               id<CPProgram,CPScheduler> cp  = (id)[ORFactory  createCPSemanticProgram:model
+//                                                                            annotation:notes
+//                                                                                  with:[ORSemBDSController class]];
          
 //         id<CPProgram,CPScheduler> cp = [args makeProgram:model annotation:notes];
 
-//         id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model
-//                                                                       nb:args.nbThreads
-//                                                               annotation:notes
-//                                                                     with:[ORSemDFSController class]];
+         id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model
+                                                                       nb:args.nbThreads
+                                                               annotation:notes
+                                                                     with:[ORSemDFSController proto]];
          //[cp createFDS];
          [cp solve: ^{
-            NSLog(@"MKS: %@\n",[cp concretize:makespan]);
-            //id<ORIntVarArray> av = [model intVars];
-            //[cp labelArrayFF:av];
-            //[cp splitArray:av];
+            //NSLog(@"MKS: %@\n",[cp concretize:makespan]);
             
             [cp forall: Machines orderedBy: ^ORInt(ORInt i) {
                ORInt gs = [cp globalSlack: disjunctive[i]];
