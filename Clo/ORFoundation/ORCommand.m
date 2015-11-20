@@ -154,13 +154,13 @@ static __thread ComListPool* pool = NULL;
 }
 -(void)setMemoryTo:(ORInt)ml
 {
-   assert(_th <= ml || !_frozen);
+   assert(!_frozen);
    _th = ml;
 }
 
 -(void)insert:(id<ORConstraint>)c
 {
-//   assert(!_frozen);
+   assert(!_frozen);
    struct CNode* new = malloc(sizeof(struct CNode));
    new->_c = [c retain];
    new->_next = _head;

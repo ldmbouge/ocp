@@ -90,7 +90,7 @@ inline static void pushCommandList(ORCmdStack* cmd,ORCommandList* list)
       cmd->_mxs <<= 1;
    }
    assert(cmd->_sz==0 || list.memoryFrom >= cmd->_tab[cmd->_sz-1].memoryTo);
-   cmd->_tab[cmd->_sz++] = grab(list);
+   cmd->_tab[cmd->_sz++] = list;
 }
 inline static ORCommandList* peekAt(ORCmdStack* cmd,ORUInt d) { return cmd->_tab[d];}
 inline static ORUInt getStackSize(ORCmdStack* cmd) { return cmd->_sz;}
@@ -103,6 +103,11 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
       _mxs <<= 1;
    }
    if (_sz  >= 1) {
+      if (_tab[_sz-1]->_frozen) {
+         ORCommandList* old = _tab[_sz - 1];
+         _tab[_sz-1] = [_tab[_sz-1] copy];
+         [old letgo];
+      }
       [_tab[_sz - 1] setMemoryTo:mh];
    }
    assert(_sz == 0 || mh >= _tab[_sz-1].memoryTo);
@@ -262,7 +267,9 @@ static __thread id checkPointCache = NULL;
       const ORInt csz = getStackSize(cmds);
       const ORInt cpsz = getStackSize(theCP->_path);
       while (pfxEq && i < csz  && i < cpsz) {
-         pfxEq = commandsEqual(peekAt(cmds, i), peekAt(theCP->_path, i));
+         ORCommandList* cl = peekAt(theCP->_path, i);
+         pfxEq = commandsEqual(peekAt(cmds, i), cl);
+         cl->_frozen = YES;
          i += pfxEq;
       }
       while (i != getStackSize(theCP->_path)) {
@@ -289,7 +296,7 @@ static __thread id checkPointCache = NULL;
 {
    assert(_cnt > 0);
    if (--_cnt == 0) {
-      [_mt clear];
+      //[_mt clear];
       id vLossCache = checkPointCache;
       *(id*)self = vLossCache;
       checkPointCache = self;
@@ -548,11 +555,11 @@ static __thread id checkPointCache = NULL;
                assert([_cmds size] == [_trStack size]);
                return status;
             }
-            [_cmds pushCommandList:theList.copy];
+            [_cmds pushCommandList:grab(theList)]; // .copy
             assert([_cmds size] == [_trStack size]);
             return status;
          }, ^ORStatus{
-            [_cmds pushCommandList:theList.copy];
+            [_cmds pushCommandList:grab(theList)]; // .copy
             assert([_cmds size] == [_trStack size]);
             return ORFailure;
          });
@@ -584,14 +591,16 @@ static __thread id checkPointCache = NULL;
          return status;
       }
 #pragma clang diagnostic pop
-      [[p theList] setNodeId:_lastNode-1];
-      [_cmds pushCommandList:[p theList]];
+      ORCommandList* tl = [p.theList grab];
+      [tl setNodeId:_lastNode-1];
+      [_cmds pushCommandList:tl];
       assert([_cmds size] == [_trStack size]);
       ORStatus rv = [engine propagate];
       return rv;
    }, ^ORStatus{
       assert([_cmds size] == [_trStack size]);
-      [_cmds pushCommandList:[p theList]];
+      ORCommandList* tl = [p.theList grab];
+      [_cmds pushCommandList:tl];
       assert([_cmds size] == [_trStack size]);
       return ORFailure;
    });
