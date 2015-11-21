@@ -1538,7 +1538,10 @@
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce: ^ {[var bind: val];}];
+   ORStatus status = [_engine enforce: ^ {
+      bindDom((id)var, val);
+      //[var bind: val];
+   }];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
