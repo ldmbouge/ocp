@@ -251,8 +251,8 @@
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
    ORInt low = succ.range.low;
-   ORInt size = succ.range.size - 1;
-   ORInt k = low;
+//   ORInt size = succ.range.size - 1;
+//   ORInt k = low;
 //   for(ORInt i=succ.range.low;i <= succ.range.up;i++) {
 //      if ([self bound:succ[i]]) {
 //         ORInt pv = [self intValue:succ[i]];

@@ -357,25 +357,10 @@
        ];
    }
 }
--(void) solveOn: (void(^)(id<CPCommonProgram>))body {
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body
+{
    ORClosure search = ^() { body(self); };
-   _objective = [_engine objective];
-   if (_objective != nil) {
-      _oneSol = NO;
-      [_search optimizeModel: self using: search
-                  onSolution: ^{ [self doOnSolution];}
-                      onExit: ^{ [self doOnExit];}
-       ];
-      NSLog(@"Optimal Solution: %@ thread:%d\n",[_objective primalBound],[NSThread threadID]);
-   }
-   else {
-      _oneSol = YES;
-      [_search solveModel: self using: search
-               onSolution: ^{ [self doOnSolution];}
-                   onExit: ^{ [self doOnExit];}
-       ];
-   }
-
+   [self solve: search];
 }
 -(void) solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 {

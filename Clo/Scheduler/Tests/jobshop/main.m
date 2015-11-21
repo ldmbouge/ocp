@@ -17,6 +17,9 @@
 #import <ORScheduler/ORScheduler.h>
 #import <ORSchedulingProgram/ORSchedulingProgram.h>
 #import <ORProgram/ORRunnable.h>
+#import <ORProgram/ORSignature.h>
+#import <ORProgram/ORParallelCombinator.h>
+
 #import <ORModeling/ORLinearize.h>
 
 
@@ -236,7 +239,7 @@ int mainBasicLNS(int argc, const char * argv[])
                   NSLog(@"Time: %lld:",timeEnd - timeStart);
                }];
             } onRepeat: ^{
-               id<ORSolution,CPSchedulerSolution> s = (id)[[cp solutionPool] best];
+               id<ORSolution,ORSchedulerSolution> s = (id)[[cp solutionPool] best];
                for(ORInt k = Machines.low; k <= Machines.up; k++) {
                   id<ORIntVarArray> succ = disjunctive[k].successors;
                   id<ORTaskVarArray> t = disjunctive[k].taskVars;
@@ -350,7 +353,7 @@ int mainSubpathLNS(int argc, const char * argv[])
                }];
             }
             onRepeat: ^{
-               id<ORSolution,CPSchedulerSolution> sol = (id) [[cp solutionPool] best];
+               id<ORSolution,ORSchedulerSolution> sol = (id) [[cp solutionPool] best];
                for(ORInt k = 1; k <= 2; k++) {
                   ORInt i = [sM next];
                   id<ORIntVarArray> succ = disjunctive[i].successors;
@@ -453,16 +456,16 @@ int mainPureCP(int argc, const char * argv[])
             [model add: disjunctive[i]];
          //[model add: [makespan lt:@(59)]];
          // search
-//               id<CPProgram,CPScheduler> cp  = (id)[ORFactory  createCPSemanticProgram:model
-//                                                                            annotation:notes
-//                                                                                  with:[ORSemBDSController class]];
+               id<CPProgram,CPScheduler> cp  = (id)[ORFactory  createCPSemanticProgram:model
+                                                                            annotation:notes
+                                                                                  with:[ORSemBDSController class]];
          
 //         id<CPProgram,CPScheduler> cp = [args makeProgram:model annotation:notes];
 
-         id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model
-                                                                       nb:args.nbThreads
-                                                               annotation:notes
-                                                                     with:[ORSemDFSController class]];
+//         id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model
+//                                                                       nb:args.nbThreads
+//                                                               annotation:notes
+//                                                                     with:[ORSemDFSController class]];
          //[cp createFDS];
          [cp solve: ^{
             NSLog(@"MKS: %@\n",[cp concretize:makespan]);

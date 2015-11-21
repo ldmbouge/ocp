@@ -75,7 +75,7 @@ PORTABLE_BEGIN
 
 -(void)               solve: (ORClosure) body;
 -(void)             solveOn: (void(^)(id<CPCommonProgram>))body;
--(void)               solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
+-(void)             solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 -(void)            solveAll: (ORClosure) body;
 -(void)               close;
 

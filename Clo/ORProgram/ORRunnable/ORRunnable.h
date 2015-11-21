@@ -7,10 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <ORProgram/CPProgram.h>
-#import <ORProgram/LPProgram.h>
-#import <ORUtilities/ORTypes.h>
-#import <ORUtilities/ORTypes.h>
+#import <ORUtilities/ORUtilities.h>
+#import <ORProgram/ORProgram.h>
 #import <ORProgram/ORSignature.h>
 #import <ORProgram/ORParallelCombinator.h>
 
