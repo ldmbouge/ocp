@@ -118,7 +118,8 @@
    bool pe = !_publishing && [_pool empty] && [_controller willingToShare];
    if (pe) {
       //NSLog(@"Pool found to be empty[%d] and controller willing to share in thread: %p\n",pe,[NSThread currentThread]);
-      [self publishWork];
+      while (_controller.willingToShare && [_pool size] < 10)
+         [self publishWork];
    }
    [_controller startTryall];
 }

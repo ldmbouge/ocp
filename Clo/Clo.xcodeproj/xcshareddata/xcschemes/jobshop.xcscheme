@@ -63,16 +63,16 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-p6"
+            argument = "-p4"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p2"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p0"

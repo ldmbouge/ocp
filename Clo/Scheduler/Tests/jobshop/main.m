@@ -460,12 +460,12 @@ int mainPureCP(int argc, const char * argv[])
 //                                                                            annotation:notes
 //                                                                                  with:[ORSemBDSController proto]];
          
-//         id<CPProgram,CPScheduler> cp = [args makeProgram:model annotation:notes];
+         id<CPProgram,CPScheduler> cp = (id)[args makeProgram:model annotation:notes];
 
-         id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model
-                                                                       nb:args.nbThreads
-                                                               annotation:notes
-                                                                     with:[ORSemDFSController proto]];
+//         id<CPProgram,CPScheduler> cp = (id)[ORFactory createCPParProgram:model
+//                                                                       nb:args.nbThreads
+//                                                               annotation:notes
+//                                                                     with:[ORSemDFSController proto]];
          //[cp createFDS];
          [cp solve: ^{
             //NSLog(@"MKS: %@\n",[cp concretize:makespan]);
