@@ -120,18 +120,6 @@
         }
     }
     
-    
-//    id<ORIntVarArray> modelVars = [[sol model] intVars];
-//    NSMutableArray* vars = [[NSMutableArray alloc] init];
-//    NSMutableArray* vals = [[NSMutableArray alloc] init];
-//    [modelVars enumerateWith: ^(id<ORIntVar> v, ORInt idx) {
-//        MIPVariableI* x = [_program concretize: v];
-//        if(x != nil) {
-//            [vars addObject: x];
-//            [vals addObject: @([sol intValue: v])];
-//        }
-//    }];
-    
     NSLog(@"MIPRunnable(%p): recieved solution: %p", self, sol);
     [[_program solver] injectSolution: vars values: vals size: (ORInt)[vars count]];
 }
