@@ -101,7 +101,7 @@
 -(ORInt) runsOn;
 @end
 
-@protocol CPTaskVarArray <ORObject>
+@protocol CPTaskVarArray <ORObject,NSFastEnumeration>
 -(id<CPTaskVar>) at: (ORInt) idx;
 -(void) set: (id<CPTaskVar>) value at: (ORInt)idx;
 -(id<CPTaskVar>)objectAtIndexedSubscript:(NSUInteger)key;

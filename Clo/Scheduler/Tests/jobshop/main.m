@@ -458,7 +458,7 @@ int mainPureCP(int argc, const char * argv[])
          // search
 //               id<CPProgram,CPScheduler> cp  = (id)[ORFactory  createCPSemanticProgram:model
 //                                                                            annotation:notes
-//                                                                                  with:[ORSemBDSController class]];
+//                                                                                  with:[ORSemBDSController proto]];
          
 //         id<CPProgram,CPScheduler> cp = [args makeProgram:model annotation:notes];
 

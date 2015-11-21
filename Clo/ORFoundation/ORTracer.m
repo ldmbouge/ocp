@@ -120,6 +120,11 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 }
 -(void)addCommand:(id<ORConstraint>)c
 {
+   ORCommandList* cl = _tab[_sz-1];
+   if (cl->_frozen) {
+      _tab[_sz - 1] = [cl copy];
+      [cl letgo];
+   }
    [_tab[_sz-1] insert:c];
 }
 -(ORCommandList*)popList
@@ -195,9 +200,11 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    for(ORInt i=0;i< ub;i++) {
       assert(i==0 || cmds->_tab[i].memoryFrom >= cmds->_tab[i-1].memoryTo);
       ORCommandList* cl = peekAt(cmds, i);
-      ORCommandList* cc = [cl copy];
-      cc->_frozen = YES;
-      pushCommandList(_path,cc);
+      //ORCommandList* cc = [cl copy];
+      //cc->_frozen = YES;
+      grab(cl);
+      cl->_frozen = YES;
+      pushCommandList(_path,cl);
    }
    _nodeId = -1;
    _mt = [mt copy];
@@ -278,7 +285,8 @@ static __thread id checkPointCache = NULL;
       }
       ORInt ub = getStackSize(cmds);
       for(;i < ub;i++) {
-         ORCommandList* cl = peekAt(cmds, i).copy;
+         ORCommandList* cl = peekAt(cmds, i); //.copy;
+         grab(cl);
          cl->_frozen = YES;
          pushCommandList(theCP->_path,cl);
       }
@@ -510,15 +518,17 @@ static __thread id checkPointCache = NULL;
    ORCmdStack* toRestore =  acp->_path;
    int i=0;
    bool pfxEq = true;
-   while (pfxEq && i <  getStackSize(_cmds) && i < getStackSize(toRestore)) {
-      pfxEq = commandsEqual(peekAt(_cmds, i), peekAt(toRestore, i));
+   ORInt cmdSz = getStackSize(_cmds);
+   ORInt trtSz = getStackSize(toRestore);
+   while (pfxEq && i <  cmdSz && i < trtSz) {
+      pfxEq = commandsEqual(_cmds->_tab[i], toRestore->_tab[i]);
       i += pfxEq;
    }
-   if (i <= getStackSize(_cmds) && i <= getStackSize(toRestore)) {
+   if (i <= cmdSz && i <= trtSz) {
       // the suffix in _cmds [i+1 .. cmd.top] should be backtracked.
       // the suffix in toRestore [i+1 toR.top] should be replayed
       assert([_cmds size] == [_trStack size]);
-      while (i != getStackSize(_cmds)) {
+      while (i != cmdSz--) {
          trailPop(_trStack);
          ORCommandList* lst = popList(_cmds);
          assert([_cmds size] == [_trStack size]);
@@ -532,9 +542,9 @@ static __thread id checkPointCache = NULL;
       //NSLog(@"SemTracer AFTER SUFFIXUNDO: %@ - in thread %p",[self description],[NSThread currentThread]);
       //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
       [_trail incMagic];
-      for(ORInt j=i;j < getStackSize(toRestore);j++) {
+      for(ORInt j=i;j < trtSz;j++) {
          assert([_cmds size] == [_trStack size]);
-         ORCommandList* theList = peekAt(toRestore,j);
+         ORCommandList* theList = toRestore->_tab[j];
          [_trStack pushNode:theList->_ndId];
          [_mt comply:acp->_mt upTo:theList];
          [_trail incMagic];
