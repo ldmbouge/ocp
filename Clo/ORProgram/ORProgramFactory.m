@@ -60,14 +60,14 @@
    [notes release];
    return program;
 }
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (id<ORSearchController>) ctrlClass
 {
    id<ORAnnotation> notes = [ORFactory annotation];
    id<CPProgram> program = [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
    [notes release];
    return program;
 }
-+(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (id<ORSearchController>) ctrlClass
 {
    id<ORAnnotation> notes = [ORFactory annotation];
    id<CPProgram> program = [self createCPParProgram:model nb:k annotation:notes with:ctrlClass];
@@ -129,9 +129,9 @@
    return cpprogram;
 }
 
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto
 {
-   id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolver: ctrlClass];
+   id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolver: ctrlProto];
    [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    return cpprogram;
 }
@@ -182,9 +182,9 @@
    return cpprogram;
 }
 
-+(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto
 {
-   CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
+   CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlProto];
    id<ORAnnotation> ncpy = [notes copy];
    id<ORModel> flatModel = [model flatten:ncpy];
    id<ORSolutionPool> global = [cpprogram solutionPool];

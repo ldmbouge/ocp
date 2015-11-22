@@ -32,7 +32,7 @@
 #import <ORFoundation/ORExplorerI.h>
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORConstraint.h>
-//#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemFDSController.h>
