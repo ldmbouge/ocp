@@ -104,6 +104,7 @@
         id<ORSolution> s = [_program captureSolution];
         [self notifySolution: s];
         id<ORObjectiveValueInt> objectiveValue = (id<ORObjectiveValueInt>)[s objectiveValue];
+        NSLog(@"Sending solution: %p  -- %@",[NSThread currentThread],objectiveValue);
         [self notifyUpperBound: [objectiveValue value]];
     }];
     
