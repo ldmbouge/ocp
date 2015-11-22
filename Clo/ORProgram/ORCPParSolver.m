@@ -505,6 +505,7 @@
 {
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
+   [me onSolution: _onSol];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested

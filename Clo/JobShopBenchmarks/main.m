@@ -45,6 +45,7 @@ int main(int argc, const char * argv[]) {
         BOOL doHybridLNS = NO;
         BOOL doHybridLNS_CP = NO;
         BOOL doBDS = NO;
+        BOOL doCPSCP = NO;
         ORInt numThreads = 0;
         
         if([args containsObject: @"-cp"]) doCP = YES;
@@ -53,6 +54,7 @@ int main(int argc, const char * argv[]) {
         if([args containsObject: @"-lns-mip"]) doHybridLNS = YES;
         if([args containsObject: @"-lns-cp"]) doHybridLNS_CP = YES;
         if([args containsObject: @"-bds"]) doBDS = YES;
+        if([args containsObject: @"-cps-cp"]) doCPSCP = YES;
         if([args containsObject: @"-t1"]) numThreads = 1;
         if([args containsObject: @"-t2"]) numThreads = 2;
         if([args containsObject: @"-t4"]) numThreads = 4;
@@ -111,7 +113,7 @@ int main(int argc, const char * argv[]) {
         
         // Solve CP
         if(doCP) {
-            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+            FILE* outFile = fopen("/Users/ldm/Desktop/cpout.txt", "w+");
             id<ORAnnotation> notes = [ORFactory annotation];
             id<CPProgram,CPScheduler> cp = nil;
             
@@ -201,7 +203,7 @@ int main(int argc, const char * argv[]) {
                     }];
                 }
                   onRepeat: ^{
-                      id<ORSolution,CPSchedulerSolution> sol = (id) [[cp solutionPool] best];
+                      id<ORSolution,ORSchedulerSolution> sol = (id) [[cp solutionPool] best];
                       for(ORInt k = 1; k <= 2; k++) {
                           ORInt i = [sM next];
                           id<ORIntVarArray> succ = disjunctive[i].successors;
@@ -256,7 +258,7 @@ int main(int argc, const char * argv[]) {
                     }];
                 }
                   onRepeat: ^{
-                      id<ORSolution,CPSchedulerSolution> sol = (id) [[cp solutionPool] best];
+                      id<ORSolution,ORSchedulerSolution> sol = (id) [[cp solutionPool] best];
                       for(ORInt k = 1; k <= 2; k++) {
                           ORInt i = [sM next];
                           id<ORIntVarArray> succ = disjunctive[i].successors;
@@ -286,7 +288,7 @@ int main(int argc, const char * argv[]) {
                   }];
             }];
             
-            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+            FILE* outFile = fopen("/Users/ldm/Desktop/cpout.txt", "w+");
             ORLong timeStart = [ORRuntimeMonitor wctime];
             id<ORRunnable> r1 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
@@ -314,7 +316,7 @@ int main(int argc, const char * argv[]) {
         
         
         if(doBDS) {
-            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+            FILE* outFile = fopen("/Users/ldm/Desktop/cpout.txt", "w+");
             id<ORAnnotation> notes = [ORFactory annotation];
             id<CPProgram,CPScheduler> cp = nil;
             cp = //(id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemBDSController class]];
@@ -352,8 +354,43 @@ int main(int argc, const char * argv[]) {
             id<ORSolution> optimum = [pool best];
             NSLog(@"!! BDS makespan: %d \n",[optimum intValue: makespan]);
         }
-        
-        
+       if (doCPSCP) {
+         id<ORRunnable> r0 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program) {
+            id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
+            [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
+               id<ORTaskVarArray> t = disjunctive[i].taskVars;
+               [cp sequence: disjunctive[i].successors
+                         by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; }
+                       then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
+            }];
+            [cp label: makespan];
+            NSLog(@"(SEQ   )makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+         }];
+         FILE* outFile = fopen("/Users/ldm/Desktop/cpout.txt", "w+");
+          ORLong timeStart = [ORRuntimeMonitor wctime];
+          id<ORRunnable> r1 = [ORFactory CPRunnable: model  numThreads:numThreads solve: ^(id<CPCommonProgram> program){
+             id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
+             [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
+                id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                [cp sequence: disjunctive[i].successors
+                          by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
+                        then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
+             }];
+             [cp label: makespan];
+             NSLog(@"(PAR:%2d)makespan = [%d,%d] \n",[NSThread threadID],[cp min: makespan],[cp max: makespan]);
+             fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
+             fflush(outFile);
+          }];
+          
+          id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
+          [r run];
+          fclose(outFile);
+          ORLong timeEnd = [ORRuntimeMonitor wctime];
+          NSLog(@"Time: %lld",timeEnd - timeStart);
+          id<ORSolution> optimum = [r bestSolution];
+          NSLog(@"!! CPS/CP makespan: %d \n",[optimum intValue: makespan]);
+       }
+       
     }
     return 0;
 }

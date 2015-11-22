@@ -79,13 +79,13 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    NSLog(@"(%p) recieved upper bound: %i", self, bound);
+    NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
 }
 
 -(void) receiveLowerBound:(ORDouble)bound
 {
-    NSLog(@"(%p) recieved lower bound: %f", self, bound);
+    NSLog(@"(%p) received lower bound(%p): %f", self, [NSThread currentThread],bound);
 }
 
 -(void) receiveSolution:(id<ORSolution>)sol {
