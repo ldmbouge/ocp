@@ -83,13 +83,15 @@
    //NSLog(@"MT(1):%d : %@",[NSThread threadID],[theCP getMT]);
    //NSLog(@"CT(1):%d : %@",[NSThread threadID],[tracer getMT]);
    ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
-   assert(ok != ORFailure);
+//   assert(ok != ORFailure);
    //NSLog(@"MT(2):%d : %@",[NSThread threadID],[theCP getMT]);
    //NSLog(@"CT(2):%d : %@",[NSThread threadID],[tracer getMT]);
    [theCP letgo];
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    [pItf release];
    _publishing = NO;
+   if (ok == ORFailure)
+      [self fail];
 }
 -(void)trust
 {
@@ -234,7 +236,7 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:[_solver engine] model:_model];
-         //assert(ok != ORFailure);
+         assert(ok != ORFailure);
          [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
@@ -254,7 +256,7 @@
 -(void) finitelyFailed
 {
    [_controller fail];
-   assert(FALSE);
+   //assert(FALSE);
 }
 -(ORBool) isFinitelyFailed
 {

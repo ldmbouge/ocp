@@ -2296,8 +2296,8 @@ static void readData(CPTaskDisjunctive * disj)
 
     disj->_begin = MAXINT;
     disj->_end   = MININT;
-   id<ORIdArray> ia = disj->_tasks;
-   id<CPTaskVar>* tb = [ia base];
+   id<ORIdArray> ia = (id)disj->_tasks;
+   id<CPTaskVar>* tb = (id)[ia base];
     // Retrieve all necessary data from the tasks
     for (ORInt tt = boundSize; tt < disj->_size; tt++) {
         const ORInt t  = disj->_bound[tt];

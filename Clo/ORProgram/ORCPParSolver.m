@@ -63,6 +63,7 @@
       _workers[i] = [CPSolverFactory semanticSolver:[ctrlProto copy]];
    _globalPool = [ORFactory createSolutionPool];
    _onSol = nil;
+   _onStartup = nil;
    _doneSearching = NO;
    _sowct = [ORRuntimeMonitor wctime];
    return self;
@@ -77,6 +78,7 @@
    [_allClosed release];
    [_globalPool release];
    [_onSol release];
+   [_onStartup release];
    [super dealloc];
 }
 -(id<ORTracker>)tracker
@@ -448,6 +450,10 @@
 {
    return [[self worker] constraints:x];
 }
+-(void)onStartup:(ORClosure)onStartup
+{
+   _onStartup = [onStartup copy];
+}
 -(void)onSolution:(ORClosure)onSolution
 {
    _onSol = [onSolution copy];
@@ -460,6 +466,12 @@
 -(void) doOnSolution
 {
    [[self worker] doOnSolution];
+}
+-(void) doOnStartup
+{
+   if (_onStartup)
+      _onStartup();
+   [[self worker] doOnStartup];
 }
 -(void) doOnExit
 {
@@ -478,6 +490,11 @@
       id<ORSTask> theTask = (id<ORSTask>)stask();
       [theTask execute];
    }];
+}
+-(void) clearOnStartup
+{
+   for(ORInt k = 0; k < _nbWorkers; k++)
+      [_workers[k] clearOnStartup];
 }
 -(void) clearOnSolution
 {
@@ -572,6 +589,7 @@
    [NSThread setThreadPriority:1.0];
    [NSThread setThreadID:myID];
    _doneSearching = NO;
+   [self doOnStartup];
    [[_workers[myID] explorer] search: ^() {
       [_workers[myID] close];
       // The probing can already tigthen the bound of the objective.

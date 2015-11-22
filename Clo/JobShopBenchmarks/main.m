@@ -118,7 +118,7 @@ int main(int argc, const char * argv[]) {
             id<CPProgram,CPScheduler> cp = nil;
             
             if(numThreads > 0)
-                cp = (id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemDFSController class]];
+                cp = (id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemDFSController proto]];
             else cp = (id)[ORFactory createCPProgram: model];
             
             ORLong timeStart = [ORRuntimeMonitor wctime];
@@ -322,7 +322,7 @@ int main(int argc, const char * argv[]) {
             cp = //(id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemBDSController class]];
             (id)[ORFactory  createCPSemanticProgram:model
                                          annotation:notes
-                                               with:[ORSemBDSController class]];
+                                               with:[ORSemBDSController proto]];
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [cp solve: ^{
                 NSLog(@"MKS: %@\n",[cp concretize:makespan]);
@@ -360,8 +360,8 @@ int main(int argc, const char * argv[]) {
             [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
                id<ORTaskVarArray> t = disjunctive[i].taskVars;
                [cp sequence: disjunctive[i].successors
-                         by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; }
-                       then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
+                         by: ^ORDouble(ORInt i) { return i <= t.up ? [cp est: t[i]] : MAXDBL;}
+                       then: ^ORDouble(ORInt i) { return i <= t.up ? [cp ect: t[i]] : MAXDBL;}];
             }];
             [cp label: makespan];
             NSLog(@"(SEQ   )makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
@@ -373,8 +373,8 @@ int main(int argc, const char * argv[]) {
              [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
                 id<ORTaskVarArray> t = disjunctive[i].taskVars;
                 [cp sequence: disjunctive[i].successors
-                          by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
-                        then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
+                          by: ^ORDouble(ORInt i) { return i <= t.up ? [cp est: t[i]] : MAXDBL;}
+                        then: ^ORDouble(ORInt i) { return i <= t.up ? [cp ect: t[i]] : MAXDBL;}];
              }];
              [cp label: makespan];
              NSLog(@"(PAR:%2d)makespan = [%d,%d] \n",[NSThread threadID],[cp min: makespan],[cp max: makespan]);

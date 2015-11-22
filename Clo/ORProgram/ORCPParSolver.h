@@ -15,12 +15,15 @@
    ORInt              _nbWorkers;
    id<ORSolutionPool> _globalPool;
    ORClosure          _onSol;
+   ORClosure          _onStartup;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(id<ORSearchController>)ctrlProto;
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)nbWorkers;
 -(id<CPProgram>) worker;
+-(void)onStartup:(ORClosure)onStartup;
 -(void)onSolution:(ORClosure)onSolution;
+-(void) doOnStartup;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(void) clearOnSolution;

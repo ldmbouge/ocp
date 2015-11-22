@@ -148,6 +148,7 @@
    id<ORIdxIntInformer>  _failGT;
    TRInt                 _closed;
    BOOL                  _oneSol;
+   NSMutableArray*       _doOnStartupArray;
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
@@ -162,8 +163,9 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
-   _doOnSolArray = [[NSMutableArray alloc] initWithCapacity: 1];
-   _doOnExitArray = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnSolArray     = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnExitArray    = [[NSMutableArray alloc] initWithCapacity: 1];
    return self;
 }
 -(void) dealloc
@@ -179,6 +181,7 @@
    [_failLT release];
    [_failGT release];
    [_sPool release];
+   [_doOnStartupArray release];
    [_doOnSolArray release];
    [_doOnExitArray release];
    [super dealloc];
@@ -301,6 +304,10 @@
 {
   [_hSet applyToAll:^(id<CPHeuristic> h) { [h restart];}];
 }
+-(void) clearOnStartup
+{
+   [_doOnStartupArray removeAllObjects];
+}
 -(void) clearOnSolution
 {
    [_doOnSolArray removeAllObjects];
@@ -313,6 +320,12 @@
 {
    id block = [onSolution copy];
    [_doOnSolArray addObject: block];
+   [block release];
+}
+-(void) onStartup:(ORClosure) onStartup
+{
+   id block = [onStartup copy];
+   [_doOnStartupArray addObject: block];
    [block release];
 }
 -(void) onExit: (ORClosure) onExit
@@ -332,6 +345,12 @@
       return [ORFactory parameterizedSolution: (id<ORParameterizedModel>)_model solver: self];
    return [ORFactory solution: _model solver: self];
 }
+-(void) doOnStartup
+{
+   [_doOnStartupArray enumerateObjectsUsingBlock:^(ORClosure  _Nonnull block, NSUInteger idx, BOOL * _Nonnull stop) {
+      block();
+   }];
+}
 -(void) doOnSolution
 {
    [_doOnSolArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
@@ -347,6 +366,7 @@
 -(void) solve: (ORClosure) search
 {
    _objective = [_engine objective];
+   [self doOnStartup];
    if (_objective != nil) {
       _oneSol = NO;
       [_search optimizeModel: self using: search
@@ -371,6 +391,7 @@
 -(void) solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 {
     ORClosure newSearch = ^() { [self limitTime: limit * 1000 in: ^(){ body(self); }]; };
+   [self doOnStartup];
     _objective = [_engine objective];
     if (_objective != nil) {
         _oneSol = NO;
@@ -391,6 +412,7 @@
 -(void) solveAll: (ORClosure) search
 {
    _oneSol = NO;
+   [self doOnStartup];
    [_search solveAllModel: self using: search
                onSolution: ^{ [self doOnSolution];}
                    onExit: ^{ [self doOnExit];}

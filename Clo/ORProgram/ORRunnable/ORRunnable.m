@@ -44,7 +44,7 @@
 }
 -(void) start
 {
-    if(_startBlock) _startBlock();
+    ///if(_startBlock) _startBlock();
     [self run];
     if(_exitBlock) _exitBlock();
 }

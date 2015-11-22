@@ -66,12 +66,14 @@
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
+-(void) onStartup:(ORClosure) onStartup;
 -(void) onSolution: (ORClosure) onSolution;
 -(void) onExit: (ORClosure) onExit;
 -(void) clearOnSolution;
 -(void) clearOnExit;
 -(void) addHeuristic: (id<CPHeuristic>) h;
 -(void) restartHeuristics;
+-(void) doOnStartup;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;

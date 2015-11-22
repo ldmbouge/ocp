@@ -603,7 +603,12 @@ static __thread id checkPointCache = NULL;
 #pragma clang diagnostic pop
       ORCommandList* tl = [p.theList grab];
       [tl setNodeId:_lastNode-1];
-      [_cmds pushCommandList:tl];
+      [_cmds pushList:tl->_ndId memory:[_mt trailSize]];
+      [tl apply:^BOOL(id<ORConstraint> c) {
+         [_cmds addCommand:c];
+         return YES;
+      }];
+      //[_cmds pushCommandList:tl];
       assert([_cmds size] == [_trStack size]);
       ORStatus rv = [engine propagate];
       return rv;

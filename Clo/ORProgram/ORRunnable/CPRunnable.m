@@ -83,13 +83,13 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
+    //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
 }
 
 -(void) receiveLowerBound:(ORDouble)bound
 {
-    NSLog(@"(%p) received lower bound(%p): %f", self, [NSThread currentThread],bound);
+    //NSLog(@"(%p) received lower bound(%p): %f", self, [NSThread currentThread],bound);
 }
 
 -(void) receiveSolution:(id<ORSolution>)sol {
@@ -99,12 +99,16 @@
 -(void) run
 {
     NSLog(@"Running CP runnable(%p)...", _program);
+   [_program onStartup:^{
+      if (_startBlock)
+         _startBlock();
+   }];
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution:^{
         id<ORSolution> s = [_program captureSolution];
         [self notifySolution: s];
         id<ORObjectiveValueInt> objectiveValue = (id<ORObjectiveValueInt>)[s objectiveValue];
-        NSLog(@"Sending solution: %p  -- %@",[NSThread currentThread],objectiveValue);
+        //NSLog(@"Sending solution: %p  -- %@",[NSThread currentThread],objectiveValue);
         [self notifyUpperBound: [objectiveValue value]];
     }];
     
