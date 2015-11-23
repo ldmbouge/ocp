@@ -114,8 +114,10 @@ PORTABLE_BEGIN
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
+-(void)           onStartup: (ORClosure) onStartup;
 -(void)          onSolution: (ORClosure) onSolution;
 -(void)              onExit: (ORClosure) onExit;
+-(void) clearOnStartup;
 -(void) clearOnSolution;
 -(void) clearOnExit;
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
@@ -135,6 +137,7 @@ PORTABLE_BEGIN
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) defaultSearch;
 -(void) search:(void*(^)())stask;
+-(void) doOnStartup;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;

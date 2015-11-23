@@ -35,11 +35,13 @@
     ORAbstractRunnableI* r1 = (ORAbstractRunnableI*)runnables[1];
     
     [r1 performOnStart: ^() {
-        if([[r0 signature] providesUpperBoundStream] && [[r1 signature] acceptsUpperBoundStream])
+       id<ORSignature> r0Sig = [r0 signature];
+       id<ORSignature> r1Sig = [r1 signature];
+        if([r0Sig providesUpperBoundStream] && [r1Sig acceptsUpperBoundStream])
             [(id<ORUpperBoundStreamProducer>)r0 addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)r1];
-        if([[r0 signature] providesLowerBoundStream] && [[r1 signature] acceptsLowerBoundStream])
+        if([r0Sig providesLowerBoundStream] && [r1Sig acceptsLowerBoundStream])
             [(id<ORLowerBoundStreamProducer>)r0 addLowerBoundStreamConsumer: (id<ORLowerBoundStreamConsumer>)r1];
-        if([[r0 signature] providesSolutionStream] && [[r1 signature] acceptsSolutionStream])
+        if([r0Sig providesSolutionStream] && [r1Sig acceptsSolutionStream])
             [(id<ORSolutionStreamProducer>)r0 addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)r1];
     }];
     

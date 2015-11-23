@@ -15,6 +15,7 @@
 #import <ORFoundation/ORTracer.h>
 
 @interface ORSemDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing> 
++(id<ORSearchController>)proto;
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
 -(void) dealloc;
 -(void) setup;
@@ -27,4 +28,5 @@
 
 @interface ORSemDFSControllerCSP : ORSemDFSController
 -(void) fail;
++(id<ORSearchController>)proto;
 @end

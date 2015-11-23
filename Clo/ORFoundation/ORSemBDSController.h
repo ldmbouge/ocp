@@ -16,18 +16,9 @@
 
 @class BDSStack;
 
-@interface ORSemBDSController : ORDefaultController<NSCopying,ORSearchController> {
-@private
-   BDSStack*             _tab;
-   BDSStack*            _next;
-   ORInt             _maxDisc;
-   ORInt              _nbDisc;
-   SemTracer*         _tracer;
-   id<ORCheckpoint>   _atRoot;
-   id<ORSearchEngine> _solver;
-   id<ORPost>          _model;
-}
+@interface ORSemBDSController : ORDefaultController<NSCopying,ORSearchController> 
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
++(id<ORSearchController>)proto;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

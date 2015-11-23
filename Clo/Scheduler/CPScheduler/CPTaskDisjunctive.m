@@ -20,6 +20,9 @@
 // need a tree of size 2 * (#tasks) - 1
 #define MAXNBTASK ((MAXINT)/4)
 
+typedef ORBool(*REType)(id,SEL,...);
+
+
 @implementation CPTaskDisjunctive {
     // Attributs of tasks
     ORInt    _size;         // Number of tasks in the array '_tasks'
@@ -70,6 +73,7 @@
     ORBool _dprec;          // Detectable precedences filtering
     ORBool _nfnl;           // Not-first/not-last filtering
     ORBool _ef;             // Edge-finding
+   REType*   _reIMP;
 }
 -(id) initCPTaskDisjunctive: (id<CPTaskVarArray>)tasks
 {
@@ -83,6 +87,11 @@
     // TODO Changing the priority
     _priority = LOWEST_PRIO + 2;
     _tasks    = tasks;
+    _reIMP = malloc(sizeof(IMP)*_tasks.range.size);
+    _reIMP -= _tasks.range.low;
+   for(ORInt i = tasks.range.low;i <= tasks.range.up;i++)
+      _reIMP[i] = (REType)[_tasks[i] methodForSelector:@selector(readEst:lst:ect:lct:minDuration:maxDuration:present:absent:forResource:)];
+   
     _resTasks = NULL;
     
     
@@ -2287,12 +2296,24 @@ static void readData(CPTaskDisjunctive * disj)
 
     disj->_begin = MAXINT;
     disj->_end   = MININT;
-    
+   id<ORIdArray> ia = (id)disj->_tasks;
+   id<CPTaskVar>* tb = (id)[ia base];
     // Retrieve all necessary data from the tasks
     for (ORInt tt = boundSize; tt < disj->_size; tt++) {
         const ORInt t  = disj->_bound[tt];
         const ORInt t0 = t - disj->_low;
-        ORBool bound = [disj->_tasks[t] readEst:disj->_est+t0
+       ORBool bound = disj->_reIMP[t](tb[t],@selector(readEst:lst:ect:lct:minDuration:maxDuration:present:absent:forResource:),
+                                   disj->_est+t0,
+                                   disj->_lst+t0,
+                                   disj->_ect+t0,
+                                   disj->_lct+t0,
+                                   disj->_dur_min+t0,
+                                   disj->_dur_max+t0,
+                                   disj->_present+t0,
+                                   disj->_absent+t0,
+                                   disj);
+/*
+        ORBool bound = [tb[t] readEst:disj->_est+t0
                                             lst:disj->_lst+t0
                                             ect:disj->_ect+t0
                                             lct:disj->_lct+t0
@@ -2301,7 +2322,7 @@ static void readData(CPTaskDisjunctive * disj)
                                         present:disj->_present+t0
                                          absent:disj->_absent+t0
                                     forResource:disj];
-        
+        */
         assert(disj->_dur_min[t0] >= 0);
         assert(disj->_est[t0] + disj->_dur_min[t0] <= disj->_lct[t0]);
         

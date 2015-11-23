@@ -66,12 +66,14 @@
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
+-(void) onStartup:(ORClosure) onStartup;
 -(void) onSolution: (ORClosure) onSolution;
 -(void) onExit: (ORClosure) onExit;
 -(void) clearOnSolution;
 -(void) clearOnExit;
 -(void) addHeuristic: (id<CPHeuristic>) h;
 -(void) restartHeuristics;
+-(void) doOnStartup;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
@@ -92,13 +94,13 @@
 // SemanticPath CPSolver
 @interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram,CPSemanticProgramDFS>
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
--(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
+-(id<CPSemanticProgram>)    initCPSemanticSolver: (id<ORSearchController>) ctrlProto;
 @end
 
 @interface CPSolverFactory : NSObject
 +(id<CPProgram>) solver;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
-+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
++(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto;
 @end
 
 

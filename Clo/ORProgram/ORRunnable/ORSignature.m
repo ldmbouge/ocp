@@ -129,7 +129,7 @@
 
 @implementation ORFactory(ORSignature)
 +(id<ORSignature>) createSignature: (NSString*)sigString {
-    ORMutableSignatureI* sig = [[[ORMutableSignatureI alloc] init] autorelease];
+    ORMutableSignatureI* sig = [[ORMutableSignatureI alloc] init];
     sig = [sig valueForKeyPath: sigString];
     return sig;
 }

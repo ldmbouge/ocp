@@ -68,6 +68,9 @@
 
 -(void) run
 {
+   if (_startBlock)
+      _startBlock();
+   
     NSLog(@"Running MIP runnable(%p)...", _program);
     [[[_program solver] boundInformer] wheneverNotifiedDo: ^(ORDouble bnd) { [self notifyUpperBound: (ORInt)bnd]; }];
     [_program solve];

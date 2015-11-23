@@ -55,10 +55,18 @@
    id<ORCheckpoint> theCP = [tracer captureCheckpoint];
    //NSLog(@"MT(0):%d : %@",[NSThread threadID],[theCP getMT]);
    ORHeist* stolen = [_controller steal];
-   //NSLog(@"ST(0):%d : %@",[NSThread threadID],[[stolen theCP] getMT]);
+   //NSLog(@"     Publishing(%d) : %@ - %p  -- current objective: %@ stole:%d",[NSThread threadID],stolen.oValue,stolen.theCP,[_solver objective],[stolen sizeEstimate]);
    
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
    ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine] model:pItf];
+   if (ok == ORFailure) {
+      ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
+      _publishing = NO;
+      [theCP letgo];
+      [pItf release];
+      [stolen release];
+      return;
+   }
    assert(ok != ORFailure);
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
    
@@ -70,18 +78,20 @@
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool post:pItf]];
                                     }];
    
-   //NSLog(@"PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
+   //NSLog(@"     PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
    [stolen release];
    //NSLog(@"MT(1):%d : %@",[NSThread threadID],[theCP getMT]);
    //NSLog(@"CT(1):%d : %@",[NSThread threadID],[tracer getMT]);
    ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
-   assert(ok != ORFailure);
+//   assert(ok != ORFailure);
    //NSLog(@"MT(2):%d : %@",[NSThread threadID],[theCP getMT]);
    //NSLog(@"CT(2):%d : %@",[NSThread threadID],[tracer getMT]);
    [theCP letgo];
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    [pItf release];
    _publishing = NO;
+   if (ok == ORFailure)
+      [self fail];
 }
 -(void)trust
 {
@@ -95,7 +105,11 @@
    bool pe = !_publishing && [_pool empty] && [_controller willingToShare];
    if (pe) {
       //NSLog(@"Pool found to be empty[%d] and controller willing to share in thread: %p\n",pe,[NSThread currentThread]);
-      [self publishWork];
+      //while (_controller.willingToShare)
+//      NSLog(@"***** (%d) Start publishing...",[NSThread threadID]);
+      while (_controller.willingToShare && [_pool size] < 10)
+         [self publishWork];
+//      NSLog(@"***** (%d) End   publishing... %d",[_pool size],[NSThread threadID]);
    }
    [_controller startTry];
 }
@@ -106,7 +120,8 @@
    bool pe = !_publishing && [_pool empty] && [_controller willingToShare];
    if (pe) {
       //NSLog(@"Pool found to be empty[%d] and controller willing to share in thread: %p\n",pe,[NSThread currentThread]);
-      [self publishWork];
+      while (_controller.willingToShare && [_pool size] < 10)
+         [self publishWork];
    }
    [_controller startTryall];
 }
@@ -221,7 +236,7 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:[_solver engine] model:_model];
-         //assert(ok != ORFailure);
+         assert(ok != ORFailure);
          [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
@@ -241,7 +256,7 @@
 -(void) finitelyFailed
 {
    [_controller fail];
-   assert(FALSE);
+   //assert(FALSE);
 }
 -(ORBool) isFinitelyFailed
 {

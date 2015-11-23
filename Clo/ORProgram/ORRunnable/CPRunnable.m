@@ -40,8 +40,10 @@
 -(id) initWithModel: (id<ORModel>)m numThreads: (ORInt) nth
 {
     if((self = [super initWithModel: m]) != nil) {
-        _program = (id)[ORFactory createCPParProgram: m nb: nth annotation: [ORFactory annotation]
-                                                with:[ORSemDFSController class]];
+        _program = (id)[ORFactory createCPParProgram: m
+                                                  nb: nth
+                                          annotation: [ORFactory annotation]
+                                                with: [ORSemDFSController proto]];
         _sig = nil;
         _search = nil;
     }
@@ -51,8 +53,10 @@
 -(id) initWithModel: (id<ORModel>)m numThreads: (ORInt) nth search: (void(^)(id<CPCommonProgram>))search
 {
     if((self = [super initWithModel: m]) != nil) {
-        _program = (id)[ORFactory createCPParProgram: m nb: nth annotation: [ORFactory annotation]
-                                                with:[ORSemDFSController class]];
+        _program = (id)[ORFactory createCPParProgram: m
+                                                  nb: nth
+                                          annotation: [ORFactory annotation]
+                                                with: [ORSemDFSController proto]];
         _sig = nil;
         _search = [search retain];
     }
@@ -79,13 +83,13 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    NSLog(@"(%p) recieved upper bound: %i", self, bound);
+    //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
 }
 
 -(void) receiveLowerBound:(ORDouble)bound
 {
-    NSLog(@"(%p) recieved lower bound: %f", self, bound);
+    //NSLog(@"(%p) received lower bound(%p): %f", self, [NSThread currentThread],bound);
 }
 
 -(void) receiveSolution:(id<ORSolution>)sol {
@@ -95,11 +99,16 @@
 -(void) run
 {
     NSLog(@"Running CP runnable(%p)...", _program);
+   [_program onStartup:^{
+      if (_startBlock)
+         _startBlock();
+   }];
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution:^{
         id<ORSolution> s = [_program captureSolution];
         [self notifySolution: s];
         id<ORObjectiveValueInt> objectiveValue = (id<ORObjectiveValueInt>)[s objectiveValue];
+        //NSLog(@"Sending solution: %p  -- %@",[NSThread currentThread],objectiveValue);
         [self notifyUpperBound: [objectiveValue value]];
     }];
     

@@ -88,32 +88,38 @@
 
 @interface ORControllerFactoryI : NSObject<ORControllerFactory> {
    id<CPCommonProgram> _solver;
-   Class               _ctrlClass;
-   Class               _nestedClass;
+   id<ORSearchController>  _ctrlProto;
+   id<ORSearchController>  _nestedProto;
 }
--(id)initORControllerFactoryI: (id<CPCommonProgram>) solver rootControllerClass:(Class)class nestedControllerClass:(Class)nc;
+-(id)initORControllerFactoryI: (id<CPCommonProgram>) solver
+          rootControllerClass: (id<ORSearchController>)class
+        nestedControllerClass: (id<ORSearchController>)nc;
 -(id<ORSearchController>) makeRootController;
 -(id<ORSearchController>) makeNestedController;
 @end
 
 @implementation ORControllerFactoryI
--(id)initORControllerFactoryI: (id<CPCommonProgram>) solver rootControllerClass: (Class) class nestedControllerClass: (Class) nc
+-(id)initORControllerFactoryI: (id<CPCommonProgram>) solver
+          rootControllerClass: (id<ORSearchController>) ctrl
+        nestedControllerClass: (id<ORSearchController>) nc
 {
    self = [super init];
    _solver = solver;
-   _ctrlClass = class;
-   _nestedClass = nc;
+   _ctrlProto = ctrl;
+   _nestedProto = nc;
    return self;
 }
 -(id<ORSearchController>) makeRootController
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
-   return [[_ctrlClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
+   return [[_ctrlProto clone] tuneWith:[_solver tracer] engine:[_solver engine] pItf:pItf];
+//   return [[_ctrlClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
 }
 -(id<ORSearchController>) makeNestedController
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
-   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
+   return [[_nestedProto clone] tuneWith:[_solver tracer] engine:[_solver engine] pItf:pItf];
+//   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
 }
 @end
 
@@ -142,6 +148,7 @@
    id<ORIdxIntInformer>  _failGT;
    TRInt                 _closed;
    BOOL                  _oneSol;
+   NSMutableArray*       _doOnStartupArray;
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
@@ -156,8 +163,9 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _oneSol = YES;
-   _doOnSolArray = [[NSMutableArray alloc] initWithCapacity: 1];
-   _doOnExitArray = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnSolArray     = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnExitArray    = [[NSMutableArray alloc] initWithCapacity: 1];
    return self;
 }
 -(void) dealloc
@@ -173,6 +181,7 @@
    [_failLT release];
    [_failGT release];
    [_sPool release];
+   [_doOnStartupArray release];
    [_doOnSolArray release];
    [_doOnExitArray release];
    [super dealloc];
@@ -295,6 +304,10 @@
 {
   [_hSet applyToAll:^(id<CPHeuristic> h) { [h restart];}];
 }
+-(void) clearOnStartup
+{
+   [_doOnStartupArray removeAllObjects];
+}
 -(void) clearOnSolution
 {
    [_doOnSolArray removeAllObjects];
@@ -307,6 +320,12 @@
 {
    id block = [onSolution copy];
    [_doOnSolArray addObject: block];
+   [block release];
+}
+-(void) onStartup:(ORClosure) onStartup
+{
+   id block = [onStartup copy];
+   [_doOnStartupArray addObject: block];
    [block release];
 }
 -(void) onExit: (ORClosure) onExit
@@ -326,6 +345,12 @@
       return [ORFactory parameterizedSolution: (id<ORParameterizedModel>)_model solver: self];
    return [ORFactory solution: _model solver: self];
 }
+-(void) doOnStartup
+{
+   [_doOnStartupArray enumerateObjectsUsingBlock:^(ORClosure  _Nonnull block, NSUInteger idx, BOOL * _Nonnull stop) {
+      block();
+   }];
+}
 -(void) doOnSolution
 {
    [_doOnSolArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
@@ -341,6 +366,7 @@
 -(void) solve: (ORClosure) search
 {
    _objective = [_engine objective];
+   [self doOnStartup];
    if (_objective != nil) {
       _oneSol = NO;
       [_search optimizeModel: self using: search
@@ -365,6 +391,7 @@
 -(void) solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 {
     ORClosure newSearch = ^() { [self limitTime: limit * 1000 in: ^(){ body(self); }]; };
+   [self doOnStartup];
     _objective = [_engine objective];
     if (_objective != nil) {
         _oneSol = NO;
@@ -385,6 +412,7 @@
 -(void) solveAll: (ORClosure) search
 {
    _oneSol = NO;
+   [self doOnStartup];
    [_search solveAllModel: self using: search
                onSolution: ^{ [self doOnSolution];}
                    onExit: ^{ [self doOnExit];}
@@ -1325,8 +1353,8 @@
    self = [super initCPCoreSolver];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-                                                                    rootControllerClass: [ORDFSController class]
-                                                                  nestedControllerClass: [ORDFSController class]];
+                                                                    rootControllerClass: [ORDFSController proto]
+                                                                  nestedControllerClass: [ORDFSController proto]];
    _search = [ORExplorerFactory explorer: engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
@@ -1449,8 +1477,8 @@
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-                                                                    rootControllerClass: [ORDFSController class]
-                                                                  nestedControllerClass: [ORDFSController class]];
+                                                                    rootControllerClass: [ORDFSController proto]
+                                                                  nestedControllerClass: [ORDFSController proto]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
@@ -1465,14 +1493,14 @@
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-                                                                    rootControllerClass: [ORSemDFSControllerCSP class]
-                                                                  nestedControllerClass: [ORSemDFSControllerCSP class]];
+                                                                    rootControllerClass: [ORSemDFSControllerCSP proto]
+                                                                  nestedControllerClass: [ORSemDFSControllerCSP proto]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
    return self;
 }
--(id<CPSemanticProgram>) initCPSemanticSolver: (Class) ctrlClass
+-(id<CPSemanticProgram>) initCPSemanticSolver: (id<ORSearchController>) ctrlProto
 {
    self = [super initCPCoreSolver]; 
    _trail = [ORFactory trail];
@@ -1481,8 +1509,8 @@
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-                                                                    rootControllerClass: [ORSemDFSControllerCSP class]
-                                                                  nestedControllerClass: ctrlClass];
+                                                                    rootControllerClass: [ORSemDFSControllerCSP proto]
+                                                                  nestedControllerClass: ctrlProto];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
@@ -1532,7 +1560,10 @@
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce: ^ {[var bind: val];}];
+   ORStatus status = [_engine enforce: ^ {
+      bindDom((id)var, val);
+      //[var bind: val];
+   }];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -1638,9 +1669,9 @@
 {
    return [[CPSemanticSolver alloc] initCPSemanticSolverDFS];
 }
-+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
++(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto
 {
-   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
+   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlProto];
 }
 @end
 

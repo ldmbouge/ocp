@@ -13,17 +13,19 @@
 #import <ORUtilities/cont.h>
 
 @implementation ORHeist
--(ORHeist*)initORHeist:(NSCont*)c from:(id<ORCheckpoint>)cp
+-(ORHeist*)init:(NSCont*)c from:(id<ORCheckpoint>)cp oValue:(id<ORObjectiveValue>)ov;
 {
    self = [super init];
    _cont = [c grab];
    _theCP = [cp grab];
+   _oValue = [ov retain];
    return self;
 }
 -(void)dealloc
 {
    [_cont letgo];
    [_theCP letgo];
+   [_oValue release];
    [super dealloc];
 }
 -(NSCont*)cont
@@ -37,6 +39,10 @@
 -(ORInt)sizeEstimate
 {
    return [_theCP sizeEstimate];
+}
+-(id<ORObjectiveValue>)oValue
+{
+   return _oValue;
 }
 @end
 
@@ -62,7 +68,16 @@
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
-
+-(id<ORSearchController>)clone
+{
+   ORDefaultController* c = [[ORDefaultController alloc] initORDefaultController];
+   c->_controller = _controller;
+   return c;
+}
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf
+{
+   return self;
+}
 -(id<ORSearchController>) controller
 {
    return _controller;
@@ -186,6 +201,15 @@
    [_parent release];
    [super dealloc];
 }
+-(id<ORSearchController>)clone
+{
+   ORNestedController* c = [[ORNestedController alloc] init:_controller parent:_parent];
+   return c;
+}
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf
+{
+   return self;
+}
 -(void) setParent:(id<ORSearchController>) controller
 {
    [_parent release];
@@ -228,10 +252,14 @@
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
 }
++(id<ORSearchController>)proto
+{
+   return [[ORDFSController alloc] initTheControllerWithTracer:nil];
+}
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {
    self = [super initORDefaultController];
-   _tracer = [tracer retain];
+   _tracer = tracer ? [tracer retain] : nil;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
@@ -243,20 +271,38 @@
 - (id) initTheControllerWithTracer:(id<ORTracer>)tracer
 {
    self = [super initORDefaultController];
-   _tracer = [tracer retain];
+   _tracer = tracer ? [tracer retain] : nil;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
    _atRoot = 0;
    return self;
 }
-
 - (void) dealloc
 {
    //NSLog(@"DFSController dealloc called...\n");
-   [_tracer release];
+   if (_tracer)
+      [_tracer release];
    free(_tab);
    [super dealloc];
+}
+-(id<ORSearchController>)clone
+{
+   ORDFSController* c = [[ORDFSController alloc] initTheController:_tracer engine:nil posting:nil];
+   free(c->_tab);
+   c->_tab = malloc(sizeof(NSCont*)*_mx);
+   for(ORInt k=0;k<_sz;k++) {
+      c->_tab[k] = _tab[k];
+   }
+   c->_sz = _sz;
+   c->_mx = _mx;
+   return c;
+}
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf
+{
+   [_tracer release];
+   _tracer = [tracer retain];
+   return self;
 }
 
 -(void)setup

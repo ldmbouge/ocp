@@ -13,8 +13,8 @@
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPConstraint.h>
-
 #import <objcp/CPVar.h>
+#import <objcp/CPIntVarI.h>
 #import "CPTask.h"
 #import "CPTaskI.h"
 #import "CPTaskSequence.h"
@@ -115,10 +115,11 @@
    ORInt start = -MAXINT;
    ORInt nb = 0;
    while (true) {
-      if (![_succ[i] bound])
+      CPIntVar* si = (id) _succ[i];
+      if (!bound(si))
          break;
       nb++;
-      ORInt next = [_succ[i] value];
+      ORInt next = minDom(si);
       if (![_assigned at: i])
          [_assigned set: 1 at: i];
       i = next;   
@@ -127,7 +128,7 @@
       [_tasks[next] updateStart: start];
       start = [_tasks[next] ect];
    }
-    assert(0 <= nb && nb <= _size + 1);
+   assert(0 <= nb && nb <= _size + 1);
    ORInt maxLct = -MAXINT;
    ORInt minEct = MAXINT;
    ORInt duration = 0;
@@ -149,10 +150,13 @@
       [_succ[i] remove: _up + 1];
    }
    if (i != _up + 1) {
-      ORInt min = [_succ[i] min];
-      ORInt max = [_succ[i] max];
-      for(ORInt k = min; k <= max; k++) {
-         if ([_succ[i] member: k]) {
+      CPIntVar* si = (id)_succ[i];
+      ORBounds b = bounds(si);
+      //ORInt min = [_succ[i] min];
+      //ORInt max = [_succ[i] max];
+      for(ORInt k = b.min; k <= b.max; k++) {
+         if (memberDom(si, k)) {
+//         if ([_succ[i] member: k]) {
             if (k != _up + 1) {
                if ([_tasks[k] est] + duration > maxLct) {
                   [_succ[i] remove: k];

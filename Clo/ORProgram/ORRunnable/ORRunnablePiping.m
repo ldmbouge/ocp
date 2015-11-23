@@ -72,10 +72,6 @@
     [_solutionStreamInformer wheneverNotifiedDo: ^(id<ORSolution> s) { [c receiveSolution: s]; }];
 }
 
--(void) receivedUpperBound: (ORInt)bound {}
--(void) receivedLowerBound: (ORDouble)bound {}
--(void) receivedSolution: (id<ORSolution>)sol {}
-
 -(void) produceColumn: (id<ORDoubleArray>)col
 {
     _col = col;
