@@ -201,7 +201,7 @@ int main(int argc, const char * argv[]) {
                     }];
                 }
                   onRepeat: ^{
-                      id<ORSolution,CPSchedulerSolution> sol = (id) [[cp solutionPool] best];
+                      id<ORSolution,ORSchedulerSolution> sol = (id) [[cp solutionPool] best];
                       for(ORInt k = 1; k <= 2; k++) {
                           ORInt i = [sM next];
                           id<ORIntVarArray> succ = disjunctive[i].successors;
@@ -256,7 +256,7 @@ int main(int argc, const char * argv[]) {
                     }];
                 }
                   onRepeat: ^{
-                      id<ORSolution,CPSchedulerSolution> sol = (id) [[cp solutionPool] best];
+                      id<ORSolution,ORSchedulerSolution> sol = (id) [[cp solutionPool] best];
                       for(ORInt k = 1; k <= 2; k++) {
                           ORInt i = [sM next];
                           id<ORIntVarArray> succ = disjunctive[i].successors;
