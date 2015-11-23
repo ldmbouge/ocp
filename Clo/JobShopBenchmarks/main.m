@@ -58,7 +58,10 @@ int main(int argc, const char * argv[]) {
         if([args containsObject: @"-t1"]) numThreads = 1;
         if([args containsObject: @"-t2"]) numThreads = 2;
         if([args containsObject: @"-t4"]) numThreads = 4;
-        
+        if([args containsObject: @"-t5"]) numThreads = 5;
+        if([args containsObject: @"-t6"]) numThreads = 6;
+        if([args containsObject: @"-t8"]) numThreads = 8;
+       
         
         NSString* path = [args lastObject];//@"/Users/dan/Work/platform/Clo/Scheduler/BenchmarkData/jsp/la19.jss"
         
