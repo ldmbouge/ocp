@@ -30,25 +30,6 @@ typedef struct _CPBitAntecedents{
    ORUInt            numAntecedents;
 } CPBitAntecedents;
 
-
-
-
-//Heap Structures and functions
-typedef struct heapnode{
-   unsigned long int* value;
-   struct heapnode* leftchild;
-   struct heapnode* rightchild;
-} heapnode;
-
-static inline bool imax(unsigned long int a, unsigned long int b);
-static inline unsigned long int* get_max(unsigned long int* a, unsigned long int* b);
-static inline unsigned long int* get_min(unsigned long int* a, unsigned long int* b);
-static inline bool item_gt(unsigned long int* a, unsigned long int* b);
-heapnode* insert(unsigned long int* v, heapnode* heap);
-heapnode* combineheaps(heapnode* left, heapnode* right);
-heapnode* remove_top_prio(heapnode* heap);
-
-
 @interface CPFactory (BitConstraint)
 //Bit Constraints
 +(id<CPConstraint>) bitEqual:(id<CPBitVar>)x to:(id<CPBitVar>)y;

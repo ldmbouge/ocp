@@ -414,7 +414,7 @@ int main(int argc, const char* argv[])
 
 
 //   twoByteSHA1(@"null-mssg.txt", BVLSB);
-   twoByteMD4(@"lorem-mssg.txt", BVFF);
+   twoByteSHA1(@"lorem-mssg.txt", BVFF);
 
 
 }

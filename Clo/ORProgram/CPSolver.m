@@ -1395,10 +1395,10 @@
       
       if (bestIndex != - 1)  {
          [_search try: ^{
-//            NSLog(@"Choicepoint: setting %lx[%d] = false",x, bestIndex);
+            NSLog(@"Choicepoint: setting %lx[%d] = false",x, bestIndex);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
          } or: ^{
-//            NSLog(@"Choicepoint: setting %lx[%d] = true",x, bestIndex);
+            NSLog(@"Choicepoint: setting %lx[%d] = true",x, bestIndex);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
          }];
       }

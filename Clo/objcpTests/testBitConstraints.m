@@ -2673,10 +2673,12 @@ char *int2bin(int a, char *buffer, int buf_size) {
    id<ORModel> m = [ORFactory createModel];
    unsigned int zero[1];
    unsigned int min[1];
+   unsigned int min2[1];
    unsigned int max[1];
    
    zero[0] = 0x00000000;
-   min[0] = 0xAAAAAAAA;
+   min[0] = 0xFF00FF00;
+   min2[0] = 0x00FF00FF;
    max[0] = 0xFFFFFFFF;
    id<ORBitVar> x1 = [ORFactory bitVar:m low:zero up:max bitLength:32];
    id<ORBitVar> x2 = [ORFactory bitVar:m low:zero up:max bitLength:32];
@@ -2696,8 +2698,9 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [m add:[ORFactory bit:x4 xor:x5 eq:x6]];
    [m add:[ORFactory bit:x5 rotateLBy:8 eq:x6]];
    [m add:[ORFactory bit:x5 xor:x6 eq:x7]];
-//   [m add:[ORFactory bit:x4 plus:x5 withCarryIn:cin eq:x8 withCarryOut:cout]];
+//   [m add:[ORFactory bit:x5 plus:x6 withCarryIn:cin eq:x8 withCarryOut:cout]];
 //   [m add:[ORFactory bit:x2 eq:x8]];
+   
    
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:m];
    id* gamma = [cp gamma];
@@ -2722,7 +2725,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"%lx x5 = %@\n", gamma[x5.getId], gamma[x5.getId]);
          NSLog(@"%lx x6 = %@\n", gamma[x6.getId], gamma[x6.getId]);
          NSLog(@"%lx x7 = %@\n", gamma[x7.getId], gamma[x7.getId]);
-//         NSLog(@"%lx x8 = %@\n", gamma[x8.getId], gamma[x7.getId]);
+//         NSLog(@"%lx x8 = %@\n", gamma[x8.getId], gamma[x8.getId]);
 //         NSLog(@"%lx cin = %@\n", gamma[cin.getId], gamma[cin.getId]);
 //         NSLog(@"%lx cout = %@\n", gamma[cout.getId], gamma[cout.getId]);
          [cp labelBitVarHeuristicCDCL:h];

@@ -95,15 +95,13 @@
          _tab[ofs] = 0;
          --_sz;
          level = [_tracer level];
-//         NSLog(@"Restored Checkpoint to level %d",level);
+         //NSLog(@"Restored Checkpoint to level %d",level);
          
 //         if(jumplevel==-1){
 //            jumplevel=[(CPLearningEngineI*)_engine getBackjumpLevel];
 //            NSLog(@"Backjump level is %d",jumplevel);
 //         }
 //         if ((jumplevel !=0) && (jumplevel < level)) {
-
-         
 //         if (jumplevel < level) {
 //            NSLog(@"Backjumping over level %d",level);
 //            if (k) {
@@ -111,17 +109,19 @@
 //            }
 //            continue;
 //         }
-         
+//         if (level > jumplevel) {
+//            continue;
+//         }
          [(CPLearningEngineI*)_engine setLevel:level];
          status = [(CPLearningEngineI*)_engine restoreLostConstraints:level];
          //[_engine propagate];
-//         NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
+         //NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
          if (k &&  status != ORFailure) {
 //            NSLog(@"Restarting search at level %d",level);
-//               if ((faillevel == jumplevel) || (jumplevel == -1))
-                  [k call];
-//               else
-//                  [k callInvisible];
+//            if (level < (faillevel - 1))
+//               [k callInvisible];
+//            else
+               [k call];
          } else {
             if (k==nil)
                @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];

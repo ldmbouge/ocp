@@ -374,9 +374,8 @@ return 0;
       [cp labelBitVarHeuristicCDCL:h];
       searchFinish = clock();
 //      NSLog(@"  Search Finish Time : %ld",searchFinish);
-//      for (id object in allvars){
-//         NSLog(@"%@",object);
-//      }
+      for (int k=0;k<[allvars count];k++)
+         NSLog(@"%ld = %@",allvars[k],allvars[k]);
       sat = true;
 //      NSLog(@"%@",[[cp engine] model]);
    }];
@@ -512,6 +511,14 @@ return 0;
    return result;
 }
 //objcp_mk_not
+//-(objcp_expr) objCP_mk_not:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2{
+//   ORUInt* low = alloca(sizeof(ORUInt));
+//   ORUInt* up = alloca(sizeof(ORUInt));
+//   *low = 0;
+//
+//}
+
+
 -(objcp_expr) objcp_mk_eq:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2{
    ORUInt* low = alloca(sizeof(ORUInt));
    ORUInt* up = alloca(sizeof(ORUInt));

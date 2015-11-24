@@ -39,9 +39,10 @@
          CPBitConflict* c = [CPFactory bitConflict:_globalStore[n]->vars];
          s = [self add:c];
 //         NSLog(@"Adding new global constraint %@ to constraint store",c);
+         [self propagate];
          if (s == ORFailure)
             return ORFailure;
-         [self propagate];
+         
 //         if (status == ORFailure) {
 //            NSLog(@"failure in restoring constraint %d\n",n);
 //            NSLog(@"--------------------Begin Global Constraint Store--------------------\n");
@@ -92,6 +93,22 @@
 //         }
 //      }
 //   }
+
+//   //Check to see if constraint is already in store of global constraints
+//   for(int i=0;i<_size;i++){
+//      if(a->numAntecedents != _globalStore[i]->vars->numAntecedents)
+//         continue;
+//      for (int j=0; j<a->numAntecedents; j++) {
+//         if ((a->antecedents[j]->var != _globalStore[i]->vars->antecedents[i]->var) ||
+//             (a->antecedents[j]->index != _globalStore[i]->vars->antecedents[i]->index) ||
+//             (a->antecedents[j]->value != _globalStore[i]->vars->antecedents[i]->value)){
+//            break;
+//         }
+//         
+//      }
+//      
+//   }
+   
    
    CPBVConflict* newConflict = malloc(sizeof(CPBVConflict));
    newConflict->vars = a;

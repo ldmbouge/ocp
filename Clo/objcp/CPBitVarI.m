@@ -637,7 +637,7 @@ return self;
    }
 //   NSLog(@"done.");
    [_dom setUp: newUp andLow:newLow for:self];
-//   NSLog(@"%lx updated by %@ \@ %ld",self,constraint,[_engine getLevel]);
+//   NSLog(@"%lx=%@ updated by %@ \@ %ld",self,self,constraint,[_engine getLevel]);
    
 }
 //end of setup and setlow for nogoods
