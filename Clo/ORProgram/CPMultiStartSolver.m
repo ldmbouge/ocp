@@ -453,7 +453,12 @@
 {
    [[self worker] limitFailures: maxFailures in: cl];
 }
--(void) onSolution: (ORClosure) onSol 
+-(void) onStartup: (ORClosure) onStartup
+{
+   for(ORInt k = 0; k < _nb; k++)
+      [_solver[k] onStartup: onStartup];
+}
+-(void) onSolution: (ORClosure) onSol
 {
    for(ORInt k = 0; k < _nb; k++) 
       [_solver[k] onSolution: onSol];
@@ -462,6 +467,11 @@
 {
    for(ORInt k = 0; k < _nb; k++)   
       [_solver[k] onExit: onExit];
+}
+-(void) clearOnStartup
+{
+   for(ORInt k = 0; k < _nb; k++)
+      [_solver[k] clearOnStartup];
 }
 -(void) clearOnSolution
 {
@@ -473,7 +483,10 @@
    for(ORInt k = 0; k < _nb; k++)
       [_solver[k] clearOnExit];
 }
-
+-(void) doOnStartup
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "do OnStartup never called on CPMultiStartProgram"];
+}
 -(void) doOnSolution
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
