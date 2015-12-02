@@ -529,6 +529,11 @@ struct CPVarPair {
     id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
     [_terms addTerm:alpha by:1];
 }
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
+}
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
     id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
@@ -942,6 +947,17 @@ static inline ORLong maxSeq(ORLong v[4])  {
         [self reifyLEQc:[e left] constant:[[e right] min]];
     } else
         [self reifyLEQ:[e left] right:[e right]];
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   ORExprI* left  = e.right;
+   ORExprI* right = e.left;    // switch side and pretend it is ≤
+   if ([left isConstant]) {
+      [self reifyGEQc:right constant:[left min]];
+   } else if ([right isConstant]) {
+      [self reifyLEQc:left constant:[right min]];
+   } else
+      [self reifyLEQ:left right:right];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {

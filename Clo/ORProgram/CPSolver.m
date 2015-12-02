@@ -1218,7 +1218,7 @@
 
 -(void) search:(void*(^)())stask
 {
-   [self solveAll:^{
+   [self solve:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();
       [theTask execute];
    }];

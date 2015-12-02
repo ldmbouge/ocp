@@ -384,6 +384,11 @@
 			<key>orderHint</key>
 			<integer>46</integer>
 		</dict>
+		<key>mqueensSwift.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>124</integer>
+		</dict>
 		<key>mrcpsp.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -753,6 +758,11 @@
 			<true/>
 		</dict>
 		<key>5B11551E171B1CF4005371AA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B147AEE1C0CE8AE00E1E197</key>
 		<dict>
 			<key>primary</key>
 			<true/>
