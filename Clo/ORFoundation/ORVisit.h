@@ -141,6 +141,7 @@
 -(void) visitReifySumBoolGEqualc: (id<ORConstraint>) c;
 -(void) visitHReifySumBoolEqualc: (id<ORConstraint>) c;
 -(void) visitHReifySumBoolGEqualc: (id<ORConstraint>) c;
+-(void) visitClause:(id<ORConstraint>)c;
 -(void) visitSumBoolEqualc: (id<ORConstraint>) c;
 -(void) visitSumBoolLEqualc:(id<ORConstraint>)c;
 -(void) visitSumBoolGEqualc:(id<ORConstraint>)c;

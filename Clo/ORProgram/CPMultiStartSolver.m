@@ -505,11 +505,19 @@
 -(void) search:(void*(^)())stask
 {
    //TODO: This is not correct yet.
+   [self solve:^{
+      id<ORSTask> theTask = (id)stask();
+      [theTask execute];
+   }];
+}
+-(void) searchAll:(void*(^)())stask
+{
    [self solveAll:^{
       id<ORSTask> theTask = (id)stask();
       [theTask execute];
    }];
 }
+
 -(id<ORSolutionPool>) solutionPool
 {
    return _sPool;

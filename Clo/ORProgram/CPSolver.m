@@ -454,8 +454,8 @@
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter do: (ORInt2Void) body
 {
-   filter = [_mt track:[filter copy]];
-   body   = [_mt track:[body copy]];
+   if (filter) filter = [_mt track:[filter copy]];
+   if (body)   body   = [_mt track:[body copy]];
    [_search tryall: range suchThat: filter in: body];   
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
@@ -1219,6 +1219,15 @@
 -(void) search:(void*(^)())stask
 {
    [self solve:^{
+      id<ORSTask> theTask = (id<ORSTask>)stask();
+      [theTask execute];
+   }];
+   [_engine open];
+}
+
+-(void) searchAll:(void*(^)())stask
+{
+   [self solveAll:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();
       [theTask execute];
    }];

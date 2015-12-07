@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import  <ORFoundation/ORFoundation.h>
+#import <CPUKernel/CPClosureEvent.h>
+#import <CPUKernel/CPTypes.h>
 #import "CPEngineI.h"
-#import "CPTypes.h"
-#import "CPClosureEvent.h"
 
 typedef struct CPClosureEntry {
    ORClosure             cb;
@@ -587,7 +587,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       [cstr post];
       ORStatus pstatus =  propagateFDM(self);
-      if (pstatus != ORFailure) {
+      if (pstatus != ORFailure && cstr->_active._val != 0) {
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
          [_trail trailClosure:^{

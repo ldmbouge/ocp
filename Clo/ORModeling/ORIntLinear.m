@@ -44,6 +44,14 @@
 {
     return _nb== 0 && _indep == 1;
 }
+-(BOOL)clausalForm
+{
+   BOOL cf = _indep == 0;
+   for(int i=0;i < _nb && cf; i++) {
+      cf = cf && _terms[i]._coef == 1;
+   }
+   return cf;
+}
 -(void)setIndependent:(ORInt)idp
 {
     _indep = idp;

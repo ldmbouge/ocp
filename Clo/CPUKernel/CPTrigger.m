@@ -16,20 +16,6 @@
 #import "CPConstraintI.h"
 
 
-@interface CPTrigger : NSObject {
-   @package
-   CPTrigger*         _prev;
-   CPTrigger*         _next;
-   ORClosure          _cb;       // var/val held inside the closure (captured).
-   id<CPConstraint>   _cstr;
-   ORInt              _vId;       // local variable identifier (var being watched)
-}
--(id)initTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>)c;
--(void) detach;
--(ORInt) localID;
--(void) setLocalID: (ORInt) lid;
-@end
-
 @interface CPDenseTriggerMap : CPTriggerMap {
 @private
    CPTrigger**   _tab;

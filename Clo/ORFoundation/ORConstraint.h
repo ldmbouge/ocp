@@ -297,6 +297,11 @@ enum ORGroupType {
 -(ORInt)cst;
 @end
 
+@protocol ORClause <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(id<ORIntVar>)targetValue;
+@end
+
 @protocol ORSumBoolEqc <ORConstraint>
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;

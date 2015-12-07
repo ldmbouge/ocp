@@ -39,6 +39,7 @@
 -(ORInt) up;
 -(ORBool) isDefined;
 -(ORBool) inRange: (ORInt)e;
+-(ORBool) isBool;
 -(ORInt) atRank:(ORInt)r;
 -(NSString*) description;
 -(void)enumerateWithBlock:(ORInt2Void)block;

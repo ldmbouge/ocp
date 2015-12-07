@@ -995,7 +995,7 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTInt;
+   return ORTReal;
 }
 -(void) visit:(ORVisitor*)visitor
 {
@@ -1931,18 +1931,25 @@
 -(id<ORRelation>) init: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    self = [super init];
-   _e = [ORFactory integer: cp value: 0];
+   _e = nil; // [ORFactory integer: cp value: 0];
    if (f!=NULL) {
       [S enumerateWithBlock:^(ORInt i) {
-         if (!f(i))
-            _e = [_e lor: e(i)];
+         if (f(i)) {
+            if (_e)
+               _e = [_e lor: e(i)];
+            else _e = e(i);
+         }
       }];
    }
    else {
       [S enumerateWithBlock:^(ORInt i) {
-         _e = [_e lor: e(i)];
+         if (_e)
+            _e = [_e lor: e(i)];
+         else _e = e(i);
       }];
    }
+   if (_e==nil)
+      _e = [ORFactory integer: cp value: 0];
    return self;
 }
 -(id<ORRelation>) init: (id<ORExpr>) e
@@ -1974,7 +1981,8 @@
 }
 -(enum ORVType) vtype
 {
-   return _e.vtype;
+   assert(_e.vtype == ORTBool);
+   return ORTBool;
 }
 -(id<ORTracker>) tracker
 {
@@ -2047,7 +2055,8 @@
 }
 -(enum ORVType) vtype
 {
-   return _e.vtype;
+   assert(_e.vtype == ORTBool);
+   return ORTBool;
 }
 -(id<ORTracker>) tracker
 {
@@ -2124,7 +2133,15 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTInt;
+   __block bool allBool = true;
+   [_array enumerateWith:^(id<ORIntVar>  _Nonnull vk, int k) {
+      id<ORIntRange> dom = [vk domain];
+      allBool |= dom.isBool;
+   }];
+   if (allBool)
+      return ORTBool;
+   else
+      return ORTInt;
 }
 -(void) visit:(ORVisitor*)visitor
 {

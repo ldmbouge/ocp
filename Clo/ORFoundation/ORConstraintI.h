@@ -273,6 +273,12 @@
 -(id<ORIntVar>) y;
 @end
 
+@interface ORClause : ORConstraintI<ORClause>
+-(id) init:(id<ORIntVarArray>)ba eq:(id<ORIntVar>)c;
+-(id<ORIntVarArray>)vars;
+-(id<ORIntVar>)targetValue;
+@end
+
 @interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>
 -(ORSumBoolEqc*) initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;

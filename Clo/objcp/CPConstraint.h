@@ -41,6 +41,7 @@
 +(id<CPConstraint>) hreify: (id<CPIntVar>) b array:(id<CPIntVarArray>)x eqi:(ORInt) c annotation:(ORCLevel)note;
 +(id<CPConstraint>) hreify: (id<CPIntVar>) b array:(id<CPIntVarArray>)x geqi:(ORInt) c annotation:(ORCLevel)note;
 
++(id<CPConstraint>) clause:(id<CPIntVarArray>) x eq:(id<CPIntVar>)tv;
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c;
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (ORInt) c;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c annotation: (ORCLevel)cons;

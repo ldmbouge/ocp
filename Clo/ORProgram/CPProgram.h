@@ -137,6 +137,7 @@ PORTABLE_BEGIN
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) defaultSearch;
 -(void) search:(void*(^)())stask;
+-(void) searchAll:(void*(^)())stask;
 -(void) doOnStartup;
 -(void) doOnSolution;
 -(void) doOnExit;

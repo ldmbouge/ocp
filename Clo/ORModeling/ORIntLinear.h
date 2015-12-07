@@ -49,6 +49,7 @@
 -(ORInt)max;
 -(BOOL)isZero;
 -(BOOL)isOne;
+-(BOOL)clausalForm;
 @end
 
 @interface ORLinearFlip : NSObject<ORIntLinear> 

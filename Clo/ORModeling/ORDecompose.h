@@ -19,6 +19,8 @@
 
 @interface ORNormalizer : NSObject
 +(id<ORLinear>)normalize:(id<ORExpr>)expr into: (id<ORAddToModel>)model;
+// ------- Bool
++(id<ORIntLinear>)boolLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
 // ------- Integer
 +(id<ORIntLinear>)intLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model;
 +(id<ORIntLinear>)intLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x;

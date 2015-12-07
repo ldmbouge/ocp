@@ -2163,6 +2163,46 @@
 }
 @end
 
+@implementation ORClause {
+   id<ORIntVarArray>  _ba;
+   id<ORIntVar>       _tv;
+}
+-(id)init:(id<ORIntVarArray>)ba eq:(id<ORIntVar>)tv
+{
+   self = [super initORConstraintI];
+   _ba = ba;
+   _tv = tv;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (clause(%@) == %@)",[self class],self,_ba,_tv];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitClause:self];
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_tv];
+   return ms;
+}
+-(id<ORIntVar>)targetValue
+{
+   return _tv;
+}
+@end
+
 @implementation ORSumBoolEqc {
    id<ORIntVarArray> _ba;
    ORInt             _c;

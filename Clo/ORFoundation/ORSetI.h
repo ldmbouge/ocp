@@ -51,6 +51,7 @@
 -(ORInt) size;
 -(ORInt) atRank:(ORInt)r;
 -(NSString*) description;
+-(ORBool) isBool;
 -(void)visit:(ORVisitor*)v;
 -(id<IntEnumerator>) enumerator;
 -(void)enumerateWithBlock:(ORInt2Void)block;
