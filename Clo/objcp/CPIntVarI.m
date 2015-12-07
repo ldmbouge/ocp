@@ -992,10 +992,10 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 {
-    [_recv setTracksLoseEvt];
-    if (_triggers == nil)
-        [self createTriggers];
-    [_triggers linkTrigger:t forValue:val];
+   setTracksLoseEvt(_recv, YES);
+   if (_triggers == nil)
+      [self createTriggers];
+   [_triggers linkTrigger:t forValue:val];
 }
 -(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {

@@ -81,6 +81,14 @@
    _next = new;
    new->_prev = self;
 }
+static void triggerSetNext(CPTrigger* x,CPTrigger* new)
+{
+   if (x->_next)
+      x->_next->_prev = new;
+   new->_next = x->_next;
+   x->_next = new;
+   new->_prev = x;
+}
 static void freeTriggers(CPTrigger* list)
 {
    while (list) {
@@ -185,10 +193,10 @@ static void freeTriggers(CPTrigger* list)
       CPTrigger* front = [[CPTrigger alloc] init];
       CPTrigger* back  = [[CPTrigger alloc] init];
       _tab[value] = front;
-      [front setNext:back];
+      triggerSetNext(front,back);
       _active = YES;
    }
-   [_tab[value] setNext:trig];
+   triggerSetNext(_tab[value],trig);
    return trig;
 }
 -(void)loseValEvt:(ORInt)val solver:(CPEngineI*)fdm

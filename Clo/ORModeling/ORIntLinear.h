@@ -25,6 +25,7 @@
 -(ORInt)independent;
 -(BOOL)isZero;
 -(BOOL)isOne;
+-(BOOL)clausalForm;
 -(ORInt)min;
 -(ORInt)max;
 @end

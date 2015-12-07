@@ -782,7 +782,6 @@
 }
 -(void)post
 {
-   
    _at = malloc(sizeof(id<CPTrigger>)*(2));
    _notTriggered = malloc(sizeof(ORInt)*(_nb - 2));
    int nbTrue = 0;
@@ -844,8 +843,8 @@
                            else {  // Ok, we couldn't find any other support => so we must bind the remaining ones
                               if (minDom(_t) == 1) { // t is true, so clause must be satisfied
                                  CPTrigger* ot = _at[!listen];
-                                 [_x[ot->_vId] updateMin:true];
                                  assignTRInt(&_active, 0, _trail);
+                                 updateMinDom(_x[ot->_vId], YES);
                               }
                               // if maxDom(_t) == 0, t is FALSE, so clause cannot be satisfied.
                               // If _t is not bound, clause can go either way. if both watches are false, then the clause is false
@@ -854,8 +853,8 @@
                                  int nbf  = (maxDom(_x[_at[0].localID]) == 0);
                                  nbf     += (maxDom(_x[_at[1].localID]) == 0);
                                  if (nbf == 2) {
-                                    bindDom(_t, 0);
                                     assignTRInt(&_active, 0, _trail);
+                                    bindDom(_t, 0);
                                  }
                               }
                            }
@@ -868,10 +867,10 @@
    }
    [_t whenBindDo:^{
       if (maxDom(_t) == 0) {  // _t is FALSE
+         assignTRInt(&_active, 0, _trail);
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                bindDom(_x[i], 0);
-         assignTRInt(&_active, 0, _trail);
       }
    } onBehalf:self];
    assert(nbNW == _nb - 1 - 1);
