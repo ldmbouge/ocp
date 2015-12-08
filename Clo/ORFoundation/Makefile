@@ -1,11 +1,7 @@
-#GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
-#include $(GNUSTEP_MAKEFILES)/common.make
+OC = clang-3.6
 
-OC = clang-3.5
-GNUstep = /opt/kitkit-1.0-rc1
-
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -g -O0 -I. -I.. -msse4.1 -fblocks -fobjc-nonfragile-abi -DUSEVIEWS=1
-LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) -g -O0 \
+CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. -msse4.1 -fblocks -fobjc-nonfragile-abi -DUSEVIEWS=1
+LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES)  \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities -lORUtilities
 
 SRCS =  ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \

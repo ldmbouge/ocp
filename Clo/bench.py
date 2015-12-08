@@ -55,7 +55,6 @@ ab = ['ais',
 'Sudoku',
 'TestAssignment',
 'testLPConcretization',
-'testMIP',
 'testPacking',
 'warehouse',
 'wka']
@@ -81,9 +80,9 @@ for b in ab:
 	of.write('include ../rules.make\n')
 	of.close()
 	gmf.write('\n' + b + ':\n')
-	gmf.write("	@make -s -C " + b + " USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'\n")
+	gmf.write("	@$(MAKE) -s -C " + b + " USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'\n")
 
 gmf.write('\nclean:\n')
 for b in ab:
-	gmf.write("	@make -s -C " + b + " clean\n")
+	gmf.write("	@$(MAKE) -s -C " + b + " clean\n")
 gmf.close()

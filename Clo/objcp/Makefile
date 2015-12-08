@@ -1,7 +1,4 @@
-#GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
-#include $(GNUSTEP_MAKEFILES)/common.make
-
-OC = clang-3.5
+OC = clang-3.6
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
@@ -12,15 +9,6 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-L../CPUKernel -Wl,-rpath=`pwd`/../CPUKernel \
 	-lORUtilities -lORFoundation -lCPUKernel 
-
-# CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel -I../ORFoundation \
-# 	-msse4.1 \
-# 	-fPIC -fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
-
-# LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
-# 	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
-# 	-lORUtilities -lORFoundation -lCPUKernel \
-# 	-lgnustep-base -lobjc 
 
 SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m CPConstraint.m  \
 	CPEvent.m  CPKnapsack.m CPTableI.m CPAssignmentI.m CPBitArray.m  \

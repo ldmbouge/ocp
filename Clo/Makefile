@@ -11,7 +11,7 @@ all: $(TARGETS)
 	@mkdir -p bin
 	@cp -ar ../data/* bin
 	@python bench.py
-	@make -s -j$(PAR) -f bench.make
+	$(MAKE) -s -j$(PAR) -f bench.make
 	@echo "Done all..."
 
 objcp:

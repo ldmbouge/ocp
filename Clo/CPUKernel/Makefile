@@ -1,8 +1,4 @@
-#GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
-#include $(GNUSTEP_MAKEFILES)/common.make
-
-OC = clang-3.5
-GNUstep = /opt/kitkit-1.0-rc1
+OC = clang-3.6
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -msse4.1 \

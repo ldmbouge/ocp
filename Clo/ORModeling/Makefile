@@ -1,7 +1,4 @@
-#GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
-#include $(GNUSTEP_MAKEFILES)/common.make
-
-OC = clang-3.5
+OC = clang-3.6
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -msse4.1 \
@@ -11,14 +8,6 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-lORUtilities -lORFoundation
-
-# CFLAGS = -I$(GNUstep)/include -I.. -I. -fPIC -g -msse4.1 \
-# 	-I../ORFoundation -I../ORUtilities \
-# 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
-# LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
-# 	-L../ORUtilities -L../ORFoundation \
-# 	-lORUtilities -lORFoundation \
-# 	-lgnustep-base -lobjc 	
 
 SRCS = ORDecompose.m  ORFlatten.m  ORIntLinear.m  \
 	ORRealLinear.m ORRealDecompose.m  \
@@ -40,7 +29,7 @@ all: $(LIBNAME)
 
 
 $(LIBNAME): $(OFILES)
-	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) -g --shared  -o $(LIBNAME)
+	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
