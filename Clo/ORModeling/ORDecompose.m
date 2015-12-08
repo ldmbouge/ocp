@@ -1130,6 +1130,15 @@ static inline ORLong maxSeq(ORLong v[4])  {
       id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model];
       _rv = [ORFactory intVar:_model var:oV scale:-1 shift:1];
    } else {  // x = NEG(e)  ==>  NOT(X) == e
+      // x = NEG(a0 OR ... OR an)
+      // a0 OR ... OR an OR x   (to make sure that when x=0, a0 OR ... an must be satisfied (classic clause)
+      // NOT(X) OR NOT(ai)      (to make sure that when x=1, ai=0 must be true (so that the expression be false)
+      // The second can be rewritten (for every i) as:  1 - x ≥ ai
+      // Note that x=1  => 1-x = 0 =>  0 ≥ ai  and all the disjunct must be false.
+      //           x=0  => 1-x = 1 =>  1 ≥ ai  no constraints on the ai
+      //           ai=1 => 1-x ≥ 1 =>  x ≤ 0   and x must be zero. (ok, since the expression is true)
+      //           ai=0 => 1-x ≥ 0 =>  x ≤ 1   and no impact on x.
+      // This requires n+1 clauses, x appears in all of them, each ai appears in 2.
       id<ORIntVar> negRet = [ORFactory intVar:_model var:_rv scale:-1 shift:1];
       [ORNormalizer intVar:negRet equal:lT for:_model];
    }
