@@ -124,6 +124,11 @@ static __declspec(thread) ContPool* _thePool = 0;
 static __thread ContPool* _thePool = 0;
 #endif
 
+void contCleanup()
+{
+  [NSCont shutdown];
+}
+
 inline static ContPool* instancePool()
 {
    if (!_thePool) {
@@ -132,9 +137,13 @@ inline static ContPool* instancePool()
       _thePool->poolClass = [NSCont self];
       _thePool->sz = 1000;
       _thePool->pool = malloc(sizeof(id)*_thePool->sz);
+#if defined(__APPLE__)
       atexit_b(^{
          [NSCont shutdown];
       });
+#else
+      atexit(contCleanup);
+#endif
    }
    return _thePool;
 }

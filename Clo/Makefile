@@ -1,9 +1,9 @@
 LIBS    = ORUtilities ORFoundation CPUKernel objcp ORModeling ORProgram 
 TARGETS = $(LIBS) 
-PAR=3
+PAR=2
 VIEWS=1
 #CFL= -O3 -g0
-CFL=-g
+CFL=-g -O0
 
 .PHONY: $(TARGETS)
 
