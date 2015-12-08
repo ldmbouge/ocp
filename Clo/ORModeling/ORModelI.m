@@ -640,8 +640,7 @@
    if (cstr && (id)cstr != [NSNull null]) {
       [_target add: cstr];
       [_target.modelMappings.tau set:cstr forKey:_current];
-      if (_current)
-         [_notes transfer: _current toConstraint: cstr];
+      [_notes transfer: _current toConstraint: cstr];
    }
    return cstr;
 }

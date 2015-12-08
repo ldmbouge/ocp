@@ -34,8 +34,8 @@ typedef enum {
 -(id<ORConstraint>) hard:(id<ORConstraint>) cstr;
 -(void) alldifferent: (ORCLevel) cl;
 
+-(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr;
 -(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) o;
-
 @end
 
 @interface ORAnnotation : ORObject<ORAnnotation,NSCopying>

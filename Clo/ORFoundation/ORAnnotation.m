@@ -110,6 +110,14 @@
    return rv;
 }
 
+-(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr
+{
+   NSNumber* k = [NSNumber numberWithInt:cstr.getId];
+   NSArray*  na = [_cstr objectForKey:k];
+   [k release];
+   return na;
+}
+
 -(id<ORNote>) findConstraintNote: (id<ORConstraint>) cstr ofClass: (Class) nc
 {
    NSNumber* k = [[NSNumber alloc] initWithInt:[cstr getId]];
@@ -235,10 +243,14 @@
    else
       return [_original levelFor:cstr];
 }
--(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) d
+-(void) transfer: (id<ORConstraint>) src toConstraint: (id<ORConstraint>) d
 {
-   [super transfer: o toConstraint: d];
-   [_original transfer: o toConstraint: d];
+   NSArray* allNotes = src ? [_original findConstraintNotes:src] : nil;
+   if (allNotes) {
+      for(id<ORNote> oneNote in allNotes) {
+         [self addCstr:d note:oneNote];
+      }
+   }
 }
 -(NSString*) description
 {
