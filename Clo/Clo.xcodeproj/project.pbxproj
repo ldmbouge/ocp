@@ -21312,7 +21312,7 @@
 		5BCAF1411BF146BF00C18360 /* OrSemFDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OrSemFDSController.m; sourceTree = "<group>"; };
 		5BCAF1471BF1479A00C18360 /* queensFDS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensFDS; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCAF1491BF1479A00C18360 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		5BCAF1621BF385F500C18360 /* CPFDS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPFDS.m; path = ../ORFoundation/CPFDS.m; sourceTree = "<group>"; };
+		5BCAF1621BF385F500C18360 /* CPFDS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFDS.m; sourceTree = "<group>"; };
 		5BCAF1641BF3861700C18360 /* CPFDS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPFDS.h; sourceTree = "<group>"; };
 		5BCCC4031417F8CE0079E833 /* queensACSem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensACSem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -53262,6 +53262,7 @@
 				5BCAF14E1BF1479B00C18360 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BCCC40F1417F8CE0079E833 /* Build configuration list for PBXNativeTarget "queensACSem" */ = {
 			isa = XCConfigurationList;
