@@ -364,7 +364,7 @@
    filter = [_mt track:[filter copy]];
    order = [_mt track:[order copy]];
    body = [_mt track:[body copy]];
-   [ORControl forall: S suchThat: filter orderedBy: order do: body];  
+  [ORControl forall: S suchThat: filter orderedBy: order do: body];  
 }
 -(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
@@ -650,7 +650,7 @@
    ORInt low = [x low];
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,low,[x up])
-                                  suchThat: ^bool(ORInt i) { return ![cxp[i - low] bound]; }
+                                  suchThat: ^ORBool(ORInt i) { return ![cxp[i - low] bound]; }
                                  orderedBy: orderedBy];
    do {
       ORInt i = [select min];
@@ -723,7 +723,7 @@
 
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
-                                        suchThat: ^bool(ORInt i) { return ![cav[i] bound]; }
+                                        suchThat: ^ORBool(ORInt i) { return ![cav[i] bound]; }
                                        orderedBy: ^ORDouble(ORInt i) {
                                           ORDouble rv = [h varOrdering:cav[i]];
                                           return rv;

@@ -1,6 +1,5 @@
-OC = clang-3.6
+include ../setup.make
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. -msse4.1 -fblocks -fobjc-nonfragile-abi -DUSEVIEWS=1
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES)  \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities -lORUtilities
 
@@ -17,7 +16,7 @@ OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
 LIBNAME = libORFoundation.so.1 
 all: $(LIBNAME)
-	@echo "Done..."
+	@echo "(ORFoundation) Done... ======================================================================" 
 	@if [ ! -f $(basename $(LIBNAME)) ];  \
 	then \
 	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
@@ -25,10 +24,10 @@ all: $(LIBNAME)
 
 $(LIBNAME): $(OFILES)
 	@echo "Linking..." $<
-	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
-	@echo "compiling m" $<
+	@echo "compiling m" $(USER_DEFINES) $<
 	$(OC) $(CFLAGS) -c $< 
 
 %.$(OBJEXT): %.mm

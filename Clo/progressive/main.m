@@ -82,11 +82,24 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
          [cp solve: ^{
-            for(ORInt p = Periods.low; p <= Periods.up; p++) {
-               [cp forall:Guests suchThat:^bool(ORInt g) { return ![cp bound:[boat at:g :p]];}
-                orderedBy: nil // ^ORInt(ORInt g) { return [cp domsize:[boat at:g :p]];}
+	     for(ORInt p = Periods.low; p <= Periods.up; p++) {
+	      //  id<ORIntVarArray> slice = All(cp,ORIntVar,i,Guests,[boat at:i :p]);
+	      // [cp labelArray:slice];
+
+	      // for(ORInt g=Guests.low;g <= Guests.up;g++) {
+	      // 	[cp tryall:Hosts suchThat:^bool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
+	      // 		in:^(ORInt h) {
+	      // 		  [cp label:[boat at:g :p] with:h];
+	      // 		}
+	      // 	onFailure:^(ORInt h) {
+	      // 		  [cp diff:[boat at:g :p] with:h];
+	      // 		}];		
+	      // }
+	      [cp forall:Guests 
+	      	suchThat: ^ORBool(ORInt g) { return ![cp bound:[boat at:g :p]];}
+		  orderedBy: nil // ^ORInt(ORInt g) { return [cp domsize:[boat at:g :p]];}
                        do:^(ORInt g) {
-                          [cp tryall:Hosts suchThat:^bool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
+			   [cp tryall:Hosts suchThat: ^ORBool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
                                   in:^(ORInt h) {
                                      [cp label:[boat at:g :p] with:h];
                                   }
@@ -94,7 +107,7 @@ int main(int argc, const char * argv[])
                               [cp diff:[boat at:g :p] with:h];
                            }];
                        }];
-            }
+	    }            
             ORLong endTime = [ORRuntimeMonitor cputime];
             
             for(ORInt p = Periods.low; p <= Periods.up; p++) {

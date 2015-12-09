@@ -51,8 +51,8 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          __block ORInt nbSol = 0;
          [cp solveAll:^{
-            [cp forall:[ad range] suchThat:^bool(ORInt i) { return ![cp bound:ad[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:ad[i]];} do:^(ORInt i) {
-               [cp tryall:Digit suchThat:^bool(ORInt d) { return [cp member:d in:ad[i]];} in:^(ORInt d) {
+            [cp forall:[ad range] suchThat:^ORBool(ORInt i) { return ![cp bound:ad[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:ad[i]];} do:^(ORInt i) {
+               [cp tryall:Digit suchThat:^ORBool(ORInt d) { return [cp member:d in:ad[i]];} in:^(ORInt d) {
                   [cp label:ad[i] with:d];
                } onFailure:^(ORInt d) {
                   [cp diff:ad[i] with:d];

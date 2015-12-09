@@ -124,7 +124,7 @@
     id<ORIntRange> dom = [self unionOfVarArrayRanges: varsOfC];
     for (int d = [dom low]; d <= [dom up]; d++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [varsOfC range]
-                                   suchThat:^bool(ORInt i) {
+                                   suchThat:^ORBool(ORInt i) {
                                        return [[varsOfC[i] domain] inRange: d];
                                    } of:^id<ORExpr>(ORInt i) {
                                        id<ORIntVarArray> binArr = [self binarizationForVar: varsOfC[i]];
@@ -156,7 +156,7 @@
     id<ORIntRange> ur = [upArr range];
     for (int u = ur.low; u <= ur.up; u++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [[cstr array] range]
-                                   suchThat:^bool(ORInt i) {
+                                   suchThat:^ORBool(ORInt i) {
                                        id<ORIntVar> var = (id<ORIntVar>)[[cstr array] at: i];
                                        return [[var domain] inRange: u];
                                    } of:^id<ORExpr>(ORInt i) {
@@ -171,7 +171,7 @@
     id<ORIntRange> lr = [lowArr range];
     for (int l = lr.low; l <= lr.up; l++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [[cstr array] range]
-                                   suchThat:^bool(ORInt i) {
+                                   suchThat:^ORBool(ORInt i) {
                                        id<ORIntVar> var = (id<ORIntVar>)[[cstr array] at: i];
                                        return [[var domain] inRange: l];
                                    } of:^id<ORExpr>(ORInt i) {
@@ -189,7 +189,7 @@
     id<ORIntRange> binRange = [binSize range];
     for(int b = [binRange low]; b < [binRange up]; b++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [item range]
-                                   suchThat:^bool(ORInt i) {
+                                   suchThat:^ORBool(ORInt i) {
                                        id<ORIntVar> var = (id<ORIntVar>)[item at: i];
                                        return [[var domain] inRange: b];
                                    } of:^id<ORExpr>(ORInt i) {

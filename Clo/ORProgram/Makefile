@@ -1,8 +1,7 @@
-OC = clang-3.6
+include ../setup.make
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
-	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
-	-msse4.1 -fblocks -fobjc-nonfragile-abi
+CFLAGS += -I../ORFoundation -I../ORUtilities -I../CPUKernel 
+
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
@@ -20,7 +19,7 @@ OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
 LIBNAME = libORProgram.so.1 
 all: $(LIBNAME)
-	@echo "Done..."
+	@echo "(ORProgram) Done... ======================================================================" 
 	@if [ ! -f $(basename $(LIBNAME)) ];  \
 	then \
 	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
@@ -30,7 +29,7 @@ $(LIBNAME): $(OFILES)
 	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
-	@echo "compiling m"  $<
+	@echo "compiling m" $(USER_DEFINES) $<
 	$(OC) $(CFLAGS) -c $< 
 
 clean:

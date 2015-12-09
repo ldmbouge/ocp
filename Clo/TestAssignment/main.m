@@ -79,7 +79,7 @@ int main (int argc, const char * argv[])
          //id<ORTRIntArray> mark = [ORFactory TRIntArray:[cp engine] range: Cities];
          
          [cp solve: ^{
-            [cp limitCondition: ^bool() { return [nbRestarts intValue:cp] >= 100; } in:
+            [cp limitCondition: ^ORBool() { return [nbRestarts intValue:cp] >= 100; } in:
              ^{
                 [cp repeat:
                  ^{

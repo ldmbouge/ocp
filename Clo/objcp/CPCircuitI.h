@@ -19,19 +19,19 @@
 -(CPCircuit*) initCPCircuit: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(void) post;
-static void assignCircuit(CPCircuit* cstr,int i);
+void assignCircuit(CPCircuit* cstr,int i);
 @end
 
 @interface CPPath : CPCoreConstraint<CPConstraint>
 -(CPPath*) initCPPath: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(void) post;
-static void assignPath(CPPath* cstr,int i);
+void assignPath(CPPath* cstr,int i);
 @end
 
 @interface CPSubCircuit : CPCoreConstraint<CPConstraint>
 -(CPSubCircuit*) initCPSubCircuit: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(void) post;
-static ORStatus assignSubCircuit(CPSubCircuit* cstr,int i);
+ORStatus assignSubCircuit(CPSubCircuit* cstr,int i);
 @end

@@ -111,7 +111,7 @@ int main0(int argc, const char * argv[])
       printf(" Starting search \n");
       [cp perform: ^{
          [cp limitFailures: 200 in: ^{
-         [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];}
+         [cp forall:SetOrders suchThat:^ORBool(ORInt o) { return ![cp bound: slab[o]];}
           orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]]);}
                  do: ^(ORInt o){
 #define TESTTA 1
@@ -132,7 +132,7 @@ int main0(int argc, const char * argv[])
                [cp fail];
 #else
             ORInt ms = max(0,[cp maxBound: slab]);
-            [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; } in: ^void(ORInt s)
+            [cp tryall: Slabs suchThat: ^ORBool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; } in: ^void(ORInt s)
              {
                 [cp label: slab[o] with: s];
              }
@@ -235,9 +235,9 @@ int main(int argc, const char * argv[])
             printf(" Starting search \n");
             [cp portfolio: ^{
                [cp limitFailures: 200 in: ^{
-                  [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];} orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]]);} do: ^(ORInt o){
+                  [cp forall:SetOrders suchThat:^ORBool(ORInt o) { return ![cp bound: slab[o]];} orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]]);} do: ^(ORInt o){
                      ORInt ms = max(0,[cp maxBound: slab]);
-                     [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; } in: ^void(ORInt s)
+                     [cp tryall: Slabs suchThat: ^ORBool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; } in: ^void(ORInt s)
                       {
                          //NSLog(@"doing %d with %d",o,s);
                          [cp label: slab[o] with: s];
@@ -254,9 +254,9 @@ int main(int argc, const char * argv[])
             }
                      then: ^{
                         printf("Second branch\n");
-                        [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];} orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]]);} do: ^(ORInt o){
+                        [cp forall:SetOrders suchThat:^ORBool(ORInt o) { return ![cp bound: slab[o]];} orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]]);} do: ^(ORInt o){
                            ORInt ms = max(0,[cp maxBound: slab]);
-                           [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; } in: ^void(ORInt s)
+                           [cp tryall: Slabs suchThat: ^ORBool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; } in: ^void(ORInt s)
                             {
                                //NSLog(@"doing %d with %d",o,s);
                                [cp label: slab[o] with: s];

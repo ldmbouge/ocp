@@ -90,7 +90,7 @@ int main(int argc, const char * argv[])
              {
                 ORInt ms = max(0,[cp maxBound: slab]);
                 [cp tryall: Slabs
-                  suchThat: ^bool(ORInt s) { return s <= ms + 1 && [cp member:s in:slab[o]]; }
+                  suchThat: ^ORBool(ORInt s) { return s <= ms + 1 && [cp member:s in:slab[o]]; }
                         in: ^void(ORInt s) {
                     [cp label: slab[o] with: s];
                  }

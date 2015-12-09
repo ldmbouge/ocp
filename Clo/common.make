@@ -1,8 +1,4 @@
-SHELL=/bin/bash
-OC = clang-3.6
-CFLAGS = `gnustep-config --objc-flags` -msse4.1 -fblocks -fobjc-nonfragile-abi \
-	$(USER_DEFINES) -I. -I.. -I/home/ldm/ocp/gurobi550/linux64/include \
-	-msse4.1 
+include ../setup.make
 
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \

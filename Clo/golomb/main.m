@@ -52,7 +52,16 @@ int main(int argc, const char * argv[])
          [cp solve: ^{
             for(ORInt i=1;i<=n;i++) {
                if ([cp bound:m[i]]) continue;
-               [cp tryall:D suchThat:^bool(ORInt v) { return [cp member:v in:m[i]];} in:^(ORInt v) {
+	       // while (![cp bound:m[i]]) {
+	       // 	 int v = [cp min:m[i]];
+	       // 	 [cp try: ^{ [cp label:m[i] with:v]; }
+    	       // 	     alt: ^{ [cp diff:m[i] with:v]; }
+               //   ];
+	       // }
+	       //[cp label:m[i]];
+               [cp tryall:D suchThat:^ORBool(ORInt v) { 
+		   return [cp member:v in:m[i]];
+		 } in:^(ORInt v) {
                   [cp label:m[i] with:v];
                } onFailure:^(ORInt v) {
                   [cp diff:m[i] with:v];

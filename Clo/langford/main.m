@@ -59,10 +59,10 @@ int main(int argc, const char * argv[])
             id<ORIntVarArray> tb = All2(model, ORIntVar, i, K, j, N, [p at:i :j]);
             //[cp labelHeuristic:h];
             //[cp labelArray:tb];
-            [cp forall:[tb range] suchThat:^bool(ORInt i) { return ![cp bound:tb[i]];} orderedBy:^ORInt(ORInt i) {
+            [cp forall:[tb range] suchThat:^ORBool(ORInt i) { return ![cp bound:tb[i]];} orderedBy:^ORInt(ORInt i) {
                return [cp domsize:tb[i]];
             } do:^(ORInt i) {
-               [cp tryall:[tb[i] domain] suchThat:^bool(ORInt j) {
+               [cp tryall:[tb[i] domain] suchThat:^ORBool(ORInt j) {
                   return [cp member:j in:tb[i]];
                } in:^(ORInt j) {
                   //NSLog(@" ? tb[%d] == %d",i,j);

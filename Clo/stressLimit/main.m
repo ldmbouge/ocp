@@ -20,7 +20,7 @@ void makeLimit(int md,int d,id<CPProgram> cp,ORClosure c)
    if (d >= md)
       c();
    else {
-      [cp limitCondition:^bool{
+      [cp limitCondition:^ORBool{
          return false;
       } in:^{
          makeLimit(md, d+1, cp, c);

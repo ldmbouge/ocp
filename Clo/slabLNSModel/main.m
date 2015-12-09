@@ -104,7 +104,7 @@ int main(int argc, const char * argv[])
             [cp repeat:^{
                improved = NO;
                [cp limitFailures:lim in:^{
-                  [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];}
+                  [cp forall:SetOrders suchThat:^ORBool(ORInt o) { return ![cp bound: slab[o]];}
                    orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]] << 16) - [weight at:o];}
                           do: ^(ORInt o){
                              id<ORIntSet> avail = [ORFactory intSet:cp];
@@ -121,7 +121,7 @@ int main(int argc, const char * argv[])
                              ORInt aar = [avail atRank:s];
                              [rS insert:aar];
 //                             NSLog(@"rs.insert(%d) : lbl(%d  --> %@",aar,o,rS);
-                             [cp tryall: rS suchThat: ^bool(ORInt s) { return [cp member: s in: slab[o]]; }
+                             [cp tryall: rS suchThat: ^ORBool(ORInt s) { return [cp member: s in: slab[o]]; }
                                      in: ^void(ORInt s) {
                                         [cp label: slab[o] with: s];
                                      }

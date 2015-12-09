@@ -103,12 +103,12 @@ int main(int argc, const char * argv[])
          [cp solve: ^{
             //         [cp labelHeuristic:h];
             [cp forall: V
-              suchThat:^bool(ORInt i) { return ![cp bound: c[i]];}
+              suchThat:^ORBool(ORInt i) { return ![cp bound: c[i]];}
              orderedBy: ^ORInt(ORInt i) { return [cp domsize: c[i]]; }
                   then: ^ORInt(ORInt i) { return - [deg at:i];}
                     do: ^(ORInt i) {
                        ORInt maxc = max(0,[cp maxBound: c]);
-                       [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {
+                       [cp tryall:V suchThat:^ORBool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {
                           [cp label: c[i] with: v];
                        }
                         onFailure:^(ORInt v) {

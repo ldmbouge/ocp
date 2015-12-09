@@ -9,7 +9,7 @@ $(EXE): $(OFILES)
 	@$(OC) $(CFLAGS) $(LFLAGS)  $(notdir $(OFILES)) -o $(EXE)
 
 ../bin/$(EXE): $(EXE)
-	@echo "Copying in bin..." $(EXE)
+	@echo "Copy -> bin..." $(EXE)
 	@mkdir -p ../bin
 	@cp $(EXE) ../bin
 

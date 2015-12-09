@@ -3,14 +3,15 @@ TARGETS = $(LIBS)
 PAR=2
 VIEWS=1
 #CFL= -O3 -g0
-CFL=-g -O0
+#CFL=-g -O0
+CFL=-O2
 
 .PHONY: $(TARGETS)
 
 all: $(TARGETS) 
 	@mkdir -p bin
 	@cp -ar ../data/* bin
-	@python bench.py
+	@python bench.py CFL='$(CFL)'
 	$(MAKE) -s -j$(PAR) -f bench.make
 	@echo "Done all..."
 

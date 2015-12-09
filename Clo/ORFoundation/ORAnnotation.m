@@ -114,7 +114,7 @@
 {
    NSNumber* k = [NSNumber numberWithInt:cstr.getId];
    NSArray*  na = [_cstr objectForKey:k];
-   [k release];
+   //[k release];
    return na;
 }
 

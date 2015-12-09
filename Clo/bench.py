@@ -59,7 +59,12 @@ ab = ['ais',
 'warehouse',
 'wka']
 
-print ab
+nba = len(sys.argv)
+aa  = str(sys.argv)
+
+print "All args:" , sys.argv[1]
+
+dOpt = sys.argv[1]
 
 gmf = open('bench.make','w')
 gmf.write('TARGETS = ')
@@ -74,6 +79,8 @@ gmf.write('	@echo "Done all..."\n')
 
 for b in ab:
 	of = open(b + '/' + 'Makefile','w')
+        of.write(dOpt + '\n')
+        of.write('USER_DEFINES=$(CFL)\n')
 	of.write('include ../common.make\n')
 	of.write('SRCS = main.m ORCmdLineArgs.m\n')
 	of.write('EXE  = ' + b + '\n')
