@@ -5354,6 +5354,13 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5BCE9D821C28474100EE7865 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
+		};
 		5BD09AFD16480CF60090818B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -7385,7 +7392,7 @@
 		};
 		5BB1C2421B39F598008A9E51 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
@@ -40404,6 +40411,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BCE9D831C28474100EE7865 /* PBXTargetDependency */,
 				5BB1C2501B39F668008A9E51 /* PBXTargetDependency */,
 				5BB1C2521B39F668008A9E51 /* PBXTargetDependency */,
 				5BB1C2541B39F668008A9E51 /* PBXTargetDependency */,
@@ -41697,7 +41705,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					53B8329F1BA377A700EC9224 = {
@@ -45627,6 +45635,11 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BCAF1591BF148B100C18360 /* PBXContainerItemProxy */;
 		};
+		5BCE9D831C28474100EE7865 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 5BCE9D821C28474100EE7865 /* PBXContainerItemProxy */;
+		};
 		5BD09AFE16480CF60090818B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
@@ -46905,6 +46918,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -46925,6 +46939,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -46946,6 +46961,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -46966,6 +46982,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -46986,6 +47003,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -47007,6 +47025,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -47106,6 +47125,7 @@
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgramTests/ORSchedulingProgramTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -47140,6 +47160,7 @@
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgramTests/ORSchedulingProgramTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -47174,6 +47195,7 @@
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgramTests/ORSchedulingProgramTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -48069,6 +48091,7 @@
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48090,6 +48113,7 @@
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48290,6 +48314,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48315,6 +48340,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48392,6 +48418,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
@@ -48610,10 +48637,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
-				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORFoundation;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = framework;
@@ -48636,6 +48660,7 @@
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48660,6 +48685,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48685,6 +48711,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48710,6 +48737,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48729,6 +48757,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -48756,6 +48785,7 @@
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
@@ -48917,6 +48947,7 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -48941,6 +48972,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "queensGui/queensGui-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -48970,6 +49002,7 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -48996,6 +49029,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "SportDemo/SportDemo-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -50222,6 +50256,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -50247,6 +50282,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -50266,6 +50302,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -50286,6 +50323,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -50356,6 +50394,7 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -50384,6 +50423,7 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -50484,6 +50524,7 @@
 				INFOPLIST_FILE = TestAll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -50518,6 +50559,7 @@
 				INFOPLIST_FILE = TestAll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -50552,6 +50594,7 @@
 				INFOPLIST_FILE = TestAll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -50576,6 +50619,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -50602,6 +50646,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -50843,6 +50888,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "queensGui/queensGui-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -50861,6 +50907,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "queensGui/queensGui-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "UCONN.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -50890,6 +50937,7 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -50917,6 +50965,7 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -51612,10 +51661,7 @@
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
-				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORFoundation;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -51635,10 +51681,7 @@
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
-				);
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORFoundation;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -51869,6 +51912,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgram/ORSchedulingProgram-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -51902,6 +51946,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgram/ORSchedulingProgram-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				WRAPPER_EXTENSION = framework;
@@ -51937,6 +51982,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgram/ORSchedulingProgram-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -52119,6 +52165,7 @@
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
@@ -52147,6 +52194,7 @@
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
@@ -52748,6 +52796,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "SportDemo/SportDemo-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -52768,6 +52817,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "SportDemo/SportDemo-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -53062,6 +53112,7 @@
 				5B4053FE1C1DBC64001407E3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B40A9281B6321470033D351 /* Build configuration list for PBXNativeTarget "orderSwift" */ = {
 			isa = XCConfigurationList;
