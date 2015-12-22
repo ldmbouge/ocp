@@ -224,7 +224,7 @@
       [_m add:[ORFactory bit:digest[4] eq:digestVars[4]]];
    
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 //   id<ORBasicModel> model = [engine model];
@@ -302,7 +302,7 @@
                }
             break;
          case BVFF:
-            [cp labelBitVarHeuristic:h];
+            [cp labelBitVarHeuristicCDCL:h];
             break;
             
          default:
