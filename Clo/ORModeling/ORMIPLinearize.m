@@ -478,6 +478,18 @@
 {
    _result = c;
 }
+-(void) visitBitOrb:(id<ORBitOrb>)c
+{
+   _result = c;
+}
+-(void) visitBitNotb:(id<ORBitNotb>)c
+{
+   _result = c;
+}
+-(void) visitBitEqualb:(id<ORBitEqualb>)c
+{
+   _result = c;
+}
 // Flattening of constraints ============================================================================
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
