@@ -84,8 +84,7 @@
         //NSLog(@"r2 bound: %@", [[[_r1 model] objective] description]);
         //[ORConcurrency pumpEvents];
     }
-    [_t0 cancel];
-    [_t1 cancel];
+    [self cancelSearch];
     id<ORSolution> s0 = [_r0 bestSolution];
     id<ORSolution> s1 = [_r1 bestSolution];
     if(s0 && s1) {        
@@ -102,6 +101,11 @@
 -(void) receiveSolution:(id<ORSolution>)sol {
     NSLog(@"Sol: %@", [sol description]);
     [_solutionPool addSolution: sol];
+}
+
+-(void)cancelSearch {
+    [_r0 cancelSearch];
+    [_r1 cancelSearch];
 }
 
 @end

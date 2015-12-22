@@ -59,6 +59,7 @@
 -(void) tightenBound: (ORDouble)bnd;
 -(void) injectSolution: (NSArray*)vars values: (NSArray*)vals size: (ORInt)size;
 -(void) printModelToFile: (char*) fileName;
+-(void) cancel;
 -(void) print;
 @end
 

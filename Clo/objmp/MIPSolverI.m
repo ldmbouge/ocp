@@ -1457,6 +1457,10 @@
    [_MIP printModelToFile: fileName];
 }
 
+-(void) cancel {
+    [_MIP cancel];
+}
+
 //-(CotMIPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotMIPAbstractBasis* basis) ;
 

@@ -122,7 +122,7 @@
 //   }
 //   printf("\n");
    GRBoptimize(_model);
-   [self printModelToFile: "/Users/ldm/Desktop/lookatgurobi.lp"];
+   //[self printModelToFile: "/Users/ldm/Desktop/lookatgurobi.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {

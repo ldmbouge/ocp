@@ -32,20 +32,21 @@ void fill(FILE* data,id<ORIntRange> Jobs,id<ORIntRange> Machines,id<ORIntMatrix>
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        if(argc < 2) {
-            NSLog(@"jspbenchmarks [technology] filepath");
-            return -1;
-        }
+//        if(argc < 2) {
+//            NSLog(@"jspbenchmarks [technology] filepath");
+//            return -1;
+//        }
         NSMutableArray* args = [[NSMutableArray alloc] initWithCapacity: argc];
         for(int i = 0; i < argc; i++) [args addObject: [NSString stringWithCString: argv[i] encoding: NSASCIIStringEncoding]];
         
         BOOL doCP = NO;
         BOOL doMIP = NO;
         BOOL doHybrid = NO;
-        BOOL doHybridLNS = NO;
+        BOOL doHybridLNS = YES;
         BOOL doHybridLNS_CP = NO;
         BOOL doBDS = NO;
         BOOL doCPSCP = NO;
+        BOOL doLNS = NO;
         ORInt numThreads = 0;
         
         if([args containsObject: @"-cp"]) doCP = YES;
@@ -55,12 +56,13 @@ int main(int argc, const char * argv[]) {
         if([args containsObject: @"-lns-cp"]) doHybridLNS_CP = YES;
         if([args containsObject: @"-bds"]) doBDS = YES;
         if([args containsObject: @"-cps-cp"]) doCPSCP = YES;
+        if([args containsObject: @"-lns"]) doLNS = YES;
         if([args containsObject: @"-t1"]) numThreads = 1;
         if([args containsObject: @"-t2"]) numThreads = 2;
         if([args containsObject: @"-t4"]) numThreads = 4;
         
         
-        NSString* path = [args lastObject];//@"/Users/dan/Work/platform/Clo/Scheduler/BenchmarkData/jsp/la19.jss"
+        NSString* path = @"/Users/dan/Work/platform/Clo/Scheduler/BenchmarkData/jsp/la21.jss";//[args lastObject];
         
         FILE* data = fopen([path cStringUsingEncoding: NSASCIIStringEncoding], "r");
         
@@ -113,7 +115,7 @@ int main(int argc, const char * argv[]) {
         
         // Solve CP
         if(doCP) {
-            FILE* outFile = fopen("/Users/ldm/Desktop/cpout.txt", "w+");
+            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
             id<ORAnnotation> notes = [ORFactory annotation];
             id<CPProgram,CPScheduler> cp = nil;
             
@@ -229,7 +231,7 @@ int main(int argc, const char * argv[]) {
                               curr = [sol intValue: succ[curr]];
                           }
                       }
-                      NSLog(@"R");
+                      //NSLog(@"R");
                   }];
             }];
             id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
@@ -288,7 +290,7 @@ int main(int argc, const char * argv[]) {
                   }];
             }];
             
-            FILE* outFile = fopen("/Users/ldm/Desktop/cpout.txt", "w+");
+            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
             ORLong timeStart = [ORRuntimeMonitor wctime];
             id<ORRunnable> r1 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
@@ -316,7 +318,7 @@ int main(int argc, const char * argv[]) {
         
         
         if(doBDS) {
-            FILE* outFile = fopen("/Users/ldm/Desktop/cpout.txt", "w+");
+            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
             id<ORAnnotation> notes = [ORFactory annotation];
             id<CPProgram,CPScheduler> cp = nil;
             cp = //(id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemBDSController class]];
@@ -366,7 +368,7 @@ int main(int argc, const char * argv[]) {
             [cp label: makespan];
             NSLog(@"(SEQ   )makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
          }];
-         FILE* outFile = fopen("/Users/ldm/Desktop/cpout.txt", "w+");
+         FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
           ORLong timeStart = [ORRuntimeMonitor wctime];
           id<ORRunnable> r1 = [ORFactory CPRunnable: model  numThreads:numThreads solve: ^(id<CPCommonProgram> program){
              id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
@@ -391,6 +393,75 @@ int main(int argc, const char * argv[]) {
           NSLog(@"!! CPS/CP makespan: %d \n",[optimum intValue: makespan]);
        }
        
+        if(doLNS){
+            id<ORAnnotation> notes = [ORFactory annotation];
+            id<CPProgram,CPScheduler> cp = nil;
+            
+            if(numThreads > 0)
+                cp = (id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemDFSController proto]];
+            else cp = (id)[ORFactory createCPProgram: model];
+            
+            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+            ORLong timeStart = [ORRuntimeMonitor wctime];
+            [cp solve: ^{
+                id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range: Machines];
+                id<ORUniformDistribution> sD = [ORFactory uniformDistribution:model range: Jobs];
+                id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,2,nbMachines/5)];
+                [cp repeat: ^{
+                    [cp limitFailures: 3 *nbJobs * nbMachines in: ^{
+                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 10 * [cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
+                            id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                            [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
+                        }];
+                        [cp label: makespan];
+                        NSLog(@"\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                        ORLong timeEnd = [ORRuntimeMonitor wctime];
+                        NSLog(@"Time: %lld:",timeEnd - timeStart);
+                    }];
+                }
+                  onRepeat: ^{
+                      id<ORSolution,ORSchedulerSolution> sol = (id) [[cp solutionPool] best];
+                      for(ORInt k = 1; k <= 2; k++) {
+                          ORInt i = [sM next];
+                          id<ORIntVarArray> succ = disjunctive[i].successors;
+                          id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                          ORInt st = [sD next];
+                          ORInt d = [lD next];
+                          ORInt en = st + d;
+                          // need to fix everything outside the bounds but the tight constraints
+                          ORInt j = 0;
+                          ORInt curr = 0;
+                          while (curr <= succ.up) {
+                              if ((j < st || j >= en)) {
+                                  ORInt n = [sol intValue: succ[curr]];
+                                  if (n != nbJobs + 1) {
+                                      ORInt est = [sol ect: t[n]];
+                                      ORInt ect = [sol ect: t[n]];
+                                      ORInt duration = [sol minDuration: t[n]];
+                                      if (est + duration != ect)
+                                          [cp label: succ[curr] with: [sol intValue: succ[curr]]];
+                                  }
+                              }
+                              j++;
+                              curr = [sol intValue: succ[curr]];
+                          }
+                      }
+                      NSLog(@"R");
+                  }];
+                NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
+                fflush(outFile);
+            }];
+            fclose(outFile);
+            
+            ORLong timeEnd = [ORRuntimeMonitor wctime];
+            NSLog(@"Time: %lld",timeEnd - timeStart);
+            id<ORSolutionPool> pool = [cp solutionPool];
+            id<ORSolution> optimum = [pool best];
+            NSLog(@"!! LNS makespan: %d \n",[optimum intValue: makespan]);
+        }
+
+        
     }
     return 0;
 }

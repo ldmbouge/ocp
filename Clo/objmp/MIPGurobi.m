@@ -29,6 +29,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    NSArray*                       _newSolVals;
    ORDouble                       _newBnd;
    ORDouble                       _bnd;
+   BOOL                           _terminate;
 }
 
 -(MIPGurobiSolver*) init
@@ -117,6 +118,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    GRBupdatemodel(_model);
    //[self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
    GRBsetcallbackfunc(_model, &gurobi_callback, self);
+   _terminate = NO;
    
    GRBoptimize(_model);
    int status;
@@ -307,6 +309,10 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    GRBwrite(_model,fileName);
 }
 
+-(void) cancel {
+   _terminate = YES;
+}
+
 -(id<ORDoubleInformer>) boundInformer
 {
    return _informer;
@@ -378,7 +384,7 @@ FILE* outFile = 0;
 ORLong timeStart = -1;
 
 int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata) {
-   if(outFile == 0) outFile = fopen("/Users/ldm/Desktop/mipout.txt", "w+");
+   if(outFile == 0) outFile = fopen("/Users/dan/Desktop/mipout.txt", "w+");
    if(timeStart == -1) timeStart = [ORRuntimeMonitor wctime];
    
     MIPGurobiSolver* solver = (MIPGurobiSolver*)usrdata;
@@ -395,7 +401,10 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata) {
        [solver lazySolutionInject: cbdata];
        //[solver lazyBoundTighten: cbdata];
     }
-    else if (where == GRB_CB_POLLING) [solver pumpEvents];
+    else if (where == GRB_CB_POLLING) {
+       [solver pumpEvents];
+       if(solver->_terminate) GRBterminate(model);
+    }
     return 0;
 }
 
