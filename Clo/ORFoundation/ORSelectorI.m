@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORUtilities/ORPQueue.h>
 #import "ORDataI.h"
 #import "ORSelectorI.h"
 #import <math.h>
@@ -22,11 +23,11 @@
    id<ORRandomStream> _stream;
    id<ORIntIterable>   _range;
    ORInt2Bool         _filter;
-   ORInt2Float         _order;
-   ORFloat         _direction;
+   ORInt2Double         _order;
+   ORDouble         _direction;
    BOOL           _randomized;
 }
--(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized: (ORBool) randomized
 {
    self = [super init];
    _range = range;
@@ -63,12 +64,12 @@
 }
 -(ORInt) choose
 {
-   __block float bestFound = MAXFLOAT;
+   __block ORDouble bestFound = MAXDBL;
    __block ORLong bestRand = 0x7fffffffffffffff;
    __block ORInt indexFound = MAXINT;
    [_range enumerateWithBlock:^(ORInt i) {
-      if (_filter(i)) {
-         ORFloat val = _direction * (_order ? _order(i) : 0.0);
+       if ((id)_filter==nil || _filter(i)) {
+         ORDouble val = _direction * (_order ? _order(i) : 0.0);
          if (val < bestFound) {
             bestFound = val;
             indexFound = i;
@@ -82,6 +83,7 @@
             }
          }
       }
+ 
    }];
    return indexFound;
 }
@@ -91,7 +93,7 @@
 {
    OROPTSelect* _select;
 }
--(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized
+-(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized: (ORBool) randomized
 {
    self = [super init];
    _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order randomized: randomized];
@@ -115,5 +117,61 @@
 -(ORInt) any
 {
    return [_select any];
+}
+@end
+
+@implementation ORMinSelector {
+   ORClosure _bestBlock;
+   ORDouble   _bestValue;
+   ORLong     _bestRand;
+   ORBool    _randomized;
+   id<ORRandomStream> _stream;
+}
+-(id)init
+{
+   self = [super init];
+   _bestRand = 0x7fffffffffffffff;
+   _bestValue = MAXDBL;
+   _bestBlock = nil;
+   _randomized = YES;
+   _stream = [[ORRandomStreamI alloc] init];
+   return self;
+}
+-(void)dealloc
+{
+   [_bestBlock release];
+   [_stream release];
+   [super dealloc];
+}
+-(void)reset
+{
+   [_bestBlock release];
+   _bestRand = 0x7fffffffffffffff;
+   _bestValue = MAXDBL;
+   _bestBlock = nil;
+}
+-(void)commit
+{
+   if (_bestBlock) {
+      _bestBlock();
+      [self reset];
+   }
+}
+-(void)neighbor:(ORDouble)v do:(ORClosure)block
+{
+   if (v < _bestValue) {
+      _bestValue = v;
+      _bestRand  = [_stream next];
+      [_bestBlock release];
+      _bestBlock = [block copy];
+   }
+   else if (_randomized && v == _bestValue) {
+      ORLong r = [_stream next];
+      if (r < _bestRand) {
+         _bestRand = r;
+         [_bestBlock release];
+         _bestBlock = [block copy];
+      }
+   }
 }
 @end

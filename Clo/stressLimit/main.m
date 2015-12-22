@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -52,7 +52,6 @@ int test0(int argc, const char * argv[])
          NSLog(@"Solver %@",cp);
          NSLog(@"#sol: %d",nbSol);
          struct ORResult res = REPORT(l, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }
@@ -83,7 +82,7 @@ int test0Q(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          [cp solveAll:^{
             makeLimit(l, 0, cp, ^{
-               [cp labelArray:x orderedBy:^ORFloat(ORInt i) {return [cp domsize:x[i]];}];
+               [cp labelArray:x orderedBy:^ORDouble(ORInt i) {return [cp domsize:x[i]];}];
                nbSol++;
                [[cp explorer] fail];
             });
@@ -91,7 +90,6 @@ int test0Q(int argc, const char * argv[])
          NSLog(@"Solver %@",cp);
          NSLog(@"#sol: %d",nbSol);
          struct ORResult res = REPORT(l, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }
@@ -135,7 +133,6 @@ int test1(int argc, const char * argv[])
          NSLog(@"Solver %@",cp);
          NSLog(@"#sol: %d",nbSol);
          struct ORResult res = REPORT(l, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }
@@ -165,9 +162,9 @@ int test1Q(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          [cp solveAll:^{
-            //[cp labelArray:x orderedBy:^ORFloat(ORInt i) {return [cp domsize:x[i]];}];nbSol++;
+            //[cp labelArray:x orderedBy:^ORDouble(ORInt i) {return [cp domsize:x[i]];}];nbSol++;
             makePF(l,0,14199,cp, ^{
-               [cp labelArray:x orderedBy:^ORFloat(ORInt i) {return [cp domsize:x[i]];}];
+               [cp labelArray:x orderedBy:^ORDouble(ORInt i) {return [cp domsize:x[i]];}];
                nbSol++;
             } );
             [[cp explorer] fail];
@@ -176,7 +173,6 @@ int test1Q(int argc, const char * argv[])
          NSLog(@"Solver %@",cp);
          NSLog(@"#sol: %d",nbSol);
          struct ORResult res = REPORT(l, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [ORFactory shutdown];
          return res;
       }];
    }

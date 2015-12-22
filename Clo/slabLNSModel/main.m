@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -150,7 +150,7 @@ int main(int argc, const char * argv[])
             NSLog(@"Objective value: %@",[obj value]);
             improved = YES;
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
+         id<ORSolution> sol = [[cp solutionPool] best];
          for(ORInt i = [SetOrders low]; i <= [SetOrders up]; i++)
             printf("slab[%d] = %d \n",i,[sol intValue: slab[i]]);
          printf("\n");
@@ -159,8 +159,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }

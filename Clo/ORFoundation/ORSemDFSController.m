@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,19 @@
 
  ***********************************************************************/
 
-#import "ORSemDFSController.h"
+#import <ORFoundation/ORSemDFSController.h>
 
-@implementation ORSemDFSController
+@implementation ORSemDFSController {
+@protected
+   NSCont**            _tab;
+   ORInt                _sz;
+   ORInt                _mx;
+   id<ORCheckpoint>* _cpTab;
+   SemTracer*       _tracer;
+   id<ORCheckpoint> _atRoot;
+   id<ORSearchEngine>     _engine;
+   id<ORPost>        _model;
+}
 
 - (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {

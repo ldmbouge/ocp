@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,20 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+
+#if (defined(__APPLE__)) && (__MAC_OS_X_VERSION_MAX_ALLOWED > __MAC_10_9)
+#define PORTABLE_BEGIN NS_ASSUME_NONNULL_BEGIN
+#define PORTABLE_END NS_ASSUME_NONNULL_END
+#define PNONNULL   __nonnull
+#define PNULLABLE  __nullable
+#else
+#define PORTABLE_BEGIN
+#define PORTABLE_END
+#define PNONNULL 
+#define PNULLABLE 
+#endif
+
+
 #if !defined(__APPLE__) || defined(__IPHONE_NA)
 typedef unsigned long long uint64;
 typedef long long sint64;
@@ -21,11 +35,12 @@ typedef unsigned char uint8;
 typedef signed char sint8;
 #endif
 
-typedef sint32 ORInt;
-typedef uint32 ORUInt;
-typedef sint64 ORLong;
-typedef uint64 ORULong;
-typedef double ORFloat;
+typedef int ORInt;
+typedef unsigned int ORUInt;
+typedef long long ORLong;
+typedef unsigned long long ORULong;
+typedef float  ORFloat;
+typedef double ORDouble;
 typedef BOOL   ORBool;
 
 //#define minOf(a,b) ((a) < (b) ? (a) : (b))
@@ -42,6 +57,9 @@ static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}
 #define FDMAXINT (((ORInt)0x7FFFFFFF)/2)
 #define FDMININT (((ORInt)0x80000000)/2)
 
+#define MAXDBL DBL_MAX
+#define MINDBL DBL_MIN
+
 #define MAXUNSIGNED ((ORUInt)0xFFFFFFFF)
 #define MINUNSIGNED ((ORUInt)0x0)
 
@@ -53,7 +71,7 @@ static inline ORInt bindDown(ORLong a) { return (a > (ORLong)FDMININT) ? (ORInt)
 @protocol ORSolution;
 @protocol ORConstraint;
 @protocol ORIntArray;
-@protocol ORFloatArray;
+@protocol ORDoubleArray;
 @protocol ORConstraintSet;
 
 typedef struct ORRange {
@@ -65,6 +83,11 @@ typedef struct ORBounds {
    ORInt min;
    ORInt max;
 } ORBounds;
+
+static inline ORBounds unionOf(ORBounds a,ORBounds b)
+{
+   return (ORBounds){min(a.min,b.min),max(a.max,b.max)};
+}
 
 @protocol IntEnumerator <NSObject>
 -(ORBool) more;
@@ -97,11 +120,12 @@ typedef void (^ORId2Void)(id);
 typedef void (^ORSolution2Void)(id<ORSolution>);
 typedef void (^ORConstraint2Void)(id<ORConstraint>);
 typedef void (^ORIntArray2Void)(id<ORIntArray>);
-typedef void (^ORFloatArray2Void)(id<ORFloatArray>);
+typedef void (^ORDoubleArray2Void)(id<ORDoubleArray>);
 typedef void (^ORConstraintSet2Void)(id<ORConstraintSet>);
+typedef ORDouble (^ORIntxInt2Double)(ORInt,ORInt);
 typedef int (^ORIntxInt2Int)(ORInt,ORInt);
 typedef BOOL (^ORIntxInt2Bool)(ORInt,ORInt);
-typedef ORFloat (^ORInt2Float)(ORInt);
+typedef ORDouble (^ORInt2Double)(ORInt);
 typedef id<ORExpr> (^ORInt2Expr)(ORInt);
 typedef id<ORExpr> (^ORIntxInt2Expr)(ORInt, ORInt);
 typedef id<ORRelation> (^ORInt2Relation)(ORInt);

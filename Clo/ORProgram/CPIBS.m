@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,12 @@
 
  ***********************************************************************/
 
-#import "CPIBS.h"
+#import <ORProgram/CPIBS.h>
 #import <ORFoundation/ORTracer.h>
 #import <CPUKernel/CPUKernel.h>
+#import <ORPRogram/CPConcretizer.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
-#import "CPConcretizer.h"
 #import <objcp/CPFactory.h>
 
 #if defined(__linux__)
@@ -162,7 +162,7 @@
          rv += 1.0 - _imps[i];
       }
       return - rv;
-   } else return - MAXFLOAT;
+   } else return - MAXDBL;
 }
 @end
 
@@ -198,14 +198,14 @@
    return _cp;
 }
 
--(ORFloat)varOrdering:(id<CPIntVar>)x
+-(ORDouble)varOrdering:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
--(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForValue:v];
@@ -213,7 +213,7 @@
    return rv;
 }
 // pvh: this dictionary business seems pretty heavy; lots of memory allocation
--(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs
+-(void)initInternal:(id<ORVarArray>)t with:(id<CPVarArray>)cvs
 {
    _vars = t;
    _cvs  = cvs;
@@ -243,8 +243,7 @@
       [[_impacts objectForKey:key] addImpact: 1.0 forValue:val];
       [key release];
    }];
-   [[_cp engine] clearStatus];
-   [[_cp engine] enforceObjective];
+   [[_cp engine] tryEnforceObjective];
    if ([[_cp engine] objective] != NULL)
       NSLog(@"IBS ready... %@",[[_cp engine] objective]);
    else
@@ -282,7 +281,7 @@
 -(void)dichotomize:(id<CPIntVar>)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set
 {
    if (up - low + 1 <= b) {
-      float ks = 0.0;
+      double ks = 0.0;
       for(CPKillRange* kr in set)
          ks += [kr killed];
       
@@ -321,35 +320,43 @@
 }
 -(void)initImpacts
 {
-   ORInt blockWidth = 1;
-   id<ORIntVarArray> mav = [self allIntVars];
-   id* gamma = [_cp gamma];
-   id<CPIntVarArray> av = [CPFactory intVarArray:_cp range:mav.range with:^id<CPIntVar>(ORInt i) {
-      return gamma[mav[i].getId];
-   }];
-   ORInt low = [av low],up = [av up];
-   for(ORInt k=low; k <= up;k++) {
-      NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
-      id<CPIntVar> v = av[k];
-      ORBounds vb = [v bounds];
-      [_monitor rootRefresh];
-      [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
-      ORInt rank = 0;
-      ORInt lastRank = (ORInt)[sacs count]-1;
-      for(CPKillRange* kr in sacs) {
-         if (rank == 0 && [kr low] == [v min]) {
-            [_engine enforce: ^{ [v updateMin:[kr up]+1];}];  // gthen:v with:[kr up]];
-         } else if (rank == lastRank && [kr up] == [v max]) {
-            [_engine enforce: ^{ [v updateMax:[kr low]-1];}]; // lthen:v with:[kr low]];
-         } else {
-            for(ORInt i=[kr low];i <= [kr up];i++)
-               [_engine enforce: ^{ [v remove:i];}];// diff:v with:i];
-         }
-         rank++;
-      }
-      [sacs release];
-      //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
-   }
-   //NSLog(@"VARS AT END OF INIT:%@ ",av);
+    ORInt blockWidth = 1;
+    id<ORIntVarArray> mav = [self allIntVars];
+    id* gamma = [_cp gamma];
+    id<CPIntVarArray> av = [CPFactory intVarArray:_cp range:mav.range with:^id<CPIntVar>(ORInt i) {
+        return gamma[mav[i].getId];
+    }];
+    ORInt low = [av low],up = [av up];
+    for(ORInt k=low; k <= up;k++) {
+        NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
+        id<CPIntVar> v = av[k];
+        ORBounds vb = [v bounds];
+        [_monitor rootRefresh];
+        [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
+        ORInt rank = 0;
+        ORInt lastRank = (ORInt)[sacs count]-1;
+        ORStatus status = ORSuspend;
+        for(CPKillRange* kr in sacs) {
+            if (rank == 0 && [kr low] == [v min]) {
+                if ([_engine enforce: ^{ [v updateMin:[kr up]+1];}] == ORFailure)   // gthen:v with:[kr up]];
+                    status = ORFailure;
+            }
+            else if (rank == lastRank && [kr up] == [v max]) {
+                if ([_engine enforce: ^{ [v updateMax:[kr low]-1];}] == ORFailure) // lthen:v with:[kr low]];
+                    status = ORFailure;
+            }
+            else {
+                for(ORInt i=[kr low];i <= [kr up];i++)
+                    if ([_engine enforce: ^{ [v remove:i];}] == ORFailure) // diff:v with:i];
+                        status = ORFailure;
+            }
+            rank++;
+        }
+        [sacs release];
+        if (status == ORFailure)
+            failNow();
+        //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
+    }
+    //NSLog(@"VARS AT END OF INIT:%@ ",av);
 }
 @end

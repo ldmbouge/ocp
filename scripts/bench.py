@@ -11,14 +11,14 @@ import csv
 
 ab = [
 #      ('sport',0,0,0,0,0,lambda x : x + 1),
-#      ('progressive',1,9,0,0,1,lambda x : x + 1),
+       ('progressive',7,6,0,0,7,lambda x : x + 1),
 #      ('slab',0,0,0,0,0,lambda x : x + 1),
 #      ('slabLNSModel',0,0,0,0,0,lambda x : x + 1),
 #      ('perfect',0,0,0,0,0,lambda x : x + 1),
 #      ('knapsackOpt',1,0,0,0,4,lambda x : x + 1),
 #      ('golomb',8,0,0,0,13,lambda x : x + 1),
 #	('order2',8,0,0,0,4096,lambda x : x * 2),
-	('order',8,0,0,0,8192,lambda x : x * 2)
+#	('order',8,0,0,0,8192,lambda x : x * 2)
   ]
 
 #      ('latinSquare',8,0,0,0,8,lambda x : x + 1),
@@ -29,18 +29,19 @@ ab = [
 #ab = [('order',8,0,0,0,32,lambda x : x * 2)]
 
 e = runner.Environment()
-nbRun = 10
+nbRun = 50
 
 for (b,qa,na,par,heur,ub,step) in ab:
  	p = runner.Runner(b,1)
  	ar = []
         sz = qa
-        while sz <= ub:                
+        print sz, " ", ub
+	while sz <= ub:                
                 for run in range(nbRun):
                         res = p.run(sz,na,par,heur)
                         ar.append(res)
                 sz = step(sz)
-	#print ar
+	print ar
 	f = open(b + '.csv','w')
 	k = ar[0].keys()
 	writer = csv.DictWriter(f,k)

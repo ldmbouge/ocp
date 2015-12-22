@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c)  2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c)  2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,12 +10,11 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORExpr.h>
-#import "ORExprI.h"
-#import "ORFactory.h"
-#import "ORError.h"
-#import "ORConstraint.h"
-#import "ORVisit.h"
-
+#import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORError.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORVisit.h>
 
 @implementation NSNumber (Expressions)
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker
@@ -24,7 +23,7 @@
    if (strcmp(tt,@encode(ORInt))==0 || strcmp(tt,@encode(ORUInt)) ==0 || strcmp(tt,@encode(ORLong)) ==0 || strcmp(tt,@encode(ORULong)) ==0)
       return [ORFactory integer:tracker value:[self intValue]];
    else if (strcmp(tt,@encode(float))==0 || strcmp(tt,@encode(double))==0)
-      return [ORFactory float:tracker value:[self floatValue]];  
+      return [ORFactory double:tracker value:[self floatValue]];
    else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
    else {
@@ -88,13 +87,13 @@
 {
    return [[self asExpression:[e tracker]] gt:e];
 }
--(id<ORRelation>) and: (id<ORExpr>) e
+-(id<ORRelation>) land: (id<ORExpr>) e
 {
-   return [[self asExpression:[e tracker]] and:e];
+   return [[self asExpression:[e tracker]] land:e];
 }
--(id<ORRelation>) or: (id<ORExpr>) e
+-(id<ORRelation>) lor: (id<ORExpr>) e
 {
-   return [[self asExpression:[e tracker]] or:e];
+   return [[self asExpression:[e tracker]] lor:e];
 }
 @end
 
@@ -106,7 +105,7 @@
 // Variables
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitBitVar: (id<ORBitVar>) v;
--(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitRealVar: (id<ORRealVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 // Expressions
@@ -166,7 +165,7 @@
 {
    [_ms addObject:v];
 }
--(void) visitFloatVar: (id<ORFloatVar>) v
+-(void) visitRealVar: (id<ORRealVar>) v
 {
    [_ms addObject:v];
 }
@@ -253,7 +252,7 @@
 {
    [[e index] visit:self];
 }
--(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*) e
+-(void) visitExprCstDoubleSubI: (ORExprCstDoubleSubI*) e
 {
    [[e index] visit:self];
 }
@@ -373,9 +372,9 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "intvalue not defined on expression"];
    return 0;
 }
--(ORFloat) floatValue
+-(ORDouble) doubleValue
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "doubleValue not defined on expression"];
    return 0;
 }
 -(ORBool) isConstant
@@ -458,19 +457,19 @@
 {
    return [ORFactory exprNegate:self track:[self tracker]];
 }
--(id<ORExpr>)and:(id<ORRelation>)e
+-(id<ORExpr>) land:(id<ORRelation>)e
 {
    if (e == NULL)
       return self;
    else
-      return [self and:e track:[self tracker]];
+      return [self land:e track:[self tracker]];
 }
--(id<ORExpr>) or: (id<ORRelation>)e
+-(id<ORExpr>) lor: (id<ORRelation>)e
 {
    if (e == NULL)
       return self;
    else
-      return [self or:e track:[self tracker]];
+      return [self lor:e track:[self tracker]];
 }
 -(id<ORExpr>) imply:(id<ORRelation>)e
 {
@@ -605,22 +604,26 @@
 {
    return (id)[ORFactory exprNegate:self track:t];
 }
--(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t
+-(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t
 {
    if ([e conformsToProtocol:@protocol(ORExpr)])
-      return (id)[ORFactory expr:(id)self and:(id)e track:t];
+      return (id)[ORFactory expr:(id)self land:(id)e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
-      return (id)[ORFactory expr:(id)self and:(id)[(id)e asExpression:t] track:t];
+      return (id)[ORFactory expr:(id)self land:(id)[(id)e asExpression:t] track:t];
    else
       return NULL;
 }
--(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t
+-(id<ORRelation>) lor: (id<ORExpr>) e track:(id<ORTracker>)t
 {
-   return (id)[ORFactory expr:(id)self or:(id)e track:t];
+   return (id)[ORFactory expr:(id)self lor:(id)e track:t];
 }
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t
 {
    return (id)[ORFactory expr:(id)self imply:(id)e track:t];
+}
+-(void) close
+{
+   
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {}
@@ -940,8 +943,8 @@
 @end
 
 
-@implementation ORExprCstFloatSubI
--(id<ORExpr>) initORExprCstFloatSubI: (id<ORFloatArray>) array index:(id<ORExpr>) op
+@implementation ORExprCstDoubleSubI
+-(id<ORExpr>) initORExprCstDoubleSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op
 {
    self = [super init];
    _array = array;
@@ -952,16 +955,16 @@
 {
    return [_index tracker];
 }
--(ORFloat) fmin
+-(ORDouble) fmin
 {
-   ORFloat minOf = MAXINT;
+   ORDouble minOf = MAXINT;
    for(ORInt k=[_array low];k<=[_array up];k++)
       minOf = minOf <[_array at:k] ? minOf : [_array at:k];
    return minOf;
 }
--(ORFloat) fmax
+-(ORDouble) fmax
 {
-   ORFloat maxOf = MININT;
+   ORDouble maxOf = MININT;
    for(ORInt k=[_array low];k<=[_array up];k++)
       maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
    return maxOf;
@@ -976,7 +979,7 @@
 {
    return  _index;
 }
--(id<ORFloatArray>)array
+-(id<ORDoubleArray>)array
 {
    return _array;
 }
@@ -990,7 +993,7 @@
 }
 -(void) visit:(ORVisitor*)visitor
 {
-   [visitor visitExprCstFloatSubI:self];
+   [visitor visitExprCstDoubleSubI:self];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1881,12 +1884,12 @@
    if (f!=NULL) {
       [S enumerateWithBlock:^(ORInt i) {
          if (!f(i))
-            _e = [_e or: e(i)];
+            _e = [_e lor: e(i)];
       }];
    }
    else {
       [S enumerateWithBlock:^(ORInt i) {
-         _e = [_e or: e(i)];
+         _e = [_e lor: e(i)];
       }];
    }
    return self;
@@ -1954,12 +1957,12 @@
    if (f!=NULL) {
       [S enumerateWithBlock:^(ORInt i) {
          if (!f(i))
-            _e = [_e and: e(i)];
+            _e = [_e land: e(i)];
       }];
    }
    else {
       [S enumerateWithBlock:^(ORInt i) {
-         _e = [_e and: e(i)];
+         _e = [_e land: e(i)];
       }];
    }
    return self;
@@ -2172,16 +2175,3 @@
    return self;
 }
 @end
-
-
-id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r)
-{
-   return [r mul: l];
-}
-id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r)
-{
-   return [l mul: r];
-}
-
-
-

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFactory.h>
-#import <objcp/CPConstraint.h>
-#import <objcp/CPFactory.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgramFactory.h>
-#import <objcp/CPError.h>
-
+#import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
@@ -35,26 +29,24 @@ int main(int argc, const char * argv[])
 
          [notes dc:[mdl add:[ORFactory alldifferent:sx]]];
          for(ORUInt i=SD.low;i<=SD.up;i++) {
-            //[mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]] annotation: DomainConsistency];
-            [mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]]];
+            [notes dc:[mdl add:[dx[i] eq:[[sx[i] sub:sx[i+1]] abs]]]];
          }
          [notes dc:[mdl add:[ORFactory alldifferent:dx]]];
-//         [mdl add:[sx[1]   leq:sx[2]]];
-//         [mdl add:[dx[n-1] leq:dx[1]]];
 
          [mdl add:[sx[1] leq:sx[n]]];
          [mdl add:[dx[1] leq:dx[2]]];
 
          id<CPProgram> cp =  [args makeProgram:mdl annotation:notes];
-//         id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
          __block ORInt nbSolutions = 0;
+         [cp clearOnSolution]; // other solvers are not saving the solutions. So we shouldn't either.
          [cp solveAll: ^{
-//            [cp labelHeuristic:h];
-//            [cp labelArrayFF:sx];
-//            [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
-//               return [cp domsize:sx[i]];
-//            }];
             while(true) {
+               /**
+                * Manual implementation of 'mindom' heuristic to have a deterministic 
+                * tie break and be as close as possible to other solvers
+                * sd is the size of the smallest domain so-far
+                * sdi is the index of the first variable  in 'sx' with the smallest domain.
+                */
                ORInt sd  = FDMAXINT;
                ORInt sdi = -1;
                for(ORInt i=1;i<=n;i++) {
@@ -67,24 +59,18 @@ int main(int argc, const char * argv[])
                }
                if (sdi == -1) break;
                [cp tryall:D suchThat:^bool(ORInt v) { return [cp member:v in:sx[sdi]];}
-                       in:^(ORInt v) {
+                       do:^(ORInt v) {
                           [cp label:sx[sdi] with:v];
                        }];
             }
             nbSolutions++;
-//            id<ORIntArray> a = [ORFactory intArray:cp range: R  with:^ORInt(ORInt i) {
-//               return [cp intValue:sx[i]];
-//            }];
-//            NSLog(@"Solution: %@",a);
          }];
          NSLog(@"#solutions: %d",nbSolutions);
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(nbSolutions, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }
    return 0;
 }
-

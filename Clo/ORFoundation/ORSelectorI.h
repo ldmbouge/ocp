@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,14 +10,12 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORTracker.h"
-#import "ORSet.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORSet.h>
 
 
 @interface OROPTSelect : NSObject
-
--(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized;
--(void)           dealloc;
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized: (ORBool) randomized;
 -(ORInt)              min;
 -(ORInt)              max;
 -(ORInt)              any;
@@ -25,11 +23,16 @@
 @end
 
 
-@interface ORSelectI : NSObject<ORSelect>
--(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized;
--(void)           dealloc;
+@interface ORSelectI : ORObject<ORSelect>
+-(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Double) order randomized: (ORBool) randomized;
 -(ORInt)              min;
 -(ORInt)              max;
 -(ORInt)              any;
 @end
 
+
+@interface ORMinSelector : ORObject<ORSelector>
+-(id)init;
+-(void)commit;
+-(void)neighbor:(ORDouble)v do:(ORClosure)block;
+@end

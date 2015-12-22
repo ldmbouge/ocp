@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,11 +9,9 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgramFactory.h>
-
+#import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
+
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -31,31 +29,24 @@ int main (int argc, const char * argv[])
          [cp solve: ^{
             NSLog(@"start...");
             ORLong st0 = [ORRuntimeMonitor cputime];
-            //NSLog(@"x = %@",x);
-            //NSLog(@"model: %@",[[cp engine] model]);
             for(ORInt i=0;i<n;i++) {
                while (![cp bound:x[i]]) {
                   ORInt v = [cp max:x[i]];
                   [cp try:^{
                      [cp label:x[i] with:v];
-                  } or:^{
+                  } alt:^{
                      [cp diff:x[i] with:v];
                   }];
                }
             }
-            //[CPLabel array: x];
             ORLong st1 = [ORRuntimeMonitor cputime];
-
             printf("Succeeds(%lld) \n",st1 - st0);
             for(ORInt i = 0; i < n; i++)
                printf("%d ",[cp intValue:x[i]]);
             printf("\n");
-         }
-          ];
+         }];
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }

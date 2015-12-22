@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,11 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFactory.h>
-#import <objcp/CPConstraint.h>
-#import <objcp/CPFactory.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPError.h>
 
 ORInt ipow(ORInt b,ORInt e)
@@ -68,8 +64,6 @@ int main(int argc, const char * argv[])
             [nsex release];
          }
        }];
-      [cp release];
-      [ORFactory shutdown];
    }
    return 0;
 }

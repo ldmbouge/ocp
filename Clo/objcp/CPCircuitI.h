@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,11 +15,23 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-@interface CPCircuitI : CPCoreConstraint<CPConstraint>
--(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
--(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
+@interface CPCircuit : CPCoreConstraint<CPConstraint>
+-(CPCircuit*) initCPCircuit: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(void) post;
-static ORStatus assign(CPCircuitI* cstr,int i);
+static void assignCircuit(CPCircuit* cstr,int i);
 @end
 
+@interface CPPath : CPCoreConstraint<CPConstraint>
+-(CPPath*) initCPPath: (id<CPIntVarArray>) x;
+-(void) dealloc;
+-(void) post;
+static void assignPath(CPPath* cstr,int i);
+@end
+
+@interface CPSubCircuit : CPCoreConstraint<CPConstraint>
+-(CPSubCircuit*) initCPSubCircuit: (id<CPIntVarArray>) x;
+-(void) dealloc;
+-(void) post;
+static ORStatus assignSubCircuit(CPSubCircuit* cstr,int i);
+@end

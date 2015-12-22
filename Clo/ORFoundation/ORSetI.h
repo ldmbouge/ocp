@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,10 +11,10 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
-#import "ORObject.h"
-#import "ORData.h"
-#import "ORSet.h"
-#import "ORAVLTree.h"
+#import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORAVLTree.h>
 
 @interface ORIntSetI : ORObject<ORIntSet>
 
@@ -38,13 +38,18 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : ORObject<ORIntRange,NSCopying>
+@interface ORIntRangeI : ORObject<ORIntRange,NSCopying> {
+@package
+   ORInt _low;
+   ORInt _up;
+}
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
 -(ORBool) isDefined;
 -(ORBool) inRange: (ORInt)e;
 -(ORInt) size;
+-(ORInt) atRank:(ORInt)r;
 -(NSString*) description;
 -(void)visit:(ORVisitor*)v;
 -(id<IntEnumerator>) enumerator;
@@ -53,11 +58,12 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORFloatRangeI : ORObject<ORFloatRange,NSCopying>
--(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up;
--(ORFloat)low;
--(ORFloat)up;
+
+@interface ORRealRangeI : ORObject<ORRealRange,NSCopying>
+-(id<ORRealRange>)init:(ORDouble) low up:(ORDouble)up;
+-(ORDouble)low;
+-(ORDouble)up;
 -(ORBool)isDefined;
--(ORBool)inRange:(ORFloat)e;
+-(ORBool)inRange:(ORDouble)e;
 -(NSString*)description;
 @end

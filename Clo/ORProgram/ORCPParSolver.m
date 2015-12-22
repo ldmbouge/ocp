@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,7 @@
  ***********************************************************************/
 
 
-#import "ORCPParSolver.h"
-#import <ORProgram/CPParallel.h>
-#import <ORProgram/CPBaseHeuristic.h>
-#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPObjectQueue.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
@@ -26,7 +23,7 @@
 -(id<ORSearchController>)makeNestedController;
 @end
 
-@implementation CPParSolverI {
+@implementation CPParSolverI  {
    id<CPSemanticProgram>* _workers;
    
    PCObjectQueue*       _queue;
@@ -84,6 +81,10 @@
 {
    [_source release];
    _source = [src retain];
+}
+-(id<ORModel>)       source
+{
+   return _source;
 }
 -(ORInt)nbWorkers
 {
@@ -152,19 +153,19 @@
 {
   [[self worker] forall:S suchThat:filter orderedBy:order do:body];
 }
--(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
-  [[self worker] forall:S orderedBy:o1 and:o2 do:b];
+  [[self worker] forall:S orderedBy:o1 then:o2 do:b];
 }
--(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
-  [[self worker] forall:S suchThat:suchThat orderedBy:o1 and:o2  do:b];
+  [[self worker] forall:S suchThat:suchThat orderedBy:o1 then:o2  do:b];
 }
--(void) try: (ORClosure) left or: (ORClosure) right
+-(void) try: (ORClosure) left alt: (ORClosure) right
 {
-   [[[self worker] explorer] try: left or: right];
+   [[[self worker] explorer] try: left alt: right];
 }
--(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter do: (ORInt2Void) body
 {
    [[[self worker] explorer] tryall: range suchThat: filter in: body];
 }
@@ -174,7 +175,7 @@
 }
 -(void) tryall: (id<ORIntIterable>) range
       suchThat: (ORInt2Bool) filter
-     orderedBy: (ORInt2Float)o1
+     orderedBy: (ORInt2Double)o1
             in: (ORInt2Void) body
      onFailure: (ORInt2Void) onFailure
 {
@@ -217,9 +218,9 @@
 {
    return [[self worker] trackVariable: object];
 }
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORCLevel)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c
 {
-   [[self worker] addConstraintDuringSearch: c annotation:n];
+   [[self worker] addConstraintDuringSearch: c];
 }
 -(void)add: (id<ORConstraint>) c
 {
@@ -239,8 +240,7 @@
 }
 -(id*) gamma
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "gamma never called on CPParProgram"];
-   return NULL;
+   return [[self worker] gamma];
 }
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
@@ -277,7 +277,7 @@
 {
    [[self worker] labelArray: x];
 }
--(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
+-(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy
 {
    [[self worker] labelArray: x orderedBy: orderedBy];
 }
@@ -297,6 +297,22 @@
 {
    [[self worker] label: mx];
 }
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o
+{
+   return [[self worker] selectValue: v by: o];
+}
+-(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
+{
+   return [[self worker] selectValue: v by: o1 then: o2];
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
+{
+   return [[self worker] label: v by:o1 then:o2];
+}
+-(void) label: (id<ORIntVar>) v by: (ORInt2Double) o
+{
+   return [[self worker] label: v by: o];
+}
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
    [[self worker] label: var with: val];
@@ -313,11 +329,11 @@
 {
    [[self worker] gthen: var with: val];
 }
--(void) lthen: (id<ORIntVar>) var float: (ORFloat) val
+-(void) lthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [[self worker] lthen: var with: val];
 }
--(void) gthen: (id<ORIntVar>) var float: (ORFloat) val
+-(void) gthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [[self worker] gthen: var with: val];
 }
@@ -325,13 +341,13 @@
 {
    [[self worker] restrict: var to: S];
 }
--(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+-(void) realLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
-   [[self worker] floatLthen: var with: val];
+   [[self worker] realLthen: var with: val];
 }
--(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+-(void) realGthen: (id<ORRealVar>) var with: (ORDouble) val
 {
-   [[self worker] floatGthen: var with: val];
+   [[self worker] realGthen: var with: val];
 }
 -(void) fail
 {
@@ -348,6 +364,10 @@
 -(void) once: (ORClosure) cl
 {
    [[self worker] once: cl];
+}
+-(void) try: (ORClosure) left then: (ORClosure) right
+{
+   [[self worker] try: left then: right];
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
@@ -382,17 +402,21 @@
 {
    return [[self worker] domsize:x];
 }
--(ORFloat) domwidth:(id<ORFloatVar>)x
+-(ORDouble) domwidth:(id<ORRealVar>)x
 {
    return [[self worker] domwidth:x];
 }
--(ORFloat) fmin:(id<ORFloatVar>)x
+-(ORDouble) doubleMin:(id<ORRealVar>)x
 {
-   return [[self worker] fmin:x];
+   return [[self worker] doubleMin:x];
 }
--(ORFloat) fmax:(id<ORFloatVar>)x
+-(ORDouble) doubleMax:(id<ORRealVar>)x
 {
-   return [[self worker] fmax:x];
+   return [[self worker] doubleMax:x];
+}
+-(void) assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
+{
+   return [[self worker] assignRelaxationValue:  f to:  x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
@@ -401,6 +425,14 @@
 -(ORInt) maxBound:(id<ORIdArray>) x
 {
    return [[self worker] maxBound:(id)x];
+}
+-(ORBool) allBound:(id<ORIdArray>) x
+{
+   return [[self worker] allBound:x];
+}
+-(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x
+{
+   return [[self worker] smallestDom:x];
 }
 -(NSSet*)constraints:(id<ORVar>)x
 {
@@ -422,12 +454,39 @@
 -(void) doOnExit
 {
 }
-
+-(void) defaultSearch
+{
+   id<CPHeuristic> h = [self createFF];
+   [self solveAll:^{
+      [self labelHeuristic:h];
+   }];
+}
+-(void) search:(void*(^)())stask
+{
+   //TODO: This is not correct yet.
+   [self solveAll:^{
+      id<ORSTask> theTask = (id<ORSTask>)stask();
+      [theTask execute];
+   }];
+}
+-(void) clearOnSolution
+{
+   for(ORInt k = 0; k < _nbWorkers; k++)
+      [_workers[k] clearOnSolution];
+}
+-(void) clearOnExit
+{
+   for(ORInt k = 0; k < _nbWorkers; k++)
+      [_workers[k] clearOnExit];
+}
 -(id<ORSolutionPool>) solutionPool
 {
    return _globalPool;
 }
-
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [[self worker] objectiveValue];
+}
 -(void)setupWork:(id<ORProblem>)theSub forCP:(id<CPSemanticProgram>)cp
 {
    //NSLog(@"***** THREAD(%d) SETUP work size: %@",[NSThread threadID],theSub);
@@ -630,6 +689,13 @@
     binding[i] = [_workers[i] createABS:rvars];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createFDS:(id<ORVarArray>)rvars
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createFDS:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(id<CPHeuristic>) createFF
 {
   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
@@ -672,6 +738,13 @@
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(id<CPHeuristic>) createFDS
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+   for(ORInt i=0;i < _nbWorkers;i++)
+      binding[i] = [_workers[i] createFDS];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 -(ORUInt) degree:(id<ORVar>)x
 {
    return [[self worker] degree:x];
@@ -680,17 +753,17 @@
 {
    return [[self worker] intValue: x];
 }
--(ORFloat) floatValue: (id<ORFloatVar>) x
+-(ORDouble) doubleValue: (id<ORRealVar>) x
 {
-   return [[self worker] floatValue: x];
+   return [[self worker] doubleValue: x];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {
    return [((id<CPCommonProgram>) [self worker]) boolValue: x];
 }
--(id<ORCPSolution>) captureSolution
+-(id<ORSolution>) captureSolution
 {
-   return (id<ORCPSolution>) [[self worker] captureSolution];
+   return (id<ORSolution>) [[self worker] captureSolution];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -92,8 +92,10 @@ int main0(int argc, const char * argv[])
                NSLog(@"INTER %d | %d = %@",i,j,ns);
          }
       }
-      
-   [model add: [ORFactory packing:model item: slab itemSize: weight load: load]];
+   for (ORInt j=Slabs.low; j <= Slabs.up; j++) {
+      [model add:[Sum(model, i, SetOrders, [[slab[i] eq:@(j)] mul:weight[i]]) eq:load[j]]];
+   }
+   //[model add: [ORFactory packing:model item: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
 //   [model add: [o eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
@@ -148,7 +150,7 @@ int main0(int argc, const char * argv[])
       onLimit: ^{ printf("limit reached\n"); }
      ];
     }];
-   id<ORCPSolution> sol = [[cp solutionPool] best];
+   id<ORSolution> sol = [[cp solutionPool] best];
    for(ORInt i = [SetOrders low]; i <= [SetOrders up]; i++)
       printf("slab[%d] = %d \n",i,[sol intValue: slab[i]]);
    printf("\n");
@@ -156,8 +158,6 @@ int main0(int argc, const char * argv[])
    NSLog(@"Execution Time (WC): %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
-   [cp release];
-   [ORFactory shutdown];
    return 0;
 }
 
@@ -281,8 +281,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult res = REPORT(ov, [[cp explorer] nbFailures],
                                       [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }

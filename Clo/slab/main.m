@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,7 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORFoundation.h>
 #import <ORProgram/ORProgram.h>
-#import <ORProgram/ORProgramFactory.h>
-
 #import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
@@ -23,6 +17,7 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
+         ORLong startTime = [ORRuntimeMonitor cputime];
          id<ORModel> mdl = [ORFactory createModel];
          FILE* dta = fopen("slab.dat","r");
          ORInt nbCap;
@@ -88,15 +83,18 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp  = [args makeProgram:mdl annotation:nil];
          [cp solve: ^{
             NSLog(@"In the search ... ");
-            [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [cp domsize:slab[o]];} do: ^(ORInt o)
+            [cp forall: SetOrders
+              suchThat: nil
+             orderedBy: ^ORInt(ORInt o) { return [cp domsize:slab[o]];}
+                    do: ^(ORInt o)
              {
                 ORInt ms = max(0,[cp maxBound: slab]);
-                [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1 && [cp member:s in:slab[o]]; } in: ^void(ORInt s)
-                 {
+                [cp tryall: Slabs
+                  suchThat: ^bool(ORInt s) { return s <= ms + 1 && [cp member:s in:slab[o]]; }
+                        in: ^void(ORInt s) {
                     [cp label: slab[o] with: s];
                  }
-                 onFailure: ^void(ORInt s)
-                 {
+                 onFailure: ^void(ORInt s) {
                     [cp diff: slab[o] with: s];
                  }
                  ];
@@ -104,11 +102,10 @@ int main(int argc, const char * argv[])
              ];
             printf("obj: %d \n",[cp intValue:obj]);
          }];
-         
+         ORLong endTime = [ORRuntimeMonitor cputime];
          NSLog(@"Solver status: %@\n",cp);
+         NSLog(@"CPU Time: %lld\n",endTime - startTime);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return r;
       }];
    }

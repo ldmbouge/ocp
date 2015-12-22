@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,9 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTracer.h>
-#import <CPUKernel/CPTypes.h>
-#import "ORTrailI.h"
 #include <pthread.h>
 
 
@@ -35,6 +32,7 @@
    ORInt     _nodeId;
    ORInt        _cnt;
    id<ORMemoryTrail> _mt;
+   int _level;
 }
 -(ORCheckpointI*)initCheckpoint: (ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt;
 -(void)dealloc;
@@ -191,6 +189,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
       pushCommandList(_path, peekAt(cmds, i));
    _nodeId = -1;
    _mt = [mt copy];
+   _level = -1;
    return self;
 }
 -(void)dealloc
@@ -227,6 +226,24 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    return _path;
 }
 
+#if TARGET_OS_IPHONE
++(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
+{
+   id ptr = [super allocWithZone:NULL];
+   *(Class*)ptr = self;
+   ptr = [ptr initCheckpoint:cmds memory:mt];
+   ((ORCheckpointI*)ptr)->_cnt = 1;
+   return ptr;
+}
+-(void) letgo
+{
+   assert(_cnt > 0);
+   if (--_cnt == 0) {
+      [_mt clear];
+      [self release];
+   }
+}
+#else
 static __thread id checkPointCache = NULL;
 
 +(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
@@ -272,6 +289,7 @@ static __thread id checkPointCache = NULL;
       checkPointCache = self;
    }
 }
+#endif
 
 -(id)grab
 {
@@ -414,7 +432,8 @@ static __thread id checkPointCache = NULL;
 }
 -(void)       trust
 {
-   assignTRInt(&_level,_level._val+1,_trail);
+ //  assignTRInt(&_level,_level._val+1,_trail);
+   [self pushNode];
 }
 -(ORInt)      level
 {
@@ -447,6 +466,7 @@ static __thread id checkPointCache = NULL;
 -(id<ORCheckpoint>)captureCheckpoint
 {
    ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds memory:_mt];
+   ncp->_level  = _level._val;
    ncp->_nodeId = [self pushNode];
    return ncp;
 }
@@ -471,7 +491,6 @@ static __thread id checkPointCache = NULL;
    NSLog(@"into tracer: %@",_cmds);
    NSLog(@"-----------------------------");
     */
-   [engine clearStatus];
    ORCmdStack* toRestore =  acp->_path;
    int i=0;
    bool pfxEq = true;
@@ -492,8 +511,8 @@ static __thread id checkPointCache = NULL;
       [_trail incMagic];
       for(ORInt j=i;j < getStackSize(toRestore);j++) {
          ORCommandList* theList = peekAt(toRestore,j);
-         [_mt comply:acp->_mt upTo:theList];
          [_trStack pushNode:theList->_ndId];
+         [_mt comply:acp->_mt upTo:theList];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
             BOOL pOk = [theList apply: ^BOOL(id<ORConstraint> c) {
@@ -516,6 +535,7 @@ static __thread id checkPointCache = NULL;
          if (s==ORFailure)
             return s;
       }
+      assignTRInt(&_level, acp->_level, _trail);
       //[_mt comply:acp->_mt from:[peekAt(_cmds, getStackSize(_cmds)-1) memoryTo] to:[acp->_mt trailSize]];
       return [engine enforceObjective];
    }
@@ -530,9 +550,7 @@ static __thread id checkPointCache = NULL;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
       bool ok = [p apply:^bool(id<ORConstraint> c) {
-         [model post:c];
-         return TRUE;
-//         [c post]; return TRUE;
+          return [model post:c] != ORFailure;
       }];
       assert(ok);
 #pragma clang diagnostic pop

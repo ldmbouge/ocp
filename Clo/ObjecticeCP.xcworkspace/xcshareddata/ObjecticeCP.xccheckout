@@ -5,48 +5,83 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>A6787962-A0C4-45BE-B24B-0C9A7674FC48</string>
+	<string>64A93361-EF48-4660-B02C-F0B36C131679</string>
 	<key>IDESourceControlProjectName</key>
 	<string>ObjecticeCP</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>3A83F562-7140-4003-BE78-30ADFE4571B3</key>
-		<string>git+ssh://ash.engr.uconn.edu/home/ldm/git/public.git</string>
-		<key>BF1923E3-9EE4-44BB-8981-BBF2C4E8A063</key>
-		<string>git+ssh://scm.forge.nicta.com.au/scmrepos/git/objectivecp/platform.git</string>
+		<key>B0408365-0382-42AF-BFF3-1FB3204D0F89</key>
+		<string>git+ssh://forge.nicta.com.au//var/lib/gforge/chroot/scmrepos/git/objectivecpdev/objectivecpdev.git</string>
+		<key>D2D8EB46BA5C8E354237CFF9B3605891E8A5CEEE</key>
+		<string>git+ssh://forge.nicta.com.au//var/lib/gforge/chroot/scmrepos/git/objectivecpdev/objectivecpdev.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Clo/ObjecticeCP.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3A83F562-7140-4003-BE78-30ADFE4571B3</key>
+		<key>3CA110B7-9684-468F-A9D0-BA12707EEB6C</key>
+		<string>../LSprogressive</string>
+		<key>7260A511-154F-4039-8D95-9DDCE33937E1</key>
+		<string>../LSprog</string>
+		<key>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</key>
+		<string>../progressiveLS</string>
+		<key>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</key>
+		<string>../../../progressiveLS</string>
+		<key>B0408365-0382-42AF-BFF3-1FB3204D0F89</key>
+		<string>../../../objectivecpdev</string>
+		<key>D2D8EB46BA5C8E354237CFF9B3605891E8A5CEEE</key>
 		<string>../..</string>
-		<key>BF1923E3-9EE4-44BB-8981-BBF2C4E8A063</key>
-		<string>../../../platform</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>git+ssh://ash.engr.uconn.edu/home/ldm/git/public.git</string>
+	<string>git+ssh://scm.forge.nicta.com.au/scmrepos/git/cpglobalopt/cpglobalopt.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>3A83F562-7140-4003-BE78-30ADFE4571B3</string>
+	<string>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>BF1923E3-9EE4-44BB-8981-BBF2C4E8A063</string>
+			<string>7260A511-154F-4039-8D95-9DDCE33937E1</string>
 			<key>IDESourceControlWCCName</key>
-			<string>platform</string>
+			<string>LSprog</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3A83F562-7140-4003-BE78-30ADFE4571B3</string>
+			<string>3CA110B7-9684-468F-A9D0-BA12707EEB6C</string>
 			<key>IDESourceControlWCCName</key>
-			<string>public</string>
+			<string>LSprogressive</string>
+			<string>D2D8EB46BA5C8E354237CFF9B3605891E8A5CEEE</string>
+			<key>IDESourceControlWCCName</key>
+			<string>objcppriv</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</string>
+			<key>IDESourceControlWCCName</key>
+			<string>progressiveLS</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C2770243-FFFD-47D6-9B6C-B8EE79FCDB30</string>
+			<key>IDESourceControlWCCName</key>
+			<string>progressiveLS</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B0408365-0382-42AF-BFF3-1FB3204D0F89</string>
+			<key>IDESourceControlWCCName</key>
+			<string>objectivecpdev</string>
 		</dict>
 	</array>
 </dict>

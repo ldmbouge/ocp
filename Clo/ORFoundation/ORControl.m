@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORTracker.h"
-#import "ORFactory.h"
-#import "ORControl.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORControl.h>
 #import <math.h>
 #if defined(__linux__)
 #import <values.h>
@@ -96,7 +96,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
    bool done = false;
    while (!done) {
       for(int k = 0; k < nbo; k++)
-         best[k] = MAXFLOAT;
+         best[k] = MAXDBL;
       ORInt chosen = -1;
       ORInt i = 0;
       while (i < nb) {
@@ -155,7 +155,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
    }];
    bool done = false;
    while (!done) {
-      float best = MAXFLOAT;
+      ORDouble best = MAXDBL;
       ORInt chosen = -1;
       ORInt i = 0;
       while (i < nb) {

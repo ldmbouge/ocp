@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,8 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
+
 
 //1->11->26->9->3->13->23->8->14->4->10->20->5->15->30->40->46->36->53->63->48->31->16->6->21->27->37->52->58->41->51->57->42->25->19->29->35->50->33->43->49->59->44->61->55->45->60->54->64->47->62->56->39->24->7->22->32->38->28->34->17->2->12->18->1
 //39 choices
@@ -68,7 +64,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl annotation:notes];
       [cp solve:
        ^() {
-          [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[jump at:i]];}];
+          [cp labelArray: jump orderedBy: ^ORDouble(ORInt i) { return [cp domsize:[jump at:i]];}];
           printCircuit(cp,jump);
        }
        ];
@@ -76,7 +72,6 @@ int main (int argc, const char * argv[])
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];
-      [ORFactory shutdown];
    }
    return 0;
 }

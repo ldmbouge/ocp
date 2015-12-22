@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,16 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORData.h>
+#import <ORUtilities/ORUtilities.h>
 
-// pvh: Do I need the implementation to be visible
-// ldm: We must, because CPCoreConstraint in CPUKernel is public and inherits from ORObject
+@class ORVisitor;
+
+@protocol ORObject <NSObject>
+-(ORInt) getId;
+-(void)setId:(ORUInt)name;
+-(void) visit: (ORVisitor*) visitor;
+@end;
+
 
 @interface ORObject : NSObject<ORObject> {
 @public
@@ -22,9 +28,10 @@
    ORUInt  _rc;
    BOOL    _ba[4];
 }
--(id)init;
--(void)setId:(ORUInt)name;
--(ORUInt)getId;
+-(id) init;
+-(void) setId:(ORUInt)name;
+-(ORUInt) getId;
+-(id) takeSnapshot: (ORInt) id;
 @end
 
-static inline ORUInt getId(ORObject* ptr) { return ptr->_name;}
+static inline ORUInt getId(const ORObject* ptr) { return ptr->_name;}

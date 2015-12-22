@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,28 +9,20 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 
 @class LPSolverI;
 @protocol ORModel;
 
 @protocol LPColumn <NSObject>
--(void) addObjCoef: (ORFloat) coef;
--(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
+-(void) addObjCoef: (ORDouble) coef;
+-(void) addConstraint: (id<ORConstraint>) cstr coef: (ORDouble) coef;
 @end
 
-@protocol ORLPSolution <ORSolution>
--(ORFloat) reducedCost: (id<ORFloatVar>) var;
--(ORFloat) dual: (id<ORConstraint>) var;
--(id<ORObjectiveValue>) objectiveValue;
-@end
-
-@protocol ORLPSolutionPool <ORSolutionPool>
--(void) addSolution: (id<ORLPSolution>) s;
--(void) enumerateWith: (void(^)(id<ORLPSolution>)) block;
--(id<ORInformer>) solutionAdded;
--(id<ORLPSolution>) best;
+@protocol LPSolution
+-(ORDouble) doubleValue: (id<ORRealVar>) var;
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORRealVar>) x;
 @end
 
 @protocol LPProgram <ORASolver>
@@ -40,14 +32,14 @@
 -(id*)  gamma;
 -(void) solve;
 -(id<LPColumn>) createColumn;
--(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up;
+-(id<LPColumn>) createColumn: (ORDouble) low up: (ORDouble) up;
 -(void) addColumn: (id<LPColumn>) column;
--(ORFloat) dual: (id<ORConstraint>) c;
--(ORFloat) reducedCost: (id<ORFloatVar>) v;
--(ORFloat) floatValue: (id<ORFloatVar>) v;
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORRealVar>) v;
+-(ORDouble) doubleValue: (id<ORRealVar>) v;
 -(id<ORObjectiveValue>) objectiveValue;
--(id<ORLPSolutionPool>) solutionPool;
--(id<ORLPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 @end
 
 @protocol LPRelaxation <ORASolver>
@@ -56,14 +48,14 @@
 -(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(OROutcome) solve;
--(ORFloat) dual: (id<ORConstraint>) c;
--(ORFloat) reducedCost: (id<ORVar>) v;
--(ORFloat) floatValue: (id<ORVar>) v;
--(ORFloat) objective;
+-(ORDouble) dual: (id<ORConstraint>) c;
+-(ORDouble) reducedCost: (id<ORVar>) v;
+-(ORDouble) doubleValue: (id<ORVar>) v;
+-(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
--(ORFloat) lowerBound: (id<ORVar>) v;
--(ORFloat) upperBound: (id<ORVar>) v;
--(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb;
--(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub;
+-(ORDouble) lowerBound: (id<ORVar>) v;
+-(ORDouble) upperBound: (id<ORVar>) v;
+-(void) updateLowerBound: (id<ORVar>) v with: (ORDouble) lb;
+-(void) updateUpperBound: (id<ORVar>) v with: (ORDouble) ub;
 @end
 

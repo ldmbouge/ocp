@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,9 @@
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBaseHeuristic.h>
 #import <ORProgram/CPProgram.h>
-#import <objcp/CPVar.h>
+
+@protocol ORIntVar;
+@protocol CPVarArray;
 
 @interface CPDeg : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>  _vars;  // Model variables
@@ -24,9 +26,9 @@
    ORInt*            _cv;
 }
 -(id)initCPDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
--(ORFloat)varOrdering:(id<CPIntVar>)x;
--(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x;
--(void)initInternal:(id<ORVarArray>)t and:(id<ORVarArray>)cvs;
+-(ORDouble)varOrdering:(id<CPIntVar>)x;
+-(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x;
+-(void)initInternal:(id<ORVarArray>)t with:(id<ORVarArray>)cvs;
 -(id<ORIntVarArray>)allIntVars;
 -(id<CPProgram>)solver;
 @end

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,13 +14,33 @@
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 
-@implementation CPEquationBC
+@class CPIntVar;
+typedef struct CPEQTerm {
+   UBType  update;
+   CPIntVar* var;
+   ORLong     low;
+   ORLong      up;
+   BOOL   updated;
+} CPEQTerm;
+
+MAKETRPointer(TRCPEQTerm,CPEQTerm);
+
+@implementation CPEquationBC { // sum(i in S) x_i == c
+@private
+   CPIntVar**               _x;  // array of vars
+   ORLong                   _nb;  // size
+   ORInt                     _c;  // constant c in:: sum(i in S) x_i == c
+   UBType*        _updateBounds;
+   CPEQTerm*          _allTerms;
+   TRCPEQTerm*           _inUse;
+   TRInt                  _used;
+   TRLong                   _ec; // expanded constant c (including the bound terms)
+}
 
 -(CPEquationBC*) initCPEquationBC: (ORIdArrayI*) x equal: (ORInt) c
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -29,7 +49,9 @@
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVar*) [xa at:k];
-   } else assert(FALSE);
+   }
+   else
+       assert(FALSE);
    _c = c;
    _allTerms = NULL;
    _inUse    = NULL;
@@ -64,7 +86,7 @@ struct Bounds {
    long long _sumUp;
    ORULong     _nb;
 };
-
+/*
 static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 {
    long long slow = 0,sup = 0;
@@ -87,6 +109,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    bnd->_sumUp  = sup  + bnd->_bndUp;
    bnd->_nb     = nb;
 }
+*/
 
 -(void) post
 {
@@ -108,7 +131,8 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          inline_assignTRCPEQTerm(&_inUse[lastUsed],_inUse[i]._val,_trail);
          inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
          lastUsed--;
-      } else
+      }
+      else
          i++;      
    }
    _ec   = makeTRLong(_trail, ec);
@@ -135,7 +159,8 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          inline_assignTRCPEQTerm(&_inUse[lastUsed],cur,_trail);
          inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
          lastUsed--;
-      } else {
+      }
+      else {
          cur->low = b.min;
          cur->up  = b.max;
          slow += cur->low;
@@ -184,12 +209,17 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 }
 @end
 
-@implementation CPINEquationBC 
+@implementation CPINEquationBC  { // sum(i in S) x_i <= c
+@private
+   CPIntVar**        _x;  // array of vars
+   ORLong            _nb;  // size
+   ORInt              _c;  // constant c in:: sum(i in S) x_i <= c
+   UBType*    _updateMax;
+}
 -(CPINEquationBC*) initCPINEquationBC: (ORIdArrayI*) x lequal: (ORInt) c
 {
    id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
-   //_idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
    if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
@@ -278,8 +308,6 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
       terms[i].updated |= updateNow;
       terms[i].up  = minOf(terms[i].up,nSupi);
       if (updateNow) {
-         // [ldm] this is necessary to make sure that the view can apply its narrowing
-         // so that the constraint behaves in an idempotent way.
          terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
          terms[i].up = maxDom(terms[i].var);
       }

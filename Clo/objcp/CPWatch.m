@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,11 +10,9 @@
  ***********************************************************************/
 
 
-#import "CPWatch.h"
-#import "CPConstraintI.h"
-#import "CPIntVarI.h"
-#import "CPEngineI.h"
-#import <ORProgram/CPProgram.h>
+#import <objcp/CPWatch.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <objcp/CPIntVarI.h>
 
 @interface CPWatch : CPCoreConstraint {
    CPIntVar* _theVar;
@@ -71,7 +69,7 @@
          }];
       }
    }];
-   [_theVar setBindTrigger: ^ { 
+   [_theVar whenBindDo:^ {
       ORInt val = [_theVar min];
       if (_bind) _bind(val);
       if (_unb) {
@@ -79,12 +77,12 @@
             _unb(val);
          }];
       }
-   } onBehalf:self];
+   }priority:ALWAYS_PRIO onBehalf:self];
 }
 @end
 
 @implementation CPFactory(Visualize)
-+(id<ORConstraint>)solver:(id<CPProgram>)cp
++(id<ORConstraint>)solver:(id<ORASolver>)cp
             watchVariable:(id<ORIntVar>)x
               onValueLost:(ORInt2Void)lost
               onValueBind:(ORInt2Void)bind

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 
 void show(id<CPProgram> cp,id<ORIntVarMatrix> m)
 {
@@ -42,8 +37,7 @@ int main (int argc, const char * argv[])
       id<ORIntVarArray> a  = [ORFactory intVarArray: mdl range: R : R with: ^id<ORIntVar>(ORInt i,ORInt j) { return [x at: i : j]; }];
       for(ORInt i = 0; i < nb; i++) {
          fscanf(f,"%d%d%d",&r,&c,&v);
-//         [mdl  add: [[x at: r : c] eq: @(v)]];
-         [mdl  add: [[x at: r : c] eq: [ORFactory intVar: mdl value: v]]];
+         [mdl  add: [[x at: r : c] eq: @(v)]];
       }
       for(ORInt i = 1; i <= 9; i++)
          [mdl add: [ORFactory alldifferent: [ORFactory intVarArray: mdl range: R with: ^id<ORIntVar>(ORInt j) { return [x at: i : j]; }]]];
@@ -59,15 +53,13 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve:
        ^() {
-          [cp labelArray: a orderedBy: ^ORFloat(ORInt i) { return [cp domsize:a[i]];}];
+          [cp labelArray: a orderedBy: ^ORDouble(ORInt i) { return [cp domsize:a[i]];}];
           show(cp,x);
        }
        ];
       
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [cp release];
-      [ORFactory shutdown];
    }
    return 0;
 }

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,7 @@
 
 @implementation CPValueLossEvent
 
--(id) initValueLoss: (ORInt) value notify: (id<CPEventNode>) list
+-(id) initValueLoss: (ORInt) value notify: (id<CPClosureList>) list
 {
    self = [super init];
    _theVal = value;
@@ -27,7 +27,7 @@
    __block ORInt rv;
    tryfail(^ORStatus{
       __block ORInt nbP = 0;
-      scanListWithBlock(_theList,(void(^)(id)) ^(ConstraintIntCallBack trigger) {
+      scanListWithBlock(_theList,(void(^)(id)) ^(ORIntClosure trigger) {
          trigger(_theVal);
          ++nbP;
       });
@@ -42,20 +42,28 @@
    return rv;
 }
 
+#if TARGET_OS_IPHONE==0
 static __thread id vLossCache = nil;
 
-+(id)newValueLoss:(ORInt)value notify:(id<CPEventNode>)list
++(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list
 {
    // [ldm] This is an effective optimization, but it is not thread-friendly.
    // Should use TLS to store the vLossCache.
    id ptr = vLossCache;
    if (ptr) {
       vLossCache = *(id*)ptr;
-   } else ptr = [super allocWithZone:NULL];
+   } else {
+      ptr = [super allocWithZone:NULL];
+      [ptr init];
+   }
    // now generic code.
    *(Class*)ptr = self;
-   id rv = [ptr initValueLoss:value notify:list];
-   return rv;
+   CPValueLossEvent* evt = (CPValueLossEvent*)ptr;
+   evt->_theVal = value;
+   evt->_theList = list;
+   return evt;
+//   id rv = [ptr initValueLoss:value notify:list];
+//   return rv;
 }
 -(void)letgo
 {
@@ -64,6 +72,20 @@ static __thread id vLossCache = nil;
    return;
    [super dealloc];
 }
+#else
++(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list
+{
+   CPValueLossEvent* ptr = [[CPValueLossEvent alloc] init];
+   ptr->_theVal = value;
+   ptr->_theList = list;
+   return ptr;
+}
+-(void)letgo
+{
+   [self release];
+}
+#endif
+
 
 
 @end

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -57,7 +57,21 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     *upArrayr = upArray;
 }
 
-@implementation CPCardinalityCst
+@implementation CPCardinalityCst {
+   CPEngineI*        _fdm;
+   ORRange       _values;
+   CPIntVar**         _x;  // CPIntVar[_lx .. _ux]
+   ORInt*             _low;  // raw version of _low
+   ORInt*              _up;  // raw version of _up
+   ORInt               _lo; // int low[lo..uo] && int up[lo..uo]
+   ORInt               _uo;
+   ORInt               _lx;
+   ORInt               _ux;
+   ORUInt        _so; // size of low/up
+   ORUInt        _sx; // size of ax
+   TRInt*      _required; //_required[v]= how many variables are assigned to value v
+   TRInt*      _possible; //_possible[v]= how many variables have value v in their domain
+}
 
 -(void) findValueRange
 {
@@ -246,7 +260,7 @@ static void valRemoveIdx(CPCardinalityCst* cc,CPIntVar* v,ORInt i,ORInt val)
                     assignTRInt(_possible+v, _possible[v]._val+1, _trail);
         }
     }
-    // AC5 events
+    // constraint events
     for(ORInt i=_lx;i<=_ux;i++) {
         if ([_x[i] bound]) 
             continue;

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,9 +12,20 @@
 
 #import <objcp/CPObjectQueue.h>
 
+#if defined(__APPLE__)
+#include <libkern/OSAtomic.h>
+#endif
+
 #define SPINLOCK 1
 
-@implementation CPObjectQueue
+@implementation CPObjectQueue  {
+   @package
+   ORInt      _mxs;
+   id*        _tab;
+   ORInt    _enter;
+   ORInt     _exit;
+   ORInt     _mask;
+}
 -(id) initEvtQueue: (ORInt) sz {   
    self = [super init];
    _mxs = sz;
@@ -84,7 +95,21 @@
 }   
 @end
 
-@implementation PCObjectQueue
+@implementation PCObjectQueue {
+   ORInt           _mxs;
+   id*             _tab;
+   ORInt         _enter;
+   ORInt          _exit;
+   ORInt          _mask;
+   ORInt        _nbUsed;
+   ORInt     _nbWorkers;
+   ORInt    _nbWWaiting;
+   NSCondition*  _avail;
+#if defined(__APPLE__)
+   OSSpinLock    _slock;
+#endif
+   BOOL _pretend;
+}
 -(id) initPCQueue: (ORInt) sz nbWorkers:(ORInt)nbw
 {   
    self = [super init];

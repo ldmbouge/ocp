@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,15 +9,14 @@
  
  ***********************************************************************/
 
-#import "ORTrail.h"
-#import "ORTrailI.h"
+#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORTrailI.h>
 #import <ORFoundation/OREngine.h>
-#import "ORError.h"
-#import "ORData.h"
+#import <ORFoundation/ORError.h>
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORCommand.h>
 #import <assert.h>
-#import "ORVisit.h"
-#import "ORCommand.h"
-
 
 @implementation ORTrailI
 -(ORTrailI*) init
@@ -86,7 +85,7 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = ptr;
    s->code = TAGId;
-   s->idVal = obj;
+   s->ptrVal = obj;
    ++_seg[_cSeg]->top;
 }
 -(void)trailIdNC:(id*)ptr
@@ -96,7 +95,7 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = ptr;
    s->code = TAGIdNC;
-   s->idVal = obj;
+   s->ptrVal = obj;
    ++_seg[_cSeg]->top;
 }
 -(void) trailLong:(ORLong*) ptr
@@ -136,6 +135,15 @@
    s->doubleVal = *ptr;
    ++_seg[_cSeg]->top;
 }
+-(void)trailLDouble:(long double*)ptr
+{
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGLDouble;
+   s->ldVal = *ptr;
+   ++_seg[_cSeg]->top;
+}
 -(void) trailPointer:(void**) ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
@@ -152,7 +160,7 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = 0;
    s->code = TAGClosure;
-   s->cloVal = [clo copy];
+   s->ptrVal = [clo copy];
    ++_seg[_cSeg]->top;
 }
 -(void) trailRelease:(id)obj
@@ -161,7 +169,7 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = 0;
    s->code = TAGRelease;
-   s->idVal = obj;
+   s->ptrVal = obj;
    ++_seg[_cSeg]->top;
 }
 -(void) trailFree:(void*)ptr
@@ -207,7 +215,7 @@
             case TAGId: {
                if (*((id*)cs->ptr))
                   [(*((id*)cs->ptr)) release];
-               *((id*)cs->ptr) = cs->idVal;
+               *((id*)cs->ptr) = cs->ptrVal;
             }break;
             case TAGFloat:
                *((float*)cs->ptr) = cs->floatVal;
@@ -215,21 +223,24 @@
             case TAGDouble:
                *((double*)cs->ptr) = cs->doubleVal;
                break;
+            case TAGLDouble:
+               *((long double*)cs->ptr) = cs->ldVal;
+               break;
             case TAGPointer:
                *((void**)cs->ptr) = cs->ptrVal;
                break;
             case TAGClosure:
-               cs->cloVal();
-               [cs->cloVal release];
+               ((ORClosure)cs->ptrVal)();
+               [(id)(cs->ptrVal) release];
                break;
             case TAGRelease:
-               [cs->idVal release];
+               [(id)cs->ptrVal release];
                break;
             case TAGFree:
                free(cs->ptrVal);
                break;
             case TAGIdNC:
-               *((id*)cs->ptr) = cs->idVal;
+               *((id*)cs->ptr) = cs->ptrVal;
                break;
             default:
                break;
@@ -290,13 +301,18 @@ TRDouble  makeTRDouble(ORTrailI* trail,double val)
 {
    return (TRDouble){val,[trail magic]-1};
 }
+TRLDouble makeTRLDouble(id<ORTrail> trail,long double val)
+{
+   return (TRLDouble){val,[trail magic]-1};
+}
 
-ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
+
+ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
 {
    TRInt* ei = a._entries + i;
-   if (ei->_mgc != [a._trail magic]) {
-      trailIntFun((ORTrailI*)a._trail, & ei->_val);
-      ei->_mgc = [a._trail magic];
+   if (ei->_mgc != [trail magic]) {
+      trailIntFun(trail, & ei->_val);
+      ei->_mgc = [trail magic];
    }
    return ei->_val = val;
 }
@@ -310,7 +326,7 @@ void trailIntFun(ORTrailI* t,int* ptr)
    s->intVal = *ptr;
    ++(t->_seg[t->_cSeg]->top);
 }
-void trailFloatFun(ORTrailI* t,ORFloat* ptr)
+void trailDoubleFun(ORTrailI* t,ORDouble* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
    struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
@@ -335,7 +351,7 @@ void trailIdNCFun(ORTrailI* t,id* ptr)
    struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
    s->ptr = ptr;
    s->code = TAGIdNC;
-   s->idVal = obj;
+   s->ptrVal = obj;
    ++(t->_seg[t->_cSeg]->top);
 }
 
@@ -375,16 +391,24 @@ void  assignTRDouble(TRDouble* v,double val,ORTrailI* trail)
    }
    v->_val = val;
 }
+void  assignTRLDouble(TRLDouble* v,long double val,ORTrailI* trail)
+{
+   if (v->_mgc != [trail magic]) {
+      v->_mgc = [trail magic];
+      [trail trailLDouble:&v->_val];
+   }
+   v->_val = val;
+}
 void  assignTRId(TRId* v,id val,ORTrailI* trail)
 {
-   [trail trailId:&v->_val];
-   [v->_val release];
-   v->_val = [val retain];
+   [trail trailId:v];
+   [*v release];
+   *v = [val retain];
 }
 void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
 {
-   inline_trailIdNCFun(trail, &v->_val);
-   v->_val = val;
+   inline_trailIdNCFun(trail, v);
+   *v = val;
 }
 ORInt getTRIntArray(TRIntArray a,int i)
 {
@@ -420,11 +444,15 @@ ORInt trailMagic(ORTrailI* trail)
 }
 @end
 
-@implementation ORMemoryTrailI
+@implementation ORMemoryTrailI {
+   id __strong* __strong _tab;
+   ORInt _mxs;
+   ORInt _csz;
+}
 -(id)init
 {
    self = [super init];
-   _mxs = 128;
+   _mxs = 16;
    _csz = 0;
    _tab = malloc(sizeof(id)*_mxs);
    return self;
@@ -435,8 +463,10 @@ ORInt trailMagic(ORTrailI* trail)
    _mxs = mt->_mxs;
    _csz = mt->_csz;
    _tab = malloc(sizeof(id)*_mxs);
-   for(ORInt i=0;i<_csz;i++)
+   for(ORInt i=0;i<_csz;i++) {
+      assert(mt->_tab[i] != nil);
       _tab[i] = [mt->_tab[i] retain];
+   }
    return self;
 }
 -(void)dealloc
@@ -459,6 +489,7 @@ ORInt trailMagic(ORTrailI* trail)
 {
    if (_csz >= _mxs)
       [self resize];
+   assert(obj != nil);
    _tab[_csz++] = [obj retain];
    return obj;
 }
@@ -484,15 +515,20 @@ ORInt trailMagic(ORTrailI* trail)
 {
    ORInt fh = [cl memoryFrom];
    ORInt th = [cl memoryTo];
-   for(ORInt k=fh;k < th;k++)
+   for(ORInt k=fh;k < th;k++) {
+      assert(mt->_tab[k] != nil);
+      if (_csz >= _mxs) [self resize];
       _tab[_csz++] = [mt->_tab[k] retain];
+   }
 }
 -(void)comply:(ORMemoryTrailI*)mt from:(ORInt)fh to:(ORInt)th
 {
    while (_csz + (th - fh) >= _mxs)
       [self resize];
-   for(ORInt k=fh;k < th;k++)
+   for(ORInt k=fh;k < th;k++) {
+      assert(mt->_tab[k] != nil);
       _tab[_csz++] = [mt->_tab[k] retain];
+   }
 }
 -(void)reload:(ORMemoryTrailI*)t
 {
@@ -504,6 +540,7 @@ ORInt trailMagic(ORTrailI* trail)
    while(_csz < t->_csz) {
       if (_csz >= _mxs)
          [self resize];
+      assert(t->_tab[i] != nil);
       _tab[_csz++] = [t->_tab[i++] retain];
    }
 }
@@ -514,7 +551,7 @@ ORInt trailMagic(ORTrailI* trail)
    [buf appendFormat:@"ORMemoryTrail(%d / %d)[",_csz,_mxs];
    for(ORInt i =0;i<_csz-1;i++)
       [buf appendFormat:@"%p(%lu,%@),",_tab[i],(unsigned long)[_tab[i] retainCount],NSStringFromClass([_tab[i] class])];
-   [buf appendFormat:@"%p(%lu,%@)]",_tab[_csz-1],[_tab[_csz-1] retainCount],NSStringFromClass([_tab[_csz-1] class])];
+   [buf appendFormat:@"%p(%lu,%@)]",_tab[_csz-1],(unsigned long)[_tab[_csz-1] retainCount],NSStringFromClass([_tab[_csz-1] class])];
    return buf;
 }
 @end
@@ -580,7 +617,7 @@ ORInt trailMagic(ORTrailI* trail)
 
 TRIntArray makeTRIntArray(ORTrailI* trail,int nb,int low)
 {
-   TRIntArray x = {trail,nb,low,NULL};
+   TRIntArray x = {nb,low,NULL};
    x._entries = malloc(sizeof(TRInt)*nb);
    for(int i = 0; i < nb; i++)
       x._entries[i] = makeTRInt(trail,0);
@@ -730,7 +767,18 @@ void freeTRIntArray(TRIntArray a)
 /*             Multi-Dimensional Matrix of Trailable Int                         */
 /*********************************************************************************/
 
-@implementation ORTRIntMatrixI
+@implementation ORTRIntMatrixI {
+@private
+   ORTrailI*       _trail;
+   TRInt*          _flat;
+   ORInt           _arity;
+   id<ORIntRange>* _range;
+   ORInt*          _low;
+   ORInt*          _up;
+   ORInt*          _size;
+   ORInt*          _i;
+   ORInt           _nb;
+}
 
 -(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSearchEngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {

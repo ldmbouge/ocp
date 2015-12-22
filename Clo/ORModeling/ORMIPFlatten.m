@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@
 #import "ORModelI.h"
 #import "ORVarI.h"
 #import "ORDecompose.h"
-#import "ORFloatLinear.h"
+#import "ORRealLinear.h"
 #import "ORFlatten.h"
 
 @implementation ORMIPFlatten {
@@ -117,7 +117,7 @@
 {
    _result = v;
 }
--(void) visitFloatVar: (ORFloatVarI*) v
+-(void) visitRealVar: (ORRealVarI*) v
 {
    _result = v;
 }
@@ -129,7 +129,7 @@
 {
    _result = e;
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    _result = e;
 }
@@ -137,7 +137,7 @@
 {
    _result = v;
 }
--(void) visitFloatArray:(id<ORFloatArray>)v
+-(void) visitDoubleArray:(id<ORDoubleArray>)v
 {
    _result = v;
 }
@@ -157,7 +157,7 @@
 {
    _result = v;
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {
    _result = v;
 }
@@ -194,12 +194,12 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
+   ORRealLinear* terms = [ORNormalizer realLinearFrom: [v expr] model: _into];
    _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into];
+   ORRealLinear* terms = [ORNormalizer realLinearFrom: [v expr] model: _into];
    _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
 }
 

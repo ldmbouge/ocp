@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,8 +12,9 @@
 #import <ORProgram/CPProgram.h>
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <objcp/CPVar.h>
 
+@protocol CPIntVar;
+@protocol CPVarArray;
 @class CPStatisticsMonitor;
 @protocol CPIntVarArray;
 
@@ -26,9 +27,9 @@
    id<CPCommonProgram>      _cp;
 }
 -(id)initCPABS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
--(ORFloat)varOrdering:(id<CPIntVar>)x;
--(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x;
--(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs;
+-(ORDouble)varOrdering:(id<CPIntVar>)x;
+-(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x;
+-(void)initInternal:(id<ORVarArray>)t with:(id<CPVarArray>)cvs;
 -(void) restart;
 -(id<ORIntVarArray>)allIntVars;
 -(id<CPCommonProgram>)solver;

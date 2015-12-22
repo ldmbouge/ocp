@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0500"
+   LastUpgradeVersion = "0640"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -37,19 +37,17 @@
                BlueprintName = "objcpTests"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "bitTest">
-               </Test>
-               <Test
-                  Identifier = "objcpTests">
-               </Test>
-               <Test
-                  Identifier = "testCard">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5B9ABCEE1391329D000997E5"
+            BuildableName = "objcp.framework"
+            BlueprintName = "objcp"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -82,6 +80,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "5B9ABCEE1391329D000997E5"
+            BuildableName = "objcp.framework"
+            BlueprintName = "objcp"
+            ReferencedContainer = "container:Clo.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

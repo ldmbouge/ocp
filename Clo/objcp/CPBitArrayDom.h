@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,9 +37,9 @@
 -(ORUInt)               getSize;
 -(ORInt)                domsize;
 -(void)                 updateFreeBitCount;
--(ORBool)                 bound;
--(uint64)               min;
--(uint64)               max;
+-(ORBool)               bound;
+-(ORULong)              min;
+-(ORULong)              max;
 -(unsigned int*)        minArray;
 -(unsigned int*)        maxArray;
 -(unsigned int*)        lowArray;
@@ -54,9 +54,9 @@
 -(unsigned int*)        atRank:(unsigned long long) rnk;
 -(unsigned int)         getMaxRank;
 -(unsigned int*)        pred:(unsigned int*) x;
--(ORStatus)             updateMin:(uint64)newMin for: (id<CPBitVarNotifier>)x;
--(ORStatus)             updateMax:(uint64)newMax for: (id<CPBitVarNotifier>)x;
--(ORStatus)             bind:(uint64)val for:(id<CPBitVarNotifier>)x;
+-(ORStatus)             updateMin:(ORULong)newMin for: (id<CPBitVarNotifier>)x;
+-(ORStatus)             updateMax:(ORULong)newMax for: (id<CPBitVarNotifier>)x;
+-(ORStatus)             bind:(ORULong)val for:(id<CPBitVarNotifier>)x;
 -(ORStatus)             bindToPat: (unsigned int*) pat for:(id<CPBitVarNotifier>)x;
 -(TRUInt*)              getLow;
 -(TRUInt*)              getUp;

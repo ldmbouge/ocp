@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -73,15 +73,13 @@ int main(int argc, const char * argv[])
             //NSLog(@"Start... %@",[[cp engine] model]);
             id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
             //[cp labelHeuristic:h];
-            [cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [cp domsize:flat[i]];}];
+            [cp labelArray:flat orderedBy:^ORDouble(ORInt i) { return [cp domsize:flat[i]];}];
             //[cp labelArray:[ORFactory flattenMatrix:M]];
             NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);
             show(cp,M);
          }];
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }

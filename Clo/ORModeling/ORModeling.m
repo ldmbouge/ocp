@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,11 +10,12 @@
  ***********************************************************************/
 
 #import <ORModeling/ORModeling.h>
+#import <ORModeling/ORFlatten.h>
+#import <ORModeling/ORLSFlatten.h>
+#import <ORModeling/ORLPFlatten.h>
+#import <ORModeling/ORMIPFlatten.h>
+#import <ORModeling/ORLinearize.h>
 #import "ORModelI.h"
-#import "ORFlatten.h"
-#import "ORLPFlatten.h"
-#import "ORMIPFlatten.h"
-#import "ORLinearize.h"
 
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
@@ -38,6 +39,10 @@
 {
   return [[ORFlatten alloc] initORFlatten:into];
 }
++(id<ORModelTransformation>) createLSFlattener:(id<ORAddToModel>)into
+{
+   return [[ORLSFlatten alloc] initORLSFlatten:into];
+}
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
 {
    return [[ORLPFlatten alloc] initORLPFlatten:into];
@@ -50,14 +55,12 @@
 {
    return [[ORLinearize alloc] initORLinearize:into];
 }
-+(id<ORSolutionPool>) createSolutionPool
++(id<ORConstraintSet>) createConstraintSet
 {
-   return [[ORSolutionPoolI alloc] init];
-}
-+(id<ORConstraintSet>) createConstraintSet {
     return [[ORConstraintSetI alloc] init];
 }
-+(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block {
++(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block
+{
     id<OROrderedConstraintSet> s = [[OROrderedConstraintSetI alloc] init];
     for(ORInt i = [range low]; i <= [range up]; i++) {
         [s addConstraint: block(i)];

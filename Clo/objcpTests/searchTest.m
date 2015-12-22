@@ -1,10 +1,13 @@
-//
-//  searchTest.m
-//  Clo
-//
-//  Created by Laurent Michel on 7/2/13.
-//
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import "searchTest.h"
 #import <ORFoundation/ORFoundation.h>
@@ -29,7 +32,7 @@
    [cp solveAll:^{
       NSLog(@"START: %@",x);
       [cp forall:RANGE(m,1,2) suchThat:^bool(ORInt i) { return YES;} orderedBy:nil do:^(ORInt i) {
-         [cp tryall:D suchThat:^bool(ORInt v) { return YES;} orderedBy:^ORFloat(ORInt v) { return [z at:i :v];} in:^(ORInt v) {
+         [cp tryall:D suchThat:^bool(ORInt v) { return YES;} orderedBy:^ORDouble(ORInt v) { return [z at:i :v];} in:^(ORInt v) {
             [cp label:x[i] with:v];
          } onFailure:^(ORInt v) {
             [cp diff:x[i] with:v];

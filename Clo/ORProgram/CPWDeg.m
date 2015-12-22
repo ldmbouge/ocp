@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,16 +10,30 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPWDeg.h"
-#import "CPEngineI.h"
+#import <ORProgram/CPWDeg.h>
+#import <CPUKernel/CPEngine.h>
+#import <objcp/CPVar.h>
 
-@implementation CPWDeg
 
+@implementation CPWDeg {
+   id<ORVarArray>   _vars;  // Model variables
+   id<CPVarArray>    _cvs;  // concrete variables
+   id<ORVarArray>  _rvars;
+   ORUInt         _nbVars;
+   ORUInt*           _map;
+   id<CPCommonProgram>      _cp;
+   id<CPEngine>   _solver;
+   ORUInt            _nbc;
+   ORUInt            _nbv;
+   ORUInt*             _w;
+   NSSet* __strong*   _cv;
+   id*              _vOfC;
+}
 -(CPWDeg*)initCPWDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
-   _solver  = (CPEngineI*)[cp engine];
+   _solver  = [cp engine];
    _vars = nil;
    _rvars = rvars;
    _w = 0;
@@ -61,9 +75,9 @@
 
 // pvh: see question below for the importance of _cv
 
--(ORFloat) varOrdering:(id<CPIntVar>)x
+-(ORDouble) varOrdering:(id<CPIntVar>)x
 {
-   __block float h = 0.0;
+   __block double h = 0.0;
    NSSet* theConstraints = _cv[_map[x.getId]];
    for(id obj in theConstraints) {
       ORInt cid = [obj getId];
@@ -73,7 +87,7 @@
    return h / [x domsize];
 }
 
--(ORFloat) valOrdering:(int) v forVar:(id<CPIntVar>)x
+-(ORDouble) valOrdering:(int) v forVar:(id<CPIntVar>)x
 {
    return -v;   
 }
@@ -81,7 +95,7 @@
 // pvh: we should really use our arrays for consistency in the interfaces [ldm:done]
 // pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable [ldm:caching]
 
--(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs
+-(void)initInternal:(id<ORVarArray>)t with:(id<CPVarArray>)cvs
 {
    ORUInt len = (ORUInt) [t count];
    _vars = t;
@@ -99,7 +113,7 @@
       _cv[k - low] = [_cvs[k] constraints];
    }
    _nbv = len;
-   NSArray* allC = [_solver constraints];
+   NSArray* allC = [(id)_solver constraints];
    _nbc = (ORUInt)[allC count];
    _w   = malloc(sizeof(ORUInt)*_nbc);
    _vOfC = malloc(sizeof(id)*_nbc);

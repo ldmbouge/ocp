@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2013 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,7 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORControl.h>
 #import <ORProgram/ORProgram.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/LPProgram.h>
-#import <ORProgram/CPProgram.h>
 #import "math.h"
 
 #import "ORCmdLineArgs.h"
@@ -41,7 +36,7 @@ int main_lp(int argc, const char * argv[])
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-   id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+   id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
    
    id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
@@ -52,7 +47,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
    printf("Objective: %f \n",[lp objective]);
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[lp floatValue: x[i]],[lp reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[lp doubleValue: x[i]],[lp reducedCost: x[i]]);
    for(ORInt i = 0; i < nbRows; i++)
       printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
    NSLog(@"we are done (Part I) \n\n");
@@ -63,7 +58,7 @@ int main_lp(int argc, const char * argv[])
    [lp solve];
    
    for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f : %10.5f \n",i,[lp floatValue: x[i]],[lp reducedCost: x[i]]);
+      printf("x[%d] = %10.5f : %10.5f \n",i,[lp doubleValue: x[i]],[lp reducedCost: x[i]]);
    NSLog(@"we are done (Part II) \n\n");
    
    [lp release];
@@ -77,7 +72,7 @@ int main_mip(int argc, const char * argv[])
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-   id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+   id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
    
    id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
@@ -103,7 +98,7 @@ int main_cp(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+         id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
          
          //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
          for(ORInt i = 0; i < nbRows; i++)
@@ -124,7 +119,7 @@ int main_cp(int argc, const char * argv[])
                    //             NSLog(@"Mid value: %d for [%d,%d]",m,[cp min: x[i]],[cp max: x[i]]);
                    [cp try:
                     ^()  { [cp gthen: x[i] with: m]; /* NSLog(@"After gthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
-                        or:
+                       alt:
                     ^()  { [cp lthen: x[i] with: m+1]; /* NSLog(@"After lthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
                     
                     ];
@@ -139,7 +134,6 @@ int main_cp(int argc, const char * argv[])
          NSLog(@"we are done \n\n");
          ORInt valueSol = [(id<ORObjectiveValueInt>)[[[cp solutionPool] best] objectiveValue] value];
          struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          return r;
       }];
    }
@@ -156,7 +150,7 @@ int main_hybrid(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-//         id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
+//         id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
          
          //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
          for(ORInt i = 0; i < nbRows; i++)
@@ -184,7 +178,7 @@ int main_hybrid(int argc, const char * argv[])
                    //             NSLog(@"Mid value: %d for [%d,%d]",m,[cp min: x[i]],[cp max: x[i]]);
                    [cp try:
                     ^()  { [cp gthen: x[i] with: m]; /* NSLog(@"After gthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
-                        or:
+                       alt:
                     ^()  { [cp lthen: x[i] with: m+1]; /* NSLog(@"After lthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
                     
                     ];
@@ -201,7 +195,6 @@ int main_hybrid(int argc, const char * argv[])
          NSLog(@"we are done \n\n");
          ORInt valueSol = [(id<ORObjectiveValueInt>)[[[cp solutionPool] best] objectiveValue] value];
          struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          return r;
       }];
    }
@@ -219,46 +212,39 @@ int main_hybrid_branching(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         //         id<ORFloatVar> y = [ORFactory floatVar: model low: 0.0 up: 0.0];
-         
-         //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
+         id<ORRealVar> y = [ORFactory realVar: model low: -1.0 up: 1.0];
+        
          for(ORInt i = 0; i < nbRows; i++)
-            //               [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i])]]];
+            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i]-1)]]];
             //[note relax: [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]]];
-            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
-         [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
+            //[model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
+          [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
          
          id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
-         //   OROutcome b = [lp solve];
-         //   printf("outcome: %d \n",b);
-         printf("Objective: %f \n",[lp objective]);
-         for(ORInt i = 0; i < nbColumns-1; i++)
-            printf("x[%d] = %10.5f in [%10.5f,%10.5f] \n",i,[lp value: x[i]],[lp lowerBound: x[i]],[lp upperBound: x[i]]);
          id<CPProgram> cp = [ORFactory createCPProgram: model withRelaxation: lp annotation: note];
          [cp solve:
           ^() {
-             NSLog(@"Objective: %f",[lp objective]);
              id<ORSelect> sel = [ORFactory select:cp range: Columns
                                          suchThat:^bool(ORInt i)    { return true;}
-                                        orderedBy:^ORFloat(ORInt i) { return frac([lp value: x[i]]);}];
+                                        orderedBy:^ORDouble(ORInt i) { return frac([lp value: x[i]]);}];
              while (true) {
                 ORInt idx = [sel max];
-                ORFloat ifval = [lp value: x[idx]];
+                ORDouble ifval = [lp value: x[idx]];
+                //NSLog(@"Index: %d -> %f in [%d,%d]",idx,ifval,[cp min: x[idx]],[cp max: x[idx]]);
                 if (ifval == 0.0)
                    break;
-                //NSLog(@"Most Fractional: %d with %f giving (%ld,%ld)",idx,ifrac,lrint(floor(ifval)),lrint(ceil(ifval)));
                 [cp try:
-                        ^{ [cp gthen: x[idx] float: ifval]; }
-                     or:
-                        ^{ [cp lthen: x[idx] float: ifval]; }
+                        ^{ [cp gthen: x[idx] double: ifval]; }
+                    alt:
+                        ^{ [cp lthen: x[idx] double: ifval]; }
                  ];
 //                NSLog(@"new Objective: %f",[lp objective]);
              }
-             //NSLog(@"new primal bound: %f",[lp objective]);
              for(ORInt i = 0; i < nbColumns; i++) {
                 if (![cp bound: x[i]])
                    [cp label: x[i] with: rint([lp value: x[i]])];
              }
+             [cp assignRelaxationValue: [lp value: y] to: y];
           }
           ];
          ORLong endTime = [ORRuntimeMonitor cputime];
@@ -266,9 +252,14 @@ int main_hybrid_branching(int argc, const char * argv[])
          printf("Execution Time: %lld \n",endTime - startTime);
          printf("NbFailures: %lld \n",nbFailures);
          NSLog(@"we are done \n\n");
-         ORInt valueSol = [(id<ORObjectiveValueInt>)[[[cp solutionPool] best] objectiveValue] value];
+         id<ORSolution> sol = [[cp solutionPool] best];
+         ORInt valueSol = [(id<ORObjectiveValueInt>)[sol objectiveValue] value];
+         for(ORInt i = 0; i < nbColumns; i++) {
+            NSLog(@"Variable x[%d] is %d",i,[sol intValue: x[i]]);
+         }
+         //NSLog(@"Variable y is in [%f,%f]",[sol doubleMin: y],[sol doubleMax: y]);
+         NSLog(@"Variable y is %f",[sol doubleValue: y]);
          struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          return r;
       }];
    }
@@ -281,6 +272,7 @@ int main(int argc, const char * argv[])
 //   main_lp(argc,argv);
    // 261922 and 24431 failures
 //   return main_hybrid(argc,argv);
+    main_mip(argc,argv);
     return main_hybrid_branching(argc,argv);
    //return main_mip(argc,argv);
    //return main_cp(argc,argv);

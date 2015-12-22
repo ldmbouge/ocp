@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORUtilities.h>
-#import "CPBaseHeuristic.h"
+#import <ORProgram/CPBaseHeuristic.h>
 #import <objcp/CPVar.h>
 
 @implementation CPBaseHeuristic {
@@ -30,7 +30,7 @@
    k = 0;
    for(id<ORVar> v in cvar)
       cv[k++] = v;
-   [self initInternal:mv and:cv];
+   [self initInternal:mv with:cv];
    /*
    __block ORUInt nbViews = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
@@ -49,15 +49,15 @@
    [self initInternal: direct];   
     */
 }
--(void) initInternal: (id<ORVarArray>) t and:(id<ORVarArray>)cv
+-(void) initInternal: (id<ORVarArray>) t with:(id<ORVarArray>)cv
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];      
 }
--(ORFloat) varOrdering: (id<ORIntVar>)x
+-(ORDouble) varOrdering: (id<ORIntVar>)x
 {
    return 0.0;
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
 {
    return 0.0;
 }
@@ -98,17 +98,17 @@
    [_binding release];
    [super dealloc];
 }
--(ORFloat) varOrdering: (id<CPIntVar>)x
+-(ORDouble) varOrdering: (id<CPIntVar>)x
 {
    return [_binding[[NSThread threadID]] varOrdering:x];
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x
 {
    return [_binding[[NSThread threadID]] valOrdering:v forVar:x];
 }
--(void) initInternal: (id<CPIntVarArray>) t and:(id<ORVarArray>)cvs
+-(void) initInternal: (id<CPIntVarArray>) t with:(id<ORVarArray>)cvs
 {
-   [_binding[[NSThread threadID]] initInternal:t and:cvs];
+   [_binding[[NSThread threadID]] initInternal:t with:cvs];
 }
 -(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol
 {

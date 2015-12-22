@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,9 @@
  
  ***********************************************************************/
 
-#import "CPDeg.h"
-#import "CPEngineI.h"
+#import <ORProgram/CPDeg.h>
+#import <CPUKernel/CPEngine.h>
+#import <objcp/CPVar.h>
 
 @implementation CPDeg {
    CPEngineI*    _solver;
@@ -40,16 +41,16 @@
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
--(ORFloat)varOrdering: (id<CPIntVar>)x
+-(ORDouble)varOrdering: (id<CPIntVar>)x
 {
-   float h = _cv[_map[x.getId]];
+   double h = _cv[_map[x.getId]];
    return h / [x domsize];
 }
--(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(ORDouble)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    return v;
 }
--(void)initInternal:(id<ORVarArray>) t and:(id<CPVarArray>)cvs
+-(void)initInternal:(id<ORVarArray>) t with:(id<CPVarArray>)cvs
 {
    _vars = t;
    _cvs  = cvs;

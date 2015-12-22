@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,15 @@
  
  ***********************************************************************/
 
-#import "ORDataI.h"
-#import "ORSet.h"
+#import <ORFoundation/ORDataI.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORSetI.h>
 #import <sys/time.h>
 #import <sys/types.h>
 #import <sys/resource.h>
 #import <unistd.h>
 #import <ORUtilities/ORConcurrency.h>
+#import <ORFoundation/ORFactory.h>
 
 @implementation NSObject (Concretization)
 -(void) setImpl: (id) impl
@@ -69,7 +71,7 @@
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -142,7 +144,7 @@
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -158,7 +160,7 @@
 {
    return _value = value;
 }
--(ORFloat) floatValue: (id<ORGamma>) solver
+-(ORDouble) doubleValue: (id<ORGamma>) solver
 {
    return _value;
 }
@@ -238,11 +240,11 @@
 {
    return [(ORMutableId*)[solver concretize:self] idValue];
 }
--(void) setId:(id)v in:(id<ORGamma>)solver
+-(void) setIdValue:(id)v in:(id<ORGamma>)solver
 {
-   [(ORMutableId*)[solver concretize:self] setId:v];
+   [(ORMutableId*)[solver concretize:self] setIdValue:v];
 }
--(void)setId:(id)v
+-(void)setIdValue:(id)v
 {
    _value = v;
 }
@@ -252,13 +254,13 @@
 }
 @end
 
-@implementation ORFloatI
+@implementation ORDoubleI
 {
-	ORFloat       _value;
+	ORDouble       _value;
    id<ORTracker> _tracker;
 }
 
--(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+-(ORDoubleI*) init: (id<ORTracker>) tracker value: (ORDouble) value
 {
    self = [super init];
    _value = value;
@@ -273,7 +275,7 @@
 {
    return (ORInt)ceil(_value);
 }
--(ORFloat) value
+-(ORDouble) value
 {
    return _value;
 }
@@ -281,7 +283,7 @@
 {
    return (ORInt) _value;
 }
--(ORFloat) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
@@ -295,7 +297,7 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTFloat;
+   return ORTReal;
 }
 -(id<ORTracker>) tracker
 {
@@ -307,50 +309,50 @@
 }
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
    return self;
 }
 -(void) visit: (ORVisitor*) visitor
 {
-   [visitor visitFloatI: self];
+   [visitor visitDouble: self];
 }
 @end
 
-@implementation ORMutableFloatI
+@implementation ORMutableDoubleI
 {
-	ORFloat       _value;
+	ORDouble       _value;
    id<ORTracker> _tracker;
 }
 
--(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+-(ORMutableDoubleI*) initORMutableRealI: (id<ORTracker>) tracker value: (ORDouble) value
 {
    self = [super init];
    _value = value;
    _tracker = tracker;
    return self;
 }
--(ORFloat) initialValue
+-(ORDouble) initialValue
 {
    return _value;
 }
--(ORFloat) floatValue
+-(ORDouble) doubleValue
 {
    return _value;
 }
--(ORFloat) value: (id<ORGamma>) solver;
+-(ORDouble) value: (id<ORGamma>) solver;
 {
-   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+   return [(ORMutableIntegerI*)[solver concretize: self] doubleValue];
 }
--(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORDouble) doubleValue: (id<ORGamma>) solver;
 {
-   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+   return [(ORMutableIntegerI*)[solver concretize: self] doubleValue];
 }
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 {
    return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
 }
@@ -364,7 +366,7 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTFloat;
+   return ORTReal;
 }
 -(id<ORTracker>) tracker
 {
@@ -376,17 +378,17 @@
 }
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
    return self;
 }
 -(void) visit: (ORVisitor*) visitor
 {
-   [visitor visitMutableFloatI: self];
+   [visitor visitMutableDouble: self];
 }
 @end
 
@@ -410,6 +412,10 @@ static ORInt _deterministic;
 +(ORInt) deterministic
 {
    return _deterministic;
+}
++(ORInt) randomized
+{
+   return !_deterministic;
 }
 +(void) initSeed: (unsigned short*) seed
 {
@@ -477,9 +483,7 @@ static ORInt _deterministic;
 }
 @end
 
-@implementation ORUniformDistributionI
-{
-   ORUInt           _name;
+@implementation ORUniformDistributionI {
    id<ORIntRange>   _range;
    ORRandomStreamI* _stream;
    ORInt            _size;
@@ -501,13 +505,50 @@ static ORInt _deterministic;
 {
    return _range.low + [_stream next] % _size;
 }
--(void)setId:(ORUInt)name
-{
-   _name = name;
-}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitUniformDistribution:self];
+}
+@end
+
+@implementation ORRandomPermutationI {
+   id<ORIntIterable> _theSet;
+   id<ORIntSet> _thePool;
+   id<ORRandomStream> _stream;
+}
+-(ORRandomPermutationI*)initWithSet:(id<ORIntIterable>)set
+{
+   self = [super init];
+   _theSet = set;
+   _thePool = [[ORIntSetI alloc] initORIntSetI];
+   [set enumerateWithBlock:^(ORInt i) {
+      [_thePool insert:i];
+   }];
+   _stream = [[ORRandomStreamI alloc] init];
+   return self;
+}
+-(void)dealloc
+{
+   [_thePool release];
+   [super dealloc];
+}
+-(ORInt)next
+{
+   ORLong v = [_stream next];
+   if ([_thePool size] == 0)
+      @throw [[ORExecutionError alloc] initORExecutionError:"empty set for permutation next"];
+   ORInt r = v % [_thePool size];
+   ORInt rv = [_thePool atRank:r];
+   [_thePool delete:rv];
+   return rv;
+}
+-(void)reset
+{
+   while ([_thePool size] > 0)
+      [_thePool delete:[_thePool min]];
+   [_theSet enumerateWithBlock:^(ORInt i) {
+      [_thePool  insert:i];
+   }];
 }
 @end
 
@@ -912,7 +953,7 @@ static ORInt _deterministic;
 @end
 
 @implementation ORGamma
--(ORGamma*) initORGamma
+-(ORGamma*) init
 {
    self = [super init];
    _gamma = NULL;
