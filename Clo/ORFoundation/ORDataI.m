@@ -857,6 +857,12 @@ static ORInt _deterministic;
 {
    return _transition;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"DFA(A:%@,Q:%@,I:%d,F:%@,|T|=%d,T=%@",_alpha,_states,_initial,_final,_nbt,_transition];
+   return buf;
+}
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nbt];

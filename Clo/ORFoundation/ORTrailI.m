@@ -487,6 +487,8 @@ ORInt trailMagic(ORTrailI* trail)
 }
 -(id)track:(id)obj
 {
+   if (obj==nil) 
+     return nil;
    if (_csz >= _mxs)
       [self resize];
    assert(obj != nil);

@@ -35,7 +35,7 @@ int main(int argc, const char * argv[])
             NSLog(@"MODEL is: %@",cp.engine.model);
             id<ORSelect> select = [ORFactory select: cp
                                               range: a.range
-                                           suchThat: ^bool(ORInt i)    { return ![cp bound:a[i]]; }
+                                           suchThat: ^ORBool(ORInt i)    { return ![cp bound:a[i]]; }
                                           orderedBy:^ORDouble(ORInt i) { return [cp domwidth:a[i]];} ];
             do {
                ORInt i = [select min];

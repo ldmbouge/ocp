@@ -14,8 +14,12 @@
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORTracer.h>
 
+@protocol ORChoiceHeuristic
+-(double)lastChoiceRating;
+@end
+
 @interface ORSemFDSController : ORDefaultController <NSCopying,ORSearchController,ORStealing>
--(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model heuristic:(id<ORChoiceHeuristic>)h;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

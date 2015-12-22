@@ -1,17 +1,18 @@
 LIBS    = ORUtilities ORFoundation CPUKernel objcp ORModeling ORProgram 
 TARGETS = $(LIBS) 
-PAR=3
+PAR=2
 VIEWS=1
 #CFL= -O3 -g0
-CFL=-g
+#CFL=-g -O0
+CFL=-O2
 
 .PHONY: $(TARGETS)
 
 all: $(TARGETS) 
 	@mkdir -p bin
 	@cp -ar ../data/* bin
-	@python bench.py
-	@make -s -j$(PAR) -f bench.make
+	@python bench.py CFL='$(CFL)'
+	$(MAKE) -s -j$(PAR) -f bench.make
 	@echo "Done all..."
 
 objcp:

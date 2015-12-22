@@ -143,17 +143,20 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 }
 +(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-   ORInt sz = [S size];
-   ORInt* value = alloca(sizeof(ORInt)*sz);
-   bool* used = alloca(sizeof(ORBool)*sz);
+   ORInt sz = S.size;
+   ORInt value[sz];
+   ORBool used[sz];
    memset(used,0,sizeof(ORBool)*sz);
-   __block ORInt nb = 0;
-   [S enumerateWithBlock:^(ORInt k) {
-      value[nb] = k;
+   ORInt nb = 0;
+   id<IntEnumerator> it = S.enumerator;
+   while (it.more) {
+      value[nb] = it.next;
       if (!suchThat || suchThat(value[nb]))
          nb++;
-   }];
-   bool done = false;
+   }
+   [it release];
+   assert(nb <= sz);
+   ORBool done = NO;
    while (!done) {
       ORDouble best = MAXDBL;
       ORInt chosen = -1;
@@ -170,6 +173,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
       }
       done = (chosen == -1);
       if (!done) {
+ 	 assert(chosen >=0 && chosen <= sz);
          used[chosen] = true;
          body(value[chosen]);
       }

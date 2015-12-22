@@ -1271,7 +1271,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) regular:(id<ORIntVarArray>) x for:(id<ORAutomaton>)a
++(id<ORConstraint>) regular:(id<ORIntVarArray>) x belongs:(id<ORAutomaton>)a
 {
    id<ORConstraint> o = [[ORRegularI alloc] init:x for:a];
    [[x tracker] trackObject:o];

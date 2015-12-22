@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
          [note dc:[mdl add: [ORFactory alldifferent: x]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i] plus:@(i)])]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i]  sub:@(i)])]]];
-         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl annotation:note with:[ORSemFDSController class]];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl annotation:note with:[ORSemDFSController class]];
          id<CPHeuristic> h = [cp createFDS];
          [cp clearOnSolution];     // do not save the solutions (the other solvers do not).
          __block ORInt nbSol = 0;
@@ -38,8 +38,8 @@ int main(int argc, const char * argv[])
                 ORInt bi = R.low - 1;
                 for(ORInt i=R.low;i <= R.up;i++) {
                    if ([cp bound:x[i]]) continue;
-                   ORDouble ds = [h varOrdering:cx[i]];
-                   ld = min(ld,ds);
+                   ORDouble ds =[h varOrdering:cx[i]];
+                   ld = ld < ds ? ld : ds;
                    if (ld == ds) bi = i;
                 }
                 ORInt lb = [cp min:x[bi]], ub = [cp max:x[bi]];

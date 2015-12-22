@@ -232,6 +232,7 @@
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }
    [_engine post:_monitor];
+   [ORConcurrency pumpEvents];
    [self initImpacts];       // [ldm] init called _after_ adding the monitor so that the reduction is tracked (but before watching label)
    [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];

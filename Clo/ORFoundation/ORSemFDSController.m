@@ -49,9 +49,10 @@
    id<ORSearchEngine> _engine;
    id<ORPost>          _model;
    ORPQueue*         _pending;
+   id              _heuristic;  // not strongly typed. Heuristic are CPHeuristic defined in ORProgram. We are in ORFoundation here
 }
 
-- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model heuristic:(id<ORChoiceHeuristic>)h
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -65,6 +66,7 @@
       double diff = [a doubleValue] - [b doubleValue];
       return diff < 0;
    }];
+   _heuristic = h;
    return self;
 }
 
@@ -110,9 +112,10 @@
 {
    NSCont* k = [NSCont takeContinuation];
    if ([k nbCalls] == 0) {
+      double lrr = [_heuristic lastChoiceRating];
       id<ORCheckpoint> state = [_tracer captureCheckpoint];
       FDSNode* theNode = [[FDSNode alloc] init:k state:state];
-      [_pending insertObject:theNode withKey:[NSNumber numberWithDouble:0.0]];
+      [_pending insertObject:theNode withKey:[NSNumber numberWithDouble:lrr]];
       [theNode release];
       [self fail];
    } else {
@@ -124,9 +127,10 @@
 {
    NSCont* k = [NSCont takeContinuation];
    if ([k nbCalls] == 0) {
+      double lrr = [_heuristic lastChoiceRating];
       id<ORCheckpoint> state = [_tracer captureCheckpoint];
       FDSNode* theNode = [[FDSNode alloc] init:k state:state];
-      [_pending insertObject:theNode withKey:[NSNumber numberWithDouble:0.0]];
+      [_pending insertObject:theNode withKey:[NSNumber numberWithDouble:lrr]];
       [theNode release];
       [self fail];
    } else {
@@ -159,7 +163,7 @@
       } else {
          //NSLog(@"Branches depleted... Pull from the pending queue");
          if ([_pending empty])
-            return;
+            [_controller fail];
          FDSNode* bestNode = [_pending extractBest];
          NSCont* resume = bestNode.control;
          [_tracer restoreCheckpoint:bestNode.state inSolver:_engine model:_model];

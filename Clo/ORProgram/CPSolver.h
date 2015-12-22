@@ -125,6 +125,8 @@
 -(id<ORIdxIntInformer>) retLT;
 -(id<ORIdxIntInformer>) retGT;
 -(id<ORIdxIntInformer>) failLabel;
+-(id<ORIdxIntInformer>) failLT;
+-(id<ORIdxIntInformer>) failGT;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end

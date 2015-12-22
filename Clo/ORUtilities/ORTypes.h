@@ -111,8 +111,8 @@ typedef enum  {
 } ORNarrowing;
 
 typedef void (^ORClosure)(void);
-typedef bool (^ORInt2Bool)(ORInt);
-typedef bool (^ORVoid2Bool)(void);
+typedef ORBool (^ORInt2Bool)(ORInt);
+typedef ORBool (^ORVoid2Bool)(void);
 typedef ORInt (^ORInt2Int)(ORInt);
 typedef id   (^ORInt2Id)(ORInt);
 typedef void (^ORInt2Void)(ORInt);
@@ -124,7 +124,7 @@ typedef void (^ORDoubleArray2Void)(id<ORDoubleArray>);
 typedef void (^ORConstraintSet2Void)(id<ORConstraintSet>);
 typedef ORDouble (^ORIntxInt2Double)(ORInt,ORInt);
 typedef int (^ORIntxInt2Int)(ORInt,ORInt);
-typedef BOOL (^ORIntxInt2Bool)(ORInt,ORInt);
+typedef ORBool (^ORIntxInt2Bool)(ORInt,ORInt);
 typedef ORDouble (^ORInt2Double)(ORInt);
 typedef id<ORExpr> (^ORInt2Expr)(ORInt);
 typedef id<ORExpr> (^ORIntxInt2Expr)(ORInt, ORInt);

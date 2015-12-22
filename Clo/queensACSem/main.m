@@ -49,11 +49,11 @@ int main (int argc, const char * argv[])
          [cp solveAll: ^{
             __block ORInt depth = 0;
             //[cp labelHeuristic:h];
-            [cp forall:R suchThat:^bool(ORInt i) { return ![cp bound:x[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];} do:^(ORInt i) {
+            [cp forall:R suchThat:^ORBool(ORInt i) { return ![cp bound:x[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];} do:^(ORInt i) {
             //FORALL(i,R,![cp bound:x[i]],[cp domsize:x[i]], ^(ORInt i) {
 #if TESTTA==1
                //NSLog(@"IN body of forall with i= %d",i);
-               [cp tryall:R suchThat:^bool(ORInt v) { return [cp member:v in:x[i]];}
+               [cp tryall:R suchThat:^ORBool(ORInt v) { return [cp member:v in:x[i]];}
                        in:^(ORInt v) {
                           [cp label: x[i] with:v];
                           //NSLog(@"AFTER LABEL: %@",x);

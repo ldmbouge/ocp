@@ -1,8 +1,8 @@
-OC = clang-3.5
+OC = clang-3.6
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
-	-I$(HOME)/gurobi550/linux64/include \
+	-I$(HOME)/ocp/gurobi550/linux64/include \
 	-msse4.1  -fblocks -fobjc-nonfragile-abi
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
@@ -28,7 +28,7 @@ $(LIBNAME): $(OFILES)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

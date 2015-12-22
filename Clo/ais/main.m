@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
                   }
                }
                if (sdi == -1) break;
-               [cp tryall:D suchThat:^bool(ORInt v) { return [cp member:v in:sx[sdi]];}
+               [cp tryall:D suchThat:^ORBool(ORInt v) { return [cp member:v in:sx[sdi]];}
                        do:^(ORInt v) {
                           [cp label:sx[sdi] with:v];
                        }];

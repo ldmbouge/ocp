@@ -59,7 +59,7 @@ int main(int argc, const char * argv[])
             //[cp labelArrayFF:x];
             //[cp labelArrayFF:l];
             
-            [cp forall:Courses suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}
+            [cp forall:Courses suchThat:^ORBool(ORInt i) { return ![cp bound:x[i]];}
              orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];}
                   then:^ORInt(ORInt i) { return - [credits at:i];}
                     do:^(ORInt i) {
@@ -71,7 +71,7 @@ int main(int argc, const char * argv[])
                           }
                           return ttl;
                        }];
-                       [cp tryall:Periods suchThat:^bool(ORInt p) { return [cp member:p in:x[i]];}
+                       [cp tryall:Periods suchThat:^ORBool(ORInt p) { return [cp member:p in:x[i]];}
                         orderedBy:^ORDouble(ORInt p) { return ([cp min:l[p]] << 16) - [cc at:p];}
                                in:^(ORInt p) {
                                   [cp label:x[i] with:p];

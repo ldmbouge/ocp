@@ -19,9 +19,7 @@
 @protocol CPVarArray;
 
 
-#define ALPHA 8.0L
-
-@interface CPFDS : CPBaseHeuristic<CPHeuristic> {
+@interface CPFDS : CPBaseHeuristic<CPHeuristic,ORChoiceHeuristic> {
    id<ORVarArray>      _vars;  // Model variables
    id<CPVarArray>       _cvs;  // concrete variables
    id<ORVarArray>     _rvars;
@@ -33,4 +31,5 @@
 -(void)initInternal:(id<ORVarArray>)t with:(id<ORVarArray>)cvs;
 -(id<ORIntVarArray>)allIntVars;
 -(id<CPProgram>)solver;
+-(double)lastChoiceRating;
 @end
