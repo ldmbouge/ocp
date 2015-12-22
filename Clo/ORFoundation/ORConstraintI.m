@@ -4292,3 +4292,121 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORBitOrb {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _r;
+}
+-(ORBitOrb*)initORBitOrb: (id<ORBitVar>) x or:(id<ORBitVar>) y eval:(id<ORBitVar>)r
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _r = r;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _r;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ | %@ = %@)",[self class],self,_x,_y,_r];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitOrb:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_r, nil] autorelease];
+}
+@end
+
+@implementation ORBitNotb {
+   id<ORBitVar> _x;
+   id<ORBitVar> _r;
+}
+-(ORBitNotb*)initORBitNotb: (id<ORBitVar>) x  eval:(id<ORBitVar>)r
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _r = r;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _r;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (~ %@  = %@)",[self class],self,_x,_r];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitNotb:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_r, nil] autorelease];
+}
+@end
+
+@implementation ORBitEqualb {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _r;
+}
+-(ORBitEqualb*)initORBitEqualb: (id<ORBitVar>) x equal:(id<ORBitVar>) y eval:(id<ORBitVar>)r
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _r = r;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _r;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ => %@)",[self class],self,_x,_y,_r];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitEqualb:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_r, nil] autorelease];
+}
+@end
+
+

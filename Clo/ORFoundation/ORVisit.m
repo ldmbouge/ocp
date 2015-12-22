@@ -470,6 +470,19 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitLogicalOr: visit method not defined"];
 }
+-(void) visitBitOrb:(id<ORBitOrb>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitOrb: visit method not defined"];
+}
+-(void) visitBitNotb:(id<ORBitNotb>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitNotb: visit method not defined"];
+}
+-(void) visitBitEqualb:(id<ORBitEqualb>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitEqualb: visit method not defined"];
+}
+
 
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -710,6 +723,9 @@
 -(void) visitBitITE:(id<ORBitITE>)c{}
 -(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c{}
 -(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c{}
+-(void) visitBitOrb:(id<ORBitOrb>)c{}
+-(void) visitBitNotb:(id<ORBitNotb>)c{}
+-(void) visitBitEqualb:(id<ORBitEqualb>)c{}
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}

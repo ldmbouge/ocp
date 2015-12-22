@@ -118,7 +118,7 @@
          //NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
          if (k &&  status != ORFailure) {
 //            NSLog(@"Restarting search at level %d",level);
-//            if (level < (faillevel - 1))
+//            if ((level < (faillevel - 1)))
 //               [k callInvisible];
 //            else
                [k call];

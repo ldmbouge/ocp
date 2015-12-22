@@ -1026,7 +1026,7 @@ SMTLIB2_OBJCP_DECLHANDLER(or) //{ return NULL; /* TODO */ }
 
 SMTLIB2_OBJCP_DECLHANDLER(not) //{ return NULL; /* TODO */ }
 {
-   return [objcpgw objcp_mk_bv_not:YCTX(ctx)
+   return [objcpgw objcp_mk_not:YCTX(ctx)
                        withArg:(objcp_expr)smtlib2_vector_at(args, 0)];
 }
 

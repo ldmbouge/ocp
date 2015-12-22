@@ -678,3 +678,23 @@
 -(id<ORBitVar>) res;
 -(id<ORBitVarArray>) left;
 @end
+
+@interface ORBitOrb : ORConstraintI<ORBitOrb>
+-(ORBitOrb*)initORBitOrb: (id<ORBitVar>) x or: (id<ORBitVar>) y eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitNotb : ORConstraintI<ORBitNotb>
+-(ORBitOrb*)initORBitNotb: (id<ORBitVar>) x eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+@end
+
+@interface ORBitEqualb : ORConstraintI<ORBitEqualb>
+-(ORBitOrb*)initORBitEqualb: (id<ORBitVar>) x equal: (id<ORBitVar>) y eval:(id<ORBitVar>)r;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end

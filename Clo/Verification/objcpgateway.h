@@ -127,7 +127,7 @@ typedef int assertion_id;
 
 -(objcp_expr) objcp_mk_and:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs;
 -(objcp_expr) objcp_mk_or:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs;
-//-(objcp_expr) objcp_mk_not
+-(objcp_expr) objcp_mk_not:(objcp_context)ctx withArg:(objcp_expr)arg1;
 
 -(objcp_expr) objcp_mk_eq:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2;
 

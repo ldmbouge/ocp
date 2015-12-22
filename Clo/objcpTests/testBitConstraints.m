@@ -2687,9 +2687,9 @@ char *int2bin(int a, char *buffer, int buf_size) {
    id<ORBitVar> x5 = [ORFactory bitVar:m low:zero up:max bitLength:32];
    id<ORBitVar> x6 = [ORFactory bitVar:m low:zero up:max bitLength:32];
    id<ORBitVar> x7 = [ORFactory bitVar:m low:max up:max bitLength:32];
-//   id<ORBitVar> x8 = [ORFactory bitVar:m low:zero up:max bitLength:32];
-//   id<ORBitVar> cin = [ORFactory bitVar:m low:zero up:max bitLength:32];
-//   id<ORBitVar> cout = [ORFactory bitVar:m low:zero up:max bitLength:32];
+   id<ORBitVar> x8 = [ORFactory bitVar:m low:zero up:max bitLength:32];
+   id<ORBitVar> cin = [ORFactory bitVar:m low:zero up:max bitLength:32];
+   id<ORBitVar> cout = [ORFactory bitVar:m low:zero up:max bitLength:32];
    
    [m add:[ORFactory bit:x1 xor:x2 eq:x3]];
    [m add:[ORFactory bit:x1 rotateLBy:8 eq:x2]];
@@ -2698,13 +2698,13 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [m add:[ORFactory bit:x4 xor:x5 eq:x6]];
    [m add:[ORFactory bit:x5 rotateLBy:8 eq:x6]];
    [m add:[ORFactory bit:x5 xor:x6 eq:x7]];
-//   [m add:[ORFactory bit:x5 plus:x6 withCarryIn:cin eq:x8 withCarryOut:cout]];
-//   [m add:[ORFactory bit:x2 eq:x8]];
+   [m add:[ORFactory bit:x5 plus:x6 withCarryIn:cin eq:x8 withCarryOut:cout]];
+   [m add:[ORFactory bit:x2 eq:x8]];
    
    
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:m];
    id* gamma = [cp gamma];
-   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:6]];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:7]];
    [o set:gamma[x1.getId] at:0];
    [o set:gamma[x2.getId] at:1];
    [o set:gamma[x3.getId] at:2];
@@ -2712,10 +2712,10 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [o set:gamma[x5.getId] at:4];
    [o set:gamma[x6.getId] at:5];
    [o set:gamma[x7.getId] at:6];
-//   [o set:gamma[x8.getId] at:7];
+   [o set:gamma[x8.getId] at:7];
    
    id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
-   [cp solve: ^(){
+   [cp solveAll: ^(){
       @try {
          NSLog(@"After Posting:");
          NSLog(@"%lx x1 = %@\n", gamma[x1.getId], gamma[x1.getId]);
@@ -2725,9 +2725,9 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"%lx x5 = %@\n", gamma[x5.getId], gamma[x5.getId]);
          NSLog(@"%lx x6 = %@\n", gamma[x6.getId], gamma[x6.getId]);
          NSLog(@"%lx x7 = %@\n", gamma[x7.getId], gamma[x7.getId]);
-//         NSLog(@"%lx x8 = %@\n", gamma[x8.getId], gamma[x8.getId]);
-//         NSLog(@"%lx cin = %@\n", gamma[cin.getId], gamma[cin.getId]);
-//         NSLog(@"%lx cout = %@\n", gamma[cout.getId], gamma[cout.getId]);
+         NSLog(@"%lx x8 = %@\n", gamma[x8.getId], gamma[x8.getId]);
+         NSLog(@"%lx cin = %@\n", gamma[cin.getId], gamma[cin.getId]);
+         NSLog(@"%lx cout = %@\n", gamma[cout.getId], gamma[cout.getId]);
          [cp labelBitVarHeuristicCDCL:h];
          NSLog(@"Solution Found:");
          NSLog(@"x1 = %@\n", gamma[x1.getId]);
@@ -2737,9 +2737,9 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"x5 = %@\n", gamma[x5.getId]);
          NSLog(@"x6 = %@\n", gamma[x6.getId]);
          NSLog(@"x7 = %@\n", gamma[x7.getId]);
-//         NSLog(@"x8 = %@\n", gamma[x8.getId]);
-//         NSLog(@"cin = %@\n", gamma[cin.getId]);
-//         NSLog(@"cout = %@\n", gamma[cout.getId]);
+         NSLog(@"x8 = %@\n", gamma[x8.getId]);
+         NSLog(@"cin = %@\n", gamma[cin.getId]);
+         NSLog(@"cout = %@\n", gamma[cout.getId]);
       }
       @catch (NSException *exception) {
          NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
@@ -2750,6 +2750,105 @@ char *int2bin(int a, char *buffer, int buf_size) {
    NSLog(@"End Test of backjumping search\n");
    
 }
+
+-(void) testBoolOR
+{
+   NSLog(@"Begin Test of bit boolean OR constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0x0;
+   max[0] = 0x1;
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:1];
+   id<ORBitVar> y = [ORFactory bitVar:m low:max up:max bitLength:1];
+   id<ORBitVar> r1 = [ORFactory bitVar:m low:min up:max bitLength:1];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"y = %@\n", y);
+   NSLog(@"r = %@\n", r1);
+   
+   [m add:[ORFactory bit:x orb:y eval:r1]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[x.getId] at:0];
+   [o set:gamma[y.getId] at:1];
+   [o set:gamma[r1.getId] at:2];
+   
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"r = %@\n", gamma[r1.getId]);
+         [cp labelBitVarHeuristicCDCL:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"r = %@\n", gamma[r1.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test of bit boolean OR constraint.\n");
+   
+}
+
+-(void) testBoolEqual
+{
+   NSLog(@"Begin Test of bit boolean equality constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   unsigned int min[1];
+   unsigned int max[1];
+   
+   min[0] = 0x0;
+   max[0] = 0x1;
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:1];
+   id<ORBitVar> y = [ORFactory bitVar:m low:max up:max bitLength:1];
+   id<ORBitVar> r1 = [ORFactory bitVar:m low:min up:max bitLength:1];
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"y = %@\n", y);
+   NSLog(@"r = %@\n", r1);
+   
+   [m add:[ORFactory bit:x equalb:y eval:r1]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[x.getId] at:0];
+   [o set:gamma[y.getId] at:1];
+   [o set:gamma[r1.getId] at:2];
+   
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"r = %@\n", gamma[r1.getId]);
+         [cp labelBitVarHeuristicCDCL:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"r = %@\n", gamma[r1.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test of bit boolean Equality constraint.\n");
+   
+}
+
 
 -(void) test
 {

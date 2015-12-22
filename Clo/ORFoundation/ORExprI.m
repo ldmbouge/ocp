@@ -155,6 +155,9 @@
 -(void) visitBitITE:(id<ORBitITE>)c;
 -(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c;
 -(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c;
+-(void) visitBitOrb:(id<ORBitOrb>)c;
+-(void) visitBitNotb:(id<ORBitNotb>)c;
+-(void) visitBitEqualb:(id<ORBitEqualb>)c;
 @end
 
 @implementation ORSweep
@@ -447,8 +450,27 @@
    [[c left] visit:self];
    [[c res] visit:self];
 }
-@end
 
+-(void) visitBitOrb:(id<ORBitOrb>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitNotb:(id<ORBitNotb>)c
+{
+   [[c left] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitEqualb:(id<ORBitEqualb>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+@end
 
 @implementation ORExprI
 -(id<ORTracker>) tracker

@@ -166,6 +166,9 @@
 -(void) visitBitITE:(id<ORBitITE>)c;
 -(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c;
 -(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c;
+-(void) visitBitOrb:(id<ORBitOrb>)c;
+-(void) visitBitNotb:(id<ORBitNotb>)c;
+-(void) visitBitEqualb:(id<ORBitEqualb>)c;
 @end
 
 @interface ORNOopVisit : ORVisitor

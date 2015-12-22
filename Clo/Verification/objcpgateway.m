@@ -500,23 +500,30 @@ return 0;
    
    *zero = 0;
    *one = 1;
-   
+   if(numArgs != 2)
+      NSLog(@"ERROR - Boolean OR constraint defined with other than two arguments");
    id<ORBitVar> result = [ORFactory bitVar:_model low:zero up:one bitLength:1];
-   id<ORIntRange> range = [ORFactory intRange:_model low:0 up:numArgs-1];
-   id<ORBitVarArray> arguments = [ORFactory bitVarArray:_model range:range];
-   for (int i = 0; i<numArgs; i++)
-      arguments[i] = args[i];
-   [_model add:[ORFactory bit:arguments logicalAndEval:result]];
+//   id<ORIntRange> range = [ORFactory intRange:_model low:0 up:numArgs-1];
+//   id<ORBitVarArray> arguments = [ORFactory bitVarArray:_model range:range];
+//   for (int i = 0; i<numArgs; i++)
+//      arguments[i] = args[i];
+//   [_model add:[ORFactory bit:arguments logicalAndEval:result]];
 
+   [_model add:[ORFactory bit:(id<ORBitVar>)args[0] orb:(id<ORBitVar>)args[1] eval:result]];
    return result;
 }
 //objcp_mk_not
-//-(objcp_expr) objCP_mk_not:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2{
-//   ORUInt* low = alloca(sizeof(ORUInt));
-//   ORUInt* up = alloca(sizeof(ORUInt));
-//   *low = 0;
-//
-//}
+-(objcp_expr) objcp_mk_not:(objcp_context)ctx withArg:(objcp_expr)arg1{
+   ORUInt* low = alloca(sizeof(ORUInt));
+   ORUInt* up = alloca(sizeof(ORUInt));
+   *low = 0;
+   *up = 0x00000001;
+   
+   id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:1];
+   
+   [_model add:[ORFactory bit:(id<ORBitVar>)arg1 notb:(id<ORBitVar>)bv]];
+   return bv;
+}
 
 
 -(objcp_expr) objcp_mk_eq:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2{
@@ -527,7 +534,7 @@ return 0;
 
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:1];
   
-   [_model add:[ORFactory bit:(id<ORBitVar>)arg1 EQ:(id<ORBitVar>)arg2 eval:(id<ORBitVar>)bv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)arg1 equalb:(id<ORBitVar>)arg2 eval:(id<ORBitVar>)bv]];
 //   [_model add:[ORFactory bit:(id<ORBitVar>)arg1 eq:(id<ORBitVar>)arg2]];
 //   NSLog(@"Added Logical EQUAL Constraint\n");
    return bv;
