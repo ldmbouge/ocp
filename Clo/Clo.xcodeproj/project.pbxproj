@@ -48612,7 +48612,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
+					"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib",
 				);
 				PRODUCT_NAME = ORFoundation;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -48753,9 +48753,9 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi60";
+				OTHER_LDFLAGS = "-lgurobi65";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
@@ -48849,10 +48849,10 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "testLPWrapper/testLPWrapper-Prefix.pch";
-				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
+				HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi450/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -49502,10 +49502,10 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lgurobi55";
@@ -51614,7 +51614,7 @@
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
+					"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib",
 				);
 				PRODUCT_NAME = ORFoundation;
 				WRAPPER_EXTENSION = framework;
@@ -51637,7 +51637,7 @@
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib",
+					"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib",
 				);
 				PRODUCT_NAME = ORFoundation;
 				WRAPPER_EXTENSION = framework;
@@ -51813,10 +51813,10 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "testLPWrapper/testLPWrapper-Prefix.pch";
-				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
+				HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi450/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -51829,10 +51829,10 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "testLPWrapper/testLPWrapper-Prefix.pch";
-				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
+				HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi450/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -52063,10 +52063,10 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lgurobi55";
@@ -52087,10 +52087,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "testMIP/testMIP-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = /Library/gurobi550/mac64/include;
+				HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi550/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
 				OTHER_LDFLAGS = "-lgurobi55";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -52116,9 +52116,9 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi60";
+				OTHER_LDFLAGS = "-lgurobi65";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
@@ -52144,9 +52144,9 @@
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
 				);
-				OTHER_LDFLAGS = "-lgurobi60";
+				OTHER_LDFLAGS = "-lgurobi65";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
@@ -53062,6 +53062,7 @@
 				5B4053FE1C1DBC64001407E3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B40A9281B6321470033D351 /* Build configuration list for PBXNativeTarget "orderSwift" */ = {
 			isa = XCConfigurationList;
