@@ -58,6 +58,7 @@
 -(void) pushList: (ORInt) node memory:(ORInt)mh;
 -(void) pushCommandList: (ORCommandList*) list;
 -(void) addCommand:(id<ORConstraint>)c;
+-(void) patchMT:(ORMemoryTrailI*)mt;
 -(ORCommandList*) popList;
 -(ORCommandList*) peekAt:(ORUInt)d;
 -(ORUInt) size;
@@ -102,7 +103,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
       _tab = realloc(_tab,sizeof(ORCommandList*)*_mxs*2);
       _mxs <<= 1;
    }
-   if (_sz  >= 1) {
+/*   if (_sz  >= 1) {
       if (_tab[_sz-1]->_frozen) {
          ORCommandList* old = _tab[_sz - 1];
          _tab[_sz-1] = [_tab[_sz-1] copy];
@@ -110,10 +111,23 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
       }
       [_tab[_sz - 1] setMemoryTo:mh];
    }
+ */
    assert(_sz == 0 || mh >= _tab[_sz-1].memoryTo);
    ORCommandList* list = [ORCommandList newCommandList:node from:mh to:mh];
    _tab[_sz++] = list;
 }
+-(void) patchMT:(ORMemoryTrailI*)mt
+{
+   if (_sz  >= 1) {
+      if (_tab[_sz-1]->_frozen) {
+         ORCommandList* old = _tab[_sz - 1];
+         _tab[_sz-1] = [_tab[_sz-1] copy];
+         [old letgo];
+      }
+      [_tab[_sz - 1] setMemoryTo:mt.trailSize];
+   }
+}
+
 -(void)pushCommandList:(ORCommandList*)list
 {
    pushCommandList(self, list);
@@ -487,6 +501,7 @@ static __thread id checkPointCache = NULL;
 }
 -(id<ORCheckpoint>)captureCheckpoint
 {
+   [_cmds patchMT:_mt];
    ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds memory:_mt];
    ncp->_level  = _level._val;
    ncp->_nodeId = [self pushNode];

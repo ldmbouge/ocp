@@ -2,12 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Scheduler/ORScheduler/ORSchedLinearize.m">
-   </FileRef>
-   <FileRef
-      location = "group:ORFoundation/CPFDS.m">
-   </FileRef>
-   <FileRef
       location = "group:Extensions.playground">
    </FileRef>
    <FileRef
