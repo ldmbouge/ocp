@@ -12,49 +12,38 @@
 #import <ORProgram/ORProgram.h>
 
 typedef enum {
-    None = 0, FPGA, FPGA2, SOFT
-} FFT_COMP;
+    None = 0, G0, G1, G2
+} MAIN_GEN;
+
+ORInt rawMainGenCost[] = {
+    0, 1000, 1200, 1500
+};
+
+ORInt rawMainGenPow[] = {
+    0, 25, 35, 45
+};
+
+ORInt rawMainGenWeight[] = {
+    0, 100, 110, 115
+};
+
 
 typedef enum {
-    CondNone = 0, CondRequired
-} SIG_COND;
+    S0 = 0, S1, S2
+} SENSOR;
 
-ORInt rawFFTACost[] = {
-    0, 25, 75, 120
+ORInt rawSensCost[] = {
+    0, 10, 30, 40
 };
 
-ORInt rawFFTAWeight[] = {
-    0, 4, 12, 16
+ORInt rawSensPowDraw[] = {
+    0, 1, 5, 15
 };
 
-ORInt rawFFTADelay[] = {
-    0, 7000, 2000, 2000
+ORInt rawSensPowWeight[] = {
+    0, 1, 5, 15
 };
 
-ORInt rawFFTAHeat[] = {
-    0, 1000, 8500, 9000
-};
-
-ORInt rawFFTBCost[] = {
-    0, 15, 65, 120
-};
-
-ORInt rawFFTBWeight[] = {
-    0, 2, 9, 14
-};
-
-ORInt rawFFTBDelay[] = {
-    0, 9000, 3000, 3000
-};
-
-ORInt rawFFTBHeat[] = {
-    0, 800, 500, 900
-};
-
-
-NSString* fftNameTable[] = {
-    @"FFT FPGA", @"FFT SOFTWARE"
-};
 
 ORInt MAX_WEIGHT = 20;
 ORDouble FAIL_LIMIT = .07;
@@ -73,62 +62,43 @@ int main(int argc, const char * argv[]) {
     ORInt COMP = nbComponent;
     
     id<ORModel> m = [ORFactory createModel];
-    id<ORIntRange> fftARange = RANGE(m, 0, 1);
-    id<ORIntRange> fftADomain = RANGE(m, 0, 3);
-    id<ORIntRange> fftBRange = RANGE(m, 0, 2);
-    id<ORIntRange> fftBDomain = RANGE(m, 0, 3);
-    id<ORIntRange> sigConnRange = RANGE(m, 0, 5);
-    id<ORIntRange> sigConnDomain = RANGE(m, 0, 1);
+    id<ORIntRange> genBounds = RANGE(m, 0, 3);
+    id<ORIntRange> genRange = RANGE(m, 0, 3);
+    id<ORIntRange> senBounds = RANGE(m, 0, 3);
+    id<ORIntRange> senRange = RANGE(m, 0, 6);
+    id<ORIntRange> boolBounds = RANGE(m, 0, 1);
     
-    id<ORIntArray> fftACost = [ORFactory intArray: m range: fftADomain values: rawFFTACost];
-    id<ORIntArray> fftBCost = [ORFactory intArray: m range: fftBDomain values: rawFFTBCost];
-    id<ORIntArray> fftAWeight = [ORFactory intArray: m range: fftADomain values: rawFFTAWeight];
-    id<ORIntArray> fftBWeight = [ORFactory intArray: m range: fftBDomain values: rawFFTBWeight];
-
-    id<ORIntArray> fftADelay = [ORFactory intArray: m range: fftADomain values: rawFFTADelay];
-    id<ORIntArray> fftBDelay = [ORFactory intArray: m range: fftBDomain values: rawFFTBDelay];
-
-    id<ORIntArray> fftAHeat = [ORFactory intArray: m range: fftADomain values: rawFFTAHeat];
-    id<ORIntArray> fftBHeat = [ORFactory intArray: m range: fftBDomain values: rawFFTBHeat];
-
-    
-    id<ORIntVarArray> fftA = [ORFactory intVarArray: m range: fftARange domain: fftADomain];
-    id<ORIntVarArray> fftB = [ORFactory intVarArray: m range: fftBRange domain: fftBDomain];
-    id<ORIntVarMatrix> conn = [ORFactory intVarMatrix: m range: sigConnRange : sigConnRange domain: sigConnDomain];
-    id<ORIntVar> useCompResource = [ORFactory intVar: m domain: RANGE(m, 0, 1)];
-
-    id<ORIntVarArray>
-    
-    // Connectivity
-//    [m add: [[[conn at: 4] eq: @(1)] imply: [[isConnA at: 0] eq: @(1)]]];
-//    [m add: [[[conn at: 10] eq: @(1)] imply: [[isConnA at: 1] eq: @(1)]]];
-//    [m add: [[[conn at: 1] eq: @(1)] imply: [[isConnB at: 0] eq: @(1)]]];
-//    [m add: [[[conn at: 0] eq: @(1)] imply: [[isConnB at: 1] eq: @(1)]]];
-//    [m add: [[[conn at: 5] eq: @(1)] imply: [[isConnB at: 2] eq: @(1)]]];
+    id<ORIntVar> g0 = [ORFactory intVar: m bounds: genBounds];
+    id<ORIntVar> g1 = [ORFactory intVar: m bounds: genBounds];
+    id<ORIntVar> auxgen = [ORFactory intVar: m bounds: genBounds];
+    id<ORIntVarArray> sensors = [ORFactory intVarArray: m range: senRange bounds: senBounds];
+    id<ORIntVarArray> cd = [ORFactory intVarArray: m range: senRange bounds: boolBounds];
+    id<ORIntVarArray> cb0 = [ORFactory intVarArray: m range: senRange bounds: boolBounds];
+    id<ORIntVarArray> cb1 = [ORFactory intVarArray: m range: senRange bounds: boolBounds];
+    id<ORIntVar> bus0 = [ORFactory intVar: m bounds: boolBounds];
+    id<ORIntVar> bus1 = [ORFactory intVar: m bounds: boolBounds];
+    id<ORIntVar> pow = [ORFactory intVar: m bounds: RANGE(m, 0, 10000)];
+    id<ORIntVar> cost = [ORFactory intVar: m bounds: RANGE(m, 0, 99999)];
+    id<ORIntVar> genCost = [ORFactory intVar: m bounds: RANGE(m, 0, 9999)];
+    id<ORIntVar> senCost = [ORFactory intVar: m bounds: RANGE(m, 0, 9999)];
+    id<ORIntVar> connCost = [ORFactory intVar: m bounds: RANGE(m, 0, 9999)];
 
     
-    // Weight Limit
-    [m add:
-     [[[[ORFactory elt: m intArray: fftWeight index: fft[0]] plus: [ORFactory elt: m intArray: fftWeight index: fft[1]]] mul: reps]
-      leq: @(MAX_WEIGHT)]];
+    id<ORIntVar> weight = [ORFactory intVar: m bounds: RANGE(m, 0, 99999)];
     
-    // Throughput
-    [m add: [[[[multiplex mul: Sum(m, i, fftRange,
-                                   [ORFactory elt: m intArray: fftDelay index: fft[i]])]
-               sub: cpuSpeedup]
-              plus: Sum(m, i, sigCondRange, [ORFactory elt: m intArray: sigCondDelay index: sigCond[i]])]
-             leq: @(MIN_DELAY)]];
+    id<ORIntArray> mainGenWeight = [ORFactory intArray: m range: genRange values: rawMainGenWeight];
+    id<ORIntArray> mainGenCost = [ORFactory intArray: m range: genRange values: rawMainGenCost];
+    id<ORIntArray> mainGenPow = [ORFactory intArray: m range: genRange values: rawMainGenPow];
     
-    // Heat
-    [m add: [[[[multiplex mul:
-                Sum(m, i, fftRange, [ORFactory elt: m intArray: fftHeat index: fft[i]])] mul: reps]
-              plus: cpuSpeedup]
-             leq: @(MAX_HEAT)]];
+    id<ORIntArray> sensWeight = [ORFactory intArray: m range: senRange values: rawSensPowWeight];
+    id<ORIntArray> sensCost = [ORFactory intArray: m range: senRange values: rawSensCost];
+    id<ORIntArray> sensPow = [ORFactory intArray: m range: senRange values: rawSensPowDraw];
     
-    // Cost
-    [m minimize: [[Sum(m, i, fftRange, [ORFactory elt: m intArray: fftCost index: fft[i]])
-                   plus: Sum(m, i, sigCondRange, [ORFactory elt: m intArray: sigCondCost index: sigCond[i]])]
-                  mul: reps]];
+    [m add: [senCost eq: Sum(m, i, senRange, [sensors at: i])]];
+    [m add: [genCost eq: [[[mainGenCost elt: g0] plus: [mainGenCost elt: g1]] plus: [mainGenCost elt: auxgen]]]];
+    [m add: [cost eq: [senCost plus: genCost]]];
+
+    
     
     
     id<CPProgram> p = [ORFactory createCPProgram: m];
