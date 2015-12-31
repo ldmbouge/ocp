@@ -1419,7 +1419,6 @@
 		5BCAF15F1BF148C000C18360 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BCAF1601BF148C000C18360 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BCAF1611BF148C900C18360 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */; };
-		5BCAF1631BF385F500C18360 /* CPFDS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BCAF1621BF385F500C18360 /* CPFDS.m */; };
 		5BCAF1651BF386FB00C18360 /* CPFDS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BCAF1641BF3861700C18360 /* CPFDS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BCCC4051417F8CE0079E833 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BCCC4081417F8CE0079E833 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BCCC4071417F8CE0079E833 /* main.m */; };
@@ -1510,6 +1509,8 @@
 		5BE1218F173C75C0000C9AA9 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BE12190173C75C0000C9AA9 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BE12191173C75C0000C9AA9 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BE22BB81C342C1600A6C709 /* CPFDS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE22BB71C342C1600A6C709 /* CPFDS.m */; };
+		5BE22BBA1C342C2C00A6C709 /* ORSchedLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE22BB91C342C2C00A6C709 /* ORSchedLinearize.m */; };
 		5BE2D73F1BFA386D0054B848 /* ORSemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* ORSemBDSController.m */; };
 		5BE2D7401BFA790D0054B848 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */; };
 		5BE2D7421BFB9DDE0054B848 /* ft05.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE2D7411BFB9DCD0054B848 /* ft05.jss */; };
@@ -21186,6 +21187,8 @@
 		5BE19F251582654F008DF214 /* CPFirstFail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFirstFail.h; sourceTree = "<group>"; };
 		5BE19F261582654F008DF214 /* CPFirstFail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFirstFail.m; sourceTree = "<group>"; };
 		5BE19F2915826A28008DF214 /* CPDDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPDDeg.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BE22BB71C342C1600A6C709 /* CPFDS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFDS.m; sourceTree = "<group>"; };
+		5BE22BB91C342C2C00A6C709 /* ORSchedLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSchedLinearize.m; path = ../Scheduler/ORScheduler/ORSchedLinearize.m; sourceTree = "<group>"; };
 		5BE2D73E1BF927150054B848 /* JobShopBenchmarks */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JobShopBenchmarks; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BE2D7411BFB9DCD0054B848 /* ft05.jss */ = {isa = PBXFileReference; lastKnownFileType = text; path = ft05.jss; sourceTree = "<group>"; };
 		5BE5A7EA158A838F006703CB /* fdmul2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fdmul2; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -36852,6 +36855,8 @@
 			isa = PBXGroup;
 			children = (
 				37D62B8A1BD5CF8A005A6DBC /* ORRunnable */,
+				5BE22BB91C342C2C00A6C709 /* ORSchedLinearize.m */,
+				5BE22BB71C342C1600A6C709 /* CPFDS.m */,
 				5B93489116558D0F00757F89 /* ORProgram.h */,
 				5BF333321B3B0CC00030F127 /* ORProgram.m */,
 				B17832FA161F5FCC00C7298D /* ORProgramFactory.h */,
@@ -42183,6 +42188,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BE22BB81C342C1600A6C709 /* CPFDS.m in Sources */,
 				5B68119A161F99C700F4480F /* CPConcretizer.m in Sources */,
 				37D62BBA1BD5CFAD005A6DBC /* ORRunnable.m in Sources */,
 				37D62BA81BD5CFAD005A6DBC /* LPRunnable.m in Sources */,
@@ -42192,13 +42198,13 @@
 				5B68119E161F99C700F4480F /* ORProgramFactory.m in Sources */,
 				5BB1C27B1B3A01E6008A9E51 /* ORSolution.m in Sources */,
 				5B6811A0161F99C700F4480F /* CPSolver.m in Sources */,
+				5BE22BBA1C342C2C00A6C709 /* ORSchedLinearize.m in Sources */,
 				5BA6F96918464836002434E3 /* CPDeg.m in Sources */,
 				5BF333331B3B0CC00030F127 /* ORProgram.m in Sources */,
 				5B84692B163856BF00F4D749 /* CPDDeg.m in Sources */,
 				5B84692C163856BF00F4D749 /* CPFirstFail.m in Sources */,
 				37D62BA61BD5CFAD005A6DBC /* CPRunnable.m in Sources */,
 				5B84692D163856BF00F4D749 /* CPIBS.m in Sources */,
-				5BCAF1631BF385F500C18360 /* CPFDS.m in Sources */,
 				5B84692E163856BF00F4D749 /* CPWDeg.m in Sources */,
 				5B84692F163856BF00F4D749 /* CPABS.m in Sources */,
 				5B8469321638583800F4D749 /* CPBaseHeuristic.m in Sources */,
