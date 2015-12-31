@@ -77,6 +77,10 @@
     NSLog(@"Finishing MIP runnable(%p)...", _program);
 }
 
+-(void) cancelSearch {
+    [[_program solver] cancel];
+}
+
 -(void) setTimeLimit: (ORDouble) secs
 {
     assert(NO);
@@ -99,7 +103,6 @@
 
 -(void) receiveLowerBound:(ORDouble)bound
 {
-    NSLog(@"(%p) recieved upper bound: %f", self, bound);
     //MIPSolverI* mipSolver = [[self solver] solver];
     //MIPVariableI* objVar = [[((ORObjectiveFunctionExprI*)[[self model] objective]) expr] dereference];
     //MIPVariableI* varArr[] = {objVar};
@@ -110,6 +113,7 @@
 
 -(void) receiveSolution:(id<ORSolution,ORSchedulerSolution>)sol
 {
+    static solCount = 0;
     NSArray* modelVars = [[sol model] variables];
     NSMutableArray* vars = [[NSMutableArray alloc] init];
     NSMutableArray* vals = [[NSMutableArray alloc] init];
@@ -123,7 +127,7 @@
         }
     }
     
-    NSLog(@"MIPRunnable(%p): recieved solution: %p", self, sol);
+    NSLog(@"MIPRunnable(%p): recieved solution(%i): %p", self, ++solCount, sol);
     [[_program solver] injectSolution: vars values: vals size: (ORInt)[vars count]];
 }
 

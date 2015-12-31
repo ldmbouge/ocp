@@ -23,6 +23,7 @@
 -(void) setTimeLimit: (ORDouble) secs;
 -(ORDouble) bestBound;
 -(id<ORSolution>) bestSolution;
+-(void)cancelSearch;
 @end
 
 @interface ORAbstractRunnableI : NSObject<ORRunnable> {

@@ -292,6 +292,7 @@
 -(id<ORDoubleInformer>) boundInformer;
 -(void) print;
 -(void) printModelToFile: (char*) fileName;
+-(void) cancel;
 
 //-(CotMIPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotMIPAbstractBasis* basis) ;
