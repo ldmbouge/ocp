@@ -139,15 +139,13 @@
 
 -(void) propagate
 {
-    if ([_x bound]) {
-        [_y bind:[_x min] - _c];
-    } 
-    else if ([_y bound]) {
-        [_x bind:[_y min] + _c];
-    } 
+    if (bound(_x))
+       bindDom(_y,minDom(_x) - _c);
+    else if (bound(_y))
+       bindDom(_x,minDom(_y) + _c);
     else {
-       [_x updateMin:[_y min] + _c andMax:[_y max] + _c];
-       [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
+       updateMinAndMaxOfDom(_x, minDom(_y)+_c, maxDom(_y)+_c);
+       updateMinAndMaxOfDom(_y, minDom(_x)-_c, maxDom(_x)-_c);
     }
 }
 -(NSString*)description

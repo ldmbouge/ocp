@@ -67,7 +67,10 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTInt;
+   if (_domain.low == 0 && _domain.up == 1)
+      return ORTBool;
+   else
+      return ORTInt;
 }
 -(NSString*) description
 {

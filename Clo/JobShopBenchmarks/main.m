@@ -16,6 +16,8 @@
 #import <ORProgram/ORRunnable.h>
 #import <ORModeling/ORLinearize.h>
 
+ #include <unistd.h>
+
 
 void fill(FILE* data,id<ORIntRange> Jobs,id<ORIntRange> Machines,id<ORIntMatrix> duration,id<ORIntMatrix> resource)
 {
@@ -60,7 +62,15 @@ int main(int argc, const char * argv[]) {
         if([args containsObject: @"-t1"]) numThreads = 1;
         if([args containsObject: @"-t2"]) numThreads = 2;
         if([args containsObject: @"-t4"]) numThreads = 4;
-        
+        if([args containsObject: @"-t5"]) numThreads = 5;
+        if([args containsObject: @"-t6"]) numThreads = 6;
+        if([args containsObject: @"-t8"]) numThreads = 8;
+       
+        char home[512];
+       strcpy(home,getenv("HOME"));
+        char  fNameBuf[1024];
+       
+       
         
         NSString* path = @"/Users/dan/Work/platform/Clo/Scheduler/BenchmarkData/jsp/la21.jss";//[args lastObject];
         
@@ -115,7 +125,9 @@ int main(int argc, const char * argv[]) {
         
         // Solve CP
         if(doCP) {
-            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+           *fNameBuf = 0;
+           strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
+            FILE* outFile = fopen(fNameBuf, "w+");
             id<ORAnnotation> notes = [ORFactory annotation];
             id<CPProgram,CPScheduler> cp = nil;
             
@@ -289,8 +301,8 @@ int main(int argc, const char * argv[]) {
                       NSLog(@"R");
                   }];
             }];
-            
-            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+            strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
+            FILE* outFile = fopen(fNameBuf, "w+");
             ORLong timeStart = [ORRuntimeMonitor wctime];
             id<ORRunnable> r1 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
@@ -318,7 +330,9 @@ int main(int argc, const char * argv[]) {
         
         
         if(doBDS) {
-            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+            *fNameBuf = 0;
+            strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
+            FILE* outFile = fopen(fNameBuf, "w+");
             id<ORAnnotation> notes = [ORFactory annotation];
             id<CPProgram,CPScheduler> cp = nil;
             cp = //(id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemBDSController class]];
@@ -368,7 +382,9 @@ int main(int argc, const char * argv[]) {
             [cp label: makespan];
             NSLog(@"(SEQ   )makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
          }];
-         FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+          *fNameBuf = 0;
+          strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
+         FILE* outFile = fopen(fNameBuf, "w+");
           ORLong timeStart = [ORRuntimeMonitor wctime];
           id<ORRunnable> r1 = [ORFactory CPRunnable: model  numThreads:numThreads solve: ^(id<CPCommonProgram> program){
              id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;

@@ -97,7 +97,10 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTInt;
+   if (0 <= _value && _value <= 1)
+      return ORTBool;
+   else
+      return ORTInt;
 }
 -(id<ORTracker>) tracker
 {

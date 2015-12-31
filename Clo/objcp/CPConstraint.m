@@ -313,6 +313,12 @@
    [[b tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) clause:(id<CPIntVarArray>) x eq:(id<CPIntVar>)tv
+{
+   id<CPConstraint> o = [[CPClause alloc] initCPClause:x equal:tv];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c
 {

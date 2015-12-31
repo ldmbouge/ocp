@@ -993,6 +993,17 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitClause:(id<ORClause>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      id<CPIntVar> tv = [self concreteVar:[cstr targetValue]];
+      id<CPConstraint> concreteCstr = [CPFactory clause:x eq:tv];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+      
+   }
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

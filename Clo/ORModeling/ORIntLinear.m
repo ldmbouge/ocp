@@ -44,6 +44,14 @@
 {
     return _nb== 0 && _indep == 1;
 }
+-(BOOL)clausalForm
+{
+   BOOL cf = _indep == 0;
+   for(int i=0;i < _nb && cf; i++) {
+      cf = cf && _terms[i]._coef == 1;
+   }
+   return cf;
+}
 -(void)setIndependent:(ORInt)idp
 {
     _indep = idp;
@@ -417,7 +425,10 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
     return [_real size] == 0 && [_real independent] == -1;
 }
-
+-(BOOL)clausalForm
+{
+   return NO;
+}
 -(void) setIndependent:(ORInt)idp
 {
     [_real setIndependent:-idp];

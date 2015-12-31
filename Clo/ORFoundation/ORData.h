@@ -66,7 +66,7 @@
 -(void) visit: (ORVisitor*) visitor;
 @end
 
-@protocol ORInteger <ORObject,ORExpr>
+@protocol ORInteger <ORObject,ORRelation>
 -(ORInt) value;
 @end
 

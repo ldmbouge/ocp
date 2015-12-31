@@ -486,11 +486,19 @@
 -(void) search:(void*(^)())stask
 {
    //TODO: This is not correct yet.
+   [self solve:^{
+      id<ORSTask> theTask = (id<ORSTask>)stask();
+      [theTask execute];
+   }];
+}
+-(void) searchAll:(void*(^)())stask
+{
    [self solveAll:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();
       [theTask execute];
    }];
 }
+
 -(void) clearOnStartup
 {
    for(ORInt k = 0; k < _nbWorkers; k++)

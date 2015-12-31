@@ -21,7 +21,7 @@ PORTABLE_BEGIN
 -(ORInt) getId;
 @end
 
-@protocol ORExprVar <ORVar,ORExpr>
+@protocol ORExprVar <ORVar,ORRelation>
 -(ORInt) getId;
 @end
 

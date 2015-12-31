@@ -982,6 +982,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) clause:(id<ORTracker>)model over:(id<ORIntVarArray>) x equal:(id<ORIntVar>)tv
+{
+   id<ORConstraint> o = [[ORClause alloc] init: x eq: tv];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x geqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumBoolGEqc alloc] initSumBool: x geqi: c];

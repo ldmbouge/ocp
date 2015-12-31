@@ -42,6 +42,10 @@
 -(id)init:(id<ORIntLinear>)t model:(id<ORAddToModel>)model;
 @end
 
+@interface ORBoolLinearizer : ORIntLinearizer {
+}
+@end
+
 @interface ORIntSubst   : ORVisitor<NSObject> {
     id<ORIntVar>        _rv;
     id<ORAddToModel> _model;
@@ -56,26 +60,36 @@
 +(id<ORLinear>)normalize:(ORExprI*)rel into:(id<ORAddToModel>) model
 {
     switch (rel.vtype) {
-        case ORTInt: {
-            ORIntNormalizer* v = [[ORIntNormalizer alloc] init: model];
-            [rel visit:v];
-            ORIntLinear* rv = [v terms];
-            [v release];
-            return rv;
-        }break;
-        case ORTReal: {
-            ORRealNormalizer* v = [[ORRealNormalizer alloc] init:model];
-            [rel visit:v];
-            ORRealLinear* rv = [v terms];
-            [v release];
-            return rv;
-        }break;
-        default: {
-            @throw [[ORExecutionError alloc] initORExecutionError:"Unexpected type in expression normalization"];
-            return NULL;
-        }break;
+       case ORTBool:
+       case ORTInt: {
+          ORIntNormalizer* v = [[ORIntNormalizer alloc] init: model];
+          [rel visit:v];
+          ORIntLinear* rv = [v terms];
+          [v release];
+          return rv;
+       }break;
+       case ORTReal: {
+          ORRealNormalizer* v = [[ORRealNormalizer alloc] init:model];
+          [rel visit:v];
+          ORRealLinear* rv = [v terms];
+          [v release];
+          return rv;
+       }break;
+       default: {
+          @throw [[ORExecutionError alloc] initORExecutionError:"Unexpected type in expression normalization"];
+          return NULL;
+       }break;
     }
 }
++(id<ORIntLinear>)boolLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+   ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
+   ORBoolLinearizer* v = [[ORBoolLinearizer alloc] init:rv model: model];
+   [e visit:v];
+   [v release];
+   return rv;
+}
+
 +(ORIntLinear*)intLinearFrom:(ORExprI*)e model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x
 {
     ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
@@ -86,11 +100,15 @@
 }
 +(ORIntLinear*)intLinearFrom:(ORExprI*)e model:(id<ORAddToModel>)model
 {
-    ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
-    ORIntLinearizer* v = [[ORIntLinearizer alloc] init:rv model: model];
-    [e visit:v];
-    [v release];
-    return rv;
+   if (e.vtype == ORTBool)
+      return [ORNormalizer boolLinearFrom:e model:model];
+   else {
+      ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
+      ORIntLinearizer* v = [[ORIntLinearizer alloc] init:rv model: model];
+      [e visit:v];
+      [v release];
+      return rv;
+   }
 }
 +(ORIntLinear*)addToIntLinear:(id<ORIntLinear>)terms from:(ORExprI*)e  model:(id<ORAddToModel>)model
 {
@@ -148,6 +166,10 @@
         return xv;
     } else if ([e size] == 1) {
         return [e oneView:model];
+    } else if ([e clausalForm]) {
+       id<ORIntVar> cValue = [ORFactory intVar: model domain: RANGE(model,0,1)];
+       [model addConstraint:[ORFactory clause:model over:[e variables:model] equal:cValue]];
+       return cValue;
     } else {
         id<ORIntVar> xv = [ORFactory intVar: model domain: RANGE(model,[e min],[e max])];
         [e addTerm:xv by:-1];
@@ -155,6 +177,21 @@
         return xv;
     }
 }
++(void)intVar:(id<ORIntVar>)var equal:(ORIntLinear*)e for:(id<ORAddToModel>) model
+{
+   if (e.size == 0) {
+      [model addConstraint:[ORFactory equalc:model var:var to:0]];
+   } else if (e.size == 1) {
+      [e addTerm:var by:-1];
+      [e postEQZ:model];
+   } else if (e.clausalForm) {
+      [model addConstraint:[ORFactory clause:model over:[e variables:model] equal:var]];
+   } else {
+      [e addTerm:var by:-1];
+      [e postEQZ:model];
+   }
+}
+
 +(id<ORRealVar>) realVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
 {
     ORRealSubst* subst = [[ORRealSubst alloc] initORSubst: model];
@@ -354,6 +391,25 @@ struct CPVarPair {
 }
 @end
 
+
+// ========================================================================================================================
+// Bool Linearizer
+// ========================================================================================================================
+@implementation ORBoolLinearizer
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+   if (_eqto) {
+      id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      [[e left] visit:self];
+      [[e right] visit:self];
+   }
+}
+
+@end
+
 // ========================================================================================================================
 // Int Linearizer
 // ========================================================================================================================
@@ -528,6 +584,11 @@ struct CPVarPair {
 {
     id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
     [_terms addTerm:alpha by:1];
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
@@ -900,21 +961,42 @@ static inline ORLong maxSeq(ORLong v[4])  {
 
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-    if ([[e left] isConstant] && [[e right] isVariable]) {
-        [self reifyEQc:[e right] constant:[[e left] min]];
-    } else if ([[e right] isConstant] && [[e left] isVariable]) {
-        [self reifyEQc:[e left] constant:[[e right] min]];
-    } else {
-        id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
-        id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model];
-        id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
-        id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
-        if (_rv==nil)
-            _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-        [_model addConstraint:[ORFactory reify:_model boolean:_rv with:lV eq:rV]];
-        [linLeft release];
-        [linRight release];
-    }
+   if (e.left.isConstant) {
+      id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model];
+      id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
+      [self reifyEQc:rV constant:e.left.min];
+      [linRight release];
+   } else if (e.right.isConstant) {
+      id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
+      id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
+      [self reifyEQc:lV constant:e.right.min];
+      [linLeft release];
+   } else {
+      id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
+      id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model];
+      id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
+      id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+      [_model addConstraint:[ORFactory reify:_model boolean:_rv with:lV eq:rV]];
+      [linLeft release];
+      [linRight release];
+   }
+//    if ([[e left] isConstant] && [[e right] isVariable]) {
+//        [self reifyEQc:[e right] constant:[[e left] min]];
+//    } else if ([[e right] isConstant] && [[e left] isVariable]) {
+//        [self reifyEQc:[e left] constant:[[e right] min]];
+//    } else {
+//        id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
+//        id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model];
+//        id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
+//        id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
+//        if (_rv==nil)
+//            _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+//        [_model addConstraint:[ORFactory reify:_model boolean:_rv with:lV eq:rV]];
+//        [linLeft release];
+//        [linRight release];
+//    }
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
@@ -942,6 +1024,17 @@ static inline ORLong maxSeq(ORLong v[4])  {
         [self reifyLEQc:[e left] constant:[[e right] min]];
     } else
         [self reifyLEQ:[e left] right:[e right]];
+}
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   ORExprI* left  = e.right;
+   ORExprI* right = e.left;    // switch side and pretend it is ≤
+   if ([left isConstant]) {
+      [self reifyGEQc:right constant:[left min]];
+   } else if ([right isConstant]) {
+      [self reifyLEQc:left constant:[right min]];
+   } else
+      [self reifyLEQ:left right:right];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
@@ -1032,15 +1125,15 @@ static inline ORLong maxSeq(ORLong v[4])  {
 }
 -(void) visitExprNegateI:(ORExprNegateI*)e
 {
-    id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e operand] model:_model];
-    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model];
-    if (_rv == nil)
-        _rv = [ORFactory intVar:_model var:oV scale:-1 shift:1];
-    else {
-        id<ORIntVar> fV = [ORFactory intVar:_model var:oV scale:-1 shift:1];
-        [_model addConstraint:[ORFactory equal:_model var:_rv to:fV plus:0]];
-    }
-    [lT release];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:e.operand model:_model];
+   if (_rv==nil) {  // NEG(E)  ->  produce y == NEG(E) ; return y.
+      id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model];
+      _rv = [ORFactory intVar:_model var:oV scale:-1 shift:1];
+   } else {  // x = NEG(e)  ==>  NOT(X) == e
+      id<ORIntVar> negRet = [ORFactory intVar:_model var:_rv scale:-1 shift:1];
+      [ORNormalizer intVar:negRet equal:lT for:_model];
+   }
+   [lT release];
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {

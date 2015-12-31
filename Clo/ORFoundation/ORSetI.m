@@ -203,6 +203,10 @@
 {
    return _up;
 }
+-(ORBool) isBool
+{
+   return _low == 0 && _up == 1;
+}
 -(ORBool) isDefined
 {
     return _low <= _up;
