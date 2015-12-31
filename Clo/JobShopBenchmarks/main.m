@@ -34,17 +34,17 @@ void fill(FILE* data,id<ORIntRange> Jobs,id<ORIntRange> Machines,id<ORIntMatrix>
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-//        if(argc < 2) {
-//            NSLog(@"jspbenchmarks [technology] filepath");
-//            return -1;
-//        }
+        if(argc < 2) {
+            NSLog(@"jspbenchmarks [technology] filepath");
+            return -1;
+        }
         NSMutableArray* args = [[NSMutableArray alloc] initWithCapacity: argc];
         for(int i = 0; i < argc; i++) [args addObject: [NSString stringWithCString: argv[i] encoding: NSASCIIStringEncoding]];
         
         BOOL doCP = NO;
         BOOL doMIP = NO;
         BOOL doHybrid = NO;
-        BOOL doHybridLNS = YES;
+        BOOL doHybridLNS = NO;
         BOOL doHybridLNS_CP = NO;
         BOOL doBDS = NO;
         BOOL doCPSCP = NO;
@@ -72,7 +72,7 @@ int main(int argc, const char * argv[]) {
        
        
         
-        NSString* path = @"/Users/dan/Work/platform/Clo/Scheduler/BenchmarkData/jsp/la21.jss";//[args lastObject];
+        NSString* path = [args lastObject];
         
         FILE* data = fopen([path cStringUsingEncoding: NSASCIIStringEncoding], "r");
         

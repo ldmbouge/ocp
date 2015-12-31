@@ -85,6 +85,7 @@
         //[ORConcurrency pumpEvents];
     }
     [self cancelSearch];
+    while([_t0 isExecuting] || [_t1 isExecuting]);
     id<ORSolution> s0 = [_r0 bestSolution];
     id<ORSolution> s1 = [_r1 bestSolution];
     if(s0 && s1) {        
