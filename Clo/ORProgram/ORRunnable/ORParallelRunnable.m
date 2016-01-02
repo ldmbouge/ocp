@@ -11,103 +11,154 @@
 #import "ORConcurrencyI.h"
 #import <ORProgram/ORSolution.h>
 
+#define CPR_DONE    0
+#define CPR_RUNNING 1
+
+@interface CPRComponent : NSObject {
+   id<ORRunnable>    _c;  // the worker
+   NSConditionLock* _cl;  // the condition to end
+}
+-(id)init:(id<ORRunnable>)w;
+-(id<ORRunnable>)runnable;
+-(void)dealloc;
+-(void)join;
+-(void)notifyDone;
+@end
+
+@implementation CPRComponent
+-(id)init:(id<ORRunnable>)w
+{
+   self = [super init];
+   _c   = w;
+   _cl  = [[NSConditionLock alloc] initWithCondition:CPR_RUNNING];
+   return self;
+}
+-(id<ORRunnable>)runnable
+{
+   return _c;
+}
+-(void)dealloc
+{
+   [_cl release];
+   [super dealloc];
+}
+-(void)join
+{
+   [_cl lockWhenCondition:CPR_DONE];
+   [_cl unlock];
+}
+-(void)notifyDone
+{
+   [_cl lockWhenCondition:CPR_RUNNING];
+   [_cl unlockWithCondition:CPR_DONE];
+}
+-(void)start:(id<ORVoidInformer>)stop
+{
+   [stop whenNotifiedDo:^ {
+      [_c cancelSearch];
+   }];
+   [_c start];
+   [stop notify];
+   [self notifyDone];
+}
+-(void)cancelSearch
+{
+   NSLog(@"Asking for a cancellation...");
+   [_c cancelSearch];
+}
+@end
+
 @implementation ORCompleteParallelRunnableI {
-    id<ORRunnable> _r0;
-    id<ORRunnable> _r1;
-    id<ORSolutionPool> _solutionPool;
-    NSThread* _t0;
-    NSThread* _t1;
-    ORDouble _bestBound;
-    id<ORRunnable> _solvedRunnable;
+   CPRComponent* _r[2];
+   id<ORSolutionPool> _solutionPool;
+   ORDouble _bestBound;
+   id<ORRunnable> _solvedRunnable;
+   id<ORVoidInformer> _stop;
 }
 
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1 {
-    if((self = [super initWithModel: [r0 model]]) != nil) {
-        _r0 = r0;
-        _r1 = r1;
-        _t0 = nil;
-        _t1 = nil;
-        _solutionPool = [[ORSolutionPool alloc] init];
-        _bestBound = -DBL_MAX;
-        _solvedRunnable = nil;
-    }
-    return self;
+   if((self = [super initWithModel: [r0 model]]) != nil) {
+      _r[0] = [[CPRComponent alloc] init:r0];
+      _r[1] = [[CPRComponent alloc] init:r1];
+      _solutionPool = [[ORSolutionPool alloc] init];
+      _bestBound = -DBL_MAX;
+      _solvedRunnable = nil;
+      _stop = nil;
+   }
+   return self;
 }
 
--(void) dealloc {
-    [_t0 cancel];
-    [_t1 cancel];
-    [_r0 release];
-    [_r1 release];
-    [_t0 release];
-    [_t1 release];
-    [_solutionPool release];
-    [super dealloc];
+-(void) dealloc
+{
+   [_r[0] release];
+   [_r[1] release];
+   [_solutionPool release];
+   [super dealloc];
 }
 
 -(id<ORModel>) model {
-    return [_r0 model];
+   return [_r[0].runnable model];
 }
 
 -(ORDouble) bestBound {
-    return _bestBound;
+   return _bestBound;
 }
 
 -(void) setTimeLimit:(ORFloat)secs {
-    [_r0 setTimeLimit: secs];
-    [_r1 setTimeLimit: secs];
+   [_r[0].runnable setTimeLimit: secs];
+   [_r[1].runnable setTimeLimit: secs];
 }
 
 -(id<ORSolution>) bestSolution {
-    if(_solvedRunnable) return [_solvedRunnable bestSolution];
-    return nil;
+   if(_solvedRunnable) return [_solvedRunnable bestSolution];
+   return nil;
 }
 
--(id<ORRunnable>) solvedRunnable {
-    return  _solvedRunnable;
+-(id<ORRunnable>) solvedRunnable
+{
+   return  _solvedRunnable;
 }
 
--(void) run {
-    
-//    [_r0 onExit: ^() { [(CPRunnableI*)_r0 restore: [_solutionPool best]]; }];
-//    [_r1 onExit: ^() { [(CPRunnableI*)_r1 restore: [_solutionPool best]]; }];
-   
-    _t0 = [[NSThread alloc] initWithTarget: _r0 selector: @selector(start) object: nil];
-    _t1 = [[NSThread alloc] initWithTarget: _r1 selector: @selector(start) object: nil];
-    [_t1 start];
-    //[NSThread sleepForTimeInterval:0.5]; //so MIP doesn't receive bounds before it starts
-    [_t0 start];
-    
-    // Wait for the runnables to finish
-    while([_t0 isExecuting] && [_t1 isExecuting]) {
-        [NSThread sleepForTimeInterval: 0.25];
-        //NSLog(@"r2 bound: %@", [[[_r1 model] objective] description]);
-        //[ORConcurrency pumpEvents];
-    }
-    [self cancelSearch];
-    while([_t0 isExecuting] || [_t1 isExecuting]);
-    id<ORSolution> s0 = [_r0 bestSolution];
-    id<ORSolution> s1 = [_r1 bestSolution];
-    if(s0 && s1) {        
-        _solvedRunnable = ([[s0 objectiveValue] doubleValue] <= [[s1 objectiveValue] doubleValue]) ? _r0 : _r1;
-        _bestBound = MIN([[s0 objectiveValue] doubleValue], [[s1 objectiveValue] doubleValue]);
-    }
-    else if(s0) { _bestBound = [[s0 objectiveValue] doubleValue]; _solvedRunnable = _r0; }
-    else if(s1) { _bestBound = [[s1 objectiveValue] doubleValue]; _solvedRunnable = _r1; }
+-(void) run
+{  
+   _stop = [ORConcurrency voidInformer];
+   [NSThread detachNewThreadSelector:@selector(start:) toTarget:_r[0] withObject:_stop];
+   [NSThread detachNewThreadSelector:@selector(start:) toTarget:_r[1] withObject:_stop];
+   [_r[0] join];
+   [_r[1] join];
+   @synchronized(self) {
+      [_stop release];
+      _stop = nil;
+   }
+
+   id<ORSolution> s0 = [_r[0].runnable bestSolution];
+   id<ORSolution> s1 = [_r[1].runnable bestSolution];
+   if(s0 && s1) {
+      id<ORObjectiveValue> ov0 = s0.objectiveValue;
+      id<ORObjectiveValue> ov1 = s1.objectiveValue;
+      NSComparisonResult cr = [ov0 compare:ov1];
+      _solvedRunnable = cr == NSOrderedAscending ? _r[0].runnable : _r[1].runnable;
+      _bestBound = _bestBound = [ov0 best:ov1].doubleValue;
+   }
+   else if(s0) { _bestBound = [[s0 objectiveValue] doubleValue]; _solvedRunnable = _r[0].runnable; }
+   else if(s1) { _bestBound = [[s1 objectiveValue] doubleValue]; _solvedRunnable = _r[1].runnable; }
 }
 
--(id<ORRunnable>) primaryRunnable { return _r0; }
--(id<ORRunnable>) secondaryRunnable { return _r1; }
+-(id<ORRunnable>) primaryRunnable   { return _r[0].runnable; }
+-(id<ORRunnable>) secondaryRunnable { return _r[1].runnable; }
 
--(void) receiveSolution:(id<ORSolution>)sol {
-    NSLog(@"Sol: %@", [sol description]);
-    [_solutionPool addSolution: sol];
+-(void) receiveSolution:(id<ORSolution>)sol
+{
+   NSLog(@"Sol: %@", [sol description]);
+   [_solutionPool addSolution: sol];
 }
 
--(void)cancelSearch {
-    [_r0 cancelSearch];
-    [_r1 cancelSearch];
+-(void)cancelSearch
+{
+   @synchronized(self) {
+      if (_stop)
+         [_stop notify];
+   }
 }
-
 @end
 

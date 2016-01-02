@@ -80,7 +80,9 @@
 {
     _exitBlock = [c copy];
 }
-
+-(void)cancelSearch
+{
+}
 @end
 
 

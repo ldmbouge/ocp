@@ -90,7 +90,7 @@ typedef ORBool(*REType)(id,SEL,...);
     _reIMP = malloc(sizeof(IMP)*_tasks.range.size);
     _reIMP -= _tasks.range.low;
    for(ORInt i = tasks.range.low;i <= tasks.range.up;i++)
-      _reIMP[i] = (REType)[_tasks[i] methodForSelector:@selector(readEst:lst:ect:lct:minDuration:maxDuration:present:absent:forResource:)];
+      _reIMP[i] = (REType)[(NSObject*)(_tasks[i]) methodForSelector:@selector(readEst:lst:ect:lct:minDuration:maxDuration:present:absent:forResource:)];
    
     _resTasks = NULL;
     
@@ -2297,7 +2297,7 @@ static void readData(CPTaskDisjunctive * disj)
     disj->_begin = MAXINT;
     disj->_end   = MININT;
    id<ORIdArray> ia = (id)disj->_tasks;
-   id<CPTaskVar>* tb = (id)[ia base];
+   id<CPTaskVar>* tb = (id*)[(id)ia base];
     // Retrieve all necessary data from the tasks
     for (ORInt tt = boundSize; tt < disj->_size; tt++) {
         const ORInt t  = disj->_bound[tt];

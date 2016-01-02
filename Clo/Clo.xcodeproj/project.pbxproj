@@ -1510,7 +1510,6 @@
 		5BE12190173C75C0000C9AA9 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BE12191173C75C0000C9AA9 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BE22BB81C342C1600A6C709 /* CPFDS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE22BB71C342C1600A6C709 /* CPFDS.m */; };
-		5BE22BBA1C342C2C00A6C709 /* ORSchedLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE22BB91C342C2C00A6C709 /* ORSchedLinearize.m */; };
 		5BE2D73F1BFA386D0054B848 /* ORSemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* ORSemBDSController.m */; };
 		5BE2D7401BFA790D0054B848 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */; };
 		5BE2D7421BFB9DDE0054B848 /* ft05.jss in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE2D7411BFB9DCD0054B848 /* ft05.jss */; };
@@ -42198,7 +42197,6 @@
 				5B68119E161F99C700F4480F /* ORProgramFactory.m in Sources */,
 				5BB1C27B1B3A01E6008A9E51 /* ORSolution.m in Sources */,
 				5B6811A0161F99C700F4480F /* CPSolver.m in Sources */,
-				5BE22BBA1C342C2C00A6C709 /* ORSchedLinearize.m in Sources */,
 				5BA6F96918464836002434E3 /* CPDeg.m in Sources */,
 				5BF333331B3B0CC00030F127 /* ORProgram.m in Sources */,
 				5B84692B163856BF00F4D749 /* CPDDeg.m in Sources */,
@@ -52816,6 +52814,7 @@
 				5B147AF61C0CE8AE00E1E197 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B19098B16DAACA7006D1D24 /* Build configuration list for PBXNativeTarget "eq20" */ = {
 			isa = XCConfigurationList;

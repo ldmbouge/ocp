@@ -113,7 +113,7 @@
 
 -(void) receiveSolution:(id<ORSolution,ORSchedulerSolution>)sol
 {
-    static solCount = 0;
+    static int solCount = 0;
     NSArray* modelVars = [[sol model] variables];
     NSMutableArray* vars = [[NSMutableArray alloc] init];
     NSMutableArray* vals = [[NSMutableArray alloc] init];

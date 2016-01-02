@@ -84,7 +84,7 @@
 -(void) receiveUpperBound: (ORInt)bound
 {
     static int bndCount = 0;
-    NSLog(@"CPRunnable(%p): recieved bound(%i): %i", self, ++bndCount, bound);
+    NSLog(@"CPRunnable(%p): received bound(%i): %i", self, ++bndCount, bound);
     //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
 }
@@ -123,8 +123,8 @@
             //            [_model restore:best];
             //[best release];
         //}
-        id<ORSolution> best = [[_program solutionPool] best];
-        NSLog(@"best: %@", best);
+//        id<ORSolution> best = [[_program solutionPool] best];
+//        NSLog(@"best: %@", best);
     }];
     
     if(_search) {
