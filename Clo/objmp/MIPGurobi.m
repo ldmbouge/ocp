@@ -384,7 +384,14 @@ FILE* outFile = 0;
 ORLong timeStart = -1;
 
 int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata) {
-   if(outFile == 0) outFile = fopen("/Users/dan/Desktop/mipout.txt", "w+");
+   if(outFile == 0) {
+      const char* home = getenv("HOME");
+      const char* file = "/Desktop/mipout.txt";
+      char buf[strlen(home)+strlen(file)+2];
+      strcpy(buf,home);
+      strcat(buf,file);
+      outFile = fopen(buf, "w+");
+   }
    if(timeStart == -1) timeStart = [ORRuntimeMonitor wctime];
    
     MIPGurobiSolver* solver = (MIPGurobiSolver*)usrdata;

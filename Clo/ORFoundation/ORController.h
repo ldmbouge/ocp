@@ -48,6 +48,7 @@
 -(void)       fail;
 -(void)       fail: (BOOL) pruned;
 -(void)       succeeds;
+-(void)       abort;
 -(void)       trust;
 
 -(void)       startTry;
@@ -64,6 +65,7 @@
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
 -(ORBool)     isFinitelyFailed;
+-(ORBool)     isAborted;
 -(id)         copy;
 @end
 
@@ -80,6 +82,7 @@
 -(void)       fail;
 -(void)       fail: (ORBool) pruned;
 -(void)       succeeds;
+-(void)       abort;
 -(void)       trust;
 
 -(void)       startTry;
@@ -95,7 +98,8 @@
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
--(ORBool)       isFinitelyFailed;
+-(ORBool)     isFinitelyFailed;
+-(ORBool)     isAborted;
 @end
 
 @interface ORNestedController : ORDefaultController
@@ -103,8 +107,10 @@
 -(void) setParent:(id<ORSearchController>) controller;
 -(void) fail;
 -(void) succeeds;
+-(void) abort;
 -(void) finitelyFailed;
 -(ORBool) isFinitelyFailed;
+-(ORBool) isAborted;
 @end
 
 @interface ORDFSController : ORDefaultController <NSCopying,ORSearchController>

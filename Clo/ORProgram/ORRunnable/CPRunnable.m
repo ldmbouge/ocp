@@ -159,8 +159,9 @@
     return [[[[_program solutionPool] best] objectiveValue] doubleValue];
 }
 
--(void)cancelSearch {
-    [[[_program explorer] controller] succeeds];
+-(void)cancelSearch
+{
+    [[[_program explorer] controller] abort];
 }
 
 //-(void) restore: (id<ORSolution>)s {

@@ -211,7 +211,7 @@ int main(int argc, const char * argv[]) {
                             [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
                         }];
                         [cp label: makespan];
-                        NSLog(@"\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                        NSLog(@"\nLNSLNSLNSLNSLNS ******************* ----> makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
                         ORLong timeEnd = [ORRuntimeMonitor wctime];
                         NSLog(@"Time: %lld:",timeEnd - timeStart);
                     }];
@@ -417,7 +417,10 @@ int main(int argc, const char * argv[]) {
                 cp = (id)[ORFactory createCPParProgram:model nb: numThreads annotation: notes with:[ORSemDFSController proto]];
             else cp = (id)[ORFactory createCPProgram: model];
             
-            FILE* outFile = fopen("/Users/dan/Desktop/cpout.txt", "w+");
+           *fNameBuf = 0;
+           strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
+
+           FILE* outFile = fopen(fNameBuf, "w+");
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [cp solve: ^{
                 id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range: Machines];

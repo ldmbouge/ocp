@@ -128,10 +128,19 @@
 {
    [_controller succeeds]; // failAll is meant to be handled by the first controller in the chain. (The actual policy)
 }
+-(void) abort
+{
+   [_controller abort];
+}
 -(ORBool) isFinitelyFailed
 {
    return [_controller isFinitelyFailed];
 }
+-(ORBool) isAborted
+{
+   return [_controller isAborted];
+}
+
 -(void) startTry
 {
    [_controller startTry];
@@ -186,6 +195,7 @@
 {
    id<ORSearchController> _parent;        // This is not a mistake. Delegation chain for NESTED controllers (fail).
    BOOL                   _isFF;
+   BOOL                   _isAborted;
 }
 -(id)init:(id<ORSearchController>)chain parent:(id<ORSearchController>)par
 {
@@ -193,6 +203,7 @@
    [self setController:chain];
    _parent = [par retain];
    _isFF = NO;
+   _isAborted = NO;
    return self;
 }
 -(void)dealloc
@@ -232,6 +243,12 @@
    [_controller cleanup];
    [_parent fail];
 }
+-(void) abort
+{
+   _isAborted = YES;
+   [_controller cleanup];
+   [_parent fail];
+}
 -(void) finitelyFailed
 {
    _isFF = YES;
@@ -241,6 +258,10 @@
 -(ORBool) isFinitelyFailed
 {
    return _isFF;
+}
+-(ORBool) isAborted
+{
+   return _isAborted;
 }
 @end
 

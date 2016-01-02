@@ -290,11 +290,14 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    //   id<ORMutableInteger> nbRestarts = [ORFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
-   if (isDone)
-      if (isDone()) {
-         [enter letgo];
-         [_controller fail];
-      }
+   if (isDone && isDone()) {
+      [enter letgo];
+      [_controller fail];
+   }
+   if ([_controller isAborted]) {
+      [enter letgo];
+      [_controller fail];
+   }
    /*
     [nbRestarts incr];
     if ([nbRestarts value] == 2000) {
