@@ -30,7 +30,7 @@
 #include <string.h>
 #include "/usr/local/include/gmp.h"
 
-//#include "OBJCPGateway.h"
+#include "OBJCPGateway.h"
 
 
 static void smtlib2_objcp_parser_set_logic(smtlib2_parser_interface *p,

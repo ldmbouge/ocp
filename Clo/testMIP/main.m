@@ -1,10 +1,13 @@
-//
-//  main.m
-//  testMIP
-//
-//  Created by Pascal Van Hentenryck on 2/18/13.
-//
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import <Foundation/Foundation.h>
 #import <ORProgram/ORProgram.h>
@@ -33,8 +36,8 @@ static int nbRows = 7;
 static int nbColumns = 12;
 
 int b[7] = { 18209, 7692, 1333, 924, 26638, 61188, 13360 };
-float c[12] = { 96, 76, 56, 11, 86, 10, 66, 86, 83, 12, 9, 81 };
-float coef[7][12] = {
+double c[12] = { 96, 76, 56, 11, 86, 10, 66, 86, 83, 12, 9, 81 };
+double coef[7][12] = {
    { 19,   1,  10,  1,   1,  14, 152, 11,  1,   1, 1, 1},
    {  0,   4,  53,  0,   0,  80,   0,  4,  5,   0, 0, 0},
    {  4, 660,   3,  0,  30,   0,   3,  0,  4,  90, 0, 0},

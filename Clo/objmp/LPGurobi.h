@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,19 +13,10 @@
 #import <Foundation/NSObject.h>
 #import <ORFoundation/ORFoundation.h>
 #import <objmp/LPType.h>
-#import "gurobi_c.h"
-
 
 @interface LPGurobiSolver: NSObject
-{
-@private
-   struct _GRBenv*                _env;
-   struct _GRBmodel*              _model;
-   OROutcome                      _status;
-   LPObjectiveType                _objectiveType;
-}
 
--(LPGurobiSolver*) initLPGurobiSolver;
+-(LPGurobiSolver*) init;
 -(void) dealloc;
 
 -(void) addVariable: (LPVariableI*) var;
@@ -38,22 +29,22 @@
 -(OROutcome) solve;
 
 -(OROutcome) status;
--(ORFloat) value: (LPVariableI*) var;
--(ORFloat) lowerBound: (LPVariableI*) var;
--(ORFloat) upperBound: (LPVariableI*) var;
--(ORFloat) objectiveValue;
--(ORFloat) reducedCost: (LPVariableI*) var;
--(ORFloat) dual: (LPConstraintI*) cstr;
+-(ORDouble) value: (LPVariableI*) var;
+-(ORDouble) lowerBound: (LPVariableI*) var;
+-(ORDouble) upperBound: (LPVariableI*) var;
+-(ORDouble) objectiveValue;
+-(ORDouble) reducedCost: (LPVariableI*) var;
+-(ORDouble) dual: (LPConstraintI*) cstr;
 
--(void) setBounds: (LPVariableI*) var low: (ORFloat) low up: (ORFloat) up;
+-(void) setBounds: (LPVariableI*) var low: (ORDouble) low up: (ORDouble) up;
 -(void) setUnboundUpperBound: (LPVariableI*) var;
 -(void) setUnboundLowerBound: (LPVariableI*) var;
 
--(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb;
--(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub;
+-(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb;
+-(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORFloat) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(ORStatus) postConstraint: (LPConstraintI*) cstr;

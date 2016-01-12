@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,8 +51,8 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram:model];
          __block ORInt nbSol = 0;
          [cp solveAll:^{
-            [cp forall:[ad range] suchThat:^bool(ORInt i) { return ![cp bound:ad[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:ad[i]];} do:^(ORInt i) {
-               [cp tryall:Digit suchThat:^bool(ORInt d) { return [cp member:d in:ad[i]];} in:^(ORInt d) {
+            [cp forall:[ad range] suchThat:^ORBool(ORInt i) { return ![cp bound:ad[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:ad[i]];} do:^(ORInt i) {
+               [cp tryall:Digit suchThat:^ORBool(ORInt d) { return [cp member:d in:ad[i]];} in:^(ORInt d) {
                   [cp label:ad[i] with:d];
                } onFailure:^(ORInt d) {
                   [cp diff:ad[i] with:d];
@@ -71,8 +71,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return r;
       }];
    }

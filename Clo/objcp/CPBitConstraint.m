@@ -1,8 +1,8 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -11,8 +11,9 @@
 
 #import "CPBitConstraint.h"
 #import "CPUKernel/CPEngineI.h"
-#import "CPUKernel/CPLearningEngineI.h"
+//#import <CPUKernel/CPLearningEngineI.h>
 #import "CPBitMacros.h"
+#import "CPBitVarI.h"
 
 #define ISTRUE(up, low) ((up) & (low))
 #define ISFALSE(up, low) ((~up) & (~low))
@@ -220,7 +221,8 @@ void analyzeConflict(CPLearningEngineI* engine, CPBitAssignment* conflict, CPCor
       }
       final->antecedents = finalVars;
       final->numAntecedents = numConflictVars;
-      [(CPLearningEngineI*)engine addConstraint:final];
+      CPCoreConstraint* c = [CPFactory bitConflict:final];
+      [(CPLearningEngineI*)engine addConstraint:c];
    }
 //   else
 //      NSLog(@"No choices found in tracing back antecedents");

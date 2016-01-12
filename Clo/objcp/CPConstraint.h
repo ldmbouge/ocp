@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,6 +27,8 @@
 
 +(id<CPIntVar>) reifyView: (id<CPIntVar>) x eqi:(ORInt)c;
 
++(id<CPConstraint>) imply: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i;
+
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y annotation:(ORCLevel)c;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (id<CPIntVar>) y annotation:(ORCLevel)c;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leq:(id<CPIntVar>)y annotation:(ORCLevel)c;
@@ -50,6 +52,8 @@
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
 
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
++(id<CPConstraint>) path: (id<CPIntVarArray>) x;
++(id<CPConstraint>) subCircuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize;
 +(id<CPConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<CPIntVar>)c;
@@ -85,14 +89,18 @@
 +(id<CPConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
 @end
 
-@interface CPFactory (ORFloat)
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
-+(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
-+(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORCLevel)c;
-+(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c;
-+(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORCLevel)n;
-+(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x;
-+(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
+@interface CPFactory (ORReal)
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c;
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c;
++(id<CPConstraint>) realSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c;
++(id<CPConstraint>) realEqualc: (id<CPIntVar>) x to:(ORDouble) c;
++(id<CPConstraint>) realElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n;
++(id<CPConstraint>) realMinimize: (id<CPRealVar>) x;
++(id<CPConstraint>) realMaximize: (id<CPRealVar>) x;
+@end
+
+@interface CPFactory (ORIntSet)
++(id<CPConstraint>) inter:(id<CPIntSetVar>)x with:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z;
 @end
 
 @interface CPSearchFactory : NSObject

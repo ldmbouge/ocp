@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,9 +23,8 @@
 -(ORUInt) getId;
 -(ORBool) bound;
 -(CPBitArrayDom*) domain;
--(uint64)min;
--(uint64)max;
--(ORBounds) bounds;
+-(ORULong)min;
+-(ORULong)max;
 -(ORInt)  domsize;
 -(ORULong)  numPatterns;
 -(ORUInt) msFreeBit;
@@ -57,9 +56,13 @@
 @class CPCoreConstraint;
 
 @protocol CPBitVarSubscriber <NSObject>
--(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ConstraintCallback) todo;
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo;
--(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
+-(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ORClosure) todo;
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+//=======
+//-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+//-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
+//>>>>>>> master
 @end
 
 @class CPBitVarI;

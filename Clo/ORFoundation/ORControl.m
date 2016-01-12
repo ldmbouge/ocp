@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORTracker.h"
-#import "ORFactory.h"
-#import "ORControl.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORControl.h>
 #import <math.h>
 #if defined(__linux__)
 #import <values.h>
@@ -96,7 +96,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
    bool done = false;
    while (!done) {
       for(int k = 0; k < nbo; k++)
-         best[k] = MAXFLOAT;
+         best[k] = MAXDBL;
       ORInt chosen = -1;
       ORInt i = 0;
       while (i < nb) {
@@ -143,19 +143,22 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 }
 +(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-   ORInt sz = [S size];
-   ORInt* value = alloca(sizeof(ORInt)*sz);
-   bool* used = alloca(sizeof(ORBool)*sz);
+   ORInt sz = S.size;
+   ORInt value[sz];
+   ORBool used[sz];
    memset(used,0,sizeof(ORBool)*sz);
-   __block ORInt nb = 0;
-   [S enumerateWithBlock:^(ORInt k) {
-      value[nb] = k;
+   ORInt nb = 0;
+   id<IntEnumerator> it = S.enumerator;
+   while (it.more) {
+      value[nb] = it.next;
       if (!suchThat || suchThat(value[nb]))
          nb++;
-   }];
-   bool done = false;
+   }
+   [it release];
+   assert(nb <= sz);
+   ORBool done = NO;
    while (!done) {
-      float best = MAXFLOAT;
+      ORDouble best = MAXDBL;
       ORInt chosen = -1;
       ORInt i = 0;
       while (i < nb) {
@@ -170,6 +173,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
       }
       done = (chosen == -1);
       if (!done) {
+ 	 assert(chosen >=0 && chosen <= sz);
          used[chosen] = true;
          body(value[chosen]);
       }

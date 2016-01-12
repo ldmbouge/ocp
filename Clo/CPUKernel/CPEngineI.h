@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,8 +16,8 @@
 
 @class ORTrailI;
 @class ORTrailIStack;
-@class CPAC3Queue;
-@class CPAC5Queue;
+@class CPClosureQueue;
+@class CPValueClosureQueue;
 
 
 enum CPEngineState {
@@ -26,7 +26,7 @@ enum CPEngineState {
    CPClosed  = 2
 };
 
-@interface CPEngineI : NSObject <CPEngine,NSCoding> {
+@interface CPEngineI : NSObject <CPEngine> {
    enum CPEngineState       _state;
    id<ORTrail>              _trail;
    id<ORMemoryTrail>        _mt;
@@ -34,29 +34,31 @@ enum CPEngineState {
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
+   ORUInt                   _nbCstrs;
    id<ORSearchObjectiveFunction> _objective;
-   CPAC3Queue*              _ac3[NBPRIORITIES];
-   CPAC5Queue*              _ac5;
-   ORStatus                _status;
-   ORInt                _propagating;
-   ORUInt               _nbpropag;
-   id<CPConstraint>        _last;
+   CPClosureQueue*          _closureQueue[NBPRIORITIES];
+   CPValueClosureQueue*     _valueClosureQueue;
+   ORInt                    _propagating;
+   ORUInt                   _nbpropag;
+   id<CPConstraint>         _last;
    UBType                   _propagIMP;
    @package
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
    ORFailException*         _fex;
+   id<ORIntRange>           _br;
 }
 -(CPEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
+-(id<ORTracker>)tracker;
 -(id)        trackVariable:(id)var;
 -(id)        trackMutable:(id)obj;
 -(id)        trackImmutable:(id)obj;
 -(id)        trail;
--(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
--(void)      scheduleAC3:(id<CPEventNode>*)mlist;
--(void)      scheduleAC5:(id<CPAC5Event>)evt;
+-(void)      scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
+-(void)      scheduleClosures:(id<CPClosureList>*)mlist;
+-(void)      scheduleValueClosure:(id<CPValueEvent>)evt;
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
 -(id<ORSearchObjectiveFunction>)objective;
@@ -65,23 +67,25 @@ enum CPEngineState {
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  enforce:(ORClosure) cl;
 -(ORStatus)  atomic:(ORClosure) cl;
+-(ORStatus)  enforceObjective;
+-(void)      tryEnforce:(ORClosure) cl;
+-(void)      tryAtomic:(ORClosure) cl;
+-(void)      tryEnforceObjective;
 -(NSMutableArray*) variables;
 -(NSMutableArray*) constraints;
 -(NSMutableArray*) objects;
--(ORStatus)  close;
--(ORStatus)  status;
--(ORBool)      closed;
+-(ORStatus)   close;
+-(ORBool)     closed;
+-(void)       open;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
+-(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
--(ORStatus)enforceObjective;
-//-(id<ORIntVarArray>)intVars;
+
 -(id<ORBasicModel>)model;
 -(void)incNbPropagation:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
+-(id<ORIntRange>)boolRange;
 @end
-
-ORStatus propagateFDM(CPEngineI* fdm);
-void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist);

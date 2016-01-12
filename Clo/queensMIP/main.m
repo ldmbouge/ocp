@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,11 +10,7 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORFoundation/ORFoundation.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 
 int main_alldiff(int argc, const char * argv[])
 {
@@ -44,7 +40,7 @@ int main_alldiff(int argc, const char * argv[])
           
       [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+          [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
           @synchronized(cp) {
              nbSol++;
           }
@@ -55,9 +51,6 @@ int main_alldiff(int argc, const char * argv[])
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [cp release];
-      [ORFactory shutdown];
-      
    }
    return 0;
 }
@@ -88,14 +81,15 @@ int main_neq(int argc, const char * argv[])
       
       id<ORVarLitterals> l = [ORFactory varLitterals: mdl var: x[1]];
       NSLog(@"literals: %@",l);
-      id<CPProgram> cp = [ORFactory createCPLinearizedProgram: mdl annotation:nil];
+      id<ORAnnotation> notes = [ORFactory annotation];
+      id<CPProgram> cp = [ORFactory createCPLinearizedProgram: mdl annotation:notes];
       
       ORLong startTime = [ORRuntimeMonitor wctime];
       __block ORInt nbSol = 0;
       //id* gamma = [cp gamma];
       [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+          [cp labelArray:x orderedBy:  ^ORDouble(ORInt i) { return [cp domsize:x[i]];} ];
 /*          [cp forall:x.range orderedBy:^ORInt(ORInt i) {
              return [cp domsize:x[i]];
           } do:^(ORInt i) {
@@ -116,7 +110,7 @@ int main_neq(int argc, const char * argv[])
                 NSLog(@"x6 = %@",gamma[x[6].getId]);
              }
           }];*/
-          //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+          //[cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
           id<ORIntArray> sa = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt k) {
              return [cp intValue:x[k]];
           }];
@@ -133,9 +127,6 @@ int main_neq(int argc, const char * argv[])
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      [cp release];
-      [ORFactory shutdown];
-      
    }
    return 0;
 }

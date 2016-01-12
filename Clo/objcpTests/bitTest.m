@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -72,8 +72,8 @@
       unsigned long long rank = [bitDomain getRank:bits];
       unsigned int* pat = [bitDomain atRank:rank];
       NSLog(@"Value [%llu] is %x%x : %x%x",rank,bits[0],bits[1],pat[0],pat[1]);
-//      XCTAssertEquals(bits[0], pat[0],@"bit pattern (high) must be equal");
-//      XCTAssertEquals(bits[1], pat[1],@"bit pattern (low) must be equal");
+      XCTAssertEqual(bits[0], pat[0],@"bit pattern (high) must be equal");
+      XCTAssertEqual(bits[1], pat[1],@"bit pattern (low) must be equal");
       free(pat);
    }];
 }

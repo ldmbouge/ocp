@@ -1,18 +1,20 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
  ***********************************************************************/
+#import <ORFoundation/ORTrail.h>
 #import "CPBitVar.h"
 #import "CPBitVarI.h"
 #import "CPEngineI.h"
 #import "CPTrigger.h"
 #import "CPBitArrayDom.h"
+
 
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
@@ -41,40 +43,40 @@ static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t,ORUInt low,ORUInt 
 
 static void deallocNetwork(CPBitEventNetwork* net)
 {
-   freeList(net->_bitFixedEvt[0]._val);
-   freeList(net->_bitFixedAtIEvt[0]._val);
-   freeList(net->_boundsEvt[0]._val);
-   freeList(net->_bindEvt[0]._val);
-   freeList(net->_domEvt[0]._val);
-   freeList(net->_minEvt[0]._val);
-   freeList(net->_maxEvt[0]._val);
-   freeList(net->_ac5[0]._val);
+   freeList(net->_bitFixedEvt[0]);
+   freeList(net->_bitFixedAtIEvt[0]);
+   freeList(net->_boundsEvt[0]);
+   freeList(net->_bindEvt[0]);
+   freeList(net->_domEvt[0]);
+   freeList(net->_minEvt[0]);
+   freeList(net->_maxEvt[0]);
+   freeList(net->_ac5[0]);
 
    for (int i=0; i<net->_bitLength; i++)
-      freeList(net->_bitFixedAtEvt[i][0]._val);
+      freeList(net->_bitFixedAtEvt[i][0]);
    free(net->_bitFixedAtEvt);
 }
 
 static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
-   collectList(net->_bitFixedEvt[0]._val,rv);
-   collectList(net->_bitFixedAtIEvt[0]._val,rv);
-   collectList(net->_boundsEvt[0]._val,rv);
-   collectList(net->_bindEvt[0]._val,rv);
-   collectList(net->_domEvt[0]._val,rv);
-   collectList(net->_minEvt[0]._val,rv);
-   collectList(net->_maxEvt[0]._val,rv);
-   collectList(net->_ac5[0]._val,rv);
+   collectList(net->_bitFixedEvt[0],rv);
+   collectList(net->_bitFixedAtIEvt[0],rv);
+   collectList(net->_boundsEvt[0],rv);
+   collectList(net->_bindEvt[0],rv);
+   collectList(net->_domEvt[0],rv);
+   collectList(net->_minEvt[0],rv);
+   collectList(net->_maxEvt[0],rv);
+   collectList(net->_ac5[0],rv);
    
    for (int i=0; i<net->_bitLength; i++) {
-      collectList(net->_bitFixedAtEvt[i][0]._val, rv);
+      collectList(net->_bitFixedAtEvt[i][0], rv);
    }
    return rv;
 }
 
 /*****************************************************************************************/
 
-@interface CPBitVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+@interface CPBitVarSnapshot : NSObject {
    ORUInt    _name;
    union {
       ORInt _value;
@@ -82,22 +84,19 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    }              _rep;
    BOOL         _asDom;
 }
--(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v;
+-(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v name: (ORInt) name;
 -(int)intValue;
 -(ORBool)boolValue;
 @end
 
-// TOFIX: GREG
+// [pvh: Can someone fix this implementation?
 @implementation CPBitVarSnapshot
--(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v
+-(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v name: (ORInt) name
 {
    self = [super init];
-   _name = [v getId];
-   _asDom = ![v bound];
-//   if (_asDom) {
-//      _rep._dom = [[v domain] copy];
-//   } else
-//      _rep._value = [v min];
+   _name = name;
+   _asDom = YES;
+   _rep._dom = [[v domain] copy];
    return self;
 }
 -(void)dealloc
@@ -106,7 +105,7 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
       [_rep._dom release];
    [super dealloc];
 }
--(int)intValue
+-(ORInt)intValue
 {
    return _asDom ? [_rep._dom min] : _rep._value;
 }
@@ -114,31 +113,9 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 {
    return _asDom ? [_rep._dom min] : _rep._value;
 }
--(ORFloat) floatValue
+-(ORDouble) doubleValue
 {
    return _asDom ? [_rep._dom min] : _rep._value;   
-}
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_asDom];
-   if (_asDom) {
-      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
-   } else {
-      [aCoder encodeObject:_rep._dom];
-   }
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_asDom];
-   if (_asDom)
-      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
-   else {
-      _rep._dom = [[aDecoder decodeObject] retain];
-   }
-   return self;
 }
 @end
 
@@ -187,6 +164,10 @@ return self;
     if (_triggers != nil)
         [_triggers release];    
     [super dealloc];
+}
+-(id) takeSnapshot: (ORInt) id
+{
+   return [[CPBitVarSnapshot alloc] initCPBitVarSnapshot: self name: id];
 }
 -(id<CPEngine>) engine
 {
@@ -245,17 +226,16 @@ return self;
 {
     return [_dom bound];
 }
-
 -(ORInt) bitLength
 {
    return [_dom getLength];
 }
--(uint64) min
+-(ORULong) min
 {
     return [_dom min];
 }
 
--(uint64) max 
+-(ORULong) max
 { 
     return [_dom max];
 }
@@ -348,7 +328,7 @@ return self;
 }
 -(CPCoreConstraint*) getImplicationForBit:(ORUInt)i
 {
-   return (CPCoreConstraint*)_implications[i]._val;
+   return (CPCoreConstraint*)_implications[i];
 }
 
 -(ORBool) isFree:(ORUInt)pos{
@@ -386,33 +366,33 @@ return self;
 {
    hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
 }
--(void) whenChangeDo:(CPCoreConstraint*) c
-{
-   hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
-}
--(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+//-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
+//{
+//   hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
+//}
+-(void)whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
    hookupEvent(_engine, _net._domEvt, todo, c, p);
 }
--(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
+-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, _net._boundsEvt, todo, c, p);
 }
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, _net._minEvt, todo, c, p);
 }
--(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
+-(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo
 {
    hookupEvent(_engine, _net._maxEvt, todo, c, p);
 }
 
--(void) whenBitFixed: (CPCoreConstraint*)c at:(ORUInt)p do: (ConstraintCallback) todo
+-(void) whenBitFixed: (CPCoreConstraint*)c at:(ORUInt)p do: (ORClosure) todo
 {
    hookupEvent(_engine, _net._bitFixedEvt, todo, c, p);
 }
 //-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(int)p withI:(int)i do:(ConstraintCallback) todo
--(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(ORUInt)p do:(ConstraintCallback) todo
+-(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(ORUInt)p do:(ORClosure) todo
 {
    hookupEvent(_engine, _net._bitFixedAtIEvt, todo, c, p);
 }
@@ -424,28 +404,38 @@ return self;
 -(void) createTriggers
 {
     if (_triggers == nil) {
-        uint64 low = [_dom min];
-        uint64 up = [_dom max];
+        ORULong low = [_dom min];
+        ORULong up = [_dom max];
         _triggers = [CPTriggerMap triggerMapFrom:(ORInt)low to:(ORInt)up dense:(up-low+1)<256];
     }
 }
 
 -(ORStatus) bindEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
+//<<<<<<< HEAD
    
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[8];
+//   id<CPEventNode> mList[8];
+//   ORUInt k = 0;
+//   mList[k] = _net._boundsEvt[0]._val;
+//   k += mList[k] != NULL;
+//   mList[k] = _net._minEvt[0]._val;
+//   k += mList[k] != NULL;
+//   mList[k] = _net._maxEvt[0]._val;
+//=======
+   id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt[0]._val;
+   mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._minEvt[0]._val;
+   mList[k] = _net._minEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._maxEvt[0]._val;
+   mList[k] = _net._maxEvt[0];
+//>>>>>>> master
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
+   [_engine scheduleClosures:mList];
     if (_triggers != nil)
         [_triggers bindEvt:_engine];
    return ORSuspend;
@@ -453,34 +443,53 @@ return self;
 
 -(ORStatus) changeMinEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
+//<<<<<<< HEAD
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[8];
+//   id<CPEventNode> mList[8];
+//   ORUInt k = 0;
+//   mList[k] = _net._boundsEvt[0]._val;
+//   k += mList[k] != NULL;
+//   mList[k] = _net._minEvt[0]._val;
+//=======
+   id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt[0]._val;
+   mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._minEvt[0]._val;
+   mList[k] = _net._minEvt[0];
+//>>>>>>> master
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
-    if (dsz==1 && _triggers != nil)
+//   [_engine scheduleClosures:mList];
+   scheduleClosures(_engine, mList);
+   
+   if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
    return ORSuspend;
 }
 -(ORStatus) changeMaxEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
+//<<<<<<< HEAD
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[8];
+//   id<CPEventNode> mList[8];
+//   ORUInt k = 0;
+//   mList[k] = _net._boundsEvt[0]._val;
+//   k += mList[k] != NULL;
+//   mList[k] = _net._maxEvt[0]._val;
+//=======
+   id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._boundsEvt[0]._val;
+   mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._maxEvt[0]._val;
+   mList[k] = _net._maxEvt[0];
+//>>>>>>> master
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
+//   [_engine scheduleClosures:mList];
+   scheduleClosures(_engine, mList);
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
    
@@ -494,13 +503,14 @@ return self;
 
 //   [_dom updateFreeBitCount];
     //Empty implementation
-   id<CPEventNode> mList[8];
+//<<<<<<< HEAD
+   id<CPClosureList> mList[5];
    ORUInt k = 0;
-   mList[k] = _net._bitFixedEvt[0]._val;
+   mList[k] = _net._bitFixedEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
-   
+//   [_engine scheduleClosures:mList];
+   scheduleClosures(_engine, mList);
    
    return ORSuspend;
 }
@@ -511,13 +521,13 @@ return self;
    if (s==ORFailure) return s;
    
    //Empty implementation
-   id<CPEventNode> mList[8];
+   id<CPClosureList> mList[8];
    ORUInt k = 0;
-   mList[k] = _net._bitFixedAtIEvt[0]._val;
+   mList[k] = _net._bitFixedAtIEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
-   
+//   [_engine scheduleAC3:mList];
+   scheduleClosures(_engine, mList);
    
    return ORSuspend;
 }
@@ -529,23 +539,35 @@ return self;
    
    //   [_dom updateFreeBitCount];
    //Empty implementation
-   id<CPEventNode> mList[8];
+   id<CPClosureList> mList[8];
    ORUInt k = 0;
-   mList[k] = _net._bitFixedAtEvt[idx][0]._val;
+   mList[k] = _net._bitFixedAtEvt[idx][0];
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_engine scheduleAC3:mList];
+//   [_engine scheduleAC3:mList];
+   scheduleClosures(_engine, mList);
    
    return ORSuspend;
 }
 
 
--(ORStatus) updateMin: (uint64) newMin
+//-(ORStatus) updateMin: (uint64) newMin
+////=======
+//   id<CPClosureList> mList[5];
+//   ORUInt k = 0;
+//   mList[k] = _net._bitFixedEvt;
+//   k += mList[k] != NULL;
+//   mList[k] = NULL;
+//   [_engine scheduleClosures:mList];
+//}
+
+-(ORStatus) updateMin: (ORULong) newMin
+//>>>>>>> master
 {
     return [_dom updateMin:newMin for:self];
 }
 
--(ORStatus) updateMax: (uint64) newMax
+-(ORStatus) updateMax: (ORULong) newMax
 {
     return [_dom updateMax:newMax for:self];
 }
@@ -576,7 +598,7 @@ return self;
       changedLow = oldLow[i]._val ^ newLow[i];
       for(int j=0;j<BITSPERWORD; j++){
          if (changedLow & 0x1) {
-            if([_engine isKindOfClass:[CPLearningEngineI class]])
+//            if([_engine isKindOfClass:[CPLearningEngineI class]])
               // assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
 //               _levels[i*BITSPERWORD+j] = [(CPLearningEngineI*)_engine getLevel];
 //            _implications[i*BITSPERWORD+j] = constraint;
@@ -599,11 +621,10 @@ return self;
       changedUp = oldUp[i]._val ^ newUp[i];
       for(int j=0;j<BITSPERWORD; j++){
          if (changedUp & 0x1) {
-            if([_engine isKindOfClass:[CPLearningEngineI class]])
+//            if([_engine isKindOfClass:[CPLearningEngineI class]])
                //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
             //_implications[i*BITSPERWORD+j] = constraint;
                assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-
          }
          changedUp >>= 1;
       }
@@ -657,7 +678,7 @@ return self;
    return [_dom getUp:currUp andLow:currLow];
 }
 
--(ORStatus) bindUInt64:(uint64)val
+-(ORStatus) bindUInt64:(ORULong)val
 {
     return [_dom bind:val for:self];
 }
@@ -935,6 +956,7 @@ return self;
    }
    return ORSuspend;
 }
+//<<<<<<< HEAD
 
 -(ORStatus) bitFixedEvt:(ORUInt)dsz at:(ORUInt)i sender:(CPBitArrayDom *)sender{
    NSLog(@"BitFixedEvt at:%d\n",i);
@@ -988,6 +1010,8 @@ return self;
    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
    return self;
 }
+//=======
+//>>>>>>> master
 @end
 
 

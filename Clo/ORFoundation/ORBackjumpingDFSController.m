@@ -60,7 +60,7 @@
    }
    _tab[_sz]   = k;
    _cpTab[_sz] = [_tracer captureCheckpoint];
-   [(CPLearningEngineI*)_engine setLevel:[_tracer level]];
+   [_engine setLevel:[_tracer level]];
    _sz++;
    return [_cpTab[_sz-1] nodeId];
 }
@@ -72,7 +72,7 @@
 {
    ORUInt faillevel = [_tracer level];
    ORUInt level = faillevel;
-   ORUInt jumplevel = [(CPLearningEngineI*)_engine getBackjumpLevel];
+//   ORUInt jumplevel = [_engine getBackjumpLevel];
 
 //   if (jumplevel >= level) {
 //      //push new constraints to constraint store
@@ -112,11 +112,11 @@
 //         if (level > jumplevel) {
 //            continue;
 //         }
-         [(CPLearningEngineI*)_engine setLevel:level];
-         status = [(CPLearningEngineI*)_engine restoreLostConstraints:level];
-         //[_engine propagate];
+         [_engine setLevel:level];
+//         status = [_engine restoreLostConstraints:level];
+//         [_engine propagate];
          //NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
-         if (k &&  status != ORFailure) {
+         if ((k) &&  status != ORFailure) {
 //            NSLog(@"Restarting search at level %d",level);
 //            if ((level < (faillevel - 1)))
 //               [k callInvisible];

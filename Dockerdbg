@@ -1,0 +1,4 @@
+FROM debug
+RUN adduser --disabled-password --gecos '' ldm -u 1000 && adduser ldm sudo
+USER ldm
+WORKDIR /home/ldm

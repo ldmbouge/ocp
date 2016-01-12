@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,9 +59,9 @@ int main(int argc, const char * argv[])
             //[cp labelArrayFF:x];
             //[cp labelArrayFF:l];
             
-            [cp forall:Courses suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}
+            [cp forall:Courses suchThat:^ORBool(ORInt i) { return ![cp bound:x[i]];}
              orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];}
-                   and:^ORInt(ORInt i) { return - [credits at:i];}
+                  then:^ORInt(ORInt i) { return - [credits at:i];}
                     do:^(ORInt i) {
                        id<ORIntArray> cc = [ORFactory intArray:cp range:Periods with:^ORInt(ORInt p) {
                           ORInt ttl = 0;
@@ -71,8 +71,8 @@ int main(int argc, const char * argv[])
                           }
                           return ttl;
                        }];
-                       [cp tryall:Periods suchThat:^bool(ORInt p) { return [cp member:p in:x[i]];}
-                        orderedBy:^ORFloat(ORInt p) { return ([cp min:l[p]] << 16) - [cc at:p];}
+                       [cp tryall:Periods suchThat:^ORBool(ORInt p) { return [cp member:p in:x[i]];}
+                        orderedBy:^ORDouble(ORInt p) { return ([cp min:l[p]] << 16) - [cc at:p];}
                                in:^(ORInt p) {
                                   [cp label:x[i] with:p];
                                } onFailure:^(ORInt p) {
@@ -88,14 +88,12 @@ int main(int argc, const char * argv[])
                printf("%d%c",[cp intValue: l[i]],((i < l.up) ? ',' : ']'));
             printf("\tObjective: %d\n",[[[[cp engine] objective] value] intValue]);
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
+         id<ORSolution> sol = [[cp solutionPool] best];
          printf("x = [");
          for(ORInt i = x.low; i <= x.up; i++)
             printf("%d%c",[sol intValue: x[i]],((i < x.up) ? ',' : ']'));
          printf("\tObjective: %d\n",[[sol objectiveValue] intValue]);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,15 +18,6 @@
 #import <objcp/CPDom.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
-
-typedef struct  {
-   TRId         _boundsEvt[2];
-   TRId           _bindEvt[2];
-   TRId            _domEvt[2];
-   TRId            _minEvt[2];
-   TRId            _maxEvt[2];
-   TRId               _ac5[2];
-} CPEventNetwork;
 
 @class CPIntVar;
 @class CPLiterals;
@@ -75,7 +66,6 @@ typedef struct  {
 @interface CPIntVarI : CPIntVar {
 @public
    id<CPDom>                           _dom;
-   CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
 }
 -(CPIntVar*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
@@ -91,6 +81,8 @@ typedef struct  {
 +(CPIntVar*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
 +(CPIntVar*)    initCPNegateBoolView:(id<CPIntVar>)x;
 @end
+
+
 
 // ---------------------------------------------------------------------
 // Views
@@ -110,8 +102,6 @@ typedef struct  {
 -(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
 -(void)updateMin:(ORInt)newMin;
 -(void)updateMax:(ORInt)newMax;
 -(ORBounds)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
@@ -136,8 +126,6 @@ typedef struct  {
 -(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
 -(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
@@ -160,8 +148,6 @@ typedef struct  {
 -(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
 -(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
@@ -185,8 +171,6 @@ typedef struct  {
 -(ORInt) domsize;
 -(ORBool)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
 -(void) updateMin:(ORInt)newMin;
 -(void) updateMax:(ORInt)newMax;
 -(ORBounds) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
@@ -194,22 +178,55 @@ typedef struct  {
 -(void) remove:(ORInt)val;
 @end
 
+/*****************************************************************************************/
+/*                        MultiCast Notifier                                             */
+/*****************************************************************************************/
 
-static inline BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
-{
-   switch(((CPIntVar*)x)->_vc) {
-      case CPVCBare: {
-         CPIntVarI* y = (CPIntVarI*)x;
-         if (y->_net._ac5[0]._val != nil || y->_triggers != nil)
-            return YES;
-         else if (y->_recv && [y->_recv tracksLoseEvt])
-            return YES;
-         else
-            return NO;
-      }
-      default: return [x tracksLoseEvt];
-   }
+@interface CPMultiCast : NSObject {
+   id<CPIntVarNotifier> __strong* _tab;
+   BOOL                  _tracksLoseEvt;
+   ORInt                 _nb;
+   ORInt                 _mx;
+   UBType*               _loseValIMP;
+   UBType*               _minIMP;
+   UBType*               _maxIMP;
+   CPLiterals*           _literals;
 }
+-(id) initVarMC: (ORInt) n root: (CPIntVar*) root;
+-(void) dealloc;
+-(CPLiterals*) findLiterals:(CPIntVar*)ref;
+-(void) addVar: (id<CPIntVarNotifier>) v;
+-(ORBool) tracksLoseEvt;
+-(void) setTracksLoseEvt;
+-(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
+//-(void) bindEvt:(id<CPDom>)sender;
+//-(void) domEvt: (id<CPDom>)sender;
+//-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+//-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+@end
+
+void bindEvt(CPMultiCast* x,id<CPDom> sender);
+void domEvt(CPMultiCast* x,id<CPDom> sender);
+void changeMinEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender);
+void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender);
+
+
+@interface CPLiterals : NSObject<CPIntVarNotifier> 
+-(id) initCPLiterals:(CPIntVar*)ref;
+-(void) dealloc;
+-(NSMutableSet*) constraints;
+-(void) addPositive:(CPEQLitView*)x forValue:(ORInt)value;
+-(CPEQLitView*) positiveForValue:(ORInt)value;
+-(void) bindEvt:(id<CPDom>)sender;
+-(void) domEvt: (id<CPDom>)sender;
+-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+@end
+
+BOOL tracksLoseEvt(id<CPIntVarNotifier> x);
+
 
 static inline BOOL bound(CPIntVar* x)
 {
@@ -394,63 +411,6 @@ static inline void updateMaxDom(CPIntVar* x,ORInt newMax)
    }
 }
 
-/*****************************************************************************************/
-/*                        MultiCast Notifier                                             */
-/*****************************************************************************************/
-
-@interface CPMultiCast : NSObject {
-   id<CPIntVarNotifier>* _tab;
-   BOOL                  _tracksLoseEvt;
-   ORInt                 _nb;
-   ORInt                 _mx;
-   UBType*               _loseValIMP;
-   UBType*               _minIMP;
-   UBType*               _maxIMP;
-   CPLiterals*           _literals;
-}
--(id) initVarMC: (ORInt) n root: (CPIntVar*) root;
--(void) dealloc;
--(CPLiterals*) findLiterals:(CPIntVar*)ref;
--(void) addVar: (id<CPIntVarNotifier>) v;
--(ORBool) tracksLoseEvt;
--(void) setTracksLoseEvt;
--(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
-//-(void) bindEvt:(id<CPDom>)sender;
-//-(void) domEvt: (id<CPDom>)sender;
-//-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
-//-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
--(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
-@end
-
-void bindEvt(CPMultiCast* x,id<CPDom> sender);
-void domEvt(CPMultiCast* x,id<CPDom> sender);
-void changeMinEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender);
-void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender);
-
-
-@interface CPLiterals : NSObject<CPIntVarNotifier> {
-   CPIntVar*     _ref;
-   CPEQLitView** _pos;
-   ORInt          _nb;
-   ORInt         _ofs;
-   TRInt           _a;
-   TRInt           _b;
-   BOOL       _tracksLoseEvt;
-   IMP  _changeMaxEvtIMP;
-   IMP  _changeMinEvtIMP;
-   IMP  _domEvtIMP;
-}
--(id) initCPLiterals:(CPIntVar*)ref;
--(void) dealloc;
--(NSMutableSet*) constraints;
--(void) addPositive:(CPEQLitView*)x forValue:(ORInt)value;
--(CPEQLitView*) positiveForValue:(ORInt)value;
--(void) bindEvt:(id<CPDom>)sender;
--(void) domEvt: (id<CPDom>)sender;
--(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
--(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
--(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
-@end
 
 
 

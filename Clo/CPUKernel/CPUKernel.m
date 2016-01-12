@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,7 @@
 #import <CPUKernel/CPUKernel.h>
 #import "CPEngineI.h"
 #import "CPLearningEngineI.h"
-#import "CPAC3Event.h"
+#import <CPUKernel/CPClosureEvent.h>
 #import "CPGroup.h"
 
 @implementation CPFactory
@@ -30,7 +30,7 @@
    [engine trackMutable:g];
    return g;
 }
-+(id<CPGroup>)bergeGroup:(id<CPEngine>)engine
++(id<CPGroup>) bergeGroup: (id<CPEngine>) engine
 {
    id<CPGroup> g = [[CPBergeGroup alloc] init:engine];
    [engine trackMutable:g];
@@ -39,9 +39,9 @@
 @end
 
 
-@implementation CPEventNode
--(id)initCPEventNode:(id)t
-                cstr:(CPCoreConstraint*)c
+@implementation CPClosureList
+-(id)initCPEventNode:(ORClosure)t
+                cstr:(id<CPConstraint>)c
                   at:(ORInt)prio
                trail:(id<ORTrail>)trail
 {
@@ -55,59 +55,59 @@
 
 -(void)dealloc
 {
-   //NSLog(@"CPEventNode::dealloc] %p\n",self);
+   //NSLog(@"CPClosureList::dealloc] %p\n",self);
    [_trigger release];
-   [_node._val release];
+   [_node release];
    [super dealloc];
 }
 
--(id)trigger
+-(ORClosure) trigger
 {
    return _trigger;
 }
--(id<CPEventNode>)next
+-(id<CPClosureList>) next
 {
-   return _node._val;
+   return _node;
 }
 
 -(void)scanWithBlock:(void(^)(id))block
 {
-   CPEventNode* cur = self;
+   CPClosureList* cur = self;
    while(cur) {
       block(cur->_trigger);
-      cur = cur->_node._val;
+      cur = cur->_node;
    }
 }
 -(void)scanCstrWithBlock:(void(^)(id))block
 {
-   CPEventNode* cur = self;
+   CPClosureList* cur = self;
    while(cur) {
       block(cur->_cstr);
-      cur = cur->_node._val;
+      cur = cur->_node;
    }
 }
 
-void scanListWithBlock(CPEventNode* cur,ORID2Void block)
+void scanListWithBlock(CPClosureList* cur,ORID2Void block)
 {
    while(cur) {
       block(cur->_trigger);
-      cur = cur->_node._val;
+      cur = cur->_node;
    }
 }
 
-void collectList(CPEventNode* list,NSMutableSet* rv)
+void collectList(CPClosureList* list,NSMutableSet* rv)
 {
    while(list) {
-      CPEventNode* next = list->_node._val;
+      CPClosureList* next = list->_node;
       [rv addObject:list->_cstr];
       list = next;
    }
 }
 
-void freeList(CPEventNode* list)
+void freeList(CPClosureList* list)
 {
    while (list) {
-      CPEventNode* next = list->_node._val;
+      CPClosureList* next = list->_node;
       [list release];
       list = next;
    }
@@ -116,26 +116,28 @@ void freeList(CPEventNode* list)
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,ORInt priority)
 {
    id<ORTrail> trail = [engine trail];
-   CPEventNode* evt = [[CPEventNode alloc] initCPEventNode:todo
+   CPClosureList* evt = [[CPClosureList alloc] initCPEventNode:todo
                                                       cstr:c
                                                         at:priority
                                                      trail:trail];
-   if (evtList->_val == nil) {
+   [engine trackMutable: evt];
+   if (*evtList == nil) {
       assignTRId(&evtList[0], evt, trail);
       assignTRId(&evtList[1], evt, trail);
    } else {
-      assignTRId(&evt->_node, evtList[0]._val, trail);
+      assignTRId(&evt->_node, evtList[0], trail);
       assignTRId(&evtList[0],evt,trail);
    }
-/* // [ldm] insert at end version!
-   if (evtList->_val == nil) {
-      assignTRId(&evtList[0], evt, trail);
-      assignTRId(&evtList[1], evt, trail);
-   } else {
-      CPEventNode* lastNode = evtList[1]._val;
-      assignTRId(&lastNode->_node, evt, trail);
-      assignTRId(&evtList[1], evt, trail);
-   }
- */
+//
+//    // [ldm] insert at end version!
+//   if (evtList->_val == nil) {
+//      assignTRId(&evtList[0], evt, trail);
+//      assignTRId(&evtList[1], evt, trail);
+//   } else {
+//      CPClosureList* lastNode = evtList[1]._val;
+//      assignTRId(&lastNode->_node, evt, trail);
+//      assignTRId(&evtList[1], evt, trail);
+//   }
+//
 }
 @end

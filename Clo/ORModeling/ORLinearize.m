@@ -1,10 +1,13 @@
-//
-//  ORLinearize.m
-//  Clo
-//
-//  Created by Daniel Fontaine on 10/6/12.
-//  Copyright (c) 2012 CSE. All rights reserved.
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import <ORModeling/ORLinearize.h>
 #import <ORFoundation/ORSetI.h>
@@ -121,7 +124,7 @@
     id<ORIntRange> dom = [self unionOfVarArrayRanges: varsOfC];
     for (int d = [dom low]; d <= [dom up]; d++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [varsOfC range]
-                                   suchThat:^bool(ORInt i) {
+                                   suchThat:^ORBool(ORInt i) {
                                        return [[varsOfC[i] domain] inRange: d];
                                    } of:^id<ORExpr>(ORInt i) {
                                        id<ORIntVarArray> binArr = [self binarizationForVar: varsOfC[i]];
@@ -134,6 +137,18 @@
 {
    assert(NO);
 }
+-(void) visitMultiKnapsack:(id<ORMultiKnapsack>) cstr
+{
+   assert(NO);
+}
+-(void) visitMultiKnapsackOne:(id<ORMultiKnapsackOne>) cstr
+{
+   assert(NO);
+}
+-(void) visitMeetAtmost:(id<ORMeetAtmost>) cstr
+{
+   assert(NO);
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
     // Constrain upper bounds
@@ -141,7 +156,7 @@
     id<ORIntRange> ur = [upArr range];
     for (int u = ur.low; u <= ur.up; u++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [[cstr array] range]
-                                   suchThat:^bool(ORInt i) {
+                                   suchThat:^ORBool(ORInt i) {
                                        id<ORIntVar> var = (id<ORIntVar>)[[cstr array] at: i];
                                        return [[var domain] inRange: u];
                                    } of:^id<ORExpr>(ORInt i) {
@@ -156,7 +171,7 @@
     id<ORIntRange> lr = [lowArr range];
     for (int l = lr.low; l <= lr.up; l++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [[cstr array] range]
-                                   suchThat:^bool(ORInt i) {
+                                   suchThat:^ORBool(ORInt i) {
                                        id<ORIntVar> var = (id<ORIntVar>)[[cstr array] at: i];
                                        return [[var domain] inRange: l];
                                    } of:^id<ORExpr>(ORInt i) {
@@ -174,7 +189,7 @@
     id<ORIntRange> binRange = [binSize range];
     for(int b = [binRange low]; b < [binRange up]; b++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [item range]
-                                   suchThat:^bool(ORInt i) {
+                                   suchThat:^ORBool(ORInt i) {
                                        id<ORIntVar> var = (id<ORIntVar>)[item at: i];
                                        return [[var domain] inRange: b];
                                    } of:^id<ORExpr>(ORInt i) {
@@ -211,7 +226,7 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+-(void) visitRealEqualc: (id<ORRealEqualc>)c
 {
 }
 -(void) visitEqualc: (id<OREqualc>)c
@@ -247,7 +262,7 @@
 -(void) visitSquare:(id<ORSquare>)c
 {
 }
--(void) visitFloatSquare:(id<ORSquare>)c
+-(void) visitRealSquare:(id<ORSquare>)c
 {
 }
 -(void) visitAbs: (id<ORAbs>)c
@@ -268,7 +283,7 @@
 -(void) visitElementVar: (id<ORElementVar>)c
 {
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+-(void) visitRealElementCst: (id<ORRealElementCst>) c
 {
 }
 // Expressions
@@ -280,11 +295,11 @@
 {
     _exprResult = e;
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    _exprResult = e;
 }
--(void) visitFloatI: (id<ORFloatNumber>) e
+-(void) visitDouble: (id<ORDoubleNumber>) e
 {
    _exprResult = e;
 }
@@ -331,7 +346,7 @@
     [_model addConstraint: [sumVar eq: linearSumExpr]];
     _exprResult = sumVar;
 }
--(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*)cstSubExpr
+-(void) visitExprCstDoubleSubI: (ORExprCstDoubleSubI*)cstSubExpr
 {
    id<ORIntVar> indexVar;
    // Create the index variable if needed.
@@ -347,7 +362,7 @@
    id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
       return [[binIndexVar at: i] mul: @([[cstSubExpr array] at: i ])];
    }];
-   id<ORFloatVar> sumVar = [ORFactory floatVar: _model low:[linearSumExpr min] up:[linearSumExpr max]];
+   id<ORRealVar> sumVar = [ORFactory realVar: _model low:[linearSumExpr min] up:[linearSumExpr max]];
    [_model addConstraint: [sumVar eq: linearSumExpr]];
    _exprResult = sumVar;
 }

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,8 @@
 #import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORTracker.h>
 
+@protocol ORIntRange;
+
 @protocol ORTrail <NSObject>
 -(void) trailInt:(ORInt*) ptr;
 -(void) trailUnsigned:(ORUInt*) ptr;
@@ -21,6 +23,7 @@
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
 -(void) trailDouble:(double*) ptr;
+-(void) trailLDouble:(long double*)ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
 -(void) trailRelease:(id)obj;
 -(void) trailFree:(void*)ptr;
@@ -59,26 +62,24 @@ typedef struct {
 } TRDouble;
 
 typedef struct {
-   id        _val;
-} TRId;
+   long double _val;
+   ORUInt      _mgc;
+} TRLDouble;
+
+typedef id TRId;
+typedef id TRIdNC;
 
 typedef struct {
-   id        _val;
-} TRIdNC;
-
-typedef struct {
-   id<ORTrail>_trail;
    int        _nb;
    int        _low;
    TRInt*     _entries;
 } TRIntArray;
 
 typedef struct {
-   id<ORTrail>_trail;
    int        _nb;
    int        _low;
    TRDouble*  _entries;
-} TRFloatArray;
+} TRDoubleArray;
 
 typedef struct {
    int    _val;
@@ -87,30 +88,32 @@ typedef struct {
 
 @interface ORTrailFunction : NSObject
 void trailIntFun(id<ORTrail> t,int* ptr);
-void trailFloatFun(id<ORTrail> t,double* ptr);
+void trailDoubleFun(id<ORTrail> t,double* ptr);
 void trailUIntFun(id<ORTrail> t,unsigned* ptr);
 void trailIdNCFun(id<ORTrail> t,id* ptr);
 TRInt makeTRInt(id<ORTrail> trail,int val);
 TRUInt makeTRUInt(id<ORTrail> trail,unsigned val);
 TRLong makeTRLong(id<ORTrail> trail,long long val);
 TRDouble  makeTRDouble(id<ORTrail> trail,double val);
+TRLDouble makeTRLDouble(id<ORTrail> trail,long double val);
 TRId  makeTRId(id<ORTrail> trail,id val);
 TRIdNC  makeTRIdNC(id<ORTrail> trail,id val);
 TRIntArray makeTRIntArray(id<ORTrail> trail,int nb,int low);
 void  freeTRIntArray(TRIntArray a);
-TRIntArray makeTRFloatArray(id<ORTrail> trail,int nb,int low);
-void  freeTRFloatArray(TRFloatArray a);
+TRDoubleArray makeTRDoubleArray(id<ORTrail> trail,int nb,int low);
+void  freeTRDoubleArray(TRDoubleArray a);
 
 void  assignTRInt(TRInt* v,int val,id<ORTrail> trail);
 void  assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail);
 void  assignTRLong(TRLong* v,long long val,id<ORTrail> trail);
 void  assignTRDouble(TRDouble* v,double val,id<ORTrail> trail);
+void  assignTRLDouble(TRLDouble* v,long double val,id<ORTrail> trail);
 void  assignTRId(TRId* v,id val,id<ORTrail> trail);
 void  assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail);
-ORInt assignTRIntArray(TRIntArray a,int i,ORInt val);
+ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail);
 ORInt getTRIntArray(TRIntArray a,int i);
-ORFloat assignTRFloatArray(TRIntArray a,int i,ORFloat val);
-ORInt getTRFloatArray(TRFloatArray a,int i);
+ORDouble assignTRDoubleArray(TRIntArray a,int i,ORDouble val,id<ORTrail> trail);
+ORInt getTRDoubleArray(TRDoubleArray a,int i);
 
 FXInt makeFXInt(id<ORTrail> trail);
 void  incrFXInt(FXInt* v,id<ORTrail> trail);

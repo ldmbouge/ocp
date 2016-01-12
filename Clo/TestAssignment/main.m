@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPFactory.h>
 
 #import "ORCmdLineArgs.h"
@@ -79,7 +79,7 @@ int main (int argc, const char * argv[])
          //id<ORTRIntArray> mark = [ORFactory TRIntArray:[cp engine] range: Cities];
          
          [cp solve: ^{
-            [cp limitCondition: ^bool() { return [nbRestarts intValue:cp] >= 100; } in:
+            [cp limitCondition: ^ORBool() { return [nbRestarts intValue:cp] >= 100; } in:
              ^{
                 [cp repeat:
                  ^{
@@ -126,7 +126,6 @@ int main (int argc, const char * argv[])
          NSLog(@"Quitting");
          struct ORResult r = REPORT([solution intValue:assignmentCost], [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
-         [ORFactory shutdown];
          return r;
       }];
    }

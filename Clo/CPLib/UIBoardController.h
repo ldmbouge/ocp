@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,5 +29,5 @@
 -(void)neverStop;
 -(void)toggleGrid:(id)grid row:(NSInteger)r col:(NSInteger)c to:(enum CPDomValue)dv;
 -(void)drawRect:(CGRect)dirtyRect inView:(id)view;
--(void)watchSearch:(id<CPProgram>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
+-(void)watchSearch:(id<ORExplorer>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
 @end

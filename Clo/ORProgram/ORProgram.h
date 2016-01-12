@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +9,12 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
 #import <ORProgram/CPProgram.h>
+#import <ORProgram/LPProgram.h>
+#import <ORProgram/MIPProgram.h>
 #import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/CPSolver.h>
+#import <ORProgram/ORSolution.h>
 #import <ORProgram/CPHeuristic.h>
 #import "CPBitVarHeuristic.h"
 #import <ORProgram/CPDDeg.h>
@@ -20,12 +22,22 @@
 #import <ORProgram/CPWDeg.h>
 #import <ORProgram/CPIBS.h>
 #import <ORProgram/CPABS.h>
+//<<<<<<< HEAD
 #import <ORProgram/CPBitVarABS.h>
 #import <ORProgram/CPBitVarIBS.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPBitVarFirstFail.h>
+//=======
+#import <ORProgram/CPFDS.h>
+#import <ORProgram/CPFirstFail.h>
+#import <ORProgram/CPConcretizer.h>
+#import <ORProgram/CPMultiStartSolver.h>
+#import <ORProgram/CPParallel.h>
+#import <ORProgram/ORCPParSolver.h>
+#import <ORProgram/ORSTask.h>
+//>>>>>>> master
 
 @interface ORGamma (Model)
--(void) initialize: (id<ORModel>) model;
+-(void) initialize: (PNONNULL id<ORModel>) model;
 @end
 

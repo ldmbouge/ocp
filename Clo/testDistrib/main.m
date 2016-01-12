@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +9,10 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <ORFoundation/ORFactory.h>
-#import <objcp/CPConstraint.h>
+#import <ORFoundation/ORFoundation.h>
 #import <objcp/CPFactory.h>
+#import <objcp/objcp.h>
+#import <ORProgram/CPSolver.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 
@@ -20,13 +20,14 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CPProgram> m = [CPFactory createSolver];
+      id<CPCommonProgram> m = [CPSolverFactory solver];
+      //[ORStreamManager setRandomized];
       id<ORIntRange> R = RANGE(m,0,19);
       int* key = (int[]){10,10,8,8,5,5,5,10,5,5,5,5,5,5,5,5,5,5,5,5};
       id<ORSelect> select = [ORFactory select: m
                                         range: R
                                      suchThat: ^bool(ORInt i) { return YES;}
-                                    orderedBy: ^ORFloat(ORInt i) {
+                                    orderedBy: ^ORDouble(ORInt i) {
                                        return key[i];
                                     }];
       int cnt[20];

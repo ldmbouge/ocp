@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,8 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPTypes.h>
-#import <CPUKernel/CPConstraintI.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORLinear.h>
 
@@ -31,16 +29,7 @@
 -(ORInt)max;
 @end
 
-@interface ORIntLinear : NSObject<ORIntLinear> {
-   struct CPTerm {
-      id<ORIntVar>  _var;
-      ORInt        _coef;
-   };
-   struct CPTerm* _terms;
-   ORInt             _nb;
-   ORInt            _max;
-   ORInt          _indep;
-}
+@interface ORIntLinear : NSObject<ORIntLinear> 
 -(ORIntLinear*)initORLinear:(ORInt)mxs;
 -(void)dealloc;
 -(void)setIndependent:(ORInt)idp;
@@ -62,9 +51,7 @@
 -(BOOL)isOne;
 @end
 
-@interface ORLinearFlip : NSObject<ORIntLinear> {
-   id<ORIntLinear> _real;
-}
+@interface ORLinearFlip : NSObject<ORIntLinear> 
 -(ORLinearFlip*)initORLinearFlip:(id<ORIntLinear>)r;
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;

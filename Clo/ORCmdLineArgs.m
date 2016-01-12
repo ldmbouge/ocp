@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,7 +25,11 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 @synthesize nArg;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
-   return [[[ORCmdLineArgs alloc] init:argc argv:argv] autorelease];
+   ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
+#if !__has_feature(objc_arc)
+   [rv autorelease];
+#endif
+   return rv;
 }
 -(id)init:(int)argc argv:(const char*[])argv
 {
@@ -74,7 +78,9 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
          run = block();
       }@catch(ORExecutionError* execError) {
          NSLog(@"Execution ERROR: %@",execError);
+#if !__has_feature(objc_arc)
          [execError release];
+#endif
          run.found = 0;
          run.nbFailures = run.nbChoices = run.nbPropagations = 0;
       }

@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import <CPLearningEngineI.h>
+#import "CPLearningEngineI.h"
 
 @implementation CPLearningEngineI
 -(CPLearningEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
@@ -26,92 +26,53 @@
 }
 
 
--(ORStatus) restoreLostConstraints:(ORUInt) level
-{
-   //re-insert lost constraints (at lower levels in search tree)
-   //at the current level
-   ORStatus s;
-   ORStatus status = ORSuspend;
-   
-   for (int n = 0; n<_size; n++) {
-      if ((_globalStore[n]->level > level) && (_globalStore[n]->vars->numAntecedents > 0)){
-         CPBVConflict* test = _globalStore[n];
-         CPBitConflict* c = [CPFactory bitConflict:_globalStore[n]->vars];
-         s = [self add:c];
-//         NSLog(@"Adding new global constraint %@ to constraint store",c);
-         [self propagate];
-         if (s == ORFailure)
-            return ORFailure;
-         
-//         if (status == ORFailure) {
-//            NSLog(@"failure in restoring constraint %d\n",n);
-//            NSLog(@"--------------------Begin Global Constraint Store--------------------\n");
-//            for(int i=0;i<_size;i++){
-//               NSLog(@"******************************");
-//               NSLog(@"_globalStore[%d]\n",i);
-//               for(int j=0;j<_globalStore[i]->vars->numAntecedents;j++)
-//                  NSLog(@"0x%lx[%d] = %d\n",_globalStore[i]->vars->antecedents[j]->var,_globalStore[i]->vars->antecedents[j]->index,_globalStore[i]->vars->antecedents[j]->value);
-//            }
-//            NSLog(@"--------------------End Global Constraint Store--------------------\n");
+//-(ORStatus) restoreLostConstraints:(ORUInt) level
+//{
+//   //re-insert lost constraints (at lower levels in search tree)
+//   //at the current level
+//   ORStatus s;
+//   ORStatus status = ORSuspend;
+//   
+//   for (int n = 0; n<_size; n++) {
+//      if (_globalStore[n]->level > level){
+////         s= [self addConstraintDuringSearch:c];
+//         s = [self post:_globalStore[n]->constraint];
+////         NSLog(@"Adding new global constraint %@ to constraint store",c);
+////         [self propagate];
+//         if (s == ORFailure){
+//            return ORFailure;
 //         }
-//         ORUInt l;
-//         for(int j=0;j<_globalStore[n]->vars->numAntecedents;j++){
-//            if (_backjumpLevel > (l=[(CPBitVarI*)_globalStore[n]->vars->antecedents[j]->var getLevelBitWasSet:_globalStore[n]->vars->antecedents[j]->index]) &&
-//                (l!=0)) {
-//               _backjumpLevel = l;
-//            }
-//         }
-         _globalStore[n]->level = level;
-         _newConstraint = true;
-      }
-   }
-   _backjumpLevel = -1;
-   return status;
-}
--(void) addConstraint:(CPBitAntecedents*) a
-{
-   _lastConflict = a;
-   if (a->numAntecedents <= 0)
-   {
-      free(a->antecedents);
-      free(a);
-      return;
-   }
-   
-//   ORBool newConstraint = false;
-//   ORBool inConstraintStore;
-//   for(int n=0;n<_size;n++){
-//      if (_globalStore[n]->vars->numAntecedents != a->numAntecedents) {
-//         continue;
-//      }
-////      inConstraintStore = true;
-//      for (int v=0; v<_globalStore[n]->vars->numAntecedents; v++) {
-//         if ((_globalStore[n]->vars->antecedents[v]->var != a->antecedents[v]->var) ||
-//             (_globalStore[n]->vars->antecedents[v]->index != a->antecedents[v]->index) ||
-//             (_globalStore[n]->vars->antecedents[v]->value != a->antecedents[v]->value)) {
-//            inConstraintStore = false;
-//         }
+////         if (status == ORFailure) {
+////            NSLog(@"failure in restoring constraint %d\n",n);
+////            NSLog(@"--------------------Begin Global Constraint Store--------------------\n");
+////            for(int i=0;i<_size;i++){
+////               NSLog(@"******************************");
+////               NSLog(@"_globalStore[%d]\n",i);
+////               for(int j=0;j<_globalStore[i]->vars->numAntecedents;j++)
+////                  NSLog(@"0x%lx[%d] = %d\n",_globalStore[i]->vars->antecedents[j]->var,_globalStore[i]->vars->antecedents[j]->index,_globalStore[i]->vars->antecedents[j]->value);
+////            }
+////            NSLog(@"--------------------End Global Constraint Store--------------------\n");
+////         }
+////         ORUInt l;
+////         for(int j=0;j<_globalStore[n]->vars->numAntecedents;j++){
+////            if (_backjumpLevel > (l=[(CPBitVarI*)_globalStore[n]->vars->antecedents[j]->var getLevelBitWasSet:_globalStore[n]->vars->antecedents[j]->index]) &&
+////                (l!=0)) {
+////               _backjumpLevel = l;
+////            }
+////         }
+//         _globalStore[n]->level = level;
+//         _newConstraint = true;
 //      }
 //   }
-
-//   //Check to see if constraint is already in store of global constraints
-//   for(int i=0;i<_size;i++){
-//      if(a->numAntecedents != _globalStore[i]->vars->numAntecedents)
-//         continue;
-//      for (int j=0; j<a->numAntecedents; j++) {
-//         if ((a->antecedents[j]->var != _globalStore[i]->vars->antecedents[i]->var) ||
-//             (a->antecedents[j]->index != _globalStore[i]->vars->antecedents[i]->index) ||
-//             (a->antecedents[j]->value != _globalStore[i]->vars->antecedents[i]->value)){
-//            break;
-//         }
-//         
-//      }
-//      
-//   }
-   
+//   _backjumpLevel = -1;
+//   return status;
+//}
+-(void) addConstraint:(CPCoreConstraint*) c
+{
    
    CPBVConflict* newConflict = malloc(sizeof(CPBVConflict));
-   newConflict->vars = a;
+   [c retain];
+   newConflict->constraint = c;
    newConflict->level = _currLevel;
    
    if (_size >= _capacity) {
@@ -123,12 +84,12 @@
       free(_globalStore);
       _globalStore = newStore;
    }
-   ORUInt l;
-   for (int i=0; i<a->numAntecedents; i++) {
-      if (((l=[a->antecedents[i]->var getLevelBitWasSet:a->antecedents[i]->index]) < _backjumpLevel) && (l > 0)) {
-         _backjumpLevel = l;
-      }
-   }
+//   ORUInt l;
+//   for (int i=0; i<a->numAntecedents; i++) {
+//      if (((l=[a->antecedents[i]->var getLevelBitWasSet:a->antecedents[i]->index]) < _backjumpLevel) && (l > 0)) {
+//         _backjumpLevel = l;
+//      }
+//   }
    _globalStore[_size++] = newConflict;
 }
 //-(void) addConstraint:(NSArray*) vars withConflicts:(ORUInt*)conflictBits withValues:(ORUInt**)bitValues
@@ -180,4 +141,37 @@ return _backjumpLevel;
    _newConstraint = false;
    return newOne;
 }
+
+
+
+
+
+
+-(ORStatus) enforceObjective
+{
+   ORStatus s;
+   // Add missing constraints back to constraint store here
+   for (int n = 0; n<_size; n++) {
+      if (_globalStore[n]->level > _currLevel){
+         s=[self post:_globalStore[n]->constraint];
+         if(s==ORFailure)
+            return ORFailure;
+         _globalStore[n]->level = _currLevel;
+      }
+   }
+   _backjumpLevel = -1;
+   
+   if (_objective == nil)
+      return ORSuspend;
+   return tryfail(^ORStatus{
+      ORStatus ok = [_objective check];
+      if (ok)
+         ok = propagateFDM(self);
+      return ok;
+   }, ^ORStatus{
+      return ORFailure;
+   });
+}
+
+
 @end

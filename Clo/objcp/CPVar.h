@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,51 +34,59 @@ enum CPVarClass {
 -(ORBool) bound;
 -(NSSet*)constraints;
 -(ORInt)degree;
--(enum CPVarClass)varClass;
 @end
 
-@protocol CPNumVar <CPVar>
--(ORFloat) floatMin;
--(ORFloat) floatMax;
--(ORFloat) floatValue;
-@end
 
-@protocol CPIntVarSubscriber <NSObject>
+@protocol CPNumVarSubscriber <NSObject>
 
 // AC3 Closure Event
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeMinDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeMaxDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeBoundsDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
 
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeMinDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeMaxDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+-(void) whenChangeBoundsDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 
 // AC3 Constraint Event
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
--(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p;
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
+-(void) whenChangePropagate:  (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenChangeMinPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenChangeMaxPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenChangeBoundsPropagate: (id<CPConstraint>) c priority: (ORInt) p;
 
--(void) whenBindPropagate: (CPCoreConstraint*) c;
--(void) whenChangePropagate:  (CPCoreConstraint*) c;
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c;
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c;
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c;
+-(void) whenChangePropagate:  (id<CPConstraint>) c;
+-(void) whenChangeMinPropagate: (id<CPConstraint>) c;
+-(void) whenChangeMaxPropagate: (id<CPConstraint>) c;
+-(void) whenChangeBoundsPropagate: (id<CPConstraint>) c;
+
+@end
+
+@protocol CPNumVar <CPVar,CPNumVarSubscriber>
+-(ORDouble) doubleMin;
+-(ORDouble) doubleMax;
+-(ORDouble) doubleValue;
+@end
+
+@protocol CPIntVarSubscriber <CPNumVarSubscriber>
+
+// AC3 Closure Event
+-(void) whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf:(id<CPConstraint>)c;
+-(void) whenBindDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
+
+// AC3 Constraint Event
+-(void) whenBindPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+-(void) whenBindPropagate: (id<CPConstraint>) c;
 
 // AC5 Event
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo;
+-(void) whenLoseValue: (id<CPConstraint>) c do: (ORIntClosure) todo;
 
 // Triggers
 // create a trigger which executes todo when value val is removed.
--(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 // create a trigger which executes todo when the variable is bound.
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 // assign a trigger which is executed when value val is removed.
 -(void) watch:(ORInt) val with: (id<CPTrigger>) t;
 
@@ -94,8 +102,6 @@ enum CPVarClass {
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
--(ORInt) scale;
--(ORInt) shift;
 -(id<ORIntVar>) base;
 -(ORBool) bound;
 -(ORInt) countFrom: (ORInt) from to: (ORInt) to;
@@ -105,7 +111,6 @@ enum CPVarClass {
 -(void) updateMin: (ORInt) newMin;
 -(void) updateMax: (ORInt) newMax;
 -(ORBounds) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
--(CPIntVar*) findAffine: (ORInt) scale shift: (ORInt) shift;
 @end
 
 @protocol CPVarArray <ORVarArray>
@@ -145,25 +150,51 @@ enum CPVarClass {
 -(id<ORASolver>) solver;
 @end
 
-@protocol CPFloatVar<CPVar>
--(ORFloat) min;
--(ORFloat) max;
--(ORFloat) value;
+@protocol CPRealVar<CPVar>
+-(ORDouble) min;
+-(ORDouble) max;
+-(ORDouble) value;
 -(ORInterval) bounds;
--(ORBool) member:(ORFloat)v;
+-(ORBool) member:(ORDouble)v;
 -(ORBool) bound;
--(ORFloat) domwidth;
--(void) bind:(ORFloat) val;
--(void) updateMin:(ORFloat) newMin;
--(void) updateMax:(ORFloat) newMax;
+-(ORDouble) domwidth;
+-(void) bind:(ORDouble) val;
+-(void) updateMin:(ORDouble) newMin;
+-(void) updateMax:(ORDouble) newMax;
+-(void) assignRelaxationValue: (ORDouble) f;
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 
-@protocol CPFloatVarArray <CPVarArray>
--(id<CPFloatVar>) at: (ORInt) value;
--(void) set: (id<CPFloatVar>) x at: (ORInt) value;
--(id<CPFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<CPFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+@protocol CPRealVarArray <CPVarArray>
+-(id<CPRealVar>) at: (ORInt) value;
+-(void) set: (id<CPRealVar>) x at: (ORInt) value;
+-(id<CPRealVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPRealVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
+@end
+
+@protocol CPIntSetVar <CPVar>
+-(id<CPIntVar>)cardinality;
+-(ORBool)bound;
+-(id<IntEnumerator>)required;
+-(id<IntEnumerator>)possible;
+-(id<IntEnumerator>)excluded;
+-(ORInt)cardRequired;
+-(ORInt)cardPossible;
+-(ORBool)isRequired:(ORInt)v;
+-(ORBool)isPossible:(ORInt)v;
+-(ORBool)isExcluded:(ORInt)v;
+-(void)require:(ORInt)v;
+-(void)exclude:(ORInt)v;
+// notifications APIs
+-(void)whenRequired:(id<CPConstraint>)c do:(ORIntClosure)todo;
+-(void)whenExcluded:(id<CPConstraint>)c do:(ORIntClosure)todo;
+-(void)whenBound:(id<CPConstraint>)c do:(ORClosure)todo;
+-(void)whenChange:(id<CPConstraint>)c do:(ORClosure)todo;
+// events
+-(void)requireEvt:(ORInt)v;
+-(void)excludeEvt:(ORInt)v;
+-(void)bindEvt;
+-(void)changeEvt;
 @end
 

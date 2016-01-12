@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPBitArrayDom.h>
-//#import <CPUKernel/CPLearningEngineI.h>
+#import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPData.h>
 
@@ -46,8 +46,8 @@
 -(void)                 updateFreeBitCount;
 -(ORBounds)             bounds;
 -(ORBool)               bound;
--(uint64)               min;
--(uint64)               max;
+-(ORULong)               min;
+-(ORULong)               max;
 -(unsigned int*)        minArray;
 -(unsigned int*)        maxArray;
 -(unsigned int*)        lowArray;
@@ -65,9 +65,9 @@
 -(unsigned int)         getMaxRank;
 -(ORStatus)             remove:(ORUInt)val;
 -(unsigned int*)        pred:(unsigned int*) x;
--(ORStatus)             updateMin:(uint64)newMin for: (id<CPBitVarNotifier>)x;
--(ORStatus)             updateMax:(uint64)newMax for: (id<CPBitVarNotifier>)x;
--(ORStatus)             bind:(uint64)val for:(id<CPBitVarNotifier>)x;
+-(ORStatus)             updateMin:(ORULong)newMin for: (id<CPBitVarNotifier>)x;
+-(ORStatus)             updateMax:(ORULong)newMax for: (id<CPBitVarNotifier>)x;
+-(ORStatus)             bind:(ORULong)val for:(id<CPBitVarNotifier>)x;
 -(ORStatus)             bindToPat: (unsigned int*) pat for:(id<CPBitVarNotifier>)x;
 -(TRUInt*)              getLow;
 -(TRUInt*)              getUp;
@@ -80,4 +80,6 @@
 -(void)                 restoreDomain:(CPBitArrayDom*)toRestore;
 -(void)                 restoreValue:(ORInt)toRestore;
 -(ORUInt)               getLevelForBit:(ORUInt)bit;
+
+-(id) copyWithZone:(NSZone*) zone;
 @end

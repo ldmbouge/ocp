@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,10 +11,10 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
-#import "ORObject.h"
-#import "ORData.h"
-#import "ORTracker.h"
-#import "ORArray.h"
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORArray.h>
 
 
 @interface ORIntArrayI : ORObject<NSCoding,ORIntArray>
@@ -40,27 +40,28 @@
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
+-(int*)base;
 @end
 
-@interface ORFloatArrayI : ORObject<NSCoding,ORFloatArray>
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORFloat) v;
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORFloat(^)(ORInt)) clo;
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORFloat) v;
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (ORFloat(^)(ORInt)) clo;
--(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORFloat(^)(ORInt,ORInt)) clo;
+@interface ORDoubleArrayI : ORObject<NSCoding,ORDoubleArray>
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb value: (ORDouble) v;
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker size: (ORInt) nb with: (ORDouble(^)(ORInt)) clo;
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORDouble) v;
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (ORDouble(^)(ORInt)) clo;
+-(ORDoubleArrayI*) init: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORDouble(^)(ORInt,ORInt)) clo;
 -(void) dealloc;
--(ORFloat) at: (ORInt) value;
--(void) set: (ORFloat) value at:(ORInt)idx;
+-(ORDouble) at: (ORInt) value;
+-(void) set: (ORDouble) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
--(ORFloat) max;
--(ORFloat) min;
+-(ORDouble) max;
+-(ORDouble) min;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
+-(void)enumerateWith:(void(^)(ORDouble obj,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
@@ -82,12 +83,13 @@
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 -(void)visit:(ORVisitor*)v;
+-(id*)base;
 @end
 
 
 @interface ORIntMatrixI : ORObject<ORIntMatrix,NSCoding>
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 using: (ORIntxInt2Int)block;
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 with: (ORIntxInt2Int)block;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) matrix;
 -(void) dealloc;
@@ -127,5 +129,6 @@
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 -(void)visit:(ORVisitor*)v;
+-(id<ORIdArray>) flatten;
 @end
 

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,10 +11,11 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTrailI.h>
-#import "CPBitDom.h"
+#import <CPUKernel/CPTypes.h>
+#import <objcp/CPBitDom.h>
+#import <objcp/CPIntVarI.h>
+#import <objcp/CPError.h>
 #import "CPEngineI.h"
-#import "CPIntVarI.h"
-#import "CPError.h"
 
 @implementation CPBoundsDom
 
@@ -600,7 +601,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    ORInt oldMin = _min._val;
    BOOL compact = _max._val - _min._val + 1 == _sz._val;
    int nbr = compact ? newMin - _min._val : countFrom(self,_min._val,newMin-1);
-   // need to send AC5 notifications still
+   // need to send value notifications still
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
    if (!compact)

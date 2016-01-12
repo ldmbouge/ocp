@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORFoundation/ORObject.h>
 
 @interface ORModelMappings : NSObject<ORModelMappings>
 -(ORModelMappings*) initORModelMappings;
@@ -66,6 +66,7 @@
 -(id<ORModel>)source;
 
 -(id<ORModel>) flatten:(id<ORAnnotation>)notes;
+-(id<ORModel>) lsflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) mipflatten:(id<ORAnnotation>)notes;
 
@@ -85,8 +86,8 @@
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORDoubleArray>) coef;
 -(id<ORModel>) model;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;
@@ -113,18 +114,7 @@
 -(id) trackVariable: (id) obj;
 @end
 
-@interface ORSolutionPoolI : NSObject<ORSolutionPool> {
-    NSMutableArray* _all;
-    id<ORSolutionInformer> _solutionAddedInformer;
-}
--(id)init;
--(void)addSolution:(id<ORSolution>)s;
--(void)enumerateWith:(void(^)(id<ORSolution>))block;
--(id<ORInformer>)solutionAdded;
--(id<ORSolution>)best;
--(id<ORSolution>) objectAtIndexedSubscript: (NSUInteger) key;
--(NSUInteger) count;
-@end
+
 
 @interface ORConstraintSetI : NSObject<ORConstraintSet> {
     NSMutableSet* _all;

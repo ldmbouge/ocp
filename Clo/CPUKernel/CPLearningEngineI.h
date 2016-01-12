@@ -9,11 +9,15 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORConstraint.h>
 #import "CPEngineI.h"
-#import "objcp/CPVar.h"
-#import "objcp/CPBitConstraint.h"
-#import <Foundation/NSString.h>
+//#import <objcp/CPVar.h>
+//#import <objcp/CPBitConstraint.h>
+
+//#import <CPUKernel/CPTypes.h>
+//#import <CPUKernel/CPEngine.h>
+//#import <CPUKernel/CPConstraintI.h>
 
 @class CPBitConflict;
 
@@ -21,15 +25,14 @@ struct _CPBitAntecedents;
 typedef struct _CPBitAntecedents CPBitAntecedents;
 
 typedef struct CPBVConflict{
-   CPBitAntecedents*    vars;
-   ORUInt              level;
-   
+   CPCoreConstraint*    constraint;
+   ORUInt                    level;
 } CPBVConflict;
 
 
 @interface CPLearningEngineI : CPEngineI
 {
-   CPBVConflict** _globalStore;
+   CPBVConflict**         _globalStore;
    ORUInt                        _size;
    ORUInt                    _capacity;
    ORUInt                   _currLevel;
@@ -40,11 +43,13 @@ typedef struct CPBVConflict{
 }
 -(CPLearningEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(ORStatus) restoreLostConstraints:(ORUInt) level;
--(void) addConstraint:(CPBitAntecedents*)c;
+-(void) addConstraint:(CPCoreConstraint*)c;
 //-(void) addConstraint:(NSArray*) vars withConflicts:(ORUInt*)conflictBits withValues:(ORUInt**)bitValues;
 -(void) setLevel:(ORUInt)level;
 -(void) setBaseLevel:(ORUInt)level;
 -(ORUInt) getLevel;
 -(ORUInt) getBackjumpLevel;
 -(ORBool) newConstraint;
+
+-(ORStatus) enforceObjective;
 @end

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,18 +9,8 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORModeling/ORFlatten.h>
-#import <ORModeling/ORMIPLinearize.h>
-#import "ORProgramFactory.h"
-
-// CP Solver
 #import <ORProgram/ORProgram.h>
-#import <ORProgram/CPFirstFail.h>
-#import <ORProgram/ORCPParSolver.h>
-#import <ORProgram/CPMultiStartSolver.h>
+
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import "CPSolver.h"
@@ -32,13 +22,12 @@
 #import "CPABS.h"
 #import "CPBitVarABS.h"
 #import "CPBitVarIBS.h"
+
 // LP Solver
-#import "LPProgram.h"
 #import "LPSolver.h"
 #import "LPConcretizer.h"
 
 // MIP Solver
-#import "MIPProgram.h"
 #import "MIPSolver.h"
 #import "MIPConcretizer.h"
 
@@ -53,6 +42,14 @@
 
 
 @implementation ORFactory (Concretization)
++(id<ORSolution>) solution: (id<ORModel>) m solver: (id<ORASolver>) solver
+{
+   return [[ORSolution alloc] initORSolution: m with: solver];
+}
++(id<ORSolutionPool>) createSolutionPool
+{
+   return [[ORSolutionPool alloc] init];
+}
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
@@ -101,8 +98,11 @@
    ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram annotation:notes];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];
-   for(id<ORObject> c in [m constraints])
-      [c visit: concretizer];
+   for(id<ORConstraint> c in [m constraints]) {
+      ORCLevel n = [notes levelFor: c];
+      if (n != RelaxedConsistency)
+         [c visit: concretizer];
+   }
    [[m objective] visit:concretizer];
    
    [concretizer release];
@@ -224,7 +224,7 @@
          id<CPCommonProgram> pi = [cpprogram worker];
          [ORFactory concretizeCP:flatModel program:pi annotation:ncpy];
          [pi onSolution:^{
-            id<ORCPSolution> sol = [[cpprogram worker] captureSolution];
+            id<ORSolution> sol = [[cpprogram worker] captureSolution];
             [[[cpprogram worker] solutionPool] addSolution: sol];
             @synchronized(global) {
                [global addSolution:sol];
@@ -425,29 +425,33 @@
    _lprelaxation = [ORFactory createLPRelaxation: _model];
    return self;
 }
--(ORFloat) objective
+-(ORDouble) objective
 {
    return [_lprelaxation objective];
 }
--(ORFloat) value: (id<ORVar>) x
+-(ORDouble) value: (id<ORVar>) x
 {
-   return [_lprelaxation floatValue: x];
+   return [_lprelaxation doubleValue: x];
 }
--(ORFloat) lowerBound: (id<ORVar>) x
+-(ORDouble) lowerBound: (id<ORVar>) x
 {
    return [_lprelaxation lowerBound: x];
 }
--(ORFloat) upperBound: (id<ORVar>) x
+-(ORDouble) upperBound: (id<ORVar>) x
 {
    return [_lprelaxation upperBound: x];
 }
--(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f
+-(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f
 {
    [_lprelaxation updateLowerBound: x with:f];
 }
--(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f
+-(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f
 {
    [_lprelaxation updateUpperBound: x with:f];
+}
+-(void) close
+{
+   return [_lprelaxation close];
 }
 -(OROutcome) solve
 {

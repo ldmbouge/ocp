@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,24 +9,26 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/CPSolver.h>
 
-@interface ORCPConcretizer  : ORVisitor<NSObject>
-{
+@protocol CPCommonProgram;
+@protocol ORAnnotation;
+@protocol CPEngine;
+
+@interface ORCPConcretizer  : ORVisitor<NSObject> {
    id<CPCommonProgram> _solver;
    id<CPEngine>        _engine;
-   id*                 _gamma;
+   id __unsafe_unretained* _gamma;
    id<ORAnnotation>    _notes;
 }
--(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver annotation:(id<ORAnnotation>)notes;
+-(ORCPConcretizer*) initORCPConcretizer:(id<CPCommonProgram>) solver
+                             annotation:(id<ORAnnotation>)notes;
+-(BOOL)isConcretized:(id<ORObject>)obj;
+-(BOOL)mustConcretize:(id<ORObject>)obj;
+-(id)gamma:(id<ORObject>)obj;
 @end
 
 @interface ORCPSearchConcretizer : ORVisitor<NSObject>
-{
-   id<CPEngine>        _engine;
-   id*                 _gamma;
-}
--(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine gamma:(id<ORGamma>)gamma;
+-(ORCPSearchConcretizer*) initORCPConcretizer: (id<CPEngine>) engine
+                                        gamma:(id<ORGamma>)gamma;
 @end

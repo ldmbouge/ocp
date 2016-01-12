@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +9,9 @@
 
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 #import <objcp/CPError.h>
+#import <CPUKernel/CPTypes.h>
 
 @class CPEngineI;
 
@@ -22,8 +21,8 @@ enum CPDomClass {
    DCLRanges = 2
 };
 
-@interface CPBoundsDom : NSObject<CPDom,NSCoding,NSCopying> {
-@package
+@interface CPBoundsDom : NSObject<CPDom,NSCopying> {
+@public
    enum CPDomClass    _dc;
    id<ORTrail>     _trail;
    ORInt            _imin;
@@ -65,7 +64,7 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 }
 
 @interface CPBitDom : CPBoundsDom {
-@package
+@public
    unsigned*    _bits;
    ORInt*      _magic;
    UBType  _updateMin;
@@ -164,7 +163,7 @@ static inline void domRemove(CPBoundsDom* x,ORInt val,id<CPIntVarNotifier> recv,
          else if (val == x->_max._val)
             [x updateMax:val-1 for:recv tle:tle];
          else
-            @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+            [CPRemoveOnDenseDomainError raise];
       }
       case DCBits: {
          domBitRemove((CPBitDom*)x,val,recv);

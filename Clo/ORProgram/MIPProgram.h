@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,22 +9,10 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 
 @class MIPSolverI;
 @protocol ORModel;
-
-@protocol ORMIPSolution <ORSolution>
--(id<ORObjectiveValue>) objectiveValue;
-@end
-
-@protocol ORMIPSolutionPool <ORSolutionPool>
--(void) addSolution: (id<ORMIPSolution>) s;
--(void) enumerateWith: (void(^)(id<ORMIPSolution>)) block;
--(id<ORInformer>) solutionAdded;
--(id<ORMIPSolution>) best;
-@end
 
 
 @protocol MIPProgram <ORASolver>
@@ -33,11 +21,11 @@
 -(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
--(ORFloat) floatValue: (id<ORFloatVar>) v;
+-(ORDouble) doubleValue: (id<ORRealVar>) v;
 -(ORInt) intValue: (id<ORIntVar>) v;
 -(id<ORObjectiveValue>) objectiveValue;
--(id<ORMIPSolutionPool>) solutionPool;
--(id<ORMIPSolution>) captureSolution;
+-(id<ORSolutionPool>) solutionPool;
+-(id<ORSolution>) captureSolution;
 -(id<ORExplorer>)  explorer;
 @end
 

@@ -1,7 +1,7 @@
 /************************************************************************
  MIT License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
@@ -26,4 +26,6 @@
 #import <XCTest/XCTest.h>
 
 @interface testBitConstraints : XCTestCase
+
 @end
+

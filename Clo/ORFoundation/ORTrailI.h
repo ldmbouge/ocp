@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@
 #import <ORFoundation/ORData.h>
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/ORSet.h>
-#import "ORObject.h"
+#import <ORFoundation/ORObject.h>
 
 @protocol ORSearchEngine;
 
@@ -32,12 +32,14 @@
 #define TAGRelease      0xB
 #define TAGFree         0xC
 #define TAGIdNC         0xD
+#define TAGLDouble      0xF
 
-@interface ORTrailI : NSObject<NSCoding,ORTrail>
+@interface ORTrailI : NSObject<ORTrail>
 {
    @public
    struct Slot {
-      void* ptr;
+      void*               ptr;
+      unsigned short     code;
       union {
          ORInt         intVal;          // 4-bytes
          ORUInt       uintVal;          // 4-bytes
@@ -45,11 +47,9 @@
          ORULong     ulongVal;          // 8-bytes
          float       floatVal;          // 4-bytes
          double     doubleVal;          // 8-bytes
-         id             idVal;          // 4-bytes OR 8-bytes depending 32/64 compilation mode
+         long double    ldVal;          // 10-byte
          void*         ptrVal;          // 4 or 8 (pointer)
-         void (^cloVal)(void);
       };
-      ORInt code;
    };
    struct Segment {
       struct Slot tab[NBSLOT];
@@ -74,6 +74,7 @@
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
 -(void) trailDouble:(double*) ptr;
+-(void) trailLDouble:(long double*)ptr;
 -(void) trailPointer:(void**) ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
 -(void) trailRelease:(id)obj;
@@ -82,11 +83,7 @@
 @end
 
 @class ORCommandList;
-@interface ORMemoryTrailI : NSObject<ORMemoryTrail,NSCopying> {
-   id*   _tab;
-   ORInt _mxs;
-   ORInt _csz;
-}
+@interface ORMemoryTrailI : NSObject<ORMemoryTrail,NSCopying> 
 -(id)init;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)dealloc;
@@ -167,23 +164,27 @@ static inline TRDouble  inline_makeTRDouble(ORTrailI* trail,double val)
 {
    return (TRDouble){val,[trail magic]-1};
 }
+static inline TRLDouble  inline_makeTRLDouble(ORTrailI* trail,long double val)
+{
+   return (TRLDouble){val,[trail magic]-1};
+}
 
-static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val)
+static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
 {
    TRInt* ei = a._entries + i;
-   if (ei->_mgc != [a._trail magic]) {
-      trailIntFun(a._trail, & ei->_val);
-      ei->_mgc = [a._trail magic];
+   if (ei->_mgc != [trail magic]) {
+      trailIntFun(trail, & ei->_val);
+      ei->_mgc = [trail magic];
    }
    return ei->_val = val;
 }
 
-static inline ORFloat inline_assignTRFloatArray(TRFloatArray a,int i,ORFloat val)
+static inline ORDouble inline_assignTRDoubleArray(TRDoubleArray a,int i,ORDouble val,id<ORTrail> trail)
 {
    TRDouble* ei = a._entries + i;
-   if (ei->_mgc != [a._trail magic]) {
-      trailFloatFun(a._trail, & ei->_val);
-      ei->_mgc = [a._trail magic];
+   if (ei->_mgc != [trail magic]) {
+      trailDoubleFun(trail, & ei->_val);
+      ei->_mgc = [trail magic];
    }
    return ei->_val = val;
 }
@@ -240,7 +241,7 @@ static inline void inline_trailIdNCFun(ORTrailI* t,id* ptr)
    struct Slot* s = seg->tab + seg->top++;
    s->ptr = ptr;
    s->code = TAGIdNC;
-   s->idVal = *ptr;
+   s->ptrVal = (__bridge void*) *ptr;
 }
 static inline void inline_assignTRInt(TRInt* v,int val,id<ORTrail> trail)
 {
@@ -281,14 +282,18 @@ static inline void  inline_assignTRDouble(TRDouble* v,double val,ORTrailI* trail
 }
 static inline void  inline_assignTRId(TRId* v,id val,id<ORTrail> trail)
 {
-   [trail trailId:&v->_val];
-   [v->_val release];
-   v->_val = [val retain];
+   [trail trailId:v];
+#if __has_feature(objc_arc)
+   *v = val;
+#else
+   [*v release];
+   *v = [val retain];
+#endif
 }
 static inline void  inline_assignTRIdNC(TRIdNC* v,id val,id<ORTrail> trail)
 {
-   inline_trailIdNCFun((ORTrailI*)trail, &v->_val);
-   v->_val = val;
+   inline_trailIdNCFun((ORTrailI*)trail, v);
+   *v = val;
 }
 static inline ORInt inline_getTRIntArray(TRIntArray a,int i)
 {
@@ -341,7 +346,7 @@ static inline V* get##T(T* v) { return v->_val;}
 
 @end
 
-@interface ORTRIntArrayI : NSObject<ORTRIntArray,NSCoding> {
+@interface ORTRIntArrayI : NSObject<ORTRIntArray> {
    @package
    ORTrailI*    _trail;
    TRInt*       _array;
@@ -361,20 +366,7 @@ static inline V* get##T(T* v) { return v->_val;}
 - (id) initWithCoder:(NSCoder *) aDecoder;
 @end
 
-
-
-@interface ORTRIntMatrixI : NSObject<ORTRIntMatrix,NSCoding> {
-@private
-   ORTrailI*       _trail;
-   TRInt*          _flat;
-   ORInt           _arity;
-   id<ORIntRange>* _range;
-   ORInt*          _low;
-   ORInt*          _up;
-   ORInt*          _size;
-   ORInt*          _i;
-   ORInt           _nb;
-}
+@interface ORTRIntMatrixI : NSObject<ORTRIntMatrix> 
 -(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSearchEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSearchEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;

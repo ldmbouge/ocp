@@ -92,7 +92,7 @@
 -(CPBitVarAssignImpact*)initCPBitVarAssignImpact:(id<CPBitVar>)theVar
 {
    self = [super init];
-   NSAssert([theVar isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", theVar, [[CPBitVarI class] description]);
+//   NSAssert([theVar isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", theVar, [[CPBitVarI class] description]);
    _var = theVar;
    _dom.min = [theVar lsFreeBit];
    _dom.max = [theVar msFreeBit];

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,6 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
@@ -24,34 +22,23 @@ int main(int argc, const char * argv[])
          ORInt n = [args size];
          id<ORIntRange> D = RANGE(model,0,n);
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
-         //id<ORGroup> g = [ORFactory bergeGroup:model];
-         [D enumerateWithBlock:^(ORInt k) {
-            if (k < n)
-               //[g add:[x[k] lt:x[k+1]]];
+         for(ORInt k=0;k <= n-1;k++)
             [model add:[x[k] lt:x[k+1]]];
-         }];
-//         [model add:g];
-         //NSLog(@"Group: %@",g);
-         //NSLog(@"MODEL %@",model);
          id<CPProgram> cp = [ORFactory createCPProgram:model];
-         __block ORInt nbSol = 0;
          [cp solve:^{
             NSLog(@"About to search...");
-//             @autoreleasepool {
-//                id<ORIntArray> xv = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
-//                   return [cp intValue:x[i]];
-//                }];
-//                NSLog(@"solution: %@",xv);
-//                nbSol++;
-//            }
+             @autoreleasepool {
+                id<ORIntArray> xv = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt i) {
+                   return [cp intValue:x[i]];
+                }];
+                NSLog(@"solution: %@",xv);
+            }
          }];
          ORLong endTime = [ORRuntimeMonitor cputime];
          NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
-         struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
+         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];
    }

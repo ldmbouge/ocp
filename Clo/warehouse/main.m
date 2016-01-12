@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -61,9 +61,9 @@ int main(int argc, const char * argv[])
          
          [cp solve: ^{
             NSLog(@"Start...");
-            [cp labelArray:cost orderedBy:^ORFloat(ORInt i) { return [cp domsize:cost[i]];}];
-            [cp labelArray:supp orderedBy:^ORFloat(ORInt i) { return [cp domsize:supp[i]];}];
-            [cp labelArray:open orderedBy:^ORFloat(ORInt i) { return [cp domsize:open[i]];}];
+            [cp labelArray:cost orderedBy:^ORDouble(ORInt i) { return [cp domsize:cost[i]];}];
+            [cp labelArray:supp orderedBy:^ORDouble(ORInt i) { return [cp domsize:supp[i]];}];
+            [cp labelArray:open orderedBy:^ORDouble(ORInt i) { return [cp domsize:open[i]];}];
             nbSol++;
             @autoreleasepool {
                id<ORIntArray> ops = [ORFactory intArray:cp range:open.range with:^ORInt(ORInt k) {
@@ -75,8 +75,6 @@ int main(int argc, const char * argv[])
          NSLog(@"#solutions: %d",nbSol);
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }

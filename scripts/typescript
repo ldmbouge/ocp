@@ -1,0 +1,445 @@
+Script started on Sat Apr 12 11:02:07 2014
+bash-3.2$ ls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ ls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ ls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ more typescript 
+[?1h=Script started on Sat Apr 12 11:02:07 2014
+[K[?1l>bash-3.2$ more typescript 
+[?1h=Script started on Sat Apr 12 11:02:07 2014
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ more typescript 
+[7mESC[m[?1h[7mESC[m=Script started on Sat Apr 12 11:02:07 2014
+[7m^MESC[m[K[7mESC[m[?1l[7mESC[m>bash-3.2$ 
+[K[?1l>bash-3.2$ more typescript 
+[?1h=Script started on Sat Apr 12 11:02:07 2014
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ more typescript 
+[7mESC[m[?1h[7mESC[m=Script started on Sat Apr 12 11:02:07 2014
+[7m^MESC[m[K[7mESC[m[?1l[7mESC[m>bash-3.2$ 
+[K[?1l>bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ ls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ 1[Kls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ ls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ lsmore typescript 
+[?1h=Script started on Sat Apr 12 11:02:07 2014
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ more typescript 
+[7mESC[m[?1h[7mESC[m=Script started on Sat Apr 12 11:02:07 2014
+[7m^MESC[m[K[7mESC[m[?1l[7mESC[m>bash-3.2$ more typescript 
+[7mESC[m[?1h[7mESC[m=Script started on Sat Apr 12 11:02:07 2014
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ more typescript 
+[7mESC[m[7mESC[7mESC[m[m[?1h[7mESC[m[7mESC[7mESC[m[m=Script started on Sat Apr 12 11:02:07 2014
+[7mESC[m[7m^MESC[7mESC[m[m[K[7mESC[m[7mESC[7mESC[m[m[?1l[7mESC[m[7mESC[7mESC[m[m>bash-3.2$ 
+[7m^MESC[m[K[7mESC[m[?1l[7mESC[m>bash-3.2$ more typescript 
+[7mESC[m[?1h[7mESC[m=Script started on Sat Apr 12 11:02:07 2014
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ ls
+ab.py           bench.py~       cp13a.py        knapsack.py     ounit.py        stress.py       views.py
+bench.py        coverage.py     intoDB.py       operf.py        runner.py       typescript
+bash-3.2$ more typescript 
+[7mESC[m[7mESC[7mESC[m[m[?1h[7mESC[m[7mESC[7mESC[m[m=Script started on Sat Apr 12 11:02:07 2014
+[7mtypescript [m[K[K [KESCESC[KOO[KAA[K[K:[K[K [KESCESC[KOO[KAA[K[K:[K[K [KESCESC[KOO[KAA[K[K:[K[K[7mESC[m[7m^MESC[7mESC[m[m[K[7mESC[m[7mESC[7mESC[m[m[?1l[7mESC[m[7mESC[7mESC[m[m>bash-3.2$ 
+:[K[K[?1l>bash-3.2$ 
+bash-3.2$ ls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ ls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ lsmore typescript [C[C[C[C[C[C[C[C[C[Cls[Kmore typescript [C[C[C[C[C[C[C[C[C[Cls[Ktcshschcshemacs[K[K[K[K[Ksc[K[Kls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ lsmore typescript [C[C[C[C[C[C[C[C[C[Cls[Kmore typescript [C[C[C[C[C[C[C[C[C[Cls[Ktcshschcshemacssource ~/.alias[C[C[C[C[C[C[C[C[C[C[3Pemacs .alias[Ktar xvf config.tar [C[C[C[C[C[C[C[C[C[C[5Pls oldpvh/pvh/[K[K[K[K[K[K[K[K[K[K[K[K[K[Kls
+ab.py		bench.py~	cp13a.py	knapsack.py	ounit.py	stress.py	views.py
+bench.py	coverage.py	intoDB.py	operf.py	runner.py	typescript
+bash-3.2$ cd ..
+bash-3.2$ ls
+Clo			Clo.sublime-workspace	cpp			espresso.css		scripts
+Clo.sublime-project	R			data			java			xxx
+bash-3.2$ script [Ks/bench.py
+2014-04-12 11:08:15.947 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5486DF25-ED9C-496A-BE5C-1143FEE73524.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.947 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7449E1DE-F37D-4D50-B8EF-D7C8396C573B.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.947 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/D25AA97F-E9A2-451B-8B92-6E401DFFC259.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.948 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5E8C8854-F1A6-4D2F-A2DD-056C6DB30073.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.948 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/E86A0A1A-443F-450F-9276-9EED0CFFF59A.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.948 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/2E5AE233-1BC6-4970-B392-6E88D285DE96.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.949 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8C4B6FE7-F154-42DE-917A-D6A6CF7894B8.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.949 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/E0E7BE74-8BE0-4842-9CA5-010F4B4F4E72.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.949 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8AAEED6C-53F0-478B-953E-B1664CFA8BF2.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.949 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4DAE138E-E102-499E-B514-0C7DFE4510FC.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.950 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/FE816D4C-8BAD-4D2E-A57B-E7C159B96F62.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.950 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4D564656-C75C-41DE-A573-E6928CBB9B48.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.950 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7EA80D22-1160-4649-A265-A9BF00B62856.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.950 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BFC3BD86-A5EA-4628-B6DF-577F1D14BDED.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.950 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/C9F9A647-0EFF-4A28-B446-9A381BAEF503.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.951 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BA56CE0D-CC5B-4D32-9A1D-D8DE0B7727C6.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.951 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/23BF1AE6-03C4-413D-822A-8CE208781325.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.951 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/2668C793-6819-4406-A299-C4522AE9AED7.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.951 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/349D84F2-ABA1-4BB7-8E93-FB5D4A05DBA2.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.951 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/A301C00D-BF3F-429E-8390-D055AB6A2E35.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.952 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/458A93CD-1CD7-4A11-A3E8-7C9035784DE0.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.952 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/91175DEF-5A1F-4901-88BF-4C874324AE3F.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.952 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/253CF4FE-28D6-4176-A473-998071BD5CBE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.952 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/51A234AE-9E02-4BA6-BC29-D588A2B7A91C.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.952 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/0BA0E92A-5CE4-4916-9B10-D5D1FE206B44.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.953 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/CAA23C64-3F0F-44D5-8705-4187C32F2DA9.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.953 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F3522BE2-947D-4D76-9E8C-0763239C071B.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.953 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4F8A07D6-197E-4A5E-AD22-FA73BE6884A6.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.953 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/EC871F5D-1C2B-41E5-A86B-16DAD33BA336.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.953 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/879D4E2B-ED53-4B2F-8A68-E28C3199BC7E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.953 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/FC41AA70-FC51-40F1-9665-476BFB6D9E21.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.954 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/B12242E5-922E-4E3C-949E-2F2C99D1C4DE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.954 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/57083469-0D94-4EC4-9A26-3FADCAB47381.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.954 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/C10EB5CD-72F3-461A-B4F4-964559C81DA4.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.954 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BB39D951-5334-4E74-A7C4-40743C1AC6D3.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.954 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5FA830E0-6921-4FAF-B137-4A473FBDFF57.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.955 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/3B21386E-360D-4A0F-964B-2CEAE1F9BD73.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.955 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/034AB485-8F30-4EC3-9E6B-84761DB039F8.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.955 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/19B09FD8-3197-4AD9-99DC-B037DBAB960E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.955 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/613DAC63-9951-4A3C-89F5-13473D1FC575.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.956 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/AA98BC0F-C748-41E0-A496-E69C26EC2BD7.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.956 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4DF71008-19A2-4544-AF8D-8ABCD29A86F3.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.956 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7FD31A1C-9957-4AF2-B471-70DEB8A82D97.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.956 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/D8C5D21D-4658-4954-B541-823A234B5FBB.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.956 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/9D07D08D-CC91-4562-8965-B25D25D6E1BE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.957 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/6468B0DF-F825-4EA8-8CC5-8BF0CAD297C6.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.957 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1ADC912C-22C7-425F-9185-6B0BB06CF455.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.957 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/65B56B54-4C99-4B16-A4FB-0A7CACFEFC00.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.957 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7A7716C1-5195-4D38-B42F-6D43898105C0.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.958 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8610F5C5-9F93-4361-98BC-550A5CB2EC3A.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.958 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/31E8F7DA-D2CE-4F86-926F-AFFF7DE81007.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.958 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/C29F7E05-BCA6-406A-96DD-BE44E3E1F081.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.958 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4A9AA2D6-E2B6-4394-9EC5-D9720AF5D3B7.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.958 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5BB78E33-6F19-4D6C-AF93-6B7A046AD069.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.959 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/9D9D31A9-32CA-4074-BFB2-CB6A4A35E1D4.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.959 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/12151E9E-8BA8-4822-96DC-0D6DA1594449.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.959 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/AE7B88C1-9875-408C-9207-1B980C8508CE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.959 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F952F93D-DF47-42F3-ACC7-EBC99A7576F8.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.959 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/2AFAC82A-614D-4E00-B921-6C3BA98B65A3.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.960 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/349885D2-7F96-4A05-9100-27D066A1B689.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.960 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/3DBE0D6C-FCAB-4B96-A981-077A3470181D.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.960 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/21EA472E-3492-4C1D-8D2F-DA5D8F6AFE3F.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.960 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/253B298E-8405-4C36-BD2F-E2DB90936C91.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.960 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/A1BDFDBB-86D3-4686-8EA9-47B41AD260B9.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.961 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1FE528C6-9C4A-4495-A87B-0A559A7B4D4C.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.961 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BC6A02F2-2B84-42EB-84A1-CAA8ABFE37DF.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.961 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/D9FC1E66-BF26-46B3-B503-CE05E4C65108.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.961 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/CE281657-DF86-4322-80F4-D6E096C9E1B4.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.961 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8CB97B16-4126-47AE-98C4-309E66F4B02C.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.962 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/24F3E7F2-0C99-44E5-861F-C0DD931B39ED.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.962 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/06A1A69E-1CE9-44BB-8919-CAAA8D0D4918.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.962 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/132FB63C-2125-4D8E-A750-3D83F0DB20DF.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.962 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/AF93BE20-E435-491B-B76A-DDE35489B8BE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.962 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/03F06F0E-5BDB-49E7-8F5B-A69FE8BAB0CC.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.963 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/6C3586BA-F276-4A50-ACB6-6A17E4F3B932.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.963 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/2A67B3D9-42F9-4EA5-848F-1F2D20EB055A.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.963 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/14898B86-0FC2-4DB7-A72A-C9587949E20B.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.963 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1300547A-9C4A-48F0-9810-15F09F0B7A57.xcactivitylog") is missing. Skipping.
+2014-04-12 11:08:15.963 xcodebuild[9053:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BDB53F2B-1538-48B1-A60A-ED1B94DE7491.xcactivitylog") is missing. Skipping.
+CWD is:/Users/pvh/NICTA/Project/objectivecp-private/cpglobalopt
+Traceback (most recent call last):
+  File "scripts/bench.py", line 45, in <module>
+    k = ar[0].keys()
+IndexError: list index out of range
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ scripts/bench.py[C[C[C[C[C[C[C[C[C[C[K[w[K[Kpwd
+/Users/pvh/NICTA/project/objectivecp-private/cpglobalopt
+bash-3.2$ pwdscripts/bench.py
+2014-04-12 11:17:08.921 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5486DF25-ED9C-496A-BE5C-1143FEE73524.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.922 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7449E1DE-F37D-4D50-B8EF-D7C8396C573B.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.922 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/D25AA97F-E9A2-451B-8B92-6E401DFFC259.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.922 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/73E6E841-ABB1-4EA9-8FA8-F806B948C067.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.923 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/970ED734-3D80-4702-9C46-41D1B8898C92.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.923 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5E8C8854-F1A6-4D2F-A2DD-056C6DB30073.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.923 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/908F0E26-C310-4E80-98A9-F9DE3F39367E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.923 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/E86A0A1A-443F-450F-9276-9EED0CFFF59A.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.924 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1981E97A-1AE3-4B11-8EB6-C8FC21EF3F40.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.924 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/2E5AE233-1BC6-4970-B392-6E88D285DE96.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.924 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/ACDC586E-6183-44D1-9AB6-70B865C377C2.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.924 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8C4B6FE7-F154-42DE-917A-D6A6CF7894B8.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.924 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/E0E7BE74-8BE0-4842-9CA5-010F4B4F4E72.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.925 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8AAEED6C-53F0-478B-953E-B1664CFA8BF2.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.925 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4DAE138E-E102-499E-B514-0C7DFE4510FC.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.925 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/FE816D4C-8BAD-4D2E-A57B-E7C159B96F62.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.925 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4D564656-C75C-41DE-A573-E6928CBB9B48.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.925 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7EA80D22-1160-4649-A265-A9BF00B62856.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.925 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BFC3BD86-A5EA-4628-B6DF-577F1D14BDED.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.926 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/C9F9A647-0EFF-4A28-B446-9A381BAEF503.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.926 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/9156ADA5-D793-4C0D-91E8-4A8945BF13B6.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.926 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BA56CE0D-CC5B-4D32-9A1D-D8DE0B7727C6.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.926 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1D4BF10E-04E1-48ED-96D3-96481945E682.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.926 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/23BF1AE6-03C4-413D-822A-8CE208781325.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.926 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/2668C793-6819-4406-A299-C4522AE9AED7.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.927 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/46E701AC-9541-4F85-AAE1-C69736223DF0.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.927 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/9B138D8B-C440-4B49-B358-0E62A4F65A1D.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.927 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/349D84F2-ABA1-4BB7-8E93-FB5D4A05DBA2.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.927 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/224256E9-2B76-4245-8082-0A4FEBC30F43.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.927 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/A301C00D-BF3F-429E-8390-D055AB6A2E35.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.927 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/E70F9450-BB6B-4AF7-B945-1B0C13505F40.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.928 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/458A93CD-1CD7-4A11-A3E8-7C9035784DE0.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.928 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/91175DEF-5A1F-4901-88BF-4C874324AE3F.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.928 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/253CF4FE-28D6-4176-A473-998071BD5CBE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.928 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/B1C91970-F777-4DB3-A94E-3AF6EE6324DC.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.928 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/51A234AE-9E02-4BA6-BC29-D588A2B7A91C.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.929 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/94BC4FD0-4C49-4CC9-8CC0-92521801D78A.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.929 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1F27AB56-0C69-4C2D-8690-C7ACB4E987D8.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.929 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/0BA0E92A-5CE4-4916-9B10-D5D1FE206B44.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.929 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/CAA23C64-3F0F-44D5-8705-4187C32F2DA9.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.929 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/70517848-EEED-42FE-BAC3-EB230E4F82DA.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.929 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/503513DD-2AE7-41B4-931B-935C02D7DC50.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.930 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/C0091DC2-7B76-43A8-BC3D-E067E084853D.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.930 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F3522BE2-947D-4D76-9E8C-0763239C071B.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.930 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4F8A07D6-197E-4A5E-AD22-FA73BE6884A6.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.930 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/EC871F5D-1C2B-41E5-A86B-16DAD33BA336.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.930 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/879D4E2B-ED53-4B2F-8A68-E28C3199BC7E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.930 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/FC41AA70-FC51-40F1-9665-476BFB6D9E21.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.930 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/B12242E5-922E-4E3C-949E-2F2C99D1C4DE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.931 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/99633676-1E5F-491D-A7EB-3AB5C68B77A8.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.931 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/57083469-0D94-4EC4-9A26-3FADCAB47381.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.931 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/C10EB5CD-72F3-461A-B4F4-964559C81DA4.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.931 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BB39D951-5334-4E74-A7C4-40743C1AC6D3.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.931 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8AEFCB9B-9322-41E2-B495-0BAEE1EBA57D.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.931 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/54072981-5932-4BCD-9572-CC832B2D9F13.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.932 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5FA830E0-6921-4FAF-B137-4A473FBDFF57.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.932 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/35049295-91CA-4EAB-9ABC-9992D61376AF.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.932 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/3B21386E-360D-4A0F-964B-2CEAE1F9BD73.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.932 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BBAAA11F-C90C-4876-ADC9-890233A76C5B.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.932 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/034AB485-8F30-4EC3-9E6B-84761DB039F8.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.933 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/19B09FD8-3197-4AD9-99DC-B037DBAB960E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.933 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/613DAC63-9951-4A3C-89F5-13473D1FC575.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.933 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/3872F54D-EA2B-4561-B590-6B372985EC0B.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.933 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/AA98BC0F-C748-41E0-A496-E69C26EC2BD7.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.933 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4DF71008-19A2-4544-AF8D-8ABCD29A86F3.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.933 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/E9FBC7DB-8A21-4DAC-B34A-DFDCA9C5C495.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.933 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/034159C3-D1A1-4D90-9F3D-4294390457CD.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.934 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/B9DB3062-DF74-41AE-AD74-F7FF08809D52.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.934 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/ACE8C89B-B559-4206-A203-AE032F88DFCA.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.934 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7FD31A1C-9957-4AF2-B471-70DEB8A82D97.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.934 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/D8C5D21D-4658-4954-B541-823A234B5FBB.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.934 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F2CF0331-D52E-43FC-86C6-FC282EF0D0FF.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.935 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/9D07D08D-CC91-4562-8965-B25D25D6E1BE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.935 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/09F92700-C3A7-4A92-907B-C513A9690902.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.935 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/6468B0DF-F825-4EA8-8CC5-8BF0CAD297C6.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.935 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4F026A9C-0E0E-4333-AC64-2A7E349DFB07.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.935 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/B09AD53C-A577-4F21-8745-2EDA62C9AC1E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.935 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F3201882-0432-47B0-B2DC-139A0D73CE24.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.935 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/0E0AF7A4-932E-46DD-B9E0-5996DCB0A900.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.936 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1ADC912C-22C7-425F-9185-6B0BB06CF455.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.936 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/65B56B54-4C99-4B16-A4FB-0A7CACFEFC00.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.936 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/6FDB032E-223A-4894-93CB-DFDE0B2D0906.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.936 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7A7716C1-5195-4D38-B42F-6D43898105C0.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.936 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8610F5C5-9F93-4361-98BC-550A5CB2EC3A.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.936 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7B90DAA9-151C-41E4-B9BA-62BC73DFCA5C.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.936 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/D48C99BE-3261-4975-9AD2-3C73ADBD5E8F.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.937 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/373F987B-AA3A-44C7-9EB0-7B688F8D154F.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.937 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/31E8F7DA-D2CE-4F86-926F-AFFF7DE81007.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.937 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/C29F7E05-BCA6-406A-96DD-BE44E3E1F081.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.937 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/4A9AA2D6-E2B6-4394-9EC5-D9720AF5D3B7.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.937 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F3645FF3-33DF-42D2-9769-FFF010BF23DD.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.937 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F026E97D-DFA1-4867-88F6-FCD3BE379BD4.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.938 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5BB78E33-6F19-4D6C-AF93-6B7A046AD069.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.938 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5F05DC87-A8BD-46A8-AAEC-FDC1F267BD69.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.938 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/A65DAD78-5580-4250-BBCE-70C4C011FEE3.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.938 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/9D9D31A9-32CA-4074-BFB2-CB6A4A35E1D4.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.938 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/12151E9E-8BA8-4822-96DC-0D6DA1594449.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.938 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/89E32AD0-496A-497A-8E5A-8449CB3F3FD5.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.939 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/868F3F07-4E87-4549-A760-015322BFC26E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.939 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/AE7B88C1-9875-408C-9207-1B980C8508CE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.939 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F952F93D-DF47-42F3-ACC7-EBC99A7576F8.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.939 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/2AFAC82A-614D-4E00-B921-6C3BA98B65A3.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.939 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/E0DC33DF-C8C0-4827-A6E3-D20B051A4B0E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.939 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/349885D2-7F96-4A05-9100-27D066A1B689.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.940 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/3DBE0D6C-FCAB-4B96-A981-077A3470181D.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.940 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/569355CC-FC1D-45CC-B8C7-B9D735BB0A78.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.940 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/21EA472E-3492-4C1D-8D2F-DA5D8F6AFE3F.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.940 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/253B298E-8405-4C36-BD2F-E2DB90936C91.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.940 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/A1BDFDBB-86D3-4686-8EA9-47B41AD260B9.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.940 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/A31C630B-152F-49BE-BE9C-A5AA09D98805.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.940 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1FE528C6-9C4A-4495-A87B-0A559A7B4D4C.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.941 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/ED652562-072D-42A5-9148-57E6DB855140.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.941 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/FFA7AD65-18D7-4195-8B14-2D19315FF376.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.941 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BC6A02F2-2B84-42EB-84A1-CAA8ABFE37DF.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.941 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/D9FC1E66-BF26-46B3-B503-CE05E4C65108.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.941 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/5D076998-DDA9-4C39-B281-2117114CB25E.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.941 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/CE281657-DF86-4322-80F4-D6E096C9E1B4.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.942 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/ED1734E0-1C22-4C80-9D38-DF411D02FB86.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.942 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F72D7883-5A0E-42E9-AEB0-8DBE686462FD.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.942 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8CB97B16-4126-47AE-98C4-309E66F4B02C.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.942 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/24F3E7F2-0C99-44E5-861F-C0DD931B39ED.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.942 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/06A1A69E-1CE9-44BB-8919-CAAA8D0D4918.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.942 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/132FB63C-2125-4D8E-A750-3D83F0DB20DF.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.943 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/8FBCCFB4-C585-4A2A-8B8D-10007D3BF9AE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.943 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/7FD9F9FF-F7A7-4F4D-AD22-255B10F58C78.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.943 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1EFD6232-1A3E-43A1-8F6D-B4CCA89739AB.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.943 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/01F30F5B-1E3C-4E20-AE70-E5F4E2F35BAE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.943 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/AF93BE20-E435-491B-B76A-DDE35489B8BE.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.943 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/66C136A8-FAFC-43FB-89E9-314CAA1FA6F7.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.943 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/34418E50-46C1-4D6B-B290-59F18CBB3D7F.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.944 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/03F06F0E-5BDB-49E7-8F5B-A69FE8BAB0CC.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.944 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1E20259F-F6E5-4F60-BD52-B97DCE00BB28.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.944 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/6C3586BA-F276-4A50-ACB6-6A17E4F3B932.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.944 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/F4B1B809-1A6E-40E8-8812-0E408FC19700.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.944 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/2A67B3D9-42F9-4EA5-848F-1F2D20EB055A.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.944 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/244C3EE5-B17A-4243-B3C3-2DDF722E0829.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.945 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/FA266843-475B-4A44-903C-BFA905E770D9.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.945 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/14898B86-0FC2-4DB7-A72A-C9587949E20B.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.945 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/622CBF1E-A236-456A-9721-FCF71971CC65.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.945 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/1300547A-9C4A-48F0-9810-15F09F0B7A57.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.945 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/6A82EC54-FF3A-4E46-BBBD-ABA0AE41F8B2.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.945 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/BDB53F2B-1538-48B1-A60A-ED1B94DE7491.xcactivitylog") is missing. Skipping.
+2014-04-12 11:17:08.946 xcodebuild[9126:1007] [MT] IDELogStore: Log record's backing file ("/Users/pvh/Library/Developer/Xcode/DerivedData/ObjecticeCP-chqfmkpfoilhrfcxujhgqatnmklj/Logs/Build/299856C7-1D40-46D1-BC26-C35FEF3006DE.xcactivitylog") is missing. Skipping.
+CWD is:/Users/pvh/NICTA/Project/objectivecp-private/cpglobalopt
+Traceback (most recent call last):
+  File "scripts/bench.py", line 45, in <module>
+    k = ar[0].keys()
+IndexError: list index out of range
+bash-3.2$ emacs scripts/bench.py
+7[?47h[?1h=[39;1H[7m----:---F1  [m[m[7m[1m*scratch*   [m[m[7m   All L1     (Fundamental)---------------------------------------------------------------------[m[m
+[A[H[H[2J[40;1HLoading encoded-kb...[K[H[40;22Hdone[H[40;1H[K[?1l>[2J[?47l8[m7[?47h[?1h=[H[2J[40;1H[K[?1l>[2J[?47l8[m7[?47h[?1h=[40;1HLoading /Users/pvh/.emacs-22.el (source)...[K[H
+[40;1HEmacs-19. Power.[K[H
+[40;1HLoading derived...[H
+[40;19Hdone[H
+[40;9H/Users/[4hpvh/.emacs-22.el (source)[H
+[4l[40;1HFor information about the GNU Project and its goals, type <help> C-p.[H
+[40;1HLoading python...[K[H
+[40;18Hdone[H
+[40;1H[37m[46mLoading python...done                                                                                                  [m[H[37m[46m#!/usr/bin/python                                                                                                       [m
+[A
+[37m[46mimport subprocess                                                                                                       [m
+[A
+[37m[46mimport os                                                                                                               [m
+[A
+[37m[46mimport sys                                                                                                              [m
+[A
+[37m[46mimport json                                                                                                             [m
+[A
+[37m[46mimport intoDB                                                                                                           [m
+[A
+[37m[46mimport runner                                                                                                           [m
+[A
+[37m[46mimport csv                                                                                                              [m
+[A
+[37m[46m                                                                                                                        [m
+[A
+[37m[46m#  bench qArgument      nArgument       parallel (0/1)  heuristic [0|1|2|3|4]                                           [m
+[A
+[37m[46m                                                                                                                        [m
+[A
+[33m[46mab[m[m[37m[46m = [                                                                                                                  [m
+[A
+[37m[46m#      ('sport',0,0,0,0,0,lambda x : x + 1),                                                                            [m
+[A
+[37m[46m       ('progressive',6,6,0,0,0,lambda x : x + 1),                                                                      [m
+[A
+[37m[46m#      ('slab',0,0,0,0,0,lambda x : x + 1),                                                                             [m
+[A
+[37m[46m#      ('slabLNSModel',0,0,0,0,0,lambda x : x + 1),                                                                     [m
+[A
+[37m[46m#      ('perfect',0,0,0,0,0,lambda x : x + 1),                                                                          [m
+[A
+[37m[46m#      ('knapsackOpt',1,0,0,0,4,lambda x : x + 1),                                                                      [m
+[A
+[37m[46m#      ('golomb',8,0,0,0,13,lambda x : x + 1),                                                                          [m
+[A
+[37m[46m#       ('order2',8,0,0,0,4096,lambda x : x * 2),                                                                       [m
+[A
+[37m[46m#       ('order',8,0,0,0,8192,lambda x : x * 2)                                                                         [m
+[A
+[37m[46m  ]                                                                                                                     [m
+[A
+[37m[46m                                                                                                                        [m
+[A
+[37m[46m#      ('latinSquare',8,0,0,0,8,lambda x : x + 1),                                                                      [m
+[A
+[37m[46m                                                                                                                        [m
+[A
+[37m[46m# ab = [('magicserie',8,0,0,0,2048,lambda x : x * 2),                                                                   [m
+[A
+[37m[46m#       ('magicseriesModel',8,0,0,0,256,lambda x : x * 2)]                                                              [m
+[A
+[37m[46m#ab = [('slow_convergence',8,0,0,0,2048,lambda x : x * 2)]                                                              [m
+[A
+[37m[46m#ab = [('order',8,0,0,0,32,lambda x : x * 2)]                                                                           [m
+[A
+[37m[46m                                                                                                                        [m
+[A
+[33m[46me[m[m[37m[46m = runner.Environment()                                                                                                [m
+[A
+[33m[46mnbRun[m[m[37m[46m = 10                                                                                                              [m
+[A
+[37m[46m                                                                                                                        [m
+[A
+[37m[46mfor (b,qa,na,par,heur,ub,step) in ab:                                                                                   [m
+[A
+[37m[46m        p = runner.Runner(b,1)                                                                                          [m
+[A
+[37m[46m        ar = []                                                                                                         [m
+[A
+[37m[46m        sz = qa                                                                                                         [m
+[A
+[37m[46m        while sz <= ub:                                                                                                 [m
+[A
+[36m[47m-uu-:---F1  [m[m[1m[36m[47mbench.py    [m[m[36m[47m   Top L1     (Python)--------------------------------------------------------------------------[m[m
+[A[H[40;1H[37m[46m                     [m[H[40;1H[37m[46m(No files need saving)[m[H[40;1H[K[?1l>[2J[?47l8[mbash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ 
+bash-3.2$ exit
+exit
+
+Script done on Sat Apr 12 11:17:58 2014

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORTypes.h"
+#import <ORUtilities/ORTypes.h>
 
 @protocol Position    
 -(id)element;
@@ -33,6 +33,8 @@
 -(void) removeObjectForKey:(ORInt) k;
 -(void) removeNode:(ORAVLTreeNode<Position>*)n;
 -(NSEnumerator*)iterator;
+-(ORAVLTreeNode<Position>*)smallest:(ORAVLTreeNode<Position>*)x;
+-(ORAVLTreeNode<Position>*)largest:(ORAVLTreeNode<Position>*)x;
 @end
 
 @interface ORAVLTreeKeyIntEnumerator : NSObject<IntEnumerator>

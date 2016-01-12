@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,14 +20,14 @@
    @package
    CPTrigger*         _prev;
    CPTrigger*         _next;
-   ConstraintCallback   _cb;       // var/val held inside the closure (captured).
-   CPCoreConstraint*  _cstr;
-   ORInt               _vId;       // local variable identifier (var being watched)
+   ORClosure          _cb;       // var/val held inside the closure (captured).
+   id<CPConstraint>   _cstr;
+   ORInt              _vId;       // local variable identifier (var being watched)
 }
--(id)initTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c;
--(void)detach;
--(ORInt)localID;
--(void)setLocalID:(ORInt)lid;
+-(id)initTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>)c;
+-(void) detach;
+-(ORInt) localID;
+-(void) setLocalID: (ORInt) lid;
 @end
 
 @interface CPDenseTriggerMap : CPTriggerMap {
@@ -36,9 +36,9 @@
    ORInt         _low;
    ORInt          _sz;
 }
--(id) initDenseTriggerMap:(ORInt)low size:(ORInt)sz;
--(CPTrigger*)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
--(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
+-(id) initDenseTriggerMap: (ORInt)low size: (ORInt) sz;
+-(CPTrigger*) linkTrigger: (CPTrigger*) t forValue: (ORInt)value;
+-(void) loseValEvt: (ORInt) val solver: (CPEngineI*) fdm;
 @end
 
 @interface CPSparseTriggerMap : CPTriggerMap {
@@ -46,12 +46,12 @@
    ORAVLTree* _map;
 }
 -(id) initSparseTriggerMap;
--(CPTrigger*) linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
--(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
+-(CPTrigger*) linkTrigger: (CPTrigger*) t forValue: (ORInt) value;
+-(void) loseValEvt: (ORInt) val solver: (CPEngineI*) fdm;
 @end
 
 @implementation CPTrigger
--(id)init
+-(id) init
 {
    self = [super init];
    _cb = nil;
@@ -60,7 +60,7 @@
    _prev = _next = nil;
    return self;
 }
--(id)initTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c
+-(id) initTrigger:(ORClosure)cb onBehalf:(id<CPConstraint>) c
 {
    self = [super init];
    _cb = [cb copy];
@@ -69,25 +69,25 @@
    _prev = _next = nil;
    return self;
 }
--(void)dealloc
+-(void) dealloc
 {
    [_cb release];
    [super dealloc];
 }
--(void)detach
+-(void) detach
 {
    _next->_prev = _prev;
    _prev->_next = _next;
 }
--(ORInt)localID
+-(ORInt) localID
 {
    return _vId;
 }
--(void)setLocalID:(ORInt)lid
+-(void) setLocalID: (ORInt) lid
 {
    _vId = lid;
 }
--(void)setNext:(CPTrigger*)new
+-(void) setNext: (CPTrigger*) new
 {
    if (_next)
       _next->_prev = new;
@@ -129,7 +129,7 @@ static void freeTriggers(CPTrigger* list)
     [super dealloc];
 }
 
-+(CPTrigger*) createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
++(CPTrigger*) createTrigger: (ORClosure) todo onBehalf:(id<CPConstraint>)c
 {
    return [[CPTrigger alloc] initTrigger:todo onBehalf:c];
 }

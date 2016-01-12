@@ -55,12 +55,16 @@ ab = ['ais',
 'Sudoku',
 'TestAssignment',
 'testLPConcretization',
-'testMIP',
 'testPacking',
 'warehouse',
 'wka']
 
-print ab
+nba = len(sys.argv)
+aa  = str(sys.argv)
+
+print "All args:" , sys.argv[1]
+
+dOpt = sys.argv[1]
 
 gmf = open('bench.make','w')
 gmf.write('TARGETS = ')
@@ -75,15 +79,17 @@ gmf.write('	@echo "Done all..."\n')
 
 for b in ab:
 	of = open(b + '/' + 'Makefile','w')
+        of.write(dOpt + '\n')
+        of.write('USER_DEFINES=$(CFL)\n')
 	of.write('include ../common.make\n')
 	of.write('SRCS = main.m ORCmdLineArgs.m\n')
 	of.write('EXE  = ' + b + '\n')
 	of.write('include ../rules.make\n')
 	of.close()
 	gmf.write('\n' + b + ':\n')
-	gmf.write("	@make -s -C " + b + " USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'\n")
+	gmf.write("	@$(MAKE) -s -C " + b + " USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'\n")
 
 gmf.write('\nclean:\n')
 for b in ab:
-	gmf.write("	@make -s -C " + b + " clean\n")
+	gmf.write("	@$(MAKE) -s -C " + b + " clean\n")
 gmf.close()

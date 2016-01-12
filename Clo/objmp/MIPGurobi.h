@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,19 +13,10 @@
 #import <Foundation/NSObject.h>
 #import <ORFoundation/ORFoundation.h>
 #import <objmp/MIPType.h>
-#import "gurobi_c.h"
-
 
 @interface MIPGurobiSolver: NSObject
-{
-@private
-   struct _GRBenv*                _env;
-   struct _GRBmodel*              _model;
-   MIPOutcome                      _status;
-   MIPObjectiveType                _objectiveType;
-}
 
--(MIPGurobiSolver*) initMIPGurobiSolver;
+-(MIPGurobiSolver*) init;
 -(void) dealloc;
 
 -(void) addVariable: (MIPVariableI*) var;
@@ -37,21 +28,21 @@
 -(MIPOutcome) solve;
 
 -(MIPOutcome) status;
--(ORFloat) floatValue: (MIPVariableI*) var;
+-(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORInt) intValue: (MIPIntVariableI*) var;
--(ORFloat) lowerBound: (MIPVariableI*) var;
--(ORFloat) upperBound: (MIPVariableI*) var;
--(ORFloat) objectiveValue;
+-(ORDouble) lowerBound: (MIPVariableI*) var;
+-(ORDouble) upperBound: (MIPVariableI*) var;
+-(ORDouble) objectiveValue;
 
--(void) setBounds: (MIPVariableI*) var low: (ORFloat) low up: (ORFloat) up;
+-(void) setBounds: (MIPVariableI*) var low: (ORDouble) low up: (ORDouble) up;
 -(void) setUnboundUpperBound: (MIPVariableI*) var;
 -(void) setUnboundLowerBound: (MIPVariableI*) var;
 
--(void) updateLowerBound: (MIPVariableI*) var lb: (ORFloat) lb;
--(void) updateUpperBound: (MIPVariableI*) var ub: (ORFloat) ub;
+-(void) updateLowerBound: (MIPVariableI*) var lb: (ORDouble) lb;
+-(void) updateUpperBound: (MIPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (ORFloat) val;
+-(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr;

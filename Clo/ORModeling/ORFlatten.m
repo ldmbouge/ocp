@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,13 +9,11 @@
  
  ***********************************************************************/
 
-#import "ORFlatten.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORFlatten.h>
+#import "ORRealLinear.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
-#import "ORSetI.h"
-#import "ORVarI.h"
-#import <ORFoundation/ORArrayI.h>
-
 
 @implementation ORFlatten {
    NSMapTable* _mapping;
@@ -25,7 +23,7 @@
    self = [super init];
    _into = into;
    _fresh = nil;
-   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsOpaqueMemory|NSPointerFunctionsObjectPointerPersonality
                                         valueOptions:NSPointerFunctionsOpaqueMemory
                                             capacity:64];
    return self;
@@ -71,30 +69,32 @@
       [_into addImmutable:x];
    }
    onConstraints: ^(id<ORConstraint> c) {
+      [_into setCurrent:c];
       [self flattenIt:c];
+      [_into setCurrent:nil];
    }
    onObjective: ^(id<ORObjectiveFunction> o) {
       [self flattenIt:o];
    }];
 }
 
--(void) visitIntVar: (ORIntVarI*) v
+-(void) visitIntVar: (id) v
 {
    _result = v;
 }
--(void) visitBitVar: (ORBitVarI*) v
+-(void) visitBitVar: (id) v
 {
    _result = v;
 }
--(void) visitFloatVar: (ORFloatVarI*) v
+-(void) visitRealVar: (id) v
 {
    _result = v;
 }
--(void) visitIntVarLitEQView:(ORIntVarLitEQView*)v
+-(void) visitIntVarLitEQView:(id)v
 {
    _result = v;
 }
--(void) visitAffineVar:(ORIntVarAffineI*) v
+-(void) visitAffineVar:(id) v
 {
    _result = v;
 }
@@ -109,7 +109,7 @@
 {
    _result = e;
 }
--(void) visitMutableFloatI: (id<ORMutableFloat>) e
+-(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
    _result = e;
 }
@@ -118,7 +118,7 @@
 {
    _result = v;
 }
--(void) visitFloatArray:(id<ORFloatArray>)v
+-(void) visitDoubleArray:(id<ORDoubleArray>)v
 {
    _result = v;
 }
@@ -138,7 +138,7 @@
 {
    _result = v;
 }
--(void) visitFloatRange:(id<ORFloatRange>)v
+-(void) visitRealRange:(id<ORRealRange>)v
 {
    _result = v;
 }
@@ -160,6 +160,10 @@
 -(void) visitRestrict:(id<ORRestrict>)cstr
 {
    _result = [_into addConstraint:cstr];
+}
+-(void) visitLinearLeq: (id<ORLinearLeq>) cstr
+{
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
@@ -204,6 +208,18 @@
 {
    _result = [_into addConstraint:cstr];
 }
+-(void) visitMultiKnapsack: (id<ORMultiKnapsack>) cstr
+{
+   _result = [_into addConstraint:cstr];
+}
+-(void) visitMultiKnapsackOne: (id<ORMultiKnapsackOne>) cstr
+{
+   _result = [_into addConstraint:cstr];
+}
+-(void) visitMeetAtmost: (id<ORMeetAtmost>) cstr
+{
+   _result = [_into addConstraint:cstr];
+}
 -(void) visitPacking: (id<ORPacking>) cstr
 {
    id<ORIntVarArray> item     = [self flattenIt:[cstr item]];
@@ -214,7 +230,6 @@
    id<ORTracker> t = [_into tracker];
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
-   [_into setCurrent:cstr];
    for(ORInt b = brlow; b <= brup; b++) { /*note:RangeConsistency*/
       [ORFlatten flattenExpression: [Sum(t,i,IR,[[item[i] eq: @(b) track:t] mul:@([itemSize at:i]) track:t]) eq: binSize[b]]
                               into: _into];
@@ -230,6 +245,7 @@
    for(ORInt b = brlow; b <= brup; b++)
       [_into addConstraint: [ORFactory packOne:t item:item itemSize: itemSize bin: b binSize: binSize[b]]];
 }
+
 -(void) visitGroup:(id<ORGroup>)g
 {
    id<ORGroup> ng = [ORFactory group:[_into tracker] type:[g type]];
@@ -250,14 +266,13 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [_into setCurrent:cstr];
    [ORFlatten flattenExpression:[cstr expr] into:_into];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
    _result = [_into addConstraint:cstr];
 }
--(void) visitFloatEqualc: (id<ORFloatEqualc>)cstr
+-(void) visitRealEqualc: (id<ORRealEqualc>)cstr
 {
    _result = [_into addConstraint:cstr];
 }
@@ -305,7 +320,7 @@
 {
    _result = [_into addConstraint:c];
 }
--(void) visitFloatSquare:(id<ORSquare>)c
+-(void) visitRealSquare:(id<ORSquare>)c
 {
    _result = [_into addConstraint:c];
 }
@@ -349,7 +364,7 @@
 {
    _result = [_into addConstraint:c];
 }
--(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+-(void) visitRealElementCst: (id<ORRealElementCst>) c
 {
    _result = [_into addConstraint:c];
 }
@@ -393,6 +408,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitPath:(id<ORPath>) c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitSubCircuit:(id<ORSubCircuit>) c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitNoCycle:(id<ORNoCycle>) c
 {
    _result = [_into addConstraint:c];
@@ -400,6 +423,10 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
    _result = [_into addConstraint:c];
+}
+-(void) visitImplyEqualc: (id<ORImplyEqualc>)c
+{
+    _result = [_into addConstraint:c];
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
@@ -593,9 +620,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
          _result = [_into minimizeVar: alpha];
       }break;
-      case ORTFloat: {
-         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
-         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+      case ORTReal: {
+         ORRealLinear* terms = [ORNormalizer realLinearFrom: [e expr] model: _into];
+         id<ORRealVar> alpha = [ORNormalizer realVarIn:terms for:_into];
          _result = [_into minimizeVar:alpha];
       }break;
       default:
@@ -610,9 +637,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
          id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
          _result = [_into maximizeVar: alpha];
       }break;
-      case ORTFloat:{
-         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into];
-         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into];
+      case ORTReal:{
+         ORRealLinear* terms = [ORNormalizer realLinearFrom: [e expr] model: _into];
+         id<ORRealVar> alpha = [ORNormalizer realVarIn:terms for:_into];
          _result = [_into maximizeVar:alpha];
       }break;
       default: break;
@@ -621,13 +648,13 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
    id<ORIntVarArray> ca = [self flattenIt:[v array]];
-   id<ORFloatArray>  cc = [self flattenIt:[v coef]];
+   id<ORDoubleArray>  cc = [self flattenIt:[v coef]];
    _result = [_into minimize:ca coef:cc];
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
    id<ORIntVarArray> ca = [self flattenIt:[v array]];
-   id<ORFloatArray>  cc = [self flattenIt:[v coef]];
+   id<ORDoubleArray>  cc = [self flattenIt:[v coef]];
    _result = [_into maximize:ca coef:cc];
 }
 

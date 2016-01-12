@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -93,6 +93,9 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(void) propagate
 {
+//   NSLog(@"element x: %@",[_x description]);
+//   NSLog(@"element y: %@",[_y description]);
+//   NSLog(@"element c: %@",[_c description]);
    if (bound(_x)) {
       [_y bind:[_c at:[_x min]]];
    } else {
@@ -283,7 +286,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 }
 -(ORUInt)nbUVars
 {
-   return !bound(_x) && !bound(_y);
+   return !bound(_x) + !bound(_y);
 }
 -(NSString*)description
 {
@@ -308,20 +311,22 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 }
 -(void) post
 {
-   [self propagate];
    [_x whenChangePropagate:self];
    [_y whenChangeBoundsPropagate:self];
    ORBounds xb = bounds(_x);
    for(ORInt k=xb.min; k <= xb.max;k++)
       if (memberDom(_x, k))
          [(CPIntVar*)[_z at:k] whenChangeBoundsPropagate:self];
+   [self propagate];
 }
 -(void) propagate
 {
    ORBounds bx = bounds(_x);
    id<ORIntRange> zr = [_z range];
    [_x updateMin:[zr low] andMax:[zr up]];
-   ORInt minZ = MAXINT,maxZ = MININT; // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
+   
+   // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
+   ORInt minZ = MAXINT,maxZ = MININT;
    for(int k=bx.min; k <= bx.max;k++) {
       if (memberDom(_x, k)) {
          ORBounds zk = bounds((CPIntVar*)[_z at:k]);
@@ -339,8 +344,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
             removeDom(_x, k);
       }
    }
-   bx = bounds(_x);
-   if (bound(_x)) { 
+   if (bound(_x)) {
+      bx = bounds(_x);
       CPIntVar* zk = (CPIntVar*)[_z at:bx.min];
       [zk updateMin:yb.min andMax:yb.max];  //x==c -> D(y) == D(z_c)
    }

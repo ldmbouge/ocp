@@ -2,6 +2,18 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ORFoundation/CPFDS.m">
+   </FileRef>
+   <FileRef
+      location = "group:Extensions.playground">
+   </FileRef>
+   <FileRef
+      location = "group:CPSwift.playground">
+   </FileRef>
+   <FileRef
+      location = "group:CPSwiftExpe.playground">
+   </FileRef>
+   <FileRef
       location = "group:Clo.xcodeproj">
    </FileRef>
 </Workspace>

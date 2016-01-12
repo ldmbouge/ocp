@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -104,7 +104,7 @@ int main(int argc, const char * argv[])
             [cp repeat:^{
                improved = NO;
                [cp limitFailures:lim in:^{
-                  [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];}
+                  [cp forall:SetOrders suchThat:^ORBool(ORInt o) { return ![cp bound: slab[o]];}
                    orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]] << 16) - [weight at:o];}
                           do: ^(ORInt o){
                              id<ORIntSet> avail = [ORFactory intSet:cp];
@@ -121,7 +121,7 @@ int main(int argc, const char * argv[])
                              ORInt aar = [avail atRank:s];
                              [rS insert:aar];
 //                             NSLog(@"rs.insert(%d) : lbl(%d  --> %@",aar,o,rS);
-                             [cp tryall: rS suchThat: ^bool(ORInt s) { return [cp member: s in: slab[o]]; }
+                             [cp tryall: rS suchThat: ^ORBool(ORInt s) { return [cp member: s in: slab[o]]; }
                                      in: ^void(ORInt s) {
                                         [cp label: slab[o] with: s];
                                      }
@@ -150,7 +150,7 @@ int main(int argc, const char * argv[])
             NSLog(@"Objective value: %@",[obj value]);
             improved = YES;
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
+         id<ORSolution> sol = [[cp solutionPool] best];
          for(ORInt i = [SetOrders low]; i <= [SetOrders up]; i++)
             printf("slab[%d] = %d \n",i,[sol intValue: slab[i]]);
          printf("\n");
@@ -159,8 +159,6 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
-         [ORFactory shutdown];
          return res;
       }];
    }

@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,13 +10,13 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORObject.h"
-#import "ORExpr.h"
-#import "ORArray.h"
-#import "ORData.h"
-#import "ORSet.h"
-#import "ORConstraint.h"
-#import "ORVisit.h"
+#import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORExpr.h>
+#import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORVisit.h>
 
 @interface ORExprI: ORObject<ORExpr,NSCoding>
 -(id<ORExpr>) abs;
@@ -35,8 +35,8 @@
 -(id<ORRelation>) lt: (id) e;
 -(id<ORRelation>) gt: (id) e;
 -(id<ORExpr>) neg;
--(id<ORExpr>) and:(id<ORRelation>) e;
--(id<ORExpr>) or:(id<ORRelation>) e;
+-(id<ORExpr>) land:(id<ORRelation>) e;
+-(id<ORExpr>) lor:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
@@ -55,8 +55,8 @@
 -(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) negTrack:(id<ORTracker>)t;
--(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
--(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
+-(id<ORRelation>) land: (id<ORExpr>) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) lor: (id<ORExpr>) e track:(id<ORTracker>)t;
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
 
 -(void) encodeWithCoder:(NSCoder*) aCoder;
@@ -139,17 +139,17 @@
 -(void) visit:(ORVisitor*) v;
 @end
 
-@interface ORExprCstFloatSubI : ORExprI<ORExpr,NSCoding> {
-   id<ORFloatArray> _array;
+@interface ORExprCstDoubleSubI : ORExprI<ORExpr,NSCoding> {
+   id<ORDoubleArray> _array;
    ORExprI*         _index;
 }
--(id<ORExpr>) initORExprCstFloatSubI: (id<ORFloatArray>) array index:(id<ORExpr>) op;
+-(id<ORExpr>) initORExprCstDoubleSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op;
 -(id<ORTracker>) tracker;
--(ORFloat) fmin;
--(ORFloat) fmax;
+-(ORDouble) fmin;
+-(ORDouble) fmax;
 -(NSString *)description;
 -(ORExprI*) index;
--(id<ORFloatArray>)array;
+-(id<ORDoubleArray>)array;
 -(ORBool) isConstant;
 -(void) visit:(ORVisitor*) v;
 @end

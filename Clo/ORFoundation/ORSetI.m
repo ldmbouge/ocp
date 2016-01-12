@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,11 +9,13 @@
 
  ***********************************************************************/
 
-#import "ORSetI.h"
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORAVLTree.h>
+#if defined(__APPLE__)
+#import <objc/objc-runtime.h>
+#else
+#import <objc/runtime.h>
+#endif
 #import "ORFactoryI.h"
-#import "ORError.h"
 
 @implementation ORIntSetI
 {
@@ -70,7 +72,7 @@
 
 -(id<ORIntSet>)inter:(id<ORIntSet>)s2
 {
-   id<ORIntSet> rv = [ORFactory intSet:nil];
+   id<ORIntSet> rv = [[ORIntSetI alloc] initORIntSetI];
    [self enumerateWithBlock:^(ORInt e) {
       if ([s2 member:e])
          [rv insert:e];
@@ -169,10 +171,7 @@
 @end
 
 
-@implementation ORIntRangeI {
-   ORInt _low;
-   ORInt _up;
-}
+@implementation ORIntRangeI 
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up
 {
    self = [super init];
@@ -186,9 +185,11 @@
 }
 -(BOOL)isEqual:(id)object
 {
-   if ([object isKindOfClass:[self class]])
-      return _low == ((ORIntRangeI*)object)->_low && _up == ((ORIntRangeI*)object)->_up;
-   else return NO;
+   if (self == object)
+      return YES;
+   if (object_getClass(self) != object_getClass(object))
+      return NO;
+   return _low == ((ORIntRangeI*)object)->_low && _up == ((ORIntRangeI*)object)->_up;
 }
 -(NSUInteger)hash
 {
@@ -202,15 +203,21 @@
 {
    return _up;
 }
--(ORBool) isDefined {
+-(ORBool) isDefined
+{
     return _low <= _up;
 }
--(ORBool) inRange: (ORInt)e {
+-(ORBool) inRange: (ORInt)e
+{
     return e >= _low && e <= _up;
 }
 -(ORInt) size
 {
    return (_up - _low + 1);
+}
+-(ORInt) atRank:(ORInt)r
+{
+   return _low + r;
 }
 -(void)enumerateWithBlock:(void(^)(ORInt))block
 {
@@ -245,11 +252,11 @@
 }
 @end
 
-@implementation ORFloatRangeI {
-   ORFloat _low;
-   ORFloat _up;
+@implementation ORRealRangeI {
+   ORDouble _low;
+   ORDouble _up;
 }
--(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up
+-(id<ORRealRange>)init:(ORDouble) low up:(ORDouble)up
 {
    self = [super init];
    _low = low;
@@ -258,23 +265,23 @@
 }
 -(id)copyWithZone:(NSZone *)zone
 {
-   return [[ORFloatRangeI allocWithZone:zone] initORFloatRangeI:_low up:_up];
+   return [[ORRealRangeI allocWithZone:zone] init:_low up:_up];
 }
 -(BOOL)isEqual:(id)object
 {
    if ([object isKindOfClass:[self class]])
-      return _low == ((ORFloatRangeI*)object)->_low && _up == ((ORFloatRangeI*)object)->_up;
+      return _low == ((ORRealRangeI*)object)->_low && _up == ((ORRealRangeI*)object)->_up;
    else return NO;
 }
 -(NSUInteger)hash
 {
    return (NSUInteger)_low ^ (NSUInteger)_up;
 }
--(ORFloat)low
+-(ORDouble)low
 {
    return _low;
 }
--(ORFloat)up
+-(ORDouble)up
 {
    return _up;
 }
@@ -282,7 +289,7 @@
 {
    return _low <= _up;
 }
--(ORBool)inRange:(ORFloat)e
+-(ORBool)inRange:(ORDouble)e
 {
    return _low <= e && e <= _up;
 }
@@ -294,18 +301,37 @@
 }
 -(void)visit:(ORVisitor*)v
 {
-   [v visitFloatRange:self];
+   [v visitRealRange:self];
 }
 - (void) encodeWithCoder:(NSCoder*) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_up];
 }
 - (id) initWithCoder:(NSCoder*) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_up];
    return self;
 }
 @end
+
+id<ORIntSet> filterSet(id<ORTracker> t,id<ORIntIterable> s,ORBool(^cond)(ORInt i))
+{
+   id<ORIntSet> sub = [ORFactory intSet:t];
+   [s enumerateWithBlock:^(ORInt i) {
+      if (cond(i))
+         [sub insert:i];
+   }];
+   return sub;
+}
+
+ORInt sumSet(id<ORIntIterable> s,ORInt(^term)(ORInt i))
+{
+   ORInt __block ttl = 0;
+   [s enumerateWithBlock:^(ORInt i) {
+      ttl += term(i);
+   }];
+   return ttl;
+}

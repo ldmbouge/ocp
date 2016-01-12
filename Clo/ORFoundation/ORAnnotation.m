@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
-#import "ORAnnotation.h"
-#import "ORConstraint.h"
+#import <ORFoundation/ORAnnotation.h>
+#import <ORFoundation/ORConstraint.h>
 #import "ORConstraintI.h"
 
 @interface ORAnnotationCopy : ORAnnotation<ORAnnotation,NSCopying>
@@ -110,6 +110,14 @@
    return rv;
 }
 
+-(NSArray*) findConstraintNotes:(id<ORConstraint>) cstr
+{
+   NSNumber* k = [NSNumber numberWithInt:cstr.getId];
+   NSArray*  na = [_cstr objectForKey:k];
+   //[k release];
+   return na;
+}
+
 -(id<ORNote>) findConstraintNote: (id<ORConstraint>) cstr ofClass: (Class) nc
 {
    NSNumber* k = [[NSNumber alloc] initWithInt:[cstr getId]];
@@ -137,6 +145,10 @@
 -(id<ORConstraint>) cstr: (id<ORConstraint>) cstr consistency: (ORCLevel) cl;
 {
    return [self noteConstraint: cstr consistency: cl];
+}
+-(id<ORConstraint>) hard:(id<ORConstraint>) cstr
+{
+   return [self noteConstraint:cstr consistency:HardConsistency];
 }
 -(id<ORConstraint>) dc: (id<ORConstraint>) cstr
 {
@@ -201,7 +213,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-   static const char* names[] = {"dom","rng","val","def"};
+   static const char* names[] = {"dom","rng","val","relax","hard","soft","def"};
    [buf appendFormat:@"c=%s",names[_cLevel]];
    return buf;
 }
@@ -231,10 +243,14 @@
    else
       return [_original levelFor:cstr];
 }
--(void) transfer: (id<ORConstraint>) o toConstraint: (id<ORConstraint>) d
+-(void) transfer: (id<ORConstraint>) src toConstraint: (id<ORConstraint>) d
 {
-   [super transfer: o toConstraint: d];
-   [_original transfer: o toConstraint: d];
+   NSArray* allNotes = src ? [_original findConstraintNotes:src] : nil;
+   if (allNotes) {
+      for(id<ORNote> oneNote in allNotes) {
+         [self addCstr:d note:oneNote];
+      }
+   }
 }
 -(NSString*) description
 {

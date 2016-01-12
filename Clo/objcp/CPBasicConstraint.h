@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2015 NICTA, Laurent Michel and Pascal Van Hentenryck
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,6 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPBitDom.h>
@@ -18,6 +17,7 @@
 @class CPIntVar;
 @class ORIntSetI;
 @class CPEngine;
+@class CPBitDom;
 @protocol CPIntVarArray;
 
 
@@ -161,7 +161,7 @@ typedef int (^intgetter) (void) ;
 @private
    CPIntVar*  _x;
    CPIntVar*  _y;
-   ORInt       _c;
+   ORInt      _c;
 }
 -(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c;
 -(void) post;
@@ -321,10 +321,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAllDifferenceVC : CPCoreConstraint {
-   CPIntVar**   _x;
-   ORLong       _nb;
-}
+@interface CPAllDifferenceVC : CPCoreConstraint 
 -(id) initCPAllDifferenceVC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x;
 -(id) initCPAllDifferenceVC: (CPIntVar**) x nb: (ORInt) n;
 -(id) initCPAllDifferenceVC: (id) x;
