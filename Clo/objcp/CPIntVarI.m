@@ -1762,8 +1762,8 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(ORBool)member:(ORInt)val
 {
-   ORInt lb = [_secondary min];
-   ORInt ub = [_secondary max];
+   ORBounds b = bounds(_secondary);
+   ORInt lb = b.min,ub = b.max;
    // [ldm] v should be a boolean (0,1)
    // Case 1: lit IN    D(x)         => 0 IN D(self) AND 1 in D(self) : always say yes.
    // Case 2: lit NOTIN D(x)         => 0 in D(self) AND 1 NOTIN D(self).
@@ -1771,7 +1771,7 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
    if (lb == ub && lb == _v) {
       return val;
    } else {
-      if (_v < lb || _v > ub || !memberBitDom(_secondary, _v))
+      if (_v < lb || _v > ub || !memberDom(_secondary, _v))
          return !val;
       else {
          return YES;

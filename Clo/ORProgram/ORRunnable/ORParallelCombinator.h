@@ -6,7 +6,7 @@
 //
 //
 
-#import "ORCombinator.h"
+#import <ORProgram/ORCombinator.h>
 
 @interface ORCompleteParallelCombinator : NSObject<ORCombinator>
 -(BOOL) isCompatible: (NSArray*)runnables;

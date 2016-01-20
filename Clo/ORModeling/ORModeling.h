@@ -19,7 +19,7 @@
 #import <ORModeling/ORLSFlatten.h>
 #import <ORModeling/ORIntLinear.h>
 #import <ORModeling/ORMIPLinearize.h>
-//#import <ORModeling/ORLinearize.h>
+#import <ORModeling/ORLinearize.h>
 
 @protocol ORModelTransformation;
 

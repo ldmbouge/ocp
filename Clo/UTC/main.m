@@ -210,9 +210,9 @@ int main(int argc, const char * argv[]) {
     // Bus ////////////////////////////////
     [m add: [useBus1 geq: Sum(m, i, senRange, senToBus[i])]];
     
-//    for(ORInt i = [senRange low]; i <= [senRange up]; i++)
-//        [m add: [[senToBus[i] eq: @(1)] imply: [sensors[i] eq: @(SenWithConc)]]]; // If sens. connected to bus, must have its own concentrator
-//    
+    for(ORInt i = [senRange low]; i <= [senRange up]; i++)
+        [m add: [[senToBus[i] eq: @(1)] imply: [sensors[i] eq: @(SenWithConc)]]]; // If sens. connected to bus, must have its own concentrator
+//
     // Concentrators //////////////////////
     [m add: [useCon1 geq: [[[[sensors[S0] plus: sensors[S1]] plus: sensors[S4]] plus: sensors[S6]] plus: sensors[S7]] ]];
     [m add: [useCon1 geq: [[[sensors[S2] plus: sensors[S3]] plus: sensors[S5]] plus: sensors[S8]] ]];
