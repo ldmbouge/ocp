@@ -15,37 +15,12 @@ typedef enum {
     G0, G1, G2
 } MAIN_GEN;
 
-ORInt rawMainGenCost[] = {
-    1000, 1200, 1500
-};
-
-ORInt rawMainGenPow[] = {
-    25, 35, 45
-};
-
-ORInt rawMainGenWeight[] = {
-    100, 110, 115
-};
-
-
 typedef enum {
     S0 = 0, S1, S2, S3, S4, S5, S6, S7, S8
 } SENSOR;
 
 ORInt rawSensBandwith[] = {
   35, 35, 35, 40, 51, 47, 18, 66, 22
-};
-
-ORInt rawSensCost[] = {
-    10, 30, 40
-};
-
-ORInt rawSensPowDraw[] = {
-    1, 5, 15
-};
-
-ORInt rawSensPowWeight[] = {
-    1, 5, 15
 };
 
 ORInt rawConCost[] = {
@@ -65,7 +40,7 @@ ORInt rawDirectToPMUCost[] = {
 };
 
 ORInt rawDirectToPMUWeight[] = {
-    2, 2, 8, 8, 10, 10, 10, 12, 12
+    20, 20, 80, 80, 100, 100, 100, 120, 120
 };
 
 ORInt rawSenToBusCost[] = {
@@ -92,10 +67,7 @@ ORInt numSensors = 9;
 ORInt SenWithConc = 2;
 
 ORInt MAX_WEIGHT = 1200;
-ORInt MAX_BAND = 125;
 
-ORInt BUS_COST = 75;
-ORInt BUS_WGHT = 15;
 ORInt CON_COST = 60;
 ORInt CON_WEIGHT = 6;
 
@@ -106,12 +78,63 @@ ORInt BBF2_POW = 55;
 //ORInt PROB_SCALE = 10000;
 
 int main(int argc, const char * argv[]) {
+    
     id<ORModel> m = [ORFactory createModel];
-    id<ORIntRange> genBounds = RANGE(m, 0, 2);
+    
+    // Load Templates and model parameters -----------------------------------------------------------------
+    NSXMLDocument *xmlDoc;
+    NSError *err=nil;
+    NSString* xmlPath = [[NSBundle mainBundle] pathForResource:@"UTCTemplates" ofType:@"xml"];
+    NSURL *furl = [NSURL fileURLWithPath: xmlPath];
+    if (!furl) {
+        NSLog(@"Can't create an URL from file %@.", xmlPath);
+        return -1;
+    }
+    xmlDoc = [[NSXMLDocument alloc] initWithContentsOfURL: furl options: NSXMLDocumentTidyXML error: &err];
+    NSArray* generatorTemplates = [xmlDoc nodesForXPath: @"/template_library/generator_templates/generator" error: &err];
+    ORInt numGeneratorTemplates = (ORInt)[generatorTemplates count];
+    NSArray* sensorTemplates = [xmlDoc nodesForXPath: @"/template_library/sensor_templates/sensor" error: &err];
+    ORInt numSensorTemplates = (ORInt)[sensorTemplates count];
+    NSArray* busTemplates = [xmlDoc nodesForXPath: @"/template_library/data_bus_templates/data_bus" error: &err];
+    ORInt numBusTemplates = (ORInt)[sensorTemplates count];
+    NSArray* concTemplates = [xmlDoc nodesForXPath: @"/template_library/concentrator_templates/concentrator" error: &err];
+    ORInt numConcTemplates = (ORInt)[concTemplates count];
+    NSArray* bbfTemplates = [xmlDoc nodesForXPath: @"/template_library/blackbox_templates/bbf" error: &err];
+
+    id<ORIntRange> genBounds = RANGE(m, 0, numGeneratorTemplates-1);
     id<ORIntRange> genRange = RANGE(m, 0, numMainGen + numBackupGen - 1);
-    id<ORIntRange> senBounds = RANGE(m, 0, 2);
+    id<ORIntRange> senBounds = RANGE(m, 0, numSensorTemplates-1);
     id<ORIntRange> senRange = RANGE(m, 0, numSensors-1);
+    id<ORIntRange> concBounds = RANGE(m, 0, numConcTemplates-1);
+
     id<ORIntRange> boolBounds = RANGE(m, 0, 1);
+    
+    // Generator Template Tables
+    id<ORIntArray> mainGenWeight = [ORFactory intArray: m range: genBounds with: ^ORInt(ORInt i) {
+        return [[[[generatorTemplates[i] elementsForName: @"weight"] lastObject] stringValue] intValue]; }];
+    id<ORIntArray> mainGenCost = [ORFactory intArray: m range: genBounds with: ^ORInt(ORInt i) {
+        return [[[[generatorTemplates[i] elementsForName: @"cost"] lastObject] stringValue] intValue]; }];
+    id<ORIntArray> mainGenPow = [ORFactory intArray: m range: genBounds with: ^ORInt(ORInt i) {
+        return [[[[generatorTemplates[i] elementsForName: @"power"] lastObject] stringValue] intValue]; }];
+    
+    // Sensor Template Tables
+    id<ORIntArray> sensWeight = [ORFactory intArray: m range: senBounds with: ^ORInt(ORInt i) {
+        return [[[[sensorTemplates[i] elementsForName: @"weight"] lastObject] stringValue] intValue]; }];
+    id<ORIntArray> sensCost = [ORFactory intArray: m range: senBounds with: ^ORInt(ORInt i) {
+        return [[[[sensorTemplates[i] elementsForName: @"cost"] lastObject] stringValue] intValue]; }];
+    id<ORIntArray> sensPowDraw = [ORFactory intArray: m range: senBounds with: ^ORInt(ORInt i) {
+        return [[[[sensorTemplates[i] elementsForName: @"power"] lastObject] stringValue] intValue]; }];
+    
+    // Bus Template Tables
+    ORInt MAX_BAND = [[[[busTemplates[0] elementsForName: @"bandwidth"] lastObject] stringValue] intValue];
+    ORInt BUS_COST = [[[[busTemplates[0] elementsForName: @"cost"] lastObject] stringValue] intValue];;
+    ORInt BUS_WGHT = [[[[busTemplates[0] elementsForName: @"weight"] lastObject] stringValue] intValue];;
+    
+    // Concentrator Template Table
+    
+    id<ORIntArray> conCost = [ORFactory intArray: m range: concBounds with: ^ORInt(ORInt i) {
+        return [[[[concTemplates[i] elementsForName: @"cost"] lastObject] stringValue] intValue]; }];
+
     
     // Variables ------------------------------------------------------------------------------------------
     
@@ -131,11 +154,11 @@ int main(int argc, const char * argv[]) {
     id<ORIntVarArray> senToBus = [ORFactory intVarArray: m range: senRange bounds: boolBounds];
 
     // Concetrators
-    id<ORIntVar> useCon1 = [ORFactory intVar: m bounds: boolBounds];
-    id<ORIntVar> useCon2 = [ORFactory intVar: m bounds: boolBounds];
+    id<ORIntVar> useConc0 = [ORFactory intVar: m bounds: boolBounds];
+    id<ORIntVar> useConc1 = [ORFactory intVar: m bounds: boolBounds];
 
     // Bus
-    id<ORIntVar> useBus1 = [ORFactory intVar: m bounds: boolBounds];
+    id<ORIntVar> useBus0 = [ORFactory intVar: m bounds: boolBounds];
 
     id<ORIntVar> powUse = [ORFactory intVar: m bounds: RANGE(m, 0, 10000)];
     id<ORIntVar> bandUse = [ORFactory intVar: m bounds: RANGE(m, 0, 10000)];
@@ -145,16 +168,8 @@ int main(int argc, const char * argv[]) {
     
     // Template Tables -----------------------------------------------------------------------
     
-    id<ORIntArray> mainGenWeight = [ORFactory intArray: m range: genBounds values: rawMainGenWeight];
-    id<ORIntArray> mainGenCost = [ORFactory intArray: m range: genBounds values: rawMainGenCost];
-    id<ORIntArray> mainGenPow = [ORFactory intArray: m range: genBounds values: rawMainGenPow];
     
-    id<ORIntArray> sensWeight = [ORFactory intArray: m range: senBounds values: rawSensPowWeight];
-    id<ORIntArray> sensCost = [ORFactory intArray: m range: senBounds values: rawSensCost];
-    id<ORIntArray> sensPowDraw = [ORFactory intArray: m range: senBounds values: rawSensPowDraw];
     id<ORIntArray> sensBandwith = [ORFactory intArray: m range: senRange values: rawSensBandwith];
-
-    id<ORIntArray> conCost = [ORFactory intArray: m range: boolBounds values: rawConCost];
 
     id<ORIntArray> directToPMUCost = [ORFactory intArray: m range: senRange values: rawDirectToPMUCost];
     id<ORIntArray> directToPMUWeight = [ORFactory intArray: m range: senRange values: rawDirectToPMUWeight];
@@ -175,8 +190,8 @@ int main(int argc, const char * argv[]) {
               Sum(m, i, senRange, [@([directToPMUCost at: i]) mul: [senDirectPMU at: i]])] plus: // Cost direct to PMU
               Sum(m, i, senRange, [@([senToBusCost at: i]) mul: [senToBus at: i]])] plus: // Cost direct to bus
               Sum(m, i, senRange, [@([senToConCost at: i]) mul: [senToCon at: i]])] plus: // Cost direct to Concentrator
-              [[conCost elt: useCon1] plus: [conCost elt: useCon2]]] plus: // Concentrator cost
-              [useBus1 mul: @(BUS_COST)]] // Bus Cost
+              [[conCost elt: useConc0] plus: [conCost elt: useConc1]]] plus: // Concentrator cost
+              [useBus0 mul: @(BUS_COST)]] // Bus Cost
              ]];
     
     // Weight /////////////////////////
@@ -186,8 +201,8 @@ int main(int argc, const char * argv[]) {
               Sum(m, i, senRange, [@([directToPMUWeight at: i]) mul: [senDirectPMU at: i]])] plus: // Weight direct to PMU
               Sum(m, i, senRange, [@([senToBusWeight at: i]) mul: [senToBus at: i]])] plus: // Weight direct to bus
               Sum(m, i, senRange, [@([senToConWeight at: i]) mul: [senToCon at: i]])] plus: // Weight direct to Concentrator
-              [[useCon1 mul:@(CON_WEIGHT)] plus: [useCon2 mul:@(CON_WEIGHT)]]] plus: // Concentrator weight
-              [useBus1 mul: @(BUS_WGHT)] ]
+              [[useConc0 mul:@(CON_WEIGHT)] plus: [useConc1 mul:@(CON_WEIGHT)]]] plus: // Concentrator weight
+              [useBus0 mul: @(BUS_WGHT)] ]
              ]];
 
     [m add: [weight leq: @(MAX_WEIGHT)]];
@@ -208,14 +223,14 @@ int main(int argc, const char * argv[]) {
         [m add: [[senDirectPMU[i] plus: [senToCon[i] plus: senToBus[i]]] eq: @(1)]]; // Connected to PMU, bus or concentrator
     
     // Bus ////////////////////////////////
-    [m add: [useBus1 geq: Sum(m, i, senRange, senToBus[i])]];
+    [m add: [[Sum(m, i, senRange, senToBus[i]) gt: @(0)] imply: [useBus0 eq: @(1)]]];
     
-//    for(ORInt i = [senRange low]; i <= [senRange up]; i++)
-//        [m add: [[senToBus[i] eq: @(1)] imply: [sensors[i] eq: @(SenWithConc)]]]; // If sens. connected to bus, must have its own concentrator
-//    
+    for(ORInt i = [senRange low]; i <= [senRange up]; i++)
+        [m add: [[senToBus[i] eq: @(1)] imply: [sensors[i] eq: @(SenWithConc)]]]; // If sens. connected to bus, must have its own concentrator
+    
     // Concentrators //////////////////////
-    [m add: [useCon1 geq: [[[[sensors[S0] plus: sensors[S1]] plus: sensors[S4]] plus: sensors[S6]] plus: sensors[S7]] ]];
-    [m add: [useCon1 geq: [[[sensors[S2] plus: sensors[S3]] plus: sensors[S5]] plus: sensors[S8]] ]];
+    [m add: [[[[[[senToCon[S0] plus: senToCon[S1]] plus: senToCon[S4]] plus: senToCon[S6]] plus: senToCon[S7]] gt: @(0)] imply: [useConc0 eq: @(1)]]];
+    [m add: [[[[[senToCon[S2] plus: senToCon[S3]] plus: senToCon[S5]] plus: senToCon[S8]] gt: @(0)] imply: [useConc1 eq: @(1)]]];
 
     // Bus Bandwidth
     [m add: [bandUse eq: Sum(m, i, senRange, [[senToBus[i] plus: senToCon[1]] mul: sensBandwith[i]] )]];
@@ -229,9 +244,86 @@ int main(int argc, const char * argv[]) {
     }];
     //    [p solve];
     id<ORSolutionPool> sols = [p solutionPool];
-    //id<ORSolution> bestSolution = [sols best];
+    id<ORSolution> bestSolution = [sols best];
     
     NSLog(@"Sol count: %li", [sols count]);
+    
+    // Write Solution to XML ----------------------------------------------------------------------------------
+    NSXMLElement* root = [[NSXMLElement alloc] initWithName: @"utc_architecture"];
+    
+    // Write Sensors
+    NSXMLElement* sensorsRoot = [[NSXMLElement alloc] initWithName: @"sensors"];
+    for(ORInt i = [senRange low]; i <= [senRange up]; i++) {
+        ORInt template = [bestSolution intValue: sensors[i]];
+        NSXMLElement* sensorNode = [[NSXMLElement alloc] initWithName: @"sensor"];
+        [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
+        [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        
+        NSString* data_string = @"PMU";
+        if([bestSolution intValue: senToBus[i]]) data_string = @"bus";
+        else if([bestSolution intValue: senToCon[i]]) data_string = @"concentrator";
+        [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"data_connect" stringValue: data_string]];
+
+        [sensorsRoot addChild: sensorNode];
+    }
+    [root addChild: sensorsRoot];
+    
+    // Write Generators
+    NSXMLElement* generatorRoot = [[NSXMLElement alloc] initWithName: @"generators"];
+    ORInt template = [bestSolution intValue: g0];
+    NSXMLElement* generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
+    [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"Gen0"]];
+    [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+    [generatorRoot addChild: generatorNode];
+    
+    template = [bestSolution intValue: g1];
+    generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
+    [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"Gen1"]];
+    [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+    [generatorRoot addChild: generatorNode];
+
+    template = [bestSolution intValue: auxgen];
+    generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
+    [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"APU"]];
+    [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+    [generatorRoot addChild: generatorNode];
+    
+    [root addChild: generatorRoot];
+    
+    // Write Buses
+    NSXMLElement* busesRoot = [[NSXMLElement alloc] initWithName: @"data_buses"];
+    if([bestSolution intValue: useBus0]) {
+        ORInt template = 0;
+        NSXMLElement* busNode = [[NSXMLElement alloc] initWithName: @"data_bus"];
+        [busNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"bus0"]];
+        [busNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        [busesRoot addChild: busNode];
+    }
+    [root addChild: busesRoot];
+    
+    // Write Concentrators
+    NSXMLElement* concRoot = [[NSXMLElement alloc] initWithName: @"concentrators"];
+    if([bestSolution intValue: useConc0]) {
+        ORInt template = 0;
+        NSXMLElement* concNode = [[NSXMLElement alloc] initWithName: @"concentrator"];
+        [concNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"conc0"]];
+        [concNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        [concRoot addChild: concNode];
+    }
+    if([bestSolution intValue: useConc1]) {
+        ORInt template = 0;
+        NSXMLElement* concNode = [[NSXMLElement alloc] initWithName: @"concentrator"];
+        [concNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"conc1"]];
+        [concNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        [concRoot addChild: concNode];
+    }
+    [root addChild: concRoot];
+    
+    NSXMLDocument* solDoc = [[NSXMLDocument alloc] initWithRootElement: root];
+    NSData *xmlData = [solDoc XMLDataWithOptions:NSXMLNodePrettyPrint];
+    NSString* outPath = [NSHomeDirectory() stringByAppendingPathComponent:@"UTCSolution.xml"];
+    [xmlData writeToFile: outPath atomically:YES];
+    NSLog(@"Wrote Solution File: %@", outPath);
     
     return 0;
 }

@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<template_library>
+    
+    <generator_templates>
+        <generator id="0" name="G0">
+            <cost>1000</cost>
+            <power>25</power>
+            <weight>100</weight>
+        </generator>
+        <generator id="1" name="G1">
+            <cost>1200</cost>
+            <power>35</power>
+            <weight>110</weight>
+        </generator>
+        <generator id="2" name="G2">
+            <cost>1500</cost>
+            <power>45</power>
+            <weight>115</weight>
+        </generator>
+    </generator_templates>
+    
+    <sensor_templates>
+        <sensor id="0" name="S0">
+            <cost>10</cost>
+            <power>2</power>
+            <weight>3</weight>
+        </sensor>
+        <sensor id="1" name="S1">
+            <cost>30</cost>
+            <power>5</power>
+            <weight>3</weight>
+        </sensor>
+        <sensor id="2" name="S2">
+            <cost>40</cost>
+            <power>15</power>
+            <weight>5</weight>
+        </sensor>
+    </sensor_templates>
+    
+    <data_bus_templates>
+        <data_bus id="0" name="BUS0">
+            <cost>75</cost>
+            <bandwidth>125</bandwidth>
+            <weight>15</weight>
+        </data_bus>
+    </data_bus_templates>
+    
+    <concentrator_templates>
+        <concentrator id="0" name="CONC0">
+            <cost>60</cost>
+            <power>45</power>
+            <weight>6</weight>
+        </concentrator>
+    </concentrator_templates>
+    
+    <blackbox_templates>
+        <bbf id="0" name="BBF0">
+            <power>70</power>
+        </bbf>
+        <bbf id="1" name="BBF1">
+            <power>55</power>
+        </bbf>
+    </blackbox_templates>
+
+</template_library>
