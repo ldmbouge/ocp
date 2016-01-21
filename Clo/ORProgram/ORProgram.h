@@ -28,6 +28,9 @@
 #import <ORProgram/ORCPParSolver.h>
 #import <ORProgram/ORSTask.h>
 
+#import <ORProgram/ORCombinator.h>
+#import <ORProgram/ORParallelCombinator.h>
+
 @interface ORGamma (Model)
 -(void) initialize: (PNONNULL id<ORModel>) model;
 @end
