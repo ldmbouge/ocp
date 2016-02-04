@@ -83,8 +83,8 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    static int bndCount = 0;
-    NSLog(@"CPRunnable(%p): received bound(%i): %i", self, ++bndCount, bound);
+    static __thread int bndCount = 0;
+    NSLog(@"CPRunnable(%p): received bound(%i): %i", _program, ++bndCount, bound);
     //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
 }
