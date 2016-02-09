@@ -211,7 +211,7 @@ int main(int argc, const char * argv[]) {
     [m add: [useBus1 geq: Sum(m, i, senRange, senToBus[i])]];
     
     for(ORInt i = [senRange low]; i <= [senRange up]; i++)
-        [m add: [[senToBus[i] eq: @(1)] imply: [sensors[i] eq: @(SenWithConc)]]]; // If sens. connected to bus, must have its own concentrator
+        [m add: [senToBus[i] eq: [sensors[i] eq: @(SenWithConc)]]]; // If sens. connected to bus, must have its own concentrator
 //
     // Concentrators //////////////////////
     [m add: [useCon1 geq: [[[[sensors[S0] plus: sensors[S1]] plus: sensors[S4]] plus: sensors[S6]] plus: sensors[S7]] ]];
@@ -231,7 +231,7 @@ int main(int argc, const char * argv[]) {
     id<ORSolutionPool> sols = [p solutionPool];
     //id<ORSolution> bestSolution = [sols best];
     
-    NSLog(@"Sol count: %li", [sols count]);
+    NSLog(@"Sol count: %li", [sols count]);  // this only prints the number of solutions on the way to the global optimum.
     
     return 0;
 }
