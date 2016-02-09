@@ -12,23 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 
-@protocol ORSolution <NSObject>
--(id) value: (id) var;
--(ORInt) intValue: (id<ORIntVar>) var;
--(ORBool) boolValue: (id<ORIntVar>) var;
--(ORDouble) doubleValue: (id<ORRealVar>) var;
--(id<ORObjectiveValue>) objectiveValue;
-@end
-
-@protocol ORSolutionPool <NSObject>
--(void) addSolution: (id<ORSolution>) s;
--(void) enumerateWith: (void(^)(id<ORSolution>)) block;
--(id) objectAtIndexedSubscript: (NSUInteger) key;
--(id<ORInformer>) solutionAdded;
--(id<ORSolution>) best;
--(NSUInteger) count;
-@end
-
 @interface ORSolution : NSObject<ORSolution>
 {
    NSArray*             _varShots;

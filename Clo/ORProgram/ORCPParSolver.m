@@ -620,6 +620,17 @@
    [_terminated unlock];
 }
 
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body
+{
+   assert(NO);// not yet implemented
+}
+
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
+{
+    // Not implemented
+    assert(NO);
+}
+
 -(void) solveAll:(ORClosure)search
 {
    for(ORInt i=0;i<_nbWorkers;i++) {

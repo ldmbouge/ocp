@@ -172,6 +172,11 @@
 {
    return [_all count];
 }
+-(void) emptyPool
+{
+   [_all removeAllObjects];
+}
+
 -(void) addSolution:(id<ORSolution>)s
 {
    [_all addObject:s];

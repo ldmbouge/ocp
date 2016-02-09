@@ -146,6 +146,16 @@
    [_terminated unlock];
 }
 
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body
+{
+   assert(NO);// not yet implemented
+}
+-(void) solveOn:(void (^)(id<CPCommonProgram>))body withTimeLimit:(ORFloat)limit
+{
+    // Not implemented
+    assert(NO);
+}
+
 -(void) solveAllOne: (NSArray*) input
 {
    ORClosure search = [input objectAtIndex: 0];

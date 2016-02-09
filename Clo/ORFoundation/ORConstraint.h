@@ -481,12 +481,32 @@ enum ORGroupType {
 -(void)     tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 @end
 
+@protocol ORSolution <NSObject>
+-(id) value: (id) var;
+-(ORInt) intValue: (id<ORIntVar>) var;
+-(ORBool) boolValue: (id<ORIntVar>) var;
+-(ORDouble) doubleValue: (id<ORRealVar>) var;
+-(id<ORObjectiveValue>) objectiveValue;
+@end
+
+@protocol ORSolutionPool <NSObject>
+-(void) addSolution: (id<ORSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORSolution>)) block;
+-(id) objectAtIndexedSubscript: (NSUInteger) key;
+-(id<ORInformer>) solutionAdded;
+-(id<ORSolution>) best;
+-(void) emptyPool;
+-(NSUInteger) count;
+@end
+
+
 // pvh: to reconsider the solution pool in this interface; not sure I like them here
 @protocol ORASolver <NSObject,ORTracker,ORGamma>
 -(void)               close;
 -(id<OREngine>)       engine;
 -(id) concretize: (id) o;
 -(id<ORObjectiveValue>) objectiveValue;
+-(id<ORSolutionPool>)solutionPool;
 @end
 
 @protocol ORASearchSolver <ORASolver>

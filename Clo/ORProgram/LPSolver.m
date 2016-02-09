@@ -264,6 +264,11 @@
 {
    return [_lpsolver trackImmutable:obj];
 }
+-(id<ORSolutionPool>)solutionPool
+{
+   assert(NO);
+   return nil;
+}
 @end
 
 @implementation ORSolution (LPSolver)
