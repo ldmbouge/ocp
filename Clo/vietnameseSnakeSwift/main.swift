@@ -13,7 +13,7 @@ import ORProgram
 
 autoreleasepool {
    let m  = ORFactory.createModel()
-   let x  = ORFactory.intVarArray(m, range: range(m,1..<10), domain: range(m,1..<10))
+   let x  = ORFactory.intVarArray(m, range: range(m,r: 1..<10), domain: range(m,r: 1..<10))
    m.add(ORFactory.alldifferent(x))
    m.add(x[1] + (x[2]*13)/x[3] + x[4] + x[5]*12 - x[6] - 11 + x[7]*(x[8]/x[9]) - 10 == 66)
    
@@ -23,5 +23,5 @@ autoreleasepool {
    cp.search {
       firstFail(cp, x) » Do(cp) { nbs++ }
    }
-   println("Number of sols \(nbs)")
+   print("Number of sols \(nbs)")
 }

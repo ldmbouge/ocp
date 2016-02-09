@@ -90,7 +90,7 @@ void checkRule(id<ORModel> m,ORInt* rules,ORInt mx,id<ORIntVarArray>  y)
                                        size:tfn.sz
                                     initial:0
                                       final:F];
-   [m add:[ORFactory regular:y for:A]];
+   [m add:[ORFactory regular:y belongs:A]];
 }
 
 int main(int argc, const char * argv[])

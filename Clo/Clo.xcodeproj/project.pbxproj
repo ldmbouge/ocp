@@ -5354,6 +5354,13 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5BCE9D821C28474100EE7865 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
+		};
 		5BD09AFD16480CF60090818B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -7385,7 +7392,7 @@
 		};
 		5BB1C2421B39F598008A9E51 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
@@ -40404,6 +40411,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BCE9D831C28474100EE7865 /* PBXTargetDependency */,
 				5BB1C2501B39F668008A9E51 /* PBXTargetDependency */,
 				5BB1C2521B39F668008A9E51 /* PBXTargetDependency */,
 				5BB1C2541B39F668008A9E51 /* PBXTargetDependency */,
@@ -45626,6 +45634,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BCAF1591BF148B100C18360 /* PBXContainerItemProxy */;
+		};
+		5BCE9D831C28474100EE7865 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 5BCE9D821C28474100EE7865 /* PBXContainerItemProxy */;
 		};
 		5BD09AFE16480CF60090818B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
