@@ -1767,7 +1767,7 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
    if (lb == ub && lb == _v) {
       return val;
    } else {
-      if (_v < lb || _v > ub || !memberBitDom(_secondary, _v))
+      if (_v < lb || _v > ub || !memberDom(_secondary, _v))
          return !val;
       else {
          return YES;
