@@ -124,6 +124,7 @@
 		37D62BBC1BD5CFAD005A6DBC /* ORRunnablePiping.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D62BA21BD5CFAD005A6DBC /* ORRunnablePiping.m */; };
 		37D62BBD1BD5CFAD005A6DBC /* ORSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D62BA31BD5CFAD005A6DBC /* ORSignature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37D62BBE1BD5CFAD005A6DBC /* ORSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D62BA41BD5CFAD005A6DBC /* ORSignature.m */; };
+		37EB71121C5067C2000EC36F /* UTCTemplates.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 37EB71111C5049B9000EC36F /* UTCTemplates.xml */; };
 		53432BF11BA1C771009F8038 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B834A561B588B2000759557 /* main.m */; };
 		53432BF21BA1C78B009F8038 /* shiploading.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B834A581B588B2000759557 /* shiploading.1 */; };
 		53432C0B1BA1C9F6009F8038 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
@@ -6678,12 +6679,13 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		371C98121BE23BD800F531E3 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
+				37EB71121C5067C2000EC36F /* UTCTemplates.xml in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		37A715C616FB93F900E02DC6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -8000,6 +8002,7 @@
 		37D62BA21BD5CFAD005A6DBC /* ORRunnablePiping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORRunnablePiping.m; path = ORRunnable/ORRunnablePiping.m; sourceTree = "<group>"; };
 		37D62BA31BD5CFAD005A6DBC /* ORSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSignature.h; path = ORRunnable/ORSignature.h; sourceTree = "<group>"; };
 		37D62BA41BD5CFAD005A6DBC /* ORSignature.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSignature.m; path = ORRunnable/ORSignature.m; sourceTree = "<group>"; };
+		37EB71111C5049B9000EC36F /* UTCTemplates.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = UTCTemplates.xml; sourceTree = "<group>"; };
 		533C56DF1922F545007D33BB /* char_barnes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = char_barnes.txt; sourceTree = "<group>"; };
 		533C56E01922F545007D33BB /* mt10c1.fjs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mt10c1.fjs; sourceTree = "<group>"; };
 		533C56E11922F545007D33BB /* mt10cc.fjs */ = {isa = PBXFileReference; lastKnownFileType = text; path = mt10cc.fjs; sourceTree = "<group>"; };
@@ -22909,6 +22912,7 @@
 			isa = PBXGroup;
 			children = (
 				371C98161BE23BD900F531E3 /* main.m */,
+				37EB71111C5049B9000EC36F /* UTCTemplates.xml */,
 			);
 			path = UTC;
 			sourceTree = "<group>";
