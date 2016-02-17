@@ -144,7 +144,7 @@ int main(int argc, const char * argv[]) {
                             then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
                 }];
                 [cp label: makespan];
-                NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                NSLog(@"(%d) makespan = [%d,%d] \n",[NSThread threadID],[cp min: makespan],[cp max: makespan]);
                 fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
                 fflush(outFile);
             }];

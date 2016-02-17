@@ -13,6 +13,8 @@
 #import <ORUtilities/ORCrFactory.h>
 #import <ORFoundation/ORObject.h>
 
+typedef struct timeval ORTimeval;
+
 @protocol ORExpr;
 @protocol ORIntRange;
 @protocol ORASolver;
@@ -109,6 +111,8 @@
 +(ORLong) cputime;
 +(ORLong) microseconds;
 +(ORLong) wctime;
++(ORTimeval)now;
++(ORTimeval)elapsedSince:(ORTimeval)tv;
 @end;
 
 @interface ORStreamManager : NSObject

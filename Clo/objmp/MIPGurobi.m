@@ -353,6 +353,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 -(void) lazySolutionInject: (void*)cbdata
 {
    if(_newSolVars && _newSolVals) {
+      ORTimeval cpu0 = [ORRuntimeMonitor now];
       int numVars;
       GRBgetintattr(_model, "NumVars", &numVars);
       double* solution = malloc(numVars * sizeof(double));
@@ -374,6 +375,10 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
       free(_newSolVals);
       _newSolVars = nil;
       _newSolVals = nil;
+      ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+      static ORLong ttlMIPINJ = 0;
+      ttlMIPINJ += cpu1.tv_sec * 1000000 + cpu1.tv_usec;
+      NSLog(@"TTL MIP inject: %lld",ttlMIPINJ);
    }
 }
 

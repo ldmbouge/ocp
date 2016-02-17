@@ -83,10 +83,15 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
+   ORTimeval cpu0 = [ORRuntimeMonitor now];
     static int bndCount = 0;
     NSLog(@"CPRunnable(%p): received bound(%i): %i", self, ++bndCount, bound);
     //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
+   ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+   static ORLong ttlCP = 0;
+   ttlCP += (ORLong)cpu1.tv_sec * 1000000 + cpu1.tv_usec;
+   NSLog(@"ttlCP =  %lld",ttlCP);
 }
 
 -(void) receiveLowerBound:(ORDouble)bound
@@ -101,6 +106,7 @@
 -(void) run
 {
     NSLog(@"Running CP runnable(%p)...", _program);
+   ORLong cpu0 = [ORRuntimeMonitor wctime];
    [_program onStartup:^{
       if (_startBlock)
          _startBlock();
@@ -145,8 +151,9 @@
              [_program labelHeuristic: h restricted: intVars];
          }];
     }
+    ORLong cpu1 = [ORRuntimeMonitor wctime];
     NSLog(@"status: %@", _program);
-    NSLog(@"Finishing CP runnable(%p)...", _program);
+    NSLog(@"Finishing CP runnable(%p)...  time=%lld", _program,cpu1-cpu0);
 }
 
 -(id<ORSolution>) bestSolution
