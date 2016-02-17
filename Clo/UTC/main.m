@@ -230,9 +230,9 @@ int main(int argc, const char * argv[]) {
     id<ORIntVarArray> useBus = [ORFactory intVarArray: m range: RANGE(m, 1, 3) bounds: boolBounds];
 
     id<ORIntVar> powUse = [ORFactory intVar: m bounds: RANGE(m, 0, 10000)];
-    id<ORIntVarArray> bandUse = [ORFactory intVarArray: m range: RANGE(m, 0, 2) bounds: RANGE(m, 0, 100000)];
-    id<ORIntVar> cost = [ORFactory intVar: m bounds: RANGE(m, 0, 99999)];
-    id<ORIntVar> weight = [ORFactory intVar: m bounds: RANGE(m, 0, 99999)];
+    id<ORIntVarArray> bandUse = [ORFactory intVarArray: m range: RANGE(m, 0, 2) bounds: RANGE(m, 0, 25000)];
+    id<ORIntVar> cost = [ORFactory intVar: m bounds: RANGE(m, 0, 25000)];
+    id<ORIntVar> weight = [ORFactory intVar: m bounds: RANGE(m, 0, 25000)];
     
     // data paths
     id<ORIntRange> pathRange = RANGE(m, 0, 16);
@@ -405,7 +405,7 @@ int main(int argc, const char * argv[]) {
     [m add: [usePath[8] eq: @(1)]];
     
     id<CPProgram> p = [ORFactory createCPProgram: m];
-    id<CPHeuristic> h = [p createFF];
+    id<CPHeuristic> h = [p createIBS];
     [p solve: ^{
         [p labelHeuristic: h];
         NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
