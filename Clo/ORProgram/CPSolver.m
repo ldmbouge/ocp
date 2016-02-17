@@ -286,11 +286,19 @@
             NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
             for(id<ORVar> v in mvar)
                [cvar addObject:_gamma[v.getId]];
-            [_hSet applyToAll:^(id<CPHeuristic> h) {
-               [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
-            }];
-            [cvar release];
-            [mvar release];
+            tryfail(^ORStatus{
+               [_hSet applyToAll:^(id<CPHeuristic> h) {
+                  [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+               }];
+               [cvar release];
+               [mvar release];
+               return ORSuspend;
+            }, ^ORStatus{
+               [cvar release];
+               [mvar release];
+               [_search fail];
+               return ORFailure;
+            });
          }
       }
       [ORConcurrency pumpEvents];
