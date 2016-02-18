@@ -138,16 +138,18 @@ int main(int argc, const char * argv[]) {
             
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [cp solve: ^{
-                [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
-                    id<ORTaskVarArray> t = disjunctive[i].taskVars;
-                    [cp sequence: disjunctive[i].successors
-                              by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
-                            then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
-                }];
-                [cp label: makespan];
-                NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
-                fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
-                fflush(outFile);
+               [cp limitTime:1000L * 300 in:^{
+                  [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
+                     id<ORTaskVarArray> t = disjunctive[i].taskVars;
+                     [cp sequence: disjunctive[i].successors
+                               by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
+                             then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
+                  }];
+                  [cp label: makespan];
+                  NSLog(@"(%d) makespan = [%d,%d] \n",[NSThread threadID],[cp min: makespan],[cp max: makespan]);
+                  fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
+                  fflush(outFile);
+               }];
             }];
             
             fclose(outFile);

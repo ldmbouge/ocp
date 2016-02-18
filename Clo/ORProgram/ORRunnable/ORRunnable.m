@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 CSE. All rights reserved.
 //
 
-#import "ORRunnable.h"
+#import <ORProgram/ORRunnable.h>
 #import <ORFoundation/ORFactory.h>
 #import <ORProgram/ORProgramFactory.h>
 #import "ORConcurrencyI.h"

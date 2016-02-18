@@ -52,12 +52,13 @@ int main(int argc, const char * argv[])
          
          __block ORInt nbSol = 0;
          id<CPProgram> cp = [args makeProgram:model annotation:notes];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
          //NSLog(@"Model %@",model);
          //      id<CPHeuristic> h = [ORFactory createFF:cp];
          [cp solveAll:^{
             //NSLog(@"concrete: %@",[[cp engine] model]);
             id<ORIntVarArray> tb = All2(model, ORIntVar, i, K, j, N, [p at:i :j]);
-            //[cp labelHeuristic:h];
+            [cp labelHeuristic:h];
             //[cp labelArray:tb];
             [cp forall:[tb range] suchThat:^bool(ORInt i) { return ![cp bound:tb[i]];} orderedBy:^ORInt(ORInt i) {
                return [cp domsize:tb[i]];

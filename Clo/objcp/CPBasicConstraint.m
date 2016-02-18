@@ -2136,7 +2136,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
          ORInt b = [((ORObjectiveValueIntI*) newBound) value];
          if (b < _primalBound)
-         _primalBound = b;
+            _primalBound = b;
       }
    }
 }

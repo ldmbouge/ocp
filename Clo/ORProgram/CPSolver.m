@@ -286,11 +286,19 @@
             NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
             for(id<ORVar> v in mvar)
                [cvar addObject:_gamma[v.getId]];
-            [_hSet applyToAll:^(id<CPHeuristic> h) {
-               [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
-            }];
-            [cvar release];
-            [mvar release];
+            tryfail(^ORStatus{
+               [_hSet applyToAll:^(id<CPHeuristic> h) {
+                  [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+               }];
+               [cvar release];
+               [mvar release];
+               return ORSuspend;
+            }, ^ORStatus{
+               [cvar release];
+               [mvar release];
+               [_search fail];
+               return ORFailure;
+            });
          }
       }
       [ORConcurrency pumpEvents];
@@ -807,7 +815,9 @@
    // [ldm] All four objects below are on the memory trail (+range of selector)
    // Note, the two mutables are created during the search, hence never concretized.
    id<CPIntVarArray> cav = [CPFactory intVarArray:self range:av.range with:^id<CPIntVar>(ORInt i) {
-      return _gamma[av[i].getId];
+      CPIntVar* sv =_gamma[av[i].getId];
+      assert([sv isKindOfClass:[CPIntVar class]]);
+      return sv;
    }];
 
    id<ORSelect> select = [ORFactory selectRandom: _engine

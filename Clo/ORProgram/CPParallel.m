@@ -50,6 +50,7 @@
 -(void) publishWork
 {
    _publishing = YES;
+   ORTimeval cpu0 = [ORRuntimeMonitor now];
    //NSLog(@"BEFORE PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    id<ORTracer> tracer = [_solver tracer];
    id<ORCheckpoint> theCP = [tracer captureCheckpoint];
@@ -89,6 +90,13 @@
    [theCP letgo];
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    [pItf release];
+   ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+   static OSSpinLock lock = OS_SPINLOCK_INIT;
+   OSSpinLockLock(&lock);
+   static ORLong ttl = 0;
+   ttl += cpu1.tv_sec*1000 + cpu1.tv_usec/1000;
+   OSSpinLockUnlock(&lock);
+   NSLog(@"publishing took: %lld",ttl);
    _publishing = NO;
    if (ok == ORFailure)
       [self fail];

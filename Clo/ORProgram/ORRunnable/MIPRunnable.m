@@ -71,10 +71,12 @@
    if (_startBlock)
       _startBlock();
    
-    NSLog(@"Running MIP runnable(%p)...", _program);
-    [[[_program solver] boundInformer] wheneverNotifiedDo: ^(ORDouble bnd) { [self notifyUpperBound: (ORInt)bnd]; }];
-    [_program solve];
-    NSLog(@"Finishing MIP runnable(%p)...", _program);
+   NSLog(@"Running MIP runnable(%p)...", _program);
+   ORLong cpu0 = [ORRuntimeMonitor wctime];
+   [[[_program solver] boundInformer] wheneverNotifiedDo: ^(ORDouble bnd) { [self notifyUpperBound: (ORInt)bnd]; }];
+   [_program solve];
+   ORLong cpu1 = [ORRuntimeMonitor wctime];
+   NSLog(@"Finishing MIP runnable(%p)... TTLMIP = %lld", _program,cpu1-cpu0);
 }
 
 -(void) cancelSearch {
@@ -97,7 +99,7 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    NSLog(@"MIPRunnable(%p): recieved upper bound: %i", self, bound);
+    NSLog(@"MIPRunnable(%p): received upper bound: %i", self, bound);
     [[_program solver] tightenBound: bound];
 }
 
@@ -113,22 +115,28 @@
 
 -(void) receiveSolution:(id<ORSolution,ORSchedulerSolution>)sol
 {
-    static int solCount = 0;
-    NSArray* modelVars = [[sol model] variables];
-    NSMutableArray* vars = [[NSMutableArray alloc] init];
-    NSMutableArray* vals = [[NSMutableArray alloc] init];
-    for(id<ORVar> v in modelVars) {
-        if([v conformsToProtocol: @protocol(ORTaskVar)]) {
-            id<ORTaskVar> t = (id<ORTaskVar>)v;
-            MIPVariableI* x = [_program concretize: [t getStartVar]];
-            [vars addObject: x];
-            //[vals addObject: @((ORInt)[[sol value: t] est])];
-            [vals addObject: @([sol est:t])];
-        }
-    }
-    
-    NSLog(@"MIPRunnable(%p): recieved solution(%i): %p", self, ++solCount, sol);
-    [[_program solver] injectSolution: vars values: vals size: (ORInt)[vars count]];
+   ORTimeval cpu0 = [ORRuntimeMonitor now];
+   static int solCount = 0;
+   NSArray* modelVars = [[sol model] variables];
+   NSMutableArray* vars = [[NSMutableArray alloc] init];
+   NSMutableArray* vals = [[NSMutableArray alloc] init];
+   for(id<ORVar> v in modelVars) {
+      if([v conformsToProtocol: @protocol(ORTaskVar)]) {
+         id<ORTaskVar> t = (id<ORTaskVar>)v;
+         MIPVariableI* x = [_program concretize: [t getStartVar]];
+         [vars addObject: x];
+         //[vals addObject: @((ORInt)[[sol value: t] est])];
+         [vals addObject: @([sol est:t])];
+      }
+   }
+   
+   NSLog(@"MIPRunnable(%p): received solution(%i): %p  (%@)", self, ++solCount, sol,sol.objectiveValue);
+   [[_program solver] injectSolution: vars values: vals size: (ORInt)[vars count]];
+   static ORLong ttlMIPIN = 0;
+   ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+   ttlMIPIN += (ORLong)cpu1.tv_sec * 1000000 + cpu1.tv_usec;
+   assert(ttlMIPIN >= 0);
+   NSLog(@"TTL MIP: %lld",ttlMIPIN);
 }
 
 @end

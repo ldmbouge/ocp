@@ -637,13 +637,18 @@
       }
       id<ORProblem> cpRoot = nil;
       //ORLong took = 0;
+      ORTimeval before = [ORRuntimeMonitor now];
+      ORLong sleeping = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
+            ORTimeval sleepy = [ORRuntimeMonitor elapsedSince:before];
+            sleeping += sleepy.tv_sec* 1000 + sleepy.tv_usec / 1000;
             [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
-//            [_queue pretendFull:took < 500];
+            before = [ORRuntimeMonitor now];
          }
          [cpRoot release];
       }
+      NSLog(@"Worker %d spent %lld sleeping",[NSThread threadID],sleeping);
       NSLog(@"IN Queue after leaving: %d (%s)",[_queue size],(_doneSearching ? "YES" : "NO"));
    }];
    // Final tear down. The worker is done with the model.
