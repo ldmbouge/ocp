@@ -405,7 +405,7 @@ int main(int argc, const char * argv[]) {
     [m add: [usePath[8] eq: @(1)]];
     
     id<CPProgram> p = [ORFactory createCPProgram: m];
-    id<CPHeuristic> h = [p createIBS];
+    id<CPHeuristic> h = [p createWDeg];
     [p solve: ^{
         [p labelHeuristic: h];
         NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
