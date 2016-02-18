@@ -249,7 +249,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 {
    struct _GRBenv* modelEnv = GRBgetenv(_model);
    int error = GRBsetdblparam(modelEnv,name,val);
-   if(error) assert(false);}
+   if(error) assert(false);
+}
 
 -(void) setStringParameter: (const char*) name val: (char*) val
 {

@@ -32,6 +32,11 @@
 }
 -(void)dealloc
 {
+   NSInteger ub = [_vars count];
+   for(int k=0; k < ub;k++)
+      [_cv[k] release];
+   free(_cv);
+   free(_map);
    [super dealloc];
 }
 -(id<CPCommonProgram>)solver
@@ -63,7 +68,7 @@
    ORUInt len = (ORUInt)[_vars count];
    ORUInt maxID = 0;
    for(int k=0;k<len;k++) 
-      maxID = max(maxID,[[t at:k] getId]);   
+      maxID = max(maxID,[t at:k].getId);
    _cv = malloc(sizeof(NSSet*)*len);
    _map = malloc(sizeof(ORUInt)*(maxID+1));
    memset(_cv,sizeof(NSSet*)*len,0);
@@ -71,7 +76,7 @@
    ORInt low = [t low],up = [t up];
    for(ORInt k=low;k <= up;k++) {
       _map[_cvs[k].getId] = k - low;
-      _cv[k-low] = [_cvs[k] constraints]; 
+      _cv[k-low] = [[_cvs[k] constraints] retain];
    }
    _nbv = len;
    NSLog(@"DDeg ready...");
