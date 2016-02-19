@@ -405,7 +405,8 @@ int main(int argc, const char * argv[]) {
     [m add: [usePath[8] eq: @(1)]];
     
     id<CPProgram> p = [ORFactory createCPProgram: m];
-    id<CPHeuristic> h = [p createDDeg];
+    ORTimeval cpu0 = [ORRuntimeMonitor now];
+    id<CPHeuristic> h = [p createFF];
     [p solve: ^{
         [p labelHeuristic: h];
         NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
@@ -413,6 +414,8 @@ int main(int argc, const char * argv[]) {
     //    [p solve];
     id<ORSolutionPool> sols = [p solutionPool];
     id<ORSolution> bestSolution = [sols best];
+    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+    NSLog(@"Time to solution: %ld",cpu1.tv_sec * 1000 + cpu1.tv_usec/1000);
     
     NSLog(@"Sol count: %li", [sols count]);  // this only prints the number of solutions on the way to the global optimum.
     
