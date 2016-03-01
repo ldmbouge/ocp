@@ -48,7 +48,7 @@
 {
    BOOL cf = _indep == 0;
    for(int i=0;i < _nb && cf; i++) {
-      cf = cf && _terms[i]._coef == 1;
+      cf = cf && _terms[i]._coef == 1 && [_terms[i]._var isBool];
    }
    return cf;
 }
