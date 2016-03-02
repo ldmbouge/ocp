@@ -330,11 +330,11 @@ int main(int argc, const char * argv[]) {
     
     // Connectivity ///////////////////////
     for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
-        [m add: [[[[contSenDirectPMU[i] plus: contSenToCon[i]] plus: contSenToBus[i]] leq: [contSensors[i] gt: NONE]] eq: [contSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
+        [m add: [[[contSenDirectPMU[i] plus: contSenToCon[i]] plus: contSenToBus[i]] eq: [contSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
     for(ORInt i = [voltSenRange low]; i <= [voltSenRange up]; i++)
-        [m add: [[[[voltSenDirectPMU[i] plus: voltSenToCon[i]] plus: voltSenToBus[i]] leq: [voltSensors[i] gt: NONE]] eq: [voltSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
-    for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
-        [m add: [[[[curSenDirectPMU[i] plus: curSenToCon[i]] plus: curSenToBus[i]] leq: [curSensors[i] gt: NONE]] eq: [voltSensors[i] gt: NONE] ]]; // Connected to PMU, bus or concentrator
+        [m add: [[[voltSenDirectPMU[i] plus: voltSenToCon[i]] plus: voltSenToBus[i]] eq: [voltSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
+    for(ORInt i = [curSenRange low]; i <= [curSenRange up]; i++)
+        [m add: [[[curSenDirectPMU[i] plus: curSenToCon[i]] plus: curSenToBus[i]] eq: [curSensors[i] gt: NONE] ]]; // Connected to PMU, bus or concentrator
     
     // If not connected to PMU directly, must have a sensor capable of digital conversion
     for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
@@ -421,26 +421,10 @@ int main(int argc, const char * argv[]) {
     [m add: [usePath[7] eq: @(1)]];
     [m add: [usePath[8] eq: @(1)]];
     
-    
-    id<CPProgram> p = [ORFactory createCPProgram: m];
-    //id<CPHeuristic> h = [p createIBS];
-    ORTimeval cpu0 = [ORRuntimeMonitor now];
-    id<CPHeuristic> h = [p createIBS];
-    [p solve: ^{
-        [p limitTime: 30 * 1000 in: ^{
-            [p labelHeuristic: h];
-            NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
-        }];
-    }];
-    //    [p solve];
-    id<ORSolutionPool> sols = [p solutionPool];
-    id<ORSolution> bestSolution = [sols best];
-    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
-    NSLog(@"Time to solution: %ld",cpu1.tv_sec * 1000 + cpu1.tv_usec/1000);
-    
-    NSLog(@"Sol count: %li", [sols count]);  // this only prints the number of solutions on the way to the global optimum.
+    //NSLog(@"Sol count: %li", [sols count]);  // this only prints the number of solutions on the way to the global optimum.
     
     // Write Solution to XML ----------------------------------------------------------------------------------
+    void(^writeOut)(id<ORSolution>) = ^(id<ORSolution> bestSolution){
     NSXMLElement* root = [[NSXMLElement alloc] initWithName: @"utc_architecture"];
     
     // Write contSensors
@@ -451,7 +435,7 @@ int main(int argc, const char * argv[]) {
         [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
         [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
         
-        NSString* data_string = @"nil";
+        NSString* data_string = @"none";
         if([bestSolution intValue: contSenDirectPMU[i]]) data_string = @"PMU";
         else if([bestSolution intValue: contSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: contSenToBus[i]]];
         else if([bestSolution intValue: contSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: contSenToCon[i]]];
@@ -469,7 +453,7 @@ int main(int argc, const char * argv[]) {
         [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
         [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
         
-        NSString* data_string = @"nil";
+        NSString* data_string = @"none";
         if([bestSolution intValue: voltSenDirectPMU[i]]) data_string = @"PMU";
         else if([bestSolution intValue: voltSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: voltSenToBus[i]]];
         else if([bestSolution intValue: voltSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: voltSenToCon[i]]];
@@ -487,7 +471,7 @@ int main(int argc, const char * argv[]) {
         [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
         [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
         
-        NSString* data_string = @"nil";
+        NSString* data_string = @"none";
         if([bestSolution intValue: curSenDirectPMU[i]]) data_string = @"PMU";
         else if([bestSolution intValue: curSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: curSenToBus[i]]];
         else if([bestSolution intValue: curSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: curSenToCon[i]]];
@@ -567,17 +551,36 @@ int main(int argc, const char * argv[]) {
     NSString* outPath = [NSHomeDirectory() stringByAppendingPathComponent:@"UTCSolution.xml"];
     [xmlData writeToFile: outPath atomically:YES];
     NSLog(@"Wrote Solution File: %@", outPath);
+    };
     
-    for(ORInt i = 0; i <=16; i++)
-        NSLog(@"%i, %i", i, [bestSolution intValue: usePath[i]]);
     
-    NSLog(@"POW USE: %i", [bestSolution intValue: powUse]);
+    id<CPProgram> p = [ORFactory createCPProgram: m];
+    //id<CPHeuristic> h = [p createIBS];
+    ORTimeval cpu0 = [ORRuntimeMonitor now];
+    id<CPHeuristic> h = [p createIBS];
+    [p solve: ^{
+        //[p limitTime: 30 * 1000 in: ^{
+        [p labelHeuristic: h];
+        NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
+        //}];
+        writeOut([p captureSolution]);
+    }];
+    //    [p solve];
+    //id<ORSolutionPool> sols = [p solutionPool];
+    //id<ORSolution> bestSolution = [sols best];
+    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+    NSLog(@"Time to solution: %ld",cpu1.tv_sec * 1000 + cpu1.tv_usec/1000);
     
-    for(ORInt k = 1; k <= numOptConcentrators; k++)
-        NSLog(@"concToBus %i: %i", k, [bestSolution intValue: concToBus[k]]);
-    
-    for(ORInt k = 1; k <= numOptBuses; k++)
-        NSLog(@"useBus %i: %i", k, [bestSolution intValue: useBus[k]]);
+//    for(ORInt i = 0; i <=16; i++)
+//        NSLog(@"%i, %i", i, [bestSolution intValue: usePath[i]]);
+//    
+//    NSLog(@"POW USE: %i", [bestSolution intValue: powUse]);
+//    
+//    for(ORInt k = 1; k <= numOptConcentrators; k++)
+//        NSLog(@"concToBus %i: %i", k, [bestSolution intValue: concToBus[k]]);
+//    
+//    for(ORInt k = 1; k <= numOptBuses; k++)
+//        NSLog(@"useBus %i: %i", k, [bestSolution intValue: useBus[k]]);
     
     return 0;
 }

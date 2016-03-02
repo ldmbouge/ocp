@@ -4,7 +4,7 @@
     <generator_templates>
         <generator id="0" name="G0">
             <cost>900</cost>
-            <power>2000</power>
+            <power>200</power>
             <weight>50</weight>
         </generator>
         <generator id="1" name="G1">
