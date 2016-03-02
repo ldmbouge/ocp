@@ -3,47 +3,67 @@
     
     <generator_templates>
         <generator id="0" name="G0">
-            <cost>1000</cost>
-            <power>125</power>
-            <weight>100</weight>
+            <cost>900</cost>
+            <power>2000</power>
+            <weight>50</weight>
         </generator>
         <generator id="1" name="G1">
-            <cost>1200</cost>
-            <power>130</power>
-            <weight>110</weight>
+            <cost>950</cost>
+            <power>210</power>
+            <weight>55</weight>
         </generator>
         <generator id="2" name="G2">
-            <cost>1500</cost>
-            <power>137</power>
-            <weight>115</weight>
+            <cost>1000</cost>
+            <power>315</power>
+            <weight>65</weight>
+        </generator>
+        <generator id="3" name="G3">
+            <cost>1050</cost>
+            <power>300</power>
+            <weight>65</weight>
+        </generator>
+        <generator id="4" name="G4">
+            <cost>1100</cost>
+            <power>400</power>
+            <weight>75</weight>
+        </generator>
+        <generator id="5" name="G5">
+            <cost>1200</cost>
+            <power>450</power>
+            <weight>150</weight>
         </generator>
     </generator_templates>
     
     <contactor_sensor_templates>
         <sensor id="0" name="S_CONT0">
             <cost>60</cost>
-            <power>12</power>
+            <power>15</power>
             <weight>13</weight>
+            <conversion>0</conversion>
         </sensor>
         <sensor id="1" name="S_CONT1">
             <cost>64</cost>
-            <power>12</power>
+            <power>20</power>
             <weight>11</weight>
+            <conversion>0</conversion>
         </sensor>
         <sensor id="2" name="S_CONT2">
             <cost>59</cost>
-            <power>10</power>
-            <weight>12</weight>
+            <power>25</power>
+            <weight>10</weight>
+            <conversion>1</conversion>
         </sensor>
         <sensor id="3" name="S_CONT3">
             <cost>70</cost>
-            <power>8</power>
+            <power>10</power>
             <weight>13</weight>
+            <conversion>1</conversion>
         </sensor>
         <sensor id="4" name="S_CONT4">
             <cost>75</cost>
-            <power>8</power>
-            <weight>9</weight>
+            <power>7</power>
+            <weight>11</weight>
+            <conversion>0</conversion>
         </sensor>
     </contactor_sensor_templates>
     
@@ -52,31 +72,37 @@
             <cost>0</cost>
             <power>0</power>
             <weight>0</weight>
+            <conversion>0</conversion>
         </sensor>
         <sensor id="1" name="S_VOLT0">
             <cost>10</cost>
             <power>12</power>
             <weight>3</weight>
+            <conversion>0</conversion>
         </sensor>
         <sensor id="2" name="S_VOLT1">
             <cost>30</cost>
             <power>10</power>
             <weight>3</weight>
+            <conversion>1</conversion>
         </sensor>
         <sensor id="3" name="S_VOLT2">
             <cost>34</cost>
             <power>6</power>
             <weight>4</weight>
+            <conversion>1</conversion>
         </sensor>
         <sensor id="4" name="S_VOLT3">
             <cost>32</cost>
             <power>5</power>
             <weight>5</weight>
+            <conversion>1</conversion>
         </sensor>
         <sensor id="5" name="S_VOLT4">
             <cost>30</cost>
             <power>5</power>
             <weight>3</weight>
+            <conversion>1</conversion>
         </sensor>
     </voltage_sensor_templates>
     
@@ -85,32 +111,51 @@
             <cost>0</cost>
             <power>0</power>
             <weight>0</weight>
+            <conversion>0</conversion>
         </sensor>
         <sensor id="1" name="S_VOLT0">
             <cost>10</cost>
             <power>2</power>
             <weight>3</weight>
+            <conversion>0</conversion>
         </sensor>
         <sensor id="2" name="S_VOLT1">
             <cost>30</cost>
             <power>5</power>
             <weight>3</weight>
+            <conversion>1</conversion>
         </sensor>
     </current_sensor_templates>
     
     <data_bus_templates>
         <data_bus id="0" name="BUS0">
-            <cost>5</cost>
-            <bandwidth>1525</bandwidth>
-            <weight>5</weight>
+            <cost>50</cost>
+            <max_bandwidth>200</max_bandwidth>
+            <weight>15</weight>
         </data_bus>
     </data_bus_templates>
     
     <concentrator_templates>
-        <concentrator id="0" name="CONC0">
+        <concentrator id="0" name="NONE">
+            <cost>0</cost>
+            <power>0</power>
+            <weight>0</weight>
+            <bandwidth>0</bandwidth>
+            <max_connections>10000</max_connections>
+        </concentrator>
+        <concentrator id="1" name="CONC0">
             <cost>60</cost>
             <power>45</power>
             <weight>6</weight>
+            <bandwidth>55</bandwidth>
+            <max_connections>3</max_connections>
+        </concentrator>
+        <concentrator id="2" name="CONC1">
+            <cost>80</cost>
+            <power>55</power>
+            <weight>7</weight>
+            <bandwidth>60</bandwidth>
+            <max_connections>5</max_connections>
         </concentrator>
     </concentrator_templates>
     
@@ -122,5 +167,5 @@
             <power>55</power>
         </bbf>
     </blackbox_templates>
-
+    
 </template_library>
