@@ -4,19 +4,12 @@
 OC = clang-3.5
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. -msse4.1 -fblocks -fobjc-nonfragile-abi -DUSEVIEWS=1
-LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
+CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -g -O0 -I. -I.. -msse4.1 -fblocks -fobjc-nonfragile-abi -DUSEVIEWS=1
+LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) -g -O0 \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities -lORUtilities
 
-
-# CFLAGS = -I$(GNUstep)/include -I. -I.. -fPIC -g -msse4.1 \
-# 	-fblocks -fobjc-nonfragile-abi  $(USER_DEFINES)
-# LFLAGS = -dynamic -g -L$(GNUstep)/lib -lgnustep-base -lobjc $(USER_DEFINES) \
-# 	-L../ORUtilities \
-# 	-lORUtilities $(USER_DEFINES)
-
 SRCS =  ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \
-	ORFoundation.m  ORObject.m     ORSemBDSController.m  ORTracer.m \
+	ORFoundation.m  ORObject.m     ORSemBDSController.m  ORSemFDSController.m ORTracer.m \
 	ORCommand.m     ORDataI.m    ORError.m      ORFactoryI.m  \
 	ORLimit.m       ORParallel.m   ORSemDFSController.m  ORTrailI.m \
 	ORArrayI.m  ORController.m  ORData.m     ORExplorerI.m  ORFactory.m  \
@@ -40,11 +33,11 @@ $(LIBNAME): $(OFILES)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m" $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 %.$(OBJEXT): %.mm
 	@echo "compiling C++ / m"  $<
-	@$(OC) $(CFLAGS) -ObjC++ -c $< 
+	$(OC) $(CFLAGS) -ObjC++ -c $< 
 
 clean:
 	rm -rf *.o *~

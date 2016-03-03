@@ -1,6 +1,6 @@
 OC = clang-3.5
 CFLAGS = `gnustep-config --objc-flags` -msse4.1 -fblocks -fobjc-nonfragile-abi -fobjc-runtime=gnustep \
-	$(USER_DEFINES) -I. -I.. -I/opt/gurobi550/linux64/include \
+	$(USER_DEFINES) -I. -I.. -I/home/ldm/ocp/gurobi550/linux64/include \
 	-msse4.1 
 
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
@@ -11,7 +11,7 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORModeling -Wl,-rpath=`pwd`/../ORModeling \
 	-L../ORProgram -Wl,-rpath=`pwd`/../ORProgram \
 	-L../objmp -Wl,-rpath=`pwd`/../objmp \
-	-L$(HOME)/gurobi550/linux64/lib -Wl,-rpath=$(HOME)/gurobi550/linux64/lib \
+	-L$(HOME)/ocp/gurobi550/linux64/lib -Wl,-rpath=$(HOME)/ocp/gurobi550/linux64/lib \
 	-lORUtilities -lORFoundation -lCPUKernel -lobjcp -lORModeling -lORProgram \
 	-lobjmp -lgurobi55 \
 	-fobjc-runtime=gnustep

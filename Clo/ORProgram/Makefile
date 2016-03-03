@@ -24,7 +24,7 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 
 SRCS = CPABS.m CPConcretizer.m  CPFirstFail.m  CPMultiStartSolver.m  \
 	CPSolver.m  ORSolution.m LPConcretizer.m  ORCPParSolver.m CPBaseHeuristic.m  \
-	CPDeg.m CPDDeg.m CPIBS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m \
+	CPDeg.m CPDDeg.m CPIBS.m CPFDS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m \
 	MIPConcretizer.m MIPSolver.m
 
 
