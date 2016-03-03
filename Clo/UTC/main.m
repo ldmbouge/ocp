@@ -30,15 +30,15 @@ typedef enum {
 } CUR_SENSOR;
 
 ORInt rawContSensBandwith[] = {
-    35, 35, 35, 40, 51, 47, 18, 66, 22
+    55, 55, 55, 60, 61, 157, 108, 86, 42
 };
 
 ORInt rawVoltSensBandwith[] = {
-    41, 52, 31, 31, 56, 58, 19, 27, 33
+    41, 52, 31, 31, 56, 158, 119, 127, 33
 };
 
 ORInt rawCurSensBandwith[] = {
-    39, 48, 41, 51, 36, 39, 29, 21, 30
+    59, 68, 41, 71, 36, 99, 99, 91, 50
 };
 
 ORInt rawConCost[] = {
@@ -54,24 +54,24 @@ ORInt rawConPowWeight[] = {
 };
 
 ORInt rawContDirectToPMUCost[] = {
-    1115, 1115, 1110, 1112, 1116, 1112, 1117, 1119, 11119
+    315, 315, 210, 312, 216, 212, 317, 319, 219
 };
 
 ORInt rawContDirectToPMUWeight[] = {
-    11120, 11120, 11180, 11180, 11100, 11100, 11100, 11120, 11120
+    420, 420, 480, 780, 500, 370, 500, 760, 400
 };
 
 
 ORInt rawVoltDirectToPMUCost[] = {
-    113, 117, 112, 116, 122, 19, 112, 121, 116
+    313, 317, 312, 316, 522, 219, 312, 321, 416
 };
 
 ORInt rawVoltDirectToPMUWeight[] = {
-    112, 114, 170, 164, 110, 110, 90, 122, 130
+    412, 214, 370, 464, 510, 610, 600, 522, 430
 };
 
 ORInt rawCurDirectToPMUCost[] = {
-    118, 114, 116, 112, 113, 111, 117, 114, 118
+    218, 314, 316, 212, 313, 311, 217, 214, 318
 };
 
 ORInt rawCurDirectToPMUWeight[] = {
@@ -79,21 +79,55 @@ ORInt rawCurDirectToPMUWeight[] = {
 };
 
 
-ORInt rawSenToBusCost[] = {
-    2, 2, 4, 4, 4, 4, 5, 3, 3
+ORInt rawContToBusCost[] = {
+    20, 20, 40, 40, 35, 42, 52, 31, 43
 };
 
-ORInt rawSenToBusWeight[] = {
-    1, 1, 2, 2, 2, 2, 3, 2, 2
+ORInt rawContToBusWeight[] = {
+    11, 11, 12, 12, 22, 22, 23, 22, 12
 };
 
-ORInt rawSenToConCost[] = {
-    1, 1, 3, 3, 3, 3, 4, 2, 2
+ORInt rawContToConCost[] = {
+    11, 11, 13, 23, 23, 13, 14, 22, 32
 };
 
-ORInt rawSenToConWeight[] = {
-    1, 1, 3, 3, 3, 3, 4, 2, 2
+ORInt rawContToConWeight[] = {
+    21, 21, 13, 13, 23, 23, 14, 12, 12
 };
+
+
+ORInt rawVoltToBusCost[] = {
+    20, 20, 40, 40, 35, 42, 52, 31, 43
+};
+
+ORInt rawVoltToBusWeight[] = {
+    11, 11, 12, 12, 22, 22, 23, 22, 12
+};
+
+ORInt rawVoltToConCost[] = {
+    11, 11, 13, 23, 23, 13, 14, 22, 32
+};
+
+ORInt rawVoltToConWeight[] = {
+    21, 21, 13, 13, 23, 23, 14, 12, 12
+};
+
+ORInt rawCurToBusCost[] = {
+    20, 20, 40, 40, 35, 42, 52, 31, 43
+};
+
+ORInt rawCurToBusWeight[] = {
+    11, 11, 12, 12, 22, 22, 23, 22, 12
+};
+
+ORInt rawCurToConCost[] = {
+    11, 11, 13, 23, 23, 13, 14, 22, 32
+};
+
+ORInt rawCurToConWeight[] = {
+    21, 21, 13, 13, 23, 23, 14, 12, 12
+};
+
 
 ORInt numMainGen = 2;
 ORInt numOptBuses = 2;
@@ -259,7 +293,7 @@ int main(int argc, const char * argv[]) {
     // Template Tables -----------------------------------------------------------------------
     
     
-    id<ORIntArray> contSensBandwith = [ORFactory intArray: m range: contSenRange values: rawContSensBandwith];
+    id<ORIntArray> contSensBandwith = [ORFactory intArray: m range: contSenRange values: rawVoltSensBandwith];
     id<ORIntArray> voltSensBandwith = [ORFactory intArray: m range: voltSenRange values: rawVoltSensBandwith];
     id<ORIntArray> curSensBandwith = [ORFactory intArray: m range: curSenRange values: rawCurSensBandwith];
     
@@ -272,41 +306,60 @@ int main(int argc, const char * argv[]) {
     id<ORIntArray> curDirectToPMUCost = [ORFactory intArray: m range: curSenRange values: rawCurDirectToPMUCost];
     id<ORIntArray> curDirectToPMUWeight = [ORFactory intArray: m range: curSenRange values: rawCurDirectToPMUWeight];
     
-    id<ORIntArray> senToBusCost = [ORFactory intArray: m range: contSenRange values: rawSenToBusCost];
-    id<ORIntArray> senToBusWeight = [ORFactory intArray: m range: contSenRange values: rawSenToBusWeight];
+    id<ORIntArray> contToBusCost = [ORFactory intArray: m range: contSenRange values: rawContToBusCost];
+    id<ORIntArray> contToBusWeight = [ORFactory intArray: m range: contSenRange values: rawContToBusWeight];
     
-    id<ORIntArray> senToConCost = [ORFactory intArray: m range: contSenRange values: rawSenToConCost];
-    id<ORIntArray> senToConWeight = [ORFactory intArray: m range: contSenRange values: rawSenToConWeight];
+    id<ORIntArray> contToConCost = [ORFactory intArray: m range: contSenRange values: rawContToConCost];
+    id<ORIntArray> contToConWeight = [ORFactory intArray: m range: contSenRange values: rawContToConWeight];
     
+    id<ORIntArray> voltToBusCost = [ORFactory intArray: m range: voltSenRange values: rawVoltToBusCost];
+    id<ORIntArray> voltToBusWeight = [ORFactory intArray: m range: voltSenRange values: rawVoltToBusWeight];
+    
+    id<ORIntArray> voltToConCost = [ORFactory intArray: m range: voltSenRange values: rawVoltToConCost];
+    id<ORIntArray> voltToConWeight = [ORFactory intArray: m range: voltSenRange values: rawVoltToConWeight];
+    
+    id<ORIntArray> curToBusCost = [ORFactory intArray: m range: curSenRange values: rawCurToBusCost];
+    id<ORIntArray> curToBusWeight = [ORFactory intArray: m range: curSenRange values: rawCurToBusWeight];
+    
+    id<ORIntArray> curToConCost = [ORFactory intArray: m range: curSenRange values: rawCurToConCost];
+    id<ORIntArray> curToConWeight = [ORFactory intArray: m range: curSenRange values: rawCurToConWeight];
     
     [m minimize: [cost plus: weight]];
     
     // Cost ///////////////////////////
     [m add: [cost eq:
-             [[[[[[[[[[[[[mainGenCost elt: g0] plus: [mainGenCost elt: g1]] plus: [mainGenCost elt: auxgen]] plus: // Gen cost
+             [[[[[[[[[[[[[[[[[mainGenCost elt: g0] plus: [mainGenCost elt: g1]] plus: [mainGenCost elt: auxgen]] plus: // Gen cost
                        Sum(m, i, voltSenRange, [voltSensCost elt: [voltSensors at: i]])] plus: // Cost of contactor sensors
                       Sum(m, i, curSenRange, [curSensCost elt: [curSensors at: i]])] plus: // Cost of contactor sensors
                      Sum(m, i, contSenRange, [contSensCost elt: [contSensors at: i]])] plus: // Cost of contactor sensors
                     Sum(m, i, contSenRange, [@([contDirectToPMUCost at: i]) mul: [contSenDirectPMU at: i]])] plus: // Cost direct to PMU
                    Sum(m, i, voltSenRange, [@([voltDirectToPMUCost at: i]) mul: [voltSenDirectPMU at: i]])] plus: // Cost direct to PMU
                   Sum(m, i, curSenRange, [@([curDirectToPMUCost at: i]) mul: [curSenDirectPMU at: i]])] plus: // Cost direct to PMU
-                 Sum(m, i, contSenRange, [@([senToBusCost at: i]) mul: [[contSenToBus at: i] gt: @(0)]])] plus: // Cost direct to bus
-                Sum(m, i, contSenRange, [@([senToConCost at: i]) mul: [[contSenToCon at: i] gt: @(0)]])] plus: // Cost direct to Concentrator
-               Sum(m, i, concRange, [concCost elt: [conc at: i]])] plus: // Concentrator cost
+                 Sum(m, i, contSenRange, [@([contToBusCost at: i]) mul: [[contSenToBus at: i] gt: @(0)]])] plus: // Cost direct to bus
+                Sum(m, i, contSenRange, [@([contToConCost at: i]) mul: [[contSenToCon at: i] gt: @(0)]])] plus: // Cost direct to Concentrator
+               Sum(m, i, voltSenRange, [@([voltToBusCost at: i]) mul: [[voltSenToBus at: i] gt: @(0)]])] plus: // Cost direct to bus
+              Sum(m, i, voltSenRange, [@([voltToConCost at: i]) mul: [[voltSenToCon at: i] gt: @(0)]])] plus: // Cost direct to Concentrator
+            Sum(m, i, concRange, [concCost elt: [conc at: i]])] plus: // Concentrator cost
+                Sum(m, i, curSenRange, [@([curToBusCost at: i]) mul: [[curSenToBus at: i] gt: @(0)]])] plus: // Cost direct to bus
+             Sum(m, i, curSenRange, [@([curToConCost at: i]) mul: [[curSenToCon at: i] gt: @(0)]])] plus: // Cost direct to Concentrator
               [Sum(m, i, RANGE(m, 1, numOptBuses), useBus[i]) mul: @(BUS_COST)]] // Bus Cost
              ]];
     
     // Weight /////////////////////////
     [m add: [weight eq:
-             [[[[[[[[[[[[[mainGenWeight elt: g0] plus: [mainGenWeight elt: g1]] plus: [mainGenWeight elt: auxgen]] plus: // Gen weight
+             [[[[[[[[[[[[[[[[[mainGenWeight elt: g0] plus: [mainGenWeight elt: g1]] plus: [mainGenWeight elt: auxgen]] plus: // Gen weight
                        Sum(m, i, contSenRange, [contSensWeight elt: [contSensors at: i]])] plus: // Contactor sensor weight
                       Sum(m, i, voltSenRange, [voltSensWeight elt: [voltSensors at: i]])] plus: // Contactor sensor weight
                      Sum(m, i, curSenRange, [curSensWeight elt: [curSensors at: i]])] plus: // Contactor sensor weight
                     Sum(m, i, voltSenRange, [@([voltDirectToPMUWeight at: i]) mul: [voltSenDirectPMU at: i]])] plus: // Weight direct to PMU
                    Sum(m, i, curSenRange, [@([curDirectToPMUWeight at: i]) mul: [curSenDirectPMU at: i]])] plus: // Weight direct to PMU
                   Sum(m, i, contSenRange, [@([contDirectToPMUWeight at: i]) mul: [contSenDirectPMU at: i]])] plus: // Weight direct to PMU
-                 Sum(m, i, contSenRange, [@([senToBusWeight at: i]) mul: [contSenToBus at: i]])] plus: // Weight direct to bus
-                Sum(m, i, contSenRange, [@([senToConWeight at: i]) mul: [contSenToCon at: i]])] plus: // Weight direct to Concentrator
+                 Sum(m, i, contSenRange, [@([contToBusWeight at: i]) mul: [contSenToBus at: i]])] plus: // Weight direct to bus
+                Sum(m, i, contSenRange, [@([contToConWeight at: i]) mul: [contSenToCon at: i]])] plus: // Weight direct to Concentrator
+               Sum(m, i, voltSenRange, [@([voltToBusWeight at: i]) mul: [voltSenToBus at: i]])] plus: // Weight direct to bus
+              Sum(m, i, voltSenRange, [@([voltToConWeight at: i]) mul: [voltSenToCon at: i]])] plus: // Weight direct to Concentrator
+               Sum(m, i, curSenRange, [@([curToBusWeight at: i]) mul: [curSenToBus at: i]])] plus: // Weight direct to bus
+              Sum(m, i, curSenRange, [@([curToConWeight at: i]) mul: [curSenToCon at: i]])] plus: // Weight direct to Concentrator
                Sum(m, i, concRange, [concWeight elt: [conc at: i]])] plus: // Concentrator weight
               [Sum(m, i, RANGE(m, 1, numOptBuses), useBus[i]) mul: @(BUS_WGHT)] ]
              ]];
@@ -363,7 +416,7 @@ int main(int argc, const char * argv[]) {
     
     // Use concentrators
     for(ORInt k = 1; k <= numOptConcentrators; k++) {
-        [m add: [[useConc[k] neq: @(0)] eq: [numConcConn[k] gt: @(0)]]];
+        [m add: [[useConc[k] eq: @(1)] eq: [numConcConn[k] gt: @(0)]]];
         [m add: [[useConc[k] eq: @(1)] eq: [conc[k] gt: NONE]]];
     }
     
@@ -392,23 +445,23 @@ int main(int argc, const char * argv[]) {
     for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
         [m add: [usePath[i] eq: [contSensors[i] gt: NONE]]];
     
-    [m add: [usePath[9] imply: [voltSensors[VOLT_S0] gt: NONE]]];
-    [m add: [usePath[9] imply: [voltSensors[VOLT_S1] gt: NONE]]];
-    [m add: [usePath[10] imply: [voltSensors[VOLT_S0] gt: NONE]]];
-    [m add: [usePath[10] imply: [voltSensors[VOLT_S2] gt: NONE]]];
-    [m add: [usePath[11] imply: [curSensors[CUR_S0] gt: NONE]]];
-    [m add: [usePath[11] imply: [curSensors[CUR_S1] gt: NONE]]];
-    [m add: [usePath[12] imply: [curSensors[CUR_S0] gt: NONE]]];
-    [m add: [usePath[12] imply: [curSensors[CUR_S2] gt: NONE]]];
+    [m add: [usePath[9] eq: [voltSensors[VOLT_S0] gt: NONE]]];
+    [m add: [usePath[9] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [m add: [usePath[10] eq: [voltSensors[VOLT_S0] gt: NONE]]];
+    [m add: [usePath[10] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [m add: [usePath[11] eq: [curSensors[CUR_S0] gt: NONE]]];
+    [m add: [usePath[11] eq: [curSensors[CUR_S1] gt: NONE]]];
+    [m add: [usePath[12] eq: [curSensors[CUR_S0] gt: NONE]]];
+    [m add: [usePath[12] eq: [curSensors[CUR_S2] gt: NONE]]];
     
-    [m add: [usePath[13] imply: [voltSensors[VOLT_S3] gt: NONE]]];
-    [m add: [usePath[13] imply: [voltSensors[VOLT_S4] gt: NONE]]];
-    [m add: [usePath[14] imply: [voltSensors[VOLT_S4] gt: NONE]]];
-    [m add: [usePath[14] imply: [voltSensors[VOLT_S2] gt: NONE]]];
-    [m add: [usePath[15] imply: [curSensors[CUR_S3] gt: NONE]]];
-    [m add: [usePath[15] imply: [curSensors[CUR_S4] gt: NONE]]];
-    [m add: [usePath[16] imply: [curSensors[CUR_S4] gt: NONE]]];
-    [m add: [usePath[16] imply: [curSensors[CUR_S2] gt: NONE]]];
+    [m add: [usePath[13] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [m add: [usePath[13] eq: [voltSensors[VOLT_S4] gt: NONE]]];
+    [m add: [usePath[14] eq: [voltSensors[VOLT_S4] gt: NONE]]];
+    [m add: [usePath[14] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [m add: [usePath[15] eq: [curSensors[CUR_S3] gt: NONE]]];
+    [m add: [usePath[15] eq: [curSensors[CUR_S4] gt: NONE]]];
+    [m add: [usePath[16] eq: [curSensors[CUR_S4] gt: NONE]]];
+    [m add: [usePath[16] eq: [curSensors[CUR_S2] gt: NONE]]];
     
     // Path requirements
     [m add: [[[[[usePath[0] plus: usePath[9]] plus: usePath[10]] plus: usePath[11]] plus: usePath[12]] eq: @(2)]]; // CONT 0
