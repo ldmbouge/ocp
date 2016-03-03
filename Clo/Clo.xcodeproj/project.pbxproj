@@ -1154,7 +1154,6 @@
 		5B9B2464177873EA001AB944 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B9B2465177873EA001AB944 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B9B2466177873F2001AB944 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
-		5B9B50311C755EC700520567 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B502F1C755EC700520567 /* main.m */; };
 		5B9B50321C755EC700520567 /* UTCTemplates.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5B9B50301C755EC700520567 /* UTCTemplates.xml */; };
 		5B9B50521C755F1900520567 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
 		5B9B50531C755F1900520567 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -21245,7 +21244,7 @@
 		5BCAF1411BF146BF00C18360 /* OrSemFDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OrSemFDSController.m; sourceTree = "<group>"; };
 		5BCAF1471BF1479A00C18360 /* queensFDS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensFDS; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCAF1491BF1479A00C18360 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		5BCAF1621BF385F500C18360 /* CPFDS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPFDS.m; path = ../ORFoundation/CPFDS.m; sourceTree = "<group>"; };
+		5BCAF1621BF385F500C18360 /* CPFDS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFDS.m; sourceTree = "<group>"; };
 		5BCAF1641BF3861700C18360 /* CPFDS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPFDS.h; sourceTree = "<group>"; };
 		5BCCC4031417F8CE0079E833 /* queensACSem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensACSem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -42289,7 +42288,6 @@
 				5B7C894B187EFD5100D82789 /* context.m in Sources */,
 				5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */,
 				5B7C894D187F034F00D82789 /* ORInterval.mm in Sources */,
-				5B9B50311C755EC700520567 /* main.m in Sources */,
 				5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -53460,6 +53458,7 @@
 				5B9B503E1C755EE300520567 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B9EE52315175CCC00619B47 /* Build configuration list for PBXNativeTarget "iCP" */ = {
 			isa = XCConfigurationList;
