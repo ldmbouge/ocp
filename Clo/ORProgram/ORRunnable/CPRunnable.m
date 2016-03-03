@@ -83,15 +83,14 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-   ORTimeval cpu0 = [ORRuntimeMonitor now];
-    static int bndCount = 0;
-    NSLog(@"CPRunnable(%p): received bound(%i): %i", self, ++bndCount, bound);
+    static __thread int bndCount = 0;
+    NSLog(@"CPRunnable(%p): received bound(%i): %i", _program, ++bndCount, bound);
     //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
     [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
-   ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
-   static ORLong ttlCP = 0;
-   ttlCP += (ORLong)cpu1.tv_sec * 1000000 + cpu1.tv_usec;
-   NSLog(@"ttlCP =  %lld",ttlCP);
+   //ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+   //static ORLong ttlCP = 0;
+   //ttlCP += (ORLong)cpu1.tv_sec * 1000000 + cpu1.tv_usec;
+   //NSLog(@"ttlCP =  %lld",ttlCP);
 }
 
 -(void) receiveLowerBound:(ORDouble)bound

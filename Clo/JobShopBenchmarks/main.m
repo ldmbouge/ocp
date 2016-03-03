@@ -34,10 +34,10 @@ void fill(FILE* data,id<ORIntRange> Jobs,id<ORIntRange> Machines,id<ORIntMatrix>
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        if(argc < 2) {
-            NSLog(@"jspbenchmarks [technology] filepath");
-            return -1;
-        }
+//        if(argc < 2) {
+//            NSLog(@"jspbenchmarks [technology] filepath");
+//            return -1;
+//        }
         NSMutableArray* args = [[NSMutableArray alloc] initWithCapacity: argc];
         for(int i = 0; i < argc; i++) [args addObject: [NSString stringWithCString: argv[i] encoding: NSASCIIStringEncoding]];
         
@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]) {
         BOOL doMIP = NO;
         BOOL doHybrid = NO;
         BOOL doHybridLNS = NO;
-        BOOL doHybridLNS_CP = NO;
+        BOOL doHybridLNS_CP = YES;
         BOOL doBDS = NO;
         BOOL doCPSCP = NO;
         BOOL doLNS = NO;
@@ -74,7 +74,8 @@ int main(int argc, const char * argv[]) {
         
         NSString* path = [args lastObject];
         
-        FILE* data = fopen([path cStringUsingEncoding: NSASCIIStringEncoding], "r");
+        //FILE* data = fopen([path cStringUsingEncoding: NSASCIIStringEncoding], "r");
+        FILE* data = fopen("orb10.jss","r");
         
         ORInt nbJobs, nbMachines;
         fscanf(data, "%d",&nbJobs);
@@ -270,7 +271,7 @@ int main(int argc, const char * argv[]) {
                             [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
                         }];
                         [cp label: makespan];
-                        NSLog(@"\nmakespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                        NSLog(@"\n(%p) hybrid makespan = [%d,%d] \n",cp, [cp min: makespan],[cp max: makespan]);
                     }];
                 }
                   onRepeat: ^{
@@ -300,7 +301,7 @@ int main(int argc, const char * argv[]) {
                               curr = [sol intValue: succ[curr]];
                           }
                       }
-                      NSLog(@"R");
+                      //NSLog(@"R");
                   }];
             }];
             strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
@@ -467,7 +468,7 @@ int main(int argc, const char * argv[]) {
                               curr = [sol intValue: succ[curr]];
                           }
                       }
-                      NSLog(@"R");
+                      //NSLog(@"R");
                   }];
                 NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
                 fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
