@@ -363,7 +363,7 @@ int main(int argc, const char * argv[]) {
     
     // Use concentrators
     for(ORInt k = 1; k <= numOptConcentrators; k++) {
-        [m add: [[numConcConn[k] gt: 0] eq: [useConc[k] eq: @(1)]]];
+        [m add: [[useConc[k] neq: @(0)] eq: [numConcConn[k] gt: @(0)]]];
         [m add: [[useConc[k] eq: @(1)] eq: [conc[k] gt: NONE]]];
     }
     
@@ -563,7 +563,11 @@ int main(int argc, const char * argv[]) {
         [p labelHeuristic: h];
         NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
         //}];
-        writeOut([p captureSolution]);
+        id<ORSolution> s = [p captureSolution];
+        writeOut(s);
+        for(ORInt k = 1; k <= numOptConcentrators; k++)
+            NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
+
     }];
     //    [p solve];
     //id<ORSolutionPool> sols = [p solutionPool];
