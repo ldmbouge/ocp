@@ -22,60 +22,48 @@ typedef enum {
 } CONT_SENSOR;
 
 typedef enum {
-    VOLT_S0 = 0, VOLT_S1, VOLT_S2, VOLT_S3, VOLT_S4, VOLT_S5, VOLT_S6, VOLT_S7, VOLT_S8
+    VOLT_S0 = 0, VOLT_S1, VOLT_S2, VOLT_S3, VOLT_S4, VOLT_S5, VOLT_S6, VOLT_S7, VOLT_S8, VOLT_S9, VOLT_S10
 } VOLT_SENSOR;
 
 typedef enum {
-    CUR_S0 = 0, CUR_S1, CUR_S2, CUR_S3, CUR_S4, CUR_S5, CUR_S6, CUR_S7, CUR_S8
+    CUR_S0 = 0, CUR_S1, CUR_S2, CUR_S3, CUR_S4, CUR_S5, CUR_S6, CUR_S7, CUR_S8, CUR_S9, CUR_S10
 } CUR_SENSOR;
 
 ORInt rawContSensBandwith[] = {
-    55, 55, 55, 60, 61, 157, 108, 86, 42
+    85, 75, 85, 69, 81, 157, 108, 86, 92
 };
 
 ORInt rawVoltSensBandwith[] = {
-    41, 52, 31, 31, 56, 158, 119, 127, 33
+    81, 82, 71, 71, 66, 158, 119, 127, 93
 };
 
 ORInt rawCurSensBandwith[] = {
-    59, 68, 41, 71, 36, 99, 99, 91, 50
-};
-
-ORInt rawConCost[] = {
-    0, 100
-};
-
-ORInt rawConPowDraw[] = {
-    0, 45
-};
-
-ORInt rawConPowWeight[] = {
-    0, 75
+    99, 68, 91, 71, 86, 99, 99, 91, 150
 };
 
 ORInt rawContDirectToPMUCost[] = {
-    315, 315, 210, 312, 216, 212, 317, 319, 219
+    1315, 1315, 1210, 1312, 1216, 1212, 1317, 1319, 1219
 };
 
 ORInt rawContDirectToPMUWeight[] = {
-    420, 420, 480, 780, 500, 370, 500, 760, 400
+    1620, 1520, 1580, 1780, 1600, 1770, 1800, 1860, 1400
 };
 
 
 ORInt rawVoltDirectToPMUCost[] = {
-    313, 317, 312, 316, 522, 219, 312, 321, 416
+    1313, 1317, 1312, 1316, 1522, 1219, 1312, 1321, 1416
 };
 
 ORInt rawVoltDirectToPMUWeight[] = {
-    412, 214, 370, 464, 510, 610, 600, 522, 430
+    1612, 1514, 1670, 1764, 1710, 1710, 1600, 1522, 1630
 };
 
 ORInt rawCurDirectToPMUCost[] = {
-    218, 314, 316, 212, 313, 311, 217, 214, 318
+    1218, 1314, 1316, 1212, 1313, 1311, 1217, 1214, 1318
 };
 
 ORInt rawCurDirectToPMUWeight[] = {
-    113, 113, 160, 174, 100, 190, 165, 132, 140
+    1613, 1613, 1760, 1774, 1700, 1690, 1665, 1632, 1740
 };
 
 
@@ -137,10 +125,6 @@ ORInt numBatteries = 1;
 ORInt numContSensors = 9;
 ORInt numVoltSensors = 11;
 ORInt numCurSensors = 11;
-
-ORInt SenWithConc = 2;
-
-ORInt MAX_WEIGHT = 2200;
 
 ORInt PMU_POW = 20;
 ORInt BBF1_POW = 70;
@@ -279,6 +263,8 @@ int main(int argc, const char * argv[]) {
     
     // Bus
     id<ORIntVarArray> useBus = [ORFactory intVarArray: m range: RANGE(m, 1, numOptBuses) bounds: boolBounds];
+    id<ORIntVarArray> numBusConn = [ORFactory intVarArray: m range: RANGE(m, 1, numOptBuses) bounds: RANGE(m, 0, totalSensorCount + numOptConcentrators)];
+
     
     id<ORIntVar> powUse = [ORFactory intVar: m bounds: RANGE(m, 0, 10000)];
     id<ORIntVarArray> bandUse = [ORFactory intVarArray: m range: RANGE(m, 1, numOptBuses) bounds: RANGE(m, 0, MAX_BAND)];
@@ -286,12 +272,21 @@ int main(int argc, const char * argv[]) {
     id<ORIntVar> weight = [ORFactory intVar: m bounds: RANGE(m, 0, 25000)];
     
     // data paths
-    id<ORIntRange> pathRange = RANGE(m, 0, 16);
-    id<ORIntVarArray> usePath = [ORFactory intVarArray: m range: pathRange bounds: boolBounds];
+    id<ORIntRange> pathRange5 = RANGE(m, 0, 4);
+    id<ORIntRange> pathRange3 = RANGE(m, 0, 2);
+    id<ORIntVarArray> usePath0 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
+    id<ORIntVarArray> usePath1 = [ORFactory intVarArray: m range: pathRange3 bounds: boolBounds];
+    id<ORIntVarArray> usePath2 = [ORFactory intVarArray: m range: pathRange3 bounds: boolBounds];
+    id<ORIntVarArray> usePath3 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
+    id<ORIntVarArray> usePath4 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
+    id<ORIntVarArray> usePath5 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
+    id<ORIntVarArray> usePath6 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
+    id<ORIntVarArray> usePath7 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
+    id<ORIntVarArray> usePath8 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
+
     
     
     // Template Tables -----------------------------------------------------------------------
-    
     
     id<ORIntArray> contSensBandwith = [ORFactory intArray: m range: contSenRange values: rawVoltSensBandwith];
     id<ORIntArray> voltSensBandwith = [ORFactory intArray: m range: voltSenRange values: rawVoltSensBandwith];
@@ -378,31 +373,32 @@ int main(int argc, const char * argv[]) {
     
     // Power Gen //////////////////////////
     [m add: [powUse leq: [[mainGenPow elt: g0] plus: [mainGenPow elt: g1]]]];
-    [m add: [[[mainGenPow elt: g0] plus: [mainGenPow elt: auxgen]] geq: powUse]];
-    [m add: [[[mainGenPow elt: auxgen] plus: [mainGenPow elt: g1]] geq: powUse]];
+    [m add: [powUse leq: [[mainGenPow elt: g0] plus: [mainGenPow elt: auxgen]]]];
+    [m add: [powUse leq: [[mainGenPow elt: auxgen] plus: [mainGenPow elt: g1]]]];
     
     // Connectivity ///////////////////////
     for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
-        [m add: [[[contSenDirectPMU[i] plus: contSenToCon[i]] plus: contSenToBus[i]] eq: [contSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
+        [m add: [[[[contSenDirectPMU[i] plus: contSenToCon[i]] plus: contSenToBus[i]] gt: @(0)] eq: [contSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
     for(ORInt i = [voltSenRange low]; i <= [voltSenRange up]; i++)
-        [m add: [[[voltSenDirectPMU[i] plus: voltSenToCon[i]] plus: voltSenToBus[i]] eq: [voltSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
+        [m add: [[[[voltSenDirectPMU[i] plus: voltSenToCon[i]] plus: voltSenToBus[i]] gt: @(0)] eq: [voltSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
     for(ORInt i = [curSenRange low]; i <= [curSenRange up]; i++)
-        [m add: [[[curSenDirectPMU[i] plus: curSenToCon[i]] plus: curSenToBus[i]] eq: [curSensors[i] gt: NONE] ]]; // Connected to PMU, bus or concentrator
+        [m add: [[[[curSenDirectPMU[i] plus: curSenToCon[i]] plus: curSenToBus[i]] gt: @(0)] eq: [curSensors[i] gt: NONE] ]]; // Connected to PMU, bus or concentrator
     
     // If not connected to PMU directly, must have a sensor capable of digital conversion
     for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
-        [m add: [[[contSensors[i] gt: NONE] land: [contSenDirectPMU[i] neq: @(1)]] eq: [[contSensConverts elt: contSensors[i]] geq: @(1)]]];
+        [m add: [[[contSensors[i] gt: NONE] land: [contSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [contSensConverts elt: contSensors[i]]]]];
     for(ORInt i = [voltSenRange low]; i <= [voltSenRange up]; i++)
-        [m add: [[[voltSensors[i] gt: NONE] land: [voltSenDirectPMU[i] neq: @(1)]] eq: [[voltSensConverts elt: voltSensors[i]] geq: @(1)]]];
+        [m add: [[[voltSensors[i] gt: NONE] land: [voltSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [voltSensConverts elt: voltSensors[i]]]]];
     for(ORInt i = [curSenRange low]; i <= [curSenRange up]; i++)
-        [m add: [[[curSensors[i] gt: NONE] land: [curSenDirectPMU[i] neq: @(1)]] eq: [[curSensConverts elt: curSensors[i]] geq: @(1)]]];
+        [m add: [[[curSensors[i] gt: NONE] land: [curSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [curSensConverts elt: curSensors[i]]]]];
     
     // Bus ////////////////////////////////
     for(ORInt b = 1; b <= numOptBuses; b++) {
-        [m add: [[Sum(m, i, contSenRange, [contSenToBus[i] eq: @(b)]) gt: @(0)] eq: [useBus[b] eq: @(1)]]]; // Use bus if cont. sensor connected
-        [m add: [[Sum(m, i, voltSenRange, [voltSenToBus[i] eq: @(b)]) gt: @(0)] eq: [useBus[b] eq: @(1)]]]; // Use bus if volt. sensor connected
-        [m add: [[Sum(m, i, curSenRange, [curSenToBus[i] eq: @(b)]) gt: @(0)] eq: [useBus[b] eq: @(1)]]]; // Use bus if cur. sensor connected
-        [m add: [[Sum(m, i, concRange, [concToBus[i] eq: @(b)]) gt: @(0)] eq: [useBus[b] eq: @(1)]]]; // Use bus if concentrator connected
+        [m add: [[[[Sum(m, i, contSenRange, [contSenToBus[i] eq: @(b)]) plus:
+                   Sum(m, i, voltSenRange, [voltSenToBus[i] eq: @(b)])] plus:
+                  Sum(m, i, concRange, [concToBus[i] eq: @(b)])] plus:
+                  Sum(m, i, curSenRange, [curSenToBus[i] eq: @(b)])] eq: numBusConn[b]]];
+        [m add: [[useBus[b] eq: @(1)] eq: [numBusConn[b] gt: @(0)]]];
     }
     
     // Concentrators //////////////////////
@@ -417,7 +413,7 @@ int main(int argc, const char * argv[]) {
     // Use concentrators
     for(ORInt k = 1; k <= numOptConcentrators; k++) {
         [m add: [[useConc[k] eq: @(1)] eq: [numConcConn[k] gt: @(0)]]];
-        [m add: [[useConc[k] eq: @(1)] eq: [conc[k] gt: NONE]]];
+        [m add: [[useConc[k] eq: @(1)] eq: [conc[k] neq: NONE]]];
     }
     
     // Limit number of concentrator connections
@@ -427,7 +423,7 @@ int main(int argc, const char * argv[]) {
     
     // Connect to a bus if concentrator in use
     for(ORInt k = 1; k <= numOptConcentrators; k++) {
-        [[useConc[k] eq: @(1)] eq: [concToBus[k] gt: NONE]];
+        [m add: [[useConc[k] eq: @(1)] eq: [concToBus[k] neq: NONE]]];
     }
     
     // Bus Bandwidth
@@ -441,38 +437,101 @@ int main(int argc, const char * argv[]) {
         [m add: [bandUse[b] leq: @(MAX_BAND)]];
     }
     
+    
+    
     // Path Definitions
-    for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
-        [m add: [usePath[i] eq: [contSensors[i] gt: NONE]]];
+    [m add: [[usePath0[0] eq: @(1)] eq: [contSensors[CONT_S0] gt: NONE]]];
+    [m add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
+    [m add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [m add: [[usePath0[2] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
+    [m add: [[usePath0[2] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [m add: [[usePath0[3] eq: @(1)] eq: [curSensors[CUR_S0] gt: NONE]]];
+    [m add: [[usePath0[3] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    [m add: [[usePath0[4] eq: @(1)] eq: [curSensors[CUR_S0] gt: NONE]]];
+    [m add: [[usePath0[4] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
     
-    [m add: [usePath[9] eq: [voltSensors[VOLT_S0] gt: NONE]]];
-    [m add: [usePath[9] eq: [voltSensors[VOLT_S1] gt: NONE]]];
-    [m add: [usePath[10] eq: [voltSensors[VOLT_S0] gt: NONE]]];
-    [m add: [usePath[10] eq: [voltSensors[VOLT_S2] gt: NONE]]];
-    [m add: [usePath[11] eq: [curSensors[CUR_S0] gt: NONE]]];
-    [m add: [usePath[11] eq: [curSensors[CUR_S1] gt: NONE]]];
-    [m add: [usePath[12] eq: [curSensors[CUR_S0] gt: NONE]]];
-    [m add: [usePath[12] eq: [curSensors[CUR_S2] gt: NONE]]];
+    [m add: [[usePath1[0] eq: @(1)] eq: [contSensors[CONT_S1] gt: NONE]]];
+    [m add: [[usePath1[1] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [m add: [[usePath1[1] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [m add: [[usePath1[2] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    [m add: [[usePath1[2] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
     
-    [m add: [usePath[13] eq: [voltSensors[VOLT_S3] gt: NONE]]];
-    [m add: [usePath[13] eq: [voltSensors[VOLT_S4] gt: NONE]]];
-    [m add: [usePath[14] eq: [voltSensors[VOLT_S4] gt: NONE]]];
-    [m add: [usePath[14] eq: [voltSensors[VOLT_S2] gt: NONE]]];
-    [m add: [usePath[15] eq: [curSensors[CUR_S3] gt: NONE]]];
-    [m add: [usePath[15] eq: [curSensors[CUR_S4] gt: NONE]]];
-    [m add: [usePath[16] eq: [curSensors[CUR_S4] gt: NONE]]];
-    [m add: [usePath[16] eq: [curSensors[CUR_S2] gt: NONE]]];
+    [m add: [[usePath2[0] eq: @(1)] eq: [contSensors[CONT_S2] gt: NONE]]];
+    [m add: [[usePath2[1] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [m add: [[usePath2[1] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [m add: [[usePath2[2] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
+    [m add: [[usePath2[2] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
+
+    [m add: [[usePath3[0] eq: @(1)] eq: [contSensors[CONT_S3] gt: NONE]]];
+    [m add: [[usePath3[1] eq: @(1)] eq: [voltSensors[VOLT_S4] gt: NONE]]];
+    [m add: [[usePath3[1] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [m add: [[usePath3[2] eq: @(1)] eq: [voltSensors[VOLT_S4] gt: NONE]]];
+    [m add: [[usePath3[2] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [m add: [[usePath3[3] eq: @(1)] eq: [curSensors[CUR_S4] gt: NONE]]];
+    [m add: [[usePath3[3] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
+    [m add: [[usePath3[4] eq: @(1)] eq: [curSensors[CUR_S4] gt: NONE]]];
+    [m add: [[usePath3[4] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
+    
+    [m add: [[usePath4[0] eq: @(1)] eq: [contSensors[CONT_S4] gt: NONE]]];
+    [m add: [[usePath4[1] eq: @(1)] eq: [voltSensors[VOLT_S5] gt: NONE]]];
+    [m add: [[usePath4[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
+    [m add: [[usePath4[2] eq: @(1)] eq: [voltSensors[VOLT_S5] gt: NONE]]];
+    [m add: [[usePath4[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [m add: [[usePath4[3] eq: @(1)] eq: [curSensors[CUR_S5] gt: NONE]]];
+    [m add: [[usePath4[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
+    [m add: [[usePath4[4] eq: @(1)] eq: [curSensors[CUR_S5] gt: NONE]]];
+    [m add: [[usePath4[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    
+    [m add: [[usePath5[0] eq: @(1)] eq: [contSensors[CONT_S5] gt: NONE]]];
+    [m add: [[usePath5[1] eq: @(1)] eq: [voltSensors[VOLT_S8] gt: NONE]]];
+    [m add: [[usePath5[1] eq: @(1)] eq: [voltSensors[VOLT_S7] gt: NONE]]];
+    [m add: [[usePath5[2] eq: @(1)] eq: [voltSensors[VOLT_S8] gt: NONE]]];
+    [m add: [[usePath5[2] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [m add: [[usePath5[3] eq: @(1)] eq: [curSensors[CUR_S8] gt: NONE]]];
+    [m add: [[usePath5[3] eq: @(1)] eq: [curSensors[CUR_S7] gt: NONE]]];
+    [m add: [[usePath5[4] eq: @(1)] eq: [curSensors[CUR_S8] gt: NONE]]];
+    [m add: [[usePath5[4] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
+    
+    [m add: [[usePath6[0] eq: @(1)] eq: [contSensors[CONT_S6] gt: NONE]]];
+    [m add: [[usePath6[1] eq: @(1)] eq: [voltSensors[VOLT_S9] gt: NONE]]];
+    [m add: [[usePath6[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
+    [m add: [[usePath6[2] eq: @(1)] eq: [voltSensors[VOLT_S9] gt: NONE]]];
+    [m add: [[usePath6[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [m add: [[usePath6[3] eq: @(1)] eq: [curSensors[CUR_S9] gt: NONE]]];
+    [m add: [[usePath6[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
+    [m add: [[usePath6[4] eq: @(1)] eq: [curSensors[CUR_S9] gt: NONE]]];
+    [m add: [[usePath6[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    
+    [m add: [[usePath7[0] eq: @(1)] eq: [contSensors[CONT_S7] gt: NONE]]];
+    [m add: [[usePath7[1] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
+    [m add: [[usePath7[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
+    [m add: [[usePath7[2] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
+    [m add: [[usePath7[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [m add: [[usePath7[3] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
+    [m add: [[usePath7[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
+    [m add: [[usePath7[4] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
+    [m add: [[usePath7[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    
+    [m add: [[usePath8[0] eq: @(1)] eq: [contSensors[CONT_S8] gt: NONE]]];
+    [m add: [[usePath8[1] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
+    [m add: [[usePath8[1] eq: @(1)] eq: [voltSensors[VOLT_S7] gt: NONE]]];
+    [m add: [[usePath8[2] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
+    [m add: [[usePath8[2] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [m add: [[usePath8[3] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
+    [m add: [[usePath8[3] eq: @(1)] eq: [curSensors[CUR_S7] gt: NONE]]];
+    [m add: [[usePath8[4] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
+    [m add: [[usePath8[4] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
     
     // Path requirements
-    [m add: [[[[[usePath[0] plus: usePath[9]] plus: usePath[10]] plus: usePath[11]] plus: usePath[12]] eq: @(2)]]; // CONT 0
-    [m add: [usePath[1] eq: @(1)]];
-    [m add: [usePath[2] eq: @(1)]];
-    [m add: [[[[[usePath[3] plus: usePath[13]] plus: usePath[14]] plus: usePath[15]] plus: usePath[16]] eq: @(2)]]; // CONT 3
-    [m add: [usePath[4] eq: @(1)]];
-    [m add: [usePath[5] eq: @(1)]];
-    [m add: [usePath[6] eq: @(1)]];
-    [m add: [usePath[7] eq: @(1)]];
-    [m add: [usePath[8] eq: @(1)]];
+    [m add: [@(3) leq: Sum(m, i, pathRange5, usePath0[i])]];
+    [m add: [@(1) leq: Sum(m, i, pathRange3, usePath1[i])]];
+    [m add: [@(1) leq: Sum(m, i, pathRange3, usePath2[i])]];
+    [m add: [@(3) leq: Sum(m, i, pathRange5, usePath3[i])]];
+    [m add: [@(2) leq: Sum(m, i, pathRange5, usePath4[i])]];
+    [m add: [@(2) leq: Sum(m, i, pathRange5, usePath5[i])]];
+    [m add: [@(1) leq: Sum(m, i, pathRange5, usePath6[i])]];
+    [m add: [@(1) leq: Sum(m, i, pathRange5, usePath7[i])]];
+    [m add: [@(1) leq: Sum(m, i, pathRange5, usePath8[i])]];
     
     //NSLog(@"Sol count: %li", [sols count]);  // this only prints the number of solutions on the way to the global optimum.
     
@@ -620,7 +679,7 @@ int main(int argc, const char * argv[]) {
         writeOut(s);
         for(ORInt k = 1; k <= numOptConcentrators; k++)
             NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
-
+        NSLog(@"path0: %i %i %i %i %i", [s intValue: usePath0[0]], [s intValue: usePath0[1]], [s intValue: usePath0[2]], [s intValue: usePath0[3]], [s intValue: usePath0[4]]);
     }];
     //    [p solve];
     //id<ORSolutionPool> sols = [p solutionPool];
