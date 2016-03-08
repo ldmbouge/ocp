@@ -60,6 +60,7 @@
             [_mapping setObject:[NSNull null] forKey:obj];
         else
             [_mapping setObject:rv forKey:obj];
+        assert(rv != nil);
         return rv;
     }
 }
@@ -94,6 +95,7 @@
         case ORREq:
         {
             cstr = [terms postEQZ: model];
+            assert(cstr != nil);
         }
             break;
         case ORRNEq:
@@ -116,6 +118,11 @@
 -(void) visitIntVar:(ORIntVarI*)v
 {
     _result = v;
+}
+-(void) visitIntVarLitEQView:(id<ORIntVar>)v
+{
+    ORIntVarLitEQView* view = (ORIntVarLitEQView*)v;
+    _result = [view base];
 }
 -(void) visitRealVar: (ORRealVarI*) v
 {
@@ -183,6 +190,7 @@
     [_into setCurrent:cstr];
     _result = [ORMIPFlatten flattenExpression:[cstr expr] into: _into];
     [_tau set: _result forKey: cstr];
+    assert(_result != nil);
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
