@@ -14,6 +14,8 @@
 #import <objmp/MIPSolverI.h>
 #import "MIPConcretizer.h"
 
+// DAN
+#import "ORVarI.h"
 
 @implementation ORMIPConcretizer
 {
@@ -73,7 +75,27 @@
    if (_gamma[v.getId] == NULL) 
       _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up]];
 }
-
+-(void) visitAffineVar:(id<ORIntVar>)v
+{
+    // DAN
+    ORIntVarAffineI* av = (ORIntVarAffineI*)v;
+    MIPIntVariableI* mipvar = _gamma[av.getId];
+    if(mipvar == NULL) {
+        id<ORIntVar> base = [av base];
+        MIPIntVariableI* mipbase = _gamma[base.getId];
+        if (mipbase == NULL) {
+            mipbase = [_MIPsolver createIntVariable: [base low] up: [base up]];
+            _gamma[base.getId] = mipbase;
+        }
+        mipvar = [_MIPsolver createIntVariable: [av low] up: [av up]];
+        _gamma[av.getId] = mipvar;
+        
+        MIPVariableI* x[2] = { mipvar, mipbase };
+        ORDouble    coef[2] = { 1 , -[av scale] };
+        MIPConstraintI* cstr = [_MIPsolver createEQ: 2 var: x coef: coef rhs: [av shift]];
+        [_MIPsolver postConstraint: cstr];
+    }
+}
 -(void) visitRealVar: (id<ORRealVar>) v
 {
    if (_gamma[v.getId] == NULL) {

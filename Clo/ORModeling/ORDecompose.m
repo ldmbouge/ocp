@@ -59,14 +59,12 @@
 @implementation ORNormalizer
 +(id<ORLinear>)normalize:(ORExprI*)rel into:(id<ORAddToModel>) model
 {
-    NSLog(@"type: %lu", (unsigned long)rel.vtype);
     switch (rel.vtype) {
        case ORTBool:
        case ORTInt: {
           ORIntNormalizer* v = [[ORIntNormalizer alloc] init: model];
           [rel visit:v];
           ORIntLinear* rv = [v terms];
-           assert(rv != nil);
           [v release];
           return rv;
        }break;
@@ -267,7 +265,6 @@
             _terms = linLeft;
         }
     }
-    assert(_terms != nil);
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
@@ -680,6 +677,14 @@ struct CPVarPair {
 }
 -(void) visitIntVar: (id<ORIntVar>) e
 {
+    if (_rv)
+        [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
+    else
+        _rv = e;
+}
+-(void) visitIntVarLitEQView:(id<ORIntVar>)e
+{
+    // DAN
     if (_rv)
         [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
     else
