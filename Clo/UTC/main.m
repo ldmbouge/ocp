@@ -612,15 +612,14 @@ int main(int argc, const char * argv[]) {
     ORTimeval cpu0 = [ORRuntimeMonitor now];
     id<CPHeuristic> h = [p createIBS];
     [p solve: ^{
-        //[p limitTime: 30 * 1000 in: ^{
-        [p labelHeuristic: h];
-        NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
-        //}];
-        id<ORSolution> s = [p captureSolution];
-        writeOut(s);
-        for(ORInt k = 1; k <= numOptConcentrators; k++)
-            NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
-
+        [p limitTime: 10 * 1000 in: ^{
+           [p labelHeuristic: h];
+           NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
+           id<ORSolution> s = [p captureSolution];
+           writeOut(s);
+           for(ORInt k = 1; k <= numOptConcentrators; k++)
+              NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
+      }];
     }];
     //    [p solve];
     //id<ORSolutionPool> sols = [p solutionPool];
