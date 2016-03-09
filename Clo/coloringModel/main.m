@@ -177,6 +177,8 @@ int main(int argc, const char * argv[])
       
       
       id<ORModel> lm = [ORFactory linearizeModel: model];
+      id<ORRunnable> r = [ORFactory MIPRunnable: lm numThreads: 1];
+   
       // --------------------------------------------------------------------------------------
 
       char buf[1024];

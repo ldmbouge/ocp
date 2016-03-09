@@ -691,6 +691,14 @@ struct CPVarPair {
     else
         _rv = e;
 }
+-(void) visitIntVarLitEQView:(id<ORIntVar>)e
+{
+    // DAN
+    if (_rv)
+        [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
+    else
+        _rv = e;
+}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
     if (!_rv)

@@ -117,6 +117,12 @@
 {
     _result = v;
 }
+-(void) visitIntVarLitEQView:(id<ORIntVar>)v
+{
+    // DAN
+    ORIntVarLitEQView* view = (ORIntVarLitEQView*)v;
+    _result = @([view literal]);//[view base];
+}
 -(void) visitRealVar: (ORRealVarI*) v
 {
     _result = v;

@@ -10,6 +10,9 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
+#import <ORModeling/ORLinearize.h>
+#import <ORProgram/ORRunnable.h>
+
 
 #define NONE @(0)
 
@@ -464,8 +467,6 @@ int main(int argc, const char * argv[])
         [m add: [bandUse[b] leq: @(MAX_BAND)]];
     }
     
-    
-    
     // Path Definitions
     [m add: [[usePath0[0] eq: @(1)] eq: [contSensors[CONT_S0] gt: NONE]]];
     [m add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
@@ -564,136 +565,135 @@ int main(int argc, const char * argv[])
     
     // Write Solution to XML ----------------------------------------------------------------------------------
     void(^writeOut)(id<ORSolution>) = ^(id<ORSolution> bestSolution){
-    NSXMLElement* root = [[NSXMLElement alloc] initWithName: @"utc_architecture"];
-    
-    // Write contSensors
-    NSXMLElement* contSensorsRoot = [[NSXMLElement alloc] initWithName: @"contactor_sensors"];
-    for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++) {
-        ORInt template = [bestSolution intValue: contSensors[i]];
-        NSXMLElement* sensorNode = [[NSXMLElement alloc] initWithName: @"sensor"];
-        [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
-        [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        NSXMLElement* root = [[NSXMLElement alloc] initWithName: @"utc_architecture"];
         
-        NSString* data_string = @"none";
-        if([bestSolution intValue: contSenDirectPMU[i]]) data_string = @"PMU";
-        else if([bestSolution intValue: contSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: contSenToBus[i]]];
-        else if([bestSolution intValue: contSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: contSenToCon[i]]];
-        [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"data_connect" stringValue: data_string]];
+        // Write contSensors
+        NSXMLElement* contSensorsRoot = [[NSXMLElement alloc] initWithName: @"contactor_sensors"];
+        for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++) {
+            ORInt template = [bestSolution intValue: contSensors[i]];
+            NSXMLElement* sensorNode = [[NSXMLElement alloc] initWithName: @"sensor"];
+            [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
+            [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+            
+            NSString* data_string = @"none";
+            if([bestSolution intValue: contSenDirectPMU[i]]) data_string = @"PMU";
+            else if([bestSolution intValue: contSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: contSenToBus[i]]];
+            else if([bestSolution intValue: contSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: contSenToCon[i]]];
+            [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"data_connect" stringValue: data_string]];
+            
+            [contSensorsRoot addChild: sensorNode];
+        }
+        [root addChild: contSensorsRoot];
         
-        [contSensorsRoot addChild: sensorNode];
-    }
-    [root addChild: contSensorsRoot];
-    
-    // Write voltSensors
-    NSXMLElement* voltSensorsRoot = [[NSXMLElement alloc] initWithName: @"voltage_sensors"];
-    for(ORInt i = [voltSenRange low]; i <= [voltSenRange up]; i++) {
-        ORInt template = [bestSolution intValue: voltSensors[i]];
-        NSXMLElement* sensorNode = [[NSXMLElement alloc] initWithName: @"sensor"];
-        [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
-        [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        // Write voltSensors
+        NSXMLElement* voltSensorsRoot = [[NSXMLElement alloc] initWithName: @"voltage_sensors"];
+        for(ORInt i = [voltSenRange low]; i <= [voltSenRange up]; i++) {
+            ORInt template = [bestSolution intValue: voltSensors[i]];
+            NSXMLElement* sensorNode = [[NSXMLElement alloc] initWithName: @"sensor"];
+            [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
+            [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+            
+            NSString* data_string = @"none";
+            if([bestSolution intValue: voltSenDirectPMU[i]]) data_string = @"PMU";
+            else if([bestSolution intValue: voltSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: voltSenToBus[i]]];
+            else if([bestSolution intValue: voltSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: voltSenToCon[i]]];
+            [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"data_connect" stringValue: data_string]];
+            
+            [voltSensorsRoot addChild: sensorNode];
+        }
+        [root addChild: voltSensorsRoot];
         
-        NSString* data_string = @"none";
-        if([bestSolution intValue: voltSenDirectPMU[i]]) data_string = @"PMU";
-        else if([bestSolution intValue: voltSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: voltSenToBus[i]]];
-        else if([bestSolution intValue: voltSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: voltSenToCon[i]]];
-        [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"data_connect" stringValue: data_string]];
+        // Write curSensors
+        NSXMLElement* curSensorsRoot = [[NSXMLElement alloc] initWithName: @"current_sensors"];
+        for(ORInt i = [curSenRange low]; i <= [curSenRange up]; i++) {
+            ORInt template = [bestSolution intValue: curSensors[i]];
+            NSXMLElement* sensorNode = [[NSXMLElement alloc] initWithName: @"sensor"];
+            [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
+            [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+            
+            NSString* data_string = @"none";
+            if([bestSolution intValue: curSenDirectPMU[i]]) data_string = @"PMU";
+            else if([bestSolution intValue: curSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: curSenToBus[i]]];
+            else if([bestSolution intValue: curSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: curSenToCon[i]]];
+            [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"data_connect" stringValue: data_string]];
+            
+            [curSensorsRoot addChild: sensorNode];
+        }
+        [root addChild: curSensorsRoot];
         
-        [voltSensorsRoot addChild: sensorNode];
-    }
-    [root addChild: voltSensorsRoot];
-    
-    // Write curSensors
-    NSXMLElement* curSensorsRoot = [[NSXMLElement alloc] initWithName: @"current_sensors"];
-    for(ORInt i = [curSenRange low]; i <= [curSenRange up]; i++) {
-        ORInt template = [bestSolution intValue: curSensors[i]];
-        NSXMLElement* sensorNode = [[NSXMLElement alloc] initWithName: @"sensor"];
-        [sensorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: [NSString stringWithFormat: @"%i", i]]];
-        [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        // Write Generators
+        NSXMLElement* generatorRoot = [[NSXMLElement alloc] initWithName: @"generators"];
+        ORInt template = [bestSolution intValue: g0];
+        NSXMLElement* generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
+        [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"Gen0"]];
+        [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        [generatorRoot addChild: generatorNode];
         
-        NSString* data_string = @"none";
-        if([bestSolution intValue: curSenDirectPMU[i]]) data_string = @"PMU";
-        else if([bestSolution intValue: curSenToBus[i]]) data_string = [NSString stringWithFormat: @"bus %i", [bestSolution intValue: curSenToBus[i]]];
-        else if([bestSolution intValue: curSenToCon[i]]) data_string = [NSString stringWithFormat: @"concentrator %i", [bestSolution intValue: curSenToCon[i]]];
-        [sensorNode addChild: [[NSXMLElement alloc] initWithName: @"data_connect" stringValue: data_string]];
+        template = [bestSolution intValue: g1];
+        generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
+        [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"Gen1"]];
+        [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        [generatorRoot addChild: generatorNode];
         
-        [curSensorsRoot addChild: sensorNode];
-    }
-    [root addChild: curSensorsRoot];
-    
-    // Write Generators
-    NSXMLElement* generatorRoot = [[NSXMLElement alloc] initWithName: @"generators"];
-    ORInt template = [bestSolution intValue: g0];
-    NSXMLElement* generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
-    [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"Gen0"]];
-    [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
-    [generatorRoot addChild: generatorNode];
-    
-    template = [bestSolution intValue: g1];
-    generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
-    [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"Gen1"]];
-    [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
-    [generatorRoot addChild: generatorNode];
-    
-    template = [bestSolution intValue: auxgen];
-    generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
-    [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"APU"]];
-    [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
-    [generatorRoot addChild: generatorNode];
-    
-    [root addChild: generatorRoot];
-    
-    // Write Buses
-    NSXMLElement* busesRoot = [[NSXMLElement alloc] initWithName: @"data_buses"];
-    if([bestSolution intValue: useBus[1]]) {
-        ORInt template = 0;
-        NSXMLElement* busNode = [[NSXMLElement alloc] initWithName: @"data_bus"];
-        [busNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"bus1"]];
-        [busNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
-        [busesRoot addChild: busNode];
-    }
-    if([bestSolution intValue: useBus[2]]) {
-        ORInt template = 0;
-        NSXMLElement* busNode = [[NSXMLElement alloc] initWithName: @"data_bus"];
-        [busNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"bus2"]];
-        [busNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
-        [busesRoot addChild: busNode];
-    }
-    [root addChild: busesRoot];
-    
-    // Write Concentrators
-    NSXMLElement* concRoot = [[NSXMLElement alloc] initWithName: @"concentrators"];
-    if([bestSolution intValue: useConc[1]]) {
-        ORInt template = [bestSolution intValue: conc[1]];
-        NSXMLElement* concNode = [[NSXMLElement alloc] initWithName: @"concentrator"];
-        [concNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"conc1"]];
-        [concNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
-        [concRoot addChild: concNode];
-    }
-    if([bestSolution intValue: useConc[2]]) {
-        ORInt template = [bestSolution intValue: conc[2]];
-        NSXMLElement* concNode = [[NSXMLElement alloc] initWithName: @"concentrator"];
-        [concNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"conc2"]];
-        [concNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
-        [concRoot addChild: concNode];
-    }
-    if([bestSolution intValue: useConc[3]]) {
-        ORInt template = [bestSolution intValue: conc[3]];
-        NSXMLElement* concNode = [[NSXMLElement alloc] initWithName: @"concentrator"];
-        [concNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"conc3"]];
-        [concNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
-        [concRoot addChild: concNode];
-    }
-    [root addChild: concRoot];
-    
-    NSXMLDocument* solDoc = [[NSXMLDocument alloc] initWithRootElement: root];
-    NSData *xmlData = [solDoc XMLDataWithOptions:NSXMLNodePrettyPrint];
-    NSString* outPath = [NSHomeDirectory() stringByAppendingPathComponent:@"UTCSolution.xml"];
-    [xmlData writeToFile: outPath atomically:YES];
-    NSLog(@"Wrote Solution File: %@", outPath);
+        template = [bestSolution intValue: auxgen];
+        generatorNode = [[NSXMLElement alloc] initWithName: @"generator"];
+        [generatorNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"APU"]];
+        [generatorNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+        [generatorRoot addChild: generatorNode];
+        
+        [root addChild: generatorRoot];
+        
+        // Write Buses
+        NSXMLElement* busesRoot = [[NSXMLElement alloc] initWithName: @"data_buses"];
+        if([bestSolution intValue: useBus[1]]) {
+            ORInt template = 0;
+            NSXMLElement* busNode = [[NSXMLElement alloc] initWithName: @"data_bus"];
+            [busNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"bus1"]];
+            [busNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+            [busesRoot addChild: busNode];
+        }
+        if([bestSolution intValue: useBus[2]]) {
+            ORInt template = 0;
+            NSXMLElement* busNode = [[NSXMLElement alloc] initWithName: @"data_bus"];
+            [busNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"bus2"]];
+            [busNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+            [busesRoot addChild: busNode];
+        }
+        [root addChild: busesRoot];
+        
+        // Write Concentrators
+        NSXMLElement* concRoot = [[NSXMLElement alloc] initWithName: @"concentrators"];
+        if([bestSolution intValue: useConc[1]]) {
+            ORInt template = [bestSolution intValue: conc[1]];
+            NSXMLElement* concNode = [[NSXMLElement alloc] initWithName: @"concentrator"];
+            [concNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"conc1"]];
+            [concNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+            [concRoot addChild: concNode];
+        }
+        if([bestSolution intValue: useConc[2]]) {
+            ORInt template = [bestSolution intValue: conc[2]];
+            NSXMLElement* concNode = [[NSXMLElement alloc] initWithName: @"concentrator"];
+            [concNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"conc2"]];
+            [concNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+            [concRoot addChild: concNode];
+        }
+        if([bestSolution intValue: useConc[3]]) {
+            ORInt template = [bestSolution intValue: conc[3]];
+            NSXMLElement* concNode = [[NSXMLElement alloc] initWithName: @"concentrator"];
+            [concNode addAttribute: [NSXMLNode attributeWithName:@"id" stringValue: @"conc3"]];
+            [concNode addChild: [[NSXMLElement alloc] initWithName: @"template" stringValue: [NSString stringWithFormat: @"%i", template]]];
+            [concRoot addChild: concNode];
+        }
+        [root addChild: concRoot];
+        
+        NSXMLDocument* solDoc = [[NSXMLDocument alloc] initWithRootElement: root];
+        NSData *xmlData = [solDoc XMLDataWithOptions:NSXMLNodePrettyPrint];
+        NSString* outPath = [NSHomeDirectory() stringByAppendingPathComponent:@"UTCSolution.xml"];
+        [xmlData writeToFile: outPath atomically:YES];
+        NSLog(@"Wrote Solution File: %@", outPath);
     };
-    
-    
-   //id<CPProgram> p = [ORFactory createCPProgram: m];
+
+    /*
    id<CPProgram> p = [ORFactory createCPParProgram:m nb:nbt with:[ORSemDFSController proto]];
     ORTimeval cpu0 = [ORRuntimeMonitor now];
     id<CPHeuristic> h = [p createIBS];
@@ -719,6 +719,12 @@ int main(int argc, const char * argv[])
     //id<ORSolution> bestSolution = [sols best];
     ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
     NSLog(@"Time to solution: %ld",cpu1.tv_sec * 1000 + cpu1.tv_usec/1000);
+	   */
+
+    id<ORModel> lm = [ORFactory linearizeModel: m];
+    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+    [r run];
+    
     
 //    for(ORInt i = 0; i <=16; i++)
 //        NSLog(@"%i, %i", i, [bestSolution intValue: usePath[i]]);
