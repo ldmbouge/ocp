@@ -85,7 +85,7 @@
     id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] mul: @(i)]);
     [_model addConstraint: [sumBinVars eq: @(1)]];
     [_model addConstraint: [sumExpr eq: x]];
-    [[[_model modelMappings] tau] set: o forKey: x];
+    //[[[_model modelMappings] tau] set: o forKey: x];
     return o;
 }
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var
@@ -117,7 +117,7 @@
     if(dv == nil) {
         ORIntVarLitEQView* view = (ORIntVarLitEQView*)v;
         if([[v domain] inRange: [view literal]]) {
-            id<ORIntVarArray> bv = [self binarizationForVar: v];
+            id<ORIntVarArray> bv = [self binarizationForVar: [v base]];
             [[[_model modelMappings] tau] set: [bv at: [view literal]] forKey: v];
         }
         else {
@@ -511,7 +511,7 @@
 {
     id<ORAnnotation> notes = [ORFactory annotation];
     id<ORModel> fm = [m flatten: notes];
-    id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
+    id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings: [fm modelMappings]];
     ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: fm annotation:nil]; //TOFIX
     id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
     [linearizer apply: fm with:nil]; // TOFIX
