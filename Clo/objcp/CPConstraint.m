@@ -198,12 +198,16 @@
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
-   CPEQLitView* litView = [literals positiveForValue: c];
-   if (!litView) {
-      litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
-      [literals addPositive: litView forValue:c];
+   if (memberDom(x, c)) {
+      CPEQLitView* litView = [literals positiveForValue: c];
+      if (!litView) {
+         litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
+         [literals addPositive: litView forValue:c];
+      }
+      return litView;
+   } else {
+      return [CPFactory intVar:[x engine] value:0];
    }
-   return litView;
 }
 
 +(id<ORConstraint>) imply: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i

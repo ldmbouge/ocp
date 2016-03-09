@@ -904,7 +904,10 @@ static inline ORLong maxSeq(ORLong v[4])  {
     if (_rv != nil) {
         [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
     } else {
-        _rv = [ORFactory reifyView:_model var:theVar eqi:c];
+       if ([theVar.domain inRange:c])
+	  _rv = [ORFactory reifyView:_model var:theVar eqi:c];
+       else
+	  _rv = [ORFactory intVar:_model value:0];
     }
 #endif
 }
