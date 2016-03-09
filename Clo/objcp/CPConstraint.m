@@ -566,9 +566,15 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<ORConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
++(id<CPConstraint>) fail:(id<CPEngine>)engine
 {
-   id<ORConstraint> o = [[CPRestrictI alloc] initRestrict:x to:r];
+   id<CPConstraint> c = [[CPFalse alloc] init:engine];
+   [engine trackMutable:c];
+   return c;
+}
++(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
+{
+   id<CPConstraint> o = [[CPRestrictI alloc] initRestrict:x to:r];
    [[x tracker] trackMutable:o];
    return o;
 }

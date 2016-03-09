@@ -14,6 +14,7 @@
 
 @interface CPFactory (Constraint)
 
++(id<CPConstraint>) fail:(id<CPEngine>)engine;
 +(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x annotation: (ORCLevel) c;
 +(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x;

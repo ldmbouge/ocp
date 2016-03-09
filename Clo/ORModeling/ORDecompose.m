@@ -301,6 +301,12 @@ struct CPVarPair {
     [_model addConstraint:[ORFactory equalc:_model var:final to:1]];
     return (struct CPVarPair){lV,rV,final};
 }
+-(void) visitExprNegateI:(ORExprNegateI*) e
+{
+   ORIntLinear* linLeft  = [ORNormalizer intLinearFrom:e model:_model];
+   [linLeft addIndependent:-1];
+   _terms = linLeft;
+}
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
     ORIntLinear* linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
