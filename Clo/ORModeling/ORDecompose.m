@@ -254,9 +254,12 @@
             ORExprI* other = lv ? [e right] : [e left];
             ORExprI* var   = lv ? [e left] : [e right];
             id<ORIntVar> theVar = [ORNormalizer intVarIn:_model expr:var];
-            ORIntLinear* lin  = [ORNormalizer intLinearFrom:other model:_model equalTo:theVar];
-            [lin release];
-            _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
+//            ORIntLinear* lin  = [ORNormalizer intLinearFrom:other model:_model equalTo:theVar];
+//            [lin release];
+//            _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
+            ORIntLinear* lin  = [ORNormalizer intLinearFrom:other model:_model];
+           [lin addTerm:theVar by:-1];
+           _terms = lin;
         } else {
             ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e left] model:_model ];
             ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];

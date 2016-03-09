@@ -274,7 +274,7 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORFlatten flattenExpression:[cstr expr] into:_into];
+   _result = [ORFlatten flattenExpression:[cstr expr] into:_into];
 }
 -(void) visitRealWeightedVar:(id<ORWeightedVar>)cstr
 {

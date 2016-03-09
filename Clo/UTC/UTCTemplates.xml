@@ -4,62 +4,68 @@
     <generator_templates>
         <generator id="0" name="G0">
             <cost>850</cost>
-            <power>160</power>
+            <power>250</power>
             <weight>50</weight>
         </generator>
         <generator id="1" name="G1">
-            <cost>1450</cost>
-            <power>190</power>
+            <cost>950</cost>
+            <power>325</power>
             <weight>55</weight>
         </generator>
         <generator id="2" name="G2">
-            <cost>2200</cost>
-            <power>200</power>
+            <cost>1050</cost>
+            <power>350</power>
             <weight>65</weight>
         </generator>
         <generator id="3" name="G3">
-            <cost>3500</cost>
-            <power>230</power>
+            <cost>1200</cost>
+            <power>375</power>
             <weight>65</weight>
         </generator>
         <generator id="4" name="G4">
-            <cost>7000</cost>
+            <cost>1350</cost>
             <power>400</power>
             <weight>75</weight>
         </generator>
         <generator id="5" name="G5">
-            <cost>8000</cost>
+            <cost>1400</cost>
             <power>450</power>
             <weight>150</weight>
         </generator>
     </generator_templates>
     
     <contactor_sensor_templates>
-        <sensor id="0" name="S_CONT0">
+        <sensor id="0" name="NONE">
+            <cost>0</cost>
+            <power>0</power>
+            <weight>0</weight>
+            <conversion>0</conversion>
+        </sensor>
+        <sensor id="1" name="S_CONT0">
             <cost>60</cost>
             <power>45</power>
             <weight>13</weight>
             <conversion>0</conversion>
         </sensor>
-        <sensor id="1" name="S_CONT1">
+        <sensor id="2" name="S_CONT1">
             <cost>64</cost>
             <power>20</power>
             <weight>11</weight>
             <conversion>0</conversion>
         </sensor>
-        <sensor id="2" name="S_CONT2">
+        <sensor id="3" name="S_CONT2">
             <cost>59</cost>
             <power>35</power>
             <weight>10</weight>
             <conversion>1</conversion>
         </sensor>
-        <sensor id="3" name="S_CONT3">
+        <sensor id="4" name="S_CONT3">
             <cost>70</cost>
             <power>10</power>
             <weight>13</weight>
             <conversion>1</conversion>
         </sensor>
-        <sensor id="4" name="S_CONT4">
+        <sensor id="5" name="S_CONT4">
             <cost>75</cost>
             <power>7</power>
             <weight>11</weight>
@@ -75,7 +81,7 @@
             <conversion>0</conversion>
         </sensor>
         <sensor id="1" name="S_VOLT0">
-            <cost>10</cost>
+            <cost>24</cost>
             <power>22</power>
             <weight>3</weight>
             <conversion>0</conversion>
@@ -114,14 +120,14 @@
             <conversion>0</conversion>
         </sensor>
         <sensor id="1" name="S_VOLT0">
-            <cost>10</cost>
+            <cost>32</cost>
             <power>22</power>
-            <weight>3</weight>
+            <weight>4</weight>
             <conversion>0</conversion>
         </sensor>
         <sensor id="2" name="S_VOLT1">
-            <cost>30</cost>
-            <power>35</power>
+            <cost>36</cost>
+            <power>25</power>
             <weight>3</weight>
             <conversion>1</conversion>
         </sensor>
