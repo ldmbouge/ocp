@@ -13,6 +13,7 @@
 #import <ORFoundation/ORSetI.h>
 #import "ORModelI.h"
 #import "ORExprI.h"
+#import "ORVarI.h"
 #import <ORFoundation/ORVisit.h>
 
 @implementation ORLinearize {
@@ -38,7 +39,7 @@
 {
     ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: _into];
     [m applyOnVar:^(id<ORVar> x) {
-        [_into addVariable: x];
+        [x visit: lc];
     } onMutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
     } onImmutables:^(id<ORObject> x) {
@@ -98,12 +99,34 @@
 }
 -(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr
 {
+    _exprResult = nil;
     [expr visit: self];
     return _exprResult;
 }
--(void) visitIntVar: (id<ORIntVar>) v  { _exprResult = v; }
+-(void) visitIntVar: (id<ORIntVar>) v  {
+    id<ORIntVar> dv = [[[_model modelMappings] tau] get: v];
+    if(dv == nil) {
+        [[[_model modelMappings] tau] set: v forKey: v];
+        [_model addVariable: v];
+        return;
+    }
+    _exprResult = dv;
+}
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v {
-    
+    id<ORIntVar> dv = [[[_model modelMappings] tau] get: v];
+    if(dv == nil) {
+        ORIntVarLitEQView* view = (ORIntVarLitEQView*)v;
+        if([[v domain] inRange: [view literal]]) {
+            id<ORIntVarArray> bv = [self binarizationForVar: v];
+            [[[_model modelMappings] tau] set: [bv at: [view literal]] forKey: v];
+        }
+        else {
+            id<ORIntVar> falseVar = [ORFactory intVar: _model bounds: RANGE(_model, 0, 0)];
+            [[[_model modelMappings] tau] set: falseVar forKey: v];
+        }
+        return;
+    }
+    _exprResult = dv;
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
@@ -139,10 +162,10 @@
 }
 -(void) visitMult: (id<ORMult>)c
 {
-    id<ORIntVar> x0 = [c left];
+    id<ORIntVar> x0 = (id<ORIntVar>)[ self linearizeExpr: [c left]];
     id<ORIntVarArray> bx0 = [self binarizationForVar: x0];
     id<ORIntRange> d0 = [x0 domain];
-    id<ORIntVar> x1 = [c right];
+    id<ORIntVar> x1 = (id<ORIntVar>)[ self linearizeExpr: [c right]];
     id<ORIntVarArray> bx1 = [self binarizationForVar: x1];
     id<ORIntRange> d1 = [x1 domain];
     ORInt offset = [d1 size];
@@ -210,7 +233,7 @@
         [_model addConstraint: [sumExpr leq: [binSize at: b]]];
     }
 }
--(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
+-(void) visitAlgebraicConstraint:(id<ORAlgebraicConstraint>)cstr
 {
     ORExprBinaryI* binExpr = (ORExprBinaryI*)[cstr expr];
     id<ORExpr> left = nil;
@@ -237,7 +260,7 @@
             [_model addConstraint: [left geq: right]];
         }break;
         default:
-            assert(true);
+            assert(false);
             break;
     }
     
@@ -259,7 +282,8 @@
     _exprResult = [left leq: right];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c {
-    [_model addConstraint: c];
+    id<ORExpr> left = [self linearizeExpr: [c left]];
+    [_model addConstraint: [left leq: @([c cst])]];
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
 {
@@ -274,11 +298,15 @@
 }
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
-    [_model addConstraint: c];
+    id<ORConstraint> cstr = [ORFactory sum: _model array: (id<ORIntVarArray>)[[c vars] map: ^id(id obj, int idx) {
+        return [[[_model modelMappings] tau] get: obj];  }] coef: [c coefs] eq: [c cst]];
+    [_model addConstraint: cstr];
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) c
 {
-    [_model addConstraint: c];
+    id<ORConstraint> cstr = [ORFactory sum: _model array: (id<ORIntVarArray>)[[c vars] map: ^id(id obj, int idx) {
+        return [[[_model modelMappings] tau] get: obj];  }] coef: [c coefs] leq: [c cst]];
+    [_model addConstraint: cstr];
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
 {
@@ -307,17 +335,21 @@
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-    [_model addConstraint: c];
+    id<ORIntVar> x0 = (id<ORIntVar>)[self linearizeExpr: (id<ORIntVar>)[c left]];
+    id<ORIntVar> x1 = (id<ORIntVar>)[self linearizeExpr: (id<ORIntVar>)[c right]];
+    [_model addConstraint: [x0 eq: x1 track: _model]];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
-    [_model addConstraint: c];
+    id<ORIntVar> x0 = (id<ORIntVar>)[self linearizeExpr: (id<ORIntVar>)[c left]];
+    id<ORIntVar> x1 = (id<ORIntVar>)[self linearizeExpr: (id<ORIntVar>)[c right]];
+    [_model addConstraint: [x0 leq: x1 track: _model]];
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
-    id<ORIntVar> x = [c left];
+    id<ORIntVar> x = (id<ORIntVar>)[ self linearizeExpr: [c left]];
     id<ORIntVarArray> bx = [self binarizationForVar: x];
-    id<ORIntVar> y = [c right];
+    id<ORIntVar> y = (id<ORIntVar>)[ self linearizeExpr: [c right]];
     id<ORIntVarArray> by = [self binarizationForVar: y];
     ORInt cst = [c cst];
     NSMutableArray* cstrs = [[NSMutableArray alloc] init];
@@ -333,8 +365,8 @@
 }
 -(void) visitAnd:( id<ORAnd>)c
 {
-    id<ORIntVar> x0 = [c left];
-    id<ORIntVar> x1 = [c right];
+    id<ORIntVar> x0 = (id<ORIntVar>)[self linearizeExpr: [c left]];
+    id<ORIntVar> x1 = (id<ORIntVar>)[self linearizeExpr: [c right]];;
     id<ORIntVar> r = [c res];
     // r <= x0
     // r <= x1
@@ -345,7 +377,7 @@
 }
 -(void) visitElementCst: (id<ORElementCst>)c
 {
-    id<ORIntVar> idx = [c idx];
+    id<ORIntVar> idx = (id<ORIntVar>)[ self linearizeExpr: [c idx]];
     id<ORIntVarArray> bidx = [self binarizationForVar: idx];
     id<ORIntArray> arr = [c array];
     id<ORIntVar> res = [c res];

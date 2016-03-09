@@ -668,6 +668,11 @@ int main(int argc, const char * argv[]) {
     
     
     id<ORModel> lm = [ORFactory linearizeModel: m];
+//    for(id<ORVar> v in [lm variables]) {
+//        NSLog(@"v: %@", [v class]);
+//    }
+//    NSLog(@"DONE: %i", (int)[[lm variables] count]);
+    
     id<ORRunnable> r = [ORFactory MIPRunnable: lm];
     [r run];
     

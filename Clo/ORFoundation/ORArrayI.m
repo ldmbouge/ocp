@@ -532,6 +532,12 @@
    for(ORInt i=_low;i<=_up;i++)
       block(_array[i],i);
 }
+-(id<ORIdArray>) map:(id(^)(id obj, int idx))block {
+    id<ORIdArray> res = [[ORIdArrayI alloc] initORIdArray: [self tracker] range: [self range]];
+    for(ORInt i=_low;i<=_up;i++)
+        [res set: block(_array[i], i) at: i];
+    return res;
+}
 -(NSArray*) toNSArray {
     NSMutableArray* arr = [[NSMutableArray alloc] init];
     [self enumerateWith: ^(id obj, ORInt idx) { [arr addObject: obj]; }];

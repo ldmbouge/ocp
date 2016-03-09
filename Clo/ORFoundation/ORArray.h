@@ -90,6 +90,7 @@ PORTABLE_BEGIN
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
+-(id<ORIdArray>) map:(id(^)(id obj, int idx))block;
 -(NSArray*) toNSArray;
 @end
 
