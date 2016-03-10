@@ -110,6 +110,7 @@
     id<ORIdArray> dv = [[[_model modelMappings] tau] get: v];
     if(dv == nil) {
         dv = [v map: ^id(id obj, int idx) { return [[[_model modelMappings] tau] get: obj]; }];
+        [_model trackMutable: dv];
         [[[_model modelMappings] tau] set: dv forKey: v];
         [_model addMutable: dv];
         return;
@@ -312,14 +313,20 @@
 }
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
-    id<ORConstraint> cstr = [ORFactory sum: _model array: (id<ORIntVarArray>)[[c vars] map: ^id(id obj, int idx) {
-        return [[[_model modelMappings] tau] get: obj];  }] coef: [c coefs] eq: [c cst]];
+    id<ORIntVarArray> narr = (id<ORIntVarArray>)[[c vars] map: ^id(id obj, int idx) {
+        return [[[_model modelMappings] tau] get: obj];  }];
+    [_model addMutable: narr];
+    [_model trackMutable: narr];
+    id<ORConstraint> cstr = [ORFactory sum: _model array: narr coef: [c coefs] eq: [c cst]];
     [_model addConstraint: cstr];
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) c
 {
-    id<ORConstraint> cstr = [ORFactory sum: _model array: (id<ORIntVarArray>)[[c vars] map: ^id(id obj, int idx) {
-        return [[[_model modelMappings] tau] get: obj];  }] coef: [c coefs] leq: [c cst]];
+    id<ORIntVarArray> narr = (id<ORIntVarArray>)[[c vars] map: ^id(id obj, int idx) {
+        return [[[_model modelMappings] tau] get: obj];  }];
+    [_model addMutable: narr];
+    [_model trackMutable: narr];
+    id<ORConstraint> cstr = [ORFactory sum: _model array: narr coef: [c coefs] leq: [c cst]];
     [_model addConstraint: cstr];
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c

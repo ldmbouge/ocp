@@ -62,24 +62,24 @@ int main(int argc, const char * argv[])
           id<ORModel> lm = [ORFactory linearizeModel: mdl];
           id<ORRunnable> r = [ORFactory MIPRunnable: lm];
           [r run];
-//         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-//         __block ORInt nbSol = 0;
-//         
+         id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+         __block ORInt nbSol = 0;
+         
 //         [cp solve: ^{
 //            NSLog(@"Start...");
 //            //[cp labelArray:cost orderedBy:^ORInt(ORInt i) { return [cp domsize:cost[i]];}];
-//            [cp labelArray:supp orderedBy:^ORInt(ORInt i) { return [cp domsize:supp[i]];}];
-//            [cp labelArray:open orderedBy:^ORInt(ORInt i) { return [cp domsize:open[i]];}];
+//            [cp labelArray:supp orderedBy:^ORDouble(ORInt i) { return [cp domsize:supp[i]];}];
+//            [cp labelArray:open orderedBy:^ORDouble(ORInt i) { return [cp domsize:open[i]];}];
 //            nbSol++;
 //            @autoreleasepool {
 //               id<ORIntArray> ops = [ORFactory intArray:cp range:open.range with:^ORInt(ORInt k) {
 //                  return [cp intValue:open[k]];
 //               }];
-//               NSLog(@"Solution: %@  -- cost: %f",ops,[cp intValue:obj]);
+//               NSLog(@"Solution: %@  -- cost: %i",ops,[cp intValue:obj]);
 //            }
 //         }];
-        // NSLog(@"#solutions: %d",nbSol);
-        // NSLog(@"Solver: %@",cp);
+//         NSLog(@"#solutions: %d",nbSol);
+//         NSLog(@"Solver: %@",cp);
         // struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
         // return res;
       //}];

@@ -254,6 +254,7 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
+       
       id<ORDoubleArray> fa = [ORFactory doubleArray:[a tracker] range:[a range] with:^ORDouble(ORInt k) {
          return [a at:k];
       }];
