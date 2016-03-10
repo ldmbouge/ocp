@@ -274,7 +274,7 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORFlatten flattenExpression:[cstr expr] into:_into];
+   _result = [ORFlatten flattenExpression:[cstr expr] into:_into];
 }
 -(void) visitRealWeightedVar:(id<ORWeightedVar>)cstr
 {
@@ -628,6 +628,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
         case ORREq: rv = [terms postEQZ:model];break;
         case ORRNEq:rv = [terms postNEQZ:model];break;
         case ORRLEq:rv = [terms postLEQZ:model];break;
+        case ORNeg: rv = [terms postEQZ:model];break;
         case ORRDisj:rv = [terms postDISJ:model];break;
         default:
             assert(terms == nil);

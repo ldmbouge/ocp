@@ -15,7 +15,7 @@
    int           _argc;
    const char**  _argv;
 }
-static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
+static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg"};
 @synthesize size;
 @synthesize restartRate;
 @synthesize timeOut;

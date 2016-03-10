@@ -19,10 +19,13 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 # 	-L../ORUtilities -L../ORFoundation \
 # 	-lORUtilities -lORFoundation \
 # 	-lgnustep-base -lobjc 	
-SRCS = ORDecompose.m  ORFlatten.m  ORLinearize.m  ORIntLinear.m  \
-	ORFloatLinear.m ORFloatDecompose.m  \
-	ORLPFlatten.m  ORModelI.m  ORModeling.m  ORModelTransformation.m \
-	ORMIPLinearize.m ORMIPFlatten.m ORLSFlatten.m
+
+SRCS = ORDecompose.m  ORFlatten.m  ORIntLinear.m  \
+	ORRealLinear.m ORRealDecompose.m  \
+	ORLPFlatten.m ORLSFlatten.m   ORMIPFlatten.m  \
+	ORLinearize.m  ORMIPLinearize.m  \
+	ORModelI.m  ORModelTransformation.m ORModeling.m  
+
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))

@@ -135,8 +135,35 @@ ORInt BBF2_POW = 55;
 
 //ORInt PROB_SCALE = 10000;
 
-int main(int argc, const char * argv[]) {
-    
+id<ORIntVarArray> joinVarArray(id<ORTracker> t,id<ORIntVarArray> a,id<ORIntVarArray> b)
+{
+   int sz = a.range.size + b.range.size;
+   id<ORIntVarArray> nx = [ORFactory intVarArray:t range:RANGE(t,0,sz-1)];
+   ORInt k = 0;
+   for(ORInt i=a.range.low;i<=a.range.up;i++)
+      nx[k++] = a[i];
+   for(ORInt i=b.range.low;i<=b.range.up;i++)
+      nx[k++] = b[i];
+   return nx;
+}
+
+id<ORIntArray> joinIntArray(id<ORTracker> t,id<ORIntArray> a,id<ORIntArray> b)
+{
+   int sz = a.range.size + b.range.size;
+   id<ORIntArray> nx = [ORFactory intArray:t range:RANGE(t,0,sz-1) value:0];
+   ORInt k = 0;
+   for(ORInt i=a.range.low;i<=a.range.up;i++)
+      nx[k++] = a[i];
+   for(ORInt i=b.range.low;i<=b.range.up;i++)
+      nx[k++] = b[i];
+   return nx;
+}
+
+int main(int argc, const char * argv[])
+{
+      int nbt = 1;
+   if (argc==2)
+      nbt = atoi(argv[1]);
     id<ORModel> m = [ORFactory createModel];
     
     // Load Templates and model parameters -----------------------------------------------------------------
@@ -325,7 +352,7 @@ int main(int argc, const char * argv[]) {
     [m minimize: [cost plus: weight]];
     
     // Cost ///////////////////////////
-    [m add: [cost eq:
+    id<ORConstraint> o1 = [m add: [cost eq:
              [[[[[[[[[[[[[[[[[mainGenCost elt: g0] plus: [mainGenCost elt: g1]] plus: [mainGenCost elt: auxgen]] plus: // Gen cost
                        Sum(m, i, voltSenRange, [voltSensCost elt: [voltSensors at: i]])] plus: // Cost of contactor sensors
                       Sum(m, i, curSenRange, [curSensCost elt: [curSensors at: i]])] plus: // Cost of contactor sensors
@@ -344,7 +371,7 @@ int main(int argc, const char * argv[]) {
              ]];
     
     // Weight /////////////////////////
-    [m add: [weight eq:
+    id<ORConstraint> o2 = [m add: [weight eq:
              [[[[[[[[[[[[[[[[[mainGenWeight elt: g0] plus: [mainGenWeight elt: g1]] plus: [mainGenWeight elt: auxgen]] plus: // Gen weight
                        Sum(m, i, contSenRange, [contSensWeight elt: [contSensors at: i]])] plus: // Contactor sensor weight
                       Sum(m, i, voltSenRange, [voltSensWeight elt: [voltSensors at: i]])] plus: // Contactor sensor weight
@@ -665,8 +692,35 @@ int main(int argc, const char * argv[]) {
         [xmlData writeToFile: outPath atomically:YES];
         NSLog(@"Wrote Solution File: %@", outPath);
     };
-    
-    
+
+    /*
+   id<CPProgram> p = [ORFactory createCPParProgram:m nb:nbt with:[ORSemDFSController proto]];
+    ORTimeval cpu0 = [ORRuntimeMonitor now];
+    id<CPHeuristic> h = [p createIBS];
+    [p solve: ^{
+        //[p limitTime: 30 * 1000 in: ^{
+       id<ORTau> t = p.modelMappings.tau;
+       id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
+       id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
+       [p forall:x.range suchThat:^bool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return -[c at:i];} do:^(ORInt i) {
+          [p label:x[i]];
+       }];
+       [p labelHeuristic: h];
+        NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
+        //}];
+        id<ORSolution> s = [p captureSolution];
+        writeOut(s);
+        for(ORInt k = 1; k <= numOptConcentrators; k++)
+            NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
+        NSLog(@"path0: %i %i %i %i %i", [s intValue: usePath0[0]], [s intValue: usePath0[1]], [s intValue: usePath0[2]], [s intValue: usePath0[3]], [s intValue: usePath0[4]]);
+    }];
+    //    [p solve];
+    //id<ORSolutionPool> sols = [p solutionPool];
+    //id<ORSolution> bestSolution = [sols best];
+    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+    NSLog(@"Time to solution: %ld",cpu1.tv_sec * 1000 + cpu1.tv_usec/1000);
+	   */
+
     id<ORModel> lm = [ORFactory linearizeModel: m];
 //        NSSet* vars = [c allVars];
 //        for(id<ORIntVar> x in vars)
@@ -677,26 +731,6 @@ int main(int argc, const char * argv[]) {
     id<ORRunnable> r = [ORFactory MIPRunnable: lm];
     [r run];
     
-//    id<CPProgram> p = [ORFactory createCPProgram: m];
-//    //id<CPHeuristic> h = [p createIBS];
-//    ORTimeval cpu0 = [ORRuntimeMonitor now];
-//    id<CPHeuristic> h = [p createIBS];
-//    [p solve: ^{
-//        //[p limitTime: 30 * 1000 in: ^{
-//        [p labelHeuristic: h];
-//        NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
-//        //}];
-//        id<ORSolution> s = [p captureSolution];
-//        writeOut(s);
-//        for(ORInt k = 1; k <= numOptConcentrators; k++)
-//            NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
-//        NSLog(@"path0: %i %i %i %i %i", [s intValue: usePath0[0]], [s intValue: usePath0[1]], [s intValue: usePath0[2]], [s intValue: usePath0[3]], [s intValue: usePath0[4]]);
-//    }];
-//    //    [p solve];
-//    //id<ORSolutionPool> sols = [p solutionPool];
-//    //id<ORSolution> bestSolution = [sols best];
-//    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
-//    NSLog(@"Time to solution: %ld",cpu1.tv_sec * 1000 + cpu1.tv_usec/1000);
     
 //    for(ORInt i = 0; i <=16; i++)
 //        NSLog(@"%i, %i", i, [bestSolution intValue: usePath[i]]);

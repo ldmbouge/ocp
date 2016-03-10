@@ -75,6 +75,12 @@
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c
 {
     if (c==0) return;
+   id<ORIntRange> dom = [x domain];
+   if (dom.low == dom.up  && dom.up == 0) return;
+   if (dom.low == dom.up) {
+      _indep += dom.low * c;
+      return ;
+   }
     ORInt low = 0,up=_nb-1,mid=-1,kid;
     ORInt xid = [x  getId];
     BOOL found = NO;
@@ -280,8 +286,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
     // [ldm] This should *never* raise an exception, but return a ORFailure.
     id<ORConstraint> rv = NULL;
     switch (_nb) {
-        case 0:
+      case 0: {
+         if (_indep == 0)
             return NULL;
+         else rv = [model addConstraint:[ORFactory fail:model]];
+      }break;
         case 1: {
             if (_terms[0]._coef == 1) {
                 rv = [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:-_indep]];
@@ -386,7 +395,10 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
     id<ORConstraint> rv = NULL;
     switch (_nb) {
-        case 0: assert(false);return NULL;
+      case 0: {
+         if (_indep == 0)
+            rv = [model addConstraint:[ORFactory fail:model]];
+      }break;
         case 1: {
             assert(_terms[0]._coef == 1 && _indep == 0);
             rv = [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:1]];

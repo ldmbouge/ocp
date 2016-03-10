@@ -756,14 +756,10 @@
 		5B60C6861BFCCB4500A685C6 /* ORSchedLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60C6851BFCCB4500A685C6 /* ORSchedLinearize.m */; };
 		5B60C6891BFCD1C300A685C6 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B60E5D715AE907E002FF2B3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
-		5B60E5DD15AE907F002FF2B3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B60E5DB15AE907F002FF2B3 /* InfoPlist.strings */; };
-		5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60E5E015AE907F002FF2B3 /* ORUtilities.m */; };
 		5B60E5EB15AE912F002FF2B3 /* ORConcurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = B12B178B151DC9CB008AB289 /* ORConcurrency.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B60E5EC15AE9136002FF2B3 /* ORConcurrencyI.h in Headers */ = {isa = PBXBuildFile; fileRef = B12B178D151DCA16008AB289 /* ORConcurrencyI.h */; settings = {ATTRIBUTES = (); }; };
-		5B60E5ED15AE913F002FF2B3 /* ORConcurrencyI.m in Sources */ = {isa = PBXBuildFile; fileRef = B12B178E151DCA16008AB289 /* ORConcurrencyI.m */; };
 		5B60E5EE15AE91E9002FF2B3 /* ORTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64312139D49610056F448 /* ORTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B60E5EF15AE958A002FF2B3 /* ORCrFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B149BF5B151E759600FC5887 /* ORCrFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B149BF5C151E759600FC5887 /* ORCrFactory.m */; };
 		5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60E5F115AE9661002FF2B3 /* ORData.m */; };
 		5B63C2D4156DB05E00C65B2A /* CPStatisticsMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B63C2D2156DB05E00C65B2A /* CPStatisticsMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B63C2D5156DB05E00C65B2A /* CPStatisticsMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */; };
@@ -812,7 +808,6 @@
 		5B67A50D17E227ED00516F50 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B67A50E17E227ED00516F50 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B67F8121B5824D700F223DC /* ORPQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B67F8101B5824D700F223DC /* ORPQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B67F8131B5824D700F223DC /* ORPQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B67F8111B5824D700F223DC /* ORPQueue.m */; };
 		5B67F8151B5829DF00F223DC /* CPClosureList.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B67F8141B5829DF00F223DC /* CPClosureList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B681181161F98FB00F4480F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B681187161F98FB00F4480F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B681185161F98FB00F4480F /* InfoPlist.strings */; };
@@ -954,11 +949,8 @@
 		5B7B477815F0E4BE005FF875 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B7B477915F0E4BE005FF875 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B7C8948187EFD5100D82789 /* cont.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642EE139D49320056F448 /* cont.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B7C8949187EFD5100D82789 /* cont.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642EF139D49320056F448 /* cont.m */; };
 		5B7C894A187EFD5100D82789 /* context.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642F0139D49320056F448 /* context.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B7C894B187EFD5100D82789 /* context.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642F1139D49320056F448 /* context.m */; };
 		5B7C894C187F01AE00D82789 /* ORInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B6B0EF61787533000104246 /* ORInterval.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B7C894D187F034F00D82789 /* ORInterval.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0EF71787533000104246 /* ORInterval.mm */; };
 		5B7C895D187F455F00D82789 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B7C895F187F455F00D82789 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B7C8960187F455F00D82789 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -1156,7 +1148,6 @@
 		5B9B2464177873EA001AB944 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B9B2465177873EA001AB944 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B9B2466177873F2001AB944 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
-		5B9B50321C755EC700520567 /* UTCTemplates.xml in Resources */ = {isa = PBXBuildFile; fileRef = 5B9B50301C755EC700520567 /* UTCTemplates.xml */; };
 		5B9B50521C755F1900520567 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
 		5B9B50531C755F1900520567 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B9B50541C755F1900520567 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -1505,7 +1496,6 @@
 		5BDBBAC61718DA2F00322163 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BDBBAC71718DA3F00322163 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5BDE360516D905BE0030559D /* ORMallocWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDE360316D905BE0030559D /* ORMallocWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE360416D905BE0030559D /* ORMallocWatch.m */; };
 		5BDF5FA6161F4F9900E5E1FA /* ORVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FA4161F4F9900E5E1FA /* ORVarI.h */; };
 		5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */; };
 		5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1513,6 +1503,14 @@
 		5BDF5FAD161F81B800E5E1FA /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */; };
 		5BDF5FB4161F84A400E5E1FA /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BDF5FB5161F84A400E5E1FA /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BDFE1791C8895EB009384E9 /* ORPQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B67F8111B5824D700F223DC /* ORPQueue.m */; };
+		5BDFE17A1C8895EB009384E9 /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE360416D905BE0030559D /* ORMallocWatch.m */; };
+		5BDFE17B1C8895EB009384E9 /* ORCrFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B149BF5C151E759600FC5887 /* ORCrFactory.m */; };
+		5BDFE17C1C8895EB009384E9 /* ORConcurrencyI.m in Sources */ = {isa = PBXBuildFile; fileRef = B12B178E151DCA16008AB289 /* ORConcurrencyI.m */; };
+		5BDFE17E1C8895EB009384E9 /* ORUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60E5E015AE907F002FF2B3 /* ORUtilities.m */; };
+		5BDFE17F1C8895EB009384E9 /* cont.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642EF139D49320056F448 /* cont.m */; };
+		5BDFE1801C8895EB009384E9 /* context.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642F1139D49320056F448 /* context.m */; };
+		5BDFE1811C8895EB009384E9 /* ORInterval.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0EF71787533000104246 /* ORInterval.mm */; };
 		5BE12175173C75A3000C9AA9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BE12178173C75A3000C9AA9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE12177173C75A3000C9AA9 /* main.m */; };
 		5BE1217C173C75A3000C9AA9 /* bug.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE1217B173C75A3000C9AA9 /* bug.1 */; };
@@ -21247,7 +21245,7 @@
 		5BCAF1411BF146BF00C18360 /* OrSemFDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OrSemFDSController.m; sourceTree = "<group>"; };
 		5BCAF1471BF1479A00C18360 /* queensFDS */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensFDS; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCAF1491BF1479A00C18360 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		5BCAF1621BF385F500C18360 /* CPFDS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPFDS.m; path = ../ORFoundation/CPFDS.m; sourceTree = "<group>"; };
+		5BCAF1621BF385F500C18360 /* CPFDS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFDS.m; sourceTree = "<group>"; };
 		5BCAF1641BF3861700C18360 /* CPFDS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPFDS.h; sourceTree = "<group>"; };
 		5BCCC4031417F8CE0079E833 /* queensACSem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensACSem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -41930,8 +41928,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B9B50321C755EC700520567 /* UTCTemplates.xml in Resources */,
-				5B60E5DD15AE907F002FF2B3 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42284,14 +42280,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B7C8949187EFD5100D82789 /* cont.m in Sources */,
-				5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */,
-				5B60E5ED15AE913F002FF2B3 /* ORConcurrencyI.m in Sources */,
-				5B67F8131B5824D700F223DC /* ORPQueue.m in Sources */,
-				5B7C894B187EFD5100D82789 /* context.m in Sources */,
-				5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */,
-				5B7C894D187F034F00D82789 /* ORInterval.mm in Sources */,
-				5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */,
+				5BDFE1791C8895EB009384E9 /* ORPQueue.m in Sources */,
+				5BDFE17A1C8895EB009384E9 /* ORMallocWatch.m in Sources */,
+				5BDFE17B1C8895EB009384E9 /* ORCrFactory.m in Sources */,
+				5BDFE17C1C8895EB009384E9 /* ORConcurrencyI.m in Sources */,
+				5BDFE17E1C8895EB009384E9 /* ORUtilities.m in Sources */,
+				5BDFE17F1C8895EB009384E9 /* cont.m in Sources */,
+				5BDFE1801C8895EB009384E9 /* context.m in Sources */,
+				5BDFE1811C8895EB009384E9 /* ORInterval.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50366,7 +50362,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -50397,7 +50393,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -50425,7 +50421,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;

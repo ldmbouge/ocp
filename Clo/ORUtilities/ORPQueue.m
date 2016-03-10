@@ -87,7 +87,7 @@ static void heapify(ORPQueue* pq,ORInt i)
          pq->_tab[m]->_ofs = m;
          i = m;
       } else break;
-   } while(TRUE);
+   } while(1);
 }
 -(ORPQueue*)init:(BOOL(^)(id,id))cmp
 {

@@ -198,6 +198,14 @@
    }
 }
 
+-(void) visitFail:(id<ORFail>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPConstraint> cc = [CPFactory fail:_engine];
+      [_engine add:cc];
+      _gamma[cstr.getId] = cc;
+   }
+}
 
 -(void) visitRestrict: (id<ORRestrict>) cstr
 {

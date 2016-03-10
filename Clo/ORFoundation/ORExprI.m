@@ -859,6 +859,11 @@
 {
    return _op.vtype;
 }
+-(enum ORRelationType) type
+{
+   return ORNeg;
+}
+
 -(NSString *)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

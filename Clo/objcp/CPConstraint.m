@@ -198,12 +198,16 @@
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
-   CPEQLitView* litView = [literals positiveForValue: c];
-   if (!litView) {
-      litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
-      [literals addPositive: litView forValue:c];
+   if (memberDom(x, c)) {
+      CPEQLitView* litView = [literals positiveForValue: c];
+      if (!litView) {
+         litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
+         [literals addPositive: litView forValue:c];
+      }
+      return litView;
+   } else {
+      return [CPFactory intVar:[x engine] value:0];
    }
-   return litView;
 }
 
 +(id<ORConstraint>) imply: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
@@ -562,9 +566,15 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<ORConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
++(id<CPConstraint>) fail:(id<CPEngine>)engine
 {
-   id<ORConstraint> o = [[CPRestrictI alloc] initRestrict:x to:r];
+   id<CPConstraint> c = [[CPFalse alloc] init:engine];
+   [engine trackMutable:c];
+   return c;
+}
++(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
+{
+   id<CPConstraint> o = [[CPRestrictI alloc] initRestrict:x to:r];
    [[x tracker] trackMutable:o];
    return o;
 }

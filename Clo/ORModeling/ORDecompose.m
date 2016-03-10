@@ -254,9 +254,12 @@
             ORExprI* other = lv ? [e right] : [e left];
             ORExprI* var   = lv ? [e left] : [e right];
             id<ORIntVar> theVar = [ORNormalizer intVarIn:_model expr:var];
-            ORIntLinear* lin  = [ORNormalizer intLinearFrom:other model:_model equalTo:theVar];
-            [lin release];
-            _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
+//            ORIntLinear* lin  = [ORNormalizer intLinearFrom:other model:_model equalTo:theVar];
+//            [lin release];
+//            _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
+            ORIntLinear* lin  = [ORNormalizer intLinearFrom:other model:_model];
+           [lin addTerm:theVar by:-1];
+           _terms = lin;
         } else {
             ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e left] model:_model ];
             ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
@@ -297,6 +300,12 @@ struct CPVarPair {
     id<ORIntVar> final = [ORFactory intVar: _model domain:RANGE(_model,0,1)];
     [_model addConstraint:[ORFactory equalc:_model var:final to:1]];
     return (struct CPVarPair){lV,rV,final};
+}
+-(void) visitExprNegateI:(ORExprNegateI*) e
+{
+   ORIntLinear* linLeft  = [ORNormalizer intLinearFrom:e model:_model];
+   [linLeft addIndependent:-1];
+   _terms = linLeft;
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
@@ -909,7 +918,10 @@ static inline ORLong maxSeq(ORLong v[4])  {
     if (_rv != nil) {
         [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
     } else {
-        _rv = [ORFactory reifyView:_model var:theVar eqi:c];
+       if ([theVar.domain inRange:c])
+	  _rv = [ORFactory reifyView:_model var:theVar eqi:c];
+       else
+	  _rv = [ORFactory intVar:_model value:0];
     }
 #endif
 }

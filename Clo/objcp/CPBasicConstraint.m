@@ -41,6 +41,31 @@
 }
 @end
 
+@implementation CPFalse
+-(id)init:(id<CPEngine>)engine
+{
+   self = [super initCPCoreConstraint:engine];
+   return self;
+}
+-(void)post
+{
+   failNow();
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] init] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return 0;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<CPFalse>"];
+}
+@end
+
+
 @implementation CPEqualc
 -(id) initCPEqualc: (id<CPIntVar>) x and:(ORInt)c
 {

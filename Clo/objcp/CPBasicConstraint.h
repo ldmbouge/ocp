@@ -32,6 +32,13 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFalse : CPCoreConstraint
+-(id)init:(id<CPEngine>)engine;
+-(void)post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 // PVH: where is _active being used
 @interface CPEqualc : CPCoreConstraint {
    @private
