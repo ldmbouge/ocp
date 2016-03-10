@@ -726,7 +726,6 @@ int main(int argc, const char * argv[])
 //        for(id<ORIntVar> x in vars)
 //            assert([x getId] != 1422);
 //    }
-    NSLog(@"DONE: %i", (int)[[lm variables] count]);
     
     id<ORRunnable> r = [ORFactory MIPRunnable: lm];
     [r run];

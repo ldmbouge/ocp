@@ -289,7 +289,6 @@
    [mipprogram setGamma: gamma];
    [mipprogram setModelMappings: flatModel.modelMappings];
    
-   
    ORVisitor* concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
    
    for(id<ORObject> c in [flatModel mutables])

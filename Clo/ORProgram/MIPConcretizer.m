@@ -72,9 +72,6 @@
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-    if([v getId] == 432)
-        NSLog(@"Hello");
-    
    if (_gamma[v.getId] == NULL)
       _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up]];
 }
@@ -132,9 +129,6 @@
          dx[i] = _gamma[[v[i] getId]];
       }
       _gamma[v.getId] = dx;
-       if([v getId] == 5868)
-           NSLog(@"Hello");
-
    }
 }
 -(void) visitIdMatrix:(id<ORIdMatrix>) v
@@ -201,6 +195,16 @@
         MIPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
         ORDouble    coef[2] = { 1, -1 };
         MIPConstraintI* concreteCstr = [_MIPsolver createEQ:2 var:x coef:coef rhs:[c cst]];
+        _gamma[c.getId] = concreteCstr;
+        [_MIPsolver postConstraint:concreteCstr];
+    }
+}
+-(void) visitEqualc: (id<OREqualc>)c
+{
+    if (_gamma[c.getId]==NULL) {
+        MIPVariableI* x[1] = { [self concreteVar:[c left]] };
+        ORDouble    coef[1] = { 1.0 };
+        MIPConstraintI* concreteCstr = [_MIPsolver createEQ: 1 var:x coef:coef rhs:[c cst]];
         _gamma[c.getId] = concreteCstr;
         [_MIPsolver postConstraint:concreteCstr];
     }

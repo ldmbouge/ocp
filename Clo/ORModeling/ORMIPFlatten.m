@@ -117,12 +117,6 @@
 {
     _result = v;
 }
--(void) visitIntVarLitEQView:(id<ORIntVar>)v
-{
-    // DAN
-    ORIntVarLitEQView* view = (ORIntVarLitEQView*)v;
-    _result = @([view literal]);//[view base];
-}
 -(void) visitRealVar: (ORRealVarI*) v
 {
     _result = v;
@@ -189,6 +183,13 @@
     [_into setCurrent:cstr];
     _result = [ORMIPFlatten flattenExpression:[cstr expr] into: _into];
     [_tau set: _result forKey: cstr];
+}
+-(void) visitLinearEq:(id<ORConstraint>)c {
+    _result = c;
+}
+-(void) visitLinearLeq: (id<ORLinearLeq>) c
+{
+    _result = c;
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {

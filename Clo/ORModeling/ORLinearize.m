@@ -42,8 +42,11 @@
         [x visit: lc];
     } onMutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
+        if([x conformsToProtocol: @protocol(ORIdArray)])
+            [x visit: lc];
     } onImmutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
+        //[_into addImmutable: x];
     } onConstraints:^(id<ORConstraint> c) {
         [c visit: lc];
     } onObjective:^(id<ORObjectiveFunction> o) {
@@ -103,6 +106,15 @@
     [expr visit: self];
     return _exprResult;
 }
+-(void) visitIdArray:(id<ORIdArray>)v {
+    id<ORIdArray> dv = [[[_model modelMappings] tau] get: v];
+    if(dv == nil) {
+        dv = [v map: ^id(id obj, int idx) { return [[[_model modelMappings] tau] get: obj]; }];
+        [[[_model modelMappings] tau] set: dv forKey: v];
+        [_model addMutable: dv];
+        return;
+    }
+}
 -(void) visitIntVar: (id<ORIntVar>) v  {
     id<ORIntVar> dv = [[[_model modelMappings] tau] get: v];
     if(dv == nil) {
@@ -116,14 +128,11 @@
     id<ORIntVar> dv = [[[_model modelMappings] tau] get: v];
     if(dv == nil) {
         ORIntVarLitEQView* view = (ORIntVarLitEQView*)v;
-        if([[v domain] inRange: [view literal]]) {
+        if([[[v base] domain] inRange: [view literal]]) {
             id<ORIntVarArray> bv = [self binarizationForVar: [v base]];
             [[[_model modelMappings] tau] set: [bv at: [view literal]] forKey: v];
         }
-        else {
-            id<ORIntVar> falseVar = [ORFactory intVar: _model bounds: RANGE(_model, 0, 0)];
-            [[[_model modelMappings] tau] set: falseVar forKey: v];
-        }
+        else assert(false);
         return;
     }
     _exprResult = dv;
@@ -269,6 +278,11 @@
     id<ORExpr> sumExpr = Sum(_model, i, [[cstr item] range], [[[cstr item] at: i] mul: @([[cstr weight] at: i])]);
     [_model addConstraint: [sumExpr eq: [cstr capacity]]];
 }
+-(void) visitEqualc: (id<OREqualc>)c
+{
+    id<ORExpr> left = [self linearizeExpr: [c left]];
+    [_model addConstraint: [left eq: @([c cst])]];
+}
 -(void) visitExprGEqualI: (id<ORExpr>) e {
     ORExprBinaryI* binExpr = (ORExprBinaryI*)e;
     id<ORExpr> left = [self linearizeExpr: [binExpr left]];
@@ -382,6 +396,27 @@
     id<ORIntArray> arr = [c array];
     id<ORIntVar> res = [c res];
     [_model addConstraint: [res eq: Sum(_model, i, [idx domain], [@([arr at: i]) mul: bidx[i]])]];
+}
+-(void) visitElementVar: (id<ORElementVar>)c
+{
+    NSLog(@"idx: %@", [[c idx] class]);
+    id<ORIntRange> binRange = RANGE(_model, 0, 1);
+    id<ORIntVarArray> bidx = [self binarizationForVar: [c idx]];
+    id<ORExpr> sum = [ORFactory integer: _model value: 0];
+    for(ORInt i = [[c array] low]; i <= [[c array] up]; i++) {
+        id<ORIntVar> x = [[c array] at: i];
+        NSLog(@"x: %@", [x class]);
+        id<ORIntVarArray> bx = [self binarizationForVar: x];
+        for(ORInt val = [[x domain] low]; val <= [[x domain] up]; val++) {
+            id<ORIntVar> z = [ORFactory intVar: _model bounds: binRange];
+            [_model addConstraint: [z leq: [bx at: val]]];
+            [_model addConstraint: [z leq: [bidx at: i]]];
+            [_model addConstraint: [[z plus: @(1)] geq: [[bx at: val] plus: [bidx at: i]]]];
+            sum = [sum plus: [z mul: @(val)]];
+        }
+    }
+    NSLog(@"res: %@", [[c res] class]);
+    [_model addConstraint: [[c res] eq: sum]];
 }
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e
@@ -511,7 +546,7 @@
 {
     id<ORAnnotation> notes = [ORFactory annotation];
     id<ORModel> fm = [m flatten: notes];
-    id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings: [fm modelMappings]];
+    id<ORModel> lm = [ORFactory createModel: [fm nbObjects] mappings: [fm modelMappings]];
     ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: fm annotation:nil]; //TOFIX
     id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
     [linearizer apply: fm with:nil]; // TOFIX
