@@ -517,12 +517,15 @@
       onConstraints:(void(^)(id<ORObject>)) doCons
         onObjective:(void(^)(id<ORObject>)) doObjective
 {
+   // DAN
+   for(id<ORObject> c in _vars)
+      doVar(c);
    for(id<ORObject> c in _mStore)
       doMutable(c);
    for(id<ORObject> c in _iStore)
       doImmutable(c);
-   for(id<ORObject> c in _vars)
-      doVar(c);
+//   for(id<ORObject> c in _vars)
+//      doVar(c);
    for(id<ORObject> c in _cStore)
       doCons(c);
    doObjective(_objective);

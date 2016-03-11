@@ -300,6 +300,7 @@ int main(int argc, const char * argv[])
     id<ORIntVarArray> bandUse = [ORFactory intVarArray: m range: RANGE(m, 1, numOptBuses) bounds: RANGE(m, 0, MAX_BAND)];
     id<ORIntVar> cost = [ORFactory intVar: m bounds: RANGE(m, 0, 25000)];
     id<ORIntVar> weight = [ORFactory intVar: m bounds: RANGE(m, 0, 25000)];
+    id<ORIntVar> objective = [ORFactory intVar: m bounds: RANGE(m, 0, 50000)];
     
     // data paths
     id<ORIntRange> pathRange5 = RANGE(m, 0, 4);
@@ -349,7 +350,8 @@ int main(int argc, const char * argv[])
     id<ORIntArray> curToConCost = [ORFactory intArray: m range: curSenRange values: rawCurToConCost];
     id<ORIntArray> curToConWeight = [ORFactory intArray: m range: curSenRange values: rawCurToConWeight];
     
-    [m minimize: [cost plus: weight]];
+    [m minimize:  objective];
+    [m add: [objective eq: [cost plus: weight]]];
     
     // Cost ///////////////////////////
     id<ORConstraint> o1 = [m add: [cost eq:
@@ -467,8 +469,10 @@ int main(int argc, const char * argv[])
         [m add: [bandUse[b] leq: @(MAX_BAND)]];
     }
     
+    // 350
     // Path Definitions
-    [m add: [[usePath0[0] eq: @(1)] eq: [contSensors[CONT_S0] gt: NONE]]];
+    id<ORConstraint> c = [m add: [[usePath0[0] eq: @(1)] eq: [contSensors[CONT_S0] gt: NONE]]];
+    NSLog(@"c: %@", c);
     [m add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
     [m add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
     [m add: [[usePath0[2] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
@@ -477,7 +481,7 @@ int main(int argc, const char * argv[])
     [m add: [[usePath0[3] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
     [m add: [[usePath0[4] eq: @(1)] eq: [curSensors[CUR_S0] gt: NONE]]];
     [m add: [[usePath0[4] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
-    
+
     [m add: [[usePath1[0] eq: @(1)] eq: [contSensors[CONT_S1] gt: NONE]]];
     [m add: [[usePath1[1] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
     [m add: [[usePath1[1] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
@@ -719,17 +723,13 @@ int main(int argc, const char * argv[])
     //id<ORSolution> bestSolution = [sols best];
     ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
     NSLog(@"Time to solution: %ld",cpu1.tv_sec * 1000 + cpu1.tv_usec/1000);
-	   */
+    */
 
+    // ORLinearLeq 1176
     id<ORModel> lm = [ORFactory linearizeModel: m];
-//        NSSet* vars = [c allVars];
-//        for(id<ORIntVar> x in vars)
-//            assert([x getId] != 1422);
-//    }
-    
     id<ORRunnable> r = [ORFactory MIPRunnable: lm];
     [r run];
-    
+
     
 //    for(ORInt i = 0; i <=16; i++)
 //        NSLog(@"%i, %i", i, [bestSolution intValue: usePath[i]]);

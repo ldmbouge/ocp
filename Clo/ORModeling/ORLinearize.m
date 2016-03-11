@@ -44,9 +44,10 @@
         //NSLog(@"Got an object: %@",x);
         if([x conformsToProtocol: @protocol(ORIdArray)])
             [x visit: lc];
+        //else [_into addMutable: x];
     } onImmutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
-        //[_into addImmutable: x];
+        [_into addImmutable: x];
     } onConstraints:^(id<ORConstraint> c) {
         [c visit: lc];
     } onObjective:^(id<ORObjectiveFunction> o) {
@@ -110,6 +111,7 @@
     id<ORIdArray> dv = [[[_model modelMappings] tau] get: v];
     if(dv == nil) {
         dv = [v map: ^id(id obj, int idx) { return [[[_model modelMappings] tau] get: obj]; }];
+        assert([dv at: [[dv range] low]] != nil);
         [_model trackMutable: dv];
         [[[_model modelMappings] tau] set: dv forKey: v];
         [_model addMutable: dv];
@@ -302,14 +304,14 @@
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
 {
-    id<ORIntVar> x = [c x];
-    id<ORIntVar> r = [c b];
+    id<ORIntVar> x = (id<ORIntVar>)[self linearizeExpr: [c x]];
+    id<ORIntVar> b = (id<ORIntVar>)[self linearizeExpr: [c b]];
     ORInt cst = [c cst];
-    ORInt M = 99999;
-    // x + ((1 - r) * M) >= cst
-    // x - (r * M) < cst
-    [_model addConstraint: [[x plus: [[@(1) sub: r] mul: @(M)]] geq: @(cst)]];
-    [_model addConstraint: [[x sub: [r mul: @(M)]] lt: @(cst)]];
+    ORInt M = 999999;
+    // x + ((1 - b) * M) >= cst
+    // x - (b * M) < cst
+    [_model addConstraint: [[x plus: [[@(1) sub: b] mul: @(M)]] geq: @(cst)]];
+    [_model addConstraint: [[x sub: [b mul: @(M)]] lt: @(cst)]];
 }
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
@@ -336,7 +338,7 @@
     ORInt cst = [c cst];
     id<ORIntVar> z0 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
     id<ORIntVar> z1 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
-    ORInt M = 99999;
+    ORInt M = 999999;
     
     // greater-than
     // x + ((1 - z0) * M) > cst

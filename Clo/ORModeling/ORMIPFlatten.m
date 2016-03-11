@@ -16,6 +16,9 @@
 #import "ORRealLinear.h"
 #import "ORFlatten.h"
 
+// DAN hack
+BOOL _alreadyAdded;
+
 @implementation ORMIPFlatten {
     id<ORAddToModel> _into;
     NSMapTable*     _mapping;
@@ -77,7 +80,9 @@
          [_into addImmutable: x];
      }
     onConstraints:^(id<ORConstraint> c) {
-        [_into addConstraint:[self flattenIt:c]];
+        _alreadyAdded = NO;
+        id fc = [self flattenIt:c];
+        if(!_alreadyAdded) [_into addConstraint: fc];
     }
       onObjective:^(id<ORObjectiveFunction> o) {
           [self flattenIt:o];
@@ -94,6 +99,7 @@
         case ORREq:
         {
             cstr = [terms postEQZ: model];
+            _alreadyAdded = YES;
         }
             break;
         case ORRNEq:
@@ -101,9 +107,11 @@
             @throw [[ORExecutionError alloc] initORExecutionError: "No != constraint supported in LP yet"];
         }
             break;
+        case ORRGEq:
         case ORRLEq:
         {
             cstr = [terms postLEQZ: model];
+            _alreadyAdded = YES;
         }
             break;
         default:
@@ -111,6 +119,7 @@
             break;
     }
     [terms release];
+    assert(cstr != nil);
     return cstr;
 }
 -(void) visitIntVar:(ORIntVarI*)v

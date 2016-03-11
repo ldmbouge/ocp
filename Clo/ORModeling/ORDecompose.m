@@ -17,7 +17,7 @@
 //-- temp
 #import "ORRealDecompose.h"
 
-@interface ORIntNormalizer : ORNOopVisit<NSObject> {
+@interface ORIntNormalizer : ORVisitor<NSObject> {
     id<ORIntLinear>     _terms;
     id<ORAddToModel>   _model;
 }
@@ -285,7 +285,14 @@
     [linRight release];
     _terms = linLeft;
 }
-
+-(void) visitExprGEqualI:(ORExprLEqualI*)e
+{
+    ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e right] model:_model];
+    ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
+    [ORNormalizer addToIntLinear:linRight from:[e left] model:_model];
+    [linRight release];
+    _terms = linLeft;
+}
 struct CPVarPair {
     id<ORIntVar> lV;
     id<ORIntVar> rV;
