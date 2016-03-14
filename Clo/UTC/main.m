@@ -121,8 +121,8 @@ ORInt rawCurToConWeight[] = {
 
 
 ORInt numMainGen = 2;
-ORInt numOptBuses = 2;
-ORInt numOptConcentrators = 3;
+ORInt numOptBuses = 4;
+ORInt numOptConcentrators = 4;
 ORInt numBackupGen = 1;
 ORInt numBatteries = 1;
 ORInt numContSensors = 9;
@@ -199,7 +199,8 @@ int main(int argc, const char * argv[])
     id<ORIntRange> voltSenRange = RANGE(m, 0, numVoltSensors-1);
     id<ORIntRange> curSenBounds = RANGE(m, 0, numCurSensorTemplates-1);
     id<ORIntRange> curSenRange = RANGE(m, 0, numCurSensors-1);
-    
+    id<ORIntRange> busBounds = RANGE(m, 0, numBusTemplates-1);
+    id<ORIntRange> busRange = RANGE(m, 1, numOptBuses);
     id<ORIntRange> concRange = RANGE(m, 1, numOptConcentrators);
     id<ORIntRange> concBounds = RANGE(m, 0, numConcTemplates-1);
     
@@ -241,10 +242,17 @@ int main(int argc, const char * argv[])
     id<ORIntArray> curSensConverts = [ORFactory intArray: m range: contSenBounds with: ^ORInt(ORInt i) {
         return [[[[contSensorTemplates[i] elementsForName: @"conversion"] lastObject] stringValue] intValue]; }];
     
+    id<ORIntArray> busBandwidth = [ORFactory intArray: m range: busBounds with: ^ORInt(ORInt i) {
+        return [[[[busTemplates[i] elementsForName: @"max_bandwidth"] lastObject] stringValue] intValue]; }];
+    id<ORIntArray> busCost = [ORFactory intArray: m range: busBounds with: ^ORInt(ORInt i) {
+        return [[[[busTemplates[i] elementsForName: @"cost"] lastObject] stringValue] intValue]; }];
+    id<ORIntArray> busWeight = [ORFactory intArray: m range: busBounds with: ^ORInt(ORInt i) {
+        return [[[[busTemplates[i] elementsForName: @"weight"] lastObject] stringValue] intValue]; }];
+    
     // Bus Template Tables
-    ORInt MAX_BAND = [[[[busTemplates[0] elementsForName: @"max_bandwidth"] lastObject] stringValue] intValue];
-    ORInt BUS_COST = [[[[busTemplates[0] elementsForName: @"cost"] lastObject] stringValue] intValue];;
-    ORInt BUS_WGHT = [[[[busTemplates[0] elementsForName: @"weight"] lastObject] stringValue] intValue];;
+//    ORInt MAX_BAND = [[[[busTemplates[0] elementsForName: @"max_bandwidth"] lastObject] stringValue] intValue];
+//    ORInt BUS_COST = [[[[busTemplates[0] elementsForName: @"cost"] lastObject] stringValue] intValue];;
+//    ORInt BUS_WGHT = [[[[busTemplates[0] elementsForName: @"weight"] lastObject] stringValue] intValue];;
     
     // Concentrator Template Table
     
@@ -292,12 +300,13 @@ int main(int argc, const char * argv[])
     
     
     // Bus
+    id<ORIntVarArray> bus = [ORFactory intVarArray: m range: busRange bounds: busBounds];
     id<ORIntVarArray> useBus = [ORFactory intVarArray: m range: RANGE(m, 1, numOptBuses) bounds: boolBounds];
     id<ORIntVarArray> numBusConn = [ORFactory intVarArray: m range: RANGE(m, 1, numOptBuses) bounds: RANGE(m, 0, totalSensorCount + numOptConcentrators)];
 
     
     id<ORIntVar> powUse = [ORFactory intVar: m bounds: RANGE(m, 0, 10000)];
-    id<ORIntVarArray> bandUse = [ORFactory intVarArray: m range: RANGE(m, 1, numOptBuses) bounds: RANGE(m, 0, MAX_BAND)];
+    id<ORIntVarArray> bandUse = [ORFactory intVarArray: m range: RANGE(m, 1, numOptBuses) bounds: RANGE(m, 0, 100000)];
     id<ORIntVar> cost = [ORFactory intVar: m bounds: RANGE(m, 0, 25000)];
     id<ORIntVar> weight = [ORFactory intVar: m bounds: RANGE(m, 0, 25000)];
     id<ORIntVar> objective = [ORFactory intVar: m bounds: RANGE(m, 0, 50000)];
@@ -369,7 +378,7 @@ int main(int argc, const char * argv[])
             Sum(m, i, concRange, [concCost elt: [conc at: i]])] plus: // Concentrator cost
                 Sum(m, i, curSenRange, [@([curToBusCost at: i]) mul: [[curSenToBus at: i] gt: @(0)]])] plus: // Cost direct to bus
              Sum(m, i, curSenRange, [@([curToConCost at: i]) mul: [[curSenToCon at: i] gt: @(0)]])] plus: // Cost direct to Concentrator
-              [Sum(m, i, RANGE(m, 1, numOptBuses), useBus[i]) mul: @(BUS_COST)]] // Bus Cost
+              Sum(m, i, RANGE(m, 1, numOptBuses), [busCost elt: [bus at: i]])] // Bus Cost
              ]];
     
     // Weight /////////////////////////
@@ -388,7 +397,7 @@ int main(int argc, const char * argv[])
                Sum(m, i, curSenRange, [@([curToBusWeight at: i]) mul: [curSenToBus at: i]])] plus: // Weight direct to bus
               Sum(m, i, curSenRange, [@([curToConWeight at: i]) mul: [curSenToCon at: i]])] plus: // Weight direct to Concentrator
                Sum(m, i, concRange, [concWeight elt: [conc at: i]])] plus: // Concentrator weight
-              [Sum(m, i, RANGE(m, 1, numOptBuses), useBus[i]) mul: @(BUS_WGHT)] ]
+              Sum(m, i, RANGE(m, 1, numOptBuses), [busWeight elt: [bus at: i]])]
              ]];
     
     //[m add: [weight leq: @(MAX_WEIGHT)]];
@@ -431,6 +440,7 @@ int main(int argc, const char * argv[])
                   Sum(m, i, concRange, [concToBus[i] eq: @(b)])] plus:
                   Sum(m, i, curSenRange, [curSenToBus[i] eq: @(b)])] eq: numBusConn[b]]];
         [m add: [[useBus[b] eq: @(1)] eq: [numBusConn[b] gt: @(0)]]];
+        [m add: [[useBus[b] eq: @(1)] eq: [bus[b] gt: NONE]]];
     }
     
     // Concentrators //////////////////////
@@ -466,7 +476,7 @@ int main(int argc, const char * argv[])
                                   Sum(m, i, curSenRange, [[curSenToBus[i] eq: @(b)] mul: curSensBandwith[i]])] plus:
                                  Sum(m, i, concRange, [[concToBus[i] eq: @(b)] mul: [concBand elt: conc[i]]])
                                  ]]];
-        [m add: [bandUse[b] leq: @(MAX_BAND)]];
+        [m add: [bandUse[b] leq: [busBandwidth elt: [bus at: b]]]];
     }
     
     // 350
@@ -731,16 +741,17 @@ int main(int argc, const char * argv[])
     [r run];
 
     
+    id<ORSolution> bestSolution = [r bestSolution];
 //    for(ORInt i = 0; i <=16; i++)
 //        NSLog(@"%i, %i", i, [bestSolution intValue: usePath[i]]);
-//    
-//    NSLog(@"POW USE: %i", [bestSolution intValue: powUse]);
-//    
-//    for(ORInt k = 1; k <= numOptConcentrators; k++)
-//        NSLog(@"concToBus %i: %i", k, [bestSolution intValue: concToBus[k]]);
-//    
-//    for(ORInt k = 1; k <= numOptBuses; k++)
-//        NSLog(@"useBus %i: %i", k, [bestSolution intValue: useBus[k]]);
+    
+    NSLog(@"POW USE: %i", [bestSolution intValue: powUse]);
+    
+    for(ORInt k = 1; k <= numOptConcentrators; k++)
+        NSLog(@"concToBus %i: %i", k, [bestSolution intValue: concToBus[k]]);
+    
+    for(ORInt k = 1; k <= numOptBuses; k++)
+        NSLog(@"useBus %i: %i", k, [bestSolution intValue: bus[k]]);
     
     return 0;
 }

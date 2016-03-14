@@ -4,32 +4,42 @@
     <generator_templates>
         <generator id="0" name="G0">
             <cost>850</cost>
-            <power>250</power>
+            <power>200</power>
             <weight>50</weight>
         </generator>
         <generator id="1" name="G1">
             <cost>950</cost>
-            <power>325</power>
+            <power>225</power>
             <weight>55</weight>
         </generator>
         <generator id="2" name="G2">
             <cost>1050</cost>
-            <power>350</power>
+            <power>250</power>
             <weight>65</weight>
         </generator>
         <generator id="3" name="G3">
             <cost>1200</cost>
-            <power>375</power>
+            <power>275</power>
             <weight>65</weight>
         </generator>
         <generator id="4" name="G4">
             <cost>1350</cost>
-            <power>400</power>
+            <power>300</power>
             <weight>75</weight>
         </generator>
         <generator id="5" name="G5">
-            <cost>1400</cost>
-            <power>450</power>
+            <cost>1450</cost>
+            <power>350</power>
+            <weight>150</weight>
+        </generator>
+        <generator id="6" name="G5">
+            <cost>1650</cost>
+            <power>400</power>
+            <weight>150</weight>
+        </generator>
+        <generator id="7" name="G5">
+            <cost>1850</cost>
+            <power>480</power>
             <weight>150</weight>
         </generator>
     </generator_templates>
@@ -42,27 +52,27 @@
             <conversion>0</conversion>
         </sensor>
         <sensor id="1" name="S_CONT0">
-            <cost>60</cost>
-            <power>45</power>
-            <weight>13</weight>
+            <cost>30</cost>
+            <power>35</power>
+            <weight>10</weight>
             <conversion>0</conversion>
         </sensor>
         <sensor id="2" name="S_CONT1">
-            <cost>64</cost>
+            <cost>40</cost>
             <power>20</power>
             <weight>11</weight>
             <conversion>0</conversion>
         </sensor>
         <sensor id="3" name="S_CONT2">
-            <cost>59</cost>
+            <cost>90</cost>
             <power>35</power>
             <weight>10</weight>
             <conversion>1</conversion>
         </sensor>
         <sensor id="4" name="S_CONT3">
-            <cost>70</cost>
-            <power>10</power>
-            <weight>13</weight>
+            <cost>110</cost>
+            <power>20</power>
+            <weight>17</weight>
             <conversion>1</conversion>
         </sensor>
         <sensor id="5" name="S_CONT4">
@@ -119,14 +129,20 @@
             <weight>0</weight>
             <conversion>0</conversion>
         </sensor>
-        <sensor id="1" name="S_VOLT0">
-            <cost>32</cost>
+        <sensor id="1" name="S_CUR0">
+            <cost>22</cost>
             <power>22</power>
             <weight>4</weight>
             <conversion>0</conversion>
         </sensor>
-        <sensor id="2" name="S_VOLT1">
-            <cost>36</cost>
+        <sensor id="2" name="S_CUR1">
+            <cost>28</cost>
+            <power>25</power>
+            <weight>3</weight>
+            <conversion>1</conversion>
+        </sensor>
+        <sensor id="3" name="S_CUR2">
+            <cost>38</cost>
             <power>25</power>
             <weight>3</weight>
             <conversion>1</conversion>
@@ -134,10 +150,30 @@
     </current_sensor_templates>
     
     <data_bus_templates>
-        <data_bus id="0" name="BUS0">
-            <cost>25</cost>
-            <max_bandwidth>250</max_bandwidth>
-            <weight>15</weight>
+        <data_bus id="0" name="NONE">
+            <cost>0</cost>
+            <max_bandwidth>0</max_bandwidth>
+            <weight>0</weight>
+        </data_bus>
+        <data_bus id="1" name="BUS0">
+            <cost>50</cost>
+            <max_bandwidth>50</max_bandwidth>
+            <weight>115</weight>
+        </data_bus>
+        <data_bus id="2" name="BUS1">
+            <cost>85</cost>
+            <max_bandwidth>90</max_bandwidth>
+            <weight>125</weight>
+        </data_bus>
+        <data_bus id="3" name="BUS2">
+            <cost>115</cost>
+            <max_bandwidth>120</max_bandwidth>
+            <weight>125</weight>
+        </data_bus>
+        <data_bus id="4" name="BUS3">
+            <cost>250</cost>
+            <max_bandwidth>150</max_bandwidth>
+            <weight>150</weight>
         </data_bus>
     </data_bus_templates>
     
@@ -153,19 +189,26 @@
             <cost>20</cost>
             <power>45</power>
             <weight>16</weight>
-            <bandwidth>55</bandwidth>
+            <bandwidth>95</bandwidth>
             <max_connections>3</max_connections>
         </concentrator>
         <concentrator id="2" name="CONC1">
             <cost>45</cost>
             <power>55</power>
             <weight>17</weight>
-            <bandwidth>60</bandwidth>
+            <bandwidth>80</bandwidth>
             <max_connections>4</max_connections>
         </concentrator>
         <concentrator id="3" name="CONC3">
             <cost>75</cost>
-            <power>55</power>
+            <power>95</power>
+            <weight>17</weight>
+            <bandwidth>70</bandwidth>
+            <max_connections>5</max_connections>
+        </concentrator>
+        <concentrator id="4" name="CONC4">
+            <cost>95</cost>
+            <power>105</power>
             <weight>17</weight>
             <bandwidth>60</bandwidth>
             <max_connections>5</max_connections>
