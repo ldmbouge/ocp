@@ -302,6 +302,10 @@
     id<ORExpr> left = [self linearizeExpr: [c left]];
     [_model addConstraint: [left leq: @([c cst])]];
 }
+-(void) visitGEqualc: (id<ORGEqualc>)c {
+    id<ORExpr> left = [self linearizeExpr: [c left]];
+    [_model addConstraint: [left geq: @([c cst])]];
+}
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
 {
     id<ORIntVar> x = (id<ORIntVar>)[self linearizeExpr: [c x]];
@@ -366,7 +370,7 @@
 {
     id<ORIntVar> x0 = (id<ORIntVar>)[self linearizeExpr: (id<ORIntVar>)[c left]];
     id<ORIntVar> x1 = (id<ORIntVar>)[self linearizeExpr: (id<ORIntVar>)[c right]];
-    [_model addConstraint: [x0 leq: x1 track: _model]];
+    [_model addConstraint: [[x0 mul: @([c coefLeft])] leq: [[x1 mul: @([c coefLeft])] plus: @([c cst])] track: _model]];
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
