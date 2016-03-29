@@ -381,7 +381,7 @@ int main(int argc, const char * argv[])
     id<ORIntVarArray> usePath7 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
     id<ORIntVarArray> usePath8 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
 
-    id<ORIntRange> delayRange = RANGE(m, 0, 60);
+    id<ORIntRange> delayRange = RANGE(m, 0, 600);
     id<ORIntVarArray> delayPath0 = [ORFactory intVarArray: m range: pathRange5 bounds: delayRange];
     id<ORIntVarArray> delayPath1 = [ORFactory intVarArray: m range: pathRange3 bounds: delayRange];
     id<ORIntVarArray> delayPath2 = [ORFactory intVarArray: m range: pathRange3 bounds: delayRange];
@@ -912,11 +912,11 @@ int main(int argc, const char * argv[])
     };
 
    id<ORModel> lm = [ORFactory linearizeModel: m];
-   id<ORRelaxation> relax = [ORFactory createLinearRelaxation:lm];
+   id<ORRelaxation> relax = nil;
 
    __block id<ORSolution> bestSolution = nil;
    id<ORRunnable> r0 = [ORFactory CPRunnable:m
-                            //  withRelaxation:relax
+//                              withRelaxation: relax = [ORFactory createLinearRelaxation:lm]
                                        solve:^(id<CPCommonProgram> p)
    {
 //      id<CPHeuristic> h = [p createIBS];
@@ -970,37 +970,23 @@ int main(int argc, const char * argv[])
       }];
    
    
-   id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
-   id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
-
+   //id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
+   //id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];   
    
-   
-   id<ORRunnable> r  = rp;
+   id<ORRunnable> r  = r0;
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [r run];
    bestSolution = [r bestSolution];
    ORLong cpu1 = [ORRuntimeMonitor wctime];
    NSLog(@"Time to solution: %lld",cpu1 - cpu0);
    
+   NSLog(@"POW USE: %i", [bestSolution intValue: powUse]);
    
-    // ORLinearLeq 1176
-//    id<ORModel> lm = [ORFactory linearizeModel: m];
-//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-//    [r run];
-//
-//    
-//    id<ORSolution> bestSolution = [r bestSolution];
-
-   //    for(ORInt i = 0; i <=16; i++)
-//        NSLog(@"%i, %i", i, [bestSolution intValue: usePath[i]]);
-    
-    NSLog(@"POW USE: %i", [bestSolution intValue: powUse]);
-    
-    for(ORInt k = 1; k <= numOptConcentrators; k++)
-        NSLog(@"concToBus %i: %i", k, [bestSolution intValue: concToBus[k]]);
-    
-    for(ORInt k = 1; k <= numOptBuses; k++)
-        NSLog(@"useBus %i: %i", k, [bestSolution intValue: bus[k]]);
-    
-    return 0;
+   for(ORInt k = 1; k <= numOptConcentrators; k++)
+      NSLog(@"concToBus %i: %i", k, [bestSolution intValue: concToBus[k]]);
+   
+   for(ORInt k = 1; k <= numOptBuses; k++)
+      NSLog(@"useBus %i: %i", k, [bestSolution intValue: bus[k]]);
+   
+   return 0;
 }

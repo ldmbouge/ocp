@@ -16,10 +16,11 @@
 
 @interface LPVariableI : ORObject
 {
+@public
+   int                   _idx;
 @protected
    LPSolverI*            _solver;
    int                   _nb;
-   int                   _idx;
    ORDouble               _low;
    ORDouble               _up;
    LPObjectiveI*         _obj;
@@ -52,6 +53,8 @@
 -(NSString*)description;
 -(ORBool) isInteger;
 @end
+static inline int getLPId(LPVariableI* p)  { return p->_idx;}
+
 
 @protocol LPVariableArray <ORVarArray>
 -(LPVariableI*) at: (ORInt) value;

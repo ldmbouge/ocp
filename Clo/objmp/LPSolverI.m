@@ -1044,13 +1044,12 @@
    }
    int sizeIdx = (uidx - lidx + 1);
    ORDouble* bucket = (ORDouble*) alloca(sizeIdx * sizeof(ORDouble));
+   bzero(bucket,sizeIdx * sizeof(ORDouble));
    LPVariableI** bucketVar = (LPVariableI**) alloca(sizeIdx * sizeof(LPVariableI*));
    bucket -= lidx;
    bucketVar -= lidx;
-   for(ORInt i = lidx; i <= uidx; i++)
-      bucket[i] = 0.0;
    for(ORInt i = 0; i < _size; i++) {
-      int idx = [_var[i] idx];
+      int idx = getLPId(_var[i]);
       bucket[idx] += _coef[i];
       bucketVar[idx] = _var[i];
    }
