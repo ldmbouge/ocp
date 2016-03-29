@@ -122,7 +122,7 @@
 //   }
 //   printf("\n");
    GRBoptimize(_model);
-   //[self printModelToFile: "/Users/ldm/Desktop/lookatgurobi.lp"];
+   //[self printModelToFile: "/Users/ldm/Desktop/linearRelax.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
@@ -220,6 +220,12 @@
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub
 {
 //   if (ub < [self upperBound: var])
+
+//   double oldLB = [self lowerBound:var];
+//   double oldUB = [self upperBound:var];
+//   if (ub < oldUB) {
+//      NSLog(@"About to tighten UB var(%d) from [%f ,** %f] to %f",[var idx],oldLB,oldUB,ub);
+//   }
    GRBsetdblattrelement(_model,"UB",[var idx],ub);
    GRBupdatemodel(_model);
 }

@@ -445,7 +445,7 @@ ORInt trailMagic(ORTrailI* trail)
 @end
 
 @implementation ORMemoryTrailI {
-   id __strong* __strong _tab;
+   id __strong*  _tab;
    ORInt _mxs;
    ORInt _csz;
 }

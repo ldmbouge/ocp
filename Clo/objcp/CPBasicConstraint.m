@@ -2395,9 +2395,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 //   NSUInteger nb = [_cv count];
 //   for(ORInt i = 0; i < nb; i++) {
 //      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] doubleMin]];
-//      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
-//   }
-   
+//         [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
+//   }   
    OROutcome outcome = [_relaxation solve];
    if (outcome == ORinfeasible)
       failNow();

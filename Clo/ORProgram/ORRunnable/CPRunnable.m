@@ -63,6 +63,36 @@
     return self;
 }
 
+-(id) initWithModel: (id<ORModel>)m
+     withRelaxation:(id<ORRelaxation>)relax
+             search: (void(^)(id<CPCommonProgram>))search
+{
+   if((self = [super initWithModel: m]) != nil) {
+      _program = [ORFactory createCPProgram: m  withRelaxation:relax];
+      _sig = nil;
+      _search = [search retain];
+   }
+   return self;
+}
+
+
+-(id) initWithModel: (id<ORModel>)m
+     withRelaxation:(id<ORRelaxation>)relax
+         numThreads: (ORInt) nth
+             search: (void(^)(id<CPCommonProgram>))search
+{
+   assert(0); // we are missing the relaxation!
+   if((self = [super initWithModel: m]) != nil) {
+      _program = (id)[ORFactory createCPParProgram: m
+                                                nb: nth
+                                        annotation: [ORFactory annotation]
+                                              with: [ORSemDFSController proto]];
+      _sig = nil;
+      _search = [search retain];
+   }
+   return self;
+}
+
 
 -(void) dealloc
 {

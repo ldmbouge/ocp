@@ -63,6 +63,7 @@ PORTABLE_BEGIN
 -(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
 -(void) close;
 -(OROutcome) solve;
+-(double)reducedCost:(id<ORVar>) x;
 @end
 
 PORTABLE_END

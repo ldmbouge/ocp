@@ -105,6 +105,12 @@
             cstr = [terms postLEQZ: model];
         }
             break;
+       case ORRGEq:
+       {
+          //[terms scaleBy:-1];
+          cstr = [terms postLEQZ:model];
+       }
+          break;
         default:
             assert(terms == nil);
             break;
@@ -174,6 +180,20 @@
 {
     _result = v;
 }
+-(void) visitLinearEq: (id<ORLinearEq>) c
+{
+   _result = c;
+}
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   _result = c;
+}
+-(void) visitLinearLeq: (id<ORLinearLeq>) c
+{
+   _result = c;
+}
+
+
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
     _result = [ORLPFlatten flattenExpression:[cstr expr] into: _into];

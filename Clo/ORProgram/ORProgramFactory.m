@@ -425,6 +425,10 @@
 {
    [_lprelaxation updateUpperBound: x with:f];
 }
+-(double)reducedCost:(id<ORVar>) x
+{
+   return [_lprelaxation reducedCost:x];
+}
 -(void) close
 {
    return [_lprelaxation close];

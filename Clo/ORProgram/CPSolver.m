@@ -698,14 +698,14 @@
 -(void)splitArray:(id<ORIntVarArray>)x
 {
    id<ORIntRange> R = x.range;
-   id<CPHeuristic> h = _hSet.top;
+   id<CPHeuristic> h = [_hSet empty] ? nil : _hSet.top;
    while (![self allBound:x]) {
       ORDouble ld = FDMAXINT;
       ORInt bi = R.low - 1;
       for(ORInt i=R.low;i <= R.up;i++) {
          CPIntVar* cxi = _gamma[getId(x[i])];
          if (bound(cxi)) continue;
-         ORDouble ds =[h varOrdering:cxi];
+         ORDouble ds = h ? [h varOrdering:cxi] : - [cxi domsize];
          ld = ld < ds ? ld : ds;
          if (ld == ds) bi = i;
       }

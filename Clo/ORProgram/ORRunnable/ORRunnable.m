@@ -107,6 +107,22 @@
     id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m numThreads: nth search: body];
     return r;
 }
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m withRelaxation:(id<ORRelaxation>)relax solve: (void(^)(id<CPCommonProgram>))body
+{
+   id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m withRelaxation:relax  search: body];
+   return r;
+}
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m
+              withRelaxation:(id<ORRelaxation>)relax
+                  numThreads: (ORInt)nth
+                       solve: (void(^)(id<CPCommonProgram>))body
+{
+   id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m withRelaxation:relax numThreads: nth search: body];
+   return r;
+}
+
+
+
 +(id<ORRunnable>) LPRunnable: (id<ORModel>)m
 {
     id<ORRunnable> r = [[LPRunnableI alloc] initWithModel: m];

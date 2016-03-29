@@ -17,7 +17,7 @@
 @protocol ORConstraint;
 @protocol ORExpr;
 
-@interface ORLPFlatten : ORNOopVisit<ORModelTransformation>
+@interface ORLPFlatten : ORVisitor<ORModelTransformation>
 -(id) initORLPFlatten: (id<ORAddToModel>) target;
 -(void) apply:(id<ORModel>) m  with:(id<ORAnnotation>)notes;
 -(id<ORAddToModel>) target;

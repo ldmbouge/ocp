@@ -707,42 +707,87 @@ int main(int argc, const char * argv[])
         NSLog(@"Wrote Solution File: %@", outPath);
     };
 
-    /*
-   id<CPProgram> p = [ORFactory createCPParProgram:m nb:nbt with:[ORSemDFSController proto]];
-    ORTimeval cpu0 = [ORRuntimeMonitor now];
-    id<CPHeuristic> h = [p createIBS];
-    [p solve: ^{
-        //[p limitTime: 30 * 1000 in: ^{
-       id<ORTau> t = p.modelMappings.tau;
-       id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
-       id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
-       [p forall:x.range suchThat:^bool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return -[c at:i];} do:^(ORInt i) {
-          [p label:x[i]];
-       }];
-       [p labelHeuristic: h];
-        NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
-        //}];
-        id<ORSolution> s = [p captureSolution];
-        writeOut(s);
-        for(ORInt k = 1; k <= numOptConcentrators; k++)
+   id<ORModel> lm = [ORFactory linearizeModel: m];
+   id<ORRelaxation> relax = [ORFactory createLinearRelaxation:lm];
+
+   __block id<ORSolution> bestSolution = nil;
+   id<ORRunnable> r0 = [ORFactory CPRunnable:m
+                            //  withRelaxation:relax
+                                       solve:^(id<CPCommonProgram> p)
+   {
+//      id<CPHeuristic> h = [p createIBS];
+         id<ORTau> t = p.modelMappings.tau;
+         id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
+         id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
+         [p forall:x.range suchThat:^bool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return -[c at:i];} do:^(ORInt i) {
+            [p label:x[i]];
+         }];
+
+      //[p labelHeuristic: h];
+//         id<ORIntVarArray> av = m.intVars;
+//      while (![p allBound:av]) {
+//         double brc = FDMAXINT;
+//         ORInt bi = av.range.low - 1;
+//         for(ORInt i=av.range.low;i <= av.range.up;i++) {
+//            if ([p bound:av[i]]) continue;
+//            double rc = [relax value:av[i]];
+//            double mp = 0.5 - (rc - floor(rc));
+//            double frac = fabs(mp);
+//            if (frac == 0.5) continue;
+//            //NSLog(@"av[%d] RC = %f",i,rc);
+//            //printf("(%d,%.2f) ",i,frac);
+//            if (frac < brc) {
+//               brc = frac;
+//               bi = i;
+//            }
+//         }
+//         //printf("\n");
+//         if (bi != av.range.low - 1) {
+//            while (![p bound:av[bi]]) {
+//               double lb = [p min:av[bi]],ub = [p max:av[bi]];
+//               double m  = (lb + ub)/2.0;ORInt im = floor(m);
+//               [p try:^{
+//                  [p lthen:av[bi] with:im+1];
+//               } alt:^{
+//                  [p gthen:av[bi] with:im];
+//               }];
+//            }
+//         } else break;
+//      }
+        [p labelArrayFF:m.intVars];
+         //[p splitArray:m.intVars];
+         NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
+         id<ORSolution> s = [p captureSolution];
+         writeOut(s);
+         for(ORInt k = 1; k <= numOptConcentrators; k++)
             NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
-        NSLog(@"path0: %i %i %i %i %i", [s intValue: usePath0[0]], [s intValue: usePath0[1]], [s intValue: usePath0[2]], [s intValue: usePath0[3]], [s intValue: usePath0[4]]);
-    }];
-    //    [p solve];
-    //id<ORSolutionPool> sols = [p solutionPool];
-    //id<ORSolution> bestSolution = [sols best];
-    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
-    NSLog(@"Time to solution: %ld",cpu1.tv_sec * 1000 + cpu1.tv_usec/1000);
-    */
+         NSLog(@"path0: %i %i %i %i %i", [s intValue: usePath0[0]], [s intValue: usePath0[1]],
+               [s intValue: usePath0[2]], [s intValue: usePath0[3]], [s intValue: usePath0[4]]);
+      }];
+   
+   
+   id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
+   id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
 
+   
+   
+   id<ORRunnable> r  = rp;
+   ORLong cpu0 = [ORRuntimeMonitor wctime];
+   [r run];
+   bestSolution = [r bestSolution];
+   ORLong cpu1 = [ORRuntimeMonitor wctime];
+   NSLog(@"Time to solution: %lld",cpu1 - cpu0);
+   
+   
     // ORLinearLeq 1176
-    id<ORModel> lm = [ORFactory linearizeModel: m];
-    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-    [r run];
+//    id<ORModel> lm = [ORFactory linearizeModel: m];
+//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+//    [r run];
+//
+//    
+//    id<ORSolution> bestSolution = [r bestSolution];
 
-    
-    id<ORSolution> bestSolution = [r bestSolution];
-//    for(ORInt i = 0; i <=16; i++)
+   //    for(ORInt i = 0; i <=16; i++)
 //        NSLog(@"%i, %i", i, [bestSolution intValue: usePath[i]]);
     
     NSLog(@"POW USE: %i", [bestSolution intValue: powUse]);
