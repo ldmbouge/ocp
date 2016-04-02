@@ -12,16 +12,16 @@
 #import "CPLearningEngineI.h"
 
 @implementation CPLearningEngineI
--(CPLearningEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
+-(CPLearningEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr
 {
    self = [super init];
    [super initEngine:trail memory:mt];
+   _tracer = tr;
    _capacity = 8;
    _globalStore = malloc(sizeof(CPBVConflict*)*_capacity);
    _size = 0;
-   _newConstraint = false;
-   _lastConflict = nil;
    _backjumpLevel = -1;
+   _retry = false;
    return self;
 }
 
@@ -71,9 +71,8 @@
 {
    
    CPBVConflict* newConflict = malloc(sizeof(CPBVConflict));
-   [c retain];
-   newConflict->constraint = c;
-   newConflict->level = _currLevel;
+   newConflict->constraint = [c retain];
+   newConflict->level = [_tracer level];
    
    if (_size >= _capacity) {
       _capacity <<= 1;
@@ -84,83 +83,58 @@
       free(_globalStore);
       _globalStore = newStore;
    }
-//   ORUInt l;
-//   for (int i=0; i<a->numAntecedents; i++) {
-//      if (((l=[a->antecedents[i]->var getLevelBitWasSet:a->antecedents[i]->index]) < _backjumpLevel) && (l > 0)) {
-//         _backjumpLevel = l;
-//      }
-//   }
    _globalStore[_size++] = newConflict;
+   _retry = true;
 }
-//-(void) addConstraint:(NSArray*) vars withConflicts:(ORUInt*)conflictBits withValues:(ORUInt**)bitValues
-//{
-////   NSLog(@"New conflict constraint found\n");
-//   _lastConflict = [[bvConflict alloc] initBVConflict:vars withConflicts:conflictBits withValues:bitValues atLevel:_currLevel];
-//   [_globalStore addObject:_lastConflict];
-//   _newConstraint = true;
-//   //don't add constraint to engine here, we're going to backjump anyhow
-//}
--(void) setLevel:(ORUInt)level
+-(void) addConstraint:(CPCoreConstraint*) c withJumpLevel:(ORUInt) level
 {
-   _currLevel = level;
-}
--(void) setBaseLevel:(ORUInt)level
-{
-   _baseLevel = level;
+   [self addConstraint:c];
+   _backjumpLevel = (level < _backjumpLevel) ? level:_backjumpLevel;
 }
 -(ORUInt) getLevel
 {
-   return _currLevel;
+   return [_tracer level];
 }
 
--(ORUInt) getBackjumpLevel{
-//   ORUInt lvl;
-//   ORUInt wordLength =[[_vars objectAtIndex:0] getWordLength];
-//   ORUInt* bitMask = [_lastConflict getConflictBits];
-//   NSArray* vars = [_lastConflict getVars];
-//   
-//   if(!bitMask) return _baseLevel;
-//      for (ORUInt i = 0; i<wordLength; i++) {
-//         for (ORUInt j = 0; j<32; j++) {
-//            for (int k = 0; k<[vars count]; k++) {
-//               if (bitMask[i] & 0x1) {
-//                  lvl = [(CPBitVarI*)vars[k] getLevelBitWasSet:(i*32)+j];
-//                  if ((lvl < backJumpLevel) && (lvl >= _baseLevel)) {
-//                     backJumpLevel = lvl;
-//                  }
-//                  //else backJumpLevel = _baseLevel; //Added 7/21/15
-//               }
-//            }
-//            bitMask[i] >>= 1;
-//         }
-//      }
-return _backjumpLevel;
-}
--(ORBool) newConstraint{
-   ORBool newOne = _newConstraint;
-   _newConstraint = false;
-   return newOne;
+-(ORUInt) getBackjumpLevel
+{
+   ORUInt tmp = _backjumpLevel;
+   _backjumpLevel = -1;
+   return tmp;
 }
 
-
-
-
-
+-(ORBool) retry
+{
+   ORBool tmp = _retry;
+   _retry = false;
+   return tmp;
+}
 
 -(ORStatus) enforceObjective
 {
    ORStatus s;
+   ORInt currLevel = [_tracer level];
    // Add missing constraints back to constraint store here
-   for (int n = 0; n<_size; n++) {
-      if (_globalStore[n]->level > _currLevel){
-         s=[self post:_globalStore[n]->constraint];
-         if(s==ORFailure)
-            return ORFailure;
-         _globalStore[n]->level = _currLevel;
+   s = tryfail(^ORStatus{
+      ORStatus status;
+      for (int n = 0; n<_size; n++) {
+         if (_globalStore[n]->level > currLevel){
+            status=[self post:_globalStore[n]->constraint];
+            if(status==ORFailure){
+               return ORFailure;
+            }
+            _globalStore[n]->level = currLevel;
+         }
       }
-   }
-   _backjumpLevel = -1;
+      status = propagateFDM(self);
+      return status;
+   }, ^ORStatus{
+      return ORFailure;
+   });
    
+   if (s==ORFailure)
+      return ORFailure;
+
    if (_objective == nil)
       return ORSuspend;
    return tryfail(^ORStatus{

@@ -142,7 +142,8 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
    setUpNetwork(&_net, _trail,*low,*up,len);
    _triggers = nil;
 //_dom = nil;
-   _dom = [[CPBitArrayDom alloc] initWithLength:len withTrail:_trail];
+//   _dom = [[CPBitArrayDom alloc] initWithLength:len withTrail:_trail];
+   _dom = [[CPBitArrayDom alloc] initWithLength:len withEngine:_engine withTrail:_trail];
    _levels = malloc(sizeof(TRUInt)*len);
    _implications = malloc(sizeof(TRId)*len);
    for (int i=0; i<len; i++) {
@@ -250,10 +251,21 @@ return self;
     return [_dom maxArray];
 }
 
+-(unsigned int*) smaxArray
+{
+   return [_dom smaxArray];
+}
+
 -(unsigned int*) minArray
 {
     return [_dom minArray];
 }
+
+-(unsigned int*) sminArray
+{
+   return [_dom sminArray];
+}
+
 -(unsigned int) getWordLength
 {
     return [_dom getWordLength];

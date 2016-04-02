@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPClosureEvent.h>
 #import "CPEngineI.h"
 #import "CPLearningEngineI.h"
-#import <CPUKernel/CPClosureEvent.h>
 #import "CPGroup.h"
 
 @implementation CPFactory
@@ -20,9 +20,9 @@
 {
    return [[CPEngineI alloc] initEngine: trail memory:mt];
 }
-+(id<CPEngine>) learningEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
++(id<CPEngine>) learningEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr
 {
-   return [[CPLearningEngineI alloc] initEngine: trail memory:mt];
+   return [[CPLearningEngineI alloc] initEngine: trail memory:mt tracer:tr];
 }
 +(id<CPGroup>)group:(id<CPEngine>)engine
 {

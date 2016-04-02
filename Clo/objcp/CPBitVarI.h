@@ -113,6 +113,8 @@ typedef struct  {
 -(CPBitArrayDom*) domain;
 -(unsigned int*) minArray;
 -(unsigned int*) maxArray;
+-(unsigned int*) sminArray;
+-(unsigned int*) smaxArray;
 -(unsigned int) getWordLength;
 -(ORBounds) bounds;
 -(ORInt) domsize;

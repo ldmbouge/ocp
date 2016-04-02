@@ -34,9 +34,8 @@
 #include "smtlib2abstractparser.h"
 #include "smtlib2abstractparser_private.h"
 #include "/usr/local/include/gmp.h"
-#import "OBJCPgateway.h"
+#import "objcpgateway.h"
 
-OBJCPGateway* objcpgw;
 
 typedef enum {l_false, l_undef, l_true}lbool;
 

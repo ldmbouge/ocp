@@ -25,13 +25,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include "smtlib2objcp.h"
 #include <stdlib.h>
 #include <string.h>
+#include "smtlib2objcp.h"
 #include "/usr/local/include/gmp.h"
 
-#include "OBJCPGateway.h"
-
+OBJCPGateway* objcpgw;
 
 static void smtlib2_objcp_parser_set_logic(smtlib2_parser_interface *p,
                                            const char *logic);
@@ -1310,12 +1309,12 @@ SMTLIB2_OBJCP_DECLHANDLER(bvule) //{ return NULL; /* TODO */ }
 }
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvsle) { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_sle:YCTX(ctx)
-//                            withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                             andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvsle) //{ return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_sle:YCTX(ctx)
+                            x:(objcp_expr)smtlib2_vector_at(args, 0)
+                             sle:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(bvugt)  { return NULL; /* TODO */ }
@@ -1375,20 +1374,20 @@ SMTLIB2_OBJCP_DECLHANDLER(bvadd)
 }
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvsub) { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_sub:YCTX(ctx)
-//                            withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                             andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvsub) //{ return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_sub:YCTX(ctx)
+                            withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+                             andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
-SMTLIB2_OBJCP_DECLHANDLER(bvmul) { return NULL; /* TODO */ }
-//{
-//    return [objcpgw objcp_mk_bv_mul:YCTX(ctx)
-//                            withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-//                             andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(bvmul) //{ return NULL; /* TODO */ }
+{
+    return [objcpgw objcp_mk_bv_mul:YCTX(ctx)
+                            withArg:(objcp_expr)smtlib2_vector_at(args, 0)
+                             andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(bvudiv) { return NULL; /* TODO */ }
@@ -1396,7 +1395,11 @@ SMTLIB2_OBJCP_DECLHANDLER(bvsdiv) { return NULL; /* TODO */ }
 SMTLIB2_OBJCP_DECLHANDLER(bvsmod) { return NULL; /* TODO */ }
 SMTLIB2_OBJCP_DECLHANDLER(bvurem) { return NULL; /* TODO */ }
 SMTLIB2_OBJCP_DECLHANDLER(bvsrem) { return NULL; /* TODO */ }
-SMTLIB2_OBJCP_DECLHANDLER(bvslt)  { return NULL; /* TODO */ }
+SMTLIB2_OBJCP_DECLHANDLER(bvslt)  {// return NULL; /* TODO */ }
+   return [objcpgw objcp_mk_bv_sle:YCTX(ctx)
+                                 x:(objcp_expr)smtlib2_vector_at(args, 0)
+                               sle:(objcp_expr)smtlib2_vector_at(args, 1)];
+}
 //SMTLIB2_OBJCP_DECLHANDLER(bvlshr) { return NULL; /* TODO */ }
 SMTLIB2_OBJCP_DECLHANDLER(bvashr) { return NULL; /* TODO */ }
 
@@ -1428,20 +1431,20 @@ SMTLIB2_OBJCP_DECLHANDLER(zero_extend) //{ return NULL; /* TODO */ }
 //   objcp_expr pad = [objcpgw objcp_mk_bv_constant:YCTX(ctx) extendBy:amount with:0];
             return [objcpgw objcp_mk_bv_zero_extend:YCTX(ctx)
                                        withArg:(objcp_expr)smtlib2_vector_at(args, 0)
-                                        andAmount:amount];
+                                        andAmount:(ORUInt)amount];
 }
 
 
-SMTLIB2_OBJCP_DECLHANDLER(sign_extend) { return NULL; /* TODO */ }
-//{
-//    size_t amount = (size_t)smtlib2_vector_at(idx, 0);
-//   return [objcpgw objcp_mk_bv_sign_extend:YCTX(ctx) withExpr:(objcp_expr)smtlib2_vector_at(args, 0) andNumBits:amount];
-//}
+SMTLIB2_OBJCP_DECLHANDLER(sign_extend) //{ return NULL; /* TODO */ }
+{
+    size_t amount = (size_t)smtlib2_vector_at(idx, 0);
+   return [objcpgw objcp_mk_bv_sign_extend:YCTX(ctx) withArg:(objcp_expr)smtlib2_vector_at(args, 0) andAmount:(ORUInt)amount];
+}
 
 
 SMTLIB2_OBJCP_DECLHANDLER(rotate_left) {
    size_t amount = (size_t)smtlib2_vector_at(idx, 0);
-   return [objcpgw objcp_mk_bv_rotl:YCTX(ctx) withArg:(objcp_expr)smtlib2_vector_at(args, 0) andAmount:amount];
+   return [objcpgw objcp_mk_bv_rotl:YCTX(ctx) withArg:(objcp_expr)smtlib2_vector_at(args, 0) andAmount:(ORUInt)amount];
 }
 SMTLIB2_OBJCP_DECLHANDLER(rotate_right)  { return NULL; /* TODO */ }
 

@@ -192,6 +192,9 @@
 -(void) visitBitShiftR_BV:(id<ORConstraint>)c;
 -(void) visitBitRotateL:(id<ORConstraint>)c;
 -(void) visitBitSum:(id<ORConstraint>)cstr;
+-(void) visitBitSubtract:(id<ORConstraint>)cstr;
+-(void) visitBitMultiply:(id<ORConstraint>)cstr;
+-(void) visitBitDivide:(id<ORConstraint>)cstr;
 -(void) visitBitIf:(id<ORConstraint>)cstr;
 -(void) visitBitCount:(id<ORConstraint>)cstr;
 -(void) visitBitZeroExtend:(id<ORConstraint>)c;
@@ -200,6 +203,7 @@
 -(void) visitBitLogicalEqual:(id<ORConstraint>)c;
 -(void) visitBitLT:(id<ORConstraint>)c;
 -(void) visitBitLE:(id<ORConstraint>)c;
+-(void) visitBitSLE:(id<ORConstraint>)c;
 -(void) visitBitITE:(id<ORConstraint>)c;
 -(void) visitBitLogicalAnd:(id<ORConstraint>)c;
 -(void) visitBitLogicalOr:(id<ORConstraint>)c;

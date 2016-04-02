@@ -452,7 +452,15 @@
 {
    _result = c;
 }
+-(void) visitBitNegative:(id<ORBitNegative>)c
+{
+   _result = c;
+}
 -(void) visitBitSum:(id<ORBitSum>)c
+{
+   _result = c;
+}
+-(void) visitBitSubtract:(id<ORBitSubtract>)c
 {
    _result = c;
 }
@@ -465,6 +473,10 @@
    _result = c;
 }
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
+{
+   _result = c;
+}
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c
 {
    _result = c;
 }
@@ -484,7 +496,13 @@
 {
    _result = c;
 }
+
 -(void) visitBitLE:(id<ORBitLE>)c
+{
+   _result = c;
+}
+
+-(void) visitBitSLE:(id<ORBitSLE>)c
 {
    _result = c;
 }

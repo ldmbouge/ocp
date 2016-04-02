@@ -29,27 +29,24 @@ typedef struct CPBVConflict{
    ORUInt                    level;
 } CPBVConflict;
 
-
 @interface CPLearningEngineI : CPEngineI
 {
    CPBVConflict**         _globalStore;
    ORUInt                        _size;
    ORUInt                    _capacity;
-   ORUInt                   _currLevel;
-   ORUInt                   _baseLevel;
+//   ORUInt                   _currLevel;
+//   ORUInt                   _baseLevel;
    ORUInt               _backjumpLevel;
-   CPBitAntecedents*     _lastConflict;
-   ORBool               _newConstraint;
+   ORBool                       _retry;
+   
+   SemTracer*                  _tracer;
 }
--(CPLearningEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
--(ORStatus) restoreLostConstraints:(ORUInt) level;
+-(CPLearningEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr;
+//-(ORStatus) restoreLostConstraints:(ORUInt) level;
 -(void) addConstraint:(CPCoreConstraint*)c;
-//-(void) addConstraint:(NSArray*) vars withConflicts:(ORUInt*)conflictBits withValues:(ORUInt**)bitValues;
--(void) setLevel:(ORUInt)level;
--(void) setBaseLevel:(ORUInt)level;
+-(void) addConstraint:(CPCoreConstraint *)c withJumpLevel:(ORUInt) level;
 -(ORUInt) getLevel;
 -(ORUInt) getBackjumpLevel;
--(ORBool) newConstraint;
-
+-(ORBool) retry;
 -(ORStatus) enforceObjective;
 @end

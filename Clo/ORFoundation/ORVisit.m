@@ -443,9 +443,25 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitRotateL: visit method not defined"]; 
 }
+-(void) visitBitNegative:(id<ORBitNegative>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitNegative: visit method not defined"];
+}
 -(void) visitBitSum:(id<ORBitSum>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitSum: visit method not defined"]; 
+}
+-(void) visitBitSubtract:(id<ORBitSubtract>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitSubtract: visit method not defined"];
+}
+-(void) visitBitMultiply:(id<ORBitMultiply>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitMultiply: visit method not defined"];
+}
+-(void) visitBitDivide:(id<ORBitDivide>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitDivide: visit method not defined"];
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {
@@ -458,6 +474,10 @@
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitZeroExtend: visit method not defined"];
+}
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitSignExtend: visit method not defined"];
 }
 -(void) visitBitExtract:(id<ORBitExtract>)c
 {
@@ -480,6 +500,11 @@
 -(void) visitBitLE:(id<ORBitLE>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitLE: visit method not defined"];
+}
+
+-(void) visitBitSLE:(id<ORBitSLE>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitSLE: visit method not defined"];
 }
 
 -(void) visitBitITE:(id<ORBitITE>)c
@@ -742,15 +767,19 @@
 -(void) visitBitShiftR:(id<ORBitShiftR>)c {}
 -(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c {}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c {}
+-(void) visitBitNegative:(id<ORBitNegative>)c {}
 -(void) visitBitSum:(id<ORBitSum>)c {}
+-(void) visitBitSubtract:(id<ORBitSubtract>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}
 -(void) visitBitCount:(id<ORBitCount>)c {}
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c{}
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c{}
 -(void) visitBitExtract:(id<ORBitExtract>)c{}
 -(void) visitBitConcat:(id<ORBitConcat>)c{}
 -(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c{}
 -(void) visitBitLT:(id<ORBitLT>)c{}
 -(void) visitBitLE:(id<ORBitLE>)c{}
+-(void) visitBitSLE:(id<ORBitSLE>)c{}
 -(void) visitBitITE:(id<ORBitITE>)c{}
 -(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c{}
 -(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c{}

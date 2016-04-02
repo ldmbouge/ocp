@@ -8,23 +8,23 @@
 #import <mach/mach.h>
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORAVLTree.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgram.h>
-#import <objcp/CPObjectQueue.h>
-#import <objcp/CPFactory.h>
+//#import <ORFoundation/ORFoundation.h>
+//#import <ORFoundation/ORAVLTree.h>
+//#import <ORModeling/ORModeling.h>
+//#import <ORProgram/ORProgram.h>
+//#import <objcp/CPObjectQueue.h>
+//#import <objcp/CPFactory.h>
 
-#import <objcp/CPConstraint.h>
-#import <objcp/CPBitMacros.h>
-#import <objcp/CPBitArray.h>
-#import <objcp/CPBitArrayDom.h>
-#import <objcp/CPBitConstraint.h>
-//#import "../Verification/OBJCPGateway.h"
-//#import "../smtlib2abstractparser_private.h"
-//#import "../smtlib2abstractparser.h"
-#import "smtlib2objcp.h"
-#import "objcpgateway.h"
+//#import <objcp/CPConstraint.h>
+//#import <objcp/CPBitMacros.h>
+//#import <objcp/CPBitArray.h>
+//#import <objcp/CPBitArrayDom.h>
+//#import <objcp/CPBitConstraint.h>
+//#include <Verification/objcpgateway.h>
+#import <Verification/objcpgateway.h>
+#include <Verification/smtlib2abstractparser_private.h>
+#include <Verification/smtlib2abstractparser.h>
+#import <Verification/smtlib2objcp.h>
 
 void report_memory(void) {
    struct task_basic_info info;

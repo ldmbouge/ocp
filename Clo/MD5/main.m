@@ -410,6 +410,7 @@ int main(int argc, const char* argv[])
 //   twoByteSHA1(@"fifteen.txt", BVABS);
 //   twoByteSHA1(@"fifteen.txt", BVIBS);
 
+   twoByteMD4(@"lorem-mssg.txt", BVFF);
    
 //   twoByteSHA1(@"lorem-mssg.txt", BVFF);
 //   twoByteSHA1(@"lorem-mssg.txt", BVABS);
@@ -417,7 +418,7 @@ int main(int argc, const char* argv[])
 
 
 //   twoByteSHA1(@"null-mssg.txt", BVLSB);
-   twoByteSHA1(@"lorem-mssg.txt", BVFF);
+//   twoByteSHA1(@"lorem-mssg.txt", BVFF);
 
 
 }

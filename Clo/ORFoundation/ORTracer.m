@@ -443,8 +443,7 @@ static __thread id checkPointCache = NULL;
 
 -(void) reset
 {
-   //removed following line 8/18/15 GAJ
-//   assert([_cmds size] == [_trStack size]);
+   assert([_cmds size] == [_trStack size]);
    while (![_trStack empty]) {
       [_trStack popNode];
       ORCommandList* clist = [_cmds popList];

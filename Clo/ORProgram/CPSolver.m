@@ -587,7 +587,7 @@
                               //NSLog(@"Setting bit %i to false of %@ reduced search space by %lli",i,x,domainDiff);
                         }
        
-                or: ^() { domainBefore = domainAfter = 0;
+                then: ^() { domainBefore = domainAfter = 0;
                    for(int j=0;j<[variables count];j++)
                       domainBefore += [variables[j] domsize];
                    [self labelBV:x at:i with:true];
@@ -616,7 +616,7 @@
 //      NSLog(@"%@ shows MSB as %d",bv,i);
       NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
       [_search try: ^() { [self labelBV:x at:i with:true];}
-                or: ^() { [self labelBV:x at:i with:false];}];
+                then: ^() { [self labelBV:x at:i with:false];}];
    }
 }
 
@@ -711,12 +711,12 @@
       if (rand > 0.5){
 //         NSLog(@"Labeling Bit at index %d with false first",i);
          [_search try: ^() { [self labelBV:x at:i with:false];}
-                   or: ^() { [self labelBV:x at:i with:true];}];
+                   then: ^() { [self labelBV:x at:i with:true];}];
       }
       else {
 //         NSLog(@"Labeling Bit at index %d with true first",i);
          [_search try: ^() { [self labelBV:x at:i with:true];}
-                   or: ^() { [self labelBV:x at:i with:false];}];
+                   then: ^() { [self labelBV:x at:i with:false];}];
    }
 }
 }
@@ -732,18 +732,18 @@
          //      NSLog(@"%@ shows MSB as %d",bv,i);
          NSAssert(i>=0,@"ERROR in [labelDownFromMSB] bitVar is not bound, but no free bits found when using msFreeBit.");
          [_search try: ^() { [self labelBV:x at:i with:false];}
-                   or: ^() { [self labelBV:x at:i with:true];}];
+                 then: ^() { [self labelBV:x at:i with:true];}];
          
          
          if (![bv bound]) {
             i = [bv lsFreeBit];
             [_search try: ^() { [self labelBV:x at:i with:false];}
-                      or: ^() { [self labelBV:x at:i with:true];}];
+                    then: ^() { [self labelBV:x at:i with:true];}];
          }
          if (![bv bound]) {
             i = [bv msFreeBit];
             [_search try: ^() { [self labelBV:x at:i with:false];}
-                      or: ^() { [self labelBV:x at:i with:true];}];
+                    then: ^() { [self labelBV:x at:i with:true];}];
          }
       }
 }
@@ -1047,16 +1047,16 @@
 
       if (bestIndex != - 1)  {
          [_search try: ^{
-            NSLog(@"Setting bit %i of %ld to 0 at level %i\n",bestIndex,x,[(CPLearningEngineI*)_engine getLevel]);
-            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+//            NSLog(@"Setting bit %i of %ld to 0 at level %i\n",bestIndex,(unsigned long)x,(unsigned int)[(CPLearningEngineI*)_engine getLevel]);
+//            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
 //            NSLog(@"%@\n",[_engine variables]);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
             
-         } or: ^{
-            NSLog(@"Setting bit %i of %ld to 1 at level %i\n",bestIndex,x,[(CPLearningEngineI*)_engine getLevel]);
+         } alt: ^{
+//            NSLog(@"Setting bit %i of %ld to 1 at level %i\n",bestIndex,(unsigned long)x,[(CPLearningEngineI*)_engine getLevel]);
 //            NSLog(@"%@",[_engine variables]);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
-            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
+//            [(CPBitVarI*)x bit:bestIndex setAtLevel:[(CPLearningEngineI*)_engine getLevel]];
          }];
       }
    } while (true);
@@ -1165,7 +1165,7 @@
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = [x lsFreeBit];
       ORInt up  = [x msFreeBit];
-      ORInt bestIndex = 0;
+      __block ORInt bestIndex = 0;
       for(ORInt v = low;v <= up;v++) {
          if ([x isFree:v]) {
             ORFloat vValue = [h valOrdering:v forVar:x];
@@ -1185,15 +1185,14 @@
       
       if (bestIndex != - 1)  {
          [_search try: ^{
-            NSLog(@"Choicepoint: setting %lx[%d] = false",x, bestIndex);
+//            NSLog(@"Choicepoint: setting %lx[%d] = false",(unsigned long)x, bestIndex);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:false];
-         } then: ^{
-            NSLog(@"Choicepoint: setting %lx[%d] = true",x, bestIndex);
+         } alt: ^{
+//            NSLog(@"Choicepoint: setting %lx[%d] = true",(unsigned long)x, bestIndex);
             [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)x at: bestIndex with:true];
          }];
       }
    } while (true);
-//   NSLog(@"Level %d\n",[_tracer level]);
 }
 
 
@@ -1732,24 +1731,25 @@
    [cFact release];
    return self;
 }
--(id<CPProgram>) initCPSolverBackjumpingDFS
-{
-   self = [super initCPCoreSolver];
-   _trail = [ORFactory trail];
-   _mt    = [ORFactory memoryTrail];
-   _engine = [CPFactory learningEngine: _trail memory:_mt];
-   _tracer =    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
-//   _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
+//-(id<CPProgram>) initCPSolverBackjumpingDFS
+//{
+//   self = [super initCPCoreSolver];
+//   _trail = [ORFactory trail];
+//   _mt    = [ORFactory memoryTrail];
+//   _tracer = [[SemTracer alloc] initSemTracer:_trail memory:_mt];
+////   _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
+//   _engine = [CPFactory learningEngine: _trail memory:_mt tracer:_tracer];
+//   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+////                                                                    rootControllerClass: [ORDFSController class]
+//                                                                    rootControllerClass: [ORSemDFSController class]
+////                                                                  nestedControllerClass: [ORDFSController class]];
+//                                                                  nestedControllerClass: [ORSemDFSController class]];
+//   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+//   [cFact release];
+//   return self;
+//}
 
-   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-//                                                                    rootControllerClass: [ORDFSController class]
-                                                                    rootControllerClass: [ORBackjumpingDFSController class]
-//                                                                  nestedControllerClass: [ORDFSController class]];
-                                                                  nestedControllerClass: [ORBackjumpingDFSController class]];
-   _search = [ORExplorerFactory explorer: _engine withTracer: _tracer ctrlFactory: cFact];
-   [cFact release];
-   return self;
-}-(void) dealloc
+-(void) dealloc
 {
    NSLog(@"CPSolver dealloc'd (%p)",self);
    [_trail release];
@@ -1833,9 +1833,10 @@
    //changed by gaj 08/07/15
    ORStatus status = [_engine enforce:^{ [[var domain] setBit:i to:val for:var];}];
 //   ORStatus status = [_engine enforce:^{ [var bind:i to:val];}];
-   if (status == ORFailure)
+   if (status == ORFailure){
       [_search fail];
-   [ORConcurrency pumpEvents];   
+   }
+   [ORConcurrency pumpEvents];
 }
 -(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
@@ -1901,6 +1902,21 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: ctrlClass];
+   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _imdl   = [[CPINCModel alloc] init:self];
+   [cFact release];
+   return self;
+}
+-(id<CPSemanticProgram>) initCPSolverBackjumpingDFS
+{
+   self = [super initCPCoreSolver];
+   _trail = [ORFactory trail];
+   _mt    = [ORFactory memoryTrail];
+   _tracer = [[SemTracer alloc] initSemTracer:_trail memory:_mt];
+   _engine = [CPFactory learningEngine: _trail memory:_mt tracer:_tracer];
+   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+                                                                    rootControllerClass: [ORBackjumpingDFSController class]
+                                                                  nestedControllerClass: [ORBackjumpingDFSController class]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
@@ -2052,9 +2068,9 @@
 {
    return [[[CPSolver alloc] initCPSolver] autorelease];
 }
-+(id<CPProgram>) solverBackjumpingDFS
++(id<CPSemanticProgramDFS>) solverBackjumpingDFS
 {
-   return [[CPSolver alloc] initCPSolverBackjumpingDFS];
+   return [[CPSemanticSolver alloc] initCPSolverBackjumpingDFS];
 }
 +(id<CPSemanticProgramDFS>) semanticSolverDFS
 {

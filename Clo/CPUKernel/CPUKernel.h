@@ -9,11 +9,11 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPClosureEvent.h>
-//#import <CPUKernel/CPLearningEngineI.h>
 
 /*
  
@@ -59,7 +59,7 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,OR
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 //<<<<<<< HEAD
-+(id<CPEngine>) learningEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
++(id<CPEngine>) learningEngine: (id<ORTrail>)trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr;
 +(id<CPGroup>)group:(id<CPEngine>)engine;
 +(id<CPGroup>)bergeGroup:(id<CPEngine>)engine;
 @end;
@@ -68,6 +68,5 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,OR
 //+(id<CPGroup>) bergeGroup:(id<CPEngine>)engine;
 //@end
 //
-//#import <CPUKernel/CPConstraintI.h>
-//
-//>>>>>>> master
+#import <CPUKernel/CPConstraintI.h>
+

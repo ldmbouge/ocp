@@ -631,6 +631,12 @@
 -(id<ORBitVar>) right;
 @end
 
+@interface ORBitNegative : ORConstraintI<ORBitNegative>
+-(ORBitNegative*)initORBitNegative: (id<ORBitVar>) x eq:(id<ORBitVar>)y;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) res;
+@end
+
 @interface ORBitSum : ORConstraintI<ORBitSum>
 -(ORBitSum*)initORBitSum: (id<ORBitVar>) x plus:(id<ORBitVar>) y in:(id<ORBitVar>)ci eq:(id<ORBitVar>)z out:(id<ORBitVar>)co;
 -(id<ORBitVar>) left;
@@ -638,6 +644,27 @@
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) in;
 -(id<ORBitVar>) out;
+@end
+
+@interface ORBitSubtract : ORConstraintI<ORBitSubtract>
+-(ORBitSubtract*)initORBitSubtract: (id<ORBitVar>) x minus:(id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+@end
+
+@interface ORBitMultiply : ORConstraintI<ORBitMultiply>
+-(ORBitMultiply*)initORBitMultiply: (id<ORBitVar>) x times:(id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+@end
+
+@interface ORBitDivide: ORConstraintI<ORBitDivide>
+-(ORBitDivide*)initORBitDivide: (id<ORBitVar>) x dividedby:(id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
 @end
 
 @interface ORBitIf : ORConstraintI<ORBitIf>
@@ -656,6 +683,12 @@
 
 @interface ORBitZeroExtend : ORConstraintI<ORBitZeroExtend>
 -(ORBitZeroExtend*)initORBitZeroExtend: (id<ORBitVar>) x extendTo: (id<ORBitVar>) y;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitSignExtend : ORConstraintI<ORBitSignExtend>
+-(ORBitSignExtend*)initORBitSignExtend: (id<ORBitVar>) x extendTo: (id<ORBitVar>) y;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 @end
@@ -691,6 +724,13 @@
 
 @interface ORBitLE : ORConstraintI<ORBitLE>
 -(ORBitLE*)initORBitLE:(id<ORBitVar>)x LE:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitSLE : ORConstraintI<ORBitSLE>
+-(ORBitSLE*)initORBitSLE:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;

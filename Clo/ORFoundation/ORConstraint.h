@@ -554,12 +554,36 @@ enum ORGroupType {
 -(ORInt) places;
 @end
 
+
+@protocol  ORBitNegative <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+@end
+
 @protocol  ORBitSum <ORConstraint>
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 -(id<ORBitVar>) in;
 -(id<ORBitVar>) out;
+@end
+
+@protocol  ORBitSubtract <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitMultiply <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitDivide <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
 @end
 
 @protocol  ORBitIf <ORConstraint>
@@ -575,6 +599,11 @@ enum ORGroupType {
 @end
 
 @protocol  ORBitZeroExtend <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitSignExtend <ORConstraint>
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 @end
@@ -605,6 +634,12 @@ enum ORGroupType {
 @end
 
 @protocol  ORBitLE <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitSLE <ORConstraint>
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;

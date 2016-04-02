@@ -49,7 +49,9 @@
 -(ORULong)               min;
 -(ORULong)               max;
 -(unsigned int*)        minArray;
+-(unsigned int*)        sminArray;
 -(unsigned int*)        maxArray;
+-(unsigned int*)        smaxArray;
 -(unsigned int*)        lowArray;
 -(unsigned int*)        upArray;
 -(ORBool)               getBit:(unsigned int) idx;

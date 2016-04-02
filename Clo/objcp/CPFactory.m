@@ -18,9 +18,10 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPData.h>
 
+#import <objcp/CPBitVarI.h>
+#import <objcp/CPRealVarI.h>
+
 #import "CPTableI.h"
-#import "CPBitVarI.h"
-#import "CPRealVarI.h"
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 

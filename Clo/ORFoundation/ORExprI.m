@@ -142,15 +142,19 @@
 -(void) visitBitShiftR:(id<ORBitShiftR>)c;
 -(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c;
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitNegative:(id<ORBitNegative>)cstr;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
+-(void) visitBitSubtract:(id<ORBitSubtract>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
 -(void) visitBitCount:(id<ORBitCount>)cstr;
 -(void) visitBitZeroExtend:(id<ORBitZeroExtend>)c;
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c;
 -(void) visitBitExtract:(id<ORBitExtract>)c;
 -(void) visitBitConcat:(id<ORBitConcat>)c;
 -(void) visitBitLogicalEqual:(id<ORBitLogicalEqual>)c;
 -(void) visitBitLT:(id<ORBitLT>)c;
 -(void) visitBitLE:(id<ORBitLE>)c;
+-(void) visitBitSLE:(id<ORBitSLE>)c;
 -(void) visitBitITE:(id<ORBitITE>)c;
 -(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c;
 -(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c;
@@ -375,6 +379,11 @@
    [[c left] visit:self];
    [[c right] visit:self];
 }
+-(void) visitBitNegative:(id<ORBitNegative>)c
+{
+   [[c res] visit:self];
+   [[c left] visit:self];
+}
 -(void) visitBitSum:(id<ORBitSum>)c
 {
    [[c res] visit:self];
@@ -382,6 +391,12 @@
    [[c right] visit:self];
    [[c in] visit:self];
    [[c out] visit:self];
+}
+-(void) visitBitSubtract:(id<ORBitSubtract>)c
+{
+   [[c res] visit:self];
+   [[c left] visit:self];
+   [[c right] visit:self];
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {
@@ -401,6 +416,13 @@
    [[c left] visit:self];
    [[c right] visit:self];
 }
+
+-(void) visitBitSignExtend:(id<ORBitSignExtend>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+
 -(void) visitBitConcat:(id<ORBitConcat>)c
 {
    [[c left] visit:self];
@@ -431,6 +453,14 @@
    [[c right] visit:self];
    [[c res] visit:self];
 }
+
+-(void) visitBitSLE:(id<ORBitSLE>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
 -(void) visitBitITE:(id<ORBitITE>)c
 {
    [[c left] visit:self];

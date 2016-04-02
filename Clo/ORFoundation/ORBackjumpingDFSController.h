@@ -9,22 +9,12 @@
  
  ***********************************************************************/
 
-#import "ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
 #import <ORUtilities/cont.h>
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORTracer.h>
 
-@interface ORBackjumpingDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing> {
-@protected
-   NSCont**             _tab;
-   ORInt                _sz;
-   ORInt                _mx;
-   id<ORCheckpoint>*    _cpTab;
-   SemTracer*           _tracer;
-   id<ORCheckpoint>     _atRoot;
-   id<ORSearchEngine>   _engine;
-   id<ORPost>           _model;
-}
+@interface ORBackjumpingDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing>
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
 -(void) dealloc;
 -(void) setup;

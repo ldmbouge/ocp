@@ -107,7 +107,7 @@
 @end
 
 @implementation CPBitAssignmentObj
--(id)initCPBitAssignmentObj:(id<CPBitVar>)x idx:(ORUInt) idx val:(ORBool) val{
+-(id)initCPBitAssignmentObj:(id<CPBitVar>)x idx:(ORUInt)idx val:(ORBool) val{
    self = [super init];
    _x = x;
    _idx = idx;

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORBackjumpingDFSController.h>
 #import <ORFoundation/ORDataI.h>
 #import <ORProgram/CPProgram.h>
 #import <ORModeling/ORModeling.h>
@@ -119,19 +120,19 @@
 // Pure DFS CPSolver
 @interface CPSolver : CPCoreSolver<CPProgram>
 -(id<CPProgram>) initCPSolver;
--(id<CPProgram>) initCPSolverBackjumpingDFS;
 -(id<CPProgram>) initCPSolverWithEngine: (id<CPEngine>) engine;
 @end
 
 // SemanticPath CPSolver
 @interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram,CPSemanticProgramDFS>
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
+-(id<CPSemanticProgramDFS>) initCPSolverBackjumpingDFS;
 -(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
 @end
 
 @interface CPSolverFactory : NSObject
 +(id<CPProgram>) solver;
-+(id<CPProgram>) solverBackjumpingDFS;
++(id<CPSemanticProgramDFS>) solverBackjumpingDFS;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
 @end

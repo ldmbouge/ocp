@@ -187,7 +187,21 @@
         min[i] = _min[i]._val;
     return min;     
 }
+-(unsigned int*) sminArray
+{
+   unsigned int* min = malloc(sizeof(unsigned int)*_wordLength);
+   for(int i=0;i<_wordLength;i++){
+      min[i] = _low[i]._val;
+   }
+   unsigned int signMask = 1 << ((_bitLength-1) % BITSPERWORD);
+   ORUInt signIsSet = (~(_up[_wordLength-1]._val ^ _low[_wordLength-1]._val)) & signMask;
+//   ORBool isPositive = _low[_wordLength-1]._val & signMask;
+   
+   if (!signIsSet)
+      min[_wordLength-1] |= signMask;
 
+   return min;
+}
 
 -(unsigned int*) lowArray
 {
@@ -224,6 +238,21 @@
     for(int i=0;i<_wordLength;i++)
         max[i] = _max[i]._val;
     return max;     
+}
+
+-(unsigned int*) smaxArray
+{
+   unsigned int* max = malloc(sizeof(unsigned int)*_wordLength);
+   for(int i=0;i<_wordLength;i++)
+      max[i] = _up[i]._val;
+   
+   unsigned int signMask = 1 << ((_bitLength-1) % BITSPERWORD);
+   ORUInt signIsSet = (~(_up[_wordLength-1]._val ^ _low[_wordLength-1]._val)) & signMask;
+
+   if (!signIsSet) {
+      max[_wordLength-1] &= ~signMask;
+   }
+   return max;
 }
 
 -(unsigned int) getLength
@@ -848,7 +877,8 @@
    for (int i=0; i<_wordLength; i++) {
       for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
-            assignTRUInt(&_levels[i], [(CPLearningEngineI*)_engine getLevel], _trail);
+            if([_engine isKindOfClass:[CPLearningEngineI class]])
+               assignTRUInt(&_levels[i], [(CPLearningEngineI*)_engine getLevel], _trail);
             [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
@@ -915,6 +945,7 @@
          for (int j=0; j<BITSPERWORD; j++) {
             if (isChanged[i] & 0x00000001) {
                [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
+               if([_engine isKindOfClass:[CPLearningEngineI class]])
                assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(CPLearningEngineI*)_engine getLevel], _trail);
             }
             isChanged[i] >>= 1;

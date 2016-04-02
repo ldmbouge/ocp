@@ -11,7 +11,20 @@
 
 #import "ORBackjumpingDFSController.h"
 
-@implementation ORBackjumpingDFSController
+@class CPLearningEngineI;
+
+@implementation ORBackjumpingDFSController{
+@protected
+   NSCont**                  _tab;
+   ORInt                      _sz;
+   ORInt                      _mx;
+   id<ORCheckpoint>*       _cpTab;
+   SemTracer*             _tracer;
+   id<ORCheckpoint>       _atRoot;
+   id<ORSearchEngine>     _engine;
+   id<ORPost>              _model;
+}
+
 - (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {
    self = [super initORDefaultController];
@@ -38,7 +51,6 @@
 -(void)setup
 {
    _atRoot = [_tracer captureCheckpoint];
-   NSLog(@"Root Node at level %d",[_tracer level]);
 }
 -(void) cleanup
 {
@@ -60,7 +72,6 @@
    }
    _tab[_sz]   = k;
    _cpTab[_sz] = [_tracer captureCheckpoint];
-   [_engine setLevel:[_tracer level]];
    _sz++;
    return [_cpTab[_sz-1] nodeId];
 }
@@ -70,19 +81,9 @@
 }
 -(void) fail
 {
-   ORUInt faillevel = [_tracer level];
-   ORUInt level = faillevel;
-//   ORUInt jumplevel = [_engine getBackjumpLevel];
-
-//   if (jumplevel >= level) {
-//      //push new constraints to constraint store
-//      
-//      //re-try last choice
-//      NSCont* k = _tab[_sz-1];
-//      [k callInvisible];
-//   }
-//   
-//   NSLog(@"Backjump level is %d",jumplevel);
+   ORUInt level;
+   ORUInt jumplevel = (ORUInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
+//   ORBool retry = [(CPLearningEngineI*)_engine retry];
 
    do {
       ORInt ofs = _sz-1;
@@ -94,33 +95,19 @@
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
+            
+         //Jump back if constraint was learned
          level = [_tracer level];
-         //NSLog(@"Restored Checkpoint to level %d",level);
-         
-//         if(jumplevel==-1){
-//            jumplevel=[(CPLearningEngineI*)_engine getBackjumpLevel];
-//            NSLog(@"Backjump level is %d",jumplevel);
-//         }
-//         if ((jumplevel !=0) && (jumplevel < level)) {
-//         if (jumplevel < level) {
-//            NSLog(@"Backjumping over level %d",level);
-//            if (k) {
-//               [k letgo];
-//            }
-//            continue;
-//         }
-//         if (level > jumplevel) {
-//            continue;
-//         }
-         [_engine setLevel:level];
-//         status = [_engine restoreLostConstraints:level];
-//         [_engine propagate];
-         //NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
-         if ((k) &&  status != ORFailure) {
+         if (jumplevel < level) {
+            [k letgo];
+            continue;
+         }
+
+         if (k &&  status != ORFailure) {
 //            NSLog(@"Restarting search at level %d",level);
-//            if ((level < (faillevel - 1)))
-//               [k callInvisible];
-//            else
+            if (jumplevel != -1)
+               [k callInvisible];
+            else
                [k call];
          } else {
             if (k==nil)

@@ -4315,6 +4315,171 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORBitNegative{
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+
+}
+-(ORBitNegative*)initORBitNegative: (id<ORBitVar>) x eq:(id<ORBitVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) res
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (-%@ = %@ )",[self class],self,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitNegative:self];
+}
+@end
+
+
+@implementation ORBitSubtract {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitSubtract*)initORBitSubtract: (id<ORBitVar>) x minus:(id<ORBitVar>)y eq:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ - %@ = %@ )",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitSubtract:self];
+}
+@end
+
+@implementation ORBitMultiply {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitMultiply*)initORBitMultiply: (id<ORBitVar>) x times:(id<ORBitVar>)y eq:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ * %@ = %@ )",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitMultiply:self];
+}
+@end
+
+
+@implementation ORBitDivide {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitDivide*)initORBitDivide: (id<ORBitVar>) x dividedby:(id<ORBitVar>)y eq:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ / %@ = %@ )",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitDivide:self];
+}
+@end
+
 @implementation ORBitIf {
    id<ORBitVar> _w;
    id<ORBitVar> _x;
@@ -4426,6 +4591,41 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(ORVisitor*)v
 {
    [v visitBitZeroExtend:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+@end
+
+@implementation ORBitSignExtend {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+}
+-(ORBitSignExtend*)initORBitSignExtend:(id<ORBitVar>)x extendTo:(id<ORBitVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (+/-...+/-%@ = %@)",[self class],self,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitSignExtend:self];
 }
 -(NSSet*)allVars
 {
@@ -4643,6 +4843,48 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
+
+@implementation ORBitSLE {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitSLE*)initORBitSLE: (id<ORBitVar>) x SLE:(id<ORBitVar>) y eval:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=(signed) %@ evaluates to %@)",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitSLE:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+@end
+
 
 @implementation ORBitITE {
    id<ORBitVar> _i;
