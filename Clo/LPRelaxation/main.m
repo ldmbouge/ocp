@@ -212,10 +212,10 @@ int main_hybrid_branching(int argc, const char * argv[])
          id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
          id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
          id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-         id<ORRealVar> y = [ORFactory realVar: model low: -1.0 up: 1.0];
+         id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
         
          for(ORInt i = 0; i < nbRows; i++)
-            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i]-1)]]];
+            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i])]]];
             //[note relax: [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]]];
             //[model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
           [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];

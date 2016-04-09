@@ -121,6 +121,7 @@
 //      printf("Variable %i has bounds in lp: [%f,%f] \n",i,lb,ub);
 //   }
 //   printf("\n");
+   GRBupdatemodel(_model);
    GRBoptimize(_model);
    //[self printModelToFile: "/Users/ldm/Desktop/linearRelax.lp"];
    int status;
@@ -195,26 +196,22 @@
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);
    GRBsetdblattrelement(_model,"UB",[var idx],low);
-   GRBupdatemodel(_model);
 }
 
 -(void) setUnboundUpperBound: (LPVariableI*) var
 {
    GRBsetdblattrelement(_model,"UB",[var idx],1e21);
-   GRBupdatemodel(_model);
 }
 
 -(void) setUnboundLowerBound: (LPVariableI*) var
 {
    GRBsetdblattrelement(_model,"LB",[var idx],-1e21);
-   GRBupdatemodel(_model);
 }
 
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb
 {
 //   if (lb > [self lowerBound: var])
    GRBsetdblattrelement(_model,"LB",[var idx],lb);
-   GRBupdatemodel(_model);
 }
 
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub
@@ -227,7 +224,6 @@
 //      NSLog(@"About to tighten UB var(%d) from [%f ,** %f] to %f",[var idx],oldLB,oldUB,ub);
 //   }
    GRBsetdblattrelement(_model,"UB",[var idx],ub);
-   GRBupdatemodel(_model);
 }
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val

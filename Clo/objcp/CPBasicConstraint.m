@@ -2364,6 +2364,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [_cv[i] whenChangeBoundsPropagate: self];
       
       [_cv[i] whenChangeBoundsDo: ^{
+         //printf("whenChangedBound %d %d\n",i,_solved._mgc);
          if (getFXInt(&_solved,_trail) == 0) {
             incrFXInt(&_solved,_trail);
             [_trail trailClosure: ^{
@@ -2378,6 +2379,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
                [_relaxation updateUpperBound: _mv[i] with: omax];
             }];
             incrFXInt(&_updated[i],_trail);
+          
          }
          ORDouble lb = [_cv[i] doubleMin];
          ORDouble ub = [_cv[i] doubleMax];
@@ -2390,13 +2392,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    }
    [self propagate];
 }
+
 -(void) propagate
 {
-//   NSUInteger nb = [_cv count];
-//   for(ORInt i = 0; i < nb; i++) {
-//      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] doubleMin]];
-//         [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
-//   }   
    OROutcome outcome = [_relaxation solve];
    if (outcome == ORinfeasible)
       failNow();
