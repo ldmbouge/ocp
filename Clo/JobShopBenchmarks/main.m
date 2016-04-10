@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]) {
         BOOL doMIP = NO;
         BOOL doHybrid = NO;
         BOOL doHybridLNS = NO;
-        BOOL doHybridLNS_CP = YES;
+        BOOL doHybridLNS_CP = NO;
         BOOL doBDS = NO;
         BOOL doCPSCP = NO;
         BOOL doLNS = NO;
