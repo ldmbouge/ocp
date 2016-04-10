@@ -74,8 +74,8 @@ int main(int argc, const char * argv[]) {
         
         NSString* path = [args lastObject];
         
-        //FILE* data = fopen([path cStringUsingEncoding: NSASCIIStringEncoding], "r");
-        FILE* data = fopen("orb10.jss","r");
+        FILE* data = fopen([path cStringUsingEncoding: NSASCIIStringEncoding], "r");
+        //FILE* data = fopen("orb10.jss","r");
         
         ORInt nbJobs, nbMachines;
         fscanf(data, "%d",&nbJobs);
