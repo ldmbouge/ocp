@@ -29,6 +29,7 @@
 -(ORSolution*) initORSolution: (id<ORModel>) model with: (id<ORASolver>) solver
 {
    self = [super init];
+    _model = model;
    NSArray* av = [model variables];
    NSArray* ac = [model constraints];
    ORULong sz = [av count];
@@ -127,6 +128,10 @@
 {
    return [_varShots count];
 }
+-(id<ORModel>) model
+{
+    return _model;
+}
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
    [aCoder encodeObject:_varShots];
@@ -151,6 +156,99 @@
       [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
    }];
    return buf;
+}
+@end
+
+@implementation ORParameterizedSolution
+
+-(ORParameterizedSolution*) initORParameterizedSolution:(id<ORParameterizedModel>)model with:(id<ORASolver>)solver
+{
+    self = [super initORSolution: model with: solver];
+    NSArray* ap = [model parameters];
+    NSMutableArray* paramShots = [[NSMutableArray alloc] initWithCapacity: [ap count]];
+    for(id obj in ap) {
+        id shot = [[solver concretize: obj] takeSnapshot: [obj getId]];
+        if (shot)
+            [paramShots addObject: shot];
+        [shot release];
+    }
+    _paramShots = paramShots;
+    return self;
+}
+
+-(void) dealloc
+{
+    [_paramShots release];
+    [super dealloc];
+}
+
+-(ORBool) isEqual: (id) object
+{
+    if ([object isKindOfClass: [self class]]) {
+        ORParameterizedSolution* other = object;
+        if (_objValue && other->_objValue) {
+            if ([_objValue isEqual:other->_objValue]) {
+                return [_varShots isEqual:other->_varShots] && [_paramShots isEqual: other->_paramShots];
+            }
+            else
+                return NO;
+        }
+        else
+            return NO;
+    }
+    else
+        return NO;
+}
+-(id) value: (id) var
+{
+    if([var conformsToProtocol: @protocol(ORParameter)]) {
+        NSUInteger idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            return [obj getId] == [var getId];
+        }];
+        if (idx < [_paramShots count])
+            return [_paramShots objectAtIndex:idx];
+        else return nil;
+    }
+    return [super value: var];
+}
+-(ORDouble) paramValue: (id<ORParameter>) param;
+{
+    NSUInteger idx = [_paramShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return [obj getId] == [param getId];
+    }];
+    id<ORQueryRealVar> snap = [_paramShots objectAtIndex:idx];
+    return [snap doubleValue];
+}
+-(NSUInteger) count
+{
+    return [_varShots count] + [_paramShots count];
+}
+- (void) encodeWithCoder: (NSCoder *)aCoder
+{
+    [super encodeWithCoder: aCoder];
+    [aCoder encodeObject:_paramShots];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+    self = [super initWithCoder: aDecoder];
+    _paramShots = [[aDecoder decodeObject] retain];
+    return self;
+}
+-(NSString*) description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    if (_objValue)
+        [buf appendFormat:@"SOL[%@](",_objValue];
+    else
+        [buf appendString:@"SOL("];
+    NSUInteger last = [_varShots count] - 1;
+    [_varShots enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
+    }];
+    [_paramShots enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
+    }];
+    return buf;
 }
 @end
 

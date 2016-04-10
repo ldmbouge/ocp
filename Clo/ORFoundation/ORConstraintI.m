@@ -11,7 +11,9 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORError.h>
+//#import <ORFoundation/ORParameter.h>
 #import "ORConstraintI.h"
+#import "ORParameterI.h"
 
 @implementation ORConstraintI
 -(ORConstraintI*) initORConstraintI
@@ -93,6 +95,14 @@
    [_content enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
       block(obj);
    }];
+}
+-(ORInt) size
+{
+    return (ORInt)[_content count];
+}
+-(id<ORConstraint>) at: (ORInt) idx
+{
+    return [_content objectAtIndex: idx];
 }
 -(NSSet*)allVars
 {
@@ -603,6 +613,29 @@
 }
 @end
 
+@implementation ORSoftNEqual {
+    id<ORVar> _slack;
+}
+-(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y slack: (id<ORVar>)slack {
+   self = [super initORNEqual: x neq: y];
+   if(self) _slack = slack;
+   return self;
+}
+-(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y plus: (ORInt) c slack: (id<ORVar>)slack {
+   self = [super initORNEqual: x neq: y plus: c];
+   if(self) _slack = slack;
+   return self;
+}
+-(id<ORVar>) slack
+{
+   return _slack;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitSoftNEqual:self];
+}
+@end
+
 @implementation ORLEqual {  // a * x ≤ b * y + c
    ORInt     _a,_b;
    id<ORIntVar> _x;
@@ -740,11 +773,11 @@
 @end
 
 @implementation ORMult { // x = y * z
-   id<ORIntVar> _x;
-   id<ORIntVar> _y;
-   id<ORIntVar> _z;
+   id<ORVar> _x;
+   id<ORVar> _y;
+   id<ORVar> _z;
 }
--(ORMult*)initORMult:(id<ORIntVar>)x eq:(id<ORIntVar>)y times:(id<ORIntVar>)z
+-(ORMult*)initORMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z
 {
    self = [super initORConstraintI];
    _x = x;
@@ -762,15 +795,15 @@
 {
    [v visitMult:self];
 }
--(id<ORIntVar>) res
+-(id<ORVar>) res
 {
    return _x;
 }
--(id<ORIntVar>) left
+-(id<ORVar>) left
 {
    return _y;
 }
--(id<ORIntVar>) right
+-(id<ORVar>) right
 {
    return _z;
 }
@@ -2130,6 +2163,46 @@
 }
 @end
 
+@implementation ORClause {
+   id<ORIntVarArray>  _ba;
+   id<ORIntVar>       _tv;
+}
+-(id)init:(id<ORIntVarArray>)ba eq:(id<ORIntVar>)tv
+{
+   self = [super initORConstraintI];
+   _ba = ba;
+   _tv = tv;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (clause(%@) == %@)",[self class],self,_ba,_tv];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitClause:self];
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_tv];
+   return ms;
+}
+-(id<ORIntVar>)targetValue
+{
+   return _tv;
+}
+@end
+
 @implementation ORSumBoolEqc {
    id<ORIntVarArray> _ba;
    ORInt             _c;
@@ -2600,9 +2673,6 @@
 }
 @end
 
-// ========================================================================================================
-
-
 @implementation ORAlldifferentI {
    id<ORExprArray> _x;
    NSSet*         _av;
@@ -2939,6 +3009,62 @@
 {
    NSSet* ms = [[VarCollector collect:_expr] autorelease];
    return ms;
+}
+@end
+
+@implementation ORSoftAlgebraicConstraintI {
+   id<ORVar> _slack;
+}
+-(ORSoftAlgebraicConstraintI*) initORSoftAlgebraicConstraintI: (id<ORRelation>) expr slack: (id<ORVar>)slack
+{
+   self = [super initORAlgebraicConstraintI: expr];
+   _slack = slack;
+   return self;
+}
+-(id<ORVar>) slack
+{
+   return _slack;
+}
+@end
+
+@implementation ORRealWeightedVarI {
+   id<ORVar> _x;
+   id<ORVar> _z;
+   id<ORParameter> _lambda;
+}
+-(ORRealWeightedVarI*) initRealWeightedVar: (id<ORVar>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _z = [ORFactory realVar: [(id<ORExpr>)x tracker]  low:FDMININT up:FDMAXINT];
+   _lambda = [[ORRealParamI alloc] initORRealParamI: [(id<ORExpr>)x tracker] initialValue: 0.0]; // TOTRY [ldm] try with param @ 1.
+   return self;
+}
+-(id<ORVar>) z
+{
+   return _z;
+}
+-(id<ORVar>)x
+{
+   return _x;
+}
+-(id<ORParameter>)weight
+{
+   return _lambda;
+}
+-(NSSet*) allVars
+{
+   return [[NSSet setWithObjects: _x, _z, nil] autorelease];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORFloatWeightedConstraintI : %p(%d) IS %@ = %@ * %@",self,[self getId],_z,_lambda,_x];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitRealWeightedVar:self];
 }
 @end
 
@@ -3464,6 +3590,24 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORSoftKnapsackI {
+   id<ORVar> _slack;
+}
+-(ORSoftKnapsackI*) initORSoftKnapsackI:(id<ORIntVarArray>)x weight:(id<ORIntArray>)w capacity:(id<ORIntVar>)c slack:(id<ORVar>)slack
+{
+   self = [super initORKnapsackI: x weight: w capacity: c];
+   if(self) {
+      _slack = slack;
+   }
+   return self;
+}
+
+-(id<ORVar>) slack
+{
+   return _slack;
+}
+@end
+
 @implementation ORAssignmentI {
    id<ORIntVarArray> _x;
    id<ORIntMatrix> _matrix;
@@ -3661,8 +3805,8 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 
 -(NSComparisonResult) compare: (ORObjectiveValueRealI*) other
 {
-   ORInt mykey = [self key];
-   ORInt okey = [other key];
+   ORFloat mykey = [self key];
+   ORFloat okey = [other key];
    if (mykey < okey)
       return -1;
    else if (mykey == okey)

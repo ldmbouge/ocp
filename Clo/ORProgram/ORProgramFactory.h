@@ -26,16 +26,16 @@ PORTABLE_BEGIN
  */
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model;
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
-+(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (id<ORSearchController>) ctrlProto;
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (id<ORSearchController>) ctrlProto;
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation;
 
 // With annotations
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model annotation: (id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model annotation:(id<ORAnnotation>) notes;
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass;
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto;
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k annotation:(id<ORAnnotation>) notes;
-+(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass;
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto;
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>) notes;
 
 // For extensioms
@@ -50,6 +50,7 @@ PORTABLE_BEGIN
 +(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model;
 
 +(id<ORSolution>) solution: (id<ORModel>) m solver: (id<ORASolver>) solver;
++(id<ORSolution>) parameterizedSolution: (id<ORParameterizedModel>) m solver: (id<ORASolver>) solver;
 +(id<ORSolutionPool>) createSolutionPool;
 @end
 
@@ -62,6 +63,7 @@ PORTABLE_BEGIN
 -(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
 -(void) close;
 -(OROutcome) solve;
+-(double)reducedCost:(id<ORVar>) x;
 @end
 
 PORTABLE_END

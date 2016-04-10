@@ -16,10 +16,11 @@
 
 @interface LPVariableI : ORObject
 {
+@public
+   int                   _idx;
 @protected
    LPSolverI*            _solver;
    int                   _nb;
-   int                   _idx;
    ORDouble               _low;
    ORDouble               _up;
    LPObjectiveI*         _obj;
@@ -52,12 +53,33 @@
 -(NSString*)description;
 -(ORBool) isInteger;
 @end
+static inline int getLPId(LPVariableI* p)  { return p->_idx;}
+
 
 @protocol LPVariableArray <ORVarArray>
 -(LPVariableI*) at: (ORInt) value;
 -(void) set: (LPVariableI*) x at: (ORInt) value;
 -(LPVariableI*) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (LPVariableI*) newValue atIndexedSubscript: (NSUInteger) idx;
+@end
+
+@interface LPParameterI : NSObject
+{
+@protected
+    LPSolverI*           _solver;
+    ORInt                 _cstrIdx;
+    ORInt                 _coefIdx;
+}
+-(LPParameterI*) initLPParameterI: (LPSolverI*) solver;
+-(ORInt) cstrIdx;
+-(void) setCstrIdx: (ORInt) idx;
+-(ORInt) coefIdx;
+-(void) setCoefIdx: (ORInt) idx;
+-(ORDouble) doubleValue;
+-(void) setDoubleValue: (ORDouble)val;
+
+-(NSString*)description;
+-(ORBool) isInteger;
 @end
 
 
@@ -161,6 +183,7 @@
 {
 @protected
    LPSolverI*            _solver;
+   LPVariableI*          _theVar;
    int                   _nb;
    int                   _maxSize;
    int                   _idx;
@@ -180,9 +203,9 @@
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORDouble) low up: (ORDouble) up;
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORDouble) low up: (ORDouble) up size: (ORInt) size obj: (ORDouble) obj cstr: (LPConstraintI**) idx coef: (ORDouble*) coef;
 -(void)      dealloc;
-
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
+-(LPVariableI*)theVar;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
@@ -242,6 +265,7 @@
 
 -(LPSolverI*) initLPSolverI;
 -(void) dealloc;
+-(void)enumerateColumnWith:(void(^)(LPColumnI*))block;
 
 +(LPSolverI*)      create;
 -(LPVariableI*)    createVariable;
@@ -300,6 +324,9 @@
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
 -(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
+
+-(ORDouble) paramValue: (LPParameterI*) param;
+-(void) setParam: (LPParameterI*) param value: (ORDouble)val;
 
 -(void) print;
 -(void) printModelToFile: (char*) fileName;

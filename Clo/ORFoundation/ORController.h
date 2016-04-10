@@ -22,26 +22,33 @@
 @end
 
 @interface ORHeist : NSObject {
-   NSCont*             _cont;
-   id<ORCheckpoint>   _theCP;
+   NSCont*                _cont;
+   id<ORCheckpoint>      _theCP;
+   id<ORObjectiveValue> _oValue;
 }
--(ORHeist*)initORHeist:(NSCont*)c from:(id<ORCheckpoint>)cp;
+-(ORHeist*)init:(NSCont*)c from:(id<ORCheckpoint>)cp oValue:(id<ORObjectiveValue>)ov;
 -(NSCont*)cont;
 -(id<ORCheckpoint>)theCP;
 -(ORInt)sizeEstimate;
+-(id<ORObjectiveValue>)oValue;
 @end
 
+@protocol ORClone
+-(id)clone;
+@end
 
-@protocol ORSearchController <NSObject,NSCopying>
+@protocol ORSearchController <NSObject,NSCopying,ORClone>
 -(void)                      setController: (id<ORSearchController>) controller;
 -(id<ORSearchController>)    controller;
 -(void)       setup;
 -(void)       cleanup;
-
+-(id<ORSearchController>)clone;
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf;
 -(ORInt)      addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       fail: (BOOL) pruned;
 -(void)       succeeds;
+-(void)       abort;
 -(void)       trust;
 
 -(void)       startTry;
@@ -57,7 +64,8 @@
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
--(ORBool)       isFinitelyFailed;
+-(ORBool)     isFinitelyFailed;
+-(ORBool)     isAborted;
 -(id)         copy;
 @end
 
@@ -74,6 +82,7 @@
 -(void)       fail;
 -(void)       fail: (ORBool) pruned;
 -(void)       succeeds;
+-(void)       abort;
 -(void)       trust;
 
 -(void)       startTry;
@@ -89,7 +98,8 @@
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
--(ORBool)       isFinitelyFailed;
+-(ORBool)     isFinitelyFailed;
+-(ORBool)     isAborted;
 @end
 
 @interface ORNestedController : ORDefaultController
@@ -97,11 +107,14 @@
 -(void) setParent:(id<ORSearchController>) controller;
 -(void) fail;
 -(void) succeeds;
+-(void) abort;
 -(void) finitelyFailed;
 -(ORBool) isFinitelyFailed;
+-(ORBool) isAborted;
 @end
 
 @interface ORDFSController : ORDefaultController <NSCopying,ORSearchController>
++(id<ORSearchController>)proto;
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
 -(void) dealloc;
 -(void) setup;

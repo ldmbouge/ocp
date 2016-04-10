@@ -19,11 +19,12 @@
  *  @updated 2015-02-11
  */
 
-#import <ORScheduler/ORActivity.h>
-#import <ORScheduler/ORSchedConstraint.h>
-#import <ORScheduler/ORSchedFactory.h>
 #import <ORProgram/ORProgram.h>
-#import <ORScheduler/ORTask.h>
+#import <ORScheduler/ORScheduler.h>
+
+@protocol ORSchedulingModel <ORModel>
+-(id<ORTaskVarArray>)taskVars;
+@end
 
 /*!
  * @brief The CP program for the scheduling modul.
@@ -119,6 +120,8 @@
  * @return The maximal duration.
  */
 -(ORInt) maxDuration: (id<ORTaskVar>) task;
+-(ORBool) isResourceAssigned: (id<ORResourceTask>) task;
+
 -(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart;
 -(void) updateEnd: (id<ORTaskVar>) task with: (ORInt) newEnd;
 -(void) updateMinDuration: (id<ORTaskVar>) task with: (ORInt) newMinDuration;
@@ -180,17 +183,6 @@
 -(NSString*) description: (id<ORObject>) o;
 @end
 
-@protocol CPSchedulerSolution
--(ORInt) est: (id<ORTaskVar>) task;
--(ORInt) ect: (id<ORTaskVar>) task;
--(ORInt) lst: (id<ORTaskVar>) task;
--(ORInt) lct: (id<ORTaskVar>) task;
--(ORInt) isPresent: (id<ORTaskVar>) task;
--(ORInt) isAbsent: (id<ORTaskVar>) task;
--(ORBool) boundActivity: (id<ORTaskVar>) task;
--(ORInt) minDuration: (id<ORTaskVar>) task;
--(ORInt) maxDuration: (id<ORTaskVar>) task;
-@end
 
 
 

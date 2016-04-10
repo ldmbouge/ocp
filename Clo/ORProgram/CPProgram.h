@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORParameter.h>
 #import <ORProgram/CPHeuristic.h>
 
 @protocol ORModel;
@@ -59,6 +60,7 @@ PORTABLE_BEGIN
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
+-(void)          splitArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Double) orderedBy;
 -(void)        labelArrayFF: (id<ORIntVarArray>) x;
@@ -72,6 +74,8 @@ PORTABLE_BEGIN
 -(ORInt)        selectValue: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2;
 
 -(void)               solve: (ORClosure) body;
+-(void)             solveOn: (void(^)(id<CPCommonProgram>))body;
+-(void)             solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 -(void)            solveAll: (ORClosure) body;
 -(void)               close;
 
@@ -110,8 +114,10 @@ PORTABLE_BEGIN
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
+-(void)           onStartup: (ORClosure) onStartup;
 -(void)          onSolution: (ORClosure) onSolution;
 -(void)              onExit: (ORClosure) onExit;
+-(void) clearOnStartup;
 -(void) clearOnSolution;
 -(void) clearOnExit;
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
@@ -131,6 +137,8 @@ PORTABLE_BEGIN
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) defaultSearch;
 -(void) search:(void*(^)())stask;
+-(void) searchAll:(void*(^)())stask;
+-(void) doOnStartup;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
@@ -150,6 +158,8 @@ PORTABLE_BEGIN
 -(ORDouble) doubleMin: (id<ORRealVar>)x;
 -(ORDouble) doubleMax: (id<ORRealVar>)x;
 -(ORDouble) domwidth: (id<ORRealVar>)x;
+-(ORDouble) paramValue: (id<ORRealParam>)p;
+-(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;
 
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;

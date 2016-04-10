@@ -10,7 +10,13 @@
  ***********************************************************************/
 
 
-#import <ORProgram/ORProgram.h>
+#import <ORProgram/ORCPParSolver.h>
+#import <ORProgram/CPSolver.h>
+#import <ORProgram/CPParallel.h>
+#import <ORProgram/CPBaseHeuristic.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORSolution.h>
+#import <ORProgram/ORSTask.h>
 #import <objcp/CPObjectQueue.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
@@ -29,7 +35,7 @@
    PCObjectQueue*       _queue;
    NSCondition*    _terminated;
    ORInt               _nbDone;
-   Class               _defCon;
+   id<ORSearchController> _defCon;
    BOOL         _doneSearching;
    id<ORModel>        _source;
    NSCondition*      _allClosed;
@@ -38,7 +44,7 @@
    BOOL                _boundOk;
    ORLong                _sowct;
 }
--(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
+-(id<CPProgram>) initParSolver:(ORInt)nbt withController:(id<ORSearchController>)ctrlProto
 {
    self = [super init];
    _source = NULL;
@@ -48,15 +54,16 @@
    _queue = [[PCObjectQueue alloc] initPCQueue:128 nbWorkers:_nbWorkers];
    _terminated = [[NSCondition alloc] init];
    _allClosed  = [[NSCondition alloc] init];
-   _defCon     = ctrlClass;
+   _defCon     = ctrlProto;
    _nbDone     = 0;
    _nbClosed   = 0;
    _boundOk    = NO;
    _primal     = NULL;
    for(ORInt i=0;i<_nbWorkers;i++)
-      _workers[i] = [CPSolverFactory semanticSolver:ctrlClass];
+      _workers[i] = [CPSolverFactory semanticSolver:[ctrlProto copy]];
    _globalPool = [ORFactory createSolutionPool];
    _onSol = nil;
+   _onStartup = nil;
    _doneSearching = NO;
    _sowct = [ORRuntimeMonitor wctime];
    return self;
@@ -71,6 +78,7 @@
    [_allClosed release];
    [_globalPool release];
    [_onSol release];
+   [_onStartup release];
    [super dealloc];
 }
 -(id<ORTracker>)tracker
@@ -273,6 +281,10 @@
 }
 // ********
 
+-(void) splitArray: (id<ORIntVarArray>) x
+{
+   [[self worker] splitArray:x];
+}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    [[self worker] labelArray: x];
@@ -438,6 +450,10 @@
 {
    return [[self worker] constraints:x];
 }
+-(void)onStartup:(ORClosure)onStartup
+{
+   _onStartup = [onStartup copy];
+}
 -(void)onSolution:(ORClosure)onSolution
 {
    _onSol = [onSolution copy];
@@ -450,6 +466,12 @@
 -(void) doOnSolution
 {
    [[self worker] doOnSolution];
+}
+-(void) doOnStartup
+{
+   if (_onStartup)
+      _onStartup();
+   [[self worker] doOnStartup];
 }
 -(void) doOnExit
 {
@@ -464,10 +486,23 @@
 -(void) search:(void*(^)())stask
 {
    //TODO: This is not correct yet.
+   [self solve:^{
+      id<ORSTask> theTask = (id<ORSTask>)stask();
+      [theTask execute];
+   }];
+}
+-(void) searchAll:(void*(^)())stask
+{
    [self solveAll:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();
       [theTask execute];
    }];
+}
+
+-(void) clearOnStartup
+{
+   for(ORInt k = 0; k < _nbWorkers; k++)
+      [_workers[k] clearOnStartup];
 }
 -(void) clearOnSolution
 {
@@ -493,14 +528,17 @@
    id<ORPost> pItf = [[CPINCModel alloc] init:_workers[[NSThread threadID]]];
    ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine] model:pItf];
    [pItf release];
-   if (status == ORFailure)
+   if (status == ORFailure) {
       [[cp explorer] fail];
+   }
     [cp restartHeuristics];
 }
 -(ORLong)setupAndGo:(id<ORProblem>)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
+   if (_onSol)
+      [me onSolution: _onSol];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested
@@ -509,6 +547,7 @@
                                                                     stopIndicator:&_doneSearching];
    [nested release];
    id<ORSearchObjectiveFunction> objective = [me objective];
+   //NSLog(@"SetupAndGo(%d): obj* = %@",[NSThread threadID],[objective value]);
    if (objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
@@ -547,7 +586,7 @@
       }
    }
    ORLong t1 = [ORRuntimeMonitor cputime];
-   NSLog(@"Thread %d back from sub: %lld  AT [%lld]",[NSThread threadID],t1-t0,([ORRuntimeMonitor wctime]-_sowct)/1000);
+   //NSLog(@"Thread %d back from sub: %lld  AT [%lld]",[NSThread threadID],t1-t0,([ORRuntimeMonitor wctime]-_sowct)/1000);
    return t1 - t0;
 }
 
@@ -559,6 +598,7 @@
    [NSThread setThreadPriority:1.0];
    [NSThread setThreadID:myID];
    _doneSearching = NO;
+   [self doOnStartup];
    [[_workers[myID] explorer] search: ^() {
       [_workers[myID] close];
       // The probing can already tigthen the bound of the objective.
@@ -597,13 +637,18 @@
       }
       id<ORProblem> cpRoot = nil;
       //ORLong took = 0;
+      ORTimeval before = [ORRuntimeMonitor now];
+      ORLong sleeping = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
+            ORTimeval sleepy = [ORRuntimeMonitor elapsedSince:before];
+            sleeping += sleepy.tv_sec* 1000 + sleepy.tv_usec / 1000;
             [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
-//            [_queue pretendFull:took < 500];
+            before = [ORRuntimeMonitor now];
          }
          [cpRoot release];
       }
+      NSLog(@"Worker %d spent %lld sleeping",[NSThread threadID],sleeping);
       NSLog(@"IN Queue after leaving: %d (%s)",[_queue size],(_doneSearching ? "YES" : "NO"));
    }];
    // Final tear down. The worker is done with the model.
@@ -620,17 +665,11 @@
    [_terminated unlock];
 }
 
--(void) solveOn: (void(^)(id<CPCommonProgram>))body
-{
-   assert(NO);// not yet implemented
-}
-
 -(void) solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
 {
     // Not implemented
     assert(NO);
 }
-
 -(void) solveAll:(ORClosure)search
 {
    for(ORInt i=0;i<_nbWorkers;i++) {
@@ -656,6 +695,12 @@
 {
    assert(FALSE);
    return NULL;
+}
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body
+{
+   //LDM: needs testing.
+   ORClosure search = ^() { body(self); };
+   [self solve: search];
 }
 
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars
@@ -775,6 +820,14 @@
 -(id<ORSolution>) captureSolution
 {
    return (id<ORSolution>) [[self worker] captureSolution];
+}
+-(ORDouble) paramValue: (id<ORRealParam>)p
+{
+    return [[self worker] paramValue: _gamma[p.getId]];
+}
+-(void) param: (id<ORRealParam>)p setValue: (ORDouble)val
+{
+    [[self worker] param: _gamma[p.getId] setValue: val];
 }
 -(id<ORObject>) concretize: (id<ORObject>) o
 {

@@ -73,7 +73,7 @@ int st = _setjmp(buf); \
 if (st==0) { \
 ptr = &buf;
 
-#define ONFAIL(rv)  return (rv); \
+#define ONFAIL(rv)  ptr = old;return (rv); \
 } else { \
 ptr = old;
 

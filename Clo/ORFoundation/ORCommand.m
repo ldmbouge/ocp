@@ -79,6 +79,7 @@ static __thread ComListPool* pool = NULL;
       rv->_ndId = node;
       rv->_fh   = fh;
       rv->_th   = th;
+      rv->_frozen = NO;
    }
    return rv;
 }
@@ -117,6 +118,7 @@ static __thread ComListPool* pool = NULL;
    _fh   = fh;
    _th   = th;
    _cnt  = 1;
+   _frozen = NO;
    return self;
 }
 -(void)dealloc
@@ -152,11 +154,13 @@ static __thread ComListPool* pool = NULL;
 }
 -(void)setMemoryTo:(ORInt)ml
 {
+   assert(!_frozen);
    _th = ml;
 }
 
 -(void)insert:(id<ORConstraint>)c
 {
+   assert(!_frozen);
    struct CNode* new = malloc(sizeof(struct CNode));
    new->_c = [c retain];
    new->_next = _head;
@@ -174,6 +178,7 @@ static __thread ComListPool* pool = NULL;
 }
 -(id<ORConstraint>)removeFirst
 {
+   assert(!_frozen);
    struct CNode* leave = _head;
    _head = _head->_next;
    id<ORConstraint> rv = leave->_c;
@@ -183,7 +188,7 @@ static __thread ComListPool* pool = NULL;
 -(NSString*)description
 {
    NSMutableString* str = [NSMutableString stringWithCapacity:512];
-   [str appendFormat:@" [%d | %d - %d]:{",_ndId,_fh,_th];
+   [str appendFormat:@"%p(%c) [%2d | %2d - %2d]:{",self,_frozen? 'F' : 'T',_ndId,_fh,_th];
    struct CNode* cur = _head;
    while (cur) {
       [str appendString:[cur->_c description]];
@@ -222,7 +227,7 @@ static __thread ComListPool* pool = NULL;
       ok = clo(cur->_c);
       cur = cur->_next;
    }
-   return YES;
+   return ok;
 }
 -(ORBool)empty
 {

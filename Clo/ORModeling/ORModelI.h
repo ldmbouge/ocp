@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
+#import <ORFoundation/ORParameter.h>
 
 @interface ORModelMappings : NSObject<ORModelMappings>
 -(ORModelMappings*) initORModelMappings;
@@ -65,6 +66,7 @@
 -(void) setSource:(id<ORModel>)src;
 -(id<ORModel>)source;
 
+-(id<ORModel>) relaxConstraints: (NSArray*) cstrs;
 -(id<ORModel>) flatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) lsflatten:(id<ORAnnotation>)notes;
 -(id<ORModel>) lpflatten:(id<ORAnnotation>)notes;
@@ -100,6 +102,19 @@
 -(void)setCurrent:(id<ORConstraint>)cstr;
 @end
 
+@interface ORParameterizedModelI : ORModelI<ORParameterizedModel>
+-(ORParameterizedModelI*) initORParamModelI;
+-(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
+-(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs;
+-(NSArray*) softConstraints;
+-(NSArray*) hardConstraints;
+-(NSArray*) parameters;
+-(id<ORVarArray>) slacks;
+-(void) addParameter: (id<ORParameter>)p;
+-(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
+-(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x;
+@end
+
 @interface ORBatchGroup : NSObject<ORAddToModel>
 -(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
@@ -122,7 +137,7 @@
 -(id)init;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
--(void)enumerateWith:(void(^)(id<ORConstraint>))block;
+//-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
 
 @interface OROrderedConstraintSetI : NSObject<OROrderedConstraintSet> {
@@ -132,5 +147,5 @@
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
 -(id<ORConstraint>) at:(ORInt)index;
--(void)enumerateWith:(void(^)(id<ORConstraint>))block;
+//-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end

@@ -244,6 +244,11 @@
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
    return [tracker trackMutable:o];
 }
++(id<ORIdArray>) idArray: (id<ORTracker>)tracker NSArray: (NSArray*)arr {
+    id<ORIntRange> range = RANGE(tracker, 0, (ORInt)arr.count-1);
+    id<ORIdArray> o = [ORFactory idArray: tracker range: range with: ^id(ORInt i) { return arr[i]; }];
+    return o;
+}
 struct EltValue {
    ORDouble  _val;
    id       _obj;
@@ -788,7 +793,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right track:(id<ORTracker>)t
 {
-   id<ORRelation> o = [[ORExprLEqualI alloc] initORExprLEqualI: right and: left];
+   id<ORRelation> o = [[ORExprGEqualI alloc] initORExprGEqualI: left and: right];
    [self validate:o onError:"No CP tracker in >= Expression" track:t];
    return o;
 }
@@ -977,6 +982,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) clause:(id<ORTracker>)model over:(id<ORIntVarArray>) x equal:(id<ORIntVar>)tv
+{
+   id<ORConstraint> o = [[ORClause alloc] init: x eq: tv];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x geqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumBoolGEqc alloc] initSumBool: x geqi: c];
@@ -1080,6 +1091,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORSoftConstraint>) softNotEqual:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(id<ORIntVar>)y plus:(int)c slack: (id<ORVar>)slack
+{
+    id<ORSoftConstraint> o = [[ORSoftNEqual alloc] initORSoftNEqual:x neq:y plus:c slack: slack];
+    [model trackObject:o];
+    return o;
+}
 +(id<ORConstraint>) notEqualc:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(ORInt)c
 {
    id<ORConstraint> o = [[ORNEqualc alloc] initORNEqualc:x neqi:c];
@@ -1113,6 +1130,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORConstraint> o = [[ORLEqualc alloc] initORLEqualc:x leqi:c];
    [model trackObject:o];
    return o;
+}
++(id<ORConstraint>) gEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y // x >= y
+{   
+   id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:y leq:x plus:0];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) gEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c // x >= y + c <=> y <= x - c
+{
+   id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:y leq:x plus:-c];
+   [model trackObject:o];
+   return o;   
 }
 +(id<ORConstraint>) gEqualc:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (ORInt) c
 {
@@ -1265,7 +1294,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) alldifferent: (id<ORExprArray>) x
++(id<ORSoftConstraint>) softKnapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c slack: (id<ORVar>) slack
+{
+    id<ORSoftConstraint> o = [[ORSoftKnapsackI alloc] initORSoftKnapsackI: x weight: w capacity: c slack: slack];
+    [[x tracker] trackObject:o];
+    return o;
+}
++(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x];
    [[x tracker] trackObject:o];
@@ -1355,6 +1390,15 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORConstraint> o = [[ORRealLinearLeq alloc] initRealLinearLeq: x coef: coef cst: c];
    [model trackObject:o];
    return o;
+}
++(id<ORConstraint>) realSum: (id<ORTracker>) model array: (id<ORRealVarArray>)x coef:(id<ORDoubleArray>)coefs geq:(ORDouble)c
+{
+    id<ORDoubleArray> nc = [ORFactory doubleArray:[coefs tracker] range:[coefs range] with:^ORDouble(ORInt k) {
+        return -[coefs at: k];
+    }];
+    id<ORConstraint> o = [[ORRealLinearLeq alloc] initRealLinearLeq: x coef: nc cst: -c];
+    [model trackObject:o];
+    return o;
 }
 +(id<ORConstraint>) realEqualc:(id<ORTracker>)model  var: (id<ORRealVar>) x to:(ORDouble) c
 {

@@ -608,3 +608,39 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    return b.max - b.min;
 }
 @end
+
+@implementation CPRealParamI
+-(id)initCPRealParam:(id<CPEngine>)engine initialValue:(ORDouble)v
+{
+    self = [super init];
+    _engine = (CPEngineI*)engine;
+    _value = v;
+    return self;
+}
+-(CPEngineI*) engine
+{
+    return _engine;
+}
+-(CPEngineI*) tracker
+{
+    return _engine;
+}
+-(NSMutableSet*) constraints
+{
+    return [NSMutableSet set];
+}
+-(ORDouble) value
+{
+    return _value;
+}
+-(void) setValue: (ORDouble)val
+{
+    _value = val;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<PARAM(%d) = %lf>",_name,_value];
+   return buf;
+}
+@end

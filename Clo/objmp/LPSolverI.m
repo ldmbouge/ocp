@@ -706,7 +706,7 @@
 }
 -(LPColumnI*) column
 {
-   return [_solver createColumn:_low up:_up size:_size obj:_objCoef cstr:_cstr coef:_coef];
+   return [_solver createColumn: _low up:_up size:_size obj:_objCoef cstr:_cstr coef:_coef];
 }
 -(ORDouble) doubleValue
 {
@@ -720,6 +720,51 @@
 -(ORBool) isInteger
 {
    return false;
+}
+@end
+
+@implementation LPParameterI
+-(LPParameterI*) initLPParameterI: (LPSolverI*) solver
+{
+    self = [super init];
+    _solver = solver;
+    _cstrIdx = -1;
+    _coefIdx = -1;
+    return self;
+}
+-(ORInt) cstrIdx
+{
+    return _cstrIdx;
+}
+-(void) setCstrIdx: (ORInt) idx
+{
+    _cstrIdx = idx;
+}
+-(ORDouble) doubleValue
+{
+    return [_solver paramValue: self];
+}
+-(void) setDoubleValue: (ORDouble)val
+{
+    [_solver setParam: self value: val];
+}
+-(ORInt) coefIdx
+{
+    return _coefIdx;
+}
+-(void) setCoefIdx: (ORInt) idx
+{
+    _coefIdx = idx;
+}
+-(NSString*)description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"%f",[self doubleValue]];
+    return buf;
+}
+-(ORBool) isInteger
+{
+    return NO;
 }
 @end
 
@@ -784,7 +829,10 @@
    _coef = (ORDouble*) malloc(_maxSize * sizeof(ORDouble));
    return self;
 }
-
+-(LPVariableI*)theVar
+{
+   return _theVar;
+}
 -(void) dealloc
 {
    if (_cstrIdx)
@@ -796,6 +844,15 @@
    if (_tmpCoef)
       free(_tmpCoef);
    [super dealloc];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   [buf appendFormat:@"<%f>[",_objCoef];
+   for(ORInt i=0;i<_size;i++)
+      [buf appendFormat:@"%f,",_coef[i]];
+   [buf appendString:@"]"];
+   return buf;
 }
 -(void) resize
 {
@@ -987,13 +1044,12 @@
    }
    int sizeIdx = (uidx - lidx + 1);
    ORDouble* bucket = (ORDouble*) alloca(sizeIdx * sizeof(ORDouble));
+   bzero(bucket,sizeIdx * sizeof(ORDouble));
    LPVariableI** bucketVar = (LPVariableI**) alloca(sizeIdx * sizeof(LPVariableI*));
    bucket -= lidx;
    bucketVar -= lidx;
-   for(ORInt i = lidx; i <= uidx; i++)
-      bucket[i] = 0.0;
    for(ORInt i = 0; i < _size; i++) {
-      int idx = [_var[i] idx];
+      int idx = getLPId(_var[i]);
       bucket[idx] += _coef[i];
       bucketVar[idx] = _var[i];
    }
@@ -1061,6 +1117,13 @@
    }
    [v setIdx: _nbVars];
    _var[_nbVars++] = v;
+}
+-(void)enumerateColumnWith:(void(^)(LPColumnI*))block
+{
+   @autoreleasepool {
+      for(ORInt i=0;i < _nbVars;i++)
+         block([_var[i] column]);
+   }
 }
 
 -(LPVariableI*) createVariable
@@ -1450,7 +1513,14 @@
 {
    [_lp setStringParameter: name val: val];
 }
-
+-(ORDouble) paramValue: (LPParameterI*) param
+{
+   return [_lp paramValue: param];
+}
+-(void) setParam: (LPParameterI*) param value: (ORDouble)val
+{
+   [_lp setParam: param value: val];
+}
 -(void) print;
 {
    if (_obj || _nbCstrs > 0) {

@@ -2,4 +2,5 @@ xcuserdata
 *.o
 *.d
 *~
+*55.so
 bench.make

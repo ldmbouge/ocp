@@ -45,3 +45,4 @@
 -(void) finaliseTransitionTask;
 -(void) updateTransitionTask:(id<ORIntRange>)horizon duration:(id<ORIntRange>)duration;
 @end
+

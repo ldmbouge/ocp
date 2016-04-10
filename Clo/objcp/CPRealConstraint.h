@@ -17,6 +17,7 @@
 @class CPRealVarI;
 @class CPIntVar;
 @class CPEngine;
+@class CPRealParamI;
 @protocol CPRealVarArray;
 
 @interface CPRealSquareBC : CPCoreConstraint { // z == x^2
@@ -25,6 +26,17 @@
 }
 -(id)initCPRealSquareBC:(id)z equalSquare:(id)x;
 -(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPRealWeightedVarBC : CPCoreConstraint { // z == x^2
+    CPRealVarI* _x;
+    CPRealVarI* _z;
+    CPRealParamI* _w;
+}
+-(id)initCPRealWeightedVarBC:(id)z equal:(id)x weight: (id)w;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -80,6 +92,7 @@
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORRealVar>) var;
@@ -93,6 +106,7 @@
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORRealVar>) var;

@@ -42,6 +42,7 @@
 -(CPHeuristicSet*) initCPHeuristicSet;
 -(void) push: (id<CPHeuristic>) h;
 -(id<CPHeuristic>) pop;
+-(id<CPHeuristic>) top;
 -(void) reset;
 -(void) applyToAll: (void(^)(id<CPHeuristic> h)) closure;
 -(BOOL)empty;
@@ -65,12 +66,14 @@
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
+-(void) onStartup:(ORClosure) onStartup;
 -(void) onSolution: (ORClosure) onSolution;
 -(void) onExit: (ORClosure) onExit;
 -(void) clearOnSolution;
 -(void) clearOnExit;
 -(void) addHeuristic: (id<CPHeuristic>) h;
 -(void) restartHeuristics;
+-(void) doOnStartup;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
@@ -78,23 +81,7 @@
 -(ORInt) maxBound:(id<ORIdArray>) x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 -(id<ORIntVar>)smallestDom:(id<ORIdArray>)x;
-
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
-
-// pvh: do we have to put these here. Any way to externalize them.
--(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createSDeg: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
--(id<CPHeuristic>) createFF;
--(id<CPHeuristic>) createWDeg;
--(id<CPHeuristic>) createDDeg;
--(id<CPHeuristic>) createSDeg;
--(id<CPHeuristic>) createIBS;
--(id<CPHeuristic>) createABS;
-
 -(void) defaultSearch;
 @end
 
@@ -107,13 +94,13 @@
 // SemanticPath CPSolver
 @interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram,CPSemanticProgramDFS>
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
--(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
+-(id<CPSemanticProgram>)    initCPSemanticSolver: (id<ORSearchController>) ctrlProto;
 @end
 
 @interface CPSolverFactory : NSObject
 +(id<CPProgram>) solver;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
-+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
++(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto;
 @end
 
 

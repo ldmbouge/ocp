@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0720"
+   LastUpgradeVersion = "0730"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -66,7 +66,7 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-q8"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-q12"
@@ -74,7 +74,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-q14"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p2"
@@ -86,7 +86,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p0"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

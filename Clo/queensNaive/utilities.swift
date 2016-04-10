@@ -11,6 +11,15 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import ORProgram
 
+
+infix operator ∨ { associativity left precedence 110 }
+
+public func ∨(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
+   return lhs.lor(rhs)
+}
+prefix func !(lhs : ORExpr) -> ORRelation {
+   return lhs.neg();
+}
 public func ==(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.eq(rhs)
 }
@@ -35,6 +44,34 @@ public func <(lhs : ORExpr,rhs : Int32) -> ORRelation {
 }
 public func <(lhs : ORExpr,rhs : ORIntVar) -> ORRelation {
    return lhs.lt(rhs)
+}
+
+public func >(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
+   return lhs.gt(rhs)
+}
+public func >(lhs : ORExpr,rhs : Int) -> ORRelation {
+   return lhs.gt(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func >(lhs : ORExpr,rhs : Int32) -> ORRelation {
+   return lhs.gt(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func >(lhs : ORExpr,rhs : ORIntVar) -> ORRelation {
+   return lhs.gt(rhs)
+}
+
+infix operator ≤ { associativity left precedence 130 }
+infix operator ≥ { associativity left precedence 130 }
+public func ≥(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
+   return lhs.geq(rhs)
+}
+public func ≥(lhs : ORExpr,rhs : Int) -> ORRelation {
+   return lhs.geq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func ≥(lhs : ORExpr,rhs : Int32) -> ORRelation {
+   return lhs.geq(ORFactory.integer(lhs.tracker(), value: ORInt(rhs)))
+}
+public func ≥(lhs : ORExpr,rhs : ORIntVar) -> ORRelation {
+   return lhs.geq(rhs)
 }
 
 
@@ -101,15 +138,15 @@ infix operator | { associativity left precedence 80 }
 
 func getSolver(a : VoidPtr) -> CPCommonProgram
 {
-   var at : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(a)).takeUnretainedValue()
-   var tracker =  at.tracker() as! CPCommonProgram
+   let at : AnyObject = Unmanaged<AnyObject>.fromOpaque(COpaquePointer(a)).takeUnretainedValue()
+   let tracker =  at.tracker() as! CPCommonProgram
    return tracker
 }
 
 func packageVoidArray(sz : Int,body : (Int32,UnsafeMutablePointer<VoidPtr>,VoidBuf) -> VoidPtr) -> VoidPtr
 {
-   var ptr = UnsafeMutablePointer<VoidPtr>.alloc(sz)
-   var ta = UnsafeMutableBufferPointer<VoidPtr>(start: ptr, count: sz)
+   let ptr = UnsafeMutablePointer<VoidPtr>.alloc(sz)
+   let ta = UnsafeMutableBufferPointer<VoidPtr>(start: ptr, count: sz)
    let rv = body(Int32(sz), ptr,ta)
    ptr.dealloc(sz)
    return rv;
@@ -117,7 +154,7 @@ func packageVoidArray(sz : Int,body : (Int32,UnsafeMutablePointer<VoidPtr>,VoidB
 
 public func »(a : UnsafeMutablePointer<Void>, b : UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void> {
    return packageVoidArray(2) { n,base,ptr in
-      var tracker = getSolver(a)
+      let tracker = getSolver(a)
       ptr[0] = a
       ptr[1] = b
       return sequence(tracker,n,base)
@@ -126,17 +163,26 @@ public func »(a : UnsafeMutablePointer<Void>, b : UnsafeMutablePointer<Void>) -
 
 public func |(a : UnsafeMutablePointer<Void>, b : UnsafeMutablePointer<Void>) -> UnsafeMutablePointer<Void> {
    return packageVoidArray(2) { n,base,ptr in
-      var tracker = getSolver(a)
+      let tracker = getSolver(a)
       ptr[0] = a
       ptr[1] = b
       return alts(tracker,n,base)
    }
 }
 
+public func exist(tracker : ORTracker,_ r : ORIntRange,_ b : ORInt -> ORRelation) -> ORRelation {
+   return ORFactory.lor(tracker, over: r, suchThat: nil, of: b)
+}
+public func exist(tracker : ORTracker,_ r : ORIntRange,_ f : (ORInt -> Bool),_ b : ORInt -> ORRelation) -> ORRelation {
+   return ORFactory.lor(tracker, over: r, suchThat: f, of: b)
+}
+public func sum(tracker : ORTracker,R : ORIntRange,_ f : (ORInt -> Bool),b : ORInt -> ORExpr) -> ORExpr {
+   return ORFactory.sum(tracker, over: R, suchThat: f, of: b)
+}
 public func sum(tracker : ORTracker,R : ORIntRange,b : ORInt -> ORExpr) -> ORExpr {
    return ORFactory.sum(tracker, over: R, suchThat: nil, of: b)
 }
-public func range(tracker : ORTracker,r : Range<Int>) -> ORIntRange {
+public func range(tracker : ORTracker,_ r : Range<Int>) -> ORIntRange {
    return ORFactory.intRange(tracker, low: ORInt(r.startIndex), up: ORInt(r.endIndex - 1))
 }
 
@@ -144,19 +190,62 @@ public func Σ(tracker : ORTracker,R : ORIntRange,b : ORInt -> ORExpr) -> ORExpr
    return ORFactory.sum(tracker, over: R, suchThat: nil, of: b)
 }
 
-public func all(t : ORTracker,r : ORIntRange,body : ((i : ORInt) -> ORIntVar)) -> ORIntVarArray {
+public func all(t : ORTracker,_ r : ORIntRange,body : ((i : ORInt) -> ORIntVar)) -> ORIntVarArray {
    return ORFactory.intVarArray(t, range: r, with: body)
 }
 
-public func all(t : ORTracker,r1 : ORIntRange,r2 : ORIntRange, body : (i : ORInt, j : ORInt) -> ORIntVar) -> ORIntVarArray {
+public func all(t : ORTracker,_ r1 : ORIntRange,_ r2 : ORIntRange, body : (i : ORInt, j : ORInt) -> ORIntVar) -> ORIntVarArray {
    return ORFactory.intVarArray(t, range: r1,r2, with: body)
 }
 
-
-/*
 extension ORIntVarMatrix {
-   public subscript(i : ORInt,j : ORInt) {
-   
+   subscript(i : ORInt, j : ORInt) -> ORIntVar {
+      get {
+         return self.at(i, j)
+      }
+      set(newValue) {
+         return self.set(newValue, at: i, j)
+      }
+   }
+   subscript(i : Int, j : Int) -> ORIntVar {
+      get {
+         return self.at(ORInt(i), ORInt(j))
+      }
+      set(newValue) {
+         return self.set(newValue, at: ORInt(i), ORInt(j))
+      }
    }
 }
-*/
+
+
+extension ORIntMatrix {
+   subscript(i : ORInt, j : ORInt) -> ORInt {
+      get {
+         return self.at(i, j)
+      }
+      set(newValue) {
+         return self.set(newValue, at: i, j)
+      }
+   }
+   subscript(i : Int, j : Int) -> ORInt {
+      get {
+         return self.at(ORInt(i), ORInt(j))
+      }
+      set(newValue) {
+         return self.set(newValue, at: ORInt(i), ORInt(j))
+      }
+   }
+}
+
+
+//
+//extension ORIntVarArray {
+//   subscript (key: Int) -> ORIntVar {
+//      get {
+//         return self.at(key)
+//      }
+//      set(newValue) {
+//         return self.set(newValue, ORInt(key))
+//      }
+//   }
+//}

@@ -15,6 +15,7 @@
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>
+#import <ORFoundation/ORVisit.h>
 
 @implementation ORCPConcretizer
 
@@ -100,6 +101,12 @@
 {
    if (!_gamma[v.getId])
       _gamma[v.getId] = [CPFactory realVar: _engine bounds: [v domain]];
+}
+
+-(void) visitRealParam:(id<ORRealParam>)v
+{
+    if (!_gamma[v.getId])
+        _gamma[v.getId] = [CPFactory realParam: _engine initialValue: [v initialValue]];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v
@@ -191,6 +198,14 @@
    }
 }
 
+-(void) visitFail:(id<ORFail>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPConstraint> cc = [CPFactory fail:_engine];
+      [_engine add:cc];
+      _gamma[cstr.getId] = cc;
+   }
+}
 
 -(void) visitRestrict: (id<ORRestrict>) cstr
 {
@@ -203,7 +218,17 @@
 }
 -(void) visitLinearGeq: (id<ORLinearGeq>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError:"reached visitLinearGeq in CPConcretizer"];
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVarArray> ex = [cstr vars];
+        id<ORIntArray>    ec = [cstr coefs];
+        ORInt c = [cstr cst];
+        id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
+            return [CPFactory intVar:_gamma[ex[k].getId] scale: - [ec at:k] shift:0];
+        }];
+        id<CPConstraint> concreteCstr = [CPFactory sum:vx leq: -c];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) cstr
 {
@@ -299,6 +324,19 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+}
+-(void) visitRealWeightedVar:(id<ORWeightedVar>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<CPRealVar>  z = [self concreteVar:[cstr z]];
+        id<CPIntVar>    x = [self concreteVar:[cstr x]];
+        id<ORParameter> w = [cstr weight];
+        [w visit: self];
+        id<CPRealVar> xv = [CPFactory realVar:_engine castFrom:x];
+        id<CPConstraint> concreteCstr = [CPFactory realWeightedVar: z equal: xv weight: _gamma[w.getId]];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -547,6 +585,21 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
+}
+-(void) visitSoftNEqual:(id<ORSoftNEqual>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORIntVar> left = [cstr left];
+        id<ORIntVar> right = [cstr right];
+        id<ORVar> slack = [cstr slack];
+        //ORInt cst = [cstr cst];
+        [left visit: self];
+        [right visit: self];
+        [slack visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory reify: _gamma[slack.getId] with: _gamma[left.getId] eq: _gamma[right.getId] annotation: Default];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 -(void) visitLEqual: (id<ORLEqual>) cstr
 {
@@ -948,6 +1001,17 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitClause:(id<ORClause>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      id<CPIntVar> tv = [self concreteVar:[cstr targetValue]];
+      id<CPConstraint> concreteCstr = [CPFactory clause:x eq:tv];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+      
+   }
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1012,7 +1076,6 @@
 -(void)visitRealLinearLeq:(id<ORRealLinearLeq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-
       id<ORVarArray> av = [cstr vars];
       id<CPRealVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
          id<CPVar> theCPVar = [self concreteVar:[av at:k]];
@@ -1170,6 +1233,8 @@
 -(void) visitExprNEqualI: (id<ORExpr>) e
 {}
 -(void) visitExprLEqualI: (id<ORExpr>) e
+{}
+-(void) visitExprGEqualI: (id<ORExpr>) e
 {}
 -(void) visitExprSumI: (id<ORExpr>) e
 {}

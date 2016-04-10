@@ -24,17 +24,20 @@ typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORREq  = 1,
    ORRNEq = 2,
    ORRLEq = 3,
-   ORRDisj = 4,
-   ORRConj = 5,
-   ORRImply = 6
+   ORRGEq = 4,
+   ORNeg   = 5,
+   ORRDisj = 6,
+   ORRConj = 7,
+   ORRImply = 8
 };
 
 typedef NS_ENUM(NSUInteger,ORVType) {
-   ORTInt = 0,
-   ORTReal = 1,
-   ORTBit  = 2,
-   ORTSet  = 3,
-   ORTNA = 4
+   ORTBool = 0,
+   ORTInt = 1,
+   ORTReal = 2,
+   ORTBit  = 3,
+   ORTSet  = 4,
+   ORTNA = 5
 };
 #else
 typedef enum ORRelationType {
@@ -42,9 +45,11 @@ typedef enum ORRelationType {
    ORREq  = 1,
    ORRNEq = 2,
    ORRLEq = 3,
-   ORRDisj = 4,
-   ORRConj = 5,
-   ORRImply = 6
+   ORRGEq = 4,
+   ORNeg   = 5,
+   ORRDisj = 6,
+   ORRConj = 7,
+   ORRImply = 8
 } ORRelationType;
 
 typedef enum ORVType {
@@ -63,6 +68,8 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
    if (t1 == t2)
       return t1;
    else if (t1+t2 <= 1)
+      return ORTInt;
+   else if ((t1<=1 && t2 <= 2) || (t1 <= 2  && t2 <= 1))
       return ORTReal;
    else
       return ORTNA;

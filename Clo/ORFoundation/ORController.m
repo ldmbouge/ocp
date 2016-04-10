@@ -13,17 +13,19 @@
 #import <ORUtilities/cont.h>
 
 @implementation ORHeist
--(ORHeist*)initORHeist:(NSCont*)c from:(id<ORCheckpoint>)cp
+-(ORHeist*)init:(NSCont*)c from:(id<ORCheckpoint>)cp oValue:(id<ORObjectiveValue>)ov;
 {
    self = [super init];
    _cont = [c grab];
    _theCP = [cp grab];
+   _oValue = [ov retain];
    return self;
 }
 -(void)dealloc
 {
    [_cont letgo];
    [_theCP letgo];
+   [_oValue release];
    [super dealloc];
 }
 -(NSCont*)cont
@@ -37,6 +39,10 @@
 -(ORInt)sizeEstimate
 {
    return [_theCP sizeEstimate];
+}
+-(id<ORObjectiveValue>)oValue
+{
+   return _oValue;
 }
 @end
 
@@ -62,7 +68,16 @@
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
-
+-(id<ORSearchController>)clone
+{
+   ORDefaultController* c = [[ORDefaultController alloc] initORDefaultController];
+   c->_controller = _controller;
+   return c;
+}
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf
+{
+   return self;
+}
 -(id<ORSearchController>) controller
 {
    return _controller;
@@ -113,10 +128,19 @@
 {
    [_controller succeeds]; // failAll is meant to be handled by the first controller in the chain. (The actual policy)
 }
+-(void) abort
+{
+   [_controller abort];
+}
 -(ORBool) isFinitelyFailed
 {
    return [_controller isFinitelyFailed];
 }
+-(ORBool) isAborted
+{
+   return [_controller isAborted];
+}
+
 -(void) startTry
 {
    [_controller startTry];
@@ -171,6 +195,7 @@
 {
    id<ORSearchController> _parent;        // This is not a mistake. Delegation chain for NESTED controllers (fail).
    BOOL                   _isFF;
+   BOOL                   _isAborted;
 }
 -(id)init:(id<ORSearchController>)chain parent:(id<ORSearchController>)par
 {
@@ -178,6 +203,7 @@
    [self setController:chain];
    _parent = [par retain];
    _isFF = NO;
+   _isAborted = NO;
    return self;
 }
 -(void)dealloc
@@ -185,6 +211,15 @@
    //NSLog(@"ORNestedController %p dealloc called...\n",self);
    [_parent release];
    [super dealloc];
+}
+-(id<ORSearchController>)clone
+{
+   ORNestedController* c = [[ORNestedController alloc] init:_controller parent:_parent];
+   return c;
+}
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf
+{
+   return self;
 }
 -(void) setParent:(id<ORSearchController>) controller
 {
@@ -208,15 +243,25 @@
    [_controller cleanup];
    [_parent fail];
 }
+-(void) abort
+{
+   _isAborted = YES;
+   [_controller cleanup];
+   [_parent fail];
+}
 -(void) finitelyFailed
 {
    _isFF = YES;
-   [_controller cleanup];
+   //[_controller cleanup];
    [_parent fail];
 }
 -(ORBool) isFinitelyFailed
 {
    return _isFF;
+}
+-(ORBool) isAborted
+{
+   return _isAborted;
 }
 @end
 
@@ -228,10 +273,14 @@
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
 }
++(id<ORSearchController>)proto
+{
+   return [[ORDFSController alloc] initTheControllerWithTracer:nil];
+}
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {
    self = [super initORDefaultController];
-   _tracer = [tracer retain];
+   _tracer = tracer ? [tracer retain] : nil;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
@@ -243,20 +292,38 @@
 - (id) initTheControllerWithTracer:(id<ORTracer>)tracer
 {
    self = [super initORDefaultController];
-   _tracer = [tracer retain];
+   _tracer = tracer ? [tracer retain] : nil;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
    _atRoot = 0;
    return self;
 }
-
 - (void) dealloc
 {
    //NSLog(@"DFSController dealloc called...\n");
-   [_tracer release];
+   if (_tracer)
+      [_tracer release];
    free(_tab);
    [super dealloc];
+}
+-(id<ORSearchController>)clone
+{
+   ORDFSController* c = [[ORDFSController alloc] initTheController:_tracer engine:nil posting:nil];
+   free(c->_tab);
+   c->_tab = malloc(sizeof(NSCont*)*_mx);
+   for(ORInt k=0;k<_sz;k++) {
+      c->_tab[k] = _tab[k];
+   }
+   c->_sz = _sz;
+   c->_mx = _mx;
+   return c;
+}
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<OREngine>)engine pItf:(id<ORPost>)pItf
+{
+   [_tracer release];
+   _tracer = [tracer retain];
+   return self;
 }
 
 -(void)setup

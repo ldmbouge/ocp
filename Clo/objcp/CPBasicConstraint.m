@@ -41,6 +41,31 @@
 }
 @end
 
+@implementation CPFalse
+-(id)init:(id<CPEngine>)engine
+{
+   self = [super initCPCoreConstraint:engine];
+   return self;
+}
+-(void)post
+{
+   failNow();
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] init] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return 0;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<CPFalse>"];
+}
+@end
+
+
 @implementation CPEqualc
 -(id) initCPEqualc: (id<CPIntVar>) x and:(ORInt)c
 {
@@ -139,15 +164,13 @@
 
 -(void) propagate
 {
-    if ([_x bound]) {
-        [_y bind:[_x min] - _c];
-    } 
-    else if ([_y bound]) {
-        [_x bind:[_y min] + _c];
-    } 
+    if (bound(_x))
+       bindDom(_y,minDom(_x) - _c);
+    else if (bound(_y))
+       bindDom(_x,minDom(_y) + _c);
     else {
-       [_x updateMin:[_y min] + _c andMax:[_y max] + _c];
-       [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
+       updateMinAndMaxOfDom(_x, minDom(_y)+_c, maxDom(_y)+_c);
+       updateMinAndMaxOfDom(_y, minDom(_x)-_c, maxDom(_x)-_c);
     }
 }
 -(NSString*)description
@@ -2138,7 +2161,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
          ORInt b = [((ORObjectiveValueIntI*) newBound) value];
          if (b < _primalBound)
-         _primalBound = b;
+            _primalBound = b;
       }
    }
 }
@@ -2158,7 +2181,11 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
+   if (bound(_x))
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
+   else {
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _x.max+1 minimize:YES];
+   }
 }
 
 
@@ -2174,6 +2201,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(id<ORObjectiveValue>) primalBound
 {
    return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize:YES];
+}
+-(ORBool)   isBound
+{
+    return [_x bound];
 }
 -(NSString*)description
 {
@@ -2267,7 +2298,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize: NO];
 }
-
+-(ORBool)   isBound
+{
+    return [_x bound];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -2330,6 +2364,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
       [_cv[i] whenChangeBoundsPropagate: self];
       
       [_cv[i] whenChangeBoundsDo: ^{
+         //printf("whenChangedBound %d %d\n",i,_solved._mgc);
          if (getFXInt(&_solved,_trail) == 0) {
             incrFXInt(&_solved,_trail);
             [_trail trailClosure: ^{
@@ -2344,6 +2379,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
                [_relaxation updateUpperBound: _mv[i] with: omax];
             }];
             incrFXInt(&_updated[i],_trail);
+          
          }
          ORDouble lb = [_cv[i] doubleMin];
          ORDouble ub = [_cv[i] doubleMax];
@@ -2356,14 +2392,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    }
    [self propagate];
 }
+
 -(void) propagate
 {
-//   NSUInteger nb = [_cv count];
-//   for(ORInt i = 0; i < nb; i++) {
-//      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] doubleMin]];
-//      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
-//   }
-   
    OROutcome outcome = [_relaxation solve];
    if (outcome == ORinfeasible)
       failNow();

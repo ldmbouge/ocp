@@ -32,6 +32,10 @@
 -(void) notifyWith:(int)a0;
 @end
 
+@protocol ORDoubleInformer<ORInformer>
+-(void) notifyWithFloat:(double)a0;
+@end
+
 @protocol ORIdxIntInformer<ORInformer>
 -(void) notifyWith:(id)a0 andInt:(ORInt)v;
 @end
@@ -73,6 +77,7 @@
 +(void) parall: (ORRange) R do: (ORInt2Void) closure;
 +(id<ORSolutionInformer>) solutionInformer;
 +(id<ORIntInformer>) intInformer;
++(id<ORDoubleInformer>) doubleInformer;
 +(id<ORIdInformer>) idInformer;
 +(id<ORVoidInformer>) voidInformer;
 +(id<ORIdxIntInformer>) idxIntInformer;

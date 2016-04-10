@@ -124,13 +124,13 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    _array[idx] = value;
 }
--(id)objectAtIndexedSubscript: (NSUInteger) key
+-(id)objectAtIndexedSubscript: (NSInteger) key
 {
    if (key < _low || key > _up)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    return [NSNumber numberWithInt:_array[key]];
 }
--(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSUInteger) idx
+-(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSInteger) idx
 {
    if (idx < _low || idx > _up)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
@@ -140,6 +140,13 @@
 {
    for(ORInt i=_low;i<=_up;i++)
       block(_array[i],i);
+}
+-(ORInt) sumWith: (ORInt(^)(ORInt value,int idx))block {
+    __block ORInt sum = 0;
+    [self enumerateWith:^(ORInt obj, ORInt idx) {
+        sum += block(obj, idx);
+    }];
+    return sum;
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
@@ -325,6 +332,13 @@
     for(ORInt i=_low;i<=_up;i++)
         block(_array[i],i);
 }
+-(ORFloat) sumWith: (ORFloat(^)(ORFloat value,int idx))block {
+    __block ORFloat sum = 0.0;
+    [self enumerateWith:^(ORDouble obj, int idx) {
+        sum += block(obj, idx);
+    }];
+    return sum;
+}
 -(ORInt) low
 {
     return _low;
@@ -488,6 +502,12 @@
 {
    return _nb;
 }
+-(ORBool) contains: (id)obj
+{
+   for(ORInt i=_low;i<=_up;i++)
+      if(_array[i] == obj) return YES;
+   return NO;
+}
 -(id<ORIntRange>) range
 {
    return _range;
@@ -512,7 +532,17 @@
    for(ORInt i=_low;i<=_up;i++)
       block(_array[i],i);
 }
-
+-(id<ORIdArray>) map:(id(^)(id obj, int idx))block {
+    id<ORIdArray> res = [[ORIdArrayI alloc] initORIdArray: [self tracker] range: [self range]];
+    for(ORInt i=_low;i<=_up;i++)
+        [res set: block(_array[i], i) at: i];
+    return res;
+}
+-(NSArray*) toNSArray {
+    NSMutableArray* arr = [[NSMutableArray alloc] init];
+    [self enumerateWith: ^(id obj, ORInt idx) { [arr addObject: obj]; }];
+    return arr;
+}
 -(id<ORTracker>) tracker
 {
    return _tracker;

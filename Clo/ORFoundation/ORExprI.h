@@ -238,6 +238,15 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
+@interface ORExprGEqualI : ORExprBinaryI<ORRelation,NSCoding>
+-(id<ORExpr>) initORExprGEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(ORRelationType)type;
+-(void) visit: (ORVisitor*)v;
+@end
+
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }

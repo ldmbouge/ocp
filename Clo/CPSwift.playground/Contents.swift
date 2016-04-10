@@ -117,7 +117,7 @@ cp.onSolution {
 
 cp.search {
    forallDo(cp,R) { k in
-      let y = x[k]
+      let y = x[ORInt(k)]
       return whileDo(cp,{ !cp.bound(y)}) {
          let v = cp.min(y)
          return equal(cp,y,v) | diff(cp,y,v)

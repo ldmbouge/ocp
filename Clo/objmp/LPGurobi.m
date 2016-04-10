@@ -121,8 +121,9 @@
 //      printf("Variable %i has bounds in lp: [%f,%f] \n",i,lb,ub);
 //   }
 //   printf("\n");
+   GRBupdatemodel(_model);
    GRBoptimize(_model);
-//   [self printModelToFile: "/Users/pvh/lookatgurobi.lp"];
+   //[self printModelToFile: "/Users/ldm/Desktop/linearRelax.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
@@ -195,33 +196,34 @@
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);
    GRBsetdblattrelement(_model,"UB",[var idx],low);
-   GRBupdatemodel(_model);
 }
 
 -(void) setUnboundUpperBound: (LPVariableI*) var
 {
    GRBsetdblattrelement(_model,"UB",[var idx],1e21);
-   GRBupdatemodel(_model);
 }
 
 -(void) setUnboundLowerBound: (LPVariableI*) var
 {
    GRBsetdblattrelement(_model,"LB",[var idx],-1e21);
-   GRBupdatemodel(_model);
 }
 
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb
 {
 //   if (lb > [self lowerBound: var])
    GRBsetdblattrelement(_model,"LB",[var idx],lb);
-   GRBupdatemodel(_model);
 }
 
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub
 {
 //   if (ub < [self upperBound: var])
+
+//   double oldLB = [self lowerBound:var];
+//   double oldUB = [self upperBound:var];
+//   if (ub < oldUB) {
+//      NSLog(@"About to tighten UB var(%d) from [%f ,** %f] to %f",[var idx],oldLB,oldUB,ub);
+//   }
    GRBsetdblattrelement(_model,"UB",[var idx],ub);
-   GRBupdatemodel(_model);
 }
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val
@@ -237,6 +239,25 @@
 -(void) setStringParameter: (const char*) name val: (char*) val
 {
    GRBsetstrparam(_env,name,val);
+}
+
+-(ORDouble) paramValue: (LPParameterI*) param
+{
+    ORDouble v;
+    int err = GRBgetcoeff(_model, [param cstrIdx], [param coefIdx], &v);
+    if(err != 0) return DBL_MAX;
+    return v;
+}
+
+-(void) setParam: (LPParameterI*) param value: (ORDouble)val
+{
+    int cind[] = { [param cstrIdx] };
+    int vind[] = { [param coefIdx] };
+    double v[] = { val };
+    int err = GRBchgcoeffs(_model, 1, cind, vind, v);
+    //    GRBupdatemodel(_model);
+    if(err != 0)
+        NSLog(@"error setting gurobi parameter: %i", err);
 }
 
 -(ORStatus) postConstraint: (LPConstraintI*) cstr

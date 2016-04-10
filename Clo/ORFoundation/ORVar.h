@@ -21,7 +21,7 @@ PORTABLE_BEGIN
 -(ORInt) getId;
 @end
 
-@protocol ORExprVar <ORVar,ORExpr>
+@protocol ORExprVar <ORVar,ORRelation>
 -(ORInt) getId;
 @end
 
@@ -122,6 +122,7 @@ typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROu
 -(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
 -(OROutcome) solve;
 -(void) close;
+-(double)reducedCost:(id<ORVar>)x;
 @end
 
 PORTABLE_END

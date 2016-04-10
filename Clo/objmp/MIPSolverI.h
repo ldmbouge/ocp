@@ -66,6 +66,24 @@
 -(void) setObject: (MIPVariableI*) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
+@interface MIPParameterI : NSObject
+{
+@protected
+    MIPSolverI*           _solver;
+    ORInt                 _cstrIdx;
+    ORInt                 _coefIdx;
+}
+-(MIPParameterI*) initMIPParameterI: (MIPSolverI*) solver;
+-(ORInt) cstrIdx;
+-(void) setCstrIdx: (ORInt) idx;
+-(ORInt) coefIdx;
+-(void) setCoefIdx: (ORInt) idx;
+-(ORDouble) doubleValue;
+-(void) setDoubleValue: (ORDouble)val;
+
+-(NSString*)description;
+-(ORBool) isInteger;
+@end
 
 @interface MIPConstraintI : NSObject
 {
@@ -211,6 +229,7 @@
 +(MIPSolverI*)      create;
 -(MIPVariableI*)    createVariable;
 -(MIPVariableI*)    createVariable: (ORDouble) low up: (ORDouble) up;
+-(MIPParameterI*) createParameter;
 -(MIPIntVariableI*) createIntVariable;
 -(MIPIntVariableI*) createIntVariable: (ORDouble) low up: (ORDouble) up;
 -(MIPLinearTermI*)  createLinearTerm;
@@ -245,9 +264,13 @@
 -(void) close;
 -(ORBool) isClosed;
 -(MIPOutcome) solve;
+-(void) setTimeLimit: (double)limit;
+-(ORDouble) bestObjectiveBound;
+-(ORFloat) dualityGap;
 
 -(MIPOutcome) status;
 -(ORInt)   intValue: (MIPIntVariableI*) var;
+-(void) setIntVar: (MIPVariableI*)var value:(ORInt)val;
 -(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORDouble) lowerBound: (MIPVariableI*) var;
 -(ORDouble) upperBound: (MIPVariableI*) var;
@@ -261,8 +284,15 @@
 -(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
+-(ORDouble) paramValue: (MIPParameterI*) param;
+-(void) setParam: (MIPParameterI*) param value: (ORDouble)val;
+
+-(void) tightenBound: (ORDouble)bnd;
+-(void) injectSolution: (NSArray*)vars values: (NSArray*)vals size: (ORInt)size;
+-(id<ORDoubleInformer>) boundInformer;
 -(void) print;
 -(void) printModelToFile: (char*) fileName;
+-(void) cancel;
 
 //-(CotMIPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotMIPAbstractBasis* basis) ;

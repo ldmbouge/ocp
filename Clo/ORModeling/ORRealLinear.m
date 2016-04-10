@@ -59,7 +59,7 @@
       ORDouble svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
-   return max(MININT,lb);
+    return (((ORFloat)MININT) > lb) ? MININT : lb;
 }
 
 -(ORDouble) fmax
@@ -73,7 +73,7 @@
       ORDouble svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
-   return min(MAXINT,ub);
+    return (((ORFloat)MAXINT) < ub) ? MAXINT : ub;
 }
 
 -(void) addTerm: (id<ORVar>) x by: (ORDouble) c
@@ -189,35 +189,35 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model
 {
-   return [model addConstraint:[ORFactory realSum: model
-                                            array: [self variables: model]
-                                             coef: [self coefficients: model]
-                                               eq: -_indep]];
+    return [model addConstraint:[ORFactory realSum: model
+                                             array: [self variables: model]
+                                              coef: [self coefficients: model]
+                                                eq: -_indep]];
 }
 -(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model
 {
-   return [model addConstraint:[ORFactory realSum: model
-                                            array: [self variables: model]
-                                             coef: [self coefficients: model]
-                                              leq: -_indep]];
+    return [model addConstraint:[ORFactory realSum: model
+                                             array: [self variables: model]
+                                              coef: [self coefficients: model]
+                                               leq: -_indep]];
 }
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
-   assert(NO);
-   return nil;
+    assert(NO);
+    return nil;
 }
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
-   assert(NO);
-   return nil;
+    assert(NO);
+    return nil;
 }
 -(void) postMinimize: (id<ORAddToModel>) model
 {
-   [model minimize: [self variables: model] coef: [self coefficients: model]];
+    [model minimize: [self variables: model] coef: [self coefficients: model]];
 }
 -(void) postMaximize: (id<ORAddToModel>) model
 {
-   [model maximize: [self variables: model] coef: [self coefficients: model]];
+    [model maximize: [self variables: model] coef: [self coefficients: model]];
 }
 @end
 
@@ -283,19 +283,20 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model
 {
-   return [_real postEQZ:model];
+    return [_real postEQZ:model];
 }
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
-   return [_real postNEQZ:model];
+    return [_real postNEQZ:model];
 }
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {
-   return [_real postLEQZ:model];
+    return [_real postLEQZ:model];
 }
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
-   return [_real postDISJ:model];
+    return [_real postDISJ:model];
 }
+
 @end
 

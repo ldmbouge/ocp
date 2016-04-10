@@ -538,6 +538,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return (ORBounds){_value,_value};
 }
+-(id<CPDom>) domain
+{
+   return [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: _value up: _value];
+}
 -(ORInt) domsize
 {
    return 1;
@@ -988,10 +992,10 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 {
-    [_recv setTracksLoseEvt];
-    if (_triggers == nil)
-        [self createTriggers];
-    [_triggers linkTrigger:t forValue:val];
+   if (_recv) setTracksLoseEvt(_recv, YES);
+   if (_triggers == nil)
+      [self createTriggers];
+   [_triggers linkTrigger:t forValue:val];
 }
 -(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -1758,8 +1762,8 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(ORBool)member:(ORInt)val
 {
-   ORInt lb = [_secondary min];
-   ORInt ub = [_secondary max];
+   ORBounds b = bounds(_secondary);
+   ORInt lb = b.min,ub = b.max;
    // [ldm] v should be a boolean (0,1)
    // Case 1: lit IN    D(x)         => 0 IN D(self) AND 1 in D(self) : always say yes.
    // Case 2: lit NOTIN D(x)         => 0 in D(self) AND 1 NOTIN D(self).

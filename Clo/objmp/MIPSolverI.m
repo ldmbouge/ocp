@@ -825,6 +825,50 @@
 }
 @end
 
+@implementation MIPParameterI
+-(MIPParameterI*) initMIPParameterI: (MIPSolverI*) solver
+{
+    self = [super init];
+    _solver = solver;
+    _cstrIdx = -1;
+    _coefIdx = -1;
+    return self;
+}
+-(ORInt) cstrIdx
+{
+    return _cstrIdx;
+}
+-(void) setCstrIdx: (ORInt) idx
+{
+    _cstrIdx = idx;
+}
+-(ORDouble) doubleValue
+{
+    return [_solver paramValue: self];
+}
+-(void) setDoubleValue: (ORDouble)val
+{
+    [_solver setParam: self value: val];
+}
+-(ORInt) coefIdx
+{
+    return _coefIdx;
+}
+-(void) setCoefIdx: (ORInt) idx
+{
+    _coefIdx = idx;
+}
+-(NSString*)description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"%f",[_solver paramValue:self]];
+    return buf;
+}
+-(ORBool) isInteger
+{
+    return NO;
+}
+@end
 
 
 @implementation MIPLinearTermI
@@ -1015,7 +1059,12 @@
    [self trackVariable: v];
    return v;
 }
-
+-(MIPParameterI*) createParameter
+{
+    MIPParameterI* v = [[MIPParameterI alloc] initMIPParameterI: self];
+    [self trackMutable: v];
+    return v;
+}
 -(MIPLinearTermI*) createLinearTerm
 {
    MIPLinearTermI* o = [[MIPLinearTermI alloc] initMIPLinearTermI: self];
@@ -1114,7 +1163,7 @@
 -(MIPObjectiveI*) createMaximize: (MIPLinearTermI*) t
 {
    [t close];
-   MIPObjectiveI* o = [[MIPMaximize alloc] initMIPMaximize: self size: [t size] var: [t var] coef: [t coef]];
+   MIPObjectiveI* o = [[MIPMaximize alloc] initMIPMaximize: self size: [t size] var: [t var] coef: [t coef] cst:[t cst]];
    [o setNb: _createdObjs++];
    [self trackMutable: o];
    return o;
@@ -1122,7 +1171,7 @@
 -(MIPObjectiveI*) createMinimize: (MIPLinearTermI*) t
 {
    [t close];
-   MIPObjectiveI* o = [[MIPMinimize alloc] initMIPMinimize: self size: [t size] var: [t var] coef: [t coef]];
+   MIPObjectiveI* o = [[MIPMinimize alloc] initMIPMinimize: self size: [t size] var: [t var] coef: [t coef] cst:[t cst]];
    [o setNb: _createdObjs++];
    [self trackMutable: o];
    return o;
@@ -1258,8 +1307,10 @@
       _isClosed = true;
       for(ORInt i = 0; i < _nbVars; i++)
          [_MIP addVariable: _var[i]];
+      [_MIP updateModel];
       for(ORInt i = 0; i < _nbCstrs; i++)
          [_MIP addConstraint: _cstr[i]];
+      [_MIP updateModel];
       [_MIP addObjective: _obj];
    }
 }
@@ -1273,7 +1324,26 @@
       [self close];
    return [_MIP solve];
 }
-
+-(void) setTimeLimit: (double)limit
+{
+    [_MIP setTimeLimit: limit];
+}
+-(ORDouble) bestObjectiveBound
+{
+    return [_MIP bestObjectiveBound];
+}
+-(ORFloat) dualityGap
+{
+    return [_MIP dualityGap];
+}
+-(id) inCache:(id)obj
+{
+    return nil;
+}
+-(id)addToCache:(id)obj
+{
+    return nil;
+}
 -(MIPOutcome) status;
 {
    return [_MIP status];
@@ -1281,6 +1351,10 @@
 -(ORInt) intValue: (MIPIntVariableI*) var
 {
    return (ORInt) [_MIP intValue: var];
+}
+-(void) setIntVar: (MIPIntVariableI*)var value:(ORInt)val
+{
+    [_MIP setIntVar: var value: val];
 }
 -(ORDouble) doubleValue: (MIPVariableI*) var
 {
@@ -1334,6 +1408,29 @@
 {
    [_MIP setStringParameter: name val: val];
 }
+-(ORDouble) paramValue: (MIPParameterI*) param
+{
+    return [_MIP paramValue: param];
+}
+-(void) setParam: (MIPParameterI*) param value: (ORDouble)val
+{
+    [_MIP setParam: param value: val];
+}
+
+-(void) tightenBound: (ORDouble)bnd
+{
+    [_MIP tightenBound: bnd];
+}
+
+-(void) injectSolution: (NSArray*)vars values: (NSArray*)vals size: (ORInt)size;
+{
+    [_MIP injectSolution: vars values: vals size: size];
+}
+
+-(id<ORDoubleInformer>) boundInformer
+{
+    return [_MIP boundInformer];
+}
 
 -(void) print;
 {
@@ -1358,6 +1455,10 @@
 -(void) printModelToFile: (char*) fileName
 {
    [_MIP printModelToFile: fileName];
+}
+
+-(void) cancel {
+    [_MIP cancel];
 }
 
 //-(CotMIPAbstractBasis)* getBasis() ;

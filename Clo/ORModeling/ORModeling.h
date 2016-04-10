@@ -17,10 +17,9 @@
 #import <ORModeling/ORLPFlatten.h>
 #import <ORModeling/ORMIPFlatten.h>
 #import <ORModeling/ORLSFlatten.h>
-#import <ORModeling/ORLinear.h>
 #import <ORModeling/ORIntLinear.h>
-#import <ORModeling/ORLinearize.h>
 #import <ORModeling/ORMIPLinearize.h>
+#import <ORModeling/ORLinearize.h>
 
 @protocol ORModelTransformation;
 
@@ -28,7 +27,7 @@ PORTABLE_BEGIN
 
 @protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
--(void) addVariable: (id<ORVar>) x;
+-(id<ORVar>) addVariable: (id<ORVar>) x;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(void) optimize: (id<ORObjectiveFunction>) o;
 
@@ -84,6 +83,15 @@ PORTABLE_BEGIN
 -(void)setCurrent:(PNULLABLE id<ORConstraint>)cstr;
 @end
 
+@protocol ORParameterizedModel <ORModel>
+-(NSArray*) softConstraints;
+-(NSArray*) hardConstraints;
+-(NSArray*) parameters;
+-(id<ORVarArray>) slacks;
+-(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
+-(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x;
+@end
+
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
 +(id<ORModel>) createModel:(ORUInt)nbo mappings: (PNULLABLE id<ORModelMappings>) mappings;
@@ -95,7 +103,7 @@ PORTABLE_BEGIN
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
 +(id<ORConstraintSet>) createConstraintSet;
-+(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
+//+(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block;
 @end
 
 PORTABLE_END

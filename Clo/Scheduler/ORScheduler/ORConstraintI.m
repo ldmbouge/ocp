@@ -732,8 +732,6 @@
    for(ORInt i = 0; i <= nbAct ; i++)
       _transitionArray[i] = [ORFactory intArray: _tracker range: _transitionColumn with: ^ORInt(ORInt j) { return [_typeTransition at: i : j];}];
       
-//   NSLog(@"transition: %@",_transition);
-//   NSLog(@"type transition: %@",_typeTransition);
    _transitionTimes = [ORFactory intVarArray: _tracker range: RANGE(_tracker,0,(ORInt) [_acc count]) bounds: RANGE(_tracker,0,maxTransition)];
    
    for(ORInt i = 0; i <= nbAct ; i++)

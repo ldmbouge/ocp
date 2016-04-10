@@ -69,7 +69,7 @@
 -(SemTracer*) initSemTracer: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)       dealloc;
 -(ORInt)      pushNode;
--(id)         popNode;
+-(id)         popNode; 
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
 -(id<ORTrail>)   trail;

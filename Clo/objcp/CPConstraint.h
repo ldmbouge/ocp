@@ -14,6 +14,7 @@
 
 @interface CPFactory (Constraint)
 
++(id<CPConstraint>) fail:(id<CPEngine>)engine;
 +(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x annotation: (ORCLevel) c;
 +(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x;
@@ -41,6 +42,7 @@
 +(id<CPConstraint>) hreify: (id<CPIntVar>) b array:(id<CPIntVarArray>)x eqi:(ORInt) c annotation:(ORCLevel)note;
 +(id<CPConstraint>) hreify: (id<CPIntVar>) b array:(id<CPIntVarArray>)x geqi:(ORInt) c annotation:(ORCLevel)note;
 
++(id<CPConstraint>) clause:(id<CPIntVarArray>) x eq:(id<CPIntVar>)tv;
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c;
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (ORInt) c;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c annotation: (ORCLevel)cons;
@@ -93,6 +95,7 @@
 +(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c;
 +(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs leqi:(ORDouble)c;
 +(id<CPConstraint>) realSquare: (id<CPRealVar>)x equal:(id<CPRealVar>)z annotation:(ORCLevel)c;
++(id<CPConstraint>) realWeightedVar: (id<CPRealVar>)z equal:(id<CPRealVar>)x weight: (id<CPRealParam>)w;
 +(id<CPConstraint>) realEqualc: (id<CPIntVar>) x to:(ORDouble) c;
 +(id<CPConstraint>) realElement:(id<CPIntVar>)x idxCstArray:(id<ORDoubleArray>)c equal:(id<CPRealVar>)y annotation:(ORCLevel)n;
 +(id<CPConstraint>) realMinimize: (id<CPRealVar>) x;

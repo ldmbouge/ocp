@@ -48,16 +48,16 @@ static Class __orObjectClass = nil;
    _rc += 1;
    return self;
 }
+-(NSUInteger)retainCount
+{
+   return _rc;
+}
 -(oneway void)release
 {
    //printf("Release called on solver: RC=%d [%s]\n",_rc,[[[self class] description] UTF8String]);
    if (--_rc == 0) {
       [self dealloc];
    }
-}
--(NSUInteger)retainCount
-{
-   return _rc;
 }
 -(id)autorelease
 {

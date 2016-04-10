@@ -184,11 +184,13 @@
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
       [_b bind:minDom(_x) == minDom(_y)];
    else if (bound(_x)) {
-      [[_b engine] addInternal: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
+      [[_b engine] add: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
+      assignTRInt(&_active, 0, _trail);
       return;
    }
    else if (bound(_y)) {
-      [[_b engine] addInternal: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
+      [[_b engine] add: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
+      assignTRInt(&_active, 0, _trail);
       return;
    } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
       if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
@@ -747,6 +749,159 @@
 -(NSString*)description
 {
    return [NSMutableString stringWithFormat:@"<CPReifyGEqualDC:%02d %@ <=> (%@ >= %d)>",_name,_b,_x,_c];
+}
+@end
+
+@implementation CPClause
+-(id)initCPClause:(id)x equal:(CPIntVar*)t
+{
+   if ([[x class] conformsToProtocol:@protocol(ORIdArray)]) {
+      id<CPIntVarArray> xa = x;
+      self = [super initCPCoreConstraint:[[xa at:[xa low]] engine]];
+      _nb = [x count];
+      _x  = malloc(sizeof(CPIntVar*)*_nb);
+      ORInt low = [xa low];
+      ORInt up = [xa up];
+      ORInt i = 0;
+      for(ORInt k=low;k <= up;k++)
+         _x[i++] = (CPIntVar*) [xa at:k];
+   }
+   else
+      assert(FALSE);
+   _t  = t;
+   _at = 0;
+   _notTriggered = 0;
+   return self;
+}
+-(void) dealloc
+{
+   free(_x);
+   if (_at) free(_at);
+   if (_notTriggered) free(_notTriggered);
+   [super dealloc];
+}
+-(void)post
+{
+   _at = malloc(sizeof(id<CPTrigger>)*(2));
+   _notTriggered = malloc(sizeof(ORInt)*(_nb - 2));
+   int nbTrue = 0;
+   int nbPos  = 0;
+   for(ORInt i=0;i<_nb;i++) {
+      [_x[i] updateMin:0];
+      [_x[i] updateMax:1];
+      nbTrue += ([_x[i] bound] && [_x[i] min] == true);
+      nbPos  += ![_x[i] bound];
+   }
+   if (nbTrue >= 1) {
+      bindDom(_t, 1);
+      return ;
+   }
+   if (nbTrue + nbPos < 1) {
+      bindDom(_t,0);
+      return ;
+   }
+   if (bound(_t) && minDom(_t) == 0) {
+      for(ORInt i=0;i<_nb;++i)
+         if (!bound(_x[i]))
+            bindDom(_x[i], 0);
+   }
+   if (nbTrue + nbPos == 1 && bound(_t) && minDom(_t)==1) {
+      // We already know that all the possible should be true. Do it.
+      for(ORInt i=0;i<_nb;++i) {
+         if ([_x[i] bound])
+            continue;
+         [_x[i] updateMin:true];
+      }
+      return ;
+   }
+   ORInt listen = 2;
+   ORInt nbNW   = 0;
+   for(ORInt i=(ORInt)_nb-1;i >= 0;--i) {
+      if (listen > 0 && maxDom(_x[i]) == true) { // Still in the domain and in need of more watches
+         --listen; // the closure must capture the correct value of listen!
+         _at[listen] = [_x[i] setLoseTrigger: true do: ^
+                        {
+                           // Look for another support among the non-tracked variables.
+                           ORLong j = _last;
+                           bool jOk = false;
+                           if (_last >= 0) {
+                              do {
+                                 j=(j+1) % (_nb - 1 - 1);
+                                 CPIntVar* check = _x[_notTriggered[j]];
+                                 jOk = memberDom(check, 1);
+                              } while (j != _last && !jOk);
+                           }
+                           if (jOk) {
+                              const ORInt nextVar = _notTriggered[j];
+                              const CPTrigger* toMove = _at[listen];
+                              triggerDetach(toMove);                   // remove the trigger
+                              _notTriggered[j] = toMove->_vId;         // remember that this variable no longer has a trigger
+                              [_x[nextVar] watch:true with:(id)toMove];    // start watching the new variable
+                              toMove->_vId = nextVar;                  // update the trigger with the (*local*) variable id
+                              _last = j;
+                           }
+                           else {  // Ok, we couldn't find any other support => so we must bind the remaining ones
+                              if (minDom(_t) == 1) { // t is true, so clause must be satisfied
+                                 CPTrigger* ot = _at[!listen];
+                                 assignTRInt(&_active, 0, _trail);
+                                 updateMinDom(_x[ot->_vId], YES);
+                              }
+                              // if maxDom(_t) == 0, t is FALSE, so clause cannot be satisfied.
+                              // If _t is not bound, clause can go either way. if both watches are false, then the clause is false
+                              // and _t should be bound to FALSE.
+                              if (!bound(_t)) {
+                                 int nbf  = (maxDom(_x[_at[0].localID]) == 0);
+                                 nbf     += (maxDom(_x[_at[1].localID]) == 0);
+                                 if (nbf == 2) {
+                                    assignTRInt(&_active, 0, _trail);
+                                    bindDom(_t, 0);
+                                 }
+                              }
+                           }
+                        }
+                                    onBehalf:self];
+         [_at[listen] setLocalID:i]; // local identifier of var being watched.
+      }
+      else
+         _notTriggered[nbNW++] = i;
+   }
+   [_t whenBindDo:^{
+      if (maxDom(_t) == 0) {  // _t is FALSE
+         assignTRInt(&_active, 0, _trail);
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i]))
+               bindDom(_x[i], 0);
+      }
+   } onBehalf:self];
+   assert(nbNW == _nb - 1 - 1);
+   _last = _nb - 1 - 2;  // where we will start the circular scan among the unWatched variables.
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:_nb + 1] autorelease];
+   for(ORInt k = 0;k < _nb;k++)
+      [rv addObject:_x[k]];
+   [rv addObject:_t];
+   return rv;
+   
+}
+-(ORUInt)nbUVars
+{
+   ORUInt nb=[_t bound];
+   for(ORUInt k=0;k<_nb;k++)
+      nb += ![_x[k] bound];
+   return nb;
+}
+-(NSString*)description
+{
+   const char* act = _active._val ? "" : "DEACTIVATED :";
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%sCPClause:%02d %@ <=> ([",act,_name,_t];
+   for(ORInt i=0;i<_nb;i++) {
+      [buf appendFormat:@"%@%s",_x[i],(i < (_nb-1)) ? " || " : "]"];
+   }
+   [buf appendString:@")>"];
+   return buf;
 }
 @end
 

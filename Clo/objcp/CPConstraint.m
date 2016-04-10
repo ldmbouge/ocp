@@ -198,12 +198,16 @@
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
-   CPEQLitView* litView = [literals positiveForValue: c];
-   if (!litView) {
-      litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
-      [literals addPositive: litView forValue:c];
+   if (memberDom(x, c)) {
+      CPEQLitView* litView = [literals positiveForValue: c];
+      if (!litView) {
+         litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
+         [literals addPositive: litView forValue:c];
+      }
+      return litView;
+   } else {
+      return [CPFactory intVar:[x engine] value:0];
    }
-   return litView;
 }
 
 +(id<ORConstraint>) imply: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i
@@ -311,6 +315,12 @@
 {
    id<CPConstraint> o = [[CPHReifySumBoolGEq alloc] init:b array:x geqi:c];
    [[b tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) clause:(id<CPIntVarArray>) x eq:(id<CPIntVar>)tv
+{
+   id<CPConstraint> o = [[CPClause alloc] initCPClause:x equal:tv];
+   [[x tracker] trackMutable:o];
    return o;
 }
 
@@ -556,9 +566,15 @@
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<ORConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
++(id<CPConstraint>) fail:(id<CPEngine>)engine
 {
-   id<ORConstraint> o = [[CPRestrictI alloc] initRestrict:x to:r];
+   id<CPConstraint> c = [[CPFalse alloc] init:engine];
+   [engine trackMutable:c];
+   return c;
+}
++(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
+{
+   id<CPConstraint> o = [[CPRestrictI alloc] initRestrict:x to:r];
    [[x tracker] trackMutable:o];
    return o;
 }
@@ -577,6 +593,12 @@
    id<CPConstraint> o = [[CPRealSquareBC alloc] initCPRealSquareBC:z equalSquare:x];
    [[x tracker] trackMutable:o];
    return o;
+}
++(id<CPConstraint>) realWeightedVar: (id<CPRealVar>)z equal:(id<CPRealVar>)x weight: (id<CPRealParam>)w
+{
+    id<CPConstraint> o = [[CPRealWeightedVarBC alloc] initCPRealWeightedVarBC: z equal: x weight: w];
+    [[x tracker] trackMutable: o];
+    return o;
 }
 +(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs eqi:(ORDouble)c
 {

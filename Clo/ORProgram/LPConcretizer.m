@@ -13,6 +13,9 @@
 #import <objmp/LPSolverI.h>
 #import <ORProgram/LPProgram.h>
 #import "LPConcretizer.h"
+#import "ORVarI.H"
+#import <objmp/objmp.h>
+
 
 @implementation ORLPConcretizer
 {
@@ -168,7 +171,6 @@
       [_lpsolver postConstraint: concreteCstr];
    }
 }
-
 -(void) visitIntegerI: (id<ORInteger>) e
 {
 }
@@ -287,7 +289,24 @@
 }
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+   ORIntVarAffineI* av = (ORIntVarAffineI*)v;
+   LPVariableI* lpvar = _gamma[v.getId];
+
+   if(lpvar == NULL) {
+      id<ORIntVar> base = [av base];
+      LPVariableI* lpbase = _gamma[base.getId];
+      if (lpbase == NULL) {
+         lpbase = [_lpsolver createVariable: [base low] up: [base up]];
+         _gamma[base.getId] = lpbase;
+      }
+      lpvar = [_lpsolver createVariable: [av low] up: [av up]];
+      _gamma[av.getId] = lpvar;
+      
+      LPVariableI* x[2] = { lpvar, lpbase };
+      ORDouble    coef[2] = { 1 , -[av scale] };
+      LPConstraintI* cstr = [_lpsolver createEQ: 2 var: x coef: coef rhs: [av shift]];
+      [_lpsolver postConstraint: cstr];
+   }
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
@@ -353,6 +372,78 @@
       [_lpsolver postObjective: concreteObj];
    }
 }
+-(void) visitEqual: (id<OREqual>)c
+{
+   // DAN
+   if (_gamma[c.getId]==NULL) {
+      LPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
+      ORDouble    coef[2] = { 1, -1 };
+      LPConstraintI* concreteCstr = [_lpsolver createEQ:2 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint:concreteCstr];
+   }
+}
+-(void) visitEqualc: (id<OREqualc>)c
+{
+   if (_gamma[c.getId]==NULL) {
+      LPVariableI* x[1] = { [self concreteVar:[c left]] };
+      ORDouble    coef[1] = { 1.0 };
+      LPConstraintI* concreteCstr = [_lpsolver createEQ: 1 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint:concreteCstr];
+   }
+}
+-(void) visitLEqual: (id<ORLEqual>)c
+{
+   if (_gamma[c.getId]==NULL) {
+      LPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
+      ORDouble    coef[2] = { [c coefLeft],- [c coefRight]};
+      LPConstraintI* concreteCstr = [_lpsolver createLEQ:2 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint:concreteCstr];
+   }
+}
+-(void) visitGEqual: (id<ORLEqual>)c
+{
+   if (_gamma[c.getId]==NULL) {
+      LPVariableI* x[2] = { [self concreteVar:[c left]],[self concreteVar:[c right]]};
+      ORDouble    coef[2] = { [c coefLeft],- [c coefRight]};
+      LPConstraintI* concreteCstr = [_lpsolver createGEQ:2 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint:concreteCstr];
+   }
+}
+-(void) visitGEqualc:(id<ORGEqualc>)c
+{
+   if (_gamma[c.getId]==NULL) {
+      LPVariableI* x[1] = { [self concreteVar:[c left]] };
+      ORDouble    coef[1] = { 1.0 };
+      LPConstraintI* concreteCstr = [_lpsolver createGEQ: 1 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint:concreteCstr];
+   }
+}
+-(void) visitLEqualc:(id<ORGEqualc>)c
+{
+   if (_gamma[c.getId]==NULL) {
+      LPVariableI* x[1] = { [self concreteVar:[c left]] };
+      ORDouble    coef[1] = { 1.0 };
+      LPConstraintI* concreteCstr = [_lpsolver createLEQ: 1 var:x coef:coef rhs:[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint:concreteCstr];
+   }
+}
+
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<LPVariableArray> x = [self concreteArray:[c vars]];
+      id<ORDoubleArray> fa = [ORFactory doubleArray:_program range:[x range] value:1];
+      LPConstraintI* concreteCstr = [_lpsolver createEQ:x coef:fa cst:-[c cst]];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint:concreteCstr];
+   }
+}
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
@@ -412,7 +503,6 @@
       [_lpsolver postConstraint: concreteCstr];
    }
 }
-
 -(void) visitIntegerI: (id<ORInteger>) e
 {
 }

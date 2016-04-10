@@ -217,10 +217,10 @@
 -(ORModelI*) initWithModel: (ORModelI*) src
 {
    self = [super init];   
-   _vars = [src->_vars copy];
-   _cStore = [src->_cStore copy];
-   _mStore = [src->_mStore copy];
-   _iStore = [src->_iStore copy];
+   _vars = [src->_vars mutableCopy];
+   _cStore = [src->_cStore mutableCopy];
+   _mStore = [src->_mStore mutableCopy];
+   _iStore = [src->_iStore mutableCopy];
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _nbObjects = src->_nbObjects;
    _nbImmutables = src->_nbImmutables;
@@ -229,6 +229,24 @@
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [src->_mappings copy];
    return self;
+}
+-(ORModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
+{
+    self = [super init];
+    _vars = [src->_vars mutableCopy];
+    NSMutableArray* cStore = [src->_cStore mutableCopy];
+    [cStore removeObjectsInArray: cstrs];
+    _cStore = cStore;
+    _mStore = [src->_mStore mutableCopy];
+    _iStore = [src->_iStore mutableCopy];
+    _memory = [[NSMutableArray alloc] initWithCapacity:32];
+    _nbObjects = src->_nbObjects;
+    _nbImmutables = src->_nbImmutables;
+    _objective = src->_objective;
+    _source = [src retain];
+    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
+    _mappings = [src->_mappings copy];
+    return self;
 }
 -(void)setCurrent:(id<ORConstraint>)cstr
 {}
@@ -483,16 +501,15 @@
    _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
    return [self trackObjective: _objective];
 }
-
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
-   return [self trackObjective: _objective];
+    _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
+    return [self trackObjective: _objective];
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
-   return [self trackObjective: _objective];
+    _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
+    return [self trackObjective: _objective];
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
          onMutables: (void(^)(id<ORObject>)) doMutable
@@ -500,12 +517,15 @@
       onConstraints:(void(^)(id<ORObject>)) doCons
         onObjective:(void(^)(id<ORObject>)) doObjective
 {
+   // DAN
+   for(id<ORObject> c in _vars)
+      doVar(c);
    for(id<ORObject> c in _mStore)
       doMutable(c);
    for(id<ORObject> c in _iStore)
       doImmutable(c);
-   for(id<ORObject> c in _vars)
-      doVar(c);
+//   for(id<ORObject> c in _vars)
+//      doVar(c);
    for(id<ORObject> c in _cStore)
       doCons(c);
    doObjective(_objective);
@@ -527,6 +547,10 @@
 {
    ORModelI* clone = [[ORModelI allocWithZone:zone] initWithModel:self];
    return clone;
+}
+-(id<ORModel>) relaxConstraints: (NSArray*) cstrs {
+    id<ORModel> relaxation = [[ORModelI alloc] initWithModel: self relax: cstrs];
+    return relaxation;
 }
 -(id<ORModel>) flatten:(id<ORAnnotation>)ncpy
 {
@@ -683,11 +707,11 @@
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   return [_target minimize: array coef: coef];
+    return [_target minimize: array coef: coef];
 }
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-  return [_target maximize: array coef: coef];
+    return [_target maximize: array coef: coef];
 }
 -(id) trackObject: (id) obj
 {
@@ -715,6 +739,96 @@
 }
 @end
 
+@implementation ORParameterizedModelI
+{
+    NSMapTable* _paramMap;
+    NSMutableArray* _params;
+}
+-(ORParameterizedModelI*) initORParamModelI
+{
+    self = [super initORModelI];
+    _paramMap = [[NSMapTable alloc] init];
+    _params = [[NSMutableArray alloc] initWithCapacity: 32];
+    return self;
+}
+-(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings
+{
+    self = [self initORModelI:nb mappings: mappings];
+    _paramMap = [[NSMapTable alloc] init];
+    _params = [[NSMutableArray alloc] initWithCapacity: 32];
+    return self;
+}
+-(ORParameterizedModelI*) initWithParamModel: (ORParameterizedModelI*) src
+{
+    self = [super initWithModel: src];
+    _paramMap = [[NSMapTable alloc] init];
+    _params = [[NSMutableArray alloc] initWithCapacity: 32];
+    return self;
+}
+-(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs
+{
+    self = [super initWithModel: src relax: cstrs];
+    _paramMap = [[NSMapTable alloc] init];
+    _params = [[NSMutableArray alloc] initWithCapacity: 32];
+    return self;
+}
+-(void) dealloc
+{
+    NSLog(@"ORParameterizedModelI [%p] dealloc called...\n",self);
+    [super dealloc];
+}
+-(id) copyWithZone:(NSZone*)zone
+{
+    ORModelI* clone = [[ORParameterizedModelI allocWithZone:zone] initWithParamModel:self];
+    return clone;
+}
+-(NSArray*) softConstraints
+{
+    NSArray* cstrs = [self constraints];
+    NSMutableArray* softCstrs = [[NSMutableArray alloc] initWithCapacity: 64];
+    for(id<ORConstraint> c in cstrs)
+        if([c conformsToProtocol: @protocol(ORSoftConstraint)])
+            [softCstrs addObject: c];
+    return softCstrs;
+}
+-(NSArray*) hardConstraints
+{
+    NSArray* cstrs = [self constraints];
+    NSMutableArray* hardCstrs = [[NSMutableArray alloc] initWithCapacity: 64];
+    for(id<ORConstraint> c in cstrs)
+        if(![c conformsToProtocol: @protocol(ORSoftConstraint)])
+            [hardCstrs addObject: c];
+    return hardCstrs;
+}
+-(id<ORVarArray>) slacks {
+    NSArray* softCstrs = [self softConstraints];
+    id<ORIntRange> slackRange = RANGE(self, 0, (ORInt)softCstrs.count-1);
+    id<ORVarArray> slacks = (id<ORIntVarArray>)[ORFactory idArray: self range: slackRange with: ^id(ORInt i) {
+        id<ORSoftConstraint> c = [softCstrs objectAtIndex: i];
+        return [c slack];
+    }];
+    return slacks;
+}
+-(NSArray*) parameters
+{
+    return _params;
+}
+-(void) addParameter: (id<ORParameter>)p {
+    [_params addObject: p];
+}
+-(id<ORWeightedVar>) parameterization: (id<ORVar>)x
+{
+    return [_paramMap objectForKey: x];
+}
+-(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x
+{
+    id<ORWeightedVar> c = [[ORRealWeightedVarI alloc] initRealWeightedVar: x];
+    [_paramMap setObject: c forKey: x];
+    [_params addObject: [c weight]];
+    [self add: c];
+    return c;
+}
+@end
 
 typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
@@ -779,11 +893,11 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   return [_target minimize: array coef: coef];
+    return [_target minimize: array coef: coef];
 }
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef
 {
-   return [_target maximize: array coef: coef];
+    return [_target maximize: array coef: coef];
 }
 
 -(id<ORAddToModel>) model
@@ -837,18 +951,17 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    return c;
 }
 
--(ORInt) size {
+-(ORInt) size
+{
     return (ORInt)[_all count];
 }
 
--(void) enumerateWith:(void(^)(id<ORConstraint>))block
+-(void) emptyPool
 {
-    [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-        block(obj);
-    }];
+    [_all removeAllObjects];
 }
-
 @end
+
 @implementation OROrderedConstraintSetI
 -(id) init
 {

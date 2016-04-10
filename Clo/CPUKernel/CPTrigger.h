@@ -20,6 +20,27 @@
 -(void) setLocalID: (ORInt) lid;
 @end
 
+@interface CPTrigger : NSObject {
+@public
+   CPTrigger*         _prev;
+   CPTrigger*         _next;
+   ORClosure          _cb;       // var/val held inside the closure (captured).
+   id<CPConstraint>   _cstr;
+   ORInt              _vId;       // local variable identifier (var being watched)
+}
+-(id)initTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>)c;
+-(void) detach;
+-(ORInt) localID;
+-(void) setLocalID: (ORInt) lid;
+@end
+
+static inline void triggerDetach(const CPTrigger* t)
+{
+   t->_next->_prev = t->_prev;
+   t->_prev->_next = t->_next;
+}
+
+
 @class CPEngineI;
 
 @protocol CPTriggerMap <NSObject>

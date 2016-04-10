@@ -15,6 +15,7 @@
 @class LPSolverI;
 @class LPVariableI;
 @class LPLinearTermI;
+@class LPParameterI;
 
 typedef enum { LPgeq, LPleq, LPeq } LPConstraintType;
 typedef enum { LPminimize, LPmaximize } LPObjectiveType;

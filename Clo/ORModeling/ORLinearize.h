@@ -11,7 +11,22 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORModeling/ORModeling.h>
+
+@interface ORLinearizeConstraint : ORVisitor<NSObject> {
+@protected
+   id<ORAddToModel>  _model;
+   NSMapTable*      _binMap;
+   id<ORExpr>   _exprResult;
+}
+-(id)init:(id<ORAddToModel>)m;
+-(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
+-(id<ORIntRange>) unionOfVarArrayRanges: (id<ORExprArray>)arr;
+-(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr;
+@end
+
+@interface ORLinearizeObjective : ORVisitor<NSObject>
+-(id)init:(id<ORAddToModel>)m;
+@end
 
 @interface ORLinearize : NSObject<ORModelTransformation>
 -(id)initORLinearize:(id<ORAddToModel>)into;
@@ -19,6 +34,6 @@
 +(id<ORModel>)linearize:(id<ORModel>)model;
 @end
 
-@interface ORFactory(Linearize)
+@interface ORFactory (Linearize)
 +(id<ORModel>) linearizeModel: (id<ORModel>)m;
 @end

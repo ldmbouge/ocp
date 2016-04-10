@@ -32,6 +32,13 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFalse : CPCoreConstraint
+-(id)init:(id<CPEngine>)engine;
+-(void)post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 // PVH: where is _active being used
 @interface CPEqualc : CPCoreConstraint {
    @private
@@ -339,6 +346,7 @@ typedef int (^intgetter) (void) ;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
@@ -353,6 +361,7 @@ typedef int (^intgetter) (void) ;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;

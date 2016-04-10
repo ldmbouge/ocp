@@ -47,6 +47,9 @@
 -(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
+-(ORDouble) paramValue: (LPParameterI*) param;
+-(void) setParam: (LPParameterI*) param value: (ORDouble)val;
+
 -(ORStatus) postConstraint: (LPConstraintI*) cstr;
 
 -(void) printModelToFile: (char*) fileName;
