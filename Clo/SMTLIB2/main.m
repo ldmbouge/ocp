@@ -26,6 +26,8 @@
 #include <Verification/smtlib2abstractparser.h>
 #import <Verification/smtlib2objcp.h>
 
+#import "ORCmdLineArgs.h"
+
 void report_memory(void) {
    struct task_basic_info info;
    mach_msg_type_number_t size = sizeof(info);
@@ -46,10 +48,13 @@ int main(int argc, const char * argv[])
    FILE* fp;
       
    clock_t start,finish;
+   
+//   mallocWatch();
+   
    start = clock();
    
    if (argc > 1){
-      fp = fopen(fname, "r");
+      fp = fopen(argv[1], "r");
       if (fp==NULL) {
          printf("Error opening file.\n");
          return false;
@@ -64,6 +69,10 @@ int main(int argc, const char * argv[])
          return false;
       }
    }
+
+   
+   
+   
    smtlib2_objcp_parser *objcp_parser = smtlib2_objcp_parser_new();
    smtlib2_abstract_parser_parse((smtlib2_abstract_parser *)objcp_parser, fp);
    smtlib2_objcp_parser_delete(objcp_parser);
@@ -72,7 +81,7 @@ int main(int argc, const char * argv[])
    totalTime =((double)(finish - start))/CLOCKS_PER_SEC;
    NSLog(@"     Total Time (s): %f\n\n",totalTime);
    report_memory();
-   
+//   NSLog(@"%@",mallocReport());
 
    return 0;
    }

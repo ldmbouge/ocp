@@ -88,6 +88,7 @@
 }
 -(void) addConstraint:(CPCoreConstraint*) c withJumpLevel:(ORUInt) level
 {
+//   NSLog(@"Adding constraint with level %u",level);
    [self addConstraint:c];
    _backjumpLevel = (level < _backjumpLevel) ? level:_backjumpLevel;
 }

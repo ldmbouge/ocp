@@ -587,7 +587,7 @@
       [self updateActivities:var andVal:val atIndex:idx];
    }];
    
-   [[_cp engine] clearStatus];
+   //[[_cp engine] clearStatus];
    [[_cp engine] enforceObjective];
    if ([[_cp engine] objective] != NULL)
       NSLog(@"ABS ready... %@",[[_cp engine] objective]);
@@ -697,7 +697,7 @@
    id<ORZeroOneStream> varPr = [[ORZeroOneStreamI alloc] init];
    do {
       for(ORInt c=0;c <= nbInRound;c++) {
-         [_solver clearStatus];
+         //[_solver clearStatus];
          cntProbes++;
          ABSBitVarProbe* probe = [[ABSBitVarProbe alloc] initABSBitVarProbe:bvars];
          ORInt depth = 0;

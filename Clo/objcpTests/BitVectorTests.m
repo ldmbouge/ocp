@@ -679,7 +679,7 @@
    id<ORBitVar> z = [ORFactory bitVar:m low:min up:max bitLength:32];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -737,7 +737,7 @@
    id<ORBitVar> z = [ORFactory bitVar:m low:min up:max bitLength:64];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -781,7 +781,7 @@
    unsigned int min[2];
    unsigned int max[2];
    
-   unsigned int xmin[2];
+//   unsigned int xmin[2];
    unsigned int ymin[2];
    unsigned int ymax[2];
    
@@ -803,10 +803,10 @@
    
    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:64];
    id<ORBitVar> y = [ORFactory bitVar:m low:rmin up:rmax bitLength:64];
-   id<ORBitVar> z = [ORFactory bitVar:m low:ymin up:ymax bitLength:64];
+//   id<ORBitVar> z = [ORFactory bitVar:m low:ymin up:ymax bitLength:64];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -848,7 +848,7 @@
    unsigned int min[2];
    unsigned int max[2];
    
-   unsigned int xmin[2];
+//   unsigned int xmin[2];
    unsigned int ymin[2];
    unsigned int ymax[2];
    
@@ -868,15 +868,15 @@
    rmax[0] = 0xFFFFFFFF;
    rmax[1] = 0xFFFFFFFF;
    
-   unsigned int zero = 0;
-   unsigned int one = 1;
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
    
    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
    id<ORBitVar> y = [ORFactory bitVar:m low:ymin up:ymax bitLength:32];
    id<ORBitVar> z = [ORFactory bitVar:m low:rmin up:rmax bitLength:1];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -921,17 +921,17 @@
    unsigned int min[2];
    unsigned int max[2];
    
-   unsigned int xmin[2];
+//   unsigned int xmin[2];
    unsigned int ymin[2];
    unsigned int ymax[2];
    
    unsigned int rmin[2];
    unsigned int rmax[2];
    
-   min[0] =0x0FDFF7FB;//0xFFDFF7FBFBF7DEED
-   max[0] = 0x0FDFF7FB;
-   min[1] = 0x0FDFF7FB;
-   max[1] = 0x0FDFF7FB;
+   min[0] =0xB77BEFDF;//0xFFDFF7FBFBF7DEED
+   max[0] = 0xB77BEFDF;
+   min[1] = 0xDFEFFBFF;
+   max[1] = 0xDFEFFBFF;
    ymax[0] = 0xFFDFF7FB;
    ymax[1] = 0xFFDFF7FB;
    ymin[0] = 0xFFDFF7FB;
@@ -941,15 +941,15 @@
    rmax[0] = 0xFFFFFFFF;
    rmax[1] = 0xFFFFFFFF;
    
-   unsigned int zero = 0;
-   unsigned int one = 1;
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
    
    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
    id<ORBitVar> y = [ORFactory bitVar:m low:min up:max bitLength:32];
    id<ORBitVar> z = [ORFactory bitVar:m low:rmax up:rmax bitLength:1];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -994,35 +994,35 @@
    unsigned int min[2];
    unsigned int max[2];
    
-   unsigned int xmin[2];
+//   unsigned int xmin[2];
    unsigned int ymin[2];
    unsigned int ymax[2];
    
    unsigned int rmin[2];
    unsigned int rmax[2];
    
-   min[0] =0x0FDFF7FB;//0xFFDFF7FBFBF7DEED
-   max[0] = 0x0FDFF7FB;
-   min[1] = 0x0FDFF7FB;
-   max[1] = 0x0FDFF7FB;
-   ymax[0] = 0xFFDFF7FB;
+   min[0] =0x700FF7FB;//0xFFDFF7FBFBF7DEED
+   max[0] = 0x700FF7FB;
+   min[1] = 0xFFFFF7FB;
+   max[1] = 0xFFFFF7FB;
+   ymax[0] = 0x7FDFF7FB;
    ymax[1] = 0xFFDFF7FB;
-   ymin[0] = 0xFFDFF7FB;
+   ymin[0] = 0x7FDFF7FB;
    ymin[1] = 0xFFDFF7FB;
    rmin[0] = 0x00000000;
    rmin[1] = 0x00000000;
-   rmax[0] = 0xFFFFFFFF;
-   rmax[1] = 0xFFFFFFFF;
+   rmax[0] = 0x00000001;
+   rmax[1] = 0x00000001;
    
-   unsigned int zero = 0;
-   unsigned int one = 1;
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
    
    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
    id<ORBitVar> y = [ORFactory bitVar:m low:ymin up:ymax bitLength:32];
    id<ORBitVar> z = [ORFactory bitVar:m low:rmin up:rmax bitLength:1];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -1067,35 +1067,35 @@
    unsigned int min[2];
    unsigned int max[2];
    
-   unsigned int xmin[2];
+//   unsigned int xmin[2];
    unsigned int ymin[2];
    unsigned int ymax[2];
    
    unsigned int rmin[2];
    unsigned int rmax[2];
    
-   min[0] =0x0FDFF7FB;//0xFFDFF7FBFBF7DEED
-   max[0] = 0x0FDFF7FB;
+   min[0] =0x700FF7FB;//0xFFDFF7FBFBF7DEED
+   max[0] = 0x700FF7FB;
    min[1] = 0x0FDFF7FB;
    max[1] = 0x0FDFF7FB;
-   ymax[0] = 0xFFDFF7FB;
-   ymax[1] = 0xFFDFF7FB;
-   ymin[0] = 0xFFDFF7FB;
-   ymin[1] = 0xFFDFF7FB;
+   ymax[0] = 0xFFFFFFFF;
+   ymax[1] = 0xFFFFFFFF;
+   ymin[0] = 0x00000000;
+   ymin[1] = 0x00000000;
    rmin[0] = 0x00000000;
    rmin[1] = 0x00000000;
-   rmax[0] = 0xFFFFFFFF;
-   rmax[1] = 0xFFFFFFFF;
+   rmax[0] = 0x00000001;
+   rmax[1] = 0x00000000;
    
-   unsigned int zero = 0;
-   unsigned int one = 1;
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
    
    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
    id<ORBitVar> y = [ORFactory bitVar:m low:ymin up:ymax bitLength:32];
    id<ORBitVar> z = [ORFactory bitVar:m low:rmin up:rmax bitLength:1];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -1140,35 +1140,36 @@
    unsigned int min[2];
    unsigned int max[2];
    
-   unsigned int xmin[2];
+//   unsigned int xmin[2];
    unsigned int ymin[2];
    unsigned int ymax[2];
    
    unsigned int rmin[2];
    unsigned int rmax[2];
    
-   min[0] =0x0FDFF7FB;//0xFFDFF7FBFBF7DEED
-   max[0] = 0x0FDFF7FB;
+   min[0] =0x700FF7FB;//0xFFDFF7FBFBF7DEED
+   max[0] = 0x700FF7FB;
    min[1] = 0x0FDFF7FB;
    max[1] = 0x0FDFF7FB;
-   ymax[0] = 0xFFDFF7FB;
-   ymax[1] = 0xFFDFF7FB;
-   ymin[0] = 0xFFDFF7FB;
-   ymin[1] = 0xFFDFF7FB;
-   rmin[0] = 0x00000000;
+   ymax[0] = 0xFFFFFFFF;
+   ymax[1] = 0xFFFFFFFF;
+   ymin[0] = 0x00000000;
+   ymin[1] = 0x00000000;
+   rmin[0] = 0x00000001;
    rmin[1] = 0x00000000;
-   rmax[0] = 0xFFFFFFFF;
-   rmax[1] = 0xFFFFFFFF;
+   rmax[0] = 0x00000001;
+   rmax[1] = 0x00000001;
+
    
-   unsigned int zero = 0;
-   unsigned int one = 1;
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
    
    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
    id<ORBitVar> y = [ORFactory bitVar:m low:ymin up:ymax bitLength:32];
    id<ORBitVar> z = [ORFactory bitVar:m low:rmin up:rmax bitLength:1];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -1213,7 +1214,7 @@
    unsigned int min[2];
    unsigned int max[2];
    
-   unsigned int xmin[2];
+//   unsigned int xmin[2];
    unsigned int ymin[2];
    unsigned int ymax[2];
    
@@ -1233,15 +1234,15 @@
    rmax[0] = 0xFFFFFFFF;
    rmax[1] = 0xFFFFFFFF;
    
-   unsigned int zero = 0;
-   unsigned int one = 1;
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
    
    id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
    id<ORBitVar> y = [ORFactory bitVar:m low:ymin up:ymax bitLength:32];
    id<ORBitVar> z = [ORFactory bitVar:m low:rmin up:rmax bitLength:1];
    unsigned int test[1];
    test[0] = 0xFFFFFFFE;
-   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
    
    
    NSLog(@"Initial values:");
@@ -1274,6 +1275,299 @@
       }
    }];
    NSLog(@"End Test 6 of bit Signed LE constraint.\n");
+   
+}
+
+-(void) testBitNOT1
+{
+   NSLog(@"Begin Test 1 of Bit NOT constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   
+   unsigned int min[2];
+   unsigned int max[2];
+   
+//   unsigned int xmin[2];
+   unsigned int ymin[2];
+   unsigned int ymax[2];
+   
+   unsigned int rmin[2];
+   unsigned int rmax[2];
+   
+   min[0] =0xB77BEFDF;//0xFFDFF7FBFBF7DEED
+   max[0] = 0xB77BEFDF;
+   min[1] = 0xDFEFFBFF;
+   max[1] = 0xDFEFFBFF;
+   ymax[0] = 0xFFFFFFFF;
+   ymax[1] = 0xFFFFFFFF;
+   ymin[0] = 0x00000000;
+   ymin[1] = 0x00000000;
+   rmin[0] = 0x00000000;
+   rmin[1] = 0x00000000;
+   rmax[0] = 0xFFFFFFFF;
+   rmax[1] = 0xFFFFFFFF;
+
+   
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
+   
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORBitVar> y = [ORFactory bitVar:m low:ymin up:ymax bitLength:32];
+   id<ORBitVar> z = [ORFactory bitVar:m low:rmin up:rmax bitLength:1];
+   unsigned int test[1];
+   test[0] = 0xFFFFFFFE;
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+   
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"y = %@\n", y);
+   
+   [m add:[ORFactory bit:x not:y]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[x.getId] at:0];
+   [o set:gamma[y.getId] at:1];
+   [o set:gamma[z.getId] at:2];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"z = %@\n", gamma[z.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"z = %@\n", gamma[z.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test 1 of Bit NOT constraint.\n");
+   
+}
+
+-(void) testBitLE
+{
+   NSLog(@"Begin Test of bit LE constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   
+   unsigned int min[2];
+   unsigned int max[2];
+   
+//   unsigned int xmin[2];
+   unsigned int ymin[2];
+   unsigned int ymax[2];
+   
+   unsigned int rmin[2];
+   unsigned int rmax[2];
+   
+   min[0] =0x0FDFF7FB;//0xFFDFF7FBFBF7DEED
+   max[0] = 0x0FDFF7FB;
+   min[1] = 0x0FDFF7FB;
+   max[1] = 0x0FDFF7FB;
+   ymax[0] = 0xFFDFF7FB;
+   ymax[1] = 0xFFDFF7FB;
+   ymin[0] = 0xFFDFF7FB;
+   ymin[1] = 0xFFDFF7FB;
+   rmin[0] = 0x00000000;
+   rmin[1] = 0x00000000;
+   rmax[0] = 0xFFFFFFFF;
+   rmax[1] = 0xFFFFFFFF;
+   
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
+   
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORBitVar> y = [ORFactory bitVar:m low:ymin up:ymax bitLength:32];
+   id<ORBitVar> z = [ORFactory bitVar:m low:rmin up:rmax bitLength:1];
+   unsigned int test[1];
+   test[0] = 0xFFFFFFFE;
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+   
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"y = %@\n", y);
+   
+   [m add:[ORFactory bit:x LE:y eval:z]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[x.getId] at:0];
+   [o set:gamma[y.getId] at:1];
+   [o set:gamma[z.getId] at:2];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"z = %@\n", gamma[z.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"z = %@\n", gamma[z.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test of bit  LE constraint.\n");
+   
+}
+
+-(void) testBitLE2
+{
+   NSLog(@"Begin Test 2 of bit  LE constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   
+   unsigned int min[2];
+   unsigned int max[2];
+   
+//   unsigned int xmin[2];
+   unsigned int ymin[2];
+   unsigned int ymax[2];
+   
+   unsigned int rmin[2];
+   unsigned int rmax[2];
+   
+   min[0] =0xB77BEFDF;//0xFFDFF7FBFBF7DEED
+   max[0] = 0xB77BEFDF;
+   min[1] = 0xDFEFFBFF;
+   max[1] = 0xDFEFFBFF;
+   ymax[0] = 0xFFDFF7FB;
+   ymax[1] = 0xFFDFF7FB;
+   ymin[0] = 0xFFDFF7FB;
+   ymin[1] = 0xFFDFF7FB;
+   rmin[0] = 0x00000000;
+   rmin[1] = 0x00000000;
+   rmax[0] = 0xFFFFFFFF;
+   rmax[1] = 0xFFFFFFFF;
+   
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
+   
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORBitVar> y = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORBitVar> z = [ORFactory bitVar:m low:rmax up:rmax bitLength:1];
+   unsigned int test[1];
+   test[0] = 0xFFFFFFFE;
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+   
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"y = %@\n", y);
+   
+   [m add:[ORFactory bit:x LE:y eval:z]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[x.getId] at:0];
+   [o set:gamma[y.getId] at:1];
+   [o set:gamma[z.getId] at:2];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"z = %@\n", gamma[z.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"z = %@\n", gamma[z.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test 2 of bit LE constraint.\n");
+   
+}
+
+-(void) testBitLE3
+{
+   NSLog(@"Begin Test 3 of bit LE constraint\n");
+   
+   id<ORModel> m = [ORFactory createModel];
+   
+   unsigned int min[2];
+   unsigned int max[2];
+   
+//   unsigned int xmin[2];
+   unsigned int ymin[2];
+   unsigned int ymax[2];
+   
+   unsigned int rmin[2];
+   unsigned int rmax[2];
+   
+   min[0] =0x700FF7FB;//0xFFDFF7FBFBF7DEED
+   max[0] = 0x700FF7FB;
+   min[1] = 0xFFFFF7FB;
+   max[1] = 0xFFFFF7FB;
+   ymax[0] = 0x7FDFF7FB;
+   ymax[1] = 0xFFDFF7FB;
+   ymin[0] = 0x7FDFF7FB;
+   ymin[1] = 0xFFDFF7FB;
+   rmin[0] = 0x00000000;
+   rmin[1] = 0x00000000;
+   rmax[0] = 0x00000001;
+   rmax[1] = 0x00000001;
+   
+//   unsigned int zero = 0;
+//   unsigned int one = 1;
+   
+   id<ORBitVar> x = [ORFactory bitVar:m low:min up:max bitLength:32];
+   id<ORBitVar> y = [ORFactory bitVar:m low:ymin up:ymax bitLength:32];
+   id<ORBitVar> z = [ORFactory bitVar:m low:rmin up:rmax bitLength:1];
+   unsigned int test[1];
+   test[0] = 0xFFFFFFFE;
+//   id<ORBitVar> a = [ORFactory bitVar:m low:test up:test bitLength:32];
+   
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x = %@\n", x);
+   NSLog(@"y = %@\n", y);
+   
+   [m add:[ORFactory bit:x LE:y eval:z]];
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
+   id* gamma = [cp gamma];
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:2]];
+   [o set:gamma[x.getId] at:0];
+   [o set:gamma[y.getId] at:1];
+   [o set:gamma[z.getId] at:2];
+   id<CPBitVarHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
+   [cp solve: ^(){
+      @try {
+         NSLog(@"After Posting:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"z = %@\n", gamma[z.getId]);
+         [cp labelBitVarHeuristic:h];
+         NSLog(@"Solution Found:");
+         NSLog(@"x = %@\n", gamma[x.getId]);
+         NSLog(@"y = %@\n", gamma[y.getId]);
+         NSLog(@"z = %@\n", gamma[z.getId]);
+      }
+      @catch (NSException *exception) {
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   NSLog(@"End Test 3 of bit LE constraint.\n");
    
 }
 

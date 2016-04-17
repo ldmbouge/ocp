@@ -136,7 +136,7 @@ void smtlib2_abstract_parser_handle_error(smtlib2_parser_interface *p,
                                           const char *msg);
 
 void smtlib2_abstract_parser_push_let_scope(smtlib2_parser_interface *p);
-void smtlib2_abstract_parser_pop_let_scope(smtlib2_parser_interface *p);
+smtlib2_term smtlib2_abstract_parser_pop_let_scope(smtlib2_parser_interface *p);
 
 void smtlib2_abstract_parser_push_quantifier_scope(smtlib2_parser_interface *p);
 void smtlib2_abstract_parser_pop_quantifier_scope(smtlib2_parser_interface *p);

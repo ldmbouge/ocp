@@ -448,6 +448,14 @@
 {
    _result = c;
 }
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)c
+{
+   _result = c;
+}
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)c
+{
+   _result = c;
+}
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    _result = c;
@@ -507,6 +515,11 @@
    _result = c;
 }
 
+-(void) visitBitSLT:(id<ORBitSLT>)c
+{
+   _result = c;
+}
+
 -(void) visitBitITE:(id<ORBitITE>)c
 {
    _result = c;
@@ -532,6 +545,11 @@
 {
    _result = c;
 }
+-(void) visitBitDistinct:(id<ORBitDistinct>)c
+{
+   _result = c;
+}
+
 // Flattening of constraints ============================================================================
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v

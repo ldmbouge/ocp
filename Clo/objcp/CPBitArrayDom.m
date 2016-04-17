@@ -95,6 +95,7 @@
 {
    NSMutableString* string = [[[NSMutableString alloc] init] autorelease];
    
+   [string appendString:[NSString stringWithFormat:@"0x%lx : ",self]];
    
    int remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
    unsigned int boundLow = (~ _up[_wordLength-1]._val) & (~_low[_wordLength-1]._val);
@@ -184,7 +185,7 @@
 {
     unsigned int* min = malloc(sizeof(unsigned int)*_wordLength);
     for(int i=0;i<_wordLength;i++)
-        min[i] = _min[i]._val;
+        min[i] = _low[i]._val;
     return min;     
 }
 -(unsigned int*) sminArray
@@ -236,7 +237,7 @@
 {
     unsigned int* max = malloc(sizeof(unsigned int)*_wordLength);
     for(int i=0;i<_wordLength;i++)
-        max[i] = _max[i]._val;
+        max[i] = _up[i]._val;
     return max;     
 }
 
@@ -940,7 +941,7 @@
    
    if (umod || lmod){
       [x bitFixedEvt:_freebits._val sender:self];
-
+//      NSLog(@"\nBitvector changed.\n\n");
       for (int i=0; i<_wordLength; i++) {
          for (int j=0; j<BITSPERWORD; j++) {
             if (isChanged[i] & 0x00000001) {

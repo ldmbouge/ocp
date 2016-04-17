@@ -651,26 +651,43 @@ return self;
    ORUInt changedUp;
    ORUInt changedLow;
    ORUInt mask;
+   ORUInt bitLength = [self bitLength];
+   ORUInt wordLength = [self getWordLength];
    
-   for (int i=0; i<[_dom getWordLength]; i++) {
+   mask = CP_UMASK >> (BITSPERWORD-(bitLength%BITSPERWORD));
+   
+   newUp[wordLength-1] &= mask;
+   newLow[wordLength-1] &= mask;
+   
+   for (int i=0; i<wordLength; i++) {
       changedUp = oldUp[i]._val ^ newUp[i];
       changedLow = oldLow[i]._val ^ newLow[i];
       mask = 0x1;
       for(int j=0;j<BITSPERWORD; j++){
+         if ((i*BITSPERWORD)+j >=bitLength) {
+            break;
+         }
          if ((changedUp & mask) || (changedLow & mask)) {
+            if (((i*BITSPERWORD)+j ==63) && (bitLength==40)){
+               NSLog(@"Setting bit 63");
+            }
+
+//            NSLog(@"Update of bit %u by %@", j, constraint);
             if([_engine isKindOfClass:[CPLearningEngineI class]]){
                //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
                //_implications[i*BITSPERWORD+j] = constraint;
                assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
 //               NSLog(@"Updating %lx[%d] for %@ \@ %ld",self, i*BITSPERWORD+j,constraint,[_engine getLevel]);
             }
+            
          }
          mask <<= 1;
       }
    }
 //   NSLog(@"done.");
    [_dom setUp: newUp andLow:newLow for:self];
-//   NSLog(@"%lx=%@ updated by %@ \@ %ld",self,self,constraint,[_engine getLevel]);
+//   if(changedUp | changedLow)
+//      NSLog(@"%lx=%@ updated by %@",self,self,constraint);
    
 }
 //end of setup and setlow for nogoods

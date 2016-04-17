@@ -1105,14 +1105,16 @@
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> places = [self concreteVar:[cstr places]];
       
+      id<CPConstraint> concreteCstr;
       if(![places bound])
-         @throw [[ORExecutionError alloc] initORExecutionError: "OR Bit Shift Left with Bitvector only implemented for bitvector constants."];
-      
-//      if([(CPBitVarI*)places getWordLength]!=1)
-//         @throw [[ORExecutionError alloc] initORExecutionError: "OR Bit Shift Left with Bitvector only implemented for bitvector constants with at most 32 bits for the number of places to shift."];
-      
-      ORUInt p = [(CPBitVarI*)places getLow][0]._val;
-      id<CPConstraint> concreteCstr = [CPFactory bitShiftL:x by:p equals:y];
+      {
+         concreteCstr = [CPFactory bitShiftLBV:x by:places equals:y];
+      }
+      else
+      {
+         ORUInt p = [(CPBitVarI*)places getLow][0]._val;
+         concreteCstr = [CPFactory bitShiftL:x by:p equals:y];
+      }
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1137,14 +1139,50 @@
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> places = [self concreteVar:[cstr places]];
       
+      id<CPConstraint> concreteCstr;
       if(![places bound])
-         @throw [[ORExecutionError alloc] initORExecutionError: "OR Bit Shift Right with Bitvector only implemented for bitvector constants."];
+      {
+         concreteCstr = [CPFactory bitShiftRBV:x by:places equals:y];
+      }
+      else
+      {
+         ORUInt p = [(CPBitVarI*)places getLow][0]._val;
+         concreteCstr = [CPFactory bitShiftR:x by:p equals:y];
+      }
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 
-//      if([(CPBitVarI*)places getWordLength]!=1)
-//         @throw [[ORExecutionError alloc] initORExecutionError: "OR Bit Shift Right with Bitvector only implemented for bitvector constants with at most 32 bits for the number of places to shift."];
-      
-      ORUInt p = [(CPBitVarI*)places getLow][0]._val;
-      id<CPConstraint> concreteCstr = [CPFactory bitShiftR:x by:p equals:y];
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      ORInt p = [cstr places];
+      id<CPConstraint> concreteCstr = [CPFactory bitShiftRA:x by:p equals:y];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> places = [self concreteVar:[cstr places]];
+
+      id<CPConstraint> concreteCstr;
+      if(![places bound])
+      {
+         concreteCstr = [CPFactory bitShiftRABV:x by:places equals:y];
+      }
+      else
+      {
+         ORUInt p = [(CPBitVarI*)places getLow][0]._val;
+         concreteCstr = [CPFactory bitShiftRA:x by:p equals:y];
+      }
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1338,6 +1376,18 @@
    }
 }
 
+-(void) visitBitSLT:(id<ORBitSLT>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitSLT:x SLT:y eval:z];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitBitITE:(id<ORBitITE>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1416,6 +1466,18 @@
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> r = [self concreteVar:[cstr res]];
       id<CPConstraint> concreteCstr = [CPFactory bitEqualb:x equal:y eval:r];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitDistinct:(id<ORBitDistinct>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory bitDistinct:x distinctFrom:y eval:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

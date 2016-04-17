@@ -427,7 +427,7 @@ void smtlib2_abstract_parser_push_let_scope(smtlib2_parser_interface *p)
 }
 
 
-void smtlib2_abstract_parser_pop_let_scope(smtlib2_parser_interface *p)
+smtlib2_term smtlib2_abstract_parser_pop_let_scope(smtlib2_parser_interface *p)
 {
     smtlib2_abstract_parser *pp = (smtlib2_abstract_parser *)p;
     if (pp->response_ != SMTLIB2_RESPONSE_ERROR) {
@@ -438,6 +438,7 @@ void smtlib2_abstract_parser_pop_let_scope(smtlib2_parser_interface *p)
                 smtlib2_term_parser_get_error_msg(pp->termparser_));
         }
     }
+   return NULL;
 }
 
 

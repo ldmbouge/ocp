@@ -156,9 +156,11 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_bv_shl:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 //Shift Right Logical
 -(objcp_expr) objcp_mk_bv_shrl:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+-(objcp_expr) objcp_mk_bv_shra:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 
 -(objcp_expr) objcp_mk_bv_le:(objcp_expr)ctx x:(objcp_expr)x le:(objcp_expr)y;
 -(objcp_expr) objcp_mk_bv_sle:(objcp_expr)ctx x:(objcp_expr)x sle:(objcp_expr)y;
+-(objcp_expr) objcp_mk_bv_slt:(objcp_expr)ctx x:(objcp_expr)x slt:(objcp_expr)y;
 //-(objcp_expr) objcp_mk_bv_gt
 //-(objcp_expr) objcp_mk_bv_sgt
 //-(objcp_expr) objcp_mk_bv_ge
