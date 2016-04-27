@@ -1325,7 +1325,11 @@
 {
    [visitor visitExprEqualI: self]; 
 }
--(NSString*) description 
+-(enum ORVType) vtype
+{
+   return ORTBool;
+}
+-(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"%@ == %@",[_left description],[_right description]];

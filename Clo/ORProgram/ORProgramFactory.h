@@ -37,8 +37,12 @@ PORTABLE_BEGIN
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k annotation:(id<ORAnnotation>) notes;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto;
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>) notes;
++(id<CPProgram>) createCPProgram: (id<ORModel>) model
+                  withRelaxation: (id<ORRelaxation>) relaxation
+                      annotation: (id<ORAnnotation>) notes
+                            with: (id<ORSearchController>) ctrlProto;
 
-// For extensioms
+// For extensions
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes;
 
 +(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>)model annotation:(id<ORAnnotation>) notes;

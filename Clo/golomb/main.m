@@ -48,20 +48,12 @@ int main(int argc, const char * argv[])
                [ad set:[d at: i : j] at:k++];
          [notes dc:[model add:[ORFactory alldifferent:ad ]]];
          
-         id<CPProgram> cp  = [args makeProgram:model annotation:notes];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemBFSController proto]];
+         //id<CPProgram> cp  = [args makeProgram:model annotation:notes];
          [cp solve: ^{
             for(ORInt i=1;i<=n;i++) {
                if ([cp bound:m[i]]) continue;
-	       // while (![cp bound:m[i]]) {
-	       // 	 int v = [cp min:m[i]];
-	       // 	 [cp try: ^{ [cp label:m[i] with:v]; }
-    	       // 	     alt: ^{ [cp diff:m[i] with:v]; }
-               //   ];
-	       // }
-	       //[cp label:m[i]];
-               [cp tryall:D suchThat:^ORBool(ORInt v) { 
-		   return [cp member:v in:m[i]];
-		 } in:^(ORInt v) {
+               [cp tryall:D suchThat:^ORBool(ORInt v) { return [cp member:v in:m[i]];} in:^(ORInt v) {
                   [cp label:m[i] with:v];
                } onFailure:^(ORInt v) {
                   [cp diff:m[i] with:v];

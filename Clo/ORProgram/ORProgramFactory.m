@@ -56,16 +56,17 @@
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
-   id<CPProgram> program = [self createCPSemanticProgramDFS:model annotation:notes];
+   id<CPProgram> p = [self createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
    [notes release];
-   return program;
+   return p;
 }
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (id<ORSearchController>) ctrlClass
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model
+                                    with: (id<ORSearchController>) ctrlClass
 {
    id<ORAnnotation> notes = [ORFactory annotation];
-   id<CPProgram> program = [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
+   id<CPProgram> p =  [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
    [notes release];
-   return program;
+   return p;
 }
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (id<ORSearchController>) ctrlClass
 {
@@ -361,7 +362,9 @@
    [notes release];
    return program;
 }
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>)notes
++(id<CPProgram>) createCPProgram: (id<ORModel>) model
+                  withRelaxation: (id<ORRelaxation>) relaxation
+                      annotation: (id<ORAnnotation>)notes
 {
    __block id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPProgram: model program: cpprogram annotation:notes];
@@ -384,9 +387,37 @@
       [sp addSolution: s];
       [s release];
    }];
-   return cpprogram;
+   return (id<CPProgram>)cpprogram;
 }
 
++(id<CPProgram>) createCPProgram: (id<ORModel>) model
+                  withRelaxation: (id<ORRelaxation>) relaxation
+                      annotation: (id<ORAnnotation>)notes
+                            with: (id<ORSearchController>) ctrlProto
+{
+   __block id<CPSemanticProgram> cpprogram = [CPSolverFactory semanticSolver:ctrlProto];
+   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+   
+   NSArray* mv = [model variables];
+   NSMutableArray* cv = [[NSMutableArray alloc] init];
+   id* gamma = [cpprogram gamma];
+   for(id<ORVar> v in mv)
+      [cv addObject: gamma[v.getId]];
+   
+   NSLog(@"Model variables %@",mv);
+   NSLog(@"Concrete variables %@",cv);
+   id<CPEngine> engine = [(CPSolver*) cpprogram engine];
+   if (relaxation != nil)
+      [engine add: [CPFactory relaxation: mv var: cv relaxation: relaxation]];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [cpprogram captureSolution];
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      [sp addSolution: s];
+      [s release];
+   }];
+   return (id<CPProgram>)cpprogram;
+}
 @end
 
 @implementation ORLinearRelaxation

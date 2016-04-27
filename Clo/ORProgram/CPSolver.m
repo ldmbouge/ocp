@@ -1577,6 +1577,19 @@
    [self gthenImpl: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory gEqualc:self var:var to:val+1]];
 }
+-(void) lthen: (id<ORIntVar>) var double: (ORDouble) val
+{
+   ORInt iVal = rint(ceil(val));
+   [self lthenImpl: _gamma[var.getId] with: iVal];
+   [_tracer addCommand: [ORFactory lEqualc:self var:var to:iVal-1]];
+}
+-(void) gthen: (id<ORIntVar>) var double: (ORDouble) val
+{
+   ORInt iVal = rint(floor(val));
+   [self gthenImpl: _gamma[var.getId] with: iVal];
+   [_tracer addCommand: [ORFactory gEqualc:self var:var to:iVal+1]];
+}
+
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine enforce: ^ {

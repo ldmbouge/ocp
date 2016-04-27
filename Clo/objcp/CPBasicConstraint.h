@@ -346,11 +346,13 @@ typedef int (^intgetter) (void) ;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(id<ORObjectiveValue>) dualBound;
 -(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>)value;
+-(ORBool)   isMinimization;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
@@ -361,11 +363,13 @@ typedef int (^intgetter) (void) ;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 -(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(id<ORObjectiveValue>) dualBound;
 -(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>)value;
+-(ORBool)   isMinimization;
 @end
 
 @interface CPRelaxation : CPCoreConstraint

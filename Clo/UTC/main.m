@@ -13,6 +13,8 @@
 #import <ORModeling/ORLinearize.h>
 #import <ORProgram/ORRunnable.h>
 
+#import "PCBranching.h"
+
 
 #define NONE @(0)
 
@@ -917,48 +919,39 @@ int main(int argc, const char * argv[])
    __block id<ORSolution> bestSolution = nil;
    id<ORRunnable> r0 = [ORFactory CPRunnable:m
                               withRelaxation: relax = [ORFactory createLinearRelaxation:lm]
+                                  controller: [ORSemBFSController proto]
                                        solve:^(id<CPCommonProgram> p)
    {
 //      id<CPHeuristic> h = [p createIBS];
-         id<ORTau> t = p.modelMappings.tau;
-         id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
-         id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
-         [p forall:x.range suchThat:^ORBool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return -[c at:i];} do:^(ORInt i) {
-            [p label:x[i]];
-         }];
+//         id<ORTau> t = p.modelMappings.tau;
+//         id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
+//         id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
+//         [p forall:x.range suchThat:^ORBool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return -[c at:i];} do:^(ORInt i) {
+//            [p label:x[i]];
+//         }];
+      
+      PCBranching* pcb = [[PCBranching alloc] init:relax over:m.intVars program:p];
+      id<ORIntVarArray> av = m.intVars;
+      
+      while (![p allBound:av]) {
+         ORInt bi = [pcb selectVar];
+         if (bi != av.range.low) {
+            double fv = [relax value:av[bi]];
+            ORInt im = floor(fv);
+            [p try:^{
+               [pcb measureDown:av[bi] for: ^{
+                  [p lthen:av[bi] with:im+1];
+               }];
+            } alt:^{
+               [pcb measureUp:av[bi] for:^{
+                  [p gthen:av[bi] with:im];
+               }];
+            }];
+         } else break;
+      }
 
-      //[p labelHeuristic: h];
-//         id<ORIntVarArray> av = m.intVars;
-//      while (![p allBound:av]) {
-//         double brc = FDMAXINT;
-//         ORInt bi = av.range.low - 1;
-//         for(ORInt i=av.range.low;i <= av.range.up;i++) {
-//            if ([p bound:av[i]]) continue;
-//            double rc = [relax value:av[i]];
-//            double mp = 0.5 - (rc - floor(rc));
-//            double frac = fabs(mp);
-//            if (frac == 0.5) continue;
-//            //NSLog(@"av[%d] RC = %f",i,rc);
-//            //printf("(%d,%.2f) ",i,frac);
-//            if (frac < brc) {
-//               brc = frac;
-//               bi = i;
-//            }
-//         }
-//         //printf("\n");
-//         if (bi != av.range.low - 1) {
-//            while (![p bound:av[bi]]) {
-//               double lb = [p min:av[bi]],ub = [p max:av[bi]];
-//               double m  = (lb + ub)/2.0;ORInt im = floor(m);
-//               [p try:^{
-//                  [p lthen:av[bi] with:im+1];
-//               } alt:^{
-//                  [p gthen:av[bi] with:im];
-//               }];
-//            }
-//         } else break;
-//      }
-        [p labelArrayFF:m.intVars];
+      
+      [p labelArrayFF:m.intVars];
          //[p splitArray:m.intVars];
          NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
          id<ORSolution> s = [p captureSolution];

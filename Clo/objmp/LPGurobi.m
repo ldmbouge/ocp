@@ -152,8 +152,14 @@
 
 -(ORDouble) value: (LPVariableI*) var
 {
-   ORDouble value;
+   ORDouble lb,ub,value;
+   GRBgetdblattrelement(_model,"LB",[var idx],&lb);
+   GRBgetdblattrelement(_model,"UB",[var idx],&ub);
    GRBgetdblattrelement(_model,"X",[var idx],&value);
+   if (value < lb)
+      value = lb;
+   else if (value > ub)
+      value = ub;
    return value;
 }
 

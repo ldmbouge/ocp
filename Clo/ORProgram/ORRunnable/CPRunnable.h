@@ -26,6 +26,10 @@
              search: (void(^)(id<CPCommonProgram>))search;
 -(id) initWithModel: (id<ORModel>)m
      withRelaxation:(id<ORRelaxation>)relax
+             search: (void(^)(id<CPCommonProgram>))search
+         controller: (id<ORSearchController>)proto;
+-(id) initWithModel: (id<ORModel>)m
+     withRelaxation:(id<ORRelaxation>)relax
          numThreads: (ORInt) nth
              search: (void(^)(id<CPCommonProgram>))search;
 @end

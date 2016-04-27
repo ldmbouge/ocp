@@ -48,6 +48,10 @@
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m withRelaxation:(id<ORRelaxation>)relax solve: (void(^)(id<CPCommonProgram>))body;
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m
               withRelaxation: (id<ORRelaxation>)relax
+                  controller: (id<ORSearchController>)proto
+                       solve: (void(^)(id<CPCommonProgram>))body;
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m
+              withRelaxation: (id<ORRelaxation>)relax
                   numThreads: (ORInt)nth
                        solve: (void(^)(id<CPCommonProgram>))body;
 +(id<ORRunnable>) LPRunnable: (id<ORModel>)m;

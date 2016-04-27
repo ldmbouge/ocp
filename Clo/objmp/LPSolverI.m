@@ -641,7 +641,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"LPVariable(%d,%f)",_idx,[_solver doubleValue:self]];
+   [buf appendFormat:@"LPVariable(%d,[%f .. %f],%f)",_idx,[_solver lowerBound:self],[_solver upperBound:self],[_solver doubleValue:self]];
    return buf;
 }
 -(void) resize

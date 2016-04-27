@@ -75,6 +75,19 @@
    return self;
 }
 
+-(id) initWithModel: (id<ORModel>)m
+     withRelaxation:(id<ORRelaxation>)relax
+             search: (void(^)(id<CPCommonProgram>))search
+         controller: (id<ORSearchController>)proto
+{
+   if((self = [super initWithModel: m]) != nil) {
+      id<ORAnnotation> notes = [ORFactory annotation];
+      _program = [ORFactory createCPProgram: m  withRelaxation:relax annotation:notes with:proto];
+      _sig = nil;
+      _search = [search retain];
+   }
+   return self;
+}
 
 -(id) initWithModel: (id<ORModel>)m
      withRelaxation:(id<ORRelaxation>)relax

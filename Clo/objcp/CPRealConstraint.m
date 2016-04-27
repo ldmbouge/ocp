@@ -459,6 +459,10 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 {
    return _x;
 }
+-(ORBool)   isMinimization
+{
+   return YES;
+}
 -(void) post
 {
    _primalBound = MAXINT;
@@ -522,6 +526,10 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 {
    return [ORFactory objectiveValueReal:_primalBound minimize:YES];
 }
+-(id<ORObjectiveValue>) dualBound
+{
+   return [ORFactory objectiveValueReal:[_x min] minimize:YES];
+}
 -(ORBool)   isBound
 {
     return [_x bound];
@@ -548,6 +556,10 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 -(id<CPRealVar>)var
 {
    return _x;
+}
+-(ORBool)   isMinimization
+{
+   return NO;
 }
 -(void) post
 {
@@ -607,6 +619,11 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 {
    return [ORFactory objectiveValueReal:_primalBound minimize:NO];
 }
+-(id<ORObjectiveValue>) dualBound
+{
+   return [ORFactory objectiveValueReal:[_x max] minimize:NO];
+}
+
 -(ORBool)   isBound
 {
     return [_x bound];

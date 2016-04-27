@@ -2147,6 +2147,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    return [_x bound] ? 0 : 1;
 }
+-(ORBool)   isMinimization
+{
+   return YES;
+}
 -(void) updatePrimalBound
 {
    ORInt bound = [_x min];
@@ -2188,6 +2192,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    }
 }
 
+-(id<ORObjectiveValue>) dualBound
+{
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI:[_x min] minimize:NO]; // dual bound ordering is opposite of primal bound. (if we minimize in primal, we maximize in dual).
+}
 
 -(ORStatus) check
 {
@@ -2231,6 +2239,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    return _x;
 }
+-(ORBool)   isMinimization
+{
+   return NO;
+}
 -(void) post
 {
   if (![_x bound]) 
@@ -2245,7 +2257,15 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 }
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize: NO];
+   if (bound(_x))
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize: NO];
+   else
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _x.min-1 minimize: NO];
+}
+
+-(id<ORObjectiveValue>) dualBound
+{
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI:[_x max] minimize:YES];
 }
 
 -(ORUInt)nbUVars

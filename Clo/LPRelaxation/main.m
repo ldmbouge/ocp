@@ -11,8 +11,8 @@
 
 #import <ORProgram/ORProgram.h>
 #import "math.h"
-
 #import "ORCmdLineArgs.h"
+#import "PCBranching.h"
 
 static int nbRows = 7;
 static int nbColumns = 12;
@@ -225,7 +225,7 @@ int main_hybrid_branching(int argc, const char * argv[])
          [cp solve:
           ^() {
              id<ORSelect> sel = [ORFactory select:cp range: Columns
-                                         suchThat:^bool(ORInt i)    { return true;}
+                                         suchThat:^ORBool(ORInt i)    { return true;}
                                         orderedBy:^ORDouble(ORInt i) { return frac([lp value: x[i]]);}];
              while (true) {
                 ORInt idx = [sel max];
@@ -267,13 +267,149 @@ int main_hybrid_branching(int argc, const char * argv[])
 }
 
 
+int main_hybrid_branchingMANUALMIP(int argc, const char * argv[])
+{
+   @autoreleasepool {
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult() {
+         ORLong startTime = [ORRuntimeMonitor cputime];
+         id<ORAnnotation> note = [ORFactory annotation];
+         id<ORModel> model = [ORFactory createModel];
+         id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
+         id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
+         id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
+         id<ORRealVar> y = [ORFactory realVar: model low: 0.0 up: 0.0];
+         
+         for(ORInt i = 0; i < nbRows; i++)
+            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: [y plus: @(b[i])]]];
+         //[note relax: [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]]];
+         //[model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
+//         [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
+         [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
+         
+         id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
+         id<CPProgram> cp = [ORFactory createCPProgram: model
+                                        withRelaxation: lp
+                                            annotation: note
+                                                  with: [ORSemBFSController proto]
+                             ];
+         [cp solve:
+          ^() {
+             PCBranching* pcb = [[PCBranching alloc] init:lp over:x program:cp];
+             id<ORIntVarArray> av = x;
+
+             while (![cp allBound:av]) {
+                ORInt bi = [pcb selectVar];
+                if (bi != av.range.low - 1) {
+                   double fv = [lp value:av[bi]];
+                   ORInt im = floor(fv);
+                   [cp try:^{
+                      [pcb measureDown:av[bi] for: ^{
+                         [cp lthen:av[bi] with:im+1];
+                      }];
+                   } alt:^{
+                      [pcb measureUp:av[bi] for:^{
+                         [cp gthen:av[bi] with:im];
+                      }];
+                   }];
+                } else break;
+             }
+/*
+
+             id<ORSelect> sel = [ORFactory select:cp range: Columns
+                                         suchThat:^ORBool(ORInt i)    { return true;}
+                                        orderedBy:^ORDouble(ORInt i) { return frac([lp value: x[i]]);}];
+             while (true) {
+                ORInt idx = [sel max];
+                ORDouble ifval = [lp value: x[idx]];
+                //NSLog(@"Index: %d -> %f in [%d,%d]",idx,ifval,[cp min: x[idx]],[cp max: x[idx]]);
+                if (ifval == 0.0)
+                   break;
+                [cp try:
+                 ^{ [cp gthen: x[idx] double: ifval]; }
+                    alt:
+                 ^{ [cp lthen: x[idx] double: ifval]; }
+                 ];
+                //                NSLog(@"new Objective: %f",[lp objective]);
+             }
+*/
+             for(ORInt i = 0; i < nbColumns; i++) {
+                if (![cp bound: x[i]])
+                   [cp label: x[i] with: rint([lp value: x[i]])];
+             }
+             [cp assignRelaxationValue: [lp value: y] to: y];
+          }
+          ];
+         ORLong endTime = [ORRuntimeMonitor cputime];
+         ORLong nbFailures = [[cp explorer] nbFailures];
+         ORLong nbChoices  = [[cp explorer] nbChoices];
+         printf("Execution Time: %lld \n",endTime - startTime);
+         printf("#Failures: %lld \n",nbFailures);
+         printf("#Choices : %lld \n",nbChoices);
+         NSLog(@"we are done \n\n");
+         id<ORSolution> sol = [[cp solutionPool] best];
+         NSLog(@"FINAL OBJECTIVE: %@",[sol objectiveValue]);
+         ORInt valueSol = [(id<ORObjectiveValueInt>)[sol objectiveValue] value];
+         for(ORInt i = 0; i < nbColumns; i++) {
+            NSLog(@"Variable x[%d] is %d",i,[sol intValue: x[i]]);
+         }
+         //NSLog(@"Variable y is in [%f,%f]",[sol doubleMin: y],[sol doubleMax: y]);
+         NSLog(@"Variable y is %f",[sol doubleValue: y]);
+         struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         return r;
+      }];
+   }
+   return 0;
+}
+
+
+
+
+
+/*
+
+
+id<ORIntVarArray> av = m.intVars;
+while (![p allBound:av]) {
+   double brc = FDMAXINT;
+   ORInt bi = av.range.low - 1;
+   for(ORInt i=av.range.low;i <= av.range.up;i++) {
+      if ([p bound:av[i]]) continue;
+      double rc = [relax value:av[i]];
+      double mp = 0.5 - (rc - floor(rc));
+      double frac = fabs(mp);
+      if (frac == 0.5) continue;
+      printf("(%d,%.2f) ",i,frac);
+      if (frac < brc) {
+         brc = frac;
+         bi = i;
+      }
+   }
+   printf("\n");
+   if (bi != av.range.low - 1) {
+      double lb = [p min:av[bi]],ub = [p max:av[bi]];
+      double m  = (lb + ub)/2.0;ORInt im = floor(m);
+      [p try:^{
+         [p lthen:av[bi] with:im+1];
+      } alt:^{
+         [p gthen:av[bi] with:im];
+      }];
+      NSLog(@"Objective: %@",[p objectiveValue]);
+   } else break;
+}
+ 
+ */
+
+
+
 int main(int argc, const char * argv[])
 {
 //   main_lp(argc,argv);
    // 261922 and 24431 failures
 //   return main_hybrid(argc,argv);
-    main_mip(argc,argv);
-    return main_hybrid_branching(argc,argv);
+//    main_mip(argc,argv);
+    main_hybrid_branching(argc,argv);
+   return main_hybrid_branchingMANUALMIP(argc,argv);
    //return main_mip(argc,argv);
    //return main_cp(argc,argv);
 }
