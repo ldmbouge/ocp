@@ -126,7 +126,7 @@
             assert(back == ORoptimal);
             double finalOBJ = [relax objective];
             assert(finalOBJ==io);
-            printf("DOWN/UP(%d) [%f]  = %f,%f\n",i,vir,roDown,roUp);
+            printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vir,roDown,roUp);
             VStat* vs = [_pc objectForKey:@(vi.getId)];
             if (vs==nil) {
                vs = [[VStat alloc] initLow:downRate up:upRate];

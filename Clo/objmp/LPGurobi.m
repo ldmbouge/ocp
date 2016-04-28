@@ -123,7 +123,7 @@
 //   printf("\n");
    GRBupdatemodel(_model);
    GRBoptimize(_model);
-   //[self printModelToFile: "/Users/ldm/Desktop/linearRelax.lp"];
+   [self printModelToFile: "/Users/ldm/Desktop/linearRelax.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {

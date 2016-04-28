@@ -935,7 +935,7 @@ int main(int argc, const char * argv[])
       
       while (![p allBound:av]) {
          ORInt bi = [pcb selectVar];
-         if (bi != av.range.low) {
+         if (bi != av.range.low - 1) {
             double fv = [relax value:av[bi]];
             ORInt im = floor(fv);
             [p try:^{
@@ -963,7 +963,18 @@ int main(int argc, const char * argv[])
       }];
    
    
-   //id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
+   id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
+   MIPSolverI* r1e = (MIPSolverI*)[[r1 solver] engine];
+//   [r1e setIntParameter: "Presolve" val:0];
+//   [r1e setIntParameter: "ImpliedCuts" val: 0];
+//   [r1e setIntParameter: "ZeroHalfCuts" val: 0];
+//   [r1e setIntParameter: "CliqueCuts" val: 0];
+//   [r1e setIntParameter: "GUBCoverCuts" val: 0];
+//   [r1e setIntParameter: "CoverCuts" val: 0];
+//   [r1e setIntParameter: "MIRCuts" val: 0];
+//   [r1e setIntParameter: "ModKCuts" val: 0];
+//   [r1e setIntParameter: "Cuts" val: 0];
+
    //id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
    
    id<ORRunnable> r  = r0;

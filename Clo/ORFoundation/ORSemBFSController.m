@@ -57,8 +57,8 @@
    _model  = model;
    _k      = NULL;
    _buf    = [[ORPQueue alloc] init:^BOOL(id<ORObjectiveValue> a,id<ORObjectiveValue> b) {
-      //return [a compare:b] == NSOrderedAscending;
-      return [a compare:b] == NSOrderedDescending; //Ascending;
+      return [a compare:b] == NSOrderedAscending;
+      //return [a compare:b] == NSOrderedDescending; //Ascending;
    }];
    return self;
 }
