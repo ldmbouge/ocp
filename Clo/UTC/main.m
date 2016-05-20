@@ -45,7 +45,7 @@ ORInt rawCurSensBandwith[] = {
 };
 
 ORInt rawContDirectToPMUCost[] = {
-    1315, 1315, 1210, 1312, 1216, 1212, 1317, 1319, 1219
+    700, 700, 700, 700, 700, 700, 700, 700, 700
 };
 
 ORInt rawContDirectToPMUWeight[] = {
@@ -970,10 +970,10 @@ int main(int argc, const char * argv[])
       }];
    
    
-   //id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
+   id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
    //id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];   
    
-   id<ORRunnable> r  = r0;
+   id<ORRunnable> r  = r1;
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [r run];
    bestSolution = [r bestSolution];
