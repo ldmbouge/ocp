@@ -49355,13 +49355,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Coverage;
@@ -52826,13 +52826,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -52855,13 +52855,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -53817,6 +53817,7 @@
 				5B43FE471CCAC1D0005EB11E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B5096EC1619B6CC00171F9D /* Build configuration list for PBXNativeTarget "testDistrib" */ = {
 			isa = XCConfigurationList;

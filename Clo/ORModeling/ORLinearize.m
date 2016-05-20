@@ -309,13 +309,18 @@
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
 {
     id<ORIntVar> x = (id<ORIntVar>)[self linearizeExpr: [c x]];
+    id<ORIntVarArray> bx = [self binarizationForVar: x];
     id<ORIntVar> b = (id<ORIntVar>)[self linearizeExpr: [c b]];
     ORInt cst = [c cst];
-    ORInt M = 999999;
-    // x + ((1 - b) * M) >= cst
-    // x - (b * M) < cst
-    [_model addConstraint: [[x plus: [[@(1) sub: b] mul: @(M)]] geq: @(cst)]];
-    [_model addConstraint: [[x sub: [b mul: @(M)]] lt: @(cst)]];
+    
+    [_model addConstraint: [ Sum(_model, i, RANGE(_model, [[bx range] low], cst-1), [bx at: i]) eq: [@(1) sub: b]]];
+    [_model addConstraint: [ Sum(_model, i, RANGE(_model, cst, [[bx range] up]), [bx at: i]) eq: b]];
+
+//    ORInt M = 999999;
+//    // x + ((1 - b) * M) >= cst
+//    // x - (b * M) < cst
+//    [_model addConstraint: [[x plus: [[@(1) sub: b] mul: @(M)]] geq: @(cst)]];
+//    [_model addConstraint: [[x sub: [b mul: @(M)]] lt: @(cst)]];
 }
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
@@ -338,27 +343,31 @@
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
 {
     id<ORIntVar> x = [c x];
-    id<ORIntVar> r = [c b];
+    id<ORIntVar> b = [c b];
     ORInt cst = [c cst];
-    id<ORIntVar> z0 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
-    id<ORIntVar> z1 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
-    ORInt M = 999999;
     
-    // greater-than
-    // x + ((1 - z0) * M) > cst
-    // x - (z0 * M) <= cst
-    [_model addConstraint: [[x plus: [[@(1) sub: z0] mul: @(M)]] gt: @(cst)]];
-    [_model addConstraint: [[x sub: [z0 mul: @(M)]] leq: @(cst)]];
-
-    // less-than
-    // x - ((1 - z1) * M) < cst
-    // x + (z1 * M) >= cst
-    [_model addConstraint: [[x sub: [[@(1) sub: z1] mul: @(M)]] lt: @(cst)]];
-    [_model addConstraint: [[x plus: [z1 mul: @(M)]] geq: @(cst)]];
+    id<ORIntVarArray> bx = [self binarizationForVar: x];
+    [_model addConstraint: [[bx at: cst] eq: [@(1) sub: b]]];
     
-    // r == z0 + z1
-    // x - (z * M) == cst
-    [_model addConstraint: [r eq: [z0 plus: z1]]];
+//    id<ORIntVar> z0 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
+//    id<ORIntVar> z1 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
+//    ORInt M = 999999;
+//    
+//    // greater-than
+//    // x + ((1 - z0) * M) > cst
+//    // x - (z0 * M) <= cst
+//    [_model addConstraint: [[x plus: [[@(1) sub: z0] mul: @(M)]] gt: @(cst)]];
+//    [_model addConstraint: [[x sub: [z0 mul: @(M)]] leq: @(cst)]];
+//
+//    // less-than
+//    // x - ((1 - z1) * M) < cst
+//    // x + (z1 * M) >= cst
+//    [_model addConstraint: [[x sub: [[@(1) sub: z1] mul: @(M)]] lt: @(cst)]];
+//    [_model addConstraint: [[x plus: [z1 mul: @(M)]] geq: @(cst)]];
+//    
+//    // r == z0 + z1
+//    // x - (z * M) == cst
+//    [_model addConstraint: [r eq: [z0 plus: z1]]];
 }
 -(void) visitEqual: (id<OREqual>)c
 {
