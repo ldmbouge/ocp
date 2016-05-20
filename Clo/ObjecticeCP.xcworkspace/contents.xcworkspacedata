@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../../Desktop/FOO.swit.swift">
+   </FileRef>
+   <FileRef
       location = "group:Extensions.playground">
    </FileRef>
    <FileRef

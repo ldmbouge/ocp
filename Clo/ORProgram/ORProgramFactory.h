@@ -68,6 +68,7 @@ PORTABLE_BEGIN
 -(void) close;
 -(OROutcome) solve;
 -(double)reducedCost:(id<ORVar>) x;
+-(ORBool)inBasis:(id<ORVar>) x;
 @end
 
 PORTABLE_END

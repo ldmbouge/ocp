@@ -296,43 +296,9 @@ int main_hybrid_branchingMANUALMIP(int argc, const char * argv[])
          [cp solve:
           ^() {
              PCBranching* pcb = [[PCBranching alloc] init:lp over:x program:cp];
-             id<ORIntVarArray> av = x;
 
-             while (![cp allBound:av]) {
-                ORInt bi = [pcb selectVar];
-                if (bi != av.range.low - 1) {
-                   double fv = [lp value:av[bi]];
-                   ORInt im = floor(fv);
-                   [cp try:^{
-                      [pcb measureDown:av[bi] for: ^{
-                         [cp lthen:av[bi] with:im+1];
-                      }];
-                   } alt:^{
-                      [pcb measureUp:av[bi] for:^{
-                         [cp gthen:av[bi] with:im];
-                      }];
-                   }];
-                } else break;
-             }
-/*
+             [pcb branchOn:x];
 
-             id<ORSelect> sel = [ORFactory select:cp range: Columns
-                                         suchThat:^ORBool(ORInt i)    { return true;}
-                                        orderedBy:^ORDouble(ORInt i) { return frac([lp value: x[i]]);}];
-             while (true) {
-                ORInt idx = [sel max];
-                ORDouble ifval = [lp value: x[idx]];
-                //NSLog(@"Index: %d -> %f in [%d,%d]",idx,ifval,[cp min: x[idx]],[cp max: x[idx]]);
-                if (ifval == 0.0)
-                   break;
-                [cp try:
-                 ^{ [cp gthen: x[idx] double: ifval]; }
-                    alt:
-                 ^{ [cp lthen: x[idx] double: ifval]; }
-                 ];
-                //                NSLog(@"new Objective: %f",[lp objective]);
-             }
-*/
              for(ORInt i = 0; i < nbColumns; i++) {
                 if (![cp bound: x[i]])
                    [cp label: x[i] with: rint([lp value: x[i]])];

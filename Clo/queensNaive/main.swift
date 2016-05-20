@@ -16,9 +16,9 @@ autoreleasepool {
    let model = ORFactory.createModel()
    let R     = ORFactory.intRange(model, low: 0, up: n - 1)
    let x     = ORFactory.intVarArray(model, range: R, domain: R)
-   let e     = sum(model, R : R) { k in x[k] }
-   for  i : ORInt in 0..<n  {
-      for j : ORInt in i+1..<n {
+   let e     = sum(model, R : R) { k in x[k] }   
+   for  i : ORInt in 0..< n  {                    
+      for j : ORInt in i+1..< n {
          model.add(x[i] ≠ x[j])
          model.add(x[i] ≠ x[j] + (i-j))
          model.add(x[i] ≠ x[j] + (j-i))

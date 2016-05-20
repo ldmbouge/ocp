@@ -313,6 +313,7 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(ORDouble) lowerBound: (LPVariableI*) var;
 -(ORDouble) upperBound: (LPVariableI*) var;
 -(ORDouble) reducedCost: (LPVariableI*) var;
+-(ORBool) inBasis:(LPVariableI*)var;
 -(ORDouble) dual: (LPConstraintI*) cstr;
 -(id<ORDoubleArray>) duals;
 -(id<ORObjectiveValue>) objectiveValue;

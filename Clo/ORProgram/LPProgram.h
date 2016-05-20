@@ -37,6 +37,7 @@
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORRealVar>) v;
 -(ORDouble) doubleValue: (id<ORRealVar>) v;
+-(ORBool) inBasis: (id<ORVar>) v;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolution>) captureSolution;
@@ -51,6 +52,7 @@
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORVar>) v;
 -(ORDouble) doubleValue: (id<ORVar>) v;
+-(ORBool) inBasis: (id<ORVar>) v;
 -(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lowerBound: (id<ORVar>) v;

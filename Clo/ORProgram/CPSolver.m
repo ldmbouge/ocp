@@ -484,6 +484,15 @@
 {
    [_search limitTime: maxTime in: cl];
 }
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
+{
+   [_search nestedSolve: body
+             onSolution: onSolution
+                 onExit: onExit
+                control:[[ORNestedController alloc] init:newCtrl
+                                                  parent:[_search controller]]];
+}
+
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [_search nestedSolve: body onSolution: onSolution onExit: onExit
@@ -800,6 +809,35 @@
    } while(true);
 }
 
+-(void) select:(id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body
+{
+   const ORInt sz = x.range.size;
+   id<CPIntVar> cx[sz];
+   for(ORInt i=0;i < sz;i++)
+      cx[i]  = _gamma[x[i + x.range.low].getId];
+   id<ORRandomStream> tie = [ORFactory randomStream:_engine];
+   ORDouble     sd = MAXDBL;
+   ORInt        bi = -1;
+   ORLong bestRand = 0x7fffffffffffffff;
+   for(ORInt i=0;i<sz;i++) {
+      if (cx[i].bound) continue;
+      ORDouble cds = f(i);
+      if (cds < sd) {
+         sd = cds;
+         bi = i;
+         bestRand = [tie next];
+      } else if (cds==sd) {
+         ORLong nr = [tie next];
+         if (nr < bestRand) {
+            bi = i;
+            bestRand = nr;
+         }
+      }
+   }
+   if (bi == -1)
+      return;
+   body(bi + x.range.low);
+}
 
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {

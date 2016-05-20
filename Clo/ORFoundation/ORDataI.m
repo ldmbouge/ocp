@@ -22,66 +22,66 @@
 @implementation NSObject (Concretization)
 -(void) setImpl: (id) impl
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
-   NSLog(@"%@",self); 
-   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
+    NSLog(@"%@",self); 
+    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
 }
 -(void) makeImpl
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
-   NSLog(@"%@",self);
-   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: This object is already an implementation"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
+    NSLog(@"%@",self);
+    @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: This object is already an implementation"];
 }
 -(id) impl
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
-   return self;
+    @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
+    return self;
 }
 -(void) visit: (ORVisitor*) visitor
 {
-   NSLog(@"%@",self);
-   @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
+    NSLog(@"%@",self);
+    @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
 }
 @end;
 
 @implementation ORIntegerI
-{
-	ORInt           _value;
-   id<ORTracker> _tracker;
+{ 
+    ORInt           _value;
+    id<ORTracker> _tracker;
 }
 
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value
 {
-   self = [super init];
-   _value = value;
-   _tracker = tracker;
-   return self;
+    self = [super init];
+    _value = value;
+    _tracker = tracker;
+    return self;
 }
 -(id)copyWithZone:(NSZone *)zone
 {
-   return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
+    return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
 }
 - (BOOL)isEqual:(id)anObject
 {
-   if ([anObject isKindOfClass:[self class]])
-      return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
-   else return NO;
+    if ([anObject isKindOfClass:[self class]])
+        return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
+    else return NO;
 }
 - (NSUInteger)hash
 {
-   return _value;
+    return _value;
 }
 -(ORDouble) doubleValue
 {
-   return _value;
+    return _value;
 }
 -(ORInt) value
 {
-   return _value;
+    return _value;
 }
 -(ORInt) min
 {
-   return _value;
+    return _value;
 }
 -(ORInt) max
 {

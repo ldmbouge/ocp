@@ -6,5 +6,6 @@
 -(void)recordVar:(id<ORVar>)x up:(double)up;
 -(void)measureDown:(id<ORVar>)x for:(ORClosure)cl;
 -(void)measureUp:(id<ORVar>)x for:(ORClosure)cl;
--(ORInt)selectVar;
+-(ORInt)selectVar:(id<ORIntVarArray>)x;
+-(void)branchOn:(id<ORIntVarArray>)x;
 @end

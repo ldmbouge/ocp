@@ -14,7 +14,8 @@ func show(cp : CPProgram,_ x : ORIntVarMatrix)
    let r1 = x.range(1)
    for i in r0.low()...r0.up() {
       for j in r1.low()...r1.up() {
-         print("\(cp.intValue(x.at(i, j))) ",terminator:"")
+         let ch = cp.intValue(x.at(i,j))==1 ? "██" : "  "
+         print("\(ch)",terminator:"")
       }
       print("")
    }

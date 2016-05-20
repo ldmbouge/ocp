@@ -446,12 +446,14 @@ int main(int argc, const char * argv[])
     id<ORIntArray> curToConCost = [ORFactory intArray: m range: curSenRange values: rawCurToConCost];
     id<ORIntArray> curToConWeight = [ORFactory intArray: m range: curSenRange values: rawCurToConWeight];
     id<ORIntArray> curToConDelay = [ORFactory intArray: m range: curSenRange values: rawCurToConDelay];
-    
+   
     [m minimize:  objective];
-    [m add: [objective eq: [cost plus: weight]]];
+    id<ORModel> mc = [m copy];
+   
+    [mc add: [objective eq: [cost plus: weight]]];
     
     // Cost ///////////////////////////
-    id<ORConstraint> o1 = [m add: [cost eq:
+    id<ORConstraint> o1 = [mc add: [cost eq:
              [[[[[[[[[[[[[[[[[[mainGenCost elt: g0] plus: [mainGenCost elt: g1]] plus: [mainGenCost elt: auxgen]] plus: // Gen cost
                        Sum(m, i, voltSenRange, [voltSensCost elt: [voltSensors at: i]])] plus: // Cost of contactor sensors
                       Sum(m, i, curSenRange, [curSensCost elt: [curSensors at: i]])] plus: // Cost of contactor sensors
@@ -471,7 +473,7 @@ int main(int argc, const char * argv[])
              ]];
     
     // Weight /////////////////////////
-    id<ORConstraint> o2 = [m add: [weight eq:
+    id<ORConstraint> o2 = [mc add: [weight eq:
              [[[[[[[[[[[[[[[[[[mainGenWeight elt: g0] plus: [mainGenWeight elt: g1]] plus: [mainGenWeight elt: auxgen]] plus: // Gen weight
                        Sum(m, i, contSenRange, [contSensWeight elt: [contSensors at: i]])] plus: // Contactor sensor weight
                       Sum(m, i, voltSenRange, [voltSensWeight elt: [voltSensors at: i]])] plus: // Contactor sensor weight
@@ -490,10 +492,10 @@ int main(int argc, const char * argv[])
               [PMUWeight elt: pmu]] // PMU cost
              ]];
     
-    //[m add: [weight leq: @(MAX_WEIGHT)]];
+    //[mc add: [weight leq: @(MAX_WEIGHT)]];
     
     // Power Draw /////////////////////////
-    [m add: [powUse eq:
+    [mc add: [powUse eq:
              [[[[[Sum(m, i, contSenRange, [contSensPowDraw elt: [contSensors at: i]]) plus: // Sensor Power
                   Sum(m, i, voltSenRange, [voltSensPowDraw elt: [voltSensors at: i]])] plus:
                  Sum(m, i, curSenRange, [curSensPowDraw elt: [curSensors at: i]])] plus:
@@ -503,282 +505,282 @@ int main(int argc, const char * argv[])
              ]];
     
     // Power Gen //////////////////////////
-    [m add: [powUse leq: [[mainGenPow elt: g0] plus: [mainGenPow elt: g1]]]];
-    [m add: [powUse leq: [[mainGenPow elt: g0] plus: [mainGenPow elt: auxgen]]]];
-    [m add: [powUse leq: [[mainGenPow elt: auxgen] plus: [mainGenPow elt: g1]]]];
+    [mc add: [powUse leq: [[mainGenPow elt: g0] plus: [mainGenPow elt: g1]]]];
+    [mc add: [powUse leq: [[mainGenPow elt: g0] plus: [mainGenPow elt: auxgen]]]];
+    [mc add: [powUse leq: [[mainGenPow elt: auxgen] plus: [mainGenPow elt: g1]]]];
     
     // Connectivity ///////////////////////
     for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
-        [m add: [[[[contSenDirectPMU[i] plus: contSenToCon[i]] plus: contSenToBus[i]] gt: @(0)] eq: [contSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
+        [mc add: [[[[contSenDirectPMU[i] plus: contSenToCon[i]] plus: contSenToBus[i]] gt: @(0)] eq: [contSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
     for(ORInt i = [voltSenRange low]; i <= [voltSenRange up]; i++)
-        [m add: [[[[voltSenDirectPMU[i] plus: voltSenToCon[i]] plus: voltSenToBus[i]] gt: @(0)] eq: [voltSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
+        [mc add: [[[[voltSenDirectPMU[i] plus: voltSenToCon[i]] plus: voltSenToBus[i]] gt: @(0)] eq: [voltSensors[i] gt: NONE]]]; // Connected to PMU, bus or concentrator
     for(ORInt i = [curSenRange low]; i <= [curSenRange up]; i++)
-        [m add: [[[[curSenDirectPMU[i] plus: curSenToCon[i]] plus: curSenToBus[i]] gt: @(0)] eq: [curSensors[i] gt: NONE] ]]; // Connected to PMU, bus or concentrator
+        [mc add: [[[[curSenDirectPMU[i] plus: curSenToCon[i]] plus: curSenToBus[i]] gt: @(0)] eq: [curSensors[i] gt: NONE] ]]; // Connected to PMU, bus or concentrator
     
     // If not connected to PMU directly, must have a sensor capable of digital conversion
     for(ORInt i = [contSenRange low]; i <= [contSenRange up]; i++)
-        [m add: [[[contSensors[i] gt: NONE] land: [contSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [contSensConverts elt: contSensors[i]]]]];
+        [mc add: [[[contSensors[i] gt: NONE] land: [contSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [contSensConverts elt: contSensors[i]]]]];
     for(ORInt i = [voltSenRange low]; i <= [voltSenRange up]; i++)
-        [m add: [[[voltSensors[i] gt: NONE] land: [voltSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [voltSensConverts elt: voltSensors[i]]]]];
+        [mc add: [[[voltSensors[i] gt: NONE] land: [voltSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [voltSensConverts elt: voltSensors[i]]]]];
     for(ORInt i = [curSenRange low]; i <= [curSenRange up]; i++)
-        [m add: [[[curSensors[i] gt: NONE] land: [curSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [curSensConverts elt: curSensors[i]]]]];
+        [mc add: [[[curSensors[i] gt: NONE] land: [curSenDirectPMU[i] neq: @(1)]] eq: [@(1) leq: [curSensConverts elt: curSensors[i]]]]];
     
     // Bus ////////////////////////////////
     for(ORInt b = 1; b <= numOptBuses; b++) {
-        [m add: [[[[Sum(m, i, contSenRange, [contSenToBus[i] eq: @(b)]) plus:
+        [mc add: [[[[Sum(m, i, contSenRange, [contSenToBus[i] eq: @(b)]) plus:
                    Sum(m, i, voltSenRange, [voltSenToBus[i] eq: @(b)])] plus:
                   Sum(m, i, concRange, [concToBus[i] eq: @(b)])] plus:
                   Sum(m, i, curSenRange, [curSenToBus[i] eq: @(b)])] eq: numBusConn[b]]];
-        [m add: [[useBus[b] eq: @(1)] eq: [numBusConn[b] gt: @(0)]]];
-        [m add: [[useBus[b] eq: @(1)] eq: [bus[b] gt: NONE]]];
+        [mc add: [[useBus[b] eq: @(1)] eq: [numBusConn[b] gt: @(0)]]];
+        [mc add: [[useBus[b] eq: @(1)] eq: [bus[b] gt: NONE]]];
     }
     
     // Concentrators //////////////////////
     
     // Connection count for concentrators
     for(ORInt k = 1; k <= numOptConcentrators; k++) {
-        [m add: [[[Sum(m, i, contSenRange, [contSenToCon[i] eq: @(k)]) plus:
+        [mc add: [[[Sum(m, i, contSenRange, [contSenToCon[i] eq: @(k)]) plus:
                    Sum(m, i, voltSenRange, [voltSenToCon[i] eq: @(k)])] plus:
                   Sum(m, i, curSenRange, [curSenToCon[i] eq: @(k)])] eq: numConcConn[k]]];
     }
     
     // Use concentrators
     for(ORInt k = 1; k <= numOptConcentrators; k++) {
-        [m add: [[useConc[k] eq: @(1)] eq: [numConcConn[k] gt: @(0)]]];
-        [m add: [[useConc[k] eq: @(1)] eq: [conc[k] neq: NONE]]];
+        [mc add: [[useConc[k] eq: @(1)] eq: [numConcConn[k] gt: @(0)]]];
+        [mc add: [[useConc[k] eq: @(1)] eq: [conc[k] neq: NONE]]];
     }
     
     // Limit number of concentrator connections
     for(ORInt k = 1; k <= numOptConcentrators; k++) {
-        [m add: [numConcConn[k] leq: [concMaxConn elt: conc[k]]]];
+        [mc add: [numConcConn[k] leq: [concMaxConn elt: conc[k]]]];
     }
     
     // Connect to a bus if concentrator in use
     for(ORInt k = 1; k <= numOptConcentrators; k++) {
-        [m add: [[useConc[k] eq: @(1)] eq: [concToBus[k] neq: NONE]]];
+        [mc add: [[useConc[k] eq: @(1)] eq: [concToBus[k] neq: NONE]]];
     }
     
     // Bus Bandwidth
     for(ORInt b = 1; b <= numOptBuses; b++) {
-        [m add: [bandUse[b] eq: [[[
+        [mc add: [bandUse[b] eq: [[[
                                    Sum(m, i, contSenRange, [[contSenToBus[i] eq: @(b)] mul: contSensBandwith[i]]) plus:
                                    Sum(m, i, voltSenRange, [[voltSenToBus[i] eq: @(b)] mul: voltSensBandwith[i]])] plus:
                                   Sum(m, i, curSenRange, [[curSenToBus[i] eq: @(b)] mul: curSensBandwith[i]])] plus:
                                  Sum(m, i, concRange, [[concToBus[i] eq: @(b)] mul: [concBand elt: conc[i]]])
                                  ]]];
-        [m add: [bandUse[b] leq: [busBandwidth elt: [bus at: b]]]];
+        [mc add: [bandUse[b] leq: [busBandwidth elt: [bus at: b]]]];
     }
     
     // Path Definitions
-    [m add: [[usePath0[0] eq: @(1)] eq: [contSensors[CONT_S0] gt: NONE]]];
-    [m add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
-    [m add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
-    [m add: [[usePath0[2] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
-    [m add: [[usePath0[2] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
-    [m add: [[usePath0[3] eq: @(1)] eq: [curSensors[CUR_S0] gt: NONE]]];
-    [m add: [[usePath0[3] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
-    [m add: [[usePath0[4] eq: @(1)] eq: [curSensors[CUR_S0] gt: NONE]]];
-    [m add: [[usePath0[4] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
+    [mc add: [[usePath0[0] eq: @(1)] eq: [contSensors[CONT_S0] gt: NONE]]];
+    [mc add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
+    [mc add: [[usePath0[1] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [mc add: [[usePath0[2] eq: @(1)] eq: [voltSensors[VOLT_S0] gt: NONE]]];
+    [mc add: [[usePath0[2] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [mc add: [[usePath0[3] eq: @(1)] eq: [curSensors[CUR_S0] gt: NONE]]];
+    [mc add: [[usePath0[3] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    [mc add: [[usePath0[4] eq: @(1)] eq: [curSensors[CUR_S0] gt: NONE]]];
+    [mc add: [[usePath0[4] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
 
     // Delays on path 0
-    [m add: [[[[contSenDirectPMU[CONT_S0] mul: contDirectToPMUDelay[CONT_S0]] plus: [contSenToBus[CONT_S0] mul: contToBusDelay[CONT_S0]]] plus: [contSenToCon[CONT_S0] mul: contToConDelay[CONT_S0]]] leq: delayPath0[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S0] mul: voltDirectToPMUDelay[VOLT_S0]] plus: [voltSenToBus[VOLT_S0] mul: voltToBusDelay[VOLT_S0]]] plus: [voltSenToCon[VOLT_S0] mul: voltToConDelay[VOLT_S0]]] leq: delayPath0[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath0[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S0] mul: voltDirectToPMUDelay[VOLT_S0]] plus: [voltSenToBus[VOLT_S0] mul: voltToBusDelay[VOLT_S0]]] plus: [voltSenToCon[VOLT_S0] mul: voltToConDelay[VOLT_S0]]] leq: delayPath0[2]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S2] mul: voltDirectToPMUDelay[VOLT_S2]] plus: [voltSenToBus[VOLT_S2] mul: voltToBusDelay[VOLT_S2]]] plus: [voltSenToCon[VOLT_S2] mul: voltToConDelay[VOLT_S2]]] leq: delayPath0[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S0] mul: curDirectToPMUDelay[CUR_S0]] plus: [curSenToBus[CUR_S0] mul: curToBusDelay[CUR_S0]]] plus: [curSenToCon[CUR_S0] mul: curToConDelay[CUR_S0]]] leq: delayPath0[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath0[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S0] mul: curDirectToPMUDelay[CUR_S0]] plus: [curSenToBus[CUR_S0] mul: curToBusDelay[CUR_S0]]] plus: [curSenToCon[CUR_S0] mul: curToConDelay[CUR_S0]]] leq: delayPath0[4]]];
-    [m add: [[[[curSenDirectPMU[CUR_S2] mul: curDirectToPMUDelay[CUR_S2]] plus: [curSenToBus[CUR_S2] mul: curToBusDelay[CUR_S2]]] plus: [curSenToCon[CUR_S2] mul: curToConDelay[CUR_S2]]] leq: delayPath0[4]]];
-    [m add: [actualDelayPath0 eq: Sum(m, i, pathRange5, [usePath0[i] mul: delayPath0[i]])]];
-    [m add: [actualDelayPath0 leq: [[PMUSpeedup elt: pmu] plus: @(maxDelay0)]]];
+    [mc add: [[[[contSenDirectPMU[CONT_S0] mul: contDirectToPMUDelay[CONT_S0]] plus: [contSenToBus[CONT_S0] mul: contToBusDelay[CONT_S0]]] plus: [contSenToCon[CONT_S0] mul: contToConDelay[CONT_S0]]] leq: delayPath0[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S0] mul: voltDirectToPMUDelay[VOLT_S0]] plus: [voltSenToBus[VOLT_S0] mul: voltToBusDelay[VOLT_S0]]] plus: [voltSenToCon[VOLT_S0] mul: voltToConDelay[VOLT_S0]]] leq: delayPath0[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath0[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S0] mul: voltDirectToPMUDelay[VOLT_S0]] plus: [voltSenToBus[VOLT_S0] mul: voltToBusDelay[VOLT_S0]]] plus: [voltSenToCon[VOLT_S0] mul: voltToConDelay[VOLT_S0]]] leq: delayPath0[2]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S2] mul: voltDirectToPMUDelay[VOLT_S2]] plus: [voltSenToBus[VOLT_S2] mul: voltToBusDelay[VOLT_S2]]] plus: [voltSenToCon[VOLT_S2] mul: voltToConDelay[VOLT_S2]]] leq: delayPath0[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S0] mul: curDirectToPMUDelay[CUR_S0]] plus: [curSenToBus[CUR_S0] mul: curToBusDelay[CUR_S0]]] plus: [curSenToCon[CUR_S0] mul: curToConDelay[CUR_S0]]] leq: delayPath0[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath0[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S0] mul: curDirectToPMUDelay[CUR_S0]] plus: [curSenToBus[CUR_S0] mul: curToBusDelay[CUR_S0]]] plus: [curSenToCon[CUR_S0] mul: curToConDelay[CUR_S0]]] leq: delayPath0[4]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S2] mul: curDirectToPMUDelay[CUR_S2]] plus: [curSenToBus[CUR_S2] mul: curToBusDelay[CUR_S2]]] plus: [curSenToCon[CUR_S2] mul: curToConDelay[CUR_S2]]] leq: delayPath0[4]]];
+    [mc add: [actualDelayPath0 eq: Sum(m, i, pathRange5, [usePath0[i] mul: delayPath0[i]])]];
+    [mc add: [actualDelayPath0 leq: [[PMUSpeedup elt: pmu] plus: @(maxDelay0)]]];
     
     // Use path 1
-    [m add: [[usePath1[0] eq: @(1)] eq: [contSensors[CONT_S1] gt: NONE]]];
-    [m add: [[usePath1[1] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
-    [m add: [[usePath1[1] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
-    [m add: [[usePath1[2] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
-    [m add: [[usePath1[2] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
+    [mc add: [[usePath1[0] eq: @(1)] eq: [contSensors[CONT_S1] gt: NONE]]];
+    [mc add: [[usePath1[1] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [mc add: [[usePath1[1] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [mc add: [[usePath1[2] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    [mc add: [[usePath1[2] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
     
     // Delays on path 1
-    [m add: [[[[contSenDirectPMU[CONT_S1] mul: contDirectToPMUDelay[CONT_S1]] plus: [contSenToBus[CONT_S1] mul: contToBusDelay[CONT_S1]]] plus: [contSenToCon[CONT_S1] mul: contToConDelay[CONT_S1]]] leq: delayPath1[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath1[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S2] mul: voltDirectToPMUDelay[VOLT_S2]] plus: [voltSenToBus[VOLT_S2] mul: voltToBusDelay[VOLT_S2]]] plus: [voltSenToCon[VOLT_S2] mul: voltToConDelay[VOLT_S2]]] leq: delayPath1[1]]];
-    [m add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath1[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S2] mul: curDirectToPMUDelay[CUR_S2]] plus: [curSenToBus[CUR_S2] mul: curToBusDelay[CUR_S2]]] plus: [curSenToCon[CUR_S2] mul: curToConDelay[CUR_S2]]] leq: delayPath1[2]]];
-    [m add: [actualDelayPath1 eq: Sum(m, i, pathRange3, [usePath1[i] mul: delayPath1[i]])]];
-    [m add: [[actualDelayPath1 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay1)]];
+    [mc add: [[[[contSenDirectPMU[CONT_S1] mul: contDirectToPMUDelay[CONT_S1]] plus: [contSenToBus[CONT_S1] mul: contToBusDelay[CONT_S1]]] plus: [contSenToCon[CONT_S1] mul: contToConDelay[CONT_S1]]] leq: delayPath1[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath1[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S2] mul: voltDirectToPMUDelay[VOLT_S2]] plus: [voltSenToBus[VOLT_S2] mul: voltToBusDelay[VOLT_S2]]] plus: [voltSenToCon[VOLT_S2] mul: voltToConDelay[VOLT_S2]]] leq: delayPath1[1]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath1[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S2] mul: curDirectToPMUDelay[CUR_S2]] plus: [curSenToBus[CUR_S2] mul: curToBusDelay[CUR_S2]]] plus: [curSenToCon[CUR_S2] mul: curToConDelay[CUR_S2]]] leq: delayPath1[2]]];
+    [mc add: [actualDelayPath1 eq: Sum(m, i, pathRange3, [usePath1[i] mul: delayPath1[i]])]];
+    [mc add: [[actualDelayPath1 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay1)]];
     
     // Use path 2
-    [m add: [[usePath2[0] eq: @(1)] eq: [contSensors[CONT_S2] gt: NONE]]];
-    [m add: [[usePath2[1] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
-    [m add: [[usePath2[1] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
-    [m add: [[usePath2[2] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
-    [m add: [[usePath2[2] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
+    [mc add: [[usePath2[0] eq: @(1)] eq: [contSensors[CONT_S2] gt: NONE]]];
+    [mc add: [[usePath2[1] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [mc add: [[usePath2[1] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [mc add: [[usePath2[2] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
+    [mc add: [[usePath2[2] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
     
     // Delays on path 2
-    [m add: [[[[contSenDirectPMU[CONT_S2] mul: contDirectToPMUDelay[CONT_S2]] plus: [contSenToBus[CONT_S2] mul: contToBusDelay[CONT_S2]]] plus: [contSenToCon[CONT_S2] mul: contToConDelay[CONT_S2]]] leq: delayPath2[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S2] mul: voltDirectToPMUDelay[VOLT_S2]] plus: [voltSenToBus[VOLT_S2] mul: voltToBusDelay[VOLT_S2]]] plus: [voltSenToCon[VOLT_S2] mul: voltToConDelay[VOLT_S2]]] leq: delayPath2[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S3] mul: voltDirectToPMUDelay[VOLT_S3]] plus: [voltSenToBus[VOLT_S3] mul: voltToBusDelay[VOLT_S3]]] plus: [voltSenToCon[VOLT_S3] mul: voltToConDelay[VOLT_S3]]] leq: delayPath2[1]]];
-    [m add: [[[[curSenDirectPMU[CUR_S2] mul: curDirectToPMUDelay[CUR_S2]] plus: [curSenToBus[CUR_S2] mul: curToBusDelay[CUR_S2]]] plus: [curSenToCon[CUR_S2] mul: curToConDelay[CUR_S2]]] leq: delayPath2[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S3] mul: curDirectToPMUDelay[CUR_S3]] plus: [curSenToBus[CUR_S3] mul: curToBusDelay[CUR_S3]]] plus: [curSenToCon[CUR_S3] mul: curToConDelay[CUR_S3]]] leq: delayPath2[2]]];
-    [m add: [actualDelayPath2 eq: Sum(m, i, pathRange3, [usePath2[i] mul: delayPath2[i]])]];
-    [m add: [[actualDelayPath2 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay2)]];
+    [mc add: [[[[contSenDirectPMU[CONT_S2] mul: contDirectToPMUDelay[CONT_S2]] plus: [contSenToBus[CONT_S2] mul: contToBusDelay[CONT_S2]]] plus: [contSenToCon[CONT_S2] mul: contToConDelay[CONT_S2]]] leq: delayPath2[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S2] mul: voltDirectToPMUDelay[VOLT_S2]] plus: [voltSenToBus[VOLT_S2] mul: voltToBusDelay[VOLT_S2]]] plus: [voltSenToCon[VOLT_S2] mul: voltToConDelay[VOLT_S2]]] leq: delayPath2[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S3] mul: voltDirectToPMUDelay[VOLT_S3]] plus: [voltSenToBus[VOLT_S3] mul: voltToBusDelay[VOLT_S3]]] plus: [voltSenToCon[VOLT_S3] mul: voltToConDelay[VOLT_S3]]] leq: delayPath2[1]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S2] mul: curDirectToPMUDelay[CUR_S2]] plus: [curSenToBus[CUR_S2] mul: curToBusDelay[CUR_S2]]] plus: [curSenToCon[CUR_S2] mul: curToConDelay[CUR_S2]]] leq: delayPath2[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S3] mul: curDirectToPMUDelay[CUR_S3]] plus: [curSenToBus[CUR_S3] mul: curToBusDelay[CUR_S3]]] plus: [curSenToCon[CUR_S3] mul: curToConDelay[CUR_S3]]] leq: delayPath2[2]]];
+    [mc add: [actualDelayPath2 eq: Sum(m, i, pathRange3, [usePath2[i] mul: delayPath2[i]])]];
+    [mc add: [[actualDelayPath2 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay2)]];
     
     // Use path 3
-    [m add: [[usePath3[0] eq: @(1)] eq: [contSensors[CONT_S3] gt: NONE]]];
-    [m add: [[usePath3[1] eq: @(1)] eq: [voltSensors[VOLT_S4] gt: NONE]]];
-    [m add: [[usePath3[1] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
-    [m add: [[usePath3[2] eq: @(1)] eq: [voltSensors[VOLT_S4] gt: NONE]]];
-    [m add: [[usePath3[2] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
-    [m add: [[usePath3[3] eq: @(1)] eq: [curSensors[CUR_S4] gt: NONE]]];
-    [m add: [[usePath3[3] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
-    [m add: [[usePath3[4] eq: @(1)] eq: [curSensors[CUR_S4] gt: NONE]]];
-    [m add: [[usePath3[4] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
+    [mc add: [[usePath3[0] eq: @(1)] eq: [contSensors[CONT_S3] gt: NONE]]];
+    [mc add: [[usePath3[1] eq: @(1)] eq: [voltSensors[VOLT_S4] gt: NONE]]];
+    [mc add: [[usePath3[1] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [mc add: [[usePath3[2] eq: @(1)] eq: [voltSensors[VOLT_S4] gt: NONE]]];
+    [mc add: [[usePath3[2] eq: @(1)] eq: [voltSensors[VOLT_S2] gt: NONE]]];
+    [mc add: [[usePath3[3] eq: @(1)] eq: [curSensors[CUR_S4] gt: NONE]]];
+    [mc add: [[usePath3[3] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
+    [mc add: [[usePath3[4] eq: @(1)] eq: [curSensors[CUR_S4] gt: NONE]]];
+    [mc add: [[usePath3[4] eq: @(1)] eq: [curSensors[CUR_S2] gt: NONE]]];
     
     // Delays on path 3
-    [m add: [[[[contSenDirectPMU[CONT_S3] mul: contDirectToPMUDelay[CONT_S3]] plus: [contSenToBus[CONT_S3] mul: contToBusDelay[CONT_S3]]] plus: [contSenToCon[CONT_S3] mul: contToConDelay[CONT_S3]]] leq: delayPath3[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S4] mul: voltDirectToPMUDelay[VOLT_S4]] plus: [voltSenToBus[VOLT_S4] mul: voltToBusDelay[VOLT_S4]]] plus: [voltSenToCon[VOLT_S4] mul: voltToConDelay[VOLT_S4]]] leq: delayPath3[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S3] mul: voltDirectToPMUDelay[VOLT_S3]] plus: [voltSenToBus[VOLT_S3] mul: voltToBusDelay[VOLT_S3]]] plus: [voltSenToCon[VOLT_S3] mul: voltToConDelay[VOLT_S3]]] leq: delayPath3[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S4] mul: voltDirectToPMUDelay[VOLT_S4]] plus: [voltSenToBus[VOLT_S4] mul: voltToBusDelay[VOLT_S4]]] plus: [voltSenToCon[VOLT_S4] mul: voltToConDelay[VOLT_S4]]] leq: delayPath3[2]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S2] mul: voltDirectToPMUDelay[VOLT_S2]] plus: [voltSenToBus[VOLT_S2] mul: voltToBusDelay[VOLT_S2]]] plus: [voltSenToCon[VOLT_S2] mul: voltToConDelay[VOLT_S2]]] leq: delayPath3[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S4] mul: curDirectToPMUDelay[CUR_S4]] plus: [curSenToBus[CUR_S4] mul: curToBusDelay[CUR_S4]]] plus: [curSenToCon[CUR_S4] mul: curToConDelay[CUR_S4]]] leq: delayPath3[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S3]] plus: [curSenToBus[CUR_S3] mul: curToBusDelay[CUR_S3]]] plus: [curSenToCon[CUR_S3] mul: curToConDelay[CUR_S3]]] leq: delayPath3[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S4] mul: curDirectToPMUDelay[CUR_S4]] plus: [curSenToBus[CUR_S4] mul: curToBusDelay[CUR_S4]]] plus: [curSenToCon[CUR_S4] mul: curToConDelay[CUR_S4]]] leq: delayPath3[4]]];
-    [m add: [[[[curSenDirectPMU[CUR_S2] mul: curDirectToPMUDelay[CUR_S2]] plus: [curSenToBus[CUR_S2] mul: curToBusDelay[CUR_S2]]] plus: [curSenToCon[CUR_S2] mul: curToConDelay[CUR_S2]]] leq: delayPath3[4]]];
-    [m add: [actualDelayPath3 eq: Sum(m, i, pathRange5, [usePath3[i] mul: delayPath3[i]])]];
-    [m add: [[actualDelayPath3 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay3)]];
+    [mc add: [[[[contSenDirectPMU[CONT_S3] mul: contDirectToPMUDelay[CONT_S3]] plus: [contSenToBus[CONT_S3] mul: contToBusDelay[CONT_S3]]] plus: [contSenToCon[CONT_S3] mul: contToConDelay[CONT_S3]]] leq: delayPath3[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S4] mul: voltDirectToPMUDelay[VOLT_S4]] plus: [voltSenToBus[VOLT_S4] mul: voltToBusDelay[VOLT_S4]]] plus: [voltSenToCon[VOLT_S4] mul: voltToConDelay[VOLT_S4]]] leq: delayPath3[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S3] mul: voltDirectToPMUDelay[VOLT_S3]] plus: [voltSenToBus[VOLT_S3] mul: voltToBusDelay[VOLT_S3]]] plus: [voltSenToCon[VOLT_S3] mul: voltToConDelay[VOLT_S3]]] leq: delayPath3[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S4] mul: voltDirectToPMUDelay[VOLT_S4]] plus: [voltSenToBus[VOLT_S4] mul: voltToBusDelay[VOLT_S4]]] plus: [voltSenToCon[VOLT_S4] mul: voltToConDelay[VOLT_S4]]] leq: delayPath3[2]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S2] mul: voltDirectToPMUDelay[VOLT_S2]] plus: [voltSenToBus[VOLT_S2] mul: voltToBusDelay[VOLT_S2]]] plus: [voltSenToCon[VOLT_S2] mul: voltToConDelay[VOLT_S2]]] leq: delayPath3[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S4] mul: curDirectToPMUDelay[CUR_S4]] plus: [curSenToBus[CUR_S4] mul: curToBusDelay[CUR_S4]]] plus: [curSenToCon[CUR_S4] mul: curToConDelay[CUR_S4]]] leq: delayPath3[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S3]] plus: [curSenToBus[CUR_S3] mul: curToBusDelay[CUR_S3]]] plus: [curSenToCon[CUR_S3] mul: curToConDelay[CUR_S3]]] leq: delayPath3[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S4] mul: curDirectToPMUDelay[CUR_S4]] plus: [curSenToBus[CUR_S4] mul: curToBusDelay[CUR_S4]]] plus: [curSenToCon[CUR_S4] mul: curToConDelay[CUR_S4]]] leq: delayPath3[4]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S2] mul: curDirectToPMUDelay[CUR_S2]] plus: [curSenToBus[CUR_S2] mul: curToBusDelay[CUR_S2]]] plus: [curSenToCon[CUR_S2] mul: curToConDelay[CUR_S2]]] leq: delayPath3[4]]];
+    [mc add: [actualDelayPath3 eq: Sum(m, i, pathRange5, [usePath3[i] mul: delayPath3[i]])]];
+    [mc add: [[actualDelayPath3 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay3)]];
     
     // Use path 4
-    [m add: [[usePath4[0] eq: @(1)] eq: [contSensors[CONT_S4] gt: NONE]]];
-    [m add: [[usePath4[1] eq: @(1)] eq: [voltSensors[VOLT_S5] gt: NONE]]];
-    [m add: [[usePath4[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
-    [m add: [[usePath4[2] eq: @(1)] eq: [voltSensors[VOLT_S5] gt: NONE]]];
-    [m add: [[usePath4[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
-    [m add: [[usePath4[3] eq: @(1)] eq: [curSensors[CUR_S5] gt: NONE]]];
-    [m add: [[usePath4[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
-    [m add: [[usePath4[4] eq: @(1)] eq: [curSensors[CUR_S5] gt: NONE]]];
-    [m add: [[usePath4[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    [mc add: [[usePath4[0] eq: @(1)] eq: [contSensors[CONT_S4] gt: NONE]]];
+    [mc add: [[usePath4[1] eq: @(1)] eq: [voltSensors[VOLT_S5] gt: NONE]]];
+    [mc add: [[usePath4[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
+    [mc add: [[usePath4[2] eq: @(1)] eq: [voltSensors[VOLT_S5] gt: NONE]]];
+    [mc add: [[usePath4[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [mc add: [[usePath4[3] eq: @(1)] eq: [curSensors[CUR_S5] gt: NONE]]];
+    [mc add: [[usePath4[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
+    [mc add: [[usePath4[4] eq: @(1)] eq: [curSensors[CUR_S5] gt: NONE]]];
+    [mc add: [[usePath4[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
     
     // Delays on path 4
-    [m add: [[[[contSenDirectPMU[CONT_S4] mul: contDirectToPMUDelay[CONT_S4]] plus: [contSenToBus[CONT_S4] mul: contToBusDelay[CONT_S4]]] plus: [contSenToCon[CONT_S4] mul: contToConDelay[CONT_S4]]] leq: delayPath4[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S5] mul: voltDirectToPMUDelay[VOLT_S5]] plus: [voltSenToBus[VOLT_S5] mul: voltToBusDelay[VOLT_S5]]] plus: [voltSenToCon[VOLT_S5] mul: voltToConDelay[VOLT_S5]]] leq: delayPath4[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S6] mul: voltDirectToPMUDelay[VOLT_S6]] plus: [voltSenToBus[VOLT_S6] mul: voltToBusDelay[VOLT_S6]]] plus: [voltSenToCon[VOLT_S6] mul: voltToConDelay[VOLT_S6]]] leq: delayPath4[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S5] mul: voltDirectToPMUDelay[VOLT_S5]] plus: [voltSenToBus[VOLT_S5] mul: voltToBusDelay[VOLT_S5]]] plus: [voltSenToCon[VOLT_S5] mul: voltToConDelay[VOLT_S5]]] leq: delayPath4[2]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath4[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S5] mul: curDirectToPMUDelay[CUR_S5]] plus: [curSenToBus[CUR_S5] mul: curToBusDelay[CUR_S5]]] plus: [curSenToCon[CUR_S5] mul: curToConDelay[CUR_S5]]] leq: delayPath4[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S6] mul: curDirectToPMUDelay[CUR_S6]] plus: [curSenToBus[CUR_S6] mul: curToBusDelay[CUR_S6]]] plus: [curSenToCon[CUR_S6] mul: curToConDelay[CUR_S6]]] leq: delayPath4[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S5] mul: curDirectToPMUDelay[CUR_S5]] plus: [curSenToBus[CUR_S5] mul: curToBusDelay[CUR_S5]]] plus: [curSenToCon[CUR_S5] mul: curToConDelay[CUR_S5]]] leq: delayPath4[4]]];
-    [m add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath4[4]]];
-    [m add: [actualDelayPath4 eq: Sum(m, i, pathRange5, [usePath4[i] mul: delayPath4[i]])]];
-    [m add: [[actualDelayPath4 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay4)]];
+    [mc add: [[[[contSenDirectPMU[CONT_S4] mul: contDirectToPMUDelay[CONT_S4]] plus: [contSenToBus[CONT_S4] mul: contToBusDelay[CONT_S4]]] plus: [contSenToCon[CONT_S4] mul: contToConDelay[CONT_S4]]] leq: delayPath4[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S5] mul: voltDirectToPMUDelay[VOLT_S5]] plus: [voltSenToBus[VOLT_S5] mul: voltToBusDelay[VOLT_S5]]] plus: [voltSenToCon[VOLT_S5] mul: voltToConDelay[VOLT_S5]]] leq: delayPath4[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S6] mul: voltDirectToPMUDelay[VOLT_S6]] plus: [voltSenToBus[VOLT_S6] mul: voltToBusDelay[VOLT_S6]]] plus: [voltSenToCon[VOLT_S6] mul: voltToConDelay[VOLT_S6]]] leq: delayPath4[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S5] mul: voltDirectToPMUDelay[VOLT_S5]] plus: [voltSenToBus[VOLT_S5] mul: voltToBusDelay[VOLT_S5]]] plus: [voltSenToCon[VOLT_S5] mul: voltToConDelay[VOLT_S5]]] leq: delayPath4[2]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath4[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S5] mul: curDirectToPMUDelay[CUR_S5]] plus: [curSenToBus[CUR_S5] mul: curToBusDelay[CUR_S5]]] plus: [curSenToCon[CUR_S5] mul: curToConDelay[CUR_S5]]] leq: delayPath4[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S6] mul: curDirectToPMUDelay[CUR_S6]] plus: [curSenToBus[CUR_S6] mul: curToBusDelay[CUR_S6]]] plus: [curSenToCon[CUR_S6] mul: curToConDelay[CUR_S6]]] leq: delayPath4[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S5] mul: curDirectToPMUDelay[CUR_S5]] plus: [curSenToBus[CUR_S5] mul: curToBusDelay[CUR_S5]]] plus: [curSenToCon[CUR_S5] mul: curToConDelay[CUR_S5]]] leq: delayPath4[4]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath4[4]]];
+    [mc add: [actualDelayPath4 eq: Sum(m, i, pathRange5, [usePath4[i] mul: delayPath4[i]])]];
+    [mc add: [[actualDelayPath4 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay4)]];
     
     // Use path 5
-    [m add: [[usePath5[0] eq: @(1)] eq: [contSensors[CONT_S5] gt: NONE]]];
-    [m add: [[usePath5[1] eq: @(1)] eq: [voltSensors[VOLT_S8] gt: NONE]]];
-    [m add: [[usePath5[1] eq: @(1)] eq: [voltSensors[VOLT_S7] gt: NONE]]];
-    [m add: [[usePath5[2] eq: @(1)] eq: [voltSensors[VOLT_S8] gt: NONE]]];
-    [m add: [[usePath5[2] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
-    [m add: [[usePath5[3] eq: @(1)] eq: [curSensors[CUR_S8] gt: NONE]]];
-    [m add: [[usePath5[3] eq: @(1)] eq: [curSensors[CUR_S7] gt: NONE]]];
-    [m add: [[usePath5[4] eq: @(1)] eq: [curSensors[CUR_S8] gt: NONE]]];
-    [m add: [[usePath5[4] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
+    [mc add: [[usePath5[0] eq: @(1)] eq: [contSensors[CONT_S5] gt: NONE]]];
+    [mc add: [[usePath5[1] eq: @(1)] eq: [voltSensors[VOLT_S8] gt: NONE]]];
+    [mc add: [[usePath5[1] eq: @(1)] eq: [voltSensors[VOLT_S7] gt: NONE]]];
+    [mc add: [[usePath5[2] eq: @(1)] eq: [voltSensors[VOLT_S8] gt: NONE]]];
+    [mc add: [[usePath5[2] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [mc add: [[usePath5[3] eq: @(1)] eq: [curSensors[CUR_S8] gt: NONE]]];
+    [mc add: [[usePath5[3] eq: @(1)] eq: [curSensors[CUR_S7] gt: NONE]]];
+    [mc add: [[usePath5[4] eq: @(1)] eq: [curSensors[CUR_S8] gt: NONE]]];
+    [mc add: [[usePath5[4] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
     
     // Delays on path 5
-    [m add: [[[[contSenDirectPMU[CONT_S5] mul: contDirectToPMUDelay[CONT_S5]] plus: [contSenToBus[CONT_S5] mul: contToBusDelay[CONT_S5]]] plus: [contSenToCon[CONT_S5] mul: contToConDelay[CONT_S5]]] leq: delayPath5[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S8] mul: voltDirectToPMUDelay[VOLT_S8]] plus: [voltSenToBus[VOLT_S8] mul: voltToBusDelay[VOLT_S8]]] plus: [voltSenToCon[VOLT_S8] mul: voltToConDelay[VOLT_S8]]] leq: delayPath5[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S7] mul: voltDirectToPMUDelay[VOLT_S7]] plus: [voltSenToBus[VOLT_S7] mul: voltToBusDelay[VOLT_S7]]] plus: [voltSenToCon[VOLT_S7] mul: voltToConDelay[VOLT_S7]]] leq: delayPath5[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S8] mul: voltDirectToPMUDelay[VOLT_S8]] plus: [voltSenToBus[VOLT_S8] mul: voltToBusDelay[VOLT_S8]]] plus: [voltSenToCon[VOLT_S8] mul: voltToConDelay[VOLT_S8]]] leq: delayPath5[2]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S3] mul: voltDirectToPMUDelay[VOLT_S3]] plus: [voltSenToBus[VOLT_S3] mul: voltToBusDelay[VOLT_S3]]] plus: [voltSenToCon[VOLT_S3] mul: voltToConDelay[VOLT_S3]]] leq: delayPath5[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S8] mul: curDirectToPMUDelay[CUR_S8]] plus: [curSenToBus[CUR_S8] mul: curToBusDelay[CUR_S8]]] plus: [curSenToCon[CUR_S8] mul: curToConDelay[CUR_S8]]] leq: delayPath5[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S7] mul: curDirectToPMUDelay[CUR_S7]] plus: [curSenToBus[CUR_S7] mul: curToBusDelay[CUR_S7]]] plus: [curSenToCon[CUR_S7] mul: curToConDelay[CUR_S7]]] leq: delayPath5[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S8] mul: curDirectToPMUDelay[CUR_S8]] plus: [curSenToBus[CUR_S8] mul: curToBusDelay[CUR_S8]]] plus: [curSenToCon[CUR_S8] mul: curToConDelay[CUR_S8]]] leq: delayPath5[4]]];
-    [m add: [[[[curSenDirectPMU[CUR_S3] mul: curDirectToPMUDelay[CUR_S3]] plus: [curSenToBus[CUR_S3] mul: curToBusDelay[CUR_S3]]] plus: [curSenToCon[CUR_S3] mul: curToConDelay[CUR_S3]]] leq: delayPath5[4]]];
-    [m add: [actualDelayPath5 eq: Sum(m, i, pathRange5, [usePath5[i] mul: delayPath5[i]])]];
-    [m add: [[actualDelayPath5 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay5)]];
+    [mc add: [[[[contSenDirectPMU[CONT_S5] mul: contDirectToPMUDelay[CONT_S5]] plus: [contSenToBus[CONT_S5] mul: contToBusDelay[CONT_S5]]] plus: [contSenToCon[CONT_S5] mul: contToConDelay[CONT_S5]]] leq: delayPath5[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S8] mul: voltDirectToPMUDelay[VOLT_S8]] plus: [voltSenToBus[VOLT_S8] mul: voltToBusDelay[VOLT_S8]]] plus: [voltSenToCon[VOLT_S8] mul: voltToConDelay[VOLT_S8]]] leq: delayPath5[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S7] mul: voltDirectToPMUDelay[VOLT_S7]] plus: [voltSenToBus[VOLT_S7] mul: voltToBusDelay[VOLT_S7]]] plus: [voltSenToCon[VOLT_S7] mul: voltToConDelay[VOLT_S7]]] leq: delayPath5[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S8] mul: voltDirectToPMUDelay[VOLT_S8]] plus: [voltSenToBus[VOLT_S8] mul: voltToBusDelay[VOLT_S8]]] plus: [voltSenToCon[VOLT_S8] mul: voltToConDelay[VOLT_S8]]] leq: delayPath5[2]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S3] mul: voltDirectToPMUDelay[VOLT_S3]] plus: [voltSenToBus[VOLT_S3] mul: voltToBusDelay[VOLT_S3]]] plus: [voltSenToCon[VOLT_S3] mul: voltToConDelay[VOLT_S3]]] leq: delayPath5[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S8] mul: curDirectToPMUDelay[CUR_S8]] plus: [curSenToBus[CUR_S8] mul: curToBusDelay[CUR_S8]]] plus: [curSenToCon[CUR_S8] mul: curToConDelay[CUR_S8]]] leq: delayPath5[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S7] mul: curDirectToPMUDelay[CUR_S7]] plus: [curSenToBus[CUR_S7] mul: curToBusDelay[CUR_S7]]] plus: [curSenToCon[CUR_S7] mul: curToConDelay[CUR_S7]]] leq: delayPath5[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S8] mul: curDirectToPMUDelay[CUR_S8]] plus: [curSenToBus[CUR_S8] mul: curToBusDelay[CUR_S8]]] plus: [curSenToCon[CUR_S8] mul: curToConDelay[CUR_S8]]] leq: delayPath5[4]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S3] mul: curDirectToPMUDelay[CUR_S3]] plus: [curSenToBus[CUR_S3] mul: curToBusDelay[CUR_S3]]] plus: [curSenToCon[CUR_S3] mul: curToConDelay[CUR_S3]]] leq: delayPath5[4]]];
+    [mc add: [actualDelayPath5 eq: Sum(m, i, pathRange5, [usePath5[i] mul: delayPath5[i]])]];
+    [mc add: [[actualDelayPath5 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay5)]];
     
     // Use path 6
-    [m add: [[usePath6[0] eq: @(1)] eq: [contSensors[CONT_S6] gt: NONE]]];
-    [m add: [[usePath6[1] eq: @(1)] eq: [voltSensors[VOLT_S9] gt: NONE]]];
-    [m add: [[usePath6[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
-    [m add: [[usePath6[2] eq: @(1)] eq: [voltSensors[VOLT_S9] gt: NONE]]];
-    [m add: [[usePath6[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
-    [m add: [[usePath6[3] eq: @(1)] eq: [curSensors[CUR_S9] gt: NONE]]];
-    [m add: [[usePath6[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
-    [m add: [[usePath6[4] eq: @(1)] eq: [curSensors[CUR_S9] gt: NONE]]];
-    [m add: [[usePath6[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    [mc add: [[usePath6[0] eq: @(1)] eq: [contSensors[CONT_S6] gt: NONE]]];
+    [mc add: [[usePath6[1] eq: @(1)] eq: [voltSensors[VOLT_S9] gt: NONE]]];
+    [mc add: [[usePath6[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
+    [mc add: [[usePath6[2] eq: @(1)] eq: [voltSensors[VOLT_S9] gt: NONE]]];
+    [mc add: [[usePath6[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [mc add: [[usePath6[3] eq: @(1)] eq: [curSensors[CUR_S9] gt: NONE]]];
+    [mc add: [[usePath6[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
+    [mc add: [[usePath6[4] eq: @(1)] eq: [curSensors[CUR_S9] gt: NONE]]];
+    [mc add: [[usePath6[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
     
     // Delays on path 6
-    [m add: [[[[contSenDirectPMU[CONT_S6] mul: contDirectToPMUDelay[CONT_S6]] plus: [contSenToBus[CONT_S6] mul: contToBusDelay[CONT_S6]]] plus: [contSenToCon[CONT_S6] mul: contToConDelay[CONT_S6]]] leq: delayPath6[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S9] mul: voltDirectToPMUDelay[VOLT_S9]] plus: [voltSenToBus[VOLT_S9] mul: voltToBusDelay[VOLT_S9]]] plus: [voltSenToCon[VOLT_S9] mul: voltToConDelay[VOLT_S9]]] leq: delayPath6[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S6] mul: voltDirectToPMUDelay[VOLT_S6]] plus: [voltSenToBus[VOLT_S6] mul: voltToBusDelay[VOLT_S6]]] plus: [voltSenToCon[VOLT_S6] mul: voltToConDelay[VOLT_S6]]] leq: delayPath6[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S9] mul: voltDirectToPMUDelay[VOLT_S9]] plus: [voltSenToBus[VOLT_S9] mul: voltToBusDelay[VOLT_S9]]] plus: [voltSenToCon[VOLT_S9] mul: voltToConDelay[VOLT_S9]]] leq: delayPath6[2]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath6[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S9] mul: curDirectToPMUDelay[CUR_S9]] plus: [curSenToBus[CUR_S9] mul: curToBusDelay[CUR_S9]]] plus: [curSenToCon[CUR_S9] mul: curToConDelay[CUR_S9]]] leq: delayPath6[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S6] mul: curDirectToPMUDelay[CUR_S6]] plus: [curSenToBus[CUR_S6] mul: curToBusDelay[CUR_S6]]] plus: [curSenToCon[CUR_S6] mul: curToConDelay[CUR_S6]]] leq: delayPath6[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S9] mul: curDirectToPMUDelay[CUR_S9]] plus: [curSenToBus[CUR_S9] mul: curToBusDelay[CUR_S9]]] plus: [curSenToCon[CUR_S9] mul: curToConDelay[CUR_S9]]] leq: delayPath6[4]]];
-    [m add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath6[4]]];
-    [m add: [actualDelayPath6 eq: Sum(m, i, pathRange5, [usePath6[i] mul: delayPath6[i]])]];
-    [m add: [[actualDelayPath6 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay6)]];
+    [mc add: [[[[contSenDirectPMU[CONT_S6] mul: contDirectToPMUDelay[CONT_S6]] plus: [contSenToBus[CONT_S6] mul: contToBusDelay[CONT_S6]]] plus: [contSenToCon[CONT_S6] mul: contToConDelay[CONT_S6]]] leq: delayPath6[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S9] mul: voltDirectToPMUDelay[VOLT_S9]] plus: [voltSenToBus[VOLT_S9] mul: voltToBusDelay[VOLT_S9]]] plus: [voltSenToCon[VOLT_S9] mul: voltToConDelay[VOLT_S9]]] leq: delayPath6[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S6] mul: voltDirectToPMUDelay[VOLT_S6]] plus: [voltSenToBus[VOLT_S6] mul: voltToBusDelay[VOLT_S6]]] plus: [voltSenToCon[VOLT_S6] mul: voltToConDelay[VOLT_S6]]] leq: delayPath6[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S9] mul: voltDirectToPMUDelay[VOLT_S9]] plus: [voltSenToBus[VOLT_S9] mul: voltToBusDelay[VOLT_S9]]] plus: [voltSenToCon[VOLT_S9] mul: voltToConDelay[VOLT_S9]]] leq: delayPath6[2]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath6[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S9] mul: curDirectToPMUDelay[CUR_S9]] plus: [curSenToBus[CUR_S9] mul: curToBusDelay[CUR_S9]]] plus: [curSenToCon[CUR_S9] mul: curToConDelay[CUR_S9]]] leq: delayPath6[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S6] mul: curDirectToPMUDelay[CUR_S6]] plus: [curSenToBus[CUR_S6] mul: curToBusDelay[CUR_S6]]] plus: [curSenToCon[CUR_S6] mul: curToConDelay[CUR_S6]]] leq: delayPath6[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S9] mul: curDirectToPMUDelay[CUR_S9]] plus: [curSenToBus[CUR_S9] mul: curToBusDelay[CUR_S9]]] plus: [curSenToCon[CUR_S9] mul: curToConDelay[CUR_S9]]] leq: delayPath6[4]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath6[4]]];
+    [mc add: [actualDelayPath6 eq: Sum(m, i, pathRange5, [usePath6[i] mul: delayPath6[i]])]];
+    [mc add: [[actualDelayPath6 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay6)]];
     
     // Use Path 7
-    [m add: [[usePath7[0] eq: @(1)] eq: [contSensors[CONT_S7] gt: NONE]]];
-    [m add: [[usePath7[1] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
-    [m add: [[usePath7[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
-    [m add: [[usePath7[2] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
-    [m add: [[usePath7[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
-    [m add: [[usePath7[3] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
-    [m add: [[usePath7[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
-    [m add: [[usePath7[4] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
-    [m add: [[usePath7[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
+    [mc add: [[usePath7[0] eq: @(1)] eq: [contSensors[CONT_S7] gt: NONE]]];
+    [mc add: [[usePath7[1] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
+    [mc add: [[usePath7[1] eq: @(1)] eq: [voltSensors[VOLT_S6] gt: NONE]]];
+    [mc add: [[usePath7[2] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
+    [mc add: [[usePath7[2] eq: @(1)] eq: [voltSensors[VOLT_S1] gt: NONE]]];
+    [mc add: [[usePath7[3] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
+    [mc add: [[usePath7[3] eq: @(1)] eq: [curSensors[CUR_S6] gt: NONE]]];
+    [mc add: [[usePath7[4] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
+    [mc add: [[usePath7[4] eq: @(1)] eq: [curSensors[CUR_S1] gt: NONE]]];
     
     // Delays on path 7
-    [m add: [[[[contSenDirectPMU[CONT_S7] mul: contDirectToPMUDelay[CONT_S7]] plus: [contSenToBus[CONT_S7] mul: contToBusDelay[CONT_S7]]] plus: [contSenToCon[CONT_S7] mul: contToConDelay[CONT_S7]]] leq: delayPath7[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S10] mul: voltDirectToPMUDelay[VOLT_S10]] plus: [voltSenToBus[VOLT_S10] mul: voltToBusDelay[VOLT_S10]]] plus: [voltSenToCon[VOLT_S10] mul: voltToConDelay[VOLT_S10]]] leq: delayPath7[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S6] mul: voltDirectToPMUDelay[VOLT_S6]] plus: [voltSenToBus[VOLT_S6] mul: voltToBusDelay[VOLT_S6]]] plus: [voltSenToCon[VOLT_S6] mul: voltToConDelay[VOLT_S6]]] leq: delayPath7[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S10] mul: voltDirectToPMUDelay[VOLT_S10]] plus: [voltSenToBus[VOLT_S10] mul: voltToBusDelay[VOLT_S10]]] plus: [voltSenToCon[VOLT_S10] mul: voltToConDelay[VOLT_S10]]] leq: delayPath7[2]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath7[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S10] mul: curDirectToPMUDelay[CUR_S10]] plus: [curSenToBus[CUR_S10] mul: curToBusDelay[CUR_S10]]] plus: [curSenToCon[CUR_S10] mul: curToConDelay[CUR_S10]]] leq: delayPath7[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S6] mul: curDirectToPMUDelay[CUR_S6]] plus: [curSenToBus[CUR_S6] mul: curToBusDelay[CUR_S6]]] plus: [curSenToCon[CUR_S6] mul: curToConDelay[CUR_S6]]] leq: delayPath7[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S10] mul: curDirectToPMUDelay[CUR_S10]] plus: [curSenToBus[CUR_S10] mul: curToBusDelay[CUR_S10]]] plus: [curSenToCon[CUR_S10] mul: curToConDelay[CUR_S10]]] leq: delayPath7[4]]];
-    [m add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath7[4]]];
-    [m add: [actualDelayPath7 eq: Sum(m, i, pathRange5, [usePath7[i] mul: delayPath7[i]])]];
-    [m add: [[actualDelayPath7 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay7)]];
+    [mc add: [[[[contSenDirectPMU[CONT_S7] mul: contDirectToPMUDelay[CONT_S7]] plus: [contSenToBus[CONT_S7] mul: contToBusDelay[CONT_S7]]] plus: [contSenToCon[CONT_S7] mul: contToConDelay[CONT_S7]]] leq: delayPath7[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S10] mul: voltDirectToPMUDelay[VOLT_S10]] plus: [voltSenToBus[VOLT_S10] mul: voltToBusDelay[VOLT_S10]]] plus: [voltSenToCon[VOLT_S10] mul: voltToConDelay[VOLT_S10]]] leq: delayPath7[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S6] mul: voltDirectToPMUDelay[VOLT_S6]] plus: [voltSenToBus[VOLT_S6] mul: voltToBusDelay[VOLT_S6]]] plus: [voltSenToCon[VOLT_S6] mul: voltToConDelay[VOLT_S6]]] leq: delayPath7[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S10] mul: voltDirectToPMUDelay[VOLT_S10]] plus: [voltSenToBus[VOLT_S10] mul: voltToBusDelay[VOLT_S10]]] plus: [voltSenToCon[VOLT_S10] mul: voltToConDelay[VOLT_S10]]] leq: delayPath7[2]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S1] mul: voltDirectToPMUDelay[VOLT_S1]] plus: [voltSenToBus[VOLT_S1] mul: voltToBusDelay[VOLT_S1]]] plus: [voltSenToCon[VOLT_S1] mul: voltToConDelay[VOLT_S1]]] leq: delayPath7[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S10] mul: curDirectToPMUDelay[CUR_S10]] plus: [curSenToBus[CUR_S10] mul: curToBusDelay[CUR_S10]]] plus: [curSenToCon[CUR_S10] mul: curToConDelay[CUR_S10]]] leq: delayPath7[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S6] mul: curDirectToPMUDelay[CUR_S6]] plus: [curSenToBus[CUR_S6] mul: curToBusDelay[CUR_S6]]] plus: [curSenToCon[CUR_S6] mul: curToConDelay[CUR_S6]]] leq: delayPath7[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S10] mul: curDirectToPMUDelay[CUR_S10]] plus: [curSenToBus[CUR_S10] mul: curToBusDelay[CUR_S10]]] plus: [curSenToCon[CUR_S10] mul: curToConDelay[CUR_S10]]] leq: delayPath7[4]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S1] mul: curDirectToPMUDelay[CUR_S1]] plus: [curSenToBus[CUR_S1] mul: curToBusDelay[CUR_S1]]] plus: [curSenToCon[CUR_S1] mul: curToConDelay[CUR_S1]]] leq: delayPath7[4]]];
+    [mc add: [actualDelayPath7 eq: Sum(m, i, pathRange5, [usePath7[i] mul: delayPath7[i]])]];
+    [mc add: [[actualDelayPath7 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay7)]];
     
     // Use path 8
-    [m add: [[usePath8[0] eq: @(1)] eq: [contSensors[CONT_S8] gt: NONE]]];
-    [m add: [[usePath8[1] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
-    [m add: [[usePath8[1] eq: @(1)] eq: [voltSensors[VOLT_S7] gt: NONE]]];
-    [m add: [[usePath8[2] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
-    [m add: [[usePath8[2] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
-    [m add: [[usePath8[3] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
-    [m add: [[usePath8[3] eq: @(1)] eq: [curSensors[CUR_S7] gt: NONE]]];
-    [m add: [[usePath8[4] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
-    [m add: [[usePath8[4] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
+    [mc add: [[usePath8[0] eq: @(1)] eq: [contSensors[CONT_S8] gt: NONE]]];
+    [mc add: [[usePath8[1] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
+    [mc add: [[usePath8[1] eq: @(1)] eq: [voltSensors[VOLT_S7] gt: NONE]]];
+    [mc add: [[usePath8[2] eq: @(1)] eq: [voltSensors[VOLT_S10] gt: NONE]]];
+    [mc add: [[usePath8[2] eq: @(1)] eq: [voltSensors[VOLT_S3] gt: NONE]]];
+    [mc add: [[usePath8[3] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
+    [mc add: [[usePath8[3] eq: @(1)] eq: [curSensors[CUR_S7] gt: NONE]]];
+    [mc add: [[usePath8[4] eq: @(1)] eq: [curSensors[CUR_S10] gt: NONE]]];
+    [mc add: [[usePath8[4] eq: @(1)] eq: [curSensors[CUR_S3] gt: NONE]]];
     
     // Delays on path 8
-    [m add: [[[[contSenDirectPMU[CONT_S7] mul: contDirectToPMUDelay[CONT_S8]] plus: [contSenToBus[CONT_S8] mul: contToBusDelay[CONT_S8]]] plus: [contSenToCon[CONT_S8] mul: contToConDelay[CONT_S8]]] leq: delayPath8[0]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S10] mul: voltDirectToPMUDelay[VOLT_S10]] plus: [voltSenToBus[VOLT_S10] mul: voltToBusDelay[VOLT_S10]]] plus: [voltSenToCon[VOLT_S10] mul: voltToConDelay[VOLT_S10]]] leq: delayPath8[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S6] mul: voltDirectToPMUDelay[VOLT_S7]] plus: [voltSenToBus[VOLT_S7] mul: voltToBusDelay[VOLT_S7]]] plus: [voltSenToCon[VOLT_S7] mul: voltToConDelay[VOLT_S7]]] leq: delayPath8[1]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S10] mul: voltDirectToPMUDelay[VOLT_S10]] plus: [voltSenToBus[VOLT_S10] mul: voltToBusDelay[VOLT_S10]]] plus: [voltSenToCon[VOLT_S10] mul: voltToConDelay[VOLT_S10]]] leq: delayPath8[2]]];
-    [m add: [[[[voltSenDirectPMU[VOLT_S3] mul: voltDirectToPMUDelay[VOLT_S3]] plus: [voltSenToBus[VOLT_S3] mul: voltToBusDelay[VOLT_S3]]] plus: [voltSenToCon[VOLT_S3] mul: voltToConDelay[VOLT_S3]]] leq: delayPath8[2]]];
-    [m add: [[[[curSenDirectPMU[CUR_S10] mul: curDirectToPMUDelay[CUR_S10]] plus: [curSenToBus[CUR_S10] mul: curToBusDelay[CUR_S10]]] plus: [curSenToCon[CUR_S10] mul: curToConDelay[CUR_S10]]] leq: delayPath8[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S7] mul: curDirectToPMUDelay[CUR_S7]] plus: [curSenToBus[CUR_S7] mul: curToBusDelay[CUR_S7]]] plus: [curSenToCon[CUR_S7] mul: curToConDelay[CUR_S7]]] leq: delayPath8[3]]];
-    [m add: [[[[curSenDirectPMU[CUR_S10] mul: curDirectToPMUDelay[CUR_S10]] plus: [curSenToBus[CUR_S10] mul: curToBusDelay[CUR_S10]]] plus: [curSenToCon[CUR_S10] mul: curToConDelay[CUR_S10]]] leq: delayPath8[4]]];
-    [m add: [[[[curSenDirectPMU[CUR_S3] mul: curDirectToPMUDelay[CUR_S3]] plus: [curSenToBus[CUR_S3] mul: curToBusDelay[CUR_S3]]] plus: [curSenToCon[CUR_S3] mul: curToConDelay[CUR_S3]]] leq: delayPath8[4]]];
-    [m add: [actualDelayPath8 eq: Sum(m, i, pathRange5, [usePath8[i] mul: delayPath8[i]])]];
-    [m add: [[actualDelayPath8 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay8)]];
+    [mc add: [[[[contSenDirectPMU[CONT_S7] mul: contDirectToPMUDelay[CONT_S8]] plus: [contSenToBus[CONT_S8] mul: contToBusDelay[CONT_S8]]] plus: [contSenToCon[CONT_S8] mul: contToConDelay[CONT_S8]]] leq: delayPath8[0]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S10] mul: voltDirectToPMUDelay[VOLT_S10]] plus: [voltSenToBus[VOLT_S10] mul: voltToBusDelay[VOLT_S10]]] plus: [voltSenToCon[VOLT_S10] mul: voltToConDelay[VOLT_S10]]] leq: delayPath8[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S6] mul: voltDirectToPMUDelay[VOLT_S7]] plus: [voltSenToBus[VOLT_S7] mul: voltToBusDelay[VOLT_S7]]] plus: [voltSenToCon[VOLT_S7] mul: voltToConDelay[VOLT_S7]]] leq: delayPath8[1]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S10] mul: voltDirectToPMUDelay[VOLT_S10]] plus: [voltSenToBus[VOLT_S10] mul: voltToBusDelay[VOLT_S10]]] plus: [voltSenToCon[VOLT_S10] mul: voltToConDelay[VOLT_S10]]] leq: delayPath8[2]]];
+    [mc add: [[[[voltSenDirectPMU[VOLT_S3] mul: voltDirectToPMUDelay[VOLT_S3]] plus: [voltSenToBus[VOLT_S3] mul: voltToBusDelay[VOLT_S3]]] plus: [voltSenToCon[VOLT_S3] mul: voltToConDelay[VOLT_S3]]] leq: delayPath8[2]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S10] mul: curDirectToPMUDelay[CUR_S10]] plus: [curSenToBus[CUR_S10] mul: curToBusDelay[CUR_S10]]] plus: [curSenToCon[CUR_S10] mul: curToConDelay[CUR_S10]]] leq: delayPath8[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S7] mul: curDirectToPMUDelay[CUR_S7]] plus: [curSenToBus[CUR_S7] mul: curToBusDelay[CUR_S7]]] plus: [curSenToCon[CUR_S7] mul: curToConDelay[CUR_S7]]] leq: delayPath8[3]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S10] mul: curDirectToPMUDelay[CUR_S10]] plus: [curSenToBus[CUR_S10] mul: curToBusDelay[CUR_S10]]] plus: [curSenToCon[CUR_S10] mul: curToConDelay[CUR_S10]]] leq: delayPath8[4]]];
+    [mc add: [[[[curSenDirectPMU[CUR_S3] mul: curDirectToPMUDelay[CUR_S3]] plus: [curSenToBus[CUR_S3] mul: curToBusDelay[CUR_S3]]] plus: [curSenToCon[CUR_S3] mul: curToConDelay[CUR_S3]]] leq: delayPath8[4]]];
+    [mc add: [actualDelayPath8 eq: Sum(m, i, pathRange5, [usePath8[i] mul: delayPath8[i]])]];
+    [mc add: [[actualDelayPath8 sub: [PMUSpeedup elt: pmu]] leq: @(maxDelay8)]];
     
     // Path requirements
-    [m add: [@(3) leq: Sum(m, i, pathRange5, usePath0[i])]];
-    [m add: [@(1) leq: Sum(m, i, pathRange3, usePath1[i])]];
-    [m add: [@(1) leq: Sum(m, i, pathRange3, usePath2[i])]];
-    [m add: [@(3) leq: Sum(m, i, pathRange5, usePath3[i])]];
-    [m add: [@(2) leq: Sum(m, i, pathRange5, usePath4[i])]];
-    [m add: [@(2) leq: Sum(m, i, pathRange5, usePath5[i])]];
-    [m add: [@(1) leq: Sum(m, i, pathRange5, usePath6[i])]];
-    [m add: [@(1) leq: Sum(m, i, pathRange5, usePath7[i])]];
-    [m add: [@(1) leq: Sum(m, i, pathRange5, usePath8[i])]];
+    [mc add: [@(3) leq: Sum(m, i, pathRange5, usePath0[i])]];
+    [mc add: [@(1) leq: Sum(m, i, pathRange3, usePath1[i])]];
+    [mc add: [@(1) leq: Sum(m, i, pathRange3, usePath2[i])]];
+    [mc add: [@(3) leq: Sum(m, i, pathRange5, usePath3[i])]];
+    [mc add: [@(2) leq: Sum(m, i, pathRange5, usePath4[i])]];
+    [mc add: [@(2) leq: Sum(m, i, pathRange5, usePath5[i])]];
+    [mc add: [@(1) leq: Sum(m, i, pathRange5, usePath6[i])]];
+    [mc add: [@(1) leq: Sum(m, i, pathRange5, usePath7[i])]];
+    [mc add: [@(1) leq: Sum(m, i, pathRange5, usePath8[i])]];
     
     
     //NSLog(@"Sol count: %li", [sols count]);  // this only prints the number of solutions on the way to the global optimum.
@@ -913,8 +915,16 @@ int main(int argc, const char * argv[])
         NSLog(@"Wrote Solution File: %@", outPath);
     };
 
-   id<ORModel> lm = [ORFactory linearizeModel: m];
+   id<ORModel> lm = [ORFactory linearizeModel: mc];
    id<ORRelaxation> relax = nil;
+   id<ORIntVarArray> av = m.intVars;
+
+   __block ORInt nbBool = 0;
+   [av enumerateWith:^(id<ORIntVar>  _Nonnull avk, int k) {
+      nbBool += avk.isBool;
+   }];
+   id<ORIntVarArray> bv = [ORFactory slice:m range:av.range suchThat:^ORBool(ORInt k) { return av[k].isBool;} of:^id(ORInt k) { return av[k];}];
+   id<ORIntVarArray> dv = [ORFactory slice:m range:av.range suchThat:^ORBool(ORInt k) { return !av[k].isBool;} of:^id(ORInt k) { return av[k];}];
 
    __block id<ORSolution> bestSolution = nil;
    id<ORRunnable> r0 = [ORFactory CPRunnable:m
@@ -931,27 +941,28 @@ int main(int argc, const char * argv[])
 //         }];
       
       PCBranching* pcb = [[PCBranching alloc] init:relax over:m.intVars program:p];
-      id<ORIntVarArray> av = m.intVars;
-      
-      while (![p allBound:av]) {
-         ORInt bi = [pcb selectVar];
-         if (bi != av.range.low - 1) {
-            double fv = [relax value:av[bi]];
-            ORInt im = floor(fv);
-            [p try:^{
-               [pcb measureDown:av[bi] for: ^{
-                  [p lthen:av[bi] with:im+1];
-               }];
-            } alt:^{
-               [pcb measureUp:av[bi] for:^{
-                  [p gthen:av[bi] with:im];
-               }];
-            }];
-         } else break;
-      }
+      [pcb branchOn:av];
+//      [pcb branchOn:dv];
+//      [pcb branchOn:bv];
+      double oval = [relax objective];
 
-      
-      [p labelArrayFF:m.intVars];
+      for(ORInt i=av.range.low;i <= av.range.up;i++) {
+         //OROutcome ok = [relax solve];
+         //assert(ok== ORoptimal);
+         double avrv = [relax value:av[i]];
+         NSLog(@"READING x[%d] ~= %f ",i,avrv);
+         NSLog(@"------> x[140] ~= %f ",[relax value:av[140]]);
+         
+         double ip = 0;
+         double f = modf(avrv,&ip);
+         assert(f == 0);
+         
+         [p label:av[i] with:(ORInt)ip];
+         
+         double nval = [relax objective];
+         NSLog(@"FIXED (%d) ==> %f  ==? %f",i,oval,nval);
+      }
+//      [p labelArrayFF:av];
          //[p splitArray:m.intVars];
          NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
          id<ORSolution> s = [p captureSolution];

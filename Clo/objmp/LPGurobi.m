@@ -123,7 +123,7 @@
 //   printf("\n");
    GRBupdatemodel(_model);
    GRBoptimize(_model);
-   [self printModelToFile: "/Users/ldm/Desktop/linearRelax.lp"];
+   //[self printModelToFile: "/Users/ldm/Desktop/linearRelax.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
@@ -153,12 +153,20 @@
 -(ORDouble) value: (LPVariableI*) var
 {
    ORDouble lb,ub,value;
+   ORDouble feasTol = 0.0;
+   int st = GRBgetdblparam(_env,"IntFeasTol",&feasTol);
+
    GRBgetdblattrelement(_model,"LB",[var idx],&lb);
    GRBgetdblattrelement(_model,"UB",[var idx],&ub);
    GRBgetdblattrelement(_model,"X",[var idx],&value);
-   if (value < lb)
+//   if (value < lb)
+//      value = lb;
+//   else if (value > ub)
+//      value = ub;
+
+   if (fabs(value - lb) < feasTol)
       value = lb;
-   else if (value > ub)
+   else if (fabs(value - ub) < feasTol)
       value = ub;
    return value;
 }
@@ -189,6 +197,13 @@
    ORDouble value;
    GRBgetdblattrelement(_model,"RC",[var idx],&value);
    return value;
+}
+-(ORBool) inBasis: (LPVariableI*) var
+{
+   int value = 0;
+   int st = GRBgetintattrelement(_model, "VBasis",[var idx], &value);
+   assert(st==0);
+   return value==0;
 }
 
 -(ORDouble) dual: (LPConstraintI*) cstr

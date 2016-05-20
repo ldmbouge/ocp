@@ -118,6 +118,10 @@
 {
     return [_lpsolver reducedCost: _gamma[v.getId]];
 }
+-(ORBool) inBasis:(id<ORRealVar>)v
+{
+   return [_lpsolver inBasis: _gamma[v.getId]];
+}
 -(id<LPColumn>) createColumn
 {
     LPColumnI* col = [_lpsolver createColumn];
@@ -233,6 +237,10 @@
 -(ORDouble) reducedCost: (id<ORRealVar>) v
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
+}
+-(ORBool) inBasis:(id<ORRealVar>)v
+{
+   return [_lpsolver inBasis: _gamma[v.getId]];
 }
 -(ORDouble) objective
 {

@@ -70,12 +70,14 @@
 {
    return _nbu > 0 ? _up / _nbu : FDMAXINT;
 }
+static inline ORDouble minDbl(ORDouble a,ORDouble b) { return a < b ? a : b;}
+static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 -(double)scoreWn:(double)wn Wp:(double)wp
 {
    static const double mu = 1.0 / 6.0;
    double qn = wn * [self pseudoDown];
    double qp = wp * [self pseudoUp];
-   return (1 - mu) * min(qn,qp) + mu * max(qn,qp);
+   return (1 - mu) * minDbl(qn,qp) + mu * maxDbl(qn,qp);
 }
 @end
 
@@ -102,6 +104,7 @@
       for(ORInt i=_vars.range.low;i <= _vars.range.up;i++) {
          id<ORIntVar> vi = _vars[i];
          double vir = [_relax value:vi];
+         NSLog(@"x[%3d]  [%d,%d] ~= %4.20f",i,[_p min:vi],[_p max:vi],vir);
          double g   = 0;
          double f   = modf(vir,&g);
          if (f != 0) {
@@ -154,25 +157,115 @@
    [key release];
    return vs ? vs : _overall;
 }
--(ORInt)selectVar
+-(ORBool)selectVar:(id<ORIntVarArray>)x index:(ORInt*)k  value:(ORDouble*)rv
 {
+//   OROutcome oc = [_relax solve];
+//   for(ORInt i=x.range.low;i <= x.range.up;i++) {
+//      NSLog(@"SVAR: x[%d] ~= %f",i,[_relax value:x[i]]);
+//   }
    ORInt  bk = _vars.range.low - 1;
-   double BSF =  - MAXDBL;
-   for(ORInt i=_vars.range.low;i <= _vars.range.up;i++) {
-      double vir = [_relax value:_vars[i]];
+   __block ORBool   found = NO;
+   ORDouble BSF =  - MAXDBL;
+   ORDouble brk = 0.0;
+   for(ORInt i=x.range.low;i <= x.range.up;i++) {
+      if ([_p bound:x[i]])
+         continue;
+
+      ORInt xisz = [_p domsize:x[i]];
+      ORInt xiSpan = [_p max:x[i]] - [_p min:x[i]] + 1;
+      ORBool gap   = xisz != xiSpan;
+      if (gap) {
+         ORInt ub= [_p max:x[i]];
+         for(ORInt d = [_p min:x[i]]; d <= ub;d++) {
+            if (![_p member:d in:x[i]]) {
+               *k = i;
+               *rv = (ORDouble)d;
+               return YES;
+            }
+         }
+      }
+      
+      double vir = [_relax value:x[i]];
       double g   = 0;
       double f   = modf(vir,&g);
       if (f == 0) continue;
       double fn  = f, fp = 1.0 - f;
-      VStat* pc = [self pCost:_vars[i]];
+      VStat* pc = [self pCost:x[i]];
       assert(pc != nil);
       double q = [pc scoreWn:fn Wp:fp];
       if (q > BSF) {
          bk = i;
+         brk = vir;
+         found = YES;
          BSF = q;
       }
    }
-   return bk;
+   if (found) {
+      *k = bk;
+      *rv = brk;
+      return found;
+   } else {
+      [self probe:x];
+      [_p select:x minimizing:^ORDouble(ORInt i) { return [_p domsize:x[i]];}
+              in:^void(ORInt i) {
+                 ORInt min = [_p min:x[i]],max = [_p max:x[i]];
+                 ORInt mid = min + (max-min)/2;
+                 *k = i;
+                 *rv = mid;
+                 found =  YES;
+              }];
+      return found;
+   }
+}
+-(void)branchOn:(id<ORIntVarArray>)x
+{
+   while (![_p allBound:x]) {
+      ORDouble fv;
+      ORInt    bi;
+      ORBool ok = [self selectVar:x index:&bi value:&fv];
+      if (ok) {
+         ORInt im = floor(fv);
+         [_p try:^{
+            [self measureUp:x[bi] for:^{
+               [_p gthen:x[bi] with:im];
+            }];
+         } alt:^{
+            [self measureDown:x[bi] for: ^{
+               [_p lthen:x[bi] with:im+1];
+            }];
+         }];
+      } else {
+         NSLog(@"Found nothing to branch on?");
+         break;
+      }
+   }
+}
+-(void)probe:(id<ORIntVarArray>)x
+{
+   [_p nestedSolve:^{
+      [_p once:^{
+         __block ORInt reached = x.range.low - 1;
+         [_p try:^{
+            for(ORInt i=x.range.low; i <= x.range.up;i++) {
+               if ([_p bound:x[i]])
+                  continue;
+               ORInt rv = rint([_relax value:x[i]]);
+               [_p label:x[i] with:rv];
+               reached = i;
+            }
+            [[_p objective] updatePrimalBound];
+            NSLog(@"Probe successful!");
+         } alt:^{
+            NSLog(@"Rounding probe failed... Reached [%d]",reached);
+         }];
+      }];
+   } onSolution:^{
+      [_p doOnSolution];
+      NSLog(@"inside nested onSolution");
+   } onExit:nil
+    control:  [[ORSemDFSController proto] clone]
+   ];
+   NSLog(@"BACK FROM nestedSolve...");
 }
 -(void)recordVar:(id<ORVar>)x low:(double)low
 {
@@ -196,6 +289,7 @@
    [vs recordUp:up];
    [_overall recordUp:up];
 }
+static long nbCall = 0;
 -(void)measureDown:(id<ORVar>)x for:(ORClosure)cl
 {
    double xv = [_relax value:x];
@@ -205,6 +299,8 @@
    double f0 = [_relax objective];
    cl();
    double f1 = [_relax objective];
+   if (++nbCall % 100 == 0)
+      NSLog(@"↓ relax: %f",f1);
    double df = _flip * (f1 - f0);
    double downRate = df / m;
    [self recordVar:x low:downRate];
@@ -218,6 +314,8 @@
    double f0 = [_relax objective];
    cl();
    double f1 = [_relax objective];
+   if (++nbCall % 100 == 0)
+      NSLog(@"↑ relax: %f",f1);
    double df = _flip * (f1 - f0);
    double upRate = df / m;
    [self recordVar:x up:upRate];

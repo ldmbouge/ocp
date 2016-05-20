@@ -34,6 +34,7 @@
 -(ORDouble) upperBound: (LPVariableI*) var;
 -(ORDouble) objectiveValue;
 -(ORDouble) reducedCost: (LPVariableI*) var;
+-(ORBool) inBasis: (LPVariableI*) var;
 -(ORDouble) dual: (LPConstraintI*) cstr;
 
 -(void) setBounds: (LPVariableI*) var low: (ORDouble) low up: (ORDouble) up;

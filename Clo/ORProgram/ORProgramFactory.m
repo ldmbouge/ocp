@@ -460,6 +460,10 @@
 {
    return [_lprelaxation reducedCost:x];
 }
+-(ORBool)inBasis:(id<ORVar>)x
+{
+   return [_lprelaxation inBasis:x];
+}
 -(void) close
 {
    return [_lprelaxation close];

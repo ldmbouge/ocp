@@ -105,9 +105,13 @@ PORTABLE_BEGIN
                          in: (ORInt2Void) body
                   onFailure: (ORInt2Void) onFailure;
 
+-(void)              select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body;
+
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)                 try: (ORClosure) body then: (ORClosure) body;
+-(void)                once: (ORClosure) cl;
 
+-(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)         nestedSolve: (ORClosure) body;
@@ -169,7 +173,6 @@ PORTABLE_BEGIN
 
 // CPSolver with syntactic DFS Search
 @protocol CPProgram <CPCommonProgram>
--(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
 -(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
@@ -186,7 +189,6 @@ PORTABLE_BEGIN
 // CPSolver with semantic DFS Search
 // Initially empty but will add things here
 @protocol CPSemanticProgramDFS <CPCommonProgram>
--(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
 -(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;

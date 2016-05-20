@@ -30,6 +30,7 @@
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORVar>) x;
 -(ORDouble) doubleValue: (id<ORVar>) x;
+-(ORBool)inBasis:(id<ORVar>)x;
 -(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lowerBound: (id<ORVar>) v;

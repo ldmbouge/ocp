@@ -1462,6 +1462,10 @@
 {
    return [_lp reducedCost: var];
 }
+-(ORBool) inBasis:(LPVariableI*)var
+{
+   return [_lp inBasis:var];
+}
 -(ORDouble) dual: (LPConstraintI*) cstr;
 {
    return [_lp dual: cstr];
