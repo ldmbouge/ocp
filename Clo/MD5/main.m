@@ -29,7 +29,7 @@
 
 void twoByteMD4(NSString* filename, BVSearchHeuristic heur)
 {
-   NSAutoreleasePool* pool; // = [[NSAutoreleasePool alloc] init];
+   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
    NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"ObjCP-MD4Data"];
    switch (heur) {
       case BVFF:  [outputFilename appendString:@"-FirstFail-2BYTE-"];
@@ -73,18 +73,18 @@ void twoByteMD4(NSString* filename, BVSearchHeuristic heur)
          if ((j==3) && (i<15)) {
             mask[i+1] = 0x00FFFFFF;
          }
-         pool = [[NSAutoreleasePool alloc] init];
+//         pool = [[NSAutoreleasePool alloc] init];
          myMD4 = [MD4 initMD4];
          [str appendFormat:@"%d ",num++];
          [str appendString:[myMD4 preimage:filename withMask:mask andHeuristic:heur]];
-         [myMD4 dealloc];
-         [pool drain];
+         [myMD4 release];
+//         [pool drain];
          twobytemask >>= 8;
       }
       mask[i] = 0xFFFFFFFF;
    }
    [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-//   [pool drain];
+   [pool drain];
 }
 
 void twoByteMD5(NSString* filename, BVSearchHeuristic heur)

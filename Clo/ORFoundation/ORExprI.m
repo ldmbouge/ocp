@@ -141,6 +141,8 @@
 -(void) visitBitShiftL_BV:(id<ORBitShiftL_BV>)c;
 -(void) visitBitShiftR:(id<ORBitShiftR>)c;
 -(void) visitBitShiftR_BV:(id<ORBitShiftR_BV>)c;
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)c;
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)c;
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
 -(void) visitBitNegative:(id<ORBitNegative>)cstr;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
@@ -155,12 +157,14 @@
 -(void) visitBitLT:(id<ORBitLT>)c;
 -(void) visitBitLE:(id<ORBitLE>)c;
 -(void) visitBitSLE:(id<ORBitSLE>)c;
+-(void) visitBitSLT:(id<ORBitSLT>)c;
 -(void) visitBitITE:(id<ORBitITE>)c;
 -(void) visitBitLogicalAnd:(id<ORBitLogicalAnd>)c;
 -(void) visitBitLogicalOr:(id<ORBitLogicalOr>)c;
 -(void) visitBitOrb:(id<ORBitOrb>)c;
 -(void) visitBitNotb:(id<ORBitNotb>)c;
 -(void) visitBitEqualb:(id<ORBitEqualb>)c;
+-(void) visitBitDistinct:(id<ORBitDistinct>)c;
 @end
 
 @implementation ORSweep
@@ -374,6 +378,21 @@
    [[c places] visit:self];
 }
 
+-(void) visitBitShiftRA:(id<ORBitShiftRA>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+
+-(void) visitBitShiftRA_BV:(id<ORBitShiftRA_BV>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   //Current implementation of CPBitShiftR only shifts by a constant
+   //Must "visit" places variable when this is corrected
+   [[c places] visit:self];
+}
+
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
    [[c left] visit:self];
@@ -461,6 +480,13 @@
    [[c res] visit:self];
 }
 
+-(void) visitBitSLT:(id<ORBitSLT>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
 -(void) visitBitITE:(id<ORBitITE>)c
 {
    [[c left] visit:self];
@@ -494,6 +520,13 @@
 }
 
 -(void) visitBitEqualb:(id<ORBitEqualb>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+
+-(void) visitBitDistinct:(id<ORBitDistinct>)c
 {
    [[c left] visit:self];
    [[c right] visit:self];

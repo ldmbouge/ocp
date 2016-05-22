@@ -318,7 +318,7 @@ return 0;
 //   NSLog(@"%@",_model);
 
    id* gamma = [cp gamma];
-//
+
    id<ORBitVarArray> o = [ORFactory bitVarArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:(ORUInt)[_declarations count]-1]];
    ORInt k=0;
    for (id var in _declarations)
@@ -332,7 +332,7 @@ return 0;
 
    searchStart = clock();
    [cp solve:^{
-//      [cp limitTime:300000 in: ^{
+//      [cp limitTime:600000 in: ^{
 //      id<CPEngine> engine = [cp engine];
 //      NSLog(@"%@",[[cp engine] model]);
 //      NSLog(@"%@",_model);

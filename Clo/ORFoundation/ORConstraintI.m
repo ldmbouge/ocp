@@ -4220,6 +4220,88 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORBitShiftRA {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   ORInt _places;
+}
+-(ORBitShiftRA*)initORBitShiftRA: (id<ORBitVar>) x by:(ORInt) p eq:(id<ORBitVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _places = p;
+   return self;
+}
+-(ORInt) places
+{
+   return _places;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ >>a %d = %@)",[self class],self,_x,_places,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitShiftRA:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+@end
+
+@implementation ORBitShiftRA_BV {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _places;
+}
+-(ORBitShiftRA_BV*)initORBitShiftRA_BV: (id<ORBitVar>) x by:(id<ORBitVar>) p eq:(id<ORBitVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _places = p;
+   return self;
+}
+-(id<ORBitVar>) places
+{
+   return _places;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ >>a %@ = %@)",[self class],self,_x,_places,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitShiftRA_BV:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_places, nil] autorelease];
+}
+@end
+
 @implementation ORBitRotateL {
    id<ORBitVar> _x;
    id<ORBitVar> _y;
@@ -4885,6 +4967,47 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORBitSLT {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitSLT*)initORBitSLT: (id<ORBitVar>) x SLT:(id<ORBitVar>) y eval:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <(signed) %@ evaluates to %@)",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitSLT:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+@end
+
 
 @implementation ORBitITE {
    id<ORBitVar> _i;
@@ -5113,6 +5236,48 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(ORVisitor*)v
 {
    [v visitBitEqualb:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_r, nil] autorelease];
+}
+@end
+
+
+@implementation ORBitDistinct {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _r;
+}
+-(ORBitDistinct*)initORBitDistinct: (id<ORBitVar>) x distinctFrom:(id<ORBitVar>) y eval:(id<ORBitVar>)r
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _r = r;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _r;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ => %@)",[self class],self,_x,_y,_r];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitDistinct:self];
 }
 -(NSSet*)allVars
 {

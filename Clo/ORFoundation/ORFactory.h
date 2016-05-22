@@ -284,6 +284,8 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) bit:(id<ORBitVar>)x shiftLByBV:(id<ORBitVar>)p eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x shiftRBy:(ORInt)p eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x shiftRByBV:(id<ORBitVar>)p eq:(id<ORBitVar>)z;
++(id<ORConstraint>) bit:(id<ORBitVar>)x shiftRABy:(ORInt)p eq:(id<ORBitVar>)z;
++(id<ORConstraint>) bit:(id<ORBitVar>)x shiftRAByBV:(id<ORBitVar>)p eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x rotateLBy:(ORInt)p eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x negative:(id<ORBitVar>)y;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x plus:(id<ORBitVar>)y withCarryIn:(id<ORBitVar>)ci eq:(id<ORBitVar>)z withCarryOut:(id<ORBitVar>)co;
@@ -300,6 +302,7 @@ PORTABLE_BEGIN
 +(id<ORConstraint>) bit:(id<ORBitVar>)x LT:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x LE:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x SLE:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
++(id<ORConstraint>) bit:(id<ORBitVar>)x SLT:(id<ORBitVar>)y eval:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)i then:(id<ORBitVar>)t else:(id<ORBitVar>)e result:(id<ORBitVar>)r;
 +(id<ORConstraint>) bit:(id<ORBitVarArray>)x logicalAndEval:(id<ORBitVar>)r;
 +(id<ORConstraint>) bit:(id<ORBitVarArray>)x logicalOrEval:(id<ORBitVar>)r;

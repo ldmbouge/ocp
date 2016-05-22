@@ -350,7 +350,8 @@
       }
       else{
          j=__builtin_clz(freeBits);
-         int msfb = (wordLengthInBits)-((i*32)+j+1);
+         //int msfb = (wordLengthInBits)-((i*32)+j+1);
+         int msfb = BITSPERWORD-j-1+(i*BITSPERWORD);
          return msfb;
       }
    }

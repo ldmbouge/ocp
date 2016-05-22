@@ -1447,6 +1447,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker]trackObject:o];
    return o;
 }
++(id<ORConstraint>) bit:(id<ORBitVar>)x shiftRABy:(ORInt)p eq:(id<ORBitVar>)y
+{
+   id<ORConstraint> o = [[ORBitShiftRA alloc] initORBitShiftRA:x by:p eq:y];
+   [[x tracker]trackObject:o];
+   return o;
+}
++ (id<ORConstraint>) bit:(id<ORBitVar>)x shiftRAByBV:(id<ORBitVar>)p eq:(id<ORBitVar>)y
+{
+   id<ORConstraint> o = [[ORBitShiftRA_BV alloc] initORBitShiftRA_BV:x by:p eq:y];
+   [[x tracker]trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) bit:(id<ORBitVar>)x rotateLBy:(ORInt)p eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitRotateL alloc] initORBitRotateL:x by:p eq:y];
@@ -1544,6 +1556,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [[x tracker]trackObject:o];
    return o;
 }
++(id<ORConstraint>) bit:(id<ORBitVar>)x SLT:(id<ORBitVar>)y eval:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitSLT alloc] initORBitSLT:x SLT:y eval:z];
+   [[x tracker]trackObject:o];
+   return o;
+}
 
 +(id<ORConstraint>) bit:(id<ORBitVar>)i then:(id<ORBitVar>)t else:(id<ORBitVar>)e result:(id<ORBitVar>)r
 {
@@ -1579,6 +1597,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) bit:(id<ORBitVar>)x equalb:(id<ORBitVar>)y eval:(id<ORBitVar>)r
 {
    id<ORConstraint> o = [[ORBitEqualb alloc] initORBitEqualb:x equal:y eval:r];
+   [[x tracker]trackObject:o];
+   return o;
+}
+
++(id<ORConstraint>) bit:(id<ORBitVar>)x distinctFrom:(id<ORBitVar>)y eval:(id<ORBitVar>)r
+{
+   id<ORConstraint> o = [[ORBitDistinct alloc] initORBitDistinct:x distinctFrom:y eval:r];
    [[x tracker]trackObject:o];
    return o;
 }

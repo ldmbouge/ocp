@@ -548,6 +548,18 @@ enum ORGroupType {
 -(id<ORBitVar>) places;
 @end
 
+@protocol  ORBitShiftRA <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(ORInt) places;
+@end
+
+@protocol  ORBitShiftRA_BV <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) places;
+@end
+
 @protocol  ORBitRotateL <ORConstraint>
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
@@ -645,6 +657,12 @@ enum ORGroupType {
 -(id<ORBitVar>) right;
 @end
 
+@protocol  ORBitSLT <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
 @protocol  ORBitITE <ORConstraint>
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
@@ -674,6 +692,12 @@ enum ORGroupType {
 @end
 
 @protocol  ORBitEqualb <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitDistinct <ORConstraint>
 -(id<ORBitVar>) res;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;

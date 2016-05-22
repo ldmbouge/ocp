@@ -87,6 +87,7 @@
 
    do {
       ORInt ofs = _sz-1;
+      
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
@@ -99,13 +100,14 @@
          //Jump back if constraint was learned
          level = [_tracer level];
          if (jumplevel < level) {
+//            NSLog(@"Jumping over level %d",level);
             [k letgo];
             continue;
          }
 
          if (k &&  status != ORFailure) {
 //            NSLog(@"Restarting search at level %d",level);
-            if (jumplevel != -1)
+            if ((jumplevel != -1))
                [k callInvisible];
             else
                [k call];

@@ -586,29 +586,29 @@ typedef struct _CPBitAntecedents{
 -(void) propagate;
 @end
 
-//@interface CPBitDivide : CPCoreConstraint{
-//@private
-//   CPBitVarI* _opx;
-//   CPBitVarI* _opy;
-//   CPBitVarI* _x;
-//   CPBitVarI* _y;
-//   CPBitVarI* _z;
-//   CPBitVarI** _cin;
-//   CPBitVarI** _cout;
-//   CPBitVarI** _partialProduct;
-//   CPBitVarI** _intermediate;
-//   
-//   ORUInt   _opLength;
-//   ORUInt   _bitLength;
-//}
-//-(id) initCPBitDivide: (CPBitVarI*) x dividedby: (CPBitVarI*) y equals: (CPBitVarI*)z;
-//-(void) dealloc;
-//-(NSString*) description;
-//-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
-//-(void) post;
-//-(void) propagate;
-//@end
-//
+@interface CPBitDivide : CPCoreConstraint{
+@private
+   CPBitVarI* _opx;
+   CPBitVarI* _opy;
+   CPBitVarI* _x;
+   CPBitVarI* _y;
+   CPBitVarI* _z;
+   CPBitVarI** _cin;
+   CPBitVarI** _cout;
+   CPBitVarI** _partialProduct;
+   CPBitVarI** _intermediate;
+   
+   ORUInt   _opLength;
+   ORUInt   _bitLength;
+}
+-(id) initCPBitDivide: (CPBitVarI*) x dividedby: (CPBitVarI*) y equals: (CPBitVarI*)z;
+-(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
+-(void) post;
+-(void) propagate;
+@end
+
 
 @interface CPBitDistinct : CPCoreConstraint{
 @private

@@ -47620,6 +47620,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
@@ -47641,6 +47642,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
@@ -47663,6 +47665,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/ORScheduler/ORScheduler-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = ORScheduler;
 				WRAPPER_EXTENSION = framework;
@@ -47684,6 +47687,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
@@ -47705,6 +47709,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
@@ -47727,6 +47732,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = "Scheduler/**";
 				INFOPLIST_FILE = "Scheduler/CPScheduler/CPScheduler-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = CPScheduler;
 				WRAPPER_EXTENSION = framework;
@@ -48793,6 +48799,7 @@
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -48815,6 +48822,7 @@
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -49015,7 +49023,8 @@
 				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -49041,7 +49050,8 @@
 				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -49311,6 +49321,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				"INSTALL_PATH[sdk=*]" = "";
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				LLVM_LTO = NO;
 				ONLY_ACTIVE_ARCH = YES;
@@ -49338,6 +49349,7 @@
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -49366,6 +49378,7 @@
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -49390,7 +49403,8 @@
 				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -49416,7 +49430,8 @@
 				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORProgram/ORProgram-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -49442,7 +49457,8 @@
 				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -49463,6 +49479,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -49486,6 +49503,7 @@
 				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
@@ -50961,7 +50979,8 @@
 				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -50988,7 +51007,8 @@
 				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "CPUKernel/CPUKernel-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -51010,6 +51030,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -51031,6 +51052,7 @@
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				GCC_UNROLL_LOOPS = YES;
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -51326,7 +51348,8 @@
 				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -51353,7 +51376,8 @@
 				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -52369,6 +52393,7 @@
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib",
@@ -52393,6 +52418,7 @@
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORFoundation/ORFoundation-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib",
@@ -52628,6 +52654,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgram/ORSchedulingProgram-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
@@ -52662,6 +52689,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgram/ORSchedulingProgram-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -52697,6 +52725,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Scheduler/ORSchedulingProgram/ORSchedulingProgram-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "NICTA.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -52876,6 +52905,7 @@
 				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
@@ -52905,6 +52935,7 @@
 				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
@@ -53636,7 +53667,7 @@
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				DYLIB_INSTALL_NAME_BASE = "$(INSTALL_PATH)";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -53651,7 +53682,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = Verification/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				"LD_MAP_FILE_PATH[arch=*]" = "$(TARGET_TEMP_DIR)/$(PRODUCT_NAME)-LinkMap-$(CURRENT_VARIANT)-$(CURRENT_ARCH).txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -53666,7 +53697,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.Verification;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
@@ -53691,7 +53722,7 @@
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				DYLIB_INSTALL_NAME_BASE = "$(INSTALL_PATH)";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_VERSION = A;
@@ -53702,7 +53733,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = Verification/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -53716,7 +53747,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.Verification;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Coverage;
@@ -53741,7 +53772,7 @@
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				DYLIB_INSTALL_NAME_BASE = "$(INSTALL_PATH)";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_VERSION = A;
@@ -53752,7 +53783,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = Verification/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -53766,7 +53797,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.Verification;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;

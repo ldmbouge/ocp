@@ -190,6 +190,8 @@
 -(void) visitBitShiftL_BV:(id<ORConstraint>)c;
 -(void) visitBitShiftR:(id<ORConstraint>)c;
 -(void) visitBitShiftR_BV:(id<ORConstraint>)c;
+-(void) visitBitShiftRA:(id<ORConstraint>)c;
+-(void) visitBitShiftRA_BV:(id<ORConstraint>)c;
 -(void) visitBitRotateL:(id<ORConstraint>)c;
 -(void) visitBitSum:(id<ORConstraint>)cstr;
 -(void) visitBitSubtract:(id<ORConstraint>)cstr;
@@ -204,6 +206,7 @@
 -(void) visitBitLT:(id<ORConstraint>)c;
 -(void) visitBitLE:(id<ORConstraint>)c;
 -(void) visitBitSLE:(id<ORConstraint>)c;
+-(void) visitBitSLT:(id<ORConstraint>)c;
 -(void) visitBitITE:(id<ORConstraint>)c;
 -(void) visitBitLogicalAnd:(id<ORConstraint>)c;
 -(void) visitBitLogicalOr:(id<ORConstraint>)c;

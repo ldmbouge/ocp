@@ -668,10 +668,6 @@ return self;
             break;
          }
          if ((changedUp & mask) || (changedLow & mask)) {
-            if (((i*BITSPERWORD)+j ==63) && (bitLength==40)){
-               NSLog(@"Setting bit 63");
-            }
-
 //            NSLog(@"Update of bit %u by %@", j, constraint);
             if([_engine isKindOfClass:[CPLearningEngineI class]]){
                //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
