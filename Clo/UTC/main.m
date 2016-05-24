@@ -941,9 +941,9 @@ int main(int argc, const char * argv[])
 //         }];
       
       PCBranching* pcb = [[PCBranching alloc] init:relax over:m.intVars program:p];
-      [pcb branchOn:av];
-//      [pcb branchOn:dv];
-//      [pcb branchOn:bv];
+//      [pcb branchOn:av];
+      [pcb branchOn:bv];
+      [pcb branchOn:dv];
       double oval = [relax objective];
 
       for(ORInt i=av.range.low;i <= av.range.up;i++) {

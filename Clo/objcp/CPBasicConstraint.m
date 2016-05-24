@@ -2387,9 +2387,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          //printf("whenChangedBound %d %d\n",i,_solved._mgc);
          if (getFXInt(&_solved,_trail) == 0) {
             incrFXInt(&_solved,_trail);
-            [_trail trailClosure: ^{
-               [_relaxation solve];
-            }];
+//            [_trail trailClosure: ^{
+//               [_relaxation solve];
+//            }];
          }
          if (getFXInt(&_updated[i],_trail) == 0) {
             ORDouble omin = _min[i]._val;

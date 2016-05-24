@@ -36,6 +36,7 @@
    GRBnewmodel(_env, &_model, "", 0, NULL, NULL, NULL, NULL, NULL);
 //   GRBsetintparam(_env,"OutputFlag",0);
 
+   error = GRBsetintparam(_env, GRB_INT_PAR_METHOD, GRB_METHOD_DUAL);
    
    return self;
 }
@@ -65,7 +66,7 @@
 -(LPConstraintI*) addConstraint: (LPConstraintI*) cstr
 {
    [self postConstraint: cstr];
-   GRBupdatemodel(_model);
+//   GRBupdatemodel(_model);
    return cstr;
 }
 -(void) delConstraint: (LPConstraintI*) cstr
@@ -108,7 +109,6 @@
 
 -(void) close
 {
-   
 }
 -(OROutcome) solve
 {

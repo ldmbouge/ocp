@@ -7,6 +7,9 @@
 //
 
 #import "PCBranching.h"
+#include <math.h>
+
+#define ALPHAVALUE 2.0
 
 @interface VStat : NSObject {
    double _down;
@@ -37,38 +40,44 @@
    _down = d;
    _up   = u;
    _nbl = _nbu = 1;
+   assert(!isnan(_down));
+   assert(!isnan(_up));
    return self;
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<VStat(%f,%f) :: %f,%f  AVG: %f,%f>",_nbl,_nbu,_down,_up,self.pseudoDown,self.pseudoUp];
+   [buf appendFormat:@"<VStat(%3.0f,%3.0f) :: %f,%f  AVG: %f,%f>",_nbl,_nbu,_down,_up,self.pseudoDown,self.pseudoUp];
    return buf;
 }
 -(void)recordLow:(double)d up:(double)u
 {
    _nbl++;_nbu++;
-   _down += d;
-   _up   +=u;
+   _down = (_down * (ALPHAVALUE - 1.0) + d) / ALPHAVALUE;
+   _up   = (_up   * (ALPHAVALUE - 1.0) + u) / ALPHAVALUE;
+   assert(!isnan(_down));
+   assert(!isnan(_up));
 }
 -(void)recordLow:(double)d
 {
    _nbl++;
-   _down += d;
+   _down = (_down * (ALPHAVALUE - 1.0) + d) / ALPHAVALUE;
+   assert(!isnan(_down));
 }
--(void)recordUp:(double)d
+-(void)recordUp:(double)u
 {
    _nbu++;
-   _up += d;
+   _up   = (_up   * (ALPHAVALUE - 1.0) + u) / ALPHAVALUE;
+   assert(!isnan(_up));
 }
 
 -(double)pseudoDown
 {
-   return _nbl > 0 ? _down / _nbl : FDMAXINT;
+   return _nbl > 0 ? _down  : 0;
 }
 -(double)pseudoUp
 {
-   return _nbu > 0 ? _up / _nbu : FDMAXINT;
+   return _nbu > 0 ? _up  : 0;
 }
 static inline ORDouble minDbl(ORDouble a,ORDouble b) { return a < b ? a : b;}
 static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
@@ -109,36 +118,54 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
          double f   = modf(vir,&g);
          if (f != 0) {
             double dm  = f,um  = 1.0 - f;
+            double roDown=0.0,roUp=0.0;
+            ORBool hasDown,hasUp;
             __block ORDouble downRate = 0;
             __block ORDouble upRate   = 0;
             double lb = [relax lowerBound:vi];
             double ub = [relax upperBound:vi];
             [relax updateUpperBound:vi with:g];
             OROutcome sLow = [relax solve];
-            assert(sLow == ORoptimal);
-            double roDown = [relax objective];
-            downRate = _flip * (roDown - io) / dm;
+            hasDown = sLow == ORoptimal;
+            switch(sLow) {
+               case ORoptimal:
+                  roDown = [relax objective];
+                  downRate = _flip * (roDown - io) / dm;
+                  break;
+               case ORinfeasible:
+                  break;
+               default:break;
+            }
             [relax updateUpperBound:vi with:ub];
             [relax updateLowerBound:vi with:g+1];
             OROutcome sUp = [relax solve];
-            assert(sUp == ORoptimal);
-            double roUp = [relax objective];
-            upRate = _flip * (roUp - io) / um;
+            hasUp = sUp == ORoptimal;
+            switch(sUp) {
+               case ORoptimal:
+                  roUp = [relax objective];
+                  upRate = _flip * (roUp - io) / um;
+                  break;
+               case ORinfeasible:
+                  break;
+               default:
+                  break;
+            }
             [relax updateLowerBound:vi with:lb];
-            OROutcome back = [relax solve];
-            assert(back == ORoptimal);
-            double finalOBJ = [relax objective];
-            assert(finalOBJ==io);
+//            OROutcome back = [relax solve];
+//            assert(back == ORoptimal);
+//            double finalOBJ = [relax objective];
+//            assert(finalOBJ==io);
             printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vir,roDown,roUp);
             VStat* vs = [_pc objectForKey:@(vi.getId)];
             if (vs==nil) {
-               vs = [[VStat alloc] initLow:downRate up:upRate];
+               vs = [[VStat alloc] init];
                [_pc setObject:vs forKey:@(vi.getId)];
                [vs release];
-            } else {
-               [vs recordLow:downRate up:upRate];
             }
-            [_overall recordLow:downRate up:upRate];
+            if (hasDown) [vs recordLow:downRate];
+            if (hasUp)   [vs recordUp:upRate];
+            if (hasDown) [_overall recordLow:downRate];
+            if (hasUp)   [_overall recordUp:upRate];
          }
       }
    }];
@@ -159,7 +186,9 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 }
 -(ORBool)selectVar:(id<ORIntVarArray>)x index:(ORInt*)k  value:(ORDouble*)rv
 {
-//   OROutcome oc = [_relax solve];
+   OROutcome oc = [_relax solve];
+   if (oc == ORinfeasible)
+       [[_p explorer] fail];
 //   for(ORInt i=x.range.low;i <= x.range.up;i++) {
 //      NSLog(@"SVAR: x[%d] ~= %f",i,[_relax value:x[i]]);
 //   }
@@ -170,7 +199,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    for(ORInt i=x.range.low;i <= x.range.up;i++) {
       if ([_p bound:x[i]])
          continue;
-
+/*
       ORInt xisz = [_p domsize:x[i]];
       ORInt xiSpan = [_p max:x[i]] - [_p min:x[i]] + 1;
       ORBool gap   = xisz != xiSpan;
@@ -184,6 +213,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
             }
          }
       }
+      */
       
       double vir = [_relax value:x[i]];
       double g   = 0;
@@ -193,6 +223,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       VStat* pc = [self pCost:x[i]];
       assert(pc != nil);
       double q = [pc scoreWn:fn Wp:fp];
+      //NSLog(@"VAR[%d] pCost = %@\t relax=%f \t score = %f",i,pc,vir,q);
       if (q > BSF) {
          bk = i;
          brk = vir;
@@ -205,15 +236,15 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       *rv = brk;
       return found;
    } else {
-      [self probe:x];
-      [_p select:x minimizing:^ORDouble(ORInt i) { return [_p domsize:x[i]];}
-              in:^void(ORInt i) {
-                 ORInt min = [_p min:x[i]],max = [_p max:x[i]];
-                 ORInt mid = min + (max-min)/2;
-                 *k = i;
-                 *rv = mid;
-                 found =  YES;
-              }];
+      [self probe:_vars];
+//      [_p select:_vars minimizing:^ORDouble(ORInt i) { return [_p domsize:x[i]];}
+//              in:^void(ORInt i) {
+//                 ORInt min = [_p min:x[i]],max = [_p max:x[i]];
+//                 ORInt mid = min + (max-min)/2;
+//                 *k = i;
+//                 *rv = mid;
+//                 found =  YES;
+//              }];
       return found;
    }
 }
@@ -226,11 +257,11 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       if (ok) {
          ORInt im = floor(fv);
          [_p try:^{
-            [self measureUp:x[bi] for:^{
+            [self measureUp:x[bi] relaxedValue:fv for:^{
                [_p gthen:x[bi] with:im];
             }];
          } alt:^{
-            [self measureDown:x[bi] for: ^{
+            [self measureDown:x[bi] relaxedValue:fv for: ^{
                [_p lthen:x[bi] with:im+1];
             }];
          }];
@@ -254,7 +285,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                reached = i;
             }
             [[_p objective] updatePrimalBound];
-            NSLog(@"Probe successful!");
+            NSLog(@"Probe successful! %@",[_p objectiveValue]);
          } alt:^{
             NSLog(@"Rounding probe failed... Reached [%d]",reached);
          }];
@@ -290,9 +321,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    [_overall recordUp:up];
 }
 static long nbCall = 0;
--(void)measureDown:(id<ORVar>)x for:(ORClosure)cl
+-(void)measureDown:(id<ORVar>)x relaxedValue:(ORDouble)xv  for:(ORClosure)cl
 {
-   double xv = [_relax value:x];
    double xi = 0;
    double xf = modf(xv,&xi);
    double m  = xf;
@@ -303,11 +333,11 @@ static long nbCall = 0;
       NSLog(@"↓ relax: %f",f1);
    double df = _flip * (f1 - f0);
    double downRate = df / m;
+   assert(!isnan(downRate));
    [self recordVar:x low:downRate];
 }
--(void)measureUp:(id<ORVar>)x for:(ORClosure)cl
+-(void)measureUp:(id<ORVar>)x relaxedValue:(ORDouble)xv for:(ORClosure)cl
 {
-   double xv = [_relax value:x];
    double xi = 0;
    double xf = modf(xv,&xi);
    double m  = 1.0 - xf;
@@ -318,6 +348,7 @@ static long nbCall = 0;
       NSLog(@"↑ relax: %f",f1);
    double df = _flip * (f1 - f0);
    double upRate = df / m;
+   assert(!isnan(upRate));
    [self recordVar:x up:upRate];
 }
 @end
