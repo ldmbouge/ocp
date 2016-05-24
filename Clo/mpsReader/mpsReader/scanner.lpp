@@ -1,0 +1,56 @@
+%{
+   #include "ast.hpp"
+   #include "parser.hpp"
+   #include "y.tab.h"
+   #include <iostream>
+   #include <iomanip>
+%}
+
+DIGIT    [0-9]
+ID       [a-zA-Z0-9_][a-zA-Z0-9_]*
+NUMBER   [+-]?{DIGIT}+("."{DIGIT}+)?([DeE][+-]?{DIGIT}+)?
+%option yylineno
+
+%%
+
+{NUMBER}  {
+   yylval->val = atof(yytext);
+   return NUMBER;
+}
+
+N                      { return TNoRestriction;}
+L                      { return TLess;}
+G                      { return TGreater;}
+E                      { return TEqual;}
+UP                     { return TUP;}
+LO                     { return TDOWN;}
+FX                     { return TFIXED;}
+FR { return TFREE;}
+BV { return TBIN;}
+MI { return TMI;}
+PL { return TPL;}
+LI { return TLI;}
+UI { return TUI;}
+SC { return TSC;}
+^NAME                  { return TNAME;}
+^OBJSENSE              { return TOBJSENSE;}
+^OBJNAME               { return TOBJNAME;}
+^ROWS                  { return TROWS;}
+^COLUMNS               { return TCOLUMNS;}
+^RHS                   { return TRHS;}
+^BOUNDS                { return TBOUNDS;}
+^SOS                   { return TSOS;}
+^ENDATA                { return TENDATA;}
+\n                     { return LF;}
+\'MARKER\'             { return TMARKER;}
+\'INTORG\'             { return TINTORG;}
+\'INTEND\'             { return TINTEND;}
+{ID} {
+   yylval->id = strdup(yytext); // must copy the string. Can't use the constant.
+   return TID;
+}
+
+[ \t]*  /* ignore ws */;
+
+\/\/.*\n {}
+

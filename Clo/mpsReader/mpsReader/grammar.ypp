@@ -1,0 +1,128 @@
+%{
+#include <math.h>
+#include <stdlib.h>
+#include <list>
+#include "parser.hpp"
+#include "ast.hpp"
+#include <string>
+#define YYERROR_VERBOSE
+%}
+
+%union {
+   double       val;
+   char*         id;
+   AST::Node*  node;
+   AST::Col*    col;
+   AST::Rhs*    rhs;
+   AST::Row*    row;
+   AST::Bound*  bnd;
+   AST::Program* prog;
+   std::list<AST::Node::Ptr>* lnode;
+   std::list<AST::Row::Ptr>*  lrow;
+   std::list<AST::Rhs::Ptr>*  lrhs;
+   std::list<AST::Col::Ptr>*  lcol;
+   std::list<AST::Bound::Ptr>*  lbnd;
+}
+
+%{
+   int yyerror(Parser* p,const char* s);
+   int yylex(YYSTYPE*);
+%}
+
+%defines
+%pure-parser
+%parse-param { Parser* parser }
+%expect 0  // we can deal with 1 shift-reduce (dangling else)
+
+%token <val> NUMBER
+%token <id>  TID
+%token <smb> TMARKER TINTORG TINTEND
+%token <smb> TNoRestriction TLess TGreater TEqual
+%token <smb> TUP TDOWN TFIXED TFREE TBIN TMI TPL TLI TUI TSC
+%token <smb> TNAME TOBJSENSE TOBJNAME TROWS TCOLUMNS TRHS TBOUNDS TSOS TENDATA LF
+
+%type<prog>   Top
+%type<lrow>   Rows MoreRows
+%type<lrhs>   Rhss MoreRhss
+%type<lcol>   Columns MoreColumns
+%type<lbnd>   Bounds MoreBounds
+%type<row>    Row
+%type<bnd>    Bound
+%type<col>    Col
+%type<rhs>    Rhs
+%type<id>     Name ObjSense ObjName
+%%
+
+Top: Name ObjSense ObjName Rows Columns Rhss Bounds TENDATA LF { $$ = new AST::Program($1,$2,$3,$4,$5,$6,$7); parser->saveRoot($$);}
+;
+
+Name: TNAME TID LF { $$ = $2;}
+;
+
+ObjSense: TOBJSENSE TID LF { $$ = $2;}
+| { $$ = NULL;}
+;
+
+ObjName: TOBJNAME TID LF { $$ = $2;}
+| { $$ = NULL;}
+;
+
+Rows: TROWS LF Row MoreRows { $4->emplace_front($3);$$ = $4;}
+;
+
+MoreRows: MoreRows Row      { $1->emplace_back($2);$$ = $1;}
+   |  { $$ = new std::list<AST::Row::Ptr>();}
+;
+
+Row: TNoRestriction TID LF { $$ = new AST::Row(AST::Row::No,std::string($2));}
+| TLess TID LF             { $$ = new AST::Row(AST::Row::Leq,std::string($2));}
+| TGreater TID LF          { $$ = new AST::Row(AST::Row::Geq,std::string($2));}
+| TEqual   TID LF          { $$ = new AST::Row(AST::Row::Eq,std::string($2));}
+;
+
+Columns: TCOLUMNS LF MoreColumns { $$ = $3;}
+;
+
+MoreColumns:
+    MoreColumns TID Col LF                 { $3->setName($2);$1->emplace_back($3);$$ = $1;if (parser->isIntegral()) $3->forceInt();}
+  | MoreColumns TID Col Col LF             { $3->setName($2);$4->setName($2);$1->emplace_back($3);$1->emplace_back($4);$$ = $1;if (parser->isIntegral()) {$3->forceInt();$4->forceInt();}}
+  | MoreColumns TID TMARKER TINTORG LF     { $$ = $1;parser->startIntegral();}
+  | MoreColumns TID TMARKER TINTEND LF     { $$ = $1;parser->stopIntegral();}
+  |                                        { $$ = new std::list<AST::Col::Ptr>();}
+;
+
+Col: TID NUMBER  { $$ = new AST::Col(std::string($1),$2);}
+;
+
+Rhss: TRHS  LF MoreRhss  { $$ = $3;}
+;
+
+MoreRhss :
+    TID Rhs LF MoreRhss          { $2->setName($1);$4->emplace_back($2);$$ = $4;}
+  | TID Rhs Rhs LF MoreRhss      { $2->setName($1);$3->setName($1);$5->emplace_back($2);$5->emplace_back($3);$$ = $5;}
+  |                              { $$ = new std::list<AST::Rhs::Ptr>();}
+;
+
+Rhs: TID NUMBER   { $$ = new AST::Rhs(std::string($1),$2);}
+;
+
+Bounds: TBOUNDS LF Bound MoreBounds { $4->emplace_back($3);$$ = $4;}
+;
+
+MoreBounds: MoreBounds Bound  { $1->emplace_back($2);$$ = $1;}
+   |                          { $$ = new std::list<AST::Bound::Ptr>();}
+;
+
+Bound: TUP  TID TID NUMBER LF  { $$ = new AST::Bound(AST::Bound::Ub,std::string($2),std::string($3),$4);}
+| TDOWN TID TID NUMBER LF      { $$ = new AST::Bound(AST::Bound::Lb,std::string($2),std::string($3),$4);}
+| TFIXED TID TID NUMBER LF     { $$ = new AST::Bound(AST::Bound::Fx,std::string($2),std::string($3),$4);}
+| TFREE TID TID NUMBER LF     { $$ = new AST::Bound(AST::Bound::Fr,std::string($2),std::string($3),$4);}
+| TBIN TID TID NUMBER LF     { $$ = new AST::Bound(AST::Bound::By,std::string($2),std::string($3),$4);}
+| TMI TID TID NUMBER LF     { $$ = new AST::Bound(AST::Bound::Mi,std::string($2),std::string($3),$4);}
+| TPL TID TID NUMBER LF     { $$ = new AST::Bound(AST::Bound::Pl,std::string($2),std::string($3),$4);}
+| TLI TID TID NUMBER LF     { $$ = new AST::Bound(AST::Bound::Li,std::string($2),std::string($3),$4);}
+| TUI TID TID NUMBER LF     { $$ = new AST::Bound(AST::Bound::Ui,std::string($2),std::string($3),$4);}
+| TSC TID TID NUMBER LF     { $$ = new AST::Bound(AST::Bound::Sc,std::string($2),std::string($3),$4);}
+;
+
+%%
