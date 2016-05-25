@@ -279,6 +279,7 @@
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
+   // a <= b  =>  -lin(a) + lin(b) <= 0
     ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e left] model:_model];
     ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
     [ORNormalizer addToIntLinear:linRight from:[e right] model:_model];
@@ -287,6 +288,7 @@
 }
 -(void) visitExprGEqualI:(ORExprLEqualI*)e
 {
+   // a >= b
     ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e right] model:_model];
     ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
     [ORNormalizer addToIntLinear:linRight from:[e left] model:_model];
@@ -391,9 +393,9 @@ struct CPVarPair {
 }
 -(void) visitExprGEqualI:(ORExprGEqualI*)e
 {
-   ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
+   ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e right] model:_model];
    id<ORRealLinear> linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
-   [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
+   [ORNormalizer addToRealLinear:linRight from:[e left] model:_model];
    [linRight release];
    _terms = linLeft;
 }

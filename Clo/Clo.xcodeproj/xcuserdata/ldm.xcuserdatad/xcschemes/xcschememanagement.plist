@@ -229,6 +229,11 @@
 			<key>orderHint</key>
 			<integer>17</integer>
 		</dict>
+		<key>diet.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>130</integer>
+		</dict>
 		<key>driver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -853,6 +858,11 @@
 			<true/>
 		</dict>
 		<key>5B499C9A18FEA14E009E4FA5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B4E179F1CF52E3800A15258</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -104,10 +104,10 @@ BOOL _alreadyAdded;
        {
           @throw [[ORExecutionError alloc] initORExecutionError: "No != constraint supported in LP yet"];
        }break;
-       case ORRGEq: {
+       case ORRGEq: /*{  // DON'T FLIP TWICE. The term was already rewritten to encode a ≤
           cstr = [terms postGEQZ: model];
           _alreadyAdded = YES;
-       }break;
+       }break;*/
        case ORRLEq: {
           cstr = [terms postLEQZ: model];
           _alreadyAdded = YES;
