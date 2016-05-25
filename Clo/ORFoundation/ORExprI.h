@@ -216,7 +216,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(ORRelationType)type;
+//-(ORRelationType)type;
 -(void) visit: (ORVisitor*)v;
 @end
 

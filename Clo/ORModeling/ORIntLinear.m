@@ -391,6 +391,56 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    }
    return rv;
 }
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model
+{
+   id<ORConstraint> rv = NULL;
+   switch(_nb) {
+      case 0: return NULL;
+      case 1: {  // x >= c
+         if (_terms[0]._coef == 1) // x + c >= 0 =>  x >= - c
+            rv = [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to:- _indep]];
+         else if (_terms[0]._coef == -1)  // -x + c >= 0 =>  c >= x =>  x <= c
+            rv = [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to: _indep]];
+         else {   // a * x + c >= 0 => a *x >= -c => x >= floor(-c/a)
+            assert(_terms[0]._coef != 0);
+            ORInt nc = - _indep / _terms[0]._coef;
+            ORInt cr = - _indep % _terms[0]._coef;
+            if (nc < 0 && cr != 0)
+               rv = [model addConstraint:[ORFactory gEqualc:model var:_terms[0]._var to:nc - 1]];
+            else
+               rv = [model addConstraint:[ORFactory gEqualc:model var:_terms[0]._var to:nc]];
+         }
+      }break;
+      case 2: {  // x - y +c >= 0 =>  x >= y - c
+         if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            rv = [model addConstraint:[ORFactory gEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) { // -x + y +c >= 0 => y >= x -c
+            rv = [model addConstraint:[ORFactory gEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
+         } else { // a * x + b * y +c >= 0 => - a * x - b * y -c <= 0
+            // a * x >= -b * y - c ==>  -a * x <= b * y + c
+            rv = [model addConstraint:[ORFactory lEqual:model
+                                                   coef: - _terms[0]._coef
+                                                  times: _terms[0]._var
+                                                    leq: _terms[1]._coef
+                                                  times: _terms[1]._var
+                                                   plus:+ _indep]];
+         }
+      }break;
+      default: {
+         // sum(i in S) a_i * x_i + c >= 0  => sum(i in S) - a_i * x_i -c <= 0 => sum(i in S) - a_i * x_i <= c
+         id<ORIntArray> c  = [self coefficients:model];
+         id<ORIntArray> fc = [ORFactory intArray:model range:c.range with:^ORInt(ORInt k) {
+            return - [c at:k];
+         }];
+         rv = [model addConstraint:[ORFactory sum:model
+                                            array:[self variables:model]
+                                             coef: fc
+                                              leq: _indep]];
+      }break;
+   }
+   return rv;
+}
+
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
     id<ORConstraint> rv = NULL;
@@ -503,6 +553,10 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {
     return [_real postLEQZ:model];
+}
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model
+{
+   return [_real postGEQZ:model];
 }
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {

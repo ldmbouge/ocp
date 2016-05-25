@@ -389,6 +389,15 @@ struct CPVarPair {
     [linRight release];
     _terms = linLeft;
 }
+-(void) visitExprGEqualI:(ORExprGEqualI*)e
+{
+   ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
+   id<ORRealLinear> linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
+   [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
+   [linRight release];
+   _terms = linLeft;
+}
+
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "NO Real normalization for !="];

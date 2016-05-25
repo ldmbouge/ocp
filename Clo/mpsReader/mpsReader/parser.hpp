@@ -19,6 +19,4 @@ public:
    AST::Node* getRoot() { return _root;}
 };
 
-int yyparse(Parser*);
-
 #endif

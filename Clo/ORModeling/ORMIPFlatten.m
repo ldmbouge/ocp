@@ -94,29 +94,27 @@ BOOL _alreadyAdded;
     id<ORLinear> terms = [ORNormalizer normalize: expr into: model];
     id<ORConstraint> cstr = NULL;
     switch ([expr type]) {
-        case ORRBad:
-            assert(NO);
-        case ORREq:
-        {
-            cstr = [terms postEQZ: model];
-            _alreadyAdded = YES;
-        }
-            break;
-        case ORRNEq:
-        {
-            @throw [[ORExecutionError alloc] initORExecutionError: "No != constraint supported in LP yet"];
-        }
-            break;
-        case ORRGEq:
-        case ORRLEq:
-        {
-            cstr = [terms postLEQZ: model];
-            _alreadyAdded = YES;
-        }
-            break;
-        default:
-            assert(terms == nil);
-            break;
+       case ORRBad:
+          assert(NO);
+       case ORREq: {
+          cstr = [terms postEQZ: model];
+          _alreadyAdded = YES;
+       }break;
+       case ORRNEq:
+       {
+          @throw [[ORExecutionError alloc] initORExecutionError: "No != constraint supported in LP yet"];
+       }break;
+       case ORRGEq: {
+          cstr = [terms postGEQZ: model];
+          _alreadyAdded = YES;
+       }break;
+       case ORRLEq: {
+          cstr = [terms postLEQZ: model];
+          _alreadyAdded = YES;
+       }break;
+       default:
+          assert(terms == nil);
+          break;
     }
     [terms release];
     assert(cstr != nil);

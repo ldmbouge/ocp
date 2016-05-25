@@ -18,7 +18,30 @@
 #include <iomanip>
 #include <cfloat>
 
-class Var {
+#define DLL_PUBLIC __attribute__ ((visibility ("default")))
+
+class Var;
+class Linear;
+class Relation;
+class Objective;
+class Minimize;
+class Maximize;
+class Model;
+
+class DLL_PUBLIC MDLVisit {
+public:
+   MDLVisit() {}
+   virtual ~MDLVisit() {}
+   virtual void visitModel(Model*) {}
+   virtual void visitVar(Var*) {}
+   virtual void visitLinear(Linear*) {}
+   virtual void visitRelation(Relation*) {}
+   virtual void visitObjective(Objective*) {}
+   virtual void visitMinimize(Minimize*) {}
+   virtual void visitMaximize(Maximize*) {}
+};
+
+class DLL_PUBLIC Var {
 public:
    enum Type { Continuous,Integer,Binary };
 private:
@@ -35,9 +58,15 @@ public:
    Var* setLB(double lb) { _lb = lb;return this;}
    Var* setBinary()  { _vt = Binary;_lb = 0.0;_ub = 1.0;return this;}
    Var* setInteger() { _vt = Integer;return this;}
+   void visit(MDLVisit* mv) { mv->visitVar(this);}
+   Type getType() const { return _vt;}
+   double getLB() const { return _lb;}
+   double getUB() const { return _ub;}
+   const std::string& getName() const { return _name;}
+   int getID() const { return _id;}
 };
 
-class Linear {
+class DLL_PUBLIC Linear {
 public:
    typedef std::pair<double,Var::Ptr> Term;
 protected:
@@ -51,40 +80,49 @@ public:
    virtual std::ostream& print(std::ostream& os) const;
    void addTerm(double a,Var::Ptr x);
    friend std::ostream& operator<<(std::ostream& os,const Linear& lin);
+   virtual void visit(MDLVisit* mv) { mv->visitLinear(this);}
+   double getIndependent() const { return _independent;}
+   auto cbegin() const { return _terms.cbegin();}
+   auto cend()   const { return _terms.cend();}
 };
 
-class Relation: public Linear {
+class DLL_PUBLIC Relation: public Linear {
 public:
    enum Operator { Leq,Geq,Eq };
 private:
    Operator   _op;
 public:
    Relation(Operator op,double indep) : Linear(indep),_op(op) {}
-   std::ostream& print(std::ostream& os) const;
+   std::ostream& print(std::ostream& os) const override;
+   void visit(MDLVisit* mv) override { mv->visitRelation(this);}
+   Operator getOperator() const { return _op;}
 };
 
-class Objective : public Linear {
+class DLL_PUBLIC Objective : public Linear {
 public:
    typedef std::shared_ptr<Objective> Ptr;
    Objective(Linear::Ptr lin) : Linear(lin) {}
    Objective(double indep) : Linear(indep) {}
+   void visit(MDLVisit* mv) override { mv->visitObjective(this);}
 };
 
-class Minimize :public Objective {
+class DLL_PUBLIC Minimize :public Objective {
 public:
    Minimize(Linear::Ptr lin) : Objective(lin) {}
    Minimize(double indep) : Objective(indep)  {}
-   std::ostream& print(std::ostream& os) const;
+   std::ostream& print(std::ostream& os) const override;
+   void visit(MDLVisit* mv) override { mv->visitMinimize(this);}
 };
 
-class Maximize :public Objective {
+class DLL_PUBLIC Maximize :public Objective {
 public:
    Maximize(Linear::Ptr lin) : Objective(lin) {}
    Maximize(double indep) : Objective(indep)  {}
-   std::ostream& print(std::ostream& os) const;
+   std::ostream& print(std::ostream& os) const override;
+   void visit(MDLVisit* mv) override { mv->visitMaximize(this);}
 };
 
-class Model {
+class DLL_PUBLIC Model {
    int _lastVarID;
    std::list<Var::Ptr> _allVars;
    std::map<std::string,Relation::Ptr> _eqns;
@@ -97,7 +135,11 @@ public:
    void minimize(Linear::Ptr obj);
    void maximize(Linear::Ptr obj);
    void addRelation(std::string name,Relation::Ptr lin);
-   friend std::ostream& operator<<(std::ostream& os,const Model& m);
+   void visit(MDLVisit* mv) { mv->visitModel(this);}
+   const auto& allVars() const   { return _allVars;}
+   const auto& objective() const { return _obj;}
+   const auto& relations() const { return _eqns;}
+   friend DLL_PUBLIC std::ostream& operator<<(std::ostream& os,const Model& m);
 };
 
 #endif /* model_hpp */

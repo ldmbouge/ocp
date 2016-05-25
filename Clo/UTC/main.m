@@ -988,7 +988,7 @@ int main(int argc, const char * argv[])
 
    //id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
    
-   id<ORRunnable> r  = r0;
+   id<ORRunnable> r  = r1;
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [r run];
    bestSolution = [r bestSolution];

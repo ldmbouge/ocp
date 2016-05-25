@@ -82,8 +82,8 @@ int main_mip(int argc, const char * argv[])
    
    [mip solve];
    ORLong endTime = [ORRuntimeMonitor cputime];
-   printf("Execution Time: %lld \n",endTime - startTime);
-   NSLog(@"Objective: %@",[mip objectiveValue]);
+   printf("PUREMIP********** : Execution Time: %lld \n",endTime - startTime);
+   NSLog(@"PUREMIP**********   Objective: %@",[mip objectiveValue]);
    [mip release];
    return 0;
 }
@@ -373,7 +373,7 @@ int main(int argc, const char * argv[])
 //   main_lp(argc,argv);
    // 261922 and 24431 failures
 //   return main_hybrid(argc,argv);
-//    main_mip(argc,argv);
+    main_mip(argc,argv);
     main_hybrid_branching(argc,argv);
    return main_hybrid_branchingMANUALMIP(argc,argv);
    //return main_mip(argc,argv);

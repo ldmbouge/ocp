@@ -1325,10 +1325,11 @@
 {
    [visitor visitExprEqualI: self]; 
 }
--(enum ORVType) vtype
-{
-   return ORTBool;
-}
+// [ldm] causing trouble in MIP/LP
+//-(enum ORVType) vtype
+//{
+//   return ORTBool;
+//}
 -(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

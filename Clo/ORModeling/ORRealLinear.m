@@ -201,6 +201,14 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
                                               coef: [self coefficients: model]
                                                leq: -_indep]];
 }
+-(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model
+{
+   return [model addConstraint:[ORFactory realSum: model
+                                            array: [self variables: model]
+                                             coef: [self coefficients: model]
+                                              geq: -_indep]];
+}
+
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
     assert(NO);
@@ -292,6 +300,10 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {
     return [_real postLEQZ:model];
+}
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model
+{
+   return [_real postGEQZ:model];
 }
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {

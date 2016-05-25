@@ -88,32 +88,27 @@
     id<ORLinear> terms = [ORNormalizer normalize: expr into: model];
     id<ORConstraint> cstr = NULL;
     switch ([expr type]) {
-        case ORRBad:
-            assert(NO);
-        case ORREq:
-        {
-            cstr = [terms postEQZ: model];
-        }
-            break;
-        case ORRNEq:
-        {
-            @throw [[ORExecutionError alloc] initORExecutionError: "No != constraint supported in LP yet"];
-        }
-            break;
-        case ORRLEq:
-        {
-            cstr = [terms postLEQZ: model];
-        }
-            break;
-       case ORRGEq:
+       case ORRBad:
+          assert(NO);
+       case ORREq:
        {
-          //[terms scaleBy:-1];
-          cstr = [terms postLEQZ:model];
+          cstr = [terms postEQZ: model];
        }
           break;
-        default:
-            assert(terms == nil);
-            break;
+       case ORRNEq:
+       {
+          @throw [[ORExecutionError alloc] initORExecutionError: "No != constraint supported in LP yet"];
+       }
+          break;
+       case ORRLEq:{
+          cstr = [terms postLEQZ: model];
+       }break;
+       case ORRGEq: {
+          cstr = [terms postGEQZ:model];
+       }break;
+       default:
+          assert(terms == nil);
+          break;
     }
     [terms release];
     return cstr;

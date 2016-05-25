@@ -628,7 +628,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
         case ORREq: rv = [terms postEQZ:model];break;
         case ORRNEq:rv = [terms postNEQZ:model];break;
         case ORRLEq:rv = [terms postLEQZ:model];break;
-        case ORRGEq:rv = [terms postLEQZ:model];break;
+        case ORRGEq:rv = [terms postGEQZ:model];break;
         case ORNeg: rv = [terms postEQZ:model];break;
         case ORRDisj:rv = [terms postDISJ:model];break;
         default:

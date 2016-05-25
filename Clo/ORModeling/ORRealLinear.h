@@ -18,7 +18,7 @@
 -(void) addIndependent: (ORDouble) idp;
 -(void) addTerm: (id<ORVar>) x by: (ORDouble) c;
 -(void) addLinear: (id<ORRealLinear>) lts;
--(void) scaleBy: (ORInt) s;
+-(void) scaleBy: (ORDouble) s;
 -(ORInt) size;
 -(id<ORVar>) var: (ORInt) k;
 -(ORDouble) coef: (ORInt) k;
@@ -53,6 +53,7 @@
 -(id<ORDoubleArray>)  coefficients: (id<ORAddToModel>) model;
 -(ORInt) size;
 -(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model;
+-(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model;
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model;
 -(id<ORConstraint>) postNEQZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model;
