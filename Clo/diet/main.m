@@ -19,9 +19,9 @@ int main(int argc, const char * argv[]) {
       ORLong startTime = [ORRuntimeMonitor cputime];
       id<ORModel> model = [ORFactory createModel];
       id<ORIntRange> V = RANGE(model,1,6);
-      id<ORRealVarArray> x = (id)[ORFactory idArray:model range:V with:^id _Nonnull(ORInt k) {
-         return [ORFactory realVar:model low:0 up:ub[k]];
-         //return [ORFactory intVar:model bounds:RANGE(model,0,ub[k])];
+      id<ORIntVarArray> x = (id)[ORFactory idArray:model range:V with:^id _Nonnull(ORInt k) {
+         //return [ORFactory realVar:model low:0 up:ub[k]];
+         return [ORFactory intVar:model bounds:RANGE(model,0,ub[k])];
       }];
       [model add:[Sum(model,j,V,[@(r1[j]) mul: x[j]]) geq: @(2000)]];
       [model add:[Sum(model,j,V,[@(r2[j]) mul: x[j]]) geq: @(55)]];
@@ -29,12 +29,14 @@ int main(int argc, const char * argv[]) {
       [model minimize:Sum(model,j,V,[@(o[j]) mul: x[j]])];
 
       id<MIPProgram> mip = [ORFactory createMIPProgram: model];
+      //id<CPProgram> mip = [ORFactory createCPProgram:model];
       [mip solve];
+      //[mip defaultSearch];
+      id<ORSolution> sol = [[mip solutionPool] best];
+      NSLog(@"SOL is: %@",sol);
       ORLong endTime = [ORRuntimeMonitor cputime];
       printf("Execution Time: %lld \n",endTime - startTime);
       NSLog(@"Objective     : %@",[mip objectiveValue]);
-      for(ORInt i=1;i <= 6;i++)
-         NSLog(@"x[%d] = %f",i,[mip doubleValue:x[i]]);
       [mip release];
       return 0;
    }
