@@ -19,6 +19,7 @@ public:
    ORModelMaker(id<ORModel> mdl) : _mdl(mdl) {}
    void visitModel(Model* mdl);
    void visitMinimize(Minimize* of);
+   void visitMaximize(Maximize* of);
    void visitRelation(Relation* rel);
 };
 
@@ -75,6 +76,18 @@ void ORModelMaker::visitMinimize(Minimize * of)
       e = [e plus:[ORFactory expr:theVar mul:[ORFactory double:_mdl value:coef] track:_mdl]];
    }
    [_mdl minimize:e];
+}
+
+void ORModelMaker::visitMaximize(Maximize * of)
+{
+   id<ORExpr> e = [ORFactory integer:_mdl value:of->getIndependent()];
+   for(auto i = of->cbegin(); i != of->cend();i++) {
+      double coef = i->first;
+      Var::Ptr t  = i->second;
+      id<ORExprVar> theVar = _vMap[t->getID()];
+      e = [e plus:[ORFactory expr:theVar mul:[ORFactory double:_mdl value:coef] track:_mdl]];
+   }
+   [_mdl maximize:e];
 }
 
 void ORModelMaker::visitRelation(Relation* rel)

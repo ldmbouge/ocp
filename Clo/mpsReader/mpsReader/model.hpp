@@ -51,7 +51,7 @@ private:
    Type   _vt;
 public:
    typedef std::shared_ptr<Var> Ptr;
-   Var(const std::string& name,int vid) : _name(name),_id(vid),_vt(Continuous),_lb(-DBL_MAX),_ub(DBL_MAX) {}
+   Var(const std::string& name,int vid);
    friend std::ostream& operator<<(std::ostream& os,const Var& m);
    std::ostream& printFull(std::ostream& os) const;
    Var* setUB(double ub) { _ub = ub;return this;}

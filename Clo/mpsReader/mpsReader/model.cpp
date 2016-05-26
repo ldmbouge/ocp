@@ -8,6 +8,11 @@
 
 #include "model.hpp"
 
+Var::Var(const std::string& name,int vid)
+   : _name(name),_id(vid),_vt(Continuous),
+      _lb(0),_ub(DBL_MAX)
+{}
+
 std::ostream& operator<<(std::ostream& os,const Var& m)
 {
    return os << m._name;
