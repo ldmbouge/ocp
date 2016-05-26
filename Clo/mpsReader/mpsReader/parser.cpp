@@ -1,6 +1,10 @@
 #include "parser.hpp"
 #include <iostream>
 #include <iomanip>
+#include <float.h>
+#include <fenv.h>
+#include "emmintrin.h"
+
 
 Parser::Parser()
 {
@@ -17,6 +21,8 @@ void Parser::run(const char* fn)
    //yydebug = 1;
    if (fn!=0) 
       yyin = fopen(fn,"r");
+//   _MM_SET_ROUNDING_MODE(_MM_ROUND_TOWARD_ZERO);
+//   _MM_SET_ROUNDING_MODE(_MM_ROUND_MASK);
    yyparse(this);
    fclose(yyin);
 }

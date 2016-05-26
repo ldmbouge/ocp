@@ -125,8 +125,9 @@ public:
 class DLL_PUBLIC Model {
    int _lastVarID;
    std::list<Var::Ptr> _allVars;
-   std::map<std::string,Relation::Ptr> _eqns;
-   Objective::Ptr                       _obj;
+   typedef std::pair<std::string,Relation::Ptr> NamedRel;
+   std::list<NamedRel>     _eqns;
+   Objective::Ptr           _obj;
 public:
    typedef std::shared_ptr<Model> Ptr;
    Model();

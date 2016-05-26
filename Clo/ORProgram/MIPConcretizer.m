@@ -311,10 +311,23 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORDoubleArray> a = [c coefs];
-      ORInt cst = [c cst];
+      ORDouble cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = _gamma[x.getId];
       MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: dx coef: a cst: -cst];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+   }
+}
+-(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> x = [c vars];
+      id<ORDoubleArray> a = [c coefs];
+      ORDouble cst = [c cst];
+      [x visit: self];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPConstraintI* concreteCstr = [_MIPsolver createGEQ: dx coef: a cst: -cst];
       _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint: concreteCstr];
    }

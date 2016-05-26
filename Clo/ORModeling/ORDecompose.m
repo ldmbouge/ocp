@@ -393,9 +393,9 @@ struct CPVarPair {
 }
 -(void) visitExprGEqualI:(ORExprGEqualI*)e
 {
-   ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e right] model:_model];
+   ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
    id<ORRealLinear> linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
-   [ORNormalizer addToRealLinear:linRight from:[e left] model:_model];
+   [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
    [linRight release];
    _terms = linLeft;
 }

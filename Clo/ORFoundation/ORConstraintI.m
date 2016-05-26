@@ -2673,6 +2673,53 @@
 }
 @end
 
+@implementation ORRealLinearGeq {
+   id<ORVarArray> _ia;
+   id<ORDoubleArray> _coefs;
+   ORDouble _c;
+}
+-(id) initRealLinearGeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) coefs cst:(ORDouble)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %f)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+-(void) visit: (ORVisitor*) v
+{
+   [v visitRealLinearGeq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORDoubleArray>) coefs
+{
+   return _coefs;
+}
+-(ORDouble) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+
 @implementation ORAlldifferentI {
    id<ORExprArray> _x;
    NSSet*         _av;

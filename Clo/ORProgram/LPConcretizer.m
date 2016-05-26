@@ -171,6 +171,19 @@
       [_lpsolver postConstraint: concreteCstr];
    }
 }
+-(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> x = [c vars];
+      id<ORDoubleArray> a = [c coefs];
+      ORInt cst = [c cst];
+      [x visit: self];
+      id<LPVariableArray> dx = _gamma[x.getId];
+      LPConstraintI* concreteCstr = [_lpsolver createGEQ: dx coef: a cst: -cst];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint: concreteCstr];
+   }
+}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
 }
@@ -499,6 +512,21 @@
       id<LPVariableArray> dx = _gamma[x.getId];
 //      NSLog(@"dx: %@",dx);
       LPConstraintI* concreteCstr = [_lpsolver createLEQ: dx coef: a cst: -cst];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint: concreteCstr];
+   }
+}
+-(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c
+{
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> x = [c vars];
+      //      NSLog(@"x: %@",x);
+      id<ORDoubleArray> a = [c coefs];
+      ORInt cst = [c cst];
+      [x visit: self];
+      id<LPVariableArray> dx = _gamma[x.getId];
+      //      NSLog(@"dx: %@",dx);
+      LPConstraintI* concreteCstr = [_lpsolver createGEQ: dx coef: a cst: -cst];
       _gamma[c.getId] = concreteCstr;
       [_lpsolver postConstraint: concreteCstr];
    }

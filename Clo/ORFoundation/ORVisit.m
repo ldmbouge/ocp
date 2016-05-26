@@ -418,6 +418,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearLeq: visit method not defined"]; 
 }
+-(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearGeq: visit method not defined"];
+}
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearEq: visit method not defined"]; 
@@ -688,6 +692,7 @@
 -(void) visitLinearLeq: (id<ORLinearLeq>) c {}
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
 -(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c {}
+-(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c {}
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c {}
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c {}

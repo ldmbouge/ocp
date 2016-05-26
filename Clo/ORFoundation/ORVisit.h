@@ -153,6 +153,7 @@
 -(void) visitLinearLeq: (id<ORConstraint>) c;
 -(void) visitLinearEq: (id<ORConstraint>) c;
 -(void) visitRealLinearLeq: (id<ORConstraint>) c;
+-(void) visitRealLinearGeq: (id<ORConstraint>) c;
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
 
 

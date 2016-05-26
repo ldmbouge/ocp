@@ -366,7 +366,7 @@ enum ORGroupType {
 @protocol ORRealLinearGeq <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
--(ORFloat) cst;
+-(ORDouble) cst;
 @end
 
 @protocol ORAlldifferent <ORConstraint>

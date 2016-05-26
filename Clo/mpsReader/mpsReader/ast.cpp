@@ -14,6 +14,18 @@ namespace AST {
    using namespace std;
    Node::Node() {}
    Node::~Node() {}
+   
+   class LexKey {
+   public:
+      bool operator()(const std::string& a,const std::string& b) const {
+         if (a.size() < b.size())
+            return true;
+         else if (a.size() > b.size())
+            return false;
+         else
+            return lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
+      }
+   };
  
    Program::Program(char* n,char* s,char* o,
                     std::list<AST::Row::Ptr>* rows,
@@ -106,7 +118,7 @@ namespace AST {
       Model::Ptr m = make_shared<Model>();
       map<string,Var::Ptr> allVars;
       map<string,double> allRHS;
-      map<string,Relation::Ptr> allRels;
+      map<string,Relation::Ptr,LexKey> allRels;
       for(auto& c : _cols) {
          if (allVars.find(c->getName()) == allVars.end()) {
             Var::Ptr aVar =m->makeVar(c->getName());

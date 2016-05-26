@@ -1090,6 +1090,23 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void)visitRealLinearGeq:(id<ORRealLinearGeq>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORVarArray> av = [cstr vars];
+      id<CPRealVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+         id<CPVar> theCPVar = [self concreteVar:[av at:k]];
+         if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
+            return [CPFactory realVar:_engine castFrom:(id)theCPVar];
+         else
+            return theCPVar;
+      }];
+      id<ORDoubleArray> c = [cstr coefs];
+      id<CPConstraint> concreteCstr = [CPFactory realSum:x coef:c geqi:[cstr cst]];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr

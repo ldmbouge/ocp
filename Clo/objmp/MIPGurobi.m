@@ -63,16 +63,18 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 }
 -(void) addVariable: (MIPVariableI*) var;
 {
+   char buf[64];
+   snprintf(buf,sizeof(buf),"x%d",[var idx]+1);
    if ([var isInteger]) {
       if ([var hasBounds])
-        GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_INTEGER,NULL);
+        GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_INTEGER,buf);
       else
-         GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_INTEGER,NULL);
+         GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_INTEGER,buf);
    }
    else if ([var hasBounds])
-      GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_CONTINUOUS,NULL);
+      GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_CONTINUOUS,buf);
    else
-      GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_CONTINUOUS,NULL);
+      GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_CONTINUOUS,buf);
    //GRBupdatemodel(_model);
 }
 
@@ -280,15 +282,17 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr
 {
+   char buf[64];
+   snprintf(buf,sizeof(buf),"c%d",[cstr idx]+1);
    switch ([cstr type]) {
       case MIPleq:
-         GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_LESS_EQUAL,[cstr rhs],NULL);
+         GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_LESS_EQUAL,[cstr rhs],buf);
          break;
       case MIPgeq:
-         GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_GREATER_EQUAL,[cstr rhs],NULL);
+         GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_GREATER_EQUAL,[cstr rhs],buf);
          break;
       case MIPeq:
-         GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_EQUAL,[cstr rhs],NULL);
+         GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_EQUAL,[cstr rhs],buf);
          break;
       default:
          break;

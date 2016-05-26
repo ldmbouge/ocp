@@ -52,7 +52,10 @@ void ORModelMaker::visitModel(Model* mdl)
             _vMap[x->getID()] = mx;
          }break;
          case Var::Integer: {
-            id<ORIntVar> mx = [ORFactory intVar:_mdl bounds:RANGE(_mdl,x->getLB(),x->getUB())];
+            double lb = x->getLB(),ub = x->getUB();
+            ORInt ilb = lb < FDMININT ? FDMININT : lb;
+            ORInt iub = ub > FDMAXINT ? FDMAXINT : ub;
+            id<ORIntVar> mx = [ORFactory intVar:_mdl bounds:RANGE(_mdl,ilb,iub)];
             _vMap[x->getID()] = mx;
          }break;
          case Var::Binary: {

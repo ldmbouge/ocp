@@ -1108,6 +1108,17 @@
       [t add: [coef at: i] times: var[i]];
    return [self createLEQ: t rhs: -cst];
 }
+-(MIPConstraintI*) createGEQ: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst
+{
+   MIPLinearTermI* t = [self createLinearTerm];
+   id<ORIntRange> R = [var range];
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt i = low; i <= up; i++)
+      [t add: [coef at: i] times: var[i]];
+   return [self createGEQ: t rhs: -cst];
+}
+
 -(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst
 {
    MIPLinearTermI* t = [self createLinearTerm];

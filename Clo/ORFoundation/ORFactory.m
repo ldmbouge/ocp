@@ -1391,12 +1391,9 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) realSum: (id<ORTracker>) model array: (id<ORRealVarArray>)x coef:(id<ORDoubleArray>)coefs geq:(ORDouble)c
++(id<ORConstraint>) realSum: (id<ORTracker>) model array: (id<ORRealVarArray>)x coef:(id<ORDoubleArray>)coef geq:(ORDouble)c
 {
-    id<ORDoubleArray> nc = [ORFactory doubleArray:[coefs tracker] range:[coefs range] with:^ORDouble(ORInt k) {
-        return -[coefs at: k];
-    }];
-    id<ORConstraint> o = [[ORRealLinearLeq alloc] initRealLinearLeq: x coef: nc cst: -c];
+    id<ORConstraint> o = [[ORRealLinearGeq alloc] initRealLinearGeq: x coef: coef cst: c];
     [model trackObject:o];
     return o;
 }

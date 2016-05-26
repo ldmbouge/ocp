@@ -366,14 +366,21 @@
 
 
 @interface ORRealLinearEq : ORConstraintI<ORRealLinearEq>
--(ORLinearEq*) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
 -(ORDouble) cst;
 @end
 
 @interface ORRealLinearLeq : ORConstraintI<ORRealLinearLeq>
--(ORRealLinearLeq*) initRealLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id) initRealLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
+@interface ORRealLinearGeq : ORConstraintI<ORRealLinearGeq>
+-(id) initRealLinearGeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
 -(ORDouble) cst;

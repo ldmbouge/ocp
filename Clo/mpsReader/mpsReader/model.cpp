@@ -114,7 +114,7 @@ std::ostream& Maximize::print(std::ostream& os) const
 
 void Model::addRelation(std::string name,Relation::Ptr lin)
 {
-   _eqns[name] = lin;
+   _eqns.emplace_back(name,lin);
 }
 
 std::ostream& operator<<(std::ostream& os,const Model& m)
