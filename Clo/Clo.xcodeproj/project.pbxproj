@@ -768,7 +768,6 @@
 		5B5096F31619B6EB00171F9D /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B5096F41619B6EB00171F9D /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B5096F51619B6EB00171F9D /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		5B53D8C01CC7B52E00A9D5C5 /* PCBranching.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B155A301CBD747E0024AAC2 /* PCBranching.m */; };
 		5B558C071563F01000D2BCD7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B558C121563F28100D2BCD7 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B57E5DF161F275200DB249A /* ORExpr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EA915A3DDA600AD0820 /* ORExpr.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1465,6 +1464,8 @@
 		5BCCC4081417F8CE0079E833 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BCCC4071417F8CE0079E833 /* main.m */; };
 		5BCCC40C1417F8CE0079E833 /* queensACSem.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BCCC40B1417F8CE0079E833 /* queensACSem.1 */; };
 		5BCCC4101417FA740079E833 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BCFEA7B1CF8CABA0030E60B /* PCBranching.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B155A321CBD74AC0024AAC2 /* PCBranching.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5BCFEA7C1CF8CAC00030E60B /* PCBranching.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B155A301CBD747E0024AAC2 /* PCBranching.m */; };
 		5BD09B0516480CFC0090818B /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BD09B0616480CFC0090818B /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BD09B0716480CFC0090818B /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
@@ -20773,8 +20774,8 @@
 		5B150019156EB1A500897252 /* CPBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBaseHeuristic.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B155A2C1CBAD84C0024AAC2 /* ORSemBFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSemBFSController.h; sourceTree = "<group>"; };
 		5B155A2E1CBAD8810024AAC2 /* ORSemBFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSemBFSController.m; sourceTree = "<group>"; };
-		5B155A301CBD747E0024AAC2 /* PCBranching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PCBranching.m; sourceTree = "<group>"; };
-		5B155A321CBD74AC0024AAC2 /* PCBranching.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PCBranching.h; sourceTree = "<group>"; };
+		5B155A301CBD747E0024AAC2 /* PCBranching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PCBranching.m; path = ../UTC/PCBranching.m; sourceTree = "<group>"; };
+		5B155A321CBD74AC0024AAC2 /* PCBranching.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PCBranching.h; path = ../UTC/PCBranching.h; sourceTree = "<group>"; };
 		5B19097A16DAAB45006D1D24 /* eq20.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = eq20.1; sourceTree = "<group>"; };
 		5B19097B16DAAB45006D1D24 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B19098216DAACA7006D1D24 /* eq20 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eq20; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -37349,6 +37350,8 @@
 				5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */,
 				5B150017156EB0E800897252 /* CPBaseHeuristic.h */,
 				5B150019156EB1A500897252 /* CPBaseHeuristic.m */,
+				5B155A301CBD747E0024AAC2 /* PCBranching.m */,
+				5B155A321CBD74AC0024AAC2 /* PCBranching.h */,
 				5B681183161F98FB00F4480F /* Supporting Files */,
 			);
 			path = ORProgram;
@@ -38090,8 +38093,6 @@
 			isa = PBXGroup;
 			children = (
 				5B9B502F1C755EC700520567 /* main.m */,
-				5B155A301CBD747E0024AAC2 /* PCBranching.m */,
-				5B155A321CBD74AC0024AAC2 /* PCBranching.h */,
 				5B9B50301C755EC700520567 /* UTCTemplates.xml */,
 			);
 			path = UTC;
@@ -39292,6 +39293,7 @@
 				5B846928163856B300F4D749 /* CPIBS.h in Headers */,
 				B15442AD16D1A3DC001BD7B3 /* LPProgram.h in Headers */,
 				37D62BAD1BD5CFAD005A6DBC /* ORCombinator.h in Headers */,
+				5BCFEA7B1CF8CABA0030E60B /* PCBranching.h in Headers */,
 				5BA6F96818464836002434E3 /* CPDeg.h in Headers */,
 				5B846929163856B300F4D749 /* CPWDeg.h in Headers */,
 				5BB1C27A1B3A01E6008A9E51 /* ORSolution.h in Headers */,
@@ -42816,6 +42818,7 @@
 				5B84692B163856BF00F4D749 /* CPDDeg.m in Sources */,
 				5B84692C163856BF00F4D749 /* CPFirstFail.m in Sources */,
 				37D62BA61BD5CFAD005A6DBC /* CPRunnable.m in Sources */,
+				5BCFEA7C1CF8CAC00030E60B /* PCBranching.m in Sources */,
 				5B84692D163856BF00F4D749 /* CPIBS.m in Sources */,
 				5B84692E163856BF00F4D749 /* CPWDeg.m in Sources */,
 				5B84692F163856BF00F4D749 /* CPABS.m in Sources */,
@@ -43657,7 +43660,6 @@
 			files = (
 				B18DF16517810D2B004E1880 /* ORCmdLineArgs.m in Sources */,
 				B18DF14E17810C68004E1880 /* main.m in Sources */,
-				5B53D8C01CC7B52E00A9D5C5 /* PCBranching.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54125,6 +54127,7 @@
 				5B4E17A61CF52E3800A15258 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B5096EC1619B6CC00171F9D /* Build configuration list for PBXNativeTarget "testDistrib" */ = {
 			isa = XCConfigurationList;

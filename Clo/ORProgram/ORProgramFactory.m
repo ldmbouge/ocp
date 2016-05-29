@@ -260,7 +260,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [lpprogram setGamma: gamma];
-   [lpprogram setModelMappings: flatModel.modelMappings];
+   [lpprogram setModelMappings: flatModel.modelMappings];   
    
    ORVisitor* concretizer = [[ORLPRelaxationConcretizer alloc] initORLPRelaxationConcretizer: lpprogram];
    

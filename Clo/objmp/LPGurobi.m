@@ -122,8 +122,8 @@
 //   }
 //   printf("\n");
    GRBupdatemodel(_model);
-   GRBoptimize(_model);
    //[self printModelToFile: "/Users/ldm/Desktop/linearRelax.lp"];
+   GRBoptimize(_model);
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
@@ -244,7 +244,7 @@
 //   if (ub < oldUB) {
 //      NSLog(@"About to tighten UB var(%d) from [%f ,** %f] to %f",[var idx],oldLB,oldUB,ub);
 //   }
-   GRBsetdblattrelement(_model,"UB",[var idx],ub);
+   int errCode = GRBsetdblattrelement(_model,"UB",[var idx],ub);
 }
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val

@@ -15,12 +15,29 @@ using namespace std;
 class ORModelMaker :public MDLVisit {
    id<ORModel> _mdl;
    map<int,id<ORExprVar> >  _vMap;
-public:
-   ORModelMaker(id<ORModel> mdl) : _mdl(mdl) {}
+   void visitModelVars(Model* mdl);
    void visitModel(Model* mdl);
    void visitMinimize(Minimize* of);
    void visitMaximize(Maximize* of);
    void visitRelation(Relation* rel);
+public:
+   ORModelMaker() {}
+   id<ORModel> operator()(Model* mdl) {
+      _mdl = [ORFactory createModel];
+      visitModel(mdl);
+      return _mdl;
+   }
+   id<ORModel> makeVariables(Model* mdl) {
+      _mdl = [ORFactory createModel];
+      visitModelVars(mdl);
+      return _mdl;
+   }
+   id<ORModel> addToModel(id<ORModel> into,Model* mdl) {
+      _mdl = into;
+      for(auto& r : mdl->relations())
+         r.second->visit(this);
+      return _mdl;
+   }
 };
 
 int main(int argc, const char * argv[]) {
@@ -32,18 +49,41 @@ int main(int argc, const char * argv[]) {
    }
    @autoreleasepool {
       auto model = MPSReader::readMPSFile(argv[1]);
-      id<ORModel> mdl = [ORFactory createModel];
-      ORModelMaker maker(mdl);
-      maker.visitModel(model.get());
-      cout << *model << endl;
+      ORModelMaker maker;
+      id<ORModel> mdl0 = maker.makeVariables(model.get());
+      id<ORModel> mdl  = [mdl0 copy];
+      maker.addToModel(mdl, model.get());
+      //cout << *model << endl;
+      
       NSLog(@"Objective-C model: %@",mdl);
-      id<MIPProgram> mip = [ORFactory createMIPProgram: mdl];
-      [mip solve];
+
+//      id<MIPProgram> mip = [ORFactory createMIPProgram: mdl];
+//      [mip solve];
+      
+      
+      id<ORRelaxation> relax = [ORFactory createLinearRelaxation:mdl];
+      id<ORAnnotation> notes = [ORFactory annotation];
+      id<CPProgram> cps = [ORFactory createCPProgram:mdl0
+                                      withRelaxation:relax
+                                          annotation:notes
+                                                with:[ORSemBFSController proto]];
+      id<ORIntVarArray> aiv = mdl.intVars;
+      id<ORIntVarArray> bv = [ORFactory slice:mdl0 range:aiv.range suchThat:^ORBool(ORInt k) { return aiv[k].isBool;} of:^id(ORInt k) { return aiv[k];}];
+      id<ORIntVarArray> dv = [ORFactory slice:mdl0 range:aiv.range suchThat:^ORBool(ORInt k) { return !aiv[k].isBool;} of:^id(ORInt k) { return aiv[k];}];
+
+      [cps solve:^{
+         //PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
+         FSBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
+         [pcb branchOn:aiv];
+//         [pcb branchOn:bv];
+//         [pcb branchOn:dv];
+         double oval = [relax objective];
+      }];
    }
    return 0;
 }
 
-void ORModelMaker::visitModel(Model* mdl)
+void ORModelMaker::visitModelVars(Model* mdl)
 {
    for(Var::Ptr x : mdl->allVars()) {
       switch(x->getType()) {
@@ -65,6 +105,11 @@ void ORModelMaker::visitModel(Model* mdl)
       }
    }
    mdl->objective()->visit(this);
+}
+
+void ORModelMaker::visitModel(Model* mdl)
+{
+   visitModelVars(mdl);
    for(auto& r : mdl->relations())
       r.second->visit(this);
 }
@@ -74,9 +119,17 @@ void ORModelMaker::visitMinimize(Minimize * of)
    id<ORExpr> e = [ORFactory integer:_mdl value:of->getIndependent()];
    for(auto i = of->cbegin(); i != of->cend();i++) {
       double coef = i->first;
-      Var::Ptr t  = i->second;
-      id<ORExprVar> theVar = _vMap[t->getID()];
-      e = [e plus:[ORFactory expr:theVar mul:[ORFactory double:_mdl value:coef] track:_mdl]];
+      double ic;
+      double fc = modf(coef,&ic);
+      if (fc == 0) {
+         Var::Ptr t  = i->second;
+         id<ORExprVar> theVar = _vMap[t->getID()];
+         e = [e plus:[ORFactory expr:theVar mul:[ORFactory integer:_mdl value:rint(ic)] track:_mdl]];
+      } else {
+         Var::Ptr t  = i->second;
+         id<ORExprVar> theVar = _vMap[t->getID()];
+         e = [e plus:[ORFactory expr:theVar mul:[ORFactory double:_mdl value:coef] track:_mdl]];
+      }
    }
    [_mdl minimize:e];
 }

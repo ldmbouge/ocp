@@ -34,6 +34,7 @@
 #import <ORProgram/ORSignature.h>
 #import <ORProgram/ORParallelCombinator.h>
 
+#import <ORProgram/PCBranching.h>
 
 //The headers below are _not_ public
 //project: #import <ORProgram/CPRunnable.h>

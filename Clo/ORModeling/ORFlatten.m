@@ -567,6 +567,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
    switch ([e expr].vtype) {
+      case ORTBool:
       case ORTInt: {
          ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into];
          id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
@@ -627,9 +628,9 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
         case ORRBad: assert(NO);
         case ORREq: rv = [terms postEQZ:model];break;
         case ORRNEq:rv = [terms postNEQZ:model];break;
-        case ORRGEq:
+//        case ORRGEq:
         case ORRLEq:rv = [terms postLEQZ:model];break;
-//        case ORRGEq:rv = [terms postGEQZ:model];break;
+        case ORRGEq:rv = [terms postGEQZ:model];break;
         case ORNeg: rv = [terms postEQZ:model];break;
         case ORRDisj:rv = [terms postDISJ:model];break;
         default:

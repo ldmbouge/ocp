@@ -221,7 +221,9 @@ int main_hybrid_branching(int argc, const char * argv[])
           [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
          
          id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
-         id<CPProgram> cp = [ORFactory createCPProgram: model withRelaxation: lp annotation: note];
+         id<CPProgram> cp = [ORFactory createCPProgram: model
+                                        withRelaxation: lp
+                                            annotation: note];
          [cp solve:
           ^() {
              id<ORSelect> sel = [ORFactory select:cp range: Columns
@@ -291,11 +293,12 @@ int main_hybrid_branchingMANUALMIP(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram: model
                                         withRelaxation: lp
                                             annotation: note
-                                                  with: [ORSemBFSController proto]
+                                                  with: [ORSemDFSController proto]
                              ];
          [cp solve:
           ^() {
-             PCBranching* pcb = [[PCBranching alloc] init:lp over:x program:cp];
+             //PCBranching* pcb = [[PCBranching alloc] init:lp over:x program:cp];
+             FSBranching* pcb = [[FSBranching alloc] init:lp over:x program:cp];
 
              [pcb branchOn:x];
 

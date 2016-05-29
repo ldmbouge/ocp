@@ -1209,6 +1209,16 @@
       [t add: [coef at: i] times: var[i]];
    return [self createLEQ: t rhs: -cst];
 }
+-(LPConstraintI*) createGEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   id<ORIntRange> R = [var range];
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt i = low; i <= up; i++)
+      [t add: [coef at: i] times: var[i]];
+   return [self createGEQ: t rhs: -cst];
+}
 -(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst
 {
    LPLinearTermI* t = [self createLinearTerm];

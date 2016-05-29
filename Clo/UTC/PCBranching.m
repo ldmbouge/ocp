@@ -90,20 +90,76 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 }
 @end
 
-@implementation PCBranching {
-   id<ORRelaxation>   _relax;
-   id<ORIntVarArray>   _vars;
+@implementation Branching {
+   @protected
    id<CPCommonProgram>    _p;
+   id<ORRelaxation>   _relax;
+}
+-(id)init:(id<CPCommonProgram>)p relax:(id<ORRelaxation>)relax
+{
+   self = [super init];
+   _p = p;
+   _relax = relax;
+   return self;
+}
+-(void)branchOn:(id<ORIntVarArray>)x
+{
+   while (![_p allBound:x]) {
+      ORDouble fv;
+      ORInt    bi;
+      ORBool ok = [self selectVar:x index:&bi value:&fv];
+      if (ok) {
+         ORInt im = floor(fv);
+         [_p try:^{
+            [_p lthen:x[bi] with:im+1];
+         } alt:^{
+            [_p gthen:x[bi] with:im];
+         }];
+      } else {
+         NSLog(@"Found nothing to branch on?");
+         break;
+      }
+   }
+}
+-(void)probe:(id<ORIntVarArray>)x
+{
+   [_p nestedSolve:^{
+      [_p once:^{
+         __block ORInt reached = x.range.low - 1;
+         [_p try:^{
+            for(ORInt i=x.range.low; i <= x.range.up;i++) {
+               if ([_p bound:x[i]])
+                  continue;
+               ORInt rv = rint([_relax value:x[i]]);
+               [_p label:x[i] with:rv];
+               reached = i;
+            }
+            [[_p objective] updatePrimalBound];
+            NSLog(@"Probe successful! %@",[_p objectiveValue]);
+         } alt:^{
+            NSLog(@"Rounding probe failed... Reached [%d]",reached);
+         }];
+      }];
+   } onSolution:^{
+      [_p doOnSolution];
+   } onExit:nil
+           control: [[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:nil]
+    ];
+   NSLog(@"BACK FROM nestedSolve...");
+}
+
+@end
+
+@implementation PCBranching {
+   id<ORIntVarArray>   _vars;
    NSMutableDictionary*  _pc;
    ORDouble            _flip;
    VStat*           _overall;
 }
 -(id)init:(id<ORRelaxation>)relax over:(id<ORIntVarArray>)vars program:(id<CPCommonProgram>)p
 {
-   self =  [super init];
-   _relax = relax;
+   self =  [super init:p relax:relax];
    _vars  = vars;
-   _p     = p;
    _flip = [[_p objective] isMinimization] ? 1.0 : -1.0;
    _overall = [[VStat alloc] init];
    _pc    = [[NSMutableDictionary alloc] init];
@@ -196,9 +252,12 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    __block ORBool   found = NO;
    ORDouble BSF =  - MAXDBL;
    ORDouble brk = 0.0;
+   ORInt nbVars = x.range.size;
+   ORInt nbFree = 0;
    for(ORInt i=x.range.low;i <= x.range.up;i++) {
       if ([_p bound:x[i]])
          continue;
+      nbFree += 1;
 /*
       ORInt xisz = [_p domsize:x[i]];
       ORInt xiSpan = [_p max:x[i]] - [_p min:x[i]] + 1;
@@ -236,7 +295,10 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       *rv = brk;
       return found;
    } else {
-      [self probe:_vars];
+      if (nbFree < nbVars)
+         [self probe:_vars];
+      else
+         NSLog(@"All vars bound...");
 //      [_p select:_vars minimizing:^ORDouble(ORInt i) { return [_p domsize:x[i]];}
 //              in:^void(ORInt i) {
 //                 ORInt min = [_p min:x[i]],max = [_p max:x[i]];
@@ -257,12 +319,12 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       if (ok) {
          ORInt im = floor(fv);
          [_p try:^{
-            [self measureUp:x[bi] relaxedValue:fv for:^{
-               [_p gthen:x[bi] with:im];
-            }];
-         } alt:^{
             [self measureDown:x[bi] relaxedValue:fv for: ^{
                [_p lthen:x[bi] with:im+1];
+            }];
+         } alt:^{
+            [self measureUp:x[bi] relaxedValue:fv for:^{
+               [_p gthen:x[bi] with:im];
             }];
          }];
       } else {
@@ -270,33 +332,6 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
          break;
       }
    }
-}
--(void)probe:(id<ORIntVarArray>)x
-{
-   [_p nestedSolve:^{
-      [_p once:^{
-         __block ORInt reached = x.range.low - 1;
-         [_p try:^{
-            for(ORInt i=x.range.low; i <= x.range.up;i++) {
-               if ([_p bound:x[i]])
-                  continue;
-               ORInt rv = rint([_relax value:x[i]]);
-               [_p label:x[i] with:rv];
-               reached = i;
-            }
-            [[_p objective] updatePrimalBound];
-            NSLog(@"Probe successful! %@",[_p objectiveValue]);
-         } alt:^{
-            NSLog(@"Rounding probe failed... Reached [%d]",reached);
-         }];
-      }];
-   } onSolution:^{
-      [_p doOnSolution];
-      NSLog(@"inside nested onSolution");
-   } onExit:nil
-    control:  [[ORSemDFSController proto] clone]
-   ];
-   NSLog(@"BACK FROM nestedSolve...");
 }
 -(void)recordVar:(id<ORVar>)x low:(double)low
 {
@@ -329,7 +364,8 @@ static long nbCall = 0;
    double f0 = [_relax objective];
    cl();
    double f1 = [_relax objective];
-   if (++nbCall % 100 == 0)
+//   assert(f1 - f0 >= -0.0000001);
+   if (++nbCall % 1000 == 0)
       NSLog(@"↓ relax: %f",f1);
    double df = _flip * (f1 - f0);
    double downRate = df / m;
@@ -344,11 +380,122 @@ static long nbCall = 0;
    double f0 = [_relax objective];
    cl();
    double f1 = [_relax objective];
-   if (++nbCall % 100 == 0)
+//   assert(f1 - f0 >= -0.0000001);
+   if (++nbCall % 1000 == 0)
       NSLog(@"↑ relax: %f",f1);
    double df = _flip * (f1 - f0);
    double upRate = df / m;
    assert(!isnan(upRate));
    [self recordVar:x up:upRate];
+}
+@end
+
+@implementation FSBranching {
+   id<ORIntVarArray>   _vars;
+   ORDouble            _flip;
+}
+-(id)init:(id<ORRelaxation>)relax over:(id<ORIntVarArray>)vars program:(id<CPCommonProgram>)p
+{
+   self =  [super init:p relax:relax];
+   _vars  = vars;
+   _flip = [[_p objective] isMinimization] ? 1.0 : -1.0;
+   return self;
+}
+-(ORBool)selectVar:(id<ORIntVarArray>)x index:(ORInt*)k  value:(ORDouble*)rv
+{
+   const NSUInteger vsz = [x count];
+   int low  = x.range.low;
+   double vr[vsz];
+   int nbFrac = 0;
+   ORDouble io = [_relax objective];
+   for(ORInt i=low;i <= x.range.up;i++) {
+      double xr,xi;
+      vr[i - low] = xr = [_relax value:x[i]];
+      double xf = modf(xr,&xi);
+      nbFrac += (xf != 0);
+   }
+   if (nbFrac == 0) {
+      [self probe:_vars];
+      return NO;
+   } else {
+      int idx[nbFrac];
+      ORDouble cup[nbFrac];
+      ORDouble cdw[nbFrac];
+      ORDouble roDown,roUp;
+      ORDouble downRate,upRate;
+      int lastX = 0;
+      for(ORInt i=low;i <= x.range.up;i++) {
+         double xi;
+         double xf = modf(vr[i-low],&xi);
+         ORDouble dm = xf, um = 1.0 - xf;
+         if (xf != 0) {
+            id<ORIntVar> vi = x[i];
+            idx[lastX] = i;
+            double lb = [_relax lowerBound:vi];
+            double ub = [_relax upperBound:vi];
+            [_relax updateUpperBound:vi with:xi];
+            OROutcome sLow = [_relax solve];
+            switch(sLow) {
+               case ORoptimal:
+                  roDown = [_relax objective];
+                  downRate = _flip * (roDown - io) / dm;
+                  break;
+               case ORinfeasible:
+//                  [_relax updateLowerBound:vi with:xi+1];
+                  break;
+               default:break;
+            }
+            [_relax updateUpperBound:vi with:ub];
+            [_relax updateLowerBound:vi with:xi+1];
+            OROutcome sUp = [_relax solve];
+            switch(sUp) {
+               case ORoptimal:
+                  roUp = [_relax objective];
+                  upRate = _flip * (roUp - io) / um;
+                  break;
+               case ORinfeasible:
+//                  [_relax updateLowerBound:vi with:lb];
+//                  [_relax updateUpperBound:vi with:xi];
+                  break;
+               default:
+                  break;
+            }
+            [_relax updateLowerBound:vi with:lb];
+            OROutcome back = [_relax solve];
+            assert(back == ORoptimal);
+//            double finalOBJ = [_relax objective];
+//            assert(finalOBJ==io);
+            cup[lastX] = upRate;
+            cdw[lastX] = downRate;
+            lastX++;
+//            printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vr[i-low],roDown,roUp);
+         }
+      }
+      ORInt bi = 0;
+      ORDouble best = - DBL_MAX;
+      for(ORInt i=0;i<lastX;i++) {
+/*         ORDouble rx = vr[idx[i] - low];
+         ORDouble xi;
+         ORDouble xf = modf(rx,&xi);
+         ORDouble wn = xf,wp = 1.0 - xf;
+         static const double mu = 1.0 / 6.0;
+         double qn = wn * cdw[i];
+         double qp = wp * cup[i];
+         ORDouble wi = (1 - mu) * minDbl(qn,qp) + mu * maxDbl(qn,qp);
+*/
+         ORDouble wi = maxDbl(cdw[i],0.00000001) * maxDbl(cup[i],0.000000001);
+         
+         //ORDouble wi = minDbl(cup[i],cdw[i]);
+
+         
+         if (wi > best) {
+            best = wi;
+            bi   = idx[i];
+         }
+      }
+      *k = bi;
+      *rv = vr[bi - low];
+      return TRUE;
+   }
 }
 @end

@@ -612,6 +612,15 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) realSum:(id<CPRealVarArray>)x coef:(id<ORDoubleArray>)coefs geqi:(ORDouble)c
+{
+   id<ORDoubleArray> fc = [ORFactory doubleArray:[x tracker] range:coefs.range with:^ORDouble(ORInt k) {
+      return - [coefs at:k];
+   }];
+   id<CPConstraint> o = [[CPRealINEquationBC alloc] init:x coef:fc leqi: -c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 +(id<CPConstraint>) realEqualc: (id<CPIntVar>) x to:(ORDouble) c
 {
    id<CPConstraint> o = [[CPRealEqualc alloc] init:x and:c];

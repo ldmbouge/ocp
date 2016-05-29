@@ -166,11 +166,11 @@
         return xv;
     } else if ([e size] == 1) {
         return [e oneView:model];
-    } else if ([e clausalForm]) {
+    } /*else if ([e clausalForm]) {
        id<ORIntVar> cValue = [ORFactory intVar: model domain: RANGE(model,0,1)];
        [model addConstraint:[ORFactory clause:model over:[e variables:model] equal:cValue]];
        return cValue;
-    } else {
+    } */ else {
         id<ORIntVar> xv = [ORFactory intVar: model domain: RANGE(model,[e min],[e max])];
         [e addTerm:xv by:-1];
         [e postEQZ: model];
@@ -289,9 +289,9 @@
 -(void) visitExprGEqualI:(ORExprLEqualI*)e
 {
    // a >= b
-    ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e right] model:_model];
+    ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e left] model:_model];
     ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
-    [ORNormalizer addToIntLinear:linRight from:[e left] model:_model];
+    [ORNormalizer addToIntLinear:linRight from:[e right] model:_model];
     [linRight release];
     _terms = linLeft;
 }

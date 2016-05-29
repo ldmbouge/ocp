@@ -53,9 +53,16 @@
    ORDouble lb = _indep;
    for(ORInt k=0;k < _nb;k++) {
       ORDouble c = _terms[k]._coef;
-      id<ORRealRange> d = [(id<ORRealVar>)_terms[k]._var domain];
-      ORDouble vlb = d.low;
-      ORDouble vub = d.up;
+      ORDouble vlb,vub;
+      if ([_terms[k]._var conformsToProtocol:@protocol(ORRealVar)]) {
+         id<ORRealRange> d = [(id<ORRealVar>)_terms[k]._var domain];
+         vlb = d.low;
+         vub = d.up;
+      } else if ([_terms[k]._var conformsToProtocol:@protocol(ORIntVar)]) {
+         id<ORIntRange> d = [(id<ORIntVar>)_terms[k]._var domain];
+         vlb = d.low;
+         vub = d.up;
+      }
       ORDouble svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
@@ -256,7 +263,7 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
    }
    [_real addIndependent:- [lts independent]];
 }
--(void) scaleBy: (ORInt) s
+-(void) scaleBy: (ORDouble) s
 {
    [_real scaleBy: -s];
 }

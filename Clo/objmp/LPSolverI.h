@@ -283,6 +283,7 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(LPObjectiveI*)  createMaximize: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef;
 
 -(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
+-(LPConstraintI*) createGEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
 -(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
 
 
