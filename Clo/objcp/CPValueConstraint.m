@@ -819,8 +819,15 @@
    for(ORInt i=(ORInt)_nb-1;i >= 0;--i) {
       if (listen > 0 && maxDom(_x[i]) == true) { // Still in the domain and in need of more watches
          --listen; // the closure must capture the correct value of listen!
-         _at[listen] = [_x[i] setLoseTrigger: true do: ^
+         _at[listen] = [_x[i] setBindTrigger: ^
                         {
+                           const CPTrigger* toMove = _at[listen];
+                           if (minDom(_x[toMove->_vId]) == 1) {
+                              assignTRInt(&_active,0,_trail);
+                              bindDom(_t,1);
+                              return;
+                           }
+                           assert(maxDom(_x[toMove->_vId]) == 0);
                            // Look for another support among the non-tracked variables.
                            ORLong j = _last;
                            bool jOk = false;
@@ -833,28 +840,36 @@
                            }
                            if (jOk) {
                               const ORInt nextVar = _notTriggered[j];
-                              const CPTrigger* toMove = _at[listen];
+                              if (minDom(_x[nextVar])==1) {
+                                 assignTRInt(&_active,0,_trail);
+                                 bindDom(_t,1);
+                                 return;
+                              }
                               triggerDetach(toMove);                   // remove the trigger
                               _notTriggered[j] = toMove->_vId;         // remember that this variable no longer has a trigger
-                              [_x[nextVar] watch:true with:(id)toMove];    // start watching the new variable
+                              [_x[nextVar] watchBind:(id)toMove];      // start watching the new variable
                               toMove->_vId = nextVar;                  // update the trigger with the (*local*) variable id
                               _last = j;
                            }
-                           else {  // Ok, we couldn't find any other support => so we must bind the remaining ones
+                           else {  // Ok, we couldn't find any other support => we have at most one unbound literal (BETA), so _t == BETA
                               if (minDom(_t) == 1) { // t is true, so clause must be satisfied
                                  CPTrigger* ot = _at[!listen];
                                  assignTRInt(&_active, 0, _trail);
                                  updateMinDom(_x[ot->_vId], YES);
-                              }
-                              // if maxDom(_t) == 0, t is FALSE, so clause cannot be satisfied.
-                              // If _t is not bound, clause can go either way. if both watches are false, then the clause is false
-                              // and _t should be bound to FALSE.
-                              if (!bound(_t)) {
-                                 int nbf  = (maxDom(_x[_at[0].localID]) == 0);
-                                 nbf     += (maxDom(_x[_at[1].localID]) == 0);
-                                 if (nbf == 2) {
-                                    assignTRInt(&_active, 0, _trail);
-                                    bindDom(_t, 0);
+                              } else if (maxDom(_t) == 0)  { // t is FALSE, so clause cannot be satisfied.
+                                 CPTrigger* ot = _at[!listen];
+                                 assignTRInt(&_active, 0, _trail);
+                                 updateMaxDom(_x[ot->_vId], NO);
+                              } else {
+                                 CPTrigger* ot = _at[!listen];
+                                 if (minDom(_x[ot->_vId])) {
+                                    assignTRInt(&_active,0,_trail);
+                                    bindDom(_t,1);
+                                    return;
+                                 } else if (maxDom(_x[ot->_vId]) ==0) {
+                                    assignTRInt(&_active,0,_trail);
+                                    bindDom(_t,0);
+                                    return;
                                  }
                               }
                            }

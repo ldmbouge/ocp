@@ -95,7 +95,7 @@ enum CPVarClass {
 -(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 // assign a trigger which is executed when value val is removed.
 -(void) watch:(ORInt) val with: (id<CPTrigger>) t;
-
+-(void) watchBind:(id<CPTrigger>)t;
 @end
 @class CPIntVar;
 

@@ -389,6 +389,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method watch not defined"];     
 }
+-(void)watchBind:(id<CPTrigger>)t
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method watchBind not defined"];
+}
 -(void) createTriggers
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method createTriggers not defined"];
@@ -630,9 +634,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return NULL;
 }
--(void) watch: (ORInt) val with: (id<CPTrigger>) t;
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t
 {
 }
+-(void) watchBind:(id<CPTrigger>)t
+{}
 -(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    return NULL;
@@ -912,6 +918,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 // nothing to do here
 -(void) setTracksLoseEvt
 {
+   [_recv setTracksLoseEvt];
 }
 
 BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
@@ -996,6 +1003,13 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
    if (_triggers == nil)
       [self createTriggers];
    [_triggers linkTrigger:t forValue:val];
+}
+-(void) watchBind:(id<CPTrigger>)t
+{
+   if (_recv) setTracksLoseEvt(_recv, YES);
+   if (_triggers == nil)
+      [self createTriggers];
+   [_triggers linkBindTrigger:t];
 }
 -(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -1839,6 +1853,35 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
       [_secondary bind:_v];
    }
 }
+
+// ValueClosure Events
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ORIntClosure) todo
+{
+   [_secondary setTracksLoseEvt];
+   [super whenLoseValue:c do:todo];
+}
+
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
+{
+   [_secondary setTracksLoseEvt];
+   return [super setLoseTrigger:value do:todo onBehalf:c];
+}
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t
+{
+   [_secondary setTracksLoseEvt];
+   [super watch:val with:t];
+}
+-(void)watchBind:(id<CPTrigger>)t
+{
+   [_secondary setTracksLoseEvt];
+   [super watchBind:t];
+}
+-(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
+{
+   [_secondary setTracksLoseEvt];
+   return [super setBindTrigger:todo onBehalf:c];
+}
+
 -(void) remove:(ORInt)val
 {
    assert(val==0 || val==1);
@@ -1868,12 +1911,12 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    if (val == _v) {
       // We lost the value being watched. So the boolean lost TRUE
-      [super bindEvt:sender];
+      [super loseValEvt:true sender:sender];
    }
    else {
       // We lost some other value. So we may have bound(_seconday) && minDom(_secondary)==_v      
       if (bound(_secondary) && minDom(_secondary) == _v) {
-         [super bindEvt:sender];
+         [super loseValEvt:false sender:sender];
       } 
    }
 }
@@ -2189,6 +2232,6 @@ void literalDomEvt(CPLiterals* x,id<CPDom> sender)
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (_pos[val - _ofs])
-      [_pos[val - _ofs] bindEvt: sender];
+      [_pos[val - _ofs] loseValEvt:val sender:sender];
 }
 @end

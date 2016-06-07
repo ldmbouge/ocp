@@ -100,9 +100,25 @@
 }
 +(ORIntLinear*)intLinearFrom:(ORExprI*)e model:(id<ORAddToModel>)model
 {
-   if (e.vtype == ORTBool)
-      return [ORNormalizer boolLinearFrom:e model:model];
-   else {
+   if (e.vtype == ORTBool) {
+      ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
+      ORIntLinearizer* v = [[ORIntLinearizer alloc] init:rv model: model];
+      [e visit:v];
+      [v release];
+      return rv;
+/*
+      ORIntLinear* rv =  [ORNormalizer boolLinearFrom:e model:model];
+      if ([rv clausalForm]) {
+         id<ORIntVar> bv = [ORFactory boolVar:model];
+         [model addConstraint:[ORFactory clause:model over:[rv variables:model] equal:bv]];
+         ORIntLinear* nt = [[ORIntLinear alloc] initORLinear:4];
+         [rv release];
+         [nt addTerm:bv by:1];
+         return nt;
+      } else {
+         NSLog(@"Not in clausal form...");
+      }*/
+   } else {
       ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
       ORIntLinearizer* v = [[ORIntLinearizer alloc] init:rv model: model];
       [e visit:v];
