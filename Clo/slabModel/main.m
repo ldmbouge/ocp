@@ -144,7 +144,7 @@ int main0(int argc, const char * argv[])
 #endif
             depth++;
          }];
-         NSLog(@"Objective value: %@",[obj value]);
+         NSLog(@"Objective value: %@",[obj primalValue]);
          }];
       }
       onLimit: ^{ printf("limit reached\n"); }
@@ -248,7 +248,7 @@ int main(int argc, const char * argv[])
                       }
                       ];
                   }];
-                  NSLog(@"Objective value: %@",[obj value]);
+                  NSLog(@"Objective value: %@",[obj primalValue]);
                   nbSol++;
                }];
             }
@@ -267,7 +267,7 @@ int main(int argc, const char * argv[])
                             }
                             ];
                         }];
-                        NSLog(@"Objective value: %@",[obj value]);
+                        NSLog(@"Objective value: %@",[obj primalValue]);
                      }
              ];
          }];

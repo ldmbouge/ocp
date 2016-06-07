@@ -1991,7 +1991,6 @@
 }
 -(enum ORVType) vtype
 {
-   assert(_e.vtype == ORTBool);
    return ORTBool;
 }
 -(id<ORTracker>) tracker

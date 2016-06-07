@@ -73,7 +73,7 @@ int main(int argc, const char * argv[])
          [cp onSolution:^{
             @autoreleasepool {
                id<ORIntArray> shootSol = [ORFactory intArray:cp range:shoot.range with:^ORInt(ORInt s) { return [cp intValue:shoot[s]];}];
-               NSLog(@"Sol:(%@) %@",[[cp objective] value],shootSol);
+               NSLog(@"Sol:(%@) %@",[[cp objective] primalValue],shootSol);
             }
             found = YES;
          }];
@@ -94,15 +94,15 @@ int main(int argc, const char * argv[])
                   //       as soon as we leave the block and well before we head into the tryall. In essence the block
                   //       plays its role and control the lifetime of the selector and its captured variables.
                   id<ORSelect> sel = [ORFactory select:cp range:sr
-                                              suchThat:^bool(ORInt s)    { return ! [cp bound:shoot[s]];}
-                                             orderedBy:^ORFloat(ORInt s) {
+                                              suchThat:^ORBool(ORInt s)    { return ! [cp bound:shoot[s]];}
+                                             orderedBy:^ORDouble(ORInt s) {
                                                 return ([cp domsize:shoot[s]] << 20) - sumSet(appears[s], ^ORInt(ORInt a) { return [fee at:a];});
                                              }];
                   s = [sel min];
                }
                if (s != MAXINT) {
                   ORInt mday = max(-1,[cp maxBound:shoot]);
-                  [cp tryall:Days suchThat:^bool(ORInt d) { return d <= mday + 1 && [cp member:d in:shoot[s]];} in:^(ORInt d) {
+                  [cp tryall:Days suchThat:^ORBool(ORInt d) { return d <= mday + 1 && [cp member:d in:shoot[s]];} in:^(ORInt d) {
                      [cp label:shoot[s] with:d];
                   } onFailure:^(ORInt d) {
                      [cp diff:shoot[s] with:d];

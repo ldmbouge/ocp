@@ -219,7 +219,7 @@
    else
       NSLog(@"adding snaphot to next    wave: %@",snap);
 */
-   id<ORObjectiveValue> ov = [[_solver objective] value];
+   id<ORObjectiveValue> ov = [[_solver objective] primalValue];
    if (_nbDisc + 1 < _maxDisc.bound)
       [_tab  pushCont:k cp:snap discrepancies:_nbDisc+1 ov:ov];
    else [_next pushCont:k cp:snap discrepancies:_nbDisc+1 ov:ov];

@@ -106,6 +106,10 @@
     [_sPool addSolution: sol];
     [sol release];
 }
+-(ORBool) ground
+{
+   return YES;
+}
 -(ORDouble) dual: (id<ORConstraint>) c
 {
     return [_lpsolver dual: [self concretize: c]];
@@ -204,6 +208,10 @@
 -(id<ORTracker>)tracker
 {
    return self;
+}
+-(ORBool)ground
+{
+   return YES;
 }
 -(void)close
 {

@@ -63,17 +63,17 @@ int main(int argc, const char * argv[]) {
       
       id<ORRelaxation> relax = [ORFactory createLinearRelaxation:mdl];
       id<ORAnnotation> notes = [ORFactory annotation];
-      id<CPProgram> cps = [ORFactory createCPProgram:mdl0
+      id<CPProgram> cps = [ORFactory createCPProgram:mdl
                                       withRelaxation:relax
                                           annotation:notes
-                                                with:[ORSemBFSController proto]];
+                                                with:[ORSemDFSController proto]];
       id<ORIntVarArray> aiv = mdl.intVars;
-      id<ORIntVarArray> bv = [ORFactory slice:mdl0 range:aiv.range suchThat:^ORBool(ORInt k) { return aiv[k].isBool;} of:^id(ORInt k) { return aiv[k];}];
-      id<ORIntVarArray> dv = [ORFactory slice:mdl0 range:aiv.range suchThat:^ORBool(ORInt k) { return !aiv[k].isBool;} of:^id(ORInt k) { return aiv[k];}];
+//      id<ORIntVarArray> bv = [ORFactory slice:mdl0 range:aiv.range suchThat:^ORBool(ORInt k) { return aiv[k].isBool;} of:^id(ORInt k) { return aiv[k];}];
+//      id<ORIntVarArray> dv = [ORFactory slice:mdl0 range:aiv.range suchThat:^ORBool(ORInt k) { return !aiv[k].isBool;} of:^id(ORInt k) { return aiv[k];}];
 
       [cps solve:^{
-         //PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
-         FSBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
+         PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
+         //PCBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
          [pcb branchOn:aiv];
 //         [pcb branchOn:bv];
 //         [pcb branchOn:dv];

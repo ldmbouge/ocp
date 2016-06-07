@@ -55,6 +55,7 @@
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
 -(id<ORModel>)source;
+-(ORBool) ground;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart;

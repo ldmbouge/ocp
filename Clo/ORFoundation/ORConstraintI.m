@@ -3701,9 +3701,13 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    self = [super init];
    return self;
 }
--(id<ORObjectiveValue>) value
+-(id<ORObjectiveValue>) primalValue
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "ORObjectiveFunctionI: Method value/0 not implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORObjectiveFunctionI: Method primalValue/0 not implemented"];
+}
+-(id<ORObjectiveValue>) dualValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORObjectiveFunctionI: Method dualValue/0 not implemented"];
 }
 -(id<ORObjectiveValue>) primalBound
 {

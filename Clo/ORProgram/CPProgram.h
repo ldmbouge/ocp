@@ -45,7 +45,7 @@ PORTABLE_BEGIN
 -(id<ORSearchObjectiveFunction>) objective;
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
-
+-(ORBool) ground;
 -(void)                 add: (id<ORConstraint>) c;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
@@ -111,7 +111,8 @@ PORTABLE_BEGIN
 -(void)                 try: (ORClosure) body then: (ORClosure) body;
 -(void)                once: (ORClosure) cl;
 
--(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl;
+-(void)      nestedOptimize: (ORClosure) body onSolution: (PNULLABLE ORClosure) onSolution onExit: (PNULLABLE ORClosure) onExit  control:(id<ORSearchController>)newCtrl;
+-(void)         nestedSolve: (ORClosure) body onSolution: (PNULLABLE ORClosure) onSolution onExit: (PNULLABLE ORClosure) onExit  control:(id<ORSearchController>)newCtrl;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)         nestedSolve: (ORClosure) body;

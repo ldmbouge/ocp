@@ -20,6 +20,7 @@
 -(id)init:(id<ORObjectiveValue>)v withDepth:(int)d;
 -(NSString*)description;
 -(void)dealloc;
+-(id<ORObjectiveValue>)bound;
 @end
 
 @interface BFSNode : NSObject {
@@ -36,11 +37,10 @@
 +(BFSKey*)key:(id<ORObjectiveValue>)v withDepth:(int)d
 {
    BFSKey* k = [BFSKey alloc];
-   k->_v     = [v retain];
+   k->_v     = v; // [v retain];
    k->_depth = d;
    return k;
 }
-                  
 -(BFSKey*)init:(id<ORObjectiveValue>)v withDepth:(int)d
 {
    self = [super init];
@@ -52,6 +52,10 @@
 {
    [_v release];
    [super dealloc];
+}
+-(id<ORObjectiveValue>)bound
+{
+   return _v;
 }
 -(NSString*)description
 {
@@ -98,7 +102,15 @@
    _k      = NULL;
    _buf    = [[ORPQueue alloc] init:^BOOL(BFSKey* a,BFSKey* b) {
 //      return [a->_v compare:b->_v] == NSOrderedAscending; // BAD
-      return [a->_v compare:b->_v] == NSOrderedDescending; // GOOD
+      NSComparisonResult cr = [a->_v compare:b->_v];
+      switch(cr) {
+         case NSOrderedDescending: return true;
+         case NSOrderedAscending: return false;
+         case NSOrderedSame: {
+            return a->_depth < b->_depth;
+         }
+      }
+      //return [a->_v compare:b->_v] == NSOrderedDescending; // GOOD
    }];
    return self;
 }
@@ -152,7 +164,7 @@
 {
    id<ORCheckpoint> cp = [_tracer captureCheckpoint];
    BFSNode* node = [[BFSNode alloc] init:k checkpoint:cp];
-   BFSKey* ov    = [BFSKey key:[[_engine objective] dualBound] withDepth:[_tracer level]];
+   BFSKey* ov    = [BFSKey key:[[_engine objective] dualValue] withDepth:[_tracer level]];
 //   BFSKey* ov    = [BFSKey key:[[_engine objective] value] withDepth:[_tracer level]];
    [_buf insertObject:node withKey:ov];
    [ov release];
@@ -215,8 +227,11 @@ NSString * const ORStatus_toString[] = {
    [ORNoop   ] = @"noop"
 };
 
+static long __nbPull = 0;
+
 -(void) fail
 {
+   id<ORSearchObjectiveFunction> of = (id)_engine.objective;
    do {
       if (_k != NULL) {
          NSCont* back = _k;
@@ -230,8 +245,12 @@ NSString * const ORStatus_toString[] = {
       if (!isEmpty) {
          BFSKey* bestKey = [[_buf peekAtKey] retain];
          BFSNode* nd = [_buf extractBest];
-         ORStatus status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
-         NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString[status]);
+         
+         ORStatus status = [of tightenDualBound:bestKey.bound];
+         if (status != ORFailure)
+            status = [_tracer restoreCheckpoint:nd.cp inSolver:_engine model:_model];
+         if (__nbPull++ % 100 == 0)
+            NSLog(@"pulling: %@ -- status: %@",bestKey,ORStatus_toString[status]);
          [nd.cp letgo];
          NSCont* k = nd.cont;
          [nd release];
@@ -269,7 +288,7 @@ NSString * const ORStatus_toString[] = {
       NSCont* c           = nd.cont;
       id<ORCheckpoint> cp = nd.cp;
       [nd release];
-      ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:[[_engine objective] value]];
+      ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:[[_engine objective] primalValue]];
       [cp letgo];
       return rv;
    } else return nil;

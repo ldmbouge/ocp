@@ -262,7 +262,7 @@
 }
 -(id<ORObjectiveValue>) objectiveValue
 {
-   return [[_engine objective] value];
+   return [[_engine objective] primalValue];
 }
 -(id<ORTracer>) tracer
 {
@@ -484,6 +484,17 @@
 {
    [_search limitTime: maxTime in: cl];
 }
+
+-(void)      nestedOptimize: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
+{
+   [_search nestedOptimize:self
+                     using:body
+                onSolution:onSolution
+                    onExit:onExit
+                   control:[[ORNestedController alloc] init:newCtrl
+                                                     parent:[_search controller]]];
+}
+
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
 {
    [_search nestedSolve: body
@@ -593,6 +604,15 @@
       }
    }
    return M;
+}
+-(ORBool) ground
+{
+   NSMutableArray* av = [_engine variables];
+   for(id<CPVar> xi in av) {
+      if (![xi bound])
+         return NO;
+   }
+   return YES;
 }
 -(ORBool) allBound:(id<ORIdArray>) x
 {

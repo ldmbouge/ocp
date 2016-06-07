@@ -540,7 +540,6 @@
 
 @interface ORObjectiveFunctionI : ORObject<ORObjectiveFunction>
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI;
--(id<ORObjectiveValue>) value;
 @end
 
 @interface ORObjectiveFunctionVarI : ORObjectiveFunctionI<ORObjectiveFunctionVar>

@@ -89,27 +89,19 @@
 -(id)        init: (id<CPRealVar>) x;
 -(void)  post;
 -(ORStatus)  check;
--(void)      updatePrimalBound;
--(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
--(id<ORObjectiveValue>) primalBound;
 -(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORRealVar>) var;
--(id<ORObjectiveValue>)value;
 @end
 
 @interface CPRealVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
 -(id)        init: (id<CPRealVar>) x;
 -(void)  post;
 -(ORStatus)  check;
--(void)      updatePrimalBound;
--(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
--(id<ORObjectiveValue>) primalBound;
 -(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORRealVar>) var;
--(id<ORObjectiveValue>)value;
 @end
 

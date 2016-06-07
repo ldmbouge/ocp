@@ -195,6 +195,11 @@
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
+-(void) fail
+{
+   [super fail];
+}
+
 @end
 
 @implementation OROptimizationController

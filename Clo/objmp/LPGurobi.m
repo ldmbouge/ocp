@@ -154,7 +154,7 @@
 {
    ORDouble lb,ub,value;
    ORDouble feasTol = 0.0;
-   int st = GRBgetdblparam(_env,"IntFeasTol",&feasTol);
+   GRBgetdblparam(_env,"IntFeasTol",&feasTol);
 
    GRBgetdblattrelement(_model,"LB",[var idx],&lb);
    GRBgetdblattrelement(_model,"UB",[var idx],&ub);

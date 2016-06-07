@@ -102,7 +102,12 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    _relax = relax;
    return self;
 }
--(void)branchOn:(id<ORIntVarArray>)x
+-(ORBool)selectVar:(id<ORIntVarArray>)x index:(ORInt*)k  value:(ORDouble*)rv
+{
+   return false;
+}
+
+-(void)theSearch:(id<ORIntVarArray>)x
 {
    while (![_p allBound:x]) {
       ORDouble fv;
@@ -116,10 +121,37 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
             [_p gthen:x[bi] with:im];
          }];
       } else {
-         NSLog(@"Found nothing to branch on?");
-         break;
+         [[_p explorer] fail];
       }
    }
+}
+
+-(void)branchOn:(id<ORIntVarArray>)x
+{
+   [self dfsProbe:x];
+   [self mainSearch:x];
+}
+-(void)dfsProbe:(id<ORIntVarArray>)x
+{
+   id<ORPost> pItf = [[CPINCModel alloc] init:_p];
+   [_p nestedOptimize:^{
+      [_p limitTime:1000 in:^{
+         [self theSearch:x];
+      }];
+      NSLog(@"Back from limit...");
+   } onSolution: nil
+         onExit: nil
+        control:[[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
+}
+
+-(void)mainSearch:(id<ORIntVarArray>)x
+{
+   id<ORPost> pItf = [[CPINCModel alloc] init:_p];
+   [_p nestedOptimize:^{
+      [self theSearch:x];
+   } onSolution:nil
+               onExit:nil
+              control:[[ORSemBFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
 }
 -(void)probe:(id<ORIntVarArray>)x
 {
@@ -189,6 +221,9 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                   downRate = _flip * (roDown - io) / dm;
                   break;
                case ORinfeasible:
+                  [_relax updateUpperBound:vi with:ub];
+                  [_p gthen:vi with:g];
+                  lb = g + 1;
                   break;
                default:break;
             }
@@ -202,15 +237,22 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                   upRate = _flip * (roUp - io) / um;
                   break;
                case ORinfeasible:
+                  [_relax updateLowerBound:vi with:lb];
+                  [_p lthen:vi with:g+1];
+                  ub = g;
                   break;
                default:
                   break;
             }
             [relax updateLowerBound:vi with:lb];
-//            OROutcome back = [relax solve];
-//            assert(back == ORoptimal);
-//            double finalOBJ = [relax objective];
-//            assert(finalOBJ==io);
+            OROutcome fok = [relax solve];
+            if (sLow == ORinfeasible && sUp == ORinfeasible)
+               [[_p explorer] fail];
+            if (sLow == ORinfeasible || sUp == ORinfeasible) {
+               i -= 1;
+               continue;
+            }
+               
             printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vir,roDown,roUp);
             VStat* vs = [_pc objectForKey:@(vi.getId)];
             if (vs==nil) {
@@ -310,7 +352,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       return found;
    }
 }
--(void)branchOn:(id<ORIntVarArray>)x
+
+-(void)theSearch:(id<ORIntVarArray>)x
 {
    while (![_p allBound:x]) {
       ORDouble fv;
@@ -438,10 +481,13 @@ static long nbCall = 0;
             switch(sLow) {
                case ORoptimal:
                   roDown = [_relax objective];
-                  downRate = _flip * (roDown - io) / dm;
+                  downRate = _flip * fabs(roDown - io) / dm;
                   break;
                case ORinfeasible:
-//                  [_relax updateLowerBound:vi with:xi+1];
+                  [_relax updateUpperBound:vi with:ub];
+                  //[_relax updateLowerBound:vi with:xi+1];
+                  [_p gthen:vi with:xi];
+                  lb = xi + 1;
                   break;
                default:break;
             }
@@ -451,28 +497,40 @@ static long nbCall = 0;
             switch(sUp) {
                case ORoptimal:
                   roUp = [_relax objective];
-                  upRate = _flip * (roUp - io) / um;
+                  upRate = _flip * fabs(roUp - io) / um;
                   break;
                case ORinfeasible:
-//                  [_relax updateLowerBound:vi with:lb];
-//                  [_relax updateUpperBound:vi with:xi];
+                  [_relax updateLowerBound:vi with:lb];
+                  //[_relax updateUpperBound:vi with:xi];
+                  [_p lthen:vi with:xi+1];
+                  ub = xi;
                   break;
                default:
                   break;
             }
             [_relax updateLowerBound:vi with:lb];
+            if (sLow == ORinfeasible && sUp == ORinfeasible)
+               [[_p explorer] fail];
             OROutcome back = [_relax solve];
             assert(back == ORoptimal);
-//            double finalOBJ = [_relax objective];
-//            assert(finalOBJ==io);
+            double finalOBJ = [_relax objective];
+            io = finalOBJ;
+            //assert(fabs(finalOBJ - io) <= 0.000001);
+            if (sLow == ORinfeasible || sUp == ORinfeasible) {
+               vr[i - low] = [_relax value:x[i]];  // refresh relaxation
+               i -= 1; // redo the same var.
+               continue;
+            }
             cup[lastX] = upRate;
             cdw[lastX] = downRate;
             lastX++;
-//            printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vr[i-low],roDown,roUp);
+            //printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vr[i-low],downRate,upRate);
          }
       }
       ORInt bi = 0;
       ORDouble best = - DBL_MAX;
+      ORDouble mf   = 1.0;
+      //NSLog(@"FSBranching: #vars to consider: %d",lastX);
       for(ORInt i=0;i<lastX;i++) {
 /*         ORDouble rx = vr[idx[i] - low];
          ORDouble xi;
@@ -483,18 +541,32 @@ static long nbCall = 0;
          double qp = wp * cup[i];
          ORDouble wi = (1 - mu) * minDbl(qn,qp) + mu * maxDbl(qn,qp);
 */
-         ORDouble wi = maxDbl(cdw[i],0.00000001) * maxDbl(cup[i],0.000000001);
+         ORDouble wi = maxDbl(cdw[i],1.0e-16) * maxDbl(cup[i],1.0e-16);
          
          //ORDouble wi = minDbl(cup[i],cdw[i]);
 
+         //NSLog(@"\tSB(%d) %f : cdw/cup = %f | %f",idx[i],wi,cdw[i],cup[i]);
          
          if (wi > best) {
             best = wi;
             bi   = idx[i];
+            mf   = 1.0;
+         } else if (wi == best) {
+            ORDouble ip;
+            ORDouble fv = vr[idx[i] - low];
+            ORDouble fp = modf(fv,&ip);
+            ORDouble fc = fabs(fp - 0.5);
+            if (fc < mf) {
+               mf = fc;
+               best = wi;
+               bi = idx[i];
+            }
          }
       }
       *k = bi;
       *rv = vr[bi - low];
+      //NSLog(@"FSBranching: #vars(%d) BEST(%d): %f",lastX,bi,*rv);
+      //NSLog(@"\t\tSB(SEL): %f *** %d ",best,bi);
       return TRUE;
    }
 }

@@ -65,6 +65,10 @@
    [_sPool addSolution: s];
    [s release];
 }
+-(ORBool) ground
+{
+   return YES;
+}
 -(ORDouble) bestObjectiveBound
 {
     return [_MIPsolver bestObjectiveBound];

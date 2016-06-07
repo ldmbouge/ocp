@@ -439,10 +439,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
 }
 
--(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search
+-(void) nestedOptimize: (id<ORASearchSolver>) solver
+                 using: (ORClosure) search
             onSolution: (ORClosure) onSolution
                 onExit: (ORClosure) onExit
-               control:(id<ORSearchController>) newCtrl
+               control: (id<ORSearchController>) newCtrl
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
@@ -454,8 +455,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self push: controller];
       [controller release];
       if (search) search();
-      [obj updatePrimalBound];
-      if (onSolution) onSolution();
+      //if ([solver ground]) {
+         [obj updatePrimalBound];
+         if (onSolution) onSolution();
+      //}
       [_controller fail];
    }
    else { // if ([newCtrl isFinitelyFailed]) {

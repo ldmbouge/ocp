@@ -255,6 +255,14 @@
 {
    [[self worker] limitTime: maxTime in: cl];
 }
+-(void) nestedOptimize: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
+{
+   [[self worker] nestedOptimize:body onSolution:onSolution onExit:onExit control:newCtrl];
+}
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
+{
+   [[self worker] nestedSolve:body onSolution:onSolution onExit:onExit control:newCtrl];
+}
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [[self worker] nestedSolve: body onSolution: onSolution onExit: onExit];
@@ -308,6 +316,10 @@
 -(void) label: (id<ORIntVar>) mx
 {
    [[self worker] label: mx];
+}
+-(void) select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body
+{
+   [[self worker] select:x minimizing:f in:body];
 }
 -(ORInt) selectValue: (id<ORIntVar>) v by: (ORInt2Double) o
 {
@@ -441,6 +453,10 @@
 -(ORBool) allBound:(id<ORIdArray>) x
 {
    return [[self worker] allBound:x];
+}
+-(ORBool) ground
+{
+   return [[self worker] ground];
 }
 -(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x
 {

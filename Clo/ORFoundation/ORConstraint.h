@@ -487,7 +487,8 @@ enum ORGroupType {
 @end
 
 @protocol ORObjectiveFunction <ORObject>
--(id<ORObjectiveValue>) value;
+-(id<ORObjectiveValue>) primalValue;
+-(id<ORObjectiveValue>) dualValue;
 -(id<ORObjectiveValue>) primalBound;
 -(id<ORObjectiveValue>) dualBound;
 @end
@@ -507,11 +508,11 @@ enum ORGroupType {
 
 @protocol ORSearchObjectiveFunction <NSObject,ORObjectiveFunction>
 -(ORStatus) check;
--(id<ORObjectiveValue>) primalBound;
--(id<ORObjectiveValue>) dualBound;
 -(void)     updatePrimalBound;
+-(void)     updateDualBound;
 -(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
--(void)     tightenWithDualBound: (id<ORObjectiveValue>) newBound;
+-(ORStatus) tightenDualBound: (id<ORObjectiveValue>) newBound;
+-(void)     tightenLocallyWithDualBound: (id<ORObjectiveValue>) newBound;
 -(ORBool)   isBound;
 -(ORBool)   isMinimization;
 @end
@@ -544,6 +545,7 @@ enum ORGroupType {
 -(id) concretize: (id) o;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORSolutionPool>) solutionPool;
+-(ORBool)ground;
 @end
 
 @protocol ORASearchSolver <ORASolver>

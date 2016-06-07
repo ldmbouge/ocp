@@ -297,16 +297,9 @@ int main_hybrid_branchingMANUALMIP(int argc, const char * argv[])
                              ];
          [cp solve:
           ^() {
-             //PCBranching* pcb = [[PCBranching alloc] init:lp over:x program:cp];
-             FSBranching* pcb = [[FSBranching alloc] init:lp over:x program:cp];
-
+             PCBranching* pcb = [[PCBranching alloc] init:lp over:x program:cp];
+             //FSBranching* pcb = [[FSBranching alloc] init:lp over:x program:cp];
              [pcb branchOn:x];
-
-             for(ORInt i = 0; i < nbColumns; i++) {
-                if (![cp bound: x[i]])
-                   [cp label: x[i] with: rint([lp value: x[i]])];
-             }
-             [cp assignRelaxationValue: [lp value: y] to: y];
           }
           ];
          ORLong endTime = [ORRuntimeMonitor cputime];

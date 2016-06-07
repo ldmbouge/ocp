@@ -156,7 +156,7 @@
       }
 
       --_sz;
-      ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:[[_engine objective] value]];
+      ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:[[_engine objective] primalValue]];
       [cp letgo];
       return rv;
    } else return nil;

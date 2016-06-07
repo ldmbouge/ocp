@@ -13,6 +13,7 @@
 #import "CPRealConstraint.h"
 #import "CPIntVarI.h"
 #import "CPRealVarI.h"
+#import "ORConstraintI.h"
 
 @implementation CPRealSquareBC
 
@@ -443,16 +444,17 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 @end
 
-@implementation CPRealVarMinimize
-{
-   CPRealVarI*  _x;
-   ORDouble        _primalBound;
+@implementation CPRealVarMinimize {
+   CPRealVarI*          _x;
+   ORDouble   _primalBound;
+   ORDouble     _dualBound;
 }
 -(id) init: (CPRealVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
-   _primalBound = MAXINT;
+   _primalBound = DBL_MAX;
+   _dualBound = - DBL_MAX;
    return self;
 }
 -(id<CPRealVar>)var
@@ -487,6 +489,14 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
           _primalBound = bound - 0.000001;
    }
 }
+-(void) updateDualBound
+{
+   ORDouble bound = [_x min];
+   @synchronized(self) {
+      if (bound > _dualBound)
+         _dualBound = bound + 0.000001;
+   }
+}
 -(void) tightenPrimalBound: (id<ORObjectiveValueReal>) newBound
 {
    @synchronized(self) {
@@ -494,7 +504,26 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
          _primalBound = [newBound value];
    }
 }
--(void) tightenWithDualBound: (id) newBound
+-(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
+{
+   @synchronized (self) {
+      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+         ORDouble b = [(ORObjectiveValueIntI*)newBound value];
+         ORStatus ok = b > _primalBound ? ORFailure : ORSuspend;
+         if (ok && b > _dualBound)
+            _dualBound = b;
+         return ok;
+      } else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
+         ORDouble b = [(ORObjectiveValueRealI*)newBound doubleValue];
+         ORStatus ok = b > _primalBound ? ORFailure : ORSuspend;
+         if (ok && b > _dualBound)
+            _dualBound = b;
+         return ok;
+      } else return ORFailure;
+   }
+}
+
+-(void) tightenLocallyWithDualBound: (id) newBound
 {
    @synchronized(self) {
       
@@ -509,10 +538,23 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
    }
 }
 
--(id<ORObjectiveValue>) value
+-(id<ORObjectiveValue>) primalValue
 {
    return [ORFactory objectiveValueReal:_x.value minimize:YES];
 }
+-(id<ORObjectiveValue>) dualValue
+{
+   return [ORFactory objectiveValueReal:[_x min] minimize:NO];
+}
+-(id<ORObjectiveValue>) primalBound
+{
+   return [ORFactory objectiveValueReal:_primalBound minimize:YES];
+}
+-(id<ORObjectiveValue>) dualBound
+{
+   return [ORFactory objectiveValueReal:_dualBound minimize:YES];
+}
+
 -(ORStatus) check
 {
    return tryfail(^ORStatus{
@@ -521,14 +563,6 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
    }, ^ORStatus{
       return ORFailure;
    });
-}
--(id<ORObjectiveValue>) primalBound
-{
-   return [ORFactory objectiveValueReal:_primalBound minimize:YES];
-}
--(id<ORObjectiveValue>) dualBound
-{
-   return [ORFactory objectiveValueReal:[_x min] minimize:YES];
 }
 -(ORBool)   isBound
 {
@@ -543,14 +577,16 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 @end
 
 @implementation CPRealVarMaximize {
-   CPRealVarI*  _x;
-   ORDouble       _primalBound;
+   CPRealVarI*          _x;
+   ORDouble   _primalBound;
+   ORDouble     _dualBound;
 }
 -(id) init: (CPRealVarI*) x
 {
     self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = -MAXINT;
+   _dualBound   = MAXINT;
    return self;
 }
 -(id<CPRealVar>)var
@@ -572,10 +608,23 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
--(id<ORObjectiveValue>) value
+-(id<ORObjectiveValue>) primalValue
 {
    return [ORFactory objectiveValueReal:_x.value minimize:NO];
 }
+-(id<ORObjectiveValue>) dualValue
+{
+   return [ORFactory objectiveValueReal:[_x max] minimize:YES];
+}
+-(id<ORObjectiveValue>) primalBound
+{
+   return [ORFactory objectiveValueReal:_primalBound minimize:NO];
+}
+-(id<ORObjectiveValue>) dualBound
+{
+   return [ORFactory objectiveValueReal:_dualBound minimize:NO];
+}
+
 -(ORUInt)nbUVars
 {
    return [_x bound] ? 0 : 1;
@@ -587,12 +636,36 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
       _primalBound = bound;
    NSLog(@"primal bound: %f",_primalBound);
 }
+-(void)     updateDualBound
+{
+   ORDouble bound = [_x max];
+   if (bound < _dualBound)
+      _dualBound = bound;
+   NSLog(@"dual bound: %f",_dualBound);
+}
+
 -(void) tightenPrimalBound: (id<ORObjectiveValueReal>) newBound
 {
    if ([newBound value] > _primalBound)
       _primalBound = [newBound value];
 }
--(void) tightenWithDualBound: (id) newBound
+-(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
+{
+   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+      ORInt b = [(ORObjectiveValueIntI*)newBound value];
+      ORStatus ok = b < _primalBound ? ORFailure : ORSuspend;
+      if (ok && b < _dualBound)
+         _dualBound = b;
+      return ok;
+   } else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
+      ORDouble b = [(ORObjectiveValueRealI*)newBound doubleValue];
+      ORStatus ok = b < _primalBound ? ORFailure : ORSuspend;
+      if (ok && b < _dualBound)
+         _dualBound = b;
+      return ok;
+   } else return ORSuspend;
+}
+-(void) tightenLocallyWithDualBound: (id) newBound
 {
    if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
       ORDouble b = [((id<ORObjectiveValueInt>) newBound) value];
@@ -614,14 +687,6 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
       return ORFailure;
    }
    return ORSuspend;
-}
--(id<ORObjectiveValue>) primalBound
-{
-   return [ORFactory objectiveValueReal:_primalBound minimize:NO];
-}
--(id<ORObjectiveValue>) dualBound
-{
-   return [ORFactory objectiveValueReal:[_x max] minimize:NO];
 }
 
 -(ORBool)   isBound
