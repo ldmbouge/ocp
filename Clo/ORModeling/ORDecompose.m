@@ -106,18 +106,25 @@
       [e visit:v];
       [v release];
       return rv;
-/*
-      ORIntLinear* rv =  [ORNormalizer boolLinearFrom:e model:model];
-      if ([rv clausalForm]) {
-         id<ORIntVar> bv = [ORFactory boolVar:model];
-         [model addConstraint:[ORFactory clause:model over:[rv variables:model] equal:bv]];
-         ORIntLinear* nt = [[ORIntLinear alloc] initORLinear:4];
-         [rv release];
-         [nt addTerm:bv by:1];
-         return nt;
-      } else {
-         NSLog(@"Not in clausal form...");
-      }*/
+//
+////      ORIntLinear* rv =  [ORNormalizer boolLinearFrom:e model:model];
+//      if ([rv clausalForm]) {
+//         id<ORIntVar> bv = [ORFactory boolVar:model];
+////         id<ORConstraint> c = [ORFactory reify:model boolean:bv sumbool:[rv variables:model] geqi:1];
+//         id<ORConstraint> c = [ORFactory clause:model over:[rv variables:model] equal:bv];
+//         [model addConstraint:c];
+//         ORIntLinear* nt = [[ORIntLinear alloc] initORLinear:4];
+//         [rv release];
+//         [nt addTerm:bv by:1];
+//         return nt;
+//      } else {
+//         ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
+//         ORIntLinearizer* v = [[ORIntLinearizer alloc] init:rv model: model];
+//         [e visit:v];
+//         [v release];
+//         return rv;
+//      }
+      
    } else {
       ORIntLinear* rv = [[ORIntLinear alloc] initORLinear:4];
       ORIntLinearizer* v = [[ORIntLinearizer alloc] init:rv model: model];

@@ -160,6 +160,7 @@
 @public
    ORInt             _v;
    CPIntVar* _secondary;  // pointer to the original variable (x)
+   TRInt     _done;
 }
 -(CPEQLitView*)initEQLitViewFor:(CPIntVar*)x equal:(ORInt)v;
 -(void)dealloc;

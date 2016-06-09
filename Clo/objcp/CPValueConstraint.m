@@ -769,127 +769,134 @@
    else
       assert(FALSE);
    _t  = t;
-   _at = 0;
-   _notTriggered = 0;
    return self;
 }
 -(void) dealloc
 {
-   free(_x);
-   if (_at) free(_at);
-   if (_notTriggered) free(_notTriggered);
    [super dealloc];
 }
 -(void)post
 {
-   _at = malloc(sizeof(id<CPTrigger>)*(2));
-   _notTriggered = malloc(sizeof(ORInt)*(_nb - 2));
-   int nbTrue = 0;
-   int nbPos  = 0;
+   int nbTrue = 0,nbFree=0;
    for(ORInt i=0;i<_nb;i++) {
-      [_x[i] updateMin:0];
-      [_x[i] updateMax:1];
-      nbTrue += ([_x[i] bound] && [_x[i] min] == true);
-      nbPos  += ![_x[i] bound];
+      [_x[i] updateMin:0 andMax:1];
+      nbTrue += (minDom(_x[i])==1);
+      nbFree += !bound(_x[i]);
    }
    if (nbTrue >= 1) {
       bindDom(_t, 1);
       return ;
    }
-   if (nbTrue + nbPos < 1) {
+   if (nbFree == 0) {
       bindDom(_t,0);
       return ;
    }
-   if (bound(_t) && minDom(_t) == 0) {
-      for(ORInt i=0;i<_nb;++i)
-         if (!bound(_x[i]))
-            bindDom(_x[i], 0);
-   }
-   if (nbTrue + nbPos == 1 && bound(_t) && minDom(_t)==1) {
-      // We already know that all the possible should be true. Do it.
-      for(ORInt i=0;i<_nb;++i) {
-         if ([_x[i] bound])
-            continue;
-         [_x[i] updateMin:true];
-      }
-      return ;
-   }
-   ORInt listen = 2;
-   ORInt nbNW   = 0;
-   for(ORInt i=(ORInt)_nb-1;i >= 0;--i) {
-      if (listen > 0 && maxDom(_x[i]) == true) { // Still in the domain and in need of more watches
-         --listen; // the closure must capture the correct value of listen!
-         _at[listen] = [_x[i] setBindTrigger: ^
-                        {
-                           const CPTrigger* toMove = _at[listen];
-                           if (minDom(_x[toMove->_vId]) == 1) {
-                              assignTRInt(&_active,0,_trail);
-                              bindDom(_t,1);
-                              return;
-                           }
-                           assert(maxDom(_x[toMove->_vId]) == 0);
-                           // Look for another support among the non-tracked variables.
-                           ORLong j = _last;
-                           bool jOk = false;
-                           if (_last >= 0) {
-                              do {
-                                 j=(j+1) % (_nb - 1 - 1);
-                                 CPIntVar* check = _x[_notTriggered[j]];
-                                 jOk = memberDom(check, 1);
-                              } while (j != _last && !jOk);
-                           }
-                           if (jOk) {
-                              const ORInt nextVar = _notTriggered[j];
-                              if (minDom(_x[nextVar])==1) {
-                                 assignTRInt(&_active,0,_trail);
-                                 bindDom(_t,1);
-                                 return;
-                              }
-                              triggerDetach(toMove);                   // remove the trigger
-                              _notTriggered[j] = toMove->_vId;         // remember that this variable no longer has a trigger
-                              [_x[nextVar] watchBind:(id)toMove];      // start watching the new variable
-                              toMove->_vId = nextVar;                  // update the trigger with the (*local*) variable id
-                              _last = j;
-                           }
-                           else {  // Ok, we couldn't find any other support => we have at most one unbound literal (BETA), so _t == BETA
-                              if (minDom(_t) == 1) { // t is true, so clause must be satisfied
-                                 CPTrigger* ot = _at[!listen];
-                                 assignTRInt(&_active, 0, _trail);
-                                 updateMinDom(_x[ot->_vId], YES);
-                              } else if (maxDom(_t) == 0)  { // t is FALSE, so clause cannot be satisfied.
-                                 CPTrigger* ot = _at[!listen];
-                                 assignTRInt(&_active, 0, _trail);
-                                 updateMaxDom(_x[ot->_vId], NO);
-                              } else {
-                                 CPTrigger* ot = _at[!listen];
-                                 if (minDom(_x[ot->_vId])) {
-                                    assignTRInt(&_active,0,_trail);
-                                    bindDom(_t,1);
-                                    return;
-                                 } else if (maxDom(_x[ot->_vId]) ==0) {
-                                    assignTRInt(&_active,0,_trail);
-                                    bindDom(_t,0);
-                                    return;
-                                 }
-                              }
-                           }
-                        }
-                                    onBehalf:self];
-         [_at[listen] setLocalID:i]; // local identifier of var being watched.
-      }
-      else
-         _notTriggered[nbNW++] = i;
-   }
-   [_t whenBindDo:^{
-      if (maxDom(_t) == 0) {  // _t is FALSE
-         assignTRInt(&_active, 0, _trail);
+   if (bound(_t)) {
+      if (maxDom(_t)==0) {  // _t == 0  => all literals at 0
          for(ORInt i=0;i<_nb;++i)
             if (!bound(_x[i]))
                bindDom(_x[i], 0);
+         return;
+      } else {
+         assert(minDom(_t)==1); // _t == 1 => at least one literal at 1 (if here _nbTrue==0, so could have only free ones)
+         if (nbFree == 1) {     // but only do that if there is no choice (only one free literal)
+            for(ORInt i=0;i<_nb;i++) {
+               if (!bound(_x[i])) {
+                  bindDom(_x[i],1);
+                  return;
+               }
+            }
+         }
       }
-   } onBehalf:self];
-   assert(nbNW == _nb - 1 - 1);
-   _last = _nb - 1 - 2;  // where we will start the circular scan among the unWatched variables.
+   }
+   id<ORTrail> trail = [[_t engine] trail];
+   assert(nbTrue == 0);
+   _nbOne  = makeTRInt(trail,nbTrue);
+   _nbFree = makeTRInt(trail,nbFree);
+   for(ORInt i=0;i < _nb;i++) {
+      if (!bound(_x[i])) {
+         [_x[i] whenBindDo:^{
+            ORInt xiv = minDom(_x[i]);
+            assignTRInt(&_nbOne,_nbOne._val + xiv,trail);
+            assignTRInt(&_nbFree,_nbFree._val - 1,trail);
+
+//            if (_name == 20) {
+//               if ([_trail magic] >= 2259)
+//                  NSLog(@"pause");
+//               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//               [buf appendFormat:@"WB: %@ | %d -- %d (%u)",self,_nbOne._val,_nbFree._val,[_trail magic]];
+//               printf("%s\n",[buf cStringUsingEncoding:NSASCIIStringEncoding]);
+//               [buf release];
+//            }
+            
+            if (_nbOne._val > 0) {
+               assignTRInt(&_active,0,_trail);
+               bindDom(_t,1);
+               return;
+            }
+            if (_nbFree._val == 0) {
+               assignTRInt(&_active,0,_trail);
+               bindDom(_t,0);
+               return;
+            }
+            if (minDom(_t) && _nbFree._val == 1) {  // we want it to be true, only one literal left.
+               assignTRInt(&_active, 0, _trail);
+               ORInt nbf = 0;
+               CPIntVar* fv = nil;
+               for(ORInt j=0;j<_nb;j++) {
+                  ORInt b = bound(_x[j]);
+                  nbf += !b;
+                  if (!b) fv = _x[j];
+               }
+               assert(nbf == 1);
+               bindDom(fv,1);
+            }
+            if (maxDom(_t)==0) {
+               //assignTRInt(&_active, 0, _trail);
+               int nb1 = 0;
+               for(ORInt j=0;j<_nb;j++) {
+                  if (!bound(_x[j])) {
+                     bindDom(_x[j],0);
+                  } else nb1 += minDom(_x[j]);
+               }
+               if (nb1 > 0)
+                  failNow();
+            }
+         } onBehalf:self];
+      }
+   }
+   [_t whenBindDo:^{
+//      if (_name == 20) {
+//         NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//         [buf appendFormat:@"WP: %@ | %d -- %d (%u)",self,_nbOne._val,_nbFree._val,[_trail magic]];
+//         printf("%s\n",[buf cStringUsingEncoding:NSASCIIStringEncoding]);
+//         [buf release];
+//      }
+
+      if (maxDom(_t) == 0) {  // _t is FALSE
+         assignTRInt(&_active, 0, _trail);
+         ORInt nb1 = 0;
+         for(ORInt i=0;i<_nb;++i) {
+            if (!bound(_x[i]))
+               bindDom(_x[i], 0);
+            else nb1 += minDom(_x[i]);
+         }
+         if (nb1 > 0)
+            failNow();
+      }
+      if (minDom(_t) == 1  && _nbFree._val == 1) {
+         ORInt nbf = 0;
+         CPIntVar* fv = nil;
+         for(ORInt j=0;j<_nb;j++) {
+            ORInt b = bound(_x[j]);
+            nbf += !b;
+            if (!b) fv = _x[j];
+         }
+         assert(nbf == 1);
+         assignTRInt(&_active, 0, _trail);
+         bindDom(fv,1);
+      }
+   } priority:HIGHEST_PRIO - 1 onBehalf:self];
 }
 -(NSSet*)allVars
 {
@@ -1382,21 +1389,41 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
    for(ORInt i=0;i < _nb;i++) {
       if (bound(_x[i])) continue;
       [_x[i] whenBindDo:^{
-         if (_x[i].value) {
+         if (_x[i].value)
             assignTRInt(&_nbTrue, _nbTrue._val + 1, _trail);
-            assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
-         } else {
-            assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
-         }
+         assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
          if (_b.min > 0) {
-            if (_nbTrue._val >= _c) {
+            if (_nbTrue._val >= _c)
                assignTRInt(&_active,NO,_trail);
-            }
             if (_nbTrue._val + _nbPos._val < _c)
                failNow();
+            else if (_nbTrue._val + _nbPos._val == _c) {
+               ORInt k=0;
+               for(ORInt j=0;j < _nb;j++) {
+                  if (j == i || [_x[j] bound]) continue;
+                  [_x[j] bind:YES];
+                  k++;
+               }
+               assert(k == _nbPos._val);
+            }
          } else if (_b.max <= 0) {
             if (_nbTrue._val >= _c)
                failNow();
+            if (_nbTrue._val + _nbPos._val == _c && _nbPos._val == 1) {
+               ORInt k=0;
+               for(ORInt j=0;j < _nb;j++) {
+                  if (j == i || [_x[j] bound]) continue;
+                  k++;
+               }
+               assert(k<=1);
+               
+               for(ORInt j=0;j < _nb;j++) {
+                  if (j == i || [_x[j] bound]) continue;
+                  [_x[j] bind:NO];
+                  k++;
+               }
+               assignTRInt(&_active, NO, _trail);
+            }
             if (_nbTrue._val + _nbPos._val < _c)
                assignTRInt(&_active, NO, _trail);
          } else { // b is not FIXED.
@@ -1411,7 +1438,7 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
          }
       } onBehalf:self];
    }
-   [_b whenBindPropagate:self];
+   [_b whenBindPropagate:self priority:HIGHEST_PRIO - 1];
 }
 
 -(void)propagate
@@ -1423,11 +1450,36 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
          assignTRInt(&_active,NO, _trail);
       if (_nbTrue._val + _nbPos._val < _c)
          failNow();
+      else if (_nbTrue._val + _nbPos._val == _c) {
+         ORInt k=0;
+         for(ORInt j=0;j < _nb;j++) {
+            if ([_x[j] bound]) continue;
+            [_x[j] bind:YES];
+            k++;
+         }
+         assert(k == _nbPos._val);
+      }
    } else {
+      assert(_b.max == 0);
       if (_nbTrue._val >= _c)
          failNow();
       if (_nbTrue._val + _nbPos._val < _c)
          assignTRInt(&_active, NO, _trail);
+      if (_nbTrue._val + _nbPos._val == _c && _nbPos._val == 1) {
+         ORInt k=0;
+         for(ORInt j=0;j < _nb;j++) {
+            if ([_x[j] bound]) continue;
+            k++;
+         }
+         assert(k<=1);
+         
+         for(ORInt j=0;j < _nb;j++) {
+            if ([_x[j] bound]) continue;
+            [_x[j] bind:NO];
+            k++;
+         }
+         assignTRInt(&_active, NO, _trail);
+      }
    }
 }
 -(NSString*)description

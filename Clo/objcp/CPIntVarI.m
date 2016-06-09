@@ -1724,6 +1724,7 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
    _secondary = x;
    _v = v;
    _vc = CPVCEQLiteral;
+   _done = makeTRInt([[x engine] trail], 0);
    return self;
 }
 
@@ -1751,13 +1752,11 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(ORInt) value
 {
-   assert([_secondary bound]);
-   return [_secondary value]==_v;
+   return memberDom(_secondary, _v);
 }
 -(ORInt) intValue
 {
-   assert([_secondary bound]);
-   return [_secondary value]==_v;
+   return memberDom(_secondary, _v);
 }
 -(ORInt) min
 {
@@ -1896,11 +1895,28 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(void) bindEvt:(id<CPDom>)sender
 {
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
    [super bindEvt:sender];
 }
 -(void) domEvt:(id<CPDom>)sender
 {
-   BOOL isb = bound(_secondary) || !memberDom(_secondary, _v);
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
+
+      BOOL isb = bound(_secondary) || !memberDom(_secondary, _v);
    // [ldm]
    // There is no "dom Evt" to speak of in the literal view if the literal view is not
    // bound (the evt of the secondary must "disappear" in that case.
@@ -1909,6 +1925,15 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
+
    if (val == _v) {
       // We lost the value being watched. So the boolean lost TRUE
       [super loseValEvt:true sender:sender];
@@ -1922,23 +1947,39 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
-   if (bound(_secondary)) {
-      [super bindEvt:sender];
-   } else {
-      if (minDom(_secondary) > _v)
-         [super bindEvt:sender];
-   }
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
+
+   ORBounds sb = bounds(_secondary);
+   if (sb.min > _v)
+      [super changeMaxEvt:1 sender:sender];
+   else if (sb.min == sb.max && sb.min == _v)
+      [super changeMinEvt:1 sender:sender];
 }
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
-   if (bound(_secondary)) {
-      [super bindEvt:sender];
-   } else {
-      ORInt sMax = maxDom(_secondary);
-      if (sMax < _v)
-         [super bindEvt:sender];
-   }
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
+
+   ORBounds sb = bounds(_secondary);
+   if (sb.max < _v)
+      [super changeMaxEvt:1 sender:sender];
+   else if (sb.min == sb.max && sb.min == _v)
+      [super changeMinEvt:1 sender:sender];
 }
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

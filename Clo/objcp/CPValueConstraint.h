@@ -143,9 +143,8 @@
    CPIntVar**        _x;
    ORLong           _nb;
    CPIntVar*         _t;
-   id<CPTrigger>*   _at; // the c+1 triggers.
-   ORInt* _notTriggered;
-   ORLong         _last;
+   TRInt         _nbOne;
+   TRInt        _nbFree;
 }
 -(id)initCPClause:(id)x equal:(id<CPIntVar>)t;
 -(void)post;
