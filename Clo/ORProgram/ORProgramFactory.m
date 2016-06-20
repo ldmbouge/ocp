@@ -418,6 +418,13 @@
    }];
    return (id<CPProgram>)cpprogram;
 }
++(id<ORModel>)strengthen:(id<ORModel>)m0;
+{
+   ORStrengthening* st = [[ORStrengthening alloc] init];
+   id<ORModel> m1 = [st apply:m0];
+   [st release];
+   return m1;
+}
 @end
 
 @implementation ORLinearRelaxation
@@ -478,3 +485,30 @@
 }
 @end
 
+
+@implementation ORStrengthening
+-(id<ORModel>) apply:(id<ORModel>)m
+{
+   id<ORIntVar> aiv = m.intVars;
+   id<ORRealVar> afv = m.realVars;
+   id<CPProgram> cps = [ORFactory createCPProgram:m];
+   [cps solve:^{
+      for(id<ORIntVar> xi in aiv) {
+         ORInt lb = [cps min:xi];
+         ORInt ub = [cps max:xi];
+         if (lb > [xi low] || ub < [xi up]) {
+            NSLog(@"int bound strengtened on %@ to [%d,%d]",xi,lb,ub);
+         }
+      }
+      for(id<ORRealVar> xi in afv) {
+         ORDouble lb = [cps doubleMin:xi];
+         ORDouble ub = [cps doubleMax:xi];
+         if (lb > [xi low] || ub < [xi up]) {
+            NSLog(@"real bound strengtened on %@ to [%f,%f]",xi,lb,ub);
+            [xi setDomain:[ORFactory realRange:m low:lb up:ub]];
+         }
+      }
+   }];
+   return m;
+}
+@end

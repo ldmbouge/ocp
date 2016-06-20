@@ -455,10 +455,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self push: controller];
       [controller release];
       if (search) search();
-      //if ([solver ground]) {
+      if ([solver ground]) {
          [obj updatePrimalBound];
          if (onSolution) onSolution();
-      //}
+      }
       [_controller fail];
    }
    else { // if ([newCtrl isFinitelyFailed]) {

@@ -140,7 +140,7 @@ namespace AST {
             case Bound::Pl :  allVars[vn]->setLB(0);break;
             case Bound::Ui :  allVars[vn]->setInteger()->setUB(b->getBound());break;
             case Bound::Li :  allVars[vn]->setInteger()->setLB(b->getBound());break;
-            case Bound::Fr :  allVars[vn]->setLB(-DBL_MAX)->setUB(DBL_MAX);break;
+            case Bound::Fr :  allVars[vn]->setLB(-FLT_MAX)->setUB(FLT_MAX);break;
             case Bound::Sc : std::cout << "Don't know what semi-continuous means" << std::endl;
          }
       }

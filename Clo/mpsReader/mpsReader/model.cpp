@@ -10,7 +10,7 @@
 
 Var::Var(const std::string& name,int vid)
    : _name(name),_id(vid),_vt(Continuous),
-      _lb(0),_ub(DBL_MAX)
+      _lb(0),_ub(FLT_MAX)
 {}
 
 std::ostream& operator<<(std::ostream& os,const Var& m)
@@ -21,11 +21,11 @@ std::ostream& operator<<(std::ostream& os,const Var& m)
 std::ostream& Var::printFull(std::ostream& os) const
 {
    os << "[";
-   if (_lb == -DBL_MAX)
+   if (_lb == -FLT_MAX)
       os << "-inf";
    else os << _lb;
    os << ',';
-   if (_ub == DBL_MAX)
+   if (_ub == FLT_MAX)
       os << "+inf";
    else os << _ub;
    os << ',';

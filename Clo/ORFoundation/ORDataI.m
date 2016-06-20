@@ -270,6 +270,22 @@
    _tracker = tracker;
    return self;
 }
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORDoubleI allocWithZone:zone] init:_tracker value:_value];
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[ORDoubleI class]]) {
+      ORDoubleI* o = object;
+      return _value == o->_value;
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   long* pv = (long*)&_value;
+   return pv[0];
+}
 -(ORInt) min
 {
    return (ORInt)floor(_value);

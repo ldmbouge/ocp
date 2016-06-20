@@ -46,6 +46,7 @@ PORTABLE_BEGIN
 
 @protocol ORRealVar <ORExprVar>
 -(id<ORRealRange>) domain;
+-(void)setDomain:(id<ORRealRange>)domain;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;

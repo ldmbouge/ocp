@@ -61,24 +61,24 @@ int main(int argc, const char * argv[]) {
 //      [mip solve];
       
       
-      id<ORRelaxation> relax = [ORFactory createLinearRelaxation:mdl];
+      id<ORModel> smdl = [ORFactory strengthen:mdl];
+      
+      id<ORRelaxation> relax = [ORFactory createLinearRelaxation:smdl];
       id<ORAnnotation> notes = [ORFactory annotation];
+      id<ORIntVarArray> aiv = mdl.intVars;
       id<CPProgram> cps = [ORFactory createCPProgram:mdl
                                       withRelaxation:relax
                                           annotation:notes
                                                 with:[ORSemDFSController proto]];
-      id<ORIntVarArray> aiv = mdl.intVars;
-//      id<ORIntVarArray> bv = [ORFactory slice:mdl0 range:aiv.range suchThat:^ORBool(ORInt k) { return aiv[k].isBool;} of:^id(ORInt k) { return aiv[k];}];
-//      id<ORIntVarArray> dv = [ORFactory slice:mdl0 range:aiv.range suchThat:^ORBool(ORInt k) { return !aiv[k].isBool;} of:^id(ORInt k) { return aiv[k];}];
 
-      [cps solve:^{
+      ORTimeval t0 = [ORRuntimeMonitor now];
+      [cps solve:^{         
          PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
-         //PCBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
+         //FSBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
          [pcb branchOn:aiv];
-//         [pcb branchOn:bv];
-//         [pcb branchOn:dv];
-         double oval = [relax objective];
       }];
+      ORTimeval el = [ORRuntimeMonitor elapsedSince:t0];
+      NSLog(@"search done: #Fail=%d \t#Choice=%d  Elapsed: %ld",[cps nbFailures],[cps nbChoices],el.tv_sec);
    }
    return 0;
 }

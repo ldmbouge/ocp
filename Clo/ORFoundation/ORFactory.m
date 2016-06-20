@@ -92,19 +92,16 @@
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
    return [tracker trackImmutable: o];
-   return o;
 }
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORMutableIntegerI* o = [[ORMutableIntegerI alloc] initORMutableIntegerI: tracker value:value];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(id<ORDoubleNumber>) double: (id<ORTracker>) tracker value: (ORDouble) value
 {
    ORDoubleI* o = [[ORDoubleI alloc] init: tracker value: value];
-   [tracker trackImmutable: o];
-   return o;
+   return [tracker trackImmutable: o];
 }
 +(id<ORMutableDouble>) mutableDouble: (id<ORTracker>)tracker value: (ORDouble) value
 {
@@ -120,19 +117,17 @@
 +(id<ORTrailableInt>) trailableInt: (id<ORSearchEngine>) engine value: (ORInt) value
 {
    ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [engine trail] value:value];
-   [engine trackMutable: o];
-   return o;
+   return [engine trackMutable: o];
 }
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker
 {
    ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(id<ORIntSet>) intSet:(id<ORTracker>) tracker set:(NSSet*)theSet
 {
    ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
-   [tracker trackMutable:o];
+   o = [tracker trackMutable:o];
    for (NSNumber* k in theSet)
       [o insert:k.intValue];
    return o;
@@ -151,7 +146,7 @@
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray:tracker size:(ORInt)[array count] value:0];
-   [tracker trackMutable:o];
+   o = [tracker trackMutable:o];
    ORInt i = 0;
    for(NSNumber* k in array)
       [o set:k.intValue at:i++];
@@ -161,52 +156,44 @@
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range value: (ORInt) value];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORInt[]) values {
     ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range value: 0];
     for(ORInt i = [o.range low]; i <= [o.range up]; i++)
         [o set: values[i - [o.range low]]  at: i];
-    [tracker trackMutable: o];
-    return o;
+    return [tracker trackMutable: o];
 }
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range with:clo];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range: r1 range: r2 with:clo];    
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(ORDoubleArrayI*) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORDouble) value
 {
     ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range value: (ORDouble) value];
-    [tracker trackMutable: o];
-    return o;
+    return [tracker trackMutable: o];
 }
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORDouble[]) values {
     ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range value: 0];
     for(ORInt i = [o.range low]; i <= [o.range up]; i++)
         [o set: values[i - [o.range low]]  at: i];
-    [tracker trackMutable: o];
-    return o;
+    return [tracker trackMutable: o];
 }
 +(ORDoubleArrayI*) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORDouble(^)(ORInt)) clo
 {
     ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range:range with:clo];
-    [tracker trackMutable: o];
-    return o;
+    return [tracker trackMutable: o];
 }
 +(ORDoubleArrayI*) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORDouble(^)(ORInt,ORInt)) clo
 {
     ORDoubleArrayI* o = [[ORDoubleArrayI alloc] init: tracker range: r1 range: r2 with:clo];
-    [tracker trackMutable: o];
-    return o;
+    return [tracker trackMutable: o];
 }
 +(id<ORDoubleArray>) doubleArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr {
     return [ORFactory doubleArray: tracker range: [arr range] with:^ORDouble(ORInt i) {
@@ -278,44 +265,37 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker range:r0 :r1];
-   [tracker trackMutable:o];
-   return o;
+   return [tracker trackMutable:o];
 }
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker range:r0 :r1 :r2];
-   [tracker trackMutable:o];
-   return o;
+   return [tracker trackMutable:o];
 }
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    ORIntMatrixI* o = [[ORIntMatrixI alloc] initORIntMatrix: tracker range: r1 : r2];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with: (ORIntxInt2Int)block
 {
    ORIntMatrixI* o = [[ORIntMatrixI alloc] initORIntMatrix: tracker range: r1 : r2 with: block];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) m
 {
    ORIntMatrixI* o = [[ORIntMatrixI alloc] initORIntMatrix: tracker with: m];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker arity:(ORInt)arity ranges:(id<ORIntRange>*)ranges
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker arity:arity ranges:ranges];
-   [tracker trackMutable:o];
-   return o;
+   return [tracker trackMutable:o];
 }
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker with: (ORIdMatrixI*) m
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix: tracker with: m];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
@@ -327,8 +307,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    for(ORInt i = [r low]; i <= [r up]; i++)
       if (f == NULL || f(i))
          [o insert: e(i)];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 
 +(id<ORIntSet>) collect: (id<ORTracker>) tracker range: (id<ORIntRange>)r1 range:(id<ORIntRange>)r2
@@ -340,8 +319,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
       for(ORInt j = [r2 low]; i <= [r2 up]; j++)
       if (f == NULL || f(i,j))
          [o insert: e(i,j)];
-   [tracker trackMutable: o];
-   return o;
+   return [tracker trackMutable: o];
 }
 +(id) slice:(id<ORTracker>)model range:(id<ORIntRange>)r suchThat:(ORInt2Bool)f of:(ORInt2Id)e
 {
@@ -650,8 +628,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 {
    id<ORTable> tt = [self table:tracker arity:3];
    ORAutomatonI* o = [[ORAutomatonI alloc] init:a states:s transition:tf size:stf initial:is final:fs table:tt];
-   [tracker trackImmutable:o];
-   return o;
+   return [tracker trackImmutable:o];
 }
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
@@ -717,8 +694,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORVarLitterals>) varLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) v
 {
    id<ORVarLitterals> l = [[ORVarLitterals alloc] initORVarLitterals: tracker var: v];
-   [tracker trackImmutable: l];
-   return l;
+   return [tracker trackImmutable: l];
 }
 +(id<ORAnnotation>) annotation
 {

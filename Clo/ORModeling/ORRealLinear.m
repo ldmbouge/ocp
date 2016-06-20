@@ -66,7 +66,7 @@
       ORDouble svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
-    return (((ORFloat)MININT) > lb) ? MININT : lb;
+    return ((FLT_MIN) > lb) ? FLT_MIN : lb;
 }
 
 -(ORDouble) fmax
@@ -80,7 +80,7 @@
       ORDouble svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
-    return (((ORFloat)MAXINT) < ub) ? MAXINT : ub;
+    return ((FLT_MAX) < ub) ? FLT_MAX : ub;
 }
 
 -(void) addTerm: (id<ORVar>) x by: (ORDouble) c

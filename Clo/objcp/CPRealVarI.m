@@ -171,6 +171,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"var<%d>=",_name];
    [buf appendString:[_dom description]];
+   [buf appendFormat:@"(relaxValue:%f)",_value];
    return buf;
 }
 -(void)setDelegate:(id<CPRealVarNotifier>)delegate

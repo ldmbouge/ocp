@@ -300,7 +300,15 @@
 -(NSString*)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [rv appendFormat:@"[%lf,%lf]",_low,_up];
+   if (_low <= -FLT_MAX && _up >= FLT_MAX)
+      [rv appendFormat:@"[-inf,+inf]"];
+   else if (_low <= -FLT_MAX)
+      [rv appendFormat:@"[-inf,%lf]",_up];
+   else if (_up >= FLT_MAX)
+      [rv appendFormat:@"[%lf,+inf]",_low];
+   else
+      [rv appendFormat:@"[%lf,%lf]",_low,_up];
+
    return rv;
 }
 -(void)visit:(ORVisitor*)v

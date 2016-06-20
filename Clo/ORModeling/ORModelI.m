@@ -348,6 +348,18 @@
    }];
    return rv;
 }
+-(id<ORRealVarArray>)realVars
+{
+   ORInt k=0,nbReal = 0;
+   for(id<ORVar> xk in _vars)
+      nbReal += [xk conformsToProtocol:@protocol(ORRealVar)];
+   id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,nbReal-1)];
+   for(id<ORVar> xk in _vars)
+      if ([xk conformsToProtocol:@protocol(ORRealVar)])
+         rv[k++] = xk;
+   return rv;
+}
+
 -(NSArray*) variables
 {
    // [ldm] Why copy them out. NSArray is immutable anyhow.

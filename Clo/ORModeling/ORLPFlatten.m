@@ -62,24 +62,31 @@
         return rv;
     }
 }
+
+static BOOL _alreadyAdded;
+
 -(void) apply: (id<ORModel>) m  with:(id<ORAnnotation>)notes
 {
     _notes = notes;
     _tau = [_into modelMappings].tau;
     [m applyOnVar:^(id<ORVar> x) {
-        [_into addVariable: [self flattenIt: x]];
+       [_into addVariable: [self flattenIt: x]];
     }
        onMutables:^(id<ORObject> x) {
-           [_into addMutable:[self flattenIt:x]];
+          [_into addMutable:[self flattenIt:x]];
        }
      onImmutables:^(id<ORObject> x) {
-         [_into addImmutable: x];
+        [_into addImmutable: x];
      }
     onConstraints:^(id<ORConstraint> c) {
-        [_into addConstraint:[self flattenIt:c]];
+       _alreadyAdded = NO;
+       id<ORConstraint> fc = [self flattenIt:c];
+       if (!_alreadyAdded)
+          [_into addConstraint:fc];
+       assert(_alreadyAdded == YES);
     }
       onObjective:^(id<ORObjectiveFunction> o) {
-          [self flattenIt:o];
+         [self flattenIt:o];
       }];
 }
 
@@ -93,6 +100,7 @@
        case ORREq:
        {
           cstr = [terms postEQZ: model];
+          _alreadyAdded = YES;
        }
           break;
        case ORRNEq:
@@ -102,9 +110,11 @@
           break;
        case ORRLEq:{
           cstr = [terms postLEQZ: model];
+          _alreadyAdded = YES;
        }break;
        case ORRGEq: {
           cstr = [terms postGEQZ:model];
+          _alreadyAdded = YES;
        }break;
        default:
           assert(terms == nil);

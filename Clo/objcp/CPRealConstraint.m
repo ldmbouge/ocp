@@ -453,8 +453,8 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
-   _primalBound = DBL_MAX;
-   _dualBound = - DBL_MAX;
+   _primalBound = FLT_MAX;
+   _dualBound = - FLT_MAX;
    return self;
 }
 -(id<CPRealVar>)var
@@ -467,7 +467,7 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 }
 -(void) post
 {
-   _primalBound = MAXINT;
+   _primalBound = FLT_MAX;
    if (![_x bound])
       [_x whenChangeMinDo: ^ {
          [_x updateMax: _primalBound];
@@ -571,7 +571,10 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"Real-MINIMIZE(%@) with f* = %f",[_x description],_primalBound];
+   if (_primalBound >= FLT_MAX)
+      [buf appendFormat:@"Real-MINIMIZE(%@) with f* = +inf",[_x description]];
+   else
+      [buf appendFormat:@"Real-MINIMIZE(%@) with f* = %f",[_x description],_primalBound];
    return buf;
 }
 @end
@@ -585,8 +588,8 @@ int compareCPRealEltRecords(const CPRealEltRecord* r1,const CPRealEltRecord* r2)
 {
     self = [super initCPCoreConstraint:[x engine]];
    _x = x;
-   _primalBound = -MAXINT;
-   _dualBound   = MAXINT;
+   _primalBound = -FLT_MAX;
+   _dualBound   = FLT_MAX;
    return self;
 }
 -(id<CPRealVar>)var

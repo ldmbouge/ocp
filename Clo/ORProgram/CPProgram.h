@@ -40,6 +40,7 @@ PORTABLE_BEGIN
 -(void) setSource:(id<ORModel>)src;
 -(id<ORModel>)       source;
 -(ORInt)         nbFailures;
+-(ORInt)          nbChoices;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
 -(id<ORSearchObjectiveFunction>) objective;
@@ -53,6 +54,7 @@ PORTABLE_BEGIN
 -(void)               gthen: (id<ORIntVar>) var double: (ORDouble) val;
 -(void)               lthen: (id<ORIntVar>) var double: (ORDouble) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)          realLabel: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)         addConstraintDuringSearch: (id<ORConstraint>) c;

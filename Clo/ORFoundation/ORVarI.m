@@ -262,6 +262,10 @@
    [track trackVariable: self];
    return self;
 }
+-(void)setDomain:(id<ORRealRange>)domain
+{
+   _domain = domain;
+}
 -(id<ORRealRange>) domain
 {
    assert(_domain != NULL);
@@ -295,11 +299,11 @@
 }
 -(NSString*) description
 {
-   if (_domain.low == - DBL_MAX && _domain.up == DBL_MAX)
+   if (_domain.low <= - FLT_MAX && _domain.up >= FLT_MAX)
       return [NSString stringWithFormat:@"var<OR>{real}:%03d(-inf,+inf)",_name];
-   else if (_domain.low == - DBL_MAX)
+   else if (_domain.low <= - FLT_MAX)
       return [NSString stringWithFormat:@"var<OR>{real}:%03d(-inf,%f)",_name,_domain.up];
-   else if (_domain.up == DBL_MAX)
+   else if (_domain.up >= FLT_MAX)
       return [NSString stringWithFormat:@"var<OR>{real}:%03d(%f,+inf)",_name,_domain.low];
    else
       return [NSString stringWithFormat:@"var<OR>{real}:%03d(%f,%f)",_name,_domain.low,_domain.up];

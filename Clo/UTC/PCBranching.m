@@ -94,12 +94,14 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    @protected
    id<CPCommonProgram>    _p;
    id<ORRelaxation>   _relax;
+   id<ORRealVarArray>  _realVars;
 }
 -(id)init:(id<CPCommonProgram>)p relax:(id<ORRelaxation>)relax
 {
    self = [super init];
    _p = p;
    _relax = relax;
+   _realVars = [[[_p source] rootModel] realVars];
    return self;
 }
 -(ORBool)selectVar:(id<ORIntVarArray>)x index:(ORInt*)k  value:(ORDouble*)rv
@@ -121,7 +123,9 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
             [_p gthen:x[bi] with:im];
          }];
       } else {
+         [self probe:x];
          [[_p explorer] fail];
+         break;
       }
    }
 }
@@ -135,8 +139,24 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_p];
    [_p nestedOptimize:^{
-      [_p limitTime:1000 in:^{
+      [_p limitTime:60000 in:^{
          [self theSearch:x];
+         NSLog(@"Reached here...");
+         ORStatus ok = [[_p engine] atomic:^{
+            for(id<ORRealVar>  rvk in _realVars) {
+               ORDouble vinRelax = [_relax value:rvk];
+               [_p assignRelaxationValue:vinRelax to:rvk];
+               //[_p realLabel:rvk with:vinRelax];
+               [_p realGthen:rvk with:vinRelax - 0.000001];
+               [_p realLthen:rvk with:vinRelax + 0.000001];
+            }
+         }];
+         if (ok==ORFailure)
+            [[_p explorer] fail];
+         [[_p objective] updatePrimalBound];
+         NSLog(@"full solution! %@",[_p objectiveValue]);
+         [_p doOnSolution];
+         [[_p explorer] fail];
       }];
       NSLog(@"Back from limit...");
    } onSolution: nil
@@ -144,12 +164,53 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
         control:[[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
 }
 
+-(void)pureDFS:(id<ORIntVarArray>)x
+{
+   id<ORRealVarArray> rv = [[[_p source] rootModel] realVars];
+   id<ORPost> pItf = [[CPINCModel alloc] init:_p];
+   [_p nestedOptimize:^{
+      [self theSearch:x];
+      NSLog(@"pureDFS Reached here...");
+      ORStatus ok = [[_p engine] atomic:^{
+         for(id<ORRealVar>  rvk in _realVars) {
+            ORDouble vinRelax = [_relax value:rvk];
+            [_p assignRelaxationValue:vinRelax to:rvk];
+            [_p realGthen:rvk with:vinRelax - 0.000001];
+            [_p realLthen:rvk with:vinRelax + 0.000001];
+         }
+      }];
+      if (ok==ORFailure)
+         [[_p explorer] fail];
+      [[_p objective] updatePrimalBound];
+      NSLog(@"pureDFS full solution! %@",[_p objectiveValue]);
+      [_p doOnSolution];
+      [[_p explorer] fail];
+   } onSolution: nil
+               onExit: nil
+              control:[[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
+}
+
 -(void)mainSearch:(id<ORIntVarArray>)x
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_p];
    [_p nestedOptimize:^{
       [self theSearch:x];
-   } onSolution:nil
+      NSLog(@"Reached here...");
+      ORStatus ok = [[_p engine] atomic:^{
+         for(id<ORRealVar>  rvk in _realVars) {
+            ORDouble vinRelax = [_relax value:rvk];
+            [_p assignRelaxationValue:vinRelax to:rvk];
+            [_p realGthen:rvk with:vinRelax - 0.000001];
+            [_p realLthen:rvk with:vinRelax + 0.000001];
+         }
+      }];
+      if (ok==ORFailure)
+         [[_p explorer] fail];
+      [[_p objective] updatePrimalBound];
+      NSLog(@"MAIN: full solution! %@",[_p objectiveValue]);
+      [_p doOnSolution];
+      [[_p explorer] fail];
+   } onSolution: nil
                onExit:nil
               control:[[ORSemBFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
 }
@@ -166,6 +227,12 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                [_p label:x[i] with:rv];
                reached = i;
             }
+            
+            for(id<ORRealVar>  rvk in _realVars) {
+               ORDouble vinRelax = [_relax value:rvk];
+               [_p assignRelaxationValue:vinRelax to:rvk];
+            }
+
             [[_p objective] updatePrimalBound];
             NSLog(@"Probe successful! %@",[_p objectiveValue]);
          } alt:^{
@@ -335,22 +402,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    if (found) {
       *k = bk;
       *rv = brk;
-      return found;
-   } else {
-      if (nbFree < nbVars)
-         [self probe:_vars];
-      else
-         NSLog(@"All vars bound...");
-//      [_p select:_vars minimizing:^ORDouble(ORInt i) { return [_p domsize:x[i]];}
-//              in:^void(ORInt i) {
-//                 ORInt min = [_p min:x[i]],max = [_p max:x[i]];
-//                 ORInt mid = min + (max-min)/2;
-//                 *k = i;
-//                 *rv = mid;
-//                 found =  YES;
-//              }];
-      return found;
    }
+   return found;
 }
 
 -(void)theSearch:(id<ORIntVarArray>)x
@@ -371,7 +424,10 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
             }];
          }];
       } else {
-         NSLog(@"Found nothing to branch on?");
+         // Not everyone is bound, but everyone looks integral.
+         // Try to bind them via probing.
+         [self probe:_vars];
+         [[_p explorer] fail];
          break;
       }
    }
@@ -458,7 +514,6 @@ static long nbCall = 0;
       nbFrac += (xf != 0);
    }
    if (nbFrac == 0) {
-      [self probe:_vars];
       return NO;
    } else {
       int idx[nbFrac];
@@ -545,7 +600,7 @@ static long nbCall = 0;
          
          //ORDouble wi = minDbl(cup[i],cdw[i]);
 
-         //NSLog(@"\tSB(%d) %f : cdw/cup = %f | %f",idx[i],wi,cdw[i],cup[i]);
+         //NSLog(@"\tSB(%d) %3.15f : cdw/cup = %3.15f | %3.15f",idx[i],wi,cdw[i],cup[i]);
          
          if (wi > best) {
             best = wi;

@@ -56,6 +56,7 @@ PORTABLE_BEGIN
 +(id<ORSolution>) solution: (id<ORModel>) m solver: (id<ORASolver>) solver;
 +(id<ORSolution>) parameterizedSolution: (id<ORParameterizedModel>) m solver: (id<ORASolver>) solver;
 +(id<ORSolutionPool>) createSolutionPool;
++(id<ORModel>)strengthen:(id<ORModel>)m0;
 @end
 
 @interface ORLinearRelaxation : NSObject<ORRelaxation>
@@ -69,6 +70,10 @@ PORTABLE_BEGIN
 -(OROutcome) solve;
 -(double)reducedCost:(id<ORVar>) x;
 -(ORBool)inBasis:(id<ORVar>) x;
+@end
+
+@interface ORStrengthening : NSObject
+-(id<ORModel>) apply:(id<ORModel>)m;
 @end
 
 PORTABLE_END

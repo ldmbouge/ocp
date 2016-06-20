@@ -248,6 +248,10 @@
 {
    return [_search nbFailures];
 }
+-(ORInt) nbChoices
+{
+   return [_search nbChoices];
+}
 -(id<CPEngine>) engine
 {
    return _engine;
@@ -574,6 +578,10 @@
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method gthenImpl not implemented"];
+}
+-(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method realLabelImpl: not implemented"];
 }
 -(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
@@ -1045,6 +1053,10 @@
 -(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
    return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
+}
+-(void) realLabel: (id<ORRealVar>) var with: (ORDouble) val
+{
+   [self realLabelImpl:_gamma[var.getId] with:val];
 }
 -(void) realLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
@@ -1522,6 +1534,13 @@
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
+-(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateInterval:createORI1(val)];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
 -(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
@@ -1647,6 +1666,11 @@
    [self gthenImpl: _gamma[var.getId] with: iVal];
    [_tracer addCommand: [ORFactory gEqualc:self var:var to:iVal+1]];
 }
+-(void) realLabel:(id<ORRealVar>)var with:(ORDouble)val
+{
+   [self realLabelImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory realEqualc:self var:var to:val]];
+}
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -1700,6 +1724,42 @@
    ORStatus status = [_engine enforce:^ { [[var domain] setBit:i to:val for:var];}];
    if (status == ORFailure)
       [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce: ^ {
+      [var updateInterval:createORI1(val)];
+   }];
+   if (status == ORFailure) {
+      //[_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   //[_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
+}
+-(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce: ^ {
+      [var updateMax:val];
+   }];
+   if (status == ORFailure) {
+      //[_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   //[_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
+}
+-(void) realGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce: ^ {
+      [var updateMin:val];
+   }];
+   if (status == ORFailure) {
+      //[_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   //[_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 @end

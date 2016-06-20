@@ -101,13 +101,12 @@
    _model  = model;
    _k      = NULL;
    _buf    = [[ORPQueue alloc] init:^BOOL(BFSKey* a,BFSKey* b) {
-//      return [a->_v compare:b->_v] == NSOrderedAscending; // BAD
       NSComparisonResult cr = [a->_v compare:b->_v];
       switch(cr) {
          case NSOrderedDescending: return true;
          case NSOrderedAscending: return false;
          case NSOrderedSame: {
-            return a->_depth < b->_depth;
+            return a->_depth > b->_depth;
          }
       }
       //return [a->_v compare:b->_v] == NSOrderedDescending; // GOOD
