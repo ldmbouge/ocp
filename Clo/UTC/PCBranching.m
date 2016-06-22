@@ -9,7 +9,7 @@
 #import "PCBranching.h"
 #include <math.h>
 
-#define ALPHAVALUE 2.0
+#define ALPHAVALUE 8.0
 
 @interface VStat : NSObject {
    double _down;
@@ -139,7 +139,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_p];
    [_p nestedOptimize:^{
-      [_p limitTime:60000 in:^{
+      [_p limitTime:5000 in:^{
          [self theSearch:x];
          NSLog(@"Reached here...");
          ORStatus ok = [[_p engine] atomic:^{
@@ -194,22 +194,27 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_p];
    [_p nestedOptimize:^{
-      [self theSearch:x];
-      NSLog(@"Reached here...");
-      ORStatus ok = [[_p engine] atomic:^{
-         for(id<ORRealVar>  rvk in _realVars) {
-            ORDouble vinRelax = [_relax value:rvk];
-            [_p assignRelaxationValue:vinRelax to:rvk];
-            [_p realGthen:rvk with:vinRelax - 0.000001];
-            [_p realLthen:rvk with:vinRelax + 0.000001];
-         }
-      }];
-      if (ok==ORFailure)
+      [_p switchOnDepth:^{
+         [self theSearch:x];
+         NSLog(@"Reached here...");
+         ORStatus ok = [[_p engine] atomic:^{
+            for(id<ORRealVar>  rvk in _realVars) {
+               ORDouble vinRelax = [_relax value:rvk];
+               [_p assignRelaxationValue:vinRelax to:rvk];
+               [_p realGthen:rvk with:vinRelax - 0.000001];
+               [_p realLthen:rvk with:vinRelax + 0.000001];
+            }
+         }];
+         if (ok==ORFailure)
+            [[_p explorer] fail];
+         [[_p objective] updatePrimalBound];
+         NSLog(@"MAIN: full solution! %@",[_p objectiveValue]);
+         [_p doOnSolution];
          [[_p explorer] fail];
-      [[_p objective] updatePrimalBound];
-      NSLog(@"MAIN: full solution! %@",[_p objectiveValue]);
-      [_p doOnSolution];
-      [[_p explorer] fail];
+      } to:^{
+         [self pureDFS:x];
+         [[_p explorer] fail];
+      } limit:10];
    } onSolution: nil
                onExit:nil
               control:[[ORSemBFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];

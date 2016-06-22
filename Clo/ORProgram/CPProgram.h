@@ -118,6 +118,7 @@ PORTABLE_BEGIN
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)         nestedSolve: (ORClosure) body;
+-(void)      nestedSolveAll: (ORClosure) body onSolution: (PNULLABLE ORClosure) onSolution onExit: (PNULLABLE ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
@@ -172,6 +173,7 @@ PORTABLE_BEGIN
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
 -(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x;
 -(ORBool) allBound:(id<ORIdArray>) x;
+-(void)       switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 @end
 
 // CPSolver with syntactic DFS Search

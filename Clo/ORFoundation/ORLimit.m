@@ -351,6 +351,11 @@
    else
       [_controller startTry];
 }
+-(void)trust
+{
+   assignTRInt(&_depth,_depth._val + 1,_trail);
+   [super trust];
+}
 @end
 
 

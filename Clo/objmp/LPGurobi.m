@@ -215,36 +215,29 @@
 
 -(void) setBounds: (LPVariableI*) var low: (ORDouble) low up: (ORDouble) up
 {
-   GRBsetdblattrelement(_model,"LB",[var idx],low);
-   GRBsetdblattrelement(_model,"UB",[var idx],low);
+   ORInt idx = var->_idx;
+   GRBsetdblattrelement(_model,"LB",idx,low);
+   GRBsetdblattrelement(_model,"UB",idx,up);
 }
 
 -(void) setUnboundUpperBound: (LPVariableI*) var
 {
-   GRBsetdblattrelement(_model,"UB",[var idx],1e21);
+   GRBsetdblattrelement(_model,"UB",var->_idx,1e21);
 }
 
 -(void) setUnboundLowerBound: (LPVariableI*) var
 {
-   GRBsetdblattrelement(_model,"LB",[var idx],-1e21);
+   GRBsetdblattrelement(_model,"LB",var->_idx,-1e21);
 }
 
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb
 {
-//   if (lb > [self lowerBound: var])
-   GRBsetdblattrelement(_model,"LB",[var idx],lb);
+   GRBsetdblattrelement(_model,"LB",var->_idx,lb);
 }
 
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub
 {
-//   if (ub < [self upperBound: var])
-
-//   double oldLB = [self lowerBound:var];
-//   double oldUB = [self upperBound:var];
-//   if (ub < oldUB) {
-//      NSLog(@"About to tighten UB var(%d) from [%f ,** %f] to %f",[var idx],oldLB,oldUB,ub);
-//   }
-   int errCode = GRBsetdblattrelement(_model,"UB",[var idx],ub);
+   GRBsetdblattrelement(_model,"UB",var->_idx,ub);
 }
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val

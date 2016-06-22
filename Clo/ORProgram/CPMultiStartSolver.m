@@ -98,6 +98,10 @@
 {
    return [[self worker] nbFailures];
 }
+-(ORInt)          nbChoices
+{
+   return [[self worker] nbChoices];
+}
 -(id<ORSearchEngine>) engine
 {
    return (id<ORSearchEngine>) [[self worker] engine];
@@ -304,6 +308,10 @@
 {
    [[self worker] nestedSolve: body];
 }
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc
+{
+   [[self worker] nestedSolveAll:body onSolution:onSolution onExit:onExit control:sc];
+}
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [[self worker] nestedSolveAll: body onSolution: onSolution onExit: onExit];
@@ -424,6 +432,10 @@
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [[self worker] restrict: var to: S];
+}
+-(void) realLabel: (id<ORRealVar>) var with: (ORDouble) val
+{
+   [[self worker] realLabel:var with:val];
 }
 -(void) realLthen: (id<ORRealVar>) var with: (ORDouble) val
 {

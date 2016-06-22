@@ -186,6 +186,10 @@
    [_doOnExitArray release];
    [super dealloc];
 }
+-(id<ORMemoryTrail>)memoryTrail
+{
+   return _mt;
+}
 -(id<ORTracker>)tracker
 {
    return _engine;
@@ -271,6 +275,10 @@
 -(id<ORTracer>) tracer
 {
    return _tracer;
+}
+-(void)tracer:(id<ORTracer>)tracer
+{
+   _tracer = tracer;
 }
 -(void) close
 {
@@ -522,6 +530,11 @@
 {
    [_search nestedSolve: body onSolution:nil onExit:nil
                 control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
+}
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc
+{
+   [_search nestedSolveAll:body onSolution:onSolution onExit:onExit
+                   control:[[ORNestedController alloc] init:sc parent:[_search controller]]];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {

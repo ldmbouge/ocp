@@ -238,19 +238,19 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
-   [self whenBindPropagate:c priority:HIGHEST_PRIO];
+   [self whenBindPropagate:c priority:c->_priority];
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeMinPropagate:c priority:HIGHEST_PRIO];
+   [self whenChangeMinPropagate:c priority:c->_priority];
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeMaxPropagate:c priority:HIGHEST_PRIO];
+   [self whenChangeMaxPropagate:c priority:c->_priority];
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
+   [self whenChangeBoundsPropagate:c priority:c->_priority];
 }
 
 -(void) bindEvt:(id<CPFDom>)sender

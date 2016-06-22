@@ -489,8 +489,8 @@
 @implementation ORStrengthening
 -(id<ORModel>) apply:(id<ORModel>)m
 {
-   id<ORIntVar> aiv = m.intVars;
-   id<ORRealVar> afv = m.realVars;
+   id<ORIntVarArray> aiv = m.intVars;
+   id<ORRealVarArray> afv = m.realVars;
    id<CPProgram> cps = [ORFactory createCPProgram:m];
    [cps solve:^{
       for(id<ORIntVar> xi in aiv) {

@@ -84,6 +84,8 @@
 -(id<ORIntVar>)smallestDom:(id<ORIdArray>)x;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c;
 -(void) defaultSearch;
+-(id<ORMemoryTrail>)memoryTrail;
+-(void)tracer:(id<ORTracer>)tracer;
 @end
 
 // Pure DFS CPSolver

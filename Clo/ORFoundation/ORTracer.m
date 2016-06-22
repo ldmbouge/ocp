@@ -405,6 +405,10 @@ static __thread id checkPointCache = NULL;
 {
    return _level._val;
 }
+-(void) addCommand: (id<ORConstraint>) com
+{
+}
+
 @end
 
 // ==============================================================================

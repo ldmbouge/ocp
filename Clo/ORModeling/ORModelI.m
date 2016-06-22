@@ -357,7 +357,7 @@
    for(id<ORVar> xk in _vars)
       if ([xk conformsToProtocol:@protocol(ORRealVar)])
          rv[k++] = xk;
-   return rv;
+   return (id<ORRealVarArray>)rv;
 }
 
 -(NSArray*) variables

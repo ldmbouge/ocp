@@ -68,11 +68,11 @@ int main(int argc, const char * argv[]) {
       id<ORIntVarArray> aiv = mdl.intVars;
       id<CPProgram> cps = [ORFactory createCPProgram:mdl
                                       withRelaxation:relax
-                                          annotation:notes
+                                          annotation:notes //];
                                                 with:[ORSemDFSController proto]];
 
       ORTimeval t0 = [ORRuntimeMonitor now];
-      [cps solve:^{         
+      [cps solve:^{
          PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
          //FSBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
          [pcb branchOn:aiv];
