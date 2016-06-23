@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
          [note dc:[mdl add: [ORFactory alldifferent: x]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i] plus:@(i)])]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i]  sub:@(i)])]]];
-         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl annotation:note with:[ORSemDFSController class]];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl annotation:note with:[ORSemDFSController proto]];
          id<CPHeuristic> h = [cp createFDS];
          [cp clearOnSolution];     // do not save the solutions (the other solvers do not).
          __block ORInt nbSol = 0;
@@ -54,6 +54,11 @@ int main(int argc, const char * argv[])
 //             }
              
              //[cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
+             printf("sol %d [",nbSol);
+             for(ORInt i=1;i<= n;i++)
+                printf("%d%c",[cp intValue:x[i]],i<n ? ',' : ' ');
+             printf("]\n");
+             
              @synchronized(cp) { // synchronized so that it works correctly even when asking parallel tree search
                 nbSol++;
              }

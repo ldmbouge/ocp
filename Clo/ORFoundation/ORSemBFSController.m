@@ -215,6 +215,7 @@
 -(void) trust
 {
    [_tracer trust];
+   [_tracer pushNode];
 }
 
 NSString * const ORStatus_toString[] = {

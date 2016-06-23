@@ -9,7 +9,7 @@
 #import "PCBranching.h"
 #include <math.h>
 
-#define ALPHAVALUE 8.0
+#define ALPHAVALUE 2.0
 
 @interface VStat : NSObject {
    double _down;
@@ -187,7 +187,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       [[_p explorer] fail];
    } onSolution: nil
                onExit: nil
-              control:[[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
+              control:[[ORDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
 }
 
 -(void)mainSearch:(id<ORIntVarArray>)x
@@ -474,6 +474,7 @@ static long nbCall = 0;
    double df = _flip * (f1 - f0);
    double downRate = df / m;
    assert(!isnan(downRate));
+//   if (fabs(df) > 0.001)
    [self recordVar:x low:downRate];
 }
 -(void)measureUp:(id<ORVar>)x relaxedValue:(ORDouble)xv for:(ORClosure)cl
@@ -490,6 +491,7 @@ static long nbCall = 0;
    double df = _flip * (f1 - f0);
    double upRate = df / m;
    assert(!isnan(upRate));
+//   if (fabs(df) > 0.001)
    [self recordVar:x up:upRate];
 }
 @end

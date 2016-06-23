@@ -39,7 +39,7 @@ int main(int argc, const char * argv[])
                 }
              } onSolution: nil
                          onExit: nil
-                        control:[[ORDFSController alloc] initTheController:[cp tracer] engine:[cp engine] posting:pItf]];
+                        control:[[ORSemDFSController alloc] initTheController:[cp tracer] engine:[cp engine] posting:pItf]];
 
           }];
          printf("GOT %d solutions\n",nbSol);

@@ -472,8 +472,8 @@ static __thread id checkPointCache = NULL;
 }
 -(void)       trust
 {
- //  assignTRInt(&_level,_level._val+1,_trail);
-   [self pushNode];
+   assignTRInt(&_level,_level._val+1,_trail);
+   //[self pushNode];  // [ldm] trying to remove this but it causes trouble.
 }
 -(ORInt)      level
 {
