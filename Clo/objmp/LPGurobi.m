@@ -36,7 +36,7 @@
    GRBnewmodel(_env, &_model, "", 0, NULL, NULL, NULL, NULL, NULL);
 //   GRBsetintparam(_env,"OutputFlag",0);
 
-   error = GRBsetintparam(_env, GRB_INT_PAR_METHOD, GRB_METHOD_DUAL);
+   //error = GRBsetintparam(_env, GRB_INT_PAR_METHOD, GRB_METHOD_DUAL);
    
    return self;
 }

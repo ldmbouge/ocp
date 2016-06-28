@@ -73,8 +73,8 @@ int main(int argc, const char * argv[]) {
 
       ORTimeval t0 = [ORRuntimeMonitor now];
       [cps solve:^{
-         PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
-         //FSBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
+         //PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
+         FSBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
          [pcb branchOn:aiv];
       }];
       ORTimeval el = [ORRuntimeMonitor elapsedSince:t0];

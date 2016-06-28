@@ -121,6 +121,7 @@ typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROu
 -(ORDouble) upperBound: (id<ORVar>) x;
 -(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f;
 -(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
+-(void) updateBounds:(id<ORVar>)x lower:(ORDouble)low  upper:(ORDouble)up;
 -(OROutcome) solve;
 -(void) close;
 -(double)reducedCost:(id<ORVar>)x;

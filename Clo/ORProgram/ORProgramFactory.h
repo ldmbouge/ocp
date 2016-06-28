@@ -64,6 +64,7 @@ PORTABLE_BEGIN
 -(ORDouble) objective;
 -(ORDouble) lowerBound: (id<ORVar>) x;
 -(ORDouble) upperBound: (id<ORVar>) x;
+-(void) updateBounds:(id<ORVar>)var lower:(ORDouble)low  upper:(ORDouble)up;
 -(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f;
 -(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
 -(void) close;

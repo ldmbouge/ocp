@@ -455,6 +455,10 @@
 {
    return [_lprelaxation upperBound: x];
 }
+-(void) updateBounds:(id<ORVar>)var lower:(ORDouble)low  upper:(ORDouble)up
+{
+   [_lprelaxation updateBounds:var lower:low upper:up];
+}
 -(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f
 {
    [_lprelaxation updateLowerBound: x with:f];

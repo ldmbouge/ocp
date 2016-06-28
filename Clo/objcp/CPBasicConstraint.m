@@ -2439,11 +2439,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    [_relaxation close];
    NSUInteger nb = [_cv count];
    for(ORInt i = 0; i < nb; i++) {
-      //CPIntVar* x = (CPIntVar*) _cv[i];
       assignTRDouble(&_min[i],[_cv[i] doubleMin],_trail);
       assignTRDouble(&_max[i],[_cv[i] doubleMax],_trail);
-      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] doubleMin]];
-      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
+      [_relaxation updateBounds:_mv[i] lower:_min[i]._val upper:_max[i]._val];
       
       [_cv[i] whenChangeBoundsPropagate: self];
       
@@ -2461,18 +2459,15 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
             ORDouble omin = _min[i]._val;
             ORDouble omax = _max[i]._val;
             [_trail trailClosure: ^{
-               [_relaxation updateLowerBound: _mv[i] with: omin];
-               [_relaxation updateUpperBound: _mv[i] with: omax];
+               [_relaxation updateBounds:_mv[i] lower:omin upper:omax];
             }];
             incrFXInt(&_updated[i],_trail);
-          
          }
          ORDouble lb = [_cv[i] doubleMin];
          ORDouble ub = [_cv[i] doubleMax];
          assignTRDouble(&_min[i],lb,_trail);
          assignTRDouble(&_max[i],ub,_trail);
-         [_relaxation updateLowerBound: _mv[i] with: lb];
-         [_relaxation updateUpperBound: _mv[i] with: ub];
+         [_relaxation updateBounds:_mv[i] lower:lb upper:ub];
       }
       onBehalf: self];
    }

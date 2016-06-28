@@ -54,6 +54,11 @@
 			<key>orderHint</key>
 			<integer>19</integer>
 		</dict>
+		<key>FanghuiTest.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>130</integer>
+		</dict>
 		<key>GAP.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -232,7 +237,7 @@
 		<key>diet.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>130</integer>
+			<integer>129</integer>
 		</dict>
 		<key>driver.xcscheme</key>
 		<dict>
@@ -813,6 +818,11 @@
 			<true/>
 		</dict>
 		<key>5B28CB0416691F0C008AB802</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B2CEB481D22D0330099F276</key>
 		<dict>
 			<key>primary</key>
 			<true/>

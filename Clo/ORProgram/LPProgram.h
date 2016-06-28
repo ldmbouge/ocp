@@ -57,6 +57,7 @@
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lowerBound: (id<ORVar>) v;
 -(ORDouble) upperBound: (id<ORVar>) v;
+-(void) updateBounds:(id<ORVar>)x lower:(ORDouble)low  upper:(ORDouble)up;
 -(void) updateLowerBound: (id<ORVar>) v with: (ORDouble) lb;
 -(void) updateUpperBound: (id<ORVar>) v with: (ORDouble) ub;
 @end

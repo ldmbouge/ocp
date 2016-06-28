@@ -1506,6 +1506,10 @@
 #endif
 }
 
+-(void) updateBounds:(LPVariableI*)var lower:(ORDouble)low  upper:(ORDouble)up
+{
+   [_lp setBounds:var low:low up:up];
+}
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb
 {
    [_lp updateLowerBound: var lb: lb];

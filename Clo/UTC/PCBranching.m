@@ -123,7 +123,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
             [_p gthen:x[bi] with:im];
          }];
       } else {
-         [self probe:x];
+         [self fixAndDive:x];
          [[_p explorer] fail];
          break;
       }
@@ -161,7 +161,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       NSLog(@"Back from limit...");
    } onSolution: nil
          onExit: nil
-        control:[[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
+        control:[[ORSemBDSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
 }
 
 -(void)pureDFS:(id<ORIntVarArray>)x
@@ -214,12 +214,12 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       } to:^{
          [self pureDFS:x];
          [[_p explorer] fail];
-      } limit:10];
+      } limit:15];
    } onSolution: nil
                onExit:nil
               control:[[ORSemBFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
 }
--(void)probe:(id<ORIntVarArray>)x
+-(void)fixAndDive:(id<ORIntVarArray>)x
 {
    [_p nestedSolve:^{
       [_p once:^{
@@ -233,15 +233,21 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                reached = i;
             }
             
-            for(id<ORRealVar>  rvk in _realVars) {
-               ORDouble vinRelax = [_relax value:rvk];
-               [_p assignRelaxationValue:vinRelax to:rvk];
-            }
-
+            ORStatus ok = [[_p engine] atomic:^{
+               for(id<ORRealVar>  rvk in _realVars) {
+                  ORDouble vinRelax = [_relax value:rvk];
+                  [_p assignRelaxationValue:vinRelax to:rvk];
+                  [_p realGthen:rvk with:vinRelax - 0.000001];
+                  [_p realLthen:rvk with:vinRelax + 0.000001];
+               }
+            }];
+            if (ok==ORFailure)
+               [[_p explorer] fail];
+         
             [[_p objective] updatePrimalBound];
-            NSLog(@"Probe successful! %@",[_p objectiveValue]);
+            NSLog(@"dive successful! %@",[_p objectiveValue]);
          } alt:^{
-            NSLog(@"Rounding probe failed... Reached [%d]",reached);
+            NSLog(@"dive probe failed... Reached [%d]",reached);
          }];
       }];
    } onSolution:^{
@@ -431,7 +437,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       } else {
          // Not everyone is bound, but everyone looks integral.
          // Try to bind them via probing.
-         [self probe:_vars];
+         [self fixAndDive:_vars];
          [[_p explorer] fail];
          break;
       }

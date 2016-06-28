@@ -320,6 +320,7 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lpValue;
 
+-(void) updateBounds:(LPVariableI*)var lower:(ORDouble)low  upper:(ORDouble)up;
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb;
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub;
 

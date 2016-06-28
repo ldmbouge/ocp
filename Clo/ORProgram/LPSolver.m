@@ -266,6 +266,10 @@
 {
    return [_lpsolver upperBound: _gamma[v.getId]];
 }
+-(void) updateBounds:(id<ORVar>)v lower:(ORDouble)low  upper:(ORDouble)up
+{
+   [_lpsolver updateBounds:_gamma[v.getId] lower:low upper:up];
+}
 -(void) updateLowerBound: (id<ORVar>) v with: (ORDouble) lb
 {
    [_lpsolver updateLowerBound: _gamma[v.getId] lb: lb];
