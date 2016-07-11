@@ -125,7 +125,13 @@ typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROu
 -(OROutcome) solve;
 -(void) close;
 -(double)reducedCost:(id<ORVar>)x;
+-(ORBool)triviallyRoundable:(id<ORVar>)x;
+-(ORBool)trivialDownRoundable:(id<ORVar>)var;
+-(ORBool)trivialUpRoundable:(id<ORVar>)var;
+-(ORInt)nbLocks:(id<ORVar>)var;
+-(ORBool)minLockDown:(id<ORVar>)var;
 -(ORBool)inBasis:(id<ORVar>)x;
+-(id)basis;
 @end
 
 PORTABLE_END

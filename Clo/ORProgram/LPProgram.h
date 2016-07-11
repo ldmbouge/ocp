@@ -53,6 +53,8 @@
 -(ORDouble) reducedCost: (id<ORVar>) v;
 -(ORDouble) doubleValue: (id<ORVar>) v;
 -(ORBool) inBasis: (id<ORVar>) v;
+-(id)basis;
+-(void)restoreBasis:(id)basis;
 -(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lowerBound: (id<ORVar>) v;

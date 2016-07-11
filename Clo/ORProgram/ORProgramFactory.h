@@ -59,7 +59,7 @@ PORTABLE_BEGIN
 +(id<ORModel>)strengthen:(id<ORModel>)m0;
 @end
 
-@interface ORLinearRelaxation : NSObject<ORRelaxation>
+@interface ORLinearRelaxation : ORObject<ORRelaxation>
 -(ORLinearRelaxation*) initLinearRelaxation: (id<ORModel>) m;
 -(ORDouble) objective;
 -(ORDouble) lowerBound: (id<ORVar>) x;
@@ -70,7 +70,14 @@ PORTABLE_BEGIN
 -(void) close;
 -(OROutcome) solve;
 -(double)reducedCost:(id<ORVar>) x;
+-(ORBool)triviallyRoundable:(id<ORVar>)x;
+-(ORBool)trivialDownRoundable:(id<ORVar>)var;
+-(ORBool)trivialUpRoundable:(id<ORVar>)var;
+-(ORInt)nbLocks:(id<ORVar>)var;
+-(ORBool)minLockDown:(id<ORVar>)var;
 -(ORBool)inBasis:(id<ORVar>) x;
+-(id)basis;
+-(void)restoreBasis:(id)basis;
 @end
 
 @interface ORStrengthening : NSObject

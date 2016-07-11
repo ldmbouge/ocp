@@ -222,6 +222,27 @@
 {
    return _size;
 }
+-(void)projectVariable:(LPVariableI*)var
+{
+   ORInt k = -1;
+   ORDouble coef;
+   for(ORInt i=0;i < _size;i++) {
+      if (_var[i] == var) {
+         k = i;
+         coef = _coef[i];
+         break;
+      }
+   }
+   if (k >= 0) {
+      for(ORInt i=k;i < _size-1;i++) {
+         _var[i]  = _var[i + 1];
+         _coef[i] = _coef[i + 1];
+      }
+      --_size;
+      assert(var.low == var.up);
+      _rhs -= coef * var.low;
+   }
+}
 -(LPVariableI**) var
 {
    _tmpVar = (LPVariableI**) malloc(_size * sizeof(LPVariableI*));
@@ -327,7 +348,43 @@
 {
    _nb = nb;
 }
-
+-(NSString*)description {
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(ORInt i =0;i < _size;i++) {
+      [buf appendFormat:@"%f x_%d %c ",_coef[i],_var[i].getId, i < _size - 1 ? '+' : ' '];
+   }
+   switch(_type) {
+      case LPleq: [buf appendFormat:@" ≤ %f",_rhs];break;
+      case LPgeq: [buf appendFormat:@" ≥ %f",_rhs];break;
+      case LPeq:  [buf appendFormat:@" = %f",_rhs];break;
+   }
+   return buf;
+}
+-(ORInterval) evaluation
+{
+   ORIReady();
+   ORInterval ttl = createORI1(0.0);
+   for(ORInt i = 0;i < _size;i++) {
+      ORInterval term = ORIMul(createORI1(_coef[i]),createORI2(_var[i].low,_var[i].up));
+      ttl = ORIAdd(ttl,term);
+   }
+   return ttl;
+}
+-(ORBool)redundant
+{
+   ORInterval bnds = [self evaluation];
+   ORInterval ev = ORISub(bnds,createORI1(_rhs));
+   switch(_type) {
+      case LPleq:
+         ev = ORISub(ev,createORI1(1e-14));
+         return ORISureNegative(ev);
+      case LPgeq:
+         ev = ORIAdd(ev,createORI1(1e-14));
+         return ORISurePositive(ev);
+      case LPeq:
+         return ORIBound(ev, 1e-12);
+   }
+}
 @end
 
 
@@ -432,6 +489,23 @@
 -(ORInt) size
 {
    return _size;
+}
+-(NSString*)description {
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   switch(_type) {
+      case LPminimize: [buf appendString:@"min "];break;
+      case LPmaximize: [buf appendString:@"max "];break;
+   }
+   for(ORInt i =0;i < _size;i++) {
+      [buf appendFormat:@"%f x_%d %c ",_coef[i],_var[i]->_idx, i < _size - 1 ? '+' : ' '];
+   }
+   return buf;
+}
+-(void)projectVariable:(LPVariableI*)var
+{
+   [self delVariable:var];
+   assert(var.low == var.up);
+   _cst += var.objCoef * var.low;
 }
 -(LPVariableI**) var
 {
@@ -613,6 +687,94 @@
    free(_coef);
    [super dealloc];
 }
+-(ORInt)downLock
+{
+   ORInt dl = 0;
+   for(ORInt i=0;i<_size;i++) {
+      if (_cstr[i] == nil) continue;
+      switch(_cstr[i].type) {
+         case LPleq: dl += _coef[i] <= 0;break;
+         case LPgeq: dl += _coef[i] >= 0;break;
+         case LPeq:  dl += _coef[i] == 0;break;
+      }
+   }
+   return dl;
+}
+-(ORInt)upLock
+{
+   ORInt ul = 0;
+   for(ORInt i=0;i<_size;i++) {
+      if (_cstr[i] == nil) continue;
+      switch(_cstr[i].type) {
+         case LPleq: ul += _coef[i] >= 0;break;
+         case LPgeq: ul += _coef[i] <= 0;break;
+         case LPeq:  ul += _coef[i] == 0;break;
+      }
+   }
+   return ul;
+}
+-(ORInt)locks
+{
+   ORInt dl = [self downLock],ul = [self upLock];
+   return min(dl, ul);
+}
+-(ORDouble)fractionality
+{
+   ORDouble frv = _idx == -1 ? _low : [_solver doubleValue:self];
+   ORDouble rv  = fabs(frv - floor(frv + 0.5));
+   return rv;
+}
+-(ORDouble)nearestInt
+{
+   ORDouble frv = _idx == -1 ? _low : [_solver doubleValue:self];
+   ORDouble ni = floor(frv + 0.5);
+}
+-(ORBool)trivialDownRoundable
+{
+   return [self upLock] == _size;
+}
+-(ORBool)trivialUpRoundable
+{
+   return [self downLock] == _size;
+}
+-(ORBool)triviallyRoundable
+{
+   return [self trivialDownRoundable] || [self trivialUpRoundable];
+}
+-(ORBool)fixable
+{
+   return [self canFixDown] || [self canFixUp];
+}
+-(ORBool) canFixDown
+{
+   return [self trivialDownRoundable] && (([_obj type] == LPminimize && _objCoef > 0) ||
+                                          ([_obj type] == LPmaximize && _objCoef < 0));
+}
+-(ORBool) canFixUp
+{
+   return [self trivialUpRoundable] && (([_obj type] == LPminimize && _objCoef < 0) ||
+                                        ([_obj type] == LPmaximize && _objCoef > 0));
+}
+-(ORBool) minLockDown
+{
+   ORInt dl = [self downLock],ul = [self upLock];
+   if (dl > ul)
+      return true;
+   else return false;
+}
+-(ORBool) fixMe
+{
+   ORBool fixed = false;
+   if (_low < _up && [self canFixDown]) {
+      _up = _low;
+      fixed = true;
+   }
+   if (_low < _up && [self canFixUp]) {
+      _low = _up;
+      fixed = true;
+   }
+   return fixed;
+}
 -(ORInt) idx
 {
    return _idx;
@@ -638,10 +800,14 @@
 {
    return _up;
 }
+-(ORDouble) objCoef
+{
+   return _objCoef;
+}
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"LPVariable(%d,[%f .. %f],%f)",_idx,[_solver lowerBound:self],[_solver upperBound:self],[_solver doubleValue:self]];
+   [buf appendFormat:@"var<LP>(x_%d[%d],(%f,%f) [%f .. %f | %f])",self.getId,_idx,_low,_up,[_solver lowerBound:self],[_solver upperBound:self],[_solver doubleValue:self]];
    return buf;
 }
 -(void) resize
@@ -1092,13 +1258,18 @@
    _createdObjs = 0;
    _createdCols = 0;
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _pStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _basis  = nil;
    return self;
 }
 -(void) dealloc
 {
    free(_var);
    free(_cstr);
+   [_lp release];
    [_oStore release];
+   [_pStore release];
+   [_basis release];
    [super dealloc];
 }
 -(id<ORTracker>)tracker
@@ -1129,6 +1300,7 @@
 -(LPVariableI*) createVariable
 {
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self];
+   [v setId: _createdVars];
    [v setNb: _createdVars++];
    [self addVariable: v];
    [self trackVariable: v];
@@ -1137,6 +1309,7 @@
 -(LPVariableI*) createVariable: (ORDouble) low up: (ORDouble) up
 {
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self low: low up: up];
+   [v setId: _createdVars];
    [v setNb: _createdVars++];
    [self addVariable: v];
    [self trackVariable: v];
@@ -1362,11 +1535,11 @@
    if (k >= 0) {
       [_lp delConstraint: cstr];
       [cstr del];
-      _nbCstrs--;
-      for(ORInt i = k; i < _nbCstrs; i++) {
+      for(ORInt i = k; i < _nbCstrs - 1; i++) {
          _cstr[i] = _cstr[i+1];
          [_cstr[i] setIdx: i];
       }
+      _nbCstrs--;
    }
    if (_isClosed)
       [_lp solve];
@@ -1386,6 +1559,36 @@
    if (k >= 0) {
       [_lp delVariable: var];
       [var del];
+      _nbVars--;
+      for(ORInt i = k; i < _nbVars; i++) {
+         _var[i] = _var[i+1];
+         [_var[i] setIdx: i];
+      }
+   }
+   if (_isClosed)
+      [_lp solve];
+}
+-(void)projectVariable:(LPVariableI*)var
+{
+   if (var.idx < 0)
+      @throw [[NSException alloc] initWithName:@"LPSolver Error"
+                                        reason:@"Variable is not present"
+                                      userInfo:nil];
+   int k = -1;
+   for(ORInt i = 0; i < _nbVars; i++)
+      if (_var[i] == var) {
+         k = i;
+         break;
+      }
+   if (k >= 0) {
+      // Variable _var[k] is variable var and should be replaced by its value (projected out) because
+      // var was _bound_ (fixed) as a result of cleaning up the model.
+      [_lp delVariable:var];
+      for(ORInt i=0;i < _nbCstrs;i++)
+         [_cstr[i] projectVariable:var];
+      [_obj projectVariable:var];
+      [_pStore addObject:var];
+      [var setIdx:-1]; // projected out.
       _nbVars--;
       for(ORInt i = k; i < _nbVars; i++) {
          _var[i] = _var[i+1];
@@ -1432,6 +1635,24 @@
 -(void) close
 {
    if (!_isClosed) {
+      ORBool improving = NO;
+      do {
+         improving = NO;
+         for(ORInt i=0;i < _nbCstrs;i++) {
+            ORBool isR = [_cstr[i] redundant];
+            improving |= isR;
+            if (isR) {
+               [self removeConstraint:_cstr[i]];
+               i -= 1; // we need to inspect the next constraint, can't skip.
+            }
+         }
+         for(ORInt i=0;i < _nbVars;i++) {
+            ORBool fixed = [_var[i] fixMe];
+            if (fixed)
+               [self projectVariable:_var[i--]]; // decrement i *after* to scan the next var 
+            improving |= fixed;
+         }
+      } while (improving);
       _isClosed = true;
       for(ORInt i = 0; i < _nbVars; i++)
          [_lp addVariable: _var[i]];
@@ -1444,12 +1665,32 @@
 {
    return _isClosed;
 }
+-(id<LPBasis>)basis
+{
+//   id<LPBasis> rv = _basis;
+//   _basis = nil;
+//   return rv;
+   return [_basis retain];
+}
+
 -(OROutcome) solve
 {
    if (!_isClosed)
       [self close];
- 
-   return [_lp solve];
+   OROutcome oc = [_lp solve];
+   [_basis release];
+   _basis = [_lp captureBasis];  // reference count is 1
+   return oc;
+}
+
+-(OROutcome) solveFrom:(id<LPBasis>)basis
+{
+   if (!_isClosed)
+      [self close];
+   OROutcome oc = [_lp solveFrom:basis];
+   [_basis release];
+   _basis = [_lp captureBasis];  // reference count is 1
+   return oc;
 }
 
 -(OROutcome) status;
@@ -1462,19 +1703,59 @@
 }
 -(ORDouble) lowerBound: (LPVariableI*) var
 {
-   return [_lp lowerBound: var];
+   if (var->_idx == -1)
+      return var.low;
+   else
+      return [_lp lowerBound: var];
 }
 -(ORDouble) upperBound: (LPVariableI*) var
 {
-   return [_lp upperBound: var];
+   if (var->_idx == -1)
+      return var.up;
+   else
+      return [_lp upperBound: var];
 }
 -(ORDouble) reducedCost: (LPVariableI*) var
 {
-   return [_lp reducedCost: var];
+   if (var->_idx == -1)
+      return 0.0;
+   else
+      return [_lp reducedCost: var];
 }
 -(ORBool) inBasis:(LPVariableI*)var
 {
-   return [_lp inBasis:var];
+   if (var->_idx == -1)
+      return NO;
+   else
+      return [_lp inBasis:var];
+}
+-(ORDouble)fractionality:(LPVariableI*)var
+{
+   return [var fractionality];
+}
+-(ORDouble)nearestInt:(LPVariableI*)var
+{
+   return [var nearestInt];
+}
+-(ORBool)triviallyRoundable:(LPVariableI*)var
+{
+   return [var triviallyRoundable];
+}
+-(ORBool)trivialDownRoundable:(LPVariableI*)var
+{
+   return [var trivialDownRoundable];
+}
+-(ORBool)trivialUpRoundable:(LPVariableI*)var
+{
+   return [var trivialUpRoundable];
+}
+-(ORInt)nbLocks:(LPVariableI*)var
+{
+   return [var locks];
+}
+-(ORBool)minLockDown:(LPVariableI*)var
+{
+   return [var minLockDown];
 }
 -(ORDouble) dual: (LPConstraintI*) cstr;
 {
@@ -1508,15 +1789,18 @@
 
 -(void) updateBounds:(LPVariableI*)var lower:(ORDouble)low  upper:(ORDouble)up
 {
-   [_lp setBounds:var low:low up:up];
+   if (var->_idx >= 0)
+      [_lp setBounds:var low:low up:up];
 }
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb
 {
-   [_lp updateLowerBound: var lb: lb];
+   if (var->_idx >= 0)
+      [_lp updateLowerBound: var lb: lb];
 }
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub
 {
-   [_lp updateUpperBound: var ub: ub];
+   if (var->_idx >= 0)
+      [_lp updateUpperBound: var ub: ub];
 }
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val
@@ -1552,9 +1836,33 @@
       printf("\n");
    }
 }
+-(NSMutableString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   @autoreleasepool {
+      if (_obj || _nbCstrs > 0) {
+         for(ORInt i=0;i < _nbVars;i++)
+            [buf appendFormat:@"\t%@\n",_var[i]];
+         if (_obj)
+            [buf appendString: [_obj description]];
+         [buf appendString:@"\nSubject to:\n"];
+         for(ORInt i=0;i < _nbCstrs;i++) {
+            [buf appendString:@"\t"];
+            [buf appendString:[_cstr[i] description]];
+            [buf appendString:@"\n"];
+         }
+      } else [buf appendString:@"empty model"];
+   }
+   return buf;
+}
 -(void) printModelToFile: (char*) fileName
 {
    [_lp printModelToFile: fileName];
+}
+
+-(void)restoreBasis:(id<LPBasis>)basis
+{
+   [_lp restoreBasis:basis];
 }
 
 //-(CotLPAbstractBasis)* getBasis() ;

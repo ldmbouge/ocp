@@ -55,5 +55,7 @@
 
 -(void) printModelToFile: (char*) fileName;
 -(void) print;
+-(id<LPBasis>)captureBasis;
+-(void)restoreBasis:(id<LPBasis>)basis;
 @end
 

@@ -2437,7 +2437,24 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(void) post
 {
    [_relaxation close];
+   // The relaxation could have triggered some variable fixing. Those should be lifted back up to the model
+   // If a variable is fixed in the relaxation to a value, then in the full problem (fewer solutions) it should be
+   // bound as well.
    NSUInteger nb = [_cv count];
+   for(ORInt i = 0; i < nb; i++) {
+      ORDouble lbi = [_relaxation lowerBound:_cv[i]];
+      ORDouble ubi = [_relaxation upperBound:_cv[i]];
+      ORDouble nlb = lbi > [_cv[i] doubleMin] ? lbi : [_cv[i] doubleMin];
+      ORDouble nub = ubi < [_cv[i] doubleMax] ? ubi : [_cv[i] doubleMax];
+      if ([_cv[i] conformsToProtocol:@protocol(CPRealVar)]) {
+         id<CPRealVar> cvi = _cv[i];
+         [cvi updateInterval:createORI2(nlb,nub)];
+      } else if ([_cv[i] conformsToProtocol:@protocol(CPIntVar)]) {
+         id<CPIntVar> cvi = _cv[i];
+         [cvi updateMin:rint(ceil(nlb)) andMax:rint(floor(nub))];
+      }
+   }
+   // Now ready for the 'normal' process.
    for(ORInt i = 0; i < nb; i++) {
       assignTRDouble(&_min[i],[_cv[i] doubleMin],_trail);
       assignTRDouble(&_max[i],[_cv[i] doubleMax],_trail);
@@ -2449,8 +2466,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          //printf("whenChangedBound %d %d\n",i,_solved._mgc);
          if (getFXInt(&_solved,_trail) == 0) {
             incrFXInt(&_solved,_trail);
+            id basis = [_relaxation basis];
             [_trail trailClosure: ^{
-               OROutcome outcome = [_relaxation solve];
+               OROutcome outcome = [_relaxation solveFrom:basis];
+               [basis release];
                if (outcome == ORinfeasible)
                   failNow();
             }];
@@ -2470,6 +2489,7 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          [_relaxation updateBounds:_mv[i] lower:lb upper:ub];
       }
       onBehalf: self];
+//      [self release]; // ok, that's ugly. The closure above captures self... which is an issue as ref counter never drop.
    }
    [self propagate];
 }

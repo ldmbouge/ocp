@@ -352,7 +352,7 @@
 }
 +(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model
 {
-   return [[ORLinearRelaxation alloc] initLinearRelaxation:model];
+   return [[[ORLinearRelaxation alloc] initLinearRelaxation:model] autorelease];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation
@@ -405,8 +405,9 @@
    for(id<ORVar> v in mv)
       [cv addObject: gamma[v.getId]];
    
-   NSLog(@"Model variables %@",mv);
-   NSLog(@"Concrete variables %@",cv);
+   //NSLog(@"Model variables %@",mv);
+   //NSLog(@"Concrete variables %@",cv);
+   
    id<CPEngine> engine = [(CPSolver*) cpprogram engine];
    if (relaxation != nil)
       [engine add: [CPFactory relaxation: mv var: cv relaxation: relaxation]];
@@ -439,6 +440,20 @@
    _lprelaxation = [ORFactory createLPRelaxation: _model];
    return self;
 }
+-(void)dealloc
+{
+   [_lprelaxation release];
+   [super dealloc];
+}
+-(id)basis
+{
+   return [_lprelaxation basis];
+}
+-(void)restoreBasis:(id)basis
+{
+   return [_lprelaxation restoreBasis:basis];
+}
+
 -(ORDouble) objective
 {
    return [_lprelaxation objective];
@@ -471,6 +486,27 @@
 {
    return [_lprelaxation reducedCost:x];
 }
+-(ORBool)triviallyRoundable:(id<ORVar>)x
+{
+   return [_lprelaxation triviallyRoundable:x];
+}
+-(ORBool)trivialDownRoundable:(id<ORVar>)var
+{
+   return [_lprelaxation trivialDownRoundable:var];
+}
+-(ORBool)trivialUpRoundable:(id<ORVar>)var
+{
+   return [_lprelaxation trivialDownRoundable:var];
+}
+-(ORInt)nbLocks:(id<ORVar>)var
+{
+   return [_lprelaxation nbLocks:var];
+}
+-(ORBool)minLockDown:(id<ORVar>)var
+{
+   return [_lprelaxation minLockDown:var];
+}
+
 -(ORBool)inBasis:(id<ORVar>)x
 {
    return [_lprelaxation inBasis:x];
@@ -482,6 +518,10 @@
 -(OROutcome) solve
 {
    return [_lprelaxation solve];
+}
+-(OROutcome) solveFrom:(id)basis
+{
+   return [_lprelaxation solveFrom:basis];
 }
 -(id<ORObjectiveValue>) objectiveValue
 {

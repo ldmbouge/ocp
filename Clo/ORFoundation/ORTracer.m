@@ -568,22 +568,29 @@ static __thread id checkPointCache = NULL;
          [_mt comply:acp->_mt upTo:theList];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
-            [theList apply: ^BOOL(id<ORConstraint> c) {
-               ORStatus s = [model post:c];
-               return s != ORFailure;
-            }];
-            ORStatus status = [engine currentStatus];
+            ORStatus status = ORSuspend;
+            for(id<ORConstraint> c in theList) {
+               status = [model post:c];
+               if (status == ORFailure)
+                  break;
+            }
+//            [theList apply: ^BOOL(id<ORConstraint> c) {
+//               ORStatus s = [model post:c];
+//               return s != ORFailure;
+//            }];
+//            ORStatus status = [engine currentStatus];
             if (status == ORFailure) {
                trailPop(_trStack);
                assert([_cmds size] == [_trStack size]);
                return status;
             }
-            status = [engine propagate];
+/*            status = [engine propagate];
             if (status == ORFailure) {
                trailPop(_trStack);
                assert([_cmds size] == [_trStack size]);
                return status;
             }
+ */
             [_cmds pushCommandList:grab(theList)]; // .copy
             assert([_cmds size] == [_trStack size]);
             return status;

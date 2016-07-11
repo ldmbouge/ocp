@@ -14,12 +14,51 @@
 #import <objmp/LPSolverI.h>
 #import "gurobi_c.h"
 
+@interface GurobiBasis<LPBasis>  : ORObject {
+   @package
+   int* _vb;
+   int* _cb;
+   int  _nbVars;
+   int  _nbCons;
+}
+-(id)init:(struct _GRBenv*)env withModel:(struct _GRBmodel*)model;
+-(void)restore:(LPSolverI *)solver;
+@end
+
+
+@implementation GurobiBasis
+-(id)init:(struct _GRBenv*)env withModel:(struct _GRBmodel*)model;
+{
+   self = [super init];
+   GRBgetintattr(model,"NumConstrs",&_nbCons);
+   GRBgetintattr(model,"NumVars",&_nbVars);
+   _vb = calloc(_nbVars, sizeof(int));
+   _cb = calloc(_nbCons,sizeof(int));
+   int st1 = GRBgetintattrarray(model, "VBasis", 0, _nbVars, _vb);
+   int st2 = GRBgetintattrarray(model, "CBasis", 0, _nbCons, _cb);
+   return self;
+}
+-(void)dealloc
+{
+   free(_vb);
+   free(_cb);
+   [super dealloc];
+}
+-(void)restore:(LPSolverI *)solver
+{
+   [solver restoreBasis:self];
+}
+@end
+
+static int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
 
 @implementation LPGurobiSolver {
    struct _GRBenv*                _env;
    struct _GRBmodel*              _model;
    OROutcome                      _status;
    LPObjectiveType                _objectiveType;
+   ORLong                         _statIter;
+   ORLong                         _roundIter;
 }
 
 -(LPGurobiSolver*) init
@@ -36,16 +75,30 @@
    GRBnewmodel(_env, &_model, "", 0, NULL, NULL, NULL, NULL, NULL);
 //   GRBsetintparam(_env,"OutputFlag",0);
 
-   //error = GRBsetintparam(_env, GRB_INT_PAR_METHOD, GRB_METHOD_DUAL);
-   
+   error = GRBsetintparam(_env, GRB_INT_PAR_METHOD, GRB_METHOD_DUAL);
+   error = GRBsetcallbackfunc(_model, gurobi_callback, (void *) self);
+   _statIter = _roundIter = 0;
    return self;
 }
 
 -(void) dealloc
 {
+   NSLog(@"Iterations simplex: %d",_statIter);
    GRBfreemodel(_model);
    GRBfreeenv(_env);
    [super dealloc];
+}
+
+-(id<LPBasis>)captureBasis
+{
+   id<LPBasis> theBasis = [[GurobiBasis alloc] init:_env withModel:_model];
+   return theBasis;
+}
+
+-(void)restoreBasis:(GurobiBasis*)basis
+{
+   int st1 = GRBsetintattrarray(_model, "VBasis", 0, basis->_nbVars, basis->_vb);
+   int st2 = GRBsetintattrarray(_model, "CBasis", 0, basis->_nbCons, basis->_cb);
 }
 
 -(void) addVariable: (LPVariableI*) var;
@@ -110,6 +163,33 @@
 -(void) close
 {
 }
+-(OROutcome) solveFrom:(id<LPBasis>)basis
+{
+   GRBupdatemodel(_model);
+   [self restoreBasis:basis];
+   GRBoptimize(_model);
+   int status;
+   GRBgetintattr(_model,"Status",&status);
+   switch (status) {
+      case GRB_OPTIMAL:
+         _status = ORoptimal;
+         break;
+      case GRB_INFEASIBLE:
+         _status = ORinfeasible;
+         break;
+      case GRB_SUBOPTIMAL:
+         _status = ORsuboptimal;
+         break;
+      case GRB_UNBOUNDED:
+         _status = ORunbounded;
+         break;
+      default:
+         _status = ORerror;
+   }
+   return _status;
+}
+
+
 -(OROutcome) solve
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
@@ -306,6 +386,65 @@
    GRBwrite(_model,fileName);
 }
 
+-(void) simplex:(ORInt)it objective:(ORDouble)obj perturbed:(ORBool)isP primalInfeasible:(ORDouble)pInf dualInfeasible:(ORDouble)dInf
+{
+   if (it == 0)
+      _statIter += _roundIter;
+   //NSLog(@"simplex(%d) : %f",it,obj);
+   _roundIter = it;
+}
+
+-(void)barrier:(ORInt)it primal:(ORDouble)obj dual:(ORDouble)dual primalInfeasible:(ORDouble)pInf dualInfeasible:(ORDouble)dInf
+{
+   NSLog(@"barrier(%d) : %f",it,obj);
+}
+
+int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata)
+{
+   LPGurobiSolver* solver = (LPGurobiSolver*)usrdata;
+   
+   if (where == GRB_CB_POLLING) {
+      /* Ignore polling callback */
+   } else if (where == GRB_CB_PRESOLVE) {
+      /* Presolve callback */
+      int cdels, rdels;
+      GRBcbget(cbdata, where, GRB_CB_PRE_COLDEL, &cdels);
+      GRBcbget(cbdata, where, GRB_CB_PRE_ROWDEL, &rdels);
+      if (cdels || rdels) {
+         printf("%7d columns and %7d rows are removed\n", cdels, rdels);
+      }
+   } else if (where == GRB_CB_SIMPLEX) {
+      /* Simplex callback */
+      double itcnt, obj, pinf, dinf;
+      int    ispert;
+      char   ch;
+      GRBcbget(cbdata, where, GRB_CB_SPX_ITRCNT, &itcnt);
+      GRBcbget(cbdata, where, GRB_CB_SPX_OBJVAL, &obj);
+      GRBcbget(cbdata, where, GRB_CB_SPX_ISPERT, &ispert);
+      GRBcbget(cbdata, where, GRB_CB_SPX_PRIMINF, &pinf);
+      GRBcbget(cbdata, where, GRB_CB_SPX_DUALINF, &dinf);
+      [solver simplex:itcnt objective:obj perturbed:ispert primalInfeasible:pinf dualInfeasible:dinf ];
+   } else if (where == GRB_CB_MIP) {
+      /* General MIP callback */
+   } else if (where == GRB_CB_MIPSOL) {
+      /* MIP solution callback */
+   } else if (where == GRB_CB_MIPNODE) {
+      /* MIP node callback */
+   } else if (where == GRB_CB_BARRIER) {
+      /* Barrier callback */
+      int    itcnt;
+      double primobj, dualobj, priminf, dualinf, compl;
+      GRBcbget(cbdata, where, GRB_CB_BARRIER_ITRCNT, &itcnt);
+      GRBcbget(cbdata, where, GRB_CB_BARRIER_PRIMOBJ, &primobj);
+      GRBcbget(cbdata, where, GRB_CB_BARRIER_DUALOBJ, &dualobj);
+      GRBcbget(cbdata, where, GRB_CB_BARRIER_PRIMINF, &priminf);
+      GRBcbget(cbdata, where, GRB_CB_BARRIER_DUALINF, &dualinf);
+      GRBcbget(cbdata, where, GRB_CB_BARRIER_COMPL, &compl);
+      [solver barrier:itcnt primal:primobj dual:dualobj primalInfeasible:priminf dualInfeasible:dualinf];
+   } else if (where == GRB_CB_MESSAGE) {
+      /* Message callback */
+      
+   }
+   return 0;
+}
 @end
-
-

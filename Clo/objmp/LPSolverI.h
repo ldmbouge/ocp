@@ -37,6 +37,7 @@
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(ORDouble) objCoef;
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
 
@@ -52,9 +53,18 @@
 -(ORInt) nb;
 -(NSString*)description;
 -(ORBool) isInteger;
+-(ORInt)downLock;
+-(ORInt)upLock;
+-(ORInt)locks;
+-(ORBool)trivialDownRoundable;
+-(ORBool)trivialUpRoundable;
+-(ORBool)triviallyRoundable;
+-(ORBool)fixMe;
+-(ORDouble)fractionality;
+-(ORDouble)nearestInt;
 @end
-static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 
+static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 
 @protocol LPVariableArray <ORVarArray>
 -(LPVariableI*) at: (ORInt) value;
@@ -120,6 +130,8 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(ORDouble)             dual;
 -(void)                setNb: (ORInt) nb;
 -(ORInt)               nb;
+-(ORInterval) evaluation;
+-(ORBool)redundant;
 @end
 
 @interface LPConstraintLEQ : LPConstraintI
@@ -241,6 +253,7 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(void) close;
 @end
 
+
 @interface LPSolverI : NSObject<OREngine> {
    LPGurobiSolver*      _lp;
    int                  _nbVars;
@@ -260,12 +273,14 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
    bool                _isClosed;
    
    NSMutableArray*     _oStore;
-   
+   NSMutableArray*     _pStore;
+   id<LPBasis>         _basis;  // captured after each call to solve/optimize
 }
 
 -(LPSolverI*) initLPSolverI;
 -(void) dealloc;
 -(void)enumerateColumnWith:(void(^)(LPColumnI*))block;
+-(void)restoreBasis:(id<LPBasis>)basis;
 
 +(LPSolverI*)      create;
 -(LPVariableI*)    createVariable;
@@ -304,7 +319,7 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(void) removeVariable: (LPVariableI*) var;
 -(LPObjectiveI*) postObjective: (LPObjectiveI*) obj;
 -(LPVariableI*) postColumn: (LPColumnI*) col;
-
+-(id<LPBasis>)basis;
 -(void) close;
 -(ORBool) isClosed;
 -(OROutcome) solve;
@@ -315,6 +330,12 @@ static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 -(ORDouble) upperBound: (LPVariableI*) var;
 -(ORDouble) reducedCost: (LPVariableI*) var;
 -(ORBool) inBasis:(LPVariableI*)var;
+-(ORDouble)fractionality:(LPVariableI*)var;
+-(ORDouble)nearestInt:(LPVariableI*)var;
+-(ORBool)triviallyRoundable:(LPVariableI*)var;
+-(ORBool)trivialDownRoundable:(LPVariableI*)var;
+-(ORBool)trivialUpRoundable:(LPVariableI*)var;
+-(ORInt)nbLocks:(LPVariableI*)var;
 -(ORDouble) dual: (LPConstraintI*) cstr;
 -(id<ORDoubleArray>) duals;
 -(id<ORObjectiveValue>) objectiveValue;

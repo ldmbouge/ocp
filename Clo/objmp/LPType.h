@@ -19,3 +19,7 @@
 
 typedef enum { LPgeq, LPleq, LPeq } LPConstraintType;
 typedef enum { LPminimize, LPmaximize } LPObjectiveType;
+
+@protocol LPBasis<NSObject>
+-(void)restore:(LPSolverI*)solver;
+@end

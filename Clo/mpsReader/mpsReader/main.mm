@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
       maker.addToModel(mdl, model.get());
       //cout << *model << endl;
       
-      NSLog(@"Objective-C model: %@",mdl);
+      //NSLog(@"Objective-C model: %@",mdl);
 
 //      id<MIPProgram> mip = [ORFactory createMIPProgram: mdl];
 //      [mip solve];
@@ -73,12 +73,12 @@ int main(int argc, const char * argv[]) {
 
       ORTimeval t0 = [ORRuntimeMonitor now];
       [cps solve:^{
-         //PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
-         FSBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
+         PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:cps];
+         //FSBranching* pcb = [[FSBranching alloc] init:relax over:aiv program:cps];
          [pcb branchOn:aiv];
       }];
       ORTimeval el = [ORRuntimeMonitor elapsedSince:t0];
-      NSLog(@"search done: #Fail=%d \t#Choice=%d  Elapsed: %ld",[cps nbFailures],[cps nbChoices],el.tv_sec);
+      NSLog(@"search done: #Fail=%d \t#Choice=%d  Elapsed: %f",[cps nbFailures],[cps nbChoices],(ORDouble)el.tv_sec + (ORDouble)el.tv_usec/1000000);
    }
    return 0;
 }

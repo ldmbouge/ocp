@@ -63,7 +63,7 @@ Name: TNAME TID LF { $$ = $2;}
 Identifier: TID { $$ = $1;}
 | NUMBER { extern char* yytext; $$ = strdup(yytext);}
 
-ObjSense: TOBJSENSE Identifier LF { $$ = $2;}
+ObjSense: TOBJSENSE LF Identifier LF { $$ = $3;}
 | { $$ = NULL;}
 ;
 

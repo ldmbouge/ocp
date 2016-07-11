@@ -217,6 +217,14 @@
 {
    [_lpsolver close];
 }
+-(id)basis
+{
+   return [_lpsolver basis];
+}
+-(void)restoreBasis:(id)basis
+{
+   [_lpsolver restoreBasis:basis];
+}
 -(id<OREngine>) engine
 {
    return _lpsolver;
@@ -234,6 +242,11 @@
 {
    return [_lpsolver solve];
 }
+-(OROutcome) solveFrom:(id<LPBasis>)basis
+{
+   return [_lpsolver solveFrom:basis];
+}
+
 -(ORDouble) dual: (id<ORConstraint>) c
 {
    return [_lpsolver dual: [self concretize: c]];
@@ -249,6 +262,26 @@
 -(ORBool) inBasis:(id<ORRealVar>)v
 {
    return [_lpsolver inBasis: _gamma[v.getId]];
+}
+-(ORBool)trivialDownRoundable:(id<ORVar>)v
+{
+   return [_lpsolver trivialDownRoundable:_gamma[v.getId]];
+}
+-(ORBool)trivialUpRoundable:(id<ORVar>)v
+{
+   return [_lpsolver trivialUpRoundable:_gamma[v.getId]];
+}
+-(ORBool)triviallyRoundable:(id<ORVar>)v
+{
+   return [_lpsolver triviallyRoundable:_gamma[v.getId]];
+}
+-(ORInt)nbLocks:(id<ORVar>)var
+{
+   return [_lpsolver nbLocks:_gamma[var.getId]];
+}
+-(ORBool)minLockDown:(id<ORVar>)var
+{
+   return [_lpsolver minLockDown:_gamma[var.getId]];
 }
 -(ORDouble) objective
 {

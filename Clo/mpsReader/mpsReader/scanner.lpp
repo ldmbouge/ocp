@@ -50,6 +50,8 @@ SC { return TSC;}
    return TID;
 }
 
+^\*.*\n /* ignore comment */;
+
 [ \t]*  /* ignore ws */;
 
 \/\/.*\n {}

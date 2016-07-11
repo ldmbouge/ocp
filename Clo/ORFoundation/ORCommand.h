@@ -20,7 +20,7 @@
 
 @protocol ORConstraint;
 
-@interface ORCommandList : NSObject<NSCoding,NSCopying> {
+@interface ORCommandList : NSObject<NSCoding,NSCopying,NSFastEnumeration> {
    struct CNode* _head;
    @package
    ORInt _ndId;  // node id

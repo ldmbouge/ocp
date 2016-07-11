@@ -30,6 +30,7 @@
 		5B4E17991CF4E40700A15258 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178F1CF4E40700A15258 /* ORScheduler.framework */; };
 		5B4E179A1CF4E40700A15258 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17901CF4E40700A15258 /* ORSchedulingProgram.framework */; };
 		5B4E179B1CF4E40700A15258 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17911CF4E40700A15258 /* ORUtilities.framework */; };
+		5B8295361D22EBBA00DC55F1 /* wolsey1.mps in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B8295351D22EAB400DC55F1 /* wolsey1.mps */; };
 		5BC38DD11CF3385D0019E673 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BC38DD01CF3385D0019E673 /* main.mm */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 			dstSubfolderSpec = 6;
 			files = (
 				5B4E17661CF36BE000A15258 /* testprob.mps in CopyFiles */,
+				5B8295361D22EBBA00DC55F1 /* wolsey1.mps in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +84,7 @@
 		5B4E178F1CF4E40700A15258 /* ORScheduler.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORScheduler.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORScheduler.framework"; sourceTree = "<group>"; };
 		5B4E17901CF4E40700A15258 /* ORSchedulingProgram.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORSchedulingProgram.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORSchedulingProgram.framework"; sourceTree = "<group>"; };
 		5B4E17911CF4E40700A15258 /* ORUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORUtilities.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORUtilities.framework"; sourceTree = "<group>"; };
+		5B8295351D22EAB400DC55F1 /* wolsey1.mps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wolsey1.mps; sourceTree = "<group>"; };
 		5BC38DCD1CF3385D0019E673 /* mpsReader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpsReader; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC38DD01CF3385D0019E673 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -168,6 +171,7 @@
 			children = (
 				5BC38DD01CF3385D0019E673 /* main.mm */,
 				5B4E17651CF36B8200A15258 /* testprob.mps */,
+				5B8295351D22EAB400DC55F1 /* wolsey1.mps */,
 			);
 			path = mpsReader;
 			sourceTree = "<group>";
@@ -413,6 +417,7 @@
 		5BC38DD51CF3385D0019E673 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-Wno-deprecated-register",
 					"$(OTHER_CFLAGS)",
@@ -424,6 +429,7 @@
 		5BC38DD61CF3385D0019E673 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-Wno-deprecated-register",
 					"$(OTHER_CFLAGS)",
@@ -442,6 +448,7 @@
 				5B4E177B1CF4DE7400A15258 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BC38DC81CF3385D0019E673 /* Build configuration list for PBXProject "mpsReader" */ = {
 			isa = XCConfigurationList;

@@ -11,6 +11,26 @@
 
 #define ALPHAVALUE 2.0
 
+@interface FracVars : NSObject<NSFastEnumeration> {
+   struct VarPack {
+      id<ORIntVar> _x;
+      double    _frac;
+   };
+   id<ORRelaxation> _relax;
+   struct VarPack* _pack;
+   NSUInteger _mxs;
+   NSUInteger _sz;
+}
++(FracVars*)extractFractionalVariables:(id<ORRelaxation>)relax from:(id<ORIntVarArray>)x;
+-(id)init:(NSUInteger)capacity forRelaxation:(id<ORRelaxation>)relax;
+-(void)addVariable:(id<ORIntVar>)x withKey:(ORDouble)f;
+-(NSUInteger)count;
+-(id<ORIntVar>)extractLeastFractional;
+-(id<ORIntVar>)extractMostFractional;
+-(id<ORIntVar>)extractMinLock;
+@end
+
+
 @interface VStat : NSObject {
    double _down;
    double _up;
@@ -26,6 +46,169 @@
 -(double)scoreWn:(double)wn Wp:(double)wp;
 @end
 
+@interface VRunningMean : NSObject {
+   ORDouble _ttl;
+   ORDouble _nb;
+}
+-(id)init;
+-(void)recordSample:(ORDouble)v;
+-(ORDouble)value;
+@end
+
+@implementation VRunningMean
+-(id)init
+{
+   self = [super init];
+   _nb = 0;
+   _ttl = 0;
+   return self;
+}
+-(void)recordSample:(ORDouble)v
+{
+   _ttl += v;
+   _nb += 1.0;
+}
+-(ORDouble)value
+{
+   return _ttl / _nb;
+}
+@end
+
+@implementation FracVars
++(FracVars*)extractFractionalVariables:(id<ORRelaxation>)relax from:(id<ORIntVarArray>)x
+{
+   FracVars* rv = [[FracVars alloc] init:8 forRelaxation:relax];
+   for(id<ORIntVar> xi in x) {
+      ORDouble r = [relax value:xi];
+      ORDouble iv;
+      ORDouble fv = modf(r,&iv);
+      if (fv != 0) {
+         ORDouble fractional = fabs(r - floor(r + 0.5));
+         [rv addVariable:xi withKey:fractional];
+      }
+   }
+   return rv;
+}
+-(id)init:(NSUInteger)capacity forRelaxation:(id<ORRelaxation>)relax
+{
+   self = [super init];
+   _mxs = capacity;
+   _relax = relax;
+   _pack = calloc(_mxs,sizeof(struct VarPack));
+   _sz  = 0;
+   return self;
+}
+-(void)dealloc
+{
+   free(_pack);
+   [super dealloc];
+}
+-(void)addVariable:(id<ORIntVar>)x withKey:(ORDouble)f
+{
+   for(NSUInteger i=0;i < _sz;i++)
+      if (_pack[i]._x == x)
+         return;
+   if (_sz == _mxs)
+      _pack = realloc(_pack,(_mxs <<= 1)*sizeof(struct VarPack));
+   _pack[_sz]._x = x;
+   _pack[_sz]._frac = f;
+   _sz++;
+}
+-(NSUInteger)count
+{
+   return _sz;
+}
+-(id<ORIntVar>)extractLeastFractional
+{
+   ORInt    sd  = FDMAXINT;
+   ORDouble lfv = 1.0;
+   NSUInteger k = -1;
+   for(NSUInteger i=0;i < _sz;i++) {
+      ORInt vdsz = [[_pack[i]._x domain] size];
+      if ((vdsz < sd) || (vdsz == sd &&  _pack[i]._frac < lfv)) {
+         k = i;
+         lfv = _pack[i]._frac;
+      }
+   }
+   if (k >= 0) {
+      id<ORIntVar> rv = _pack[k]._x;
+      _pack[k] = _pack[--_sz];
+      return rv;
+   } else
+      return nil;
+}
+-(id<ORIntVar>)extractMostFractional
+{
+   ORDouble mfv = 0.0;
+   NSUInteger k = -1;
+   for(NSUInteger i=0;i < _sz;i++) {
+      if (_pack[i]._frac > mfv) {
+         k = i;
+         mfv = _pack[i]._frac;
+      }
+   }
+   if (k >= 0) {
+      id<ORIntVar> rv = _pack[k]._x;
+      _pack[k] = _pack[--_sz];
+      return rv;
+   } else
+      return nil;
+}
+-(id<ORIntVar>)extractMinLock
+{
+   ORDouble lfv = 1.0;
+   ORInt nbLocks = FDMAXINT;
+   NSUInteger k = -1;
+   for(NSUInteger i=0;i < _sz;i++) {
+      ORInt xiL = [_relax nbLocks:_pack[i]._x];
+      if (xiL < nbLocks) {
+         k = i;
+         nbLocks = xiL;
+         lfv = _pack[i]._frac;
+      } else if (xiL == nbLocks && _pack[i]._frac < lfv) {
+         k = i;
+         lfv = _pack[i]._frac;
+      }
+   }
+   if (k >= 0) {
+      id<ORIntVar> rv = _pack[k]._x;
+      _pack[k] = _pack[--_sz];
+      return rv;
+   } else
+      return nil;
+}
+
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
+                                  objects:(id *)stackbuf
+                                    count:(NSUInteger)len
+{
+   NSUInteger from;
+   if (state->state == 0)
+      from = 0;
+   else
+      from = state->state;
+   NSUInteger batch = 0;
+   while (from < _sz && batch < len) {
+      stackbuf[batch] = _pack[from]._x;
+      ++from;
+      ++batch;
+   }
+   state->state = from;
+   state->itemsPtr = stackbuf;
+   state->mutationsPtr = (unsigned long*)self;
+   return batch;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"[%d]{",_sz];
+   for(NSUInteger i = 0;i < _sz;i++) {
+      [buf appendFormat:@"%@ [%f]%c",_pack[i]._x,_pack[i]._frac,i < _sz - 1 ? ',' : ' '];
+   }
+   [buf appendString:@"}"];
+   return buf;
+}
+@end
 
 @implementation VStat
 -(id)init
@@ -60,14 +243,20 @@
 }
 -(void)recordLow:(double)d
 {
+   if (_nbl==0)
+      _down = d;
+   else
+      _down = (_down * (ALPHAVALUE - 1.0) + d) / ALPHAVALUE;
    _nbl++;
-   _down = (_down * (ALPHAVALUE - 1.0) + d) / ALPHAVALUE;
    assert(!isnan(_down));
 }
 -(void)recordUp:(double)u
 {
+   if (_nbu == 0)
+      _up = u;
+   else
+      _up   = (_up   * (ALPHAVALUE - 1.0) + u) / ALPHAVALUE;
    _nbu++;
-   _up   = (_up   * (ALPHAVALUE - 1.0) + u) / ALPHAVALUE;
    assert(!isnan(_up));
 }
 
@@ -86,6 +275,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    static const double mu = 1.0 / 6.0;
    double qn = wn * [self pseudoDown];
    double qp = wp * [self pseudoUp];
+//   return maxDbl(qn,1.0e-16)*maxDbl(qp,1.0e-16);
    return (1 - mu) * minDbl(qn,qp) + mu * maxDbl(qn,qp);
 }
 @end
@@ -108,7 +298,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 {
    return false;
 }
-
+-(void)initState
+{}
 -(void)theSearch:(id<ORIntVarArray>)x
 {
    while (![_p allBound:x]) {
@@ -129,24 +320,151 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       }
    }
 }
+-(void)fractionalDive:(id<ORIntVarArray>)x
+{
+   id<ORCheckpoint> start = [[_p tracer] captureCheckpoint];
+   FracVars* I = [FracVars extractFractionalVariables:_relax from:x];
+   id<ORObjectiveValue> primal = [[_p objective] primalBound];
+   id<ORObjectiveValue> fCur   = [_relax objectiveValue];
+   ORInt i = 0;
+   while ([I count] > 0 && [fCur compare:primal]==NSOrderedAscending) {
+      i++;
+      id<ORIntVar> sx = [I extractLeastFractional];
+      ORDouble sxv = [_relax value:sx];
+      ORDouble ni = floor(sxv + 0.5);
+      ORBool bindDown = floor(sxv) == ni;
+      ORStatus ok = [[_p engine] atomic:^{
+         if (bindDown)
+            [_p lthen:sx with:ni + 1];
+         else
+            [_p gthen:sx with:ni - 1];
+      }];
+      if (ok == ORFailure)
+         return;
+      [I release];
+      I = [FracVars extractFractionalVariables:_relax from:x];
+      NSUInteger nbtr = 0;
+      for(id<ORIntVar> xi in I) {
+         ORBool tr = [_relax triviallyRoundable:xi];
+         if (!tr) break;
+         nbtr = nbtr + tr;
+      }
+      if (nbtr == [I count]) {
+         NSLog(@"About to round %d easy guys",nbtr);
+         ORStatus ok =  [[_p engine] atomic:^{
+            for(id<ORIntVar> xi in I) {
+               ORDouble sxv = [_relax value:sx];
+               ORDouble ni = floor(sxv + 0.5);
+               if ([_relax trivialDownRoundable:xi]) {
+                  [_p lthen:xi with:[xi low] + 1];
+               } else {
+                  assert([_relax trivialUpRoundable:xi]);
+                  [_p gthen:xi with:[xi up] - 1];
+               }
+            }
+         }];
+         assert(ok != ORFailure);
+      }
+      fCur   = [_relax objectiveValue];
+   }
+   [I release];
+   [self fixAndDive:x];
+   [[_p tracer] restoreCheckpoint:start inSolver:[_p engine] model:nil];
+}
 
+-(void)coefficientDive:(id<ORIntVarArray>)x
+{
+   id<ORCheckpoint> start = [[_p tracer] captureCheckpoint];
+   FracVars* I = [FracVars extractFractionalVariables:_relax from:x];
+   id<ORObjectiveValue> primal = [[_p objective] primalBound];
+   id<ORObjectiveValue> fCur   = [_relax objectiveValue];
+   ORInt i = 0;
+   while ([I count] > 0 && [fCur compare:primal]==NSOrderedAscending) {
+      i++;
+      id<ORIntVar> sx = [I extractMinLock];
+      ORDouble sxv = [_relax value:sx];
+      ORDouble ni = floor(sxv);
+      ORBool bindDown = [_relax minLockDown:sx];
+      ORStatus ok = [[_p engine] atomic:^{
+         if (bindDown)
+            [_p lthen:sx with:ni + 1];
+         else
+            [_p gthen:sx with:ni];
+      }];
+      if (ok == ORFailure)
+         return;
+      [I release];
+      I = [FracVars extractFractionalVariables:_relax from:x];
+      NSUInteger nbtr = 0;
+      for(id<ORIntVar> xi in I) {
+         ORBool tr = [_relax triviallyRoundable:xi];
+         if (!tr) break;
+         nbtr = nbtr + tr;
+      }
+      if (nbtr == [I count]) {
+         NSLog(@"About to round %d easy guys",nbtr);
+         ORStatus ok =  [[_p engine] atomic:^{
+            for(id<ORIntVar> xi in I) {
+               ORDouble sxv = [_relax value:sx];
+               ORDouble ni = floor(sxv + 0.5);
+               if ([_relax trivialDownRoundable:xi]) {
+                  [_p lthen:xi with:[xi low] + 1];
+               } else {
+                  assert([_relax trivialUpRoundable:xi]);
+                  [_p gthen:xi with:[xi up] - 1];
+               }
+            }
+         }];
+         assert(ok != ORFailure);
+      }
+      fCur   = [_relax objectiveValue];
+   }
+   [I release];
+   [self fixAndDive:x];
+   [[_p tracer] restoreCheckpoint:start inSolver:[_p engine] model:nil];
+}
+
+
+-(void)wrapSearch:(ORClosure)body
+{
+   id<ORPost> pItf = [[CPINCModel alloc] init:_p];
+   [_p nestedOptimize:body
+           onSolution:nil
+               onExit:nil
+              control:[[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
+}
 -(void)branchOn:(id<ORIntVarArray>)x
 {
-   [self dfsProbe:x];
+   id<ORObjectiveValue> fStar = nil;
+   id<ORObjectiveValue> cur = [[_p objective] primalBound];
+   do {
+      fStar = cur;
+      [self wrapSearch:^{ [self coefficientDive:x];}];
+      [self wrapSearch:^{ [self fractionalDive:x];}];
+      cur =  [[_p objective] primalBound];
+   } while ([cur compare:fStar] == NSOrderedAscending);
+   [self initState];
+
+   cur = [[_p objective] primalBound];
+   do {
+      fStar = cur;
+      [self wrapSearch:^{ [self coefficientDive:x];}];
+      [self wrapSearch:^{ [self fractionalDive:x];}];
+      cur =  [[_p objective] primalBound];
+   } while ([cur compare:fStar] == NSOrderedAscending);
+
    [self mainSearch:x];
 }
 -(void)dfsProbe:(id<ORIntVarArray>)x
 {
-   id<ORPost> pItf = [[CPINCModel alloc] init:_p];
-   [_p nestedOptimize:^{
-      [_p limitTime:5000 in:^{
+   [self wrapSearch:^{
+      [_p limitTime:1000 in:^{
          [self theSearch:x];
          NSLog(@"Reached here...");
          ORStatus ok = [[_p engine] atomic:^{
             for(id<ORRealVar>  rvk in _realVars) {
                ORDouble vinRelax = [_relax value:rvk];
                [_p assignRelaxationValue:vinRelax to:rvk];
-               //[_p realLabel:rvk with:vinRelax];
                [_p realGthen:rvk with:vinRelax - 0.000001];
                [_p realLthen:rvk with:vinRelax + 0.000001];
             }
@@ -159,9 +477,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
          [[_p explorer] fail];
       }];
       NSLog(@"Back from limit...");
-   } onSolution: nil
-         onExit: nil
-        control:[[ORSemBDSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
+   }];
 }
 
 -(void)pureDFS:(id<ORIntVarArray>)x
@@ -214,7 +530,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       } to:^{
          [self pureDFS:x];
          [[_p explorer] fail];
-      } limit:15];
+      } limit:14];
    } onSolution: nil
                onExit:nil
               control:[[ORSemBFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:pItf]];
@@ -255,7 +571,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    } onExit:nil
            control: [[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:nil]
     ];
-   NSLog(@"BACK FROM nestedSolve...");
+   //NSLog(@"BACK FROM nestedSolve...");
 }
 
 @end
@@ -264,93 +580,100 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    id<ORIntVarArray>   _vars;
    NSMutableDictionary*  _pc;
    ORDouble            _flip;
-   VStat*           _overall;
+   VRunningMean*    _overallDown;
+   VRunningMean*    _overallUp;
 }
 -(id)init:(id<ORRelaxation>)relax over:(id<ORIntVarArray>)vars program:(id<CPCommonProgram>)p
 {
    self =  [super init:p relax:relax];
    _vars  = vars;
    _flip = [[_p objective] isMinimization] ? 1.0 : -1.0;
-   _overall = [[VStat alloc] init];
+   _overallDown = [[VRunningMean alloc] init];
+   _overallUp   = [[VRunningMean alloc] init];
    _pc    = [[NSMutableDictionary alloc] init];
-   [[p explorer] applyController:[[ORSemDFSController alloc] initTheController:[p tracer] engine:[p engine] posting:nil]
-   in:^{
-      double io = [relax objective];
-      for(ORInt i=_vars.range.low;i <= _vars.range.up;i++) {
-         id<ORIntVar> vi = _vars[i];
-         double vir = [_relax value:vi];
-         NSLog(@"x[%3d]  [%d,%d] ~= %4.20f",i,[_p min:vi],[_p max:vi],vir);
-         double g   = 0;
-         double f   = modf(vir,&g);
-         if (f != 0) {
-            double dm  = f,um  = 1.0 - f;
-            double roDown=0.0,roUp=0.0;
-            ORBool hasDown,hasUp;
-            __block ORDouble downRate = 0;
-            __block ORDouble upRate   = 0;
-            double lb = [relax lowerBound:vi];
-            double ub = [relax upperBound:vi];
-            [relax updateUpperBound:vi with:g];
-            OROutcome sLow = [relax solve];
-            hasDown = sLow == ORoptimal;
-            switch(sLow) {
-               case ORoptimal:
-                  roDown = [relax objective];
-                  downRate = _flip * (roDown - io) / dm;
-                  break;
-               case ORinfeasible:
-                  [_relax updateUpperBound:vi with:ub];
-                  [_p gthen:vi with:g];
-                  lb = g + 1;
-                  break;
-               default:break;
-            }
-            [relax updateUpperBound:vi with:ub];
-            [relax updateLowerBound:vi with:g+1];
-            OROutcome sUp = [relax solve];
-            hasUp = sUp == ORoptimal;
-            switch(sUp) {
-               case ORoptimal:
-                  roUp = [relax objective];
-                  upRate = _flip * (roUp - io) / um;
-                  break;
-               case ORinfeasible:
-                  [_relax updateLowerBound:vi with:lb];
-                  [_p lthen:vi with:g+1];
-                  ub = g;
-                  break;
-               default:
-                  break;
-            }
-            [relax updateLowerBound:vi with:lb];
-            OROutcome fok = [relax solve];
-            if (sLow == ORinfeasible && sUp == ORinfeasible)
-               [[_p explorer] fail];
-            if (sLow == ORinfeasible || sUp == ORinfeasible) {
-               i -= 1;
-               continue;
-            }
-               
-            printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vir,roDown,roUp);
-            VStat* vs = [_pc objectForKey:@(vi.getId)];
-            if (vs==nil) {
-               vs = [[VStat alloc] init];
-               [_pc setObject:vs forKey:@(vi.getId)];
-               [vs release];
-            }
-            if (hasDown) [vs recordLow:downRate];
-            if (hasUp)   [vs recordUp:upRate];
-            if (hasDown) [_overall recordLow:downRate];
-            if (hasUp)   [_overall recordUp:upRate];
-         }
-      }
-   }];
    return self;
 }
+-(void)initState
+{
+   [[_p explorer] applyController:[[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:nil]
+                              in:^{
+                                 double io = [_relax objective];
+                                 for(ORInt i=_vars.range.low;i <= _vars.range.up;i++) {
+                                    id<ORIntVar> vi = _vars[i];
+                                    double vir = [_relax value:vi];
+                                    //NSLog(@"x[%3d]  [%d,%d] ~= %4.20f",i,[_p min:vi],[_p max:vi],vir);
+                                    double g   = 0;
+                                    double f   = modf(vir,&g);
+                                    if (f != 0) {
+                                       double dm  = f,um  = 1.0 - f;
+                                       double roDown=0.0,roUp=0.0;
+                                       ORBool hasDown,hasUp;
+                                       __block ORDouble downRate = 0;
+                                       __block ORDouble upRate   = 0;
+                                       double lb = [_relax lowerBound:vi];
+                                       double ub = [_relax upperBound:vi];
+                                       [_relax updateUpperBound:vi with:g];
+                                       OROutcome sLow = [_relax solve];
+                                       hasDown = sLow == ORoptimal;
+                                       switch(sLow) {
+                                          case ORoptimal:
+                                             roDown = [_relax objective];
+                                             downRate = _flip * (roDown - io) / dm;
+                                             break;
+                                          case ORinfeasible:
+                                             [_relax updateUpperBound:vi with:ub];
+                                             [_p gthen:vi with:g];
+                                             lb = g + 1;
+                                             break;
+                                          default:break;
+                                       }
+                                       [_relax updateUpperBound:vi with:ub];
+                                       [_relax updateLowerBound:vi with:g+1];
+                                       OROutcome sUp = [_relax solve];
+                                       hasUp = sUp == ORoptimal;
+                                       switch(sUp) {
+                                          case ORoptimal:
+                                             roUp = [_relax objective];
+                                             upRate = _flip * (roUp - io) / um;
+                                             break;
+                                          case ORinfeasible:
+                                             [_relax updateLowerBound:vi with:lb];
+                                             [_p lthen:vi with:g+1];
+                                             ub = g;
+                                             break;
+                                          default:
+                                             break;
+                                       }
+                                       [_relax updateLowerBound:vi with:lb];
+                                       OROutcome fok = [_relax solve];
+                                       if (sLow == ORinfeasible && sUp == ORinfeasible)
+                                          [[_p explorer] fail];
+                                       if (sLow == ORinfeasible || sUp == ORinfeasible) {
+                                          i -= 1;
+                                          continue;
+                                       }
+                                       
+                                       //printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vir,downRate,upRate);
+                                       VStat* vs = [_pc objectForKey:@(vi.getId)];
+                                       if (vs==nil) {
+                                          vs = [[VStat alloc] init];
+                                          [_pc setObject:vs forKey:@(vi.getId)];
+                                          [vs release];
+                                       }
+                                       if (hasDown) [vs recordLow:downRate];
+                                       if (hasUp)   [vs recordUp:upRate];
+                                       if (hasDown) [_overallDown recordSample:downRate];
+                                       if (hasUp)   [_overallUp recordSample:upRate];
+                                    }
+                                 }
+                              }];
+}
+
 -(void)dealloc
 {
    [_pc release];
-   [_overall release];
+   [_overallDown release];
+   [_overallUp release];
    [super dealloc];
 }
 -(VStat*)pCost:(id<ORVar>)x
@@ -358,62 +681,88 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    NSNumber* key = [NSNumber numberWithInt:x.getId];
    VStat* vs = [_pc objectForKey:key];
    [key release];
-   return vs ? vs : _overall;
+   return vs;
 }
 -(ORBool)selectVar:(id<ORIntVarArray>)x index:(ORInt*)k  value:(ORDouble*)rv
 {
-   OROutcome oc = [_relax solve];
-   if (oc == ORinfeasible)
-       [[_p explorer] fail];
-//   for(ORInt i=x.range.low;i <= x.range.up;i++) {
-//      NSLog(@"SVAR: x[%d] ~= %f",i,[_relax value:x[i]]);
-//   }
+//   OROutcome oc = [_relax solve];
+//   if (oc == ORinfeasible)
+//       [[_p explorer] fail];
    ORInt  bk = _vars.range.low - 1;
    __block ORBool   found = NO;
    ORDouble BSF =  - MAXDBL;
+   ORInt    BDS = FDMININT;
    ORDouble brk = 0.0;
    ORInt nbVars = x.range.size;
    ORInt nbFree = 0;
+   ORInt nbCand = 0;
+   //NSLog(@"PCBranching:");
+   ORDouble q;
+   const ORDouble MU = 0.6;
    for(ORInt i=x.range.low;i <= x.range.up;i++) {
       if ([_p bound:x[i]])
          continue;
       nbFree += 1;
-/*
-      ORInt xisz = [_p domsize:x[i]];
-      ORInt xiSpan = [_p max:x[i]] - [_p min:x[i]] + 1;
-      ORBool gap   = xisz != xiSpan;
-      if (gap) {
-         ORInt ub= [_p max:x[i]];
-         for(ORInt d = [_p min:x[i]]; d <= ub;d++) {
-            if (![_p member:d in:x[i]]) {
-               *k = i;
-               *rv = (ORDouble)d;
-               return YES;
-            }
-         }
-      }
-      */
-      
       double vir = [_relax value:x[i]];
       double g   = 0;
       double f   = modf(vir,&g);
       if (f == 0) continue;
+      ORInt dsz = [_p domsize:x[i]];
+      nbCand++;
       double fn  = f, fp = 1.0 - f;
       VStat* pc = [self pCost:x[i]];
-      assert(pc != nil);
-      double q = [pc scoreWn:fn Wp:fp];
-      //NSLog(@"VAR[%d] pCost = %@\t relax=%f \t score = %f",i,pc,vir,q);
+      if (!pc) {
+         ORDouble dm = f,um = 1.0 - f;
+         ORDouble io = [_relax objective];
+         ORDouble roDown,downRate,roUp,upRate;
+         id<ORIntVar> vi = x[i];
+         double lb = [_relax lowerBound:vi],ub = [_relax upperBound:vi];
+         [_relax updateUpperBound:vi with:g];
+         OROutcome sLow = [_relax solve];
+         switch(sLow) {
+            case ORoptimal:
+               roDown = [_relax objective];
+               downRate = _flip * fabs(roDown - io) / dm;
+               break;
+            default:break;
+         }
+         [_relax updateUpperBound:vi with:ub];
+         [_relax updateLowerBound:vi with:g+1];
+         OROutcome sUp = [_relax solve];
+         switch(sUp) {
+            case ORoptimal:
+               roUp = [_relax objective];
+               upRate = _flip * fabs(roUp - io) / um;
+               break;
+            default:
+               break;
+         }
+         [_relax updateLowerBound:vi with:lb];
+         OROutcome back = [_relax solve];
+         assert(back == ORoptimal);
+
+         if (sLow == ORinfeasible && sUp == ORinfeasible)
+            [[_p explorer] fail];
+         if (sLow == ORoptimal) [self recordVar:x[i] low:downRate];
+         if (sUp == ORoptimal)  [self recordVar:x[i] up:upRate];
+         pc = [self pCost:x[i]];
+      }
+      q = [pc scoreWn:fn Wp:fp];
+      
       if (q > BSF) {
          bk = i;
          brk = vir;
          found = YES;
          BSF = q;
+         BDS = dsz;
       }
    }
    if (found) {
       *k = bk;
       *rv = brk;
    }
+   //NSLog(@"PCBranching: #vars(%d) BEST(%d) : %f",nbCand,bk,BSF);
+   //NSLog(@"Overall: %@ | %@",_overallDown,_overallUp);
    return found;
 }
 
@@ -452,7 +801,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       [vs release];
    }
    [vs recordLow:low];
-   [_overall recordLow:low];
+   [_overallDown recordSample:low];
 }
 -(void)recordVar:(id<ORVar>)x up:(double)up
 {
@@ -463,7 +812,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       [vs release];
    }
    [vs recordUp:up];
-   [_overall recordUp:up];
+   [_overallUp recordSample:up];
 }
 static long nbCall = 0;
 -(void)measureDown:(id<ORVar>)x relaxedValue:(ORDouble)xv  for:(ORClosure)cl
@@ -598,22 +947,21 @@ static long nbCall = 0;
       ORInt bi = 0;
       ORDouble best = - DBL_MAX;
       ORDouble mf   = 1.0;
-      //NSLog(@"FSBranching: #vars to consider: %d",lastX);
+      NSLog(@"FSBranching: #vars to consider: %d",lastX);
       for(ORInt i=0;i<lastX;i++) {
-/*         ORDouble rx = vr[idx[i] - low];
+         ORDouble rx = vr[idx[i] - low];
          ORDouble xi;
          ORDouble xf = modf(rx,&xi);
          ORDouble wn = xf,wp = 1.0 - xf;
          static const double mu = 1.0 / 6.0;
          double qn = wn * cdw[i];
          double qp = wp * cup[i];
-         ORDouble wi = (1 - mu) * minDbl(qn,qp) + mu * maxDbl(qn,qp);
-*/
+         ORDouble wi0 = (1 - mu) * minDbl(qn,qp) + mu * maxDbl(qn,qp);
          ORDouble wi = maxDbl(cdw[i],1.0e-16) * maxDbl(cup[i],1.0e-16);
          
          //ORDouble wi = minDbl(cup[i],cdw[i]);
 
-         //NSLog(@"\tSB(%d) %3.15f : cdw/cup = %3.15f | %3.15f",idx[i],wi,cdw[i],cup[i]);
+         NSLog(@"\tSB(%d) %3.15f : cdw/cup = %3.15f | %3.15f",idx[i],wi,cdw[i],cup[i]);
          
          if (wi > best) {
             best = wi;
@@ -633,8 +981,7 @@ static long nbCall = 0;
       }
       *k = bi;
       *rv = vr[bi - low];
-      //NSLog(@"FSBranching: #vars(%d) BEST(%d): %f",lastX,bi,*rv);
-      //NSLog(@"\t\tSB(SEL): %f *** %d ",best,bi);
+      NSLog(@"FSBranching: #vars(%d) BEST(%d): %f",lastX,bi,best);
       return TRUE;
    }
 }

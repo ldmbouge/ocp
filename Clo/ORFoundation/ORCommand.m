@@ -234,6 +234,29 @@ static __thread ComListPool* pool = NULL;
    return _head==0;
 }
 
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
+                                  objects:(id *)stackbuf
+                                    count:(NSUInteger)len
+{
+   struct CNode* from = _head;
+   if (state->state == 0)
+      from = _head;
+   else if (state->state == 0xffffffff)
+      return 0;
+   else
+      from = (struct CNode*)state->state;
+   NSUInteger batch = 0;
+   while (from  && batch < len) {
+      stackbuf[batch] = from->_c;
+      from = from->_next;
+      ++batch;
+   }
+   state->state = from == nil ? 0xffffffff : from;
+   state->itemsPtr = stackbuf;
+   state->mutationsPtr = (unsigned long*)self;
+   return batch;
+}
+
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
    ORUInt cnt = 0;

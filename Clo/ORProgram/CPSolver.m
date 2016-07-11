@@ -1830,11 +1830,11 @@
 }
 +(id<CPSemanticProgramDFS>) semanticSolverDFS
 {
-   return [[CPSemanticSolver alloc] initCPSemanticSolverDFS];
+   return [[[CPSemanticSolver alloc] initCPSemanticSolverDFS] autorelease];
 }
 +(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto
 {
-   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlProto];
+   return [[[CPSemanticSolver alloc] initCPSemanticSolver: ctrlProto] autorelease];
 }
 @end
 
