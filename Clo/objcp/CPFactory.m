@@ -17,6 +17,9 @@
 #import "CPTableI.h"
 #import "CPBitVarI.h"
 #import "CPRealVarI.h"
+#import "CPFloatVarI.h"
+#import "CPDoubleVarI.h"
+#import "CPLDoubleVarI.h"
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 
@@ -88,6 +91,32 @@
 {
     return [[CPRealParamI alloc] initCPRealParam: cp initialValue: v];
 }
+//--------------
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
+{
+    return [[CPFloatVarI alloc] init:cp low:range.low up:range.up];
+}
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
+{
+   // return [[CPFloatViewOnIntVarI alloc] init:cp intVar:x];
+}
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range
+{
+    return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up];
+}
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
+{
+    //return [[CPDoubleViewOnIntVarI alloc] init:cp intVar:x];
+}
++(id<CPLDoubleVar>) fdoubleVar:(id<CPEngine>)cp bounds:(id<ORLDoubleRange>) range
+{
+    return [[CPLDoubleVarI alloc] init:cp low:range.low up:range.up];
+}
++(id<CPLDoubleVar>) fdoubleVar:(id<CPEngine>)cp castFrom:(id<ORLDoubleRange>)x
+{
+    //return [[CPLDoubleViewOnIntVarI alloc] init:cp intVar:x];
+}
+//--------------
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet
 {
    return [[CPIntSetVarI alloc] initWith:cp set:theSet];

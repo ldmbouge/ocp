@@ -329,6 +329,219 @@
 }
 @end
 
+
+//-------------------------------------------------
+//ORFLOATRange
+//-------------------------------------------------
+
+@implementation ORFloatRangeI {
+    ORFloat _low;
+    ORFloat _up;
+}
+-(id<ORFloatRange>)init:(ORFloat) low up:(ORFloat)up
+{
+    self = [super init];
+    _low = low;
+    _up  = up;
+    return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+    return [[ORFloatRangeI allocWithZone:zone] init:_low up:_up];
+}
+-(BOOL)isEqual:(id)object
+{
+    if ([object isKindOfClass:[self class]])
+        return _low == ((ORFloatRangeI*)object)->_low && _up == ((ORFloatRangeI*)object)->_up;
+    else return NO;
+}
+-(NSUInteger)hash
+{
+    return (NSUInteger)_low ^ (NSUInteger)_up;
+}
+-(ORFloat)low
+{
+    return _low;
+}
+-(ORFloat)up
+{
+    return _up;
+}
+-(ORBool) isDefined
+{
+    return _low <= _up;
+}
+-(ORBool)inRange:(ORFloat)e
+{
+    return _low <= e && e <= _up;
+}
+-(NSString*)description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"[%lf,%lf]",_low,_up];
+    return rv;
+}
+-(void)visit:(ORVisitor*)v
+{
+    [v visitFloatRange:self];
+}
+- (void) encodeWithCoder:(NSCoder*) aCoder
+{
+    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
+    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
+}
+- (id) initWithCoder:(NSCoder*) aDecoder
+{
+    self = [super init];
+    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
+    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
+    return self;
+}
+@end
+//----------------
+
+//-------------------------------------------------
+//ORDOUBLERange
+//-------------------------------------------------
+
+@implementation ORDoubleRangeI {
+    ORDouble _low;
+    ORDouble _up;
+}
+-(id<ORDoubleRange>)init:(ORDouble) low up:(ORDouble)up
+{
+    self = [super init];
+    _low = low;
+    _up  = up;
+    return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+    return [[ORDoubleRangeI allocWithZone:zone] init:_low up:_up];
+}
+-(BOOL)isEqual:(id)object
+{
+    if ([object isKindOfClass:[self class]])
+        return _low == ((ORDoubleRangeI*)object)->_low && _up == ((ORDoubleRangeI*)object)->_up;
+    else return NO;
+}
+-(NSUInteger)hash
+{
+    return (NSUInteger)_low ^ (NSUInteger)_up;
+}
+-(ORDouble)low
+{
+    return _low;
+}
+-(ORDouble)up
+{
+    return _up;
+}
+-(ORBool) isDefined
+{
+    return _low <= _up;
+}
+-(ORBool)inRange:(ORDouble)e
+{
+    return _low <= e && e <= _up;
+}
+-(NSString*)description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"[%lf,%lf]",_low,_up];
+    return rv;
+}
+-(void)visit:(ORVisitor*)v
+{
+    [v visitDoubleRange:self];
+}
+- (void) encodeWithCoder:(NSCoder*) aCoder
+{
+    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_low];
+    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_up];
+}
+- (id) initWithCoder:(NSCoder*) aDecoder
+{
+    self = [super init];
+    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_low];
+    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_up];
+    return self;
+}
+@end
+//----------------
+
+//-------------------------------------------------
+//ORLDOUBLERange
+//-------------------------------------------------
+
+@implementation ORLDoubleRangeI {
+    ORLDouble _low;
+    ORLDouble _up;
+}
+-(id<ORLDoubleRange>)init:(ORLDouble) low up:(ORLDouble)up
+{
+    self = [super init];
+    _low = low;
+    _up  = up;
+    return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+    return [[ORLDoubleRangeI allocWithZone:zone] init:_low up:_up];
+}
+-(BOOL)isEqual:(id)object
+{
+    if ([object isKindOfClass:[self class]])
+        return _low == ((ORLDoubleRangeI*)object)->_low && _up == ((ORLDoubleRangeI*)object)->_up;
+    else return NO;
+}
+-(NSUInteger)hash
+{
+    return (NSUInteger)_low ^ (NSUInteger)_up;
+}
+-(ORLDouble)low
+{
+    return _low;
+}
+-(ORLDouble)up
+{
+    return _up;
+}
+-(ORBool) isDefined
+{
+    return _low <= _up;
+}
+-(ORBool)inRange:(ORLDouble)e
+{
+    return _low <= e && e <= _up;
+}
+-(NSString*)description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"[%Lf,%Lf]",_low,_up];
+    return rv;
+}
+-(void)visit:(ORVisitor*)v
+{
+    [v visitLDoubleRange:self];
+}
+- (void) encodeWithCoder:(NSCoder*) aCoder
+{
+    [aCoder encodeValueOfObjCType:@encode(ORLDouble) at:&_low];
+    [aCoder encodeValueOfObjCType:@encode(ORLDouble) at:&_up];
+}
+- (id) initWithCoder:(NSCoder*) aDecoder
+{
+    self = [super init];
+    [aDecoder decodeValueOfObjCType:@encode(ORLDouble) at:&_low];
+    [aDecoder decodeValueOfObjCType:@encode(ORLDouble) at:&_up];
+    return self;
+}
+@end
+//----------------
+
+
+
 id<ORIntSet> filterSet(id<ORTracker> t,id<ORIntIterable> s,ORBool(^cond)(ORInt i))
 {
    id<ORIntSet> sub = [ORFactory intSet:t];

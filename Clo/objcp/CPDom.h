@@ -42,7 +42,7 @@
 @end
 
 @protocol CPRealVarNotifier;
-@protocol CPFDom
+@protocol CPRealDom
 -(void) updateMin:(ORDouble)newMin for:(id<CPRealVarNotifier>)x;
 -(void) updateMax:(ORDouble)newMax for:(id<CPRealVarNotifier>)x;
 -(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPRealVarNotifier>)x;
@@ -57,6 +57,69 @@
 -(ORBool) member:(ORDouble)v;
 -(NSString*)description;
 -(id) copy;
--(void) restoreDomain:(id<CPFDom>)toRestore;
+-(void) restoreDomain:(id<CPRealDom>)toRestore;
 -(void) restoreValue:(ORDouble)toRestore for:(id<CPRealVarNotifier>)x;
+@end
+
+
+@protocol CPFloatVarNotifier;
+@protocol CPFloatDom
+-(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
+-(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
+-(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
+-(ORFloat) min;
+-(ORFloat) max;
+-(ORFloat) imin;
+-(ORFloat) imax;
+-(ORBool) bound;
+-(ORInterval) bounds;
+-(ORFloat) domwidth;
+-(ORBool) member:(ORFloat)v;
+-(NSString*)description;
+-(id) copy;
+-(void) restoreDomain:(id<CPFloatDom>)toRestore;
+-(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
+@end
+
+@protocol CPDoubleVarNotifier;
+@protocol CPDoubleDom
+-(void) updateMin:(ORDouble)newMin for:(id<CPDoubleVarNotifier>)x;
+-(void) updateMax:(ORDouble)newMax for:(id<CPDoubleVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPDoubleVarNotifier>)x;
+-(void) bind:(ORDouble)val  for:(id<CPDoubleVarNotifier>)x;
+-(ORDouble) min;
+-(ORDouble) max;
+-(ORDouble) imin;
+-(ORDouble) imax;
+-(ORBool) bound;
+-(ORInterval) bounds;
+-(ORDouble) domwidth;
+-(ORBool) member:(ORDouble)v;
+-(NSString*)description;
+-(id) copy;
+-(void) restoreDomain:(id<CPDoubleDom>)toRestore;
+-(void) restoreValue:(ORDouble)toRestore for:(id<CPDoubleVarNotifier>)x;
+@end
+
+
+
+@protocol CPLDoubleVarNotifier;
+@protocol CPLDoubleDom
+-(void) updateMin:(ORLDouble)newMin for:(id<CPLDoubleVarNotifier>)x;
+-(void) updateMax:(ORLDouble)newMax for:(id<CPLDoubleVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPLDoubleVarNotifier>)x;
+-(void) bind:(ORLDouble)val  for:(id<CPLDoubleVarNotifier>)x;
+-(ORLDouble) min;
+-(ORLDouble) max;
+-(ORLDouble) imin;
+-(ORLDouble) imax;
+-(ORBool) bound;
+-(ORInterval) bounds;
+-(ORLDouble) domwidth;
+-(ORBool) member:(ORLDouble)v;
+-(NSString*)description;
+-(id) copy;
+-(void) restoreDomain:(id<CPLDoubleDom>)toRestore;
+-(void) restoreValue:(ORLDouble)toRestore for:(id<CPLDoubleVarNotifier>)x;
 @end

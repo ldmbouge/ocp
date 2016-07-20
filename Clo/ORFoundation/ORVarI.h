@@ -64,7 +64,51 @@
 -(id) initWithCoder:(NSCoder *)aDecoder;
 -(enum ORVType) vtype;
 @end
+//-------------------
+@interface ORFloatVarI : ORExprI<ORFloatVar>
+-(ORFloatVarI*) init: (id<ORTracker>) tracker;
+-(ORFloatVarI*) init: (id<ORTracker>) tracker domain:(id<ORFloatRange>)dom;
+-(ORFloatVarI*) init: (id<ORTracker>) tracker up: (ORFloat) up;
+-(ORFloatVarI*) init: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
+-(ORBool) hasBounds;
+-(ORFloat) low;
+-(ORFloat) up;
+-(void) visit: (ORVisitor*)v;
+-(void) encodeWithCoder:(NSCoder *)aCoder;
+-(id) initWithCoder:(NSCoder *)aDecoder;
+-(enum ORVType) vtype;
+@end
 
+
+@interface ORDoubleVarI : ORExprI<ORDoubleVar>
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up;
+-(ORDoubleVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up;
+-(ORBool) hasBounds;
+-(ORDouble) low;
+-(ORDouble) up;
+-(void) visit: (ORVisitor*)v;
+-(void) encodeWithCoder:(NSCoder *)aCoder;
+-(id) initWithCoder:(NSCoder *)aDecoder;
+-(enum ORVType) vtype;
+@end
+
+
+@interface ORLDoubleVarI : ORExprI<ORLDoubleVar>
+-(ORLDoubleVarI*) init: (id<ORTracker>) tracker;
+-(ORLDoubleVarI*) init: (id<ORTracker>) tracker domain:(id<ORLDoubleRange>) dom;
+-(ORLDoubleVarI*) init: (id<ORTracker>) tracker up: (ORLDouble) up;
+-(ORLDoubleVarI*) init: (id<ORTracker>) tracker low: (ORLDouble) low up: (ORLDouble) up;
+-(ORBool) hasBounds;
+-(ORLDouble) low;
+-(ORLDouble) up;
+-(void) visit: (ORVisitor*)v;
+-(void) encodeWithCoder:(NSCoder *)aCoder;
+-(id) initWithCoder:(NSCoder *)aDecoder;
+-(enum ORVType) vtype;
+@end
+//------------------------
 @interface ORBitVarI : ORExprI<ORBitVar>
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len;
 -(ORUInt*)low;

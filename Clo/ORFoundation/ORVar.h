@@ -53,6 +53,31 @@ PORTABLE_BEGIN
 @end
 
 
+@protocol ORFloatVar <ORExprVar>
+-(id<ORFloatRange>) domain;
+-(ORBool) hasBounds;
+-(ORFloat) low;
+-(ORFloat) up;
+@end
+
+
+@protocol ORDoubleVar <ORExprVar>
+-(id<ORDoubleRange>) domain;
+-(ORBool) hasBounds;
+-(ORDouble) low;
+-(ORDouble) up;
+@end
+
+
+@protocol ORLDoubleVar <ORExprVar>
+-(id<ORLDoubleRange>) domain;
+-(ORBool) hasBounds;
+-(ORLDouble) low;
+-(ORLDouble) up;
+@end
+
+
+
 @protocol ORExprArray<ORIdArray>
 -(id<ORExpr>) at: (ORInt) value;
 -(void) set: (id<ORExpr>) x at: (ORInt) value;

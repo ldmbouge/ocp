@@ -106,6 +106,9 @@
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitRealVar: (id<ORRealVar>) v;
+-(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitDoubleVar: (id<ORDoubleVar>) v;
+-(void) visitLDoubleVar: (id<ORLDoubleVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 // Expressions
@@ -168,7 +171,19 @@
 }
 -(void) visitRealVar: (id<ORRealVar>) v
 {
-   [_ms addObject:v];
+    [_ms addObject:v];
+}
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+    [_ms addObject:v];
+}
+-(void) visitDoubleVar: (id<ORDoubleVar>) v
+{
+    [_ms addObject:v];
+}
+-(void) visitLDoubleVar: (id<ORLDoubleVar>) v
+{
+    [_ms addObject:v];
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {

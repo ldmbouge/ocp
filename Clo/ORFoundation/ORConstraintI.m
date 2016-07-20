@@ -2884,7 +2884,19 @@
 }
 -(void) visitRealVar: (id<ORRealVar>) v
 {
-   [_theSet addObject:v];
+    [_theSet addObject:v];
+}
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+    [_theSet addObject:v];
+}
+-(void) visitDoubleVar: (id<ORDoubleVar>) v
+{
+    [_theSet addObject:v];
+}
+-(void) visitLDoubleVar: (id<ORLDoubleVar>) v
+{
+    [_theSet addObject:v];
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {

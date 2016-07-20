@@ -41,6 +41,7 @@ typedef long long ORLong;
 typedef unsigned long long ORULong;
 typedef float  ORFloat;
 typedef double ORDouble;
+typedef long double ORLDouble;
 typedef BOOL   ORBool;
 
 //#define minOf(a,b) ((a) < (b) ? (a) : (b))

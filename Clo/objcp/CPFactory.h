@@ -33,6 +33,11 @@
 +(id<CPRealVar>) realVar:(id<CPEngine>)cp castFrom:(id<CPIntVar>)x;
 +(id<CPRealParam>) realParam:(id<CPEngine>)cp initialValue:(ORDouble)v;
 
+
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range;
++(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range;
++(id<CPLDoubleVar>) ldoubleVar:(id<CPEngine>)cp bounds:(id<ORLDoubleRange>) range;
+
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet;
 
 +(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;

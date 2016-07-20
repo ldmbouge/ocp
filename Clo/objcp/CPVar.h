@@ -162,6 +162,52 @@ enum CPVarClass {
 -(void) assignRelaxationValue: (ORDouble) f;
 -(ORNarrowing) updateInterval: (ORInterval) v;
 @end
+//----------------------
+@protocol CPFloatVar<CPVar>
+-(ORFloat) min;
+-(ORFloat) max;
+-(ORFloat) value;
+-(ORInterval) bounds;
+-(ORBool) member:(ORFloat)v;
+-(ORBool) bound;
+-(ORFloat) domwidth;
+-(void) bind:(ORFloat) val;
+-(void) updateMin:(ORFloat) newMin;
+-(void) updateMax:(ORFloat) newMax;
+-(void) assignRelaxationValue: (ORFloat) f;
+-(ORNarrowing) updateInterval: (ORInterval) v;
+@end
+
+@protocol CPDoubleVar<CPVar>
+-(ORDouble) min;
+-(ORDouble) max;
+-(ORDouble) value;
+-(ORInterval) bounds;
+-(ORBool) member:(ORDouble)v;
+-(ORBool) bound;
+-(ORDouble) domwidth;
+-(void) bind:(ORDouble) val;
+-(void) updateMin:(ORDouble) newMin;
+-(void) updateMax:(ORDouble) newMax;
+-(void) assignRelaxationValue: (ORDouble) f;
+-(ORNarrowing) updateInterval: (ORInterval) v;
+@end
+
+@protocol CPLDoubleVar<CPVar>
+-(ORLDouble) min;
+-(ORLDouble) max;
+-(ORLDouble) value;
+-(ORInterval) bounds;
+-(ORBool) member:(ORLDouble)v;
+-(ORBool) bound;
+-(ORLDouble) domwidth;
+-(void) bind:(ORLDouble) val;
+-(void) updateMin:(ORLDouble) newMin;
+-(void) updateMax:(ORLDouble) newMax;
+-(void) assignRelaxationValue: (ORLDouble) f;
+-(ORNarrowing) updateInterval: (ORInterval) v;
+@end
+//----------------------
 
 @protocol CPRealParam<CPParam>
 -(ORDouble) value;

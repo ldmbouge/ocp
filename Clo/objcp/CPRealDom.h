@@ -13,7 +13,7 @@
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 
-@interface CPRealDom : NSObject<CPFDom,NSCopying> {
+@interface CPRealDom : NSObject<CPDoubleDom,NSCopying> {
    id<ORTrail>        _trail;
    ORDouble            _imin;
    ORDouble            _imax;
@@ -34,6 +34,6 @@
 -(ORDouble) domwidth;
 -(ORBool) member:(ORDouble)v;
 -(id) copy;
--(void) restoreDomain:(id<CPFDom>)toRestore;
+-(void) restoreDomain:(id<CPDoubleDom>)toRestore;
 -(void) restoreValue:(ORDouble)toRestore for:(id<CPRealVarNotifier>)x;
 @end

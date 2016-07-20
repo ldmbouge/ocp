@@ -39,6 +39,19 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "realRange: visit method not defined"];    
 }
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "FloatRange: visit method not defined"];
+}
+-(void) visitDoubleRange:(id<ORDoubleRange>)v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleRange: visit method not defined"];
+}
+-(void) visitLDoubleRange:(id<ORLDoubleRange>)v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "LDoubleRange: visit method not defined"];
+}
+
 -(void) visitIntArray:(id<ORIntArray>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntArray: visit method not defined"];    
@@ -61,8 +74,22 @@
 }
 -(void) visitRealVar: (id<ORRealVar>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "RealVar: visit method not defined"];    
+    @throw [[ORExecutionError alloc] initORExecutionError: "RealVar: visit method not defined"];
 }
+//-------------------------
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "FloatVar: visit method not defined"];
+}
+-(void) visitDoubleVar: (id<ORDoubleVar>) v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "DoubleVar: visit method not defined"];
+}
+-(void) visitLDoubleVar: (id<ORLDoubleVar>) v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "LDoubleVar: visit method not defined"];
+}
+//-------------------------
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "BitVar: visit method not defined"];    

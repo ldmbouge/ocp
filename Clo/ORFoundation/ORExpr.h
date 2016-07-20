@@ -37,7 +37,10 @@ typedef NS_ENUM(NSUInteger,ORVType) {
    ORTReal = 2,
    ORTBit  = 3,
    ORTSet  = 4,
-   ORTNA = 5
+   ORTFloat = 5,
+   ORTDouble = 6,
+   ORTLDouble = 7,
+   ORTNA = 8
 };
 #else
 typedef enum ORRelationType {

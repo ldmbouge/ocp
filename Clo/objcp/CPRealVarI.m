@@ -253,7 +253,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    [self whenChangeBoundsPropagate:c priority:c->_priority];
 }
 
--(void) bindEvt:(id<CPFDom>)sender
+-(void) bindEvt:(id<CPRealDom>)sender
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
@@ -261,7 +261,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
--(void) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPRealDom>)sender
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
@@ -273,7 +273,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPRealDom>)sender
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
@@ -490,12 +490,12 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    return NO;
 }
--(void) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
+-(void) loseValEvt: (ORInt) val sender:(id<CPRealDom>)sender
 {
 
 }
 
--(void) bindEvt: (id<CPFDom>) sender
+-(void) bindEvt: (id<CPRealDom>) sender
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
@@ -514,7 +514,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    // [ldm]. There is nothing to do here. We lost a value _inside_ the domain, but realVars are intervals
    // So no hope of propagating. 
 }
--(void) changeMinEvt: (ORInt) dsz sender: (id<CPDom>) sender
+-(void) changeMinEvt: (ORInt) dsz sender: (id<CPRealDom>) sender
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
@@ -526,7 +526,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
--(void) changeMaxEvt:(ORInt) dsz sender:(id<CPFDom>)sender
+-(void) changeMaxEvt:(ORInt) dsz sender:(id<CPRealDom>)sender
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
