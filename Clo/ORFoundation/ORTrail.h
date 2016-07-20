@@ -57,6 +57,12 @@ typedef struct {
 } TRLong;
 
 typedef struct {
+    float    _low;
+    float    _up;
+    ORUInt    _mgc;
+} TRFloatInterval;
+
+typedef struct {
     float    _val;
     ORUInt    _mgc;
 } TRFloat;
@@ -92,6 +98,9 @@ typedef struct {
 } FXInt;
 
 @interface ORTrailFunction : NSObject
+#if __cplusplus
+extern "C" {
+#endif
 void trailIntFun(id<ORTrail> t,int* ptr);
 void trailDoubleFun(id<ORTrail> t,double* ptr);
 void trailUIntFun(id<ORTrail> t,unsigned* ptr);
@@ -107,7 +116,11 @@ TRIntArray makeTRIntArray(id<ORTrail> trail,int nb,int low);
 void  freeTRIntArray(TRIntArray a);
 TRDoubleArray makeTRDoubleArray(id<ORTrail> trail,int nb,int low);
 void  freeTRDoubleArray(TRDoubleArray a);
+TRFloatInterval makeTRFloatInterval(id<ORTrail> trail,float min, float max);
 
+void  updateMin(TRFloatInterval* dom,float min, id<ORTrail> trail);
+void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail);
+void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail> trail);
 void  assignTRInt(TRInt* v,int val,id<ORTrail> trail);
 void  assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail);
 void  assignTRLong(TRLong* v,long long val,id<ORTrail> trail);
@@ -124,6 +137,9 @@ FXInt makeFXInt(id<ORTrail> trail);
 void  incrFXInt(FXInt* v,id<ORTrail> trail);
 int   getFXInt(FXInt* v,id<ORTrail> trail);
 ORInt trailMagic(id<ORTrail> trail);
+#if __cplusplus
+}
+#endif
 @end
 
 // Struct-Based array of trailable Integers

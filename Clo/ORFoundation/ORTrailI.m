@@ -305,6 +305,10 @@ TRLDouble makeTRLDouble(id<ORTrail> trail,long double val)
 {
    return (TRLDouble){val,[trail magic]-1};
 }
+TRFloatInterval makeTRFloatInterval(ORTrailI* trail, float min, float max)
+{
+    return (TRFloatInterval){min, max, [trail magic]-1};
+}
 
 ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
 {
@@ -408,6 +412,33 @@ void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
 {
    inline_trailIdNCFun(trail, v);
    *v = val;
+}
+void  updateMin(TRFloatInterval* dom,float min, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailFloat:&dom->_low];
+    }
+    dom->_low = min;
+}
+void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailFloat:&dom->_up];
+    }
+    dom->_up = max;
+    
+}
+void  updateTRFloatInterval(TRFloatInterval* dom,float min,float max, id<ORTrail> trail)
+{
+    if (dom->_mgc != [trail magic]) {
+        dom->_mgc = [trail magic];
+        [trail trailFloat:&dom->_low];
+        [trail trailFloat:&dom->_up];
+    }
+    dom->_low = min;
+    dom->_up = max;
 }
 ORInt getTRIntArray(TRIntArray a,int i)
 {

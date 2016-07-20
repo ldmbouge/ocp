@@ -174,6 +174,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitMutableDouble: (id<ORMutableDouble>) e;
+-(void) visitFloat: (id<ORFloatNumber>) e;
 -(void) visitDouble: (id<ORDoubleNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;

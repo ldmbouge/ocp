@@ -15,6 +15,9 @@
 #import "CPError.h"
 #import "CPFloatVarI.h"
 
+#include <fpc.h>
+
+
 #define BIND_EPSILON (0.0000001)
 #define TOLERANCE    (0.0000001)
 
@@ -26,8 +29,7 @@
     _trail = trail;
     _imin = low;
     _imax = up;
- //   _min = makeTRFloat(_trail, _imin);
- //   _max = makeTRFloat(_trail, _imax);
+    _domain = makeTRFloatInterval(_trail, _imin, _imax);
     return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -37,22 +39,21 @@
 -(NSString*) description
 {
     ORIReady();
-    return ORIFormat(createORI2(_min._val, _max._val));
+    return ORIFormat(createORI2(_domain._low, _domain._up));
 }
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
     ORIReady();
-    ORInterval me = createORI2(_min._val, _max._val);
+    ORInterval me = createORI2(_domain._low, _domain._up);
     BOOL isb = ORIBound(me, TOLERANCE);
     if (isb)
         return;
-    if (newMin <= _min._val)
+    if (newMin <= _domain._low)
         return;
     if (ORIEmpty(ORIInter(me, createORI1(newMin))))
         failNow();
-   // assignTRFloat(&_min, newMin, _trail);
-    ORIReady();
-    ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+    updateMin(&_domain, newMin, _trail);
+    ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
     [x changeMinEvt: isBound sender:self];
     if (isBound)
         [x bindEvt:self];
@@ -60,17 +61,17 @@
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
 {
     ORIReady();
-    ORInterval me = createORI2(_min._val, _max._val);
+    ORInterval me = createORI2(_domain._low, _domain._up);
     BOOL isb = ORIBound(me, TOLERANCE);
     if (isb)
         return;
-    if (newMax >= _max._val)
+    if (newMax >= _domain._up)
         return;
     if (ORIEmpty(ORIInter(me, createORI1(newMax))))
         failNow();
-    //assignTRFloat(&_max, newMax, _trail);
+    updateMin(&_domain, newMax, _trail);
     ORIReady();
-    ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+    ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
     [x changeMaxEvt:isBound sender:self];
     if (isBound)
         [x bindEvt:self];
@@ -78,18 +79,17 @@
 -(ORNarrowing) updateInterval: (ORInterval) v for: (id<CPFloatVarNotifier>) x
 {
     ORIReady();
-    ORInterval src= createORI2(_min._val, _max._val);
+    ORInterval src= createORI2(_domain._low, _domain._up);
     ORInterval is = ORIInter(src, v);
     if (ORIEmpty(is))
         failNow();
     switch (ORINarrow(src, is)) {
         case ORBoth:
         {
-            ORFloat nl,nu;
+            ORDouble nl,nu;
             ORIBounds(is, &nl, &nu);
-          //  assignTRFloat(&_min, nl, _trail);
-          //  assignTRFloat(&_max, nu, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+            updateTRFloatInterval(&_domain, nl, nu, _trail);
+            ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
             [x changeMinEvt:isBound sender:self];
             [x changeMaxEvt:isBound sender:self];
             if (isBound)
@@ -99,8 +99,8 @@
         case ORLow:
         {
             ORFloat nl = ORILow(is);
-           // assignTRFloat(&_min, nl, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+            updateMin(&_domain,nl, _trail);
+            ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
             [x changeMinEvt:isBound sender:self];
             if (isBound)
                 [x bindEvt:self];
@@ -109,8 +109,8 @@
         case ORUp:
         {
             ORFloat nu = ORIUp(is);
-          //  assignTRFloat(&_max, nu, _trail);
-            ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+            updateMax(&_domain,nu, _trail);
+            ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
             [x changeMaxEvt:isBound sender:self];
             if (isBound)
                 [x bindEvt:self];
@@ -124,25 +124,24 @@
 -(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x
 {
     ORIReady();
-    if (_min._val <= val && val <= _max._val) {
-        if (ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON))
+    if (_domain._low <= val && val <= _domain._up) {
+        if (ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON))
             return;
         [x changeMinEvt:YES sender:self];
         [x changeMaxEvt:YES sender:self];
         [x bindEvt:self];
-       // assignTRFloat(&_min, val, _trail);
-       // assignTRFloat(&_max, val, _trail);
+        updateTRFloatInterval(&_domain, val, val, _trail);
     }
     else
         failNow();
 }
 -(ORFloat) min
 {
-    return _min._val;
+    return _domain._low;
 }
 -(ORFloat) max
 {
-    return _max._val;
+    return _domain._up;
 }
 -(ORFloat) imin
 {
@@ -155,21 +154,21 @@
 -(ORBool) bound
 {
     ORIReady();
-    return ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
+    return ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
 }
 -(ORInterval) bounds
 {
     ORIReady();
-    return createORI2(_min._val, _max._val);
+    return createORI2(_domain._low, _domain._up);
 }
 -(ORFloat) domwidth
 {
     ORIReady();
-    return ORIWidth(createORI2(_min._val, _max._val));
+    return ORIWidth(createORI2(_domain._low, _domain._up));
 }
 -(ORBool) member:(ORFloat)v
 {
-    return _min._val <= v && v <= _max._val;
+    return _domain._low <= v && v <= _domain._up;
 }
 -(id) copy
 {
@@ -177,27 +176,30 @@
 }
 -(void) restoreDomain:(id<CPFloatDom>)toRestore
 {
-    _min._val = [toRestore min];
-    _max._val = [toRestore max];
+    updateMin(&_domain, toRestore.min, _trail);
+    updateMax(&_domain, toRestore.max, _trail);
 }
 -(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x
 {
-    _min._val = _max._val = toRestore;
+    updateMin(&_domain, toRestore, _trail);
+    updateMax(&_domain, toRestore, _trail);
     [x bindEvt:self];
 }
 
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {
-    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_min._val];
-    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_max._val];
+    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_domain._low];
+    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_domain._up];
     [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_imin];
     [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_imax];
 }
 - (id) initWithCoder:(NSCoder *) aDecoder
 {
     self = [super init];
-    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_min._val];
-    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_max._val];
+    float low, up;
+    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&low];
+    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&up];
+    _domain = makeTRFloatInterval(_trail, low, up);
     [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_imin];
     [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_imax];
     return self;

@@ -47,6 +47,9 @@
 #endif
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());
+#if __cplusplus
+extern "C"
+#endif
 void failNow();
 
 #if TARGET_OS_IPHONE

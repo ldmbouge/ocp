@@ -45,6 +45,15 @@
 -(void)setIdValue:(id)v;
 @end
 
+
+@interface ORFloatI : ORExprI<NSCoding,NSCopying,ORDoubleNumber>
+-(ORFloatI*) init: (id<ORTracker>) tracker value: (ORFloat) value;
+-(ORFloat) doubleValue;
+-(ORFloat) value;
+-(ORInt) intValue;
+-(id<ORTracker>) tracker;
+@end
+
 @interface ORDoubleI : ORExprI<NSCoding,NSCopying,ORDoubleNumber>
 -(ORDoubleI*) init: (id<ORTracker>) tracker value: (ORDouble) value;
 -(ORDouble) doubleValue;

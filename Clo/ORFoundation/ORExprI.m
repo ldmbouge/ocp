@@ -21,9 +21,14 @@
 {
    const char* tt = [self objCType];
    if (strcmp(tt,@encode(ORInt))==0 || strcmp(tt,@encode(ORUInt)) ==0 || strcmp(tt,@encode(ORLong)) ==0 || strcmp(tt,@encode(ORULong)) ==0)
-      return [ORFactory integer:tracker value:[self intValue]];
-   else if (strcmp(tt,@encode(float))==0 || strcmp(tt,@encode(double))==0)
-      return [ORFactory double:tracker value:[self floatValue]];
+       return [ORFactory integer:tracker value:[self intValue]];
+   else if (strcmp(tt,@encode(float))==0 || strcmp(tt,@encode(ORFloat))==0)
+       return [ORFactory float:tracker value:[self floatValue]];
+   else if (strcmp(tt,@encode(double))==0 || strcmp(tt,@encode(ORDouble))==0)
+       return [ORFactory double:tracker value:[self doubleValue]];
+   //TODO
+   /*else if (strcmp(tt,@encode(long double))==0 || strcmp(tt,@encode(ORLDouble))==0)
+       return [ORFactory ldouble:tracker value:[self ldoubleValue]];*/
    else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
    else {

@@ -17,9 +17,8 @@
     id<ORTrail>        _trail;
     ORFloat            _imin;
     ORFloat            _imax;
-    TRFloat           _min;
-    TRFloat           _max;
-}
+    TRFloatInterval    _domain;
+ }
 -(id)initCPFloatDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up;
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
