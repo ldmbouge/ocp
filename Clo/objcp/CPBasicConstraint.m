@@ -2489,7 +2489,6 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          [_relaxation updateBounds:_mv[i] lower:lb upper:ub];
       }
       onBehalf: self];
-//      [self release]; // ok, that's ugly. The closure above captures self... which is an issue as ref counter never drop.
    }
    [self propagate];
 }

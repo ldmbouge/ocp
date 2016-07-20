@@ -235,15 +235,9 @@ static int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrda
    ORDouble lb,ub,value;
    ORDouble feasTol = 0.0;
    GRBgetdblparam(_env,"IntFeasTol",&feasTol);
-
    GRBgetdblattrelement(_model,"LB",[var idx],&lb);
    GRBgetdblattrelement(_model,"UB",[var idx],&ub);
    GRBgetdblattrelement(_model,"X",[var idx],&value);
-//   if (value < lb)
-//      value = lb;
-//   else if (value > ub)
-//      value = ub;
-
    if (fabs(value - lb) < feasTol)
       value = lb;
    else if (fabs(value - ub) < feasTol)
@@ -411,7 +405,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata)
       GRBcbget(cbdata, where, GRB_CB_PRE_COLDEL, &cdels);
       GRBcbget(cbdata, where, GRB_CB_PRE_ROWDEL, &rdels);
       if (cdels || rdels) {
-         printf("%7d columns and %7d rows are removed\n", cdels, rdels);
+//         printf("%7d columns and %7d rows are removed\n", cdels, rdels);
       }
    } else if (where == GRB_CB_SIMPLEX) {
       /* Simplex callback */
