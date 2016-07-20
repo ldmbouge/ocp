@@ -88,6 +88,12 @@
 {}
 -(void) visitRealRange:(id<ORRealRange>)v
 {}
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{}
+-(void) visitDoubleRange:(id<ORDoubleRange>)v
+{}
+-(void) visitLDoubleRange:(id<ORLDoubleRange>)v
+{}
 -(void) visitUniformDistribution:(id) v
 {}
 
@@ -107,6 +113,24 @@
 {
     if (!_gamma[v.getId])
         _gamma[v.getId] = [CPFactory realParam: _engine initialValue: [v initialValue]];
+}
+
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+    if (!_gamma[v.getId])
+        _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
+}
+
+-(void) visitDoubleVar: (id<ORDoubleVar>) v
+{
+    if (!_gamma[v.getId])
+        _gamma[v.getId] = [CPFactory doubleVar: _engine bounds: [v domain]];
+}
+
+-(void) visitLDoubleVar: (id<ORLDoubleVar>) v
+{
+    if (!_gamma[v.getId])
+        _gamma[v.getId] = [CPFactory ldoubleVar: _engine bounds: [v domain]];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v

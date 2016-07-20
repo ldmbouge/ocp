@@ -88,7 +88,19 @@
 }
 -(void) visitRealVar: (id) v
 {
-   _result = v;
+    _result = v;
+}
+-(void) visitFloatVar: (id) v
+{
+    _result = v;
+}
+-(void) visitDoubleVar: (id) v
+{
+    _result = v;
+}
+-(void) visitLDoubleVar: (id) v
+{
+    _result = v;
 }
 -(void) visitIntVarLitEQView:(id)v
 {
@@ -149,6 +161,18 @@
 -(void) visitRealRange:(id<ORRealRange>)v
 {
    _result = v;
+}
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{
+    _result = v;
+}
+-(void) visitDoubleRange:(id<ORDoubleRange>)v
+{
+    _result = v;
+}
+-(void) visitLDoubleRange:(id<ORLDoubleRange>)v
+{
+    _result = v;
 }
 -(void) visitIdArray: (id<ORIdArray>) v
 {

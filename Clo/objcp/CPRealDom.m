@@ -175,7 +175,7 @@
 {
    return [[CPRealDom alloc] initCPRealDom:_trail low:_imin up:_imax];
 }
--(void) restoreDomain:(id<CPFDom>)toRestore
+-(void) restoreDomain:(id<CPRealDom>)toRestore
 {
    _min._val = [toRestore min];
    _max._val = [toRestore max];

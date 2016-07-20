@@ -306,7 +306,6 @@ TRLDouble makeTRLDouble(id<ORTrail> trail,long double val)
    return (TRLDouble){val,[trail magic]-1};
 }
 
-
 ORInt assignTRIntArray(TRIntArray a,int i,ORInt val,id<ORTrail> trail)
 {
    TRInt* ei = a._entries + i;

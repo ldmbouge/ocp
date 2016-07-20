@@ -62,19 +62,18 @@ typedef struct  {
 } CPRealEventNetwork;
 
 @class CPRealVarI;
-
 @protocol CPRealVarNotifier <NSObject>
 -(CPRealVarI*) findAffine: (ORDouble) scale shift: (ORDouble) shift;
--(void) bindEvt:(id<CPFDom>)sender;
--(void) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender;
--(void) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender;
+-(void) bindEvt:(id<CPRealDom>)sender;
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPRealDom>)sender;
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPRealDom>)sender;
 @end
 
 @interface CPRealVarI : ORObject<CPRealVar,CPRealVarNotifier,CPRealVarExtendedItf> {
    CPEngineI*               _engine;
    BOOL                     _hasValue;
    ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-   id<CPFDom>               _dom;
+   id<CPRealDom>               _dom;
    CPRealEventNetwork      _net;
    CPMultiCast*             _recv;
 }

@@ -57,6 +57,11 @@ typedef struct {
 } TRLong;
 
 typedef struct {
+    float    _val;
+    ORUInt    _mgc;
+} TRFloat;
+
+typedef struct {
    double    _val;
    ORUInt    _mgc;
 } TRDouble;

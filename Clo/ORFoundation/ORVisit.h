@@ -14,6 +14,9 @@
 
 @protocol ORTrailableInt;
 @protocol ORRealVar;
+@protocol ORFloatVar;
+@protocol ORDoubleVar;
+@protocol ORLDoubleVar;
 @protocol ORIntMatrix;
 @protocol ORIdMatrix;
 @protocol ORIdArray;
@@ -45,6 +48,10 @@
 @protocol ORObjectiveFunction;
 @protocol ORRealEqualc;
 @protocol ORRealRange;
+@protocol ORFloatRange;
+@protocol ORDoubleRange;
+@protocol ORLDoubleRange;
+
 
 
 @interface ORVisitor : NSObject<NSObject>
@@ -54,6 +61,9 @@
 -(void) visitIntSet:(id<ORIntSet>)v;
 -(void) visitIntRange:(id<ORIntRange>)v;
 -(void) visitRealRange:(id<ORRealRange>)v;
+-(void) visitFloatRange:(id<ORFloatRange>)v;
+-(void) visitDoubleRange:(id<ORDoubleRange>)v;
+-(void) visitLDoubleRange:(id<ORLDoubleRange>)v;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitDoubleArray:(id<ORDoubleArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
@@ -61,6 +71,9 @@
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitRealVar: (id<ORRealVar>) v;
+-(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitDoubleVar: (id<ORDoubleVar>) v;
+-(void) visitLDoubleVar: (id<ORLDoubleVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;

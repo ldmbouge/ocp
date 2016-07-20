@@ -59,7 +59,6 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-
 @interface ORRealRangeI : ORObject<ORRealRange,NSCopying>
 -(id<ORRealRange>)init:(ORDouble) low up:(ORDouble)up;
 -(ORDouble)low;
@@ -68,3 +67,31 @@
 -(ORBool)inRange:(ORDouble)e;
 -(NSString*)description;
 @end
+
+@interface ORFloatRangeI : ORObject<ORFloatRange,NSCopying>
+-(id<ORFloatRange>)init:(ORFloat) low up:(ORFloat)up;
+-(ORFloat)low;
+-(ORFloat)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORFloat)e;
+-(NSString*)description;
+@end
+
+@interface ORDoubleRangeI : ORObject<ORDoubleRange,NSCopying>
+-(id<ORDoubleRange>)init:(ORDouble) low up:(ORDouble)up;
+-(ORDouble)low;
+-(ORDouble)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORDouble)e;
+-(NSString*)description;
+@end
+
+@interface ORLDoubleRangeI : ORObject<ORLDoubleRange,NSCopying>
+-(id<ORLDoubleRange>)init:(ORLDouble) low up:(ORLDouble)up;
+-(ORLDouble)low;
+-(ORLDouble)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORLDouble)e;
+-(NSString*)description;
+@end
+

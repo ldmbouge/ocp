@@ -142,7 +142,21 @@
    ORRealRangeI* o = [[ORRealRangeI alloc] init:low up:up];
    return [tracker trackImmutable:o];
 }
-
++(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker low:(ORFloat)low up:(ORFloat) up
+{
+    ORFloatRangeI* o = [[ORFloatRangeI alloc] init:low up:up];
+    return [tracker trackImmutable:o];
+}
++(id<ORDoubleRange>) doubleRange: (id<ORTracker>) tracker low:(ORDouble)low up:(ORDouble) up
+{
+    ORDoubleRangeI* o = [[ORDoubleRangeI alloc] init:low up:up];
+    return [tracker trackImmutable:o];
+}
++(id<ORLDoubleRange>) ldoubleRange: (id<ORTracker>) tracker low:(ORLDouble)low up:(ORLDouble) up
+{
+    ORLDoubleRangeI* o = [[ORLDoubleRangeI alloc] init:low up:up];
+    return [tracker trackImmutable:o];
+}
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray:tracker size:(ORInt)[array count] value:0];
@@ -475,12 +489,49 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORRealVar>) realVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
 {
-   return [[ORRealVarI alloc]  init: tracker low: low up: up];
+    return [[ORRealVarI alloc]  init: tracker low: low up: up];
 }
 +(id<ORRealVar>) realVar: (id<ORTracker>) tracker
 {
-   return [[ORRealVarI alloc]  init: tracker];
+    return [[ORRealVarI alloc]  init: tracker];
 }
+//-------------------------------
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up
+{
+    return [[ORFloatVarI alloc]  init: tracker low: low up: up];
+}
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker domain:(id<ORFloatRange>) dom{
+    return [[ORFloatVarI alloc]  init: tracker domain:dom];
+}
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker
+{
+    return [[ORFloatVarI alloc]  init: tracker];
+}
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker low:(ORDouble) low up: (ORDouble) up
+{
+    return [[ORDoubleVarI alloc]  init: tracker low: low up: up];
+}
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker domain:(id<ORDoubleRange>) dom
+{
+    return [[ORDoubleVarI alloc]  init: tracker domain:dom];
+}
++(id<ORDoubleVar>) doubleVar: (id<ORTracker>) tracker
+{
+    return [[ORDoubleVarI alloc]  init: tracker];
+}
++(id<ORLDoubleVar>) ldoubleVar: (id<ORTracker>) tracker low:(ORLDouble) low up: (ORLDouble) up
+{
+    return [[ORLDoubleVarI alloc]  init: tracker low: low up: up];
+}
++(id<ORLDoubleVar>) ldoubleVar: (id<ORTracker>) tracker domain:(id<ORLDoubleRange>) dom
+{
+    return [[ORLDoubleVarI alloc]  init: tracker domain:dom];
+}
++(id<ORLDoubleVar>) ldoubleVar: (id<ORTracker>) tracker
+{
+    return [[ORLDoubleVarI alloc]  init: tracker];
+}
+//---------------------------------
 +(id<ORBitVar>) bitVar:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORUInt)bLen
 {
    return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen];
