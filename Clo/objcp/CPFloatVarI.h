@@ -77,7 +77,7 @@ typedef struct  {
     CPFloatEventNetwork      _net;
     CPMultiCast*             _recv;
 }
--(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
+-(id)init:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;

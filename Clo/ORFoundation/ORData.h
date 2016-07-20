@@ -93,6 +93,12 @@ typedef struct timeval ORTimeval;
 -(ORInt) intValue;
 @end
 
+@protocol ORFloatNumber <ORObject,ORExpr>
+-(ORFloat) floatValue;
+-(ORFloat) value;
+-(ORInt) intValue;
+@end
+
 @protocol ORMutableDouble <ORObject,ORExpr>
 -(ORDouble) initialValue;
 -(ORDouble) value: (id<ORGamma>) solver;

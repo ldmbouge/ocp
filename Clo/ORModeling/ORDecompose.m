@@ -75,7 +75,14 @@
           [v release];
           return rv;
        }break;
-       default: {
+        case ORTFloat: {
+            ORRealNormalizer* v = [[ORRealNormalizer alloc] init:model];
+  //          [rel visit:v];
+            ORRealLinear* rv = [v terms];
+            [v release];
+            return rv;
+        }break;
+        default: {
           @throw [[ORExecutionError alloc] initORExecutionError:"Unexpected type in expression normalization"];
           return NULL;
        }break;

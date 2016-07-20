@@ -501,9 +501,13 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "MutableRealI: visit method not defined"]; 
 }
+-(void) visitFloat: (id<ORFloatNumber>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "FloatI: visit method not defined"];
+}
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "RealI: visit method not defined"]; 
+    @throw [[ORExecutionError alloc] initORExecutionError: "RealI: visit method not defined"];
 }
 -(void) visitExprPlusI: (id<ORExpr>) e
 {

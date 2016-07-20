@@ -103,6 +103,11 @@
    ORDoubleI* o = [[ORDoubleI alloc] init: tracker value: value];
    return [tracker trackImmutable: o];
 }
++(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value
+{
+    ORFloatI* o = [[ORFloatI alloc] init: tracker value: value];
+    return [tracker trackImmutable: o];
+}
 +(id<ORMutableDouble>) mutableDouble: (id<ORTracker>)tracker value: (ORDouble) value
 {
    ORMutableDoubleI* o = [[ORMutableDoubleI alloc] initORMutableRealI: tracker value:value];

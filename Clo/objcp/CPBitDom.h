@@ -150,7 +150,7 @@ static inline ORInt domMember(CPBoundsDom* x,ORInt value)
       default: return 0;
    }
 }
-void domBitRemove(CPBitDom* this,ORInt val,id<CPIntVarNotifier> x);
+void domBitRemove(CPBitDom* thisDom,ORInt val,id<CPIntVarNotifier> x);
 
 static inline void domRemove(CPBoundsDom* x,ORInt val,id<CPIntVarNotifier> recv,BOOL tle)
 {

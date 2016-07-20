@@ -44,7 +44,7 @@
 		08B262111D3F82E400153FE5 /* CPDoubleVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B2620D1D3F82E400153FE5 /* CPDoubleVarI.h */; };
 		08B262121D3F82E400153FE5 /* CPDoubleVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B2620E1D3F82E400153FE5 /* CPDoubleVarI.m */; };
 		08B2621C1D3F831100153FE5 /* CPFloatDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262131D3F831100153FE5 /* CPFloatDom.h */; };
-		08B2621D1D3F831100153FE5 /* CPFloatDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B262141D3F831100153FE5 /* CPFloatDom.m */; };
+		08B2621D1D3F831100153FE5 /* CPFloatDom.mm in Sources */ = {isa = PBXBuildFile; fileRef = 08B262141D3F831100153FE5 /* CPFloatDom.mm */; };
 		08B2621E1D3F831100153FE5 /* CPFloatVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262151D3F831100153FE5 /* CPFloatVarI.h */; };
 		08B2621F1D3F831100153FE5 /* CPFloatVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B262161D3F831100153FE5 /* CPFloatVarI.m */; };
 		08B262201D3F831100153FE5 /* CPInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262171D3F831100153FE5 /* CPInterface.h */; };
@@ -52,6 +52,10 @@
 		08B262221D3F831100153FE5 /* CPLDoubleDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B262191D3F831100153FE5 /* CPLDoubleDom.m */; };
 		08B262231D3F831100153FE5 /* CPLDoubleVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B2621A1D3F831100153FE5 /* CPLDoubleVarI.h */; };
 		08B262241D3F831100153FE5 /* CPLDoubleVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B2621B1D3F831100153FE5 /* CPLDoubleVarI.m */; };
+		08B262271D3F851400153FE5 /* libfpc.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 08B262251D3F851400153FE5 /* libfpc.so */; };
+		08B262281D3F851400153FE5 /* libfpi.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 08B262261D3F851400153FE5 /* libfpi.so */; };
+		08B2622A1D3FBA0F00153FE5 /* CPFloatConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262291D3FBA0F00153FE5 /* CPFloatConstraint.h */; };
+		08B2622C1D3FBA5600153FE5 /* CPFloatConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B2622B1D3FBA5600153FE5 /* CPFloatConstraint.m */; };
 		374554FD1BD09E6F00E6DC5F /* ORSoftify.h in Headers */ = {isa = PBXBuildFile; fileRef = 374554FB1BD09E6E00E6DC5F /* ORSoftify.h */; };
 		374554FE1BD09E6F00E6DC5F /* ORSoftify.m in Sources */ = {isa = PBXBuildFile; fileRef = 374554FC1BD09E6E00E6DC5F /* ORSoftify.m */; };
 		374555021BD09ED200E6DC5F /* ORParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 374554FF1BD09ED000E6DC5F /* ORParameter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -8311,7 +8315,7 @@
 		08B2620D1D3F82E400153FE5 /* CPDoubleVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPDoubleVarI.h; sourceTree = "<group>"; };
 		08B2620E1D3F82E400153FE5 /* CPDoubleVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDoubleVarI.m; sourceTree = "<group>"; };
 		08B262131D3F831100153FE5 /* CPFloatDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatDom.h; sourceTree = "<group>"; };
-		08B262141D3F831100153FE5 /* CPFloatDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatDom.m; sourceTree = "<group>"; };
+		08B262141D3F831100153FE5 /* CPFloatDom.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CPFloatDom.mm; sourceTree = "<group>"; };
 		08B262151D3F831100153FE5 /* CPFloatVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatVarI.h; sourceTree = "<group>"; };
 		08B262161D3F831100153FE5 /* CPFloatVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatVarI.m; sourceTree = "<group>"; };
 		08B262171D3F831100153FE5 /* CPInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPInterface.h; sourceTree = "<group>"; };
@@ -8319,6 +8323,10 @@
 		08B262191D3F831100153FE5 /* CPLDoubleDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPLDoubleDom.m; sourceTree = "<group>"; };
 		08B2621A1D3F831100153FE5 /* CPLDoubleVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPLDoubleVarI.h; sourceTree = "<group>"; };
 		08B2621B1D3F831100153FE5 /* CPLDoubleVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPLDoubleVarI.m; sourceTree = "<group>"; };
+		08B262251D3F851400153FE5 /* libfpc.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfpc.so; path = "../../../fpcs-180416-osx/lib/libfpc.so"; sourceTree = "<group>"; };
+		08B262261D3F851400153FE5 /* libfpi.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfpi.so; path = "../../../fpcs-180416-osx/lib/libfpi.so"; sourceTree = "<group>"; };
+		08B262291D3FBA0F00153FE5 /* CPFloatConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatConstraint.h; sourceTree = "<group>"; };
+		08B2622B1D3FBA5600153FE5 /* CPFloatConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatConstraint.m; sourceTree = "<group>"; };
 		374554FB1BD09E6E00E6DC5F /* ORSoftify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSoftify.h; sourceTree = "<group>"; };
 		374554FC1BD09E6E00E6DC5F /* ORSoftify.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSoftify.m; sourceTree = "<group>"; };
 		374554FF1BD09ED000E6DC5F /* ORParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParameter.h; sourceTree = "<group>"; };
@@ -22799,6 +22807,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08B262271D3F851400153FE5 /* libfpc.so in Frameworks */,
+				08B262281D3F851400153FE5 /* libfpi.so in Frameworks */,
 				5B934889165547BC00757F89 /* CPUKernel.framework in Frameworks */,
 				5BAEE09815AE9F05006CEE1E /* ORUtilities.framework in Frameworks */,
 				5BFD595815A3AEFB00825BC3 /* ORFoundation.framework in Frameworks */,
@@ -37875,6 +37885,8 @@
 		5B6E89231379D3E9005DB4CA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				08B262251D3F851400153FE5 /* libfpc.so */,
+				08B262261D3F851400153FE5 /* libfpi.so */,
 				5B6E89241379D3E9005DB4CA /* CoreData.framework */,
 				5B6E89261379D3E9005DB4CA /* Foundation.framework */,
 				5B9ABCE1139131EE000997E5 /* CoreFoundation.framework */,
@@ -38260,7 +38272,7 @@
 			isa = PBXGroup;
 			children = (
 				08B262131D3F831100153FE5 /* CPFloatDom.h */,
-				08B262141D3F831100153FE5 /* CPFloatDom.m */,
+				08B262141D3F831100153FE5 /* CPFloatDom.mm */,
 				08B262151D3F831100153FE5 /* CPFloatVarI.h */,
 				08B262161D3F831100153FE5 /* CPFloatVarI.m */,
 				08B262171D3F831100153FE5 /* CPInterface.h */,
@@ -38348,6 +38360,8 @@
 				5B73E55B151F45F60043192D /* NSBoardController.h */,
 				5B73E55C151F45F60043192D /* NSBoardController.m */,
 				5B9ABCF71391329D000997E5 /* Supporting Files */,
+				08B262291D3FBA0F00153FE5 /* CPFloatConstraint.h */,
+				08B2622B1D3FBA5600153FE5 /* CPFloatConstraint.m */,
 			);
 			path = objcp;
 			sourceTree = "<group>";
@@ -39713,6 +39727,7 @@
 				08B262201D3F831100153FE5 /* CPInterface.h in Headers */,
 				B1672FE215849EA300EFE5C3 /* CPCardinalityDC.h in Headers */,
 				5B91C336159FAB2D00158EEA /* CPElement.h in Headers */,
+				08B2622A1D3FBA0F00153FE5 /* CPFloatConstraint.h in Headers */,
 				B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */,
 				5BB1C27D1B3A02BB008A9E51 /* objcp.h in Headers */,
 				5BEAD77F15ABBAFC00A012FE /* CPLexConstraint.h in Headers */,
@@ -43424,6 +43439,7 @@
 				5B778B99154EF67C0078EB07 /* CPBitArray.m in Sources */,
 				5B778B9B154EF67C0078EB07 /* CPBitArrayDom.m in Sources */,
 				5BB1C2751B3A0098008A9E51 /* CPISVarI.m in Sources */,
+				08B2622C1D3FBA5600153FE5 /* CPFloatConstraint.m in Sources */,
 				5B778B9D154EF67C0078EB07 /* CPBitConstraint.m in Sources */,
 				5B778B9F154EF67C0078EB07 /* CPBitVarI.m in Sources */,
 				5B63C2D5156DB05E00C65B2A /* CPStatisticsMonitor.m in Sources */,
@@ -43431,7 +43447,7 @@
 				5B91C337159FAB2D00158EEA /* CPElement.m in Sources */,
 				08B262121D3F82E400153FE5 /* CPDoubleVarI.m in Sources */,
 				B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */,
-				08B2621D1D3F831100153FE5 /* CPFloatDom.m in Sources */,
+				08B2621D1D3F831100153FE5 /* CPFloatDom.mm in Sources */,
 				5BEAD78015ABBAFC00A012FE /* CPLexConstraint.m in Sources */,
 				5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */,
 				B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */,
@@ -50377,6 +50393,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
+				HEADER_SEARCH_PATHS = $HOME/Documents/Programmation/fpcs/include;
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -51918,6 +51935,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
+				HEADER_SEARCH_PATHS = $HOME/Documents/Programmation/fpcs/include;
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -51938,6 +51956,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objcp/objcp-Prefix.pch";
 				GCC_UNROLL_LOOPS = YES;
+				HEADER_SEARCH_PATHS = $HOME/Documents/Programmation/fpcs/include;
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "xyz.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
