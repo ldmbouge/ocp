@@ -61,4 +61,3 @@
 -(BOOL)isZero;
 -(BOOL)isOne;
 @end
-

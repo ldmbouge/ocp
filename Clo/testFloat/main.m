@@ -18,10 +18,10 @@ int main(int argc, const char * argv[]) {
         id<ORFloatVar> r = [ORFactory floatVar:mdl domain:r0];
         
         [mdl add:[x eq: @(1e7f)]];
-      /*  [mdl add:[y eq: [x plus:@(1.f)]]];
+        [mdl add:[y eq: [x plus:@(1.f)]]];
         [mdl add:[z eq: [x sub:@(1.f)]]];
         [mdl add:[r eq: [y sub:z]]];
-        [mdl add:[r neq: @(2.f)]];*/
+        [mdl add:[r neq: @(2.f)]];
         
         NSLog(@"model: %@",mdl);
         id<CPProgram> p = [ORFactory createCPProgram:mdl];

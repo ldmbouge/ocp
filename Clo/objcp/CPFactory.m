@@ -96,6 +96,10 @@
 {
     return [[CPFloatVarI alloc] init:cp low:range.low up:range.up];
 }
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp value:(ORFloat) v
+{
+    return [[CPFloatVarI alloc] init:cp low:v up:v];
+}
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
    // return [[CPFloatViewOnIntVarI alloc] init:cp intVar:x];
@@ -108,11 +112,11 @@
 {
     //return [[CPDoubleViewOnIntVarI alloc] init:cp intVar:x];
 }
-+(id<CPLDoubleVar>) fdoubleVar:(id<CPEngine>)cp bounds:(id<ORLDoubleRange>) range
++(id<CPLDoubleVar>) ldoubleVar:(id<CPEngine>)cp bounds:(id<ORLDoubleRange>) range
 {
     return [[CPLDoubleVarI alloc] init:cp low:range.low up:range.up];
 }
-+(id<CPLDoubleVar>) fdoubleVar:(id<CPEngine>)cp castFrom:(id<ORLDoubleRange>)x
++(id<CPLDoubleVar>) ldoubleVar:(id<CPEngine>)cp castFrom:(id<ORLDoubleRange>)x
 {
     //return [[CPLDoubleViewOnIntVarI alloc] init:cp intVar:x];
 }

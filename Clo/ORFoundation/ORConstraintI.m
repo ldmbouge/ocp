@@ -253,6 +253,7 @@
 }
 @end
 
+
 @implementation ORRealEqualc {
    id<ORRealVar> _x;
    ORDouble        _c;
@@ -2581,6 +2582,98 @@
 }
 @end
 
+@implementation ORFloatLinearEq{
+   id<ORVarArray> _ia;
+   id<ORFloatArray>  _coefs;
+   ORFloat _c;
+}
+-(ORFloatLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) == %f)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitFloatLinearEq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORFloatLinearNEq{
+   id<ORVarArray> _ia;
+   id<ORFloatArray>  _coefs;
+   ORFloat _c;
+}
+-(ORFloatLinearNEq*) initFloatLinearNEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) != %f)",[self class],self,_ia,_coefs,_c];
+   return buf;
+}
+
+-(void) visit: (ORVisitor*) v
+{
+   [v visitFloatLinearNEq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
 @implementation ORRealLinearEq {
    id<ORVarArray> _ia;
    id<ORDoubleArray>  _coefs;
@@ -2593,7 +2686,6 @@
    _coefs = coefs;
    _c  = c;
    return self;
-   
 }
 -(NSString*) description
 {

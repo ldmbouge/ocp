@@ -56,6 +56,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "IntArray: visit method not defined"];    
 }
+-(void) visitFloatArray:(id<ORFloatArray>)v
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "floatArray: visit method not defined"];
+}
 -(void) visitDoubleArray:(id<ORDoubleArray>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "doubleArray: visit method not defined"];    
@@ -441,6 +445,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "LinearEq: visit method not defined"]; 
 }
+-(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearLeq: visit method not defined"];
+}
+-(void) visitFloatLinearNEq: (id<ORFloatLinearNEq>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearNeq: visit method not defined"];
+}
 -(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearLeq: visit method not defined"]; 
@@ -576,6 +588,10 @@
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstSubI: visit method not defined"]; 
+}
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstFloatSubI: visit method not defined"];
 }
 -(void) visitExprCstDoubleSubI:(id<ORExpr>)e
 {

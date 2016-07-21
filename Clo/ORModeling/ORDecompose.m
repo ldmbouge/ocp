@@ -13,9 +13,11 @@
 #import <ORModeling/ORLinear.h>
 #import "ORExprI.h"
 #import "ORRealLinear.h"
+#import "ORFloatLinear.h"
 #import "ORVarI.h"
 //-- temp
 #import "ORRealDecompose.h"
+#import "ORFloatDecompose.h"
 
 @interface ORIntNormalizer : ORVisitor<NSObject> {
     id<ORIntLinear>     _terms;
@@ -24,6 +26,15 @@
 -(id)init:(id<ORAddToModel>) model;
 -(id<ORIntLinear>)terms;
 @end
+
+@interface ORFloatNormalizer : ORNOopVisit<NSObject> {
+    id<ORFloatLinear>  _terms;
+    id<ORAddToModel>   _model;
+}
+-(id)init:(id<ORAddToModel>) model;
+-(id<ORFloatLinear>)terms;
+@end
+
 
 @interface ORRealNormalizer : ORNOopVisit<NSObject> {
     id<ORRealLinear>  _terms;
@@ -76,9 +87,9 @@
           return rv;
        }break;
         case ORTFloat: {
-            ORRealNormalizer* v = [[ORRealNormalizer alloc] init:model];
-  //          [rel visit:v];
-            ORRealLinear* rv = [v terms];
+            ORFloatNormalizer* v = [[ORFloatNormalizer alloc] init:model];
+            [rel visit:v];
+            ORFloatNormalizer* rv = [v terms];
             [v release];
             return rv;
         }break;
@@ -447,6 +458,65 @@ struct CPVarPair {
     @throw [[ORExecutionError alloc] initORExecutionError: "NO Real normalization for =>"];
 }
 @end
+
+@implementation ORFloatNormalizer
+-(id)init:(id<ORAddToModel>) model
+{
+    self = [super init];
+    _terms = nil;
+    _model = model;
+    return self;
+}
+-(id<ORFloatLinear>)terms
+{
+    return _terms;
+}
+-(void) visitExprEqualI:(ORExprEqualI*)e
+{
+    bool lc = [[e left] isConstant];
+    bool rc = [[e right] isConstant];
+    if (lc && rc) {
+        bool isOk = [[e left] min] == [[e right] min];
+        if (!isOk)
+            [_model addConstraint:[ORFactory fail:_model]];
+    } else if (lc || rc) {
+        ORFloat c = lc ? [[e left] min] : [[e right] min];
+        ORExprI* other = lc ? [e right] : [e left];
+        ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
+        [lin addIndependent: - c];
+        _terms = lin;
+    } else {
+        bool lv = [[e left] isVariable];
+        bool rv = [[e right] isVariable];
+        if (lv || rv) {
+            ORExprI* other = lv ? [e right] : [e left];
+            ORExprI* var   = lv ? [e left] : [e right];
+            id<ORFloatVar> theVar = [ORNormalizer floatVarIn:_model expr:var];
+            ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
+            [lin addTerm:theVar by:-1];
+            _terms = lin;
+        } else {
+            ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model ];
+            ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
+            [ORNormalizer addTofloatLinear:linRight from:[e right] model:_model];
+            [linRight release];
+            _terms = linLeft;
+        }
+    }
+    
+}
+-(void) visitExprNEqualI:(ORExprNotEqualI*)e
+{
+    ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model];
+    ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
+    [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
+    [linRight release];
+    _terms = linLeft;
+}
+
+@end
+
+
 
 
 // ========================================================================================================================
@@ -1293,5 +1363,45 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitExprAggMaxI: (ORExprAggMaxI*) e
 {
     [[e expr] visit:self];
+}
+@end
+
+
+
+@implementation ORNormalizer(Float)
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+    ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+    ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model];
+    [e visit:v];
+    [v release];
+    return rv;
+}
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORFloatVar>)x
+{
+    
+}
++(id<ORFloatLinear>)addToFloatLinear:(id<ORFloatLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model
+{
+    ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: terms model: model];
+    [e visit:v];
+    [v release];
+    return terms;
+}
++(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr
+{
+    ORFloatSubst* subst = [[ORFloatSubst alloc] initORFloatSubst: model];
+    [expr visit:subst];
+    id<ORFloatVar> theVar = [subst result];
+    [subst release];
+    return theVar;
+}
++(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORFloatVar>)x
+{
+    
+}
++(id<ORFloatVar>) floatVarIn:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model
+{
+    
 }
 @end

@@ -103,6 +103,13 @@
 +(id<CPConstraint>) realMaximize: (id<CPRealVar>) x;
 @end
 
+@interface CPFactory (ORFloat)
++(id<CPConstraint>) floatEqualc: (id<CPFloatVar>) x to:(ORFloat) c;
++(id<CPConstraint>) floatNEqualc: (id<CPFloatVar>) x to:(ORFloat) c;
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs neqi:(ORFloat)c;
+@end
+
 @interface CPFactory (ORIntSet)
 +(id<CPConstraint>) inter:(id<CPIntSetVar>)x with:(id<CPIntSetVar>)y eq:(id<CPIntSetVar>)z;
 @end
