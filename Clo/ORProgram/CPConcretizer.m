@@ -178,6 +178,9 @@
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }
+-(void) visitFloatArray:(id<ORFloatArray>) v
+{
+}
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {
 }
@@ -1082,20 +1085,43 @@
 }
 -(void) visitRealLinearEq:(id<ORRealLinearEq>)cstr
 {
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPRealVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+            id<CPVar> theCPVar = [self concreteVar:[av at:k]];
+            if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
+                return [CPFactory realVar:_engine castFrom:(id)theCPVar];
+            else
+                return theCPVar;
+        }];
+        id<ORDoubleArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory realSum:x coef:c eqi:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatLinearEq:(id<ORFloatLinearEq>)cstr
+{
    if (_gamma[cstr.getId] == NULL) {
       id<ORVarArray> av = [cstr vars];
-      id<CPRealVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
-         id<CPVar> theCPVar = [self concreteVar:[av at:k]];
-         if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
-            return [CPFactory realVar:_engine castFrom:(id)theCPVar];
-         else
-            return theCPVar;
-      }];
-      id<ORDoubleArray> c = [cstr coefs];
-      id<CPConstraint> concreteCstr = [CPFactory realSum:x coef:c eqi:[cstr cst]];
+      id<CPFloatVarArray> x = [self concreteArray:av];
+      id<ORFloatArray> c = [cstr coefs];
+      id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst]];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
+}
+
+-(void) visitFloatLinearNEq:(id<ORFloatLinearNEq>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORVarArray> av = [cstr vars];
+        id<CPFloatVarArray> x = [self concreteArray:av];
+        id<ORFloatArray> c = [cstr coefs];
+        id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c neqi:[cstr cst]];
+        [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
 }
 -(void)visitRealLinearLeq:(id<ORRealLinearLeq>)cstr
 {

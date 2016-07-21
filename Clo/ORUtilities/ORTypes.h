@@ -72,6 +72,7 @@ static inline ORInt bindDown(ORLong a) { return (a > (ORLong)FDMININT) ? (ORInt)
 @protocol ORSolution;
 @protocol ORConstraint;
 @protocol ORIntArray;
+@protocol ORFloatArray;
 @protocol ORDoubleArray;
 @protocol ORConstraintSet;
 

@@ -26,7 +26,7 @@
 }
 -(void) post
 {
-  //  [_x bind:_c];
+    [_x bind:_c];
 }
 -(NSSet*)allVars
 {
@@ -53,7 +53,15 @@
 }
 -(void) post
 {
-    //  [_x bind:_c];
+    if ([_x bound]) {
+        if([_x min] == _c)
+            failNow();
+    } else {
+        [_x whenBindDo:^{
+            if([_x min] == _c)
+                failNow();
+        } onBehalf:self];
+    }
 }
 -(NSSet*)allVars
 {
@@ -69,4 +77,63 @@
 }
 @end
 
+@implementation CPFloatTernaryAdd
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y
+{
+    self = [super initCPCoreConstraint: [x engine]];
+    _z = z;
+    _x = x;
+    _y = y;
+    return self;
+}
+-(void) post
+{
+    //  [_x bind:_c];
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound];
+}
+-(NSString*)description
+{
+    if([_y bound])
+        return [NSString stringWithFormat:@"<x[%d] = x[%d] + x[%d](value=%f)>",[_z getId],[_x getId],[_y getId],[_y value]];
+    
+    return [NSString stringWithFormat:@"<x[%d] = x[%d] + x[%d]>",[_z getId],[_x getId],[_y getId]];
+}
+@end
+
+
+@implementation CPFloatTernarySub
+-(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x minus:(CPFloatVarI*)y
+{
+    self = [super initCPCoreConstraint: [x engine]];
+    _z = z;
+    _x = x;
+    _y = y;
+    return self;
+}
+-(void) post
+{
+    //  [_x bind:_c];
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound];
+}
+-(NSString*)description
+{
+    if([_y bound])
+        return [NSString stringWithFormat:@"<x[%d] = x[%d] - x[%d](value=%f)>",[_z getId],[_x getId],[_y getId],[_y value]];
+    return [NSString stringWithFormat:@"<x[%d] = x[%d] - x[%d]>",[_z getId],[_x getId],[_y getId]];
+}
+@end
 

@@ -15,11 +15,21 @@
 #import "CPError.h"
 #import "CPFloatVarI.h"
 
-#include <fpc.h>
+#include <fpi.h>
 
 
 #define BIND_EPSILON (0.0000001)
 #define TOLERANCE    (0.0000001)
+
+float_interval TRFloatInterval2float_interval(TRFloatInterval* dom)
+{
+    return (float_interval){dom->_low,dom->_up};
+}
+TRFloatInterval float_interval2TRFloatInterval(ORTrailI* trail, float_interval* dom)
+{
+    return makeTRFloatInterval(trail, dom->inf, dom->sup);
+}
+
 
 @implementation CPFloatDom
 
@@ -43,35 +53,16 @@
 }
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
-    ORIReady();
-    ORInterval me = createORI2(_domain._low, _domain._up);
-    BOOL isb = ORIBound(me, TOLERANCE);
-    if (isb)
-        return;
-    if (newMin <= _domain._low)
-        return;
-    if (ORIEmpty(ORIInter(me, createORI1(newMin))))
-        failNow();
     updateMin(&_domain, newMin, _trail);
-    ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
+    ORBool isBound = (_domain._low == _domain._up);
     [x changeMinEvt: isBound sender:self];
     if (isBound)
         [x bindEvt:self];
 }
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
 {
-    ORIReady();
-    ORInterval me = createORI2(_domain._low, _domain._up);
-    BOOL isb = ORIBound(me, TOLERANCE);
-    if (isb)
-        return;
-    if (newMax >= _domain._up)
-        return;
-    if (ORIEmpty(ORIInter(me, createORI1(newMax))))
-        failNow();
-    updateMin(&_domain, newMax, _trail);
-    ORIReady();
-    ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
+    updateMax(&_domain, newMax, _trail);
+    ORBool isBound = (_domain._low == _domain._up);
     [x changeMaxEvt:isBound sender:self];
     if (isBound)
         [x bindEvt:self];
@@ -205,3 +196,6 @@
     return self;
 }
 @end
+
+
+

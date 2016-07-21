@@ -38,3 +38,27 @@
 @end
 
 
+@interface CPFloatTernaryAdd : CPCoreConstraint { // z = x + y
+    CPFloatVarI* _z;
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)z equals:(id)x plus:(id)y ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
+@interface CPFloatTernarySub : CPCoreConstraint { // z = x + y
+    CPFloatVarI* _z;
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)z equals:(id)x minus:(id)y ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+

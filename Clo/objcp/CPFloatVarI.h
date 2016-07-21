@@ -72,7 +72,7 @@ typedef struct  {
 @interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPFloatVarExtendedItf> {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
-    ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
+    ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
     id<CPFloatDom>               _dom;
     CPFloatEventNetwork      _net;
     CPMultiCast*             _recv;
@@ -81,8 +81,8 @@ typedef struct  {
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
--(ORDouble) dblValue;
--(ORDouble) domwidth;
+-(ORFloat) dblValue;
+-(ORFloat) domwidth;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {

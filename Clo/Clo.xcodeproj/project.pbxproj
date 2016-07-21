@@ -30,6 +30,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		080BB0211D40CD080027C2AB /* ORFloatDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = 080BB0201D40CD080027C2AB /* ORFloatDecompose.h */; };
+		080BB0241D40CE460027C2AB /* ORFloatDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = 080BB0221D40CD5D0027C2AB /* ORFloatDecompose.m */; };
 		08B261EF1D3F805200153FE5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B261EE1D3F805200153FE5 /* main.m */; };
 		08B262021D3F807F00153FE5 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		08B262031D3F807F00153FE5 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -44,7 +46,7 @@
 		08B262111D3F82E400153FE5 /* CPDoubleVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B2620D1D3F82E400153FE5 /* CPDoubleVarI.h */; };
 		08B262121D3F82E400153FE5 /* CPDoubleVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B2620E1D3F82E400153FE5 /* CPDoubleVarI.m */; };
 		08B2621C1D3F831100153FE5 /* CPFloatDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262131D3F831100153FE5 /* CPFloatDom.h */; };
-		08B2621D1D3F831100153FE5 /* CPFloatDom.mm in Sources */ = {isa = PBXBuildFile; fileRef = 08B262141D3F831100153FE5 /* CPFloatDom.mm */; };
+		08B2621D1D3F831100153FE5 /* CPFloatDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B262141D3F831100153FE5 /* CPFloatDom.m */; };
 		08B2621E1D3F831100153FE5 /* CPFloatVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262151D3F831100153FE5 /* CPFloatVarI.h */; };
 		08B2621F1D3F831100153FE5 /* CPFloatVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B262161D3F831100153FE5 /* CPFloatVarI.m */; };
 		08B262201D3F831100153FE5 /* CPInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262171D3F831100153FE5 /* CPInterface.h */; };
@@ -56,6 +58,8 @@
 		08B262281D3F851400153FE5 /* libfpi.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 08B262261D3F851400153FE5 /* libfpi.so */; };
 		08B2622A1D3FBA0F00153FE5 /* CPFloatConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262291D3FBA0F00153FE5 /* CPFloatConstraint.h */; };
 		08B2622C1D3FBA5600153FE5 /* CPFloatConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B2622B1D3FBA5600153FE5 /* CPFloatConstraint.m */; };
+		08B2622E1D3FE5FB00153FE5 /* ORFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B2622D1D3FE5FB00153FE5 /* ORFloatLinear.h */; };
+		08B262301D3FE6E200153FE5 /* ORFloatLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B2622F1D3FE6E200153FE5 /* ORFloatLinear.m */; };
 		374554FD1BD09E6F00E6DC5F /* ORSoftify.h in Headers */ = {isa = PBXBuildFile; fileRef = 374554FB1BD09E6E00E6DC5F /* ORSoftify.h */; };
 		374554FE1BD09E6F00E6DC5F /* ORSoftify.m in Sources */ = {isa = PBXBuildFile; fileRef = 374554FC1BD09E6E00E6DC5F /* ORSoftify.m */; };
 		374555021BD09ED200E6DC5F /* ORParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 374554FF1BD09ED000E6DC5F /* ORParameter.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -8308,6 +8312,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		080BB0201D40CD080027C2AB /* ORFloatDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFloatDecompose.h; sourceTree = "<group>"; };
+		080BB0221D40CD5D0027C2AB /* ORFloatDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFloatDecompose.m; sourceTree = "<group>"; };
 		08B261EC1D3F805200153FE5 /* testFloat */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testFloat; sourceTree = BUILT_PRODUCTS_DIR; };
 		08B261EE1D3F805200153FE5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08B2620B1D3F82E400153FE5 /* CPDoubleDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPDoubleDom.h; sourceTree = "<group>"; };
@@ -8315,7 +8321,7 @@
 		08B2620D1D3F82E400153FE5 /* CPDoubleVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPDoubleVarI.h; sourceTree = "<group>"; };
 		08B2620E1D3F82E400153FE5 /* CPDoubleVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDoubleVarI.m; sourceTree = "<group>"; };
 		08B262131D3F831100153FE5 /* CPFloatDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatDom.h; sourceTree = "<group>"; };
-		08B262141D3F831100153FE5 /* CPFloatDom.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CPFloatDom.mm; sourceTree = "<group>"; };
+		08B262141D3F831100153FE5 /* CPFloatDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatDom.m; sourceTree = "<group>"; };
 		08B262151D3F831100153FE5 /* CPFloatVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatVarI.h; sourceTree = "<group>"; };
 		08B262161D3F831100153FE5 /* CPFloatVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatVarI.m; sourceTree = "<group>"; };
 		08B262171D3F831100153FE5 /* CPInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPInterface.h; sourceTree = "<group>"; };
@@ -8327,6 +8333,8 @@
 		08B262261D3F851400153FE5 /* libfpi.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfpi.so; path = "../../../fpcs-180416-osx/lib/libfpi.so"; sourceTree = "<group>"; };
 		08B262291D3FBA0F00153FE5 /* CPFloatConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatConstraint.h; sourceTree = "<group>"; };
 		08B2622B1D3FBA5600153FE5 /* CPFloatConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatConstraint.m; sourceTree = "<group>"; };
+		08B2622D1D3FE5FB00153FE5 /* ORFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFloatLinear.h; sourceTree = "<group>"; };
+		08B2622F1D3FE6E200153FE5 /* ORFloatLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFloatLinear.m; sourceTree = "<group>"; };
 		374554FB1BD09E6E00E6DC5F /* ORSoftify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSoftify.h; sourceTree = "<group>"; };
 		374554FC1BD09E6E00E6DC5F /* ORSoftify.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSoftify.m; sourceTree = "<group>"; };
 		374554FF1BD09ED000E6DC5F /* ORParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParameter.h; sourceTree = "<group>"; };
@@ -38272,7 +38280,7 @@
 			isa = PBXGroup;
 			children = (
 				08B262131D3F831100153FE5 /* CPFloatDom.h */,
-				08B262141D3F831100153FE5 /* CPFloatDom.mm */,
+				08B262141D3F831100153FE5 /* CPFloatDom.m */,
 				08B262151D3F831100153FE5 /* CPFloatVarI.h */,
 				08B262161D3F831100153FE5 /* CPFloatVarI.m */,
 				08B262171D3F831100153FE5 /* CPInterface.h */,
@@ -38474,6 +38482,8 @@
 				5BB1C2671B39FE8E008A9E51 /* ORLSFlatten.m */,
 				379CDEEB16F17D71000E7338 /* ORModelTransformation.h */,
 				5BAD1158161E5E430014EBCB /* ORModeling.h */,
+				080BB0201D40CD080027C2AB /* ORFloatDecompose.h */,
+				080BB0221D40CD5D0027C2AB /* ORFloatDecompose.m */,
 				5BAD1159161E5E430014EBCB /* ORModeling.m */,
 				5BAD1164161E5F2B0014EBCB /* ORModelI.h */,
 				5BAD1165161E5F2B0014EBCB /* ORModelI.m */,
@@ -38499,6 +38509,8 @@
 				B182C60A173C3DC9002954F6 /* ORMIPLinearize.h */,
 				B182C60B173C3DC9002954F6 /* ORMIPLinearize.m */,
 				5B673A2A178DC5AA00886A28 /* ORLinear.h */,
+				08B2622D1D3FE5FB00153FE5 /* ORFloatLinear.h */,
+				08B2622F1D3FE6E200153FE5 /* ORFloatLinear.m */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";
@@ -39816,9 +39828,11 @@
 				5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */,
 				374554FD1BD09E6F00E6DC5F /* ORSoftify.h in Headers */,
 				5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */,
+				080BB0211D40CD080027C2AB /* ORFloatDecompose.h in Headers */,
 				5BB1C2681B39FE8E008A9E51 /* ORLSFlatten.h in Headers */,
 				3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */,
 				B182C60C173C3DC9002954F6 /* ORMIPLinearize.h in Headers */,
+				08B2622E1D3FE5FB00153FE5 /* ORFloatLinear.h in Headers */,
 				5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */,
 				5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */,
 				B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */,
@@ -43447,7 +43461,7 @@
 				5B91C337159FAB2D00158EEA /* CPElement.m in Sources */,
 				08B262121D3F82E400153FE5 /* CPDoubleVarI.m in Sources */,
 				B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */,
-				08B2621D1D3F831100153FE5 /* CPFloatDom.mm in Sources */,
+				08B2621D1D3F831100153FE5 /* CPFloatDom.m in Sources */,
 				5BEAD78015ABBAFC00A012FE /* CPLexConstraint.m in Sources */,
 				5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */,
 				B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */,
@@ -43629,6 +43643,7 @@
 				5BAD115A161E5E430014EBCB /* ORModeling.m in Sources */,
 				5BAD1167161E5F2B0014EBCB /* ORModelI.m in Sources */,
 				5BDF5FAD161F81B800E5E1FA /* ORFlatten.m in Sources */,
+				080BB0241D40CE460027C2AB /* ORFloatDecompose.m in Sources */,
 				3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */,
 				5BB1C26B1B39FF0C008A9E51 /* ORModelTransformation.m in Sources */,
 				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
@@ -43639,6 +43654,7 @@
 				B103615216D9AB9A00E95A39 /* ORIntLinear.m in Sources */,
 				B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */,
 				B1E1C7AB17038784006AACFC /* ORRealLinear.m in Sources */,
+				08B262301D3FE6E200153FE5 /* ORFloatLinear.m in Sources */,
 				B182C60D173C3DC9002954F6 /* ORMIPLinearize.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -54733,6 +54749,7 @@
 				08B261F21D3F805200153FE5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		37A715D116FB93F900E02DC6 /* Build configuration list for PBXNativeTarget "LogicBendersExample" */ = {
 			isa = XCConfigurationList;

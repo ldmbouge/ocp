@@ -78,7 +78,7 @@
 -(NSString*) description
 {
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"LDouble(%d) : %f",_name,_value];
+    [buf appendFormat:@"LDouble(%d) : %Lf",_name,_value];
     return buf;
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder

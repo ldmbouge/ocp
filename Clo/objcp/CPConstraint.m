@@ -27,6 +27,7 @@
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
 #import "CPRealConstraint.h"
+#import "CPFloatConstraint.h"
 #import "CPIntSetConstraint.h"
 
 
@@ -645,6 +646,67 @@
    id<CPConstraint> o = [[CPRealVarMaximize alloc] init: x];
    [[x engine] trackMutable: o];
    return o;
+}
+@end
+
+@implementation CPFactory (ORFloat)
++(id<CPConstraint>) floatEqualc: (id<CPFloatVar>) x to:(ORFloat) c
+{
+    id<CPConstraint> o = [[CPFloatEqualc alloc] init:x and:c];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) floatNEqualc: (id<CPFloatVar>) x to:(ORFloat) c
+{
+    id<CPConstraint> o = [[CPFloatNEqualc alloc] init:x and:c];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
+{
+    if([x count] == 1 && [coefs at:coefs.low]==1.0){
+        return [self floatEqualc:x[x.low] to:c];
+    }else{
+        id<CPConstraint> o;
+        if([x count] == 2){
+            //form  x = y + c ->  x - y - c = 0
+            //form  x = y - c ->  x - y + c = 0
+            ORInt indiceX = coefs.low;
+            ORInt indiceY = 1;
+            if([coefs at:coefs.low] == -1 && [coefs at:1] == 1){
+                indiceX = 1;
+                indiceY = coefs.low;
+            }
+            id<CPFloatVar> z = [CPFactory floatVar:[x[x.low] engine] value:c];
+                        if(c > 0){
+                 o = [[CPFloatTernaryAdd alloc] init:x[indiceX] equals:x[indiceY] plus:z];
+            }else{
+                o = [[CPFloatTernarySub alloc] init:x[indiceX] equals:x[indiceY] minus:z];
+            }
+            [[x tracker] trackMutable:o];
+            return o;
+        }
+        if([x count] == 3){
+            //form  x = y + z ->  x - y - z = 0
+            //form  x = y - z ->  x - y + z = 0
+            if([coefs at:2] == 1){
+                o = [[CPFloatTernaryAdd alloc] init:x[x.low] equals:x[1] plus:x[2]];
+            }else{
+                o = [[CPFloatTernarySub alloc] init:x[x.low] equals:x[1] minus:x[2]];
+            }
+            [[x tracker] trackMutable:o];
+            return o;
+        }
+        assert(NO);
+    }
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs neqi:(ORFloat)c
+{
+    if([x count] == 1 && [coefs at:coefs.low]==1.0){
+        return [self floatNEqualc:x[x.low] to:c];
+    }else{
+        assert(NO);
+    }
 }
 @end
 
