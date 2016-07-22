@@ -329,6 +329,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
         return [_dom min];
     return _value;
 }
+-(TRFloatInterval) domain
+{
+    return [_dom domain];
+}
 -(void) assignRelaxationValue: (ORFloat) f
 {
     if (f < [_dom min] && f > [_dom max])

@@ -75,6 +75,7 @@
 -(ORBool) bound;
 -(ORInterval) bounds;
 -(ORFloat) domwidth;
+-(TRFloatInterval) domain;
 -(ORBool) member:(ORFloat)v;
 -(NSString*)description;
 -(id) copy;

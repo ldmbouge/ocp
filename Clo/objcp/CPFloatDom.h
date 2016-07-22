@@ -15,6 +15,16 @@
 
 #include <fpi.h>
 
+static inline float_interval TRFloatInterval2float_interval(TRFloatInterval dom)
+{
+    return (float_interval){dom._low,dom._up};
+}
+
+static inline TRFloatInterval float_interval2TRFloatInterval(ORTrailI* trail, float_interval dom)
+{
+    return makeTRFloatInterval(trail, dom.inf, dom.sup);
+}
+
 @interface CPFloatDom : NSObject<CPFloatDom,NSCopying> {
     id<ORTrail>        _trail;
     ORFloat            _imin;
@@ -33,6 +43,7 @@
 -(ORBool) bound;
 -(ORInterval) bounds;
 -(ORFloat) domwidth;
+-(TRFloatInterval) domain;
 -(ORBool) member:(ORFloat)v;
 -(id) copy;
 -(void) restoreDomain:(id<CPFloatDom>)toRestore;
