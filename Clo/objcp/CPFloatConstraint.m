@@ -15,6 +15,19 @@
 #import "ORConstraintI.h"
 
 
+typedef struct {
+    float_interval  result;
+    float_interval  interval;
+    int  changed;
+} intersectionInterval;
+
+
+intersectionInterval intersection(int changed,float_interval r, float_interval x)
+{
+    fpi_narrowf(&r, &x, &changed);
+    return (intersectionInterval){r,x,changed};
+}
+
 @implementation CPFloatEqualc
 -(id) init:(CPFloatVarI*)x and:(ORFloat)c
 {
@@ -88,7 +101,53 @@
 }
 -(void) post
 {
-    //  [_x bind:_c];
+    int changed = false;
+    //TO generalise
+    ORInt precision = 1;
+    ORInt arrondi = FE_TONEAREST;
+    float_interval zTemp,yTemp,xTemp,z,x,y;
+    intersectionInterval inter;
+    z = TRFloatInterval2float_interval([_z domain]);
+    x = TRFloatInterval2float_interval([_x domain]);
+    y = TRFloatInterval2float_interval([_y domain]);
+    do {
+        changed = false;
+        zTemp = z;
+        fpi_addf(precision, arrondi, &zTemp, &x, &y);
+        inter = intersection(changed, z, zTemp);
+        z = inter.result;
+        changed |= inter.changed;
+        
+        xTemp = x;
+        yTemp = y;
+        fpi_add_invsub_boundsf(precision, arrondi, &xTemp, &yTemp, &z);
+        inter = intersection(changed, x , xTemp);
+        x = inter.result;
+        changed |= inter.changed;
+        
+        inter = intersection(changed, y, yTemp);
+        y = inter.result;
+        changed |= inter.changed;
+        
+        xTemp = x;
+        fpi_addxf_inv(precision, arrondi, &xTemp, &z, &y);
+        inter = intersection(changed, x , xTemp);
+        x = inter.result;
+        changed |= inter.changed;
+        
+        yTemp = y;
+        fpi_addyf_inv(precision, arrondi, &yTemp, &z, &x);
+        inter = intersection(changed, y, yTemp);
+        y = inter.result;
+        changed |= inter.changed;
+     } while(changed);
+    
+    [_z updateMin:z.inf];
+    [_x updateMin:x.inf];
+    [_y updateMin:y.inf];
+    [_z updateMax:z.sup];
+    [_x updateMax:x.sup];
+    [_y updateMax:y.sup];
 }
 -(NSSet*)allVars
 {
@@ -119,7 +178,54 @@
 }
 -(void) post
 {
-    //  [_x bind:_c];
+    int changed = false;
+    //TO generalise
+    ORInt precision = 1;
+    ORInt arrondi = FE_TONEAREST;
+    float_interval zTemp,yTemp,xTemp,z,x,y;
+    intersectionInterval inter;
+    //TODO use min and max
+    z = TRFloatInterval2float_interval([_z domain]);
+    x = TRFloatInterval2float_interval([_x domain]);
+    y = TRFloatInterval2float_interval([_y domain]);
+    do {
+        changed = false;
+        zTemp = z;
+        fpi_subf(precision, arrondi, &zTemp, &x, &y);
+        inter = intersection(changed, z, zTemp);
+        z = inter.result;
+        changed |= inter.changed;
+        
+        xTemp = x;
+        yTemp = y;
+        fpi_sub_invsub_boundsf(precision, arrondi, &xTemp, &yTemp, &z);
+        inter = intersection(changed, x , xTemp);
+        x = inter.result;
+        changed |= inter.changed;
+        
+        inter = intersection(changed, y, yTemp);
+        y = inter.result;
+        changed |= inter.changed;
+        
+        xTemp = x;
+        fpi_subxf_inv(precision, arrondi, &xTemp, &z, &y);
+        inter = intersection(changed, x , xTemp);
+        x = inter.result;
+        changed |= inter.changed;
+        
+        yTemp = y;
+        fpi_subyf_inv(precision, arrondi, &yTemp, &z, &x);
+        inter = intersection(changed, y, yTemp);
+        y = inter.result;
+        changed |= inter.changed;
+    } while(changed);
+    
+    [_z updateMin:z.inf];
+    [_x updateMin:x.inf];
+    [_y updateMin:y.inf];
+    [_z updateMax:z.sup];
+    [_x updateMax:x.sup];
+    [_y updateMax:y.sup];
 }
 -(NSSet*)allVars
 {

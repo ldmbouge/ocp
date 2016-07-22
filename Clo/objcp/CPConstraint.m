@@ -669,18 +669,19 @@
     }else{
         id<CPConstraint> o;
         if([x count] == 2){
-            //form  x = y + c ->  x - y - c = 0
-            //form  x = y - c ->  x - y + c = 0
+            //form  x = y + c ->  x - y = c
+            //form  x = y - c ->  x - y = - c
             ORInt indiceX = coefs.low;
             ORInt indiceY = 1;
             if([coefs at:coefs.low] == -1 && [coefs at:1] == 1){
                 indiceX = 1;
                 indiceY = coefs.low;
             }
-            id<CPFloatVar> z = [CPFactory floatVar:[x[x.low] engine] value:c];
-                        if(c > 0){
+            if(c > 0){
+                id<CPFloatVar> z = [CPFactory floatVar:[x[x.low] engine] value:c];
                  o = [[CPFloatTernaryAdd alloc] init:x[indiceX] equals:x[indiceY] plus:z];
             }else{
+                id<CPFloatVar> z = [CPFactory floatVar:[x[x.low] engine] value:-c];
                 o = [[CPFloatTernarySub alloc] init:x[indiceX] equals:x[indiceY] minus:z];
             }
             [[x tracker] trackMutable:o];
@@ -689,10 +690,10 @@
         if([x count] == 3){
             //form  x = y + z ->  x - y - z = 0
             //form  x = y - z ->  x - y + z = 0
-            if([coefs at:2] == 1){
-                o = [[CPFloatTernaryAdd alloc] init:x[x.low] equals:x[1] plus:x[2]];
+            if([coefs at:2] == -1){
+                o = [[CPFloatTernaryAdd alloc] init:x[0] equals:x[1] plus:x[2]];
             }else{
-                o = [[CPFloatTernarySub alloc] init:x[x.low] equals:x[1] minus:x[2]];
+                o = [[CPFloatTernarySub alloc] init:x[0] equals:x[1] minus:x[2]];
             }
             [[x tracker] trackMutable:o];
             return o;

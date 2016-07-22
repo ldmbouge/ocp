@@ -45,7 +45,7 @@
 		08B262101D3F82E400153FE5 /* CPDoubleDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B2620C1D3F82E400153FE5 /* CPDoubleDom.m */; };
 		08B262111D3F82E400153FE5 /* CPDoubleVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B2620D1D3F82E400153FE5 /* CPDoubleVarI.h */; };
 		08B262121D3F82E400153FE5 /* CPDoubleVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B2620E1D3F82E400153FE5 /* CPDoubleVarI.m */; };
-		08B2621C1D3F831100153FE5 /* CPFloatDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262131D3F831100153FE5 /* CPFloatDom.h */; };
+		08B2621C1D3F831100153FE5 /* CPFloatDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262131D3F831100153FE5 /* CPFloatDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		08B2621D1D3F831100153FE5 /* CPFloatDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B262141D3F831100153FE5 /* CPFloatDom.m */; };
 		08B2621E1D3F831100153FE5 /* CPFloatVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B262151D3F831100153FE5 /* CPFloatVarI.h */; };
 		08B2621F1D3F831100153FE5 /* CPFloatVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B262161D3F831100153FE5 /* CPFloatVarI.m */; };

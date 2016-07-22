@@ -21,16 +21,6 @@
 #define BIND_EPSILON (0.0000001)
 #define TOLERANCE    (0.0000001)
 
-float_interval TRFloatInterval2float_interval(TRFloatInterval* dom)
-{
-    return (float_interval){dom->_low,dom->_up};
-}
-TRFloatInterval float_interval2TRFloatInterval(ORTrailI* trail, float_interval* dom)
-{
-    return makeTRFloatInterval(trail, dom->inf, dom->sup);
-}
-
-
 @implementation CPFloatDom
 
 -(id)initCPFloatDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up
@@ -144,8 +134,7 @@ TRFloatInterval float_interval2TRFloatInterval(ORTrailI* trail, float_interval* 
 }
 -(ORBool) bound
 {
-    ORIReady();
-    return ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
+    return _domain._up == _domain._low;
 }
 -(ORInterval) bounds
 {
@@ -156,6 +145,10 @@ TRFloatInterval float_interval2TRFloatInterval(ORTrailI* trail, float_interval* 
 {
     ORIReady();
     return ORIWidth(createORI2(_domain._low, _domain._up));
+}
+-(TRFloatInterval) domain
+{
+    return _domain;
 }
 -(ORBool) member:(ORFloat)v
 {

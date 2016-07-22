@@ -89,7 +89,7 @@
         case ORTFloat: {
             ORFloatNormalizer* v = [[ORFloatNormalizer alloc] init:model];
             [rel visit:v];
-            ORFloatNormalizer* rv = [v terms];
+            id<ORFloatLinear> rv = [v terms];
             [v release];
             return rv;
         }break;
@@ -491,11 +491,16 @@ struct CPVarPair {
         if (lv || rv) {
             ORExprI* other = lv ? [e right] : [e left];
             ORExprI* var   = lv ? [e left] : [e right];
-            id<ORFloatVar> theVar = [ORNormalizer floatVarIn:_model expr:var];
-            ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
-            [lin addTerm:theVar by:-1];
-            _terms = lin;
+            id<ORFloatVar> theVar  = [ORNormalizer floatVarIn:_model expr:var];
+            ORFloatLinear* lLeft   = [[ORFloatLinear alloc] initORFloatLinear:4];
+            [lLeft addTerm:theVar by:1];
+            ORFloatLinear* lRight  = [ORNormalizer floatLinearFrom:other model:_model];
+            [lRight scaleBy:-1.0];
+            [lLeft addLinear:lRight];
+            [lRight release];
+            _terms = lLeft;
         } else {
+            //TODO: fix order of sides.
             ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model ];
             ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
             [ORNormalizer addTofloatLinear:linRight from:[e right] model:_model];

@@ -1244,6 +1244,10 @@
 {
    return [(id<ORRealVar>)_gamma[x.getId] doubleValue];
 }
+-(ORFloat) floatValue:(id<ORVar>)x
+{
+   return [(id<CPFloatVar>)_gamma[x.getId] value];
+}
 -(ORDouble) paramValue: (id<ORRealParam>)x
 {
    id<CPRealParam> p = _gamma[x.getId];

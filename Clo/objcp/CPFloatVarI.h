@@ -73,7 +73,7 @@ typedef struct  {
     CPEngineI*               _engine;
     BOOL                     _hasValue;
     ORFloat                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
-    id<CPFloatDom>               _dom;
+    id<CPFloatDom>            _dom;
     CPFloatEventNetwork      _net;
     CPMultiCast*             _recv;
 }
@@ -83,6 +83,7 @@ typedef struct  {
 -(NSMutableSet*) constraints;
 -(ORFloat) dblValue;
 -(ORFloat) domwidth;
+-(TRFloatInterval) domain;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
