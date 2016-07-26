@@ -631,7 +631,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
    }
    else {
       [c setId: _nbCstrs++];
-      [_mStore addObject: c];
+       if(c)
+           [_mStore addObject: c];
       return ORSuspend;
    }
 }

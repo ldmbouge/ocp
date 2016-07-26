@@ -68,7 +68,8 @@ PORTABLE_BEGIN
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORDouble(^)(ORInt)) clo;
 +(id<ORDoubleArray>) doubleArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORDouble(^)(ORInt,ORInt)) clo;
 +(id<ORDoubleArray>) doubleArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr;
-
++(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range:(id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo;
++(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(id(^)(ORInt))clo;
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
@@ -194,6 +195,7 @@ PORTABLE_BEGIN
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intArray: (id<ORIntArray>) a index: (id<ORExpr>) index;
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intVarMatrix: (id<ORIntVarMatrix>) m elt:(id<ORExpr>) e0 elt:(id<ORExpr>)e1;
 +(id<ORExpr>) elt: (id<ORTracker>) tracker doubleArray: (id<ORDoubleArray>) a index: (id<ORExpr>) index;
++(id<ORExpr>) elt: (id<ORTracker>) tracker floatArray: (id<ORFloatArray>) a index: (id<ORExpr>) index;
 @end
 
 @interface ORFactory (Constraints)
@@ -288,6 +290,8 @@ PORTABLE_BEGIN
 @interface ORFactory (ORFloat)
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c;
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  neq: (ORFloat) c;
++(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
++(id<ORConstraint>) div:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z;
 @end
 
 @interface ORFactory (BV)

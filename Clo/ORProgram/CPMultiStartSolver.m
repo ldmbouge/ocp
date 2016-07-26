@@ -652,6 +652,10 @@
 {
    return [(id<CPProgram>)[self worker] intValue: x];
 }
+-(ORFloat) floatValue: (id<ORFloatVar>) x
+{
+    return [(id<CPProgram>)[self worker] floatValue: x];
+}
 -(ORBool) bound: (id<ORVar>) x
 {
    return [[self worker] bound: x];

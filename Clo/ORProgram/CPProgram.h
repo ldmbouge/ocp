@@ -54,6 +54,10 @@ PORTABLE_BEGIN
 -(void)               gthen: (id<ORIntVar>) var double: (ORDouble) val;
 -(void)               lthen: (id<ORIntVar>) var double: (ORDouble) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)          floatLthen: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          realLabel: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;

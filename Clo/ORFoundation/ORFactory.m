@@ -224,6 +224,11 @@
     ORFloatArrayI* o = [[ORFloatArrayI alloc] init: tracker range:range with:clo];
     return [tracker trackMutable: o];
 }
++(ORFloatArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+    ORFloatArrayI* o = [[ORFloatArrayI alloc] init: tracker range:range value:0];
+    return [tracker trackMutable: o];
+}
 
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker array: (NSArray*)array
 {
@@ -507,6 +512,10 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     return [[ORRealVarI alloc]  init: tracker];
 }
 //-------------------------------
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker var:(id<ORFloatVar>) x scale: (ORFloat) a shift:(ORFloat) b
+{
+    
+}
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up
 {
     return [[ORFloatVarI alloc]  init: tracker low: low up: up];
@@ -870,7 +879,7 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 }
 +(id<ORExpr>) elt: (id<ORTracker>) tracker floatArray: (id<ORFloatArray>) a index: (id<ORExpr>) index
 {
-    id<ORExpr> o = [[ORExprCstDoubleSubI alloc] initORExprCstDoubleSubI: a index: index];
+    id<ORExpr> o = [[ORExprCstFloatSubI alloc] initORExprCstFloatSubI: a index: index];
     [tracker trackObject: o];
     return o;
 }
@@ -880,8 +889,6 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [tracker trackObject: o];
    return o;
 }
-
-
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
@@ -1463,10 +1470,21 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
-
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  neq: (ORFloat) c
 {
     id<ORConstraint> o = [[ORFloatLinearNEq alloc] initFloatLinearNEq: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
+{
+    id<ORConstraint> o = [[ORFloatMult alloc] initORFloatMult:z eq:x times:y];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) div:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
+{
+    id<ORConstraint> o = [[ORFloatDiv alloc] initORFloatDiv:z eq:x times:y];
     [model trackObject:o];
     return o;
 }

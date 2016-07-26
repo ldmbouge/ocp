@@ -667,8 +667,8 @@
       [left visit: self];
       [right visit: self];
       id<CPConstraint> concreteCstr = [CPFactory mult: (id<CPIntVar>) _gamma[left.getId] 
-                                                   by: (id<CPIntVar>) _gamma[right.getId]
-                                                equal: (id<CPIntVar>) _gamma[res.getId]
+                by: (id<CPIntVar>) _gamma[right.getId]
+                equal: (id<CPIntVar>) _gamma[res.getId]
                                        ];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
@@ -1120,6 +1120,40 @@
         id<ORFloatArray> c = [cstr coefs];
         id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c neqi:[cstr cst]];
         [_engine add:concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatMult:(id<ORFloatMult>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORFloatVar> res = [cstr res];
+        id<ORFloatVar> left = [cstr left];
+        id<ORFloatVar> right = [cstr right];
+        [res visit: self];
+        [left visit: self];
+        [right visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory mult: (id<CPFloatVar>) _gamma[left.getId]
+                                                     by: (id<CPFloatVar>) _gamma[right.getId]
+                                                  equal: (id<CPFloatVar>) _gamma[res.getId]
+                                         ];
+        [_engine add: concreteCstr];
+        _gamma[cstr.getId] = concreteCstr;
+    }
+}
+-(void) visitFloatDiv:(id<ORFloatDiv>)cstr
+{
+    if (_gamma[cstr.getId] == NULL) {
+        id<ORFloatVar> res = [cstr res];
+        id<ORFloatVar> left = [cstr left];
+        id<ORFloatVar> right = [cstr right];
+        [res visit: self];
+        [left visit: self];
+        [right visit: self];
+        id<CPConstraint> concreteCstr = [CPFactory div: (id<CPFloatVar>) _gamma[left.getId]
+            by: (id<CPFloatVar>) _gamma[right.getId]
+            equal: (id<CPFloatVar>) _gamma[res.getId]
+            ];
+        [_engine add: concreteCstr];
         _gamma[cstr.getId] = concreteCstr;
     }
 }

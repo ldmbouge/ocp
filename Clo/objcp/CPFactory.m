@@ -104,6 +104,19 @@
 {
    // return [[CPFloatViewOnIntVarI alloc] init:cp intVar:x];
 }
++(id<CPFloatVarArray>) floatVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
+{
+    id<ORIdArray> o = [ORFactory idArray:cp range:range];
+    return (id<CPFloatVarArray>) o;
+}
++(id<CPFloatVarArray>) floatVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPFloatVar>(^)(ORInt)) clo
+{
+    id<ORIdArray> o = [ORFactory idArray:cp range:range];
+    for(ORInt k=range.low;k <= range.up;k++) {
+        [o  set:clo(k) at:k];
+    }
+    return (id<CPFloatVarArray>)o;
+}
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp bounds:(id<ORDoubleRange>) range
 {
     return [[CPDoubleVarI alloc] init:cp low:range.low up:range.up];

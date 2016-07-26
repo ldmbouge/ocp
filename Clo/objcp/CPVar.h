@@ -175,7 +175,7 @@ enum CPVarClass {
 -(void) updateMin:(ORFloat) newMin;
 -(void) updateMax:(ORFloat) newMax;
 -(void) assignRelaxationValue: (ORFloat) f;
--(ORNarrowing) updateInterval: (ORInterval) v;
+-(void) updateInterval: (ORFloat) newMin and:(ORFloat) newMax;
 @end
 
 @protocol CPDoubleVar<CPVar>

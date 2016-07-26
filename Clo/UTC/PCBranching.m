@@ -268,8 +268,6 @@
 {
    return _nbu > 0 ? _up  : 0;
 }
-static inline ORDouble minDbl(ORDouble a,ORDouble b) { return a < b ? a : b;}
-static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 -(double)scoreWn:(double)wn Wp:(double)wp
 {
    static const double mu = 1.0 / 6.0;

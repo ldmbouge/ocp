@@ -306,6 +306,10 @@
 {
     return _value;
 }
+-(ORDouble) doubleValue
+{
+    return (ORDouble)_value;
+}
 -(ORBool) isConstant
 {
     return YES;

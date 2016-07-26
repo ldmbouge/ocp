@@ -18,6 +18,34 @@
 
 @class CPFloatVarI;
 
+typedef struct {
+    float_interval  result;
+    float_interval  interval;
+    int  changed;
+} intersectionInterval;
+
+
+static inline float_interval makeFloatInterval(float min, float max)
+{
+    return (float_interval){min,max};
+}
+
+static inline intersectionInterval intersection(int changed,float_interval r, float_interval x)
+{
+    fpi_narrowf(&r, &x, &changed);
+    return (intersectionInterval){r,x,changed};
+}
+
+@interface CPFloatEqual : CPCoreConstraint {
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)x equals:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPFloatEqualc : CPCoreConstraint {
     CPFloatVarI* _x;
     ORFloat      _c;
@@ -63,4 +91,25 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatTernaryMult : CPCoreConstraint { // z = x * y
+    CPFloatVarI* _z;
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)z equals:(id)x mult:(id)y ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
+
+@interface CPFloatTernaryDiv : CPCoreConstraint { // z = x / y
+    CPFloatVarI* _z;
+    CPFloatVarI* _x;
+    CPFloatVarI* _y;
+}
+-(id) init:(id)z equals:(id)x div:(id)y ;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end

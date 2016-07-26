@@ -46,10 +46,11 @@
 @end
 
 
-@interface ORFloatI : ORExprI<NSCoding,NSCopying,ORDoubleNumber>
+@interface ORFloatI : ORExprI<NSCoding,NSCopying,ORFloatNumber>
 -(ORFloatI*) init: (id<ORTracker>) tracker value: (ORFloat) value;
--(ORFloat) doubleValue;
+-(ORDouble) doubleValue;
 -(ORFloat) value;
+-(ORFloat) floatValue;
 -(ORInt) intValue;
 -(id<ORTracker>) tracker;
 @end

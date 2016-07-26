@@ -38,11 +38,22 @@
 }
 -(NSString*) description
 {
-    ORIReady();
-    return ORIFormat(createORI2(_domain._low, _domain._up));
+    if([self bound]){
+        NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+        [buf appendFormat:@"value=%f",_domain._low ];
+        return buf;
+    }
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"(%f,%f)",_domain._low,_domain._up];
+    return buf;
+//    ORIReady();
+//    return ORIFormat(createORI2(_domain._low, _domain._up));
 }
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
+    assert(newMin <= FLT_MAX);
+    if(newMin > [self max])
+        failNow();
     updateMin(&_domain, newMin, _trail);
     ORBool isBound = (_domain._low == _domain._up);
     [x changeMinEvt: isBound sender:self];
@@ -51,55 +62,19 @@
 }
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
 {
+    assert(newMax >=  -FLT_MAX);
+    if(newMax < [self min])
+        failNow();
     updateMax(&_domain, newMax, _trail);
     ORBool isBound = (_domain._low == _domain._up);
     [x changeMaxEvt:isBound sender:self];
     if (isBound)
         [x bindEvt:self];
 }
--(ORNarrowing) updateInterval: (ORInterval) v for: (id<CPFloatVarNotifier>) x
+-(void) updateInterval:(float_interval)v for:(id<CPFloatVarNotifier>)x;
 {
-    ORIReady();
-    ORInterval src= createORI2(_domain._low, _domain._up);
-    ORInterval is = ORIInter(src, v);
-    if (ORIEmpty(is))
-        failNow();
-    switch (ORINarrow(src, is)) {
-        case ORBoth:
-        {
-            ORDouble nl,nu;
-            ORIBounds(is, &nl, &nu);
-            updateTRFloatInterval(&_domain, nl, nu, _trail);
-            ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
-            [x changeMinEvt:isBound sender:self];
-            [x changeMaxEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORBoth;
-        }break;
-        case ORLow:
-        {
-            ORFloat nl = ORILow(is);
-            updateMin(&_domain,nl, _trail);
-            ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
-            [x changeMinEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORLow;
-        }break;
-        case ORUp:
-        {
-            ORFloat nu = ORIUp(is);
-            updateMax(&_domain,nu, _trail);
-            ORBool isBound = ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON);
-            [x changeMaxEvt:isBound sender:self];
-            if (isBound)
-                [x bindEvt:self];
-            return ORUp;
-        }break;
-        case ORNone:
-            return ORNone;
-    }
+    [self updateMin:v.inf for:x];
+    [self updateMax:v.sup for:x];
 }
 
 -(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x

@@ -25,7 +25,7 @@
 }
 -(CPFloatVarSnapshot*) init: (CPFloatVarI*) v name: (ORInt) name;
 -(ORUInt) getId;
--(ORFloat) dblValue;
+-(ORFloat) floatValue;
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
@@ -46,7 +46,7 @@
     }
     return self;
 }
--(ORFloat) dblValue
+-(ORFloat) floatValue
 {
     return _value;
 }
@@ -291,15 +291,18 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) updateMin: (ORFloat) newMin
 {
-    [_dom updateMin:newMin for:self];
+    if(newMin != [self min])
+        [_dom updateMin:newMin for:self];
 }
 -(void) updateMax: (ORFloat) newMax
 {
-    [_dom updateMax:newMax for:self];
+    if(newMax != [self max])
+         [_dom updateMax:newMax for:self];
 }
--(ORNarrowing) updateInterval: (ORInterval) nb
+-(void) updateInterval: (ORFloat) newMin and:(ORFloat)newMax
 {
-    return [_dom updateInterval:nb for:self];
+    [self updateMin:newMin];
+    [self updateMax:newMax];
 }
 -(ORFloat) min
 {
@@ -309,21 +312,13 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom max];
 }
--(ORFloat) dblMin
-{
-    return [_dom min];
-}
--(ORFloat) dblMax
-{
-    return [_dom max];
-}
 -(ORFloat) value
 {
     if ([_dom bound])
         return [_dom min];
     return _value;
 }
--(ORFloat) dblValue
+-(ORFloat) floatValue
 {
     if ([_dom bound])
         return [_dom min];
@@ -554,21 +549,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     [_theVar updateMax:(ORInt)floor(newMax)];
 }
--(ORNarrowing) updateInterval: (ORInterval) nb
+-(void) updateInterval: (ORFloat) newMin and: (ORFloat)newMax
 {
-    float a,b;
-    ORIBounds(nb, &a, &b);
-    ORBounds bb = [_theVar bounds];
-    [_theVar updateMin: (ORInt) ceil(a) andMax: (ORInt) floor(b)];
-    ORBounds ba = [_theVar bounds];
-    if (ba.min > bb.min && ba.max < bb.max)
-        return ORBoth;
-    else if (ba.min > bb.min)
-        return ORLow;
-    else if (ba.max < bb.max)
-        return ORUp;
-    else
-        return ORNone;
+    [self updateMax:newMax];
+    [self updateMin:newMin];
 }
 -(ORFloat) min
 {
@@ -582,7 +566,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_theVar min];
 }
--(ORFloat)dblValue
+-(ORFloat)floatValue
 {
     return [_theVar min];
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		08CE60301D4592B80041C97D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CE602F1D4592B80041C97D /* main.m */; };
 		5B4E17661CF36BE000A15258 /* testprob.mps in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B4E17651CF36B8200A15258 /* testprob.mps */; };
 		5B4E17741CF4DE7400A15258 /* MPSReader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5B4E17731CF4DE7400A15258 /* MPSReader.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B4E17761CF4DE7400A15258 /* MPSReaderPriv.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5B4E17751CF4DE7400A15258 /* MPSReaderPriv.hpp */; };
@@ -45,6 +46,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		08CE602B1D4592B80041C97D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		5BC38DCB1CF3385D0019E673 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -59,6 +69,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		08CE602D1D4592B80041C97D /* solve_cubic */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = solve_cubic; sourceTree = BUILT_PRODUCTS_DIR; };
+		08CE602F1D4592B80041C97D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B4E17591CF3398200A15258 /* grammar.ypp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = grammar.ypp; path = ../mpsReader/grammar.ypp; sourceTree = "<group>"; };
 		5B4E175A1CF3398200A15258 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parser.cpp; path = ../mpsReader/parser.cpp; sourceTree = "<group>"; };
 		5B4E175B1CF3398200A15258 /* parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = parser.hpp; path = ../mpsReader/parser.hpp; sourceTree = "<group>"; };
@@ -90,6 +102,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		08CE602A1D4592B80041C97D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B4E176E1CF4DE7400A15258 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -118,6 +137,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		08CE602E1D4592B80041C97D /* solve_cubic */ = {
+			isa = PBXGroup;
+			children = (
+				08CE602F1D4592B80041C97D /* main.m */,
+			);
+			path = solve_cubic;
+			sourceTree = "<group>";
+		};
 		5B4E17721CF4DE7400A15258 /* MPSReader */ = {
 			isa = PBXGroup;
 			children = (
@@ -153,6 +180,7 @@
 				5B4E17911CF4E40700A15258 /* ORUtilities.framework */,
 				5BC38DCF1CF3385D0019E673 /* mpsReader */,
 				5B4E17721CF4DE7400A15258 /* MPSReader */,
+				08CE602E1D4592B80041C97D /* solve_cubic */,
 				5BC38DCE1CF3385D0019E673 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -162,6 +190,7 @@
 			children = (
 				5BC38DCD1CF3385D0019E673 /* mpsReader */,
 				5B4E17711CF4DE7400A15258 /* libMPSReader.dylib */,
+				08CE602D1D4592B80041C97D /* solve_cubic */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -194,6 +223,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		08CE602C1D4592B80041C97D /* solve_cubic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 08CE60331D4592B80041C97D /* Build configuration list for PBXNativeTarget "solve_cubic" */;
+			buildPhases = (
+				08CE60291D4592B80041C97D /* Sources */,
+				08CE602A1D4592B80041C97D /* Frameworks */,
+				08CE602B1D4592B80041C97D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = solve_cubic;
+			productName = solve_cubic;
+			productReference = 08CE602D1D4592B80041C97D /* solve_cubic */;
+			productType = "com.apple.product-type.tool";
+		};
 		5B4E17701CF4DE7400A15258 /* MPSReader */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B4E17791CF4DE7400A15258 /* Build configuration list for PBXNativeTarget "MPSReader" */;
@@ -238,6 +284,9 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Laurent Michel";
 				TargetAttributes = {
+					08CE602C1D4592B80041C97D = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					5B4E17701CF4DE7400A15258 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -260,11 +309,20 @@
 			targets = (
 				5BC38DCC1CF3385D0019E673 /* mpsReader */,
 				5B4E17701CF4DE7400A15258 /* MPSReader */,
+				08CE602C1D4592B80041C97D /* solve_cubic */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		08CE60291D4592B80041C97D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08CE60301D4592B80041C97D /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B4E176D1CF4DE7400A15258 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -297,6 +355,22 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		08CE60311D4592B80041C97D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		08CE60321D4592B80041C97D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5B4E177A1CF4DE7400A15258 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -441,6 +515,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		08CE60331D4592B80041C97D /* Build configuration list for PBXNativeTarget "solve_cubic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08CE60311D4592B80041C97D /* Debug */,
+				08CE60321D4592B80041C97D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		5B4E17791CF4DE7400A15258 /* Build configuration list for PBXNativeTarget "MPSReader" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
