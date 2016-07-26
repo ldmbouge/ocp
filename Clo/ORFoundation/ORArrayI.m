@@ -420,7 +420,7 @@
 @implementation ORFloatArrayI
 {
     id<ORTracker> _tracker;
-    ORDouble*        _array;
+    ORFloat*        _array;
     ORInt             _low;
     ORInt              _up;
     ORInt              _nb;
@@ -541,7 +541,7 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-    return [ORFactory elt: _tracker doubleArray: self index: idx];
+    return [ORFactory elt: _tracker floatArray: self index: idx];
 }
 -(ORFloat) max {
     ORFloat v = _array[_low];

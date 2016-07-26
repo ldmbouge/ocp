@@ -398,10 +398,15 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "intvalue not defined on expression"];
    return 0;
 }
+-(ORFloat) floatValue
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
+    return 0;
+}
 -(ORDouble) doubleValue
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "doubleValue not defined on expression"];
-   return 0;
+    @throw [[ORExecutionError alloc] initORExecutionError: "doubleValue not defined on expression"];
+    return 0;
 }
 -(ORBool) isConstant
 {

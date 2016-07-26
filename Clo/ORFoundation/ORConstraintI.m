@@ -2582,6 +2582,119 @@
 }
 @end
 
+
+@implementation ORFloatMult { // x = y * z
+   id<ORVar> _x;
+   id<ORVar> _y;
+   id<ORVar> _z;
+}
+-(ORFloatMult*)initORFloatMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ * %@)",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatMult:self];
+}
+-(id<ORVar>) res
+{
+   return _x;
+}
+-(id<ORVar>) left
+{
+   return _y;
+}
+-(id<ORVar>) right
+{
+   return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORFloatDiv { // x = y * z
+   id<ORVar> _x;
+   id<ORVar> _y;
+   id<ORVar> _z;
+}
+-(ORFloatDiv*)initORFloatDiv:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ / %@)",[self class],self,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitFloatDiv:self];
+}
+-(id<ORVar>) res
+{
+   return _x;
+}
+-(id<ORVar>) left
+{
+   return _y;
+}
+-(id<ORVar>) right
+{
+   return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 @implementation ORFloatLinearEq{
    id<ORVarArray> _ia;
    id<ORFloatArray>  _coefs;

@@ -50,7 +50,7 @@
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
 -(void) updateMin: (ORFloat) newMin;
 -(void) updateMax: (ORFloat) newMax;
--(ORStatus) updateInterval: (ORInterval)nb;
+-(void) updateInterval: (ORFloat) newMin and: (ORFloat)newMax;
 -(void) bind: (ORFloat) val;
 @end
 
@@ -81,7 +81,7 @@ typedef struct  {
 -(id<CPEngine>) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
--(ORFloat) dblValue;
+-(ORFloat) floatValue;
 -(ORFloat) domwidth;
 -(TRFloatInterval) domain;
 @end

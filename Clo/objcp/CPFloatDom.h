@@ -15,16 +15,6 @@
 
 #include <fpi.h>
 
-static inline float_interval TRFloatInterval2float_interval(TRFloatInterval dom)
-{
-    return (float_interval){dom._low,dom._up};
-}
-
-static inline TRFloatInterval float_interval2TRFloatInterval(ORTrailI* trail, float_interval dom)
-{
-    return makeTRFloatInterval(trail, dom.inf, dom.sup);
-}
-
 @interface CPFloatDom : NSObject<CPFloatDom,NSCopying> {
     id<ORTrail>        _trail;
     ORFloat            _imin;
@@ -34,7 +24,7 @@ static inline TRFloatInterval float_interval2TRFloatInterval(ORTrailI* trail, fl
 -(id)initCPFloatDom:(id<ORTrail>)trail low:(ORFloat)low up:(ORFloat)up;
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
--(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
+-(void) updateInterval:(float_interval)v for:(id<CPFloatVarNotifier>)x;
 -(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
 -(ORFloat) min;
 -(ORFloat) max;

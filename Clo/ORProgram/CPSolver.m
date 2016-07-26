@@ -26,6 +26,7 @@
 #import <values.h>
 #endif
 
+#include <fpi.h>
 // [pvh: this is from a long time ago]
 //
 // 1. Look at IncModel to implement the incremental addition of constraints
@@ -604,6 +605,22 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method realGthenImpl: not implemented"];
 }
+-(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLthenImpl: not implemented"];
+}
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGthenImpl: not implemented"];
+}
+-(void) floatLEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLEqualImpl: not implemented"];
+}
+-(void) floatGEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGEqualImpl: not implemented"];
+}
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method restrictImpl not implemented"];
@@ -1057,6 +1074,22 @@
 -(void) gthen: (id<ORIntVar>) var double: (ORDouble) val
 {
    [self gthenImpl: _gamma[var.getId] with: rint(floor(val))];
+}
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [self floatLthenImpl: _gamma[var.getId] with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [self floatGthenImpl: _gamma[var.getId] with: val];
+}
+-(void) floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [self floatLEqualImpl: _gamma[var.getId] with: val];
+}
+-(void) floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [self floatGEqualImpl: _gamma[var.getId] with: val];
 }
 
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
@@ -1566,6 +1599,36 @@
    [ORConcurrency pumpEvents];
 }
 -(void) realGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORFloat pval = fp_previous_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMax:pval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORFloat nval = fp_next_float(val);
+   ORStatus status = [_engine enforce:^{ [var updateMin:nval];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatLEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatGEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
    if (status == ORFailure)

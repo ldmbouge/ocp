@@ -48,7 +48,6 @@
 -(NSString*) description;
 -(ORFloat) fmin;
 -(ORFloat) fmax;
-
 -(id<ORVarArray>)  variables:  (id<ORAddToModel>)  model;
 -(id<ORFloatArray>)  coefficients: (id<ORAddToModel>) model;
 -(ORInt) size;

@@ -48,19 +48,20 @@
 {
     return _terms[k]._coef;
 }
+//FIXME
 -(ORFloat) fmin
 {
     ORDouble lb = _indep;
     for(ORInt k=0;k < _nb;k++) {
         ORDouble c = _terms[k]._coef;
         ORDouble vlb,vub;
-        id<ORDoubleRange> d = [_terms[k]._var domain];
+        id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
         vlb = d.low;
         vub = d.up;
         ORDouble svlb = c > 0 ? vlb * c : vub * c;
         lb += svlb;
     }
-    return ((FLT_MIN) > lb) ? FLT_MIN : lb;
+    return ((-FLT_MAX) > lb) ? -FLT_MAX : lb;
 }
 
 -(ORFloat) fmax
@@ -68,7 +69,7 @@
     ORDouble ub = _indep;
     for(ORInt k=0;k < _nb;k++) {
         ORDouble c = _terms[k]._coef;
-        id<ORDoubleRange> d = [_terms[k]._var domain];
+        id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
         ORDouble vlb = d.low;
         ORDouble vub = d.up;
         ORDouble svub = c > 0 ? vub * c : vlb * c;
@@ -222,7 +223,7 @@
 {
     [_float addIndependent: -idp];
 }
--(void) addTerm: (id<ORIntVar>) x by: (ORFloat) c
+-(void) addTerm: (id<ORFloatVar>) x by: (ORFloat) c
 {
     [_float addTerm: x by: -c];
 }
@@ -233,7 +234,7 @@
     }
     [_float addIndependent:- [lts independent]];
 }
--(void) scaleBy: (ORDouble) s
+-(void) scaleBy: (ORFloat) s
 {
     [_float scaleBy: -s];
 }

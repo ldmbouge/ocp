@@ -503,7 +503,7 @@ struct CPVarPair {
             //TODO: fix order of sides.
             ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model ];
             ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
-            [ORNormalizer addTofloatLinear:linRight from:[e right] model:_model];
+            [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model];
             [linRight release];
             _terms = linLeft;
         }
@@ -1403,10 +1403,25 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 }
 +(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORFloatVar>)x
 {
-    
+    ORFloatSubst* subst = [[ORFloatSubst alloc] initORFloatSubst: model];
+    [expr visit:subst];
+    id<ORFloatVar> theVar = [subst result];
+    [subst release];
+    return theVar;
 }
 +(id<ORFloatVar>) floatVarIn:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model
 {
-    
+    id<ORFloatRange> r = [ORFactory floatRange:model low:[e fmin] up:[e fmax]];
+    if ([e size] == 0) {
+        id<ORFloatVar> xv = [ORFactory floatVar: model domain: r];
+        return xv;
+    } else if ([e size] == 1 && [e coef:0] == 1) {
+        return (id<ORFloatVar>)[e var:0];
+    } else {
+        id<ORFloatVar> xv = [ORFactory floatVar: model domain: r];
+        [e addTerm:xv by:-1];
+        [e postEQZ: model];
+        return xv;
+    }
 }
 @end

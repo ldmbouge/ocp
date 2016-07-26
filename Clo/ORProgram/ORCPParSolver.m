@@ -837,6 +837,10 @@
 {
    return [[self worker] intValue: x];
 }
+-(ORFloat) floatValue: (id<ORFloatVar>) x
+{
+    return [[self worker] intValue: x];
+}
 -(ORDouble) doubleValue: (id<ORRealVar>) x
 {
    return [[self worker] doubleValue: x];
