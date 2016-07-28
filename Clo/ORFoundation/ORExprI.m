@@ -126,6 +126,8 @@
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
 -(void) visitExprGEqualI: (id<ORExpr>) e;
+-(void) visitExprLThenI: (id<ORExpr>) e;
+-(void) visitExprGThenI: (id<ORExpr>) e;
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
@@ -615,12 +617,16 @@
 }
 -(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t
 {
-   id re = NULL;
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      re = e;
-   else if ([e isKindOfClass:[NSNumber class]])
-      re = [e asExpression:t];
-   return [ORFactory expr:self leq:[re sub:[ORFactory integer:t value:1] track:t] track:t];
+    id re = NULL;
+    if ([e conformsToProtocol:@protocol(ORExpr)])
+        re = e;
+    else if ([e isKindOfClass:[NSNumber class]])
+        re = [e asExpression:t];
+    enum ORVType et = [(id<ORExpr>)re vtype];
+    if (et == ORTFloat)
+        return [ORFactory expr:self lt:re track:t];
+    else
+        return [ORFactory expr:self leq:[re plus:[ORFactory integer:t value:1]] track:t];
 }
 -(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t
 {
@@ -629,7 +635,11 @@
       re = e;
    else if ([e isKindOfClass:[NSNumber class]])
       re = [e asExpression:t];
-   return [ORFactory expr:self geq:[re plus:[ORFactory integer:t value:1]] track:t];
+   enum ORVType et = [(id<ORExpr>)re vtype];
+   if (et == ORTFloat)
+       return [ORFactory expr:self gt:re track:t];
+    else
+        return [ORFactory expr:self geq:[re plus:[ORFactory integer:t value:1]] track:t];
 }
 -(id<ORRelation>) negTrack:(id<ORTracker>)t
 {
@@ -1578,6 +1588,98 @@
    return self;
 }
 @end
+
+@implementation ORExprLThenI
+-(id<ORExpr>) initORExprLThenI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+    self = [super initORExprBinaryI:left and:right];
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORInt) min
+{
+    assert([self isConstant]);
+    return [_left min] < [_right min];
+}
+-(ORInt) max
+{
+    assert([self isConstant]);
+    return [_left max] < [_right max];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+    [visitor visitExprLThenI: self];
+}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"%@ < %@",[_left description],[_right description]];
+    return rv;
+}
+-(enum ORRelationType)type
+{
+    return ORRLThen;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+    [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    return self;
+}
+@end
+
+@implementation ORExprGThenI
+-(id<ORExpr>) initORExprGThenI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+    self = [super initORExprBinaryI:left and:right];
+    return self;
+}
+-(void) dealloc
+{
+    [super dealloc];
+}
+-(ORInt) min
+{
+    assert([self isConstant]);
+    return [_left min] > [_right min];
+}
+-(ORInt) max
+{
+    assert([self isConstant]);
+    return [_left max] > [_right max];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+    [visitor visitExprGThenI: self];
+}
+-(NSString*) description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendFormat:@"%@ > %@",[_left description],[_right description]];
+    return rv;
+}
+-(enum ORRelationType)type
+{
+    return ORRGThen;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+    [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    return self;
+}
+@end
+
+
 
 @implementation ORDisjunctI
 -(id<ORExpr>) initORDisjunctI: (id<ORExpr>) left or: (id<ORExpr>) right

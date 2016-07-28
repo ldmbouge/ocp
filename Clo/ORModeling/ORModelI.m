@@ -348,6 +348,17 @@
    }];
    return rv;
 }
+-(id<ORFloatVarArray>)floatVars
+{
+   ORInt k=0,nbfloat = 0;
+   for(id<ORVar> xk in _vars)
+      nbfloat += [xk conformsToProtocol:@protocol(ORFloatVar)];
+   id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,nbfloat-1)];
+   for(id<ORVar> xk in _vars)
+      if ([xk conformsToProtocol:@protocol(ORFloatVar)])
+         rv[k++] = xk;
+   return (id<ORFloatVarArray>)rv;
+}
 -(id<ORRealVarArray>)realVars
 {
    ORInt k=0,nbReal = 0;

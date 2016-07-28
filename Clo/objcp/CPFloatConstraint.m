@@ -32,13 +32,10 @@
         [_x bind:[_y value]];
         return;
     }
-    //TODO clean up
-    NSLog(@"x : %f %f",[_x min],[_x max]);
-    NSLog(@"y : %f %f",[_y min],[_y max]);
-    if(([_x min] < [_y min] && [_x max] < [_y min]) || ([_y min] < [_x min] && [_y max] < [_x min])){
-        //empty inter
+    if(![_x asIntersectionDomain:_y]){
         failNow();
     }else{
+        //TODO use maxFlt
         ORFloat min = maxOf([_x min], [_y min]);
         ORFloat max = minOf([_x max], [_y max]);
         [_x updateInterval:min and:max];
@@ -57,9 +54,10 @@
         [_x bind:[_y value]];
         assignTRInt(&_active, NO, _trail);
     }
-    if(([_x min] < [_y min] && [_x max] < [_y min]) || ([_y min] < [_x min] && [_y max] < [_x min])){
+    if(![_x asIntersectionDomain:_y]){
         failNow();
     }else{
+        //TODO use maxFlt
         ORFloat min = maxOf([_x min], [_y min]);
         ORFloat max = minOf([_x max], [_y max]);
         [_x updateInterval:min and:max];
@@ -143,6 +141,107 @@
     return [NSString stringWithFormat:@"<%@ != %f>",_x,_c];
 }
 @end
+@implementation CPFloatLT
+-(id) init:(CPFloatVarI*)x lt:(CPFloatVarI*)y
+{
+    self = [super initCPCoreConstraint: [x engine]];
+    _x = x;
+    _y = y;
+    return self;
+}
+-(void) post
+{
+    [self propagate];
+    [_y whenChangeBoundsPropagate:self];
+    [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+    if([_x bound]){
+        [_y updateMin:[_x min]];
+    }else if ([_y bound]){
+        [_x updateMax:[_y min]];
+        return;
+    }
+    if([_x asIntersectionDomain:_y]){
+        if([_x min] > [_y min]){
+            ORFloat nmin = fp_next_float([_x min]);
+            [_y updateMin:nmin];
+        }
+        if([_x max] > [_y max]){
+            ORFloat pmax = fp_previous_float([_y max]);
+            [_y updateMax:pmax];
+        }
+    }else{
+        if([_x asDomainAtRightOf:_y])
+            failNow();
+    }
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound];
+}
+-(NSString*)description
+{
+    return [NSString stringWithFormat:@"<%@ < %@>",_x,_y];
+}
+@end
+
+@implementation CPFloatGT
+-(id) init:(CPFloatVarI*)x gt:(CPFloatVarI*)y
+{
+    self = [super initCPCoreConstraint: [x engine]];
+    _x = x;
+    _y = y;
+    return self;
+}
+-(void) post
+{
+    [self propagate];
+    [_y whenChangeBoundsPropagate:self];
+    [_x whenChangeBoundsPropagate:self];
+}
+-(void) propagate
+{
+    if([_x bound]){
+        [_y updateMin:[_x min]];
+    }else if ([_y bound]){
+        [_x updateMax:[_y min]];
+        return;
+    }
+    if([_x asIntersectionDomain:_y]){
+        if([_x min] > [_y min]){
+            ORFloat nmin = fp_next_float([_y min]);
+            [_x updateMin:nmin];
+        }
+        if([_x max] < [_y max]){
+            ORFloat pmax = fp_previous_float([_x max]);
+            [_y updateMax:pmax];
+        }
+    }else{
+        if([_x asDomainAtLeftOf:_y])
+            failNow();
+    }
+    
+}
+-(NSSet*)allVars
+{
+    return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+    return ![_x bound];
+}
+-(NSString*)description
+{
+    return [NSString stringWithFormat:@"<%@ > %@>",_x,_y];
+}
+@end
+
 
 @implementation CPFloatTernaryAdd
 -(id) init:(CPFloatVarI*)z equals:(CPFloatVarI*)x plus:(CPFloatVarI*)y

@@ -21,6 +21,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPIntVarI.h>
+#import <objcp/CPFloatVarI.h>
 
 #if defined(__linux__)
 #import <values.h>
@@ -454,6 +455,13 @@
    body = [_mt track:[body copy]];
   [ORControl forall: S suchThat: filter orderedBy: order do: body];  
 }
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedByFloat: (ORInt2Float) order do: (ORInt2Void) body
+{
+   filter = [_mt track:[filter copy]];
+   order = [_mt track:[order copy]];
+   body = [_mt track:[body copy]];
+   [ORControl forall: S suchThat: filter orderedByFloat: order do: body];
+}
 -(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
    id<ORForall> forall = [ORControl forall: self set: S];
@@ -620,6 +628,10 @@
 -(void) floatGEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGEqualImpl: not implemented"];
+}
+-(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) u
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatIntervalImpl: not implemented"];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
@@ -1111,6 +1123,104 @@
 -(void) realGthen: (id<ORRealVar>) var with: (ORDouble) val
 {
    [self realGthenImpl: _gamma[var.getId] with: val];
+}
+//TODO check orderedbyfloat
+-(void) dynamicFloatSplitArray: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedByFloat: ^ORFloat(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         NSLog(@"%@   =   %20.20e  %d",v,[v domwidth],(ORInt)[v domwidth]);
+         return -[v domwidth];
+      }
+      do: ^(ORInt i){
+         [self floatSplit:_gamma[getId(x[i])]];
+      }];
+   
+}
+-(void) floatSplitArray: (id<ORFloatVarArray>) x
+{
+   ORInt low = [x low];
+   ORInt up = [x up];
+   for(ORInt i = low; i <= up; i++) {
+      //[self floatSplit:_gamma[getId(x[i])]];
+      [self float5WaySplit:_gamma[getId(x[i])]  array:x];
+      //[self float2Split:_gamma[getId(x[i])]];
+   }
+}
+-(void) floatSplit: (id<CPFloatVar>) xi
+{
+   while (![xi bound]) {
+      ORFloat theMax = xi.max;
+      ORFloat theMin = xi.min;
+      ORFloat mid = (theMin + theMax)/2.0f;
+      if(mid == theMax)
+         mid = theMin;
+      [_search try: ^{ [self floatGthenImpl:xi with:mid]; }
+               alt: ^{ [self floatLEqualImpl:xi with:mid]; }
+       ];
+   }
+}
+-(void) float2Split: (id<CPFloatVar>) xi
+{
+   float_interval interval[5];
+   while (![xi bound]) {
+      ORFloat theMax = xi.max;
+      ORFloat theMin = xi.min;
+      ORFloat mid = (theMin + theMax)/2.0f;
+      if(fp_next_float(theMin) == theMax){
+         interval[0].inf = interval[0].sup = theMin;
+         interval[1].inf = interval[1].sup = theMax;
+      }else{
+         interval[0].inf  = theMin;
+         interval[0].sup = fp_previous_float(mid);
+         interval[1].inf = mid;
+         interval[1].sup = theMax;
+      }
+      float_interval* ip = interval;
+      [_search tryall:RANGE(self,0,2) suchThat:nil in:^(ORInt i) {
+         [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+      }];
+   }
+}
+-(void) float5WaySplit: (id<CPFloatVar>) xi array:(id)x
+{
+   float_interval interval[5];
+   ORInt length = 0;
+   while (![xi bound]) {
+      ORFloat theMax = xi.max;
+      ORFloat theMin = xi.min;
+      ORFloat mid = (theMin + theMax)/2.0f;
+      length = 1;
+      interval[0].inf = interval[0].sup = theMax;
+      interval[1].inf = interval[1].sup = theMin;
+      if(fp_next_float(theMin) == fp_previous_float(theMax)){
+         interval[2].inf = interval[2].sup = mid;
+         length = 2;
+      }else{
+         //force the interval to right side
+         if(mid == fp_previous_float(theMax)){
+            mid = fp_previous_float(mid);
+         }
+         interval[2].inf = interval[2].sup = mid;
+         interval[3].inf = fp_next_float(mid);
+         interval[3].sup = fp_previous_float(theMax);
+         length = 3;
+         if(fp_next_float(theMin) != mid){
+            interval[4].inf = fp_next_float(theMin);
+            interval[4].sup = fp_previous_float(mid);
+            length++;
+         }
+      }
+      float_interval* ip = interval;
+      [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+         [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+      }];
+   }
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
@@ -1631,6 +1741,13 @@
 -(void) floatGEqualImpl: (id<CPFloatVar>) var with: (ORFloat) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatIntervalImpl: (id<CPFloatVar>) var low: (ORFloat) low up:(ORFloat) up
+{
+   ORStatus status = [_engine enforce:^{ [var updateInterval:low and:up];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];

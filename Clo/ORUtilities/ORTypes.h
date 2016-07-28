@@ -119,6 +119,7 @@ typedef void (^ORClosure)(void);
 typedef ORBool (^ORInt2Bool)(ORInt);
 typedef ORBool (^ORVoid2Bool)(void);
 typedef ORInt (^ORInt2Int)(ORInt);
+typedef ORFloat (^ORInt2Float)(ORInt);
 typedef id   (^ORInt2Id)(ORInt);
 typedef void (^ORInt2Void)(ORInt);
 typedef void (^ORFloat2Void)(ORFloat);

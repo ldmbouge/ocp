@@ -336,6 +336,25 @@
     [linRight release];
     _terms = linLeft;
 }
+-(void) visitExprLThenI:(ORExprLEqualI*)e
+{
+    // a <= b  =>  -lin(a) + lin(b) <= 0
+    ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e left] model:_model];
+    ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
+    [ORNormalizer addToIntLinear:linRight from:[e right] model:_model];
+    [linRight release];
+    _terms = linLeft;
+}
+-(void) visitExprGThenI:(ORExprLEqualI*)e
+{
+    // a >= b
+    ORIntLinear* linLeft = [ORNormalizer intLinearFrom:[e left] model:_model];
+    ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
+    [ORNormalizer addToIntLinear:linRight from:[e right] model:_model];
+    [linRight release];
+    _terms = linLeft;
+}
+
 struct CPVarPair {
     id<ORIntVar> lV;
     id<ORIntVar> rV;
@@ -440,6 +459,22 @@ struct CPVarPair {
    [linRight release];
    _terms = linLeft;
 }
+-(void) visitExprLThenI:(ORExprLEqualI*)e
+{
+    ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
+    id<ORRealLinear> linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
+    [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
+    [linRight release];
+    _terms = linLeft;
+}
+-(void) visitExprGThenI:(ORExprGEqualI*)e
+{
+    ORRealLinear* linLeft = [ORNormalizer realLinearFrom:[e left] model:_model];
+    id<ORRealLinear> linRight = [[ORRealLinearFlip alloc] initORRealLinearFlip: linLeft];
+    [ORNormalizer addToRealLinear:linRight from:[e right] model:_model];
+    [linRight release];
+    _terms = linLeft;
+}
 
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
@@ -508,7 +543,14 @@ struct CPVarPair {
             _terms = linLeft;
         }
     }
-    
+}
+-(void) visitExprGThenI:(ORExprGThenI*)e
+{
+    [self visitExprEqualI:e];
+}
+-(void) visitExprLThenI:(ORExprLThenI*)e
+{
+    [self visitExprEqualI:e];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
@@ -721,6 +763,16 @@ struct CPVarPair {
 {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
    [_terms addTerm:alpha by:1];
+}
+-(void) visitExprLThenI:(ORExprLThenI*)e
+{
+    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
+}
+-(void) visitExprGThenI:(ORExprGThenI*)e
+{
+    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
@@ -1171,6 +1223,8 @@ static inline ORLong maxSeq(ORLong v[4])  {
    } else
       [self reifyLEQ:left right:right];
 }
+//TODO: add the visits for < , > (for cleanliness)
+
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
     id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];

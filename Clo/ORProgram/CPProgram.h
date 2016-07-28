@@ -58,6 +58,7 @@ PORTABLE_BEGIN
 -(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          floatSplitArray: (id<ORFloatVarArray>) x;
 -(void)          realLabel: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;
@@ -92,6 +93,10 @@ PORTABLE_BEGIN
 -(void)              forall: (id<ORIntIterable>) S
                    suchThat: (PNULLABLE ORInt2Bool) suchThat
                   orderedBy: (PNULLABLE ORInt2Int) o
+                         do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S
+                   suchThat: (PNULLABLE ORInt2Bool) suchThat
+             orderedByFloat: (PNULLABLE ORInt2Float) o
                          do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterable>) S
                   orderedBy: (ORInt2Int) o1

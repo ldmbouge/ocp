@@ -162,27 +162,30 @@
                                               coef: [self coefficients: model]
                                                 eq: -_indep]];
 }
+-(id<ORConstraint>) postLTZ: (id<ORAddToModel>) model
+{
+    return [model addConstraint:[ORFactory floatSum: model
+                                              array: [self variables: model]
+                                               coef: [self coefficients: model]
+                                                 lt: -_indep]];
+}
+-(id<ORConstraint>) postGTZ: (id<ORAddToModel>) model
+{
+    return [model addConstraint:[ORFactory floatSum: model
+                                              array: [self variables: model]
+                                               coef: [self coefficients: model]
+                                                 gt: -_indep]];
+}
 -(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model
 {
-  /*  return [model addConstraint:[ORFactory realSum: model
-                                             array: [self variables: model]
-                                              coef: [self coefficients: model]
-                                               leq: -_indep]];
-   */
     assert(NO);
     return nil;
 }
 -(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model
 {
-    /*return [model addConstraint:[ORFactory realSum: model
-                                             array: [self variables: model]
-                                              coef: [self coefficients: model]
-                                               geq: -_indep]];*/
-    
     assert(NO);
     return nil;
 }
-
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
     return [model addConstraint:[ORFactory floatSum:model
@@ -274,6 +277,14 @@
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
     return [_float postNEQZ:model];
+}
+-(id<ORConstraint>) postLTZ: (id<ORAddToModel>) model
+{
+    return [_float postLTZ:model];
+}
+-(id<ORConstraint>) postGTZ: (id<ORAddToModel>) model
+{
+    return [_float postGTZ:model];
 }
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {

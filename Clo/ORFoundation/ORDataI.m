@@ -328,7 +328,7 @@
 }
 -(NSString*)description
 {
-    return [NSString stringWithFormat:@"%f",_value];
+    return [NSString stringWithFormat:@"%.9f",_value];
 }
 - (void) encodeWithCoder:(NSCoder *) aCoder
 {

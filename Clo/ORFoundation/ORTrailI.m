@@ -417,6 +417,7 @@ void  updateMin(TRFloatInterval* dom,float min, id<ORTrail> trail)
     if (dom->_mgc != [trail magic]) {
         dom->_mgc = [trail magic];
         [trail trailFloat:&dom->_low];
+        [trail trailFloat:&dom->_up];
     }
     dom->_low = min;
 }
@@ -424,6 +425,7 @@ void  updateMax(TRFloatInterval* dom,float max, id<ORTrail> trail)
 {
     if (dom->_mgc != [trail magic]) {
         dom->_mgc = [trail magic];
+        [trail trailFloat:&dom->_low];
         [trail trailFloat:&dom->_up];
     }
     dom->_up = max;

@@ -147,6 +147,11 @@
    ORRealRangeI* o = [[ORRealRangeI alloc] init:low up:up];
    return [tracker trackImmutable:o];
 }
++(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker
+{
+    ORFloatRangeI* o = [[ORFloatRangeI alloc] init:-INFINITY up:INFINITY];
+    return [tracker trackImmutable:o];
+}
 +(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker low:(ORFloat)low up:(ORFloat) up
 {
     ORFloatRangeI* o = [[ORFloatRangeI alloc] init:low up:up];
@@ -561,6 +566,19 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    return [[ORBindingArrayI alloc] initORBindingArray: nb];
 }
 
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up
+{
+    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+    for(ORInt k=range.low;k <= range.up;k++)
+        [o set:[ORFactory floatVar:tracker low:low up:up] at:k];
+    return (id<ORFloatVarArray>)o;
+}
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
+{
+    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+    return (id<ORFloatVarArray>)o;
+}
+
 +(id<ORRealVarArray>) realVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORDouble)low up:(ORDouble)up
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -843,6 +861,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORRelation> o = [[ORExprGEqualI alloc] initORExprGEqualI: left and: right];
    [self validate:o onError:"No CP tracker in >= Expression" track:t];
    return o;
+}
++(id<ORRelation>) expr: (id<ORExpr>) left lt: (id<ORExpr>) right track:(id<ORTracker>)t
+{
+    id<ORRelation> o = [[ORExprLThenI alloc] initORExprLThenI: left and: right];
+    [self validate:o onError:"No CP tracker in < Expression" track:t];
+    return o;
+}
++(id<ORRelation>) expr: (id<ORExpr>) left gt: (id<ORExpr>) right track:(id<ORTracker>)t
+{
+    id<ORRelation> o = [[ORExprGThenI alloc] initORExprGThenI: left and: right];
+    [self validate:o onError:"No CP tracker in > Expression" track:t];
+    return o;
 }
 +(id<ORExpr>) expr: (id<ORRelation>) left land: (id<ORRelation>) right track:(id<ORTracker>)t
 {
@@ -1476,13 +1506,25 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
     [model trackObject:o];
     return o;
 }
-+(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  lt: (ORFloat) c
+{
+    id<ORConstraint> o = [[ORFloatLinearLT alloc] initFloatLinearLT: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  gt: (ORFloat) c
+{
+    id<ORConstraint> o = [[ORFloatLinearGT alloc] initFloatLinearGT: x coef: coef cst: c];
+    [model trackObject:o];
+    return o;
+}
++(id<ORConstraint>) floatMult:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {
     id<ORConstraint> o = [[ORFloatMult alloc] initORFloatMult:z eq:x times:y];
     [model trackObject:o];
     return o;
 }
-+(id<ORConstraint>) div:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
++(id<ORConstraint>) floatDiv:(id<ORTracker>)model  var: (id<ORFloatVar>)x by:(id<ORFloatVar>)y equal:(id<ORFloatVar>)z
 {
     id<ORConstraint> o = [[ORFloatDiv alloc] initORFloatDiv:z eq:x times:y];
     [model trackObject:o];

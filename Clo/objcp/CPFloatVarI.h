@@ -84,6 +84,10 @@ typedef struct  {
 -(ORFloat) floatValue;
 -(ORFloat) domwidth;
 -(TRFloatInterval) domain;
+-(ORBool) asIntersectionDomain:(id<CPFloatVar>) y;
+-(ORBool) asDisjointDomain : (id<CPFloatVar>) y;
+-(ORBool) asDomainAtLeftOf : (id<CPFloatVar>) y;
+-(ORBool) asDomainAtRightOf : (id<CPFloatVar>) y;
 @end
 
 @interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {

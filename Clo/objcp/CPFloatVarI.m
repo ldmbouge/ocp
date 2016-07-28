@@ -301,6 +301,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat)newMax
 {
+    if(newMin > newMax)
+        failNow();
     [self updateMin:newMin];
     [self updateMax:newMax];
 }
@@ -327,6 +329,22 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(TRFloatInterval) domain
 {
     return [_dom domain];
+}
+-(ORBool) asIntersectionDomain : (CPFloatVarI*) y
+{
+    return ![self asDisjointDomain:y];
+}
+-(ORBool) asDisjointDomain : (id<CPFloatVar>) y
+{
+    return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
+}
+-(ORBool) asDomainAtLeftOf : (id<CPFloatVar>) y
+{
+    return [self min] < [y min] && [self max] < [y max];
+}
+-(ORBool) asDomainAtRightOf : (id<CPFloatVar>) y
+{
+    return [self min] > [y min] && [self max] > [y max];
 }
 -(void) assignRelaxationValue: (ORFloat) f
 {

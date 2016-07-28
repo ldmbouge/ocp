@@ -375,6 +375,18 @@ enum ORGroupType {
 -(ORFloat) cst;
 @end
 
+@protocol ORFloatLinearLT <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
+@protocol ORFloatLinearGT <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
 @protocol ORRealLinearEq <ORConstraint>
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
