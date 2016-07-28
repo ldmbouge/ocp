@@ -298,6 +298,18 @@
     id<ORExpr> right = [self linearizeExpr: [binExpr right]];
     _exprResult = [left leq: right];
 }
+-(void) visitExprGThenI: (id<ORExpr>) e {
+    ORExprBinaryI* binExpr = (ORExprBinaryI*)e;
+    id<ORExpr> left = [self linearizeExpr: [binExpr left]];
+    id<ORExpr> right = [self linearizeExpr: [binExpr right]];
+    _exprResult = [left gt: right];
+}
+-(void) visitExprLThenI: (id<ORExpr>) e {
+    ORExprBinaryI* binExpr = (ORExprBinaryI*)e;
+    id<ORExpr> left = [self linearizeExpr: [binExpr left]];
+    id<ORExpr> right = [self linearizeExpr: [binExpr right]];
+    _exprResult = [left lt: right];
+}
 -(void) visitLEqualc: (id<ORLEqualc>)c {
     id<ORExpr> left = [self linearizeExpr: [c left]];
     [_model addConstraint: [left leq: @([c cst])]];

@@ -40,14 +40,12 @@
 {
     if([self bound]){
         NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-        [buf appendFormat:@"value=%f",_domain._low ];
+        [buf appendFormat:@"%20.20e",_domain._low ];
         return buf;
     }
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [buf appendFormat:@"(%f,%f)",_domain._low,_domain._up];
+    [buf appendFormat:@"(%20.20e,%20.20e)",_domain._low,_domain._up];
     return buf;
-//    ORIReady();
-//    return ORIFormat(createORI2(_domain._low, _domain._up));
 }
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
@@ -118,8 +116,7 @@
 }
 -(ORFloat) domwidth
 {
-    ORIReady();
-    return ORIWidth(createORI2(_domain._low, _domain._up));
+    return  -(_domain._low - _domain._up);
 }
 -(TRFloatInterval) domain
 {

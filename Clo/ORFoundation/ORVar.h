@@ -102,6 +102,14 @@ PORTABLE_BEGIN
 -(id<ORASolver>) solver;
 @end
 
+@protocol ORFloatVarArray <ORVarArray>
+-(id<ORFloatVar>) at: (ORInt) value;
+-(void) set: (id<ORFloatVar>) x at: (ORInt) value;
+-(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
 @protocol ORRealVarArray <ORVarArray>
 -(id<ORRealVar>) at: (ORInt) value;
 -(void) set: (id<ORRealVar>) x at: (ORInt) value;

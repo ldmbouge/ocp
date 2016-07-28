@@ -25,10 +25,12 @@ typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORRNEq = 2,
    ORRLEq = 3,
    ORRGEq = 4,
-   ORNeg   = 5,
-   ORRDisj = 6,
-   ORRConj = 7,
-   ORRImply = 8
+   ORRLThen = 5,
+   ORRGThen = 6,
+   ORNeg   = 7,
+   ORRDisj = 8,
+   ORRConj = 9,
+   ORRImply = 10
 };
 
 typedef NS_ENUM(NSUInteger,ORVType) {

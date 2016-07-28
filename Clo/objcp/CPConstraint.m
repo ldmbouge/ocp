@@ -668,6 +668,29 @@
     [[x tracker] trackMutable:o];
     return o;
 }
++(id<CPConstraint>) floatLTc: (id<CPFloatVar>) x to:(ORFloat) c
+{
+    id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
+    return [self floatLT:x to:cvar];
+}
++(id<CPConstraint>) floatGTc: (id<CPFloatVar>) x to:(ORFloat) c
+{
+    id<CPFloatVar> cvar = [CPFactory floatVar:[x engine] value:c];
+    return [self floatGT:x to:cvar];
+}
++(id<CPConstraint>) floatLT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
+{
+    id<CPConstraint> o = [[CPFloatLT alloc] init:x lt:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
++(id<CPConstraint>) floatGT: (id<CPFloatVar>) x to:(id<CPFloatVar>) y
+{
+    id<CPConstraint> o = [[CPFloatGT alloc] init:x gt:y];
+    [[x tracker] trackMutable:o];
+    return o;
+}
+//TODO clean
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
 {
     if([x count] == 1 && [coefs at:coefs.low]==1.0){
@@ -719,7 +742,7 @@
             id<ORFloatRange> dom = [ORFactory floatRange:engine low:lb up:ub];
              betas[i-1] = [CPFactory floatVar: engine bounds:dom];
             id<CPFloatVar> value = [CPFactory floatVar:engine value:[coefs at:i]];
-            id<CPConstraint> m = [self mult:value by:x[i] equal:betas[i-1]];
+            id<CPConstraint> m = [self floatMult:value by:x[i] equal:betas[i-1]];
             [tracker trackMutable:m];
             [engine add:m];
         }
@@ -737,12 +760,12 @@
         }
         id<CPFloatVar> x0 = x[0];
         if([coefs at:0] != 1){
-            ORFloat lb = [coefs at:0]  * [x0 min];
-            ORFloat ub = [coefs at:0] *  [x0 max];
+            ORFloat lb = [coefs at:0] * [x0 min];
+            ORFloat ub = [coefs at:0] * [x0 max];
             id<ORFloatRange> dom = [ORFactory floatRange:engine low:lb up:ub];
             x0 = [CPFactory floatVar: engine bounds:dom];
             id<CPFloatVar> value = [CPFactory floatVar:engine value:[coefs at:0]];
-            id<CPConstraint> m = [self mult:value by:x[0] equal:x0];
+            id<CPConstraint> m = [self floatMult:value by:x[0] equal:x0];
             [tracker trackMutable:m];
             [engine add:m];
         }
@@ -760,14 +783,68 @@
         assert(NO);
     }
 }
-
-+(id<CPConstraint>) mult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs lt:(ORFloat)c
+{
+    id<ORTracker> tracker = [x tracker];
+    id<CPEngine> engine = [x[0] engine];
+    id<ORIntRange> r = RANGE(tracker, 0, (ORInt)[x count]);
+    id<CPFloatVarArray> betas = [CPFactory floatVarArray:tracker range:r];
+    for(ORInt i = 0; i < [x count]; i++){
+        if(![coefs at:i]){
+            ORFloat lb = [coefs at:i] * ([coefs at:i] >= 0 ? [x[i] min] : [x[i] max]);
+            ORFloat ub = [coefs at:i] * ([coefs at:i] >= 0 ? [x[i] max] : [x[i] min]);
+            id<ORFloatRange> dom = [ORFactory floatRange:engine low:lb up:ub];
+            betas[i] = [CPFactory floatVar: engine bounds:dom];
+            id<CPFloatVar> value = [CPFactory floatVar:engine value:[coefs at:i]];
+            id<CPConstraint> m = [self floatMult:value by:x[i] equal:betas[i]];
+            [tracker trackMutable:m];
+            [engine add:m];
+        }else{
+            betas[i] = x[i];
+        }
+    }
+    
+    if([x count] == 1){
+        return [self floatLTc:betas[0] to:c];
+    }else if([x count] == 2){
+        return [self floatLT:betas[0] to:betas[1]];
+    }
+    assert(NO);
+}
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs gt:(ORFloat)c
+{
+    id<ORTracker> tracker = [x tracker];
+    id<CPEngine> engine = [x[0] engine];
+    id<ORIntRange> r = RANGE(tracker, 0, (ORInt)[x count]-1);
+    id<CPFloatVarArray> betas = [CPFactory floatVarArray:tracker range:r];
+    for(ORInt i = 0; i < [x count]; i++){
+        if(![coefs at:i]){
+            ORFloat lb = [coefs at:i] * ([coefs at:i] >= 0 ? [x[i] min] : [x[i] max]);
+            ORFloat ub = [coefs at:i] * ([coefs at:i] >= 0 ? [x[i] max] : [x[i] min]);
+            id<ORFloatRange> dom = [ORFactory floatRange:engine low:lb up:ub];
+            betas[i] = [CPFactory floatVar: engine bounds:dom];
+            id<CPFloatVar> value = [CPFactory floatVar:engine value:[coefs at:i]];
+            id<CPConstraint> m = [self floatMult:value by:x[i] equal:betas[i]];
+            [tracker trackMutable:m];
+            [engine add:m];
+        }else{
+            betas[i] = x[i];
+        }
+    }
+    if([x count] == 1){
+        return [self floatGTc:betas[0] to:c];
+    }else if([x count] == 2){
+        return [self floatGT:betas[0] to:betas[1]];
+    }
+    assert(NO);
+}
++(id<CPConstraint>) floatMult: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
 {
     id<CPConstraint> o = [[CPFloatTernaryMult alloc] init:z equals:x mult:y];
     [[x tracker] trackMutable:o];
     return o;
 }
-+(id<CPConstraint>) div: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
++(id<CPConstraint>) floatDiv: (id<CPFloatVar>)x by:(id<CPFloatVar>)y equal:(id<CPFloatVar>)z
 {
     id<CPConstraint> o = [[CPFloatTernaryDiv alloc] init:z equals:x div:y];
     [[x tracker] trackMutable:o];

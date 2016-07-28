@@ -15,6 +15,8 @@
 @protocol ORLinear<NSObject>
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model;
+-(id<ORConstraint>)postLTZ:(id<ORAddToModel>)model;
+-(id<ORConstraint>)postGTZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model;

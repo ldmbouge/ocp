@@ -453,6 +453,14 @@
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "FloatLinearNeq: visit method not defined"];
 }
+-(void) visitFloatLinearLT: (id<ORFloatLinearLT>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatLinearLT: visit method not defined"];
+}
+-(void) visitFloatLinearGT: (id<ORFloatLinearGT>) c
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatLinearLT: visit method not defined"];
+}
 -(void) visitFloatMult: (id<ORFloatMult>) c
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "ORFloatMult: visit method not defined"];
@@ -560,6 +568,14 @@
 -(void) visitExprGEqualI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprGEqualI: visit method not defined"];
+}
+-(void) visitExprLThenI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprLThenI: visit method not defined"];
+}
+-(void) visitExprGThenI: (id<ORExpr>) e
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "ExprGThenI: visit method not defined"];
 }
 -(void) visitExprSumI: (id<ORExpr>) e
 {
@@ -772,6 +788,8 @@
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}
 -(void) visitExprGEqualI: (id<ORExpr>) e  {}
+-(void) visitExprLThenI: (id<ORExpr>) e  {}
+-(void) visitExprGThenI: (id<ORExpr>) e  {}
 -(void) visitExprSumI: (id<ORExpr>) e  {}
 -(void) visitExprProdI: (id<ORExpr>) e  {}
 -(void) visitExprAbsI:(id<ORExpr>) e  {}

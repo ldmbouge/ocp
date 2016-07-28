@@ -45,6 +45,7 @@ PORTABLE_BEGIN
        onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
+-(id<ORFloatVarArray>)floatVars;
 -(id<ORRealVarArray>)realVars;
 -(ORUInt) nbObjects;
 -(NSArray*) variables;

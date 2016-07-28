@@ -175,7 +175,7 @@
         id<ORFloatRange> r = [ORFactory floatRange:_model low:flb up:fub];
         _rv = [ORFactory floatVar:_model domain: r];
     }
-    [_model addConstraint: [ORFactory mult:_model var:lV by:rV equal:_rv]];
+    [_model addConstraint: [ORFactory floatMult:_model var:lV by:rV equal:_rv]];
     [lT release];
     [rT release];
 }

@@ -263,6 +263,24 @@
 -(void) visit: (ORVisitor*)v;
 @end
 
+@interface ORExprLThenI : ORExprBinaryI<ORRelation,NSCoding>
+-(id<ORExpr>) initORExprLThenI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(ORRelationType)type;
+-(void) visit: (ORVisitor*)v;
+@end
+
+@interface ORExprGThenI : ORExprBinaryI<ORRelation,NSCoding>
+-(id<ORExpr>) initORExprGThenI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(ORRelationType)type;
+-(void) visit: (ORVisitor*)v;
+@end
+
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }
