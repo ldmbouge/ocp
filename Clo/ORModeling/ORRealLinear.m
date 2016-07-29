@@ -66,7 +66,7 @@
       ORDouble svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
-    return ((FLT_MIN) > lb) ? FLT_MIN : lb;
+    return ((-FLT_MAX) > lb) ? FLT_MAX : lb;
 }
 
 -(ORDouble) fmax
