@@ -167,6 +167,7 @@ static NSMutableSet* collectConstraints(CPLDoubleEventNetwork* net,NSMutableSet*
 {
     ORIReady();
     long double a,b;
+    //TODO:Shouldn't use ORIBounds on long double:
     ORIBounds([_dom bounds], &a, &b);
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [buf appendFormat:@"var<%d>=",_name];

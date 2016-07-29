@@ -28,7 +28,7 @@ int main(int argc, const char * argv[]) {
         [mdl add:[r eq: [y sub:z]]];
          [mdl add:[r neq: @(2.f)]];*/
         //[mdl add:[z eq: [x div:y]]];
-        [mdl add:[x3 eq:[[[x0 mul:@(2.0f)] plus: [x1 mul:@(3.0f)]] plus:[x2 mul:@(4.0f)]]]];
+       // [mdl add:[x3 eq:[[[x0 mul:@(2.0f)] plus: [x1 mul:@(3.0f)]] plus:[x2 mul:@(4.0f)]]]];
         
         NSLog(@"model: %@",mdl);
         id<CPProgram> p = [ORFactory createCPProgram:mdl];

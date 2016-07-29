@@ -23,6 +23,16 @@
     _indep = 0.0;
     return self;
 }
+-(ORFloatLinear*) initORFloatLinear: (ORInt) mxs type:(ORRelationType) t
+{
+    self = [super init];
+    _max   = mxs;
+    _terms = malloc(sizeof(struct ORFloatTerm) *_max);
+    _type = t;
+    _nb    = 0;
+    _indep = 0.0;
+    return self;
+}
 -(void) dealloc
 {
     free(_terms);
@@ -48,7 +58,6 @@
 {
     return _terms[k]._coef;
 }
-//FIXME
 -(ORFloat) fmin
 {
     ORDouble lb = _indep;
@@ -207,6 +216,35 @@
 {
     //[model maximize: [self variables: model] coef: [self coefficients: model]];
     assert(NO);
+}
+-(void) visit :(id<ORFloatLinear>) right
+{
+    switch(_type)
+    {
+    case ORRLThen ://same as ORRGThen
+    case ORRGThen :
+            [right scaleBy:-1];
+            [self addLinear:right];
+            break;
+    case ORREq :
+            if([self size] == 1){
+                [right scaleBy:-1];
+                [self addLinear:right];
+            }else{
+                [self scaleBy:-1];
+                [right addLinear:self];
+            }
+            break;
+    default :
+            if([self size] == 1){
+                [right scaleBy:-1];
+                [self addLinear:right];
+            }else{
+                [self scaleBy:-1];
+                [right addLinear:self];
+            }
+            break;
+    }
 }
 @end
 

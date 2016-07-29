@@ -161,8 +161,8 @@
 }
 -(id<ORExpr>) initORExprCstDoubleSubI: (id<ORDoubleArray>) array index:(id<ORExpr>) op;
 -(id<ORTracker>) tracker;
--(ORDouble) fmin;
--(ORDouble) fmax;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 -(NSString *)description;
 -(ORExprI*) index;
 -(id<ORDoubleArray>)array;
@@ -175,6 +175,8 @@
 -(id<ORExpr>) initORExprPlusI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 -(NSString *)description;
 -(void) visit:(ORVisitor*)v;
 @end
@@ -183,6 +185,8 @@
 -(id<ORExpr>) initORExprMulI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 -(NSString *)description;
 -(void) visit: (ORVisitor*)v;
 @end
@@ -191,6 +195,8 @@
 -(id<ORExpr>) initORExprDivI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 -(NSString *)description;
 -(void) visit: (ORVisitor*)v;
 @end
@@ -223,6 +229,8 @@
 -(id<ORExpr>) initORExprMinusI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 -(NSString *)description;
 -(void) visit: (ORVisitor*)v;
 @end

@@ -288,11 +288,20 @@
 }
 -(ORInt) min
 {
-    return (ORInt)floor(_value);
+    return floor(_value);
 }
 -(ORInt) max
 {
     return (ORInt)ceil(_value);
+}
+
+-(ORFloat) fmin
+{
+    return _value;
+}
+-(ORFloat) fmax
+{
+    return _value;
 }
 -(ORFloat) value
 {

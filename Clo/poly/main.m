@@ -52,10 +52,6 @@ int main(int argc, const char * argv[]) {
         id<CPProgram> p = [ORFactory createCPProgram:mdl];
         [p solveAll:^{
             NSLog(@"hello");
-         /*   ORFloat f = fp_next_float(0.f);
-            ORFloat nf = fp_next_float(f);
-            [p floatLEqual:b with:fp_next_float(nf)];*/
-            //[p dynamicFloatSplitArray:vars];
             [p floatSplitArray:vars];
             check_solution([p floatValue:a],[p floatValue:b], [p floatValue:c], [p floatValue:res]);
             NSLog(@"a : %@ (%s)",[p concretize:a],[p bound:a] ? "YES" : "NO");

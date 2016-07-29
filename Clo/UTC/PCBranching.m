@@ -122,8 +122,8 @@
 {
    ORInt    sd  = FDMAXINT;
    ORDouble lfv = 1.0;
-   NSUInteger k = -1;
-   for(NSUInteger i=0;i < _sz;i++) {
+   NSInteger k = -1;
+   for(NSInteger i=0;i < _sz;i++) {
       ORInt vdsz = [[_pack[i]._x domain] size];
       if ((vdsz < sd) || (vdsz == sd &&  _pack[i]._frac < lfv)) {
          k = i;
@@ -140,8 +140,8 @@
 -(id<ORIntVar>)extractMostFractional
 {
    ORDouble mfv = 0.0;
-   NSUInteger k = -1;
-   for(NSUInteger i=0;i < _sz;i++) {
+   NSInteger k = -1;
+   for(NSInteger i=0;i < _sz;i++) {
       if (_pack[i]._frac > mfv) {
          k = i;
          mfv = _pack[i]._frac;
@@ -158,8 +158,8 @@
 {
    ORDouble lfv = 1.0;
    ORInt nbLocks = FDMAXINT;
-   NSUInteger k = -1;
-   for(NSUInteger i=0;i < _sz;i++) {
+   NSInteger k = -1;
+   for(NSInteger i=0;i < _sz;i++) {
       ORInt xiL = [_relax nbLocks:_pack[i]._x];
       if (xiL < nbLocks) {
          k = i;
@@ -201,7 +201,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"[%d]{",_sz];
+   [buf appendFormat:@"[%lu]{",(unsigned long)_sz];
    for(NSUInteger i = 0;i < _sz;i++) {
       [buf appendFormat:@"%@ [%f]%c",_pack[i]._x,_pack[i]._frac,i < _sz - 1 ? ',' : ' '];
    }

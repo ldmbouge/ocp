@@ -165,9 +165,6 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(NSString*)description
 {
-    ORIReady();
-    ORDouble a,b;
-    ORIBounds([_dom bounds], &a, &b);
     NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [buf appendFormat:@"var<%d>=",_name];
     [buf appendString:[_dom description]];
@@ -291,12 +288,12 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(void) updateMin: (ORFloat) newMin
 {
-    if(newMin != [self min])
+    if(newMin > [self min])
         [_dom updateMin:newMin for:self];
 }
 -(void) updateMax: (ORFloat) newMax
 {
-    if(newMax != [self max])
+    if(newMax < [self max])
          [_dom updateMax:newMax for:self];
 }
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat)newMax
@@ -330,19 +327,19 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
     return [_dom domain];
 }
--(ORBool) asIntersectionDomain : (CPFloatVarI*) y
+-(ORBool) isIntersectingWith : (CPFloatVarI*) y
 {
-    return ![self asDisjointDomain:y];
+    return ![self isDisjointWith:y];
 }
--(ORBool) asDisjointDomain : (id<CPFloatVar>) y
+-(ORBool) isDisjointWith : (id<CPFloatVar>) y
 {
     return ([self min] < [y min] && [self max] < [y min]) || ([y min] < [self min] && [y max] < [self min]);
 }
--(ORBool) asDomainAtLeftOf : (id<CPFloatVar>) y
+-(ORBool) canPrecede : (id<CPFloatVar>) y
 {
     return [self min] < [y min] && [self max] < [y max];
 }
--(ORBool) asDomainAtRightOf : (id<CPFloatVar>) y
+-(ORBool) canFollow : (id<CPFloatVar>) y
 {
     return [self min] > [y min] && [self max] > [y max];
 }

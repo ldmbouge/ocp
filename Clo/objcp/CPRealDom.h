@@ -13,7 +13,7 @@
 #import <CPUKernel/CPTypes.h>
 #import <objcp/CPDom.h>
 
-@interface CPRealDom : NSObject<CPDoubleDom,NSCopying> {
+@interface CPRealDom : NSObject<CPRealDom,NSCopying> {
    id<ORTrail>        _trail;
    ORDouble            _imin;
    ORDouble            _imax;

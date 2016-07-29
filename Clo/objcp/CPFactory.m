@@ -103,6 +103,7 @@
 +(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
    // return [[CPFloatViewOnIntVarI alloc] init:cp intVar:x];
+    assert(NO);return nil;
 }
 +(id<CPFloatVarArray>) floatVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
@@ -124,6 +125,7 @@
 +(id<CPDoubleVar>) doubleVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
     //return [[CPDoubleViewOnIntVarI alloc] init:cp intVar:x];
+    assert(NO);return nil;
 }
 +(id<CPLDoubleVar>) ldoubleVar:(id<CPEngine>)cp bounds:(id<ORLDoubleRange>) range
 {
@@ -132,6 +134,7 @@
 +(id<CPLDoubleVar>) ldoubleVar:(id<CPEngine>)cp castFrom:(id<ORLDoubleRange>)x
 {
     //return [[CPLDoubleViewOnIntVarI alloc] init:cp intVar:x];
+    assert(NO);return nil;
 }
 //--------------
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet
