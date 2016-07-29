@@ -171,6 +171,8 @@
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
 -(void) visitFloatLinearEq: (id<ORConstraint>) c;
 -(void) visitFloatLinearNEq: (id<ORConstraint>) c;
+-(void) visitFloatLinearLT: (id<ORConstraint>) c;
+-(void) visitFloatLinearGT: (id<ORConstraint>) c;
 -(void) visitFloatMult: (id<ORFloatMult>) c;
 -(void) visitFloatDiv: (id<ORFloatDiv>) c;
 

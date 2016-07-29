@@ -36,8 +36,10 @@
     ORInt             _nb;
     ORInt            _max;
     ORFloat          _indep;
+    ORRelationType _type;
 }
 -(ORFloatLinear*) initORFloatLinear: (ORInt) mxs;
+-(ORFloatLinear*) initORFloatLinear: (ORInt) mxs type:(ORRelationType) t;
 -(void) dealloc;
 -(void) setIndependent: (ORFloat) idp;
 -(void) addIndependent: (ORFloat) idp;
@@ -60,6 +62,7 @@
 -(id<ORConstraint>) postDISJ:(id<ORAddToModel>)model;
 -(void)  postMinimize: (id<ORAddToModel>) model;
 -(void)  postMaximize: (id<ORAddToModel>) model;
+-(void) visit:(id<ORFloatLinear>) right;
 @end
 
 @interface ORFloatLinearFlip : NSObject<ORFloatLinear> {

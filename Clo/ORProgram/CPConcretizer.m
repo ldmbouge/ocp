@@ -1123,7 +1123,7 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
--(void) visitFloatLinearLT:(id<ORFloatLinearNEq>)cstr
+-(void) visitFloatLinearLT:(id<ORFloatLinearLT>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
         id<ORVarArray> av = [cstr vars];
@@ -1134,7 +1134,7 @@
         _gamma[cstr.getId] = concreteCstr;
     }
 }
--(void) visitFloatLinearGT:(id<ORFloatLinearNEq>)cstr
+-(void) visitFloatLinearGT:(id<ORFloatLinearGT>)cstr
 {
     if (_gamma[cstr.getId] == NULL) {
         id<ORVarArray> av = [cstr vars];
@@ -1171,7 +1171,7 @@
         [res visit: self];
         [left visit: self];
         [right visit: self];
-        id<CPConstraint> concreteCstr = [CPFactory div: (id<CPFloatVar>) _gamma[left.getId]
+        id<CPConstraint> concreteCstr = [CPFactory floatDiv: (id<CPFloatVar>) _gamma[left.getId]
             by: (id<CPFloatVar>) _gamma[right.getId]
             equal: (id<CPFloatVar>) _gamma[res.getId]
             ];

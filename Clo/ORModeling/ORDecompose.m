@@ -511,11 +511,11 @@ struct CPVarPair {
     bool lc = [[e left] isConstant];
     bool rc = [[e right] isConstant];
     if (lc && rc) {
-        bool isOk = [[e left] min] == [[e right] min];
+        bool isOk = [[e left] fmin] == [[e right] fmin];
         if (!isOk)
             [_model addConstraint:[ORFactory fail:_model]];
     } else if (lc || rc) {
-        ORFloat c = lc ? [[e left] min] : [[e right] min];
+        ORFloat c = lc ? [[e left] fmin] : [[e right] fmin];
         ORExprI* other = lc ? [e right] : [e left];
         ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model];
         [lin addIndependent: - c];
@@ -524,16 +524,22 @@ struct CPVarPair {
         bool lv = [[e left] isVariable];
         bool rv = [[e right] isVariable];
         if (lv || rv) {
-            ORExprI* other = lv ? [e right] : [e left];
-            ORExprI* var   = lv ? [e left] : [e right];
-            id<ORFloatVar> theVar  = [ORNormalizer floatVarIn:_model expr:var];
-            ORFloatLinear* lLeft   = [[ORFloatLinear alloc] initORFloatLinear:4];
-            [lLeft addTerm:theVar by:1];
-            ORFloatLinear* lRight  = [ORNormalizer floatLinearFrom:other model:_model];
-            [lRight scaleBy:-1.0];
-            [lLeft addLinear:lRight];
-            [lRight release];
-            _terms = lLeft;
+            //TODO si lv et rv sont des vars flipper dans un sens
+            //si 1 var est l'autre expr dans l'autre 
+            //ORExprI* other = rv ? [e left] : [e right];
+            //ORExprI* var   = rv ? [e right] : [e left] ;
+            id<ORFloatLinear> left  = [ORNormalizer floatLinearFrom:[e left] model:_model];
+            ORFloatLinear* lLeft   = [[ORFloatLinear alloc] initORFloatLinear:4 type:[e type]];
+            [lLeft addLinear:left];
+            ORFloatLinear* lRight  = [ORNormalizer floatLinearFrom:[e right] model:_model];
+            [lLeft visit:lRight];
+            if([lLeft size] > [lRight size]){
+                [lRight release];
+                _terms = lLeft;
+            }else{
+                [lLeft release];
+                _terms = lRight;
+            }
         } else {
             //TODO: fix order of sides.
             ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model ];
@@ -546,10 +552,26 @@ struct CPVarPair {
 }
 -(void) visitExprGThenI:(ORExprGThenI*)e
 {
+    bool lc = [[e left] isConstant];
+    bool rc = [[e right] isConstant];
+    if (lc && rc) {
+        bool isOk = [[e left] fmin] > [[e right] fmin];
+        if (!isOk)
+            [_model addConstraint:[ORFactory fail:_model]];
+        return;
+    }
     [self visitExprEqualI:e];
 }
 -(void) visitExprLThenI:(ORExprLThenI*)e
 {
+    bool lc = [[e left] isConstant];
+    bool rc = [[e right] isConstant];
+    if (lc && rc) {
+        bool isOk = [[e left] fmin] < [[e right] fmin];
+        return;
+        if (!isOk)
+            [_model addConstraint:[ORFactory fail:_model]];
+    }
     [self visitExprEqualI:e];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
@@ -1430,7 +1452,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 @implementation ORNormalizer(Float)
 +(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model
 {
-    ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+    ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4 type:[e type]];
     ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model];
     [e visit:v];
     [v release];

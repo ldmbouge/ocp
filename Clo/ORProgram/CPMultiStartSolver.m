@@ -445,6 +445,26 @@
 {
    [[self worker] realGthen: var with: val];
 }
+-(void) floatSplitArray:(id<ORFloatVarArray>)x
+{
+    [[self worker] floatSplitArray:x];
+}
+-(void) floatLthen:(id<ORFloatVar>)var with:(ORFloat)val
+{
+    [[self worker] floatLthen:var with:val];
+}
+-(void) floatGthen:(id<ORFloatVar>)var with:(ORFloat)val
+{
+    [[self worker] floatGthen:var with:val];
+}
+-(void) floatGEqual:(id<ORFloatVar>)var with:(ORFloat)val
+{
+    [[self worker] floatGEqual:var with:val];
+}
+-(void) floatLEqual:(id<ORFloatVar>)var with:(ORFloat)val
+{
+    [[self worker] floatLEqual:var with:val];
+}
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
    [[self worker] repeat: body onRepeat: onRepeat];

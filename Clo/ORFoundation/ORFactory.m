@@ -519,7 +519,8 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 //-------------------------------
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker var:(id<ORFloatVar>) x scale: (ORFloat) a shift:(ORFloat) b
 {
-    
+    assert(NO);
+    return nil;
 }
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up
 {

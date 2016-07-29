@@ -49,7 +49,9 @@
 }
 -(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
-    assert(newMin <= FLT_MAX);
+    //TODO -inf et inf
+    //when selecting unbound variable
+//    assert(newMin <= FLT_MAX);
     if(newMin > [self max])
         failNow();
     updateMin(&_domain, newMin, _trail);
@@ -60,7 +62,7 @@
 }
 -(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
 {
-    assert(newMax >=  -FLT_MAX);
+    //assert(newMax >=  -FLT_MAX);
     if(newMax < [self min])
         failNow();
     updateMax(&_domain, newMax, _trail);
@@ -77,10 +79,7 @@
 
 -(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x
 {
-    ORIReady();
     if (_domain._low <= val && val <= _domain._up) {
-        if (ORIBound(createORI2(_domain._low, _domain._up), BIND_EPSILON))
-            return;
         [x changeMinEvt:YES sender:self];
         [x changeMaxEvt:YES sender:self];
         [x bindEvt:self];

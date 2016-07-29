@@ -43,6 +43,15 @@
 		083826231D47AB6E002BEAD2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		083826241D47AB6E002BEAD2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		086C7EA91D48FAF50025D9AC /* libfpi.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 08B262261D3F851400153FE5 /* libfpi.so */; };
+		08B0EE0B1D4A0710000DF54F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B0EE0A1D4A0710000DF54F /* main.m */; };
+		08B0EE1E1D4A0721000DF54F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AC9FF417C4322C00FD312E /* ORCmdLineArgs.m */; };
+		08B0EE1F1D4A0BDA000DF54F /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		08B0EE201D4A0BDA000DF54F /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		08B0EE211D4A0BDA000DF54F /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		08B0EE221D4A0BDA000DF54F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		08B0EE231D4A0BDA000DF54F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		08B0EE241D4A0BED000DF54F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		08B0EE251D4A0BF2000DF54F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		08B261EF1D3F805200153FE5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08B261EE1D3F805200153FE5 /* main.m */; };
 		08B262021D3F807F00153FE5 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		08B262031D3F807F00153FE5 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -2126,6 +2135,55 @@
 			remoteInfo = objcp;
 		};
 		0838261B1D47AB5E002BEAD2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
+		};
+		08B0EE101D4A071B000DF54F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		08B0EE121D4A071B000DF54F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		08B0EE141D4A071B000DF54F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		08B0EE161D4A071B000DF54F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		08B0EE181D4A071B000DF54F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		08B0EE1A1D4A071B000DF54F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		08B0EE1C1D4A071B000DF54F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -7065,6 +7123,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		08B0EE061D4A0710000DF54F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		08B261EA1D3F805200153FE5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -8453,6 +8520,8 @@
 		080BB0221D40CD5D0027C2AB /* ORFloatDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFloatDecompose.m; sourceTree = "<group>"; };
 		083826071D47A8F9002BEAD2 /* poly */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = poly; sourceTree = BUILT_PRODUCTS_DIR; };
 		083826091D47A8F9002BEAD2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		08B0EE081D4A0710000DF54F /* OptimizedHeron */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OptimizedHeron; sourceTree = BUILT_PRODUCTS_DIR; };
+		08B0EE0A1D4A0710000DF54F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08B261EC1D3F805200153FE5 /* testFloat */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testFloat; sourceTree = BUILT_PRODUCTS_DIR; };
 		08B261EE1D3F805200153FE5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		08B2620B1D3F82E400153FE5 /* CPDoubleDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPDoubleDom.h; sourceTree = "<group>"; };
@@ -22274,6 +22343,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		08B0EE051D4A0710000DF54F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08B0EE251D4A0BF2000DF54F /* ORUtilities.framework in Frameworks */,
+				08B0EE241D4A0BED000DF54F /* CPUKernel.framework in Frameworks */,
+				08B0EE1F1D4A0BDA000DF54F /* objcp.framework in Frameworks */,
+				08B0EE201D4A0BDA000DF54F /* objmp.framework in Frameworks */,
+				08B0EE211D4A0BDA000DF54F /* ORFoundation.framework in Frameworks */,
+				08B0EE221D4A0BDA000DF54F /* ORModeling.framework in Frameworks */,
+				08B0EE231D4A0BDA000DF54F /* ORProgram.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		08B261E91D3F805200153FE5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -23933,6 +24016,14 @@
 				083826091D47A8F9002BEAD2 /* main.m */,
 			);
 			path = poly;
+			sourceTree = "<group>";
+		};
+		08B0EE091D4A0710000DF54F /* OptimizedHeron */ = {
+			isa = PBXGroup;
+			children = (
+				08B0EE0A1D4A0710000DF54F /* main.m */,
+			);
+			path = OptimizedHeron;
 			sourceTree = "<group>";
 		};
 		08B261ED1D3F805200153FE5 /* testFloat */ = {
@@ -37951,6 +38042,7 @@
 				08B261ED1D3F805200153FE5 /* testFloat */,
 				08CE60391D45931F0041C97D /* solvecubic */,
 				083826081D47A8F9002BEAD2 /* poly */,
+				08B0EE091D4A0710000DF54F /* OptimizedHeron */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -38078,6 +38170,7 @@
 				08B261EC1D3F805200153FE5 /* testFloat */,
 				08CE60381D45931F0041C97D /* solvecubic */,
 				083826071D47A8F9002BEAD2 /* poly */,
+				08B0EE081D4A0710000DF54F /* OptimizedHeron */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -40131,6 +40224,30 @@
 			name = poly;
 			productName = poly;
 			productReference = 083826071D47A8F9002BEAD2 /* poly */;
+			productType = "com.apple.product-type.tool";
+		};
+		08B0EE071D4A0710000DF54F /* OptimizedHeron */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 08B0EE0F1D4A0710000DF54F /* Build configuration list for PBXNativeTarget "OptimizedHeron" */;
+			buildPhases = (
+				08B0EE041D4A0710000DF54F /* Sources */,
+				08B0EE051D4A0710000DF54F /* Frameworks */,
+				08B0EE061D4A0710000DF54F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				08B0EE111D4A071B000DF54F /* PBXTargetDependency */,
+				08B0EE131D4A071B000DF54F /* PBXTargetDependency */,
+				08B0EE151D4A071B000DF54F /* PBXTargetDependency */,
+				08B0EE171D4A071B000DF54F /* PBXTargetDependency */,
+				08B0EE191D4A071B000DF54F /* PBXTargetDependency */,
+				08B0EE1B1D4A071B000DF54F /* PBXTargetDependency */,
+				08B0EE1D1D4A071B000DF54F /* PBXTargetDependency */,
+			);
+			name = OptimizedHeron;
+			productName = OptimizedHeron;
+			productReference = 08B0EE081D4A0710000DF54F /* OptimizedHeron */;
 			productType = "com.apple.product-type.tool";
 		};
 		08B261EB1D3F805200153FE5 /* testFloat */ = {
@@ -42856,6 +42973,9 @@
 					083826061D47A8F9002BEAD2 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
+					08B0EE071D4A0710000DF54F = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					08B261EB1D3F805200153FE5 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -43050,6 +43170,7 @@
 				08B261EB1D3F805200153FE5 /* testFloat */,
 				08CE60371D45931F0041C97D /* solvecubic */,
 				083826061D47A8F9002BEAD2 /* poly */,
+				08B0EE071D4A0710000DF54F /* OptimizedHeron */,
 			);
 		};
 /* End PBXProject section */
@@ -43207,6 +43328,15 @@
 			files = (
 				0838261D1D47AB64002BEAD2 /* ORCmdLineArgs.m in Sources */,
 				0838260A1D47A8F9002BEAD2 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		08B0EE041D4A0710000DF54F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				08B0EE1E1D4A0721000DF54F /* ORCmdLineArgs.m in Sources */,
+				08B0EE0B1D4A0710000DF54F /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44544,6 +44674,41 @@
 			isa = PBXTargetDependency;
 			target = B154427F16D19D8E001BD7B3 /* objmp */;
 			targetProxy = 0838261B1D47AB5E002BEAD2 /* PBXContainerItemProxy */;
+		};
+		08B0EE111D4A071B000DF54F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 08B0EE101D4A071B000DF54F /* PBXContainerItemProxy */;
+		};
+		08B0EE131D4A071B000DF54F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 08B0EE121D4A071B000DF54F /* PBXContainerItemProxy */;
+		};
+		08B0EE151D4A071B000DF54F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 08B0EE141D4A071B000DF54F /* PBXContainerItemProxy */;
+		};
+		08B0EE171D4A071B000DF54F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 08B0EE161D4A071B000DF54F /* PBXContainerItemProxy */;
+		};
+		08B0EE191D4A071B000DF54F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 08B0EE181D4A071B000DF54F /* PBXContainerItemProxy */;
+		};
+		08B0EE1B1D4A071B000DF54F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 08B0EE1A1D4A071B000DF54F /* PBXContainerItemProxy */;
+		};
+		08B0EE1D1D4A071B000DF54F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 08B0EE1C1D4A071B000DF54F /* PBXContainerItemProxy */;
 		};
 		08B261F51D3F806E00153FE5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -48329,6 +48494,96 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = $HOME/Documents/Programmation/fpcs/include;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		08B0EE0C1D4A0710000DF54F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		08B0EE0D1D4A0710000DF54F /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		08B0EE0E1D4A0710000DF54F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -55272,6 +55527,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		08B0EE0F1D4A0710000DF54F /* Build configuration list for PBXNativeTarget "OptimizedHeron" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08B0EE0C1D4A0710000DF54F /* Debug */,
+				08B0EE0D1D4A0710000DF54F /* Coverage */,
+				08B0EE0E1D4A0710000DF54F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		08B261F31D3F805200153FE5 /* Build configuration list for PBXNativeTarget "testFloat" */ = {
 			isa = XCConfigurationList;

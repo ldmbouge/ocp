@@ -165,6 +165,10 @@
 {
   [[self worker] forall:S suchThat:filter orderedBy:order do:body];
 }
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedByFloat: (ORInt2Float) order do: (ORInt2Void) body
+{
+    [[self worker] forall:S suchThat:filter orderedByFloat:order do:body];
+}
 -(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 then: (ORInt2Int) o2  do: (ORInt2Void) b
 {
   [[self worker] forall:S orderedBy:o1 then:o2 do:b];
@@ -384,6 +388,26 @@
 -(void) realGthen: (id<ORRealVar>) var with: (ORDouble) val
 {
    [[self worker] realGthen: var with: val];
+}
+-(void) floatSplitArray:(id<ORFloatVarArray>)x
+{
+    [[self worker] floatSplitArray:x];
+}
+-(void) floatLthen:(id<ORFloatVar>)var with:(ORFloat)val
+{
+    [[self worker] floatLthen:var with:val];
+}
+-(void) floatGthen:(id<ORFloatVar>)var with:(ORFloat)val
+{
+    [[self worker] floatGthen:var with:val];
+}
+-(void) floatGEqual:(id<ORFloatVar>)var with:(ORFloat)val
+{
+    [[self worker] floatGEqual:var with:val];
+}
+-(void) floatLEqual:(id<ORFloatVar>)var with:(ORFloat)val
+{
+    [[self worker] floatLEqual:var with:val];
 }
 -(void) fail
 {

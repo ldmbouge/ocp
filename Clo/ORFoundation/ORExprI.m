@@ -256,6 +256,16 @@
    [[e left] visit:self];
    [[e right] visit:self];
 }
+-(void) visitExprLThenI: (ORExprBinaryI*) e
+{
+    [[e left] visit:self];
+    [[e right] visit:self];
+}
+-(void) visitExprGThenI: (ORExprBinaryI*) e
+{
+    [[e left] visit:self];
+    [[e right] visit:self];
+}
 -(void) visitExprSumI: (ORExprSumI*) e
 {
    [[e expr] visit:self];
@@ -387,13 +397,23 @@
 }
 -(ORInt) min
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "min not defined on expression"];
-   return 0;
+    @throw [[ORExecutionError alloc] initORExecutionError: "min not defined on expression"];
+    return 0;
 }
 -(ORInt) max
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "max not defined on expression"];
-   return 0;
+    @throw [[ORExecutionError alloc] initORExecutionError: "max not defined on expression"];
+    return 0;
+}
+-(ORFloat) fmin
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "fmin not defined on expression"];
+    return 0;
+}
+-(ORFloat) fmax
+{
+    @throw [[ORExecutionError alloc] initORExecutionError: "maxFloat not defined on expression"];
+    return 0;
 }
 -(ORInt) intValue
 {
@@ -1068,14 +1088,14 @@
 {
    return [_index tracker];
 }
--(ORDouble) fmin
+-(ORFloat) fmin
 {
    ORDouble minOf = MAXINT;
    for(ORInt k=[_array low];k<=[_array up];k++)
       minOf = minOf <[_array at:k] ? minOf : [_array at:k];
    return minOf;
 }
--(ORDouble) fmax
+-(ORFloat) fmax
 {
    ORDouble maxOf = MININT;
    for(ORInt k=[_array low];k<=[_array up];k++)
@@ -1140,7 +1160,14 @@
 {
    return [_left max] + [_right max]; 
 }
-
+-(ORFloat) fmin
+{
+    return [_left fmin] + [_right fmin];
+}
+-(ORFloat) fmax
+{
+    return [_left fmax] + [_right fmax];
+}
 -(void) visit:(ORVisitor*) visitor
 {
    [visitor visitExprPlusI: self]; 
@@ -1180,7 +1207,14 @@
 {
    return [_left max] - [_right min]; 
 }
-
+-(ORFloat) fmin
+{
+    return [_left fmin] - [_right fmax];
+}
+-(ORFloat) fmax
+{
+     return [_left fmax] - [_right fmin];
+}
 -(void) visit: (ORVisitor*) visitor
 {
    [visitor visitExprMinusI: self]; 
@@ -1223,6 +1257,18 @@
    ORInt m1 = max([_left min] * [_right min],[_left min] * [_right max]);
    ORInt m2 = max([_left max] * [_right min],[_left max] * [_right max]);
    return max(m1,m2);
+}
+-(ORFloat) fmin
+{
+    ORFloat m1 = minDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
+    ORFloat m2 = minDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
+    return minDbl(m1,m2);
+}
+-(ORFloat) fmax
+{
+    ORFloat m1 = maxDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
+    ORFloat m2 = maxDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
+    return maxDbl(m1,m2);
 }
 -(void) visit: (ORVisitor*) visitor
 {

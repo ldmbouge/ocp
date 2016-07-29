@@ -32,7 +32,7 @@
         [_x bind:[_y value]];
         return;
     }
-    if(![_x asIntersectionDomain:_y]){
+    if(![_x isIntersectingWith:_y]){
         failNow();
     }else{
         //TODO use maxFlt
@@ -50,11 +50,13 @@
     if([_x bound]){
         [_y bind:[_x value]];
         assignTRInt(&_active, NO, _trail);
+        return;
     }else if([_y bound]){
         [_x bind:[_y value]];
         assignTRInt(&_active, NO, _trail);
+        return;
     }
-    if(![_x asIntersectionDomain:_y]){
+    if(![_x isIntersectingWith:_y]){
         failNow();
     }else{
         //TODO use maxFlt
@@ -157,23 +159,29 @@
 }
 -(void) propagate
 {
+    
     if([_x bound]){
-        [_y updateMin:[_x min]];
+        ORFloat nmin = fp_next_float([_x min]);
+        [_y updateMin:nmin];
+        assignTRInt(&_active, NO, _trail);
+        return;
     }else if ([_y bound]){
-        [_x updateMax:[_y min]];
+        ORFloat pmin = fp_previous_float([_y min]);
+        [_x updateMax:pmin];
+        assignTRInt(&_active, NO, _trail);
         return;
     }
-    if([_x asIntersectionDomain:_y]){
-        if([_x min] > [_y min]){
+    if([_x isIntersectingWith:_y]){
+        if([_x min] >= [_y min]){
             ORFloat nmin = fp_next_float([_x min]);
             [_y updateMin:nmin];
         }
-        if([_x max] > [_y max]){
+        if([_x max] >= [_y max]){
             ORFloat pmax = fp_previous_float([_y max]);
-            [_y updateMax:pmax];
+            [_x updateMax:pmax];
         }
     }else{
-        if([_x asDomainAtRightOf:_y])
+        if([_x canFollow:_y])
             failNow();
     }
 }
@@ -208,22 +216,27 @@
 -(void) propagate
 {
     if([_x bound]){
-        [_y updateMin:[_x min]];
+        ORFloat pmin = fp_previous_float([_x min]);
+        [_y updateMax:pmin];
+        assignTRInt(&_active, NO, _trail);
+        return;
     }else if ([_y bound]){
-        [_x updateMax:[_y min]];
+        ORFloat nmin = fp_next_float([_y min]);
+        [_x updateMin:nmin];
+        assignTRInt(&_active, NO, _trail);
         return;
     }
-    if([_x asIntersectionDomain:_y]){
-        if([_x min] > [_y min]){
-            ORFloat nmin = fp_next_float([_y min]);
-            [_x updateMin:nmin];
+    if([_x isIntersectingWith:_y]){
+        if([_x min] <= [_y min]){
+            ORFloat pmin = fp_next_float([_y min]);
+            [_x updateMin:pmin];
         }
-        if([_x max] < [_y max]){
-            ORFloat pmax = fp_previous_float([_x max]);
-            [_y updateMax:pmax];
+        if([_x max] <= [_y max]){
+            ORFloat nmax = fp_previous_float([_x max]);
+            [_y updateMax:nmax];
         }
     }else{
-        if([_x asDomainAtLeftOf:_y])
+        if([_x canPrecede:_y])
             failNow();
     }
     
@@ -267,13 +280,13 @@
     ORInt arrondi = FE_TONEAREST;
     float_interval zTemp,yTemp,xTemp,z,x,y;
     intersectionInterval inter;
-    //FIXME z domain Inf,-Inf
     z = makeFloatInterval([_z min],[_z max]);
     x = makeFloatInterval([_x min],[_x max]);
     y = makeFloatInterval([_y min],[_y max]);
     do {
         changed = false;
         zTemp = z;
+        //fix me update only low ?
         fpi_addf(precision, arrondi, &zTemp, &x, &y);
         inter = intersection(changed, z, zTemp);
         z = inter.result;
@@ -281,6 +294,7 @@
         
         xTemp = x;
         yTemp = y;
+        //FIX ME quand je passe un interval degenerer beug ?
         fpi_add_invsub_boundsf(precision, arrondi, &xTemp, &yTemp, &z);
         inter = intersection(changed, x , xTemp);
         x = inter.result;

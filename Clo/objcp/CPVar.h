@@ -176,10 +176,11 @@ enum CPVarClass {
 -(void) updateMax:(ORFloat) newMax;
 -(void) assignRelaxationValue: (ORFloat) f;
 -(void) updateInterval: (ORFloat) newMin and:(ORFloat) newMax;
--(ORBool) asIntersectionDomain : (id<CPFloatVar>) y;
--(ORBool) asDisjointDomain : (id<CPFloatVar>) y;
--(ORBool) asDomainAtLeftOf : (id<CPFloatVar>) y;
--(ORBool) asDomainAtRightOf : (id<CPFloatVar>) y;
+//TODO change to function
+-(ORBool) isIntersectingWith : (id<CPFloatVar>) y;
+-(ORBool) isDisjointWith : (id<CPFloatVar>) y;
+-(ORBool) canPrecede : (id<CPFloatVar>) y;
+-(ORBool) canFollow : (id<CPFloatVar>) y;
 @end
 
 @protocol CPDoubleVar<CPVar>
