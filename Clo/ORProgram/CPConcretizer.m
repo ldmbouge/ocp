@@ -1254,8 +1254,9 @@
    if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
-      id<CPBitVar> z = [self concreteVar:[cstr res]];
-      id<CPConstraint> concreteCstr = [CPFactory bitDivide:x dividedby:y equals:z];
+      id<CPBitVar> q = [self concreteVar:[cstr res]];
+      id<CPBitVar> r = [self concreteVar: [cstr rem]];
+      id<CPConstraint> concreteCstr = [CPFactory bitDivide:x dividedby:y equals:q rem:r];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

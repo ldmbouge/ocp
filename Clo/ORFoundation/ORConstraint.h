@@ -594,6 +594,7 @@ enum ORGroupType {
 
 @protocol  ORBitDivide <ORConstraint>
 -(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 @end

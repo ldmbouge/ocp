@@ -48,7 +48,7 @@ typedef struct _CPBitAntecedents{
 +(id<CPConstraint>) bitADD:(id<CPBitVar>)x plus:(id<CPBitVar>) y withCarryIn:(id<CPBitVar>) cin equals:(id<CPBitVar>) z withCarryOut:(id<CPBitVar>) cout;
 +(id<CPConstraint>) bitSubtract:(id<CPBitVar>)x minus:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
 +(id<CPConstraint>) bitMultiply:(id<CPBitVar>)x times:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
-+(id<CPConstraint>) bitDivide:(id<CPBitVar>)x dividedby:(id<CPBitVar>) y equals:(id<CPBitVar>) z;
++(id<CPConstraint>) bitDivide:(id<CPBitVar>)x dividedby:(id<CPBitVar>) y equals:(id<CPBitVar>)q rem:(id<CPBitVar>) r;
 +(id<CPConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
 +(id<CPConstraint>) bitCount:(id<CPBitVar>)x count:(id<CPIntVar>)y;
 +(id<CPConstraint>) bitZeroExtend:(id<CPBitVar>)x extendTo:(id<CPBitVar>)y;
@@ -172,7 +172,7 @@ typedef struct _CPBitAntecedents{
    CPBitVarI*      _x;
    CPBitVarI*      _y;
    CPBitVarI*    _places;
-   TRUInt        _placesBound;
+//   TRUInt        _placesBound;
 }
 -(id) initCPBitShiftLBV: (CPBitVarI*) x shiftLBy:(CPBitVarI*) places equals: (CPBitVarI*) y;
 -(void) dealloc;
@@ -359,6 +359,12 @@ typedef struct _CPBitAntecedents{
    CPBitVarI* _x;
    CPBitVarI* _y;
    CPBitVarI* _z;
+   ORUInt*  _xUpCategories;
+   ORUInt*  _xLowCategories;
+   ORUInt*  _yUpCategories;
+   ORUInt*  _yLowCategories;
+   ORUInt _zUpCategory;
+   ORUInt _zLowCategory;
 }
 -(id) initCPBitLT: (CPBitVarI*) x LT: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
@@ -373,6 +379,9 @@ typedef struct _CPBitAntecedents{
    CPBitVarI* _x;
    CPBitVarI* _y;
    CPBitVarI* _z;
+   ORUInt*  _xcategories;
+   ORUInt*  _ycategories;
+   ORUInt _zcategory;
 }
 -(id) initCPBitLE: (CPBitVarI*) x LE: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
@@ -387,6 +396,9 @@ typedef struct _CPBitAntecedents{
    CPBitVarI* _x;
    CPBitVarI* _y;
    CPBitVarI* _z;
+   ORUInt*  _xcategories;
+   ORUInt*  _ycategories;
+   ORUInt _zcategory;
 }
 -(id) initCPBitSLE: (CPBitVarI*) x SLE: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
@@ -401,6 +413,9 @@ typedef struct _CPBitAntecedents{
    CPBitVarI* _x;
    CPBitVarI* _y;
    CPBitVarI* _z;
+   ORUInt*  _xcategories;
+   ORUInt*  _ycategories;
+   ORUInt _zcategory;
 }
 -(id) initCPBitSLT: (CPBitVarI*) x SLT: (CPBitVarI*) y eval: (CPBitVarI*) z;
 -(void) dealloc;
@@ -416,6 +431,7 @@ typedef struct _CPBitAntecedents{
    CPBitVarI* _t;
    CPBitVarI* _e;
    CPBitVarI* _r;
+   ORUInt*  _category;
 }
 -(id) initCPBitITE: (CPBitVarI*) i then: (CPBitVarI*) t else: (CPBitVarI*) e result:(CPBitVarI*)r;
 -(void) dealloc;
@@ -588,20 +604,15 @@ typedef struct _CPBitAntecedents{
 
 @interface CPBitDivide : CPCoreConstraint{
 @private
-   CPBitVarI* _opx;
-   CPBitVarI* _opy;
    CPBitVarI* _x;
    CPBitVarI* _y;
-   CPBitVarI* _z;
-   CPBitVarI** _cin;
-   CPBitVarI** _cout;
-   CPBitVarI** _partialProduct;
-   CPBitVarI** _intermediate;
-   
-   ORUInt   _opLength;
-   ORUInt   _bitLength;
+   CPBitVarI* _q;
+   CPBitVarI* _r;
+   CPBitVarI* _product;
+   CPBitVarI* _cin;
+   CPBitVarI* _cout;
 }
--(id) initCPBitDivide: (CPBitVarI*) x dividedby: (CPBitVarI*) y equals: (CPBitVarI*)z;
+-(id) initCPBitDivide: (CPBitVarI*) x dividedby: (CPBitVarI*) y equals: (CPBitVarI*)q rem:(CPBitVarI*)r;
 -(void) dealloc;
 -(NSString*) description;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;

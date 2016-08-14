@@ -26,7 +26,7 @@
 #include <Verification/smtlib2abstractparser.h>
 #import <Verification/smtlib2objcp.h>
 
-#import "ORCmdLineArgs.h"
+//#import "ORCmdLineArgs.h"
 
 void report_memory(void) {
    struct task_basic_info info;
@@ -79,7 +79,7 @@ int main(int argc, const char * argv[])
    finish = clock();
    double totalTime;
    totalTime =((double)(finish - start))/CLOCKS_PER_SEC;
-   NSLog(@"     Total Time (s): %f\n\n",totalTime);
+   NSLog(@"     Overall Time (s): %f\n\n",totalTime);
    report_memory();
 //   NSLog(@"%@",mallocReport());
 

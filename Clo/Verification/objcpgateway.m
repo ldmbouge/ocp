@@ -323,12 +323,11 @@ return 0;
    ORInt k=0;
    for (id var in _declarations)
    {
-      
       [o set:gamma[[[_declarations objectForKey:var] getVariable].getId] at:k];
       k++;
    }
    
-   __block id<CPBitVarHeuristic> h =[cp createBitVarFF:o];
+   __block id<CPBitVarHeuristic> h =[cp createBitVarFF];
 
    searchStart = clock();
    [cp solve:^{
@@ -884,6 +883,49 @@ return 0;
    [_model add:[ORFactory bit:res from:0 to:(size-1) eq:bv]];
    return bv;
 }
+-(objcp_expr) objcp_mk_bv_div:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
+   int size = [(id<ORBitVar>)a1 bitLength];
+   
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   for(int i=0; i< wordlength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
+
+   id<ORBitVar> q;
+   id<ORBitVar> r;
+   
+   q = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   r = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   [_model add:[ORFactory bit:a1 dividedby:a2 eq:q rem:r]];
+   
+   return q;
+}
+
+//-(objcp_expr) objcp_mk_bv_rem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
+-(objcp_expr) objcp_mk_bv_rem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2{
+   int size = [(id<ORBitVar>)a1 bitLength];
+   
+   ORUInt wordlength = (size / BITSPERWORD) + ((size % BITSPERWORD == 0) ? 0: 1);
+   ORUInt* low = alloca(sizeof(ORUInt)*wordlength);
+   ORUInt* up = alloca(sizeof(ORUInt)*wordlength);
+   for(int i=0; i< wordlength;i++){
+      low[i] = 0;
+      up[i] = CP_UMASK;
+   }
+   
+   id<ORBitVar> q;
+   id<ORBitVar> r;
+   
+   q = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   r = [ORFactory bitVar:_model low:low up:up bitLength:size];
+   [_model add:[ORFactory bit:a1 dividedby:a2 eq:q rem:r]];
+   
+   return r;
+}
+
 -(objcp_expr) objcp_mk_bv_extract:(objcp_context)ctx from:(ORUInt)msb downTo:(ORUInt)lsb in:(objcp_expr)bv{
    //[ORFactory bit:(id<ORBitVar>)arg1 from:lsb to:msb eq:bv];
    ORUInt size = msb - lsb + 1;

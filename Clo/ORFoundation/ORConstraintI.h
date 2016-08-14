@@ -675,10 +675,11 @@
 @end
 
 @interface ORBitDivide: ORConstraintI<ORBitDivide>
--(ORBitDivide*)initORBitDivide: (id<ORBitVar>) x dividedby:(id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(ORBitDivide*)initORBitDivide: (id<ORBitVar>) x dividedby:(id<ORBitVar>) y eq:(id<ORBitVar>)z rem:(id<ORBitVar>)r;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
 -(id<ORBitVar>) res;
+-(id<ORBitVar>) rem;
 @end
 
 @interface ORBitIf : ORConstraintI<ORBitIf>

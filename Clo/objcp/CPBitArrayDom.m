@@ -948,7 +948,7 @@
             if (isChanged[i] & 0x00000001) {
                [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
                if([_engine isKindOfClass:[CPLearningEngineI class]])
-               assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(CPLearningEngineI*)_engine getLevel], _trail);
+                  assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(CPLearningEngineI*)_engine getLevel], _trail);
             }
             isChanged[i] >>= 1;
          }
