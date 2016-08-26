@@ -124,6 +124,11 @@
 			<key>orderHint</key>
 			<integer>60</integer>
 		</dict>
+		<key>OptimizedHeron.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>134</integer>
+		</dict>
 		<key>SportDemo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -489,6 +494,11 @@
 			<key>orderHint</key>
 			<integer>63</integer>
 		</dict>
+		<key>poly.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>133</integer>
+		</dict>
 		<key>progressive.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -634,6 +644,11 @@
 			<key>orderHint</key>
 			<integer>105</integer>
 		</dict>
+		<key>solvecubic.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>132</integer>
+		</dict>
 		<key>sport.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -663,6 +678,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>95</integer>
+		</dict>
+		<key>testFloat.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>131</integer>
 		</dict>
 		<key>testLPConcretization.xcscheme_^#shared#^_</key>
 		<dict>
@@ -722,6 +742,26 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>083826061D47A8F9002BEAD2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>08B0EE071D4A0710000DF54F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>08B261EB1D3F805200153FE5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>08CE60371D45931F0041C97D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>37A715C716FB93F900E02DC6</key>
 		<dict>
 			<key>primary</key>
