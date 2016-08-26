@@ -327,6 +327,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    id<ORObjectiveValue> primal = [[_p objective] primalBound];
    id<ORObjectiveValue> fCur   = [_relax objectiveValue];
    ORInt i = 0;
+   bool diveDead = false;
    while ([I count] > 0 && [fCur compare:primal]==NSOrderedAscending) {
       i++;
       id<ORIntVar> sx = [I extractLeastFractional];
@@ -339,8 +340,10 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
          else
             [_p gthen:sx with:ni - 1];
       }];
-      if (ok == ORFailure)
-         return;
+      if (ok == ORFailure) {
+         diveDead = true;
+         break;
+      }
       [I release];
       I = [FracVars extractFractionalVariables:_relax from:x];
       NSUInteger nbtr = 0;
@@ -368,7 +371,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       fCur   = [_relax objectiveValue];
    }
    [I release];
-   [self fixAndDive:x];
+   if (!diveDead)
+      [self fixAndDive:x];
    [[_p tracer] restoreCheckpoint:start inSolver:[_p engine] model:nil];
 }
 
@@ -379,6 +383,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    id<ORObjectiveValue> primal = [[_p objective] primalBound];
    id<ORObjectiveValue> fCur   = [_relax objectiveValue];
    ORInt i = 0;
+   bool diveDead = false;
    while ([I count] > 0 && [fCur compare:primal]==NSOrderedAscending) {
       i++;
       id<ORIntVar> sx = [I extractMinLock];
@@ -391,8 +396,10 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
          else
             [_p gthen:sx with:ni];
       }];
-      if (ok == ORFailure)
-         return;
+      if (ok == ORFailure) {
+         diveDead = true;
+         break;
+      }
       [I release];
       I = [FracVars extractFractionalVariables:_relax from:x];
       NSUInteger nbtr = 0;
@@ -420,7 +427,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
       fCur   = [_relax objectiveValue];
    }
    [I release];
-   [self fixAndDive:x];
+   if (!diveDead)
+      [self fixAndDive:x];
    [[_p tracer] restoreCheckpoint:start inSolver:[_p engine] model:nil];
 }
 
@@ -437,12 +445,12 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 {
    id<ORObjectiveValue> fStar = nil;
    id<ORObjectiveValue> cur = [[_p objective] primalBound];
-   do {
-      fStar = cur;
-      [self wrapSearch:^{ [self coefficientDive:x];}];
-      [self wrapSearch:^{ [self fractionalDive:x];}];
-      cur =  [[_p objective] primalBound];
-   } while ([cur compare:fStar] == NSOrderedAscending);
+//   do {
+//      fStar = cur;
+//      [self wrapSearch:^{ [self coefficientDive:x];}];
+//      [self wrapSearch:^{ [self fractionalDive:x];}];
+//      cur =  [[_p objective] primalBound];
+//   } while ([cur compare:fStar] == NSOrderedAscending);
    [self initState];
 
    cur = [[_p objective] primalBound];
@@ -537,19 +545,19 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 }
 -(void)fixAndDive:(id<ORIntVarArray>)x
 {
-   [_p nestedSolve:^{
+   [_p nestedOptimize: ^{
       [_p once:^{
          __block ORInt reached = x.range.low - 1;
          [_p try:^{
-            for(ORInt i=x.range.low; i <= x.range.up;i++) {
-               if ([_p bound:x[i]])
-                  continue;
-               ORInt rv = rint([_relax value:x[i]]);
-               [_p label:x[i] with:rv];
-               reached = i;
-            }
             
             ORStatus ok = [[_p engine] atomic:^{
+               for(ORInt i=x.range.low; i <= x.range.up;i++) {
+                  if ([_p bound:x[i]])
+                     continue;
+                  ORInt rv = rint([_relax value:x[i]]);
+                  [_p label:x[i] with:rv];
+                  reached = i;
+               }
                for(id<ORRealVar>  rvk in _realVars) {
                   ORDouble vinRelax = [_relax value:rvk];
                   [_p assignRelaxationValue:vinRelax to:rvk];
@@ -569,7 +577,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    } onSolution:^{
       [_p doOnSolution];
    } onExit:nil
-           control: [[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:nil]
+    control: [[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:nil]
     ];
    //NSLog(@"BACK FROM nestedSolve...");
 }

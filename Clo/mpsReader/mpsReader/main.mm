@@ -57,8 +57,8 @@ int main(int argc, const char * argv[]) {
       
       //NSLog(@"Objective-C model: %@",mdl);
 
-//      id<MIPProgram> mip = [ORFactory createMIPProgram: mdl];
-//      [mip solve];
+      id<MIPProgram> mip = [ORFactory createMIPProgram: mdl];
+      [mip solve];
       
       
       id<ORModel> smdl = [ORFactory strengthen:mdl];
