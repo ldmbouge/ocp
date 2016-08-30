@@ -48924,13 +48924,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Coverage;
@@ -52391,13 +52391,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -52420,13 +52420,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi604/mac64/lib\"",
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 				);
 				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi604/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

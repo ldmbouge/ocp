@@ -357,7 +357,7 @@ int main(int argc, const char * argv[])
     id<ORIntVarArray> usePath7 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
     id<ORIntVarArray> usePath8 = [ORFactory intVarArray: m range: pathRange5 bounds: boolBounds];
 
-    id<ORIntRange> delayRange = RANGE(m, 0, 600);
+    id<ORIntRange> delayRange = RANGE(m, 0, 60);
     id<ORIntVarArray> delayPath0 = [ORFactory intVarArray: m range: pathRange5 bounds: delayRange];
     id<ORIntVarArray> delayPath1 = [ORFactory intVarArray: m range: pathRange3 bounds: delayRange];
     id<ORIntVarArray> delayPath2 = [ORFactory intVarArray: m range: pathRange3 bounds: delayRange];
@@ -993,7 +993,6 @@ int main(int argc, const char * argv[])
          NSLog(@"path0: %i %i %i %i %i", [s intValue: usePath0[0]], [s intValue: usePath0[1]],
                [s intValue: usePath0[2]], [s intValue: usePath0[3]], [s intValue: usePath0[4]]);
       }];
-   
    
 //   id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
 //   //id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];

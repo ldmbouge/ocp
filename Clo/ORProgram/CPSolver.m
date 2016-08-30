@@ -880,7 +880,7 @@
    id<CPIntVar> x = _gamma[mx.getId];
    while (![x bound]) {
       ORInt m = [x min];
-      [_search try: ^{ [self label: mx with: m]; }
+      [_search try: ^{  [self label: mx with: m]; }
                alt: ^{ [self  diff: mx with: m]; }
       ];
    }
