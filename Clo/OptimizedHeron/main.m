@@ -57,19 +57,19 @@ int main(int argc, const char * argv[]) {
         [mdl add:[b gt:c]];
         
         //squared_area = (((a+(b+c))*(c-(a-b))*(c+(a-b))*(a+(b-c)))/16.0f)
-      [mdl add:[squaredArea eq:[[
+      [mdl add:[squaredArea eq:[//[
                                     [[
                                       [a plus:[b plus:c]]
                                      mul:[c sub:[a sub:b]]]
                                      mul:[c plus:[a sub:b]]]
                                      mul:[a plus:[b sub:c]]]
-                                     div:@(16.0f)] ]
-                                ];
+         //                            div:@(16.0f)] 
+                                ]];
 
         //squared_area > (156.25f + 1e-5)
         float v = 156.25f;
         id<ORExpr> fc = [ORFactory float:mdl value:v];
-        [mdl add:[squaredArea gt:[fc plus:@(1e-5f)]]]; /* */
+       // [mdl add:[squaredArea gt:[fc plus:@(1e-5f)]]]; /* */
         NSLog(@"model %@",mdl);
         id<CPProgram> p = [ORFactory createCPProgram:mdl];
         [p solve:^{

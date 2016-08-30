@@ -35,9 +35,8 @@
     if(![_x isIntersectingWith:_y]){
         failNow();
     }else{
-        //TODO use maxFlt
-        ORFloat min = maxOf([_x min], [_y min]);
-        ORFloat max = minOf([_x max], [_y max]);
+        ORFloat min = maxFlt([_x min], [_y min]);
+        ORFloat max = minFlt([_x max], [_y max]);
         [_x updateInterval:min and:max];
         [_y updateInterval:min and:max];
         [_x whenChangeBoundsPropagate:self];
@@ -59,9 +58,8 @@
     if(![_x isIntersectingWith:_y]){
         failNow();
     }else{
-        //TODO use maxFlt
-        ORFloat min = maxOf([_x min], [_y min]);
-        ORFloat max = minOf([_x max], [_y max]);
+        ORFloat min = maxFlt([_x min], [_y min]);
+        ORFloat max = minFlt([_x max], [_y max]);
         [_x updateInterval:min and:max];
         [_y updateInterval:min and:max];
     }

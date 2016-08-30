@@ -360,6 +360,7 @@
 {
     self = [super init];
     _tracker = track;
+    _domain = [ORFactory floatRange:track];
     _hasBounds = false;
     [track trackVariable: self];
     return self;

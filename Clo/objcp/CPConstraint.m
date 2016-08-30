@@ -697,7 +697,7 @@
         return [self floatEqualc:x[x.low] to:c];
     }else{
         id<CPConstraint> o;
-        if([x count] == 2 && fabs([coefs at:0]) == 1 && fabs([coefs at:1]) == -1){
+        if([x count] == 2 && fabs([coefs at:0]) == 1 && fabs([coefs at:1]) == 1){
             //form  x = y + c ->  x - y = c
             //form  x = y - c ->  x - y = - c
             ORInt indiceX = coefs.low;
