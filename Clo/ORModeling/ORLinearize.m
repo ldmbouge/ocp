@@ -245,6 +245,9 @@
         [_model addConstraint: [sumExpr leq: [binSize at: b]]];
     }
 }
+-(void) visitTableConstraint: (id<ORTableConstraint>) cstr
+{
+}
 -(void) visitAlgebraicConstraint:(id<ORAlgebraicConstraint>)cstr
 {
     ORExprBinaryI* binExpr = (ORExprBinaryI*)[cstr expr];
@@ -359,6 +362,23 @@
     // r == z0 + z1
     // x - (z * M) == cst
     [_model addConstraint: [r eq: [z0 plus: z1]]];
+}
+-(void) visitReifyEqual: (id<ORReifyEqual>)c
+{
+    id<ORIntVar> x = [c x];
+    id<ORIntVar> y = [c y];
+    id<ORIntVar> r = [c b];
+    id<ORIntVar> z0 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
+    id<ORIntVar> z1 = [ORFactory intVar: _model bounds: RANGE(_model, 0, 1)];
+    ORInt M = 999999;
+    
+    // x + (z0 * M) >= y
+    // x - (z1 * M) <= y
+    [_model addConstraint: [[x plus: [z0 mul: @(M)]] geq: y]];
+    [_model addConstraint: [[x sub: [z1 mul: @(M)]] leq: y]];
+    
+    // r == 1 - (z0 + z1)
+    [_model addConstraint: [r eq: [@(1) sub: [z0 plus: z1]]]];
 }
 -(void) visitEqual: (id<OREqual>)c
 {
