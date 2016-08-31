@@ -249,12 +249,12 @@
 {
     ORTableI* table = (ORTableI*)[cstr table];
     id<ORIntVarArray> vars = [cstr array];
-    ORInt M = 99999;
+    ORInt arity = [table arity];
+    ORInt M = arity + 1;
     
     id<ORIntRange> zRange = RANGE(_model, 0, (int)[table size]-1);
     id<ORIntVarArray> z = [ORFactory intVarArray: _model range: zRange domain: RANGE(_model, 0, 1)];
     
-    ORInt arity = [table arity];
     for(ORInt i = [zRange low]; i <= [zRange up]; i++) {
         id<ORExpr> sumExpr = [ORFactory integer: _model value: 0];
         for(ORInt a = 0; a < arity; a++) {
