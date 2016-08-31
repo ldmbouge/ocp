@@ -247,6 +247,25 @@
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
+    ORTableI* table = (ORTableI*)[cstr table];
+    id<ORIntVarArray> vars = [cstr array];
+    ORInt M = 99999;
+    
+    id<ORIntRange> zRange = RANGE(_model, 0, (int)[table size]-1);
+    id<ORIntVarArray> z = [ORFactory intVarArray: _model range: zRange domain: RANGE(_model, 0, 1)];
+    
+    ORInt arity = [table arity];
+    for(ORInt i = [zRange low]; i <= [zRange up]; i++) {
+        id<ORExpr> sumExpr = [ORFactory integer: _model value: 0];
+        for(ORInt a = 0; a < arity; a++) {
+            id<ORIntVar> x = [vars at: a];
+            id<ORIntVarArray> bx = [self binarizationForVar: x];
+            sumExpr = [sumExpr plus: [bx at: [table atColumn: a position: i]]];
+        }
+        [_model addConstraint: [[sumExpr plus: [[@(1) sub: [z at: i]] mul: @(M)]] geq: @(arity)]];
+    }
+    [_model addConstraint: [Sum(_model, i, zRange, [z at: i]) eq: @(1)]];
+    
 }
 -(void) visitAlgebraicConstraint:(id<ORAlgebraicConstraint>)cstr
 {

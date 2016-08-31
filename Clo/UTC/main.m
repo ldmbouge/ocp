@@ -922,7 +922,7 @@ int main(int argc, const char * argv[])
         NSLog(@"Wrote Solution File: %@", outPath);
     };
 
-//   id<ORModel> lm = [ORFactory linearizeModel: m];
+   id<ORModel> lm = [ORFactory linearizeModel: m];
 //   id<ORRelaxation> relax = nil;
 //
 //   __block id<ORSolution> bestSolution = nil;
@@ -934,70 +934,70 @@ int main(int argc, const char * argv[])
 ////    }];
 //    
 
-   id<ORRunnable> r0 = [ORFactory CPRunnable:m
-                              //withRelaxation: relax = [ORFactory createLinearRelaxation:lm]
-                                       solve:^(id<CPCommonProgram> p)
-   {
-         id<ORTau> t = p.modelMappings.tau;
-         id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
-         id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
-         [p forall:x.range suchThat:^bool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return -[c at:i];} do:^(ORInt i) {
-            [p label:x[i]];
-         }];
-       
-         [p labelArray: voltSensorEndpoints];
-         [p labelArray: curSensorEndpoints];
-         [p labelArray: contSensorEndpoints];
-         [p labelArray: busEndpoints];
-         [p labelArray: concEndpoints];
-
-//         id<ORIntVarArray> av = m.intVars;
-//      while (![p allBound:av]) {
-//         double brc = FDMAXINT;
-//         ORInt bi = av.range.low - 1;
-//         for(ORInt i=av.range.low;i <= av.range.up;i++) {
-//            if ([p bound:av[i]]) continue;
-//            double rc = [relax value:av[i]];
-//            double mp = 0.5 - (rc - floor(rc));
-//            double frac = fabs(mp);
-//            if (frac == 0.5) continue;
-//            //NSLog(@"av[%d] RC = %f",i,rc);
-//            //printf("(%d,%.2f) ",i,frac);
-//            if (frac < brc) {
-//               brc = frac;
-//               bi = i;
-//            }
-//         }
-//         //printf("\n");
-//         if (bi != av.range.low - 1) {
-//            while (![p bound:av[bi]]) {
-//               double lb = [p min:av[bi]],ub = [p max:av[bi]];
-//               double m  = (lb + ub)/2.0;ORInt im = floor(m);
-//               [p try:^{
-//                  [p lthen:av[bi] with:im+1];
-//               } alt:^{
-//                  [p gthen:av[bi] with:im];
-//               }];
-//            }
-//         } else break;
-//      }
-        [p labelArrayFF:m.intVars];
-         //[p splitArray:m.intVars];
-         NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
-         id<ORSolution> s = [p captureSolution];
-         writeOut(s);
-       for(ORInt k = [busRange low]; k <= [busRange up]; k++)
-           NSLog(@"numBus %i: %i, use: %i", k, [s intValue: numBusConn[k]], [s intValue: useBus[k]]);
-         for(ORInt k = [concRange low]; k <= [concRange up]; k++)
-            NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
-         NSLog(@"path0: %i %i %i %i %i", [s intValue: usePath0[0]], [s intValue: usePath0[1]],
-               [s intValue: usePath0[2]], [s intValue: usePath0[3]], [s intValue: usePath0[4]]);
-      }];
+//   id<ORRunnable> r0 = [ORFactory CPRunnable:m
+//                              //withRelaxation: relax = [ORFactory createLinearRelaxation:lm]
+//                                       solve:^(id<CPCommonProgram> p)
+//   {
+//         id<ORTau> t = p.modelMappings.tau;
+//         id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
+//         id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
+//         [p forall:x.range suchThat:^bool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return -[c at:i];} do:^(ORInt i) {
+//            [p label:x[i]];
+//         }];
+//       
+//         [p labelArray: voltSensorEndpoints];
+//         [p labelArray: curSensorEndpoints];
+//         [p labelArray: contSensorEndpoints];
+//         [p labelArray: busEndpoints];
+//         [p labelArray: concEndpoints];
+//
+////         id<ORIntVarArray> av = m.intVars;
+////      while (![p allBound:av]) {
+////         double brc = FDMAXINT;
+////         ORInt bi = av.range.low - 1;
+////         for(ORInt i=av.range.low;i <= av.range.up;i++) {
+////            if ([p bound:av[i]]) continue;
+////            double rc = [relax value:av[i]];
+////            double mp = 0.5 - (rc - floor(rc));
+////            double frac = fabs(mp);
+////            if (frac == 0.5) continue;
+////            //NSLog(@"av[%d] RC = %f",i,rc);
+////            //printf("(%d,%.2f) ",i,frac);
+////            if (frac < brc) {
+////               brc = frac;
+////               bi = i;
+////            }
+////         }
+////         //printf("\n");
+////         if (bi != av.range.low - 1) {
+////            while (![p bound:av[bi]]) {
+////               double lb = [p min:av[bi]],ub = [p max:av[bi]];
+////               double m  = (lb + ub)/2.0;ORInt im = floor(m);
+////               [p try:^{
+////                  [p lthen:av[bi] with:im+1];
+////               } alt:^{
+////                  [p gthen:av[bi] with:im];
+////               }];
+////            }
+////         } else break;
+////      }
+//        [p labelArrayFF:m.intVars];
+//         //[p splitArray:m.intVars];
+//         NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
+//         id<ORSolution> s = [p captureSolution];
+//         writeOut(s);
+//       for(ORInt k = [busRange low]; k <= [busRange up]; k++)
+//           NSLog(@"numBus %i: %i, use: %i", k, [s intValue: numBusConn[k]], [s intValue: useBus[k]]);
+//         for(ORInt k = [concRange low]; k <= [concRange up]; k++)
+//            NSLog(@"numConn %i: %i, use: %i", k, [s intValue: numConcConn[k]], [s intValue: useConc[k]]);
+//         NSLog(@"path0: %i %i %i %i %i", [s intValue: usePath0[0]], [s intValue: usePath0[1]],
+//               [s intValue: usePath0[2]], [s intValue: usePath0[3]], [s intValue: usePath0[4]]);
+//      }];
    
-//   id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
+   id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
 //   //id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
 //   
-   id<ORRunnable> r  = r0;
+   id<ORRunnable> r  = r1;
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [r run];
    id<ORSolution> bestSolution = [r bestSolution];
