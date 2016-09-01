@@ -451,7 +451,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 //      [self wrapSearch:^{ [self fractionalDive:x];}];
 //      cur =  [[_p objective] primalBound];
 //   } while ([cur compare:fStar] == NSOrderedAscending);
-   [self initState];
+   //[self initState];
 
    cur = [[_p objective] primalBound];
    do {
