@@ -794,6 +794,21 @@ struct timeval timeval_subtract(struct timeval* x,struct timeval* y) {
    }
 }
 
+-(ORInt) size
+{
+    return _size;
+}
+
+-(ORInt) arity
+{
+    return _arity;
+}
+
+-(ORInt) atColumn: (ORInt)c position: (ORInt)p
+{
+    return _column[c][p];
+}
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

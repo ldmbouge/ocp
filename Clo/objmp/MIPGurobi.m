@@ -116,7 +116,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    //int error = GRBsetintparam(GRBgetenv(_model), "LazyConstraints", 1); // Enable lazy constraints for bounds update
    //if(error != 0) assert(YES);
    GRBupdatemodel(_model);
-   [self printModelToFile: "/Users/ldm/Desktop/lookatgurobi.lp"];
+   [self printModelToFile: "/Users/dan/Desktop/lookatgurobi.lp"];
    GRBsetcallbackfunc(_model, &gurobi_callback, self);
    _terminate = NO;
    
