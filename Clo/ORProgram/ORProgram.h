@@ -41,8 +41,8 @@
 //project: #import <ORProgram/LPRunnable.h>
 //project: #import <ORProgram/MIPRunnable.h
 //project: #import <ORProgram/ORColumnGeneration.h>
-//#import <ORProgram/ORLagrangeRelax.h>
-//#import <ORProgram/ORLagrangianTransform.h>
+#import <ORProgram/ORLagrangeRelax.h>
+#import <ORProgram/ORLagrangianTransform.h>
 //project: #import <ORProgram/ORLogicBenders.h>
 //project: #import <ORProgram/ORParallelRunnable.h>
 //project: #import <ORProgram/ORRunnablePiping.h>

@@ -9,11 +9,10 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORRunnablePiping.h>
-
+#import <ORProgram/LPProgram.h>
 
 typedef id<ORRunnable> (^ORDoubleArray2Runnable)(id<ORDoubleArray>);
 typedef id<LPColumn> (^Void2Column)();
