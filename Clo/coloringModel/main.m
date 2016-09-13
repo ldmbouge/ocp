@@ -349,7 +349,12 @@ int main(int argc, const char * argv[])
       __block ORFloat bndtime = -1;
       id<CPProgram> cp = [ORFactory createCPProgram: model]; //[args makeProgram:model];
       t0 = [NSDate date];
+      id<CPHeuristic> heur = [cp createFF];
       [cp solve: ^{
+         [cp labelHeuristic: heur];
+         id<ORSolution> sol = [cp captureSolution];
+         NSLog(@"new objective bound: %i", [[sol objectiveValue] intValue]);
+         
          [cp limitTime: timeLimit * 1000 in: ^{
             //         [cp labelHeuristic:h];
             [cp forall: V

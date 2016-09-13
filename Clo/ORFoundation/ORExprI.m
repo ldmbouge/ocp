@@ -1043,6 +1043,20 @@
 {
    [visitor visitExprPlusI: self]; 
 }
+-(enum ORVType) vtype
+{
+   ORExprI* root = self;
+   ORVType vty = ORTNA;
+   while ([root isKindOfClass:[ORExprPlusI class]]) {
+      ORExprPlusI* pn = (ORExprPlusI*)root;
+      ORVType rvt = [pn->_right conformsToProtocol:@protocol(ORExpr)] ? [pn->_right vtype] : ORTInt;
+      vty  = lubVType(vty,rvt);
+      root = pn->_left;
+   }
+   ORVType rvt = [root conformsToProtocol:@protocol(ORExpr)] ? [root vtype] : ORTInt;
+   return lubVType(vty,rvt);
+}
+
 -(NSString*) description 
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

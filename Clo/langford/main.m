@@ -25,8 +25,8 @@ int main(int argc, const char * argv[])
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
          id<ORAnnotation> notes = [ORFactory annotation];
-         ORInt k    = [args nArg];
-         ORInt n    = [args size];
+          ORInt k    = 2;//[args nArg];
+          ORInt n    = 7;//[args size];
          NSLog(@"Params: k=%d n=%d",k,n);
          
          id<ORIntRange> R = RANGE(model,1,k*n);
@@ -46,8 +46,11 @@ int main(int argc, const char * argv[])
                [notes dc:[model add:[[p at:i :j] lt:[p at:i+1 :j]]]]; // onDomain
          
          for(ORInt i=1;i<=k-1;i++)
-            for(ORInt j=1;j<=n;j++)
-               [notes dc:[model add:[[x elt:[[p at:i :j] plus:@(1+j)]] eq:@(j)]]]; // onDomain
+             for(ORInt j=1;j<=n;j++) {
+                 NSLog(@"p - %i %i", [[p at:i :j] min] + j + 1, [[p at:i :j] max] + j + 1);
+                 NSLog(@"x rng: %i %i", [[x range] low], [[x range] up]);
+                 [notes dc:[model add:[[x elt:[[p at:i :j] plus:@(1+j)]] eq:@(j)]]]; // onDomain
+             }
          [model add: [x[1] leq: x[k*n]]];
          
          __block ORInt nbSol = 0;
@@ -75,13 +78,13 @@ int main(int argc, const char * argv[])
                   //NSLog(@" ! tb[%d] != %d",i,j);
                }];
             }];
-//            @autoreleasepool {
-//               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-//               [buf appendString:@"["];
-//               for(ORInt i=1;i<=k*n;i++)
-//                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],(i < k *n) ? ',' : ']'];
-//               NSLog(@"Sol: %@",buf);
-//            }
+            @autoreleasepool {
+               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+               [buf appendString:@"["];
+               for(ORInt i=1;i<=k*n;i++)
+                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],(i < k *n) ? ',' : ']'];
+               NSLog(@"Sol: %@",buf);
+            }
             nbSol++;
             [[cp explorer] fail];
          }];         

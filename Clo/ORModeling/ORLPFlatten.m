@@ -83,7 +83,7 @@ static BOOL _alreadyAdded;
        id<ORConstraint> fc = [self flattenIt:c];
        if (!_alreadyAdded)
           [_into addConstraint:fc];
-       assert(_alreadyAdded == YES);
+       //assert(_alreadyAdded == YES);
     }
       onObjective:^(id<ORObjectiveFunction> o) {
          [self flattenIt:o];
