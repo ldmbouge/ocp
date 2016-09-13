@@ -122,8 +122,8 @@
 {
    ORInt    sd  = FDMAXINT;
    ORDouble lfv = 1.0;
-   NSUInteger k = -1;
-   for(NSUInteger i=0;i < _sz;i++) {
+   NSInteger k = -1;
+   for(NSInteger i=0;i < _sz;i++) {
       ORInt vdsz = [[_pack[i]._x domain] size];
       if ((vdsz < sd) || (vdsz == sd &&  _pack[i]._frac < lfv)) {
          k = i;
@@ -140,8 +140,8 @@
 -(id<ORIntVar>)extractMostFractional
 {
    ORDouble mfv = 0.0;
-   NSUInteger k = -1;
-   for(NSUInteger i=0;i < _sz;i++) {
+   NSInteger k = -1;
+   for(NSInteger i=0;i < _sz;i++) {
       if (_pack[i]._frac > mfv) {
          k = i;
          mfv = _pack[i]._frac;
@@ -158,8 +158,8 @@
 {
    ORDouble lfv = 1.0;
    ORInt nbLocks = FDMAXINT;
-   NSUInteger k = -1;
-   for(NSUInteger i=0;i < _sz;i++) {
+   NSInteger k = -1;
+   for(NSInteger i=0;i < _sz;i++) {
       ORInt xiL = [_relax nbLocks:_pack[i]._x];
       if (xiL < nbLocks) {
          k = i;
@@ -201,7 +201,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"[%d]{",_sz];
+   [buf appendFormat:@"[%lu]{",(unsigned long)_sz];
    for(NSUInteger i = 0;i < _sz;i++) {
       [buf appendFormat:@"%@ [%f]%c",_pack[i]._x,_pack[i]._frac,i < _sz - 1 ? ',' : ' '];
    }
@@ -353,11 +353,11 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
          nbtr = nbtr + tr;
       }
       if (nbtr == [I count]) {
-         NSLog(@"About to round %d easy guys",nbtr);
+         NSLog(@"About to round %lu easy guys",(unsigned long)nbtr);
          ORStatus ok =  [[_p engine] atomic:^{
             for(id<ORIntVar> xi in I) {
-               ORDouble sxv = [_relax value:sx];
-               ORDouble ni = floor(sxv + 0.5);
+               //ORDouble sxv = [_relax value:sx];
+               //ORDouble ni = floor(sxv + 0.5);
                if ([_relax trivialDownRoundable:xi]) {
                   [_p lthen:xi with:[xi low] + 1];
                } else {
@@ -409,11 +409,11 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
          nbtr = nbtr + tr;
       }
       if (nbtr == [I count]) {
-         NSLog(@"About to round %d easy guys",nbtr);
+         NSLog(@"About to round %lu easy guys",(unsigned long)nbtr);
          ORStatus ok =  [[_p engine] atomic:^{
             for(id<ORIntVar> xi in I) {
-               ORDouble sxv = [_relax value:sx];
-               ORDouble ni = floor(sxv + 0.5);
+               //ORDouble sxv = [_relax value:sx];
+               //ORDouble ni = floor(sxv + 0.5);
                if ([_relax trivialDownRoundable:xi]) {
                   [_p lthen:xi with:[xi low] + 1];
                } else {
@@ -490,7 +490,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
 
 -(void)pureDFS:(id<ORIntVarArray>)x
 {
-   id<ORRealVarArray> rv = [[[_p source] rootModel] realVars];
+   //id<ORRealVarArray> rv = [[[_p source] rootModel] realVars];
    id<ORPost> pItf = [[CPINCModel alloc] init:_p];
    [_p nestedOptimize:^{
       [self theSearch:x];
@@ -660,7 +660,7 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                                           i -= 1;
                                           continue;
                                        }
-                                       
+                                       assert(fok != ORinfeasible);
                                        //printf("DOWN/UP(%d) [%f]  = %f,%f\n",vi.getId,vir,downRate,upRate);
                                        VStat* vs = [_pc objectForKey:@(vi.getId)];
                                        if (vs==nil) {
@@ -701,12 +701,12 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    ORDouble BSF =  - MAXDBL;
    ORInt    BDS = FDMININT;
    ORDouble brk = 0.0;
-   ORInt nbVars = x.range.size;
+   //ORInt nbVars = x.range.size;
    ORInt nbFree = 0;
    ORInt nbCand = 0;
    //NSLog(@"PCBranching:");
    ORDouble q;
-   const ORDouble MU = 0.6;
+   //const ORDouble MU = 0.6;
    for(ORInt i=x.range.low;i <= x.range.up;i++) {
       if ([_p bound:x[i]])
          continue;
@@ -957,14 +957,14 @@ static long nbCall = 0;
       ORDouble mf   = 1.0;
       NSLog(@"FSBranching: #vars to consider: %d",lastX);
       for(ORInt i=0;i<lastX;i++) {
-         ORDouble rx = vr[idx[i] - low];
-         ORDouble xi;
-         ORDouble xf = modf(rx,&xi);
-         ORDouble wn = xf,wp = 1.0 - xf;
-         static const double mu = 1.0 / 6.0;
-         double qn = wn * cdw[i];
-         double qp = wp * cup[i];
-         ORDouble wi0 = (1 - mu) * minDbl(qn,qp) + mu * maxDbl(qn,qp);
+         //ORDouble rx = vr[idx[i] - low];
+         //ORDouble xi;
+         //ORDouble xf = modf(rx,&xi);
+         //ORDouble wn = xf,wp = 1.0 - xf;
+         //static const double mu = 1.0 / 6.0;
+         //double qn = wn * cdw[i];
+         //double qp = wp * cup[i];
+         //ORDouble wi0 = (1 - mu) * minDbl(qn,qp) + mu * maxDbl(qn,qp);
          ORDouble wi = maxDbl(cdw[i],1.0e-16) * maxDbl(cup[i],1.0e-16);
          
          //ORDouble wi = minDbl(cup[i],cdw[i]);

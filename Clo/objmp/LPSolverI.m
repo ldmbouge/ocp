@@ -728,6 +728,7 @@
 {
    ORDouble frv = _idx == -1 ? _low : [_solver doubleValue:self];
    ORDouble ni = floor(frv + 0.5);
+   return ni;
 }
 -(ORBool)trivialDownRoundable
 {
