@@ -157,7 +157,6 @@
 }
 -(void) propagate
 {
-    
     if([_x bound]){
         ORFloat nmin = fp_next_float([_x min]);
         [_y updateMin:nmin];
@@ -284,15 +283,13 @@
     do {
         changed = false;
         zTemp = z;
-        //fix me update only low ?
         fpi_addf(precision, arrondi, &zTemp, &x, &y);
         inter = intersection(changed, z, zTemp);
         z = inter.result;
         changed |= inter.changed;
-        
+        //FIX ME
         xTemp = x;
         yTemp = y;
-        //FIX ME quand je passe un interval degenerer beug ?
         fpi_add_invsub_boundsf(precision, arrondi, &xTemp, &yTemp, &z);
         inter = intersection(changed, x , xTemp);
         x = inter.result;

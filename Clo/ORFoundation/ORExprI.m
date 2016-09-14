@@ -1260,15 +1260,15 @@
 }
 -(ORFloat) fmin
 {
-    ORFloat m1 = minDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
-    ORFloat m2 = minDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
-    return minDbl(m1,m2);
+    ORFloat m1 = minFlt([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
+    ORFloat m2 = minFlt([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
+    return minFlt(m1,m2);
 }
 -(ORFloat) fmax
 {
-    ORFloat m1 = maxDbl([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
-    ORFloat m2 = maxDbl([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
-    return maxDbl(m1,m2);
+    ORFloat m1 = maxFlt([_left fmin] * [_right fmin],[_left fmin] * [_right fmax]);
+    ORFloat m2 = maxFlt([_left fmax] * [_right fmin],[_left fmax] * [_right fmax]);
+    return maxFlt(m1,m2);
 }
 -(void) visit: (ORVisitor*) visitor
 {
@@ -1312,6 +1312,20 @@
    ORInt m1 = max([_left min] / [_right min],[_left min] / [_right max]);
    ORInt m2 = max([_left max] / [_right min],[_left max] / [_right max]);
    return max(m1,m2);
+}
+-(ORFloat) fmin
+{
+    ORInt m1 = minDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
+    ORInt m2 = minDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
+    return minDbl(m1,m2);
+
+}
+-(ORFloat) fmax
+{
+    ORInt m1 = maxDbl([_left fmin] / [_right fmin],[_left fmin] / [_right fmax]);
+    ORInt m2 = maxDbl([_left fmax] / [_right fmin],[_left fmax] / [_right fmax]);
+    return maxDbl(m1,m2);
+
 }
 -(void) visit: (ORVisitor*) visitor
 {

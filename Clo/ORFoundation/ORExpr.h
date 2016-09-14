@@ -74,8 +74,12 @@ static inline ORVType lubVType(ORVType t1,ORVType t2)
       return t1;
    else if (t1+t2 <= 1)
       return ORTInt;
-   else if ((t1<=1 && t2 <= 2) || (t1 <= 2  && t2 <= 1))
-      return ORTReal;
+   else if(t1 == ORTReal || t2 == ORTReal)
+       //TODO CHANGE TO ORTreal
+       //return ORTReal;
+       return ORTFloat;
+    else if(t1 == ORTFloat || t2 == ORTFloat)
+        return ORTFloat;
    else
       return ORTNA;
 }

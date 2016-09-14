@@ -1142,13 +1142,29 @@
       }];
    
 }
+-(void) floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x
+{
+   [self forall: RANGE(self, [x low], [x up])
+       suchThat: ^ORBool(ORInt i){
+          id<CPFloatVar> v = _gamma[getId(x[i])];
+          return ![v bound];
+       }
+      orderedByFloat: ^ORFloat(ORInt i) {
+         id<CPFloatVar> v = _gamma[getId(x[i])];
+         NSLog(@"%@   =   %20.20e  %d",v,[v domwidth],(ORInt)[v domwidth]);
+         return -[v domwidth];
+      }
+      do: ^(ORInt i){
+         [self float5WaySplitOnce:_gamma[getId(x[i])]];
+      }];
+}
 -(void) floatSplitArray: (id<ORFloatVarArray>) x
 {
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
       //[self floatSplit:_gamma[getId(x[i])]];
-      [self float5WaySplit:_gamma[getId(x[i])]  array:x];
+      [self float5WaySplit:_gamma[getId(x[i])]];
       //[self float2Split:_gamma[getId(x[i])]];
    }
 }
@@ -1187,39 +1203,44 @@
       }];
    }
 }
--(void) float5WaySplit: (id<CPFloatVar>) xi array:(id)x
+-(void) float5WaySplitOnce:(id<CPFloatVar>) xi
 {
    float_interval interval[5];
    ORInt length = 0;
-   while (![xi bound]) {
-      ORFloat theMax = xi.max;
-      ORFloat theMin = xi.min;
-      ORFloat mid = (theMin + theMax)/2.0f;
-      length = 1;
-      interval[0].inf = interval[0].sup = theMax;
-      interval[1].inf = interval[1].sup = theMin;
-      if(fp_next_float(theMin) == fp_previous_float(theMax)){
-         interval[2].inf = interval[2].sup = mid;
-         length = 2;
-      }else{
-         //force the interval to right side
-         if(mid == fp_previous_float(theMax)){
-            mid = fp_previous_float(mid);
-         }
-         interval[2].inf = interval[2].sup = mid;
-         interval[3].inf = fp_next_float(mid);
-         interval[3].sup = fp_previous_float(theMax);
-         length = 3;
-         if(fp_next_float(theMin) != mid){
-            interval[4].inf = fp_next_float(theMin);
-            interval[4].sup = fp_previous_float(mid);
-            length++;
-         }
+   ORFloat theMax = xi.max;
+   ORFloat theMin = xi.min;
+   ORFloat mid = (theMin + theMax)/2.0f;
+   length = 1;
+   interval[0].inf = interval[0].sup = theMax;
+   interval[1].inf = interval[1].sup = theMin;
+   if(fp_next_float(theMin) == fp_previous_float(theMax)){
+      interval[2].inf = interval[2].sup = mid;
+      length = 2;
+   }else{
+      //force the interval to right side
+      if(mid == fp_previous_float(theMax)){
+         mid = fp_previous_float(mid);
       }
-      float_interval* ip = interval;
-      [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
-         [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
-      }];
+      interval[2].inf = interval[2].sup = mid;
+      interval[3].inf = fp_next_float(mid);
+      interval[3].sup = fp_previous_float(theMax);
+      length = 3;
+      if(fp_next_float(theMin) != mid){
+         interval[4].inf = fp_next_float(theMin);
+         interval[4].sup = fp_previous_float(mid);
+         length++;
+      }
+   }
+   float_interval* ip = interval;
+   [_search tryall:RANGE(self,0,length) suchThat:nil in:^(ORInt i) {
+      [self floatIntervalImpl:xi low:ip[i].inf up:ip[i].sup];
+   }];
+
+}
+-(void) float5WaySplit: (id<CPFloatVar>) xi
+{
+   while (![xi bound]) {
+      [self float5WaySplitOnce:xi];
    }
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat

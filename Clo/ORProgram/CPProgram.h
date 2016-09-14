@@ -59,6 +59,7 @@ PORTABLE_BEGIN
 -(void)          floatLEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatGEqual: (id<ORFloatVar>) var with: (ORFloat) val;
 -(void)          floatSplitArray: (id<ORFloatVarArray>) x;
+-(void)          floatSplitArrayOrderedByDomSize: (id<ORFloatVarArray>) x;
 -(void)          realLabel: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realLthen: (id<ORRealVar>) var with: (ORDouble) val;
 -(void)          realGthen: (id<ORRealVar>) var with: (ORDouble) val;

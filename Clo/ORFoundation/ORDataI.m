@@ -400,6 +400,14 @@
 {
     return (ORInt) _value;
 }
+-(ORFloat) fmin
+{
+    return (ORFloat)_value;
+}
+-(ORFloat) fmax
+{
+    return (ORFloat)_value;
+}
 -(ORDouble) doubleValue
 {
     return _value;
