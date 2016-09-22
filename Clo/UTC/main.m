@@ -1035,63 +1035,39 @@ int main(int argc, const char * argv[])
    
    id<ORRelaxation> relax = nil;
    __block id<ORSolution> bestSolution = nil;
-//    id<CPProgram> cp = [ORFactory createCPProgram: m];
-//    id<CPHeuristic> h = [cp createIBS];
-//    [cp solve: ^{
-//        [cp labelHeuristic: h];
-//        NSLog(@"SOLUTION");
-//    }];
-    
-
+   relax = [ORFactory createLinearRelaxation:lm];
+   id<ORIntVarArray> aiv = m.intVars;
+   
    id<ORRunnable> r0 = [ORFactory CPRunnable:m
-                              //withRelaxation: relax = [ORFactory createLinearRelaxation:lm]
+                              withRelaxation: relax
+                                  controller: [ORSemDFSController proto]
                                        solve:^(id<CPCommonProgram> p)
    {
          id<ORTau> t = p.modelMappings.tau;
          id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
          id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
-         [p forall:x.range suchThat:^ORBool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return -[c at:i];} do:^(ORInt i) {
-            [p label:x[i]];
-         }];
-       
-         [p labelArrayFF: voltSensorEndpoints];
-         [p labelArrayFF: curSensorEndpoints];
-         [p labelArrayFF: contSensorEndpoints];
-         [p labelArrayFF: busEndpoints];
-         [p labelArrayFF: concEndpoints];
 
-//         id<ORIntVarArray> av = m.intVars;
-//      while (![p allBound:av]) {
-//         double brc = FDMAXINT;
-//         ORInt bi = av.range.low - 1;
-//         for(ORInt i=av.range.low;i <= av.range.up;i++) {
-//            if ([p bound:av[i]]) continue;
-//            double rc = [relax value:av[i]];
-//            double mp = 0.5 - (rc - floor(rc));
-//            double frac = fabs(mp);
-//            if (frac == 0.5) continue;
-//            //NSLog(@"av[%d] RC = %f",i,rc);
-//            //printf("(%d,%.2f) ",i,frac);
-//            if (frac < brc) {
-//               brc = frac;
-//               bi = i;
-//            }
-//         }
-//         //printf("\n");
-//         if (bi != av.range.low - 1) {
-//            while (![p bound:av[bi]]) {
-//               double lb = [p min:av[bi]],ub = [p max:av[bi]];
-//               double m  = (lb + ub)/2.0;ORInt im = floor(m);
-//               [p try:^{
-//                  [p lthen:av[bi] with:im+1];
-//               } alt:^{
-//                  [p gthen:av[bi] with:im];
-//               }];
-//            }
-//         } else break;
-//      }
-        [p labelArrayFF:m.intVars];
-         //[p splitArray:m.intVars];
+         PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:p];
+         [pcb branchOn:aiv];
+
+         [p forall:x.range suchThat:^ORBool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return  - [c at:i];} do:^(ORInt i) {
+            int m = [p min:x[i]] + ([p max:x[i]] + [p min:x[i]]) / 2;
+            [p try:^{
+               [p lthen:x[i] with:m+1];
+            } alt:^{
+               [p gthen:x[i] with:m];
+            }];
+            //[p label:x[i]];
+         }];
+//
+//         [p labelArrayFF: voltSensorEndpoints];
+//         [p labelArrayFF: curSensorEndpoints];
+//         [p labelArrayFF: contSensorEndpoints];
+//         [p labelArrayFF: busEndpoints];
+//         [p labelArrayFF: concEndpoints];
+
+         [p labelArray:m.intVars];
+         [p splitArray:m.intVars];
          NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
          id<ORSolution> s = [p captureSolution];
          writeOut(s);

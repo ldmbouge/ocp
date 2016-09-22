@@ -109,7 +109,11 @@
 }
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m withRelaxation:(id<ORRelaxation>)relax solve: (void(^)(id<CPCommonProgram>))body
 {
-   id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m withRelaxation:relax  search: body];
+   id<CPRunnable> r = nil;
+   if (relax)
+      r = [[CPRunnableI alloc] initWithModel: m withRelaxation:relax  search: body];
+   else
+      r = [[CPRunnableI alloc] initWithModel: m search: body];
    return r;
 }
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m

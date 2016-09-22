@@ -2442,8 +2442,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    // bound as well.
    NSUInteger nb = [_cv count];
    for(ORInt i = 0; i < nb; i++) {
-      ORDouble lbi = [_relaxation lowerBound:_cv[i]];
-      ORDouble ubi = [_relaxation upperBound:_cv[i]];
+      ORDouble lbi = [_relaxation lowerBound:_mv[i]];  // [LDM] This used to read _cv[i]. But that does not make any sense. Queries on relaxation should be in term of the model vars!
+      ORDouble ubi = [_relaxation upperBound:_mv[i]];
       ORDouble nlb = lbi > [_cv[i] doubleMin] ? lbi : [_cv[i] doubleMin];
       ORDouble nub = ubi < [_cv[i] doubleMax] ? ubi : [_cv[i] doubleMax];
       if ([_cv[i] conformsToProtocol:@protocol(CPRealVar)]) {

@@ -1692,6 +1692,8 @@
       //[var bind: val];
    }];
    if (status == ORFailure) {
+      if ([_engine isPropagating])
+         failNow();
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }

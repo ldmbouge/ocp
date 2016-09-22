@@ -560,6 +560,14 @@ ORStatus propagateFDM(CPEngineI* fdm)
       assignTRInt(&fdm->_iStat, ORFailure, fdm->_trail);
    ENDFAIL(ORFailure)
 }
+-(ORBool)isPropagating
+{
+   return _propagating > 0;
+}
+-(void)sanityCheck
+{
+   assert(_propagating == 0);
+}
 
 -(ORStatus) propagate
 {
