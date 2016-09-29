@@ -23,14 +23,10 @@
 -(void) setImpl: (id) impl
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
-    NSLog(@"%@",self); 
-    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
 }
 -(void) makeImpl
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
-    NSLog(@"%@",self);
-    @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: This object is already an implementation"];
 }
 -(id) impl
 {

@@ -36,7 +36,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORCoreExplorer dealloc called...\n");
+   NSLog(@"ORCoreExplorer dealloc called...");
    id ctrl = _controller;
    [ctrl release];
    [_trail release];

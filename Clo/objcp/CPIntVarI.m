@@ -2105,13 +2105,14 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 -(ORBool) tracksLoseEvt
 {
    return _tracksLoseEvt;
-   if (_tracksLoseEvt)
+/*   if (_tracksLoseEvt)
       return true;
    else {
       for(ORUInt k=0;k<_nb && !_tracksLoseEvt;k++)
 	 _tracksLoseEvt |= [_tab[k] tracksLoseEvt];
       return _tracksLoseEvt;
    }
+ */
 }
 void bindEvt(CPMultiCast* x,id<CPDom> sender)
 {
@@ -2228,19 +2229,21 @@ void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender)
    }
    assignTRInt(&_b,_a._val, [[_ref engine] trail]);
 }
+typedef id (*SELPROTO)(id,SEL,...);
+
 void literalDomEvt(CPLiterals* x,id<CPDom> sender)
 {
    SEL dSEL = @selector(domEvt:);
    for(ORInt i=x->_a._val;i < x->_b._val;i++)
       if (x->_pos[i])
-         x->_domEvtIMP(x->_pos[i],dSEL,sender);
+         ((SELPROTO)x->_domEvtIMP)(x->_pos[i],dSEL,sender);
 }
 -(void) domEvt:(id<CPDom>)sender
 {
    SEL dSEL = @selector(domEvt:);
    for(ORInt i=_a._val;i <_b._val;i++) {
       if (_pos[i])
-         _domEvtIMP(_pos[i],dSEL,sender);
+         ((SELPROTO)_domEvtIMP)(_pos[i],dSEL,sender);
 //      [_pos[i] domEvt:sender];
    }
 }

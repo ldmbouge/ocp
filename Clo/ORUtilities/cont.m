@@ -170,11 +170,12 @@ inline static void freePool()
          k = (k+1) % pool->sz;
          nb++;
       }
+      ORUInt nbCont = pool->nbCont;
       pool->low = pool->high = 0;
       free(pool->pool);
       free(pool);
       freePool(pool);
-      NSLog(@"released %d continuations out of %d...",nb,pool->nbCont);
+      NSLog(@"released %d continuations out of %d...",nb,nbCont);
    }
 }
 

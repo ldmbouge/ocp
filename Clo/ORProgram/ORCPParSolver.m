@@ -681,7 +681,8 @@
    }];
    // Final tear down. The worker is done with the model.
    NSLog(@"Worker[%d] = %@",myID,_workers[myID]);
-   [_workers[myID] release];
+   // [LDM]. Solvers are auto-released. We should never manually deallocate them.
+   //[_workers[myID] release];
    _workers[myID] = nil;
    [mySearch release];
    [ORFactory shutdown];

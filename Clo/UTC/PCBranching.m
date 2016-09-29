@@ -497,8 +497,6 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    //id<ORRealVarArray> rv = [[[_p source] rootModel] realVars];
    id<ORPost> pItf = [[CPINCModel alloc] init:_p];
    [_p nestedOptimize:^{
-      CPEngineI* eng = [_p engine];
-      [eng sanityCheck];
       [self theSearch:x];
       NSLog(@"pureDFS Reached here...");
       ORStatus ok = [[_p engine] atomic:^{
@@ -554,13 +552,8 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
    [_p nestedOptimize: ^{
       [_p once:^{
          __block ORInt reached = x.range.low - 1;
-         CPEngineI* eng = [_p engine];
-         [eng sanityCheck];
 
          [_p try:^{
-
-            CPEngineI* eng = [_p engine];
-            [eng sanityCheck];
 
             ORStatus ok = [[_p engine] atomic:^{
                for(ORInt i=x.range.low; i <= x.range.up;i++) {
@@ -577,7 +570,6 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
                   [_p realLthen:rvk with:vinRelax + 0.000001];
                }
             }];
-            [eng sanityCheck];
 
             if (ok==ORFailure)
                [[_p explorer] fail];
@@ -585,7 +577,6 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
             [[_p objective] updatePrimalBound];
             NSLog(@"dive successful! %@",[_p objectiveValue]);
          } alt:^{
-            [[_p engine] sanityCheck];
             NSLog(@"dive probe failed... Reached [%d]",reached);
          }];
       }];
@@ -595,7 +586,6 @@ static inline ORDouble maxDbl(ORDouble a,ORDouble b) { return a > b ? a : b;}
     control: [[ORSemDFSController alloc] initTheController:[_p tracer] engine:[_p engine] posting:nil]
     ];
    NSLog(@"BACK at END of fixAndDive...");
-   [[_p engine] sanityCheck];
 }
 
 @end
