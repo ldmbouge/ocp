@@ -1,6 +1,5 @@
 //: Playground - The Queens Model.
 
-import ORFoundation
 import ORProgram
 
 public func ==(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
@@ -18,7 +17,13 @@ public func ==(lhs : ORExpr,rhs : ORIntVar!) -> ORRelation {
 public func !=(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.neq(rhs)
 }
-infix operator ≠ { associativity left precedence 130 }
+
+precedencegroup ComparisonPrecedence {
+   associativity : left
+}
+infix operator ≠ : ComparisonPrecedence
+
+//infix operator ≠ { associativity left precedence 130 }
 public func ≠(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.neq(rhs)
 }
@@ -36,7 +41,7 @@ public func *(lhs: ORExpr, rhs : ORInt) -> ORExpr {
 }
 
 func convertArray(s : [UnsafeMutableRawPointer]) -> [AnyObject] {
-   return s.map({v  in Unmanaged<AnyObject>.fromOpaque(_: OpaquePointer(v)).takeUnretainedValue() })
+   return s.map({v  in Unmanaged<AnyObject>.fromOpaque(v).takeUnretainedValue() })
 }
 
 func wrap<T>(x : T) -> UnsafeMutableRawPointer {
@@ -49,12 +54,20 @@ func unwrap<T>(x : UnsafeMutableRawPointer) -> T {
 typealias VoidPtr = UnsafeMutableRawPointer
 typealias VoidBuf = UnsafeMutableBufferPointer<VoidPtr>
 
-infix operator » { associativity left precedence 70 }
-infix operator | { associativity left precedence 80 }
+precedencegroup CodePrecedence {
+   associativity : left
+   lowerThan : AssignmentPrecedence
+}
+
+infix operator » : CodePrecedence
+infix operator | : CodePrecedence
+
+//infix operator » { associativity left precedence 70 }
+//infix operator | { associativity left precedence 80 }
 
 func getSolver(anObject : VoidPtr) -> CPCommonProgram
 {
-   let at : AnyObject = Unmanaged<AnyObject>.fromOpaque(OpaquePointer(anObject)).takeUnretainedValue()
+   let at : AnyObject = Unmanaged<AnyObject>.fromOpaque(anObject).takeUnretainedValue()
    let tracker =  at.tracker() as! CPCommonProgram
    return tracker
 }
@@ -115,7 +128,7 @@ cp.onSolution {
    })
 }
 
-cp.search {
+cp.searchAll {
    forallDo(cp,R) { k in
       let y = x[ORInt(k)]
       return whileDo(cp,{ !cp.bound(y)}) {
@@ -143,7 +156,7 @@ doit(t: [4,5,6,7])
 
 func sumOf(tracker : ORTracker,R : ORIntRange,b : ((ORInt) -> ORExpr)) -> ORExpr {
    var rv : ORExpr = ORFactory.integer(tracker, value: 0)
-   for var i : ORInt = R.low(); i <= R.up(); i += 1 {
+   for i : ORInt in R.low() ... R.up() {
       rv = rv.plus(b(i))
    }
    return rv

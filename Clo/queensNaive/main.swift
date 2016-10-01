@@ -14,11 +14,11 @@ import ORProgram
 autoreleasepool {
    let n : ORInt = 8
    let model = ORFactory.createModel()
-   let R     = ORFactory.intRange(model, low: 0, up: n - 1)
+   let R     = ORFactory.intRange(model, low: 0, up: ORInt(n) - 1)
    let x     = ORFactory.intVarArray(model, range: R, domain: R)
    let e     = sum(model, R : R) { k in x[k] }   
-   for  i : ORInt in 0..< n  {                    
-      for j : ORInt in i+1..< n {
+   for i in 0..<n  {
+      for j : ORInt in i+1..<n {
          model.add(x[i] ≠ x[j])
          model.add(x[i] ≠ x[j] + (i-j))
          model.add(x[i] ≠ x[j] + (j-i))
@@ -39,7 +39,7 @@ autoreleasepool {
 //      }
 //   }
    let nbF = ORFactory.mutable(cp, value: 0)
-   cp.search {
+   cp.searchAll {
 //      repeatDo(cp, {
 //            limitSolutionsDo(cp, nbF.intValue()) { firstFail(cp, x) }
 //         }, { nbF *= 2 }
