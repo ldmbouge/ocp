@@ -65,13 +65,32 @@
    [_sPool addSolution: s];
    [s release];
 }
+-(ORBool) ground
+{
+   return YES;
+}
+-(ORDouble) bestObjectiveBound
+{
+    return [_MIPsolver bestObjectiveBound];
+}
 -(ORDouble) doubleValue: (id<ORRealVar>) v
 {
    return [_MIPsolver doubleValue: _gamma[v.getId]];
 }
+-(ORDouble) paramValue: (id<ORRealParam>)p
+{
+    return [_MIPsolver paramValue: _gamma[p.getId]];
+}
+-(void) param: (id<ORRealParam>)p setValue: (ORDouble)val
+{
+    [_MIPsolver setParam: _gamma[p.getId] value: val];
+}
 -(ORInt) intValue: (id<ORIntVar>) v
 {
    return [_MIPsolver intValue: _gamma[v.getId]];
+}
+-(void) setIntVar: (id<ORIntVar>)v value:(ORInt)val {
+    [_MIPsolver setIntVar: _gamma[v.getId] value: val];
 }
 -(id<ORObjectiveValue>) objectiveValue
 {

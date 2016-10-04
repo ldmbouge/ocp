@@ -16,20 +16,6 @@
 #import "CPConstraintI.h"
 
 
-@interface CPTrigger : NSObject {
-   @package
-   CPTrigger*         _prev;
-   CPTrigger*         _next;
-   ORClosure          _cb;       // var/val held inside the closure (captured).
-   id<CPConstraint>   _cstr;
-   ORInt              _vId;       // local variable identifier (var being watched)
-}
--(id)initTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>)c;
--(void) detach;
--(ORInt) localID;
--(void) setLocalID: (ORInt) lid;
-@end
-
 @interface CPDenseTriggerMap : CPTriggerMap {
 @private
    CPTrigger**   _tab;
@@ -94,6 +80,14 @@
    new->_next = _next;
    _next = new;
    new->_prev = self;
+}
+static void triggerSetNext(CPTrigger* x,CPTrigger* new)
+{
+   if (x->_next)
+      x->_next->_prev = new;
+   new->_next = x->_next;
+   x->_next = new;
+   new->_prev = x;
 }
 static void freeTriggers(CPTrigger* list)
 {
@@ -199,10 +193,10 @@ static void freeTriggers(CPTrigger* list)
       CPTrigger* front = [[CPTrigger alloc] init];
       CPTrigger* back  = [[CPTrigger alloc] init];
       _tab[value] = front;
-      [front setNext:back];
+      triggerSetNext(front,back);
       _active = YES;
    }
-   [_tab[value] setNext:trig];
+   triggerSetNext(_tab[value],trig);
    return trig;
 }
 -(void)loseValEvt:(ORInt)val solver:(CPEngineI*)fdm

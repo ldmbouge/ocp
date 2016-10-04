@@ -141,6 +141,7 @@
 -(void) trust
 {
    [_tracer trust];
+   [_tracer pushNode];
 }
 -(void) fail
 {

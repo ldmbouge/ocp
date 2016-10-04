@@ -195,6 +195,11 @@
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
+-(void) fail
+{
+   [super fail];
+}
+
 @end
 
 @implementation OROptimizationController
@@ -345,6 +350,11 @@
       [_next call];
    else
       [_controller startTry];
+}
+-(void)trust
+{
+   assignTRInt(&_depth,_depth._val + 1,_trail);
+   [super trust];
 }
 @end
 

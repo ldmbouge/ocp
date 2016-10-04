@@ -15,7 +15,7 @@
 
 int main (int argc, const char * argv[])
 {
-   ORInt n = 8;
+   ORInt n = 11;
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
       id<ORAnnotation> annotate = [ORFactory annotation];

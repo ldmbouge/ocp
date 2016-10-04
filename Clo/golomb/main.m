@@ -27,9 +27,12 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray>  m = [ORFactory intVarArray:model range:R domain:D];
          [model minimize:m[n]];
          [model add:[m[1] eq:@0]];
-         for(ORInt i=1;i<=n;i++)
+         for(ORInt i=1;i<=n;i++) {
+            for(ORInt j=1;j <= i;j++)
+               [model add:[[d at:i :j] eq: @(0)]];
             for(ORInt j=i+1;j <= n;j++)
                [model add:[[d at:i :j] eq: [m[j] sub: m[i]]]];
+         }
          
          for(ORInt j=1;j<=n;j++)
             [model add: [m[j] geq: @(j * (j-1) / 2)]];
@@ -48,20 +51,14 @@ int main(int argc, const char * argv[])
                [ad set:[d at: i : j] at:k++];
          [notes dc:[model add:[ORFactory alldifferent:ad ]]];
          
-         id<CPProgram> cp  = [args makeProgram:model annotation:notes];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:model
+                                                    annotation:notes
+                                                          with:[ORSemDFSController proto]];
+//         id<CPProgram> cp  = [args makeProgram:model annotation:notes];
          [cp solve: ^{
             for(ORInt i=1;i<=n;i++) {
                if ([cp bound:m[i]]) continue;
-	       // while (![cp bound:m[i]]) {
-	       // 	 int v = [cp min:m[i]];
-	       // 	 [cp try: ^{ [cp label:m[i] with:v]; }
-    	       // 	     alt: ^{ [cp diff:m[i] with:v]; }
-               //   ];
-	       // }
-	       //[cp label:m[i]];
-               [cp tryall:D suchThat:^ORBool(ORInt v) { 
-		   return [cp member:v in:m[i]];
-		 } in:^(ORInt v) {
+               [cp tryall:D suchThat:^ORBool(ORInt v) { return [cp member:v in:m[i]];} in:^(ORInt v) {
                   [cp label:m[i] with:v];
                } onFailure:^(ORInt v) {
                   [cp diff:m[i] with:v];

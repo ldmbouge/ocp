@@ -26,33 +26,39 @@ int main(int argc, const char * argv[])
          [note dc:[mdl add: [ORFactory alldifferent: x]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i] plus:@(i)])]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i]  sub:@(i)])]]];
-         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl annotation:note with:[ORSemDFSController class]];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl annotation:note with:[ORSemDFSController proto]];
          id<CPHeuristic> h = [cp createFDS];
          [cp clearOnSolution];     // do not save the solutions (the other solvers do not).
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
-             id<CPIntVarArray> cx = [cp concretize:x];
-             while (![cp allBound:x]) {
-                ORDouble ld = FDMAXINT;
-                ORInt bi = R.low - 1;
-                for(ORInt i=R.low;i <= R.up;i++) {
-                   if ([cp bound:x[i]]) continue;
-                   ORDouble ds =[h varOrdering:cx[i]];
-                   ld = ld < ds ? ld : ds;
-                   if (ld == ds) bi = i;
-                }
-                ORInt lb = [cp min:x[bi]], ub = [cp max:x[bi]];
-                ORInt mp = lb + (ub - lb)/2;
-                [cp try: ^ {
-                   [cp lthen:x[bi] with:mp+1];
-                }
-                    alt: ^{
-                   [cp gthen:x[bi] with:mp];
-                }];
-             }
+             [cp splitArray:x];
+//             id<CPIntVarArray> cx = [cp concretize:x];
+//             while (![cp allBound:x]) {
+//                ORDouble ld = FDMAXINT;
+//                ORInt bi = R.low - 1;
+//                for(ORInt i=R.low;i <= R.up;i++) {
+//                   if ([cp bound:x[i]]) continue;
+//                   ORDouble ds =[h varOrdering:cx[i]];
+//                   ld = ld < ds ? ld : ds;
+//                   if (ld == ds) bi = i;
+//                }
+//                ORInt lb = [cp min:x[bi]], ub = [cp max:x[bi]];
+//                ORInt mp = lb + (ub - lb)/2;
+//                [cp try: ^ {
+//                   [cp lthen:x[bi] with:mp+1];
+//                }
+//                    alt: ^{
+//                   [cp gthen:x[bi] with:mp];
+//                }];
+//             }
              
              //[cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
+             printf("sol %d [",nbSol);
+             for(ORInt i=1;i<= n;i++)
+                printf("%d%c",[cp intValue:x[i]],i<n ? ',' : ' ');
+             printf("]\n");
+             
              @synchronized(cp) { // synchronized so that it works correctly even when asking parallel tree search
                 nbSol++;
              }

@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import  <ORFoundation/ORFoundation.h>
+#import <CPUKernel/CPClosureEvent.h>
+#import <CPUKernel/CPTypes.h>
 #import "CPEngineI.h"
-#import "CPTypes.h"
-#import "CPClosureEvent.h"
 
 typedef struct CPClosureEntry {
    ORClosure             cb;
@@ -291,6 +291,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _propagFail = nil;
    _propagDone = nil;
    _br = RANGE(self, 0, 1);
+   _iStat = makeTRInt(_trail,ORSuspend);
    return self;
 }
 -(id<ORIntRange>)boolRange
@@ -426,10 +427,19 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    return _trail;
 }
 
--(void) scheduleTrigger: (ORClosure) cb onBehalf:(id<CPConstraint>)c
+-(void) scheduleTrigger: (ORClosure) cb onBehalf:(CPCoreConstraint*)c
 {
-   ClosureQueueEnqueue(_closureQueue[HIGHEST_PRIO], cb, c);
+   if (c->_active._val)
+      	ClosureQueueEnqueue(_closureQueue[HIGHEST_PRIO], cb, c);
 }
+
+//static ORLong __active = 0;
+//static ORLong __inactive = 0;
+//
+//void printStats()
+//{
+//   NSLog(@"A/I : %lld,%lld",__active,__inactive);
+//}
 
 void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
 {
@@ -438,16 +448,18 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
          if (lc->_active._val) {
+            //__active++;
             id<CPGroup> group = lc->_group;
+            lc->_todo = CPTocheck;
             if (group) {
-               lc->_todo = CPTocheck;
                ClosureQueueEnqueue(fdm->_closureQueue[LOWEST_PRIO], nil, group);
                [group scheduleClosure:list];
             }
             else {
-               lc->_todo = CPTocheck;
                ClosureQueueEnqueue(fdm->_closureQueue[list->_priority], list->_trigger,lc);
             }
+//         } else {
+//            __inactive++;
          }
          list = list->_node;
       }
@@ -460,25 +472,27 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
    scheduleClosures(self, mlist);
 }
 
-
 -(void) scheduleValueClosure: (id<CPValueEvent>)evt
 {
    ValueClosureQueueEnqueue(_valueClosureQueue, evt);
 }
 
+typedef id (*SELPROTO)(id,SEL,...);
+
 static inline ORStatus executeClosure(CPClosureEntry cb,id<CPConstraint>* last)
 {
     *last = cb.cstr;   // [pvh] This is for wdeg: need to know the last constraint that has failed
-    
-    if (cb.cb)    // closure event
-        cb.cb();
-    else {        // propagation event; closure not created explicitly for efficiency reasons
-        CPCoreConstraint* cstr = cb.cstr;
+   CPCoreConstraint* cstr = cb.cstr;
+   if (cstr->_active._val == 0)
+      return ORSkip;
+   if (cb.cb) {    // closure event
+      cb.cb();
+   } else {        // propagation event; closure not created explicitly for efficiency reasons
         if (cstr->_todo == CPChecked)
             return ORSkip;
         else {
             cstr->_todo = CPChecked;
-            cstr->_propagate(cstr,@selector(propagate));
+            ((SELPROTO)cstr->_propagate)(cstr,@selector(propagate));
         }
     }
     return ORSuspend;
@@ -488,6 +502,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
    if (fdm->_propagating > 0)
       return ORDelay;
+   if (fdm->_iStat._val == ORFailure)
+      return ORFailure;
    ++fdm->_propagating;
    CPValueClosureQueue* vcQueue = fdm->_valueClosureQueue;
    CPClosureQueue** cQueue = fdm->_closureQueue;
@@ -527,6 +543,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          [fdm->_propagDone notify];
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
+      assignTRInt(&fdm->_iStat, status, fdm->_trail);
    ONFAIL(status);
       id<CPConstraint>* last = &fdm->_last;
       while (ISLOADED(cQueue[ALWAYS_PRIO])) {
@@ -542,9 +559,13 @@ ORStatus propagateFDM(CPEngineI* fdm)
       //[exception release];
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
+      assignTRInt(&fdm->_iStat, ORFailure, fdm->_trail);
    ENDFAIL(ORFailure)
 }
-
+-(ORBool)isPropagating
+{
+   return _propagating > 0;
+}
 -(ORStatus) propagate
 {
    return propagateFDM(self);
@@ -560,6 +581,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          ok = propagateFDM(self);
       return ok;
    }, ^ORStatus{
+      assignTRInt(&_iStat, ORFailure, _trail);
       return ORFailure;
    });
 }
@@ -581,7 +603,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       [cstr post];
       ORStatus pstatus =  propagateFDM(self);
-      if (pstatus != ORFailure) {
+      if (pstatus != ORFailure && cstr->_active._val != 0) {
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
          [_trail trailClosure:^{
@@ -590,6 +612,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       }
       return pstatus;
    }, ^ORStatus{
+      assignTRInt(&_iStat, ORFailure, _trail);
       return ORFailure;
    });
 }
@@ -601,8 +624,9 @@ ORStatus propagateFDM(CPEngineI* fdm)
 {
    assert(_state != CPOpen);
    ORStatus s = [self post:c];
-   if (s==ORFailure)
+   if (s==ORFailure) {
       failNow();
+   }
 }
 
 -(ORStatus) add: (id<ORConstraint>) c
@@ -660,6 +684,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       return propagateFDM(self);
    }, ^ORStatus{
       _propagating = oldPropag;
+      assignTRInt(&_iStat, ORFailure, _trail);
       return ORFailure;
    });
 }
@@ -674,6 +699,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
         return propagateFDM(self);
     }, ^ORStatus{
         _propagating = oldPropag;
+        assignTRInt(&_iStat, ORFailure, _trail);
         return ORFailure;
     });
     if (status == ORFailure)
@@ -682,6 +708,10 @@ ORStatus propagateFDM(CPEngineI* fdm)
 -(void) open
 {
    _state = CPOpen;
+}
+-(ORStatus)currentStatus
+{
+   return _iStat._val;
 }
 -(ORStatus) close
 {
@@ -728,16 +758,6 @@ ORStatus propagateFDM(CPEngineI* fdm)
       _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_state];
-   [aCoder encodeObject:_vars];
-   [aCoder encodeObject:_trail];
-   [aCoder encodeObject:_mStore];
-   [aCoder encodeObject:_oStore];
-}
-
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super init];

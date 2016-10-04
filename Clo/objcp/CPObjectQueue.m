@@ -178,7 +178,7 @@
 }
 -(void) resize
 {
-   id* nt = malloc(sizeof(id)*_mxs*2);
+   id* nt = calloc(_mxs*2,sizeof(id));
    id* ptr = nt;
    ORInt cur = _exit;
    do {
@@ -189,7 +189,7 @@
    free(_tab);
    _tab = nt;
    _exit = 0;
-   _enter = _mxs-1;
+   _enter = _mxs;
    _mxs <<= 1;
    _mask = _mxs - 1;
 }

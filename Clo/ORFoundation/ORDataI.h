@@ -45,7 +45,7 @@
 -(void)setIdValue:(id)v;
 @end
 
-@interface ORDoubleI : ORExprI<NSCoding,ORDoubleNumber>
+@interface ORDoubleI : ORExprI<NSCoding,NSCopying,ORDoubleNumber>
 -(ORDoubleI*) init: (id<ORTracker>) tracker value: (ORDouble) value;
 -(ORDouble) doubleValue;
 -(ORDouble) value;
@@ -107,6 +107,9 @@
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;
 -(void) close;
+-(ORInt) size;
+-(ORInt) arity;
+-(ORInt) atColumn: (ORInt)c position: (ORInt)p;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 -(void) print;

@@ -25,15 +25,22 @@ int main(int argc, const char * argv[])
          [note dc:[mdl add: [ORFactory alldifferent: x]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i] plus:@(i)])]]];
          [note vc:[mdl add: [ORFactory alldifferent: All(mdl, ORExpr, i, R, [x[i]  sub:@(i)])]]];
-         id<CPProgram> cp = [args makeProgram:mdl annotation:note];
+         //id<CPProgram> cp = [args makeProgram:mdl annotation:note];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController proto]];
          [cp clearOnSolution];     // do not save the solutions (the other solvers do not).
          __block ORInt nbSol = 0;
-         [cp solveAll:
-          ^() {
-             [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
-             @synchronized(cp) { // synchronized so that it works correctly even when asking parallel tree search
-                nbSol++;
-             }
+         [cp solveAll: ^ {
+             
+             id<ORPost> pItf = [[CPINCModel alloc] init:cp];
+             [cp nestedSolveAll:^{
+                [cp labelArray: x orderedBy: ^ORDouble(ORInt i) { return [cp domsize: x[i]];}];
+                @synchronized(cp) { // synchronized so that it works correctly even when asking parallel tree search
+                   nbSol++;
+                }
+             } onSolution: nil
+                         onExit: nil
+                        control:[[ORSemDFSController alloc] initTheController:[cp tracer] engine:[cp engine] posting:pItf]];
+
           }];
          printf("GOT %d solutions\n",nbSol);
          NSLog(@"Solver status: %@\n",cp);

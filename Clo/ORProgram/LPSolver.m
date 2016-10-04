@@ -33,9 +33,17 @@
    _lpsolver = lpsolver;
    return self;
 }
+-(id)theVar
+{
+   return [_lpcolumn theVar];
+}
 -(void) dealloc
 {
    [super dealloc];
+}
+-(NSString*)description
+{
+   return [_lpcolumn description];
 }
 -(LPColumnI*) column
 {
@@ -49,53 +57,62 @@
 {
    [_lpcolumn addConstraint: [_lpsolver concretize: cstr] coef: coef];
 }
+-(ORFloat) objCoef
+{
+   return [_lpcolumn objCoef];
+}
+
 @end
 
 @implementation LPSolver
 {
-   LPSolverI*  _lpsolver;
-   id<ORModel> _model;
-   id<ORSolutionPool> _sPool;
+    LPSolverI*  _lpsolver;
+    id<ORModel> _model;
+    id<ORSolutionPool> _sPool;
 }
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
-   self = [super init];
-   _lpsolver = [LPFactory solver];
-   _model = model;
-   _sPool = (id<ORSolutionPool>) [ORFactory createSolutionPool];
-   return self;
+    self = [super init];
+    _lpsolver = [LPFactory solver];
+    _model = model;
+    _sPool = (id<ORSolutionPool>) [ORFactory createSolutionPool];
+    return self;
 }
 -(void) dealloc
 {
-   NSLog(@"dealloc LPSolver");
-   [_lpsolver release];
-   [_sPool release];
-   [super dealloc];
+    NSLog(@"dealloc LPSolver");
+    [_lpsolver release];
+    [_sPool release];
+    [super dealloc];
 }
 -(id<ORTracker>)tracker
 {
-   return self;
+    return self;
 }
 -(void)close
 {}
 -(id<OREngine>) engine
 {
-   return _lpsolver;
+    return _lpsolver;
 }
 -(LPSolverI*) solver
 {
-   return _lpsolver;
+    return _lpsolver;
 }
 -(void) solve
 {
-   [_lpsolver solve];
-   id<ORSolution> sol = [self captureSolution];
-   [_sPool addSolution: sol];
-   [sol release];
+    [_lpsolver solve];
+    id<ORSolution> sol = [self captureSolution];
+    [_sPool addSolution: sol];
+    [sol release];
+}
+-(ORBool) ground
+{
+   return YES;
 }
 -(ORDouble) dual: (id<ORConstraint>) c
 {
-   return [_lpsolver dual: [self concretize: c]];
+    return [_lpsolver dual: [self concretize: c]];
 }
 -(ORDouble) doubleValue: (id<ORRealVar>) v
 {
@@ -103,65 +120,69 @@
 }
 -(ORDouble) reducedCost: (id<ORRealVar>) v
 {
-   return [_lpsolver reducedCost: _gamma[v.getId]];
+    return [_lpsolver reducedCost: _gamma[v.getId]];
+}
+-(ORBool) inBasis:(id<ORRealVar>)v
+{
+   return [_lpsolver inBasis: _gamma[v.getId]];
 }
 -(id<LPColumn>) createColumn
 {
-   LPColumnI* col = [_lpsolver createColumn];
-   id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
-   [self trackMutable: o];
-   return o;
+    LPColumnI* col = [_lpsolver createColumn];
+    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
+    [self trackMutable: o];
+    return o;
 }
 -(id<LPColumn>) createColumn: (ORDouble) low up: (ORDouble) up
 {
-   LPColumnI* col = [_lpsolver createColumn: low up: up];
-   id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
-   [self trackMutable: o];
-   return o;
+    LPColumnI* col = [_lpsolver createColumn: low up: up];
+    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
+    [self trackMutable: o];
+    return o;
 }
 
 -(void) addColumn: (LPColumn*) column
 {
-   [_lpsolver postColumn: [column column]];
-   id<ORSolution> sol = [self captureSolution];
-   [_sPool addSolution: sol];
-   [sol release];
+    [_lpsolver postColumn: [column column]];
+    id<ORSolution> sol = [self captureSolution];
+    [_sPool addSolution: sol];
+    [sol release];
 }
 -(id) trackObject: (id) obj
 {
-   return [_lpsolver trackObject:obj];
+    return [_lpsolver trackObject:obj];
 }
 -(id) trackConstraintInGroup:(id)obj
 {
-   return [_lpsolver trackConstraintInGroup:obj];
+    return [_lpsolver trackConstraintInGroup:obj];
 }
 -(id) trackObjective: (id) obj
 {
-   return [_lpsolver trackObjective:obj];
+    return [_lpsolver trackObjective:obj];
 }
 -(id) trackMutable: (id) obj
 {
-   return [_lpsolver trackMutable:obj];
+    return [_lpsolver trackMutable:obj];
 }
 -(id) trackVariable: (id) obj
 {
-   return [_lpsolver trackVariable:obj];
+    return [_lpsolver trackVariable:obj];
 }
 -(id) trackImmutable:(id)obj
 {
-   return [_lpsolver trackImmutable:obj];
+    return [_lpsolver trackImmutable:obj];
 }
 -(id<ORSolutionPool>) solutionPool
 {
-   return _sPool;
+    return _sPool;
 }
 -(id<ORObjectiveValue>) objectiveValue
 {
-   return [_lpsolver objectiveValue];
+    return [_lpsolver objectiveValue];
 }
 -(id<ORSolution>) captureSolution
 {
-   return [ORFactory solution: _model solver: self];
+    return [ORFactory solution: _model solver: self];
 }
 @end
 
@@ -188,9 +209,21 @@
 {
    return self;
 }
+-(ORBool)ground
+{
+   return YES;
+}
 -(void)close
 {
    [_lpsolver close];
+}
+-(id)basis
+{
+   return [_lpsolver basis];
+}
+-(void)restoreBasis:(id)basis
+{
+   [_lpsolver restoreBasis:basis];
 }
 -(id<OREngine>) engine
 {
@@ -200,10 +233,20 @@
 {
    return _lpsolver;
 }
+-(id<ORSolutionPool>) solutionPool
+{
+   assert(0);
+   return nil;
+}
 -(OROutcome) solve
 {
    return [_lpsolver solve];
 }
+-(OROutcome) solveFrom:(id<LPBasis>)basis
+{
+   return [_lpsolver solveFrom:basis];
+}
+
 -(ORDouble) dual: (id<ORConstraint>) c
 {
    return [_lpsolver dual: [self concretize: c]];
@@ -215,6 +258,30 @@
 -(ORDouble) reducedCost: (id<ORRealVar>) v
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
+}
+-(ORBool) inBasis:(id<ORRealVar>)v
+{
+   return [_lpsolver inBasis: _gamma[v.getId]];
+}
+-(ORBool)trivialDownRoundable:(id<ORVar>)v
+{
+   return [_lpsolver trivialDownRoundable:_gamma[v.getId]];
+}
+-(ORBool)trivialUpRoundable:(id<ORVar>)v
+{
+   return [_lpsolver trivialUpRoundable:_gamma[v.getId]];
+}
+-(ORBool)triviallyRoundable:(id<ORVar>)v
+{
+   return [_lpsolver triviallyRoundable:_gamma[v.getId]];
+}
+-(ORInt)nbLocks:(id<ORVar>)var
+{
+   return [_lpsolver nbLocks:_gamma[var.getId]];
+}
+-(ORBool)minLockDown:(id<ORVar>)var
+{
+   return [_lpsolver minLockDown:_gamma[var.getId]];
 }
 -(ORDouble) objective
 {
@@ -231,6 +298,10 @@
 -(ORDouble) upperBound: (id<ORVar>) v
 {
    return [_lpsolver upperBound: _gamma[v.getId]];
+}
+-(void) updateBounds:(id<ORVar>)v lower:(ORDouble)low  upper:(ORDouble)up
+{
+   [_lpsolver updateBounds:_gamma[v.getId] lower:low upper:up];
 }
 -(void) updateLowerBound: (id<ORVar>) v with: (ORDouble) lb
 {
@@ -264,6 +335,11 @@
 {
    return [_lpsolver trackImmutable:obj];
 }
+//-(id<ORSolutionPool>)solutionPool
+//{
+//   assert(NO);
+//   return nil;
+//}
 @end
 
 @implementation ORSolution (LPSolver)

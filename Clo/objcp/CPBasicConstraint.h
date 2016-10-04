@@ -32,6 +32,13 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFalse : CPCoreConstraint
+-(id)init:(id<CPEngine>)engine;
+-(void)post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 // PVH: where is _active being used
 @interface CPEqualc : CPCoreConstraint {
    @private
@@ -336,13 +343,19 @@ typedef int (^intgetter) (void) ;
 -(void)       post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
+-(void)      updateDualBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
--(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
+-(ORStatus) tightenDualBound: (id<ORObjectiveValue>) newBound;
+-(void)     tightenLocallyWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(id<ORObjectiveValue>) dualBound;
+-(id<ORObjectiveValue>) primalValue;
+-(id<ORObjectiveValue>) dualValue;
+-(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
--(id<ORObjectiveValue>)value;
+-(ORBool)   isMinimization;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
@@ -350,13 +363,17 @@ typedef int (^intgetter) (void) ;
 -(void)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
+-(void)      updateDualBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
--(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
+-(ORStatus)  tightenDualBound: (id<ORObjectiveValue>) newBound;
+-(void)      tightenLocallyWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
+-(id<ORObjectiveValue>) dualBound;
+-(ORBool)   isBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
--(id<ORObjectiveValue>)value;
+-(ORBool)   isMinimization;
 @end
 
 @interface CPRelaxation : CPCoreConstraint

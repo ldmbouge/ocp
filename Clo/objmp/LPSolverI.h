@@ -16,10 +16,11 @@
 
 @interface LPVariableI : ORObject
 {
+@public
+   int                   _idx;
 @protected
    LPSolverI*            _solver;
    int                   _nb;
-   int                   _idx;
    ORDouble               _low;
    ORDouble               _up;
    LPObjectiveI*         _obj;
@@ -36,6 +37,7 @@
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
+-(ORDouble) objCoef;
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
 
@@ -51,13 +53,43 @@
 -(ORInt) nb;
 -(NSString*)description;
 -(ORBool) isInteger;
+-(ORInt)downLock;
+-(ORInt)upLock;
+-(ORInt)locks;
+-(ORBool)trivialDownRoundable;
+-(ORBool)trivialUpRoundable;
+-(ORBool)triviallyRoundable;
+-(ORBool)fixMe;
+-(ORDouble)fractionality;
+-(ORDouble)nearestInt;
 @end
+
+static inline int getLPId(LPVariableI* p)  { return p->_idx;}
 
 @protocol LPVariableArray <ORVarArray>
 -(LPVariableI*) at: (ORInt) value;
 -(void) set: (LPVariableI*) x at: (ORInt) value;
 -(LPVariableI*) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (LPVariableI*) newValue atIndexedSubscript: (NSUInteger) idx;
+@end
+
+@interface LPParameterI : NSObject
+{
+@protected
+    LPSolverI*           _solver;
+    ORInt                 _cstrIdx;
+    ORInt                 _coefIdx;
+}
+-(LPParameterI*) initLPParameterI: (LPSolverI*) solver;
+-(ORInt) cstrIdx;
+-(void) setCstrIdx: (ORInt) idx;
+-(ORInt) coefIdx;
+-(void) setCoefIdx: (ORInt) idx;
+-(ORDouble) doubleValue;
+-(void) setDoubleValue: (ORDouble)val;
+
+-(NSString*)description;
+-(ORBool) isInteger;
 @end
 
 
@@ -98,6 +130,8 @@
 -(ORDouble)             dual;
 -(void)                setNb: (ORInt) nb;
 -(ORInt)               nb;
+-(ORInterval) evaluation;
+-(ORBool)redundant;
 @end
 
 @interface LPConstraintLEQ : LPConstraintI
@@ -161,6 +195,7 @@
 {
 @protected
    LPSolverI*            _solver;
+   LPVariableI*          _theVar;
    int                   _nb;
    int                   _maxSize;
    int                   _idx;
@@ -180,9 +215,9 @@
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORDouble) low up: (ORDouble) up;
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORDouble) low up: (ORDouble) up size: (ORInt) size obj: (ORDouble) obj cstr: (LPConstraintI**) idx coef: (ORDouble*) coef;
 -(void)      dealloc;
-
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
+-(LPVariableI*)theVar;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
@@ -218,6 +253,7 @@
 -(void) close;
 @end
 
+
 @interface LPSolverI : NSObject<OREngine> {
    LPGurobiSolver*      _lp;
    int                  _nbVars;
@@ -237,11 +273,14 @@
    bool                _isClosed;
    
    NSMutableArray*     _oStore;
-   
+   NSMutableArray*     _pStore;
+   id<LPBasis>         _basis;  // captured after each call to solve/optimize
 }
 
 -(LPSolverI*) initLPSolverI;
 -(void) dealloc;
+-(void)enumerateColumnWith:(void(^)(LPColumnI*))block;
+-(void)restoreBasis:(id<LPBasis>)basis;
 
 +(LPSolverI*)      create;
 -(LPVariableI*)    createVariable;
@@ -259,6 +298,7 @@
 -(LPObjectiveI*)  createMaximize: (ORInt) size var: (LPVariableI**) var coef: (ORDouble*) coef;
 
 -(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
+-(LPConstraintI*) createGEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
 -(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORDoubleArray>) coef cst: (ORDouble) cst;
 
 
@@ -279,27 +319,40 @@
 -(void) removeVariable: (LPVariableI*) var;
 -(LPObjectiveI*) postObjective: (LPObjectiveI*) obj;
 -(LPVariableI*) postColumn: (LPColumnI*) col;
-
+-(id<LPBasis>)basis;
 -(void) close;
 -(ORBool) isClosed;
 -(OROutcome) solve;
+-(OROutcome) solveFrom:(id<LPBasis>)basis;
 
 -(OROutcome) status;
 -(ORDouble) doubleValue: (LPVariableI*) var;
 -(ORDouble) lowerBound: (LPVariableI*) var;
 -(ORDouble) upperBound: (LPVariableI*) var;
 -(ORDouble) reducedCost: (LPVariableI*) var;
+-(ORBool) inBasis:(LPVariableI*)var;
+-(ORDouble)fractionality:(LPVariableI*)var;
+-(ORDouble)nearestInt:(LPVariableI*)var;
+-(ORBool)triviallyRoundable:(LPVariableI*)var;
+-(ORBool)trivialDownRoundable:(LPVariableI*)var;
+-(ORBool)trivialUpRoundable:(LPVariableI*)var;
+-(ORInt)nbLocks:(LPVariableI*)var;
+-(ORBool)minLockDown:(LPVariableI*)var;
 -(ORDouble) dual: (LPConstraintI*) cstr;
 -(id<ORDoubleArray>) duals;
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lpValue;
 
+-(void) updateBounds:(LPVariableI*)var lower:(ORDouble)low  upper:(ORDouble)up;
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORDouble) lb;
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORDouble) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
 -(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
+
+-(ORDouble) paramValue: (LPParameterI*) param;
+-(void) setParam: (LPParameterI*) param value: (ORDouble)val;
 
 -(void) print;
 -(void) printModelToFile: (char*) fileName;

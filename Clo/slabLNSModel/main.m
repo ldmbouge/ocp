@@ -147,7 +147,7 @@ int main(int argc, const char * argv[])
                   //[[cp objective] tightenPrimalBound:[s objectiveValue]];
                }
             }];
-            NSLog(@"Objective value: %@",[obj value]);
+            NSLog(@"Objective value: %@",[obj primalValue]);
             improved = YES;
          }];
          id<ORSolution> sol = [[cp solutionPool] best];

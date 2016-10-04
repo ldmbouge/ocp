@@ -14,7 +14,8 @@ func show(cp : CPProgram,_ x : ORIntVarMatrix)
    let r1 = x.range(1)
    for i in r0.low()...r0.up() {
       for j in r1.low()...r1.up() {
-         print("\(cp.intValue(x.at(i, j))) ",terminator:"")
+         let ch = cp.intValue(x.at(i,j))==1 ? "██" : "  "
+         print("\(ch)",terminator:"")
       }
       print("")
    }
@@ -48,7 +49,7 @@ func readRE(scan : NSScanner,alphabet al : ORIntRange,forModel m: ORModel) -> OR
          f.append((lState,0,lState))      // stay put on 0
       }
    }
-   let S = range(m,r: 1...Int(lState))
+   let S = range(m,1...Int(lState))
    let F = ORFactory.intSet(m)
    F.insert(lState)
    let a  = ORFactory.automaton(m, alphabet: al, states: S, transition: UnsafeMutablePointer<ORTransition>(f) ,
@@ -65,8 +66,8 @@ autoreleasepool {
       scan.scanInteger(&n)
       scan.scanInteger(&f)
       let model = ORFactory.createModel()
-      let R     = range(model, r: 1...n)
-      let B     = range(model, r: 0...1)
+      let R     = range(model, 1...n)
+      let B     = range(model, 0...1)
       let x     = ORFactory.boolVarMatrix(model, range: R, R)
       print("board: \(n) x \(n)\t fixed=\(f)\n")
       for i in 0..<f {
@@ -76,12 +77,12 @@ autoreleasepool {
          model.add(x.at(r,c) == 1)
       }
       for r in 1...ORInt(n) {
-         let row = all(model, r: R) { c in x.at(r,c) }
+         let row = all(model, R) { c in x.at(r,c) }
          let dfa = readRE(scan, alphabet: B, forModel: model)
          model.add(ORFactory.regular(row, belongs: dfa))
       }
       for c in 1...ORInt(n) {
-         let col = all(model, r: R) { r in x.at(r,c) }
+         let col = all(model, R) { r in x.at(r,c) }
          let dfa = readRE(scan, alphabet: B, forModel: model)
          model.add(ORFactory.regular(col, belongs: dfa))
       }

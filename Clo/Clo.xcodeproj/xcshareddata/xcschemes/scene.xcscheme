@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0640"
-   version = "1.8">
+   LastUpgradeVersion = "0800"
+   version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B65049D1940C21600AEA65C"
+               BlueprintIdentifier = "5BB272641D065631008E94CF"
                BuildableName = "scene"
                BlueprintName = "scene"
                ReferencedContainer = "container:Clo.xcodeproj">
@@ -23,16 +23,16 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B65049D1940C21600AEA65C"
+            BlueprintIdentifier = "5BB272641D065631008E94CF"
             BuildableName = "scene"
             BlueprintName = "scene"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -42,11 +42,11 @@
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -55,7 +55,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B65049D1940C21600AEA65C"
+            BlueprintIdentifier = "5BB272641D065631008E94CF"
             BuildableName = "scene"
             BlueprintName = "scene"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -65,16 +65,16 @@
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B65049D1940C21600AEA65C"
+            BlueprintIdentifier = "5BB272641D065631008E94CF"
             BuildableName = "scene"
             BlueprintName = "scene"
             ReferencedContainer = "container:Clo.xcodeproj">

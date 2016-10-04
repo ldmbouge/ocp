@@ -26,10 +26,15 @@
 -(void) addObjective: (MIPObjectiveI*) obj;
 -(void) close;
 -(MIPOutcome) solve;
+-(void) updateModel;
+-(void) setTimeLimit: (double)limit;
+-(ORDouble) bestObjectiveBound;
+-(ORFloat) dualityGap;
 
 -(MIPOutcome) status;
 -(ORDouble) doubleValue: (MIPVariableI*) var;
 -(ORInt) intValue: (MIPIntVariableI*) var;
+-(void) setIntVar: (MIPIntVariableI*)var value: (ORInt)val;
 -(ORDouble) lowerBound: (MIPVariableI*) var;
 -(ORDouble) upperBound: (MIPVariableI*) var;
 -(ORDouble) objectiveValue;
@@ -45,9 +50,16 @@
 -(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
+-(ORDouble) paramValue: (MIPParameterI*) param;
+-(void) setParam: (MIPParameterI*) param value: (ORDouble)val;
+
 -(ORStatus) postConstraint: (MIPConstraintI*) cstr;
 
+-(id<ORDoubleInformer>) boundInformer;
+-(void) tightenBound: (ORDouble)bnd;
+-(void) injectSolution: (NSArray*)vars values: (NSArray*)vals size: (ORInt)size;
 -(void) printModelToFile: (char*) fileName;
+-(void) cancel;
 -(void) print;
 @end
 

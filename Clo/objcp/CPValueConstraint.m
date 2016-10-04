@@ -184,11 +184,13 @@
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
       [_b bind:minDom(_x) == minDom(_y)];
    else if (bound(_x)) {
-      [[_b engine] addInternal: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
+      [[_b engine] add: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
+      assignTRInt(&_active, 0, _trail);
       return;
    }
    else if (bound(_y)) {
-      [[_b engine] addInternal: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
+      [[_b engine] add: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
+      assignTRInt(&_active, 0, _trail);
       return;
    } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
       if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
@@ -750,6 +752,181 @@
 }
 @end
 
+@implementation CPClause
+-(id)initCPClause:(id)x equal:(CPIntVar*)t
+{
+   if ([[x class] conformsToProtocol:@protocol(ORIdArray)]) {
+      id<CPIntVarArray> xa = x;
+      self = [super initCPCoreConstraint:[[xa at:[xa low]] engine]];
+      _nb = [x count];
+      _x  = malloc(sizeof(CPIntVar*)*_nb);
+      ORInt low = [xa low];
+      ORInt up = [xa up];
+      ORInt i = 0;
+      for(ORInt k=low;k <= up;k++)
+         _x[i++] = (CPIntVar*) [xa at:k];
+   }
+   else
+      assert(FALSE);
+   _t  = t;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(void)post
+{
+   int nbTrue = 0,nbFree=0;
+   for(ORInt i=0;i<_nb;i++) {
+      [_x[i] updateMin:0 andMax:1];
+      nbTrue += (minDom(_x[i])==1);
+      nbFree += !bound(_x[i]);
+   }
+   if (nbTrue >= 1) {
+      bindDom(_t, 1);
+      return ;
+   }
+   if (nbFree == 0) {
+      bindDom(_t,0);
+      return ;
+   }
+   if (bound(_t)) {
+      if (maxDom(_t)==0) {  // _t == 0  => all literals at 0
+         for(ORInt i=0;i<_nb;++i)
+            if (!bound(_x[i]))
+               bindDom(_x[i], 0);
+         return;
+      } else {
+         assert(minDom(_t)==1); // _t == 1 => at least one literal at 1 (if here _nbTrue==0, so could have only free ones)
+         if (nbFree == 1) {     // but only do that if there is no choice (only one free literal)
+            for(ORInt i=0;i<_nb;i++) {
+               if (!bound(_x[i])) {
+                  bindDom(_x[i],1);
+                  return;
+               }
+            }
+         }
+      }
+   }
+   id<ORTrail> trail = [[_t engine] trail];
+   assert(nbTrue == 0);
+   _nbOne  = makeTRInt(trail,nbTrue);
+   _nbFree = makeTRInt(trail,nbFree);
+   for(ORInt i=0;i < _nb;i++) {
+      if (!bound(_x[i])) {
+         [_x[i] whenBindDo:^{
+            ORInt xiv = minDom(_x[i]);
+            assignTRInt(&_nbOne,_nbOne._val + xiv,trail);
+            assignTRInt(&_nbFree,_nbFree._val - 1,trail);
+
+//            if (_name == 20) {
+//               if ([_trail magic] >= 2259)
+//                  NSLog(@"pause");
+//               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//               [buf appendFormat:@"WB: %@ | %d -- %d (%u)",self,_nbOne._val,_nbFree._val,[_trail magic]];
+//               printf("%s\n",[buf cStringUsingEncoding:NSASCIIStringEncoding]);
+//               [buf release];
+//            }
+            
+            if (_nbOne._val > 0) {
+               assignTRInt(&_active,0,_trail);
+               bindDom(_t,1);
+               return;
+            }
+            if (_nbFree._val == 0) {
+               assignTRInt(&_active,0,_trail);
+               bindDom(_t,0);
+               return;
+            }
+            if (minDom(_t) && _nbFree._val == 1) {  // we want it to be true, only one literal left.
+               assignTRInt(&_active, 0, _trail);
+               ORInt nbf = 0;
+               CPIntVar* fv = nil;
+               for(ORInt j=0;j<_nb;j++) {
+                  ORInt b = bound(_x[j]);
+                  nbf += !b;
+                  if (!b) fv = _x[j];
+               }
+               assert(nbf == 1);
+               bindDom(fv,1);
+            }
+            if (maxDom(_t)==0) {
+               //assignTRInt(&_active, 0, _trail);
+               int nb1 = 0;
+               for(ORInt j=0;j<_nb;j++) {
+                  if (!bound(_x[j])) {
+                     bindDom(_x[j],0);
+                  } else nb1 += minDom(_x[j]);
+               }
+               if (nb1 > 0)
+                  failNow();
+            }
+         } onBehalf:self];
+      }
+   }
+   [_t whenBindDo:^{
+//      if (_name == 20) {
+//         NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//         [buf appendFormat:@"WP: %@ | %d -- %d (%u)",self,_nbOne._val,_nbFree._val,[_trail magic]];
+//         printf("%s\n",[buf cStringUsingEncoding:NSASCIIStringEncoding]);
+//         [buf release];
+//      }
+
+      if (maxDom(_t) == 0) {  // _t is FALSE
+         assignTRInt(&_active, 0, _trail);
+         ORInt nb1 = 0;
+         for(ORInt i=0;i<_nb;++i) {
+            if (!bound(_x[i]))
+               bindDom(_x[i], 0);
+            else nb1 += minDom(_x[i]);
+         }
+         if (nb1 > 0)
+            failNow();
+      }
+      if (minDom(_t) == 1  && _nbFree._val == 1) {
+         ORInt nbf = 0;
+         CPIntVar* fv = nil;
+         for(ORInt j=0;j<_nb;j++) {
+            ORInt b = bound(_x[j]);
+            nbf += !b;
+            if (!b) fv = _x[j];
+         }
+         assert(nbf == 1);
+         assignTRInt(&_active, 0, _trail);
+         bindDom(fv,1);
+      }
+   } priority:HIGHEST_PRIO - 1 onBehalf:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:_nb + 1] autorelease];
+   for(ORInt k = 0;k < _nb;k++)
+      [rv addObject:_x[k]];
+   [rv addObject:_t];
+   return rv;
+   
+}
+-(ORUInt)nbUVars
+{
+   ORUInt nb=[_t bound];
+   for(ORUInt k=0;k<_nb;k++)
+      nb += ![_x[k] bound];
+   return nb;
+}
+-(NSString*)description
+{
+   const char* act = _active._val ? "" : "DEACTIVATED :";
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%sCPClause:%02d %@ <=> ([",act,_name,_t];
+   for(ORInt i=0;i<_nb;i++) {
+      [buf appendFormat:@"%@%s",_x[i],(i < (_nb-1)) ? " || " : "]"];
+   }
+   [buf appendString:@")>"];
+   return buf;
+}
+@end
+
 @implementation CPSumBoolGeq
 -(id) initCPSumBool: (id) x geq: (ORInt) c
 {
@@ -1212,21 +1389,41 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
    for(ORInt i=0;i < _nb;i++) {
       if (bound(_x[i])) continue;
       [_x[i] whenBindDo:^{
-         if (_x[i].value) {
+         if (_x[i].value)
             assignTRInt(&_nbTrue, _nbTrue._val + 1, _trail);
-            assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
-         } else {
-            assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
-         }
+         assignTRInt(&_nbPos, _nbPos._val - 1, _trail);
          if (_b.min > 0) {
-            if (_nbTrue._val >= _c) {
+            if (_nbTrue._val >= _c)
                assignTRInt(&_active,NO,_trail);
-            }
             if (_nbTrue._val + _nbPos._val < _c)
                failNow();
+            else if (_nbTrue._val + _nbPos._val == _c) {
+               ORInt k=0;
+               for(ORInt j=0;j < _nb;j++) {
+                  if (j == i || [_x[j] bound]) continue;
+                  [_x[j] bind:YES];
+                  k++;
+               }
+               assert(k == _nbPos._val);
+            }
          } else if (_b.max <= 0) {
             if (_nbTrue._val >= _c)
                failNow();
+            if (_nbTrue._val + _nbPos._val == _c && _nbPos._val == 1) {
+               ORInt k=0;
+               for(ORInt j=0;j < _nb;j++) {
+                  if (j == i || [_x[j] bound]) continue;
+                  k++;
+               }
+               assert(k<=1);
+               
+               for(ORInt j=0;j < _nb;j++) {
+                  if (j == i || [_x[j] bound]) continue;
+                  [_x[j] bind:NO];
+                  k++;
+               }
+               assignTRInt(&_active, NO, _trail);
+            }
             if (_nbTrue._val + _nbPos._val < _c)
                assignTRInt(&_active, NO, _trail);
          } else { // b is not FIXED.
@@ -1241,7 +1438,7 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
          }
       } onBehalf:self];
    }
-   [_b whenBindPropagate:self];
+   [_b whenBindPropagate:self priority:HIGHEST_PRIO - 1];
 }
 
 -(void)propagate
@@ -1253,11 +1450,36 @@ static ORInt setupPrefix(CPReifySumBoolEq* this)
          assignTRInt(&_active,NO, _trail);
       if (_nbTrue._val + _nbPos._val < _c)
          failNow();
+      else if (_nbTrue._val + _nbPos._val == _c) {
+         ORInt k=0;
+         for(ORInt j=0;j < _nb;j++) {
+            if ([_x[j] bound]) continue;
+            [_x[j] bind:YES];
+            k++;
+         }
+         assert(k == _nbPos._val);
+      }
    } else {
+      assert(_b.max == 0);
       if (_nbTrue._val >= _c)
          failNow();
       if (_nbTrue._val + _nbPos._val < _c)
          assignTRInt(&_active, NO, _trail);
+      if (_nbTrue._val + _nbPos._val == _c && _nbPos._val == 1) {
+         ORInt k=0;
+         for(ORInt j=0;j < _nb;j++) {
+            if ([_x[j] bound]) continue;
+            k++;
+         }
+         assert(k<=1);
+         
+         for(ORInt j=0;j < _nb;j++) {
+            if ([_x[j] bound]) continue;
+            [_x[j] bind:NO];
+            k++;
+         }
+         assignTRInt(&_active, NO, _trail);
+      }
    }
 }
 -(NSString*)description

@@ -58,6 +58,10 @@
 {
    return _tab[--_sz];
 }
+-(id<CPHeuristic>) top
+{
+   return _tab[_sz - 1];
+}
 -(void) reset
 {
    for(ORUInt k=0;k<_sz;k++)
@@ -84,32 +88,38 @@
 
 @interface ORControllerFactoryI : NSObject<ORControllerFactory> {
    id<CPCommonProgram> _solver;
-   Class               _ctrlClass;
-   Class               _nestedClass;
+   id<ORSearchController>  _ctrlProto;
+   id<ORSearchController>  _nestedProto;
 }
--(id)initORControllerFactoryI: (id<CPCommonProgram>) solver rootControllerClass:(Class)class nestedControllerClass:(Class)nc;
+-(id)initORControllerFactoryI: (id<CPCommonProgram>) solver
+          rootControllerClass: (id<ORSearchController>)class
+        nestedControllerClass: (id<ORSearchController>)nc;
 -(id<ORSearchController>) makeRootController;
 -(id<ORSearchController>) makeNestedController;
 @end
 
 @implementation ORControllerFactoryI
--(id)initORControllerFactoryI: (id<CPCommonProgram>) solver rootControllerClass: (Class) class nestedControllerClass: (Class) nc
+-(id)initORControllerFactoryI: (id<CPCommonProgram>) solver
+          rootControllerClass: (id<ORSearchController>) ctrl
+        nestedControllerClass: (id<ORSearchController>) nc
 {
    self = [super init];
    _solver = solver;
-   _ctrlClass = class;
-   _nestedClass = nc;
+   _ctrlProto = ctrl;
+   _nestedProto = nc;
    return self;
 }
 -(id<ORSearchController>) makeRootController
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
-   return [[_ctrlClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
+   return [[_ctrlProto clone] tuneWith:[_solver tracer] engine:[_solver engine] pItf:pItf];
+//   return [[_ctrlClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
 }
 -(id<ORSearchController>) makeNestedController
 {
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
-   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
+   return [[_nestedProto clone] tuneWith:[_solver tracer] engine:[_solver engine] pItf:pItf];
+//   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine] posting:pItf];
 }
 @end
 
@@ -136,8 +146,9 @@
    id<ORIdxIntInformer>  _failLabel;
    id<ORIdxIntInformer>  _failLT;
    id<ORIdxIntInformer>  _failGT;
-   BOOL                  _closed;
+   TRInt                 _closed;
    BOOL                  _oneSol;
+   NSMutableArray*       _doOnStartupArray;
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
@@ -151,10 +162,10 @@
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
-   _closed = false;
    _oneSol = YES;
-   _doOnSolArray = [[NSMutableArray alloc] initWithCapacity: 1];
-   _doOnExitArray = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnStartupArray = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnSolArray     = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnExitArray    = [[NSMutableArray alloc] initWithCapacity: 1];
    return self;
 }
 -(void) dealloc
@@ -170,9 +181,14 @@
    [_failLT release];
    [_failGT release];
    [_sPool release];
+   [_doOnStartupArray release];
    [_doOnSolArray release];
    [_doOnExitArray release];
    [super dealloc];
+}
+-(id<ORMemoryTrail>)memoryTrail
+{
+   return _mt;
 }
 -(id<ORTracker>)tracker
 {
@@ -236,6 +252,10 @@
 {
    return [_search nbFailures];
 }
+-(ORInt) nbChoices
+{
+   return [_search nbChoices];
+}
 -(id<CPEngine>) engine
 {
    return _engine;
@@ -250,27 +270,48 @@
 }
 -(id<ORObjectiveValue>) objectiveValue
 {
-   return [[_engine objective] value];
+   return [[_engine objective] primalValue];
 }
 -(id<ORTracer>) tracer
 {
    return _tracer;
 }
+-(void)tracer:(id<ORTracer>)tracer
+{
+   _tracer = tracer;
+}
 -(void) close
 {
-   if (!_closed) {
-      _closed = true;
+   if (!_closed._val) {
+      assignTRInt(&_closed, YES, _trail);
       if ([_engine close] == ORFailure)
          [_search fail];
       if (![_hSet empty]) {
-         NSArray* mvar = [_model variables];
-         NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
-         for(id<ORVar> v in mvar)
-            [cvar addObject:_gamma[v.getId]];
-         [_hSet applyToAll:^(id<CPHeuristic> h) {
-            [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
-         }];
-         [cvar release];
+         @autoreleasepool {
+            NSMutableArray* mvar = [[NSMutableArray alloc] initWithCapacity: [[_model variables] count]];
+            NSIndexSet* iset = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+               return [obj conformsToProtocol: @protocol(ORIntVar)];
+            }];
+            [[_model variables] enumerateObjectsAtIndexes: iset options: NSEnumerationReverse usingBlock: ^(id obj, NSUInteger idx, BOOL* stop) {
+               [mvar addObject: obj];
+            }];
+            NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
+            for(id<ORVar> v in mvar)
+               [cvar addObject:_gamma[v.getId]];
+            tryfail(^ORStatus{
+               [_hSet applyToAll:^(id<CPHeuristic> h) {
+                  [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+               }];
+               [cvar release];
+               [mvar release];
+               return ORSuspend;
+            }, ^ORStatus{
+               [cvar release];
+               [mvar release];
+               [_search fail];
+               return ORFailure;
+            });
+         }
       }
       [ORConcurrency pumpEvents];
    }
@@ -282,6 +323,10 @@
 -(void) restartHeuristics
 {
   [_hSet applyToAll:^(id<CPHeuristic> h) { [h restart];}];
+}
+-(void) clearOnStartup
+{
+   [_doOnStartupArray removeAllObjects];
 }
 -(void) clearOnSolution
 {
@@ -297,6 +342,12 @@
    [_doOnSolArray addObject: block];
    [block release];
 }
+-(void) onStartup:(ORClosure) onStartup
+{
+   id block = [onStartup copy];
+   [_doOnStartupArray addObject: block];
+   [block release];
+}
 -(void) onExit: (ORClosure) onExit
 {
    id block = [onExit copy];
@@ -310,7 +361,15 @@
 // [pvh: This method should be higher; no need to repeat for all solvers]
 -(id<ORSolution>) captureSolution
 {
+   if([_model conformsToProtocol: @protocol(ORParameterizedModel)])
+      return [ORFactory parameterizedSolution: (id<ORParameterizedModel>)_model solver: self];
    return [ORFactory solution: _model solver: self];
+}
+-(void) doOnStartup
+{
+   [_doOnStartupArray enumerateObjectsUsingBlock:^(ORClosure  _Nonnull block, NSUInteger idx, BOOL * _Nonnull stop) {
+      block();
+   }];
 }
 -(void) doOnSolution
 {
@@ -327,6 +386,7 @@
 -(void) solve: (ORClosure) search
 {
    _objective = [_engine objective];
+   [self doOnStartup];
    if (_objective != nil) {
       _oneSol = NO;
       [_search optimizeModel: self using: search
@@ -343,9 +403,36 @@
        ];
    }
 }
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body
+{
+   ORClosure search = ^() { body(self); };
+   [self solve: search];
+}
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body withTimeLimit: (ORFloat)limit;
+{
+    ORClosure newSearch = ^() { [self limitTime: limit * 1000 in: ^(){ body(self); }]; };
+   [self doOnStartup];
+    _objective = [_engine objective];
+    if (_objective != nil) {
+        _oneSol = NO;
+        [_search optimizeModel: self using: newSearch
+                    onSolution: ^{ [self doOnSolution];}
+                        onExit: ^{ [self doOnExit];}
+         ];
+        NSLog(@"Optimal Solution: %@ thread:%d\n",[_objective primalBound],[NSThread threadID]);
+    }
+    else {
+        _oneSol = YES;
+        [_search solveModel: self using: newSearch
+                 onSolution: ^{ [self doOnSolution];}
+                     onExit: ^{ [self doOnExit];}
+         ];
+    }
+}
 -(void) solveAll: (ORClosure) search
 {
    _oneSol = NO;
+   [self doOnStartup];
    [_search solveAllModel: self using: search
                onSolution: ^{ [self doOnSolution];}
                    onExit: ^{ [self doOnExit];}
@@ -387,8 +474,8 @@
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter do: (ORInt2Void) body
 {
-   filter = [_mt track:[filter copy]];
-   body   = [_mt track:[body copy]];
+   if (filter) filter = [_mt track:[filter copy]];
+   if (body)   body   = [_mt track:[body copy]];
    [_search tryall: range suchThat: filter in: body];   
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
@@ -409,6 +496,26 @@
 {
    [_search limitTime: maxTime in: cl];
 }
+
+-(void)      nestedOptimize: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
+{
+   [_search nestedOptimize:self
+                     using:body
+                onSolution:onSolution
+                    onExit:onExit
+                   control:[[ORNestedController alloc] init:newCtrl
+                                                     parent:[_search controller]]];
+}
+
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
+{
+   [_search nestedSolve: body
+             onSolution: onSolution
+                 onExit: onExit
+                control:[[ORNestedController alloc] init:newCtrl
+                                                  parent:[_search controller]]];
+}
+
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [_search nestedSolve: body onSolution: onSolution onExit: onExit
@@ -423,6 +530,11 @@
 {
    [_search nestedSolve: body onSolution:nil onExit:nil
                 control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
+}
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc
+{
+   [_search nestedSolveAll:body onSolution:onSolution onExit:onExit
+                   control:[[ORNestedController alloc] init:sc parent:[_search controller]]];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
@@ -480,6 +592,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method gthenImpl not implemented"];
 }
+-(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method realLabelImpl: not implemented"];
+}
 -(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method realLthenImpl: not implemented"];
@@ -509,6 +625,15 @@
       }
    }
    return M;
+}
+-(ORBool) ground
+{
+   NSMutableArray* av = [_engine variables];
+   for(id<CPVar> xi in av) {
+      if (![xi bound])
+         return NO;
+   }
+   return YES;
 }
 -(ORBool) allBound:(id<ORIdArray>) x
 {
@@ -620,13 +745,35 @@
    }
 }
 
+-(void)splitArray:(id<ORIntVarArray>)x
+{
+   id<ORIntRange> R = x.range;
+   id<CPHeuristic> h = [_hSet empty] ? nil : _hSet.top;
+   while (![self allBound:x]) {
+      ORDouble ld = FDMAXINT;
+      ORInt bi = R.low - 1;
+      for(ORInt i=R.low;i <= R.up;i++) {
+         CPIntVar* cxi = _gamma[getId(x[i])];
+         if (bound(cxi)) continue;
+         ORDouble ds = h ? [h varOrdering:cxi] : - [cxi domsize];
+         ld = ld < ds ? ld : ds;
+         if (ld == ds) bi = i;
+      }
+      CPIntVar* bxi = _gamma[getId(x[bi])];
+      ORInt lb =bxi.min,ub = bxi.max;
+      ORInt mp = lb + (ub - lb)/2;
+      [self try: ^{ [self lthen:x[bi] with:mp+1];}
+            alt: ^{ [self gthen:x[bi] with:mp];}];
+   }
+}
+
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
       CPIntVar* xi = _gamma[getId(x[i])];
-      while (!bound(xi)) { 
+      while (!bound(xi)) {
          ORInt m = minDom(xi);
          [_search try: ^{ [self labelImpl: xi with: m]; }
                   alt: ^{ [self  diffImpl: xi with: m]; }
@@ -703,6 +850,35 @@
    } while(true);
 }
 
+-(void) select:(id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body
+{
+   const ORInt sz = x.range.size;
+   id<CPIntVar> cx[sz];
+   for(ORInt i=0;i < sz;i++)
+      cx[i]  = _gamma[x[i + x.range.low].getId];
+   id<ORRandomStream> tie = [ORFactory randomStream:_engine];
+   ORDouble     sd = MAXDBL;
+   ORInt        bi = -1;
+   ORLong bestRand = 0x7fffffffffffffff;
+   for(ORInt i=0;i<sz;i++) {
+      if (cx[i].bound) continue;
+      ORDouble cds = f(i);
+      if (cds < sd) {
+         sd = cds;
+         bi = i;
+         bestRand = [tie next];
+      } else if (cds==sd) {
+         ORLong nr = [tie next];
+         if (nr < bestRand) {
+            bi = i;
+            bestRand = nr;
+         }
+      }
+   }
+   if (bi == -1)
+      return;
+   body(bi + x.range.low);
+}
 
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
@@ -718,7 +894,9 @@
    // [ldm] All four objects below are on the memory trail (+range of selector)
    // Note, the two mutables are created during the search, hence never concretized.
    id<CPIntVarArray> cav = [CPFactory intVarArray:self range:av.range with:^id<CPIntVar>(ORInt i) {
-      return _gamma[av[i].getId];
+      CPIntVar* sv =_gamma[av[i].getId];
+      assert([sv isKindOfClass:[CPIntVar class]]);
+      return sv;
    }];
 
    id<ORSelect> select = [ORFactory selectRandom: _engine
@@ -781,7 +959,7 @@
    id<CPIntVar> x = _gamma[mx.getId];
    while (![x bound]) {
       ORInt m = [x min];
-      [_search try: ^{ [self label: mx with: m]; }
+      [_search try: ^{  [self label: mx with: m]; }
                alt: ^{ [self  diff: mx with: m]; }
       ];
    }
@@ -838,22 +1016,22 @@
    return indexFound;
 }
 
--(void) label: (id<ORIntVar>) v by: (ORInt2Double) o1 then: (ORInt2Double) o2
+-(void) label: (id<ORIntVar>) var by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
-   id<CPIntVar> x = _gamma[v.getId];
+   id<CPIntVar> x = _gamma[getId(var)];
    while (![x bound]) {
-      ORInt v = [self selectValueImpl: x by: o1 then: o2];
-      [self try: ^() { [self labelImpl: x with: v]; }
-            alt: ^() { [self diffImpl: x with: v]; }];
+      ORInt val = [self selectValueImpl: x by: o1 then: o2];
+      [self try: ^() { [self label: var with: val]; }
+            alt: ^() { [self diff: var with: val]; }];
    }
 }
--(void) label: (id<ORIntVar>) v by: (ORInt2Double) o
+-(void) label: (id<ORIntVar>) var by: (ORInt2Double) o
 {
-   id<CPIntVar> x = _gamma[v.getId];
+   id<CPIntVar> x = _gamma[getId(var)];
    while (![x bound]) {
-      ORInt v = [self selectValueImpl: x by: o];
-      [self try: ^() { [self labelImpl: x with: v]; }
-            alt: ^() { [self diffImpl: x with: v]; }];
+      ORInt val = [self selectValueImpl: x by: o];
+      [self try: ^() { [self label: var with: val]; }
+            alt: ^() { [self diff: var with: val]; }];
    }
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
@@ -888,6 +1066,10 @@
 -(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
    return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
+}
+-(void) realLabel: (id<ORRealVar>) var with: (ORDouble) val
+{
+   [self realLabelImpl:_gamma[var.getId] with:val];
 }
 -(void) realLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
@@ -1062,6 +1244,16 @@
 {
    return [(id<ORRealVar>)_gamma[x.getId] doubleValue];
 }
+-(ORDouble) paramValue: (id<ORRealParam>)x
+{
+   id<CPRealParam> p = _gamma[x.getId];
+   return [p value];
+}
+-(void) param: (id<ORRealParam>)p setValue: (ORDouble)val
+{
+   id<CPRealParam> param = _gamma[p.getId];
+   [param setValue: val];
+}
 -(void)  assignRelaxationValue: (ORDouble) f to: (id<ORRealVar>) x
 {
    [_gamma[x.getId] assignRelaxationValue: f];
@@ -1115,24 +1307,30 @@
       [self labelHeuristic:h];
    }];
     [_engine open];
-    _closed = NO;
 }
 
 -(void) search:(void*(^)())stask
+{
+   [self solve:^{
+      id<ORSTask> theTask = (id<ORSTask>)stask();
+      [theTask execute];
+   }];
+   [_engine open];
+}
+
+-(void) searchAll:(void*(^)())stask
 {
    [self solveAll:^{
       id<ORSTask> theTask = (id<ORSTask>)stask();
       [theTask execute];
    }];
    [_engine open];
-   _closed = NO;
 }
 @end
 
 /******************************************************************************************/
 /*                                   CPSolver                                             */
 /******************************************************************************************/
-
 
 @implementation CPINCModel {
    id<ORModelMappings> _maps;
@@ -1162,7 +1360,7 @@
                                     into: self];
         else
             [ORFlatten flatten: c into:self];
-        return ORSuspend;
+        return [_engine currentStatus];
     }, ^ORStatus {
         return ORFailure;
     });
@@ -1248,6 +1446,7 @@
 {
    _trail = [ORFactory trail];
    _mt    = [ORFactory memoryTrail];
+   _closed = makeTRInt(_trail, NO);
    _engine = [CPFactory engine: _trail memory:_mt];
    return [self initCPSolverWithEngine: _engine];
 }
@@ -1256,8 +1455,8 @@
    self = [super initCPCoreSolver];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-                                                                    rootControllerClass: [ORDFSController class]
-                                                                  nestedControllerClass: [ORDFSController class]];
+                                                                    rootControllerClass: [ORDFSController proto]
+                                                                  nestedControllerClass: [ORDFSController proto]];
    _search = [ORExplorerFactory explorer: engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
@@ -1348,6 +1547,13 @@
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
+-(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce:^{ [var updateInterval:createORI1(val)];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
 -(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
 {
    ORStatus status = [_engine enforce:^{ [var updateMax:val];}];
@@ -1376,11 +1582,12 @@
    self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
    _mt   = [ORFactory memoryTrail];
+   _closed = makeTRInt(_trail, NO);
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-                                                                    rootControllerClass: [ORDFSController class]
-                                                                  nestedControllerClass: [ORDFSController class]];
+                                                                    rootControllerClass: [ORDFSController proto]
+                                                                  nestedControllerClass: [ORDFSController proto]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
@@ -1395,23 +1602,24 @@
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-                                                                    rootControllerClass: [ORSemDFSControllerCSP class]
-                                                                  nestedControllerClass: [ORSemDFSControllerCSP class]];
+                                                                    rootControllerClass: [ORSemDFSControllerCSP proto]
+                                                                  nestedControllerClass: [ORSemDFSControllerCSP proto]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
    return self;
 }
--(id<CPSemanticProgram>) initCPSemanticSolver: (Class) ctrlClass
+-(id<CPSemanticProgram>) initCPSemanticSolver: (id<ORSearchController>) ctrlProto
 {
    self = [super initCPCoreSolver]; 
    _trail = [ORFactory trail];
    _mt    = [ORFactory memoryTrail];
+   _closed = makeTRInt(_trail, NO);
    _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
-                                                                    rootControllerClass: [ORSemDFSControllerCSP class]
-                                                                  nestedControllerClass: ctrlClass];
+                                                                    rootControllerClass: [ORSemDFSControllerCSP proto]
+                                                                  nestedControllerClass: ctrlProto];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
@@ -1459,10 +1667,33 @@
    [self gthenImpl: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory gEqualc:self var:var to:val+1]];
 }
+-(void) lthen: (id<ORIntVar>) var double: (ORDouble) val
+{
+   ORInt iVal = rint(ceil(val));
+   [self lthenImpl: _gamma[var.getId] with: iVal];
+   [_tracer addCommand: [ORFactory lEqualc:self var:var to:iVal-1]];
+}
+-(void) gthen: (id<ORIntVar>) var double: (ORDouble) val
+{
+   ORInt iVal = rint(floor(val));
+   [self gthenImpl: _gamma[var.getId] with: iVal];
+   [_tracer addCommand: [ORFactory gEqualc:self var:var to:iVal+1]];
+}
+-(void) realLabel:(id<ORRealVar>)var with:(ORDouble)val
+{
+   [self realLabelImpl: _gamma[var.getId] with: val];
+   [_tracer addCommand: [ORFactory realEqualc:self var:var to:val]];
+}
+
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine enforce: ^ {[var bind: val];}];
+   ORStatus status = [_engine enforce: ^ {
+      bindDom((id)var, val);
+      //[var bind: val];
+   }];
    if (status == ORFailure) {
+      if ([_engine isPropagating])
+         failNow();
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
@@ -1508,6 +1739,42 @@
    ORStatus status = [_engine enforce:^ { [[var domain] setBit:i to:val for:var];}];
    if (status == ORFailure)
       [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce: ^ {
+      [var updateInterval:createORI1(val)];
+   }];
+   if (status == ORFailure) {
+      //[_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   //[_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
+}
+-(void) realLthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce: ^ {
+      [var updateMax:val];
+   }];
+   if (status == ORFailure) {
+      //[_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   //[_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
+}
+-(void) realGthenImpl: (id<CPRealVar>) var with: (ORDouble) val
+{
+   ORStatus status = [_engine enforce: ^ {
+      [var updateMin:val];
+   }];
+   if (status == ORFailure) {
+      //[_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   //[_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
 @end
@@ -1565,11 +1832,11 @@
 }
 +(id<CPSemanticProgramDFS>) semanticSolverDFS
 {
-   return [[CPSemanticSolver alloc] initCPSemanticSolverDFS];
+   return [[[CPSemanticSolver alloc] initCPSemanticSolverDFS] autorelease];
 }
-+(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
++(id<CPSemanticProgram>) semanticSolver: (id<ORSearchController>) ctrlProto
 {
-   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
+   return [[[CPSemanticSolver alloc] initCPSemanticSolver: ctrlProto] autorelease];
 }
 @end
 

@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!--Created by COMET/XML-->
+<scene>
+   <actors>
+      <actor id="6" >
+         <name>Anderson</name>
+         <fee>8770</fee>
+      </actor>
+      <actor id="4" >
+         <name>Brown</name>
+         <fee>7562</fee>
+      </actor>
+      <actor id="1" >
+         <name>Casta</name>
+         <fee>25043</fee>
+      </actor>
+      <actor id="5" >
+         <name>Hacket</name>
+         <fee>9381</fee>
+      </actor>
+      <actor id="7" >
+         <name>McDougal</name>
+         <fee>5788</fee>
+      </actor>
+      <actor id="8" >
+         <name>Mercer</name>
+         <fee>7423</fee>
+      </actor>
+      <actor id="3" >
+         <name>Murphy</name>
+         <fee>4085</fee>
+      </actor>
+      <actor id="0" >
+         <name>Patt</name>
+         <fee>26481</fee>
+      </actor>
+      <actor id="2" >
+         <name>Scolaro</name>
+         <fee>30310</fee>
+      </actor>
+      <actor id="9" >
+         <name>Spring</name>
+         <fee>3303</fee>
+      </actor>
+      <actor id="10" >
+         <name>Thompson</name>
+         <fee>9593</fee>
+      </actor>
+   </actors>
+   <appearances>
+      <scene id="0" >
+         <actor ref="5" />
+      </scene>
+      <scene id="1" >
+         <actor ref="0" />
+         <actor ref="3" />
+         <actor ref="4" />
+         <actor ref="5" />
+      </scene>
+      <scene id="2" >
+         <actor ref="2" />
+         <actor ref="4" />
+         <actor ref="7" />
+         <actor ref="8" />
+      </scene>
+      <scene id="3" >
+         <actor ref="1" />
+         <actor ref="8" />
+      </scene>
+      <scene id="4" >
+         <actor ref="0" />
+         <actor ref="6" />
+         <actor ref="7" />
+         <actor ref="8" />
+         <actor ref="9" />
+      </scene>
+      <scene id="5" >
+         <actor ref="2" />
+         <actor ref="6" />
+         <actor ref="7" />
+         <actor ref="9" />
+         <actor ref="10" />
+      </scene>
+      <scene id="6" >
+         <actor ref="0" />
+         <actor ref="1" />
+      </scene>
+      <scene id="7" >
+         <actor ref="3" />
+         <actor ref="8" />
+      </scene>
+      <scene id="8" >
+         <actor ref="1" />
+         <actor ref="2" />
+         <actor ref="7" />
+         <actor ref="8" />
+         <actor ref="10" />
+      </scene>
+      <scene id="9" >
+         <actor ref="0" />
+         <actor ref="1" />
+         <actor ref="2" />
+         <actor ref="7" />
+      </scene>
+      <scene id="10" >
+         <actor ref="0" />
+      </scene>
+      <scene id="11" >
+         <actor ref="3" />
+         <actor ref="4" />
+         <actor ref="5" />
+         <actor ref="7" />
+         <actor ref="10" />
+      </scene>
+      <scene id="12" >
+         <actor ref="0" />
+         <actor ref="1" />
+         <actor ref="3" />
+         <actor ref="5" />
+      </scene>
+      <scene id="13" >
+         <actor ref="2" />
+         <actor ref="6" />
+      </scene>
+      <scene id="14" >
+         <actor ref="0" />
+         <actor ref="3" />
+         <actor ref="7" />
+         <actor ref="10" />
+      </scene>
+      <scene id="15" >
+         <actor ref="1" />
+         <actor ref="2" />
+         <actor ref="7" />
+         <actor ref="8" />
+      </scene>
+      <scene id="16" >
+         <actor ref="0" />
+         <actor ref="2" />
+         <actor ref="4" />
+      </scene>
+      <scene id="17" >
+         <actor ref="2" />
+         <actor ref="5" />
+         <actor ref="7" />
+         <actor ref="10" />
+      </scene>
+      <scene id="18" >
+         <actor ref="1" />
+      </scene>
+   </appearances>
+</scene>

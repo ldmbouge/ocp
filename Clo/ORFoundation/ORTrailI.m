@@ -445,7 +445,7 @@ ORInt trailMagic(ORTrailI* trail)
 @end
 
 @implementation ORMemoryTrailI {
-   id __strong* __strong _tab;
+   id __strong*  _tab;
    ORInt _mxs;
    ORInt _csz;
 }
@@ -484,6 +484,14 @@ ORInt trailMagic(ORTrailI* trail)
 {
    _tab = realloc(_tab, sizeof(id) * _mxs * 2);
    _mxs = _mxs * 2;
+}
+-(void)resizeTo:(ORInt)sz
+{
+   ORInt mx = _mxs;
+   while (mx < sz)
+      mx <<= 1;
+   _tab = realloc(_tab, sizeof(id) * mx);
+   _mxs = mx;
 }
 -(id)track:(id)obj
 {
@@ -539,9 +547,8 @@ ORInt trailMagic(ORTrailI* trail)
    for(i = 0;i < h && _tab[i] == t->_tab[i];i++);
    while(_csz != i)
       [_tab[--_csz] release];
+   [self resizeTo:t->_mxs];
    while(_csz < t->_csz) {
-      if (_csz >= _mxs)
-         [self resize];
       assert(t->_tab[i] != nil);
       _tab[_csz++] = [t->_tab[i++] retain];
    }

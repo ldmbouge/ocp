@@ -35,7 +35,6 @@
    _sz  = 0;
    return self;
 }
-
 - (void) dealloc
 {
    //NSLog(@"SemDFSController %p dealloc called...\n",self);
@@ -46,6 +45,35 @@
    free(_cpTab);
    [super dealloc];
 }
++(id<ORSearchController>)proto
+{
+   return [[ORSemDFSController alloc] initTheController:nil engine:nil posting:nil];
+}
+-(id<ORSearchController>)clone
+{
+   ORSemDFSController* c = [[ORSemDFSController alloc] initTheController:_tracer engine:_engine posting:_model];
+   c->_atRoot = [_atRoot grab];
+   free(c->_tab);
+   free(c->_cpTab);
+   c->_tab = malloc(sizeof(NSCont*)*_mx);
+   c->_cpTab = malloc(sizeof(id<ORCheckpoint>)*_mx);
+   for(ORInt k=0;k<_sz;k++) {
+      c->_tab[k]   = [_tab[k] grab];
+      c->_cpTab[k] = [_cpTab[k] grab];
+   }
+   c->_sz = _sz;
+   c->_mx = _mx;
+   return c;
+}
+-(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine pItf:(id<ORPost>)pItf
+{
+   [_tracer release];
+   _tracer = [tracer retain];
+   _engine = engine;
+   _model  = pItf;
+   return self;
+}
+
 -(void)setup
 {
    _atRoot = [_tracer captureCheckpoint];
@@ -117,18 +145,18 @@
 -(ORHeist*)steal
 {
    if (_sz >= 1) {
+//      NSCont* c = _tab[_sz - 1];
+//      id<ORCheckpoint> cp = _cpTab[_sz -1];
+
       NSCont* c           = _tab[0];
       id<ORCheckpoint> cp = _cpTab[0];
       for(ORInt i=1;i<_sz;i++) {
          _tab[i-1] = _tab[i];
          _cpTab[i-1] = _cpTab[i];
       }
-      /*
-      NSCont* c = _tab[_sz - 1];
-      id<ORCheckpoint> cp = _cpTab[_sz - 1];
-       */
+
       --_sz;
-      ORHeist* rv = [[ORHeist alloc] initORHeist:c from:cp];
+      ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:[[_engine objective] primalValue]];
       [cp letgo];
       return rv;
    } else return nil;
@@ -136,13 +164,17 @@
 
 -(ORBool)willingToShare
 {
-   BOOL some = _sz >= 2;
+   BOOL some = _sz >= 4;
    //some = some && [_cpTab[0] sizeEstimate] < 10;
    return some;
 }
 @end
 
 @implementation ORSemDFSControllerCSP
++(id<ORSearchController>)proto
+{
+   return [[ORSemDFSControllerCSP alloc] initTheController:nil engine:nil posting:nil];
+}
 -(void) fail
 {
    do {

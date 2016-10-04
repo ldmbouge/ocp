@@ -62,6 +62,9 @@
 {
     [_closureQueue[HIGHEST_PRIO] enQueue: cb cstr: c];
 }
+
+typedef id (*SELPROTO)(id,SEL,...);
+
 static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<CPConstraint>* last)
 {
    *last = forCstr;
@@ -73,7 +76,7 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
          return ORSkip;
       else {
           cstr->_todo = CPChecked;
-          cstr->_propagate(cstr,@selector(propagate));
+          ((SELPROTO)cstr->_propagate)(cstr,@selector(propagate));
       }
    }
    return ORSuspend;

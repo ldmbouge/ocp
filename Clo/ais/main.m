@@ -68,7 +68,6 @@ int main(int argc, const char * argv[])
          NSLog(@"#solutions: %d",nbSolutions);
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(nbSolutions, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         [cp release];
          return res;
       }];
    }

@@ -139,6 +139,19 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPClause : CPCoreConstraint {
+   CPIntVar**        _x;
+   ORLong           _nb;
+   CPIntVar*         _t;
+   TRInt         _nbOne;
+   TRInt        _nbFree;
+}
+-(id)initCPClause:(id)x equal:(id<CPIntVar>)t;
+-(void)post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPSumBoolGeq : CPCoreConstraint {
     CPIntVar**        _x;
     ORLong           _nb;

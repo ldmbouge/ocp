@@ -38,7 +38,6 @@ int oldMain(int argc, const char * argv[])
       id<ORIntVarArray> a = [ORFactory intVarArray: model range: R domain: R];
       id<ORConstraint> cstr = [ORFactory alldifferent: a];
       
-      
       [model add: cstr];
       
       id<CPCommonProgram> cp = [ORFactory createCPProgram:model];

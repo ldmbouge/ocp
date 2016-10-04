@@ -70,7 +70,7 @@
 // pvh: why do we need vars and t and so on.
 -(id<ORIntVarArray>)allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
 // pvh: see question below for the importance of _cv
@@ -110,7 +110,7 @@
    ORInt low = [_cvs low],up = [_cvs up];
    for(int k=low;k <= up;k++) {
       _map[_cvs[k].getId] = k - low;
-      _cv[k - low] = [_cvs[k] constraints];
+      _cv[k - low] = [[_cvs[k] constraints] retain];
    }
    _nbv = len;
    NSArray* allC = [(id)_solver constraints];

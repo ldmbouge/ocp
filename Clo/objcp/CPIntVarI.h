@@ -160,6 +160,7 @@
 @public
    ORInt             _v;
    CPIntVar* _secondary;  // pointer to the original variable (x)
+   TRInt     _done;
 }
 -(CPEQLitView*)initEQLitViewFor:(CPIntVar*)x equal:(ORInt)v;
 -(void)dealloc;
@@ -184,13 +185,14 @@
 
 @interface CPMultiCast : NSObject {
    id<CPIntVarNotifier> __strong* _tab;
-   BOOL                  _tracksLoseEvt;
    ORInt                 _nb;
    ORInt                 _mx;
    UBType*               _loseValIMP;
    UBType*               _minIMP;
    UBType*               _maxIMP;
    CPLiterals*           _literals;
+@public
+   BOOL                  _tracksLoseEvt;
 }
 -(id) initVarMC: (ORInt) n root: (CPIntVar*) root;
 -(void) dealloc;
@@ -205,6 +207,11 @@
 //-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
+
+static inline void setTracksLoseEvt(CPMultiCast* mc,BOOL tle)
+{
+   mc->_tracksLoseEvt = tle;
+}
 
 void bindEvt(CPMultiCast* x,id<CPDom> sender);
 void domEvt(CPMultiCast* x,id<CPDom> sender);

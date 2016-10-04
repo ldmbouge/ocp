@@ -469,11 +469,11 @@
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
-   _result = [_into minimize: [v array] coef: [v coef]];
+    _result = [_into minimize: [v array] coef: [v coef]];
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
-   _result = [_into maximize: [v array] coef: [v coef]];
+    _result = [_into maximize: [v array] coef: [v coef]];
 }
 
 @end

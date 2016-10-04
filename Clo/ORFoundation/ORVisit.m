@@ -87,6 +87,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Table: visit method not defined"]; 
 }
+-(void) visitIntParam: (id<ORIntParam>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "IntParam: visit method not defined"];
+}
+-(void) visitRealParam: (id<ORRealParam>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealParam: visit method not defined"];
+}
 -(void) visitConstraint:(id<ORConstraint>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Constraint: visit method not defined"]; 
@@ -130,6 +138,10 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "AlgebraicConstraint: visit method not defined"]; 
+}
+-(void) visitRealWeightedVar: (id<ORWeightedVar>) cstr;
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealWeightedVar: visit method not defined"];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -230,6 +242,9 @@
 -(void) visitEqual: (id<OREqual>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Equal: visit method not defined"]; 
+}
+-(void) visitSoftNEqual: (id<ORSoftNEqual>)c {
+    @throw [[ORExecutionError alloc] initORExecutionError: "SoftNEqual: visit method not defined"];
 }
 -(void) visitAffine: (id<ORAffine>)c
 {
@@ -359,6 +374,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "HReifySumBoolGEqualc: visit method not defined"];
 }
+-(void) visitClause:(id<ORClause>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Clause: visit method not defined"];
+}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolEqualc: visit method not defined"]; 
@@ -398,6 +417,10 @@
 -(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearLeq: visit method not defined"]; 
+}
+-(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "RealLinearGeq: visit method not defined"];
 }
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c
 {
@@ -482,6 +505,10 @@
 -(void) visitExprLEqualI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ExprLEqualI: visit method not defined"]; 
+}
+-(void) visitExprGEqualI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprGEqualI: visit method not defined"];
 }
 -(void) visitExprSumI: (id<ORExpr>) e
 {
@@ -581,6 +608,8 @@
 -(void) visitIdArray: (id<ORIdArray>) v  {}
 -(void) visitIdMatrix: (id<ORIdMatrix>) v  {}
 -(void) visitTable:(id<ORTable>) v  {}
+-(void) visitIntParam: (id<ORIntParam>) v {}
+-(void) visitFloatParam: (id<ORRealParam>) v {}
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
 -(void) visitGroup:(id<ORGroup>)g {}
@@ -593,6 +622,7 @@
 -(void) visitRegular:(id<ORRegular>) cstr {}
 -(void) visitCardinality: (id<ORCardinality>) cstr  {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr  {}
+-(void) visitRealWeightedVar: (id<ORWeightedVar>) cstr  {}
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr  {}
 -(void) visitLexLeq:(id<ORLexLeq>) cstr  {}
 -(void) visitCircuit:(id<ORCircuit>) cstr  {}
@@ -650,6 +680,7 @@
 -(void) visitReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c {}
 -(void) visitHReifySumBoolEqualc: (id<ORReifySumBoolEqc>) c {}
 -(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c {}
+-(void) visitClause:(id<ORConstraint>)c           {}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c  {}
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c  {}
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c  {}
@@ -661,6 +692,7 @@
 -(void) visitLinearLeq: (id<ORLinearLeq>) c {}
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
 -(void) visitRealLinearLeq: (id<ORRealLinearLeq>) c {}
+-(void) visitRealLinearGeq: (id<ORRealLinearGeq>) c {}
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c {}
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c {}
@@ -684,6 +716,7 @@
 -(void) visitExprEqualI: (id<ORExpr>) e  {}
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}
+-(void) visitExprGEqualI: (id<ORExpr>) e  {}
 -(void) visitExprSumI: (id<ORExpr>) e  {}
 -(void) visitExprProdI: (id<ORExpr>) e  {}
 -(void) visitExprAbsI:(id<ORExpr>) e  {}

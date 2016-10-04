@@ -36,6 +36,7 @@
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemFDSController.h>
+#import <ORFoundation/ORSemBFSController.h>
 #import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORLimit.h>
 #import <ORFoundation/ORParallel.h>
@@ -73,7 +74,7 @@ int st = _setjmp(buf); \
 if (st==0) { \
 ptr = &buf;
 
-#define ONFAIL(rv)  return (rv); \
+#define ONFAIL(rv)  ptr = old;return (rv); \
 } else { \
 ptr = old;
 

@@ -21,8 +21,8 @@ PORTABLE_BEGIN
 @protocol ORIntArray <ORObject>
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
--(id)objectAtIndexedSubscript: (NSUInteger) key;
--(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id)objectAtIndexedSubscript: (NSInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(ORInt) max;
@@ -33,6 +33,7 @@ PORTABLE_BEGIN
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
+-(ORInt) sumWith: (ORInt(^)(ORInt value,int idx))block;
 @end
 
 @protocol ORDoubleArray <ORObject>
@@ -85,9 +86,12 @@ PORTABLE_BEGIN
 -(ORInt) up;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
+-(ORBool) contains: (id)obj;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
+-(id<ORIdArray>) map:(id(^)(id obj, int idx))block;
+-(NSArray*) toNSArray;
 @end
 
 @protocol ORIdMatrix <ORObject>

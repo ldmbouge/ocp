@@ -56,10 +56,12 @@ int main(int argc, const char * argv[])
          
          
          id<CPProgram> cp = [ORFactory createCPProgram:model annotation:notes];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
          __block ORInt nbSol = 0;
          [cp solveAll:^{
             //NSLog(@"MODEL: %@",[[cp engine] model]);
             NSLog(@"searching...");
+            [cp labelHeuristic:h];
             [cp labelArray:x];
 //            @autoreleasepool {
 //               NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];

@@ -96,3 +96,14 @@ typedef struct  {
 -(id<ORTracker>) tracker;
 -(NSMutableSet*) constraints;
 @end
+
+@interface CPRealParamI : ORObject<CPRealParam> {
+    CPEngineI*            _engine;
+    ORDouble               _value;
+}
+-(id)initCPRealParam:(id<CPEngine>)engine initialValue:(ORDouble)v;
+-(CPEngineI*) engine;
+-(CPEngineI*) tracker;
+-(NSMutableSet*) constraints;
+-(ORDouble) value;
+@end

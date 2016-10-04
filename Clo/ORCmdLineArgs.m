@@ -15,7 +15,7 @@
    int           _argc;
    const char**  _argv;
 }
-static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
+static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg",@"SDeg"};
 @synthesize size;
 @synthesize restartRate;
 @synthesize timeOut;
@@ -23,6 +23,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 @synthesize heuristic;
 @synthesize nbThreads;
 @synthesize nArg;
+@synthesize fName;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    ORCmdLineArgs* rv = [[ORCmdLineArgs alloc] init:argc argv:argv];
@@ -42,6 +43,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
    restartRate = 0;
    timeOut = 60;
    nbThreads = 0;
+   fName = @"";
    randomized = NO;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "-q", 2) == 0)
@@ -58,6 +60,8 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
          randomized = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-p",2)==0)
          nbThreads = atoi(argv[k]+2);
+      else if (strncmp(argv[k],"-f",2)==0)
+         fName = [NSString stringWithCString:argv[k]+2 encoding:NSASCIIStringEncoding];
    }
    return self;
 }
@@ -67,7 +71,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 }
 -(void)measure:(struct ORResult(^)())block
 {
-   mallocWatch();
+   //mallocWatch();
    if (randomized)
       [ORStreamManager setRandomized];
    ORLong startWC  = [ORRuntimeMonitor wctime];
@@ -109,8 +113,8 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 {
    switch(nbThreads) {
       case 0: return [ORFactory createCPProgram:model annotation:notes];
-      case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController class]];
-      default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController class]];
+      case 1: return [ORFactory createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
+      default: return [ORFactory createCPParProgram:model nb:nbThreads annotation:notes with:[ORSemDFSController proto]];
    }
 }
 -(id<CPHeuristic>)makeHeuristic:(id<CPProgram>)cp restricted:(id<ORIntVarArray>)x

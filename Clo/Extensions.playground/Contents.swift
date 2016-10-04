@@ -1,10 +1,9 @@
 //: Playground - noun: a place where people can play
 
-import Cocoa
 import ORProgram
 
 extension Array {
-   subscript(i : ORInt) -> T {
+   subscript(i : ORInt) -> Element {
       get {
          return self[Int(i)]
       }
@@ -14,7 +13,7 @@ extension Array {
    }
 }
 
-let a = [1,2,3,4]
+var a = [1,2,3,4]
 
 let i0 : ORInt = 1
 let i1 : ORInt = 2

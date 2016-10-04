@@ -20,13 +20,14 @@
 
 @protocol ORConstraint;
 
-@interface ORCommandList : NSObject<NSCoding,NSCopying> {
+@interface ORCommandList : NSObject<NSCoding,NSCopying,NSFastEnumeration> {
    struct CNode* _head;
    @package
    ORInt _ndId;  // node id
    ORInt _fh;
    ORInt _th;
    ORInt _cnt;
+   ORBool _frozen;
 }
 +(id)newCommandList:(ORInt)node from:(ORInt)fh to:(ORInt)th;
 -(ORCommandList*) initCPCommandList: (ORInt) node from:(ORInt)fh to:(ORInt)th;
@@ -53,5 +54,5 @@ inline static ORCommandList* grab(ORCommandList* l)
 }
 inline static ORBool commandsEqual(ORCommandList* c1,ORCommandList* c2)
 {
-   return c1->_ndId == c2->_ndId;
+   return c1->_ndId == c2->_ndId && c1->_fh == c2->_fh && c1->_th == c2->_th;
 }
