@@ -310,8 +310,8 @@ return 0;
    double totalTime, searchTime;
    mallocWatch();
    
-   id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:_model];
-//   id<CPProgram,CPBV> cp = (id<CPProgram,CPBV>)[ORFactory createCPProgram:_model];
+//   id<CPSemanticProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS:_model];
+   id<CPProgram,CPBV> cp = (id<CPProgram,CPBV>)[ORFactory createCPProgram:_model];
 //   id<CPEngine> engine = [cp engine];
 //   id<ORExplorer> explorer = [cp explorer];
 //   NSArray* allvars = [[[cp engine] model] variables];
@@ -331,7 +331,7 @@ return 0;
 
    searchStart = clock();
    [cp solve:^{
-//      [cp limitTime:600000 in: ^{
+//      [cp limitTime:300000 in: ^{
 //      id<CPEngine> engine = [cp engine];
 //      NSLog(@"%@",[[cp engine] model]);
 //      NSLog(@"%@",_model);

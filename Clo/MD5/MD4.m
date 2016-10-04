@@ -205,7 +205,7 @@
    [_m add:[ORFactory bit:digest[3] eq:digestVars[3]]];
    
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 //   id<ORBasicModel> model = [engine model];
@@ -292,7 +292,7 @@
                }
             break;
          case BVFF:
-            [cp labelBitVarHeuristicCDCL:h];
+            [cp labelBitVarHeuristic:h];
             break;
             
 
@@ -545,8 +545,8 @@
    *min = 0;
    *max = 0xFFFFFFFF;
    
-id<ORBitVar> t0 = [ORFactory bitVar:_m low:min up:max bitLength:32];
-id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
+   id<ORBitVar> t0 = [ORFactory bitVar:_m low:min up:max bitLength:32];
+   id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
    //_m.post(BitXor<CP>(x,y,t0));
    [_m add:[ORFactory bit:x xor:y eq:t0]];
    //_m.post(BitXor<CP>(t0,z,t1));

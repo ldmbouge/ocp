@@ -673,7 +673,7 @@ return self;
                //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
                //_implications[i*BITSPERWORD+j] = constraint;
                assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
-//               NSLog(@"Updating %lx[%d] for %@ \@ %ld",self, i*BITSPERWORD+j,constraint,[_engine getLevel]);
+//               NSLog(@"Updating %@[%d] for %@ \@ %ld",self, i*BITSPERWORD+j,constraint,[_engine getLevel]);
             }
             
          }

@@ -1,3 +1,4 @@
+
 /************************************************************************
  Mozilla Public License
  
@@ -19,8 +20,6 @@
 #define ISFALSE(up, low) ((~up) & (~low))
 
 #define UIMIN(a,b) ((a < b) ? a : b)
-
-
 
 NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int bitLength)
 {
@@ -92,6 +91,283 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int bitLength)
 
 }
 
+__attribute__((noinline))
+static CPBitAssignment** enqueue(CPBitAssignment** queue, ORInt* front, ORInt* back, ORUInt* cap, CPBitAssignment* element)
+{
+   ORBool inQueue = false;
+   CPBitAssignment** newQueue = queue;
+   
+   if(*front != -1){
+      for (int k=*front; k<=*back; k++) {
+         if ((element->var == queue[k%(*cap)]->var) &&
+             (element->index == queue[k%(*cap)]->index) &&
+             (element->value == queue[k%(*cap)]->value)) {
+            inQueue = true;
+            break;
+         }
+      }
+   }
+   if (!inQueue) {//add antecedent to queue
+      //expand queue if full
+      if ((((*back)-(*front))%(*cap))+1 >= *cap) {
+         newQueue = malloc(sizeof(CPBitAssignment*)*(*cap)*2);
+         for(int k=0;k<(*cap);k++)
+            newQueue[k] = queue[(k+*front)%(*cap)];
+         free(queue);
+         *front=0;
+         *back=*cap-1;
+         *cap <<= 1;
+      }
+      
+      (*back)++;
+      if(*front==-1)
+         *front=*back;
+      newQueue[(*back)%(*cap)] = element;
+   }
+   else{
+      free(element);
+   }
+   return newQueue;
+}
+
+__attribute__((noinline))
+static CPBitAssignment* dequeue(CPBitAssignment** queue, ORInt* front, ORInt* back, ORUInt* cap)
+{
+   CPBitAssignment* temp = queue[(*front)%(*cap)];
+
+   if(*front==*back)
+      *front=*back=-1;
+   else
+      (*front)++;
+   
+   return temp;
+}
+
+__attribute__((noinline))
+static ORBool member(CPBitAssignment** stack, ORUInt* size, CPBitAssignment* element)
+{
+   for(int i=0;i<(*size);i++)
+   {
+      if ((element->var == stack[i]->var) &&
+          (element->index == stack[i]->index) &&
+          (element->value == stack[i]->value)) {
+         
+         return true;
+      }
+   }
+   return false;
+}
+
+__attribute__((noinline))
+static CPBitAssignment** push(CPBitAssignment** stack, ORUInt* size, ORUInt* cap, CPBitAssignment* element)
+{
+   if(member(stack,size,element))
+      return stack;
+   
+   CPBitAssignment** newStack = stack;
+   if (*size >= *cap) {
+      newStack = malloc(sizeof(CPBitAssignment*)*(*cap)*2);
+      for (int j = 0; j<*size; j++) {
+         newStack[j] = stack[j];
+      }
+      free (stack);
+      (*cap) <<= 1;
+   }
+   newStack[*size] = element;
+   (*size)++;
+   return newStack;
+}
+
+__attribute__((noinline))
+void analyzeConflictUIP(CPLearningEngineI* engine, CPBitAssignment* conflict, CPCoreConstraint* constraint)
+{
+   CPBitAssignment** queue;
+   CPBitAssignment** conflictVars;
+   CPBitAssignment** visited;
+   
+   ORUInt level = [engine getLevel];
+   
+   CPBitAntecedents* antecedents = [constraint getAntecedentsFor:conflict];
+   CPCoreConstraint* c;// = [(CPBitVarI*)conflict->var getImplicationForBit:conflict->index];
+   
+   ORUInt qcap = antecedents->numAntecedents > 8 ? antecedents->numAntecedents : 8;
+   ORUInt vcap = 8;
+   
+   ORInt qfront = -1;
+   ORInt qback = -1;
+   ORUInt vsize = 0;
+   
+   queue = malloc(sizeof(CPBitAssignment*)*qcap);
+   visited = malloc(sizeof(CPBitAssignment*)*vcap);
+   
+   
+   ORUInt capConflictVars = qcap;
+   ORUInt numConflictVars = 0;
+   conflictVars  = malloc(sizeof(CPBitAssignment*)*capConflictVars);
+   CPBitAssignment* temp;
+   ORInt setLevel;
+   ORUInt numAtLevel=0;
+   
+   for (int i=0; i<antecedents->numAntecedents; i++) {
+      temp = antecedents->antecedents[i];
+      if(member(visited,&vsize,temp))
+      {
+         free(temp);
+         continue;
+      }
+      setLevel =[temp->var getLevelBitWasSet:temp->index];
+      visited = push(visited, &vsize, &vcap, temp);
+      if(setLevel==level)
+      {         //bit was set on this level, add to the queue
+         queue = enqueue(queue, &qfront, &qback, &qcap, temp);
+         numAtLevel++;
+      }
+      else if (setLevel != -1)
+      {
+         //bit was set at a previous level, add it to the nogood
+         conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
+      }
+   }
+   
+   free(antecedents->antecedents);
+   free(antecedents);
+//   NSLog(@"%@",c);
+   c = [(CPBitVarI*)conflict->var getImplicationForBit:conflict->index];
+   if(c!=NULL)
+   {
+      antecedents = [c getAntecedentsFor:conflict];
+      if((antecedents == NULL) || (antecedents->numAntecedents ==0)) {
+         if (antecedents){
+            free(antecedents->antecedents);
+            free(antecedents);
+         }
+      }
+      else{
+         for (int i=0; i<antecedents->numAntecedents; i++) {
+            temp = antecedents->antecedents[i];
+            if(member(visited,&vsize,temp))
+            {
+               free(temp);
+               continue;
+            }
+            setLevel =[temp->var getLevelBitWasSet:temp->index];
+            visited = push(visited, &vsize, &vcap, temp);
+            if(setLevel==level)
+            {
+               //bit was set on this level, add to the queue
+               queue = enqueue(queue, &qfront, &qback, &qcap, temp);
+               numAtLevel++;
+            }
+            else if (setLevel != -1)
+            {
+               //bit was set at a previous level, add it to the nogood
+               conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
+            }
+         }
+         free(antecedents->antecedents);
+         free(antecedents);
+      }
+   }
+   else if ([conflict->var getLevelBitWasSet:conflict->index] != -1)
+   {
+       conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, conflict);
+   }
+   
+   while (numAtLevel > 1){
+      //get antecedents of first assignment in queue
+      temp = dequeue(queue, &qfront, &qback, &qcap);
+      if([temp->var getLevelBitWasSet:temp->index] == level)
+         numAtLevel--;
+      c = [(CPBitVarI*)temp->var getImplicationForBit:temp->index];
+      if(c==NULL){
+         //bit was set by choice
+         if ([temp->var getLevelBitWasSet:temp->index] != -1)
+            conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
+         continue;
+      }
+      antecedents  = [c getAntecedentsFor:temp];
+      if((antecedents == NULL) || (antecedents->numAntecedents ==0)) {
+         if (antecedents){
+            free(antecedents->antecedents);
+            free(antecedents);
+         }
+         if ([temp->var getLevelBitWasSet:temp->index] != -1)
+            conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
+         continue;
+      }
+      //Process all of the antecedents at this level until there is only one
+      for (int i=0; i<antecedents->numAntecedents; i++) {
+         temp = antecedents->antecedents[i];
+         if(member(visited,&vsize, temp))
+         {
+            free(temp);
+            continue;
+         }
+         setLevel =[temp->var getLevelBitWasSet:temp->index];
+         visited = push(visited, &vsize, &vcap, temp);
+         if(setLevel==level)
+         {
+            //bit was set on this level, add to the queue
+            queue = enqueue(queue, &qfront, &qback, &qcap, temp);
+            numAtLevel++;
+         }
+         else if (setLevel != -1)
+         {
+            //bit was set at a previous level, add it to the nogood
+            conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
+         }
+      }
+      free(antecedents->antecedents);
+      free(antecedents);
+   }
+//   while(numAtLevel > 0)
+//   {
+//      temp = dequeue(queue, &qfront, &qback, &qcap);
+//      if ([temp->var getLevelBitWasSet:temp->index] != -1)
+//         conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
+//      if([temp->var getLevelBitWasSet:temp->index] ==  level)
+//         numAtLevel--;
+//   }
+   if(qfront == -1)
+      NSLog(@"Missing antecedent at this level.");
+   
+   while(qfront != -1){
+      temp = dequeue(queue, &qfront, &qback, &qcap);
+      //if ([temp->var getLevelBitWasSet:temp->index] != -1)
+         conflictVars = push(conflictVars, &numConflictVars, &capConflictVars, temp);
+   }
+   
+   if (numConflictVars > 0) {
+      //      NSLog(@"Adding constraint to constraint store\n");
+      CPBitAntecedents* final = malloc(sizeof(CPBitAntecedents));
+      CPBitAssignment** finalVars = malloc(sizeof(CPBitAssignment*)*(numConflictVars));
+      ORUInt backjumpLevel = -1;
+      for (int i=0; i<numConflictVars; i++) {
+         CPBitAssignment* a = malloc(sizeof(CPBitAssignment));
+         a->var = conflictVars[i]->var;
+         a->index = conflictVars[i]->index;
+         a->value = conflictVars[i]->value;
+         finalVars[i] = a;
+         if ([finalVars[i]->var getLevelBitWasSet:finalVars[i]->index] >= 5)
+            backjumpLevel = UIMIN(backjumpLevel,[finalVars[i]->var getLevelBitWasSet:finalVars[i]->index]);
+      }
+      final->antecedents = finalVars;
+      final->numAntecedents = numConflictVars;
+      //CPCoreConstraint*
+      c = [CPFactory bitConflict:final];
+//      NSLog(@"Backjump level: %d",backjumpLevel);
+      [(CPLearningEngineI*)engine addConstraint:c withJumpLevel:backjumpLevel];
+   }
+   else{
+      NSLog(@"No choices found in tracing back antecedents");
+   }
+//   NSLog(@"New Constraint: %@",c);
+   free(queue);
+   free(conflictVars);
+   for(int i=0;i<vsize;i++)
+      free(visited[i]);
+   free(visited);
+}
 
 //fix visited set
 void analyzeConflict(CPLearningEngineI* engine, CPBitAssignment* conflict, CPCoreConstraint* constraint)
@@ -105,24 +381,6 @@ void analyzeConflict(CPLearningEngineI* engine, CPBitAssignment* conflict, CPCor
    CPBitAssignment* var;
 //   ORBool haveVisited = false;
    ORBool inQueue = false;
-   
-   
-   
-//   struct task_basic_info info;
-//   mach_msg_type_number_t size = sizeof(info);
-//   kern_return_t kerr = task_info(mach_task_self(),
-//                                  TASK_BASIC_INFO,
-//                                  (task_info_t)&info,
-//                                  &size);
-//   if( kerr == KERN_SUCCESS ) {
-//      NSLog(@"Memory in use (in MB): %f", (double)info.resident_size/1048576);
-//   } else {
-//      NSLog(@"Error with task_info(): %s", mach_error_string(kerr));
-//   }
-
-   
-   
-   
    
    CPBitAntecedents* antecedents = [constraint getAntecedentsFor:conflict];
    CPCoreConstraint* c = [(CPBitVarI*)conflict->var getImplicationForBit:conflict->index];
@@ -152,7 +410,7 @@ void analyzeConflict(CPLearningEngineI* engine, CPBitAssignment* conflict, CPCor
       antecedents->antecedents = allAntecedents;
       antecedents->numAntecedents++;
    }
-      
+   
    if (!antecedents)
       return;
    
@@ -415,6 +673,7 @@ void analyzeConflict(CPLearningEngineI* engine, CPBitAssignment* conflict, CPCor
 //   [visitedSet release];
    
    [visitedSet removeAllObjects];
+   [visitedSet release];
    
 //   for (int i=0; i<vsize; i++) {
 //      if(visited[i]->var != NULL){
@@ -426,18 +685,6 @@ void analyzeConflict(CPLearningEngineI* engine, CPBitAssignment* conflict, CPCor
 //   free(conflict);
 //   NSLog(@"Analysis complete.");
 //   NSLog(@"%d nodes visited.",vsize);
-   
-   
-   
-//   kerr = task_info(mach_task_self(),
-//                                  TASK_BASIC_INFO,
-//                                  (task_info_t)&info,
-//                                  &size);
-//   if( kerr == KERN_SUCCESS ) {
-//      NSLog(@"Memory in use (in MB): %f", (double)info.resident_size/1048576);
-//   } else {
-//      NSLog(@"Error with task_info(): %s", mach_error_string(kerr));
-//   }
 
 }
 
@@ -472,9 +719,6 @@ ORBool checkDomainConsistency(CPBitVarI* var, unsigned int* low, unsigned int* u
             if (index >= bitlength)
                break;
             if (mask & conflicts[i]) {
-            
-               
-               
 //               NSLog(@"Analyzing conflict in constraint %@ for variable %lx[%d]",constraint,a->var,a->index);
 //               NSLog(@"\tAntecedents:");
 //               for (int x=0; x<conflictAntecedents->numAntecedents; x++) {
@@ -485,7 +729,11 @@ ORBool checkDomainConsistency(CPBitVarI* var, unsigned int* low, unsigned int* u
                   CPBitAssignment* a = malloc(sizeof(CPBitAssignment));
                   a->var = var;
                   a->index = i*BITSPERWORD+j;
-                  analyzeConflict((CPLearningEngineI*)[var engine], a, constraint);
+                  if(![var isFree:a->index])
+                     a->value = [var getBit:a->index];
+                  else
+                     a->value = 0;
+                  analyzeConflictUIP((CPLearningEngineI*)[var engine], a, constraint);
                }
 //               NSLog(@"");
                
@@ -495,10 +743,10 @@ ORBool checkDomainConsistency(CPBitVarI* var, unsigned int* low, unsigned int* u
          }
       }
    }
-   if(isConflict){
-//      NSLog(@"%@", constraint);
-      failNow();
-   }
+//   if(isConflict){
+////      NSLog(@"%@", constraint);
+//      failNow();
+//   }
    
    return isConflict;
 }
@@ -763,6 +1011,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    id<CPConstraint> o = [[CPBitNotb alloc] initCPBitNotb:x eval:r];
    [[x engine] trackMutable:o];
    return o;
+   
+   
 }
 +(id<CPConstraint>) bitEqualb:(CPBitVarI*)x equal:(CPBitVarI*) y eval:(CPBitVarI*)r
 {
@@ -1016,17 +1266,19 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          newYLow[i] &= bitMask;
       }
    }
-   ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
-   ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
 
-   if(xFail || yFail)
-      failNow();
 
 //   NSLog(@"BitNOT propagated");
 //   NSLog(@"x = %@",_x);
 //   NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, [_x bitLength]));
 //   NSLog(@"y = %@",_y);
 //   NSLog(@"newY = %@\n\n",bitvar2NSString(newYLow, newYUp, [_y bitLength]));
+   
+   ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
+   ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
+
+   if(xFail || yFail)
+      failNow();
 
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
@@ -1198,6 +1450,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 //   NSLog(@"%@",bitvar2NSString(newYLow, newYUp, 32));
 //   NSLog(@"%@",bitvar2NSString(newZLow, newZUp, 32));
 
+   
    ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
    
    ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
@@ -1206,7 +1459,6 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
    if (xFail || yFail || zFail)
       failNow();
-   
    
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
@@ -1374,18 +1626,16 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    }
    
    ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
-   
    ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
-   
    ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, wordLength, self);
    
    if (xFail || yFail || zFail)
       failNow();
 
-   
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
    [_z setUp:newZUp andLow:newZLow for:self];
+   
    
 #ifdef BIT_DEBUG
    NSLog(@"      X =%@",_x);
@@ -1561,6 +1811,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       newYLow[i] =  (~zUp[i]._val & xLow[i]._val) | (zLow[i]._val & ~xUp[i]._val) | yLow[i]._val;
       
    }
+
    ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
    ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
    ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, wordLength, self);
@@ -1725,6 +1976,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [_y setUp:newYUp];
    [_z setLow:newZLow];
    [_z setUp:newZUp];
+   
 }
 @end
 
@@ -1771,7 +2023,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    if (assignment->var == _x) {
       index = assignment->index + _places;
-      if((index < len) && ![_y isFree:index]){
+      if((index < len) && ![_y isFree:index])
+      {
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->var = _y;
          vars[ants->numAntecedents]->index = index;
@@ -1779,9 +2032,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          ants->numAntecedents++;
       }
    }
-   else{
+   else
+   {
       index = assignment->index -_places;
-      if ((index >= 0) && ![_x isFree:index]) {
+      if ((index >= 0) && ![_x isFree:index])
+      {
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->var = _x;
          vars[ants->numAntecedents]->index = index;
@@ -1882,6 +2137,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
+   
 }
 @end
 
@@ -2022,7 +2278,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       
       [_x setUp:newXUp andLow:newXLow for:self];
       [_y setUp:newYUp andLow:newYLow for:self];
-
+      
    }
 }
 @end
@@ -2071,7 +2327,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    if (assignment->var == _x) {
       index = assignment->index -_places;
-      if((index >= 0) && ![_y isFree:index]){
+      if((index >= 0) && ![_y isFree:index])
+      {
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->var = _y;
          vars[ants->numAntecedents]->index = index;
@@ -2081,7 +2338,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    }
    else{
       index = assignment->index + _places;
-      if ((index < len) && ![_x isFree:index]) {
+      if ((index < len) && ![_x isFree:index])
+      {
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->var = _x;
          vars[ants->numAntecedents]->index = index;
@@ -2174,9 +2432,10 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if ( xFail || yFail) {
       failNow();
    }
-   
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
+   
+   
 }
 @end
 
@@ -2411,6 +2670,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
+   
 }
 @end
 
@@ -2606,7 +2866,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
-
+   
 #ifdef BIT_DEBUG
    NSLog(@"         X =%@",_x);
    NSLog(@" ROTL %d  Y =%@",_places,_y);
@@ -2633,6 +2893,9 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [string appendString:[NSString stringWithFormat:@"%@ ",_x]];
    [string appendString:[NSString stringWithFormat:@"and %@ ",_y]];
    [string appendString:[NSString stringWithFormat:@"and %@\n",_z]];
+   [string appendString:[NSString stringWithFormat:@"with Carry In %@\n",_cin]];
+   [string appendString:[NSString stringWithFormat:@"and Carry Out%@\n",_cout]];
+   
    
    return string;
 }
@@ -2953,13 +3216,13 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    while (change) {
 
-      //       NSLog(@"propagating sum constraint");
-      //       NSLog(@" Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, bitLength));
-      //       NSLog(@" X    =%@",bitvar2NSString(prevXLow, prevXUp, bitLength));
-      //       NSLog(@"+Y    =%@",bitvar2NSString(prevYLow, prevYUp, bitLength));
-      //       NSLog(@"_______________________________________________________");
-      //       NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength));
-      //       NSLog(@" Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, bitLength));
+//             NSLog(@"propagating sum constraint");
+//             NSLog(@" Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, bitLength));
+//             NSLog(@" X    =%@",bitvar2NSString(prevXLow, prevXUp, bitLength));
+//             NSLog(@"+Y    =%@",bitvar2NSString(prevYLow, prevYUp, bitLength));
+//             NSLog(@"_______________________________________________________");
+//             NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, bitLength));
+//             NSLog(@" Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, bitLength));
       
       change = false;
       //      NSLog(@"top of iteration for sum constraint");
@@ -2970,50 +3233,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       //             NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, bitLength));
       //             NSLog(@" Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, bitLength));
 
-      ORBool cinFail = checkDomainConsistency(_cin, newCinLow, newCinUp, wordLength, self);
-      
-      ORBool coutFail = checkDomainConsistency(_cout, newCoutLow, newCoutUp, wordLength, self);
 
-      ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, wordLength, self);
-
-      ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
-
-      ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
-      
-      if (xFail || yFail || zFail || cinFail || coutFail){
-#ifdef BIT_DEBUG
-         NSLog(@"Inconsistency in Bitwise sum constraint in (shifted) Carry In.\n");
-         
-         NSLog(@" Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, bitLength));
-         NSLog(@" X    =%@",bitvar2NSString(prevXLow, prevXUp, bitLength));
-         NSLog(@"+Y    =%@",bitvar2NSString(prevYLow, prevYUp, bitLength));
-         NSLog(@"_______________________________________________________");
-         NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, bitLength));
-         NSLog(@" Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, bitLength));
-         
-         NSLog(@" Cin  =%@",bitvar2NSString(shiftedCinLow,shiftedCinUp, bitLength));
-         NSLog(@" X    =%@",bitvar2NSString(prevXLow, prevXUp, bitLength));
-         NSLog(@"+Y    =%@",bitvar2NSString(prevYLow, prevYUp, bitLength));
-         NSLog(@"_______________________________________________________");
-         NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, bitLength));
-         NSLog(@" Cout =%@\n\n",bitvar2NSString(shiftedCoutLow, shiftedCoutUp, bitLength));
-#endif
-          failNow();
-      }
-      
-      
-//      //No failure, save intermediate state of variables
-      [_x setUp:newXUp andLow:newXLow for:self];
-      [_y setUp:newYUp andLow:newYLow for:self];
-      [_z setUp:newZUp andLow:newZLow for:self];
-      [_cin setUp:newCinUp andLow:newCinLow for:self];
-      [_cout setUp:newCoutUp andLow:newCoutLow for:self];
-      
-      
-
-      
-      
-      
       
       for(int i=0;i<wordLength;i++){
          //          NSLog(@"\ttop of shift iteration for sum constraint");
@@ -3513,11 +3733,55 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          prevCinLow[i] = newCinLow[i];
          prevCoutUp[i] = newCoutUp[i];
          prevCoutLow[i] = newCoutLow[i];
-      }
+         
+         
+//         NSLog(@" Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, bitLength));
+//         NSLog(@" X    =%@",bitvar2NSString(prevXLow, prevXUp, bitLength));
+//         NSLog(@"+Y    =%@",bitvar2NSString(prevYLow, prevYUp, bitLength));
+//         NSLog(@"_______________________________________________________");
+//         NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, bitLength));
+//         NSLog(@" Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, bitLength));
 
-   
-   
-   
+         
+         ORBool cinFail = checkDomainConsistency(_cin, newCinLow, newCinUp, wordLength, self);
+         
+         ORBool coutFail = checkDomainConsistency(_cout, newCoutLow, newCoutUp, wordLength, self);
+         
+         ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, wordLength, self);
+         
+         ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
+         
+         ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
+
+         if (xFail || yFail || zFail || cinFail || coutFail){
+#ifdef BIT_DEBUG
+            NSLog(@"Inconsistency in Bitwise sum constraint in (shifted) Carry In.\n");
+            
+            NSLog(@" Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, bitLength));
+            NSLog(@" X    =%@",bitvar2NSString(prevXLow, prevXUp, bitLength));
+            NSLog(@"+Y    =%@",bitvar2NSString(prevYLow, prevYUp, bitLength));
+            NSLog(@"_______________________________________________________");
+            NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, bitLength));
+            NSLog(@" Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, bitLength));
+            
+            NSLog(@" Cin  =%@",bitvar2NSString(shiftedCinLow,shiftedCinUp, bitLength));
+            NSLog(@" X    =%@",bitvar2NSString(prevXLow, prevXUp, bitLength));
+            NSLog(@"+Y    =%@",bitvar2NSString(prevYLow, prevYUp, bitLength));
+            NSLog(@"_______________________________________________________");
+            NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, bitLength));
+            NSLog(@" Cout =%@\n\n",bitvar2NSString(shiftedCoutLow, shiftedCoutUp, bitLength));
+#endif
+            failNow();
+         }
+
+         //      //save intermediate state of variables
+         [_x setUp:newXUp andLow:newXLow for:self];
+         [_y setUp:newYUp andLow:newYLow for:self];
+         [_z setUp:newZUp andLow:newZLow for:self];
+         [_cin setUp:newCinUp andLow:newCinLow for:self];
+         [_cout setUp:newCoutUp andLow:newCoutLow for:self];
+         
+      }
    }
    
 //   NSLog(@"");
@@ -3528,19 +3792,28 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 //   NSLog(@"newY = %@",bitvar2NSString(newYLow, newYUp, [_y bitLength]));
 //   NSLog(@"newZ = %@\n\n",bitvar2NSString(newZLow, newZUp, [_z bitLength]));
    
-//   ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
-//   
-//   ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
-//   
-//   ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, wordLength, self);
-//   
-//   ORBool cinFail = checkDomainConsistency(_cin, newCinLow, newCinUp, wordLength, self);
-//   
-//   ORBool coutFail = checkDomainConsistency(_cout, newCoutLow, newCoutUp, wordLength, self);
-//
-//   if (xFail || yFail || zFail || cinFail || coutFail){
-//      failNow();
-//   }
+   
+//   NSLog(@" Cin  =%@",bitvar2NSString(newCinLow,newCinUp, bitLength));
+//   NSLog(@" X    =%@",bitvar2NSString(newXLow, newXUp, bitLength));
+//   NSLog(@"+Y    =%@",bitvar2NSString(newYLow, newYUp, bitLength));
+//   NSLog(@"_______________________________________________________");
+//   NSLog(@" Z    =%@",bitvar2NSString(newZLow, newZUp, bitLength));
+//   NSLog(@" Cout =%@\n\n",bitvar2NSString(newCoutLow, newCoutUp, bitLength));
+
+   
+   ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
+   
+   ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
+   
+   ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, wordLength, self);
+   
+   ORBool cinFail = checkDomainConsistency(_cin, newCinLow, newCinUp, wordLength, self);
+   
+   ORBool coutFail = checkDomainConsistency(_cout, newCoutLow, newCoutUp, wordLength, self);
+
+   if (xFail || yFail || zFail || cinFail || coutFail){
+      failNow();
+   }
    
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
@@ -3677,11 +3950,13 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       upXORlow = up[i] ^ low[i];
       inconsistencyFound |= (upXORlow&(~up[i]))&(upXORlow & low[i]);
    }
+
    if (inconsistencyFound)
       failNow();
    
    //set _x and _p to new values
    [_x setUp:up andLow:low for:self];
+   
 }
 @end
 
@@ -3838,8 +4113,6 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       failNow();
    }
    
-
-   
    [_x setUp:up andLow:low for:self];
    [_y setUp:up andLow:low for:self];
    
@@ -3891,7 +4164,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    else if (assignment->var == _y){
       if (assignment->index >= [_x bitLength]){
          ORUInt signBit = [_x bitLength]-1;
-         if (![_x isFree:index]) {
+         if (![_x isFree:signBit]) {
             vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
             vars[ants->numAntecedents]->var = _x;
             vars[ants->numAntecedents]->index = signBit;
@@ -4054,11 +4327,16 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    }
    ySignBits[xWordLength-1] &= (~(yUp[xWordLength-1]._val ^ yLow[xWordLength-1]._val) & (UP_MASK << (xBitLength%BITSPERWORD)));
    
+   //_y may not be on 32bit boundary
+   //Clear out unused bits
+   ySignBits[yWordLength-1] &=(~(yUp[xWordLength-1]._val ^ yLow[xWordLength-1]._val) & (UP_MASK >> (BITSPERWORD - (yBitLength%BITSPERWORD))));
+   
    ORUInt ySignBitSet = 0;
    for (int i=0; i<yWordLength; i++) {
       //find set sign bits in y
       ySignBitSet |= ySignBits[i] & ~(yUp[i]._val ^ yLow[i]._val);
    }
+   
    if (ySignBitSet) {
       for (int i = yWordLength-1; i>=0; i--) {
          if (ySignBits[i] & ~yUp[i]._val) {
@@ -4224,7 +4502,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       up[i] = yUpForX[i] = yUp[i]._val;
       
    }
-   yUpForX[yWordLength-1] &= (CP_UMASK >> (BITSPERWORD - ([_y bitLength]%BITSPERWORD)));
+   yUpForX[yWordLength-1] |= (CP_UMASK << ([_y bitLength]%BITSPERWORD)) | yUp[yWordLength-1]._val;
    yLowForX[yWordLength-1] &= (CP_UMASK >> (BITSPERWORD - ([_y bitLength]%BITSPERWORD)));
    
 //   NSLog(@"yForX = %@\n",bitvar2NSString(yLowForX, yUpForX, yBitLength));
@@ -4286,38 +4564,22 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
    
    
-   
    //check domain consistency
 //   for(int i=0;i<xWordLength;i++){
 //      upXORlow = newXUp[i] ^ newXLow[i];
 //      inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
-      inconsistencyFound = checkDomainConsistency(_x, newXLow, newXUp, xWordLength, self);
-      if (inconsistencyFound){
-//         NSLog(@"Inconsistency found in Bit Extract constraint X Variable.");
-//         NSLog(@"x=%@\n",bitvar2NSString(newXLow, newXUp, xBitLength));
-         failNow();
-      }
-      
-//      upXORlow = up[i] ^ low[i];
-//      inconsistencyFound |= (upXORlow&(~up[i]))&(upXORlow & low[i]);
-      inconsistencyFound |= checkDomainConsistency(_y, low, up, yWordLength, self);
-      if (inconsistencyFound){
-//         NSLog(@"Inconsistency found in Bit Extract constraint Y Variable.");
-//         NSLog(@"y=%@\n",bitvar2NSString(low, up, yBitLength));
-         failNow();
-      }
-      
+
 //   }
    
-   if (inconsistencyFound){
-//      NSLog(@"Inconsistency found in Bit Extract constraint.");
-      failNow();
-   }
-   
-   
-
+      inconsistencyFound = checkDomainConsistency(_x, newXLow, newXUp, xWordLength, self);
+      inconsistencyFound |= checkDomainConsistency(_y, low, up, yWordLength, self);
+      if (inconsistencyFound){
+         failNow();
+      }
+      
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:up andLow:low for:self];
+   
 }
 @end
 
@@ -4345,20 +4607,25 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    ants->numAntecedents = 0;
 
    if (assignment->var == _x) {
+      
       index = assignment->index + [_y bitLength];
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->index = index;
-      vars[ants->numAntecedents]->value = ([_z getBit:index]!=0);
-      ants->numAntecedents++;
+      if(![_z isFree:index]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->index = index;
+         vars[ants->numAntecedents]->value = ([_z getBit:index]!=0);
+         ants->numAntecedents++;
+      }
    }
    else if (assignment->var == _y){
       index = assignment->index;
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->index = index;
-      vars[ants->numAntecedents]->value = ([_z getBit:index]!=0);
-      ants->numAntecedents++;
+      if(![_z isFree:index]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->index = index;
+         vars[ants->numAntecedents]->value = ([_z getBit:index]!=0);
+         ants->numAntecedents++;
+      }
    }
    else{
       vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
@@ -4369,10 +4636,12 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          vars[ants->numAntecedents]->value = ([_x getBit:index]!=0);
       }
       else{
-         index = assignment->index;
-         vars[ants->numAntecedents]->var = _y;
-         vars[ants->numAntecedents]->index = index;
-         vars[ants->numAntecedents]->value = ([_y getBit:index]!=0);
+         if(![_y isFree:index]){
+            index = assignment->index;
+            vars[ants->numAntecedents]->var = _y;
+            vars[ants->numAntecedents]->index = index;
+            vars[ants->numAntecedents]->value = ([_y getBit:index]!=0);
+         }
       }
       ants->numAntecedents++;
    }
@@ -4554,6 +4823,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
    [_z setUp:newZUp andLow:newZLow for:self];
+   
 }
 @end
 
@@ -4606,42 +4876,18 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORInt index = assignment->index;
    
-   if(assignment->var == _x){
-//      if(![_y isFree:index]){
-//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-//         vars[ants->numAntecedents]->index = index;
-//         vars[ants->numAntecedents]->var = _y;
-//         vars[ants->numAntecedents]->value = [_y getBit:index];
-//         ants->numAntecedents++;
-//      }
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->index = 0;
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->value = [_z getBit:0];
-      ants->numAntecedents++;
-   }
-   else if(assignment->var == _y){
-//      if(![_x isFree:index]){
-//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-//         vars[ants->numAntecedents]->index = index;
-//         vars[ants->numAntecedents]->var = _x;
-//         vars[ants->numAntecedents]->value = [_x getBit:index];
-//         ants->numAntecedents++;
-//      }
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->index = 0;
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->value = [_z getBit:0];
-      ants->numAntecedents++;
-   }
-   if(assignment->var == _z){
-      if(![_x isFree:index]){
-         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-         vars[ants->numAntecedents]->index = index;
-         vars[ants->numAntecedents]->var = _x;
-         vars[ants->numAntecedents]->value = [_x getBit:index];
-         ants->numAntecedents++;
+   ORUInt* different = alloca(sizeof(ORUInt)*wordLength);
+   ORInt diffIndex =0;
+   for(int i=wordLength-1;i>=0;i--){
+      different[i] = (xUp[i]._val ^ yUp[i]._val) | (xLow[i]._val ^ yLow[i]._val);
+      if(different[i] != 0){
+         diffIndex = (i*BITSPERWORD)+(BITSPERWORD - __builtin_clz(different[i])-1);
+         break;
       }
+   }
+
+   
+   if(assignment->var == _x){
       if(![_y isFree:index]){
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->index = index;
@@ -4649,9 +4895,48 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          vars[ants->numAntecedents]->value = [_y getBit:index];
          ants->numAntecedents++;
       }
+      if(![_z isFree:0]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = 0;
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->value = [_z getBit:0];
+         ants->numAntecedents++;
+      }
    }
+   else if(assignment->var == _y){
+      if(![_x isFree:index]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = index;
+         vars[ants->numAntecedents]->var = _x;
+         vars[ants->numAntecedents]->value = [_x getBit:index];
+         ants->numAntecedents++;
+      }
+      if(![_z isFree:0]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = 0;
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->value = [_z getBit:0];
+         ants->numAntecedents++;
+      }
+   }
+//   if(assignment->var == _z){
+//      if(![_x isFree:index]){
+//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+//         vars[ants->numAntecedents]->index = index;
+//         vars[ants->numAntecedents]->var = _x;
+//         vars[ants->numAntecedents]->value = [_x getBit:index];
+//         ants->numAntecedents++;
+//      }
+//      if(![_y isFree:index]){
+//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+//         vars[ants->numAntecedents]->index = index;
+//         vars[ants->numAntecedents]->var = _y;
+//         vars[ants->numAntecedents]->value = [_y getBit:index];
+//         ants->numAntecedents++;
+//      }
+//   }
    //index++;
-   for(int i=0;i<bitLength;i++){
+   for(int i=diffIndex;i<bitLength;i++){
       if(![_x isFree:i]){
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->index = i;
@@ -4765,6 +5050,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          newZUp[i] = 0;
    }
    
+   [_z setUp:newZUp andLow:newZLow for:self];
+
+   checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
+
+   
    ORUInt *freeX = alloca(sizeof(ORUInt)*wordLength);
    ORUInt *freeY = alloca(sizeof(ORUInt)*wordLength);
    ORUInt *different = alloca(sizeof(ORUInt)*wordLength);
@@ -4830,6 +5120,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsX--;
                   more = true;
+                  [_x setUp:newXUp andLow:newXLow for:self];
+                  checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
                }
 //               else if(temp >= newYLow[wordIndex] && (numFreeBitsY == 0)){
 //                  newXUp[wordIndex] &= ~mask;
@@ -4849,6 +5141,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsX--;
                   more = true;
+                  [_x setUp:newXUp andLow:newXLow for:self];
+                  checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
                }
             }
          }
@@ -4896,6 +5190,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsY--;
                   more = true;
+                  [_y setUp:newYUp andLow:newYLow for:self];
+                  checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
                }
             }
             else if (zUp[0]._val == 0){
@@ -4907,6 +5203,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsY--;
                   more = true;
+                  [_y setUp:newYUp andLow:newYLow for:self];
+                  checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
                }
             }
          }
@@ -4925,12 +5223,14 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    //   NSLog(@"   <  Y =%@",_y);
    //   NSLog(@"   =  Z =%@\n\n",_z);
 #endif
+   
    ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
    ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
    ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
    if (xFail || yFail || zFail) {
       failNow();
    }
+   
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
    [_z setUp:newZUp andLow:newZLow for:self];
@@ -5286,42 +5586,18 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORInt index = assignment->index;
    
-   if(assignment->var == _x){
-//      if(![_y isFree:index]){
-//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-//         vars[ants->numAntecedents]->index = index;
-//         vars[ants->numAntecedents]->var = _y;
-//         vars[ants->numAntecedents]->value = [_y getBit:index];
-//         ants->numAntecedents++;
-//      }
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->index = 0;
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->value = [_z getBit:0];
-      ants->numAntecedents++;
-   }
-   else if(assignment->var == _y){
-//      if(![_x isFree:index]){
-//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-//         vars[ants->numAntecedents]->index = index;
-//         vars[ants->numAntecedents]->var = _x;
-//         vars[ants->numAntecedents]->value = [_x getBit:index];
-//         ants->numAntecedents++;
-//      }
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->index = 0;
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->value = [_z getBit:0];
-      ants->numAntecedents++;
-   }
-   if(assignment->var == _z){
-      if(![_x isFree:index]){
-         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-         vars[ants->numAntecedents]->index = index;
-         vars[ants->numAntecedents]->var = _x;
-         vars[ants->numAntecedents]->value = [_x getBit:index];
-         ants->numAntecedents++;
+   ORUInt* different = alloca(sizeof(ORUInt)*wordLength);
+   ORInt diffIndex =0;
+   for(int i=wordLength-1;i>=0;i--){
+      different[i] = (xUp[i]._val ^ yUp[i]._val) | (xLow[i]._val ^ yLow[i]._val);
+      if(different[i] != 0){
+         diffIndex = (i*BITSPERWORD)+(BITSPERWORD - __builtin_clz(different[i])-1);
+         break;
       }
+   }
+
+   
+   if(assignment->var == _x){
       if(![_y isFree:index]){
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->index = index;
@@ -5329,9 +5605,49 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          vars[ants->numAntecedents]->value = [_y getBit:index];
          ants->numAntecedents++;
       }
+      if(![_z isFree:0]){
+
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = 0;
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->value = [_z getBit:0];
+         ants->numAntecedents++;
+      }
    }
+   else if(assignment->var == _y){
+      if(![_x isFree:index]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = index;
+         vars[ants->numAntecedents]->var = _x;
+         vars[ants->numAntecedents]->value = [_x getBit:index];
+         ants->numAntecedents++;
+      }
+      if(![_z isFree:0]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = 0;
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->value = [_z getBit:0];
+         ants->numAntecedents++;
+      }
+   }
+//   if(assignment->var == _z){
+//      if(![_x isFree:index]){
+//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+//         vars[ants->numAntecedents]->index = index;
+//         vars[ants->numAntecedents]->var = _x;
+//         vars[ants->numAntecedents]->value = [_x getBit:index];
+//         ants->numAntecedents++;
+//      }
+//      if(![_y isFree:index]){
+//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+//         vars[ants->numAntecedents]->index = index;
+//         vars[ants->numAntecedents]->var = _y;
+//         vars[ants->numAntecedents]->value = [_y getBit:index];
+//         ants->numAntecedents++;
+//      }
+//   }
 //   index++;
-   for(int i=0;i<bitLength;i++){
+   for(int i=diffIndex;i<bitLength;i++){
       if(![_x isFree:i]){
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->index = i;
@@ -5455,6 +5771,10 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          newZUp[i] = 0;
    }
    
+   [_z setUp:newZUp andLow:newZLow for:self];
+   checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
+
+   
    ORUInt *freeX = alloca(sizeof(ORUInt)*wordLength);
    ORUInt *freeY = alloca(sizeof(ORUInt)*wordLength);
    ORUInt *different = alloca(sizeof(ORUInt)*wordLength);
@@ -5520,6 +5840,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsX--;
                   more = true;
+                  [_x setUp:newXUp andLow:newXLow for:self];
+                  checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
                }
             }
             else if (zUp[0]._val == 0){
@@ -5531,6 +5853,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsX--;
                   more = true;
+                  [_x setUp:newXUp andLow:newXLow for:self];
+                  checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
                }
             }
          }
@@ -5578,6 +5902,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsY--;
                   more = true;
+                  [_y setUp:newYUp andLow:newYLow for:self];
+                  checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
                }
             }
             else if (zUp[0]._val == 0){
@@ -5589,6 +5915,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsY--;
                   more = true;
+                  [_y setUp:newYUp andLow:newYLow for:self];
+                  checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
                }
             }
          }
@@ -5606,6 +5934,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    NSLog(@"   <  Y =%@",_y);
    NSLog(@"   =  Z =%@\n\n",_z);
 #endif
+
    ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
    ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
    ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
@@ -5665,42 +5994,18 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORInt index = assignment->index;
    
-   if(assignment->var == _x){
-//      if(![_y isFree:index]){
-//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-//         vars[ants->numAntecedents]->index = index;
-//         vars[ants->numAntecedents]->var = _y;
-//         vars[ants->numAntecedents]->value = [_y getBit:index];
-//         ants->numAntecedents++;
-//      }
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->index = 0;
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->value = [_z getBit:0];
-      ants->numAntecedents++;
-   }
-   else if(assignment->var == _y){
-//      if(![_x isFree:index]){
-//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-//         vars[ants->numAntecedents]->index = index;
-//         vars[ants->numAntecedents]->var = _x;
-//         vars[ants->numAntecedents]->value = [_x getBit:index];
-//         ants->numAntecedents++;
-//      }
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->index = 0;
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->value = [_z getBit:0];
-      ants->numAntecedents++;
-   }
-   if(assignment->var == _z){
-      if(![_x isFree:index]){
-         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-         vars[ants->numAntecedents]->index = index;
-         vars[ants->numAntecedents]->var = _x;
-         vars[ants->numAntecedents]->value = [_x getBit:index];
-         ants->numAntecedents++;
+   ORUInt* different = alloca(sizeof(ORUInt)*wordLength);
+   ORInt diffIndex =0;
+   for(int i=wordLength-1;i>=0;i--){
+      different[i] = (xUp[i]._val ^ yUp[i]._val) | (xLow[i]._val ^ yLow[i]._val);
+      if(different[i] != 0){
+         diffIndex = (i*BITSPERWORD)+(BITSPERWORD - __builtin_clz(different[i])-1);
+         break;
       }
+   }
+   
+   
+   if(assignment->var == _x){
       if(![_y isFree:index]){
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->index = index;
@@ -5708,9 +6013,48 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          vars[ants->numAntecedents]->value = [_y getBit:index];
          ants->numAntecedents++;
       }
+      if(![_z isFree:0]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = 0;
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->value = [_z getBit:0];
+         ants->numAntecedents++;
+      }
    }
-//   index++;
-   for(int i=0;i<bitLength;i++){
+   else if(assignment->var == _y){
+      if(![_x isFree:index]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = index;
+         vars[ants->numAntecedents]->var = _x;
+         vars[ants->numAntecedents]->value = [_x getBit:index];
+         ants->numAntecedents++;
+      }
+      if(![_z isFree:0]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = 0;
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->value = [_z getBit:0];
+         ants->numAntecedents++;
+      }
+   }
+   //   if(assignment->var == _z){
+   //      if(![_x isFree:index]){
+   //         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+   //         vars[ants->numAntecedents]->index = index;
+   //         vars[ants->numAntecedents]->var = _x;
+   //         vars[ants->numAntecedents]->value = [_x getBit:index];
+   //         ants->numAntecedents++;
+   //      }
+   //      if(![_y isFree:index]){
+   //         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+   //         vars[ants->numAntecedents]->index = index;
+   //         vars[ants->numAntecedents]->var = _y;
+   //         vars[ants->numAntecedents]->value = [_y getBit:index];
+   //         ants->numAntecedents++;
+   //      }
+   //   }
+   //index++;
+   for(int i=diffIndex;i<bitLength;i++){
       if(![_x isFree:i]){
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->index = i;
@@ -5865,6 +6209,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       for (int i=0; i<zWordLength; i++)
          newZUp[i] = 0;
    }
+   [_z setUp:newZUp andLow:newZLow for:self];
+   checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
 
 
    //Find bits that are different in x and y
@@ -5914,6 +6260,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsX--;
                   more = true;
+//                  checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
+//                  [_x setUp:newXUp andLow:newXLow for:self];
                }
             }
             else if (zUp[0]._val == 0){
@@ -5925,6 +6273,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsX--;
                   more = true;
+//                  checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
+//                  [_x setUp:newXUp andLow:newXLow for:self];
                }
             }
          }
@@ -5972,6 +6322,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsY--;
                   more = true;
+//                  checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
+//                  [_y setUp:newYUp andLow:newYLow for:self];
                }
             }
             else if (zUp[0]._val == 0){
@@ -5983,6 +6335,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsY--;
                   more = true;
+//                  checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
+//                  [_y setUp:newYUp andLow:newYLow for:self];
                }
             }
          }
@@ -5998,12 +6352,12 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       newYUp[wordLength-1] ^= signMask;
       newYLow[wordLength-1] ^= signMask;
    }
+   
+   
 
 //   NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
 //   NSLog(@"newY = %@",bitvar2NSString(newYLow, newYUp, bitLength));
 //   NSLog(@"newZ = %@",bitvar2NSString(newZLow, newZUp, zBitLength));
-   
-   
    
    ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
    ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
@@ -6011,14 +6365,14 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if (xFail || yFail || zFail) {
       failNow();
    }
-   [_x setUp:newXUp andLow:newXLow for:self];
-   [_y setUp:newYUp andLow:newYLow for:self];
-   [_z setUp:newZUp andLow:newZLow for:self];
-
 //   NSLog(@"x=%@\n",_x);
 //   NSLog(@"y=%@\n",_y);
 //   NSLog(@"z=%@\n\n",_z);
 
+   [_x setUp:newXUp andLow:newXLow for:self];
+   [_y setUp:newYUp andLow:newYLow for:self];
+   [_z setUp:newZUp andLow:newZLow for:self];
+   
    
 #ifdef BIT_DEBUG
    NSLog(@"      X =%@",_x);
@@ -6070,42 +6424,18 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    ORInt index = assignment->index;
    
-   if(assignment->var == _x){
-//      if(![_y isFree:index]){
-//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-//         vars[ants->numAntecedents]->index = index;
-//         vars[ants->numAntecedents]->var = _y;
-//         vars[ants->numAntecedents]->value = [_y getBit:index];
-//         ants->numAntecedents++;
-//      }
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->index = 0;
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->value = [_z getBit:0];
-      ants->numAntecedents++;
-   }
-   else if(assignment->var == _y){
-//      if(![_x isFree:index]){
-//         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-//         vars[ants->numAntecedents]->index = index;
-//         vars[ants->numAntecedents]->var = _x;
-//         vars[ants->numAntecedents]->value = [_x getBit:index];
-//         ants->numAntecedents++;
-//      }
-      vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-      vars[ants->numAntecedents]->index = 0;
-      vars[ants->numAntecedents]->var = _z;
-      vars[ants->numAntecedents]->value = [_z getBit:0];
-      ants->numAntecedents++;
-   }
-   if(assignment->var == _z){
-      if(![_x isFree:index]){
-         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
-         vars[ants->numAntecedents]->index = index;
-         vars[ants->numAntecedents]->var = _x;
-         vars[ants->numAntecedents]->value = [_x getBit:index];
-         ants->numAntecedents++;
+   ORUInt* different = alloca(sizeof(ORUInt)*wordLength);
+   ORInt diffIndex =0;
+   for(int i=wordLength-1;i>=0;i--){
+      different[i] = (xUp[i]._val ^ yUp[i]._val) | (xLow[i]._val ^ yLow[i]._val);
+      if(different[i] != 0){
+         diffIndex = (i*BITSPERWORD)+(BITSPERWORD - __builtin_clz(different[i])-1);
+         break;
       }
+   }
+   
+   
+   if(assignment->var == _x){
       if(![_y isFree:index]){
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->index = index;
@@ -6113,9 +6443,48 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          vars[ants->numAntecedents]->value = [_y getBit:index];
          ants->numAntecedents++;
       }
+      if(![_z isFree:0]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = 0;
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->value = [_z getBit:0];
+         ants->numAntecedents++;
+      }
    }
-//   index++;
-   for(int i=0;i<bitLength;i++){
+   else if(assignment->var == _y){
+      if(![_x isFree:index]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = index;
+         vars[ants->numAntecedents]->var = _x;
+         vars[ants->numAntecedents]->value = [_x getBit:index];
+         ants->numAntecedents++;
+      }
+      if(![_z isFree:0]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = 0;
+         vars[ants->numAntecedents]->var = _z;
+         vars[ants->numAntecedents]->value = [_z getBit:0];
+         ants->numAntecedents++;
+      }
+   }
+   //   if(assignment->var == _z){
+   //      if(![_x isFree:index]){
+   //         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+   //         vars[ants->numAntecedents]->index = index;
+   //         vars[ants->numAntecedents]->var = _x;
+   //         vars[ants->numAntecedents]->value = [_x getBit:index];
+   //         ants->numAntecedents++;
+   //      }
+   //      if(![_y isFree:index]){
+   //         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+   //         vars[ants->numAntecedents]->index = index;
+   //         vars[ants->numAntecedents]->var = _y;
+   //         vars[ants->numAntecedents]->value = [_y getBit:index];
+   //         ants->numAntecedents++;
+   //      }
+   //   }
+   //index++;
+   for(int i=diffIndex;i<bitLength;i++){
       if(![_x isFree:i]){
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->index = i;
@@ -6131,7 +6500,6 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          ants->numAntecedents++;
       }
    }
-   
    return ants;
 }
 
@@ -6277,6 +6645,10 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          newZUp[i] = 0;
    }
    
+   [_z setUp:newZUp andLow:newZLow for:self];
+   checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
+
+   
    if(numFreeBitsX != 0){
       do{
          diffIndex =-1;
@@ -6318,6 +6690,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsX--;
                   more = true;
+//                  checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
+//                  [_x setUp:newXUp andLow:newXLow for:self];
                }
 //               else if((temp >= newYLow[wordIndex]) && (numFreeBitsY == 0)){
 //                  newXUp[wordIndex] &= ~mask;
@@ -6337,6 +6711,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsX--;
                   more = true;
+//                  checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
+//                  [_x setUp:newXUp andLow:newXLow for:self];
                }
             }
          }
@@ -6384,6 +6760,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsY--;
                   more = true;
+//                  checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
+//                  [_y setUp:newYUp andLow:newYLow for:self];
                }
             }
             else if (zUp[0]._val == 0){
@@ -6395,6 +6773,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
                   different[wordIndex] = (newXUp[wordIndex] ^ newYUp[wordIndex]) | (newXLow[wordIndex] ^ newYLow[wordIndex]);
                   numFreeBitsY--;
                   more = true;
+//                  checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
+//                  [_y setUp:newYUp andLow:newYLow for:self];
                }
             }
          }
@@ -6410,6 +6790,17 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       newYUp[wordLength-1] ^= signMask;
       newYLow[wordLength-1] ^= signMask;
    }
+   
+   
+//   if (checkDomainConsistency(_x, newXLow, newXUp, wordLength, self))
+//      failNow();
+//   
+//   if (checkDomainConsistency(_y, newYLow, newYUp, wordLength, self))
+//      failNow();
+//   
+//   [_x setUp:newXUp andLow:newXLow for:self];
+//   [_y setUp:newYUp andLow:newYLow for:self];
+
 
 //   NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
 //   NSLog(@"newY = %@",bitvar2NSString(newYLow, newYUp, bitLength));
@@ -6714,8 +7105,6 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          }
       }
 
-  
-   
    ORBool iFail = checkDomainConsistency(_i, newILow, newIUp, 1, self);
    ORBool tFail = checkDomainConsistency(_t, newTLow, newTUp, wordLength, self);
    ORBool eFail = checkDomainConsistency(_e, newELow, newEUp, wordLength, self);
@@ -6729,7 +7118,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [_t setUp:newTUp andLow:newTLow for:self];
    [_e setUp:newEUp andLow:newELow for:self];
    [_r setUp:newRUp andLow:newRLow for:self];
-
+   
 //   NSLog(@"if %@\n",_i);
 //   NSLog(@"then %@\n",_t);
 //   NSLog(@"else %@\n",_e);
@@ -6925,10 +7314,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          if (xFail)
             failNow();
 //         }
+         [_x setUp:up andLow:low for:self];
+         [_y setUp:up andLow:low for:self];
+         
       }
       
-      [_x setUp:up andLow:low for:self];
-      [_y setUp:up andLow:low for:self];
    }
    
    if (different) {
@@ -6940,8 +7330,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
          if (zFail)
             failNow();
+         [_z setUp:newZUp andLow:newZLow for:self];
       }
-      [_z setUp:newZUp andLow:newZLow for:self];
    }
    else if ([_x bound] && [_y bound]){
       //LSB should be 1
@@ -6953,6 +7343,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
       if (zFail)
          failNow();
+//      [_z setUp:newZUp andLow:newZLow for:self];
       
       //check the rest of the words in the bitvector if present
       for (int i=1; i<zWordLength; i++) {
@@ -6967,6 +7358,19 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       }
       [_z setUp:newZUp andLow:newZLow for:self];
    }
+   
+   ORBool xFail = checkDomainConsistency(_x, low, up, wordLength, self);
+   ORBool yFail = checkDomainConsistency(_y, low, up, wordLength, self);
+   ORBool zFail = checkDomainConsistency(_z, newZLow, newZUp, zWordLength, self);
+
+   if(xFail || yFail || zFail){
+      failNow();
+   }
+   [_x setUp:up andLow:low for:self];
+   [_y setUp:up andLow:low for:self];
+   [_z setUp:newZUp andLow:newZLow for:self];
+   
+
    return;
 }
 @end
@@ -7214,9 +7618,9 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          if (rFail) {
             failNow();
          }
-         else{
+//         else{
 //            [_r setUp:rup andLow:rlow for:self];
-         }
+//         }
 //         return;
       }
    }
@@ -7265,7 +7669,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          if (xFail) {
             failNow();
          }
-         else [(CPBitVarI*)lastUnboundVar setUp:xup andLow:xlow for:self];
+         [(CPBitVarI*)lastUnboundVar setUp:xup andLow:xlow for:self];
+
       }
       else if ((rup[0] == 0) && allTrue){
          xup[0] = 0;
@@ -7273,7 +7678,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          if (xFail) {
             failNow();
          }
-         else [(CPBitVarI*)lastUnboundVar setUp:xup andLow:xlow for:self];
+         [(CPBitVarI*)lastUnboundVar setUp:xup andLow:xlow for:self];
+         
       }
       
    }
@@ -7288,9 +7694,9 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if (rFail) {
       failNow();
    }
-
    [_r setUp:rup andLow:rlow for:self];
 
+   
 //   NSLog(@"%@, %@",_x,_r);
    
    
@@ -7401,9 +7807,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          if (rFail) {
             failNow();
          }
-         else{
-            [_r setUp:rup andLow:rlow for:self];
-         }
+         [_r setUp:rup andLow:rlow for:self];
          return;
       }
    }
@@ -7415,9 +7819,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       if (rFail) {
          failNow();
       }
-      else{
-         [_r setUp:rup andLow:rlow for:self];
-      }
+      [_r setUp:rup andLow:rlow for:self];
       return;
    }
    if((numUnboundVars==1) && ([lastUnboundVar domsize]==1)){
@@ -7446,7 +7848,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          if (xFail) {
             failNow();
          }
-         else [(CPBitVarI*)lastUnboundVar setUp:xup andLow:xlow for:self];
+         [(CPBitVarI*)lastUnboundVar setUp:xup andLow:xlow for:self];
+         
       }
    }
    return;
@@ -7560,15 +7963,52 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       for (int i = 0; i<numVars; i++) {
          if (currentVals[i] != _assignments->antecedents[i]->value) {
             conflict = false;
-            CPBitAssignment* c = malloc(sizeof(CPBitAssignment));
-            c->var = _assignments->antecedents[i]->var;
-            c->index = _assignments->antecedents[i]->index;
-//            CPBitAntecedents* conflictAntecedents = [self getAntecedentsFor:c];
-            analyzeConflict((CPLearningEngineI*)[c->var engine], c, self);
+            break;
          }
       }
       if (conflict) {
-         failNow();
+//         ORUInt idx;
+//         ORBool val;
+//         ORUInt maxLevel = 5;
+//         ORUInt currLevel = [[_assignments->antecedents[0]->var engine] getLevel];
+//         CPBitVarI* var = NULL;
+//         for(int i=0;i<numVars;i++){
+//            ORUInt setLevel = [_assignments->antecedents[i]->var getLevelBitWasSet:_assignments->antecedents[i]->index];
+////            if ((setLevel != -1) && (setLevel >= maxLevel) && (setLevel > 4) && (setLevel <= currLevel)){
+//            if ((setLevel != -1) && (setLevel >= maxLevel)&& (setLevel <= currLevel)){
+//               maxLevel = setLevel;
+//               var =_assignments->antecedents[i]->var;
+//               idx =_assignments->antecedents[i]->index;
+//               val=_assignments->antecedents[i]->value;
+//            }
+//         }
+//         
+//         if (var == NULL)
+//            failNow();
+//         
+//         TRUInt* up;
+//         TRUInt* low;
+//         
+//         [var getUp:&up andLow:&low];
+//         ORUInt wordLength =[var getWordLength];
+//         ORUInt* newUp = alloca(sizeof(ORUInt)*wordLength);
+//         ORUInt* newLow = alloca(sizeof(ORUInt)*wordLength);
+//         for(int j=0;j<wordLength;j++)
+//         {
+//            newUp[j] = up[j]._val;
+//            newLow[j] = low[j]._val;
+//         }
+//         ORUInt mask = 1 <<idx%BITSPERWORD;
+//         
+//         if(val){
+//            newUp[idx/BITSPERWORD] ^= mask;
+//         }
+//         else{
+//            newLow[idx/BITSPERWORD] ^= mask;
+//         }
+//         if(checkDomainConsistency(var, newLow, newUp, [var bitLength], self))
+            failNow();
+         
       }
    }
    
@@ -7865,12 +8305,12 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    if(xFail || rFail)
       failNow();
    
-   [_x setUp:&newXUp andLow:&newXLow for:self];
-   [_r setUp:&newRUp andLow:&newRLow for:self];
-   
 //   NSLog(@"x=%@\n",_x);
 //   NSLog(@"r=%@\n",_r);
 
+   [_x setUp:&newXUp andLow:&newXLow for:self];
+   [_r setUp:&newRUp andLow:&newRLow for:self];
+   
 }
 @end
 
@@ -7914,7 +8354,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment
 {
   //NSLog(@"Implication for 0x%lx[%u] = %@  traced back through %@", (unsigned long)assignment->var, assignment->index, (CPBitVarI*)assignment->var, self);
-
+   ORUInt bitLength = [_x bitLength];
    CPBitAntecedents* ants = malloc(sizeof(CPBitAntecedents));
    CPBitAssignment** vars;
    ants->numAntecedents = 0;
@@ -7922,8 +8362,9 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    ORUInt index = assignment->index;
    ants->antecedents = vars;
    
+   vars  = malloc(sizeof(CPBitAssignment*)*2*bitLength);
+   
    if (assignment->var == _x) {
-      vars  = malloc(sizeof(CPBitAssignment*)*2);
       if (![_y isFree:index]) {
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->var = _y;
@@ -7940,7 +8381,6 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       }
    }
    else if (assignment->var == _y){
-      vars  = malloc(sizeof(CPBitAssignment*)*2);
       if (![_x isFree:index]) {
          vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
          vars[ants->numAntecedents]->var = _x;
@@ -7957,52 +8397,86 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       }
    }
    else if (assignment->var == _r){
-      ORUInt bitlength = [_x bitLength];
-      ORUInt wordLength = bitlength/BITSPERWORD + (((bitlength%BITSPERWORD)>0) ? 1 : 0);
-      TRUInt* xUp;
-      TRUInt* xLow;
-      TRUInt* yUp;
-      TRUInt* yLow;
-
-      ORUInt* xandyset = alloca(sizeof(ORUInt)*wordLength);
-
-      ORUInt numAnts = 0;
-      ORUInt mask = 0x1;
-      ORBool value;
-
-      [_x getUp:&xUp andLow:&xLow];
-      [_y getUp:&yUp andLow:&yLow];
-
-      for (int i=0; i<wordLength; i++) {
-         xandyset[i] = (~(xUp[i]._val ^ xLow[i]._val)) & (~(yUp[i]._val ^ yLow[i]._val));
-         numAnts += __builtin_popcount(xandyset[i]);
+      if (![_x isFree:index]) {
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->var = _x;
+         vars[ants->numAntecedents]->index = index;
+         vars[ants->numAntecedents]->value = [_x getBit:index];
+         ants->numAntecedents++;
       }
-      vars = malloc(sizeof(CPBitAssignment*)*numAnts*2);
-      numAnts = 0;
-      for (int i=0; i<wordLength; i++) {
-         mask = 0x1;
-         for(int j=0;j<BITSPERWORD;j++){
-            index =i*BITSPERWORD+j;
-            if (index >= bitlength)
-               break;
-            if (xandyset[i] & mask) {
-//               index =i*BITSPERWORD+j;
-               value =[_x getBit:index];
-               vars[numAnts] = malloc(sizeof(CPBitAssignment));
-               vars[numAnts]->var = _x;
-               vars[numAnts]->index = index;
-               vars[numAnts++]->value = value;
-               value =[_y getBit:index];
-               vars[numAnts] = malloc(sizeof(CPBitAssignment));
-               vars[numAnts]->var = _y;
-               vars[numAnts]->index = index;
-               vars[numAnts++]->value = value;
-            }
-            mask <<= 1;
-         }
+      if (![_y isFree:index]) {
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->var = _y;
+         vars[ants->numAntecedents]->index = index;
+         vars[ants->numAntecedents]->value = [_y getBit:index];
+         ants->numAntecedents++;
       }
-      ants->numAntecedents = numAnts;
    }
+   
+   for(int i=0;i<bitLength;i++){
+      if(i == index)
+         continue;
+      if(![_x isFree:i]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = i;
+         vars[ants->numAntecedents]->var = _x;
+         vars[ants->numAntecedents]->value = [_x getBit:i];
+         ants->numAntecedents++;
+      }
+      if(![_y isFree:i]){
+         vars[ants->numAntecedents] = malloc(sizeof(CPBitAssignment));
+         vars[ants->numAntecedents]->index = i;
+         vars[ants->numAntecedents]->var = _y;
+         vars[ants->numAntecedents]->value = [_y getBit:i];
+         ants->numAntecedents++;
+      }
+   }
+//      ORUInt bitlength = [_x bitLength];
+//      ORUInt wordLength = bitlength/BITSPERWORD + (((bitlength%BITSPERWORD)>0) ? 1 : 0);
+//      TRUInt* xUp;
+//      TRUInt* xLow;
+//      TRUInt* yUp;
+//      TRUInt* yLow;
+//
+//      ORUInt* xandyset = alloca(sizeof(ORUInt)*wordLength);
+//
+//      ORUInt numAnts = 0;
+//      ORUInt mask = 0x1;
+//      ORBool value;
+//
+//      [_x getUp:&xUp andLow:&xLow];
+//      [_y getUp:&yUp andLow:&yLow];
+//
+//      for (int i=0; i<wordLength; i++) {
+//         xandyset[i] = (~(xUp[i]._val ^ xLow[i]._val)) & (~(yUp[i]._val ^ yLow[i]._val));
+//         numAnts += __builtin_popcount(xandyset[i]);
+//      }
+//      vars = malloc(sizeof(CPBitAssignment*)*numAnts*2);
+//      numAnts = 0;
+//      for (int i=0; i<wordLength; i++) {
+//         mask = 0x1;
+//         for(int j=0;j<BITSPERWORD;j++){
+//            index =i*BITSPERWORD+j;
+//            if (index >= bitlength)
+//               break;
+//            if (xandyset[i] & mask) {
+////               index =i*BITSPERWORD+j;
+//               value =[_x getBit:index];
+//               vars[numAnts] = malloc(sizeof(CPBitAssignment));
+//               vars[numAnts]->var = _x;
+//               vars[numAnts]->index = index;
+//               vars[numAnts++]->value = value;
+//               value =[_y getBit:index];
+//               vars[numAnts] = malloc(sizeof(CPBitAssignment));
+//               vars[numAnts]->var = _y;
+//               vars[numAnts]->index = index;
+//               vars[numAnts++]->value = value;
+//            }
+//            mask <<= 1;
+//         }
+//      }
+//      ants->numAntecedents = numAnts;
+//   }
    ants->antecedents = vars;
    return ants;
 }
@@ -8076,27 +8550,31 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          yfree[i] = yUp[i]._val ^ yLow[i]._val;
          numYFree += __builtin_popcount(yfree[i]);
          xyfree |= yfree[i];
-         xyneq[i] = (xLow[i]._val ^ yLow[i]._val) & ~xfree[i] & ~yfree[i];// | (xUp[i]._val ^ yUp[i]._val);
+//         xyneq[i] = ((xLow[i]._val ^ yLow[i]._val) | (xUp[i]._val ^ yUp[i]._val)) & ~xfree[i] & ~yfree[i];
+        xyneq[i] = ((xLow[i]._val ^ yLow[i]._val) | (xUp[i]._val ^ yUp[i]._val));
          numXYDiff += __builtin_popcount(xyneq[i]);
       }
 
       //If r is set, is there a final bit in x or y we can set?
-      if ((numXFree + numYFree)==1){
+      if (((numXFree + numYFree)==1) && (numXYDiff == 1)){
          //if _x or _y have only one free bit, we may be able to fix it
          if (rUp->_val == 0) {
             //only if all of the set bits are identical in x and y
             if (numXFree)
                for (int j=0; j<wordLength; j++){
-                  if (xyneq[j] & xfree[j])
+                  if ((xyneq[j] ^ xfree[j]) == 0)
                   {
                      newXLow[j] |= xfree[j] & ~yUp[j]._val;
-                     newXUp[j] &= xfree[j] | yUp[j]._val;
+                     newXUp[j] &= ~xfree[j] | ~yUp[j]._val;
                   }
                }
             else if (numYFree)
                for (int j=0; j<wordLength; j++){
-                  newYLow[j] |= yfree[j] & ~xUp[j]._val;
-                  newYUp[j] &= yfree[j] | xUp[j]._val;
+                  if ((xyneq[j] ^ yfree[j]) == 0)
+                  {
+                     newYLow[j] |= yfree[j] & ~xUp[j]._val;
+                     newYUp[j] &= ~yfree[j] | ~xUp[j]._val;
+                  }
                }
          }
       }
@@ -8107,27 +8585,27 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          newRLow = 0x1;
    }
 
-//   if (newRUp ==0)
-//      NSLog(@"break here");
-   ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
-   ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
-   ORBool rFail = checkDomainConsistency(_r, &newRLow, &newRUp, 1, self);
-   
+//      NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
+//      NSLog(@"newY = %@",bitvar2NSString(newYLow, newYUp, bitLength));
+//      NSLog(@"newR = %@\n\n",bitvar2NSString(&newRLow, &newRUp, 1));
+
 //   NSLog(@"");
 //   NSLog(@"x = %@",_x);
 //   NSLog(@"y = %@",_y);
 //   NSLog(@"r = %@",_r);
-//   NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
-//   NSLog(@"newY = %@",bitvar2NSString(newYLow, newYUp, bitLength));
-//   NSLog(@"newR = %@\n\n",bitvar2NSString(&newRLow, &newRUp, 1));
    
+   
+   ORBool xFail = checkDomainConsistency(_x, newXLow, newXUp, wordLength, self);
+   ORBool yFail = checkDomainConsistency(_y, newYLow, newYUp, wordLength, self);
+   ORBool rFail = checkDomainConsistency(_r, &newRLow, &newRUp, 1, self);
    
    if(xFail || yFail || rFail)
       failNow();
-   
+
    [_x setUp:newXUp andLow:newXLow for:self];
    [_y setUp:newYUp andLow:newYLow for:self];
    [_r setUp:&newRUp andLow:&newRLow for:self];
+   
    
 }
 @end
@@ -8335,7 +8813,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [string appendString:[NSString stringWithFormat:@"%@, ",_x]];
    [string appendString:[NSString stringWithFormat:@"%@, ",_y]];
    [string appendString:[NSString stringWithFormat:@"and %@\n",_z]];
-   
+   [string appendString:[NSString stringWithFormat:@"using ~y %@\n",_notY]];
+   [string appendString:[NSString stringWithFormat:@"and one %@\n",_one]];
+   [string appendString:[NSString stringWithFormat:@"and -y %@\n",_negY]];
+   [string appendString:[NSString stringWithFormat:@"and one %@\n",_negYCin]];
+   [string appendString:[NSString stringWithFormat:@"and one %@\n",_negYCout]];
    return string;
 }
 
@@ -8751,7 +9233,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          [_partialProduct[i] setUp:newUp andLow:newLow for:self];
       }
       else if((boundLow[i/BITSPERWORD]) & (0x1 << (i%BITSPERWORD))) {
-////         [_partialProduct[i] getUp:&tempUp andLow:&tempLow];
+//         [_partialProduct[i] getUp:&tempUp andLow:&tempLow];
          for (int j=0; j<wordLength; j++) {
             newUp[j] = 0;
             newLow[j] = tempLow[j]._val;

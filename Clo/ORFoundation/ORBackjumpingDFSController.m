@@ -81,9 +81,13 @@
 }
 -(void) fail
 {
-   ORUInt level;
+   ORUInt faillevel = [_tracer level];
+   ORUInt level = faillevel;
    ORUInt jumplevel = (ORUInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
-//   ORBool retry = [(CPLearningEngineI*)_engine retry];
+   
+//   ORBool retry = (jumplevel != (level - 1));
+//   NSLog(@"Backtracking to level %d from level %d",jumplevel, level);
+//   NSLog(@"fail at level %d", level);
 
    do {
       ORInt ofs = _sz-1;
@@ -97,19 +101,21 @@
          _tab[ofs] = 0;
          --_sz;
             
-         //Jump back if constraint was learned
-         level = [_tracer level];
-         if (jumplevel < level) {
-//            NSLog(@"Jumping over level %d",level);
-            [k letgo];
-            continue;
-         }
+//         //Jump back if constraint was learned
+//         level = [_tracer level];
+//         if (jumplevel < level) {
+////)            NSLog(@"Jumping over level %d to level %d",level,jumplevel);
+//            [k letgo];
+//            continue;
+//         }
 
          if (k &&  status != ORFailure) {
-//            NSLog(@"Restarting search at level %d",level);
-            if ((jumplevel != -1))
-               [k callInvisible];
-            else
+////            NSLog(@"Restarting search at level %d",level);
+//            if ((jumplevel != -1) && (level < faillevel-1)){
+////               NSLog(@"Retry search at level %d",level);
+//               [k callInvisible];
+//            }
+//            else
                [k call];
          } else {
             if (k==nil)

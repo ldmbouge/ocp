@@ -17,7 +17,7 @@
 #import <objcp/CPIntVarI.h>
 #import "CPBitVarI.h"
 
-#define BITFREE(idx)     ((_low[WORDIDX(idx)]._val ^ _up[WORDIDX(idx)]._val) & ONEAT(idx))
+#define BITFREE(idx)     ((_low[WORDIDX(idx)]._val ^ _up[WORDIDX(idx)]._val) & ONEAT(idx) & _up[WORDIDX(idx)]._val)
 #define SETBITTRUE(idx)   (assignTRUInt(&_low[WORDIDX(idx)],_low[WORDIDX(idx)]._val | ONEAT(idx),_trail))
 #define SETBITFALSE(idx)  (assignTRUInt(&_up[WORDIDX(idx)],_up[WORDIDX(idx)]._val & ZEROAT(idx),_trail))
 
@@ -295,8 +295,11 @@
    }
 
    [self updateFreeBitCount];
-   if([_engine isKindOfClass:[CPLearningEngineI class]])
-      assignTRUInt(&(_levels[idx]),[(CPLearningEngineI*)_engine getLevel], _trail);
+   if([_engine isKindOfClass:[CPLearningEngineI class]]){
+      ORUInt level = [(CPLearningEngineI*)_engine getLevel];
+      assignTRUInt(&(_levels[idx]),level, _trail);
+//      NSLog(@"Setting %@[%d] to %i at Level %u",self, idx,val,level);
+   }
    [x bitFixedEvt:_freebits._val sender:self];
    //Added _freebits._val when I included bitFixedAtEvt here, not sure it is needed
    [x bitFixedAtEvt:_freebits._val at:idx sender:self];
@@ -880,7 +883,7 @@
       for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
             if([_engine isKindOfClass:[CPLearningEngineI class]])
-               assignTRUInt(&_levels[i], [(CPLearningEngineI*)_engine getLevel], _trail);
+               assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(CPLearningEngineI*)_engine getLevel], _trail);
             [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
@@ -931,8 +934,10 @@
    isChanged = alloca(sizeof(uint32)*_wordLength);
    
    for(int i=0;i<_wordLength;i++){
-      isChanged[i]  = (_up[i]._val & ~newUp[i]);
-      isChanged[i] |= (_low[i]._val & ~newLow[i]);
+//      isChanged[i]  = (_up[i]._val & ~newUp[i]);
+//      isChanged[i] |= (~_low[i]._val & newLow[i]);
+      isChanged[i]  = (_up[i]._val ^ newUp[i]);
+      isChanged[i] |= (_low[i]._val ^ newLow[i]);
       umod |= _up[i]._val != newUp[i];
       assignTRUInt(&_up[i], newUp[i], _trail);
       lmod |= _low[i]._val != newLow[i];

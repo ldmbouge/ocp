@@ -90,7 +90,12 @@
 {
 //   NSLog(@"Adding constraint with level %u",level);
    [self addConstraint:c];
-   _backjumpLevel = (level < _backjumpLevel) ? level:_backjumpLevel;
+
+   if (level < 5)
+      level = 5;
+   
+   if (level < [_tracer level])
+      _backjumpLevel = ((level < _backjumpLevel) && (level > 4)) ? level:_backjumpLevel;
 }
 -(ORUInt) getLevel
 {
@@ -115,6 +120,7 @@
 {
    ORStatus s;
    ORInt currLevel = [_tracer level];
+//   NSLog(@"Restoring constraints at level %d",currLevel);
    // Add missing constraints back to constraint store here
    s = tryfail(^ORStatus{
       ORStatus status;
