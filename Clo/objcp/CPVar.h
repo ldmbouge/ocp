@@ -105,6 +105,7 @@ enum CPVarClass {
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
+-(ORInt) regret;
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;

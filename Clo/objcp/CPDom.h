@@ -29,6 +29,7 @@
 -(ORBool) bound;
 -(ORBounds) bounds;
 -(ORInt) domsize;
+-(ORInt) regret;
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to;
 -(ORBool) get:(ORInt)b;
 -(ORBool) member:(ORInt)v;

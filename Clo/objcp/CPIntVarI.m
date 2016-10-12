@@ -242,6 +242,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method domsize  not defined"];
    return 0;
 }
+-(ORInt) regret
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method regret  not defined"];
+   return 0;
+}
 -(ORBounds) bounds
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method bounds not defined"];
@@ -550,6 +555,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return 1;
 }
+-(ORInt) regret
+{
+   return 0;
+}
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to
 {
    return (_value >= from && _value <= to);
@@ -824,6 +833,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORInt)domsize
 {
     return [_dom domsize];
+}
+-(ORInt) regret
+{
+   return [_dom regret];
 }
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to
 {
@@ -1440,6 +1453,16 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    return [_x domsize];
 }
+-(ORInt) regret
+{
+   if (_a >= 0) {
+      return _a * [_x regret];
+   } else {
+      int theMax = [_x max];
+      int prev   = [[_x domain] findMax:theMax-1];
+      return - (theMax - prev) * _a;
+   }
+}
 -(ORRange)around:(ORInt)v
 {
    ORRange a = [_x around: (v - _b) / _a];
@@ -1659,6 +1682,12 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 {
    return [_x domsize];
 }
+-(ORInt) regret
+{
+   int theMax = [_x max];
+   int prev = [[_x domain] findMax:theMax-1];
+   return theMax - prev;
+}
 -(ORRange)around:(ORInt)v
 {
    ORRange a = [_x around:-v];
@@ -1811,7 +1840,13 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
       else return 1;
    }
 }
-
+-(ORInt) regret
+{
+   if (bound(_secondary))
+      return 0;
+   else
+      return 1;
+}
 -(ORRange)around:(ORInt)v
 {
    return (ORRange){0,1};

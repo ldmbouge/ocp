@@ -1274,6 +1274,11 @@
 {
   return [((id<CPIntVar>) _gamma[x.getId]) domsize];
 }
+-(ORInt)  regret:(id<ORIntVar>)x
+{
+   return [((id<CPIntVar>) _gamma[x.getId]) regret];
+}
+
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];

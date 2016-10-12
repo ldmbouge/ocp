@@ -158,6 +158,7 @@ PORTABLE_BEGIN
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
 -(ORInt)  domsize: (id<ORIntVar>) x;
+-(ORInt)  regret:(id<ORIntVar>)x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
 

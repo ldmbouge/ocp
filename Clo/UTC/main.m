@@ -1027,6 +1027,7 @@ int main(int argc, const char * argv[])
         NSData *xmlData = [solDoc XMLDataWithOptions:NSXMLNodePrettyPrint];
         NSString* outPath = [NSHomeDirectory() stringByAppendingPathComponent:@"UTCSolution.xml"];
         [xmlData writeToFile: outPath atomically:YES];
+        [xmlData release];
         NSLog(@"Wrote Solution File: %@", outPath);
     };
 
@@ -1035,39 +1036,49 @@ int main(int argc, const char * argv[])
    
    id<ORRelaxation> relax = nil;
    __block id<ORSolution> bestSolution = nil;
-   relax = [ORFactory createLinearRelaxation:lm];
+   //relax = [ORFactory createLinearRelaxation:lm];
    id<ORIntVarArray> aiv = m.intVars;
    
    id<ORRunnable> r0 = [ORFactory CPRunnable:m
                               withRelaxation: relax
-                                  controller: [ORSemDFSController proto]
+                                  controller: [ORDFSController proto]
                                        solve:^(id<CPCommonProgram> p)
    {
          id<ORTau> t = p.modelMappings.tau;
-         id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
-         id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
+      id<ORIntVarArray> x = [[t get:o1] vars]; //joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
+      id<ORIntArray>    c = [[t get:o1] coefs]; //joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
 
-         PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:p];
-         [pcb branchOn:aiv];
+//         PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:p];
+//         [pcb branchOn:aiv];
 
-         [p forall:x.range suchThat:^ORBool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return  - [c at:i];} do:^(ORInt i) {
-            int m = [p min:x[i]] + ([p max:x[i]] + [p min:x[i]]) / 2;
+      while (![p allBound:x]) {
+         [p select:x minimizing:^ORDouble(ORInt i) { return  (( - [c at:i] * [p regret:x[i]]) << 16)  + [p domsize:x[i]];} in:^(ORInt i) {
             [p try:^{
-               [p lthen:x[i] with:m+1];
+               [p label:x[i] with:[p min:x[i]]];
             } alt:^{
-               [p gthen:x[i] with:m];
+               [p diff:x[i] with:[p min:x[i]]];
             }];
-            //[p label:x[i]];
          }];
-//
+      }
+      
+//         [p forall:x.range suchThat:^ORBool(ORInt i) { return ![p bound:x[i]];} orderedBy:^ORInt(ORInt i) { return  - [c at:i];} do:^(ORInt i) {
+//            int m = [p min:x[i]] + ([p max:x[i]] + [p min:x[i]]) / 2;
+//            [p try:^{
+//               [p lthen:x[i] with:m+1];
+//            } alt:^{
+//               [p gthen:x[i] with:m];
+//            }];
+//            [p label:x[i]];
+//         }];
+
 //         [p labelArrayFF: voltSensorEndpoints];
 //         [p labelArrayFF: curSensorEndpoints];
 //         [p labelArrayFF: contSensorEndpoints];
 //         [p labelArrayFF: busEndpoints];
 //         [p labelArrayFF: concEndpoints];
 
-         [p labelArray:m.intVars];
-         [p splitArray:m.intVars];
+         [p labelArray:aiv];
+         [p splitArray:aiv];
          NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
          id<ORSolution> s = [p captureSolution];
          writeOut(s);
@@ -1082,7 +1093,7 @@ int main(int argc, const char * argv[])
    id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
    id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
    
-   id<ORRunnable> r  = r1;
+   id<ORRunnable> r  = r0;
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [r run];
    bestSolution = [r bestSolution];

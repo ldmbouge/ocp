@@ -438,6 +438,10 @@
 {
    return [[self worker] domsize:x];
 }
+-(ORInt) regret: (id<ORIntVar>) x
+{
+   return [[self worker] regret:x];
+}
 -(ORDouble) domwidth:(id<ORRealVar>)x
 {
    return [[self worker] domwidth:x];

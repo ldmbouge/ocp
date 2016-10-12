@@ -365,7 +365,7 @@
 {
    ORInt ofs = _sz-1;
    if (ofs >= 0) {
-      [_tracer popNode];
+      [[_tracer popNode] letgo];
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;
       --_sz;
