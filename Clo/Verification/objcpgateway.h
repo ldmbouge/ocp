@@ -1,7 +1,7 @@
 #ifndef OBJCPGATEWAY_H
 #define OBJCPGATEWAY_H
-#import <Foundation/Foundation.h>
-#import <ORUtilities/ORTypes.h>
+
+#import <ORUtilities/ORUtilities.h>
 //#import <Foundation/NSData.h>
 //#import <Foundation/NSString.h>
 
@@ -20,7 +20,6 @@
 //#import <objcp/CPBitArray.h>
 //#import <objcp/CPBitArrayDom.h>
 //#import <objcp/CPBitConstraint.h>
-#include "/usr/local/include/gmp.h"
 
 @protocol CPProgram;
 
@@ -87,7 +86,7 @@ typedef int assertion_id;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name;
 -(objcp_type) objcp_mk_bitvector_type:(objcp_context)ctx withSize:(unsigned int) size;
 -(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range;
--(int)        objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value;
+//-(int)        objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value;
 
 /**
  \brief Create a backtracking point in the given logical context.

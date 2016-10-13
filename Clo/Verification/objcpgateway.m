@@ -7,6 +7,7 @@
 //
 
 #import "objcpgateway.h"
+#include "/usr/local/include/gmp.h"
 
 @interface OBJCPType : NSObject{
 @private
@@ -237,10 +238,12 @@
    NSLog(@"Make function type not implemented");
    return NULL;
 }
+/*
 -(int)  objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value{
-NSLog(@"Get mpq value not implemented");
-return 0;
+   NSLog(@"Get mpq value not implemented");
+   return 0;
 }
+*/
 
 /**
  \brief Create a backtracking point in the given logical context.
