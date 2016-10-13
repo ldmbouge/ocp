@@ -870,6 +870,8 @@ int main(int argc, const char * argv[])
     
     // Write Solution to XML ----------------------------------------------------------------------------------
     void(^writeOut)(id<ORSolution>) = ^(id<ORSolution> bestSolution){
+       
+       @autoreleasepool {
         NSXMLElement* root = [[NSXMLElement alloc] initWithName: @"utc_architecture"];
         
         // Write PMU
@@ -1023,12 +1025,13 @@ int main(int argc, const char * argv[])
         }
         [root addChild: concRoot];
         
-        NSXMLDocument* solDoc = [[NSXMLDocument alloc] initWithRootElement: root];
+        NSXMLDocument* solDoc = [[[NSXMLDocument alloc] initWithRootElement: root] autorelease];
         NSData *xmlData = [solDoc XMLDataWithOptions:NSXMLNodePrettyPrint];
         NSString* outPath = [NSHomeDirectory() stringByAppendingPathComponent:@"UTCSolution.xml"];
         [xmlData writeToFile: outPath atomically:YES];
-        [xmlData release];
+        //[xmlData release];
         NSLog(@"Wrote Solution File: %@", outPath);
+       }
     };
 
    id<ORModel> lm = [ORFactory linearizeModel: m];
@@ -1043,7 +1046,7 @@ int main(int argc, const char * argv[])
    
    id<ORRunnable> r0 = [ORFactory CPRunnable:m
                               withRelaxation: relax
-                                  controller: [ORDFSController proto]
+                                  controller: [ORSemDFSController proto]
                                        solve:^(id<CPProgram> p)
    {
          id<ORTau> t = p.modelMappings.tau;
@@ -1065,7 +1068,7 @@ int main(int argc, const char * argv[])
                }];
             }
             [p labelArray:aiv];
-            [p splitArray:aiv];
+            //[p splitArray:aiv];
             NSLog(@"Solution cost: %i", [[[p captureSolution] objectiveValue] intValue]);
             id<ORSolution> s = [p captureSolution];
             writeOut(s);
@@ -1080,30 +1083,26 @@ int main(int argc, const char * argv[])
          id<ORSolution> s = [[p solutionPool] best];
          if (s!=nil) {
             bool improve = [[s objectiveValue] intValue] < best;
-            for(ORInt i=x.range.low;i <= x.range.up;i+=1) {
-               if ([d next] <= 90) {
-                  [p add: [x[i]  eq: @([s intValue:x[i]])]];
+            int nbFIX = 0;
+            for(id<ORIntVar> y in aiv) {
+               if ([d next] <= 10) {
+                  [p add: [y  eq: @([s intValue:y])]];
+                  nbFIX += 1;
                }
             }
             if (improve)
                best = [[s objectiveValue] intValue];
-            else fLim *= 2;
-            NSLog(@"LNS move... Next Limit = %d",fLim);
+            //else fLim *= 2;
+            NSLog(@"LNS move(%d/%ld)... Next Limit = %d",nbFIX,[aiv count],fLim);
          } else fLim *= 2;
       }];
       
-//         [p labelArrayFF: voltSensorEndpoints];
-//         [p labelArrayFF: curSensorEndpoints];
-//         [p labelArrayFF: contSensorEndpoints];
-//         [p labelArrayFF: busEndpoints];
-//         [p labelArrayFF: concEndpoints];
-
-      }];
+   }];
    
    id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
    id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
    
-   id<ORRunnable> r  = r0;
+   id<ORRunnable> r  = rp;
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [r run];
    bestSolution = [r bestSolution];
