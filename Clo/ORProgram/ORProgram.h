@@ -22,7 +22,7 @@
 #import <ORProgram/CPWDeg.h>
 #import <ORProgram/CPIBS.h>
 #import <ORProgram/CPABS.h>
-//<<<<<<< HEAD
+
 #import <ORProgram/CPBitVarABS.h>
 #import <ORProgram/CPBitVarIBS.h>
 #import <ORProgram/CPFirstFail.h>

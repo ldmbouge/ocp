@@ -244,7 +244,7 @@
 
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
-      [o set:gamma[bitVars[k].getId] at:k];
+      [o set:bitVars[k] at:k];
    
    
    

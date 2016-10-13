@@ -40,7 +40,6 @@ typedef struct  {
    ORUInt          _bitLength;
 } CPBitEventNetwork;
 
-//<<<<<<< HEAD
 @interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 //=======
 //

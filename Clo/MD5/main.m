@@ -23,7 +23,6 @@
 #import <objcp/CPBitConstraint.h>
 #import "MD4.h"
 #import "MD5.h"
-//#import "../SHA1/SHA1.h"
 #import "../SHA1/SHA1/SHA1b.h"
 
 

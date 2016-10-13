@@ -12,7 +12,7 @@
 #import <ORUtilities/ORUtilities.h>
 #import <ORProgram/CPBitVarHeuristic.h>
 #import <ORProgram/CPBitVarBaseHeuristic.h>
-#import <objcp/CPVar.h>
+#import <objcp/objcp.h>
 
 @implementation CPBitVarBaseHeuristic {
    BOOL _oneSol;

@@ -208,7 +208,7 @@ void smtlib2_term_parser_define_let_binding(smtlib2_term_parser *tp,
             char *s;
             smtlib2_vector *vv;
             
-            for (i = (int)smtlib2_vector_size(tp->let_levels_)-1; i >= 0; --i) {
+            for (i = smtlib2_vector_size(tp->let_levels_)-1; i >= 0; --i) {
                 const char *s2 =
                     (const char *)smtlib2_vector_at(tp->let_levels_, i);
                 if (!s2) {

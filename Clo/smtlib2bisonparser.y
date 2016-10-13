@@ -558,13 +558,13 @@ term_num_constant :
 | BINCONSTANT
   {
       const char *s = $1 + 2; /* skip the "#b" prefix */
-      $$ = parser->make_number_term(parser, s, (int)strlen(s), 2);
+      $$ = parser->make_number_term(parser, s, strlen(s), 2);
       free($1);
   }
 | HEXCONSTANT
   {
       const char *s = $1 + 2; /* skip the "#x" prefix */
-      $$ = parser->make_number_term(parser, s, 4 * (int)strlen(s), 16);
+      $$ = parser->make_number_term(parser, s, 4 * strlen(s), 16);
       free($1);
   }
 | '(' TK_UNDERSCORE BVCONSTANT NUMERAL ')'

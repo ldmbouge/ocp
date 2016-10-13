@@ -93,7 +93,6 @@
 -(ORInt) maxBound:(id<ORIdArray>) x;
 -(ORBool) allBound:(id<ORIdArray>) x;
 -(id<ORIntVar>)smallestDom:(id<ORIdArray>)x;
-//<<<<<<< HEAD
 
 //-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
 //
@@ -137,7 +136,7 @@
 // SemanticPath CPSolver
 @interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram,CPSemanticProgramDFS>
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
-//<<<<<<< HEAD
+
 -(id<CPSemanticProgramDFS>) initCPSolverBackjumpingDFS;
 //-(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
 //=======
