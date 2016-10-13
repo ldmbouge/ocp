@@ -21,10 +21,7 @@
 //#import <objcp/CPBitArrayDom.h>
 //#import <objcp/CPBitConstraint.h>
 //#include <Verification/objcpgateway.h>
-#import <Verification/objcpgateway.h>
-#include <Verification/smtlib2abstractparser_private.h>
-#include <Verification/smtlib2abstractparser.h>
-#import <Verification/smtlib2objcp.h>
+#import <Verification/Verification.h>
 
 //#import "ORCmdLineArgs.h"
 
