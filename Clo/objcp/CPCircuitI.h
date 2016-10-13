@@ -10,10 +10,8 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
-#import <CPUKernel/CPTypes.h>
-#import <CPUKernel/CPConstraintI.h>
-#import <objcp/CPVar.h>
+#import <CPUKernel/CPUKernel.h>
+#import <objcp/objcp.h>
 
 @interface CPCircuit : CPCoreConstraint<CPConstraint>
 -(CPCircuit*) initCPCircuit: (id<CPIntVarArray>) x;

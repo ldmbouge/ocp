@@ -171,6 +171,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"var<%d>=",_name];
    [buf appendString:[_dom description]];
+   [buf appendFormat:@"(relaxValue:%f)",_value];
    return buf;
 }
 -(void)setDelegate:(id<CPRealVarNotifier>)delegate
@@ -237,19 +238,19 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
-   [self whenBindPropagate:c priority:HIGHEST_PRIO];
+   [self whenBindPropagate:c priority:c->_priority];
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeMinPropagate:c priority:HIGHEST_PRIO];
+   [self whenChangeMinPropagate:c priority:c->_priority];
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeMaxPropagate:c priority:HIGHEST_PRIO];
+   [self whenChangeMaxPropagate:c priority:c->_priority];
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
+   [self whenChangeBoundsPropagate:c priority:c->_priority];
 }
 
 -(void) bindEvt:(id<CPFDom>)sender
@@ -606,5 +607,41 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    ORBounds b = [_theVar bounds];
    return b.max - b.min;
+}
+@end
+
+@implementation CPRealParamI
+-(id)initCPRealParam:(id<CPEngine>)engine initialValue:(ORDouble)v
+{
+    self = [super init];
+    _engine = (CPEngineI*)engine;
+    _value = v;
+    return self;
+}
+-(CPEngineI*) engine
+{
+    return _engine;
+}
+-(CPEngineI*) tracker
+{
+    return _engine;
+}
+-(NSMutableSet*) constraints
+{
+    return [NSMutableSet set];
+}
+-(ORDouble) value
+{
+    return _value;
+}
+-(void) setValue: (ORDouble)val
+{
+    _value = val;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<PARAM(%d) = %lf>",_name,_value];
+   return buf;
 }
 @end

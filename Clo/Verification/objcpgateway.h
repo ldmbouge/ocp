@@ -6,9 +6,10 @@
 //#import <Foundation/NSString.h>
 
 //#import <ORFoundation/ORAVLTree.h>
-//#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORFactory.h>
 //#import <ORFoundation/ORSetI.h>
 #import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <ORProgram/CPProgram.h>
 //#import <objcp/CPObjectQueue.h>
 #import <objcp/CPFactory.h>
@@ -129,8 +130,8 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_true:(objcp_context)ctx;
 -(objcp_expr) objcp_mk_false:(objcp_context)ctx;
 
--(objcp_expr) objcp_mk_and:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs;
--(objcp_expr) objcp_mk_or:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs;
+-(objcp_expr) objcp_mk_and:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORULong)numArgs;
+-(objcp_expr) objcp_mk_or:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORULong)numArgs;
 -(objcp_expr) objcp_mk_not:(objcp_context)ctx withArg:(objcp_expr)arg1;
 
 -(objcp_expr) objcp_mk_eq:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_expr)arg2;
@@ -144,7 +145,7 @@ typedef int assertion_id;
 //-(objcp_expr) objcp_mk_gt
 -(objcp_expr) objcp_mk_ite:(objcp_context)ctx if:(objcp_expr) c then:(objcp_expr) t else:(objcp_expr)e ;
 //-(objcp_expr) objcp_mk_num_from_string
-//-(objcp_expr) objcp_mk_diseq
+-(objcp_expr) objcp_mk_diseq:(objcp_context)ctx var:(objcp_expr)arg1 neq:(objcp_expr)arg2;
 -(objcp_expr) objcp_mk_bv_concat:(objcp_context)ctx withArg:(objcp_expr)arg1 andArg:(objcp_context)arg2;
 -(objcp_expr) objcp_mk_bv_not:(objcp_context) ctx withArg:(objcp_expr) a1;
 -(objcp_expr) objcp_mk_bv_and:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
@@ -170,6 +171,9 @@ typedef int assertion_id;
 -(objcp_expr) objcp_mk_bv_add:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 -(objcp_expr) objcp_mk_bv_sub:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
 -(objcp_expr) objcp_mk_bv_mul:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+-(objcp_expr) objcp_mk_bv_div:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+-(objcp_expr) objcp_mk_bv_rem:(objcp_context) ctx withArg:(objcp_expr) a1 andArg:(objcp_expr)a2;
+
 -(objcp_expr) objcp_mk_bv_extract:(objcp_context)ctx from:(ORUInt)msb downTo:(ORUInt)lsb in:(objcp_expr)a1;
 -(objcp_expr) objcp_mk_bv_sign_extend:(objcp_context)ctx withArg:(objcp_expr)a1 andAmount:(ORUInt)amt;
 -(objcp_expr) objcp_mk_bv_rotl:(objcp_context) ctx withArg:(objcp_expr) a1 andAmount:(ORUInt)a2;

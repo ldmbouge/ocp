@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORData.h>
+#import <ORFoundation/ORParameter.h>
 
 @protocol ORTrailableInt;
 @protocol ORRealVar;
@@ -65,6 +66,9 @@
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitTable:(id<ORTable>) v;
+-(void) visitIntParam: (id<ORIntParam>) v;
+-(void) visitRealParam: (id<ORRealParam>) v;
+
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c;
 -(void) visitGroup:(id<ORGroup>)g;
@@ -77,6 +81,7 @@
 -(void) visitRegular:(id<ORRegular>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+-(void) visitRealWeightedVar: (id<ORWeightedVar>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitCircuit:(id<ORCircuit>) cstr;
@@ -105,6 +110,7 @@
 -(void) visitEqual: (id<ORConstraint>)c;
 -(void) visitAffine: (id<ORConstraint>)c;
 -(void) visitNEqual: (id<ORConstraint>)c;
+-(void) visitSoftNEqual: (id<ORSoftNEqual>)c;
 -(void) visitLEqual: (id<ORConstraint>)c;
 -(void) visitPlus: (id<ORConstraint>)c;
 -(void) visitMult: (id<ORConstraint>)c;
@@ -135,6 +141,7 @@
 -(void) visitReifySumBoolGEqualc: (id<ORConstraint>) c;
 -(void) visitHReifySumBoolEqualc: (id<ORConstraint>) c;
 -(void) visitHReifySumBoolGEqualc: (id<ORConstraint>) c;
+-(void) visitClause:(id<ORConstraint>)c;
 -(void) visitSumBoolEqualc: (id<ORConstraint>) c;
 -(void) visitSumBoolLEqualc:(id<ORConstraint>)c;
 -(void) visitSumBoolGEqualc:(id<ORConstraint>)c;
@@ -146,6 +153,7 @@
 -(void) visitLinearLeq: (id<ORConstraint>) c;
 -(void) visitLinearEq: (id<ORConstraint>) c;
 -(void) visitRealLinearLeq: (id<ORConstraint>) c;
+-(void) visitRealLinearGeq: (id<ORConstraint>) c;
 -(void) visitRealLinearEq: (id<ORConstraint>) c;
 
 
@@ -164,6 +172,7 @@
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
+-(void) visitExprGEqualI: (id<ORExpr>) e;
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAggMinI: (id<ORExpr>) e;
@@ -213,6 +222,9 @@
 -(void) visitBitOrb:(id<ORConstraint>)c;
 -(void) visitBitNotb:(id<ORConstraint>)c;
 -(void) visitBitEqualb:(id<ORConstraint>)c;
+-(void) visitBitNegative:(id<ORConstraint>)c;
+-(void) visitBitSignExtend:(id<ORConstraint>)c;
+-(void) visitBitDistinct:(id<ORConstraint>)c;
 @end
 
 @interface ORNOopVisit : ORVisitor

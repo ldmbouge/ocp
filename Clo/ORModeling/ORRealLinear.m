@@ -53,13 +53,20 @@
    ORDouble lb = _indep;
    for(ORInt k=0;k < _nb;k++) {
       ORDouble c = _terms[k]._coef;
-      id<ORRealRange> d = [(id<ORRealVar>)_terms[k]._var domain];
-      ORDouble vlb = d.low;
-      ORDouble vub = d.up;
+      ORDouble vlb,vub;
+      if ([_terms[k]._var conformsToProtocol:@protocol(ORRealVar)]) {
+         id<ORRealRange> d = [(id<ORRealVar>)_terms[k]._var domain];
+         vlb = d.low;
+         vub = d.up;
+      } else if ([_terms[k]._var conformsToProtocol:@protocol(ORIntVar)]) {
+         id<ORIntRange> d = [(id<ORIntVar>)_terms[k]._var domain];
+         vlb = d.low;
+         vub = d.up;
+      }
       ORDouble svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
-   return max(MININT,lb);
+    return ((FLT_MIN) > lb) ? FLT_MIN : lb;
 }
 
 -(ORDouble) fmax
@@ -73,7 +80,7 @@
       ORDouble svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
-   return min(MAXINT,ub);
+    return ((FLT_MAX) < ub) ? FLT_MAX : ub;
 }
 
 -(void) addTerm: (id<ORVar>) x by: (ORDouble) c
@@ -189,35 +196,43 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 
 -(id<ORConstraint>) postEQZ: (id<ORAddToModel>) model
 {
-   return [model addConstraint:[ORFactory realSum: model
-                                            array: [self variables: model]
-                                             coef: [self coefficients: model]
-                                               eq: -_indep]];
+    return [model addConstraint:[ORFactory realSum: model
+                                             array: [self variables: model]
+                                              coef: [self coefficients: model]
+                                                eq: -_indep]];
 }
 -(id<ORConstraint>) postLEQZ: (id<ORAddToModel>) model
 {
+    return [model addConstraint:[ORFactory realSum: model
+                                             array: [self variables: model]
+                                              coef: [self coefficients: model]
+                                               leq: -_indep]];
+}
+-(id<ORConstraint>) postGEQZ: (id<ORAddToModel>) model
+{
    return [model addConstraint:[ORFactory realSum: model
                                             array: [self variables: model]
                                              coef: [self coefficients: model]
-                                              leq: -_indep]];
+                                              geq: -_indep]];
 }
+
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
-   assert(NO);
-   return nil;
+    assert(NO);
+    return nil;
 }
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
-   assert(NO);
-   return nil;
+    assert(NO);
+    return nil;
 }
 -(void) postMinimize: (id<ORAddToModel>) model
 {
-   [model minimize: [self variables: model] coef: [self coefficients: model]];
+    [model minimize: [self variables: model] coef: [self coefficients: model]];
 }
 -(void) postMaximize: (id<ORAddToModel>) model
 {
-   [model maximize: [self variables: model] coef: [self coefficients: model]];
+    [model maximize: [self variables: model] coef: [self coefficients: model]];
 }
 @end
 
@@ -248,7 +263,7 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
    }
    [_real addIndependent:- [lts independent]];
 }
--(void) scaleBy: (ORInt) s
+-(void) scaleBy: (ORDouble) s
 {
    [_real scaleBy: -s];
 }
@@ -283,19 +298,24 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model
 {
-   return [_real postEQZ:model];
+    return [_real postEQZ:model];
 }
 -(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model
 {
-   return [_real postNEQZ:model];
+    return [_real postNEQZ:model];
 }
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model
 {
-   return [_real postLEQZ:model];
+    return [_real postLEQZ:model];
+}
+-(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model
+{
+   return [_real postGEQZ:model];
 }
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
-   return [_real postDISJ:model];
+    return [_real postDISJ:model];
 }
+
 @end
 

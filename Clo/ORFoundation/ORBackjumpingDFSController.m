@@ -38,6 +38,12 @@
    return self;
 }
 
++(id<ORSearchController>)proto
+{
+   return [[ORSemDFSController alloc] initTheController:nil engine:nil posting:nil];
+}
+
+
 - (void) dealloc
 {
    //NSLog(@"SemDFSController %p dealloc called...\n",self);
@@ -81,9 +87,9 @@
 }
 -(void) fail
 {
-   ORUInt faillevel = [_tracer level];
-   ORUInt level = faillevel;
-   ORUInt jumplevel = (ORUInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
+//   ORUInt faillevel = [_tracer level];
+//   ORUInt level = faillevel;
+//   ORUInt jumplevel = (ORUInt)[(CPLearningEngineI*)_engine getBackjumpLevel];
    
 //   ORBool retry = (jumplevel != (level - 1));
 //   NSLog(@"Backtracking to level %d from level %d",jumplevel, level);
@@ -140,25 +146,25 @@
    return ctrl;
 }
 
--(ORHeist*)steal
-{
-   if (_sz >= 1) {
-      NSCont* c           = _tab[0];
-      id<ORCheckpoint> cp = _cpTab[0];
-      for(ORInt i=1;i<_sz;i++) {
-         _tab[i-1] = _tab[i];
-         _cpTab[i-1] = _cpTab[i];
-      }
-      /*
-       NSCont* c = _tab[_sz - 1];
-       id<ORCheckpoint> cp = _cpTab[_sz - 1];
-       */
-      --_sz;
-      ORHeist* rv = [[ORHeist alloc] initORHeist:c from:cp];
-      [cp letgo];
-      return rv;
-   } else return nil;
-}
+//-(ORHeist*)steal
+//{
+//   if (_sz >= 1) {
+//      NSCont* c           = _tab[0];
+//      id<ORCheckpoint> cp = _cpTab[0];
+//      for(ORInt i=1;i<_sz;i++) {
+//         _tab[i-1] = _tab[i];
+//         _cpTab[i-1] = _cpTab[i];
+//      }
+//      /*
+//       NSCont* c = _tab[_sz - 1];
+//       id<ORCheckpoint> cp = _cpTab[_sz - 1];
+//       */
+//      --_sz;
+//      ORHeist* rv = [[ORHeist alloc] initORHeist:c from:cp];
+//      [cp letgo];
+//      return rv;
+//   } else return nil;
+//}
 
 -(ORBool)willingToShare
 {

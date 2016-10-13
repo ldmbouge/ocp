@@ -10,6 +10,8 @@
 
  ***********************************************************************/
 
+#import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPLEngine.h>
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPError.h>
 #import <objcp/CPBitVar.h>
@@ -23,7 +25,7 @@
 
 @implementation CPBitArrayDom
 
--(CPBitArrayDom*)      initWithLength: (int) len withTrail:(id<ORTrail>) tr
+-(CPBitArrayDom*)      initWithLength: (int) len withEngine:(id<CPEngine>)engine withTrail:(id<ORTrail>) tr
 {
    self = [super init];
    _trail = tr;
@@ -45,10 +47,12 @@
    for (int i=0; i<len; i++) {
       _levels[i] = makeTRUInt(tr, -1);
    }
+   
+   _remValues = [[NSMutableArray alloc] init];
    return self;
 }
 
--(CPBitArrayDom*)initWithBitPat:(int)len withLow:(unsigned int *)low andUp:(unsigned int *)up andTrail:(id<ORTrail>) tr
+-(CPBitArrayDom*)initWithBitPat:(int)len withLow:(ORUInt *)low andUp:(ORUInt *)up andEngine:(id<CPEngine>)engine andTrail:(id<ORTrail>) tr
 {
     self = [super init];
     _trail = tr;
@@ -76,32 +80,36 @@
    for (int i=0; i<len; i++) {
       _levels[i] = makeTRUInt(tr, -1);
    }
-    unsigned int boundBits = 0;
-    unsigned int freeBits = 0;
+    ORUInt boundBits = 0;
+    ORUInt freeBits = 0;
     for (int i=0; i<_wordLength; i++) {
         boundBits = (_low[i]._val ^ _up[i]._val);
         freeBits += __builtin_popcount(boundBits);
     }
    
     _freebits = makeTRUInt(tr, freeBits);
-    return self;
+
+   _remValues = [[NSMutableArray alloc] init];
+
+   return self;
 }
 
--(void) setEngine:(id<CPEngine>)engine{
-   _engine = engine;
+-(void) setEngine:(id<CPEngine>)engine
+{
+   _engine = (id)engine;
 }
 
 -(NSString*)    description
 {
    NSMutableString* string = [[[NSMutableString alloc] init] autorelease];
    
-   [string appendString:[NSString stringWithFormat:@"0x%lx : ",self]];
+   [string appendString:[NSString stringWithFormat:@"0x%p : ",(void*)self]];
    
    int remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
-   unsigned int boundLow = (~ _up[_wordLength-1]._val) & (~_low[_wordLength-1]._val);
-   unsigned int boundUp = _up[_wordLength-1]._val & _low[_wordLength-1]._val;
-   unsigned int err = ~_up[_wordLength-1]._val & _low[_wordLength-1]._val;
-   unsigned int mask = CP_DESC_MASK;
+   ORUInt boundLow = (~ _up[_wordLength-1]._val) & (~_low[_wordLength-1]._val);
+   ORUInt boundUp = _up[_wordLength-1]._val & _low[_wordLength-1]._val;
+   ORUInt err = ~_up[_wordLength-1]._val & _low[_wordLength-1]._val;
+   ORUInt mask = CP_DESC_MASK;
 
    mask >>= 32 - remainingbits;
 
@@ -163,9 +171,9 @@
    ORBounds b = {(ORInt)[self min],(ORInt)[self max]};
    return b;
 }
--(ORStatus) remove:(ORUInt)val
+-(ORStatus) remove:(ORUInt*)val
 {
-   [_remValues addObject:(id)val];
+   [_remValues addObject:[NSValue valueWithPointer:val]];
    return ORSuccess;
 }
 
@@ -181,20 +189,20 @@
     return minimum;
 }
 
--(unsigned int*) minArray
+-(ORUInt*) minArray
 {
-    unsigned int* min = malloc(sizeof(unsigned int)*_wordLength);
+    ORUInt* min = malloc(sizeof(ORUInt)*_wordLength);
     for(int i=0;i<_wordLength;i++)
         min[i] = _low[i]._val;
     return min;     
 }
--(unsigned int*) sminArray
+-(ORUInt*) sminArray
 {
-   unsigned int* min = malloc(sizeof(unsigned int)*_wordLength);
+   ORUInt* min = malloc(sizeof(ORUInt)*_wordLength);
    for(int i=0;i<_wordLength;i++){
       min[i] = _low[i]._val;
    }
-   unsigned int signMask = 1 << ((_bitLength-1) % BITSPERWORD);
+   ORUInt signMask = 1 << ((_bitLength-1) % BITSPERWORD);
    ORUInt signIsSet = (~(_up[_wordLength-1]._val ^ _low[_wordLength-1]._val)) & signMask;
 //   ORBool isPositive = _low[_wordLength-1]._val & signMask;
    
@@ -204,16 +212,16 @@
    return min;
 }
 
--(unsigned int*) lowArray
+-(ORUInt*) lowArray
 {
-   unsigned int* low = malloc(sizeof(unsigned int)*_wordLength);
+   ORUInt* low = malloc(sizeof(ORUInt)*_wordLength);
    for(int i=0;i<_wordLength;i++)
       low[i] = _low[i]._val;
    return low;
 }
--(unsigned int*) upArray
+-(ORUInt*) upArray
 {
-   unsigned int* up = malloc(sizeof(unsigned int)*_wordLength);
+   ORUInt* up = malloc(sizeof(ORUInt)*_wordLength);
    for(int i=0;i<_wordLength;i++)
       up[i] = _up[i]._val;
    return up;
@@ -233,21 +241,21 @@
     return maximum;
 }
 
--(unsigned int*) maxArray
+-(ORUInt*) maxArray
 {
-    unsigned int* max = malloc(sizeof(unsigned int)*_wordLength);
+    ORUInt* max = malloc(sizeof(ORUInt)*_wordLength);
     for(int i=0;i<_wordLength;i++)
         max[i] = _up[i]._val;
     return max;     
 }
 
--(unsigned int*) smaxArray
+-(ORUInt*) smaxArray
 {
-   unsigned int* max = malloc(sizeof(unsigned int)*_wordLength);
+   ORUInt* max = malloc(sizeof(ORUInt)*_wordLength);
    for(int i=0;i<_wordLength;i++)
       max[i] = _up[i]._val;
    
-   unsigned int signMask = 1 << ((_bitLength-1) % BITSPERWORD);
+   ORUInt signMask = 1 << ((_bitLength-1) % BITSPERWORD);
    ORUInt signIsSet = (~(_up[_wordLength-1]._val ^ _low[_wordLength-1]._val)) & signMask;
 
    if (!signIsSet) {
@@ -256,17 +264,17 @@
    return max;
 }
 
--(unsigned int) getLength
+-(ORUInt) getLength
 {
     return _bitLength;
 }
 
--(unsigned int) getWordLength
+-(ORUInt) getWordLength
 {
     return _wordLength;
 }
 
--(ORBool) getBit:(unsigned int) idx
+-(ORBool) getBit:(ORUInt) idx
 {
    if (BITFREE(idx)) 
       @throw [[ORExecutionError alloc] initORExecutionError: "Trying to 'get' unbound bit in CPBitArrayDom"];
@@ -276,7 +284,7 @@
       return false;
 }
 
--(ORStatus) setBit:(unsigned int)idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
+-(ORStatus) setBit:(ORUInt)idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
 {
    if (BITFREE(idx)) {
       if (val){
@@ -295,8 +303,8 @@
    }
 
    [self updateFreeBitCount];
-   if([_engine isKindOfClass:[CPLearningEngineI class]]){
-      ORUInt level = [(CPLearningEngineI*)_engine getLevel];
+   if([_engine conformsToProtocol:@protocol(CPLEngine)]){
+      ORUInt level = [(id<CPLEngine>)_engine getLevel];
       assignTRUInt(&(_levels[idx]),level, _trail);
 //      NSLog(@"Setting %@[%d] to %i at Level %u",self, idx,val,level);
    }
@@ -305,13 +313,13 @@
    [x bitFixedAtEvt:_freebits._val at:idx sender:self];
    return ORSuspend;
 }
--(ORBool) isFree:(unsigned int)idx
+-(ORBool) isFree:(ORUInt)idx
 {
    //NSLog(@"ONEAT for index %d is %x",idx, ONEAT(idx));
    //NSLog(@"BITFREE for index %d is %x",idx, BITFREE(idx));
    return (BITFREE(idx) != 0);
 }
--(unsigned int) lsFreeBit
+-(ORUInt) lsFreeBit
 {
    int j;
    //[self updateFreeBitCount];
@@ -327,9 +335,9 @@
    }
    return -1;
 }
--(unsigned int) msFreeBit
+-(ORUInt) msFreeBit
 {
-   unsigned int freeBits;
+   ORUInt freeBits;
    int j;
    //[self updateFreeBitCount];
    //Assumes length is a multiple of 32 bits
@@ -361,14 +369,14 @@
    return -1;
 }
 
--(unsigned int) randomFreeBit
+-(ORUInt) randomFreeBit
 {
    //[self updateFreeBitCount];
    int r = arc4random() % _freebits._val;
 
-   unsigned int foundFreeBits =0;
-   unsigned int unboundBits;
-   unsigned int bitMask;
+   ORUInt foundFreeBits =0;
+   ORUInt unboundBits;
+   ORUInt bitMask;
    
    for(int i=0; i<_wordLength;i++)
    {
@@ -387,7 +395,7 @@
    }
    return -1;
 }
--(unsigned int) midFreeBit
+-(ORUInt) midFreeBit
 {
 //   uint32 midbit = _freebits._val/2;
 //   uint32 freeBitsInWord;
@@ -412,12 +420,12 @@
 //      else
 //         midbit -= freeBitsInWord;
 //   }
-   uint32 n;
-   uint32 oldn;
-   uint32 c = 0;
+   ORUInt n;
+   ORUInt oldn;
+   ORUInt c = 0;
    
-   uint32 numConsecutiveUnboundBits = 0;
-   uint32 lsBitPos = 0;
+   ORUInt numConsecutiveUnboundBits = 0;
+   ORUInt lsBitPos = 0;
    
    for (int i=0; i<_wordLength; i++) {
       n =  (_low[i]._val ^ _up[i]._val);
@@ -436,16 +444,16 @@
 
 -(void) updateFreeBitCount
 {
-   unsigned int freeBits = 0;
+   ORUInt freeBits = 0;
    for (int i=0; i<_wordLength; i++) {
-      unsigned int boundBits = (_low[i]._val ^ _up[i]._val);
+      ORUInt boundBits = (_low[i]._val ^ _up[i]._val);
       freeBits += __builtin_popcount(boundBits);
    }
 //   NSLog(@"Bit pattern:%@",[self description]);
 //   NSLog(@"%d free bits\n", freeBits);
    assignTRUInt(&(_freebits), freeBits, _trail);
 }
--(ORBool) member:(unsigned int*) val
+-(ORBool) member:(ORUInt*) val
 {
    bool isMember = true;
    bool wasRemoved = false;
@@ -459,7 +467,7 @@
    {
       wasRemoved = true;
       for (int j=0; j<_wordLength; j++) {
-         if (((unsigned int*)_remValues[i])[j] != val[j]) {
+         if (((ORUInt*)[[_remValues objectAtIndex:i] pointerValue])[j] != val[j]) {
             wasRemoved = false;
             break;
          }
@@ -471,16 +479,16 @@
    return isMember;
 }
 
--(unsigned long long) getRank: (unsigned int*) val
+-(ORULong) getRank: (ORUInt*) val
 {
    // [ldm] Algorithm runs in THETA(k) where k is the number of free bits in domain.
    if(_freebits._val > 64)
       @throw[[ORExecutionError alloc] initORExecutionError:"Cannot get rank of a binary array with > 64 bits free.\n"];  
-   unsigned long long rank = 0;
-   unsigned long long rankIndex = 0;   
+   ORULong rank = 0;
+   ORULong rankIndex = 0;   
    for (int index=_wordLength-1;index >= 0;index--) {
-      unsigned int unbound = _low[index]._val ^ _up[index]._val; // picks up free bits in word (as a set)
-      unsigned int cur  = val[index];                            // bit pattern to analyze
+      ORUInt unbound = _low[index]._val ^ _up[index]._val; // picks up free bits in word (as a set)
+      ORUInt cur  = val[index];                            // bit pattern to analyze
       while (unbound && cur) {                                   // as long as we have free bits and bits @ 1 in val_i
          int bOfs = __builtin_ffs(unbound);                      // pick up offset of LSB among free bits
          unbound >>= bOfs;                                       // skips all fixed bits and the first free bit
@@ -491,18 +499,18 @@
    return rank;
 }
 
--(unsigned int*) atRank: (unsigned long long) rank
+-(ORUInt*) atRank: (ORULong) rank
 {
    // [ldm] Algorithm still has O(|B|) rather than O(k). Must improve and use __builtin_ffs.
    if(_wordLength>2)
       @throw[[ORExecutionError alloc] initORExecutionError:"CPBitArrayDom::atRank does not support bit arrays with length > 64 bits.\n"];    
-   unsigned int* bits = malloc(sizeof(unsigned int) * _wordLength);
-   memset(bits,0,sizeof(unsigned int)*_wordLength);
+   ORUInt* bits = malloc(sizeof(ORUInt) * _wordLength);
+   memset(bits,0,sizeof(ORUInt)*_wordLength);
    ORInt k = _freebits._val;
-   unsigned int idx = 0;
-   unsigned long long rc = rank;
+   ORUInt idx = 0;
+   ORULong rc = rank;
    while(k) {
-      unsigned int isFree = BITFREE(idx); // has a 1 at the proper bit position if free(b_idx)
+      ORUInt isFree = BITFREE(idx); // has a 1 at the proper bit position if free(b_idx)
       if (isFree) {
          bits[WORDIDX(idx)] |= (rc & 0x1) ? isFree : 0;     
          rc >>= 1;
@@ -513,7 +521,7 @@
    return bits;
 }
 
--(unsigned int) getMaxRank
+-(ORUInt) getMaxRank
 {
    return (1 << _freebits._val)-1;
 }
@@ -523,7 +531,7 @@
    return (1 << _freebits._val)-1;
 }
 
--(unsigned int*) pred:(unsigned int*)x
+-(ORUInt*) pred:(ORUInt*)x
 {
     /*
      * Idea is simple:
@@ -553,10 +561,10 @@
         x64bit += x[1];
     }
     
-    unsigned int* outarray = malloc (sizeof(unsigned int)*_wordLength);
+    ORUInt* outarray = malloc (sizeof(ORUInt)*_wordLength);
     
-    unsigned int* lowa = alloca(sizeof(unsigned int)*_wordLength);
-    unsigned int* upa = alloca(sizeof(unsigned int)*_wordLength);    
+    ORUInt* lowa = alloca(sizeof(ORUInt)*_wordLength);
+    ORUInt* upa = alloca(sizeof(ORUInt)*_wordLength);    
     
     for (int i = 0; i<_wordLength ; i++){
         lowa[i] = _low[i]._val;
@@ -623,7 +631,7 @@
     return outarray;
 }
 
-#define INTERPRETATION(t) ((((unsigned long long)(t)[0]._val)<<BITSPERWORD) | (t)[1]._val)
+#define INTERPRETATION(t) ((((ORULong)(t)[0]._val)<<BITSPERWORD) | (t)[1]._val)
 
 -(ORStatus)updateMin:(ORULong)newMin for:(id<CPBitVarNotifier>)x
 {
@@ -678,7 +686,7 @@
     
     if(newMax64 >= originalMax)
         return ORSuspend;
-   unsigned int* ptrMax = (unsigned int*)&newMax;
+   ORUInt* ptrMax = (ORUInt*)&newMax;
 
     assignTRUInt(&_max[0], ptrMax[0], _trail);
     if(_wordLength > 1)
@@ -688,7 +696,7 @@
         failNow();
     
     if (![self member:ptrMax]){
-        unsigned int* pred = [self pred:ptrMax];
+        ORUInt* pred = [self pred:ptrMax];
         assignTRUInt(&_max[0], pred[0], _trail);
         if(_wordLength > 1)
             assignTRUInt(&_max[1], pred[1], _trail);
@@ -816,9 +824,9 @@
     return ORSuspend;   
 }
 
--(ORStatus) bindToPat:(unsigned int*) pat for:(id<CPBitVarNotifier>)x
+-(ORStatus) bindToPat:(ORUInt*) pat for:(id<CPBitVarNotifier>)x
 {
-   ORULong  val = (((unsigned long long)pat[0]) << BITSPERWORD) | pat[1];
+   ORULong  val = (((ORULong)pat[0]) << BITSPERWORD) | pat[1];
    if(_wordLength > 1){
       val <<= 32;
       val+= pat[1];
@@ -863,12 +871,12 @@
 }
 
 
--(void) setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x
+-(void) setLow: (ORUInt*) newLow for:(id<CPBitVarNotifier>)x
 {
    bool lmod =  false;
    
-   uint32* isChanged;
-   isChanged = alloca(sizeof(uint32)*_wordLength);
+   ORUInt* isChanged;
+   isChanged = alloca(sizeof(ORUInt)*_wordLength);
 
    for(int i=0;i<_wordLength;i++){
       isChanged[i] |= (_low[i]._val & ~newLow[i]);
@@ -882,8 +890,8 @@
    for (int i=0; i<_wordLength; i++) {
       for (int j=0; j<BITSPERWORD; j++) {
          if (isChanged[i] & 0x00000001) {
-            if([_engine isKindOfClass:[CPLearningEngineI class]])
-               assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(CPLearningEngineI*)_engine getLevel], _trail);
+            if([_engine conformsToProtocol:@protocol(CPLEngine)])
+               assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(id<CPLEngine>)_engine getLevel], _trail);
             [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
          }
          isChanged[i] >>= 1;
@@ -892,13 +900,13 @@
 
 }
 
--(void) setUp: (unsigned int*) newUp  for:(id<CPBitVarNotifier>)x
+-(void) setUp: (ORUInt*) newUp  for:(id<CPBitVarNotifier>)x
 {
     bool umod = false;
 //   ORUInt level = [(CPLearningEngineI*)_engine getLevel];
 
-   uint32* isChanged;
-   isChanged = alloca(sizeof(uint32)*_wordLength);
+   ORUInt* isChanged;
+   isChanged = alloca(sizeof(ORUInt)*_wordLength);
 
 
    for(int i=0;i<_wordLength;i++){
@@ -915,23 +923,23 @@
          if (isChanged[i] & 0x00000001) {
             [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
 //            assignTRUInt(&_levels[i], level, _trail);
-            assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel],_trail);
+            assignTRUInt(&_levels[i*BITSPERWORD+j],[(id<CPLEngine>)_engine getLevel],_trail);
          }
          isChanged[i] >>= 1;
       }
    }
 }
 
--(void) setUp: (unsigned int*) newUp andLow:(unsigned int*)newLow for:(id<CPBitVarNotifier>)x
+-(void) setUp: (ORUInt*) newUp andLow:(ORUInt*)newLow for:(id<CPBitVarNotifier>)x
 {
-   uint32 umod = false;
-   uint32 lmod = false;
+   ORUInt umod = false;
+   ORUInt lmod = false;
 //   ORUInt level = [(CPLearningEngineI*)_engine getLevel];
    
-   uint32* isChanged;
+   ORUInt* isChanged;
 //   uint32 k;
 
-   isChanged = alloca(sizeof(uint32)*_wordLength);
+   isChanged = alloca(sizeof(ORUInt)*_wordLength);
    
    for(int i=0;i<_wordLength;i++){
 //      isChanged[i]  = (_up[i]._val & ~newUp[i]);
@@ -952,7 +960,7 @@
          for (int j=0; j<BITSPERWORD; j++) {
             if (isChanged[i] & 0x00000001) {
                [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
-               if([_engine isKindOfClass:[CPLearningEngineI class]])
+               if([_engine conformsToProtocol:@protocol(CPLEngine)])
                   assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(CPLearningEngineI*)_engine getLevel], _trail);
             }
             isChanged[i] >>= 1;
@@ -961,17 +969,17 @@
    }
 }
 
--(void)enumerateWith:(void(^)(unsigned int*,ORInt))body
+-(void)enumerateWith:(void(^)(ORUInt*,ORInt))body
 {
    ORUInt sz = [self getSize];
-   unsigned int* bits = alloca(sizeof(unsigned int)*_wordLength);
+   ORUInt* bits = alloca(sizeof(ORUInt)*_wordLength);
    for(ORUInt rank=0;rank < sz;rank++) {
-      memset(bits,0,sizeof(unsigned int)*_wordLength);
+      memset(bits,0,sizeof(ORUInt)*_wordLength);
       ORInt k = _freebits._val;
-      unsigned int idx = 0;
+      ORUInt idx = 0;
       ORUInt rc = rank;
       while(k) {
-         unsigned int isFree = BITFREE(idx); // has a 1 at the proper bit position if free(b_idx)
+         ORUInt isFree = BITFREE(idx); // has a 1 at the proper bit position if free(b_idx)
          if (isFree) {
             bits[WORDIDX(idx)] |= (rc & 0x1) ? isFree : 0;     
             rc >>= 1;
@@ -1002,7 +1010,7 @@
 
 
 -(id) copyWithZone:(NSZone*) zone{
-   CPBitArrayDom* copy = [[CPBitArrayDom alloc] initWithBitPat:_bitLength withLow:&_low->_val andUp:&_up->_val andTrail:_trail];
+   CPBitArrayDom* copy = [[CPBitArrayDom alloc] initWithBitPat:_bitLength withLow:&_low->_val andUp:&_up->_val andEngine:_engine andTrail:_trail];
    [copy setEngine:_engine];
    return copy;
 }

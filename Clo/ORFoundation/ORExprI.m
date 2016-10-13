@@ -97,7 +97,7 @@
 }
 @end
 
-@interface ORSweep : ORVisitor<NSObject> {
+@interface ORSweep : ORNOopVisit<NSObject> {
    NSMutableSet* _ms;
 }
 -(id)init;
@@ -117,6 +117,7 @@
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
+-(void) visitExprGEqualI: (id<ORExpr>) e;
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
@@ -248,6 +249,11 @@
    [[e right] visit:self];
 }
 -(void) visitExprLEqualI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprGEqualI: (ORExprBinaryI*) e
 {
    [[e left] visit:self];
    [[e right] visit:self];
@@ -1035,6 +1041,11 @@
 {
    return _op.vtype;
 }
+-(enum ORRelationType) type
+{
+   return ORNeg;
+}
+
 -(NSString *)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -1171,7 +1182,7 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTInt;
+   return ORTReal;
 }
 -(void) visit:(ORVisitor*)visitor
 {
@@ -1214,6 +1225,20 @@
 {
    [visitor visitExprPlusI: self]; 
 }
+-(enum ORVType) vtype
+{
+   ORExprI* root = self;
+   ORVType vty = ORTNA;
+   while ([root isKindOfClass:[ORExprPlusI class]]) {
+      ORExprPlusI* pn = (ORExprPlusI*)root;
+      ORVType rvt = [pn->_right conformsToProtocol:@protocol(ORExpr)] ? [pn->_right vtype] : ORTInt;
+      vty  = lubVType(vty,rvt);
+      root = pn->_left;
+   }
+   ORVType rvt = [root conformsToProtocol:@protocol(ORExpr)] ? [root vtype] : ORTInt;
+   return lubVType(vty,rvt);
+}
+
 -(NSString*) description 
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -1496,7 +1521,12 @@
 {
    [visitor visitExprEqualI: self]; 
 }
--(NSString*) description 
+// [ldm] causing trouble in MIP/LP
+//-(enum ORVType) vtype
+//{
+//   return ORTBool;
+//}
+-(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"%@ == %@",[_left description],[_right description]];
@@ -1596,6 +1626,51 @@
 -(enum ORRelationType)type
 {
    return ORRLEq;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprGEqualI
+-(id<ORExpr>) initORExprGEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   assert([self isConstant]);
+   return [_left min] >= [_right min];
+}
+-(ORInt) max
+{
+   assert([self isConstant]);
+   return [_left max] >= [_right max];
+}
+-(void) visit: (ORVisitor*) visitor
+{
+   [visitor visitExprGEqualI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@ >= %@",[_left description],[_right description]];
+   return rv;
+}
+-(enum ORRelationType)type
+{
+   return ORRGEq;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -2062,18 +2137,25 @@
 -(id<ORRelation>) init: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    self = [super init];
-   _e = [ORFactory integer: cp value: 0];
+   _e = nil; // [ORFactory integer: cp value: 0];
    if (f!=NULL) {
       [S enumerateWithBlock:^(ORInt i) {
-         if (!f(i))
-            _e = [_e lor: e(i)];
+         if (f(i)) {
+            if (_e)
+               _e = [_e lor: e(i)];
+            else _e = e(i);
+         }
       }];
    }
    else {
       [S enumerateWithBlock:^(ORInt i) {
-         _e = [_e lor: e(i)];
+         if (_e)
+            _e = [_e lor: e(i)];
+         else _e = e(i);
       }];
    }
+   if (_e==nil)
+      _e = [ORFactory integer: cp value: 0];
    return self;
 }
 -(id<ORRelation>) init: (id<ORExpr>) e
@@ -2105,7 +2187,7 @@
 }
 -(enum ORVType) vtype
 {
-   return _e.vtype;
+   return ORTBool;
 }
 -(id<ORTracker>) tracker
 {
@@ -2178,7 +2260,8 @@
 }
 -(enum ORVType) vtype
 {
-   return _e.vtype;
+   assert(_e.vtype == ORTBool);
+   return ORTBool;
 }
 -(id<ORTracker>) tracker
 {
@@ -2255,7 +2338,15 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTInt;
+   __block bool allBool = true;
+   [_array enumerateWith:^(id<ORIntVar>  _Nonnull vk, int k) {
+      id<ORIntRange> dom = [vk domain];
+      allBool |= dom.isBool;
+   }];
+   if (allBool)
+      return ORTBool;
+   else
+      return ORTInt;
 }
 -(void) visit:(ORVisitor*)visitor
 {

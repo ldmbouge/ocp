@@ -40,6 +40,7 @@ enum CPEngineState {
    CPValueClosureQueue*     _valueClosureQueue;
    ORInt                    _propagating;
    ORUInt                   _nbpropag;
+   TRInt                    _iStat;
    id<CPConstraint>         _last;
    UBType                   _propagIMP;
    @package
@@ -74,6 +75,7 @@ enum CPEngineState {
 -(NSMutableArray*) variables;
 -(NSMutableArray*) constraints;
 -(NSMutableArray*) objects;
+-(ORStatus)currentStatus;
 -(ORStatus)   close;
 -(ORBool)     closed;
 -(void)       open;
@@ -88,4 +90,5 @@ enum CPEngineState {
 -(void)incNbPropagation:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 -(id<ORIntRange>)boolRange;
+-(ORBool)isPropagating;
 @end

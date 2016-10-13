@@ -98,6 +98,10 @@
 {
    return [[self worker] nbFailures];
 }
+-(ORInt)          nbChoices
+{
+   return [[self worker] nbChoices];
+}
 -(id<ORSearchEngine>) engine
 {
    return (id<ORSearchEngine>) [[self worker] engine];
@@ -113,6 +117,14 @@
 -(id<ORTracer>) tracer
 {
    return [[self worker] tracer];
+}
+-(ORDouble) paramValue:(id<ORRealParam>)p
+{
+    return  [[self worker] paramValue: p];
+}
+-(void) param:(id<ORRealParam>)p setValue:(ORDouble)val
+{
+    [[self worker] param: p setValue: val];
 }
 -(void) close
 {
@@ -144,6 +156,12 @@
    if (_nbDone == _nb)
       [_terminated signal];
    [_terminated unlock];
+}
+
+-(void) solveOn:(void (^)(id<CPCommonProgram>))body withTimeLimit:(ORFloat)limit
+{
+    // Not implemented
+    assert(NO);
 }
 
 -(void) solveAllOne: (NSArray*) input
@@ -188,6 +206,12 @@
                              withObject:[NSArray arrayWithObjects: [objClosure copy],[NSNumber numberWithInt:i],nil]];
    }
    [self waitWorkers];
+}
+-(void) solveOn: (void(^)(id<CPCommonProgram>))body
+{
+   id<CPCommonProgram> w = [self worker];
+   ORClosure search = ^() { body(w); };
+   [self solve: search];
 }
 
 -(void) solveAll: (ORClosure) search
@@ -264,6 +288,14 @@
 {
    [[self worker] limitTime: maxTime in: cl];
 }
+-(void) nestedOptimize: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
+{
+   [[self worker] nestedOptimize:body onSolution:onSolution onExit:onExit control:newCtrl];
+}
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
+{
+   [[self worker] nestedSolve:body onSolution:onSolution onExit:onExit control:newCtrl];
+}
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [[self worker] nestedSolve: body onSolution: onSolution onExit: onExit];
@@ -276,6 +308,10 @@
 {
    [[self worker] nestedSolve: body];
 }
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc
+{
+   [[self worker] nestedSolveAll:body onSolution:onSolution onExit:onExit control:sc];
+}
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [[self worker] nestedSolveAll: body onSolution: onSolution onExit: onExit];
@@ -287,6 +323,10 @@
 -(void) nestedSolveAll: (ORClosure) body
 {
    [[self worker] nestedSolveAll: body];
+}
+-(void) select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body
+{
+   [[self worker] select:x minimizing:f in:body];
 }
 -(id) trackObject: (id) object
 {
@@ -319,6 +359,10 @@
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c
 {
    [[self worker] addConstraintDuringSearch: c];
+}
+-(void) splitArray: (id<ORIntVarArray>) x
+{
+   [[self worker] splitArray:x];
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -389,6 +433,10 @@
 {
    [[self worker] restrict: var to: S];
 }
+-(void) realLabel: (id<ORRealVar>) var with: (ORDouble) val
+{
+   [[self worker] realLabel:var with:val];
+}
 -(void) realLthen: (id<ORRealVar>) var with: (ORDouble) val
 {
    [[self worker] realLthen: var with: val];
@@ -429,7 +477,12 @@
 {
    [[self worker] limitFailures: maxFailures in: cl];
 }
--(void) onSolution: (ORClosure) onSol 
+-(void) onStartup: (ORClosure) onStartup
+{
+   for(ORInt k = 0; k < _nb; k++)
+      [_solver[k] onStartup: onStartup];
+}
+-(void) onSolution: (ORClosure) onSol
 {
    for(ORInt k = 0; k < _nb; k++) 
       [_solver[k] onSolution: onSol];
@@ -438,6 +491,11 @@
 {
    for(ORInt k = 0; k < _nb; k++)   
       [_solver[k] onExit: onExit];
+}
+-(void) clearOnStartup
+{
+   for(ORInt k = 0; k < _nb; k++)
+      [_solver[k] clearOnStartup];
 }
 -(void) clearOnSolution
 {
@@ -449,7 +507,10 @@
    for(ORInt k = 0; k < _nb; k++)
       [_solver[k] clearOnExit];
 }
-
+-(void) doOnStartup
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "do OnStartup never called on CPMultiStartProgram"];
+}
 -(void) doOnSolution
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
@@ -468,11 +529,19 @@
 -(void) search:(void*(^)())stask
 {
    //TODO: This is not correct yet.
+   [self solve:^{
+      id<ORSTask> theTask = (id)stask();
+      [theTask execute];
+   }];
+}
+-(void) searchAll:(void*(^)())stask
+{
    [self solveAll:^{
       id<ORSTask> theTask = (id)stask();
       [theTask execute];
    }];
 }
+
 -(id<ORSolutionPool>) solutionPool
 {
    return _sPool;
@@ -630,6 +699,10 @@
 -(ORInt) maxBound:(id<ORIdArray>) x
 {
    return [[self worker] maxBound:(id)x];
+}
+-(ORBool) ground
+{
+   return [[self worker] ground];
 }
 -(ORBool) allBound:(id<ORIdArray>) x
 {

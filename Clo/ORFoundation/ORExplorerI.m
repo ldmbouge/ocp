@@ -36,7 +36,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORCoreExplorer dealloc called...\n");
+   NSLog(@"ORCoreExplorer dealloc called...");
    id ctrl = _controller;
    [ctrl release];
    [_trail release];
@@ -290,11 +290,14 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    //   id<ORMutableInteger> nbRestarts = [ORFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
-   if (isDone)
-      if (isDone()) {
-         [enter letgo];
-         [_controller fail];
-      }
+   if (isDone && isDone()) {
+      [enter letgo];
+      [_controller fail];
+   }
+   if ([_controller isAborted]) {
+      [enter letgo];
+      [_controller fail];
+   }
    /*
     [nbRestarts incr];
     if ([nbRestarts value] == 2000) {
@@ -436,10 +439,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
 }
 
--(void) nestedOptimize: (id<ORASearchSolver>) solver using: (ORClosure) search
+-(void) nestedOptimize: (id<ORASearchSolver>) solver
+                 using: (ORClosure) search
             onSolution: (ORClosure) onSolution
                 onExit: (ORClosure) onExit
-               control:(id<ORSearchController>) newCtrl
+               control: (id<ORSearchController>) newCtrl
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
@@ -451,8 +455,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self push: controller];
       [controller release];
       if (search) search();
-      [obj updatePrimalBound];
-      if (onSolution) onSolution();
+      if ([solver ground]) {
+         [obj updatePrimalBound];
+         if (onSolution) onSolution();
+      }
       [_controller fail];
    }
    else { // if ([newCtrl isFinitelyFailed]) {

@@ -23,7 +23,7 @@
    ORBool        _val;
 }
 -(id)copyWithZone:(NSZone *)zone;
--(id)initCPBitAssignment:(id<CPBitVar>)x idx:(ORUInt) idx val:(ORBool) val;
+-(id)initCPBitAssignmentObj:(id<CPBitVar>)x idx:(ORUInt) idx val:(ORBool) val;
 -(BOOL) isEqual:(id)object;
 -(NSUInteger)     hash;
 -(id<CPBitVar>) getVar;
@@ -565,7 +565,7 @@
    _vars = t;
    _cvs  = cvs;
    NSArray* allvars = [[[_cp engine] model] variables];
-   id<ORIdArray> o = [ORFactory idArray:[_cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:[allvars count]]];
+   id<ORIdArray> o = [ORFactory idArray:[_cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:(ORUInt)[allvars count]]];
    for(int i=0; i< [allvars count];i++)
       [o set:allvars[i] at:i];
    
@@ -671,123 +671,123 @@
 
 -(void)initActivities
 {
-   id<CPBitVarArray> vars = (id<CPBitVarArray>)_cvs;
-   id<CPBitVarArray> bvars = [self allBitVars];
-   const ORInt nbInRound = 10;
-   const ORInt probeDepth = (ORInt) [bvars count];  //TODO: Should the probe depth be based on # of bitvars and their domain size? (treating each bit as a variable)
-   float mxp = 0;
-   for(ORInt i = [bvars low];i <= [bvars up];i++) {
-      //NSAssert([bvars[i] isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", bvars[i], [[CPBitVarI class] description]);
-      if ([bvars[i] bound]) continue;
-      mxp += [(id)bvars[i] domsize];
-//      mxp += log([(id)bvars[i] domsize]);
-//      mxp += pow(2,[(id)bvars[i] domsize]);
-   }
-   const ORInt maxProbes = (int)10 * mxp;
-   NSLog(@"#vars:  %d --> maximum # probes: %u  (MXP=%f)",probeDepth,maxProbes,mxp);
-   int   cntProbes = 0;
-   BOOL  carryOn = YES;
-   id<ORTracer> tracer = [_cp tracer];
-   _aggregator = [[ABSBitVarProbeAggregator alloc] initABSBitVarProbeAggregator:bvars];
-   _valPr = [[ORZeroOneStreamI alloc] init];
-   NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
-   NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
-   __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
-   __block ORInt nbVS = 0;
-   id<ORZeroOneStream> varPr = [[ORZeroOneStreamI alloc] init];
-   do {
-      for(ORInt c=0;c <= nbInRound;c++) {
-         //[_solver clearStatus];
-         cntProbes++;
-         ABSBitVarProbe* probe = [[ABSBitVarProbe alloc] initABSBitVarProbe:bvars];
-         ORInt depth = 0;
-         BOOL allBound = NO;
-         while (depth <= probeDepth && !allBound) {
-            [tracer pushNode];
-            nbVS = 0;
-            [[bvars range] enumerateWithBlock:^(ORInt i) {
-               if (![bvars[i] bound])
-                  vs[nbVS++] = i;
-            }];
-            
-            /*
-             NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
-             [buf  appendString:@"["];
-             for(ORInt j=0;j < nbVS; j++)
-             [buf appendFormat:@"%d ",vs[j]];
-             [buf  appendString:@"]"];
-             */
-            
-            ORInt idx = (ORInt)floor([varPr next] * nbVS);
-            ORInt i = vs[idx];
-            
-            //NSLog(@"chose %i from VS = %@",i, buf);
-            
-            if (nbVS) { // we found someone
-               CPBitVarI* xi = (CPBitVarI*)bvars[i];
-               NSAssert([xi isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", xi, [[CPBitVarI class] description]);
-               ORUInt idx = [xi randomFreeBit]; //randomize
-               ORBool v = arc4random_uniform(2)==0;
-               ORStatus s = [_solver enforce: ^{[(id<CPBitVar>)xi bind:idx to:v];}];
-               [ORConcurrency pumpEvents];
-               __block int nbActive = 0;
-               [_monitor scanActive:^(CPVarInfo * vInfo) {
-                  nbActive++;
-                  [probe addVar:[vInfo getVar]];
-               }];
-               [_aggregator addAssignment:xi atIndex:idx toValue:v withActivity:nbActive];//atIndex: toValue:
-               if (s == ORFailure) {
-                  if (depth == 0) {
-                     ABSBitVarNogood* nogood = [[ABSBitVarNogood alloc] initABSBitVarNogood:xi atIndex:idx value:v];
-                     NSLog(@"Adding SAC %@",nogood);
-                     [killSet addObject:nogood];
-                     [localKill addObject:nogood];
-                     [nogood release];
-                  }
-                  depth++;
-                  break;
-               }
-            } else allBound = YES;
-            depth++;
-         }
-         if (depth > probeDepth || allBound) {
-            if ([_solver objective]==nil) {
-               NSLog(@"Found a solution in a CSP while probing!");
-               if ([self oneSol])
-                  return ;
-            } else {
-               NSLog(@"ABS found a local optimum = %@",[_solver objective]);
-               [[_solver objective] updatePrimalBound];
-               //NSLog(@"after updatePrimalBound = %@",[_solver objective]);
-            }
-         }
-         while (depth-- != 0)
-            [tracer popNode];
-         NSLog(@"THEPROBE: %@",probe);
-         [_aggregator addProbe:probe];
-         [probe release];
-         for(ABSBitVarNogood* b in localKill) {
-            
-            //TODO:For BitVars we can just bind the bit to  the opposite value
-            [_solver enforce: ^{[[b variable] bind:[b index] to:![b value]];}];
-            //NSLog(@"Imposing local SAC %@",b);
-         }
-         [localKill removeAllObjects];
-      }
-      carryOn = [self moreProbes];
-   } while (carryOn && cntProbes < maxProbes);
-   
-   [_solver atomic:^{
-      NSLog(@"Imposing %ld SAC constraints",[killSet count]);
-      for(ABSBitVarNogood* b in killSet) {
-         [_solver enforce: ^{[[b variable] bind:[b index] to:![b value]];}];
-      }
-   }];
-   
-   NSLog(@"Done probing (%d / %u)...",cntProbes,maxProbes);
-   [killSet release];
-   [varPr release];
-   [_valPr release];
+//   id<CPBitVarArray> vars = (id<CPBitVarArray>)_cvs;
+//   id<CPBitVarArray> bvars = [self allBitVars];
+//   const ORInt nbInRound = 10;
+//   const ORInt probeDepth = (ORInt) [bvars count];  //TODO: Should the probe depth be based on # of bitvars and their domain size? (treating each bit as a variable)
+//   float mxp = 0;
+//   for(ORInt i = [bvars low];i <= [bvars up];i++) {
+//      //NSAssert([bvars[i] isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", bvars[i], [[CPBitVarI class] description]);
+//      if ([bvars[i] bound]) continue;
+//      mxp += [(id)bvars[i] domsize];
+////      mxp += log([(id)bvars[i] domsize]);
+////      mxp += pow(2,[(id)bvars[i] domsize]);
+//   }
+//   const ORInt maxProbes = (int)10 * mxp;
+//   NSLog(@"#vars:  %d --> maximum # probes: %u  (MXP=%f)",probeDepth,maxProbes,mxp);
+//   int   cntProbes = 0;
+//   BOOL  carryOn = YES;
+//   id<ORTracer> tracer = [_cp tracer];
+//   _aggregator = [[ABSBitVarProbeAggregator alloc] initABSBitVarProbeAggregator:bvars];
+//   _valPr = [[ORZeroOneStreamI alloc] init];
+//   NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
+//   NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
+//   __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
+//   __block ORInt nbVS = 0;
+//   id<ORZeroOneStream> varPr = [[ORZeroOneStreamI alloc] init];
+//   do {
+//      for(ORInt c=0;c <= nbInRound;c++) {
+//         //[_solver clearStatus];
+//         cntProbes++;
+//         ABSBitVarProbe* probe = [[ABSBitVarProbe alloc] initABSBitVarProbe:bvars];
+//         ORInt depth = 0;
+//         BOOL allBound = NO;
+//         while (depth <= probeDepth && !allBound) {
+//            [tracer pushNode];
+//            nbVS = 0;
+//            [[bvars range] enumerateWithBlock:^(ORInt i) {
+//               if (![bvars[i] bound])
+//                  vs[nbVS++] = i;
+//            }];
+//            
+//            /*
+//             NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+//             [buf  appendString:@"["];
+//             for(ORInt j=0;j < nbVS; j++)
+//             [buf appendFormat:@"%d ",vs[j]];
+//             [buf  appendString:@"]"];
+//             */
+//            
+//            ORInt idx = (ORInt)floor([varPr next] * nbVS);
+//            ORInt i = vs[idx];
+//            
+//            //NSLog(@"chose %i from VS = %@",i, buf);
+//            
+//            if (nbVS) { // we found someone
+//               CPBitVarI* xi = (CPBitVarI*)bvars[i];
+//               NSAssert([xi isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", xi, [[CPBitVarI class] description]);
+//               ORUInt idx = [xi randomFreeBit]; //randomize
+//               ORBool v = arc4random_uniform(2)==0;
+//               ORStatus s = [_solver enforce: ^{[(id<CPBitVar>)xi bind:idx to:v];}];
+//               [ORConcurrency pumpEvents];
+//               __block int nbActive = 0;
+//               [_monitor scanActive:^(CPVarInfo * vInfo) {
+//                  nbActive++;
+//                  [probe addVar:[vInfo getVar]];
+//               }];
+//               [_aggregator addAssignment:xi atIndex:idx toValue:v withActivity:nbActive];//atIndex: toValue:
+//               if (s == ORFailure) {
+//                  if (depth == 0) {
+//                     ABSBitVarNogood* nogood = [[ABSBitVarNogood alloc] initABSBitVarNogood:xi atIndex:idx value:v];
+//                     NSLog(@"Adding SAC %@",nogood);
+//                     [killSet addObject:nogood];
+//                     [localKill addObject:nogood];
+//                     [nogood release];
+//                  }
+//                  depth++;
+//                  break;
+//               }
+//            } else allBound = YES;
+//            depth++;
+//         }
+//         if (depth > probeDepth || allBound) {
+//            if ([_solver objective]==nil) {
+//               NSLog(@"Found a solution in a CSP while probing!");
+//               if ([self oneSol])
+//                  return ;
+//            } else {
+//               NSLog(@"ABS found a local optimum = %@",[_solver objective]);
+//               [[_solver objective] updatePrimalBound];
+//               //NSLog(@"after updatePrimalBound = %@",[_solver objective]);
+//            }
+//         }
+//         while (depth-- != 0)
+//            [tracer popNode];
+//         NSLog(@"THEPROBE: %@",probe);
+//         [_aggregator addProbe:probe];
+//         [probe release];
+//         for(ABSBitVarNogood* b in localKill) {
+//            
+//            //TODO:For BitVars we can just bind the bit to  the opposite value
+//            [_solver enforce: ^{[[b variable] bind:[b index] to:![b value]];}];
+//            //NSLog(@"Imposing local SAC %@",b);
+//         }
+//         [localKill removeAllObjects];
+//      }
+//      carryOn = [self moreProbes];
+//   } while (carryOn && cntProbes < maxProbes);
+//   
+//   [_solver atomic:^{
+//      NSLog(@"Imposing %ld SAC constraints",[killSet count]);
+//      for(ABSBitVarNogood* b in killSet) {
+//         [_solver enforce: ^{[[b variable] bind:[b index] to:![b value]];}];
+//      }
+//   }];
+//   
+//   NSLog(@"Done probing (%d / %u)...",cntProbes,maxProbes);
+//   [killSet release];
+//   [varPr release];
+//   [_valPr release];
 }
 
 -(void) restart

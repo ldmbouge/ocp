@@ -11,10 +11,11 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORConstraint.h>
+#import <CPUKernel/CPLEngine.h>
 #import "CPEngineI.h"
+
 //#import <objcp/CPVar.h>
 //#import <objcp/CPBitConstraint.h>
-
 //#import <CPUKernel/CPTypes.h>
 //#import <CPUKernel/CPEngine.h>
 //#import <CPUKernel/CPConstraintI.h>
@@ -29,7 +30,7 @@ typedef struct CPBVConflict{
    ORUInt                    level;
 } CPBVConflict;
 
-@interface CPLearningEngineI : CPEngineI
+@interface CPLearningEngineI : CPEngineI<CPLEngine>
 {
    CPBVConflict**         _globalStore;
    ORUInt                        _size;

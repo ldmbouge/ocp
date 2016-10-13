@@ -466,7 +466,7 @@ return 0;
    return [ORFactory bitVar:_model low:&dom up:&dom bitLength:1];
 }
 
--(objcp_expr) objcp_mk_and:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs{
+-(objcp_expr) objcp_mk_and:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORULong)numArgs{
 //   ORUInt* low = alloca(sizeof(ORUInt));
 //   ORUInt* up = alloca(sizeof(ORUInt));
 //   *low = 0;
@@ -480,7 +480,7 @@ return 0;
    *one = 1;
 
    id<ORBitVar> result = [ORFactory bitVar:_model low:zero up:one bitLength:1];
-   id<ORIntRange> range = [ORFactory intRange:_model low:0 up:numArgs-1];
+   id<ORIntRange> range = [ORFactory intRange:_model low:0 up:(ORUInt)numArgs-1];
    id<ORBitVarArray> arguments = [ORFactory bitVarArray:_model range:range];
    for (int i = 0; i<numArgs; i++)
       arguments[i] = args[i];
@@ -489,7 +489,7 @@ return 0;
    return result;
 }
 
--(objcp_expr) objcp_mk_or:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORUInt)numArgs{
+-(objcp_expr) objcp_mk_or:(objcp_context)ctx withArgs:(objcp_expr *)args andNumArgs:(ORULong)numArgs{
 //   ORUInt* low = alloca(sizeof(ORUInt));
 //   ORUInt* up = alloca(sizeof(ORUInt));
 //   *low = 0;

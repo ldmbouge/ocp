@@ -389,6 +389,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method watch not defined"];     
 }
+-(void)watchBind:(id<CPTrigger>)t
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method watchBind not defined"];
+}
 -(void) createTriggers
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method createTriggers not defined"];
@@ -538,6 +542,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return (ORBounds){_value,_value};
 }
+-(id<CPDom>) domain
+{
+   return [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: _value up: _value];
+}
 -(ORInt) domsize
 {
    return 1;
@@ -626,9 +634,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return NULL;
 }
--(void) watch: (ORInt) val with: (id<CPTrigger>) t;
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t
 {
 }
+-(void) watchBind:(id<CPTrigger>)t
+{}
 -(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
    return NULL;
@@ -908,6 +918,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 // nothing to do here
 -(void) setTracksLoseEvt
 {
+   [_recv setTracksLoseEvt];
 }
 
 BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
@@ -988,10 +999,17 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 {
-    [_recv setTracksLoseEvt];
-    if (_triggers == nil)
-        [self createTriggers];
-    [_triggers linkTrigger:t forValue:val];
+   if (_recv) setTracksLoseEvt(_recv, YES);
+   if (_triggers == nil)
+      [self createTriggers];
+   [_triggers linkTrigger:t forValue:val];
+}
+-(void) watchBind:(id<CPTrigger>)t
+{
+   if (_recv) setTracksLoseEvt(_recv, YES);
+   if (_triggers == nil)
+      [self createTriggers];
+   [_triggers linkBindTrigger:t];
 }
 -(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
 {
@@ -1706,6 +1724,7 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
    _secondary = x;
    _v = v;
    _vc = CPVCEQLiteral;
+   _done = makeTRInt([[x engine] trail], 0);
    return self;
 }
 
@@ -1733,13 +1752,11 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(ORInt) value
 {
-   assert([_secondary bound]);
-   return [_secondary value]==_v;
+   return memberDom(_secondary, _v);
 }
 -(ORInt) intValue
 {
-   assert([_secondary bound]);
-   return [_secondary value]==_v;
+   return memberDom(_secondary, _v);
 }
 -(ORInt) min
 {
@@ -1758,8 +1775,8 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(ORBool)member:(ORInt)val
 {
-   ORInt lb = [_secondary min];
-   ORInt ub = [_secondary max];
+   ORBounds b = bounds(_secondary);
+   ORInt lb = b.min,ub = b.max;
    // [ldm] v should be a boolean (0,1)
    // Case 1: lit IN    D(x)         => 0 IN D(self) AND 1 in D(self) : always say yes.
    // Case 2: lit NOTIN D(x)         => 0 in D(self) AND 1 NOTIN D(self).
@@ -1767,7 +1784,7 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
    if (lb == ub && lb == _v) {
       return val;
    } else {
-      if (_v < lb || _v > ub || !memberBitDom(_secondary, _v))
+      if (_v < lb || _v > ub || !memberDom(_secondary, _v))
          return !val;
       else {
          return YES;
@@ -1835,6 +1852,35 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
       [_secondary bind:_v];
    }
 }
+
+// ValueClosure Events
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ORIntClosure) todo
+{
+   [_secondary setTracksLoseEvt];
+   [super whenLoseValue:c do:todo];
+}
+
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
+{
+   [_secondary setTracksLoseEvt];
+   return [super setLoseTrigger:value do:todo onBehalf:c];
+}
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t
+{
+   [_secondary setTracksLoseEvt];
+   [super watch:val with:t];
+}
+-(void)watchBind:(id<CPTrigger>)t
+{
+   [_secondary setTracksLoseEvt];
+   [super watchBind:t];
+}
+-(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(CPCoreConstraint*)c
+{
+   [_secondary setTracksLoseEvt];
+   return [super setBindTrigger:todo onBehalf:c];
+}
+
 -(void) remove:(ORInt)val
 {
    assert(val==0 || val==1);
@@ -1849,11 +1895,28 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(void) bindEvt:(id<CPDom>)sender
 {
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
    [super bindEvt:sender];
 }
 -(void) domEvt:(id<CPDom>)sender
 {
-   BOOL isb = bound(_secondary) || !memberDom(_secondary, _v);
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
+
+      BOOL isb = bound(_secondary) || !memberDom(_secondary, _v);
    // [ldm]
    // There is no "dom Evt" to speak of in the literal view if the literal view is not
    // bound (the evt of the secondary must "disappear" in that case.
@@ -1862,36 +1925,61 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
+
    if (val == _v) {
       // We lost the value being watched. So the boolean lost TRUE
-      [super bindEvt:sender];
+      [super loseValEvt:true sender:sender];
    }
    else {
       // We lost some other value. So we may have bound(_seconday) && minDom(_secondary)==_v      
       if (bound(_secondary) && minDom(_secondary) == _v) {
-         [super bindEvt:sender];
+         [super loseValEvt:false sender:sender];
       } 
    }
 }
 -(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
-   if (bound(_secondary)) {
-      [super bindEvt:sender];
-   } else {
-      if (minDom(_secondary) > _v)
-         [super bindEvt:sender];
-   }
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
+
+   ORBounds sb = bounds(_secondary);
+   if (sb.min > _v)
+      [super changeMaxEvt:1 sender:sender];
+   else if (sb.min == sb.max && sb.min == _v)
+      [super changeMinEvt:1 sender:sender];
 }
 -(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
-   if (bound(_secondary)) {
-      [super bindEvt:sender];
-   } else {
-      ORInt sMax = maxDom(_secondary);
-      if (sMax < _v)
-         [super bindEvt:sender];
-   }
+   ORBool doIt = false;
+   if (_done._val == 0) {
+      assignTRInt(&_done,1,[_secondary->_fdm trail]);
+      doIt = true;
+   } else if (_done._mgc == [[_secondary->_fdm trail] magic])
+      doIt = true;
+   if (!doIt)
+      return;
+
+   ORBounds sb = bounds(_secondary);
+   if (sb.max < _v)
+      [super changeMaxEvt:1 sender:sender];
+   else if (sb.min == sb.max && sb.min == _v)
+      [super changeMinEvt:1 sender:sender];
 }
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -2017,13 +2105,14 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 -(ORBool) tracksLoseEvt
 {
    return _tracksLoseEvt;
-   if (_tracksLoseEvt)
+/*   if (_tracksLoseEvt)
       return true;
    else {
       for(ORUInt k=0;k<_nb && !_tracksLoseEvt;k++)
 	 _tracksLoseEvt |= [_tab[k] tracksLoseEvt];
       return _tracksLoseEvt;
    }
+ */
 }
 void bindEvt(CPMultiCast* x,id<CPDom> sender)
 {
@@ -2140,19 +2229,21 @@ void changeMaxEvt(CPMultiCast* x,ORInt dsz,id<CPDom> sender)
    }
    assignTRInt(&_b,_a._val, [[_ref engine] trail]);
 }
+typedef id (*SELPROTO)(id,SEL,...);
+
 void literalDomEvt(CPLiterals* x,id<CPDom> sender)
 {
    SEL dSEL = @selector(domEvt:);
    for(ORInt i=x->_a._val;i < x->_b._val;i++)
       if (x->_pos[i])
-         x->_domEvtIMP(x->_pos[i],dSEL,sender);
+         ((SELPROTO)x->_domEvtIMP)(x->_pos[i],dSEL,sender);
 }
 -(void) domEvt:(id<CPDom>)sender
 {
    SEL dSEL = @selector(domEvt:);
    for(ORInt i=_a._val;i <_b._val;i++) {
       if (_pos[i])
-         _domEvtIMP(_pos[i],dSEL,sender);
+         ((SELPROTO)_domEvtIMP)(_pos[i],dSEL,sender);
 //      [_pos[i] domEvt:sender];
    }
 }
@@ -2185,6 +2276,6 @@ void literalDomEvt(CPLiterals* x,id<CPDom> sender)
 -(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (_pos[val - _ofs])
-      [_pos[val - _ofs] bindEvt: sender];
+      [_pos[val - _ofs] loseValEvt:val sender:sender];
 }
 @end

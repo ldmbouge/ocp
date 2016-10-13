@@ -249,7 +249,7 @@
    id* gamma = [_cp gamma];
    _vars = t;
    NSArray* allvars = [[_engine model] variables];
-   id<ORIdArray> o = [ORFactory idArray:_engine range:[[ORIntRangeI alloc] initORIntRangeI:0 up:[allvars count]]];
+   id<ORIdArray> o = [ORFactory idArray:_engine range:[[ORIntRangeI alloc] initORIntRangeI:0 up:(ORUInt)[allvars count]]];
    for(int i=0; i< [allvars count];i++)
       [o set:allvars[i] at:i];
 
@@ -279,7 +279,7 @@
       [[_impacts objectForKey:key] addImpact: 1.0 forValue:val atIndex:idx];
       [key release];
    }];
-   [[_cp engine] clearStatus];
+//   [[_cp engine] clearStatus];
    [[_cp engine] enforceObjective];
    if ([[_cp engine] objective] != NULL)
       NSLog(@"BitVar IBS ready... %@",[[_cp engine] objective]);
@@ -317,93 +317,93 @@
 
 -(void)dichotomize:(id<CPBitVar>)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set
 {
-   if (up - low + 1 <= b) {
-      float ks = 0.0;
-      for(CPBitVarKillRange* kr in set)
-         ks += [kr killed];
-      
-      double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
-      NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
-      //NSLog(@"base: [%d .. %d]impact (%@) = %lf",low,up,key,ir);
-      CPBitVarAssignImpact* vImpact = [_impacts objectForKey:key];
-      for(ORInt c = low ; c <= up;c++) {
-         [vImpact setImpact:ir forValue:false atIndex:c];
-         [vImpact setImpact:ir forValue:true atIndex:c];
-      }
-      [key release];
-   } else {
-      ORInt mid = low + (up - low)/2;
-      id<ORTracer> tracer = [_cp tracer];
-      [tracer pushNode];
-      ORStatus s1 = [_engine enforce:^{  [x updateMax:mid];}]; //  lthen:x with:mid+1];
-      [ORConcurrency pumpEvents];
-      if (s1!=ORFailure) {
-         [self dichotomize:x from:low to:mid block:b sac:set];
-      } else {
-         // [ldm] We know that x IN [l..mid] leads to an inconsistency. -> record a SAC.
-         [self addKillSetFrom:low to:mid size:[x countFrom:low to:mid] into:set];
-      }
-      [tracer popNode];
-      [tracer pushNode];
-      ORStatus s2 = [_engine enforce: ^void { [x updateMin:mid+1];}];// gthen:x with:mid];
-      [ORConcurrency pumpEvents];
-      if (s2!=ORFailure) {
-         [self dichotomize:x from:mid+1 to:up block:b sac:set];
-      } else {
-         // [ldm] We know that x IN [mid+1..up] leads to an inconsistency. -> record a SAC.
-         [self addKillSetFrom:mid+1 to:up size:[x countFrom:mid+1 to:up] into:set];
-      }
-      [tracer popNode];
-   }
+//   if (up - low + 1 <= b) {
+//      float ks = 0.0;
+//      for(CPBitVarKillRange* kr in set)
+//         ks += [kr killed];
+//      
+//      double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
+//      NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+//      //NSLog(@"base: [%d .. %d]impact (%@) = %lf",low,up,key,ir);
+//      CPBitVarAssignImpact* vImpact = [_impacts objectForKey:key];
+//      for(ORInt c = low ; c <= up;c++) {
+//         [vImpact setImpact:ir forValue:false atIndex:c];
+//         [vImpact setImpact:ir forValue:true atIndex:c];
+//      }
+//      [key release];
+//   } else {
+//      ORInt mid = low + (up - low)/2;
+//      id<ORTracer> tracer = [_cp tracer];
+//      [tracer pushNode];
+//      ORStatus s1 = [_engine enforce:^{  [x updateMax:mid];}]; //  lthen:x with:mid+1];
+//      [ORConcurrency pumpEvents];
+//      if (s1!=ORFailure) {
+//         [self dichotomize:x from:low to:mid block:b sac:set];
+//      } else {
+//         // [ldm] We know that x IN [l..mid] leads to an inconsistency. -> record a SAC.
+//         [self addKillSetFrom:low to:mid size:[x countFrom:low to:mid] into:set];
+//      }
+//      [tracer popNode];
+//      [tracer pushNode];
+//      ORStatus s2 = [_engine enforce: ^void { [x updateMin:mid+1];}];// gthen:x with:mid];
+//      [ORConcurrency pumpEvents];
+//      if (s2!=ORFailure) {
+//         [self dichotomize:x from:mid+1 to:up block:b sac:set];
+//      } else {
+//         // [ldm] We know that x IN [mid+1..up] leads to an inconsistency. -> record a SAC.
+//         [self addKillSetFrom:mid+1 to:up size:[x countFrom:mid+1 to:up] into:set];
+//      }
+//      [tracer popNode];
+//   }
 }
 -(void) computeBitVarImpacts:(id<CPBitVar>)x sac:(NSMutableSet*)set{
-
-   id<ORTracer> tracer = [_cp tracer];
-   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
-
-
-   for(int b=0; b < [x bitLength]; b++){
-      float ks = 0.0;
-      for(CPBitVarKillRange* kr in set)
-         ks += [kr killed];
-      
-      CPBitVarAssignImpact* vImpact = [_impacts objectForKey:key];
-
-
-      if ([x isFree:b]){
-      //cout << "var:" << x.getId() << ",bit:" << b  << endl;
-         [tracer pushNode];
-         ORStatus oc = [_engine enforce:^void{ [x bind:b to:true];}];
-         [ORConcurrency pumpEvents];
-         if (oc != ORFailure) {
-            double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
-            [vImpact setImpact:ir forValue:true atIndex:b];
-//            _bstat[x.getId()].setImpact(b,true,ix0);
-            //cout << "RATIO:" << ix0 << "\tNBA:" << _nbA << endl;
-         }
-         
-         [tracer popNode];
-         if (oc == ORFailure) {
-            NSLog(@"FAILED impactBit(%@, %i to true )", x, b);
-            [x bind:b to:false];
-            
-         }
-         if (![x isFree:b]) continue;
-         [tracer pushNode];
-         oc = [_engine enforce:^void{ [x bind:b to:false];}];
-         [ORConcurrency pumpEvents];
-         if (oc!=ORFailure) {
-            double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
-            [vImpact setImpact:ir forValue:false atIndex:b];
-         }
-         [tracer popNode];
-         if (oc==ORFailure) {
-            NSLog(@"FAILED impactBit(%@, %i to false )", x, b);
-            [x bind:b to:true];
-         }
-      }
-   }
-   [key release];
+//
+//   id<ORTracer> tracer = [_cp tracer];
+//   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+//
+//
+//   for(int b=0; b < [x bitLength]; b++){
+//      float ks = 0.0;
+//      for(CPBitVarKillRange* kr in set)
+//         ks += [kr killed];
+//      
+//      CPBitVarAssignImpact* vImpact = [_impacts objectForKey:key];
+//
+//
+//      if ([x isFree:b]){
+//      //cout << "var:" << x.getId() << ",bit:" << b  << endl;
+//         [tracer pushNode];
+//         ORStatus oc = [_engine enforce:^void{ [x bind:b to:true];}];
+//         [ORConcurrency pumpEvents];
+//         if (oc != ORFailure) {
+//            double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
+//            [vImpact setImpact:ir forValue:true atIndex:b];
+////            _bstat[x.getId()].setImpact(b,true,ix0);
+//            //cout << "RATIO:" << ix0 << "\tNBA:" << _nbA << endl;
+//         }
+//         
+//         [tracer popNode];
+//         if (oc == ORFailure) {
+//            NSLog(@"FAILED impactBit(%@, %i to true )", x, b);
+//            [x bind:b to:false];
+//            
+//         }
+//         if (![x isFree:b]) continue;
+//         [tracer pushNode];
+//         oc = [_engine enforce:^void{ [x bind:b to:false];}];
+//         [ORConcurrency pumpEvents];
+//         if (oc!=ORFailure) {
+//            double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
+//            [vImpact setImpact:ir forValue:false atIndex:b];
+//         }
+//         [tracer popNode];
+//         if (oc==ORFailure) {
+//            NSLog(@"FAILED impactBit(%@, %i to false )", x, b);
+//            [x bind:b to:true];
+//         }
+//      }
+//   }
+//   [key release];
 }
 -(void) impBitVar:(id<CPBitVar>) x sac:(NSMutableSet*)set {
    [self computeBitVarImpacts:x sac:set];

@@ -984,7 +984,7 @@ static smtlib2_term smtlib2_objcp_parser_mk_number(smtlib2_context ctx,
     if (width != 0) {
         mpz_t tmp;
         int i;
-        int *bits = malloc(sizeof(int) * width);
+        unsigned int *bits = malloc(sizeof(int) * width);
         smtlib2_term ret = NULL;
         mpz_init(tmp);
         mpz_set_str(tmp, rep, base);
@@ -1413,7 +1413,7 @@ SMTLIB2_OBJCP_DECLHANDLER(bvurem) //{ return NULL; /* TODO */ }
 
 SMTLIB2_OBJCP_DECLHANDLER(bvsrem)// { return NULL; /* TODO */ }
 {
-   return [objcpgw objcp_mk_bv_srem:YCTX(ctx)
+   return [objcpgw objcp_mk_bv_rem:YCTX(ctx)
                            withArg:(objcp_expr)smtlib2_vector_at(args, 0)
                             andArg:(objcp_expr)smtlib2_vector_at(args, 1)];
 }
@@ -1435,7 +1435,7 @@ SMTLIB2_OBJCP_DECLHANDLER(extract) //{ return NULL; /* TODO */ }
 {
     size_t msb = (size_t)smtlib2_vector_at(idx, 0);
     size_t lsb = (size_t)smtlib2_vector_at(idx, 1);
-            return [objcpgw objcp_mk_bv_extract:YCTX(ctx) from:msb downTo:lsb in:(objcp_expr)smtlib2_vector_at(args, 0)];
+            return [objcpgw objcp_mk_bv_extract:YCTX(ctx) from:(ORUInt)msb downTo:(ORUInt)lsb in:(objcp_expr)smtlib2_vector_at(args, 0)];
 }
 
 

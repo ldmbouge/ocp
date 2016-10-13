@@ -37,6 +37,25 @@
 #import <ORProgram/ORSTask.h>
 //>>>>>>> master
 
+#import <ORProgram/ORCombinator.h>
+#import <ORProgram/ORRunnable.h>
+#import <ORProgram/ORSignature.h>
+#import <ORProgram/ORParallelCombinator.h>
+
+#import <ORProgram/PCBranching.h>
+
+//The headers below are _not_ public
+//project: #import <ORProgram/CPRunnable.h>
+//project: #import <ORProgram/LPRunnable.h>
+//project: #import <ORProgram/MIPRunnable.h
+//project: #import <ORProgram/ORColumnGeneration.h>
+#import <ORProgram/ORLagrangeRelax.h>
+#import <ORProgram/ORLagrangianTransform.h>
+//project: #import <ORProgram/ORLogicBenders.h>
+//project: #import <ORProgram/ORParallelRunnable.h>
+//project: #import <ORProgram/ORRunnablePiping.h>
+
+
 @interface ORGamma (Model)
 -(void) initialize: (PNONNULL id<ORModel>) model;
 @end

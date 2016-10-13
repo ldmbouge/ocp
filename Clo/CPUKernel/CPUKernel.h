@@ -14,6 +14,7 @@
 #import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPClosureEvent.h>
+#import <CPUKernel/CPLEngine.h>
 
 /*
  
@@ -23,6 +24,12 @@
 2. Check if the group stuff can be simplified
  
 */
+
+struct _CPBitAssignment;
+typedef struct _CPBitAssignment CPBitAssignment;
+
+struct _CPBitAntecedents;
+typedef struct _CPBitAntecedents CPBitAntecedents;
 
 typedef enum {
    CPChecked,
@@ -37,6 +44,10 @@ typedef enum {
 -(void)        setGroup:(id<CPGroup>) g;
 -(id<CPGroup>) group;
 -(void) post;
+@end
+
+@protocol CPBVConstraint <CPConstraint>
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment;
 @end
 
 @protocol CPGroup <CPConstraint>
@@ -58,15 +69,9 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,OR
 
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
-//<<<<<<< HEAD
 +(id<CPEngine>) learningEngine: (id<ORTrail>)trail memory:(id<ORMemoryTrail>)mt tracer:(id<ORTracer>)tr;
 +(id<CPGroup>)group:(id<CPEngine>)engine;
 +(id<CPGroup>)bergeGroup:(id<CPEngine>)engine;
 @end;
-//=======
-//+(id<CPGroup>) group:(id<CPEngine>)engine;
-//+(id<CPGroup>) bergeGroup:(id<CPEngine>)engine;
-//@end
-//
 #import <CPUKernel/CPConstraintI.h>
 

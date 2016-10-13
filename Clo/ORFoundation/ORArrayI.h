@@ -35,9 +35,10 @@
 -(NSString*)description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id)objectAtIndexedSubscript: (NSUInteger) key;
--(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id)objectAtIndexedSubscript: (NSInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSInteger) idx;
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
+-(ORInt) sumWith: (ORInt(^)(ORInt value,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 -(int*)base;
@@ -74,12 +75,15 @@
 -(ORInt) up;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
+-(ORBool) contains: (id)obj;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
+-(id<ORIdArray>) map:(id(^)(id obj, int idx))block;
+-(NSArray*) toNSArray;
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 -(void)visit:(ORVisitor*)v;

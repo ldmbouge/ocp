@@ -64,6 +64,7 @@
 -(ORRealVarI*) init: (id<ORTracker>) tracker;
 -(ORRealVarI*) init: (id<ORTracker>) tracker up: (ORDouble) up;
 -(ORRealVarI*) init: (id<ORTracker>) tracker low: (ORDouble) low up: (ORDouble) up;
+-(void)setDomain:(id<ORRealRange>)domain;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;

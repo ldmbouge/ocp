@@ -23,6 +23,8 @@
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(ORInt) size;
+-(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
 @end
 
@@ -90,6 +92,12 @@
 -(ORInt) cst;
 @end
 
+@interface ORSoftNEqual : ORNEqual<ORSoftNEqual,NSCoding>
+-(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y slack: (id<ORVar>)slack;
+-(id) initORSoftNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y plus: (ORInt) c slack: (id<ORVar>)slack;
+-(id<ORVar>) slack;
+@end
+
 @interface ORLEqual : ORConstraintI<ORLEqual>
 -(ORLEqual*)initORLEqual: (id<ORIntVar>) x leq: (id<ORIntVar>) y plus: (ORInt) c;
 -(ORLEqual*)initORLEqual:(ORInt)a times:(id<ORIntVar>)x leq:(ORInt)b times:(id<ORIntVar>)y plus:(ORInt)c;
@@ -108,10 +116,10 @@
 @end
 
 @interface ORMult : ORConstraintI<ORMult>
--(ORMult*)initORMult:(id<ORIntVar>)x eq:(id<ORIntVar>)y times:(id<ORIntVar>)z;
--(id<ORIntVar>) res;
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
+-(ORMult*)initORMult:(id<ORVar>)x eq:(id<ORVar>)y times:(id<ORVar>)z;
+-(id<ORVar>) res;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
 @end
 
 @interface ORSquare : ORConstraintI<ORSquare>
@@ -265,6 +273,12 @@
 -(id<ORIntVar>) y;
 @end
 
+@interface ORClause : ORConstraintI<ORClause>
+-(id) init:(id<ORIntVarArray>)ba eq:(id<ORIntVar>)c;
+-(id<ORIntVarArray>)vars;
+-(id<ORIntVar>)targetValue;
+@end
+
 @interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>
 -(ORSumBoolEqc*) initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;
@@ -329,23 +343,22 @@
 -(ORInt)cst;
 @end
 
-@interface ORLinearGeq : ORConstraintI<ORLinearGeq>
--(ORLinearGeq*) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
--(id<ORIntVarArray>) vars;
--(id<ORIntArray>) coefs;
--(ORInt) cst;
-@end
-
 @interface ORLinearEq : ORConstraintI<ORLinearEq>
 -(ORLinearEq*) initLinearEq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt) c;
 -(id<ORIntVarArray>) vars;
 -(id<ORIntArray>) coefs;
 -(ORInt) cst;
--(NSUInteger)count;
 @end
 
 @interface ORLinearLeq : ORConstraintI<ORLinearLeq>
--(ORLinearLeq*) initLinearLeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
+-(id) initLinearLeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
+@interface ORLinearGeq : ORConstraintI<ORLinearGeq>
+-(id) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
 -(id<ORIntVarArray>) vars;
 -(id<ORIntArray>) coefs;
 -(ORInt) cst;
@@ -353,19 +366,25 @@
 
 
 @interface ORRealLinearEq : ORConstraintI<ORRealLinearEq>
--(ORLinearEq*) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id) initRealLinearEq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
 -(ORDouble) cst;
 @end
 
 @interface ORRealLinearLeq : ORConstraintI<ORRealLinearLeq>
--(ORRealLinearLeq*) initRealLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id) initRealLinearLeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
 -(id<ORVarArray>) vars;
 -(id<ORDoubleArray>) coefs;
 -(ORDouble) cst;
 @end
 
+@interface ORRealLinearGeq : ORConstraintI<ORRealLinearGeq>
+-(id) initRealLinearGeq: (id<ORVarArray>) ia coef: (id<ORDoubleArray>) ca cst: (ORDouble) c;
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORExprArray>) x;
@@ -388,6 +407,18 @@
 @interface ORAlgebraicConstraintI : ORConstraintI<ORAlgebraicConstraint>
 -(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr;
 -(id<ORRelation>) expr;
+@end
+
+@interface ORSoftAlgebraicConstraintI : ORAlgebraicConstraintI<ORSoftConstraint>
+-(ORSoftAlgebraicConstraintI*) initORSoftAlgebraicConstraintI: (id<ORRelation>) expr slack: (id<ORVar>)slack;
+-(id<ORVar>) slack;
+@end
+
+@interface ORRealWeightedVarI : ORConstraintI<ORWeightedVar>
+-(ORRealWeightedVarI*) initRealWeightedVar: (id<ORVar>)x;
+-(id<ORVar>) z;
+-(id<ORVar>)x;
+-(id<ORParameter>)weight;
 @end
 
 @interface ORTableConstraintI : ORConstraintI<ORTableConstraint>
@@ -466,6 +497,10 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@interface ORSoftKnapsackI : ORKnapsackI<ORSoftKnapsack>
+-(ORSoftKnapsackI*)initORSoftKnapsackI:(id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c slack: (id<ORVar>)slack;
+-(id<ORVar>)slack;
+@end
 
 @interface ORAssignmentI: ORConstraintI<ORAssignment>
 -(ORAssignmentI*)initORAssignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
@@ -505,7 +540,6 @@
 
 @interface ORObjectiveFunctionI : ORObject<ORObjectiveFunction>
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI;
--(id<ORObjectiveValue>) value;
 @end
 
 @interface ORObjectiveFunctionVarI : ORObjectiveFunctionI<ORObjectiveFunctionVar>
@@ -561,7 +595,6 @@
 @interface ORMaximizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
 -(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef;
 @end
-
 
 @interface ORBitEqual : ORConstraintI<ORBitEqual>
 -(ORBitEqual*)initORBitEqual: (id<ORBitVar>) x eq: (id<ORBitVar>) y;

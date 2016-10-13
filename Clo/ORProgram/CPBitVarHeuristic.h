@@ -10,14 +10,14 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <CPUKernel/CPEngine.h>
-#import <objcp/CPData.h>
+#import <ORProgram/CPHeuristic.h>
 
+@protocol ORVarArray;
 @protocol CPBitVarArray;
 @protocol CPProgram;
 @protocol CPBitVar;
 
-@protocol CPBitVarHeuristic <NSObject>
+@protocol CPBitVarHeuristic <CPHeuristic>
 -(ORFloat) varOrdering: (id<CPBitVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
 -(void) initInternal: (id<ORVarArray>) t  and:(id<ORVarArray>)cv;

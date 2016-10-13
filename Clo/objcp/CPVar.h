@@ -27,6 +27,13 @@ enum CPVarClass {
    CPVCCst = 6
 };
 
+@protocol CPParam <NSObject>
+-(ORUInt) getId;
+-(id<ORTracker>)tracker;
+-(id<CPEngine>)engine;
+-(NSSet*)constraints;
+@end
+
 @protocol CPVar <NSObject>
 -(ORUInt) getId;
 -(id<ORTracker>)tracker;
@@ -89,7 +96,7 @@ enum CPVarClass {
 -(id<CPTrigger>) setBindTrigger: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 // assign a trigger which is executed when value val is removed.
 -(void) watch:(ORInt) val with: (id<CPTrigger>) t;
-
+-(void) watchBind:(id<CPTrigger>)t;
 @end
 @class CPIntVar;
 
@@ -163,6 +170,11 @@ enum CPVarClass {
 -(void) updateMax:(ORDouble) newMax;
 -(void) assignRelaxationValue: (ORDouble) f;
 -(ORNarrowing) updateInterval: (ORInterval) v;
+@end
+
+@protocol CPRealParam<CPParam>
+-(ORDouble) value;
+-(void) setValue: (ORDouble)val;
 @end
 
 @protocol CPRealVarArray <CPVarArray>

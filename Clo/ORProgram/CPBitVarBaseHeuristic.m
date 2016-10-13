@@ -52,7 +52,11 @@
 }
 -(void) initInternal: (id<ORVarArray>) t and:(id<ORVarArray>)cv
 {
-   //@throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
+}
+-(void) initInternal: (id<ORVarArray>) t with:(id<ORVarArray>)cv
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
 }
 -(ORFloat) varOrdering: (id<ORIntVar>)x
 {
@@ -67,6 +71,10 @@
    //NSLog(@"Restart of based heuristic called... Nothing to do.");
 }
 -(id<ORBitVarArray>) allBitVars
+{
+   return nil;
+}
+-(id<ORBitVarArray>) allIntVars
 {
    return nil;
 }
@@ -99,11 +107,15 @@
    [_binding release];
    [super dealloc];
 }
--(ORFloat) varOrdering: (id<CPBitVar>)x
+-(void) initInternal: (id<ORVarArray>) t with:(id<ORVarArray>)cv
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
+}
+-(ORDouble) varOrdering: (id<CPBitVar>)x
 {
    return [_binding[[NSThread threadID]] varOrdering:x];
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<ORBitVar>) x
 {
    return [_binding[[NSThread threadID]] valOrdering:v forVar:x];
 }

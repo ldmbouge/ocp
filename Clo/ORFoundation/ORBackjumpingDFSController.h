@@ -14,7 +14,8 @@
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORTracer.h>
 
-@interface ORBackjumpingDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing>
+@interface ORBackjumpingDFSController : ORDefaultController <NSCopying,ORSearchController>
++(id<ORSearchController>)proto;
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model;
 -(void) dealloc;
 -(void) setup;
@@ -22,5 +23,5 @@
 -(ORInt) addChoice:(NSCont*)k;
 -(void) trust;
 -(void) fail;
--(ORHeist*)steal;
+//-(ORHeist*)steal;
 @end

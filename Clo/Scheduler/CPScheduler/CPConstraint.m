@@ -1304,7 +1304,7 @@
    
    _task = task;
    _date  = date;
-    NSLog(@"Create constraint CPTaskIsFinishedBy\n");
+   //NSLog(@"Create constraint CPTaskIsFinishedBy\n");
    return self;
 }
 -(void) dealloc

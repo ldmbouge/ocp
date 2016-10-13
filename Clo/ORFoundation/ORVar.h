@@ -21,7 +21,7 @@ PORTABLE_BEGIN
 -(ORInt) getId;
 @end
 
-@protocol ORExprVar <ORVar,ORExpr>
+@protocol ORExprVar <ORVar,ORRelation>
 -(ORInt) getId;
 @end
 
@@ -59,6 +59,7 @@ PORTABLE_BEGIN
 
 @protocol ORRealVar <ORExprVar>
 -(id<ORRealRange>) domain;
+-(void)setDomain:(id<ORRealRange>)domain;
 -(ORBool) hasBounds;
 -(ORDouble) low;
 -(ORDouble) up;
@@ -141,12 +142,19 @@ typedef enum { ORinfeasible, ORoptimal, ORsuboptimal, ORunbounded, ORerror} OROu
 -(ORDouble) upperBound: (id<ORVar>) x;
 -(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f;
 -(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f;
+-(void) updateBounds:(id<ORVar>)x lower:(ORDouble)low  upper:(ORDouble)up;
 -(OROutcome) solve;
+-(OROutcome) solveFrom:(id)basis;
 -(void) close;
+-(double)reducedCost:(id<ORVar>)x;
+-(ORBool)triviallyRoundable:(id<ORVar>)x;
+-(ORBool)trivialDownRoundable:(id<ORVar>)var;
+-(ORBool)trivialUpRoundable:(id<ORVar>)var;
+-(ORInt)nbLocks:(id<ORVar>)var;
+-(ORBool)minLockDown:(id<ORVar>)var;
+-(ORBool)inBasis:(id<ORVar>)x;
+-(id)basis;
 @end
-//<<<<<<< HEAD
-//=======
 
 PORTABLE_END
 
-//>>>>>>> master

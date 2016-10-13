@@ -98,6 +98,14 @@
 {
    _result = v;
 }
+-(void) visitRealParam:(id<ORRealParam>)v
+{
+    _result = v;
+}
+-(void) visitIntParam:(id<ORIntParam>)v
+{
+    _result = v;
+}
 
 // ======================================================================================================
 
@@ -266,7 +274,11 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORFlatten flattenExpression:[cstr expr] into:_into];
+   _result = [ORFlatten flattenExpression:[cstr expr] into:_into];
+}
+-(void) visitRealWeightedVar:(id<ORWeightedVar>)cstr
+{
+    _result = [_into addConstraint:cstr];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -303,6 +315,10 @@
 -(void) visitNEqual: (id<ORNEqual>)c
 {
    _result = [_into addConstraint:c];
+}
+-(void) visitSoftNEqual: (id<ORSoftNEqual>)c
+{
+    _result = [_into addConstraint:c];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
@@ -655,6 +671,7 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
    switch ([e expr].vtype) {
+      case ORTBool:
       case ORTInt: {
          ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into];
          id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into];
@@ -709,20 +726,23 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
 
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model
 {
-   id<ORConstraint> rv = NULL;
-   id<ORLinear> terms = [ORNormalizer normalize:expr into: model];
-   switch ([expr type]) {
-      case ORRBad: assert(NO);
-      case ORREq: rv = [terms postEQZ:model];break;
-      case ORRNEq:rv = [terms postNEQZ:model];break;
-      case ORRLEq:rv = [terms postLEQZ:model];break;
-      case ORRDisj:rv = [terms postDISJ:model];break;
-      default:
-         assert(terms == nil);
-         break;
-   }
-   [terms release];
-   return rv;
+    id<ORConstraint> rv = NULL;
+    id<ORLinear> terms = [ORNormalizer normalize:expr into: model];
+    switch ([expr type]) {
+        case ORRBad: assert(NO);
+        case ORREq: rv = [terms postEQZ:model];break;
+        case ORRNEq:rv = [terms postNEQZ:model];break;
+//        case ORRGEq:
+        case ORRLEq:rv = [terms postLEQZ:model];break;
+        case ORRGEq:rv = [terms postGEQZ:model];break;
+        case ORNeg: rv = [terms postEQZ:model];break;
+        case ORRDisj:rv = [terms postDISJ:model];break;
+        default:
+            assert(terms == nil);
+            break;
+    }
+    [terms release];
+    return rv;
 }
 @end
 

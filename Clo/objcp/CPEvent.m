@@ -70,7 +70,6 @@ static __thread id vLossCache = nil;
    *(id*)self = vLossCache;
    vLossCache = self;
    return;
-   [super dealloc];
 }
 #else
 +(id)newValueLoss:(ORInt)value notify:(id<CPClosureList>)list

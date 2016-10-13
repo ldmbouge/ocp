@@ -63,6 +63,7 @@ static BOOL refresh(CPVarInfo* vi)
 -(void)rootRefresh
 {
    _root = [_theVar domsize];
+   assignTRDouble(&_oldDSize, _root, _trail);
 }
 @end
 

@@ -28,6 +28,7 @@
 @protocol ORObjectiveFunction;
 @protocol ORSolution;
 @protocol ORSolutionPool;
+@protocol ORParameter;
 
 @protocol ORBasicModel
 -(id<ORObjectiveFunction>) objective;
@@ -44,6 +45,10 @@
 -(void) close;
 @end
 
+@protocol ORSoftConstraint <ORConstraint>
+-(id<ORVar>)slack;
+@end
+
 @protocol ORPost<NSObject>
 -(ORStatus)post:(id<ORConstraint>)c;
 @end
@@ -51,7 +56,6 @@
 @protocol ORConstraintSet <NSObject>
 -(void)addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
--(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
 
 @protocol OROrderedConstraintSet <ORConstraintSet>
@@ -66,6 +70,8 @@ enum ORGroupType {
 @protocol ORGroup <ORObject,ORConstraint>
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(ORInt) size;
+-(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
 @end
 
@@ -119,6 +125,9 @@ enum ORGroupType {
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
+@end
+
+@protocol ORSoftNEqual <ORNEqual, ORSoftConstraint>
 @end
 
 @protocol  ORLEqual <ORConstraint>
@@ -288,6 +297,11 @@ enum ORGroupType {
 -(ORInt)cst;
 @end
 
+@protocol ORClause <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(id<ORIntVar>)targetValue;
+@end
+
 @protocol ORSumBoolEqc <ORConstraint>
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
@@ -349,6 +363,12 @@ enum ORGroupType {
 -(ORDouble) cst;
 @end
 
+@protocol ORRealLinearGeq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORDoubleArray>) coefs;
+-(ORDouble) cst;
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORExprArray>) array;
 @end
@@ -360,6 +380,13 @@ enum ORGroupType {
 
 @protocol ORAlgebraicConstraint <ORConstraint>
 -(id<ORExpr>) expr;
+@end
+
+// z = weight * x
+@protocol ORWeightedVar <ORConstraint>
+-(id<ORVar>) z;
+-(id<ORVar>)x;
+-(id<ORParameter>)weight;
 @end
 
 @protocol ORTableConstraint <ORConstraint>
@@ -432,6 +459,9 @@ enum ORGroupType {
 -(id<ORIntVar>) capacity;
 @end
 
+@protocol ORSoftKnapsack <ORKnapsack, ORSoftConstraint>
+@end
+
 @protocol ORAssignment <ORConstraint>
 -(id<ORIntVarArray>) x;
 -(id<ORIntMatrix>) matrix;
@@ -457,7 +487,10 @@ enum ORGroupType {
 @end
 
 @protocol ORObjectiveFunction <ORObject>
--(id<ORObjectiveValue>) value;
+-(id<ORObjectiveValue>) primalValue;
+-(id<ORObjectiveValue>) dualValue;
+-(id<ORObjectiveValue>) primalBound;
+-(id<ORObjectiveValue>) dualBound;
 @end
 
 @protocol ORObjectiveFunctionVar <ORObjectiveFunction>
@@ -475,11 +508,35 @@ enum ORGroupType {
 
 @protocol ORSearchObjectiveFunction <NSObject,ORObjectiveFunction>
 -(ORStatus) check;
--(id<ORObjectiveValue>) primalBound;
 -(void)     updatePrimalBound;
+-(void)     updateDualBound;
 -(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
--(void)     tightenWithDualBound: (id<ORObjectiveValue>) newBound;
+-(ORStatus) tightenDualBound: (id<ORObjectiveValue>) newBound;
+-(void)     tightenLocallyWithDualBound: (id<ORObjectiveValue>) newBound;
+-(ORBool)   isBound;
+-(ORBool)   isMinimization;
 @end
+
+@protocol ORModel;
+@protocol ORSolution <NSObject>
+-(id) value: (id) var;
+-(ORInt) intValue: (id<ORIntVar>) var;
+-(ORBool) boolValue: (id<ORIntVar>) var;
+-(ORDouble) doubleValue: (id<ORRealVar>) var;
+-(id<ORObjectiveValue>) objectiveValue;
+-(id<ORModel>) model;
+@end
+
+@protocol ORSolutionPool <NSObject>
+-(void) addSolution: (id<ORSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORSolution>)) block;
+-(id) objectAtIndexedSubscript: (NSUInteger) key;
+-(id<ORInformer>) solutionAdded;
+-(id<ORSolution>) best;
+-(void) emptyPool;
+-(NSUInteger) count;
+@end
+
 
 // pvh: to reconsider the solution pool in this interface; not sure I like them here
 @protocol ORASolver <NSObject,ORTracker,ORGamma>
@@ -487,6 +544,8 @@ enum ORGroupType {
 -(id<OREngine>)       engine;
 -(id) concretize: (id) o;
 -(id<ORObjectiveValue>) objectiveValue;
+-(id<ORSolutionPool>) solutionPool;
+-(ORBool)ground;
 @end
 
 @protocol ORASearchSolver <ORASolver>

@@ -13,6 +13,7 @@
 #import <ORFoundation/ORTracker.h>
 
 @protocol ORSearchEngine;
+@protocol ORObjectiveFunction;
 @protocol ORTrail;
 
 @interface ORFailException : NSObject
@@ -28,7 +29,9 @@
 -(id)   trackMutable:(id)obj;
 -(NSMutableArray*) variables;
 -(id<ORTrail>) trail;
+-(ORStatus)currentStatus;
 -(ORStatus)propagate;
 -(ORStatus)enforceObjective;
 -(void)tryEnforceObjective;
+-(id<ORObjectiveFunction>)objective;
 @end

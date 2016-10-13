@@ -46,6 +46,10 @@
 {
    return [[ORSolution alloc] initORSolution: m with: solver];
 }
++(id<ORSolution>) parameterizedSolution: (id<ORParameterizedModel>) m solver: (id<ORASolver>) solver
+{
+   return [[ORParameterizedSolution alloc] initORParameterizedSolution: m with: solver];
+}
 +(id<ORSolutionPool>) createSolutionPool
 {
    return [[ORSolutionPool alloc] init];
@@ -68,18 +72,19 @@
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
    id<ORAnnotation> notes = [ORFactory annotation];
-   id<CPProgram> program = [self createCPSemanticProgramDFS:model annotation:notes];
+   id<CPProgram> p = [self createCPSemanticProgram:model annotation:notes with:[ORSemDFSController proto]];
    [notes release];
-   return program;
+   return p;
 }
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model
+                                    with: (id<ORSearchController>) ctrlClass
 {
    id<ORAnnotation> notes = [ORFactory annotation];
-   id<CPProgram> program = [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
+   id<CPProgram> p =  [self createCPSemanticProgram:model annotation:notes with:ctrlClass];
    [notes release];
-   return program;
+   return p;
 }
-+(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (id<ORSearchController>) ctrlClass
 {
    id<ORAnnotation> notes = [ORFactory annotation];
    id<CPProgram> program = [self createCPParProgram:model nb:k annotation:notes with:ctrlClass];
@@ -95,6 +100,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
+   [cpprogram setModelMappings:[m modelMappings]];
    ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram annotation:notes];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];
@@ -112,7 +118,7 @@
 
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram annotation:(id<ORAnnotation>)notes
 {
-//   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
+   //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
    id<ORAnnotation> ncpy   = [notes copy];
    id<ORModel> fm = [model flatten: ncpy];   // models are AUTORELEASE
    [self concretizeCP:fm program:cpprogram annotation:ncpy];
@@ -153,9 +159,9 @@
    return cpprogram;
 }
 
-+(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass 
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto
 {
-   id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolver: ctrlClass];
+   id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolver: ctrlProto];
    [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    return cpprogram;
 }
@@ -184,21 +190,21 @@
          id<ORSolution> s = [cp captureSolution];
          [lp addSolution: s];
          @synchronized(gp) {
-//            NSLog(@"Adding a global solution with cost %@",[s objectiveValue]);
-//            NSLog(@"Solution %@",s);
+            //            NSLog(@"Adding a global solution with cost %@",[s objectiveValue]);
+            //            NSLog(@"Solution %@",s);
             [gp addSolution: s];
          }
-//         id<ORSearchObjectiveFunction> objective = [cp objective];
-//         if (objective != NULL) {
-//            id<ORObjectiveValue> myBound = [objective primalBound];
-//            for(ORInt w=0;w < k;w++) {
-//               if (w == i) continue;
-//               id<ORSearchObjectiveFunction> wwObj = [[cpprogram at:w] objective];
-//               [wwObj tightenPrimalBound: myBound];
-//               //NSLog(@"TIGHT: %@  -- thread %d",wwObj,[NSThread threadID]);
-//            }
-//            [myBound release];
-//         }
+         //         id<ORSearchObjectiveFunction> objective = [cp objective];
+         //         if (objective != NULL) {
+         //            id<ORObjectiveValue> myBound = [objective primalBound];
+         //            for(ORInt w=0;w < k;w++) {
+         //               if (w == i) continue;
+         //               id<ORSearchObjectiveFunction> wwObj = [[cpprogram at:w] objective];
+         //               [wwObj tightenPrimalBound: myBound];
+         //               //NSLog(@"TIGHT: %@  -- thread %d",wwObj,[NSThread threadID]);
+         //            }
+         //            [myBound release];
+         //         }
          [s release];
       }];
    }
@@ -206,9 +212,9 @@
    return cpprogram;
 }
 
-+(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (Class) ctrlClass
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k annotation:(id<ORAnnotation>)notes with: (id<ORSearchController>) ctrlProto
 {
-   CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
+   CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlProto];
    id<ORAnnotation> ncpy = [notes copy];
    id<ORModel> flatModel = [model flatten:ncpy];
    id<ORSolutionPool> global = [cpprogram solutionPool];
@@ -254,9 +260,9 @@
       gamma[i] = NULL;
    [lpprogram setGamma: gamma];
    [lpprogram setModelMappings: flatModel.modelMappings];
- 
+   
    ORVisitor* concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
-
+   
    for(id<ORObject> c in [flatModel mutables])
       [c visit: concretizer];
    for(id<ORObject> c in [flatModel constraints])
@@ -282,7 +288,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [lpprogram setGamma: gamma];
-   [lpprogram setModelMappings: flatModel.modelMappings];
+   [lpprogram setModelMappings: flatModel.modelMappings];   
    
    ORVisitor* concretizer = [[ORLPRelaxationConcretizer alloc] initORLPRelaxationConcretizer: lpprogram];
    
@@ -311,16 +317,15 @@
       gamma[i] = NULL;
    [mipprogram setGamma: gamma];
    [mipprogram setModelMappings: flatModel.modelMappings];
-  
    
    ORVisitor* concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
-  
+   
    for(id<ORObject> c in [flatModel mutables])
       [c visit: concretizer];
    for(id<ORObject> c in [flatModel constraints])
       [c visit: concretizer];
    [[flatModel objective] visit:concretizer];
-
+   
    //[mipprogram setSource:model];  // [ldm] missing API
    [concretizer release];
    //NSLog(@"flat: %@",flatModel);
@@ -346,7 +351,7 @@
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
    ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram annotation:ncpy];
-
+   
    for(id<ORObject> c in [lfm mutables])
       [c visit: concretizer];
    for(id<ORObject> c in [lfm constraints])
@@ -375,7 +380,7 @@
 }
 +(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model
 {
-   return [[ORLinearRelaxation alloc] initLinearRelaxation:model];
+   return [[[ORLinearRelaxation alloc] initLinearRelaxation:model] autorelease];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation
@@ -385,12 +390,14 @@
    [notes release];
    return program;
 }
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation annotation:(id<ORAnnotation>)notes
++(id<CPProgram>) createCPProgram: (id<ORModel>) model
+                  withRelaxation: (id<ORRelaxation>) relaxation
+                      annotation: (id<ORAnnotation>)notes
 {
    __block id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPProgram: model program: cpprogram annotation:notes];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
-
+   
    NSArray* mv = [model variables];
    NSMutableArray* cv = [[NSMutableArray alloc] init];
    id* gamma = [cpprogram gamma];
@@ -408,9 +415,45 @@
       [sp addSolution: s];
       [s release];
    }];
-   return cpprogram;
+   return (id<CPProgram>)cpprogram;
 }
 
++(id<CPProgram>) createCPProgram: (id<ORModel>) model
+                  withRelaxation: (id<ORRelaxation>) relaxation
+                      annotation: (id<ORAnnotation>)notes
+                            with: (id<ORSearchController>) ctrlProto
+{
+   __block id<CPSemanticProgram> cpprogram = [CPSolverFactory semanticSolver:ctrlProto];
+   [ORFactory createCPProgram: model program: cpprogram annotation:notes];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+   
+   NSArray* mv = [model variables];
+   NSMutableArray* cv = [[NSMutableArray alloc] init];
+   id* gamma = [cpprogram gamma];
+   for(id<ORVar> v in mv)
+      [cv addObject: gamma[v.getId]];
+   
+   //NSLog(@"Model variables %@",mv);
+   //NSLog(@"Concrete variables %@",cv);
+   
+   id<CPEngine> engine = [(CPSolver*) cpprogram engine];
+   if (relaxation != nil)
+      [engine add: [CPFactory relaxation: mv var: cv relaxation: relaxation]];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [cpprogram captureSolution];
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      [sp addSolution: s];
+      [s release];
+   }];
+   return (id<CPProgram>)cpprogram;
+}
++(id<ORModel>)strengthen:(id<ORModel>)m0;
+{
+   ORStrengthening* st = [[ORStrengthening alloc] init];
+   id<ORModel> m1 = [st apply:m0];
+   [st release];
+   return m1;
+}
 @end
 
 @implementation ORLinearRelaxation
@@ -425,6 +468,20 @@
    _lprelaxation = [ORFactory createLPRelaxation: _model];
    return self;
 }
+-(void)dealloc
+{
+   [_lprelaxation release];
+   [super dealloc];
+}
+-(id)basis
+{
+   return [_lprelaxation basis];
+}
+-(void)restoreBasis:(id)basis
+{
+   return [_lprelaxation restoreBasis:basis];
+}
+
 -(ORDouble) objective
 {
    return [_lprelaxation objective];
@@ -441,6 +498,10 @@
 {
    return [_lprelaxation upperBound: x];
 }
+-(void) updateBounds:(id<ORVar>)var lower:(ORDouble)low  upper:(ORDouble)up
+{
+   [_lprelaxation updateBounds:var lower:low upper:up];
+}
 -(void) updateLowerBound: (id<ORVar>) x with: (ORDouble) f
 {
    [_lprelaxation updateLowerBound: x with:f];
@@ -448,6 +509,35 @@
 -(void) updateUpperBound: (id<ORVar>) x with: (ORDouble) f
 {
    [_lprelaxation updateUpperBound: x with:f];
+}
+-(double)reducedCost:(id<ORVar>) x
+{
+   return [_lprelaxation reducedCost:x];
+}
+-(ORBool)triviallyRoundable:(id<ORVar>)x
+{
+   return [_lprelaxation triviallyRoundable:x];
+}
+-(ORBool)trivialDownRoundable:(id<ORVar>)var
+{
+   return [_lprelaxation trivialDownRoundable:var];
+}
+-(ORBool)trivialUpRoundable:(id<ORVar>)var
+{
+   return [_lprelaxation trivialDownRoundable:var];
+}
+-(ORInt)nbLocks:(id<ORVar>)var
+{
+   return [_lprelaxation nbLocks:var];
+}
+-(ORBool)minLockDown:(id<ORVar>)var
+{
+   return [_lprelaxation minLockDown:var];
+}
+
+-(ORBool)inBasis:(id<ORVar>)x
+{
+   return [_lprelaxation inBasis:x];
 }
 -(void) close
 {
@@ -457,8 +547,39 @@
 {
    return [_lprelaxation solve];
 }
+-(OROutcome) solveFrom:(id)basis
+{
+   return [_lprelaxation solveFrom:basis];
+}
 -(id<ORObjectiveValue>) objectiveValue
 {
    return [_lprelaxation objectiveValue];
+}
+@end
+
+@implementation ORStrengthening
+-(id<ORModel>) apply:(id<ORModel>)m
+{
+   id<ORIntVarArray> aiv = m.intVars;
+   id<ORRealVarArray> afv = m.realVars;
+   id<CPProgram> cps = [ORFactory createCPProgram:m];
+   [cps solve:^{
+      for(id<ORIntVar> xi in aiv) {
+         ORInt lb = [cps min:xi];
+         ORInt ub = [cps max:xi];
+         if (lb > [xi low] || ub < [xi up]) {
+            NSLog(@"int bound strengtened on %@ to [%d,%d]",xi,lb,ub);
+         }
+      }
+      for(id<ORRealVar> xi in afv) {
+         ORDouble lb = [cps doubleMin:xi];
+         ORDouble ub = [cps doubleMax:xi];
+         if (lb > [xi low] || ub < [xi up]) {
+            NSLog(@"real bound strengtened on %@ to [%f,%f]",xi,lb,ub);
+            [xi setDomain:[ORFactory realRange:m low:lb up:ub]];
+         }
+      }
+   }];
+   return m;
 }
 @end

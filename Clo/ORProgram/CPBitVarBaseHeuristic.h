@@ -26,8 +26,8 @@
 
 @interface CPBitVarVirtualHeuristic: NSObject<CPBitVarHeuristic>
 -(CPBitVarVirtualHeuristic*)initWithBindings:(id<ORBindingArray>)bindings;
--(ORFloat) varOrdering: (id<CPBitVar>)x;
--(ORFloat) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
+-(ORDouble) varOrdering: (id<CPBitVar>)x;
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
 -(void) initInternal: (id<CPBitVarArray>) t and:(id<ORVarArray>)cv;
 -(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void) restart;

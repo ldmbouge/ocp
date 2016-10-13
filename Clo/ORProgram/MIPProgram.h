@@ -13,6 +13,7 @@
 
 @class MIPSolverI;
 @protocol ORModel;
+@protocol ORFloatParam;
 
 
 @protocol MIPProgram <ORASolver>
@@ -23,7 +24,11 @@
 -(void) solve;
 -(ORDouble) doubleValue: (id<ORRealVar>) v;
 -(ORInt) intValue: (id<ORIntVar>) v;
+-(void) setIntVar: (id<ORIntVar>)v value:(ORInt)val;
+-(ORDouble) paramValue: (id<ORRealParam>)p;
+-(void) param: (id<ORRealParam>)p setValue: (ORDouble)val;
 -(id<ORObjectiveValue>) objectiveValue;
+-(ORDouble) bestObjectiveBound;
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolution>) captureSolution;
 -(id<ORExplorer>)  explorer;

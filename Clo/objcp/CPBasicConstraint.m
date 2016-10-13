@@ -41,6 +41,31 @@
 }
 @end
 
+@implementation CPFalse
+-(id)init:(id<CPEngine>)engine
+{
+   self = [super initCPCoreConstraint:engine];
+   return self;
+}
+-(void)post
+{
+   failNow();
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] init] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return 0;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<CPFalse>"];
+}
+@end
+
+
 @implementation CPEqualc
 -(id) initCPEqualc: (id<CPIntVar>) x and:(ORInt)c
 {
@@ -139,15 +164,13 @@
 
 -(void) propagate
 {
-    if ([_x bound]) {
-        [_y bind:[_x min] - _c];
-    } 
-    else if ([_y bound]) {
-        [_x bind:[_y min] + _c];
-    } 
+    if (bound(_x))
+       bindDom(_y,minDom(_x) - _c);
+    else if (bound(_y))
+       bindDom(_x,minDom(_y) + _c);
     else {
-       [_x updateMin:[_y min] + _c andMax:[_y max] + _c];
-       [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
+       updateMinAndMaxOfDom(_x, minDom(_y)+_c, maxDom(_y)+_c);
+       updateMinAndMaxOfDom(_y, minDom(_x)-_c, maxDom(_x)-_c);
     }
 }
 -(NSString*)description
@@ -2097,12 +2120,14 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    CPIntVar*  _x;
    ORInt       _primalBound;
+   ORInt       _dualBound;
 }
 -(CPIntVarMinimize*) init: (CPIntVar*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = MAXINT;
+   _dualBound   = MININT;
    return self;
 }
 -(id<CPIntVar>)var
@@ -2124,6 +2149,10 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    return [_x bound] ? 0 : 1;
 }
+-(ORBool)   isMinimization
+{
+   return YES;
+}
 -(void) updatePrimalBound
 {
    ORInt bound = [_x min];
@@ -2132,53 +2161,95 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          _primalBound = bound;
    }
 }
+-(void) updateDualBound
+{
+   ORInt bound = [_x min];
+   @synchronized (self) {
+      if (bound > _dualBound)
+         _dualBound = bound;
+   }
+}
 -(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
 {
    @synchronized(self) {
       if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
          ORInt b = [((ORObjectiveValueIntI*) newBound) value];
          if (b < _primalBound)
-         _primalBound = b;
+            _primalBound = b;
       }
    }
 }
--(void) tightenWithDualBound: (id) newBound
+-(ORStatus) tightenDualBound:(ORObjectiveValueIntI*)newBound
+{
+   @synchronized (self) {
+      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+         ORInt b = [newBound value];
+         ORStatus ok = b > _primalBound ? ORFailure : ORSuspend;
+         if (ok && b > _dualBound)
+            _dualBound = b;
+         return ok;
+      } else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
+         ORDouble b = [(ORObjectiveValueRealI*)newBound doubleValue];
+         ORInt ib = (ORInt)ceil(b);
+         ORStatus ok = ib > _primalBound ? ORFailure : ORSuspend;
+         if (ok && ib > _dualBound)
+            _dualBound = ib;
+         return ok;
+      } else return ORFailure;
+   }
+}
+-(void) tightenLocallyWithDualBound: (id) newBound
 {
    @synchronized(self) {
       if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
          ORInt b = [((ORObjectiveValueIntI*) newBound) value];
-         [_x updateMin: b];
+         [_x updateMin: max(_dualBound, b)];
       }
       else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
          ORInt b = (ORInt) ceil([((ORObjectiveValueRealI*) newBound) value]);
-         [_x updateMin: b];
+         [_x updateMin: max(_dualBound,b)];
       }
    }
 }
 
--(id<ORObjectiveValue>) value
+-(id<ORObjectiveValue>) primalValue
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
+   if (bound(_x))
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
+   else {
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _x.max+1 minimize:YES];
+   }
 }
-
-
--(ORStatus) check
+-(id<ORObjectiveValue>) dualValue
 {
-   return tryfail(^ORStatus{
-      [_x updateMax: _primalBound - 1];
-      return ORSuspend;
-   }, ^ORStatus{
-      return ORFailure;
-   });
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI:[_x min] minimize:NO]; // dual bound ordering is opposite of primal bound. (if we minimize in primal, we maximize in dual).
 }
 -(id<ORObjectiveValue>) primalBound
 {
    return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize:YES];
 }
+-(id<ORObjectiveValue>) dualBound
+{
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _dualBound minimize:YES];
+}
+
+-(ORStatus) check
+{
+   return tryfail(^ORStatus{
+      [_x updateMin:_dualBound andMax:_primalBound - 1];
+      return ORSuspend;
+   }, ^ORStatus{
+      return ORFailure;
+   });
+}
+-(ORBool)   isBound
+{
+    return [_x bound];
+}
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"MINIMIZE(%@) with f* = %d",[_x description],_primalBound];
+   [buf appendFormat:@"MINIMIZE(%@) with f* = %d  (dual: %d)",[_x description],_primalBound,_dualBound];
    return buf;
 }
 @end
@@ -2186,7 +2257,8 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 @implementation CPIntVarMaximize
 {
    CPIntVar*  _x;
-   ORInt        _primalBound;
+   ORInt    _primalBound;
+   ORInt      _dualBound;
 }
 
 -(CPIntVarMaximize*) init: (CPIntVar*) x
@@ -2194,11 +2266,16 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = -MAXINT;
+   _dualBound = MAXINT;
    return self;
 }
 -(id<CPIntVar>)var
 {
    return _x;
+}
+-(ORBool)   isMinimization
+{
+   return NO;
 }
 -(void) post
 {
@@ -2212,9 +2289,25 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 {
    return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
--(id<ORObjectiveValue>) value
+-(id<ORObjectiveValue>) primalValue
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize: NO];
+   if (bound(_x))
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize: NO];
+   else
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _x.min-1 minimize: NO];
+}
+-(id<ORObjectiveValue>) dualValue
+{
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI:[_x max] minimize:YES];
+}
+
+-(id<ORObjectiveValue>) primalBound
+{
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize: NO];
+}
+-(id<ORObjectiveValue>) dualBound
+{
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _dualBound minimize: NO];
 }
 
 -(ORUInt)nbUVars
@@ -2229,6 +2322,13 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
     _primalBound = bound;
   NSLog(@"primal bound: %d",_primalBound);
 }
+-(void) updateDualBound
+{
+   ORInt bound = [_x max];
+   if (bound < _dualBound)
+      _dualBound = bound;
+   NSLog(@"dual bound: %d",_dualBound);
+}
 
 -(void) tightenPrimalBound: (id) newBound
 {
@@ -2238,8 +2338,25 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          _primalBound = b;
    }
 }
+-(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
+{
+   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+      ORInt b = [(ORObjectiveValueIntI*)newBound value];
+      ORStatus ok = b < _primalBound ? ORFailure : ORSuspend;
+      if (ok && b < _dualBound)
+         _dualBound = b;
+      return ok;
+   } else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
+      ORDouble b = [(ORObjectiveValueRealI*)newBound doubleValue];
+      ORInt ib = (ORInt)floor(b);
+      ORStatus ok = ib < _primalBound ? ORFailure : ORSuspend;
+      if (ok && ib < _dualBound)
+         _dualBound = b;
+      return ok;
+   }  else return ORFailure;
+}
 
--(void) tightenWithDualBound: (id) newBound
+-(void) tightenLocallyWithDualBound: (id) newBound
 {
    if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
       ORInt b = [((ORObjectiveValueIntI*) newBound) value];
@@ -2254,7 +2371,9 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(ORStatus) check 
 {
    @try {
-      [_x updateMin: _primalBound + 1];   
+      if (_primalBound == _dualBound) return ORSuccess;
+      [_x updateMin:_primalBound + 1 andMax:_dualBound];
+      //[_x updateMin: _primalBound + 1];
    }
    @catch (ORFailException* e) {
       [e release];
@@ -2263,15 +2382,14 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    return ORSuspend;  
 }
 
--(id<ORObjectiveValue>) primalBound
+-(ORBool)   isBound
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize: NO];
+    return [_x bound];
 }
-
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"MAXIMIZE(%@) with f* = %d  [thread: %d]",[_x description],_primalBound,[NSThread threadID]];
+   [buf appendFormat:@"MAXIMIZE(%@) with f* = %d  (dual: %d) [thread: %d]",[_x description],_primalBound,_dualBound,[NSThread threadID]];
    return buf;
 }
 @end
@@ -2319,29 +2437,48 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(void) post
 {
    [_relaxation close];
+   // The relaxation could have triggered some variable fixing. Those should be lifted back up to the model
+   // If a variable is fixed in the relaxation to a value, then in the full problem (fewer solutions) it should be
+   // bound as well.
    NSUInteger nb = [_cv count];
    for(ORInt i = 0; i < nb; i++) {
-      //CPIntVar* x = (CPIntVar*) _cv[i];
+      ORDouble lbi = [_relaxation lowerBound:_mv[i]];  // [LDM] This used to read _cv[i]. But that does not make any sense. Queries on relaxation should be in term of the model vars!
+      ORDouble ubi = [_relaxation upperBound:_mv[i]];
+      ORDouble nlb = lbi > [_cv[i] doubleMin] ? lbi : [_cv[i] doubleMin];
+      ORDouble nub = ubi < [_cv[i] doubleMax] ? ubi : [_cv[i] doubleMax];
+      if ([_cv[i] conformsToProtocol:@protocol(CPRealVar)]) {
+         id<CPRealVar> cvi = _cv[i];
+         [cvi updateInterval:createORI2(nlb,nub)];
+      } else if ([_cv[i] conformsToProtocol:@protocol(CPIntVar)]) {
+         id<CPIntVar> cvi = _cv[i];
+         [cvi updateMin:rint(ceil(nlb)) andMax:rint(floor(nub))];
+      }
+   }
+   // Now ready for the 'normal' process.
+   for(ORInt i = 0; i < nb; i++) {
       assignTRDouble(&_min[i],[_cv[i] doubleMin],_trail);
       assignTRDouble(&_max[i],[_cv[i] doubleMax],_trail);
-      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] doubleMin]];
-      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
+      [_relaxation updateBounds:_mv[i] lower:_min[i]._val upper:_max[i]._val];
       
       [_cv[i] whenChangeBoundsPropagate: self];
       
       [_cv[i] whenChangeBoundsDo: ^{
+         //printf("whenChangedBound %d %d\n",i,_solved._mgc);
          if (getFXInt(&_solved,_trail) == 0) {
             incrFXInt(&_solved,_trail);
+            id basis = [_relaxation basis];
             [_trail trailClosure: ^{
-               [_relaxation solve];
+               OROutcome outcome = [_relaxation solveFrom:basis];
+               [basis release];
+               if (outcome == ORinfeasible)
+                  failNow();
             }];
          }
          if (getFXInt(&_updated[i],_trail) == 0) {
             ORDouble omin = _min[i]._val;
             ORDouble omax = _max[i]._val;
             [_trail trailClosure: ^{
-               [_relaxation updateLowerBound: _mv[i] with: omin];
-               [_relaxation updateUpperBound: _mv[i] with: omax];
+               [_relaxation updateBounds:_mv[i] lower:omin upper:omax];
             }];
             incrFXInt(&_updated[i],_trail);
          }
@@ -2349,27 +2486,21 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          ORDouble ub = [_cv[i] doubleMax];
          assignTRDouble(&_min[i],lb,_trail);
          assignTRDouble(&_max[i],ub,_trail);
-         [_relaxation updateLowerBound: _mv[i] with: lb];
-         [_relaxation updateUpperBound: _mv[i] with: ub];
+         [_relaxation updateBounds:_mv[i] lower:lb upper:ub];
       }
       onBehalf: self];
    }
    [self propagate];
 }
+
 -(void) propagate
 {
-//   NSUInteger nb = [_cv count];
-//   for(ORInt i = 0; i < nb; i++) {
-//      [_relaxation updateLowerBound: _mv[i] with: [_cv[i] doubleMin]];
-//      [_relaxation updateUpperBound: _mv[i] with: [_cv[i] doubleMax]];
-//   }
-   
    OROutcome outcome = [_relaxation solve];
    if (outcome == ORinfeasible)
       failNow();
    else if (outcome == ORoptimal) {
       id<ORSearchObjectiveFunction> o = [_engine objective];
-      [o tightenWithDualBound: [_relaxation objectiveValue]];
+      [o tightenLocallyWithDualBound: [_relaxation objectiveValue]];
    }
 }
 

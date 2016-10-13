@@ -22,66 +22,62 @@
 @implementation NSObject (Concretization)
 -(void) setImpl: (id) impl
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
-   NSLog(@"%@",self); 
-   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
 }
 -(void) makeImpl
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
-   NSLog(@"%@",self);
-   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: This object is already an implementation"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
 }
 -(id) impl
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
-   return self;
+    @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
+    return self;
 }
 -(void) visit: (ORVisitor*) visitor
 {
-   NSLog(@"%@",self);
-   @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
+    NSLog(@"%@",self);
+    @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
 }
 @end;
 
 @implementation ORIntegerI
-{
-	ORInt           _value;
-   id<ORTracker> _tracker;
+{ 
+    ORInt           _value;
+    id<ORTracker> _tracker;
 }
 
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value
 {
-   self = [super init];
-   _value = value;
-   _tracker = tracker;
-   return self;
+    self = [super init];
+    _value = value;
+    _tracker = tracker;
+    return self;
 }
 -(id)copyWithZone:(NSZone *)zone
 {
-   return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
+    return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
 }
 - (BOOL)isEqual:(id)anObject
 {
-   if ([anObject isKindOfClass:[self class]])
-      return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
-   else return NO;
+    if ([anObject isKindOfClass:[self class]])
+        return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
+    else return NO;
 }
 - (NSUInteger)hash
 {
-   return _value;
+    return _value;
 }
 -(ORDouble) doubleValue
 {
-   return _value;
+    return _value;
 }
 -(ORInt) value
 {
-   return _value;
+    return _value;
 }
 -(ORInt) min
 {
-   return _value;
+    return _value;
 }
 -(ORInt) max
 {
@@ -97,7 +93,10 @@
 }
 -(enum ORVType) vtype
 {
-   return ORTInt;
+   if (0 <= _value && _value <= 1)
+      return ORTBool;
+   else
+      return ORTInt;
 }
 -(id<ORTracker>) tracker
 {
@@ -266,6 +265,22 @@
    _value = value;
    _tracker = tracker;
    return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORDoubleI allocWithZone:zone] init:_tracker value:_value];
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[ORDoubleI class]]) {
+      ORDoubleI* o = object;
+      return _value == o->_value;
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   long* pv = (long*)&_value;
+   return pv[0];
 }
 -(ORInt) min
 {
@@ -552,6 +567,28 @@ static ORInt _deterministic;
 }
 @end
 
+
+struct timeval timeval_subtract(struct timeval* x,struct timeval* y) {
+   /* Perform the carry for the later subtraction by updating y. */
+   if (x->tv_usec < y->tv_usec) {
+      int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+      y->tv_usec -= 1000000 * nsec;
+      y->tv_sec += nsec;
+   }
+   if (x->tv_usec - y->tv_usec > 1000000) {
+      int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+      y->tv_usec += 1000000 * nsec;
+      y->tv_sec -= nsec;
+   }
+   
+   /* Compute the time remaining to wait.
+    tv_usec is certainly positive. */
+   struct timeval result;
+   result.tv_sec = x->tv_sec - y->tv_sec;
+   result.tv_usec = x->tv_usec - y->tv_usec;
+   return result;
+}
+
 @implementation ORRuntimeMonitor
 +(ORLong) cputime
 {
@@ -567,7 +604,7 @@ static ORInt _deterministic;
    getrusage(RUSAGE_SELF,&r);
    struct timeval t;
    t = r.ru_utime;
-   return t.tv_usec;
+   return ((ORLong)t.tv_usec) + (ORLong)1000L * (ORLong)t.tv_sec;
 }
 +(ORLong) wctime
 {
@@ -580,6 +617,20 @@ static ORInt _deterministic;
    }
    else return 0;
 }
+
++(ORTimeval)now
+{
+   struct rusage r;
+   getrusage(RUSAGE_SELF,&r);
+   return r.ru_utime;
+}
++(ORTimeval)elapsedSince:(ORTimeval)then
+{
+   struct rusage r;
+   getrusage(RUSAGE_SELF,&r);
+   return timeval_subtract(&r.ru_utime,&then);
+}
+
 @end;
 
 
@@ -753,6 +804,21 @@ static ORInt _deterministic;
       for(ORInt j = 0; j < _arity; j++)
          [self index: j];
    }
+}
+
+-(ORInt) size
+{
+    return _size;
+}
+
+-(ORInt) arity
+{
+    return _arity;
+}
+
+-(ORInt) atColumn: (ORInt)c position: (ORInt)p
+{
+    return _column[c][p];
 }
 
 -(NSString*)description

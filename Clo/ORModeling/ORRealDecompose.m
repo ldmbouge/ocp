@@ -17,64 +17,64 @@
 
 @implementation ORRealLinearizer
 {
-   id<ORRealLinear>   _terms;
-   id<ORAddToModel>    _model;
-   id<ORRealVar>       _eqto;
+    id<ORRealLinear>   _terms;
+    id<ORAddToModel>    _model;
+    id<ORRealVar>       _eqto;
 }
 -(id) init: (id<ORRealLinear>) t model: (id<ORAddToModel>) model
 {
-   self = [super init];
-   _terms = t;
-   _model = model;
-   return self;
+    self = [super init];
+    _terms = t;
+    _model = model;
+    return self;
 }
 -(id) init: (id<ORRealLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORRealVar>)x
 {
-   self = [super init];
-   _terms = t;
-   _model = model;
-   _eqto  = x;
-   return self;
+    self = [super init];
+    _terms = t;
+    _model = model;
+    _eqto  = x;
+    return self;
 }
 
 -(void) visitIntVar: (id<ORIntVar>) e
 {
-   if (_eqto) {
-      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
-      [_terms addTerm:_eqto by:1];
-      _eqto = nil;
-   } else
-      [_terms addTerm:e by:1];
+    if (_eqto) {
+        [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+        [_terms addTerm:_eqto by:1];
+        _eqto = nil;
+    } else
+        [_terms addTerm:e by:1];
 }
 -(void) visitRealVar:(id<ORRealVar>) e
 {
-   if (_eqto) {
-      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
-      [_terms addTerm:_eqto by:1];
-      _eqto = nil;
-   } else
-      [_terms addTerm: e by: 1];
+    if (_eqto) {
+        [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+        [_terms addTerm:_eqto by:1];
+        _eqto = nil;
+    } else
+        [_terms addTerm: e by: 1];
 }
 -(void) visitAffineVar:(id<ORIntVar>)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO Real Linearization supported"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "NO Real Linearization supported"];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   if (_eqto) {
-      [_model addConstraint:[ORFactory realEqualc:_model var:_eqto to:[e value]]];
-      [_terms addIndependent:[e value]];
-      _eqto = nil;
-   } else
-      [_terms addIndependent:[e value]];
+    if (_eqto) {
+        [_model addConstraint:[ORFactory realEqualc:_model var:_eqto to:[e value]]];
+        [_terms addIndependent:[e value]];
+        _eqto = nil;
+    } else
+        [_terms addIndependent:[e value]];
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
-   [_terms addIndependent:[e initialValue]];
+    [_terms addIndependent:[e initialValue]];
 }
 -(void) visitMutableDouble: (id<ORMutableDouble>) e
 {
-   [_terms addIndependent:[e initialValue]];
+    [_terms addIndependent:[e initialValue]];
 }
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
@@ -82,29 +82,29 @@
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
-   if (_eqto) {
-      id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-      [_terms addTerm:alpha by:1];
-      _eqto = nil;
-   } else {
-      [[e left] visit:self];
-      [[e right] visit:self];
-   }
+    if (_eqto) {
+        id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        [[e left] visit:self];
+        [[e right] visit:self];
+    }
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
-   if (_eqto) {
-      id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-      [_terms addTerm:alpha by:1];
-      _eqto = nil;
-   } else {
-      [[e left] visit:self];
-      id<ORRealLinear> old = _terms;
-      _terms = [[ORRealLinearFlip alloc] initORRealLinearFlip: _terms];
-      [[e right] visit:self];
-      [_terms release];
-      _terms = old;
-   }
+    if (_eqto) {
+        id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+        [_terms addTerm:alpha by:1];
+        _eqto = nil;
+    } else {
+        [[e left] visit:self];
+        id<ORRealLinear> old = _terms;
+        _terms = [[ORRealLinearFlip alloc] initORRealLinearFlip: _terms];
+        [[e right] visit:self];
+        [_terms release];
+        _terms = old;
+    }
 }
 -(void) visitExprMulI: (ORExprMulI*) e
 {
@@ -134,137 +134,137 @@
 }
 -(void) visitExprDivI: (ORExprDivI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO Real Linearization supported for div"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "NO Real Linearization supported for div"];
 }
 -(void) visitExprModI: (ORExprModI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO Real Linearization supported for mod"];
+    @throw [[ORExecutionError alloc] initORExecutionError: "NO Real Linearization supported for mod"];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSquareI:(ORExprSquareI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprNegateI:(ORExprNegateI*) e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprCstDoubleSubI: (ORExprCstDoubleSubI*) e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
-   id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
-   [_terms addTerm:alpha by:1];
+    id<ORRealVar> alpha = [ORNormalizer realVarIn:_model expr:e by:_eqto];
+    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSumI: (ORExprSumI*) e
 {
-   [[e expr] visit: self];
+    [[e expr] visit: self];
 }
 -(void) visitExprProdI: (ORExprProdI*) e
 {
-   [[e expr] visit: self];
+    [[e expr] visit: self];
 }
 -(void) visitExprAggOrI: (ORExprAggOrI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 -(void) visitExprAggAndI: (ORExprAggAndI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 -(void) visitExprAggMinI: (ORExprAggMinI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 -(void) visitExprAggMaxI: (ORExprAggMaxI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 @end
 
 @implementation ORRealSubst
 -(id)initORSubst:(id<ORAddToModel>) model
 {
-   self = [super init];
-   _rv = nil;
-   _model = model;
-   return self;
+    self = [super init];
+    _rv = nil;
+    _model = model;
+    return self;
 }
 -(id)initORSubst:(id<ORAddToModel>) model by:(id<ORRealVar>)x
 {
-   self = [super init];
-   _rv  = x;
-   _model = model;
-   return self;
+    self = [super init];
+    _rv  = x;
+    _model = model;
+    return self;
 }
 -(id<ORRealVar>)result
 {
-   return _rv;
+    return _rv;
 }
 -(void) visitIntVar: (id<ORIntVar>) e
 {
-   if (_rv)
-      [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
-   else
-      _rv = (id)e;
+    if (_rv)
+        [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
+    else
+        _rv = (id)e;
 }
 -(void) visitRealVar: (id<ORRealVar>) e
 {
-   if (_rv)
-      [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
-   else
-      _rv = e;
+    if (_rv)
+        [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
+    else
+        _rv = e;
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   if (!_rv)
-      _rv = [ORFactory realVar:_model low:[e value] up:[e value]];
-   [_model addConstraint:[ORFactory realEqualc:_model var:_rv to:[e value]]];
+    if (!_rv)
+        _rv = [ORFactory realVar:_model low:[e value] up:[e value]];
+    [_model addConstraint:[ORFactory realEqualc:_model var:_rv to:[e value]]];
 }
 -(void) visitDouble: (id<ORDoubleNumber>) e
 {
@@ -274,70 +274,81 @@
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
-   id<ORRealLinear> terms = [ORNormalizer realLinearFrom:e model:_model];
-   if (_rv==nil)
-      _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
-   [terms addTerm:_rv by:-1];
-   [terms postEQZ:_model];
-   [terms release];
+    id<ORRealLinear> terms = [ORNormalizer realLinearFrom:e model:_model];
+    if (_rv==nil)
+        _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
+    [terms addTerm:_rv by:-1];
+    [terms postEQZ:_model];
+    [terms release];
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
-   id<ORRealLinear> terms = [ORNormalizer realLinearFrom:e model:_model];
+    id<ORRealLinear> terms = [ORNormalizer realLinearFrom:e model:_model];
+    if (_rv==nil)
+        _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
+    [terms addTerm:_rv by:-1];
+    [terms postEQZ:_model];
+    [terms release];
+}
+-(void) visitExprNegateI:(ORExprNegateI*) e
+{
+   id<ORRealLinear> terms = [ORNormalizer realLinearFrom:[e operand] model:_model];
+   [terms scaleBy:-1.0];
    if (_rv==nil)
       _rv = [ORFactory realVar:_model low:[terms fmin] up:[terms fmax]];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_model];
    [terms release];
 }
+
 -(void) visitExprSquareI:(ORExprSquareI *)e
 {
-   id<ORRealLinear> lT = [ORNormalizer realLinearFrom:[e operand] model:_model];
-   id<ORRealVar> oV = [ORNormalizer realVarIn:lT for:_model];
-   ORDouble lb = [lT fmin];
-   ORDouble ub = [lT fmax];
-   ORDouble nlb = lb < 0 ? 0 : lb*lb;
-   ORDouble nub = max(lb*lb, ub*ub);
-   if (_rv == nil)
-      _rv = [ORFactory realVar:_model low:nlb up:nub];
-   [_model addConstraint:[ORFactory realSquare:_model var:oV equal:_rv]];
-   [lT release];
+    id<ORRealLinear> lT = [ORNormalizer realLinearFrom:[e operand] model:_model];
+    id<ORRealVar> oV = [ORNormalizer realVarIn:lT for:_model];
+    ORDouble lb = [lT fmin];
+    ORDouble ub = [lT fmax];
+    ORDouble nlb = lb < 0 ? 0 : lb*lb;
+    ORDouble nub = max(lb*lb, ub*ub);
+    if (_rv == nil)
+        _rv = [ORFactory realVar:_model low:nlb up:nub];
+    [_model addConstraint:[ORFactory realSquare:_model var:oV equal:_rv]];
+    [lT release];
 }
 -(void) visitExprCstDoubleSubI:(ORExprCstDoubleSubI*)e
 {
-   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e index] model:_model];
-   id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model];
-   id<ORDoubleArray> a = [e array];
-   ORDouble lb = [a min];
-   ORDouble ub = [a max];
-   if (_rv == nil)
-      _rv = [ORFactory realVar:_model low:lb up:ub];
-   [_model addConstraint:[ORFactory realElement:_model var:oV idxCstArray:a equal:_rv]];
-   [lT release];
+    id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e index] model:_model];
+    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model];
+    id<ORDoubleArray> a = [e array];
+    ORDouble lb = [a min];
+    ORDouble ub = [a max];
+    if (_rv == nil)
+        _rv = [ORFactory realVar:_model low:lb up:ub];
+    [_model addConstraint:[ORFactory realElement:_model var:oV idxCstArray:a equal:_rv]];
+    [lT release];
 }
 
 -(void) visitExprSumI: (ORExprSumI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 -(void) visitExprProdI: (ORExprProdI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 -(void) visitExprAggOrI: (ORExprAggOrI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 -(void) visitExprAggAndI: (ORExprAggAndI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 -(void) visitExprAggMinI: (ORExprAggMinI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 -(void) visitExprAggMaxI: (ORExprAggMaxI*) e
 {
-   [[e expr] visit:self];
+    [[e expr] visit:self];
 }
 @end

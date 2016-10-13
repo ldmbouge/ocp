@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0720"
+   LastUpgradeVersion = "0800"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -507,6 +507,20 @@
                BlueprintIdentifier = "5BC091CF167F9D5B009A7712"
                BuildableName = "slow_convergence"
                BlueprintName = "slow_convergence"
+               ReferencedContainer = "container:Clo.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5B5F547A165D6EB200E674DA"
+               BuildableName = "assignmentProblem"
+               BlueprintName = "assignmentProblem"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

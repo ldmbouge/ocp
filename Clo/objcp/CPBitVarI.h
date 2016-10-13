@@ -59,7 +59,7 @@ typedef struct  {
     TRUInt*                          _levels;
     TRId*                       _implications;
 }
--(CPBitVarI*) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
+-(CPBitVarI*) initCPBitVarCore:(id<CPEngine>)cp low:(ORUInt*)low up:(ORUInt*)up length:(int) len;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(NSString*) description;
@@ -75,13 +75,12 @@ typedef struct  {
 -(void) setTracksLoseEvt;
 
 // subscription
-//<<<<<<< HEAD
 -(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt) idx do:(ORClosure) todo;
 -(void) whenBitFixedAtI:(CPCoreConstraint*)c at:(ORUInt)p do:(ORClosure) todo;
 -(void) whenBitFixedAt:(ORUInt)i propagate:(CPCoreConstraint*) c;
 //-(void) whenBitFixed:(CPCoreConstraint*)c at:(ORUInt)p do:(ConstraintIntCallBack)todo;
 
--(void) whenChangeDo:(CPCoreConstraint*) c;
+//-(void) whenChangeDo:(CPCoreConstraint*) c;
 -(void) whenChangeDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ORClosure) todo;
@@ -105,17 +104,16 @@ typedef struct  {
 // access
 -(ORInt) bitLength;
 -(ORBool) bound;
-//<<<<<<< HEAD
 -(ORULong) min;
 -(ORULong) max;
 -(ORUInt) maxRank;
 
 -(CPBitArrayDom*) domain;
--(unsigned int*) minArray;
--(unsigned int*) maxArray;
--(unsigned int*) sminArray;
--(unsigned int*) smaxArray;
--(unsigned int) getWordLength;
+-(ORUInt*) minArray;
+-(ORUInt*) maxArray;
+-(ORUInt*) sminArray;
+-(ORUInt*) smaxArray;
+-(ORUInt) getWordLength;
 -(ORBounds) bounds;
 -(ORInt) domsize;
 -(ORULong)  numPatterns;
@@ -124,34 +122,34 @@ typedef struct  {
 -(ORUInt) randomFreeBit;
 -(ORUInt) midFreeBit;
 -(ORBool) isFree:(ORUInt)pos;
--(ORBool) member:(unsigned int*)v;
+-(ORBool) member:(ORUInt*)v;
 -(ORBool) getBit:(ORUInt) index;
 -(ORUInt) getLevelBitWasSet:(ORUInt)bit;
 -(void) bit:(ORUInt)i setAtLevel:(ORUInt)l;
--(CPCoreConstraint*) getImplicationForBit:(ORUInt)i;
+-(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i;
 
 // update
 -(ORStatus)     updateMin: (ORULong) newMin;
 -(ORStatus)     updateMax: (ORULong) newMax;
--(void)         setLow: (unsigned int*) newLow;
--(void)         setUp: (unsigned int*) newUp;
--(void)         setUp:(unsigned int*) newUp andLow:(unsigned int*)newLow for:(CPCoreConstraint*)constraint;
--(void)         setLow: (unsigned int*) newLow for:(CPCoreConstraint*)constraint;
--(void)         setUp: (unsigned int*) newUp for:(CPCoreConstraint*)constraint;
--(void)         setUp:(unsigned int*) newUp andLow:(unsigned int*)newLow;
+-(void)         setLow: (ORUInt*) newLow;
+-(void)         setUp: (ORUInt*) newUp;
+-(void)         setUp:(ORUInt*) newUp andLow:(ORUInt*)newLow for:(CPCoreConstraint*)constraint;
+-(void)         setLow: (ORUInt*) newLow for:(CPCoreConstraint*)constraint;
+-(void)         setUp: (ORUInt*) newUp for:(CPCoreConstraint*)constraint;
+-(void)         setUp:(ORUInt*) newUp andLow:(ORUInt*)newLow;
 -(TRUInt*)    getLow;
 -(TRUInt*)    getUp;
 -(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
 -(ORStatus)     bind:(ORUInt*) val;
 -(ORStatus)     bind:(ORUInt)bit to:(ORBool)value;
 -(ORStatus)     bindUInt64:(ORULong) val;
--(ORStatus)     remove:(ORUInt) val;
+-(ORStatus)     remove:(ORUInt*) val;
 
--(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
--(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
+-(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (ORUInt*) low andUp: (ORUInt*) up andLen:(ORUInt) len;
+-(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPEngine>)fdm withLow: (ORUInt*) low andUp: (ORUInt*) up andLen:(ORUInt) len;
 // Class methods
-+(CPBitVarI*)   initCPBitVar: (id<CPEngine>)cp low:(int)low up:(int)up len:(unsigned int)len;
-+(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)cp withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
++(CPBitVarI*)   initCPBitVar: (id<CPEngine>)cp low:(int)low up:(int)up len:(ORUInt)len;
++(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)cp withLow:(ORUInt *)low andUp:(ORUInt *)up andLen:(ORUInt)len;
 
 
 @end
@@ -189,7 +187,7 @@ typedef struct  {
 -(ORStatus) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 //-(ORStatus) bitFixedAtEvt:(ORUInt) i sender:(CPBitArrayDom*)sender;
 -(ORStatus) bitFixedAtEvt:(ORUInt)dsz at:(ORUInt) i sender:(CPBitArrayDom*)sender;
--(ORStatus) bitFixedAtIEvt:(ORUInt)i sender:(CPBitArrayDom *)sender;
+-(ORStatus) bitFixedAtIEvt:(ORUInt)dsz at:(ORUInt)i sender:(CPBitArrayDom *)sender;
 @end
 
 

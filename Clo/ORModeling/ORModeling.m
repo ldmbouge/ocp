@@ -15,7 +15,7 @@
 #import <ORModeling/ORLPFlatten.h>
 #import <ORModeling/ORMIPFlatten.h>
 #import <ORModeling/ORLinearize.h>
-#import "ORModelI.h"
+#import <ORModeling/ORModelI.h>
 
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
@@ -58,14 +58,5 @@
 +(id<ORConstraintSet>) createConstraintSet
 {
     return [[ORConstraintSetI alloc] init];
-}
-+(id<OROrderedConstraintSet>) orderedConstraintSet: (id<ORTracker>) tracker range: (id<ORIntRange>)range with: (id<ORConstraint>(^)(ORInt index)) block
-{
-    id<OROrderedConstraintSet> s = [[OROrderedConstraintSetI alloc] init];
-    for(ORInt i = [range low]; i <= [range up]; i++) {
-        [s addConstraint: block(i)];
-    }
-    //[tracker trackMutable: s];
-    return s;
 }
 @end

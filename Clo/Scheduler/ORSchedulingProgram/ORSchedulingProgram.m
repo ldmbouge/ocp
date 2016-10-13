@@ -9,15 +9,36 @@
  
  ***********************************************************************/
 
-#import "ORSchedulingProgram.h"
+#import <ORSchedulingProgram/ORSchedulingProgram.h>
 #import <ORProgram/CPSolver.h>
 #import <CPScheduler/CPScheduler.h>
 #import <ORProgram/CPSolver.h>
 #import <CPScheduler/CPTask.h>
+#import "ORModelI.h"
 #import "ORTaskI.h"
 #import "ORConstraintI.h"
 
-@implementation CPSolver (CPScheduler)
+@implementation ORModelI (ORScheduler)
+-(id<ORTaskVarArray>)taskVars
+{
+   NSArray* av = [self variables];
+   __block ORInt cnt = 0;
+   [av enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      cnt += [obj conformsToProtocol:@protocol(ORTaskVar)];
+   }];
+   id<ORTaskVarArray> rv = (id)[ORFactory idArray:self range:RANGE(self,0,cnt-1)];
+   cnt = 0;
+   [av enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      if ([obj conformsToProtocol:@protocol(ORTaskVar)]) {
+         [rv set:obj at:cnt];
+         cnt++;
+      }
+   }];
+   return rv;
+}
+@end
+
+@implementation CPCoreSolver (CPScheduler)
 -(void) labelActivity: (id<ORTaskVar>) act
 {
     if ([act isMemberOfClass: [ORResourceTask class]])
@@ -230,11 +251,39 @@
 -(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Double) o1 then: (ORInt2Double) o2
 {
    ORInt low = succ.range.low;
-   ORInt size = succ.range.size - 1;
-   ORInt k = low;
-   for(ORInt j = 1; j <= size; j++) {
+//   ORInt size = succ.range.size - 1;
+//   ORInt k = low;
+//   for(ORInt i=succ.range.low;i <= succ.range.up;i++) {
+//      if ([self bound:succ[i]]) {
+//         ORInt pv = [self intValue:succ[i]];
+//         for(ORInt j=succ.range.low; j <= succ.range.up;j++) {
+//            if (j == i) continue;
+//            if ([self member:pv in:succ[j]]) {
+//               assert(NO);
+//            }
+//         }
+//      }
+//   }
+//   for(ORInt j = 1; j <= size; j++) {
+   while (![self allBound:succ]) {
+      ORInt k = low;
+      while ([self bound:succ[k]])
+         k = [self intValue:succ[k]];
       [self label: succ[k] by: o1 then: o2];
-      k = [self intValue: succ[k]];
+      
+//      for(ORInt i=succ.range.low;i <= succ.range.up;i++) {
+//         if ([self bound:succ[i]]) {
+//            ORInt pv = [self intValue:succ[i]];
+//            for(ORInt j=succ.range.low; j <= succ.range.up;j++) {
+//               if (j == i) continue;
+//               if ([self member:pv in:succ[j]]) {
+//                  assert(NO);
+//               }
+//            }
+//         }
+//      }
+      
+      //k = [self intValue: succ[k]];
    }
 }
 -(ORInt) est: (id<ORTaskVar>) task
@@ -284,6 +333,130 @@
 {
     return [((id<CPResourceTask>)_gamma[task.getId]) isAssigned];
 }
+
+// **********************************************************************************
+// Methods that must adapt in a Semantic Solver
+// **********************************************************************************
+
+-(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart
+{}
+-(void) updateEnd: (id<ORTaskVar>) task with: (ORInt) newEnd
+{}
+-(void) updateMinDuration: (id<ORTaskVar>) task with: (ORInt) newMinDuration
+{}
+-(void) updateMaxDuration: (id<ORTaskVar>) task with: (ORInt) newMaxDuration
+{}
+-(void) labelStart: (id<ORTaskVar>) task with: (ORInt) start
+{}
+-(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end
+{}
+-(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration
+{}
+-(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present
+{}
+-(void) bindResourceTask: (id<ORResourceTask>) task with: (id<ORConstraint>) res
+{}
+-(void) removeResourceTask: (id<ORResourceTask>) task with: (id<ORConstraint>) res
+{}
+
+
+-(void) labelStart: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self est: task] < [self lst: task]) {
+            ORInt est = [self est: task];
+            [self try: ^{ [self labelStart : task with: est    ]; }
+                  alt: ^{ [self updateStart: task with: est + 1]; }
+             ];
+        }
+    }
+}
+-(void) labelEnd: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self ect: task] < [self lct: task]) {
+            ORInt ect = [self ect: task];
+            [self try: ^{ [self labelEnd : task with: ect    ]; }
+                  alt: ^{ [self updateEnd: task with: ect + 1]; }
+             ];
+        }
+    }
+}
+-(void) labelDuration: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task]) {
+        while ([self minDuration: task] < [self maxDuration: task]) {
+            ORInt m = [self minDuration: task];
+            [self try: ^{ [self labelDuration    : task with: m    ]; }
+                  alt: ^{ [self updateMinDuration: task with: m + 1]; }
+             ];
+        }
+    }
+}
+-(void) labelPresent: (id<ORTaskVar>) task
+{
+    if (![self isAbsent: task] && ![self isPresent: task]) {
+        [self try: ^{ [self labelPresent: task with: true ]; }
+              alt: ^{ [self labelPresent: task with: false]; }
+         ];
+    }
+}
+-(void) labelResourceTask: (id<ORResourceTask>) task to: (id<ORConstraint>) res
+{
+    if (![self isResourceAssigned:task]) {
+        [self try: ^{ [self   bindResourceTask:task with:res]; }
+              alt: ^{ [self removeResourceTask:task with:res]; }
+         ];
+    }
+}
+-(ORInt) globalSlack: (id<ORTaskDisjunctive>) d
+{
+   ORInt gs = [((CPTaskDisjunctive*)_gamma[d.getId]) globalSlack];
+//   NSLog(@"Global slack: %d",gs);
+   return gs;
+}
+-(ORInt) localSlack: (id<ORTaskDisjunctive>) d
+{
+   ORInt gs = [((CPTaskDisjunctive*)_gamma[d.getId]) localSlack];
+   //   NSLog(@"Local slack: %d",gs);
+   return gs;
+}
+
+-(NSString*) description: (id<ORObject>) o
+{
+   return [_gamma[o.getId] description];
+}
+@end
+
+@implementation CPSolver (CPScheduler)
+-(void) labelStart: (id<ORTaskVar>) task with: (ORInt) start
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelStart: start]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelEnd: end]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelDuration: duration]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present
+{
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelPresent: present]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
+}
 -(void) updateStart: (id<ORTaskVar>) task with: (ORInt) newStart
 {
    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) updateStart: newStart]; }];
@@ -307,118 +480,98 @@
 }
 -(void) updateMaxDuration: (id<ORTaskVar>) task with: (ORInt) newMaxDuration
 {
-    ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) updateMaxDuration: newMaxDuration]; }];
+   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) updateMaxDuration: newMaxDuration]; }];
    if (status == ORFailure)
       [[self explorer] fail];
    [ORConcurrency pumpEvents];
-}
--(void) labelStart: (id<ORTaskVar>) task
-{
-    if (![self isAbsent: task]) {
-        while ([self est: task] < [self lst: task]) {
-            ORInt est = [self est: task];
-            [self try: ^{ [self labelStart : task with: est    ]; }
-                  alt: ^{ [self updateStart: task with: est + 1]; }
-             ];
-        }
-    }
-}
--(void) labelStart: (id<ORTaskVar>) task with: (ORInt) start
-{
-   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelStart: start]; }];
-   if (status == ORFailure)
-      [[self explorer] fail];
-   [ORConcurrency pumpEvents];
-}
--(void) labelEnd: (id<ORTaskVar>) task
-{
-    if (![self isAbsent: task]) {
-        while ([self ect: task] < [self lct: task]) {
-            ORInt ect = [self ect: task];
-            [self try: ^{ [self labelEnd : task with: ect    ]; }
-                  alt: ^{ [self updateEnd: task with: ect + 1]; }
-             ];
-        }
-    }
-}
--(void) labelEnd: (id<ORTaskVar>) task with: (ORInt) end
-{
-   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelEnd: end]; }];
-   if (status == ORFailure)
-      [[self explorer] fail];
-   [ORConcurrency pumpEvents];
-}
--(void) labelDuration: (id<ORTaskVar>) task
-{
-    if (![self isAbsent: task]) {
-        while ([self minDuration: task] < [self maxDuration: task]) {
-            ORInt m = [self minDuration: task];
-            [self try: ^{ [self labelDuration    : task with: m    ]; }
-                  alt: ^{ [self updateMinDuration: task with: m + 1]; }
-             ];
-        }
-    }
-}
--(void) labelDuration: (id<ORTaskVar>) task with: (ORInt) duration
-{
-   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelDuration: duration]; }];
-   if (status == ORFailure)
-      [[self explorer] fail];
-   [ORConcurrency pumpEvents];
-}
--(void) labelPresent: (id<ORTaskVar>) task
-{
-    if (![self isAbsent: task] && ![self isPresent: task]) {
-        [self try: ^{ [self labelPresent: task with: true ]; }
-              alt: ^{ [self labelPresent: task with: false]; }
-         ];
-    }
-}
--(void) labelPresent: (id<ORTaskVar>) task with: (ORBool) present
-{
-   ORStatus status = [[self engine] enforce:^{ [((id<CPTaskVar>) _gamma[task.getId]) labelPresent: present]; }];
-   if (status == ORFailure)
-      [[self explorer] fail];
-   [ORConcurrency pumpEvents];
-}
--(void) labelResourceTask: (id<ORResourceTask>) task to: (id<ORConstraint>) res
-{
-    if (![self isResourceAssigned:task]) {
-        [self try: ^{ [self   bindResourceTask:task with:res]; }
-              alt: ^{ [self removeResourceTask:task with:res]; }
-         ];
-    }
 }
 -(void) bindResourceTask: (id<ORResourceTask>) task with: (id<ORConstraint>) res
 {
-    ORStatus status = [[self engine] enforce:^{ [((id<CPResourceTask>) _gamma[task.getId]) bind: _gamma[res.getId]]; }];
-    if (status == ORFailure)
-        [[self explorer] fail];
-    [ORConcurrency pumpEvents];
+   ORStatus status = [[self engine] enforce:^{ [((id<CPResourceTask>) _gamma[task.getId]) bind: _gamma[res.getId]]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
 }
 -(void) removeResourceTask: (id<ORResourceTask>) task with: (id<ORConstraint>) res
 {
-    ORStatus status = [[self engine] enforce:^{ [((id<CPResourceTask>) _gamma[task.getId]) remove: _gamma[res.getId]]; }];
-    if (status == ORFailure)
-        [[self explorer] fail];
-    [ORConcurrency pumpEvents];
+   ORStatus status = [[self engine] enforce:^{ [((id<CPResourceTask>) _gamma[task.getId]) remove: _gamma[res.getId]]; }];
+   if (status == ORFailure)
+      [[self explorer] fail];
+   [ORConcurrency pumpEvents];
 }
--(ORInt) globalSlack: (id<ORTaskDisjunctive>) d
+@end
+
+@implementation CPParSolverI (CPScheduler)
+-(ORInt) globalSlack: (id<ORTaskDisjunctive>)d
 {
-   ORInt gs = [((CPTaskDisjunctive*)_gamma[d.getId]) globalSlack];
-//   NSLog(@"Global slack: %d",gs);
-   return gs;
+   id<CPScheduler> w = (id)[self worker];
+   return [w globalSlack:d];
 }
 -(ORInt) localSlack: (id<ORTaskDisjunctive>) d
 {
-   ORInt gs = [((CPTaskDisjunctive*)_gamma[d.getId]) localSlack];
-   //   NSLog(@"Local slack: %d",gs);
-   return gs;
+   id<CPScheduler> w = (id)[self worker];
+   return [w localSlack:d];
+}
+-(void) sequence: (id<ORIntVarArray>) succ by: (ORInt2Double) o1 then: (ORInt2Double) o2
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w sequence:succ by:o1 then:o2];
 }
 
--(NSString*) description: (id<ORObject>) o
+-(ORInt) est: (id<ORTaskVar>) task
 {
-   return [_gamma[o.getId] description];
+   id<CPScheduler> w = (id)[self worker];
+   return [w est:task];
+}
+-(ORInt) ect: (id<ORTaskVar>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w ect:task];
+}
+-(ORInt) lst: (id<ORTaskVar>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w lst:task];
+}
+-(ORInt) lct: (id<ORTaskVar>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w lct:task];
+}
+-(ORBool) boundActivity: (id<ORTaskVar>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w boundActivity:task];
+}
+-(ORInt) minDuration: (id<ORTaskVar>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w minDuration:task];
+}
+-(ORInt) maxDuration: (id<ORTaskVar>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w maxDuration:task];
+}
+-(ORInt) isPresent: (id<ORTaskVar>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w isPresent:task];
+}
+-(ORInt) isAbsent: (id<ORTaskVar>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w isAbsent:task];
+}
+-(id<ORConstraint>) runsOnResource: (id<ORResourceTask>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w runsOnResource:task];
+}
+-(ORBool) isResourceAssigned: (id<ORResourceTask>) task
+{
+   id<CPScheduler> w = (id)[self worker];
+   return [w isResourceAssigned:task];
 }
 @end
 
@@ -508,3 +661,4 @@
    return [snap maxDuration];
 }
 @end
+

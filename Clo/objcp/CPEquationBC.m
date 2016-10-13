@@ -23,7 +23,12 @@ typedef struct CPEQTerm {
    BOOL   updated;
 } CPEQTerm;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+
 MAKETRPointer(TRCPEQTerm,CPEQTerm);
+
+#pragma clang diagnostic pop
 
 @implementation CPEquationBC { // sum(i in S) x_i == c
 @private

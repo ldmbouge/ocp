@@ -31,10 +31,10 @@
 #ifndef SMTLIB2OBJCP_H_INCLUDED
 #define SMTLIB2OBJCP_H_INCLUDED
 
-#include "smtlib2abstractparser.h"
-#include "smtlib2abstractparser_private.h"
+#include <Verification/smtlib2abstractparser.h>
+#include <Verification/smtlib2abstractparser_private.h>
 #include "/usr/local/include/gmp.h"
-#import "objcpgateway.h"
+#import <Verification/objcpgateway.h>
 
 
 typedef enum {l_false, l_undef, l_true}lbool;

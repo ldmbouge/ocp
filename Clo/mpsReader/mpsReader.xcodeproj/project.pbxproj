@@ -1,0 +1,474 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5B4E17661CF36BE000A15258 /* testprob.mps in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B4E17651CF36B8200A15258 /* testprob.mps */; };
+		5B4E17741CF4DE7400A15258 /* MPSReader.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5B4E17731CF4DE7400A15258 /* MPSReader.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B4E17761CF4DE7400A15258 /* MPSReaderPriv.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5B4E17751CF4DE7400A15258 /* MPSReaderPriv.hpp */; };
+		5B4E17781CF4DE7400A15258 /* MPSReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B4E17771CF4DE7400A15258 /* MPSReader.cpp */; };
+		5B4E177C1CF4DF1000A15258 /* ast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B4E17631CF369EB00A15258 /* ast.cpp */; };
+		5B4E177D1CF4DF1000A15258 /* grammar.ypp in Sources */ = {isa = PBXBuildFile; fileRef = 5B4E17591CF3398200A15258 /* grammar.ypp */; };
+		5B4E177E1CF4DF1000A15258 /* scanner.lpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B4E175C1CF3398200A15258 /* scanner.lpp */; };
+		5B4E177F1CF4DF1000A15258 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B4E175A1CF3398200A15258 /* parser.cpp */; };
+		5B4E17801CF4DF1000A15258 /* model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B4E17671CF3C54D00A15258 /* model.cpp */; };
+		5B4E17821CF4DF3B00A15258 /* ast.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5B4E175F1CF339C300A15258 /* ast.hpp */; };
+		5B4E17831CF4DF3B00A15258 /* parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5B4E175B1CF3398200A15258 /* parser.hpp */; };
+		5B4E17841CF4DF3B00A15258 /* model.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 5B4E17681CF3C54D00A15258 /* model.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B4E17871CF4DFFE00A15258 /* libMPSReader.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17711CF4DE7400A15258 /* libMPSReader.dylib */; };
+		5B4E17921CF4E40700A15258 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17881CF4E40700A15258 /* CPScheduler.framework */; };
+		5B4E17931CF4E40700A15258 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17891CF4E40700A15258 /* CPUKernel.framework */; };
+		5B4E17941CF4E40700A15258 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178A1CF4E40700A15258 /* objcp.framework */; };
+		5B4E17951CF4E40700A15258 /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178B1CF4E40700A15258 /* objmp.framework */; };
+		5B4E17961CF4E40700A15258 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178C1CF4E40700A15258 /* ORFoundation.framework */; };
+		5B4E17971CF4E40700A15258 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178D1CF4E40700A15258 /* ORModeling.framework */; };
+		5B4E17981CF4E40700A15258 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178E1CF4E40700A15258 /* ORProgram.framework */; };
+		5B4E17991CF4E40700A15258 /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E178F1CF4E40700A15258 /* ORScheduler.framework */; };
+		5B4E179A1CF4E40700A15258 /* ORSchedulingProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17901CF4E40700A15258 /* ORSchedulingProgram.framework */; };
+		5B4E179B1CF4E40700A15258 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B4E17911CF4E40700A15258 /* ORUtilities.framework */; };
+		5B8295361D22EBBA00DC55F1 /* wolsey1.mps in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B8295351D22EAB400DC55F1 /* wolsey1.mps */; };
+		5BC38DD11CF3385D0019E673 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BC38DD01CF3385D0019E673 /* main.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5B4E17851CF4DFF600A15258 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5BC38DC51CF3385D0019E673 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B4E17701CF4DE7400A15258;
+			remoteInfo = MPSReader;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5BC38DCB1CF3385D0019E673 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				5B4E17661CF36BE000A15258 /* testprob.mps in CopyFiles */,
+				5B8295361D22EBBA00DC55F1 /* wolsey1.mps in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		5B4E17591CF3398200A15258 /* grammar.ypp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = grammar.ypp; path = ../mpsReader/grammar.ypp; sourceTree = "<group>"; };
+		5B4E175A1CF3398200A15258 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parser.cpp; path = ../mpsReader/parser.cpp; sourceTree = "<group>"; };
+		5B4E175B1CF3398200A15258 /* parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = parser.hpp; path = ../mpsReader/parser.hpp; sourceTree = "<group>"; };
+		5B4E175C1CF3398200A15258 /* scanner.lpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = scanner.lpp; path = ../mpsReader/scanner.lpp; sourceTree = "<group>"; };
+		5B4E175F1CF339C300A15258 /* ast.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ast.hpp; path = ../mpsReader/ast.hpp; sourceTree = "<group>"; };
+		5B4E17631CF369EB00A15258 /* ast.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ast.cpp; path = ../mpsReader/ast.cpp; sourceTree = "<group>"; };
+		5B4E17651CF36B8200A15258 /* testprob.mps */ = {isa = PBXFileReference; lastKnownFileType = text; path = testprob.mps; sourceTree = "<group>"; };
+		5B4E17671CF3C54D00A15258 /* model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = model.cpp; path = ../mpsReader/model.cpp; sourceTree = "<group>"; };
+		5B4E17681CF3C54D00A15258 /* model.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = model.hpp; path = ../mpsReader/model.hpp; sourceTree = "<group>"; };
+		5B4E176A1CF4D0EC00A15258 /* mps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mps.cpp; path = ../mpsReader/mps.cpp; sourceTree = "<group>"; };
+		5B4E176B1CF4D0EC00A15258 /* mps.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = mps.hpp; path = ../mpsReader/mps.hpp; sourceTree = "<group>"; };
+		5B4E17711CF4DE7400A15258 /* libMPSReader.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libMPSReader.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B4E17731CF4DE7400A15258 /* MPSReader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MPSReader.hpp; sourceTree = "<group>"; };
+		5B4E17751CF4DE7400A15258 /* MPSReaderPriv.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MPSReaderPriv.hpp; sourceTree = "<group>"; };
+		5B4E17771CF4DE7400A15258 /* MPSReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MPSReader.cpp; sourceTree = "<group>"; };
+		5B4E17881CF4E40700A15258 /* CPScheduler.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CPScheduler.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/CPScheduler.framework"; sourceTree = "<group>"; };
+		5B4E17891CF4E40700A15258 /* CPUKernel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CPUKernel.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/CPUKernel.framework"; sourceTree = "<group>"; };
+		5B4E178A1CF4E40700A15258 /* objcp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = objcp.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/objcp.framework"; sourceTree = "<group>"; };
+		5B4E178B1CF4E40700A15258 /* objmp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = objmp.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/objmp.framework"; sourceTree = "<group>"; };
+		5B4E178C1CF4E40700A15258 /* ORFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORFoundation.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORFoundation.framework"; sourceTree = "<group>"; };
+		5B4E178D1CF4E40700A15258 /* ORModeling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORModeling.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORModeling.framework"; sourceTree = "<group>"; };
+		5B4E178E1CF4E40700A15258 /* ORProgram.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORProgram.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORProgram.framework"; sourceTree = "<group>"; };
+		5B4E178F1CF4E40700A15258 /* ORScheduler.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORScheduler.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORScheduler.framework"; sourceTree = "<group>"; };
+		5B4E17901CF4E40700A15258 /* ORSchedulingProgram.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORSchedulingProgram.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORSchedulingProgram.framework"; sourceTree = "<group>"; };
+		5B4E17911CF4E40700A15258 /* ORUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ORUtilities.framework; path = "../../../../Library/Developer/Xcode/DerivedData/ObjecticeCP-gpkxbaxnppvxooeoqqgpehxkvobc/Build/Products/Debug/ORUtilities.framework"; sourceTree = "<group>"; };
+		5B8295351D22EAB400DC55F1 /* wolsey1.mps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wolsey1.mps; sourceTree = "<group>"; };
+		5BC38DCD1CF3385D0019E673 /* mpsReader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpsReader; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BC38DD01CF3385D0019E673 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5B4E176E1CF4DE7400A15258 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BC38DCA1CF3385D0019E673 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B4E17921CF4E40700A15258 /* CPScheduler.framework in Frameworks */,
+				5B4E17931CF4E40700A15258 /* CPUKernel.framework in Frameworks */,
+				5B4E17941CF4E40700A15258 /* objcp.framework in Frameworks */,
+				5B4E17951CF4E40700A15258 /* objmp.framework in Frameworks */,
+				5B4E17961CF4E40700A15258 /* ORFoundation.framework in Frameworks */,
+				5B4E17971CF4E40700A15258 /* ORModeling.framework in Frameworks */,
+				5B4E17981CF4E40700A15258 /* ORProgram.framework in Frameworks */,
+				5B4E17991CF4E40700A15258 /* ORScheduler.framework in Frameworks */,
+				5B4E179A1CF4E40700A15258 /* ORSchedulingProgram.framework in Frameworks */,
+				5B4E179B1CF4E40700A15258 /* ORUtilities.framework in Frameworks */,
+				5B4E17871CF4DFFE00A15258 /* libMPSReader.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5B4E17721CF4DE7400A15258 /* MPSReader */ = {
+			isa = PBXGroup;
+			children = (
+				5B4E175F1CF339C300A15258 /* ast.hpp */,
+				5B4E17631CF369EB00A15258 /* ast.cpp */,
+				5B4E17591CF3398200A15258 /* grammar.ypp */,
+				5B4E175C1CF3398200A15258 /* scanner.lpp */,
+				5B4E175A1CF3398200A15258 /* parser.cpp */,
+				5B4E175B1CF3398200A15258 /* parser.hpp */,
+				5B4E17671CF3C54D00A15258 /* model.cpp */,
+				5B4E17681CF3C54D00A15258 /* model.hpp */,
+				5B4E176A1CF4D0EC00A15258 /* mps.cpp */,
+				5B4E176B1CF4D0EC00A15258 /* mps.hpp */,
+				5B4E17731CF4DE7400A15258 /* MPSReader.hpp */,
+				5B4E17751CF4DE7400A15258 /* MPSReaderPriv.hpp */,
+				5B4E17771CF4DE7400A15258 /* MPSReader.cpp */,
+			);
+			path = MPSReader;
+			sourceTree = "<group>";
+		};
+		5BC38DC41CF3385D0019E673 = {
+			isa = PBXGroup;
+			children = (
+				5B4E17881CF4E40700A15258 /* CPScheduler.framework */,
+				5B4E17891CF4E40700A15258 /* CPUKernel.framework */,
+				5B4E178A1CF4E40700A15258 /* objcp.framework */,
+				5B4E178B1CF4E40700A15258 /* objmp.framework */,
+				5B4E178C1CF4E40700A15258 /* ORFoundation.framework */,
+				5B4E178D1CF4E40700A15258 /* ORModeling.framework */,
+				5B4E178E1CF4E40700A15258 /* ORProgram.framework */,
+				5B4E178F1CF4E40700A15258 /* ORScheduler.framework */,
+				5B4E17901CF4E40700A15258 /* ORSchedulingProgram.framework */,
+				5B4E17911CF4E40700A15258 /* ORUtilities.framework */,
+				5BC38DCF1CF3385D0019E673 /* mpsReader */,
+				5B4E17721CF4DE7400A15258 /* MPSReader */,
+				5BC38DCE1CF3385D0019E673 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5BC38DCE1CF3385D0019E673 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5BC38DCD1CF3385D0019E673 /* mpsReader */,
+				5B4E17711CF4DE7400A15258 /* libMPSReader.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5BC38DCF1CF3385D0019E673 /* mpsReader */ = {
+			isa = PBXGroup;
+			children = (
+				5BC38DD01CF3385D0019E673 /* main.mm */,
+				5B4E17651CF36B8200A15258 /* testprob.mps */,
+				5B8295351D22EAB400DC55F1 /* wolsey1.mps */,
+			);
+			path = mpsReader;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		5B4E176F1CF4DE7400A15258 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B4E17741CF4DE7400A15258 /* MPSReader.hpp in Headers */,
+				5B4E17841CF4DF3B00A15258 /* model.hpp in Headers */,
+				5B4E17821CF4DF3B00A15258 /* ast.hpp in Headers */,
+				5B4E17831CF4DF3B00A15258 /* parser.hpp in Headers */,
+				5B4E17761CF4DE7400A15258 /* MPSReaderPriv.hpp in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		5B4E17701CF4DE7400A15258 /* MPSReader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B4E17791CF4DE7400A15258 /* Build configuration list for PBXNativeTarget "MPSReader" */;
+			buildPhases = (
+				5B4E176D1CF4DE7400A15258 /* Sources */,
+				5B4E176E1CF4DE7400A15258 /* Frameworks */,
+				5B4E176F1CF4DE7400A15258 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MPSReader;
+			productName = MPSReader;
+			productReference = 5B4E17711CF4DE7400A15258 /* libMPSReader.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		5BC38DCC1CF3385D0019E673 /* mpsReader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BC38DD41CF3385D0019E673 /* Build configuration list for PBXNativeTarget "mpsReader" */;
+			buildPhases = (
+				5BC38DC91CF3385D0019E673 /* Sources */,
+				5BC38DCA1CF3385D0019E673 /* Frameworks */,
+				5BC38DCB1CF3385D0019E673 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B4E17861CF4DFF600A15258 /* PBXTargetDependency */,
+			);
+			name = mpsReader;
+			productName = mpsReader;
+			productReference = 5BC38DCD1CF3385D0019E673 /* mpsReader */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5BC38DC51CF3385D0019E673 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Laurent Michel";
+				TargetAttributes = {
+					5B4E17701CF4DE7400A15258 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					5BC38DCC1CF3385D0019E673 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 5BC38DC81CF3385D0019E673 /* Build configuration list for PBXProject "mpsReader" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5BC38DC41CF3385D0019E673;
+			productRefGroup = 5BC38DCE1CF3385D0019E673 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5BC38DCC1CF3385D0019E673 /* mpsReader */,
+				5B4E17701CF4DE7400A15258 /* MPSReader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5B4E176D1CF4DE7400A15258 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B4E177C1CF4DF1000A15258 /* ast.cpp in Sources */,
+				5B4E177D1CF4DF1000A15258 /* grammar.ypp in Sources */,
+				5B4E177E1CF4DF1000A15258 /* scanner.lpp in Sources */,
+				5B4E177F1CF4DF1000A15258 /* parser.cpp in Sources */,
+				5B4E17801CF4DF1000A15258 /* model.cpp in Sources */,
+				5B4E17781CF4DE7400A15258 /* MPSReader.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BC38DC91CF3385D0019E673 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BC38DD11CF3385D0019E673 /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5B4E17861CF4DFF600A15258 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B4E17701CF4DE7400A15258 /* MPSReader */;
+			targetProxy = 5B4E17851CF4DFF600A15258 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5B4E177A1CF4DE7400A15258 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				LEXFLAGS = "--bison-bridge";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-deprecated-register",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B4E177B1CF4DE7400A15258 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				LEXFLAGS = "--bison-bridge";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-Wno-deprecated-register",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5BC38DD21CF3385D0019E673 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		5BC38DD31CF3385D0019E673 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		5BC38DD51CF3385D0019E673 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"-Wno-deprecated-register",
+					"$(OTHER_CFLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5BC38DD61CF3385D0019E673 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"-Wno-deprecated-register",
+					"$(OTHER_CFLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5B4E17791CF4DE7400A15258 /* Build configuration list for PBXNativeTarget "MPSReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B4E177A1CF4DE7400A15258 /* Debug */,
+				5B4E177B1CF4DE7400A15258 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BC38DC81CF3385D0019E673 /* Build configuration list for PBXProject "mpsReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BC38DD21CF3385D0019E673 /* Debug */,
+				5BC38DD31CF3385D0019E673 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BC38DD41CF3385D0019E673 /* Build configuration list for PBXNativeTarget "mpsReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BC38DD51CF3385D0019E673 /* Debug */,
+				5BC38DD61CF3385D0019E673 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5BC38DC51CF3385D0019E673 /* Project object */;
+}

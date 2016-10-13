@@ -30,12 +30,16 @@
 -(ORDouble) dual: (id<ORConstraint>) c;
 -(ORDouble) reducedCost: (id<ORVar>) x;
 -(ORDouble) doubleValue: (id<ORVar>) x;
+-(ORBool)inBasis:(id<ORVar>)x;
+-(id)basis;
+-(void)restoreBasis:(id)basis;
 -(ORDouble) objective;
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORDouble) lowerBound: (id<ORVar>) v;
 -(ORDouble) upperBound: (id<ORVar>) v;
 -(void) updateLowerBound: (id<ORVar>) v with: (ORDouble) lb;
 -(void) updateUpperBound: (id<ORVar>) v with: (ORDouble) ub;
+-(ORInt)nbLocks:(id<ORVar>)var;
 @end
 
 

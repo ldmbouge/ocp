@@ -27,6 +27,8 @@
 -(void) addColumn: (LPColumnI*) col;
 -(void) close;
 -(OROutcome) solve;
+-(OROutcome) solveFrom:(id)basis;
+
 
 -(OROutcome) status;
 -(ORDouble) value: (LPVariableI*) var;
@@ -34,6 +36,7 @@
 -(ORDouble) upperBound: (LPVariableI*) var;
 -(ORDouble) objectiveValue;
 -(ORDouble) reducedCost: (LPVariableI*) var;
+-(ORBool) inBasis: (LPVariableI*) var;
 -(ORDouble) dual: (LPConstraintI*) cstr;
 
 -(void) setBounds: (LPVariableI*) var low: (ORDouble) low up: (ORDouble) up;
@@ -47,9 +50,14 @@
 -(void) setDoubleParameter: (const char*) name val: (ORDouble) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
+-(ORDouble) paramValue: (LPParameterI*) param;
+-(void) setParam: (LPParameterI*) param value: (ORDouble)val;
+
 -(ORStatus) postConstraint: (LPConstraintI*) cstr;
 
 -(void) printModelToFile: (char*) fileName;
 -(void) print;
+-(id<LPBasis>)captureBasis;
+-(void)restoreBasis:(id<LPBasis>)basis;
 @end
 

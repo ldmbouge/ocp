@@ -31,6 +31,7 @@
 
 +(id<CPRealVar>) realVar:(id<CPEngine>)cp bounds:(id<ORRealRange>) range;
 +(id<CPRealVar>) realVar:(id<CPEngine>)cp castFrom:(id<CPIntVar>)x;
++(id<CPRealParam>) realParam:(id<CPEngine>)cp initialValue:(ORDouble)v;
 
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet;
 

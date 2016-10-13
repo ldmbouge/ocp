@@ -1,0 +1,275 @@
+<?xml version="1.0"?>
+<template_library>
+    
+    <pmu_templates>
+        <pmu id="0" name="PMU0">
+            <cost>0</cost>
+            <power>0</power>
+            <weight>0</weight>
+            <speedup>1</speedup>
+        </pmu>
+        <pmu id="1" name="PMU1">
+            <cost>20</cost>
+            <power>60</power>
+            <weight>5</weight>
+            <speedup>0</speedup>
+        </pmu>
+        <pmu id="2" name="PMU2">
+            <cost>35</cost>
+            <power>70</power>
+            <weight>5</weight>
+            <speedup>24</speedup>
+        </pmu>
+        <pmu id="3" name="PMU3">
+            <cost>45</cost>
+            <power>90</power>
+            <weight>6</weight>
+            <speedup>33</speedup>
+        </pmu>
+    </pmu_templates>
+    
+    <generator_templates>
+        <generator id="0" name="G0">
+            <cost>850</cost>
+            <power>400</power>
+            <weight>250</weight>
+        </generator>
+        <generator id="1" name="G1">
+            <cost>950</cost>
+            <power>425</power>
+            <weight>255</weight>
+        </generator>
+        <generator id="2" name="G2">
+            <cost>1050</cost>
+            <power>450</power>
+            <weight>265</weight>
+        </generator>
+        <generator id="3" name="G3">
+            <cost>1200</cost>
+            <power>500</power>
+            <weight>265</weight>
+        </generator>
+        <generator id="4" name="G4">
+            <cost>1350</cost>
+            <power>550</power>
+            <weight>275</weight>
+        </generator>
+        <generator id="5" name="G5">
+            <cost>1450</cost>
+            <power>600</power>
+            <weight>2150</weight>
+        </generator>
+        <generator id="6" name="G5">
+            <cost>1650</cost>
+            <power>650</power>
+            <weight>2150</weight>
+        </generator>
+        <generator id="7" name="G5">
+            <cost>1850</cost>
+            <power>700</power>
+            <weight>2150</weight>
+        </generator>
+    </generator_templates>
+    
+    <contactor_sensor_templates>
+        <sensor id="0" name="NONE">
+            <cost>0</cost>
+            <power>0</power>
+            <weight>0</weight>
+            <conversion>0</conversion>
+            <delay>10</delay>
+        </sensor>
+        <sensor id="1" name="S_CONT0">
+            <cost>30</cost>
+            <power>35</power>
+            <weight>10</weight>
+            <conversion>0</conversion>
+            <delay>5</delay>
+        </sensor>
+        <sensor id="2" name="S_CONT1">
+            <cost>40</cost>
+            <power>20</power>
+            <weight>11</weight>
+            <conversion>0</conversion>
+            <delay>5</delay>
+        </sensor>
+        <sensor id="3" name="S_CONT2">
+            <cost>90</cost>
+            <power>35</power>
+            <weight>10</weight>
+            <conversion>1</conversion>
+            <delay>7</delay>
+        </sensor>
+        <sensor id="4" name="S_CONT3">
+            <cost>110</cost>
+            <power>20</power>
+            <weight>17</weight>
+            <conversion>1</conversion>
+            <delay>8</delay>
+        </sensor>
+        <sensor id="5" name="S_CONT4">
+            <cost>75</cost>
+            <power>7</power>
+            <weight>11</weight>
+            <conversion>0</conversion>
+            <delay>12</delay>
+        </sensor>
+    </contactor_sensor_templates>
+    
+    <voltage_sensor_templates>
+        <sensor id="0" name="NONE">
+            <cost>0</cost>
+            <power>0</power>
+            <weight>0</weight>
+            <conversion>0</conversion>
+            <delay>0</delay>
+        </sensor>
+        <sensor id="1" name="S_VOLT0">
+            <cost>24</cost>
+            <power>22</power>
+            <weight>3</weight>
+            <conversion>0</conversion>
+            <delay>4</delay>
+        </sensor>
+        <sensor id="2" name="S_VOLT1">
+            <cost>30</cost>
+            <power>30</power>
+            <weight>3</weight>
+            <conversion>1</conversion>
+            <delay>7</delay>
+        </sensor>
+        <sensor id="3" name="S_VOLT2">
+            <cost>34</cost>
+            <power>26</power>
+            <weight>4</weight>
+            <conversion>1</conversion>
+            <delay>6</delay>
+        </sensor>
+        <sensor id="4" name="S_VOLT3">
+            <cost>32</cost>
+            <power>23</power>
+            <weight>5</weight>
+            <conversion>0</conversion>
+            <delay>2</delay>
+        </sensor>
+        <sensor id="5" name="S_VOLT4">
+            <cost>30</cost>
+            <power>25</power>
+            <weight>3</weight>
+            <conversion>1</conversion>
+            <delay>1</delay>
+        </sensor>
+    </voltage_sensor_templates>
+    
+    <current_sensor_templates>
+        <sensor id="0" name="NONE">
+            <cost>0</cost>
+            <power>0</power>
+            <weight>0</weight>
+            <conversion>0</conversion>
+            <delay>4</delay>
+        </sensor>
+        <sensor id="1" name="S_CUR0">
+            <cost>22</cost>
+            <power>22</power>
+            <weight>4</weight>
+            <conversion>0</conversion>
+            <delay>7</delay>
+        </sensor>
+        <sensor id="2" name="S_CUR1">
+            <cost>28</cost>
+            <power>25</power>
+            <weight>3</weight>
+            <conversion>1</conversion>
+            <delay>12</delay>
+        </sensor>
+        <sensor id="3" name="S_CUR2">
+            <cost>38</cost>
+            <power>25</power>
+            <weight>3</weight>
+            <conversion>1</conversion>
+            <delay>11</delay>
+        </sensor>
+    </current_sensor_templates>
+    
+    <data_bus_templates>
+        <data_bus id="0" name="NONE">
+            <cost>0</cost>
+            <max_bandwidth>0</max_bandwidth>
+            <weight>0</weight>
+        </data_bus>
+        <data_bus id="1" name="BUS0">
+            <cost>150</cost>
+            <max_bandwidth>50</max_bandwidth>
+            <weight>115</weight>
+        </data_bus>
+        <data_bus id="2" name="BUS1">
+            <cost>185</cost>
+            <max_bandwidth>100</max_bandwidth>
+            <weight>125</weight>
+        </data_bus>
+        <data_bus id="3" name="BUS2">
+            <cost>215</cost>
+            <max_bandwidth>130</max_bandwidth>
+            <weight>125</weight>
+        </data_bus>
+        <data_bus id="4" name="BUS3">
+            <cost>450</cost>
+            <max_bandwidth>190</max_bandwidth>
+            <weight>150</weight>
+        </data_bus>
+    </data_bus_templates>
+    
+    <concentrator_templates>
+        <concentrator id="0" name="NONE">
+            <cost>0</cost>
+            <power>0</power>
+            <weight>0</weight>
+            <bandwidth>0</bandwidth>
+            <max_connections>10000</max_connections>
+            <delay>10</delay>
+        </concentrator>
+        <concentrator id="1" name="CONC0">
+            <cost>20</cost>
+            <power>45</power>
+            <weight>16</weight>
+            <bandwidth>105</bandwidth>
+            <max_connections>300</max_connections>
+            <delay>18</delay>
+        </concentrator>
+        <concentrator id="2" name="CONC1">
+            <cost>45</cost>
+            <power>55</power>
+            <weight>17</weight>
+            <bandwidth>95</bandwidth>
+            <max_connections>400</max_connections>
+            <delay>14</delay>
+        </concentrator>
+        <concentrator id="3" name="CONC3">
+            <cost>75</cost>
+            <power>95</power>
+            <weight>17</weight>
+            <bandwidth>80</bandwidth>
+            <max_connections>500</max_connections>
+            <delay>12</delay>
+        </concentrator>
+        <concentrator id="4" name="CONC4">
+            <cost>95</cost>
+            <power>105</power>
+            <weight>17</weight>
+            <bandwidth>75</bandwidth>
+            <max_connections>5</max_connections>
+            <delay>16</delay>
+        </concentrator>
+    </concentrator_templates>
+    
+    <blackbox_templates>
+        <bbf id="0" name="BBF0">
+            <power>70</power>
+        </bbf>
+        <bbf id="1" name="BBF1">
+            <power>55</power>
+        </bbf>
+    </blackbox_templates>
+    
+</template_library>

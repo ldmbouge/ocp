@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 #import <ORFoundation/ORTrail.h>
+#import <CPUKernel/CPLEngine.h>
 #import "CPBitVar.h"
 #import "CPBitVarI.h"
 #import "CPEngineI.h"
@@ -165,6 +166,15 @@ return self;
     if (_triggers != nil)
         [_triggers release];    
     [super dealloc];
+}
+
+-(id<CPBitVar>) dereference{
+   //This is defined in the CPBitVar protocol. Not sure what it is supposed to do...
+   return self;
+}
+-(ORInt) degree{
+   //required for the CPVar protocol, not sure of its use.
+   return 0;
 }
 -(id) takeSnapshot: (ORInt) id
 {
@@ -338,9 +348,9 @@ return self;
 {
    assignTRUInt(&_levels[i], l, _trail);
 }
--(CPCoreConstraint*) getImplicationForBit:(ORUInt)i
+-(id<CPBVConstraint>) getImplicationForBit:(ORUInt)i
 {
-   return (CPCoreConstraint*)_implications[i];
+   return (id<CPBVConstraint>)_implications[i];
 }
 
 -(ORBool) isFree:(ORUInt)pos{
@@ -669,7 +679,7 @@ return self;
          }
          if ((changedUp & mask) || (changedLow & mask)) {
 //            NSLog(@"Update of bit %u by %@", j, constraint);
-            if([_engine isKindOfClass:[CPLearningEngineI class]]){
+            if([_engine conformsToProtocol:@protocol(CPLEngine)]){
                //assignTRUInt(&_levels[i*BITSPERWORD+j],[(CPLearningEngineI*)_engine getLevel], _trail);
                //_implications[i*BITSPERWORD+j] = constraint;
                assignTRId(&_implications[i*BITSPERWORD+j], constraint, _trail);
@@ -711,7 +721,7 @@ return self;
 -(ORStatus)bind:(ORUInt*)val{
     return [_dom bindToPat: val for:self];
 }
--(ORStatus) remove:(ORUInt)val
+-(ORStatus) remove:(ORUInt*) val
 {
    return [_dom remove:val];
 }
@@ -731,7 +741,7 @@ return self;
    _trail = [engine trail];
     setUpNetwork(&_net, _trail, *low, *up,len);
     _triggers = nil;
-    _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:_trail];
+   _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andEngine:_engine andTrail:_trail];
     [_dom setEngine:engine];
    _levels = malloc(sizeof(TRUInt)*len);
    _implications = malloc(sizeof(TRId)*len);

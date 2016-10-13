@@ -11,10 +11,6 @@
 
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORUtilities/cont.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORUtilities/ORUtilities.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPData.h>
 
@@ -88,6 +84,10 @@
 +(id<CPRealVar>) realVar:(id<CPEngine>)cp castFrom:(CPIntVar*)x
 {
    return [[CPRealViewOnIntVarI alloc] init:cp intVar:x];
+}
++(id<CPRealParam>) realParam:(id<CPEngine>)cp initialValue:(ORDouble)v
+{
+    return [[CPRealParamI alloc] initCPRealParam: cp initialValue: v];
 }
 +(id<CPIntSetVar>) intSetVar:(id<CPEngine>)cp withSet:(id<ORIntSet>)theSet
 {
