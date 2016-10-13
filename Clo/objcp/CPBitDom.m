@@ -85,6 +85,13 @@
 {
    return _sz._val;
 }
+-(ORInt) regret
+{
+   if (_sz._val == 1)
+      return 0;
+   else return 1;
+}
+
 -(ORBool) get:(ORInt)v
 {
    return _min._val <= v && v <= _max._val;
@@ -529,7 +536,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 {
    return findMax(self,from);
 }
--(ORInt)regret
+-(ORInt) regret
 {
    return [self findMin:_min._val+1] - _min._val;   
 }
@@ -981,6 +988,16 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
 -(ORInt) domsize
 {
    return [_theDom domsize];
+}
+-(ORInt) regret
+{
+   if (_a >= 0)
+      return [_theDom regret];
+   else {
+      int theMax = [_theDom max];
+      int prev = [_theDom findMax: theMax -1];
+      return - (theMax - prev) * _a;
+   }
 }
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to
 {

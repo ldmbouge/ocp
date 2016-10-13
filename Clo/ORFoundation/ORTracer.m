@@ -465,7 +465,7 @@ static __thread id checkPointCache = NULL;
 }
 -(id) popToNode: (ORInt) n
 {
-//   assert(false);
+
    [_trStack popNode: n];
    // not clear this is needed for the intended uses but this is safe anyway
    [_trail incMagic];

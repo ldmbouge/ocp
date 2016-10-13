@@ -460,13 +460,13 @@
 }
 -(void) visitElementVar: (id<ORElementVar>)c
 {
-    NSLog(@"idx: %@", [[c idx] class]);
+    //NSLog(@"idx: %@", [[c idx] class]);
     id<ORIntRange> binRange = RANGE(_model, 0, 1);
     id<ORIntVarArray> bidx = [self binarizationForVar: [c idx]];
     id<ORExpr> sum = [ORFactory integer: _model value: 0];
     for(ORInt i = [[c array] low]; i <= [[c array] up]; i++) {
         id<ORIntVar> x = [[c array] at: i];
-        NSLog(@"x: %@", [x class]);
+        //NSLog(@"x: %@", [x class]);
         id<ORIntVarArray> bx = [self binarizationForVar: x];
         for(ORInt val = [[x domain] low]; val <= [[x domain] up]; val++) {
             id<ORIntVar> z = [ORFactory intVar: _model bounds: binRange];
@@ -476,7 +476,7 @@
             sum = [sum plus: [z mul: @(val)]];
         }
     }
-    NSLog(@"res: %@", [[c res] class]);
+    //NSLog(@"res: %@", [[c res] class]);
     [_model addConstraint: [[c res] eq: sum]];
 }
 // Expressions

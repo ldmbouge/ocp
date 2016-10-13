@@ -668,6 +668,10 @@
 {
    return [[self worker] domsize: x];
 }
+-(ORInt) regret: (id<ORIntVar>) x
+{
+   return [[self worker] regret:x];
+}
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
    return [[self worker] member: v in: x];
