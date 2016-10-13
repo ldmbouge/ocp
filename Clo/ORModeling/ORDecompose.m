@@ -498,6 +498,15 @@ struct CPVarPair {
     } else
         [_terms addTerm:e by:1];
 }
+-(void) visitIntVarLitEQView:(id<ORIntVar>)e
+{
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+      [_terms addTerm:_eqto by:1];
+      _eqto = nil;
+   } else
+      [_terms addTerm:e by:1];
+}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
     if (_eqto) {

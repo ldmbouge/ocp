@@ -1594,7 +1594,6 @@
                                                                     rootControllerClass: [ORDFSController proto]
                                                                   nestedControllerClass: [ORDFSController proto]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
-   _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
    return self;
 }
@@ -1610,7 +1609,6 @@
                                                                     rootControllerClass: [ORSemDFSControllerCSP proto]
                                                                   nestedControllerClass: [ORSemDFSControllerCSP proto]];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
-   _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
    return self;
 }
@@ -1626,7 +1624,6 @@
                                                                     rootControllerClass: [ORSemDFSControllerCSP proto]
                                                                   nestedControllerClass: ctrlProto];
    _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
-   _imdl   = [[CPINCModel alloc] init:self];
    [cFact release];
    return self;
 }
@@ -1638,6 +1635,11 @@
    [_search release];
    [_tracer release];
    [super dealloc];
+}
+-(void) close
+{
+   [super close];
+   _imdl   = [[CPINCModel alloc] init:self];
 }
 -(void) add: (id<ORConstraint>) c
 {
