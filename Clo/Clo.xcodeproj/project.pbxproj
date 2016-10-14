@@ -2086,7 +2086,6 @@
 		F515FFEE1DA43FE80023B888 /* CPBitVarFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FFEB1DA43FE80023B888 /* CPBitVarFF.h */; };
 		F515FFEF1DA43FE80023B888 /* CPBitVarFF.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FFEC1DA43FE80023B888 /* CPBitVarFF.m */; };
 		F515FFF01DA43FE80023B888 /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FFED1DA43FE80023B888 /* CPBitVarHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F515FFF11DA440ED0023B888 /* ORSolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB1C2781B3A01E6008A9E51 /* ORSolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F515FFF51DA443080023B888 /* CPBitVarFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FFF31DA443080023B888 /* CPBitVarFirstFail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F515FFF61DA443080023B888 /* CPBitVarFirstFail.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FFF41DA443080023B888 /* CPBitVarFirstFail.m */; };
 		F515FFF91DA443430023B888 /* CPBitVarBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FFF71DA443430023B888 /* CPBitVarBaseHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -40201,7 +40200,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F515FFF11DA440ED0023B888 /* ORSolution.h in Headers */,
 				B154429616D19E6D001BD7B3 /* LPType.h in Headers */,
 				B1E1C78C17036D27006AACFC /* MIPSolverI.h in Headers */,
 				B1E1C79017036D4D006AACFC /* MIPGurobi.h in Headers */,
@@ -50951,13 +50949,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 					"$(inherited)",
 				);
-				OTHER_LDFLAGS = "-lgurobi65";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Coverage;
@@ -54518,13 +54516,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 					"$(inherited)",
 				);
-				OTHER_LDFLAGS = "-lgurobi65";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -54547,13 +54545,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objmp/objmp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi650/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi600/mac64/lib\"",
 					"$(inherited)",
 				);
-				OTHER_LDFLAGS = "-lgurobi65";
+				OTHER_LDFLAGS = "-lgurobi60";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi650/mac64/include;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi600/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

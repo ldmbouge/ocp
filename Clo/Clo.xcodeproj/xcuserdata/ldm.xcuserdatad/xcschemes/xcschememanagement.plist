@@ -139,6 +139,11 @@
 			<key>orderHint</key>
 			<integer>73</integer>
 		</dict>
+		<key>SMTLIB2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>143</integer>
+		</dict>
 		<key>SportDemo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -173,6 +178,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>132</integer>
+		</dict>
+		<key>Verification.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>142</integer>
 		</dict>
 		<key>ais.xcscheme_^#shared#^_</key>
 		<dict>
@@ -1297,7 +1307,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>F51500671DA581340023B888</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F515006F1DA581350023B888</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>F548AA70167FB1C600726814</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F59BEEB81DAC3A20007F8BA8</key>
 		<dict>
 			<key>primary</key>
 			<true/>
