@@ -16,6 +16,19 @@
 #import "CPTrigger.h"
 #import "CPBitArrayDom.h"
 
+typedef struct  {
+   TRId         _boundsEvt[2];
+   TRId           _bindEvt[2];
+   TRId            _domEvt[2];
+   TRId            _minEvt[2];
+   TRId            _maxEvt[2];
+   TRId               _ac5[2];
+   TRId       _bitFixedEvt[2];
+   TRId    _bitFixedAtIEvt[2];
+   TRId**      _bitFixedAtEvt;
+   ORUInt          _bitLength;
+} CPBitEventNetwork;
+
 
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
@@ -121,7 +134,11 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
 @end
 
 //****************************************************
-@implementation CPBitVarI
+@implementation CPBitVarI {
+@public
+   CPBitEventNetwork   _net;
+   TRId*      _implications;
+}
 -(CPBitVarI*) initCPBitVarCore:(CPEngineI*)engine low: (unsigned int*) low up: (unsigned int*)up length:(int)len
 {
 //    self = [super init];
@@ -796,7 +813,20 @@ return self;
 }
 @end
 
-@implementation CPBitVarMultiCast
+@implementation CPBitVarMultiCast {
+   id<CPBitVarNotifier>*     _tab;
+   BOOL            _tracksLoseEvt;
+   ORUInt              _bitLength;
+   ORInt                      _nb;
+   ORInt                      _mx;
+   UBType*            _loseValIMP;
+   UBType*                _minIMP;
+   UBType*                _maxIMP;
+   UBType*           _bitFixedIMP;
+   UBType*        _bitFixedAtIIMP;
+   UBType**        _bitFixedAtIMP;
+   CPBitVarLiterals*    _literals;
+}
 -(id)initVarMC:(ORInt)n root:(CPBitVarI*)root
 {
    self = [super init];

@@ -54,12 +54,6 @@
 -(void) bind: (ORDouble) val;
 @end
 
-typedef struct  {
-   TRId           _bindEvt;
-   TRId            _minEvt;
-   TRId            _maxEvt;
-   TRId         _boundsEvt;
-} CPRealEventNetwork;
 
 @class CPRealVarI;
 
@@ -75,7 +69,6 @@ typedef struct  {
    BOOL                     _hasValue;
    ORDouble                  _value;    // This value is only used for storing the value of the variable in linear/convex relaxation. Bounds only are safe
    id<CPFDom>               _dom;
-   CPRealEventNetwork      _net;
    CPMultiCast*             _recv;
 }
 -(id)init:(id<CPEngine>)engine low:(ORDouble)low up:(ORDouble)up;
@@ -89,7 +82,6 @@ typedef struct  {
 @interface CPRealViewOnIntVarI : ORObject<CPRealVar,CPRealVarExtendedItf,CPIntVarNotifier> {
    CPEngineI* _engine;
    CPIntVar* _theVar;
-   CPRealEventNetwork _net;
 }
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv;
 -(CPEngineI*)    engine;

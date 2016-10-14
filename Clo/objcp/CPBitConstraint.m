@@ -17,6 +17,19 @@
 #import <objcp/CPBitMacros.h>
 #import <objcp/CPBitVarI.h>
 
+typedef struct _CPBitAssignment {
+   CPBitVarI* var;
+   ORUInt   index;
+   ORBool   value;
+} CPBitAssignment;
+
+typedef struct _CPBitAntecedents {
+   CPBitAssignment**    antecedents;
+   ORUInt            numAntecedents;
+   ORUInt                    jumpTo;
+} CPBitAntecedents;
+
+
 #define ISTRUE(up, low) ((up) & (low))
 #define ISFALSE(up, low) ((~up) & (~low))
 
@@ -2854,7 +2867,14 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 @end
 
-@implementation CPBitADD
+@implementation CPBitADD {
+@private
+   CPBitVarI*      _x;
+   CPBitVarI*      _y;
+   CPBitVarI*      _z;
+   CPBitVarI*      _cin;
+   CPBitVarI*      _cout;
+}
 -(id) initCPBitAdd:(id<CPBitVar>)x plus:(id<CPBitVar>)y equals:(id<CPBitVar>)z withCarryIn:(id<CPBitVar>)cin andCarryOut:(id<CPBitVar>)cout
 {
    self = [super initCPCoreConstraint:[x engine]];
@@ -3827,8 +3847,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 @end
 
-@implementation CPBitCount
-
+@implementation CPBitCount {
+@private
+   CPBitVarI*  _x;
+   CPIntVarI*  _p;
+}
 -(id) initCPBitCount:(CPBitVarI*) x count:(CPIntVarI*) p
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -3939,8 +3962,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 @end
 
-@implementation CPBitZeroExtend
-
+@implementation CPBitZeroExtend {
+@private
+   CPBitVarI*  _x;
+   CPBitVarI*  _y;
+}
 -(id) initCPBitZeroExtend:(CPBitVarI*) x extendTo:(CPBitVarI *)y
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -4098,8 +4124,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 @end
 
-@implementation CPBitSignExtend
-
+@implementation CPBitSignExtend {
+@private
+   CPBitVarI*  _x;
+   CPBitVarI*  _y;
+}
 -(id) initCPBitSignExtend:(CPBitVarI*) x extendTo:(CPBitVarI *)y
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -4358,8 +4387,13 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 }
 @end
 
-@implementation CPBitExtract
-
+@implementation CPBitExtract {
+@private
+   CPBitVarI*  _x;
+   ORUInt      _lsb;
+   ORUInt      _msb;
+   CPBitVarI*  _y;
+}
 -(id) initCPBitExtract:(CPBitVarI*) x from:(ORUInt)lsb to:(ORUInt)msb eq:(CPBitVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
@@ -8917,8 +8951,21 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 @end
 
 
-@implementation CPBitMultiply
-
+@implementation CPBitMultiply {
+@private
+   CPBitVarI* _opx;
+   CPBitVarI* _opy;
+   CPBitVarI* _x;
+   CPBitVarI* _y;
+   CPBitVarI* _z;
+   CPBitVarI** _cin;
+   CPBitVarI** _cout;
+   CPBitVarI** _partialProduct;
+   CPBitVarI** _intermediate;
+   
+   ORUInt   _opLength;
+   ORUInt   _bitLength;
+}
 -(id) initCPBitMultiply:(CPBitVarI*)x times:(CPBitVarI*)y equals:(CPBitVarI*)z
 {
    self = [super initCPCoreConstraint:[x engine]];

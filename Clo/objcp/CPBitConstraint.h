@@ -19,17 +19,11 @@
 
 #define BIT_CONSISTENT_CHECK
 
-typedef struct _CPBitAssignment{
-   CPBitVarI* var;
-   ORUInt   index;
-   ORBool   value;
-} CPBitAssignment;
+struct _CPBitAssignment;
+typedef struct _CPBitAssignment CPBitAssignment;
 
-typedef struct _CPBitAntecedents{
-   CPBitAssignment**    antecedents;
-   ORUInt            numAntecedents;
-   ORUInt                    jumpTo;
-} CPBitAntecedents;
+struct _CPBitAntecedents;
+typedef struct _CPBitAntecedents CPBitAntecedents;
 
 @interface CPFactory (BitConstraint)
 //Bit Constraints
@@ -257,14 +251,7 @@ typedef struct _CPBitAntecedents{
 -(void) propagate;
 @end
 
-@interface CPBitADD: CPCoreConstraint<CPBVConstraint>{
-@private
-    CPBitVarI*      _x;
-    CPBitVarI*      _y;
-    CPBitVarI*      _z;
-    CPBitVarI*      _cin;
-    CPBitVarI*      _cout;    
-}
+@interface CPBitADD: CPCoreConstraint<CPBVConstraint> 
 -(id) initCPBitAdd: (CPBitVarI*) x plus: (CPBitVarI*) y equals:(CPBitVarI*) z withCarryIn:(CPBitVarI*) cin andCarryOut:(CPBitVarI*)cout;
 -(void) dealloc;
 -(NSString*) description;
@@ -273,11 +260,7 @@ typedef struct _CPBitAntecedents{
 -(void) propagate;
 @end
 
-@interface CPBitCount : CPCoreConstraint<CPBVConstraint> {
-@private
-   CPBitVarI*  _x;
-   CPIntVarI*  _p;
-}
+@interface CPBitCount : CPCoreConstraint<CPBVConstraint> 
 -(id) initCPBitCount: (CPBitVarI*) x count: (CPIntVarI*) p ;
 -(void) dealloc;
 -(NSString*) description;
@@ -286,11 +269,7 @@ typedef struct _CPBitAntecedents{
 -(void) propagate;
 @end
 
-@interface CPBitZeroExtend : CPCoreConstraint<CPBVConstraint> {
-@private
-   CPBitVarI*  _x;
-   CPBitVarI*  _y;
-}
+@interface CPBitZeroExtend : CPCoreConstraint<CPBVConstraint> 
 -(id) initCPBitZeroExtend: (CPBitVarI*) x extendTo: (CPBitVarI*) y ;
 -(void) dealloc;
 -(NSString*) description;
@@ -299,11 +278,7 @@ typedef struct _CPBitAntecedents{
 -(void) propagate;
 @end
 
-@interface CPBitSignExtend : CPCoreConstraint<CPBVConstraint> {
-@private
-   CPBitVarI*  _x;
-   CPBitVarI*  _y;
-}
+@interface CPBitSignExtend : CPCoreConstraint<CPBVConstraint> 
 -(id) initCPBitSignExtend: (CPBitVarI*) x extendTo: (CPBitVarI*) y ;
 -(void) dealloc;
 -(NSString*) description;
@@ -312,13 +287,7 @@ typedef struct _CPBitAntecedents{
 -(void) propagate;
 @end
 
-@interface CPBitExtract : CPCoreConstraint<CPBVConstraint> {
-@private
-   CPBitVarI*  _x;
-   ORUInt      _lsb;
-   ORUInt      _msb;
-   CPBitVarI*  _y;
-}
+@interface CPBitExtract : CPCoreConstraint<CPBVConstraint> 
 -(id) initCPBitExtract: (CPBitVarI*) x from:(ORUInt)lsb to:(ORUInt)msb eq:(CPBitVarI*) y ;
 -(void) dealloc;
 -(NSString*) description;
@@ -580,21 +549,7 @@ typedef struct _CPBitAntecedents{
 -(void) propagate;
 @end
 
-@interface CPBitMultiply : CPCoreConstraint<CPBVConstraint>{
-@private
-   CPBitVarI* _opx;
-   CPBitVarI* _opy;
-   CPBitVarI* _x;
-   CPBitVarI* _y;
-   CPBitVarI* _z;
-   CPBitVarI** _cin;
-   CPBitVarI** _cout;
-   CPBitVarI** _partialProduct;
-   CPBitVarI** _intermediate;
-   
-   ORUInt   _opLength;
-   ORUInt   _bitLength;
-}
+@interface CPBitMultiply : CPCoreConstraint<CPBVConstraint>
 -(id) initCPBitMultiply: (CPBitVarI*) x times: (CPBitVarI*) y equals: (CPBitVarI*)z;
 -(void) dealloc;
 -(NSString*) description;

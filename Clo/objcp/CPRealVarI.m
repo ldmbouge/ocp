@@ -13,6 +13,14 @@
 #import <CPUKernel/CPUKernel.h>
 #import "CPRealDom.h"
 
+typedef struct  {
+   TRId           _bindEvt[2];
+   TRId            _minEvt[2];
+   TRId            _maxEvt[2];
+   TRId         _boundsEvt[2];
+} CPRealEventNetwork;
+
+
 /*****************************************************************************************/
 /*                        CPRealVarSnapshot                                              */
 /*****************************************************************************************/
@@ -99,27 +107,32 @@
 
 static void setUpNetwork(CPRealEventNetwork* net,id<ORTrail> t)
 {
-   net->_bindEvt   = makeTRId(t,nil);
-   net->_minEvt    = makeTRId(t,nil);
-   net->_maxEvt    = makeTRId(t,nil);
+   for(ORInt i =0 ; i < 2;i++) {
+      net->_bindEvt[i]   = makeTRId(t,nil);
+      net->_minEvt[i]    = makeTRId(t,nil);
+      net->_maxEvt[i]    = makeTRId(t,nil);
+   }
 }
 
 static void deallocNetwork(CPRealEventNetwork* net)
 {
-   freeList(net->_bindEvt);
-   freeList(net->_minEvt);
-   freeList(net->_maxEvt);
+   freeList(net->_bindEvt[0]);
+   freeList(net->_minEvt[0]);
+   freeList(net->_maxEvt[0]);
 }
 
 static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv)
 {
-   collectList(net->_bindEvt,rv);
-   collectList(net->_minEvt,rv);
-   collectList(net->_maxEvt,rv);
+   collectList(net->_bindEvt[0],rv);
+   collectList(net->_minEvt[0],rv);
+   collectList(net->_maxEvt[0],rv);
    return rv;
 }
 
-@implementation CPRealVarI
+@implementation CPRealVarI {
+@public
+   CPRealEventNetwork      _net;
+}
 
 -(id)init:(CPEngineI*)engine low:(ORDouble)low up:(ORDouble)up
 {
@@ -257,7 +270,7 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._bindEvt;
+   mList[k] = _net._bindEvt[0];
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
@@ -265,11 +278,11 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._minEvt;
+   mList[k] = _net._minEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._boundsEvt;
+   mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
-   mList[k] = bound ? _net._bindEvt : NULL;
+   mList[k] = bound ? _net._bindEvt[0] : NULL;
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
@@ -277,11 +290,11 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 {
    id<CPClosureList> mList[6];
    ORUInt k = 0;
-   mList[k] = _net._maxEvt;
+   mList[k] = _net._maxEvt[0];
    k += mList[k] != NULL;
-   mList[k] = _net._boundsEvt;
+   mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
-   mList[k] = bound ? _net._bindEvt : NULL;
+   mList[k] = bound ? _net._bindEvt[0] : NULL;
    k += mList[k] != NULL;
    scheduleClosures(_engine,mList);
 }
@@ -354,7 +367,10 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
 }
 @end
 
-@implementation CPRealViewOnIntVarI
+@implementation CPRealViewOnIntVarI {
+   @public
+   CPRealEventNetwork _net;
+}
 -(id)init:(id<CPEngine>)engine intVar:(CPIntVar*)iv
 {
    self = [super init];

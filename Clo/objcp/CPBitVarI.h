@@ -27,18 +27,6 @@
 @class CPBitVarMultiCast;
 @class CPBitVarLiterals;
 
-typedef struct  {
-   TRId         _boundsEvt[2];
-   TRId           _bindEvt[2];
-   TRId            _domEvt[2];
-   TRId            _minEvt[2];
-   TRId            _maxEvt[2];
-   TRId               _ac5[2];
-   TRId       _bitFixedEvt[2];
-   TRId    _bitFixedAtIEvt[2];
-   TRId**      _bitFixedAtEvt;
-   ORUInt          _bitLength;
-} CPBitEventNetwork;
 
 @interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 //=======
@@ -50,13 +38,10 @@ typedef struct  {
     CPEngineI*                       _engine;
     id<ORTrail>                       _trail;
     CPBitArrayDom*                      _dom;
-    CPBitEventNetwork                   _net;
     CPTriggerMap*                  _triggers;
     CPBitVarMultiCast*                 _recv;
     enum CPVarClass                      _vc;
-   
     TRUInt*                          _levels;
-    TRId*                       _implications;
 }
 -(CPBitVarI*) initCPBitVarCore:(id<CPEngine>)cp low:(ORUInt*)low up:(ORUInt*)up length:(int) len;
 -(void) dealloc;
@@ -160,20 +145,7 @@ typedef struct  {
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
-@interface CPBitVarMultiCast : NSObject<CPBitVarNotifier,NSCoding> {
-   id<CPBitVarNotifier>*     _tab;
-   BOOL            _tracksLoseEvt;
-   ORUInt              _bitLength;
-   ORInt                      _nb;
-   ORInt                      _mx;
-   UBType*            _loseValIMP;
-   UBType*                _minIMP;
-   UBType*                _maxIMP;
-   UBType*           _bitFixedIMP;
-   UBType*        _bitFixedAtIIMP;
-   UBType**        _bitFixedAtIMP;
-   CPBitVarLiterals*    _literals;
-}
+@interface CPBitVarMultiCast : NSObject<CPBitVarNotifier,NSCoding> 
 -(id)initVarMC:(ORInt)n root:(CPBitVarI*)root;
 -(void) dealloc;
 //-(CPBitVarLiterals*)findLiterals:(CPBitVarI*)ref;
