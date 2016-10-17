@@ -161,7 +161,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
     NSLog(@"b = %@\n", b);
     NSLog(@"c = %@\n", c);
     
-   [m add:[ORFactory bit:a and:b eq:c]];
+   [m add:[ORFactory bit:a band:b eq:c]];
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
    [cp solve: ^() {
       @try {
@@ -222,7 +222,7 @@ char *int2bin(int a, char *buffer, int buf_size) {
     NSLog(@"e = %@\n", e);
     NSLog(@"f = %@\n", f);
     
-   [m add:[ORFactory bit:d or:e eq:f]];
+   [m add:[ORFactory bit:d bor:e eq:f]];
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram:m];
    [cp solve: ^() {
       @try {

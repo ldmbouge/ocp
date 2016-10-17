@@ -99,7 +99,6 @@
    return digest;
 }
 
-
 -(void) createSHA1bBlocks:(uint32*)mask
 {
    uint64 blockLength;
@@ -224,12 +223,10 @@
       [_m add:[ORFactory bit:digest[4] eq:digestVars[4]]];
    
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgramBackjumpingDFS: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
-//   id<ORBasicModel> model = [engine model];
-   //<<<<<<< HEAD
-   //CPBitVarFF
+
    __block id* gamma = [cp gamma];
    
    NSLog(@"SHA-1 Message Blocks (Original)");
@@ -244,7 +241,7 @@
 
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
-      [o set:bitVars[k] at:k];
+      [o set:gamma[bitVars[k].getId] at:k];
    
    
    
@@ -368,9 +365,9 @@
          volatile id<ORBitVar> tempBV3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
          volatile id<ORBitVar> newW = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
       
-         [_m add:[ORFactory bit:_W[t-3] xor:_W[t-8] eq:tempBV]];
-         [_m add:[ORFactory bit:tempBV xor:_W[t-14] eq:tempBV2]];
-         [_m add:[ORFactory bit:tempBV2 xor:_W[t-16] eq:tempBV3]];
+         [_m add:[ORFactory bit:_W[t-3] bxor:_W[t-8] eq:tempBV]];
+         [_m add:[ORFactory bit:tempBV bxor:_W[t-14] eq:tempBV2]];
+         [_m add:[ORFactory bit:tempBV2 bxor:_W[t-16] eq:tempBV3]];
          [_m add:[ORFactory bit:tempBV3 rotateLBy:1 eq:newW]];
          _W[t] = newW;
       }
@@ -482,9 +479,9 @@
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    
-   [_m add:[ORFactory bit:y xor:z eq:t0]];
-   [_m add:[ORFactory bit:x and:t0 eq:t1]];
-   [_m add:[ORFactory bit:z xor:t1 eq:t2]];
+   [_m add:[ORFactory bit:y bxor:z eq:t0]];
+   [_m add:[ORFactory bit:x band:t0 eq:t1]];
+   [_m add:[ORFactory bit:z bxor:t1 eq:t2]];
    
    return t2;
 }
@@ -496,8 +493,8 @@
    id<ORBitVar> t0 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> t1 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    
-   [_m add:[ORFactory bit:x xor:y eq:t0]];
-   [_m add:[ORFactory bit:t0 xor:z eq:t1]];
+   [_m add:[ORFactory bit:x bxor:y eq:t0]];
+   [_m add:[ORFactory bit:t0 bxor:z eq:t1]];
    
    return t1;
 }
@@ -512,11 +509,11 @@
    id<ORBitVar> t2 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> t3 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
    id<ORBitVar> t4 = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
-   [_m add:[ORFactory bit:x and:y eq:t0]];
-   [_m add:[ORFactory bit:x and:z eq:t1]];
-   [_m add:[ORFactory bit:y and:z eq:t2]];
-   [_m add:[ORFactory bit:t0 xor:t1 eq:t3]];
-   [_m add:[ORFactory bit:t3 xor:t2 eq:t4]];
+   [_m add:[ORFactory bit:x band:y eq:t0]];
+   [_m add:[ORFactory bit:x band:z eq:t1]];
+   [_m add:[ORFactory bit:y band:z eq:t2]];
+   [_m add:[ORFactory bit:t0 bxor:t1 eq:t3]];
+   [_m add:[ORFactory bit:t3 bxor:t2 eq:t4]];
    return t4;
 }
 

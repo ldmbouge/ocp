@@ -1126,7 +1126,7 @@
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
-      id<CPConstraint> concreteCstr = [CPFactory bitOR:x or:y equals:z];
+      id<CPConstraint> concreteCstr = [CPFactory bitOR:x bor:y equals:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1138,7 +1138,7 @@
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
-      id<CPConstraint> concreteCstr = [CPFactory bitAND:x and:y equals:z];
+      id<CPConstraint> concreteCstr = [CPFactory bitAND:x band:y equals:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1160,7 +1160,7 @@
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
-      id<CPConstraint> concreteCstr = [CPFactory bitXOR:x xor:y equals:z];
+      id<CPConstraint> concreteCstr = [CPFactory bitXOR:x bxor:y equals:z];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -1523,7 +1523,7 @@
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> r = [self concreteVar:[cstr res]];
-      id<CPConstraint> concreteCstr = [CPFactory bitOrb:x or:y eval:r];
+      id<CPConstraint> concreteCstr = [CPFactory bitOrb:x bor:y eval:r];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

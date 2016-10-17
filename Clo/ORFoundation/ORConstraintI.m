@@ -4106,7 +4106,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    id<ORBitVar> _y;
    id<ORBitVar> _z;
 }
--(ORBitOr*)initORBitOr: (id<ORBitVar>) x or:(id<ORBitVar>) y eq:(id<ORBitVar>)z
+-(ORBitOr*)initORBitOr: (id<ORBitVar>) x bor:(id<ORBitVar>) y eq:(id<ORBitVar>)z
 {
    self = [super initORConstraintI];
    _x = x;
@@ -4147,7 +4147,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    id<ORBitVar> _y;
    id<ORBitVar> _z;
 }
--(ORBitAnd*)initORBitAnd: (id<ORBitVar>) x and:(id<ORBitVar>) y eq:(id<ORBitVar>)z
+-(ORBitAnd*)initORBitAnd: (id<ORBitVar>) x band:(id<ORBitVar>) y eq:(id<ORBitVar>)z
 {
    self = [super initORConstraintI];
    _x = x;
@@ -4187,7 +4187,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    id<ORBitVar> _x;
    id<ORBitVar> _y;
 }
--(ORBitNot*)initORBitNot: (id<ORBitVar>) x not: (id<ORBitVar>) y
+-(ORBitNot*)initORBitNot: (id<ORBitVar>) x bnot: (id<ORBitVar>) y
 {
    self = [super initORConstraintI];
    _x = x;
@@ -4223,7 +4223,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    id<ORBitVar> _y;
    id<ORBitVar> _z;
 }
--(ORBitXor*)initORBitXor: (id<ORBitVar>) x xor:(id<ORBitVar>) y eq:(id<ORBitVar>)z
+-(ORBitXor*)initORBitXor: (id<ORBitVar>) x bxor:(id<ORBitVar>) y eq:(id<ORBitVar>)z
 {
    self = [super initORConstraintI];
    _x = x;
@@ -5340,7 +5340,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    id<ORBitVar> _y;
    id<ORBitVar> _r;
 }
--(ORBitOrb*)initORBitOrb: (id<ORBitVar>) x or:(id<ORBitVar>) y eval:(id<ORBitVar>)r
+-(ORBitOrb*)initORBitOrb: (id<ORBitVar>) x bor:(id<ORBitVar>) y eval:(id<ORBitVar>)r
 {
    self = [super initORConstraintI];
    _x = x;
