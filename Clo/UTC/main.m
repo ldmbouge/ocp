@@ -1041,7 +1041,7 @@ int main(int argc, const char * argv[])
    __block id<ORSolution> bestSolution = nil;
    //relax = [ORFactory createLinearRelaxation:lm];
    id<ORIntVarArray> aiv = m.intVars;
-   __block ORInt fLim = 1000;
+   __block ORInt fLim = 2000;
    __block ORInt best = FDMAXINT;
    
    id<ORRunnable> r0 = [ORFactory CPRunnable:m
@@ -1050,21 +1050,30 @@ int main(int argc, const char * argv[])
                                        solve:^(id<CPProgram> p)
    {
          id<ORTau> t = p.modelMappings.tau;
-      id<ORIntVarArray> x = [[t get:o1] vars]; //joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]);
-      id<ORIntArray>    c = [[t get:o1] coefs]; //joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]);
+      id<ORIntVarArray> x = joinVarArray(p, [[t get:o1] vars], [[t get:o2] vars]); // [[t get:o1] vars]; //
+      id<ORIntArray>    c = joinIntArray(p, [[t get:o1] coefs], [[t get:o2] coefs]); // [[t get:o1] coefs]; //
       id<ORUniformDistribution> d = [ORFactory uniformDistribution:m range:RANGE(m,1,100)];
 
-//         PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:p];
-//         [pcb branchOn:aiv];
+//      PCBranching* pcb = [[PCBranching alloc] init:relax over:aiv program:p];
+//      [pcb branchOn:aiv];
+      
       [p repeat:^{
          [p limitFailures:fLim in:^{
             while (![p allBound:x]) {
                [p select:x minimizing:^ORDouble(ORInt i) { return  (( - [c at:i] * [p regret:x[i]]) << 16)  + [p domsize:x[i]];} in:^(ORInt i) {
+                  //[p split:x[i]];
                   [p try:^{
                      [p label:x[i] with:[p min:x[i]]];
                   } alt:^{
                      [p diff:x[i] with:[p min:x[i]]];
                   }];
+//                  int lb = [p min:x[i]],ub = [p max:x[i]];
+//                  int mp = lb + (ub - lb)/2;
+//                  [p try:^{
+//                     [p lthen:x[i] with:mp+1];
+//                  } alt:^{
+//                     [p gthen:x[i] with:mp];
+//                  }];
                }];
             }
             [p labelArray:aiv];
@@ -1085,13 +1094,14 @@ int main(int argc, const char * argv[])
             bool improve = [[s objectiveValue] intValue] < best;
             int nbFIX = 0;
             for(id<ORIntVar> y in aiv) {
-               if ([d next] <= 10) {
+               if ([d next] <= 40) {
                   [p add: [y  eq: @([s intValue:y])]];
                   nbFIX += 1;
                }
             }
             if (improve)
                best = [[s objectiveValue] intValue];
+            fLim = 2000;
             //else fLim *= 2;
             NSLog(@"LNS move(%d/%ld)... Next Limit = %d",nbFIX,[aiv count],fLim);
          } else fLim *= 2;
@@ -1102,7 +1112,7 @@ int main(int argc, const char * argv[])
    id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
    id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
    
-   id<ORRunnable> r  = rp;
+   id<ORRunnable> r  = r0;
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [r run];
    bestSolution = [r bestSolution];

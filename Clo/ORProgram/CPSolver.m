@@ -871,8 +871,6 @@
       }
 }
 
-//<<<<<<< HEAD
-//=======
 -(void)splitArray:(id<ORIntVarArray>)x
 {
    id<ORIntRange> R = x.range;
@@ -894,7 +892,17 @@
             alt: ^{ [self gthen:x[bi] with:mp];}];
    }
 }
-//>>>>>>> master
+
+-(void)split:(id<ORIntVar>)x
+{
+   CPIntVar* cx = _gamma[getId(x)];
+   while (!bound(cx)) {
+      ORInt lb =cx.min,ub = cx.max;
+      ORInt mp = lb + (ub - lb)/2;
+      [self try: ^{ [self lthen:x with:mp+1];}
+            alt: ^{ [self gthen:x with:mp];}];
+   }
+}
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -902,15 +910,10 @@
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
       CPIntVar* xi = _gamma[getId(x[i])];
-//<<<<<<< HEAD
-//      while ([xi bound]) {
-//         ORInt m = [xi min];
-//=======
       while (!bound(xi)) {
          ORInt m = minDom(xi);
-//>>>>>>> master
-         [_search try: ^{ [self labelImpl: xi with: m]; }
-                  alt: ^{ [self  diffImpl: xi with: m]; }
+            [_search try: ^{ [self labelImpl: xi with: m]; }
+                     alt: ^{ [self  diffImpl: xi with: m]; }
           ];
       }
    }

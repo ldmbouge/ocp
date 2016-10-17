@@ -360,6 +360,10 @@
 {
    [[self worker] addConstraintDuringSearch: c];
 }
+-(void)split:(id<ORIntVar>)x
+{
+   [[self worker] split:x];
+}
 -(void) splitArray: (id<ORIntVarArray>) x
 {
    [[self worker] splitArray:x];
