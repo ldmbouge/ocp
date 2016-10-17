@@ -956,6 +956,8 @@
 		5B729C42153F79A4001BE95A /* CPWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B729C40153F79A4001BE95A /* CPWatch.m */; };
 		5B729C43153F89E6001BE95A /* CPWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B729C3F153F79A4001BE95A /* CPWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B729C44153F89F8001BE95A /* CPWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B729C40153F79A4001BE95A /* CPWatch.m */; };
+		5B7300721DB536C8002A8731 /* lorem-mssg.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5B7300711DB536C8002A8731 /* lorem-mssg.txt */; };
+		5B7300731DB536DB002A8731 /* lorem-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7300711DB536C8002A8731 /* lorem-mssg.txt */; };
 		5B73E55D151F45F60043192D /* NSBoardController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B73E55B151F45F60043192D /* NSBoardController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B73E55E151F45F60043192D /* NSBoardController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B73E55C151F45F60043192D /* NSBoardController.m */; };
 		5B7408B115628C1400C05277 /* CPBitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7408B015628C1400C05277 /* CPBitMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -8426,6 +8428,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				5B7300731DB536DB002A8731 /* lorem-mssg.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21622,6 +21625,7 @@
 		5B70AA131B58571700316083 /* ORSTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSTask.h; sourceTree = "<group>"; };
 		5B729C3F153F79A4001BE95A /* CPWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPWatch.h; sourceTree = "<group>"; };
 		5B729C40153F79A4001BE95A /* CPWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPWatch.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B7300711DB536C8002A8731 /* lorem-mssg.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "lorem-mssg.txt"; sourceTree = "<group>"; };
 		5B73E55B151F45F60043192D /* NSBoardController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSBoardController.h; sourceTree = "<group>"; };
 		5B73E55C151F45F60043192D /* NSBoardController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSBoardController.m; sourceTree = "<group>"; };
 		5B7408AD156286C700C05277 /* bitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitTest.h; sourceTree = "<group>"; };
@@ -39640,6 +39644,7 @@
 		B1943A1015B0E33C00E1771B /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5B7300711DB536C8002A8731 /* lorem-mssg.txt */,
 				5BB2728C1D06584C008E94CF /* scene.xml */,
 				5B4054151C1DC1C9001407E3 /* crypto.txt */,
 				5B6CFD7316D90F2200BCB95F /* rbg049a.tw */,
@@ -43234,6 +43239,7 @@
 				5BB272601D06560D008E94CF /* scene.1 in Resources */,
 				F515001F1DA539F50023B888 /* SMTLIB2.1 in Resources */,
 				5BB2728D1D06584C008E94CF /* scene.xml in Resources */,
+				5B7300721DB536C8002A8731 /* lorem-mssg.txt in Resources */,
 				5B4054161C1DC1C9001407E3 /* crypto.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
