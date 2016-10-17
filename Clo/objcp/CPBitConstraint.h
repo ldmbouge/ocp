@@ -28,9 +28,9 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 @interface CPFactory (BitConstraint)
 //Bit Constraints
 +(id<CPBVConstraint>) bitEqual:(id<CPBitVar>)x to:(id<CPBitVar>)y;
-+(id<CPBVConstraint>) bitAND:(id<CPBitVar>)x and:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
-+(id<CPBVConstraint>) bitOR:(id<CPBitVar>)x or:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
-+(id<CPBVConstraint>) bitXOR:(id<CPBitVar>)x xor:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
++(id<CPBVConstraint>) bitAND:(id<CPBitVar>)x band:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
++(id<CPBVConstraint>) bitOR:(id<CPBitVar>)x bor:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
++(id<CPBVConstraint>) bitXOR:(id<CPBitVar>)x bxor:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
 +(id<CPBVConstraint>) bitNOT:(id<CPBitVar>)x equals:(id<CPBitVar>) y;
 +(id<CPBVConstraint>) bitShiftL:(id<CPBitVar>)x by:(int) p equals:(id<CPBitVar>) y;
 +(id<CPBVConstraint>) bitShiftR:(id<CPBitVar>)x by:(int) p equals:(id<CPBitVar>) y;
@@ -58,7 +58,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 +(id<CPBVConstraint>) bitLogicalEqual:(id<CPBitVar>)x EQ:(id<CPBitVar>)y eval:(id<CPBitVar>)r;
 +(id<CPBVConstraint>) bitLogicalAnd:(id<CPBitVarArray>)x eval:(id<CPBitVar>)r;
 +(id<CPBVConstraint>) bitLogicalOr:(id<CPBitVarArray>)x eval:(id<CPBitVar>)r;
-+(id<CPBVConstraint>) bitOrb:(id<CPBitVar>)x or:(id<CPBitVar>)y eval:(id<CPBitVar>)r;
++(id<CPBVConstraint>) bitOrb:(id<CPBitVar>)x bor:(id<CPBitVar>)y eval:(id<CPBitVar>)r;
 +(id<CPBVConstraint>) bitEqualb:(id<CPBitVar>)x equal:(id<CPBitVar>)y eval:(id<CPBitVar>)r;
 +(id<CPBVConstraint>) bitNotb:(id<CPBitVar>)x eval:(id<CPBitVar>)r;
 +(id<CPBVConstraint>) bitConflict:(CPBitAntecedents*)a;
@@ -97,7 +97,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
     CPBitVarI* _y;
     CPBitVarI* _z;
 }
--(id) initCPBitAND: (CPBitVarI*) x and: (CPBitVarI*) y equals: (CPBitVarI*) z;
+-(id) initCPBitAND: (CPBitVarI*) x band: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
 -(NSString*) description;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
@@ -111,7 +111,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
     CPBitVarI* _y;
     CPBitVarI* _z;    
 }
--(id) initCPBitOR: (CPBitVarI*) x or: (CPBitVarI*) y equals: (CPBitVarI*) z;
+-(id) initCPBitOR: (CPBitVarI*) x bor: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
 -(NSString*) description;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
@@ -125,7 +125,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
     CPBitVarI* _y;
     CPBitVarI* _z;    
 }
--(id) initCPBitXOR: (CPBitVarI*) x xor: (CPBitVarI*) y equals: (CPBitVarI*) z;
+-(id) initCPBitXOR: (CPBitVarI*) x bxor: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
 -(NSString*) description;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
@@ -462,7 +462,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
    CPBitVarI* _y;
    CPBitVarI* _r;
 }
--(id) initCPBitORb: (CPBitVarI*) x or: (CPBitVarI*) y eval: (CPBitVarI*)r;
+-(id) initCPBitORb: (CPBitVarI*) x bor: (CPBitVarI*) y eval: (CPBitVarI*)r;
 -(void) dealloc;
 -(NSString*) description;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;

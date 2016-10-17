@@ -628,7 +628,7 @@
       up[i] = CP_UMASK;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-   [_model add:[ORFactory bit:(id<ORBitVar>)a1 not:bv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)a1 bnot:bv]];
 //   NSLog(@"Added BVNOT Constraint\n");
    return bv;
 }
@@ -644,7 +644,7 @@
       up[i] = CP_UMASK;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-   [_model add:[ORFactory bit:(id<ORBitVar>)a1 and:(id<ORBitVar>)a2 eq:bv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)a1 band:(id<ORBitVar>)a2 eq:bv]];
 //   NSLog(@"Added BVAND Constraint\n");
    return bv;
 }
@@ -660,7 +660,7 @@
       up[i] = CP_UMASK;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-   [_model add:[_model add:[ORFactory bit:(id<ORBitVar>)a1 or:(id<ORBitVar>)a2 eq:bv]]];
+   [_model add:[_model add:[ORFactory bit:(id<ORBitVar>)a1 bor:(id<ORBitVar>)a2 eq:bv]]];
 //   NSLog(@"Added BVOR Constraint\n");
    return bv;
 }
@@ -676,7 +676,7 @@
       up[i] = CP_UMASK;
    }
    id<ORBitVar> bv = [ORFactory bitVar:_model low:low up:up bitLength:size];
-   [_model add:[ORFactory bit:(id<ORBitVar>)a1 xor:(id<ORBitVar>)a2 eq:bv]];
+   [_model add:[ORFactory bit:(id<ORBitVar>)a1 bxor:(id<ORBitVar>)a2 eq:bv]];
 //   NSLog(@"Added BVXOR Constraint\n");
    return bv;
 }
