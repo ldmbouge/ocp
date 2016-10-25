@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
-
+#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/OREngine.h>
 
 @protocol ORCommand;
 @protocol ORSearchEngine;

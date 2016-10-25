@@ -14,17 +14,16 @@
 #import <CPUKernel/CPUKernel.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
-#import "CPBitVar.h"
+#import <objcp/CPBitVar.h>
 #import "CPConcretizer.h"
 #import <ORFoundation/ORFactory.h>
 #import <ORProgram.h>
+#import <objcp/CPBitVarI.h>
 
 
 #if defined(__linux__)
 #import <values.h>
 #endif
-
-@class CPBitVarI;
 
 @interface CPBitVarKillRange : NSObject {
    @package

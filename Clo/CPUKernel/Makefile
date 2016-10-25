@@ -7,7 +7,7 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
 	-lORUtilities -lORFoundation
 
-SRCS = CPConstraintI.m  CPEngineI.m  CPGroup.m  CPTrigger.m  CPTypes.m  CPUKernel.m
+SRCS = CPConstraintI.m  CPEngineI.m  CPGroup.m  CPTrigger.m  CPTypes.m  CPUKernel.m CPLearningEngineI.m
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))

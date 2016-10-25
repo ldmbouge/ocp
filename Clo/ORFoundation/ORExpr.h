@@ -53,11 +53,12 @@ typedef enum ORRelationType {
 } ORRelationType;
 
 typedef enum ORVType {
-   ORTInt = 0,
-   ORTReal = 1,
-   ORTBit  = 2,
-   ORTSet  = 3,
-   ORTNA = 4
+  ORTBool = 0,
+  ORTInt = 1,
+  ORTReal = 2,
+  ORTBit  = 3,
+  ORTSet  = 4,
+  ORTNA = 5
 } ORVType;
 
 #endif

@@ -10,11 +10,14 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORConcurrency.h>
+#import <ORFoundation/ORFoundation.h>
+/*
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORBackjumpingDFSController.h>
+*/
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORFlatten.h>
 #import <ORProgram/ORProgram.h>
@@ -830,7 +833,12 @@
    while (![bv bound]) {
       i=[bv randomFreeBit];
 //      NSLog(@"Labeling Bit at index %d",i);
+      // LDM: TODO: This needs fixing! We should be using distributions here!
+#if defined(__APPLE__)
       int rand = arc4random();
+#else
+      int rand = random();
+#endif
       if (rand > 0.5){
 //         NSLog(@"Labeling Bit at index %d with false first",i);
          [_search try: ^() { [self labelBV:x at:i with:false];}
@@ -1204,7 +1212,7 @@
       } else {
 //        NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
         }
-      NSAssert([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);      
+      NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);      
       [failStamp setValue:[_search nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
@@ -1345,7 +1353,7 @@
       } else {
 //         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }
-      NSAssert([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
+      NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
       [failStamp setValue:[_search nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
