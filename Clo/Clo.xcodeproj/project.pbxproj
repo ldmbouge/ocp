@@ -21133,8 +21133,8 @@
 		5B150019156EB1A500897252 /* CPBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBaseHeuristic.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B155A2C1CBAD84C0024AAC2 /* ORSemBFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSemBFSController.h; sourceTree = "<group>"; };
 		5B155A2E1CBAD8810024AAC2 /* ORSemBFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSemBFSController.m; sourceTree = "<group>"; };
-		5B155A301CBD747E0024AAC2 /* PCBranching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PCBranching.m; path = ../UTC/PCBranching.m; sourceTree = "<group>"; };
-		5B155A321CBD74AC0024AAC2 /* PCBranching.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PCBranching.h; path = ../UTC/PCBranching.h; sourceTree = "<group>"; };
+		5B155A301CBD747E0024AAC2 /* PCBranching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PCBranching.m; sourceTree = "<group>"; };
+		5B155A321CBD74AC0024AAC2 /* PCBranching.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PCBranching.h; sourceTree = "<group>"; };
 		5B19097A16DAAB45006D1D24 /* eq20.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = eq20.1; sourceTree = "<group>"; };
 		5B19097B16DAAB45006D1D24 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B19098216DAACA7006D1D24 /* eq20 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eq20; sourceTree = BUILT_PRODUCTS_DIR; };
