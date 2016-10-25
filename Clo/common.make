@@ -10,7 +10,7 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../objmp -Wl,-rpath=`pwd`/../objmp \
 	-L/opt/gurobi652/linux64/lib -Wl,-rpath=/opt/gurobi652/linux64/lib \
 	-lORUtilities -lORFoundation -lCPUKernel -lobjcp -lORModeling -lORProgram \
-	-lobjmp -lgurobi65 \
+	-lobjmp -lgurobi65 -ldispatch \
 	-fobjc-runtime=gnustep
 
 OBJEXT=o
