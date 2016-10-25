@@ -9,9 +9,9 @@
  
  ***********************************************************************/
 
-#import "CPBitVarFirstFail.h"
-#import "CPEngine.h"
-#import "CPBitVar.h"
+#import <ORProgram/CPBitVarFirstFail.h>
+#import <CPUKernel/CPEngine.h>
+#import <objcp/CPBitVar.h>
 
 @implementation CPBitVarFirstFail {
    id<CPEngine>    _engine;

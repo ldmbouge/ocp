@@ -25,6 +25,65 @@
 #import "MD5.h"
 #import "../SHA1/SHA1/SHA1b.h"
 
+void oneByteMD4(NSString* filename, BVSearchHeuristic heur)
+{
+   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+   NSMutableString* outputFilename = [[NSMutableString alloc] initWithString:@"ObjCP-MD4Data"];
+   switch (heur) {
+      case BVFF:  [outputFilename appendString:@"-FirstFail-2BYTE-"];
+         break;
+      case BVABS:  [outputFilename appendString:@"-ABS-2BYTE-"];
+         break;
+      case BVIBS:  [outputFilename appendString:@"-IBS-2BYTE-"];
+         break;
+      case BVLSB:  [outputFilename appendString:@"-LSB-2BYTE-"];
+         break;
+      case BVMSB:  [outputFilename appendString:@"-MSB-2BYTE-"];
+         break;
+      case BVMID:  [outputFilename appendString:@"-MID-OUT-2BYTE-"];
+         break;
+      case BVRAND:  [outputFilename appendString:@"-RAND-2BYTE-"];
+         break;
+      case BVMIX:  [outputFilename appendString:@"-MIXED-2BYTE-"];
+         break;
+      default:
+         break;
+   }
+   
+   [outputFilename appendString:filename];
+   int num = 0;
+   //      pool = [[NSAutoreleasePool alloc] init];
+   [ORStreamManager setRandomized];
+   
+   MD4 *myMD4;
+   
+   NSMutableString *str = [NSMutableString stringWithString:@"bit,choices,failures,propagations,search time (s),total time (s)\n"];
+   
+   uint32 *mask = malloc(16*sizeof(uint32));
+   uint32 onebytemask;
+   
+   for(int i=0;i<16;i++)
+      mask[i] = 0xFFFFFFFF;
+   for(int i=0;i<16;i++){
+      onebytemask = 0xFF000000;
+      for(int j=0;j<4;j++){
+         mask[i] = ~onebytemask;
+//         if ((j==7) && (i<15)) {
+//            mask[i+1] = 0x0FFFFFFF;
+//         }
+         //         pool = [[NSAutoreleasePool alloc] init];
+         myMD4 = [MD4 initMD4];
+         [str appendFormat:@"%d ",num++];
+         [str appendString:[myMD4 preimage:filename withMask:mask andHeuristic:heur]];
+         [myMD4 release];
+         //         [pool drain];
+         onebytemask >>= 8;
+      }
+      mask[i] = 0xFFFFFFFF;
+   }
+   [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+//   [pool drain];
+}
 
 void twoByteMD4(NSString* filename, BVSearchHeuristic heur)
 {
@@ -231,7 +290,7 @@ void zeroByteSHA1(NSString* filename, BVSearchHeuristic heur)
    
    [outputFilename appendString:filename];
    int num = 0;
-   //      pool = [[NSAutoreleasePool alloc] init];
+//         pool = [[NSAutoreleasePool alloc] init];
    [ORStreamManager setRandomized];
    
    SHA1b *mySHA1;
@@ -247,7 +306,7 @@ void zeroByteSHA1(NSString* filename, BVSearchHeuristic heur)
          [str appendFormat:@"%d ",num++];
          [str appendString:[mySHA1 preimage:filename withMask:mask andHeuristic:heur]];
          [mySHA1 dealloc];
-         [pool drain];
+//         [pool drain];
    [str writeToFile:outputFilename atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 //   [pool drain];
 }
@@ -409,7 +468,9 @@ int main(int argc, const char* argv[])
 //   twoByteSHA1(@"fifteen.txt", BVABS);
 //   twoByteSHA1(@"fifteen.txt", BVIBS);
 
-   twoByteMD4(@"lorem-mssg.txt", BVFF);
+//   twoByteMD4(@"lorem-mssg.txt", BVFF);
+   
+   oneByteMD4(@"lorem-mssg.txt", BVFF);
    
 //   twoByteSHA1(@"lorem-mssg.txt", BVFF);
 //   twoByteSHA1(@"lorem-mssg.txt", BVABS);

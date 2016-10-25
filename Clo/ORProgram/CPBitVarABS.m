@@ -14,8 +14,8 @@
 #import <ORFoundation/ORDataI.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <ORFoundation/ORTracer.h>
-#import "CPBitVar.h"
-#import "CPBitVarI.h"
+#import <objcp/CPBitVar.h>
+#import <objcp/CPBitVarI.h>
 
 @interface CPBitAssignmentObj : NSObject<NSCopying> {
    id<CPBitVar>    _x;
@@ -602,7 +602,7 @@
 -(ORUInt)chooseValue:(id<CPBitVar>)x
 // Chooses a bit position/not a value for the variable
 {
-   NSAssert([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
+   NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
    return [x randomFreeBit];
 }
 -(ORBool)moreProbes

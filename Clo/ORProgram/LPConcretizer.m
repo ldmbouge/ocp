@@ -13,7 +13,7 @@
 #import <objmp/LPSolverI.h>
 #import <ORProgram/LPProgram.h>
 #import "LPConcretizer.h"
-#import "ORVarI.H"
+#import "ORVarI.h"
 #import <objmp/objmp.h>
 
 

@@ -8,9 +8,9 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORModeling -Wl,-rpath=`pwd`/../ORModeling \
 	-L../ORProgram -Wl,-rpath=`pwd`/../ORProgram \
 	-L../objmp -Wl,-rpath=`pwd`/../objmp \
-	-L$(HOME)/ocp/gurobi550/linux64/lib -Wl,-rpath=$(HOME)/ocp/gurobi550/linux64/lib \
+	-L/opt/gurobi652/linux64/lib -Wl,-rpath=/opt/gurobi652/linux64/lib \
 	-lORUtilities -lORFoundation -lCPUKernel -lobjcp -lORModeling -lORProgram \
-	-lobjmp -lgurobi55 \
+	-lobjmp -lgurobi65 \
 	-fobjc-runtime=gnustep
 
 OBJEXT=o

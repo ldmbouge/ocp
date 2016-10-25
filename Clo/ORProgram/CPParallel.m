@@ -14,6 +14,10 @@
 #import <ORProgram/CPSolver.h>
 #import <objcp/CPObjectQueue.h>
 
+#if defined(__linux__)
+#include <pthread.h>
+#endif
+
 @implementation CPParallelAdapter {
    id<CPSemanticProgram>  _solver;
    PCObjectQueue*           _pool;
@@ -47,6 +51,16 @@
    return [_controller succeeds];
 }
 
+#if defined(__linux__)
+static pthread_spinlock_t lock;
+__attribute__((constructor))
+void lock_constructor() {
+  if (pthread_spin_init(&lock,0) != 0) {
+    exit(1);
+  }
+}
+#endif
+
 -(void) publishWork
 {
    _publishing = YES;
@@ -56,7 +70,8 @@
    id<ORCheckpoint> theCP = [tracer captureCheckpoint];
    //NSLog(@"MT(0):%d : %@",[NSThread threadID],[theCP getMT]);
    ORHeist* stolen = [_controller steal];
-   //NSLog(@"     Publishing(%d) : %@ - %p  -- current objective: %@ stole:%d",[NSThread threadID],stolen.oValue,stolen.theCP,[_solver objective],[stolen sizeEstimate]);
+   //NSLog(@"     Publishing(%d) : %@ - %p  -- current objective: %@ stole:%d",[NSThread threadID],
+   //stolen.oValue,stolen.theCP,[_solver objective],[stolen sizeEstimate]);
    
    id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
    ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine] model:pItf];
@@ -91,11 +106,19 @@
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    [pItf release];
    ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
+#if defined(__APPLE__)
    static OSSpinLock lock = OS_SPINLOCK_INIT;
    OSSpinLockLock(&lock);
+#else   
+   pthread_spin_lock(&lock);
+#endif
    static ORLong ttl = 0;
    ttl += cpu1.tv_sec*1000 + cpu1.tv_usec/1000;
+#if defined(__APPLE__)
    OSSpinLockUnlock(&lock);
+#else
+   pthread_spin_unlock(&lock);
+#endif   
    NSLog(@"publishing took: %lld",ttl);
    _publishing = NO;
    if (ok == ORFailure)
