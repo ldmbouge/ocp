@@ -9,7 +9,6 @@ ab = ['ais',
 'bacp',
 'bibd',
 'circle',
-'coloringModel',
 'costas',
 'costas2',
 'debruijn',
@@ -57,7 +56,9 @@ ab = ['ais',
 'testLPConcretization',
 'testPacking',
 'warehouse',
-'wka']
+      'wka',
+'coloringModel'
+]
 
 nba = len(sys.argv)
 aa  = str(sys.argv)

@@ -92,37 +92,58 @@
 }
 -(id) value: (id) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   if (idx < [_varShots count])
-      return [_varShots objectAtIndex:idx];
-   else
-      return nil;
+  for(id<ORObject> obj in _varShots) {
+    if ([obj getId] == [var getId])
+      return obj;
+  }
+  return nil;
+  
+   // NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+   //    return [obj getId] == [var getId];
+   // }];
+   // if (idx < [_varShots count])
+   //    return [_varShots objectAtIndex:idx];
+   // else
+   //    return nil;
 }
 -(ORInt) intValue: (id) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   id snap = [_varShots objectAtIndex:idx];
-   return [snap intValue];
+  for(id obj in _varShots) {
+    if ([obj getId] == [var getId])
+      return [obj intValue];
+  }
+  return 0;
+   // NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+   //    return [obj getId] == [var getId];
+   // }];
+   // id snap = [_varShots objectAtIndex:idx];
+   // return [snap intValue];
 }
 -(ORBool) boolValue: (id) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   id snap = [_varShots objectAtIndex:idx];
-   return [snap intValue];
+  for(id obj in _varShots) {
+    if ([obj getId] == [var getId])
+      return [obj intValue];
+  }
+  return NO;
+   // NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+   //    return [obj getId] == [var getId];
+   // }];
+   // id snap = [_varShots objectAtIndex:idx];
+   // return [snap intValue];
 }
 -(ORDouble) doubleValue: (id<ORRealVar>) var
 {
-   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [obj getId] == [var getId];
-   }];
-   id<ORQueryRealVar> snap = [_varShots objectAtIndex:idx];
-   return [snap doubleValue];
+  for(id<ORObject> obj in _varShots) {
+    if ([obj getId] == [var getId])
+      return [(id<ORQueryRealVar>)obj doubleValue];
+  }
+  return 0.0;
+   // NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+   //    return [obj getId] == [var getId];
+   // }];
+   // id<ORQueryRealVar> snap = [_varShots objectAtIndex:idx];
+   // return [snap doubleValue];
 }
 -(NSUInteger) count
 {
@@ -288,9 +309,8 @@
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block
 {
-   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
-      block(obj);
-   }];
+  for(id obj in _all)
+    block(obj);
 }
 
 -(id<ORInformer>)solutionAdded
