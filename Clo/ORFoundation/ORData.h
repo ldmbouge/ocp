@@ -99,13 +99,6 @@ typedef struct timeval ORTimeval;
 -(ORDouble) setValue: (ORDouble) value in: (id<ORGamma>) solver;
 @end
 
-@protocol ORTrailableInt <ORObject>
--(ORInt) value;
--(ORInt) setValue: (ORInt) value;
--(ORInt)  incr;  // post-incr returned
--(ORInt)  decr;  // post-decr returned
-@end
-
 @interface ORRuntimeMonitor : NSObject
 +(ORLong) cputime;
 +(ORLong) microseconds;

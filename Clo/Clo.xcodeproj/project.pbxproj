@@ -791,6 +791,7 @@
 		5B57E5E5161F295000DB249A /* ORVisit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E4161F294F00DB249A /* ORVisit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B5AAA8017905AAC0076C729 /* CPRealConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B5AAA7E17905AAC0076C729 /* CPRealConstraint.h */; };
 		5B5AAA8117905AAC0076C729 /* CPRealConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5AAA7F17905AAC0076C729 /* CPRealConstraint.m */; };
+		5B5BDB651DC11EE2005FB4B7 /* ORTrailable.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B5BDB641DC11EE2005FB4B7 /* ORTrailable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B5E67D81BB34383005801A2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5E67D71BB34383005801A2 /* main.m */; };
 		5B5E67DD1BB34459005801A2 /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537EEA4D18FCE1FE0006FFD2 /* CPScheduler.framework */; };
 		5B5E67DE1BB34459005801A2 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -21536,6 +21537,7 @@
 		5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCPParSolver.m; sourceTree = "<group>"; };
 		5B5AAA7E17905AAC0076C729 /* CPRealConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPRealConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B5AAA7F17905AAC0076C729 /* CPRealConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPRealConstraint.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B5BDB641DC11EE2005FB4B7 /* ORTrailable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORTrailable.h; sourceTree = "<group>"; };
 		5B5E67D51BB34383005801A2 /* testBug */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testBug; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B5E67D71BB34383005801A2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B60C6831BFCCAA700A685C6 /* ORSchedLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSchedLinearize.h; sourceTree = "<group>"; };
@@ -39189,6 +39191,7 @@
 				B139DE9F15CCE3F8007D523E /* ORController.h */,
 				B139DEA015CCE3F8007D523E /* ORController.m */,
 				5B920EB515A3F91A00AD0820 /* ORData.h */,
+				5B5BDB641DC11EE2005FB4B7 /* ORTrailable.h */,
 				5B920EB915A3FDB800AD0820 /* ORDataI.h */,
 				5B920EBA15A3FDB800AD0820 /* ORDataI.m */,
 				5B60E5F115AE9661002FF2B3 /* ORData.m */,
@@ -40165,6 +40168,7 @@
 				B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */,
 				B15B2F6815C4A86F0027A7E6 /* ORControl.h in Headers */,
 				B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */,
+				5B5BDB651DC11EE2005FB4B7 /* ORTrailable.h in Headers */,
 				B139DEA115CCE3F8007D523E /* ORController.h in Headers */,
 				B11D862715CD8E310019729B /* ORLimit.h in Headers */,
 				B1C0E7CF15CD853700DA4F82 /* ORExplorer.h in Headers */,

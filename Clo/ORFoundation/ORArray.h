@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORData.h>
+#import <ORFoundation/ORTrailable.h>
 
 @protocol ORExpr;
 @protocol ORIntSet;
