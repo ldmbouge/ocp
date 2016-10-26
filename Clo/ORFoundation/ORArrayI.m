@@ -13,6 +13,7 @@
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORVar.h>
 #import "ORArrayI.h"
 
 /**********************************************************************************************/

@@ -16,7 +16,6 @@
 @protocol ORRelation;
 @protocol ORExpr;
 @protocol ORIntArray;
-@protocol ORIntVarArray;
 
 #if defined(__APPLE__)
 typedef NS_ENUM(NSUInteger,ORRelationType) {

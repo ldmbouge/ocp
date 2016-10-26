@@ -33,6 +33,10 @@
 #import <values.h>
 #endif
 
+#if __clang_major__<=3 && __clang_minor__<=6
+#define _Nonnull
+#endif
+
 // [pvh: this is from a long time ago]
 //
 // 1. Look at IncModel to implement the incremental addition of constraints

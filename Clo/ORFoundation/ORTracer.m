@@ -9,7 +9,9 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTracer.h>
+#import <ORFoundation/ORCommand.h>
+#import <ORFoundation/ORTrailI.h>
 #include <pthread.h>
 
 

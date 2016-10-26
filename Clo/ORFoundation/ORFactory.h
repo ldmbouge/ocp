@@ -24,7 +24,10 @@
 @protocol ORTRIntArray;
 @protocol ORTRIntMatrix;
 @protocol ORAutomaton;
-
+@protocol ORRealVarArray;
+@protocol ORIntVarArray;
+@protocol ORBitVarArray;
+@protocol ORVarLitterals;
 
 PORTABLE_BEGIN
 @protocol OROrderedSweep <NSObject>

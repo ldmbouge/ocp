@@ -17,6 +17,7 @@
 @protocol ORProblem;
 @protocol ORCheckpoint;
 @protocol ORTrail;
+@protocol ORPost;
 @class ORCommandList;
 @class ORTrailI;
 @class ORMemoryTrailI;

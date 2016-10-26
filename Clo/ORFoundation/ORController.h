@@ -13,6 +13,7 @@
 #import <ORFoundation/ORTracer.h>
 
 @protocol ORTracer;
+@protocol ORObjectiveValue;
 @class ORHeist;
 
 @protocol ORStealing

@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-OC = clang
+OC = clang-3.6
 CFL=-g -O0
 ifeq ($(findstring -g,$(CFL)),-g)
 GSC=`gnustep-config --debug-flags`

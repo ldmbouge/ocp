@@ -17,7 +17,6 @@ typedef struct timeval ORTimeval;
 
 @protocol ORExpr;
 @protocol ORIntRange;
-@protocol ORASolver;
 @protocol ORIntSet;
 @class ORVisitor;
 

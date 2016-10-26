@@ -13,7 +13,9 @@
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORConstraint.h>
+//#import <ORFoundation/ORConstraint.h>
+
+@protocol ORASolver;
 
 PORTABLE_BEGIN
 

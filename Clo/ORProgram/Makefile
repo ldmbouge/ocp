@@ -1,6 +1,6 @@
 include ../setup.make
 
-CFLAGS += -I../ORFoundation -I../ORUtilities -I../CPUKernel -lpthread
+CFLAGS += -I../ORFoundation -I../ORUtilities -I../CPUKernel 
 
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \

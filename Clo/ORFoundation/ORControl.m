@@ -12,6 +12,8 @@
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORFactory.h>
 #import <ORFoundation/ORControl.h>
+#import <ORFoundation/ORVar.h>
+
 #import <math.h>
 #if defined(__linux__)
 #import <values.h>
