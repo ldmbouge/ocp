@@ -34,22 +34,8 @@
 -(ORBool) isFree:(ORUInt)pos;
 -(ORStatus) remove:(ORUInt)val;
 //-(id<CPBitVar>) dereference;
-
-//-(ORInt) getId;
-//-(ORBool) bound;
 -(ORBool) member: (unsigned int*) v;
 -(id<CPBitVar>) dereference;
-//=======
-//@protocol CPBitVar <NSObject>
-//-(ORInt) getId;
-//-(ORBool) bound;
-//-(CPBitArrayDom*) domain;
-//-(uint64)min;
-//-(uint64)max;
-//-(ORInt)  domsize;
-//-(ORBool) member: (unsigned int*) v;
-////-(id<CPBitVar>) dereference;
-//>>>>>>> modeling
 -(id<CPEngine>) engine;
 @end
 
@@ -69,7 +55,7 @@
 
 @protocol CPBitVarNotifier <NSObject>
 @optional -(void) addVar:(CPBitVarI*)var;
--(ORInt)getId;
+-(ORUInt)getId;
 -(enum CPVarClass)varClass;
 -(NSMutableSet*)constraints;
 -(ORBool) tracksLoseEvt:(CPBitArrayDom*)sender;

@@ -378,21 +378,21 @@
 }
 -(void) doOnStartup
 {
-   [_doOnStartupArray enumerateObjectsUsingBlock:^(ORClosure  _Nonnull block, NSUInteger idx, BOOL * _Nonnull stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnStartupArray) {
+    block();
+  }
 }
 -(void) doOnSolution
 {
-   [_doOnSolArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnSolArray) {
+    block();
+  }
 }
 -(void) doOnExit
 {
-   [_doOnExitArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnExitArray) {
+    block();
+  }
 }
 -(void) solve: (ORClosure) search
 {

@@ -844,7 +844,7 @@ return self;
    _nb = 0;
    return self;
 }
--(ORInt)getId
+-(ORUInt)getId
 {
    assert(FALSE);
    return 0;

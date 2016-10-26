@@ -21,8 +21,8 @@ PORTABLE_BEGIN
 @protocol ORIntArray <ORObject>
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
--(id)objectAtIndexedSubscript: (NSInteger) key;
--(void)setObject: (id) newValue atIndexedSubscript: (NSInteger) idx;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(ORInt) low;
 -(ORInt) up;
 -(ORInt) max;
@@ -80,8 +80,8 @@ PORTABLE_BEGIN
 @protocol ORIdArray <ORObject,NSFastEnumeration>
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
--(id)objectAtIndexedSubscript:(ORInt)key;
--(void)setObject:(id)newValue atIndexedSubscript:(ORInt)idx;
+-(id)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(id<ORIntRange>) range;
