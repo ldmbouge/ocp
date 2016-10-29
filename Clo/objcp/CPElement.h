@@ -72,3 +72,39 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+@interface CPElementBitVarBC : CPCoreConstraint { // y == z[x]
+@private
+   CPBitVarI*        _x;
+   CPBitVarI*        _y;
+   id<ORIdArray> _z;
+}
+-(id) initCPElementBC: (id) x indexVarArray:(id<ORIdArray>) c equal:(id)y;
+-(void) dealloc;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPElementBitVarAC : CPCoreConstraint {
+   CPBitVarI*        _x;
+   CPBitVarI*        _y;
+   id<ORIdArray> _z;
+   CPBitVarI*  _xold;
+   CPBitArrayDom* _xold2;
+   id<ORTrailableInt>   _la;  // lowest index in array (_z)
+   id<ORTrailableInt>   _ua; // upper index of _z
+   id<ORTrailableIntArray> _I; // _I[i] tells us if _y = _z[i] is a possible assignment
+   id<ORTrailableIntArray> _svx0; // _svx0[i] tells us the number of zeros in the permutations of _x in column i
+   id<ORTrailableIntArray> _svx1;
+   id<ORTrailableIntArray> _svy0; // support for 0's in array (_z)
+   id<ORTrailableIntArray> _svy1;
+   id<ORTrailableInt> _cI; // cardinality of _I
+   
+}
+-(id)initCPElementAC: (id) x indexVarArray:(id<ORIdArray>)y equal:(id)z;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
