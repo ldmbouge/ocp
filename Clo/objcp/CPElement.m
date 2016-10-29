@@ -12,7 +12,7 @@
 #import "CPElement.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "CPIntVarI.h"
+#import "CPBitVarI.h"
 
 typedef struct CPEltRecordTag {
    ORInt _idx;
@@ -565,6 +565,419 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"CPElementVarAC: <%02d %@ [ %@ ] == %@ >",_name,_array,_x,_z];
+   return buf;
+}
+@end
+
+
+
+@implementation CPElementBitVarBC
+-(id) initCPElementBC: (CPBitVarI*) x indexVarArray:(id<ORIdArray>)z equal:(CPBitVarI*)y   // y == z[x]
+{
+   self = [super initCPCoreConstraint: (id<ORSearchEngine>)[x engine]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORStatus) post
+{
+   NSLog(@"BC constraint posted.\n");
+   return ORSuspend;
+}
+-(void) propagate
+{
+   
+}
+-(NSSet*)allVars
+{
+   ORULong sz = [_z count] + 2;
+   id<ORIdArray>* t = alloca(sizeof(id<ORBitVar>)*sz);
+   ORInt i = 0;
+   for(ORInt k=[_z low];k<=[_z up];k++)
+      t[i++] = [_z at: k];
+   t[i++] = (id)_x;
+   t[i++] = (id)_y;
+   return [[[NSSet alloc] initWithObjects:t count:sz] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   ORInt nbuv = 0;
+   for(ORInt k=[_z low];k<=[_z up];k++)
+      nbuv += !([(CPBitVarI*)[_z at: k] bound]);
+   nbuv += [_x bound] + [_y bound];
+   return nbuv;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"CPElementVarBC: <%02d %@ [ %@ ] == %@ >",_name,_z,_x,_y];
+   return buf;
+}
+@end
+
+@implementation CPElementBitVarAC
+-(id) initCPElementAC: (CPBitVarI*) x indexVarArray:(id<ORIdArray>)z equal:(CPBitVarI*)y   // y == z[x]
+{
+   self = [super initCPCoreConstraint: (id<ORSearchEngine>)[x engine]];
+   _x = x;
+   _y = y;
+   _z = z;
+   _xold = NULL;
+   _cI = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
+   _la = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
+   _ua = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
+   _I = NULL;
+   _svx0 = NULL;
+   _svx1 = NULL;
+   _svy0 = NULL;
+   _svy1 = NULL;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORStatus) post
+{
+   unsigned int xwl = [_x getWordLength];
+   assert(xwl==1);
+   
+   //    ORBounds xb = [_x bounds];
+   CPBitArrayDom* xdom = [_x domain];
+   CPBitArrayDom* ydom = [_y domain];
+   
+   //    ORUInt la = max([_z low],xb.min);
+   ORUInt la = max([_z low],[xdom lowArray][0]);
+   ORUInt ua = min([_z up],[xdom upArray][0]);
+   //    ORUInt ua = min([_z up],xb.max);
+   
+   unsigned int *temp;
+   unsigned long long rank;
+   if (![_x member:&la]) {
+      temp = [xdom pred:&la];
+      rank = [xdom getRank:&temp[1]];
+      temp = [xdom atRank:rank+1];
+      //        la = temp[0]+xb.min;
+      la = temp[0]+[xdom lowArray][0];
+   }
+   if (![_x member:&ua]) {
+      temp = [xdom pred:&ua];
+      ua = temp[1];
+   }
+   if (la>ua || la>[_z up])
+      failNow();
+   
+   [_la setValue:la];
+   [_ua setValue:ua];
+   _I = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine],[_la value],[_ua value]) value:0];
+   _svx0 = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine], 0, xwl*WORD_BIT-1) value:0];
+   _svx1 = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine], 0, xwl*WORD_BIT-1) value:0];
+   _svy0 = [ORFactory trailableIntArray:[_y engine] range:RANGE([_y engine], 0, [_y getWordLength]*WORD_BIT-1) value:0];
+   _svy1 = [ORFactory trailableIntArray:[_y engine] range:RANGE([_y engine], 0, [_y getWordLength]*WORD_BIT-1) value:0];
+   
+   CPBitVarI* elmt;
+   unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
+   
+   for(ORUInt k=[_la value];k<=[_ua value];k++) {
+      if ([_x member:&k]) {
+         // check if z[k]=y is valid assignment
+         elmt = (CPBitVarI*)[_z at:k];
+         elmtfixed = ~([[elmt domain] lowArray][0]^[[elmt domain] upArray][0]);
+         yfixed = ~([[_y domain] lowArray][0]^[[_y domain] upArray][0]);
+         bothfixed = yfixed&elmtfixed;
+         yeldif = [[_y domain] lowArray][0]^[[elmt domain] lowArray][0];
+         notcomp = bothfixed&yeldif;
+         if (notcomp)
+            continue;
+         for (int b=[_svx0 low]; b<=[_svx0 up]; b++) {
+            if ([xdom isFree:b]) {
+               bool isOne = (k) & (1<<(b));
+               [_svx0[b] setValue:[_svx0[b] value]+!isOne];
+               [_svx1[b] setValue:[_svx1[b] value]+isOne];
+            }
+         }
+         for (int b=[_svy0 low]; b<=[_svy0 up]; b++) {
+            if ([ydom isFree:b]) {
+               if (![[elmt domain] isFree:b]) {
+                  bool isOne = [[elmt domain] getBit:b];
+                  [_svy0[b] setValue:[_svy0[b] value]+!isOne];
+                  [_svy1[b] setValue:[_svy1[b] value]+isOne];
+               }
+               else {
+                  [_svy0[b] incr];
+                  [_svy1[b] incr];
+                  //                        [_svy0[b] setValue:[_svy0[b] value]+1];
+                  //                        [_svy1[b] setValue:[_svy1[b] value]+1];
+               }
+            }
+         }
+         [_I[k] setValue:1];
+         [_cI incr];
+         //            [_cI setValue:[_cI value]+1];
+      }
+   }
+   
+   if ([_cI value]==1) {
+      for(ORInt k=[_la value];k<=[_ua value];k++) {
+         if ([_I[k] value]) {
+            [self doACEqual:k];
+            break;
+         }
+      }
+   }
+   else if (![_cI value])
+      failNow();
+   
+   for (int b=[_svx0 low];b<=[_svx0 up];b++) {
+      if ([xdom isFree:b]) {
+         if (![_svx0[b] value]) { // support for 0 for free bit b is 0
+            [xdom setBit:b to:TRUE for:_x];
+         }
+         else if (![_svx1[b] value]) { // support for 1 for free bit b is 0
+            [xdom setBit:b to:FALSE for:_x];
+         }
+      }
+   }
+   for (int b=[_svy0 low];b<=[_svy0 up];b++) {
+      if ([ydom isFree:b]) {
+         if (![_svy0[b] value]) {
+            [ydom setBit:b to:TRUE for:_y];
+         }
+         else if (![_svy1[b] value]) {
+            [ydom setBit:b to:FALSE for:_y];
+         }
+         //            if ([_svy0[b] value] == [_cI value]) {
+         //                [ydom setBit:b to:FALSE for:_y];
+         //            }
+         //            else if ([_svy1[b] value] == [_cI value]) {
+         //                [ydom setBit:b to:TRUE for:_y];
+         //            }
+      }
+   }
+   
+   la = max([_la value], [[_x domain] lowArray][0]);
+   [_la setValue:la];
+   ua = min([_ua value], [[_x domain] upArray][0]);
+   [_ua setValue:ua];
+   
+   ORUInt* newxlow = malloc(sizeof(ORUInt));
+   ORUInt* newxup = malloc(sizeof(ORUInt));
+   newxlow[0] = [_x getLow][0]._val;
+   newxup[0] = [_x getUp][0]._val;
+   _xold = (CPBitVarI*)[CPFactory bitVar:[_x engine] withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
+   
+   //    _xold2 = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:la up:ua];
+   _xold2 = [[CPBitArrayDom alloc] initWithBitPat:WORD_BIT withLow:[[_x domain] lowArray] andUp:[[_x domain] upArray] andTrail:[[_x engine] trail]];
+   
+   if (![_x bound]) {
+      [_x whenChangePropagate:self];
+   }
+   if (![_y bound]) {
+      [_y whenChangePropagate:self];
+   }
+   for(ORInt k=[_la value];k<=[_ua value];k++) {
+      if (_I[k] && ![_z[k] bound])
+         [_z[k] whenChangePropagate:self];
+   }
+   
+   return ORSuspend;
+}
+-(void) propagate
+{
+   
+   if ([_cI value]==1) {
+      for(ORInt k=[_la value];k<=[_ua value];k++) {
+         if ([_I[k] value]) {
+            [self doACEqual:k];
+            break;
+         }
+      }
+      return;
+   }
+   else if ([_cI value]<=0)
+      failNow();
+   CPBitVarI* elmt = NULL;
+   unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
+   bool inXDom;
+   // plenty of room for optimization here
+   for(ORUInt k=[_la value];k<=[_ua value];k++) {
+      if ([_I[k] value]) {
+         elmt = (CPBitVarI*)[_z at:k];
+         elmtfixed = ~([[elmt domain] lowArray][0]^[[elmt domain] upArray][0]);
+         yfixed = ~([[_y domain] lowArray][0]^[[_y domain] upArray][0]);
+         bothfixed = yfixed&elmtfixed;
+         yeldif = [[_y domain] lowArray][0]^[[elmt domain] lowArray][0];
+         notcomp = bothfixed&yeldif;
+         //            inXDom = [_x member:temp];
+         inXDom = [_x member:&k];
+         if (!inXDom||notcomp) {
+            [_I[k] setValue:0];
+            [_cI setValue:[_cI value]-1];
+            if ([_cI value]==1) {
+               for(ORInt k=[_la value];k<=[_ua value];k++) {
+                  if ([_I[k] value]) {
+                     [self doACEqual:k];
+                     break;
+                  }
+               }
+               return;
+            }
+            for (int b=[_svy0 low];b<=[_svy0 up];b++) {
+               if (![[elmt domain] isFree:b]) {
+                  bool bit = [[elmt domain] getBit:b];
+                  if (bit) {
+                     if ([_svy1[b] value])
+                        [_svy1[b] setValue:[_svy1[b] value]-1];
+                  }
+                  else  {
+                     if ([_svy0[b] value])
+                        [_svy0[b] setValue:[_svy0[b] value]-1];
+                  }
+               }
+               else {
+                  if ([_svy1[b] value])
+                     [_svy1[b] setValue:[_svy1[b] value]-1];
+                  if ([_svy0[b] value])
+                     [_svy0[b] setValue:[_svy0[b] value]-1];
+               }
+            }
+            // update svx0, svx1
+            for (int b=[_svx0 low];b<=[_svx0 up];b++) {
+               //                    if ([[_xold domain] isFree:b]) { // do we really need xold here?
+               //                        bool isOne = (k)&(1<<(b));
+               //                        if ([_svx0[b] value])
+               //                            [_svx0[b] setValue:[_svx0[b] value]-!isOne];
+               //                        if ([_svx1[b] value])
+               //                            [_svx1[b] setValue:[_svx1[b] value]-isOne];
+               //                    }
+               if ([_xold2 isFree:b]) { // do we really need xold here?
+                  bool isOne = (k)&(1<<(b));
+                  if ([_svx0[b] value])
+                     [_svx0[b] setValue:[_svx0[b] value]-!isOne];
+                  if ([_svx1[b] value])
+                     [_svx1[b] setValue:[_svx1[b] value]-isOne];
+               }
+            }
+            
+         }
+      }
+   }
+   
+   for (int b=[_svx0 low];b<=[_svx0 up];b++) {
+      if ([[_x domain] isFree:b]) {
+         if (![_svx0[b] value]) { // support for 0 for free bit b is 0
+            [[_x domain] setBit:b to:TRUE for:_x];
+         }
+         else if (![_svx1[b] value]) { // support for 1 for free bit b is 0
+            [[_x domain] setBit:b to:FALSE for:_x];
+         }
+      }
+   }
+   for (int b=[_svy0 low];b<=[_svy0 up];b++) {
+      if ([[_y domain] isFree:b]) {
+         if (![_svy0[b] value]) {
+            [[_y domain] setBit:b to:TRUE for:_y];
+         }
+         else if (![_svy1[b] value]) {
+            [[_y domain] setBit:b to:FALSE for:_y];
+         }
+         //            if ([_svy0[b] value] == [_cI value]) {
+         //                [[_y domain] setBit:b to:FALSE for:_y];
+         //            }
+         //            else if ([_svy1[b] value] == [_cI value]) {
+         //                [[_y domain] setBit:b to:TRUE for:_y];
+         //            }
+      }
+   }
+   
+   // update bounds
+   ORInt la = max([_la value], [[_x domain] lowArray][0]);
+   [_la setValue:la];
+   ORInt ua = min([_ua value], [[_x domain] upArray][0]);
+   [_ua setValue:ua];
+   [_xold setUp:[[_x domain] upArray] andLow:[[_x domain] lowArray]];
+   
+   //    ORUInt* newxlow = malloc(sizeof(ORUInt));
+   //    ORUInt* newxup = malloc(sizeof(ORUInt));
+   //    newxlow[0] = [_x getLow][0]._val;
+   //    newxup[0] = [_x getUp][0]._val;
+   //    [_xold2 setUp:newxup andLow:newxlow for:nil];
+   
+   [_xold2 setUp:[[_x domain] upArray] andLow:[[_x domain] lowArray] for:NULL];
+   
+}
+
+-(void)doACEqual:(ORUInt)k
+{
+   CPBitVarI* elmt = _z[k];
+   unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
+   elmtfixed = ~([[elmt domain] lowArray][0]^[[elmt domain] upArray][0]);
+   yfixed = ~([[_y domain] lowArray][0]^[[_y domain] upArray][0]);
+   bothfixed = yfixed&elmtfixed;
+   yeldif = [[_y domain] lowArray][0]^[[elmt domain] lowArray][0];
+   notcomp = bothfixed&yeldif;
+   if (notcomp)
+      failNow();
+   unsigned int* finalidx = alloca(sizeof(unsigned int));
+   finalidx[0] = k;
+   [_x setUp:finalidx andLow:finalidx]; // bind still doesn't work
+   //    [_x bind:finalidx];
+   [_la setValue:k]; [_ua setValue:k];
+   if ([_y bound]) {
+      //        [elmt bind:[[_y domain] lowArray]];
+      [elmt setUp:[[_y domain] upArray] andLow:[[_y domain] lowArray]];
+   }
+   else if ([elmt bound]) {
+      //        [_y bind:[[elmt domain] lowArray]];
+      [_y setUp:[[elmt domain] upArray] andLow:[[elmt domain] lowArray]];
+   }
+   else {
+      // this doesn't really work!
+      //        [elmt setUp:[[_y domain] upArray] andLow:[[_y domain] lowArray]];
+      //        [_y setUp:[[elmt domain] upArray] andLow:[[elmt domain] lowArray]];
+      //        for (unsigned int b=0;b<=WORD_BIT-1;b++) {
+      //            if ([[_y domain] isFree:b]&&![[elmt domain] isFree:b])
+      //                [[_y domain] setBit:b to:[[elmt domain] getBit:b] for:_y];
+      //            else if ([[elmt domain] isFree:b]&&![[_y domain] isFree:b])
+      //                [[elmt domain] setBit:b to:[[_y domain] getBit:b] for:elmt];
+      //        }
+      unsigned int* up = alloca(sizeof(unsigned int));
+      unsigned int* low = alloca(sizeof(unsigned int));
+      up[0] = [[_y domain] upArray][0]&[[elmt domain] upArray][0];
+      low[0] = [[_y domain] lowArray][0]|[[elmt domain] lowArray][0];
+      [_y setUp:up andLow:low];
+      [elmt setUp:up andLow:low];
+   }
+}
+
+-(NSSet*)allVars
+{
+   ORULong sz = [_z count] + 2;
+   id<ORIdArray>* t = alloca(sizeof(id<ORBitVar>)*sz);
+   ORInt i = 0;
+   for(ORInt k=[_z low];k<=[_z up];k++)
+      t[i++] = [_z at: k];
+   t[i++] = (id)_x;
+   t[i++] = (id)_y;
+   return [[[NSSet alloc] initWithObjects:t count:sz] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   ORInt nbuv = 0;
+   for(ORInt k=[_z low];k<=[_z up];k++)
+      nbuv += !([(CPBitVarI*)[_z at: k] bound]);
+   nbuv += [_x bound] + [_y bound];
+   return nbuv;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"CPElementVarBC: <%02d %@ [ %@ ] == %@ >",_name,_z,_x,_y];
    return buf;
 }
 @end
