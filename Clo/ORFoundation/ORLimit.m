@@ -90,7 +90,7 @@
 }
 -(void) dealloc
 {
-   //NSLog(@"ORLimitFailures dealloc called...\n");
+   NSLog(@"ORLimitFailures dealloc called...\n");
    [super dealloc];
 }
 -(ORInt) addChoice: (NSCont*) k
