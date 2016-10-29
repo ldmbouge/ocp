@@ -261,10 +261,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 -(void) limitFailures: (ORInt) nb in: (ORClosure) cl
 {
    ORLimitFailures* limit = [[ORLimitFailures alloc] initORLimitFailures: nb];
+   //[_engine trackObject:limit];  // [ldm. that causes a leak. Seems like there is a strong reference from each checkpoint as well as from the controller in the explorer.]
    [self push: limit];
-   [limit release];
    cl();
    [limit succeeds];
+   [limit release];
    [self popController];
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
