@@ -251,7 +251,7 @@ static __thread ComListPool* pool = NULL;
       from = from->_next;
       ++batch;
    }
-   state->state = from == nil ? 0xffffffff : (unsigned long)from;
+   state->state = from == NULL ? 0xffffffff : (unsigned long)from;
    state->itemsPtr = stackbuf;
    state->mutationsPtr = (unsigned long*)self;
    return batch;

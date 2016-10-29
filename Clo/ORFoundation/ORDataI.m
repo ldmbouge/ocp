@@ -12,12 +12,14 @@
 #import <ORFoundation/ORDataI.h>
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORSetI.h>
+#import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORFactory.h>
+
 #import <sys/time.h>
 #import <sys/types.h>
 #import <sys/resource.h>
 #import <unistd.h>
 #import <ORUtilities/ORConcurrency.h>
-#import <ORFoundation/ORFactory.h>
 
 @implementation NSObject (Concretization)
 -(void) setImpl: (id) impl

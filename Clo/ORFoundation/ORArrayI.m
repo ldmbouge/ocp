@@ -13,6 +13,7 @@
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORVar.h>
 #import "ORArrayI.h"
 
 /**********************************************************************************************/
@@ -124,13 +125,13 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    _array[idx] = value;
 }
--(id)objectAtIndexedSubscript: (NSInteger) key
+-(id)objectAtIndexedSubscript: (NSUInteger) key
 {
    if (key < _low || key > _up)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    return [NSNumber numberWithInt:_array[key]];
 }
--(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSInteger) idx
+-(void)setObject: (NSNumber*) newValue atIndexedSubscript: (NSUInteger) idx
 {
    if (idx < _low || idx > _up)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];

@@ -10,25 +10,25 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORArray.h>
-#import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORArray.h>
+//#import <ORFoundation/ORVar.h>
 
-@protocol ORIntVarArray;
-@protocol ORVarArray;
-@protocol ORExprArray;
-@protocol ORIntVarMatrix;
 @protocol ORExpr;
-@protocol ORVar;
-@protocol ORIntVar;
-@protocol ORBitVar;
-@protocol ORRealVar;
 @protocol OREngine;
 @protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
-@protocol ORSolution;
-@protocol ORSolutionPool;
 @protocol ORParameter;
+
+@protocol ORVar;
+@protocol ORIntVar;
+@protocol ORRealVar;
+@protocol ORBitVar;
+
+@protocol ORVarArray;
+@protocol ORExprArray;
+@protocol ORIntVarArray;
+@protocol ORIntVarMatrix;
 
 @protocol ORBasicModel
 -(id<ORObjectiveFunction>) objective;

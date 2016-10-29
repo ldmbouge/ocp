@@ -1,6 +1,6 @@
 include ../setup.make
 
-CFLAGS += -I../ORFoundation -I../ORUtilities 
+CFLAGS += -I../ORFoundation -I../ORUtilities -I..
 
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
@@ -11,6 +11,7 @@ SRCS = ORDecompose.m  ORFlatten.m  ORIntLinear.m  \
 	ORRealLinear.m ORRealDecompose.m  \
 	ORLPFlatten.m ORLSFlatten.m   ORMIPFlatten.m  \
 	ORLinearize.m  ORMIPLinearize.m  \
+	ORSoftify.m \
 	ORModelI.m  ORModelTransformation.m ORModeling.m  
 
 

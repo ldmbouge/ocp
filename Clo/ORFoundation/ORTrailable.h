@@ -10,14 +10,11 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/CPSolver.h>
-#import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORObject.h>
 
-
-@interface ORMIPConcretizer  : ORVisitor<NSObject>
--(ORMIPConcretizer*) initORMIPConcretizer: (id<MIPProgram>) solver;
--(void) dealloc;
+@protocol ORTrailableInt <ORObject>
+-(ORInt) value;
+-(ORInt) setValue: (ORInt) value;
+-(ORInt)  incr;  // post-incr returned
+-(ORInt)  decr;  // post-decr returned
 @end
-
-

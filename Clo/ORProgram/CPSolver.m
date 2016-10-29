@@ -10,11 +10,14 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORConcurrency.h>
+#import <ORFoundation/ORFoundation.h>
+/*
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORBackjumpingDFSController.h>
+*/
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORFlatten.h>
 #import <ORProgram/ORProgram.h>
@@ -28,6 +31,10 @@
 
 #if defined(__linux__)
 #import <values.h>
+#endif
+
+#if __clang_major__<=3 && __clang_minor__<=6
+#define _Nonnull
 #endif
 
 // [pvh: this is from a long time ago]
@@ -371,21 +378,21 @@
 }
 -(void) doOnStartup
 {
-   [_doOnStartupArray enumerateObjectsUsingBlock:^(ORClosure  _Nonnull block, NSUInteger idx, BOOL * _Nonnull stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnStartupArray) {
+    block();
+  }
 }
 -(void) doOnSolution
 {
-   [_doOnSolArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnSolArray) {
+    block();
+  }
 }
 -(void) doOnExit
 {
-   [_doOnExitArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
-      block();
-   }];
+  for(ORClosure block in _doOnExitArray) {
+    block();
+  }
 }
 -(void) solve: (ORClosure) search
 {
@@ -830,7 +837,12 @@
    while (![bv bound]) {
       i=[bv randomFreeBit];
 //      NSLog(@"Labeling Bit at index %d",i);
+      // LDM: TODO: This needs fixing! We should be using distributions here!
+#if defined(__APPLE__)
       int rand = arc4random();
+#else
+      int rand = random();
+#endif
       if (rand > 0.5){
 //         NSLog(@"Labeling Bit at index %d with false first",i);
          [_search try: ^() { [self labelBV:x at:i with:false];}
@@ -871,8 +883,6 @@
       }
 }
 
-//<<<<<<< HEAD
-//=======
 -(void)splitArray:(id<ORIntVarArray>)x
 {
    id<ORIntRange> R = x.range;
@@ -894,7 +904,17 @@
             alt: ^{ [self gthen:x[bi] with:mp];}];
    }
 }
-//>>>>>>> master
+
+-(void)split:(id<ORIntVar>)x
+{
+   CPIntVar* cx = _gamma[getId(x)];
+   while (!bound(cx)) {
+      ORInt lb =cx.min,ub = cx.max;
+      ORInt mp = lb + (ub - lb)/2;
+      [self try: ^{ [self lthen:x with:mp+1];}
+            alt: ^{ [self gthen:x with:mp];}];
+   }
+}
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -902,15 +922,10 @@
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++) {
       CPIntVar* xi = _gamma[getId(x[i])];
-//<<<<<<< HEAD
-//      while ([xi bound]) {
-//         ORInt m = [xi min];
-//=======
       while (!bound(xi)) {
          ORInt m = minDom(xi);
-//>>>>>>> master
-         [_search try: ^{ [self labelImpl: xi with: m]; }
-                  alt: ^{ [self  diffImpl: xi with: m]; }
+            [_search try: ^{ [self labelImpl: xi with: m]; }
+                     alt: ^{ [self  diffImpl: xi with: m]; }
           ];
       }
    }
@@ -1204,7 +1219,7 @@
       } else {
 //        NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
         }
-      NSAssert([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);      
+      NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);      
       [failStamp setValue:[_search nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
@@ -1345,7 +1360,7 @@
       } else {
 //         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }
-      NSAssert([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
+      NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
       [failStamp setValue:[_search nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;

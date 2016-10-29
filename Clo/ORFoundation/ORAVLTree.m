@@ -446,7 +446,7 @@ static inline void rightRotate(ORAVLTree* t,ORAVLTreeNode* z)
         return rv;
     } 
     else 
-        @throw [[ORExecutionError alloc] initORExecutionError: "No next element in the iterator"]; ;
+      @throw [[ORExecutionError alloc] initORExecutionError: "No next element in the iterator"];      
 }
 
 @end

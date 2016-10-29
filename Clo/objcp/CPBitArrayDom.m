@@ -372,8 +372,12 @@
 -(ORUInt) randomFreeBit
 {
    //[self updateFreeBitCount];
+#if defined(__linux__)
+   int r = random() % _freebits._val;
+#else
    int r = arc4random() % _freebits._val;
-
+#endif
+   
    ORUInt foundFreeBits =0;
    ORUInt unboundBits;
    ORUInt bitMask;

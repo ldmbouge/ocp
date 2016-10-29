@@ -9,12 +9,17 @@
  
  ***********************************************************************/
 
-#import <ORFoundation/ORExpr.h>
 #import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORExpr.h>
+#import <ORFoundation/ORVar.h>
 #import <ORFoundation/ORFactory.h>
 #import <ORFoundation/ORError.h>
 #import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
+
+#if __clang_major__==3 && __clang_minor__==6
+#define _Nonnull 
+#endif
 
 @implementation NSNumber (Expressions)
 -(id<ORExpr>) asExpression:(id<ORTracker>) tracker

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 #import <objcp/CPWatch.h>
 
 @protocol NSRefreshable

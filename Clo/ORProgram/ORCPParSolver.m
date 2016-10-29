@@ -301,6 +301,10 @@
 {
    [[self worker] splitArray:x];
 }
+-(void) split: (id<ORIntVar>)x
+{
+   [[self worker] split:x];
+}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    [[self worker] labelArray: x];

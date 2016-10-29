@@ -10,6 +10,8 @@
 #import <ORFoundation/ORParameter.h>
 #import <ORFoundation/ORVisit.h>
 
+@protocol ORParameterizedModel;
+
 @interface ORSoftify : ORNOopVisit
 -(ORSoftify*) initORSoftify;
 -(void)apply:(id<ORModel>)m;

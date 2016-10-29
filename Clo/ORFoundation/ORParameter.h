@@ -11,7 +11,7 @@
 
 
 @protocol ORParameter <ORObject,ORExpr>
--(ORInt) getId;
+-(ORUInt) getId;
 @end
 
 @protocol ORIntParam <ORParameter>

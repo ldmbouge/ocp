@@ -15,7 +15,7 @@
 @class ORVisitor;
 
 @protocol ORObject <NSObject>
--(ORInt) getId;
+-(ORUInt) getId;
 -(void)setId:(ORUInt)name;
 -(void) visit: (ORVisitor*) visitor;
 @end;

@@ -1,13 +1,14 @@
-OC = clang-3.6
+include ../setup.make
 
 CFLAGS = `gnustep-config --objc-flags`  $(USER_DEFINES) -I. -I.. \
 	-I../ORFoundation -I../ORUtilities -I../CPUKernel \
-	-I$(HOME)/ocp/gurobi550/linux64/include \
+	-I/opt/gurobi652/linux64/include \
 	-msse4.1  -fblocks -fobjc-nonfragile-abi
 LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORUtilities -Wl,-rpath=`pwd`/../ORUtilities \
 	-L../ORFoundation -Wl,-rpath=`pwd`/../ORFoundation \
-	-lORUtilities -lORFoundation 
+	-L/opt/gurobi652/linux64/lib -Wl,-rpath=/opt/gurobi652/linux64/lib \
+	-lORUtilities -lORFoundation -lgurobi65
 
 
 SRCS = LPGurobi.m    LPSolverI.m   MIPGurobi.m   MIPSolverI.m

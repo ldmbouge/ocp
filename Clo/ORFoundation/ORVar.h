@@ -13,16 +13,16 @@
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORConstraint.h>
+//#import <ORFoundation/ORConstraint.h>
+
+@protocol ORASolver;
 
 PORTABLE_BEGIN
 
 @protocol ORVar <ORObject>
--(ORInt) getId;
 @end
 
 @protocol ORExprVar <ORVar,ORRelation>
--(ORInt) getId;
 @end
 
 @protocol ORIntVar <ORExprVar>
@@ -70,23 +70,23 @@ PORTABLE_BEGIN
 -(id<ORExpr>) at: (ORInt) value;
 -(void) set: (id<ORExpr>) x at: (ORInt) value;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id<ORExpr>) objectAtIndexedSubscript: (ORInt) key;
--(void) setObject: (id<ORExpr>) newValue atIndexedSubscript: (ORInt) idx;
+-(id<ORExpr>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORExpr>) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
 @protocol ORVarArray <ORExprArray>
 -(id<ORVar>) at: (ORInt) value;
 -(void) set: (id<ORVar>) x at: (ORInt) value;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id<ORVar>) objectAtIndexedSubscript: (ORInt) key;
--(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (ORInt) idx;
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
 @protocol ORIntVarArray <ORVarArray>
 -(id<ORIntVar>) at: (ORInt) value;
 -(void) set: (id<ORIntVar>) x at: (ORInt) value;
--(id<ORIntVar>) objectAtIndexedSubscript: (ORInt) key;
--(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (ORInt) idx;
+-(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 
