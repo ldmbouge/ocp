@@ -16,6 +16,8 @@
 @class CPIntVar;
 @class CPEngine;
 @class CPBitDom;
+@class CPBitVarI;
+@class CPBitArrayDom;
 
 @interface CPElementCstBC : CPCoreConstraint { // y == c[x]
 @private
