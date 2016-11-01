@@ -17,12 +17,12 @@
 static Class __orObjectClass = nil;
 
 @implementation ORObject
-/*
+
 +(void)load
 {
    __orObjectClass = [ORObject class];
 }
-*/
+
 -(id)init
 {
    self = [super init];

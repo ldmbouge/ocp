@@ -32,7 +32,7 @@
    _model = model;
    _duration = duration;
    _horizon = horizon;
-   _isOptional = FALSE;
+   _isOptional = NO;
     _startVar    = NULL;
     _durationVar = NULL;
     _endVar      = NULL;
@@ -45,7 +45,7 @@
    _model = model;
    _duration = duration;
    _horizon = horizon;
-   _isOptional = TRUE;
+   _isOptional = YES;
     _startVar    = NULL;
     _durationVar = NULL;
     _endVar      = NULL;

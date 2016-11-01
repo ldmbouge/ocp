@@ -17,7 +17,7 @@
 #import <ORScheduler/ORActivity.h>
 #import <ORProgram/CPConcretizer.h>
 #import <CPScheduler/CPFactory.h>
-#import "CPSCheduler/CPDifference.h"
+#import "CPDifference.h"
 #import "CPTask.h"
 #import "CPTaskI.h"
 

@@ -14,6 +14,10 @@
 #import "CPEngineI.h"
 #import "CPBitVarI.h"
 
+#if defined(__linux__)
+#define WORD_BIT 32
+#endif
+
 typedef struct CPEltRecordTag {
    ORInt _idx;
    ORInt _val;

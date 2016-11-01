@@ -7,9 +7,9 @@
 //
 
 #import "ORParallelRunnable.h"
-#import "ORModelI.h"
-#import "ORConcurrencyI.h"
 #import <ORProgram/ORSolution.h>
+//#import "ORModelI.h"
+//#import "ORConcurrencyI.h"
 
 #define CPR_DONE    0
 #define CPR_RUNNING 1

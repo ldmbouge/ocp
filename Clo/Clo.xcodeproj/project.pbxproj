@@ -1392,6 +1392,8 @@
 		5BBB08E116C551C80087ACF0 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BBB08E416C562520087ACF0 /* CPGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBB08E216C562520087ACF0 /* CPGroup.h */; };
 		5BBB08E516C562520087ACF0 /* CPGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB08E316C562520087ACF0 /* CPGroup.m */; };
+		5BBB97D81DC7BCE70078A56E /* clique.col in Resources */ = {isa = PBXBuildFile; fileRef = 5BBB97D71DC7BCE70078A56E /* clique.col */; };
+		5BBB97D91DC7BD1E0078A56E /* clique.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BBB97D71DC7BCE70078A56E /* clique.col */; };
 		5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442E416D1B414001BD7B3 /* LPConcretizer.m */; };
 		5BBFE0A5178C63DA00BEAD83 /* CPRealVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A3178C63DA00BEAD83 /* CPRealVarI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBFE0A6178C63DA00BEAD83 /* CPRealVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPRealVarI.m */; };
@@ -7682,6 +7684,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				5BBB97D91DC7BD1E0078A56E /* clique.col in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21852,6 +21855,7 @@
 		5BBB08CB16C551960087ACF0 /* order.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = order.1; sourceTree = "<group>"; };
 		5BBB08E216C562520087ACF0 /* CPGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPGroup.h; sourceTree = "<group>"; };
 		5BBB08E316C562520087ACF0 /* CPGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPGroup.m; sourceTree = "<group>"; };
+		5BBB97D71DC7BCE70078A56E /* clique.col */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = clique.col; sourceTree = "<group>"; };
 		5BBFE0A3178C63DA00BEAD83 /* CPRealVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPRealVarI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BBFE0A4178C63DA00BEAD83 /* CPRealVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPRealVarI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BBFE0A7178C981B00BEAD83 /* CPRealDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPRealDom.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -39652,6 +39656,7 @@
 		B1943A1015B0E33C00E1771B /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5BBB97D71DC7BCE70078A56E /* clique.col */,
 				5B7300711DB536C8002A8731 /* lorem-mssg.txt */,
 				5BB2728C1D06584C008E94CF /* scene.xml */,
 				5B4054151C1DC1C9001407E3 /* crypto.txt */,
@@ -43248,6 +43253,7 @@
 				5BB272601D06560D008E94CF /* scene.1 in Resources */,
 				F515001F1DA539F50023B888 /* SMTLIB2.1 in Resources */,
 				5BB2728D1D06584C008E94CF /* scene.xml in Resources */,
+				5BBB97D81DC7BCE70078A56E /* clique.col in Resources */,
 				5B7300721DB536C8002A8731 /* lorem-mssg.txt in Resources */,
 				5B4054161C1DC1C9001407E3 /* crypto.txt in Resources */,
 			);

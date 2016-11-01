@@ -7,7 +7,7 @@
 //
 
 #import "MIPRunnable.h"
-#import "MIPSolverI.h"
+#import <objmp/MIPSolverI.h>
 #import "ORProgramFactory.h"
 #import <ORProgram/ORSolution.h>
 #import <ORScheduler/ORScheduler.h>

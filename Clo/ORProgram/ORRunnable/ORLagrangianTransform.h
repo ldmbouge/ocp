@@ -6,7 +6,7 @@
 //
 //
 
-#import <Foundation/Foundation.h>
+#import <ORModeling/ORModeling.h>
 
 @interface ORLagrangianTransform : NSObject
 -(id<ORParameterizedModel>) apply: (id<ORModel>)m relaxing: (NSArray*)cstrs;
