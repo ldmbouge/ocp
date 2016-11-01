@@ -43012,7 +43012,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					3730FD7A1CAEF80B00C9362B = {
@@ -50606,7 +50606,7 @@
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
-				SDKROOT = macosx10.12;
+				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -50650,7 +50650,7 @@
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
-				SDKROOT = macosx10.12;
+				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -50810,7 +50810,7 @@
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
-				SDKROOT = macosx10.12;
+				SDKROOT = macosx;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Coverage;

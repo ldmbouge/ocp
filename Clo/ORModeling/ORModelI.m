@@ -202,6 +202,7 @@
    _mappings = [[ORModelMappings alloc] initORModelMappings];
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
+   _source = nil;
    return self;
 }
 -(ORModelI*) initORModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings

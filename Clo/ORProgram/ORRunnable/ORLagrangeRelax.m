@@ -6,9 +6,9 @@
 //
 //
 
+#import <ORModeling/ORModeling.h>
 #import <ORProgram/ORLagrangeRelax.h>
 #import <ORFoundation/ORExpr.h>
-#import <ORModeling/ORModeling.h>
 #import <ORProgram/MIPProgram.h>
 #import <objmp/MIPSolverI.h>
 #import <objcp/CPFactory.h>
