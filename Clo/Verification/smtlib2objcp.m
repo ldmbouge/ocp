@@ -977,35 +977,35 @@ static smtlib2_term smtlib2_objcp_parser_mk_function(smtlib2_context ctx,
 static smtlib2_term smtlib2_objcp_parser_mk_number(smtlib2_context ctx,
                                                    const char *rep,
                                                    unsigned int width,
-                                                   unsigned int base) { return NULL; /* TODO */ }
-//{
-//    smtlib2_term ret;
-//    intptr_t v;
-//    if (width != 0) {
-//        mpz_t tmp;
-//        int i;
-//        unsigned int *bits = malloc(sizeof(int) * width);
-//        smtlib2_term ret = NULL;
-//        mpz_init(tmp);
-//        mpz_set_str(tmp, rep, base);
-//        for (i = 0; i < width; ++i) {
-//            bits[i] = mpz_tstbit(tmp, i);
-//        }
-//        mpz_clear(tmp);
-//        ret = [objcpgw objcp_mk_bv_constant_from_array:YCTX(ctx) withSize:width fromArray:bits];
-//        free(bits);
-//        return ret;
-//    } else if (base != 10) {
-//        return NULL;
-//    }
-//   ret = (smtlib2_term)[objcpgw objcp_mk_num_from_string:YCTX(ctx) withString:(char *)rep];
-//    if (!smtlib2_hashtable_find(((smtlib2_objcp_parser *)ctx)->numbers_,
-//                                (intptr_t)ret, &v)) {
-//        smtlib2_hashtable_set(((smtlib2_objcp_parser *)ctx)->numbers_,
-//                              (intptr_t)ret, (intptr_t)smtlib2_strdup(rep));
-//    }
-//    return ret;
-//}
+                                                   unsigned int base) //{ return NULL; /* TODO */ }
+{
+    smtlib2_term ret;
+    intptr_t v;
+    if (width != 0) {
+        mpz_t tmp;
+        int i;
+        unsigned int *bits = malloc(sizeof(int) * width);
+        smtlib2_term ret = NULL;
+        mpz_init(tmp);
+        mpz_set_str(tmp, rep, base);
+        for (i = 0; i < width; ++i) {
+            bits[i] = mpz_tstbit(tmp, i);
+        }
+        mpz_clear(tmp);
+        ret = [objcpgw objcp_mk_bv_constant_from_array:YCTX(ctx) withSize:width fromArray:bits];
+        free(bits);
+        return ret;
+    } else if (base != 10) {
+        return NULL;
+    }
+   ret = (smtlib2_term)[objcpgw objcp_mk_num_from_string:YCTX(ctx) withString:(char *)rep];
+    if (!smtlib2_hashtable_find(((smtlib2_objcp_parser *)ctx)->numbers_,
+                                (intptr_t)ret, &v)) {
+        smtlib2_hashtable_set(((smtlib2_objcp_parser *)ctx)->numbers_,
+                              (intptr_t)ret, (intptr_t)smtlib2_strdup(rep));
+    }
+    return ret;
+}
 
 SMTLIB2_OBJCP_DECLHANDLER(and) //{ return NULL; /* TODO */ }
 {

@@ -21,6 +21,12 @@
 //#import <objcp/CPBitArrayDom.h>
 //#import <objcp/CPBitConstraint.h>
 
+
+
+#include "/usr/local/include/gmp.h"
+
+
+
 @protocol CPProgram;
 
 typedef enum {OR_BOOL, OR_INT, OR_REAL, OR_BV} objcp_var_type;
@@ -86,7 +92,7 @@ typedef int assertion_id;
 -(objcp_type) objcp_mk_type:(objcp_context)ctx withName:(char*) name;
 -(objcp_type) objcp_mk_bitvector_type:(objcp_context)ctx withSize:(unsigned int) size;
 -(objcp_type) objcp_mk_function_type:(objcp_context)ctx withDom:(objcp_type*)domain withDomSize:(unsigned long) size andRange:(objcp_type) range;
-//-(int)        objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value;
+-(int)        objcp_get_mpq_value:(objcp_model) m withDecl:(objcp_var_decl) d andVal:(mpq_t) value;
 
 /**
  \brief Create a backtracking point in the given logical context.
