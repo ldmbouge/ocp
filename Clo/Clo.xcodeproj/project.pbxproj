@@ -2035,6 +2035,7 @@
 		F50D95AE16835AE4001D5E3C /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		F50D95AF16835AE4001D5E3C /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		F50D95B016835AE4001D5E3C /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		F511C6FC1DC8F57B0029E7BF /* testBitVarElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F511C6F91DC8F0DF0029E7BF /* testBitVarElement.m */; };
 		F51500001DA4438F0023B888 /* CPBitVarABS.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FFFC1DA4438F0023B888 /* CPBitVarABS.m */; };
 		F51500011DA4438F0023B888 /* CPBitVarIBS.h in Headers */ = {isa = PBXBuildFile; fileRef = F515FFFD1DA4438F0023B888 /* CPBitVarIBS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F51500021DA4438F0023B888 /* CPBitVarIBS.m in Sources */ = {isa = PBXBuildFile; fileRef = F515FFFE1DA4438F0023B888 /* CPBitVarIBS.m */; };
@@ -22221,6 +22222,8 @@
 		B1F531DF15AED4B100E89F98 /* testPacking-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testPacking-Prefix.pch"; sourceTree = "<group>"; };
 		B1F531E015AED4B100E89F98 /* testPacking.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testPacking.1; sourceTree = "<group>"; };
 		B1FBA2F017BF1AE0000F5F43 /* ORVisit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORVisit.m; sourceTree = "<group>"; };
+		F511C6F81DC8F0DF0029E7BF /* testBitVarElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testBitVarElement.h; sourceTree = "<group>"; };
+		F511C6F91DC8F0DF0029E7BF /* testBitVarElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = testBitVarElement.m; sourceTree = "<group>"; };
 		F51500141DA47E130023B888 /* SHA1b.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA1b.h; sourceTree = "<group>"; };
 		F51500151DA47E130023B888 /* SHA1b.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SHA1b.m; sourceTree = "<group>"; };
 		F515001A1DA539F50023B888 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -38605,6 +38608,8 @@
 		5B9ABD071391329D000997E5 /* objcpTests */ = {
 			isa = PBXGroup;
 			children = (
+				F511C6F81DC8F0DF0029E7BF /* testBitVarElement.h */,
+				F511C6F91DC8F0DF0029E7BF /* testBitVarElement.m */,
 				5B8DCD8F165FDDB6007CC562 /* testBitConstraints.h */,
 				5B8DCD90165FDDB6007CC562 /* testBitConstraints.m */,
 				5BEA4E641783641E00614A82 /* searchTest.h */,
@@ -44054,6 +44059,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F511C6FC1DC8F57B0029E7BF /* testBitVarElement.m in Sources */,
 				5BAB12821B81DCA8004803EA /* objcpTests.m in Sources */,
 				5BAB127A1B81DC62004803EA /* TestAll.m in Sources */,
 			);
