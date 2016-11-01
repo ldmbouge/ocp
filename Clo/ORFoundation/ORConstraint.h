@@ -215,6 +215,12 @@ enum ORGroupType {
 -(id<ORIntVar>)   res;
 @end
 
+@protocol ORElementBitVar <ORConstraint>
+-(id<ORIdArray>) array;
+-(id<ORBitVar>)   idx;
+-(id<ORBitVar>)   res;
+@end
+
 @protocol ORElementMatrixVar <ORConstraint>
 -(id<ORIntVarMatrix>) matrix;
 -(id<ORIntVar>) index0;

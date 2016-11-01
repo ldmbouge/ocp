@@ -15,8 +15,8 @@
 
 #import "ORCmdLineArgs.h"
 
-#import "ORLagrangeRelax.h"
-#import "ORLagrangianTransform.h"
+#import <ORProgram/ORLagrangeRelax.h>
+#import <ORProgram/ORLagrangianTransform.h>
 #import <ORModeling/ORLinearize.h>
 
 int main(int argc, const char * argv[])

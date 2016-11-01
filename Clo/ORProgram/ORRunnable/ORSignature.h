@@ -6,7 +6,8 @@
 //
 //
 
-#import <Foundation/Foundation.h>
+#import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORFactory.h>
 
 @protocol ORSignature<NSObject>
 -(ORBool) matches: (id<ORSignature>)sig;

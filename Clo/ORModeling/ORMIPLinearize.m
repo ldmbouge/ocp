@@ -311,6 +311,10 @@
 {
    _result = c;
 }
+-(void) visitElementBitVar: (id<ORElementBitVar>)c
+{
+   _result = c;
+}
 -(void) visitRealElementCst: (id<ORRealElementCst>) c
 {
    _result = c;

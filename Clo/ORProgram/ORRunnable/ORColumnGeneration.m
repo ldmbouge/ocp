@@ -12,7 +12,7 @@
 #import "ORColumnGeneration.h"
 #import "ORConcurrencyI.h"
 #import "LPRunnable.h"
-#import "LPSolverI.h"
+#import <objmp/LPSolverI.h>
 #import <ORProgram/ORSolution.h>
 
 @implementation ORColumnGeneration {

@@ -314,6 +314,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ElementVar: visit method not defined"]; 
 }
+-(void) visitElementBitVar: (id<ORElementBitVar>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ElementBitVar: visit method not defined"];
+}
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ElementMatrixVar: visit method not defined"];   
@@ -778,6 +782,7 @@
 -(void) visitImply: (id<ORImply>)c  {}
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
+-(void) visitElementBitVar: (id<ORElementBitVar>)c  {}
 -(void) visitRealElementCst: (id<ORRealElementCst>) cstr {}
 -(void) visitImplyEqualc: (id<ORImplyEqualc>)c  {}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c  {}

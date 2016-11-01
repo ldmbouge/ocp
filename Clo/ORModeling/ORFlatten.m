@@ -380,6 +380,10 @@
 {
    _result = [_into addConstraint:c];
 }
+-(void) visitElementBitVar: (id<ORElementBitVar>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitRealElementCst: (id<ORRealElementCst>) c
 {
    _result = [_into addConstraint:c];

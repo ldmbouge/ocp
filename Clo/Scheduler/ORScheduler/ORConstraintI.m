@@ -382,7 +382,7 @@
     _accU    = 0;
     _accA    = 0;
     _accResT = 0;
-    _closed  = TRUE;
+    _closed  = YES;
     
     // Check for duplicates
     for (ORInt i = _tasks.low; i <= _tasks.up; i++) {
@@ -408,7 +408,7 @@
     _accResT  = [[NSMutableArray alloc] initWithCapacity: 16];
     _accU     = [[NSMutableArray alloc] initWithCapacity: 16];
     _accA     = [[NSMutableArray alloc] initWithCapacity: 16];
-    _closed   = FALSE;
+    _closed   = NO;
     
     return self;
 }
@@ -583,9 +583,9 @@
     _accTypes   = 0;
     _accResTask = 0;
     _accIds     = [[NSMutableSet alloc] initWithCapacity:tasks.count];
-    _closed     = TRUE;
+    _closed     = YES;
     
-    _hasOptionalTasks = FALSE;
+    _hasOptionalTasks = NO;
     
     // Check for duplicates and optional tasks
     for (ORInt i = low; i <= up; i++) {
@@ -594,7 +594,7 @@
         [_accIds addObject: _tasks[i]];
         
         if ([_tasks[i] isOptional])
-            _hasOptionalTasks = TRUE;
+            _hasOptionalTasks = YES;
     }
     [_accIds dealloc];
     _accIds = 0;
@@ -613,9 +613,9 @@
     _accIds     = [[NSMutableSet   alloc] initWithCapacity: 16];
     _transition = 0;
     _resourceTasks = 0;
-    _closed     = FALSE;
+    _closed     = NO;
     
-    _hasOptionalTasks = FALSE;
+    _hasOptionalTasks = NO;
 
     return self;
 }
@@ -631,9 +631,9 @@
     _accIds     = [[NSMutableSet   alloc] initWithCapacity: 16];
     _transition = transition;
     _resourceTasks = 0;
-    _closed     = FALSE;
+    _closed     = NO;
 
-    _hasOptionalTasks = FALSE;
+    _hasOptionalTasks = NO;
 
     return self;
 }
@@ -659,7 +659,7 @@
         [_accResTask addObject: @(0           )];
         
         if ([task isOptional])
-            _hasOptionalTasks = TRUE;
+            _hasOptionalTasks = YES;
     }
 }
 -(void) add: (id<ORTaskVar>) task type: (ORInt) type
@@ -677,7 +677,7 @@
         [_accResTask addObject: @(0           )];
         
         if ([task isOptional])
-            _hasOptionalTasks = TRUE;
+            _hasOptionalTasks = YES;
     }
 }
 -(void) add: (id<ORResourceTask>) task duration:(ORInt)duration
@@ -697,7 +697,7 @@
         // Add resource to resource task
         [task addResource:self with:durationRange];
         
-        _hasOptionalTasks = TRUE;
+        _hasOptionalTasks = YES;
     }
 }
 -(void) postTransitionTimes

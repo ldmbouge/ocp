@@ -7,13 +7,13 @@
 //
 
 #import "ORLagrangeRelax.h"
-#import "ORExprI.h"
-#import "ORModelI.h"
+#import <ORFoundation/ORExprI.h>
+#import <ORModeling/ORModelI.h>
 #import "MIPRunnable.h"
 #import "MIPProgram.h"
-#import "MIPSolverI.h"
-#import "CPFactory.h"
-#import "ORConstraintI.h"
+#import <objmp/MIPSolverI.h>
+#import <objcp/CPFactory.h>
+#import "ORFoundation/ORConstraintI.h"
 #import <ORFoundation/ORVisit.h>
 #import <ORProgram/ORSolution.h>
 #import <ORProgramFactory.h>
@@ -568,7 +568,7 @@
         NSMapTable* candidIncumbents = [incumbents copy];
         
         ////////// Solve subproblem ///////////
-        int r = arc4random() % [probIndexes count];
+        int r = random() % [probIndexes count];
         NSNumber* n = [[probIndexes allObjects] objectAtIndex: r];
         //[subprobQueue removeObjectAtIndex: 0];
         int probIdx = [n intValue];//[[[probIndexes allObjects] objectAtIndex: r] intValue];

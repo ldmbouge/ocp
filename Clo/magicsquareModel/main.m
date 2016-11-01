@@ -16,6 +16,15 @@
 #import <ORProgram/ORProgramFactory.h>
 #import "ORCmdLineArgs.h"
 
+ORBool mustGoon(id<ORModel> m,ORBool* b)
+{
+  ORBool rv;
+  @synchronized(m) {
+    rv = !*b;
+  }
+  return rv;
+}
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -51,10 +60,12 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [args makeProgram:model];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
-         __block BOOL found = NO;
+	 ORBool* found = malloc(sizeof(ORBool));
+	 *found = NO;
+         //__block BOOL found = NO;
          [cp solve:^{
             [cp limitTime:maxTime in: ^ {
-               while(!found) {
+		while (mustGoon(model,found)) {
                   [cp perform:^{
                      [cp limitFailures:[nbFailures intValue:cp] in: ^ {
                         [cp labelHeuristic:h];
@@ -67,7 +78,9 @@ int main(int argc, const char * argv[])
                               NSLog(@"%@",buf);
                            }
                         }
-                        found = YES;
+			@synchronized(model) {
+			  *found = YES;
+			}
                      }];
                   } onLimit:^{
                      [nbFailures setValue:(double)[nbFailures intValue:cp] * rf in:cp];
@@ -80,7 +93,7 @@ int main(int argc, const char * argv[])
          }];
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
-         struct ORResult r = REPORT(found, [cp nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(*found, [cp nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          return r;
       }];
    }

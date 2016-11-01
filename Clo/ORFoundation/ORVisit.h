@@ -126,6 +126,7 @@
 -(void) visitImply: (id<ORConstraint>)c;
 -(void) visitElementCst: (id<ORConstraint>)c;
 -(void) visitElementVar: (id<ORConstraint>)c;
+-(void) visitElementBitVar: (id<ORConstraint>)c;
 -(void) visitElementMatrixVar:(id<ORConstraint>)c;
 -(void) visitRealElementCst: (id<ORConstraint>)c;
 -(void) visitImplyEqualc: (id<ORConstraint>)c;
