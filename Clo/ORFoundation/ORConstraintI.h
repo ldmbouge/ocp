@@ -201,6 +201,13 @@
 -(id<ORIntVar>)   res;
 @end
 
+@interface ORElementBitVar : ORConstraintI<ORElementBitVar>
+-(ORElementBitVar*)initORElement:(id<ORBitVar>)idx array:(id<ORIdArray>)y equal:(id<ORBitVar>)z; // y[idx] == z
+-(id<ORIdArray>) array;
+-(id<ORBitVar>)   idx;
+-(id<ORBitVar>)   res;
+@end
+
 @interface ORElementMatrixVar : ORConstraintI<ORElementMatrixVar>
 -(id)initORElement:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y;
 -(id<ORIntVarMatrix>)matrix;

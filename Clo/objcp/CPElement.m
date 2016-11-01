@@ -772,7 +772,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _xold = (CPBitVarI*)[CPFactory bitVar:[_x engine] withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
    
    //    _xold2 = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:la up:ua];
-   _xold2 = [[CPBitArrayDom alloc] initWithBitPat:WORD_BIT withLow:[[_x domain] lowArray] andUp:[[_x domain] upArray] andTrail:[[_x engine] trail]];
+   _xold2 = [[CPBitArrayDom alloc] initWithBitPat:WORD_BIT withLow:[[_x domain] lowArray] andUp:[[_x domain] upArray] andEngine:[_x engine] andTrail:[[_x engine] trail]];
    
    if (![_x bound]) {
       [_x whenChangePropagate:self];

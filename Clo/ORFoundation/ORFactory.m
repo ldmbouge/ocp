@@ -1210,6 +1210,13 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORBitVar>)x idxBitVarArray:(id<ORIdArray>)c equal:(id<ORBitVar>)y
+{
+   id<ORConstraint> o = [[ORElementBitVar alloc] initORElement:x array:c equal:y];
+   [model trackObject:o];
+   return o;
+}
+
 +(id<ORConstraint>)element:(id<ORTracker>)model matrix:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1
                      equal:(id<ORIntVar>)y
 {

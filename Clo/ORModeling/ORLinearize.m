@@ -479,6 +479,10 @@
     //NSLog(@"res: %@", [[c res] class]);
     [_model addConstraint: [[c res] eq: sum]];
 }
+-(void) visitElementBitVar: (id<ORElementBitVar>)c
+{
+   assert(NO);
+}
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e
 {

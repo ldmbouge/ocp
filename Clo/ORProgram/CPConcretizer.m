@@ -68,6 +68,12 @@
    return _gamma[x.getId];
 }
 
+-(id) concreteIdArray: (id<ORIdArray>) x
+{
+   [x visit: self];
+   return _gamma[x.getId];
+}
+
 -(id)concreteMatrix: (id<ORIntVarMatrix>) m
 {
    [m visit:self];
@@ -835,6 +841,25 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitElementBitVar: (id<ORElementBitVar>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIdArray> array = [self concreteIdArray:[cstr array]];
+      id<CPBitVar> idx = [self concreteVar:[cstr idx]];
+      id<CPBitVar> res = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory element: idx
+                                          idxBitVarArray: array
+                                                   equal: res
+                                              annotation: DomainConsistency
+                                       ];
+      
+      
+      
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"reached elementMatrixVar in CPConcretizer"];

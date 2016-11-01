@@ -566,6 +566,22 @@
    [[x tracker] trackMutable:o];
    return o;
 }
+
++(id<CPConstraint>) element:(id<CPBitVar>)x idxBitVarArray:(id<ORIdArray>)array equal:(id<CPBitVar>)y annotation:(ORCLevel)n
+{
+   id<CPConstraint> o = nil;
+   switch(n) {
+      case DomainConsistency:
+         o = [[CPElementBitVarAC alloc] initCPElementAC:x indexVarArray:array equal:y];
+         break;
+      default:
+         o = [[CPElementBitVarBC alloc] initCPElementBC:x indexVarArray:array equal:y];
+         break;
+   }
+   [[x engine] trackMutable:o];
+   return o;
+}
+
 +(id<CPConstraint>) fail:(id<CPEngine>)engine
 {
    id<CPConstraint> c = [[CPFalse alloc] init:engine];

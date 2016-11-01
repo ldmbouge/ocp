@@ -1309,6 +1309,53 @@
 }
 @end
 
+@implementation ORElementBitVar {  // y[idx] == z
+   id<ORBitVar>     _idx;
+   id<ORIdArray>  _y;
+   id<ORBitVar>       _z;
+}
+-(ORElementBitVar*)initORElement:(id<ORBitVar>)idx array:(id<ORIdArray>)y equal:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _idx = idx;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@[%@] == %@)",[self class],self,_y,_idx,_z];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitElementBitVar:self];
+}
+-(id<ORIdArray>) array
+{
+   return _y;
+}
+-(id<ORBitVar>) idx
+{
+   return _idx;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2 + [_y count]] autorelease];
+   [_y enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_idx];
+   [ms addObject:_z];
+   return ms;
+}
+@end
+
 @implementation ORElementMatrixVar {
    id<ORIntVarMatrix> _m;
    id<ORIntVar> _v0;
