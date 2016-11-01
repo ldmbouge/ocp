@@ -7,6 +7,7 @@
 //
 
 #import <ORProgram/ORCombinator.h>
+#import <ORFoundation/ORFactory.h>
 
 @interface ORCompleteParallelCombinator : NSObject<ORCombinator>
 -(BOOL) isCompatible: (NSArray*)runnables;

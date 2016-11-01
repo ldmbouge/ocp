@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ORProgram/MIPProgram.h>
 #import "ORRunnablePiping.h"
-#import "MIPProgram.h"
 
 @protocol MIPRunnable <ORRunnable>
 -(id<MIPProgram>) solver;
