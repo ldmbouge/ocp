@@ -18,8 +18,8 @@
 @protocol CPBitVar;
 
 @protocol CPBitVarHeuristic <CPHeuristic>
--(ORFloat) varOrdering: (id<CPBitVar>)x;
--(ORFloat) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
+-(ORDouble) varOrdering: (id<CPBitVar>)x;
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
 -(void) initInternal: (id<ORVarArray>) t  and:(id<ORVarArray>)cv;
 -(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void) restart;

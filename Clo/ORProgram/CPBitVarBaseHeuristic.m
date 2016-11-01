@@ -58,11 +58,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
 }
--(ORFloat) varOrdering: (id<ORIntVar>)x
+-(ORDouble) varOrdering: (id<ORIntVar>)x
 {
    return 0.0;
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
 {
    return 0.0;
 }

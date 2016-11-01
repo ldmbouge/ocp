@@ -13,8 +13,8 @@
 #import "CPBitVarHeuristic.h"
 
 @interface CPBitVarBaseHeuristic : NSObject<CPBitVarHeuristic>
--(ORFloat) varOrdering: (id<CPBitVar>)x;
--(ORFloat) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
+-(ORDouble) varOrdering: (id<CPBitVar>)x;
+-(ORDouble) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
 -(void)initHeuristic:(NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void)initInternal:(id<ORVarArray>)t and:(id<ORVarArray>)cv;
 -(void) restart;

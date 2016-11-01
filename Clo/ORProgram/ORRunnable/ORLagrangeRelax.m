@@ -6,22 +6,21 @@
 //
 //
 
-#import "ORLagrangeRelax.h"
-#import <ORFoundation/ORExprI.h>
-#import <ORModeling/ORModelI.h>
-#import "MIPRunnable.h"
-#import "MIPProgram.h"
+#import <ORProgram/ORLagrangeRelax.h>
+#import <ORFoundation/ORExpr.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/MIPProgram.h>
 #import <objmp/MIPSolverI.h>
 #import <objcp/CPFactory.h>
-#import "ORFoundation/ORConstraintI.h"
 #import <ORFoundation/ORVisit.h>
 #import <ORProgram/ORSolution.h>
-#import <ORProgramFactory.h>
+#import <ORProgram/ORProgramFactory.h>
+#import "MIPRunnable.h"
 
 @interface ORTermCollector : ORNOopVisit<NSObject> {
     NSMutableArray* _terms;
 }
--(id)init;
+-(ORTermCollector*)init;
 -(NSArray*)doIt:(id<ORExpr>)e;
 // Variables
 -(void) visitIntVar: (id<ORIntVar>) v;
@@ -47,7 +46,7 @@
 @end
 
 @implementation ORTermCollector
--(id)init
+-(ORTermCollector*)init
 {
     self = [super init];
     _terms = NULL;
@@ -568,7 +567,7 @@
         NSMapTable* candidIncumbents = [incumbents copy];
         
         ////////// Solve subproblem ///////////
-        int r = random() % [probIndexes count];
+        NSUInteger r = ((unsigned long)random()) % [probIndexes count];
         NSNumber* n = [[probIndexes allObjects] objectAtIndex: r];
         //[subprobQueue removeObjectAtIndex: 0];
         int probIdx = [n intValue];//[[[probIndexes allObjects] objectAtIndex: r] intValue];
@@ -577,10 +576,10 @@
         id<MIPProgram> subproblemSolver = [ORFactory createMIPProgram: subproblem];
         [[subproblemSolver solver] close];
         
-        for(id<ORVar> x in [subproblem variables]) {
+        for(id<ORExprVar> x in [subproblem variables]) {
             NSSet* vset = [_split objectAtIndex: probIdx];
             if(![vset member: x]) {
-                if([(id<ORExpr>)x vtype] == ORTInt)
+                if([x vtype] == ORTInt)
                     [subproblemSolver setIntVar: (id<ORIntVar>)x value: [[candidIncumbents objectForKey: x] intValue]];
             }
         }
@@ -617,17 +616,18 @@
     return _bestSolution;
 }
 
--(id<ORModel>) subproblemForPartition: (NSUInteger) splitIdx {
-    id<ORParameterizedModel> m = [[ORParameterizedModelI alloc] initWithModel: (ORModelI*)_model relax: [_model constraints]];
+-(id<ORModel>) subproblemForPartition: (NSUInteger) splitIdx
+{
+    id<ORParameterizedModel> m = [ORFactory createParametricModel:_model relax:[_model constraints]];
     NSArray* cstrs = [self constraintsForPartition: splitIdx];
     NSSet* vars = [_split objectAtIndex: splitIdx];
-   NSDictionary* scd = [self makeWeightedMap];
+    NSDictionary* scd = [self makeWeightedMap];
     for(id<ORConstraint> c in cstrs) {
         [m add: c];
         // Create the lambda map
         if([c conformsToProtocol: @protocol(ORSoftConstraint)]) {
             // Add problem index to lambda map
-            ORSoftAlgebraicConstraintI* softCstr = (ORSoftAlgebraicConstraintI*)c;
+            id<ORSoftConstraint> softCstr = (id<ORSoftConstraint>)c;
            id<ORWeightedVar> wv = [scd objectForKey:@(getId([softCstr slack]))];
            assert(wv != nil);
             //id<ORWeightedVar> wv = [self weightedVarForSlack: [softCstr slack]];
@@ -639,7 +639,7 @@
             [arr addObject: @(splitIdx)];
             
             // Add lambda to model
-            [(ORParameterizedModelI*)m addParameter: [wv weight]];
+            [m addParameter: [wv weight]];
         }
     }
     //for (id<ORParameter> p in [_model parameters]) [(ORParameterizedModelI*)m addParameter: p];
@@ -707,7 +707,7 @@
       NSSet* cstrVars =[c allVars];
       if([cstrVars intersectsSet: vars]) {
          if([c conformsToProtocol: @protocol(ORSoftConstraint)]) {
-            ORSoftAlgebraicConstraintI* softCstr = (ORSoftAlgebraicConstraintI*)c;
+            id<ORSoftConstraint> softCstr = (id<ORSoftConstraint>)c;
             id<ORWeightedVar> wv = [scd objectForKey:@(getId([softCstr slack]))];
             //id<ORWeightedVar> wv = [self weightedVarForSlack: [softCstr slack]];
             [cstrs addObject: wv];

@@ -20,6 +20,7 @@
 #import <ORModeling/ORIntLinear.h>
 #import <ORModeling/ORMIPLinearize.h>
 #import <ORModeling/ORLinearize.h>
+#import <ORModeling/ORSoftify.h>
 
 @protocol ORModelTransformation;
 
@@ -89,6 +90,7 @@ PORTABLE_BEGIN
 -(NSArray*) hardConstraints;
 -(NSArray*) parameters;
 -(id<ORVarArray>) slacks;
+-(void) addParameter: (id<ORParameter>)p;
 -(id<ORWeightedVar>) parameterization: (id<ORVar>)x;
 -(id<ORWeightedVar>) parameterizeVar: (id<ORVar>)x;
 @end
@@ -96,6 +98,7 @@ PORTABLE_BEGIN
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
 +(id<ORModel>) createModel:(ORUInt)nbo mappings: (PNULLABLE id<ORModelMappings>) mappings;
++(id<ORParameterizedModel>)createParametricModel:(id<ORModel>)m relax:(NSArray*)cstrs;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src annotation:(id<ORAnnotation>)notes;
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;

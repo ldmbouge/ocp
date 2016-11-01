@@ -106,7 +106,7 @@
 @interface ORParameterizedModelI : ORModelI<ORParameterizedModel>
 -(ORParameterizedModelI*) initORParamModelI;
 -(ORParameterizedModelI*) initORParamModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
--(ORParameterizedModelI*) initWithModel: (ORModelI*) src relax: (NSArray*)cstrs;
+-(ORParameterizedModelI*) initWithModel: (id<ORModel>) src relax: (NSArray*)cstrs;
 -(NSArray*) softConstraints;
 -(NSArray*) hardConstraints;
 -(NSArray*) parameters;
