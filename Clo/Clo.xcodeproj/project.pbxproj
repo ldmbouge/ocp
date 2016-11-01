@@ -37,7 +37,7 @@
 		3730FD861CAEF85300C9362B /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		3730FD871CAEF85300C9362B /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		3730FD881CAEF85A00C9362B /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		374554FD1BD09E6F00E6DC5F /* ORSoftify.h in Headers */ = {isa = PBXBuildFile; fileRef = 374554FB1BD09E6E00E6DC5F /* ORSoftify.h */; };
+		374554FD1BD09E6F00E6DC5F /* ORSoftify.h in Headers */ = {isa = PBXBuildFile; fileRef = 374554FB1BD09E6E00E6DC5F /* ORSoftify.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		374554FE1BD09E6F00E6DC5F /* ORSoftify.m in Sources */ = {isa = PBXBuildFile; fileRef = 374554FC1BD09E6E00E6DC5F /* ORSoftify.m */; };
 		374555021BD09ED200E6DC5F /* ORParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 374554FF1BD09ED000E6DC5F /* ORParameter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		374555031BD09ED200E6DC5F /* ORParameterI.h in Headers */ = {isa = PBXBuildFile; fileRef = 374555001BD09ED100E6DC5F /* ORParameterI.h */; };
@@ -119,7 +119,6 @@
 		537EEA0E18FCDD1D0006FFD2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		537EEA0F18FCDD1D0006FFD2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		537EEA1018FCDD330006FFD2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
-		537EEA2118FCDD760006FFD2 /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8AC18FCC5720006FFD2 /* CPConcretizer.m */; };
 		537EEA2218FCDD760006FFD2 /* ORConstraintI.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8AE18FCC5720006FFD2 /* ORConstraintI.m */; };
 		537EEA2418FCDD760006FFD2 /* ORSchedFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8B318FCC5720006FFD2 /* ORSchedFactory.m */; };
 		537EEA2518FCDD760006FFD2 /* ORVisit.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8B618FCC5720006FFD2 /* ORVisit.m */; };
@@ -1394,6 +1393,7 @@
 		5BBB08E516C562520087ACF0 /* CPGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB08E316C562520087ACF0 /* CPGroup.m */; };
 		5BBB97D81DC7BCE70078A56E /* clique.col in Resources */ = {isa = PBXBuildFile; fileRef = 5BBB97D71DC7BCE70078A56E /* clique.col */; };
 		5BBB97D91DC7BD1E0078A56E /* clique.col in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BBB97D71DC7BCE70078A56E /* clique.col */; };
+		5BBB97DA1DC822920078A56E /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 537EE8AC18FCC5720006FFD2 /* CPConcretizer.m */; };
 		5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442E416D1B414001BD7B3 /* LPConcretizer.m */; };
 		5BBFE0A5178C63DA00BEAD83 /* CPRealVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A3178C63DA00BEAD83 /* CPRealVarI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBFE0A6178C63DA00BEAD83 /* CPRealVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPRealVarI.m */; };
@@ -43420,7 +43420,6 @@
 			files = (
 				5B60C6861BFCCB4500A685C6 /* ORSchedLinearize.m in Sources */,
 				53BD901A1A240117003EEFA6 /* ORFlatten.m in Sources */,
-				537EEA2118FCDD760006FFD2 /* CPConcretizer.m in Sources */,
 				537EEA2218FCDD760006FFD2 /* ORConstraintI.m in Sources */,
 				B127A5661962817400398AA3 /* ORTaskI.m in Sources */,
 				B12BE46B19014C56006D1D59 /* ORActivity.m in Sources */,
@@ -43436,6 +43435,7 @@
 				535D133018FF7EFA008D48BD /* CPMisc.m in Sources */,
 				537EEA5118FCE2FC0006FFD2 /* CPConstraint.m in Sources */,
 				537EEA5218FCE2FC0006FFD2 /* CPCumulative.m in Sources */,
+				5BBB97DA1DC822920078A56E /* CPConcretizer.m in Sources */,
 				537EEA5318FCE2FC0006FFD2 /* CPDifference.m in Sources */,
 				537EEA5418FCE2FC0006FFD2 /* CPDisjunctive.m in Sources */,
 				B127A56F19628CA100398AA3 /* CPTaskI.m in Sources */,
