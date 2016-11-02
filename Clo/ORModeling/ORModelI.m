@@ -278,14 +278,19 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORModelI [%p] dealloc called...\n",self);
+   NSLog(@"ORModelI [%p] dealloc called...  source (%p) RC[%lu]\n",self,_source,(unsigned long)[_source retainCount]);
    [_source release];
    [_vars release];
+   NSLog(@"Vars released...");
    [_mStore release];
+   NSLog(@"_mStore released...");
    [_cStore release];
+   NSLog(@"_cStore released...");
    [_iStore release];
+   NSLog(@"_iStore released...");
    [_cache release];
    [_mappings release];
+   NSLog(@"ABOUT TO RELEASE _memory...");
    [_memory release];
    [super dealloc];
 }

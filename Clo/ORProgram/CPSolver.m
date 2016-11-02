@@ -2158,6 +2158,7 @@
 }
 -(void) dealloc
 {
+   NSLog(@"CPSemanticSolver dealloc'd [%p]  model RC [%d]",self,(int)[_model retainCount]);
    [_imdl  release];
    [_trail release];
    [_engine release];

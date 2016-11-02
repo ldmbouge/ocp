@@ -47,7 +47,7 @@ static Class __orObjectClass = nil;
 }
 -(id)retain
 {
-   _rc += 1;
+   __sync_add_and_fetch(&_rc,1);
    return self;
 }
 -(NSUInteger)retainCount
@@ -57,7 +57,8 @@ static Class __orObjectClass = nil;
 -(oneway void)release
 {
    //printf("Release called on solver: RC=%d [%s]\n",_rc,[[[self class] description] UTF8String]);
-   if (--_rc == 0) {
+   ORUInt nc = __sync_sub_and_fetch(&_rc,1);
+   if (nc == 0) {
       [self dealloc];
    }
 }
@@ -68,9 +69,6 @@ static Class __orObjectClass = nil;
    id rv = [super autorelease];
    _ba[3] = 1;
    return rv;
-//   _rc += 1;
-//   [NSAutoreleasePool addObject:self];
-//   return self;
 }
 -(void) visit: (ORVisitor*) visitor
 {}

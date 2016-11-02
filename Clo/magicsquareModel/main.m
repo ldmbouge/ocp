@@ -60,12 +60,11 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [args makeProgram:model];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
-	 ORBool* found = malloc(sizeof(ORBool));
-	 *found = NO;
-         //__block BOOL found = NO;
+         ORBool* found = malloc(sizeof(ORBool));
+         *found = NO;
          [cp solve:^{
             [cp limitTime:maxTime in: ^ {
-		while (mustGoon(model,found)) {
+               while (mustGoon(model,found)) {
                   [cp perform:^{
                      [cp limitFailures:[nbFailures intValue:cp] in: ^ {
                         [cp labelHeuristic:h];
@@ -78,9 +77,9 @@ int main(int argc, const char * argv[])
                               NSLog(@"%@",buf);
                            }
                         }
-			@synchronized(model) {
-			  *found = YES;
-			}
+                        @synchronized(model) {
+                           *found = YES;
+                        }
                      }];
                   } onLimit:^{
                      [nbFailures setValue:(double)[nbFailures intValue:cp] * rf in:cp];

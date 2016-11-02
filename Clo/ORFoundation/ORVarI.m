@@ -40,8 +40,10 @@
 }
 -(void) dealloc
 {
+   //NSLog(@"ORIntVarI(%p)::dealloc %d\n",self,_name);
    [super dealloc];
 }
+
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];

@@ -730,7 +730,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void)dealloc
 {
-    //NSLog(@"CIVar::dealloc %d\n",_name);
+    //NSLog(@"CPIntVarI::dealloc %d\n",_name);
     if (_recv != nil)
         [_recv release];
     [_dom release];     
