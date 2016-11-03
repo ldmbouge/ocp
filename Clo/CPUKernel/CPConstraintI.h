@@ -11,7 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPUKernel.h>
-#import <ORFoundation/ORObject.h>
 
 @class CPEngineI;
 

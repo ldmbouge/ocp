@@ -1154,8 +1154,8 @@ static void dprec_filter_est_optional_vilim(CPTaskDisjunctive * disj, const ORIn
                 // The leaf must be a gray one
                 if (theta[leaf_idx]._time != MININT || lambda[leaf_idx]._gTime == MININT) {
                     break;
-                    dumpThetaTree(theta, tsize);
-                    dumpLambdaTree(lambda, tsize);
+                    //dumpThetaTree(theta, tsize);
+                    //dumpLambdaTree(lambda, tsize);
                 }
                 assert(theta[leaf_idx]._time == MININT && lambda[leaf_idx]._gTime != MININT);
                 // Map leaf index to task ID
