@@ -21,7 +21,7 @@
 -(ORDouble) varOrdering: (id<CPBitVar>)x;
 -(ORDouble) valOrdering: (ORInt) v forVar: (id<CPBitVar>) x;
 -(void) initInternal: (id<ORVarArray>) t  and:(id<ORVarArray>)cv;
--(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
+-(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol tracker:(id<ORTracker>)cp;
 -(void) restart;
 -(id<ORBitVarArray>) allBitVars;
 -(id<CPProgram>)solver;

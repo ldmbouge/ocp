@@ -19,7 +19,7 @@
 -(ORDouble) varOrdering: (id<CPIntVar>)x;
 -(ORDouble) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x;
 -(void) initInternal: (id<ORVarArray>) t  with:(id<ORVarArray>)cv;
--(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
+-(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol tracker:(id<ORTracker>)cp;
 -(void) restart;
 -(id<ORIntVarArray>) allIntVars;
 -(id<CPProgram>)solver;
