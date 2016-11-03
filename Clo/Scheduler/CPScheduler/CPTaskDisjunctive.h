@@ -24,7 +24,7 @@
 -(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) tasks;
 -(id) initCPTaskDisjunctive: (id<CPTaskVarArray>) tasks resourceTasks: (id<ORIntArray>)res;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;

@@ -227,15 +227,12 @@ typedef struct {
     
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
 //    printf("I am posting a CPDifference Constraint\n");
     _isPosted = TRUE;
     
     // XXX Initial propagation????
-
-    // Return the state
-    return ORSuspend;
 }
 -(void) propagate
 {

@@ -27,7 +27,7 @@
 
 -(id) initCPDisjunctive: (id<CPIntVarArray>) s duration: (id<CPIntVarArray>) d;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;

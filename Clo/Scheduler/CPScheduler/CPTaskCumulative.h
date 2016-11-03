@@ -34,7 +34,7 @@
 -(id) initCPTaskCumulative:(id<CPTaskVarArray>)tasks with: (id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity: (id<CPIntVar>)capacity;
 -(id) initCPTaskCumulative:(id<CPTaskVarArray>)tasks resourceTasks:(id<ORIntArray>)resTasks with:(id<CPIntVarArray>)usages area:(id<CPIntVarArray>)area capacity:(id<CPIntVar>) capacity;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 //-(CPTaskVarPrec *) getPartialOrder: (ORInt *) posize;

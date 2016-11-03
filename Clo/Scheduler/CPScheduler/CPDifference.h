@@ -17,7 +17,7 @@
 @interface CPDifference : CPCoreConstraint
 -(id) initCPDifference: (id<CPEngine>) engine withInitCapacity: (ORInt) numItems;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;

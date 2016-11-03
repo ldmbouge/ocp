@@ -39,7 +39,7 @@ typedef enum {
 
 -(id) initCPCumulative:(id<CPIntVarArray>)s duration:(id<CPIntVarArray>)d usage:(id<CPIntVarArray>)r energy:(id<CPIntVarArray>)a end:(id<CPIntVarArray>)e type:(TaskType*)t capacity:(id<CPIntVar>)c;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;

@@ -47,7 +47,7 @@
     if (_idx != NULL) free(_idx);
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     const ORInt size = (ORInt) [_alt count];
     const ORInt low  = [_alt low  ];
@@ -169,7 +169,6 @@
         [_task whenChangeDurationDo: ^{ [self propagateTaskDuration]; } onBehalf: self];
     }
     
-    return ORSuspend;
 }
 -(void) propagateTaskAbsence
 {
@@ -613,7 +612,7 @@
     if (_idx != NULL) free(_idx);
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     const ORInt size = (ORInt) [_compound count];
     const ORInt low  = [_compound low  ];
@@ -694,8 +693,6 @@
         // Bound change on end
         [_task whenChangeEndDo: ^{ [self propagateTaskEnd]; } onBehalf: self];
     }
-    
-    return ORSuspend;
 }
 -(void) propagateTaskPresence
 {
@@ -1085,7 +1082,7 @@
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_before bound] && ![_after bound]) {
@@ -1093,7 +1090,6 @@
        [_before whenChangeDurationPropagate: self];
       [_after whenChangeEndPropagate: self];
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -1130,7 +1126,7 @@
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_before bound] && ![_after bound]) {
@@ -1142,7 +1138,6 @@
       if ([_after isOptional])
          [_after whenPresentPropagate: self];
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -1185,7 +1180,7 @@
 {
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     if (_beforeRes != NULL && _afterRes != NULL) {
         CPResourceTask * before = (CPResourceTask *)_before;
@@ -1240,7 +1235,6 @@
                 [_after whenPresentPropagate: self];
         }
     }
-    return ORSuspend;
 }
 -(void) propagateResTaskBeforeTask
 {
@@ -1311,14 +1305,13 @@
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_task bound] && ![_date bound]) {
       [_task whenChangeStartPropagate: self];
       [_date whenChangeMaxPropagate: self];
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -1357,7 +1350,7 @@
 {
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     [self propagate];
     if (![_task bound] && ![_bool bound]) {
@@ -1369,7 +1362,6 @@
             [_task labelPresent:_bool.value];
         } onBehalf:self];
     }
-    return ORSuspend;
 }
 -(NSSet*) allVars
 {
@@ -1401,7 +1393,7 @@
 {
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     [self propagate];
     if (![_task bound] && ![_start bound]) {
@@ -1410,7 +1402,6 @@
         [_task  whenChangeDurationPropagate: self];
         [_start whenChangeBoundsPropagate  : self];
     }
-    return ORSuspend;
 }
 -(void) propagate
 {
@@ -1450,14 +1441,13 @@
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    [self propagate];
    if (![_task bound] && ![_duration bound]) {
       [_task whenChangeDurationPropagate: self];
       [_duration whenChangeBoundsPropagate: self];
    }
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -1496,7 +1486,7 @@
 {
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     [self propagate];
     if (![_task bound] && ![_end bound]) {
@@ -1505,7 +1495,6 @@
         [_task  whenChangeDurationPropagate: self];
         [_end   whenChangeBoundsPropagate  : self];
     }
-    return ORSuspend;
 }
 -(void) propagate
 {
@@ -1546,7 +1535,7 @@
 {
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     [self propagate];
     if (![_normal bound] && ![_extended bound] && ![_time bound]) {
@@ -1561,7 +1550,6 @@
         [_extended whenAbsentDo :^(){[_normal   labelPresent:false];} onBehalf:self];
         [_extended whenPresentDo:^(){[_normal   labelPresent:true ];} onBehalf:self];
     }
-    return ORSuspend;
 }
 -(void) propagate
 {
@@ -1623,7 +1611,7 @@
 {
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     [self propagate];
     
@@ -1639,7 +1627,6 @@
         [_y whenChangePropagate:self];
         [_z whenChangePropagate:self];
     }
-    return ORSuspend;
 }
 -(void) propagate
 {
@@ -1742,7 +1729,7 @@ static inline ORInt roundUpDiv(const ORInt a, const ORInt b)
 {
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     _normalSize   = makeTRInt(_trail, (ORInt)[_time count]);
     _extendedSize = makeTRInt(_trail, (ORInt)[_time count]);
@@ -1763,8 +1750,6 @@ static inline ORInt roundUpDiv(const ORInt a, const ORInt b)
     [_normal   whenPresentDo:^(){[_extended labelPresent:true ];} onBehalf:self];
     [_extended whenAbsentDo :^(){[_normal   labelPresent:false];} onBehalf:self];
     [_extended whenPresentDo:^(){[_normal   labelPresent:true ];} onBehalf:self];
-
-    return ORSuspend;
 }
 -(void) propagate
 {

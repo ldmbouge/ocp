@@ -274,7 +274,7 @@ typedef struct {
     return nb;
 }
 
--(ORStatus) post
+-(void) post
 {
 //    printf("CPTaskCumulative: post\n");
     assert(_tasks.count == _usages.count);
@@ -378,9 +378,6 @@ typedef struct {
     }
     if (!_capacity.bound)
         [_capacity whenChangeMaxPropagate:self];
-
-    // Return of the state
-    return ORSuspend;
 }
 
 -(void) propagate
