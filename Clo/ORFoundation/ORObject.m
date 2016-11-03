@@ -77,7 +77,9 @@ static Class __orObjectClass = nil;
    if ((id)self == object)
       return YES;
    if ([self isKindOfClass:__orObjectClass]) {
-      return _name == getId(object);
+      ORBool eq = _name == getId(object);
+      assert(!eq || [self class] == [object class]);
+      return eq;
    } else return NO;
 }
 - (NSUInteger)hash
