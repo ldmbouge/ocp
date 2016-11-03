@@ -74,8 +74,9 @@ static Class __orObjectClass = nil;
 {}
 - (BOOL)isEqual:(id)object
 {
-   Class me = object_getClass(self);
-   if ([me isKindOfClass:__orObjectClass]) {
+   if ((id)self == object)
+      return YES;
+   if ([self isKindOfClass:__orObjectClass]) {
       return _name == getId(object);
    } else return NO;
 }
