@@ -180,7 +180,7 @@ int main(int argc, const char * argv[])
     // Load Templates and model parameters -----------------------------------------------------------------
     NSXMLDocument *xmlDoc;
     NSError *err=nil;
-    NSString* xmlPath = [[NSBundle mainBundle] pathForResource:@"UTCTemplates" ofType:@"xml"];
+    NSString* xmlPath = @"UTCTemplates.xml";//  "[[NSBundle mainBundle] pathForResource:@"UTCTemplates" ofType:@"xml"];
     NSURL *furl = [NSURL fileURLWithPath: xmlPath];
     if (!furl) {
         NSLog(@"Can't create an URL from file %@.", xmlPath);
@@ -1112,7 +1112,7 @@ int main(int argc, const char * argv[])
    id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
    id<ORRunnable> rp = [ORFactory composeCompleteParallel:r0 with:r1];
    
-   id<ORRunnable> r  = rp;
+   id<ORRunnable> r  = r0;
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [r run];
    bestSolution = [r bestSolution];

@@ -265,8 +265,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    [self push: limit];
    cl();
    [limit succeeds];
-   [limit release];
    [self popController];
+//   [limit release];  // [LDM] we cannot deallocate like that. Backtrack before limit is reached can take us right back in (and exit a second time! 2x dealloc!).
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
