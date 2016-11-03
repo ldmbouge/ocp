@@ -139,7 +139,9 @@ int main(int argc, const char * argv[]) {
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [cp solve: ^{
                [cp limitTime:1000L * 300 in:^{
-                  [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
+                  [cp forall: Machines orderedBy: ^ORInt(ORInt i) {
+                        return [cp globalSlack: disjunctive[i]] +
+                               ([cp localSlack: disjunctive[i]] << 16);} do: ^(ORInt i) {
                      id<ORTaskVarArray> t = disjunctive[i].taskVars;
                      [cp sequence: disjunctive[i].successors
                                by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
