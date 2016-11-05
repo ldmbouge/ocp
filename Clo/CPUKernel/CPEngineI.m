@@ -321,6 +321,16 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 {
    return self;
 }
+-(ORBool)holdsVertical
+{
+   ORBool isVertical = NO;
+   for(id<ORObject> obj in _oStore) {
+      isVertical |= [obj vertical];
+      if (isVertical)
+         break;
+   }
+   return isVertical;
+}
 -(NSMutableArray*)variables
 {
    return _vars;
