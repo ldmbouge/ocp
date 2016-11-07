@@ -178,11 +178,12 @@ int main(int argc, const char * argv[]) {
         }
         
         if(doHybrid) {
-            id<ORModel> lm = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
             id<ORRunnable> r0 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
                 NSLog(@"MKS: %@n\n",[cp concretize:makespan]);
-                [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
+                [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return
+		      [cp globalSlack: disjunctive[i]] + ([cp localSlack: disjunctive[i]] << 16);
+		  } do: ^(ORInt i) {
                     id<ORTaskVarArray> t = disjunctive[i].taskVars;
                     [cp sequence: disjunctive[i].successors
                               by: ^ORDouble(ORInt i) { return [cp est: t[i]]; }
@@ -191,6 +192,7 @@ int main(int argc, const char * argv[]) {
                 [cp label: makespan];
                 NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
             }];
+	    id<ORModel> lm = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
             id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
             id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
             ORLong timeStart = [ORRuntimeMonitor wctime];

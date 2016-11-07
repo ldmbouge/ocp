@@ -58,7 +58,10 @@ ab = ['ais',
 'testPacking',
 'warehouse',
       'wka',
-'coloringModel'
+      'coloringModel',
+      'jobshop',
+      'JobShopBenchmarks',
+      'UTC'
 ]
 
 nba = len(sys.argv)
