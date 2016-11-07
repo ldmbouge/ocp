@@ -31,6 +31,10 @@ static Class __orObjectClass = nil;
    _rc = 1;
    return self;
 }
+-(ORBool)vertical
+{
+   return NO;
+}
 -(void)setId:(ORUInt)name
 {
    assert(_name == -1);

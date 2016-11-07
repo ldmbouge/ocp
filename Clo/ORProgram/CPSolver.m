@@ -651,6 +651,9 @@
 
 -(ORBool) ground
 {
+   ORBool holdsVertical = [_engine holdsVertical];
+   if (holdsVertical)
+      return YES;
    NSMutableArray* av = [_engine variables];
    for(id<CPVar> xi in av) {
       if (![xi bound])

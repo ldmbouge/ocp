@@ -82,8 +82,6 @@
 +(CPIntVar*)    initCPNegateBoolView:(id<CPIntVar>)x;
 @end
 
-
-
 // ---------------------------------------------------------------------
 // Views
 

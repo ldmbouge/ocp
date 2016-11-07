@@ -36,9 +36,9 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon;
       if([x conformsToProtocol: @protocol(ORTaskVar)]) {
          id<ORTaskVar> y = (id<ORTaskVar>)x;
          [y getStartVar];
-         [y getEndVar];
-         [y getDurationVar];
-         [y getPresenceVar];
+//         [y getEndVar];
+//         [y getDurationVar];
+//         [y getPresenceVar];
       }
    }
    [theVars release];
