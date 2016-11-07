@@ -376,8 +376,8 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
       if (error != 0) assert(NO);
       
       free(solution);
-      free(_newSolVars);
-      free(_newSolVals);
+      [_newSolVars release];
+      [_newSolVals release];
       _newSolVars = nil;
       _newSolVals = nil;
       ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
