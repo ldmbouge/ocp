@@ -31,10 +31,6 @@
     return self;
 }
 
--(void) doExit {
-    if(_exitBlock) _exitBlock();
-}
-
 -(void) dealloc
 {
     [_upperBoundStreamInformer release];
@@ -83,6 +79,7 @@
 }
 
 -(void) notifyUpperBound: (ORInt)bound {
+   //NSLog(@"Thread %p sending bound: %d",[NSThread currentThread],bound);
     [_upperBoundStreamInformer notifyWith: bound];
 }
 

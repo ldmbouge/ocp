@@ -49,7 +49,7 @@ int main(int argc, const char * argv[]) {
         BOOL doBDS = NO;
         BOOL doCPSCP = NO;
         BOOL doLNS = NO;
-        ORInt numThreads = 0;
+        ORInt numThreads = 2;
         
         if([args containsObject: @"-cp"]) doCP = YES;
         if([args containsObject: @"-mip"]) doMIP = YES;
@@ -264,23 +264,25 @@ int main(int argc, const char * argv[]) {
         }
         
         if(doHybridLNS_CP) {
-            id<ORRunnable> r0 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
+           id<ORRunnable> r0 = [ORFactory CPRunnable: model numThreads:numThreads/2 solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
                 id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range: Machines];
                 id<ORUniformDistribution> sD = [ORFactory uniformDistribution:model range: Jobs];
-                id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,2,nbMachines/5)];
+                id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,2,max(2,nbMachines/5))];
                 [cp repeat: ^{
                     [cp limitFailures: 3 *nbJobs * nbMachines in: ^{
-                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 10 * [cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
+                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + ([cp localSlack: disjunctive[i]]<<16); }
+                                do: ^(ORInt i) {
                             id<ORTaskVarArray> t = disjunctive[i].taskVars;
                             [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
                         }];
                         [cp label: makespan];
-                        NSLog(@"\n(%p) hybrid makespan = [%d,%d] \n",cp, [cp min: makespan],[cp max: makespan]);
+                        NSLog(@"---------------------------------------------(%p) LNS makespan = [%d,%d] (THREAD:%d)  %p\n",cp, [cp min: makespan],[cp max: makespan],[NSThread threadID],[NSThread currentThread]);
                     }];
                 }
                   onRepeat: ^{
                       id<ORSolution,ORSchedulerSolution> sol = (id) [[cp solutionPool] best];
+                      if (sol==nil) return;
                       for(ORInt k = 1; k <= 2; k++) {
                           ORInt i = [sM next];
                           id<ORIntVarArray> succ = disjunctive[i].successors;
@@ -306,15 +308,15 @@ int main(int argc, const char * argv[]) {
                               curr = [sol intValue: succ[curr]];
                           }
                       }
-                      //NSLog(@"R");
+                     printf("R(%d)",[NSThread threadID]);fflush(stdout);
                   }];
             }];
             strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
             FILE* outFile = fopen(fNameBuf, "w+");
             ORLong timeStart = [ORRuntimeMonitor wctime];
-            id<ORRunnable> r1 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
+            id<ORRunnable> r1 = [ORFactory CPRunnable: model numThreads:numThreads/2 solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
-                NSLog(@"MKS: %@n\n",[cp concretize:makespan]);
+                //NSLog(@"MKS: %@\n",[cp concretize:makespan]);
                 [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + 1000 * [cp localSlack: disjunctive[i]];} do: ^(ORInt i) {
                     id<ORTaskVarArray> t = disjunctive[i].taskVars;
                     [cp sequence: disjunctive[i].successors
@@ -322,7 +324,7 @@ int main(int argc, const char * argv[]) {
                             then: ^ORDouble(ORInt i) { return [cp ect: t[i]];}];
                 }];
                 [cp label: makespan];
-                NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
+                NSLog(@"---------------------------------------------(%p) PURE makespan = [%d,%d] (THREAD:%d) %p \n",cp, [cp min: makespan],[cp max: makespan],[NSThread threadID],[NSThread currentThread]);
                 fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
                 fflush(outFile);
             }];

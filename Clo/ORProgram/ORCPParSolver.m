@@ -573,8 +573,6 @@
 {
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
-   if (_onSol)
-      [me onSolution: _onSol];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested
@@ -633,6 +631,8 @@
    NSNumber* allSols  = [input objectAtIndex:2];
    [NSThread setThreadPriority:1.0];
    [NSThread setThreadID:myID];
+   if (_onSol)
+      [_workers[myID] onSolution: _onSol];
    _doneSearching = NO;
    [self doOnStartup];
    [[_workers[myID] explorer] search: ^() {

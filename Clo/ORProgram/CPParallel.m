@@ -50,6 +50,11 @@
 {
    return [_controller succeeds];
 }
+-(void) abort
+{
+   *_stopNow = YES;
+   [super abort];
+}
 
 #if defined(__linux__)
 static pthread_spinlock_t lock;
@@ -297,6 +302,7 @@ void lock_constructor() {
 -(void)packAndFail
 {
    id<ORProblem> p = [[_solver tracer] captureProblem];
+   //NSLog(@"packAndFail called. Saving problem %@",p);
    [_pool enQueue:p];
    [self fail];
    [self finitelyFailed];
