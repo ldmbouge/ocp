@@ -31,8 +31,8 @@
 @interface ORAbstractRunnableI : NSObject<ORRunnable> {
 @protected
    id<ORModel> _model;
-   NSMutableArray<ORClosure>* _startBlocks;
-   NSMutableArray<ORClosure>* _exitBlocks;
+   NSMutableArray* _startBlocks;
+   NSMutableArray* _exitBlocks;
 }
 @property(readwrite, retain) NSArray* siblings;
 -(id) initWithModel: (id<ORModel>)m;

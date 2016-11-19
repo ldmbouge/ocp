@@ -20,8 +20,8 @@
 {
     self = [super init];
     _model = m;
-    _startBlocks = [[NSMutableArray<ORClosure> alloc] initWithCapacity:2];
-    _exitBlocks  = [[NSMutableArray<ORClosure> alloc] initWithCapacity:2];
+    _startBlocks = [[NSMutableArray alloc] initWithCapacity:2];
+    _exitBlocks  = [[NSMutableArray alloc] initWithCapacity:2];
     return self;
 }
 

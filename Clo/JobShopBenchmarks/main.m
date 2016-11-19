@@ -65,10 +65,12 @@ int main(int argc, const char * argv[]) {
         if([args containsObject: @"-t5"]) numThreads = 5;
         if([args containsObject: @"-t6"]) numThreads = 6;
         if([args containsObject: @"-t8"]) numThreads = 8;
+	if([args containsObject: @"-t16"]) numThreads = 16;
+	if([args containsObject: @"-t32"]) numThreads = 32;
        
         char home[512];
-       strcpy(home,getenv("HOME"));
-        char  fNameBuf[1024];
+	strcpy(home,getenv("HOME"));
+	char  fNameBuf[1024];
        
        
         
