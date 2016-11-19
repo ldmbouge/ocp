@@ -56,8 +56,6 @@
 
 @interface ORPipedRunnable : ORAbstractRunnableI<ORRunnable>
 -(id) initWithModel: (id<ORModel>)m;
--(void) doExit;
-
 -(void) notifyUpperBound: (ORInt)bound;
 -(void) notifyLowerBound: (ORDouble)bound;
 -(id<ORIntInformer>) upperBoundStreamInformer;

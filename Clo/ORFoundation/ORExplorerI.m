@@ -291,6 +291,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    //   id<ORMutableInteger> nbRestarts = [ORFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
+   if ([enter nbCalls]==0)
+      enter.admin = YES;       // This makes sure that this specific continuation can't be stolen (parallel code).
    if (isDone && isDone()) {
       [enter letgo];
       [_controller fail];

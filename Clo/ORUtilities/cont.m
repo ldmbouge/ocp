@@ -47,6 +47,7 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    char* _data;
    int _used;
    ORInt field;  // a stored property
+   ORBool admin; // a stored property
    id  fieldId;
    ORInt _cnt;   
 }
@@ -196,6 +197,7 @@ inline static void freePool()
       rv->_data = 0;
       rv->_length = 0;
       rv->field = 0;
+      rv->admin = NO;
       rv->fieldId = nil;
 #else
       // THis is the allocation for Linux 64 where alignments are not
@@ -259,6 +261,7 @@ void letgo(NSCont* c)
 
 
 @synthesize field;
+@synthesize admin;
 @synthesize fieldId;
 
 @end
