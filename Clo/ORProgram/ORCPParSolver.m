@@ -675,7 +675,7 @@
       //ORLong took = 0;
       ORTimeval before = [ORRuntimeMonitor now];
       ORLong sleeping = 0;
-      while ((cpRoot = [_queue deQueue]) !=nil) {
+      while (!_doneSearching && (cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
             ORTimeval sleepy = [ORRuntimeMonitor elapsedSince:before];
             sleeping += sleepy.tv_sec* 1000 + sleepy.tv_usec / 1000;

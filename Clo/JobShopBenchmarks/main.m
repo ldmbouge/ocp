@@ -50,6 +50,7 @@ int main(int argc, const char * argv[]) {
         BOOL doCPSCP = NO;
         BOOL doLNS = NO;
         ORInt numThreads = 2;
+	ORInt tL = 300;
         
         if([args containsObject: @"-cp"]) doCP = YES;
         if([args containsObject: @"-mip"]) doMIP = YES;
@@ -59,6 +60,7 @@ int main(int argc, const char * argv[]) {
         if([args containsObject: @"-bds"]) doBDS = YES;
         if([args containsObject: @"-cps-cp"]) doCPSCP = YES;
         if([args containsObject: @"-lns"]) doLNS = YES;
+	if([args containsObject: @"-t0"]) numThreads = 0;
         if([args containsObject: @"-t1"]) numThreads = 1;
         if([args containsObject: @"-t2"]) numThreads = 2;
         if([args containsObject: @"-t4"]) numThreads = 4;
@@ -67,6 +69,12 @@ int main(int argc, const char * argv[]) {
         if([args containsObject: @"-t8"]) numThreads = 8;
 	if([args containsObject: @"-t16"]) numThreads = 16;
 	if([args containsObject: @"-t32"]) numThreads = 32;
+	if([args containsObject: @"-b30"]) tL = 30;
+	if([args containsObject: @"-b60"]) tL = 60;
+	if([args containsObject: @"-b300"]) tL = 300;
+	if([args containsObject: @"-b600"]) tL = 600;
+	if([args containsObject: @"-b3600"]) tL = 3600;
+	if([args containsObject: @"-b36000"]) tL = 36000;
        
         char home[512];
 	strcpy(home,getenv("HOME"));
@@ -140,7 +148,7 @@ int main(int argc, const char * argv[]) {
             
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [cp solve: ^{
-               [cp limitTime:1000L * 300 in:^{
+		[cp limitTime:1000L * tL in:^{
                   [cp forall: Machines orderedBy: ^ORInt(ORInt i) {
                         return [cp globalSlack: disjunctive[i]] +
                                ([cp localSlack: disjunctive[i]] << 16);} do: ^(ORInt i) {
@@ -209,14 +217,14 @@ int main(int argc, const char * argv[]) {
         if(doHybridLNS) {
             id<ORModel> lm = [ORFactory linearizeSchedulingModel: model encoding: MIPSchedDisjunctive];
             ORLong timeStart = [ORRuntimeMonitor wctime];
-            id<ORRunnable> r0 = [ORFactory CPRunnable: model solve: ^(id<CPCommonProgram> program){
+            id<ORRunnable> r0 = [ORFactory CPRunnable: model numThreads:numThreads/2 solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
                 id<ORUniformDistribution> sM = [ORFactory uniformDistribution:model range: Machines];
                 id<ORUniformDistribution> sD = [ORFactory uniformDistribution:model range: Jobs];
                 id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,2,nbMachines/5)];
                 [cp repeat: ^{
                     [cp limitFailures: 3 *nbJobs * nbMachines in: ^{
-                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 10 * [cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
+                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 1000 * [cp globalSlack: disjunctive[i]] + [cp localSlack: disjunctive[i]]; } do: ^(ORInt i) {
                             id<ORTaskVarArray> t = disjunctive[i].taskVars;
                             [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
                         }];
@@ -256,7 +264,7 @@ int main(int argc, const char * argv[]) {
                       //NSLog(@"R");
                   }];
             }];
-            id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
+            id<ORRunnable> r1 = [ORFactory MIPRunnable: lm numThreads:numThreads/2];
             id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
             [r run];
             ORLong timeEnd = [ORRuntimeMonitor wctime];
@@ -273,7 +281,7 @@ int main(int argc, const char * argv[]) {
                 id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,2,max(2,nbMachines/5))];
                 [cp repeat: ^{
                     [cp limitFailures: 3 *nbJobs * nbMachines in: ^{
-                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + ([cp localSlack: disjunctive[i]]<<16); }
+                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 100 * [cp globalSlack: disjunctive[i]] + ([cp localSlack: disjunctive[i]]); }
                                 do: ^(ORInt i) {
                             id<ORTaskVarArray> t = disjunctive[i].taskVars;
                             [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];
