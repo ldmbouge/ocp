@@ -263,10 +263,10 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    ORLimitFailures* limit = [[ORLimitFailures alloc] initORLimitFailures: nb];
    //[_engine trackObject:limit];  // [ldm. that causes a leak. Seems like there is a strong reference from each checkpoint as well as from the controller in the explorer.]
    [self push: limit];
+   [limit release];  // [LDM] debugging this... The release here is necessary so that there is only *ONE* referefence to the limit (from the controller var).
    cl();
    [limit succeeds];
    [self popController];
-//   [limit release];  // [LDM] we cannot deallocate like that. Backtrack before limit is reached can take us right back in (and exit a second time! 2x dealloc!).
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {

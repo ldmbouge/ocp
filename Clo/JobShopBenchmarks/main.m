@@ -281,7 +281,7 @@ int main(int argc, const char * argv[]) {
                 id<ORUniformDistribution> lD = [ORFactory uniformDistribution:model range:RANGE(model,2,max(2,nbMachines/5))];
                 [cp repeat: ^{
                     [cp limitFailures: 3 *nbJobs * nbMachines in: ^{
-                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return 100 * [cp globalSlack: disjunctive[i]] + ([cp localSlack: disjunctive[i]]); }
+                        [cp forall: Machines orderedBy: ^ORInt(ORInt i) { return [cp globalSlack: disjunctive[i]] + ([cp localSlack: disjunctive[i]] << 16); }
                                 do: ^(ORInt i) {
                             id<ORTaskVarArray> t = disjunctive[i].taskVars;
                             [cp sequence: disjunctive[i].successors by: ^ORDouble(ORInt i) { return [cp ect: t[i]]; } then: ^ORDouble(ORInt i) { return [cp est: t[i]];}];

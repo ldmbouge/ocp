@@ -90,8 +90,21 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitFailures dealloc called...\n");
+   //NSLog(@"ORLimitFailures dealloc called...");
    [super dealloc];
+}
+
+-(id)retain
+{
+   return [super retain];
+}
+-(NSUInteger)retainCount
+{
+   return [super retainCount];
+}
+-(oneway void)release
+{
+   [super release];
 }
 -(ORInt) addChoice: (NSCont*) k
 {

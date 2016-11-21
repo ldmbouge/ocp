@@ -89,6 +89,9 @@ void lock_constructor() {
       return;
    }
    assert(ok != ORFailure);
+
+   [tracer pushNode];
+
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
    
    [[_solver explorer] applyController: base
@@ -99,6 +102,7 @@ void lock_constructor() {
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool post:pItf]];
                                     }];
    
+   [tracer popNode];
    //NSLog(@"     PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
    [stolen release];
    //NSLog(@"MT(1):%d : %@",[NSThread threadID],[theCP getMT]);
