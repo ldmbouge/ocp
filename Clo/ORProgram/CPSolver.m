@@ -1121,14 +1121,19 @@
    }];
    [self labelBitVarHeuristic:h withConcrete:cav];
 }
--(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h withConcrete:(id<ORVarArray>)av
 {
+   id<CPBitVarArray> cav = [CPFactory bitVarArray:self range:av.range with:^id<CPBitVar>(ORInt i) {
+      CPBitVarI* sv =_gamma[av[i].getId];
+      assert([sv isKindOfClass:[CPBitVarI class]]);
+      return sv;
+   }];
    id<ORSelect> select = [ORFactory selectRandom: _engine
-                                           range: RANGE(_engine,[av low],[av up])
+                                           range: RANGE(_engine,[cav low],[cav up])
 //                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
-                                  suchThat: ^ORBool(ORInt i) { return ![av[i] bound]; }
+                                  suchThat: ^ORBool(ORInt i) { return ![cav[i] bound]; }
                                        orderedBy: ^ORDouble(ORInt i) {
-                                          ORDouble rv = [h varOrdering:av[i]];
+                                          ORDouble rv = [h varOrdering:cav[i]];
                                           return rv;
                                        }];
    
@@ -1215,7 +1220,7 @@
          i = [select max];
          if (i == MAXINT)
             return;
-         x = av[i];
+         x = cav[i];
 //         NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
       } else {
