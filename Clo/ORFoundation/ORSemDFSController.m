@@ -43,6 +43,7 @@
    for(ORInt i = 0;i  < _sz;i++)
       [_cpTab[i] release];
    free(_cpTab);
+   [_model release];
    [super dealloc];
 }
 +(id<ORSearchController>)proto
@@ -162,7 +163,9 @@
             _cpTab[i-1] = _cpTab[i];
          }
          --_sz;
-         ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:[[_engine objective] primalValue]];
+         id<ORObjectiveValue> pb = [[_engine objective] primalValue];
+         ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:pb];
+         [pb release]; // needed to avoid leak.
          [cp letgo];
          return rv;
       } else return nil;

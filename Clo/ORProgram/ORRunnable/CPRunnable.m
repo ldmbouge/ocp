@@ -126,15 +126,13 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    static __thread int bndCount = 0;
-    id<ORObjectiveValue> pb = [[_program objective] primalBound];
+    //static __thread int bndCount = 0;
+    //id<ORObjectiveValue> pb = [[_program objective] primalBound];
     //NSLog(@"CPRunnable(%p): received bound(%i): %i  PRIMAL WAS: %@ inside: %p", _program, ++bndCount, bound,pb,[NSThread currentThread]);
     //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
-    [[_program objective] tightenPrimalBound:[ORFactory objectiveValueInt:bound minimize:YES]];
-   //ORTimeval cpu1 = [ORRuntimeMonitor elapsedSince:cpu0];
-   //static ORLong ttlCP = 0;
-   //ttlCP += (ORLong)cpu1.tv_sec * 1000000 + cpu1.tv_usec;
-   //NSLog(@"ttlCP =  %lld",ttlCP);
+   id<ORObjectiveValue> nb = [ORFactory objectiveValueInt:bound minimize:YES];
+   [[_program objective] tightenPrimalBound:nb];
+   [nb release];
 }
 
 -(void) receiveLowerBound:(ORDouble)bound

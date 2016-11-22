@@ -92,14 +92,19 @@ void lock_constructor() {
 
    [tracer pushNode];
 
-   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
+   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer]
+                                                                        engine:[_solver engine]
+                                                                       posting:[pItf retain]];
    
    [[_solver explorer] applyController: base
                                     in: ^ {
                                        [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
                                                                onSolution:nil
                                                                    onExit:nil
-                                                                  control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool post:pItf]];
+                                                                  control:[[CPGenerator alloc] initCPGenerator:base
+                                                                                                      explorer:_solver
+                                                                                                        onPool:_pool
+                                                                                                          post:pItf]];
                                     }];
    
    [tracer popNode];
