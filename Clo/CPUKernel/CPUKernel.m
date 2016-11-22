@@ -60,7 +60,10 @@
    [_node release];
    [super dealloc];
 }
-
+-(ORBool)vertical
+{
+   return NO;
+}
 -(ORClosure) trigger
 {
    return _trigger;

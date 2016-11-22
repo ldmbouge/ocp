@@ -21,14 +21,13 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> mdl = [ORFactory createModel];
+         
          ORInt fixed = 30;
          ORInt maxCost = 100;
-          id<ORIntRange> Stores     = RANGE(mdl, 0, 4);//RANGE(mdl,0,9);
-          id<ORIntRange> Warehouses = RANGE(mdl, 0, 1);//RANGE(mdl,0,4);
-          id<ORIntArray> cap = [ORFactory intArray:mdl array: @[@3, @3]];//@[@1,@4,@2,@1,@3]];
+          id<ORIntRange> Stores     = RANGE(mdl,0,9);
+          id<ORIntRange> Warehouses = RANGE(mdl,0,4);
+          id<ORIntArray> cap = [ORFactory intArray:mdl array: @[@1,@4,@2,@1,@3]];
          
-          ORInt connection[5][2] = {{24, 55},{27, 63},{97, 43},{22, 35}, {83,74}};
-          /*
           ORInt connection[10][5] = {{ 20, 24, 11, 25, 30 },
             { 28, 27, 82, 83, 74 },
             { 74, 97, 71, 96, 70 },
@@ -39,7 +38,6 @@ int main(int argc, const char * argv[])
             { 10, 73, 13, 43, 96 },
             { 93, 35, 63, 85, 46 },
             { 47, 65, 55, 71, 95 }};
-          */
          ORInt* conn = (ORInt*)connection;
          
          
@@ -80,9 +78,7 @@ int main(int argc, const char * argv[])
                 id<ORIntArray> cps = [ORFactory intArray:cp range:cost.range with:^ORInt(ORInt k) {
                     return [cp intValue:cost[k]];
                 }];
-               NSLog(@"Solution: %@  -- open: %d",ops,[cp intValue:obj]);
-                NSLog(@"Solution: %@  -- supp: %d",sps,[cp intValue:obj]);
-                NSLog(@"Solution: %@  -- cost: %d",cps,[cp intValue:obj]);
+               NSLog(@"Solution: %@  -- %@ -- %@ -- open: %d",ops,sps,cps,[cp intValue:obj]);
             }
          }];
          NSLog(@"#solutions: %d",nbSol);

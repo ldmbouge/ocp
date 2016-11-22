@@ -388,6 +388,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller release];
          _controller = nil;
          NSLog(@"top-level success");
+         //[exit letgo];
       }
       else {
          NSLog(@"top-level fail");
@@ -428,7 +429,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
-      [_controller addChoice: exit];
+      [newCtrl addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       if (body) body();
       if (onSolution) onSolution();
@@ -436,6 +437,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
    else { // if ([newCtrl isFinitelyFailed]) {
       [exit letgo];
+      [newCtrl cleanup];
       [newCtrl release];
       if (onExit) onExit();
       // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.

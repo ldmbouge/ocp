@@ -39,25 +39,25 @@
 }
 
 - (void)testReify {
-   id<ORModel> m = [ORFactory createModel];
-   id<ORIntRange> R = RANGE(m,1,3);
-   
-   id<ORIntVar> A  = [ORFactory boolVar:m];
-   id<ORIntVar> B  = [ORFactory intVar:m domain:R];
-   id<ORIntVar> C  = [ORFactory intVar:m domain:R];
-   [m add: [A eq:[B neq:C]]];
-   
-   id<CPProgram> cp = [ORFactory createCPProgram:m];
-   id<ORIntVarArray> x = [m intVars];
-   [cp solveAll:
-    ^() {
-       [cp labelArray: x];
-       @autoreleasepool {
-          NSString* buf = [NSMutableString stringWithFormat:@"DISEQUALITY: A = %d , B = %d , C = %d\n",[cp intValue:A],[cp intValue:B],[cp intValue:C]];
-          printf("%s", [buf cStringUsingEncoding:NSASCIIStringEncoding]);
-       }
-    }
-    ];
+   @autoreleasepool {
+      id<ORModel> m = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(m,1,2);
+      
+      id<ORIntVar> A  = [ORFactory boolVar:m];
+      id<ORIntVar> B  = [ORFactory intVar:m domain:R];
+      id<ORIntVar> C  = [ORFactory intVar:m domain:R];
+      [m add: [A eq:[B neq:C]]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:m];
+      id<ORIntVarArray> x = [m intVars];
+      [cp solveAll: ^{
+          [cp labelArray: x];
+          @autoreleasepool {
+             NSString* buf = [NSMutableString stringWithFormat:@"DISEQUALITY: A = %d , B = %d , C = %d\n",[cp intValue:A],[cp intValue:B],[cp intValue:C]];
+             printf("%s", [buf cStringUsingEncoding:NSASCIIStringEncoding]);
+          }
+       }];
+   }
 }
 
 
