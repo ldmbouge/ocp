@@ -50,6 +50,11 @@
 {
    return [_controller succeeds];
 }
+-(void) abort
+{
+   *_stopNow = YES;
+   [super abort];
+}
 
 #if defined(__linux__)
 static pthread_spinlock_t lock;
@@ -84,16 +89,25 @@ void lock_constructor() {
       return;
    }
    assert(ok != ORFailure);
-   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer] engine:[_solver engine] posting:pItf];
+
+   [tracer pushNode];
+
+   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer]
+                                                                        engine:[_solver engine]
+                                                                       posting:[pItf retain]];
    
    [[_solver explorer] applyController: base
                                     in: ^ {
                                        [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
                                                                onSolution:nil
                                                                    onExit:nil
-                                                                  control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool post:pItf]];
+                                                                  control:[[CPGenerator alloc] initCPGenerator:base
+                                                                                                      explorer:_solver
+                                                                                                        onPool:_pool
+                                                                                                          post:pItf]];
                                     }];
    
+   [tracer popNode];
    //NSLog(@"     PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
    [stolen release];
    //NSLog(@"MT(1):%d : %@",[NSThread threadID],[theCP getMT]);
@@ -297,6 +311,7 @@ void lock_constructor() {
 -(void)packAndFail
 {
    id<ORProblem> p = [[_solver tracer] captureProblem];
+   //NSLog(@"packAndFail called. Saving problem %@",p);
    [_pool enQueue:p];
    [self fail];
    [self finitelyFailed];

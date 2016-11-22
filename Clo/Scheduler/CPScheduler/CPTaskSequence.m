@@ -69,7 +69,7 @@
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
     // Each task has a different successor
    [_engine addInternal:[CPFactory alldifferent: _engine over: _succ annotation: ValueConsistency]];
@@ -105,8 +105,6 @@
    
    // Initial propagation
    [self propagate];
-
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -277,7 +275,7 @@ static inline ORBool isPresent(CPOptionalTaskSequence * seq, const ORInt t)
         return [(CPResourceTask *)[seq->_tasks at:t] isPresentOn:[seq->_res at:t]];
     return [[seq->_tasks at:t] isPresent];
 }
--(ORStatus) post
+-(void) post
 {
     // Each task has a different successor
     [_engine addInternal:[CPFactory alldifferent: _engine over: _succ annotation: ValueConsistency]];
@@ -309,8 +307,6 @@ static inline ORBool isPresent(CPOptionalTaskSequence * seq, const ORInt t)
     
     // Initial propagation
     [self propagate];
-    
-    return ORSuspend;
 }
 
 -(void) propagate

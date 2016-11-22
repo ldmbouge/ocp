@@ -54,9 +54,13 @@
 }
 -(void)start:(id<ORVoidInformer>)stop
 {
-   [stop whenNotifiedDo:^ {
-      [_c cancelSearch];
+   [_c performOnStart:^{
+      NSLog(@"We are about to setup a listener on stop informer: %p",[NSThread currentThread]);
+      [stop whenNotifiedDo:^ {
+         [_c cancelSearch];
+      }];
    }];
+   
    [_c start];
    [stop notify];
    [self notifyDone];

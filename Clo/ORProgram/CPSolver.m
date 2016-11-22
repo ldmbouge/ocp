@@ -299,19 +299,18 @@
          [_search fail];
       if (![_hSet empty]) {
          @autoreleasepool {
-            NSMutableArray* mvar = [[NSMutableArray alloc] initWithCapacity: [[_model variables] count]];
-            NSIndexSet* iset = [[_model variables] indexesOfObjectsPassingTest: ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-               return ([obj conformsToProtocol: @protocol(ORIntVar)] || [obj conformsToProtocol:@protocol(ORBitVar)]);
-            }];
-            [[_model variables] enumerateObjectsAtIndexes: iset options: NSEnumerationReverse usingBlock: ^(id obj, NSUInteger idx, BOOL* stop) {
-               [mvar addObject: obj];
-            }];
-            NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
+	    NSArray* svar = [_model variables];	   
+            NSMutableArray* mvar = [[NSMutableArray alloc] initWithCapacity: svar.count];
+	    for(id<ORVar> x in svar) {
+	      if ([x conformsToProtocol: @protocol(ORIntVar)] || [x conformsToProtocol:@protocol(ORBitVar)])
+		[mvar addObject:x];
+	    }
+            NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity: mvar.count];
             for(id<ORVar> v in mvar)
                [cvar addObject:_gamma[v.getId]];
             tryfail(^ORStatus{
                [_hSet applyToAll:^(id<CPHeuristic> h) {
-                  [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+		   [h initHeuristic:mvar concrete:cvar oneSol:_oneSol tracker:self];
                }];
                [cvar release];
                [mvar release];
@@ -652,6 +651,9 @@
 
 -(ORBool) ground
 {
+   ORBool holdsVertical = [_engine holdsVertical];
+   if (holdsVertical)
+      return YES;
    NSMutableArray* av = [_engine variables];
    for(id<CPVar> xi in av) {
       if (![xi bound])

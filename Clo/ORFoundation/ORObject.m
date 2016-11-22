@@ -31,6 +31,10 @@ static Class __orObjectClass = nil;
    _rc = 1;
    return self;
 }
+-(ORBool)vertical
+{
+   return NO;
+}
 -(void)setId:(ORUInt)name
 {
    assert(_name == -1);
@@ -74,9 +78,12 @@ static Class __orObjectClass = nil;
 {}
 - (BOOL)isEqual:(id)object
 {
-   Class me = object_getClass(self);
-   if ([me isKindOfClass:__orObjectClass]) {
-      return _name == getId(object);
+   if ((id)self == object)
+      return YES;
+   if ([self isKindOfClass:__orObjectClass]) {
+      ORBool eq = _name == getId(object);
+      assert(!eq || [self class] == [object class]);
+      return eq;
    } else return NO;
 }
 - (NSUInteger)hash

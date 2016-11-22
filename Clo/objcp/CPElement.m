@@ -588,10 +588,9 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    NSLog(@"BC constraint posted.\n");
-   return ORSuspend;
 }
 -(void) propagate
 {
@@ -646,7 +645,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 {
    [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
    unsigned int xwl = [_x getWordLength];
    assert(xwl==1);
@@ -787,9 +786,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    for(ORInt k=[_la value];k<=[_ua value];k++) {
       if (_I[k] && ![_z[k] bound])
          [_z[k] whenChangePropagate:self];
-   }
-   
-   return ORSuspend;
+   }   
 }
 -(void) propagate
 {

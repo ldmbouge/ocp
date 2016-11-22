@@ -11,7 +11,7 @@
 
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPIntVarI.h>
-#import "CPDifference.h"
+#import <CPScheduler/CPDifference.h>
 
     // Whether binary priority queue should be used instead of a linear
     // operation for the shortest path calculations
@@ -119,7 +119,6 @@ typedef struct {
     
     // Avoidance of negative capacity
     numItems = max(numItems, 0);
- 
     self = [super initCPCoreConstraint: engine];
 
     // TODO Adjusting the priority
@@ -182,7 +181,6 @@ typedef struct {
     _lambdaLast  = makeTRInt(_trail, -1);
     
     _isPosted = FALSE;
-    
     return self;
 }
 -(void) dealloc
@@ -229,15 +227,12 @@ typedef struct {
     
     [super dealloc];
 }
--(ORStatus) post
+-(void) post
 {
 //    printf("I am posting a CPDifference Constraint\n");
     _isPosted = TRUE;
     
     // XXX Initial propagation????
-
-    // Return the state
-    return ORSuspend;
 }
 -(void) propagate
 {

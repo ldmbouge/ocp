@@ -24,18 +24,22 @@
 -(ORDouble) bestBound;
 -(id<ORSolution>) bestSolution;
 -(void)cancelSearch;
+-(void) performOnStart: (ORClosure)c;
+-(void) performOnExit: (ORClosure)c;
 @end
 
 @interface ORAbstractRunnableI : NSObject<ORRunnable> {
 @protected
-    id<ORModel> _model;
-    ORClosure _exitBlock;
-    ORClosure _startBlock;
+   id<ORModel> _model;
+   NSMutableArray* _startBlocks;
+   NSMutableArray* _exitBlocks;
 }
 @property(readwrite, retain) NSArray* siblings;
 -(id) initWithModel: (id<ORModel>)m;
 -(void) performOnStart: (ORClosure)c;
 -(void) performOnExit: (ORClosure)c;
+-(void) doStart;
+-(void) doExit;
 -(id<ORASolver>) solver;
 -(void) setTimeLimit: (ORDouble) secs;
 @end

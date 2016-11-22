@@ -83,7 +83,7 @@
 }
 -(id) initCPElementBC: (id) x indexVarArray:(id<ORIdArray>) c equal:(id)y;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -105,7 +105,7 @@
    
 }
 -(id)initCPElementAC: (id) x indexVarArray:(id<ORIdArray>)y equal:(id)z;
--(ORStatus) post;
+-(void) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

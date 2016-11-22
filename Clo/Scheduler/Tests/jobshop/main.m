@@ -9,18 +9,13 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <ORFoundation/ORFoundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <ORScheduler/ORScheduler.h>
 #import <ORSchedulingProgram/ORSchedulingProgram.h>
-#import <ORProgram/ORRunnable.h>
-#import <ORProgram/ORSignature.h>
-#import <ORProgram/ORParallelCombinator.h>
 
-#import <ORModeling/ORLinearize.h>
+//#import <ORProgram/ORSignature.h>
+//#import <ORProgram/ORParallelCombinator.h>
+//#import <ORModeling/ORLinearize.h>
 
 
 #import "ORCmdLineArgs.h"
@@ -416,7 +411,7 @@ int mainPureCP(int argc, const char * argv[])
          id<ORSchedulingModel> model = (id)[ORFactory createModel];
          
          // data
-         ORLong timeStart = [ORRuntimeMonitor cputime];
+         ORTimeval timeStart = [ORRuntimeMonitor now];
          
          id<ORIntRange> Jobs = [ORFactory intRange: model low: 0 up: nbJobs-1];
          id<ORIntRange> Machines = [ORFactory intRange: model low: 0 up: nbMachines-1];
@@ -484,8 +479,8 @@ int mainPureCP(int argc, const char * argv[])
             printf("(%d)\tmakespan = [%d,%d] \n",[NSThread threadID],[cp min: makespan],[cp max: makespan]);
             
          }];
-         ORLong timeEnd = [ORRuntimeMonitor cputime];
-         NSLog(@"Time: %lld:",timeEnd - timeStart);
+         ORTimeval timeEnd = [ORRuntimeMonitor elapsedSince:timeStart];
+         NSLog(@"Time: %ld ms",timeEnd.tv_sec * 1000 + timeEnd.tv_usec / 1000);
          id<ORSolutionPool> pool = [cp solutionPool];
          id<ORSolution> optimum = [pool best];
          printf("Makespan: %d \n",[optimum intValue: makespan]);

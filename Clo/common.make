@@ -8,8 +8,13 @@ LFLAGS = `gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../ORModeling -Wl,-rpath=`pwd`/../ORModeling \
 	-L../ORProgram -Wl,-rpath=`pwd`/../ORProgram \
 	-L../objmp -Wl,-rpath=`pwd`/../objmp \
+	-L../Scheduler/ORScheduler -Wl,-rpath=`pwd`/../Scheduler/ORScheduler \
+	-L../Scheduler/CPScheduler -Wl,-rpath=`pwd`/../Scheduler/CPScheduler \
+	-L../Scheduler/ORSchedulingProgram -Wl,-rpath=`pwd`/../Scheduler/ORSchedulingProgram \
+	-L../objmp -Wl,-rpath=`pwd`/../objmp \
 	-L/opt/gurobi652/linux64/lib -Wl,-rpath=/opt/gurobi652/linux64/lib \
 	-lORUtilities -lORFoundation -lCPUKernel -lobjcp -lORModeling -lORProgram \
+	-lORScheduler -lCPScheduler -lORSchedulerProgram \
 	-lobjmp -lgurobi65 -ldispatch \
 	-fobjc-runtime=gnustep
 

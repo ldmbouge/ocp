@@ -17,11 +17,11 @@
 @implementation CPBitVarBaseHeuristic {
    BOOL _oneSol;
 }
--(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol
+-(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol tracker:(id<ORTracker>)cp
 {
    self = [super init];
    _oneSol = oneSol;
-   id<ORTracker>  cp = [[mvar objectAtIndex:0] tracker];
+   //id<ORTracker>  cp = [[mvar objectAtIndex:0] tracker];
    id<ORIntRange>  r = RANGE(cp,0,(ORInt)[mvar count]-1);
    id<ORVarArray> mv = (id)[ORFactory idArray:cp range:r];
    ORInt k = 0;
@@ -123,9 +123,9 @@
 {
    [_binding[[NSThread threadID]] initInternal:t and:cvs];
 }
--(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol
+-(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol tracker:(id<ORTracker>)cp
 {
-   [_binding[[NSThread threadID]] initHeuristic:mvar concrete:cvar oneSol:oneSol];
+   [_binding[[NSThread threadID]] initHeuristic:mvar concrete:cvar oneSol:oneSol tracker:cp];
 }
 -(id<ORBitVarArray>) allBitVars
 {

@@ -24,6 +24,7 @@
 +(NSCont*) takeContinuation;
 +(void)shutdown;
 @property (readwrite,assign) ORInt field;
+@property (readwrite,assign) ORBool admin;
 @property (readwrite,retain) id  fieldId;
 @end 
 

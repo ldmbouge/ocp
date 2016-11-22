@@ -20,14 +20,15 @@
 {
     self = [super init];
     _model = m;
-    _startBlock = nil;
-    _exitBlock = nil;
+    _startBlocks = [[NSMutableArray alloc] initWithCapacity:2];
+    _exitBlocks  = [[NSMutableArray alloc] initWithCapacity:2];
     return self;
 }
 
 -(void) dealloc {
-    if(_exitBlock) [_exitBlock release];
-    [super dealloc];
+   [_startBlocks release];
+   [_exitBlocks release];
+   [super dealloc];
 }
 
 -(id<ORModel>) model
@@ -44,9 +45,10 @@
 }
 -(void) start
 {
-    ///if(_startBlock) _startBlock();
-    [self run];
-    if(_exitBlock) _exitBlock();
+   ///if(_startBlock) _startBlock();
+   [self run];
+   for(ORClosure exb in _exitBlocks)
+      exb();
 }
 
 -(void) run
@@ -73,12 +75,22 @@
 
 -(void) performOnStart: (ORClosure)c
 {
-    _startBlock = [c copy];
+   [_startBlocks addObject:[c copy]];
 }
 
 -(void) performOnExit: (ORClosure)c
 {
-    _exitBlock = [c copy];
+   [_exitBlocks addObject:[c copy]];
+}
+-(void) doStart
+{
+   for(ORClosure sb in _startBlocks)
+      sb();
+}
+-(void) doExit
+{
+   for(ORClosure eb in _exitBlocks)
+      eb();
 }
 -(void)cancelSearch
 {

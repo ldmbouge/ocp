@@ -105,7 +105,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 }
 -(void) dealloc
 {
-   _column += (_low - 1);
+   _column += - 1;
    for(ORInt k=0;k<_nb+1;k++)
       [_column[k] release];
    free(_column);

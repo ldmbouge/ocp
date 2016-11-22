@@ -573,8 +573,6 @@
 {
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
-   if (_onSol)
-      [me onSolution: _onSol];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested
@@ -633,6 +631,8 @@
    NSNumber* allSols  = [input objectAtIndex:2];
    [NSThread setThreadPriority:1.0];
    [NSThread setThreadID:myID];
+   if (_onSol)
+      [_workers[myID] onSolution: _onSol];
    _doneSearching = NO;
    [self doOnStartup];
    [[_workers[myID] explorer] search: ^() {
@@ -675,7 +675,7 @@
       //ORLong took = 0;
       ORTimeval before = [ORRuntimeMonitor now];
       ORLong sleeping = 0;
-      while ((cpRoot = [_queue deQueue]) !=nil) {
+      while (!_doneSearching && (cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
             ORTimeval sleepy = [ORRuntimeMonitor elapsedSince:before];
             sleeping += sleepy.tv_sec* 1000 + sleepy.tv_usec / 1000;

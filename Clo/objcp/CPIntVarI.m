@@ -174,6 +174,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _recv = nil;
    return self;
 }
+-(ORBool)vertical
+{
+   return NO;
+}
+
 -(id<ORTracker>) tracker
 {
    return _fdm;

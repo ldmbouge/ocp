@@ -68,9 +68,7 @@
 
 -(void) run
 {
-   if (_startBlock)
-      _startBlock();
-   
+   [self doStart];
    NSLog(@"Running MIP runnable(%p)...", _program);
    ORLong cpu0 = [ORRuntimeMonitor wctime];
    [[[_program solver] boundInformer] wheneverNotifiedDo: ^(ORDouble bnd) { [self notifyUpperBound: (ORInt)bnd]; }];

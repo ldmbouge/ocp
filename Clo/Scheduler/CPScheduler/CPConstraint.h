@@ -27,7 +27,7 @@
 }
 -(id) initCPAlternative: (id<CPTaskVar>) task alternatives: (id<CPTaskVarArray>) alt;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end
@@ -40,7 +40,7 @@
 }
 -(id) initCPSpan: (id<CPTaskVar>) task compound: (id<CPTaskVarArray>) compound;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end
@@ -51,7 +51,7 @@
 }
 -(id) initCPTaskPrecedence: (id<CPTaskVar>) before after: (id<CPTaskVar>) after;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -63,7 +63,7 @@
 }
 -(id) initCPOptionalTaskPrecedence: (id<CPTaskVar>) before after: (id<CPTaskVar>) after;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -75,7 +75,7 @@
 }
 -(id) initCPOptionalResourceTaskPrecedence: (id<CPTaskVar>) before res: (id<CPConstraint>) bRes after: (id<CPTaskVar>) after res: (id<CPConstraint>) aRes;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -87,7 +87,7 @@
 }
 -(id) initCPTaskIsFinishedBy: (id<CPTaskVar>) task : (id<CPIntVar>) date;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -99,7 +99,7 @@
 }
 -(id) initCPTaskPresence: (id<CPTaskVar>) task : (id<CPIntVar>) presence;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 @end
@@ -110,7 +110,7 @@
 }
 -(id) initCPTaskStart:(id<CPTaskVar>)task :(id<CPIntVar>)start;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -122,7 +122,7 @@
 }
 -(id) initCPTaskDuration: (id<CPTaskVar>) task : (id<CPIntVar>) duration;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -134,7 +134,7 @@
 }
 -(id) initCPTaskEnd:(id<CPTaskVar>)task :(id<CPIntVar>)end;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -147,7 +147,7 @@
 }
 -(id) initCPTaskAddTransitionTime: (id<CPTaskVar>) normal extended: (id<CPTaskVar>) extended time: (id<CPIntVar>) time;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -160,7 +160,7 @@
 }
 -(id) initCPTaskMultDur:(id<CPTaskVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -173,7 +173,7 @@
 }
 -(id) initCPResourceTaskAddTransitionTime: (id<CPResourceTask>) normal extended: (id<CPResourceTask>) extended time: (id<CPIntVarArray>) time;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;

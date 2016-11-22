@@ -48,6 +48,7 @@
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 -(id<ORIntRange>)boolRange;
+-(ORBool)holdsVertical;
 @end
 
 #define ISLOADED(q)  ((q)->_csz)

@@ -433,6 +433,7 @@
    _low = [range low];
    _up  = [range up];
    _nb  = _up - _low + 1;
+   assert(0 <= _nb && _nb <= 100000000);
    _range = range;
    _array = malloc(_nb * sizeof(id));
    memset(_array,0,sizeof(id)*_nb);

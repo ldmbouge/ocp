@@ -81,14 +81,13 @@
     _w = w;
     return self;
 }
--(ORStatus) post
+-(void) post
 {
     [self propagate];
     if (![_x bound])
         [_x whenChangeBoundsPropagate:self];
     if (![_z bound])
         [_z whenChangeBoundsPropagate:self];
-    return ORSuspend;
 }
 -(void) propagate
 {

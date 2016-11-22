@@ -31,6 +31,17 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon;
 +(id<ORModel>) linearizeSchedulingModel: (id<ORModel>)m
                                encoding: (MIPSchedEncoding)enc
 {
+   NSArray* theVars = [[m variables] copy];
+   for(id<ORVar> x in theVars) {
+      if([x conformsToProtocol: @protocol(ORTaskVar)]) {
+         id<ORTaskVar> y = (id<ORTaskVar>)x;
+         [y getStartVar];
+//         [y getEndVar];
+//         [y getDurationVar];
+//         [y getPresenceVar];
+      }
+   }
+   [theVars release];
    id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m annotation:nil]; //TOFIX
    

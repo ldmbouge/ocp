@@ -19,7 +19,7 @@
 }
 -(id) initCPTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
@@ -32,7 +32,7 @@
 -(id) initCPOptionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ;
 -(id) initCPOptionalTaskSequence: (id<CPTaskVarArray>) tasks successors: (id<CPIntVarArray>) succ resource:(id<CPResourceArray>) resource;
 -(void) dealloc;
--(ORStatus) post;
+-(void) post;
 -(void) propagate;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;

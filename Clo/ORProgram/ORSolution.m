@@ -293,12 +293,16 @@
 }
 -(void) emptyPool
 {
-   [_all removeAllObjects];
+  @synchronized(self) {
+    [_all removeAllObjects];
+  }
 }
 
 -(void) addSolution:(id<ORSolution>)s
 {
-   [_all addObject:s];
+   @synchronized(self) {
+    [_all addObject:s];
+   }
    [_solutionAddedInformer notifyWithSolution: s];
 }
 
@@ -309,8 +313,10 @@
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block
 {
-  for(id obj in _all)
-    block(obj);
+  @synchronized(self) {
+    for(id obj in _all)
+      block(obj);
+  }
 }
 
 -(id<ORInformer>)solutionAdded
@@ -322,9 +328,11 @@
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"pool["];
-   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
-      [buf appendFormat:@"\t%@\n",obj];
-   }];
+   @synchronized(self) {
+     [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
+	 [buf appendFormat:@"\t%@\n",obj];
+       }];
+   }
    [buf appendFormat:@"]"];
    return buf;
 }
@@ -333,19 +341,21 @@
 {
    __block id<ORSolution> sel = nil;
    __block id<ORObjectiveValue> bestSoFar = nil;
-   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
-      if (bestSoFar == nil) {
-         bestSoFar = [obj objectiveValue];
-         sel = obj;
-      }
-      else {
-         id<ORObjectiveValue> nv = [obj objectiveValue];
-         if ([bestSoFar compare: nv] == 1) {
-            bestSoFar = nv;
-            sel = obj;
-         }
-      }
-   }];
+   @synchronized(self) {
+     [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
+	 if (bestSoFar == nil) {
+	   bestSoFar = [obj objectiveValue];
+	   sel = obj;
+	 }
+	 else {
+	   id<ORObjectiveValue> nv = [obj objectiveValue];
+	   if ([bestSoFar compare: nv] == 1) {
+	     bestSoFar = nv;
+	     sel = obj;
+	   }
+	 }
+       }];
+   }
    return [sel retain];
 }
 @end

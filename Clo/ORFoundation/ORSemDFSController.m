@@ -43,6 +43,7 @@
    for(ORInt i = 0;i  < _sz;i++)
       [_cpTab[i] release];
    free(_cpTab);
+   [_model release];
    [super dealloc];
 }
 +(id<ORSearchController>)proto
@@ -147,18 +148,27 @@
    if (_sz >= 1) {
 //      NSCont* c = _tab[_sz - 1];
 //      id<ORCheckpoint> cp = _cpTab[_sz -1];
-
-      NSCont* c           = _tab[0];
-      id<ORCheckpoint> cp = _cpTab[0];
-      for(ORInt i=1;i<_sz;i++) {
-         _tab[i-1] = _tab[i];
-         _cpTab[i-1] = _cpTab[i];
+      ORInt selection = -1;
+      for(ORInt i=0;i<_sz;i++) {
+         if (!_tab[i].admin) {
+            selection = i;
+            break;
+         }
       }
-
-      --_sz;
-      ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:[[_engine objective] primalValue]];
-      [cp letgo];
-      return rv;
+      if (selection != -1) {
+         NSCont* c           = _tab[selection];
+         id<ORCheckpoint> cp = _cpTab[selection];
+         for(ORInt i=selection + 1;i<_sz;i++) {
+            _tab[i-1] = _tab[i];
+            _cpTab[i-1] = _cpTab[i];
+         }
+         --_sz;
+         id<ORObjectiveValue> pb = [[_engine objective] primalValue];
+         ORHeist* rv = [[ORHeist alloc] init:c from:cp oValue:pb];
+         [pb release]; // needed to avoid leak.
+         [cp letgo];
+         return rv;
+      } else return nil;
    } else return nil;
 }
 

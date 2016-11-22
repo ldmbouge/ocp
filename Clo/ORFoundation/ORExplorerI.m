@@ -263,9 +263,9 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    ORLimitFailures* limit = [[ORLimitFailures alloc] initORLimitFailures: nb];
    //[_engine trackObject:limit];  // [ldm. that causes a leak. Seems like there is a strong reference from each checkpoint as well as from the controller in the explorer.]
    [self push: limit];
+   [limit release];  // [LDM] debugging this... The release here is necessary so that there is only *ONE* referefence to the limit (from the controller var).
    cl();
    [limit succeeds];
-   [limit release];
    [self popController];
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
@@ -291,6 +291,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
    //   id<ORMutableInteger> nbRestarts = [ORFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
+   if ([enter nbCalls]==0)
+      enter.admin = YES;       // This makes sure that this specific continuation can't be stolen (parallel code).
    if (isDone && isDone()) {
       [enter letgo];
       [_controller fail];

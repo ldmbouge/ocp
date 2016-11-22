@@ -10,5 +10,5 @@ USER_DEFINES += $(CFL)
 
 CFLAGS =$(GSC) -msse4.1 -fblocks -fobjc-nonfragile-abi \
 	-DUSEVIEWS=1 \
-	$(USER_DEFINES) -I. -I.. -I/home/ldm/ocp/gurobi550/linux64/include 
+	$(USER_DEFINES) -I. -I.. -I../Scheduler -I/home/ldm/ocp/gurobi550/linux64/include 
 
