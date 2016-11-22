@@ -2110,7 +2110,8 @@
 		F59BEED21DAC3A64007F8BA8 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		F59BEED31DAC3A64007F8BA8 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		F59BEED41DAC3A64007F8BA8 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		F59BEED51DAC3A64007F8BA8 /* Verification.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F51500681DA581340023B888 /* Verification.framework */; };
+		F59BEED51DAC3A64007F8BA8 /* Verification.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F51500681DA581340023B888 /* Verification.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		F5DD8CE61DCFF09E005F3DE6 /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -7048,6 +7049,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F51500671DA581340023B888;
 			remoteInfo = verification;
+		};
+		F5DD8CE71DCFF0C7005F3DE6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -23965,6 +23973,7 @@
 				F59BEED21DAC3A64007F8BA8 /* ORModeling.framework in Frameworks */,
 				F59BEED31DAC3A64007F8BA8 /* ORProgram.framework in Frameworks */,
 				F59BEECF1DAC3A64007F8BA8 /* CPUKernel.framework in Frameworks */,
+				F5DD8CE61DCFF09E005F3DE6 /* objmp.framework in Frameworks */,
 				F59BEED01DAC3A64007F8BA8 /* objcp.framework in Frameworks */,
 				F59BEED51DAC3A64007F8BA8 /* Verification.framework in Frameworks */,
 			);
@@ -42992,6 +43001,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F5DD8CE81DCFF0C7005F3DE6 /* PBXTargetDependency */,
 				F59BEEC21DAC3A3E007F8BA8 /* PBXTargetDependency */,
 				F59BEEC41DAC3A3E007F8BA8 /* PBXTargetDependency */,
 				F59BEEC61DAC3A3E007F8BA8 /* PBXTargetDependency */,
@@ -48238,6 +48248,11 @@
 			isa = PBXTargetDependency;
 			target = F51500671DA581340023B888 /* Verification */;
 			targetProxy = F59BEECD1DAC3A3E007F8BA8 /* PBXContainerItemProxy */;
+		};
+		F5DD8CE81DCFF0C7005F3DE6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = F5DD8CE71DCFF0C7005F3DE6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -55268,7 +55283,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = verification/Info.plist;
+				INFOPLIST_FILE = Verification/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -55276,11 +55291,11 @@
 					/opt/local/lib,
 					/usr/local/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.verification;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.Verification;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
@@ -55310,7 +55325,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = verification/Info.plist;
+				INFOPLIST_FILE = Verification/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -55318,11 +55333,11 @@
 					/opt/local/lib,
 					/usr/local/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.verification;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.Verification;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Coverage;
@@ -55352,7 +55367,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = verification/Info.plist;
+				INFOPLIST_FILE = Verification/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -55360,11 +55375,11 @@
 					/opt/local/lib,
 					/usr/local/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.verification;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uconn.Verification;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
@@ -55519,7 +55534,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -55544,7 +55559,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -55569,7 +55584,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -211,104 +211,37 @@
 //   id<ORBasicModel> model = [engine model];
    
    //<<<<<<< HEAD
-   //CPBitVarFF
-   __block id* gamma = [cp gamma];
-   
+   //CPBitVarFF   
    NSLog(@"MD4 Message Blocks (Original)");
    id<ORBitVar>* bitVars;
    for(int i=0; i<_numBlocks;i++){
       bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
       for(int j=0;j<16;j++)
-         NSLog(@"%@\n",gamma[bitVars[j].getId]);
+         NSLog(@"%@\n",[cp stringValue:bitVars[j]]);
    }
    
-//   NSArray* allvars = [model variables];
-   
-//   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:32]];
-//   for(ORInt k=0;k <= 32;k++)
-//      [o set:allvars[k] at:k];
+
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
-      [o set:gamma[bitVars[k].getId] at:k];
-
-//   __block ORUInt maxFail = 0x0000000000001000;
+      [o set:bitVars[k] at:k];
 
    id<CPBitVarHeuristic> h;
-   switch (heur) {
-      case BVABS: h = [cp createBitVarABS:(id<CPBitVarArray>)o];
-         break;
-      case BVIBS: h = [cp createBitVarIBS:(id<CPBitVarArray>)o];
-         break;
-      case BVFF:
-      default:    h =[cp createBitVarFF:(id<CPBitVarArray>)o];
-                  break;
-   }
+   h =[cp createBitVarFF:(id<CPBitVarArray>)o];
    
    [cp solve: ^{
-//      NSLog(@"All variables before search:");
-//      for (int i=0; i< [allvars count]; i++) {
-//         NSLog(@"Model Variable[%i]: %@",i,allvars[i]);
-//      }
-//      NSLog(@"End all variables before search:");
       NSLog(@"Search");
       for(int i=0;i<4;i++)
       {
-         NSLog(@"%@",gamma[digest[i].getId]);
-         NSLog(@"%@\n\n",gamma[digestVars[i].getId]);
+         NSLog(@"%@",[cp stringValue:digest[i]]);
+         NSLog(@"%@\n\n",[cp stringValue:digestVars[i]]);
       }
       //      NSLog(@"Message Blocks (With Data Recovered)");
       clock_t searchStart = clock();
-      //      [cp repeat:^{
-      //         [cp limitFailures:maxFail
-      //                        in:^{[cp labelBitVarHeuristic:h];}];}
-      //        onRepeat:^{maxFail<<=1;NSLog(@"Restart");}];
-      //[cp labelBitVarHeuristic:h];
-      //      for (int i=0;i<16;i++)
-      //         if (![gamma [bitVars[i].getId] bound]) {
-      //            [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
-      //         }
-      switch (heur) {
-         case BVLSB:
-            for (int i=0;i<16;i++)
-               if (![gamma [bitVars[i].getId] bound]) {
-                  [cp labelUpFromLSB:gamma[bitVars[i].getId]];
-               }
-            break;
-         case BVRAND:
-            for (int i=0;i<16;i++)
-               if (![gamma [bitVars[i].getId] bound]) {
-                  [cp labelRandomFreeBit:gamma[bitVars[i].getId]];
-               }
-            break;
-         case BVMID:
-            for (int i=0;i<16;i++)
-               if (![gamma [bitVars[i].getId] bound]) {
-                  [cp labelOutFromMidFreeBit:gamma[bitVars[i].getId]];
-               }
-            break;
-         case BVMIX:
-            for (int i=0;i<16;i++)
-               if (![gamma [bitVars[i].getId] bound]) {
-                  [cp labelBitsMixedStrategy:gamma[bitVars[i].getId]];
-               }
-            break;
-         case BVFF:
-            [cp labelBitVarHeuristic:h];
-            break;
-            
-
-         default: [cp labelBitVarHeuristic:h];
-//               [cp repeat:^{
-//                  [cp limitFailures:maxFail
-//                                 in:^{[cp labelBitVarHeuristic:h];}];}
-//                  onRepeat:^{maxFail= maxFail + (maxFail>>6);NSLog(@"Restart, %u",maxFail);}];
-            break;
-      }
-
+      [cp labelBitVarHeuristic:h];
       clock_t searchFinish = clock();
       
       for(int j=0;j<16;j++){
-         NSLog(@"%@\n",gamma[bitVars[j].getId]);
+         NSLog(@"%@\n",[cp stringValue:bitVars[j]]);
          
       }
       
