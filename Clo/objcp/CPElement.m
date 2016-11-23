@@ -650,13 +650,18 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    unsigned int xwl = [_x getWordLength];
    assert(xwl==1);
    
+   id<CPEngine> engine = [_x engine];
+   
    //    ORBounds xb = [_x bounds];
    CPBitArrayDom* xdom = [_x domain];
    CPBitArrayDom* ydom = [_y domain];
    
    //    ORUInt la = max([_z low],xb.min);
-   ORUInt la = max([_z low],[xdom lowArray][0]);
-   ORUInt ua = min([_z up],[xdom upArray][0]);
+   TRUInt* xUp;
+   TRUInt* xLow;
+   [xdom getUp:&xUp andLow:&xLow];
+   ORUInt la = max([_z low],xLow[0]._val);
+   ORUInt ua = min([_z up],xUp[0]._val);
    //    ORUInt ua = min([_z up],xb.max);
    
    unsigned int *temp;
@@ -666,7 +671,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       rank = [xdom getRank:&temp[1]];
       temp = [xdom atRank:rank+1];
       //        la = temp[0]+xb.min;
-      la = temp[0]+[xdom lowArray][0];
+      la = temp[0]+xLow[0]._val;
    }
    if (![_x member:&ua]) {
       temp = [xdom pred:&ua];
@@ -677,11 +682,11 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    
    [_la setValue:la];
    [_ua setValue:ua];
-   _I = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine],[_la value],[_ua value]) value:0];
-   _svx0 = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine], 0, xwl*WORD_BIT-1) value:0];
-   _svx1 = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine], 0, xwl*WORD_BIT-1) value:0];
-   _svy0 = [ORFactory trailableIntArray:[_y engine] range:RANGE([_y engine], 0, [_y getWordLength]*WORD_BIT-1) value:0];
-   _svy1 = [ORFactory trailableIntArray:[_y engine] range:RANGE([_y engine], 0, [_y getWordLength]*WORD_BIT-1) value:0];
+   _I = [ORFactory trailableIntArray:engine range:RANGE([_x engine],[_la value],[_ua value]) value:0];
+   _svx0 = [ORFactory trailableIntArray:engine range:RANGE([_x engine], 0, xwl*WORD_BIT-1) value:0];
+   _svx1 = [ORFactory trailableIntArray:engine range:RANGE([_x engine], 0, xwl*WORD_BIT-1) value:0];
+   _svy0 = [ORFactory trailableIntArray:engine range:RANGE([_y engine], 0, [_y getWordLength]*WORD_BIT-1) value:0];
+   _svy1 = [ORFactory trailableIntArray:engine range:RANGE([_y engine], 0, [_y getWordLength]*WORD_BIT-1) value:0];
    
    CPBitVarI* elmt;
    unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
@@ -690,10 +695,16 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       if ([_x member:&k]) {
          // check if z[k]=y is valid assignment
          elmt = (CPBitVarI*)[_z at:k];
-         elmtfixed = ~([[elmt domain] lowArray][0]^[[elmt domain] upArray][0]);
-         yfixed = ~([[_y domain] lowArray][0]^[[_y domain] upArray][0]);
+         TRUInt* zUp;
+         TRUInt* zLow;
+         [elmt getUp:&zUp andLow:&zLow];
+         elmtfixed = ~(zLow[0]._val^zUp[0]._val);
+         TRUInt* yUp;
+         TRUInt* yLow;
+         [_y getUp:&yUp andLow:&yLow];
+         yfixed = ~(yLow[0]._val^yUp[0]._val);
          bothfixed = yfixed&elmtfixed;
-         yeldif = [[_y domain] lowArray][0]^[[elmt domain] lowArray][0];
+         yeldif = yLow[0]._val^zLow[0]._val;
          notcomp = bothfixed&yeldif;
          if (notcomp)
             continue;
@@ -763,19 +774,30 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       }
    }
    
-   la = max([_la value], [[_x domain] lowArray][0]);
+   
+   la = max([_la value], xLow[0]._val);
    [_la setValue:la];
-   ua = min([_ua value], [[_x domain] upArray][0]);
+   ua = min([_ua value], xUp[0]._val);
    [_ua setValue:ua];
    
    ORUInt* newxlow = malloc(sizeof(ORUInt));
    ORUInt* newxup = malloc(sizeof(ORUInt));
-   newxlow[0] = [_x getLow][0]._val;
-   newxup[0] = [_x getUp][0]._val;
-   _xold = (CPBitVarI*)[CPFactory bitVar:[_x engine] withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
+   [_x getUp:&xUp andLow:&xLow];
+   newxlow[0] = xLow[0]._val;
+   newxup[0] = xUp[0]._val;
+   _xold = (CPBitVarI*)[CPFactory bitVar:engine withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
    
    //    _xold2 = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:la up:ua];
-   _xold2 = [[CPBitArrayDom alloc] initWithBitPat:WORD_BIT withLow:[[_x domain] lowArray] andUp:[[_x domain] upArray] andEngine:[_x engine] andTrail:[[_x engine] trail]];
+   ORUInt xWordLength = [_x getWordLength];
+   ORUInt* newXLow = malloc(sizeof(ORUInt)*xWordLength);
+   ORUInt* newXUp = malloc(sizeof(ORUInt)*xWordLength);
+   for(int i=0;i<xWordLength;i++)
+   {
+      newXLow[i] = xLow[i]._val;
+      newXUp[i] = xUp[i]._val;
+   }
+   
+   _xold2 = [[CPBitArrayDom alloc] initWithBitPat:WORD_BIT withLow:newXLow andUp:newXUp andEngine:engine andTrail:[engine trail]];
    
    if (![_x bound]) {
       [_x whenChangePropagate:self];
@@ -805,14 +827,21 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    CPBitVarI* elmt = NULL;
    unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
    bool inXDom;
+   
+   TRUInt* eUp;
+   TRUInt* eLow;
+   TRUInt* yUp;
+   TRUInt* yLow;
+   [_y getUp:&yUp andLow:&yLow];
    // plenty of room for optimization here
    for(ORUInt k=[_la value];k<=[_ua value];k++) {
       if ([_I[k] value]) {
          elmt = (CPBitVarI*)[_z at:k];
-         elmtfixed = ~([[elmt domain] lowArray][0]^[[elmt domain] upArray][0]);
-         yfixed = ~([[_y domain] lowArray][0]^[[_y domain] upArray][0]);
+         [elmt getUp:&eUp andLow:&eLow];
+         elmtfixed = ~(eLow[0]._val^eUp[0]._val);
+         yfixed = ~(yLow[0]._val^yUp[0]._val);
          bothfixed = yfixed&elmtfixed;
-         yeldif = [[_y domain] lowArray][0]^[[elmt domain] lowArray][0];
+         yeldif = yLow[0]._val^eLow[0]._val;
          notcomp = bothfixed&yeldif;
          //            inXDom = [_x member:temp];
          inXDom = [_x member:&k];
@@ -897,11 +926,22 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    }
    
    // update bounds
-   ORInt la = max([_la value], [[_x domain] lowArray][0]);
+   TRUInt* xUp;
+   TRUInt* xLow;
+   [_x getUp:&xUp andLow:&xLow];
+   ORInt la = max([_la value], xLow[0]._val);
    [_la setValue:la];
-   ORInt ua = min([_ua value], [[_x domain] upArray][0]);
+   ORInt ua = min([_ua value], xUp[0]._val);
    [_ua setValue:ua];
-   [_xold setUp:[[_x domain] upArray] andLow:[[_x domain] lowArray]];
+   ORUInt wordLength = [_x getWordLength];
+   ORUInt* newXLow = alloca(sizeof(ORUInt)*wordLength);
+   ORUInt* newXUp = alloca(sizeof(ORUInt)*wordLength);
+   for(int i=0;i<wordLength;i++){
+      newXUp[i] = xUp[i]._val;
+      newXLow[i] = xLow[i]._val;
+   }
+      
+   [_xold setUp:newXUp andLow:newXLow];
    
    //    ORUInt* newxlow = malloc(sizeof(ORUInt));
    //    ORUInt* newxup = malloc(sizeof(ORUInt));
@@ -909,18 +949,24 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    //    newxup[0] = [_x getUp][0]._val;
    //    [_xold2 setUp:newxup andLow:newxlow for:nil];
    
-   [_xold2 setUp:[[_x domain] upArray] andLow:[[_x domain] lowArray] for:NULL];
+   [_xold2 setUp:newXUp andLow:newXLow for:NULL];
    
 }
 
 -(void)doACEqual:(ORUInt)k
 {
    CPBitVarI* elmt = _z[k];
+   TRUInt* eUp;
+   TRUInt* eLow;
+   [elmt getUp:&eUp andLow:&eLow];
+   TRUInt* yUp;
+   TRUInt* yLow;
+   [_y getUp:&yUp andLow:&yLow];
    unsigned int elmtfixed, yfixed, bothfixed, yeldif, notcomp;
-   elmtfixed = ~([[elmt domain] lowArray][0]^[[elmt domain] upArray][0]);
-   yfixed = ~([[_y domain] lowArray][0]^[[_y domain] upArray][0]);
+   elmtfixed = ~(eLow[0]._val^eUp[0]._val);
+   yfixed = ~(yLow[0]._val^yUp[0]._val);
    bothfixed = yfixed&elmtfixed;
-   yeldif = [[_y domain] lowArray][0]^[[elmt domain] lowArray][0];
+   yeldif = yLow[0]._val^eLow[0]._val;
    notcomp = bothfixed&yeldif;
    if (notcomp)
       failNow();
@@ -929,13 +975,26 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_x setUp:finalidx andLow:finalidx]; // bind still doesn't work
    //    [_x bind:finalidx];
    [_la setValue:k]; [_ua setValue:k];
+   ORUInt wordLength = [_y getWordLength];
+   ORUInt* newYUp = alloca(sizeof(ORUInt)*wordLength);
+   ORUInt* newYLow = alloca(sizeof(ORUInt)*wordLength);
+   ORUInt* newEUp = alloca(sizeof(ORUInt)*wordLength);
+   ORUInt* newELow = alloca(sizeof(ORUInt)*wordLength);
+   
+   for(int i=0;i<wordLength;i++){
+      newYUp[i]=yUp[i]._val;
+      newYLow[i] = yLow[i]._val;
+      newEUp[i]= eUp[i]._val;
+      newELow[i] = eLow[i]._val;
+   }
+   
    if ([_y bound]) {
       //        [elmt bind:[[_y domain] lowArray]];
-      [elmt setUp:[[_y domain] upArray] andLow:[[_y domain] lowArray]];
+      [elmt setUp:newYUp andLow:newYLow];
    }
    else if ([elmt bound]) {
       //        [_y bind:[[elmt domain] lowArray]];
-      [_y setUp:[[elmt domain] upArray] andLow:[[elmt domain] lowArray]];
+      [_y setUp:newEUp andLow:newELow];
    }
    else {
       // this doesn't really work!
@@ -949,8 +1008,8 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       //        }
       unsigned int* up = alloca(sizeof(unsigned int));
       unsigned int* low = alloca(sizeof(unsigned int));
-      up[0] = [[_y domain] upArray][0]&[[elmt domain] upArray][0];
-      low[0] = [[_y domain] lowArray][0]|[[elmt domain] lowArray][0];
+      up[0] = yUp[0]._val&eUp[0]._val;
+      low[0] = yLow[0]._val|eLow[0]._val;
       [_y setUp:up andLow:low];
       [elmt setUp:up andLow:low];
    }
