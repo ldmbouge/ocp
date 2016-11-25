@@ -4,6 +4,7 @@ import ORProgram
 MemoryLayout<UnsafeMutableRawPointer>.size
 
 /*: These should really be in a framework. Not quite working with Command line though */
+/*: These should really be in a framework. Not quite working with Command line though */
 public func ==(lhs : ORExpr,rhs : ORExpr) -> ORRelation {
    return lhs.eq(rhs)
 }
@@ -145,7 +146,7 @@ cp.search {
    firstFail(cp, x) » Do(cp) {
       nbs+=1
       print(ORFactory.intArray(cp,range:x.range()) {
-         k in cp.intValue(x[k])
+         k in cp.intValue(x[UInt(k)])
       })
    }
 }

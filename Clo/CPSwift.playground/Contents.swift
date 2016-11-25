@@ -106,16 +106,16 @@ func range(tracker : ORTracker,r : Range<Int>) -> ORIntRange {
    return ORFactory.intRange(tracker, low: ORInt(r.lowerBound), up: ORInt(r.upperBound - 1))
 }
 
-let n : ORInt = 8
+let n : UInt = 8
 let model = ORFactory.createModel()
-let R     = ORFactory.intRange(model, low: 0, up: n - 1)
+let R     = ORFactory.intRange(model, low: 0, up: ORInt(n) - 1)
 let nbSol = ORFactory.mutable(model, value: 0)
 let x     = ORFactory.intVarArray(model, range: R, domain: R)
-for i : ORInt in 0 ..< n  {
-   for j : ORInt in i+1 ..< n {
+for i : UInt in 0 ..< n  {
+   for j : UInt in i+1 ..< n {
       model.add(x[i] != x[j])
-      model.add(x[i] != x[j] + (i-j))
-      model.add(x[i] != x[j] + (j-i))
+      model.add(x[i] != x[j] + (Int(i)-Int(j)))
+      model.add(x[i] != x[j] + (Int(j)-Int(i)))
    }
 }
 
@@ -124,13 +124,13 @@ let cp = ORFactory.createCPProgram(model)
 cp.onSolution {
    nbSol.incr(cp)
    print(ORFactory.intArray(cp,range:x.range()) {
-      k in cp.intValue(x[k])
+      k in cp.intValue(x[UInt(k)])
    })
 }
 
 cp.searchAll {
    forallDo(cp,R) { k in
-      let y = x[ORInt(k)]
+      let y = x[UInt(k)]
       return whileDo(cp,{ !cp.bound(y)}) {
          let v = cp.min(y)
          return equal(cp,y,v) | diff(cp,y,v)
@@ -162,7 +162,7 @@ func sumOf(tracker : ORTracker,R : ORIntRange,b : ((ORInt) -> ORExpr)) -> ORExpr
    return rv
 }
 
-let e = sumOf(tracker: model,R: R) { k in x[k]}
+let e = sumOf(tracker: model,R: R) { k in x[UInt(k)] }
 print(e)
 
 
