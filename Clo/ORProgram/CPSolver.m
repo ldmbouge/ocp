@@ -656,7 +656,7 @@
       return YES;
    NSMutableArray* av = [_engine variables];
    for(id<CPVar> xi in av) {
-      if (![xi bound])
+      if (![xi bound] && [xi degree] > 0)
          return NO;
    }
    return YES;

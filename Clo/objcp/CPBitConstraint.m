@@ -1655,7 +1655,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [string appendString:@" with "];
    [string appendString:[NSString stringWithFormat:@"%@, ",_x]];
    [string appendString:[NSString stringWithFormat:@"%@ and ",_y]];
-   [string appendString:[NSString stringWithFormat:@"%@\n",_z]];
+   [string appendString:[NSString stringWithFormat:@"%@",_z]];
    
    return string;
 }
@@ -3864,7 +3864,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    NSMutableString* string = [NSMutableString stringWithString:[super description]];
    [string appendString:@" with "];
    [string appendString:[NSString stringWithFormat:@"%@ ",_x]];
-   [string appendString:[NSString stringWithFormat:@"and %@\n",_p]];
+   [string appendString:[NSString stringWithFormat:@"and %@",_p]];
    
    return string;
 }

@@ -103,7 +103,7 @@
 {
    NSMutableString* string = [[[NSMutableString alloc] init] autorelease];
    
-   [string appendString:[NSString stringWithFormat:@"0x%p : ",(void*)self]];
+   [string appendString:[NSString stringWithFormat:@"%p : ",(void*)self]];
    
    int remainingbits = (_bitLength%32 == 0) ? 32 : _bitLength%32;
    ORUInt boundLow = (~ _up[_wordLength-1]._val) & (~_low[_wordLength-1]._val);

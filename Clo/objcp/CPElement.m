@@ -630,7 +630,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _x = x;
    _y = y;
    _z = z;
-   _xold = NULL;
+   //_xold = NULL;
    _cI = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
    _la = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
    _ua = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
@@ -772,7 +772,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    ORUInt* newxup = malloc(sizeof(ORUInt));
    newxlow[0] = [_x getLow][0]._val;
    newxup[0] = [_x getUp][0]._val;
-   _xold = (CPBitVarI*)[CPFactory bitVar:[_x engine] withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
+   //_xold = (CPBitVarI*)[CPFactory bitVar:[_x engine] withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
    
    //    _xold2 = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:la up:ua];
    _xold2 = [[CPBitArrayDom alloc] initWithBitPat:WORD_BIT withLow:[[_x domain] lowArray] andUp:[[_x domain] upArray] andEngine:[_x engine] andTrail:[[_x engine] trail]];
@@ -901,7 +901,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_la setValue:la];
    ORInt ua = min([_ua value], [[_x domain] upArray][0]);
    [_ua setValue:ua];
-   [_xold setUp:[[_x domain] upArray] andLow:[[_x domain] lowArray]];
+   //[_xold setUp:[[_x domain] upArray] andLow:[[_x domain] lowArray]];
    
    //    ORUInt* newxlow = malloc(sizeof(ORUInt));
    //    ORUInt* newxup = malloc(sizeof(ORUInt));
