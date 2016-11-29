@@ -630,7 +630,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _x = x;
    _y = y;
    _z = z;
-   _xold = NULL;
+   //_xold = NULL;
    _cI = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
    _la = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
    _ua = [ORFactory trailableInt:(id<ORSearchEngine>)[_x engine] value:0];
@@ -779,18 +779,20 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_la setValue:la];
    ua = min([_ua value], xUp[0]._val);
    [_ua setValue:ua];
-   
-   ORUInt* newxlow = malloc(sizeof(ORUInt));
-   ORUInt* newxup = malloc(sizeof(ORUInt));
+
+   // LDM: THOSE ARE STILL MALLOC CALLS. Twice as Many!
+   // LDM: I changed them
+   //ORUInt* newxlow = malloc(sizeof(ORUInt));
+   //ORUInt* newxup = malloc(sizeof(ORUInt));
    [_x getUp:&xUp andLow:&xLow];
-   newxlow[0] = xLow[0]._val;
-   newxup[0] = xUp[0]._val;
-   _xold = (CPBitVarI*)[CPFactory bitVar:engine withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
+   //newxlow[0] = xLow[0]._val;
+   //newxup[0] = xUp[0]._val;
+   //_xold = (CPBitVarI*)[CPFactory bitVar:engine withLow:newxlow andUp:newxup andLength:WORD_BIT]; // deep copy of _x to use in the propagate method;
    
    //    _xold2 = [[CPBitDom alloc] initBitDomFor:[[_x engine] trail] low:la up:ua];
    ORUInt xWordLength = [_x getWordLength];
-   ORUInt* newXLow = malloc(sizeof(ORUInt)*xWordLength);
-   ORUInt* newXUp = malloc(sizeof(ORUInt)*xWordLength);
+   ORUInt* newXLow = alloca(sizeof(ORUInt)*xWordLength);
+   ORUInt* newXUp = alloca(sizeof(ORUInt)*xWordLength);
    for(int i=0;i<xWordLength;i++)
    {
       newXLow[i] = xLow[i]._val;
@@ -941,7 +943,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       newXLow[i] = xLow[i]._val;
    }
       
-   [_xold setUp:newXUp andLow:newXLow];
+   //[_xold setUp:newXUp andLow:newXLow];
    
    //    ORUInt* newxlow = malloc(sizeof(ORUInt));
    //    ORUInt* newxup = malloc(sizeof(ORUInt));

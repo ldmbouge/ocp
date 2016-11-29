@@ -92,7 +92,7 @@
    CPBitVarI*        _x;
    CPBitVarI*        _y;
    id<ORIdArray> _z;
-   CPBitVarI*  _xold;
+   //CPBitVarI*  _xold;
    CPBitArrayDom* _xold2;
    id<ORTrailableInt>   _la;  // lowest index in array (_z)
    id<ORTrailableInt>   _ua; // upper index of _z

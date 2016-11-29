@@ -213,6 +213,7 @@ PORTABLE_BEGIN
 
 @protocol CPBV <CPCommonProgram>
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
+-(void) labelBits:(id<ORBitVar>)x withValue:(ORInt) v;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
 -(void) labelDownFromMSB:(id<CPBitVar>) x;
 -(void) labelOutFromMidFreeBit:(id<CPBitVar>) x;

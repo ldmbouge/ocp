@@ -622,6 +622,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
 }
+-(void) labelBitsImpl:(id<ORBitVar>)x withValue:(ORInt) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBitsImpl not implemented"];
+}
 -(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var with:(ORUInt)val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
@@ -656,7 +660,7 @@
       return YES;
    NSMutableArray* av = [_engine variables];
    for(id<CPVar> xi in av) {
-      if (![xi bound])
+      if (![xi bound] && [xi degree] > 0)
          return NO;
    }
    return YES;
@@ -693,6 +697,12 @@
    [_search try: ^() { [self labelBV:x at:i with:false];}
             alt: ^() { [self labelBV:x at:i with:true];}];
 }
+-(void) labelBits:(id<ORBitVar>)x withValue:(ORInt) v
+{
+   [self labelBitsImpl:_gamma[x.getId] withValue:v];
+}
+
+
 -(void) labelUpFromLSB:(id<ORBitVar>) x
 {
    int i=-1;
@@ -2070,6 +2080,13 @@
    if (status == ORFailure){
       [_search fail];
    }
+   [ORConcurrency pumpEvents];
+}
+-(void) labelBitsImpl:(id<CPBitVar>)x withValue:(ORInt) v
+{
+   ORStatus status = [_engine enforce:^{ [(CPBitVarI*)x bindUInt64:(ORULong)v];}];
+   if (status == ORFailure)
+      [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) realLabelImpl: (id<CPRealVar>) var with: (ORDouble) val

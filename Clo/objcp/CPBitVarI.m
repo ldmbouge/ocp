@@ -381,7 +381,10 @@ return self;
 }
 -(NSString*)description
 {
-    return [_dom description];
+   NSString* domStr = [_dom description];
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   [buf appendFormat:@"<CPBitVar : %p  dom = %@ >",self,domStr];
+   return buf;
 }
 -(void)restoreDomain:(id<CPDom>)toRestore
 {
