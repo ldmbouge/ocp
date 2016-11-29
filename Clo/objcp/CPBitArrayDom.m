@@ -327,10 +327,10 @@
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
    
-   for(int i=_wordLength-1; i>=0; i--){
+   for(int i=0; i<_wordLength; i++){
 //      NSLog(@"%d is first free bit in %x\n",i*32+__builtin_ffs((_low[i]._val^_up[i]._val))-1, (_low[i]._val^_up[i]._val));
       if ((j=__builtin_ffs(_low[i]._val^_up[i]._val))!=0) {
-         return (i*32)+j-1;
+         return (i*BITSPERWORD)+j-1;
       }
    }
    return -1;
@@ -343,7 +343,7 @@
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
-   ORInt wordLengthInBits = _wordLength * 32;
+   ORInt wordLengthInBits = _wordLength * BITSPERWORD;
    
    for(int i=_wordLength-1; i>=0; i--){
       //NSLog(@"%d leading zeroes in %x\n",__builtin_clz((_low[i]._val^_up[i]._val)), (_low[i]._val^_up[i]._val));
@@ -356,8 +356,10 @@
          return msfb;
       }
       else if (freeBits & 0x80000000) {
-         j=__builtin_clz(~freeBits);
-         return (wordLengthInBits)-((i*32)+1);
+//         j=__builtin_clz(~freeBits);
+//         int msfb = wordLengthInBits-((i*32)+1);
+//         return msfb;
+         return (((i+1)*BITSPERWORD)-1);
       }
       else{
          j=__builtin_clz(freeBits);
