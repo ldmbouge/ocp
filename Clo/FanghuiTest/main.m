@@ -1,6 +1,6 @@
 #import <ORProgram/ORProgram.h>
 #define EXPECTKEY
-#define KNOWNKEYS 10
+#define KNOWNKEYS 6
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -196,27 +196,35 @@ int main(int argc, const char * argv[]) {
    for(ORUInt i = 0;i< error_count*2;i++)
       iv[i] = errorPtr[i];
    
-   
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
-   
-   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:31]];
+   id<ORIdArray> o = [ORFactory idArray:model range:[[ORIntRangeI alloc] initORIntRangeI:0 up:31]];
    for(ORInt k=0;k <= 15;k++)
       [o set:keys[0][k] at:k];
    
    for(ORInt k=0;k <= 15;k++)
       [o set:states[1][k] at:(k+16)];
+
+   
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   
    
    
    id<CPBitVarHeuristic> h;
    h = [cp createBitVarFF:(id<CPBitVarArray>)o];
    [cp solve:^(){
-      for(int j=0; j<16; j++){
+      id<ORIntRange> R = RANGE(cp,0,31);
+      for(int j=0; j<16; j++)
          NSLog(@"%@",[cp stringValue:keys[0][j]]);
-      }
+      for(int j=0;j < 32;j++)
+         NSLog(@"o[%d] = %@",j,[cp stringValue:o[j]]);
       NSLog(@"Search Started: ;-)");
 
       clock_t searchStart = clock();
-      [cp labelBitVarHeuristic:h];
+      for(ORInt i=31;i>=0;i--) {
+         [cp tryall:R suchThat:^ORBool(ORInt k) { return true; } do:^(ORInt k) {
+            [cp labelBits:o[i] withValue:k];
+         }];
+      }
+//      [cp labelBitVarHeuristic:h];
       [cp labelArrayFF:iv];
       clock_t searchStop = clock();
       double searchTime = ((double)(searchStop - searchStart))/CLOCKS_PER_SEC;
@@ -228,7 +236,7 @@ int main(int argc, const char * argv[]) {
       
       //NSLog(@"MiniVar: %d",[cp intValue:miniVar]);
    }];
-   
+   NSLog(@"Choices: %d / %d",[cp nbChoices],[cp nbFailures]);
    //id<ORSolution> sol = [[mip solutionPool] best];
    // NSLog(@"SOL is: %@",sol);
    
