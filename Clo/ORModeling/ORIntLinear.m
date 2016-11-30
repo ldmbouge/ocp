@@ -96,7 +96,7 @@
     }
     if (found) {
         _terms[mid]._coef += c;
-        assert(_terms[mid]._coef != 0);
+        //assert(_terms[mid]._coef != 0);
         if (_terms[mid]._coef == 0) {
             for(ORInt k=mid+1;k<_nb;k++)
                 _terms[k-1] = _terms[k];
@@ -272,7 +272,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
         default: {
             ORInt lb = [self min];
             ORInt ub = [self max];
-            id<ORIntVar> alpha = [ORFactory intVar:[_terms[0]._var tracker]
+            id<ORIntVar> alpha = [ORFactory intVar:model
                                             domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
             [self addTerm:alpha by:-1];
             [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi:-_indep]];

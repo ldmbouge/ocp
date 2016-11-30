@@ -1263,6 +1263,14 @@
 		5B9EE58315175D4F00619B47 /* ORSemBDSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B85DE111438B2D500E4E133 /* ORSemBDSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE58415175D4F00619B47 /* ORSemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* ORSemBDSController.m */; };
 		5B9EE5871517BE3700619B47 /* libCPLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE52815175CF900619B47 /* libCPLib.a */; };
+		5BA14BD11DEE680600C7024B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA14BD01DEE680600C7024B /* main.m */; };
+		5BA14BE41DEE685200C7024B /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5BA14BE51DEE685200C7024B /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BA14BE61DEE685200C7024B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		5BA14BE71DEE685200C7024B /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5BA14BE81DEE685200C7024B /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BA14BE91DEE685200C7024B /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BA14BEA1DEE685200C7024B /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BA3457E1680B7BD00485366 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BA345811680B7BD00485366 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BA345801680B7BD00485366 /* main.m */; };
 		5BA345851680B7BD00485366 /* latinSquare.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BA345841680B7BD00485366 /* latinSquare.1 */; };
@@ -4852,6 +4860,55 @@
 			remoteGlobalIDString = 5B9EE52715175CF900619B47;
 			remoteInfo = CPLib;
 		};
+		5BA14BD61DEE683F00C7024B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BA14BD81DEE683F00C7024B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BA14BDA1DEE683F00C7024B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BA14BDC1DEE683F00C7024B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5BA14BDE1DEE683F00C7024B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5BA14BE01DEE683F00C7024B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5BA14BE21DEE683F00C7024B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
+		};
 		5BA345891680B7C800485366 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -7769,6 +7826,15 @@
 				37499FCE1C877FDF00F13EE1 /* UTCTemplates.xml in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA14BCC1DEE680500C7024B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 		5BA3457A1680B7BD00485366 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -21798,6 +21864,8 @@
 		5B9EE50715175CCC00619B47 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		5B9EE50A15175CCC00619B47 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		5B9EE52815175CF900619B47 /* libCPLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCPLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BA14BCE1DEE680500C7024B /* dxAES */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dxAES; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BA14BD01DEE680600C7024B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BA3457C1680B7BD00485366 /* latinSquare */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = latinSquare; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BA345801680B7BD00485366 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BA345831680B7BD00485366 /* latinSquare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "latinSquare-Prefix.pch"; sourceTree = "<group>"; };
@@ -23060,6 +23128,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA14BCB1DEE680500C7024B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BA14BE41DEE685200C7024B /* CPUKernel.framework in Frameworks */,
+				5BA14BE51DEE685200C7024B /* objcp.framework in Frameworks */,
+				5BA14BE61DEE685200C7024B /* objmp.framework in Frameworks */,
+				5BA14BE71DEE685200C7024B /* ORFoundation.framework in Frameworks */,
+				5BA14BE81DEE685200C7024B /* ORModeling.framework in Frameworks */,
+				5BA14BE91DEE685200C7024B /* ORProgram.framework in Frameworks */,
+				5BA14BEA1DEE685200C7024B /* ORUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38005,6 +38087,7 @@
 				F51500691DA581340023B888 /* verification */,
 				F51500761DA581350023B888 /* verificationTests */,
 				F59BEEBA1DAC3A20007F8BA8 /* SMTLIB2 */,
+				5BA14BCF1DEE680500C7024B /* dxAES */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -38133,6 +38216,7 @@
 				F51500681DA581340023B888 /* Verification.framework */,
 				F51500701DA581350023B888 /* verificationTests.xctest */,
 				F59BEEB91DAC3A20007F8BA8 /* SMTLIB2 */,
+				5BA14BCE1DEE680500C7024B /* dxAES */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -38672,6 +38756,14 @@
 				5B9B50301C755EC700520567 /* UTCTemplates.xml */,
 			);
 			path = UTC;
+			sourceTree = "<group>";
+		};
+		5BA14BCF1DEE680500C7024B /* dxAES */ = {
+			isa = PBXGroup;
+			children = (
+				5BA14BD01DEE680600C7024B /* main.m */,
+			);
+			path = dxAES;
 			sourceTree = "<group>";
 		};
 		5BA3457F1680B7BD00485366 /* latinSquare */ = {
@@ -41487,6 +41579,30 @@
 			productReference = 5B9EE52815175CF900619B47 /* libCPLib.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		5BA14BCD1DEE680500C7024B /* dxAES */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BA14BD51DEE680600C7024B /* Build configuration list for PBXNativeTarget "dxAES" */;
+			buildPhases = (
+				5BA14BCA1DEE680500C7024B /* Sources */,
+				5BA14BCB1DEE680500C7024B /* Frameworks */,
+				5BA14BCC1DEE680500C7024B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BA14BD71DEE683F00C7024B /* PBXTargetDependency */,
+				5BA14BD91DEE683F00C7024B /* PBXTargetDependency */,
+				5BA14BDB1DEE683F00C7024B /* PBXTargetDependency */,
+				5BA14BDD1DEE683F00C7024B /* PBXTargetDependency */,
+				5BA14BDF1DEE683F00C7024B /* PBXTargetDependency */,
+				5BA14BE11DEE683F00C7024B /* PBXTargetDependency */,
+				5BA14BE31DEE683F00C7024B /* PBXTargetDependency */,
+			);
+			name = dxAES;
+			productName = dxAES;
+			productReference = 5BA14BCE1DEE680500C7024B /* dxAES */;
+			productType = "com.apple.product-type.tool";
+		};
 		5BA3457B1680B7BD00485366 /* latinSquare */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BA345881680B7BD00485366 /* Build configuration list for PBXNativeTarget "latinSquare" */;
@@ -43061,6 +43177,10 @@
 					5B9B50361C755EE200520567 = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
+					5BA14BCD1DEE680500C7024B = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+					};
 					5BAB12741B81DC61004803EA = {
 						CreatedOnToolsVersion = 6.4;
 					};
@@ -43230,6 +43350,7 @@
 				F51500671DA581340023B888 /* Verification */,
 				F515006F1DA581350023B888 /* verificationTests */,
 				F59BEEB81DAC3A20007F8BA8 /* SMTLIB2 */,
+				5BA14BCD1DEE680500C7024B /* dxAES */,
 			);
 		};
 /* End PBXProject section */
@@ -44059,6 +44180,14 @@
 				5B9EE58215175D4F00619B47 /* ORSemDFSController.m in Sources */,
 				5B9EE58415175D4F00619B47 /* ORSemBDSController.m in Sources */,
 				5B8C7E551586801F007042CA /* UIBoardController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BA14BCA1DEE680500C7024B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BA14BD11DEE680600C7024B /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46678,6 +46807,41 @@
 			isa = PBXTargetDependency;
 			target = 5B9EE52715175CF900619B47 /* CPLib */;
 			targetProxy = 5B9EE5881517BE4B00619B47 /* PBXContainerItemProxy */;
+		};
+		5BA14BD71DEE683F00C7024B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BA14BD61DEE683F00C7024B /* PBXContainerItemProxy */;
+		};
+		5BA14BD91DEE683F00C7024B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BA14BD81DEE683F00C7024B /* PBXContainerItemProxy */;
+		};
+		5BA14BDB1DEE683F00C7024B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BA14BDA1DEE683F00C7024B /* PBXContainerItemProxy */;
+		};
+		5BA14BDD1DEE683F00C7024B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5BA14BDC1DEE683F00C7024B /* PBXContainerItemProxy */;
+		};
+		5BA14BDF1DEE683F00C7024B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5BA14BDE1DEE683F00C7024B /* PBXContainerItemProxy */;
+		};
+		5BA14BE11DEE683F00C7024B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5BA14BE01DEE683F00C7024B /* PBXContainerItemProxy */;
+		};
+		5BA14BE31DEE683F00C7024B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 5BA14BE21DEE683F00C7024B /* PBXContainerItemProxy */;
 		};
 		5BA3458A1680B7C800485366 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -52764,6 +52928,81 @@
 			};
 			name = Release;
 		};
+		5BA14BD21DEE680600C7024B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5BA14BD31DEE680600C7024B /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Coverage;
+		};
+		5BA14BD41DEE680600C7024B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5BA345861680B7BD00485366 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -56142,6 +56381,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		5BA14BD51DEE680600C7024B /* Build configuration list for PBXNativeTarget "dxAES" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BA14BD21DEE680600C7024B /* Debug */,
+				5BA14BD31DEE680600C7024B /* Coverage */,
+				5BA14BD41DEE680600C7024B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		5BA345881680B7BD00485366 /* Build configuration list for PBXNativeTarget "latinSquare" */ = {
 			isa = XCConfigurationList;

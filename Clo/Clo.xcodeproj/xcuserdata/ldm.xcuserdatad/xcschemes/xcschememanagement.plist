@@ -269,6 +269,11 @@
 			<key>orderHint</key>
 			<integer>26</integer>
 		</dict>
+		<key>dxAES.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>144</integer>
+		</dict>
 		<key>eq20.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -988,6 +993,11 @@
 			<true/>
 		</dict>
 		<key>5B9EE52715175CF900619B47</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BA14BCD1DEE680500C7024B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
