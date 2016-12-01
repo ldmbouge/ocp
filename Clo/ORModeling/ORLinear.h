@@ -18,5 +18,6 @@
 -(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>)postGEQZ:(id<ORAddToModel>)model;
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model;
+-(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model;
 -(void)scaleBy:(ORInt)s;
 @end

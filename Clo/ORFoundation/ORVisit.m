@@ -306,6 +306,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Imply: visit method not defined"]; 
 }
+-(void) visitBinImply: (id<ORBinImply>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "BinImply: visit method not defined"];
+}
 -(void) visitElementCst: (id<ORElementCst>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ElementCst: visit method not defined"]; 
@@ -385,6 +389,10 @@
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolEqualc: visit method not defined"]; 
+}
+-(void) visitSumBoolNEqualc: (id<ORSumBoolEqc>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolNEqualc: visit method not defined"];
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
 {
@@ -780,6 +788,7 @@
 -(void) visitOr: (id<OROr>)c  {}
 -(void) visitAnd:( id<ORAnd>)c  {}
 -(void) visitImply: (id<ORImply>)c  {}
+-(void) visitBinImply: (id<ORBinImply>)c  {}
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
 -(void) visitElementBitVar: (id<ORElementBitVar>)c  {}
@@ -799,6 +808,7 @@
 -(void) visitHReifySumBoolGEqualc: (id<ORReifySumBoolGEqc>) c {}
 -(void) visitClause:(id<ORConstraint>)c           {}
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c  {}
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c  {}
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c  {}
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c  {}
 -(void) visitSumEqualc:(id<ORSumEqc>)c  {}

@@ -193,6 +193,10 @@ static BOOL _alreadyAdded;
 {
    _result = c;
 }
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
+{
+   _result = c;
+}
 -(void) visitLinearLeq: (id<ORLinearLeq>) c
 {
    _result = c;

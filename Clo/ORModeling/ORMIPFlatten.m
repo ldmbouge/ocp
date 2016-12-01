@@ -184,6 +184,10 @@ BOOL _alreadyAdded;
 {
     _result = c;
 }
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
+{
+   _result = c;
+}
 
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

@@ -292,6 +292,10 @@
       [_MIPsolver postConstraint:concreteCstr];
    }
 }
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
+{
+   assert(0);
+}
 
 -(void) visitRealLinearEq: (id<ORRealLinearEq>) c
 {

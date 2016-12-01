@@ -1110,6 +1110,42 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
 @end
 
 
+@implementation CPBinImplyDC
+-(id)initCPBinImplyDC:(id<CPIntVar>)x imply:(id<CPIntVar>)y
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = (CPIntVar*) x;
+   _y = (CPIntVar*) y;
+   return self;
+}
+-(void) post
+{
+   [self propagate];
+   if (!bound(_x)) [_x whenBindPropagate:self];
+   if (!bound(_y)) [_y whenBindPropagate:self];
+}
+-(void)propagate
+{
+   // x=>y is true:  thus NOT(x) || y is true.
+   if (minDom(_x)>0)
+      bindDom(_y,TRUE);
+   else if (maxDom(_y)==0)
+      bindDom(_x,FALSE);
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return  !bound(_x) + !bound(_y);
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPBinImplyDC: %02d %@ => %@>",_name,_x,_y];
+}
+@end
+
 @implementation CPLEqualc
 -(id) initCPLEqualc:(id<CPIntVar>)x and:(ORInt) c
 {

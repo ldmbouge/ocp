@@ -60,5 +60,49 @@
    }
 }
 
+- (void)testSumBoolNEQ {
+   @autoreleasepool {
+      id<ORModel> m = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(m,0,5);
+      id<ORIntVarArray> x = [ORFactory intVarArray:m range:R with:^id<ORIntVar> _Nonnull(ORInt i) { return [ORFactory boolVar:m];}];
+
+      [m add: [ORFactory sumbool:m array:x neqi:2]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:m];
+      [cp solveAll: ^{
+         [cp labelArray: x];
+         @autoreleasepool {
+            id<ORIntArray> s = [ORFactory intArray:cp range:R with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
+            ORInt cnt = sumSet(R, ^ORInt(ORInt i) { return [s at:i];});
+            NSString* buf = [NSMutableString stringWithFormat:@"SUMBOOL ≠ 2 sum(%@) == %d \n",s,cnt];
+            printf("%s", [buf UTF8String]);
+         }
+      }];
+      printf("Done: %d / %d\n",[cp nbChoices],[cp nbFailures]);
+   }
+}
+
+
+- (void)testBinImply {
+   @autoreleasepool {
+      id<ORModel> m = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(m,0,1);
+      id<ORIntVarArray> x = [ORFactory intVarArray:m range:R with:^id<ORIntVar> _Nonnull(ORInt i) { return [ORFactory boolVar:m];}];
+      
+      [m add: [ORFactory model:m boolean:x[0] imply:x[1]]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:m];
+      [cp solveAll: ^{
+         [cp labelArray: x];
+         @autoreleasepool {
+            id<ORIntArray> s = [ORFactory intArray:cp range:R with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
+            NSString* buf = [NSMutableString stringWithFormat:@"x[0] imply x[1] (%@)\n",s];
+            printf("%s", [buf UTF8String]);
+         }
+      }];
+      printf("Done: %d / %d\n",[cp nbChoices],[cp nbFailures]);
+   }
+}
+
 
 @end

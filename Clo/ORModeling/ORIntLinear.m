@@ -270,13 +270,29 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
             }
         }break;
         default: {
-            ORInt lb = [self min];
-            ORInt ub = [self max];
-            id<ORIntVar> alpha = [ORFactory intVar:model
-                                            domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
-            [self addTerm:alpha by:-1];
-            [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi:-_indep]];
-            rv = [model addConstraint:[ORFactory notEqualc:model var:alpha to:0]];
+//           ORInt lb = [self min];
+//           ORInt ub = [self max];
+//           id<ORIntVar> alpha = [ORFactory intVar:model
+//                                           domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
+//           [self addTerm:alpha by:-1];
+//           [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi:-_indep]];
+//           rv = [model addConstraint:[ORFactory notEqualc:model var:alpha to:0]];
+           ORInt nbCOne = 0;
+           for(ORInt k=0;k<_nb;k++)
+              if ([_terms[k]._var isBool])
+                 nbCOne += (_terms[k]._coef == 1);
+           if (nbCOne == _nb) {
+              id<ORIntVarArray> bv = All(model,ORIntVar,i,RANGE(model,0,_nb-1),_terms[i]._var);
+              rv = [model addConstraint:[ORFactory sumbool:model array:bv neqi:- _indep]];
+           } else {
+              ORInt lb = [self min];
+              ORInt ub = [self max];
+              id<ORIntVar> alpha = [ORFactory intVar:model
+                                              domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
+              [self addTerm:alpha by:-1];
+              [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi:-_indep]];
+              rv = [model addConstraint:[ORFactory notEqualc:model var:alpha to:0]];
+           }
         }break;
     }
     return rv;
@@ -466,7 +482,14 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
     }
     return rv;
 }
-
+-(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
+{
+   assert(_nb == 0);
+   if (_indep == 0)
+      return [ORFactory fail:model];
+   else
+      return nil;
+}
 @end
 
 
@@ -562,5 +585,10 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
     return [_real postDISJ:model];
 }
+-(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
+{
+   return [_real postIMPLY:model];
+}
+
 @end
 

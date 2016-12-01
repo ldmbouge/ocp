@@ -203,6 +203,11 @@ enum ORGroupType {
 -(id<ORIntVar>) right;
 @end
 
+@protocol ORBinImply <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
 @protocol ORElementCst <ORConstraint>
 -(id<ORIntArray>) array;
 -(id<ORIntVar>)   idx;
@@ -309,6 +314,11 @@ enum ORGroupType {
 @end
 
 @protocol ORSumBoolEqc <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@protocol ORSumBoolNEqc <ORConstraint>
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end

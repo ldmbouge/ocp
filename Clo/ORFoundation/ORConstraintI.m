@@ -1221,6 +1221,43 @@
 }
 @end
 
+
+@implementation ORBinImply { // x => y
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+}
+-(ORBinImply*)init:(id<ORIntVar>)x imply:(id<ORIntVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ => %@ >",[self class],self,_x,_y];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBinImply:self];
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
+@end
+
+
 @implementation ORElementCst {  // y[idx] == z
    id<ORIntVar>   _idx;
    id<ORIntArray> _y;
@@ -2288,6 +2325,46 @@
    return ms;
 }
 @end
+
+@implementation ORSumBoolNEqc {
+   id<ORIntVarArray> _ba;
+   ORInt             _c;
+}
+-(ORSumBoolNEqc*)initSumBool:(id<ORIntVarArray>)ba neqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ba = ba;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (sumbool(%@) != %d)",[self class],self,_ba,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitSumBoolNEqualc:self];
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
 
 @implementation ORSumBoolLEqc {
    id<ORIntVarArray> _ba;

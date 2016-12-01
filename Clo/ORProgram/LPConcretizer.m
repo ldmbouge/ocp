@@ -457,6 +457,11 @@
       [_lpsolver postConstraint:concreteCstr];
    }
 }
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
+{
+   assert(0);
+}
+
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {

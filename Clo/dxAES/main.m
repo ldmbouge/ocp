@@ -14,7 +14,7 @@ void addKey();
 void keyExpansion();
 void mixColumns();
 void equRelation();
-const int rounds = 5;
+const int rounds = 3;
 
 id<ORModel> model;
 
@@ -27,6 +27,7 @@ id<ORIntVar> V[rounds][4][4][40];
 id<ORIntVar> dX[rounds][4][4];
 id<ORIntVar> dY[rounds][4][4];
 id<ORIntVar> dK[rounds][4][4];
+id<ORIntVar> zero;
 int main(int argc, const char * argv[]) {
    model = [ORFactory createModel];
    
@@ -38,16 +39,18 @@ int main(int argc, const char * argv[]) {
          colK[r][i] = [ORFactory intVar:model bounds: [ORFactory intRange:model low:0 up:4]];
          colX[r][i] = [ORFactory intVar:model bounds: [ORFactory intRange:model low:0 up:4]];
       }
+   zero = [ORFactory intVar:model bounds: [ORFactory intRange:model low:0 up:0]];
    
    for(int r = 0; r < rounds; r++)
       for(int i = 0; i < 4; i++){
          for(int j = 0; j < 4; j++){
             for(int k = 0; k < 40; k++){
+               //V[r][i][j][k] = zero;
                V[r][i][j][k] = [ORFactory boolVar:model];
+               
             }
          }
       }
-   
    
    for(int r1 = 0; r1 < rounds; r1++)
       for(int r2 = 0; r2 < rounds; r2++)
@@ -55,7 +58,20 @@ int main(int argc, const char * argv[]) {
             for(int j1 = 0; j1 < 4; j1++)
                for(int i2 = 0; i2 < 4; i2++)
                   for(int j2 = 0; j2 < 4; j2++){
-                     equRK[r1][i1][j1][r2][i2][j2] = [ORFactory boolVar:model];
+                     equRK[r1][i1][j1][r2][i2][j2] = NULL;
+                  }
+   
+   for(int r1 = 0; r1 < rounds; r1++)
+      for(int r2 = 0; r2 < rounds; r2++)
+         for(int i1 = 0; i1 < 4; i1++)
+            for(int j1 = 0; j1 < 4; j1++)
+               for(int i2 = 0; i2 < 4; i2++)
+                  for(int j2 = 0; j2 < 4; j2++){
+                     if(equRK[r2][i2][j2][r1][i1][j1] != NULL)
+                        equRK[r1][i1][j1][r2][i2][j2] = equRK[r2][i2][j2][r1][i1][j1];
+                     else
+                        equRK[r1][i1][j1][r2][i2][j2] = [ORFactory boolVar:model];
+                     
                   }
    
    for(int r = 0; r < rounds; r++)
@@ -96,7 +112,7 @@ int main(int argc, const char * argv[]) {
    }
    
    addKey();
-   //keyExpansion();
+   keyExpansion();
    mixColumns();
    equRelation();
    
@@ -104,6 +120,8 @@ int main(int argc, const char * argv[]) {
    id<ORIntVar> obj = [ORFactory intVar:model bounds: [ORFactory intRange:model low:0 up:200]];
    
    [model add: [e eq: obj] ];
+   //[model add: [@(5) eq: obj] ];
+   
    [model minimize:obj];
    
    
@@ -214,23 +232,33 @@ void keyExpansion(){
       for(int k = 0; k < 4; k++)
          for(int j2 = 0; j2 < 4; j2++)
             for(int k2 = 0; k2 < 4; k2++){
-               if(j2*4+k2 == j*4+k)
+               if(j2*4+k2 == j*4+k){
                   [model add: [V[0][j][k][j2*4+k2] eq: dK[0][j][k]]];
-               else
+                  //V[0][j][k][j2*4+k2] = dK[0][j][k];
+               }
+               else{
                   [model add: [V[0][j][k][j2*4+k2] eq: @(0)]];
+                  //V[0][j][k][j2*4+k2] = zero;
+                  
+               }
             }
    
    //SubByte KeyComponents
    for(int r = 1; r < rounds; r++){
-      for(int i = 0; i < 40; i++){
+      for(int i = 16; i < 40; i++){
          for(int k = 0; k < 4; k++){
             for(int j = 0; j < 4; j++){
                if(j == 0 && i >=16){
                   [model add: [V[r][j][k][i] eq: dK[r-1][j][(k + 5) % 4]]];
+                  //V[r][j][k][i] = dK[r-1][j][(k + 5) % 4];
+                  
                }
                else{
-                  [model add: [V[r][j][k][i] eq: V[r-1][j-1][k][i]]];
-                  
+                  if(j > 0){
+                     [model add: [V[r][j][k][i] eq: V[r-1][j-1][k][i]]];
+                     //V[r][j][k][i] = V[r-1][j-1][k][i];
+                     
+                  }
                }
             }
          }
@@ -281,10 +309,11 @@ void equRelation(){
                for(int i2 = 0; i2 < 4; i2++)
                   for(int j2 = 0; j2 < 4; j2++){
                      //Symmetry Constraints
-                     [model add: [equRK[r1][i1][j1][r2][i2][j2] eq: equRK[r2][i2][j2][r1][i1][j1]]];
+                     //[model add: [equRK[r1][i1][j1][r2][i2][j2] eq: equRK[r2][i2][j2][r1][i1][j1]]];
                      
                      //Relate to Binary Variables
-                     [model add: [[equRK[r1][i1][j1][r2][i2][j2] eq: @(1)] imply: [dK[r1][i1][j1] eq: dK[r2][i2][j2]]]];
+                     //[model add: [[equRK[r1][i1][j1][r2][i2][j2] eq: @(1)] imply: [dK[r1][i1][j1] eq: dK[r2][i2][j2]]]];
+                     [model add: [equRK[r1][i1][j1][r2][i2][j2] imply: [dK[r1][i1][j1] eq: dK[r2][i2][j2]]]];
                      [model add: [[[equRK[r1][i1][j1][r2][i2][j2] plus: dK[r1][i1][j1]] plus: dK[r2][i2][j2]] neq: @(0)]];
                   }
    
@@ -298,7 +327,13 @@ void equRelation(){
                         for(int i3 = 0; i3 < 4; i3++)
                            for(int j3 = 0; j3 < 4; j3++){
                               //Transistive Property
-                              [model add: [[equRK[r1][i1][j1][r2][i2][j2] eq: [equRK[r2][i2][j2][r3][i3][j3] eq: @(1)]] imply: [equRK[r1][i1][j1][r3][i3][j3] eq: @(1)]]];
+                              if(equRK[r1][i1][j1][r2][i2][j2] != equRK[r2][i2][j2][r3][i3][j3]){
+                                 //[model add: [[equRK[r1][i1][j1][r2][i2][j2] eq: [equRK[r2][i2][j2][r3][i3][j3] eq: @(1)]] imply: [equRK[r1][i1][j1][r3][i3][j3] eq: @(1)]]];
+                                 [model add: [[equRK[r1][i1][j1][r2][i2][j2] eq: equRK[r2][i2][j2][r3][i3][j3]] imply: [equRK[r1][i1][j1][r3][i3][j3] eq: @(1)]]];
+                              }
+                              else{
+                                 [model add: [equRK[r1][i1][j1][r3][i3][j3] eq: @(1)]];
+                              }
                               
                            }
 }
