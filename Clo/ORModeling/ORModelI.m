@@ -974,6 +974,13 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
     [_all removeAllObjects];
 }
+
+-(void) enumerateWith:(void(^)(id<ORConstraint>))block
+{
+   [_all enumerateObjectsUsingBlock:^(id  _Nonnull obj, BOOL * _Nonnull stop) {
+      block(obj);
+   }];
+}
 @end
 
 @implementation OROrderedConstraintSetI

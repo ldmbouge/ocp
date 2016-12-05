@@ -25,7 +25,7 @@
 -(id<ORIntLinear>)terms;
 @end
 
-@interface ORRealNormalizer : ORNOopVisit<NSObject> {
+@interface ORRealNormalizer : ORVisitor<NSObject> {
     id<ORRealLinear>  _terms;
     id<ORAddToModel>   _model;
 }
@@ -452,7 +452,6 @@ struct CPVarPair {
    [linRight release];
    _terms = linLeft;
 }
-
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "NO Real normalization for !="];

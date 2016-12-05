@@ -56,6 +56,7 @@
 @protocol ORConstraintSet <NSObject>
 -(void)addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
+-(void) enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
 
 @protocol OROrderedConstraintSet <ORConstraintSet>

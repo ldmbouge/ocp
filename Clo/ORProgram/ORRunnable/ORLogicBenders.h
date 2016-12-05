@@ -13,22 +13,23 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import "ORRunnablePiping.h"
+#import <ORProgram/ORRunnablePiping.h>
 
-typedef id<ORConstraintSet> (^Void2ConstraintSet)();
+typedef id<ORConstraintSet> (^ORSolution2ConstraintSet)(id<ORSolution>);
 
 
 @interface ORLogicBenders : ORPipedRunnable {
 @protected
     id<ORRunnable> _master;
-    Void2ConstraintSet _slaveBlock;
+    ORSolution2ConstraintSet _slaveBlock;
+    id<ORSolution> _bestSol;
     id<ORSignature> _sig;
 
     NSTimeInterval timeInMaster;
     NSTimeInterval timeInSlave;
 }
 
--(id) initWithMaster: (id<ORRunnable>)master slave: (Void2ConstraintSet)slaveBlock;
+-(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2ConstraintSet)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
@@ -39,5 +40,5 @@ typedef id<ORConstraintSet> (^Void2ConstraintSet)();
 @end
 
 @interface ORFactory(ORLogicBenders)
-+(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (Void2ConstraintSet)slaveBlock;
++(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2ConstraintSet)slaveBlock;
 @end

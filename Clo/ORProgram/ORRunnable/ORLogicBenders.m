@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-
+#import "MIPRunnable.h"
 #import "ORLogicBenders.h"
 #import "ORConcurrencyI.h"
 
@@ -18,10 +18,11 @@
 @synthesize timeInMaster;
 @synthesize timeInSlave;
 
--(id) initWithMaster: (id<ORRunnable>)master slave: (Void2ConstraintSet)slaveBlock {
+-(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2ConstraintSet)slaveBlock {
     if((self = [super init]) != nil) {
         _master = [master retain];
         _slaveBlock = [slaveBlock copy];
+        _bestSol = nil;
         _sig = nil;
         
         timeInMaster = 0;
@@ -34,6 +35,7 @@
     [_master release];
     [_sig release];
     [_slaveBlock release];
+    [_bestSol release];
     [super dealloc];
 }
 
@@ -56,17 +58,28 @@
         t1 = [NSDate date];
         timeInMaster += [t1 timeIntervalSinceDate: t0];
         t0 = [NSDate date];
-        //id<ORConstraintSet> cut = _slaveBlock();
+        id<ORConstraintSet> cut = _slaveBlock([_master bestSolution]);
         t1 = [NSDate date];
         timeInSlave += [t1 timeIntervalSinceDate: t0];
         
-        /*
-        if(cut == nil || [cut size] == 0) isFeasible = YES;
-        else [cut enumerateWith:^(id<ORConstraint> c) {
-            [[_master model] add: c]; }]; // Inject cuts
-        */
+        if(cut == nil || [cut size] == 0) {
+            isFeasible = YES;
+            _bestSol = [_master bestSolution];
+        }
+        else [(id<MIPRunnable>)_master addCuts: cut]; // Inject cuts
+        NSLog(@"constraints in master: %li", [[[_master model] constraints] count]);
     } while(!isFeasible);
     NSLog(@"master %f slave %f", timeInMaster, timeInSlave);
+}
+
+-(id<ORSolution>) bestSolution
+{
+    return _bestSol;
+}
+
+-(ORDouble) bestBound
+{
+    return [[_bestSol objectiveValue] doubleValue];
 }
 
 -(void) onExit: (ORClosure)block {}
@@ -74,7 +87,7 @@
 @end
 
 @implementation ORFactory(ORLogicBenders)
-+(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (Void2ConstraintSet)slaveBlock {
++(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2ConstraintSet)slaveBlock {
     return [[ORLogicBenders alloc] initWithMaster: master slave: slaveBlock];
 }
 @end
