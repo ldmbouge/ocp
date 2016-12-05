@@ -182,7 +182,7 @@ int main(int argc, const char * argv[])
                     if(best == nil) { // Infeasible
                         // Add Cut to pool
                         id<ORConstraint> c = [[[numVeh at: j] sub: [ORFactory sum: master over: Ij suchThat: nil of: ^id<ORExpr>(ORInt i) { return [x at: i : j]; }]]
-                                              geq: @([sol intValue: [numVeh at: j]] - [Ij size] + 1)];
+                                              geq: @(numVehj - [Ij size] + 1)];
                         NSLog(@"cut: %@", [c description]);
                         [cuts addConstraint: c];
                         [r release];
