@@ -303,6 +303,10 @@
 {
    _result = c;
 }
+-(void) visitBinImply: (id<ORBinImply>)c
+{
+   _result = c;
+}
 -(void) visitElementCst: (id<ORElementCst>)c
 {
    _result = c;
@@ -392,6 +396,10 @@
    _result = c;
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   _result = c;
+}
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
 {
    _result = c;
 }

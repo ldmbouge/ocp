@@ -187,6 +187,12 @@
 -(id<ORIntVar>) right;
 @end
 
+@interface ORBinImply : ORConstraintI<ORBinImply>
+-(ORImply*)init:(id<ORIntVar>)x imply:(id<ORIntVar>)y;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
 @interface ORElementCst : ORConstraintI<ORElementCst>
 -(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
 -(id<ORIntArray>) array;
@@ -288,6 +294,12 @@
 
 @interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>
 -(ORSumBoolEqc*) initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
+@end
+
+@interface ORSumBoolNEqc : ORConstraintI<ORSumBoolNEqc>
+-(ORSumBoolNEqc*) initSumBool:(id<ORIntVarArray>)ba neqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end

@@ -117,7 +117,7 @@ BOOL _alreadyAdded;
           break;
     }
     [terms release];
-    assert(cstr != nil);
+    //assert(cstr != nil); DAN
     return cstr;
 }
 -(void) visitIntVar:(ORIntVarI*)v
@@ -183,6 +183,14 @@ BOOL _alreadyAdded;
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
     _result = c;
+}
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
+{
+   _result = c;
+}
+-(void) visitUniformDistribution:(id) v
+{
+    _result = v;
 }
 
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr

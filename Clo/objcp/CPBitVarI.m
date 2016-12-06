@@ -456,7 +456,7 @@ return self;
 {
 //<<<<<<< HEAD
    
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
 
 //   id<CPEventNode> mList[8];
@@ -486,7 +486,7 @@ return self;
 -(ORStatus) changeMinEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
 //<<<<<<< HEAD
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
 
 //   id<CPEventNode> mList[8];
@@ -513,7 +513,7 @@ return self;
 -(ORStatus) changeMaxEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
 //<<<<<<< HEAD
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
 
 //   id<CPEventNode> mList[8];
@@ -540,7 +540,7 @@ return self;
 
 -(ORStatus) bitFixedEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
 
 //   [_dom updateFreeBitCount];
@@ -559,7 +559,7 @@ return self;
 
 -(ORStatus) bitFixedAtIEvt:(ORUInt)dsz at:(ORUInt)idx sender:(CPBitArrayDom*)sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
    
    //Empty implementation
@@ -576,7 +576,7 @@ return self;
 
 -(ORStatus) bitFixedAtEvt:(ORUInt)dsz at:(ORUInt)idx sender:(CPBitArrayDom*)sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
    if (s==ORFailure) return s;
    
    //   [_dom updateFreeBitCount];
@@ -967,13 +967,13 @@ return self;
 {
    return _tracksLoseEvt;
 }
--(ORStatus)bindEvt:(CPBitArrayDom*)sender
+-(ORStatus)bindEvt:(ORUInt)dsz  sender:(CPBitArrayDom*)sender
 {
    // If _nb > 0 but the _tab entries are nil, this would inadvertently
    // set ok to ORFailure which is wrong. Hence it is critical to also
    // backtrack the size of the array in addVar.
    for(ORInt i=0;i<_nb;i++) {
-      ORStatus ok = [_tab[i] bindEvt:sender];
+      ORStatus ok = [_tab[i] bindEvt:dsz sender:sender];
       if (!ok) return ok;
    }
    return ORSuspend;

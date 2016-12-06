@@ -789,6 +789,21 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitBinImply: (id<ORBinImply>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVar> left = [cstr left];
+      id<ORIntVar> right = [cstr right];
+      [left visit: self];
+      [right visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) _gamma[left.getId]
+                                                   imply: (id<CPIntVar>) _gamma[right.getId]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitElementCst: (id<ORElementCst>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1042,6 +1057,15 @@
    if (_gamma[cstr.getId] == NULL) {
       id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
       id<CPConstraint> concreteCstr = [CPFactory sumbool:x eq:[cstr cst]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      id<CPConstraint> concreteCstr = [CPFactory sumbool:x neq:[cstr cst]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

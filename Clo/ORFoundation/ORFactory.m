@@ -998,6 +998,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x neqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORSumBoolNEqc alloc] initSumBool: x neqi: c];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) sum:(id<ORTracker>)model array:(id<ORIntVarArray>) x eqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumEqc alloc] initSum:x eqi:c];
@@ -1044,6 +1050,12 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x imply:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[ORImply alloc] initORImply:b eq:x imply:y];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x imply:(id<ORIntVar>)y
+{
+   id<ORConstraint> o = [[ORBinImply alloc] init:x imply:y];
    [model trackObject:o];
    return o;
 }

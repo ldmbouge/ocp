@@ -124,6 +124,7 @@
 -(void) visitOr: (id<ORConstraint>)c;
 -(void) visitAnd:( id<ORConstraint>)c;
 -(void) visitImply: (id<ORConstraint>)c;
+-(void) visitBinImply: (id<ORBinImply>)c;
 -(void) visitElementCst: (id<ORConstraint>)c;
 -(void) visitElementVar: (id<ORConstraint>)c;
 -(void) visitElementBitVar: (id<ORConstraint>)c;
@@ -144,6 +145,7 @@
 -(void) visitHReifySumBoolGEqualc: (id<ORConstraint>) c;
 -(void) visitClause:(id<ORConstraint>)c;
 -(void) visitSumBoolEqualc: (id<ORConstraint>) c;
+-(void) visitSumBoolNEqualc: (id<ORConstraint>) c;
 -(void) visitSumBoolLEqualc:(id<ORConstraint>)c;
 -(void) visitSumBoolGEqualc:(id<ORConstraint>)c;
 -(void) visitSumEqualc:(id<ORConstraint>)c;

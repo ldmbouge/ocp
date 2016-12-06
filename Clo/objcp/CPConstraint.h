@@ -45,6 +45,8 @@
 +(id<CPConstraint>) clause:(id<CPIntVarArray>) x eq:(id<CPIntVar>)tv;
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c;
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (ORInt) c;
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x neq: (ORInt) c;
+
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c annotation: (ORCLevel)cons;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (ORInt) c;
@@ -52,6 +54,7 @@
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
 +(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
++(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y;
 
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) path: (id<CPIntVarArray>) x;

@@ -328,6 +328,18 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
+
+@interface CPBinImplyDC : CPCoreConstraint { // (x => y)
+   CPIntVar* _x;
+   CPIntVar* _y;
+}
+-(id)initCPBinImplyDC:(id)x imply:(id)y;
+-(void) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+
 @interface CPAllDifferenceVC : CPCoreConstraint 
 -(id) initCPAllDifferenceVC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x;
 -(id) initCPAllDifferenceVC: (CPIntVar**) x nb: (ORInt) n;

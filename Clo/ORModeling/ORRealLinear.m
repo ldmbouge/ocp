@@ -226,6 +226,12 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
     assert(NO);
     return nil;
 }
+-(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
+{
+   assert(NO);
+   return nil;
+}
+
 -(void) postMinimize: (id<ORAddToModel>) model
 {
     [model minimize: [self variables: model] coef: [self coefficients: model]];
@@ -315,6 +321,10 @@ static int decCoef(const struct ORDoubleTerm* t1,const struct ORDoubleTerm* t2)
 -(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model
 {
     return [_real postDISJ:model];
+}
+-(id<ORConstraint>)postIMPLY:(id<ORAddToModel>)model
+{
+   return [_real postIMPLY:model];
 }
 
 @end

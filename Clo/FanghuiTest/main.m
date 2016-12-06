@@ -346,8 +346,8 @@ void mixColumns(){
       int ir = (r - 2) / 4;
       for(ORInt j = 0; j < 4; j++){
          id<ORBitVar> temp[4];
-         id<ORBitVar> temp1[4];
-         id<ORBitVar> temp2[4];
+         //id<ORBitVar> temp1[4];
+         //id<ORBitVar> temp2[4];
          
          for(int i = 0; i < 4; i++){
             temp[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :7];

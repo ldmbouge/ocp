@@ -25,7 +25,7 @@
 -(id<ORIntLinear>)terms;
 @end
 
-@interface ORRealNormalizer : ORNOopVisit<NSObject> {
+@interface ORRealNormalizer : ORVisitor<NSObject> {
     id<ORRealLinear>  _terms;
     id<ORAddToModel>   _model;
 }
@@ -329,8 +329,7 @@ struct CPVarPair {
     ORIntLinear* linRight = [ORNormalizer intLinearFrom:r model:_model];
     id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
     id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
-    id<ORIntVar> final = [ORFactory intVar: _model domain:RANGE(_model,0,1)];
-    [_model addConstraint:[ORFactory equalc:_model var:final to:1]];
+    id<ORIntVar> final = [ORFactory intVar: _model value:1];
     return (struct CPVarPair){lV,rV,final};
 }
 -(void) visitExprNegateI:(ORExprNegateI*) e
@@ -352,8 +351,39 @@ struct CPVarPair {
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-    struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
-    [_model addConstraint:[ORFactory model:_model boolean:vars.lV imply:vars.rV equal:vars.boolVar]];
+ ORIntLinear* linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model];
+   ORIntLinear* linRight = [ORNormalizer intLinearFrom:[e right] model:_model];
+   if ([linLeft size] == 0) {  // the antecedent is a constant!
+      if ([linLeft independent] == 0) { // the antecedent in A => B is false. false => B <=> !false OR B <=> true OR B <=> true
+         _terms = [[ORIntLinear alloc] initORLinear:2];
+         [_terms setIndependent:1];
+      } else { // the antecedent in A => B is true. true => B <=> !true OR B <=> false OR B <=> B  <=> B = 1
+         id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
+         [_model addConstraint:[ORFactory equalc:_model var:rV to:1]];
+      }
+      [linLeft release];
+      [linRight release];
+      return;
+   }
+   if ([linRight size] == 0) { // the consequent is a constant!
+      if ([linRight independent] == 1) {  // consequent is true.  A => true <-> !A OR true <-> true
+         _terms = [[ORIntLinear alloc] initORLinear:2];
+         [_terms setIndependent:1];
+      } else { // else A => false <-> !A OR false <-> !A <-> A = 0
+         id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
+         [_model addConstraint:[ORFactory equalc:_model var:lV to:0]];
+      }
+      [linLeft release];
+      [linRight release];
+      return ;
+   }
+   id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
+   id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
+   //id<ORIntVar> final = [ORFactory intVar: _model value:1];
+   //[_model addConstraint:[ORFactory model:_model boolean:lV imply:rV equal:final]];
+   [_model addConstraint:[ORFactory model:_model boolean:lV imply:rV]];
+//   struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
+//   [_model addConstraint:[ORFactory model:_model boolean:vars.lV imply:vars.rV equal:vars.boolVar]];
 }
 @end
 
@@ -422,7 +452,6 @@ struct CPVarPair {
    [linRight release];
    _terms = linLeft;
 }
-
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
     @throw [[ORExecutionError alloc] initORExecutionError: "NO Real normalization for !="];
@@ -960,10 +989,12 @@ static inline ORLong maxSeq(ORLong v[4])  {
     if (_rv != nil) {
         [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
     } else {
-       if ([theVar.domain inRange:c])
-	  _rv = [ORFactory reifyView:_model var:theVar eqi:c];
+       if (theVar.isBool && c==1)
+          _rv = theVar;
+       else if ([theVar.domain inRange:c])
+          _rv = [ORFactory reifyView:_model var:theVar eqi:c];
        else
-	  _rv = [ORFactory intVar:_model value:0];
+          _rv = [ORFactory intVar:_model value:0];
     }
 #endif
 }
@@ -1038,9 +1069,15 @@ static inline ORLong maxSeq(ORLong v[4])  {
       id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model];
       id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model];
       id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model];
-      if (_rv==nil)
-         _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-      [_model addConstraint:[ORFactory reify:_model boolean:_rv with:lV eq:rV]];
+      if (_rv==nil) {
+         if (lV == rV)
+            _rv = [ORFactory intVar:_model value:1];
+         else {
+            _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+            [_model addConstraint:[ORFactory reify:_model boolean:_rv with:lV eq:rV]];
+         }
+      } else
+         [_model addConstraint:[ORFactory reify:_model boolean:_rv with:lV eq:rV]];
       [linLeft release];
       [linRight release];
    }

@@ -27,7 +27,7 @@
 #import <ORProgram/CPBitVarIBS.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPBitVarFirstFail.h>
-//=======
+
 #import <ORProgram/CPFDS.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPConcretizer.h>
@@ -35,12 +35,12 @@
 #import <ORProgram/CPParallel.h>
 #import <ORProgram/ORCPParSolver.h>
 #import <ORProgram/ORSTask.h>
-//>>>>>>> master
 
 #import <ORProgram/ORCombinator.h>
 #import <ORProgram/ORRunnable.h>
 #import <ORProgram/ORSignature.h>
 #import <ORProgram/ORParallelCombinator.h>
+#import <ORProgram/ORColumnGeneration.h>
 
 #import <ORProgram/PCBranching.h>
 

@@ -40,7 +40,7 @@
 {
    double a = 1.0;
    double b = 3.0;
-   initContinuationLibrary(&a);
+   initContinuationLibrary((int*)&a);
    ORIReady();
    _MM_SET_ROUNDING_MODE(_MM_ROUND_UP);
    double c  = a / b;

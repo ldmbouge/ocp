@@ -816,18 +816,18 @@
 
 -(ORStatus)bind:(ORULong)val for:(id<CPBitVarNotifier>)x
 {
-    if ((val < [self min]) || (val > [self max]))
-       failNow();
-    if ((_freebits._val == 0) && (val == [self min])) return ORSuccess;
-    //Deal with arrays < 64 bits long
-    assignTRUInt(&_min[0], val>>32, _trail);
-    assignTRUInt(&_max[0], val>>32, _trail);
-    assignTRUInt(&_min[1], val & CP_BITMASK, _trail);
-    assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
-    assignTRUInt(&_freebits, 0, _trail);
+   if ((val < [self min]) || (val > [self max]))
+      failNow();
+   if ((_freebits._val == 0) && (val == [self min])) return ORSuccess;
+   //Deal with arrays < 64 bits long
+   assignTRUInt(&_min[0], val>>32, _trail);
+   assignTRUInt(&_max[0], val>>32, _trail);
+   assignTRUInt(&_min[1], val & CP_BITMASK, _trail);
+   assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
+   assignTRUInt(&_freebits, 0, _trail);
    [self updateFreeBitCount];
-   [x bindEvt:self];
-    return ORSuspend;   
+   [x bindEvt:1 sender:self];
+   return ORSuspend;
 }
 
 -(ORStatus) bindToPat:(ORUInt*) pat for:(id<CPBitVarNotifier>)x
@@ -847,7 +847,7 @@
    assignTRUInt(&_min[1], pat[1], _trail);
    assignTRUInt(&_max[1], pat[1], _trail);
    assignTRUInt(&_freebits, 0, _trail);
-   [x bindEvt:self];
+   [x bindEvt:1 sender:self];
    [self updateFreeBitCount];
    return ORSuspend;   
 }

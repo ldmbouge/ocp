@@ -337,6 +337,12 @@
    [[x tracker] trackMutable: o];
    return o;
 }
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x neq: (ORInt) c
+{
+   id<CPConstraint> o = [[CPSumBoolNEq alloc] initCPSumBool: x neq: c];
+   [[x tracker] trackMutable: o];
+   return o;
+}
 
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c
 {
@@ -373,6 +379,12 @@
    id<ORConstraint> o = [[CPImplyDC alloc] initCPImplyDC:b equal:x imply:y];
    [[x tracker] trackMutable:o];
    return o;   
+}
++(id<ORConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y
+{
+   id<ORConstraint> o = [[CPBinImplyDC alloc] initCPBinImplyDC:x imply:y];
+   [[x tracker] trackMutable:o];
+   return o;
 }
 
 +(id<ORConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c

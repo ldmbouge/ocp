@@ -60,5 +60,66 @@
    }
 }
 
+- (void)testSumBoolNEQ {
+   @autoreleasepool {
+      id<ORModel> m = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(m,0,5);
+      id<ORIntVarArray> x = [ORFactory intVarArray:m range:R with:^id<ORIntVar> _Nonnull(ORInt i) { return [ORFactory boolVar:m];}];
+
+      [m add: [ORFactory sumbool:m array:x neqi:2]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:m];
+      [cp solveAll: ^{
+         [cp labelArray: x];
+         @autoreleasepool {
+            id<ORIntArray> s = [ORFactory intArray:cp range:R with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
+            ORInt cnt = sumSet(R, ^ORInt(ORInt i) { return [s at:i];});
+            NSString* buf = [NSMutableString stringWithFormat:@"SUMBOOL ≠ 2 sum(%@) == %d \n",s,cnt];
+            printf("%s", [buf UTF8String]);
+         }
+      }];
+      printf("Done: %d / %d\n",[cp nbChoices],[cp nbFailures]);
+   }
+}
+
+
+- (void)testBinImply {
+   @autoreleasepool {
+      id<ORModel> m = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(m,0,1);
+      id<ORIntVarArray> x = [ORFactory intVarArray:m range:R with:^id<ORIntVar> _Nonnull(ORInt i) { return [ORFactory boolVar:m];}];
+      
+      [m add: [ORFactory model:m boolean:x[0] imply:x[1]]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:m];
+      [cp solveAll: ^{
+         [cp labelArray: x];
+         @autoreleasepool {
+            id<ORIntArray> s = [ORFactory intArray:cp range:R with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
+            NSString* buf = [NSMutableString stringWithFormat:@"x[0] imply x[1] (%@)\n",s];
+            printf("%s", [buf UTF8String]);
+         }
+      }];
+      printf("Done: %d / %d\n",[cp nbChoices],[cp nbFailures]);
+   }
+}
+
+-(void) testBitBind {
+   @autoreleasepool {
+      id<ORModel>  m = [ORFactory createModel];
+      id<ORBitVar> x = [ORFactory bitVar:m withLength:32];
+      id<ORBitVar> y = [ORFactory bitVar:m withLength:32];
+      id<ORBitVar> z = [ORFactory bitVar:m withLength:32];
+      [m add: [ORFactory bit:x bnot:y]];
+      [m add: [ORFactory bit:y eq:z]];
+      id<CPProgram,CPBV> cp = [ORFactory createCPProgram:m];
+      [cp solveAll:^{
+         [cp labelBits:x withValue:17];
+         NSLog(@"x = %@",[cp stringValue:x]);
+         NSLog(@"y = %@",[cp stringValue:y]);
+         NSLog(@"z = %@",[cp stringValue:z]);
+      }];      
+   }
+}
 
 @end

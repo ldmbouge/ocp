@@ -101,6 +101,9 @@
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
+-(void) visitIntMatrix:(id<ORIntMatrix>)v
+{
+}
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }
@@ -457,6 +460,11 @@
       [_lpsolver postConstraint:concreteCstr];
    }
 }
+-(void) visitSumBoolNEqualc: (id<ORSumBoolNEqc>) c
+{
+   assert(0);
+}
+
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
