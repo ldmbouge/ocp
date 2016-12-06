@@ -189,7 +189,6 @@
 
 @interface ORBinImply : ORConstraintI<ORBinImply>
 -(ORImply*)init:(id<ORIntVar>)x imply:(id<ORIntVar>)y;
--(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 @end

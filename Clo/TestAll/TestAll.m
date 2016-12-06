@@ -104,5 +104,22 @@
    }
 }
 
+-(void) testBitBind {
+   @autoreleasepool {
+      id<ORModel>  m = [ORFactory createModel];
+      id<ORBitVar> x = [ORFactory bitVar:m withLength:32];
+      id<ORBitVar> y = [ORFactory bitVar:m withLength:32];
+      id<ORBitVar> z = [ORFactory bitVar:m withLength:32];
+      [m add: [ORFactory bit:x bnot:y]];
+      [m add: [ORFactory bit:y eq:z]];
+      id<CPProgram,CPBV> cp = [ORFactory createCPProgram:m];
+      [cp solveAll:^{
+         [cp labelBits:x withValue:17];
+         NSLog(@"x = %@",[cp stringValue:x]);
+         NSLog(@"y = %@",[cp stringValue:y]);
+         NSLog(@"z = %@",[cp stringValue:z]);
+      }];      
+   }
+}
 
 @end
