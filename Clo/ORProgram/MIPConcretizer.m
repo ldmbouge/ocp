@@ -68,8 +68,11 @@
 {
 }
 -(void) visitRealRange:(id<ORRealRange>)v
-{}
-
+{
+}
+-(void) visitIntMatrix:(id<ORIntMatrix>)v
+{
+}
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (_gamma[v.getId] == NULL)
@@ -146,6 +149,9 @@
 {
 }
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
+{
+}
+-(void) visitUniformDistribution:(id) v
 {
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v

@@ -101,6 +101,9 @@
 -(void) visitIntArray:(id<ORIntArray>) v
 {
 }
+-(void) visitIntMatrix:(id<ORIntMatrix>)v
+{
+}
 -(void) visitDoubleArray:(id<ORDoubleArray>) v
 {
 }

@@ -62,8 +62,13 @@
     }
     return _sig;
 }
--(void) injectColumn: (id<ORDoubleArray>) col
+-(void) addCuts: (id<ORConstraintSet>) cuts
 {
+    [cuts enumerateWith:^(id<ORConstraint> c) {
+        [_model add: c];
+    }];
+    [_program release];
+    _program = [ORFactory createMIPProgram: _model];
 }
 
 -(void) run
