@@ -4738,7 +4738,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    unsigned int* up = alloca(sizeof(unsigned int)*wordLength);
    unsigned int* low = alloca(sizeof(unsigned int)*wordLength);
-   unsigned int  upXORlow;
+//   unsigned int  upXORlow;
    bool    inconsistencyFound = false;
 
    ORInt xPopcount = 0;
@@ -4774,15 +4774,17 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       for (int i=0; i<wordLength; i++)
          up[i] = low[i];
    }else{
+      if (pUp < pLow)
+         failNow();
       [_p updateMin:pLow andMax:pUp];
    }
    
    //domain consistency check on _x
-   for (int i=0; i<wordLength; i++) {
-      upXORlow = up[i] ^ low[i];
-      inconsistencyFound |= (upXORlow&(~up[i]))&(upXORlow & low[i]);
-   }
-
+//   for (int i=0; i<wordLength; i++) {
+//      upXORlow = up[i] ^ low[i];
+//      inconsistencyFound |= (upXORlow&(~up[i]))&(upXORlow & low[i]);
+//   }
+   inconsistencyFound = checkDomainConsistency(_x, low, up, wordLength, self);
    if (inconsistencyFound)
       failNow();
    
