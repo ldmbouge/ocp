@@ -23,6 +23,11 @@
 
 #import <objc/runtime.h>
 
+#if __clang_major__==3 && __clang_minor__==6
+#define _Nonnull
+#endif
+
+
 @implementation ORTau
 {
    NSMapTable* _mapping;
