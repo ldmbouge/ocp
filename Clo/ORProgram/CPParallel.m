@@ -74,42 +74,44 @@ void lock_constructor() {
    id<ORTracer> tracer = [_solver tracer];
    id<ORCheckpoint> theCP = [tracer captureCheckpoint];
    //NSLog(@"MT(0):%d : %@",[NSThread threadID],[theCP getMT]);
+   id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
    ORHeist* stolen = [_controller steal];
    //NSLog(@"     Publishing(%d) : %@ - %p  -- current objective: %@ stole:%d",[NSThread threadID],
    //stolen.oValue,stolen.theCP,[_solver objective],[stolen sizeEstimate]);
-   
-   id<ORPost> pItf = [[CPINCModel alloc] init:_solver];
-   ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine] model:pItf];
-   if (ok == ORFailure) {
-      ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
-      _publishing = NO;
-      [theCP letgo];
-      [pItf release];
+   ORStatus ok;
+   if (stolen) {
+      ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine] model:pItf];
+      if (ok == ORFailure) {
+         ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];
+         _publishing = NO;
+         [theCP letgo];
+         [pItf release];
+         [stolen release];
+         return;
+      }
+      assert(ok != ORFailure);
+      
+      [tracer pushNode];
+      
+      id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer]
+                                                                           engine:[_solver engine]
+                                                                          posting:[pItf retain]];
+      
+      [[_solver explorer] applyController: base
+                                       in: ^ {
+                                          [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
+                                                                  onSolution:nil
+                                                                      onExit:nil
+                                                                     control:[[CPGenerator alloc] initCPGenerator:base
+                                                                                                         explorer:_solver
+                                                                                                           onPool:_pool
+                                                                                                             post:pItf]];
+                                       }];
+      
+      [tracer popNode];
+      //NSLog(@"     PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
       [stolen release];
-      return;
    }
-   assert(ok != ORFailure);
-
-   [tracer pushNode];
-
-   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer]
-                                                                        engine:[_solver engine]
-                                                                       posting:[pItf retain]];
-   
-   [[_solver explorer] applyController: base
-                                    in: ^ {
-                                       [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
-                                                               onSolution:nil
-                                                                   onExit:nil
-                                                                  control:[[CPGenerator alloc] initCPGenerator:base
-                                                                                                      explorer:_solver
-                                                                                                        onPool:_pool
-                                                                                                          post:pItf]];
-                                    }];
-   
-   [tracer popNode];
-   //NSLog(@"     PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
-   [stolen release];
    //NSLog(@"MT(1):%d : %@",[NSThread threadID],[theCP getMT]);
    //NSLog(@"CT(1):%d : %@",[NSThread threadID],[tracer getMT]);
    ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine] model:pItf];

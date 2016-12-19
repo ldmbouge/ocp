@@ -67,12 +67,12 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-q8"
+            argument = "-q14"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-p2"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

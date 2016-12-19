@@ -175,8 +175,12 @@
 -(ORBool)willingToShare
 {
    BOOL some = _sz >= 4;
+   for(ORInt i=0;i<_sz;i++)
+      if (!_tab[i].admin)
+         return some;
+   return NO;
    //some = some && [_cpTab[0] sizeEstimate] < 10;
-   return some;
+   //return some;
 }
 @end
 

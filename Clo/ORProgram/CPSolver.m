@@ -936,8 +936,8 @@
       CPIntVar* xi = _gamma[getId(x[i])];
       while (!bound(xi)) {
          ORInt m = minDom(xi);
-            [_search try: ^{ [self labelImpl: xi with: m]; }
-                     alt: ^{ [self  diffImpl: xi with: m]; }
+         [_search try: ^{  [self label: x[i] with: m]; }
+                  alt: ^{  [self  diff: x[i] with: m]; }
           ];
       }
    }
