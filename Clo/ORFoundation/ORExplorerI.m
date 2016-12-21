@@ -60,7 +60,6 @@
 -(void) setController: (id<ORSearchController>) controller
 {
    assignTRId(&_controller,controller,_trail);
-   [controller setup];
 }
 
 -(void) push: (id<ORSearchController>) controller
@@ -380,8 +379,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       if ([exit nbCalls]==0) {
          exit.admin = YES;
          _controller = makeTRId(_trail,dfs);
-         [dfs addChoice: exit];
          [dfs setup];
+         [dfs addChoice: exit];
          body();
          // [ldm] Do *not* letgo of exit here. The cleanup call will do this automatically.
          //[exit letgo];
@@ -406,6 +405,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       exit.admin = YES;
+      [newCtrl setup];
       [_controller addChoice: exit];                           // add the choice in the original controller
       [self setController:newCtrl];                                 // install the new controller chain
       if (body) body();
@@ -432,6 +432,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       exit.admin = YES;
+      [newCtrl setup];
       [newCtrl addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       if (body) body();
@@ -456,6 +457,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       exit.admin = YES;
+      [newCtrl setup];
       [_controller addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       id<ORSearchObjectiveFunction> obj = solver.objective;
