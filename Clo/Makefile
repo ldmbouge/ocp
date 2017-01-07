@@ -11,12 +11,15 @@ CFL=-g -O0
 
 .PHONY: $(TARGETS)
 
-all: $(TARGETS) 
+all: links $(TARGETS) 
 	@mkdir -p bin
 	@cp -ar ../data/* bin
 	@python bench.py CFL='$(CFL)'
 	$(MAKE) -s -j$(PAR) -f bench.make
 	@echo "Done all..."
+
+links:
+	@make -s -C ORProgram runnable USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 
 objcp:
 	@make -s -C objcp -j$(PAR) USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
