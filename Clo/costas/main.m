@@ -53,7 +53,7 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          id<CPProgram> cp = [args makeProgram:mdl annotation:notes];
          [cp solveAll: ^{
-            NSLog(@"Searching...");
+	     //NSLog(@"Searching...");
             [cp labelArray:costas];
             @synchronized(cp) { // synchronized to work correctly even if you ask for a parallel run on the command line.
                nbSol++;

@@ -135,7 +135,7 @@ void lock_constructor() {
 #else
    pthread_spin_unlock(&lock);
 #endif   
-   NSLog(@"publishing took: %lld",ttl);
+   //NSLog(@"publishing took: %lld",ttl);
    _publishing = NO;
    if (ok == ORFailure)
       [self fail];
