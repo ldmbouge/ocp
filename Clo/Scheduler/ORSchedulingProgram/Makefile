@@ -5,6 +5,7 @@ CFLAGS += -I../../ORFoundation \
 	-I../../objcp \
 	-I../../ORModeling \
 	-I../../CPUKernel \
+	-I../../ORProgram \
 	-I../ORScheduler \
 	-I../CPScheduler \
 	-I../..
