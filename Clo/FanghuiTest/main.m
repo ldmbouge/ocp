@@ -5,7 +5,7 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 #define EXPECTKEY
-#define KNOWNKEYS 11
+#define KNOWNKEYS 9
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -258,19 +258,18 @@ int main(int argc, const char * argv[]) {
       [cp forall:R suchThat:^ORBool(ORInt i) {
          return [oc[i] domsize] > 0;
       } orderedBy:^ORInt(ORInt i) {
-         return [oc[i] domsize];
+         return -i; // [LDM] Perf improvement// [oc[i] domsize];
          //return -(([gamma[o[i].getId] domsize] << 20) + s_SC[i]);
       } do:^(ORInt s) {
          ORUInt size = [oc[s] domsize];
          id<ORIntRange> S = [ORFactory intRange:cp low:0 up:((1 << size) - 1)];
          ORUInt fixedHW = 8 - size;
-         
          [cp tryall:S suchThat:^ORBool(ORInt i) {
             //Calculate hamming weight
             i = i - ((i>>1) & 0x55555555);
             i = (i & 0x33333333) + ((i>>2) & 0x33333333);
             int count = ((i + (i>>4) & 0xF0F0F0F) * 0x1010101) >> 24;
-            //NSLog(@"integer: %d count: %d", i, count);            
+            //NSLog(@"integer: %d count: %d", i, count);
             return (fixedHW + count) <= (s_SC[s] + 1) && (fixedHW + count) >= (s_SC[s] - 1);
             //return true;
          } in:^(ORInt i) {
