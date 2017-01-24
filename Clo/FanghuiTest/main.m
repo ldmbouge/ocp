@@ -270,10 +270,8 @@ int main(int argc, const char * argv[]) {
             i = i - ((i>>1) & 0x55555555);
             i = (i & 0x33333333) + ((i>>2) & 0x33333333);
             int count = ((i + (i>>4) & 0xF0F0F0F) * 0x1010101) >> 24;
-            //NSLog(@"integer: %d count: %d", i, count);
-            
+            //NSLog(@"integer: %d count: %d", i, count);            
             return (fixedHW + count) <= (s_SC[s] + 1) && (fixedHW + count) >= (s_SC[s] - 1);
-            
             //return true;
          } in:^(ORInt i) {
             //num_checks++;
@@ -281,12 +279,9 @@ int main(int argc, const char * argv[]) {
                uint32 count = 0;
                for(int nbit = 0; nbit < 8; nbit++){
                   if([oc[s] isFree: nbit]){
-                     if((i >> count++) & 1){
-                        [[oc[s] domain] setBit:nbit to:true for:oc[s]];
-                     }
-                     else{
-                        [[oc[s] domain] setBit:nbit to:false for:oc[s]];
-                     }
+                     id<CPBitVar> ocs = oc[s];
+                     BOOL val = (i >> count++) & 1;
+                     [ocs bind:nbit to:val];
                   }
                }
             }];
@@ -295,7 +290,9 @@ int main(int argc, const char * argv[]) {
          }];
       }];
       //id<ORSolution> sol = [[cp solutionPool] best];
-      [cp labelArrayFF:iv];
+      [cp once:^{
+         [cp labelArrayFF:iv];
+      }];
       clock_t searchStop = clock();
       double searchTime = ((double)(searchStop - searchStart))/CLOCKS_PER_SEC;
       for(int i = 0; i < 16; i++)
