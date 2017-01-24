@@ -287,6 +287,7 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
    _valueClosureQueue = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
    _propagating = 0;
    _nbpropag = 0;
+   _nbFailures = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
    _propagFail = nil;
    _propagDone = nil;
@@ -350,6 +351,10 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 -(void)incNbPropagation:(ORUInt)add
 {
    _nbpropag += add;
+}
+-(ORUInt) nbFailures
+{
+   return _nbFailures;
 }
 -(ORUInt) nbPropagation
 {
@@ -568,6 +573,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
          [fdm->_propagFail notifyWith:[*last getId]];
       //[exception release];
       fdm->_nbpropag += nbp;
+      fdm->_nbFailures += 1;
       --fdm->_propagating;
       assignTRInt(&fdm->_iStat, ORFailure, fdm->_trail);
    ENDFAIL(ORFailure)

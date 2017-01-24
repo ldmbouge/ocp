@@ -217,7 +217,7 @@
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",
-               [_engine nbVars],[_engine nbConstraints],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
+               [_engine nbVars],[_engine nbConstraints],[self nbChoices],[self nbFailures],[_engine nbPropagation]];
 }
 -(id<ORIdxIntInformer>) retLabel
 {
@@ -261,7 +261,7 @@
 }
 -(ORInt) nbFailures
 {
-   return [_search nbFailures];
+   return [_engine nbFailures];
 }
 -(ORInt) nbChoices
 {
@@ -502,6 +502,13 @@
    [_search tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
 }
 
+-(void) atomic:(ORClosure)body
+{
+   ORStatus status = [_engine atomic:body];
+   if (status == ORFailure) {
+      [_search fail];
+   }
+}
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
    [_search limitTime: maxTime in: cl];
@@ -1073,7 +1080,7 @@
    do {
       id<ORIntVar> x = [last idValue];
       //NSLog(@"at top: last = %p",x);
-      if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [self bound:x])) {
+      if ([failStamp intValue]  == [self nbFailures] || (x == nil || [self bound:x])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
@@ -1081,9 +1088,9 @@
          //NSLog(@"-->Chose variable: %p",x);
          [last setIdValue:x];
       }/* else {
-         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+         NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
       }*/
-      [failStamp setValue:[_search nbFailures]];
+      [failStamp setValue:[self nbFailures]];
       ORDouble bestValue = - MAXDBL;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = x.min;
@@ -1226,7 +1233,7 @@
    do {
       id<CPBitVar> x = [last idValue];
 //      NSLog(@"at top: last = %p",x);
-      if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [x bound])) {
+      if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
          i = [select max];
          if (i == MAXINT)
             return;
@@ -1234,10 +1241,10 @@
 //         NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
       } else {
-//        NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+//        NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
         }
       NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);      
-      [failStamp setValue:[_search nbFailures]];
+      [failStamp setValue:[self nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = [x lsFreeBit];
@@ -1367,7 +1374,7 @@
    do {
       id<CPBitVar> x = [last idValue];
       //NSLog(@"at top: last = %p",x);
-      if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [x bound])) {
+      if ([failStamp intValue]  == [self nbFailures] || (x == nil || [x bound])) {
          i = [select max];
          if (i == MAXINT)
             return;
@@ -1375,10 +1382,10 @@
 //                  NSLog(@"-->Chose variable: %p=%@",x,x);
          [last setIdValue:x];
       } else {
-//         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+//         NSLog(@"STAMP: %d  - %d",[failStamp value],[self nbFailures]);
       }
       NSAssert2([x isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", x, [[CPBitVarI class] description]);
-      [failStamp setValue:[_search nbFailures]];
+      [failStamp setValue:[self nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = [x lsFreeBit];

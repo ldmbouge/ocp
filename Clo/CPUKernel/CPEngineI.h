@@ -40,6 +40,7 @@ enum CPEngineState {
    CPValueClosureQueue*     _valueClosureQueue;
    ORInt                    _propagating;
    ORUInt                   _nbpropag;
+   ORUInt                   _nbFailures;
    TRInt                    _iStat;
    id<CPConstraint>         _last;
    UBType                   _propagIMP;
@@ -79,6 +80,7 @@ enum CPEngineState {
 -(ORStatus)   close;
 -(ORBool)     closed;
 -(void)       open;
+-(ORUInt) nbFailures;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;

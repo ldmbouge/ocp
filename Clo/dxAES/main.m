@@ -31,9 +31,13 @@ int i_dK[rounds][4][4] = {{{1,0,1,0} ,{1,0,1,0} ,{1,0,1,0} ,{1,0,1,0}},
    {{1,1,0,0} ,{1,1,0,0} ,{1,1,0,0} ,{1,1,0,0}},
    {{1,0,0,0} ,{1,0,0,0} ,{1,0,0,0} ,{1,0,0,0}}};
 
-int i_dX[rounds][4][4] = {{{1,1,0,0} ,{0,0,1,0} ,{0,0,0,1} ,{0,0,0,0}},
-   {{1,0,0,0} ,{0,0,0,0} ,{0,0,0,0} ,{0,0,0,0}},
-   {{0,0,0,0} ,{0,0,0,0} ,{0,0,0,0} ,{0,0,0,0}}};
+int i_dX[rounds][4][4] = {{
+   {0,1,0,0} ,
+   {0,1,0,0} ,
+   {0,0,1,0} ,
+   {0,0,0,1}},
+                          {{1,0,0,0} ,{0,0,0,0} ,{0,0,0,0} ,{0,0,0,0}},
+                          {{0,0,0,0} ,{0,0,0,0} ,{0,0,0,0} ,{0,0,0,0}}};
 
 int i_dSR[rounds][4][4] = {{{1,1,0,0} ,{0,1,0,0} ,{0,1,0,0} ,{0,0,0,0}},
    {{1,0,0,0} ,{0,0,0,0} ,{0,0,0,0} ,{0,0,0,0}},
@@ -56,6 +60,24 @@ int i_dSR[rounds][4][4] = {{{1,1,0,0} ,{0,1,0,0} ,{0,1,0,0} ,{0,0,0,0}},
  [1, 0, 0, 0]   [1, 0, 0, 0]   [0, 0, 0, 0]   [0, 0, 0, 0]
  */
 
+void printMatrix(id<CPProgram> p,int nbr,id<ORIntVar> m[nbr][4][4])
+{
+   id* g = [p gamma];
+   @autoreleasepool {
+      for(int i=0;i < 4;i++) {
+         for(int r=0;r < nbr;r++) {
+            for(int j=0;j < 4;j++) {
+               //NSString* buf = [g[m[r][i][j].getId] description];
+               //printf("%s ",[buf UTF8String]);
+               int v = [p intValue:m[r][i][j]];
+               printf("%d ",v);
+            }
+            printf("\t ");
+         }
+         printf("\n");
+      }
+   }
+}
 
 
 id<ORModel> model;
@@ -64,7 +86,7 @@ id<ORIntVar> equRK[rounds][4][rounds][4][4];
 //16 + 4*(rounds+1) = 40 elements
 id<ORIntVar> V[rounds][4][4][NBK];
 id<ORIntVar> dX[rounds][4][4];
-id<ORIntVar> dY[rounds][4][4];
+id<ORIntVar> dY[rounds-1][4][4];
 id<ORIntVar> dK[rounds][4][4];
 id<ORIntVar> DSR[rounds][4][4];
 id<ORIntVar> colK[rounds][4];
@@ -174,7 +196,7 @@ int main(int argc, const char * argv[]) {
          }
       }
    
-   
+
    initKS();
    keyExpansion(); //Sets V Variables
    
@@ -194,16 +216,14 @@ int main(int argc, const char * argv[]) {
    [model add: [e eq: @(obj)] ];
    
    
-   
    id<CPProgram> cp = (id)[ORFactory createCPProgram: model];
    
    //id<ORIntVar> x[240];
    
-   id<ORIntVarArray> x = [ORFactory intVarArray: model range: [ORFactory intRange: model low: 0 up: 281] domain: [ORFactory intRange: model low: 0 up: 100]];
-   
+   id<ORIntVarArray> x = [ORFactory intVarArray: model range: RANGE(model,0,281)]; // no need to create the vars. You are overwriting below.
    
    int count = 0;
-   
+   // The static ordering below does not match the one from minizinc at all.
    for(int r = 0; r < rounds; r++)
       for(int j = 0; j < 4; j++){
          x[count++] = colK[r][j]; // 3 * 4
@@ -234,6 +254,12 @@ int main(int argc, const char * argv[]) {
    
    [cp solve:^(){
       NSLog(@"Searching...");
+      
+      printMatrix(cp,2,dY);
+      printMatrix(cp,3,dX);
+      printMatrix(cp,3,dK);
+      
+      
       clock_t searchStart = clock();
       for(int i = 0; i < count; i++){
          if(![cp bound:x[i]]){
@@ -357,7 +383,7 @@ void keyExpansion(){
                [model add: [[temp1 neq: temp2] eq: V[r][j][i][k]]];
             }
          }
-                  
+         
          [model add: [[Sum(model,k,[ORFactory intRange:model low:0 up:NBK-1], V[r][j][i][k]) plus: dK[r][j][i]] neq: @(1)]];
          
       }

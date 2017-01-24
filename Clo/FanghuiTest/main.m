@@ -1,6 +1,11 @@
 #import <ORProgram/ORProgram.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPIntVarI.h>
+#import <objcp/CPBitVar.h>
+#import <objcp/CPBitVarI.h>
 #define EXPECTKEY
-#define KNOWNKEYS 6
+#define KNOWNKEYS 11
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -19,6 +24,7 @@ uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x6
    ,0xe1 ,0xf8 ,0x98 ,0x11 ,0x69 ,0xd9 ,0x8e ,0x94 ,0x9b ,0x1e ,0x87 ,0xe9 ,0xce ,0x55 ,0x28 ,0xdf
    ,0x8c ,0xa1 ,0x89 ,0x0d ,0xbf ,0xe6 ,0x42 ,0x68 ,0x41 ,0x99 ,0x2d ,0x0f ,0xb0 ,0x54 ,0xbb ,0x16};
 
+
 uint32 expect_key[] = {197,79,167,90,39,16,175,2,233,69,53,43,101,2,108,155};
 
 
@@ -28,10 +34,10 @@ uint32 expect_key[] = {197,79,167,90,39,16,175,2,233,69,53,43,101,2,108,155};
 void XOR(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar> b, id<ORBitVar> outt);
 void XORThree(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar> b, id<ORBitVar> c, id<ORBitVar> outt);
 void XORFour(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar> b, id<ORBitVar> c, id<ORBitVar> d, id<ORBitVar> outt);
+void XORFour32(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar> b, id<ORBitVar> c, id<ORBitVar> d, id<ORBitVar> outt);
 void sbox(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> b1, id<ORBitVar> b2);
 void SideChannel(id<ORBitVar> x, int sc);
-
-
+void xtimes(id<ORBitVar> a, id<ORBitVar> b);
 void keyExpansion();
 void addRoundKey();
 void shiftRows();
@@ -44,7 +50,7 @@ id<ORModel> model;
 id<ORIdArray> ca;
 id<ORRealVar> y;
 id<ORBitVar> states [5][16];
-id<ORIntVar> error[10][16][2];
+//id<ORIntVar> error[10][16][2];
 id<ORBitVar> rcon[10];
 id<ORBitVar> keys[11][16];
 id<ORBitVar> tm1[1][4][4];
@@ -53,18 +59,24 @@ id<ORBitVar> tm0[1][4];
 id<ORBitVar> sboxout[256];
 id<ORIdArray> sboxBV;
 
-id<ORIntVar> *errorPtr = error;
+id<ORIntVar> errorPtr[320];
 uint32 MIN8 = 0x00000000;
 uint32 MAX8 = 0x000000FF;
 uint32 MIN32 = 0x00000000;
 uint32 MAX32 = 0xFFFFFFFF;
 ORInt error_count;
-
+uint32 i_xor1b = 0x1B;
+id<ORBitVar> xor1b;
+int s_SC[64];
+UInt32 num_checks = 0;
 
 int main(int argc, const char * argv[]) {
    
    model = [ORFactory createModel];
    ca = NULL;
+   
+   xor1b = [ORFactory bitVar:model low:&i_xor1b up:&i_xor1b bitLength:8];
+   
    
    uint32 rconstant[] = {1,2,4,8,16,32,64,128,27,54};
    
@@ -85,8 +97,11 @@ int main(int argc, const char * argv[]) {
    
    sboxBV = [ORFactory idArray:model range:[[ORIntRangeI alloc] initORIntRangeI:0 up:255]];
    
-   for(ORInt k=0;k < 256;k++)
+   for(ORInt k=0;k < 256;k++){
       [sboxBV set:sboxout[k] at:k];
+      
+      
+   }
    
    //Initial State variables set to plaintext values
    for(int w = 0; w < 16; w++)
@@ -94,25 +109,25 @@ int main(int argc, const char * argv[]) {
    
    //Initialize the remaining State variables
    
-   for(int i = 1; i < 4; i++){
+   for(int i = 1; i < 5; i++){
       for(int w = 0; w < 16; w++)
          states[i][w] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :8];
    }
-   
-   for(int i = 4; i < 5; i++){
-      for(int w = 0; w < 16; w++)
-         states[i][w] = [ORFactory bitVar: model low :&cipher[w] up :&cipher[w] bitLength :8];
-   }
-   
+   /*
+    for(int i = 4; i < 5; i++){
+    for(int w = 0; w < 16; w++)
+    states[i][w] = [ORFactory bitVar: model low :&cipher[w] up :&cipher[w] bitLength :8];
+    }
+    */
    printf("States Variables: %d\n",totalstates);
    
-   totalstates=0;
-   for(int i = 0; i < 10; i++)
-      for(int j = 0; j < 16; j++)
-         for(int z = 0; z < 2; z++){
-            error[i][j][z] = [ORFactory intVar: model bounds: [ORFactory intRange: model low: 0 up: 1]];
-            totalstates++;
-         }
+   //    totalstates=0;
+   //    for(int i = 0; i < 10; i++)
+   //        for(int j = 0; j < 16; j++)
+   //            for(int z = 0; z < 2; z++){
+   //                error[i][j][z] = [ORFactory intVar: model bounds: [ORFactory intRange: model low: 0 up: 1]];
+   //                totalstates++;
+   //            }
    
    totalstates = 0;
    
@@ -180,7 +195,7 @@ int main(int argc, const char * argv[]) {
    }
    printf("Tm0 Variables: %d\n",totalstates);
    
-   keyExpansion();
+   //keyExpansion();
    addRoundKey();
    subBytes();
    shiftRows();
@@ -191,51 +206,106 @@ int main(int argc, const char * argv[]) {
    [model add: [Sum(model,j,[ORFactory intRange:model low:0 up:error_count-1],[errorPtr[2*j] plus: errorPtr[2*j + 1]]) eq: miniVar]];
    
    [model minimize: miniVar];
+   //[model add: [miniVar eq: @(10)]];
+   
    
    id<ORIdArray> iv = [ORFactory intVarArray:model range:RANGE(model,0,error_count*2 - 1)];
    for(ORUInt i = 0;i< error_count*2;i++)
       iv[i] = errorPtr[i];
    
-   id<ORIdArray> o = [ORFactory idArray:model range:[[ORIntRangeI alloc] initORIntRangeI:0 up:31]];
+   // id<ORIdArray> o = [ORFactory idArray:model range:[[ORIntRangeI alloc] initORIntRangeI:0 up:31]];
+   
+   
+   id<ORIntRange> R = [[ORIntRangeI alloc] initORIntRangeI:0 up:47];
+   //  id<ORIntRange> testR = [[ORIntRangeI alloc] initORIntRangeI:0 up:(32*8)-1];
+   
+   id<ORBitVarArray> o = [CPFactory bitVarArray:model range: R];
    for(ORInt k=0;k <= 15;k++)
       [o set:keys[0][k] at:k];
    
    for(ORInt k=0;k <= 15;k++)
       [o set:states[1][k] at:(k+16)];
-
+   
+   for(ORInt k=0;k <= 15;k++)
+      [o set:states[2][k] at:(k+32)];
+   
+   /*
+    for(ORInt k=0;k <= 255;k++)
+    [o set:sboxout[k] at:(k+48)];
+    */
+   
+   id<ORIdArray> oc = [ORFactory idArray:model range:R];
+   
+   
+   
+   
+   
    
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   __block id* gamma = [cp gamma];
+   //  id<CPBitVar> test = gamma[o[0].getId];
+   
+   // [test lsFreeBit];
+   
+   for(int i = 0; i < 47; i++){
+      oc[i] = gamma[o[i].getId];
+   }
    
    
-   
-   id<CPBitVarHeuristic> h;
-   h = [cp createBitVarFF:(id<CPBitVarArray>)o];
    [cp solve:^(){
-      id<ORIntRange> R = RANGE(cp,0,31);
-      for(int j=0; j<16; j++)
-         NSLog(@"%@",[cp stringValue:keys[0][j]]);
-      for(int j=0;j < 32;j++)
-         NSLog(@"o[%d] = %@",j,[cp stringValue:o[j]]);
       NSLog(@"Search Started: ;-)");
-
       clock_t searchStart = clock();
-      for(ORInt i=31;i>=0;i--) {
-         [cp tryall:R suchThat:^ORBool(ORInt k) { return true; } do:^(ORInt k) {
-            [cp labelBits:o[i] withValue:k];
+      [cp forall:R suchThat:^ORBool(ORInt i) {
+         return [oc[i] domsize] > 0;
+      } orderedBy:^ORInt(ORInt i) {
+         return [oc[i] domsize];
+         //return -(([gamma[o[i].getId] domsize] << 20) + s_SC[i]);
+      } do:^(ORInt s) {
+         ORUInt size = [oc[s] domsize];
+         id<ORIntRange> S = [ORFactory intRange:cp low:0 up:((1 << size) - 1)];
+         ORUInt fixedHW = 8 - size;
+         
+         [cp tryall:S suchThat:^ORBool(ORInt i) {
+            //Calculate hamming weight
+            i = i - ((i>>1) & 0x55555555);
+            i = (i & 0x33333333) + ((i>>2) & 0x33333333);
+            int count = ((i + (i>>4) & 0xF0F0F0F) * 0x1010101) >> 24;
+            //NSLog(@"integer: %d count: %d", i, count);
+            
+            return (fixedHW + count) <= (s_SC[s] + 1) && (fixedHW + count) >= (s_SC[s] - 1);
+            
+            //return true;
+         } in:^(ORInt i) {
+            //num_checks++;
+            [cp atomic:^{
+               uint32 count = 0;
+               for(int nbit = 0; nbit < 8; nbit++){
+                  if([oc[s] isFree: nbit]){
+                     if((i >> count++) & 1){
+                        [[oc[s] domain] setBit:nbit to:true for:oc[s]];
+                     }
+                     else{
+                        [[oc[s] domain] setBit:nbit to:false for:oc[s]];
+                     }
+                  }
+               }
+            }];
+         } onFailure:^(ORInt i) {
+            //Do Nothing
          }];
-      }
-//      [cp labelBitVarHeuristic:h];
+      }];
+      //id<ORSolution> sol = [[cp solutionPool] best];
       [cp labelArrayFF:iv];
       clock_t searchStop = clock();
       double searchTime = ((double)(searchStop - searchStart))/CLOCKS_PER_SEC;
+      for(int i = 0; i < 16; i++)
+         NSLog(@"%@",[cp stringValue:keys[0][i]]);
       NSLog(@"    Search Time (s): %f",searchTime);
-      
-      for(int j=0; j<16; j++){
-         NSLog(@"%@",[cp stringValue:keys[0][j]]);
-      }
-      
-      //NSLog(@"MiniVar: %d",[cp intValue:miniVar]);
+      NSLog(@"Objective Function : %@",[cp objectiveValue]);
+      // NSLog(@"    Number of check: %d",num_checks);
    }];
+   
+   
    NSLog(@"Choices: %d / %d",[cp nbChoices],[cp nbFailures]);
    //id<ORSolution> sol = [[mip solutionPool] best];
    // NSLog(@"SOL is: %@",sol);
@@ -268,11 +338,24 @@ void XORFour(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar> b
    XOR(ca,model,d,t2,outt);
 }
 
+void XORFour32(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar> b, id<ORBitVar> c, id<ORBitVar> d, id<ORBitVar> outt){
+   uint32 MIN8 = 0x00000000;
+   uint32 MAX8 = 0xFFFFFFFF;
+   
+   id<ORBitVar> t1 = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :32];
+   id<ORBitVar> t2 = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :32];
+   XOR(ca,model,a,b,t1);
+   XOR(ca,model,c,t1,t2);
+   XOR(ca,model,d,t2,outt);
+}
+
 void sbox(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> b1, id<ORBitVar> b2){
    [model add:[ORFactory element:model var:b1 idxBitVarArray:sboxBV equal:b2]];
 }
 
 void SideChannel(id<ORBitVar> x, int sc){
+   errorPtr[2 * error_count]     = [ORFactory boolVar:model];
+   errorPtr[2 * error_count + 1] = [ORFactory boolVar:model];
    id<ORIntVar> val = [ORFactory intVar:model bounds:[ORFactory intRange: model low: 0 up: 8]];
    id<ORIntVar> scval = [ORFactory intVar: model value:sc];
    
@@ -346,13 +429,13 @@ void mixColumns(){
       int ir = (r - 2) / 4;
       for(ORInt j = 0; j < 4; j++){
          id<ORBitVar> temp[4];
-         //id<ORBitVar> temp1[4];
-         //id<ORBitVar> temp2[4];
+         id<ORBitVar> temp1[4];
+         id<ORBitVar> temp2[4];
          
          for(int i = 0; i < 4; i++){
             temp[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :7];
-//            temp1[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :8];
-//            temp2[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :8];
+            //            temp1[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :8];
+            //            temp2[i] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :8];
          }
          
          //Calculating TMP
@@ -382,6 +465,7 @@ void mixColumns(){
             [model add: [ORFactory bit:shift bxor:xor1b eq:shift2]];
             [model add: [ORFactory bit:judge then:shift2 else:shift result:tm2[ir][j][z]]];
             
+            //xtimes(tm1[ir][j][z],tm2[ir][j][z]);
             
             /*
              [model add: [ORFactory bit:tm1[ir][j][z] shiftLBy:1 eq:temp[z] ]]; //T0b
@@ -425,6 +509,9 @@ void sideChannelCon(){
    for(ORInt subr = 0; subr < 4; subr++){
       for(ORInt b = 0; b < 16; b++){
          SideChannel(states[subr][b], SC[subr][b]);
+         if(subr >= 1){
+            s_SC[b+(16*subr)] = SC[subr][b];
+         }
       }
    }
    
@@ -450,7 +537,20 @@ void sideChannelCon(){
    
    for(ORInt b = 0; b < 16; b++){
       SideChannel(keys[0][b], SC[8][b]);
+      s_SC[b] = SC[8][b];
    }
    
 }
 
+void xtimes(id<ORBitVar> a, id<ORBitVar> b){
+   id<ORBitVar> temp = [ORFactory bitVar:model withLength:7];
+   id<ORBitVar> shift = [ORFactory bitVar:model withLength:8];
+   id<ORBitVar> result = [ORFactory bitVar:model withLength:8];
+   id<ORBitVar> judge = [ORFactory bitVar:model withLength:8];
+   
+   [model add: [ORFactory bit:a from:7 to:7 eq:judge]];
+   [model add: [ORFactory bit:a from:0 to:6 eq:temp]];
+   [model add: [ORFactory bit:temp shiftLBy:1 eq:shift]];
+   [model add: [ORFactory bit:judge times:xor1b eq:result]];
+   [model add: [ORFactory bit:result bxor:shift eq:b]];
+}

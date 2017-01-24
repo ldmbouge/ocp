@@ -111,7 +111,7 @@ PORTABLE_BEGIN
                   onFailure: (ORInt2Void) onFailure;
 
 -(void)              select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body;
-
+-(void)              atomic: (ORClosure)body;
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)                 try: (ORClosure) body then: (ORClosure) body;
 -(void)                once: (ORClosure) cl;
