@@ -7,7 +7,7 @@
 #import "ORCmdLineArgs.h"
 
 #define EXPECTKEY
-#define KNOWNKEYS 5
+#define KNOWNKEYS 6
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -69,69 +69,29 @@ uint32 MAX32 = 0xFFFFFFFF;
 ORInt error_count;
 uint32 i_xor1b = 0x1B;
 id<ORBitVar> xor1b;
+uint32 i_zero = 0x00;
+id<ORBitVar> zero;
 int s_SC[64];
-ORUInt num_checks = 0;
+UInt32 num_checks = 0;
 
-#define BICHAR 8
+int elevator[8][256];
+int elevator_1[] = {0,1};
+int elevator_2[] = {1,2,0,3};
+int elevator_3[] = {3, 4, 2, 5, 1, 6, 0, 7};
+int elevator_4[] = {7, 8, 6, 9, 5, 10, 4, 11, 3, 12, 2, 13, 1, 14, 0, 15};
+int elevator_5[] = {15, 16, 14, 17, 13, 18, 12, 19, 11, 20, 10, 21, 9, 22, 8, 23, 7, 24, 6, 25, 5, 26, 4, 27, 3, 28, 2, 29, 1, 30, 0, 31};
+int elevator_6[] = {31, 32, 30, 33, 29, 34, 28, 35, 27, 36, 26, 37, 25, 38, 24, 39, 23, 40, 22, 41, 21, 42, 20, 43, 19, 44, 18, 45, 17, 46, 16, 47, 15, 48, 14, 49, 13, 50, 12, 51, 11, 52, 10, 53, 9, 54, 8, 55, 7, 56, 6, 57, 5, 58, 4, 59, 3, 60, 2, 61, 1, 62, 0, 63};
+int elevator_7[] = {63, 64, 62, 65, 61, 66, 60, 67, 59, 68, 58, 69, 57, 70, 56, 71, 55, 72, 54, 73, 53, 74, 52, 75, 51, 76, 50, 77, 49, 78, 48, 79, 47, 80, 46, 81, 45, 82, 44, 83, 43, 84, 42, 85, 41, 86, 40, 87, 39, 88, 38, 89, 37, 90, 36, 91, 35, 92, 34, 93, 33, 94, 32, 95, 31, 96, 30, 97, 29, 98, 28, 99, 27, 100, 26, 101, 25, 102, 24, 103, 23, 104, 22, 105, 21, 106, 20, 107, 19, 108, 18, 109, 17, 110, 16, 111, 15, 112, 14, 113, 13, 114, 12, 115, 11, 116, 10, 117, 9, 118, 8, 119, 7, 120, 6, 121, 5, 122, 4, 123, 3, 124, 2, 125, 1, 126, 0, 127};
+int elevator_8[] = {127, 128, 126, 129, 125, 130, 124, 131, 123, 132, 122, 133, 121, 134, 120, 135, 119, 136, 118, 137, 117, 138, 116, 139, 115, 140, 114, 141, 113, 142, 112, 143, 111, 144, 110, 145, 109, 146, 108, 147, 107, 148, 106, 149, 105, 150, 104, 151, 103, 152, 102, 153, 101, 154, 100, 155, 99, 156, 98, 157, 97, 158, 96, 159, 95, 160, 94, 161, 93, 162, 92, 163, 91, 164, 90, 165, 89, 166, 88, 167, 87, 168, 86, 169, 85, 170, 84, 171, 83, 172, 82, 173, 81, 174, 80, 175, 79, 176, 78, 177, 77, 178, 76, 179, 75, 180, 74, 181, 73, 182, 72, 183, 71, 184, 70, 185, 69, 186, 68, 187, 67, 188, 66, 189, 65, 190, 64, 191, 63, 192, 62, 193, 61, 194, 60, 195, 59, 196, 58, 197, 57, 198, 56, 199, 55, 200, 54, 201, 53, 202, 52, 203, 51, 204, 50, 205, 49, 206, 48, 207, 47, 208, 46, 209, 45, 210, 44, 211, 43, 212, 42, 213, 41, 214, 40, 215, 39, 216, 38, 217, 37, 218, 36, 219, 35, 220, 34, 221, 33, 222, 32, 223, 31, 224, 30, 225, 29, 226, 28, 227, 27, 228, 26, 229, 25, 230, 24, 231, 23, 232, 22, 233, 21, 234, 20, 235, 19, 236, 18, 237, 17, 238, 16, 239, 15, 240, 14, 241, 13, 242, 12, 243, 11, 244, 10, 245, 9, 246, 8, 247, 7, 248, 6, 249, 5, 250, 4, 251, 3, 252, 2, 253, 1, 254, 0, 255};
 
-unsigned char nextPerm(unsigned char v)
-{
-   unsigned char t = v | (v - 1); // t gets v's least significant 0 bits set to 1
-   // Next set to 1 the most significant bit to change,
-   // set to 0 the least significant ones, and add the necessary 1 bits.
-   unsigned char w = (t + 1) | (((~t & -~t) - 1) >> (__builtin_ctz(v) + 1));
-   return w;
-}
+int prob[] = {7, 11, 13, 14, 19, 21, 22, 25, 26, 28, 31, 35, 37, 38, 41, 42, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62, 67, 69, 70, 73, 74, 76, 79, 81, 82, 84, 87, 88, 91, 93, 94, 97, 98, 100, 103, 104, 107, 109, 110, 112, 115, 117, 118, 121, 122, 124, 131, 133, 134, 137, 138, 140, 143, 145, 146, 148, 151, 152, 155, 157, 158, 161, 162, 164, 167, 168, 171, 173, 174, 176, 179, 181, 182, 185, 186, 188, 193, 194, 196, 199, 200, 203, 205, 206, 208, 211, 213, 214, 217, 218, 220, 224, 227, 229, 230, 233, 234, 236, 241, 242, 244, 248, 15, 23, 27, 29, 30, 39, 43, 45, 46, 51, 53, 54, 57, 58, 60, 71, 75, 77, 78, 83, 85, 86, 89, 90, 92, 99, 101, 102, 105, 106, 108, 113, 114, 116, 120, 135, 139, 141, 142, 147, 149, 150, 153, 154, 156, 163, 165, 166, 169, 170, 172, 177, 178, 180, 184, 195, 197, 198, 201, 202, 204, 209, 210, 212, 216, 225, 226, 228, 232, 240, 3, 5, 6, 9, 10, 12, 17, 18, 20, 24, 33, 34, 36, 40, 48, 63, 65, 66, 68, 72, 80, 95, 96, 111, 119, 123, 125, 126, 129, 130, 132, 136, 144, 159, 160, 175, 183, 187, 189, 190, 192, 207, 215, 219, 221, 222, 231, 235, 237, 238, 243, 245, 246, 249, 250, 252, 1, 2, 4, 8, 16, 32, 64, 127, 128, 191, 223, 239, 247, 251, 253, 254, 0, 255};
 
-unsigned char setLowestK(int K)
-{
-   unsigned char v = (1 << K) - 1;
-   return v;
-}
-
-void printBinary(unsigned char v)
-{
-   unsigned char mask = 1U << 7;
-   for(int k=7;k >= 0;k--) {
-      printf("%c",v & mask ? '1' : '0');
-      mask >>= 1;
-   }
-   printf("\n");
-}
-
-int patternKBits(int K,int from,int nbPat,int pats[nbPat])
-{
-   int nb = 0;
-   unsigned char v = setLowestK(K);
-   unsigned char last = v << (BICHAR - K);
-   while (v != last) {
-      printBinary(v);
-      pats[from + nb] = v;
-      nb++;
-      v = nextPerm(v);
-   }
-   printBinary(v);
-   pats[from + nb++] = v;
-   return nb;
-}
-
-void allPats(int n,int nbb[n],int nbPat,int pats[nbPat])
-{
-   int tot = 0;
-   for(int i=0;i < n;i++) {
-      int nbp = patternKBits(nbb[i],tot,nbPat,pats);
-      tot += nbp;
-   }
-   printf("Got %d patterns\n",tot);
-}
-
-
-int main(int argc, const char * argv[])
-{
-  ORCmdLineArgs* cmd = [ORCmdLineArgs newWith:argc argv:argv];
-  
+int main(int argc, const char * argv[]) {
+   
+   ORCmdLineArgs* cmd = [ORCmdLineArgs newWith:argc argv:argv];
    model = [ORFactory createModel];
    ca = NULL;
+   zero = [ORFactory bitVar:model low:&i_zero up:&i_zero bitLength:8];
    
    xor1b = [ORFactory bitVar:model low:&i_xor1b up:&i_xor1b bitLength:8];
    
@@ -148,6 +108,35 @@ int main(int argc, const char * argv[])
    
    error_count = 0;
    
+   for(int i = 0; i < 8; i++)
+      for(int j = 0; j < 256; j++)
+         elevator[i][j] = 0;
+   
+   for(int j = 0; j < 2; j++)
+      elevator[0][j] = elevator_1[j];
+   
+   for(int j = 0; j < 4; j++)
+      elevator[1][j] = elevator_2[j];
+   
+   for(int j = 0; j < 8; j++)
+      elevator[2][j] = elevator_3[j];
+   
+   for(int j = 0; j < 16; j++)
+      elevator[3][j] = elevator_4[j];
+   
+   for(int j = 0; j < 32; j++)
+      elevator[4][j] = elevator_5[j];
+   
+   for(int j = 0; j < 64; j++)
+      elevator[5][j] = elevator_6[j];
+   
+   for(int j = 0; j < 128; j++)
+      elevator[6][j] = elevator_7[j];
+   
+   for(int j = 0; j < 256; j++)
+      elevator[7][j] = elevator_8[j];
+   
+   
    //Initial Sbox variables
    for(ORInt w = 0; w < 256; w++){
       sboxout[w] = [ORFactory bitVar: model low: &s[w] up: &s[w] bitLength :8];
@@ -157,8 +146,6 @@ int main(int argc, const char * argv[])
    
    for(ORInt k=0;k < 256;k++){
       [sboxBV set:sboxout[k] at:k];
-      
-      
    }
    
    //Initial State variables set to plaintext values
@@ -287,69 +274,55 @@ int main(int argc, const char * argv[])
    for(ORInt k=0;k <= 15;k++)
       [o set:states[2][k] at:(k+32)];
    
-   /*
-    for(ORInt k=0;k <= 255;k++)
-    [o set:sboxout[k] at:(k+48)];
-    */
-   
-   const int nbPat = 256;
-   int pats[nbPat];
-   int* patPtr = pats;
-   int p[9] = {8,0,4,5,3,6,2,7,1};
-   //int p[9] = {8,7,6,5,4,3,2,1,0};
-   allPats(9,p,nbPat,pats);
-   
-   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
-   //__block id* gamma = [cp gamma];
-   //  id<CPBitVar> test = gamma[o[0].getId];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
+   
    ORLong searchStart = [ORRuntimeMonitor wctime];
    [cp solve:^(){
       NSLog(@"Search Started: ;-)");
+         //NSLog(@"Minivar: %@", miniVar);
+      
       [cp forall:R suchThat:^ORBool(ORInt i) {
-         return [cp domsize:o[i]] > 0;
+         return [cp domsize: o[i]] > 0;
       } orderedBy:^ORInt(ORInt i) {
-         return -i; // [LDM] Perf improvement// [cp domsize:o[i]];
-         //return -(([cp domsize:o[i]] << 20) + s_SC[i]);
+         return -i;
       } do:^(ORInt s) {
          ORUInt size = [cp domsize:o[s]];
          id<ORIntRange> S = [ORFactory intRange:cp low:0 up:((1 << size) - 1)];
          ORUInt fixedHW = 8 - size;
-         int nbt = 0;
+
          [cp tryall:S suchThat:^ORBool(ORInt k) {
+            ORInt i = elevator[size-1][k];
             //Calculate hamming weight
-            ORInt i = patPtr[255-k];
-            //ORInt i = patPtr[k];
             i = i - ((i>>1) & 0x55555555);
             i = (i & 0x33333333) + ((i>>2) & 0x33333333);
             int count = ((i + (i>>4) & 0xF0F0F0F) * 0x1010101) >> 24;
             //NSLog(@"integer: %d count: %d", i, count);
-            return (fixedHW + count) <= (s_SC[s] + 1) && (fixedHW + count) >= (s_SC[s] - 1);
+            return (fixedHW + count) <= (s_SC[s] + 1) && (fixedHW + count) >= (s_SC[s] - 1) ;
             //return true;
-         } in:^(ORInt k) {
-            //num_checks++;
-            ORInt i = patPtr[255-k];
-            //ORInt i = patPtr[k];
-//            [cp labelBits:o[s] withValue:i];
-            [cp atomic:^{
-               uint32 count = 0;
-               for(int nbit = 0; nbit < 8; nbit++){
-                  if([cp memberBit:nbit value:YES in:o[s]]){
-                     BOOL val = (i >> count++) & 1;
-                     [cp labelBV:o[s] at:nbit with:val];
-                     //[ocs bind:nbit to:val];
-                  }
-               }
-            }];
-         } onFailure:^(ORInt i) {
-            //Do Nothing
-         }];
+         }
+                 in:^(ORInt k) {
+                    ORInt i = elevator[size-1][k];
+                    
+                    [cp atomic:^{
+                       uint32 count = 0;
+                       for(int nbit = 0; nbit < 8; nbit++){
+                          if([cp memberBit:nbit value:YES in:o[s]]){
+                             BOOL val = (i >> count++) & 1;
+                             [cp labelBV:o[s] at:nbit with:val];
+                          }
+                       }
+                    }];
+                 } onFailure:^(ORInt i) {
+                    //Do Nothing
+                 }];
       }];
       //id<ORSolution> sol = [[cp solutionPool] best];
-      //[cp once:^{
+      [cp once:^{
          [cp labelArrayFF:iv];
-      //}];
+      }];
+      
       ORLong searchStop = [ORRuntimeMonitor wctime];
       ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
       @autoreleasepool {
@@ -392,6 +365,7 @@ void XORFour(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar> b
    XOR(ca,model,d,t2,outt);
 }
 
+
 void XORFour32(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar> b, id<ORBitVar> c, id<ORBitVar> d, id<ORBitVar> outt){
    uint32 MIN8 = 0x00000000;
    uint32 MAX8 = 0xFFFFFFFF;
@@ -405,11 +379,14 @@ void XORFour32(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> a, id<ORBitVar>
 
 void sbox(id<ORIdArray> ca, id<ORModel> model, id<ORBitVar> b1, id<ORBitVar> b2){
    [model add:[ORFactory element:model var:b1 idxBitVarArray:sboxBV equal:b2]];
+   //[model add:[ORFactory bit:b1 equalb:b2 eval:zero]];
 }
 
 void SideChannel(id<ORBitVar> x, int sc){
+   
    errorPtr[2 * error_count]     = [ORFactory boolVar:model];
    errorPtr[2 * error_count + 1] = [ORFactory boolVar:model];
+   [model add: [[errorPtr[2 * error_count] plus: errorPtr[2 * error_count + 1]] neq: @(2)]];
    id<ORIntVar> val = [ORFactory intVar:model bounds:[ORFactory intRange: model low: 0 up: 8]];
    id<ORIntVar> scval = [ORFactory intVar: model value:sc];
    
