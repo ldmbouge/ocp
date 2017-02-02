@@ -1537,14 +1537,13 @@
 {
    [self gthenImpl: _gamma[var.getId] with: rint(floor(val))];
 }
-
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
    [self restrictImpl: _gamma[var.getId] to: S];
 }
 -(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
-   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
+   [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
 }
 -(void) realLabel: (id<ORRealVar>) var with: (ORDouble) val
 {
@@ -1742,6 +1741,11 @@
 {
    return [_gamma[x.getId] stringValue];
 }
+-(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x
+{
+   CPBitVarI* cx = _gamma[x.getId];
+   return [cx isFree:k] ? YES : [cx getBit:k] == v;
+}
 -(ORUInt) degree:(id<ORVar>)x
 {
    return [_gamma[x.getId] degree];
@@ -1787,7 +1791,7 @@
 }
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
-  return [((id<CPIntVar>) _gamma[x.getId]) domsize];
+  return [((id<CPVar>) _gamma[x.getId]) domsize];
 }
 -(ORInt)  regret:(id<ORIntVar>)x
 {
@@ -2252,6 +2256,18 @@
    [self realLabelImpl: _gamma[var.getId] with: val];
    [_tracer addCommand: [ORFactory realEqualc:self var:var to:val]];
 }
+-(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
+{
+   [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
+   [_tracer addCommand: [ORFactory bvEqualBit:self var:var bit:i with:val]];
+}
+
+-(void) labelBits:(id<ORBitVar>)x withValue:(ORInt) val
+{
+   [self labelBitsImpl: _gamma[x.getId] withValue:val];
+   [_tracer addCommand: [ORFactory bvEqualc:self var:x to:val]];
+}
+
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {

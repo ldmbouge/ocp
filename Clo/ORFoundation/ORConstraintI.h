@@ -615,6 +615,19 @@
 -(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef;
 @end
 
+@interface ORBitEqualAt : ORConstraintI<ORBitEqualAt>
+-(ORBitEqualAt*)init:(id<ORBitVar>)x at:(ORInt)k with:(ORInt)c;
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+-(ORInt)bit;
+@end
+
+@interface ORBitEqualc : ORConstraintI<ORBitEqualc>
+-(ORBitEqualc*)init:(id<ORBitVar>)x eqc:(ORInt)c;
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+@end
+
 @interface ORBitEqual : ORConstraintI<ORBitEqual>
 -(ORBitEqual*)initORBitEqual: (id<ORBitVar>) x eq: (id<ORBitVar>) y;
 -(id<ORBitVar>) left;

@@ -5,7 +5,7 @@
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
 #define EXPECTKEY
-#define KNOWNKEYS 9
+#define KNOWNKEYS 7
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -69,6 +69,60 @@ uint32 i_xor1b = 0x1B;
 id<ORBitVar> xor1b;
 int s_SC[64];
 UInt32 num_checks = 0;
+
+#define BICHAR 8
+
+unsigned char nextPerm(unsigned char v)
+{
+   unsigned char t = v | (v - 1); // t gets v's least significant 0 bits set to 1
+   // Next set to 1 the most significant bit to change,
+   // set to 0 the least significant ones, and add the necessary 1 bits.
+   unsigned char w = (t + 1) | (((~t & -~t) - 1) >> (__builtin_ctz(v) + 1));
+   return w;
+}
+
+unsigned char setLowestK(int K)
+{
+   unsigned char v = (1 << K) - 1;
+   return v;
+}
+
+void printBinary(unsigned char v)
+{
+   unsigned char mask = 1U << 7;
+   for(int k=7;k >= 0;k--) {
+      printf("%c",v & mask ? '1' : '0');
+      mask >>= 1;
+   }
+   printf("\n");
+}
+
+int patternKBits(int K,int from,int nbPat,int pats[nbPat])
+{
+   int nb = 0;
+   unsigned char v = setLowestK(K);
+   unsigned char last = v << (BICHAR - K);
+   while (v != last) {
+      printBinary(v);
+      pats[from + nb] = v;
+      nb++;
+      v = nextPerm(v);
+   }
+   printBinary(v);
+   pats[from + nb++] = v;
+   return nb;
+}
+
+void allPats(int n,int nbb[n],int nbPat,int pats[nbPat])
+{
+   int tot = 0;
+   for(int i=0;i < n;i++) {
+      int nbp = patternKBits(nbb[i],tot,nbPat,pats);
+      tot += nbp;
+   }
+   printf("Got %d patterns\n",tot);
+}
+
 
 int main(int argc, const char * argv[]) {
    
@@ -234,53 +288,53 @@ int main(int argc, const char * argv[]) {
     [o set:sboxout[k] at:(k+48)];
     */
    
-   id<ORIdArray> oc = [ORFactory idArray:model range:R];
+   const int nbPat = 256;
+   int pats[nbPat];
+   int* patPtr = pats;
+   int p[9] = {8,0,4,5,3,6,2,7,1};
+   //int p[9] = {8,7,6,5,4,3,2,1,0};
+   allPats(9,p,nbPat,pats);
    
-   
-   
-   
-   
-   
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
-   __block id* gamma = [cp gamma];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController proto]];
+   //__block id* gamma = [cp gamma];
    //  id<CPBitVar> test = gamma[o[0].getId];
-   
-   // [test lsFreeBit];
-   
-   for(int i = 0; i < 47; i++){
-      oc[i] = gamma[o[i].getId];
-   }
-   
-   
+   ORLong searchStart = [ORRuntimeMonitor wctime];
    [cp solve:^(){
       NSLog(@"Search Started: ;-)");
-      clock_t searchStart = clock();
       [cp forall:R suchThat:^ORBool(ORInt i) {
-         return [oc[i] domsize] > 0;
+         return [cp domsize:o[i]] > 0;
       } orderedBy:^ORInt(ORInt i) {
-         return -i; // [LDM] Perf improvement// [oc[i] domsize];
-         //return -(([gamma[o[i].getId] domsize] << 20) + s_SC[i]);
+         return -i; // [LDM] Perf improvement// [cp domsize:o[i]];
+         //return -(([cp domsize:o[i]] << 20) + s_SC[i]);
       } do:^(ORInt s) {
-         ORUInt size = [oc[s] domsize];
+         ORUInt size = [cp domsize:o[s]];
          id<ORIntRange> S = [ORFactory intRange:cp low:0 up:((1 << size) - 1)];
          ORUInt fixedHW = 8 - size;
-         [cp tryall:S suchThat:^ORBool(ORInt i) {
+         int nbt = 0;
+         [cp tryall:S suchThat:^ORBool(ORInt k) {
             //Calculate hamming weight
+            ORInt i = patPtr[255-k];
+            //ORInt i = patPtr[k];
             i = i - ((i>>1) & 0x55555555);
             i = (i & 0x33333333) + ((i>>2) & 0x33333333);
             int count = ((i + (i>>4) & 0xF0F0F0F) * 0x1010101) >> 24;
             //NSLog(@"integer: %d count: %d", i, count);
             return (fixedHW + count) <= (s_SC[s] + 1) && (fixedHW + count) >= (s_SC[s] - 1);
             //return true;
-         } in:^(ORInt i) {
+         } in:^(ORInt k) {
             //num_checks++;
+            ORInt i = patPtr[255-k];
+            //ORInt i = patPtr[k];
+//            [cp labelBits:o[s] withValue:i];
             [cp atomic:^{
                uint32 count = 0;
                for(int nbit = 0; nbit < 8; nbit++){
-                  if([oc[s] isFree: nbit]){
-                     id<CPBitVar> ocs = oc[s];
+                  if([cp memberBit:nbit value:YES in:o[s]]){
                      BOOL val = (i >> count++) & 1;
-                     [ocs bind:nbit to:val];
+                     [cp labelBV:o[s] at:nbit with:val];
+                     //[ocs bind:nbit to:val];
                   }
                }
             }];
@@ -289,24 +343,24 @@ int main(int argc, const char * argv[]) {
          }];
       }];
       //id<ORSolution> sol = [[cp solutionPool] best];
-      [cp once:^{
+      //[cp once:^{
          [cp labelArrayFF:iv];
-      }];
-      clock_t searchStop = clock();
-      double searchTime = ((double)(searchStop - searchStart))/CLOCKS_PER_SEC;
-      for(int i = 0; i < 16; i++)
-         NSLog(@"%@",[cp stringValue:keys[0][i]]);
-      NSLog(@"    Search Time (s): %f",searchTime);
-      NSLog(@"Objective Function : %@",[cp objectiveValue]);
-      // NSLog(@"    Number of check: %d",num_checks);
+      //}];
+      ORLong searchStop = [ORRuntimeMonitor wctime];
+      ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
+      @autoreleasepool {
+         ORInt tid = [NSThread threadID];
+         for(int i = 0; i < 16; i++)
+            NSLog(@"[thread:%d] %@",tid,[cp stringValue:keys[0][i]]);
+         NSLog(@"[thread:%d]     Search Time (s): %f",tid,elapsed);
+         NSLog(@"[thread:%d] Objective Function : %@",tid,[cp objectiveValue]);
+         // NSLog(@"    Number of check: %d",num_checks);
+      }
    }];
-   
-   
+   ORLong searchStop = [ORRuntimeMonitor wctime];
+   ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
+   NSLog(@"FinishTime (s): %f",elapsed);
    NSLog(@"Choices: %d / %d",[cp nbChoices],[cp nbFailures]);
-   //id<ORSolution> sol = [[mip solutionPool] best];
-   // NSLog(@"SOL is: %@",sol);
-   
-   // NSLog(@"Objective     : %@",[mip objectiveValue]);
    [cp release];
    return 0;
 }

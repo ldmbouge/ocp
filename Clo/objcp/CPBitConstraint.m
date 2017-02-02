@@ -828,6 +828,19 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
 @implementation CPFactory (BitConstraint)
 //Bit Vector Constraints
++(id<CPBVConstraint>) bitEqualAt:(CPBitVarI*)x at:(ORInt)k to:(ORInt)c
+{
+   id<CPBVConstraint> o = [[CPBitEqualAt alloc] init:x at:k to:c];
+   [[x engine] trackMutable:o];
+   return o;
+}
++(id<CPBVConstraint>) bitEqualc:(CPBitVarI*)x to:(ORInt)c
+{
+   id<CPBVConstraint> o = [[CPBitEqualc alloc] initCPBitEqualc:x and:c];
+   [[x engine] trackMutable:o];
+   return o;
+}
+
 +(id<CPBVConstraint>) bitEqual:(CPBitVarI*)x to:(CPBitVarI*)y
 {
    id<CPBVConstraint> o = [[CPBitEqual alloc] initCPBitEqual:x and:y];
@@ -1085,7 +1098,111 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    [[x engine] trackMutable:o];
    return o;
 }
+@end
 
+@implementation CPBitEqualAt
+-(id)init:(CPBitVarI*)x at:(ORInt)bit to:(ORInt)v
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = x;
+   _at = bit;
+   _c = v;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* string = [NSMutableString stringWithString:[super description]];
+   [string appendString:@" with "];
+   [string appendString:[NSString stringWithFormat:@"%@ ",_x]];
+   [string appendString:[NSString stringWithFormat:@"at %d to %d\n",_at,_c]];
+   return string;
+}
+-(NSSet*) allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment
+{
+   return ([self getAntecedentsFor:assignment withState:_state]);
+}
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state
+{
+   return nil;
+}
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment
+{
+   return nil;
+}
+-(void) post
+{
+   [_x bind:_at to:_c];
+}
+@end
+
+@implementation CPBitEqualc
+-(id) initCPBitEqualc: (CPBitVarI*) x and: (ORInt) c
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* string = [NSMutableString stringWithString:[super description]];
+   [string appendString:@" with "];
+   [string appendString:[NSString stringWithFormat:@"%@ ",_x]];
+   [string appendString:[NSString stringWithFormat:@"and %d\n",_c]];
+   return string;
+}
+-(NSSet*) allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment
+{
+   return ([self getAntecedentsFor:assignment withState:_state]);
+}
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state
+{
+   return nil;
+}
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment
+{
+   return nil;
+}
+-(void) post
+{
+#ifdef BIT_DEBUG
+   NSLog(@"Bit Equalc Constraint propagated.");
+#endif
+   unsigned int wordLength = [_x getWordLength];
+   assert(wordLength == 1);
+   TRUInt* xLow;
+   TRUInt* xUp;
+   [_x getUp:&xUp andLow:&xLow];
+   
+   unsigned int* up = alloca(sizeof(unsigned int)*wordLength);
+   unsigned int* low = alloca(sizeof(unsigned int)*wordLength);
+   
+   for(int i=0;i<wordLength;i++){
+      up[i] = xUp[i]._val & _c;
+      low[i] = xLow[i]._val & _c;
+   }
+//   _state[0] = up;
+//   _state[1] = low;
+//   _state[2] = up;
+//   _state[3] = low;
+   ORBool xFail = checkDomainConsistency(_x, low, up, wordLength, self);
+   if (xFail)
+      failNow();
+   
+   [_x setUp:up andLow:low for:self];
+ }
 @end
 
 @implementation CPBitEqual

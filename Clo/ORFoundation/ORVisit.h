@@ -193,6 +193,8 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
 // Bit
+-(void) visitBitEqualAt:(id<ORConstraint>)c;
+-(void) visitBitEqualc:(id<ORConstraint>)c;
 -(void) visitBitEqual:(id<ORConstraint>)c;
 -(void) visitBitOr:(id<ORConstraint>)c;
 -(void) visitBitAnd:(id<ORConstraint>)c;

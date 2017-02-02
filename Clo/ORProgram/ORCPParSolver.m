@@ -254,6 +254,10 @@
 {
    return [[self worker] gamma];
 }
+-(void) atomic:(ORClosure)body
+{
+   [[self worker] atomic:body];
+}
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
@@ -328,6 +332,10 @@
 -(void) label: (id<ORIntVar>) mx
 {
    [[self worker] label: mx];
+}
+-(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
+{
+   [[self worker] labelBV:var at:i with:val];
 }
 -(void) select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body
 {
@@ -462,6 +470,10 @@
 {
    return [[self worker] assignRelaxationValue:  f to:  x];
 }
+-(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x
+{
+   return [[self worker] memberBit:k value:v in:x];
+}
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
    return [[self worker] member:v in:x];
@@ -481,6 +493,10 @@
 -(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x
 {
    return [[self worker] smallestDom:x];
+}
+-(NSString*)stringValue:(id<ORBitVar>)x
+{
+   return [[self worker] stringValue: x];
 }
 -(NSSet*)constraints:(id<ORVar>)x
 {
