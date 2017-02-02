@@ -20,8 +20,8 @@ all: links $(TARGETS)
 
 links:
 	@make -s -C ORProgram runnable USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
-	mkdir jobshop
-	(cd jobshop; ln -s ../Scheduler/Tests/jobshop/* .)
+	mkdir -p jobshop
+	(cd jobshop; ln -sf ../Scheduler/Tests/jobshop/* .)
 
 
 objcp:

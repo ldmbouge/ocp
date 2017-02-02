@@ -4,8 +4,10 @@
 #import <objcp/CPIntVarI.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPBitVarI.h>
+#import "ORCmdLineArgs.h"
+
 #define EXPECTKEY
-#define KNOWNKEYS 7
+#define KNOWNKEYS 5
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -68,7 +70,7 @@ ORInt error_count;
 uint32 i_xor1b = 0x1B;
 id<ORBitVar> xor1b;
 int s_SC[64];
-UInt32 num_checks = 0;
+ORUInt num_checks = 0;
 
 #define BICHAR 8
 
@@ -124,8 +126,10 @@ void allPats(int n,int nbb[n],int nbPat,int pats[nbPat])
 }
 
 
-int main(int argc, const char * argv[]) {
-   
+int main(int argc, const char * argv[])
+{
+  ORCmdLineArgs* cmd = [ORCmdLineArgs newWith:argc argv:argv];
+  
    model = [ORFactory createModel];
    ca = NULL;
    
@@ -297,7 +301,7 @@ int main(int argc, const char * argv[]) {
    
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController proto]];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
    //__block id* gamma = [cp gamma];
    //  id<CPBitVar> test = gamma[o[0].getId];
    ORLong searchStart = [ORRuntimeMonitor wctime];
