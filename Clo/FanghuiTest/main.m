@@ -7,7 +7,7 @@
 #import "ORCmdLineArgs.h"
 
 #define EXPECTKEY
-#define KNOWNKEYS 6
+#define KNOWNKEYS 7
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -264,7 +264,7 @@ int main(int argc, const char * argv[]) {
    id<ORIntRange> R = [[ORIntRangeI alloc] initORIntRangeI:0 up:47];
    //  id<ORIntRange> testR = [[ORIntRangeI alloc] initORIntRangeI:0 up:(32*8)-1];
    
-   id<ORBitVarArray> o = [CPFactory bitVarArray:model range: R];
+   id<ORBitVarArray> o = [ORFactory bitVarArray:model range:R];
    for(ORInt k=0;k <= 15;k++)
       [o set:keys[0][k] at:k];
    
@@ -274,9 +274,9 @@ int main(int argc, const char * argv[]) {
    for(ORInt k=0;k <= 15;k++)
       [o set:states[2][k] at:(k+32)];
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
    
    ORLong searchStart = [ORRuntimeMonitor wctime];
    [cp solve:^(){
@@ -319,9 +319,7 @@ int main(int argc, const char * argv[]) {
                  }];
       }];
       //id<ORSolution> sol = [[cp solutionPool] best];
-      [cp once:^{
-         [cp labelArrayFF:iv];
-      }];
+      [cp labelArrayFF:iv];
       
       ORLong searchStop = [ORRuntimeMonitor wctime];
       ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
