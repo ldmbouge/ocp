@@ -180,7 +180,7 @@
 -(ORULong)   min
 {
     ORULong minimum;
-    
+   
     minimum = _min[0]._val;
     if(_wordLength > 1){
         minimum <<= 32;
@@ -327,10 +327,10 @@
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
    
-   for(int i=_wordLength-1; i>=0; i--){
+   for(int i=0; i<_wordLength; i++){
 //      NSLog(@"%d is first free bit in %x\n",i*32+__builtin_ffs((_low[i]._val^_up[i]._val))-1, (_low[i]._val^_up[i]._val));
       if ((j=__builtin_ffs(_low[i]._val^_up[i]._val))!=0) {
-         return (i*32)+j-1;
+         return (i*BITSPERWORD)+j-1;
       }
    }
    return -1;
@@ -343,7 +343,7 @@
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
-   ORInt wordLengthInBits = _wordLength * 32;
+   ORInt wordLengthInBits = _wordLength * BITSPERWORD;
    
    for(int i=_wordLength-1; i>=0; i--){
       //NSLog(@"%d leading zeroes in %x\n",__builtin_clz((_low[i]._val^_up[i]._val)), (_low[i]._val^_up[i]._val));
@@ -356,8 +356,10 @@
          return msfb;
       }
       else if (freeBits & 0x80000000) {
-         j=__builtin_clz(~freeBits);
-         return (wordLengthInBits)-((i*32)+1);
+//         j=__builtin_clz(~freeBits);
+//         int msfb = wordLengthInBits-((i*32)+1);
+//         return msfb;
+         return (((i+1)*BITSPERWORD)-1);
       }
       else{
          j=__builtin_clz(freeBits);
@@ -814,18 +816,18 @@
 
 -(ORStatus)bind:(ORULong)val for:(id<CPBitVarNotifier>)x
 {
-    if ((val < [self min]) || (val > [self max]))
-       failNow();
-    if ((_freebits._val == 0) && (val == [self min])) return ORSuccess;
-    //Deal with arrays < 64 bits long
-    assignTRUInt(&_min[0], val>>32, _trail);
-    assignTRUInt(&_max[0], val>>32, _trail);
-    assignTRUInt(&_min[1], val & CP_BITMASK, _trail);
-    assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
-    assignTRUInt(&_freebits, 0, _trail);
+   if ((val < [self min]) || (val > [self max]))
+      failNow();
+   if ((_freebits._val == 0) && (val == [self min])) return ORSuccess;
+   //Deal with arrays < 64 bits long
+   assignTRUInt(&_min[0], val>>32, _trail);
+   assignTRUInt(&_max[0], val>>32, _trail);
+   assignTRUInt(&_min[1], val & CP_BITMASK, _trail);
+   assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
+   assignTRUInt(&_freebits, 0, _trail);
    [self updateFreeBitCount];
-   [x bindEvt:self];
-    return ORSuspend;   
+   [x bindEvt:1 sender:self];
+   return ORSuspend;
 }
 
 -(ORStatus) bindToPat:(ORUInt*) pat for:(id<CPBitVarNotifier>)x
@@ -845,7 +847,7 @@
    assignTRUInt(&_min[1], pat[1], _trail);
    assignTRUInt(&_max[1], pat[1], _trail);
    assignTRUInt(&_freebits, 0, _trail);
-   [x bindEvt:self];
+   [x bindEvt:1 sender:self];
    [self updateFreeBitCount];
    return ORSuspend;   
 }
@@ -888,17 +890,36 @@
       assignTRUInt(&_low[i], newLow[i], _trail);
    }
     [self updateFreeBitCount];
-    if (lmod)
+   if (lmod){
        [x bitFixedEvt:_freebits._val sender:self];
-   
-   for (int i=0; i<_wordLength; i++) {
-      for (int j=0; j<BITSPERWORD; j++) {
-         if (isChanged[i] & 0x00000001) {
-            if([_engine conformsToProtocol:@protocol(CPLEngine)])
-               assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(id<CPLEngine>)_engine getLevel], _trail);
-            [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
+
+      //Update Min for bitvector
+      ORULong lowInterpretation = _low[0]._val;
+      ORULong currentMin = _min[0]._val;
+      if(_wordLength > 1){
+         lowInterpretation <<= 32;
+         currentMin <<= 32;
+         lowInterpretation += _low[1]._val;
+         currentMin += _min[1]._val;
+      }
+      if(lowInterpretation > currentMin){
+         ORUInt temp = _low[0]._val;
+         assignTRUInt(&_min[0], temp, _trail);
+         if (_wordLength>1){
+            temp = _low[1]._val;
+            assignTRUInt(&_min[1], temp, _trail);
          }
-         isChanged[i] >>= 1;
+      }
+
+      for (int i=0; i<_wordLength; i++) {
+         for (int j=0; j<BITSPERWORD; j++) {
+            if (isChanged[i] & 0x00000001) {
+               if([_engine conformsToProtocol:@protocol(CPLEngine)])
+                  assignTRUInt(&_levels[(i*BITSPERWORD)+j], [(id<CPLEngine>)_engine getLevel], _trail);
+               [x bitFixedAtEvt:(i*BITSPERWORD)+j sender:self];
+            }
+            isChanged[i] >>= 1;
+         }
       }
    }
 
@@ -912,24 +933,43 @@
    ORUInt* isChanged;
    isChanged = alloca(sizeof(ORUInt)*_wordLength);
 
-
    for(int i=0;i<_wordLength;i++){
       isChanged[i]  = (_up[i]._val & ~newUp[i]);
     umod |= _up[i]._val != newUp[i];
     assignTRUInt(&_up[i], newUp[i], _trail);
    }
     [self updateFreeBitCount];
-    if (umod)
-       [x bitFixedEvt:_freebits._val sender:self];
    
-   for (int i=0; i<_wordLength; i++) {
-      for (int j=0; j<BITSPERWORD; j++) {
-         if (isChanged[i] & 0x00000001) {
-            [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
-//            assignTRUInt(&_levels[i], level, _trail);
-            assignTRUInt(&_levels[i*BITSPERWORD+j],[(id<CPLEngine>)_engine getLevel],_trail);
+   if (umod){
+       [x bitFixedEvt:_freebits._val sender:self];
+
+      //Update Max for bitvector
+      ORULong upInterpretation = _up[0]._val;
+      ORULong currentMax = _max[0]._val;
+      if(_wordLength > 1){
+         upInterpretation <<= 32;
+         currentMax <<= 32;
+         upInterpretation += _up[1]._val;
+         currentMax += _max[1]._val;
+      }
+      if(upInterpretation < currentMax){
+         ORUInt temp = _up[0]._val;
+         assignTRUInt(&_max[0], temp, _trail);
+         if (_wordLength>1){
+            temp = _up[1]._val;
+            assignTRUInt(&_max[1], temp, _trail);
          }
-         isChanged[i] >>= 1;
+      }
+
+      //record level new bits were set at
+      for (int i=0; i<_wordLength; i++) {
+         for (int j=0; j<BITSPERWORD; j++) {
+            if (isChanged[i] & 0x00000001) {
+               [x bitFixedAtEvt:_freebits._val at:(i*BITSPERWORD)+j sender:self];
+               assignTRUInt(&_levels[i*BITSPERWORD+j],[(id<CPLEngine>)_engine getLevel],_trail);
+            }
+            isChanged[i] >>= 1;
+         }
       }
    }
 }
@@ -960,6 +1000,39 @@
    if (umod || lmod){
       [x bitFixedEvt:_freebits._val sender:self];
 //      NSLog(@"\nBitvector changed.\n\n");
+
+      //Update Min and Max for bitvector
+      ORULong upInterpretation = _up[0]._val;
+      ORULong lowInterpretation = _low[0]._val;
+      ORULong currentMax = _max[0]._val;
+      ORULong currentMin = _min[0]._val;
+      if(_wordLength > 1){
+         upInterpretation <<= 32;
+         lowInterpretation <<= 32;
+         currentMax <<= 32;
+         currentMin <<= 32;
+         upInterpretation += _up[1]._val;
+         lowInterpretation += _low[1]._val;
+         currentMax += _max[1]._val;
+         currentMin += _min[1]._val;
+      }
+      if(upInterpretation < currentMax){
+         ORUInt temp = _up[0]._val;
+         assignTRUInt(&_max[0], temp, _trail);
+         if (_wordLength>1){
+            temp = _up[1]._val;
+            assignTRUInt(&_max[1], temp, _trail);
+         }
+      }
+      if(lowInterpretation > currentMin){
+         ORUInt temp = _low[0]._val;
+         assignTRUInt(&_min[0], temp, _trail);
+         if (_wordLength>1){
+            temp = _low[1]._val;
+            assignTRUInt(&_min[1], temp, _trail);
+         }
+      }
+
       for (int i=0; i<_wordLength; i++) {
          for (int j=0; j<BITSPERWORD; j++) {
             if (isChanged[i] & 0x00000001) {

@@ -151,7 +151,7 @@
 //-(CPBitVarLiterals*)findLiterals:(CPBitVarI*)ref;
 -(void) addVar:(CPBitVarI*) v;
 -(NSMutableSet*)constraints;
--(ORStatus) bindEvt:(CPBitArrayDom*)sender;
+-(ORStatus) bindEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMinEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) changeMaxEvt:(ORUInt)dsz sender:(CPBitArrayDom*)sender;
 -(ORStatus) loseValEvt:(ORUInt)val sender:(CPBitArrayDom*)sender;

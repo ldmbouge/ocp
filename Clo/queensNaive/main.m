@@ -32,8 +32,28 @@ int main (int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram: model];
          [cp clearOnSolution]; // other solvers do not save solutions. We shouldn't either.
          [cp solveAll: ^{
-            [cp labelArrayFF: x];
+            //[cp labelArrayFF: x];
+            while (![cp allBound:x]) {
+               int sd = 0x7fffffff;
+               id<ORIntVar> sel = nil;
+               for(ORInt i=0;i < n;i++) {
+                  if ([cp bound:x[i]])
+                     continue;
+                  int isz = [cp domsize:x[i]];
+                  if (isz < sd) {
+                     sd = isz;
+                     sel = x[i];
+                  }
+               }
+               if (sel != nil) {
+                  [cp label:sel];
+               }
+            }
             [nbSol incr:cp];
+            for(int i = 0 ; i < n;i++) {
+               printf("%d,",[cp intValue:x[i]]);
+            }
+            printf("\n");
          }];
          printf("GOT %d solutions\n",[nbSol intValue:cp]);
          NSLog(@"Solver status: %@\n",cp);

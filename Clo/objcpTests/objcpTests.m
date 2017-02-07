@@ -40,7 +40,7 @@
 {
    double a = 1.0;
    double b = 3.0;
-   initContinuationLibrary(&a);
+   initContinuationLibrary((int*)&a);
    ORIReady();
    _MM_SET_ROUNDING_MODE(_MM_ROUND_UP);
    double c  = a / b;
@@ -502,5 +502,164 @@
       }];
       NSLog(@"the var is: %@",x);
    }
+}
+-(void) testSumConstraint5
+{
+   NSLog(@"Begin testing bitwise Sum constraint\n");
+   
+   id<ORModel> m3 = [ORFactory createModel];
+   unsigned int min[5];
+   unsigned int max[5];
+   
+   //CinLow  0x00000000 0x00000000 0x00000000 0x2AA      0xAAAAAAAA
+   //CinUp   0xD5       0x55555555 0x5FFFFFFF 0xFFFFFFFF 0xFFFFFFFF
+   
+   min[0] = 0x00000000;//
+   min[1] = 0x00000000;
+   min[2] = 0x00000000;//
+   min[3] = 0x2AA;
+   min[4] = 0xAAAAAAAA;//
+   
+   max[0] = 0xFFFFFFD5;//
+   max[1] = 0x55555555;
+   max[2] = 0xFFFFFFFF;//
+   max[3] = 0xFFFFFFFF;
+   max[4] = 0xFFFFFFFF;//
+   //   min[0] = 0;
+   //   max[0] = 0xFFFFFFFF;
+   
+   id<ORBitVar> cin =  [ORFactory bitVar:m3 low:min up:max bitLength:160];
+   
+   //Ylow    0x00000000 0x2AA      0xA0000000 0x2AAA800  0xAAA
+   //YUp     0xD5       0x57FFFFFF 0xF5555FFF 0xFFFFFD55 0x5FFFFFFF
+   
+   min[0] = 0x00000000;//
+   min[1] = 0x2AA;
+   min[2] = 0xA0000000;//
+   min[3] = 0x2AAA800;
+   min[4] = 0xAAA;//
+   
+   max[0] = 0xFFFFFFD5;//
+   max[1] = 0x57FFFFFF;
+   max[2] = 0xF5555FFF;//
+   max[3] = 0xFFFFFD55;
+   max[4] = 0x5FFFFFFF;//
+   id<ORBitVar> y = [ORFactory bitVar:m3 low:min up:max bitLength:160];
+   
+   //Zlow    0x00000000 0x28002800 0xA000A000 0xA800A800 0xA002A00A
+   //Zup     0xD7       0xFD5FFD7F 0xF57FF57F 0xFD7FFD7F 0xF5FFF5FF
+   
+   min[0] = 0x00000000;//
+   min[1] = 0x28002800;
+   min[2] = 0xA000A000;//
+   min[3] = 0xA800A800;
+   min[4] = 0xA002A00A;//
+   
+   max[0] = 0xFFFFFFD7;//
+   max[1] = 0xFD5FFD7F;
+   max[2] = 0xF57FF57F;//
+   max[3] = 0xFD7FFD7F;
+   max[4] = 0xF5FFF5FF;//
+   id<ORBitVar> z = [ORFactory bitVar:m3 low:min up:max bitLength:160];
+   
+   //CoLow   0x00000000 0x208082   0x820082   0x8820882  0x2082222
+   //CoUp    0xDD       0xDDF7DFDF 0x77DF77DF 0x7FDF7FDF 0x7F7DFFFF
+   
+   min[0] = 0x00000000;//
+   min[1] = 0x00208082;
+   min[2] = 0x00820082;//
+   min[3] = 0x08820882;
+   min[4] = 0x02082222;//
+   
+   max[0] = 0xFFFFFFDD;//
+   max[1] = 0xDDF7DFDF;
+   max[2] = 0x77DF77DF;//
+   max[3] = 0x7FDF7FDF;
+   max[4] = 0x7F7DFFFF;//
+   
+   id<ORBitVar> co = [ORFactory bitVar:m3 low:min up:max bitLength:160];
+   
+   //Xlow    0x00000000 0x28208282 0x820000   0x8000A82  0x200A
+   //Xup     0xD7       0xFDFFFFDF 0x57FFF7FF 0xFFDF7FDF 0x5F7DF5FF
+   
+   min[0] = 0x00000000;//
+   min[1] = 0x28208282;
+   min[2] = 0x820000;//
+   min[3] = 0x8000A82;
+   min[4] = 0x200A;//
+   
+   max[0] = 0xFFFFFFD7;//
+   max[1] = 0xFDFFFFDF;
+   max[2] = 0x57FFF7FF;//
+   max[3] = 0xFFDF7FDF;
+   max[4] = 0x5F7DF5FF;//
+   //   min[0] = 0;
+   //   max[0] = 0xFFFFFFFF;
+   id<ORBitVar> x = [ORFactory bitVar:m3 low:min up:max bitLength:160];
+   
+   
+   NSLog(@"Initial values:");
+   NSLog(@"x    = %@\n", x);
+   NSLog(@"y    = %@\n", y);
+   NSLog(@"cin  = %@\n", cin);
+   NSLog(@"z    = %@\n", z);
+   NSLog(@"cout = %@\n", co);
+   //   [m add:[CPFactory bitADD:x3 plus:y3 withCarryIn:ci3 equals:z3 withCarryOut:co3]];
+   //   NSLog(@"Added Sum constraint.\n");
+   //   NSLog(@"Initial values:");
+   //   NSLog(@"x    = %@\n", x3);
+   //   NSLog(@"y    = %@\n", y3);
+   //   NSLog(@"cin  = %@\n", ci3);
+   //   NSLog(@"z    = %@\n", z3);
+   //   NSLog(@"cout = %@\n", co3);
+   [m3 add:[ORFactory bit:x plus:y withCarryIn:cin eq:z withCarryOut:co]];
+   id<CPProgram,CPBV> cp3 = (id)[ORFactory createCPProgram:m3];
+   id* gamma = [cp3 gamma];
+   __block id<ORBitVarArray> o = [ORFactory bitVarArray:[cp3 engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:4]];
+   [o set:gamma[cin.getId] at:0];
+   [o set:gamma[x.getId] at:1];
+   [o set:gamma[y.getId] at:2];
+   [o set:gamma[z.getId] at:3];
+   [o set:gamma[co.getId] at:4];
+
+   [cp3 solve: ^() {
+      @try {
+         NSLog(@"After Posting:");
+//         NSLog(@"cin  = %@\n", gamma[cin.getId]);
+//         NSLog(@"x    = %@\n", gamma[x.getId]);
+//         NSLog(@"y    = %@\n", gamma[y.getId]);
+//         NSLog(@"z    = %@\n", gamma[z.getId]);
+//         NSLog(@"cout = %@\n", gamma[co.getId]);
+         NSLog(@"%@",o);
+         //         [cp3 labelUpFromLSB:x];
+         //         [cp3 labelUpFromLSB:y];
+         //         [cp3 labelUpFromLSB:z];
+         //         [cp3 labelUpFromLSB:cin];
+         //         [cp3 labelUpFromLSB:co];
+//         [cp3 solve: ^{
+            id<CPBitVarHeuristic> h = [cp3 createBitVarFF:o];
+            [cp3 labelBitVarHeuristic:h];
+//         }];
+         NSLog(@"Solution Found:");
+//         NSLog(@"cin  = %@\n", gamma[cin.getId]);
+//         NSLog(@"x    = %@\n", gamma[x.getId]);
+//         NSLog(@"y    = %@\n", gamma[y.getId]);
+//         NSLog(@"z    = %@\n", gamma[z.getId]);
+//         NSLog(@"cout = %@\n", gamma[co.getId]);
+         NSLog(@"%@",o);
+
+         //         XCTAssertTrue([[ci3 stringValue] isEqualToString:@"0000000000000000000000000000000000000000000000000000000000000000"],@"testBitSUMConstraint: Bit Pattern for Cin is incorrect.");
+         //         XCTAssertTrue([[x3 stringValue] isEqualToString:@"0000000100100011010001010110011110001001101010111100110111101111"],@"testBitSUMConstraint: Bit Pattern for x is incorrect.");
+         //         XCTAssertTrue([[y3 stringValue] isEqualToString:@"1111111011011100101110101001100001110110010101000011001000010000"],@"testBitSUMConstraint: Bit Pattern for y is incorrect.");
+         //         XCTAssertTrue([[z3 stringValue] isEqualToString:@"1111111111111111111111111111111111111111111111111111111111111111"],@"testBitSUMConstraint: Bit Pattern for z is incorrect.");
+         //         XCTAssertTrue([[co3 stringValue] isEqualToString:@"0000000000000000000000000000000000000000000000000000000000000000"],@"testBitSUMConstraint: Bit Pattern for Cout is incorrect.");
+//         [cp3 release];
+      }
+      @catch (NSException *exception) {
+         NSLog(@"testSumConstraint: Caught %@: %@", [exception name], [exception reason]);
+      }
+   }];
+   
+   NSLog(@"End testing bitwise Sum constraint.\n");
 }
 @end

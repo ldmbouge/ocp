@@ -39,7 +39,7 @@
 -(void)  tryAtomic:(ORClosure) cl;
 -(ORStatus) atomic: (ORClosure) cl;
 -(ORBool) isPropagating;
-
+-(ORUInt) nbFailures;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;

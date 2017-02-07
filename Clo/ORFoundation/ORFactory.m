@@ -1428,7 +1428,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    return (id<ORBitVarArray>)o;
 }
-
++(id<ORConstraint>) bvEqualBit:(id<ORTracker>)tracker var:(id<ORBitVar>)x bit:(ORInt)k with:(ORInt)val
+{
+   id<ORConstraint> o = [[ORBitEqualAt alloc] init:x at:k with:val];
+   [tracker trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bvEqualc:(id<ORTracker>)tracker var:(id<ORBitVar>)x to:(ORInt) c
+{
+   id<ORConstraint> o = [[ORBitEqualc alloc] init:x eqc:c];
+   [tracker trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitEqual alloc] initORBitEqual:x eq:y];

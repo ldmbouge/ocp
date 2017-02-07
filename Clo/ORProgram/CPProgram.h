@@ -111,7 +111,7 @@ PORTABLE_BEGIN
                   onFailure: (ORInt2Void) onFailure;
 
 -(void)              select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body;
-
+-(void)              atomic: (ORClosure)body;
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)                 try: (ORClosure) body then: (ORClosure) body;
 -(void)                once: (ORClosure) cl;
@@ -160,7 +160,7 @@ PORTABLE_BEGIN
 -(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
--(ORInt)  domsize: (id<ORIntVar>) x;
+-(ORInt)  domsize: (id<ORVar>) x;
 -(ORInt)  regret:(id<ORIntVar>)x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
 -(NSSet*) constraints: (id<ORVar>)x;
@@ -212,6 +212,7 @@ PORTABLE_BEGIN
 @end
 
 @protocol CPBV <CPCommonProgram>
+-(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val;
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
 -(void) labelBits:(id<ORBitVar>)x withValue:(ORInt) v;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
@@ -231,6 +232,7 @@ PORTABLE_BEGIN
 -(id<CPBitVarHeuristic>) createBitVarIBS:(id<ORVarArray>)rvars;
 
 -(NSString*)stringValue:(id<ORBitVar>)x;
+-(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x;
 @end
 PORTABLE_END
 

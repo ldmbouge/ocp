@@ -49,6 +49,11 @@
 			<key>orderHint</key>
 			<integer>15</integer>
 		</dict>
+		<key>ColGenCombinatorExample.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>147</integer>
+		</dict>
 		<key>CuttingStock.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -88,6 +93,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>46</integer>
+		</dict>
+		<key>LogicBendersCombinatorExample.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>148</integer>
 		</dict>
 		<key>LogicBendersExample.xcscheme</key>
 		<dict>
@@ -139,10 +149,20 @@
 			<key>orderHint</key>
 			<integer>73</integer>
 		</dict>
+		<key>ParallelCombinatorExample.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>146</integer>
+		</dict>
 		<key>SMTLIB2.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>143</integer>
+		</dict>
+		<key>SequentialCombinatorExample.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>145</integer>
 		</dict>
 		<key>SportDemo.xcscheme_^#shared#^_</key>
 		<dict>
@@ -727,7 +747,27 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>3730BFC01DF49AF500829AB5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3730BFF21DF4C17700829AB5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>3730FD7A1CAEF80B00C9362B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>374493D01DF4D27F00FAE3E2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>374493FA1DF509AE00FAE3E2</key>
 		<dict>
 			<key>primary</key>
 			<true/>

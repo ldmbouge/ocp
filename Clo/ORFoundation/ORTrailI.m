@@ -597,6 +597,7 @@ ORInt trailMagic(ORTrailI* trail)
    do {
       --_sz;
    } while(_sz>0 && (_tab[_sz]._x != x));
+   assert(self->_sz >= 0);
    const ORInt ofs  = _tab[_sz]._ofs;
    const ORInt mOfs = _tab[_sz]._mOfs;
    [_trail backtrack:ofs];

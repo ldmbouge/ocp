@@ -284,7 +284,7 @@
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
-   _atRoot = 0;
+   _atRoot = -1;
    [model release]; // not needed
    return self;
 }
@@ -296,7 +296,7 @@
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
-   _atRoot = 0;
+   _atRoot = -1;
    return self;
 }
 - (void) dealloc
@@ -328,7 +328,7 @@
 
 -(void)setup
 {
-   if (_atRoot==0)
+   if (_atRoot==-1)
       _atRoot = [_tracer pushNode];
 }
 
