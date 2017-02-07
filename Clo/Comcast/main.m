@@ -12,6 +12,8 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
+#import <ORModeling/ORLinearize.h>
+
 
 int main(int argc, const char * argv[])
 {
@@ -76,25 +78,29 @@ int main(int argc, const char * argv[])
         [model add: [[u_bw at: i] geq: Sum(model, j, apps, [[a at: i : j] mul: @([Bapp at: j])])]];
         [model add: [[[u_bw at: i] mul: [Sbw elt: [s at: i]]] leq: [@([B at: i]) sub: [Fbw elt: [s at: i]]]]];
     }
+
+//    id<ORModel> lm = [ORFactory linearizeModel: model];
+//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+//    [r start];
     
-    //__block id<CPHeuristic> h = nil;
     id<ORRunnable> r = [ORFactory CPDualRunnable: model solve:^(id<CPCommonProgram> cp) {
         [cp labelArray: s];
-        [cp labelArray: [a flatten]];
         [cp labelArray: u_mem];
         [cp labelArray: u_bw];
+        [cp labelArray: [a flatten]];
     }];
     [r start];
+    id<ORSolution> best = [r bestSolution];
     
-//    id<CPProgram> cp = [ORFactory createCPProgram: model];
-//    //NSLog(@"Model %@",model);
-//    id<CPHeuristic> h = [cp createIBS];
+    id<CPProgram> cp = [ORFactory createCPProgram: model];
+    //NSLog(@"Model %@",model);
+//    id<CPHeuristic> h = [cp createWDeg];
 //    [cp solve:^{
 //        [cp labelHeuristic:h];
 //        id<ORSolution> s = [cp captureSolution];
 //        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
 //    }];
-    id<ORSolution> best = [r bestSolution];
+//    id<ORSolution> best = [[cp solutionPool] best];
     //NSLog(@"Number of solutions found: %li", [[cp solutionPool] count]);
     NSLog(@"#best objective: %i",[[best objectiveValue] intValue]);
     return 0;
