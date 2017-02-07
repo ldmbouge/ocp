@@ -118,7 +118,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
    //int error = GRBsetintparam(GRBgetenv(_model), "LazyConstraints", 1); // Enable lazy constraints for bounds update
    //if(error != 0) assert(YES);
    GRBupdatemodel(_model);
-   [self printModelToFile: "/Users/ldm/Desktop/MIPgurobi.lp"];
+   [self printModelToFile: "/Users/dan/Desktop/MIPgurobi.lp"];
    GRBsetcallbackfunc(_model, &gurobi_callback, self);
    _terminate = NO;
    
@@ -275,7 +275,7 @@ int gurobi_callback(GRBmodel *model, void *cbdata, int where, void *usrdata);
     int vind[] = { [param coefIdx] };
     double v[] = { val };
     int err = GRBchgcoeffs(_model, 1, cind, vind, v);
-    //    GRBupdatemodel(_model);
+    //GRBupdatemodel(_model);
     if(err != 0)
         NSLog(@"error setting gurobi parameter: %i", err);
 }

@@ -44,7 +44,8 @@
     else if([[cstr expr] type] == ORRLEq) slackExpr = [[binexpr left] sub: [binexpr right] track: _target];
     
     id<ORVar, ORExpr> slack = nil;
-    if([binexpr vtype] == ORTInt) slack = [ORFactory intVar: _target domain: RANGE(_target, [slackExpr min], [slackExpr max])];
+    if([binexpr vtype] == ORTInt || [binexpr vtype] == ORTBool)
+        slack = [ORFactory intVar: _target domain: RANGE(_target, [slackExpr min], [slackExpr max])];
     else if([binexpr vtype] == ORTReal) slack = [ORFactory realVar: _target low: [slackExpr min] up: [slackExpr max]];
     else [NSException raise: @"ORSoftifyTransform" format: @"Invalid Algebraic Expr"];
     

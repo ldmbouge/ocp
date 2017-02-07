@@ -10,7 +10,7 @@
 #import "ORParallelRunnable.h"
 
 @interface ORCompleteParallelCombinator(Private)
--(void) connectInternalPiping: (NSArray*)runnables;
+-(void) connectPiping: (id<ORRunnable>)r0 and: (id<ORRunnable>) r1;
 @end
 
 @implementation ORCompleteParallelCombinator
@@ -26,17 +26,18 @@
         // Error
         return nil;
     }
-    [self connectInternalPiping: runnables];
-    return [[ORCompleteParallelRunnableI alloc] initWithPrimary: runnables[0] secondary: runnables[1]];
+    ORCompleteParallelRunnableI* r = [[ORCompleteParallelRunnableI alloc] initWithPrimary: runnables[0] secondary: runnables[1]];
+    [self connectPiping: runnables[0] and: runnables[1]];
+    //[self connectPiping: r and: runnables[0]];
+    //[self connectPiping: r and: runnables[1]];
+    return r;
 }
 
--(void) connectInternalPiping: (NSArray*)runnables {
-    ORAbstractRunnableI* r0 = (ORAbstractRunnableI*)runnables[0];
-    ORAbstractRunnableI* r1 = (ORAbstractRunnableI*)runnables[1];
+-(void) connectPiping: (id<ORRunnable>)r0 and: (id<ORRunnable>) r1 {
+    id<ORSignature> r0Sig = [r0 signature];
+    id<ORSignature> r1Sig = [r1 signature];
     
     [r1 performOnStart: ^() {
-       id<ORSignature> r0Sig = [r0 signature];
-       id<ORSignature> r1Sig = [r1 signature];
         if([r0Sig providesUpperBoundStream] && [r1Sig acceptsUpperBoundStream])
             [(id<ORUpperBoundStreamProducer>)r0 addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)r1];
         if([r0Sig providesLowerBoundStream] && [r1Sig acceptsLowerBoundStream])
@@ -46,11 +47,11 @@
     }];
     
     [r0 performOnStart: ^() {
-        if([[r1 signature] providesUpperBoundStream] && [[r0 signature] acceptsUpperBoundStream])
+        if([r1Sig  providesUpperBoundStream] && [r0Sig  acceptsUpperBoundStream])
             [(id<ORUpperBoundStreamProducer>)r1 addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)r0];
-        if([[r1 signature] providesLowerBoundStream] && [[r0 signature] acceptsLowerBoundStream])
+        if([r1Sig  providesLowerBoundStream] && [r0Sig  acceptsLowerBoundStream])
             [(id<ORLowerBoundStreamProducer>)r1 addLowerBoundStreamConsumer: (id<ORLowerBoundStreamConsumer>)r0];
-        if([[r1 signature] providesSolutionStream] && [[r0 signature] acceptsSolutionStream])
+        if([r1Sig  providesSolutionStream] && [r0Sig  acceptsSolutionStream])
             [(id<ORSolutionStreamProducer>)r1 addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)r0];
     }];
 }

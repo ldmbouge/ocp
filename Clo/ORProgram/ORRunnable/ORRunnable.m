@@ -11,6 +11,7 @@
 #import <ORProgram/ORProgramFactory.h>
 #import "ORConcurrencyI.h"
 #import "CPRunnable.h"
+#import "CPDualRunnable.h"
 #import "LPRunnable.h"
 #import "MIPRunnable.h"
 
@@ -146,7 +147,27 @@
    return r;
 }
 
++(id<CPDualRunnable>) CPDualRunnable: (id<ORModel>)m
+{
+    id<CPDualRunnable> r = [[CPDualRunnableI alloc] initWithModel: m];
+    return r;
+}
++(id<CPDualRunnable>) CPDualRunnable: (id<ORModel>)m numThreads: (ORInt)nth
+{
+    id<CPDualRunnable> r = [[CPDualRunnableI alloc] initWithModel: m numThreads: nth];
+    return r;
+}
++(id<CPDualRunnable>) CPDualRunnable: (id<ORModel>)m solve: (void(^)(id<CPCommonProgram>))body
+{
+    id<CPDualRunnable> r = [[CPDualRunnableI alloc] initWithModel: m search: body];
+    return r;
 
+}
++(id<CPDualRunnable>) CPDualRunnable: (id<ORModel>)m numThreads: (ORInt)nth solve: (void(^)(id<CPCommonProgram>))body
+{
+    id<CPDualRunnable> r = [[CPDualRunnableI alloc] initWithModel: m numThreads: nth search: body];
+    return r;
+}
 
 +(id<ORRunnable>) LPRunnable: (id<ORModel>)m
 {

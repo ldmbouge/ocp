@@ -350,8 +350,9 @@
         return [[[_model modelMappings] tau] get: obj];  }];
     [_model addMutable: narr];
     [_model trackMutable: narr];
-    id<ORConstraint> cstr = [ORFactory sum: _model array: narr coef: [c coefs] eq: [c cst]];
+    id<ORConstraint> cstr = [Sum(_model, i, [narr range], [narr[i] mul: @([[c coefs] at: i])]) eq: @([c cst])];
     [_model addConstraint: cstr];
+    [[[_model modelMappings] tau] set: cstr forKey: c];
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) c
 {
@@ -359,8 +360,10 @@
         return [[[_model modelMappings] tau] get: obj];  }];
     [_model addMutable: narr];
     [_model trackMutable: narr];
-    id<ORConstraint> cstr = [ORFactory sum: _model array: narr coef: [c coefs] leq: [c cst]];
+    id<ORConstraint> cstr = [Sum(_model, i, [narr range], [narr[i] mul: @([[c coefs] at: i])]) leq: @([c cst])];
+    //[ORFactory sum: _model array: narr coef: [c coefs] leq: [c cst]];
     [_model addConstraint: cstr];
+    [[[_model modelMappings] tau] set: cstr forKey: c];
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
 {

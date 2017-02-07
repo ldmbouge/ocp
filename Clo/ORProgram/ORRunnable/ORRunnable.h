@@ -59,6 +59,12 @@
               withRelaxation: (id<ORRelaxation>)relax
                   numThreads: (ORInt)nth
                        solve: (void(^)(id<CPCommonProgram>))body;
+
++(id<ORRunnable>) CPDualRunnable: (id<ORModel>)m;
++(id<ORRunnable>) CPDualRunnable: (id<ORModel>)m numThreads: (ORInt)nth;
++(id<ORRunnable>) CPDualRunnable: (id<ORModel>)m solve: (void(^)(id<CPCommonProgram>))body;
++(id<ORRunnable>) CPDualRunnable: (id<ORModel>)m numThreads: (ORInt)nth solve: (void(^)(id<CPCommonProgram>))body;
+
 +(id<ORRunnable>) LPRunnable: (id<ORModel>)m;
 +(id<ORRunnable>) MIPRunnable: (id<ORModel>)m;
 +(id<ORRunnable>) MIPRunnable: (id<ORModel>)m numThreads: (ORInt)nth;

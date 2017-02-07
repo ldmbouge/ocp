@@ -78,6 +78,8 @@
    ORDouble _bestBound;
    id<ORRunnable> _solvedRunnable;
    id<ORVoidInformer> _stop;
+    @private
+    ORBool _searchDone;
 }
 
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1 {
@@ -90,6 +92,19 @@
       _stop = nil;
    }
    return self;
+}
+
+-(id<ORSignature>) signature
+{
+    if(_sig == nil) {
+        ORMutableSignatureI* sig = [[[ORMutableSignatureI alloc] init] retain];
+        id<ORSignature> sig0 = [[_r[0] runnable] signature];
+        id<ORSignature> sig1 = [[_r[1] runnable] signature];
+        [sig compose: sig0];
+        [sig compose: sig1];
+        _sig = sig;
+    }
+    return _sig;
 }
 
 -(void) dealloc
@@ -123,13 +138,24 @@
    return  _solvedRunnable;
 }
 
+-(void) runEvents {
+    [self doStart];
+    while(!_searchDone) {
+        [ORConcurrency pumpEvents];
+        [NSThread sleepForTimeInterval: 0.1];
+    }
+}
+
 -(void) run
 {
-   _stop = [ORConcurrency voidInformer];
+    _searchDone = NO;
+    _stop = [ORConcurrency voidInformer];
    [NSThread detachNewThreadSelector:@selector(start:) toTarget:_r[0] withObject:_stop];
    [NSThread detachNewThreadSelector:@selector(start:) toTarget:_r[1] withObject:_stop];
+   [NSThread detachNewThreadSelector:@selector(runEvents) toTarget: self withObject: nil];
    [_r[0] join];
    [_r[1] join];
+    _searchDone = YES;
    @synchronized(self) {
       [_stop release];
       _stop = nil;
@@ -155,6 +181,21 @@
 {
    NSLog(@"Sol: %@", [sol description]);
    [_solutionPool addSolution: sol];
+}
+
+-(void) receiveUpperBound: (ORInt)bound
+{
+    //static __thread int bndCount = 0;
+    //id<ORObjectiveValue> pb = [[_program objective] primalBound];
+    //NSLog(@"CPRunnable(%p): received bound(%i): %i  PRIMAL WAS: %@ inside: %p", _program, ++bndCount, bound,pb,[NSThread currentThread]);
+    //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
+    [self notifyUpperBound: bound];
+}
+
+-(void) receiveLowerBound:(ORDouble)bound
+{
+    //NSLog(@"(%p) received lower bound(%p): %f", self, [NSThread currentThread],bound);
+    [self notifyLowerBound: bound];
 }
 
 -(void)cancelSearch

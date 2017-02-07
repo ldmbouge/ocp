@@ -54,7 +54,14 @@
 -(void) notifyConstraintSet: (id<ORConstraintSet>)set;
 @end
 
-@interface ORPipedRunnable : ORAbstractRunnableI<ORRunnable>
+@interface ORPipedRunnable : ORAbstractRunnableI<ORRunnable> {
+@protected
+    id<ORSignature> _sig;
+    id<ORIntInformer> _upperBoundStreamInformer;
+    id<ORDoubleInformer> _lowerBoundStreamInformer;
+    id<ORSolutionInformer> _solutionStreamInformer;
+    id<ORDoubleArray> _col;
+}
 -(id) initWithModel: (id<ORModel>)m;
 -(void) notifyUpperBound: (ORInt)bound;
 -(void) notifyLowerBound: (ORDouble)bound;

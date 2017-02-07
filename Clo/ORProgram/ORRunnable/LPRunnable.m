@@ -52,6 +52,7 @@
 
 -(void) run
 {
+    [self doStart];
     NSLog(@"Running LP runnable(%p)...", _program);
     [_program solve];
     NSLog(@"Finishing LP runnable(%p)...", _program);

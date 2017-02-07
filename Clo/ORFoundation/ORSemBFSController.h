@@ -24,4 +24,5 @@
 -(void) trust;
 -(void) fail;
 -(ORHeist*)steal;
+-(id<ORDoubleInformer>) primalBoundInformer;
 @end

@@ -32,60 +32,126 @@
 @implementation MIPDoubleVarSnapshot
 -(MIPDoubleVarSnapshot*) initMIPFloatVarSnapshot: (MIPVariableI*) v name: (ORInt) name
 {
-   self = [super init];
-   _name = name;
-   _value = [v doubleValue];
-   return self;
+    self = [super init];
+    _name = name;
+    _value = [v doubleValue];
+    return self;
 }
 -(ORUInt) getId
 {
-   return _name;
+    return _name;
 }
 -(ORDouble) doubleValue
 {
-   return _value;
+    return _value;
 }
 -(ORDouble) reducedCost
 {
-   return _reducedCost;
+    return _reducedCost;
 }
 -(ORBool) isEqual: (id) object
 {
-   if ([object isKindOfClass:[self class]]) {
-      MIPDoubleVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return (_value == other->_value) && (_reducedCost == other->_reducedCost);
-      }
-      else
-         return NO;
-   }
-   else
-      return NO;
+    if ([object isKindOfClass:[self class]]) {
+        MIPDoubleVarSnapshot* other = object;
+        if (_name == other->_name) {
+            return (_value == other->_value) && (_reducedCost == other->_reducedCost);
+        }
+        else
+            return NO;
+    }
+    else
+        return NO;
 }
 -(NSUInteger) hash
 {
-   return (_name << 16) + (ORInt) _value;
+    return (_name << 16) + (ORInt) _value;
 }
 -(NSString*) description
 {
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"float(%d) : (%f,%f)",_name,_value,_reducedCost];
-   return buf;
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"float(%d) : (%f,%f)",_name,_value,_reducedCost];
+    return buf;
 }
 
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
-   [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_reducedCost];
+    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
+    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_reducedCost];
 }
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
-   [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_reducedCost];
-   return self;
+    self = [super init];
+    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
+    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_reducedCost];
+    return self;
+}
+@end
+
+@interface MIPParameterSnapshot : NSObject {
+    ORUInt    _name;
+    ORDouble   _value;
+}
+-(MIPParameterSnapshot*) initMIPParameterSnapshot: (MIPParameterI*) v name: (ORInt) name;
+-(ORDouble) doubleValue;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation MIPParameterSnapshot
+-(MIPParameterSnapshot*) initMIPParameterSnapshot: (MIPParameterI*) v name: (ORInt) name
+{
+    self = [super init];
+    _name = name;
+    _value = [v doubleValue];
+    return self;
+}
+-(ORUInt) getId
+{
+    return _name;
+}
+-(ORDouble) doubleValue
+{
+    return _value;
+}
+-(ORBool) isEqual: (id) object
+{
+    if ([object isKindOfClass:[self class]]) {
+        MIPParameterSnapshot* other = object;
+        if (_name == other->_name) {
+            return (_value == other->_value);
+        }
+        else
+            return NO;
+    }
+    else
+        return NO;
+}
+-(NSUInteger) hash
+{
+    return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [buf appendFormat:@"param(%d) : %f",_name,_value];
+    return buf;
+}
+
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+    [aCoder encodeValueOfObjCType:@encode(ORDouble) at:&_value];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+    self = [super init];
+    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+    [aDecoder decodeValueOfObjCType:@encode(ORDouble) at:&_value];
+    return self;
 }
 @end
 
@@ -867,6 +933,10 @@
 -(ORBool) isInteger
 {
     return NO;
+}
+-(id) takeSnapshot: (ORInt) id
+{
+    return [[MIPParameterSnapshot alloc] initMIPParameterSnapshot: self name: id];
 }
 @end
 

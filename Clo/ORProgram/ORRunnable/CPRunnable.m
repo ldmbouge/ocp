@@ -117,7 +117,14 @@
 -(id<ORSignature>) signature
 {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut.lowerStreamIn.lowerStreamOut.solutionStreamOut"];
+        //_sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut.lowerStreamIn.lowerStreamOut.solutionStreamOut"];
+        ORMutableSignatureI* sig = [[ORMutableSignatureI alloc] init];
+        [sig complete];
+        [sig upperStreamIn];
+        [sig upperStreamOut];
+        [sig lowerStreamIn];
+        [sig solutionStreamOut];
+        _sig = [sig retain];
     }
     return _sig;
 }
@@ -126,10 +133,9 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    //static __thread int bndCount = 0;
-    //id<ORObjectiveValue> pb = [[_program objective] primalBound];
-    //NSLog(@"CPRunnable(%p): received bound(%i): %i  PRIMAL WAS: %@ inside: %p", _program, ++bndCount, bound,pb,[NSThread currentThread]);
-    //NSLog(@"(%p) received upper bound(%p): %i", self, [NSThread currentThread],bound);
+    static __thread int bndCount = 0;
+    id<ORObjectiveValue> pb = [[_program objective] primalBound];
+    NSLog(@"CPRunnable(%p): received bound(%i): %i  PRIMAL WAS: %@ inside: %p", self, ++bndCount, bound,pb,[NSThread currentThread]);
    id<ORObjectiveValue> nb = [ORFactory objectiveValueInt:bound minimize:YES];
    [[_program objective] tightenPrimalBound:nb];
    [nb release];
@@ -137,7 +143,10 @@
 
 -(void) receiveLowerBound:(ORDouble)bound
 {
-    //NSLog(@"(%p) received lower bound(%p): %f", self, [NSThread currentThread],bound);
+    NSLog(@"(%p) received lower bound(%p): %f", self, [NSThread currentThread],bound);
+    id<ORObjectiveValue> nb = [ORFactory objectiveValueInt:bound minimize:YES];
+    [[_program objective] tightenDualBound:nb];
+    [nb release];
 }
 
 -(void) receiveSolution:(id<ORSolution>)sol {

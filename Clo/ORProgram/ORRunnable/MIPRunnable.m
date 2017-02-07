@@ -58,7 +58,16 @@
 -(id<ORSignature>) signature
 {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut.lowerStreamIn.lowerStreamOut.solutionStreamIn"];
+        //_sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut.lowerStreamIn.lowerStreamOut.solutionStreamIn"];
+        ORMutableSignatureI* sig = [[ORMutableSignatureI alloc] init];
+        [sig complete];
+        [sig lowerStreamIn];
+        [sig lowerStreamOut];
+        [sig upperStreamIn];
+        [sig upperStreamOut];
+        [sig solutionStreamIn];
+        [sig solutionStreamOut];
+        _sig = sig;
     }
     return _sig;
 }
@@ -73,9 +82,9 @@
 
 -(void) run
 {
-   [self doStart];
    NSLog(@"Running MIP runnable(%p)...", _program);
    ORLong cpu0 = [ORRuntimeMonitor wctime];
+    [self doStart];
    [[[_program solver] boundInformer] wheneverNotifiedDo: ^(ORDouble bnd) { [self notifyUpperBound: (ORInt)bnd]; }];
    [_program solve];
    ORLong cpu1 = [ORRuntimeMonitor wctime];
@@ -102,7 +111,8 @@
 
 -(void) receiveUpperBound: (ORInt)bound
 {
-    NSLog(@"MIPRunnable(%p): received upper bound: %i", self, bound);
+    static __thread int bndCount = 0;
+    NSLog(@"MIPRunnable(%p): received bound(%i): %i inside: %p", self, ++bndCount, bound,[NSThread currentThread]);
     [[_program solver] tightenBound: bound];
 }
 

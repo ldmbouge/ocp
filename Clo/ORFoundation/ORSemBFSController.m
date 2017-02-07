@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORSemBFSController.h>
 #import <ORUtilities/ORPQueue.h>
+#import "ORConcurrencyI.h"
 
 @interface BFSKey : NSObject {
 @public
@@ -92,6 +93,8 @@
    id<ORCheckpoint>   _atRoot;
    id<ORSearchEngine> _engine;
    id<ORPost>          _model;
+   ORDouble               _bestBound;
+   id<ORDoubleInformer>   _primalBoundInformer;
 }
 - (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine posting:(id<ORPost>)model
 {
@@ -100,6 +103,8 @@
    _engine = engine;
    _model  = model;
    _k      = NULL;
+   _primalBoundInformer = [[ORInformer alloc] initORInformer];
+   _bestBound = [[[engine objective] dualBound] doubleValue];
    _buf    = [[ORPQueue alloc] init:^BOOL(BFSKey* a,BFSKey* b) {
       NSComparisonResult cr = [a->_v compare:b->_v];
       switch(cr) {
@@ -125,7 +130,9 @@
 -(id<ORSearchController>)clone
 {
    ORSemBFSController* c = [[ORSemBFSController alloc] initTheController:_tracer engine:_engine posting:_model];
-   c->_atRoot = [_atRoot grab];
+    c->_primalBoundInformer = _primalBoundInformer;
+    //[[c primalBoundInformer] wheneverNotifiedDo: ^(ORDouble val) { [[self primalBoundInformer] notifyWithFloat: val]; }];
+    c->_atRoot = [_atRoot grab];
    return c;
 }
 -(id<ORSearchController>)tuneWith:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine pItf:(id<ORPost>)pItf
@@ -245,6 +252,13 @@ static long __nbPull = 0;
       if (!isEmpty) {
          BFSKey* bestKey = [[_buf peekAtKey] retain];
          BFSNode* nd = [_buf extractBest];
+          
+          // Informer
+          if(([of isMinimization] && [[bestKey bound] intValue] > _bestBound) ||
+             (![of isMinimization] && [[bestKey bound] intValue] < _bestBound)) {
+              _bestBound = [[bestKey bound] doubleValue];
+              [[self primalBoundInformer] notifyWithFloat: _bestBound];
+          }
          
          ORStatus status = [of tightenDualBound:bestKey.bound];
          if (status != ORFailure)
@@ -300,4 +314,10 @@ static long __nbPull = 0;
    //some = some && [_cpTab[0] sizeEstimate] < 10;
    return some;
 }
+
+-(id<ORDoubleInformer>) primalBoundInformer
+{
+    return _primalBoundInformer;
+}
+
 @end

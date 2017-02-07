@@ -10,14 +10,7 @@
 #import "ORRunnable.h"
 #import "ORConcurrencyI.h"
 
-@implementation ORPipedRunnable {
-@protected
-    id<ORSignature> _sig;
-    id<ORIntInformer> _upperBoundStreamInformer;
-    id<ORDoubleInformer> _lowerBoundStreamInformer;
-    id<ORSolutionInformer> _solutionStreamInformer;
-    id<ORDoubleArray> _col;
-}
+@implementation ORPipedRunnable
 
 -(id) initWithModel: (id<ORModel>)m;
 {
@@ -52,19 +45,21 @@
 
 -(void) addUpperBoundStreamConsumer:(id<ORUpperBoundStreamConsumer>)c
 {
-    NSLog(@"Adding upper bound consumer...");
+    //NSLog(@"(%p) Adding upper bound consumer => (%p)...", self, c);
     [_upperBoundStreamInformer wheneverNotifiedDo: ^(ORInt b) { [c receiveUpperBound: b]; }];
 }
 
 -(void) addLowerBoundStreamConsumer:(id<ORLowerBoundStreamConsumer>)c
 {
-    NSLog(@"Adding lower bound consumer...");
-    [_lowerBoundStreamInformer wheneverNotifiedDo: ^(ORDouble b) { [c receiveLowerBound: b]; }];
+    //NSLog(@"(%p) Adding lower bound consumer => (%p)...", self, c);
+    [_lowerBoundStreamInformer wheneverNotifiedDo: ^(ORDouble b) {
+        [c receiveLowerBound: b];
+    }];
 }
 
 -(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c
 {
-    NSLog(@"Adding solution stream consumer...");
+    //NSLog(@"Adding solution stream consumer...");
     [_solutionStreamInformer wheneverNotifiedDo: ^(id<ORSolution> s) { [c receiveSolution: s]; }];
 }
 
@@ -93,10 +88,10 @@
 
 -(id<ORIntInformer>) upperBoundStreamInformer { return _upperBoundStreamInformer; }
 -(id<ORDoubleInformer>) lowerBoundStreamInformer { return _lowerBoundStreamInformer; }
--(void) receiveUpperBound: (ORInt)bound {}
--(void) receiveLowerBound: (ORDouble)bound {}
+-(void) receiveUpperBound: (ORInt)bound { assert(NO); }
+-(void) receiveLowerBound: (ORDouble)bound { assert(NO); }
 -(id<ORSolutionInformer>) solutionStreamInformer { return nil; }
--(void) receiveSolution: (id<ORSolution>)sol {}
+-(void) receiveSolution: (id<ORSolution>)sol { assert(NO); }
 -(id<ORConstraintSetInformer>) constraintSetInformer { return nil; }
 -(void) receiveConstraintSet: (id<ORConstraintSet>)set {}
 -(void) addConstraintSetConsumer: (id<ORConstraintSetConsumer>)c {}

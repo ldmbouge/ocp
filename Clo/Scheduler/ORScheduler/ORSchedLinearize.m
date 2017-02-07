@@ -90,7 +90,9 @@ indexVars: (id<ORIntVar>***)y horizon: (ORInt)horizon;
    id<ORIntVar> sx0 = [[precedesCstr before] getStartVar];
    ORInt d0 = [[[precedesCstr before] duration] up];
    id<ORIntVar> sx1 = [[precedesCstr after] getStartVar];
-   [_model addConstraint: [[sx0 plus: @(d0)] leq: sx1]];
+    id<ORConstraint> c = [ORFactory algebraicConstraint: _model expr: [[sx0 plus: @(d0)] leq: sx1]];
+    [_model addConstraint: c];
+   [[[_model modelMappings] tau] set: [NSArray arrayWithObject: c] forKey: precedesCstr];
 }
 //-(void) visitTaskDuration: (id<ORTaskDuration>) cstr
 //{

@@ -80,6 +80,31 @@
     acceptsConstraintSet = [sig acceptsConstraintSet];
 }
 
+-(void) compose: (id<ORSignature>)sig
+{
+    isComplete = isComplete || [sig isComplete];
+    providesLowerBound = providesLowerBound || [sig providesLowerBound];
+    providesLowerBoundPool = providesLowerBoundPool|| [sig providesLowerBoundPool];
+    providesLowerBoundStream = providesLowerBoundStream || [sig providesLowerBoundStream];
+    providesUpperBound = providesUpperBound|| [sig providesUpperBound];
+    providesUpperBoundPool = providesUpperBoundPool|| [sig providesUpperBoundPool];
+    providesUpperBoundStream = providesUpperBoundStream || [sig providesUpperBoundStream];
+    providesSolutionStream = providesSolutionStream || [sig providesSolutionStream];
+    providesColumn = providesColumn || [sig providesColumn];
+    providesConstraint = providesConstraint || [sig providesConstraint];
+    providesConstraintSet = providesConstraintSet || [sig providesConstraintSet];
+    acceptsLowerBound = acceptsLowerBound || [sig acceptsLowerBound];
+    acceptsLowerBoundPool = acceptsLowerBoundPool || [sig acceptsLowerBoundPool];
+    acceptsLowerBoundStream = acceptsLowerBoundStream || [sig acceptsLowerBoundStream];
+    acceptsUpperBound = acceptsUpperBound || [sig acceptsUpperBound];
+    acceptsUpperBoundPool = acceptsUpperBoundPool || [sig acceptsUpperBoundPool];
+    acceptsUpperBoundStream = acceptsUpperBoundStream || [sig acceptsUpperBoundStream];
+    acceptsSolutionStream = acceptsSolutionStream || [sig acceptsSolutionStream];
+    acceptsColumn = acceptsColumn || [sig acceptsColumn];
+    acceptsConstraint = acceptsConstraint || [sig acceptsConstraint];
+    acceptsConstraintSet = acceptsConstraintSet || [sig acceptsConstraintSet];
+}
+
 -(void) clear {
     isComplete = NO;
     providesLowerBound = NO;

@@ -51,6 +51,7 @@
 
 -(void) run
 {
+    [self doStart];
     [_bounding run];
     _bestSol = [_bounding bestSolution];
     [_primary performOnStart:^{

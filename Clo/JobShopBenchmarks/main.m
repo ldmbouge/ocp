@@ -50,7 +50,7 @@ int main(int argc, const char * argv[]) {
         BOOL doCPSCP = NO;
         BOOL doLNS = NO;
         ORInt numThreads = 2;
-	ORInt tL = 300;
+        ORInt tL = 300;
         
         if([args containsObject: @"-cp"]) doCP = YES;
         if([args containsObject: @"-mip"]) doMIP = YES;
@@ -79,8 +79,6 @@ int main(int argc, const char * argv[]) {
         char home[512];
 	strcpy(home,getenv("HOME"));
 	char  fNameBuf[1024];
-       
-       
         
         NSString* path = [args lastObject];
 
@@ -205,6 +203,9 @@ int main(int argc, const char * argv[]) {
                 NSLog(@"makespan = [%d,%d] \n",[cp min: makespan],[cp max: makespan]);
             }];
             id<ORRunnable> r1 = [ORFactory MIPRunnable: lm numThreads:numThreads/2];
+            
+            NSLog(@"CP: %p, MIP: %p", r0, r1);
+            
             id<ORRunnable> r =  [ORFactory composeCompleteParallel: r0 with: r1];
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [r run];
@@ -265,6 +266,10 @@ int main(int argc, const char * argv[]) {
                   }];
             }];
             id<ORRunnable> r1 = [ORFactory MIPRunnable: lm numThreads:numThreads/2];
+            
+            NSLog(@"LNS: %p, MIP: %p", r0, r1);
+
+            
             id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
             [r run];
             ORLong timeEnd = [ORRuntimeMonitor wctime];
@@ -321,8 +326,8 @@ int main(int argc, const char * argv[]) {
                      printf("R(%d)",[NSThread threadID]);fflush(stdout);
                   }];
             }];
-            strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
-            FILE* outFile = fopen(fNameBuf, "w+");
+            //strcat(strcpy(fNameBuf, home),"/Desktop/cpout.txt");
+            //FILE* outFile = fopen(fNameBuf, "w+");
             ORLong timeStart = [ORRuntimeMonitor wctime];
             id<ORRunnable> r1 = [ORFactory CPRunnable: model numThreads:numThreads/2 solve: ^(id<CPCommonProgram> program){
                 id<CPProgram,CPScheduler> cp = (id<CPProgram,CPScheduler>)program;
@@ -335,13 +340,15 @@ int main(int argc, const char * argv[]) {
                 }];
                 [cp label: makespan];
                 NSLog(@"---------------------------------------------(%p) PURE makespan = [%d,%d] (THREAD:%d) %p \n",cp, [cp min: makespan],[cp max: makespan],[NSThread threadID],[NSThread currentThread]);
-                fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
-                fflush(outFile);
+                //fprintf(outFile, "%f %i\n", ([ORRuntimeMonitor wctime] - timeStart) / 1000.0, [cp min: makespan]);
+                //fflush(outFile);
             }];
+            
+            NSLog(@"CP: %p, LNS: %p", r1, r0);
             
             id<ORRunnable> r = [ORFactory composeCompleteParallel: r0 with: r1];
             [r run];
-            fclose(outFile);
+            //fclose(outFile);
             ORLong timeEnd = [ORRuntimeMonitor wctime];
             NSLog(@"Time: %lld",timeEnd - timeStart);
             id<ORSolution> optimum = [r bestSolution];

@@ -47,6 +47,10 @@
 {
    return nil;
 }
+-(void) setTimeLimit: (double)limit
+{
+    [_MIPsolver setTimeLimit: limit];
+}
 -(void) close
 {}
 
@@ -98,6 +102,8 @@
 }
 -(id<ORSolution>) captureSolution
 {
+   if([_model conformsToProtocol: @protocol(ORParameterizedModel)])
+       return [ORFactory parameterizedSolution: (id<ORParameterizedModel>)_model solver: self];
    return [ORFactory solution: _model solver: self];
 }
 -(id) trackObject: (id) obj

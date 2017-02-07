@@ -121,15 +121,20 @@
     // Lookup constraints wrt this model
     NSMutableArray* myCstrs = [[NSMutableArray alloc] init];
     for(id<ORConstraint> cstr in cstrs) {
-        NSArray* tc = [[m tau] get: cstr];
+        id tc = [[m tau] get: cstr];
+        while([[m tau] get: tc] != nil) tc = [[m tau] get: tc];
         if(tc == nil) [myCstrs addObject: cstr];
-        else [myCstrs addObjectsFromArray: tc];
+        else if([tc isKindOfClass: [NSArray class]]) [myCstrs addObjectsFromArray: tc];
+        else if([tc conformsToProtocol: @protocol(ORExpr)])
+            [myCstrs addObject: [ORFactory algebraicConstraint: m expr: tc]];
+        else [myCstrs addObject: tc];
     }
     
     id<ORParameterizedModel> relaxedModel = [self softify: m constraints: myCstrs];
     id<ORIntRange> slackRange = RANGE(relaxedModel, 0, (ORInt)myCstrs.count-1);
     id<ORIdArray> slacks = [ORFactory idArray:  relaxedModel range: slackRange with: ^id(ORInt i) {
         id<ORSoftConstraint> c = [[relaxedModel tau] get: [myCstrs objectAtIndex: i]];
+        while([[relaxedModel tau] get: c] != nil) c = [[relaxedModel tau] get: c];
         return [c slack];
     }];
     id<ORExpr> slackSum = [ORFactory sum: relaxedModel over: slackRange suchThat: nil of: ^id<ORExpr>(ORInt i) {

@@ -86,6 +86,7 @@
 -(id) init;
 -(id) initFromSignature: (id<ORSignature>)sig;
 -(void) copy: (id<ORSignature>)sig;
+-(void) compose: (id<ORSignature>)sig;
 -(void) clear;
 -(ORMutableSignatureI*) complete;
 -(ORMutableSignatureI*) upperOut;

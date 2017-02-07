@@ -237,7 +237,7 @@
     id<ORASolver> program = [self solverForModel: _model];
     [program close];
     ORFloat cutoff = 0.0005;
-    ORInt noImproveLimit = 30;//30;
+    ORInt noImproveLimit = 30;
     ORInt noImprove = 0;
     ORInt timeIncrease = 0;
     NSTimeInterval remainingTime = 0;
@@ -246,13 +246,16 @@
     _iters = 0;
     while(pi > cutoff) {
         NSDate* t1 = [NSDate date];
-        remainingTime = (_subgradientTimeLimit > 0) ? _subgradientTimeLimit - [t1 timeIntervalSinceDate: t0]: DBL_MAX;
-        ORFloat programTimeLimit = MIN(fabs(_solverTimeLimit), fabs(remainingTime));
-        if(programTimeLimit < 0) programTimeLimit = 0;
         [[program solutionPool] emptyPool];
-        //if([program respondsToSelector: @selector(setTimeLimit:)]) [program setTimeLimit: programTimeLimit];
+        if([program respondsToSelector: @selector(setTimeLimit:)]) [program setTimeLimit: 5.0];
         [self solveIt: program];
         _iters++;
+        
+//        [lambdas enumerateWith:^(id obj, ORInt idx) {
+//            id<ORRealParam> lambda = obj;
+//            ORDouble val = [(id<MIPProgram>)program paramValue: lambda];
+//            NSLog(@"lambda[%i] value: %lf", idx, val);
+//        }];
         
         id<ORParameterizedSolution> sol = (id<ORParameterizedSolution>)[[program solutionPool] best];
         id<ORObjectiveValue> objValue = (id<ORObjectiveValue>)[sol objectiveValue];
@@ -260,8 +263,9 @@
         
         __block BOOL satisfied = YES;
         slackSum = 0.0;
-        [slacks enumerateWith:^(id<ORRealVar> obj, ORInt idx) {
-            double s = [sol doubleValue: obj];
+        [slacks enumerateWith:^(id<ORVar> obj, ORInt idx) {
+            ORDouble s = [obj conformsToProtocol: @protocol(ORIntVar)] ?
+                [sol intValue: (id<ORIntVar>)obj] : [sol doubleValue: (id<ORRealVar>)obj];
             slackSum += s * s;
             if(s > 0) satisfied = NO;
         }];
@@ -275,33 +279,15 @@
             [self notifyLowerBound: _bestBound];
             [ORConcurrency pumpEvents];
             NSLog(@"new bound: %f", _bestBound);
-            if(satisfied &&
-               [[bestSol objectiveValue] doubleValue] == _bestBound &&
-               [program respondsToSelector: @selector(bestObjectiveBound)]) break;
+//            if(satisfied &&
+//               [[bestSol objectiveValue] doubleValue] == _bestBound &&
+//               [program respondsToSelector: @selector(bestObjectiveBound)]) break;
         }
         else if(++noImprove > noImproveLimit) { pi /= 2.0; noImprove = 0; }
-        else {
-            ORFloat newTime;
-            if(timeIncrease++ < 3) newTime = _solverTimeLimit * 2;
-            else newTime = DBL_MAX;
-            
-            //if(_solverTimeLimit > 0.0 && [program respondsToSelector: @selector(setTimeLimit:)])
-            //    [program setTimeLimit: newTime];
-            [self setSolverTimeLimit: newTime];
-        }
+        
         if(_bestSolution == nil) _bestSolution = sol;
         
-        t1 = [NSDate date];
-        remainingTime = (_subgradientTimeLimit > 0) ? _subgradientTimeLimit - [t1 timeIntervalSinceDate: t0]: DBL_MAX;
-        if(_subgradientTimeLimit > 0 && remainingTime <= 0) break;
-        
         //if(satisfied && [program dualityGap] == 0.0) break;
-        
-        // Special case: Slacks are 0, but we stopped due to time limit.
-        if(satisfied && _solverTimeLimit > 0 && [program respondsToSelector: @selector(setTimeLimit:)]) {
-            [self setSolverTimeLimit: -DBL_MAX];
-            continue;
-        }
         
         ORFloat stepSize = pi * (_ub - bound) / slackSum;
         
@@ -309,18 +295,16 @@
             id<ORRealParam> lambda = obj;
             ORDouble value = [sol paramValue: lambda];
             id<ORVar> slack = [slacks at: idx];
-            ORFloat newValue = MAX(0, value + stepSize * [sol doubleValue: (id<ORRealVar>)slack]);
-            [(id<CPProgram>)program param: lambda setValue: newValue];
-            //NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, [sol floatValue: slack]);
+            ORDouble slackVal = [slack conformsToProtocol: @protocol(ORIntVar)] ?
+                [sol intValue: (id<ORIntVar>)slack] : [sol doubleValue: (id<ORRealVar>)slack];
+            ORDouble newValue = MAX(0, value + stepSize * slackVal);
+            [program param: lambda setValue: newValue];
+            NSLog(@"New lambda is[%i]: %lf -- slack: %f", idx, newValue, slackVal);
         }];
         
         // Check if done
         if(satisfied) break;
     }
-    NSDate* t1 = [NSDate date];
-    _runtime = [t1 timeIntervalSinceDate: t0];
-    NSLog(@"Best Bound: %f", _bestBound);
-    NSLog(@"remaining slack: %f", slackSum);
     return bestSol;
 }
 

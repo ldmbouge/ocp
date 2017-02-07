@@ -180,6 +180,19 @@ BOOL _alreadyAdded;
 {
     _result = v;
 }
+-(void) visitIntParam: (id<ORIntParam>) v
+{
+    _result = v;
+}
+-(void) visitRealParam: (id<ORRealParam>) v
+{
+    _result = v;
+}
+-(void) visitRealWeightedVar: (id<ORWeightedVar>)c;
+{
+    _result = c;
+}
+
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
     _result = c;

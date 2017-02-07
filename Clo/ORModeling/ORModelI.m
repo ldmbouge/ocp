@@ -817,7 +817,7 @@
 -(id<ORVarArray>) slacks {
     NSArray* softCstrs = [self softConstraints];
     id<ORIntRange> slackRange = RANGE(self, 0, (ORInt)softCstrs.count-1);
-    id<ORVarArray> slacks = (id<ORIntVarArray>)[ORFactory idArray: self range: slackRange with: ^id(ORInt i) {
+    id<ORVarArray> slacks = (id<ORVarArray>)[ORFactory idArray: self range: slackRange with: ^id(ORInt i) {
         id<ORSoftConstraint> c = [softCstrs objectAtIndex: i];
         return [c slack];
     }];

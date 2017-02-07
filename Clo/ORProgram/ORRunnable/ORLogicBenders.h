@@ -23,7 +23,6 @@ typedef id<ORConstraintSet> (^ORSolution2ConstraintSet)(id<ORSolution>);
     id<ORRunnable> _master;
     ORSolution2ConstraintSet _slaveBlock;
     id<ORSolution> _bestSol;
-    id<ORSignature> _sig;
 
     NSTimeInterval timeInMaster;
     NSTimeInterval timeInSlave;
