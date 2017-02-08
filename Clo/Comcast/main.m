@@ -96,7 +96,7 @@ int main(int argc, const char * argv[])
     id<CPProgram> cp = [ORFactory createCPProgram: model];
     //NSLog(@"Model %@",model);
     ORTimeval now = [ORRuntimeMonitor now];
-    id<CPHeuristic> h = [cp createFF];
+    id<CPHeuristic> h = [cp createABS];
     [cp solve:^{
         [cp labelHeuristic:h];
         id<ORSolution> s = [cp captureSolution];
