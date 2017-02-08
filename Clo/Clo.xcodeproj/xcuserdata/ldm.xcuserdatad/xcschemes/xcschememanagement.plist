@@ -54,6 +54,11 @@
 			<key>orderHint</key>
 			<integer>147</integer>
 		</dict>
+		<key>Comcast.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>150</integer>
+		</dict>
 		<key>CuttingStock.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -153,6 +158,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>146</integer>
+		</dict>
+		<key>RelaxedParallelCombinatorExample.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>149</integer>
 		</dict>
 		<key>SMTLIB2.xcscheme</key>
 		<dict>
@@ -762,6 +772,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>373A76DB1DF8956F0041C4A5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>374493D01DF4D27F00FAE3E2</key>
 		<dict>
 			<key>primary</key>
@@ -773,6 +788,11 @@
 			<true/>
 		</dict>
 		<key>37A715C716FB93F900E02DC6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>37B00FC91E49FA6E00BE9B23</key>
 		<dict>
 			<key>primary</key>
 			<true/>
