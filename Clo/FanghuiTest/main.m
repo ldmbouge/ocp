@@ -345,7 +345,7 @@ int main(int argc, const char * argv[]) {
                        uint32 count = 0;
                        for(int nbit = 0; nbit < 8; nbit++){
                           BOOL val = (i >> count++) & 1;
-                          [cp labelBV:o[s] at:nbit with:val];
+                          [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails. 
                        }
                     }];
                  } onFailure:^(ORInt i) {
