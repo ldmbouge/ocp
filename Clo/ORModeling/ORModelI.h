@@ -51,6 +51,7 @@
 -(id<ORObjectiveFunction>)objective;
 -(id<ORIntVarArray>)intVars;
 -(id<ORRealVarArray>)realVars;
+-(id<ORBitVarArray>)bitVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) mutables;

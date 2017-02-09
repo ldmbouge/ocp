@@ -7,7 +7,7 @@
 #import "ORCmdLineArgs.h"
 
 #define EXPECTKEY
-#define KNOWNKEYS 7
+#define KNOWNKEYS 2
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -25,6 +25,25 @@ uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x6
    ,0x70 ,0x3e ,0xb5 ,0x66 ,0x48 ,0x03 ,0xf6 ,0x0e ,0x61 ,0x35 ,0x57 ,0xb9 ,0x86 ,0xc1 ,0x1d ,0x9e
    ,0xe1 ,0xf8 ,0x98 ,0x11 ,0x69 ,0xd9 ,0x8e ,0x94 ,0x9b ,0x1e ,0x87 ,0xe9 ,0xce ,0x55 ,0x28 ,0xdf
    ,0x8c ,0xa1 ,0x89 ,0x0d ,0xbf ,0xe6 ,0x42 ,0x68 ,0x41 ,0x99 ,0x2d ,0x0f ,0xb0 ,0x54 ,0xbb ,0x16};
+
+uint32 x[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
+   ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
+   ,0xb7 ,0xfd ,0x93 ,0x26 ,0x36 ,0x3f ,0xf7 ,0xcc ,0x34 ,0xa5 ,0xe5 ,0xf1 ,0x71 ,0xd8 ,0x31 ,0x15
+   ,0x04 ,0xc7 ,0x23 ,0xc3 ,0x18 ,0x96 ,0x05 ,0x9a ,0x07 ,0x12 ,0x80 ,0xe2 ,0xeb ,0x27 ,0xb2 ,0x75
+   ,0x09 ,0x83 ,0x2c ,0x1a ,0x1b ,0x6e ,0x5a ,0xa0 ,0x52 ,0x3b ,0xd6 ,0xb3 ,0x29 ,0xe3 ,0x2f ,0x84
+   ,0x53 ,0xd1 ,0x00 ,0xed ,0x20 ,0xfc ,0xb1 ,0x5b ,0x6a ,0xcb ,0xbe ,0x39 ,0x4a ,0x4c ,0x58 ,0xcf
+   ,0xd0 ,0xef ,0xaa ,0xfb ,0x43 ,0x4d ,0x33 ,0x85 ,0x45 ,0xf9 ,0x02 ,0x7f ,0x50 ,0x3c ,0x9f ,0xa8
+   ,0x51 ,0xa3 ,0x40 ,0x8f ,0x92 ,0x9d ,0x38 ,0xf5 ,0xbc ,0xb6 ,0xda ,0x21 ,0x10 ,0xff ,0xf3 ,0xd2
+   ,0xcd ,0x0c ,0x13 ,0xec ,0x5f ,0x97 ,0x44 ,0x17 ,0xc4 ,0xa7 ,0x7e ,0x3d ,0x64 ,0x5d ,0x19 ,0x73
+   ,0x60 ,0x81 ,0x4f ,0xdc ,0x22 ,0x2a ,0x90 ,0x88 ,0x46 ,0xee ,0xb8 ,0x14 ,0xde ,0x5e ,0x0b ,0xdb
+   ,0xe0 ,0x32 ,0x3a ,0x0a ,0x49 ,0x06 ,0x24 ,0x5c ,0xc2 ,0xd3 ,0xac ,0x62 ,0x91 ,0x95 ,0xe4 ,0x79
+   ,0xe7 ,0xc8 ,0x37 ,0x6d ,0x8d ,0xd5 ,0x4e ,0xa9 ,0x6c ,0x56 ,0xf4 ,0xea ,0x65 ,0x7a ,0xae ,0x08
+   ,0xba ,0x78 ,0x25 ,0x2e ,0x1c ,0xa6 ,0xb4 ,0xc6 ,0xe8 ,0xdd ,0x74 ,0x1f ,0x4b ,0xbd ,0x8b ,0x8a
+   ,0x70 ,0x3e ,0xb5 ,0x66 ,0x48 ,0x03 ,0xf6 ,0x0e ,0x61 ,0x35 ,0x57 ,0xb9 ,0x86 ,0xc1 ,0x1d ,0x9e
+   ,0xe1 ,0xf8 ,0x98 ,0x11 ,0x69 ,0xd9 ,0x8e ,0x94 ,0x9b ,0x1e ,0x87 ,0xe9 ,0xce ,0x55 ,0x28 ,0xdf
+   ,0x8c ,0xa1 ,0x89 ,0x0d ,0xbf ,0xe6 ,0x42 ,0x68 ,0x41 ,0x99 ,0x2d ,0x0f ,0xb0 ,0x54 ,0xbb ,0x16};
+
+int hw[256] = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8};
 
 
 uint32 expect_key[] = {197,79,167,90,39,16,175,2,233,69,53,43,101,2,108,155};
@@ -46,6 +65,8 @@ void shiftRows();
 void mixColumns();
 void subBytes();
 void sideChannelCon();
+void generateLists();
+void printDebug();
 
 //Global Variables
 id<ORModel> model;
@@ -73,7 +94,7 @@ uint32 i_zero = 0x00;
 id<ORBitVar> zero;
 int s_SC[64];
 UInt32 num_checks = 0;
-
+unsigned int Plaintext[] = {197,174,245,236,70,202,43,217,26,99,198,174,222,3,132,138};
 int elevator[8][256];
 int elevator_1[] = {0,1};
 int elevator_2[] = {1,2,0,3};
@@ -85,6 +106,12 @@ int elevator_7[] = {63, 64, 62, 65, 61, 66, 60, 67, 59, 68, 58, 69, 57, 70, 56, 
 int elevator_8[] = {127, 128, 126, 129, 125, 130, 124, 131, 123, 132, 122, 133, 121, 134, 120, 135, 119, 136, 118, 137, 117, 138, 116, 139, 115, 140, 114, 141, 113, 142, 112, 143, 111, 144, 110, 145, 109, 146, 108, 147, 107, 148, 106, 149, 105, 150, 104, 151, 103, 152, 102, 153, 101, 154, 100, 155, 99, 156, 98, 157, 97, 158, 96, 159, 95, 160, 94, 161, 93, 162, 92, 163, 91, 164, 90, 165, 89, 166, 88, 167, 87, 168, 86, 169, 85, 170, 84, 171, 83, 172, 82, 173, 81, 174, 80, 175, 79, 176, 78, 177, 77, 178, 76, 179, 75, 180, 74, 181, 73, 182, 72, 183, 71, 184, 70, 185, 69, 186, 68, 187, 67, 188, 66, 189, 65, 190, 64, 191, 63, 192, 62, 193, 61, 194, 60, 195, 59, 196, 58, 197, 57, 198, 56, 199, 55, 200, 54, 201, 53, 202, 52, 203, 51, 204, 50, 205, 49, 206, 48, 207, 47, 208, 46, 209, 45, 210, 44, 211, 43, 212, 42, 213, 41, 214, 40, 215, 39, 216, 38, 217, 37, 218, 36, 219, 35, 220, 34, 221, 33, 222, 32, 223, 31, 224, 30, 225, 29, 226, 28, 227, 27, 228, 26, 229, 25, 230, 24, 231, 23, 232, 22, 233, 21, 234, 20, 235, 19, 236, 18, 237, 17, 238, 16, 239, 15, 240, 14, 241, 13, 242, 12, 243, 11, 244, 10, 245, 9, 246, 8, 247, 7, 248, 6, 249, 5, 250, 4, 251, 3, 252, 2, 253, 1, 254, 0, 255};
 
 int prob[] = {7, 11, 13, 14, 19, 21, 22, 25, 26, 28, 31, 35, 37, 38, 41, 42, 44, 47, 49, 50, 52, 55, 56, 59, 61, 62, 67, 69, 70, 73, 74, 76, 79, 81, 82, 84, 87, 88, 91, 93, 94, 97, 98, 100, 103, 104, 107, 109, 110, 112, 115, 117, 118, 121, 122, 124, 131, 133, 134, 137, 138, 140, 143, 145, 146, 148, 151, 152, 155, 157, 158, 161, 162, 164, 167, 168, 171, 173, 174, 176, 179, 181, 182, 185, 186, 188, 193, 194, 196, 199, 200, 203, 205, 206, 208, 211, 213, 214, 217, 218, 220, 224, 227, 229, 230, 233, 234, 236, 241, 242, 244, 248, 15, 23, 27, 29, 30, 39, 43, 45, 46, 51, 53, 54, 57, 58, 60, 71, 75, 77, 78, 83, 85, 86, 89, 90, 92, 99, 101, 102, 105, 106, 108, 113, 114, 116, 120, 135, 139, 141, 142, 147, 149, 150, 153, 154, 156, 163, 165, 166, 169, 170, 172, 177, 178, 180, 184, 195, 197, 198, 201, 202, 204, 209, 210, 212, 216, 225, 226, 228, 232, 240, 3, 5, 6, 9, 10, 12, 17, 18, 20, 24, 33, 34, 36, 40, 48, 63, 65, 66, 68, 72, 80, 95, 96, 111, 119, 123, 125, 126, 129, 130, 132, 136, 144, 159, 160, 175, 183, 187, 189, 190, 192, 207, 215, 219, 221, 222, 231, 235, 237, 238, 243, 245, 246, 249, 250, 252, 1, 2, 4, 8, 16, 32, 64, 127, 128, 191, 223, 239, 247, 251, 253, 254, 0, 255};
+
+int p_list[32][256];
+int p_count[32];
+int p_min[32];
+int p_max[32];
+
 
 int main(int argc, const char * argv[]) {
    
@@ -98,8 +125,6 @@ int main(int argc, const char * argv[]) {
    
    uint32 rconstant[] = {1,2,4,8,16,32,64,128,27,54};
    
-   uint32 Plaintext[] = {197,174,245,236,70,202,43,217,26,99,198,174,222,3,132,138};
-   
    uint32 cipher[] = {176,88,179,224,18,226,231,218,39,76,161,2,20,119,14,183};
    
    //uint32 cipher2[] = {4,79,253,149,226,60,238,192,17,123,136,192,248,95,102,123};
@@ -107,6 +132,15 @@ int main(int argc, const char * argv[]) {
    int totalstates = 0;
    
    error_count = 0;
+   
+   for(int i = 0; i < 32; i++){
+      p_count[i] = 0;
+      p_min[i] = 1000;
+      p_max[i] = -1;
+      for(int j = 0; j < 256; j++){
+         p_list[i][j] = -1;
+      }
+   }
    
    for(int i = 0; i < 8; i++)
       for(int j = 0; j < 256; j++)
@@ -150,7 +184,7 @@ int main(int argc, const char * argv[]) {
    
    //Initial State variables set to plaintext values
    for(int w = 0; w < 16; w++)
-      states[0][w] = [ORFactory bitVar: model low :&Plaintext[w] up :&Plaintext[w] bitLength :8];
+      states[0][w] = [ORFactory bitVar: model low :Plaintext + w up :Plaintext + w bitLength :8];
    
    //Initialize the remaining State variables
    
@@ -254,82 +288,90 @@ int main(int argc, const char * argv[]) {
    //[model add: [miniVar eq: @(10)]];
    
    
-   id<ORIdArray> iv = [ORFactory intVarArray:model range:RANGE(model,0,error_count*2 - 1)];
-   for(ORUInt i = 0;i< error_count*2;i++)
-      iv[i] = errorPtr[i];
+//   id<ORIdArray> iv = [ORFactory intVarArray:model range:RANGE(model,0,error_count*2 - 1)];
+//   for(ORUInt i = 0;i< error_count*2;i++)
+//      iv[i] = errorPtr[i];
+   id<ORIdArray> iv = [model intVars];
    
    // id<ORIdArray> o = [ORFactory idArray:model range:[[ORIntRangeI alloc] initORIntRangeI:0 up:31]];
    
    
-   id<ORIntRange> R = [[ORIntRangeI alloc] initORIntRangeI:0 up:47];
+   id<ORIntRange> R = [[ORIntRangeI alloc] initORIntRangeI:0 up:31];
    //  id<ORIntRange> testR = [[ORIntRangeI alloc] initORIntRangeI:0 up:(32*8)-1];
    
-   id<ORBitVarArray> o = [ORFactory bitVarArray:model range:R];
+   id<ORBitVarArray> o = [CPFactory bitVarArray:model range: R];
    for(ORInt k=0;k <= 15;k++)
       [o set:keys[0][k] at:k];
    
    for(ORInt k=0;k <= 15;k++)
       [o set:states[1][k] at:(k+16)];
    
-   for(ORInt k=0;k <= 15;k++)
-      [o set:states[2][k] at:(k+32)];
+   id<ORBitVarArray> av = [model bitVars];
    
-   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
-   
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController proto]];
+   generateLists();
+   printDebug();
    ORLong searchStart = [ORRuntimeMonitor wctime];
    [cp solve:^(){
       NSLog(@"Search Started: ;-)");
-         //NSLog(@"Minivar: %@", miniVar);
+      //NSLog(@"Minivar: %@", miniVar);
       
       [cp forall:R suchThat:^ORBool(ORInt i) {
          return [cp domsize: o[i]] > 0;
       } orderedBy:^ORInt(ORInt i) {
-         return -i;
+         //return -i;
+         return ((4 - abs(4 - s_SC[i])) << 10) - i; // [current best]
       } do:^(ORInt s) {
          ORUInt size = [cp domsize:o[s]];
-         id<ORIntRange> S = [ORFactory intRange:cp low:0 up:((1 << size) - 1)];
-         ORUInt fixedHW = 8 - size;
-
+         assert(size != 0);
+         //id<ORIntRange> S = [ORFactory intRange:cp low:0 up:((1 << size) - 1)];
+         id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
+         //NSLog(@"var: %d p_count: %d", s, p_count[s]);
+         
+         //int fixedHW = 8 - size;
          [cp tryall:S suchThat:^ORBool(ORInt k) {
-            ORInt i = elevator[size-1][k];
-            //Calculate hamming weight
-            i = i - ((i>>1) & 0x55555555);
-            i = (i & 0x33333333) + ((i>>2) & 0x33333333);
-            int count = ((i + (i>>4) & 0xF0F0F0F) * 0x1010101) >> 24;
-            //NSLog(@"integer: %d count: %d", i, count);
-            return (fixedHW + count) <= (s_SC[s] + 1) && (fixedHW + count) >= (s_SC[s] - 1) ;
-            //return true;
+            return true;
          }
+          orderedBy:^ORDouble(ORInt z) {
+             return abs(z - ((p_max[s] - p_min[s])/3)); //[current best]
+          }
                  in:^(ORInt k) {
-                    ORInt i = elevator[size-1][k];
+                    assert(s >= 0  && s <= 47);
+                    ORInt i = p_list[s][k]; //elevator[size-1][k];
                     
                     [cp atomic:^{
                        uint32 count = 0;
                        for(int nbit = 0; nbit < 8; nbit++){
-                          if([cp memberBit:nbit value:YES in:o[s]]){
-                             BOOL val = (i >> count++) & 1;
-                             [cp labelBV:o[s] at:nbit with:val];
-                          }
+                          BOOL val = (i >> count++) & 1;
+                          [cp labelBV:o[s] at:nbit with:val];
                        }
                     }];
                  } onFailure:^(ORInt i) {
                     //Do Nothing
                  }];
       }];
-      //id<ORSolution> sol = [[cp solutionPool] best];
+
+      // label "everything else"
+      for(id<ORBitVar> bvk in av)
+         [cp labelUpFromLSB:bvk];
       [cp labelArrayFF:iv];
       
       ORLong searchStop = [ORRuntimeMonitor wctime];
       ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
       @autoreleasepool {
+         
          ORInt tid = [NSThread threadID];
-         for(int i = 0; i < 16; i++)
-            NSLog(@"[thread:%d] %@",tid,[cp stringValue:keys[0][i]]);
+         /*
+          for(int i = 0; i < 16; i++)
+          NSLog(@"[thread:%d] %@",tid,[cp stringValue:keys[0][i]]);
+          */
+         assert([cp ground]  == YES);
          NSLog(@"[thread:%d]     Search Time (s): %f",tid,elapsed);
          NSLog(@"[thread:%d] Objective Function : %@",tid,[cp objectiveValue]);
          // NSLog(@"    Number of check: %d",num_checks);
+         
       }
    }];
    ORLong searchStop = [ORRuntimeMonitor wctime];
@@ -582,4 +624,57 @@ void xtimes(id<ORBitVar> a, id<ORBitVar> b){
    [model add: [ORFactory bit:temp shiftLBy:1 eq:shift]];
    [model add: [ORFactory bit:judge times:xor1b eq:result]];
    [model add: [ORFactory bit:result bxor:shift eq:b]];
+}
+
+void generateLists(){
+   for (int v = 0; v < 32; v++){
+      for(int k = 0; k < 256; k++){
+         ORInt i = elevator[7][k];
+         ORInt test = Plaintext[v % 16] ^ i;
+         
+         int count2 = hw[test];
+         int count = hw[i];
+         ORInt var = (v % 16) + (1 - (v / 16)) * 16;
+         
+         bool testb = true;
+         bool testc = true;
+         
+         if(v >= 16){
+            int sbstate = hw[s[i]];
+            testb = (sbstate <= (s_SC[v + 16] + 1) && sbstate >= (s_SC[v + 16] - 1));
+         }
+         
+         if(v < 16){
+            int sbstate2 = hw[s[test]];
+            testc = (sbstate2 <= (s_SC[var + 16] + 1) && sbstate2 >= (s_SC[var + 16] - 1));
+         }
+         
+         if ((count) <= (s_SC[v] + 1) && (count) >= (s_SC[v] - 1) &&  count2 <= (s_SC[var] + 1) && count2 >= (s_SC[var] - 1) && testb && testc){
+            p_list[v][p_count[v]] = i;
+            p_count[v]++;
+            if(k > p_max[v])
+               p_max[v] = k;
+            if(k < p_min[v])
+               p_min[v] = k;
+         }
+      }
+   }
+}
+
+void printDebug(){
+   for (int v = 0; v < 32; v++){
+      printf("BV: %d ", v);
+      for(int c = 0; c < p_count[v]; c++){
+         printf("%d ",abs(c - ((p_max[v] - p_min[v])/3)));
+      }
+      printf("\n");
+   }
+   
+   for(int i = 0; i < 2; i++){
+      for(int v = 0; v < 16; v++){
+         printf("%d ", p_count[v + i * 16]);
+      }
+      printf("\n");
+      
+   }
 }

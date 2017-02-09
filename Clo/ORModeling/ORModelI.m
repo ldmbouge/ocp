@@ -365,6 +365,17 @@
          rv[k++] = xk;
    return (id<ORRealVarArray>)rv;
 }
+-(id<ORBitVarArray>)bitVars
+{
+   ORInt k=0,nbBV = 0;
+   for(id<ORVar> xk in _vars)
+      nbBV += [xk conformsToProtocol:@protocol(ORBitVar)];
+   id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,nbBV-1)];
+   for(id<ORVar> xk in _vars)
+      if ([xk conformsToProtocol:@protocol(ORBitVar)])
+         rv[k++] = xk;
+   return (id<ORBitVarArray>)rv;
+}
 
 -(NSArray*) variables
 {

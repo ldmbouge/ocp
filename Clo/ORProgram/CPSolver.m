@@ -1746,6 +1746,17 @@
    CPBitVarI* cx = _gamma[x.getId];
    return [cx isFree:k] ? YES : [cx getBit:k] == v;
 }
+-(ORBool)boundBit:(ORInt)k in:(id<ORBitVar>)x
+{
+   CPBitVarI* cx = _gamma[x.getId];
+   return ![cx isFree:k];
+}
+-(ORBool)bitAt:(ORInt)k in:(id<ORBitVar>)x
+{
+   CPBitVarI* cx = _gamma[x.getId];
+   return [cx bitAt:k];
+}
+
 -(ORUInt) degree:(id<ORVar>)x
 {
    return [_gamma[x.getId] degree];
