@@ -7,7 +7,7 @@
 #import "ORCmdLineArgs.h"
 
 #define EXPECTKEY
-#define KNOWNKEYS 2
+#define KNOWNKEYS 1
 
 uint32 s[256] = {0x63 ,0x7c ,0x77 ,0x7b ,0xf2 ,0x6b ,0x6f ,0xc5 ,0x30 ,0x01 ,0x67 ,0x2b ,0xfe ,0xd7 ,0xab ,0x76
    ,0xca ,0x82 ,0xc9 ,0x7d ,0xfa ,0x59 ,0x47 ,0xf0 ,0xad ,0xd4 ,0xa2 ,0xaf ,0x9c ,0xa4 ,0x72 ,0xc0
@@ -285,93 +285,68 @@ int main(int argc, const char * argv[]) {
    [model add: [Sum(model,j,[ORFactory intRange:model low:0 up:error_count-1],[errorPtr[2*j] plus: errorPtr[2*j + 1]]) eq: miniVar]];
    
    [model minimize: miniVar];
-   //[model add: [miniVar eq: @(10)]];
+   //[model add: [miniVar leq: @(10)]];
    
-   
-//   id<ORIdArray> iv = [ORFactory intVarArray:model range:RANGE(model,0,error_count*2 - 1)];
-//   for(ORUInt i = 0;i< error_count*2;i++)
-//      iv[i] = errorPtr[i];
-   id<ORIdArray> iv = [model intVars];
-   
-   // id<ORIdArray> o = [ORFactory idArray:model range:[[ORIntRangeI alloc] initORIntRangeI:0 up:31]];
-   
-   
+  
    id<ORIntRange> R = [[ORIntRangeI alloc] initORIntRangeI:0 up:31];
-   //  id<ORIntRange> testR = [[ORIntRangeI alloc] initORIntRangeI:0 up:(32*8)-1];
    
-   id<ORBitVarArray> o = [CPFactory bitVarArray:model range: R];
+   id<ORBitVarArray> o = (id)[CPFactory bitVarArray:model range: R];
    for(ORInt k=0;k <= 15;k++)
       [o set:keys[0][k] at:k];
    
    for(ORInt k=0;k <= 15;k++)
       [o set:states[1][k] at:(k+16)];
    
+   id<ORIntVarArray> iv = [model intVars];
    id<ORBitVarArray> av = [model bitVars];
    
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
+   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   //id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController proto]];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController proto]];
    generateLists();
    printDebug();
    ORLong searchStart = [ORRuntimeMonitor wctime];
    [cp solve:^(){
       NSLog(@"Search Started: ;-)");
       //NSLog(@"Minivar: %@", miniVar);
-      
-      [cp forall:R suchThat:^ORBool(ORInt i) {
-         return [cp domsize: o[i]] > 0;
-      } orderedBy:^ORInt(ORInt i) {
+      [cp forall:R suchThat:^ORBool(ORInt i) { return [cp domsize: o[i]] > 0;} orderedBy:^ORInt(ORInt i) {
          //return -i;
          return ((4 - abs(4 - s_SC[i])) << 10) - i; // [current best]
-      } do:^(ORInt s) {
-         ORUInt size = [cp domsize:o[s]];
-         assert(size != 0);
-         //id<ORIntRange> S = [ORFactory intRange:cp low:0 up:((1 << size) - 1)];
-         id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
-         //NSLog(@"var: %d p_count: %d", s, p_count[s]);
-         
-         //int fixedHW = 8 - size;
-         [cp tryall:S suchThat:^ORBool(ORInt k) {
-            return true;
-         }
-          orderedBy:^ORDouble(ORInt z) {
-             return abs(z - ((p_max[s] - p_min[s])/3)); //[current best]
-          }
-                 in:^(ORInt k) {
-                    assert(s >= 0  && s <= 47);
-                    ORInt i = p_list[s][k]; //elevator[size-1][k];
-                    
-                    [cp atomic:^{
-                       uint32 count = 0;
-                       for(int nbit = 0; nbit < 8; nbit++){
-                          BOOL val = (i >> count++) & 1;
-                          [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails. 
-                       }
-                    }];
-                 } onFailure:^(ORInt i) {
-                    //Do Nothing
-                 }];
+      }
+              do:^(ORInt s) {
+                 ORUInt size = [cp domsize:o[s]];
+                 assert(size != 0);
+                 id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
+                 [cp tryall:S suchThat:^ORBool(ORInt k) { return true;} orderedBy:^ORDouble(ORInt z) { return abs(z - ((p_max[s] - p_min[s])/3));}
+                         in:^(ORInt k) {
+                            assert(s >= 0  && s <= 47);
+                            ORInt i = p_list[s][k]; //elevator[size-1][k];
+                            [cp atomic:^{
+                               uint32 count = 0;
+                               for(int nbit = 0; nbit < 8; nbit++){
+                                  BOOL val = (i >> count++) & 1;
+                                  [cp labelBV:o[s] at:nbit with:val]; // if the bit is already fixed, attempting to fix it to something else fails.
+                               }
+                            }];
+                         } onFailure:^(ORInt i) {
+                            //Do Nothing
+                         }];
       }];
-
       // label "everything else"
-      for(id<ORBitVar> bvk in av)
-         [cp labelUpFromLSB:bvk];
+//      for(id<ORBitVar> bvk in o)
+//         [cp labelUpFromLSB:bvk];
+//      for(id<ORBitVar> bvk in av)
+//         [cp labelUpFromLSB:bvk];
       [cp labelArrayFF:iv];
       
       ORLong searchStop = [ORRuntimeMonitor wctime];
       ORDouble elapsed = ((ORDouble)searchStop - searchStart) / 1000.0;
       @autoreleasepool {
-         
          ORInt tid = [NSThread threadID];
-         /*
-          for(int i = 0; i < 16; i++)
-          NSLog(@"[thread:%d] %@",tid,[cp stringValue:keys[0][i]]);
-          */
          assert([cp ground]  == YES);
          NSLog(@"[thread:%d]     Search Time (s): %f",tid,elapsed);
          NSLog(@"[thread:%d] Objective Function : %@",tid,[cp objectiveValue]);
-         // NSLog(@"    Number of check: %d",num_checks);
-         
+         NSLog(@"[thread:%d]            Choices : %d / %d",tid,[cp nbChoices],[cp nbFailures]);
       }
    }];
    ORLong searchStop = [ORRuntimeMonitor wctime];
