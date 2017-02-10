@@ -93,7 +93,7 @@ id<ORBitVar> xor1b;
 uint32 i_zero = 0x00;
 id<ORBitVar> zero;
 int s_SC[64];
-UInt32 num_checks = 0;
+ORUInt num_checks = 0;
 unsigned int Plaintext[] = {197,174,245,236,70,202,43,217,26,99,198,174,222,3,132,138};
 int elevator[8][256];
 int elevator_1[] = {0,1};
@@ -116,6 +116,7 @@ int p_max[32];
 int main(int argc, const char * argv[]) {
    
    ORCmdLineArgs* cmd = [ORCmdLineArgs newWith:argc argv:argv];
+   const int knownKeys = cmd.size;
    model = [ORFactory createModel];
    ca = NULL;
    zero = [ORFactory bitVar:model low:&i_zero up:&i_zero bitLength:8];
@@ -213,7 +214,7 @@ int main(int argc, const char * argv[]) {
 #ifdef EXPECTKEY
    for(int i = 0; i < 1; i++){ //i < 10
       for(int w = 0; w < 16; w++)
-         if(w < KNOWNKEYS)
+         if(w < knownKeys)
             keys[i][w] = [ORFactory bitVar: model low :&expect_key[w] up :&expect_key[w] bitLength :8];
          else
             keys[i][w] = [ORFactory bitVar: model low :&MIN8 up :&MAX8 bitLength :8];
@@ -302,7 +303,7 @@ int main(int argc, const char * argv[]) {
    
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: model];
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
-   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController proto]];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
    generateLists();
    printDebug();
    ORLong searchStart = [ORRuntimeMonitor wctime];
