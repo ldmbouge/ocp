@@ -66,6 +66,7 @@ void mixColumns();
 void subBytes();
 void sideChannelCon();
 void generateLists();
+void MCFilter();
 void printDebug();
 
 //Global Variables
@@ -305,6 +306,7 @@ int main(int argc, const char * argv[]) {
    //id<CPProgram,CPBV> cp = (id)[ORFactory createCPSemanticProgramDFS:model];
    id<CPProgram,CPBV> cp = (id)[ORFactory createCPParProgram:model nb:cmd.nbThreads with:[ORSemDFSController proto]];
    generateLists();
+   MCFilter();
    printDebug();
    ORLong searchStart = [ORRuntimeMonitor wctime];
    [cp solve:^(){
@@ -318,7 +320,11 @@ int main(int argc, const char * argv[]) {
                  ORUInt size = [cp domsize:o[s]];
                  assert(size != 0);
                  id<ORIntRange> S = [ORFactory intRange:cp low:0 up:(p_count[s] - 1)];
-                 [cp tryall:S suchThat:^ORBool(ORInt k) { return true;} orderedBy:^ORDouble(ORInt z) { return abs(z - ((p_max[s] - p_min[s])/3));}
+                 [cp tryall:S suchThat:^ORBool(ORInt k) { return true;}
+                  orderedBy:^ORDouble(ORInt z) {
+                     //return abs(z - ((p_max[s] - p_min[s])/3));
+                     return (abs(s_SC[s] - hw[p_list[s][z]]) << 20) - z;
+                  }
                          in:^(ORInt k) {
                             assert(s >= 0  && s <= 47);
                             ORInt i = p_list[s][k]; //elevator[size-1][k];
@@ -636,6 +642,108 @@ void generateLists(){
       }
    }
 }
+
+void MCFilter()
+{
+   int SC[9][16] =
+   {
+      {4,5,6,5,3,4,4,5,3,4,4,5,6,2,2,3}, //(0) Plaintext
+      {0,4,3,5,3,5,2,5,6,3,6,3,6,0,4,2}, //
+      {4,5,0,4,7,5,6,5,3,7,3,5,5,5,4,2}, //
+      {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, //3
+      {6,3,4,4,4,5,2,4,4,-1,-1,-1,-1,-1,-1,-1},
+      {5,2,2,4,4,5,4,2,4,-1,-1,-1,-1,-1,-1,-1},
+      {3,4,4,5,5,5,4,4,5,-1,-1,-1,-1,-1,-1,-1},
+      {5,1,1,5,4,3,4,7,6,-1,-1,-1,-1,-1,-1,-1},
+      {4,5,5,4,4,1,6,1,6,3,4,4,4,1,4,5}
+   };
+   int count = 0;
+   /*
+    XOR(ca,model, states[r][j*4], states[r][(j*4+5) % 16], tm1[ir][j][0]);
+    
+    XOR(ca,model, states[r][(j*4+5) % 16], states[r][(j*4+10) % 16], tm1[ir][j][1]);
+    
+    XOR(ca,model, states[r][(j*4+10) % 16], states[r][(j*4+15) % 16], tm1[ir][j][2]);
+    
+    XOR(ca,model, states[r][(j*4+15) % 16], states[r][j*4], tm1[ir][j][3]);
+    */
+   
+   for(int col = 0; col < 4; col++){
+      for(int eq = 0; eq < 4; eq++){
+         
+         int state1 = (col*4+(5*eq))%16 + 16;
+         int state2 = (col*4+(5*eq)+5)%16 + 16;
+         int temp1[256];
+         int temp2[256];
+         int tcount1 = 0;
+         int tcount2 = 0;
+         for(int j = 0; j < p_count[state1]; j++){
+            bool toggle = false;
+            for(int k = 0; k < p_count[state2]; k++){
+               int tm1hw = hw[s[p_list[state1][j]] ^ s[p_list[state2][k]]];
+               if(!toggle && (tm1hw <= SC[4 + col][2*eq + 1] + 1) && (tm1hw >= SC[4 + col][2*eq + 1] - 1)){
+                  toggle = true;
+                  temp1[tcount1++] = p_list[state1][j];
+               }
+            }
+            if(!toggle){
+               NSLog(@"REDUCTION!");
+               count++;
+            }
+         }
+         
+         for(int j = 0; j < p_count[state2]; j++){
+            bool toggle = false;
+            for(int k = 0; k < p_count[state1]; k++){
+               int tm1hw = hw[s[p_list[state2][j]] ^ s[p_list[state1][k]]];
+               if(!toggle && (tm1hw <= SC[4 + col][2*eq + 1] + 1) && (tm1hw >= SC[4 + col][2*eq + 1] - 1)){
+                  toggle = true;
+                  temp2[tcount2++] = p_list[state2][j];
+                  
+               }
+            }
+            if(!toggle){
+               NSLog(@"REDUCTION!");
+               count++;
+            }
+            
+         }
+         NSLog(@"tc1: %d",tcount1);
+         NSLog(@"tc2: %d",tcount2);
+         
+         for(int c = 0; c < tcount1; c++){
+            p_list[state1][c] = temp1[c];
+         }
+         p_count[state1] = tcount1;
+         
+         for(int c = 0; c < tcount2; c++){
+            p_list[state2][c] = temp2[c];
+         }
+         p_count[state2] = tcount2;
+         
+      }
+   }
+   
+   /*
+    for(int i = 16; i < 32; i++){
+    for(int j = 0; j < p_count[i]; j++){
+    p_list[i+16][j] = s[p_list[i][j]];
+    }
+    p_count[i+16] = p_count[i];
+    }
+    
+    for(int i = 16; i < 32; i++){
+    for(int j = 0; j < p_count[i]; j++){
+    p_list[i-16][j] = (p_list[i][j] ^ Plaintext[j]);
+    }
+    p_count[i-16] = p_count[i];
+    }
+    */
+   
+   NSLog(@"count is %d!", count);
+   
+}
+
 
 void printDebug(){
    for (int v = 0; v < 32; v++){
