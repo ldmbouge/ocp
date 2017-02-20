@@ -49,8 +49,8 @@ int main(int argc, const char * argv[])
     
     id<ORIntVarArray>  s = [ORFactory intVarArray: model range: cnodes domain: sec];
     id<ORIntVarMatrix> a = [ORFactory intVarMatrix:model range: cnodes : apps domain: RANGE(model, 0, 1000)];
-    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 100*100)];
-    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 100*100)];
+    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 100)];
+    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: cnodes domain: RANGE(model, 0, 100)];
     
     [model minimize: Sum(model, i, cnodes, [[u_mem at: i] plus: [u_bw at: i]])];
     
@@ -79,33 +79,34 @@ int main(int argc, const char * argv[])
         [model add: [[[u_bw at: i] mul: [Sbw elt: [s at: i]]] leq: [@([B at: i]) sub: [Fbw elt: [s at: i]]]]];
     }
 
-//    id<ORModel> lm = [ORFactory linearizeModel: model];
-//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-//    [r start];
-
-   /*
-    id<ORRunnable> r = [ORFactory CPDualRunnable: model solve:^(id<CPCommonProgram> cp) {
-        [cp labelArray: s];
-        [cp labelArray: u_mem];
-        [cp labelArray: u_bw];
-        [cp labelArray: [a flatten]];
-    }];
+    id<ORModel> lm = [ORFactory linearizeModel: model];
+    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
     [r start];
-    id<ORSolution> best = [r bestSolution];
-    */
-    id<CPProgram> cp = [ORFactory createCPProgram: model];
-    //NSLog(@"Model %@",model);
+
     ORTimeval now = [ORRuntimeMonitor now];
-    id<CPHeuristic> h = [cp createFF];
-    [cp solve:^{
-        [cp labelHeuristic:h];
-        id<ORSolution> s = [cp captureSolution];
-        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
-    }];
-    id<ORSolution> best = [[cp solutionPool] best];
+//    id<ORRunnable> r = [ORFactory CPRunnable: model solve:^(id<CPCommonProgram> cp) {
+//        [cp labelArray: s];
+//        [cp labelArray: u_mem];
+//        [cp labelArray: u_bw];
+//        [cp labelArray: [a flatten]];
+//        id<ORSolution> s = [cp captureSolution];
+//        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
+//    }];
+//    [r start];
+//    id<ORSolution> best = [r bestSolution];
+    
+//    id<CPProgram> cp = [ORFactory createCPProgram: model];
+//    //NSLog(@"Model %@",model);
+//    id<CPHeuristic> h = [cp createWDeg];
+//    [cp solve:^{
+//        [cp labelHeuristic:h];
+//        id<ORSolution> s = [cp captureSolution];
+//        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
+//    }];
+    id<ORSolution> best = [r bestSolution];
     //NSLog(@"Number of solutions found: %li", [[cp solutionPool] count]);
    ORTimeval el = [ORRuntimeMonitor elapsedSince:now];
-    NSLog(@"#best objective: %i",[[best objectiveValue] intValue]);
+    NSLog(@"#best objective: %i",[[best objectiveValue] doubleValue]);
    NSLog(@"Total time: %f",el.tv_sec * 1000.0 + (double)el.tv_usec / 1000.0);
     return 0;
 }
