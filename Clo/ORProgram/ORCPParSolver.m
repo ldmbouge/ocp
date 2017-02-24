@@ -337,6 +337,10 @@
 {
    [[self worker] labelBV:var at:i with:val];
 }
+-(void) labelUpFromLSB:(id<ORBitVar>) x
+{
+   [[self worker] labelUpFromLSB:x];
+}
 -(void) select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body
 {
    [[self worker] select:x minimizing:f in:body];
@@ -473,6 +477,14 @@
 -(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x
 {
    return [[self worker] memberBit:k value:v in:x];
+}
+-(ORBool) bitAt:(ORUInt)pos in:(id<ORBitVar>)x
+{
+   return [[self worker] bitAt:pos in:x];
+}
+-(ORBool)boundBit:(ORInt)k in:(id<ORBitVar>)x
+{
+   return [[self worker] boundBit:k in:x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
