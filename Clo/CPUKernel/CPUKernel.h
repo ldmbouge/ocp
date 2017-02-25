@@ -15,6 +15,9 @@
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPClosureEvent.h>
 #import <CPUKernel/CPLEngine.h>
+#import <CPUKernel/CPCstr.h>
+#import <CPUKernel/CPGroup.h>
+#import <CPUKernel/CPConstraintI.h>
 
 /*
  
@@ -31,29 +34,8 @@ typedef struct _CPBitAssignment CPBitAssignment;
 struct _CPBitAntecedents;
 typedef struct _CPBitAntecedents CPBitAntecedents;
 
-typedef enum {
-   CPChecked,
-   CPTocheck,
-   CPOff
-} CPTodo;
-
-@protocol CPGroup;
-
-@protocol CPConstraint <ORConstraint>
--(ORUInt)      getId;
--(void)        setGroup:(id<CPGroup>) g;
--(id<CPGroup>) group;
--(void) post;
-@end
-
 @protocol CPBVConstraint <CPConstraint>
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment;
-@end
-
-@protocol CPGroup <CPConstraint>
--(void)  add:(id<CPConstraint>)p;
--(void)  assignIdToConstraint:(id<ORConstraint>)c;
--(void)  scheduleClosure:(id<CPClosureList>)evt;
 @end
 
 @protocol CPValueEvent<NSObject>
@@ -73,5 +55,3 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,OR
 +(id<CPGroup>)group:(id<CPEngine>)engine;
 +(id<CPGroup>)bergeGroup:(id<CPEngine>)engine;
 @end;
-#import <CPUKernel/CPConstraintI.h>
-

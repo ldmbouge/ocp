@@ -32,6 +32,13 @@
 
 @implementation CPFactory (Constraint)
 
++(id<CPGroup>)group:(id<CPEngine>)engine guard:(id<CPIntVar>)guard
+{
+   id<CPGroup> g = [[CPGuardedGroup alloc] init:engine guard:guard];
+   [engine trackMutable:g];
+   return g;
+}
+
 // alldifferent
 +(id<ORConstraint>) alldifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x
 {

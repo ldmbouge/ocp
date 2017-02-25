@@ -11,6 +11,7 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPConstraintI.h>
+#import <CPUKernel/CPGroup.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPVar.h>
 
@@ -394,5 +395,10 @@ typedef int (^intgetter) (void) ;
 -(void)  post;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
+@end
+
+@interface CPGuardedGroup : CPGroup<CPGroup>
+-(id)   init: (id<CPEngine>) engine guard:(id<CPIntVar>)guard;
+-(void) post;
 @end
 

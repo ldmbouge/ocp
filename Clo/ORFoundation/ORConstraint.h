@@ -65,7 +65,8 @@
 
 enum ORGroupType {
    DefaultGroup = 0,
-   BergeGroup = 1
+   BergeGroup = 1,
+   GuardedGroup = 2
 };
 
 @protocol ORGroup <ORObject,ORConstraint>
@@ -74,6 +75,7 @@ enum ORGroupType {
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
+-(id<ORIntVar>)guard;
 @end
 
 @protocol ORFail <ORConstraint>

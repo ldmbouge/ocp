@@ -20,11 +20,13 @@
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)g;
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
+-(id<ORIntVar>)guard;
 -(enum ORGroupType)type;
 @end
 

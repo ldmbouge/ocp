@@ -2549,3 +2549,37 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
    return (ORUInt) [_cv count];
 }
 @end
+
+
+
+// ---------------------------
+
+@implementation CPGuardedGroup {
+   CPIntVar*                _guard;
+}
+-(id)init:(CPEngineI*) engine guard:(CPIntVar*)guard
+{
+   self = [super init:engine];
+   _guard  = guard;
+   return self;
+}
+-(void) post
+{
+   [_guard whenBindDo:^{
+      if ([_guard min] == 1)
+         [super post];
+   } onBehalf:self];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CPGuardedGroup(%p): guard = %@",self,_guard];
+   [super enumerateWithBlock: ^(ORInt i,id<ORConstraint> c) {
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[c description]];
+   }];
+   [buf appendString:@"\n\t>"];
+   return buf;
+}
+@end
+
+
