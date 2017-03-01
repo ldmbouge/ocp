@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "ORConstraintI.h"
 #import "CPBasicConstraint.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
@@ -2205,27 +2204,28 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
          _dualBound = bound;
    }
 }
--(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
+-(void) tightenPrimalBound: (id<ORObjectiveValueInt>) newBound
 {
    @synchronized(self) {
-      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-         ORInt b = [((ORObjectiveValueIntI*) newBound) value];
+//      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+         ORInt b = [newBound value];
          if (b < _primalBound)
             _primalBound = b;
       }
    }
 }
--(ORStatus) tightenDualBound:(ORObjectiveValueIntI*)newBound
+-(ORStatus) tightenDualBound:(id<ORObjectiveValueInt>)newBound
 {
    @synchronized (self) {
-      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
          ORInt b = [newBound value];
          ORStatus ok = b > _primalBound ? ORFailure : ORSuspend;
          if (ok && b > _dualBound)
             _dualBound = b;
          return ok;
-      } else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
-         ORDouble b = [(ORObjectiveValueRealI*)newBound doubleValue];
+      } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+         ORDouble b = [(id<ORObjectiveValueReal>)newBound doubleValue];
          ORInt ib = (ORInt)ceil(b);
          ORStatus ok = ib > _primalBound ? ORFailure : ORSuspend;
          if (ok && ib > _dualBound)
@@ -2237,12 +2237,12 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(void) tightenLocallyWithDualBound: (id) newBound
 {
    @synchronized(self) {
-      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-         ORInt b = [((ORObjectiveValueIntI*) newBound) value];
+      if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+         ORInt b = [((id<ORObjectiveValueInt>) newBound) value];
          [_x updateMin: max(_dualBound, b)];
       }
-      else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
-         ORInt b = (ORInt) ceil([((ORObjectiveValueRealI*) newBound) value]);
+      else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+         ORInt b = (ORInt) ceil([((id<ORObjectiveValueReal>) newBound) value]);
          [_x updateMin: max(_dualBound,b)];
       }
    }
@@ -2251,22 +2251,22 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(id<ORObjectiveValue>) primalValue
 {
    if (bound(_x))
-      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
-   else {
-      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _x.max+1 minimize:YES];
-   }
+      return [ORFactory objectiveValueInt:_x.value minimize:YES];
+   else
+      return [ORFactory objectiveValueInt:_x.max + 1  minimize:YES];
 }
 -(id<ORObjectiveValue>) dualValue
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI:[_x min] minimize:NO]; // dual bound ordering is opposite of primal bound. (if we minimize in primal, we maximize in dual).
+   return [ORFactory objectiveValueInt:_x.min minimize:NO];
+   // dual bound ordering is opposite of primal bound. (if we minimize in primal, we maximize in dual).
 }
 -(id<ORObjectiveValue>) primalBound
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize:YES];
+   return [ORFactory objectiveValueInt:_primalBound minimize:YES];
 }
 -(id<ORObjectiveValue>) dualBound
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _dualBound minimize:YES];
+   return [ORFactory objectiveValueInt:_dualBound minimize:YES];
 }
 
 -(ORStatus) check
@@ -2328,22 +2328,22 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 -(id<ORObjectiveValue>) primalValue
 {
    if (bound(_x))
-      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize: NO];
+      return [ORFactory objectiveValueInt:_x.value minimize:NO];
    else
-      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _x.min-1 minimize: NO];
+      return [ORFactory objectiveValueInt:_x.min - 1  minimize:NO];
 }
 -(id<ORObjectiveValue>) dualValue
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI:[_x max] minimize:YES];
+   return [ORFactory objectiveValueInt:_x.max minimize:YES];
 }
 
 -(id<ORObjectiveValue>) primalBound
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize: NO];
+   return [ORFactory objectiveValueInt:_primalBound minimize:NO];
 }
 -(id<ORObjectiveValue>) dualBound
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _dualBound minimize: NO];
+   return [ORFactory objectiveValueInt:_dualBound minimize:NO];
 }
 
 -(ORUInt)nbUVars
@@ -2368,22 +2368,22 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 -(void) tightenPrimalBound: (id) newBound
 {
-   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-      ORInt b = [((ORObjectiveValueIntI*) newBound) value];
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      ORInt b = [(id<ORObjectiveValueInt>)newBound value];
       if (b > _primalBound)
          _primalBound = b;
    }
 }
 -(ORStatus) tightenDualBound:(id<ORObjectiveValue>)newBound
 {
-   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-      ORInt b = [(ORObjectiveValueIntI*)newBound value];
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      ORInt b = [(id<ORObjectiveValueInt>)newBound value];
       ORStatus ok = b < _primalBound ? ORFailure : ORSuspend;
       if (ok && b < _dualBound)
          _dualBound = b;
       return ok;
-   } else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
-      ORDouble b = [(ORObjectiveValueRealI*)newBound doubleValue];
+   } else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+      ORDouble b = [(id<ORObjectiveValueReal>)newBound doubleValue];
       ORInt ib = (ORInt)floor(b);
       ORStatus ok = ib < _primalBound ? ORFailure : ORSuspend;
       if (ok && ib < _dualBound)
@@ -2394,12 +2394,12 @@ static void propagateCX(CPMultBC* mc,ORLong c,CPIntVar* x,CPIntVar* z)
 
 -(void) tightenLocallyWithDualBound: (id) newBound
 {
-   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
-      ORInt b = [((ORObjectiveValueIntI*) newBound) value];
+   if ([newBound conformsToProtocol:@protocol(ORObjectiveValueInt)]) {
+      ORInt b = [((id<ORObjectiveValueInt>) newBound) value];
       [_x updateMax: b];
    }
-   else if ([newBound isKindOfClass:[ORObjectiveValueRealI class]]) {
-      ORInt b = (ORInt) floor([((ORObjectiveValueRealI*) newBound) value]);
+   else if ([newBound conformsToProtocol:@protocol(ORObjectiveValueReal)]) {
+      ORInt b = (ORInt) floor([((id<ORObjectiveValueReal>) newBound) value]);
       [_x updateMax: b];
    }
 }

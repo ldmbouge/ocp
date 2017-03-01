@@ -530,7 +530,6 @@
 -(id<ORIntVar>) cost;
 @end
 
-
 @interface ORObjectiveValueIntI : ORObject<ORObjectiveValueInt> {
    ORInt _value;
    ORInt _direction;

@@ -31,7 +31,7 @@ int main(int argc, const char * argv[])
          id<ORIntVar> z = [ORFactory intVar:model domain:r2];
          
          id<ORIntVarArray> vars = [model intVars];
-
+         
          id<ORExpr> cp  = [[x plus: y] gt: @(6)];
          id<ORIntVar> b0 = [ORFactory boolVar:model];
          id<ORIntVar> b1 = [ORFactory boolVar:model];
@@ -39,14 +39,14 @@ int main(int argc, const char * argv[])
          [model add: [[cp neg] eq: b1]];
          
          id<ORGroup> g0 = [ORFactory group:model guard:b0];
-            [g0 add:[z eq: [x plus: y]]];               // z <- x + y
-            [g0 add:[a eq: [z sub: @(2)]]];             // a <- z - 2
+         [g0 add:[z eq: [x plus: y]]];               // z <- x + y
+         [g0 add:[a eq: [z sub: @(2)]]];             // a <- z - 2
          [model add:g0];
          id<ORGroup> g1 = [ORFactory group:model guard:b1];
-            [g1 add:[a eq: [x sub: y]]];                // a <- x - y
-            [g1 add:[z eq: [a plus: @(2)]]];            // z <- a + 2
+         [g1 add:[a eq: [x sub: y]]];                // a <- x - y
+         [g1 add:[z eq: [a plus: @(2)]]];            // z <- a + 2
          [model add:g1];
-
+         
          
          __block BOOL found = false;
          id<CPProgram>   cps = [args makeProgram:model annotation:notes];

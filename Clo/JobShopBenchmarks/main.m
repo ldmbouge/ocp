@@ -148,7 +148,7 @@ int main(int argc, const char * argv[]) {
             
             ORLong timeStart = [ORRuntimeMonitor wctime];
             [cp solve: ^{
-		[cp limitTime:1000L * tL in:^{
+               [cp limitTime:1000L * tL in:^{
                   [cp forall: Machines orderedBy: ^ORInt(ORInt i) {
                         return [cp globalSlack: disjunctive[i]] +
                                ([cp localSlack: disjunctive[i]] << 16);} do: ^(ORInt i) {
@@ -171,6 +171,9 @@ int main(int argc, const char * argv[]) {
             id<ORSolutionPool> pool = [cp solutionPool];
             id<ORSolution> optimum = [pool best];
             NSLog(@"!! CP makespan: %d \n",[optimum intValue: makespan]);
+           ORInt nbf = [cp nbFailures];
+           ORInt nbc = [cp nbChoices];
+           NSLog(@"#F/#C = %d / %d",nbf,nbc);
         }
         
         if(doMIP) {

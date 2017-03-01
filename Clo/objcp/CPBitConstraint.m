@@ -2593,7 +2593,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    NSLog(@"Bit Shift Left Constraint propagated.");
 #endif
    unsigned int wordLength = [_x getWordLength];
-   ORUInt bitLength = [_x bitLength];
+   //ORUInt bitLength = [_x bitLength];
    
    TRUInt* xLow;
    TRUInt* xUp;
@@ -2740,7 +2740,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       ORUInt places = pLow->_val;
 //      [engine addInternal:[[CPBitShiftL alloc] initCPBitShiftL:_x shiftLBy:places equals:_y]];
       unsigned int wordLength = [_x getWordLength];
-      ORUInt bitLength = [_x bitLength];
+      //ORUInt bitLength = [_x bitLength];
       
       TRUInt* xLow;
       TRUInt* xUp;
@@ -10759,7 +10759,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    TRUInt* rUp;
    
    ORUInt wordLength = [_x getWordLength];
-   ORUInt bitLength = [_x bitLength];
+   //ORUInt bitLength = [_x bitLength];
    
    ORUInt* newXUp = alloca(sizeof(ORUInt)*wordLength);
    ORUInt* newXLow  = alloca(sizeof(ORUInt)*wordLength);

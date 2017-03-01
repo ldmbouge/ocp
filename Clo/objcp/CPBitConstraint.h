@@ -27,7 +27,7 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 
 @interface CPFactory (BitConstraint)
 //Bit Constraints
-+(id<CPBVConstraint>) bitEqualAt:(CPBitVarI*)x at:(ORInt)k to:(ORInt)c;
++(id<CPBVConstraint>) bitEqualAt:(id<CPBitVar>)x at:(ORInt)k to:(ORInt)c;
 +(id<CPBVConstraint>) bitEqualc:(id<CPBitVar>)x to:(ORInt)c;
 +(id<CPBVConstraint>) bitEqual:(id<CPBitVar>)x to:(id<CPBitVar>)y;
 +(id<CPBVConstraint>) bitAND:(id<CPBitVar>)x band:(id<CPBitVar>)y equals:(id<CPBitVar>) z;

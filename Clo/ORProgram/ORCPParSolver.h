@@ -16,6 +16,7 @@
    id<ORSolutionPool> _globalPool;
    ORClosure          _onSol;
    ORClosure          _onStartup;
+   ORInt              _nbf,_nbc;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(id<ORSearchController>)ctrlProto;
 -(void) setSource:(id<ORModel>)src;
