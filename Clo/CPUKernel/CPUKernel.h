@@ -35,7 +35,9 @@ struct _CPBitAntecedents;
 typedef struct _CPBitAntecedents CPBitAntecedents;
 
 @protocol CPBVConstraint <CPConstraint>
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*)assignment;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment;
+//-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment withState:(ORUInt**)state;
 @end
 
 @protocol CPValueEvent<NSObject>

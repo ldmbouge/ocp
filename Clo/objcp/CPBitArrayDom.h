@@ -70,7 +70,7 @@
 -(ORStatus)             updateMin:(ORULong)newMin for: (id<CPBitVarNotifier>)x;
 -(ORStatus)             updateMax:(ORULong)newMax for: (id<CPBitVarNotifier>)x;
 -(ORStatus)             bind:(ORULong)val for:(id<CPBitVarNotifier>)x;
--(ORStatus)             bindToPat: (ORUInt*) pat for:(id<CPBitVarNotifier>)x;
+-(ORStatus)             bindToPat:(ORUInt*) pat for:(id<CPBitVarNotifier>)x;
 -(TRUInt*)              getLow;
 -(TRUInt*)              getUp;
 -(void)                 getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
