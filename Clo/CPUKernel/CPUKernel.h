@@ -47,7 +47,9 @@ typedef enum {
 @end
 
 @protocol CPBVConstraint <CPConstraint>
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*)assignment;
 -(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment;
+//-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*)assignment withState:(ORUInt**)state;
 @end
 
 @protocol CPGroup <CPConstraint>

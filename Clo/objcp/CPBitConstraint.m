@@ -295,6 +295,9 @@ void analyzeConflictUIP(id<CPLEngine> engine, CPBitAssignment* conflict, id<CPBV
    while (more){
       //get antecedents of first assignment in queue
       temp = dequeue(queue, &qfront, &qback, &qcap);
+      if (qfront==qback)
+         more=false;
+      
       if(([temp->var getLevelBitWasSet:temp->index] == level) || [temp->var isFree:temp->index])
          numAtLevel--;
       if(![temp->var isFree:temp->index])
@@ -789,7 +792,7 @@ ORBool checkDomainConsistency(CPBitVarI* var, unsigned int* low, unsigned int* u
                      a->value = [var getBit:a->index];
                   else
                      a->value = 0;
-                  analyzeConflictUIP((id<CPLEngine>)[var engine], a, constraint);
+//                     analyzeConflictUIP((id<CPLEngine>)[var engine], a, constraint);
                }
                failNow();
             }
@@ -2492,11 +2495,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    unsigned int* newYUp = alloca((sizeof(unsigned int))*(wordLength+1));
    unsigned int* newYLow  = alloca((sizeof(unsigned int))*(wordLength+1));
    
-//      NSLog(@"*******************************************");
-//      NSLog(@"x << p = y");
-//      NSLog(@"p=%d\n",_places);
-//      NSLog(@"x=%@\n",_x);
-//      NSLog(@"y=        %@\n",_y);
+      NSLog(@"*******************************************");
+      NSLog(@"x << p = y");
+      NSLog(@"p= %d\n",_places);
+      NSLog(@"x= %@\n",_x);
+      NSLog(@"y=  %@\n",_y);
 
    
    for(int i=0;i<wordLength;i++){
@@ -2537,9 +2540,14 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
 
    }
    
-//      NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
-//      NSLog(@"newY =         %@",bitvar2NSString(newYLow, newYUp, bitLength));
+      NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
+      NSLog(@"newY =         %@",bitvar2NSString(newYLow, newYUp, bitLength));
 
+   if (_places != 1){
+      NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
+      NSLog(@"newY =         %@",bitvar2NSString(newYLow, newYUp, bitLength));
+   }
+   
    _state[0] = newXUp;
    _state[1] = newXLow;
    _state[2] = newYUp;
@@ -2639,11 +2647,11 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
       unsigned int* newYUp = alloca((sizeof(unsigned int))*(wordLength+1));
       unsigned int* newYLow  = alloca((sizeof(unsigned int))*(wordLength+1));
       
-//            NSLog(@"*******************************************");
-//            NSLog(@"x << p = y");
-//            NSLog(@"p=%d\n",_places);
-//            NSLog(@"x=%@\n",_x);
-//            NSLog(@"y=        %@\n",_y);
+            NSLog(@"*******************************************");
+            NSLog(@"x << p = y");
+            NSLog(@"p=%d\n",_places);
+            NSLog(@"x=%@\n",_x);
+            NSLog(@"y=        %@\n",_y);
       
       
       for(int i=0;i<wordLength;i++){
@@ -2684,8 +2692,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
          
       }
       
-//            NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
-//            NSLog(@"newY =         %@",bitvar2NSString(newYLow, newYUp, bitLength));
+            NSLog(@"newX = %@",bitvar2NSString(newXLow, newXUp, bitLength));
+            NSLog(@"newY =         %@",bitvar2NSString(newYLow, newYUp, bitLength));
       
       _state[0] = newXUp;
       _state[1] = newXLow;
@@ -3388,6 +3396,7 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    NSLog(@"Bit Rotate Left Constraint propagated.");
 #endif
    unsigned int wordLength = [_x getWordLength];
+   unsigned int bitLength = [_x bitLength];
    
    TRUInt* xLow;
    TRUInt* xUp;
@@ -3396,6 +3405,8 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    
    [_x getUp:&xUp andLow:&xLow];
    [_y getUp:&yUp andLow:&yLow];
+   
+   ORUInt bitmask = CP_UMASK << _places;
    
    
    unsigned int* newXUp = alloca((sizeof(unsigned int))*wordLength);
@@ -3407,22 +3418,41 @@ ORUInt numSetBitsORUInt(ORUInt* low, ORUInt* up, int wordLength)
    NSLog(@"         X =%@",_x);
    NSLog(@" ROTL %d  Y =%@",_places,_y);
 #endif
-   
-   for(int i=0;i<wordLength;i++){
-      newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val) | (ISFALSE(xUp[(i+(_places/32))%wordLength]._val, xLow[(i+(_places/32))%wordLength]._val) << _places%32)
-                    | (ISFALSE(xUp[(i+(_places/32)+1)%wordLength]._val, xLow[(i+(_places/32)+1)%wordLength]._val) >> (32-(_places%32))));
-      
-      newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)   | (ISTRUE(xUp[(i+(_places/32))%wordLength]._val, xLow[(i+(_places/32))%wordLength]._val) << _places%32)
-      | (ISTRUE(xUp[(i+(_places/32)+1)%wordLength]._val, xLow[(i+(_places/32)+1)%wordLength]._val) >> (32-(_places%32)));
-      
-      newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val) | (ISFALSE(yUp[(i-(_places/32))%wordLength]._val, yLow[(i-(_places/32))%wordLength]._val) >> _places%32)
-                    | (ISFALSE(yUp[(i-(_places/32)-1)%wordLength]._val, yLow[(i-(_places/32)-1)%wordLength]._val) << (32-(_places%32))));
-      
-      newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)   | (ISTRUE(yUp[(i-(_places/32))%wordLength]._val, yLow[(i-(_places/32))%wordLength]._val) >> _places%32)
-      | (ISTRUE(yUp[(i-(_places/32)-1)%wordLength]._val, yLow[(i-(_places/32)-1)%wordLength]._val) << (32-(_places%32)));
-      
+   if(bitLength >= BITSPERWORD){
+      ORUInt lowBitsShift = ((bitLength%BITSPERWORD) == 0) ? BITSPERWORD : (bitLength%BITSPERWORD);
+      lowBitsShift -= _places%BITSPERWORD;
+      newYUp[0] = 0;
+      newYLow[0] = 0;
+      for(int i=0;i<wordLength;i++){
+   //      newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)) & (~(ISFALSE(xUp[(i+(_places/BITSPERWORD))%wordLength]._val, xLow[(i+(_places/BITSPERWORD))%wordLength]._val) << _places%BITSPERWORD)
+   //                    & ~(ISFALSE(xUp[(i+(_places/BITSPERWORD)+1)%wordLength]._val, xLow[(i+(_places/BITSPERWORD)+1)%wordLength]._val) >> lowBitsShift));
+         
+         newYUp[i] = yUp[i]._val & (bitmask | (xUp[(i+(_places/BITSPERWORD))%wordLength]._val << _places%BITSPERWORD)) & (bitmask | (xUp[(i+(_places/BITSPERWORD)+1)%wordLength]._val >> lowBitsShift));
+         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)   | (ISTRUE(xUp[(i+(_places/BITSPERWORD))%wordLength]._val, xLow[(i+(_places/BITSPERWORD))%wordLength]._val) << _places%BITSPERWORD)
+         | (ISTRUE(xUp[(i+(_places/BITSPERWORD)+1)%wordLength]._val, xLow[(i+(_places/BITSPERWORD)+1)%wordLength]._val) >> lowBitsShift);
+         
+         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val) | (ISFALSE(yUp[(i-(_places/BITSPERWORD))%wordLength]._val, yLow[(i-(_places/BITSPERWORD))%wordLength]._val) >> _places%BITSPERWORD)
+                       | (ISFALSE(yUp[(i-(_places/BITSPERWORD)-1)%wordLength]._val, yLow[(i-(_places/BITSPERWORD)-1)%wordLength]._val) << lowBitsShift));
+         
+         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)   | (ISTRUE(yUp[(i-(_places/BITSPERWORD))%wordLength]._val, yLow[(i-(_places/BITSPERWORD))%wordLength]._val) >> _places%BITSPERWORD)
+         | (ISTRUE(yUp[(i-(_places/BITSPERWORD)-1)%wordLength]._val, yLow[(i-(_places/BITSPERWORD)-1)%wordLength]._val) << lowBitsShift);
+         
+      }
    }
-   
+   else{
+      ORUInt mask = -1;
+      mask >>= BITSPERWORD - bitLength;
+      
+      newXUp[0] = xUp[0]._val & ((yUp[0]._val >> _places) | ((yUp[0]._val << (bitLength -_places))& bitmask));
+      newXLow[0] = xLow[0]._val | ((yLow[0]._val >> _places) | ((yLow[0]._val << (bitLength -_places))& bitmask));
+      newYUp[0] = yUp[0]._val & ((xUp[0]._val >> (bitLength -_places)) | ((xUp[0]._val << _places)));
+      newYLow[0] = yLow[0]._val | ((xLow[0]._val >> (bitLength - _places)) | ((xLow[0]._val << _places)));
+      
+      newXUp[0] &= mask;
+      newXLow[0] &= mask;
+      newYUp[0] &= mask;
+      newYLow[0] &= mask;
+   }
    _state[0] = newXUp;
    _state[1] = newXLow;
    _state[2] = newYUp;
