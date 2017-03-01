@@ -33,4 +33,5 @@
 -(ORUInt) nbVars;
 -(void)setGroup:(id<CPGroup>)g;
 -(id<CPGroup>)group;
+-(void) toCheck;
 @end

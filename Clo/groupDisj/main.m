@@ -29,6 +29,8 @@ int main(int argc, const char * argv[])
          id<ORIntVar> y = [ORFactory intVar:model domain:r1];
          id<ORIntVar> a = [ORFactory intVar:model domain:r2];
          id<ORIntVar> z = [ORFactory intVar:model domain:r2];
+         id<ORIntVar> w = [ORFactory intVar:model domain:r1];
+         id<ORIntVar> v = [ORFactory intVar:model domain:r2];
          
          id<ORIntVarArray> vars = [model intVars];
          
@@ -39,12 +41,35 @@ int main(int argc, const char * argv[])
          [model add: [[cp neg] eq: b1]];
          
          id<ORGroup> g0 = [ORFactory group:model guard:b0];
-         [g0 add:[z eq: [x plus: y]]];               // z <- x + y
-         [g0 add:[a eq: [z sub: @(2)]]];             // a <- z - 2
+         {
+            [g0 add:[z eq: [x plus: y]]];               // z <- x + y
+            [g0 add:[a eq: [z sub: @(2)]]];             // a <- z - 2
+         
+            id<ORExpr> c2  = [[a plus: w] leq: @(6)];
+            id<ORIntVar> b00 = [ORFactory boolVar:model];
+            id<ORIntVar> b01 = [ORFactory boolVar:model];
+            [g0 add: [c2 eq: b00]];
+            [g0 add:[b01 eq: [b00 neg]]];
+            id<ORGroup> g00 = [ORFactory group:model guard:b00];
+            {
+               [g00 add:[v eq: [a plus: w]]];
+            }
+            [g0 add:g00];
+            id<ORGroup> g01 = [ORFactory group:model guard:b01];
+            {
+               [g01 add:[v eq: [a mul: w]]];
+            }
+            [g0 add:g01];
+         }
          [model add:g0];
+         
          id<ORGroup> g1 = [ORFactory group:model guard:b1];
-         [g1 add:[a eq: [x sub: y]]];                // a <- x - y
-         [g1 add:[z eq: [a plus: @(2)]]];            // z <- a + 2
+         {
+            [g1 add:[a eq: [x sub: y]]];                // a <- x - y
+            [g1 add:[z eq: [a plus: @(2)]]];            // z <- a + 2
+            [g1 add:[w eq: @(2)]];                      // w <- 2
+            [g1 add:[v eq: [a div:w]]];                 // v <- a div w
+         }
          [model add:g1];
          
          
