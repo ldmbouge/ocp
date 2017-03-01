@@ -11,9 +11,9 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPClosureEvent.h>
+#import <CPUKernel/CPGroup.h>
 #import "CPEngineI.h"
 #import "CPLearningEngineI.h"
-#import "CPGroup.h"
 
 @implementation CPFactory
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt

@@ -65,7 +65,8 @@
 
 enum ORGroupType {
    DefaultGroup = 0,
-   BergeGroup = 1
+   BergeGroup = 1,
+   GuardedGroup = 2
 };
 
 @protocol ORGroup <ORObject,ORConstraint>
@@ -74,6 +75,7 @@ enum ORGroupType {
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
 -(enum ORGroupType)type;
+-(id<ORIntVar>)guard;
 @end
 
 @protocol ORFail <ORConstraint>
@@ -571,6 +573,17 @@ enum ORGroupType {
 
 
 // ====== Bit Constraints =====================================
+
+@protocol ORBitEqualAt <ORConstraint>
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+-(ORInt)bit;
+@end
+
+@protocol ORBitEqualc <ORConstraint>
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+@end
 
 @protocol  ORBitEqual <ORConstraint>
 -(id<ORBitVar>) left;

@@ -20,11 +20,13 @@
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)g;
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
 -(ORInt) size;
 -(id<ORConstraint>) at: (ORInt) idx;
+-(id<ORIntVar>)guard;
 -(enum ORGroupType)type;
 @end
 
@@ -528,7 +530,6 @@
 -(id<ORIntVar>) cost;
 @end
 
-
 @interface ORObjectiveValueIntI : ORObject<ORObjectiveValueInt> {
    ORInt _value;
    ORInt _direction;
@@ -613,6 +614,19 @@
 
 @interface ORMaximizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
 -(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORDoubleArray>) coef;
+@end
+
+@interface ORBitEqualAt : ORConstraintI<ORBitEqualAt>
+-(ORBitEqualAt*)init:(id<ORBitVar>)x at:(ORInt)k with:(ORInt)c;
+-(id<ORBitVar>)left;
+-(ORInt)cst;
+-(ORInt)bit;
+@end
+
+@interface ORBitEqualc : ORConstraintI<ORBitEqualc>
+-(ORBitEqualc*)init:(id<ORBitVar>)x eqc:(ORInt)c;
+-(id<ORBitVar>)left;
+-(ORInt)cst;
 @end
 
 @interface ORBitEqual : ORConstraintI<ORBitEqual>

@@ -44,7 +44,9 @@ PORTABLE_BEGIN
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) tracker range: (id<ORIntRange>) r;
 +(id<ORRandomPermutation>) randomPermutation:(id<ORIntIterable>)onSet;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
++(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)guard;
 +(id<ORGroup>)group:(id<ORTracker>)model;
++(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value;
@@ -286,6 +288,9 @@ PORTABLE_BEGIN
 
 @interface ORFactory (BV)
 +(id<ORBitVarArray>) bitVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
++(id<ORConstraint>) bvEqualBit:(id<ORTracker>)tracker var:(id<ORBitVar>)x bit:(ORInt)k with:(ORInt)val;
++(id<ORConstraint>) bvEqualc:(id<ORTracker>)tracker var:(id<ORBitVar>)x to:(ORInt) c;
+
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x bor:(id<ORBitVar>)y eq:(id<ORBitVar>)z;
 +(id<ORConstraint>) bit:(id<ORBitVar>)x band:(id<ORBitVar>)y eq:(id<ORBitVar>)z;

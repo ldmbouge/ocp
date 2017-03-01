@@ -32,6 +32,7 @@
 -(ORUInt) midFreeBit;
 -(ORUInt) randomFreeBit;
 -(ORBool) isFree:(ORUInt)pos;
+-(ORBool) bitAt:(ORUInt)pos;
 -(ORStatus) remove:(ORUInt)val;
 //-(id<CPBitVar>) dereference;
 -(ORBool) member: (unsigned int*) v;

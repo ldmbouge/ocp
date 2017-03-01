@@ -27,6 +27,8 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 
 @interface CPFactory (BitConstraint)
 //Bit Constraints
++(id<CPBVConstraint>) bitEqualAt:(id<CPBitVar>)x at:(ORInt)k to:(ORInt)c;
++(id<CPBVConstraint>) bitEqualc:(id<CPBitVar>)x to:(ORInt)c;
 +(id<CPBVConstraint>) bitEqual:(id<CPBitVar>)x to:(id<CPBitVar>)y;
 +(id<CPBVConstraint>) bitAND:(id<CPBitVar>)x band:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
 +(id<CPBVConstraint>) bitOR:(id<CPBitVar>)x bor:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
@@ -63,6 +65,36 @@ typedef struct _CPBitAntecedents CPBitAntecedents;
 +(id<CPBVConstraint>) bitNotb:(id<CPBitVar>)x eval:(id<CPBitVar>)r;
 +(id<CPBVConstraint>) bitConflict:(CPBitAntecedents*)a;
 +(id<CPBVConstraint>) bitDistinct:(id<CPBitVar>)x distinctFrom:(id<CPBitVar>)y eval:(id<CPBitVar>)z;
+@end
+
+@interface CPBitEqualAt : CPCoreConstraint<CPBVConstraint> {
+   @private
+   CPBitVarI* _x;
+   ORInt     _at;
+   ORInt      _c;
+   ORUInt** _state;
+}
+-(id)init:(CPBitVarI*)x at:(ORInt)bit to:(ORInt)v;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state;
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment;
+-(void) post;
+@end
+
+@interface CPBitEqualc : CPCoreConstraint<CPBVConstraint> {
+@private
+   CPBitVarI*  _x;
+   ORInt       _c;
+   ORUInt**    _state;
+}
+-(id) initCPBitEqualc: (CPBitVarI*) x and: (ORInt) c ;
+-(void) dealloc;
+-(NSString*) description;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment;
+-(CPBitAntecedents*) getAntecedentsFor:(CPBitAssignment*) assignment withState:(ORUInt**)state;
+-(CPBitAntecedents*) getAntecedents:(CPBitAssignment*) assignment;
+-(void) post;
 @end
 
 @interface CPBitEqual : CPCoreConstraint<CPBVConstraint> {

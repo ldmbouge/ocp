@@ -188,6 +188,10 @@
          case BergeGroup:
             cg = [CPFactory bergeGroup:_engine];
             break;
+         case GuardedGroup: {
+            id<CPIntVar> cGuard = [self concreteVar:[g guard]];
+            cg = [CPFactory group:_engine guard:cGuard];
+         } break;
          default:
             cg = [CPFactory group:_engine];
             break;
@@ -1157,6 +1161,26 @@
    }
 }
 
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPConstraint> concreteCstr = [CPFactory bitEqualAt:x at:[cstr bit] to:[cstr cst]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
+-(void) visitBitEqualc:(id<ORBitEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPConstraint> concreteCstr = [CPFactory bitEqualc:x to:[cstr cst]];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr
 {
@@ -1737,6 +1761,15 @@
       [left updateMin:cstr.cst];
    }];
 }
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)cstr
+{
+   id<CPBitVar> left = [self concreteVar:cstr.left];
+   [_engine tryEnforce:^{
+      [left bind:cstr.bit to:cstr.cst];
+   }];
+}
+
+
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (!_gamma[v.getId]) {

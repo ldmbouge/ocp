@@ -111,6 +111,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
 }
+-(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "initHeuristic not implemented"];
+}
 -(ORDouble) varOrdering: (id<CPBitVar>)x
 {
    return [_binding[[NSThread threadID]] varOrdering:x];

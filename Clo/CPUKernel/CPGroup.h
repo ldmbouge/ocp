@@ -11,35 +11,30 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPCstr.h>
 #import <CPUKernel/CPConstraintI.h>
 
 @class CPGroupController;
 
-@interface CPGroup : CPCoreConstraint<CPGroup> {
-   CPEngineI*               _engine;
-   CPClosureQueue*          _closureQueue[NBPRIORITIES];
-   CPValueClosureQueue*     _valueClosureQueue;
-}
+@protocol CPGroup <CPConstraint>
+-(void)  add:(id<CPConstraint>)p;
+-(void)  assignIdToConstraint:(id<ORConstraint>)c;
+-(void)  scheduleClosure:(id<CPClosureList>)evt;
+@end
+
+@interface CPGroup : CPCoreConstraint<CPGroup>
 -(id)   init: (id<CPEngine>) engine;
 -(void) add: (id<CPConstraint>) p;
--(void)  assignIdToConstraint:(id<ORConstraint>)c;
+-(void) assignIdToConstraint:(id<ORConstraint>)c;
 -(void) scheduleTrigger: (ORClosure) cb onBehalf: (id<CPConstraint>) c;
 -(void) scheduleClosure: (id<CPClosureList>) evt;
 -(void) scheduleValueClosure: (id<CPValueEvent>) evt;
+-(void) enumerateWithBlock:(void(^)(ORInt,id<ORConstraint>))block;
 -(void) post;
 -(ORStatus) propagate;
 @end
 
-@interface CPBergeGroup : CPCoreConstraint<CPGroup> {
-   CPEngineI*               _engine;
-   id<CPConstraint>*        _inGroup;
-   id<CPClosureList>*       _scanMap;
-   ORInt                    _nbIn;
-   ORInt                    _max;
-   ORInt                    _low;
-   ORInt                    _sz;
-   ORInt*                   _map;
-}
+@interface CPBergeGroup : CPCoreConstraint<CPGroup>
 -(id) init:(id<CPEngine>)engine;
 -(void) add:(id<CPConstraint>)p;
 -(void) assignIdToConstraint:(id<ORConstraint>)c;

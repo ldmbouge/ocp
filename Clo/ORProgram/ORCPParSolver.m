@@ -66,6 +66,7 @@
    _onStartup = nil;
    _doneSearching = NO;
    _sowct = [ORRuntimeMonitor wctime];
+   _nbf = _nbc = 0;
    return self;
 }
 -(void)dealloc
@@ -127,11 +128,17 @@
 }
 -(ORInt) nbFailures
 {
-  return [[self worker] nbFailures];
+   if (_nbDone == _nbWorkers)
+      return _nbf;
+   else
+      return [[self worker] nbFailures];
 }
 -(ORInt) nbChoices
 {
-   return [[self worker] nbChoices];
+   if (_nbDone == _nbWorkers)
+      return _nbc;
+   else
+      return [[self worker] nbChoices];
 }
 -(id<CPEngine>) engine
 {
@@ -254,6 +261,10 @@
 {
    return [[self worker] gamma];
 }
+-(void) atomic:(ORClosure)body
+{
+   [[self worker] atomic:body];
+}
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
@@ -328,6 +339,14 @@
 -(void) label: (id<ORIntVar>) mx
 {
    [[self worker] label: mx];
+}
+-(void) labelBV: (id<ORBitVar>) var at:(ORUInt) i with:(ORBool)val
+{
+   [(id<CPBV>)[self worker] labelBV:var at:i with:val];
+}
+-(void) labelUpFromLSB:(id<ORBitVar>) x
+{
+   [(id<CPBV>)[self worker] labelUpFromLSB:x];
 }
 -(void) select: (id<ORIntVarArray>)x minimizing:(ORInt2Double)f in:(ORInt2Void)body
 {
@@ -462,6 +481,19 @@
 {
    return [[self worker] assignRelaxationValue:  f to:  x];
 }
+-(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x
+{
+   id<CPBV> ptr = (id<CPBV>)[self worker];
+   return [ptr memberBit:k value:v in:x];
+}
+-(ORBool) bitAt:(ORUInt)pos in:(id<ORBitVar>)x
+{
+   return [(id<CPBV>)[self worker] bitAt:pos in:x];
+}
+-(ORBool)boundBit:(ORInt)k in:(id<ORBitVar>)x
+{
+   return [(id<CPBV>)[self worker] boundBit:k in:x];
+}
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
    return [[self worker] member:v in:x];
@@ -481,6 +513,10 @@
 -(id<ORIntVar>)smallestDom:(id<ORIntVarArray>)x
 {
    return [[self worker] smallestDom:x];
+}
+-(NSString*)stringValue:(id<ORBitVar>)x
+{
+   return [(id<CPBV>)[self worker] stringValue: x];
 }
 -(NSSet*)constraints:(id<ORVar>)x
 {
@@ -691,6 +727,8 @@
    NSLog(@"Worker[%d] = %@",myID,_workers[myID]);
    // [LDM]. Solvers are auto-released. We should never manually deallocate them.
    //[_workers[myID] release];
+   _nbf += [_workers[myID] nbFailures];
+   _nbc += [_workers[myID] nbChoices];
    _workers[myID] = nil;
    [mySearch release];
    [ORFactory shutdown];

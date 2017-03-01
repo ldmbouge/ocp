@@ -42,6 +42,7 @@ enum CPVarClass {
 -(NSSet*)constraints;
 -(ORInt)degree;
 -(ORBool)vertical;
+-(ORInt) domsize;
 @end
 
 

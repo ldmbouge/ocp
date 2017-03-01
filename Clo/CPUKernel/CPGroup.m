@@ -14,7 +14,14 @@
 #import "CPConstraintI.h"
 #import "CPEngineI.h"
 
-@implementation CPGroup
+@implementation CPGroup {
+   CPEngineI*               _engine;
+   CPClosureQueue*          _closureQueue[NBPRIORITIES];
+   CPValueClosureQueue*     _valueClosureQueue;
+   id<CPConstraint>*        _inGroup;
+   ORInt                    _nbIn;
+   ORInt                    _max;
+}
 -(id)init:(CPEngineI*) engine
 {
    self = [super initCPCoreConstraint:engine];
@@ -22,6 +29,9 @@
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _closureQueue[i] = [[CPClosureQueue alloc] initClosureQueue:512];
    _valueClosureQueue = [[CPValueClosureQueue alloc] initValueClosureQueue:512];
+   _max = 2;
+   _nbIn = 0;
+   _inGroup = malloc(sizeof(id<CPConstraint>)*_max);
    return self;
 }
 -(void)dealloc
@@ -29,15 +39,27 @@
    for(ORInt i=0;i<NBPRIORITIES;i++)
       [_closureQueue[i] release];
    [_valueClosureQueue release];
+   free(_inGroup);
    [super dealloc];
 }
 -(void)add:(id<CPConstraint>)p
 {
    [p setGroup:self];
+   if (_nbIn >= _max) {
+      _inGroup = realloc(_inGroup,sizeof(id<CPConstraint>)* _max * 2);
+      _max *= 2;
+   }
+   _inGroup[_nbIn++] = p;
+   [_engine assignIdToConstraint:p];
 }
 -(void)assignIdToConstraint:(id<ORConstraint>)c
 {
    [_engine assignIdToConstraint:c];
+}
+-(void) enumerateWithBlock:(void(^)(ORInt,id<ORConstraint>))block
+{
+   for(ORInt i = 0;i <_nbIn;i++)
+      block(i,_inGroup[i]);
 }
 -(void)setGroup:(id<CPGroup>)g
 {
@@ -49,6 +71,8 @@
 }
 -(void) post
 {
+   for(ORInt i=0;i<_nbIn;i++)
+      [_inGroup[i] post];
 }
 -(void)scheduleClosure:(CPClosureList*)evt
 {
@@ -140,9 +164,29 @@ static inline ORStatus executeClosure(ORClosure cb,id<CPConstraint> forCstr,id<C
       return ORSuspend;
    });
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CPGroup(%p): ",self];
+   for(ORInt i=0;i<_nbIn;i++) {
+      [buf appendFormat:@"\n\t\t%3d : %@",i,[_inGroup[i] description]];
+   }
+   [buf appendString:@"\n\t>"];
+   return buf;
+}
 @end
 
-@implementation CPBergeGroup
+// ---------------------------
+@implementation CPBergeGroup  {
+   CPEngineI*               _engine;
+   id<CPConstraint>*        _inGroup;
+   id<CPClosureList>*       _scanMap;
+   ORInt                    _nbIn;
+   ORInt                    _max;
+   ORInt                    _low;
+   ORInt                    _sz;
+   ORInt*                   _map;
+}
 -(id)init:(CPEngineI*)engine
 {
    self = [super initCPCoreConstraint:engine];

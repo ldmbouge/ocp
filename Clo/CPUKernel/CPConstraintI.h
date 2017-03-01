@@ -10,9 +10,11 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPCstr.h>
 
 @class CPEngineI;
+@protocol CPGroup;
 
 @interface CPCoreConstraint : ORObject<CPConstraint> {
 @public

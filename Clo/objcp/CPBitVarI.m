@@ -191,7 +191,17 @@ return self;
 }
 -(ORInt) degree{
    //required for the CPVar protocol, not sure of its use.
-   return 0;
+   __block ORUInt d = 0;
+   [_net._boundsEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._bindEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._domEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._ac5[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._bitFixedEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._bitFixedAtIEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   return d;
+
 }
 -(id) takeSnapshot: (ORInt) id
 {
@@ -374,6 +384,10 @@ return self;
 //   ORBool temp = [_dom isFree:pos];
 //   return temp;
    return [_dom isFree:pos];
+}
+-(ORBool) bitAt:(ORUInt)pos
+{
+   return [_dom getBit:pos];
 }
 -(NSString*)stringValue
 {

@@ -53,6 +53,7 @@
    NSMutableArray* _content;
    id<ORTracker>     _model;
    enum ORGroupType     _gt;
+   id<ORIntVar>      _guard;
 }
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt
 {
@@ -61,6 +62,17 @@
    _content = [[NSMutableArray alloc] initWithCapacity:8];
    _name = -1;
    _gt = gt;
+   _guard = nil;
+   return self;
+}
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)g
+{
+   self = [super init];
+   _model = model;
+   _content = [[NSMutableArray alloc] initWithCapacity:8];
+   _name = -1;
+   _gt = gt;
+   _guard = g;
    return self;
 }
 -(void)dealloc
@@ -76,6 +88,10 @@
    [_model trackConstraintInGroup:c];
    return c;
 }
+-(id<ORIntVar>)guard
+{
+   return _guard;
+}
 -(void) close
 {
 }
@@ -83,18 +99,19 @@
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<%@ : %p> -> ",[self class],self];
-   [buf appendString:@"{"];
+   [buf appendString:@"{\n"];
    [_content enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      [buf appendFormat:@"%@,",[obj description]];
+      [buf appendFormat:@"\t\t%@\n",[obj description]];
    }];
-   [buf appendString:@"}"];
+   [buf appendString:@"\t}"];
+   if (_gt == GuardedGroup)
+      [buf appendFormat:@" guard: %@",_guard];
    return buf;
 }
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block
 {
-   [_content enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
+   for(id obj in _content)
       block(obj);
-   }];
 }
 -(ORInt) size
 {
@@ -4188,6 +4205,83 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return NULL;
 }
+@end
+
+
+@implementation ORBitEqualAt {
+   id<ORBitVar>    _x;
+   ORInt         _bit;
+   ORInt         _val;
+}
+-(ORBitEqualAt*)init:(id<ORBitVar>)x at:(ORInt)k with:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x  = x;
+   _bit = k;
+   _val = c;
+   return self;
+}
+-(id<ORBitVar>)left
+{
+   return _x;
+}
+-(ORInt)cst
+{
+   return _val;
+}
+-(ORInt)bit {
+   return _bit;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@[%d] == %d)",[self class],self,_x,_bit,_val];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitEqualAt:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+@end
+
+@implementation ORBitEqualc {
+   id<ORBitVar> _x;
+   ORInt        _c;
+}
+-(ORBitEqualc*)init:(id<ORBitVar>)x eqc:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(id<ORBitVar>)left
+{
+   return _x;
+}
+-(ORInt)cst
+{
+   return _c;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %d)",[self class],self,_x,_c];
+   return buf;
+}
+-(void)visit:(ORVisitor*)v
+{
+   [v visitBitEqualc:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
+}
+
 @end
 
 @implementation ORBitEqual {

@@ -82,6 +82,12 @@
    [model trackObject:o];
    return o;
 }
++(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)guard
+{
+   id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt guard:guard];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORGroup>)group:(id<ORTracker>)model
 {
    return [self group:model type:DefaultGroup];
@@ -90,7 +96,12 @@
 {
    return [self group:model type:BergeGroup];
 }
-
++(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g
+{
+   id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:GuardedGroup guard:g];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
@@ -1428,7 +1439,18 @@ int cmpEltValue(const struct EltValue* v1,const struct EltValue* v2)
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    return (id<ORBitVarArray>)o;
 }
-
++(id<ORConstraint>) bvEqualBit:(id<ORTracker>)tracker var:(id<ORBitVar>)x bit:(ORInt)k with:(ORInt)val
+{
+   id<ORConstraint> o = [[ORBitEqualAt alloc] init:x at:k with:val];
+   [tracker trackObject:o];
+   return o;
+}
++(id<ORConstraint>) bvEqualc:(id<ORTracker>)tracker var:(id<ORBitVar>)x to:(ORInt) c
+{
+   id<ORConstraint> o = [[ORBitEqualc alloc] init:x eqc:c];
+   [tracker trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitEqual alloc] initORBitEqual:x eq:y];

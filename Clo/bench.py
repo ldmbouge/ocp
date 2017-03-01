@@ -61,7 +61,8 @@ ab = ['ais',
       'coloringModel',
       'jobshop',
       'JobShopBenchmarks',
-      'UTC'
+      'UTC',
+      'FanghuiTest'
 ]
 
 nba = len(sys.argv)

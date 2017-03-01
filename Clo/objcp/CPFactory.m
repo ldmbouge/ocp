@@ -204,6 +204,7 @@
 {
    return [ORFactory TRIntMatrix: cp range: R1 : R2];
 }
+
 @end
 
 

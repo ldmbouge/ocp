@@ -256,7 +256,7 @@
 
 -(void) visitGroup:(id<ORGroup>)g
 {
-   id<ORGroup> ng = [ORFactory group:[_into tracker] type:[g type]];
+   id<ORGroup> ng = [ORFactory group:[_into tracker] type:[g type] guard:[g guard]];
    id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:(id)[_into tracker] group:ng];
    [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
       [ORFlatten flatten:ck into:a2g];
@@ -529,6 +529,14 @@ static void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> 
    _result = [_into addConstraint:c];
 }
 // Bit
+-(void) visitBitEqualAt:(id<ORBitEqualAt>)c
+{
+   _result = [_into addConstraint:c];
+}
+-(void) visitBitEqualc:(id<ORBitEqualc>)c
+{
+   _result = [_into addConstraint:c];
+}
 -(void) visitBitEqual:(id<ORBitEqual>)c
 {
    _result = [_into addConstraint:c];

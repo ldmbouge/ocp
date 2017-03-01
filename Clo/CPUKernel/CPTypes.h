@@ -20,3 +20,10 @@
 
 typedef ORStatus(*UBType)(id,SEL,...);
 typedef void (^ORIntClosure)(ORInt);
+
+
+typedef enum {
+   CPChecked,
+   CPTocheck,
+   CPOff
+} CPTodo;
