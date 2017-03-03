@@ -415,6 +415,10 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
    return d;
 }
+-(ORInt) domsize
+{
+   return [_theVar domsize];
+}
 -(NSString*)description
 {
    ORIReady();
