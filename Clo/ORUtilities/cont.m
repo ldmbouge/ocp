@@ -197,7 +197,6 @@ inline static void freePool()
       rv->_data = 0;
       rv->_length = 0;
       rv->field = 0;
-      rv->admin = NO;
       rv->fieldId = nil;
 #else
       // THis is the allocation for Linux 64 where alignments are not
@@ -215,7 +214,8 @@ inline static void freePool()
    }   
    rv->_used   = 0;
    rv->_start  = 0;
-   rv->_cnt = 1;
+   rv->_cnt    = 1;
+   rv->admin   = NO;
    return rv;
 }
 

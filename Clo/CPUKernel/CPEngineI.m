@@ -467,6 +467,7 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
             id<CPGroup> group = lc->_group;
             lc->_todo = CPTocheck;
             if (group) {
+               [group toCheck];
                ClosureQueueEnqueue(fdm->_closureQueue[LOWEST_PRIO], nil, group);
                [group scheduleClosure:list];
             }

@@ -283,12 +283,11 @@ void lock_constructor() {
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:[_solver engine] model:_model];
-         assert(ok != ORFailure);
          [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
-         if (k && ok)
+         if (k &&  (k.admin || ok != ORFailure))
             [k call];
          else [k letgo];
       } else break;

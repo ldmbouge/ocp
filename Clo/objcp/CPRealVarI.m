@@ -176,6 +176,11 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
    return d;
 }
+-(ORInt) domsize
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"domsize not supported on real var"];
+}
+
 -(NSString*)description
 {
    ORIReady();
@@ -409,6 +414,10 @@ static NSMutableSet* collectConstraints(CPRealEventNetwork* net,NSMutableSet* rv
    [_net._maxEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
    [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
    return d;
+}
+-(ORInt) domsize
+{
+   return [_theVar domsize];
 }
 -(NSString*)description
 {

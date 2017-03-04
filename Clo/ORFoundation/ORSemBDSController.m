@@ -255,7 +255,7 @@
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver model:_model];
          [node._cp letgo];
          //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
-         if (status != ORFailure)
+         if (node._cont &&  (node._cont.admin || status != ORFailure))
             [node._cont call];
          else
             [node._cont letgo]; // we must deallocate this continuation since it will never be used again.

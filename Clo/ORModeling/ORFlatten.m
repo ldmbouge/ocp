@@ -256,7 +256,7 @@
 
 -(void) visitGroup:(id<ORGroup>)g
 {
-   id<ORGroup> ng = [ORFactory group:[_into tracker] type:[g type]];
+   id<ORGroup> ng = [ORFactory group:[_into tracker] type:[g type] guard:[g guard]];
    id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:(id)[_into tracker] group:ng];
    [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
       [ORFlatten flatten:ck into:a2g];

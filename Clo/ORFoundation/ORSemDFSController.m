@@ -113,13 +113,11 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine model:_model];
-         //assert(status != ORFailure);
          [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
-         if (k &&  status != ORFailure) {
-            //NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
+         if (k &&  (k.admin || status != ORFailure)) {
             [k call];
          } else {
             if (k==nil)

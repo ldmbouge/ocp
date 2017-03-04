@@ -188,6 +188,10 @@
          case BergeGroup:
             cg = [CPFactory bergeGroup:_engine];
             break;
+         case GuardedGroup: {
+            id<CPIntVar> cGuard = [self concreteVar:[g guard]];
+            cg = [CPFactory group:_engine guard:cGuard];
+         } break;
          default:
             cg = [CPFactory group:_engine];
             break;
