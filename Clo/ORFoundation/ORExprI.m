@@ -813,6 +813,8 @@
       return (id)[ORFactory expr:(id)self land:(id)e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return (id)[ORFactory expr:(id)self land:(id)[(id)e asExpression:t] track:t];
+   else if ([e conformsToProtocol:@protocol(ORConstraint)])
+      return (id)[ORFactory expr:(id)self land:(id)e track:t];
    else
       return NULL;
 }

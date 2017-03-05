@@ -191,7 +191,17 @@ return self;
 }
 -(ORInt) degree{
    //required for the CPVar protocol, not sure of its use.
-   return 0;
+   __block ORUInt d = 0;
+   [_net._boundsEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr) { d += [cstr nbVars] - 1;}];
+   [_net._bindEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)   { d += [cstr nbVars] - 1;}];
+   [_net._domEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._minEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._maxEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._ac5[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._bitFixedEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   [_net._bitFixedAtIEvt[0] scanCstrWithBlock:^(CPCoreConstraint* cstr)    { d += [cstr nbVars] - 1;}];
+   return d;
+
 }
 -(id) takeSnapshot: (ORInt) id
 {
@@ -375,6 +385,10 @@ return self;
 //   return temp;
    return [_dom isFree:pos];
 }
+-(ORBool) bitAt:(ORUInt)pos
+{
+   return [_dom getBit:pos];
+}
 -(NSString*)stringValue
 {
    return [_dom description];
@@ -404,7 +418,11 @@ return self;
 {
 }
 
--(void) whenChangePropagate:  (CPCoreConstraint*) c 
+-(void)whenBindDo: (ORClosure) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c
+{
+   hookupEvent(_engine, _net._bindEvt, todo, c, p);
+}
+-(void) whenChangePropagate:  (CPCoreConstraint*) c
 {
    hookupEvent(_engine, _net._bitFixedEvt, nil, c, HIGHEST_PRIO);
 }
@@ -456,8 +474,8 @@ return self;
 {
 //<<<<<<< HEAD
    
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
-   if (s==ORFailure) return s;
+//   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:dsz sender:sender];
+//   if (s==ORFailure) return s;
 
 //   id<CPEventNode> mList[8];
 //   ORUInt k = 0;
@@ -467,18 +485,25 @@ return self;
 //   k += mList[k] != NULL;
 //   mList[k] = _net._maxEvt[0]._val;
 //=======
-   id<CPClosureList> mList[5];
+   id<CPClosureList> mList[7];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt[0];
    k += mList[k] != NULL;
    mList[k] = _net._minEvt[0];
    k += mList[k] != NULL;
    mList[k] = _net._maxEvt[0];
-//>>>>>>> master
+   k += mList[k] != NULL;
+   mList[k] = _net._domEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = _net._bindEvt[0];
+   k += mList[k] != NULL;
+   mList[k] = _net._bitFixedEvt[0];
    k += mList[k] != NULL;
    mList[k] = NULL;
+   
    [_engine scheduleClosures:mList];
-    if (_triggers != nil)
+   
+    if (_triggers)
         [_triggers bindEvt:_engine];
    return ORSuspend;
 }
@@ -735,11 +760,14 @@ return self;
 
 -(ORStatus) bindUInt64:(ORULong)val
 {
+//   ORUInt* temp = alloca(sizeof(ORUInt)*2);
+//   temp[0] = val >> 32;
+//   temp[1] = val & CP_UMASK;
     return [_dom bind:val for:self];
 }
 
 -(ORStatus)bind:(ORUInt*)val{
-    return [_dom bindToPat: val for:self];
+    return [_dom bindToPat:val for:self];
 }
 -(ORStatus) remove:(ORUInt*) val
 {

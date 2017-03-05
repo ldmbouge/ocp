@@ -13,6 +13,7 @@
 #import <objcp/CPFactory.h>
 
 @interface CPFactory (Constraint)
++(id<CPGroup>)group:(id<CPEngine>)engine guard:(id<CPIntVar>)guard;
 
 +(id<CPConstraint>) fail:(id<CPEngine>)engine;
 +(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x;

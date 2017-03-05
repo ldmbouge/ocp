@@ -82,6 +82,12 @@
    [model trackObject:o];
    return o;
 }
++(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)guard
+{
+   id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt guard:guard];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORGroup>)group:(id<ORTracker>)model
 {
    return [self group:model type:DefaultGroup];
@@ -90,7 +96,12 @@
 {
    return [self group:model type:BergeGroup];
 }
-
++(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g
+{
+   id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:GuardedGroup guard:g];
+   [model trackObject:o];
+   return o;
+}
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
