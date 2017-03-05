@@ -20,21 +20,21 @@ int main(int argc, const char * argv[])
     id<ORModel> model = [ORFactory createModel];
     //id<ORAnnotation> notes = [ORFactory annotation];
     
-    srand(5003);//(unsigned int)time(NULL));
+    srand(2);//(unsigned int)time(NULL));
     
-    ORInt Ncnodes = 30;
-    ORInt Napps = 5;
+    ORInt Ncnodes = 3;
+    ORInt Napps = 3;
     ORInt Nsec = 2;
-    ORInt MAX_CONN = 3;
-    ORInt VM_MEM = 300;
+    ORInt MAX_CONN = 2;
+    ORInt VM_MEM = 200;
     
     id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
     id<ORIntRange> apps = RANGE(model,1, Napps);
     id<ORIntRange> sec = RANGE(model,0, Nsec);
 
-    id<ORIntArray> D = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
-    id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 2000 + 1; }];
-    id<ORIntArray> Mapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
+    id<ORIntArray> D = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 8 + 1; }];
+    id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 800 + 1; }];
+    id<ORIntArray> Mapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 20 + 1; }];
     id<ORIntArray> B = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 1000 + 1; }];
     id<ORIntArray> Bapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
     
@@ -53,7 +53,7 @@ int main(int argc, const char * argv[])
     }
  
     
-    ORInt Vmax = [D sumWith:^ORInt(ORInt value, int idx) { return value; }];
+    ORInt Vmax = 3;//[D sumWith:^ORInt(ORInt value, int idx) { return value; }];
     id<ORIntRange> vm = RANGE(model,1, Vmax);
     id<ORIntArray> Uapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return (ORInt)([D at: i] * 1.3); }];
     id<ORIntRange> Iapp = RANGE(model,0, [Uapp sumWith:^ORInt(ORInt value, int idx) { return value; }]-1);
@@ -89,8 +89,8 @@ int main(int argc, const char * argv[])
     
     id<ORIntVarArray>  s = [ORFactory intVarArray: model range: RANGE(model, 0, Vmax) domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
     
-    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 100000)];
-    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 100000)];
+    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 10000)];
+    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 10000)];
     
     [model minimize: Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]])];
     
@@ -103,7 +103,7 @@ int main(int argc, const char * argv[])
     for(ORInt j = [apps low]; j <= [apps up]; j++) {
         id<ORIntRange> r = [omega at: j];
         for(ORInt i = [r low]; i < [r up]; i++) {
-            [model add: [[[a at: i] leq: @(0)] eq: [[a at: i+1] leq: @(0)]]];
+            [model add: [[[a at: i] leq: @(0)] imply: [[a at: i+1] leq: @(0)]]];
         }
     }
     
@@ -142,7 +142,7 @@ int main(int argc, const char * argv[])
     
     // VM symmetry breaking
     for(ORInt i = [vm low]; i < [vm up]; i++) {
-        [model add: [[[vc at: i] lt: @(1)] eq: [[vc at: i+1] lt: @(1)]]];
+        [model add: [[[vc at: i] eq: @(0)] imply: [[vc at: i+1] eq: @(0)]]];
     }
     
     // Security Constraints
@@ -171,31 +171,58 @@ int main(int argc, const char * argv[])
                       [Fbw elt: [s at: i]]
                      ]]];
     }
+
     
+    // Function to write solution.
+    // Print solution
+    void(^writeOut)(id<ORSolution>) = ^(id<ORSolution> best){
+        for(ORInt c = [cnodes low]; c <= [cnodes up]; c++) {
+            NSLog(@"Node: %i {", c);
+            for(ORInt i = [vm low]; i <= [vm up]; i++) {
+                if([best intValue: [v at: i]] == c) {
+                    NSLog(@"\tVM: %i (security: %i, %i apps) {", i, [best intValue: [s at: i]], [best intValue: [vc at: i]]);
+                    for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
+                        if([best intValue: [a at: k]] == i) {
+                            NSLog(@"\t\t app: %i {", k);
+                            for(ORInt k2 = [Iapp low]; k2 <= [Iapp up]; k2++) {
+                                ORInt connections = [best intValue: [conn at: k : k2]];
+                                if(connections > 0) {
+                                    NSLog(@"\t\t\t[app %i] <=> [app %i] (x%i)", k, k2, connections);
+                                }
+                            }
+                            NSLog(@"\t\t}");
+                        }
+                    }
+                    NSLog(@"\t}");
+                }
+            }
+            NSLog(@"}");
+        }
+    };
 
-//    
-//    // Bandwidth Constraints
-//    for(ORInt i = [cnodes low]; i <= [cnodes up]; i++) {
-//        [model add: [[u_bw at: i] geq: Sum(model, j, apps, [[a at: i : j] mul: @([Bapp at: j])])]];
-//        [model add: [[[u_bw at: i] mul: [Sbw elt: [s at: i]]] leq: [@([B at: i]) sub: [Fbw elt: [s at: i]]]]];
-//    }
-
+    
     ORTimeval now = [ORRuntimeMonitor now];
     
 //    id<ORModel> lm = [ORFactory linearizeModel: model];
 //    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
 //    [r start];
+//    id<ORSolution> best = [r bestSolution];
 
-//    id<ORRunnable> r = [ORFactory CPRunnable: model solve:^(id<CPCommonProgram> cp) {
+//    id<ORRunnable> r = [ORFactory CPDualRunnable: model solve:^(id<CPCommonProgram> cp) {
+//        id<ORIntVarArray> conn_flat = [conn flatten];
+//        id<ORIntVarArray> vm_conn_flat = [vm_conn flatten];
+//
 //        [cp labelArray: a];
-//        [cp labelArray: vc];
 //        [cp labelArray: v];
+//        [cp labelArray: vc];
 //        [cp labelArray: s];
-//        [cp labelArray: [conn flatten]];
+//        [cp labelArray: vm_conn_flat];
+//        [cp labelArray: conn_flat];
 //        [cp labelArray: u_bw];
 //        [cp labelArray: u_mem];
-//        id<ORSolution> s = [cp captureSolution];
-//        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
+//        
+//        id<ORSolution> sol = [cp captureSolution];
+//        NSLog(@"Found Solution: %i", [[sol objectiveValue] intValue]);
 //    }];
 //    [r start];
 //    id<ORSolution> best = [r bestSolution];
@@ -204,38 +231,19 @@ int main(int argc, const char * argv[])
     
     id<CPProgram> cp = [ORFactory createCPProgram: model];
     //NSLog(@"Model %@",model);
-    id<CPHeuristic> h = [cp createFF];
+    id<CPHeuristic> h = [cp createDDeg];
     [cp solve:^{
         [cp labelHeuristic:h];
         id<ORSolution> s = [cp captureSolution];
         NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
+        writeOut(s);
     }];
     id<ORSolution> best = [[cp solutionPool] best];
     
-    // Print solution
-    for(ORInt c = [cnodes low]; c <= [cnodes up]; c++) {
-        NSLog(@"Node: %i {", c);
-        for(ORInt i = [vm low]; i <= [vm up]; i++) {
-            if([best intValue: [v at: i]] == c) {
-                NSLog(@"\tVM: %i (security: %i, %i apps) {", i, [best intValue: [s at: i]], [best intValue: [vc at: i]]);
-                for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
-                    if([best intValue: [a at: k]] == i) {
-                        NSLog(@"\t\t app: %i {", k);
-                        for(ORInt k2 = [Iapp low]; k2 <= [Iapp up]; k2++) {
-                            ORInt connections = [best intValue: [conn at: k : k2]];
-                            if(connections > 0) {
-                                NSLog(@"\t\t\t[app %i] <=> [app %i] (x%i)", k, k2, connections);
-                            }
-                        }
-                        NSLog(@"\t\t}");
-                    }
-                }
-                NSLog(@"\t}");
-            }
-        }
-        NSLog(@"}");
-    }
     
+    for(ORInt i = [vm low]; i <= [vm up]; i++) {
+        NSLog(@"vm %i mem: %i", i, [best intValue: [u_mem at: i]]);
+    }
     
     //NSLog(@"Number of solutions found: %li", [[cp solutionPool] count]);
    ORTimeval el = [ORRuntimeMonitor elapsedSince:now];
