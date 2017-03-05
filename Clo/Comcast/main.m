@@ -16,10 +16,7 @@
 #import "XMLReader.h"
 
 int main(int argc, const char * argv[])
-{
-    XMLReader* r = [[XMLReader alloc] init];
-    [r sayHi: @"Dan"];
-    
+{    
     id<ORModel> model = [ORFactory createModel];
     //id<ORAnnotation> notes = [ORFactory annotation];
     

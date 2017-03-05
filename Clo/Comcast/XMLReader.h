@@ -1,16 +1,16 @@
+////
+////  XMLReader.h
+////  Clo
+////
+////  Created by Sarah Peck on 2/23/17.
+////
+////
 //
-//  XMLReader.h
-//  Clo
+//#import <Foundation/Foundation.h>
 //
-//  Created by Sarah Peck on 2/23/17.
+//@interface XMLReader : NSObject
 //
+//-(id) init;
+//-(void) sayHi: (NSString*)name;
 //
-
-#import <Foundation/Foundation.h>
-
-@interface XMLReader : NSObject
-
--(id) init;
--(void) sayHi: (NSString*)name;
-
-@end
+//@end
