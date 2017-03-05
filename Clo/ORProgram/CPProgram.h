@@ -233,6 +233,7 @@ PORTABLE_BEGIN
 
 -(NSString*)stringValue:(id<ORBitVar>)x;
 -(ORInt)memberBit:(ORInt)k value:(ORInt)v in: (id<ORBitVar>) x;
+-(ORBool)boundBit:(ORInt)k in:(id<ORBitVar>)x;
+-(ORBool)bitAt:(ORInt)k in:(id<ORBitVar>)x;
 @end
 PORTABLE_END
-

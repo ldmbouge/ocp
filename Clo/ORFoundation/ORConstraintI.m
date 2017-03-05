@@ -53,6 +53,7 @@
    NSMutableArray* _content;
    id<ORTracker>     _model;
    enum ORGroupType     _gt;
+   id<ORIntVar>      _guard;
 }
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt
 {
@@ -61,6 +62,17 @@
    _content = [[NSMutableArray alloc] initWithCapacity:8];
    _name = -1;
    _gt = gt;
+   _guard = nil;
+   return self;
+}
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)g
+{
+   self = [super init];
+   _model = model;
+   _content = [[NSMutableArray alloc] initWithCapacity:8];
+   _name = -1;
+   _gt = gt;
+   _guard = g;
    return self;
 }
 -(void)dealloc
@@ -76,6 +88,10 @@
    [_model trackConstraintInGroup:c];
    return c;
 }
+-(id<ORIntVar>)guard
+{
+   return _guard;
+}
 -(void) close
 {
 }
@@ -83,18 +99,19 @@
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<%@ : %p> -> ",[self class],self];
-   [buf appendString:@"{"];
+   [buf appendString:@"{\n"];
    [_content enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      [buf appendFormat:@"%@,",[obj description]];
+      [buf appendFormat:@"\t\t%@\n",[obj description]];
    }];
-   [buf appendString:@"}"];
+   [buf appendString:@"\t}"];
+   if (_gt == GuardedGroup)
+      [buf appendFormat:@" guard: %@",_guard];
    return buf;
 }
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block
 {
-   [_content enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
+   for(id obj in _content)
       block(obj);
-   }];
 }
 -(ORInt) size
 {

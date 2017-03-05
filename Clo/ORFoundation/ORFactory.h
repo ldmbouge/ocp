@@ -44,7 +44,9 @@ PORTABLE_BEGIN
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) tracker range: (id<ORIntRange>) r;
 +(id<ORRandomPermutation>) randomPermutation:(id<ORIntIterable>)onSet;
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
++(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt guard:(id<ORIntVar>)guard;
 +(id<ORGroup>)group:(id<ORTracker>)model;
++(id<ORGroup>)group:(id<ORTracker>)model guard:(id<ORIntVar>)g;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value;

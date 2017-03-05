@@ -352,6 +352,10 @@
 {
    return [[self worker] trackVariable: object];
 }
+-(void) atomic: (ORClosure)body
+{
+   [[self worker] atomic:body];
+}
 -(void) add: (id<ORConstraint>) c
 {
    [(CPSolver*)[self worker] add:c];
