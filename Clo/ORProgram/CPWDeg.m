@@ -114,12 +114,18 @@
    }
    _nbv = len;
    NSArray* allC = [(id)_solver constraints];
-   _nbc = (ORUInt)[allC count];
+   int maxCID = -1;
+   for(id<ORObject> c in allC)
+      maxCID = max(maxID,[c getId]);
+   //_nbc = (ORUInt)[allC count];
+   _nbc = maxCID+1;
    _w   = malloc(sizeof(ORUInt)*_nbc);
    _vOfC = malloc(sizeof(id)*_nbc);
-   for(ORUInt k=0;k < _nbc;k++) {
+   for(id<ORConstraint> c in allC) {
+      //for(ORUInt k=0;k < _nbc;k++) {
+      int k = [c getId];
       _w[k] = 1;
-      _vOfC[k] = [[allC[k] allVars] retain];
+      _vOfC[k] = [[c allVars] retain];
    }
    [[_solver propagateFail] wheneverNotifiedDo:^(int cID) {
       _w[cID]++;
