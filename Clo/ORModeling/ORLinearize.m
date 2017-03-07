@@ -85,8 +85,8 @@
     id<ORIntVarArray> o = [ORFactory intVarArray:_model range:[x domain] with:^id<ORIntVar>(ORInt i) {
         return [ORFactory intVar:_model domain:RANGE(_model,0,1)];
     }];
-    id<ORExpr> sumBinVars = Sum(_model, i,[x domain], o[i]);
-    id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] mul: @(i)]);
+    id<ORExpr> sumBinVars = Sum(_model, i,[x domain], [o at: i]);
+    id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [[o at: i] mul: @(i)]);
     [_model addConstraint: [sumBinVars eq: @(1)]];
     [_model addConstraint: [sumExpr eq: x]];
     //[[[_model modelMappings] tau] set: o forKey: x];
@@ -338,16 +338,18 @@
     [_model addConstraint: [ Sum(_model, i, RANGE(_model, [[bx range] low], cst-1), [bx at: i]) eq: [@(1) sub: b]]];
     [_model addConstraint: [ Sum(_model, i, RANGE(_model, cst, [[bx range] up]), [bx at: i]) eq: b]];
 }
-//-(void) visitReifyLEqualc: (id<ORReifyGEqualc>)c
-//{
-////    id<ORIntVar> x = (id<ORIntVar>)[self linearizeExpr: [c x]];
-////    id<ORIntVarArray> bx = [self binarizationForVar: x];
-////    id<ORIntVar> b = (id<ORIntVar>)[self linearizeExpr: [c b]];
-////    ORInt cst = [c cst];
-////    
-////    [_model addConstraint: [ Sum(_model, i, RANGE(_model, [[bx range] low], cst-1), [bx at: i]) eq: [@(1) sub: b]]];
-////    [_model addConstraint: [ Sum(_model, i, RANGE(_model, cst, [[bx range] up]), [bx at: i]) eq: b]];
-//}
+-(void) visitReifyLEqualc: (id<ORReifyGEqualc>)c
+{
+    id<ORExpr> expr = (id<ORIntVar>)[self linearizeExpr: [[c x] mul: @(-1)]];
+    id<ORIntVar> y = [ORFactory intVar: _model bounds: RANGE(_model, [expr min], [expr max])];
+    id<ORIntVarArray> by = [self binarizationForVar: y];
+    id<ORIntVar> b = (id<ORIntVar>)[self linearizeExpr: [c b]];
+    ORInt cst = -[c cst];
+    
+    [_model addConstraint: [y eq: expr]];
+    [_model addConstraint: [ Sum(_model, i, RANGE(_model, [[by range] low], cst-1), [by at: i]) eq: [@(1) sub: b]]];
+    [_model addConstraint: [ Sum(_model, i, RANGE(_model, cst, [[by range] up]), [by at: i]) eq: b]];
+}
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
     id<ORIntVarArray> narr = (id<ORIntVarArray>)[[c vars] map: ^id(id obj, int idx) {

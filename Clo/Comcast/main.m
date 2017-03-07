@@ -26,15 +26,15 @@ int main(int argc, const char * argv[])
     ORInt Napps = 3;
     ORInt Nsec = 2;
     ORInt MAX_CONN = 2;
-    ORInt VM_MEM = 200;
+    ORInt VM_MEM = 50;
     
     id<ORIntRange> cnodes = RANGE(model,1, Ncnodes);
     id<ORIntRange> apps = RANGE(model,1, Napps);
     id<ORIntRange> sec = RANGE(model,0, Nsec);
 
     id<ORIntArray> D = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 8 + 1; }];
-    id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 800 + 1; }];
-    id<ORIntArray> Mapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 20 + 1; }];
+    id<ORIntArray> M = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 400 + 1; }];
+    id<ORIntArray> Mapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 28 + 1; }];
     id<ORIntArray> B = [ORFactory intArray: model range: cnodes with:^ORInt(ORInt i) { return rand() % 1000 + 1; }];
     id<ORIntArray> Bapp = [ORFactory intArray: model range: apps with:^ORInt(ORInt i) { return rand() % 10 + 1; }];
     
@@ -89,8 +89,8 @@ int main(int argc, const char * argv[])
     
     id<ORIntVarArray>  s = [ORFactory intVarArray: model range: RANGE(model, 0, Vmax) domain: sec]; // We really want the range to be 'vm' here, but 0 must be included for elt constraint.
     
-    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 10000)];
-    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 10000)];
+    id<ORIntVarArray> u_mem = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 200)];
+    id<ORIntVarArray> u_bw = [ORFactory intVarArray: model range: vm domain: RANGE(model, 0, 100)];
     
     [model minimize: Sum(model, i, vm, [[u_mem at: i] plus: [u_bw at: i]])];
     
@@ -100,12 +100,12 @@ int main(int argc, const char * argv[])
     }
     
     // App Symmetry breaking
-    for(ORInt j = [apps low]; j <= [apps up]; j++) {
-        id<ORIntRange> r = [omega at: j];
-        for(ORInt i = [r low]; i < [r up]; i++) {
-            [model add: [[[a at: i] leq: @(0)] imply: [[a at: i+1] leq: @(0)]]];
-        }
-    }
+//    for(ORInt j = [apps low]; j <= [apps up]; j++) {
+//        id<ORIntRange> r = [omega at: j];
+//        for(ORInt i = [r low]; i < [r up]; i++) {
+//            [model add: [[[a at: i] leq: @(0)] imply: [[a at: i+1] leq: @(0)]]];
+//        }
+//    }
     
     // Connection Constraints
     for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
@@ -141,9 +141,9 @@ int main(int argc, const char * argv[])
     }
     
     // VM symmetry breaking
-    for(ORInt i = [vm low]; i < [vm up]; i++) {
-        [model add: [[[vc at: i] eq: @(0)] imply: [[vc at: i+1] eq: @(0)]]];
-    }
+//    for(ORInt i = [vm low]; i < [vm up]; i++) {
+//        [model add: [[[vc at: i] eq: @(0)] imply: [[vc at: i+1] eq: @(0)]]];
+//    }
     
     // Security Constraints
     for(ORInt k = [Iapp low]; k <= [Iapp up]; k++) {
@@ -156,7 +156,7 @@ int main(int argc, const char * argv[])
     }
 
     // Memory usage = Fixed memory for deploying VM + per app memory usage scaled by security technology + fixed cost of sec. technology.
-    for(ORInt i = [vm low]; i < [vm up]; i++) {
+    for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_mem at: i] geq:
                      [[[[vc at: i] gt: @(0)] mul: @(VM_MEM)] plus:
                       [[Sum(model, k, Iapp, [ [[a at: k] eq: @(i)] mul: @([Mapp at: [alpha at: k]])] ) mul: [Smem elt: [s at: i]] ] plus:
@@ -165,7 +165,7 @@ int main(int argc, const char * argv[])
     }
     
     // Bandwidth usage:
-    for(ORInt i = [vm low]; i < [vm up]; i++) {
+    for(ORInt i = [vm low]; i <= [vm up]; i++) {
         [model add: [[u_bw at: i] geq:
                      [[Sum(model, j, apps, [[vm_conn at: i : j] mul: @([Bapp at: j])]) mul: [Sbw elt: [s at: i]]] plus:
                       [Fbw elt: [s at: i]]
@@ -203,10 +203,11 @@ int main(int argc, const char * argv[])
     
     ORTimeval now = [ORRuntimeMonitor now];
     
-//    id<ORModel> lm = [ORFactory linearizeModel: model];
-//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-//    [r start];
-//    id<ORSolution> best = [r bestSolution];
+    id<ORModel> lm = [ORFactory linearizeModel: model];
+    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+    [r start];
+    id<ORSolution> best = [r bestSolution];
+    writeOut(best);
 
 //    id<ORRunnable> r = [ORFactory CPDualRunnable: model solve:^(id<CPCommonProgram> cp) {
 //        id<ORIntVarArray> conn_flat = [conn flatten];
@@ -229,21 +230,21 @@ int main(int argc, const char * argv[])
     
     
     
-    id<CPProgram> cp = [ORFactory createCPProgram: model];
-    //NSLog(@"Model %@",model);
-    id<CPHeuristic> h = [cp createDDeg];
-    [cp solve:^{
-        [cp labelHeuristic:h];
-        id<ORSolution> s = [cp captureSolution];
-        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
-        writeOut(s);
-    }];
-    id<ORSolution> best = [[cp solutionPool] best];
-    
-    
-    for(ORInt i = [vm low]; i <= [vm up]; i++) {
-        NSLog(@"vm %i mem: %i", i, [best intValue: [u_mem at: i]]);
-    }
+//    id<CPProgram> cp = [ORFactory createCPProgram: model];
+//    //NSLog(@"Model %@",model);
+//    id<CPHeuristic> h = [cp createDDeg];
+//    [cp solve:^{
+//        [cp labelHeuristic:h];
+//        id<ORSolution> s = [cp captureSolution];
+//        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
+//        writeOut(s);
+//    }];
+//    id<ORSolution> best = [[cp solutionPool] best];
+//
+//    
+//    for(ORInt i = [vm low]; i <= [vm up]; i++) {
+//        NSLog(@"vm %i vc: %i mem: %i", i, [best intValue: [vc at: i]], [best intValue: [u_mem at: i]]);
+//    }
     
     //NSLog(@"Number of solutions found: %li", [[cp solutionPool] count]);
    ORTimeval el = [ORRuntimeMonitor elapsedSince:now];
