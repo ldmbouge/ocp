@@ -18,4 +18,5 @@
 -(id<CPClosureList>) next;           // fetches the tail of the list
 -(void) scanWithBlock:(void(^)(id))block;
 -(void) scanCstrWithBlock:(void(^)(id))block;
+-(void)retract;
 @end

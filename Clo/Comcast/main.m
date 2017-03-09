@@ -203,11 +203,20 @@ int main(int argc, const char * argv[])
     
     ORTimeval now = [ORRuntimeMonitor now];
     
-    id<ORModel> lm = [ORFactory linearizeModel: model];
-    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
-    [r start];
-    id<ORSolution> best = [r bestSolution];
-    writeOut(best);
+//    id<ORModel> lm = [ORFactory linearizeModel: model];
+//    id<ORRunnable> r = [ORFactory MIPRunnable: lm];
+//    [r start];
+//    id<ORSolution> best = [r bestSolution];
+//    writeOut(best);
+
+//   id<ORRunnable> r2 = [ORFactory CPRunnable:model numThreads:2 solve:^(id<CPCommonProgram> cp) {
+//      [cp labelArrayFF:[model intVars]];
+//      id<ORSolution> s = [cp captureSolution];
+//      writeOut(s);
+//      NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
+//   }];
+//   [r2 start];
+//   id<ORSolution> best = [r2 bestSolution];
 
 //    id<ORRunnable> r = [ORFactory CPDualRunnable: model solve:^(id<CPCommonProgram> cp) {
 //        id<ORIntVarArray> conn_flat = [conn flatten];
@@ -230,16 +239,16 @@ int main(int argc, const char * argv[])
     
     
     
-//    id<CPProgram> cp = [ORFactory createCPProgram: model];
-//    //NSLog(@"Model %@",model);
-//    id<CPHeuristic> h = [cp createDDeg];
-//    [cp solve:^{
-//        [cp labelHeuristic:h];
-//        id<ORSolution> s = [cp captureSolution];
-//        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
-//        writeOut(s);
-//    }];
-//    id<ORSolution> best = [[cp solutionPool] best];
+   id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController proto]];
+    //NSLog(@"Model %@",model);
+    id<CPHeuristic> h = [cp createFF];
+    [cp solve:^{
+        [cp labelHeuristic:h];
+        id<ORSolution> s = [cp captureSolution];
+        writeOut(s);
+        NSLog(@"Found Solution: %i", [[s objectiveValue] intValue]);
+    }];
+    id<ORSolution> best = [[cp solutionPool] best];
 //
 //    
 //    for(ORInt i = [vm low]; i <= [vm up]; i++) {

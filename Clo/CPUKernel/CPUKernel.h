@@ -49,7 +49,8 @@ typedef void(^ORID2Void)(id);
 void scanListWithBlock(id<CPClosureList> list,ORID2Void block);
 void collectList(id<CPClosureList> list,NSMutableSet* rv);
 void freeList(id<CPClosureList> list);
-void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
+id<CPClosureList> hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
+void retract(id<CPClosureList> list);
 
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;

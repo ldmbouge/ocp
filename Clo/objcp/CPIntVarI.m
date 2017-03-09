@@ -429,9 +429,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    [self whenChangeBoundsDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
 
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+-(id<CPClosureList>) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntBase: method whenBindPropagate not defined"];
+   return nil;
 }
 -(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
 {
@@ -450,9 +451,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    @throw [[ORExecutionError alloc] initORExecutionError: "CPIntVar: method whenChaneBoundsPropagate not defined"];
 }
 
--(void) whenBindPropagate: (CPCoreConstraint*) c
+-(id<CPClosureList>) whenBindPropagate: (CPCoreConstraint*) c
 {
-   [self whenBindPropagate: c priority: c->_priority];
+   return [self whenBindPropagate: c priority: c->_priority];
 }
 -(void) whenChangePropagate:  (CPCoreConstraint*) c
 {
@@ -623,8 +624,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 // Constraint-based Events
 
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+-(id<CPClosureList>) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
+   return nil;
 }
 -(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
 {
@@ -979,9 +981,9 @@ BOOL tracksLoseEvt(id<CPIntVarNotifier> x)
 }
 
 // Constraint-based Events
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+-(id<CPClosureList>) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   hookupEvent(_fdm, _net._bindEvt, nil, c, p);
+   return hookupEvent(_fdm, _net._bindEvt, nil, c, p);
 }
 -(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
 {

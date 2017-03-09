@@ -85,8 +85,8 @@ enum CPVarClass {
 -(void) whenBindDo: (ORClosure) todo onBehalf:(id<CPConstraint>)c;
 
 // AC3 Constraint Event
--(void) whenBindPropagate: (id<CPConstraint>) c priority: (ORInt) p;
--(void) whenBindPropagate: (id<CPConstraint>) c;
+-(id<CPClosureList>) whenBindPropagate: (id<CPConstraint>) c priority: (ORInt) p;
+-(id<CPClosureList>) whenBindPropagate: (id<CPConstraint>) c;
 
 // AC5 Event
 -(void) whenLoseValue: (id<CPConstraint>) c do: (ORIntClosure) todo;

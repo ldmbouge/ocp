@@ -47,6 +47,8 @@
 {
    self = [super init];
    _node = makeTRId(trail, nil);
+   _prev = makeTRId(trail, nil);
+   _list = nil;
    _trigger = [t copy];
    _cstr = c;
    _priority = prio;
@@ -71,6 +73,10 @@
 -(id<CPClosureList>) next
 {
    return _node;
+}
+-(id<CPClosureList>) pred
+{
+   return _prev;
 }
 
 -(void)scanWithBlock:(void(^)(id))block
@@ -116,31 +122,50 @@ void freeList(CPClosureList* list)
    }
 }
 
-void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,ORInt priority)
+id<CPClosureList> hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,CPCoreConstraint* c,ORInt priority)
 {
    id<ORTrail> trail = [engine trail];
    CPClosureList* evt = [[CPClosureList alloc] initCPEventNode:todo
                                                       cstr:c
                                                         at:priority
                                                      trail:trail];
+   evt->_list = evtList;
+   evt->_trail = trail;
    [engine trackMutable: evt];
    if (*evtList == nil) {
       assignTRId(&evtList[0], evt, trail);
       assignTRId(&evtList[1], evt, trail);
    } else {
-      assignTRId(&evt->_node, evtList[0], trail);
+      CPClosureList* second = evtList[0];
+      assignTRId(&evt->_node, second, trail);
+      assignTRId(&second->_prev,evt,trail);
       assignTRId(&evtList[0],evt,trail);
    }
-//
-//    // [ldm] insert at end version!
-//   if (evtList->_val == nil) {
-//      assignTRId(&evtList[0], evt, trail);
-//      assignTRId(&evtList[1], evt, trail);
-//   } else {
-//      CPClosureList* lastNode = evtList[1]._val;
-//      assignTRId(&lastNode->_node, evt, trail);
-//      assignTRId(&evtList[1], evt, trail);
-//   }
-//
+   return evt;
 }
+-(void)retract
+{
+   CPClosureList* p = self->_prev;
+   CPClosureList* s = self->_node;
+   if (p != nil)
+      assignTRId(&p->_node, s, _trail);
+   else assignTRId(_list,s,_trail);
+   if (s != nil)
+      assignTRId(&s->_prev,p,_trail);
+   else assignTRId(_list+1,p,_trail);
+}
+
+void retract(id<CPClosureList> list)
+{
+   CPClosureList* me = list;
+   CPClosureList* p = me->_prev;
+   CPClosureList* s = me->_node;
+   if (p != nil)
+      assignTRIdNC(&p->_node, s, me->_trail);
+   else assignTRIdNC(me->_list,s,me->_trail);
+   if (s != nil)
+      assignTRIdNC(&s->_prev,p,me->_trail);
+   else assignTRIdNC(me->_list+1,p,me->_trail);
+}
+
 @end

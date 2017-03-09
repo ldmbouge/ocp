@@ -675,7 +675,9 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
 }
 @end
 
-@implementation CPNotEqual
+@implementation CPNotEqual {
+   id<CPClosureList> hdl1,hdl2;
+}
 
 -(id)initCPNotEqual:(CPIntVar*) x and:(CPIntVar*) y  and: (ORInt) c
 {
@@ -707,15 +709,17 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
    else if ([_y bound])
       [_x remove:minDom(_y) + _c];
    else {
-       [_x whenBindPropagate: self]; 
-       [_y whenBindPropagate: self];
+       hdl1 = [_x whenBindPropagate: self];
+       hdl2 = [_y whenBindPropagate: self];
    }
 }
 
 -(void) propagate
 {
-   if (!_active._val) return;
-   assignTRInt(&_active, NO, _trail);
+   retract(hdl1);
+   retract(hdl2);
+//   if (!_active._val) return;
+//   assignTRInt(&_active, NO, _trail);
    if (bound(_x))
       removeDom(_y,minDom(_x)-_c);
    else
@@ -741,20 +745,20 @@ static void scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVar* c,TRIntAr
 }
 -(void) post
 {
-   if ([_x bound])
-      [_y remove:[_x min]];
-   else if ([_y bound])
-      [_x remove:[_y min]];
+   if (bound(_x))
+      [_y remove:minDom(_x)];
+   else if (bound(_y))
+      [_x remove:minDom(_y)];
    else {
       [_x whenBindDo:^void{
          if (!_active._val) return;
          assignTRInt(&_active, NO, _trail);
-         [_y remove:minDom(_x)];
+         removeDom(_y,minDom(_x));
       } priority:HIGHEST_PRIO onBehalf:self];
       [_y whenBindDo:^void {
          if (!_active._val) return;
          assignTRInt(&_active, NO, _trail);
-         [_x remove:minDom(_y)];
+         removeDom(_x,minDom(_y));
       } priority:HIGHEST_PRIO onBehalf:self];
    }
 }

@@ -458,11 +458,15 @@ inline static id<CPValueEvent> ValueClosureQueueDequeue(CPValueClosureQueue* q)
 
 void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
 {
+//   static long long nbA = 0,nbS = 0;
+//   static long long nbI = 0;
    while (*mlist) {
       CPClosureList* list = *mlist;
       while (list) {
          CPCoreConstraint* lc = list->_cstr;
-         if (lc->_active._val) {
+//         nbA += lc->_active._val;
+//         nbS += 1;
+//         if (lc->_active._val) {
             //__active++;
             id<CPGroup> group = lc->_group;
             lc->_todo = CPTocheck;
@@ -476,11 +480,13 @@ void scheduleClosures(CPEngineI* fdm,id<CPClosureList>* mlist)
             }
 //         } else {
 //            __inactive++;
-         }
+//         }
          list = list->_node;
       }
       ++mlist;
    }
+//   if (nbI++ % 100000 == 0)
+//      NSLog(@"scheduleClosures: %ld --  %ld",nbA,nbS);
 }
 
 -(void) scheduleClosures: (id<CPClosureList>*) mlist

@@ -18,6 +18,9 @@
 @interface CPClosureList : NSObject<CPClosureList> {
 @public
    TRId                  _node;
+   TRId                  _prev;
+   TRId*                 _list;
+   id<ORTrail>           _trail;
    ORClosure             _trigger;
    CPCoreConstraint*     _cstr;
    ORInt                 _priority;
@@ -27,4 +30,5 @@
                    at: (ORInt) prio
                 trail: (id<ORTrail>)trail;
 -(void)dealloc;
+-(void)retract;
 @end
